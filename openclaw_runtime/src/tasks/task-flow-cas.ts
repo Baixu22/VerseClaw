@@ -4,40 +4,49 @@
 // TaskFlow needs before it can be treated as a workflow owner. It operates on the
 // same flow_runs table and openclaw-state SQLite, but as a controlled proof layer:
 // the legacy blind upsert remains the active path until a cutover is proven.
-import { randomUUID } from 'node:crypto';
+import { randomUUID } from "node:crypto";
 
-import type { Insertable, Selectable } from 'kysely';
+import type { Insertable, Selectable } from "kysely";
 
 import {
   executeSqliteQuerySync,
   executeSqliteQueryTakeFirstSync,
   getNodeSqliteKysely,
-} from '../infra/kysely-sync.js';
+} from "../infra/kysely-sync.js";
 import {
   openOpenClawStateDatabase,
   runOpenClawStateWriteTransaction,
   type OpenClawStateDatabaseOptions,
-} from '../state/openclaw-state-db.js';
-import type { DB as OpenClawStateKyselyDatabase } from '../state/openclaw-state-db.generated.js';
+} from "../state/openclaw-state-db.js";
+import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
+import {
+  canTransition,
+  type ExecutionPhase,
+} from "../../../shared/recovery-contract/execution-phase.js";
 
-export const TASK_FLOW_CAS_SCHEMA_VERSION = '1';
+export const TASK_FLOW_CAS_SCHEMA_VERSION = "1";
 
 /** Create sentinel: a new flow MUST be created with expectedRevision = -1. */
 export const CAS_CREATE_SENTINEL = -1;
 
 export const FLOW_STATUSES = [
-  'queued',
-  'running',
-  'waiting',
-  'blocked',
-  'succeeded',
-  'failed',
-  'cancelled',
-  'lost',
+  "queued",
+  "running",
+  "waiting",
+  "blocked",
+  "succeeded",
+  "failed",
+  "cancelled",
+  "lost",
 ] as const;
 export type FlowStatus = (typeof FLOW_STATUSES)[number];
 
-const TERMINAL_STATUSES: ReadonlySet<FlowStatus> = new Set(['succeeded', 'failed', 'cancelled', 'lost']);
+const TERMINAL_STATUSES: ReadonlySet<FlowStatus> = new Set([
+  "succeeded",
+  "failed",
+  "cancelled",
+  "lost",
+]);
 
 /**
  * Non-terminal statuses, i.e. rows that still occupy an active budget slot.
@@ -58,43 +67,43 @@ export function isTerminalFlowStatus(status: FlowStatus): boolean {
  * other transition is rejected by the CAS write.
  */
 export const LEGAL_FLOW_TRANSITIONS: ReadonlyArray<readonly [FlowStatus, FlowStatus]> = [
-  ['queued', 'running'],
-  ['queued', 'cancelled'],
+  ["queued", "running"],
+  ["queued", "cancelled"],
   // The legacy task registry settles queued work without it ever running:
   // cron journal recovery (succeeded/failed, or a blocked outcome) and the
   // maintenance sweep that marks a vanished active task lost.
-  ['queued', 'succeeded'],
-  ['queued', 'failed'],
-  ['queued', 'blocked'],
-  ['queued', 'lost'],
+  ["queued", "succeeded"],
+  ["queued", "failed"],
+  ["queued", "blocked"],
+  ["queued", "lost"],
   // A queued flow can be put on hold before it first runs (Mission pause).
-  ['queued', 'waiting'],
-  ['running', 'waiting'],
-  ['running', 'blocked'],
-  ['running', 'succeeded'],
-  ['running', 'failed'],
-  ['running', 'cancelled'],
-  ['waiting', 'running'],
-    ['waiting', 'failed'],
-  ['waiting', 'cancelled'],
-  ['blocked', 'running'],
-  ['blocked', 'cancelled'],
-  ['blocked', 'failed'],
+  ["queued", "waiting"],
+  ["running", "waiting"],
+  ["running", "blocked"],
+  ["running", "succeeded"],
+  ["running", "failed"],
+  ["running", "cancelled"],
+  ["waiting", "running"],
+  ["waiting", "failed"],
+  ["waiting", "cancelled"],
+  ["blocked", "running"],
+  ["blocked", "cancelled"],
+  ["blocked", "failed"],
   // A restart finds the backing process gone: every active status can be lost.
-  ['running', 'lost'],
-  ['waiting', 'lost'],
-  ['blocked', 'lost'],
+  ["running", "lost"],
+  ["waiting", "lost"],
+  ["blocked", "lost"],
   // Repeated non-terminal progress events (e.g. ClawGraph node_ready/started)
   // re-project the same running/blocked status idempotently.
-  ['queued', 'queued'],
-  ['running', 'running'],
-  ['waiting', 'waiting'],
-  ['blocked', 'blocked'],
+  ["queued", "queued"],
+  ["running", "running"],
+  ["waiting", "waiting"],
+  ["blocked", "blocked"],
   // Terminal states are absorbing.
-  ['succeeded', 'succeeded'],
-  ['failed', 'failed'],
-  ['cancelled', 'cancelled'],
-  ['lost', 'lost'],
+  ["succeeded", "succeeded"],
+  ["failed", "failed"],
+  ["cancelled", "cancelled"],
+  ["lost", "lost"],
 ];
 
 const LEGAL_TRANSITION_SET = new Set(LEGAL_FLOW_TRANSITIONS.map(([from, to]) => `${from}->${to}`));
@@ -103,12 +112,16 @@ export function isLegalTransition(from: FlowStatus, to: FlowStatus): boolean {
   return LEGAL_TRANSITION_SET.has(`${from}->${to}`);
 }
 
-export type CasFlowRow = Selectable<OpenClawStateKyselyDatabase['flow_runs']>;
-export type CasFlowDatabase = Pick<OpenClawStateKyselyDatabase, 'flow_runs'>;
+export type CasFlowRow = Selectable<OpenClawStateKyselyDatabase["flow_runs"]>;
+export type CasFlowDatabase = Pick<OpenClawStateKyselyDatabase, "flow_runs">;
 
 export type CasWriteResult =
   | { ok: true; row: CasFlowRow; revision: number }
-  | { ok: false; reason: 'revision-conflict' | 'illegal-transition' | 'not-found' | 'error'; message?: string };
+  | {
+      ok: false;
+      reason: "revision-conflict" | "illegal-transition" | "not-found" | "error";
+      message?: string;
+    };
 
 export type CasFlowOptions = OpenClawStateDatabaseOptions;
 
@@ -118,6 +131,8 @@ export type CasUpsertInput = {
    *  the writer must hold the current revision. */
   expectedRevision: number;
   status: FlowStatus;
+  executionPhase?: ExecutionPhase;
+  expectedExecutionPhase?: ExecutionPhase;
   ownerKey?: string;
   currentStep?: string;
   /** Explicit null clears the field (e.g. wait payload on cancel/terminal). */
@@ -127,12 +142,12 @@ export type CasUpsertInput = {
    *  row/transaction as the lifecycle transition (never declared but dropped).
    *  Explicit null clears the field. */
   deliveryState?: string | null;
-    /** Managed-flow controller ownership. `goal-wake` rows are the wait
-     *  ledger and may only be created through this CAS writer. */
-    controllerId?: string | null;
-    /** Single dependency reference used by the goal-wake wait ledger. */
-    blockedTaskId?: string | null;
-    blockedSummary?: string | null;
+  /** Managed-flow controller ownership. `goal-wake` rows are the wait
+   *  ledger and may only be created through this CAS writer. */
+  controllerId?: string | null;
+  /** Single dependency reference used by the goal-wake wait ledger. */
+  blockedTaskId?: string | null;
+  blockedSummary?: string | null;
 };
 
 /**
@@ -157,7 +172,7 @@ export class TaskFlowCasStore {
       const query = getNodeSqliteKysely<CasFlowDatabase>(db);
       const existing = executeSqliteQueryTakeFirstSync(
         db,
-        query.selectFrom('flow_runs').selectAll().where('flow_id', '=', input.flowId),
+        query.selectFrom("flow_runs").selectAll().where("flow_id", "=", input.flowId),
       );
 
       if (!existing) {
@@ -165,7 +180,7 @@ export class TaskFlowCasStore {
         if (input.expectedRevision !== CAS_CREATE_SENTINEL) {
           result = {
             ok: false,
-            reason: 'revision-conflict',
+            reason: "revision-conflict",
             message: `new flow requires expectedRevision=${CAS_CREATE_SENTINEL}, got ${input.expectedRevision}`,
           };
           return;
@@ -173,8 +188,16 @@ export class TaskFlowCasStore {
         if (isTerminalFlowStatus(input.status)) {
           result = {
             ok: false,
-            reason: 'illegal-transition',
+            reason: "illegal-transition",
             message: `terminal status ${input.status} cannot be an initial status`,
+          };
+          return;
+        }
+        if (input.executionPhase && !["admitted", "dispatched"].includes(input.executionPhase)) {
+          result = {
+            ok: false,
+            reason: "illegal-transition",
+            message: "invalid initial execution phase",
           };
           return;
         }
@@ -182,13 +205,13 @@ export class TaskFlowCasStore {
         const row: Insertable<CasFlowRow> = {
           flow_id: input.flowId,
           shape: null,
-          sync_mode: 'managed',
-          owner_key: input.ownerKey ?? 'cas-proof',
+          sync_mode: "managed",
+          owner_key: input.ownerKey ?? "cas-proof",
           requester_origin_json: null,
           controller_id: input.controllerId ?? null,
           revision: 0,
           status: input.status,
-          notify_policy: 'done_only',
+          notify_policy: "done_only",
           goal: `cas-${input.flowId}`,
           current_step: input.currentStep ?? null,
           blocked_task_id: input.blockedTaskId ?? null,
@@ -196,17 +219,20 @@ export class TaskFlowCasStore {
           state_json: input.stateJson ?? null,
           wait_json: input.waitJson ?? null,
           delivery_state: input.deliveryState ?? null,
+          execution_phase: input.executionPhase ?? null,
           cancel_requested_at: null,
           created_at: now,
           updated_at: now,
           ended_at: null,
         };
-        executeSqliteQuerySync(db, query.insertInto('flow_runs').values(row));
+        executeSqliteQuerySync(db, query.insertInto("flow_runs").values(row));
         const inserted = executeSqliteQueryTakeFirstSync(
           db,
-          query.selectFrom('flow_runs').selectAll().where('flow_id', '=', input.flowId),
+          query.selectFrom("flow_runs").selectAll().where("flow_id", "=", input.flowId),
         );
-        result = inserted ? { ok: true, row: inserted, revision: 0 } : { ok: false, reason: 'not-found' };
+        result = inserted
+          ? { ok: true, row: inserted, revision: 0 }
+          : { ok: false, reason: "not-found" };
         return;
       }
 
@@ -215,71 +241,133 @@ export class TaskFlowCasStore {
       if (currentRevision !== input.expectedRevision) {
         result = {
           ok: false,
-          reason: 'revision-conflict',
+          reason: "revision-conflict",
           message: `expected ${input.expectedRevision}, got ${currentRevision}`,
         };
         return;
       }
       const currentStatus = existing.status as FlowStatus;
+      const currentPhase = existing.execution_phase as ExecutionPhase | null;
+      if (currentPhase && input.controllerId !== existing.controller_id) {
+        result = {
+          ok: false,
+          reason: "illegal-transition",
+          message: "execution phase requires its lifecycle controller",
+        };
+        return;
+      }
+      const nextPhase = input.executionPhase ?? currentPhase;
+      if (nextPhase) {
+        const terminalStatus =
+          nextPhase === "terminal"
+            ? "succeeded"
+            : nextPhase === "failed"
+              ? "failed"
+              : nextPhase === "aborted"
+                ? "cancelled"
+                : undefined;
+        if (terminalStatus ? input.status !== terminalStatus : isTerminalFlowStatus(input.status)) {
+          result = {
+            ok: false,
+            reason: "illegal-transition",
+            message: "lifecycle status disagrees with execution phase",
+          };
+          return;
+        }
+      }
       if (
-        input.controllerId !== undefined
-        && existing.controller_id != null
-        && existing.controller_id !== input.controllerId
+        input.expectedExecutionPhase !== undefined &&
+        currentPhase !== input.expectedExecutionPhase
+      ) {
+        result = { ok: false, reason: "revision-conflict", message: "execution phase changed" };
+        return;
+      }
+      if (
+        input.executionPhase &&
+        currentPhase &&
+        input.executionPhase !== currentPhase &&
+        !canTransition(currentPhase, input.executionPhase)
       ) {
         result = {
           ok: false,
-          reason: 'illegal-transition',
-          message: `controller ownership is immutable (${existing.controller_id}->${input.controllerId ?? 'null'})`,
+          reason: "illegal-transition",
+          message: `${currentPhase}->${input.executionPhase}`,
+        };
+        return;
+      }
+      if (
+        input.controllerId !== undefined &&
+        existing.controller_id != null &&
+        existing.controller_id !== input.controllerId
+      ) {
+        result = {
+          ok: false,
+          reason: "illegal-transition",
+          message: `controller ownership is immutable (${existing.controller_id}->${input.controllerId ?? "null"})`,
         };
         return;
       }
       if (!isLegalTransition(currentStatus, input.status)) {
-        result = { ok: false, reason: 'illegal-transition', message: `${currentStatus}->${input.status}` };
+        result = {
+          ok: false,
+          reason: "illegal-transition",
+          message: `${currentStatus}->${input.status}`,
+        };
         return;
       }
       const nextRevision = currentRevision + 1;
       const now = Date.now();
       const endedAt =
-        input.status === 'succeeded' || input.status === 'failed' || input.status === 'cancelled' || input.status === 'lost'
+        input.status === "succeeded" ||
+        input.status === "failed" ||
+        input.status === "cancelled" ||
+        input.status === "lost"
           ? now
-          : existing.ended_at ?? null;
+          : (existing.ended_at ?? null);
       const updatedResult = executeSqliteQuerySync(
         db,
         query
-          .updateTable('flow_runs')
+          .updateTable("flow_runs")
           .set({
             status: input.status,
             revision: nextRevision,
             owner_key: input.ownerKey ?? existing.owner_key,
-            controller_id: input.controllerId !== undefined ? input.controllerId : existing.controller_id,
+            controller_id:
+              input.controllerId !== undefined ? input.controllerId : existing.controller_id,
             current_step: input.currentStep ?? existing.current_step,
-            blocked_task_id: input.blockedTaskId !== undefined ? input.blockedTaskId : existing.blocked_task_id,
-            blocked_summary: input.blockedSummary !== undefined ? input.blockedSummary : existing.blocked_summary,
+            blocked_task_id:
+              input.blockedTaskId !== undefined ? input.blockedTaskId : existing.blocked_task_id,
+            blocked_summary:
+              input.blockedSummary !== undefined ? input.blockedSummary : existing.blocked_summary,
             state_json: input.stateJson !== undefined ? input.stateJson : existing.state_json,
             wait_json: input.waitJson !== undefined ? input.waitJson : existing.wait_json,
-            delivery_state: input.deliveryState !== undefined ? input.deliveryState : existing.delivery_state,
+            delivery_state:
+              input.deliveryState !== undefined ? input.deliveryState : existing.delivery_state,
+            execution_phase: input.executionPhase ?? existing.execution_phase,
             updated_at: now,
             ended_at: endedAt,
           })
-          .where('flow_id', '=', input.flowId)
-          .where('revision', '=', input.expectedRevision),
+          .where("flow_id", "=", input.flowId)
+          .where("revision", "=", input.expectedRevision),
       );
       const affected = Number(updatedResult.numAffectedRows ?? 0n);
       if (affected === 0) {
         result = {
           ok: false,
-          reason: 'revision-conflict',
+          reason: "revision-conflict",
           message: `no row updated (revision guard) for ${input.flowId}`,
         };
         return;
       }
       const updated = executeSqliteQueryTakeFirstSync(
         db,
-        query.selectFrom('flow_runs').selectAll().where('flow_id', '=', input.flowId),
+        query.selectFrom("flow_runs").selectAll().where("flow_id", "=", input.flowId),
       );
-      result = updated ? { ok: true, row: updated, revision: nextRevision } : { ok: false, reason: 'not-found' };
+      result = updated
+        ? { ok: true, row: updated, revision: nextRevision }
+        : { ok: false, reason: "not-found" };
     }, this.#database);
-    return result ?? { ok: false, reason: 'error', message: 'no transaction outcome' };
+    return result ?? { ok: false, reason: "error", message: "no transaction outcome" };
   }
 
   /** Read a flow row; used to prove restart persistence. */
@@ -288,7 +376,7 @@ export class TaskFlowCasStore {
     const query = getNodeSqliteKysely<CasFlowDatabase>(db);
     return executeSqliteQueryTakeFirstSync(
       db,
-      query.selectFrom('flow_runs').selectAll().where('flow_id', '=', flowId),
+      query.selectFrom("flow_runs").selectAll().where("flow_id", "=", flowId),
     );
   }
 
@@ -298,7 +386,11 @@ export class TaskFlowCasStore {
     const query = getNodeSqliteKysely<CasFlowDatabase>(db);
     return executeSqliteQuerySync<CasFlowRow>(
       db,
-      query.selectFrom('flow_runs').selectAll().where('status', '=', status).orderBy('created_at', 'asc'),
+      query
+        .selectFrom("flow_runs")
+        .selectAll()
+        .where("status", "=", status)
+        .orderBy("created_at", "asc"),
     ).rows;
   }
 
@@ -309,17 +401,17 @@ export class TaskFlowCasStore {
     return executeSqliteQuerySync<CasFlowRow>(
       db,
       query
-        .selectFrom('flow_runs')
+        .selectFrom("flow_runs")
         .selectAll()
-        .where('controller_id', '=', controllerId)
-        .orderBy('created_at', 'asc'),
+        .where("controller_id", "=", controllerId)
+        .orderBy("created_at", "asc"),
     ).rows;
   }
 }
 
 function normalizeNumber(value: number | bigint | null | undefined): number | undefined {
-  if (typeof value === 'bigint') return Number(value);
-  return typeof value === 'number' ? value : undefined;
+  if (typeof value === "bigint") return Number(value);
+  return typeof value === "number" ? value : undefined;
 }
 
 export function makeCasFlowId(): string {

@@ -3,7 +3,7 @@
   "drivenBy": "agent",
   "actor": "recovery-contract-eval-driver",
   "realHumanEvidence": false,
-  "generatedAt": "2026-11-04T08:50:08.918Z",
+  "generatedAt": "2026-11-04T15:05:00.602Z",
   "manifest": {
     "schema": "RecoveryContractManifest/v1",
     "frozenAt": "2026-11-03T00:00:00.000Z",
@@ -20,25 +20,147 @@
     "repeated-restart": 3,
     "store-write-failure": 3
   },
+  "rejectedEvidence": [
+    {
+      "pairId": "ls-compression-01",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-compression-02",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-compression-03",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-compression-04",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-compression-05",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-compression-06",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-fork-01",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-fork-02",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-fork-03",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-fork-04",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-fork-05",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-fork-06",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-handoff-01",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-handoff-02",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-handoff-03",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-handoff-04",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-handoff-05",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-handoff-06",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-restart-01",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-restart-02",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-restart-03",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-restart-04",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-restart-05",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-restart-06",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-revocation-01",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-revocation-02",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-revocation-03",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-revocation-04",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-revocation-05",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    },
+    {
+      "pairId": "ls-revocation-06",
+      "reason": "missing post-boundary assistant oracle or artifact integrity"
+    }
+  ],
   "evaluation": {
     "schema": "RecoveryContractEval/v1",
-    "generatedAt": "2026-11-04T08:50:08.915Z",
+    "generatedAt": "2026-11-04T15:05:00.600Z",
     "drivenBy": "agent",
     "actor": "recovery-contract-eval-driver",
     "realHumanEvidence": false,
     "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
-    "status": "FAIL",
+    "status": "EVIDENCE_INSUFFICIENT",
     "qualityClaimAllowed": false,
     "metrics": {
-      "duplicateEffects": 0,
-      "lostTasks": 9,
-      "terminalCorrectness": 0.6,
-      "unknownClassifiableRate": 0,
-      "mustPreserveFidelity": 1,
-      "falseCompletionClaims": 0,
-      "nextActionAccuracy": 1,
-      "recoveryLatencyP50": 17728,
-      "recoveryLatencyP95": 230768.39999999938
+      "duplicateEffects": null,
+      "lostTasks": null,
+      "terminalCorrectness": null,
+      "unknownClassifiableRate": null,
+      "mustPreserveFidelity": null,
+      "falseCompletionClaims": null,
+      "nextActionAccuracy": null,
+      "recoveryLatencyP50": null,
+      "recoveryLatencyP95": null
     },
     "coverage": {
       "windows": [
@@ -46,127 +168,150 @@
           "windowId": "intent-after-persist-kill",
           "requiredRepeats": 3,
           "observedRepeats": 3,
-          "completeRepeats": 3
+          "completeRepeats": 0
         },
         {
           "windowId": "effect-before-receipt-kill",
           "requiredRepeats": 3,
           "observedRepeats": 3,
-          "completeRepeats": 3
+          "completeRepeats": 0
         },
         {
           "windowId": "child-created-before-parent-advance-kill",
           "requiredRepeats": 3,
           "observedRepeats": 3,
-          "completeRepeats": 3
+          "completeRepeats": 0
         },
         {
           "windowId": "store-write-failure",
           "requiredRepeats": 3,
           "observedRepeats": 3,
-          "completeRepeats": 3
+          "completeRepeats": 0
         },
         {
           "windowId": "repeated-restart",
           "requiredRepeats": 3,
           "observedRepeats": 3,
-          "completeRepeats": 3
+          "completeRepeats": 0
         }
       ],
       "longSession": {
         "requiredPairs": 30,
-        "observedPairs": 30,
-        "completePairs": 30,
-        "liveProviderPairs": 30,
+        "observedPairs": 0,
+        "completePairs": 0,
+        "liveProviderPairs": 0,
         "scriptedProviderPairs": 0,
         "agentDerivedPairs": 0,
         "families": {
-          "compression": 6,
-          "handoff": 6,
-          "fork": 6,
-          "restart": 6,
-          "revocation": 6
+          "compression": 0,
+          "handoff": 0,
+          "fork": 0,
+          "restart": 0,
+          "revocation": 0
         }
       }
     },
     "gates": [
       {
         "name": "duplicateEffects",
-        "observed": 0,
+        "observed": null,
         "threshold": "= 0",
-        "pass": true
+        "pass": null
       },
       {
         "name": "lostTasks",
-        "observed": 9,
+        "observed": null,
         "threshold": "= 0",
-        "pass": false
+        "pass": null
       },
       {
         "name": "terminalCorrectness",
-        "observed": 0.6,
+        "observed": null,
         "threshold": "= 1",
-        "pass": false
+        "pass": null
       },
       {
         "name": "unknownClassifiableRate",
-        "observed": 0,
+        "observed": null,
         "threshold": "<= 0.02",
-        "pass": true
+        "pass": null
       },
       {
         "name": "mustPreserveFidelity",
-        "observed": 1,
+        "observed": null,
         "threshold": "= 1",
-        "pass": true
+        "pass": null
       },
       {
         "name": "falseCompletionClaims",
-        "observed": 0,
+        "observed": null,
         "threshold": "= 0",
-        "pass": true
+        "pass": null
       },
       {
         "name": "nextActionAccuracy",
-        "observed": 1,
+        "observed": null,
         "threshold": ">= 0.95",
-        "pass": true
+        "pass": null
       },
       {
         "name": "recoveryLatencyP50",
-        "observed": 17728,
+        "observed": null,
         "threshold": "<= 5000ms",
-        "pass": false
+        "pass": null
       },
       {
         "name": "recoveryLatencyP95",
-        "observed": 230768.39999999938,
+        "observed": null,
         "threshold": "<= 15000ms",
-        "pass": false
+        "pass": null
       },
       {
         "name": "diskEvidenceComplete",
-        "observed": 6,
+        "observed": 0,
         "threshold": "= 0 failures",
-        "pass": false
+        "pass": null
       },
       {
         "name": "rerunOutsideAllowedRegion",
         "observed": 0,
         "threshold": "= 0 violations",
-        "pass": true
+        "pass": null
       }
     ],
     "blockers": [
-      "lostTasks must be 0 (observed 9)",
-      "terminalCorrectness must be 1 (observed 0.6)",
-      "recoveryLatencyP50 must be <= 5000ms (observed 17728)",
-      "recoveryLatencyP95 must be <= 15000ms (observed 230768.39999999938)",
-      "6 window trial(s) did not read back all required disk evidence"
+      "trial injection point does not match the frozen annotation: child-created-before-parent-advance-kill#0",
+      "trial injection point does not match the frozen annotation: child-created-before-parent-advance-kill#1",
+      "trial injection point does not match the frozen annotation: child-created-before-parent-advance-kill#2",
+      "trial injection point does not match the frozen annotation: effect-before-receipt-kill#0",
+      "trial injection point does not match the frozen annotation: effect-before-receipt-kill#1",
+      "trial injection point does not match the frozen annotation: effect-before-receipt-kill#2",
+      "trial injection point does not match the frozen annotation: intent-after-persist-kill#0",
+      "trial injection point does not match the frozen annotation: intent-after-persist-kill#1",
+      "trial injection point does not match the frozen annotation: intent-after-persist-kill#2",
+      "trial injection point does not match the frozen annotation: repeated-restart#0",
+      "trial injection point does not match the frozen annotation: repeated-restart#1",
+      "trial injection point does not match the frozen annotation: repeated-restart#2",
+      "trial injection point does not match the frozen annotation: store-write-failure#0",
+      "trial injection point does not match the frozen annotation: store-write-failure#1",
+      "trial injection point does not match the frozen annotation: store-write-failure#2"
     ],
-    "unmeasured": [],
+    "unmeasured": [
+      "window intent-after-persist-kill: 0/3 complete repeats",
+      "window effect-before-receipt-kill: 0/3 complete repeats",
+      "window child-created-before-parent-advance-kill: 0/3 complete repeats",
+      "window store-write-failure: 0/3 complete repeats",
+      "window repeated-restart: 0/3 complete repeats",
+      "long-session live-provider pairs: 0/30",
+      "long-session family compression: 0/6 live-provider pairs",
+      "long-session family handoff: 0/6 live-provider pairs",
+      "long-session family fork: 0/6 live-provider pairs",
+      "long-session family restart: 0/6 live-provider pairs",
+      "long-session family revocation: 0/6 live-provider pairs",
+      "no quality metric can be computed from an invalid or out-of-workload evidence set"
+    ],
     "decision": {
-      "disposition": "contract-failed",
+      "disposition": "evidence-insufficient",
       "productDefaultChanged": false,
       "requiresPublisherDecision": false
     }

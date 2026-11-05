@@ -4,6 +4,7 @@ import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { HOST_ACTION_LONG_TIMEOUT_MS } from '../../shared/host-api/host-action-timeouts';
 
 const {
   handoffWorkspaceUpdateMock,
@@ -1017,7 +1018,7 @@ describe('host services', () => {
           fileName: 'image.png',
         }],
       },
-      120000,
+      HOST_ACTION_LONG_TIMEOUT_MS,
     );
   });
 
@@ -1235,7 +1236,7 @@ describe('host services', () => {
       key: 'agent:main:main',
       force: true,
       customInstructions: expect.stringContaining('Preserve decision D1.'),
-    }), 120_000);
+    }), 15 * 60_000);
   });
 
   it('proxies located (range) compaction with the chosen boundary (#178)', async () => {
@@ -1268,7 +1269,7 @@ describe('host services', () => {
       key: 'agent:main:main',
       fromLeafId: 'entry-5',
       customInstructions: expect.stringContaining('Preserve decision D1.'),
-    }), 120_000);
+    }), 15 * 60_000);
   });
 
   it('proxies read-only context recall through Gateway without local archive reads', async () => {

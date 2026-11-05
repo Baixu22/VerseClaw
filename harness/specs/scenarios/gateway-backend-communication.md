@@ -82,6 +82,16 @@ rename. Restore creates a fresh physical generation while retaining the logical
 SessionKey, and archived rows are excluded from the live list until the runtime
 commit reconciles.
 
+The opt-in execution-phase recovery path uses the existing TaskFlow row and CAS
+revision as its lifecycle owner. Both task-loop and execution writers must select
+taskflow before it writes. User intent, assistant dispatch and real tool results
+reach stable transcript storage before continuation. Recovery consumes only the
+current session generation and active tail; unknown effects remain in explicit
+reconciliation and never authorize a repeated tool effect. The read-only authority
+shadow records the observed owner outcome, including failed RPC admission.
+See `recovery-tool-redispatch` for the frozen fault-window and post-boundary
+assistant-readback validation.
+
 ## Explicit coding diagnostics
 
 An explicitly selected runtime diagnostic consumer may observe destructive-tier classification rates through the existing diagnostic logger. It must not create approvals or alter tool effects; missing/expired windows are unavailable, not healthy. See `coding-approval-rate-diagnostics` and task `harness-gap-approval-rate-alerts`. Main-process copies of process-local counters do not count as runtime observations.

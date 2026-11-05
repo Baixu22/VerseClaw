@@ -2327,8 +2327,8 @@
     "team/dcs/dcs-v1.6.1-addendum.md",
     "team/role-architecture-design/area-4-role-memory-completion.md",
     "docs/dev/recovery-contract/EXECUTION-PHASE.zh-CN.md",
-    "docs/dev/recovery-contract/INTEGRATION-NOTES.zh-CN.md"
+    "docs/dev/recovery-contract/INTEGRATION-NOTES.zh-CN.md",
+    "docs/dev/recovery-contract/REDISPATCH-20261104.md"
   ],
   "artifactBatches": {}
 }
-

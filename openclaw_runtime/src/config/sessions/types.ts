@@ -378,6 +378,14 @@ export type SessionEntry = {
   restartRecoveryDeliveryContext?: DeliveryContext;
   /** Active run id that owns restartRecoveryDeliveryContext cleanup. */
   restartRecoveryDeliveryRunId?: string;
+  /** Durable restart-owner authorization and finite budget for one transcript boundary. */
+  restartRecovery?: {
+    sessionId: string;
+    boundary: string;
+    runId: string;
+    attempts: number;
+    state: "admitted" | "accepted" | "wedged";
+  };
   /**
    * Whether totalTokens reflects a fresh context snapshot for the latest run.
    * Undefined means legacy/unknown freshness; false forces consumers to treat

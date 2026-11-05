@@ -2,6 +2,13 @@
  * Orchestrates one embedded-agent attempt from prompt setup through stream result.
  */
 import { isDiagnosticFlagEnabled } from "../../../infra/diagnostic-flags.js";
+import { recoveryEvalProbe } from "../../../infra/recovery-eval-probe.js";
+import {
+  isExecutionPhaseWriterEnabled,
+  recordAssistantToolDispatches,
+  settlePersistedToolResult,
+} from "../../execution-phase/tool-boundary.js";
+import { redispatchPendingToolCalls } from "../../execution-phase/redispatch.js";
 import fs from "node:fs/promises";
 import fsSync from "node:fs";
 import os from "node:os";
@@ -1466,7 +1473,7 @@ export async function runEmbeddedAttempt(
               const registered = registerManualCompactionRequest(manualCompactionRequest, request);
               manualCompactionRequest = registered.pending;
               return registered.status;
-            },            // TF-0645: the tool archives what the session file holds right now.
+            }, // TF-0645: the tool archives what the session file holds right now.
             readCheckpointTranscript: () => {
               try {
                 return fsSync.readFileSync(params.sessionFile, "utf8");
@@ -2416,8 +2423,13 @@ export async function runEmbeddedAttempt(
         suppressTranscriptOnlyAssistantPersistence:
           params.suppressTranscriptOnlyAssistantPersistence,
         suppressAssistantErrorPersistence: params.suppressAssistantErrorPersistence,
-        onMessagePersisted: () => {
+        onMessagePersisted: (message) => {
           sessionLockController.refreshAfterOwnedSessionWrite();
+          settlePersistedToolResult(message, catalogToolHookContext);
+          recordAssistantToolDispatches(message, {
+            ...catalogToolHookContext,
+            toolNames: new Set(effectiveTools.map((tool) => tool.name)),
+          });
         },
         withCompactionPersistence: (append, validateAppend) =>
           sessionLockController.withOwnedSessionFileWrite(append, validateAppend),
@@ -2710,6 +2722,18 @@ export async function runEmbeddedAttempt(
       }
       session.setActiveToolsByName(sessionToolAllowlist);
       const activeSession = session;
+      const recoveryEntry =
+        isExecutionPhaseWriterEnabled() && params.sessionKey
+          ? loadSessionStore(
+              resolveStorePath(params.config?.session?.store, { agentId: sessionAgentId }),
+              { skipCache: true },
+            )[params.sessionKey]
+          : undefined;
+      const resumePersistedHistory =
+        recoveryEntry?.sessionId === params.sessionId &&
+        recoveryEntry?.restartRecovery?.sessionId === params.sessionId &&
+        recoveryEntry.restartRecovery.runId === params.runId &&
+        recoveryEntry.restartRecovery.state !== "wedged";
       const setActiveSessionSystemPrompt = (nextSystemPrompt: string) => {
         systemPromptText = nextSystemPrompt;
         applySystemPromptToSession(activeSession, nextSystemPrompt);
@@ -3377,6 +3401,24 @@ export async function runEmbeddedAttempt(
             system: systemPromptText,
           });
         } else {
+          if (params.sessionKey && resumePersistedHistory) {
+            const recoverySessionManager = sessionManager;
+            activeSession.agent.state.messages = await redispatchPendingToolCalls({
+              sessionKey: sandboxSessionKey ?? params.sessionKey,
+              sessionId: params.sessionId,
+              context: {
+                systemPrompt: activeSession.agent.state.systemPrompt,
+                messages: activeSession.messages,
+                tools: activeSession.agent.state.tools,
+              },
+              config: {
+                beforeToolCall: activeSession.agent.beforeToolCall,
+                afterToolCall: activeSession.agent.afterToolCall,
+              },
+              signal: runAbortController.signal,
+              appendResult: (message) => recoverySessionManager.appendMessage(message),
+            });
+          }
           const prior = await sanitizeSessionHistory({
             messages: activeSession.messages,
             modelApi: params.model.api,
@@ -3576,9 +3618,19 @@ export async function runEmbeddedAttempt(
         prompt: string,
         options?: Parameters<typeof activeSession.prompt>[1],
       ): Promise<void> =>
-        withOwnedSessionTranscriptWrites(ownedTranscriptWriteContext, async () =>
-          abortable(trackPromptSettlePromise(activeSession.prompt(prompt, options))),
-        );
+        withOwnedSessionTranscriptWrites(ownedTranscriptWriteContext, async () => {
+          recoveryEvalProbe("recovery-before-dispatch", {
+            sessionId: params.sessionId,
+            runId: params.runId,
+            sessionFile: params.sessionFile,
+            resumePersistedHistory,
+          });
+          return abortable(
+            trackPromptSettlePromise(
+              activeSession.prompt(prompt, { ...options, resumePersistedHistory }),
+            ),
+          );
+        });
       // Hook runner was already obtained earlier before tool creation.
       const hookAgentId = sessionAgentId;
       let beforeAgentFinalizeRevisionReason: string | undefined;
@@ -4187,7 +4239,11 @@ export async function runEmbeddedAttempt(
         let promptForRuntimeContextSplit = promptBeforePromptBuildHooks;
         // Repair orphaned trailing user messages so new prompts don't violate role ordering.
         const leafEntry = isRawModelRun ? null : sessionManager.getLeafEntry();
-        if (leafEntry?.type === "message" && leafEntry.message.role === "user") {
+        if (
+          !resumePersistedHistory &&
+          leafEntry?.type === "message" &&
+          leafEntry.message.role === "user"
+        ) {
           const messageMergeStrategy = resolveMessageMergeStrategy();
           const orphanPromptMerge = messageMergeStrategy.mergeOrphanedTrailingUserPrompt({
             prompt: effectivePrompt,
@@ -4519,9 +4575,7 @@ export async function runEmbeddedAttempt(
                 sessionId: params.sessionId,
                 runId: params.runId,
                 backendId:
-                  params.agentHarnessRuntimeOverride ??
-                  params.agentHarnessId ??
-                  "openclaw",
+                  params.agentHarnessRuntimeOverride ?? params.agentHarnessId ?? "openclaw",
                 provider: params.provider,
                 model: params.modelId,
                 effort: params.thinkLevel ?? params.requestedReasoningEffort ?? null,

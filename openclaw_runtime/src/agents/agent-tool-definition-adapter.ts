@@ -8,8 +8,13 @@ import { logDebug, logError } from "../logger.js";
 import { redactToolDetail } from "../logging/redact.js";
 import { isPlainObject } from "../utils.js";
 import { awaitWithAbort } from "../utils/await-with-abort.js";
+import { recoveryEvalProbe } from "../infra/recovery-eval-probe.js";
 import type { HookContext } from "./agent-tools.before-tool-call.js";
-import { beginToolExecution, completeToolExecution, failToolExecution } from "./execution-phase/tool-boundary.js";
+import {
+  beginToolExecution,
+  completeToolExecution,
+  failToolExecution,
+} from "./execution-phase/tool-boundary.js";
 import {
   buildBlockedToolResult,
   isToolWrappedWithBeforeToolCallHook,
@@ -439,9 +444,19 @@ export function toToolDefinitions(
           phaseKey = beginToolExecution({
             ...(toolCallId ? { toolCallId } : {}),
             toolName: name,
+            args: params,
+            sessionKey: hookContext?.sessionKey,
+            sessionId: hookContext?.sessionId,
             ...(hookContext?.runId ? { runId: hookContext.runId } : {}),
           });
           const rawResult = await tool.execute(toolCallId, executeParams, signal, guardedOnUpdate);
+          recoveryEvalProbe("tool-return-before-receipt", {
+            toolName: name,
+            toolCallId,
+            sessionId: hookContext?.sessionId,
+            sessionKey: hookContext?.sessionKey,
+            phaseKey,
+          });
           updatesOpen = false;
           signal?.throwIfAborted();
           const result = normalizeToolExecutionResult({
@@ -451,6 +466,7 @@ export function toToolDefinitions(
           completeToolExecution(phaseKey);
           return result;
         } catch (err) {
+          failToolExecution(phaseKey);
           if (signal?.aborted) {
             signal.throwIfAborted();
           }
@@ -460,7 +476,6 @@ export function toToolDefinitions(
               reason: err.reason,
             });
           }
-          failToolExecution(phaseKey);
           const described = describeToolExecutionError(err);
           if (described.stack && described.stack !== described.message) {
             logDebug(`tools: ${normalizedName} failed stack:\n${described.stack}`);
@@ -590,4 +605,3 @@ export function toClientToolDefinitions(
     } satisfies ToolDefinition;
   });
 }
-

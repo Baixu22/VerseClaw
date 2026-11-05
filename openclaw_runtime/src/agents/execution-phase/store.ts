@@ -1,39 +1,46 @@
-/**
- * TF-0718: durable execution-phase store (single writer, CAS transitions).
- *
- * One row per tool invocation. `recordIntent` must commit before the tool is
- * dispatched; every later phase change is a compare-and-set on (phase,
- * revision), so a stale writer can never move a row backwards or skip a step.
- *
- * The domain journal remains the effect truth. This table only answers "which
- * phase did this invocation durably reach?", which is what recovery needs.
- */
-import { randomUUID } from 'node:crypto';
-
+/** Execution phases are a projection of the TaskFlow owner, never a second ledger. */
+import { randomUUID } from "node:crypto";
 import {
-  executeSqliteQuerySync,
-  executeSqliteQueryTakeFirstSync,
-  getNodeSqliteKysely,
-} from '../../infra/kysely-sync.js';
-import {
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-  type OpenClawStateDatabaseOptions,
-} from '../../state/openclaw-state-db.js';
-import type { DB as OpenClawStateKyselyDatabase } from '../../state/openclaw-state-db.generated.js';
+  TaskFlowCasStore,
+  CAS_CREATE_SENTINEL,
+  type CasFlowRow,
+  type FlowStatus,
+} from "../../tasks/task-flow-cas.js";
+import type { OpenClawStateDatabaseOptions } from "../../state/openclaw-state-db.js";
 import {
   canTransition,
   type ExecutionPhase,
-} from '../../../../shared/recovery-contract/execution-phase.js';
+} from "../../../../shared/recovery-contract/execution-phase.js";
 
-export const EXECUTION_PHASE_OWNER = 'openclaw_runtime.agents.execution-phase.store';
-
-export type ExecutionPhasesTable = OpenClawStateKyselyDatabase['execution_phases'];
-export type ExecutionPhaseRow = SelectableRow;
-type SelectableRow = ExecutionPhasesTable extends never ? never : import('kysely').Selectable<ExecutionPhasesTable>;
-
-export type ExecutionEffectClass = 'safe' | 'unsafe' | 'reconcile';
-
+export const EXECUTION_PHASE_OWNER = "tool-execution";
+export type ExecutionEffectClass = "safe" | "unsafe" | "reconcile";
+export type ExecutionPhaseOptions = OpenClawStateDatabaseOptions;
+type ExecutionState = {
+  executionId: string;
+  idempotencyKey: string;
+  sessionKey: string | null;
+  runId: string | null;
+  taskId: string | null;
+  toolName: string;
+  effectClass: ExecutionEffectClass;
+  intent: Record<string, unknown>;
+  recovery: Record<string, unknown>;
+};
+export type ExecutionPhaseRow = {
+  execution_id: string;
+  idempotency_key: string;
+  session_key: string | null;
+  run_id: string | null;
+  task_id: string | null;
+  tool_name: string;
+  effect_class: ExecutionEffectClass;
+  phase: ExecutionPhase;
+  revision: number;
+  intent_json: string;
+  recovery_json: string;
+  created_at: number;
+  updated_at: number;
+};
 export type RecordExecutionIntentInput = {
   idempotencyKey: string;
   toolName: string;
@@ -41,242 +48,234 @@ export type RecordExecutionIntentInput = {
   sessionKey?: string;
   runId?: string;
   taskId?: string;
-  /** Digest/refs only. Raw tool arguments must never be stored here. */
   intent?: Record<string, unknown>;
   now?: number;
 };
-
 export type RecordExecutionIntentResult = {
   ok: true;
   executionId: string;
   duplicate: boolean;
   phase: ExecutionPhase;
 };
-
 export type CommitExecutionPhaseInput = {
   idempotencyKey: string;
   from: ExecutionPhase;
   to: ExecutionPhase;
+  expectedRevision?: number;
   recovery?: Record<string, unknown>;
   now?: number;
 };
-
-export type CommitExecutionPhaseFailure = 'not-found' | 'revision-conflict' | 'illegal-transition' | 'write-failed';
-
+export type CommitExecutionPhaseFailure =
+  | "not-found"
+  | "revision-conflict"
+  | "illegal-transition"
+  | "write-failed";
 export type CommitExecutionPhaseResult =
   | { ok: true; phase: ExecutionPhase; revision: number }
   | { ok: false; reason: CommitExecutionPhaseFailure };
 
-export type ExecutionPhaseOptions = OpenClawStateDatabaseOptions;
-
-function table(options: ExecutionPhaseOptions) {
-  const { db } = openOpenClawStateDatabase(options);
-  return getNodeSqliteKysely<Pick<OpenClawStateKyselyDatabase, 'execution_phases'>>(db);
+const flowId = (key: string) => `tool-execution:${key}`;
+function state(row: CasFlowRow): ExecutionState {
+  if (row.controller_id !== EXECUTION_PHASE_OWNER || !row.execution_phase || !row.state_json) {
+    throw new Error("execution lifecycle ownership mismatch");
+  }
+  return JSON.parse(row.state_json) as ExecutionState;
 }
-
+function project(row: CasFlowRow): ExecutionPhaseRow {
+  const value = state(row);
+  return {
+    execution_id: value.executionId,
+    idempotency_key: value.idempotencyKey,
+    session_key: value.sessionKey,
+    run_id: value.runId,
+    task_id: value.taskId,
+    tool_name: value.toolName,
+    effect_class: value.effectClass,
+    phase: row.execution_phase as ExecutionPhase,
+    revision: row.revision,
+    intent_json: JSON.stringify(value.intent),
+    recovery_json: JSON.stringify(value.recovery),
+    created_at: row.created_at,
+    updated_at: row.updated_at,
+  };
+}
+function phaseStatus(phase: ExecutionPhase, needsReconciliation = false): FlowStatus {
+  if (phase === "terminal") return "succeeded";
+  if (phase === "failed") return "failed";
+  if (phase === "aborted") return "cancelled";
+  return needsReconciliation ? "blocked" : "running";
+}
 export function readExecutionPhase(
-  idempotencyKey: string,
+  key: string,
   options: ExecutionPhaseOptions = {},
 ): ExecutionPhaseRow | undefined {
-  const { db } = openOpenClawStateDatabase(options);
-  return executeSqliteQueryTakeFirstSync(
-    db,
-    table(options)
-      .selectFrom('execution_phases')
-      .selectAll()
-      .where('idempotency_key', '=', idempotencyKey),
-  ) as ExecutionPhaseRow | undefined;
+  const row = new TaskFlowCasStore(options).getById(flowId(key));
+  return row ? project(row) : undefined;
 }
-
 export function readOpenExecutionPhases(
   sessionKey: string,
   options: ExecutionPhaseOptions = {},
 ): ExecutionPhaseRow[] {
-  const { db } = openOpenClawStateDatabase(options);
-  return executeSqliteQuerySync(
-    db,
-    table(options)
-      .selectFrom('execution_phases')
-      .selectAll()
-      .where('session_key', '=', sessionKey)
-      .where('phase', 'in', ['admitted', 'dispatched', 'effect_pending', 'effect_committed'])
-      .orderBy('updated_at', 'desc'),
-  ).rows as ExecutionPhaseRow[];
+  return new TaskFlowCasStore(options)
+    .listByController(EXECUTION_PHASE_OWNER)
+    .filter(
+      (row) =>
+        row.owner_key === sessionKey &&
+        !["terminal", "failed", "aborted"].includes(row.execution_phase ?? ""),
+    )
+    .map(project);
 }
-
-/** Record the intent BEFORE the tool runs. Idempotent on the idempotency key. */
 export function recordExecutionIntent(
   input: RecordExecutionIntentInput,
   options: ExecutionPhaseOptions = {},
 ): RecordExecutionIntentResult {
-  const now = input.now ?? Date.now();
-  let result: RecordExecutionIntentResult | undefined;
-  runOpenClawStateWriteTransaction(({ db }) => {
-    const query = getNodeSqliteKysely<Pick<OpenClawStateKyselyDatabase, 'execution_phases'>>(db);
-    const existing = executeSqliteQueryTakeFirstSync(
-      db,
-      query.selectFrom('execution_phases').selectAll().where('idempotency_key', '=', input.idempotencyKey),
-    ) as ExecutionPhaseRow | undefined;
-    if (existing) {
-      result = {
-        ok: true,
-        executionId: existing.execution_id,
-        duplicate: true,
-        phase: existing.phase as ExecutionPhase,
-      };
-      return;
-    }
-    const executionId = `exe_${randomUUID()}`;
-    executeSqliteQuerySync(
-      db,
-      query.insertInto('execution_phases').values({
-        execution_id: executionId,
-        idempotency_key: input.idempotencyKey,
-        session_key: input.sessionKey ?? null,
-        run_id: input.runId ?? null,
-        task_id: input.taskId ?? null,
-        tool_name: input.toolName,
-        effect_class: input.effectClass,
-        phase: 'dispatched',
-        revision: 0,
-        intent_json: JSON.stringify(input.intent ?? {}),
-        recovery_json: '{}',
-        created_at: now,
-        updated_at: now,
-      }),
-    );
-    result = { ok: true, executionId, duplicate: false, phase: 'dispatched' };
-  }, options);
-  if (!result) throw new Error('execution intent write produced no result');
-  return result;
+  const store = new TaskFlowCasStore(options);
+  const existing = store.getById(flowId(input.idempotencyKey));
+  if (existing) {
+    const row = project(existing);
+    if (
+      row.tool_name !== input.toolName ||
+      row.session_key !== (input.sessionKey ?? null) ||
+      row.intent_json !== JSON.stringify(input.intent ?? {})
+    )
+      throw new Error("execution intent identity conflict");
+    return { ok: true, executionId: row.execution_id, duplicate: true, phase: row.phase };
+  }
+  const value: ExecutionState = {
+    executionId: `exe_${randomUUID()}`,
+    idempotencyKey: input.idempotencyKey,
+    sessionKey: input.sessionKey ?? null,
+    runId: input.runId ?? null,
+    taskId: input.taskId ?? null,
+    toolName: input.toolName,
+    effectClass: input.effectClass,
+    intent: input.intent ?? {},
+    recovery: {},
+  };
+  const committed = store.casUpsert({
+    flowId: flowId(input.idempotencyKey),
+    expectedRevision: CAS_CREATE_SENTINEL,
+    status: "running",
+    executionPhase: "dispatched",
+    controllerId: EXECUTION_PHASE_OWNER,
+    ownerKey: input.sessionKey ?? "unbound",
+    currentStep: input.toolName,
+    stateJson: JSON.stringify(value),
+  });
+  if (!committed.ok) throw new Error(`execution intent commit failed: ${committed.reason}`);
+  return { ok: true, executionId: value.executionId, duplicate: false, phase: "dispatched" };
 }
-
-/** Compare-and-set a phase transition. A stale or illegal move is rejected. */
 export function commitExecutionPhase(
   input: CommitExecutionPhaseInput,
   options: ExecutionPhaseOptions = {},
 ): CommitExecutionPhaseResult {
-  const now = input.now ?? Date.now();
-  let result: CommitExecutionPhaseResult | undefined;
   try {
-    runOpenClawStateWriteTransaction(({ db }) => {
-      const query = getNodeSqliteKysely<Pick<OpenClawStateKyselyDatabase, 'execution_phases'>>(db);
-      const existing = executeSqliteQueryTakeFirstSync(
-        db,
-        query.selectFrom('execution_phases').selectAll().where('idempotency_key', '=', input.idempotencyKey),
-      ) as ExecutionPhaseRow | undefined;
-      if (!existing) {
-        result = { ok: false, reason: 'not-found' };
-        return;
-      }
-      if (existing.phase === input.to) {
-        result = { ok: true, phase: existing.phase as ExecutionPhase, revision: existing.revision };
-        return;
-      }
-      if (existing.phase !== input.from) {
-        result = { ok: false, reason: 'revision-conflict' };
-        return;
-      }
-      if (!canTransition(existing.phase as ExecutionPhase, input.to)) {
-        result = { ok: false, reason: 'illegal-transition' };
-        return;
-      }
-      const revision = existing.revision + 1;
-      executeSqliteQuerySync(
-        db,
-        query
-          .updateTable('execution_phases')
-          .set({
-            phase: input.to,
-            revision,
-            recovery_json: JSON.stringify(input.recovery ?? {}),
-            updated_at: now,
-          })
-          .where('execution_id', '=', existing.execution_id)
-          .where('phase', '=', existing.phase)
-          .where('revision', '=', existing.revision),
-      );
-      result = { ok: true, phase: input.to, revision };
-    }, options);
+    const store = new TaskFlowCasStore(options);
+    const row = store.getById(flowId(input.idempotencyKey));
+    if (!row) return { ok: false, reason: "not-found" };
+    if (input.expectedRevision !== undefined && row.revision !== input.expectedRevision)
+      return { ok: false, reason: "revision-conflict" };
+    if (row.execution_phase === input.to)
+      return { ok: true, phase: input.to, revision: row.revision };
+    if (row.execution_phase !== input.from) return { ok: false, reason: "revision-conflict" };
+    if (!canTransition(input.from, input.to)) return { ok: false, reason: "illegal-transition" };
+    const value = state(row);
+    value.recovery = input.recovery ?? {};
+    const committed = store.casUpsert({
+      flowId: row.flow_id,
+      expectedRevision: row.revision,
+      expectedExecutionPhase: input.from,
+      executionPhase: input.to,
+      status: phaseStatus(input.to),
+      controllerId: EXECUTION_PHASE_OWNER,
+      stateJson: JSON.stringify(value),
+    });
+    if (!committed.ok)
+      return {
+        ok: false,
+        reason: committed.reason === "error" ? "write-failed" : committed.reason,
+      };
+    return { ok: true, phase: input.to, revision: committed.revision };
   } catch {
-    result = { ok: false, reason: 'write-failed' };
+    return { ok: false, reason: "write-failed" };
   }
-  if (!result) throw new Error('execution phase commit produced no result');
-  return result;
 }
-
-/**
- * Gateway startup settlement: an open row from a previous boot is `lost` unless
- * its phase says the effect may already be present, in which case it must be
- * reconciled instead of retried.
- */
-export function settleOrphanedExecutionPhases(params: {
-  runIdPrefix?: string;
-  now?: number;
-  options?: ExecutionPhaseOptions;
-} = {}): { settled: number; needsReconciliation: number } {
-  const now = params.now ?? Date.now();
-  const { db } = openOpenClawStateDatabase(params.options ?? {});
-  const query = getNodeSqliteKysely<Pick<OpenClawStateKyselyDatabase, 'execution_phases'>>(db);
-  const open = executeSqliteQuerySync(
-    db,
-    query.selectFrom('execution_phases').selectAll()
-      .where('phase', 'in', ['admitted', 'dispatched', 'effect_pending', 'effect_committed'])
-      .orderBy('updated_at', 'asc'),
-  ).rows as ExecutionPhaseRow[];
-  let settled = 0;
-  let needsReconciliation = 0;
-  for (const row of open) {
-    if (params.runIdPrefix && !String(row.run_id ?? '').startsWith(params.runIdPrefix)) continue;
-    const phase = row.phase as ExecutionPhase;
-    if (phase === 'effect_pending' || phase === 'effect_committed') {
-      markExecutionNeedsReconciliation(row.idempotency_key, 'gateway-restart', now, params.options ?? {});
-      needsReconciliation += 1;
-      continue;
-    }
-    // admitted/dispatched: no effect truth, so the invocation is simply lost.
-    commitExecutionPhase({
-      idempotencyKey: row.idempotency_key,
-      from: phase,
-      to: 'failed',
-      recovery: { settledAt: now, reason: 'gateway-restart', lost: true },
-      now,
-    }, params.options ?? {});
-    settled += 1;
-  }
-  return { settled, needsReconciliation };
+function updateRecovery(
+  row: ExecutionPhaseRow,
+  recovery: Record<string, unknown>,
+  options: ExecutionPhaseOptions,
+): boolean {
+  const store = new TaskFlowCasStore(options);
+  const current = store.getById(flowId(row.idempotency_key));
+  if (!current || current.revision !== row.revision) return false;
+  const value = state(current);
+  value.recovery = recovery;
+  return store.casUpsert({
+    flowId: current.flow_id,
+    expectedRevision: row.revision,
+    expectedExecutionPhase: row.phase,
+    executionPhase: row.phase,
+    status: phaseStatus(row.phase, recovery.needsReconciliation === true),
+    controllerId: EXECUTION_PHASE_OWNER,
+    stateJson: JSON.stringify(value),
+  }).ok;
 }
-
-
-/** Mark a row as needing reconciliation without changing its committed phase. */
 export function markExecutionNeedsReconciliation(
-  idempotencyKey: string,
+  key: string,
   reason: string,
-  now: number = Date.now(),
+  now = Date.now(),
   options: ExecutionPhaseOptions = {},
 ): boolean {
   try {
-    runOpenClawStateWriteTransaction(({ db }) => {
-      const query = getNodeSqliteKysely<Pick<OpenClawStateKyselyDatabase, 'execution_phases'>>(db);
-      const existing = executeSqliteQueryTakeFirstSync(
-        db,
-        query.selectFrom('execution_phases').selectAll().where('idempotency_key', '=', idempotencyKey),
-      ) as ExecutionPhaseRow | undefined;
-      if (!existing) return false;
-      executeSqliteQuerySync(
-        db,
-        query.updateTable('execution_phases')
-          .set({
-            recovery_json: JSON.stringify({ needsReconciliation: true, reason, settledAt: now }),
-            updated_at: now,
-          })
-          .where('execution_id', '=', existing.execution_id),
-      );
-      return true;
-    }, options);
-    return true;
+    const row = readExecutionPhase(key, options);
+    return (
+      !!row && updateRecovery(row, { needsReconciliation: true, reason, settledAt: now }, options)
+    );
   } catch {
     return false;
   }
 }
-
+export function authorizeExecutionRecovery(
+  row: ExecutionPhaseRow,
+  options: ExecutionPhaseOptions = {},
+): void {
+  if (row.phase !== "dispatched" || !updateRecovery(row, { resumeAuthorized: true }, options)) {
+    throw new Error("recovery authorization revision conflict");
+  }
+}
+export function settleOrphanedExecutionPhases(
+  params: { runIdPrefix?: string; now?: number; options?: ExecutionPhaseOptions } = {},
+): { settled: number; needsReconciliation: number } {
+  let settled = 0;
+  let needsReconciliation = 0;
+  for (const flow of new TaskFlowCasStore(params.options).listByController(EXECUTION_PHASE_OWNER)) {
+    const row = project(flow);
+    if (params.runIdPrefix && !row.run_id?.startsWith(params.runIdPrefix)) continue;
+    if (row.phase === "verified") {
+      if (
+        commitExecutionPhase(
+          {
+            idempotencyKey: row.idempotency_key,
+            from: "verified",
+            to: "terminal",
+            expectedRevision: row.revision,
+          },
+          params.options,
+        ).ok
+      )
+        settled++;
+    }
+    if (row.phase === "effect_pending" || row.phase === "effect_committed") {
+      if (
+        markExecutionNeedsReconciliation(
+          row.idempotency_key,
+          "gateway-restart",
+          params.now,
+          params.options,
+        )
+      )
+        needsReconciliation++;
+    }
+  }
+  return { settled, needsReconciliation };
+}

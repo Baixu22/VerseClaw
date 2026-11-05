@@ -72,6 +72,9 @@ const rendererEntryUrl = pathToFileURL(join(repoRoot, 'dist', 'index.html')).toS
 // If any src file is newer than dist/entry.js, fail-fast with a readable hint.
 const runtimeSrcDir = join(repoRoot, 'openclaw_runtime', 'src');
 const runtimeDistEntry = join(repoRoot, 'openclaw_runtime', 'dist', 'entry.js');
+// On this Windows host app.process() can be the launcher wrapper. The main
+// process owns the Gateway/renderer tree and must be tracked before shutdown.
+const electronMainPids = new WeakMap<ElectronApplication, number>();
 
 let freshnessChecked = false;
 async function assertRuntimeDistFresh(): Promise<void> {
@@ -277,15 +280,13 @@ async function killElectronProcessTree(app: ElectronApplication): Promise<void> 
   if (process.platform !== 'win32') return;
   let pid: number | undefined;
   try {
-    pid = app.process().pid;
+    pid = electronMainPids.get(app) ?? app.process().pid;
   } catch {
     return;
   }
   if (!pid) return;
-  // Kill the Electron parent directly first. taskkill /T can block on Windows
-  // when a detached Gateway child owns inherited stdio; a bounded taskkill is
-  // only a child-tree follow-up.
-  try { process.kill(pid, 'SIGKILL'); } catch { /* already exited */ }
+  // Terminate the live tree first: killing the wrapper/root before taskkill
+  // loses the descendant relationship and leaves inherited pipes open.
   await new Promise<void>((resolve) => {
     try {
       const killer = spawn('taskkill', ['/F', '/T', '/PID', String(pid)], { stdio: 'ignore', windowsHide: true });
@@ -298,6 +299,7 @@ async function killElectronProcessTree(app: ElectronApplication): Promise<void> 
       resolve();
     }
   });
+  try { process.kill(pid, 'SIGKILL'); } catch { /* already exited */ }
 }
 
 async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000): Promise<void> {
@@ -447,7 +449,9 @@ async function launchVerseClawElectron(
     }),
     timeout: 90_000,
   });
-  await recordElectronProcess(userDataDir, app.process().pid);
+  const mainPid = await app.evaluate(() => process.pid);
+  electronMainPids.set(app, mainPid);
+  await recordElectronProcess(userDataDir, mainPid);
   /*
    * The app's own output is otherwise swallowed, which makes a stalled turn
    * unattributable from the test side: the composer just goes idle and the

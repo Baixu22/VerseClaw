@@ -1,47 +1,68 @@
-/**
- * TF-0719: recovery reads the committed execution phase.
- *
- * A turn with an open `effect_pending`/`effect_committed` row may already have
- * applied an external effect. Resuming it blindly would duplicate the effect,
- * so the only safe outcome is reconciliation. A turn with only `dispatched`
- * rows never started its effect and may be resumed.
- */
-import { readOpenExecutionPhases, type ExecutionPhaseRow, type ExecutionPhaseOptions } from './store.js';
-import { isExecutionPhaseWriterEnabled } from './tool-boundary.js';
+/** Restart decision made from bound durable phases and the active transcript. */
+import {
+  authorizeExecutionRecovery,
+  readOpenExecutionPhases,
+  type ExecutionPhaseOptions,
+} from "./store.js";
+import { buildToolIntentIdempotencyKey, isExecutionPhaseWriterEnabled } from "./tool-boundary.js";
+import { planPendingToolRecovery } from "./retry-authorization.js";
 
-export type ExecutionPhaseRecoveryAction = 'none' | 'resume' | 'reconcile';
-
+export type ExecutionPhaseRecoveryAction = "none" | "resume" | "reconcile";
 export type ExecutionPhaseRecovery = {
   action: ExecutionPhaseRecoveryAction;
   phases: string[];
   reason: string;
 };
-
 export function resolveExecutionPhaseRecovery(
   sessionKey: string,
   env: NodeJS.ProcessEnv = process.env,
   options: ExecutionPhaseOptions = {},
+  transcript?: { sessionId: string; messages: readonly unknown[] },
 ): ExecutionPhaseRecovery {
   if (!isExecutionPhaseWriterEnabled(env)) {
-    return { action: 'none', phases: [], reason: 'execution-phase writer disabled' };
+    return { action: "none", phases: [], reason: "execution-phase writer disabled" };
   }
-  let rows: ExecutionPhaseRow[];
   try {
-    rows = readOpenExecutionPhases(sessionKey, options);
-  } catch {
-    return { action: 'none', phases: [], reason: 'execution-phase store unavailable' };
-  }
-  if (rows.length === 0) {
-    return { action: 'none', phases: [], reason: 'no open execution phases' };
-  }
-  const phases = rows.map((row) => String(row.phase));
-  if (phases.some((phase) => phase === 'effect_pending' || phase === 'effect_committed')) {
+    const rows = readOpenExecutionPhases(sessionKey, options);
+    const phases = rows.map((row) => row.phase);
+    if (transcript) {
+      const pending = planPendingToolRecovery({ ...transcript, sessionKey, rows });
+      return {
+        action: pending ? "resume" : "none",
+        phases,
+        reason: pending ? "bound unstarted dispatch" : "no pending tools in active tail",
+      };
+    }
     return {
-      action: 'reconcile',
+      action: rows.length ? "reconcile" : "none",
       phases,
-      reason: 'an effect may already be applied; reconcile before resuming',
+      reason: "active transcript required for authorization",
     };
+  } catch (error) {
+    return { action: "reconcile", phases: [], reason: String(error) };
   }
-  return { action: 'resume', phases, reason: 'only unstarted dispatches are open' };
 }
 
+export function authorizePendingToolRecovery(
+  params: {
+    sessionKey: string;
+    sessionId: string;
+    messages: readonly unknown[];
+  },
+  options: ExecutionPhaseOptions = {},
+): void {
+  const rows = readOpenExecutionPhases(params.sessionKey, options);
+  const pending = planPendingToolRecovery({ ...params, rows });
+  for (const call of pending?.content ?? []) {
+    if (call.type !== "toolCall") continue;
+    const key = buildToolIntentIdempotencyKey({
+      ...params,
+      toolCallId: call.id,
+      toolName: call.name,
+      args: call.arguments,
+    });
+    const row = rows.find((entry) => entry.idempotency_key === key);
+    if (!row) throw new Error("recovery authorization disappeared");
+    authorizeExecutionRecovery(row, options);
+  }
+}

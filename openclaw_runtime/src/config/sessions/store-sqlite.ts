@@ -9,6 +9,7 @@ import {
   getNodeSqliteKysely,
 } from "../../infra/kysely-sync.js";
 import { requireNodeSqlite } from "../../infra/node-sqlite.js";
+import { recoveryEvalProbe } from "../../infra/recovery-eval-probe.js";
 import { DEFAULT_AGENT_ID, normalizeAgentId } from "../../routing/session-key.js";
 import type { DB as OpenClawAgentKyselyDatabase } from "../../state/openclaw-agent-db.generated.js";
 import {
@@ -187,6 +188,11 @@ export function replaceSqliteSessionStore(
         }),
       );
     }
+    recoveryEvalProbe("session-store-before-ack", {
+      storePath,
+      keys: Object.keys(store),
+      databasePath: database.path,
+    });
     for (const journalRow of opts?.journalRows ?? []) {
       executeSqliteQuerySync(
         database.db,

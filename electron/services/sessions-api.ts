@@ -1,6 +1,7 @@
 import { existsSync, openSync, closeSync, fstatSync, readFileSync, readSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
 import { randomUUID } from 'node:crypto';
+import { HOST_ACTION_LONG_TIMEOUT_MS } from '../../shared/host-api/host-action-timeouts';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { RawMessage } from '@shared/chat/types';
 import type { AgentReasoningEffort } from '@shared/types/agent';
@@ -2512,7 +2513,7 @@ export function createSessionsApi(ctx: {
         ...(agentId ? { agentId } : {}),
         customInstructions: getManualCompactionInstructions(payload),
         force: true,
-      }, 120_000);
+      }, HOST_ACTION_LONG_TIMEOUT_MS);
       return mapCompactionRpcOutcome(result, sessionKey);
     },
     /**
@@ -2536,7 +2537,7 @@ export function createSessionsApi(ctx: {
         ...(fromLeafId ? { fromLeafId } : {}),
         ...(toLeafId ? { toLeafId } : {}),
         customInstructions: getManualCompactionInstructions(payload),
-      }, 120_000);
+      }, HOST_ACTION_LONG_TIMEOUT_MS);
       return mapCompactionRpcOutcome(result, sessionKey);
     },
     prepareHandoff: async (payload) => {

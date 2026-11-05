@@ -84,7 +84,6 @@ export class ResumeContractVerifier {
  */
 export class ContextBudgetPlanner {
   private scheduler: ResourceAwareWaveScheduler;
-  private lastPlan: WavePlan[] | null = null;
   private resumeCount = 0;
   private readonly initialMaxWorkers: number;
 
@@ -95,7 +94,7 @@ export class ContextBudgetPlanner {
 
   /** Initial plan. */
   plan(): WavePlan[] {
-    this.lastPlan = this.scheduler.plan();
+    this.scheduler.plan();
     return this.getPlan();
   }
 
@@ -121,7 +120,6 @@ export class ContextBudgetPlanner {
     });
     if (result.accepted) {
       this.resumeCount++;
-      this.lastPlan = this.scheduler.getWaves();
     }
     return this.getPlan();
   }
@@ -226,7 +224,11 @@ export class FingerprintLeaseCoordinator {
    * Coordinate a full mid-turn pause: commit lease, then write checkpoint.
    * Returns a result confirming the lease was committed before the checkpoint.
    */
-  coordinatePause(leaseId: string, checkpointId: string, now: number = Date.now()): PauseCoordinationResult {
+  coordinatePause(
+    leaseId: string,
+    checkpointId: string,
+    now: number = Date.now(),
+  ): PauseCoordinationResult {
     const lease = this.commitLease(leaseId, now);
     const checkpoint = this.writeCheckpoint(checkpointId, now);
     return {

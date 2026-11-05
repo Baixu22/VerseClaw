@@ -1,0 +1,477 @@
+{
+  "schema": "RecoveryRedispatchCloseout/v1",
+  "generatedAt": "2026-11-04T12:59:18.564024+00:00",
+  "driven_by": "agent",
+  "actor": "recovery-redispatch-integrator",
+  "realHumanEvidence": false,
+  "baseCommit": "f719c36883ecc5f1e3b61b8b0d81ad31145afc38",
+  "sourceSha256": {
+    "openclaw_runtime/packages/agent-core/src/agent-loop.ts": "37a143259772ba0b385106ef1581564a14e12163904612d5b9a697b0ce2a334b",
+    "openclaw_runtime/src/agents/agent-tool-definition-adapter.ts": "8deab7412c32d600dbc65d666b32c4c05c03d47763535371bc4a7f24393af027",
+    "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts": "93e1b5363ba1dc9f93d501b7b7279f79da133f05bb01c51a1558c890b3a9e800",
+    "openclaw_runtime/src/agents/execution-phase/recovery.test.ts": "200595ae74e9f185d4609c7251f91eebb76ef5f84e71c8e4e9b7111d952a47bd",
+    "openclaw_runtime/src/agents/execution-phase/recovery.ts": "e1c1e6ad32f61aa5e7f0d6b97eb0fc77c78391985fde050e52befff59ea26595",
+    "openclaw_runtime/src/agents/execution-phase/redispatch-process.fixture.ts": "5146c408317f3e122767ed8f2d5e1273e57326bfca0de90523dca5673fb16a54",
+    "openclaw_runtime/src/agents/execution-phase/redispatch-process.test.ts": "fbbcfbd366f21dedd80a6e4fcf441abbadadc08a9fdb894bbc203e80db2b7ec6",
+    "openclaw_runtime/src/agents/execution-phase/redispatch.test.ts": "770c0401ba2fd5ede78fc051cd18dcf8c957ebf07508fc90ef77a28729b24fbb",
+    "openclaw_runtime/src/agents/execution-phase/redispatch.ts": "25e84f2219944a0f0e1e1ce037ebeb1ed77e27973ed4f4d86fce1277a7921e54",
+    "openclaw_runtime/src/agents/execution-phase/retry-authorization.ts": "ed1df905c7d2ec941c3f423a688f1e235b585fceebc0ee32fbd79620d9ebd5df",
+    "openclaw_runtime/src/agents/execution-phase/store.test.ts": "09ac0f4b94440a0395feacba6989076ce94440bbdbf79cc18a6788ae3d802518",
+    "openclaw_runtime/src/agents/execution-phase/store.ts": "7df8b8cb0c8562112025c9bcd93654b29e91a1e9730ab7935ff65e2837a123a5",
+    "openclaw_runtime/src/agents/execution-phase/tool-boundary.ts": "12f382f66ad51bd521166378261af37d7db2f72cbaa834e65d954077121e5349",
+    "openclaw_runtime/src/agents/main-session-restart-recovery.flow.test.ts": "053abcf65eadc0e8e5fd4c242a01723f2008a9df2b2f0248e0c52cde6ee2e162",
+    "openclaw_runtime/src/agents/main-session-restart-recovery.ts": "e15c553fac37322fc2a0543a659c3273a406c0dcd49874fe56dd22719c2cf412",
+    "scripts/recovery-contract-eval.mjs": "8247907e34ec85691866dca7e8bca6c9f9f2605f872c94db9e42c5c7c2d362a4",
+    "tests/unit/recovery-contract-eval.test.ts": "f07f7623bb9803a99629d830c012f9705286f4c2d5e13db3a7cf16431328ce37"
+  },
+  "verdict": "focused-implementation-verified; full-acceptance-incomplete",
+  "checks": {
+    "runtimeRegression": {
+      "exitCode": 0,
+      "testFiles": 7,
+      "passed": 73,
+      "failed": 0
+    },
+    "contractTests": {
+      "exitCode": 0,
+      "testFiles": 2,
+      "passed": 25,
+      "failed": 0
+    },
+    "harnessValidate": {
+      "exitCode": 0,
+      "noDiffBypass": false
+    },
+    "harnessRunDryRun": {
+      "exitCode": 0,
+      "executedProfiles": false
+    },
+    "commsReplay": {
+      "exitCode": 0,
+      "scope": "existing deterministic communication datasets"
+    },
+    "commsCompare": {
+      "exitCode": 0
+    },
+    "runtimeCliStartupBuild": {
+      "exitCode": 0,
+      "scope": "repository cliStartup build profile; declaration generation not included"
+    },
+    "runtimeFullBuildAttempt": {
+      "exitCode": 134,
+      "reason": "V8 heap out of memory at 8GB"
+    },
+    "runtimeCoreTypecheck": {
+      "exitCode": 2,
+      "diagnosticCount": 35,
+      "errors": [
+        "src/agents/cross-area/cross-area-facades.ts(87,11): error TS6133: 'lastPlan' is declared but its value is never read.",
+        "../shared/long-session-continuity.ts(1,64): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './types/memory.js'?",
+        "../shared/long-session-continuity.ts(7,8): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './types/task-ledger.js'?",
+        "../shared/long-session-continuity.ts(298,56): error TS7006: Parameter 'node' implicitly has an 'any' type.",
+        "../shared/long-session-continuity.ts(305,14): error TS2339: Property 'status' does not exist on type '{}'.",
+        "../shared/long-session-continuity.ts(306,50): error TS2339: Property 'id' does not exist on type '{}'.",
+        "../shared/long-session-continuity.ts(312,45): error TS2339: Property 'updatedAt' does not exist on type '{}'.",
+        "../shared/long-session-continuity.ts(314,27): error TS2339: Property 'evidenceRefs' does not exist on type '{}'.",
+        "../shared/long-session-continuity.ts(314,52): error TS7006: Parameter 'ref' implicitly has an 'any' type.",
+        "../shared/long-session-continuity.ts(316,14): error TS2339: Property 'kind' does not exist on type '{}'.",
+        "../shared/long-session-continuity.ts(319,31): error TS2339: Property 'id' does not exist on type '{}'.",
+        "../shared/long-session-continuity.ts(322,23): error TS2339: Property 'status' does not exist on type '{}'.",
+        "../shared/long-session-continuity.ts(322,90): error TS2339: Property 'description' does not exist on type '{}'.",
+        "../shared/long-session-continuity.ts(322,110): error TS2339: Property 'title' does not exist on type '{}'.",
+        "../shared/long-session-continuity.ts(323,26): error TS2339: Property 'updatedAt' does not exist on type '{}'.",
+        "../shared/long-session-continuity.ts(326,14): error TS2339: Property 'status' does not exist on type '{}'.",
+        "../shared/long-session-continuity.ts(326,43): error TS2339: Property 'status' does not exist on type '{}'.",
+        "../shared/long-session-continuity.ts(329,31): error TS2339: Property 'id' does not exist on type '{}'.",
+        "../shared/long-session-continuity.ts(332,23): error TS2339: Property 'status' does not exist on type '{}'.",
+        "../shared/long-session-continuity.ts(332,39): error TS2339: Property 'title' does not exist on type '{}'.",
+        "../shared/long-session-continuity.ts(335,36): error TS2339: Property 'metadata' does not exist on type '{}'.",
+        "../shared/long-session-continuity.ts(335,77): error TS2339: Property 'metadata' does not exist on type '{}'.",
+        "../shared/long-session-continuity.ts(339,31): error TS2339: Property 'id' does not exist on type '{}'.",
+        "../shared/long-session-continuity.ts(356,56): error TS7006: Parameter 'node' implicitly has an 'any' type.",
+        "../shared/long-session-continuity.ts(362,53): error TS2339: Property 'status' does not exist on type '{}'.",
+        "../shared/long-session-continuity.ts(368,21): error TS2339: Property 'title' does not exist on type '{}'.",
+        "../shared/long-session-continuity.ts(368,85): error TS2339: Property 'title' does not exist on type '{}'.",
+        "../shared/long-session-continuity.ts(373,47): error TS2339: Property 'id' does not exist on type '{}'.",
+        "../shared/long-session-continuity.ts(373,76): error TS2339: Property 'id' does not exist on type '{}'.",
+        "../shared/types/session-activity.ts(1,42): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './git.js'?",
+        "../shared/types/session-activity.ts(2,45): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './session-effective-policy.js'?",
+        "../shared/types/session-activity.ts(3,45): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './session-stage.js'?",
+        "../shared/types/session-activity.ts(4,40): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './session-derivation.js'?",
+        "../shared/types/session-activity.ts(5,51): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../long-session-resource-reclamation.js'?",
+        "../shared/types/session-delegation.ts(1,61): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './workspace.js'?"
+      ]
+    },
+    "focusedTestTypes": {
+      "exitCode": 2,
+      "diagnosticCount": 34,
+      "errorsInTouchedFiles": false
+    },
+    "applicationTypecheck": {
+      "exitCode": 1,
+      "node": "pass",
+      "web": "pass",
+      "test": "fail: two TS2339 promotion field errors in unchanged tests/unit/rsi-sekb-arms.test.ts:102,126"
+    },
+    "frozenEvalRecomputed": {
+      "exitCode": 1,
+      "status": "EVIDENCE_INSUFFICIENT",
+      "windowMetrics": {
+        "duplicateEffects": null,
+        "lostTasks": null,
+        "terminalCorrectness": null,
+        "unknownClassifiableRate": null,
+        "mustPreserveFidelity": 1,
+        "falseCompletionClaims": 0,
+        "nextActionAccuracy": 1,
+        "recoveryLatencyP50": null,
+        "recoveryLatencyP95": null
+      },
+      "newLiveProviderRun": false
+    }
+  },
+  "processProof": {
+    "schema": "RecoveryToolRedispatchProcessProof/v1",
+    "driven_by": "agent",
+    "actor": "redispatch-process-test",
+    "realHumanEvidence": false,
+    "generatedAt": "2026-11-04T12:58:42.916Z",
+    "trials": [
+      {
+        "stage": "dispatch",
+        "repeat": 0,
+        "killedPid": 41148,
+        "status": "resumed",
+        "effects": 1,
+        "realResults": 1,
+        "rows": [
+          {
+            "phase": "effect_committed",
+            "recovery": {}
+          }
+        ],
+        "driven_by": "agent",
+        "actor": "redispatch-process-test",
+        "realHumanEvidence": false
+      },
+      {
+        "stage": "dispatch",
+        "repeat": 1,
+        "killedPid": 25520,
+        "status": "resumed",
+        "effects": 1,
+        "realResults": 1,
+        "rows": [
+          {
+            "phase": "effect_committed",
+            "recovery": {}
+          }
+        ],
+        "driven_by": "agent",
+        "actor": "redispatch-process-test",
+        "realHumanEvidence": false
+      },
+      {
+        "stage": "dispatch",
+        "repeat": 2,
+        "killedPid": 43900,
+        "status": "resumed",
+        "effects": 1,
+        "realResults": 1,
+        "rows": [
+          {
+            "phase": "effect_committed",
+            "recovery": {}
+          }
+        ],
+        "driven_by": "agent",
+        "actor": "redispatch-process-test",
+        "realHumanEvidence": false
+      },
+      {
+        "stage": "pending",
+        "repeat": 0,
+        "killedPid": 32788,
+        "status": "reconcile",
+        "error": "Error: effect outcome requires reconciliation, even if an error result was persisted",
+        "effects": 0,
+        "realResults": 0,
+        "rows": [
+          {
+            "phase": "effect_pending",
+            "recovery": {
+              "needsReconciliation": true,
+              "reason": "gateway-restart",
+              "settledAt": 1793796997970
+            }
+          }
+        ],
+        "driven_by": "agent",
+        "actor": "redispatch-process-test",
+        "realHumanEvidence": false
+      },
+      {
+        "stage": "pending",
+        "repeat": 1,
+        "killedPid": 6272,
+        "status": "reconcile",
+        "error": "Error: effect outcome requires reconciliation, even if an error result was persisted",
+        "effects": 0,
+        "realResults": 0,
+        "rows": [
+          {
+            "phase": "effect_pending",
+            "recovery": {
+              "needsReconciliation": true,
+              "reason": "gateway-restart",
+              "settledAt": 1793797007669
+            }
+          }
+        ],
+        "driven_by": "agent",
+        "actor": "redispatch-process-test",
+        "realHumanEvidence": false
+      },
+      {
+        "stage": "pending",
+        "repeat": 2,
+        "killedPid": 31912,
+        "status": "reconcile",
+        "error": "Error: effect outcome requires reconciliation, even if an error result was persisted",
+        "effects": 0,
+        "realResults": 0,
+        "rows": [
+          {
+            "phase": "effect_pending",
+            "recovery": {
+              "needsReconciliation": true,
+              "reason": "gateway-restart",
+              "settledAt": 1793797015535
+            }
+          }
+        ],
+        "driven_by": "agent",
+        "actor": "redispatch-process-test",
+        "realHumanEvidence": false
+      },
+      {
+        "stage": "effect",
+        "repeat": 0,
+        "killedPid": 49096,
+        "status": "reconcile",
+        "error": "Error: effect outcome requires reconciliation, even if an error result was persisted",
+        "effects": 1,
+        "realResults": 0,
+        "rows": [
+          {
+            "phase": "effect_pending",
+            "recovery": {
+              "needsReconciliation": true,
+              "reason": "gateway-restart",
+              "settledAt": 1793797024586
+            }
+          }
+        ],
+        "driven_by": "agent",
+        "actor": "redispatch-process-test",
+        "realHumanEvidence": false
+      },
+      {
+        "stage": "effect",
+        "repeat": 1,
+        "killedPid": 20228,
+        "status": "reconcile",
+        "error": "Error: effect outcome requires reconciliation, even if an error result was persisted",
+        "effects": 1,
+        "realResults": 0,
+        "rows": [
+          {
+            "phase": "effect_pending",
+            "recovery": {
+              "needsReconciliation": true,
+              "reason": "gateway-restart",
+              "settledAt": 1793797033989
+            }
+          }
+        ],
+        "driven_by": "agent",
+        "actor": "redispatch-process-test",
+        "realHumanEvidence": false
+      },
+      {
+        "stage": "effect",
+        "repeat": 2,
+        "killedPid": 30844,
+        "status": "reconcile",
+        "error": "Error: effect outcome requires reconciliation, even if an error result was persisted",
+        "effects": 1,
+        "realResults": 0,
+        "rows": [
+          {
+            "phase": "effect_pending",
+            "recovery": {
+              "needsReconciliation": true,
+              "reason": "gateway-restart",
+              "settledAt": 1793797055190
+            }
+          }
+        ],
+        "driven_by": "agent",
+        "actor": "redispatch-process-test",
+        "realHumanEvidence": false
+      },
+      {
+        "stage": "committed",
+        "repeat": 0,
+        "killedPid": 41300,
+        "status": "reconcile",
+        "error": "Error: tool call original-call requires reconciliation; no matching unstarted dispatch",
+        "effects": 1,
+        "realResults": 0,
+        "rows": [
+          {
+            "phase": "effect_committed",
+            "recovery": {
+              "needsReconciliation": true,
+              "reason": "gateway-restart",
+              "settledAt": 1793797074533
+            }
+          }
+        ],
+        "driven_by": "agent",
+        "actor": "redispatch-process-test",
+        "realHumanEvidence": false
+      },
+      {
+        "stage": "committed",
+        "repeat": 1,
+        "killedPid": 8176,
+        "status": "reconcile",
+        "error": "Error: tool call original-call requires reconciliation; no matching unstarted dispatch",
+        "effects": 1,
+        "realResults": 0,
+        "rows": [
+          {
+            "phase": "effect_committed",
+            "recovery": {
+              "needsReconciliation": true,
+              "reason": "gateway-restart",
+              "settledAt": 1793797084424
+            }
+          }
+        ],
+        "driven_by": "agent",
+        "actor": "redispatch-process-test",
+        "realHumanEvidence": false
+      },
+      {
+        "stage": "committed",
+        "repeat": 2,
+        "killedPid": 7932,
+        "status": "reconcile",
+        "error": "Error: tool call original-call requires reconciliation; no matching unstarted dispatch",
+        "effects": 1,
+        "realResults": 0,
+        "rows": [
+          {
+            "phase": "effect_committed",
+            "recovery": {
+              "needsReconciliation": true,
+              "reason": "gateway-restart",
+              "settledAt": 1793797093500
+            }
+          }
+        ],
+        "driven_by": "agent",
+        "actor": "redispatch-process-test",
+        "realHumanEvidence": false
+      },
+      {
+        "stage": "result",
+        "repeat": 0,
+        "killedPid": 15856,
+        "status": "resumed",
+        "effects": 1,
+        "realResults": 1,
+        "rows": [
+          {
+            "phase": "effect_committed",
+            "recovery": {
+              "needsReconciliation": true,
+              "reason": "gateway-restart",
+              "settledAt": 1793797102341
+            }
+          }
+        ],
+        "driven_by": "agent",
+        "actor": "redispatch-process-test",
+        "realHumanEvidence": false
+      },
+      {
+        "stage": "result",
+        "repeat": 1,
+        "killedPid": 16696,
+        "status": "resumed",
+        "effects": 1,
+        "realResults": 1,
+        "rows": [
+          {
+            "phase": "effect_committed",
+            "recovery": {
+              "needsReconciliation": true,
+              "reason": "gateway-restart",
+              "settledAt": 1793797110907
+            }
+          }
+        ],
+        "driven_by": "agent",
+        "actor": "redispatch-process-test",
+        "realHumanEvidence": false
+      },
+      {
+        "stage": "result",
+        "repeat": 2,
+        "killedPid": 3444,
+        "status": "resumed",
+        "effects": 1,
+        "realResults": 1,
+        "rows": [
+          {
+            "phase": "effect_committed",
+            "recovery": {
+              "needsReconciliation": true,
+              "reason": "gateway-restart",
+              "settledAt": 1793797122819
+            }
+          }
+        ],
+        "driven_by": "agent",
+        "actor": "redispatch-process-test",
+        "realHumanEvidence": false
+      }
+    ],
+    "scope": "actual tool adapter + SQLite + SessionManager + process kill; not the frozen K1-K5 Electron matrix"
+  },
+  "limitations": [
+    "Process trials use production tool adapter, agent-core executor, SQLite and SessionManager but are not full Electron/Gateway K1-K5 evidence.",
+    "Legacy receipt injectionPoint substitution invalidated the old window baseline; all 15 receipts now fail the frozen annotation check.",
+    "K1 marker mismatch, overwrite-based effect counter, and K5 distinct turns require an instrument repair before baseline/candidate comparison.",
+    "Inherited independent execution_phases store differs from TF-0717 flow_runs single-owner design; lifecycle-writer conjunction remains unwired.",
+    "Full repository type gates remain failing outside touched files; defaults/product locks unchanged."
+  ],
+  "taskForest": {
+    "proposalId": "TFP-recovery-redispatch-20261104",
+    "status": "applied",
+    "validateExitCode": 0,
+    "exportGeneratedBy": "proposal-apply -> rebuild_generated",
+    "html": "D:/ClawX/.agent-workbench/task-forest/exports/task-forest.html",
+    "htmlBytes": 545668146,
+    "nodes": {
+      "TF-0710": "review_needed",
+      "TF-0718": "review_needed",
+      "TF-0719": "review_needed",
+      "TF-0721": "review_needed",
+      "TF-0723": "review_needed"
+    }
+  }
+}

@@ -147,25 +147,30 @@ export function guardSessionManager(
     suppressNextUserMessagePersistence: opts?.suppressNextUserMessagePersistence,
     suppressTranscriptOnlyAssistantPersistence: opts?.suppressTranscriptOnlyAssistantPersistence,
     suppressAssistantErrorPersistence: opts?.suppressAssistantErrorPersistence,
-    onMessagePersisted: async (message) => {
-      await opts?.onMessagePersisted?.(message);
-      if (!feedbackPort) return;
-      for (const marker of extractVerseGitFeedbackMarkers(message)) {
-        if (confirmedFeedback.has(marker.evidenceId)) continue;
-        confirmedFeedback.add(marker.evidenceId);
-        try {
-          await feedbackPort.reportDelivery({
-            bindingId: marker.bindingId,
-            childRunId: marker.childRunId,
-            toolCallId: marker.toolCallId,
-            evidenceId: marker.evidenceId,
-            level: "transcript-confirmed",
-            observedAt: new Date().toISOString(),
-          });
-        } catch {
-          // Feedback confirmation is diagnostic; transcript persistence remains authoritative.
+    onMessagePersisted: (message) => {
+      // Preserve synchronous owner failures through appendMessage. Wrapping
+      // this call in async would detach a rejected dispatch commit from I/O.
+      const persisted = opts?.onMessagePersisted?.(message);
+      if (!feedbackPort) return persisted;
+      return (async () => {
+        await persisted;
+        for (const marker of extractVerseGitFeedbackMarkers(message)) {
+          if (confirmedFeedback.has(marker.evidenceId)) continue;
+          confirmedFeedback.add(marker.evidenceId);
+          try {
+            await feedbackPort.reportDelivery({
+              bindingId: marker.bindingId,
+              childRunId: marker.childRunId,
+              toolCallId: marker.toolCallId,
+              evidenceId: marker.evidenceId,
+              level: "transcript-confirmed",
+              observedAt: new Date().toISOString(),
+            });
+          } catch {
+            // Feedback confirmation is diagnostic; transcript persistence remains authoritative.
+          }
         }
-      }
+      })();
     },
     withCompactionPersistence: opts?.withCompactionPersistence,
     onUserMessagePersisted: opts?.onUserMessagePersisted,

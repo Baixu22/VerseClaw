@@ -1,311 +1,154 @@
-/**
- * Long-session recovery evaluation (TF-0722).
- *
- * Real Electron + real Gateway + scripted local model. Each of the frozen 30
- * pairs runs one recovery variant family (compression / handoff / fork /
- * restart / revocation) and then checks, from disk, whether the must-preserve
- * facts survived and whether the recovered turn took the expected next action.
- *
- * Env:
- *   RECOVERY_LONGSESSION_OUT  directory that receives pair receipt JSON files
- *   RECOVERY_LONGSESSION_FAMILY  optional single-family debug filter
- */
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+/** Post-boundary live-model readback of the frozen 30 recovery pairs. */
+import { createServer } from 'node:http';
+import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
-import type { ElectronApplication, TestInfo } from '@playwright/test';
-import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
-import { buildMockProviderConfig, hostInvoke, startScriptedLlm } from './fixtures/fp-p1-harness';
+import { join, resolve } from 'node:path';
+import type { ElectronApplication } from '@playwright/test';
+import { getStableWindow, test, expect } from './fixtures/electron';
+import { allocatePort, buildMockProviderConfig, hostInvoke } from './fixtures/fp-p1-harness';
 import { buildRecoveryContractManifest } from '../../shared/recovery-contract-eval';
+import { scoreRecoveryReadback } from '../../shared/recovery-quality-readback';
+import { closeRecoveryApp, eventually, persistEvidence, readRecoveryDisk } from './fixtures/recovery-contract-probe';
 
-const OUT_DIR = process.env.RECOVERY_LONGSESSION_OUT ?? '';
-const FAMILY = process.env.RECOVERY_LONGSESSION_FAMILY ?? '';
-const LIMIT = Number(process.env.RECOVERY_LONGSESSION_LIMIT ?? '0');
-const LIVE_BASE_URL = process.env.RECOVERY_LIVE_BASE_URL ?? '';
-const LIVE_API_KEY = process.env.RECOVERY_LIVE_API_KEY ?? '';
-const LIVE_MODEL = process.env.RECOVERY_LIVE_MODEL ?? '';
-const LIVE_ENABLED = Boolean(LIVE_BASE_URL && LIVE_API_KEY && LIVE_MODEL);
-
-/** Live provider config: the key stays in the process env and never reaches disk. */
-function buildLiveProviderConfig(workspaceDir: string): Record<string, unknown> {
-  const base = buildMockProviderConfig(0, workspaceDir);
-  const models = base.models as Record<string, unknown>;
-  const providers = models.providers as Record<string, Record<string, unknown>>;
-  return {
-    ...base,
-    models: {
-      ...models,
-      providers: {
-        openai: {
-          ...providers.openai,
-          apiKey: LIVE_API_KEY,
-          baseUrl: LIVE_BASE_URL,
-          models: [{
-            id: LIVE_MODEL,
-            name: LIVE_MODEL,
-            api: 'openai-completions',
-            reasoning: false,
-            input: ['text'],
-            cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
-            contextWindow: 128000,
-            maxTokens: 4096,
-          }],
-        },
-      },
-    },
-    agents: {
-      ...(base.agents as Record<string, unknown>),
-      defaults: {
-        model: { primary: 'openai/' + LIVE_MODEL, fallbacks: [] },
-        workspace: workspaceDir,
-        skipBootstrap: true,
-      },
-    },
-  };
+const OUT=process.env.RECOVERY_LONGSESSION_OUT ?? '';
+const FAMILY=process.env.RECOVERY_LONGSESSION_FAMILY ?? '';
+const LIMIT=Number(process.env.RECOVERY_LONGSESSION_LIMIT ?? 0);
+const IDS=(process.env.RECOVERY_LONGSESSION_IDS ?? '').split(',').filter(Boolean);
+const BASE=process.env.RECOVERY_LIVE_BASE_URL ?? '';
+const KEY=process.env.RECOVERY_LIVE_API_KEY ?? '';
+const MODEL=process.env.RECOVERY_LIVE_MODEL ?? '';
+const ARM=process.env.RECOVERY_ARM ?? 'candidate';
+function text(message: {content?: unknown}) {
+  if(typeof message.content==='string') return message.content;
+  return Array.isArray(message.content)?message.content.filter((b)=>b.type==='text').map((b)=>b.text).join('\n'):'';
 }
 
-const MAIN_SESSION_KEY = 'agent:main:main';
-
-type GatewayStatus = { state?: string; gatewayReady?: boolean; childPid?: number };
-
-async function waitGatewayReady(app: ElectronApplication, timeoutMs = 120_000): Promise<boolean> {
-  const deadline = Date.now() + timeoutMs;
-  while (Date.now() < deadline) {
-    const status = await hostInvoke<GatewayStatus>(app, 'gateway', 'status').catch(() => ({}) as GatewayStatus);
-    if (status.gatewayReady === true || status.state === 'running') return true;
-    await new Promise((resolve) => setTimeout(resolve, 1_000));
-  }
-  return false;
-}
-
-/**
- * Read the full transcript from disk. `sessions.history` only returns the recent
- * window, which silently truncates must-preserve facts and would make a correct
- * recovery look like a loss.
- */
-async function transcriptText(sessionsDir: string, app: ElectronApplication, sessionKey = MAIN_SESSION_KEY): Promise<string> {
-  try {
-    const store = JSON.parse(await readFile(join(sessionsDir, 'sessions.json'), 'utf8')) as Record<string, { sessionFile?: string }>;
-    const file = store[sessionKey]?.sessionFile;
-    if (file) return await readFile(join(sessionsDir, file), 'utf8');
-  } catch {
-    // fall through to the host projection
-  }
-  const history = await hostInvoke<{ messages?: unknown[] }>(app, 'sessions', 'history', { sessionKey })
-    .catch(() => ({ messages: [] }));
-  return JSON.stringify(history.messages ?? []);
-}
-
-async function waitForTranscript(
-  sessionsDir: string,
-  app: ElectronApplication,
-  sessionKey: string,
-  needle: string,
-  timeoutMs = 60_000,
-): Promise<boolean> {
-  const deadline = Date.now() + timeoutMs;
-  while (Date.now() < deadline) {
-    const text = await transcriptText(sessionsDir, app, sessionKey);
-    if (text.includes(needle)) return true;
-    await new Promise((resolve) => setTimeout(resolve, 1_000));
-  }
-  return false;
-}
-
-async function send(app: ElectronApplication, message: string, key = MAIN_SESSION_KEY): Promise<void> {
-  await hostInvoke(app, 'chat', 'sendWithMedia', {
-    sessionKey: key, message, idempotencyKey: `longsession-${Date.now()}-${Math.random()}`,
+// The live credential stays in this proxy's memory; isolated app configs carry
+// only a disposable local key. No upstream authorization is recorded in evidence.
+async function liveProxy() {
+  let calls=0;
+  const server=createServer((req,res)=>{
+    if(req.url?.includes('/models')) {res.setHeader('content-type','application/json');res.end(JSON.stringify({data:[{id:MODEL}]}));return;}
+    if(!req.url?.includes('/chat/completions')) {res.writeHead(404);res.end();return;}
+    let body=''; req.on('data',(chunk)=>{body+=String(chunk);});
+    req.on('end',()=>{void(async()=>{
+      calls++;
+      const response=await fetch(BASE.replace(/\/$/,'')+'/chat/completions',{
+        method:'POST',headers:{'content-type':'application/json',authorization:`Bearer ${KEY}`},body,
+        signal:AbortSignal.timeout(180_000),
+      });
+      res.writeHead(response.status,{'content-type':response.headers.get('content-type')??'application/json'});
+      if(response.body) for await(const chunk of response.body) res.write(chunk);
+      res.end();
+    })().catch((error)=>{res.writeHead(502);res.end(JSON.stringify({error:{message:String(error)}}));});});
   });
+  await new Promise<void>((done)=>server.listen(0,'127.0.0.1',done));
+  const address=server.address();if(!address||typeof address==='string')throw new Error('proxy port unavailable');
+  return {server,port:address.port,calls:()=>calls};
+}
+async function turn(app:ElectronApplication,stateDir:string,key:string,message:string,id:string) {
+  const before=new Set(readRecoveryDisk(stateDir,key).entries.map((entry)=>entry.id));
+  await hostInvoke(app,'chat','sendWithMedia',{sessionKey:key,message,idempotencyKey:id});
+  const disk=await eventually(()=>readRecoveryDisk(stateDir,key),(d)=>d.main?.status!=='running'&&d.branch.some((entry)=>!before.has(entry.id)&&entry.message?.role==='assistant'&&entry.message.stopReason==='stop'),'settled assistant result',240_000);
+  const entry=disk.branch.findLast((item)=>!before.has(item.id)&&item.message?.role==='assistant'&&item.message.stopReason==='stop');
+  if(!entry)throw new Error('assistant result missing');
+  return {text:text(entry.message),entryId:entry.id,disk};
 }
 
-async function sendAndAwaitLive(
-  app: ElectronApplication,
-  sessionsDir: string,
-  message: string,
-  marker: string,
-): Promise<boolean> {
-  try {
-    await send(app, message);
-  } catch {
-    return false;
-  }
-  return await waitForTranscript(sessionsDir, app, MAIN_SESSION_KEY, marker, 360_000);
-}
-
-async function sendAndAwait(app: ElectronApplication, log: Array<{ issued: string | null }>, message: string, marker: string): Promise<boolean> {
-  await send(app, message);
-  const deadline = Date.now() + 120_000;
-  while (Date.now() < deadline) {
-    if (log.some((entry) => entry.issued?.startsWith('text:') && entry.issued.includes(marker.slice(0, 18)))) {
-      await new Promise((resolve) => setTimeout(resolve, 1_500));
-      return true;
-    }
-    await new Promise((resolve) => setTimeout(resolve, 1_000));
-  }
-  return false;
-}
-
-type PairReceipt = {
-  schema: 'RecoveryLongSessionPairReceipt/v1';
-  pairId: string;
-  family: string;
-  provider: string;
-  model: string;
-  measurementBasis: 'live-provider' | 'scripted-provider';
-  mustPreserveMatched: number;
-  mustPreserveTotal: number;
-  falseCompletionClaim: boolean;
-  nextActionCorrect: boolean;
-  recoveryLatencyMs: number;
-  evidenceRef: string;
-  observed: Record<string, unknown>;
-  drivenBy: 'agent';
-  realHumanEvidence: false;
-  generatedAt: string;
-};
-
-async function writePair(testInfo: TestInfo, receipt: PairReceipt): Promise<void> {
-  const text = `${JSON.stringify(receipt, null, 2)}\n`;
-  if (OUT_DIR) {
-    await mkdir(OUT_DIR, { recursive: true });
-    await writeFile(join(OUT_DIR, `pair-${receipt.pairId}.json`), text, 'utf8');
-  }
-  const output = testInfo.outputPath(`pair-${receipt.pairId}.json`);
-  await writeFile(output, text, 'utf8');
-  await testInfo.attach('long-session-pair', { path: output, contentType: 'application/json' });
-}
-
-test.describe('long-session recovery evaluation', () => {
-  test.skip(!OUT_DIR, 'RECOVERY_LONGSESSION_OUT not set: driver-only spec');
-  test.setTimeout(1_500_000);
-
-  test('runs the frozen pairs and records what survived', async ({ homeDir, userDataDir, launchElectronApp }, testInfo) => {
-    const manifest = buildRecoveryContractManifest();
-    const familyPairs = FAMILY ? manifest.longSessionPairs.filter((pair) => pair.family === FAMILY) : manifest.longSessionPairs;
-    let pairs = familyPairs;
-    if (LIMIT > 0) {
-      if (FAMILY) {
-        pairs = familyPairs.slice(0, LIMIT);
-      } else {
-        // One pair per family, in frozen order: a bounded, reproducible sample.
-        const byFamily = new Map<string, typeof familyPairs>();
-        for (const pair of familyPairs) {
-          const bucket = byFamily.get(pair.family) ?? [];
-          if (bucket.length < LIMIT) bucket.push(pair);
-          byFamily.set(pair.family, bucket);
-        }
-        pairs = [...byFamily.values()].flat();
-      }
-    }
-    const workspaceDir = await mkdtemp(join(tmpdir(), 'clawx-longsession-eval-'));
-    const llm = await startScriptedLlm((userText) => {
-      const match = /LSEVAL-FACT-(\d+)/.exec(userText);
-      if (/LSEVAL-NEXT-ACTION/.test(userText)) return { text: 'LSEVAL-NEXT-ACTION-DONE' };
-      if (match) return { text: `LSEVAL-FACT-${match[1]} ACK` };
-      return { text: 'LSEVAL-BASE-ACK' };
-    });
-    const openclawDir = join(homeDir, '.openclaw');
-    const sourceStateDir = join(userDataDir, 'openclaw-source-state');
-    const sessionsDir = join(sourceStateDir, 'agents', 'main', 'sessions');
-    await mkdir(openclawDir, { recursive: true });
-    await mkdir(sourceStateDir, { recursive: true });
-    const providerConfig = LIVE_ENABLED ? buildLiveProviderConfig(workspaceDir) : buildMockProviderConfig(llm.port, workspaceDir);
-    const serialized = `${JSON.stringify(providerConfig, null, 2)}` + String.fromCharCode(10);
-    const measurementBasis = LIVE_ENABLED ? 'live-provider' : 'scripted-provider';
-    const providerName = LIVE_ENABLED ? 'live-openai-compatible' : 'scripted-local';
-    const modelName = LIVE_ENABLED ? LIVE_MODEL : 'mock-coder';
-    await writeFile(join(openclawDir, 'openclaw.json'), serialized, 'utf8');
-    await writeFile(join(sourceStateDir, 'openclaw.json'), serialized, 'utf8');
-
-    let app: ElectronApplication | null = null;
-    try {
-      app = await launchElectronApp({ skipSetup: true });
+test.describe('long-session recovery evaluation',()=>{
+  test.skip(!OUT,'explicit live evaluation driver only');test.setTimeout(3_600_000);
+  test('scores fresh assistant answers after each actual boundary',async({homeDir,userDataDir,launchElectronApp},testInfo)=>{
+    expect(Boolean(BASE&&KEY&&MODEL),'live provider resource required').toBe(true);
+    const proxy=await liveProxy();
+    const workspace=await mkdtemp(join(tmpdir(),'recovery-quality-'));
+    const stateDir=join(userDataDir,'openclaw-source-state');
+    const port=await allocatePort();
+    const config=buildMockProviderConfig(proxy.port,workspace);
+    (config.gateway as Record<string,unknown>).port=port;
+    const providers=(config.models as {providers:Record<string,Record<string,unknown>>}).providers;
+    (providers.openai.models as Array<Record<string,unknown>>)[0].id=MODEL;
+    (providers.openai.models as Array<Record<string,unknown>>)[0].name=MODEL;
+    ((config.agents as {defaults:Record<string,unknown>}).defaults).model={primary:`openai/${MODEL}`,fallbacks:[]};
+    await mkdir(join(homeDir,'.openclaw'),{recursive:true});await mkdir(stateDir,{recursive:true});
+    await writeFile(join(homeDir,'.openclaw/openclaw.json'),JSON.stringify(config));
+    await writeFile(join(stateDir,'openclaw.json'),JSON.stringify(config));
+    await writeFile(join(userDataDir,'settings.json'),JSON.stringify({language:'en',gatewayPort:port}));
+    let app:ElectronApplication|undefined;
+    const launch=async()=>{
+      app=await launchElectronApp({skipSetup:true,env:{OPENCLAW_GATEWAY_PORT:String(port),
+        OPENCLAW_EXECUTION_PHASE_WRITER:ARM==='candidate'?'taskflow':'legacy',OPENCLAW_TASK_LOOP_LIFECYCLE_WRITER:ARM==='candidate'?'taskflow':'legacy'}});
       await getStableWindow(app);
-      await hostInvoke(app, 'workspaces', 'create', {
-        rootPath: workspaceDir, permissionMode: 'fullAccess', name: 'longsession-eval',
-      }).catch(() => undefined);
-      await hostInvoke(app, 'gateway', 'start').catch(() => undefined);
-      if (!(await waitGatewayReady(app))) throw new Error('gateway never became ready');
-
-      for (const pair of pairs) {
-        const startedAt = Date.now();
-        // Facts and the next-action request go in ONE turn: the contract measures
-        // what survives, not how many round-trips it takes to state it.
-        const factsMessage = pair.mustPreserve
-          .map((fact, i) => `LSEVAL-FACT-${i} ${fact}`)
-          .join(' | ');
-        const turnMessage = factsMessage + ' | LSEVAL-NEXT-ACTION ' + pair.expectedNextAction + (LIVE_ENABLED ? ' | Reply with exactly this token and nothing else: LSEVAL-NEXT-ACTION-DONE' : '');
-        // In live mode the model decides the reply, so the completion marker must
-        // come from the real transcript rather than the scripted request log.
-        const nextActionOk = LIVE_ENABLED
-          ? await sendAndAwaitLive(app, sessionsDir, turnMessage, 'LSEVAL-NEXT-ACTION-DONE')
-          : await sendAndAwait(app, llm.log, turnMessage, 'LSEVAL-NEXT-ACTION-DONE');
-        // The variant must not run before the facts are durable on disk, or the
-        // measurement would confuse "not yet written" with "lost by recovery".
-        const factsPersisted = await waitForTranscript(
-          sessionsDir, app, MAIN_SESSION_KEY, pair.mustPreserve[0] ?? "", LIVE_ENABLED ? 240_000 : 60_000,
-        );
-
-        let sessionKey = MAIN_SESSION_KEY;
-        let variantNote = 'in-place';
-        if (pair.family === 'fork') {
-          const fork = await hostInvoke<{ sessionKey?: string }>(app, 'sessions', 'fork', {
-            sessionKey: MAIN_SESSION_KEY, agentId: 'main', label: `eval-fork-${pair.id}`,
-          }).catch(() => ({}) as { sessionKey?: string });
-          if (fork.sessionKey) { sessionKey = fork.sessionKey; variantNote = 'forked'; }
-        } else if (pair.family === 'handoff') {
-          const handoff = await hostInvoke<{ sessionKey?: string }>(app, 'sessions', 'handoff', {
-            sessionKey: MAIN_SESSION_KEY, agentId: 'main', label: `eval-handoff-${pair.id}`,
-          }).catch(() => ({}) as { sessionKey?: string });
-          if (handoff.sessionKey) { sessionKey = handoff.sessionKey; variantNote = 'handed-off'; }
-        } else if (pair.family === 'compression') {
-          await hostInvoke(app, 'gateway', 'rpc', {
-            method: 'sessions.compact', params: { key: MAIN_SESSION_KEY, agentId: 'main' }, timeoutMs: 60_000,
-          }).catch(() => undefined);
-          variantNote = 'compacted';
-        } else if (pair.family === 'restart') {
-          await hostInvoke(app, 'gateway', 'restart').catch(() => undefined);
-          await waitGatewayReady(app);
-          variantNote = 'restarted';
-        } else if (pair.family === 'revocation') {
-          await hostInvoke(app, 'gateway', 'rpc', {
-            method: 'sessions.compact', params: { key: MAIN_SESSION_KEY, agentId: 'main', reason: 'eval-revocation' },
-            timeoutMs: 120_000,
-          }).catch(() => undefined);
-          variantNote = 'revoked-context';
+      await hostInvoke(app,'gateway','start');
+      await eventually(()=>hostInvoke<{gatewayReady?:boolean}>(app!,'gateway','status'),(s)=>s.gatewayReady===true,'gateway readiness');
+    };
+    try{
+      await launch();
+      const workspaceResult=await hostInvoke<{workspace?:{id?:string};id?:string}>(app!,'workspaces','create',{rootPath:workspace,permissionMode:'fullAccess',name:'recovery-quality'});
+      const workspaceId=workspaceResult.workspace?.id??workspaceResult.id;
+      const all=buildRecoveryContractManifest().longSessionPairs.filter((pair)=>(!FAMILY||pair.family===FAMILY)&&(!IDS.length||IDS.includes(pair.id)));
+      const pairs=LIMIT>0?all.filter((pair)=>pair.pairIndex<LIMIT):all;
+      for(const pair of pairs){
+        const evidenceDir=join(resolve(OUT),`evidence-${pair.id}`);await mkdir(evidenceDir,{recursive:true});
+        const artifacts=[];
+        let sessionKey=`agent:main:recovery-${pair.id}`;
+        const sourceKey=sessionKey;
+        const revoked=`REVOKED-${pair.id}`;
+        const sibling=`SIBLING_ONLY-${pair.id}`;
+        const seed=`These four accepted facts are authoritative. Preserve their exact wording for later recovery:\n${pair.mustPreserve.join('\n')}\nThe task remains unfinished. Do not execute tools. Acknowledge only.\n`+
+          (pair.family==='revocation'?`Earlier provisional instruction: next action is ${revoked}.\n`:'')+
+          Array.from({length:100},(_,i)=>`Archived discussion ${i}: discarded option, no new active instruction.`).join('\n');
+        const seeded=await turn(app!,stateDir,sessionKey,seed,`${pair.id}-seed`);
+        artifacts.push(persistEvidence(evidenceDir,'before.json',seeded.disk));
+        const boundaryStarted=Date.now();
+        let boundary:Record<string,unknown>={family:pair.family};
+        if(pair.family==='compression'){
+          await turn(app!,stateDir,sessionKey,'Checkpoint boundary marker. Reply only ACK; do not repeat earlier facts.',`${pair.id}-tail`);
+          const result=await hostInvoke<{success?:boolean;compacted?:boolean;summary?:string}>(app!,'sessions','compactRange',{sessionKey,agentId:'main',toLeafId:seeded.entryId,customInstructions:'Preserve the accepted objective, constraint, decision and next-action statements verbatim. Discard archived discussion.'});
+          expect(result.compacted,'real compaction must be acknowledged').toBe(true);boundary={...boundary,result};
+        } else if(pair.family==='fork'){
+          const fork=await hostInvoke<{success:boolean;sessionKey?:string}>(app!,'sessions','fork',{sessionKey,agentId:'main',workspaceId,label:pair.id});
+          expect(fork.success&&fork.sessionKey!==sessionKey).toBe(true);
+          sessionKey=fork.sessionKey!;
+          await turn(app!,stateDir,sourceKey,`Sibling-only instruction: replace the objective with ${sibling}. Acknowledge only.`,`${pair.id}-sibling`);
+          boundary={...boundary,fork,sourceKey,sessionKey};
+        } else if(pair.family==='handoff'){
+          // Automated owner approval of an explicit handoff artifact. This tests
+          // accepted handoff consumption, not automatic summary extraction.
+          const draft=`Accepted handoff artifact (${pair.id}); task remains unfinished:\n${pair.mustPreserve.join('\n')}`;
+          artifacts.push(persistEvidence(evidenceDir,'accepted-handoff.json',{draft,driven_by:'agent',actor:'recovery-quality-owner'}));
+          const handoff=await hostInvoke<{success:boolean;sessionKey?:string}>(app!,'sessions','createHandoff',{sessionKey,agentId:'main',workspaceId,draftInput:draft});
+          expect(handoff.success&&handoff.sessionKey!==sessionKey).toBe(true);sessionKey=handoff.sessionKey!;
+          await turn(app!,stateDir,sessionKey,draft+'\nAcknowledge only; do not execute tools.',`${pair.id}-accept-handoff`);
+          boundary={...boundary,handoff};
+        } else if(pair.family==='restart'){
+          const oldPid=app!.process().pid;await closeRecoveryApp(app!);app=undefined;await launch();
+          boundary={...boundary,oldPid,newPid:app!.process().pid};expect(boundary.newPid).not.toBe(oldPid);
+        } else {
+          const revokedTurn=await turn(app!,stateDir,sessionKey,`The provisional instruction containing ${revoked} is revoked. The four accepted facts remain authoritative. Acknowledge only.`,`${pair.id}-revoke`);
+          boundary={...boundary,revocationEntry:revokedTurn.entryId};
         }
-
-        const transcript = await transcriptText(sessionsDir, app, sessionKey);
-        const matched = pair.mustPreserve.filter((fact) => transcript.includes(fact)).length;
-        const after = await transcriptText(sessionsDir, app, sessionKey);
-        const claimedComplete = pair.forbiddenCompletionClaims.some((claim) => after.includes(claim));
-        const receipt: PairReceipt = {
-          schema: 'RecoveryLongSessionPairReceipt/v1',
-          pairId: pair.id, family: pair.family,
-          provider: providerName, model: modelName, measurementBasis,
-          mustPreserveMatched: matched, mustPreserveTotal: pair.mustPreserve.length,
-          falseCompletionClaim: claimedComplete, nextActionCorrect: nextActionOk,
-          recoveryLatencyMs: Date.now() - startedAt,
-          evidenceRef: `recovery-longsession:${pair.id}`,
-          observed: { variantNote, sessionKey, factsPersisted, transcriptLength: transcript.length, llmRequests: llm.log.length },
-          drivenBy: 'agent', realHumanEvidence: false, generatedAt: new Date().toISOString(),
-        };
-        await writePair(testInfo, receipt);
-        expect(receipt.pairId).toBe(pair.id);
-        console.log('[recovery-longsession]', JSON.stringify(receipt));
+        const afterBoundary=readRecoveryDisk(stateDir,sessionKey);
+        artifacts.push(persistEvidence(evidenceDir,'boundary.json',{boundary,disk:afterBoundary}));
+        // The question does not repeat the gold facts or expected next action.
+        const answer=await turn(app!,stateDir,sessionKey,
+          `Recovery readback for ${pair.id}. Return exactly one JSON object, without Markdown or commentary. From accepted context only, facts must contain exactly the four authoritative statements in this order: Objective, Constraint, Decision, Next action. Copy each statement verbatim, including its case identifier; do not substitute task-status or archive notes. nextAction must copy the full accepted Next action statement, including its prefix and case identifier. complete must be a boolean describing whether the work is finished. Exclude revoked and sibling-only instructions. Do not use tools or claim finished work.`,`${pair.id}-readback`);
+        const latency=Date.now()-boundaryStarted;
+        artifacts.push(persistEvidence(evidenceDir,'answer.json',{assistantEntryId:answer.entryId,assistantText:answer.text,disk:answer.disk}));
+        const judged=scoreRecoveryReadback(answer.text,{...pair,forbiddenFacts:[revoked,sibling]});
+        const {schemaValid,forbiddenFactLeak,nextActionCorrect}=judged;
+        const matched=judged.mustPreserveMatched;
+        const falseCompletion=judged.falseCompletionClaim;
+        const receipt={schema:'RecoveryLongSessionPairReceipt/v2',pairId:pair.id,family:pair.family,arm:ARM,
+          provider:'live-openai-compatible',model:MODEL,measurementBasis:'live-provider',
+          mustPreserveMatched:forbiddenFactLeak?0:matched,mustPreserveTotal:pair.mustPreserve.length,
+          falseCompletionClaim:falseCompletion,nextActionCorrect:nextActionCorrect&&!forbiddenFactLeak,
+          recoveryLatencyMs:latency,evidenceRef:evidenceDir.replaceAll('\\','/'),artifacts,
+          observed:{boundary,sourceKey,sessionKey,assistantEntryId:answer.entryId,postBoundaryAnswer:true,schemaValid,forbiddenFactLeak,liveCalls:proxy.calls()},
+          drivenBy:'agent',actor:'recovery-quality-owner',realHumanEvidence:false,generatedAt:new Date().toISOString()};
+        const out=persistEvidence(resolve(OUT),`pair-${pair.id}.json`,receipt);
+        await testInfo.attach(pair.id,{path:out.path,contentType:'application/json'});
+        console.log(`[quality] ${pair.id} facts=${matched}/4 next=${nextActionCorrect} completeError=${falseCompletion} leak=${forbiddenFactLeak}`);
       }
-    } finally {
-      if (app) await closeElectronApp(app).catch(() => undefined);
-      await rm(workspaceDir, { recursive: true, force: true }).catch(() => undefined);
-    }
+    }finally{if(app)await closeRecoveryApp(app);proxy.server.closeAllConnections();await new Promise<void>((resolve)=>proxy.server.close(()=>resolve()));}
   });
 });
-
-
-
-
-
-
-
-

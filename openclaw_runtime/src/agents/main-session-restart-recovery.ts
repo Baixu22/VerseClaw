@@ -21,6 +21,7 @@ import { callGateway } from "../gateway/call.js";
 import { readSessionMessagesAsync } from "../gateway/session-utils.fs.js";
 import { resolveGatewaySessionStoreTarget } from "../gateway/session-utils.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
+import { recordRecoveryEvalDecision } from "../infra/recovery-eval-probe.js";
 import { CommandLane } from "../process/lanes.js";
 import { isAcpSessionKey, isCronSessionKey, isSubagentSessionKey } from "../routing/session-key.js";
 import { resolveSendPolicy } from "../sessions/send-policy.js";
@@ -40,8 +41,14 @@ import {
   recoveryShadowSink,
   type LegacyRecoveryOutcome,
 } from "./recovery-authority/shadow.js";
-import { isExecutionPhaseWriterEnabled } from "./execution-phase/tool-boundary.js";
-import { resolveExecutionPhaseRecovery } from "./execution-phase/recovery.js";
+import {
+  isExecutionPhaseWriterEnabled,
+  settlePersistedToolResult,
+} from "./execution-phase/tool-boundary.js";
+import {
+  authorizePendingToolRecovery,
+  resolveExecutionPhaseRecovery,
+} from "./execution-phase/recovery.js";
 import { settleOrphanedExecutionPhases } from "./execution-phase/store.js";
 import type { SessionLockInspection } from "./session-write-lock.js";
 
@@ -351,6 +358,7 @@ async function resumeMainSession(params: {
   storePath: string;
   sessionKey: string;
   pendingFinalDeliveryText?: string | null;
+  recoveryBoundary: string;
 }): Promise<boolean> {
   const sanitizedPendingText =
     typeof params.pendingFinalDeliveryText === "string"
@@ -362,11 +370,53 @@ async function resumeMainSession(params: {
     sessionKey: params.sessionKey,
   });
   try {
+    let recoveryRunId: string = crypto.randomUUID();
+    if (isExecutionPhaseWriterEnabled()) {
+      let admitted = false;
+      await updateSessionStore(
+        params.storePath,
+        (store) => {
+          const current = store[params.sessionKey];
+          if (
+            !current ||
+            current.sessionId !== params.entry.sessionId ||
+            current.abortedLastRun !== true
+          ) {
+            throw new Error("restart recovery session generation changed");
+          }
+          const previous =
+            current.restartRecovery?.sessionId === current.sessionId &&
+            current.restartRecovery.boundary === params.recoveryBoundary
+              ? current.restartRecovery
+              : undefined;
+          if (
+            previous &&
+            (previous.state === "wedged" || previous.attempts >= MAX_RECOVERY_RETRIES)
+          ) {
+            current.restartRecovery = { ...previous, state: "wedged" };
+            current.status = "failed";
+            current.endedAt = Date.now();
+            return;
+          }
+          recoveryRunId = previous?.runId ?? recoveryRunId;
+          current.restartRecovery = {
+            sessionId: current.sessionId,
+            boundary: params.recoveryBoundary,
+            runId: recoveryRunId,
+            attempts: (previous?.attempts ?? 0) + 1,
+            state: "admitted",
+          };
+          admitted = true;
+        },
+        { skipMaintenance: true },
+      );
+      if (!admitted) return false;
+    }
     const agentParams: Record<string, unknown> = {
       message: buildResumeMessage(sanitizedPendingText),
       sessionKey: params.sessionKey,
       sessionId: params.entry.sessionId,
-      idempotencyKey: crypto.randomUUID(),
+      idempotencyKey: recoveryRunId,
       deliver: Boolean(deliveryContext),
       lane: CommandLane.Main,
     };
@@ -390,8 +440,12 @@ async function resumeMainSession(params: {
       params.storePath,
       (store) => {
         const entry = store[params.sessionKey];
-        if (!entry) {
+        if (!entry || entry.sessionId !== params.entry.sessionId) {
           return;
+        }
+        if (isExecutionPhaseWriterEnabled()) {
+          if (entry.restartRecovery?.runId !== recoveryRunId) return;
+          entry.restartRecovery.state = "accepted";
         }
         const now = Date.now();
         entry.abortedLastRun = false;
@@ -524,13 +578,15 @@ async function recoverStore(params: {
 
     const resumeBlockReason = resolveMainSessionResumeBlockReason(messages);
 
-    // TF-0714: read-only shadow. Default off; it never changes the outcome.
-    if (isRecoveryAuthorityShadowEnabled()) {
+    // Compare with the observed owner outcome, including failed admission/RPC.
+    // A predicted "resumed" value would hide a real continuation failure.
+    const recordShadow = (outcome: LegacyRecoveryOutcome) => {
+      if (!isRecoveryAuthorityShadowEnabled()) return;
       try {
         const request = buildMainSessionRecoveryRequest({
           sessionKey,
           sessionId: entry.sessionId ?? sessionKey,
-          attemptsConsumed: 0,
+          attemptsConsumed: entry.restartRecovery?.attempts ?? 0,
           maxAttempts: MAX_RECOVERY_RETRIES,
           resumable: !resumeBlockReason,
           approvalPending: Boolean(resumeBlockReason?.includes("approval-pending")),
@@ -540,22 +596,56 @@ async function recoverStore(params: {
           ),
         });
         const decision = recoveryAuthorityV1.decide(request);
-        const legacyOutcome: LegacyRecoveryOutcome = resumeBlockReason ? "not-resumed" : "resumed";
-        recoveryShadowSink.record(compareRecoveryShadow(request, decision, legacyOutcome));
+        const record = compareRecoveryShadow(request, decision, outcome);
+        recoveryShadowSink.record(record);
+        recordRecoveryEvalDecision({
+          sessionKey,
+          sessionId: entry.sessionId,
+          action: "shadow",
+          ...record,
+        });
       } catch (err) {
         log.warn(`recovery authority shadow failed for ${sessionKey}: ${String(err)}`);
       }
-    }
+    };
     // TF-0719: with the execution-phase writer on, an open effect may already
     // have been applied. Resuming blindly would duplicate it.
     let effectiveResumeBlockReason = resumeBlockReason;
     if (isExecutionPhaseWriterEnabled()) {
-      const phaseRecovery = resolveExecutionPhaseRecovery(sessionKey);
-      if (phaseRecovery.action === 'reconcile') {
-        effectiveResumeBlockReason = "execution phase requires reconciliation: " + phaseRecovery.phases.join(",");
+      for (const message of messages) {
+        settlePersistedToolResult(message as import("./runtime/index.js").AgentMessage, {
+          sessionKey,
+          sessionId: entry.sessionId,
+        });
+      }
+      const phaseRecovery = resolveExecutionPhaseRecovery(
+        sessionKey,
+        process.env,
+        {},
+        {
+          sessionId: entry.sessionId,
+          messages,
+        },
+      );
+      if (phaseRecovery.action === "reconcile") {
+        effectiveResumeBlockReason =
+          "execution phase requires reconciliation: " + phaseRecovery.reason;
+      } else if (!effectiveResumeBlockReason && phaseRecovery.action === "resume") {
+        try {
+          authorizePendingToolRecovery({ sessionKey, sessionId: entry.sessionId, messages });
+        } catch (error) {
+          effectiveResumeBlockReason = "execution recovery authorization failed: " + String(error);
+        }
       }
     }
     if (effectiveResumeBlockReason) {
+      recordShadow("not-resumed");
+      recordRecoveryEvalDecision({
+        sessionKey,
+        sessionId: entry.sessionId,
+        action: "reconcile",
+        reason: effectiveResumeBlockReason,
+      });
       await sendUnresumableSessionNotice({
         cfg: params.cfg,
         entry,
@@ -571,13 +661,19 @@ async function recoverStore(params: {
       continue;
     }
 
+    recordRecoveryEvalDecision({ sessionKey, sessionId: entry.sessionId, action: "resume" });
     const resumed = await resumeMainSession({
       cfg: params.cfg,
       entry,
       storePath: params.storePath,
       sessionKey,
       pendingFinalDeliveryText: entry.pendingFinalDeliveryText,
+      recoveryBoundary: crypto
+        .createHash("sha256")
+        .update(JSON.stringify(messages.slice(-1)))
+        .digest("hex"),
     });
+    recordShadow(resumed ? "resumed" : "failed");
     if (resumed) {
       params.resumedSessionKeys.add(sessionKey);
       result.recovered++;
@@ -654,7 +750,9 @@ export function scheduleRestartAbortedMainSessionRecovery(
   const candidateMode = isExecutionPhaseWriterEnabled();
   const initialDelay = params.delayMs ?? (candidateMode ? 1_000 : DEFAULT_RECOVERY_DELAY_MS);
   const nextDelay = (delay: number) =>
-    candidateMode ? Math.min(delay * RETRY_BACKOFF_MULTIPLIER, 10_000) : delay * RETRY_BACKOFF_MULTIPLIER;
+    candidateMode
+      ? Math.min(delay * RETRY_BACKOFF_MULTIPLIER, 10_000)
+      : delay * RETRY_BACKOFF_MULTIPLIER;
   const maxRetries = params.maxRetries ?? MAX_RECOVERY_RETRIES;
   const resumedSessionKeys = new Set<string>();
 
@@ -683,6 +781,3 @@ export function scheduleRestartAbortedMainSessionRecovery(
 
   attemptRecovery(1, initialDelay);
 }
-
-
-

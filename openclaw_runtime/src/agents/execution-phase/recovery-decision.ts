@@ -13,19 +13,19 @@ import {
   classifyReplay,
   type ExecutionPhase,
   type ReplayDisposition,
-} from '../../../../shared/recovery-contract/execution-phase.js';
+} from "../../../../shared/recovery-contract/execution-phase.js";
 
 /** Effect truth, resolved by the caller from the domain journal/receipts. */
-export type ResolvedEffectCertainty = 'applied' | 'not_applied' | 'unknown' | 'reconciled';
+export type ResolvedEffectCertainty = "applied" | "not_applied" | "unknown" | "reconciled";
 
 export type ExecutionRecoveryAction =
-  | 'resume-dispatch'
-  | 'reconcile'
-  | 'advance-commit'
-  | 'continue-verify'
-  | 'settle'
-  | 'quarantine'
-  | 'refuse';
+  | "resume-dispatch"
+  | "reconcile"
+  | "advance-commit"
+  | "continue-verify"
+  | "settle"
+  | "quarantine"
+  | "refuse";
 
 export type ExecutionRecoveryDecision = {
   readonly phase: ExecutionPhase;
@@ -43,7 +43,7 @@ export type EffectFacts = {
   /** Domain journal rows observed for the idempotency key. */
   readonly journalMatches: number;
   /** Effect receipt outcomes observed for the idempotency key (evidence only). */
-  readonly receiptOutcomes: readonly ('applied' | 'not_applied' | 'unknown' | 'reconciled')[];
+  readonly receiptOutcomes: readonly ("applied" | "not_applied" | "unknown" | "reconciled")[];
 };
 
 /**
@@ -51,14 +51,11 @@ export type EffectFacts = {
  * never promote an unknown effect to `applied` on their own.
  */
 export function deriveEffectCertainty(facts: EffectFacts): ResolvedEffectCertainty {
-  if (facts.journalMatches > 0) return 'applied';
-  if (facts.receiptOutcomes.includes('reconciled')) return 'reconciled';
-  if (facts.receiptOutcomes.includes('applied') && facts.intentRecorded) return 'unknown';
-  if (facts.receiptOutcomes.length > 0 && facts.receiptOutcomes.every((outcome) => outcome === 'not_applied')) {
-    return 'not_applied';
-  }
-  if (facts.intentRecorded) return 'unknown';
-  return 'not_applied';
+  if (facts.journalMatches > 0) return "applied";
+  // Receipts correlate evidence; they cannot prove either applied or not_applied.
+  if (facts.receiptOutcomes.length > 0) return "unknown";
+  if (facts.intentRecorded) return "unknown";
+  return "not_applied";
 }
 
 export function decideExecutionRecovery(
@@ -68,51 +65,52 @@ export function decideExecutionRecovery(
   const disposition = classifyReplay(phase);
   const base = { phase, disposition, effect } as const;
 
-  if (effect === 'applied' || effect === 'reconciled') {
+  if (effect === "applied" || effect === "reconciled") {
     return {
       ...base,
-      action: 'advance-commit',
+      action: "advance-commit",
       replayAllowed: false,
-      reason: 'the effect is already present in the domain journal; advance the committed phase, never re-run',
-      evidenceRequired: ['domain-journal'],
+      reason:
+        "the effect is already present in the domain journal; advance the committed phase, never re-run",
+      evidenceRequired: ["domain-journal"],
     };
   }
 
-  if (effect === 'unknown') {
+  if (effect === "unknown") {
     return {
       ...base,
-      action: 'quarantine',
+      action: "quarantine",
       replayAllowed: false,
-      reason: 'effect certainty is unknown; keep the phase quarantined until the journal is read',
-      evidenceRequired: ['domain-journal', 'effect-receipt'],
+      reason: "effect certainty is unknown; keep the phase quarantined until the journal is read",
+      evidenceRequired: ["domain-journal", "effect-receipt"],
     };
   }
 
   switch (disposition) {
-    case 'safe':
+    case "safe":
       return {
         ...base,
-        action: phase === 'admitted' ? 'resume-dispatch' : 'settle',
-        replayAllowed: phase === 'admitted',
-        reason: 'phase is replay-safe and the effect is not applied',
+        action: phase === "admitted" ? "resume-dispatch" : "settle",
+        replayAllowed: phase === "admitted",
+        reason: "phase is replay-safe and the effect is not applied",
         evidenceRequired: [],
       };
-    case 'unsafe':
+    case "unsafe":
       return {
         ...base,
-        action: 'continue-verify',
+        action: "continue-verify",
         replayAllowed: false,
-        reason: 'the effect may already be present; continue verification, never re-run',
-        evidenceRequired: ['domain-journal'],
+        reason: "the effect may already be present; continue verification, never re-run",
+        evidenceRequired: ["domain-journal"],
       };
-    case 'reconcile':
+    case "reconcile":
     default:
       return {
         ...base,
-        action: 'reconcile',
+        action: "reconcile",
         replayAllowed: false,
-        reason: 'phase is ambiguous; reconcile before any further action',
-        evidenceRequired: ['domain-journal', 'effect-receipt'],
+        reason: "phase is ambiguous; reconcile before any further action",
+        evidenceRequired: ["domain-journal", "effect-receipt"],
       };
   }
 }
@@ -122,7 +120,7 @@ export type ToolIntentRecord = {
   readonly intentId: string;
   readonly idempotencyKey: string;
   readonly toolName: string;
-  readonly phase: 'dispatched';
+  readonly phase: "dispatched";
   readonly recordedAt: number;
 };
 
@@ -135,13 +133,16 @@ export function buildToolIntentRecord(input: {
     intentId: `intent:${input.idempotencyKey}`,
     idempotencyKey: input.idempotencyKey,
     toolName: input.toolName,
-    phase: 'dispatched',
+    phase: "dispatched",
     recordedAt: input.now,
   };
 }
 
 /** An intent record is only useful if it is durable before the effect starts. */
-export function isIntentBeforeEffect(intent: ToolIntentRecord | undefined, effectStartedAt: number | undefined): boolean {
+export function isIntentBeforeEffect(
+  intent: ToolIntentRecord | undefined,
+  effectStartedAt: number | undefined,
+): boolean {
   if (!intent) return false;
   if (effectStartedAt === undefined) return true;
   return intent.recordedAt <= effectStartedAt;

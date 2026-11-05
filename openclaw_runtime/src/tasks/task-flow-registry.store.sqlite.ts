@@ -40,7 +40,6 @@ type FlowRegistryDatabase = {
 // SQLite-backed task-flow store mirrors the in-process registry into openclaw-state.db.
 let cachedDatabase: FlowRegistryDatabase | null = null;
 
-
 const WORKFLOW_LIFECYCLE_CONTROLLER_SQL_LIST = Object.values(WORKFLOW_LIFECYCLE_CONTROLLER_IDS)
   .map((id) => `'${id}'`)
   .join(", ");
@@ -152,7 +151,8 @@ function pruneFlowsNotInSnapshot(params: { db: DatabaseSync; ids: readonly strin
   // same CAS writer and are never part of this snapshot either.
   params.db.exec(`
     DELETE FROM flow_runs
-    WHERE COALESCE(controller_id, '') NOT IN ('goal-wake', ${WORKFLOW_LIFECYCLE_CONTROLLER_SQL_LIST})
+    WHERE execution_phase IS NULL
+      AND COALESCE(controller_id, '') NOT IN ('goal-wake', ${WORKFLOW_LIFECYCLE_CONTROLLER_SQL_LIST})
       AND NOT EXISTS (
         SELECT 1 FROM ${tempTableName}
         WHERE ${tempTableName}.id = flow_runs.flow_id
@@ -181,6 +181,7 @@ function selectFlowRows(db: DatabaseSync): FlowRegistryRow[] {
       "state_json",
       "wait_json",
       "delivery_state",
+      "execution_phase",
       "cancel_requested_at",
       "created_at",
       "updated_at",
@@ -192,6 +193,18 @@ function selectFlowRows(db: DatabaseSync): FlowRegistryRow[] {
 }
 
 function upsertFlowRow(db: DatabaseSync, row: Insertable<FlowRunsTable>): void {
+  // Phase-owned rows can only advance through the shared revision CAS. A
+  // stale registry snapshot must never replace the committed execution state.
+  const existing = executeSqliteQuerySync(
+    db,
+    getFlowRegistryKysely(db)
+      .selectFrom("flow_runs")
+      .select("execution_phase")
+      .where("flow_id", "=", row.flow_id),
+  ).rows[0];
+  if (row.execution_phase != null || existing?.execution_phase != null) {
+    throw new Error("execution lifecycle is owned by TaskFlow CAS");
+  }
   executeSqliteQuerySync(
     db,
     getFlowRegistryKysely(db)
@@ -250,7 +263,9 @@ export function loadTaskFlowRegistryStateFromSqlite(): TaskFlowRegistryStoreSnap
   // Workflow lifecycle rows change only through their CAS writer; a restored
   // in-memory copy would go stale on the next commit, so the registry reads
   // them from TaskFlow instead of caching them.
-  const rows = selectFlowRows(db).filter((row) => !isWorkflowLifecycleControllerId(row.controller_id));
+  const rows = selectFlowRows(db).filter(
+    (row) => row.execution_phase == null && !isWorkflowLifecycleControllerId(row.controller_id),
+  );
   return {
     flows: new Map(rows.map((row) => [row.flow_id, rowToFlowRecord(row)])),
   };
@@ -277,7 +292,10 @@ export function deleteTaskFlowRegistryRecordFromSqlite(flowId: string) {
   withWriteTransaction(({ db }) => {
     executeSqliteQuerySync(
       db,
-      getFlowRegistryKysely(db).deleteFrom("flow_runs").where("flow_id", "=", flowId),
+      getFlowRegistryKysely(db)
+        .deleteFrom("flow_runs")
+        .where("flow_id", "=", flowId)
+        .where("execution_phase", "is", null),
     );
   });
 }
