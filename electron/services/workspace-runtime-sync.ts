@@ -1,13 +1,15 @@
 import { readOpenClawConfig, writeOpenClawConfig } from '../utils/channel-config';
 import { applyWorkspaceSandboxConfig } from '../utils/workspace-runtime-permissions';
-import { resolveActiveSandboxPolicyForMode } from './sandbox-api';
-import { getActiveWorkspaceProfile } from './workspaces-api';
+import { resolveActiveSandboxPolicyForMode } from './sandbox-state';
+import type { WorkspaceProfile } from '@shared/types/workspace';
 import { DEFAULT_WORKSPACE_PERMISSION_MODE } from '@shared/types/workspace';
 
+type ReadActiveWorkspace = () => Promise<WorkspaceProfile | null>;
+
 export async function syncActiveWorkspacePermissionToRuntime(
-  _gatewayManager?: unknown,
+  readActiveWorkspace: ReadActiveWorkspace,
 ): Promise<void> {
-  const workspace = await getActiveWorkspaceProfile();
+  const workspace = await readActiveWorkspace();
   const permissionMode = workspace?.permissionMode ?? DEFAULT_WORKSPACE_PERMISSION_MODE;
   const { policy } = await resolveActiveSandboxPolicyForMode(permissionMode);
   const config = await readOpenClawConfig() as Record<string, unknown>;
@@ -33,8 +35,8 @@ export async function syncActiveWorkspacePermissionToRuntime(
  * profile's rootPath into the gateway config so agent-side reads/writes and
  * UI-side permission decisions judge the same boundary.
  */
-export async function syncActiveWorkspaceRootToRuntime(): Promise<boolean> {
-  const workspace = await getActiveWorkspaceProfile();
+export async function syncActiveWorkspaceRootToRuntime(readActiveWorkspace: ReadActiveWorkspace): Promise<boolean> {
+  const workspace = await readActiveWorkspace();
   const rootPath = workspace?.rootPath?.trim();
   if (!rootPath) return false;
   const config = await readOpenClawConfig() as Record<string, unknown>;

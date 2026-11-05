@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { WorkspaceProfile, WorkspacePermissionMode } from '@shared/types/workspace';
 
 const state = vi.hoisted(() => ({
   config: {} as Record<string, unknown>,
@@ -9,7 +10,7 @@ const state = vi.hoisted(() => ({
     rootPath: 'C:/project',
     agentId: 'main',
     activeSessionKey: 'agent:main:main',
-    permissionMode: 'readOnly',
+    permissionMode: 'readOnly' as WorkspacePermissionMode,
     createdAt: 1,
     updatedAt: 1,
     lastOpenedAt: 1,
@@ -25,11 +26,7 @@ vi.mock('@electron/utils/channel-config', () => ({
   }),
 }));
 
-vi.mock('@electron/services/workspaces-api', () => ({
-  getActiveWorkspaceProfile: vi.fn(async () => state.activeWorkspace),
-}));
-
-vi.mock('@electron/services/sandbox-api', () => ({
+vi.mock('@electron/services/sandbox-state', () => ({
   resolveActiveSandboxPolicyForMode: vi.fn(async () => ({
     providers: [],
     policy: {
@@ -38,24 +35,20 @@ vi.mock('@electron/services/sandbox-api', () => ({
   })),
 }));
 
+const readActiveWorkspace = vi.fn(async (): Promise<WorkspaceProfile | null> => state.activeWorkspace);
+
 describe('workspace runtime permission sync', () => {
   beforeEach(() => {
     state.config = {};
     state.writes = [];
     state.activeWorkspace.permissionMode = 'readOnly';
     state.effectiveProviderId = 'policy-light';
+    readActiveWorkspace.mockClear();
   });
 
-  it('persists OpenClaw exec policy without reloading the running gateway', async () => {
+  it('persists OpenClaw exec policy using the workspace owner reader', async () => {
     const { syncActiveWorkspacePermissionToRuntime } = await import('@electron/services/workspace-runtime-sync');
-    const gatewayManager = {
-      getStatus: vi.fn(() => ({ state: 'running' })),
-      debouncedReload: vi.fn(),
-      debouncedRestart: vi.fn(),
-      restart: vi.fn(),
-    };
-
-    await syncActiveWorkspacePermissionToRuntime(gatewayManager);
+    await syncActiveWorkspacePermissionToRuntime(readActiveWorkspace);
 
     expect(state.writes).toHaveLength(1);
     expect(state.writes[0]).toMatchObject({
@@ -81,9 +74,7 @@ describe('workspace runtime permission sync', () => {
         },
       },
     });
-    expect(gatewayManager.debouncedReload).not.toHaveBeenCalled();
-    expect(gatewayManager.debouncedRestart).not.toHaveBeenCalled();
-    expect(gatewayManager.restart).not.toHaveBeenCalled();
+    expect(readActiveWorkspace).toHaveBeenCalledTimes(1);
   });
 
   it('skips writes when the persisted policy is already current', async () => {
@@ -92,7 +83,7 @@ describe('workspace runtime permission sync', () => {
     state.config = {};
     applyWorkspaceSandboxConfig(state.config, 'readOnly');
 
-    await syncActiveWorkspacePermissionToRuntime();
+    await syncActiveWorkspacePermissionToRuntime(readActiveWorkspace);
 
     expect(state.writes).toHaveLength(0);
   });
@@ -110,7 +101,7 @@ describe('workspace runtime permission sync', () => {
       },
     };
 
-    await syncActiveWorkspacePermissionToRuntime();
+    await syncActiveWorkspacePermissionToRuntime(readActiveWorkspace);
 
     expect(state.writes).toHaveLength(1);
     expect(state.writes[0]).toMatchObject({
@@ -129,7 +120,7 @@ describe('workspace runtime permission sync', () => {
     state.activeWorkspace.permissionMode = 'acceptEdits';
     state.effectiveProviderId = 'docker-strong';
 
-    await syncActiveWorkspacePermissionToRuntime();
+    await syncActiveWorkspacePermissionToRuntime(readActiveWorkspace);
 
     expect(state.writes).toHaveLength(1);
     expect(state.writes[0]).toMatchObject({
@@ -168,7 +159,7 @@ describe('FP-P1-02 syncActiveWorkspaceRootToRuntime', () => {
 
   it('writes the active rootPath into agents.defaults.workspace', async () => {
     state.config = { agents: { defaults: { workspace: '~/.openclaw/workspace' } } };
-    const modified = await syncActiveWorkspaceRootToRuntime();
+    const modified = await syncActiveWorkspaceRootToRuntime(readActiveWorkspace);
     expect(modified).toBe(true);
     const written = state.writes.at(-1) as { agents?: { defaults?: { workspace?: string } } };
     expect(written?.agents?.defaults?.workspace).toBe('C:/project');
@@ -176,16 +167,23 @@ describe('FP-P1-02 syncActiveWorkspaceRootToRuntime', () => {
 
   it('is idempotent when the config already points at the active workspace', async () => {
     state.config = { agents: { defaults: { workspace: 'C:/project' } } };
-    const modified = await syncActiveWorkspaceRootToRuntime();
+    const modified = await syncActiveWorkspaceRootToRuntime(readActiveWorkspace);
     expect(modified).toBe(false);
     expect(state.writes).toHaveLength(0);
   });
 
   it('creates the agents.defaults chain when missing', async () => {
     state.config = {};
-    const modified = await syncActiveWorkspaceRootToRuntime();
+    const modified = await syncActiveWorkspaceRootToRuntime(readActiveWorkspace);
     expect(modified).toBe(true);
     const written = state.writes.at(-1) as { agents?: { defaults?: { workspace?: string } } };
     expect(written?.agents?.defaults?.workspace).toBe('C:/project');
+  });
+  it('preserves the runtime root when no workspace is active', async () => {
+    const readMissingWorkspace = vi.fn(async () => null);
+    state.config = { agents: { defaults: { workspace: 'C:/previous' } } };
+    expect(await syncActiveWorkspaceRootToRuntime(readMissingWorkspace)).toBe(false);
+    expect(state.writes).toHaveLength(0);
+    expect(readMissingWorkspace).toHaveBeenCalledTimes(1);
   });
 });

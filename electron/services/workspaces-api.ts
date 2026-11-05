@@ -646,16 +646,18 @@ type WorkspacesApiContext = {
   taskLedgerApi?: Pick<CompleteHostServiceRegistry['taskLedger'], 'snapshot'>;
 };
 
-async function syncWorkspacePermissionBestEffort(gatewayManager: GatewayManager | undefined): Promise<void> {
+async function syncWorkspacePermissionBestEffort(): Promise<void> {
+  // The workspace owner supplies its current reader. Sync must not import this
+  // service or snapshot it earlier, before a create/switch/delete is persisted.
   try {
-    await syncActiveWorkspacePermissionToRuntime(gatewayManager);
+    await syncActiveWorkspacePermissionToRuntime(getActiveWorkspaceProfile);
   } catch (error) {
     console.warn('[workspaces] Failed to sync workspace permission to runtime:', error);
   }
   // FP-P1-02: also pin the gateway's agents.defaults.workspace to the active
   // profile so there is exactly one workspace authority.
   try {
-    await syncActiveWorkspaceRootToRuntime();
+    await syncActiveWorkspaceRootToRuntime(getActiveWorkspaceProfile);
   } catch (error) {
     console.warn('[workspaces] Failed to sync workspace root to runtime:', error);
   }
@@ -1175,7 +1177,7 @@ export function createWorkspacesApi(
       await writeDocument(nextDocument);
       ctx.terminalManager?.registerWorkspace(profile);
       ctx.webPreviewManager?.registerWorkspace(profile);
-      await syncWorkspacePermissionBestEffort(ctx.gatewayManager);
+      await syncWorkspacePermissionBestEffort();
       return successSnapshot(nextDocument);
     },
     update: async (payload) => {
@@ -1269,7 +1271,7 @@ export function createWorkspacesApi(
         })).catch(() => undefined);
       }
       if (document.activeWorkspaceId === id && nextProfile.permissionMode !== current.permissionMode) {
-        await syncWorkspacePermissionBestEffort(ctx.gatewayManager);
+        await syncWorkspacePermissionBestEffort();
       }
       return successSnapshot(nextDocument);
     },
@@ -1300,7 +1302,7 @@ export function createWorkspacesApi(
         ctx.webPreviewManager?.registerWorkspace(nextActiveWorkspace);
       }
       if (document.activeWorkspaceId === id || activeWorkspaceId !== document.activeWorkspaceId) {
-        await syncWorkspacePermissionBestEffort(ctx.gatewayManager);
+        await syncWorkspacePermissionBestEffort();
       }
       return successSnapshot(nextDocument);
     },
@@ -1352,7 +1354,7 @@ export function createWorkspacesApi(
       // Workspace switching changes the active selection only. Long-lived
       // terminals, browser sessions and managed ports remain with their owner.
       await writeDocument(nextDocument);
-      await syncWorkspacePermissionBestEffort(ctx.gatewayManager);
+      await syncWorkspacePermissionBestEffort();
       const activeWorkspace = profiles[index];
       ctx.terminalManager?.registerWorkspace(activeWorkspace);
       ctx.webPreviewManager?.registerWorkspace(activeWorkspace);

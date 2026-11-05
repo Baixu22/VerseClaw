@@ -74,7 +74,8 @@ describe('sandbox api', () => {
     expect(status.degraded).toBe(false);
     expect(status.docker).toEqual({ cli: false, daemon: false, image: false });
     expect(status.openClawConfig.agents.defaults.sandbox.mode).toBe('off');
-    expect(status.openClawConfig.agents.defaults.sandbox.workspaceAccess).toBe('none');
+    // Policy-light preserves read access; Main's readOnly gate blocks mutations.
+    expect(status.openClawConfig.agents.defaults.sandbox.workspaceAccess).toBe('ro');
     expect(status.openClawConfig.tools.exec.security).toBe('allowlist');
     expect(status.openClawConfig.tools.exec.host).toBe('gateway');
     expect(status.warnings.length).toBeGreaterThan(0);
@@ -161,6 +162,12 @@ describe('sandbox api', () => {
         expect.stringContaining('Effective provider: policy-light'),
       ]),
     });
+    const { readActiveSandboxProfile: readViaApi, resolveActiveSandboxPolicyForMode: resolveViaApi } = await import('@electron/services/sandbox-api');
+    const { readActiveSandboxProfile, resolveActiveSandboxPolicyForMode } = await import('@electron/services/sandbox-state');
+    expect(readViaApi).toBe(readActiveSandboxProfile);
+    expect(resolveViaApi).toBe(resolveActiveSandboxPolicyForMode);
+    expect(await readActiveSandboxProfile()).toMatchObject({ id: 'local', providerId: 'policy-light' });
+    expect((await resolveActiveSandboxPolicyForMode('readOnly')).policy.workspaceAccess).toBe('ro');
   });
 
   it('force-visible degraded fields when docker-strong is unavailable (P2-004)', async () => {
