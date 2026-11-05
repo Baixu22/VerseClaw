@@ -1,0 +1,56 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "candidate": "ec2053701bfc5f0126760507c8ff5045f60cdb47",
+  "sourceBindings": [
+    {
+      "scope": "application",
+      "files": 826,
+      "exactBytes": 826,
+      "lineEndingOnly": 0,
+      "mismatches": 0,
+      "originalGraphSha256": "88d2b1eeb09474b2fca97581adc7bad34f56b8d03ed59adce10b2d9ddc643342"
+    },
+    {
+      "scope": "runtime",
+      "files": 9159,
+      "exactBytes": 9159,
+      "lineEndingOnly": 0,
+      "mismatches": 0,
+      "originalGraphSha256": "493a27719f3c475ad66a1643b23e7e0fcc9ce826d29c38d1ab77742f9bd39e2f"
+    }
+  ],
+  "previousPacks": [
+    {
+      "path": "harness/specs/fixtures/architecture-admission-ast",
+      "hashesVerified": 35
+    },
+    {
+      "path": "harness/specs/fixtures/architecture-small-cycles",
+      "hashesVerified": 19
+    },
+    {
+      "path": "harness/specs/fixtures/architecture-runtime-cycles",
+      "hashesVerified": 20
+    },
+    {
+      "path": "harness/specs/fixtures/architecture-authority-convergence/acceptance",
+      "hashesVerified": 11
+    }
+  ],
+  "inheritedLocStdoutIdentical": true,
+  "inheritedLocSha256": "2b3049696a2456f4dc236a682d2f3ff24b4e221abfaec7708e9c0494b7783400",
+  "protectedPathsUnchanged": [
+    "electron",
+    "src",
+    "openclaw_runtime",
+    "shared/dcs/prod-flags-catalog.ts",
+    "shared/types/workspace.ts",
+    "shared/permission-effect-contract.ts",
+    "docs/dev/default-config-matrix.md",
+    "package.json",
+    "pnpm-lock.yaml"
+  ],
+  "historicalSemanticPacksUnchanged": true,
+  "method": "SHA256 readback plus Git blob SHA1 against current commit tree; CRLF-only difference is classified, never silently treated as raw equality."
+}

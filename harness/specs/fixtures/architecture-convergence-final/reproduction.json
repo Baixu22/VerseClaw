@@ -1,0 +1,513 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "ec2053701bfc5f0126760507c8ff5045f60cdb47",
+    "tree": "b5bca90ffa3d81ffc5af1e92d75db3c936777d51",
+    "dirty": false
+  },
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "GOMAXPROCS": "4",
+    "UV_THREADPOOL_SIZE": "2",
+    "pnpmVerifyDepsMode": "warn"
+  },
+  "helpers": [
+    {
+      "file": "run-final.py",
+      "sha256": "22678449ced75e7dd8ac95eadb47af69aeb50b70734683527cfa3eced390201e",
+      "source": "import datetime as dt,hashlib,json,os,subprocess,time\nfrom pathlib import Path\nROOT=Path(r'C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX')\nRUN=Path(__file__).parent\nOUT=RUN/'candidate';OUT.mkdir(exist_ok=True)\nRT=ROOT/'openclaw_runtime'\nPNPM='C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs'\nSPEC='harness/specs/tasks/architecture-convergence-final-verification.md'\nenv={**os.environ,'TEMP':'D:/tmp','TMP':'D:/tmp','TMPDIR':'D:/tmp','GOMAXPROCS':'4','UV_THREADPOOL_SIZE':'2','pnpm_config_verify_deps_before_run':'warn','COMMS_OUTPUT_DIR':str(OUT/'comms'),'ARCHITECTURE_SCAN_ROOT':str(RT),'ARCHITECTURE_SCAN_OUT':str(RUN/'runtime-graph.json')}\ndef git(*args):return subprocess.check_output(['git',*args],cwd=ROOT,text=True).strip()\nassert not git('status','--porcelain')\ncandidate={'commit':git('rev-parse','HEAD'),'tree':git('rev-parse','HEAD^{tree}'),'dirty':False}\narch=['product-semantics','evidence-refs-exist','semantic-authority-consistency','contract-check','architecture-small-cycles','architecture-runtime-cycles','context-engine-registry-default-on','architecture-authority-convergence','component-authority-manifest','component-disposition-catalog','model-capability-profile','identity-scope','permission-effect-contract','default-config-matrix','workspace-runtime-sync','workspaces-api','sandbox-api']\nowner=['task-loop-controller','routing-memo','orchestration-plan-ledger-projection','task-loop-upgrade','task-ledger-reference','task-ledger-reference-inheritance']\ndef unit(names,id,extra=[]):return ['node','node_modules/vitest/vitest.mjs','run',*['tests/unit/'+n+'.test.ts' for n in names],*extra,'--maxWorkers=1','--reporter=verbose','--reporter=json','--outputFile.json='+str(OUT/(id+'.json'))]\ncommands=[\n ('architecture-tests',ROOT,unit(arch,'architecture-tests')),\n ('owner-tests',ROOT,unit(owner,'owner-tests',['tests/integration/p1-orchestration-boundary.integration.test.ts','tests/integration/task-loop-checkpoint-evidence.integration.test.ts'])),\n ('capability-tests',ROOT,unit(['model-capability-effective-state-tf0512'],'capability-tests')),\n ('runtime-tests',RT,['node','scripts/run-vitest.mjs','run','--config','test/vitest/vitest.unit.config.ts','src/context-engine/enhancement-kill-switch.test.ts','src/context-engine/chat-turn-vtoken-injection.test.ts','src/context-engine/assembler.kill-switch.test.ts','--maxWorkers=1','--reporter=verbose','--reporter=json','--outputFile.json='+str(OUT/'runtime-tests.json')]),\n ('types',ROOT,['node',PNPM,'run','typecheck']),\n ('contract',ROOT,['node','scripts/contract-check.mjs']),\n ('authority',ROOT,['node','scripts/check-semantic-authority.mjs','--report',str(OUT/'authority.json'),'--actor','codex-architecture-convergence']),\n ('evidence',ROOT,['node','scripts/check-evidence-refs.mjs']),\n ('evidence-report',ROOT,['node','scripts/check-evidence-refs.mjs','--report',str(OUT/'evidence-report.json'),'--actor','codex-architecture-convergence']),\n ('evidence-verify',ROOT,['node','scripts/check-evidence-refs.mjs','--verify',str(OUT/'evidence-report.json')]),\n ('app-graph',ROOT,['node',str(RUN/'app-graph.cjs')]),\n ('runtime-graph',RT,['node',str(RUN/'runtime-graph-instrumented.mjs')]),\n ('runtime-policy',ROOT,['node','scripts/check-runtime-source-policy.mjs']),\n ('cycles',RT,['node','--import','tsx','scripts/check-import-cycles.ts']),\n ('deprecated-api',RT,['node','scripts/check-deprecated-api-usage.mjs']),\n ('deprecated-zero',RT,['node','scripts/check-deprecated-zero-call.mjs']),\n ('unused-files',RT,['node','scripts/check-deadcode-unused-files.mjs']),\n ('loc',RT,['node','--import','tsx','scripts/check-ts-max-loc.ts','--max','500','--baseline','scripts/ts-max-loc-baseline.json']),\n ('runtime-source',ROOT,['node',PNPM,'run','runtime:source:check']),\n ('comms-replay',ROOT,['node',PNPM,'run','comms:replay']),\n ('comms-compare',ROOT,['node',PNPM,'run','comms:compare']),\n ('lint',ROOT,['node','node_modules/eslint/bin/eslint.js','shared/product-semantics.ts','scripts/check-evidence-refs.mjs','tests/unit/product-semantics.test.ts','tests/unit/evidence-refs-exist.test.ts','--max-warnings','0']),\n ('retention',ROOT,['node','scripts/check-repository-artifacts.mjs']),\n ('harness-context',ROOT,['node','harness/src/cli.mjs','context','--spec',SPEC]),\n ('harness-validate',ROOT,['node','harness/src/cli.mjs','validate','--spec',SPEC]),\n ('harness-dry-run',ROOT,['node','harness/src/cli.mjs','run','--spec',SPEC,'--dry-run']),\n ('diff',ROOT,['git','diff','--check','a80f06b17246ecc4010570b51fcdd038e822a913']),\n]\nresults=[]\nfor name,cwd,argv in commands:\n assert not git('status','--porcelain')\n start=time.monotonic();started=dt.datetime.now(dt.timezone.utc).isoformat()\n with (OUT/(name+'.stdout.txt')).open('wb') as stdout,(OUT/(name+'.stderr.txt')).open('wb') as stderr:\n  proc=subprocess.Popen(argv,cwd=cwd,env=env,stdout=stdout,stderr=stderr)\n  while proc.poll() is None:\n   try:proc.wait(timeout=30)\n   except subprocess.TimeoutExpired:print(json.dumps({'running':name,'pid':proc.pid,'seconds':round(time.monotonic()-start)}),flush=True)\n result={'id':name,'cwd':str(cwd),'argv':argv,'candidate':candidate,'startedAt':started,'durationSeconds':round(time.monotonic()-start,3),'exitCode':proc.returncode,'expectedExitCode':1 if name in ('loc','runtime-source') else 0,'afterDirty':bool(git('status','--porcelain'))}\n for stream in ('stdout','stderr'):\n  p=OUT/(name+'.'+stream+'.txt');raw=p.read_bytes();result[stream]={'path':str(p),'sha256':hashlib.sha256(raw).hexdigest(),'text':raw.decode('utf-8')}\n results.append(result)\n (OUT/'gates.json').write_text(json.dumps({'driven_by':'agent','actor':'codex-architecture-convergence','candidate':candidate,'gates':results},ensure_ascii=False,indent=2)+'\\n',encoding='utf-8')\n print(json.dumps({'id':name,'exitCode':proc.returncode,'seconds':result['durationSeconds'],'afterDirty':result['afterDirty']}),flush=True)\n assert not result['afterDirty']\nraise SystemExit(int(any(r['exitCode']!=r['expectedExitCode'] for r in results)))\n"
+    },
+    {
+      "file": "app-graph.cjs",
+      "sha256": "6100d69361d70a7f660f8c3ae1bbe62f4825b4e721f8ad3424121824017c0ece",
+      "source": "const fs = require('node:fs'), path = require('node:path'), {createRequire} = require('node:module'), {execFileSync} = require('node:child_process'), {createHash} = require('node:crypto'), {pathToFileURL} = require('node:url');\nconst root=process.cwd(), run='D:/tmp/architecture-final-20261105';\nconst ts=createRequire(path.join(root,'package.json'))('typescript');\nconst git=args=>execFileSync('git',args,{cwd:root,encoding:'utf8',windowsHide:true,maxBuffer:32*1024*1024}).trim();\n(async()=>{\n const {collectStronglyConnectedComponents}=await import(pathToFileURL(path.join(root,'openclaw_runtime/scripts/lib/import-cycle-graph.ts')).href);\n const files=git(['ls-files']).split('\\n').filter(f=>/^(src|electron|shared)\\//.test(f)&&/\\.[cm]?tsx?$/.test(f)&&! /\\.d\\.[cm]?ts$|\\.(test|spec)\\.[cm]?tsx?$/.test(f));\n const set=new Set(files),graph=new Map(files.map(f=>[f,[]])),hashes=[],edges=[],opts={};\n for(const layer of ['src','electron','shared']){const cfg=ts.readConfigFile(path.join(root,layer==='electron'?'tsconfig.node.json':'tsconfig.web.json'),ts.sys.readFile);opts[layer]=ts.parseJsonConfigFileContent(cfg.config,ts.sys,root).options;}\n function value(n){if(ts.isImportDeclaration(n)){const c=n.importClause;if(!c)return true;if(c.isTypeOnly)return false;return !!c.name||!c.namedBindings||ts.isNamespaceImport(c.namedBindings)||c.namedBindings.elements.some(e=>!e.isTypeOnly);}return !n.isTypeOnly&&(!n.exportClause||ts.isNamespaceExport(n.exportClause)||n.exportClause.elements.some(e=>!e.isTypeOnly));}\n for(const f of files){const bytes=fs.readFileSync(path.join(root,f)),src=ts.createSourceFile(f,bytes.toString('utf8'),ts.ScriptTarget.Latest,true);hashes.push({file:f,sha256:createHash('sha256').update(bytes).digest('hex')});for(const n of src.statements){if(!(ts.isImportDeclaration(n)||ts.isExportDeclaration(n))||!n.moduleSpecifier||!ts.isStringLiteral(n.moduleSpecifier)||!value(n))continue;const r=ts.resolveModuleName(n.moduleSpecifier.text,path.join(root,f),opts[f.split('/')[0]],ts.sys).resolvedModule;if(!r||r.isExternalLibraryImport)continue;const to=path.relative(root,r.resolvedFileName).replaceAll('\\\\','/');if(set.has(to)){graph.get(f).push(to);edges.push({from:f,to});}}}\n const components=collectStronglyConnectedComponents(graph), forbidden=edges.filter(e=>(e.from.startsWith('shared/')&&/^(src|electron)\\//.test(e.to))||(e.from.startsWith('src/')&&e.to.startsWith('electron/')));\n const result={driven_by:'agent',actor:'codex-architecture-convergence',candidate:git(['rev-parse','HEAD']),files:files.length,valueEdges:edges.length,components,forbiddenLayerEdges:forbidden,sourceHashes:hashes,scope:'Tracked src/electron/shared static value imports and re-exports resolved with existing tsconfig; dynamic import/require/package edges excluded.'};\n fs.writeFileSync(run+'/app-graph.json',JSON.stringify(result,null,2)+'\\n');console.log(JSON.stringify({files:files.length,edges:edges.length,components,forbidden}));if(components.length||forbidden.length)process.exitCode=1;\n})();\n"
+    },
+    {
+      "file": "runtime-graph-instrumented.mjs",
+      "sha256": "b9d83eda74aa03b65d60d8d992fc40b92b68d97bb1158ae4953596c3fff4d5a3",
+      "source": "import { writeFileSync } from \"node:fs\";\nimport { createHash } from \"node:crypto\";\n// Check Import Cycles script supports OpenClaw repository automation.\nimport { readFileSync } from \"node:fs\";\nimport path from \"node:path\";\nimport ts from \"file:///D:/ClawX/node_modules/.pnpm/typescript@5.9.3/node_modules/typescript/lib/typescript.js\";\nimport { collectSourceFiles, collectStronglyConnectedComponents, formatCycle, } from \"file:///C:/Users/27933/.codex/worktrees/architecture-convergence-recovered/ClawX/openclaw_runtime/scripts/lib/import-cycle-graph.ts\";\nconst repoRoot = process.env.ARCHITECTURE_SCAN_ROOT;\nconst scanRoots = [\"src\", \"extensions\", \"scripts\"];\nconst sourceExtensions = [\".ts\", \".tsx\", \".mts\", \".cts\", \".js\", \".mjs\", \".cjs\"];\nconst testSourcePattern = /(?:\\.test|\\.e2e\\.test)\\.[cm]?[tj]sx?$/;\nconst generatedSourcePattern = /\\.(?:generated|bundle)\\.[tj]s$/;\nconst declarationSourcePattern = /\\.d\\.[cm]?ts$/;\nconst ignoredPathPartPattern = /(^|\\/)(node_modules|dist|build|coverage|\\.artifacts|\\.git|assets)(\\/|$)/;\nfunction shouldSkipRepoPath(repoPath) {\n    return (ignoredPathPartPattern.test(repoPath) ||\n        testSourcePattern.test(repoPath) ||\n        generatedSourcePattern.test(repoPath) ||\n        declarationSourcePattern.test(repoPath));\n}\nfunction createSourceResolver(files) {\n    const fileSet = new Set(files);\n    const pathMap = new Map();\n    for (const file of files) {\n        const parsed = path.posix.parse(file);\n        const extensionless = path.posix.join(parsed.dir, parsed.name);\n        pathMap.set(extensionless, file);\n        if (file.endsWith(\".ts\")) {\n            pathMap.set(`${extensionless}.js`, file);\n        }\n        else if (file.endsWith(\".tsx\")) {\n            pathMap.set(`${extensionless}.jsx`, file);\n        }\n        else if (file.endsWith(\".mts\")) {\n            pathMap.set(`${extensionless}.mjs`, file);\n        }\n        else if (file.endsWith(\".cts\")) {\n            pathMap.set(`${extensionless}.cjs`, file);\n        }\n    }\n    return (importer, specifier) => {\n        if (!specifier.startsWith(\".\")) {\n            return null;\n        }\n        const base = path.posix.normalize(path.posix.join(path.posix.dirname(importer), specifier));\n        const candidates = [\n            base,\n            ...sourceExtensions.map((extension) => `${base}${extension}`),\n            `${base}/index.ts`,\n            `${base}/index.tsx`,\n            `${base}/index.js`,\n            `${base}/index.mjs`,\n        ];\n        for (const candidate of candidates) {\n            if (fileSet.has(candidate)) {\n                return candidate;\n            }\n            const mapped = pathMap.get(candidate);\n            if (mapped) {\n                return mapped;\n            }\n        }\n        return null;\n    };\n}\nfunction importDeclarationHasRuntimeEdge(node) {\n    if (!node.importClause) {\n        return true;\n    }\n    if (node.importClause.isTypeOnly) {\n        return false;\n    }\n    const bindings = node.importClause.namedBindings;\n    if (node.importClause.name || !bindings || ts.isNamespaceImport(bindings)) {\n        return true;\n    }\n    return bindings.elements.some((element) => !element.isTypeOnly);\n}\nfunction exportDeclarationHasRuntimeEdge(node) {\n    if (!node.moduleSpecifier || node.isTypeOnly) {\n        return false;\n    }\n    const clause = node.exportClause;\n    if (!clause || ts.isNamespaceExport(clause)) {\n        return true;\n    }\n    return clause.elements.some((element) => !element.isTypeOnly);\n}\nfunction collectRuntimeStaticImports(file, resolveSource) {\n    const sourceFile = ts.createSourceFile(file, readFileSync(path.join(repoRoot, file), \"utf8\"), ts.ScriptTarget.Latest, true);\n    const imports = [];\n    const visit = (node) => {\n        let specifier;\n        let include = false;\n        if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier)) {\n            specifier = node.moduleSpecifier.text;\n            include = importDeclarationHasRuntimeEdge(node);\n        }\n        else if (ts.isExportDeclaration(node) &&\n            node.moduleSpecifier &&\n            ts.isStringLiteral(node.moduleSpecifier)) {\n            specifier = node.moduleSpecifier.text;\n            include = exportDeclarationHasRuntimeEdge(node);\n        }\n        if (include && specifier) {\n            const resolved = resolveSource(file, specifier);\n            if (resolved) {\n                imports.push(resolved);\n            }\n        }\n        ts.forEachChild(node, visit);\n    };\n    visit(sourceFile);\n    return imports.toSorted((left, right) => left.localeCompare(right));\n}\nfunction main() {\n    const files = scanRoots.flatMap((root) => collectSourceFiles(path.join(repoRoot, root), {\n        repoRoot,\n        sourceExtensions,\n        shouldSkipRepoPath,\n    }));\n    const resolveSource = createSourceResolver(files);\n    const graph = new Map(files.map((file) => [\n        file,\n        collectRuntimeStaticImports(file, resolveSource),\n    ]));\n    const components = collectStronglyConnectedComponents(graph);\n    const sources = files.map(file => ({ file, sha256: createHash(\"sha256\").update(readFileSync(path.join(repoRoot, file))).digest(\"hex\") }));\n    writeFileSync(process.env.ARCHITECTURE_SCAN_OUT, JSON.stringify({ driven_by: \"agent\", actor: \"codex-architecture-convergence\", scope: \"Exact runtime checker graph with read-only output instrumentation\", root: repoRoot, files: files.length, components, edges: [...graph], sourceHashes: sources }, null, 2) + \"\\n\");\n    console.log(`Import cycle check: ${components.length} runtime value cycle(s).`);\n    if (components.length === 0) {\n        return 0;\n    }\n    console.error(\"\\nRuntime value import cycles:\");\n    for (const component of components) {\n        console.error(`\\n# component size ${component.length}`);\n        console.error(formatCycle(component, graph));\n    }\n    console.error(\"\\nBreak the cycle or convert type-only edges to `import type`.\");\n    return 1;\n}\nprocess.exitCode = main();\n"
+    },
+    {
+      "file": "verify-sources.py",
+      "sha256": "f372ff4eee1fa538fb5f4290cb051594d7ace0549f96a9d84cb9797c4390b99a",
+      "source": "import hashlib,json,subprocess\nfrom pathlib import Path\nROOT=Path(r'C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX')\nRUN=Path(__file__).parent\ndef sha(b):return hashlib.sha256(b).hexdigest()\ndef git(*a):return subprocess.check_output(['git',*a],cwd=ROOT)\ncandidate=git('rev-parse','HEAD').decode().strip()\ntree={}\nfor record in git('ls-tree','-r','-z','HEAD').split(b'\\0'):\n if not record:continue\n meta,path=record.split(b'\\t',1);tree[path.decode()]=meta.split()[2].decode()\nbindings=[]\nfor label,file,prefix in [('application','app-graph.json',''),('runtime','runtime-graph.json','openclaw_runtime/')]:\n graph=json.loads((RUN/file).read_text(encoding='utf-8'))\n assert not graph['components']\n exact=normalized=0\n for source in graph['sourceHashes']:\n  path=prefix+source['file'];raw=(ROOT/path).read_bytes()\n  assert sha(raw)==source['sha256'],path\n  def blob(b):return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\\0'+b).hexdigest()\n  if blob(raw)==tree[path]:exact+=1\n  else:\n   assert blob(raw.replace(b'\\r\\n',b'\\n'))==tree[path],path\n   normalized+=1\n bindings.append({'scope':label,'files':len(graph['sourceHashes']),'exactBytes':exact,'lineEndingOnly':normalized,'mismatches':0,'originalGraphSha256':sha((RUN/file).read_bytes())})\nold=json.loads((ROOT/'harness/specs/fixtures/architecture-runtime-cycles/runtime-source-residual.json').read_text(encoding='utf-8'))\nloc=(RUN/'candidate/loc.stdout.txt').read_bytes()\nassert sha(loc)==old['loc']['candidateStdoutSha256']\npack_checks=[]\nfor relative in ['harness/specs/fixtures/architecture-admission-ast','harness/specs/fixtures/architecture-small-cycles','harness/specs/fixtures/architecture-runtime-cycles','harness/specs/fixtures/architecture-authority-convergence/acceptance']:\n folder=ROOT/relative;files=[]\n for line in (folder/'SHA256SUMS').read_text().splitlines():\n  digest,name=line.split('  ',1)\n  target=ROOT/name if name.startswith(relative+'/') else folder/name\n  assert target.resolve().is_relative_to(folder.resolve())\n  assert sha(target.read_bytes())==digest,name\n  files.append(name)\n pack_checks.append({'path':relative,'hashesVerified':len(files)})\nprotected=['electron','src','openclaw_runtime','shared/dcs/prod-flags-catalog.ts','shared/types/workspace.ts','shared/permission-effect-contract.ts','docs/dev/default-config-matrix.md','package.json','pnpm-lock.yaml']\nassert not git('diff','3a362590d','HEAD','--',*protected).strip()\nassert not git('diff','a80f06b17','HEAD','--','harness/specs/fixtures/ontology-lite-existing-contracts/final','harness/specs/fixtures/ontology-lite-existing-contracts/provenance').strip()\nresult={'driven_by':'agent','actor':'codex-architecture-convergence','candidate':candidate,'sourceBindings':bindings,'previousPacks':pack_checks,'inheritedLocStdoutIdentical':True,'inheritedLocSha256':sha(loc),'protectedPathsUnchanged':protected,'historicalSemanticPacksUnchanged':True,'method':'SHA256 readback plus Git blob SHA1 against current commit tree; CRLF-only difference is classified, never silently treated as raw equality.'}\n(RUN/'source-readback.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\\n',encoding='utf-8')\nprint(json.dumps(result,ensure_ascii=False))\n"
+    },
+    {
+      "file": "supplement.py",
+      "sha256": "3f947124284868c3536cb73de3bd48296820c29ad95a1ad1b60a7aac7b76253d",
+      "source": "import datetime as dt,hashlib,json,os,subprocess,time\nfrom pathlib import Path\nROOT=Path(r'C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX')\nRUN=Path(__file__).parent\nOUT=RUN/'candidate'\nPNPM='C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs'\nenv={**os.environ,'TEMP':'D:/tmp','TMP':'D:/tmp','TMPDIR':'D:/tmp','GOMAXPROCS':'4','UV_THREADPOOL_SIZE':'2','pnpm_config_verify_deps_before_run':'warn'}\nfor _ in range(1800):\n p=OUT/'gates.json'\n if p.exists():\n  try:data=json.loads(p.read_text(encoding='utf-8'))\n  except json.JSONDecodeError:time.sleep(2);continue\n  if len(data['gates'])==27:break\n time.sleep(2)\nelse:raise SystemExit('Final gates did not complete within bounded observation window.')\nassert not subprocess.check_output(['git','status','--porcelain'],cwd=ROOT).strip()\ncommands=[('source-readback',['python','-X','utf8',str(RUN/'verify-sources.py')]),('harness-ci',['node',PNPM,'run','harness:ci'])]\nresults=[]\nfor name,argv in commands:\n started=dt.datetime.now(dt.timezone.utc).isoformat();start=time.monotonic()\n with (OUT/(name+'.stdout.txt')).open('wb') as stdout,(OUT/(name+'.stderr.txt')).open('wb') as stderr:\n  proc=subprocess.Popen(argv,cwd=ROOT,env=env,stdout=stdout,stderr=stderr)\n  while proc.poll() is None:\n   try:proc.wait(timeout=30)\n   except subprocess.TimeoutExpired:print(json.dumps({'running':name,'pid':proc.pid,'seconds':round(time.monotonic()-start)}),flush=True)\n r={'id':name,'cwd':str(ROOT),'argv':argv,'startedAt':started,'exitCode':proc.returncode,'durationSeconds':round(time.monotonic()-start,3),'candidate':data['candidate'],'afterDirty':bool(subprocess.check_output(['git','status','--porcelain'],cwd=ROOT).strip())}\n for stream in ('stdout','stderr'):\n  p=OUT/(name+'.'+stream+'.txt');raw=p.read_bytes();r[stream]={'path':str(p),'sha256':hashlib.sha256(raw).hexdigest(),'text':raw.decode('utf-8')}\n results.append(r);(OUT/'supplement.json').write_text(json.dumps(results,ensure_ascii=False,indent=2)+'\\n',encoding='utf-8')\n print(json.dumps({'id':name,'exitCode':r['exitCode'],'afterDirty':r['afterDirty']}),flush=True)\n assert not r['afterDirty']\n"
+    }
+  ],
+  "dependencySetup": "Root/runtime/VerseBrowser dependencies reused explicitly; missing package-level net-policy/gateway-client ipaddr.js 2.4.0 and diagnostics-otel exact manifest versions installed in isolated D:/tmp/architecture-deps-20261105 and linked only in this worktree. See TF-0790 types-restored.json. Whole-workspace fresh install not claimed.",
+  "privateRawRoot": "D:\\tmp\\architecture-final-20261105",
+  "rawFiles": [
+    {
+      "file": "app-graph.cjs",
+      "sha256": "6100d69361d70a7f660f8c3ae1bbe62f4825b4e721f8ad3424121824017c0ece",
+      "bytes": 3011
+    },
+    {
+      "file": "app-graph.json",
+      "sha256": "88d2b1eeb09474b2fca97581adc7bad34f56b8d03ed59adce10b2d9ddc643342",
+      "bytes": 124634
+    },
+    {
+      "file": "candidate\\app-graph.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "candidate\\app-graph.stdout.txt",
+      "sha256": "533be9ce1176084456f1b0fed5057078196335b0455af2ff8849a7969d4dadf6",
+      "bytes": 58
+    },
+    {
+      "file": "candidate\\architecture-tests.json",
+      "sha256": "0aac74793aa8bab6d99a24f42a1cafb1e874d7e8d3c5f602498ebccf1003f6f5",
+      "bytes": 164842
+    },
+    {
+      "file": "candidate\\architecture-tests.stderr.txt",
+      "sha256": "8b8d9e4e96f1fc3a7e05251da69a4d40ebe79748b8c04614575dfcfcd4b6a2ec",
+      "bytes": 763
+    },
+    {
+      "file": "candidate\\architecture-tests.stdout.txt",
+      "sha256": "d572f7d69b519dbcfc36908fd198b17b9f5ab5729af594d0ad31f137a1285fa8",
+      "bytes": 75351
+    },
+    {
+      "file": "candidate\\authority.json",
+      "sha256": "14ff57be460b742454442cfff9ab6f2ee9f5d911f5c0a00c361fc7738ca955d6",
+      "bytes": 11050
+    },
+    {
+      "file": "candidate\\authority.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "candidate\\authority.stdout.txt",
+      "sha256": "e1ba0d475295e970b4914b5fee297098e125aefe9a65286cdf14ea13b7c38404",
+      "bytes": 278
+    },
+    {
+      "file": "candidate\\capability-tests.json",
+      "sha256": "fa133d64ea0fbc692ccc9abf410b0adc87287944e37976464beadcf1605e5f34",
+      "bytes": 7357
+    },
+    {
+      "file": "candidate\\capability-tests.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "candidate\\capability-tests.stdout.txt",
+      "sha256": "304b8144fa2b0a714c5325c47a9b8e3de2516bd1a785bd2c5bfaa279be564128",
+      "bytes": 4041
+    },
+    {
+      "file": "candidate\\comms\\compare-report.json",
+      "sha256": "06d0e4e4cc80c2299e3d8150bd86c22dde9afe8b7d5fd8cb8f35cd54b1291778",
+      "bytes": 3812
+    },
+    {
+      "file": "candidate\\comms\\compare-report.md",
+      "sha256": "a871ad06ac36bbef68d024035084b47455c260b6d0112409576c0c02eb592a29",
+      "bytes": 3329
+    },
+    {
+      "file": "candidate\\comms\\current-metrics.json",
+      "sha256": "64af07d41508fcef7e0711279d3b2aa5b689ec18f79cab525b877fe712ce7c0b",
+      "bytes": 3735
+    },
+    {
+      "file": "candidate\\comms-compare.stderr.txt",
+      "sha256": "48e7603e40a1735e4502fdb4dbadda746f0fc1bc06398dfa60dbc0c967aa1a5e",
+      "bytes": 33
+    },
+    {
+      "file": "candidate\\comms-compare.stdout.txt",
+      "sha256": "ad50189c620c4c9b2a591a8ea5b26e5e362aeee014e1a5527402bf6132ca54f6",
+      "bytes": 3545
+    },
+    {
+      "file": "candidate\\comms-replay.stderr.txt",
+      "sha256": "a20e0262fa7317650a11e0e9ed31f2eb84da093326dafb4a5d29f2ec9592474a",
+      "bytes": 32
+    },
+    {
+      "file": "candidate\\comms-replay.stdout.txt",
+      "sha256": "223d2375827ec396e61144201b9803bad14c204351b1a1dc7ec8c50a19b16159",
+      "bytes": 220
+    },
+    {
+      "file": "candidate\\contract.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "candidate\\contract.stdout.txt",
+      "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
+      "bytes": 23
+    },
+    {
+      "file": "candidate\\cycles.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "candidate\\cycles.stdout.txt",
+      "sha256": "c8317e0f6d64ddb09fb7d0dc7dc80c5581a041c9bbf2f3d0b0131dc4668a754a",
+      "bytes": 46
+    },
+    {
+      "file": "candidate\\deprecated-api.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "candidate\\deprecated-api.stdout.txt",
+      "sha256": "dc451110fbfd9c86658001618968d1e4f8ddf281589f82c6882c9b702ecbbcfa",
+      "bytes": 34
+    },
+    {
+      "file": "candidate\\deprecated-zero.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "candidate\\deprecated-zero.stdout.txt",
+      "sha256": "b252cad4eef9e2a44fe22f7a8f57eb6d886f86788b0ad103ef91c0c85e3a37ce",
+      "bytes": 55
+    },
+    {
+      "file": "candidate\\diff.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "candidate\\diff.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "candidate\\evidence-report.json",
+      "sha256": "a0520d8c7c92d014e8cb2de98814832e15fe547630e7ffd809490c2a35256fbf",
+      "bytes": 5435
+    },
+    {
+      "file": "candidate\\evidence-report.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "candidate\\evidence-report.stdout.txt",
+      "sha256": "cd02b3400e472b3ca6dcad1ca8b59944b56ff2d30b41a3f54a72d661b99312ba",
+      "bytes": 147
+    },
+    {
+      "file": "candidate\\evidence-verify.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "candidate\\evidence-verify.stdout.txt",
+      "sha256": "d7261221a1b21e50edc164525825ad3270bf08d918d30c9552d65eec202301cf",
+      "bytes": 150
+    },
+    {
+      "file": "candidate\\evidence.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "candidate\\evidence.stdout.txt",
+      "sha256": "047cce29d2ca7c0bd2355ac3f116c8b099afb74981f7381fd16ff51c4381427f",
+      "bytes": 44
+    },
+    {
+      "file": "candidate\\gates.json",
+      "sha256": "56ac9be264b097af00aee3b62378f5e93a23608956dbf20c889964e760af97e7",
+      "bytes": 164669
+    },
+    {
+      "file": "candidate\\harness-ci.stderr.txt",
+      "sha256": "7926864688263608ce182cb4a4512bdf6153ab8b9faddf8b08e4a478e241b119",
+      "bytes": 1762
+    },
+    {
+      "file": "candidate\\harness-ci.stdout.txt",
+      "sha256": "90fdfe02737c3d3dc0fb16a7c22289cfd37ddc1b02d9fbc6bdf15f408b6b8b5e",
+      "bytes": 18335
+    },
+    {
+      "file": "candidate\\harness-context.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "candidate\\harness-context.stdout.txt",
+      "sha256": "acf0a5753ca5a90bdc1eff90e92c6527b3f870c34452d86ecba20cdde6d79000",
+      "bytes": 1483
+    },
+    {
+      "file": "candidate\\harness-dry-run.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "candidate\\harness-dry-run.stdout.txt",
+      "sha256": "034759bd0daf88e4a88169ef5c03b6a036245aa4f81bdb7070013a94b505fbb3",
+      "bytes": 138
+    },
+    {
+      "file": "candidate\\harness-validate.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "candidate\\harness-validate.stdout.txt",
+      "sha256": "9c4ee288e84a34f5213e684e2d8218f56a835775cb16f4a382ffd7a18a860415",
+      "bytes": 82
+    },
+    {
+      "file": "candidate\\lint.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "candidate\\lint.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "candidate\\loc.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "candidate\\loc.stdout.txt",
+      "sha256": "2b3049696a2456f4dc236a682d2f3ff24b4e221abfaec7708e9c0494b7783400",
+      "bytes": 7173
+    },
+    {
+      "file": "candidate\\owner-tests.json",
+      "sha256": "190765a2df5cabdfca3e1464cb66fc943868ca0d88780412172b7a3c6cd30769",
+      "bytes": 47541
+    },
+    {
+      "file": "candidate\\owner-tests.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "candidate\\owner-tests.stdout.txt",
+      "sha256": "edef21ec9a1d41f62d08aec9bad7a10effef37e0df59d2f3d8c7a2af1ba3fe3d",
+      "bytes": 20874
+    },
+    {
+      "file": "candidate\\retention.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "candidate\\retention.stdout.txt",
+      "sha256": "836dc6bc6f25fd3cae02f7f14253e320d0630bbfea0d7f51fcae45b9931cca97",
+      "bytes": 60
+    },
+    {
+      "file": "candidate\\runtime-graph.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "candidate\\runtime-graph.stdout.txt",
+      "sha256": "c8317e0f6d64ddb09fb7d0dc7dc80c5581a041c9bbf2f3d0b0131dc4668a754a",
+      "bytes": 46
+    },
+    {
+      "file": "candidate\\runtime-policy.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "candidate\\runtime-policy.stdout.txt",
+      "sha256": "1505dd372c44f2c7988a2ee141d32144f0e19a60b1bc9dce76a86dc3eae95a47",
+      "bytes": 80
+    },
+    {
+      "file": "candidate\\runtime-source.stderr.txt",
+      "sha256": "fd4cc53ad17782ea2974b2ac6d8012c2189583eb0427427ae6f715fa51545b59",
+      "bytes": 629
+    },
+    {
+      "file": "candidate\\runtime-source.stdout.txt",
+      "sha256": "579399120d43c42e2245a8807f8a3831bd9d501ea84543dbdfdc33cc0012ba96",
+      "bytes": 7667
+    },
+    {
+      "file": "candidate\\runtime-tests.json",
+      "sha256": "073a4fdf3353be9af7b432d3978ff65ed496de7a22165a17a84dd4a71180550c",
+      "bytes": 11490
+    },
+    {
+      "file": "candidate\\runtime-tests.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "candidate\\runtime-tests.stdout.txt",
+      "sha256": "e01740bbf9fe18005360603a05a3b47effb8013ffa549a0a4451e3919646fd4a",
+      "bytes": 5271
+    },
+    {
+      "file": "candidate\\source-readback.stderr.txt",
+      "sha256": "a6610e0611f7b342f765c03cb892f852189b8882631554f6d2547833a21ce746",
+      "bytes": 804
+    },
+    {
+      "file": "candidate\\source-readback.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "candidate\\supplement.json",
+      "sha256": "a5360f0d1a06fc25e4c2c617676cc9d9a818cace52ec43596e3d1db7daa03d82",
+      "bytes": 24035
+    },
+    {
+      "file": "candidate\\types.stderr.txt",
+      "sha256": "f2e7f65dfb997e4f5b690711e61a6f0998a1c5bf3e1825f83cad573e0ad5611a",
+      "bytes": 150
+    },
+    {
+      "file": "candidate\\types.stdout.txt",
+      "sha256": "c57961e0df716e5daed69883275c96e5d171484ee413ee7907fa6b825e2de7d6",
+      "bytes": 1711
+    },
+    {
+      "file": "candidate\\unused-files.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "candidate\\unused-files.stdout.txt",
+      "sha256": "f7bf1e092509540c11c970517c4e13adde563ad259867c8cc90ca7e2e25ee0b2",
+      "bytes": 69
+    },
+    {
+      "file": "coverage.exit.txt",
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "bytes": 3
+    },
+    {
+      "file": "coverage.stderr.txt",
+      "sha256": "b6b42d6016b726617ca311123a7ef0a710cc35f4b9a023d3ad0549a18e543c33",
+      "bytes": 49
+    },
+    {
+      "file": "coverage.stdout.txt",
+      "sha256": "994dd3c72fd8a8103b6e8b599fb9f2d4eda361c2b84bae1110f87b8efde3a9bd",
+      "bytes": 172
+    },
+    {
+      "file": "development-tests-2.json",
+      "sha256": "b83b9fc71193eaaa1f3e3cb87aed158566efdd77f349eebd0c3af3561153e8f8",
+      "bytes": 46371
+    },
+    {
+      "file": "development-tests-2.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "development-tests-2.stdout.txt",
+      "sha256": "fcdab077a44ceb31836d7fd14af54762653e2f009667308bca4589a3854fdbfc",
+      "bytes": 83
+    },
+    {
+      "file": "development-tests.json",
+      "sha256": "d0b065e18d543a5deebfc0a87e128ba47e594386c93b704617f3145cabba9fea",
+      "bytes": 46411
+    },
+    {
+      "file": "development-tests.stderr.txt",
+      "sha256": "4362f871a1c90b73f26fb09cf551b23d6890bfff0934d2e86e593e4b571d90a6",
+      "bytes": 1559
+    },
+    {
+      "file": "development-tests.stdout.txt",
+      "sha256": "6c3d591622661352dd1b20d7d449be6a9de16086301402b98f280c418980ed23",
+      "bytes": 21264
+    },
+    {
+      "file": "docs.py",
+      "sha256": "231645114e9d465b2febcf8544cf50360093941595ae4780465f5a67c9e354b7",
+      "bytes": 3419
+    },
+    {
+      "file": "endpoints-before.json",
+      "sha256": "f163ce8cdcf811beb68672c479a21eb65399deacad4748d921a7cab5c93dae60",
+      "bytes": 19168
+    },
+    {
+      "file": "endpoints-before.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "endpoints-before.stdout.txt",
+      "sha256": "8bbd106ea56e0ff53f306eea7e328bd509bd69c7ae95e8adaec288350870de56",
+      "bytes": 80
+    },
+    {
+      "file": "prepare.py",
+      "sha256": "381ce255566b91d0efed764c2896f1b01171642425aa6209747ec573b3fb579e",
+      "bytes": 834
+    },
+    {
+      "file": "run-final.py",
+      "sha256": "22678449ced75e7dd8ac95eadb47af69aeb50b70734683527cfa3eced390201e",
+      "bytes": 6030
+    },
+    {
+      "file": "runtime-graph-instrumented.mjs",
+      "sha256": "b9d83eda74aa03b65d60d8d992fc40b92b68d97bb1158ae4953596c3fff4d5a3",
+      "bytes": 6131
+    },
+    {
+      "file": "runtime-graph.json",
+      "sha256": "493a27719f3c475ad66a1643b23e7e0fcc9ce826d29c38d1ab77742f9bd39e2f",
+      "bytes": 3200665
+    },
+    {
+      "file": "source-readback-retry.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "source-readback-retry.stdout.txt",
+      "sha256": "9b7ba4fb97880c8543c51e1d73fd5219b023490b09248e8c30e51784a8308aa3",
+      "bytes": 1462
+    },
+    {
+      "file": "source-readback.json",
+      "sha256": "28378422757415c3cd266f3ee85f6f39694dd5880749cf9edfd718df2591abac",
+      "bytes": 1767
+    },
+    {
+      "file": "supplement.py",
+      "sha256": "3f947124284868c3536cb73de3bd48296820c29ad95a1ad1b60a7aac7b76253d",
+      "bytes": 2157
+    },
+    {
+      "file": "verify-sources.py",
+      "sha256": "f372ff4eee1fa538fb5f4290cb051594d7ace0549f96a9d84cb9797c4390b99a",
+      "bytes": 3216
+    }
+  ]
+}

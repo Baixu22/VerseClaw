@@ -1,0 +1,638 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "ec2053701bfc5f0126760507c8ff5045f60cdb47",
+    "tree": "b5bca90ffa3d81ffc5af1e92d75db3c936777d51",
+    "dirty": false
+  },
+  "runtimeSource": {
+    "exitCode": 1,
+    "subgates": [
+      {
+        "id": "runtime-policy",
+        "exitCode": 0
+      },
+      {
+        "id": "cycles",
+        "exitCode": 0
+      },
+      {
+        "id": "deprecated-api",
+        "exitCode": 0
+      },
+      {
+        "id": "deprecated-zero",
+        "exitCode": 0
+      },
+      {
+        "id": "unused-files",
+        "exitCode": 0
+      },
+      {
+        "id": "loc",
+        "exitCode": 1
+      }
+    ],
+    "unexecutedSubgates": 0,
+    "locUnchangedFromTf0789": true,
+    "newOver500": 23,
+    "grownOverBaseline": 110,
+    "newOrWorsenedInThisStage": 0
+  },
+  "harnessCi": {
+    "id": "harness-ci",
+    "cwd": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+    "argv": [
+      "node",
+      "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+      "run",
+      "harness:ci"
+    ],
+    "startedAt": "2026-11-05T15:56:40.685037+00:00",
+    "exitCode": 1,
+    "durationSeconds": 24.531,
+    "candidate": {
+      "commit": "ec2053701bfc5f0126760507c8ff5045f60cdb47",
+      "tree": "b5bca90ffa3d81ffc5af1e92d75db3c936777d51",
+      "dirty": false
+    },
+    "afterDirty": false,
+    "stdout": {
+      "path": "D:\\tmp\\architecture-final-20261105\\candidate\\harness-ci.stdout.txt",
+      "sha256": "90fdfe02737c3d3dc0fb16a7c22289cfd37ddc1b02d9fbc6bdf15f408b6b8b5e",
+      "text": "[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed\nProfiles:\n- fast\n- comms\n- e2e\n- rsi\n- concurrency-aux\n\nScenario specs:\n- agent-dev-composable-scenarios: harness\\specs\\scenarios\\agent-dev-composable-scenarios.md\n- autonomous-project-system: harness\\specs\\scenarios\\autonomous-project-system.md\n- autonomy-session-task-scope: harness\\specs\\scenarios\\autonomy-session-task-scope.md\n- autonomy-task-completion: harness\\specs\\scenarios\\autonomy-task-completion.md\n- capability-registry-v3: harness\\specs\\scenarios\\capability-registry-v3.md\n- context-family: harness\\specs\\scenarios\\context-family.md\n- context-folding-rlm: harness\\specs\\scenarios\\context-folding-rlm.md\n- context-runtime-kit: harness\\specs\\scenarios\\context-runtime-kit.md\n- conversation-resource-rendering: harness\\specs\\scenarios\\conversation-resource-rendering.md\n- gateway-backend-communication: harness\\specs\\scenarios\\gateway-backend-communication.md\n- gateway-startup-diagnostics: harness\\specs\\scenarios\\gateway-startup-diagnostics.md\n- identity-scope-compatibility: harness\\specs\\scenarios\\identity-scope-compatibility.md\n- plugin-lifecycle-management: harness\\specs\\scenarios\\plugin-lifecycle-management.md\n- rareui-conversation-interactions: harness\\specs\\scenarios\\rareui-conversation-interactions.md\n- session-derivation-ui: harness\\specs\\scenarios\\session-derivation-ui.md\n- sidebar-session-row-management: harness\\specs\\scenarios\\sidebar-session-row-management.md\n- sidebar-session-workgroup-drag-drop: harness\\specs\\scenarios\\sidebar-session-workgroup-drag-drop.md\n- system-maturity-traceability: harness\\specs\\scenarios\\system-maturity-traceability.md\n- versegit-validation-layer-extension: harness\\specs\\scenarios\\versegit-validation-layer-extension.md\n- windows-release-trust: harness\\specs\\scenarios\\windows-release-trust.md\n- windows-ui-v2: harness\\specs\\scenarios\\windows-ui-v2.md\n- workspace-harness-bootstrap: harness\\specs\\scenarios\\workspace-harness-bootstrap.md\n\nRule specs:\n- active-config-guards: harness\\specs\\rules\\active-config-guards.md\n- agency-role-memory-import-boundary: harness\\specs\\rules\\agency-role-memory-import-boundary.md\n- agency-role-package-boundary: harness\\specs\\rules\\agency-role-package-boundary.md\n- agency-role-promotion-boundary: harness\\specs\\rules\\agency-role-promotion-boundary.md\n- agent-browser-multi-tab: harness\\specs\\rules\\agent-browser-multi-tab.md\n- agent-browser-supervised-task-boundary: harness\\specs\\rules\\agent-browser-supervised-task-boundary.md\n- agent-browser-tool-interception: harness\\specs\\rules\\agent-browser-tool-interception.md\n- agent-dev-conformance-evidence: harness\\specs\\rules\\agent-dev-conformance-evidence.md\n- agent-engineering-acceptance-boundary: harness\\specs\\rules\\agent-engineering-acceptance-boundary.md\n- api-client-transport-policy: harness\\specs\\rules\\api-client-transport-policy.md\n- autonomy-session-task-scope-boundary: harness\\specs\\rules\\autonomy-session-task-scope-boundary.md\n- autonomy-task-completion-boundary: harness\\specs\\rules\\autonomy-task-completion-boundary.md\n- backend-communication-boundary: harness\\specs\\rules\\backend-communication-boundary.md\n- c1-gate-corpus-authority: harness\\specs\\rules\\c1-gate-corpus-authority.md\n- capability-owner-resolution: harness\\specs\\rules\\capability-owner-resolution.md\n- capability-registry-v3-boundary: harness\\specs\\rules\\capability-registry-v3-boundary.md\n- channel-plugin-migration-guards: harness\\specs\\rules\\channel-plugin-migration-guards.md\n- chat-loop-boundary: harness\\specs\\rules\\chat-loop-boundary.md\n- clean-release-baseline-reproducibility: harness\\specs\\rules\\clean-release-baseline-reproducibility.md\n- coding-approval-rate-diagnostics: harness\\specs\\rules\\coding-approval-rate-diagnostics.md\n- coding-mutation-consistency-boundary: harness\\specs\\rules\\coding-mutation-consistency-boundary.md\n- coding-runtime-workspace-dcs-producer-boundary: harness\\specs\\rules\\coding-runtime-workspace-dcs-producer-boundary.md\n- comms-regression: harness\\specs\\rules\\comms-regression.md\n- context-family-boundary: harness\\specs\\rules\\context-family-boundary.md\n- context-folding-boundary: harness\\specs\\rules\\context-folding-boundary.md\n- context-runtime-kit-boundary: harness\\specs\\rules\\context-runtime-kit-boundary.md\n- contract-first-boundary: harness\\specs\\rules\\contract-first-boundary.md\n- conversation-resource-boundary: harness\\specs\\rules\\conversation-resource-boundary.md\n- dcs-production-flags-locale-quality: harness\\specs\\rules\\dcs-production-flags-localization.md\n- dcs-stage2-handoff-boundary: harness\\specs\\rules\\dcs-stage2-handoff-boundary.md\n- dcs-stage3-tool-registry-boundary: harness\\specs\\rules\\dcs-stage3-tool-registry-boundary.md\n- dcs-stage4-knowledge-unification-boundary: harness\\specs\\rules\\dcs-stage4-knowledge-unification-boundary.md\n- dcs-stage5-sekb-closure-boundary: harness\\specs\\rules\\dcs-stage5-sekb-closure-boundary.md\n- disk-temp-policy: harness\\specs\\rules\\disk-temp-policy.md\n- docs-sync: harness\\specs\\rules\\docs-sync.md\n- error-governance-boundary: harness\\specs\\rules\\error-governance-boundary.md\n- exec-default-safety: harness\\specs\\rules\\exec-default-safety.md\n- gateway-endpoint-single-source: harness\\specs\\rules\\gateway-endpoint-single-source.md\n- gateway-readiness-policy: harness\\specs\\rules\\gateway-readiness-policy.md\n- host-api-fallback-policy: harness\\specs\\rules\\host-api-fallback-policy.md\n- host-events-fallback-policy: harness\\specs\\rules\\host-events-fallback-policy.md\n- i18n-locale-coverage: harness\\specs\\rules\\i18n-locale-coverage.md\n- identity-scope-boundary: harness\\specs\\rules\\identity-scope-boundary.md\n- knowledge-bot-runtime-state: harness\\specs\\rules\\knowledge-bot-runtime-state.md\n- local-data-fail-closed-config: harness\\specs\\rules\\local-data-fail-closed-config.md\n- locomo-evaluation-integrity: harness\\specs\\rules\\locomo-evaluation-integrity.md\n- outbound-protocol-payload-consistency: harness\\specs\\rules\\outbound-protocol-payload-consistency.md\n- packaged-runtime-pruning-guards: harness\\specs\\rules\\packaged-runtime-pruning-guards.md\n- paired-ablation-boundary: harness\\specs\\rules\\paired-ablation-boundary.md\n- portable-spec-commands: harness\\specs\\rules\\portable-spec-commands.md\n- product-policy-doc-truthfulness: harness\\specs\\rules\\product-policy-doc-truthfulness.md\n- prompt-cache-observation-boundary: harness\\specs\\rules\\prompt-cache-observation-boundary.md\n- provider-envelope-reject-boundary: harness\\specs\\rules\\provider-envelope-reject-boundary.md\n- provider-error-retry-boundaries: harness\\specs\\rules\\provider-error-retry-boundaries.md\n- provider-outbound-concurrency-budget: harness\\specs\\rules\\provider-outbound-concurrency-budget.md\n- rareui-interaction-adaptation: harness\\specs\\rules\\rareui-interaction-adaptation.md\n- reach-readers-credential-hygiene: harness\\specs\\rules\\reach-readers-credential-hygiene.md\n- reach-readers-readonly-network-boundary: harness\\specs\\rules\\reach-readers-readonly-network-boundary.md\n- reach-readers-upstream-integrity: harness\\specs\\rules\\reach-readers-upstream-integrity.md\n- release-artifact-attestation-integrity: harness\\specs\\rules\\release-artifact-attestation-integrity.md\n- reliability-aggregation-boundary: harness\\specs\\rules\\reliability-aggregation-boundary.md\n- remote-forge-expansion-boundary: harness\\specs\\rules\\remote-forge-expansion-boundary.md\n- renderer-loading-experience: harness\\specs\\rules\\renderer-loading-experience.md\n- renderer-main-boundary: harness\\specs\\rules\\renderer-main-boundary.md\n- repository-artifact-retention: harness\\specs\\rules\\repository-artifact-retention.md\n- runtime-authority-convergence-boundary: harness\\specs\\rules\\runtime-authority-convergence-boundary.md\n- runtime-deep-reference-boundary: harness\\specs\\rules\\runtime-deep-reference-boundary.md\n- runtime-efficiency-observability-boundary: harness\\specs\\rules\\runtime-efficiency-observability-boundary.md\n- runtime-feature-leaf-consumers: harness\\specs\\rules\\runtime-feature-leaf-consumers.md\n- runtime-lifecycle-governance-boundary: harness\\specs\\rules\\runtime-lifecycle-governance-boundary.md\n- runtime-lineage-boundary: harness\\specs\\rules\\runtime-lineage-boundary.md\n- runtime-local-ecosystem-boundary: harness\\specs\\rules\\runtime-local-ecosystem-boundary.md\n- sandbox-strength-fail-closed: harness\\specs\\rules\\sandbox-strength-fail-closed.md\n- sekb-assisted-review-boundary: harness\\specs\\rules\\sekb-assisted-review-boundary.md\n- sekb-hermes-default-off-boundary: harness\\specs\\rules\\sekb-hermes-default-off-boundary.md\n- sekb-hermes-promotion-boundary: harness\\specs\\rules\\sekb-hermes-promotion-boundary.md\n- sekb-hermes-tier-d-boundary: harness\\specs\\rules\\sekb-hermes-tier-d-boundary.md\n- sekb-hermes-write-path-boundary: harness\\specs\\rules\\sekb-hermes-write-path-boundary.md\n- sekb-runtime-development-loop: harness\\specs\\rules\\sekb-runtime-development-loop.md\n- sensitive-sink-ledger-boundary: harness\\specs\\rules\\sensitive-sink-ledger-boundary.md\n- session-derivation-ui-contract: harness\\specs\\rules\\session-derivation-ui-contract.md\n- sidebar-session-row-controls: harness\\specs\\rules\\sidebar-session-row-controls.md\n- spec-doc-gardening-boundary: harness\\specs\\rules\\spec-doc-gardening-boundary.md\n- supply-chain-integrity-pinning: harness\\specs\\rules\\supply-chain-integrity-pinning.md\n- system-maturity-privacy-controls: harness\\specs\\rules\\system-maturity-privacy-controls.md\n- system-maturity-quarterly-audit: harness\\specs\\rules\\system-maturity-quarterly-audit.md\n- system-maturity-security-regression: harness\\specs\\rules\\system-maturity-security-regression.md\n- system-maturity-status-gate: harness\\specs\\rules\\system-maturity-status-gate.md\n- system-maturity-traceability: harness\\specs\\rules\\system-maturity-traceability.md\n- task-forest-autoclose-and-roles: harness\\specs\\rules\\task-forest-autoclose-and-roles.md\n- task-review-outcome-boundary: harness\\specs\\rules\\task-review-outcome-boundary.md\n- telemetry-consent-lifecycle: harness\\specs\\rules\\telemetry-consent-lifecycle.md\n- tf0009-real-canary-authority: harness\\specs\\rules\\tf0009-real-canary-authority.md\n- tool-runtime-lifecycle: harness\\specs\\rules\\tool-runtime-lifecycle.md\n- trace-cost-sampling-boundary: harness\\specs\\rules\\trace-cost-sampling-boundary.md\n- uas-00-evidence-freeze-boundary: harness\\specs\\rules\\uas-00-evidence-freeze-boundary.md\n- ui-motion-material-system: harness\\specs\\rules\\ui-motion-material-system.md\n- versebrowser-upstream-preservation: harness\\specs\\rules\\versebrowser-upstream-preservation.md\n- versegit-validation-layer-extension-boundary: harness\\specs\\rules\\versegit-validation-layer-extension-boundary.md\n- verseshell-command-profile-boundary: harness\\specs\\rules\\verseshell-command-profile-boundary.md\n- verseshell-external-write-policy-boundary: harness\\specs\\rules\\verseshell-external-write-policy-boundary.md\n- verseshell-foundation-p0-boundary: harness\\specs\\rules\\verseshell-foundation-p0-boundary.md\n- verseshell-job-object-limits: harness\\specs\\rules\\verseshell-job-object-limits.md\n- verseshell-mcp-compatibility-boundary: harness\\specs\\rules\\verseshell-mcp-compatibility-boundary.md\n- verseshell-patch-preview-journal-bridge-boundary: harness\\specs\\rules\\verseshell-patch-preview-journal-bridge-boundary.md\n- verseshell-process-lifecycle-boundary: harness\\specs\\rules\\verseshell-process-lifecycle-boundary.md\n- verseshell-readonly-facade-boundary: harness\\specs\\rules\\verseshell-readonly-facade-boundary.md\n- verseshell-single-local-exec-canary-boundary: harness\\specs\\rules\\verseshell-single-local-exec-canary-boundary.md\n- verseshell-upstream-preservation: harness\\specs\\rules\\verseshell-upstream-preservation.md\n- vtoken-foundation-boundary: harness\\specs\\rules\\vtoken-foundation-boundary.md\n- windows-delivery-entry-boundary: harness\\specs\\rules\\windows-delivery-entry-boundary.md\n- windows-release-signing-policy: harness\\specs\\rules\\windows-release-signing-policy.md\n- windows-update-feed-integrity: harness\\specs\\rules\\windows-update-feed-integrity.md\n- workspace-harness-single-source: harness\\specs\\rules\\workspace-harness-single-source.md\n\nGuide specs:\n- admission-seam-migration: harness\\specs\\guides\\admission-seam-migration.md\n- agent-first-acceptance: harness\\specs\\guides\\agent-first-acceptance.md\n- agent-harness-routing: harness\\specs\\guides\\agent-harness-routing.md\n- autonomous-project-system-plan: harness\\specs\\guides\\autonomous-project-system-plan.md\n- context-folding-rlm-design: harness\\specs\\guides\\context-folding-rlm-design.md\n- delta-informed-change-context-review-loop-options: harness\\specs\\guides\\delta-informed-change-context-review-loop-options.md\n- long-session-delegation-admission: harness\\specs\\guides\\long-session-delegation-admission.md\n- ontology-agent-systems-research: harness\\specs\\guides\\ontology-agent-systems-research.md\n- ontology-lite-existing-contracts-research: harness\\specs\\guides\\ontology-lite-existing-contracts-research.md\n- pretext-text-measurement-integration: harness\\specs\\guides\\pretext-text-measurement-integration.md\n- product-acceptance-strategy: harness\\specs\\guides\\product-acceptance-strategy.md\n- rsi-evidence-binding: harness\\specs\\guides\\rsi-evidence-binding.md\n- scoped-development-validation: harness\\specs\\guides\\scoped-development-validation.md\n- sekb-long-task-stages: harness\\specs\\guides\\sekb-long-task-stages.md\n- session-derivation-ui-design: harness\\specs\\guides\\session-derivation-ui-design.md\n- session-lifecycle-worktree-and-node-development: harness\\specs\\guides\\session-lifecycle-worktree-and-node-development.md\n- spec-update: harness\\specs\\guides\\spec-update.md\n- sustained-development-continuity: harness\\specs\\guides\\sustained-development-continuity.md\n- versebrowser-reintegration-playbook: harness\\specs\\guides\\versebrowser-reintegration-playbook.md\n- versegit-cross-agent-concurrency-research: harness\\specs\\guides\\versegit-concurrency\\cross-agent-concurrency-research-2026-10-21.md\n- versegit-harness-lifecycle-contracts: harness\\specs\\guides\\versegit-concurrency\\harness-lifecycle-and-contracts.md\n- versegit-module-implementation-roadmap: harness\\specs\\guides\\versegit-concurrency\\implementation-roadmap-and-acceptance.md\n- versegit-migration-control-plan: harness\\specs\\guides\\versegit-concurrency\\versegit-migration-control-plan.md\n- versegit-planning-correction-matrix: harness\\specs\\guides\\versegit-concurrency\\versegit-planning-correction-matrix.md\n- versegit-verseshell-behavior-observability: harness\\specs\\guides\\versegit-concurrency\\verseshell-and-behavior-observability.md\n- versegit-wp9-lifecycle-closeout: harness\\specs\\guides\\versegit-concurrency\\wp9-lifecycle-closeout.md\n- verseshell-reintegration-playbook: harness\\specs\\guides\\verseshell-reintegration-playbook.md\n\nLayer specs:\n- electron-main: harness\\specs\\layers\\electron-main.md\n- harness: harness\\specs\\layers\\harness.md\n- openclaw-runtime: harness\\specs\\layers\\openclaw-runtime.md\n- plugins: harness\\specs\\layers\\plugins.md\n- renderer: harness\\specs\\layers\\renderer.md\nSpec is valid: harness\\specs\\scenarios\\gateway-backend-communication.md\nSpec is valid: harness\\specs\\tasks\\fix-chat-history-gateway-timeout.example.md\nHarness report: C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX\\artifacts\\harness\\latest.md\nHarness result: pass\n\n RUN  v4.1.1 C:/Users/27933/.codex/worktrees/architecture-convergence-recovered/ClawX\n\n\n Test Files  5 passed (5)\n      Tests  59 passed (59)\n   Start at  23:56:49\n   Duration  6.66s (transform 432ms, setup 664ms, import 394ms, tests 10.28s, environment 4.12s)\n\n[specs] lifecycle status present for 715 task specs.\n[duplicates] 14 reviewed duplicate groups matched the allowlist.\n[policy-docs] PASS package-version-resolvable\n[policy-docs] PASS security-policy-no-template-text\n[policy-docs] PASS security-policy-supported-version\n[policy-docs] PASS security-policy-reporting-path\n[policy-docs] PASS security-policy-tracking-process\n[policy-docs] PASS security-policy-references-resolve\n[policy-docs] PASS security-policy-no-credential-shapes\n[policy-docs] PASS acceleration-source-matches-decision\n[policy-docs] PASS acceleration-decision-record\n[policy-docs] PASS security-process-assets-exist\n[policy-docs] report: C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX\\artifacts\\policy-doc-truthfulness\\report.json\n[policy-docs] PASS: 10 checks\ncatalogs:check passed — generated catalogs are fresh and match their sources.\n{\n  \"status\": \"fail\",\n  \"grade\": \"C\",\n  \"totalScore\": 74,\n  \"maxScore\": 100,\n  \"output\": \"C:\\\\Users\\\\27933\\\\.codex\\\\worktrees\\\\architecture-convergence-recovered\\\\ClawX\\\\artifacts\\\\agent-dev-audit\\\\report.json\",\n  \"markdown\": \"C:\\\\Users\\\\27933\\\\.codex\\\\worktrees\\\\architecture-convergence-recovered\\\\ClawX\\\\artifacts\\\\agent-dev-audit\\\\report.md\",\n  \"disqualifiers\": [\n    {\n      \"dimension\": \"evidence-completeness\",\n      \"id\": \"evidence-stale:workbench\",\n      \"severity\": \"fail\",\n      \"priority\": \"P0\",\n      \"message\": \"artifacts/agent-dev-workbench/evidence.json is 84.21h old, beyond the 24h freshness window.\",\n      \"recommendation\": \"Refresh Workbench, deep-test, quality, and audit evidence before final review.\"\n    },\n    {\n      \"dimension\": \"evidence-completeness\",\n      \"id\": \"evidence-stale:deep-test\",\n      \"severity\": \"fail\",\n      \"priority\": \"P0\",\n      \"message\": \"artifacts/agent-dev-deep-test/report.json is 84.21h old, beyond the 24h freshness window.\",\n      \"recommendation\": \"Refresh Workbench, deep-test, quality, and audit evidence before final review.\"\n    },\n    {\n      \"dimension\": \"evidence-completeness\",\n      \"id\": \"evidence-stale:deep-test-history\",\n      \"severity\": \"fail\",\n      \"priority\": \"P0\",\n      \"message\": \"artifacts/agent-dev-deep-test/history.json is 84.21h old, beyond the 24h freshness window.\",\n      \"recommendation\": \"Refresh Workbench, deep-test, quality, and audit evidence before final review.\"\n    },\n    {\n      \"dimension\": \"evidence-completeness\",\n      \"id\": \"evidence-stale:quality\",\n      \"severity\": \"fail\",\n      \"priority\": \"P0\",\n      \"message\": \"artifacts/agent-dev-quality/report.json is 84.21h old, beyond the 24h freshness window.\",\n      \"recommendation\": \"Refresh Workbench, deep-test, quality, and audit evidence before final review.\"\n    }\n  ]\n}\n[ELIFECYCLE] Command failed with exit code 1.\n[ELIFECYCLE] Command failed with exit code 1.\n"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\architecture-final-20261105\\candidate\\harness-ci.stderr.txt",
+      "sha256": "7926864688263608ce182cb4a4512bdf6153ab8b9faddf8b08e4a478e241b119",
+      "text": "$ pnpm harness list && pnpm harness validate --spec harness/specs/scenarios/gateway-backend-communication.md && pnpm harness validate --spec harness/specs/tasks/fix-chat-history-gateway-timeout.example.md --no-diff && pnpm harness run --spec harness/specs/scenarios/gateway-backend-communication.md --dry-run && pnpm exec vitest run tests/unit/harness-specs.test.ts tests/unit/harness-git.test.ts tests/unit/harness-spec-lifecycle.test.ts tests/unit/docs-index.test.ts tests/unit/runtime-source-policy.test.ts && pnpm harness:specs:lifecycle && pnpm repo:duplicates:check && pnpm docs:policy:validate && pnpm catalogs:check && pnpm agent-dev:audit && pnpm repo:evidence:check && pnpm repo:test-coverage:check\n$ pnpm --filter @verse-claw/harness start -- \"list\"\n$ node src/cli.mjs \"--\" \"list\"\n$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/scenarios/gateway-backend-communication.md\"\n$ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/scenarios/gateway-backend-communication.md\"\n$ pnpm --filter @verse-claw/harness start -- \"validate\" \"--spec\" \"harness/specs/tasks/fix-chat-history-gateway-timeout.example.md\" \"--no-diff\"\n$ node src/cli.mjs \"--\" \"validate\" \"--spec\" \"harness/specs/tasks/fix-chat-history-gateway-timeout.example.md\" \"--no-diff\"\n$ pnpm --filter @verse-claw/harness start -- \"run\" \"--spec\" \"harness/specs/scenarios/gateway-backend-communication.md\" \"--dry-run\"\n$ node src/cli.mjs \"--\" \"run\" \"--spec\" \"harness/specs/scenarios/gateway-backend-communication.md\" \"--dry-run\"\n$ node scripts/check-spec-lifecycle.mjs\n$ node scripts/check-duplicate-assets.mjs\n$ node scripts/validate-policy-docs.mjs\n$ pnpm --dir openclaw_runtime exec tsx ../scripts/generate-catalogs.mjs --check\n$ node scripts/agent-dev-audit.mjs\n"
+    }
+  },
+  "agentDevAudit": {
+    "schema": "clawx.agent-dev.audit.v1",
+    "generatedAt": "2026-11-05T15:57:03.994Z",
+    "policy": {
+      "schema": "clawx.agent-dev.audit.v1",
+      "passScore": 90,
+      "warnScore": 80,
+      "maxEvidenceAgeHours": 24,
+      "maxHistoryEntries": 20,
+      "hardVetoSeverities": [
+        "fail"
+      ],
+      "statusSemantics": {
+        "pass": "Score is at least 90 and no hard-veto findings exist.",
+        "warn": "Score is at least 80 and below 90 with no hard-veto findings.",
+        "fail": "Score is below 80 or at least one hard-veto finding exists."
+      }
+    },
+    "status": "fail",
+    "grade": "C",
+    "maturityLevel": "blocked",
+    "confidence": {
+      "level": "medium",
+      "reason": "4 generated evidence artifact(s) are stale.",
+      "freshGeneratedCount": 0,
+      "generatedSourceCount": 4,
+      "staleGeneratedCount": 4
+    },
+    "totalScore": 74,
+    "maxScore": 100,
+    "summary": {
+      "pass": 4,
+      "warn": 1,
+      "fail": 1,
+      "disqualifierCount": 4
+    },
+    "dimensions": [
+      {
+        "id": "gate-integrity",
+        "title": "Gate Integrity",
+        "maxScore": 20,
+        "description": "Full gates remain available, fast paths are additive, and deep-test explains which full gates remain required.",
+        "score": 20,
+        "findings": [],
+        "status": "pass"
+      },
+      {
+        "id": "evidence-completeness",
+        "title": "Evidence Completeness",
+        "maxScore": 20,
+        "description": "Machine-readable Workbench, deep-test, quality, decision, and trend evidence exist.",
+        "score": 0,
+        "findings": [
+          {
+            "id": "evidence-stale:workbench",
+            "severity": "fail",
+            "priority": "P0",
+            "message": "artifacts/agent-dev-workbench/evidence.json is 84.21h old, beyond the 24h freshness window.",
+            "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+          },
+          {
+            "id": "evidence-stale:deep-test",
+            "severity": "fail",
+            "priority": "P0",
+            "message": "artifacts/agent-dev-deep-test/report.json is 84.21h old, beyond the 24h freshness window.",
+            "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+          },
+          {
+            "id": "evidence-stale:deep-test-history",
+            "severity": "fail",
+            "priority": "P0",
+            "message": "artifacts/agent-dev-deep-test/history.json is 84.21h old, beyond the 24h freshness window.",
+            "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+          },
+          {
+            "id": "evidence-stale:quality",
+            "severity": "fail",
+            "priority": "P0",
+            "message": "artifacts/agent-dev-quality/report.json is 84.21h old, beyond the 24h freshness window.",
+            "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+          }
+        ],
+        "status": "fail"
+      },
+      {
+        "id": "coverage-breadth",
+        "title": "Coverage Breadth",
+        "maxScore": 20,
+        "description": "Agent Dev has scenario, unit, E2E, contract, i18n, and host-api boundary coverage.",
+        "score": 20,
+        "findings": [],
+        "status": "pass"
+      },
+      {
+        "id": "performance-discipline",
+        "title": "Performance Discipline",
+        "maxScore": 20,
+        "description": "Latest timing evidence stays within budgets and refuses to treat over-limit runs as passing design evidence.",
+        "score": 14,
+        "findings": [
+          {
+            "id": "latest-needs-full-gate",
+            "severity": "warn",
+            "priority": "P1",
+            "message": "Latest deep-test is daily-loop evidence and still requires full gates.",
+            "recommendation": "Run decision.requiredFullGates before PR/release review."
+          },
+          {
+            "id": "performance-watch:playwright-agent-dev",
+            "severity": "warn",
+            "priority": "P1",
+            "message": "playwright-agent-dev exceeded target: 23299ms > 15000ms.",
+            "recommendation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding."
+          }
+        ],
+        "status": "warn"
+      },
+      {
+        "id": "docs-runbook",
+        "title": "Docs And Runbook",
+        "maxScore": 10,
+        "description": "Developer docs explain daily loops, full gates, release evidence, and failure interpretation.",
+        "score": 10,
+        "findings": [],
+        "status": "pass"
+      },
+      {
+        "id": "maintainability",
+        "title": "Maintainability",
+        "maxScore": 10,
+        "description": "The system avoids parallel registries, has focused unit protection, and keeps generated evidence bounded.",
+        "score": 10,
+        "findings": [],
+        "status": "pass"
+      }
+    ],
+    "scoreBreakdown": [
+      {
+        "id": "gate-integrity",
+        "title": "Gate Integrity",
+        "score": 20,
+        "maxScore": 20,
+        "deducted": 0,
+        "status": "pass",
+        "reason": "No findings deducted points for this dimension.",
+        "findings": []
+      },
+      {
+        "id": "evidence-completeness",
+        "title": "Evidence Completeness",
+        "score": 0,
+        "maxScore": 20,
+        "deducted": 20,
+        "status": "fail",
+        "reason": "4 finding(s) deducted 20 point(s).",
+        "findings": [
+          {
+            "id": "evidence-stale:workbench",
+            "severity": "fail",
+            "estimatedPenalty": 8,
+            "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+          },
+          {
+            "id": "evidence-stale:deep-test",
+            "severity": "fail",
+            "estimatedPenalty": 8,
+            "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+          },
+          {
+            "id": "evidence-stale:deep-test-history",
+            "severity": "fail",
+            "estimatedPenalty": 8,
+            "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+          },
+          {
+            "id": "evidence-stale:quality",
+            "severity": "fail",
+            "estimatedPenalty": 8,
+            "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+          }
+        ]
+      },
+      {
+        "id": "coverage-breadth",
+        "title": "Coverage Breadth",
+        "score": 20,
+        "maxScore": 20,
+        "deducted": 0,
+        "status": "pass",
+        "reason": "No findings deducted points for this dimension.",
+        "findings": []
+      },
+      {
+        "id": "performance-discipline",
+        "title": "Performance Discipline",
+        "score": 14,
+        "maxScore": 20,
+        "deducted": 6,
+        "status": "warn",
+        "reason": "2 finding(s) deducted 6 point(s).",
+        "findings": [
+          {
+            "id": "latest-needs-full-gate",
+            "severity": "warn",
+            "estimatedPenalty": 3,
+            "recommendation": "Run decision.requiredFullGates before PR/release review."
+          },
+          {
+            "id": "performance-watch:playwright-agent-dev",
+            "severity": "warn",
+            "estimatedPenalty": 3,
+            "recommendation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding."
+          }
+        ]
+      },
+      {
+        "id": "docs-runbook",
+        "title": "Docs And Runbook",
+        "score": 10,
+        "maxScore": 10,
+        "deducted": 0,
+        "status": "pass",
+        "reason": "No findings deducted points for this dimension.",
+        "findings": []
+      },
+      {
+        "id": "maintainability",
+        "title": "Maintainability",
+        "score": 10,
+        "maxScore": 10,
+        "deducted": 0,
+        "status": "pass",
+        "reason": "No findings deducted points for this dimension.",
+        "findings": []
+      }
+    ],
+    "rubric": [
+      {
+        "id": "gate-integrity",
+        "title": "Gate Integrity",
+        "maxScore": 20,
+        "description": "Full gates remain available, fast paths are additive, and deep-test explains which full gates remain required."
+      },
+      {
+        "id": "evidence-completeness",
+        "title": "Evidence Completeness",
+        "maxScore": 20,
+        "description": "Machine-readable Workbench, deep-test, quality, decision, and trend evidence exist."
+      },
+      {
+        "id": "coverage-breadth",
+        "title": "Coverage Breadth",
+        "maxScore": 20,
+        "description": "Agent Dev has scenario, unit, E2E, contract, i18n, and host-api boundary coverage."
+      },
+      {
+        "id": "performance-discipline",
+        "title": "Performance Discipline",
+        "maxScore": 20,
+        "description": "Latest timing evidence stays within budgets and refuses to treat over-limit runs as passing design evidence."
+      },
+      {
+        "id": "docs-runbook",
+        "title": "Docs And Runbook",
+        "maxScore": 10,
+        "description": "Developer docs explain daily loops, full gates, release evidence, and failure interpretation."
+      },
+      {
+        "id": "maintainability",
+        "title": "Maintainability",
+        "maxScore": 10,
+        "description": "The system avoids parallel registries, has focused unit protection, and keeps generated evidence bounded."
+      }
+    ],
+    "evidenceInventory": [
+      {
+        "id": "workbench",
+        "path": "artifacts/agent-dev-workbench/evidence.json",
+        "required": true,
+        "generated": true,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-05T10:21:04.971Z",
+        "generatedAt": "2026-11-02T03:44:20.557Z",
+        "ageHours": 84.21,
+        "newestRelevantSource": {
+          "path": "package.json",
+          "mtime": "2026-11-03T15:38:52.000Z",
+          "mtimeMs": 1793720332000,
+          "timeSource": "git-commit"
+        },
+        "sourceFresh": false,
+        "fresh": false
+      },
+      {
+        "id": "deep-test",
+        "path": "artifacts/agent-dev-deep-test/report.json",
+        "required": true,
+        "generated": true,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-05T10:21:04.918Z",
+        "generatedAt": "2026-11-02T03:44:20.608Z",
+        "ageHours": 84.21,
+        "newestRelevantSource": {
+          "path": "package.json",
+          "mtime": "2026-11-03T15:38:52.000Z",
+          "mtimeMs": 1793720332000,
+          "timeSource": "git-commit"
+        },
+        "sourceFresh": false,
+        "fresh": false
+      },
+      {
+        "id": "deep-test-history",
+        "path": "artifacts/agent-dev-deep-test/history.json",
+        "required": true,
+        "generated": true,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-05T10:21:04.916Z",
+        "generatedAt": "2026-11-02T03:44:20.608Z",
+        "ageHours": 84.21,
+        "newestRelevantSource": {
+          "path": "package.json",
+          "mtime": "2026-11-03T15:38:52.000Z",
+          "mtimeMs": 1793720332000,
+          "timeSource": "git-commit"
+        },
+        "sourceFresh": false,
+        "fresh": false
+      },
+      {
+        "id": "quality",
+        "path": "artifacts/agent-dev-quality/report.json",
+        "required": true,
+        "generated": true,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-05T10:21:04.931Z",
+        "generatedAt": "2026-11-02T03:44:19.960Z",
+        "ageHours": 84.21,
+        "newestRelevantSource": {
+          "path": "package.json",
+          "mtime": "2026-11-03T15:38:52.000Z",
+          "mtimeMs": 1793720332000,
+          "timeSource": "git-commit"
+        },
+        "sourceFresh": false,
+        "fresh": false
+      },
+      {
+        "id": "package-scripts",
+        "path": "package.json",
+        "required": true,
+        "generated": false,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-05T10:22:20.795Z",
+        "generatedAt": null,
+        "ageHours": 5.58,
+        "newestRelevantSource": null,
+        "sourceFresh": true,
+        "fresh": true
+      },
+      {
+        "id": "agent-dev-runbook",
+        "path": "docs/agent-dev-control-plane.md",
+        "required": true,
+        "generated": false,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-05T10:21:33.074Z",
+        "generatedAt": null,
+        "ageHours": 5.59,
+        "newestRelevantSource": null,
+        "sourceFresh": true,
+        "fresh": true
+      },
+      {
+        "id": "agent-instructions",
+        "path": "AGENTS.md",
+        "required": true,
+        "generated": false,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-05T10:21:03.490Z",
+        "generatedAt": null,
+        "ageHours": 5.6,
+        "newestRelevantSource": null,
+        "sourceFresh": true,
+        "fresh": true
+      },
+      {
+        "id": "scenario-registry",
+        "path": "shared/agent-dev/scenarios.ts",
+        "required": true,
+        "generated": false,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-05T10:22:33.557Z",
+        "generatedAt": null,
+        "ageHours": 5.57,
+        "newestRelevantSource": null,
+        "sourceFresh": true,
+        "fresh": true
+      },
+      {
+        "id": "regularization-tests",
+        "path": "tests/unit/agent-dev-regularization.test.ts",
+        "required": true,
+        "generated": false,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-05T10:22:35.520Z",
+        "generatedAt": null,
+        "ageHours": 5.57,
+        "newestRelevantSource": null,
+        "sourceFresh": true,
+        "fresh": true
+      }
+    ],
+    "prioritizedFindings": [
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:deep-test",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-deep-test/report.json is 84.21h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review.",
+        "impact": "high",
+        "effort": "low",
+        "validationCommands": [
+          "pnpm agent-dev:workbench",
+          "pnpm agent-dev:deep-test:reuse",
+          "pnpm agent-dev:audit:report"
+        ]
+      },
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:deep-test-history",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-deep-test/history.json is 84.21h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review.",
+        "impact": "high",
+        "effort": "low",
+        "validationCommands": [
+          "pnpm agent-dev:workbench",
+          "pnpm agent-dev:deep-test:reuse",
+          "pnpm agent-dev:audit:report"
+        ]
+      },
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:quality",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-quality/report.json is 84.21h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review.",
+        "impact": "high",
+        "effort": "low",
+        "validationCommands": [
+          "pnpm agent-dev:workbench",
+          "pnpm agent-dev:deep-test:reuse",
+          "pnpm agent-dev:audit:report"
+        ]
+      },
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:workbench",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-workbench/evidence.json is 84.21h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review.",
+        "impact": "high",
+        "effort": "low",
+        "validationCommands": [
+          "pnpm agent-dev:workbench",
+          "pnpm agent-dev:deep-test:reuse",
+          "pnpm agent-dev:audit:report"
+        ]
+      },
+      {
+        "dimension": "performance-discipline",
+        "id": "latest-needs-full-gate",
+        "severity": "warn",
+        "priority": "P1",
+        "message": "Latest deep-test is daily-loop evidence and still requires full gates.",
+        "recommendation": "Run decision.requiredFullGates before PR/release review.",
+        "impact": "medium",
+        "effort": "low",
+        "validationCommands": [
+          "pnpm exec vitest run --maxWorkers=1 tests/unit/agent-dev-regularization.test.ts",
+          "pnpm agent-dev:audit:report"
+        ]
+      },
+      {
+        "dimension": "performance-discipline",
+        "id": "performance-watch:playwright-agent-dev",
+        "severity": "warn",
+        "priority": "P1",
+        "message": "playwright-agent-dev exceeded target: 23299ms > 15000ms.",
+        "recommendation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding.",
+        "impact": "medium",
+        "effort": "low",
+        "validationCommands": [
+          "pnpm agent-dev:fast",
+          "pnpm agent-dev:audit:report"
+        ]
+      }
+    ],
+    "disqualifiers": [
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:workbench",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-workbench/evidence.json is 84.21h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+      },
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:deep-test",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-deep-test/report.json is 84.21h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+      },
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:deep-test-history",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-deep-test/history.json is 84.21h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+      },
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:quality",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-quality/report.json is 84.21h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+      }
+    ],
+    "recommendations": [
+      "Refresh Workbench, deep-test, quality, and audit evidence before final review.",
+      "Run decision.requiredFullGates before PR/release review.",
+      "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding."
+    ]
+  },
+  "afterCiShortCircuit": {
+    "repo:evidence:check": "Executed separately in gates.json (evidence), exit 0",
+    "repo:test-coverage:check": {
+      "exitCode": 0,
+      "stdout": "[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed\n[test-coverage] gateway=27 services=115 meet baseline\n",
+      "stderr": "$ node scripts/check-test-coverage-baseline.mjs\n"
+    }
+  },
+  "readbackAttempt": {
+    "exitCode": 1,
+    "stderr": "Traceback (most recent call last):\n  File \"D:\\tmp\\architecture-final-20261105\\verify-sources.py\", line 33, in <module>\n    digest,name=line.split('  ',1);assert sha((folder/name).read_bytes())==digest;files.append(name)\n  File \"C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\lib\\pathlib.py\", line 1124, in read_bytes\n    with self.open(mode='rb') as f:\n  File \"C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\lib\\pathlib.py\", line 1117, in open\n    return self._accessor.open(self, mode, buffering, encoding, errors,\nFileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\Users\\\\27933\\\\.codex\\\\worktrees\\\\architecture-convergence-recovered\\\\ClawX\\\\harness\\\\specs\\\\fixtures\\\\architecture-admission-ast\\\\harness\\\\specs\\\\fixtures\\\\architecture-admission-ast\\\\after-probes.json'\n",
+    "resolution": "Readback helper first treated the admission manifest repo-relative paths as directory-relative. Fixed only the helper path resolution; verified all 85 entries. No evidence/hash modified."
+  }
+}

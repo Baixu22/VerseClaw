@@ -1,6 +1,6 @@
 # 架构骨架收敛宪章（Architecture Skeleton Convergence）
 
-> 状态：`in_progress`（2026-11-05：既有 A/B/C 与 A3–A6 已落地；所有者授权依据架构测评继续收敛节点与结构，当前五叶修复阶段见 §9）
+> 状态：`done`（五叶整改及限定架构复验已完成；保留LOC与Agent Dev证据时效残差，非全仓通过、非GA。原候选及范围见 §9）
 > 录入日期：2026-10-31，Asia/Shanghai
 > 根目标：`TF-0628`；关联战略：`TF-0001`（记忆-上下文-工具-经验联合系统受控可运营，非全量 GA）
 > 关联研究：`harness/specs/guides/ontology-agent-systems-research.md`
@@ -143,13 +143,13 @@ Palantir 真正值得借鉴的是「对象—关系—动作—权限—血缘�
 
 | 批次 | 节点 | 状态 |
 |---|---|---|
-| 根 | TF-0628 架构骨架收敛 | in_progress |
+| 根 | TF-0628 架构骨架收敛 | done；限定架构范围，保留残差 |
 | A | TF-0629 接入层盘点与唯一入口裁定；TF-0630 contract:check 覆盖扁平 IPC | done / done |
 | B | TF-0631 语义权威矩阵逐条对齐；TF-0632 唯一 owner 校验 | done / done |
 | C | TF-0633 语义合同硬化接入骨架（父）；TF-0634…TF-0637 C1–C4 四叶 | done |
 | 审查后续 | TF-0638 B2 对账承重化；TF-0639 C5 报告观测化（`REVIEW-20261101.md` §5） | done / done |
 | A（2026-11-03 已验收） | TF-0649 A3 迁移活体消费者；TF-0650 A4 改写 E2E mock 缝；TF-0651 A5 退役扁平通道与 preload 第二入口；TF-0652 A6 兼容回归与收口 | done；保留已分类的全仓失败 |
-| 2026-11-05 修复 | TF-0786：TF-0787 门禁 → TF-0788 小依赖环 → TF-0789 runtime 反向依赖 → TF-0790 权威描述 → TF-0791 复验 | 四叶限定验收完成（4/5）；TF-0791 最终复验中 |
+| 2026-11-05 修复 | TF-0786：TF-0787 门禁 → TF-0788 小依赖环 → TF-0789 runtime 反向依赖 → TF-0790 权威描述 → TF-0791 复验 | 五叶限定验收完成（5/5）；584项专项与owner测试通过，残差见 §9 |
 | D | 未登记（消费需求未证实） | - |
 
 > 2026-10-31 的拆分与规划状态保留在历史决策记录 `docs/dev/architecture-skeleton/CLOSURE-DECISIONS-20261031.md`；上表表达当前交付和正在推进的阶段。
@@ -250,6 +250,9 @@ A 与 B 并行前提：写入集不重叠（A 触 contract-check 与 ipc-handler
 - `TF-0788` 把同步叶模块的 workspace 查询改为 owner 传入的读取函数，sandbox API 与同步复用同一个 `sandbox-state` 存储；只读工具目录持有四个名称常量，工厂保持原导出。持久存储、权限 mapper、工具名称/顺序/摘要和注册条件保持。前后依赖图、owner 测试、原循环门禁残差与最终候选见 `harness/specs/fixtures/architecture-small-cycles/report.json`。README 三语已复核，内部依赖重排无需产品说明更新。
 - `TF-0788` 限定验收通过：干净候选 `36b37acd4` 的 80/80 相关测试和 4 条反向边负例通过；20 项记录运行 exit 0，含完整 uncached node/web/test 类型、契约、scoped lint、comms 与 Harness。应用静态图 825 → 826 文件、环 1 → 0；context 两文件环 1 → 0。该候选的原 runtime checker 分量 [23, 2] → [23]，exit 1，23 文件成员不变。20 份保留文件的哈希读回 19/19 匹配、凭据 0 命中。两次 Codex 复核无发现；四入口 bundle smoke 不替代完整构建。剩余分量由 `TF-0789` 接续。
 - `TF-0789` 将 CVK 引擎身份放到静态叶模块并保持工厂模块原导出；registry 只读取身份，kill-switch 与 VToken 配置解析直接消费原 `runtime-core/types` 中的 `isRecord`。三条反向边均已移开，原循环检查从 23 文件分量降为 0；限定候选 `b834bf3e1` 的 58/58 相关测试通过，24 项记录门禁为 0，完整 `runtime:source:check` 仍保留与基线逐字一致的 LOC 残差。证据见 `harness/specs/fixtures/architecture-runtime-cycles/report.json`；不把该限定结果外推为全仓通过。
-- TF-0790 已修正五组件的陈旧声明并删除对应八条裁定。原 checker 规则不变，当前裁定为0；结构例外55项、登记gap35项。逐项分类为18项描述映射缺口、16项领域外owner、1项未实现的全系统model echo保证，详见 `AUTHORITY-RECONCILIATION.md` §12 与 `harness/specs/fixtures/architecture-authority-convergence/gap-classification.json`。TF-0790候选2ca6e2092的150项测试及完整类型通过，证据提交a80f06b17；TF-0791现补关键关系约束并复验既定架构范围。
-- 共享工作区会话接口的类型漂移属于另一未提交工作流；本轮独立基线没有搬入这些改动，类型验收单独记录。
-- 整体架构成熟度仍不等于通过；维护效率、agent 成功率与可靠性净收益尚无本轮对照测量。批次 D 的产品消费需求仍未证实。
+- TF-0790 已修正五组件的陈旧声明并删除对应八条裁定。原 checker 规则不变，当前裁定为0；结构例外55项、登记gap35项。逐项分类为18项描述映射缺口、16项领域外owner、1项未实现的全系统model echo保证，详见 `AUTHORITY-RECONCILIATION.md` §12 与 `harness/specs/fixtures/architecture-authority-convergence/gap-classification.json`。TF-0790候选2ca6e2092的150项测试及完整类型通过，证据提交a80f06b17；TF-0791已补关键关系约束并完成既定架构范围复验。
+- 原测评的共享工作区会话接口类型漂移属于另一工作流；本轮独立候选的完整node/web/test类型检查已通过。
+- TF-0791限定通过：干净候选 `ec2053701`（tree `b5bca90ffa3d81ffc5af1e92d75db3c936777d51`）的29文件584项测试全部通过，含399架构、136 owner、19能力、30 runtime；完整uncached node/web/test类型通过。五种关系的245个已知概念组合只接受六种合法关系，错误目标经原报告入口拒绝；12关系规则与8来源规则均实际观测。
+- 同候选应用静态图826文件/2375值边，环0与禁止层间边0；runtime9159文件，环0。9985图输入匹配候选Git原字节，前四叶85哈希匹配；最终证据在 `harness/specs/fixtures/architecture-convergence-final/report.json` 与 `report.md`，18文件/17哈希/凭据0。
+- 完整runtime source仍exit1，最后LOC子门禁保留23个未登记超500行及110个超既有基线文件，与TF-0789逐字相同；未新增或加重。额外Harness CI在5文件59测试和policy/catalog通过后，因四份Agent Dev产物过24小时而exit1；CI后续evidence及test-coverage单独通过。详情见最终包 `residuals.json`。不改变LOC基线、时效门槛或旧证据日期。
+- 本根收口表示其声明的接入、静态依赖、权威描述与关系约束范围有证据，不能外推为全仓健康、完整发行构建、Electron/live provider效果或GA。维护效率、agent成功率与可靠性净收益尚无本轮对照测量。35gap仍保留，批次D消费需求未证实。
