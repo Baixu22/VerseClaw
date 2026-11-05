@@ -15,7 +15,9 @@ touchedAreas:
   - shared/host-api/**
   - shared/i18n/locales/*/knowledge.json
   - src/lib/host-api/**
+  - src/lib/knowledge-librarian.ts
   - src/pages/Chat/KnowledgeChat.tsx
+  - src/pages/Knowledge/KnowledgeAssistant.tsx
   - tests/unit/knowledge*.test.*
   - tests/e2e/knowledge*.spec.ts
   - scripts/knowledge-*.ts
