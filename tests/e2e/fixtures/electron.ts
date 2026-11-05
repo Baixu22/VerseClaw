@@ -49,6 +49,10 @@ type ElectronFixtures = {
   launchElectronApp: (options?: LaunchElectronOptions) => Promise<ElectronApplication>;
 };
 
+// Playwright's Windows child handle may identify an exited cmd.exe wrapper.
+// Retain the actual Electron main PID while its inspector is still connected.
+const electronMainProcessIds = new WeakMap<ElectronApplication, number>();
+
 type AgentDevTestWindow = Window & {
   __CLAWX_TEST__?: {
     getSnapshot?: () => unknown;
@@ -277,7 +281,7 @@ async function killElectronProcessTree(app: ElectronApplication): Promise<void> 
   if (process.platform !== 'win32') return;
   let pid: number | undefined;
   try {
-    pid = app.process().pid;
+    pid = electronMainProcessIds.get(app) ?? app.process().pid;
   } catch {
     return;
   }
@@ -447,7 +451,9 @@ async function launchVerseClawElectron(
     }),
     timeout: 90_000,
   });
-  await recordElectronProcess(userDataDir, app.process().pid);
+  const mainProcessId = await app.evaluate(() => process.pid);
+  electronMainProcessIds.set(app, mainProcessId);
+  await recordElectronProcess(profileDir, mainProcessId);
   /*
    * The app's own output is otherwise swallowed, which makes a stalled turn
    * unattributable from the test side: the composer just goes idle and the

@@ -10,6 +10,7 @@ diffBase: cc9799bc7
 intent: Verify the complete semantic repair chain with explicit positive, negative, boundary, integration and Electron evidence on one clean source candidate.
 touchedAreas:
   - vite.config.ts
+  - tests/e2e/fixtures/electron.ts
   - tests/unit/semantic-convergence-*
   - tests/integration/semantic-convergence-*
   - tests/e2e/semantic-convergence-*
@@ -56,3 +57,9 @@ existing Runtime net-policy package. Add that existing package to the same
 source-alias boundary as the other inlined runtime packages; no policy/default
 or dependency version changes. Retain the failed run and dependency-resolution
 provenance, then rebuild and repeat the same UI checks.
+
+The Windows run also reproduced an orphan after the wrapper PID exited. Capture
+the real Electron main PID over its existing inspector connection, retain it in
+the existing run ledger, and use that owned PID for teardown. The Electron
+regression must prove the closed app is gone while a second app remains alive.
+This completes the owner's requested process/resource cleanup boundary.

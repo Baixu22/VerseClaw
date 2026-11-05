@@ -1,5 +1,6 @@
 import { createServer } from 'node:http';
 import { writeFile } from 'node:fs/promises';
+import type { ElectronApplication } from '@playwright/test';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 
 test('Settings validates 429 and non-auth 400 through Main without claiming verified', async ({ launchElectronApp }) => {
@@ -14,8 +15,9 @@ test('Settings validates 429 and non-auth 400 through Main without claiming veri
   await new Promise<void>(resolve => endpoint.listen(0, '127.0.0.1', resolve));
   const address = endpoint.address();
   if (!address || typeof address === 'string') throw new Error('Missing endpoint address');
-  const app = await launchElectronApp({ skipSetup: true });
+  let app: ElectronApplication | undefined;
   try {
+    app = await launchElectronApp({ skipSetup: true });
     const page = await getStableWindow(app);
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.getByTestId('sidebar-nav-settings').click();
@@ -41,8 +43,31 @@ test('Settings validates 429 and non-auth 400 through Main without claiming veri
       rateLimitedVerified: false, parameterErrorVerified: false,
     }, null, 2));
   } finally {
-    await closeElectronApp(app);
+    if (app) await closeElectronApp(app);
     endpoint.closeAllConnections();
     await new Promise<void>(resolve => endpoint.close(() => resolve()));
+  }
+});
+
+test('closing an Electron wrapper reaps its actual main process and preserves a second app', async ({ launchElectronApp }) => {
+  const first = await launchElectronApp({ skipSetup: true });
+  let second: ElectronApplication | undefined;
+  const isAlive = (pid: number) => { try { process.kill(pid, 0); return true; } catch { return false; } };
+  try {
+    second = await launchElectronApp({ skipSetup: true });
+    const firstPid = await first.evaluate(() => process.pid);
+    const secondPid = await second.evaluate(() => process.pid);
+    await closeElectronApp(first);
+    await expect.poll(() => isAlive(firstPid)).toBe(false);
+    expect(isAlive(secondPid)).toBe(true);
+    const page = await getStableWindow(second);
+    await expect(page.getByTestId('main-layout')).toBeVisible();
+    await writeFile(test.info().outputPath('process-close-observations.json'), JSON.stringify({
+      driven_by: 'agent', actor: 'codex/tf0746', firstPid, firstAlive: false, secondPid, secondAlive: true,
+      wrapperPid: first.process().pid,
+    }, null, 2));
+  } finally {
+    await closeElectronApp(first);
+    if (second) await closeElectronApp(second);
   }
 });
