@@ -27,14 +27,14 @@
       "executionCommit": "a5d49452d394f3f401f3ffd989fc6ea13c2e533c"
     },
     "browserUnits": {
-      "files": 2,
-      "passed": 39,
+      "files": 3,
+      "passed": 44,
       "failed": 0,
       "skipped": 0,
-      "startTime": 1793837316825,
+      "startTime": 1793837936330,
       "artifact": "browser-unit-current.json",
       "sourceCommit": "a5d49452d394f3f401f3ffd989fc6ea13c2e533c",
-      "executionCommit": "a5d49452d394f3f401f3ffd989fc6ea13c2e533c"
+      "executionCommit": "edc4f79b778e325c42d43b4fe9d87eddda903515"
     },
     "electronE2E": {
       "startTime": "2026-11-05T00:10:15.374Z",
