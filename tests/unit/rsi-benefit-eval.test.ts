@@ -40,15 +40,17 @@ afterAll(() => {
 });
 
 describe('measured receipt admission (synthetic contract controls, no provider calls)', () => {
-  function measuredPack(limit = 2) {
+  function measuredPack(limit = 2, codingCollector = false) {
     const { directory: offlineDir, plan: offlinePlan } = pack(limit);
     const directory = mkdtempSync(join(TEMP, 'rsi-benefit-test-measured-'));
     created.push(directory);
     const plan = writeBenefitPlan(ROOT, directory, {
       mode: 'measured', runId: 'measured-contract-control', maxProviderCalls: 216, maxTotalTokens: 1_000_000,
-      candidate: { ...offlinePlan.candidate, kind: 'confirmed-sekb' },
+      candidate: codingCollector ? JSON.parse(readFileSync(join(ROOT, 'harness/specs/fixtures/rsi-coding-cohort/candidate.json'), 'utf8'))
+        : { ...offlinePlan.candidate, kind: 'confirmed-sekb' }, codingCollector,
     });
-    const identities = new Map(inspectLiveCorpus(ROOT).map((identity) => [identity.id, identity]));
+    if (codingCollector) cpSync(join(ROOT, 'harness/specs/fixtures/rsi-coding-cohort/task-bindings.v1.json'), join(directory, 'task-bindings.json'));
+    const identities = new Map(inspectLiveCorpus(ROOT, { codingCohort: codingCollector }).map((identity) => [identity.id, identity]));
     for (const task of plan.tasks) {
       const oracleTestDigests = Object.fromEntries(task.oracle.testPaths.map((path) => [path, createHash('sha256').update(execFileSync('git', ['-C', ROOT, 'show', `${task.source.reference}:${path}`], { windowsHide: true })).digest('hex')]));
       const stage = (pass: boolean) => ({ passed: pass, commands: task.oracle.commands, oracleUnchanged: true, oracleRevision: task.source.reference, oracleTestDigests, inputDigests: task.oracle.inputDigests,
@@ -56,6 +58,9 @@ describe('measured receipt admission (synthetic contract controls, no provider c
           report: { success: pass, numTotalTests: 1, numPassedTests: pass ? 1 : 0, numFailedTests: pass ? 0 : 1, numPendingTests: 0,
             testResults: [{ assertionResults: [{ status: pass ? 'passed' : 'failed' }] }] } })) });
       const stages = { reference: stage(true), baseline: stage(false) };
+      if (codingCollector) for (const value of Object.values(stages)) Object.assign(value, {
+        baselineSetup: task.baselineSetup ?? null, supportPackages: [],
+      });
       const path = join(directory, 'calibration', task.id, 'admission.json'); mkdirSync(dirname(path), { recursive: true });
       writeFileSync(path, JSON.stringify({
         schemaVersion: 'RsiLiveTaskAdmission/v1', driven_by: 'agent', actor: 'offline-contract-calibrator', taskId: task.id,
@@ -79,9 +84,13 @@ describe('measured receipt admission (synthetic contract controls, no provider c
       const passed = JSON.parse(row.rawResponse.output[0].content[0].text).probeValue === 'ok';
       const editPath = task.targetScope.find((path) => !task.oracle.testPaths.includes(path))!;
       row.planDigest = benefitDigest(plan);
+      row.slot = slot;
+      row.request = buildBenefitRequest(plan, slot);
+      row.requestDigest = benefitDigest(row.request);
       row.evidenceKind = plan.evidenceKind;
       row.runtime.isolationId = `${plan.runId}/${slot.id}`;
       row.runtime.candidateDigest = plan.candidateDigest;
+      row.runtime.injectionDigest = slot.arm === 'sekb-confirmed' ? benefitDigest(plan.candidate.context) : null;
       row.runtime.runtimeEffectMeasured = true;
       row.edits = [{ path: editPath, content: '// measured contract-control edit\n' }];
       row.execution.measurementBasis = 'live-provider';
@@ -89,6 +98,7 @@ describe('measured receipt admission (synthetic contract controls, no provider c
       row.execution.startedAt = new Date(Date.UTC(2026, 0, 1) + slot.position * 10).toISOString();
       row.execution.endedAt = new Date(Date.UTC(2026, 0, 1) + slot.position * 10 + 1).toISOString();
       row.rawResponse.id = `contract-control-${slot.id}`;
+      if (codingCollector) row.rawResponse.output[0].content[0].text = JSON.stringify({ edits: row.edits });
       row.providerAttempts = [{ endpoint: plan.provider.endpoint, request: row.request, rawResponse: row.rawResponse, parsedResponse: parseResponsesReply(row.rawResponse) }];
       row.grader = {
         schemaVersion: 'RsiBenefitGrader/v1', driven_by: 'agent', actor: 'offline-contract-grader',
@@ -101,6 +111,13 @@ describe('measured receipt admission (synthetic contract controls, no provider c
           testResults: task.oracle.testPaths.map((name) => ({ name, assertionResults: [{ status: passed ? 'passed' : 'failed', title: 'offline schema control' }] })),
         } })),
       };
+      if (codingCollector) {
+        Object.assign(row.grader, { oracleRevision: task.source.reference, oracleTestDigests: task.oracleTestDigests,
+          oracleUnchanged: true, baselineSetup: task.baselineSetup ?? null });
+        for (const item of row.grader.reports) if (item.command.startsWith('node ')) Object.assign(item, {
+          kind: 'command', report: { kind: 'command', exitCode: item.exitCode, stdoutDigest: 'a'.repeat(64), stderrDigest: 'b'.repeat(64) },
+        });
+      }
       return row;
     });
     return { directory, plan, receipts };
@@ -115,6 +132,18 @@ describe('measured receipt admission (synthetic contract controls, no provider c
     // Final measured checks additionally require the evaluator inputs committed.
     expect(report.coverage.missing).toEqual([]);
     // These in-memory contract-control responses are never retained as live evidence.
+  });
+
+  it('reads coding receipts with a retained model format failure and script oracle without inventing assertions', () => {
+    const { directory, receipts } = measuredPack(30, true);
+    const row = receipts[0];
+    row.rawResponse.output[0].content[0].text = 'invalid JSON';
+    row.providerAttempts[0].parsedResponse = parseResponsesReply(row.rawResponse);
+    row.edits = []; row.grader = null; row.execution.failureCategory = 'model-format';
+    const imported = recordMeasuredBenefitTrials(ROOT, directory, receipts);
+    expect(imported[0].outcome).toBe('fail');
+    expect(imported).toHaveLength(30);
+    expect(sealBenefitRun(ROOT, directory).coverage.recorded).toBe(30);
   });
 
   it('rejects absent or failed calibration before importing a measured receipt', () => {
