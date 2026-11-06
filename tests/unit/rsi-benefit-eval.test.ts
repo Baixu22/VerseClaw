@@ -144,7 +144,7 @@ describe('measured receipt admission (synthetic contract controls, no provider c
     expect(imported[0].outcome).toBe('fail');
     expect(imported).toHaveLength(30);
     expect(sealBenefitRun(ROOT, directory).coverage.recorded).toBe(30);
-  });
+  }, 180_000); // Restores immutable history for all 24 task identities, including reconstruction inputs.
 
   it('rejects absent or failed calibration before importing a measured receipt', () => {
     const { directory, plan, receipts } = measuredPack();

@@ -65,9 +65,14 @@ function sanitizedEnvironment(homeDirectory) {
   return env;
 }
 
+const commitExistsCache = new Set();
+const gitBlobCache = new Map();
 function gitObjectExists(root, revision) {
+  const key = `${resolve(root)}\0${revision}`;
+  if (commitExistsCache.has(key)) return true;
   try {
     execFileSync('git', ['-C', root, 'cat-file', '-e', `${revision}^{commit}`], { stdio: 'ignore', windowsHide: true });
+    commitExistsCache.add(key);
     return true;
   } catch {
     return false;
@@ -75,7 +80,9 @@ function gitObjectExists(root, revision) {
 }
 
 function gitBlob(root, revision, path) {
-  return execFileSync('git', ['-C', root, 'show', `${revision}:${path}`], { windowsHide: true, maxBuffer: 64 * 1024 * 1024 });
+  const key = `${resolve(root)}\0${revision}\0${path}`;
+  if (!gitBlobCache.has(key)) gitBlobCache.set(key, execFileSync('git', ['-C', root, 'show', `${revision}:${path}`], { windowsHide: true, maxBuffer: 64 * 1024 * 1024 }));
+  return gitBlobCache.get(key);
 }
 
 function readJson(path) {
