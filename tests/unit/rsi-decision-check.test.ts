@@ -14,6 +14,15 @@ const readAcceptance = () => JSON.parse(readFileSync(join(ROOT, PATHS.acceptance
 const codes = (result: { errors: Array<{ code: string }> }) => result.errors.map((entry) => entry.code);
 
 describe('rsi decision acceptance readback', () => {
+  it('rejects an emptied hash inventory or a judged source relabelled non-judged', () => {
+    const missing = readAcceptance();
+    missing.source.gitBlobHashes = {};
+    expect(codes(validateDecisionAcceptance(missing, ROOT, { allowDirty: true }))).toContain('bound-file-coverage');
+    const bypass = readAcceptance();
+    bypass.source.nonJudgedInputs['scripts/lib/paired-ablation.mjs'] = 'not judged';
+    expect(codes(validateDecisionAcceptance(bypass, ROOT, { allowDirty: true }))).toContain('non-judged-scope');
+  });
+
   it('passes on the checked-in record and agrees with the decisions file', () => {
     const result = validateDecisionAcceptance(readAcceptance(), ROOT, { allowDirty: true });
 
@@ -46,6 +55,18 @@ describe('rsi decision acceptance readback', () => {
     expect(result.passed).toBe(true);
   });
 
+  it('keeps README documentation drift out of the RSI hard-failure scope', () => {
+    const acceptance = readAcceptance();
+    for (const path of ['README.ja-JP.md', 'README.md', 'README.zh-CN.md']) {
+      acceptance.source.gitBlobHashes[path] = '0'.repeat(40);
+    }
+
+    const result = validateDecisionAcceptance(acceptance, ROOT, { allowDirty: true });
+
+    expect(codes(result)).not.toContain('bound-file-drift');
+    expect(result.warnings.filter((entry) => entry.code === 'non-judged-drift' && entry.message.startsWith('README.'))).toHaveLength(3);
+    expect(result.passed).toBe(true);
+  });
   it('fails when the acceptance disagrees with the decisions file', () => {
     const acceptance = readAcceptance();
     acceptance.decisions.find((entry: { id: string }) => entry.id === 'D1').choice = 'A';

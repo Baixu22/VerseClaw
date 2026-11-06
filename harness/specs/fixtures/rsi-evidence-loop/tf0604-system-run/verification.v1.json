@@ -350,7 +350,9 @@
       "wallClockP50Ms": null,
       "wallClockP95Ms": null,
       "treatmentTokensPerCompletedCase": null,
+      "treatmentToolCallsPerCompletedCase": null,
       "observedRelativeTokenIncrease": null,
+      "observedRelativeToolCallIncrease": null,
       "costCeilingRelativeIncrease": 0.1
     },
     "failureClasses": {
@@ -679,7 +681,9 @@
       "wallClockP50Ms": null,
       "wallClockP95Ms": null,
       "treatmentTokensPerCompletedCase": null,
+      "treatmentToolCallsPerCompletedCase": null,
       "observedRelativeTokenIncrease": null,
+      "observedRelativeToolCallIncrease": null,
       "costCeilingRelativeIncrease": 0.1
     },
     "failureClasses": {
@@ -704,10 +708,10 @@
   "reanalysisBoundary": "Diagnostic recomputation only. V2 was not pre-registered for this run; safety annotations and cost measurements are unavailable. Original source bytes and failure are preserved.",
   "evaluatorInputHashes": {
     "scripts/rsi-measurement-archive.mjs": "7a13c26099e4348907c57b1317cef5a5fe2009969bee86a53a7c2090f1fd5ef3",
-    "scripts/rsi-tf0592-statistical-adjudication.mjs": "f58483cf50346cdf11bfa12fc60eaaa74aebeab1f81f0741953195f1fcb1f3ac",
+    "scripts/rsi-tf0592-statistical-adjudication.mjs": "586819cea8c88a6c32d391ecb8634f863967e2de9592eeec4318f8b5bc9a4291",
     "scripts/rsi-tf0604-baseline.mjs": "796a6238586dea788d172cde296fc6dd86eafc17b7c6301e6e8349cefbe5a57b",
-    "scripts/lib/reliability-aggregation.mjs": "1992d1aa0f64649b049b364cbb7241dc739dd3ef4329787ba8beaab358ebc3ed",
-    "scripts/lib/paired-ablation.mjs": "f13dbe9835585ae929ec44488efef28f7c95ea5e1b19d80ee063259fde7cdeaa",
+    "scripts/lib/reliability-aggregation.mjs": "764b31e2244dc70945ba4a15a90c9be6b6b7b7b02e40236fd86c5b54adb37483",
+    "scripts/lib/paired-ablation.mjs": "df61dddd780abe1945d5d204308077da1f290fc7b328722061cbd150e6884e32",
     "harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v2.json": "d8803c95fbf5fac238ebbd0cda7fed5562e2289bcc0a211de8a8856fe6ad89a8"
   },
   "claims": {

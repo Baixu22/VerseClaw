@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "completedAt": "2026-11-05T00:30:51.987Z",
+  "status": "pass",
+  "integrationCommit": "64e36f236aaaef43c3e1077443e75faeb1276423",
+  "previousMain": "538c443ef95ad7788bf870f7840ffd8b82220449",
+  "repairTip": "01e49470575a822be582eb575f250413e2d629e1",
+  "parents": "538c443ef95ad7788bf870f7840ffd8b82220449 01e49470575a822be582eb575f250413e2d629e1",
+  "patchSha256": "553ed2c72855982cf6dc11fabafb4a918b9c6237d478655da44fa324de79597e",
+  "preservedExistingEdits": true,
+  "preservedExistingIndex": true,
+  "touchedPaths": 124,
+  "reviewedCoreFilesMatched": 26,
+  "browserDistFilesMatched": 508,
+  "postMergeTests": {
+    "unit": {
+      "passed": 90,
+      "failed": 0,
+      "skipped": 0,
+      "artifact": "main-integration-unit.json"
+    },
+    "node": {
+      "passed": 13,
+      "artifact": "main-integration-node.txt"
+    }
+  },
+  "resolvedIntegrationFailure": {
+    "artifact": "main-stale-browser-dist-failure.json",
+    "cause": "Main source had merged correctly, but its ignored browser dist still predated the new session hooks.",
+    "resolution": "pnpm run versebrowser:build; then reran the same 90 tests successfully."
+  },
+  "scope": "Merged repaired component source and rebuilt the browser module in main. Unrelated concurrent main changes remain outside the isolated full-package acceptance scope.",
+  "headAtCapture": "64e36f236aaaef43c3e1077443e75faeb1276423"
+}

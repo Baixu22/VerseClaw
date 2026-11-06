@@ -1,0 +1,337 @@
+{
+  "schemaVersion": "RsiLiveTaskAdmission/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-independent-calibrator",
+  "taskId": "tf-0290-g02",
+  "source": {
+    "id": "tf-0290-g02",
+    "base": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+    "reference": "ef12077c63b264f2aa05f0eaa1e0e760ae57ca23",
+    "productChanges": [],
+    "originalDecision": "PASS",
+    "sourceRecord": "docs/dev/harness-gap-closure/g02-acceptance.json",
+    "sourceRecordDigest": "1bb54cbc25f437496ffdecb71f808562d633b123bd115901e91ef0c3d94aaea0",
+    "oraclePaths": [
+      "tests/unit/spec-doc-gardening.test.ts"
+    ],
+    "commands": [
+      "pnpm exec vitest run tests/unit/spec-doc-gardening.test.ts --maxWorkers=1",
+      "node scripts/check-spec-lifecycle.mjs"
+    ]
+  },
+  "stages": {
+    "reference": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0290-g02",
+      "commands": [
+        "pnpm exec vitest run tests/unit/spec-doc-gardening.test.ts --maxWorkers=1",
+        "node scripts/check-spec-lifecycle.mjs"
+      ],
+      "executions": [
+        {
+          "command": "pnpm exec vitest run tests/unit/spec-doc-gardening.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\ClawX\\node_modules\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\vitest.mjs",
+            "run",
+            "tests/unit/spec-doc-gardening.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0290-g02\\reference\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0290-g02\\reference\\workspace",
+          "exitCode": 0,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 2,
+            "numPassedTestSuites": 2,
+            "numFailedTestSuites": 0,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 3,
+            "numPassedTests": 3,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793868224862,
+            "success": true,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "G02 spec/doc gardening boundary"
+                    ],
+                    "fullName": "G02 spec/doc gardening boundary every task spec carries a valid lifecycleStatus (archive, never mechanical delete)",
+                    "status": "passed",
+                    "title": "every task spec carries a valid lifecycleStatus (archive, never mechanical delete)",
+                    "duration": 68.90419999999995,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "G02 spec/doc gardening boundary"
+                    ],
+                    "fullName": "G02 spec/doc gardening boundary keeps the AGENTS.md entry routable (not an ossified spec dump)",
+                    "status": "passed",
+                    "title": "keeps the AGENTS.md entry routable (not an ossified spec dump)",
+                    "duration": 0.5032999999999674,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "G02 spec/doc gardening boundary"
+                    ],
+                    "fullName": "G02 spec/doc gardening boundary has a single doc-gardening rule and does not create a parallel spec list",
+                    "status": "passed",
+                    "title": "has a single doc-gardening rule and does not create a parallel spec list",
+                    "duration": 0.7474999999999454,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793868225468,
+                "endTime": 1793868225537.7476,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0290-g02/reference/workspace/tests/unit/spec-doc-gardening.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0290-g02\\reference\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0290-g02\\reference\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0290-g02\\reference\\oracle\\01-stderr.log"
+        },
+        {
+          "command": "node scripts/check-spec-lifecycle.mjs",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/check-spec-lifecycle.mjs"
+          ],
+          "kind": "command",
+          "cwd": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0290-g02\\reference\\workspace",
+          "exitCode": 0,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "kind": "command",
+            "exitCode": 0,
+            "stdoutDigest": "2b45d3c05f3f2e7e1faa590f4e25a379a8885954a3a8473fa7f7cd8357a6358c",
+            "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "reportPath": null,
+          "stdoutPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0290-g02\\reference\\oracle\\02-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0290-g02\\reference\\oracle\\02-stderr.log"
+        }
+      ],
+      "numTotalTests": 3,
+      "numPassedTests": 3,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": true,
+      "failureClass": null,
+      "timeoutMs": 300000,
+      "oracleHashBefore": "1725b7930c467bb8eab8a68116bd0df105b472efc1dd8a9fbced620c510ca6d9",
+      "oracleHashAfter": "1725b7930c467bb8eab8a68116bd0df105b472efc1dd8a9fbced620c510ca6d9",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-spec-doc-gardening.md": "ec5004bce21e5ab4a017830c20fe0116fe77e0ea6cdc58711a89ec51ab218535",
+        "tests/unit/spec-doc-gardening.test.ts": "968bf0a818599d9b0dd5d912d676aa287ea895cbabc23288ab613f1e393f0837",
+        "scripts/check-spec-lifecycle.mjs": "b06eb534725cd3941048076d5c1fd73941be8eb0110b7c768d37f17da967ae02"
+      },
+      "diagnostics": [],
+      "workspace": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0290-g02\\reference\\workspace",
+      "outDir": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0290-g02\\reference\\oracle",
+      "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0290-g02\\reference\\oracle\\run-report.json"
+    },
+    "baseline": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0290-g02",
+      "commands": [
+        "pnpm exec vitest run tests/unit/spec-doc-gardening.test.ts --maxWorkers=1",
+        "node scripts/check-spec-lifecycle.mjs"
+      ],
+      "executions": [
+        {
+          "command": "pnpm exec vitest run tests/unit/spec-doc-gardening.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\ClawX\\node_modules\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\vitest.mjs",
+            "run",
+            "tests/unit/spec-doc-gardening.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0290-g02\\baseline\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0290-g02\\baseline\\workspace",
+          "exitCode": 1,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 2,
+            "numPassedTestSuites": 0,
+            "numFailedTestSuites": 2,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 3,
+            "numPassedTests": 1,
+            "numFailedTests": 2,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793868241769,
+            "success": false,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "G02 spec/doc gardening boundary"
+                    ],
+                    "fullName": "G02 spec/doc gardening boundary every task spec carries a valid lifecycleStatus (archive, never mechanical delete)",
+                    "status": "failed",
+                    "title": "every task spec carries a valid lifecycleStatus (archive, never mechanical delete)",
+                    "duration": 92.61689999999999,
+                    "failureMessages": [
+                      "AssertionError: missing lifecycleStatus:\nharness/specs/tasks/harness-gap-browser-effect-boundary.md\nharness/specs/tasks/harness-gap-checkpoint-attachment-binding.md\nharness/specs/tasks/harness-gap-context-pressure-recovery.md\nharness/specs/tasks/harness-gap-credential-use-boundary.md\nharness/specs/tasks/harness-gap-envelope-reject.md\nharness/specs/tasks/harness-gap-error-recovery-next-action.md\nharness/specs/tasks/harness-gap-external-write-boundary.md\nharness/specs/tasks/harness-gap-hot-file-write-owner.md\nharness/specs/tasks/harness-gap-in-run-steering.md\nharness/specs/tasks/harness-gap-memory-effect-receipt.md\nharness/specs/tasks/harness-gap-paired-ablation.md\nharness/specs/tasks/harness-gap-rate-circuit-breaker.md\nharness/specs/tasks/harness-gap-reliability-aggregation.md\nharness/specs/tasks/harness-gap-sink-ledger.md\nharness/specs/tasks/harness-gap-trace-cost-sampling.md\nharness/specs/tasks/harness-gap-verifier-completion-verdict.md\nharness/specs/tasks/harness-gap-working-context-single-source.md: expected [ …(17) ] to deeply equal []\n    at D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0290-g02/baseline/workspace/tests/unit/spec-doc-gardening.test.ts:38:72\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+                    ],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "G02 spec/doc gardening boundary"
+                    ],
+                    "fullName": "G02 spec/doc gardening boundary keeps the AGENTS.md entry routable (not an ossified spec dump)",
+                    "status": "passed",
+                    "title": "keeps the AGENTS.md entry routable (not an ossified spec dump)",
+                    "duration": 1.2726999999999862,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "G02 spec/doc gardening boundary"
+                    ],
+                    "fullName": "G02 spec/doc gardening boundary has a single doc-gardening rule and does not create a parallel spec list",
+                    "status": "failed",
+                    "title": "has a single doc-gardening rule and does not create a parallel spec list",
+                    "duration": 1.462699999999984,
+                    "failureMessages": [
+                      "AssertionError: expected [] to deeply equal [ 'spec-doc-gardening-boundary.md' ]\n    at D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0290-g02/baseline/workspace/tests/unit/spec-doc-gardening.test.ts:54:23\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+                    ],
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793868242739,
+                "endTime": 1793868242834.4626,
+                "status": "failed",
+                "message": "",
+                "name": "D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0290-g02/baseline/workspace/tests/unit/spec-doc-gardening.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0290-g02\\baseline\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0290-g02\\baseline\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0290-g02\\baseline\\oracle\\01-stderr.log"
+        },
+        {
+          "command": "node scripts/check-spec-lifecycle.mjs",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "scripts/check-spec-lifecycle.mjs"
+          ],
+          "kind": "command",
+          "cwd": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0290-g02\\baseline\\workspace",
+          "exitCode": 1,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "kind": "command",
+            "exitCode": 1,
+            "stdoutDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stderrDigest": "7064b504ba15147bfe771b07c32c932928cc46ec43d33fbc2d7c8fca34c1f8b4"
+          },
+          "reportPath": null,
+          "stdoutPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0290-g02\\baseline\\oracle\\02-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0290-g02\\baseline\\oracle\\02-stderr.log"
+        }
+      ],
+      "numTotalTests": 3,
+      "numPassedTests": 1,
+      "numFailedTests": 2,
+      "numPendingTests": 0,
+      "passed": false,
+      "failureClass": "assertion",
+      "timeoutMs": 300000,
+      "oracleHashBefore": "1725b7930c467bb8eab8a68116bd0df105b472efc1dd8a9fbced620c510ca6d9",
+      "oracleHashAfter": "1725b7930c467bb8eab8a68116bd0df105b472efc1dd8a9fbced620c510ca6d9",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-spec-doc-gardening.md": "ec5004bce21e5ab4a017830c20fe0116fe77e0ea6cdc58711a89ec51ab218535",
+        "tests/unit/spec-doc-gardening.test.ts": "968bf0a818599d9b0dd5d912d676aa287ea895cbabc23288ab613f1e393f0837",
+        "scripts/check-spec-lifecycle.mjs": "b06eb534725cd3941048076d5c1fd73941be8eb0110b7c768d37f17da967ae02"
+      },
+      "diagnostics": [],
+      "workspace": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0290-g02\\baseline\\workspace",
+      "outDir": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0290-g02\\baseline\\oracle",
+      "reportPath": "D:\\tmp\\rsi-live-admission-20261105-v5-final\\calibration\\tf-0290-g02\\baseline\\oracle\\run-report.json"
+    }
+  },
+  "admission": {
+    "passed": true,
+    "issues": []
+  },
+  "claims": {
+    "modelQuality": false,
+    "benefit": false,
+    "realHuman": false
+  }
+}

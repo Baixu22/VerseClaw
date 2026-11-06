@@ -169,6 +169,9 @@ flowchart LR
 - Sessions используют JSONL transcripts; runtime state также использует SQLite.
 - Token history строится из structured session usage; cost является оценкой.
 - Knowledge использует `memory-wiki` vault и local governance metadata.
+- Наблюдаемые папки сверяют добавления, изменения и удаления с версиями кандидатов на проверку, включая изменения во время остановки приложения.
+- Librarian передаёт допущенные источники и ограниченную историю настроенной модели Gateway, проверяет точные цитаты и версии, явно показывает неполные чтения, конфликты и ошибки модели. Studio сохраняет выдержки как черновики для проверки.
+- Реализованы китайский лексический поиск, ограниченное продолжение чтения, кеш embedding с изоляцией provider и выводы Steward с привязкой к версии. Необязательный коннектор публичного каталога GitHub отправляет изменения и отзывы в Inbox; другие SaaS-коннекторы не реализованы.
 - Logs, traces, screenshots, Task Forest и handoffs являются local working data, пока явно не curated.
 
 Локальное хранение не означает offline execution. Online models, channels, browsers и external tools получают данные согласно конфигурации. Не коммитьте credentials, private transcripts и raw logs.

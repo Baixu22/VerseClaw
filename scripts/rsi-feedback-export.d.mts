@@ -1,11 +1,11 @@
 export const FEEDBACK_EXPORT_PATH: string;
 export type FeedbackExportRow = {
   id: string; injectionId: string | null; cardId: string | null; caseId: string | null;
-  roleName: string | null; outcome: string; taskSuccess: boolean; createdAt: string | null;
+  roleName: string | null; outcome: string; taskSuccess: 'success' | 'partial' | 'failure' | 'unknown'; createdAt: string | null;
 };
 export type FeedbackExport = {
   schemaVersion: string; generatedAt: string; driven_by: string; actor: string;
-  source: { dbPath: string; state: string; note?: string };
+  source: { dbPath: string; state: string; note?: string; totalRows?: number; exportedRows?: number; truncated?: boolean };
   records: FeedbackExportRow[];
 };
 export function resolveStateDbPath(env?: Record<string, string | undefined>): string;

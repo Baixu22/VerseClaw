@@ -14,8 +14,9 @@
  * - Policy v2, the annotated corpus and the curated historical run must still
  *   satisfy the chosen options.
  * - Every bound blob is hashed against disk. Files declared in
- *   `source.nonJudgedInputs` are reported as warnings, never as failures: they
- *   are repository registries that unrelated tasks legitimately edit.
+ *   `source.nonJudgedInputs` are reported as warnings, never as failures:
+ *   repository registries and README documentation are legitimately edited by
+ *   unrelated tasks, while RSI code, fixtures and rules remain hard failures.
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
@@ -26,6 +27,92 @@ import { parseArgs } from 'node:util';
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+// The checker owns coverage; the mutable acceptance record cannot omit a
+// judged source or relabel it as non-judged to bypass verification.
+const NON_JUDGED_PATHS = [
+  '.gitignore',
+  'README.ja-JP.md',
+  'README.md',
+  'README.zh-CN.md',
+  'scripts/repository-artifacts.json',
+];
+const REQUIRED_BOUND_PATHS = [
+  '.gitignore',
+  'README.ja-JP.md',
+  'README.md',
+  'README.zh-CN.md',
+  'docs/dev/rsi-capability-and-boundaries.md',
+  'docs/dev/rsi-decision-implementation.md',
+  'harness/specs/fixtures/agent-first-framework/loop-validation-report.json',
+  'harness/specs/fixtures/rsi-evidence-loop/capability-matrix.v1.json',
+  'harness/specs/fixtures/rsi-evidence-loop/decisions.20261101.json',
+  'harness/specs/fixtures/rsi-evidence-loop/evidence-identities.v1.json',
+  'harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v2.json',
+  'harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/SHA256SUMS',
+  'harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/aggregate.json',
+  'harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/corpus.v1.json',
+  'harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/manifest.json',
+  'harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/progress.json',
+  'harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/promotion-policy.v1.json',
+  'harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/provenance.v1.json',
+  'harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/raw-trials.v1.json',
+  'harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/run-audit.json',
+  'harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/run-exclusions.json',
+  'harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/verification.v1.json',
+  'harness/specs/fixtures/rsi-evidence-loop/tf0604/task-corpus.v1.json',
+  'harness/specs/rules/paired-ablation-boundary.md',
+  'harness/specs/rules/reliability-aggregation-boundary.md',
+  'harness/specs/tasks/rsi-decision-implementation.md',
+  'harness/specs/tasks/rsi-evidence-loop-contract.md',
+  'harness/specs/tasks/rsi-tf0592-statistical-adjudication.md',
+  'harness/specs/tasks/rsi-tf0604-baseline-corpus.md',
+  'openclaw_runtime/src/context-engine/handlers/task-loop-handler.test.ts',
+  'openclaw_runtime/src/context-engine/handlers/task-loop-handler.ts',
+  'scripts/lib/evidence-binding.d.mts',
+  'scripts/lib/evidence-binding.mjs',
+  'scripts/lib/paired-ablation.d.mts',
+  'scripts/lib/paired-ablation.mjs',
+  'scripts/lib/reliability-aggregation.d.mts',
+  'scripts/lib/reliability-aggregation.mjs',
+  'scripts/repository-artifacts.json',
+  'scripts/rsi-decision-check.mjs',
+  'scripts/rsi-feedback-export.d.mts',
+  'scripts/rsi-feedback-export.mjs',
+  'scripts/rsi-feedback-pilot.d.mts',
+  'scripts/rsi-feedback-pilot.mjs',
+  'scripts/rsi-measurement-archive.d.mts',
+  'scripts/rsi-measurement-archive.mjs',
+  'scripts/rsi-sekb-arms.d.mts',
+  'scripts/rsi-sekb-arms.mjs',
+  'scripts/rsi-tf0592-statistical-adjudication.d.mts',
+  'scripts/rsi-tf0592-statistical-adjudication.mjs',
+  'scripts/rsi-tf0604-baseline.d.mts',
+  'scripts/rsi-tf0604-baseline.mjs',
+  'shared/i18n/locales/en/agents.json',
+  'shared/i18n/locales/en/knowledge.json',
+  'shared/i18n/locales/ja/agents.json',
+  'shared/i18n/locales/ja/knowledge.json',
+  'shared/i18n/locales/ru/agents.json',
+  'shared/i18n/locales/ru/knowledge.json',
+  'shared/i18n/locales/zh/agents.json',
+  'shared/i18n/locales/zh/knowledge.json',
+  'src/components/agents/RolesOrchestrationPanel.tsx',
+  'src/pages/Knowledge/index.tsx',
+  'tests/e2e/knowledge-hub.spec.ts',
+  'tests/e2e/role-memory-panel.spec.ts',
+  'tests/unit/agent-dev-ablation-verdict-guards.test.ts',
+  'tests/unit/agent-dev-paired-ablation.test.ts',
+  'tests/unit/agent-dev-reliability-aggregation.test.ts',
+  'tests/unit/evidence-binding.test.ts',
+  'tests/unit/rsi-decision-check.test.ts',
+  'tests/unit/rsi-evidence-loop-contract.test.ts',
+  'tests/unit/rsi-feedback-export.test.ts',
+  'tests/unit/rsi-feedback-pilot.test.ts',
+  'tests/unit/rsi-measurement-archive.test.ts',
+  'tests/unit/rsi-sekb-arms.test.ts',
+  'tests/unit/rsi-tf0592-statistical-adjudication.test.ts',
+  'tests/unit/runtime-memory-paired-ablation.test.ts',
+];
 export const PATHS = {
   acceptance: 'harness/specs/fixtures/rsi-evidence-loop/decision-implementation-validation.v1.json',
   decisions: 'harness/specs/fixtures/rsi-evidence-loop/decisions.20261101.json',
@@ -65,7 +152,10 @@ export function validateDecisionAcceptance(acceptance, root = ROOT, options = {}
   if (acceptance?.driven_by !== 'agent' || typeof acceptance?.actor !== 'string' || acceptance.actor.length === 0) {
     errors.push(error('agent-label', 'acceptance must be agent-driven with a concrete actor'));
   }
-  if (acceptance?.boundaries && Object.entries(acceptance.boundaries).some(([key, value]) => key !== 'driven_by' && value !== false && value !== 0)) {
+  const expectedBoundaries = { driven_by: 'agent', realHuman: false, additionalProviderCalls: 0,
+    completeRsiImplementation: false, liveReady: false, productApproved: false, defaultOn: false, releaseApproved: false };
+  if (Object.keys(acceptance?.boundaries ?? {}).length !== Object.keys(expectedBoundaries).length
+    || Object.entries(expectedBoundaries).some(([key, value]) => acceptance?.boundaries?.[key] !== value)) {
     errors.push(error('boundary', 'integration acceptance cannot authorise product, release, human or capability claims'));
   }
   if (acceptance?.boundaries?.driven_by !== 'agent') errors.push(error('boundary', 'boundaries.driven_by must be agent'));
@@ -78,6 +168,7 @@ export function validateDecisionAcceptance(acceptance, root = ROOT, options = {}
   }
   const expected = new Map((decisions?.decisions ?? []).map((entry) => [entry.id, entry.choice]));
   const actual = new Map((acceptance?.decisions ?? []).map((entry) => [entry.id, entry.choice]));
+  if (actual.size !== 6 || acceptance?.decisions?.length !== 6) errors.push(error('decision-coverage', 'exactly six distinct decisions are required'));
   for (const id of ['D1', 'D2', 'D3', 'D4', 'D5', 'D6']) {
     if (!expected.has(id)) errors.push(error('decision-missing', `decisions file has no ${id}`));
     if (actual.get(id) !== expected.get(id)) {
@@ -95,8 +186,8 @@ export function validateDecisionAcceptance(acceptance, root = ROOT, options = {}
     errors.push(error('policy-read', `cannot read ${PATHS.policyV2}`));
   }
   if (policy && expected.get('D1') === 'C') {
-    if (!Number.isInteger(policy.taskSet?.maxFlakeCases) || policy.taskSet.maxFlakeCases < 0) {
-      errors.push(error('d1-case-count', 'D1=C requires an integer taskSet.maxFlakeCases'));
+    if (policy.taskSet?.maxFlakeCases !== 1) {
+      errors.push(error('d1-case-count', 'D1=C requires taskSet.maxFlakeCases = 1'));
     }
     if (policy.taskSet?.maxSafetyFlakeCases !== 0) {
       errors.push(error('d1-safety-zero', 'D1=C requires taskSet.maxSafetyFlakeCases = 0'));
@@ -151,6 +242,12 @@ export function validateDecisionAcceptance(acceptance, root = ROOT, options = {}
   const bound = acceptance?.source?.gitBlobHashes ?? {};
   const nonJudged = acceptance?.source?.nonJudgedInputs ?? {};
   const hashDrift = [];
+  for (const path of REQUIRED_BOUND_PATHS) {
+    if (!/^[a-f0-9]{40}$/u.test(bound[path] ?? '')) errors.push(error('bound-file-coverage', path));
+  }
+  for (const path of Object.keys(nonJudged)) {
+    if (!NON_JUDGED_PATHS.includes(path)) errors.push(error('non-judged-scope', path));
+  }
   if (!options.skipHashes) {
     for (const [path, recorded] of Object.entries(bound)) {
       const current = gitHashObject(root, path);

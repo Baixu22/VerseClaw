@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m10-packaged-flow",
+  "driven_by": "agent",
+  "actor": "codex",
+  "exe": "D:/ClawX/.ae/verse-tools-package-20261104/win-unpacked/Verse Claw.exe",
+  "build": {
+    "schemaVersion": 1,
+    "artifacts": [
+      {
+        "path": "Verse Claw.exe",
+        "bytes": 214315008,
+        "sha256": "977cdbe80e5a64cea1501d9d6cfd5ee3d72aff6da215c71291e12aee44ab7626"
+      },
+      {
+        "path": "resources/app.asar",
+        "bytes": 306472538,
+        "sha256": "157235d76b6deaf444b30530e09288938778d62eec297bf5684390b3797cf503"
+      },
+      {
+        "path": "resources/main-runtime.asar",
+        "bytes": 730562341,
+        "sha256": "b016c09f04041cbe7c893c4f7201e7c62d4752c289907b558afbd9f60146d37c"
+      }
+    ],
+    "digest": "fa9a367c3fa7ee7217bfbd5701a91e80ce4277650dd3b934ce3754794fb675a0"
+  },
+  "fixtureUrl": "http://127.0.0.1:51320/",
+  "runId": "m10-mw2aji1a",
+  "pageTitle": "Verse Claw",
+  "hostBridgePresent": true,
+  "defaultDeny": {
+    "id": "2d152e7d-d3c4-4cb1-a914-45cab4ff3d1f",
+    "ok": false,
+    "error": {
+      "code": "INTERNAL",
+      "message": "Agent browser open blocked: private-network-default-deny (address class loopback)",
+      "details": {
+        "backendCode": "E_BROWSER_PRIVATE_NETWORK_DENIED"
+      }
+    }
+  },
+  "approval": {
+    "sessionId": "agent:main:m10-mw2aji1a",
+    "origin": "http://127.0.0.1:51320",
+    "grantedAt": 1793807301239,
+    "expiresAt": 1793807901239,
+    "grantedBy": "agent"
+  },
+  "flow": {
+    "enabled": true,
+    "openOk": false,
+    "openError": {
+      "code": "INTERNAL",
+      "message": "Atomic lock failed for [redacted-path] (EPERM): EPERM: operation not permitted, open '[redacted-path]'",
+      "details": {
+        "backendCode": "EPERM"
+      }
+    }
+  },
+  "checks": {
+    "host_bridge_present": true,
+    "private_network_default_deny": true,
+    "real_session_opened": false,
+    "sandbox_fails_closed_without_upgrade": false,
+    "runtime_mode_upgrade_ok": false,
+    "snapshot_returns_fixture_content": false,
+    "session_owned_by_requested_key": false,
+    "session_closed": false
+  },
+  "status": "fail",
+  "issues": []
+}

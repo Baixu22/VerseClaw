@@ -1,0 +1,203 @@
+{
+  "schemaVersion": "RsiLiveAcceptance/v1",
+  "generatedAt": "2026-11-04T16:51:15.168Z",
+  "driven_by": "agent",
+  "actor": "codex/rsi-live-integrator",
+  "status": "NO_GO",
+  "phase": "live-resource-and-task-admission",
+  "taskForestNode": "TF-0785",
+  "request": {
+    "provider": "local-responses",
+    "endpoint": "http://127.0.0.1:3065/v1/responses",
+    "model": "space-bunny",
+    "financialLimit": "uncapped-by-owner",
+    "credentialsPersisted": false
+  },
+  "candidate": {
+    "baseline": "bd677408fd665bdef7cdf6940cdd1f4389f62caa",
+    "commit": "18faaf27d75e8d114b97c85c48af68ff0d97da4a",
+    "tree": "0bd2a2786100272f989448bf68013ad84aca4acb",
+    "sourceHashes": {
+      "harness/specs/tasks/rsi-live-acceptance.md": "8077f2ab3cd0225c2c0f013be07f7cd87f79611f6b61147a347667b6f8ffd020",
+      "scripts/lib/rsi-benefit-eval.mjs": "e1caf095267298f3a2906e8f7421a7bf0d5a71a6e9b31ea155fd07209fcefe5e",
+      "scripts/lib/rsi-live-grader.d.mts": "1a8ac07bff242889e81074af22ed1413b303dd01202113696c7d8a26b39d21c3",
+      "scripts/lib/rsi-live-grader.mjs": "af6445a8018ac0dc6884e8ec326fc6f58b04632204565b5acfba92ee65aa8880",
+      "scripts/rsi-live-acceptance.d.mts": "2b9e322c84111f9a8583c022f3d7ff39affbb1abc08cc90a62aff2db11f224ee",
+      "scripts/rsi-live-acceptance.mjs": "74cf1616bbca03fd383e798f59da210e3ffbbf5523da7ca1abdae0575bf54be1",
+      "tests/unit/rsi-benefit-eval.test.ts": "2fe64f9e221591fbae11c6c5a6cd441b29ed31ebb2a05ffe3be7c3bc564ee84c",
+      "tests/unit/rsi-live-acceptance.test.ts": "38bb5a9c3ffe0c607c11f5196481567d57db5aa7e3a95e600a9007096cb6d8e1",
+      "tests/unit/rsi-live-grader.test.ts": "9b9fd9434f8659040de016de3c479c998145400d1c5bf31a3cf5b7f7461e82b4"
+    }
+  },
+  "provider": {
+    "attemptedRequests": 4,
+    "completedResponses": 2,
+    "failedOrTimedOut": 2,
+    "knownTotalTokens": 404,
+    "requestsWithoutUsage": 2,
+    "totalBilledTokens": null,
+    "modelIdentity": "endpoint-reported space-bunny alias; underlying model identity unverified",
+    "boundary": "These are endpoint preflights, not any of the 216 task slots."
+  },
+  "calibration": [
+    {
+      "taskId": "tf-0274-e01",
+      "reference": {
+        "passed": false,
+        "total": 8,
+        "passedTests": 6,
+        "failed": 2,
+        "skipped": 0,
+        "exits": [
+          1
+        ],
+        "oracleUnchanged": true
+      },
+      "baseline": {
+        "passed": false,
+        "total": 0,
+        "passedTests": 0,
+        "failed": 0,
+        "skipped": 0,
+        "exits": [
+          1
+        ],
+        "oracleUnchanged": true
+      },
+      "issues": [
+        "reference-oracle-not-passing",
+        "baseline-has-no-gradeable-failure"
+      ]
+    },
+    {
+      "taskId": "tf-0283-l01",
+      "reference": {
+        "passed": true,
+        "total": 14,
+        "passedTests": 14,
+        "failed": 0,
+        "skipped": 0,
+        "exits": [
+          0
+        ],
+        "oracleUnchanged": true
+      },
+      "baseline": {
+        "passed": true,
+        "total": 14,
+        "passedTests": 14,
+        "failed": 0,
+        "skipped": 0,
+        "exits": [
+          0
+        ],
+        "oracleUnchanged": true
+      },
+      "issues": [
+        "baseline-already-passes"
+      ]
+    }
+  ],
+  "corpusAudit": {
+    "tasks": 24,
+    "tasksWithOracleDriftFromHistoricalReference": 11,
+    "observedCalibrationRejections": 2,
+    "tasksNotCalibratedAfterHardFailure": 22
+  },
+  "trialExecution": {
+    "planned": 216,
+    "executed": 0,
+    "unexecuted": 216,
+    "reason": "frozen-corpus-admission-failed"
+  },
+  "quality": {
+    "measured": false,
+    "passK": null,
+    "effect": null,
+    "confidenceInterval": null,
+    "costRatio": null,
+    "conclusion": "The current experiment is invalid for benefit inference. No conclusion about model quality or RSI gain is made."
+  },
+  "fixes": [
+    "Restore historical base/reference identity from original evidence",
+    "Execute hidden frozen oracles in independent temporary workspaces",
+    "Require passing reference and gradeable unresolved baseline",
+    "Reject missing/failed calibration at receipt import, report and check",
+    "Preserve NO_GO with all 216 not-run slots",
+    "Replay raw calibration reports and complete SHA256SUMS inventory"
+  ],
+  "validation": {
+    "firstCombinedTestRun": {
+      "passed": 52,
+      "failed": 4,
+      "reason": "timeout under concurrent system load; no acceptance assertions relaxed"
+    },
+    "sequentialTests": {
+      "files": 4,
+      "passed": 56,
+      "failed": 0,
+      "skipped": 0
+    },
+    "readbackTests": {
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0
+    },
+    "typecheck": {
+      "success": true,
+      "cache": "disabled",
+      "results": [
+        {
+          "commandLine": "node scripts/generate-ext-bridge.mjs",
+          "exitCode": 0,
+          "durationMs": 1121
+        },
+        {
+          "commandLine": "pnpm run typecheck:node",
+          "exitCode": 0,
+          "durationMs": 75655
+        },
+        {
+          "commandLine": "pnpm run typecheck:web",
+          "exitCode": 0,
+          "durationMs": 35069
+        },
+        {
+          "commandLine": "pnpm run typecheck:test",
+          "exitCode": 0,
+          "durationMs": 144224,
+          "observationMode": false,
+          "errorCount": 0,
+          "errorLog": "D:\\tmp\\rsi-review-20261104\\verify\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+        }
+      ]
+    },
+    "lint": {
+      "exitCode": 0,
+      "warnings": 0
+    },
+    "harness": {
+      "validate": 0,
+      "dryRun": 0
+    },
+    "independentSourceReview": {
+      "actor": "Ohm",
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "verdict": "no additional confirmed findings after fixes"
+    }
+  },
+  "nextRequired": [
+    "Version and re-register references that satisfy the current oracle",
+    "Replace or redefine already-solved starting states without selecting cases by model outcomes",
+    "Recalibrate the full task cohort before dispatching coding trials",
+    "Freeze independent SEKB candidate and runtime collector, then execute 216 actual trials"
+  ],
+  "claims": {
+    "benefit": false,
+    "promotionReady": false,
+    "completeRsiImplementation": false,
+    "realHuman": false,
+    "productLocksChanged": false,
+    "releaseApproved": false
+  }
+}

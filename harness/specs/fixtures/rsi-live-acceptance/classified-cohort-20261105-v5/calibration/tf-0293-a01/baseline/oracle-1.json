@@ -1,0 +1,1230 @@
+{
+  "numTotalTestSuites": 34,
+  "numPassedTestSuites": 27,
+  "numFailedTestSuites": 7,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 88,
+  "numPassedTests": 82,
+  "numFailedTests": 6,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793865361433,
+  "success": false,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "A01 A1 isolation pilot gate coverage"
+          ],
+          "fullName": "A01 A1 isolation pilot gate coverage keeps the A1 spec's requiredTests wired to the criterion-1/3/4 counter tests",
+          "status": "failed",
+          "title": "keeps the A1 spec's requiredTests wired to the criterion-1/3/4 counter tests",
+          "duration": 7.245199999999954,
+          "failureMessages": [
+            "AssertionError: expected '---\\nlifecycleStatus: archived\\nid: a…' to contain 'tests/unit/deprecation-counters.test.…'\n    at D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0293-a01/baseline/workspace/tests/unit/a01-a1-gate-coverage.test.ts:17:18\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A01 A1 isolation pilot gate coverage"
+          ],
+          "fullName": "A01 A1 isolation pilot gate coverage keeps the counter test asserting the 5% budget and the degrade_to_legacy response",
+          "status": "passed",
+          "title": "keeps the counter test asserting the 5% budget and the degrade_to_legacy response",
+          "duration": 0.6455000000000268,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A01 A1 isolation pilot gate coverage"
+          ],
+          "fullName": "A01 A1 isolation pilot gate coverage keeps the write-risk and namespace criteria covered by their tests",
+          "status": "passed",
+          "title": "keeps the write-risk and namespace criteria covered by their tests",
+          "duration": 0.667699999999968,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793865370794,
+      "endTime": 1793865370802.6677,
+      "status": "failed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0293-a01/baseline/workspace/tests/unit/a01-a1-gate-coverage.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.1: deprecation counters cover all 6 areas"
+          ],
+          "fullName": "Stage 4 / 4.1: deprecation counters cover all 6 areas snapshot() returns all 6 areas with zero counters initially",
+          "status": "passed",
+          "title": "snapshot() returns all 6 areas with zero counters initially",
+          "duration": 1.8088000000000193,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.1: deprecation counters cover all 6 areas"
+          ],
+          "fullName": "Stage 4 / 4.1: deprecation counters cover all 6 areas getArea() returns the correct area shape for each of the 6 areas",
+          "status": "passed",
+          "title": "getArea() returns the correct area shape for each of the 6 areas",
+          "duration": 0.38399999999990087,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.2: A1 telemetry — legacy fallback count"
+          ],
+          "fullName": "Stage 4 / 4.2: A1 telemetry — legacy fallback count incrementA1LegacyFallback increments the counter",
+          "status": "passed",
+          "title": "incrementA1LegacyFallback increments the counter",
+          "duration": 0.22860000000002856,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.2: A1 telemetry — legacy fallback count"
+          ],
+          "fullName": "Stage 4 / 4.2: A1 telemetry — legacy fallback count shadow success increments independently of legacy fallback",
+          "status": "passed",
+          "title": "shadow success increments independently of legacy fallback",
+          "duration": 0.1813000000000784,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.2: A1 telemetry — legacy fallback count"
+          ],
+          "fullName": "Stage 4 / 4.2: A1 telemetry — legacy fallback count declared-path violations are tracked separately",
+          "status": "passed",
+          "title": "declared-path violations are tracked separately",
+          "duration": 0.15410000000008495,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.3: A2 telemetry — deferral agreement"
+          ],
+          "fullName": "Stage 4 / 4.3: A2 telemetry — deferral agreement records agreement and disagreement separately",
+          "status": "passed",
+          "title": "records agreement and disagreement separately",
+          "duration": 0.1995000000000573,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.3: A2 telemetry — deferral agreement"
+          ],
+          "fullName": "Stage 4 / 4.3: A2 telemetry — deferral agreement records deferred wave count",
+          "status": "passed",
+          "title": "records deferred wave count",
+          "duration": 0.15260000000000673,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL)"
+          ],
+          "fullName": "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL) incrementA6VolatileMislabel increments the critical counter",
+          "status": "passed",
+          "title": "incrementA6VolatileMislabel increments the critical counter",
+          "duration": 0.15670000000000073,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL)"
+          ],
+          "fullName": "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL) volatile mislabel is critical — any non-zero value triggers budget violation (4.14)",
+          "status": "passed",
+          "title": "volatile mislabel is critical — any non-zero value triggers budget violation (4.14)",
+          "duration": 0.27049999999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL)"
+          ],
+          "fullName": "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL) verifier pass/fail are tracked",
+          "status": "passed",
+          "title": "verifier pass/fail are tracked",
+          "duration": 0.26490000000001146,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A1: legacy fallback rate > 5% → violated with degrade_to_legacy",
+          "status": "passed",
+          "title": "A1: legacy fallback rate > 5% → violated with degrade_to_legacy",
+          "duration": 0.2338999999999487,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A1: legacy fallback rate ≤ 5% → not violated",
+          "status": "passed",
+          "title": "A1: legacy fallback rate ≤ 5% → not violated",
+          "duration": 0.13220000000001164,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A2: disagreement rate > 10% → violated",
+          "status": "passed",
+          "title": "A2: disagreement rate > 10% → violated",
+          "duration": 0.14869999999996253,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A3: anomaly rate > 20% → violated",
+          "status": "passed",
+          "title": "A3: anomaly rate > 20% → violated",
+          "duration": 0.1493000000000393,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A4: low-quality rate > 10% → violated",
+          "status": "passed",
+          "title": "A4: low-quality rate > 10% → violated",
+          "duration": 0.12339999999994689,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A5: plan ignored rate > 20% → violated",
+          "status": "passed",
+          "title": "A5: plan ignored rate > 20% → violated",
+          "duration": 0.12260000000003402,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A6: verifier fail rate > 5% → violated",
+          "status": "passed",
+          "title": "A6: verifier fail rate > 5% → violated",
+          "duration": 0.10599999999999454,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response no violation when all counters are within budget",
+          "status": "passed",
+          "title": "no violation when all counters are within budget",
+          "duration": 0.23940000000004602,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response reset() clears all counters",
+          "status": "passed",
+          "title": "reset() clears all counters",
+          "duration": 0.16449999999997544,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793865370441,
+      "endTime": 1793865370447.2395,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0293-a01/baseline/workspace/tests/unit/deprecation-counters.test.ts"
+    },
+    {
+      "assertionResults": [],
+      "startTime": 1793865361433,
+      "endTime": 1793865361433,
+      "status": "failed",
+      "message": "Failed to resolve import \"../../openclaw_runtime/src/agents/cross-area/cross-area-facades.js\" from \"tests/unit/performance-budgets.test.ts\". Does the file exist?",
+      "name": "D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0293-a01/baseline/workspace/tests/unit/performance-budgets.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "PolicyLightSnapshotter (A1 Stage 2)",
+            "collectDeclaredWritePaths"
+          ],
+          "fullName": "PolicyLightSnapshotter (A1 Stage 2) collectDeclaredWritePaths collects paths from declared_paths profiles",
+          "status": "passed",
+          "title": "collects paths from declared_paths profiles",
+          "duration": 4.113100000000031,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PolicyLightSnapshotter (A1 Stage 2)",
+            "collectDeclaredWritePaths"
+          ],
+          "fullName": "PolicyLightSnapshotter (A1 Stage 2) collectDeclaredWritePaths collects dynamic tools separately",
+          "status": "passed",
+          "title": "collects dynamic tools separately",
+          "duration": 1.1247000000000753,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PolicyLightSnapshotter (A1 Stage 2)",
+            "collectDeclaredWritePaths"
+          ],
+          "fullName": "PolicyLightSnapshotter (A1 Stage 2) collectDeclaredWritePaths deduplicates declared paths",
+          "status": "passed",
+          "title": "deduplicates declared paths",
+          "duration": 0.9030999999999949,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PolicyLightSnapshotter (A1 Stage 2)",
+            "acceptance 2.11 — flag-off parity (A1 disabled → no-op handle)"
+          ],
+          "fullName": "PolicyLightSnapshotter (A1 Stage 2) acceptance 2.11 — flag-off parity (A1 disabled → no-op handle) returns a no-op handle when a1Enabled is false/omitted",
+          "status": "passed",
+          "title": "returns a no-op handle when a1Enabled is false/omitted",
+          "duration": 1.881399999999985,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PolicyLightSnapshotter (A1 Stage 2)",
+            "acceptance 2.11 — flag-off parity (A1 disabled → no-op handle)"
+          ],
+          "fullName": "PolicyLightSnapshotter (A1 Stage 2) acceptance 2.11 — flag-off parity (A1 disabled → no-op handle) no-op handle has no diff (no snapshot taken)",
+          "status": "passed",
+          "title": "no-op handle has no diff (no snapshot taken)",
+          "duration": 0.9319000000000415,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PolicyLightSnapshotter (A1 Stage 2)",
+            "acceptance 2.11 — flag-off parity (A1 disabled → no-op handle)"
+          ],
+          "fullName": "PolicyLightSnapshotter (A1 Stage 2) acceptance 2.11 — flag-off parity (A1 disabled → no-op handle) no-op handle does not create .openclaw/snapshots directory",
+          "status": "passed",
+          "title": "no-op handle does not create .openclaw/snapshots directory",
+          "duration": 1.6578000000000657,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PolicyLightSnapshotter (A1 Stage 2)",
+            "acceptance 2.3 — dynamic_writes triggers full fs-diff (git-diff mode)"
+          ],
+          "fullName": "PolicyLightSnapshotter (A1 Stage 2) acceptance 2.3 — dynamic_writes triggers full fs-diff (git-diff mode) selects git-diff mode when dynamic_writes tool is present",
+          "status": "passed",
+          "title": "selects git-diff mode when dynamic_writes tool is present",
+          "duration": 312.7790000000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PolicyLightSnapshotter (A1 Stage 2)",
+            "acceptance 2.3 — dynamic_writes triggers full fs-diff (git-diff mode)"
+          ],
+          "fullName": "PolicyLightSnapshotter (A1 Stage 2) acceptance 2.3 — dynamic_writes triggers full fs-diff (git-diff mode) records changed files via git-diff after commit",
+          "status": "passed",
+          "title": "records changed files via git-diff after commit",
+          "duration": 342.11360000000013,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PolicyLightSnapshotter (A1 Stage 2)",
+            "acceptance 2.5 — Git-diff fallback when A6 flag off"
+          ],
+          "fullName": "PolicyLightSnapshotter (A1 Stage 2) acceptance 2.5 — Git-diff fallback when A6 flag off falls back to git-diff when a6FingerprintEnabled is false/omitted",
+          "status": "passed",
+          "title": "falls back to git-diff when a6FingerprintEnabled is false/omitted",
+          "duration": 458.6216999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PolicyLightSnapshotter (A1 Stage 2)",
+            "acceptance 2.5 — Git-diff fallback when A6 flag off"
+          ],
+          "fullName": "PolicyLightSnapshotter (A1 Stage 2) acceptance 2.5 — Git-diff fallback when A6 flag off git-diff fallback succeeds even without baseline fingerprint",
+          "status": "passed",
+          "title": "git-diff fallback succeeds even without baseline fingerprint",
+          "duration": 376.52109999999993,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PolicyLightSnapshotter (A1 Stage 2)",
+            "acceptance 2.6 — Git-diff fallback byte-equivalent"
+          ],
+          "fullName": "PolicyLightSnapshotter (A1 Stage 2) acceptance 2.6 — Git-diff fallback byte-equivalent produces identical diff for same workspace operations (golden)",
+          "status": "passed",
+          "title": "produces identical diff for same workspace operations (golden)",
+          "duration": 846.252,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PolicyLightSnapshotter (A1 Stage 2)",
+            "copy-on-write mode (declared_paths only)"
+          ],
+          "fullName": "PolicyLightSnapshotter (A1 Stage 2) copy-on-write mode (declared_paths only) selects copy-on-write mode when only declared_paths tools present",
+          "status": "passed",
+          "title": "selects copy-on-write mode when only declared_paths tools present",
+          "duration": 4.827800000000025,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PolicyLightSnapshotter (A1 Stage 2)",
+            "copy-on-write mode (declared_paths only)"
+          ],
+          "fullName": "PolicyLightSnapshotter (A1 Stage 2) copy-on-write mode (declared_paths only) snapshots existing declared files and restores them on rollback",
+          "status": "passed",
+          "title": "snapshots existing declared files and restores them on rollback",
+          "duration": 7.409900000000107,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PolicyLightSnapshotter (A1 Stage 2)",
+            "copy-on-write mode (declared_paths only)"
+          ],
+          "fullName": "PolicyLightSnapshotter (A1 Stage 2) copy-on-write mode (declared_paths only) commit cleans up snapshot directory",
+          "status": "passed",
+          "title": "commit cleans up snapshot directory",
+          "duration": 5.6293000000000575,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PolicyLightSnapshotter (A1 Stage 2)",
+            "edge cases"
+          ],
+          "fullName": "PolicyLightSnapshotter (A1 Stage 2) edge cases returns no-op when no write paths and no dynamic tools",
+          "status": "passed",
+          "title": "returns no-op when no write paths and no dynamic tools",
+          "duration": 0.7744999999999891,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "PolicyLightSnapshotter (A1 Stage 2)",
+            "edge cases"
+          ],
+          "fullName": "PolicyLightSnapshotter (A1 Stage 2) edge cases falls back to git-diff when declared paths exceed maxFilesForCopyOnWrite",
+          "status": "passed",
+          "title": "falls back to git-diff when declared paths exceed maxFilesForCopyOnWrite",
+          "duration": 32.91339999999991,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793865365116,
+      "endTime": 1793865367515.9133,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0293-a01/baseline/workspace/tests/unit/policy-light-snapshotter.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C)",
+            "detectUndeclaredWrites (pure)"
+          ],
+          "fullName": "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C) detectUndeclaredWrites (pure) returns empty when all actual paths are declared",
+          "status": "passed",
+          "title": "returns empty when all actual paths are declared",
+          "duration": 1.731300000000033,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C)",
+            "detectUndeclaredWrites (pure)"
+          ],
+          "fullName": "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C) detectUndeclaredWrites (pure) detects undeclared paths",
+          "status": "passed",
+          "title": "detects undeclared paths",
+          "duration": 0.24690000000009604,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C)",
+            "detectUndeclaredWrites (pure)"
+          ],
+          "fullName": "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C) detectUndeclaredWrites (pure) handles directory prefix matching (declared dir covers subdir files)",
+          "status": "passed",
+          "title": "handles directory prefix matching (declared dir covers subdir files)",
+          "duration": 0.16639999999995325,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C)",
+            "detectUndeclaredWrites (pure)"
+          ],
+          "fullName": "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C) detectUndeclaredWrites (pure) handles directory prefix matching without trailing slash",
+          "status": "passed",
+          "title": "handles directory prefix matching without trailing slash",
+          "duration": 0.18799999999998818,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C)",
+            "detectUndeclaredWrites (pure)"
+          ],
+          "fullName": "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C) detectUndeclaredWrites (pure) normalizes backslashes to forward slashes (Windows compat)",
+          "status": "passed",
+          "title": "normalizes backslashes to forward slashes (Windows compat)",
+          "duration": 0.14979999999991378,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C)",
+            "detectUndeclaredWrites (pure)"
+          ],
+          "fullName": "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C) detectUndeclaredWrites (pure) case-insensitive matching (Windows compat)",
+          "status": "passed",
+          "title": "case-insensitive matching (Windows compat)",
+          "duration": 0.12059999999996762,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C)",
+            "detectUndeclaredWrites (pure)"
+          ],
+          "fullName": "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C) detectUndeclaredWrites (pure) returns all actual paths as undeclared when declared is empty",
+          "status": "passed",
+          "title": "returns all actual paths as undeclared when declared is empty",
+          "duration": 0.18020000000001346,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C)",
+            "ShadowWriteEventRecorder",
+            "acceptance 2.7 — records undeclared_write_event"
+          ],
+          "fullName": "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C) ShadowWriteEventRecorder acceptance 2.7 — records undeclared_write_event records event when declared_paths tool writes outside declared paths",
+          "status": "passed",
+          "title": "records event when declared_paths tool writes outside declared paths",
+          "duration": 0.8938000000000557,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C)",
+            "ShadowWriteEventRecorder",
+            "acceptance 2.7 — records undeclared_write_event"
+          ],
+          "fullName": "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C) ShadowWriteEventRecorder acceptance 2.7 — records undeclared_write_event records multiple events for multiple undeclared writes",
+          "status": "passed",
+          "title": "records multiple events for multiple undeclared writes",
+          "duration": 0.19059999999990396,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C)",
+            "ShadowWriteEventRecorder",
+            "acceptance 2.7 — records undeclared_write_event"
+          ],
+          "fullName": "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C) ShadowWriteEventRecorder acceptance 2.7 — records undeclared_write_event records event when no_writes tool performs any write",
+          "status": "passed",
+          "title": "records event when no_writes tool performs any write",
+          "duration": 0.32940000000007785,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C)",
+            "ShadowWriteEventRecorder",
+            "acceptance 2.7 — records undeclared_write_event"
+          ],
+          "fullName": "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C) ShadowWriteEventRecorder acceptance 2.7 — records undeclared_write_event records events across multiple turns (accumulates)",
+          "status": "passed",
+          "title": "records events across multiple turns (accumulates)",
+          "duration": 0.16579999999999018,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C)",
+            "ShadowWriteEventRecorder",
+            "acceptance 2.8 — 0 events when all tools declare correctly"
+          ],
+          "fullName": "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C) ShadowWriteEventRecorder acceptance 2.8 — 0 events when all tools declare correctly records 0 events when declared_paths tool writes only to declared paths",
+          "status": "passed",
+          "title": "records 0 events when declared_paths tool writes only to declared paths",
+          "duration": 0.12879999999995562,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C)",
+            "ShadowWriteEventRecorder",
+            "acceptance 2.8 — 0 events when all tools declare correctly"
+          ],
+          "fullName": "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C) ShadowWriteEventRecorder acceptance 2.8 — 0 events when all tools declare correctly records 0 events for dynamic_writes tool (declared dynamic)",
+          "status": "passed",
+          "title": "records 0 events for dynamic_writes tool (declared dynamic)",
+          "duration": 0.13879999999994652,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C)",
+            "ShadowWriteEventRecorder",
+            "acceptance 2.8 — 0 events when all tools declare correctly"
+          ],
+          "fullName": "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C) ShadowWriteEventRecorder acceptance 2.8 — 0 events when all tools declare correctly records 0 events for pattern_writes tool (patterns accepted as-is)",
+          "status": "passed",
+          "title": "records 0 events for pattern_writes tool (patterns accepted as-is)",
+          "duration": 0.1351000000000795,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C)",
+            "ShadowWriteEventRecorder",
+            "acceptance 2.8 — 0 events when all tools declare correctly"
+          ],
+          "fullName": "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C) ShadowWriteEventRecorder acceptance 2.8 — 0 events when all tools declare correctly integration: 10-turn session with correctly-declared tools → 0 events",
+          "status": "passed",
+          "title": "integration: 10-turn session with correctly-declared tools → 0 events",
+          "duration": 0.1694999999999709,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C)",
+            "ShadowWriteEventRecorder",
+            "utility methods"
+          ],
+          "fullName": "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C) ShadowWriteEventRecorder utility methods clear() removes all events",
+          "status": "passed",
+          "title": "clear() removes all events",
+          "duration": 0.13459999999997763,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C)",
+            "ShadowWriteEventRecorder",
+            "utility methods"
+          ],
+          "fullName": "ShadowWriteEventRecorder (A1 Stage 2 Stream 2C) ShadowWriteEventRecorder utility methods getEvents() returns readonly array",
+          "status": "passed",
+          "title": "getEvents() returns readonly array",
+          "duration": 0.10300000000006548,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793865369483,
+      "endTime": 1793865369488.1694,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0293-a01/baseline/workspace/tests/unit/shadow-write-event-recorder.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)",
+            "readonly tools"
+          ],
+          "fullName": "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2) readonly tools passes with no profile (omitted)",
+          "status": "passed",
+          "title": "passes with no profile (omitted)",
+          "duration": 1.7659999999999627,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)",
+            "readonly tools"
+          ],
+          "fullName": "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2) readonly tools passes with no_writes profile",
+          "status": "passed",
+          "title": "passes with no_writes profile",
+          "duration": 0.26579999999989923,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)",
+            "readonly tools"
+          ],
+          "fullName": "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2) readonly tools passes even with a declared_paths profile (harmless override)",
+          "status": "passed",
+          "title": "passes even with a declared_paths profile (harmless override)",
+          "duration": 0.20299999999997453,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)",
+            "write tools (profile required)"
+          ],
+          "fullName": "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2) write tools (profile required) throws MissingWriteRiskProfileError when profile is undefined",
+          "status": "passed",
+          "title": "throws MissingWriteRiskProfileError when profile is undefined",
+          "duration": 0.4941000000000031,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)",
+            "write tools (profile required)"
+          ],
+          "fullName": "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2) write tools (profile required) throws when profile is null",
+          "status": "passed",
+          "title": "throws when profile is null",
+          "duration": 0.20070000000009713,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)",
+            "write tools (profile required)"
+          ],
+          "fullName": "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2) write tools (profile required) passes with declared_paths profile",
+          "status": "passed",
+          "title": "passes with declared_paths profile",
+          "duration": 0.1816000000000031,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)",
+            "write tools (profile required)"
+          ],
+          "fullName": "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2) write tools (profile required) passes with pattern_writes profile",
+          "status": "passed",
+          "title": "passes with pattern_writes profile",
+          "duration": 0.17679999999995744,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)",
+            "write tools (profile required)"
+          ],
+          "fullName": "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2) write tools (profile required) passes with dynamic_writes profile",
+          "status": "passed",
+          "title": "passes with dynamic_writes profile",
+          "duration": 0.23559999999997672,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)",
+            "write tools (profile required)"
+          ],
+          "fullName": "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2) write tools (profile required) passes with a durable_state profile",
+          "status": "failed",
+          "title": "passes with a durable_state profile",
+          "duration": 3.7630000000000337,
+          "failureMessages": [
+            "AssertionError: expected [Function] to not throw an error but 'MissingWriteRiskProfileError: writeRi…' was thrown\n    at Proxy.<anonymous> (file:///D:/ClawX/node_modules/.pnpm/@vitest+expect@4.1.1/node_modules/@vitest/expect/dist/index.js:1551:16)\n    at Proxy.<anonymous> (file:///D:/ClawX/node_modules/.pnpm/@vitest+expect@4.1.1/node_modules/@vitest/expect/dist/index.js:1155:15)\n    at Proxy.methodWrapper (file:///D:/ClawX/node_modules/.pnpm/chai@6.2.2/node_modules/chai/index.js:1700:25)\n    at D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0293-a01/baseline/workspace/tests/unit/tool-registration.test.ts:90:73\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)",
+            "write tools (profile required)"
+          ],
+          "fullName": "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2) write tools (profile required) throws when durable_state has no ownerStore",
+          "status": "passed",
+          "title": "throws when durable_state has no ownerStore",
+          "duration": 0.2033999999999878,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)",
+            "write tools (profile required)"
+          ],
+          "fullName": "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2) write tools (profile required) throws when declared_paths has empty writePaths array",
+          "status": "passed",
+          "title": "throws when declared_paths has empty writePaths array",
+          "duration": 0.1491000000000895,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)",
+            "write tools (profile required)"
+          ],
+          "fullName": "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2) write tools (profile required) throws when pattern_writes has empty writePattern",
+          "status": "passed",
+          "title": "throws when pattern_writes has empty writePattern",
+          "duration": 0.0988999999999578,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)",
+            "write tools (profile required)"
+          ],
+          "fullName": "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2) write tools (profile required) throws when dynamic_writes lacks requiresApproval=true",
+          "status": "passed",
+          "title": "throws when dynamic_writes lacks requiresApproval=true",
+          "duration": 0.10949999999991178,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)",
+            "write tools (profile required)"
+          ],
+          "fullName": "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2) write tools (profile required) throws when kind is invalid",
+          "status": "passed",
+          "title": "throws when kind is invalid",
+          "duration": 0.10719999999992069,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)",
+            "destructive tools (must be dynamic_writes)"
+          ],
+          "fullName": "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2) destructive tools (must be dynamic_writes) throws when profile is undefined",
+          "status": "passed",
+          "title": "throws when profile is undefined",
+          "duration": 0.1309999999999718,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)",
+            "destructive tools (must be dynamic_writes)"
+          ],
+          "fullName": "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2) destructive tools (must be dynamic_writes) passes with dynamic_writes profile",
+          "status": "passed",
+          "title": "passes with dynamic_writes profile",
+          "duration": 0.11379999999996926,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)",
+            "destructive tools (must be dynamic_writes)"
+          ],
+          "fullName": "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2) destructive tools (must be dynamic_writes) throws when profile is declared_paths (not dynamic_writes)",
+          "status": "passed",
+          "title": "throws when profile is declared_paths (not dynamic_writes)",
+          "duration": 0.13830000000007203,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)",
+            "destructive tools (must be dynamic_writes)"
+          ],
+          "fullName": "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2) destructive tools (must be dynamic_writes) throws when profile is pattern_writes (not dynamic_writes)",
+          "status": "passed",
+          "title": "throws when profile is pattern_writes (not dynamic_writes)",
+          "duration": 0.09220000000004802,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)",
+            "destructive tools (must be dynamic_writes)"
+          ],
+          "fullName": "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2) destructive tools (must be dynamic_writes) throws when profile is durable_state (not dynamic_writes)",
+          "status": "passed",
+          "title": "throws when profile is durable_state (not dynamic_writes)",
+          "duration": 0.09519999999997708,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)",
+            "destructive tools (must be dynamic_writes)"
+          ],
+          "fullName": "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2) destructive tools (must be dynamic_writes) throws when profile is no_writes (not dynamic_writes)",
+          "status": "passed",
+          "title": "throws when profile is no_writes (not dynamic_writes)",
+          "duration": 0.09389999999996235,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)",
+            "named field error"
+          ],
+          "fullName": "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2) named field error MissingWriteRiskProfileError has field=\"writeRiskProfile\"",
+          "status": "passed",
+          "title": "MissingWriteRiskProfileError has field=\"writeRiskProfile\"",
+          "duration": 0.1168999999999869,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)",
+            "helper functions"
+          ],
+          "fullName": "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2) helper functions requiresFullFsDiff returns true only for dynamic_writes",
+          "status": "passed",
+          "title": "requiresFullFsDiff returns true only for dynamic_writes",
+          "duration": 0.17390000000000327,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)",
+            "helper functions"
+          ],
+          "fullName": "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2) helper functions requiresApproval covers dynamic_writes and durable_state",
+          "status": "failed",
+          "title": "requiresApproval covers dynamic_writes and durable_state",
+          "duration": 2.088200000000029,
+          "failureMessages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0293-a01/baseline/workspace/tests/unit/tool-registration.test.ts:232:9\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)",
+            "helper functions"
+          ],
+          "fullName": "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2) helper functions a readonly risk level still validates a declared durable_state profile",
+          "status": "failed",
+          "title": "a readonly risk level still validates a declared durable_state profile",
+          "duration": 0.7115000000000009,
+          "failureMessages": [
+            "AssertionError: expected [Function] to throw an error\n    at Proxy.<anonymous> (file:///D:/ClawX/node_modules/.pnpm/@vitest+expect@4.1.1/node_modules/@vitest/expect/dist/index.js:1551:16)\n    at Proxy.<anonymous> (file:///D:/ClawX/node_modules/.pnpm/@vitest+expect@4.1.1/node_modules/@vitest/expect/dist/index.js:1155:15)\n    at Proxy.methodWrapper (file:///D:/ClawX/node_modules/.pnpm/chai@6.2.2/node_modules/chai/index.js:1700:25)\n    at D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0293-a01/baseline/workspace/tests/unit/tool-registration.test.ts:252:9\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)",
+            "helper functions"
+          ],
+          "fullName": "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2) helper functions validateWriteRiskProfile returns null for valid profiles",
+          "status": "failed",
+          "title": "validateWriteRiskProfile returns null for valid profiles",
+          "duration": 0.4920000000000755,
+          "failureMessages": [
+            "AssertionError: expected 'writeRiskProfile.kind must be one of:…' to be null\n    at D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0293-a01/baseline/workspace/tests/unit/tool-registration.test.ts:270:9\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2)",
+            "helper functions"
+          ],
+          "fullName": "assertWriteRiskProfileForTool (A1 Stage 2 acceptance 2.2) helper functions validateWriteRiskProfile returns error message for invalid profiles",
+          "status": "failed",
+          "title": "validateWriteRiskProfile returns error message for invalid profiles",
+          "duration": 1.616800000000012,
+          "failureMessages": [
+            "AssertionError: expected 'writeRiskProfile.kind must be one of:…' to contain 'requiresApproval'\n    at D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0293-a01/baseline/workspace/tests/unit/tool-registration.test.ts:283:84\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+          ],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793865362951,
+      "endTime": 1793865362965.6167,
+      "status": "failed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0293-a01/baseline/workspace/tests/unit/tool-registration.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.10: trace namespace enforcement"
+          ],
+          "fullName": "Stage 3 / 3.10: trace namespace enforcement rejects an out-of-namespace event (claw.a4.tool.choice on an a1 recorder)",
+          "status": "passed",
+          "title": "rejects an out-of-namespace event (claw.a4.tool.choice on an a1 recorder)",
+          "duration": 2.1476000000000113,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.10: trace namespace enforcement"
+          ],
+          "fullName": "Stage 3 / 3.10: trace namespace enforcement accepts an in-namespace event (claw.a1.tool.choice on an a1 recorder)",
+          "status": "passed",
+          "title": "accepts an in-namespace event (claw.a1.tool.choice on an a1 recorder)",
+          "duration": 0.4270999999999958,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.10: trace namespace enforcement"
+          ],
+          "fullName": "Stage 3 / 3.10: trace namespace enforcement emits an event.recorded runtime event for the rejection",
+          "status": "passed",
+          "title": "emits an event.recorded runtime event for the rejection",
+          "duration": 0.24469999999996617,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.10: trace namespace enforcement"
+          ],
+          "fullName": "Stage 3 / 3.10: trace namespace enforcement allows claw.core.* events on a core recorder",
+          "status": "passed",
+          "title": "allows claw.core.* events on a core recorder",
+          "duration": 0.29150000000004184,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.10: trace namespace enforcement"
+          ],
+          "fullName": "Stage 3 / 3.10: trace namespace enforcement skips validation when callerArea is not set (legacy mode)",
+          "status": "passed",
+          "title": "skips validation when callerArea is not set (legacy mode)",
+          "duration": 0.23950000000002092,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.10: trace namespace enforcement"
+          ],
+          "fullName": "Stage 3 / 3.10: trace namespace enforcement rejects multiple out-of-namespace events independently",
+          "status": "passed",
+          "title": "rejects multiple out-of-namespace events independently",
+          "duration": 0.24279999999998836,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.10: trace namespace enforcement"
+          ],
+          "fullName": "Stage 3 / 3.10: trace namespace enforcement preserves spanId in the rejection diagnostic",
+          "status": "passed",
+          "title": "preserves spanId in the rejection diagnostic",
+          "duration": 0.14599999999995816,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793865368554,
+      "endTime": 1793865368558.243,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0293-a01/baseline/workspace/tests/unit/trace-namespace-enforcement.test.ts"
+    }
+  ]
+}

@@ -1,0 +1,946 @@
+{
+  "numTotalTestSuites": 19,
+  "numPassedTestSuites": 19,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 71,
+  "numPassedTests": 71,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793901411725,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "A06 A6 gate coverage"
+          ],
+          "fullName": "A06 A6 gate coverage keeps every A6 required test path present and wired into the archived pilot spec",
+          "status": "passed",
+          "title": "keeps every A6 required test path present and wired into the archived pilot spec",
+          "duration": 2.8102999999996428,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A06 A6 gate coverage"
+          ],
+          "fullName": "A06 A6 gate coverage pins A6 critical counter and budget-response evidence",
+          "status": "passed",
+          "title": "pins A6 critical counter and budget-response evidence",
+          "duration": 0.3926000000001295,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A06 A6 gate coverage"
+          ],
+          "fullName": "A06 A6 gate coverage keeps the missing verifier, lease-ordering, and pause/resume latency gates explicit",
+          "status": "passed",
+          "title": "keeps the missing verifier, lease-ordering, and pause/resume latency gates explicit",
+          "duration": 698.9786999999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793901414704,
+      "endTime": 1793901415405.9788,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0298-a06/reference/workspace/tests/unit/a06-a6-gate-coverage.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.1: deprecation counters cover all 6 areas"
+          ],
+          "fullName": "Stage 4 / 4.1: deprecation counters cover all 6 areas snapshot() returns all 6 areas with zero counters initially",
+          "status": "passed",
+          "title": "snapshot() returns all 6 areas with zero counters initially",
+          "duration": 1.6608999999999696,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.1: deprecation counters cover all 6 areas"
+          ],
+          "fullName": "Stage 4 / 4.1: deprecation counters cover all 6 areas getArea() returns the correct area shape for each of the 6 areas",
+          "status": "passed",
+          "title": "getArea() returns the correct area shape for each of the 6 areas",
+          "duration": 0.35419999999999163,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.2: A1 telemetry — legacy fallback count"
+          ],
+          "fullName": "Stage 4 / 4.2: A1 telemetry — legacy fallback count incrementA1LegacyFallback increments the counter",
+          "status": "passed",
+          "title": "incrementA1LegacyFallback increments the counter",
+          "duration": 0.21420000000000528,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.2: A1 telemetry — legacy fallback count"
+          ],
+          "fullName": "Stage 4 / 4.2: A1 telemetry — legacy fallback count shadow success increments independently of legacy fallback",
+          "status": "passed",
+          "title": "shadow success increments independently of legacy fallback",
+          "duration": 0.1633000000000493,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.2: A1 telemetry — legacy fallback count"
+          ],
+          "fullName": "Stage 4 / 4.2: A1 telemetry — legacy fallback count declared-path violations are tracked separately",
+          "status": "passed",
+          "title": "declared-path violations are tracked separately",
+          "duration": 0.1673000000000684,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.3: A2 telemetry — deferral agreement"
+          ],
+          "fullName": "Stage 4 / 4.3: A2 telemetry — deferral agreement records agreement and disagreement separately",
+          "status": "passed",
+          "title": "records agreement and disagreement separately",
+          "duration": 0.17999999999994998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.3: A2 telemetry — deferral agreement"
+          ],
+          "fullName": "Stage 4 / 4.3: A2 telemetry — deferral agreement records deferred wave count",
+          "status": "passed",
+          "title": "records deferred wave count",
+          "duration": 0.1288000000000693,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL)"
+          ],
+          "fullName": "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL) incrementA6VolatileMislabel increments the critical counter",
+          "status": "passed",
+          "title": "incrementA6VolatileMislabel increments the critical counter",
+          "duration": 0.15199999999992997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL)"
+          ],
+          "fullName": "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL) volatile mislabel is critical — any non-zero value triggers budget violation (4.14)",
+          "status": "passed",
+          "title": "volatile mislabel is critical — any non-zero value triggers budget violation (4.14)",
+          "duration": 0.24950000000001182,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL)"
+          ],
+          "fullName": "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL) verifier pass/fail are tracked",
+          "status": "passed",
+          "title": "verifier pass/fail are tracked",
+          "duration": 0.21010000000001128,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A1: legacy fallback rate > 5% → violated with degrade_to_legacy",
+          "status": "passed",
+          "title": "A1: legacy fallback rate > 5% → violated with degrade_to_legacy",
+          "duration": 0.18659999999999854,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A1: legacy fallback rate ≤ 5% → not violated",
+          "status": "passed",
+          "title": "A1: legacy fallback rate ≤ 5% → not violated",
+          "duration": 0.129099999999994,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A2: disagreement rate > 10% → violated",
+          "status": "passed",
+          "title": "A2: disagreement rate > 10% → violated",
+          "duration": 0.11220000000002983,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A3: anomaly rate > 20% → violated",
+          "status": "passed",
+          "title": "A3: anomaly rate > 20% → violated",
+          "duration": 0.13179999999999836,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A4: low-quality rate > 10% → violated",
+          "status": "passed",
+          "title": "A4: low-quality rate > 10% → violated",
+          "duration": 0.11160000000006676,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A5: plan ignored rate > 20% → violated",
+          "status": "passed",
+          "title": "A5: plan ignored rate > 20% → violated",
+          "duration": 0.10860000000002401,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A6: verifier fail rate > 5% → violated",
+          "status": "passed",
+          "title": "A6: verifier fail rate > 5% → violated",
+          "duration": 0.09329999999999927,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response no violation when all counters are within budget",
+          "status": "passed",
+          "title": "no violation when all counters are within budget",
+          "duration": 0.17420000000004165,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response reset() clears all counters",
+          "status": "passed",
+          "title": "reset() clears all counters",
+          "duration": 0.10140000000001237,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793901421699,
+      "endTime": 1793901421704.1743,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0298-a06/reference/workspace/tests/unit/deprecation-counters.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "A6 file fingerprint"
+          ],
+          "fullName": "A6 file fingerprint returns null for non-existent file (no throw)",
+          "status": "passed",
+          "title": "returns null for non-existent file (no throw)",
+          "duration": 3.4524000000000115,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A6 file fingerprint"
+          ],
+          "fullName": "A6 file fingerprint returns null for a directory (not a file)",
+          "status": "passed",
+          "title": "returns null for a directory (not a file)",
+          "duration": 1.2648000000000366,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A6 file fingerprint"
+          ],
+          "fullName": "A6 file fingerprint computes sha256 + mtimeMs + size for a regular file",
+          "status": "passed",
+          "title": "computes sha256 + mtimeMs + size for a regular file",
+          "duration": 3.657600000000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A6 file fingerprint"
+          ],
+          "fullName": "A6 file fingerprint is deterministic — same content produces same sha256",
+          "status": "passed",
+          "title": "is deterministic — same content produces same sha256",
+          "duration": 1.9624000000000024,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A6 file fingerprint"
+          ],
+          "fullName": "A6 file fingerprint different content produces different sha256",
+          "status": "passed",
+          "title": "different content produces different sha256",
+          "duration": 2.785699999999906,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A6 file fingerprint"
+          ],
+          "fullName": "A6 file fingerprint returns null for empty file path",
+          "status": "passed",
+          "title": "returns null for empty file path",
+          "duration": 0.5251000000000658,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A6 file fingerprint"
+          ],
+          "fullName": "A6 file fingerprint fingerprints all files in a directory tree (recursive)",
+          "status": "passed",
+          "title": "fingerprints all files in a directory tree (recursive)",
+          "duration": 4.844999999999914,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A6 file fingerprint"
+          ],
+          "fullName": "A6 file fingerprint uses relative paths as keys (workspace portability)",
+          "status": "passed",
+          "title": "uses relative paths as keys (workspace portability)",
+          "duration": 1.9746999999999844,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A6 file fingerprint"
+          ],
+          "fullName": "A6 file fingerprint records skipped files for permission-denied subdirectory [POSIX only]",
+          "status": "passed",
+          "title": "records skipped files for permission-denied subdirectory [POSIX only]",
+          "duration": 0.6644000000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A6 file fingerprint"
+          ],
+          "fullName": "A6 file fingerprint include filter only fingerprints matching paths",
+          "status": "passed",
+          "title": "include filter only fingerprints matching paths",
+          "duration": 1.9837999999999738,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A6 file fingerprint"
+          ],
+          "fullName": "A6 file fingerprint exclude filter skips matching paths",
+          "status": "passed",
+          "title": "exclude filter skips matching paths",
+          "duration": 1.915200000000027,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A6 file fingerprint"
+          ],
+          "fullName": "A6 file fingerprint skips symlinks (avoids loops) [POSIX only]",
+          "status": "passed",
+          "title": "skips symlinks (avoids loops) [POSIX only]",
+          "duration": 0.6596000000000686,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A6 file fingerprint"
+          ],
+          "fullName": "A6 file fingerprint diff: detects added files",
+          "status": "passed",
+          "title": "diff: detects added files",
+          "duration": 0.7071999999999434,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A6 file fingerprint"
+          ],
+          "fullName": "A6 file fingerprint diff: detects removed files",
+          "status": "passed",
+          "title": "diff: detects removed files",
+          "duration": 0.6379000000000588,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A6 file fingerprint"
+          ],
+          "fullName": "A6 file fingerprint diff: detects modified files (sha256 differs)",
+          "status": "passed",
+          "title": "diff: detects modified files (sha256 differs)",
+          "duration": 0.6808999999999514,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A6 file fingerprint"
+          ],
+          "fullName": "A6 file fingerprint diff: detects touched files (mtime changed, content same)",
+          "status": "passed",
+          "title": "diff: detects touched files (mtime changed, content same)",
+          "duration": 0.6335000000000264,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A6 file fingerprint"
+          ],
+          "fullName": "A6 file fingerprint diff: isClean true when no added/removed/modified",
+          "status": "passed",
+          "title": "diff: isClean true when no added/removed/modified",
+          "duration": 0.6260999999999513,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A6 file fingerprint"
+          ],
+          "fullName": "A6 file fingerprint fingerprintToRecord produces path → sha256 mapping",
+          "status": "passed",
+          "title": "fingerprintToRecord produces path → sha256 mapping",
+          "duration": 2.357599999999934,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A6 file fingerprint"
+          ],
+          "fullName": "A6 file fingerprint fingerprintFromRecord reconstructs DirectoryFingerprint from record",
+          "status": "passed",
+          "title": "fingerprintFromRecord reconstructs DirectoryFingerprint from record",
+          "duration": 0.7527999999999793,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A6 file fingerprint"
+          ],
+          "fullName": "A6 file fingerprint roundtrip: fingerprintToRecord → fingerprintFromRecord preserves paths + hashes",
+          "status": "passed",
+          "title": "roundtrip: fingerprintToRecord → fingerprintFromRecord preserves paths + hashes",
+          "duration": 2.15300000000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A6 file fingerprint"
+          ],
+          "fullName": "A6 file fingerprint end-to-end: detects file modification after write",
+          "status": "passed",
+          "title": "end-to-end: detects file modification after write",
+          "duration": 2.4849000000000387,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A6 file fingerprint"
+          ],
+          "fullName": "A6 file fingerprint end-to-end: detects file addition after write",
+          "status": "passed",
+          "title": "end-to-end: detects file addition after write",
+          "duration": 2.515899999999988,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A6 file fingerprint"
+          ],
+          "fullName": "A6 file fingerprint end-to-end: detects file removal after delete",
+          "status": "passed",
+          "title": "end-to-end: detects file removal after delete",
+          "duration": 1.5096999999999525,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793901416329,
+      "endTime": 1793901416369.5098,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0298-a06/reference/workspace/tests/unit/file-fingerprint.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "buildRuntimeCoreCheckpointFromResumeCheckpoint"
+          ],
+          "fullName": "buildRuntimeCoreCheckpointFromResumeCheckpoint accepts supplied tool results and file hashes for checkpoint evidence",
+          "status": "passed",
+          "title": "accepts supplied tool results and file hashes for checkpoint evidence",
+          "duration": 1.7678000000000793,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793901422788,
+      "endTime": 1793901422789.7678,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0298-a06/reference/workspace/tests/unit/long-task-checkpoint-builder.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "long-task intervention control"
+          ],
+          "fullName": "long-task intervention control maps guide to non-disruptive steering evidence",
+          "status": "passed",
+          "title": "maps guide to non-disruptive steering evidence",
+          "duration": 1.6499000000000024,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "long-task intervention control"
+          ],
+          "fullName": "long-task intervention control maps queue to deferred follow-up without aborting the active run",
+          "status": "passed",
+          "title": "maps queue to deferred follow-up without aborting the active run",
+          "duration": 0.22850000000005366,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "long-task intervention control"
+          ],
+          "fullName": "long-task intervention control maps interrupt to deviation evidence and requires ClawGraph confirmation while a node is active",
+          "status": "passed",
+          "title": "maps interrupt to deviation evidence and requires ClawGraph confirmation while a node is active",
+          "duration": 0.17360000000007858,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "long-task intervention control"
+          ],
+          "fullName": "long-task intervention control maps revise-goal to a checkpointed goal-revision deviation",
+          "status": "passed",
+          "title": "maps revise-goal to a checkpointed goal-revision deviation",
+          "duration": 0.1614000000000715,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "long-task intervention control"
+          ],
+          "fullName": "long-task intervention control builds a normalized resume checkpoint that can recover without the full transcript",
+          "status": "passed",
+          "title": "builds a normalized resume checkpoint that can recover without the full transcript",
+          "duration": 1.2448000000000548,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "long-task intervention control"
+          ],
+          "fullName": "long-task intervention control normalizes control signals, validation state, and acceptance status within bounded recovery fields",
+          "status": "passed",
+          "title": "normalizes control signals, validation state, and acceptance status within bounded recovery fields",
+          "duration": 0.8225000000001046,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "intervention policy: shared/runtime consistency (P0-2)"
+          ],
+          "fullName": "intervention policy: shared/runtime consistency (P0-2) keeps runtime policy identical to shared for mode='interrupt' options={}",
+          "status": "passed",
+          "title": "keeps runtime policy identical to shared for mode='interrupt' options={}",
+          "duration": 0.19859999999994216,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "intervention policy: shared/runtime consistency (P0-2)"
+          ],
+          "fullName": "intervention policy: shared/runtime consistency (P0-2) keeps runtime policy identical to shared for mode='interrupt' options={ highRisk: true, …(1) }",
+          "status": "passed",
+          "title": "keeps runtime policy identical to shared for mode='interrupt' options={ highRisk: true, …(1) }",
+          "duration": 0.11879999999996471,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "intervention policy: shared/runtime consistency (P0-2)"
+          ],
+          "fullName": "intervention policy: shared/runtime consistency (P0-2) keeps runtime policy identical to shared for mode='guide' options={}",
+          "status": "passed",
+          "title": "keeps runtime policy identical to shared for mode='guide' options={}",
+          "duration": 0.13369999999997617,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "intervention policy: shared/runtime consistency (P0-2)"
+          ],
+          "fullName": "intervention policy: shared/runtime consistency (P0-2) keeps runtime policy identical to shared for mode='guide' options={ highRisk: true }",
+          "status": "passed",
+          "title": "keeps runtime policy identical to shared for mode='guide' options={ highRisk: true }",
+          "duration": 0.11390000000005784,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "intervention policy: shared/runtime consistency (P0-2)"
+          ],
+          "fullName": "intervention policy: shared/runtime consistency (P0-2) keeps runtime policy identical to shared for mode='queue' options={}",
+          "status": "passed",
+          "title": "keeps runtime policy identical to shared for mode='queue' options={}",
+          "duration": 0.08150000000000546,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "intervention policy: shared/runtime consistency (P0-2)"
+          ],
+          "fullName": "intervention policy: shared/runtime consistency (P0-2) keeps runtime policy identical to shared for mode='revise-goal' options={}",
+          "status": "passed",
+          "title": "keeps runtime policy identical to shared for mode='revise-goal' options={}",
+          "duration": 0.08339999999998327,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "intervention policy: shared/runtime consistency (P0-2)"
+          ],
+          "fullName": "intervention policy: shared/runtime consistency (P0-2) keeps runtime policy identical to shared for mode='revise-goal' options={ clawGraphNodeActive: true }",
+          "status": "passed",
+          "title": "keeps runtime policy identical to shared for mode='revise-goal' options={ clawGraphNodeActive: true }",
+          "duration": 0.05520000000001346,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "intervention policy: shared/runtime consistency (P0-2)"
+          ],
+          "fullName": "intervention policy: shared/runtime consistency (P0-2) requires review for guide with highRisk (shared side)",
+          "status": "passed",
+          "title": "requires review for guide with highRisk (shared side)",
+          "duration": 0.1110999999999649,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "intervention policy: shared/runtime consistency (P0-2)"
+          ],
+          "fullName": "intervention policy: shared/runtime consistency (P0-2) marks queue checkpointRequired without abort semantics",
+          "status": "passed",
+          "title": "marks queue checkpointRequired without abort semantics",
+          "duration": 0.11230000000000473,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793901420050,
+      "endTime": 1793901420055.114,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0298-a06/reference/workspace/tests/unit/long-task-control.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "A5 performance budgets"
+          ],
+          "fullName": "A5 performance budgets planner 100-call p99 stays <= 30ms",
+          "status": "passed",
+          "title": "planner 100-call p99 stays <= 30ms",
+          "duration": 2.434600000000046,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A5 performance budgets"
+          ],
+          "fullName": "A5 performance budgets A5+A1+A3 cumulative per-turn smoke p99 stays <= 300ms and writes bounded evidence",
+          "status": "passed",
+          "title": "A5+A1+A3 cumulative per-turn smoke p99 stays <= 300ms and writes bounded evidence",
+          "duration": 2.4607999999999493,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793901420873,
+      "endTime": 1793901420878.4607,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0298-a06/reference/workspace/tests/unit/performance-budgets.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "runtime resume shadow"
+          ],
+          "fullName": "runtime resume shadow is a flag-off no-op and does not read shadow or legacy state",
+          "status": "passed",
+          "title": "is a flag-off no-op and does not read shadow or legacy state",
+          "duration": 1.8546000000001186,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "runtime resume shadow"
+          ],
+          "fullName": "runtime resume shadow reuses a completed side-effect tool result by idempotency key without executing side effects",
+          "status": "passed",
+          "title": "reuses a completed side-effect tool result by idempotency key without executing side effects",
+          "duration": 4.666600000000017,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "runtime resume shadow"
+          ],
+          "fullName": "runtime resume shadow returns a waiting verification diagnostic for a missing mutating tool result instead of completing",
+          "status": "passed",
+          "title": "returns a waiting verification diagnostic for a missing mutating tool result instead of completing",
+          "duration": 0.7034000000003289,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "runtime resume shadow"
+          ],
+          "fullName": "runtime resume shadow reports ambiguous mutating tool results instead of choosing a replay side effect",
+          "status": "passed",
+          "title": "reports ambiguous mutating tool results instead of choosing a replay side effect",
+          "duration": 0.7582000000002154,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "runtime resume shadow"
+          ],
+          "fullName": "runtime resume shadow compares replayed completed state against legacy checkpoint state",
+          "status": "passed",
+          "title": "compares replayed completed state against legacy checkpoint state",
+          "duration": 0.5898999999999432,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "runtime resume shadow"
+          ],
+          "fullName": "runtime resume shadow compares replayed blocked state against legacy checkpoint state",
+          "status": "passed",
+          "title": "compares replayed blocked state against legacy checkpoint state",
+          "duration": 0.4432999999999083,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "runtime resume shadow"
+          ],
+          "fullName": "runtime resume shadow compares replayed failed state against legacy checkpoint state",
+          "status": "passed",
+          "title": "compares replayed failed state against legacy checkpoint state",
+          "duration": 0.44860000000016953,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "runtime resume shadow"
+          ],
+          "fullName": "runtime resume shadow keeps the legacy checkpoint authoritative when replay comparison mismatches",
+          "status": "passed",
+          "title": "keeps the legacy checkpoint authoritative when replay comparison mismatches",
+          "duration": 0.5958000000000538,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793901419219,
+      "endTime": 1793901419228.5957,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0298-a06/reference/workspace/tests/unit/runtime-resume-shadow.test.ts"
+    }
+  ]
+}

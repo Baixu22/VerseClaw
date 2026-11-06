@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "recordedAt": "2026-11-04T19:26:02.016Z",
+  "sourceCommit": "38e0d720970fdc26c5c594161c5f776532fd9423",
+  "sourceTree": "52ad44e698d33b55af104ae2e849542ade1363ac",
+  "dirty": false,
+  "build": {
+    "schemaVersion": 1,
+    "artifacts": [
+      {
+        "path": "Verse Claw.exe",
+        "bytes": 214315008,
+        "sha256": "a6f4679e4bf505a377cbd380b35277b84abce258c112d16598dae352f079503b"
+      },
+      {
+        "path": "resources/app.asar",
+        "bytes": 306473050,
+        "sha256": "e55b03eeb331b554b5793b4ff7ac7c3665f4302fe5e8aa5a0ad36600d1da01c6"
+      },
+      {
+        "path": "resources/main-runtime.asar",
+        "bytes": 730568597,
+        "sha256": "f10017c1df916bcf4ab0b57fa142627a675af03d2e0f465e01cfc8790338d4a7"
+      }
+    ],
+    "digest": "f421bda0d35fd54720a3a82f62c44d044e498b52d4108da6d8f6c921d32ecfa8"
+  },
+  "productBuildCommit": "24d42fc98e790ede0fbfddadd64ff3e81b4b2e34",
+  "buildReuse": "Fresh Windows package at this clean candidate; the Vite/Main build was produced at 27e0f5dda and no production inputs changed before packaging.",
+  "execution": "N8 and all 46 N9 rounds ran from this clean source commit; the Windows package identity was measured before and after each runner."
+}

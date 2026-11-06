@@ -10,6 +10,7 @@ import {
   PROTOCOL_PATH,
   buildFeedbackReport,
   validateFeedbackProtocol,
+  validateFeedbackReport,
 } from '../../scripts/rsi-feedback-pilot.mjs';
 
 const ROOT = process.cwd();
@@ -32,6 +33,14 @@ afterAll(() => {
 });
 
 describe('rsi feedback pilot protocol', () => {
+  it('rejects a saved report that no longer matches the derived input counts', () => {
+    const report = buildFeedbackReport(ROOT);
+    const changed = structuredClone(report);
+    changed.input.completeCases = 20;
+    expect(validateFeedbackReport(changed, report)).toBe(false);
+    expect(validateFeedbackReport(report, report)).toBe(true);
+  });
+
   it('accepts the checked-in protocol', () => {
     const result = validateFeedbackProtocol(readProtocol());
     expect(result.errors).toEqual([]);
@@ -76,7 +85,8 @@ describe('rsi feedback pilot protocol', () => {
 
     expect(report.input.attributed).toBe(21);
     expect(report.input.missingCaseJoin).toBe(1);
-    expect(report.input.completeCases).toBe(20);
+    expect(report.input.attributedCases).toBe(20);
+    expect(report.input.completeCases).toBe(0);
     expect(report.reasons.join(' ')).toContain('no case join');
   });
 
@@ -89,7 +99,8 @@ describe('rsi feedback pilot protocol', () => {
     );
     const report = buildFeedbackReport(ROOT, protocol);
 
-    expect(report.input.completeCases).toBe(20);
+    expect(report.input.attributedCases).toBe(20);
+    expect(report.input.completeCases).toBe(0);
     expect(report.status).toBe('insufficient-evidence');
     expect(report.reasons.join(' ')).toContain('no paired effect');
   });
@@ -108,5 +119,14 @@ describe('rsi feedback pilot protocol', () => {
     expect(report.input.unattributed).toBe(1);
     expect(report.status).toBe('insufficient-evidence');
     expect(report.claims.benefit).toBe(false);
+  });
+
+  it('preserves an unreadable producer state and refuses malformed export data', () => {
+    const protocol = readProtocol();
+    protocol.feedbackSource.exportPath = tempExport([]);
+    writeFileSync(protocol.feedbackSource.exportPath, JSON.stringify({ source: { state: 'unreadable' }, records: [] }));
+    expect(buildFeedbackReport(ROOT, protocol).feedbackSource).toMatchObject({ state: 'unreadable' });
+    writeFileSync(protocol.feedbackSource.exportPath, '{}');
+    expect(buildFeedbackReport(ROOT, protocol).feedbackSource).toMatchObject({ state: 'invalid' });
   });
 });

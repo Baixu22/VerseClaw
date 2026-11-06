@@ -17,6 +17,7 @@ import {
   documentDigest,
   recomputeStability,
   validateStoredArtifacts,
+  validateVerseToolReadme,
   verifyShaManifest,
 } from '../../scripts/verify-versegit-product-integration.mjs';
 
@@ -39,23 +40,11 @@ describe('VerseGit product integration acceptance', () => {
   it('recomputes all product criteria and the independent P0/P1/P2 verdict from current retained evidence', () => {
     const result = validateStoredArtifacts({ root });
     const pendingCommandIssues = result.issues.filter((issue: string) => issue.startsWith('required command not recorded:'));
-    const pendingRebindIssues = result.issues.filter((issue: string) => (
-      issue === 'criterion index candidate differs from live source inputs'
-      || issue === 'global report candidate differs from live source inputs'
-      || issue === 'independent verdict candidate mismatch'
-      || issue === 'criterion evidence index diverges from live replay'
-    ));
-    const pendingSourceIssues = result.issues.filter((issue: string) => (
-      issue.startsWith('source input differs from evidence source ')
-      || issue.startsWith('source input is not committed at evidence source ')
-      || issue.startsWith('source worktree is dirty outside F5 evidence:')
-    ));
-    const rebuildable = pendingCommandIssues.length > 0 || pendingRebindIssues.length > 0 || pendingSourceIssues.length > 0;
-    expect(result.issues).toEqual(rebuildable ? [...pendingSourceIssues, ...pendingRebindIssues, ...pendingCommandIssues] : []);
-    if (!rebuildable) {
-      expect(result.state.ok).toBe(true);
-      expect(result.report.status).toBe('passed');
-    }
+    // Only command recording can be pending while this very suite runs during
+    // sealing. Source/candidate drift is never a green acceptance result.
+    expect(result.issues).toEqual(pendingCommandIssues);
+    expect(result.state.ok).toBe(true);
+    expect(result.report.status).toBe('passed');
     expect(result.report.acceptance.map((entry: { id: string; status: string }) => [entry.id, entry.status])).toEqual([
       ['AC1', 'passed'],
       ['AC2', 'passed'],
@@ -186,7 +175,9 @@ describe('VerseGit product integration acceptance', () => {
       expect(text).toContain('M4');
       expect(text).toContain('win32-x64');
       expect(text).toContain('M1');
-      expect(text).not.toMatch(/\bGA\b/u);
+      expect(validateVerseToolReadme(text, path)).toBe(true);
+      expect(validateVerseToolReadme(text.replace('<!-- VERSE-TOOLS-BOUNDARY-END -->', 'GA ready\n<!-- VERSE-TOOLS-BOUNDARY-END -->'), path)).toBe(false);
+      expect(validateVerseToolReadme(text.replace('M4', 'M9'), path)).toBe(false);
     }
     const semantics = readFileSync(resolve(root, F5_PRODUCT_SEMANTICS_PATH), 'utf8');
     const fpStart = semantics.indexOf('<!-- FP-P1-08-COMPONENT-STATUS-START -->');
@@ -217,15 +208,7 @@ describe('VerseGit product integration acceptance', () => {
 
   it('rebuilds the acceptance state from evidence rather than trusting node status text', () => {
     const state = buildAcceptanceState({ root });
-    if (!state.ok) {
-      const rebuildOnly = state.sourceIssues.every((issue: string) => (
-        issue.includes('source input differs from evidence source')
-        || issue.includes('source input is not committed at evidence source')
-        || issue.includes('dirty outside F5 evidence')
-      ));
-      expect(rebuildOnly).toBe(true);
-      return;
-    }
+    expect(state.ok).toBe(true);
     expect(state.evidence.groups.map((group: { task: string }) => group.task)).toEqual([
       'TF-0524', 'TF-0525', 'TF-0526', 'TF-0527', 'TF-0528', 'TF-0529', 'TF-0530', 'TF-0531',
       'TF-0532', 'TF-0533', 'TF-0534', 'TF-0535', 'TF-0536', 'TF-0537', 'TF-0538',

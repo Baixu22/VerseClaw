@@ -1,0 +1,23 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-knowledge-relay",
+  "files": {
+    "D:\\tmp\\knowledge-relay-20261105\\gates.log": {
+      "sha256": "e3641c13541e261703a5d042c3f9e6ba4fb20040fc0259df3713a5543c47a6ac",
+      "bytes": 131
+    },
+    "D:\\tmp\\knowledge-relay-20261105\\gates-after-init.log": {
+      "sha256": "9e20b68b08c4a68fdc4f735fa9c2dd4afea577425f89ff3bbad6e2bf23fe4c32",
+      "bytes": 438
+    },
+    "D:\\tmp\\knowledge-relay-20261105\\live-r2.log": {
+      "sha256": "d6b48336cf0deb270036cc6432cdc0cb66d2af715c5e5619e32c0059452312f2",
+      "bytes": 94
+    },
+    "D:\\tmp\\knowledge-relay-20261105\\live-r3.log": {
+      "sha256": "d6b48336cf0deb270036cc6432cdc0cb66d2af715c5e5619e32c0059452312f2",
+      "bytes": 94
+    }
+  },
+  "recovery": "Original raw logs retained locally on D:. Normalized selected copies above retain observed failure status; no private test profile is committed."
+}

@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "artifact": "versebrowser-m10-packaged-flow",
+  "driven_by": "agent",
+  "actor": "codex",
+  "exe": "D:/ClawX/.ae/verse-tools-package-20261104/win-unpacked/Verse Claw.exe",
+  "build": {
+    "schemaVersion": 1,
+    "artifacts": [
+      {
+        "path": "Verse Claw.exe",
+        "bytes": 214315008,
+        "sha256": "a6f4679e4bf505a377cbd380b35277b84abce258c112d16598dae352f079503b"
+      },
+      {
+        "path": "resources/app.asar",
+        "bytes": 306473050,
+        "sha256": "e55b03eeb331b554b5793b4ff7ac7c3665f4302fe5e8aa5a0ad36600d1da01c6"
+      },
+      {
+        "path": "resources/main-runtime.asar",
+        "bytes": 730568597,
+        "sha256": "f10017c1df916bcf4ab0b57fa142627a675af03d2e0f465e01cfc8790338d4a7"
+      }
+    ],
+    "digest": "f421bda0d35fd54720a3a82f62c44d044e498b52d4108da6d8f6c921d32ecfa8"
+  },
+  "fixtureUrl": "http://127.0.0.1:54280/",
+  "runId": "m10-mw2hw3fn",
+  "pageTitle": "Verse Claw",
+  "hostBridgePresent": true,
+  "defaultDeny": {
+    "id": "ab986115-c683-4062-8eb3-8fcf2171acc6",
+    "ok": false,
+    "error": {
+      "code": "INTERNAL",
+      "message": "Agent browser open blocked: private-network-default-deny (address class loopback)",
+      "details": {
+        "backendCode": "E_BROWSER_PRIVATE_NETWORK_DENIED"
+      }
+    }
+  },
+  "approval": {
+    "sessionId": "agent:main:m10-mw2hw3fn",
+    "origin": "http://127.0.0.1:54280",
+    "grantedAt": 1793819632428,
+    "expiresAt": 1793820232428,
+    "grantedBy": "agent"
+  },
+  "flow": {
+    "enabled": true,
+    "openOk": true,
+    "sessionId": "5a59fda1-f263-4af8-a282-815b1057ae40",
+    "blockedFailsClosed": true,
+    "upgradeOk": true,
+    "upgradeMode": "full_access",
+    "snapshotOk": true,
+    "snapshotHasFixture": true,
+    "ownedSessionCount": 1,
+    "closed": true
+  },
+  "cleanup": {
+    "appExited": true,
+    "forcedShutdown": false,
+    "killed": 0,
+    "terminationRequests": [],
+    "initialResidualProcesses": 0,
+    "initialResidualNames": [],
+    "residualCleanupAttempts": 0,
+    "residualProcesses": 0,
+    "residualNames": [],
+    "runDirReclaimed": true,
+    "errors": []
+  },
+  "checks": {
+    "host_bridge_present": true,
+    "private_network_default_deny": true,
+    "real_session_opened": true,
+    "sandbox_fails_closed_without_upgrade": true,
+    "runtime_mode_upgrade_ok": true,
+    "snapshot_returns_fixture_content": true,
+    "session_owned_by_requested_key": true,
+    "session_closed": true,
+    "processes_closed": true,
+    "run_directory_reclaimed": true
+  },
+  "status": "pass",
+  "issues": []
+}

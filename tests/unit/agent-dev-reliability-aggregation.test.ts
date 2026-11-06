@@ -9,6 +9,24 @@ import {
 } from '../../scripts/lib/reliability-aggregation.mjs';
 
 describe('aggregateReliability', () => {
+  it('review regression: incomplete anchors cannot hide an observed unsafe outcome', () => {
+    for (const entry of [
+      { id: 'positive', anchor: 'positive', trials: ['fail', 'timeout'] },
+      { id: 'negative', anchor: 'negative', trials: ['pass', 'missing'] },
+      { id: 'guard', anchor: 'negative', negativeExpectedOutcome: 'pass', trials: ['fail', 'crash'] },
+    ] as ReliabilityCase[]) {
+      const result = aggregateReliability([entry]);
+      expect(result.anchors.violated).toBe(true);
+      expect(result.gate).toBe('fail');
+      expect(result.completeCaseCount).toBe(0);
+    }
+  });
+
+  it('review regression: malformed outcomes and duplicate case identities are rejected', () => {
+    expect(() => aggregateReliability([{ id: 'a', trials: ['unknown', 'unknown', 'unknown'] }] as unknown as ReliabilityCase[])).toThrow();
+    expect(() => aggregateReliability([{ id: 'a', trials: [] }, { id: 'a', trials: [] }])).toThrow();
+  });
+
   it('computes pass^k and pass@k separately on the 2-case x 3-run fixture (PPP/PPF)', () => {
     const cases: ReliabilityCase[] = [
       { id: 'case-a', trials: ['pass', 'pass', 'pass'], anchor: 'positive' },

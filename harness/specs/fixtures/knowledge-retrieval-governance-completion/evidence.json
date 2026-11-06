@@ -1,0 +1,390 @@
+{
+  "schema": "KnowledgeRetrievalGovernanceCompletion/v1",
+  "date": "2026-11-05",
+  "timezone": "Asia/Shanghai",
+  "driven_by": "agent",
+  "actor": "codex-knowledge-relay",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "2b214088527c4bd612e7cf4a4e5d06a399a8b2f5",
+    "tree": "f9bc61f52541167e1ae8cc80529cb00082343d08",
+    "dirty": false
+  },
+  "base": "3c72a9a262d704da7edcb6889bc1bf77bcc3f987",
+  "worktree": "D:\\ClawX-work\\knowledge-relay-20261105",
+  "branch": "codex/knowledge-read-governance-20261105",
+  "decision": {
+    "status": "passed-scoped-engineering",
+    "formalReleaseAcceptance": false,
+    "productDefaultsChanged": false,
+    "canonicalClosure": "Refer to local Task Forest; this artifact is not a graph status writer."
+  },
+  "unit": {
+    "backend": {
+      "files": 11,
+      "passed": 189,
+      "failed": 0,
+      "exitCode": 0
+    },
+    "rendererHost": {
+      "files": 6,
+      "passed": 109,
+      "failed": 0,
+      "exitCode": 0
+    }
+  },
+  "gates": [
+    {
+      "name": "backend",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "vitest.agent-dev.node.config.ts",
+        "tests/unit/knowledge-source-sync.test.ts",
+        "tests/unit/knowledge-github-connector.test.ts",
+        "tests/unit/knowledge-api.test.ts",
+        "tests/unit/knowledge-evidence-qa.test.ts",
+        "tests/unit/knowledge-retrieval.test.ts",
+        "tests/unit/knowledge-source-set-answer.test.ts",
+        "tests/unit/knowledge-steward-semantic-pass.test.ts",
+        "tests/unit/knowledge-steward-registry.test.ts",
+        "tests/unit/knowledge-steward-notes-injection.test.ts",
+        "tests/unit/knowledge-roletags.test.ts",
+        "tests/unit/knowledge-host-api-split.test.ts",
+        "--maxWorkers=1",
+        "--testTimeout=60000",
+        "--hookTimeout=60000",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:/tmp/knowledge-relay-20261105/final/backend.json"
+      ],
+      "exitCode": 0,
+      "durationMs": 19567,
+      "candidate": {
+        "commit": "2b214088527c4bd612e7cf4a4e5d06a399a8b2f5",
+        "dirty": false
+      }
+    },
+    {
+      "name": "renderer-host",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/knowledge-chat.test.tsx",
+        "tests/unit/host-api-facade.test.ts",
+        "tests/unit/host-api-client-error-metadata.test.ts",
+        "tests/unit/host-invoke.test.ts",
+        "tests/unit/host-invoke-security.test.ts",
+        "tests/unit/contract-check.test.ts",
+        "--maxWorkers=1",
+        "--testTimeout=60000",
+        "--hookTimeout=60000",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:/tmp/knowledge-relay-20261105/final/renderer-host.json"
+      ],
+      "exitCode": 0,
+      "durationMs": 14544,
+      "candidate": {
+        "commit": "2b214088527c4bd612e7cf4a4e5d06a399a8b2f5",
+        "dirty": false
+      }
+    },
+    {
+      "name": "typecheck-node",
+      "command": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "exitCode": 0,
+      "durationMs": 15980,
+      "candidate": {
+        "commit": "2b214088527c4bd612e7cf4a4e5d06a399a8b2f5",
+        "dirty": false
+      }
+    },
+    {
+      "name": "typecheck-web",
+      "command": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "exitCode": 0,
+      "durationMs": 2775,
+      "candidate": {
+        "commit": "2b214088527c4bd612e7cf4a4e5d06a399a8b2f5",
+        "dirty": false
+      }
+    },
+    {
+      "name": "typecheck-test",
+      "command": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false"
+      ],
+      "exitCode": 0,
+      "durationMs": 11213,
+      "candidate": {
+        "commit": "2b214088527c4bd612e7cf4a4e5d06a399a8b2f5",
+        "dirty": false
+      }
+    },
+    {
+      "name": "lint",
+      "command": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "electron/services/knowledge-api.ts",
+        "electron/services/knowledge-source-sync.ts",
+        "electron/services/knowledge-github-connector.ts",
+        "electron/services/knowledge-evidence-qa.ts",
+        "electron/services/knowledge-source-set-answer.ts",
+        "electron/services/knowledge-embedding-provider.ts",
+        "src/pages/Chat/KnowledgeChat.tsx",
+        "src/lib/host-api/knowledge/connectors.ts",
+        "scripts/knowledge-quality-eval.ts",
+        "scripts/run-knowledge-quality-eval.mjs",
+        "tests/e2e/knowledge-live.spec.ts"
+      ],
+      "exitCode": 0,
+      "durationMs": 4552,
+      "candidate": {
+        "commit": "2b214088527c4bd612e7cf4a4e5d06a399a8b2f5",
+        "dirty": false
+      }
+    },
+    {
+      "name": "contract",
+      "command": [
+        "node",
+        "scripts/contract-check.mjs"
+      ],
+      "exitCode": 0,
+      "durationMs": 248,
+      "candidate": {
+        "commit": "2b214088527c4bd612e7cf4a4e5d06a399a8b2f5",
+        "dirty": false
+      }
+    },
+    {
+      "name": "comms-replay",
+      "command": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "exitCode": 0,
+      "durationMs": 219,
+      "candidate": {
+        "commit": "2b214088527c4bd612e7cf4a4e5d06a399a8b2f5",
+        "dirty": false
+      }
+    },
+    {
+      "name": "comms-compare",
+      "command": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "exitCode": 0,
+      "durationMs": 178,
+      "candidate": {
+        "commit": "2b214088527c4bd612e7cf4a4e5d06a399a8b2f5",
+        "dirty": false
+      }
+    },
+    {
+      "name": "harness-validate",
+      "command": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/knowledge-retrieval-and-governance-completion.md"
+      ],
+      "exitCode": 0,
+      "durationMs": 593,
+      "candidate": {
+        "commit": "2b214088527c4bd612e7cf4a4e5d06a399a8b2f5",
+        "dirty": false
+      }
+    },
+    {
+      "name": "harness-dry-run",
+      "command": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/knowledge-retrieval-and-governance-completion.md",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "durationMs": 551,
+      "candidate": {
+        "commit": "2b214088527c4bd612e7cf4a4e5d06a399a8b2f5",
+        "dirty": false
+      }
+    }
+  ],
+  "build": {
+    "command": [
+      "node",
+      "--max-old-space-size=6144",
+      "node_modules/vite/bin/vite.js",
+      "build"
+    ],
+    "exitCode": 0,
+    "artifact": "build-r3.txt",
+    "evidence": "Observed unified exec session 48934 exitCode=0; retained complete build output."
+  },
+  "runtimeBuild": {
+    "command": [
+      "node",
+      "scripts/build-openclaw-runtime.mjs"
+    ],
+    "exitCode": 0,
+    "artifact": "runtime-build.txt",
+    "gatewaySmokeReady": true
+  },
+  "ui": {
+    "passed": 5,
+    "failed": 0,
+    "exitCode": 0,
+    "artifact": "ui/playwright.json"
+  },
+  "live": {
+    "passed": 1,
+    "failed": 0,
+    "exitCode": 0,
+    "providerCalls": 2,
+    "toolCounts": [
+      0,
+      0
+    ],
+    "artifact": "live/receipt.json",
+    "isolationProfilesRetained": true,
+    "auxiliaryCimSweep": "unavailable",
+    "electronLedgerSurvivors": []
+  },
+  "quality": {
+    "cases": 14,
+    "liveCalls": 8,
+    "completedProviderCalls": 8,
+    "taskComplete": 14,
+    "baselineComplete": 6,
+    "citationValid": 8,
+    "citationEvaluated": 8,
+    "abstentionCorrect": 7,
+    "abstentionCases": 7,
+    "pairedAnswerable": {
+      "cases": 7,
+      "baselineComplete": 6,
+      "treatmentComplete": 7,
+      "improved": [
+        "long-tail"
+      ],
+      "regressed": [],
+      "metric": "Expected answer strings present; reconstructed excerpt control, not historical model A/B."
+    },
+    "inferenceSkippedCases": [
+      "conflict",
+      "stale",
+      "revoked",
+      "acl-denied",
+      "secret",
+      "no-sources"
+    ],
+    "limitations": [
+      "Fixed representative selected-source corpus, not full-vault discovery or population-wide quality; no guaranteed entailment.",
+      "Direct real provider inference; full Gateway path is validated separately.",
+      "Baseline reconstructs prior excerpt behavior, not a second model or historical executable replay. Refusals are excluded from the paired answerable denominator.",
+      "Latency has no historical paired baseline; live embedding-provider latency is unmeasured.",
+      "Underlying identity behind space-bunny and monetary cost are unverified."
+    ]
+  },
+  "nativeSync": {
+    "driven_by": "agent",
+    "actor": "codex-knowledge-source-sync-native",
+    "candidate": {
+      "commit": "2b214088527c4bd612e7cf4a4e5d06a399a8b2f5",
+      "tree": "f9bc61f52541167e1ae8cc80529cb00082343d08",
+      "dirty": false
+    },
+    "status": "pass",
+    "nativeEvents": 67,
+    "transitions": 25,
+    "uniqueCaptureKeys": 25,
+    "counts": {
+      "created": 21,
+      "updated": 2,
+      "withdrawn": 2
+    },
+    "startupRecovered": 3,
+    "finalSources": 19,
+    "errors": [],
+    "dirtyAfter": false,
+    "commitAfter": "2b214088527c4bd612e7cf4a4e5d06a399a8b2f5",
+    "limitation": "Agent-owned local files on Windows; no human evidence or long-running soak."
+  },
+  "nodeEvidence": {
+    "TF-0797": [
+      "native-sync/report.json",
+      "native-sync/input-operations.json",
+      "native-sync/transitions.jsonl",
+      "backend.json"
+    ],
+    "TF-0798": [
+      "live/receipt.json",
+      "live/playwright.json",
+      "ui/playwright.json",
+      "backend.json",
+      "renderer-host.json"
+    ],
+    "TF-0799": [
+      "quality/report.json",
+      "quality/long-tail.json",
+      "backend.json"
+    ],
+    "TF-0800": [
+      "backend.json",
+      "candidate.json"
+    ],
+    "TF-0801": [
+      "live/receipt.json",
+      "backend.json"
+    ],
+    "TF-0802": [
+      "quality/report.json",
+      "quality/corpus.json",
+      "live/binding.json",
+      "REPORT.md"
+    ]
+  },
+  "limitations": [
+    "Scoped engineering evidence only; no full-repository suite or formal release acceptance.",
+    "Selected-source corpus, not full-vault discovery or guaranteed semantic entailment.",
+    "Live Steward quality, historical paired latency, live embeddings latency/cost, large-corpus performance and long soak are unmeasured.",
+    "Source withdrawal creates a review candidate; it does not automatically invalidate accepted Wiki content.",
+    "Private repo/document ACL synchronization and additional SaaS connectors are not implemented.",
+    "Full repository artifact policy exits 1 for eight pre-existing RSI ignored log paths.",
+    "Two live runs passed test assertions but exited 1 on worker teardown; final retained-profile run exited 0."
+  ]
+}

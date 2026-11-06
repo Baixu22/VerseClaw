@@ -1,4 +1,5 @@
 import type { RuntimeEmbeddingProvider } from '../../openclaw_runtime/src/runtime-core/memory-embedding-provider';
+import { createHash } from 'node:crypto';
 import { proxyAwareFetch } from '../utils/proxy-fetch';
 
 const DEFAULT_SILICONFLOW_BASE = 'https://api.siliconflow.cn/v1';
@@ -51,6 +52,11 @@ export function resolveEmbeddingDeadlineMs(value: string | undefined): number {
   if (!Number.isFinite(parsed) || parsed <= 0) return DEFAULT_EMBEDDING_DEADLINE_MS;
   return parsed;
 }
+// Content addressing covers source edits; credential/model/endpoint scope prevents
+// cross-provider reuse. This cache is disposable, never an accepted knowledge store.
+const vectors = new Map<string, number[]>();
+const MAX_CACHED_VECTORS = 256;
+const digest = (value: string) => createHash('sha256').update(value).digest('hex');
 
 export function hasSiliconFlowEmbeddingProvider(): boolean {
   return Boolean(process.env.SILICONFLOW_API_KEY);
@@ -70,7 +76,11 @@ export function createSiliconFlowEmbeddingProvider(
   const deadlineMs = options.deadlineMs ?? DEFAULT_EMBEDDING_DEADLINE_MS;
   const now = options.now ?? Date.now;
   const requestImpl = options.requestImpl ?? proxyAwareFetch;
+  // An injected transport may return a different corpus/vector space; never
+  // reuse production or another injected transport's cached result.
+  const cache = options.requestImpl ? new Map<string, number[]>() : vectors;
   const startedAt = now();
+  const scope = digest(JSON.stringify([endpoint, model, apiKey]));
 
   /** Milliseconds left in the operation budget, or 0 once exhausted. */
   const remainingMs = (): number => {
@@ -104,8 +114,7 @@ export function createSiliconFlowEmbeddingProvider(
         signal: controller.signal,
       });
       if (!response.ok) {
-        const body = await response.text();
-        throw new Error(`SiliconFlow embedding request failed (${response.status}): ${body}`);
+        throw new Error(`SiliconFlow embedding request failed (${response.status})`);
       }
       const json = (await response.json()) as {
         data?: Array<{ embedding?: number[]; index?: number }>;
@@ -116,8 +125,9 @@ export function createSiliconFlowEmbeddingProvider(
       }
       return rows
         .sort((left, right) => (left.index ?? 0) - (right.index ?? 0))
-        .map((row) => {
-          if (!Array.isArray(row.embedding) || row.embedding.length === 0) {
+        .map((row, index) => {
+          if (row.index !== undefined && row.index !== index) throw new Error('SiliconFlow embedding response index mismatch');
+          if (!Array.isArray(row.embedding) || row.embedding.length === 0 || row.embedding.some(value => typeof value !== 'number' || !Number.isFinite(value))) {
             throw new Error('SiliconFlow embedding response contained an empty vector');
           }
           return row.embedding;
@@ -132,10 +142,32 @@ export function createSiliconFlowEmbeddingProvider(
     }
   };
 
+  const cached = async (texts: string[], completedBatches = 0, totalBatches = Math.ceil(texts.length / MAX_BATCH_SIZE)): Promise<number[][]> => {
+    if (remainingMs() <= 0) throw new KnowledgeEmbeddingDeadlineError({ deadlineMs, completedBatches, totalBatches });
+    const keys = texts.map(text => `${scope}:${digest(text)}`);
+    const available = new Map(keys.flatMap(key => cache.has(key) ? [[key, cache.get(key)!] as const] : []));
+    const missing = [...new Map(texts.flatMap((text, index) => cache.has(keys[index]) ? [] : [[keys[index], text] as const])).entries()];
+    for (let index = 0; index < missing.length; index += MAX_BATCH_SIZE) {
+      const batch = missing.slice(index, index + MAX_BATCH_SIZE);
+      const result = await request(batch.map(([, text]) => text), completedBatches + Math.floor(index / MAX_BATCH_SIZE), totalBatches);
+      batch.forEach(([key], row) => {
+        available.set(key, result[row]);
+        cache.set(key, [...result[row]]);
+        while (cache.size > MAX_CACHED_VECTORS) cache.delete(cache.keys().next().value!);
+      });
+    }
+    return keys.map(key => {
+      const vector = available.get(key)!;
+      cache.delete(key); cache.set(key, vector);
+      while (cache.size > MAX_CACHED_VECTORS) cache.delete(cache.keys().next().value!);
+      return [...vector];
+    });
+  };
+
   return {
-    id: 'siliconflow-qwen3-embed-8b',
+    id: `siliconflow:${model}:${digest(endpoint).slice(0, 12)}`,
     dimension: DEFAULT_EMBEDDING_DIMENSION,
-    embedQuery: async (text: string) => (await request([text], 0, 1))[0],
+    embedQuery: async (text: string) => (await cached([text]))[0],
     embedBatch: async (texts: string[]) => {
       const totalBatches = Math.ceil(texts.length / MAX_BATCH_SIZE);
       const results: number[][] = [];
@@ -145,7 +177,7 @@ export function createSiliconFlowEmbeddingProvider(
           throw new KnowledgeEmbeddingDeadlineError({ deadlineMs, completedBatches, totalBatches });
         }
         const batch = texts.slice(index, index + MAX_BATCH_SIZE);
-        results.push(...await request(batch, completedBatches, totalBatches));
+        results.push(...await cached(batch, completedBatches, totalBatches));
       }
       return results;
     },

@@ -1,0 +1,88 @@
+{
+  "numTotalTestSuites": 2,
+  "numPassedTestSuites": 2,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 3,
+  "numPassedTests": 3,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793901189615,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "A5 deprecation counters"
+          ],
+          "fullName": "A5 deprecation counters records plan adoption, ignored plans, and budget exceeded separately",
+          "status": "passed",
+          "title": "records plan adoption, ignored plans, and budget exceeded separately",
+          "duration": 112.51089999999931,
+          "failureMessages": [],
+          "location": {
+            "line": 8,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A5 deprecation counters"
+          ],
+          "fullName": "A5 deprecation counters ignored rate > 20% triggers degrade_to_default_budget through the existing registry",
+          "status": "passed",
+          "title": "ignored rate > 20% triggers degrade_to_default_budget through the existing registry",
+          "duration": 0.5884000000005472,
+          "failureMessages": [],
+          "location": {
+            "line": 20,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A5 deprecation counters"
+          ],
+          "fullName": "A5 deprecation counters ignored rate <= 20% does not degrade",
+          "status": "passed",
+          "title": "ignored rate <= 20% does not degrade",
+          "duration": 0.2717000000011467,
+          "failureMessages": [],
+          "location": {
+            "line": 31,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793901190162,
+      "endTime": 1793901190275.5884,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0295-a03/baseline/workspace/openclaw_runtime/src/observability/deprecation-counters.test.ts"
+    }
+  ]
+}

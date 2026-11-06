@@ -14,15 +14,19 @@ import { existsSync } from 'node:fs';
 import { readFile, readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { parseArgs } from 'node:util';
+import { isDeepStrictEqual, parseArgs } from 'node:util';
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
+import { PRODUCT_SOURCE_SCOPE, validBuildProvenance } from './lib/versebrowser-build-provenance.mjs';
+import { packagedFlowChecks } from './versebrowser-m10-packaged-flow-verify.mjs';
+import { isCompleteProbeRound, summarizeProbeRows } from './versebrowser-n9-stability-probe.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const EVIDENCE_ROOT = 'harness/specs/fixtures/versebrowser-invocation-maturity';
-const CURRENT = 'current-merge-20261025';
+const CURRENT = 'current-20261105';
 const SOURCE_SCOPE = [
   'packages/versebrowser',
   'electron/services/agent-browser-api.ts',
+  'electron/services/agent-browser-network-proxy.ts',
   'electron/main/index.ts',
   'electron/services/agent-browser-capabilities.ts',
   'electron/gateway/agent-browser-bridge.ts',
@@ -31,7 +35,17 @@ const SOURCE_SCOPE = [
   'openclaw_runtime/src/agents/tools/agent-browser-tool.ts',
   'openclaw_runtime/src/gateway/server-methods/agent-browser.ts',
   'scripts/versebrowser-n9-stability-probe.mjs',
+  'scripts/versebrowser-n9-stability-probe.test.mjs',
   'scripts/versebrowser-m10-packaged-flow-verify.mjs',
+  'scripts/versebrowser-evidence-verify.mjs',
+  'scripts/versebrowser-host-integration-verify.mjs',
+  'scripts/lib/versebrowser-build-identity.mjs',
+  'scripts/lib/versebrowser-probe-cleanup.mjs',
+  'scripts/lib/versebrowser-build-provenance.mjs',
+  'scripts/versebrowser-build-provenance.mjs',
+  'package.json',
+  'tests/e2e/versebrowser-host-invocation.spec.ts',
+  'tests/unit/versebrowser-*.test.ts',
 ];
 const CREDENTIAL_PATTERNS = [
   /(?<![A-Za-z0-9_-])sk-[A-Za-z0-9_-]{20,}/,
@@ -141,7 +155,7 @@ async function verifyHistoricalN9(hostRoot) {
   return { status: issues.length ? 'fail' : 'pass', manifest, issues };
 }
 
-async function verifyCurrent(hostRoot) {
+export async function verifyCurrent(hostRoot) {
   const dir = path.join(EVIDENCE_ROOT, CURRENT);
   const issues = [];
   if (!existsSync(path.join(hostRoot, dir))) return { status: 'fail', issues: [issue('current_evidence_missing', { path: dir })] };
@@ -158,6 +172,58 @@ async function verifyCurrent(hostRoot) {
   if (status?.status !== 'pass') issues.push(issue('current_status_not_pass'));
   if (n8?.status !== 'pass') issues.push(issue('current_n8_not_pass'));
   if (n9?.status !== 'pass') issues.push(issue('current_n9_not_pass'));
+  const n8Checks = packagedFlowChecks(n8 ?? {});
+  if (!Object.values(n8Checks).every(Boolean) || !isDeepStrictEqual(n8?.checks, n8Checks)
+    || !Array.isArray(n8?.cleanup?.errors) || n8.cleanup.errors.length) issues.push(issue('current_n8_checks_invalid'));
+  for (const [run, result] of [['n8', n8], ['n9', n9]]) {
+    if (result?.driven_by !== 'agent' || !result?.actor) issues.push(issue('current_run_attribution_missing', { run }));
+    if (!Array.isArray(result?.issues) || result.issues.length) issues.push(issue('current_run_issues_present', { run }));
+  }
+  const expectedRounds = { cold: 10, loop: 30, interrupt: 3, recovery: 3 };
+  const rows = n9?.rows;
+  const validRows = Array.isArray(rows) && rows.length === 46 && rows.every(row =>
+    isCompleteProbeRound(row) && row.status === 'pass' && Number.isSafeInteger(row.index)
+    && row.index > 0 && row.index <= expectedRounds[row.kind]
+    && typeof row.runId === 'string' && row.runId.length > 0
+    && typeof row.runRoot === 'string' && row.runRoot.length > 0
+    && Number.isFinite(row.durationMs) && row.durationMs >= 0
+    && Array.isArray(row.errors) && row.errors.length === 0 && row.appExited === true
+    && row.residualProcesses === 0 && row.runDirReclaimed === true
+    && row.finalResidualProcesses === 0 && row.runDirReclaimedFinal === true
+    && (row.kind !== 'interrupt' || (row.forcedShutdown === true && Array.isArray(row.terminationRequests)
+      && Array.isArray(row.ownedProcesses) && row.terminationRequests.some(request => request.accepted === true && request.signal === 'SIGKILL'
+        && Number.isSafeInteger(request.pid) && request.pid > 0 && request.backend === 'verified-process-handle'
+        && /^\d+$/u.test(request.creationTimeTicks ?? '') && ['verse claw.exe','electron.exe'].includes(request.name?.toLowerCase())
+        && row.ownedProcesses.some(owner => owner.pid === request.pid && owner.name === request.name && owner.creationTimeTicks === request.creationTimeTicks
+          && typeof owner.userDataDir === 'string' && path.win32.normalize(owner.userDataDir).toLowerCase() === path.win32.join(row.runRoot,'ud').toLowerCase())))))
+    && new Set(rows.map(row => `${row.kind}:${row.index}`)).size === 46
+    && new Set(rows.map(row => row.runId)).size === 46 && new Set(rows.map(row => row.runRoot)).size === 46;
+  if (!validRows) issues.push(issue('current_n9_rows_invalid'));
+  else if (!isDeepStrictEqual(n9.summary, summarizeProbeRows(rows))) issues.push(issue('current_n9_summary_mismatch'));
+  const build = candidate?.build;
+  const expectedPaths = ['Verse Claw.exe', 'resources/app.asar', 'resources/main-runtime.asar'];
+  const validBuild = build?.schemaVersion === 2 && Array.isArray(build.artifacts)
+    && JSON.stringify(build.artifacts.map(entry => entry.path)) === JSON.stringify(expectedPaths)
+    && build.artifacts.every(entry => Number.isSafeInteger(entry.bytes) && entry.bytes > 0 && /^[0-9a-f]{64}$/.test(entry.sha256))
+    && build.digest === sha256(Buffer.from(JSON.stringify(build.artifacts)));
+  if (!validBuild) issues.push(issue('current_build_identity_invalid'));
+  const provenance = build?.provenance;
+  if (!validBuildProvenance(provenance) || build?.provenanceSha256 !== sha256(Buffer.from(JSON.stringify(provenance)+'\n'))) {
+    issues.push(issue('current_build_provenance_invalid'));
+  } else {
+    try {
+      if (candidate?.productBuildCommit !== provenance.sourceCommit) issues.push(issue('current_product_build_commit_mismatch'));
+      if (git(hostRoot,['rev-parse',`${provenance.sourceCommit}^{tree}`]) !== provenance.sourceTree) issues.push(issue('current_product_build_tree_mismatch'));
+      git(hostRoot,['merge-base','--is-ancestor',provenance.sourceCommit,candidate.sourceCommit]);
+      const drift = git(hostRoot,['diff','--name-only',provenance.sourceCommit,candidate.sourceCommit,'--',...PRODUCT_SOURCE_SCOPE]);
+      if (drift) issues.push(issue('current_product_build_source_drift',{changed:drift.split(/\r?\n/)}));
+    } catch (error) {
+      issues.push(issue('current_product_build_git_check_failed',{message:String(error.message ?? error)}));
+    }
+  }
+  for (const [label, result] of [['n8', n8], ['n9', n9]]) {
+    if (!validBuild || JSON.stringify(result?.build) !== JSON.stringify(build)) issues.push(issue('current_run_build_mismatch', { run: label }));
+  }
   if (n9?.summary?.loops?.passed !== 30 || n9?.summary?.loops?.fullLoops !== 30) issues.push(issue('current_n9_loop_count_mismatch'));
   if (n9?.summary?.coldStarts?.passed !== 10) issues.push(issue('current_n9_cold_start_mismatch'));
   if (n9?.summary?.interrupts?.killedWithLiveSession !== 3 || n9?.summary?.interrupts?.recoveryPassed !== 3) issues.push(issue('current_n9_interrupt_mismatch'));
@@ -168,7 +234,14 @@ async function verifyCurrent(hostRoot) {
       const commitTree = git(hostRoot, ['rev-parse', `${candidate.sourceCommit}^{tree}`]);
       if (commitTree !== candidate.sourceTree) issues.push(issue('current_candidate_tree_mismatch', { expected: candidate.sourceTree, actual: commitTree }));
       git(hostRoot, ['merge-base', '--is-ancestor', candidate.sourceCommit, 'HEAD']);
-      const changed = git(hostRoot, ['diff', '--name-only', candidate.sourceCommit, 'HEAD', '--', ...SOURCE_SCOPE]).split(/\r?\n/).filter(Boolean);
+      // Include index/worktree edits and newly introduced source files, not only
+      // committed changes. A dirty candidate must not inherit a historical pass.
+      const changed = [...new Set([
+        ...git(hostRoot, ['diff', '--name-only', candidate.sourceCommit, 'HEAD', '--', ...SOURCE_SCOPE]).split(/\r?\n/),
+        ...git(hostRoot, ['diff', '--cached', '--name-only', '--', ...SOURCE_SCOPE]).split(/\r?\n/),
+        ...git(hostRoot, ['diff', '--name-only', '--', ...SOURCE_SCOPE]).split(/\r?\n/),
+        ...git(hostRoot, ['ls-files', '--others', '--exclude-standard', '--', ...SOURCE_SCOPE]).split(/\r?\n/),
+      ].filter(Boolean))];
       if (changed.length) issues.push(issue('current_evidence_stale', { changed }));
     } catch (error) {
       issues.push(issue('current_candidate_git_check_failed', { message: String(error?.stderr || error?.message || error) }));
@@ -194,13 +267,15 @@ async function scanCredentials(hostRoot) {
 }
 
 export async function verifyEvidence(hostRoot = ROOT) {
-  const [n8, n9, current] = await Promise.all([
+  const [n8, n9, previous, previousRepair, current] = await Promise.all([
     verifyN8(hostRoot),
     verifyHistoricalN9(hostRoot),
+    verifyManifest(hostRoot, path.join(EVIDENCE_ROOT, 'current-merge-20261025')),
+    verifyManifest(hostRoot, path.join(EVIDENCE_ROOT, 'current-20261104')),
     verifyCurrent(hostRoot),
   ]);
   const credentials = await scanCredentials(hostRoot);
-  const issues = [n8, n9, current].flatMap((section) => section.issues ?? []);
+  const issues = [n8, n9, previous, previousRepair, current].flatMap((section) => section.issues ?? []);
   for (const hit of credentials) issues.push(issue('credential_pattern_hit', hit));
   return {
     schemaVersion: 1,
@@ -208,7 +283,7 @@ export async function verifyEvidence(hostRoot = ROOT) {
     actor: 'codex',
     status: issues.length ? 'fail' : 'pass',
     scope: 'retained VerseBrowser evidence manifests, attribution, current-candidate binding and credential scan',
-    sections: { n8, n9, current },
+    sections: { n8, n9, previous, current },
     credentialScan: { hits: credentials.length, matches: credentials },
     issues,
   };

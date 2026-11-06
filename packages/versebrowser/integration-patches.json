@@ -196,16 +196,30 @@
     {
       "id": "vb-engine-policy-src-engine-service-ts",
       "driven_by": "agent",
-      "actor": "codex-verse-browser-absorption-20261022",
+      "actor": "codex-verse-tools-fix",
       "sourcePath": "src/engine/service.ts",
       "targetPath": "packages/versebrowser/src/engine/service.ts",
       "sourceNormalization": "lf",
       "originalRawSha256": "081b80a0524834f6571c4bf5da812471789aa698f38b732d512ace38812b1424",
       "originalLfSha256": "f8382356e892f130d99310ab73a97560485033c306af0b405ddc12b95bb3ebfc",
-      "patchedSha256": "bea083e0072337d10e64dee78c64ba8dfa2f69451663436b0f53c683cfd183be",
+      "patchedSha256": "ad478be4e072998611d06ffb6d2e804f07270f27458abe9b6f0e64046e9c4fa9",
       "patchPath": "packages/versebrowser/patches/vb-engine-policy__src__engine__service.ts.patch",
-      "patchSha256": "53794a1402ca0567d2989d1023e88e9e65c5cfae7289d2d5715909e88d516ec8",
-      "reason": "Make managed-session engine selection explicit and immutable at construction. A desktop surface can remain browser-window even when a CLI runner exists, and an unavailable CLI engine now fails closed instead of being re-selected from runtime binary presence."
+      "patchSha256": "1b422285e8ef3f099c30a54799a2e728af1624f6e6b606961fff26f2017ed122",
+      "reason": "Preserve existing host service adaptations and bind request guards to the real session, including additional tabs and window cleanup. The host retains network policy and approval authority."
+    },
+    {
+      "id": "host-owned-tab-lifecycle",
+      "driven_by": "agent",
+      "actor": "codex-verse-tools-fix",
+      "sourcePath": "src/engine/browser-control/tab-manager.ts",
+      "targetPath": "packages/versebrowser/src/engine/browser-control/tab-manager.ts",
+      "sourceNormalization": "lf",
+      "originalRawSha256": "ce08e2e49bad4542ab2bd27bb395a0d6254bacd2f6c65d662a6ecf38ee9f8b9d",
+      "originalLfSha256": "cd965c4dd7c44990cf6b0ebe4093892c3e370dd0dbb96e6bcc10ee8839f30423",
+      "patchedSha256": "ce11ac5a3df5edd4963ee912d7b390cca5c3c8a2ffc1f3063a02154112dce5e7",
+      "patchPath": "packages/versebrowser/patches/host-owned-tab-lifecycle.patch",
+      "patchSha256": "c2047ff31b6553753117765966ba3f7cb56d5b696c03cf34efe13599ece8eaea",
+      "reason": "Destroy rejected initial-navigation windows and force explicit host-owned tab termination so beforeunload cannot leave an untracked browser resource."
     }
   ]
 }

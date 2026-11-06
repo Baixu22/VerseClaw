@@ -43,10 +43,12 @@ describe('TF-0590 real task corpus and grader calibration', () => {
   it('treats documentation drift as a warning rather than a seal violation', () => {
     // rsi-evidence-binding.md: a README edit must not invalidate a sealed pack.
     expect(NON_JUDGED_SOURCE_FILES).toContain('docs/README.md');
+    expect(NON_JUDGED_SOURCE_FILES).toContain('docs/dev/rsi-capability-and-boundaries.md');
     expect(NON_JUDGED_SOURCE_FILES).not.toContain('scripts/rsi-historical-task-corpus.mjs');
     const readback = validateTaskCorpusPack(process.cwd(), { allowDraft: true });
     expect(Array.isArray(readback.warnings)).toBe(true);
     expect(readback.errors.some((entry) => entry.includes('docs/README.md'))).toBe(false);
+    expect(readback.errors.some((entry) => entry.includes('docs/dev/rsi-capability-and-boundaries.md'))).toBe(false);
   });
   it('validates every retained pack checksum and raw calibration outcome from disk', () => {
     expect(validateTaskCorpusPack(process.cwd(), { allowDraft: true })).toMatchObject({ passed: true, taskCount: 24, calibratedRows: 16 });

@@ -24,6 +24,7 @@ export const F5_SOURCE_INPUTS: readonly string[];
 
 export function documentDigest(document: Record<string, any>): string;
 export function hashFile(root: string, path: string): string;
+export function validateVerseToolReadme(text: string, path: string): boolean;
 export function verifyShaManifest(input: { root?: string; path: string }): {
   ok: boolean;
   issues: string[];

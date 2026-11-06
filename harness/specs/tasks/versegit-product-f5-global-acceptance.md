@@ -69,7 +69,7 @@ requiredProfiles:
 requiredTests:
   - pnpm exec vitest run tests/unit/versegit-product-acceptance.test.ts
   - node scripts/verify-versegit-product-integration.mjs
-  - pnpm harness validate --spec harness/specs/tasks/versegit-product-f5-global-acceptance.md
+  - pnpm harness validate --spec harness/specs/tasks/verse-tools-boundary-repair.md
 acceptance:
   - 当前目标的风险观察、agent反馈、候选前置验证、host writeback、持久结果、cleanup、package 和有界稳定性全部有可重算映射。
   - 独立 verifier 对 current candidate 得到 P0=0/P1=0，未跑/残余 P2 明确；不能以后续节点存在代替本目标缺失功能。
@@ -81,6 +81,10 @@ docs:
 ---
 
 **F5 · 逐项聚合 VG 产品接入验收并同步能力声明**
+
+2026-11-04 联合修复的当前重验使用 `verse-tools-boundary-repair` 作为实际变更集的
+Harness 入口；F5 的原始验收标准、规则和历史候选保持不变。该入口覆盖本次 VB/VG
+源码及当前 F5 产物，不以独立 F5 任务的路径范围掩盖联合变更。
 
 让当前产品接线与成熟使用声明都由同一候选证据支持，防止局部通过代替完整闭环。
 

@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { cjkBigrams } from "../runtime-core/memory-tokenization.js";
 import type { RuntimeEmbeddingProvider } from "../runtime-core/memory-embedding-provider.js";
 import type { ResolvedChatKnowledgeRef } from "./chat-knowledge-intent.js";
 
@@ -302,7 +303,7 @@ const LEXICAL_STOP_WORDS = new Set([
 function normalizeTokens(value: string): string[] {
   return [
     ...new Set(
-      (value.toLowerCase().match(/[\p{L}\p{N}_]+/gu) ?? []).filter(
+      [...(value.toLowerCase().match(/[\p{L}\p{N}_]+/gu) ?? []), ...cjkBigrams(value)].filter(
         (token) => !LEXICAL_STOP_WORDS.has(token),
       ),
     ),
@@ -317,7 +318,7 @@ function tokenScore(tokens: readonly string[]): number {
   return score;
 }
 
-function lexicalOverlapScore(queryText: string, haystackText: string): number {
+export function lexicalOverlapScore(queryText: string, haystackText: string): number {
   const queryTokens = normalizeTokens(queryText);
   if (queryTokens.length === 0) return 0;
   const haystack = new Set(normalizeTokens(haystackText));

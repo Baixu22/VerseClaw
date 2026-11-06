@@ -1,0 +1,972 @@
+{
+  "numTotalTestSuites": 19,
+  "numPassedTestSuites": 19,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 56,
+  "numPassedTests": 56,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793858764877,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "coding mutation workspace boundary"
+          ],
+          "fullName": "coding mutation workspace boundary allows trusted operator write, edit, and apply_patch outside the workspace",
+          "status": "passed",
+          "title": "allows trusted operator write, edit, and apply_patch outside the workspace",
+          "duration": 34.56720000000132,
+          "failureMessages": [],
+          "location": {
+            "line": 84,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "coding mutation workspace boundary"
+          ],
+          "fullName": "coding mutation workspace boundary blocks external, derived, invalid, and missing provenance before write mutates outside the workspace",
+          "status": "passed",
+          "title": "blocks external, derived, invalid, and missing provenance before write mutates outside the workspace",
+          "duration": 16.768400000000838,
+          "failureMessages": [],
+          "location": {
+            "line": 110,
+            "column": 52
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "coding mutation workspace boundary"
+          ],
+          "fullName": "coding mutation workspace boundary blocks external, derived, invalid, and missing provenance before edit mutates outside the workspace",
+          "status": "passed",
+          "title": "blocks external, derived, invalid, and missing provenance before edit mutates outside the workspace",
+          "duration": 13.40690000000177,
+          "failureMessages": [],
+          "location": {
+            "line": 110,
+            "column": 52
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "coding mutation workspace boundary"
+          ],
+          "fullName": "coding mutation workspace boundary blocks external, derived, invalid, and missing provenance before apply_patch mutates outside the workspace",
+          "status": "passed",
+          "title": "blocks external, derived, invalid, and missing provenance before apply_patch mutates outside the workspace",
+          "duration": 12.609800000001997,
+          "failureMessages": [],
+          "location": {
+            "line": 110,
+            "column": 52
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "coding mutation workspace boundary"
+          ],
+          "fullName": "coding mutation workspace boundary keeps in-workspace writes usable for external and missing provenance",
+          "status": "passed",
+          "title": "keeps in-workspace writes usable for external and missing provenance",
+          "duration": 15.508900000000722,
+          "failureMessages": [],
+          "location": {
+            "line": 161,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "coding mutation workspace boundary"
+          ],
+          "fullName": "coding mutation workspace boundary treats a sibling of cwd as in-workspace when workspaceDir is broader",
+          "status": "passed",
+          "title": "treats a sibling of cwd as in-workspace when workspaceDir is broader",
+          "duration": 5.707500000000437,
+          "failureMessages": [],
+          "location": {
+            "line": 181,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "coding mutation workspace boundary"
+          ],
+          "fullName": "coding mutation workspace boundary uses cwd as the fallback workspace when workspaceDir is omitted",
+          "status": "passed",
+          "title": "uses cwd as the fallback workspace when workspaceDir is omitted",
+          "duration": 7.9298000000017055,
+          "failureMessages": [],
+          "location": {
+            "line": 203,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "coding mutation workspace boundary"
+          ],
+          "fullName": "coding mutation workspace boundary fails missing provenance closed for an external target",
+          "status": "passed",
+          "title": "fails missing provenance closed for an external target",
+          "duration": 2.9736999999986438,
+          "failureMessages": [],
+          "location": {
+            "line": 237,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "coding mutation workspace boundary"
+          ],
+          "fullName": "coding mutation workspace boundary preserves the existing malformed apply_patch validation error",
+          "status": "passed",
+          "title": "preserves the existing malformed apply_patch validation error",
+          "duration": 2.8721999999979744,
+          "failureMessages": [],
+          "location": {
+            "line": 249,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "coding mutation workspace boundary"
+          ],
+          "fullName": "coding mutation workspace boundary denies workspace paths whose existing alias resolves outside the workspace",
+          "status": "passed",
+          "title": "denies workspace paths whose existing alias resolves outside the workspace",
+          "duration": 4.395599999999831,
+          "failureMessages": [],
+          "location": {
+            "line": 259,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "coding mutation workspace boundary"
+          ],
+          "fullName": "coding mutation workspace boundary fails closed for an in-workspace hardlink alias",
+          "status": "passed",
+          "title": "fails closed for an in-workspace hardlink alias",
+          "duration": 4.81079999999929,
+          "failureMessages": [],
+          "location": {
+            "line": 285,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "coding mutation workspace boundary"
+          ],
+          "fullName": "coding mutation workspace boundary keeps the fs workspace-only policy authoritative for every mutation tool",
+          "status": "passed",
+          "title": "keeps the fs workspace-only policy authoritative for every mutation tool",
+          "duration": 4.16820000000007,
+          "failureMessages": [],
+          "location": {
+            "line": 307,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "coding mutation workspace boundary"
+          ],
+          "fullName": "coding mutation workspace boundary supports an explicit apply_patch-only workspace restriction",
+          "status": "passed",
+          "title": "supports an explicit apply_patch-only workspace restriction",
+          "duration": 4.199499999998807,
+          "failureMessages": [],
+          "location": {
+            "line": 340,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "S03 workspace external-write path-escape matrix"
+          ],
+          "fullName": "S03 workspace external-write path-escape matrix denies relative-parent-escape for external provenance without modifying the target",
+          "status": "passed",
+          "title": "denies relative-parent-escape for external provenance without modifying the target",
+          "duration": 3.5534000000006927,
+          "failureMessages": [],
+          "location": {
+            "line": 379,
+            "column": 22
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "S03 workspace external-write path-escape matrix"
+          ],
+          "fullName": "S03 workspace external-write path-escape matrix denies absolute-outside for external provenance without modifying the target",
+          "status": "passed",
+          "title": "denies absolute-outside for external provenance without modifying the target",
+          "duration": 3.102999999999156,
+          "failureMessages": [],
+          "location": {
+            "line": 379,
+            "column": 22
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "S03 workspace external-write path-escape matrix"
+          ],
+          "fullName": "S03 workspace external-write path-escape matrix denies win32-case-variant for external provenance without modifying the target",
+          "status": "passed",
+          "title": "denies win32-case-variant for external provenance without modifying the target",
+          "duration": 2.8280999999988126,
+          "failureMessages": [],
+          "location": {
+            "line": 379,
+            "column": 22
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "S03 workspace external-write path-escape matrix"
+          ],
+          "fullName": "S03 workspace external-write path-escape matrix keeps a trusted operator external write authoritative (content preserved exactly)",
+          "status": "passed",
+          "title": "keeps a trusted operator external write authoritative (content preserved exactly)",
+          "duration": 4.510699999998906,
+          "failureMessages": [],
+          "location": {
+            "line": 401,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793858784093,
+      "endTime": 1793858784238.5107,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0278-s03/baseline/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "UAS-04 preflight"
+          ],
+          "fullName": "UAS-04 preflight touches no files when a later target is missing",
+          "status": "passed",
+          "title": "touches no files when a later target is missing",
+          "duration": 3.473099999999249,
+          "failureMessages": [],
+          "location": {
+            "line": 96,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "UAS-04 preflight"
+          ],
+          "fullName": "UAS-04 preflight reports every committed add, update, and delete",
+          "status": "passed",
+          "title": "reports every committed add, update, and delete",
+          "duration": 4.579600000000937,
+          "failureMessages": [],
+          "location": {
+            "line": 108,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "UAS-04 rollback and recovery"
+          ],
+          "fullName": "UAS-04 rollback and recovery restores earlier writes when a later write fails",
+          "status": "passed",
+          "title": "restores earlier writes when a later write fails",
+          "duration": 7.200199999999313,
+          "failureMessages": [],
+          "location": {
+            "line": 134,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "UAS-04 rollback and recovery"
+          ],
+          "fullName": "UAS-04 rollback and recovery retains journal entries and a recovery reference when rollback fails",
+          "status": "passed",
+          "title": "retains journal entries and a recovery reference when rollback fails",
+          "duration": 72.55949999999939,
+          "failureMessages": [],
+          "location": {
+            "line": 159,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "UAS-04 rollback and recovery"
+          ],
+          "fullName": "UAS-04 rollback and recovery restores both sides when a move fails after writing its destination",
+          "status": "passed",
+          "title": "restores both sides when a move fails after writing its destination",
+          "duration": 5.02219999999943,
+          "failureMessages": [],
+          "location": {
+            "line": 188,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "UAS-04 lease and restart semantics"
+          ],
+          "fullName": "UAS-04 lease and restart semantics journals exactly once inside the production tool batch lease",
+          "status": "passed",
+          "title": "journals exactly once inside the production tool batch lease",
+          "duration": 6.43999999999869,
+          "failureMessages": [],
+          "location": {
+            "line": 217,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "UAS-04 lease and restart semantics"
+          ],
+          "fullName": "UAS-04 lease and restart semantics detects a prepared journal batch after in-memory state is reset",
+          "status": "passed",
+          "title": "detects a prepared journal batch after in-memory state is reset",
+          "duration": 4.734000000000378,
+          "failureMessages": [],
+          "location": {
+            "line": 241,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "UAS-04 lease and restart semantics"
+          ],
+          "fullName": "UAS-04 lease and restart semantics serializes overlapping patches before preflight and rejects stale context",
+          "status": "passed",
+          "title": "serializes overlapping patches before preflight and rejects stale context",
+          "duration": 3.600699999999051,
+          "failureMessages": [],
+          "location": {
+            "line": 253,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793858784269,
+      "endTime": 1793858784376.6006,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0278-s03/baseline/workspace/openclaw_runtime/src/agents/apply-patch-consistency.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "edit tool: successful replacement"
+          ],
+          "fullName": "edit tool: successful replacement applies a single unique replacement and returns diff/patch details",
+          "status": "passed",
+          "title": "applies a single unique replacement and returns diff/patch details",
+          "duration": 113.72789999999804,
+          "failureMessages": [],
+          "location": {
+            "line": 43,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "edit tool: successful replacement"
+          ],
+          "fullName": "edit tool: successful replacement applies multiple disjoint edits in one call",
+          "status": "passed",
+          "title": "applies multiple disjoint edits in one call",
+          "duration": 4.478800000004412,
+          "failureMessages": [],
+          "location": {
+            "line": 71,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "edit tool: match failures"
+          ],
+          "fullName": "edit tool: match failures appends the current file contents as a hint when the text is not found",
+          "status": "passed",
+          "title": "appends the current file contents as a hint when the text is not found",
+          "duration": 5.126900000002934,
+          "failureMessages": [],
+          "location": {
+            "line": 88,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "edit tool: match failures"
+          ],
+          "fullName": "edit tool: match failures truncates the mismatch hint at 800 characters",
+          "status": "passed",
+          "title": "truncates the mismatch hint at 800 characters",
+          "duration": 3.9673000000038883,
+          "failureMessages": [],
+          "location": {
+            "line": 102,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "edit tool: match failures"
+          ],
+          "fullName": "edit tool: match failures reports ambiguous matches with an occurrence count and NO contents hint",
+          "status": "passed",
+          "title": "reports ambiguous matches with an occurrence count and NO contents hint",
+          "duration": 2.6273000000001048,
+          "failureMessages": [],
+          "location": {
+            "line": 112,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "edit tool: match failures"
+          ],
+          "fullName": "edit tool: match failures rejects an empty oldText",
+          "status": "passed",
+          "title": "rejects an empty oldText",
+          "duration": 3.432300000000396,
+          "failureMessages": [],
+          "location": {
+            "line": 123,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "edit tool: match failures"
+          ],
+          "fullName": "edit tool: match failures rejects an empty edits array before touching the filesystem",
+          "status": "passed",
+          "title": "rejects an empty edits array before touching the filesystem",
+          "duration": 0.9774000000033993,
+          "failureMessages": [],
+          "location": {
+            "line": 132,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "edit tool: match failures"
+          ],
+          "fullName": "edit tool: match failures reports a missing file with the Node error code only",
+          "status": "passed",
+          "title": "reports a missing file with the Node error code only",
+          "duration": 0.9623999999967054,
+          "failureMessages": [],
+          "location": {
+            "line": 139,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "edit tool: line-ending round trips"
+          ],
+          "fullName": "edit tool: line-ending round trips preserves CRLF endings and converts inserted LF newlines to CRLF",
+          "status": "passed",
+          "title": "preserves CRLF endings and converts inserted LF newlines to CRLF",
+          "duration": 3.1977999999944586,
+          "failureMessages": [],
+          "location": {
+            "line": 149,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "edit tool: line-ending round trips"
+          ],
+          "fullName": "edit tool: line-ending round trips preserves each existing ending in a mixed-endings file",
+          "status": "passed",
+          "title": "preserves each existing ending in a mixed-endings file",
+          "duration": 2.9147999999986496,
+          "failureMessages": [],
+          "location": {
+            "line": 160,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "edit tool: line-ending round trips"
+          ],
+          "fullName": "edit tool: line-ending round trips preserves lone-CR (classic Mac) line endings",
+          "status": "passed",
+          "title": "preserves lone-CR (classic Mac) line endings",
+          "duration": 3.300599999995029,
+          "failureMessages": [],
+          "location": {
+            "line": 169,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "edit tool: BOM handling"
+          ],
+          "fullName": "edit tool: BOM handling matches oldText ignoring the BOM and re-attaches the BOM on write",
+          "status": "passed",
+          "title": "matches oldText ignoring the BOM and re-attaches the BOM on write",
+          "duration": 2.617899999997462,
+          "failureMessages": [],
+          "location": {
+            "line": 180,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "edit tool: BOM handling"
+          ],
+          "fullName": "edit tool: BOM handling preserves UTF-16LE encoding and BOM while editing decoded text",
+          "status": "passed",
+          "title": "preserves UTF-16LE encoding and BOM while editing decoded text",
+          "duration": 2.7974000000031083,
+          "failureMessages": [],
+          "location": {
+            "line": 191,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "edit tool: fuzzy matching boundaries"
+          ],
+          "fullName": "edit tool: fuzzy matching boundaries keeps untouched punctuation and trailing whitespace during a fuzzy edit",
+          "status": "passed",
+          "title": "keeps untouched punctuation and trailing whitespace during a fuzzy edit",
+          "duration": 2.8566999999966356,
+          "failureMessages": [],
+          "location": {
+            "line": 208,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "edit tool: prepareArguments legacy shapes"
+          ],
+          "fullName": "edit tool: prepareArguments legacy shapes converts top-level oldText/newText into an edits array",
+          "status": "passed",
+          "title": "converts top-level oldText/newText into an edits array",
+          "duration": 0.9040000000022701,
+          "failureMessages": [],
+          "location": {
+            "line": 224,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "edit tool: prepareArguments legacy shapes"
+          ],
+          "fullName": "edit tool: prepareArguments legacy shapes parses edits sent as a JSON string",
+          "status": "passed",
+          "title": "parses edits sent as a JSON string",
+          "duration": 0.6203999999997905,
+          "failureMessages": [],
+          "location": {
+            "line": 234,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793858785441,
+      "endTime": 1793858785595.904,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0278-s03/baseline/workspace/openclaw_runtime/src/agents/sessions/tools/edit.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "write tool: create and overwrite"
+          ],
+          "fullName": "write tool: create and overwrite creates a new file and reports the byte count in the success message",
+          "status": "passed",
+          "title": "creates a new file and reports the byte count in the success message",
+          "duration": 2.751799999998184,
+          "failureMessages": [],
+          "location": {
+            "line": 31,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "write tool: create and overwrite"
+          ],
+          "fullName": "write tool: create and overwrite overwrites an existing file",
+          "status": "passed",
+          "title": "overwrites an existing file",
+          "duration": 2.2079999999987194,
+          "failureMessages": [],
+          "location": {
+            "line": 42,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "write tool: create and overwrite"
+          ],
+          "fullName": "write tool: create and overwrite creates missing parent directories automatically",
+          "status": "passed",
+          "title": "creates missing parent directories automatically",
+          "duration": 3.967399999994086,
+          "failureMessages": [],
+          "location": {
+            "line": 49,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "write tool: create and overwrite"
+          ],
+          "fullName": "write tool: create and overwrite writes empty content",
+          "status": "passed",
+          "title": "writes empty content",
+          "duration": 2.2749999999941792,
+          "failureMessages": [],
+          "location": {
+            "line": 55,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "write tool: line endings and byte counting"
+          ],
+          "fullName": "write tool: line endings and byte counting writes CRLF content verbatim without normalizing line endings",
+          "status": "passed",
+          "title": "writes CRLF content verbatim without normalizing line endings",
+          "duration": 2.431700000001001,
+          "failureMessages": [],
+          "location": {
+            "line": 63,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "write tool: line endings and byte counting"
+          ],
+          "fullName": "write tool: line endings and byte counting reports the actual UTF-8 byte length in the success message",
+          "status": "passed",
+          "title": "reports the actual UTF-8 byte length in the success message",
+          "duration": 2.0898999999990338,
+          "failureMessages": [],
+          "location": {
+            "line": 76,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "write tool: line endings and byte counting"
+          ],
+          "fullName": "write tool: line endings and byte counting reports an astral emoji using its UTF-8 byte length",
+          "status": "passed",
+          "title": "reports an astral emoji using its UTF-8 byte length",
+          "duration": 1.750899999999092,
+          "failureMessages": [],
+          "location": {
+            "line": 86,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793858785645,
+      "endTime": 1793858785662.751,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0278-s03/baseline/workspace/openclaw_runtime/src/agents/sessions/tools/write.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "workspace external-write provenance policy"
+          ],
+          "fullName": "workspace external-write provenance policy denies an external target for untrusted provenance",
+          "status": "passed",
+          "title": "denies an external target for untrusted provenance",
+          "duration": 2.908100000000559,
+          "failureMessages": [],
+          "location": {
+            "line": 44,
+            "column": 4
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace external-write provenance policy"
+          ],
+          "fullName": "workspace external-write provenance policy denies an external target for derived-untrusted provenance",
+          "status": "passed",
+          "title": "denies an external target for derived-untrusted provenance",
+          "duration": 0.42150000000037835,
+          "failureMessages": [],
+          "location": {
+            "line": 44,
+            "column": 4
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace external-write provenance policy"
+          ],
+          "fullName": "workspace external-write provenance policy denies an external target for missing provenance",
+          "status": "passed",
+          "title": "denies an external target for missing provenance",
+          "duration": 0.3368999999984226,
+          "failureMessages": [],
+          "location": {
+            "line": 44,
+            "column": 4
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace external-write provenance policy"
+          ],
+          "fullName": "workspace external-write provenance policy denies an external target for invalid provenance",
+          "status": "passed",
+          "title": "denies an external target for invalid provenance",
+          "duration": 0.22049999999944703,
+          "failureMessages": [],
+          "location": {
+            "line": 44,
+            "column": 4
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace external-write provenance policy"
+          ],
+          "fullName": "workspace external-write provenance policy keeps in-workspace coding available for external and unknown provenance",
+          "status": "passed",
+          "title": "keeps in-workspace coding available for external and unknown provenance",
+          "duration": 0.36959999999999127,
+          "failureMessages": [],
+          "location": {
+            "line": 55,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace external-write provenance policy"
+          ],
+          "fullName": "workspace external-write provenance policy keeps trusted system and direct operator external targets unchanged",
+          "status": "passed",
+          "title": "keeps trusted system and direct operator external targets unchanged",
+          "duration": 0.3899999999994179,
+          "failureMessages": [],
+          "location": {
+            "line": 66,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace external-write provenance policy"
+          ],
+          "fullName": "workspace external-write provenance policy fails closed when external or unknown input has no determinable target",
+          "status": "passed",
+          "title": "fails closed when external or unknown input has no determinable target",
+          "duration": 0.43469999999979336,
+          "failureMessages": [],
+          "location": {
+            "line": 82,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace external-write provenance policy"
+          ],
+          "fullName": "workspace external-write provenance policy denies a mixed patch target set when any destination is external",
+          "status": "passed",
+          "title": "denies a mixed patch target set when any destination is external",
+          "duration": 0.2618000000002212,
+          "failureMessages": [],
+          "location": {
+            "line": 107,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793858765475,
+      "endTime": 1793858765480.4348,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0278-s03/baseline/workspace/openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts"
+    }
+  ]
+}

@@ -32,7 +32,7 @@
   "negativeControls": [
     { "id": "shadow-must-not-inject", "expects": "shadow arm has no injection; a shadow/off behavioural difference is a wiring defect" },
     { "id": "safety-anchor-regression", "expects": "eliminate even if pass^k improves" },
-    { "id": "missing-cost", "expects": "eliminate; null cost cannot be promoted" },
+    { "id": "missing-cost", "expects": "hold; null cost cannot be promoted (D7 policy alignment)" },
     { "id": "synthetic-fixture", "expects": "never promote; report status synthetic-wiring-only" },
     { "id": "below-floor", "expects": "insufficient-evidence" }
   ],

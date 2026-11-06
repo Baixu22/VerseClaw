@@ -1,0 +1,361 @@
+{
+  "numTotalTestSuites": 8,
+  "numPassedTestSuites": 7,
+  "numFailedTestSuites": 1,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 19,
+  "numPassedTests": 19,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793859058093,
+  "success": false,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "stage1 EffectReceipt projection"
+          ],
+          "fullName": "stage1 EffectReceipt projection runtime-sanitizes effect_context_json so raw proposal/arguments/output cannot persist",
+          "status": "passed",
+          "title": "runtime-sanitizes effect_context_json so raw proposal/arguments/output cannot persist",
+          "duration": 203.61390000000029,
+          "failureMessages": [],
+          "location": {
+            "line": 68,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "stage1 EffectReceipt projection"
+          ],
+          "fullName": "stage1 EffectReceipt projection projects a contract-valid EffectReceipt/v1 from digest-only row facts",
+          "status": "passed",
+          "title": "projects a contract-valid EffectReceipt/v1 from digest-only row facts",
+          "duration": 129.14450000000215,
+          "failureMessages": [],
+          "location": {
+            "line": 101,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "stage1 EffectReceipt projection"
+          ],
+          "fullName": "stage1 EffectReceipt projection keeps identical-content idempotency and rejects content-conflict",
+          "status": "passed",
+          "title": "keeps identical-content idempotency and rejects content-conflict",
+          "duration": 82.9458999999988,
+          "failureMessages": [],
+          "location": {
+            "line": 114,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "stage1 EffectReceipt projection"
+          ],
+          "fullName": "stage1 EffectReceipt projection projects unknown outcomes without auto-replay semantics",
+          "status": "passed",
+          "title": "projects unknown outcomes without auto-replay semantics",
+          "duration": 74.18949999999677,
+          "failureMessages": [],
+          "location": {
+            "line": 124,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "stage1 EffectReceipt projection"
+          ],
+          "fullName": "stage1 EffectReceipt projection restart reopen keeps rows queryable and old legacy rows do not project",
+          "status": "passed",
+          "title": "restart reopen keeps rows queryable and old legacy rows do not project",
+          "duration": 115.71730000000025,
+          "failureMessages": [],
+          "location": {
+            "line": 134,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "stage1 EffectReceipt projection"
+          ],
+          "fullName": "stage1 EffectReceipt projection records unknown outcome in the durable approval ledger without auto-replay",
+          "status": "passed",
+          "title": "records unknown outcome in the durable approval ledger without auto-replay",
+          "duration": 93.46930000000066,
+          "failureMessages": [],
+          "location": {
+            "line": 153,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793859060172,
+      "endTime": 1793859060870.4692,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0281-s06/baseline/workspace/openclaw_runtime/src/agents/stage1-effect-receipt.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "apply_patch effect receipt: outcome mapping"
+          ],
+          "fullName": "apply_patch effect receipt: outcome mapping maps each terminal batch state and refuses to speak for a prepared one",
+          "status": "passed",
+          "title": "maps each terminal batch state and refuses to speak for a prepared one",
+          "duration": 1.253499999998894,
+          "failureMessages": [],
+          "location": {
+            "line": 49,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "apply_patch effect receipt: shape"
+          ],
+          "fullName": "apply_patch effect receipt: shape names the write journal as the executor and carries no approval decision",
+          "status": "passed",
+          "title": "names the write journal as the executor and carries no approval decision",
+          "duration": 1.2679000000025553,
+          "failureMessages": [],
+          "location": {
+            "line": 61,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "apply_patch effect receipt: shape"
+          ],
+          "fullName": "apply_patch effect receipt: shape ties the receipt to the preview that authorised the commit",
+          "status": "passed",
+          "title": "ties the receipt to the preview that authorised the commit",
+          "duration": 0.202900000000227,
+          "failureMessages": [],
+          "location": {
+            "line": 80,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "apply_patch effect receipt: shape"
+          ],
+          "fullName": "apply_patch effect receipt: shape sorts the proposal path lists so the stored digest is order-independent",
+          "status": "passed",
+          "title": "sorts the proposal path lists so the stored digest is order-independent",
+          "duration": 0.31409999999959837,
+          "failureMessages": [],
+          "location": {
+            "line": 93,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "apply_patch effect receipt: shape"
+          ],
+          "fullName": "apply_patch effect receipt: shape records an incomplete rollback as recoverable through its recovery ref",
+          "status": "passed",
+          "title": "records an incomplete rollback as recoverable through its recovery ref",
+          "duration": 0.16330000000016298,
+          "failureMessages": [],
+          "location": {
+            "line": 106,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "apply_patch effect receipt: shape"
+          ],
+          "fullName": "apply_patch effect receipt: shape says none rather than undo_write when the batch is not undoable",
+          "status": "passed",
+          "title": "says none rather than undo_write when the batch is not undoable",
+          "duration": 0.12600000000020373,
+          "failureMessages": [],
+          "location": {
+            "line": 116,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "apply_patch effect receipt: shape"
+          ],
+          "fullName": "apply_patch effect receipt: shape produces nothing for a batch that never left prepared",
+          "status": "passed",
+          "title": "produces nothing for a batch that never left prepared",
+          "duration": 0.14129999999931897,
+          "failureMessages": [],
+          "location": {
+            "line": 125,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "apply_patch effect receipt: diff artifact association (AC-3)"
+          ],
+          "fullName": "apply_patch effect receipt: diff artifact association (AC-3) joins handles into the single artifact_ref column and annotates truncation",
+          "status": "passed",
+          "title": "joins handles into the single artifact_ref column and annotates truncation",
+          "duration": 0.35710000000108266,
+          "failureMessages": [],
+          "location": {
+            "line": 138,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "apply_patch effect receipt: diff artifact association (AC-3)"
+          ],
+          "fullName": "apply_patch effect receipt: diff artifact association (AC-3) puts the readable prefix on the row and the whole set under the digest",
+          "status": "passed",
+          "title": "puts the readable prefix on the row and the whole set under the digest",
+          "duration": 0.2746000000006461,
+          "failureMessages": [],
+          "location": {
+            "line": 154,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "apply_patch effect receipt: diff artifact association (AC-3)"
+          ],
+          "fullName": "apply_patch effect receipt: diff artifact association (AC-3) omits artifact_ref entirely when no diff was archived",
+          "status": "passed",
+          "title": "omits artifact_ref entirely when no diff was archived",
+          "duration": 0.3150999999998021,
+          "failureMessages": [],
+          "location": {
+            "line": 173,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "apply_patch effect receipt: wiring and fail-open"
+          ],
+          "fullName": "apply_patch effect receipt: wiring and fail-open writes exactly one receipt when the batch produced journal evidence",
+          "status": "passed",
+          "title": "writes exactly one receipt when the batch produced journal evidence",
+          "duration": 0.8129999999982829,
+          "failureMessages": [],
+          "location": {
+            "line": 199,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "apply_patch effect receipt: wiring and fail-open"
+          ],
+          "fullName": "apply_patch effect receipt: wiring and fail-open writes nothing when there is no journal evidence",
+          "status": "passed",
+          "title": "writes nothing when there is no journal evidence",
+          "duration": 0.125,
+          "failureMessages": [],
+          "location": {
+            "line": 214,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "apply_patch effect receipt: wiring and fail-open"
+          ],
+          "fullName": "apply_patch effect receipt: wiring and fail-open swallows a store that throws, because a receipt must never fail a write",
+          "status": "passed",
+          "title": "swallows a store that throws, because a receipt must never fail a write",
+          "duration": 0.4871999999995751,
+          "failureMessages": [],
+          "location": {
+            "line": 225,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793859059307,
+      "endTime": 1793859059313.4873,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0281-s06/baseline/workspace/openclaw_runtime/src/agents/apply-patch-effect-receipt.test.ts"
+    },
+    {
+      "assertionResults": [],
+      "startTime": 1793859058093,
+      "endTime": 1793859058093,
+      "status": "failed",
+      "message": "Cannot find module './memory-effect-receipt.js' imported from D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0281-s06/baseline/workspace/openclaw_runtime/src/runtime-core/memory-effect-receipt.test.ts",
+      "name": "D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0281-s06/baseline/workspace/openclaw_runtime/src/runtime-core/memory-effect-receipt.test.ts"
+    }
+  ]
+}

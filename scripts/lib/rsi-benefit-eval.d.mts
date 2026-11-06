@@ -1,0 +1,72 @@
+import type { Tf0592Policy, Tf0592Summary } from '../rsi-tf0592-statistical-adjudication.mjs';
+import type { PairedEffect } from './paired-ablation.mjs';
+import type { buildResponsesRequest } from './rsi-responses-provider.mjs';
+import type { ResponsesReply } from './rsi-responses-provider.mjs';
+
+export type BenefitArm = 'sekb-off' | 'sekb-shadow' | 'sekb-confirmed';
+export type BenefitTask = {
+  id: string; taskId: string; split: 'public' | 'held-out'; safetyRequired: boolean;
+  anchor: 'positive' | 'negative' | null; negativeExpectedOutcome: 'pass' | 'fail';
+  prompt: string; acceptanceCriteria: string[]; targetScope: string[];
+  source: { recordPath: string; recordDigest: string; base: string; reference: string };
+  oracleDigest: string;
+  oracle: { commands: string[]; testPaths: string[]; expectedSkips: number; inputDigests: Record<string, string> };
+};
+export type BenefitSlot = {
+  id: string; caseId: string; repeat: number; arm: BenefitArm; caseDigest: string;
+  pairSeed: number; flagsDigest: string; position: number;
+};
+export type BenefitCandidate = { id: string; kind: 'synthetic-control' | 'confirmed-sekb'; context: string; sourceCaseIds: string[] };
+export type BenefitPlan = {
+  schemaVersion: 'RsiBenefitPlan/v1'; driven_by: 'agent'; actor: string; runId: string;
+  evidenceKind: 'synthetic-wiring-fixture' | 'live-provider';
+  source: { commit: string; tree: string; bindings: Record<string, string>; boundary: string };
+  provider: { endpoint: string; model: string; maxOutputTokens: number };
+  budget: { providerCallsAuthorized: number; maxTotalTokens: number | null; network: string; retries: 0 };
+  design: { k: number; minimumCompleteCases: number; primaryComparison: string; order: string; unit: string; minimumImprovement: number; costIncreaseMaximum: number };
+  arms: Record<BenefitArm, { enabled: boolean; shadowEvaluation: boolean; injection: boolean }>;
+  candidate: BenefitCandidate; candidateDigest: string; tasks: BenefitTask[]; policy: Tf0592Policy; slots: BenefitSlot[];
+  claims: { realHuman: false; liveProvider: false; benefit: false; promotionReady: false; productLocksChanged: false };
+};
+export type BenefitReport = {
+  schemaVersion: string; driven_by: string; actor: string; planDigest: string; evidenceKind: string; status: string;
+  coverage: { planned: number; recorded: number; missing: string[]; incomplete: string[] };
+  comparisons: { confirmedVsOff: Tf0592Summary; shadowVsOff: Tf0592Summary };
+  splitEffects: Record<'public' | 'held-out', { cases: number; completePairs: number; passK: { off: number | null; confirmed: number | null }; effect: PairedEffect; verdict: string }>;
+  wiring: { offShadowInputsIdentical: boolean; confirmedCandidateBound: boolean; runtimeEffectMeasured: boolean };
+  benefit: { status: string; numericalStatus: string; reasons: string[] };
+  cost: { measurementBasis: string; providerCalls: number; totalTokens: number | null; actualCostUsd: number | null; missingUsageTrials: number };
+  claims: { benefit: boolean; promotionReady: false; liveProvider: boolean; realHuman: false; productLocksChanged: false };
+};
+export type BenefitPlanOptions = { endpoint?: string; model?: string; actor?: string; runId?: string; candidate?: BenefitCandidate; mode?: 'offline' | 'measured'; maxProviderCalls?: number; maxTotalTokens?: number };
+export type BenefitTrialReceipt = {
+  schemaVersion: 'RsiBenefitTrial/v1'; driven_by: 'agent'; actor: string; planDigest: string;
+  slot: BenefitSlot; evidenceKind: BenefitPlan['evidenceKind'];
+  request: ReturnType<typeof buildResponsesRequest>; requestDigest: string;
+  runtime: { flags: BenefitPlan['arms'][BenefitArm]; flagsDigest: string; candidateDigest: string;
+    injectionDigest: string | null; isolationId: string; runtimeEffectMeasured: boolean };
+  edits: Array<{ path: string; content: string }>;
+  execution: { status: 'completed' | 'timeout' | 'crash'; failureClass: 'infrastructure' | null;
+    attempts: 1; providerCalls: number; wallClockMs: number; costUsd: number | null;
+    toolEvents: Array<{ type: 'tool-call'; callId: string; name: string; arguments: string; output: string }>;
+    runPosition: number; startedAt: string; endedAt: string; measurementBasis: string; note: string };
+  rawResponse: unknown;
+  providerAttempts: Array<{ endpoint: string; request: ReturnType<typeof buildResponsesRequest>; rawResponse: unknown; parsedResponse: ResponsesReply }>;
+  grader: null | { schemaVersion: 'RsiBenefitGrader/v1'; driven_by: 'agent'; actor: string; workspaceRevision: string; oracleDigest: string; commands: string[]; responseDigest: string; editsDigest: string;
+    isolation: { hiddenOracleVisible: false; unapprovedEgress: false; candidateChangedEvaluator: false };
+    reports: Array<{ command: string; exitCode: number; report: { success: boolean; numTotalTests: number;
+      numPassedTests: number; numFailedTests: number; numPendingTests: number; numSkippedTests?: number; numTodoTests?: number;
+      testResults: Array<{ name: string; assertionResults: Array<{ status: string }> }> } }> };
+};
+export const BENEFIT_ARMS: readonly BenefitArm[];
+export function benefitDigest(value: unknown): string;
+export function createBenefitPlan(root: string, options?: BenefitPlanOptions): BenefitPlan;
+export function validateBenefitPlan(plan: BenefitPlan, root: string): boolean;
+export function writeBenefitPlan(root: string, directory: string, options?: BenefitPlanOptions): BenefitPlan;
+export function buildBenefitRequest(plan: BenefitPlan, slot: BenefitSlot): ReturnType<typeof buildResponsesRequest>;
+export function runOfflineBenefit(root: string, directory: string, options?: { limit?: number }): { written: number; resumed: number; planned: number; providerCalls: number };
+export function recordMeasuredBenefitTrials(root: string, directory: string, receipts: unknown[]): Array<{ row: { slot: BenefitSlot }; outcome: string }>;
+export function adoptLiveCalibration(root: string, directory: string, calibrationDir: string): { copied: number; existing: number; reportDigest: string; status: string };
+export function summarizeBenefitRun(root: string, directory: string, actor?: string): BenefitReport;
+export function sealBenefitRun(root: string, directory: string, actor?: string): BenefitReport;
+export function checkBenefitRun(root: string, directory: string): { passed: boolean; errors: string[]; evidenceKind: string; reportStatus: string; benefitStatus: string; coverage: BenefitReport['coverage'] | null; claims: Record<string, boolean> };

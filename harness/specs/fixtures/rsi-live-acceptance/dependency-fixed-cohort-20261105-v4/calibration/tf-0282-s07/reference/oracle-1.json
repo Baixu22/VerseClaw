@@ -1,0 +1,225 @@
+{
+  "numTotalTestSuites": 4,
+  "numPassedTestSuites": 4,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 11,
+  "numPassedTests": 11,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793859110315,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "evidence verifier shadow/pilot gating"
+          ],
+          "fullName": "evidence verifier shadow/pilot gating keeps shadow and pilot flags off by default (no production injection)",
+          "status": "passed",
+          "title": "keeps shadow and pilot flags off by default (no production injection)",
+          "duration": 143.41320000000087,
+          "failureMessages": [],
+          "location": {
+            "line": 20,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "evidence verifier shadow/pilot gating"
+          ],
+          "fullName": "evidence verifier shadow/pilot gating completes a task with the canonical fixture (all evidence kinds present)",
+          "status": "passed",
+          "title": "completes a task with the canonical fixture (all evidence kinds present)",
+          "duration": 1.1098000000001775,
+          "failureMessages": [],
+          "location": {
+            "line": 31,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "evidence verifier shadow/pilot gating"
+          ],
+          "fullName": "evidence verifier shadow/pilot gating reports insufficient evidence when required kinds are missing",
+          "status": "passed",
+          "title": "reports insufficient evidence when required kinds are missing",
+          "duration": 0.3867000000009284,
+          "failureMessages": [],
+          "location": {
+            "line": 37,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "evidence verifier shadow/pilot gating"
+          ],
+          "fullName": "evidence verifier shadow/pilot gating respects policy overrides for required evidence kinds",
+          "status": "passed",
+          "title": "respects policy overrides for required evidence kinds",
+          "duration": 0.30090000000018335,
+          "failureMessages": [],
+          "location": {
+            "line": 50,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "evidence verifier shadow/pilot gating"
+          ],
+          "fullName": "evidence verifier shadow/pilot gating collects evidence through the task-loop bridge without changing legacy decisions",
+          "status": "passed",
+          "title": "collects evidence through the task-loop bridge without changing legacy decisions",
+          "duration": 0.9340999999985797,
+          "failureMessages": [],
+          "location": {
+            "line": 68,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793859111146,
+      "endTime": 1793859111291.934,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0282-s07/reference/workspace/openclaw_runtime/src/runtime-core/evidence-verifier.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "S07 verifier completion verdict"
+          ],
+          "fullName": "S07 verifier completion verdict approves a completed task with the canonical evidence and produces one node->done transition",
+          "status": "passed",
+          "title": "approves a completed task with the canonical evidence and produces one node->done transition",
+          "duration": 1.438400000000911,
+          "failureMessages": [],
+          "location": {
+            "line": 16,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "S07 verifier completion verdict"
+          ],
+          "fullName": "S07 verifier completion verdict is digest-only and grants no publish / product-lock authority",
+          "status": "passed",
+          "title": "is digest-only and grants no publish / product-lock authority",
+          "duration": 0.5455000000001746,
+          "failureMessages": [],
+          "location": {
+            "line": 28,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "S07 verifier completion verdict"
+          ],
+          "fullName": "S07 verifier completion verdict returns insufficient-evidence and no transition when evidence is missing",
+          "status": "passed",
+          "title": "returns insufficient-evidence and no transition when evidence is missing",
+          "duration": 0.43320000000130676,
+          "failureMessages": [],
+          "location": {
+            "line": 41,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "S07 verifier completion verdict"
+          ],
+          "fullName": "S07 verifier completion verdict is bounded: a task outside the granted scope gets no verdict and no transition",
+          "status": "passed",
+          "title": "is bounded: a task outside the granted scope gets no verdict and no transition",
+          "duration": 0.3710000000010041,
+          "failureMessages": [],
+          "location": {
+            "line": 52,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "S07 verifier completion verdict"
+          ],
+          "fullName": "S07 verifier completion verdict is revocable: revocation restores the recorded prior status",
+          "status": "passed",
+          "title": "is revocable: revocation restores the recorded prior status",
+          "duration": 0.41089999999894644,
+          "failureMessages": [],
+          "location": {
+            "line": 63,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "S07 verifier completion verdict"
+          ],
+          "fullName": "S07 verifier completion verdict is deterministic: the same evidence yields the same digest (replay-safe)",
+          "status": "passed",
+          "title": "is deterministic: the same evidence yields the same digest (replay-safe)",
+          "duration": 0.4355999999988853,
+          "failureMessages": [],
+          "location": {
+            "line": 68,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793859111321,
+      "endTime": 1793859111324.4355,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0282-s07/reference/workspace/openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts"
+    }
+  ]
+}

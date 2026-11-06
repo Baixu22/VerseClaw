@@ -1,0 +1,42 @@
+{
+  "schema": "GatewayStartupProvenance/v1",
+  "driven_by": "agent",
+  "actor": "codex-gateway-startup-relay",
+  "sourceCandidate": "5c91a6f25ffd908d579116cd188e5fd8d949b835",
+  "retainedCandidateRef": "codex/gateway-startup-candidate-20261105",
+  "originalRequestChat": "01a1a9de-be55-7483-9701-74a71836d05f",
+  "rawArchive": {
+    "driven_by": "agent",
+    "actor": "codex-gateway-startup-relay",
+    "path": "D:\\ClawX\\.audit\\gateway-startup-performance\\20261105\\raw-5c91a6f2.zip",
+    "repoRelativePath": ".audit/gateway-startup-performance/20261105/raw-5c91a6f2.zip",
+    "sha256": "34d647bfd566087dfb3e5fb928470363244627fcaac87360531771bd1d9a4787",
+    "fileCount": 317,
+    "bytes": 802739,
+    "contents": "Command reports/logs, real runtime event logs, driver snapshots, traces, and counterexamples. User profiles, auth stores, node_modules and transform caches are excluded."
+  },
+  "verificationWorkspace": "D:/ClawX/.tmp/gateway-startup-verify-20261105",
+  "dependencies": {
+    "outerWorkspace": "Independent pnpm frozen-lock reification using the existing D: package store and hardlinks; official Electron binary installer completed.",
+    "runtimePackages": "Reused installed dependency directories only after comparing package manifests; runtime and desktop outputs were freshly built in the verification checkout.",
+    "sharedWorkspaceResidual": "Reinstallation in the original shared node_modules stopped at an Electron package rename because that binary was in use. No other application was stopped to replace it."
+  },
+  "reviewChain": [
+    {
+      "commit": "0024b34dc9061baa8c044d4ffba01e3b5a0893e6",
+      "findings": 3,
+      "resolvedBy": "0b152a30ad1b5cfc3f7d12ee2f7ec3f0d4dd4a47"
+    },
+    {
+      "commit": "0b152a30ad1b5cfc3f7d12ee2f7ec3f0d4dd4a47",
+      "findings": 1,
+      "resolvedBy": "5c91a6f25ffd908d579116cd188e5fd8d949b835"
+    },
+    {
+      "commit": "5c91a6f25ffd908d579116cd188e5fd8d949b835",
+      "findings": 0
+    }
+  ],
+  "failedAttempts": "Earlier startup timeouts, dependency/install failures, the invalid review-output path, and exploratory samples are retained in the raw archive. They are not acceptance passes.",
+  "restore": "Extract the repo-local private ZIP and verify its manifest.json before replay; retained source candidate is named above."
+}

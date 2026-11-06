@@ -1,0 +1,23 @@
+{
+  "id": "no-sources",
+  "baseline": {
+    "mode": "first-80-lines-240-character-excerpt",
+    "answer": "",
+    "taskComplete": false,
+    "lexicalHit": false
+  },
+  "admission": {
+    "sources": [],
+    "rejections": [],
+    "conflicts": [],
+    "reads": [],
+    "lexicalHit": false
+  },
+  "liveModel": false,
+  "taskComplete": true,
+  "abstentionCorrect": true,
+  "quoteCitationsValid": null,
+  "answer": "No admitted sources.",
+  "inferenceSkipped": "No admitted sources or structured conflict",
+  "durationMs": 0
+}

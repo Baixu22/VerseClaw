@@ -1,0 +1,149 @@
+[
+  {
+    "id": "n8",
+    "argv": [
+      "scripts/versebrowser-m10-packaged-flow-verify.mjs",
+      "--exe",
+      "D:/ClawX/.ae/verse-tools-package-20261104/win-unpacked/Verse Claw.exe",
+      "--temp-root",
+      "D:/ClawX/.ae/verse-tools-runs-20261104",
+      "--output",
+      "D:\\tmp\\clawx-verse-fix-20261104/n8-bound-current.json"
+    ],
+    "startedAt": "2026-11-04T23:58:12.3606329Z",
+    "durationMs": 23190,
+    "exitCode": 0,
+    "completedAt": "2026-11-04T23:58:35.5526206Z",
+    "log": "D:\\tmp\\clawx-verse-fix-20261104\\n8-bound.log",
+    "program": "node",
+    "sourceCommit": "a5d49452d394f3f401f3ffd989fc6ea13c2e533c"
+  },
+  {
+    "id": "n9",
+    "argv": [
+      "scripts/versebrowser-n9-stability-probe.mjs",
+      "--exe",
+      "D:/ClawX/.ae/verse-tools-package-20261104/win-unpacked/Verse Claw.exe",
+      "--temp-root",
+      "D:/ClawX/.ae/verse-tools-runs-20261104",
+      "--cold-starts",
+      "10",
+      "--loops",
+      "30",
+      "--interrupts",
+      "3",
+      "--output",
+      "D:\\tmp\\clawx-verse-fix-20261104/n9-bound-current.json"
+    ],
+    "startedAt": "2026-11-04T23:58:35.5655936Z",
+    "durationMs": 554094,
+    "exitCode": 0,
+    "completedAt": "2026-11-05T00:07:49.6663629Z",
+    "log": "D:\\tmp\\clawx-verse-fix-20261104\\n9-bound.log",
+    "program": "node",
+    "sourceCommit": "a5d49452d394f3f401f3ffd989fc6ea13c2e533c"
+  },
+  {
+    "id": "vg-write",
+    "argv": [
+      "scripts/verify-versegit-product-integration.mjs",
+      "--write"
+    ],
+    "startedAt": "2026-11-05T00:07:49.7043803Z",
+    "durationMs": 6913,
+    "exitCode": 0,
+    "completedAt": "2026-11-05T00:07:56.6183422Z",
+    "log": "D:\\tmp\\clawx-verse-fix-20261104\\vg-write-bound.log",
+    "program": "node",
+    "sourceCommit": "a5d49452d394f3f401f3ffd989fc6ea13c2e533c"
+  },
+  {
+    "id": "host-unit",
+    "argv": [
+      "exec",
+      "vitest",
+      "run",
+      "tests/unit/agent-browser-gateway-bridge.test.ts",
+      "tests/unit/versebrowser-capability-gating.test.ts",
+      "tests/unit/versebrowser-n6-authorization-conservation.test.ts",
+      "tests/unit/versebrowser-host-adapter.test.ts",
+      "tests/unit/versebrowser-boundary-repair.test.ts",
+      "tests/unit/versebrowser-evidence-verification.test.ts",
+      "tests/unit/browser-private-network-tf0503.test.ts",
+      "tests/unit/versegit-product-acceptance.test.ts",
+      "--maxWorkers=1",
+      "--reporter=json",
+      "--outputFile=D:\\tmp\\clawx-verse-fix-20261104/focused-unit-bound.json"
+    ],
+    "startedAt": "2026-11-05T00:07:56.6220809Z",
+    "durationMs": 29839,
+    "exitCode": 0,
+    "completedAt": "2026-11-05T00:08:26.4615068Z",
+    "log": "D:\\tmp\\clawx-verse-fix-20261104\\host-unit-bound.log",
+    "program": "pnpm",
+    "sourceCommit": "a5d49452d394f3f401f3ffd989fc6ea13c2e533c"
+  },
+  {
+    "id": "runtime-provenance",
+    "argv": [
+      "--dir",
+      "openclaw_runtime",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "test/vitest/vitest.agents-tools.config.ts",
+      "src/agents/tools/agent-browser-tool.provenance.test.ts",
+      "--maxWorkers=1",
+      "--reporter=json",
+      "--outputFile=D:\\tmp\\clawx-verse-fix-20261104/runtime-provenance-bound.json"
+    ],
+    "startedAt": "2026-11-05T00:08:26.4641332Z",
+    "durationMs": 9003,
+    "exitCode": 0,
+    "completedAt": "2026-11-05T00:08:35.4678578Z",
+    "log": "D:\\tmp\\clawx-verse-fix-20261104\\runtime-provenance-bound.log",
+    "program": "pnpm",
+    "sourceCommit": "a5d49452d394f3f401f3ffd989fc6ea13c2e533c"
+  },
+  {
+    "id": "browser-unit",
+    "argv": [
+      "--filter",
+      "@verse-claw/versebrowser",
+      "exec",
+      "vitest",
+      "run",
+      "tests/agent-browser-service.test.ts",
+      "tests/agent-browser-tab-manager.test.ts",
+      "--maxWorkers=1",
+      "--reporter=json",
+      "--outputFile=D:\\tmp\\clawx-verse-fix-20261104/browser-unit-bound.json"
+    ],
+    "startedAt": "2026-11-05T00:08:35.4717734Z",
+    "durationMs": 2920,
+    "exitCode": 0,
+    "completedAt": "2026-11-05T00:08:38.3921990Z",
+    "log": "D:\\tmp\\clawx-verse-fix-20261104\\browser-unit-bound.log",
+    "program": "pnpm",
+    "sourceCommit": "a5d49452d394f3f401f3ffd989fc6ea13c2e533c"
+  },
+  {
+    "id": "e2e",
+    "argv": [
+      "exec",
+      "playwright",
+      "test",
+      "tests/e2e/versebrowser-host-invocation.spec.ts",
+      "--workers=1",
+      "--reporter=json"
+    ],
+    "startedAt": "2026-11-05T00:08:38.3988681Z",
+    "durationMs": 14255,
+    "exitCode": 1,
+    "completedAt": "2026-11-05T00:08:52.6542112Z",
+    "log": "D:\\tmp\\clawx-verse-fix-20261104\\e2e-bound.log",
+    "program": "pnpm",
+    "sourceCommit": "a5d49452d394f3f401f3ffd989fc6ea13c2e533c"
+  }
+]

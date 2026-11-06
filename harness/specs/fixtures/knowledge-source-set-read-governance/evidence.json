@@ -1,0 +1,324 @@
+{
+  "schema": "KnowledgeSourceSetReadGovernanceEvidence/v1",
+  "date": "2026-11-05",
+  "timezone": "Asia/Shanghai",
+  "driven_by": "agent",
+  "actor": "codex-knowledge-convergence",
+  "realHumanEvidence": false,
+  "task": "TF-0796",
+  "parent": "TF-0792",
+  "candidate": "509eb6f3bfd3b8c987e21e64ec701a8aaf1161e0",
+  "base": "bfcf57616b361a12845014b3f054b95e31c4021c",
+  "sourceTree": "a89b36beddf66217c0d607bc716be703b1f03710",
+  "sourceState": "clean committed source; retained results added afterwards",
+  "worktree": "C:\\Users\\27933\\.codex\\worktrees\\knowledge-read-governance-20261105\\ClawX",
+  "branch": "codex/knowledge-read-governance-20261105",
+  "decision": {
+    "status": "passed-scoped-engineering",
+    "formalReleaseAcceptance": false,
+    "allSevenKnowledgeGapsCompleted": false
+  },
+  "baseline": {
+    "artifact": "baseline-tests.json",
+    "targetedCounterexamples": 4,
+    "failed": 4,
+    "unrelatedTestsNotSelected": 37,
+    "productSource": "original knowledge Host implementation on the declared base"
+  },
+  "tests": [
+    {
+      "artifact": "focused-tests-managed.json",
+      "passed": 96,
+      "failed": 0,
+      "skipped": 0,
+      "durationMs": 14309.044189453125
+    },
+    {
+      "artifact": "runtime-source-set-tests.json",
+      "passed": 19,
+      "failed": 0,
+      "skipped": 0,
+      "durationMs": 220.06103515625
+    },
+    {
+      "artifact": "communication-contract-tests.json",
+      "passed": 63,
+      "failed": 0,
+      "skipped": 0,
+      "durationMs": 1636.352294921875
+    },
+    {
+      "artifact": "host-client-tests.json",
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "durationMs": 898.772705078125
+    }
+  ],
+  "totalUnitTestsPassed": 186,
+  "electron": {
+    "artifact": "electron-e2e.json",
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "retries": 0,
+    "durationMs": 26697.402000000002,
+    "sourceStateUnchanged": true,
+    "processSurvivors": 0,
+    "screenshot": "source-set-partial-evidence.png",
+    "inspection": "Agent inspected screenshot: Partial badge, visible truncated lines, no confidence row, review draft visible.",
+    "driver": "real Electron application with mocked Host responses; actual Host handlers separately exercised by unit tests"
+  },
+  "checks": [
+    {
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "durationMs": 36411,
+      "artifact": "typecheck.json",
+      "cache": "disabled; node/web/test projects all checked"
+    },
+    {
+      "command": "pnpm run contract:check",
+      "exitCode": 0,
+      "artifact": "contract.txt"
+    },
+    {
+      "command": "pnpm exec eslint (10 changed TypeScript and TSX files)",
+      "exitCode": 0,
+      "errors": 0,
+      "warnings": 29,
+      "warningScope": "existing knowledge-api.ts no-explicit-any warnings",
+      "artifact": "lint.txt"
+    },
+    {
+      "command": "pnpm run build:vite",
+      "exitCode": 0,
+      "artifact": "build.txt",
+      "warnings": "existing large chunks, mixed static/dynamic imports, unused external Shiki import"
+    },
+    {
+      "command": "pnpm run comms:replay",
+      "exitCode": 0,
+      "artifact": "comms-metrics.json",
+      "candidateBound": true
+    },
+    {
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "artifact": "comms-compare.md",
+      "failedMetrics": 0
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/knowledge-source-set-read-governance.md",
+      "exitCode": 0,
+      "artifact": "harness-validate.txt",
+      "diffChecked": true
+    },
+    {
+      "command": "pnpm harness run --spec harness/specs/tasks/knowledge-source-set-read-governance.md --dry-run",
+      "exitCode": 0,
+      "artifact": "harness-dry-run.json",
+      "note": "profile selection only; selected broad fast suite was not executed"
+    },
+    {
+      "command": "task_forest.py validate (preclose)",
+      "exitCode": 0,
+      "artifact": "task-forest-preclose.txt"
+    }
+  ],
+  "acceptance": [
+    {
+      "criterion": "one owner-admission path for lexical, optional semantic and Studio",
+      "evidence": [
+        "knowledge-source-set-answer.test.ts",
+        "knowledge-api.test.ts"
+      ],
+      "verified": true
+    },
+    {
+      "criterion": "status, ACL, privacy, scope, versions and digests cannot be upgraded",
+      "evidence": [
+        "focused-tests-managed.json"
+      ],
+      "verified": true
+    },
+    {
+      "criterion": "no rejected body enters response, embeddings or Studio draft",
+      "evidence": [
+        "focused-tests-managed.json"
+      ],
+      "verified": true
+    },
+    {
+      "criterion": "citations, read ranges, known conflicts and freshness limits disclosed",
+      "evidence": [
+        "focused-tests-managed.json",
+        "source-set-partial-evidence.png"
+      ],
+      "verified": true
+    },
+    {
+      "criterion": "excerpt-only answers are partial and omit confidence",
+      "evidence": [
+        "focused-tests-managed.json",
+        "electron-e2e.json"
+      ],
+      "verified": true
+    },
+    {
+      "criterion": "review and apply authority preserved",
+      "evidence": [
+        "focused-tests-managed.json",
+        "electron-e2e.json"
+      ],
+      "verified": true
+    },
+    {
+      "criterion": "Studio evidence attribution is agent-owned even when client metadata attempts human attribution",
+      "verified": true,
+      "evidence": [
+        "focused-tests-managed.json"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "b48ea0e2d10bdf871d6446b8ec1f6cc9e8de6c7bf2e6bc9371a96d5c17b7a4d6"
+    },
+    {
+      "path": "README.md",
+      "sha256": "730068e5e94616d74d230fe3d7ae7cddfd1f9ecda934e8827d6939d139c42d1a"
+    },
+    {
+      "path": "README.ru-RU.md",
+      "sha256": "46dae4aad77cefac4dfc80ab1648795fd6597795cbaefba77c7a17ef0830c592"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "f6385b21617453f0c2a3a2b050f86b36170c3d138ea029288ca06d453b5bc5e2"
+    },
+    {
+      "path": "docs/modules/knowledge-base.md",
+      "sha256": "11e4cb67af35f3b01ff74562bc1a8471f56454b2c2fb57e79368da6ff62431fe"
+    },
+    {
+      "path": "electron/services/knowledge-api.ts",
+      "sha256": "d9edc8a68aee0f7ebfea6c9906322ee7e993b0574c7f2e7866928e340d052c40"
+    },
+    {
+      "path": "electron/services/knowledge-source-set-answer.ts",
+      "sha256": "c9c1f1bcc868893cf8cf2673cceabd4cc924dc0c8c5b2e94eb6a28da195e5833"
+    },
+    {
+      "path": "harness/specs/rules/knowledge-source-set-read-admission.md",
+      "sha256": "e0ac94c9702a92a7b7e6506391be51b6f9f7bae3dce1e7eda5e93f2d23cf81e2"
+    },
+    {
+      "path": "harness/specs/tasks/knowledge-source-set-read-governance.md",
+      "sha256": "7fccc0621af3332d287dbeedd42494cdfe74f299e73c762978433f26888d8544"
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "sha256": "4cae711123e095b86b7301f3dd91166bf3d67ae54882c07dffb4ff09d3289536"
+    },
+    {
+      "path": "src/lib/knowledge-librarian.ts",
+      "sha256": "ce7ccd3875162344214c26017faaaea90b17df0f740c9a00cfaa54476ce33a1f"
+    },
+    {
+      "path": "src/pages/Chat/KnowledgeChat.tsx",
+      "sha256": "d7af32e8b4139ef53b8554b11ec9464d4d9d463c98497d0c111e970b5e4c0e0a"
+    },
+    {
+      "path": "src/pages/Knowledge/KnowledgeAssistant.tsx",
+      "sha256": "65916333e269e4aa6d5003ce45b64cee4b1dd612356e00b4452a6cfef09769b1"
+    },
+    {
+      "path": "tests/e2e/knowledge-hub.spec.ts",
+      "sha256": "a282be9433e2d6d007b2c0206ca7cd8d40cc19d9a7f1e9eabca5e7a6972a6141"
+    },
+    {
+      "path": "tests/unit/knowledge-api.test.ts",
+      "sha256": "180e87de8e479e1671aaa46ff0cd096d99641517129d493566db101642693076"
+    },
+    {
+      "path": "tests/unit/knowledge-chat.test.tsx",
+      "sha256": "50615272cd09d67b8857e0ae440582f64448ae780040b9e8f94fb4f30d9de797"
+    },
+    {
+      "path": "tests/unit/knowledge-source-set-answer.test.ts",
+      "sha256": "420f5dd0e708dc5b4874765aa79deda54344d09919a3cc5951dec95d8644d1dc"
+    }
+  ],
+  "environment": {
+    "temp": "TEMP/TMP=D:/tmp for all build and test commands",
+    "dependencies": "root and runtime node_modules reused through junctions; VerseBrowser declarations built from the unchanged source, package dist linked locally; no fresh install claimed",
+    "pnpm": "11.2.2; per-process verify-deps-before-run=false prevents pnpm from reinstalling shared node_modules",
+    "electronProfile": "small isolated profile under the existing Windows LocalLow folder; logs, traces, screenshots and reports stay on D:",
+    "startupFailure": "initial profiles were medium-integrity; Electron process token was low-integrity and its atomic writes failed with EPERM. Same committed source passed using existing LocalLow inheritance; no app safety/default changes.",
+    "initialTypecheck": "missing workspace VerseBrowser declarations resolved by building the unchanged workspace package; full check rerun passed",
+    "actualTestRuntime": "root Vitest 4.1.1; runtime Vitest 4.1.7; Playwright 1.59.0; Electron 40.8.4",
+    "evidenceAttribution": "Studio drafts force driven_by=agent and actor=knowledge-source-set; client metadata cannot forge real-human attribution."
+  },
+  "notVerified": [
+    "true model QA quality and multi-turn answers",
+    "unstructured semantic contradiction detection",
+    "directory updates/deletes/restart synchronization",
+    "Chinese and long-document retrieval quality",
+    "Steward semantic review quality",
+    "continuous external connectors",
+    "long-term effectiveness and large corpus performance",
+    "full repository suite and formal release acceptance"
+  ],
+  "nextTask": {
+    "id": "TF-0797",
+    "title": "修复目录监听并闭合文件增删改与重启补扫",
+    "statusAfterClose": "ready"
+  },
+  "repositoryResiduals": [
+    {
+      "command": "pnpm run repo:artifacts:check",
+      "exitCode": 1,
+      "classification": "pre-existing unrelated retained RSI logs match ignore rules",
+      "paths": [
+        "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0274-e01/baseline/stderr-1.log",
+        "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0274-e01/baseline/stdout-1.log",
+        "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0274-e01/reference/stderr-1.log",
+        "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0274-e01/reference/stdout-1.log",
+        "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/baseline/stderr-1.log",
+        "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/baseline/stdout-1.log",
+        "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/reference/stderr-1.log",
+        "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/reference/stdout-1.log"
+      ],
+      "allPresentInBase": true,
+      "artifact": "repository-retention.txt"
+    },
+    {
+      "classification": "shared communication rule names a retired absent unit file",
+      "path": "tests/unit/api-client.test.ts",
+      "substituteEvidence": [
+        "communication-contract-tests.json",
+        "host-client-tests.json"
+      ],
+      "note": "63 Host facade/invoke and 8 actual Host client checks ran; the absent legacy filename was not counted as executed"
+    }
+  ],
+  "retainedTextNormalization": {
+    "operation": "normalize newlines and remove trailing whitespace from retained log copies",
+    "originalLogs": "D:/tmp/knowledge-convergence-20261105",
+    "changed": [
+      "build.txt",
+      "comms-compare.txt",
+      "comms-replay.txt",
+      "contract.txt",
+      "electron-e2e.txt",
+      "harness-dry-run.txt",
+      "harness-validate.txt",
+      "lint.txt",
+      "repository-retention.txt",
+      "task-forest-preclose.txt",
+      "typecheck.txt"
+    ]
+  }
+}

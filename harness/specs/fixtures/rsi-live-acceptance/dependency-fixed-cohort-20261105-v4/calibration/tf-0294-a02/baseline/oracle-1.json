@@ -1,0 +1,478 @@
+{
+  "numTotalTestSuites": 11,
+  "numPassedTestSuites": 8,
+  "numFailedTestSuites": 3,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 34,
+  "numPassedTests": 32,
+  "numFailedTests": 2,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793859371904,
+  "success": false,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "A02 A2 orchestration pilot gate coverage"
+          ],
+          "fullName": "A02 A2 orchestration pilot gate coverage points every requiredTests entry at a real file (no stale reference)",
+          "status": "failed",
+          "title": "points every requiredTests entry at a real file (no stale reference)",
+          "duration": 5.812000000000012,
+          "failureMessages": [
+            "AssertionError: missing required test: tests/unit/cross-area-composition.test.ts: expected false to be true // Object.is equality\n    at D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0294-a02/baseline/workspace/tests/unit/a02-a2-gate-coverage.test.ts:25:78\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A02 A2 orchestration pilot gate coverage"
+          ],
+          "fullName": "A02 A2 orchestration pilot gate coverage keeps criteria 1-3 mapped to assertions at the original thresholds",
+          "status": "passed",
+          "title": "keeps criteria 1-3 mapped to assertions at the original thresholds",
+          "duration": 1.1381000000000085,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "A02 A2 orchestration pilot gate coverage"
+          ],
+          "fullName": "A02 A2 orchestration pilot gate coverage points criterion 4 (multi-worker resume) at the restored cross-area test",
+          "status": "failed",
+          "title": "points criterion 4 (multi-worker resume) at the restored cross-area test",
+          "duration": 0.8577000000000226,
+          "failureMessages": [
+            "Error: ENOENT: no such file or directory, open 'D:\\tmp\\rsi-live-admission-20261105-v4\\calibration\\tf-0294-a02\\baseline\\workspace\\tests\\unit\\cross-area-composition.test.ts'\n    at readFileSync (node:fs:483:20)\n    at read (D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0294-a02/baseline/workspace/tests/unit/a02-a2-gate-coverage.test.ts:12:10)\n    at D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0294-a02/baseline/workspace/tests/unit/a02-a2-gate-coverage.test.ts:46:23\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)"
+          ],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793859372452,
+      "endTime": 1793859372459.8577,
+      "status": "failed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0294-a02/baseline/workspace/tests/unit/a02-a2-gate-coverage.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.1: deprecation counters cover all 6 areas"
+          ],
+          "fullName": "Stage 4 / 4.1: deprecation counters cover all 6 areas snapshot() returns all 6 areas with zero counters initially",
+          "status": "passed",
+          "title": "snapshot() returns all 6 areas with zero counters initially",
+          "duration": 2.171699999999987,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.1: deprecation counters cover all 6 areas"
+          ],
+          "fullName": "Stage 4 / 4.1: deprecation counters cover all 6 areas getArea() returns the correct area shape for each of the 6 areas",
+          "status": "passed",
+          "title": "getArea() returns the correct area shape for each of the 6 areas",
+          "duration": 0.6423999999999523,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.2: A1 telemetry — legacy fallback count"
+          ],
+          "fullName": "Stage 4 / 4.2: A1 telemetry — legacy fallback count incrementA1LegacyFallback increments the counter",
+          "status": "passed",
+          "title": "incrementA1LegacyFallback increments the counter",
+          "duration": 0.36980000000005475,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.2: A1 telemetry — legacy fallback count"
+          ],
+          "fullName": "Stage 4 / 4.2: A1 telemetry — legacy fallback count shadow success increments independently of legacy fallback",
+          "status": "passed",
+          "title": "shadow success increments independently of legacy fallback",
+          "duration": 0.31560000000001764,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.2: A1 telemetry — legacy fallback count"
+          ],
+          "fullName": "Stage 4 / 4.2: A1 telemetry — legacy fallback count declared-path violations are tracked separately",
+          "status": "passed",
+          "title": "declared-path violations are tracked separately",
+          "duration": 0.22500000000002274,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.3: A2 telemetry — deferral agreement"
+          ],
+          "fullName": "Stage 4 / 4.3: A2 telemetry — deferral agreement records agreement and disagreement separately",
+          "status": "passed",
+          "title": "records agreement and disagreement separately",
+          "duration": 0.27729999999996835,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.3: A2 telemetry — deferral agreement"
+          ],
+          "fullName": "Stage 4 / 4.3: A2 telemetry — deferral agreement records deferred wave count",
+          "status": "passed",
+          "title": "records deferred wave count",
+          "duration": 0.2274000000001024,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL)"
+          ],
+          "fullName": "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL) incrementA6VolatileMislabel increments the critical counter",
+          "status": "passed",
+          "title": "incrementA6VolatileMislabel increments the critical counter",
+          "duration": 0.2340000000000373,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL)"
+          ],
+          "fullName": "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL) volatile mislabel is critical — any non-zero value triggers budget violation (4.14)",
+          "status": "passed",
+          "title": "volatile mislabel is critical — any non-zero value triggers budget violation (4.14)",
+          "duration": 0.2938000000000329,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL)"
+          ],
+          "fullName": "Stage 4 / 4.4: A6 telemetry — volatile mislabel detection (CRITICAL) verifier pass/fail are tracked",
+          "status": "passed",
+          "title": "verifier pass/fail are tracked",
+          "duration": 0.30300000000011096,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A1: legacy fallback rate > 5% → violated with degrade_to_legacy",
+          "status": "passed",
+          "title": "A1: legacy fallback rate > 5% → violated with degrade_to_legacy",
+          "duration": 0.24870000000009895,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A1: legacy fallback rate ≤ 5% → not violated",
+          "status": "passed",
+          "title": "A1: legacy fallback rate ≤ 5% → not violated",
+          "duration": 0.15470000000004802,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A2: disagreement rate > 10% → violated",
+          "status": "passed",
+          "title": "A2: disagreement rate > 10% → violated",
+          "duration": 0.12229999999999563,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A3: anomaly rate > 20% → violated",
+          "status": "passed",
+          "title": "A3: anomaly rate > 20% → violated",
+          "duration": 0.1450999999999567,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A4: low-quality rate > 10% → violated",
+          "status": "passed",
+          "title": "A4: low-quality rate > 10% → violated",
+          "duration": 0.12599999999997635,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A5: plan ignored rate > 20% → violated",
+          "status": "passed",
+          "title": "A5: plan ignored rate > 20% → violated",
+          "duration": 0.16039999999998145,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response A6: verifier fail rate > 5% → violated",
+          "status": "passed",
+          "title": "A6: verifier fail rate > 5% → violated",
+          "duration": 0.22129999999992833,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response no violation when all counters are within budget",
+          "status": "passed",
+          "title": "no violation when all counters are within budget",
+          "duration": 0.269800000000032,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 4 / 4.14: per-area budget violation response"
+          ],
+          "fullName": "Stage 4 / 4.14: per-area budget violation response reset() clears all counters",
+          "status": "passed",
+          "title": "reset() clears all counters",
+          "duration": 0.129099999999994,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793859376383,
+      "endTime": 1793859376390.2698,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0294-a02/baseline/workspace/tests/unit/deprecation-counters.test.ts"
+    },
+    {
+      "assertionResults": [],
+      "startTime": 1793859371904,
+      "endTime": 1793859371904,
+      "status": "failed",
+      "message": "Failed to resolve import \"../../openclaw_runtime/src/agents/cross-area/cross-area-facades.js\" from \"tests/unit/performance-budgets.test.ts\". Does the file exist?",
+      "name": "D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0294-a02/baseline/workspace/tests/unit/performance-budgets.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.9: A5 wave immutability (ResourceAwareWaveScheduler)"
+          ],
+          "fullName": "Stage 3 / 3.9: A5 wave immutability (ResourceAwareWaveScheduler) plans waves with the given worker cap",
+          "status": "passed",
+          "title": "plans waves with the given worker cap",
+          "duration": 2.850599999999986,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.9: A5 wave immutability (ResourceAwareWaveScheduler)"
+          ],
+          "fullName": "Stage 3 / 3.9: A5 wave immutability (ResourceAwareWaveScheduler) marks a wave as started via startWave",
+          "status": "passed",
+          "title": "marks a wave as started via startWave",
+          "duration": 0.3169000000000324,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.9: A5 wave immutability (ResourceAwareWaveScheduler)"
+          ],
+          "fullName": "Stage 3 / 3.9: A5 wave immutability (ResourceAwareWaveScheduler) ignores rePlan when appliesToWave is already started",
+          "status": "passed",
+          "title": "ignores rePlan when appliesToWave is already started",
+          "duration": 0.34399999999993724,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.9: A5 wave immutability (ResourceAwareWaveScheduler)"
+          ],
+          "fullName": "Stage 3 / 3.9: A5 wave immutability (ResourceAwareWaveScheduler) accepts rePlan when appliesToWave is still planned",
+          "status": "passed",
+          "title": "accepts rePlan when appliesToWave is still planned",
+          "duration": 0.5367999999999711,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.9: A5 wave immutability (ResourceAwareWaveScheduler)"
+          ],
+          "fullName": "Stage 3 / 3.9: A5 wave immutability (ResourceAwareWaveScheduler) rejects rePlan for a non-existent wave",
+          "status": "passed",
+          "title": "rejects rePlan for a non-existent wave",
+          "duration": 0.3605000000000018,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.9: A5 wave immutability (ResourceAwareWaveScheduler)"
+          ],
+          "fullName": "Stage 3 / 3.9: A5 wave immutability (ResourceAwareWaveScheduler) rejects rePlan when there is no change (same workers, same graph)",
+          "status": "passed",
+          "title": "rejects rePlan when there is no change (same workers, same graph)",
+          "duration": 0.2319999999999709,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.9: A5 wave immutability (ResourceAwareWaveScheduler)"
+          ],
+          "fullName": "Stage 3 / 3.9: A5 wave immutability (ResourceAwareWaveScheduler) ignores rePlan for a completed wave",
+          "status": "passed",
+          "title": "ignores rePlan for a completed wave",
+          "duration": 0.2136000000000422,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.9: A5 wave immutability (ResourceAwareWaveScheduler)"
+          ],
+          "fullName": "Stage 3 / 3.9: A5 wave immutability (ResourceAwareWaveScheduler) preserves started wave's taskNodeIds after rejected rePlan",
+          "status": "passed",
+          "title": "preserves started wave's taskNodeIds after rejected rePlan",
+          "duration": 0.17790000000002237,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.9: A5 wave immutability (ResourceAwareWaveScheduler)"
+          ],
+          "fullName": "Stage 3 / 3.9: A5 wave immutability (ResourceAwareWaveScheduler) does not re-plan earlier waves when a later wave is re-planned",
+          "status": "passed",
+          "title": "does not re-plan earlier waves when a later wave is re-planned",
+          "duration": 0.348700000000008,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.9: A5 wave immutability (ResourceAwareWaveScheduler)"
+          ],
+          "fullName": "Stage 3 / 3.9: A5 wave immutability (ResourceAwareWaveScheduler) startWave throws for unknown wave",
+          "status": "passed",
+          "title": "startWave throws for unknown wave",
+          "duration": 0.7998999999999796,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.9: A5 wave immutability (ResourceAwareWaveScheduler)"
+          ],
+          "fullName": "Stage 3 / 3.9: A5 wave immutability (ResourceAwareWaveScheduler) completeWave marks wave as completed",
+          "status": "passed",
+          "title": "completeWave marks wave as completed",
+          "duration": 0.13530000000002929,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Stage 3 / 3.9: A5 wave immutability (ResourceAwareWaveScheduler)"
+          ],
+          "fullName": "Stage 3 / 3.9: A5 wave immutability (ResourceAwareWaveScheduler) getWaves returns all waves in order",
+          "status": "passed",
+          "title": "getWaves returns all waves in order",
+          "duration": 0.13530000000002929,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793859375361,
+      "endTime": 1793859375367.1353,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v4/calibration/tf-0294-a02/baseline/workspace/tests/unit/resource-aware-wave-scheduler.test.ts"
+    }
+  ]
+}

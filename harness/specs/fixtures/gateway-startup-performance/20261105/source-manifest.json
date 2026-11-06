@@ -1,0 +1,70 @@
+{
+  "candidate": "5c91a6f25ffd908d579116cd188e5fd8d949b835",
+  "files": [
+    {
+      "path": "electron/gateway/ws-client.ts",
+      "gitBlob": "5c1984e0c9a1625cdca68cd15a1333ae8cead8fa",
+      "sha256": "2b7bbed9cfc06829c2ec75d22e5c63ccea446e31253dad72759ac1b809449986"
+    },
+    {
+      "path": "openclaw_runtime/src/plugins/doctor-contract-registry.ts",
+      "gitBlob": "8fa5f1f742768679143bab1374c8d3124e4a78dd",
+      "sha256": "8ab3f767a2869f6409349f7e988bd1895412c513ae1705eaf879861ff9697b7b"
+    },
+    {
+      "path": "openclaw_runtime/scripts/profile-extension-memory.mjs",
+      "gitBlob": "64490c761431aa08ea68a6d8d804cbb599bfd28c",
+      "sha256": "ee4569c9ff4c2b167565006ffa20404fd47075e02b0d19ae4651baa0fb806c7f"
+    },
+    {
+      "path": "tests/unit/gateway-doctor-contract-loading.test.ts",
+      "gitBlob": "16b0092da2a0ab8e34465199e3748c7bdf132ead",
+      "sha256": "26f4d834023e72a613ebde29653b6a9f87781b8a1bbea779b31c7a22c6cb5833"
+    },
+    {
+      "path": "tests/unit/gateway-loopback-connect.test.ts",
+      "gitBlob": "6fa7644b1717bbef9c09625b06a39842c32cb221",
+      "sha256": "5612865bf2a3554c57d27e5e6f08bb53c5d5e2698b1d522e89e8eed3b125f118"
+    },
+    {
+      "path": "tests/unit/gateway-ready-fallback.test.ts",
+      "gitBlob": "7e7c003dc4511a564bbc28633457551380ba7e43",
+      "sha256": "edd09cdd1dec27b9f6981ade71c2438cb1e240731152465a757da6088590660e"
+    },
+    {
+      "path": "tests/e2e/gateway-startup-performance.spec.ts",
+      "gitBlob": "e4926bfd7177709a99f9254c621f24027fdbf10b",
+      "sha256": "0d046d5145e003c48155d0026ea783e711071042ffbb95e76d32442b386dd702"
+    },
+    {
+      "path": "scripts/measure-gateway-startup.mjs",
+      "gitBlob": "a676083bbbe32f1cfbb53eb736743fcef5fd8da4",
+      "sha256": "f24390526190dc92ce8e84838c47da81a104c5341db9b3b9925ed496c37d75ea"
+    },
+    {
+      "path": "harness/specs/tasks/gateway-startup-performance.md",
+      "gitBlob": "793afdf842c119d2498cbc851b3b4d0622ce4b16",
+      "sha256": "454343da5ac6cbeb082d7fcaa77281b7cd446ba5fe7acd977d6b3dcaf0701e12"
+    },
+    {
+      "path": "harness/specs/scenarios/gateway-startup-diagnostics.md",
+      "gitBlob": "f341154d9d65af180d2ccd61ded9f0c33d8dbe2c",
+      "sha256": "f958187aa08738d8ac469749b310d439b6a9876f7e8c5ab1faedb23bee167631"
+    },
+    {
+      "path": "README.md",
+      "gitBlob": "349c8d2482733bbad03efaebb626da9b6310411b",
+      "sha256": "416b7bbd159df588ae8ad2add2e34344af1eece85abd68f1f3e805c97bc6a638"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "gitBlob": "05482540af672330d8b81e02243a5c7e9f46a524",
+      "sha256": "aa7c6b3d578206ddee4955b181d0e8e4ba416d15bb6f6dd6d9558c5ee604c287"
+    },
+    {
+      "path": "README.ja-JP.md",
+      "gitBlob": "fcbeedad3ba6fbaacacb558542368dac6fb55a59",
+      "sha256": "8942072688c91d0e7e99a0a5f6945d84546ad17b7fa4734a4cd0ac1478a07f01"
+    }
+  ]
+}

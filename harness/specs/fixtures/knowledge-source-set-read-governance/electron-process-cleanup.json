@@ -1,0 +1,21 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "C:\\Users\\27933\\AppData\\LocalLow\\clawx-knowledge-20261105\\verse-claw-e2e-run-6lorvY",
+  "ledgerEntries": 1,
+  "reaped": [
+    {
+      "pid": 27756,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    }
+  ],
+  "survivors": [],
+  "sweep": {
+    "status": "ok",
+    "runRoot": "C:\\Users\\27933\\AppData\\LocalLow\\clawx-knowledge-20261105\\verse-claw-e2e-run-6lorvY\\",
+    "owned": [],
+    "remaining": []
+  }
+}

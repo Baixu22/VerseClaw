@@ -1,6 +1,6 @@
 {
   "schemaVersion": "RsiFeedbackLoopReport/v1",
-  "generatedAt": "2026-11-02T03:17:52.919Z",
+  "generatedAt": "2026-11-04T13:47:12.937Z",
   "driven_by": "agent",
   "actor": "codex/rsi-feedback-pilot",
   "taskForestNode": "TF-0654",
@@ -9,17 +9,22 @@
   "reasons": [
     "feedback export absent: harness/specs/fixtures/rsi-feedback-loop/feedback-export.v1.json",
     "no recorded feedback rows",
-    "attributed cases 0 < required 20",
-    "no provider calls authorised; this report is an offline eligibility readout, not an effect"
+    "attributed tasks 0 < required 20",
+    "no provider calls authorised; this report is an offline eligibility readout, not an effect",
+    "task attribution does not establish complete k=3 paired cases"
   ],
   "feedbackSource": {
     "state": "absent",
-    "path": "harness/specs/fixtures/rsi-feedback-loop/feedback-export.v1.json"
+    "path": "harness/specs/fixtures/rsi-feedback-loop/feedback-export.v1.json",
+    "truncated": false
   },
   "input": {
     "rows": 0,
     "attributed": 0,
+    "caseAttributed": 0,
+    "missingCaseJoin": 0,
     "unattributed": 0,
+    "attributedCases": 0,
     "completeCases": 0,
     "counts": {}
   },

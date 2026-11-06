@@ -4,7 +4,7 @@
  *
  * Why: the pilot read `harness/specs/fixtures/rsi-feedback-loop/feedback-export.v1.json`
  * but nothing produced it, so the readout could only ever say "export absent".
- * Production feedback lives in the shared OpenClaw state database
+ * Production feedback lives in the role-memory database
  * (`role_memory_feedback`), and a row can only be attributed to a task through
  * its injection (`role_memory_injections.task`). This export performs that join
  * and labels rows that have no case join instead of silently counting them.
@@ -25,13 +25,17 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const FEEDBACK_EXPORT_PATH = 'harness/specs/fixtures/rsi-feedback-loop/feedback-export.v1.json';
 const ACTOR = 'codex/rsi-feedback-export';
 
-/** Mirror the runtime's state-path resolution closely enough to be predictable. */
+/** Match memory-store.ts: <resolveStateDir()>/role-memory.sqlite. --db overrides it. */
 export function resolveStateDbPath(env = process.env) {
-  const explicit = env.OPENCLAW_STATE_DB?.trim();
-  if (explicit) return resolve(explicit);
+  const normalize = (value) => value?.trim() && !['null', 'undefined'].includes(value.trim()) ? value.trim() : undefined;
+  const osHome = normalize(env.HOME) ?? normalize(env.USERPROFILE) ?? homedir();
+  const expand = (path, home) => path.replace(/^~(?=$|[\\/])/u, home);
+  const home = resolve(expand(normalize(env.OPENCLAW_HOME) ?? osHome, osHome));
   const stateDir = env.OPENCLAW_STATE_DIR?.trim();
-  if (stateDir) return resolve(stateDir, 'state', 'openclaw.sqlite');
-  return join(homedir(), '.openclaw', 'state', 'openclaw.sqlite');
+  if (stateDir) return resolve(expand(stateDir, home), 'role-memory.sqlite');
+  const current = join(home, '.openclaw'), legacy = join(home, '.clawdbot');
+  const state = env.OPENCLAW_TEST_FAST !== '1' && !existsSync(current) && existsSync(legacy) ? legacy : current;
+  return join(state, 'role-memory.sqlite');
 }
 
 function emptyExport(dbPath, state, note) {
@@ -61,17 +65,16 @@ export function exportFeedback(options = {}) {
     return emptyExport(dbPath, 'unreadable', caught instanceof Error ? caught.message : String(caught));
   }
   try {
-    const table = db
-      .prepare("SELECT 1 AS ok FROM sqlite_master WHERE type = 'table' AND name = 'role_memory_feedback'")
-      .get();
-    if (!table) return emptyExport(dbPath, 'schema-absent', 'role_memory_feedback table not found');
+    const tables = db.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name IN ('role_memory_feedback', 'role_memory_injections')").all();
+    if (tables.length !== 2) return emptyExport(dbPath, 'schema-absent', 'role_memory_feedback or role_memory_injections table not found');
+    const totalRows = Number(db.prepare('SELECT COUNT(*) AS count FROM role_memory_feedback').get().count);
     const rows = db
       .prepare(
         `SELECT f.id, f.injection_id, f.card_id, f.role_name, f.outcome, f.task_success, f.created_at,
                 i.task AS case_id
            FROM role_memory_feedback f
            LEFT JOIN role_memory_injections i ON i.id = f.injection_id
-          ORDER BY f.created_at DESC
+          ORDER BY f.created_at DESC, f.id
           LIMIT ?`,
       )
       .all(maxRows);
@@ -83,6 +86,7 @@ export function exportFeedback(options = {}) {
       source: {
         dbPath,
         state: 'present',
+        totalRows, exportedRows: rows.length, truncated: totalRows > rows.length,
         note: 'Left join role_memory_injections on injection_id; caseId is the recorded injection task.',
       },
       records: rows.map((row) => ({
@@ -92,10 +96,12 @@ export function exportFeedback(options = {}) {
         caseId: typeof row.case_id === 'string' && row.case_id.trim() ? row.case_id : null,
         roleName: row.role_name ?? null,
         outcome: row.outcome ?? 'unknown',
-        taskSuccess: row.task_success === 'succeeded' || row.task_success === 'true' || row.task_success === 'success',
+        taskSuccess: ['success', 'partial', 'failure', 'unknown'].includes(row.task_success) ? row.task_success : 'unknown',
         createdAt: row.created_at ?? null,
       })),
     };
+  } catch (caught) {
+    return emptyExport(dbPath, 'unreadable', caught instanceof Error ? caught.message : String(caught));
   } finally {
     db.close();
   }
@@ -120,14 +126,14 @@ if (isMainEntrypoint(import.meta.url)) {
       writeFileSync(target, `${JSON.stringify(exported, null, 2)}\n`, 'utf8');
     }
     const summary = {
-      passed: true,
+      passed: exported.source.state !== 'unreadable',
       sourceState: exported.source.state,
       rows: exported.records.length,
       withCaseId: exported.records.filter((record) => record.caseId !== null).length,
       target: values.write ? target : null,
     };
     console.log(JSON.stringify(values.json ? summary : summary, null, 2));
-    process.exitCode = 0;
+    process.exitCode = summary.passed ? 0 : 1;
   } catch (caught) {
     console.error(caught instanceof Error ? caught.message : String(caught));
     process.exitCode = 1;

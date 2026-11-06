@@ -1,0 +1,8 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-wire-probe",
+  "httpStatus": 200,
+  "contentType": "application/json; charset=utf-8",
+  "durationMs": 4055,
+  "body": "{\"background\":false,\"completed_at\":1793806949,\"created_at\":1793806945,\"error\":null,\"id\":\"01a1a739ce5577f09b35f88487e355c2\",\"incomplete_details\":null,\"instructions\":null,\"max_output_tokens\":64,\"max_tool_calls\":null,\"metadata\":{},\"model\":\"space-bunny\",\"object\":\"response\",\"output\":[{\"id\":\"rs_ae90fb2b3cdd81f46c35b07455b36f0f\",\"summary\":[{\"text\":\"We need answer exactly RSI_WIRE_OK. Need ensure no extra.\",\"type\":\"summary_text\"}],\"type\":\"reasoning\"},{\"content\":[{\"annotations\":[],\"logprobs\":[],\"text\":\"RSI_WIRE_OK\",\"type\":\"output_text\"}],\"id\":\"msg_6cbe09e778c437c338c4720c91933003\",\"role\":\"assistant\",\"status\":\"completed\",\"type\":\"message\"}],\"output_text\":\"RSI_WIRE_OK\",\"parallel_tool_calls\":true,\"previous_response_id\":null,\"reasoning\":{\"effort\":null,\"summary\":null},\"status\":\"completed\",\"store\":false,\"temperature\":1,\"text\":{\"format\":{\"type\":\"text\"}},\"tool_choice\":\"auto\",\"tools\":[],\"top_logprobs\":0,\"top_p\":1,\"truncation\":\"disabled\",\"usage\":{\"input_tokens\":162,\"output_tokens\":22,\"output_tokens_details\":{\"reasoning_tokens\":14},\"total_tokens\":184},\"user\":null}"
+}

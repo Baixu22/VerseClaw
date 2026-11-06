@@ -3,6 +3,7 @@ import {
   createAgentBrowserTool,
   getPrimedAgentBrowserCapabilities,
   primeAgentBrowserCapabilities,
+  normalizeAvailableActions,
 } from '../../openclaw_runtime/src/agents/tools/agent-browser-tool';
 import { registerAgentBrowserGatewayBridge } from '@electron/gateway/agent-browser-bridge';
 import { setSandboxHighRiskPolicyLoader } from '@electron/utils/sandbox-high-risk-gate';
@@ -10,7 +11,7 @@ import { setSandboxHighRiskPolicyLoader } from '@electron/utils/sandbox-high-ris
 describe('agent browser capability gating (spec N3)', () => {
   beforeEach(() => {
     setSandboxHighRiskPolicyLoader(async () => ({ degraded: false }));
-    // Reset the process-local capability cache to the full declared vocabulary.
+    // An empty host snapshot permits only discovery.
     primeAgentBrowserCapabilities({ version: 'reset', availableActions: [] });
   });
 
@@ -36,11 +37,15 @@ describe('agent browser capability gating (spec N3)', () => {
     expect(invoke).not.toHaveBeenCalled();
   });
 
-  it('keeps the full vocabulary when no snapshot is known (no regression)', () => {
-    const tool = createAgentBrowserTool({ invoke: vi.fn() as never });
-    const schemaText = JSON.stringify(tool!.parameters);
-    expect(schemaText).toContain('downloadFile');
-    expect(schemaText).toContain('respondDialog');
+  it.each([{ availableActions: [] }, { availableActions: ['unknown-action'] }])('keeps an empty or unknown snapshot discovery-only: %j', async ({ availableActions }) => {
+    const invoke = vi.fn(async () => ({ success: true, sessions: [] }));
+    const tool = createAgentBrowserTool({ invoke: invoke as never, availableActions });
+    expect(normalizeAvailableActions(availableActions)).toEqual(['status']);
+    expect(JSON.stringify(tool!.parameters)).not.toContain('uploadFiles');
+    await expect(tool!.execute('t-denied', { action: 'open', url: 'https://example.com' })).rejects.toThrow(/not available/);
+    expect(invoke).not.toHaveBeenCalled();
+    await tool!.execute('t-discovery', { action: 'status' });
+    expect(invoke).toHaveBeenCalledOnce();
   });
 
   it('narrows a later tool from a primed snapshot and preserves canonical order', () => {

@@ -1,0 +1,1866 @@
+{
+  "schemaVersion": "RsiLiveTaskAdmission/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-independent-calibrator",
+  "taskId": "tf-0279-s04",
+  "source": {
+    "id": "tf-0279-s04",
+    "base": "ca413cdc436c00f7eddb06584783fd98996939c9",
+    "reference": "ce7ebd94cdd5814470daade4a3c7fa67ab8e77a4",
+    "productChanges": [],
+    "originalDecision": "PASS",
+    "sourceRecord": "docs/dev/harness-gap-closure/s04-acceptance.json",
+    "sourceRecordDigest": "b35b8861b4e37a7f9117c40451783debd7e57d71c5298b95be18d0471208510e",
+    "oraclePaths": [
+      "openclaw_runtime/src/agents/tools/agent-browser-external-access-policy.test.ts",
+      "openclaw_runtime/src/agents/tools/agent-browser-tool.provenance.test.ts",
+      "openclaw_runtime/src/agents/agent-browser-provenance-wiring.test.ts",
+      "tests/unit/browser-effect-boundary-ledger.test.ts"
+    ],
+    "commands": [
+      "pnpm exec vitest run tests/unit/browser-effect-boundary-ledger.test.ts --maxWorkers=1",
+      "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/tools/agent-browser-external-access-policy.test.ts src/agents/tools/agent-browser-tool.provenance.test.ts src/agents/agent-browser-provenance-wiring.test.ts --maxWorkers=1"
+    ]
+  },
+  "stages": {
+    "reference": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0279-s04",
+      "commands": [
+        "pnpm exec vitest run tests/unit/browser-effect-boundary-ledger.test.ts --maxWorkers=1",
+        "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/tools/agent-browser-external-access-policy.test.ts src/agents/tools/agent-browser-tool.provenance.test.ts src/agents/agent-browser-provenance-wiring.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm exec vitest run tests/unit/browser-effect-boundary-ledger.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\ClawX\\node_modules\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\vitest.mjs",
+            "run",
+            "tests/unit/browser-effect-boundary-ledger.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\reference\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\reference\\workspace",
+          "exitCode": 0,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 2,
+            "numPassedTestSuites": 2,
+            "numFailedTestSuites": 0,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 5,
+            "numPassedTests": 5,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793899849201,
+            "success": true,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "S04 browser effect boundary ledger"
+                    ],
+                    "fullName": "S04 browser effect boundary ledger denies external/unknown provenance the external connection modes, allows managed",
+                    "status": "passed",
+                    "title": "denies external/unknown provenance the external connection modes, allows managed",
+                    "duration": 2.2794999999999845,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S04 browser effect boundary ledger"
+                    ],
+                    "fullName": "S04 browser effect boundary ledger allows trusted provenance every connection mode",
+                    "status": "passed",
+                    "title": "allows trusted provenance every connection mode",
+                    "duration": 0.26480000000003656,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S04 browser effect boundary ledger"
+                    ],
+                    "fullName": "S04 browser effect boundary ledger requires a Main-owned managed session for click/type under external/unknown provenance",
+                    "status": "passed",
+                    "title": "requires a Main-owned managed session for click/type under external/unknown provenance",
+                    "duration": 0.8274999999999864,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S04 browser effect boundary ledger"
+                    ],
+                    "fullName": "S04 browser effect boundary ledger pins the wiring: external-access on every action, session gate only on click/type",
+                    "status": "passed",
+                    "title": "pins the wiring: external-access on every action, session gate only on click/type",
+                    "duration": 0.47910000000001673,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S04 browser effect boundary ledger"
+                    ],
+                    "fullName": "S04 browser effect boundary ledger records every action and the residual session-gate gap in the ledger doc",
+                    "status": "passed",
+                    "title": "records every action and the residual session-gate gap in the ledger doc",
+                    "duration": 0.6520999999999617,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793899849574,
+                "endTime": 1793899849578.652,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0279-s04/reference/workspace/tests/unit/browser-effect-boundary-ledger.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\reference\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\reference\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\reference\\oracle\\01-stderr.log"
+        },
+        {
+          "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/tools/agent-browser-external-access-policy.test.ts src/agents/tools/agent-browser-tool.provenance.test.ts src/agents/agent-browser-provenance-wiring.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\reference\\workspace\\openclaw_runtime\\scripts\\run-vitest.mjs",
+            "run",
+            "src/agents/tools/agent-browser-external-access-policy.test.ts",
+            "src/agents/tools/agent-browser-tool.provenance.test.ts",
+            "src/agents/agent-browser-provenance-wiring.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\reference\\oracle\\02-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\reference\\workspace\\openclaw_runtime",
+          "exitCode": 0,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 8,
+            "numPassedTestSuites": 8,
+            "numFailedTestSuites": 0,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 42,
+            "numPassedTests": 42,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793899869974,
+            "success": true,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "agent_browser provenance wiring"
+                    ],
+                    "fullName": "agent_browser provenance wiring passes the authoritative run sidecar into the external browser boundary",
+                    "status": "passed",
+                    "title": "passes the authoritative run sidecar into the external browser boundary",
+                    "duration": 589.4498999999996,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 13,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793899885673,
+                "endTime": 1793899886262.45,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0279-s04/reference/workspace/openclaw_runtime/src/agents/agent-browser-provenance-wiring.test.ts"
+              },
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "agent_browser external-access provenance boundary"
+                    ],
+                    "fullName": "agent_browser external-access provenance boundary denies an external open request before bridge invocation",
+                    "status": "passed",
+                    "title": "denies an external open request before bridge invocation",
+                    "duration": 100.15869999999995,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 34,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser external-access provenance boundary"
+                    ],
+                    "fullName": "agent_browser external-access provenance boundary denies an external command request before bridge invocation",
+                    "status": "passed",
+                    "title": "denies an external command request before bridge invocation",
+                    "duration": 0.5729000000028464,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 34,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser external-access provenance boundary"
+                    ],
+                    "fullName": "agent_browser external-access provenance boundary fails closed when provenance is missing",
+                    "status": "passed",
+                    "title": "fails closed when provenance is missing",
+                    "duration": 0.4213000000017928,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 48,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser external-access provenance boundary"
+                    ],
+                    "fullName": "agent_browser external-access provenance boundary keeps managed browsing usable even when allowExternalBrowser is present",
+                    "status": "passed",
+                    "title": "keeps managed browsing usable even when allowExternalBrowser is present",
+                    "duration": 0.7057999999997264,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 63,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser external-access provenance boundary"
+                    ],
+                    "fullName": "agent_browser external-access provenance boundary preserves direct operator external browser selection",
+                    "status": "passed",
+                    "title": "preserves direct operator external browser selection",
+                    "duration": 1.0536000000029162,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 87,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary allows external content to click a Main-verified managed session",
+                    "status": "passed",
+                    "title": "allows external content to click a Main-verified managed session",
+                    "duration": 0.5937999999987369,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 116,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary denies external content clicking an existing auto-connect session",
+                    "status": "passed",
+                    "title": "denies external content clicking an existing auto-connect session",
+                    "duration": 0.44650000000183354,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 139,
+                      "column": 54
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary denies external content clicking an existing cdp session",
+                    "status": "passed",
+                    "title": "denies external content clicking an existing cdp session",
+                    "duration": 0.3253000000004249,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 139,
+                      "column": 54
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary denies external content clicking an existing external-profile session",
+                    "status": "passed",
+                    "title": "denies external content clicking an existing external-profile session",
+                    "duration": 0.3690999999998894,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 139,
+                      "column": 54
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary fails closed for missing session status metadata",
+                    "status": "passed",
+                    "title": "fails closed for missing session status metadata",
+                    "duration": 0.4477999999980966,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 172,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary fails closed for missing connection status metadata",
+                    "status": "passed",
+                    "title": "fails closed for missing connection status metadata",
+                    "duration": 0.29720000000088476,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 172,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary fails closed for malformed response status metadata",
+                    "status": "passed",
+                    "title": "fails closed for malformed response status metadata",
+                    "duration": 0.2687000000005355,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 172,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary fails closed for missing success marker status metadata",
+                    "status": "passed",
+                    "title": "fails closed for missing success marker status metadata",
+                    "duration": 0.23170000000027358,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 172,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary fails closed for failed response status metadata",
+                    "status": "passed",
+                    "title": "fails closed for failed response status metadata",
+                    "duration": 0.25139999999737483,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 172,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary fails closed when the status lookup fails",
+                    "status": "passed",
+                    "title": "fails closed when the status lookup fails",
+                    "duration": 0.34979999999995925,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 186,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary keeps direct operator clicks on the existing path without a preflight",
+                    "status": "passed",
+                    "title": "keeps direct operator clicks on the existing path without a preflight",
+                    "duration": 0.26410000000032596,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 205,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary allows external content to type into a Main-verified managed session without exposing text to status",
+                    "status": "passed",
+                    "title": "allows external content to type into a Main-verified managed session without exposing text to status",
+                    "duration": 0.24020000000018626,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 227,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary denies external content typing into an existing external session before sending text",
+                    "status": "passed",
+                    "title": "denies external content typing into an existing external session before sending text",
+                    "duration": 0.35359999999855063,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 255,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary fails type closed for missing session status metadata",
+                    "status": "passed",
+                    "title": "fails type closed for missing session status metadata",
+                    "duration": 0.2062000000005355,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 289,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary fails type closed for missing connection status metadata",
+                    "status": "passed",
+                    "title": "fails type closed for missing connection status metadata",
+                    "duration": 0.147000000000844,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 289,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary fails type closed for malformed response status metadata",
+                    "status": "passed",
+                    "title": "fails type closed for malformed response status metadata",
+                    "duration": 0.1368000000002212,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 289,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary fails type closed for missing success marker status metadata",
+                    "status": "passed",
+                    "title": "fails type closed for missing success marker status metadata",
+                    "duration": 0.13170000000172877,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 289,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary fails type closed for failed response status metadata",
+                    "status": "passed",
+                    "title": "fails type closed for failed response status metadata",
+                    "duration": 0.12360000000262517,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 289,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary fails type closed when the status lookup fails",
+                    "status": "passed",
+                    "title": "fails type closed when the status lookup fails",
+                    "duration": 0.2783999999992375,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 304,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793899886993,
+                "endTime": 1793899887102.2783,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0279-s04/reference/workspace/openclaw_runtime/src/agents/tools/agent-browser-tool.provenance.test.ts"
+              },
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "agent browser external-access provenance policy"
+                    ],
+                    "fullName": "agent browser external-access provenance policy denies every external connection mode for untrusted provenance",
+                    "status": "passed",
+                    "title": "denies every external connection mode for untrusted provenance",
+                    "duration": 2.629800000000614,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 40,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser external-access provenance policy"
+                    ],
+                    "fullName": "agent browser external-access provenance policy denies every external connection mode for derived-untrusted provenance",
+                    "status": "passed",
+                    "title": "denies every external connection mode for derived-untrusted provenance",
+                    "duration": 0.42770000000018626,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 40,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser external-access provenance policy"
+                    ],
+                    "fullName": "agent browser external-access provenance policy denies every external connection mode for missing provenance",
+                    "status": "passed",
+                    "title": "denies every external connection mode for missing provenance",
+                    "duration": 0.245600000000195,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 40,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser external-access provenance policy"
+                    ],
+                    "fullName": "agent browser external-access provenance policy denies every external connection mode for invalid provenance",
+                    "status": "passed",
+                    "title": "denies every external connection mode for invalid provenance",
+                    "duration": 0.2620999999999185,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 40,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser external-access provenance policy"
+                    ],
+                    "fullName": "agent browser external-access provenance policy keeps managed and omitted connection modes available for external provenance",
+                    "status": "passed",
+                    "title": "keeps managed and omitted connection modes available for external provenance",
+                    "duration": 0.23279999999977008,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 48,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser external-access provenance policy"
+                    ],
+                    "fullName": "agent browser external-access provenance policy keeps external modes available for trusted system and direct operator provenance",
+                    "status": "passed",
+                    "title": "keeps external modes available for trusted system and direct operator provenance",
+                    "duration": 0.2625000000007276,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 59,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser external-access provenance policy"
+                    ],
+                    "fullName": "agent browser external-access provenance policy does not treat an ordinary trust field as an operator boundary",
+                    "status": "passed",
+                    "title": "does not treat an ordinary trust field as an operator boundary",
+                    "duration": 0.18430000000080327,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 76,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser existing-session effect policy"
+                    ],
+                    "fullName": "agent browser existing-session effect policy requires a Main status preflight for untrusted provenance",
+                    "status": "passed",
+                    "title": "requires a Main status preflight for untrusted provenance",
+                    "duration": 0.281699999999546,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 97,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser existing-session effect policy"
+                    ],
+                    "fullName": "agent browser existing-session effect policy requires a Main status preflight for derived-untrusted provenance",
+                    "status": "passed",
+                    "title": "requires a Main status preflight for derived-untrusted provenance",
+                    "duration": 0.16750000000138243,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 97,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser existing-session effect policy"
+                    ],
+                    "fullName": "agent browser existing-session effect policy requires a Main status preflight for missing provenance",
+                    "status": "passed",
+                    "title": "requires a Main status preflight for missing provenance",
+                    "duration": 0.16090000000076543,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 97,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser existing-session effect policy"
+                    ],
+                    "fullName": "agent browser existing-session effect policy requires a Main status preflight for invalid provenance",
+                    "status": "passed",
+                    "title": "requires a Main status preflight for invalid provenance",
+                    "duration": 0.09760000000096625,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 97,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser existing-session effect policy"
+                    ],
+                    "fullName": "agent browser existing-session effect policy denies risky provenance for session mode auto-connect",
+                    "status": "passed",
+                    "title": "denies risky provenance for session mode auto-connect",
+                    "duration": 0.13580000000001746,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 108,
+                      "column": 81
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser existing-session effect policy"
+                    ],
+                    "fullName": "agent browser existing-session effect policy denies risky provenance for session mode cdp",
+                    "status": "passed",
+                    "title": "denies risky provenance for session mode cdp",
+                    "duration": 0.10579999999936263,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 108,
+                      "column": 81
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser existing-session effect policy"
+                    ],
+                    "fullName": "agent browser existing-session effect policy denies risky provenance for session mode external-profile",
+                    "status": "passed",
+                    "title": "denies risky provenance for session mode external-profile",
+                    "duration": 0.08779999999933352,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 108,
+                      "column": 81
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser existing-session effect policy"
+                    ],
+                    "fullName": "agent browser existing-session effect policy denies risky provenance for session mode undefined",
+                    "status": "passed",
+                    "title": "denies risky provenance for session mode undefined",
+                    "duration": 0.08550000000104774,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 108,
+                      "column": 81
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser existing-session effect policy"
+                    ],
+                    "fullName": "agent browser existing-session effect policy denies risky provenance for session mode invalid-mode",
+                    "status": "passed",
+                    "title": "denies risky provenance for session mode invalid-mode",
+                    "duration": 0.09020000000055006,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 108,
+                      "column": 81
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser existing-session effect policy"
+                    ],
+                    "fullName": "agent browser existing-session effect policy keeps trusted system and direct operator clicks unchanged",
+                    "status": "passed",
+                    "title": "keeps trusted system and direct operator clicks unchanged",
+                    "duration": 0.25130000000172004,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 121,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793899870269,
+                "endTime": 1793899870275.2512,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0279-s04/reference/workspace/openclaw_runtime/src/agents/tools/agent-browser-external-access-policy.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\reference\\oracle\\02-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\reference\\oracle\\02-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\reference\\oracle\\02-stderr.log"
+        }
+      ],
+      "numTotalTests": 47,
+      "numPassedTests": 47,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": true,
+      "failureClass": null,
+      "timeoutMs": 300000,
+      "oracleHashBefore": "ec26f07eac1d3a4d807ab8a2a63b54bfd677c08dc31d64eaf7b9e13ab86b0c84",
+      "oracleHashAfter": "ec26f07eac1d3a4d807ab8a2a63b54bfd677c08dc31d64eaf7b9e13ab86b0c84",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-browser-effect-boundary.md": "33af143e068b540096b7f81936f4bde96c502c4395df8022bea2357cc07894c2",
+        "openclaw_runtime/src/agents/tools/agent-browser-external-access-policy.test.ts": "fbb24d2415a938e5589a8b788e6b2ad9e9a38b341bec891b1ac47c100dd60b17",
+        "openclaw_runtime/src/agents/tools/agent-browser-tool.provenance.test.ts": "f6fd297b0d31960fd0236f0ac97ff776cef497ccdc5de7755f2c31476260a5c4",
+        "openclaw_runtime/src/agents/agent-browser-provenance-wiring.test.ts": "9b443a49873b8f1046f14f44f94454ff2a33caa6fe7389665026ab91aa60e9c9",
+        "tests/unit/browser-effect-boundary-ledger.test.ts": "42d481e78e431e7c9d05e52ab6e4779dc1d882b2419c22a2f95ce13a13119b1e"
+      },
+      "oracleRevision": "ce7ebd94cdd5814470daade4a3c7fa67ab8e77a4",
+      "oracleTestDigests": {
+        "openclaw_runtime/src/agents/tools/agent-browser-external-access-policy.test.ts": "fbb24d2415a938e5589a8b788e6b2ad9e9a38b341bec891b1ac47c100dd60b17",
+        "openclaw_runtime/src/agents/tools/agent-browser-tool.provenance.test.ts": "f4f58babd79ab30f593a05044bf7f7b96c2086bc19c6f86096bd3978e256befd",
+        "openclaw_runtime/src/agents/agent-browser-provenance-wiring.test.ts": "9b443a49873b8f1046f14f44f94454ff2a33caa6fe7389665026ab91aa60e9c9",
+        "tests/unit/browser-effect-boundary-ledger.test.ts": "42d481e78e431e7c9d05e52ab6e4779dc1d882b2419c22a2f95ce13a13119b1e"
+      },
+      "diagnostics": [],
+      "workspace": "D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\reference\\workspace",
+      "outDir": "D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\reference\\oracle",
+      "reportPath": "D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\reference\\oracle\\run-report.json"
+    },
+    "baseline": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0279-s04",
+      "commands": [
+        "pnpm exec vitest run tests/unit/browser-effect-boundary-ledger.test.ts --maxWorkers=1",
+        "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/tools/agent-browser-external-access-policy.test.ts src/agents/tools/agent-browser-tool.provenance.test.ts src/agents/agent-browser-provenance-wiring.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm exec vitest run tests/unit/browser-effect-boundary-ledger.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\ClawX\\node_modules\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\vitest.mjs",
+            "run",
+            "tests/unit/browser-effect-boundary-ledger.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\baseline\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\baseline\\workspace",
+          "exitCode": 1,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 2,
+            "numPassedTestSuites": 0,
+            "numFailedTestSuites": 2,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 5,
+            "numPassedTests": 4,
+            "numFailedTests": 1,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793899895122,
+            "success": false,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "S04 browser effect boundary ledger"
+                    ],
+                    "fullName": "S04 browser effect boundary ledger denies external/unknown provenance the external connection modes, allows managed",
+                    "status": "passed",
+                    "title": "denies external/unknown provenance the external connection modes, allows managed",
+                    "duration": 2.144200000000012,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S04 browser effect boundary ledger"
+                    ],
+                    "fullName": "S04 browser effect boundary ledger allows trusted provenance every connection mode",
+                    "status": "passed",
+                    "title": "allows trusted provenance every connection mode",
+                    "duration": 0.254600000000039,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S04 browser effect boundary ledger"
+                    ],
+                    "fullName": "S04 browser effect boundary ledger requires a Main-owned managed session for click/type under external/unknown provenance",
+                    "status": "passed",
+                    "title": "requires a Main-owned managed session for click/type under external/unknown provenance",
+                    "duration": 0.8634000000000128,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S04 browser effect boundary ledger"
+                    ],
+                    "fullName": "S04 browser effect boundary ledger pins the wiring: external-access on every action, session gate only on click/type",
+                    "status": "passed",
+                    "title": "pins the wiring: external-access on every action, session gate only on click/type",
+                    "duration": 0.4970000000000141,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S04 browser effect boundary ledger"
+                    ],
+                    "fullName": "S04 browser effect boundary ledger records every action and the residual session-gate gap in the ledger doc",
+                    "status": "failed",
+                    "title": "records every action and the residual session-gate gap in the ledger doc",
+                    "duration": 2.1528999999999883,
+                    "failureMessages": [
+                      "Error: ENOENT: no such file or directory, open 'D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\baseline\\workspace\\docs\\dev\\harness-gap-closure\\s04-browser-effect-boundary.md'\n    at readFileSync (node:fs:483:20)\n    at read (D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0279-s04/baseline/workspace/tests/unit/browser-effect-boundary-ledger.test.ts:36:10)\n    at D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0279-s04/baseline/workspace/tests/unit/browser-effect-boundary-ledger.test.ts:77:17\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)"
+                    ],
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793899895760,
+                "endTime": 1793899895766.1528,
+                "status": "failed",
+                "message": "",
+                "name": "D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0279-s04/baseline/workspace/tests/unit/browser-effect-boundary-ledger.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\baseline\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\baseline\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\baseline\\oracle\\01-stderr.log"
+        },
+        {
+          "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/tools/agent-browser-external-access-policy.test.ts src/agents/tools/agent-browser-tool.provenance.test.ts src/agents/agent-browser-provenance-wiring.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\baseline\\workspace\\openclaw_runtime\\scripts\\run-vitest.mjs",
+            "run",
+            "src/agents/tools/agent-browser-external-access-policy.test.ts",
+            "src/agents/tools/agent-browser-tool.provenance.test.ts",
+            "src/agents/agent-browser-provenance-wiring.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\baseline\\oracle\\02-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\baseline\\workspace\\openclaw_runtime",
+          "exitCode": 0,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 8,
+            "numPassedTestSuites": 8,
+            "numFailedTestSuites": 0,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 42,
+            "numPassedTests": 42,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793899914844,
+            "success": true,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "agent_browser provenance wiring"
+                    ],
+                    "fullName": "agent_browser provenance wiring passes the authoritative run sidecar into the external browser boundary",
+                    "status": "passed",
+                    "title": "passes the authoritative run sidecar into the external browser boundary",
+                    "duration": 494.8052000000025,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 13,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793899929536,
+                "endTime": 1793899930030.8052,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0279-s04/baseline/workspace/openclaw_runtime/src/agents/agent-browser-provenance-wiring.test.ts"
+              },
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "agent_browser external-access provenance boundary"
+                    ],
+                    "fullName": "agent_browser external-access provenance boundary denies an external open request before bridge invocation",
+                    "status": "passed",
+                    "title": "denies an external open request before bridge invocation",
+                    "duration": 92.97889999999825,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 34,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser external-access provenance boundary"
+                    ],
+                    "fullName": "agent_browser external-access provenance boundary denies an external command request before bridge invocation",
+                    "status": "passed",
+                    "title": "denies an external command request before bridge invocation",
+                    "duration": 0.5326000000022759,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 34,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser external-access provenance boundary"
+                    ],
+                    "fullName": "agent_browser external-access provenance boundary fails closed when provenance is missing",
+                    "status": "passed",
+                    "title": "fails closed when provenance is missing",
+                    "duration": 0.42519999999785796,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 48,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser external-access provenance boundary"
+                    ],
+                    "fullName": "agent_browser external-access provenance boundary keeps managed browsing usable even when allowExternalBrowser is present",
+                    "status": "passed",
+                    "title": "keeps managed browsing usable even when allowExternalBrowser is present",
+                    "duration": 0.7361999999993714,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 63,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser external-access provenance boundary"
+                    ],
+                    "fullName": "agent_browser external-access provenance boundary preserves direct operator external browser selection",
+                    "status": "passed",
+                    "title": "preserves direct operator external browser selection",
+                    "duration": 1.034800000001269,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 87,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary allows external content to click a Main-verified managed session",
+                    "status": "passed",
+                    "title": "allows external content to click a Main-verified managed session",
+                    "duration": 0.6129999999975553,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 116,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary denies external content clicking an existing auto-connect session",
+                    "status": "passed",
+                    "title": "denies external content clicking an existing auto-connect session",
+                    "duration": 0.44870000000082655,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 139,
+                      "column": 54
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary denies external content clicking an existing cdp session",
+                    "status": "passed",
+                    "title": "denies external content clicking an existing cdp session",
+                    "duration": 0.32259999999951106,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 139,
+                      "column": 54
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary denies external content clicking an existing external-profile session",
+                    "status": "passed",
+                    "title": "denies external content clicking an existing external-profile session",
+                    "duration": 0.38139999999839347,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 139,
+                      "column": 54
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary fails closed for missing session status metadata",
+                    "status": "passed",
+                    "title": "fails closed for missing session status metadata",
+                    "duration": 0.4254000000000815,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 172,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary fails closed for missing connection status metadata",
+                    "status": "passed",
+                    "title": "fails closed for missing connection status metadata",
+                    "duration": 0.2841000000007625,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 172,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary fails closed for malformed response status metadata",
+                    "status": "passed",
+                    "title": "fails closed for malformed response status metadata",
+                    "duration": 0.26389999999810243,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 172,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary fails closed for missing success marker status metadata",
+                    "status": "passed",
+                    "title": "fails closed for missing success marker status metadata",
+                    "duration": 0.18180000000211294,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 172,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary fails closed for failed response status metadata",
+                    "status": "passed",
+                    "title": "fails closed for failed response status metadata",
+                    "duration": 0.405800000000454,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 172,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary fails closed when the status lookup fails",
+                    "status": "passed",
+                    "title": "fails closed when the status lookup fails",
+                    "duration": 0.37969999999768334,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 186,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary keeps direct operator clicks on the existing path without a preflight",
+                    "status": "passed",
+                    "title": "keeps direct operator clicks on the existing path without a preflight",
+                    "duration": 0.2474000000001979,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 205,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary allows external content to type into a Main-verified managed session without exposing text to status",
+                    "status": "passed",
+                    "title": "allows external content to type into a Main-verified managed session without exposing text to status",
+                    "duration": 0.24109999999927823,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 227,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary denies external content typing into an existing external session before sending text",
+                    "status": "passed",
+                    "title": "denies external content typing into an existing external session before sending text",
+                    "duration": 0.3683000000019092,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 255,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary fails type closed for missing session status metadata",
+                    "status": "passed",
+                    "title": "fails type closed for missing session status metadata",
+                    "duration": 0.20839999999952852,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 289,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary fails type closed for missing connection status metadata",
+                    "status": "passed",
+                    "title": "fails type closed for missing connection status metadata",
+                    "duration": 0.17150000000037835,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 289,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary fails type closed for malformed response status metadata",
+                    "status": "passed",
+                    "title": "fails type closed for malformed response status metadata",
+                    "duration": 0.15669999999954598,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 289,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary fails type closed for missing success marker status metadata",
+                    "status": "passed",
+                    "title": "fails type closed for missing success marker status metadata",
+                    "duration": 0.1614000000008673,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 289,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary fails type closed for failed response status metadata",
+                    "status": "passed",
+                    "title": "fails type closed for failed response status metadata",
+                    "duration": 0.14689999999973224,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 289,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent_browser existing-session effect provenance boundary"
+                    ],
+                    "fullName": "agent_browser existing-session effect provenance boundary fails type closed when the status lookup fails",
+                    "status": "passed",
+                    "title": "fails type closed when the status lookup fails",
+                    "duration": 0.30529999999998836,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 304,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793899930746,
+                "endTime": 1793899930848.3054,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0279-s04/baseline/workspace/openclaw_runtime/src/agents/tools/agent-browser-tool.provenance.test.ts"
+              },
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "agent browser external-access provenance policy"
+                    ],
+                    "fullName": "agent browser external-access provenance policy denies every external connection mode for untrusted provenance",
+                    "status": "passed",
+                    "title": "denies every external connection mode for untrusted provenance",
+                    "duration": 2.103900000000067,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 40,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser external-access provenance policy"
+                    ],
+                    "fullName": "agent browser external-access provenance policy denies every external connection mode for derived-untrusted provenance",
+                    "status": "passed",
+                    "title": "denies every external connection mode for derived-untrusted provenance",
+                    "duration": 0.38259999999900174,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 40,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser external-access provenance policy"
+                    ],
+                    "fullName": "agent browser external-access provenance policy denies every external connection mode for missing provenance",
+                    "status": "passed",
+                    "title": "denies every external connection mode for missing provenance",
+                    "duration": 0.2077000000008411,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 40,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser external-access provenance policy"
+                    ],
+                    "fullName": "agent browser external-access provenance policy denies every external connection mode for invalid provenance",
+                    "status": "passed",
+                    "title": "denies every external connection mode for invalid provenance",
+                    "duration": 0.23919999999998254,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 40,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser external-access provenance policy"
+                    ],
+                    "fullName": "agent browser external-access provenance policy keeps managed and omitted connection modes available for external provenance",
+                    "status": "passed",
+                    "title": "keeps managed and omitted connection modes available for external provenance",
+                    "duration": 0.2102999999988242,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 48,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser external-access provenance policy"
+                    ],
+                    "fullName": "agent browser external-access provenance policy keeps external modes available for trusted system and direct operator provenance",
+                    "status": "passed",
+                    "title": "keeps external modes available for trusted system and direct operator provenance",
+                    "duration": 0.20830000000023574,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 59,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser external-access provenance policy"
+                    ],
+                    "fullName": "agent browser external-access provenance policy does not treat an ordinary trust field as an operator boundary",
+                    "status": "passed",
+                    "title": "does not treat an ordinary trust field as an operator boundary",
+                    "duration": 0.19939999999951397,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 76,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser existing-session effect policy"
+                    ],
+                    "fullName": "agent browser existing-session effect policy requires a Main status preflight for untrusted provenance",
+                    "status": "passed",
+                    "title": "requires a Main status preflight for untrusted provenance",
+                    "duration": 0.22590000000127475,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 97,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser existing-session effect policy"
+                    ],
+                    "fullName": "agent browser existing-session effect policy requires a Main status preflight for derived-untrusted provenance",
+                    "status": "passed",
+                    "title": "requires a Main status preflight for derived-untrusted provenance",
+                    "duration": 0.20230000000083237,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 97,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser existing-session effect policy"
+                    ],
+                    "fullName": "agent browser existing-session effect policy requires a Main status preflight for missing provenance",
+                    "status": "passed",
+                    "title": "requires a Main status preflight for missing provenance",
+                    "duration": 0.19210000000020955,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 97,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser existing-session effect policy"
+                    ],
+                    "fullName": "agent browser existing-session effect policy requires a Main status preflight for invalid provenance",
+                    "status": "passed",
+                    "title": "requires a Main status preflight for invalid provenance",
+                    "duration": 0.08899999999994179,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 97,
+                      "column": 4
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser existing-session effect policy"
+                    ],
+                    "fullName": "agent browser existing-session effect policy denies risky provenance for session mode auto-connect",
+                    "status": "passed",
+                    "title": "denies risky provenance for session mode auto-connect",
+                    "duration": 0.12430000000131258,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 108,
+                      "column": 81
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser existing-session effect policy"
+                    ],
+                    "fullName": "agent browser existing-session effect policy denies risky provenance for session mode cdp",
+                    "status": "passed",
+                    "title": "denies risky provenance for session mode cdp",
+                    "duration": 0.08489999999983411,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 108,
+                      "column": 81
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser existing-session effect policy"
+                    ],
+                    "fullName": "agent browser existing-session effect policy denies risky provenance for session mode external-profile",
+                    "status": "passed",
+                    "title": "denies risky provenance for session mode external-profile",
+                    "duration": 0.06670000000121945,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 108,
+                      "column": 81
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser existing-session effect policy"
+                    ],
+                    "fullName": "agent browser existing-session effect policy denies risky provenance for session mode undefined",
+                    "status": "passed",
+                    "title": "denies risky provenance for session mode undefined",
+                    "duration": 0.09150000000045111,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 108,
+                      "column": 81
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser existing-session effect policy"
+                    ],
+                    "fullName": "agent browser existing-session effect policy denies risky provenance for session mode invalid-mode",
+                    "status": "passed",
+                    "title": "denies risky provenance for session mode invalid-mode",
+                    "duration": 0.07089999999880092,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 108,
+                      "column": 81
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "agent browser existing-session effect policy"
+                    ],
+                    "fullName": "agent browser existing-session effect policy keeps trusted system and direct operator clicks unchanged",
+                    "status": "passed",
+                    "title": "keeps trusted system and direct operator clicks unchanged",
+                    "duration": 0.2312000000001717,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 121,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793899915116,
+                "endTime": 1793899915121.2312,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0279-s04/baseline/workspace/openclaw_runtime/src/agents/tools/agent-browser-external-access-policy.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\baseline\\oracle\\02-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\baseline\\oracle\\02-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\baseline\\oracle\\02-stderr.log"
+        }
+      ],
+      "numTotalTests": 47,
+      "numPassedTests": 46,
+      "numFailedTests": 1,
+      "numPendingTests": 0,
+      "passed": false,
+      "failureClass": "assertion",
+      "timeoutMs": 300000,
+      "oracleHashBefore": "ec26f07eac1d3a4d807ab8a2a63b54bfd677c08dc31d64eaf7b9e13ab86b0c84",
+      "oracleHashAfter": "ec26f07eac1d3a4d807ab8a2a63b54bfd677c08dc31d64eaf7b9e13ab86b0c84",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-browser-effect-boundary.md": "33af143e068b540096b7f81936f4bde96c502c4395df8022bea2357cc07894c2",
+        "openclaw_runtime/src/agents/tools/agent-browser-external-access-policy.test.ts": "fbb24d2415a938e5589a8b788e6b2ad9e9a38b341bec891b1ac47c100dd60b17",
+        "openclaw_runtime/src/agents/tools/agent-browser-tool.provenance.test.ts": "f6fd297b0d31960fd0236f0ac97ff776cef497ccdc5de7755f2c31476260a5c4",
+        "openclaw_runtime/src/agents/agent-browser-provenance-wiring.test.ts": "9b443a49873b8f1046f14f44f94454ff2a33caa6fe7389665026ab91aa60e9c9",
+        "tests/unit/browser-effect-boundary-ledger.test.ts": "42d481e78e431e7c9d05e52ab6e4779dc1d882b2419c22a2f95ce13a13119b1e"
+      },
+      "oracleRevision": "ce7ebd94cdd5814470daade4a3c7fa67ab8e77a4",
+      "oracleTestDigests": {
+        "openclaw_runtime/src/agents/tools/agent-browser-external-access-policy.test.ts": "fbb24d2415a938e5589a8b788e6b2ad9e9a38b341bec891b1ac47c100dd60b17",
+        "openclaw_runtime/src/agents/tools/agent-browser-tool.provenance.test.ts": "f4f58babd79ab30f593a05044bf7f7b96c2086bc19c6f86096bd3978e256befd",
+        "openclaw_runtime/src/agents/agent-browser-provenance-wiring.test.ts": "9b443a49873b8f1046f14f44f94454ff2a33caa6fe7389665026ab91aa60e9c9",
+        "tests/unit/browser-effect-boundary-ledger.test.ts": "42d481e78e431e7c9d05e52ab6e4779dc1d882b2419c22a2f95ce13a13119b1e"
+      },
+      "diagnostics": [],
+      "workspace": "D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\baseline\\workspace",
+      "outDir": "D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\baseline\\oracle",
+      "reportPath": "D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\baseline\\oracle\\run-report.json"
+    }
+  },
+  "admission": {
+    "passed": true,
+    "issues": []
+  },
+  "claims": {
+    "modelQuality": false,
+    "benefit": false,
+    "realHuman": false
+  }
+}

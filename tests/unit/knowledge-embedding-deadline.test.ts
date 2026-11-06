@@ -122,4 +122,25 @@ describe('TF-0735 knowledge embedding total deadline', () => {
     expect(resolveEmbeddingDeadlineMs('0')).toBe(DEFAULT_EMBEDDING_DEADLINE_MS);
     expect(resolveEmbeddingDeadlineMs('not-a-number')).toBe(DEFAULT_EMBEDDING_DEADLINE_MS);
   });
+
+  it('does not let a cached vector bypass an expired operation deadline', async () => {
+    let clock = 0;
+    const requestImpl = vi.fn(async () => embeddings(1));
+    const provider = createSiliconFlowEmbeddingProvider({ deadlineMs: 100, now: () => clock, requestImpl: requestImpl as never });
+    await provider.embedQuery('cached-deadline');
+    clock = 101;
+    await expect(provider.embedQuery('cached-deadline')).rejects.toBeInstanceOf(KnowledgeEmbeddingDeadlineError);
+    expect(requestImpl).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps injected transports isolated while retaining within-instance cache reuse', async () => {
+    const first = vi.fn(async () => embeddings(1));
+    const second = vi.fn(async () => embeddings(1));
+    const provider = createSiliconFlowEmbeddingProvider({ requestImpl: first as never });
+    await provider.embedQuery('transport-isolation');
+    await provider.embedQuery('transport-isolation');
+    await createSiliconFlowEmbeddingProvider({ requestImpl: second as never }).embedQuery('transport-isolation');
+    expect(first).toHaveBeenCalledTimes(1);
+    expect(second).toHaveBeenCalledTimes(1);
+  });
 });

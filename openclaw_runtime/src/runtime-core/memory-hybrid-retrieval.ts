@@ -24,6 +24,8 @@
 // stats once so repeated queries against the same corpus are cheap. The pure
 // `hybridSearchFacts` convenience builds a transient index per call.
 
+import { cjkBigrams, CJK_RUN_RE } from "./memory-tokenization.js";
+export { cjkBigrams } from "./memory-tokenization.js";
 import {
   isRuntimeMemoryAcceptedVerificationStatus,
   type RuntimeMemoryQueryableFact,
@@ -1041,25 +1043,6 @@ function cosineEmbedding(a: Float32Array, b: Float32Array): number {
   }
   if (aSq === 0 || bSq === 0) return 0;
   return dot / (Math.sqrt(aSq) * Math.sqrt(bSq));
-}
-
-/** Contiguous CJK runs (2+ chars) — the unit of the no-segmenter fallback. */
-const CJK_RUN_RE = /[\u4e00-\u9fff]{2,}/g;
-
-/**
- * TF-0114 (T-P0-6): CJK bigrams over contiguous runs. CJK characters are
- * \\W under ASCII word splitting and carry no word boundaries, so pure
- * Chinese text produced zero word tokens before this fallback. No
- * segmentation library this round (technical-5); bigrams are the recall floor.
- */
-export function cjkBigrams(text: string): string[] {
-  const grams: string[] = [];
-  for (const run of text.match(CJK_RUN_RE) ?? []) {
-    for (let i = 0; i + 2 <= run.length; i += 1) {
-      grams.push(run.slice(i, i + 2));
-    }
-  }
-  return grams;
 }
 
 /**
