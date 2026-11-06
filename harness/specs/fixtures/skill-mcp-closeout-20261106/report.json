@@ -74,7 +74,12 @@
     },
     "build": {
       "exitCode": 0,
-      "artifact": "build.txt"
+      "artifact": "build.txt",
+      "retention": {
+        "normalization": "trailing spaces removed from console lines; no result text changed",
+        "rawSha256": "d1b743be11aa0cec63ec5a591c7e59f338f76b706ac04e55b886d56528ba6bfc",
+        "rawArchive": "D:/tmp/skill-mcp-closeout-20261106/build-frozen.log"
+      }
     },
     "nodeTypes": {
       "exitCode": 0,
