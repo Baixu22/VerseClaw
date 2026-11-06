@@ -1,0 +1,9 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-live-preflight",
+  "scope": "provider admission; not a task outcome",
+  "startedAt": "2026-11-06T08:32:21.844Z",
+  "durationMs": 197095,
+  "passed": false,
+  "error": "Responses request timed out"
+}

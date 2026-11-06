@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "RsiCodingTaskBindings/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-coding-cohort",
+  "kind": "explicit-reconstruction-redefinition",
+  "boundary": "These three tasks reconstruct removed implementation files in the historical base. They are not natural historical bug-fix baselines. Oracle bytes and reference revisions are unchanged.",
+  "tasks": [
+    {
+      "id": "tf-0283-l01",
+      "version": "2.0.0-reconstruction",
+      "sourceRecord": "docs/dev/harness-gap-closure/l01-acceptance.json",
+      "sourceRecordSha256": "0e0a4139520eec9ce4940ee7ea1e61e7eb86fd14c2e92cf0a37ccc97d368e141",
+      "base": "f8e8c4f011127d331393844d741a7d022bcbf8e3",
+      "reference": "f42bb417b862784ad37e3f488f844cc697dbea51",
+      "removePaths": [
+        {
+          "path": "electron/services/task-ledger-working-context.ts",
+          "sha256": "645090a9637612f23cdd46387b476fbbcc2474b1bb829e0f643598a938bec2d7"
+        },
+        {
+          "path": "shared/task-ledger-working-context.ts",
+          "sha256": "43eb5c0c6269ff088b8079608e76bb19afc46a8c8510997ae1388ca9eb68563d"
+        }
+      ],
+      "prompt": "Reconstruct the missing implementation files listed in targetScope. Preserve the following behavior contract. L01 核验 Working Context 复用既有 workspace Task Ledger JSONL（append/read/projection）作为唯一活任务读写源：提交事件回放得一致视图，无第二存储/守护进程，批次幂等不重复，写入失败可观察且不误报成功。",
+      "targetScope": [
+        "electron/services/task-ledger-working-context.ts",
+        "shared/task-ledger-working-context.ts"
+      ],
+      "reason": "Historical acceptance only added verification; the original base already passes the frozen oracle."
+    },
+    {
+      "id": "tf-0285-l03",
+      "version": "2.0.0-reconstruction",
+      "sourceRecord": "docs/dev/harness-gap-closure/l03-acceptance.json",
+      "sourceRecordSha256": "8afb7462ed0290f2d0899a02ab619680d276b9038cfbec276d498c3d5e9104b8",
+      "base": "78f13c8f42e64c7f24561a06b795cd1a10253ccf",
+      "reference": "24c9bd91e3a1345c742f2fe88f39838184a3e575",
+      "removePaths": [
+        {
+          "path": "openclaw_runtime/src/agents/agent-steering-queue.ts",
+          "sha256": "56b953bbebe4d01539659d2447d142973aa4a1a4bac9e3d953511199af2d6d76"
+        }
+      ],
+      "prompt": "Reconstruct the missing implementation files listed in targetScope. Preserve the following behavior contract. L03 核验运行中 steering 的接收边界：pending 完成项以 lease 注入、ack 只接受匹配 lease 且幂等（无重复注入）、失败 release 后可被再次 lease（无丢失、无重复）、取消/终止项不再被 lease（取消后不再产生效果）、陈旧 lease 可被重启后的回合重新接管。",
+      "targetScope": [
+        "openclaw_runtime/src/agents/agent-steering-queue.ts"
+      ],
+      "reason": "Historical acceptance only added verification; the original base already passes the frozen oracle."
+    },
+    {
+      "id": "tf-0278-s03",
+      "version": "2.0.0-reconstruction",
+      "sourceRecord": "docs/dev/harness-gap-closure/s03-acceptance.json",
+      "sourceRecordSha256": "6c67f99c023728eaed7c506ba24b95104de188d0ecd3eac31b27df40548d0b02",
+      "base": "8bb11a7d83603611d3fcd99160334f85f2e6e3be",
+      "reference": "3f7060cb2bade7b693c407b70cfa71c698988444",
+      "removePaths": [
+        {
+          "path": "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts",
+          "sha256": "79124f66fb05890063f0ede7c10f7e1dbb7b67cabe840a1a433aabfb5de46212"
+        }
+      ],
+      "prompt": "Reconstruct the missing implementation files listed in targetScope. Preserve the following behavior contract. S03 核验 write/edit/apply_patch 的工作区外写入边界：非法来源的写必须无副作用修改，合法（trusted/operator）外写保留原语义，路径逃逸（父目录/绝对/别名/大小写）被拒且文件不变；只核实既有单一边界，不新建第二套策略。",
+      "targetScope": [
+        "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts"
+      ],
+      "reason": "Historical acceptance only added verification; the original base already passes the frozen oracle."
+    }
+  ]
+}

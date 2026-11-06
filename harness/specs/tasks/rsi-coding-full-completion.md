@@ -21,6 +21,7 @@ touchedAreas:
   - harness/specs/fixtures/rsi-coding-cohort/**
   - harness/specs/fixtures/rsi-benefit-eval/coding-complete-20261106-v2/**
   - harness/specs/fixtures/rsi-live-acceptance/complete-cohort-20261106-v8/**
+  - harness/specs/fixtures/rsi-live-acceptance/.gitattributes
   - docs/dev/rsi-capability-and-boundaries.md
   - docs/generated/catalogs/prod-flags.md
   - docs/generated/catalogs/tools.md

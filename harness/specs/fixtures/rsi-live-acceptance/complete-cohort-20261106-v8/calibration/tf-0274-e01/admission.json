@@ -1,0 +1,335 @@
+{
+  "schemaVersion": "RsiLiveTaskAdmission/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-independent-calibrator",
+  "taskId": "tf-0274-e01",
+  "source": {
+    "id": "tf-0274-e01",
+    "base": "874befaaa018bdb1160f8f064b17f053fcfe8512",
+    "reference": "42aaf5522499fbb940aa2dd1007967eb55adb0f3",
+    "productChanges": [
+      "scripts/agent-dev-benefit-eval.mjs",
+      "scripts/lib/reliability-aggregation.d.mts",
+      "scripts/lib/reliability-aggregation.mjs",
+      "shared/agent-dev/reliability-fixture.json"
+    ],
+    "originalDecision": "PASS",
+    "codingBindingDigest": "2697e0f57ca40ab8e7b547d0d82595dd56b11f3281acf316c03df819590cf417",
+    "baselineSetup": null,
+    "targetScope": [
+      "scripts/agent-dev-benefit-eval.mjs",
+      "scripts/lib/reliability-aggregation.mjs",
+      "scripts/lib/reliability-aggregation.d.mts",
+      "shared/agent-dev/reliability-fixture.json",
+      "tests/unit/agent-dev-reliability-aggregation.test.ts",
+      "harness/specs/tasks/harness-gap-reliability-aggregation.md",
+      "harness/specs/rules/reliability-aggregation-boundary.md",
+      "docs/dev/harness-gap-closure/e01-reliability-aggregation.md",
+      "docs/dev/harness-gap-closure/e01-acceptance.json",
+      "docs/dev/harness-gap-closure/E01-SHA256SUMS"
+    ],
+    "prompt": "E01 在 Agent Dev benefit 报告里加入确定性的 pass^k、逐 trial 成功率、flake 与正反锚点聚合；缺失/超时/崩溃/skip 显式保留，pass^k 不与 pass@k 混用，不改产品默认或产品锁，不宣称真实模型泛化。",
+    "sourceRecord": "docs/dev/harness-gap-closure/e01-acceptance.json",
+    "sourceRecordDigest": "b0f0214881444c68e9c7b339a528c80cc9d2894831191cd6ee16ed8825afdb94",
+    "oraclePaths": [
+      "tests/unit/agent-dev-reliability-aggregation.test.ts"
+    ],
+    "commands": [
+      "pnpm exec vitest run tests/unit/agent-dev-reliability-aggregation.test.ts --maxWorkers=1"
+    ]
+  },
+  "stages": {
+    "reference": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0274-e01",
+      "commands": [
+        "pnpm exec vitest run tests/unit/agent-dev-reliability-aggregation.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm exec vitest run tests/unit/agent-dev-reliability-aggregation.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\tmp\\rsi-completion-20261106\\node_modules\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\vitest.mjs",
+            "run",
+            "tests/unit/agent-dev-reliability-aggregation.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0274-e01\\reference\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0274-e01\\reference\\workspace",
+          "exitCode": 0,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 2,
+            "numPassedTestSuites": 2,
+            "numFailedTestSuites": 0,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 6,
+            "numPassedTests": 6,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793954181897,
+            "success": true,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "aggregateReliability"
+                    ],
+                    "fullName": "aggregateReliability computes pass^k and pass@k separately on the 2-case x 3-run fixture (PPP/PPF)",
+                    "status": "passed",
+                    "title": "computes pass^k and pass@k separately on the 2-case x 3-run fixture (PPP/PPF)",
+                    "duration": 2.4909999999999854,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "aggregateReliability"
+                    ],
+                    "fullName": "aggregateReliability preserves missing/timeout/crash/skip as incomplete and excludes them from denominators",
+                    "status": "passed",
+                    "title": "preserves missing/timeout/crash/skip as incomplete and excludes them from denominators",
+                    "duration": 0.8925000000000409,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "aggregateReliability"
+                    ],
+                    "fullName": "aggregateReliability flags a flake only when the first scheduled trial failed and a later re-run passed",
+                    "status": "passed",
+                    "title": "flags a flake only when the first scheduled trial failed and a later re-run passed",
+                    "duration": 0.28899999999998727,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "aggregateReliability"
+                    ],
+                    "fullName": "aggregateReliability fails the gate when a safety-required case is skipped",
+                    "status": "passed",
+                    "title": "fails the gate when a safety-required case is skipped",
+                    "duration": 0.2999999999999545,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "aggregateReliability"
+                    ],
+                    "fullName": "aggregateReliability enforces positive (must pass) and negative (must reject) anchors",
+                    "status": "passed",
+                    "title": "enforces positive (must pass) and negative (must reject) anchors",
+                    "duration": 0.4257000000000062,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "aggregateReliability"
+                    ],
+                    "fullName": "aggregateReliability reports insufficient-sample instead of passing when complete cases are below the gate",
+                    "status": "passed",
+                    "title": "reports insufficient-sample instead of passing when complete cases are below the gate",
+                    "duration": 0.3491999999999962,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793954182827,
+                "endTime": 1793954182831.4258,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-completion-control-20261106/v8-calibration/calibration/tf-0274-e01/reference/workspace/tests/unit/agent-dev-reliability-aggregation.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0274-e01\\reference\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0274-e01\\reference\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0274-e01\\reference\\oracle\\01-stderr.log"
+        }
+      ],
+      "numTotalTests": 6,
+      "numPassedTests": 6,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": true,
+      "failureClass": null,
+      "timeoutMs": 300000,
+      "oracleHashBefore": "965fff2c612afce5ebc1a7ec52ac4cecd11a29953ae10c9dd1ffbce4b828fe61",
+      "oracleHashAfter": "965fff2c612afce5ebc1a7ec52ac4cecd11a29953ae10c9dd1ffbce4b828fe61",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-reliability-aggregation.md": "2351a1909b0130f4f518638644722f3413394ca3e1f6d673333e24c9340314f6",
+        "tests/unit/agent-dev-reliability-aggregation.test.ts": "6d446ed2fe11f82154645ad75e5822e7d0ab39ec296ec1f72a67405f7afe5ea9"
+      },
+      "oracleRevision": "42aaf5522499fbb940aa2dd1007967eb55adb0f3",
+      "oracleTestDigests": {
+        "tests/unit/agent-dev-reliability-aggregation.test.ts": "92fcf8665516cb9f27af32a86e69875c079928894a18d6e7db427cbc45e70af2"
+      },
+      "supportPackages": [
+        {
+          "name": "markdown-it",
+          "declaredVersion": "14.2.0",
+          "resolvedVersion": "14.2.0"
+        }
+      ],
+      "diagnostics": [],
+      "workspace": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0274-e01\\reference\\workspace",
+      "outDir": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0274-e01\\reference\\oracle",
+      "reportPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0274-e01\\reference\\oracle\\run-report.json"
+    },
+    "baseline": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0274-e01",
+      "commands": [
+        "pnpm exec vitest run tests/unit/agent-dev-reliability-aggregation.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm exec vitest run tests/unit/agent-dev-reliability-aggregation.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\tmp\\rsi-completion-20261106\\node_modules\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\vitest.mjs",
+            "run",
+            "tests/unit/agent-dev-reliability-aggregation.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0274-e01\\baseline\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0274-e01\\baseline\\workspace",
+          "exitCode": 1,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 1,
+            "numPassedTestSuites": 0,
+            "numFailedTestSuites": 1,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 0,
+            "numPassedTests": 0,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793954214261,
+            "success": false,
+            "testResults": [
+              {
+                "assertionResults": [],
+                "startTime": 1793954214261,
+                "endTime": 1793954214261,
+                "status": "failed",
+                "message": "Cannot find module '../../scripts/lib/reliability-aggregation.mjs' imported from D:/tmp/rsi-completion-control-20261106/v8-calibration/calibration/tf-0274-e01/baseline/workspace/tests/unit/agent-dev-reliability-aggregation.test.ts",
+                "name": "D:/tmp/rsi-completion-control-20261106/v8-calibration/calibration/tf-0274-e01/baseline/workspace/tests/unit/agent-dev-reliability-aggregation.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0274-e01\\baseline\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0274-e01\\baseline\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0274-e01\\baseline\\oracle\\01-stderr.log"
+        }
+      ],
+      "numTotalTests": 0,
+      "numPassedTests": 0,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": false,
+      "failureClass": "target-module-absent",
+      "timeoutMs": 300000,
+      "oracleHashBefore": "965fff2c612afce5ebc1a7ec52ac4cecd11a29953ae10c9dd1ffbce4b828fe61",
+      "oracleHashAfter": "965fff2c612afce5ebc1a7ec52ac4cecd11a29953ae10c9dd1ffbce4b828fe61",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-reliability-aggregation.md": "2351a1909b0130f4f518638644722f3413394ca3e1f6d673333e24c9340314f6",
+        "tests/unit/agent-dev-reliability-aggregation.test.ts": "6d446ed2fe11f82154645ad75e5822e7d0ab39ec296ec1f72a67405f7afe5ea9"
+      },
+      "oracleRevision": "42aaf5522499fbb940aa2dd1007967eb55adb0f3",
+      "oracleTestDigests": {
+        "tests/unit/agent-dev-reliability-aggregation.test.ts": "92fcf8665516cb9f27af32a86e69875c079928894a18d6e7db427cbc45e70af2"
+      },
+      "supportPackages": [
+        {
+          "name": "markdown-it",
+          "declaredVersion": "14.2.0",
+          "resolvedVersion": "14.2.0"
+        }
+      ],
+      "diagnostics": [
+        {
+          "kind": "missing-module",
+          "missingPath": "scripts/lib/reliability-aggregation.mjs",
+          "importer": "tests/unit/agent-dev-reliability-aggregation.test.ts",
+          "inTargetScope": true
+        }
+      ],
+      "workspace": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0274-e01\\baseline\\workspace",
+      "outDir": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0274-e01\\baseline\\oracle",
+      "reportPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0274-e01\\baseline\\oracle\\run-report.json"
+    }
+  },
+  "admission": {
+    "passed": true,
+    "issues": [],
+    "warnings": [
+      "baseline-target-module-absent"
+    ]
+  },
+  "claims": {
+    "modelQuality": false,
+    "benefit": false,
+    "realHuman": false
+  }
+}
