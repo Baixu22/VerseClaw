@@ -282,6 +282,7 @@ export function Skills({ embedded = false }: { embedded?: boolean } = {}) {
     fetchSkills,
     enableSkill,
     disableSkill,
+    uninstallSkill,
     marketplaceFallbackReason,
   } = useSkillsStore();
   const { t } = useTranslation('skills');
@@ -732,6 +733,11 @@ export function Skills({ embedded = false }: { embedded?: boolean } = {}) {
           setSelectedSkill({ ...selectedSkill, enabled });
         }}
         onOpenFolder={handleOpenSkillFolder}
+        onUninstall={(slug) => {
+          void uninstallSkill(slug)
+            .then(() => toast.success(t('toast.uninstalled')))
+            .catch((error) => toast.error(t('toast.failedUninstall') + ': ' + String(error)));
+        }}
       />
     </div>
   );

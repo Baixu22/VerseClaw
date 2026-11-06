@@ -6,6 +6,8 @@ Review Center の折りたたまれた Change Context は明示的に有効化�
 
 # Verse Claw
 
+Skill 設定はランタイム設定に保存され、管理対象のスキルは詳細からアンインストールできます。Agent Dev は通常のチャットとツールイベントを収集し、トークン使用量の重複を除きます。
+
 **チャット、コード、知識、Agent 実行を 1 つのデスクトップ作業空間に。**
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja-JP.md) · [Русский](README.ru-RU.md)

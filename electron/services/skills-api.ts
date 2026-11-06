@@ -237,15 +237,22 @@ export function createSkillsApi({
             `digest=sha256:${identity.contentDigest.slice(0, 12)}… ` +
             `declaredVersion=${identity.declaredCatalogVersion} requested=${identity.requestedVersionStatus}`,
         );
-        await updateSkillConfig(slug, { enabled: true });
+        const saved = await updateSkillConfig(slug, { enabled: true });
+        if (!saved.success) throw new Error(saved.error || 'Failed to enable installed skill');
         return { success: true, result: null };
       } catch (error) {
         return { success: false, error: errorMessage(error) };
       }
     },
-    clawhubUninstall: async () => {
-      console.warn('[skills] ClawHub marketplace disabled; uninstall noop.');
-      return { success: true, result: null };
+    clawhubUninstall: async (payload) => {
+      try {
+        const slug = isRecord(payload) && typeof payload.slug === 'string' ? payload.slug.trim() : '';
+        if (!/^[a-zA-Z0-9][a-zA-Z0-9_.-]*$/.test(slug)) throw new Error('Invalid managed skill slug');
+        await clawHubService.uninstall({ slug });
+        return { success: true, result: null };
+      } catch (error) {
+        return { success: false, error: errorMessage(error) };
+      }
     },
     clawhubOpenSkillReadme: async (payload) => {
       try {

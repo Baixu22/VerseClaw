@@ -6,6 +6,8 @@
 
 # Verse Claw
 
+Skill 配置直接写入运行时配置，受管技能可在详情中卸载。Agent Dev 报告采集正常聊天与工具事件，并对 token 用量去重。
+
 **在一个桌面工作空间里完成对话、编码、知识与 Agent 执行。**
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja-JP.md) · [Русский](README.ru-RU.md)

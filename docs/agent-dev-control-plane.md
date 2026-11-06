@@ -4,6 +4,11 @@ Verse Claw exposes a typed `hostApi.agentDev` surface for agent-authored page wo
 
 ## Capabilities
 
+Main records normal `chat:message` and `chat:runtime-event` events, associates request timelines
+with their run IDs, and deduplicates stable message usage against final run totals. Tool effect
+rows describe observed completion or failure without retaining raw arguments or results.
+Sandbox capability gates and budgets remain report configuration; effect rows do not enforce policy.
+
 1. `seedState`, `resetState`, `createConversation`, and `createProviderConfig` provide test-state seeds.
 2. Renderer host API record/replay is available through `window.__CLAWX_TEST__.setHostApiReplay(...)` and `localStorage.clawx.agentDev.hostApiReplay`.
 3. `?devScenario=<id>` routes directly to seeded page-development scenarios. `?devScenario=a+b` composes scenarios from the shared registry, ignores unknown ids safely, and lets later scenario seed values override earlier ones.

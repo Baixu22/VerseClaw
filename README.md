@@ -6,6 +6,8 @@ Review Center includes a collapsed, opt-in Change Context view for four comparis
 
 # Verse Claw
 
+Skill choices persist in the runtime configuration, and managed skills can be uninstalled from their details. Agent Dev reports collect normal chat and tool events and deduplicate token usage.
+
 **Chat, code, knowledge and agent execution in one desktop workspace.**
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja-JP.md) · [Русский](README.ru-RU.md)
