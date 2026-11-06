@@ -255,7 +255,7 @@
     "branchesRetained": true,
     "localArchive": "D:/ClawX/.local/semantic-closeout-20261106",
     "activeWorktreeProcesses": 0,
-    "taskForestRelocation": "current evidence paths are being migrated to D:/ClawX via proposal; final receipt stored locally"
+    "taskForestRelocation": "completed via proposal TFP-semantic-main-evidence-relocation-20261106; apply/validate exit0; generated HTML refreshed"
   },
   "preservation": {
     "receipt": "landing.json",
@@ -269,6 +269,163 @@
   ],
   "taskForest": {
     "closedProposal": "TFP-semantic-program-close-20261106",
-    "relocationProposal": "TFP-semantic-main-evidence-relocation-20261106"
-  }
+    "relocationProposal": "TFP-semantic-main-evidence-relocation-20261106",
+    "currentNodes": [
+      {
+        "id": "TF-0725",
+        "status": "done",
+        "progress": 100
+      },
+      {
+        "id": "TF-0726",
+        "status": "done",
+        "progress": 100
+      },
+      {
+        "id": "TF-0728",
+        "status": "done",
+        "progress": 100
+      },
+      {
+        "id": "TF-0732",
+        "status": "done",
+        "progress": 100
+      },
+      {
+        "id": "TF-0736",
+        "status": "done",
+        "progress": 100
+      },
+      {
+        "id": "TF-0740",
+        "status": "done",
+        "progress": 100
+      },
+      {
+        "id": "TF-0745",
+        "status": "done",
+        "progress": 100
+      },
+      {
+        "id": "TF-0727",
+        "status": "done",
+        "progress": 0
+      },
+      {
+        "id": "TF-0729",
+        "status": "done",
+        "progress": 100
+      },
+      {
+        "id": "TF-0730",
+        "status": "done",
+        "progress": 100
+      },
+      {
+        "id": "TF-0731",
+        "status": "done",
+        "progress": 100
+      },
+      {
+        "id": "TF-0733",
+        "status": "done",
+        "progress": 100
+      },
+      {
+        "id": "TF-0734",
+        "status": "done",
+        "progress": 100
+      },
+      {
+        "id": "TF-0735",
+        "status": "done",
+        "progress": 100
+      },
+      {
+        "id": "TF-0737",
+        "status": "done",
+        "progress": 100
+      },
+      {
+        "id": "TF-0738",
+        "status": "done",
+        "progress": 100
+      },
+      {
+        "id": "TF-0739",
+        "status": "done",
+        "progress": 100
+      },
+      {
+        "id": "TF-0741",
+        "status": "done",
+        "progress": 100
+      },
+      {
+        "id": "TF-0742",
+        "status": "done",
+        "progress": 100
+      },
+      {
+        "id": "TF-0743",
+        "status": "done",
+        "progress": 100
+      },
+      {
+        "id": "TF-0744",
+        "status": "done",
+        "progress": 100
+      },
+      {
+        "id": "TF-0746",
+        "status": "done",
+        "progress": 100
+      },
+      {
+        "id": "TF-0747",
+        "status": "done",
+        "progress": 100
+      }
+    ],
+    "nodeCount": 23,
+    "relocationCommandResults": [
+      {
+        "stage": "apply-6",
+        "command": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "C:\\Users\\27933\\.codex\\skills\\task-forest\\scripts\\task_forest.py",
+          "proposal-apply",
+          "TFP-semantic-main-evidence-relocation-20261106",
+          "--yes",
+          "--actor",
+          "codex/semantic-goal",
+          "--workspace",
+          "D:\\ClawX",
+          "--lock-timeout",
+          "60"
+        ],
+        "exitCode": 0,
+        "seconds": 293.625
+      },
+      {
+        "stage": "validate",
+        "command": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "C:\\Users\\27933\\.codex\\skills\\task-forest\\scripts\\task_forest.py",
+          "validate",
+          "--workspace",
+          "D:\\ClawX",
+          "--lock-timeout",
+          "60"
+        ],
+        "exitCode": 0,
+        "seconds": 1.011
+      }
+    ]
+  },
+  "completedAt": "2026-11-06T05:08:30.770Z"
 }
