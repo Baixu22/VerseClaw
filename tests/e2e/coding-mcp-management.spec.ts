@@ -16,7 +16,7 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
   const slow = await startCodingMcpServer({ delayMs: 2500 });
   const llm = await startScriptedLlm((text, results) => {
     if (!text.includes('P2-MODEL')) return { text: 'P2 observer complete' };
-    if (results.sdk_echo) return { text: 'P2-MODEL-DONE' };
+    if (Object.values(results).some((result) => result.includes('model-sdk-round-trip'))) return { text: 'P2-MODEL-DONE' };
     return { toolCall: { id: 'sdk_echo', name: 'fixture__echo', args: { message: 'model-sdk-round-trip' } } };
   });
   llm.server.unref();
@@ -30,7 +30,6 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
   const evidence: Record<string, unknown> = { schema: 'CodingMcpManagement/v1', driven_by: 'agent',
     actor: 'codex-coding-p2-01a1b07b', realHumanEvidence: false, runtime: 'source', provider: 'scripted-local', workspace };
   let app: ElectronApplication | undefined;
-  let primaryError: unknown;
   try {
     app = await launchElectronApp({ skipSetup: true, env: { VERSE_CLAW_OPENCLAW_RUNTIME: 'source' } });
     const page = await getStableWindow(app);
@@ -136,7 +135,6 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
     await page.screenshot({ path: testInfo.outputPath('mcp-error.png'), fullPage: true });
     evidence.status = 'pass';
   } catch (error) {
-    primaryError = error;
     evidence.status = 'failed';
     evidence.failure = error instanceof Error ? error.message : String(error);
     throw error;
@@ -156,6 +154,6 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
     llm.server.closeAllConnections(); llm.server.closeIdleConnections();
     await new Promise<void>((resolve) => llm.server.close(() => resolve()));
     await writeFile(testInfo.outputPath('coding-mcp-management.json'), JSON.stringify(evidence, null, 2));
-    if (!primaryError && evidence.gatewayStopError) throw new Error(String(evidence.gatewayStopError));
   }
+  if (evidence.gatewayStopError) throw new Error(String(evidence.gatewayStopError));
 });
