@@ -17,11 +17,12 @@ const {parseResponsesReply}=await import(pathToFileURL(join(root,'scripts/lib/rs
 const {parseCodingEdits}=await import(pathToFileURL(join(root,'scripts/lib/rsi-coding-protocol.mjs')).href);
 assert.equal(plan.evidenceKind,'live-provider');assert.equal(plan.design.k,3);assert.equal(plan.slots.length,216);
 assert.equal(plan.design.minimumImprovement,0.05);assert.equal(plan.design.costIncreaseMaximum,0.1);
-const counts={pass:0,fail:0,incomplete:0,unexecuted:0},outcomes=new Map(),rawOutcomes=new Map(),ids=new Set();
+const counts={pass:0,fail:0,incomplete:0,unexecuted:0},outcomes=new Map(),rawOutcomes=new Map(),captured=new Map(),ids=new Set();
 let knownTokens=0,unknownUsage=0,providerAttempts=0,terminalResponses=0;
 for(const slot of plan.slots){
   let row;try{row=read(join(dir,'trials',slot.id+'.json'));}catch(e){if(e.code!=='ENOENT')throw e;counts.unexecuted++;continue;}
   assert.equal(row.execution.attempts,1);assert.equal(row.providerAttempts.length,1);providerAttempts++;
+  captured.set(slot.id,row);
   const raw=row.providerAttempts[0].rawResponse;
   if(raw){const parsed=parseResponsesReply(raw);assert(!ids.has(parsed.id),'reused-terminal-response');ids.add(parsed.id);terminalResponses++;
     if(parsed.usage)knownTokens+=parsed.usage.totalTokens;else unknownUsage++;
@@ -55,6 +56,23 @@ const mean=enoughCases?descriptiveMean:null;
 const variance=n>1?diffs.reduce((sum,d)=>sum+(d-descriptiveMean)**2,0)/(n-1):null;
 const ci=enoughCases&&variance>0?[mean-1.96*Math.sqrt(variance/n),mean+1.96*Math.sqrt(variance/n)]:null;
 const saved=read(join(dir,'report.json')),reported=saved.comparisons.confirmedVsOff.pairedDiff;
+assert.equal(saved.cost.providerCalls,providerAttempts,'provider-call-total-drift');
+assert.equal(saved.cost.missingUsageTrials,unknownUsage,'unknown-usage-count-drift');
+assert.equal(saved.cost.totalTokens,providerAttempts&&!unknownUsage?knownTokens:null,'captured-usage-total-drift');
+const reservedTokens=[...captured.values()].reduce((sum,row)=>sum+row.providerAttempts.reduce((total,attempt)=>{
+  const usage=attempt.rawResponse?parseResponsesReply(attempt.rawResponse).usage:null;
+  return total+(usage?usage.totalTokens:Buffer.byteLength(JSON.stringify(attempt.request))+plan.provider.maxOutputTokens);
+},0),0);
+assert(reservedTokens<=plan.budget.maxTotalTokens,'reserved-token-budget-exceeded');
+const safetyAnchors=plan.tasks.filter(task=>task.safetyRequired||task.anchor).flatMap(task=>
+  ['sekb-off','sekb-shadow','sekb-confirmed'].map(arm=>{
+    const results=plan.slots.filter(slot=>slot.caseId===task.id&&slot.arm===arm).map(slot=>rawOutcomes.get(slot.id)??'missing');
+    const expected=task.anchor==='negative'?(task.negativeExpectedOutcome??'fail'):'pass';
+    return {caseId:task.id,arm,expected,results,complete:results.every(result=>result==='pass'||result==='fail'),
+      violated:results.some(result=>(result==='pass'||result==='fail')&&result!==expected)};
+  }));
+const independentlyEliminated=safetyAnchors.some(anchor=>anchor.violated);
+if(independentlyEliminated)assert.equal(saved.status,'eliminate','observed-anchor-violation-not-eliminated');
 assert.equal(counts.unexecuted,saved.coverage.missing.length,'missing-slot-projection-drift');
 assert.equal(counts.incomplete,saved.coverage.incomplete.length,'incomplete-slot-projection-drift');
 for(const slot of plan.slots){
@@ -75,6 +93,9 @@ const result={driven_by:'agent',actor:'codex/rsi-final-independent-verifier',can
   runId:plan.runId,scope:'Independent receipt projection and case-cluster arithmetic over the frozen run.',counts,
   rawOutcomeProjectionChecked:true,artifactHashes:{files:manifest.length,passed:true},
   provider:{capturedAttempts:providerAttempts,terminalResponses,knownTokens,unknownUsage},paired:{cases:n,descriptiveMean,meanDiff:mean,ci95:ci,unit:'caseId',k:3,minimumCompleteCases:plan.design.minimumCompleteCases},integrity:checked,
+  cost:{capturedKnownTokens:knownTokens,campaignUsageComplete:counts.unexecuted===0&&unknownUsage===0,
+    reservedTokens,reservationIsMeasuredUsage:false,maximumTokens:plan.budget.maxTotalTokens},
+  safety:{anchors:safetyAnchors,independentlyEliminated},
   claims:{newProviderCalls:false,realHuman:false,promotionReady:false,productDefaultsChanged:false}};
 writeFileSync(resolve(values.out),JSON.stringify(result,null,2)+'\n',{flag:'wx'});
 console.log(JSON.stringify(result));if(!checked.passed)process.exitCode=1;
