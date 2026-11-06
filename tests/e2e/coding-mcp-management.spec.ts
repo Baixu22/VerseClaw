@@ -30,6 +30,7 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
   const evidence: Record<string, unknown> = { schema: 'CodingMcpManagement/v1', driven_by: 'agent',
     actor: 'codex-coding-p2-01a1b07b', realHumanEvidence: false, runtime: 'source', provider: 'scripted-local', workspace };
   let app: ElectronApplication | undefined;
+  let primaryError: unknown;
   try {
     app = await launchElectronApp({ skipSetup: true, env: { VERSE_CLAW_OPENCLAW_RUNTIME: 'source' } });
     const page = await getStableWindow(app);
@@ -134,20 +135,27 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
     expect(server.requests.filter((request) => request.method === 'tools/call')).toHaveLength(callsBeforeNetworkDenial);
     await page.screenshot({ path: testInfo.outputPath('mcp-error.png'), fullPage: true });
     evidence.status = 'pass';
+  } catch (error) {
+    primaryError = error;
+    evidence.status = 'failed';
+    evidence.failure = error instanceof Error ? error.message : String(error);
+    throw error;
   } finally {
     evidence.requests = { normal: server.requests, empty: empty.requests, slow: slow.requests };
     evidence.providerLog = llm.log;
     evidence.providerAnomalies = llm.anomalies;
     if (app) {
-      evidence.appPid = app.process().pid;
+      const child = app.process();
+      evidence.appPid = child.pid;
       await hostInvoke(app, 'gateway', 'stop').catch((error) => { evidence.gatewayStopError = String(error); });
       evidence.gatewayAfterStop = await hostInvoke(app, 'gateway', 'status').catch(() => null);
       await closeElectronApp(app);
-      evidence.appExitCode = app.process().exitCode;
+      evidence.appExitCode = child.exitCode;
     }
     evidence.endpointCleanup = await Promise.all([server.close(), empty.close(), slow.close()]);
     llm.server.closeAllConnections(); llm.server.closeIdleConnections();
     await new Promise<void>((resolve) => llm.server.close(() => resolve()));
     await writeFile(testInfo.outputPath('coding-mcp-management.json'), JSON.stringify(evidence, null, 2));
+    if (!primaryError && evidence.gatewayStopError) throw new Error(String(evidence.gatewayStopError));
   }
 });
