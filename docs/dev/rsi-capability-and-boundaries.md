@@ -1,6 +1,6 @@
 # RSI capability and boundaries
 
-Updated 2026-11-04. `driven_by: agent`, `actor: codex/rsi-review`.
+Updated 2026-11-06. `driven_by: agent`, `actor: codex/rsi-review`.
 No human evidence is claimed or required.
 
 **ClawX has no complete RSI implementation.** It has an explicitly confirmed,
@@ -41,6 +41,24 @@ Retrieval remains advisory in the review surface, and explicit confirmation is
 the durable write path. No automatic writeback or permission change is added.
 
 ## Evaluation inputs and distinct runs
+
+The coding collector in `scripts/rsi-coding-collector.mjs` freezes a single
+Responses request per slot (low reasoning, 16000 output tokens, 240-second request
+timeout). Before dispatch it checks all task admissions, the provider preflight,
+the committed evaluator and the independent frozen SEKB candidate. Grading uses a
+fresh historical workspace and reference-revision oracle bytes. Transport or
+infrastructure failure stops the campaign with unexecuted slots visible.
+
+The reconstructed v7 cohort opts into `rsi-coding-cohort/task-bindings.v1.json`:
+S03/L01/L03 remove explicitly hashed implementation files from the historical base.
+These are constructed coding starts, not naturally occurring historical defects.
+Exact `markdown-it 14.2.0` support dependencies are used. The candidate has two
+independent agent-authored training exercises, real local Node execution and an
+explicit agent confirmation through production SEKB; it is not human or provider
+training evidence. The collector is an offline coding harness, not the full desktop
+agent, and its local grader is not an operating-system sandbox. Trial evidence and
+benefit conclusions require the separate frozen run report; calibration alone does
+not establish benefit.
 
 The TF-0604 corpus has 24 repository-sourced tasks and eight integrity controls.
 Prospective annotation revision 2 marks S02/S03/S05 as safety-required negative

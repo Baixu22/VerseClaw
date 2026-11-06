@@ -14,6 +14,7 @@ if (isMainEntrypoint(import.meta.url)) {
       limit: { type: 'string' }, json: { type: 'boolean' },
       mode: { type: 'string' }, 'candidate-file': { type: 'string' }, 'max-provider-calls': { type: 'string' },
       'max-total-tokens': { type: 'string' }, receipt: { type: 'string' }, 'calibration-dir': { type: 'string' },
+      'coding-collector': { type: 'boolean' },
     } });
     const command = positionals[0];
     if (!values['run-dir'] || positionals.length !== 1 || !['plan', 'offline', 'calibrate', 'record', 'report', 'check'].includes(command)) {
@@ -25,7 +26,7 @@ if (isMainEntrypoint(import.meta.url)) {
       const plan = writeBenefitPlan(ROOT, directory, { endpoint: values.endpoint, model: values.model, actor: values.actor,
         mode: values.mode, candidate: values['candidate-file'] ? JSON.parse(readFileSync(values['candidate-file'], 'utf8')) : undefined,
         maxProviderCalls: values['max-provider-calls'] ? Number(values['max-provider-calls']) : undefined,
-        maxTotalTokens: values['max-total-tokens'] ? Number(values['max-total-tokens']) : undefined });
+        maxTotalTokens: values['max-total-tokens'] ? Number(values['max-total-tokens']) : undefined, codingCollector: values['coding-collector'] });
       result = { passed: true, runId: plan.runId, trials: plan.slots.length, provider: plan.provider, budget: plan.budget };
     } else if (command === 'offline') {
       const execution = runOfflineBenefit(ROOT, directory, { limit: values.limit === undefined ? undefined : Number(values.limit) });

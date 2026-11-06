@@ -10,6 +10,9 @@ export type BenefitTask = {
   prompt: string; acceptanceCriteria: string[]; targetScope: string[];
   source: { recordPath: string; recordDigest: string; base: string; reference: string };
   oracleDigest: string;
+  baselineSetup?: { kind: string; removePaths: Array<{ path: string; sha256: string }> } | null;
+  contextFiles?: Array<{ path: string; content: string | null; missing?: boolean; truncated?: boolean }>;
+  oracleTestDigests?: Record<string, string>;
   oracle: { commands: string[]; testPaths: string[]; expectedSkips: number; inputDigests: Record<string, string> };
 };
 export type BenefitSlot = {
@@ -22,6 +25,7 @@ export type BenefitPlan = {
   evidenceKind: 'synthetic-wiring-fixture' | 'live-provider';
   source: { commit: string; tree: string; bindings: Record<string, string>; boundary: string };
   provider: { endpoint: string; model: string; maxOutputTokens: number };
+  collector?: typeof import('./rsi-coding-protocol.mjs').CODING_COLLECTOR;
   budget: { providerCallsAuthorized: number; maxTotalTokens: number | null; network: string; retries: 0 };
   design: { k: number; minimumCompleteCases: number; primaryComparison: string; order: string; unit: string; minimumImprovement: number; costIncreaseMaximum: number };
   arms: Record<BenefitArm, { enabled: boolean; shadowEvaluation: boolean; injection: boolean }>;
@@ -38,7 +42,7 @@ export type BenefitReport = {
   cost: { measurementBasis: string; providerCalls: number; totalTokens: number | null; actualCostUsd: number | null; missingUsageTrials: number };
   claims: { benefit: boolean; promotionReady: false; liveProvider: boolean; realHuman: false; productLocksChanged: false };
 };
-export type BenefitPlanOptions = { endpoint?: string; model?: string; actor?: string; runId?: string; candidate?: BenefitCandidate; mode?: 'offline' | 'measured'; maxProviderCalls?: number; maxTotalTokens?: number };
+export type BenefitPlanOptions = { endpoint?: string; model?: string; actor?: string; runId?: string; candidate?: BenefitCandidate; mode?: 'offline' | 'measured'; maxProviderCalls?: number; maxTotalTokens?: number; codingCollector?: boolean };
 export type BenefitTrialReceipt = {
   schemaVersion: 'RsiBenefitTrial/v1'; driven_by: 'agent'; actor: string; planDigest: string;
   slot: BenefitSlot; evidenceKind: BenefitPlan['evidenceKind'];
@@ -47,6 +51,7 @@ export type BenefitTrialReceipt = {
     injectionDigest: string | null; isolationId: string; runtimeEffectMeasured: boolean };
   edits: Array<{ path: string; content: string }>;
   execution: { status: 'completed' | 'timeout' | 'crash'; failureClass: 'infrastructure' | null;
+    failureCategory?: 'provider' | 'infrastructure' | 'oracle' | 'model' | 'model-format' | null;
     attempts: 1; providerCalls: number; wallClockMs: number; costUsd: number | null;
     toolEvents: Array<{ type: 'tool-call'; callId: string; name: string; arguments: string; output: string }>;
     runPosition: number; startedAt: string; endedAt: string; measurementBasis: string; note: string };
@@ -67,6 +72,7 @@ export function buildBenefitRequest(plan: BenefitPlan, slot: BenefitSlot): Retur
 export function runOfflineBenefit(root: string, directory: string, options?: { limit?: number }): { written: number; resumed: number; planned: number; providerCalls: number };
 export function recordMeasuredBenefitTrials(root: string, directory: string, receipts: unknown[]): Array<{ row: { slot: BenefitSlot }; outcome: string }>;
 export function adoptLiveCalibration(root: string, directory: string, calibrationDir: string): { copied: number; existing: number; reportDigest: string; status: string };
+export function verifyCodingAdmission(root: string, directory: string, plan: BenefitPlan): boolean;
 export function summarizeBenefitRun(root: string, directory: string, actor?: string): BenefitReport;
 export function sealBenefitRun(root: string, directory: string, actor?: string): BenefitReport;
 export function checkBenefitRun(root: string, directory: string): { passed: boolean; errors: string[]; evidenceKind: string; reportStatus: string; benefitStatus: string; coverage: BenefitReport['coverage'] | null; claims: Record<string, boolean> };

@@ -1,0 +1,92 @@
+{
+  "numTotalTestSuites": 2,
+  "numPassedTestSuites": 0,
+  "numFailedTestSuites": 2,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 3,
+  "numPassedTests": 1,
+  "numFailedTests": 2,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793931435684,
+  "success": false,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "S01 provider envelope reject boundary"
+          ],
+          "fullName": "S01 provider envelope reject boundary resolveEnvelopeRejectEnabled is off by default and opt-in only",
+          "status": "failed",
+          "title": "resolveEnvelopeRejectEnabled is off by default and opt-in only",
+          "duration": 156.35440000000017,
+          "failureMessages": [
+            "TypeError: (0 , __vite_ssr_import_3__.resolveEnvelopeRejectEnabled) is not a function\n    at D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0276-s01/baseline/workspace/openclaw_runtime/src/agents/rc02-envelope-reject.test.ts:70:14\n    at file:///D:/ClawX/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///D:/ClawX/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///D:/ClawX/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///D:/ClawX/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2955:64"
+          ],
+          "location": {
+            "line": 66,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "S01 provider envelope reject boundary"
+          ],
+          "fullName": "S01 provider envelope reject boundary rejects an invalid envelope before any provider bytes are sent (0 fetch calls)",
+          "status": "failed",
+          "title": "rejects an invalid envelope before any provider bytes are sent (0 fetch calls)",
+          "duration": 261.95540000000256,
+          "failureMessages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0276-s01/baseline/workspace/openclaw_runtime/src/agents/rc02-envelope-reject.test.ts:87:22\n    at file:///D:/ClawX/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+          ],
+          "location": {
+            "line": 81,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "S01 provider envelope reject boundary"
+          ],
+          "fullName": "S01 provider envelope reject boundary keeps the default (flag off) path observational: the request still goes out",
+          "status": "passed",
+          "title": "keeps the default (flag off) path observational: the request still goes out",
+          "duration": 14.19340000000011,
+          "failureMessages": [],
+          "location": {
+            "line": 91,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793931440626,
+      "endTime": 1793931441059.1934,
+      "status": "failed",
+      "message": "",
+      "name": "D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0276-s01/baseline/workspace/openclaw_runtime/src/agents/rc02-envelope-reject.test.ts"
+    }
+  ]
+}

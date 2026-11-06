@@ -1,0 +1,320 @@
+{
+  "schemaVersion": "RsiLiveTaskAdmission/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-independent-calibrator",
+  "taskId": "tf-0286-l04",
+  "source": {
+    "id": "tf-0286-l04",
+    "base": "2813bfcfc95d913c9a914bb082a709988480722e",
+    "reference": "7faef1e3d394cd761b3827ecde070b3dfcba0c27",
+    "productChanges": [
+      "openclaw_runtime/src/runtime-core/checkpoint-attachment-binding.ts"
+    ],
+    "originalDecision": "PASS",
+    "codingBindingDigest": "2697e0f57ca40ab8e7b547d0d82595dd56b11f3281acf316c03df819590cf417",
+    "baselineSetup": null,
+    "targetScope": [
+      "openclaw_runtime/src/runtime-core/checkpoint-attachment-binding.ts",
+      "openclaw_runtime/src/runtime-core/checkpoint-attachment-binding.test.ts",
+      "harness/specs/tasks/harness-gap-checkpoint-attachment-binding.md",
+      "docs/dev/harness-gap-closure/l04-checkpoint-attachment-binding.md",
+      "docs/dev/harness-gap-closure/l04-acceptance.json",
+      "docs/dev/harness-gap-closure/L04-SHA256SUMS"
+    ],
+    "prompt": "L04 把持久化挂件界定为五类受限引用（任务附件/恢复指令/上下文/外部 artifact 引用/ledger checkpoint），并为每个绑定校验 content hash、owner 与 TTL；恢复是纯函数：缺失/非法 hash、缺 owner、过期、同 ref 冲突都被显式修复为状态，且恢复不重复产生副作用。",
+    "sourceRecord": "docs/dev/harness-gap-closure/l04-acceptance.json",
+    "sourceRecordDigest": "e3e32b5f69a9d210cc57ccaa34b61e76c4f1dfb94984db776bdc8d5d4eb3f953",
+    "oraclePaths": [
+      "openclaw_runtime/src/runtime-core/checkpoint-attachment-binding.test.ts"
+    ],
+    "commands": [
+      "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/runtime-core/checkpoint-attachment-binding.test.ts --maxWorkers=1"
+    ]
+  },
+  "stages": {
+    "reference": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0286-l04",
+      "commands": [
+        "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/runtime-core/checkpoint-attachment-binding.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/runtime-core/checkpoint-attachment-binding.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0286-l04\\reference\\workspace\\openclaw_runtime\\scripts\\run-vitest.mjs",
+            "run",
+            "src/runtime-core/checkpoint-attachment-binding.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0286-l04\\reference\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0286-l04\\reference\\workspace\\openclaw_runtime",
+          "exitCode": 0,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 2,
+            "numPassedTestSuites": 2,
+            "numFailedTestSuites": 0,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 4,
+            "numPassedTests": 4,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793930849773,
+            "success": true,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "L04 checkpoint attachment binding"
+                    ],
+                    "fullName": "L04 checkpoint attachment binding recovers valid bindings deterministically and de-duplicates identical refs",
+                    "status": "passed",
+                    "title": "recovers valid bindings deterministically and de-duplicates identical refs",
+                    "duration": 229.03380000000107,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 28,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "L04 checkpoint attachment binding"
+                    ],
+                    "fullName": "L04 checkpoint attachment binding flags missing/invalid hash, missing owner and expired bindings, and excludes them from recovery",
+                    "status": "passed",
+                    "title": "flags missing/invalid hash, missing owner and expired bindings, and excludes them from recovery",
+                    "duration": 1.753499999998894,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 42,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "L04 checkpoint attachment binding"
+                    ],
+                    "fullName": "L04 checkpoint attachment binding repairs a hash conflict on the same attachmentRef into an explicit conflict state",
+                    "status": "passed",
+                    "title": "repairs a hash conflict on the same attachmentRef into an explicit conflict state",
+                    "duration": 0.48589999999967404,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 57,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "L04 checkpoint attachment binding"
+                    ],
+                    "fullName": "L04 checkpoint attachment binding is a pure recovery pass: no side effects, identical digest on repeat, and no arbitrary kind",
+                    "status": "passed",
+                    "title": "is a pure recovery pass: no side effects, identical digest on repeat, and no arbitrary kind",
+                    "duration": 0.4699000000000524,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 68,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793930851059,
+                "endTime": 1793930851291.47,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0286-l04/reference/workspace/openclaw_runtime/src/runtime-core/checkpoint-attachment-binding.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0286-l04\\reference\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0286-l04\\reference\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0286-l04\\reference\\oracle\\01-stderr.log"
+        }
+      ],
+      "numTotalTests": 4,
+      "numPassedTests": 4,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": true,
+      "failureClass": null,
+      "timeoutMs": 300000,
+      "oracleHashBefore": "f24cf1bdd8c48a78e13940988e64dcde8a4200fb69fb951a62614a379db994a4",
+      "oracleHashAfter": "f24cf1bdd8c48a78e13940988e64dcde8a4200fb69fb951a62614a379db994a4",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-checkpoint-attachment-binding.md": "b1d72a04abb1dbb3ef50d7e208a5a673a89509d353eeeab13c83b418206de1b3",
+        "openclaw_runtime/src/runtime-core/checkpoint-attachment-binding.test.ts": "58d3b40b2c44652c0029884133184a2d87532a9ddbc4d4e8d1beb78e76f4033b"
+      },
+      "oracleRevision": "7faef1e3d394cd761b3827ecde070b3dfcba0c27",
+      "oracleTestDigests": {
+        "openclaw_runtime/src/runtime-core/checkpoint-attachment-binding.test.ts": "58d3b40b2c44652c0029884133184a2d87532a9ddbc4d4e8d1beb78e76f4033b"
+      },
+      "supportPackages": [
+        {
+          "name": "markdown-it",
+          "declaredVersion": "14.2.0",
+          "resolvedVersion": "14.2.0"
+        }
+      ],
+      "diagnostics": [],
+      "workspace": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0286-l04\\reference\\workspace",
+      "outDir": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0286-l04\\reference\\oracle",
+      "reportPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0286-l04\\reference\\oracle\\run-report.json"
+    },
+    "baseline": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0286-l04",
+      "commands": [
+        "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/runtime-core/checkpoint-attachment-binding.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/runtime-core/checkpoint-attachment-binding.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0286-l04\\baseline\\workspace\\openclaw_runtime\\scripts\\run-vitest.mjs",
+            "run",
+            "src/runtime-core/checkpoint-attachment-binding.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0286-l04\\baseline\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0286-l04\\baseline\\workspace\\openclaw_runtime",
+          "exitCode": 1,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 1,
+            "numPassedTestSuites": 0,
+            "numFailedTestSuites": 1,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 0,
+            "numPassedTests": 0,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793930988576,
+            "success": false,
+            "testResults": [
+              {
+                "assertionResults": [],
+                "startTime": 1793930988576,
+                "endTime": 1793930988576,
+                "status": "failed",
+                "message": "Cannot find module './checkpoint-attachment-binding.js' imported from D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0286-l04/baseline/workspace/openclaw_runtime/src/runtime-core/checkpoint-attachment-binding.test.ts",
+                "name": "D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0286-l04/baseline/workspace/openclaw_runtime/src/runtime-core/checkpoint-attachment-binding.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0286-l04\\baseline\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0286-l04\\baseline\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0286-l04\\baseline\\oracle\\01-stderr.log"
+        }
+      ],
+      "numTotalTests": 0,
+      "numPassedTests": 0,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": false,
+      "failureClass": "target-module-absent",
+      "timeoutMs": 300000,
+      "oracleHashBefore": "f24cf1bdd8c48a78e13940988e64dcde8a4200fb69fb951a62614a379db994a4",
+      "oracleHashAfter": "f24cf1bdd8c48a78e13940988e64dcde8a4200fb69fb951a62614a379db994a4",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-checkpoint-attachment-binding.md": "b1d72a04abb1dbb3ef50d7e208a5a673a89509d353eeeab13c83b418206de1b3",
+        "openclaw_runtime/src/runtime-core/checkpoint-attachment-binding.test.ts": "58d3b40b2c44652c0029884133184a2d87532a9ddbc4d4e8d1beb78e76f4033b"
+      },
+      "oracleRevision": "7faef1e3d394cd761b3827ecde070b3dfcba0c27",
+      "oracleTestDigests": {
+        "openclaw_runtime/src/runtime-core/checkpoint-attachment-binding.test.ts": "58d3b40b2c44652c0029884133184a2d87532a9ddbc4d4e8d1beb78e76f4033b"
+      },
+      "supportPackages": [
+        {
+          "name": "markdown-it",
+          "declaredVersion": "14.2.0",
+          "resolvedVersion": "14.2.0"
+        }
+      ],
+      "diagnostics": [
+        {
+          "kind": "missing-module",
+          "missingPath": "openclaw_runtime/src/runtime-core/checkpoint-attachment-binding.js",
+          "importer": "openclaw_runtime/src/runtime-core/checkpoint-attachment-binding.test.ts",
+          "inTargetScope": true
+        }
+      ],
+      "workspace": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0286-l04\\baseline\\workspace",
+      "outDir": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0286-l04\\baseline\\oracle",
+      "reportPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0286-l04\\baseline\\oracle\\run-report.json"
+    }
+  },
+  "admission": {
+    "passed": true,
+    "issues": [],
+    "warnings": [
+      "baseline-target-module-absent"
+    ]
+  },
+  "claims": {
+    "modelQuality": false,
+    "benefit": false,
+    "realHuman": false
+  }
+}

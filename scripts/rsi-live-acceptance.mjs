@@ -10,12 +10,14 @@ import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { createResponsesProvider } from './lib/rsi-responses-provider.mjs';
 import { artifactPath } from './lib/agent-first-trials.mjs';
 import { sha256File } from './rsi-tf0604-baseline.mjs';
+import { CODING_BINDINGS_PATH, resolveHistoricalTask } from './lib/rsi-live-grader.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const CORPUS = 'harness/specs/fixtures/agent-first-task-corpus/task-corpus.v1.json';
 const sha = (bytes) => createHash('sha256').update(bytes).digest('hex');
 const read = (path) => JSON.parse(readFileSync(path, 'utf8'));
 const referenceTestDigestCache = new Map();
+const productChangeCache = new Map();
 function referenceTestDigest(root, revision, path) {
   const key = `${resolve(root)}\0${revision}\0${path}`;
   if (referenceTestDigestCache.has(key)) return referenceTestDigestCache.get(key);
@@ -23,22 +25,42 @@ function referenceTestDigest(root, revision, path) {
   referenceTestDigestCache.set(key, value);
   return value;
 }
+function historicalProductChanges(root, base, reference) {
+  const key = `${resolve(root)}\0${base}\0${reference}`;
+  if (productChangeCache.has(key)) return productChangeCache.get(key);
+  const changed = execFileSync('git', ['-C', root, 'diff-tree', '--no-commit-id', '--name-only', '-r', '--no-renames', base, reference], {
+    windowsHide: true,
+    encoding: 'utf8',
+  }).trim().split(/\r?\n/u).filter(Boolean);
+  const productChanges = changed.filter((path) => /^(scripts|src|electron|shared|openclaw_runtime\/src)\//u.test(path)
+    && !/\.test\.[cm]?[jt]sx?$|\/tests\//u.test(path));
+  productChangeCache.set(key, productChanges);
+  return productChanges;
+}
 function write(path, value) {
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, `${JSON.stringify(value, null, 2)}\n`, { flag: 'wx' });
 }
 
 /** Restore omitted revision identities from original evidence, never infer a parent. */
-export function inspectLiveCorpus(root = ROOT) {
+export function codingCohortFor(root, directory) {
+  const path = join(directory, 'task-bindings.json');
+  if (!existsSync(path)) return false;
+  assert.equal(sha(readFileSync(path)), sha(readFileSync(join(root, CODING_BINDINGS_PATH))), 'coding-cohort-binding-drift');
+  return true;
+}
+
+export function inspectLiveCorpus(root = ROOT, { codingCohort = false } = {}) {
   const corpus = read(join(root, CORPUS));
   return corpus.tasks.map((task) => {
     const original = read(join(root, task.referenceSolution.sourceRecord));
     const base = original.candidate?.base, reference = original.candidate?.commit;
     assert(/^[0-9a-f]{40}$/u.test(base ?? '') && /^[0-9a-f]{40}$/u.test(reference ?? ''), `missing-task-revision:${task.id}`);
-    const changed = execFileSync('git', ['diff', '--name-only', base, reference], { cwd: root, windowsHide: true, encoding: 'utf8' }).trim().split(/\r?\n/u).filter(Boolean);
-    const productChanges = changed.filter((path) => /^(scripts|src|electron|shared|openclaw_runtime\/src)\//u.test(path)
-      && !/\.test\.[cm]?[jt]sx?$|\/tests\//u.test(path));
+    const productChanges = historicalProductChanges(root, base, reference);
+    const definition = codingCohort ? resolveHistoricalTask(root, task.id, { codingCohort }) : null;
     return { id: task.id, base, reference, productChanges, originalDecision: original.decision?.status ?? null,
+      ...(codingCohort ? { codingBindingDigest: sha(readFileSync(join(root, CODING_BINDINGS_PATH))),
+        baselineSetup: definition.baselineSetup ?? null, targetScope: definition.input.targetScope, prompt: definition.input.prompt } : {}),
       sourceRecord: task.referenceSolution.sourceRecord,
       sourceRecordDigest: sha256File(join(root, task.referenceSolution.sourceRecord)),
       oraclePaths: task.oracle.testPaths, commands: task.oracle.commandLines };
@@ -52,7 +74,7 @@ export async function probeLiveResource({ directory, endpoint, model, apiKey }) 
   const request = { instructions: 'Reply with the exact marker only.', input: marker };
   let result;
   try {
-    const provider = createResponsesProvider({ endpoint, model, apiKey, maxOutputTokens: 64, timeoutMs: 45000 });
+    const provider = createResponsesProvider({ endpoint, model, apiKey, maxOutputTokens: 512, timeoutMs: 45000, reasoningEffort: 'low' });
     const receipt = await provider(request);
     result = { driven_by: 'agent', actor: 'codex/rsi-live-preflight', scope: 'provider admission; not a task outcome',
       startedAt: new Date(start).toISOString(), durationMs: Date.now() - start,
@@ -115,7 +137,8 @@ export function assessTaskAdmission({ reference, baseline }) {
 }
 
 export function finalizeLiveAdmission(root, directory, options = {}) {
-  const tasks = inspectLiveCorpus(root);
+  const codingCohort = codingCohortFor(root, directory);
+  const tasks = inspectLiveCorpus(root, { codingCohort });
   assert.equal(tasks.length, 24, 'live-admission-corpus-size');
   const admissions = tasks.map((task) => {
     const path = join(directory, 'calibration', task.id, 'admission.json');
@@ -124,6 +147,13 @@ export function finalizeLiveAdmission(root, directory, options = {}) {
     assert.deepEqual(retained.source, task, 'calibration-source-drift');
     for (const stageName of ['reference', 'baseline']) {
       const stage = retained.stages?.[stageName];
+      if (codingCohort) {
+        assert.deepEqual(stage?.baselineSetup ?? null, task.baselineSetup, 'calibration-baseline-setup-drift');
+        for (const support of stage?.supportPackages ?? []) {
+          assert.equal(support.declaredVersion, support.resolvedVersion, 'calibration-support-version-drift');
+        }
+        assert(Array.isArray(stage?.supportPackages), 'calibration-support-metadata-missing');
+      }
       assert.equal(stage?.oracleRevision, task.reference, 'calibration-oracle-revision-drift');
       for (const testPath of task.oraclePaths) {
         const expectedDigest = referenceTestDigest(root, task.reference, testPath);
@@ -209,8 +239,13 @@ export async function calibrateLiveTask(root, directory, taskId, options = {}) {
   const { prepareGradeWorkspace, resolveHistoricalTask, runLiveTaskOracles } = await import('./lib/rsi-live-grader.mjs');
   const target = join(directory, 'calibration', taskId);
   assert(!existsSync(target), 'calibration-already-exists');
-  const task = resolveHistoricalTask(root, taskId);
-  const source = inspectLiveCorpus(root).find((entry) => entry.id === taskId);
+  if (options.codingCohort && !existsSync(join(directory, 'task-bindings.json'))) {
+    mkdirSync(directory, { recursive: true });
+    writeFileSync(join(directory, 'task-bindings.json'), readFileSync(join(root, CODING_BINDINGS_PATH)), { flag: 'wx' });
+  }
+  const codingCohort = codingCohortFor(root, directory);
+  const task = resolveHistoricalTask(root, taskId, { codingCohort });
+  const source = inspectLiveCorpus(root, { codingCohort }).find((entry) => entry.id === taskId);
   assert(source, 'unknown-task');
   mkdirSync(target, { recursive: true });
   write(join(target, 'identity.json'), source);
@@ -219,7 +254,8 @@ export async function calibrateLiveTask(root, directory, taskId, options = {}) {
     const workspace = join(target, name, 'workspace');
     try {
       await prepareGradeWorkspace({ root, task, workspace, revision });
-      stages[name] = await runLiveTaskOracles({ root, task, workspace, outDir: join(target, name, 'oracle'), timeoutMs: options.timeoutMs ?? 120000 });
+      stages[name] = await runLiveTaskOracles({ root, task, workspace, outDir: join(target, name, 'oracle'),
+        timeoutMs: options.timeoutMs ?? 120000, supportRoot: options.supportRoot });
     } catch (caught) {
       const failureClass = /^frozen oracle digest mismatch:/u.test(caught.message) ? 'oracle-input-drift' : 'infrastructure';
       stages[name] = { passed: false, failureClass, error: caught.message, executions: [], diagnostics: [] };
@@ -237,6 +273,7 @@ if (isMainEntrypoint(import.meta.url)) {
     const { positionals, values } = parseArgs({ allowPositionals: true, options: {
       'run-dir': { type: 'string' }, 'task-id': { type: 'string' }, endpoint: { type: 'string' }, model: { type: 'string' },
       'timeout-ms': { type: 'string' },
+      'coding-cohort': { type: 'boolean' }, 'support-root': { type: 'string' },
     } });
     assert(values['run-dir'], '--run-dir required');
     const requestedDirectory = resolve(values['run-dir']);
@@ -255,7 +292,8 @@ if (isMainEntrypoint(import.meta.url)) {
       result = { passed: result.passed, scope: result.scope, responseId: result.response?.id ?? null, usage: result.response?.usage ?? null, error: result.error ?? null };
     } else if (positionals[0] === 'calibrate') {
       assert(values['task-id'], '--task-id required');
-      const resultOnDisk = await calibrateLiveTask(ROOT, directory, values['task-id'], { timeoutMs: values['timeout-ms'] ? Number(values['timeout-ms']) : undefined });
+      const resultOnDisk = await calibrateLiveTask(ROOT, directory, values['task-id'], { timeoutMs: values['timeout-ms'] ? Number(values['timeout-ms']) : undefined,
+        codingCohort: values['coding-cohort'], supportRoot: values['support-root'] });
       result = { passed: resultOnDisk.admission.passed, taskId: resultOnDisk.taskId, admission: resultOnDisk.admission,
         referencePassed: resultOnDisk.stages.reference.passed, baselinePassed: resultOnDisk.stages.baseline.passed };
     } else if (positionals[0] === 'finalize') result = finalizeLiveAdmission(ROOT, directory);

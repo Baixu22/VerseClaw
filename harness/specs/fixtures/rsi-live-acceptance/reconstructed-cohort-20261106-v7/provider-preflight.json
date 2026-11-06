@@ -1,0 +1,115 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-live-preflight",
+  "scope": "provider admission; not a task outcome",
+  "startedAt": "2026-11-06T04:27:38.594Z",
+  "durationMs": 2006,
+  "passed": true,
+  "request": {
+    "url": "http://127.0.0.1:3065/v1/responses",
+    "method": "POST",
+    "headers": {
+      "accept": "application/json",
+      "content-type": "application/json"
+    },
+    "redirect": "error",
+    "cache": "no-store",
+    "body": {
+      "model": "space-bunny",
+      "instructions": "Reply with the exact marker only.",
+      "input": "RSI_PROVIDER_READY",
+      "store": false,
+      "stream": false,
+      "truncation": "disabled",
+      "max_output_tokens": 512,
+      "reasoning": {
+        "effort": "low"
+      }
+    }
+  },
+  "response": {
+    "id": "01a1af1cbd257aeaa1a9891fbfd8ef0e",
+    "model": "space-bunny",
+    "status": "completed",
+    "text": "RSI_PROVIDER_READY",
+    "usage": {
+      "inputTokens": 164,
+      "outputTokens": 16,
+      "totalTokens": 180
+    },
+    "functionCalls": [],
+    "incompleteReason": null
+  },
+  "rawResponse": {
+    "background": false,
+    "completed_at": 1793939260,
+    "created_at": 1793939259,
+    "error": null,
+    "id": "01a1af1cbd257aeaa1a9891fbfd8ef0e",
+    "incomplete_details": null,
+    "instructions": "Reply with the exact marker only.",
+    "max_output_tokens": 512,
+    "max_tool_calls": null,
+    "metadata": {},
+    "model": "space-bunny",
+    "object": "response",
+    "output": [
+      {
+        "id": "rs_72409e49865addf736e9b598563f0f3b",
+        "summary": [
+          {
+            "text": "We need exact marker only.",
+            "type": "summary_text"
+          }
+        ],
+        "type": "reasoning"
+      },
+      {
+        "content": [
+          {
+            "annotations": [],
+            "logprobs": [],
+            "text": "RSI_PROVIDER_READY",
+            "type": "output_text"
+          }
+        ],
+        "id": "msg_71db3c934c1370dd0bb5b1653ceca668",
+        "role": "assistant",
+        "status": "completed",
+        "type": "message"
+      }
+    ],
+    "output_text": "RSI_PROVIDER_READY",
+    "parallel_tool_calls": true,
+    "previous_response_id": null,
+    "reasoning": {
+      "effort": "low",
+      "summary": null
+    },
+    "status": "completed",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "type": "text"
+      }
+    },
+    "tool_choice": "auto",
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 1,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 164,
+      "input_tokens_details": {
+        "cached_tokens": 140
+      },
+      "output_tokens": 16,
+      "output_tokens_details": {
+        "reasoning_tokens": 6
+      },
+      "total_tokens": 180
+    },
+    "user": null
+  }
+}

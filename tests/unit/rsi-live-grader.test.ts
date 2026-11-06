@@ -1,5 +1,6 @@
 // @vitest-environment node
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, rmdirSync, symlinkSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve, sep } from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
@@ -36,6 +37,41 @@ afterAll(() => {
 });
 
 describe('live task grader independent execution', () => {
+  it('reconstructs only explicitly bound source files before applying edits and preserves reference and oracle bytes', async () => {
+    const { root, task, base, reference } = fixture();
+    const baseBytes = execFileSync('git', ['show', `${base}:src/subject.mjs`], { cwd: root, windowsHide: true });
+    const binding = { ...task, baselineSetup: { kind: 'implementation-reconstruction',
+      removePaths: [{ path: 'src/subject.mjs', sha256: createHash('sha256').update(baseBytes).digest('hex') }] } };
+    const baseline = join(root, 'reconstructed');
+    await prepareGradeWorkspace({ root, task: binding, workspace: baseline, revision: base });
+    expect(existsSync(join(baseline, 'src/subject.mjs'))).toBe(false);
+    expect(readFileSync(join(baseline, 'tests/subject.test.ts'), 'utf8')).toContain('requires implemented value');
+    const solved = join(root, 'reconstructed-solved');
+    await prepareGradeWorkspace({ root, task: binding, workspace: solved, revision: base,
+      edits: [{ path: 'src/subject.mjs', content: 'export const value = 1;' }] });
+    expect((await runLiveTaskOracles({ root, task: binding, workspace: solved, outDir: join(root, 'reconstructed-oracle') })).passed).toBe(true);
+    const ref = join(root, 'reconstructed-reference');
+    await prepareGradeWorkspace({ root, task: binding, workspace: ref, revision: reference });
+    expect(readFileSync(join(ref, 'src/subject.mjs'), 'utf8')).toContain('value = 1');
+    await expect(prepareGradeWorkspace({ root, task: { ...binding, baselineSetup: { ...binding.baselineSetup,
+      removePaths: [{ path: 'tests/subject.test.ts', sha256: 'bad' }] } }, workspace: join(root, 'bad-reconstruction'), revision: base })).rejects.toThrow('invalid reconstruction target');
+  });
+
+  it('rejects an isolated support package whose version differs from the historical declaration', () => {
+    const { root } = fixture();
+    const workspace = join(root, 'exact-support');
+    const importer = join(workspace, 'openclaw_runtime/packages/markdown-core');
+    const support = join(root, 'support');
+    mkdirSync(importer, { recursive: true });
+    mkdirSync(join(support, 'node_modules/markdown-it'), { recursive: true });
+    writeFileSync(join(importer, 'package.json'), JSON.stringify({ dependencies: { 'markdown-it': '14.2.0' } }));
+    writeFileSync(join(support, 'node_modules/markdown-it/package.json'), JSON.stringify({ version: '14.1.1' }));
+    expect(() => linkGraderDependencies(root, workspace, [], support)).toThrow('oracle support version mismatch');
+    writeFileSync(join(support, 'node_modules/markdown-it/package.json'), JSON.stringify({ version: '14.2.0' }));
+    const links = linkGraderDependencies(root, workspace, [], support);
+    expect(links).toHaveLength(1);
+    for (const link of links) rmdirSync(link);
+  });
   it('executes a genuine fail-first baseline and passing reference with frozen hidden tests', async () => {
     const { root, task, base, reference } = fixture();
     for (const [label, revision, passed] of [['baseline', base, false], ['reference', reference, true]] as const) {

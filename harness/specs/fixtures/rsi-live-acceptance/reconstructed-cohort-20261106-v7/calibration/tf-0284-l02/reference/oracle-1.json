@@ -1,0 +1,104 @@
+{
+  "numTotalTestSuites": 2,
+  "numPassedTestSuites": 2,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 4,
+  "numPassedTests": 4,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793930753936,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "L02 context-pressure recovery"
+          ],
+          "fullName": "L02 context-pressure recovery recovers objective, unfinished work, dependencies and recent evidence in one deterministic projection",
+          "status": "passed",
+          "title": "recovers objective, unfinished work, dependencies and recent evidence in one deterministic projection",
+          "duration": 104.51809999999932,
+          "failureMessages": [],
+          "location": {
+            "line": 55,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "L02 context-pressure recovery"
+          ],
+          "fullName": "L02 context-pressure recovery never silently drops: a small budget truncates and counts every drop",
+          "status": "passed",
+          "title": "never silently drops: a small budget truncates and counts every drop",
+          "duration": 0.9053999999996449,
+          "failureMessages": [],
+          "location": {
+            "line": 69,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "L02 context-pressure recovery"
+          ],
+          "fullName": "L02 context-pressure recovery never fakes completion: the result is complete:false and an empty snapshot is unknown",
+          "status": "passed",
+          "title": "never fakes completion: the result is complete:false and an empty snapshot is unknown",
+          "duration": 1.2718000000004395,
+          "failureMessages": [],
+          "location": {
+            "line": 81,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "L02 context-pressure recovery"
+          ],
+          "fullName": "L02 context-pressure recovery has no silent recursion: exceeding maxDepth is refused explicitly",
+          "status": "passed",
+          "title": "has no silent recursion: exceeding maxDepth is refused explicitly",
+          "duration": 0.482399999998961,
+          "failureMessages": [],
+          "location": {
+            "line": 90,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793930754702,
+      "endTime": 1793930754808.4824,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0284-l02/reference/workspace/openclaw_runtime/src/runtime-core/context-pressure-recovery.test.ts"
+    }
+  ]
+}
