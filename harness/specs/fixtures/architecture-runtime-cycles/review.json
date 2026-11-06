@@ -1,0 +1,66 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "result": {
+    "findings": [],
+    "overall_confidence": 0.97,
+    "overall_correctness": "patch is correct",
+    "overall_explanation": "No actionable defects found. The three import changes preserve the original helper implementation, CVK ID export, registration boundaries, defaults, and fallback behavior. The formatting changes preserve semantics. Review was read-only; tests were not run."
+  },
+  "run": {
+    "driven_by": "agent",
+    "actor": "codex-architecture-convergence",
+    "exe": "python",
+    "argv": [
+      "-X",
+      "utf8",
+      "openclaw_runtime/.agents/skills/autoreview/scripts/autoreview",
+      "--mode",
+      "local",
+      "--no-web-search",
+      "--prompt-file",
+      "D:/tmp/architecture-runtime-cycles-20261105/review-notes.md",
+      "--output",
+      "D:/tmp/architecture-runtime-cycles-20261105/autoreview.txt",
+      "--json-output",
+      "D:/tmp/architecture-runtime-cycles-20261105/autoreview.json"
+    ],
+    "startedAt": "2026-11-05T06:27:38.121Z",
+    "finishedAt": "2026-11-05T07:03:30.966Z",
+    "exitCode": 0,
+    "signal": null
+  },
+  "stdout": "autoreview target: local\nbranch: codex/architecture-convergence-20261105\nengine: codex\ntools: on\nweb_search: off\nbundle: 29442 chars\nautoreview clean: no accepted/actionable findings reported\noverall: patch is correct (0.97)\nNo actionable defects found. The three import changes preserve the original helper implementation, CVK ID export, registration boundaries, defaults, and fallback behavior. The formatting changes preserve semantics. Review was read-only; tests were not run.\n",
+  "stderr": "review still running: codex elapsed=61s pid=17296\nreview still running: codex elapsed=124s pid=17296\nreview still running: codex elapsed=185s pid=17296\nreview still running: codex elapsed=245s pid=17296\nreview still running: codex elapsed=305s pid=17296\nreview still running: codex elapsed=365s pid=17296\nreview still running: codex elapsed=426s pid=17296\nreview still running: codex elapsed=487s pid=17296\nreview still running: codex elapsed=547s pid=17296\nreview still running: codex elapsed=607s pid=17296\nreview still running: codex elapsed=667s pid=17296\nreview still running: codex elapsed=727s pid=17296\nreview still running: codex elapsed=788s pid=17296\nreview still running: codex elapsed=849s pid=17296\nreview still running: codex elapsed=913s pid=17296\nreview still running: codex elapsed=974s pid=17296\nreview still running: codex elapsed=1036s pid=17296\nreview still running: codex elapsed=1099s pid=17296\nreview still running: codex elapsed=1159s pid=17296\nreview still running: codex elapsed=1219s pid=17296\nreview still running: codex elapsed=1279s pid=17296\nreview still running: codex elapsed=1339s pid=17296\nreview still running: codex elapsed=1400s pid=17296\nreview still running: codex elapsed=1460s pid=17296\nreview still running: codex elapsed=1520s pid=17296\nreview still running: codex elapsed=1580s pid=17296\nreview still running: codex elapsed=1640s pid=17296\nreview still running: codex elapsed=1700s pid=17296\nreview still running: codex elapsed=1760s pid=17296\nreview still running: codex elapsed=1820s pid=17296\nreview still running: codex elapsed=1880s pid=17296\nreview still running: codex elapsed=1946s pid=17296\nreview still running: codex elapsed=2008s pid=17296\nreview still running: codex elapsed=2068s pid=17296\nreview still running: codex elapsed=2129s pid=17296\n",
+  "sourceTarget": {
+    "base": "e2ba2aa36814409b6ac7de042008ba9bb9527bb9",
+    "candidate": "b834bf3e1164544e8fde5c41b715d611c5dd4bf7",
+    "mode": "local before candidate commit",
+    "files": [
+      "openclaw_runtime/src/context-engine/cvk/identity.ts",
+      "openclaw_runtime/src/context-engine/cvk/engine.ts",
+      "openclaw_runtime/src/context-engine/registry.ts",
+      "openclaw_runtime/src/context-engine/enhancement-kill-switch.ts",
+      "openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.ts"
+    ],
+    "sourceHashes": [
+      {
+        "file": "openclaw_runtime/src/context-engine/cvk/engine.ts",
+        "sha256": "d7114614ea7455603f55d32269f44758a28b25c41ae049d467c80d8d826ff38c"
+      },
+      {
+        "file": "openclaw_runtime/src/context-engine/registry.ts",
+        "sha256": "04e5be7be8101e273bfe40adc074d0e3ffae41e17455308132d24a34fdaff291"
+      },
+      {
+        "file": "openclaw_runtime/src/context-engine/enhancement-kill-switch.ts",
+        "sha256": "ea58c60d72dbafff89e1854958e5a75573f18e200b5db9b91fa82c99c6da98ba"
+      },
+      {
+        "file": "openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.ts",
+        "sha256": "a26d9a40ee4fdc98d39ae5cdacd1fbf730f737f48f316b1e32891191b00fd918"
+      }
+    ]
+  },
+  "bindingLimit": "Helper emits an advisory review result, not a signed source attestation. Candidate binding is the reviewed local diff and unchanged committed production bytes."
+}

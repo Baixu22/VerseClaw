@@ -1,0 +1,131 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "baseline": "e2ba2aa36814409b6ac7de042008ba9bb9527bb9",
+  "candidate": "b834bf3e1164544e8fde5c41b715d611c5dd4bf7",
+  "dirty": false,
+  "method": "TypeScript AST statement kind/literal/identifier/child signatures excluding imports/re-exports and the moved ID declaration; unwrap parentheses and ignore formatting/trivia.",
+  "bodies": [
+    {
+      "file": "openclaw_runtime/src/context-engine/cvk/engine.ts",
+      "beforeSha256": "aee473fb372561b75717cfb2b04b9af912cc57bea2d818519b39e5b412a69291",
+      "afterSha256": "d7114614ea7455603f55d32269f44758a28b25c41ae049d467c80d8d826ff38c",
+      "bodyTokensEquivalent": true,
+      "bodyTokensSha256": "6ad252c841f9051a6e4aef0b6fd62842521d7b02db601a343b945c92debeb47b"
+    },
+    {
+      "file": "openclaw_runtime/src/context-engine/registry.ts",
+      "beforeSha256": "9a3f5b833d2f05ef1e6aacd20495f5029b85ab60fb7be02760315b01fb35bcb6",
+      "afterSha256": "04e5be7be8101e273bfe40adc074d0e3ffae41e17455308132d24a34fdaff291",
+      "bodyTokensEquivalent": true,
+      "bodyTokensSha256": "5626b0a5d465a14b13f14bdaa42c25af9d90191906c27e686945a89ea7956c45"
+    },
+    {
+      "file": "openclaw_runtime/src/context-engine/enhancement-kill-switch.ts",
+      "beforeSha256": "c278dd8ac9b20457d84194f729613eb782f812dfaeb89ddb97fbe3fdf670fa8c",
+      "afterSha256": "ea58c60d72dbafff89e1854958e5a75573f18e200b5db9b91fa82c99c6da98ba",
+      "bodyTokensEquivalent": true,
+      "bodyTokensSha256": "3c64356221c78eef299ac65195235b9192baae59376a541d52a67b69ce418ccb"
+    },
+    {
+      "file": "openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.ts",
+      "beforeSha256": "6a37f0a6bfafa6bb782d22036542bcd17e77fc3e2ba385b04045de1086358264",
+      "afterSha256": "a26d9a40ee4fdc98d39ae5cdacd1fbf730f737f48f316b1e32891191b00fd918",
+      "bodyTokensEquivalent": true,
+      "bodyTokensSha256": "4c75787b3a3bf92681e4f8c400d15cb3d257dd2a8a8781da1d896dad2fa74f63"
+    }
+  ],
+  "protectedFiles": [
+    {
+      "file": "openclaw_runtime/scripts/check-import-cycles.ts",
+      "unchanged": true,
+      "sha256": "2852631fd132a6b4b1774907e9b03804464a92c63c3eb748b4d546fa33c60cc9"
+    },
+    {
+      "file": "openclaw_runtime/scripts/lib/import-cycle-graph.ts",
+      "unchanged": true,
+      "sha256": "92258f99a513a28afba61ec181b9e5eb548d05d0d6a22eba11685648a5eab26a"
+    },
+    {
+      "file": "openclaw_runtime/src/runtime-core/types.ts",
+      "unchanged": true,
+      "sha256": "4964d2fb009cd219d480df706fdfb746207a7497b838fbfc50cb7d28c9d27081"
+    },
+    {
+      "file": "openclaw_runtime/src/runtime-core/index.ts",
+      "unchanged": true,
+      "sha256": "e5f2296b205dd3111b90b194dcb853a788babf85dead3e6f3fc9ddeaeb75e1d0"
+    },
+    {
+      "file": "openclaw_runtime/src/runtime-core/model-capability-effective-state.ts",
+      "unchanged": true,
+      "sha256": "1488083817b7892841fdd069cb8f5db22404f6f51da80c45c0a063c9178e41f6"
+    },
+    {
+      "file": "openclaw_runtime/src/context-engine/cvk/registration.ts",
+      "unchanged": true,
+      "sha256": "5e2c40bb4d66435955f706ec53d49eb3b5261ae5e5cbb5597691adf69bb39031"
+    },
+    {
+      "file": "openclaw_runtime/src/plugins/registry.ts",
+      "unchanged": true,
+      "sha256": "be0681a41af9cddac17fbb9f4c1264bb1916058962a4efea3307aa24b87c198e"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/embedded-agent-runner/tool-schema-runtime.ts",
+      "unchanged": true,
+      "sha256": "a7fe11f0f563a86ed6287b0f29eb398ddc80422aad1b92724c34afa978d3b816"
+    },
+    {
+      "file": "openclaw_runtime/src/context-engine/runtime-flag-ack.ts",
+      "unchanged": true,
+      "sha256": "2b188f6a57afc4965c7ecba1e77c1b3b9dadd87c780c539b2a66cc65cfc4fde7"
+    },
+    {
+      "file": "shared/host-api/contract.ts",
+      "unchanged": true,
+      "sha256": "b44a41e1e11eec710f9da5eb473c719d31798ce5ecdbd7a322f3a13aa60b47b2"
+    },
+    {
+      "file": "docs/dev/default-config-matrix.md",
+      "unchanged": true,
+      "sha256": "562c072f296a080231aa353f3d9b1f957cb4a9af2dded2844299111a31907f61"
+    },
+    {
+      "file": "README.md",
+      "unchanged": true,
+      "sha256": "73ecdffccf68adda8308bc8bd8105177cf5fbb091b64d7b993ee64cee4133e99"
+    },
+    {
+      "file": "README.zh-CN.md",
+      "unchanged": true,
+      "sha256": "0ea961373d48866b73e4964016907b6d4c69a6dc3635a04440dc90f8b7cdb0a7"
+    },
+    {
+      "file": "README.ja-JP.md",
+      "unchanged": true,
+      "sha256": "ac57154ee4da1abc65b50920ede18ef803e3d0b5cdd2779cf2b576eed5473a78"
+    },
+    {
+      "file": "package.json",
+      "unchanged": true,
+      "sha256": "e4f5bccf178c37489c86a951bc4b711916e34a5f84e6193b13f4d845cb10e513"
+    },
+    {
+      "file": "openclaw_runtime/package.json",
+      "unchanged": true,
+      "sha256": "37ba4187f1ef9d897bf1b91d5b635245669c85c7ae3eedc94b636d379355c2e5"
+    },
+    {
+      "file": "pnpm-lock.yaml",
+      "unchanged": true,
+      "sha256": "01048fde1382667bf05de21f5f1a66d8a632ce2bbe3a45ba913ed2ba6eca778d"
+    },
+    {
+      "file": "openclaw_runtime/pnpm-lock.yaml",
+      "unchanged": true,
+      "sha256": "dc53d487e7572cee925e3fbd29da1797d22abb90a3b228110ea7914dc40f6f63"
+    }
+  ],
+  "limits": "This structural parity check is supplemented by execution tests and does not prove whole-program effects."
+}

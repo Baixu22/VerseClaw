@@ -1,0 +1,151 @@
+{
+  "schema": "ArchitectureConvergenceFinalAcceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "realHumanEvidence": false,
+  "generatedAt": "2026-11-05T16:11:28.366195+00:00",
+  "candidate": {
+    "commit": "ec2053701bfc5f0126760507c8ff5045f60cdb47",
+    "tree": "b5bca90ffa3d81ffc5af1e92d75db3c936777d51",
+    "dirty": false
+  },
+  "node": "TF-0791",
+  "phase": "TF-0786",
+  "rootNode": "TF-0628",
+  "verdict": "pass-for-scoped-architecture-convergence-with-recorded-residuals",
+  "criteria": [
+    {
+      "node": "TF-0790",
+      "criterion": "五处声明修正、八裁定撤销、35gap逐项分类",
+      "verdict": "pass",
+      "evidence": [
+        "../architecture-authority-convergence/acceptance/report.json",
+        "authority.json",
+        "architecture-tests.json"
+      ]
+    },
+    {
+      "node": "TF-0791",
+      "criterion": "关键关系domain/range及既有owner行为",
+      "verdict": "pass",
+      "evidence": [
+        "owner-coverage.json",
+        "architecture-tests.json",
+        "owner-tests.json",
+        "endpoints-baseline-failure.json"
+      ]
+    },
+    {
+      "node": "TF-0791",
+      "criterion": "干净候选完整专项、类型、contract/authority/evidence/runtime source退出码与负例",
+      "verdict": "pass-with-recorded-residuals",
+      "evidence": [
+        "gates.json",
+        "residuals.json",
+        "evidence-report.json",
+        "source-readback.json"
+      ]
+    },
+    {
+      "node": "TF-0628",
+      "criterion": "未分类接入0、owner冲突0或显式登记、坏例拒绝、陈旧来源失效",
+      "verdict": "pass-scoped",
+      "evidence": [
+        "architecture-tests.json",
+        "authority.json",
+        "evidence-report.json",
+        "source-readback.json"
+      ]
+    },
+    {
+      "node": "TF-0628",
+      "criterion": "不新增运行组件、第二真源或改变产品权限/default/发布边界",
+      "verdict": "pass",
+      "evidence": [
+        "source-readback.json"
+      ]
+    },
+    {
+      "node": "TF-0786",
+      "criterion": "五叶顺序与各自spec/盘上候选证据",
+      "verdict": "pass",
+      "evidence": [
+        "source-readback.json",
+        "../architecture-admission-ast/report.json",
+        "../architecture-small-cycles/report.json",
+        "../architecture-runtime-cycles/report.json",
+        "../architecture-authority-convergence/acceptance/report.json"
+      ]
+    }
+  ],
+  "tests": {
+    "passed": 584,
+    "failed": 0,
+    "skipped": 0,
+    "files": 29,
+    "groups": [
+      {
+        "id": "architecture-tests",
+        "passed": 399,
+        "failed": 0,
+        "skipped": 0,
+        "files": 17
+      },
+      {
+        "id": "owner-tests",
+        "passed": 136,
+        "failed": 0,
+        "skipped": 0,
+        "files": 8
+      },
+      {
+        "id": "capability-tests",
+        "passed": 19,
+        "failed": 0,
+        "skipped": 0,
+        "files": 1
+      },
+      {
+        "id": "runtime-tests",
+        "passed": 30,
+        "failed": 0,
+        "skipped": 0,
+        "files": 3
+      }
+    ]
+  },
+  "gates": {
+    "recorded": 27,
+    "exitZero": 25,
+    "exitOne": [
+      "loc",
+      "runtime-source"
+    ]
+  },
+  "additionalChecks": {
+    "harnessCiExit": 1,
+    "harnessCiReason": "four stale Agent Dev generated evidence reports; baseline structural/test phases passed",
+    "testCoverageExit": 0,
+    "sourceHashReadback": "826+9159 exact-byte inputs; 85 previous-pack hashes"
+  },
+  "closedScope": {
+    "ipcAdmission": "existing AST gate rejects spelling/alias bypass fixtures",
+    "cycles": "application and runtime static value components both zero",
+    "pendingDefaultConflicts": 0,
+    "criticalRelations": 6,
+    "registeredGaps": 35,
+    "structuralVocabularyExceptions": 55
+  },
+  "notAccepted": [
+    "full-repository pnpm test",
+    "full runtime-wide typecheck",
+    "full runtime/desktop distribution build",
+    "Electron E2E",
+    "live provider effects",
+    "global model echo plaintext-free guarantee",
+    "measured maintenance cost, agent success or reliability benefit",
+    "GA/publication"
+  ],
+  "notAFullGreenRepository": true,
+  "review": "Source readback and test coverage audited by the same agent; no claim of independent human or second-verifier review."
+}

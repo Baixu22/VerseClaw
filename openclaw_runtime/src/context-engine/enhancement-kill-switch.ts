@@ -17,10 +17,9 @@
  * Default: not engaged (false). Individual features remain default-off / opt-in.
  */
 
-import { isRecord } from "../runtime-core/index.js";
+import { isRecord } from "../runtime-core/types.js";
 
-export const CONTEXT_ENHANCEMENT_KILL_SWITCH_ENV =
-  "VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH";
+export const CONTEXT_ENHANCEMENT_KILL_SWITCH_ENV = "VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH";
 
 function envTruthy(raw: string | undefined): boolean | null {
   if (raw == null || raw.trim() === "") return null;

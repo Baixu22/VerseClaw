@@ -1,0 +1,17 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "restored-working-memory-context-source",
+  "class": "conflicting-default",
+  "rule": "default-activation",
+  "expect": "[semantic-authority/default-activation] component 'working-memory-context-source'",
+  "expectIssueCount": 3,
+  "description": "Reintroduce the exact pre-TF-0790 declaration; resolved exceptions must no longer suppress it.",
+  "mutations": [
+    {
+      "file": "shared/component-authority-manifest.ts",
+      "anchor": "id: 'working-memory-context-source'",
+      "find": "    id: 'working-memory-context-source',\n    label: 'Working-memory context source',\n    domains: ['context'],\n    purpose: 'Produces task-scoped working-memory candidate fragments from the task context ledger.',\n    ownedDataTypes: [],\n    scopes: ['turn', 'task'],\n    allowedReads: ['task.working-context', 'task.fact'],\n    allowedWrites: [],\n    effects: ['propose'],\n    forbiddenActions: ['accept-context-candidates', 'write-task-ledger-facts'],\n    runtimeAvailabilitySource: 'DCS_PROD_FLAGS:working-memory',\n    defaultMode: 'baseline',",
+      "replace": "    id: 'working-memory-context-source',\n    label: 'Working-memory context source',\n    domains: ['context'],\n    purpose: 'Produces task-scoped working-memory candidate fragments from the task context ledger.',\n    ownedDataTypes: [],\n    scopes: ['turn', 'task'],\n    allowedReads: ['task.working-context', 'task.fact'],\n    allowedWrites: [],\n    effects: ['propose'],\n    forbiddenActions: ['accept-context-candidates', 'write-task-ledger-facts'],\n    runtimeAvailabilitySource: 'DCS_PROD_FLAGS:working-memory',\n    defaultMode: 'opt-in',"
+    }
+  ]
+}

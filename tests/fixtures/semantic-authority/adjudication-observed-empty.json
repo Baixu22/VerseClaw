@@ -4,14 +4,14 @@
   "class": "exemption-hygiene",
   "rule": "exemption-stale",
   "expect": "[semantic-authority/exemption-stale] C-05/R-D3 (default-matrix-row, vtoken-bridge) records no observed values, so staleness cannot be checked",
-  "expectIssueCount": 2,
-  "description": "The C-05 pending-fix entry keeps an observed block that is an empty object. An entry whose observed values cannot be compared is stale, so it is rejected and the default-matrix-row conflict it would have suppressed fires again.",
+  "expectIssueCount": 1,
+  "description": "An injected pending-fix entry with no observed values is rejected even after the original conflict is resolved.",
   "mutations": [
     {
       "file": "scripts/check-semantic-authority-adjudication.json",
-      "anchor": "\"id\": \"C-05/R-D3\"",
-      "find": "      \"id\": \"C-05/R-D3\",\n      \"rule\": \"default-matrix-row\",\n      \"disposition\": \"registered-pending-fix\",\n      \"targetKind\": \"component\",\n      \"target\": \"vtoken-bridge\",\n      \"observed\": {\n        \"defaultMode\": \"opt-in\",\n        \"matrixRow\": \"VToken bridge\",\n        \"matrixValue\": \"retired\"\n      },",
-      "replace": "      \"id\": \"C-05/R-D3\",\n      \"rule\": \"default-matrix-row\",\n      \"disposition\": \"registered-pending-fix\",\n      \"targetKind\": \"component\",\n      \"target\": \"vtoken-bridge\",\n      \"observed\": {},"
+      "anchor": "\"adjudicatedConflicts\": []",
+      "find": "  \"adjudicatedConflicts\": []",
+      "replace": "  \"adjudicatedConflicts\": [\n    {\n      \"id\": \"C-05/R-D3\",\n      \"rule\": \"default-matrix-row\",\n      \"disposition\": \"registered-pending-fix\",\n      \"targetKind\": \"component\",\n      \"target\": \"vtoken-bridge\",\n      \"observed\": {},\n      \"basis\": \"explicit-adjudication\",\n      \"source\": \"docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.2-C-05\",\n      \"reason\": \"Product default adjudicated as retired from the default-matrix row the manifest entry cites; both registries' activation value can only be read as test/diagnostic availability (disposition visibilityReason and currentConsumers), which the current enum cannot distinguish from product availability. Registered pending fix.\",\n      \"reviewCondition\": \"Remove once the manifest defaultMode / disposition currentMode for vtoken-bridge are corrected, or the enum gains a product-vs-diagnostic availability distinction.\"\n    }\n  ]"
     }
   ]
 }

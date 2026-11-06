@@ -73,25 +73,27 @@ import { buildQueryContext } from "../../context-engine/views/retrieval/query-co
 import { retrieveHybrid } from "../../context-engine/views/retrieval/hybrid-retriever.js";
 import { buildReuseCandidateReport } from "../../context-engine/views/reuse-detector.js";
 import { reviewDiff } from "../../context-engine/views/verify/review-diff-view.js";
+import { type AnyAgentTool, jsonResult, readStringParam, asToolParamsRecord } from "./common.js";
 import {
-  type AnyAgentTool,
-  jsonResult,
-  readStringParam,
-  asToolParamsRecord,
-} from "./common.js";
-import {
+  CONTEXT_UNDERSTAND_TOOL_NAME,
+  CONTEXT_IMPACT_TOOL_NAME,
+  CONTEXT_REUSE_TOOL_NAME,
+  CONTEXT_VERIFY_TOOL_NAME,
+  CONTEXT_VIEW_TOOL_NAMES,
   resolveContextViewToolSurfaceState,
   type ContextViewToolSurfaceState,
+} from "./context-view-tool-surface.js";
+export {
+  CONTEXT_UNDERSTAND_TOOL_NAME,
+  CONTEXT_IMPACT_TOOL_NAME,
+  CONTEXT_REUSE_TOOL_NAME,
+  CONTEXT_VERIFY_TOOL_NAME,
 } from "./context-view-tool-surface.js";
 
 export const CONTEXT_READ_TOOL_NAME = "context_read";
 export const CONTEXT_ARCHIVE_RECALL_TOOL_NAME = "context_archive_recall";
 export const CONTEXT_SEARCH_TOOL_NAME = "context_search";
 export const CONTEXT_WRITE_TOOL_NAME = "context_write";
-export const CONTEXT_UNDERSTAND_TOOL_NAME = "context_understand";
-export const CONTEXT_IMPACT_TOOL_NAME = "context_impact";
-export const CONTEXT_REUSE_TOOL_NAME = "context_reuse";
-export const CONTEXT_VERIFY_TOOL_NAME = "context_verify";
 export const CONTEXT_EXPAND_TOOL_NAME = "context_expand";
 /**
  * context-folding-rlm tools. Deliberately not part of DCS_ALL_CONTEXT_TOOL_NAMES:
@@ -106,12 +108,7 @@ export const DCS_CONTEXT_AGENT_TOOL_NAMES = [
   CONTEXT_WRITE_TOOL_NAME,
 ] as const;
 
-export const DCS_CONTEXT_VIEW_TOOL_NAMES = [
-  CONTEXT_UNDERSTAND_TOOL_NAME,
-  CONTEXT_IMPACT_TOOL_NAME,
-  CONTEXT_REUSE_TOOL_NAME,
-  CONTEXT_VERIFY_TOOL_NAME,
-] as const;
+export const DCS_CONTEXT_VIEW_TOOL_NAMES = [...CONTEXT_VIEW_TOOL_NAMES] as const;
 
 export const DCS_ALL_CONTEXT_TOOL_NAMES = [
   ...DCS_CONTEXT_AGENT_TOOL_NAMES,
@@ -191,8 +188,7 @@ const ContextReadSchema = Type.Object({
 
 const ContextSearchSchema = Type.Object({
   query: Type.String({
-    description:
-      "Natural language or entity query. Use 'principles' to search experience Blocks.",
+    description: "Natural language or entity query. Use 'principles' to search experience Blocks.",
   }),
   limit: Type.Optional(
     Type.Number({
@@ -316,14 +312,23 @@ function requireFactService(options: DcsContextAgentToolOptions): WorkspaceFactS
 function resolveContextViewToolSurface(
   options: DcsContextAgentToolOptions,
 ): ContextViewToolSurfaceState {
-  return options.contextViewSurfaceState ?? resolveContextViewToolSurfaceState({
-    factService: options.factService,
-    viewToolsEnabled: options.viewToolsEnabled,
-    ...(options.workspaceHealthy !== undefined ? { workspaceHealthy: options.workspaceHealthy } : {}),
-    ...(options.contextStoreHealthy !== undefined ? { contextStoreHealthy: options.contextStoreHealthy } : {}),
-    ...(options.permissionAllowed !== undefined ? { permissionAllowed: options.permissionAllowed } : {}),
-    ...(options.unavailableReason ? { unavailableReason: options.unavailableReason } : {}),
-  });
+  return (
+    options.contextViewSurfaceState ??
+    resolveContextViewToolSurfaceState({
+      factService: options.factService,
+      viewToolsEnabled: options.viewToolsEnabled,
+      ...(options.workspaceHealthy !== undefined
+        ? { workspaceHealthy: options.workspaceHealthy }
+        : {}),
+      ...(options.contextStoreHealthy !== undefined
+        ? { contextStoreHealthy: options.contextStoreHealthy }
+        : {}),
+      ...(options.permissionAllowed !== undefined
+        ? { permissionAllowed: options.permissionAllowed }
+        : {}),
+      ...(options.unavailableReason ? { unavailableReason: options.unavailableReason } : {}),
+    })
+  );
 }
 
 export function getContextViewToolSurface(
@@ -332,9 +337,7 @@ export function getContextViewToolSurface(
   return resolveContextViewToolSurface(options);
 }
 
-function requireViewFactService(
-  options: DcsContextAgentToolOptions,
-): WorkspaceFactService | null {
+function requireViewFactService(options: DcsContextAgentToolOptions): WorkspaceFactService | null {
   if (resolveContextViewToolSurface(options).mode !== "healthy") {
     return null;
   }
@@ -365,7 +368,9 @@ function recordViewCall(toolName: string): void {
 }
 
 const ContextArchiveRecallSchema = Type.Object({
-  archive_uri: Type.String({ description: "Archive handle URI from a masked observation placeholder." }),
+  archive_uri: Type.String({
+    description: "Archive handle URI from a masked observation placeholder.",
+  }),
   checksum: Type.String({ description: "Archive handle checksum from the placeholder." }),
   byte_length: Type.Optional(Type.Integer({ minimum: 0 })),
   offset: Type.Optional(Type.Integer({ minimum: 0 })),
@@ -399,7 +404,9 @@ export function createContextArchiveRecallTool(
       const checksum = readStringParam(params, "checksum", { required: true })!;
       const byteLengthRaw = params.byte_length;
       const byteLength =
-        typeof byteLengthRaw === "number" && Number.isSafeInteger(byteLengthRaw) && byteLengthRaw >= 0
+        typeof byteLengthRaw === "number" &&
+        Number.isSafeInteger(byteLengthRaw) &&
+        byteLengthRaw >= 0
           ? byteLengthRaw
           : 0;
       let handle;
@@ -408,26 +415,37 @@ export function createContextArchiveRecallTool(
       } catch (error) {
         return jsonResult({
           ok: false,
-          diagnostics: [{ code: "invalid_handle", message: error instanceof Error ? error.message : String(error) }],
+          diagnostics: [
+            {
+              code: "invalid_handle",
+              message: error instanceof Error ? error.message : String(error),
+            },
+          ],
         });
       }
       const verified = await verifyContextArchiveHandle(handle);
       if (!verified.ok) {
         return jsonResult({
           ok: false,
-          diagnostics: [{ code: verified.reason, message: `Archive recall failed: ${verified.reason}` }],
+          diagnostics: [
+            { code: verified.reason, message: `Archive recall failed: ${verified.reason}` },
+          ],
         });
       }
       const ownerSessionId = verified.handle?.source?.sessionId;
       if (!ownerSessionId || ownerSessionId !== sessionId) {
         return jsonResult({
           ok: false,
-          diagnostics: [{ code: "session_mismatch", message: "Archive handle belongs to another session." }],
+          diagnostics: [
+            { code: "session_mismatch", message: "Archive handle belongs to another session." },
+          ],
         });
       }
       const offsetRaw = params.offset;
       const offset =
-        typeof offsetRaw === "number" && Number.isSafeInteger(offsetRaw) && offsetRaw >= 0 ? offsetRaw : 0;
+        typeof offsetRaw === "number" && Number.isSafeInteger(offsetRaw) && offsetRaw >= 0
+          ? offsetRaw
+          : 0;
       const maxCharsRaw = params.max_chars;
       const maxChars =
         typeof maxCharsRaw === "number" && Number.isSafeInteger(maxCharsRaw) && maxCharsRaw > 0
@@ -566,10 +584,7 @@ export function createContextWriteTool(options: DcsContextAgentToolOptions): Any
           reason: `role '${role}' is not in context_write whitelist`,
         });
       }
-      const content =
-        operation === "clear"
-          ? ""
-          : (readStringParam(params, "content") ?? "");
+      const content = operation === "clear" ? "" : (readStringParam(params, "content") ?? "");
       const nowMs = Date.now();
       const workspaceId = options.workspaceRoot?.trim() || process.cwd();
       const effectDigest = createHash("sha256")
@@ -586,7 +601,8 @@ export function createContextWriteTool(options: DcsContextAgentToolOptions): Any
         assertPermissionEffectOwnerCheckpoint({
           componentId: "fact-tools",
           subject: {
-            sessionKey: options.runSessionKey?.trim() || options.agentSessionKey?.trim() || sessionId,
+            sessionKey:
+              options.runSessionKey?.trim() || options.agentSessionKey?.trim() || sessionId,
             runId: sessionId,
             attemptIndex: 0,
             modelCallIndex: 0,
@@ -710,7 +726,9 @@ export function createContextImpactTool(options: DcsContextAgentToolOptions): An
   };
 }
 
-export function createContextUnderstandTool(options: DcsContextAgentToolOptions): AnyAgentTool | null {
+export function createContextUnderstandTool(
+  options: DcsContextAgentToolOptions,
+): AnyAgentTool | null {
   const service = requireViewFactService(options);
   if (!service) {
     return null;
@@ -743,7 +761,9 @@ export function createContextUnderstandTool(options: DcsContextAgentToolOptions)
         activeFiles,
         budgetChars,
       });
-      codingObservability.recordFactStoreHit(Boolean(pack.answerable || (pack.snippets?.length ?? 0) > 0));
+      codingObservability.recordFactStoreHit(
+        Boolean(pack.answerable || (pack.snippets?.length ?? 0) > 0),
+      );
       return jsonResult({
         ok: true,
         answerable: pack.answerable,
@@ -851,8 +871,7 @@ export function createContextVerifyTool(options: DcsContextAgentToolOptions): An
       if (blocked) return jsonResult(blocked);
       recordViewCall(CONTEXT_VERIFY_TOOL_NAME);
       const params = asToolParamsRecord(args);
-      const diff =
-        typeof params.diff === "string" && params.diff.trim() ? params.diff : undefined;
+      const diff = typeof params.diff === "string" && params.diff.trim() ? params.diff : undefined;
       const changedFiles = Array.isArray(params.changedFiles)
         ? params.changedFiles.filter((entry): entry is string => typeof entry === "string")
         : undefined;
@@ -900,7 +919,8 @@ function resolveContextFoldingRequester(
   options: DcsContextAgentToolOptions,
   sessionId: string,
 ): ContextRequesterIdentity {
-  const workspaceId = (options.workspaceRoot?.trim() || process.cwd()) as ContextRequesterIdentity["workspaceId"];
+  const workspaceId = (options.workspaceRoot?.trim() ||
+    process.cwd()) as ContextRequesterIdentity["workspaceId"];
   const sessionKey = options.runSessionKey?.trim() || options.agentSessionKey?.trim();
   return {
     workspaceId,
@@ -917,9 +937,10 @@ function resolveBlockHandleMinter(
 ): ((block: ContextBlock) => ContextHandle | null) | undefined {
   if (!resolveContextFoldingEnabledForOptions(options)) return undefined;
   const requester = resolveContextFoldingRequester(options, sessionId);
-  return (block) => handleForContextBlock(block, requester, {
-    ...(options.contextFoldingNow ? { now: options.contextFoldingNow } : {}),
-  });
+  return (block) =>
+    handleForContextBlock(block, requester, {
+      now: options.contextFoldingNow,
+    });
 }
 
 function resolveContextExpandDeps(
@@ -948,7 +969,9 @@ const ContextExpandSchema = Type.Object({
         resource_id: Type.String({
           description: "Workspace-relative file path, block:<block_id>, or a context-archive uri.",
         }),
-        checksum: Type.Optional(Type.String({ description: "Required for context-archive resources." })),
+        checksum: Type.Optional(
+          Type.String({ description: "Required for context-archive resources." }),
+        ),
         start_line: Type.Optional(Type.Integer({ minimum: 1 })),
         end_line: Type.Optional(Type.Integer({ minimum: 1 })),
         offset: Type.Optional(Type.Integer({ minimum: 0 })),
@@ -959,12 +982,26 @@ const ContextExpandSchema = Type.Object({
     ),
   ),
   mode: Type.String({ description: "excerpt | search | aggregate" }),
-  max_chars: Type.Optional(Type.Integer({ minimum: 1, maximum: CONTEXT_FOLDING_LIMITS.expandMaxChars })),
-  max_bytes: Type.Optional(Type.Integer({ minimum: 1, maximum: CONTEXT_FOLDING_LIMITS.expandMaxBytes })),
+  max_chars: Type.Optional(
+    Type.Integer({ minimum: 1, maximum: CONTEXT_FOLDING_LIMITS.expandMaxChars }),
+  ),
+  max_bytes: Type.Optional(
+    Type.Integer({ minimum: 1, maximum: CONTEXT_FOLDING_LIMITS.expandMaxBytes }),
+  ),
   query: Type.Optional(Type.String({ description: "Required for mode=search." })),
-  start_line: Type.Optional(Type.Integer({ minimum: 1, description: "Absolute line range inside the handle selector (excerpt only)." })),
+  start_line: Type.Optional(
+    Type.Integer({
+      minimum: 1,
+      description: "Absolute line range inside the handle selector (excerpt only).",
+    }),
+  ),
   end_line: Type.Optional(Type.Integer({ minimum: 1 })),
-  offset: Type.Optional(Type.Integer({ minimum: 0, description: "Absolute char range inside the handle selector (excerpt only)." })),
+  offset: Type.Optional(
+    Type.Integer({
+      minimum: 0,
+      description: "Absolute char range inside the handle selector (excerpt only).",
+    }),
+  ),
   length: Type.Optional(Type.Integer({ minimum: 1 })),
 });
 
@@ -1045,16 +1082,19 @@ export function createContextExpandTool(options: DcsContextAgentToolOptions): An
       const query = readStringParam(params, "query");
       const maxChars = typeof params.max_chars === "number" ? params.max_chars : undefined;
       const maxBytes = typeof params.max_bytes === "number" ? params.max_bytes : undefined;
-      const result = await expandContextHandle({
-        schemaVersion: CONTEXT_EXPAND_REQUEST_SCHEMA,
-        handle,
-        mode,
-        ...(maxChars !== undefined ? { maxChars } : {}),
-        ...(maxBytes !== undefined ? { maxBytes } : {}),
-        ...(query ? { query } : {}),
-        ...(range ? { range } : {}),
-        requester: deps.requester,
-      }, deps);
+      const result = await expandContextHandle(
+        {
+          schemaVersion: CONTEXT_EXPAND_REQUEST_SCHEMA,
+          handle,
+          mode,
+          ...(maxChars !== undefined ? { maxChars } : {}),
+          ...(maxBytes !== undefined ? { maxBytes } : {}),
+          ...(query ? { query } : {}),
+          ...(range ? { range } : {}),
+          requester: deps.requester,
+        },
+        deps,
+      );
       codingObservability.recordFactToolCall(CONTEXT_EXPAND_TOOL_NAME);
       codingObservability.recordFactStoreHit(result.ok);
       return jsonResult({

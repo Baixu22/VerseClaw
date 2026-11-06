@@ -430,6 +430,15 @@ describe('--fixture negatives through the real entry (in-memory rewrites, tree u
     expect(generated.relations[0].relationKey).toBe('chat--suggests-upgrade-to--chat');
   });
 
+  it('rejects a known but wrong relation endpoint through the real entry', async () => {
+    const generated = await report(['--fixture', `${FIXTURES}/known-wrong-endpoint.json`]);
+    expect(generated.code).toBe(1);
+    expect(generated.report?.status).toBe('invalid');
+    expect(generated.report?.diagnostics).toContainEqual(expect.objectContaining({
+      rule: 'relation-endpoint-mismatch', field: 'to', relationKey: 'routing-memo--quality-gated-by--chat',
+    }));
+  });
+
   it('a validator stubbed to a no-op cannot keep the declared rules: rulesEvaluated shrinks and the report is invalid', async () => {
     const { report: generated, fixture } = await negative('validator-noop');
     expect(rulesOf(generated.diagnostics)).toEqual(['report-field-missing']);
@@ -441,6 +450,20 @@ describe('--fixture negatives through the real entry (in-memory rewrites, tree u
     // The relations themselves were still enumerated and their sources still bound.
     expect(generated.relations.reduce((sum, entry) => sum + entry.sourceRefs.length, 0)).toBe(8);
     expect(generated.unverified).toEqual([]);
+  });
+
+  it('rechecks the validator probes when verifying an earlier valid report', async () => {
+    const generated = await report(['--actor', ACTOR]);
+    expect(generated.code).toBe(0);
+    const bytes = readFileSync(generated.file);
+    const candidate = describeCandidate(SANDBOX);
+
+    const verified = await run(['--fixture', `${FIXTURES}/validator-noop.json`, '--verify', generated.file]);
+    expect(verified.code).toBe(1);
+    expect(verified.stderr).toContain('[report-field-missing] - rulesEvaluated:');
+    for (const rule of semantics.PRODUCT_SEMANTIC_RELATION_RULES) expect(verified.stderr).toContain(rule);
+    expect(readFileSync(generated.file)).toEqual(bytes);
+    expect(describeCandidate(SANDBOX)).toEqual(candidate);
   });
 
   it('a deleted or moved source is recorded as missing and unverified', async () => {
@@ -627,7 +650,30 @@ describe('--verify invalidates tampered or incomplete reports', () => {
     expect(base.status).toBe('valid');
     expect(base.candidate.dirty).toBe(false);
     const result = verifyEvidenceReport(base, options);
-    expect(result).toEqual({ status: 'valid', diagnostics: [], rulesEvaluated: [...SOURCE_DIAGNOSTIC_RULES] });
+    expect(result).toEqual({ status: 'valid', diagnostics: [], rulesEvaluated: [...semantics.PRODUCT_SEMANTIC_RELATION_RULES, ...SOURCE_DIAGNOSTIC_RULES] });
+  });
+
+  it.each(['missing', 'unknown'] as const)('rejects %s rules observed from the current validator probes', (mutation) => {
+    const registry = {
+      ...semantics,
+      validateProductSemanticRelations: (...args: Parameters<typeof semantics.validateProductSemanticRelations>) => {
+        const result = semantics.validateProductSemanticRelations(...args);
+        const diagnostics = mutation === 'missing'
+          ? result.diagnostics.filter(({ rule }) => rule !== 'relation-endpoint-mismatch')
+          : result.diagnostics.length > 0
+            ? [...result.diagnostics, { ...result.diagnostics[0], rule: 'undeclared-probe-rule' }]
+            : result.diagnostics;
+        return { ok: diagnostics.length === 0, diagnostics };
+      },
+    };
+    const result = verifyEvidenceReport(base, { ...options, registry });
+    expect(result.status).toBe('invalid');
+    expect(result.diagnostics).toContainEqual(expect.objectContaining({
+      rule: 'report-field-missing', field: 'rulesEvaluated',
+      message: expect.stringContaining(mutation === 'missing' ? 'missing: relation-endpoint-mismatch' : 'unknown: undeclared-probe-rule'),
+    }));
+    if (mutation === 'missing') expect(result.rulesEvaluated).not.toContain('relation-endpoint-mismatch');
+    else expect(result.rulesEvaluated).toContain('undeclared-probe-rule');
   });
 
   const TAMPER_CASES: Array<[string, (copy: Json) => void, string, string]> = [
@@ -723,11 +769,11 @@ describe('--verify invalidates tampered or incomplete reports', () => {
 // a skipped check. Each case below spawns the CLI; the fixtures are the C3 ones under
 // report/fixtures/ (plus C5's validator-noop) and no second fixture set exists.
 describe('evidence refs check: real gate entry (node scripts/check-evidence-refs.mjs)', () => {
-  const RELATION_RULE_COUNT = 11;
+  const RELATION_RULE_COUNT = 12;
   const SOURCE_RULE_COUNT = 8;
   const CLOSED_RULES: string[] = [...semantics.PRODUCT_SEMANTIC_RELATION_RULES, ...SOURCE_DIAGNOSTIC_RULES];
 
-  it('binds the closed rule set the gate must evaluate: 11 relation rules + 8 source rules, no overlap', () => {
+  it('binds the closed rule set the gate must evaluate: 12 relation rules + 8 source rules, no overlap', () => {
     expect(semantics.PRODUCT_SEMANTIC_RELATION_RULES).toHaveLength(RELATION_RULE_COUNT);
     expect(SOURCE_DIAGNOSTIC_RULES).toHaveLength(SOURCE_RULE_COUNT);
     expect(new Set(CLOSED_RULES).size).toBe(RELATION_RULE_COUNT + SOURCE_RULE_COUNT);
@@ -793,7 +839,7 @@ describe('evidence refs check: real gate entry (node scripts/check-evidence-refs
     expect(readFileSync(hollow, 'utf8')).toBe(text);
   });
 
-  it('a skipped check cannot pass: the positive report records all 6 relations, 8 source refs and exactly the 19 closed rules', async () => {
+  it('a skipped check cannot pass: the positive report records all 6 relations, 8 source refs and exactly the 20 closed rules', async () => {
     const result = await report(['--actor', ACTOR]);
     expect(result.code).toBe(0);
     expect(result.stdout).toMatch(/^\[evidence-refs\] report valid: 6 relation\(s\), 8 source ref\(s\), 0 diagnostic\(s\) -> /);

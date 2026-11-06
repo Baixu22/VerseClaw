@@ -1,0 +1,13 @@
+{
+  "schema": "ProductSemanticRelationFixture/v1",
+  "id": "known-wrong-endpoint",
+  "umbrellaRow": [1],
+  "candidate": {
+    "from": "routing-memo",
+    "kind": "quality-gated-by",
+    "to": "chat",
+    "authorityBoundary": "same-session-scorecard",
+    "evidenceRefs": ["docs/clawx-product-semantics.md"]
+  },
+  "expect": { "rule": "relation-endpoint-mismatch", "field": "to" }
+}

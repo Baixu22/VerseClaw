@@ -1,0 +1,821 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-architecture-review",
+  "mode": "three distinct subagent contexts, same inherited model; main agent integrated and revalidated fixes",
+  "targets": {
+    "base": "bfcf57616b361a12845014b3f054b95e31c4021c",
+    "originalCandidate": "ad021f1c56572ab33292d1a2f31c32db53c994ba"
+  },
+  "runtime": {
+    "reviewer": "Kuhn",
+    "agentId": "01a1ae68-b29b-7432-84b5-7d2074942af9",
+    "findings": [],
+    "ownerTests": {
+      "passed": 44,
+      "exitCode": 0
+    },
+    "compositionTests": {
+      "passed": 1,
+      "exitCode": 0
+    },
+    "limitation": "Mocked storage/config/provider probes; no real Electron or concurrent cold-start acceptance."
+  },
+  "ipc": {
+    "reviewer": "Ampere",
+    "agentId": "01a1ae68-b1a9-7522-859e-09d1be72f661",
+    "findings": [
+      {
+        "id": "bound-channel-lost",
+        "priority": 2,
+        "status": "fixed"
+      },
+      {
+        "id": "dynamic-method-destructuring",
+        "priority": 2,
+        "status": "fixed"
+      },
+      {
+        "id": "named-default-import",
+        "priority": 2,
+        "status": "fixed"
+      },
+      {
+        "id": "nested-and-default-binding",
+        "priority": 2,
+        "status": "fixed"
+      }
+    ],
+    "report": "# Contract checker scoped review\n\nActor: codex-contract-reviewer; driven_by: agent.\nTarget: C:/Users/27933/.codex/worktrees/architecture-convergence-recovered/ClawX\nBase: bfcf57616b361a12845014b3f054b95e31c4021c\nHEAD: ad021f1c56572ab33292d1a2f31c32db53c994ba\n\nFour actionable P2 findings. Run fixtures from the target repository with\nTEMP=TMP=D:/tmp and: node scripts/contract-check.mjs --fixture <absolute path>\nAll fixtures change source text in memory. No repository files, branch state,\nTask Forest or historical evidence were edited.\n\n## 1. Bound channel arguments are discarded\n\nLocation: scripts/contract-check.mjs:303, 317-328.\nFixtures: preload-bound-channel.json, preload-bound-dynamic-channel.json.\n\n    const boundInvoke = ipcRenderer.invoke.bind(ipcRenderer, 'rogue:bound');\n    boundInvoke('host:invoke');\n\nHEAD exit 0. Actual invoked channel is rogue:bound, with host:invoke as payload.\nThe resolver follows bind but discards bound arguments; the visitor reads the\nlater call's first argument. A nonliteral bound channel also passes.\nConversely preload-bound-valid.json binds host:invoke and supplies an object\npayload, and HEAD incorrectly rejects it as a nonstatic channel (exit 1).\n\nMinimum repair: carry the bound channel with resolved method metadata, or\nexplicitly reject pre-applied arguments if unsupported. Add real-entry fixtures\nfor forbidden, nonliteral and permitted bound channels. The current fixture\nflat-ipc-preload-aliased.json binds only this.\n\n## 2. Dynamic method destructuring loses the known IPC origin\n\nLocation: scripts/contract-check.mjs:309-310.\nFixtures: main-destructure-dynamic.json, preload-destructure-dynamic.json.\n\n    const { ipcMain } = require('electron');\n    const method = ['handle'][0];\n    const { [method]: register } = ipcMain;\n    register.call(ipcMain, 'rogue:dynamic', () => 1);\n\nHEAD exit 0. The equivalent direct ipcMain[method](...) is rejected with\nflat-ipc/non-static-method (control-main-direct-dynamic.json, exit 1).\nbindingName returns null, failing methods.includes, so the known IPC origin\nis lost. The ipcRenderer equivalent also exits 0.\n\nMinimum repair: propagate <unresolved> for BindingElement keys on a known IPC\nreceiver just as for ElementAccessExpression. Add Main and preload fixtures.\n\n## 3. Named-default Electron imports regress from rejection to pass\n\nLocation: scripts/contract-check.mjs:273-277.\nFixture: default-import-named-compare.json.\n\n    import { default as admissionElectron } from 'electron';\n    admissionElectron.ipcMain.handle('rogue:default-import', () => 1);\n\nBase exit 1 (flat-ipc/bypass-registry), HEAD exit 0. isElectron recognizes\nImportClause/NamespaceImport but omits ImportSpecifier with imported name default.\nThe normal default import control is rejected by both versions.\n\nMinimum repair: recognize named-default Electron imports; add Main/preload\nequivalence fixtures.\n\n## 4. Binding sources omit defaults and nested destructuring\n\nLocation: scripts/contract-check.mjs:291-292, 309-310.\nFixtures: default-destructure-compare.json, nested-destructure-compare.json.\n\n    {\n      const { ipcMain = require('electron').ipcMain } = {};\n      ipcMain.handle('rogue:default', () => 1);\n    }\n\nBase exit 1, HEAD exit 0. isIpc only reads the whole declaration's initializer\nand ignores the BindingElement default. Also:\n\n    const { ipcMain: { handle: register } } = require('electron');\n    register.call(require('electron').ipcMain, 'rogue:nested', () => 1);\n\nHEAD exit 0. For the nested method, entry.parent.parent is another BindingElement,\nnot the variable declaration, so its initializer is undefined.\n\nMinimum repair: resolve binding sources through enclosing binding patterns,\naccount for defaults, and preserve known Electron alternatives. Unsupported\nknown IPC bindings must be rejected explicitly. Add fixtures for both forms.\n\n## Evidence and validation\n\n- report.json: unchanged-entry baseline exit 0, 11 probes and agent-driven\n  JavaScript argument/destructuring simulations using an in-memory Electron stub.\n- comparison-report.json: six base/HEAD comparisons. Original base checker and\n  entrypoint helper copied byte-for-byte from git objects to D: only.\n  Both checker versions use current repository inputs. No base worktree created.\n- Read relevant AGENTS/spec/rules, ADMISSION-GATE section 8, full checker,\n  focused tests and fixture classes. These examples fit the declared local\n  alias/destructuring/bind boundary; no reflection or cross-module analysis needed.\n- Focused Vitest: 72 tests, 71 passed, one failure after about 32.99s with\n  STACK_TRACE_ERROR for flat-ipc-preload-computed.json. Targeted retry passed.\n  This is not a single clean 72/72 run.\n- Initial configLoader=runner failed on existing __dirname usage before tests.\n  Default bundling then ran with temp config/cache confined to D:/tmp.\n- No installation, full suite, typecheck or Electron E2E. No product acceptance claim.\n- Assignment aliases explored but excluded from findings as outside static-shape scope.\n- Parallel untracked architecture-review-and-integration.md preserved.\n- Final readback observed parallel integration advance HEAD to c10496860dc73a91865bfd7415826624ff78eb33. Relative to reviewed ad021f1c, the checker only gained knowledgeConnectorsApi facade loading at line 763; IPC parser and focused tests are unchanged. Reproductions above remain bound to the requested ad021f1c candidate; the integrated candidate was not rerun.\n",
+    "before": {
+      "driven_by": "agent",
+      "actor": "codex-contract-reviewer",
+      "base": "bfcf57616b361a12845014b3f054b95e31c4021c",
+      "head": "ad021f1c56572ab33292d1a2f31c32db53c994ba",
+      "originalFiles": [
+        {
+          "relative": "scripts/contract-check.mjs",
+          "target": "D:\\tmp\\architecture-review-20261106\\contract-check-ast\\base\\scripts\\contract-check.mjs",
+          "sha256": "a1f90684073e19b45fb8ed3b789f689e0fefee8a0d0ccf9efbe509435d0fa814"
+        },
+        {
+          "relative": "scripts/lib/entrypoint.mjs",
+          "target": "D:\\tmp\\architecture-review-20261106\\contract-check-ast\\base\\scripts\\lib\\entrypoint.mjs",
+          "sha256": "c6d85bf1a39d6deba581152b62ff6438bca2b4a5e62411c0ffbd81ff7e9cab3b"
+        }
+      ],
+      "baseControl": {
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "stdout": "Contract check passed.\n",
+        "stderr": ""
+      },
+      "results": [
+        {
+          "id": "default-import-named-compare",
+          "file": "electron/main/ipc/host-invoke.ts",
+          "code": "import { default as admissionElectron } from 'electron';\nadmissionElectron.ipcMain.handle('rogue:default-import', () => 1);\n",
+          "expected": {
+            "base": 1,
+            "head": 0
+          },
+          "fixturePath": "D:\\tmp\\architecture-review-20261106\\contract-check-ast\\default-import-named-compare.json",
+          "calls": [
+            {
+              "method": "handle",
+              "channel": "rogue:default-import",
+              "callbackType": "function"
+            }
+          ],
+          "previous": {
+            "exitCode": 1,
+            "signal": null,
+            "error": null,
+            "stdout": "",
+            "stderr": "Contract check fixtures applied: default-import-named-compare\nContract check failed:\n- electron/main/ipc/host-invoke.ts:387: [flat-ipc/bypass-registry] ipcMain.handle('rogue:default-import') is registered outside electron/main/ipc-handlers.ts and bypasses HostApiRegistry\n"
+          },
+          "current": {
+            "exitCode": 0,
+            "signal": null,
+            "error": null,
+            "stdout": "Contract check passed.\n",
+            "stderr": "Contract check fixtures applied: default-import-named-compare\n"
+          }
+        },
+        {
+          "id": "control-default-import-compare",
+          "file": "electron/main/ipc/host-invoke.ts",
+          "code": "import admissionElectron from 'electron';\nadmissionElectron.ipcMain.handle('rogue:default-import', () => 1);\n",
+          "expected": {
+            "base": 1,
+            "head": 1
+          },
+          "fixturePath": "D:\\tmp\\architecture-review-20261106\\contract-check-ast\\control-default-import-compare.json",
+          "calls": [
+            {
+              "method": "handle",
+              "channel": "rogue:default-import",
+              "callbackType": "function"
+            }
+          ],
+          "previous": {
+            "exitCode": 1,
+            "signal": null,
+            "error": null,
+            "stdout": "",
+            "stderr": "Contract check fixtures applied: control-default-import-compare\nContract check failed:\n- electron/main/ipc/host-invoke.ts:387: [flat-ipc/bypass-registry] ipcMain.handle('rogue:default-import') is registered outside electron/main/ipc-handlers.ts and bypasses HostApiRegistry\n"
+          },
+          "current": {
+            "exitCode": 1,
+            "signal": null,
+            "error": null,
+            "stdout": "",
+            "stderr": "Contract check fixtures applied: control-default-import-compare\nContract check failed:\n- electron/main/ipc/host-invoke.ts:387: [flat-ipc/bypass-registry] ipcMain.handle('rogue:default-import') is registered outside electron/main/ipc-handlers.ts and bypasses HostApiRegistry\n"
+          }
+        },
+        {
+          "id": "default-destructure-compare",
+          "file": "electron/main/ipc/host-invoke.ts",
+          "code": "{ const { ipcMain = require('electron').ipcMain } = {};\nipcMain.handle('rogue:default', () => 1); }\n",
+          "expected": {
+            "base": 1,
+            "head": 0
+          },
+          "fixturePath": "D:\\tmp\\architecture-review-20261106\\contract-check-ast\\default-destructure-compare.json",
+          "calls": [
+            {
+              "method": "handle",
+              "channel": "rogue:default",
+              "callbackType": "function"
+            }
+          ],
+          "previous": {
+            "exitCode": 1,
+            "signal": null,
+            "error": null,
+            "stdout": "",
+            "stderr": "Contract check fixtures applied: default-destructure-compare\nContract check failed:\n- electron/main/ipc/host-invoke.ts:387: [flat-ipc/bypass-registry] ipcMain.handle('rogue:default') is registered outside electron/main/ipc-handlers.ts and bypasses HostApiRegistry\n"
+          },
+          "current": {
+            "exitCode": 0,
+            "signal": null,
+            "error": null,
+            "stdout": "Contract check passed.\n",
+            "stderr": "Contract check fixtures applied: default-destructure-compare\n"
+          }
+        },
+        {
+          "id": "nested-destructure-compare",
+          "file": "electron/main/ipc/host-invoke.ts",
+          "code": "const { ipcMain: { handle: nestedRegister } } = require('electron');\nnestedRegister.call(require('electron').ipcMain, 'rogue:nested', () => 1);\n",
+          "expected": {
+            "base": 0,
+            "head": 0
+          },
+          "fixturePath": "D:\\tmp\\architecture-review-20261106\\contract-check-ast\\nested-destructure-compare.json",
+          "calls": [
+            {
+              "method": "handle",
+              "channel": "rogue:nested",
+              "callbackType": "function"
+            }
+          ],
+          "previous": {
+            "exitCode": 0,
+            "signal": null,
+            "error": null,
+            "stdout": "Contract check passed.\n",
+            "stderr": "Contract check fixtures applied: nested-destructure-compare\n"
+          },
+          "current": {
+            "exitCode": 0,
+            "signal": null,
+            "error": null,
+            "stdout": "Contract check passed.\n",
+            "stderr": "Contract check fixtures applied: nested-destructure-compare\n"
+          }
+        },
+        {
+          "id": "dynamic-destructure-compare",
+          "file": "electron/main/ipc/host-invoke.ts",
+          "code": "{ const { ipcMain } = require('electron');\nconst method = ['handle'][0];\nconst { [method]: register } = ipcMain;\nregister.call(ipcMain, 'rogue:dynamic', () => 1); }\n",
+          "expected": {
+            "base": 0,
+            "head": 0
+          },
+          "fixturePath": "D:\\tmp\\architecture-review-20261106\\contract-check-ast\\dynamic-destructure-compare.json",
+          "calls": [
+            {
+              "method": "handle",
+              "channel": "rogue:dynamic",
+              "callbackType": "function"
+            }
+          ],
+          "previous": {
+            "exitCode": 0,
+            "signal": null,
+            "error": null,
+            "stdout": "Contract check passed.\n",
+            "stderr": "Contract check fixtures applied: dynamic-destructure-compare\n"
+          },
+          "current": {
+            "exitCode": 0,
+            "signal": null,
+            "error": null,
+            "stdout": "Contract check passed.\n",
+            "stderr": "Contract check fixtures applied: dynamic-destructure-compare\n"
+          }
+        },
+        {
+          "id": "bound-channel-compare",
+          "file": "electron/preload/index.ts",
+          "code": "const boundInvoke = ipcRenderer.invoke.bind(ipcRenderer, 'rogue:bound');\nboundInvoke('host:invoke');\n",
+          "expected": {
+            "base": 0,
+            "head": 0
+          },
+          "fixturePath": "D:\\tmp\\architecture-review-20261106\\contract-check-ast\\bound-channel-compare.json",
+          "calls": [
+            {
+              "method": "invoke",
+              "channel": "rogue:bound",
+              "args": [
+                "host:invoke"
+              ]
+            }
+          ],
+          "previous": {
+            "exitCode": 0,
+            "signal": null,
+            "error": null,
+            "stdout": "Contract check passed.\n",
+            "stderr": "Contract check fixtures applied: bound-channel-compare\n"
+          },
+          "current": {
+            "exitCode": 0,
+            "signal": null,
+            "error": null,
+            "stdout": "Contract check passed.\n",
+            "stderr": "Contract check fixtures applied: bound-channel-compare\n"
+          }
+        }
+      ],
+      "scope": "Both original checker entrypoints run against current repository inputs; base script files copied byte-for-byte from git objects into D: only."
+    },
+    "repair": {
+      "driven_by": "agent",
+      "actor": "codex-contract-reviewer",
+      "checkedAt": "2026-11-06T10:45:17.1065149+08:00",
+      "head": "9394c61420342122316468629e2434977835d1ba",
+      "editingComplete": true,
+      "changedFiles": [
+        {
+          "path": "scripts/contract-check.mjs",
+          "sha256": "67053f740cd8a641ce73801b8a29700e4a9ecd160ef69daaac2b4b2e37676e69"
+        },
+        {
+          "path": "tests/unit/contract-check.test.ts",
+          "sha256": "ae1fac0eddb123c1c5c75eb1e1a92594ac1b5f26827de6c5bb25549aea5df959"
+        },
+        {
+          "path": "tests/fixtures/contract-check/flat-ipc-bound-channel.json",
+          "sha256": "9728398b4cdd431533099fe8c9b7b59ee40dee15aadb0150dc3b4875ca4436a4"
+        },
+        {
+          "path": "tests/fixtures/contract-check/flat-ipc-bound-dynamic-channel.json",
+          "sha256": "a7bca0c305b1b8cffcd2783906b667fe7ac5ceba7b1fd6f016e3a8eeb51dd8b1"
+        },
+        {
+          "path": "tests/fixtures/contract-check/flat-ipc-bound-spread-channel.json",
+          "sha256": "5ee2ddd5afc348b6ec4cca65b703517463e139d7e7429b4b8610507429c7b055"
+        },
+        {
+          "path": "tests/fixtures/contract-check/flat-ipc-preload-bound-channel.json",
+          "sha256": "235f6aa60c082e492d555cde16af4912144da58d1f32f94c697711e8e01b7f87"
+        },
+        {
+          "path": "tests/fixtures/contract-check/flat-ipc-preload-bound-dynamic-channel.json",
+          "sha256": "f6d065809f585ea811cf5c4117ff34582054d52823692f92b602c713af5aee79"
+        },
+        {
+          "path": "tests/fixtures/contract-check/flat-ipc-dynamic-destructured-method.json",
+          "sha256": "493a772b7df159101ca491126bce12b96e4b1798ca13ce902cfa1f5e6ec32209"
+        },
+        {
+          "path": "tests/fixtures/contract-check/flat-ipc-preload-dynamic-destructured-method.json",
+          "sha256": "c693344cddf0294299608d937417bbd923071f244d9764cb5714b72e8f3139ad"
+        },
+        {
+          "path": "tests/fixtures/contract-check/flat-ipc-named-default-import.json",
+          "sha256": "eee56a7266a2b8d4ee6fcbc0bde6185a634a7a8b8eb517b2ee1bb78a0c5a6db0"
+        },
+        {
+          "path": "tests/fixtures/contract-check/flat-ipc-preload-named-default-import.json",
+          "sha256": "4ea8a726485842855aa8a976300974135e370aad72838d4753bafc00c9255c0e"
+        },
+        {
+          "path": "tests/fixtures/contract-check/flat-ipc-nested-destructured-method.json",
+          "sha256": "13cdbf25c813068e410bf6b3dbc945312927611f2ee71dd7c7d20dfc13edbf11"
+        },
+        {
+          "path": "tests/fixtures/contract-check/flat-ipc-preload-nested-destructured-method.json",
+          "sha256": "a617b81d01ce32fb54ffe9edc603e0ed282b892367a23b50555bb7fbe2fa6142"
+        },
+        {
+          "path": "tests/fixtures/contract-check/flat-ipc-default-receiver.json",
+          "sha256": "7c003e94124a2fe68f0eabcc108406618b657e82e4d1694f6acff82c1362ab75"
+        },
+        {
+          "path": "tests/fixtures/contract-check/flat-ipc-preload-default-receiver.json",
+          "sha256": "4588c9420f284c605755177bf57fd9a02228ab47093b0836fd9a14be2443e452"
+        },
+        {
+          "path": "tests/fixtures/contract-check/flat-ipc-default-method.json",
+          "sha256": "037b36214870a65cc810c6592a957fa7dc13c06c52ca513cb150712aaddbc378"
+        },
+        {
+          "path": "tests/fixtures/contract-check/flat-ipc-preload-default-method.json",
+          "sha256": "3bdb317636d7237fd0b7d07ae7560f0575b5fb6c448c5a1c4490abf98285e80e"
+        },
+        {
+          "path": "tests/fixtures/contract-check/flat-ipc-nested-default-binding.json",
+          "sha256": "2f079e11bda062b1710878a7d4d534300d294bbe05a5dd728b295a1c3d7bbe5b"
+        },
+        {
+          "path": "tests/fixtures/contract-check/flat-ipc-preload-nested-default-binding.json",
+          "sha256": "70a8899536f48f00fbdd20d735731a8c6022bcdfe058ac3f0e1c6304ed18b05f"
+        },
+        {
+          "path": "tests/fixtures/contract-check/flat-ipc-preload-bound-host-invoke.json",
+          "sha256": "0bed808d5572b43965cba8612f580d7b5a1258f56741057819320f3114f4e2c2"
+        },
+        {
+          "path": "tests/fixtures/contract-check/flat-ipc-ordinary-bindings.json",
+          "sha256": "1979d879b4f1ef28c35c7ea177bc50d9a766708469a111a1e1dbd8fb8c93bcb2"
+        },
+        {
+          "path": "tests/fixtures/contract-check/flat-ipc-bound-typed-entry.json",
+          "sha256": "2ba541c2534db4e6da534fb7dfc4576c49d013b5b3daabd476e08ef7cb4be876"
+        }
+      ],
+      "declarationFileChanged": false,
+      "tests": {
+        "command": "node node_modules/vitest/vitest.mjs run tests/unit/contract-check.test.ts --config D:/tmp/architecture-review-20261106/contract-check-ast/vitest.review.config.mjs --maxWorkers=1 --reporter=verbose --reporter=json --outputFile.json=D:/tmp/architecture-review-20261106/contract-check-ast/fixed-vitest-rerun-results.json",
+        "exitCode": 0,
+        "success": true,
+        "total": 98,
+        "passed": 98,
+        "failed": 0,
+        "pending": 0,
+        "durationSeconds": 161.09,
+        "timeoutMilliseconds": 30000,
+        "firstRun": "fixed-vitest-results.json: 90 passed / 8 failed; retained",
+        "report": "fixed-vitest-rerun-results.json",
+        "log": "fixed-vitest-rerun.log"
+      },
+      "remainingProcessCount": 0,
+      "remainingProcesses": [],
+      "committed": false,
+      "taskForestChanged": false,
+      "sharedDependenciesChanged": false
+    }
+  },
+  "semantic": {
+    "reviewer": "Bohr",
+    "agentId": "01a1ae68-b393-7a32-87b0-e26592c87502",
+    "findings": [
+      {
+        "id": "historical-hash-on-live-source",
+        "priority": 2,
+        "status": "fixed"
+      },
+      {
+        "id": "verify-probes-not-reexecuted",
+        "status": "fixed",
+        "origin": "existing base limitation included by user repair request"
+      }
+    ],
+    "before": {
+      "driven_by": "agent",
+      "actor": "codex-semantic-authority-reviewer",
+      "method": "Read Git blobs only; exact two assertions from architecture-authority-convergence.test.ts:43-44, no repository writes",
+      "snapshots": [
+        {
+          "revision": "2ca6e2092b954ba439ccd26a04873385a106ad5c",
+          "rows": 35,
+          "hashMismatches": 0,
+          "lineMismatches": 0,
+          "missingAnchors": 0,
+          "failures": []
+        },
+        {
+          "revision": "ad021f1c56572ab33292d1a2f31c32db53c994ba",
+          "rows": 35,
+          "hashMismatches": 0,
+          "lineMismatches": 0,
+          "missingAnchors": 0,
+          "failures": []
+        },
+        {
+          "revision": "c97ea58faf2e66cc52cabe1df7f9c5b31bc387cd",
+          "rows": 35,
+          "hashMismatches": 1,
+          "lineMismatches": 1,
+          "missingAnchors": 0,
+          "failures": [
+            {
+              "target": "memory.native-file",
+              "source": "openclaw_runtime/src/runtime-core/memory-hybrid-retrieval.ts",
+              "hashMatches": false,
+              "recordedLine": 285,
+              "recordedLineMatches": false,
+              "anchorPresent": true,
+              "currentAnchorLines": [
+                287
+              ]
+            }
+          ]
+        }
+      ],
+      "commentOnly": {
+        "target": "feature.agent-map",
+        "source": "openclaw_runtime/src/context-engine/agent-map-context-provider.ts",
+        "hashMatches": false,
+        "recordedLine": 47,
+        "recordedLineMatches": true,
+        "anchorPresent": true,
+        "currentAnchorLines": [
+          47
+        ]
+      },
+      "prefixOnly": {
+        "target": "feature.agent-map",
+        "source": "openclaw_runtime/src/context-engine/agent-map-context-provider.ts",
+        "hashMatches": false,
+        "recordedLine": 47,
+        "recordedLineMatches": false,
+        "anchorPresent": true,
+        "currentAnchorLines": [
+          48
+        ]
+      }
+    },
+    "repair": {
+      "schema": "ArchitectureSemanticReviewRepair/v1",
+      "driven_by": "agent",
+      "actor": "codex-semantic-authority-repair",
+      "baseHead": "c10496860dc73a91865bfd7415826624ff78eb33",
+      "currentHead": "c10496860dc73a91865bfd7415826624ff78eb33",
+      "changedPaths": [
+        "scripts/check-evidence-refs.mjs",
+        "tests/unit/architecture-authority-convergence.test.ts",
+        "tests/unit/evidence-refs-exist.test.ts"
+      ],
+      "sourceHashes": [
+        {
+          "path": "scripts/check-evidence-refs.mjs",
+          "sha256": "634c0bb1f6b950abc322397eb66aec6d038764ac0de6a08486264c16efcc6b41"
+        },
+        {
+          "path": "tests/unit/architecture-authority-convergence.test.ts",
+          "sha256": "7b088fc3ae628e9c8ee547fbed78d9cb4c3a94902ac57791b450daa00d03a82a"
+        },
+        {
+          "path": "tests/unit/evidence-refs-exist.test.ts",
+          "sha256": "1fa90d71e69da67b06eb3d5812bb53fec1da784200f0fdc96b1aed31c628fd48"
+        }
+      ],
+      "fixes": [
+        "Current gap source anchors replace historical whole-file hash and line assertions; keys, categories, counts and unresolved state retained.",
+        "Verification reexecutes live relation validation and observeRelationRules, rejects missing or unknown rules, and returns actual observed rules."
+      ],
+      "validation": {
+        "before": {
+          "phase": "before",
+          "output": "before-tests.json",
+          "actor": "codex-semantic-authority-repair",
+          "driven_by": "agent",
+          "exitCode": 1,
+          "passed": 0,
+          "failed": 4,
+          "skipped": 76,
+          "files": 2,
+          "success": false,
+          "failures": [
+            "component declarations reflect the already enacted product decisions accounts for every registered gap with a source-bound classification and keeps it unresolved",
+            "--fixture negatives through the real entry (in-memory rewrites, tree untouched) rechecks the validator probes when verifying an earlier valid report",
+            "--verify invalidates tampered or incomplete reports rejects missing rules observed from the current validator probes",
+            "--verify invalidates tampered or incomplete reports rejects unknown rules observed from the current validator probes"
+          ]
+        },
+        "after": {
+          "durationMs": 32797,
+          "exitCode": 0,
+          "driven_by": "agent",
+          "output": "after-tests.json",
+          "phase": "after",
+          "actor": "codex-semantic-authority-repair",
+          "passed": 82,
+          "failed": 0,
+          "skipped": 0,
+          "files": 2,
+          "success": true,
+          "failures": [],
+          "configuration": "D:/tmp/architecture-review-20261106/semantic-authority-repair/vitest.config.mjs",
+          "command": [
+            "node",
+            "node_modules/vitest/vitest.mjs",
+            "run",
+            "tests/unit/architecture-authority-convergence.test.ts",
+            "tests/unit/evidence-refs-exist.test.ts",
+            "--config",
+            "D:/tmp/architecture-review-20261106/semantic-authority-repair/vitest.config.mjs",
+            "--configLoader",
+            "runner",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:/tmp/architecture-review-20261106/semantic-authority-repair/after-tests.json"
+          ]
+        },
+        "targetedTypes": {
+          "driven_by": "agent",
+          "actor": "codex-semantic-authority-repair",
+          "scope": [
+            "tests/unit/architecture-authority-convergence.test.ts",
+            "tests/unit/evidence-refs-exist.test.ts"
+          ],
+          "exitCode": 0,
+          "diagnostics": []
+        },
+        "scopedChecks": {
+          "exitCode": 0,
+          "commands": [
+            "git diff --check -- scripts/check-evidence-refs.mjs tests/unit/architecture-authority-convergence.test.ts tests/unit/evidence-refs-exist.test.ts",
+            "node --check scripts/check-evidence-refs.mjs",
+            "node node_modules/eslint/bin/eslint.js --no-cache scripts/check-evidence-refs.mjs tests/unit/architecture-authority-convergence.test.ts tests/unit/evidence-refs-exist.test.ts"
+          ]
+        },
+        "historicalFixtures": {
+          "checked": 23,
+          "mismatches": []
+        }
+      },
+      "sideEffects": {
+        "repositoryWrites": [
+          "scripts/check-evidence-refs.mjs",
+          "tests/unit/architecture-authority-convergence.test.ts",
+          "tests/unit/evidence-refs-exist.test.ts"
+        ],
+        "declarationFileChanged": false,
+        "newRepositoryFixtures": 0,
+        "commits": 0,
+        "taskForestWrites": 0,
+        "pnpmOrInstallCommands": 0,
+        "sharedNodeModulesWrites": "None requested or performed during this repair; Vitest config uses D:/tmp cacheDir and cache:false, configLoader:runner; ESLint --no-cache.",
+        "scratchRoot": "D:/tmp/architecture-review-20261106/semantic-authority-repair",
+        "scratchBytesBeforeSummary": 78887,
+        "temporaryTestRepositories": "Created by the existing evidence test sandbox and removed by its afterAll cleanup.",
+        "remainingOwnedProcesses": [],
+        "otherSessionsChangedPaths": [
+          ".gitattributes",
+          "docs/dev/architecture-skeleton/ADMISSION-GATE.md",
+          "docs/dev/architecture-skeleton/CONTRACT-HARDENING.md",
+          "harness/specs/tasks/architecture-review-and-integration.md",
+          "scripts/contract-check.mjs",
+          "tests/unit/contract-check.test.ts"
+        ],
+        "initialConfigAttempt": {
+          "exitCode": 1,
+          "reason": "Repository Vitest config uses __dirname, unavailable with runner loading; no tests executed. Replaced only the D:/tmp runner config with the focused node configuration."
+        },
+        "priorReviewSideEffect": "Earlier read-only review accidentally triggered pnpm dependency verification/install and interrupted it; shared D:/ClawX/node_modules impact was reported then, not repaired here."
+      },
+      "notRun": [
+        "Full repository tests",
+        "Full project typecheck",
+        "Electron/live-provider tests",
+        "Spec changes or task-forest updates",
+        "Integration commit/merge/cleanup (owned by main session)"
+      ]
+    }
+  },
+  "historicalReplay": {
+    "driven_by": "agent",
+    "actor": "codex-architecture-review",
+    "historicalCandidate": "2ca6e2092b954ba439ccd26a04873385a106ad5c",
+    "currentCandidate": "c10496860dc73a91865bfd7415826624ff78eb33",
+    "rows": [
+      {
+        "target": "feature.agent-map",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "feature.runtime-shadow-governance",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "chat",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "chat-plan",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "plan-mode",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "task-loop",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "workboard",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "capability.execution-schema",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "context.candidate-fragment",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "context.owner-reference",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "context.source-reference",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "context.token-pressure",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "knowledge.candidate",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "mcp.tool-schema",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "memory.native-file",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "provider.media",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "provider.model-identity",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "provider.transform-declaration",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "runtime.config",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "runtime.env",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "session.transcript",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "skill.manifest",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "workspace.permission-mode",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "dangerous-approvals",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "file-writes",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "gateway-startup",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "session-restore-replay",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "task-loop-repair-retry",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "compaction",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "file",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "memory",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "modelEcho",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "sekb",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "trace",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      },
+      {
+        "target": "transcript",
+        "historicalHashVerified": true,
+        "historicalLineVerified": true,
+        "currentAnchorPresent": true
+      }
+    ],
+    "historicalEvidenceChanged": false
+  }
+}

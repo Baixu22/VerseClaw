@@ -1,6 +1,6 @@
 # 扁平 IPC 接入面门禁（ADMISSION-GATE）
 
-> 状态：A1 门禁为 `implemented`；A5 已于 2026-11-02 完成 43 条扁平通道与 preload invoke 门的退役（见文末）。
+> 状态：A1/A5 已实施；2026-11-05 的 TF-0787 将枚举升级为 AST 与局部符号解析，当前机制见 §8，历史计数保留原日期与候选。
 > 节点：`TF-0630`（父 `TF-0628` 架构骨架收敛；依赖 `TF-0629`）
 > 合同：`harness/specs/tasks/architecture-skeleton-admission-gate.md`
 > 输入：`docs/dev/architecture-skeleton/ADMISSION-INVENTORY.md` §4 / §6 / §7
@@ -85,7 +85,7 @@ schema `ContractCheckFlatIpcAdjudication/v1`。它是 ADMISSION-INVENTORY §6 �
 | `flat-ipc/non-literal-channel` | `ipcMain.handle(<非字符串字面量>)` | 无法枚举即失败 |
 | `flat-ipc/typed-entry-missing` | `host-invoke.ts` 中找不到 `ipcMain.handle('host:invoke')` | 唯一类型化入口必须存在 |
 
-枚举口径：递归扫描 `electron/**/*.ts`（排除 `*.test.ts` / `*.spec.ts` / `*.d.ts` / `node_modules` / `dist` / `__tests__`），对含 `ipcMain.handle(` 的文件做正则 `ipcMain\.handle\(\s*([^,)]+)`，多行写法一并覆盖。
+当前枚举口径：递归扫描 `electron` 下 ts/tsx/mts/cts/js/jsx/mjs/cjs 生产文件，排除对应测试、声明文件及 `node_modules` / `dist` / `__tests__`。保守预筛选只跳过既无 IPC 根名字也无转义的文本；可疑文本由 TypeScript AST 解码。实际调用、接收对象和静态别名由 AST/局部符号解析识别，不再依赖 `ipcMain.handle(` 的精确字符串。细节见 §8。
 
 ### 3.3 preload 白名单
 
@@ -298,3 +298,38 @@ A5 删 handler 前将该 action 接到 `syncMacTrafficLightPosition`，并由
 | `git diff --check` | exit 0 |
 
 上述 E2E 均在真实 Electron 进程下由 agent 执行；构建警告未升级为通过证据，也未声称真人操作。
+
+## 8. 2026-11-05：修复接入语法漏检（TF-0787）
+
+前一轮测评复现了同一额外 handler 的三个写法：普通写法 exit 1，
+`ipcMain['handle'](...)` 和 `ipcMain.handle (...)` 却 exit 0。本轮在独立基线
+重现这组结果，再将枚举修复到既有 `pnpm contract:check`，未修改运行时接入路径。
+
+当前覆盖属性/计算属性、空白/注释、转义标识符、模板之后的调用、静态方法名、Electron import
+别名、namespace/require 对象、局部对象/方法别名及解构、bind、call/apply。
+`handleOnce` 同样是 request handler；同文件的重复 `host:invoke` 也被拒绝。
+局部符号用于排除被函数参数遮蔽的名字、无关对象、注释与字符串。它不解析项目
+依赖或执行类型检查，复用已有 TypeScript 依赖，没有新增注册表或 package script。
+
+新增拒绝口径为 `flat-ipc/non-static-method`、`flat-ipc/typed-entry-duplicate` 与
+`flat-ipc/source-parse`；原 channel、退役状态和 preload 拒绝规则继续使用。
+preload 的等价 invoke 以及非字面量 channel 同样检查，只有 `host:invoke` 允许直调。
+
+`ContractCheckFixture/v1` 增加可选 `create` 文本，用于在内存中加入八种生产扩展名
+的虚拟文件；枚举读取这些虚拟文件但不写入候选。现有 append/find/prepend 语义保留。
+负例仍通过真实 CLI，输出文件和行号。最终候选、命令、测试 JSON、反例结果与哈希
+清单位于 `harness/specs/fixtures/architecture-admission-ast/`；历史 A1/A5 数字没有重签。
+
+这里验证静态局部调用形状，不声称全程序别名分析、跨模块 opaque export、反射或
+动态模块加载已经覆盖。已知 Electron 接收对象上的不可枚举方法选择会被拒绝。
+README 三种语言已复核：本轮只修改开发门禁，没有产品可见行为变化，故无需更新。
+
+
+## 2026-11-06 合并前独立审查修正
+
+同模型agent审查通过原checker入口复现四类漏检：bind预绑定channel被丢弃、动态计算解构失去IPC来源、
+`import { default as electron }`遗漏、解构默认值/嵌套绑定未追溯。修复继续使用现有AST枚举：
+保留首个已绑定channel（未知值拒绝）；已知IPC对象的动态方法标记unresolved；解析named-default、
+嵌套binding与默认来源。真实入口反例和合法host:invoke预绑定对照均纳入原测试文件。
+静态分析仍限本地可解析导入/别名/绑定，不声称覆盖任意JavaScript反射或跨模块数据流。
+历史验收包不改；修复和合并候选证据见 `harness/specs/fixtures/architecture-review-integration/`。

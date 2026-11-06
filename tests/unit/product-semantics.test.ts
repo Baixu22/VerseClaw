@@ -281,7 +281,7 @@ describe('ClawX product semantics', () => {
 describe('ClawX product semantic relation contract (ProductSemanticRelations/v1)', () => {
   const UMBRELLA_NEGATIVE_ROWS = [1, 2, 3, 4, 5, 6, 7, 8];
 
-  it('pins the contract version and a closed rule set of eleven rules', () => {
+  it('pins the contract version and a closed rule set of twelve rules', () => {
     expect(PRODUCT_SEMANTIC_CONTRACT_VERSION).toBe('ProductSemanticRelations/v1');
     expect(PRODUCT_SEMANTIC_RELATION_RULES).toEqual([
       'unknown-endpoint',
@@ -291,6 +291,7 @@ describe('ClawX product semantic relation contract (ProductSemanticRelations/v1)
       'duplicate-relation',
       'missing-evidence',
       'kind-boundary-mismatch',
+      'relation-endpoint-mismatch',
       'reverse-task-authority',
       'forged-grant-field',
       'cross-session-quality',
@@ -328,6 +329,26 @@ describe('ClawX product semantic relation contract (ProductSemanticRelations/v1)
   it('accepts an empty declaration set (Plan Mode declares no relation)', () => {
     expect(validateProductSemanticRelations([])).toEqual({ ok: true, diagnostics: [] });
     expect(PRODUCT_SEMANTIC_RELATIONS.some(({ from, to }) => String(from) === 'plan-mode' || String(to) === 'plan-mode')).toBe(false);
+  });
+
+  it('accepts only the six specified domain/range pairs across all known concepts and relation kinds', () => {
+    const allowed = new Set([
+      'chat--suggests-upgrade-to--task-loop',
+      'chat--projects--task-ledger',
+      'chat-plan--projects--task-ledger',
+      'task-loop--roots-in--task-ledger',
+      'workboard--references-one-way--task-ledger',
+      'routing-memo--quality-gated-by--task-loop',
+    ]);
+    const kinds = new Map(PRODUCT_SEMANTIC_RELATIONS.map((relation) => [relation.kind, relation.authorityBoundary]));
+    for (const [kind, authorityBoundary] of kinds) {
+      for (const { id: from } of PRODUCT_SEMANTIC_CONCEPTS) {
+        for (const { id: to } of PRODUCT_SEMANTIC_CONCEPTS) {
+          const candidate = { from, kind, to, authorityBoundary, evidenceRefs: ['docs/clawx-product-semantics.md'] };
+          expect(validateProductSemanticRelation(candidate).length === 0, relationKey(candidate)).toBe(allowed.has(relationKey(candidate)));
+        }
+      }
+    }
   });
 
   it('loads negative fixtures from disk with the ProductSemanticRelationFixture/v1 schema', () => {

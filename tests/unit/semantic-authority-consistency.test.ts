@@ -81,6 +81,18 @@ function read(relativePath: string): string {
 
 const adjudication: Json = JSON.parse(read(ADJUDICATION_PATH));
 
+// Synthetic pending conflict for hygiene checks after the real C-02..C-06 debt was removed.
+function pendingConflict(): Json {
+  return {
+    id: 'C-02/R-D1', rule: 'default-activation', disposition: 'registered-pending-fix',
+    targetKind: 'component', target: 'working-memory-context-source',
+    observed: { defaultMode: 'opt-in', dispositionId: 'component.working-memory-context', currentMode: 'baseline' },
+    basis: 'explicit-adjudication', source: `${RECONCILIATION}#6.2-C-02`,
+    reason: 'Test-only injection of the resolved pre-TF-0790 declaration.', reviewCondition: 'Remove once the declaration is corrected.',
+  };
+}
+
+
 function realRegistries(): Json {
   return assembleRegistries(
     {
@@ -214,7 +226,7 @@ describe('semantic authority check: closed rule set and helpers', () => {
     const otherX03 = locate({ id: 'X-03', target: 'task-ledger', section: 'exemptions' });
     expect(otherX03).not.toBe(x03);
     expect(lines[otherX03 - 1]).toContain('"id": "X-03"');
-    expect(lines[locate({ id: 'C-05/R-D3', section: 'adjudicatedConflicts' }) - 1]).toContain('"id": "C-05/R-D3"');
+    expect(lines[locate({ id: 'removed-entry', section: 'adjudicatedConflicts' }) - 1]).toContain('"adjudicatedConflicts": []');
     expect(lines[locate({ id: 'I-4', target: 'routing-memo', section: 'conceptAliases' }) - 1]).toContain('"id": "I-4"');
     expect(lines[locate({ section: 'gaps' }) - 1]).toMatch(/^ {2}"gaps":/);
     expect(lines[locate({ section: 'exemptions' }) - 1]).toMatch(/^ {2}"exemptions":/);
@@ -231,31 +243,22 @@ describe('semantic authority check: current registries with the TF-0631 rulings 
     expect(result.issues).toEqual([]);
     expect(result.report.counts).toEqual({ components: 35, authorities: 44, dispositions: 54, claims: 45, reliability: 7, sensitive: 7, concepts: 7, relations: 6, flags: 22 });
     expect(result.report.rulesEvaluated).toEqual(EXPECTED_RULES);
-    expect(result.report.adjudicated.map((entry: Json) => `${entry.id} ${entry.target}`).sort()).toEqual([
-      'C-02/R-D1 working-memory-context-source',
-      'C-02/R-D4 working-memory-context-source',
-      'C-03/R-D1 tool-registry-context-source',
-      'C-03/R-D4 tool-registry-context-source',
-      'C-04/R-D2 vtoken-context-source',
-      'C-04/R-D3 vtoken-context-source',
-      'C-05/R-D3 vtoken-bridge',
-      'C-06/R-D2 retired-surface-registry',
-    ]);
-    expect(result.report.notComparable).toHaveLength(20);
+    expect(result.report.adjudicated).toEqual([]);
+    expect(result.report.notComparable).toHaveLength(21);
     expect(result.report.matrixUnmapped).toHaveLength(5);
     expect(result.report.flagGranularity).toEqual(['isolation-request', 'patch-flow', 'stale-write-guard', 'symbol-lease', 'symbol-lease-mode', 'worktree-backend', 'write-journal']);
     const gapTotals = Object.values(result.report.gaps as Record<string, { observed: string[]; registered: string[] }>);
     expect(gapTotals.reduce((sum, gap) => sum + gap.observed.length, 0)).toBe(35);
     expect(gapTotals.every((gap) => gap.observed.join() === gap.registered.join())).toBe(true);
-    expect(result.report.exemptions).toEqual({ structural: 54, registeredPendingFix: 8, gaps: 35, conceptAliases: 1, authorityBindings: 3, invalid: 0 });
-    expect(result.report.exemptionsApplied).toEqual({ 'X-01': 7, 'X-02': 4, 'X-03': 18, 'X-04': 20, 'X-05': 5 });
-    expect(result.report.adjudicatedConflicts).toEqual({ rulings: 5, entries: 8, byRuling: { 'C-02': 2, 'C-03': 2, 'C-04': 2, 'C-05': 1, 'C-06': 1 } });
+    expect(result.report.exemptions).toEqual({ structural: 55, registeredPendingFix: 0, gaps: 35, conceptAliases: 1, authorityBindings: 3, invalid: 0 });
+    expect(result.report.exemptionsApplied).toEqual({ 'X-01': 7, 'X-02': 4, 'X-03': 18, 'X-04': 21, 'X-05': 5 });
+    expect(result.report.adjudicatedConflicts).toEqual({ rulings: 0, entries: 0, byRuling: {} });
     expect(result.report.gapsRegistered).toEqual({ total: 35, byRuling: { 'G-01': 1, 'G-02': 1, 'G-03': 5, 'G-04': 16, 'G-05': 5, 'G-06': 7 } });
     expect(result.report.conceptAliases).toEqual(['routing-memo -> routing-memo-observation']);
     expect(result.report.authorityBindings).toEqual(['task-loop--roots-in--task-ledger', 'workboard--references-one-way--task-ledger', 'routing-memo--quality-gated-by--task-loop']);
   });
 
-  it('reconciles every structural class observed == registered (54/54), with the report-only lists as the observed sets (TF-0638)', () => {
+  it('reconciles every structural class observed == registered (55/55), with the report-only lists as the observed sets (TF-0638)', () => {
     const structural = result.report.structural as Record<string, { ruling: string; observed: string[]; registered: string[] }>;
     expect(Object.keys(structural).sort()).toEqual(Object.keys(EXPECTED_STRUCTURAL).sort());
     for (const [name, ruling] of Object.entries(EXPECTED_STRUCTURAL)) {
@@ -266,22 +269,22 @@ describe('semantic authority check: current registries with the TF-0631 rulings 
     expect(structural['flag-granularity'].observed).toEqual(result.report.flagGranularity);
     expect(structural['not-comparable'].observed).toEqual([...result.report.notComparable].sort());
     expect(structural['matrix-unmapped'].observed).toEqual(result.report.matrixUnmapped.map((row: Json) => row.label).sort());
-    expect(Object.fromEntries(Object.entries(structural).map(([name, entry]) => [name, entry.observed.length]))).toEqual({ 'flag-granularity': 7, 'internal-vocabulary': 4, 'target-divergence': 18, 'not-comparable': 20, 'matrix-unmapped': 5 });
-    expect(Object.values(structural).reduce((sum, entry) => sum + entry.observed.length, 0)).toBe(54);
-    // X-03 is the divergence set minus the components whose divergence is a registered default conflict (C-02…C-05).
+    expect(Object.fromEntries(Object.entries(structural).map(([name, entry]) => [name, entry.observed.length]))).toEqual({ 'flag-granularity': 7, 'internal-vocabulary': 4, 'target-divergence': 18, 'not-comparable': 21, 'matrix-unmapped': 5 });
+    expect(Object.values(structural).reduce((sum, entry) => sum + entry.observed.length, 0)).toBe(55);
+    // Resolved declarations now agree with their targets without default-conflict exemptions.
     expect(structural['target-divergence'].observed).not.toContain('working-memory-context-source');
     expect(structural['target-divergence'].observed).not.toContain('vtoken-bridge');
   });
 
   it('registers every TF-0631 ruling with reason, review condition, basis and section source', () => {
     expect(adjudication.schema).toBe(ADJUDICATION_SCHEMA);
-    expect([...new Set(adjudication.adjudicatedConflicts.map((entry: Json) => entry.id.split('/')[0]))]).toEqual(['C-02', 'C-03', 'C-04', 'C-05', 'C-06']);
+    expect(adjudication.adjudicatedConflicts).toEqual([]);
     expect([...new Set(adjudication.exemptions.map((entry: Json) => entry.id))]).toEqual(['X-01', 'X-02', 'X-03', 'X-04', 'X-05']);
     expect([...new Set(adjudication.gaps.map((entry: Json) => entry.id))]).toEqual(['G-01', 'G-02', 'G-03', 'G-04', 'G-05', 'G-06']);
     expect(adjudication.conceptAliases.map((entry: Json) => entry.id)).toEqual(['I-4']);
     expect(adjudication.authorityBindings.map((entry: Json) => entry.id)).toEqual(['A-01', 'A-02', 'A-03']);
     expect(adjudication.exemptions.filter((entry: Json) => entry.id === 'X-03')).toHaveLength(18);
-    expect(adjudication.exemptions.filter((entry: Json) => entry.id === 'X-04')).toHaveLength(20);
+    expect(adjudication.exemptions.filter((entry: Json) => entry.id === 'X-04')).toHaveLength(21);
     for (const section of ['exemptions', 'adjudicatedConflicts', 'gaps', 'conceptAliases', 'authorityBindings']) {
       for (const entry of adjudication[section]) {
         expect(entry.basis, `${section} ${entry.id}`).toBe('explicit-adjudication');
@@ -305,7 +308,7 @@ describe('semantic authority check: current registries with the TF-0631 rulings 
     const linked = new Map<string, Json>();
     for (const entry of registries.dispositions) for (const id of entry.coverage?.authorityComponentIds ?? []) linked.set(id, entry);
     const divergent = registries.authority.components.filter((entry: Json) => linked.get(entry.id)!.targetDefaultMode !== entry.defaultMode).map((entry: Json) => entry.id);
-    expect(divergent).toHaveLength(22);
+    expect(divergent).toHaveLength(18);
     const internalCollisions = registries.authority.components.filter((entry: Json) => entry.defaultMode === 'internal' && linked.get(entry.id)!.disposition === 'default');
     expect(internalCollisions).toHaveLength(4);
     const suffixDrift = registries.authority.components.filter((entry: Json) => linked.get(entry.id)!.id.slice('component.'.length) !== entry.id);
@@ -374,12 +377,12 @@ describe('semantic authority check: rules on mutated registries', () => {
     const registries = cloneRegistries();
     registries.docs.defaultMatrixRows.set('VToken assembly', 'true');
     const result = evaluate(registries);
-    expect(rulesOf(result).sort()).toEqual(['default-matrix-row', 'exemption-stale']);
+    expect(rulesOf(result)).toEqual(['default-matrix-row']);
     expect(result.report.adjudicated.map((entry: Json) => entry.id)).not.toContain('C-04/R-D3');
     const missing = cloneRegistries();
     missing.docs.defaultMatrixRows.delete('VToken bridge');
     const missingResult = evaluate(missing);
-    expect(rulesOf(missingResult).sort()).toEqual(['default-matrix-row', 'exemption-stale', 'exemption-stale']);
+    expect(rulesOf(missingResult)).toEqual(['default-matrix-row']);
     expect(missingResult.issues.some((issue: string) => issue.includes('[semantic-authority/default-matrix-row]') && issue.includes('has no bold-labelled row'))).toBe(true);
     expect(missingResult.report.adjudicated.map((entry: Json) => entry.id)).not.toContain('C-05/R-D3');
   });
@@ -416,13 +419,13 @@ describe('semantic authority check: rules on mutated registries', () => {
     const empty = cloneAdjudication();
     empty.exemptions = [];
     const emptyResult = evaluate(realRegistries(), empty);
-    expect(rulesOf(emptyResult)).toEqual(new Array(54).fill('exemption-registration'));
+    expect(rulesOf(emptyResult)).toEqual(new Array(55).fill('exemption-registration'));
     expect(emptyResult.issues.every((issue: string) => issue.includes('structural-unregistered:'))).toBe(true);
     expect(emptyResult.report.structural['not-comparable'].registered).toEqual([]);
-    expect(emptyResult.report.structural['not-comparable'].observed).toHaveLength(20);
+    expect(emptyResult.report.structural['not-comparable'].observed).toHaveLength(21);
     const absent = cloneAdjudication();
     delete absent.exemptions;
-    expect(rulesOf(evaluate(realRegistries(), absent))).toHaveLength(54);
+    expect(rulesOf(evaluate(realRegistries(), absent))).toHaveLength(55);
     const missingOne = cloneAdjudication();
     missingOne.exemptions = missingOne.exemptions.filter((entry: Json) => !(entry.class === 'not-comparable' && entry.target === 'context-runtime-kit'));
     expect(evaluate(realRegistries(), missingOne).issues).toEqual([`${ADJUDICATION_PATH}: [semantic-authority/exemption-registration] structural-unregistered: not-comparable component 'context-runtime-kit' is observed in the registries but no structural exemption (X-04) registers it; register it with a reason or resolve it`]);
@@ -538,10 +541,13 @@ describe('semantic authority check: rules on mutated registries', () => {
   it('treats an entry without reason, review condition, source or basis as a failure and does not apply it (exemption-reason-missing)', () => {
     for (const field of ['reason', 'reviewCondition', 'source', 'basis']) {
       const registry = cloneAdjudication();
-      const entry = registry.adjudicatedConflicts.find((candidate: Json) => candidate.id === 'C-06/R-D2');
+      const entry = pendingConflict();
+      registry.adjudicatedConflicts = [entry];
       entry[field] = ' ';
-      const result = evaluate(realRegistries(), registry);
-      expect(rulesOf(result), field).toEqual(['exemption-reason-missing', 'default-retirement']);
+      const baseline = cloneRegistries();
+      component(baseline, 'working-memory-context-source').defaultMode = 'opt-in';
+      const result = evaluate(baseline, registry);
+      expect(rulesOf(result), field).toEqual(['exemption-reason-missing', 'default-activation', 'default-flag-risk', 'exemption-registration']);
       expect(result.issues[0]).toContain(`has no ${field}`);
     }
     const wrongSource = cloneAdjudication();
@@ -557,9 +563,9 @@ describe('semantic authority check: rules on mutated registries', () => {
     meta.exemptions[0].rule = 'exemption-stale';
     expect(rulesOf(evaluate(realRegistries(), meta))).toEqual(['exemption-unknown-rule']);
     const target = cloneAdjudication();
-    target.adjudicatedConflicts[0].target = 'ghost';
+    target.adjudicatedConflicts = [{ ...pendingConflict(), target: 'ghost' }];
     const result = evaluate(realRegistries(), target);
-    expect(rulesOf(result)).toEqual(['exemption-unknown-target', 'default-activation']);
+    expect(rulesOf(result)).toEqual(['exemption-unknown-target']);
     const duplicate = cloneAdjudication();
     duplicate.gaps.push({ ...duplicate.gaps[0] });
     expect(rulesOf(evaluate(realRegistries(), duplicate))).toEqual(['exemption-unknown-target']);
@@ -571,14 +577,16 @@ describe('semantic authority check: rules on mutated registries', () => {
   it('marks entries stale when a recorded value changes or the covered conflict disappears (exemption-stale)', () => {
     const fixed = cloneRegistries();
     component(fixed, 'working-memory-context-source').defaultMode = 'baseline';
-    const result = evaluate(fixed);
-    expect(rulesOf(result)).toEqual(['exemption-stale', 'exemption-stale']);
+    const obsolete = cloneAdjudication();
+    obsolete.adjudicatedConflicts = [pendingConflict()];
+    const result = evaluate(fixed, obsolete);
+    expect(rulesOf(result)).toEqual(['exemption-stale']);
     expect(result.issues[0]).toContain('C-02/R-D1 (default-activation, working-memory-context-source) recorded defaultMode="opt-in" but the registries now say "baseline"');
     const noObserved = cloneAdjudication();
     delete noObserved.exemptions[0].observed;
     expect(rulesOf(evaluate(realRegistries(), noObserved))).toEqual(['exemption-stale']);
     const phantom = cloneAdjudication();
-    phantom.adjudicatedConflicts.push({ ...phantom.adjudicatedConflicts[0], id: 'C-X', target: 'context-runtime-kit', observed: { defaultMode: 'internal' } });
+    phantom.adjudicatedConflicts.push({ ...pendingConflict(), id: 'C-X', target: 'context-runtime-kit', observed: { defaultMode: 'internal' } });
     const phantomResult = evaluate(realRegistries(), phantom);
     expect(rulesOf(phantomResult)).toEqual(['exemption-stale']);
     expect(phantomResult.issues[0]).toContain('no such diagnostic fires');
@@ -613,7 +621,7 @@ describe('semantic authority check: real gate entry (node scripts/check-semantic
     const [verdict, summary] = result.stdout.trim().split(/\r?\n/);
     expect(verdict).toBe('Semantic authority check passed.');
     expect(summary).toContain('components=35 authorities=44 dispositions=54 claims=45 reliability=7 sensitive=7 concepts=7 relations=6 flags=22');
-    expect(summary).toContain(`rules=${RULES.length} diagnostics=0 adjudicated=8 structural=54/54 gaps=35/35 aliases=1 bindings=3 not-comparable=20 matrix-unmapped=5`);
+    expect(summary).toContain(`rules=${RULES.length} diagnostics=0 adjudicated=0 structural=55/55 gaps=35/35 aliases=1 bindings=3 not-comparable=21 matrix-unmapped=5`);
     const report = JSON.parse(readFileSync(reportPath, 'utf8'));
     expect(report.schema).toBe(REPORT_SCHEMA);
     expect(report.actor).toBe('vitest');
@@ -626,7 +634,7 @@ describe('semantic authority check: real gate entry (node scripts/check-semantic
     expect(report.counts.components).toBe(35);
     expect(report.rulesEvaluated).toEqual(EXPECTED_RULES);
     expect(report.diagnostics).toEqual([]);
-    expect(report.adjudicated).toHaveLength(8);
+    expect(report.adjudicated).toHaveLength(0);
     expect(report.fixtures).toEqual([]);
     for (const [name, ruling] of Object.entries(EXPECTED_STRUCTURAL)) {
       expect(report.structural[name].ruling, name).toBe(ruling);
@@ -689,8 +697,10 @@ describe('semantic authority check: real gate entry (node scripts/check-semantic
   }, 60_000);
 
   it('locates every registry-path diagnostic on the entry id line through the real entry (TF-0638)', async () => {
-    // exemption-stale.json mutates only the manifest, so the registry text on disk is the text the gate located against.
-    const registryLines = read(ADJUDICATION_PATH).split(/\r?\n/);
+    // Locate diagnostics against the explicit injected obsolete entries, not the current empty list.
+    const staleFixture = JSON.parse(read(`${FIXTURE_DIR}/exemption-stale.json`));
+    const registryLines = read(ADJUDICATION_PATH).replace(/\r?\n/g, '\n')
+      .replace(staleFixture.mutations[0].find, staleFixture.mutations[0].replace).split('\n');
     const reportPath = path.join(reportDir, 'located-stale.json');
     const result = await runGate(['--fixture', `${FIXTURE_DIR}/exemption-stale.json`, '--report', reportPath]);
     expect(result.code).toBe(1);

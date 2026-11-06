@@ -1,0 +1,17 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "restored-vtoken-bridge",
+  "class": "conflicting-default",
+  "rule": "default-retirement",
+  "expect": "[semantic-authority/default-retirement] component 'vtoken-bridge'",
+  "expectIssueCount": 3,
+  "description": "Reintroduce the exact pre-TF-0790 declaration; resolved exceptions must no longer suppress it.",
+  "mutations": [
+    {
+      "file": "shared/component-authority-manifest.ts",
+      "anchor": "id: 'vtoken-bridge'",
+      "find": "    id: 'vtoken-bridge',\n    label: 'VToken bridge',\n    domains: ['context'],\n    purpose: 'Owns VToken host bridge availability and RPC lifecycle while DCS owns any resulting context admission.',\n    ownedDataTypes: ['vtoken.bridge-runtime'],\n    scopes: ['global', 'run'],\n    allowedReads: ['runtime.config', 'runtime.env'],\n    allowedWrites: ['vtoken.bridge-runtime'],\n    effects: ['execute', 'update'],\n    forbiddenActions: ['accept-context-candidates', 'print-secret-memory', 'grant-permissions'],\n    runtimeAvailabilitySource: 'docs/dev/default-config-matrix.md#VToken-bridge',\n    defaultMode: 'retired',",
+      "replace": "    id: 'vtoken-bridge',\n    label: 'VToken bridge',\n    domains: ['context'],\n    purpose: 'Owns VToken host bridge availability and RPC lifecycle while DCS owns any resulting context admission.',\n    ownedDataTypes: ['vtoken.bridge-runtime'],\n    scopes: ['global', 'run'],\n    allowedReads: ['runtime.config', 'runtime.env'],\n    allowedWrites: ['vtoken.bridge-runtime'],\n    effects: ['execute', 'update'],\n    forbiddenActions: ['accept-context-candidates', 'print-secret-memory', 'grant-permissions'],\n    runtimeAvailabilitySource: 'docs/dev/default-config-matrix.md#VToken-bridge',\n    defaultMode: 'opt-in',"
+    }
+  ]
+}

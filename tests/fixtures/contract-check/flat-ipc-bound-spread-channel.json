@@ -1,0 +1,13 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "flat-ipc-bound-spread-channel",
+  "rule": "flat-ipc/non-literal-channel",
+  "expect": "[flat-ipc/non-literal-channel]",
+  "description": "Regression for local IPC aliases, bound channels and binding origins through the real checker entrypoint.",
+  "mutations": [
+    {
+      "file": "electron/main/ipc/host-invoke.ts",
+      "append": "\n{\nconst args = [ipcMain, 'rogue:spread-bound'];\nconst register = ipcMain.handle.bind(...args);\nregister('host:invoke', () => 1);\n}\n"
+    }
+  ]
+}

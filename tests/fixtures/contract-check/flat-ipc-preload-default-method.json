@@ -1,0 +1,13 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "flat-ipc-preload-default-method",
+  "rule": "flat-ipc/preload-direct-invoke",
+  "expect": "[flat-ipc/preload-direct-invoke]",
+  "description": "Regression for local IPC aliases, bound channels and binding origins through the real checker entrypoint.",
+  "mutations": [
+    {
+      "file": "electron/preload/index.ts",
+      "append": "\n{\nconst { invoke: request = ipcRenderer.invoke.bind(ipcRenderer) } = {};\nrequest('rogue:default-method');\n}\n"
+    }
+  ]
+}

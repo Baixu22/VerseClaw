@@ -2,6 +2,7 @@ import { describe, expect, it, beforeEach } from 'vitest';
 import type { AgentMessage } from '../../openclaw_runtime/src/agents/runtime';
 import { OpenClawSchema } from '../../openclaw_runtime/src/config/zod-schema';
 import { registerContextRuntimeKitContextEngine } from '../../openclaw_runtime/src/context-engine/cvk/registration';
+import { CONTEXT_RUNTIME_KIT_ENGINE_ID } from '../../openclaw_runtime/src/context-engine/cvk/engine';
 import {
   clearContextEngineRuntimeQuarantine,
   clearContextEnginesForOwner,
@@ -58,6 +59,7 @@ describe('Context engine registry default-on CRK resolution', () => {
     const engine = await resolveContextEngine({});
 
     expect(engine.info.id).toBe('context-runtime-kit');
+    expect(engine.info.id).toBe(CONTEXT_RUNTIME_KIT_ENGINE_ID);
   });
 
   it('keeps explicit legacy slot authoritative', async () => {

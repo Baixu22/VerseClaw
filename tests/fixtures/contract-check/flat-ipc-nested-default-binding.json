@@ -1,0 +1,13 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "flat-ipc-nested-default-binding",
+  "rule": "flat-ipc/bypass-registry",
+  "expect": "[flat-ipc/bypass-registry]",
+  "description": "Regression for local IPC aliases, bound channels and binding origins through the real checker entrypoint.",
+  "mutations": [
+    {
+      "file": "electron/main/ipc/host-invoke.ts",
+      "append": "\n{\nconst { ipcMain: { handle: register } = require('electron').ipcMain } = {};\nregister.call(require('electron').ipcMain, 'rogue:nested-default', () => 1);\n}\n"
+    }
+  ]
+}

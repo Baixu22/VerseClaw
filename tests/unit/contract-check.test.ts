@@ -180,6 +180,7 @@ async function runGate(args: string[]) {
       cwd: ROOT,
       encoding: 'utf8',
       maxBuffer: 10 * 1024 * 1024,
+      windowsHide: true,
     });
     return { code: 0, stdout, stderr };
   } catch (error) {
@@ -262,6 +263,85 @@ describe('contract check: alias contract members', () => {
 });
 
 describe('contract check: flat IPC admission surface', () => {
+  it('finds a namespace registration after an interpolated template', () => {
+    const text = [
+      'const example = `a${1}b`;',
+      "const owner = require('electron');",
+      "owner['ipcMain']['handle']('a:one', () => 1);",
+    ].join('\n');
+    expect(parseIpcMainHandleSites(text, 'f.cjs')).toEqual([
+      { file: 'f.cjs', line: 3, channel: 'a:one', expression: "'a:one'" },
+    ]);
+  });
+
+  it('ignores comments, strings, unrelated handles and shadowed IPC objects', () => {
+    const text = [
+      "import { ipcMain } from 'electron';",
+      "// ipcMain.handle('comment', () => 1);",
+      "const example = \"ipcMain['handle']('string', () => 1)\";",
+      "function shadow(ipcMain: { handle: (name: string) => void }) { ipcMain.handle('local'); }",
+      "const local = { handle: (name: string) => name }; local.handle('local');",
+    ].join('\n');
+    expect(parseIpcMainHandleSites(text, 'f.ts')).toEqual([]);
+  });
+
+  it('resolves scoped aliases and parenthesized/type-wrapped IPC receivers', () => {
+    const text = [
+      "import { ipcMain as owner } from 'electron';",
+      "const request = (owner as unknown as typeof owner)['handle'];",
+      "request('a:one', () => 1);",
+      "function shadow(request: (name: string) => void) { request('local'); }",
+    ].join('\n');
+    expect(parseIpcMainHandleSites(text, 'f.ts')).toEqual([
+      { file: 'f.ts', line: 3, channel: 'a:one', expression: "'a:one'" },
+    ]);
+  });
+
+  it.each([
+    "register('payload');",
+    "register.call(ipcMain, 'payload');",
+    "register.apply(ipcMain, ['payload']);",
+    "const alias = register; alias.bind(null, 'payload')();",
+  ])('keeps the original bound channel for %s', (invocation) => {
+    const text = [
+      "import { ipcMain } from 'electron';",
+      "const register = ipcMain.handle.bind(ipcMain, 'a:bound');",
+      invocation,
+    ].join('\n');
+    expect(parseIpcMainHandleSites(text, 'f.ts')).toEqual([
+      { file: 'f.ts', line: 3, channel: 'a:bound', expression: "'a:bound'" },
+    ]);
+  });
+
+  it('retains nonliteral bound channels and handleOnce identity', () => {
+    const text = [
+      "import { ipcMain } from 'electron';",
+      'const register = ipcMain.handleOnce.bind(ipcMain, channel);',
+      "register('host:invoke');",
+    ].join('\n');
+    expect(parseIpcMainHandleSites(text, 'f.ts')).toEqual([
+      { file: 'f.ts', line: 3, channel: null, expression: 'channel', method: 'handleOnce' },
+    ]);
+  });
+
+  it('does not treat dynamic or default bindings from ordinary objects as IPC', () => {
+    const text = [
+      "import { ipcMain as realIpcMain } from 'electron';",
+      'const local = { handle: () => undefined };',
+      'const { [method]: request = local.handle.bind(local) } = local;',
+      "request('ordinary');",
+      'const { ipcMain: { handle: nested } = local } = {};',
+      "nested('ordinary');",
+      'const { ipcMain = local } = {};',
+      "ipcMain.handle('ordinary');",
+      'function shadow(realIpcMain) {',
+      '  const { [method]: request } = realIpcMain;',
+      "  request('ordinary');",
+      '}',
+    ].join('\n');
+    expect(parseIpcMainHandleSites(text, 'f.ts')).toEqual([]);
+  });
+
   it('enumerates ipcMain.handle sites including multi-line and non-literal forms', () => {
     const text = [
       "ipcMain.handle('a:one', () => 1);",
@@ -420,6 +500,8 @@ describe('contract check: flat IPC admission surface', () => {
 
 describe('contract check: real gate entry (node scripts/contract-check.mjs)', () => {
   const fixtures = readdirSync(`${ROOT}/${FIXTURE_DIR}`).filter((name) => name.endsWith('.json')).sort();
+  const positiveFixtures = fixtures.filter((name) => JSON.parse(readFileSync(`${ROOT}/${FIXTURE_DIR}/${name}`, 'utf8')).expectCode === 0);
+  const negativeFixtures = fixtures.filter((name) => !positiveFixtures.includes(name));
 
   it('passes on the current repository without fixtures', async () => {
     const result = await runGate([]);
@@ -429,7 +511,7 @@ describe('contract check: real gate entry (node scripts/contract-check.mjs)', ()
   }, 30_000);
 
   it('ships every negative class as a checked-in fixture', () => {
-    const rules = fixtures.map((name) => JSON.parse(readFileSync(`${ROOT}/${FIXTURE_DIR}/${name}`, 'utf8')).rule);
+    const rules = negativeFixtures.map((name) => JSON.parse(readFileSync(`${ROOT}/${FIXTURE_DIR}/${name}`, 'utf8')).rule);
     expect(rules).toEqual(expect.arrayContaining([
       'flat-ipc/unregistered-channel',
       'flat-ipc/dual-entry-unacknowledged',
@@ -438,12 +520,14 @@ describe('contract check: real gate entry (node scripts/contract-check.mjs)', ()
       'flat-ipc/preload-mismatch',
       'flat-ipc/preload-direct-invoke',
       'flat-ipc/retired-channel-live',
+      'flat-ipc/non-static-method',
+      'flat-ipc/typed-entry-duplicate',
       'host-api/unresolved-alias-member',
       'host-api/facade-missing-action',
     ]));
   });
 
-  it.each(fixtures)('rejects fixture %s through the real entry with a single locatable diagnostic', async (name) => {
+  it.each(negativeFixtures)('rejects fixture %s through the real entry with a single locatable diagnostic', async (name) => {
     const fixture = JSON.parse(readFileSync(`${ROOT}/${FIXTURE_DIR}/${name}`, 'utf8'));
     const result = await runGate(['--fixture', `${FIXTURE_DIR}/${name}`]);
     expect(result.code).toBe(1);
@@ -454,6 +538,18 @@ describe('contract check: real gate entry (node scripts/contract-check.mjs)', ()
     expect(issues).toHaveLength(1);
     expect(issues[0]).toContain(fixture.expect);
   }, 30_000);
+
+  it.each(positiveFixtures)('accepts fixture %s through the real entry without diagnostics', async (name) => {
+    const fixture = JSON.parse(readFileSync(`${ROOT}/${FIXTURE_DIR}/${name}`, 'utf8'));
+    const result = await runGate(['--fixture', `${FIXTURE_DIR}/${name}`]);
+    expect(result.code).toBe(0);
+    expect(result.stdout.trim()).toBe('Contract check passed.');
+    expect(result.stderr.trim()).toBe(`Contract check fixtures applied: ${fixture.id}`);
+  }, 30_000);
+
+  it.each(['ts', 'tsx', 'mts', 'cts', 'js', 'jsx', 'mjs', 'cjs'])('keeps virtual %s production probes off disk', (extension) => {
+    expect(() => readFileSync(`${ROOT}/electron/contract-check-probe.${extension}`)).toThrow();
+  });
 
   it('distinguishes a broken fixture (exit 2) from a gate failure (exit 1)', async () => {
     const result = await runGate(['--fixture', `${FIXTURE_DIR}/does-not-exist.json`]);

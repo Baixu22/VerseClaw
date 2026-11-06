@@ -1,0 +1,112 @@
+{
+  "schema": "ArchitectureAdmissionAcceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "realHumanEvidence": false,
+  "generatedAt": "2026-11-04T23:47:11.580Z",
+  "verdict": "pass-for-ipc-admission-scope",
+  "node": "TF-0787",
+  "phase": "TF-0786",
+  "rootNode": "TF-0628",
+  "candidate": {
+    "commit": "11adcfbdb1892618332babe6a52dd91b069a642c",
+    "tree": "626b11cd105375eb416b556466a6ae7e7cfd2feb",
+    "dirty": false
+  },
+  "tests": {
+    "files": 1,
+    "total": 72,
+    "passed": 72,
+    "failed": 0,
+    "skipped": 0,
+    "realEntryNegativeControls": 38
+  },
+  "gates": [
+    {
+      "id": "typecheck-ready",
+      "exitCode": 0,
+      "durationMs": 46041.2169
+    },
+    {
+      "id": "unit",
+      "exitCode": 0,
+      "durationMs": 108677.1821
+    },
+    {
+      "id": "contract",
+      "exitCode": 0,
+      "durationMs": 5092.4262
+    },
+    {
+      "id": "lint",
+      "exitCode": 0,
+      "durationMs": 7356.0178
+    },
+    {
+      "id": "artifacts",
+      "exitCode": 0,
+      "durationMs": 8784.4074
+    },
+    {
+      "id": "evidence",
+      "exitCode": 0,
+      "durationMs": 741.1693
+    },
+    {
+      "id": "diff-check",
+      "exitCode": 0,
+      "durationMs": 718.4953999999999
+    },
+    {
+      "id": "harness-context",
+      "exitCode": 0,
+      "durationMs": 2255.827
+    },
+    {
+      "id": "harness-validate",
+      "exitCode": 0,
+      "durationMs": 14226.4403
+    },
+    {
+      "id": "harness-dry-run",
+      "exitCode": 0,
+      "durationMs": 3045.7140999999997
+    }
+  ],
+  "boundaries": {
+    "runtimeSourceChanges": 0,
+    "defaultsChanges": 0,
+    "permissionChanges": 0
+  },
+  "dependencies": {
+    "mode": "explicit-reuse",
+    "nodeModules": "D:/ClawX/node_modules",
+    "runtimeNodeModules": "D:/ClawX/openclaw_runtime/node_modules",
+    "versebrowser": "Built from this checkout; package sources unchanged after build.",
+    "pnpmVerifyDepsMode": "warn",
+    "freshInstall": "not-run"
+  },
+  "supersededCandidates": [
+    {
+      "commit": "acfb263194acca0fba30d8fb1e48f62e4fb043cb",
+      "reason": "Template prefilter bypass found and fixed; green tests are not final acceptance."
+    },
+    {
+      "commit": "92ac4c48637eefb904ca95bcb232ee21abbd0fd8",
+      "reason": "Inherited artifact policy failure repaired for eight already tracked calibration logs."
+    }
+  ],
+  "notRun": [
+    "full unit suite",
+    "Electron E2E",
+    "Vite/Electron build",
+    "runtime source gates",
+    "Agent Dev maturity audit",
+    "live-provider effect evaluation"
+  ],
+  "limitations": [
+    "Static local aliases are covered; whole-program dataflow, opaque cross-module exports, reflection and dynamic module loading are not proven.",
+    "Workspace/context cycles, runtime large SCC, authority gaps and relation constraints remain follow-ups.",
+    "Overall architecture, GA and measured development/agent quality gains are not accepted."
+  ]
+}

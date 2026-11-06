@@ -1,0 +1,78 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "ec2053701bfc5f0126760507c8ff5045f60cdb47",
+    "tree": "b5bca90ffa3d81ffc5af1e92d75db3c936777d51",
+    "dirty": false
+  },
+  "relations": [
+    {
+      "relationKey": "chat--suggests-upgrade-to--task-loop",
+      "owner": "src/pages/Chat/task-loop-upgrade.ts",
+      "tests": [
+        "tests/unit/task-loop-upgrade.test.ts"
+      ],
+      "ownerSha256": "7c069d30743011fdb05cc1dc36c354bdd33c18e52e4deb9b3c93620de723c531",
+      "grade": "automated-owner-tests; no live provider claim"
+    },
+    {
+      "relationKey": "chat--projects--task-ledger",
+      "owner": "src/lib/task-ledger-plan-projection.ts",
+      "tests": [
+        "tests/unit/orchestration-plan-ledger-projection.test.ts"
+      ],
+      "ownerSha256": "0865a9aba2710d254a8d8ab7e9c64eaf94391c577df173f6269f632e6f8279a6",
+      "grade": "automated-owner-tests; no live provider claim"
+    },
+    {
+      "relationKey": "chat-plan--projects--task-ledger",
+      "owner": "src/lib/task-ledger-plan-projection.ts",
+      "tests": [
+        "tests/unit/orchestration-plan-ledger-projection.test.ts"
+      ],
+      "ownerSha256": "0865a9aba2710d254a8d8ab7e9c64eaf94391c577df173f6269f632e6f8279a6",
+      "grade": "automated-owner-tests; no live provider claim"
+    },
+    {
+      "relationKey": "task-loop--roots-in--task-ledger",
+      "owner": "openclaw_runtime/src/agents/task-loop-controller.ts",
+      "tests": [
+        "tests/unit/task-loop-controller.test.ts",
+        "tests/integration/task-loop-checkpoint-evidence.integration.test.ts"
+      ],
+      "ownerSha256": "f03e9e0c91652df0ca72d97bae4a4e7a6c8c1f153e7a7f556f1f8aed1bda7ed7",
+      "grade": "automated-owner-tests; no live provider claim"
+    },
+    {
+      "relationKey": "workboard--references-one-way--task-ledger",
+      "owner": "shared/types/task-ledger-reference.ts",
+      "tests": [
+        "tests/unit/task-ledger-reference.test.ts",
+        "tests/unit/task-ledger-reference-inheritance.test.ts"
+      ],
+      "ownerSha256": "7fb8caee299a3e5e2bb71bfcecaf3da56be68fcd3493896bafa97717da8f085d",
+      "grade": "automated-owner-tests; no live provider claim"
+    },
+    {
+      "relationKey": "routing-memo--quality-gated-by--task-loop",
+      "owner": "openclaw_runtime/src/agents/routing-memo.ts",
+      "tests": [
+        "tests/unit/routing-memo.test.ts",
+        "tests/integration/p1-orchestration-boundary.integration.test.ts"
+      ],
+      "ownerSha256": "93dd3fde6d1ce1145e5d22657a193974816f7578a0cbf2e279cf6cef3b0eb7ea",
+      "grade": "automated-owner-tests; no live provider claim"
+    }
+  ],
+  "endpointMatrix": {
+    "knownConcepts": 7,
+    "kinds": 5,
+    "combinations": 245,
+    "accepted": 6,
+    "rejected": 239,
+    "test": "tests/unit/product-semantics.test.ts: accepts only the six specified domain/range pairs across all known concepts and relation kinds"
+  },
+  "negativeRealEntry": "tests/unit/evidence-refs-exist.test.ts: rejects a known but wrong relation endpoint through the real entry"
+}

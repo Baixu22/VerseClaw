@@ -578,6 +578,7 @@ describe('workspaces api compatibility migration', () => {
     const terminalManager = { registerWorkspace: vi.fn(), unregisterWorkspace: vi.fn() };
     const webPreviewManager = { registerWorkspace: vi.fn(), stopForWorkspace: vi.fn() };
     const { createWorkspacesApi } = await import('@electron/services/workspaces-api');
+    const { syncActiveWorkspacePermissionToRuntime, syncActiveWorkspaceRootToRuntime } = await import('@electron/services/workspace-runtime-sync');
     const api = createWorkspacesApi({ terminalManager, webPreviewManager } as never);
 
     await expect(api.switch({ id: 'other' })).resolves.toMatchObject({
@@ -587,6 +588,11 @@ describe('workspaces api compatibility migration', () => {
     expect(terminalManager.unregisterWorkspace).not.toHaveBeenCalled();
     expect(webPreviewManager.stopForWorkspace).not.toHaveBeenCalled();
     expect(terminalManager.registerWorkspace).toHaveBeenCalledWith(expect.objectContaining({ id: 'other' }));
+    const readForPermission = vi.mocked(syncActiveWorkspacePermissionToRuntime).mock.lastCall?.[0];
+    const readForRoot = vi.mocked(syncActiveWorkspaceRootToRuntime).mock.lastCall?.[0];
+    expect(readForPermission).toBeTypeOf('function');
+    expect(readForRoot).toBe(readForPermission);
+    expect(await readForPermission?.()).toMatchObject({ id: 'other', permissionMode: 'acceptEdits', rootPath: 'C:/other' });
   });
 
   it('workspace delete reclaims Main browser and managed-port owners', async () => {

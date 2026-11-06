@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
+import ts from 'typescript';
 
 const ROOT = process.cwd();
 const REQUIRED_AGENT_DEV_SCENARIOS = [
@@ -39,7 +40,13 @@ async function readProjectFile(path) {
     import('node:fs/promises'),
     import('node:path'),
   ]);
-  const text = await readFile(resolve(ROOT, path), 'utf8');
+  let text;
+  try {
+    text = await readFile(resolve(ROOT, path), 'utf8');
+  } catch (error) {
+    if (error.code !== 'ENOENT' || !fileMutations.get(path)?.some((mutation) => typeof mutation.create === 'string')) throw error;
+    text = '';
+  }
   return applyFileMutations(path, text);
 }
 
@@ -53,6 +60,12 @@ function applyFileMutations(path, text) {
   const normalize = (value) => value.replace(/\r?\n/g, eol);
   let mutated = text;
   for (const mutation of mutations) {
+    // A virtual production file lets extension fixtures exercise enumeration
+    // without adding source files to the candidate on disk.
+    if (typeof mutation.create === 'string') {
+      if (mutated) throw new Error(`fixture create target already exists: ${path}`);
+      mutated = normalize(mutation.create);
+    }
     if (typeof mutation.find === 'string') {
       const find = normalize(mutation.find);
       if (!mutated.includes(find)) {
@@ -198,19 +211,159 @@ function parseRegistryScenarioIds(registryText) {
   return match ? [...match[1].matchAll(/\{\s*id:\s*'([^']+)'/g)].map((entry) => entry[1]) : [];
 }
 
-// Every `ipcMain.handle(<first arg>` in a file, with the channel when the first
-// argument is a plain string literal and null when it is anything else.
-function parseIpcMainHandleSites(text, file) {
-  const sites = [];
-  for (const match of text.matchAll(/ipcMain\.handle\(\s*([^,)]+)/g)) {
-    const expression = match[1].trim();
-    const literal = expression.match(/^'([^']*)'$/)
-      ?? expression.match(/^"([^"]*)"$/)
-      ?? expression.match(/^`([^`$]*)`$/);
-    const line = text.slice(0, match.index).split('\n').length;
-    sites.push({ file, line, channel: literal ? literal[1] : null, expression });
+// Syntax owns call shape; local symbols distinguish Electron aliases from
+// unrelated or shadowed objects. No project typecheck or module loading occurs.
+function parseIpcCalls(text, file, ipcName, methods) {
+  // A decoded IPC root must either occur literally or contain an escape.
+  // Any escape forces AST parsing; a context-free lexer cannot safely skip
+  // template/regexp contents and would hide subsequent registrations.
+  if (!text.includes(ipcName) && !text.includes('\\')) return [];
+  const source = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true);
+  if (source.parseDiagnostics.length) {
+    const diagnostic = source.parseDiagnostics[0];
+    const line = source.getLineAndCharacterOfPosition(diagnostic.start ?? 0).line + 1;
+    throw new Error(`${file}:${line}: [flat-ipc/source-parse] ${ts.flattenDiagnosticMessageText(diagnostic.messageText, ' ')}`);
   }
+  let checker;
+  function declarations(node) {
+    if (!checker) {
+      const options = { allowJs: true, noLib: true, noResolve: true };
+      const host = ts.createCompilerHost(options);
+      host.getSourceFile = (name) => name === file ? source : undefined;
+      checker = ts.createProgram([file], options, host).getTypeChecker();
+    }
+    return checker.getSymbolAtLocation(node)?.declarations ?? [];
+  }
+  function unwrap(node) {
+    while (node && (ts.isParenthesizedExpression(node) || ts.isAsExpression(node)
+      || ts.isTypeAssertionExpression(node) || ts.isNonNullExpression(node) || ts.isSatisfiesExpression(node))) node = node.expression;
+    return node;
+  }
+  function staticString(node) {
+    node = unwrap(node);
+    if (!node) return null;
+    if (ts.isStringLiteralLike(node)) return node.text;
+    if (ts.isIdentifier(node)) {
+      const declaration = declarations(node).find((entry) => ts.isVariableDeclaration(entry)
+        && (entry.parent.flags & ts.NodeFlags.Const) && entry.initializer && ts.isStringLiteralLike(unwrap(entry.initializer)));
+      if (declaration) return unwrap(declaration.initializer).text;
+    }
+    return null;
+  }
+  function member(node) {
+    if (ts.isPropertyAccessExpression(node)) return node.name.text;
+    if (ts.isElementAccessExpression(node)) return staticString(node.argumentExpression);
+    return null;
+  }
+  function bindingSources(entry) {
+    if (!ts.isObjectBindingPattern(entry.parent) || entry.dotDotDotToken) return [];
+    const owner = entry.parent.parent;
+    const sources = ts.isBindingElement(owner) ? bindingSources(owner) : owner.initializer ? [owner.initializer] : [];
+    const name = entry.propertyName ?? entry.name;
+    const key = ts.isComputedPropertyName(name) ? name.expression
+      : ts.isIdentifier(name) ? ts.factory.createStringLiteral(name.text) : name;
+    // Keep original expressions for symbol resolution and binding defaults.
+    // Nested patterns select from their parent's value, not its initializer.
+    return [
+      ...sources.map((value) => ts.factory.createElementAccessExpression(value, key)),
+      ...(entry.initializer ? [entry.initializer] : []),
+    ];
+  }
+  function electronImport(node) {
+    while (node && !ts.isImportDeclaration(node)) node = node.parent;
+    return node && staticString(node.moduleSpecifier) === 'electron';
+  }
+  function isElectron(node, seen = new Set()) {
+    node = unwrap(node);
+    if (!node || seen.has(node)) return false;
+    seen.add(node);
+    if (ts.isCallExpression(node) && ts.isIdentifier(node.expression) && node.expression.text === 'require'
+      && !declarations(node.expression).length && staticString(node.arguments[0]) === 'electron') return true;
+    if (!ts.isIdentifier(node)) return false;
+    return declarations(node).some((entry) =>
+      ((ts.isNamespaceImport(entry) || ts.isImportClause(entry)) && electronImport(entry))
+      || (ts.isImportSpecifier(entry) && (entry.propertyName ?? entry.name).text === 'default' && electronImport(entry))
+      || (ts.isImportEqualsDeclaration(entry) && ts.isExternalModuleReference(entry.moduleReference)
+        && staticString(entry.moduleReference.expression) === 'electron')
+      || (ts.isVariableDeclaration(entry) && isElectron(entry.initializer, seen))
+      || (ts.isBindingElement(entry) && bindingSources(entry).some((value) => isElectron(value, seen))));
+  }
+  function isIpc(node, seen = new Set()) {
+    node = unwrap(node);
+    if (!node || seen.has(node)) return false;
+    seen.add(node);
+    if ((ts.isPropertyAccessExpression(node) || ts.isElementAccessExpression(node))
+      && member(node) === ipcName && isElectron(node.expression)) return true;
+    if (!ts.isIdentifier(node)) return false;
+    const entries = declarations(node);
+    if (!entries.length) return node.text === ipcName;
+    return entries.some((entry) =>
+      (ts.isImportSpecifier(entry) && (entry.propertyName ?? entry.name).text === ipcName && electronImport(entry))
+      || (ts.isVariableDeclaration(entry) && isIpc(entry.initializer, seen))
+      || (ts.isBindingElement(entry) && bindingSources(entry).some((value) => isIpc(value, seen))));
+  }
+  function ipcMethod(node, seen = new Set()) {
+    node = unwrap(node);
+    if (!node || seen.has(node)) return null;
+    seen.add(node);
+    if (ts.isPropertyAccessExpression(node) || ts.isElementAccessExpression(node)) {
+      const name = member(node);
+      if (name === 'call' || name === 'apply') return ipcMethod(node.expression, seen);
+      if ((name === null || methods.includes(name)) && isIpc(node.expression)) return { name: name ?? '<unresolved>' };
+    }
+    if (ts.isCallExpression(node) && member(unwrap(node.expression)) === 'bind') {
+      const method = ipcMethod(unwrap(node.expression).expression, seen);
+      if (method) {
+        // The first bound channel wins across aliases and successive binds.
+        // A spread supplying thisArg can also supply an unknown channel.
+        const boundChannel = node.arguments[0] && ts.isSpreadElement(node.arguments[0])
+          ? node.arguments[0] : node.arguments[1];
+        return { ...method, boundChannel: method.boundChannel ?? boundChannel };
+      }
+    }
+    if (!ts.isIdentifier(node)) return null;
+    for (const entry of declarations(node)) {
+      if (ts.isVariableDeclaration(entry)) {
+        const method = ipcMethod(entry.initializer, seen);
+        if (method) return method;
+      } else if (ts.isBindingElement(entry)) {
+        for (const value of bindingSources(entry)) {
+          const method = ipcMethod(value, seen);
+          if (method) return method;
+        }
+      }
+    }
+    return null;
+  }
+  const sites = [];
+  function visit(node) {
+    if (ts.isCallExpression(node)) {
+      const method = ipcMethod(node.expression);
+      if (method) {
+        const invocation = member(unwrap(node.expression));
+        let rawArgument = node.arguments[0];
+        if (invocation === 'call') rawArgument = node.arguments[1];
+        if (invocation === 'apply') {
+          const argumentsArray = unwrap(node.arguments[1]);
+          rawArgument = argumentsArray && ts.isArrayLiteralExpression(argumentsArray) ? argumentsArray.elements[0] : undefined;
+        }
+        rawArgument = method.boundChannel ?? rawArgument;
+        const argument = unwrap(rawArgument);
+        const line = source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1;
+        sites.push({ file, line, channel: argument && ts.isStringLiteralLike(argument) ? argument.text : null,
+          expression: rawArgument?.getText(source) ?? node.arguments[1]?.getText(source) ?? '<missing>',
+          ...(method.name === '<unresolved>' ? { unresolvedMethod: node.expression.getText(source) } : {}),
+          ...(method.name === 'handleOnce' ? { method: method.name } : {}) });
+      }
+    }
+    ts.forEachChild(node, visit);
+  }
+  visit(source);
   return sites;
+}
+
+function parseIpcMainHandleSites(text, file) {
+  return parseIpcCalls(text, file, 'ipcMain', ['handle', 'handleOnce']);
 }
 
 function parsePreloadAllowlist(preloadText) {
@@ -225,10 +378,7 @@ function parsePreloadAllowlist(preloadText) {
 // channel without consulting validChannels, so the allowlist only describes
 // renderer reachability if every such literal is also allowlisted.
 function parsePreloadDirectInvokes(preloadText) {
-  return [...preloadText.matchAll(/ipcRenderer\.invoke\(\s*(?:'([^']+)'|"([^"]+)"|`([^`$]+)`)/g)].map((match) => ({
-    channel: match[1] ?? match[2] ?? match[3],
-    line: preloadText.slice(0, match.index).split('\n').length,
-  }));
+  return parseIpcCalls(preloadText, 'electron/preload/index.ts', 'ipcRenderer', ['invoke']);
 }
 
 function resolveTypedDomain(prefix, contract) {
@@ -288,17 +438,24 @@ function collectFlatIpcIssues({ contract, flatIpcRegistry, ipcMainHandleSites, p
     return issues;
   }
 
-  if (!ipcMainHandleSites.some((site) => site.file === hostInvoke.file && site.channel === hostInvoke.channel)) {
+  const typedSites = ipcMainHandleSites.filter((site) => site.file === hostInvoke.file && site.channel === hostInvoke.channel && site.method !== 'handleOnce');
+  if (!typedSites.length) {
     issues.push(`${hostInvoke.file}: ${tag('typed-entry-missing')} expected the single typed entry ipcMain.handle('${hostInvoke.channel}')`);
+  } else if (typedSites.length > 1) {
+    issues.push(`${hostInvoke.file}:${typedSites[1].line}: ${tag('typed-entry-duplicate')} '${hostInvoke.channel}' must have exactly one persistent handler`);
   }
   for (const site of ipcMainHandleSites) {
+    if (site.unresolvedMethod) {
+      issues.push(`${site.file}:${site.line}: ${tag('non-static-method')} IPC method must be statically enumerable (got ${site.unresolvedMethod})`);
+      continue;
+    }
     if (site.channel === null) {
       issues.push(`${site.file}:${site.line}: ${tag('non-literal-channel')} ipcMain.handle channel must be a string literal so it can be enumerated (got ${site.expression})`);
       continue;
     }
-    if (site.file === hostInvoke.file && site.channel === hostInvoke.channel) continue;
+    if (site.file === hostInvoke.file && site.channel === hostInvoke.channel && site.method !== 'handleOnce') continue;
     if (site.file !== handlersFile) {
-      issues.push(`${site.file}:${site.line}: ${tag('bypass-registry')} ipcMain.handle('${site.channel}') is registered outside ${handlersFile} and bypasses HostApiRegistry`);
+      issues.push(`${site.file}:${site.line}: ${tag('bypass-registry')} ipcMain.${site.method ?? 'handle'}('${site.channel}') is registered outside ${handlersFile} and bypasses HostApiRegistry`);
     }
   }
 
@@ -346,9 +503,9 @@ function collectFlatIpcIssues({ contract, flatIpcRegistry, ipcMainHandleSites, p
   for (const site of handlerSites) {
     const entry = registryByChannel.get(site.channel);
     if (!entry) {
-      issues.push(`${site.file}:${site.line}: ${tag('unregistered-channel')} ipcMain.handle('${site.channel}') is not adjudicated in ${FLAT_IPC_REGISTRY_PATH}`);
+      issues.push(`${site.file}:${site.line}: ${tag('unregistered-channel')} ipcMain.${site.method ?? 'handle'}('${site.channel}') is not adjudicated in ${FLAT_IPC_REGISTRY_PATH}`);
     } else if (entry.disposition === 'retired') {
-      issues.push(`${site.file}:${site.line}: ${tag('retired-channel-live')} ipcMain.handle('${site.channel}') is registered but the registry marks it retired`);
+      issues.push(`${site.file}:${site.line}: ${tag('retired-channel-live')} ipcMain.${site.method ?? 'handle'}('${site.channel}') is registered but the registry marks it retired`);
     }
   }
   for (const [channel, entry] of registryByChannel) {
@@ -368,7 +525,11 @@ function collectFlatIpcIssues({ contract, flatIpcRegistry, ipcMainHandleSites, p
   if (allowlist && allowSet.size !== allowlist.length) {
     issues.push(`${allowlistFile}: ${tag('allowlist-duplicate')} validChannels contains duplicate entries`);
   }
-  for (const { channel, line } of parsePreloadDirectInvokes(typeof preloadText === 'string' ? preloadText : '')) {
+  for (const { channel, line, expression, unresolvedMethod } of parsePreloadDirectInvokes(typeof preloadText === 'string' ? preloadText : '')) {
+    if (unresolvedMethod || channel === null) {
+      issues.push(`${allowlistFile}:${line}: ${tag('preload-direct-invoke')} non-static invocation ${unresolvedMethod ?? expression}; only '${hostInvoke.channel}' may use ipcRenderer.invoke`);
+      continue;
+    }
     if (channel === hostInvoke.channel) continue;
     issues.push(`${allowlistFile}:${line}: ${tag('preload-direct-invoke')} '${channel}' is invoked directly by the preload; only '${hostInvoke.channel}' may use ipcRenderer.invoke`);
   }
@@ -506,12 +667,13 @@ export {
   parseRegistryScenarioIds,
 };
 
-async function listTypeScriptFiles(relativeRoot) {
+async function listIpcSourceFiles(relativeRoot) {
   const [{ readdir }, { posix, resolve }] = await Promise.all([
     import('node:fs/promises'),
     import('node:path'),
   ]);
   const files = [];
+  const isProductionFile = (name) => /\.(?:[cm]?[jt]s|[jt]sx)$/.test(name) && !/\.(?:test|spec|d)\.(?:[cm]?[jt]s|[jt]sx)$/.test(name);
   async function walk(relativeDir) {
     const entries = await readdir(resolve(ROOT, relativeDir), { withFileTypes: true });
     for (const entry of entries) {
@@ -519,13 +681,18 @@ async function listTypeScriptFiles(relativeRoot) {
       if (entry.isDirectory()) {
         if (entry.name === 'node_modules' || entry.name === 'dist' || entry.name === '__tests__') continue;
         await walk(relativePath);
-      } else if (/\.ts$/.test(entry.name) && !/\.(test|spec|d)\.ts$/.test(entry.name)) {
+      } else if (isProductionFile(entry.name)) {
         files.push(relativePath);
       }
     }
   }
   await walk(relativeRoot);
-  return files.sort();
+  for (const [file, mutations] of fileMutations) {
+    if (file.startsWith(`${relativeRoot}/`) && posix.normalize(file) === file && isProductionFile(file)
+      && !file.split('/').some((part) => ['node_modules', 'dist', '__tests__'].includes(part))
+      && mutations.some((mutation) => typeof mutation.create === 'string')) files.push(file);
+  }
+  return [...new Set(files)].sort();
 }
 
 async function readAliasTypeTexts(contractText) {
@@ -597,9 +764,8 @@ async function main() {
   try {
     const contractText = await readProjectFile(CONTRACT_PATH);
     const ipcMainHandleSites = [];
-    for (const file of await listTypeScriptFiles(IPC_MAIN_SCAN_ROOT)) {
+    for (const file of await listIpcSourceFiles(IPC_MAIN_SCAN_ROOT)) {
       const text = await readProjectFile(file);
-      if (!text.includes('ipcMain.handle(')) continue;
       ipcMainHandleSites.push(...parseIpcMainHandleSites(text, file));
     }
     files = {

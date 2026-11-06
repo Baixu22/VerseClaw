@@ -1,0 +1,116 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "baselineFiles": 9158,
+  "cuts": [
+    [
+      "src/context-engine/registry.ts",
+      "src/context-engine/cvk/engine.ts"
+    ],
+    [
+      "src/context-engine/enhancement-kill-switch.ts",
+      "src/runtime-core/index.ts"
+    ],
+    [
+      "src/context-engine/chat-turn-vtoken-injection.ts",
+      "src/runtime-core/index.ts"
+    ]
+  ],
+  "trials": [
+    {
+      "cuts": [
+        [
+          "src/context-engine/registry.ts",
+          "src/context-engine/cvk/engine.ts"
+        ]
+      ],
+      "sccSizes": [
+        7
+      ]
+    },
+    {
+      "cuts": [
+        [
+          "src/context-engine/enhancement-kill-switch.ts",
+          "src/runtime-core/index.ts"
+        ]
+      ],
+      "sccSizes": [
+        20
+      ]
+    },
+    {
+      "cuts": [
+        [
+          "src/context-engine/registry.ts",
+          "src/context-engine/cvk/engine.ts"
+        ],
+        [
+          "src/context-engine/enhancement-kill-switch.ts",
+          "src/runtime-core/index.ts"
+        ]
+      ],
+      "sccSizes": [
+        4
+      ]
+    },
+    {
+      "cuts": [
+        [
+          "src/context-engine/chat-turn-vtoken-injection.ts",
+          "src/runtime-core/index.ts"
+        ]
+      ],
+      "sccSizes": [
+        23
+      ]
+    },
+    {
+      "cuts": [
+        [
+          "src/context-engine/registry.ts",
+          "src/context-engine/cvk/engine.ts"
+        ],
+        [
+          "src/context-engine/chat-turn-vtoken-injection.ts",
+          "src/runtime-core/index.ts"
+        ]
+      ],
+      "sccSizes": [
+        7
+      ]
+    },
+    {
+      "cuts": [
+        [
+          "src/context-engine/enhancement-kill-switch.ts",
+          "src/runtime-core/index.ts"
+        ],
+        [
+          "src/context-engine/chat-turn-vtoken-injection.ts",
+          "src/runtime-core/index.ts"
+        ]
+      ],
+      "sccSizes": [
+        17
+      ]
+    },
+    {
+      "cuts": [
+        [
+          "src/context-engine/registry.ts",
+          "src/context-engine/cvk/engine.ts"
+        ],
+        [
+          "src/context-engine/enhancement-kill-switch.ts",
+          "src/runtime-core/index.ts"
+        ],
+        [
+          "src/context-engine/chat-turn-vtoken-injection.ts",
+          "src/runtime-core/index.ts"
+        ]
+      ],
+      "sccSizes": []
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "candidate": "acfb263194acca0fba30d8fb1e48f62e4fb043cb",
+  "fixture": "flat-ipc-template-before-namespace",
+  "exitCode": 0,
+  "output": "Contract check fixtures applied: flat-ipc-template-before-namespace\nContract check passed.",
+  "scope": "Development replay; fixture was untracked and checker source was unchanged"
+}

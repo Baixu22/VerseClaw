@@ -1,0 +1,29 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-architecture-convergence",
+  "baseline": "e2ba2aa36814409b6ac7de042008ba9bb9527bb9",
+  "candidate": {
+    "commit": "b834bf3e1164544e8fde5c41b715d611c5dd4bf7",
+    "tree": "0eadb5e2e4a770fa8be10745f7e835aa8615bd48",
+    "dirty": false
+  },
+  "method": "git cat-file --batch verifies every recorded graph source hash against committed bytes; LF/CRLF-only differences may be classified explicitly.",
+  "bindings": [
+    {
+      "scope": "baseline",
+      "commit": "e2ba2aa36814409b6ac7de042008ba9bb9527bb9",
+      "files": 9158,
+      "exactBytes": 9158,
+      "lineEndingOnly": 0,
+      "mismatches": 0
+    },
+    {
+      "scope": "candidate",
+      "commit": "b834bf3e1164544e8fde5c41b715d611c5dd4bf7",
+      "files": 9159,
+      "exactBytes": 9159,
+      "lineEndingOnly": 0,
+      "mismatches": 0
+    }
+  ]
+}

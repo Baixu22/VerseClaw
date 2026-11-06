@@ -1,0 +1,421 @@
+{
+  "schema": "SemanticAuthorityReport/v1",
+  "generatedAt": "2026-11-06T03:19:03.677Z",
+  "actor": "codex-architecture-review",
+  "drivenBy": "agent",
+  "command": [
+    "node",
+    "C:/Users/27933/.codex/worktrees/architecture-convergence-recovered/ClawX/scripts/check-semantic-authority.mjs",
+    "--report",
+    "D:/tmp/architecture-review-20261106/revalidation/authority.json",
+    "--actor",
+    "codex-architecture-review"
+  ],
+  "exitCode": 0,
+  "candidate": {
+    "commit": "d5750f2bad06d13f663de94dd1409e3c1c6c4b07",
+    "tree": "7312444eab953200c13b807e6e3d832f88dda175",
+    "dirty": false,
+    "changedPaths": []
+  },
+  "fixtures": [],
+  "adjudication": "scripts/check-semantic-authority-adjudication.json",
+  "counts": {
+    "components": 35,
+    "authorities": 44,
+    "dispositions": 54,
+    "claims": 45,
+    "reliability": 7,
+    "sensitive": 7,
+    "concepts": 7,
+    "relations": 6,
+    "flags": 22
+  },
+  "rulesEvaluated": [
+    "registry-self-validation",
+    "identity-key",
+    "concept-alias",
+    "owner-namespace",
+    "flag-binding",
+    "default-activation",
+    "default-retirement",
+    "default-matrix-row",
+    "default-flag-risk",
+    "authority-boundary",
+    "gap-registration",
+    "exemption-registration",
+    "exemption-reason-missing",
+    "exemption-stale",
+    "exemption-unknown-rule",
+    "exemption-unknown-target",
+    "adjudication-missing",
+    "registry-load-failed"
+  ],
+  "adjudicated": [],
+  "notComparable": [
+    "context-runtime-kit",
+    "dcs-assembler-compat-adapter",
+    "provider-request-guard",
+    "c6-context-ladder-source",
+    "native-file-memory-retrieval",
+    "dreaming-derived-cache",
+    "knowledge-review-authority",
+    "knowledge-retrieval-source",
+    "sekb-candidate-provider",
+    "v3-capability-catalog",
+    "skills-mcp-source-registry",
+    "tool-search-schema-expander",
+    "coding-execution-backend",
+    "permission-approval-authority",
+    "task-ledger",
+    "browser-session-owner",
+    "browser-task-projection-owner",
+    "observability-recorder",
+    "routing-memo-observation",
+    "renderer-ui-surface",
+    "retired-surface-registry"
+  ],
+  "matrixUnmapped": [
+    {
+      "document": "docs/dev/default-config-matrix.md",
+      "label": "DCS Fact view tools",
+      "value": "auto",
+      "components": [
+        "dcs-fact-view-and-tools"
+      ]
+    },
+    {
+      "document": "docs/dev/default-config-matrix.md",
+      "label": "Coding auto verify",
+      "value": "auto",
+      "components": [
+        "coding-execution-backend"
+      ]
+    },
+    {
+      "document": "docs/clawx-product-semantics.md",
+      "label": "SEKB automatic writeback",
+      "value": "deferred",
+      "components": [
+        "sekb-candidate-provider",
+        "knowledge-review-authority"
+      ]
+    },
+    {
+      "document": "docs/clawx-product-semantics.md",
+      "label": "C7 knowledge/routing cutover",
+      "value": "deferred",
+      "components": [
+        "knowledge-review-authority",
+        "routing-memo-observation"
+      ]
+    },
+    {
+      "document": "docs/clawx-product-semantics.md",
+      "label": "Runtime Memory injection",
+      "value": "diagnostics-only",
+      "components": [
+        "runtime-memory-store",
+        "dcs-context-authority"
+      ]
+    }
+  ],
+  "gaps": {
+    "component-owner-unresolvable": {
+      "observed": [
+        "feature.agent-map",
+        "feature.runtime-shadow-governance"
+      ],
+      "registered": [
+        "feature.agent-map",
+        "feature.runtime-shadow-governance"
+      ]
+    },
+    "concept-without-component": {
+      "observed": [
+        "chat",
+        "chat-plan",
+        "plan-mode",
+        "task-loop",
+        "workboard"
+      ],
+      "registered": [
+        "chat",
+        "chat-plan",
+        "plan-mode",
+        "task-loop",
+        "workboard"
+      ]
+    },
+    "data-type-without-owner": {
+      "observed": [
+        "capability.execution-schema",
+        "context.candidate-fragment",
+        "context.owner-reference",
+        "context.source-reference",
+        "context.token-pressure",
+        "knowledge.candidate",
+        "mcp.tool-schema",
+        "memory.native-file",
+        "provider.media",
+        "provider.model-identity",
+        "provider.transform-declaration",
+        "runtime.config",
+        "runtime.env",
+        "session.transcript",
+        "skill.manifest",
+        "workspace.permission-mode"
+      ],
+      "registered": [
+        "capability.execution-schema",
+        "context.candidate-fragment",
+        "context.owner-reference",
+        "context.source-reference",
+        "context.token-pressure",
+        "knowledge.candidate",
+        "mcp.tool-schema",
+        "memory.native-file",
+        "provider.media",
+        "provider.model-identity",
+        "provider.transform-declaration",
+        "runtime.config",
+        "runtime.env",
+        "session.transcript",
+        "skill.manifest",
+        "workspace.permission-mode"
+      ]
+    },
+    "subsystem-without-anchor": {
+      "observed": [
+        "dangerous-approvals",
+        "file-writes",
+        "gateway-startup",
+        "session-restore-replay",
+        "task-loop-repair-retry"
+      ],
+      "registered": [
+        "dangerous-approvals",
+        "file-writes",
+        "gateway-startup",
+        "session-restore-replay",
+        "task-loop-repair-retry"
+      ]
+    },
+    "surface-without-anchor": {
+      "observed": [
+        "compaction",
+        "file",
+        "memory",
+        "modelEcho",
+        "sekb",
+        "trace",
+        "transcript"
+      ],
+      "registered": [
+        "compaction",
+        "file",
+        "memory",
+        "modelEcho",
+        "sekb",
+        "trace",
+        "transcript"
+      ]
+    }
+  },
+  "structural": {
+    "flag-granularity": {
+      "ruling": "X-01",
+      "observed": [
+        "isolation-request",
+        "patch-flow",
+        "stale-write-guard",
+        "symbol-lease",
+        "symbol-lease-mode",
+        "worktree-backend",
+        "write-journal"
+      ],
+      "registered": [
+        "isolation-request",
+        "patch-flow",
+        "stale-write-guard",
+        "symbol-lease",
+        "symbol-lease-mode",
+        "worktree-backend",
+        "write-journal"
+      ]
+    },
+    "internal-vocabulary": {
+      "ruling": "X-02",
+      "observed": [
+        "knowledge-review-authority",
+        "skills-mcp-source-registry",
+        "task-ledger",
+        "tool-search-schema-expander"
+      ],
+      "registered": [
+        "knowledge-review-authority",
+        "skills-mcp-source-registry",
+        "task-ledger",
+        "tool-search-schema-expander"
+      ]
+    },
+    "target-divergence": {
+      "ruling": "X-03",
+      "observed": [
+        "coding-execution-backend",
+        "compass-context-source",
+        "context-enhancement-gate",
+        "dcs-context-authority",
+        "dcs-fact-view-and-tools",
+        "host-api-transport-owner",
+        "knowledge-retrieval-source",
+        "knowledge-review-authority",
+        "memory-candidate-queue",
+        "memory-embedding-provider",
+        "role-memory-card-governance",
+        "routing-memo-observation",
+        "runtime-memory-store",
+        "sekb-candidate-provider",
+        "skills-mcp-source-registry",
+        "task-ledger",
+        "tool-search-schema-expander",
+        "verseshell-execution-adapter"
+      ],
+      "registered": [
+        "coding-execution-backend",
+        "compass-context-source",
+        "context-enhancement-gate",
+        "dcs-context-authority",
+        "dcs-fact-view-and-tools",
+        "host-api-transport-owner",
+        "knowledge-retrieval-source",
+        "knowledge-review-authority",
+        "memory-candidate-queue",
+        "memory-embedding-provider",
+        "role-memory-card-governance",
+        "routing-memo-observation",
+        "runtime-memory-store",
+        "sekb-candidate-provider",
+        "skills-mcp-source-registry",
+        "task-ledger",
+        "tool-search-schema-expander",
+        "verseshell-execution-adapter"
+      ]
+    },
+    "not-comparable": {
+      "ruling": "X-04",
+      "observed": [
+        "browser-session-owner",
+        "browser-task-projection-owner",
+        "c6-context-ladder-source",
+        "coding-execution-backend",
+        "context-runtime-kit",
+        "dcs-assembler-compat-adapter",
+        "dreaming-derived-cache",
+        "knowledge-retrieval-source",
+        "knowledge-review-authority",
+        "native-file-memory-retrieval",
+        "observability-recorder",
+        "permission-approval-authority",
+        "provider-request-guard",
+        "renderer-ui-surface",
+        "retired-surface-registry",
+        "routing-memo-observation",
+        "sekb-candidate-provider",
+        "skills-mcp-source-registry",
+        "task-ledger",
+        "tool-search-schema-expander",
+        "v3-capability-catalog"
+      ],
+      "registered": [
+        "browser-session-owner",
+        "browser-task-projection-owner",
+        "c6-context-ladder-source",
+        "coding-execution-backend",
+        "context-runtime-kit",
+        "dcs-assembler-compat-adapter",
+        "dreaming-derived-cache",
+        "knowledge-retrieval-source",
+        "knowledge-review-authority",
+        "native-file-memory-retrieval",
+        "observability-recorder",
+        "permission-approval-authority",
+        "provider-request-guard",
+        "renderer-ui-surface",
+        "retired-surface-registry",
+        "routing-memo-observation",
+        "sekb-candidate-provider",
+        "skills-mcp-source-registry",
+        "task-ledger",
+        "tool-search-schema-expander",
+        "v3-capability-catalog"
+      ]
+    },
+    "matrix-unmapped": {
+      "ruling": "X-05",
+      "observed": [
+        "C7 knowledge/routing cutover",
+        "Coding auto verify",
+        "DCS Fact view tools",
+        "Runtime Memory injection",
+        "SEKB automatic writeback"
+      ],
+      "registered": [
+        "C7 knowledge/routing cutover",
+        "Coding auto verify",
+        "DCS Fact view tools",
+        "Runtime Memory injection",
+        "SEKB automatic writeback"
+      ]
+    }
+  },
+  "exemptions": {
+    "structural": 55,
+    "registeredPendingFix": 0,
+    "gaps": 35,
+    "conceptAliases": 1,
+    "authorityBindings": 3,
+    "invalid": 0
+  },
+  "exemptionsApplied": {
+    "X-01": 7,
+    "X-02": 4,
+    "X-03": 18,
+    "X-04": 21,
+    "X-05": 5
+  },
+  "adjudicatedConflicts": {
+    "rulings": 0,
+    "entries": 0,
+    "byRuling": {}
+  },
+  "gapsRegistered": {
+    "total": 35,
+    "byRuling": {
+      "G-01": 1,
+      "G-02": 1,
+      "G-03": 5,
+      "G-04": 16,
+      "G-05": 5,
+      "G-06": 7
+    }
+  },
+  "conceptAliases": [
+    "routing-memo -> routing-memo-observation"
+  ],
+  "authorityBindings": [
+    "task-loop--roots-in--task-ledger",
+    "workboard--references-one-way--task-ledger",
+    "routing-memo--quality-gated-by--task-loop"
+  ],
+  "flagGranularity": [
+    "isolation-request",
+    "patch-flow",
+    "stale-write-guard",
+    "symbol-lease",
+    "symbol-lease-mode",
+    "worktree-backend",
+    "write-journal"
+  ],
+  "diagnostics": []
+}

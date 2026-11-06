@@ -1,0 +1,19 @@
+[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed
+Context for: harness\specs\tasks\architecture-skeleton-admission-ast-hardening.md
+Intent: 将架构测评复现的计算属性和空白调用漏检修复到既有 contract:check，使用已安装的 TypeScript AST 覆盖等价接入写法并保持运行时行为不变。
+
+Read order:
+- architecture-skeleton-admission-ast-hardening (task): harness\specs\tasks\architecture-skeleton-admission-ast-hardening.md
+- contract-first-boundary (rule): harness\specs\rules\contract-first-boundary.md
+- docs-sync (ai-coding-rule): harness\specs\rules\docs-sync.md
+- renderer-main-boundary (ai-coding-rule): harness\specs\rules\renderer-main-boundary.md
+- repository-artifact-retention (ai-coding-rule): harness\specs\rules\repository-artifact-retention.md
+- task-forest-autoclose-and-roles (ai-coding-rule): harness\specs\rules\task-forest-autoclose-and-roles.md
+- agent-first-acceptance (guide): harness\specs\guides\agent-first-acceptance.md
+- agent-harness-routing (guide): harness\specs\guides\agent-harness-routing.md
+- pretext-text-measurement-integration (guide): harness\specs\guides\pretext-text-measurement-integration.md
+- product-acceptance-strategy (guide): harness\specs\guides\product-acceptance-strategy.md
+- scoped-development-validation (guide): harness\specs\guides\scoped-development-validation.md
+- spec-update (guide): harness\specs\guides\spec-update.md
+- sustained-development-continuity (guide): harness\specs\guides\sustained-development-continuity.md
+- harness (layer-spec): harness\specs\layers\harness.md

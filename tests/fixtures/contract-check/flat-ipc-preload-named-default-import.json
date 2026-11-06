@@ -1,0 +1,13 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "flat-ipc-preload-named-default-import",
+  "rule": "flat-ipc/preload-direct-invoke",
+  "expect": "[flat-ipc/preload-direct-invoke]",
+  "description": "Regression for local IPC aliases, bound channels and binding origins through the real checker entrypoint.",
+  "mutations": [
+    {
+      "file": "electron/preload/index.ts",
+      "append": "\nimport { default as admissionElectron } from 'electron';\nadmissionElectron.ipcRenderer.invoke('rogue:default-import');\n"
+    }
+  ]
+}

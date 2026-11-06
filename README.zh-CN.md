@@ -50,7 +50,7 @@ Verse Claw 是基于嵌入式 OpenClaw Runtime 的 Electron 桌面应用。它�
 | `retired` | 仅为兼容、来源追溯或回滚检查保留 |
 | `agent-driven` | agent 生成并如实标注的证据，不是 real-human evidence |
 
-当前机器可读组件目录有 54 条：13 default、12 advanced、24 internal、5 retired、0 experiment。分类不等于运行时证明。详见[组件处置矩阵](docs/dev/component-disposition-matrix-20261021.md)。
+当前机器可读组件目录有 54 条：13 default、12 advanced、23 internal、6 retired、0 experiment。分类不等于运行时证明。详见[组件处置矩阵](docs/dev/component-disposition-matrix-20261021.md)。
 
 当前重要默认值：
 
