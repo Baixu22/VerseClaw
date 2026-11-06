@@ -1,0 +1,66 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0747",
+  "candidate": {
+    "commit": "7db02ec54115025d2f3358256f616b1785d4be71",
+    "tree": "421e7077218b3ffa531215f1cbfc84d7d1f23c16",
+    "dirty": false
+  },
+  "gates": [
+    {
+      "command": [
+        "node",
+        "--test",
+        "scripts/semantic-convergence-benefit.test.mjs"
+      ],
+      "exitCode": 0,
+      "durationMs": 344,
+      "output": "✔ unmeasured impact and cost stay bounded rather than becoming invented point gains (2.1404ms)\n✔ a report cannot silently change frozen weights or accept an invalid dimension (1.6327ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 163.2876\n"
+    },
+    {
+      "command": [
+        "node",
+        "scripts/semantic-convergence-benefit.mjs",
+        "--verify"
+      ],
+      "exitCode": 0,
+      "durationMs": 195,
+      "output": "{\"passed\":true,\"findings\":10,\"scoreInterval\":{\"lower\":0.65,\"upper\":1}}\n"
+    },
+    {
+      "command": [
+        "node",
+        "docs/dev/evidence/semantic-convergence-20261104/tf-0746/recompute.mjs"
+      ],
+      "exitCode": 0,
+      "durationMs": 42072,
+      "output": "{\n  \"tests\": 511,\n  \"electron\": 4,\n  \"matrixRows\": 13,\n  \"findings\": 10,\n  \"declaredNegatives\": 156,\n  \"sourceBlobs\": 304,\n  \"hashEntries\": 39,\n  \"passed\": true\n}\n"
+    },
+    {
+      "command": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "scripts/semantic-convergence-benefit.mjs",
+        "scripts/semantic-convergence-benefit.test.mjs",
+        "--max-warnings=0"
+      ],
+      "exitCode": 0,
+      "durationMs": 3084,
+      "output": ""
+    },
+    {
+      "command": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/semantic-convergence-benefit.md",
+        "--since",
+        "07f6564b0"
+      ],
+      "exitCode": 0,
+      "durationMs": 841,
+      "output": "Spec is valid: harness\\specs\\tasks\\semantic-convergence-benefit.md\n"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "candidate": {
+    "commit": "7db02ec54115025d2f3358256f616b1785d4be71",
+    "tree": "421e7077218b3ffa531215f1cbfc84d7d1f23c16",
+    "dirty": false
+  },
+  "sourceHashes": {
+    "scripts/semantic-convergence-benefit.mjs": "5533d3ec5af2a626331105373550f87362049b766febc5de8ab29f6b92527157",
+    "scripts/semantic-convergence-benefit.test.mjs": "038a0e9dc47ee6d47bd0a006e0dac7662e86c99196284c914efa728bc6826254",
+    "harness/specs/tasks/semantic-convergence-benefit.md": "a5374cfdc1ffb7b7bbd2c3933155c0aaa200c690616cc7ea03be8d310dff4a09",
+    "docs/dev/semantic-convergence-benefit-20261104.md": "703886d3ef3ff1a95fb7d529237063587f532566000f82cf69883816f071a537"
+  }
+}

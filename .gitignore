@@ -2631,6 +2631,12 @@ openclaw_runtime/_tmp_*
 !/docs/dev/semantic-convergence-benefit-20261104.md
 !/docs/dev/evidence/semantic-convergence-20261104/tf-0747/baseline-m0.json
 !/docs/dev/evidence/semantic-convergence-20261104/tf-0747/report.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0747/.gitattributes
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0747/README.md
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0747/SHA256SUMS
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0747/commands.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0747/credential-scan.json
+!/docs/dev/evidence/semantic-convergence-20261104/tf-0747/source-manifest.json
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.
