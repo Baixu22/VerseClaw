@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "RsiCampaignStop/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-relay-verifier",
+  "decidedAt": "2026-11-06T06:01:18.776Z",
+  "reason": "hard-acceptance-failure",
+  "trigger": {
+    "slotId": "tf-0275-e02-2-sekb-off",
+    "providerStatus": "incomplete",
+    "reason": "max_output_tokens",
+    "maxOutputTokens": 16000
+  },
+  "policy": [
+    "harness/specs/tasks/rsi-live-acceptance.md: hard acceptance failure may stop campaign, unexecuted retained",
+    "scripts/lib/rsi-benefit-eval.mjs: checkBenefitRun requires zero incomplete slots",
+    "Frozen plan retries=0; no threshold or budget changes after observing results"
+  ],
+  "recordedAtDecision": 15,
+  "pendingAtDecision": [
+    {
+      "slotId": "tf-0275-e02-3-sekb-off",
+      "dispatchDigest": "5bc5593d683ac50ba8c976c875cce480f51fe0a15e56776ac3dbbd0cec24a8ca",
+      "providerReceiptPresent": false
+    }
+  ],
+  "providerCompletionOfPending": "unknown; no retry permitted",
+  "claims": {
+    "benefit": false,
+    "promotionReady": false,
+    "complete216": false,
+    "realHuman": false
+  }
+}

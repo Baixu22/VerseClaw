@@ -1,0 +1,8 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-relay-verifier",
+  "pid": 51068,
+  "running": false,
+  "verifiedAtUtc": "2026-11-06T06:03:34.4029602Z",
+  "termination": "taskkill /PID 51068 /T /F after identity verification"
+}

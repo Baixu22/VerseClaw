@@ -1,0 +1,120 @@
+{
+  "schemaVersion": "RsiCodingCloseout/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-relay-verifier",
+  "generatedAt": "2026-11-06T06:06:12.029Z",
+  "status": "NO_GO",
+  "engineering": "admission-and-collector-verified",
+  "taskForest": {
+    "node": "TF-0809",
+    "status": "in_progress",
+    "progress": 80
+  },
+  "candidate": {
+    "commit": "feca048d749ad123780b7015e6e945b15bfc50ec",
+    "tree": "3bdb525341eb864a92cc1bdd4e211e5a0f5c8ce8",
+    "dirty": false,
+    "sourcePath": "D:/tmp/rsi-relay-20261106/candidate"
+  },
+  "admission": {
+    "tasks": 24,
+    "admitted": 24,
+    "rejected": 0,
+    "providerPreflight": true,
+    "supportPackage": "markdown-it@14.2.0",
+    "constructedTasks": [
+      "tf-0278-s03",
+      "tf-0283-l01",
+      "tf-0285-l03"
+    ]
+  },
+  "measurement": {
+    "plannedSlots": 216,
+    "dispatches": 16,
+    "retainedFinalResponses": 15,
+    "gradedModelFailures": 10,
+    "modelFormatFailures": 4,
+    "incompleteResponses": 1,
+    "unknownInFlight": 1,
+    "notStarted": 200,
+    "knownResponseTokens": 172119,
+    "totalUsageKnown": false,
+    "preflightTokens": 180,
+    "stopReason": "max_output_tokens at frozen 16000 output tokens; strict completion gate cannot pass, no retry permitted",
+    "receiptReport": "../../rsi-benefit-eval/coding-20261106/measurement/report.json"
+  },
+  "validation": {
+    "schemaVersion": "RsiCodingValidation/v1",
+    "driven_by": "agent",
+    "actor": "codex/rsi-relay-verifier",
+    "candidate": {
+      "commit": "feca048d749ad123780b7015e6e945b15bfc50ec",
+      "dirty": false
+    },
+    "tests": {
+      "command": "node node_modules/vitest/vitest.mjs run tests/unit/rsi-coding-collector.test.ts tests/unit/rsi-live-grader.test.ts tests/unit/rsi-live-acceptance.test.ts tests/unit/rsi-benefit-eval.test.ts tests/unit/rsi-responses-provider.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "passed": 86,
+      "failed": 0,
+      "files": 5
+    },
+    "harness": {
+      "command": "node harness/src/cli.mjs -- validate --spec harness/specs/tasks/rsi-coding-collector.md",
+      "exitCode": 0,
+      "noDiff": false
+    },
+    "scopedTypecheck": {
+      "exitCode": 0,
+      "config": "tsconfig.rsi.json"
+    },
+    "fullTypecheck": [
+      {
+        "project": "node",
+        "exitCode": 2,
+        "errorCount": 29,
+        "rsiPaths": []
+      },
+      {
+        "project": "web",
+        "exitCode": 2,
+        "errorCount": 57,
+        "rsiPaths": []
+      },
+      {
+        "project": "test",
+        "exitCode": 2,
+        "errorCount": 121,
+        "rsiPaths": []
+      }
+    ],
+    "dependencies": {
+      "freshInstall": false,
+      "reused": true,
+      "interruptedTypecheckScript": "pnpm auto-install began; stopped only the owned process tree, direct tsgo gates used subsequently."
+    },
+    "readmeReview": {
+      "files": [
+        "README.md",
+        "README.zh-CN.md",
+        "README.ja-JP.md"
+      ],
+      "changed": false,
+      "reason": "Existing diagnostic-only and no product-promotion boundaries remain correct; detailed collector behavior documented in capability boundaries."
+    }
+  },
+  "claims": {
+    "benefit": false,
+    "promotionReady": false,
+    "complete216": false,
+    "completeRsiImplementation": false,
+    "realHuman": false,
+    "productLocksChanged": false,
+    "releaseApproved": false
+  },
+  "residuals": [
+    "Frozen campaign stopped after a terminal incomplete response; one in-flight result and usage remain unknown.",
+    "Full node/web/test typechecks fail with 29/57/121 non-RSI diagnostics in reused dependency view.",
+    "Source projection reused shared dependencies. The pnpm wrapper unexpectedly began dependency preparation and was stopped; fresh-install and pristine dependency acceptance are not claimed.",
+    "Future measurement must be a separately frozen experiment; no overwritten response, repeated dispatch or retrospective output-budget change."
+  ]
+}

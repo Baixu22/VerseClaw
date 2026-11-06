@@ -1,0 +1,126 @@
+electron/gateway/agent-browser-bridge.ts(11,42): error TS2307: Cannot find module '@verse-claw/versebrowser' or its corresponding type declarations.
+electron/services/agent-browser-api.ts(32,8): error TS2307: Cannot find module '@verse-claw/versebrowser' or its corresponding type declarations.
+electron/services/agent-browser-api.ts(361,28): error TS4112: This member cannot have an 'override' modifier because its containing class 'HostAgentBrowserService' does not extend another class.
+electron/services/agent-browser-api.ts(367,22): error TS4112: This member cannot have an 'override' modifier because its containing class 'HostAgentBrowserService' does not extend another class.
+electron/services/agent-browser-api.ts(372,28): error TS4112: This member cannot have an 'override' modifier because its containing class 'HostAgentBrowserService' does not extend another class.
+electron/services/agent-browser-api.ts(446,24): error TS18046: 'payload' is of type 'unknown'.
+electron/services/agent-browser-api.ts(453,22): error TS18046: 'payload' is of type 'unknown'.
+electron/services/agent-browser-api.ts(453,45): error TS18046: 'payload' is of type 'unknown'.
+electron/services/agent-browser-api.ts(458,42): error TS18046: 'payload' is of type 'unknown'.
+electron/services/agent-browser-api.ts(459,61): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'object'.
+electron/services/agent-browser-api.ts(463,49): error TS2698: Spread types may only be created from object types.
+electron/services/agent-browser-api.ts(463,93): error TS7006: Parameter 'url' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(463,98): error TS7006: Parameter 'options' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(521,62): error TS2554: Expected 0 arguments, but got 1.
+electron/services/long-session-resource-reclamation.ts(49,34): error TS7006: Parameter 'session' implicitly has an 'any' type.
+electron/services/long-session-resource-reclamation.ts(173,74): error TS7006: Parameter 'session' implicitly has an 'any' type.
+electron/services/long-session-resource-reclamation.ts(233,40): error TS7006: Parameter 'session' implicitly has an 'any' type.
+openclaw_runtime/extensions/diagnostics-otel/src/cost-sampling.ts(5,40): error TS2307: Cannot find module '@opentelemetry/resources' or its corresponding type declarations.
+openclaw_runtime/extensions/diagnostics-otel/src/cost-sampling.ts(11,8): error TS2307: Cannot find module '@opentelemetry/sdk-trace-base' or its corresponding type declarations.
+openclaw_runtime/extensions/diagnostics-otel/src/cost-sampling.ts(461,38): error TS7006: Parameter 'result' implicitly has an 'any' type.
+openclaw_runtime/extensions/diagnostics-otel/src/service.ts(11,48): error TS2307: Cannot find module '@opentelemetry/api-logs' or its corresponding type declarations.
+openclaw_runtime/extensions/diagnostics-otel/src/service.ts(12,33): error TS2307: Cannot find module '@opentelemetry/exporter-logs-otlp-proto' or its corresponding type declarations.
+openclaw_runtime/extensions/diagnostics-otel/src/service.ts(13,36): error TS2307: Cannot find module '@opentelemetry/exporter-metrics-otlp-proto' or its corresponding type declarations.
+openclaw_runtime/extensions/diagnostics-otel/src/service.ts(14,35): error TS2307: Cannot find module '@opentelemetry/exporter-trace-otlp-proto' or its corresponding type declarations.
+openclaw_runtime/extensions/diagnostics-otel/src/service.ts(15,40): error TS2307: Cannot find module '@opentelemetry/resources' or its corresponding type declarations.
+openclaw_runtime/extensions/diagnostics-otel/src/service.ts(16,57): error TS2307: Cannot find module '@opentelemetry/sdk-logs' or its corresponding type declarations.
+openclaw_runtime/extensions/diagnostics-otel/src/service.ts(17,47): error TS2307: Cannot find module '@opentelemetry/sdk-metrics' or its corresponding type declarations.
+openclaw_runtime/extensions/diagnostics-otel/src/service.ts(18,25): error TS2307: Cannot find module '@opentelemetry/sdk-node' or its corresponding type declarations.
+openclaw_runtime/extensions/diagnostics-otel/src/service.ts(24,8): error TS2307: Cannot find module '@opentelemetry/sdk-trace-base' or its corresponding type declarations.
+openclaw_runtime/extensions/diagnostics-otel/src/service.ts(25,35): error TS2307: Cannot find module '@opentelemetry/semantic-conventions' or its corresponding type declarations.
+openclaw_runtime/extensions/diagnostics-otel/src/service.ts(31,8): error TS2307: Cannot find module '@opentelemetry/semantic-conventions/incubating' or its corresponding type declarations.
+openclaw_runtime/packages/net-policy/src/ip.ts(47,3): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type '"benchmarking"' is not assignable to type 'BlockedIpv6Range'.
+openclaw_runtime/packages/net-policy/src/ip.ts(49,3): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type '"orchid2"' is not assignable to type 'BlockedIpv6Range'.
+openclaw_runtime/src/context-engine/stage2-dcs-evidence.ts(53,8): error TS7006: Parameter 'ref' implicitly has an 'any' type.
+openclaw_runtime/src/context-engine/stage2-dcs-evidence.ts(64,29): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+openclaw_runtime/src/context-engine/stage2-dcs-evidence.ts(66,32): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+openclaw_runtime/src/context-engine/stage2-dcs.ts(324,31): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(14,19): error TS7016: Could not find a declaration file for module 'zod'. 'D:/ClawX/node_modules/.pnpm/zod@4.4.3/node_modules/zod/index.js' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(220,17): error TS7006: Parameter 'plan' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(220,23): error TS7006: Parameter 'ctx' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(221,45): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(222,51): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(223,28): error TS7006: Parameter 'refId' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(335,17): error TS7006: Parameter 'grant' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(335,24): error TS7006: Parameter 'ctx' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(394,17): error TS7006: Parameter 'receipt' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(394,26): error TS7006: Parameter 'ctx' implicitly has an 'any' type.
+src/components/assistant-render/AssistantMarkdown.tsx(2,41): error TS2307: Cannot find module '@assistant-ui/react' or its corresponding type declarations.
+src/components/layout/SessionSearchModal.tsx(10,41): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
+src/components/tool-ui/PendingRunApprovals.tsx(73,17): error TS2322: Type '{ id: string; title: string; description: string | undefined; icon: string; metadata: { key: string; value: string; }[]; variant: string; confirmLabel: string; cancelLabel: string; choice: PermissionApprovalDecision | undefined; onConfirm: () => Promise<...>; onCancel: () => Promise<...>; className: string; }' is not assignable to type 'IntrinsicAttributes & ApprovalCardProps'.
+  Property 'id' does not exist on type 'IntrinsicAttributes & ApprovalCardProps'.
+src/components/tool-ui/agent-interactions.tsx(3419,18): error TS2559: Type '{ type: "progress-tracker"; id: string; steps: { id: string; label: string; description?: string | undefined; status: "completed" | "failed" | "in-progress" | "pending"; }[]; elapsedTime?: number | undefined; choice?: { ...; } | undefined; }' has no properties in common with type 'IntrinsicAttributes & ProgressTrackerProps'.
+src/components/tool-ui/approval-card/approval-card.tsx(82,3): error TS2339: Property 'id' does not exist on type 'ApprovalCardProps'.
+src/components/tool-ui/approval-card/approval-card.tsx(83,3): error TS2339: Property 'title' does not exist on type 'ApprovalCardProps'.
+src/components/tool-ui/approval-card/approval-card.tsx(84,3): error TS2339: Property 'description' does not exist on type 'ApprovalCardProps'.
+src/components/tool-ui/approval-card/approval-card.tsx(85,3): error TS2339: Property 'icon' does not exist on type 'ApprovalCardProps'.
+src/components/tool-ui/approval-card/approval-card.tsx(86,3): error TS2339: Property 'metadata' does not exist on type 'ApprovalCardProps'.
+src/components/tool-ui/approval-card/approval-card.tsx(87,3): error TS2339: Property 'variant' does not exist on type 'ApprovalCardProps'.
+src/components/tool-ui/approval-card/approval-card.tsx(88,3): error TS2339: Property 'confirmLabel' does not exist on type 'ApprovalCardProps'.
+src/components/tool-ui/approval-card/approval-card.tsx(89,3): error TS2339: Property 'cancelLabel' does not exist on type 'ApprovalCardProps'.
+src/components/tool-ui/approval-card/approval-card.tsx(91,3): error TS2339: Property 'choice' does not exist on type 'ApprovalCardProps'.
+src/components/tool-ui/approval-card/approval-card.tsx(198,34): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/components/tool-ui/approval-card/approval-card.tsx(198,40): error TS7006: Parameter 'index' implicitly has an 'any' type.
+src/components/tool-ui/approval-card/schema.ts(1,19): error TS7016: Could not find a declaration file for module 'zod'. 'D:/ClawX/node_modules/.pnpm/zod@4.4.3/node_modules/zod/index.js' implicitly has an 'any' type.
+src/components/tool-ui/code-diff/schema.ts(1,19): error TS7016: Could not find a declaration file for module 'zod'. 'D:/ClawX/node_modules/.pnpm/zod@4.4.3/node_modules/zod/index.js' implicitly has an 'any' type.
+src/components/tool-ui/progress-tracker/progress-tracker.tsx(59,70): error TS2366: Function lacks ending return statement and return type does not include 'undefined'.
+src/components/tool-ui/progress-tracker/progress-tracker.tsx(159,28): error TS2339: Property 'id' does not exist on type 'ProgressTrackerProps'.
+src/components/tool-ui/progress-tracker/progress-tracker.tsx(160,31): error TS2339: Property 'steps' does not exist on type 'ProgressTrackerProps'.
+src/components/tool-ui/progress-tracker/progress-tracker.tsx(161,38): error TS2339: Property 'elapsedTime' does not exist on type 'ProgressTrackerProps'.
+src/components/tool-ui/progress-tracker/progress-tracker.tsx(204,23): error TS7006: Parameter 'step' implicitly has an 'any' type.
+src/components/tool-ui/progress-tracker/progress-tracker.tsx(204,29): error TS7006: Parameter 'index' implicitly has an 'any' type.
+src/components/tool-ui/progress-tracker/progress-tracker.tsx(245,37): error TS7006: Parameter 'step' implicitly has an 'any' type.
+src/components/tool-ui/progress-tracker/progress-tracker.tsx(265,23): error TS7006: Parameter 'step' implicitly has an 'any' type.
+src/components/tool-ui/progress-tracker/progress-tracker.tsx(265,29): error TS7006: Parameter 'index' implicitly has an 'any' type.
+src/components/tool-ui/progress-tracker/progress-tracker.tsx(343,3): error TS2339: Property 'id' does not exist on type 'ProgressTrackerProps'.
+src/components/tool-ui/progress-tracker/progress-tracker.tsx(344,3): error TS2339: Property 'steps' does not exist on type 'ProgressTrackerProps'.
+src/components/tool-ui/progress-tracker/progress-tracker.tsx(345,3): error TS2339: Property 'elapsedTime' does not exist on type 'ProgressTrackerProps'.
+src/components/tool-ui/progress-tracker/progress-tracker.tsx(347,3): error TS2339: Property 'choice' does not exist on type 'ProgressTrackerProps'.
+src/components/tool-ui/progress-tracker/schema.ts(1,19): error TS7016: Could not find a declaration file for module 'zod'. 'D:/ClawX/node_modules/.pnpm/zod@4.4.3/node_modules/zod/index.js' implicitly has an 'any' type.
+src/components/tool-ui/progress-tracker/schema.ts(26,17): error TS7006: Parameter 'steps' implicitly has an 'any' type.
+src/components/tool-ui/progress-tracker/schema.ts(26,24): error TS7006: Parameter 'ctx' implicitly has an 'any' type.
+src/components/tool-ui/shared/contract.ts(1,19): error TS7016: Could not find a declaration file for module 'zod'. 'D:/ClawX/node_modules/.pnpm/zod@4.4.3/node_modules/zod/index.js' implicitly has an 'any' type.
+src/components/tool-ui/shared/parse.ts(1,19): error TS7016: Could not find a declaration file for module 'zod'. 'D:/ClawX/node_modules/.pnpm/zod@4.4.3/node_modules/zod/index.js' implicitly has an 'any' type.
+src/components/tool-ui/shared/parse.ts(16,35): error TS7006: Parameter 'issue' implicitly has an 'any' type.
+src/components/tool-ui/shared/schema.ts(1,19): error TS7016: Could not find a declaration file for module 'zod'. 'D:/ClawX/node_modules/.pnpm/zod@4.4.3/node_modules/zod/index.js' implicitly has an 'any' type.
+src/components/tool-ui/terminal/schema.ts(1,19): error TS7016: Could not find a declaration file for module 'zod'. 'D:/ClawX/node_modules/.pnpm/zod@4.4.3/node_modules/zod/index.js' implicitly has an 'any' type.
+src/components/ui/apple-drawer.tsx(3,34): error TS2307: Cannot find module 'framer-motion' or its corresponding type declarations.
+src/pages/Chat/ChatMessage.tsx(12,73): error TS2307: Cannot find module '@assistant-ui/react' or its corresponding type declarations.
+src/pages/Chat/index.tsx(21,8): error TS2307: Cannot find module '@assistant-ui/react' or its corresponding type declarations.
+src/pages/Chat/index.tsx(4376,17): error TS7031: Binding element 'abortSignal' implicitly has an 'any' type.
+src/pages/Chat/index.tsx(4376,30): error TS7031: Binding element 'messages' implicitly has an 'any' type.
+src/pages/Chat/index.tsx(4547,15): error TS7031: Binding element 'suggestion' implicitly has an 'any' type.
+tests/unit/context-control-plane-stage2-contracts.test.ts(207,45): error TS7006: Parameter 'ref' implicitly has an 'any' type.
+tests/unit/context-control-plane-stage2-contracts.test.ts(209,38): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+tests/unit/versebrowser-boundary-repair.test.ts(37,66): error TS2339: Property 'list' does not exist on type 'HostAgentBrowserService'.
+tests/unit/versebrowser-boundary-repair.test.ts(73,44): error TS2554: Expected 0 arguments, but got 1.
+tests/unit/versebrowser-boundary-repair.test.ts(100,19): error TS2339: Property 'list' does not exist on type 'HostAgentBrowserService'.
+tests/unit/versebrowser-boundary-repair.test.ts(111,18): error TS2339: Property 'newPage' does not exist on type 'HostAgentBrowserService'.
+tests/unit/versebrowser-boundary-repair.test.ts(114,32): error TS2339: Property 'listPages' does not exist on type 'HostAgentBrowserService'.
+tests/unit/versebrowser-boundary-repair.test.ts(117,19): error TS2339: Property 'list' does not exist on type 'HostAgentBrowserService'.
+tests/unit/versebrowser-boundary-repair.test.ts(120,19): error TS2339: Property 'list' does not exist on type 'HostAgentBrowserService'.
+tests/unit/versebrowser-boundary-repair.test.ts(143,19): error TS2339: Property 'list' does not exist on type 'HostAgentBrowserService'.
+tests/unit/versebrowser-boundary-repair.test.ts(160,19): error TS2339: Property 'list' does not exist on type 'HostAgentBrowserService'.
+tests/unit/versebrowser-boundary-repair.test.ts(163,19): error TS2339: Property 'list' does not exist on type 'HostAgentBrowserService'.
+tests/unit/versebrowser-boundary-repair.test.ts(176,18): error TS2339: Property 'newPage' does not exist on type 'HostAgentBrowserService'.
+tests/unit/versebrowser-boundary-repair.test.ts(190,23): error TS2339: Property 'list' does not exist on type 'HostAgentBrowserService'.
+tests/unit/versebrowser-boundary-repair.test.ts(204,19): error TS2339: Property 'list' does not exist on type 'HostAgentBrowserService'.
+tests/unit/versebrowser-boundary-repair.test.ts(210,32): error TS2339: Property 'newPage' does not exist on type 'HostAgentBrowserService'.
+tests/unit/versebrowser-boundary-repair.test.ts(212,18): error TS2339: Property 'closePage' does not exist on type 'HostAgentBrowserService'.
+tests/unit/versebrowser-boundary-repair.test.ts(217,19): error TS2339: Property 'list' does not exist on type 'HostAgentBrowserService'.
+tests/unit/versebrowser-boundary-repair.test.ts(225,25): error TS2339: Property 'newPage' does not exist on type 'HostAgentBrowserService'.
+tests/unit/versebrowser-boundary-repair.test.ts(227,26): error TS2339: Property 'listPages' does not exist on type 'HostAgentBrowserService'.
+tests/unit/versebrowser-boundary-repair.test.ts(234,18): error TS2339: Property 'newPage' does not exist on type 'HostAgentBrowserService'.
+tests/unit/versebrowser-boundary-repair.test.ts(237,19): error TS2339: Property 'list' does not exist on type 'HostAgentBrowserService'.
+tests/unit/versebrowser-boundary-repair.test.ts(248,18): error TS2339: Property 'newPage' does not exist on type 'HostAgentBrowserService'.
+tests/unit/versebrowser-boundary-repair.test.ts(275,19): error TS2339: Property 'list' does not exist on type 'HostAgentBrowserService'.
+tests/unit/versebrowser-driver-capabilities.test.ts(3,59): error TS2307: Cannot find module '@verse-claw/versebrowser' or its corresponding type declarations.
+tests/unit/versebrowser-task-session-conservation.test.ts(6,64): error TS2307: Cannot find module '@verse-claw/versebrowser' or its corresponding type declarations.
+tests/unit/versebrowser-task-session-conservation.test.ts(10,33): error TS7006: Parameter 'step' implicitly has an 'any' type.
+tests/unit/versebrowser-task-session-conservation.test.ts(111,50): error TS2307: Cannot find module '@verse-claw/versebrowser' or its corresponding type declarations.
+tests/unit/versebrowser-task-session-conservation.test.ts(123,34): error TS7006: Parameter 'page' implicitly has an 'any' type.
+tests/unit/versebrowser-task-session-conservation.test.ts(125,32): error TS7006: Parameter 'session' implicitly has an 'any' type.

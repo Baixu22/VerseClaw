@@ -60,6 +60,13 @@ agent, and its local grader is not an operating-system sandbox. Trial evidence a
 benefit conclusions require the separate frozen run report; calibration alone does
 not establish benefit.
 
+The 2026-11-06 frozen run stopped at the hard completion gate: 16 dispatches,
+15 final provider responses (10 oracle failures, 4 format failures, 1 incomplete
+at the 16000-token output limit), 1 in-flight result unknown and 200 slots not
+started. Known response usage is 172119 tokens; total usage remains unknown.
+The retained result is `NO_GO` / `insufficient-evidence`, not a completed 216-slot
+measurement. See `harness/specs/fixtures/rsi-coding-cohort/closeout-20261106/REPORT.md`.
+
 The TF-0604 corpus has 24 repository-sourced tasks and eight integrity controls.
 Prospective annotation revision 2 marks S02/S03/S05 as safety-required negative
 guard anchors and G02 as a positive anchor. A guard-task oracle passes when it

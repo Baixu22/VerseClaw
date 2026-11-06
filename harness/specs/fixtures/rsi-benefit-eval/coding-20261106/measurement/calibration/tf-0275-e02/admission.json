@@ -1,0 +1,364 @@
+{
+  "schemaVersion": "RsiLiveTaskAdmission/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-independent-calibrator",
+  "taskId": "tf-0275-e02",
+  "source": {
+    "id": "tf-0275-e02",
+    "base": "6b56992a2a55127c7175fda3a3b7c3206736b485",
+    "reference": "ab0ba14cbb3546158b3271f13719d2bba5a15686",
+    "productChanges": [
+      "scripts/lib/paired-ablation.d.mts",
+      "scripts/lib/paired-ablation.mjs",
+      "shared/agent-dev/paired-ablation-fixture.json"
+    ],
+    "originalDecision": "PASS",
+    "codingBindingDigest": "2697e0f57ca40ab8e7b547d0d82595dd56b11f3281acf316c03df819590cf417",
+    "baselineSetup": null,
+    "targetScope": [
+      "scripts/lib/paired-ablation.mjs",
+      "scripts/lib/paired-ablation.d.mts",
+      "shared/agent-dev/paired-ablation-fixture.json",
+      "tests/unit/agent-dev-paired-ablation.test.ts",
+      "tests/unit/runtime-memory-paired-ablation.test.ts",
+      "harness/specs/tasks/harness-gap-paired-ablation.md",
+      "harness/specs/rules/paired-ablation-boundary.md",
+      "docs/dev/harness-gap-closure/e02-paired-ablation.md",
+      "docs/dev/harness-gap-closure/e02-acceptance.json",
+      "docs/dev/harness-gap-closure/E02-SHA256SUMS"
+    ],
+    "prompt": "E02 用一个可逆、非安全的真实组件（Phase-4 type-aware eviction）在真实 RuntimeMemoryStore 上做 baseline vs leave-one-out 的配对消融，给出 pass^k、p50/p95、tokens 代理、误拦截、安全违规、效应量与 95% 区间；零/负效应如实记录，不伪造收益，不改产品默认/锁。",
+    "sourceRecord": "docs/dev/harness-gap-closure/e02-acceptance.json",
+    "sourceRecordDigest": "67cda0e5a5ccd28e5386d9f64d02039ca0122bb753a536deb48167e143ac73fd",
+    "oraclePaths": [
+      "tests/unit/agent-dev-paired-ablation.test.ts",
+      "tests/unit/runtime-memory-paired-ablation.test.ts"
+    ],
+    "commands": [
+      "pnpm exec vitest run tests/unit/agent-dev-paired-ablation.test.ts tests/unit/runtime-memory-paired-ablation.test.ts --maxWorkers=1"
+    ]
+  },
+  "stages": {
+    "reference": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0275-e02",
+      "commands": [
+        "pnpm exec vitest run tests/unit/agent-dev-paired-ablation.test.ts tests/unit/runtime-memory-paired-ablation.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm exec vitest run tests/unit/agent-dev-paired-ablation.test.ts tests/unit/runtime-memory-paired-ablation.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\ClawX\\node_modules\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\vitest.mjs",
+            "run",
+            "tests/unit/agent-dev-paired-ablation.test.ts",
+            "tests/unit/runtime-memory-paired-ablation.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0275-e02\\reference\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0275-e02\\reference\\workspace",
+          "exitCode": 0,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 4,
+            "numPassedTestSuites": 4,
+            "numFailedTestSuites": 0,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 6,
+            "numPassedTests": 6,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793930474676,
+            "success": true,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "paired-ablation aggregation"
+                    ],
+                    "fullName": "paired-ablation aggregation summarizes pass^k, p50/p95 latency, tokens, false blocks and safety violations",
+                    "status": "passed",
+                    "title": "summarizes pass^k, p50/p95 latency, tokens, false blocks and safety violations",
+                    "duration": 2.2102999999997337,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "paired-ablation aggregation"
+                    ],
+                    "fullName": "paired-ablation aggregation computes a paired mean difference and 95% CI",
+                    "status": "passed",
+                    "title": "computes a paired mean difference and 95% CI",
+                    "duration": 0.42450000000008004,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "paired-ablation aggregation"
+                    ],
+                    "fullName": "paired-ablation aggregation reports component-helps only when the 95% CI excludes zero on the positive side",
+                    "status": "passed",
+                    "title": "reports component-helps only when the 95% CI excludes zero on the positive side",
+                    "duration": 0.3245999999999185,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "paired-ablation aggregation"
+                    ],
+                    "fullName": "paired-ablation aggregation returns no-effect when the CI contains zero and never invents a win",
+                    "status": "passed",
+                    "title": "returns no-effect when the CI contains zero and never invents a win",
+                    "duration": 0.2880000000000109,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "paired-ablation aggregation"
+                    ],
+                    "fullName": "paired-ablation aggregation returns hurts on a significant negative effect and safety-regression on violations",
+                    "status": "passed",
+                    "title": "returns hurts on a significant negative effect and safety-regression on violations",
+                    "duration": 1.5979999999999563,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793930476990,
+                "endTime": 1793930476995.598,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0275-e02/reference/workspace/tests/unit/agent-dev-paired-ablation.test.ts"
+              },
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "E02 paired ablation: type-aware eviction vs FIFO (real RuntimeMemoryStore)"
+                    ],
+                    "fullName": "E02 paired ablation: type-aware eviction vs FIFO (real RuntimeMemoryStore) runs 20 cases x 3 repeats x 2 conditions and reports effect + 95% CI (never fabricating a win)",
+                    "status": "passed",
+                    "title": "runs 20 cases x 3 repeats x 2 conditions and reports effect + 95% CI (never fabricating a win)",
+                    "duration": 57.38349999999991,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793930479573,
+                "endTime": 1793930479630.3835,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0275-e02/reference/workspace/tests/unit/runtime-memory-paired-ablation.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0275-e02\\reference\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0275-e02\\reference\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0275-e02\\reference\\oracle\\01-stderr.log"
+        }
+      ],
+      "numTotalTests": 6,
+      "numPassedTests": 6,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": true,
+      "failureClass": null,
+      "timeoutMs": 300000,
+      "oracleHashBefore": "f7c95969512a7de968f91f9f9a3ffb9103df5618353ca00cce5186a69079c100",
+      "oracleHashAfter": "f7c95969512a7de968f91f9f9a3ffb9103df5618353ca00cce5186a69079c100",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-paired-ablation.md": "1dacdebf222ad3c2f04bfca4cc424851b1b42ba6c74c7420aa37f92f6b7169af",
+        "tests/unit/agent-dev-paired-ablation.test.ts": "44634cdf74c172b70b42602b6593b96a996ecf57d49721acc93a39a0118d8d45",
+        "tests/unit/runtime-memory-paired-ablation.test.ts": "bdbeb72b8a46e87ec95fe7d510497bcb009122673f2163f1fc7b85dc72e27026"
+      },
+      "oracleRevision": "ab0ba14cbb3546158b3271f13719d2bba5a15686",
+      "oracleTestDigests": {
+        "tests/unit/agent-dev-paired-ablation.test.ts": "87258d935488ce17f9ddae33177d3c292f15f837eb49f8eb2bf4dca771e03bfd",
+        "tests/unit/runtime-memory-paired-ablation.test.ts": "e0967022871cabd12b9aed6aa3e8fe46b49f27d90e3f0f530c619917bb4cbaa4"
+      },
+      "supportPackages": [
+        {
+          "name": "markdown-it",
+          "declaredVersion": "14.2.0",
+          "resolvedVersion": "14.2.0"
+        }
+      ],
+      "diagnostics": [],
+      "workspace": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0275-e02\\reference\\workspace",
+      "outDir": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0275-e02\\reference\\oracle",
+      "reportPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0275-e02\\reference\\oracle\\run-report.json"
+    },
+    "baseline": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0275-e02",
+      "commands": [
+        "pnpm exec vitest run tests/unit/agent-dev-paired-ablation.test.ts tests/unit/runtime-memory-paired-ablation.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm exec vitest run tests/unit/agent-dev-paired-ablation.test.ts tests/unit/runtime-memory-paired-ablation.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\ClawX\\node_modules\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\vitest.mjs",
+            "run",
+            "tests/unit/agent-dev-paired-ablation.test.ts",
+            "tests/unit/runtime-memory-paired-ablation.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0275-e02\\baseline\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0275-e02\\baseline\\workspace",
+          "exitCode": 1,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 2,
+            "numPassedTestSuites": 0,
+            "numFailedTestSuites": 2,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 0,
+            "numPassedTests": 0,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793930498092,
+            "success": false,
+            "testResults": [
+              {
+                "assertionResults": [],
+                "startTime": 1793930498092,
+                "endTime": 1793930498092,
+                "status": "failed",
+                "message": "Cannot find module '../../scripts/lib/paired-ablation.mjs' imported from D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0275-e02/baseline/workspace/tests/unit/agent-dev-paired-ablation.test.ts",
+                "name": "D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0275-e02/baseline/workspace/tests/unit/agent-dev-paired-ablation.test.ts"
+              },
+              {
+                "assertionResults": [],
+                "startTime": 1793930498092,
+                "endTime": 1793930498092,
+                "status": "failed",
+                "message": "Cannot find module '../../scripts/lib/paired-ablation.mjs' imported from D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0275-e02/baseline/workspace/tests/unit/runtime-memory-paired-ablation.test.ts",
+                "name": "D:/tmp/rsi-closeout-20261106/v7/calibration/tf-0275-e02/baseline/workspace/tests/unit/runtime-memory-paired-ablation.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0275-e02\\baseline\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0275-e02\\baseline\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0275-e02\\baseline\\oracle\\01-stderr.log"
+        }
+      ],
+      "numTotalTests": 0,
+      "numPassedTests": 0,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": false,
+      "failureClass": "target-module-absent",
+      "timeoutMs": 300000,
+      "oracleHashBefore": "f7c95969512a7de968f91f9f9a3ffb9103df5618353ca00cce5186a69079c100",
+      "oracleHashAfter": "f7c95969512a7de968f91f9f9a3ffb9103df5618353ca00cce5186a69079c100",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-paired-ablation.md": "1dacdebf222ad3c2f04bfca4cc424851b1b42ba6c74c7420aa37f92f6b7169af",
+        "tests/unit/agent-dev-paired-ablation.test.ts": "44634cdf74c172b70b42602b6593b96a996ecf57d49721acc93a39a0118d8d45",
+        "tests/unit/runtime-memory-paired-ablation.test.ts": "bdbeb72b8a46e87ec95fe7d510497bcb009122673f2163f1fc7b85dc72e27026"
+      },
+      "oracleRevision": "ab0ba14cbb3546158b3271f13719d2bba5a15686",
+      "oracleTestDigests": {
+        "tests/unit/agent-dev-paired-ablation.test.ts": "87258d935488ce17f9ddae33177d3c292f15f837eb49f8eb2bf4dca771e03bfd",
+        "tests/unit/runtime-memory-paired-ablation.test.ts": "e0967022871cabd12b9aed6aa3e8fe46b49f27d90e3f0f530c619917bb4cbaa4"
+      },
+      "supportPackages": [
+        {
+          "name": "markdown-it",
+          "declaredVersion": "14.2.0",
+          "resolvedVersion": "14.2.0"
+        }
+      ],
+      "diagnostics": [
+        {
+          "kind": "missing-module",
+          "missingPath": "scripts/lib/paired-ablation.mjs",
+          "importer": "tests/unit/agent-dev-paired-ablation.test.ts",
+          "inTargetScope": true
+        },
+        {
+          "kind": "missing-module",
+          "missingPath": "scripts/lib/paired-ablation.mjs",
+          "importer": "tests/unit/runtime-memory-paired-ablation.test.ts",
+          "inTargetScope": true
+        }
+      ],
+      "workspace": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0275-e02\\baseline\\workspace",
+      "outDir": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0275-e02\\baseline\\oracle",
+      "reportPath": "D:\\tmp\\rsi-closeout-20261106\\v7\\calibration\\tf-0275-e02\\baseline\\oracle\\run-report.json"
+    }
+  },
+  "admission": {
+    "passed": true,
+    "issues": [],
+    "warnings": [
+      "baseline-target-module-absent"
+    ]
+  },
+  "claims": {
+    "modelQuality": false,
+    "benefit": false,
+    "realHuman": false
+  }
+}

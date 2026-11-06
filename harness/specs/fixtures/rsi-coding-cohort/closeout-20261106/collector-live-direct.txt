@@ -1,0 +1,15 @@
+{"slot":"tf-0274-e01-1-sekb-off","position":0,"outcome":"fail","failureCategory":"model","usage":{"inputTokens":2985,"outputTokens":7491,"totalTokens":10476}}
+{"slot":"tf-0274-e01-1-sekb-shadow","position":1,"outcome":"fail","failureCategory":"model","usage":{"inputTokens":2985,"outputTokens":7764,"totalTokens":10749}}
+{"slot":"tf-0274-e01-1-sekb-confirmed","position":2,"outcome":"fail","failureCategory":"model","usage":{"inputTokens":3092,"outputTokens":8796,"totalTokens":11888}}
+{"slot":"tf-0274-e01-2-sekb-shadow","position":3,"outcome":"fail","failureCategory":"model","usage":{"inputTokens":2985,"outputTokens":8603,"totalTokens":11588}}
+{"slot":"tf-0274-e01-2-sekb-confirmed","position":4,"outcome":"fail","failureCategory":"model","usage":{"inputTokens":3092,"outputTokens":4865,"totalTokens":7957}}
+{"slot":"tf-0274-e01-2-sekb-off","position":5,"outcome":"fail","failureCategory":"model-format","usage":{"inputTokens":2985,"outputTokens":10611,"totalTokens":13596}}
+{"slot":"tf-0274-e01-3-sekb-confirmed","position":6,"outcome":"fail","failureCategory":"model-format","usage":{"inputTokens":3092,"outputTokens":7853,"totalTokens":10945}}
+{"slot":"tf-0274-e01-3-sekb-off","position":7,"outcome":"fail","failureCategory":"model-format","usage":{"inputTokens":2985,"outputTokens":5572,"totalTokens":8557}}
+{"slot":"tf-0274-e01-3-sekb-shadow","position":8,"outcome":"fail","failureCategory":"model","usage":{"inputTokens":2985,"outputTokens":10312,"totalTokens":13297}}
+{"slot":"tf-0275-e02-1-sekb-shadow","position":9,"outcome":"fail","failureCategory":"model","usage":{"inputTokens":1036,"outputTokens":12305,"totalTokens":13341}}
+{"slot":"tf-0275-e02-1-sekb-confirmed","position":10,"outcome":"fail","failureCategory":"model-format","usage":{"inputTokens":1143,"outputTokens":10464,"totalTokens":11607}}
+{"slot":"tf-0275-e02-1-sekb-off","position":11,"outcome":"fail","failureCategory":"model","usage":{"inputTokens":1036,"outputTokens":8673,"totalTokens":9709}}
+{"slot":"tf-0275-e02-2-sekb-confirmed","position":12,"outcome":"fail","failureCategory":"model","usage":{"inputTokens":1143,"outputTokens":11027,"totalTokens":12170}}
+{"slot":"tf-0275-e02-2-sekb-off","position":13,"outcome":"missing","failureCategory":null,"usage":{"inputTokens":1049,"outputTokens":16000,"totalTokens":17049}}
+{"slot":"tf-0275-e02-2-sekb-shadow","position":14,"outcome":"fail","failureCategory":"model","usage":{"inputTokens":1036,"outputTokens":8154,"totalTokens":9190}}

@@ -1,0 +1,33 @@
+electron/gateway/agent-browser-bridge.ts(11,42): error TS2307: Cannot find module '@verse-claw/versebrowser' or its corresponding type declarations.
+electron/services/agent-browser-api.ts(32,8): error TS2307: Cannot find module '@verse-claw/versebrowser' or its corresponding type declarations.
+electron/services/agent-browser-api.ts(361,28): error TS4112: This member cannot have an 'override' modifier because its containing class 'HostAgentBrowserService' does not extend another class.
+electron/services/agent-browser-api.ts(367,22): error TS4112: This member cannot have an 'override' modifier because its containing class 'HostAgentBrowserService' does not extend another class.
+electron/services/agent-browser-api.ts(372,28): error TS4112: This member cannot have an 'override' modifier because its containing class 'HostAgentBrowserService' does not extend another class.
+electron/services/agent-browser-api.ts(446,24): error TS18046: 'payload' is of type 'unknown'.
+electron/services/agent-browser-api.ts(453,22): error TS18046: 'payload' is of type 'unknown'.
+electron/services/agent-browser-api.ts(453,45): error TS18046: 'payload' is of type 'unknown'.
+electron/services/agent-browser-api.ts(458,42): error TS18046: 'payload' is of type 'unknown'.
+electron/services/agent-browser-api.ts(459,61): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'object'.
+electron/services/agent-browser-api.ts(463,49): error TS2698: Spread types may only be created from object types.
+electron/services/agent-browser-api.ts(463,93): error TS7006: Parameter 'url' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(463,98): error TS7006: Parameter 'options' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(521,62): error TS2554: Expected 0 arguments, but got 1.
+electron/services/long-session-resource-reclamation.ts(49,34): error TS7006: Parameter 'session' implicitly has an 'any' type.
+electron/services/long-session-resource-reclamation.ts(173,74): error TS7006: Parameter 'session' implicitly has an 'any' type.
+electron/services/long-session-resource-reclamation.ts(233,40): error TS7006: Parameter 'session' implicitly has an 'any' type.
+openclaw_runtime/packages/net-policy/src/ip.ts(47,3): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type '"benchmarking"' is not assignable to type 'BlockedIpv6Range'.
+openclaw_runtime/packages/net-policy/src/ip.ts(49,3): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type '"orchid2"' is not assignable to type 'BlockedIpv6Range'.
+shared/types/context-control-plane/artifacts.ts(14,19): error TS7016: Could not find a declaration file for module 'zod'. 'D:/ClawX/node_modules/.pnpm/zod@4.4.3/node_modules/zod/index.js' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(220,17): error TS7006: Parameter 'plan' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(220,23): error TS7006: Parameter 'ctx' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(221,45): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(222,51): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(223,28): error TS7006: Parameter 'refId' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(335,17): error TS7006: Parameter 'grant' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(335,24): error TS7006: Parameter 'ctx' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(394,17): error TS7006: Parameter 'receipt' implicitly has an 'any' type.
+shared/types/context-control-plane/artifacts.ts(394,26): error TS7006: Parameter 'ctx' implicitly has an 'any' type.
