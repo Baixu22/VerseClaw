@@ -2,10 +2,10 @@
 import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { join, resolve, sep } from 'node:path';
 import { afterAll, describe, expect, it, vi } from 'vitest';
-import { CODING_COLLECTOR, parseCodingEdits } from '../../scripts/lib/rsi-coding-protocol.mjs';
+import { CODING_COLLECTOR, STRUCTURED_CODING_COLLECTOR, codingCollectorConfig, parseCodingEdits } from '../../scripts/lib/rsi-coding-protocol.mjs';
 import { buildBenefitRequest, createBenefitPlan, verifyCodingAdmission } from '../../scripts/lib/rsi-benefit-eval.mjs';
 import { createResponsesProvider } from '../../scripts/lib/rsi-responses-provider.mjs';
-import { collectCodingTrial } from '../../scripts/rsi-coding-collector.mjs';
+import { collectCodingTrial, reservedCodingTokens } from '../../scripts/rsi-coding-collector.mjs';
 
 const root = process.cwd(), created: string[] = [];
 function scratch() { const dir = mkdtempSync('D:/tmp/rsi-collector-test-'); created.push(dir); return dir; }
@@ -27,6 +27,31 @@ function provider(text: string) {
 }
 
 describe('bounded coding collector (stub providers only)', () => {
+  it('opts into a new native JSON-schema protocol without mutating legacy request policy', () => {
+    const current = createBenefitPlan(root, { codingCollector: true, collectorVersion: STRUCTURED_CODING_COLLECTOR.version });
+    const request = buildBenefitRequest(current, current.slots[0]);
+    expect(request.text?.format).toEqual({ type: 'json_schema', name: 'rsi_coding_edits', strict: true, schema: CODING_COLLECTOR.responseSchema });
+    expect(buildBenefitRequest(plan, slot).text).toBeUndefined();
+    expect(current.design).toEqual(plan.design);
+    expect(() => codingCollectorConfig('unregistered')).toThrow('unknown-coding-collector-version');
+  });
+  it('retains an observed output-limit failure with known usage and no unexecuted grader claim', async () => {
+    const current = createBenefitPlan(root, { codingCollector: true, collectorVersion: STRUCTURED_CODING_COLLECTOR.version });
+    const transport = vi.fn(async () => new Response(JSON.stringify({
+      id: 'bounded-output', model: current.provider.model, status: 'incomplete',
+      incomplete_details: { reason: 'max_output_tokens' },
+      output: [{ type: 'message', role: 'assistant', content: [{ type: 'output_text', text: '{' }] }],
+      usage: { input_tokens: 100, output_tokens: 16000, total_tokens: 16100 },
+    }), { status: 200 }));
+    const send = createResponsesProvider({ ...current.provider, apiKey, timeoutMs: 1000, reasoningEffort: 'low',
+      jsonSchema: CODING_COLLECTOR.responseSchema, transport });
+    const dir = scratch(), grade = vi.fn();
+    const row = await collectCodingTrial({ root, plan: current, slot: current.slots[0], apiKey, scratch: dir, supportRoot: dir, provider: send, grade });
+    expect(row.execution).toMatchObject({ status: 'completed', failureClass: null, failureCategory: 'model-output-limit', attempts: 1 });
+    expect(row.edits).toEqual([]); expect(row.grader).toBeNull();
+    expect(row.providerAttempts[0].parsedResponse.usage?.totalTokens).toBe(16100);
+    expect(grade).not.toHaveBeenCalled(); expect(transport).toHaveBeenCalledTimes(1);
+  });
   it('freezes low reasoning and filters tests, source acceptance and checksums from subject input', () => {
     expect(plan.collector).toEqual(CODING_COLLECTOR);
     const request = buildBenefitRequest(plan, slot);
@@ -54,6 +79,7 @@ describe('bounded coding collector (stub providers only)', () => {
     expect(row.execution.status).toBe('completed');
     expect(row.grader).toBeNull();
     expect(row.providerAttempts).toHaveLength(1);
+    expect(reservedCodingTokens(plan, [row])).toBe(20);
     expect(readFileSync(join(dir, slot.id, 'receipt.json'), 'utf8')).not.toContain(apiKey);
     await expect(collectCodingTrial(options)).rejects.toThrow();
     expect(stub.transport).toHaveBeenCalledTimes(1);
@@ -63,6 +89,9 @@ describe('bounded coding collector (stub providers only)', () => {
     const row = await collectCodingTrial({ root, plan, slot, apiKey, scratch: dir, supportRoot: dir, provider: send });
     expect(row.execution).toMatchObject({ status: 'crash', failureClass: 'infrastructure', failureCategory: 'provider', attempts: 1 });
     expect(row.providerAttempts[0].parsedResponse).toBeNull();
+    expect(() => reservedCodingTokens(plan, [row])).toThrow('unknown-usage-halts-campaign');
+    const continuation = { ...plan, collector: STRUCTURED_CODING_COLLECTOR };
+    expect(reservedCodingTokens(continuation, [row])).toBe(Buffer.byteLength(JSON.stringify(row.request)) + plan.provider.maxOutputTokens);
     expect(send).toHaveBeenCalledTimes(1);
   });
   it('refuses to persist a provider response containing the credential', async () => {

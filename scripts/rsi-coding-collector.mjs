@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { benefitDigest, buildBenefitRequest, recordMeasuredBenefitTrials, sealBenefitRun, validateBenefitPlan, verifyCodingAdmission } from './lib/rsi-benefit-eval.mjs';
-import { CODING_COLLECTOR, parseCodingEdits } from './lib/rsi-coding-protocol.mjs';
+import { codingCollectorConfig, parseCodingEdits } from './lib/rsi-coding-protocol.mjs';
 import { createResponsesProvider } from './lib/rsi-responses-provider.mjs';
 import { prepareGradeWorkspace, resolveHistoricalTask, runLiveTaskOracles } from './lib/rsi-live-grader.mjs';
 
@@ -22,13 +22,23 @@ function scratchPath(path) {
   return full;
 }
 
+export function reservedCodingTokens(plan, rows) {
+  return rows.reduce((total, row) => total + row.providerAttempts.reduce((sum, attempt) => {
+    const usage = attempt.parsedResponse?.usage;
+    if (usage) return sum + usage.totalTokens;
+    assert.equal(plan.collector.unknownUsagePolicy, 'reserve-request-upper-bound', 'unknown-usage-halts-campaign');
+    return sum + Buffer.byteLength(JSON.stringify(attempt.request)) + plan.provider.maxOutputTokens;
+  }, 0), 0);
+}
+
 /** One immutable attempt. A retained dispatch marker is never a license to retry. */
 export async function collectCodingTrial({ root, plan, slot, apiKey, scratch, supportRoot, provider, grade }) {
-  assert.deepEqual(plan.collector, CODING_COLLECTOR, 'collector-config-drift');
+  assert.deepEqual(plan.collector, codingCollectorConfig(plan.collector?.version), 'collector-config-drift');
   const task = plan.tasks.find(task => task.id === slot.caseId);
   assert(task && plan.slots.some(item => benefitDigest(item) === benefitDigest(slot)), 'unknown-slot');
   const directory = scratchPath(join(scratch, slot.id));
   const request = buildBenefitRequest(plan, slot);
+  const workspace = join(directory, 'workspace');
   const writeEvidence = (path, value) => {
     assert(!apiKey || !JSON.stringify(value).includes(apiKey), 'credential-in-evidence-rejected');
     write(path, value);
@@ -52,13 +62,20 @@ export async function collectCodingTrial({ root, plan, slot, apiKey, scratch, su
   try {
     const send = provider ?? createResponsesProvider({ endpoint: plan.provider.endpoint, model: plan.provider.model,
       apiKey, timeoutMs: plan.collector.timeoutMs, maxOutputTokens: plan.provider.maxOutputTokens,
-      reasoningEffort: plan.collector.reasoningEffort });
+      reasoningEffort: plan.collector.reasoningEffort,
+      ...(plan.collector.responseFormat === 'strict-json-schema' ? { jsonSchema: plan.collector.responseSchema } : {}) });
     const response = await send({ instructions: request.instructions, input: request.input });
     assert.deepEqual(response.request.body, request, 'dispatched-request-drift');
     row.providerAttempts.push({ endpoint: plan.provider.endpoint, request, rawResponse: response.rawResponse, parsedResponse: response.response });
     row.rawResponse = response.rawResponse;
     writeEvidence(join(directory, 'provider-response.json'), response);
     assert.equal(response.response.model, plan.provider.model, 'provider-model-drift');
+    if (plan.collector.incompleteOutcome === 'known-output-limit-is-failure'
+      && response.response.status === 'incomplete' && response.response.incompleteReason === 'max_output_tokens') {
+      assert(response.response.usage !== null, 'output-limit-usage-missing');
+      row.execution.failureCategory = 'model-output-limit';
+      row.execution.note = 'Provider returned a bounded unsuccessful answer with known usage; no edits applied and no retry.';
+    }
     if (response.response.status === 'completed') {
       phase = 'model-format';
       try { row.edits = parseCodingEdits(response.response.text, task); }
@@ -68,7 +85,6 @@ export async function collectCodingTrial({ root, plan, slot, apiKey, scratch, su
       }
       if (!row.execution.failureCategory) {
         phase = 'infrastructure';
-        const workspace = join(directory, 'workspace');
         let result;
         if (grade) result = await grade(row.edits);
         else {
@@ -88,10 +104,6 @@ export async function collectCodingTrial({ root, plan, slot, apiKey, scratch, su
           isolation: { hiddenOracleVisible: false, unapprovedEgress: false, candidateChangedEvaluator: false },
           reports: result.executions.map(entry => ({ command: entry.command, kind: entry.kind, exitCode: entry.exitCode, report: entry.report })) };
         if (!result.passed) row.execution.failureCategory = 'model';
-        if (!grade && existsSync(workspace)) {
-          assert(resolve(workspace).startsWith(resolve(directory) + sep), 'unsafe-workspace-cleanup');
-          rmSync(workspace, { recursive: true, force: true });
-        }
       }
     }
   } catch (error) {
@@ -101,6 +113,11 @@ export async function collectCodingTrial({ root, plan, slot, apiKey, scratch, su
     row.execution.note = apiKey ? String(error.message).split(apiKey).join('[REDACTED]') : String(error.message);
     row.rawResponse = null;
     if (!row.providerAttempts.length) row.providerAttempts.push({ endpoint: plan.provider.endpoint, request, rawResponse: null, parsedResponse: null });
+  } finally {
+    if (!grade && existsSync(workspace)) {
+      assert(resolve(workspace).startsWith(resolve(directory) + sep), 'unsafe-workspace-cleanup');
+      rmSync(workspace, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 });
+    }
   }
   row.execution.wallClockMs = Date.now() - start;
   row.execution.endedAt = new Date().toISOString();
@@ -115,7 +132,7 @@ export async function runCodingCollector({ root = ROOT, directory, scratch, supp
   const plan = read(join(directory, 'plan.json'));
   validateBenefitPlan(plan, root);
   assert.equal(plan.evidenceKind, 'live-provider', 'measured-plan-required');
-  assert.deepEqual(plan.collector, CODING_COLLECTOR, 'coding-plan-required');
+  assert.deepEqual(plan.collector, codingCollectorConfig(plan.collector?.version), 'coding-plan-required');
   verifyCodingAdmission(root, directory, plan);
   assert(Number.isSafeInteger(limit) && limit > 0 && limit <= 216, 'invalid-slot-limit');
   assert.equal(read(join(supportRoot, 'node_modules/markdown-it/package.json')).version, '14.2.0', 'support-version-drift');
@@ -142,9 +159,7 @@ export async function runCodingCollector({ root = ROOT, directory, scratch, supp
       else {
         assert(!existsSync(join(scratch, slot.id, 'dispatch.json')), 'interrupted-attempt-preserved-no-retry');
         const prior = plan.slots.slice(0, slot.position).map(s => read(join(directory, 'trials', `${s.id}.json`)));
-        const knownTokens = prior.reduce((n, r) => n + r.providerAttempts.reduce((sum, a) => sum + (a.parsedResponse?.usage?.totalTokens ?? 0), 0), 0);
-        const unknownUsage = prior.some(r => r.providerAttempts.some(a => !a.parsedResponse?.usage));
-        assert(!unknownUsage, 'unknown-usage-halts-campaign');
+        const knownTokens = reservedCodingTokens(plan, prior);
         assert(slot.position < plan.budget.providerCallsAuthorized, 'provider-call-budget-exhausted');
         const request = buildBenefitRequest(plan, slot);
         // UTF-8 bytes are a conservative input-token reserve; output is bounded by the provider.
@@ -155,7 +170,8 @@ export async function runCodingCollector({ root = ROOT, directory, scratch, supp
       written++;
       console.log(JSON.stringify({ slot: slot.id, position: slot.position, outcome: record.outcome,
         failureCategory: row.execution.failureCategory, usage: row.providerAttempts[0]?.parsedResponse?.usage ?? null }));
-      if (row.execution.failureClass === 'infrastructure') break;
+      if (row.execution.failureClass === 'infrastructure'
+        && (plan.collector.infrastructurePolicy !== 'retain-slot-and-continue' || row.execution.failureCategory === 'oracle')) break;
     }
     return { written, report: sealBenefitRun(root, directory) };
   } finally { unlinkSync(lock); }

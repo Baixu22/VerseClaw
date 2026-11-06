@@ -42,7 +42,7 @@ export type BenefitReport = {
   cost: { measurementBasis: string; providerCalls: number; totalTokens: number | null; actualCostUsd: number | null; missingUsageTrials: number };
   claims: { benefit: boolean; promotionReady: false; liveProvider: boolean; realHuman: false; productLocksChanged: false };
 };
-export type BenefitPlanOptions = { endpoint?: string; model?: string; actor?: string; runId?: string; candidate?: BenefitCandidate; mode?: 'offline' | 'measured'; maxProviderCalls?: number; maxTotalTokens?: number; codingCollector?: boolean };
+export type BenefitPlanOptions = { endpoint?: string; model?: string; actor?: string; runId?: string; candidate?: BenefitCandidate; mode?: 'offline' | 'measured'; maxProviderCalls?: number; maxTotalTokens?: number; codingCollector?: boolean; collectorVersion?: string };
 export type BenefitTrialReceipt = {
   schemaVersion: 'RsiBenefitTrial/v1'; driven_by: 'agent'; actor: string; planDigest: string;
   slot: BenefitSlot; evidenceKind: BenefitPlan['evidenceKind'];
@@ -51,7 +51,7 @@ export type BenefitTrialReceipt = {
     injectionDigest: string | null; isolationId: string; runtimeEffectMeasured: boolean };
   edits: Array<{ path: string; content: string }>;
   execution: { status: 'completed' | 'timeout' | 'crash'; failureClass: 'infrastructure' | null;
-    failureCategory?: 'provider' | 'infrastructure' | 'oracle' | 'model' | 'model-format' | null;
+    failureCategory?: 'provider' | 'infrastructure' | 'oracle' | 'model' | 'model-format' | 'model-output-limit' | null;
     attempts: 1; providerCalls: number; wallClockMs: number; costUsd: number | null;
     toolEvents: Array<{ type: 'tool-call'; callId: string; name: string; arguments: string; output: string }>;
     runPosition: number; startedAt: string; endedAt: string; measurementBasis: string; note: string };

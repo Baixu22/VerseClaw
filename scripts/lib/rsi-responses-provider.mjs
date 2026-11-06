@@ -181,7 +181,7 @@ function readOutput(output) {
   return { text: textParts.join(''), functionCalls };
 }
 
-export function buildResponsesRequest({ model, instructions, input, maxOutputTokens, reasoningEffort }) {
+export function buildResponsesRequest({ model, instructions, input, maxOutputTokens, reasoningEffort, jsonSchema }) {
   assertNonEmptyString(model, 'model');
   if (typeof instructions !== 'string') {
     throw new Error('instructions must be a string');
@@ -189,6 +189,7 @@ export function buildResponsesRequest({ model, instructions, input, maxOutputTok
   if (input === undefined) throw new Error('input is required');
   assertPositiveInteger(maxOutputTokens, 'maxOutputTokens');
   if (reasoningEffort !== undefined && reasoningEffort !== 'low') throw new Error('reasoningEffort must be low');
+  if (jsonSchema !== undefined) assertRecord(jsonSchema, 'jsonSchema');
 
   return {
     model,
@@ -199,6 +200,7 @@ export function buildResponsesRequest({ model, instructions, input, maxOutputTok
     truncation: 'disabled',
     max_output_tokens: maxOutputTokens,
     ...(reasoningEffort ? { reasoning: { effort: reasoningEffort } } : {}),
+    ...(jsonSchema ? { text: { format: { type: 'json_schema', name: 'rsi_coding_edits', strict: true, schema: jsonSchema } } } : {}),
   };
 }
 
@@ -230,6 +232,7 @@ export function createResponsesProvider({
   maxOutputTokens,
   transport,
   reasoningEffort,
+  jsonSchema,
 }) {
   const url = parseEndpoint(endpoint);
   assertNonEmptyString(model, 'model');
@@ -241,7 +244,7 @@ export function createResponsesProvider({
   if (typeof send !== 'function') throw new Error('transport must be a function');
 
   return async ({ instructions, input }) => {
-    const body = buildResponsesRequest({ model, instructions, input, maxOutputTokens, reasoningEffort });
+    const body = buildResponsesRequest({ model, instructions, input, maxOutputTokens, reasoningEffort, jsonSchema });
     const request = {
       url: url.href,
       method: 'POST',

@@ -10,7 +10,7 @@ import { sha256File } from '../rsi-tf0604-baseline.mjs';
 import { buildResponsesRequest, parseResponsesReply } from './rsi-responses-provider.mjs';
 import { assessTaskAdmission, finalizeLiveAdmission } from '../rsi-live-acceptance.mjs';
 import { CODING_BINDINGS_PATH, resolveHistoricalTask } from './rsi-live-grader.mjs';
-import { CODING_COLLECTOR, CODING_INSTRUCTIONS, parseCodingEdits } from './rsi-coding-protocol.mjs';
+import { CODING_COLLECTOR, CODING_INSTRUCTIONS, codingCollectorConfig, parseCodingEdits } from './rsi-coding-protocol.mjs';
 
 export const BENEFIT_ARMS = Object.freeze(['sekb-off', 'sekb-shadow', 'sekb-confirmed']);
 const CORPUS = 'harness/specs/fixtures/rsi-evidence-loop/tf0604/task-corpus.v1.json';
@@ -193,6 +193,7 @@ function taskSet(root, codingCollector = false) {
 
 export function createBenefitPlan(root, options = {}) {
   root = resolve(root);
+  const collector = options.codingCollector ? codingCollectorConfig(options.collectorVersion) : null;
   const tasks = taskSet(root, options.codingCollector), policy = read(join(root, POLICY));
   assert.equal(tasks.length, 24, 'existing-corpus-required');
   assert.equal(policy.taskSet.k, 3); assert.equal(policy.taskSet.minimumCompleteCases, 20);
@@ -231,6 +232,7 @@ export function createBenefitPlan(root, options = {}) {
     'scripts/rsi-coding-collector.mjs', 'scripts/rsi-coding-collector.d.mts', 'scripts/rsi-coding-candidate.mts',
     'scripts/lib/rsi-coding-protocol.mjs', 'scripts/lib/rsi-coding-protocol.d.mts', 'tests/unit/rsi-coding-collector.test.ts',
     'harness/specs/fixtures/rsi-coding-cohort/candidate.json', 'harness/specs/fixtures/rsi-coding-cohort/candidate-provenance.json'] : []),
+    ...(collector?.version === 'RsiCodingCollector/v2' ? ['harness/specs/tasks/rsi-coding-full-completion.md'] : []),
     ...tasks.flatMap((task) => [task.source.recordPath, ...Object.keys(task.oracle.inputDigests)])])].sort();
   // Source bindings use the repository's canonical text bytes across LF/CRLF
   // checkouts. Raw run receipts and their manifest remain byte-addressed.
@@ -241,8 +243,8 @@ export function createBenefitPlan(root, options = {}) {
     runId: options.runId ?? randomUUID(), evidenceKind: mode === 'offline' ? 'synthetic-wiring-fixture' : 'live-provider',
     source: { commit, tree: git(root, ['rev-parse', 'HEAD^{tree}']), bindings,
       boundary: 'Bindings pin working bytes; measured receipts also require a clean committed evaluator at final check.' },
-    provider: { endpoint, model, maxOutputTokens: options.codingCollector ? CODING_COLLECTOR.maxOutputTokens : 2048 },
-    ...(options.codingCollector ? { collector: structuredClone(CODING_COLLECTOR) } : {}),
+    provider: { endpoint, model, maxOutputTokens: collector ? collector.maxOutputTokens : 2048 },
+    ...(collector ? { collector: structuredClone(collector) } : {}),
     budget: { providerCallsAuthorized: maxProviderCalls, maxTotalTokens, network: mode === 'offline' ? 'none' : 'declared-provider-only', retries: 0 },
     design: { k: 3, minimumCompleteCases: 20, primaryComparison: 'sekb-confirmed-vs-off', order: 'rotating-three-arm',
       unit: 'caseId', minimumImprovement: 0.05, costIncreaseMaximum: 0.1 },
@@ -258,7 +260,8 @@ export function validateBenefitPlan(plan, root) {
   const expected = createBenefitPlan(root, { endpoint: plan.provider?.endpoint, model: plan.provider?.model,
     actor: plan.actor, runId: plan.runId, candidate: plan.candidate,
     mode: plan.evidenceKind === 'live-provider' ? 'measured' : 'offline',
-    maxProviderCalls: plan.budget?.providerCallsAuthorized, maxTotalTokens: plan.budget?.maxTotalTokens, codingCollector: Boolean(plan.collector) });
+    maxProviderCalls: plan.budget?.providerCallsAuthorized, maxTotalTokens: plan.budget?.maxTotalTokens,
+    codingCollector: Boolean(plan.collector), collectorVersion: plan.collector?.version });
   assert.deepEqual(plan.collector, expected.collector, 'frozen-collector-drift');
   for (const field of ['provider', 'budget', 'design', 'arms', 'candidate', 'candidateDigest', 'tasks', 'policy', 'slots', 'claims']) {
     assert.deepEqual(plan[field], expected[field], `frozen-${field}-drift`);
@@ -296,6 +299,7 @@ export function buildBenefitRequest(plan, slot) {
     ...(plan.collector ? { responseSchema: plan.collector.responseSchema, baseFiles: task.contextFiles } : {}) }, null, 2);
   return buildResponsesRequest({ model: plan.provider.model, maxOutputTokens: plan.provider.maxOutputTokens,
     ...(plan.collector ? { reasoningEffort: plan.collector.reasoningEffort } : {}),
+    ...(plan.collector?.responseFormat === 'strict-json-schema' ? { jsonSchema: plan.collector.responseSchema } : {}),
     instructions: slot.arm === 'sekb-confirmed' ? [instructions, plan.candidate.context].join("\n") : instructions,
     input });
 }
@@ -411,7 +415,13 @@ function readTrial(plan, slot, directory, supplied) {
     }
     else try { const answer = JSON.parse(response.text); success = answer.caseId === slot.caseId && answer.probeValue === 'ok'; } catch { /* Malformed output is an agent failure. */ }
   }
-  const outcome = response.status === 'completed' ? success ? 'pass' : 'fail' : 'missing';
+  const outputLimitFailure = plan.collector?.incompleteOutcome === 'known-output-limit-is-failure'
+    && response.status === 'incomplete' && response.incompleteReason === 'max_output_tokens';
+  if (outputLimitFailure) {
+    assert(response.usage !== null && execution.failureCategory === 'model-output-limit', 'output-limit-evidence-required');
+    assert(row.grader === null && row.edits.length === 0, 'output-limit-cannot-claim-grade');
+  }
+  const outcome = response.status === 'completed' ? success ? 'pass' : 'fail' : outputLimitFailure ? 'fail' : 'missing';
   return { row, outcome, failureClass: outcome === 'pass' ? null : 'agent',
     tokens: measured ? attempts.every((attempt) => attempt?.usage) ? attempts.reduce((n, attempt) => n + attempt.usage.totalTokens, 0) : null : response.usage?.totalTokens ?? null,
     turns: measured ? attempts.length : 1, toolCalls: execution.toolEvents.filter((event) => event.type === 'tool-call').length };
@@ -426,7 +436,7 @@ function readProviderAttempts(plan, row) {
     assert.equal(attempt.request?.model, plan.provider.model, 'provider-model-drift');
     assert.equal(attempt.request?.instructions, row.request.instructions, 'provider-context-drift');
     assert.deepEqual(Object.keys(attempt.request).sort(), Object.keys(row.request).sort(), 'provider-request-fields');
-    for (const field of ['store', 'stream', 'truncation', 'max_output_tokens']) assert.deepEqual(attempt.request[field], row.request[field], 'provider-request-policy');
+    for (const field of ['store', 'stream', 'truncation', 'max_output_tokens', 'reasoning', 'text']) assert.deepEqual(attempt.request[field], row.request[field], 'provider-request-policy');
     if (index === 0) assert.deepEqual(attempt.request, row.request, 'initial-provider-request-drift');
     if (plan.collector && attempt.rawResponse === null) {
       assert(row.execution.status !== 'completed' && attempt.parsedResponse === null, 'invalid-provider-failure-attempt');
@@ -586,7 +596,7 @@ function verifyLiveAdmissionReport(root, directory, plan) {
   return saved;
 }
 export function verifyCodingAdmission(root, directory, plan) {
-  assert.deepEqual(plan.collector, CODING_COLLECTOR, 'coding-plan-required');
+  assert.deepEqual(plan.collector, codingCollectorConfig(plan.collector?.version), 'coding-plan-required');
   verifyTaskAdmissions(root, directory, plan, new Set(plan.tasks.map(task => task.id)));
   verifyLiveAdmissionReport(root, directory, plan);
   assert.equal(git(root, ['status', '--porcelain', '--', ...Object.keys(plan.source.bindings)]), '', 'measured-evaluator-uncommitted');

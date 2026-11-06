@@ -40,19 +40,23 @@ afterAll(() => {
 });
 
 describe('measured receipt admission (synthetic contract controls, no provider calls)', () => {
-  function measuredPack(limit = 2, codingCollector = false) {
+  const historicalTestDigests = new Map<string, Record<string, string>>();
+  function measuredPack(limit = 2, codingCollector = false, collectorVersion?: string) {
     const { directory: offlineDir, plan: offlinePlan } = pack(limit);
     const directory = mkdtempSync(join(TEMP, 'rsi-benefit-test-measured-'));
     created.push(directory);
     const plan = writeBenefitPlan(ROOT, directory, {
       mode: 'measured', runId: 'measured-contract-control', maxProviderCalls: 216, maxTotalTokens: 1_000_000,
       candidate: codingCollector ? JSON.parse(readFileSync(join(ROOT, 'harness/specs/fixtures/rsi-coding-cohort/candidate.json'), 'utf8'))
-        : { ...offlinePlan.candidate, kind: 'confirmed-sekb' }, codingCollector,
+        : { ...offlinePlan.candidate, kind: 'confirmed-sekb' }, codingCollector, collectorVersion,
     });
     if (codingCollector) cpSync(join(ROOT, 'harness/specs/fixtures/rsi-coding-cohort/task-bindings.v1.json'), join(directory, 'task-bindings.json'));
     const identities = new Map(inspectLiveCorpus(ROOT, { codingCohort: codingCollector }).map((identity) => [identity.id, identity]));
     for (const task of plan.tasks) {
-      const oracleTestDigests = Object.fromEntries(task.oracle.testPaths.map((path) => [path, createHash('sha256').update(execFileSync('git', ['-C', ROOT, 'show', `${task.source.reference}:${path}`], { windowsHide: true })).digest('hex')]));
+      const digestKey = [task.source.reference, ...task.oracle.testPaths].join(',');
+      if (!historicalTestDigests.has(digestKey)) historicalTestDigests.set(digestKey,
+        Object.fromEntries(task.oracle.testPaths.map((path) => [path, createHash('sha256').update(execFileSync('git', ['-C', ROOT, 'show', `${task.source.reference}:${path}`], { windowsHide: true })).digest('hex')])));
+      const oracleTestDigests = { ...historicalTestDigests.get(digestKey)! };
       const stage = (pass: boolean) => ({ passed: pass, commands: task.oracle.commands, oracleUnchanged: true, oracleRevision: task.source.reference, oracleTestDigests, inputDigests: task.oracle.inputDigests,
         executions: task.oracle.commands.map((command) => ({ command, kind: 'vitest', exitCode: pass ? 0 : 1, error: null, timedOut: false,
           report: { success: pass, numTotalTests: 1, numPassedTests: pass ? 1 : 0, numFailedTests: pass ? 0 : 1, numPendingTests: 0,
@@ -132,7 +136,7 @@ describe('measured receipt admission (synthetic contract controls, no provider c
     // Final measured checks additionally require the evaluator inputs committed.
     expect(report.coverage.missing).toEqual([]);
     // These in-memory contract-control responses are never retained as live evidence.
-  });
+  }, 180_000); // Full 216-receipt fixture includes immutable historical Git inputs.
 
   it('reads coding receipts with a retained model format failure and script oracle without inventing assertions', () => {
     const { directory, receipts } = measuredPack(30, true);
@@ -145,6 +149,25 @@ describe('measured receipt admission (synthetic contract controls, no provider c
     expect(imported).toHaveLength(30);
     expect(sealBenefitRun(ROOT, directory).coverage.recorded).toBe(30);
   }, 180_000); // Restores immutable history for all 24 task identities, including reconstruction inputs.
+
+  it('counts v2 known output-limit responses as failures, never passes or dropped usage', () => {
+    const { directory, receipts } = measuredPack(1, true, 'RsiCodingCollector/v2');
+    const row = receipts[0]; row.rawResponse.status = 'incomplete';
+    row.rawResponse.incomplete_details = { reason: 'max_output_tokens' };
+    row.rawResponse.output[0].content[0].text = '{';
+    row.providerAttempts[0].parsedResponse = parseResponsesReply(row.rawResponse);
+    row.edits = []; row.grader = null; row.execution.failureCategory = 'model-output-limit';
+    const unknown = structuredClone(row); unknown.rawResponse.usage = null;
+    unknown.providerAttempts[0].rawResponse = unknown.rawResponse;
+    unknown.providerAttempts[0].parsedResponse = parseResponsesReply(unknown.rawResponse);
+    expect(() => recordMeasuredBenefitTrials(ROOT, directory, [unknown])).toThrow('output-limit-evidence-required');
+    const [record] = recordMeasuredBenefitTrials(ROOT, directory, [row]);
+    expect(record.outcome).toBe('fail');
+    const report = sealBenefitRun(ROOT, directory);
+    expect(report.coverage.incomplete).toEqual([]);
+    expect(report.cost.totalTokens).toBeGreaterThan(0);
+    expect(report.claims.benefit).toBe(false);
+  }, 180_000);
 
   it('rejects absent or failed calibration before importing a measured receipt', () => {
     const { directory, plan, receipts } = measuredPack();

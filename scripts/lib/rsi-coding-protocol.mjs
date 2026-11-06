@@ -10,6 +10,18 @@ export const CODING_COLLECTOR = Object.freeze({ version: 'RsiCodingCollector/v1'
       required: ['path', 'content'], properties: { path: { type: 'string' }, content: { type: 'string' } } } } },
 }});
 
+export const STRUCTURED_CODING_COLLECTOR = Object.freeze({ ...CODING_COLLECTOR,
+  version: 'RsiCodingCollector/v2', responseFormat: 'strict-json-schema',
+  incompleteOutcome: 'known-output-limit-is-failure',
+  infrastructurePolicy: 'retain-slot-and-continue', unknownUsagePolicy: 'reserve-request-upper-bound',
+});
+
+export function codingCollectorConfig(version = CODING_COLLECTOR.version) {
+  if (version === CODING_COLLECTOR.version) return CODING_COLLECTOR;
+  assert.equal(version, STRUCTURED_CODING_COLLECTOR.version, 'unknown-coding-collector-version');
+  return STRUCTURED_CODING_COLLECTOR;
+}
+
 export const CODING_INSTRUCTIONS = 'Return only strict JSON matching the supplied responseSchema: {"edits":[{"path":"repository/relative/path","content":"complete UTF-8 file content"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.';
 
 export function parseCodingEdits(text, task) {

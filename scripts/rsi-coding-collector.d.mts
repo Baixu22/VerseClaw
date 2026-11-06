@@ -10,3 +10,4 @@ export function collectCodingTrial(options: {
 export function runCodingCollector(options: {
   root?: string; directory: string; scratch: string; supportRoot: string; apiKey: string; limit?: number;
 }): Promise<{ written: number; report: BenefitReport }>;
+export function reservedCodingTokens(plan: BenefitPlan, rows: Pick<BenefitTrialReceipt, 'providerAttempts'>[]): number;
