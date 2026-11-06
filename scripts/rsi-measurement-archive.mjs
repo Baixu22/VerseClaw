@@ -11,7 +11,7 @@ import { evaluateAblation, pairedEffect } from './lib/paired-ablation.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const MEASUREMENT_ARCHIVE_DIR = 'harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run';
-export const MEASUREMENT_REVALIDATION_DIR = 'harness/specs/fixtures/rsi-coding-cohort/instruments/measurement-archive-v2';
+export const MEASUREMENT_REVALIDATION_DIR = 'harness/specs/fixtures/rsi-coding-cohort/instruments/measurement-archive-v3';
 const ORIGINAL_FILES = ['manifest.json', 'aggregate.json', 'run-audit.json', 'run-exclusions.json', 'progress.json', 'promotion-policy.v1.json'];
 const FILES = [...ORIGINAL_FILES, 'corpus.v1.json', 'raw-trials.v1.json', 'provenance.v1.json', 'verification.v1.json'];
 const SOURCES = ['scripts/rsi-measurement-archive.mjs', 'scripts/rsi-tf0592-statistical-adjudication.mjs',
