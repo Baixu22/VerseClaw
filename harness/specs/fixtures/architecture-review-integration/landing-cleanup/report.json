@@ -1,0 +1,93 @@
+{
+  "schema": "ArchitectureMergeCleanup/v1",
+  "driven_by": "agent",
+  "actor": "codex-architecture-review",
+  "recordedAt": "2026-11-06T04:12:45.681843+00:00",
+  "mainMerge": {
+    "driven_by": "agent",
+    "actor": "codex-architecture-review",
+    "oldMain": "2fff49d09cf605b4d1e4808c77c8992e464aadb4",
+    "newMain": "fd2ba05e13bf503a9711315c786696c5ce6b14a6",
+    "mergeExitCode": 0,
+    "dirtyFilesPreserved": 72,
+    "overlappingFilesCombined": [
+      "README.ja-JP.md",
+      "README.md",
+      "README.ru-RU.md",
+      "README.zh-CN.md"
+    ],
+    "stagedChangesAfter": 0,
+    "untrackedPathsPreserved": 182,
+    "mergedArchitectureBranch": true
+  },
+  "reviews": {
+    "sameModelSubagents": 3,
+    "closedSubagents": 3,
+    "resolvedFindings": 6,
+    "testsPassed": 615,
+    "fullTypesPassed": [
+      "node",
+      "web",
+      "test"
+    ],
+    "mergeCandidate": "d5750f2bad06d13f663de94dd1409e3c1c6c4b07"
+  },
+  "cleanup": {
+    "removedWorktrees": [
+      "D:\\ClawX-work\\architecture-convergence-20261105",
+      "D:\\tmp\\architecture-runtime-cycles-20261105\\baseline"
+    ],
+    "removedTemporaryRoots": [
+      "D:\\tmp\\architecture-authority-20261105",
+      "D:\\tmp\\architecture-convergence-20261105",
+      "D:\\tmp\\architecture-deps-20261105",
+      "D:\\tmp\\architecture-final-20261105",
+      "D:\\tmp\\architecture-runtime-cycles-20261105",
+      "D:\\tmp\\architecture-runtime-cycles-recovery-20261105",
+      "D:\\tmp\\architecture-small-cycles-20261105",
+      "D:\\tmp\\architecture-review-20261106"
+    ],
+    "initialInventoriedBytes": 849747773,
+    "reviewTempBytesRemoved": 102373377,
+    "remainingPrimary": {
+      "path": "C:\\Users\\27933\\.codex\\worktrees\\architecture-convergence-recovered\\ClawX",
+      "bytes": 3397187,
+      "files": 524,
+      "mode": "sparse tracked checkout plus ignored local artifacts",
+      "clean": true,
+      "rootLinksRemaining": 0
+    },
+    "regularFileBytesReleasedEstimate": 948723963,
+    "physicalFreeSpaceClaim": false,
+    "sharedDependencyRootsPreserved": [
+      "D:\\ClawX\\node_modules",
+      "D:\\ClawX\\openclaw_runtime\\node_modules"
+    ],
+    "primaryRemovalBlock": "Codex app archive_worktree returned: The task's primary checkout cannot be removed.",
+    "remainingIgnoredDeletionBlock": "Automatic execution approval rejected recursive deletion of current primary checkout ignored folders: blocked by policy. No alternative deletion used."
+  },
+  "archives": [
+    {
+      "path": "D:\\ClawX-acceptance\\architecture-review-merge-20261106\\prior-architecture-raw-complete.zip",
+      "bytes": 5278461,
+      "sha256": "4b2245f04cba66164760fe21fcfffdec00e6b3b57f6163ddac8c3488fff48a77"
+    },
+    {
+      "path": "D:\\ClawX-acceptance\\architecture-review-merge-20261106\\review-and-merge-raw.zip",
+      "bytes": 1556169,
+      "sha256": "19058b1f414659c87d552f9b4ca990abda586e1ffd4db59c9f1b49dd6411a3b0"
+    },
+    {
+      "path": "D:\\ClawX-acceptance\\architecture-review-merge-20261106\\primary-local-artifacts.zip",
+      "bytes": 890164,
+      "sha256": "8b499d8bb2abbcb578623287b61283e150041ea2b92a8fd2f426460d731bf5e2"
+    }
+  ],
+  "processCheck": "D:/ClawX-acceptance/architecture-review-merge-20261106/final-process-check.json",
+  "limits": [
+    "Released bytes are logical ordinary-file inventory; shared/hardlinked package storage and concurrent disk writers prevent physical-free-space attribution.",
+    "LOC gate remains exit1, 23 unregistered and 111 grown files; prior TF-0788 formatting retains +40 lines in one existing offender relative to main.",
+    "Existing main unstaged work and untracked files remain owned by other sessions.",
+    "No public release or push was performed."
+  ]
+}
