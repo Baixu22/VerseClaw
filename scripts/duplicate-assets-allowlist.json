@@ -33,6 +33,14 @@
       "reason": "Historical evidence mirrors are retained because each task directory is an independent review record."
     },
     {
+      "sha256": "1d0431ee2b840dae73fb554e2ad7b0d9d3f98e85539b4329ed7f1a44fbedbfa8",
+      "paths": [
+        "harness/specs/fixtures/rsi-benefit-eval/coding-20261106/measurement/calibration/tf-0297-a05/admission.json",
+        "harness/specs/fixtures/rsi-live-acceptance/reconstructed-cohort-20261106-v7/calibration/tf-0297-a05/admission.json"
+      ],
+      "reason": "The frozen measurement retains an exact calibration receipt copied from the independently readable admission pack; both manifests and offline readback require their own stable paths."
+    },
+    {
       "sha256": "3daa95aa0e666f9488519dc16960233128d7e7d37c6dca606e9584cc7c72bb6b",
       "paths": [
         "resources/icons/icon-dark.svg",
@@ -110,12 +118,36 @@
       "reason": "Preinstalled skill bundles are distributed independently and must remain self-contained."
     },
     {
+      "sha256": "c7bd213577f9d8ee1f301e05d17dbe15f0daeaa05900d2cdda97dfd299af1494",
+      "paths": [
+        "harness/specs/fixtures/rsi-benefit-eval/coding-20261106/measurement/calibration/tf-0293-a01/admission.json",
+        "harness/specs/fixtures/rsi-live-acceptance/reconstructed-cohort-20261106-v7/calibration/tf-0293-a01/admission.json"
+      ],
+      "reason": "The frozen measurement retains an exact calibration receipt copied from the independently readable admission pack; both manifests and offline readback require their own stable paths."
+    },
+    {
+      "sha256": "d2306726c1637b39f3acfd45517c255ab8bed3fe70837aab8a17ea471aa0f965",
+      "paths": [
+        "harness/specs/fixtures/rsi-benefit-eval/coding-20261106/measurement/calibration/tf-0298-a06/admission.json",
+        "harness/specs/fixtures/rsi-live-acceptance/reconstructed-cohort-20261106-v7/calibration/tf-0298-a06/admission.json"
+      ],
+      "reason": "The frozen measurement retains an exact calibration receipt copied from the independently readable admission pack; both manifests and offline readback require their own stable paths."
+    },
+    {
       "sha256": "d4b27977f29e69b682b9323f45021111ab9bc71535417fa340ca61b4bf177dd9",
       "paths": [
         "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/pkg-web/verseconf_wasm_bg.wasm",
         "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/pkg/verseconf_wasm_bg.wasm"
       ],
       "reason": "Vendored VerseConf WASM mirrors match the package layout needed by the runtime and verifier."
+    },
+    {
+      "sha256": "e97a1d07edbf4cee930cdcdd61244bb967152701a3bbb4d73bf21dc9df709b51",
+      "paths": [
+        "harness/specs/fixtures/rsi-benefit-eval/coding-20261106/measurement/calibration/tf-0296-a04/admission.json",
+        "harness/specs/fixtures/rsi-live-acceptance/reconstructed-cohort-20261106-v7/calibration/tf-0296-a04/admission.json"
+      ],
+      "reason": "The frozen measurement retains an exact calibration receipt copied from the independently readable admission pack; both manifests and offline readback require their own stable paths."
     },
     {
       "sha256": "ed2270fced576ac55715727e50e36e1bec87e1f692b77ed691b651233b910a65",

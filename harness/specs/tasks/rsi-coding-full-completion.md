@@ -5,6 +5,7 @@ title: Complete all remaining RSI coding measurements and evidence closure
 intent: Finish TF-0809 with a clean dependency environment, a preregistered bounded structured-output collector, all 216 real provider trials and an independently recomputable final decision, including negative results.
 diffBase: 0494e19c70af2ef1e0beaa0bdb11c2dac871a271
 touchedAreas:
+  - scripts/duplicate-assets-allowlist.json
   - scripts/rsi-*.mjs
   - scripts/rsi-*.mts
   - scripts/rsi-*.d.mts
@@ -86,3 +87,7 @@ identical. New snapshots revalidate source and registry bindings and replay the
 existing labelled grader/control inputs; they do not claim new model calibration
 or historical task execution. The live measurement continues to use the original
 frozen cohort plus explicit reconstruction bindings and reference-revision tests.
+
+The existing duplicate-asset registry records the exact calibration mirrors needed
+by the independently readable admission and measurement packs. Registration keeps
+their original bytes and hash manifests unchanged.
