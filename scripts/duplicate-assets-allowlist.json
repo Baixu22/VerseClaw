@@ -11,6 +11,14 @@
       "reason": "Packaging path compatibility: Electron Builder and platform icon references require these stable asset paths."
     },
     {
+      "sha256": "12b85112e4da5d85579a5cb415cdd38ce66502e3c7210e5dd1c62052eea93799",
+      "paths": [
+        "harness/specs/fixtures/rsi-benefit-eval/coding-complete-20261106-v2/measurement/calibration/tf-0297-a05/admission.json",
+        "harness/specs/fixtures/rsi-live-acceptance/complete-cohort-20261106-v8/calibration/tf-0297-a05/admission.json"
+      ],
+      "reason": "The completed frozen run and its independent admission pack retain the same immutable calibration receipt under their separately verified manifests."
+    },
+    {
       "sha256": "142c826c36d73e8a7c10af3b89a714e7bf55ca210678652fea3c5be9dbbcdd94",
       "paths": [
         "resources/icons/clawx-logo-kit/logo-dock-1024-dark.png",
@@ -31,6 +39,14 @@
         "artifacts/system-maturity/P5-004/final-validation.log"
       ],
       "reason": "Historical evidence mirrors are retained because each task directory is an independent review record."
+    },
+    {
+      "sha256": "1866cb8b57b3034d1c95d94b479bc79e12ffd2f48770634dea1a5068210737f4",
+      "paths": [
+        "harness/specs/fixtures/rsi-benefit-eval/coding-complete-20261106-v2/measurement/calibration/tf-0293-a01/admission.json",
+        "harness/specs/fixtures/rsi-live-acceptance/complete-cohort-20261106-v8/calibration/tf-0293-a01/admission.json"
+      ],
+      "reason": "The completed frozen run and its independent admission pack retain the same immutable calibration receipt under their separately verified manifests."
     },
     {
       "sha256": "1d0431ee2b840dae73fb554e2ad7b0d9d3f98e85539b4329ed7f1a44fbedbfa8",
@@ -82,6 +98,14 @@
         "harness/specs/fixtures/agent-first-system/product-effect/profile-3-profile-before-restart.png"
       ],
       "reason": "Retained product-effect evidence mirrors: each profile keeps its own pre-restart capture path so a single profile can be reviewed without rewriting sibling evidence."
+    },
+    {
+      "sha256": "9a7db03e620cdd01f80fa8ee10bd623e29569e1f270e618846955dec40c8b372",
+      "paths": [
+        "harness/specs/fixtures/rsi-benefit-eval/coding-complete-20261106-v2/measurement/calibration/tf-0296-a04/admission.json",
+        "harness/specs/fixtures/rsi-live-acceptance/complete-cohort-20261106-v8/calibration/tf-0296-a04/admission.json"
+      ],
+      "reason": "The completed frozen run and its independent admission pack retain the same immutable calibration receipt under their separately verified manifests."
     },
     {
       "sha256": "b96ac05ad95f4ada9565d02cd1c04068c1af4a21f6357cba9678e9ccfdee0bb1",
@@ -157,6 +181,14 @@
         "resources/icons/icon.png"
       ],
       "reason": "Packaging path compatibility: Electron Builder and platform icon references require these stable asset paths."
+    },
+    {
+      "sha256": "f37b5a8592e44d4745c82fed78171520ad74c14106da5442b110fa07ab91a171",
+      "paths": [
+        "harness/specs/fixtures/rsi-benefit-eval/coding-complete-20261106-v2/measurement/calibration/tf-0298-a06/admission.json",
+        "harness/specs/fixtures/rsi-live-acceptance/complete-cohort-20261106-v8/calibration/tf-0298-a06/admission.json"
+      ],
+      "reason": "The completed frozen run and its independent admission pack retain the same immutable calibration receipt under their separately verified manifests."
     }
   ]
 }

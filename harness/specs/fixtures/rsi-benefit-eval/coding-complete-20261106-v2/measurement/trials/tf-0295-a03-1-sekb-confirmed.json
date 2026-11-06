@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "RsiBenefitTrial/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-benefit-eval/executor",
+  "planDigest": "133d3b5ff68949682b9c402b3275fd95e232ca4ce6a497a1903deaac5ee04004",
+  "slot": {
+    "id": "tf-0295-a03-1-sekb-confirmed",
+    "caseId": "tf-0295-a03",
+    "repeat": 1,
+    "arm": "sekb-confirmed",
+    "caseDigest": "37145414ec1df31d84178b17d512cf6b35caa63698ff526bee13c598ec81b27a",
+    "pairSeed": 61,
+    "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+    "position": 180
+  },
+  "evidenceKind": "live-provider",
+  "request": {
+    "model": "space-bunny",
+    "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.\n[Relevant SEKB principle 1] Preserve the caller contract when implementing a small change\nCondition: When implementing an API from a behavior contract and existing callers\nAction: Keep names, return shapes and caller-owned inputs stable. Preserve meaningful zero, false, empty and null values. Prefer standard-library operations with the required semantics. Check both ordinary and edge inputs before returning complete source files.\nReason: Independent JSON roundtrip and array sorting exercises failed when values were filtered or caller inputs were mutated; standard-library repairs passed the same assertions.\n---",
+    "input": "{\n  \"prompt\": \"A03 按原 spec 门限复验 A3 Runtime Resilience 受控 pilot 门；逐条映射 4 个判据到当前可执行证据，不重定义门限；修正 spec 的 requiredTests 缺口（原只列 performance-budgets，漏了覆盖判据1/3/4 的 classifier 与计数器测试）。\",\n  \"acceptanceCriteria\": [\n    \"判据1 anomalyNonNullCount rate ≤ 20%（100 tick）+ >20% → degrade_to_default_decision：deprecation-counters 单测断言（数值门限未改）。\",\n    \"判据2 p99 ≤ 15ms：performance-budgets 断言。\",\n    \"判据3 flag-off parity：resolveAnomalyPatternForReviewer 在 featureFlags 未定义时返回 undefined（acceptance 1.8）。\",\n    \"判据4 超预算响应：degrade_to_default_decision 生效。\",\n    \"A3 只增强 reviewer context，绝不单独改变 Mission 终态决策。\",\n    \"修正 spec drift：requiredTests 补入 classifier 与计数器测试；加 coverage 守卫。\",\n    \"干净候选定向测试、类型、scoped lint、harness validate/dry-run、comms replay/compare 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"harness/specs/tasks/a3-runtime-resilience-pilot.md\",\n    \"harness/specs/tasks/harness-gap-a03-resilience-pilot-reverify.md\",\n    \"docs/dev/harness-gap-closure/a03-a3-resilience-gate.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"harness/specs/tasks/a3-runtime-resilience-pilot.md\",\n      \"content\": \"---\\nlifecycleStatus: archived\\nid: a3-runtime-resilience-pilot\\ntitle: A3 Runtime Resilience — Active Pilot Gate\\nscenario: gateway-backend-communication\\ntaskType: runtime-bridge\\nintent: Promote the A3 anomaly classifier from shadow to active pilot, gated by anomaly detection quality and budget compliance.\\ntouchedAreas:\\n  - openclaw_runtime/src/agents/anomaly-classifier.ts\\n  - openclaw_runtime/src/agents/mission-control/controller.ts\\n  - openclaw_runtime/src/observability/deprecation-counters.ts\\n  - openclaw_runtime/src/config/types.openclaw.ts\\nrequiredProfiles:\\n  - fast\\n  - comms\\nrequiredRules:\\n  - backend-communication-boundary\\n  - comms-regression\\nexpectedUserBehavior:\\n  - Mission reviewers may receive anomaly context only when the pilot gate is enabled and the anomaly signal stays within the false-positive budget.\\n  - When the pilot flag is off, Mission review behavior and terminal decisions are unchanged.\\n  - When anomaly rate or reviewed false positives exceed the budget, anomaly guidance is omitted and the reviewer follows the default decision path.\\n  - A3 never changes the terminal Mission decision by itself; it only augments reviewer context.\\n  - Documentation/runtime drift is handled by keeping the existing Mission flow runnable and recording the mismatch, not by broad code reshaping in this gate.\\nrequiredTests:\\n  - tests/unit/performance-budgets.test.ts\\nacceptance:\\n  - A3 deprecation counter `anomalyNonNullCount` rate ≤ 20% over 100 Mission ticks\\n  - A3 p99 ≤ 15ms (criterion 4.7)\\n  - `resolveAnomalyPatternForReviewer` returns `undefined` when flag off (flag-off parity)\\n  - `resolveAnomalyPatternForReviewer` returns `AnomalyPattern | null` when flag in 'shadow' mode\\n  - Budget violation response `degrade_to_default_decision` triggers when anomaly rate > 20%\\ndocs:\\n  required: true\\n---\\n\\n## Graduation gate\\n\\nA3 graduates from shadow to active pilot when ALL of the following hold:\\n\\n1. **Anomaly detection rate** ≤ 20%: `anomalyNonNullCount / totalMissionTicks ≤ 0.20` over 100 ticks. Higher rates indicate false positives.\\n2. **Performance**: p99 ≤ 15ms for 100 Mission ticks (criterion 4.7).\\n3. **Flag-off parity**: `resolveAnomalyPatternForReviewer` returns `undefined` when `runtime.resilience.anomalyClassifierPilot !== 'shadow'`.\\n4. **Budget violation response**: `degrade_to_default_decision` triggers when rate > 20% (criterion 4.14).\\n\\n## False-positive interpretation\\n\\nThe `anomalyNonNullCount` rate is a false-positive proxy, not proof by itself.\\nA non-null anomaly is treated as potentially false-positive until the next\\nreview tick shows one of these confirming signals:\\n\\n- the same anomaly kind persists across a later reviewer/self-check result;\\n- validation state worsens or remains missing without user-approved scope\\n  change;\\n- the Mission asks the user, repairs, or blocks for a matching reason;\\n- the operator confirms the anomaly in the sampled review packet.\\n\\nFalse-positive review packet:\\n\\n- Include every non-null anomaly when fewer than 20 exist, otherwise sample at\\n  least 20 across anomaly kind, source, and Mission phase.\\n- Mark each sample as `confirmed`, `false_positive`, or `ambiguous`.\\n- Count cancelled, user-paused, budget-exhausted, or no-validation sessions as\\n  `ambiguous`, not false positives or true positives.\\n- Any anomaly kind with repeated false positives is demoted to shadow-only until\\n  the classifier rule is tightened and the 100-tick gate is rerun.\\n\\nActive pilot limits:\\n\\n- A3 may only augment reviewer context; it must not change the terminal Mission\\n  decision by itself.\\n- If the non-null rate exceeds 20% or reviewed false positives exceed the gate\\n  budget, the system must use `degrade_to_default_decision` and omit anomaly\\n  guidance from the reviewer payload.\\n- If full-run validation reveals unrelated stitched-system failures, this gate\\n  records the incompatibility and stays in shadow/default behavior rather than\\n  expanding scope to repair broad architecture drift.\\n\\n## Out of scope\\n\\n- Replacing Mission Control's default decision logic (only augmentation).\\n- `anomalyPattern` null vs undefined semantic documentation (OQ-003, non-blocking).\\n\",\n      \"truncated\": false\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-a03-resilience-pilot-reverify.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/a03-a3-resilience-gate.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+    "store": false,
+    "stream": false,
+    "truncation": "disabled",
+    "max_output_tokens": 16000,
+    "reasoning": {
+      "effort": "low"
+    },
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "name": "rsi_coding_edits",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "edits"
+          ],
+          "properties": {
+            "edits": {
+              "type": "array",
+              "maxItems": 32,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "content"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "requestDigest": "e138e2ae5ded6fee02f015a3ada36946cef292fe8e508e346a264fae584e69c6",
+  "runtime": {
+    "flags": {
+      "enabled": true,
+      "shadowEvaluation": true,
+      "injection": true
+    },
+    "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+    "candidateDigest": "7c2408a2afc3c71ec509c11c705ba3775d427c4166aef58a0b42db1c031f54a0",
+    "injectionDigest": "d17fd84ffe6ea6fa2ba3c8cd062a6f6464144ea3c64af932d581018bff6f9d9d",
+    "isolationId": "2bb4141c-a536-443a-8b89-0fbfd0082edf/tf-0295-a03-1-sekb-confirmed",
+    "runtimeEffectMeasured": true
+  },
+  "edits": [],
+  "execution": {
+    "status": "crash",
+    "failureClass": "infrastructure",
+    "failureCategory": "provider",
+    "attempts": 1,
+    "providerCalls": 1,
+    "wallClockMs": 11,
+    "costUsd": null,
+    "toolEvents": [],
+    "runPosition": 180,
+    "startedAt": "2026-11-06T16:57:15.923Z",
+    "endedAt": "2026-11-06T16:57:15.934Z",
+    "measurementBasis": "live-provider",
+    "note": "Responses transport failed (network error)"
+  },
+  "rawResponse": null,
+  "providerAttempts": [
+    {
+      "endpoint": "http://127.0.0.1:3065/v1/responses",
+      "request": {
+        "model": "space-bunny",
+        "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.\n[Relevant SEKB principle 1] Preserve the caller contract when implementing a small change\nCondition: When implementing an API from a behavior contract and existing callers\nAction: Keep names, return shapes and caller-owned inputs stable. Preserve meaningful zero, false, empty and null values. Prefer standard-library operations with the required semantics. Check both ordinary and edge inputs before returning complete source files.\nReason: Independent JSON roundtrip and array sorting exercises failed when values were filtered or caller inputs were mutated; standard-library repairs passed the same assertions.\n---",
+        "input": "{\n  \"prompt\": \"A03 按原 spec 门限复验 A3 Runtime Resilience 受控 pilot 门；逐条映射 4 个判据到当前可执行证据，不重定义门限；修正 spec 的 requiredTests 缺口（原只列 performance-budgets，漏了覆盖判据1/3/4 的 classifier 与计数器测试）。\",\n  \"acceptanceCriteria\": [\n    \"判据1 anomalyNonNullCount rate ≤ 20%（100 tick）+ >20% → degrade_to_default_decision：deprecation-counters 单测断言（数值门限未改）。\",\n    \"判据2 p99 ≤ 15ms：performance-budgets 断言。\",\n    \"判据3 flag-off parity：resolveAnomalyPatternForReviewer 在 featureFlags 未定义时返回 undefined（acceptance 1.8）。\",\n    \"判据4 超预算响应：degrade_to_default_decision 生效。\",\n    \"A3 只增强 reviewer context，绝不单独改变 Mission 终态决策。\",\n    \"修正 spec drift：requiredTests 补入 classifier 与计数器测试；加 coverage 守卫。\",\n    \"干净候选定向测试、类型、scoped lint、harness validate/dry-run、comms replay/compare 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"harness/specs/tasks/a3-runtime-resilience-pilot.md\",\n    \"harness/specs/tasks/harness-gap-a03-resilience-pilot-reverify.md\",\n    \"docs/dev/harness-gap-closure/a03-a3-resilience-gate.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"harness/specs/tasks/a3-runtime-resilience-pilot.md\",\n      \"content\": \"---\\nlifecycleStatus: archived\\nid: a3-runtime-resilience-pilot\\ntitle: A3 Runtime Resilience — Active Pilot Gate\\nscenario: gateway-backend-communication\\ntaskType: runtime-bridge\\nintent: Promote the A3 anomaly classifier from shadow to active pilot, gated by anomaly detection quality and budget compliance.\\ntouchedAreas:\\n  - openclaw_runtime/src/agents/anomaly-classifier.ts\\n  - openclaw_runtime/src/agents/mission-control/controller.ts\\n  - openclaw_runtime/src/observability/deprecation-counters.ts\\n  - openclaw_runtime/src/config/types.openclaw.ts\\nrequiredProfiles:\\n  - fast\\n  - comms\\nrequiredRules:\\n  - backend-communication-boundary\\n  - comms-regression\\nexpectedUserBehavior:\\n  - Mission reviewers may receive anomaly context only when the pilot gate is enabled and the anomaly signal stays within the false-positive budget.\\n  - When the pilot flag is off, Mission review behavior and terminal decisions are unchanged.\\n  - When anomaly rate or reviewed false positives exceed the budget, anomaly guidance is omitted and the reviewer follows the default decision path.\\n  - A3 never changes the terminal Mission decision by itself; it only augments reviewer context.\\n  - Documentation/runtime drift is handled by keeping the existing Mission flow runnable and recording the mismatch, not by broad code reshaping in this gate.\\nrequiredTests:\\n  - tests/unit/performance-budgets.test.ts\\nacceptance:\\n  - A3 deprecation counter `anomalyNonNullCount` rate ≤ 20% over 100 Mission ticks\\n  - A3 p99 ≤ 15ms (criterion 4.7)\\n  - `resolveAnomalyPatternForReviewer` returns `undefined` when flag off (flag-off parity)\\n  - `resolveAnomalyPatternForReviewer` returns `AnomalyPattern | null` when flag in 'shadow' mode\\n  - Budget violation response `degrade_to_default_decision` triggers when anomaly rate > 20%\\ndocs:\\n  required: true\\n---\\n\\n## Graduation gate\\n\\nA3 graduates from shadow to active pilot when ALL of the following hold:\\n\\n1. **Anomaly detection rate** ≤ 20%: `anomalyNonNullCount / totalMissionTicks ≤ 0.20` over 100 ticks. Higher rates indicate false positives.\\n2. **Performance**: p99 ≤ 15ms for 100 Mission ticks (criterion 4.7).\\n3. **Flag-off parity**: `resolveAnomalyPatternForReviewer` returns `undefined` when `runtime.resilience.anomalyClassifierPilot !== 'shadow'`.\\n4. **Budget violation response**: `degrade_to_default_decision` triggers when rate > 20% (criterion 4.14).\\n\\n## False-positive interpretation\\n\\nThe `anomalyNonNullCount` rate is a false-positive proxy, not proof by itself.\\nA non-null anomaly is treated as potentially false-positive until the next\\nreview tick shows one of these confirming signals:\\n\\n- the same anomaly kind persists across a later reviewer/self-check result;\\n- validation state worsens or remains missing without user-approved scope\\n  change;\\n- the Mission asks the user, repairs, or blocks for a matching reason;\\n- the operator confirms the anomaly in the sampled review packet.\\n\\nFalse-positive review packet:\\n\\n- Include every non-null anomaly when fewer than 20 exist, otherwise sample at\\n  least 20 across anomaly kind, source, and Mission phase.\\n- Mark each sample as `confirmed`, `false_positive`, or `ambiguous`.\\n- Count cancelled, user-paused, budget-exhausted, or no-validation sessions as\\n  `ambiguous`, not false positives or true positives.\\n- Any anomaly kind with repeated false positives is demoted to shadow-only until\\n  the classifier rule is tightened and the 100-tick gate is rerun.\\n\\nActive pilot limits:\\n\\n- A3 may only augment reviewer context; it must not change the terminal Mission\\n  decision by itself.\\n- If the non-null rate exceeds 20% or reviewed false positives exceed the gate\\n  budget, the system must use `degrade_to_default_decision` and omit anomaly\\n  guidance from the reviewer payload.\\n- If full-run validation reveals unrelated stitched-system failures, this gate\\n  records the incompatibility and stays in shadow/default behavior rather than\\n  expanding scope to repair broad architecture drift.\\n\\n## Out of scope\\n\\n- Replacing Mission Control's default decision logic (only augmentation).\\n- `anomalyPattern` null vs undefined semantic documentation (OQ-003, non-blocking).\\n\",\n      \"truncated\": false\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-a03-resilience-pilot-reverify.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/a03-a3-resilience-gate.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+        "store": false,
+        "stream": false,
+        "truncation": "disabled",
+        "max_output_tokens": 16000,
+        "reasoning": {
+          "effort": "low"
+        },
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "rsi_coding_edits",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "edits"
+              ],
+              "properties": {
+                "edits": {
+                  "type": "array",
+                  "maxItems": 32,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "path",
+                      "content"
+                    ],
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "content": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "rawResponse": null,
+      "parsedResponse": null
+    }
+  ],
+  "grader": null
+}

@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "RsiBenefitTrial/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-benefit-eval/executor",
+  "planDigest": "133d3b5ff68949682b9c402b3275fd95e232ca4ce6a497a1903deaac5ee04004",
+  "slot": {
+    "id": "tf-0282-s07-3-sekb-shadow",
+    "caseId": "tf-0282-s07",
+    "repeat": 3,
+    "arm": "sekb-shadow",
+    "caseDigest": "af88eb38c3d8d525fed952739db0a199b67cc7be6656b5e8dc1a6da48523c836",
+    "pairSeed": 54,
+    "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+    "position": 159
+  },
+  "evidenceKind": "live-provider",
+  "request": {
+    "model": "space-bunny",
+    "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+    "input": "{\n  \"prompt\": \"S07 给 evidence verifier 一个受限、可撤销的完成裁决入口：复用既有 evaluateEvidenceVerifier，只对授权范围内的指定 task 产出 digest-only verdict，approved 才产生唯一 node->done 状态转换，且可从记录的 prior status 撤销。verdict 不授予发布/产品锁权限，也不是第二套权限层。\",\n  \"acceptanceCriteria\": [\n    \"复用既有 evaluateEvidenceVerifier 产出裁决：completed->approved，insufficient_evidence->insufficient-evidence，其它->rejected；不新建第二套 verifier 权限层。\",\n    \"受限（bounded）：只对 scope.taskIds 内的 task 产出 verdict；范围外一律 out-of-scope 且不产生状态转换。\",\n    \"唯一状态转换：仅 approved 产生 node->done；其它 verdict 一律不转换。verdict 记录 digest-only（taskId/verdict/evidenceDigest/findingCodes/priorStatus），不含原始证据内容。\",\n    \"可撤销（revocable）：approved 记录 priorStatus，撤销返回 from=done,to=priorStatus；非 approved 无可撤销内容。\",\n    \"能力边界：verdict 绝不授予发布/产品锁/释放权限（记录显式 grantsPublish=false / grantsProductLock=false）。\",\n    \"确定性/可重放：同一证据得到相同 evidenceDigest 与相同 verdict；不改产品默认值/锁/approval。\",\n    \"干净候选定向测试、runtime core 类型、scoped lint、harness validate/dry-run、comms replay/compare 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts\",\n    \"harness/specs/tasks/harness-gap-verifier-completion-verdict.md\",\n    \"docs/dev/harness-gap-closure/s07-verifier-completion-verdict.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-verifier-completion-verdict.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/s07-verifier-completion-verdict.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+    "store": false,
+    "stream": false,
+    "truncation": "disabled",
+    "max_output_tokens": 16000,
+    "reasoning": {
+      "effort": "low"
+    },
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "name": "rsi_coding_edits",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "edits"
+          ],
+          "properties": {
+            "edits": {
+              "type": "array",
+              "maxItems": 32,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "content"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "requestDigest": "13cb692e6db34cb74b7d97526daa9dc72bb680fda1bae2a45569c6723d11677c",
+  "runtime": {
+    "flags": {
+      "enabled": true,
+      "shadowEvaluation": true,
+      "injection": false
+    },
+    "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+    "candidateDigest": "7c2408a2afc3c71ec509c11c705ba3775d427c4166aef58a0b42db1c031f54a0",
+    "injectionDigest": null,
+    "isolationId": "2bb4141c-a536-443a-8b89-0fbfd0082edf/tf-0282-s07-3-sekb-shadow",
+    "runtimeEffectMeasured": true
+  },
+  "edits": [],
+  "execution": {
+    "status": "crash",
+    "failureClass": "infrastructure",
+    "failureCategory": "provider",
+    "attempts": 1,
+    "providerCalls": 1,
+    "wallClockMs": 25,
+    "costUsd": null,
+    "toolEvents": [],
+    "runPosition": 159,
+    "startedAt": "2026-11-06T16:56:30.804Z",
+    "endedAt": "2026-11-06T16:56:30.829Z",
+    "measurementBasis": "live-provider",
+    "note": "Responses transport failed (network error)"
+  },
+  "rawResponse": null,
+  "providerAttempts": [
+    {
+      "endpoint": "http://127.0.0.1:3065/v1/responses",
+      "request": {
+        "model": "space-bunny",
+        "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+        "input": "{\n  \"prompt\": \"S07 给 evidence verifier 一个受限、可撤销的完成裁决入口：复用既有 evaluateEvidenceVerifier，只对授权范围内的指定 task 产出 digest-only verdict，approved 才产生唯一 node->done 状态转换，且可从记录的 prior status 撤销。verdict 不授予发布/产品锁权限，也不是第二套权限层。\",\n  \"acceptanceCriteria\": [\n    \"复用既有 evaluateEvidenceVerifier 产出裁决：completed->approved，insufficient_evidence->insufficient-evidence，其它->rejected；不新建第二套 verifier 权限层。\",\n    \"受限（bounded）：只对 scope.taskIds 内的 task 产出 verdict；范围外一律 out-of-scope 且不产生状态转换。\",\n    \"唯一状态转换：仅 approved 产生 node->done；其它 verdict 一律不转换。verdict 记录 digest-only（taskId/verdict/evidenceDigest/findingCodes/priorStatus），不含原始证据内容。\",\n    \"可撤销（revocable）：approved 记录 priorStatus，撤销返回 from=done,to=priorStatus；非 approved 无可撤销内容。\",\n    \"能力边界：verdict 绝不授予发布/产品锁/释放权限（记录显式 grantsPublish=false / grantsProductLock=false）。\",\n    \"确定性/可重放：同一证据得到相同 evidenceDigest 与相同 verdict；不改产品默认值/锁/approval。\",\n    \"干净候选定向测试、runtime core 类型、scoped lint、harness validate/dry-run、comms replay/compare 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts\",\n    \"harness/specs/tasks/harness-gap-verifier-completion-verdict.md\",\n    \"docs/dev/harness-gap-closure/s07-verifier-completion-verdict.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-verifier-completion-verdict.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/s07-verifier-completion-verdict.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+        "store": false,
+        "stream": false,
+        "truncation": "disabled",
+        "max_output_tokens": 16000,
+        "reasoning": {
+          "effort": "low"
+        },
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "rsi_coding_edits",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "edits"
+              ],
+              "properties": {
+                "edits": {
+                  "type": "array",
+                  "maxItems": 32,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "path",
+                      "content"
+                    ],
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "content": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "rawResponse": null,
+      "parsedResponse": null
+    }
+  ],
+  "grader": null
+}

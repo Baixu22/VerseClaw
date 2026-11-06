@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "RsiBenefitTrial/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-benefit-eval/executor",
+  "planDigest": "133d3b5ff68949682b9c402b3275fd95e232ca4ce6a497a1903deaac5ee04004",
+  "slot": {
+    "id": "tf-0294-a02-3-sekb-shadow",
+    "caseId": "tf-0294-a02",
+    "repeat": 3,
+    "arm": "sekb-shadow",
+    "caseDigest": "d9dda05774ee8b02c3e0412535007b4d862df904a79343bafb5c3b3bf560122a",
+    "pairSeed": 60,
+    "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+    "position": 178
+  },
+  "evidenceKind": "live-provider",
+  "request": {
+    "model": "space-bunny",
+    "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+    "input": "{\n  \"prompt\": \"A02 按原 spec 门限复验 A2 Multi-Agent Orchestration 受控 pilot 门；逐条映射 4 个判据到当前可执行证据，不重定义门限；修正 spec 里两个不存在的路径引用并补入覆盖判据1/预算的计数器测试；判据4（多 worker resume 新会话）无专用测试，如实记为 NO-GO residual。\",\n  \"acceptanceCriteria\": [\n    \"判据1 deferral agreement ≥ 90% + disagreement>10% → degrade_to_live_only：deprecation-counters 单测断言（数值门限未改）。\",\n    \"判据2 started wave 不可 re-plan：resource-aware-wave-scheduler 单测（\\\"ignores rePlan when appliesToWave is already started\\\" 等）。\",\n    \"判据3 p99 ≤ 80ms：performance-budgets 断言。\",\n    \"判据4 多 worker resume 创建新会话：当前树无专用测试 → 如实记 NO-GO residual，不伪装通过。\",\n    \"修正 spec drift：移除树中不存在的 cross-area-composition.test.ts 与 cross-area/cross-area-facades.ts 引用，补入计数器测试，并加 coverage 守卫。\",\n    \"干净候选定向测试、类型、scoped lint、harness validate/dry-run、comms replay/compare 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"harness/specs/tasks/a2-multi-agent-orchestration-pilot.md\",\n    \"harness/specs/tasks/harness-gap-a02-orchestration-pilot-reverify.md\",\n    \"docs/dev/harness-gap-closure/a02-a2-orchestration-gate.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"harness/specs/tasks/a2-multi-agent-orchestration-pilot.md\",\n      \"content\": \"---\\nlifecycleStatus: archived\\nid: a2-multi-agent-orchestration-pilot\\ntitle: A2 Multi-Agent Orchestration — Active Pilot Gate\\nscenario: gateway-backend-communication\\ntaskType: runtime-bridge\\nintent: Promote the A2 wave scheduler from shadow to active pilot, gated by deferral consistency and budget compliance.\\ntouchedAreas:\\n  - openclaw_runtime/src/agents/resource-aware-wave-scheduler.ts\\n  - openclaw_runtime/src/agents/cross-area/cross-area-facades.ts\\n  - openclaw_runtime/src/observability/deprecation-counters.ts\\nrequiredProfiles:\\n  - fast\\n  - comms\\nrequiredRules:\\n  - backend-communication-boundary\\n  - comms-regression\\nexpectedUserBehavior:\\n  - With the A2 pilot gate enabled, wave planning defers consistently and the deferral-disagreement counter stays under the 10% graduation budget.\\n  - A wave that has already started is never re-planned; the scheduler rejects the re-plan request instead of silently reordering running work.\\n  - Resuming a multi-worker orchestration creates new child sessions rather than reconnecting to finished ones.\\n  - When the disagreement rate exceeds 10%, the pilot responds with `degrade_to_live_only` instead of continuing to schedule.\\n  - With the pilot flag off, wave scheduling and orchestration outcomes are unchanged.\\nrequiredTests:\\n  - tests/unit/resource-aware-wave-scheduler.test.ts\\n  - tests/unit/cross-area-composition.test.ts\\n  - tests/unit/performance-budgets.test.ts\\nacceptance:\\n  - A2 deprecation counter `deferralDisagreementCount` rate < 10% over 10-wave orchestration\\n  - A2 p99 ≤ 80ms (criterion 4.6)\\n  - `ResourceAwareWaveScheduler` rejects re-plan of started waves (criterion 3.9)\\n  - Multi-worker resume creates new sessions (criterion 3.7)\\n  - Budget violation response `degrade_to_live_only` triggers when disagreement > 10%\\ndocs:\\n  required: true\\n---\\n\\n## Graduation gate\\n\\nA2 graduates from shadow to active pilot when ALL of the following hold:\\n\\n1. **Deferral agreement rate** ≥ 90%: `deferralAgreementCount / (agreement + disagreement) ≥ 0.90` over 10 waves.\\n2. **Wave immutability**: started waves are never re-planned (criterion 3.9, unit-tested).\\n3. **Performance**: p99 ≤ 80ms for 10-wave orchestration (criterion 4.6).\\n4. **Multi-worker resume**: creates new child sessions, no reconnect (criterion 3.7).\\n\\n## Out of scope\\n\\n- Session migration / reconnect (OQ-010, Stage 5).\\n- Dynamic worker count per-wave (Stage 5 optimization).\\n\",\n      \"truncated\": false\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-a02-orchestration-pilot-reverify.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/a02-a2-orchestration-gate.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+    "store": false,
+    "stream": false,
+    "truncation": "disabled",
+    "max_output_tokens": 16000,
+    "reasoning": {
+      "effort": "low"
+    },
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "name": "rsi_coding_edits",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "edits"
+          ],
+          "properties": {
+            "edits": {
+              "type": "array",
+              "maxItems": 32,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "content"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "requestDigest": "2d39be4fedb0bf3ca2ab18a7f776a56d3b8ddc7f00dd3717fef56a49ed12f8e1",
+  "runtime": {
+    "flags": {
+      "enabled": true,
+      "shadowEvaluation": true,
+      "injection": false
+    },
+    "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+    "candidateDigest": "7c2408a2afc3c71ec509c11c705ba3775d427c4166aef58a0b42db1c031f54a0",
+    "injectionDigest": null,
+    "isolationId": "2bb4141c-a536-443a-8b89-0fbfd0082edf/tf-0294-a02-3-sekb-shadow",
+    "runtimeEffectMeasured": true
+  },
+  "edits": [],
+  "execution": {
+    "status": "crash",
+    "failureClass": "infrastructure",
+    "failureCategory": "provider",
+    "attempts": 1,
+    "providerCalls": 1,
+    "wallClockMs": 28,
+    "costUsd": null,
+    "toolEvents": [],
+    "runPosition": 178,
+    "startedAt": "2026-11-06T16:57:13.589Z",
+    "endedAt": "2026-11-06T16:57:13.617Z",
+    "measurementBasis": "live-provider",
+    "note": "Responses transport failed (network error)"
+  },
+  "rawResponse": null,
+  "providerAttempts": [
+    {
+      "endpoint": "http://127.0.0.1:3065/v1/responses",
+      "request": {
+        "model": "space-bunny",
+        "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+        "input": "{\n  \"prompt\": \"A02 按原 spec 门限复验 A2 Multi-Agent Orchestration 受控 pilot 门；逐条映射 4 个判据到当前可执行证据，不重定义门限；修正 spec 里两个不存在的路径引用并补入覆盖判据1/预算的计数器测试；判据4（多 worker resume 新会话）无专用测试，如实记为 NO-GO residual。\",\n  \"acceptanceCriteria\": [\n    \"判据1 deferral agreement ≥ 90% + disagreement>10% → degrade_to_live_only：deprecation-counters 单测断言（数值门限未改）。\",\n    \"判据2 started wave 不可 re-plan：resource-aware-wave-scheduler 单测（\\\"ignores rePlan when appliesToWave is already started\\\" 等）。\",\n    \"判据3 p99 ≤ 80ms：performance-budgets 断言。\",\n    \"判据4 多 worker resume 创建新会话：当前树无专用测试 → 如实记 NO-GO residual，不伪装通过。\",\n    \"修正 spec drift：移除树中不存在的 cross-area-composition.test.ts 与 cross-area/cross-area-facades.ts 引用，补入计数器测试，并加 coverage 守卫。\",\n    \"干净候选定向测试、类型、scoped lint、harness validate/dry-run、comms replay/compare 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"harness/specs/tasks/a2-multi-agent-orchestration-pilot.md\",\n    \"harness/specs/tasks/harness-gap-a02-orchestration-pilot-reverify.md\",\n    \"docs/dev/harness-gap-closure/a02-a2-orchestration-gate.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"harness/specs/tasks/a2-multi-agent-orchestration-pilot.md\",\n      \"content\": \"---\\nlifecycleStatus: archived\\nid: a2-multi-agent-orchestration-pilot\\ntitle: A2 Multi-Agent Orchestration — Active Pilot Gate\\nscenario: gateway-backend-communication\\ntaskType: runtime-bridge\\nintent: Promote the A2 wave scheduler from shadow to active pilot, gated by deferral consistency and budget compliance.\\ntouchedAreas:\\n  - openclaw_runtime/src/agents/resource-aware-wave-scheduler.ts\\n  - openclaw_runtime/src/agents/cross-area/cross-area-facades.ts\\n  - openclaw_runtime/src/observability/deprecation-counters.ts\\nrequiredProfiles:\\n  - fast\\n  - comms\\nrequiredRules:\\n  - backend-communication-boundary\\n  - comms-regression\\nexpectedUserBehavior:\\n  - With the A2 pilot gate enabled, wave planning defers consistently and the deferral-disagreement counter stays under the 10% graduation budget.\\n  - A wave that has already started is never re-planned; the scheduler rejects the re-plan request instead of silently reordering running work.\\n  - Resuming a multi-worker orchestration creates new child sessions rather than reconnecting to finished ones.\\n  - When the disagreement rate exceeds 10%, the pilot responds with `degrade_to_live_only` instead of continuing to schedule.\\n  - With the pilot flag off, wave scheduling and orchestration outcomes are unchanged.\\nrequiredTests:\\n  - tests/unit/resource-aware-wave-scheduler.test.ts\\n  - tests/unit/cross-area-composition.test.ts\\n  - tests/unit/performance-budgets.test.ts\\nacceptance:\\n  - A2 deprecation counter `deferralDisagreementCount` rate < 10% over 10-wave orchestration\\n  - A2 p99 ≤ 80ms (criterion 4.6)\\n  - `ResourceAwareWaveScheduler` rejects re-plan of started waves (criterion 3.9)\\n  - Multi-worker resume creates new sessions (criterion 3.7)\\n  - Budget violation response `degrade_to_live_only` triggers when disagreement > 10%\\ndocs:\\n  required: true\\n---\\n\\n## Graduation gate\\n\\nA2 graduates from shadow to active pilot when ALL of the following hold:\\n\\n1. **Deferral agreement rate** ≥ 90%: `deferralAgreementCount / (agreement + disagreement) ≥ 0.90` over 10 waves.\\n2. **Wave immutability**: started waves are never re-planned (criterion 3.9, unit-tested).\\n3. **Performance**: p99 ≤ 80ms for 10-wave orchestration (criterion 4.6).\\n4. **Multi-worker resume**: creates new child sessions, no reconnect (criterion 3.7).\\n\\n## Out of scope\\n\\n- Session migration / reconnect (OQ-010, Stage 5).\\n- Dynamic worker count per-wave (Stage 5 optimization).\\n\",\n      \"truncated\": false\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-a02-orchestration-pilot-reverify.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/a02-a2-orchestration-gate.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+        "store": false,
+        "stream": false,
+        "truncation": "disabled",
+        "max_output_tokens": 16000,
+        "reasoning": {
+          "effort": "low"
+        },
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "rsi_coding_edits",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "edits"
+              ],
+              "properties": {
+                "edits": {
+                  "type": "array",
+                  "maxItems": 32,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "path",
+                      "content"
+                    ],
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "content": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "rawResponse": null,
+      "parsedResponse": null
+    }
+  ],
+  "grader": null
+}

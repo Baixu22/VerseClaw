@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "RsiBenefitTrial/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-benefit-eval/executor",
+  "planDigest": "133d3b5ff68949682b9c402b3275fd95e232ca4ce6a497a1903deaac5ee04004",
+  "slot": {
+    "id": "tf-0297-a05-2-sekb-off",
+    "caseId": "tf-0297-a05",
+    "repeat": 2,
+    "arm": "sekb-off",
+    "caseDigest": "37f2364be04a1efe5a776dd1a658672e6a1364f1bb0c2eacce51d3dd6f795b77",
+    "pairSeed": 68,
+    "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+    "position": 202
+  },
+  "evidenceKind": "live-provider",
+  "request": {
+    "model": "space-bunny",
+    "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+    "input": "{\n  \"prompt\": \"A05 按原 spec 门限复验 A5 Adaptive Context Budget 受控 pilot 门；逐条映射可执行证据，不重定义门限；恢复 `area-composition-spec.md` 指定的 `ContextBudgetPlanner`（含 `replanOnResume`）组合 facade，补齐 resume re-plan 与 P5 现有测试、coverage 守卫。\",\n  \"acceptanceCriteria\": [\n    \"判据1 plan adoption rate ≥80%（即 ignored ≤20%）+ `degrade_to_default_budget`：deprecation-counters 与 compaction-budget-shadow 当前断言 PASS。\",\n    \"判据2 planner p99 ≤30ms：compression-planner 与 performance-budgets 当前断言 PASS。\",\n    \"判据3 `ContextBudgetPlanner.replanOnResume` resume 后重跑：`openclaw_runtime/src/agents/cross-area/cross-area-facades.ts` 实现 + `tests/unit/cross-area-composition.test.ts`（3.6）+ `tests/unit/deep/a5-deep.test.ts`，PASS。\",\n    \"判据4 started wave 不可 re-plan：resource-aware-wave-scheduler 单测 PASS。\",\n    \"判据5 ignored >20% → `degrade_to_default_budget`：现有 registry 单测 PASS。\",\n    \"判据6 A1+A5+A3 cumulative per-turn smoke p99 ≤300ms：performance-budgets 断言 PASS。\",\n    \"P5 threshold clamp/default ladder、budgetShadow diagnostics-only、nativeMemory/nativeContextGating provenance、真实 compaction counter 调用点均由现有测试覆盖，PASS。\",\n    \"移除树中不存在的 `tests/unit/cross-area-composition.test.ts` 与 `cross-area/cross-area-facades.ts` 引用；requiredTests 与 coverage 守卫同步。\",\n    \"干净候选定向测试、类型、scoped lint、harness validate/dry-run、comms replay/compare 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"harness/specs/tasks/a5-adaptive-context-budget-pilot.md\",\n    \"harness/specs/tasks/harness-gap-a05-adaptive-context-budget-pilot-reverify.md\",\n    \"docs/dev/harness-gap-closure/a05-adaptive-context-budget-gate.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"harness/specs/tasks/a5-adaptive-context-budget-pilot.md\",\n      \"content\": \"---\\nlifecycleStatus: archived\\nid: a5-adaptive-context-budget-pilot\\ntitle: A5 Adaptive Context Budget — Active Pilot Gate\\nscenario: gateway-backend-communication\\ntaskType: runtime-bridge\\nintent: Promote the A5 context budget planner from shadow to active pilot, gated by plan adoption rate and budget compliance.\\ntouchedAreas:\\n  - openclaw_runtime/src/agents/cross-area/cross-area-facades.ts\\n  - openclaw_runtime/src/agents/resource-aware-wave-scheduler.ts\\n  - openclaw_runtime/src/agents/task-loop-controller.ts\\n  - openclaw_runtime/src/observability/deprecation-counters.ts\\n  - openclaw_runtime/src/observability/deprecation-counters.test.ts\\n  - openclaw_runtime/packages/agent-core/src/harness/compaction/compression-planner.ts\\n  - openclaw_runtime/packages/agent-core/src/harness/compaction/compression-planner.test.ts\\n  - openclaw_runtime/packages/agent-core/src/harness/compaction/compaction.ts\\n  - openclaw_runtime/src/agents/agent-hooks/compaction-safeguard.ts\\n  - openclaw_runtime/src/agents/agent-hooks/compaction-budget-shadow.test.ts\\n  - openclaw_runtime/src/agents/agent-hooks/compaction-promotion.ts\\n  - openclaw_runtime/src/agents/agent-hooks/compaction-promotion.test.ts\\n  - openclaw_runtime/src/agents/agent-hooks/compaction-safeguard-p6.test.ts\\n  - openclaw_runtime/src/agents/agent-hooks/compaction-safeguard-runtime.ts\\n  - openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts\\n  - openclaw_runtime/src/config/types.agent-defaults.ts\\n  - reports/context-compression/P6-DEVELOPMENT-PROMPT-2026-08-18.md\\n  - reports/context-compression/P6-EVIDENCE-2026-08-18.md\\n  - openclaw_runtime/src/agents/embedded-agent-runner/compact.ts\\n  - openclaw_runtime/src/context-engine/context-orchestrator.ts\\n  - openclaw_runtime/src/context-engine/context-orchestrator.test.ts\\n  - tests/unit/deprecation-counters.test.ts\\n  - tests/unit/performance-budgets.test.ts\\n  - reports/context-compression/P5-EVIDENCE-2026-08-17.md\\n  - reports/context-compression/P6-DATA-PREP-STATUS-2026-08-18.md\\n  - reports/context-compression/production-compaction-entries-11.json\\n  - reports/context-compression/production-compaction-manifest-9.json\\n  - reports/context-compression/production-summaries-9.jsonl\\n  - reports/context-compression/production-summaries-9.meta.json\\n  - reports/context-compression/production-paired-trajectories-9.jsonl\\n  - reports/context-compression/failure-guidelines-p6-9.json\\n  - reports/context-compression/production-summaries-30-generated.jsonl\\n  - reports/context-compression/production-summaries-30-generated.meta.json\\n  - reports/context-compression/production-summaries-30-v5.jsonl\\n  - reports/context-compression/production-summaries-30-v5.jsonl.meta.json\\n  - reports/context-compression/production-summaries-30-v9.jsonl\\n  - reports/context-compression/production-summaries-30-v9.jsonl.meta.json\\n  - reports/context-compression/production-summaries-30-v10.jsonl\\n  - reports/context-compression/production-summaries-30-v10.jsonl.meta.json\\n  - reports/context-compression/production-summaries-30-v11.jsonl\\n  - reports/context-compression/production-summaries-30-v11.jsonl.meta.json\\n  - reports/context-compression/production-summaries-30-v14.jsonl\\n  - reports/context-compression/production-summaries-30-v14.jsonl.meta.json\\n  - scripts/context-compression-production-summary-regenerator.ts\\n  - scripts/context-compression-recovery-ledger.mjs\\n  - scripts/context-compression-would-retry-canary.ts\\n  - reports/context-compression/production-paired-trajectories-30.jsonl\\n  - reports/context-compression/failure-guidelines-p6-30.json\\n  - reports/context-compression/failure-guidelines-p6-a-phase2-reasoner.json\\n  - reports/context-compression/failure-guidelines-p6-a-v5-iteration.json\\n  - reports/context-compression/failure-guidelines-p6-a-reasoner.json\\n  - reports/context-compression/production-paired-trajectories-30-reasoner.jsonl\\n  - reports/context-compression/P6-A-AUTOMATED-ACCEPTANCE-EVIDENCE-2026-08-18.md\\n  - reports/context-compression/P6-WOULD-RETRY-CANARY-2026-08-19.md\\n  - artifacts/context-compression-p5/**\\n  - harness/specs/tasks/a5-adaptive-context-budget-pilot.md\\n  - harness/specs/tasks/token-dense-recovery-compression-v1.md\\nresidualPaths:\\n  - docs/clawx-design-overview.md\\n  - electron/services/sessions-api.ts\\n  - openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact.ts\\n  - openclaw_runtime/packages/gateway-protocol/src/schema/sessions.recall.test.ts\\n  - openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts\\n  - openclaw_runtime/src/agents/agent-hooks/compaction-addressability.test.ts\\n  - openclaw_runtime/src/agents/agent-hooks/compaction-addressability.ts\\n  - openclaw_runtime/src/agents/agent-hooks/compaction-safeguard-quality.ts\\n  - openclaw_runtime/src/agents/agent-hooks/compaction-validated-pipeline.test.ts\\n  - openclaw_runtime/src/agents/agent-hooks/compaction-validated-pipeline.ts\\n  - reports/CONTEXT-COMPRESSION-DEVELOPMENT-PLAN-2026-08-17.md\\n  - reports/context-compression/P0-EVIDENCE-2026-08-17.md\\n  - reports/context-compression/P1-DEVELOPMENT-PROMPT-2026-08-17.md\\n  - reports/context-compression/P1-EVIDENCE-2026-08-17.md\\n  - reports/context-compression/P2-DEVELOPMENT-PROMPT-2026-08-17.md\\n  - reports/context-compression/P2-EVIDENCE-2026-08-17.md\\n  - reports/context-compression/P3-DEVELOPMENT-PROMPT-2026-08-17.md\\n  - reports/context-compression/P3-EVIDENCE-2026-08-17.md\\n  - reports/context-compression/P4-ACCEPTANCE-EVIDENCE-2026-08-17.md\\n  - reports/context-compression/P4-ACCEPTANCE-PROMPT-2026-08-17.md\\n  - reports/context-compression/P4-DEVELOPMENT-PROMPT-2026-08-17.md\\n  - reports/context-compression/P4-EVIDENCE-2026-08-17.md\\n  - reports/context-compression/P5-DEVELOPMENT-PROMPT-2026-08-17.md\\n  - reports/context-compression/P5-EXECUTION-PROMPT-2026-08-17.md\\n  - reports/context-compression/production-manifest-30.json\\n  - scripts/context-compression-eval-runner.mjs\\n  - shared/host-api/contract.ts\\n  - src/lib/host-api.ts\\n  - tests/unit/compression-artifact.test.ts\\n  - tests/unit/context-compression-eval.test.ts\\n  - tests/unit/context-runtime-kit-recovery-context.test.ts\\n  - tests/unit/helpers/context-compression-eval.ts\\nexpectedUserBehavior:\\n  - P5 compaction budget shadow records plan adoption, ignored plans, and budget exceeded through the existing A5 deprecation counters without changing returned summaries or artifacts.\\n  - A5 budget violation diagnosis degrades to default budget through the existing registry when ignored plans exceed 20%.\\nrequiredProfiles:\\n  - fast\\n  - comms\\nrequiredRules:\\n  - backend-communication-boundary\\n  - comms-regression\\nrequiredTests:\\n  - tests/unit/cross-area-composition.test.ts\\n  - tests/unit/resource-aware-wave-scheduler.test.ts\\n  - tests/unit/performance-budgets.test.ts\\n  - pnpm --dir openclaw_runtime exec vitest run packages/agent-core/src/harness/compaction/compression-planner.test.ts src/context-engine/context-orchestrator.test.ts --reporter=dot\\n  - pnpm exec vitest run tests/unit/deprecation-counters.test.ts tests/unit/performance-budgets.test.ts --reporter=dot\\nacceptance:\\n  - A5 deprecation counter `planIgnoredCount` rate ≤ 20% over 100-turn session\\n  - A5 p99 ≤ 30ms (criterion 4.8)\\n  - `ContextBudgetPlanner.replanOnResume` re-executes on resume, not stale (criterion 3.6)\\n  - Wave immutability: started waves not re-planned (criterion 3.9)\\n  - Budget violation response `degrade_to_default_budget` triggers when ignored rate > 20%\\n  - P5 real compaction call sites increment planAdoptedCount/planIgnoredCount/budgetExceededCount deterministically\\n  - P5 planner threshold overrides are clamped earlier than the production ladder and default behavior is byte-identical without a schedule\\n  - P5 budgetShadow remains diagnostics-only and never enters CompressionArtifact\\n  - P5 nativeMemory/nativeContextGating negotiation is additive and keeps provenance receipts\\ndocs:\\n  required: true\\n---\\n## Graduation gate\\n\\nA5 graduates from shadow to active pilot when ALL of the following hold:\\n\\n1. **Plan adoption rate** ≥ 80%: `planAdoptedCount / (adopted + ignored) ≥ 0.80`.\\n2. **Performance**: p99 ≤ 30ms for 100-turn session (criterion 4.8).\\n3. **Resume re-execution**: planner re-executes on resume, not stale (criterion 3.6).\\n4. **Wave immutability**: started waves not re-planned (criterion 3.9).\\n5. **Budget violation response**: `degrade_to_default_budget` triggers when ignored > 20% (criterion 4.14).\\n6. **Per-turn cumulative budget**: p99 ≤ 300ms with A1+A5+A3 active (criterion 4.10).\\n\\n## Out of scope\\n\\n- Dynamic degradation order shifting (OQ-012, Stage 5).\\n- Per-area memory budget allocation (OQ-011, Stage 5).\\n\",\n      \"truncated\": false\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-a05-adaptive-context-budget-pilot-reverify.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/a05-adaptive-context-budget-gate.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+    "store": false,
+    "stream": false,
+    "truncation": "disabled",
+    "max_output_tokens": 16000,
+    "reasoning": {
+      "effort": "low"
+    },
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "name": "rsi_coding_edits",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "edits"
+          ],
+          "properties": {
+            "edits": {
+              "type": "array",
+              "maxItems": 32,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "content"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "requestDigest": "89117f5391e29247ae12029b63738dee4a14237601050e7a6b8bcbaea90157e2",
+  "runtime": {
+    "flags": {
+      "enabled": false,
+      "shadowEvaluation": false,
+      "injection": false
+    },
+    "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+    "candidateDigest": "7c2408a2afc3c71ec509c11c705ba3775d427c4166aef58a0b42db1c031f54a0",
+    "injectionDigest": null,
+    "isolationId": "2bb4141c-a536-443a-8b89-0fbfd0082edf/tf-0297-a05-2-sekb-off",
+    "runtimeEffectMeasured": true
+  },
+  "edits": [],
+  "execution": {
+    "status": "crash",
+    "failureClass": "infrastructure",
+    "failureCategory": "provider",
+    "attempts": 1,
+    "providerCalls": 1,
+    "wallClockMs": 25,
+    "costUsd": null,
+    "toolEvents": [],
+    "runPosition": 202,
+    "startedAt": "2026-11-06T16:57:42.389Z",
+    "endedAt": "2026-11-06T16:57:42.414Z",
+    "measurementBasis": "live-provider",
+    "note": "Responses transport failed (network error)"
+  },
+  "rawResponse": null,
+  "providerAttempts": [
+    {
+      "endpoint": "http://127.0.0.1:3065/v1/responses",
+      "request": {
+        "model": "space-bunny",
+        "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+        "input": "{\n  \"prompt\": \"A05 按原 spec 门限复验 A5 Adaptive Context Budget 受控 pilot 门；逐条映射可执行证据，不重定义门限；恢复 `area-composition-spec.md` 指定的 `ContextBudgetPlanner`（含 `replanOnResume`）组合 facade，补齐 resume re-plan 与 P5 现有测试、coverage 守卫。\",\n  \"acceptanceCriteria\": [\n    \"判据1 plan adoption rate ≥80%（即 ignored ≤20%）+ `degrade_to_default_budget`：deprecation-counters 与 compaction-budget-shadow 当前断言 PASS。\",\n    \"判据2 planner p99 ≤30ms：compression-planner 与 performance-budgets 当前断言 PASS。\",\n    \"判据3 `ContextBudgetPlanner.replanOnResume` resume 后重跑：`openclaw_runtime/src/agents/cross-area/cross-area-facades.ts` 实现 + `tests/unit/cross-area-composition.test.ts`（3.6）+ `tests/unit/deep/a5-deep.test.ts`，PASS。\",\n    \"判据4 started wave 不可 re-plan：resource-aware-wave-scheduler 单测 PASS。\",\n    \"判据5 ignored >20% → `degrade_to_default_budget`：现有 registry 单测 PASS。\",\n    \"判据6 A1+A5+A3 cumulative per-turn smoke p99 ≤300ms：performance-budgets 断言 PASS。\",\n    \"P5 threshold clamp/default ladder、budgetShadow diagnostics-only、nativeMemory/nativeContextGating provenance、真实 compaction counter 调用点均由现有测试覆盖，PASS。\",\n    \"移除树中不存在的 `tests/unit/cross-area-composition.test.ts` 与 `cross-area/cross-area-facades.ts` 引用；requiredTests 与 coverage 守卫同步。\",\n    \"干净候选定向测试、类型、scoped lint、harness validate/dry-run、comms replay/compare 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"harness/specs/tasks/a5-adaptive-context-budget-pilot.md\",\n    \"harness/specs/tasks/harness-gap-a05-adaptive-context-budget-pilot-reverify.md\",\n    \"docs/dev/harness-gap-closure/a05-adaptive-context-budget-gate.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"harness/specs/tasks/a5-adaptive-context-budget-pilot.md\",\n      \"content\": \"---\\nlifecycleStatus: archived\\nid: a5-adaptive-context-budget-pilot\\ntitle: A5 Adaptive Context Budget — Active Pilot Gate\\nscenario: gateway-backend-communication\\ntaskType: runtime-bridge\\nintent: Promote the A5 context budget planner from shadow to active pilot, gated by plan adoption rate and budget compliance.\\ntouchedAreas:\\n  - openclaw_runtime/src/agents/cross-area/cross-area-facades.ts\\n  - openclaw_runtime/src/agents/resource-aware-wave-scheduler.ts\\n  - openclaw_runtime/src/agents/task-loop-controller.ts\\n  - openclaw_runtime/src/observability/deprecation-counters.ts\\n  - openclaw_runtime/src/observability/deprecation-counters.test.ts\\n  - openclaw_runtime/packages/agent-core/src/harness/compaction/compression-planner.ts\\n  - openclaw_runtime/packages/agent-core/src/harness/compaction/compression-planner.test.ts\\n  - openclaw_runtime/packages/agent-core/src/harness/compaction/compaction.ts\\n  - openclaw_runtime/src/agents/agent-hooks/compaction-safeguard.ts\\n  - openclaw_runtime/src/agents/agent-hooks/compaction-budget-shadow.test.ts\\n  - openclaw_runtime/src/agents/agent-hooks/compaction-promotion.ts\\n  - openclaw_runtime/src/agents/agent-hooks/compaction-promotion.test.ts\\n  - openclaw_runtime/src/agents/agent-hooks/compaction-safeguard-p6.test.ts\\n  - openclaw_runtime/src/agents/agent-hooks/compaction-safeguard-runtime.ts\\n  - openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts\\n  - openclaw_runtime/src/config/types.agent-defaults.ts\\n  - reports/context-compression/P6-DEVELOPMENT-PROMPT-2026-08-18.md\\n  - reports/context-compression/P6-EVIDENCE-2026-08-18.md\\n  - openclaw_runtime/src/agents/embedded-agent-runner/compact.ts\\n  - openclaw_runtime/src/context-engine/context-orchestrator.ts\\n  - openclaw_runtime/src/context-engine/context-orchestrator.test.ts\\n  - tests/unit/deprecation-counters.test.ts\\n  - tests/unit/performance-budgets.test.ts\\n  - reports/context-compression/P5-EVIDENCE-2026-08-17.md\\n  - reports/context-compression/P6-DATA-PREP-STATUS-2026-08-18.md\\n  - reports/context-compression/production-compaction-entries-11.json\\n  - reports/context-compression/production-compaction-manifest-9.json\\n  - reports/context-compression/production-summaries-9.jsonl\\n  - reports/context-compression/production-summaries-9.meta.json\\n  - reports/context-compression/production-paired-trajectories-9.jsonl\\n  - reports/context-compression/failure-guidelines-p6-9.json\\n  - reports/context-compression/production-summaries-30-generated.jsonl\\n  - reports/context-compression/production-summaries-30-generated.meta.json\\n  - reports/context-compression/production-summaries-30-v5.jsonl\\n  - reports/context-compression/production-summaries-30-v5.jsonl.meta.json\\n  - reports/context-compression/production-summaries-30-v9.jsonl\\n  - reports/context-compression/production-summaries-30-v9.jsonl.meta.json\\n  - reports/context-compression/production-summaries-30-v10.jsonl\\n  - reports/context-compression/production-summaries-30-v10.jsonl.meta.json\\n  - reports/context-compression/production-summaries-30-v11.jsonl\\n  - reports/context-compression/production-summaries-30-v11.jsonl.meta.json\\n  - reports/context-compression/production-summaries-30-v14.jsonl\\n  - reports/context-compression/production-summaries-30-v14.jsonl.meta.json\\n  - scripts/context-compression-production-summary-regenerator.ts\\n  - scripts/context-compression-recovery-ledger.mjs\\n  - scripts/context-compression-would-retry-canary.ts\\n  - reports/context-compression/production-paired-trajectories-30.jsonl\\n  - reports/context-compression/failure-guidelines-p6-30.json\\n  - reports/context-compression/failure-guidelines-p6-a-phase2-reasoner.json\\n  - reports/context-compression/failure-guidelines-p6-a-v5-iteration.json\\n  - reports/context-compression/failure-guidelines-p6-a-reasoner.json\\n  - reports/context-compression/production-paired-trajectories-30-reasoner.jsonl\\n  - reports/context-compression/P6-A-AUTOMATED-ACCEPTANCE-EVIDENCE-2026-08-18.md\\n  - reports/context-compression/P6-WOULD-RETRY-CANARY-2026-08-19.md\\n  - artifacts/context-compression-p5/**\\n  - harness/specs/tasks/a5-adaptive-context-budget-pilot.md\\n  - harness/specs/tasks/token-dense-recovery-compression-v1.md\\nresidualPaths:\\n  - docs/clawx-design-overview.md\\n  - electron/services/sessions-api.ts\\n  - openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact.ts\\n  - openclaw_runtime/packages/gateway-protocol/src/schema/sessions.recall.test.ts\\n  - openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts\\n  - openclaw_runtime/src/agents/agent-hooks/compaction-addressability.test.ts\\n  - openclaw_runtime/src/agents/agent-hooks/compaction-addressability.ts\\n  - openclaw_runtime/src/agents/agent-hooks/compaction-safeguard-quality.ts\\n  - openclaw_runtime/src/agents/agent-hooks/compaction-validated-pipeline.test.ts\\n  - openclaw_runtime/src/agents/agent-hooks/compaction-validated-pipeline.ts\\n  - reports/CONTEXT-COMPRESSION-DEVELOPMENT-PLAN-2026-08-17.md\\n  - reports/context-compression/P0-EVIDENCE-2026-08-17.md\\n  - reports/context-compression/P1-DEVELOPMENT-PROMPT-2026-08-17.md\\n  - reports/context-compression/P1-EVIDENCE-2026-08-17.md\\n  - reports/context-compression/P2-DEVELOPMENT-PROMPT-2026-08-17.md\\n  - reports/context-compression/P2-EVIDENCE-2026-08-17.md\\n  - reports/context-compression/P3-DEVELOPMENT-PROMPT-2026-08-17.md\\n  - reports/context-compression/P3-EVIDENCE-2026-08-17.md\\n  - reports/context-compression/P4-ACCEPTANCE-EVIDENCE-2026-08-17.md\\n  - reports/context-compression/P4-ACCEPTANCE-PROMPT-2026-08-17.md\\n  - reports/context-compression/P4-DEVELOPMENT-PROMPT-2026-08-17.md\\n  - reports/context-compression/P4-EVIDENCE-2026-08-17.md\\n  - reports/context-compression/P5-DEVELOPMENT-PROMPT-2026-08-17.md\\n  - reports/context-compression/P5-EXECUTION-PROMPT-2026-08-17.md\\n  - reports/context-compression/production-manifest-30.json\\n  - scripts/context-compression-eval-runner.mjs\\n  - shared/host-api/contract.ts\\n  - src/lib/host-api.ts\\n  - tests/unit/compression-artifact.test.ts\\n  - tests/unit/context-compression-eval.test.ts\\n  - tests/unit/context-runtime-kit-recovery-context.test.ts\\n  - tests/unit/helpers/context-compression-eval.ts\\nexpectedUserBehavior:\\n  - P5 compaction budget shadow records plan adoption, ignored plans, and budget exceeded through the existing A5 deprecation counters without changing returned summaries or artifacts.\\n  - A5 budget violation diagnosis degrades to default budget through the existing registry when ignored plans exceed 20%.\\nrequiredProfiles:\\n  - fast\\n  - comms\\nrequiredRules:\\n  - backend-communication-boundary\\n  - comms-regression\\nrequiredTests:\\n  - tests/unit/cross-area-composition.test.ts\\n  - tests/unit/resource-aware-wave-scheduler.test.ts\\n  - tests/unit/performance-budgets.test.ts\\n  - pnpm --dir openclaw_runtime exec vitest run packages/agent-core/src/harness/compaction/compression-planner.test.ts src/context-engine/context-orchestrator.test.ts --reporter=dot\\n  - pnpm exec vitest run tests/unit/deprecation-counters.test.ts tests/unit/performance-budgets.test.ts --reporter=dot\\nacceptance:\\n  - A5 deprecation counter `planIgnoredCount` rate ≤ 20% over 100-turn session\\n  - A5 p99 ≤ 30ms (criterion 4.8)\\n  - `ContextBudgetPlanner.replanOnResume` re-executes on resume, not stale (criterion 3.6)\\n  - Wave immutability: started waves not re-planned (criterion 3.9)\\n  - Budget violation response `degrade_to_default_budget` triggers when ignored rate > 20%\\n  - P5 real compaction call sites increment planAdoptedCount/planIgnoredCount/budgetExceededCount deterministically\\n  - P5 planner threshold overrides are clamped earlier than the production ladder and default behavior is byte-identical without a schedule\\n  - P5 budgetShadow remains diagnostics-only and never enters CompressionArtifact\\n  - P5 nativeMemory/nativeContextGating negotiation is additive and keeps provenance receipts\\ndocs:\\n  required: true\\n---\\n## Graduation gate\\n\\nA5 graduates from shadow to active pilot when ALL of the following hold:\\n\\n1. **Plan adoption rate** ≥ 80%: `planAdoptedCount / (adopted + ignored) ≥ 0.80`.\\n2. **Performance**: p99 ≤ 30ms for 100-turn session (criterion 4.8).\\n3. **Resume re-execution**: planner re-executes on resume, not stale (criterion 3.6).\\n4. **Wave immutability**: started waves not re-planned (criterion 3.9).\\n5. **Budget violation response**: `degrade_to_default_budget` triggers when ignored > 20% (criterion 4.14).\\n6. **Per-turn cumulative budget**: p99 ≤ 300ms with A1+A5+A3 active (criterion 4.10).\\n\\n## Out of scope\\n\\n- Dynamic degradation order shifting (OQ-012, Stage 5).\\n- Per-area memory budget allocation (OQ-011, Stage 5).\\n\",\n      \"truncated\": false\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-a05-adaptive-context-budget-pilot-reverify.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/a05-adaptive-context-budget-gate.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+        "store": false,
+        "stream": false,
+        "truncation": "disabled",
+        "max_output_tokens": 16000,
+        "reasoning": {
+          "effort": "low"
+        },
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "rsi_coding_edits",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "edits"
+              ],
+              "properties": {
+                "edits": {
+                  "type": "array",
+                  "maxItems": 32,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "path",
+                      "content"
+                    ],
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "content": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "rawResponse": null,
+      "parsedResponse": null
+    }
+  ],
+  "grader": null
+}

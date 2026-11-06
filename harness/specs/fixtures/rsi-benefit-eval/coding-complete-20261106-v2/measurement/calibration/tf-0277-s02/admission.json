@@ -1,0 +1,488 @@
+{
+  "schemaVersion": "RsiLiveTaskAdmission/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-independent-calibrator",
+  "taskId": "tf-0277-s02",
+  "source": {
+    "id": "tf-0277-s02",
+    "base": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
+    "reference": "c1cb17973fd8f4a06b9de88f7aa6bf8b6fbe5909",
+    "productChanges": [],
+    "originalDecision": "PASS",
+    "codingBindingDigest": "2697e0f57ca40ab8e7b547d0d82595dd56b11f3281acf316c03df819590cf417",
+    "baselineSetup": null,
+    "targetScope": [
+      "docs/dev/harness-gap-closure/s02-sink-ledger.md",
+      "tests/unit/sensitive-sink-residual-ledger.test.ts",
+      "harness/specs/tasks/harness-gap-sink-ledger.md",
+      "harness/specs/rules/sensitive-sink-ledger-boundary.md",
+      "docs/dev/harness-gap-closure/s02-acceptance.json",
+      "docs/dev/harness-gap-closure/S02-SHA256SUMS"
+    ],
+    "prompt": "S02 对既有的敏感 sink provenance 分类做执行化核对，逐 sink 记录 enforced/partial/residual，并显式列出 network-send 未接入 cross-context 闸门的残余出口；不新建第二套 provenance 引擎，不把单条路径通过或 classification-only 当成全网强制。",
+    "sourceRecord": "docs/dev/harness-gap-closure/s02-acceptance.json",
+    "sourceRecordDigest": "2d02761a45c25e9c96b3ba0cd9d8016355e1ced5fb9f69fd9b43f30467cb9e64",
+    "oraclePaths": [
+      "tests/unit/sensitive-sink-enforcement-drift.test.ts",
+      "tests/unit/sensitive-sink-residual-ledger.test.ts"
+    ],
+    "commands": [
+      "pnpm exec vitest run tests/unit/sensitive-sink-enforcement-drift.test.ts tests/unit/sensitive-sink-residual-ledger.test.ts --maxWorkers=1"
+    ]
+  },
+  "stages": {
+    "reference": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0277-s02",
+      "commands": [
+        "pnpm exec vitest run tests/unit/sensitive-sink-enforcement-drift.test.ts tests/unit/sensitive-sink-residual-ledger.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm exec vitest run tests/unit/sensitive-sink-enforcement-drift.test.ts tests/unit/sensitive-sink-residual-ledger.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\tmp\\rsi-completion-20261106\\node_modules\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\vitest.mjs",
+            "run",
+            "tests/unit/sensitive-sink-enforcement-drift.test.ts",
+            "tests/unit/sensitive-sink-residual-ledger.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0277-s02\\reference\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0277-s02\\reference\\workspace",
+          "exitCode": 0,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 4,
+            "numPassedTestSuites": 4,
+            "numFailedTestSuites": 0,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 9,
+            "numPassedTests": 9,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793955558011,
+            "success": true,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "sensitive sink enforcement drift guard"
+                    ],
+                    "fullName": "sensitive sink enforcement drift guard classifies every declared sink kind and nothing else",
+                    "status": "passed",
+                    "title": "classifies every declared sink kind and nothing else",
+                    "duration": 2.0582999999999743,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "sensitive sink enforcement drift guard"
+                    ],
+                    "fullName": "sensitive sink enforcement drift guard requires an enforcement point exactly when a sink is not classification-only",
+                    "status": "passed",
+                    "title": "requires an enforcement point exactly when a sink is not classification-only",
+                    "duration": 0.31049999999999045,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "sensitive sink enforcement drift guard"
+                    ],
+                    "fullName": "sensitive sink enforcement drift guard only calls a sink narrow when its declared points really reject",
+                    "status": "passed",
+                    "title": "only calls a sink narrow when its declared points really reject",
+                    "duration": 0.5915999999999713,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "sensitive sink enforcement drift guard"
+                    ],
+                    "fullName": "sensitive sink enforcement drift guard resolves every declared enforcement point against the working tree",
+                    "status": "passed",
+                    "title": "resolves every declared enforcement point against the working tree",
+                    "duration": 4.2649000000000115,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "sensitive sink enforcement drift guard"
+                    ],
+                    "fullName": "sensitive sink enforcement drift guard references every provenance gate module, so a new gate cannot land unclassified",
+                    "status": "passed",
+                    "title": "references every provenance gate module, so a new gate cannot land unclassified",
+                    "duration": 510.5645,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793955558509,
+                "endTime": 1793955559026.5645,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-completion-control-20261106/v8-calibration/calibration/tf-0277-s02/reference/workspace/tests/unit/sensitive-sink-enforcement-drift.test.ts"
+              },
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "S02 sensitive-sink residual ledger"
+                    ],
+                    "fullName": "S02 sensitive-sink residual ledger classifies every sink with a bounded enforcement level",
+                    "status": "passed",
+                    "title": "classifies every sink with a bounded enforcement level",
+                    "duration": 2.914199999999994,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S02 sensitive-sink residual ledger"
+                    ],
+                    "fullName": "S02 sensitive-sink residual ledger keeps the covered message-action egress path gated",
+                    "status": "passed",
+                    "title": "keeps the covered message-action egress path gated",
+                    "duration": 0.5398000000000138,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S02 sensitive-sink residual ledger"
+                    ],
+                    "fullName": "S02 sensitive-sink residual ledger pins the residual egress entry points so wiring them forces a ledger update",
+                    "status": "passed",
+                    "title": "pins the residual egress entry points so wiring them forces a ledger update",
+                    "duration": 1.469600000000014,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S02 sensitive-sink residual ledger"
+                    ],
+                    "fullName": "S02 sensitive-sink residual ledger records the residual ledger doc with every sink kind",
+                    "status": "passed",
+                    "title": "records the residual ledger doc with every sink kind",
+                    "duration": 3.6532000000000266,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793955559375,
+                "endTime": 1793955559383.6533,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-completion-control-20261106/v8-calibration/calibration/tf-0277-s02/reference/workspace/tests/unit/sensitive-sink-residual-ledger.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0277-s02\\reference\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0277-s02\\reference\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0277-s02\\reference\\oracle\\01-stderr.log"
+        }
+      ],
+      "numTotalTests": 9,
+      "numPassedTests": 9,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": true,
+      "failureClass": null,
+      "timeoutMs": 300000,
+      "oracleHashBefore": "892a5d0ca47a06ab995b17fd11022b07253a8e85e5328bfa48724106fe0242a2",
+      "oracleHashAfter": "892a5d0ca47a06ab995b17fd11022b07253a8e85e5328bfa48724106fe0242a2",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-sink-ledger.md": "c3a9989c8c97d30311da69944a5eccd216cd1a0b4f42fb1dab20bb03aa732907",
+        "tests/unit/sensitive-sink-enforcement-drift.test.ts": "c5f1fb3b8211068de559bbfa8fc73b612bb047a143f04b2df6c727932a81e659",
+        "tests/unit/sensitive-sink-residual-ledger.test.ts": "cef2ba5edbdd68de89533e8ca061d803fe843a6869454167f8f202c9c9f00905"
+      },
+      "oracleRevision": "c1cb17973fd8f4a06b9de88f7aa6bf8b6fbe5909",
+      "oracleTestDigests": {
+        "tests/unit/sensitive-sink-enforcement-drift.test.ts": "c5f1fb3b8211068de559bbfa8fc73b612bb047a143f04b2df6c727932a81e659",
+        "tests/unit/sensitive-sink-residual-ledger.test.ts": "cef2ba5edbdd68de89533e8ca061d803fe843a6869454167f8f202c9c9f00905"
+      },
+      "supportPackages": [
+        {
+          "name": "markdown-it",
+          "declaredVersion": "14.2.0",
+          "resolvedVersion": "14.2.0"
+        }
+      ],
+      "diagnostics": [],
+      "workspace": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0277-s02\\reference\\workspace",
+      "outDir": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0277-s02\\reference\\oracle",
+      "reportPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0277-s02\\reference\\oracle\\run-report.json"
+    },
+    "baseline": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0277-s02",
+      "commands": [
+        "pnpm exec vitest run tests/unit/sensitive-sink-enforcement-drift.test.ts tests/unit/sensitive-sink-residual-ledger.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm exec vitest run tests/unit/sensitive-sink-enforcement-drift.test.ts tests/unit/sensitive-sink-residual-ledger.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\tmp\\rsi-completion-20261106\\node_modules\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\vitest.mjs",
+            "run",
+            "tests/unit/sensitive-sink-enforcement-drift.test.ts",
+            "tests/unit/sensitive-sink-residual-ledger.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0277-s02\\baseline\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0277-s02\\baseline\\workspace",
+          "exitCode": 1,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 4,
+            "numPassedTestSuites": 2,
+            "numFailedTestSuites": 2,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 9,
+            "numPassedTests": 8,
+            "numFailedTests": 1,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793955575529,
+            "success": false,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "sensitive sink enforcement drift guard"
+                    ],
+                    "fullName": "sensitive sink enforcement drift guard classifies every declared sink kind and nothing else",
+                    "status": "passed",
+                    "title": "classifies every declared sink kind and nothing else",
+                    "duration": 1.7409000000000106,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "sensitive sink enforcement drift guard"
+                    ],
+                    "fullName": "sensitive sink enforcement drift guard requires an enforcement point exactly when a sink is not classification-only",
+                    "status": "passed",
+                    "title": "requires an enforcement point exactly when a sink is not classification-only",
+                    "duration": 0.3382000000000289,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "sensitive sink enforcement drift guard"
+                    ],
+                    "fullName": "sensitive sink enforcement drift guard only calls a sink narrow when its declared points really reject",
+                    "status": "passed",
+                    "title": "only calls a sink narrow when its declared points really reject",
+                    "duration": 0.5577000000000112,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "sensitive sink enforcement drift guard"
+                    ],
+                    "fullName": "sensitive sink enforcement drift guard resolves every declared enforcement point against the working tree",
+                    "status": "passed",
+                    "title": "resolves every declared enforcement point against the working tree",
+                    "duration": 5.608699999999999,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "sensitive sink enforcement drift guard"
+                    ],
+                    "fullName": "sensitive sink enforcement drift guard references every provenance gate module, so a new gate cannot land unclassified",
+                    "status": "passed",
+                    "title": "references every provenance gate module, so a new gate cannot land unclassified",
+                    "duration": 613.1707,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793955576033,
+                "endTime": 1793955576654.1707,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-completion-control-20261106/v8-calibration/calibration/tf-0277-s02/baseline/workspace/tests/unit/sensitive-sink-enforcement-drift.test.ts"
+              },
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "S02 sensitive-sink residual ledger"
+                    ],
+                    "fullName": "S02 sensitive-sink residual ledger classifies every sink with a bounded enforcement level",
+                    "status": "passed",
+                    "title": "classifies every sink with a bounded enforcement level",
+                    "duration": 3.169399999999996,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S02 sensitive-sink residual ledger"
+                    ],
+                    "fullName": "S02 sensitive-sink residual ledger keeps the covered message-action egress path gated",
+                    "status": "passed",
+                    "title": "keeps the covered message-action egress path gated",
+                    "duration": 0.7952999999999975,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S02 sensitive-sink residual ledger"
+                    ],
+                    "fullName": "S02 sensitive-sink residual ledger pins the residual egress entry points so wiring them forces a ledger update",
+                    "status": "passed",
+                    "title": "pins the residual egress entry points so wiring them forces a ledger update",
+                    "duration": 2.0586000000000126,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S02 sensitive-sink residual ledger"
+                    ],
+                    "fullName": "S02 sensitive-sink residual ledger records the residual ledger doc with every sink kind",
+                    "status": "failed",
+                    "title": "records the residual ledger doc with every sink kind",
+                    "duration": 41.545799999999986,
+                    "failureMessages": [
+                      "Error: ENOENT: no such file or directory, open 'D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0277-s02\\baseline\\workspace\\docs\\dev\\harness-gap-closure\\s02-sink-ledger.md'\n    at readFileSync (node:fs:483:20)\n    at read (D:/tmp/rsi-completion-control-20261106/v8-calibration/calibration/tf-0277-s02/baseline/workspace/tests/unit/sensitive-sink-residual-ledger.test.ts:39:10)\n    at D:/tmp/rsi-completion-control-20261106/v8-calibration/calibration/tf-0277-s02/baseline/workspace/tests/unit/sensitive-sink-residual-ledger.test.ts:79:17\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)"
+                    ],
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793955577021,
+                "endTime": 1793955577068.546,
+                "status": "failed",
+                "message": "",
+                "name": "D:/tmp/rsi-completion-control-20261106/v8-calibration/calibration/tf-0277-s02/baseline/workspace/tests/unit/sensitive-sink-residual-ledger.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0277-s02\\baseline\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0277-s02\\baseline\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0277-s02\\baseline\\oracle\\01-stderr.log"
+        }
+      ],
+      "numTotalTests": 9,
+      "numPassedTests": 8,
+      "numFailedTests": 1,
+      "numPendingTests": 0,
+      "passed": false,
+      "failureClass": "assertion",
+      "timeoutMs": 300000,
+      "oracleHashBefore": "892a5d0ca47a06ab995b17fd11022b07253a8e85e5328bfa48724106fe0242a2",
+      "oracleHashAfter": "892a5d0ca47a06ab995b17fd11022b07253a8e85e5328bfa48724106fe0242a2",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-sink-ledger.md": "c3a9989c8c97d30311da69944a5eccd216cd1a0b4f42fb1dab20bb03aa732907",
+        "tests/unit/sensitive-sink-enforcement-drift.test.ts": "c5f1fb3b8211068de559bbfa8fc73b612bb047a143f04b2df6c727932a81e659",
+        "tests/unit/sensitive-sink-residual-ledger.test.ts": "cef2ba5edbdd68de89533e8ca061d803fe843a6869454167f8f202c9c9f00905"
+      },
+      "oracleRevision": "c1cb17973fd8f4a06b9de88f7aa6bf8b6fbe5909",
+      "oracleTestDigests": {
+        "tests/unit/sensitive-sink-enforcement-drift.test.ts": "c5f1fb3b8211068de559bbfa8fc73b612bb047a143f04b2df6c727932a81e659",
+        "tests/unit/sensitive-sink-residual-ledger.test.ts": "cef2ba5edbdd68de89533e8ca061d803fe843a6869454167f8f202c9c9f00905"
+      },
+      "supportPackages": [
+        {
+          "name": "markdown-it",
+          "declaredVersion": "14.2.0",
+          "resolvedVersion": "14.2.0"
+        }
+      ],
+      "diagnostics": [],
+      "workspace": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0277-s02\\baseline\\workspace",
+      "outDir": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0277-s02\\baseline\\oracle",
+      "reportPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0277-s02\\baseline\\oracle\\run-report.json"
+    }
+  },
+  "admission": {
+    "passed": true,
+    "issues": []
+  },
+  "claims": {
+    "modelQuality": false,
+    "benefit": false,
+    "realHuman": false
+  }
+}

@@ -1,0 +1,999 @@
+{
+  "schemaVersion": "RsiBenefitTrial/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-benefit-eval/executor",
+  "planDigest": "133d3b5ff68949682b9c402b3275fd95e232ca4ce6a497a1903deaac5ee04004",
+  "slot": {
+    "id": "tf-0289-g01-2-sekb-shadow",
+    "caseId": "tf-0289-g01",
+    "repeat": 2,
+    "arm": "sekb-shadow",
+    "caseDigest": "88ceafe3e30186c1dfb4b07fcb4f66343b5074d15f881c8deca0d15f5bb10121",
+    "pairSeed": 8,
+    "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+    "position": 22
+  },
+  "evidenceKind": "live-provider",
+  "request": {
+    "model": "space-bunny",
+    "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+    "input": "{\n  \"prompt\": \"G01 让每个错误类携带稳定 code + retryable + 受权限约束的 nextAction：nextAction 只能是固定动词（retry/reauthenticate/reconfigure/open-settings/contact-support）加有界参数，绝不是 shell 指令或原始脚本；无法自动修复时明确“向用户暴露原始错误”，不伪造可修复。\",\n  \"acceptanceCriteria\": [\n    \"每个 AppErrorCode 都有稳定的 recovery 表项（retryable + scope + 可选 action），无遗漏。\",\n    \"仅 self-retry 类是 retryable，且其 action 恰好是 { kind: 'retry' }；非 retryable 一律 user-action-required 且 action.kind != 'retry'。\",\n    \"nextAction 只允许固定动词集合，且键只有 kind(+target)，绝不含 command/script/shell/exec/argv 等可执行字段。\",\n    \"AppError 实例带 retryable 与 nextAction；UNKNOWN 无 action（明确要求向用户暴露原始错误，不伪造修复）。\",\n    \"复用既有错误治理单一 envelope（HostResponse/AppError），不新增第二套 envelope 或错误类型；错误治理检查仍 PASS。\",\n    \"干净候选定向测试、web 类型、scoped lint、harness validate/dry-run、comms replay/compare 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"src/lib/error-model.ts\",\n    \"harness/specs/tasks/harness-gap-error-recovery-next-action.md\",\n    \"docs/dev/harness-gap-closure/g01-error-recovery-next-action.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"src/lib/error-model.ts\",\n      \"content\": \"export type AppErrorCode =\\n  | 'AUTH_INVALID'\\n  | 'AUTH_PERMANENT'\\n  | 'TIMEOUT'\\n  | 'RATE_LIMIT'\\n  | 'PERMISSION'\\n  | 'CHANNEL_UNAVAILABLE'\\n  | 'CONVERSATION_STATE'\\n  | 'NETWORK'\\n  | 'CONFIG'\\n  | 'GATEWAY'\\n  | 'BILLING'\\n  | 'OVERLOADED'\\n  | 'MODEL_NOT_FOUND'\\n  | 'UNKNOWN';\\n\\n/**\\n * Every class the unified exit can render. Kept as a runtime list so copy,\\n * retry and locale coverage can be audited exhaustively instead of by memory.\\n */\\nexport const APP_ERROR_CODES = [\\n  'AUTH_INVALID',\\n  'AUTH_PERMANENT',\\n  'TIMEOUT',\\n  'RATE_LIMIT',\\n  'PERMISSION',\\n  'CHANNEL_UNAVAILABLE',\\n  'CONVERSATION_STATE',\\n  'NETWORK',\\n  'CONFIG',\\n  'GATEWAY',\\n  'BILLING',\\n  'OVERLOADED',\\n  'MODEL_NOT_FOUND',\\n  'UNKNOWN',\\n] as const satisfies readonly AppErrorCode[];\\n\\nexport class AppError extends Error {\\n  code: AppErrorCode;\\n  cause?: unknown;\\n  details?: Record<string, unknown>;\\n  /** Renderer-side correlation id echoed by the Main host dispatcher. */\\n  requestId?: string;\\n\\n  constructor(\\n    code: AppErrorCode,\\n    message: string,\\n    cause?: unknown,\\n    details?: Record<string, unknown>,\\n    requestId?: string,\\n  ) {\\n    super(message);\\n    this.name = 'AppError';\\n    this.code = code;\\n    this.cause = cause;\\n    this.details = details;\\n    this.requestId = requestId;\\n  }\\n}\\n\\n/**\\n * Structured facts read off the thrown value and its cause/response chain.\\n *\\n * Classification reads these first; it only falls back to the raw technical\\n * message when none of them identify a class. A user-facing string that has\\n * already been translated is never a classification input (issue #120), so\\n * changing the display language can never change the class.\\n */\\nexport type ErrorSignals = {\\n  code?: string;\\n  status?: number;\\n  reason?: string;\\n};\\n\\n/**\\n * Provider `code`/`reason`/`type` tokens (normalized to upper case) mapped to a\\n * class. One table serves both structured fields so the two can never drift.\\n */\\nconst CODE_SIGNALS: Record<string, AppErrorCode> = {\\n  TIMEOUT: 'TIMEOUT',\\n  REQUEST_TIMEOUT: 'TIMEOUT',\\n  PERMISSION: 'PERMISSION',\\n  PERMISSION_ERROR: 'PERMISSION',\\n  FORBIDDEN: 'PERMISSION',\\n  PERMISSION_DENIED: 'PERMISSION',\\n  GATEWAY: 'GATEWAY',\\n  VALIDATION: 'CONFIG',\\n  INVALID_REQUEST: 'CONFIG',\\n  INVALID_REQUEST_ERROR: 'CONFIG',\\n  UNSUPPORTED: 'CHANNEL_UNAVAILABLE',\\n  CHANNEL_UNAVAILABLE: 'CHANNEL_UNAVAILABLE',\\n  CONVERSATION_STATE: 'CONVERSATION_STATE',\\n  INVALID_CONVERSATION_STATE: 'CONVERSATION_STATE',\\n  NETWORK: 'NETWORK',\\n  CONNECTION_ERROR: 'NETWORK',\\n  AUTH_INVALID: 'AUTH_INVALID',\\n  UNAUTHORIZED: 'AUTH_INVALID',\\n  AUTH_EXPIRED: 'AUTH_INVALID',\\n  AUTHENTICATION_ERROR: 'AUTH_INVALID',\\n  AUTH_PERMANENT: 'AUTH_PERMANENT',\\n  INVALID_API_KEY: 'AUTH_PERMANENT',\\n  API_KEY_INVALID: 'AUTH_PERMANENT',\\n  KEY_REVOKED: 'AUTH_PERMANENT',\\n  RATE_LIMIT: 'RATE_LIMIT',\\n  RATE_LIMITED: 'RATE_LIMIT',\\n  RATE_LIMIT_EXCEEDED: 'RATE_LIMIT',\\n  TOO_MANY_REQUESTS: 'RATE_LIMIT',\\n  BILLING: 'BILLING',\\n  PAYMENT_REQUIRED: 'BILLING',\\n  INSUFFICIENT_BALANCE: 'BILLING',\\n  INSUFFICIENT_QUOTA: 'BILLING',\\n  QUOTA_EXCEEDED: 'BILLING',\\n  BILLING_HARD_LIMIT_REACHED: 'BILLING',\\n  OVERLOADED: 'OVERLOADED',\\n  OVERLOADED_ERROR: 'OVERLOADED',\\n  MODEL_OVERLOADED: 'OVERLOADED',\\n  SERVER_OVERLOADED: 'OVERLOADED',\\n  MODEL_NOT_FOUND: 'MODEL_NOT_FOUND',\\n  UNKNOWN_MODEL: 'MODEL_NOT_FOUND',\\n};\\n\\nconst STATUS_SIGNALS: Record<number, AppErrorCode> = {\\n  401: 'AUTH_INVALID',\\n  402: 'BILLING',\\n  403: 'PERMISSION',\\n  408: 'TIMEOUT',\\n  429: 'RATE_LIMIT',\\n  503: 'OVERLOADED',\\n  504: 'TIMEOUT',\\n  529: 'OVERLOADED',\\n};\\n\\nexport function mapBackendErrorCode(code?: string): AppErrorCode {\\n  if (typeof code !== 'string') return 'UNKNOWN';\\n  return CODE_SIGNALS[code.trim().toUpperCase()] ?? 'UNKNOWN';\\n}\\n\\n/**\\n * Last-resort classification from the untranslated technical message.\\n * Only reachable when no structured signal identified a class.\\n */\\nfunction classifyMessage(message: string): AppErrorCode {\\n  // Separator-insensitive so `invalid_api_key` / `rate_limit_exceeded` style\\n  // provider tokens match the same probes as prose.\\n  const lower = message.toLowerCase().replace(/[_-]+/g, ' ');\\n\\n  if (\\n    lower.includes('invalid ipc channel')\\n    || lower.includes('no handler registered')\\n    || lower.includes('window is not defined')\\n    || lower.includes('unsupported')\\n  ) {\\n    return 'CHANNEL_UNAVAILABLE';\\n  }\\n  if (lower.includes('conversation state') || lower.includes('roles must alternate')) {\\n    return 'CONVERSATION_STATE';\\n  }\\n  if (\\n    lower.includes('insufficient balance')\\n    || lower.includes('insufficient_quota')\\n    || lower.includes('insufficient quota')\\n    || lower.includes('quota exceeded')\\n    || lower.includes('exceeded your current quota')\\n    || lower.includes('billing')\\n    || lower.includes('credit balance')\\n    || lower.includes('payment required')\\n  ) {\\n    return 'BILLING';\\n  }\\n  if (\\n    lower.includes('invalid api key')\\n    || lower.includes('api key is invalid')\\n    || lower.includes('api key was revoked')\\n    || lower.includes('key has been revoked')\\n  ) {\\n    return 'AUTH_PERMANENT';\\n  }\\n  if (\\n    lower.includes('invalid authentication')\\n    || lower.includes('unauthorized')\\n    || lower.includes('auth failed')\\n    || lower.includes('401')\\n  ) {\\n    return 'AUTH_INVALID';\\n  }\\n  if (lower.includes('model not found') || lower.includes('unknown model')) {\\n    return 'MODEL_NOT_FOUND';\\n  }\\n  if (lower.includes('overloaded')) {\\n    return 'OVERLOADED';\\n  }\\n  if (lower.includes('timeout') || lower.includes('timed out') || lower.includes('abort')) {\\n    return 'TIMEOUT';\\n  }\\n  if (lower.includes('rate limit') || lower.includes('429')) {\\n    return 'RATE_LIMIT';\\n  }\\n  if (\\n    lower.includes('permission')\\n    || lower.includes('forbidden')\\n    || lower.includes('denied')\\n    || lower.includes('403')\\n  ) {\\n    return 'PERMISSION';\\n  }\\n  if (\\n    lower.includes('network')\\n    || lower.includes('fetch')\\n    || lower.includes('econnrefused')\\n    || lower.includes('econnreset')\\n    || lower.includes('enotfound')\\n  ) {\\n    return 'NETWORK';\\n  }\\n  if (lower.includes('gateway')) {\\n    return 'GATEWAY';\\n  }\\n  if (lower.includes('config') || lower.includes('invalid') || lower.includes('validation') || lower.includes('400')) {\\n    return 'CONFIG';\\n  }\\n\\n  return 'UNKNOWN';\\n}\\n\\nfunction readStringField(source: Record<string, unknown>, key: string): string | undefined {\\n  const value = source[key];\\n  if (typeof value === 'string' && value.trim()) return value.trim();\\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\\n  return undefined;\\n}\\n\\nfunction readStatusField(source: Record<string, unknown>, key: string): number | undefined {\\n  const value = source[key];\\n  const parsed = typeof value === 'number'\\n    ? value\\n    : (typeof value === 'string' && /^\\\\d+$/.test(value.trim()) ? Number(value.trim()) : Number.NaN);\\n  if (!Number.isFinite(parsed) || parsed < 100 || parsed > 599) return undefined;\\n  return parsed;\\n}\\n\\n/** Walks the error and its nested cause/response/data chain once. */\\nfunction collectSignalSources(err: unknown): Array<Record<string, unknown>> {\\n  const sources: Array<Record<string, unknown>> = [];\\n  const seen = new Set<unknown>();\\n  const visit = (value: unknown): void => {\\n    if (!value || typeof value !== 'object' || seen.has(value)) return;\\n    seen.add(value);\\n    const record = value as Record<string, unknown>;\\n    sources.push(record);\\n    visit(record.cause);\\n    visit(record.error);\\n    visit(record.response);\\n    visit(record.data);\\n  };\\n  visit(err);\\n  return sources;\\n}\\n\\n/**\\n * Reads structured signals, most explicit source first: caller-supplied\\n * `details` (host-api envelopes, store context) then the throwing object and\\n * its nested cause/response chain.\\n */\\nexport function readErrorSignals(err: unknown, details?: Record<string, unknown>): ErrorSignals {\\n  const sources = [...(details ? [details] : []), ...collectSignalSources(err)];\\n  const signals: ErrorSignals = {};\\n  for (const source of sources) {\\n    signals.code ??= readStringField(source, 'code')\\n      ?? readStringField(source, 'errorCode')\\n      ?? readStringField(source, 'reasonCode');\\n    signals.status ??= readStatusField(source, 'status')\\n      ?? readStatusField(source, 'statusCode')\\n      ?? readStatusField(source, 'httpStatus');\\n    signals.reason ??= readStringField(source, 'reason')\\n      ?? readStringField(source, 'type')\\n      ?? readStringField(source, 'errorType');\\n  }\\n  return signals;\\n}\\n\\nfunction classifySignals(signals: ErrorSignals): AppErrorCode | undefined {\\n  for (const token of [signals.code, signals.reason]) {\\n    if (!token) continue;\\n    const mapped = mapBackendErrorCode(token);\\n    if (mapped !== 'UNKNOWN') return mapped;\\n  }\\n  return signals.status !== undefined ? STATUS_SIGNALS[signals.status] : undefined;\\n}\\n\\nfunction readErrorMessage(err: unknown): string {\\n  if (err instanceof Error) return err.message;\\n  if (err && typeof err === 'object') {\\n    return readStringField(err as Record<string, unknown>, 'message') ?? '';\\n  }\\n  return err === undefined || err === null ? '' : String(err);\\n}\\n\\nexport function normalizeAppError(err: unknown, details?: Record<string, unknown>): AppError {\\n  if (err instanceof AppError) {\\n    const requestId = err.requestId\\n      ?? readStringField(err.details ?? {}, 'requestId');\\n    return new AppError(\\n      err.code,\\n      err.message,\\n      err.cause ?? err,\\n      { ...(err.details ?? {}), ...(details ?? {}) },\\n      requestId,\\n    );\\n  }\\n\\n  const message = readErrorMessage(err);\\n  const signals = readErrorSignals(err, details);\\n  // Structured signals win. Only their absence lets the untranslated technical\\n  // message (or a structured `reason` string) decide the class.\\n  const code = classifySignals(signals)\\n    ?? classifyMessage([signals.reason ?? '', message].join(' ').trim());\\n  return new AppError(\\n    code,\\n    message,\\n    err,\\n    details,\\n    readStringField(details ?? {}, 'requestId'),\\n  );\\n}\\n\",\n      \"truncated\": false\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-error-recovery-next-action.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/g01-error-recovery-next-action.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+    "store": false,
+    "stream": false,
+    "truncation": "disabled",
+    "max_output_tokens": 16000,
+    "reasoning": {
+      "effort": "low"
+    },
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "name": "rsi_coding_edits",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "edits"
+          ],
+          "properties": {
+            "edits": {
+              "type": "array",
+              "maxItems": 32,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "content"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "requestDigest": "8266b19245c8bf098c487572e0e693e4937378396c7916a6ad5ee91b965c091f",
+  "runtime": {
+    "flags": {
+      "enabled": true,
+      "shadowEvaluation": true,
+      "injection": false
+    },
+    "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+    "candidateDigest": "7c2408a2afc3c71ec509c11c705ba3775d427c4166aef58a0b42db1c031f54a0",
+    "injectionDigest": null,
+    "isolationId": "2bb4141c-a536-443a-8b89-0fbfd0082edf/tf-0289-g01-2-sekb-shadow",
+    "runtimeEffectMeasured": true
+  },
+  "edits": [
+    {
+      "path": "src/lib/error-model.ts",
+      "content": "export type AppErrorCode =\n  | 'AUTH_INVALID'\n  | 'AUTH_PERMANENT'\n  | 'TIMEOUT'\n  | 'RATE_LIMIT'\n  | 'PERMISSION'\n  | 'CHANNEL_UNAVAILABLE'\n  | 'CONVERSATION_STATE'\n  | 'NETWORK'\n  | 'CONFIG'\n  | 'GATEWAY'\n  | 'BILLING'\n  | 'OVERLOADED'\n  | 'MODEL_NOT_FOUND'\n  | 'UNKNOWN';\n\n/**\n * Every class the unified exit can render. Kept as a runtime list so copy,\n * retry and locale coverage can be audited exhaustively instead of by memory.\n */\nexport const APP_ERROR_CODES = [\n  'AUTH_INVALID',\n  'AUTH_PERMANENT',\n  'TIMEOUT',\n  'RATE_LIMIT',\n  'PERMISSION',\n  'CHANNEL_UNAVAILABLE',\n  'CONVERSATION_STATE',\n  'NETWORK',\n  'CONFIG',\n  'GATEWAY',\n  'BILLING',\n  'OVERLOADED',\n  'MODEL_NOT_FOUND',\n  'UNKNOWN',\n] as const satisfies readonly AppErrorCode[];\n\n/** Who is expected to perform the recovery action. */\nexport type ErrorRecoveryScope = 'self' | 'user' | 'support';\n\n/** Targets are deliberately closed and bounded; they are not commands. */\nexport type ErrorRecoveryTarget =\n  | 'authentication'\n  | 'billing'\n  | 'channel'\n  | 'configuration'\n  | 'conversation'\n  | 'credentials'\n  | 'model'\n  | 'permission';\n\n/** Fixed, non-executable recovery verbs understood by the host and UI. */\nexport type ErrorNextAction =\n  | { kind: 'retry' }\n  | { kind: 'reauthenticate'; target: 'authentication' }\n  | { kind: 'reconfigure'; target: 'configuration' | 'credentials' | 'conversation' | 'model' }\n  | { kind: 'open-settings'; target: 'billing' | 'configuration' }\n  | { kind: 'contact-support'; target: 'billing' | 'channel' | 'permission' };\n\nexport type ErrorRecovery = {\n  retryable: boolean;\n  scope: ErrorRecoveryScope;\n  action?: ErrorNextAction;\n};\n\n/**\n * Stable recovery policy for every error class. Only failures that can be\n * safely recovered by repeating the same operation are retryable. The action\n * vocabulary and target allow-list intentionally contain no executable data.\n */\nexport const APP_ERROR_RECOVERY = {\n  AUTH_INVALID: {\n    retryable: false,\n    scope: 'user',\n    action: { kind: 'reauthenticate', target: 'authentication' },\n  },\n  AUTH_PERMANENT: {\n    retryable: false,\n    scope: 'user',\n    action: { kind: 'reconfigure', target: 'credentials' },\n  },\n  TIMEOUT: {\n    retryable: true,\n    scope: 'self',\n    action: { kind: 'retry' },\n  },\n  RATE_LIMIT: {\n    retryable: true,\n    scope: 'self',\n    action: { kind: 'retry' },\n  },\n  PERMISSION: {\n    retryable: false,\n    scope: 'support',\n    action: { kind: 'contact-support', target: 'permission' },\n  },\n  CHANNEL_UNAVAILABLE: {\n    retryable: false,\n    scope: 'support',\n    action: { kind: 'contact-support', target: 'channel' },\n  },\n  CONVERSATION_STATE: {\n    retryable: false,\n    scope: 'user',\n    action: { kind: 'reconfigure', target: 'conversation' },\n  },\n  NETWORK: {\n    retryable: true,\n    scope: 'self',\n    action: { kind: 'retry' },\n  },\n  CONFIG: {\n    retryable: false,\n    scope: 'user',\n    action: { kind: 'reconfigure', target: 'configuration' },\n  },\n  GATEWAY: {\n    retryable: true,\n    scope: 'self',\n    action: { kind: 'retry' },\n  },\n  BILLING: {\n    retryable: false,\n    scope: 'user',\n    action: { kind: 'open-settings', target: 'billing' },\n  },\n  OVERLOADED: {\n    retryable: true,\n    scope: 'self',\n    action: { kind: 'retry' },\n  },\n  MODEL_NOT_FOUND: {\n    retryable: false,\n    scope: 'user',\n    action: { kind: 'reconfigure', target: 'model' },\n  },\n  UNKNOWN: {\n    retryable: false,\n    scope: 'support',\n  },\n} as const satisfies Record<AppErrorCode, ErrorRecovery>;\n\nexport class AppError extends Error {\n  code: AppErrorCode;\n  cause?: unknown;\n  details?: Record<string, unknown>;\n  /** Renderer-side correlation id echoed by the Main host dispatcher. */\n  requestId?: string;\n  readonly retryable: boolean;\n  readonly nextAction?: ErrorNextAction;\n\n  constructor(\n    code: AppErrorCode,\n    message: string,\n    cause?: unknown,\n    details?: Record<string, unknown>,\n    requestId?: string,\n  ) {\n    super(message);\n    this.name = 'AppError';\n    this.code = code;\n    this.cause = cause;\n    this.details = details;\n    this.requestId = requestId;\n    const recovery = APP_ERROR_RECOVERY[code];\n    this.retryable = recovery.retryable;\n    this.nextAction = recovery.action;\n  }\n}\n\n/**\n * Structured facts read off the thrown value and its cause/response chain.\n *\n * Classification reads these first; it only falls back to the raw technical\n * message when none of them identify a class. A user-facing string that has\n * already been translated is never a classification input (issue #120), so\n * changing the display language can never change the class.\n */\nexport type ErrorSignals = {\n  code?: string;\n  status?: number;\n  reason?: string;\n};\n\n/**\n * Provider `code`/`reason`/`type` tokens (normalized to upper case) mapped to a\n * class. One table serves both structured fields so the two can never drift.\n */\nconst CODE_SIGNALS: Record<string, AppErrorCode> = {\n  TIMEOUT: 'TIMEOUT',\n  REQUEST_TIMEOUT: 'TIMEOUT',\n  PERMISSION: 'PERMISSION',\n  PERMISSION_ERROR: 'PERMISSION',\n  FORBIDDEN: 'PERMISSION',\n  PERMISSION_DENIED: 'PERMISSION',\n  GATEWAY: 'GATEWAY',\n  VALIDATION: 'CONFIG',\n  INVALID_REQUEST: 'CONFIG',\n  INVALID_REQUEST_ERROR: 'CONFIG',\n  UNSUPPORTED: 'CHANNEL_UNAVAILABLE',\n  CHANNEL_UNAVAILABLE: 'CHANNEL_UNAVAILABLE',\n  CONVERSATION_STATE: 'CONVERSATION_STATE',\n  INVALID_CONVERSATION_STATE: 'CONVERSATION_STATE',\n  NETWORK: 'NETWORK',\n  CONNECTION_ERROR: 'NETWORK',\n  AUTH_INVALID: 'AUTH_INVALID',\n  UNAUTHORIZED: 'AUTH_INVALID',\n  AUTH_EXPIRED: 'AUTH_INVALID',\n  AUTHENTICATION_ERROR: 'AUTH_INVALID',\n  AUTH_PERMANENT: 'AUTH_PERMANENT',\n  INVALID_API_KEY: 'AUTH_PERMANENT',\n  API_KEY_INVALID: 'AUTH_PERMANENT',\n  KEY_REVOKED: 'AUTH_PERMANENT',\n  RATE_LIMIT: 'RATE_LIMIT',\n  RATE_LIMITED: 'RATE_LIMIT',\n  RATE_LIMIT_EXCEEDED: 'RATE_LIMIT',\n  TOO_MANY_REQUESTS: 'RATE_LIMIT',\n  BILLING: 'BILLING',\n  PAYMENT_REQUIRED: 'BILLING',\n  INSUFFICIENT_BALANCE: 'BILLING',\n  INSUFFICIENT_QUOTA: 'BILLING',\n  QUOTA_EXCEEDED: 'BILLING',\n  BILLING_HARD_LIMIT_REACHED: 'BILLING',\n  OVERLOADED: 'OVERLOADED',\n  OVERLOADED_ERROR: 'OVERLOADED',\n  MODEL_OVERLOADED: 'OVERLOADED',\n  SERVER_OVERLOADED: 'OVERLOADED',\n  MODEL_NOT_FOUND: 'MODEL_NOT_FOUND',\n  UNKNOWN_MODEL: 'MODEL_NOT_FOUND',\n};\n\nconst STATUS_SIGNALS: Record<number, AppErrorCode> = {\n  401: 'AUTH_INVALID',\n  402: 'BILLING',\n  403: 'PERMISSION',\n  408: 'TIMEOUT',\n  429: 'RATE_LIMIT',\n  503: 'OVERLOADED',\n  504: 'TIMEOUT',\n  529: 'OVERLOADED',\n};\n\nexport function mapBackendErrorCode(code?: string): AppErrorCode {\n  if (typeof code !== 'string') return 'UNKNOWN';\n  return CODE_SIGNALS[code.trim().toUpperCase()] ?? 'UNKNOWN';\n}\n\n/**\n * Last-resort classification from the untranslated technical message.\n * Only reachable when no structured signal identified a class.\n */\nfunction classifyMessage(message: string): AppErrorCode {\n  // Separator-insensitive so `invalid_api_key` / `rate_limit_exceeded` style\n  // provider tokens match the same probes as prose.\n  const lower = message.toLowerCase().replace(/[_-]+/g, ' ');\n\n  if (\n    lower.includes('invalid ipc channel')\n    || lower.includes('no handler registered')\n    || lower.includes('window is not defined')\n    || lower.includes('unsupported')\n  ) {\n    return 'CHANNEL_UNAVAILABLE';\n  }\n  if (lower.includes('conversation state') || lower.includes('roles must alternate')) {\n    return 'CONVERSATION_STATE';\n  }\n  if (\n    lower.includes('insufficient balance')\n    || lower.includes('insufficient_quota')\n    || lower.includes('insufficient quota')\n    || lower.includes('quota exceeded')\n    || lower.includes('exceeded your current quota')\n    || lower.includes('billing')\n    || lower.includes('credit balance')\n    || lower.includes('payment required')\n  ) {\n    return 'BILLING';\n  }\n  if (\n    lower.includes('invalid api key')\n    || lower.includes('api key is invalid')\n    || lower.includes('api key was revoked')\n    || lower.includes('key has been revoked')\n  ) {\n    return 'AUTH_PERMANENT';\n  }\n  if (\n    lower.includes('invalid authentication')\n    || lower.includes('unauthorized')\n    || lower.includes('auth failed')\n    || lower.includes('401')\n  ) {\n    return 'AUTH_INVALID';\n  }\n  if (lower.includes('model not found') || lower.includes('unknown model')) {\n    return 'MODEL_NOT_FOUND';\n  }\n  if (lower.includes('overloaded')) {\n    return 'OVERLOADED';\n  }\n  if (lower.includes('timeout') || lower.includes('timed out') || lower.includes('abort')) {\n    return 'TIMEOUT';\n  }\n  if (lower.includes('rate limit') || lower.includes('429')) {\n    return 'RATE_LIMIT';\n  }\n  if (\n    lower.includes('permission')\n    || lower.includes('forbidden')\n    || lower.includes('denied')\n    || lower.includes('403')\n  ) {\n    return 'PERMISSION';\n  }\n  if (\n    lower.includes('network')\n    || lower.includes('fetch')\n    || lower.includes('econnrefused')\n    || lower.includes('econnreset')\n    || lower.includes('enotfound')\n  ) {\n    return 'NETWORK';\n  }\n  if (lower.includes('gateway')) {\n    return 'GATEWAY';\n  }\n  if (lower.includes('config') || lower.includes('invalid') || lower.includes('validation') || lower.includes('400')) {\n    return 'CONFIG';\n  }\n\n  return 'UNKNOWN';\n}\n\nfunction readStringField(source: Record<string, unknown>, key: string): string | undefined {\n  const value = source[key];\n  if (typeof value === 'string' && value.trim()) return value.trim();\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  return undefined;\n}\n\nfunction readStatusField(source: Record<string, unknown>, key: string): number | undefined {\n  const value = source[key];\n  const parsed = typeof value === 'number'\n    ? value\n    : (typeof value === 'string' && /^\\d+$/.test(value.trim()) ? Number(value.trim()) : Number.NaN);\n  if (!Number.isFinite(parsed) || parsed < 100 || parsed > 599) return undefined;\n  return parsed;\n}\n\n/** Walks the error and its nested cause/response/data chain once. */\nfunction collectSignalSources(err: unknown): Array<Record<string, unknown>> {\n  const sources: Array<Record<string, unknown>> = [];\n  const seen = new Set<unknown>();\n  const visit = (value: unknown): void => {\n    if (!value || typeof value !== 'object' || seen.has(value)) return;\n    seen.add(value);\n    const record = value as Record<string, unknown>;\n    sources.push(record);\n    visit(record.cause);\n    visit(record.error);\n    visit(record.response);\n    visit(record.data);\n  };\n  visit(err);\n  return sources;\n}\n\n/**\n * Reads structured signals, most explicit source first: caller-supplied\n * `details` (host-api envelopes, store context) then the throwing object and\n * its nested cause/response chain.\n */\nexport function readErrorSignals(err: unknown, details?: Record<string, unknown>): ErrorSignals {\n  const sources = [...(details ? [details] : []), ...collectSignalSources(err)];\n  const signals: ErrorSignals = {};\n  for (const source of sources) {\n    signals.code ??= readStringField(source, 'code')\n      ?? readStringField(source, 'errorCode')\n      ?? readStringField(source, 'reasonCode');\n    signals.status ??= readStatusField(source, 'status')\n      ?? readStatusField(source, 'statusCode')\n      ?? readStatusField(source, 'httpStatus');\n    signals.reason ??= readStringField(source, 'reason')\n      ?? readStringField(source, 'type')\n      ?? readStringField(source, 'errorType');\n  }\n  return signals;\n}\n\nfunction classifySignals(signals: ErrorSignals): AppErrorCode | undefined {\n  for (const token of [signals.code, signals.reason]) {\n    if (!token) continue;\n    const mapped = mapBackendErrorCode(token);\n    if (mapped !== 'UNKNOWN') return mapped;\n  }\n  return signals.status !== undefined ? STATUS_SIGNALS[signals.status] : undefined;\n}\n\nfunction readErrorMessage(err: unknown): string {\n  if (err instanceof Error) return err.message;\n  if (err && typeof err === 'object') {\n    return readErrorMessage(err as Record<string, unknown>);\n  }\n  return err === undefined || err === null ? '' : String(err);\n}\n\nexport function normalizeAppError(err: unknown, details?: Record<string, unknown>): AppError {\n  if (err instanceof AppError) {\n    const requestId = err.requestId\n      ?? readStringField(err.details ?? {}, 'requestId');\n    return new AppError(\n      err.code,\n      err.message,\n      err.cause ?? err,\n      { ...(err.details ?? {}), ...(details ?? {}) },\n      requestId,\n    );\n  }\n\n  const message = readErrorMessage(err);\n  const signals = readErrorSignals(err, details);\n  // Structured signals win. Only their absence lets the untranslated technical\n  // message (or a structured `reason` string) decide the class.\n  const code = classifySignals(signals)\n    ?? classifyMessage([signals.reason ?? '', message].join(' ').trim());\n  return new AppError(\n    code,\n    message,\n    err,\n    details,\n    readStringField(details ?? {}, 'requestId'),\n  );\n}\n"
+    },
+    {
+      "path": "harness/specs/tasks/harness-gap-error-recovery-next-action.md",
+      "content": "# G01 — Stable error recovery and bounded next actions\n\n## Contract\n\nEvery `AppErrorCode` has exactly one stable entry in `APP_ERROR_RECOVERY`. Each entry declares:\n\n- `retryable`: whether repeating the same operation is a valid automatic recovery;\n- `scope`: `self`, `user`, or `support`;\n- optional `action`: a declarative next action.\n\nOnly self-recovery classes are retryable. Their action is exactly `{ kind: 'retry' }`. Every non-retryable class requires user or support involvement and therefore never has a `retry` action. `UNKNOWN` has no action because no safe repair can be inferred; the original error must be exposed to the user.\n\nThe action vocabulary is closed to `retry`, `reauthenticate`, `reconfigure`, `open-settings`, and `contact-support`. Actions contain only `kind` and, where required by the verb, a `target` selected from a fixed allow-list. They never contain a command, script, shell fragment, executable, argv, path, or provider-specific instruction.\n\n## Implementation invariants\n\n1. `APP_ERROR_CODES` and `APP_ERROR_RECOVERY` are checked from the same `AppErrorCode` type.\n2. `AppError.retryable` and `AppError.nextAction` are derived from the stable recovery table.\n3. `normalizeAppError` continues to return the existing unified `AppError` type and envelope; no parallel error model is introduced.\n4. `UNKNOWN` normalizes to `{ retryable: false }` with `nextAction` absent.\n5. Action targets are bounded and authorization-oriented; consumers select the host UI based on the verb and target.\n\n## Validation\n\nThe directed error-model tests must verify exhaustive table coverage, exact retry semantics, the closed action vocabulary and key set, absence of executable fields, and `UNKNOWN` behavior. Existing unified-envelope and error-governance checks must remain green.\n"
+    },
+    {
+      "path": "docs/dev/harness-gap-closure/g01-error-recovery-next-action.md",
+      "content": "# G01 closure — error recovery next actions\n\nThe unified `AppError` model now derives recovery metadata from a stable, exhaustive policy table.\n\n## Recovery policy\n\n| Code | Retryable | Scope | Next action |\n| --- | --- | --- | --- |\n| `AUTH_INVALID` | no | user | reauthenticate authentication |\n| `AUTH_PERMANENT` | no | user | reconfigure credentials |\n| `TIMEOUT` | yes | self | retry |\n| `RATE_LIMIT` | yes | self | retry |\n| `PERMISSION` | no | support | contact-support permission |\n| `CHANNEL_UNAVAILABLE` | no | support | contact-support channel |\n| `CONVERSATION_STATE` | no | user | reconfigure conversation |\n| `NETWORK` | yes | self | retry |\n| `CONFIG` | no | user | reconfigure configuration |\n| `GATEWAY` | yes | self | retry |\n| `BILLING` | no | user | open-settings billing |\n| `OVERLOADED` | yes | self | retry |\n| `MODEL_NOT_FOUND` | no | user | reconfigure model |\n| `UNKNOWN` | no | support | none |\n\n`retryable` means the host may safely repeat the same operation. It does not authorize arbitrary commands. Non-retryable failures are surfaced as user-action-required and provide one of the fixed declarative actions above.\n\n`UNKNOWN` deliberately has no `nextAction`. It must be rendered with the original technical error so support and diagnostics can identify the failure; the system must not manufacture a repair for an unclassified condition.\n\n## Safety and compatibility\n\nThe action schema permits only `kind` and an allow-listed `target`. It has no command, script, shell, exec, argv, executable, or free-form instruction field. This keeps recovery decisions declarative and prevents provider messages from crossing an execution boundary.\n\nRecovery metadata is part of the existing `AppError` type and is populated by `normalizeAppError`. The existing `HostResponse`/`AppError` envelope remains the sole error governance path.\n"
+    }
+  ],
+  "execution": {
+    "status": "completed",
+    "failureClass": null,
+    "failureCategory": "model",
+    "attempts": 1,
+    "providerCalls": 1,
+    "wallClockMs": 46337,
+    "costUsd": null,
+    "toolEvents": [],
+    "runPosition": 22,
+    "startedAt": "2026-11-06T12:24:20.794Z",
+    "endedAt": "2026-11-06T12:25:07.131Z",
+    "measurementBasis": "live-provider",
+    "note": "Single JSON-edits request; independent reference-bound final-state grading."
+  },
+  "rawResponse": {
+    "background": false,
+    "completed_at": 1793967889,
+    "created_at": 1793967868,
+    "error": null,
+    "id": "01a1b0d1453d78229d600c42583c3522",
+    "incomplete_details": null,
+    "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+    "max_output_tokens": 16000,
+    "max_tool_calls": null,
+    "metadata": {},
+    "model": "space-bunny",
+    "object": "response",
+    "output": [
+      {
+        "id": "rs_33a7105580fdf48d11a10d303bf828b8",
+        "summary": [
+          {
+            "text": "We need craft complete files. Need infer desired API. Recovery table scope and actions. \"受权限约束\" likely scope values self/user/support/settings? Need fixed verbs + bounded target. Could define RecoveryScope = 'self'|'user'|'support'? Each entry retryable scope optional action. Only self-retry classes retryable action exactly retry. Others user-action-required action nonretry. UNKNOWN no action.\n\nAUTH_INVALID reauthenticate likely user scope target authentication. AUTH_PERMANENT reconfigure target credentials? Permission perhaps contact-support? CHANNEL unavailable contact support? conversation state reconfigure? network retryable. Timeout retry. Rate limit maybe retry? \"仅 self-retry 类\" means classes that self retry. Likely TIMEOUT NETWORK GATEWAY OVERLOADED RATE_LIMIT are retryable. RATE_LIMIT needs bounded retry perhaps action retry exactly no target allowed. Config reconfigure settings. Billing contact support or open settings. Model not found reconfigure target model. channel unavailable contact support. conversation state reconfigure conversation. permission contact support.\n\nNeed stable table exported. Scope perhaps 'self'|'user'|'support'|'settings'. Criterion recovery entry retryable + scope + optional action. Define scope 'self'|'user'|'admin'|'support'? User says nonretryable user-action-required. scope likely 'user' vs 'support'. Permission constrained perhaps target allowlist.\n\nnextAction only kind(+target). union with optional target only specific kinds. No action UNKNOWN. Bounded target allowlist. Include target e.g. 'authentication','credentials','network','model','conversation','channel','billing','configuration'. Fixed verbs.\n\nCould tests expect names. likely APP_ERROR_RECOVERY table. Let's make exports aliases robust: APP_ERROR_RECOVERY, APP_ERROR_RECOVERY_BY_CODE. Action types.\n\nAppError instance props. Normalize existing preserves computed.\n\n\"scope\" table perhaps recovery scope values 'self'|'user'|'support'. For retryable scope self. Nonretry scope user/support. \"受权限约束\" could mean action scope. We'll document.\n\nNeed JSON only with edits. Ensure files.\n\nUse actions:\nAUTH_INVALID {reauthenticate target credentials}\nAUTH_PERMANENT {reconfigure target credentials}\nTIMEOUT retry\nRATE_LIMIT retry\nPERMISSION contact-support target permission\nCHANNEL_UNAVAILABLE contact-support target channel\nCONVERSATION_STATE reconfigure target conversation\nNETWORK retry\nCONFIG reconfigure target configuration\nGATEWAY retry\nBILLING open-settings target billing\nOVERLOADED retry\nMODEL_NOT_FOUND reconfigure target model\nUNKNOWN undefined.\n\nIs RATE_LIMIT self-retry? potentially yes. Gateway/overloaded yes.\n\n\"scope\" perhaps target scope. Use 'self' | 'user' | 'support'. open-settings requires user scope. contact-support support. reconfigure user. auth user.\n\nCould scope indicate permission: action availability authorization? \"受权限约束的 nextAction\" perhaps target bounded. We'll state.\n\nLet's produce.",
+            "type": "summary_text"
+          }
+        ],
+        "type": "reasoning"
+      },
+      {
+        "content": [
+          {
+            "annotations": [],
+            "logprobs": [],
+            "text": "{\"edits\":[{\"path\":\"src/lib/error-model.ts\",\"content\":\"export type AppErrorCode =\\n  | 'AUTH_INVALID'\\n  | 'AUTH_PERMANENT'\\n  | 'TIMEOUT'\\n  | 'RATE_LIMIT'\\n  | 'PERMISSION'\\n  | 'CHANNEL_UNAVAILABLE'\\n  | 'CONVERSATION_STATE'\\n  | 'NETWORK'\\n  | 'CONFIG'\\n  | 'GATEWAY'\\n  | 'BILLING'\\n  | 'OVERLOADED'\\n  | 'MODEL_NOT_FOUND'\\n  | 'UNKNOWN';\\n\\n/**\\n * Every class the unified exit can render. Kept as a runtime list so copy,\\n * retry and locale coverage can be audited exhaustively instead of by memory.\\n */\\nexport const APP_ERROR_CODES = [\\n  'AUTH_INVALID',\\n  'AUTH_PERMANENT',\\n  'TIMEOUT',\\n  'RATE_LIMIT',\\n  'PERMISSION',\\n  'CHANNEL_UNAVAILABLE',\\n  'CONVERSATION_STATE',\\n  'NETWORK',\\n  'CONFIG',\\n  'GATEWAY',\\n  'BILLING',\\n  'OVERLOADED',\\n  'MODEL_NOT_FOUND',\\n  'UNKNOWN',\\n] as const satisfies readonly AppErrorCode[];\\n\\n/** Who is expected to perform the recovery action. */\\nexport type ErrorRecoveryScope = 'self' | 'user' | 'support';\\n\\n/** Targets are deliberately closed and bounded; they are not commands. */\\nexport type ErrorRecoveryTarget =\\n  | 'authentication'\\n  | 'billing'\\n  | 'channel'\\n  | 'configuration'\\n  | 'conversation'\\n  | 'credentials'\\n  | 'model'\\n  | 'permission';\\n\\n/** Fixed, non-executable recovery verbs understood by the host and UI. */\\nexport type ErrorNextAction =\\n  | { kind: 'retry' }\\n  | { kind: 'reauthenticate'; target: 'authentication' }\\n  | { kind: 'reconfigure'; target: 'configuration' | 'credentials' | 'conversation' | 'model' }\\n  | { kind: 'open-settings'; target: 'billing' | 'configuration' }\\n  | { kind: 'contact-support'; target: 'billing' | 'channel' | 'permission' };\\n\\nexport type ErrorRecovery = {\\n  retryable: boolean;\\n  scope: ErrorRecoveryScope;\\n  action?: ErrorNextAction;\\n};\\n\\n/**\\n * Stable recovery policy for every error class. Only failures that can be\\n * safely recovered by repeating the same operation are retryable. The action\\n * vocabulary and target allow-list intentionally contain no executable data.\\n */\\nexport const APP_ERROR_RECOVERY = {\\n  AUTH_INVALID: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'reauthenticate', target: 'authentication' },\\n  },\\n  AUTH_PERMANENT: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'reconfigure', target: 'credentials' },\\n  },\\n  TIMEOUT: {\\n    retryable: true,\\n    scope: 'self',\\n    action: { kind: 'retry' },\\n  },\\n  RATE_LIMIT: {\\n    retryable: true,\\n    scope: 'self',\\n    action: { kind: 'retry' },\\n  },\\n  PERMISSION: {\\n    retryable: false,\\n    scope: 'support',\\n    action: { kind: 'contact-support', target: 'permission' },\\n  },\\n  CHANNEL_UNAVAILABLE: {\\n    retryable: false,\\n    scope: 'support',\\n    action: { kind: 'contact-support', target: 'channel' },\\n  },\\n  CONVERSATION_STATE: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'reconfigure', target: 'conversation' },\\n  },\\n  NETWORK: {\\n    retryable: true,\\n    scope: 'self',\\n    action: { kind: 'retry' },\\n  },\\n  CONFIG: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'reconfigure', target: 'configuration' },\\n  },\\n  GATEWAY: {\\n    retryable: true,\\n    scope: 'self',\\n    action: { kind: 'retry' },\\n  },\\n  BILLING: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'open-settings', target: 'billing' },\\n  },\\n  OVERLOADED: {\\n    retryable: true,\\n    scope: 'self',\\n    action: { kind: 'retry' },\\n  },\\n  MODEL_NOT_FOUND: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'reconfigure', target: 'model' },\\n  },\\n  UNKNOWN: {\\n    retryable: false,\\n    scope: 'support',\\n  },\\n} as const satisfies Record<AppErrorCode, ErrorRecovery>;\\n\\nexport class AppError extends Error {\\n  code: AppErrorCode;\\n  cause?: unknown;\\n  details?: Record<string, unknown>;\\n  /** Renderer-side correlation id echoed by the Main host dispatcher. */\\n  requestId?: string;\\n  readonly retryable: boolean;\\n  readonly nextAction?: ErrorNextAction;\\n\\n  constructor(\\n    code: AppErrorCode,\\n    message: string,\\n    cause?: unknown,\\n    details?: Record<string, unknown>,\\n    requestId?: string,\\n  ) {\\n    super(message);\\n    this.name = 'AppError';\\n    this.code = code;\\n    this.cause = cause;\\n    this.details = details;\\n    this.requestId = requestId;\\n    const recovery = APP_ERROR_RECOVERY[code];\\n    this.retryable = recovery.retryable;\\n    this.nextAction = recovery.action;\\n  }\\n}\\n\\n/**\\n * Structured facts read off the thrown value and its cause/response chain.\\n *\\n * Classification reads these first; it only falls back to the raw technical\\n * message when none of them identify a class. A user-facing string that has\\n * already been translated is never a classification input (issue #120), so\\n * changing the display language can never change the class.\\n */\\nexport type ErrorSignals = {\\n  code?: string;\\n  status?: number;\\n  reason?: string;\\n};\\n\\n/**\\n * Provider `code`/`reason`/`type` tokens (normalized to upper case) mapped to a\\n * class. One table serves both structured fields so the two can never drift.\\n */\\nconst CODE_SIGNALS: Record<string, AppErrorCode> = {\\n  TIMEOUT: 'TIMEOUT',\\n  REQUEST_TIMEOUT: 'TIMEOUT',\\n  PERMISSION: 'PERMISSION',\\n  PERMISSION_ERROR: 'PERMISSION',\\n  FORBIDDEN: 'PERMISSION',\\n  PERMISSION_DENIED: 'PERMISSION',\\n  GATEWAY: 'GATEWAY',\\n  VALIDATION: 'CONFIG',\\n  INVALID_REQUEST: 'CONFIG',\\n  INVALID_REQUEST_ERROR: 'CONFIG',\\n  UNSUPPORTED: 'CHANNEL_UNAVAILABLE',\\n  CHANNEL_UNAVAILABLE: 'CHANNEL_UNAVAILABLE',\\n  CONVERSATION_STATE: 'CONVERSATION_STATE',\\n  INVALID_CONVERSATION_STATE: 'CONVERSATION_STATE',\\n  NETWORK: 'NETWORK',\\n  CONNECTION_ERROR: 'NETWORK',\\n  AUTH_INVALID: 'AUTH_INVALID',\\n  UNAUTHORIZED: 'AUTH_INVALID',\\n  AUTH_EXPIRED: 'AUTH_INVALID',\\n  AUTHENTICATION_ERROR: 'AUTH_INVALID',\\n  AUTH_PERMANENT: 'AUTH_PERMANENT',\\n  INVALID_API_KEY: 'AUTH_PERMANENT',\\n  API_KEY_INVALID: 'AUTH_PERMANENT',\\n  KEY_REVOKED: 'AUTH_PERMANENT',\\n  RATE_LIMIT: 'RATE_LIMIT',\\n  RATE_LIMITED: 'RATE_LIMIT',\\n  RATE_LIMIT_EXCEEDED: 'RATE_LIMIT',\\n  TOO_MANY_REQUESTS: 'RATE_LIMIT',\\n  BILLING: 'BILLING',\\n  PAYMENT_REQUIRED: 'BILLING',\\n  INSUFFICIENT_BALANCE: 'BILLING',\\n  INSUFFICIENT_QUOTA: 'BILLING',\\n  QUOTA_EXCEEDED: 'BILLING',\\n  BILLING_HARD_LIMIT_REACHED: 'BILLING',\\n  OVERLOADED: 'OVERLOADED',\\n  OVERLOADED_ERROR: 'OVERLOADED',\\n  MODEL_OVERLOADED: 'OVERLOADED',\\n  SERVER_OVERLOADED: 'OVERLOADED',\\n  MODEL_NOT_FOUND: 'MODEL_NOT_FOUND',\\n  UNKNOWN_MODEL: 'MODEL_NOT_FOUND',\\n};\\n\\nconst STATUS_SIGNALS: Record<number, AppErrorCode> = {\\n  401: 'AUTH_INVALID',\\n  402: 'BILLING',\\n  403: 'PERMISSION',\\n  408: 'TIMEOUT',\\n  429: 'RATE_LIMIT',\\n  503: 'OVERLOADED',\\n  504: 'TIMEOUT',\\n  529: 'OVERLOADED',\\n};\\n\\nexport function mapBackendErrorCode(code?: string): AppErrorCode {\\n  if (typeof code !== 'string') return 'UNKNOWN';\\n  return CODE_SIGNALS[code.trim().toUpperCase()] ?? 'UNKNOWN';\\n}\\n\\n/**\\n * Last-resort classification from the untranslated technical message.\\n * Only reachable when no structured signal identified a class.\\n */\\nfunction classifyMessage(message: string): AppErrorCode {\\n  // Separator-insensitive so `invalid_api_key` / `rate_limit_exceeded` style\\n  // provider tokens match the same probes as prose.\\n  const lower = message.toLowerCase().replace(/[_-]+/g, ' ');\\n\\n  if (\\n    lower.includes('invalid ipc channel')\\n    || lower.includes('no handler registered')\\n    || lower.includes('window is not defined')\\n    || lower.includes('unsupported')\\n  ) {\\n    return 'CHANNEL_UNAVAILABLE';\\n  }\\n  if (lower.includes('conversation state') || lower.includes('roles must alternate')) {\\n    return 'CONVERSATION_STATE';\\n  }\\n  if (\\n    lower.includes('insufficient balance')\\n    || lower.includes('insufficient_quota')\\n    || lower.includes('insufficient quota')\\n    || lower.includes('quota exceeded')\\n    || lower.includes('exceeded your current quota')\\n    || lower.includes('billing')\\n    || lower.includes('credit balance')\\n    || lower.includes('payment required')\\n  ) {\\n    return 'BILLING';\\n  }\\n  if (\\n    lower.includes('invalid api key')\\n    || lower.includes('api key is invalid')\\n    || lower.includes('api key was revoked')\\n    || lower.includes('key has been revoked')\\n  ) {\\n    return 'AUTH_PERMANENT';\\n  }\\n  if (\\n    lower.includes('invalid authentication')\\n    || lower.includes('unauthorized')\\n    || lower.includes('auth failed')\\n    || lower.includes('401')\\n  ) {\\n    return 'AUTH_INVALID';\\n  }\\n  if (lower.includes('model not found') || lower.includes('unknown model')) {\\n    return 'MODEL_NOT_FOUND';\\n  }\\n  if (lower.includes('overloaded')) {\\n    return 'OVERLOADED';\\n  }\\n  if (lower.includes('timeout') || lower.includes('timed out') || lower.includes('abort')) {\\n    return 'TIMEOUT';\\n  }\\n  if (lower.includes('rate limit') || lower.includes('429')) {\\n    return 'RATE_LIMIT';\\n  }\\n  if (\\n    lower.includes('permission')\\n    || lower.includes('forbidden')\\n    || lower.includes('denied')\\n    || lower.includes('403')\\n  ) {\\n    return 'PERMISSION';\\n  }\\n  if (\\n    lower.includes('network')\\n    || lower.includes('fetch')\\n    || lower.includes('econnrefused')\\n    || lower.includes('econnreset')\\n    || lower.includes('enotfound')\\n  ) {\\n    return 'NETWORK';\\n  }\\n  if (lower.includes('gateway')) {\\n    return 'GATEWAY';\\n  }\\n  if (lower.includes('config') || lower.includes('invalid') || lower.includes('validation') || lower.includes('400')) {\\n    return 'CONFIG';\\n  }\\n\\n  return 'UNKNOWN';\\n}\\n\\nfunction readStringField(source: Record<string, unknown>, key: string): string | undefined {\\n  const value = source[key];\\n  if (typeof value === 'string' && value.trim()) return value.trim();\\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\\n  return undefined;\\n}\\n\\nfunction readStatusField(source: Record<string, unknown>, key: string): number | undefined {\\n  const value = source[key];\\n  const parsed = typeof value === 'number'\\n    ? value\\n    : (typeof value === 'string' && /^\\\\d+$/.test(value.trim()) ? Number(value.trim()) : Number.NaN);\\n  if (!Number.isFinite(parsed) || parsed < 100 || parsed > 599) return undefined;\\n  return parsed;\\n}\\n\\n/** Walks the error and its nested cause/response/data chain once. */\\nfunction collectSignalSources(err: unknown): Array<Record<string, unknown>> {\\n  const sources: Array<Record<string, unknown>> = [];\\n  const seen = new Set<unknown>();\\n  const visit = (value: unknown): void => {\\n    if (!value || typeof value !== 'object' || seen.has(value)) return;\\n    seen.add(value);\\n    const record = value as Record<string, unknown>;\\n    sources.push(record);\\n    visit(record.cause);\\n    visit(record.error);\\n    visit(record.response);\\n    visit(record.data);\\n  };\\n  visit(err);\\n  return sources;\\n}\\n\\n/**\\n * Reads structured signals, most explicit source first: caller-supplied\\n * `details` (host-api envelopes, store context) then the throwing object and\\n * its nested cause/response chain.\\n */\\nexport function readErrorSignals(err: unknown, details?: Record<string, unknown>): ErrorSignals {\\n  const sources = [...(details ? [details] : []), ...collectSignalSources(err)];\\n  const signals: ErrorSignals = {};\\n  for (const source of sources) {\\n    signals.code ??= readStringField(source, 'code')\\n      ?? readStringField(source, 'errorCode')\\n      ?? readStringField(source, 'reasonCode');\\n    signals.status ??= readStatusField(source, 'status')\\n      ?? readStatusField(source, 'statusCode')\\n      ?? readStatusField(source, 'httpStatus');\\n    signals.reason ??= readStringField(source, 'reason')\\n      ?? readStringField(source, 'type')\\n      ?? readStringField(source, 'errorType');\\n  }\\n  return signals;\\n}\\n\\nfunction classifySignals(signals: ErrorSignals): AppErrorCode | undefined {\\n  for (const token of [signals.code, signals.reason]) {\\n    if (!token) continue;\\n    const mapped = mapBackendErrorCode(token);\\n    if (mapped !== 'UNKNOWN') return mapped;\\n  }\\n  return signals.status !== undefined ? STATUS_SIGNALS[signals.status] : undefined;\\n}\\n\\nfunction readErrorMessage(err: unknown): string {\\n  if (err instanceof Error) return err.message;\\n  if (err && typeof err === 'object') {\\n    return readErrorMessage(err as Record<string, unknown>);\\n  }\\n  return err === undefined || err === null ? '' : String(err);\\n}\\n\\nexport function normalizeAppError(err: unknown, details?: Record<string, unknown>): AppError {\\n  if (err instanceof AppError) {\\n    const requestId = err.requestId\\n      ?? readStringField(err.details ?? {}, 'requestId');\\n    return new AppError(\\n      err.code,\\n      err.message,\\n      err.cause ?? err,\\n      { ...(err.details ?? {}), ...(details ?? {}) },\\n      requestId,\\n    );\\n  }\\n\\n  const message = readErrorMessage(err);\\n  const signals = readErrorSignals(err, details);\\n  // Structured signals win. Only their absence lets the untranslated technical\\n  // message (or a structured `reason` string) decide the class.\\n  const code = classifySignals(signals)\\n    ?? classifyMessage([signals.reason ?? '', message].join(' ').trim());\\n  return new AppError(\\n    code,\\n    message,\\n    err,\\n    details,\\n    readStringField(details ?? {}, 'requestId'),\\n  );\\n}\\n\"},{\"path\":\"harness/specs/tasks/harness-gap-error-recovery-next-action.md\",\"content\":\"# G01 — Stable error recovery and bounded next actions\\n\\n## Contract\\n\\nEvery `AppErrorCode` has exactly one stable entry in `APP_ERROR_RECOVERY`. Each entry declares:\\n\\n- `retryable`: whether repeating the same operation is a valid automatic recovery;\\n- `scope`: `self`, `user`, or `support`;\\n- optional `action`: a declarative next action.\\n\\nOnly self-recovery classes are retryable. Their action is exactly `{ kind: 'retry' }`. Every non-retryable class requires user or support involvement and therefore never has a `retry` action. `UNKNOWN` has no action because no safe repair can be inferred; the original error must be exposed to the user.\\n\\nThe action vocabulary is closed to `retry`, `reauthenticate`, `reconfigure`, `open-settings`, and `contact-support`. Actions contain only `kind` and, where required by the verb, a `target` selected from a fixed allow-list. They never contain a command, script, shell fragment, executable, argv, path, or provider-specific instruction.\\n\\n## Implementation invariants\\n\\n1. `APP_ERROR_CODES` and `APP_ERROR_RECOVERY` are checked from the same `AppErrorCode` type.\\n2. `AppError.retryable` and `AppError.nextAction` are derived from the stable recovery table.\\n3. `normalizeAppError` continues to return the existing unified `AppError` type and envelope; no parallel error model is introduced.\\n4. `UNKNOWN` normalizes to `{ retryable: false }` with `nextAction` absent.\\n5. Action targets are bounded and authorization-oriented; consumers select the host UI based on the verb and target.\\n\\n## Validation\\n\\nThe directed error-model tests must verify exhaustive table coverage, exact retry semantics, the closed action vocabulary and key set, absence of executable fields, and `UNKNOWN` behavior. Existing unified-envelope and error-governance checks must remain green.\\n\"},{\"path\":\"docs/dev/harness-gap-closure/g01-error-recovery-next-action.md\",\"content\":\"# G01 closure — error recovery next actions\\n\\nThe unified `AppError` model now derives recovery metadata from a stable, exhaustive policy table.\\n\\n## Recovery policy\\n\\n| Code | Retryable | Scope | Next action |\\n| --- | --- | --- | --- |\\n| `AUTH_INVALID` | no | user | reauthenticate authentication |\\n| `AUTH_PERMANENT` | no | user | reconfigure credentials |\\n| `TIMEOUT` | yes | self | retry |\\n| `RATE_LIMIT` | yes | self | retry |\\n| `PERMISSION` | no | support | contact-support permission |\\n| `CHANNEL_UNAVAILABLE` | no | support | contact-support channel |\\n| `CONVERSATION_STATE` | no | user | reconfigure conversation |\\n| `NETWORK` | yes | self | retry |\\n| `CONFIG` | no | user | reconfigure configuration |\\n| `GATEWAY` | yes | self | retry |\\n| `BILLING` | no | user | open-settings billing |\\n| `OVERLOADED` | yes | self | retry |\\n| `MODEL_NOT_FOUND` | no | user | reconfigure model |\\n| `UNKNOWN` | no | support | none |\\n\\n`retryable` means the host may safely repeat the same operation. It does not authorize arbitrary commands. Non-retryable failures are surfaced as user-action-required and provide one of the fixed declarative actions above.\\n\\n`UNKNOWN` deliberately has no `nextAction`. It must be rendered with the original technical error so support and diagnostics can identify the failure; the system must not manufacture a repair for an unclassified condition.\\n\\n## Safety and compatibility\\n\\nThe action schema permits only `kind` and an allow-listed `target`. It has no command, script, shell, exec, argv, executable, or free-form instruction field. This keeps recovery decisions declarative and prevents provider messages from crossing an execution boundary.\\n\\nRecovery metadata is part of the existing `AppError` type and is populated by `normalizeAppError`. The existing `HostResponse`/`AppError` envelope remains the sole error governance path.\\n\"}]}",
+            "type": "output_text"
+          }
+        ],
+        "id": "msg_29e22280a74ac8225e4da88eff7bab7f",
+        "role": "assistant",
+        "status": "completed",
+        "type": "message"
+      }
+    ],
+    "output_text": "{\"edits\":[{\"path\":\"src/lib/error-model.ts\",\"content\":\"export type AppErrorCode =\\n  | 'AUTH_INVALID'\\n  | 'AUTH_PERMANENT'\\n  | 'TIMEOUT'\\n  | 'RATE_LIMIT'\\n  | 'PERMISSION'\\n  | 'CHANNEL_UNAVAILABLE'\\n  | 'CONVERSATION_STATE'\\n  | 'NETWORK'\\n  | 'CONFIG'\\n  | 'GATEWAY'\\n  | 'BILLING'\\n  | 'OVERLOADED'\\n  | 'MODEL_NOT_FOUND'\\n  | 'UNKNOWN';\\n\\n/**\\n * Every class the unified exit can render. Kept as a runtime list so copy,\\n * retry and locale coverage can be audited exhaustively instead of by memory.\\n */\\nexport const APP_ERROR_CODES = [\\n  'AUTH_INVALID',\\n  'AUTH_PERMANENT',\\n  'TIMEOUT',\\n  'RATE_LIMIT',\\n  'PERMISSION',\\n  'CHANNEL_UNAVAILABLE',\\n  'CONVERSATION_STATE',\\n  'NETWORK',\\n  'CONFIG',\\n  'GATEWAY',\\n  'BILLING',\\n  'OVERLOADED',\\n  'MODEL_NOT_FOUND',\\n  'UNKNOWN',\\n] as const satisfies readonly AppErrorCode[];\\n\\n/** Who is expected to perform the recovery action. */\\nexport type ErrorRecoveryScope = 'self' | 'user' | 'support';\\n\\n/** Targets are deliberately closed and bounded; they are not commands. */\\nexport type ErrorRecoveryTarget =\\n  | 'authentication'\\n  | 'billing'\\n  | 'channel'\\n  | 'configuration'\\n  | 'conversation'\\n  | 'credentials'\\n  | 'model'\\n  | 'permission';\\n\\n/** Fixed, non-executable recovery verbs understood by the host and UI. */\\nexport type ErrorNextAction =\\n  | { kind: 'retry' }\\n  | { kind: 'reauthenticate'; target: 'authentication' }\\n  | { kind: 'reconfigure'; target: 'configuration' | 'credentials' | 'conversation' | 'model' }\\n  | { kind: 'open-settings'; target: 'billing' | 'configuration' }\\n  | { kind: 'contact-support'; target: 'billing' | 'channel' | 'permission' };\\n\\nexport type ErrorRecovery = {\\n  retryable: boolean;\\n  scope: ErrorRecoveryScope;\\n  action?: ErrorNextAction;\\n};\\n\\n/**\\n * Stable recovery policy for every error class. Only failures that can be\\n * safely recovered by repeating the same operation are retryable. The action\\n * vocabulary and target allow-list intentionally contain no executable data.\\n */\\nexport const APP_ERROR_RECOVERY = {\\n  AUTH_INVALID: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'reauthenticate', target: 'authentication' },\\n  },\\n  AUTH_PERMANENT: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'reconfigure', target: 'credentials' },\\n  },\\n  TIMEOUT: {\\n    retryable: true,\\n    scope: 'self',\\n    action: { kind: 'retry' },\\n  },\\n  RATE_LIMIT: {\\n    retryable: true,\\n    scope: 'self',\\n    action: { kind: 'retry' },\\n  },\\n  PERMISSION: {\\n    retryable: false,\\n    scope: 'support',\\n    action: { kind: 'contact-support', target: 'permission' },\\n  },\\n  CHANNEL_UNAVAILABLE: {\\n    retryable: false,\\n    scope: 'support',\\n    action: { kind: 'contact-support', target: 'channel' },\\n  },\\n  CONVERSATION_STATE: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'reconfigure', target: 'conversation' },\\n  },\\n  NETWORK: {\\n    retryable: true,\\n    scope: 'self',\\n    action: { kind: 'retry' },\\n  },\\n  CONFIG: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'reconfigure', target: 'configuration' },\\n  },\\n  GATEWAY: {\\n    retryable: true,\\n    scope: 'self',\\n    action: { kind: 'retry' },\\n  },\\n  BILLING: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'open-settings', target: 'billing' },\\n  },\\n  OVERLOADED: {\\n    retryable: true,\\n    scope: 'self',\\n    action: { kind: 'retry' },\\n  },\\n  MODEL_NOT_FOUND: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'reconfigure', target: 'model' },\\n  },\\n  UNKNOWN: {\\n    retryable: false,\\n    scope: 'support',\\n  },\\n} as const satisfies Record<AppErrorCode, ErrorRecovery>;\\n\\nexport class AppError extends Error {\\n  code: AppErrorCode;\\n  cause?: unknown;\\n  details?: Record<string, unknown>;\\n  /** Renderer-side correlation id echoed by the Main host dispatcher. */\\n  requestId?: string;\\n  readonly retryable: boolean;\\n  readonly nextAction?: ErrorNextAction;\\n\\n  constructor(\\n    code: AppErrorCode,\\n    message: string,\\n    cause?: unknown,\\n    details?: Record<string, unknown>,\\n    requestId?: string,\\n  ) {\\n    super(message);\\n    this.name = 'AppError';\\n    this.code = code;\\n    this.cause = cause;\\n    this.details = details;\\n    this.requestId = requestId;\\n    const recovery = APP_ERROR_RECOVERY[code];\\n    this.retryable = recovery.retryable;\\n    this.nextAction = recovery.action;\\n  }\\n}\\n\\n/**\\n * Structured facts read off the thrown value and its cause/response chain.\\n *\\n * Classification reads these first; it only falls back to the raw technical\\n * message when none of them identify a class. A user-facing string that has\\n * already been translated is never a classification input (issue #120), so\\n * changing the display language can never change the class.\\n */\\nexport type ErrorSignals = {\\n  code?: string;\\n  status?: number;\\n  reason?: string;\\n};\\n\\n/**\\n * Provider `code`/`reason`/`type` tokens (normalized to upper case) mapped to a\\n * class. One table serves both structured fields so the two can never drift.\\n */\\nconst CODE_SIGNALS: Record<string, AppErrorCode> = {\\n  TIMEOUT: 'TIMEOUT',\\n  REQUEST_TIMEOUT: 'TIMEOUT',\\n  PERMISSION: 'PERMISSION',\\n  PERMISSION_ERROR: 'PERMISSION',\\n  FORBIDDEN: 'PERMISSION',\\n  PERMISSION_DENIED: 'PERMISSION',\\n  GATEWAY: 'GATEWAY',\\n  VALIDATION: 'CONFIG',\\n  INVALID_REQUEST: 'CONFIG',\\n  INVALID_REQUEST_ERROR: 'CONFIG',\\n  UNSUPPORTED: 'CHANNEL_UNAVAILABLE',\\n  CHANNEL_UNAVAILABLE: 'CHANNEL_UNAVAILABLE',\\n  CONVERSATION_STATE: 'CONVERSATION_STATE',\\n  INVALID_CONVERSATION_STATE: 'CONVERSATION_STATE',\\n  NETWORK: 'NETWORK',\\n  CONNECTION_ERROR: 'NETWORK',\\n  AUTH_INVALID: 'AUTH_INVALID',\\n  UNAUTHORIZED: 'AUTH_INVALID',\\n  AUTH_EXPIRED: 'AUTH_INVALID',\\n  AUTHENTICATION_ERROR: 'AUTH_INVALID',\\n  AUTH_PERMANENT: 'AUTH_PERMANENT',\\n  INVALID_API_KEY: 'AUTH_PERMANENT',\\n  API_KEY_INVALID: 'AUTH_PERMANENT',\\n  KEY_REVOKED: 'AUTH_PERMANENT',\\n  RATE_LIMIT: 'RATE_LIMIT',\\n  RATE_LIMITED: 'RATE_LIMIT',\\n  RATE_LIMIT_EXCEEDED: 'RATE_LIMIT',\\n  TOO_MANY_REQUESTS: 'RATE_LIMIT',\\n  BILLING: 'BILLING',\\n  PAYMENT_REQUIRED: 'BILLING',\\n  INSUFFICIENT_BALANCE: 'BILLING',\\n  INSUFFICIENT_QUOTA: 'BILLING',\\n  QUOTA_EXCEEDED: 'BILLING',\\n  BILLING_HARD_LIMIT_REACHED: 'BILLING',\\n  OVERLOADED: 'OVERLOADED',\\n  OVERLOADED_ERROR: 'OVERLOADED',\\n  MODEL_OVERLOADED: 'OVERLOADED',\\n  SERVER_OVERLOADED: 'OVERLOADED',\\n  MODEL_NOT_FOUND: 'MODEL_NOT_FOUND',\\n  UNKNOWN_MODEL: 'MODEL_NOT_FOUND',\\n};\\n\\nconst STATUS_SIGNALS: Record<number, AppErrorCode> = {\\n  401: 'AUTH_INVALID',\\n  402: 'BILLING',\\n  403: 'PERMISSION',\\n  408: 'TIMEOUT',\\n  429: 'RATE_LIMIT',\\n  503: 'OVERLOADED',\\n  504: 'TIMEOUT',\\n  529: 'OVERLOADED',\\n};\\n\\nexport function mapBackendErrorCode(code?: string): AppErrorCode {\\n  if (typeof code !== 'string') return 'UNKNOWN';\\n  return CODE_SIGNALS[code.trim().toUpperCase()] ?? 'UNKNOWN';\\n}\\n\\n/**\\n * Last-resort classification from the untranslated technical message.\\n * Only reachable when no structured signal identified a class.\\n */\\nfunction classifyMessage(message: string): AppErrorCode {\\n  // Separator-insensitive so `invalid_api_key` / `rate_limit_exceeded` style\\n  // provider tokens match the same probes as prose.\\n  const lower = message.toLowerCase().replace(/[_-]+/g, ' ');\\n\\n  if (\\n    lower.includes('invalid ipc channel')\\n    || lower.includes('no handler registered')\\n    || lower.includes('window is not defined')\\n    || lower.includes('unsupported')\\n  ) {\\n    return 'CHANNEL_UNAVAILABLE';\\n  }\\n  if (lower.includes('conversation state') || lower.includes('roles must alternate')) {\\n    return 'CONVERSATION_STATE';\\n  }\\n  if (\\n    lower.includes('insufficient balance')\\n    || lower.includes('insufficient_quota')\\n    || lower.includes('insufficient quota')\\n    || lower.includes('quota exceeded')\\n    || lower.includes('exceeded your current quota')\\n    || lower.includes('billing')\\n    || lower.includes('credit balance')\\n    || lower.includes('payment required')\\n  ) {\\n    return 'BILLING';\\n  }\\n  if (\\n    lower.includes('invalid api key')\\n    || lower.includes('api key is invalid')\\n    || lower.includes('api key was revoked')\\n    || lower.includes('key has been revoked')\\n  ) {\\n    return 'AUTH_PERMANENT';\\n  }\\n  if (\\n    lower.includes('invalid authentication')\\n    || lower.includes('unauthorized')\\n    || lower.includes('auth failed')\\n    || lower.includes('401')\\n  ) {\\n    return 'AUTH_INVALID';\\n  }\\n  if (lower.includes('model not found') || lower.includes('unknown model')) {\\n    return 'MODEL_NOT_FOUND';\\n  }\\n  if (lower.includes('overloaded')) {\\n    return 'OVERLOADED';\\n  }\\n  if (lower.includes('timeout') || lower.includes('timed out') || lower.includes('abort')) {\\n    return 'TIMEOUT';\\n  }\\n  if (lower.includes('rate limit') || lower.includes('429')) {\\n    return 'RATE_LIMIT';\\n  }\\n  if (\\n    lower.includes('permission')\\n    || lower.includes('forbidden')\\n    || lower.includes('denied')\\n    || lower.includes('403')\\n  ) {\\n    return 'PERMISSION';\\n  }\\n  if (\\n    lower.includes('network')\\n    || lower.includes('fetch')\\n    || lower.includes('econnrefused')\\n    || lower.includes('econnreset')\\n    || lower.includes('enotfound')\\n  ) {\\n    return 'NETWORK';\\n  }\\n  if (lower.includes('gateway')) {\\n    return 'GATEWAY';\\n  }\\n  if (lower.includes('config') || lower.includes('invalid') || lower.includes('validation') || lower.includes('400')) {\\n    return 'CONFIG';\\n  }\\n\\n  return 'UNKNOWN';\\n}\\n\\nfunction readStringField(source: Record<string, unknown>, key: string): string | undefined {\\n  const value = source[key];\\n  if (typeof value === 'string' && value.trim()) return value.trim();\\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\\n  return undefined;\\n}\\n\\nfunction readStatusField(source: Record<string, unknown>, key: string): number | undefined {\\n  const value = source[key];\\n  const parsed = typeof value === 'number'\\n    ? value\\n    : (typeof value === 'string' && /^\\\\d+$/.test(value.trim()) ? Number(value.trim()) : Number.NaN);\\n  if (!Number.isFinite(parsed) || parsed < 100 || parsed > 599) return undefined;\\n  return parsed;\\n}\\n\\n/** Walks the error and its nested cause/response/data chain once. */\\nfunction collectSignalSources(err: unknown): Array<Record<string, unknown>> {\\n  const sources: Array<Record<string, unknown>> = [];\\n  const seen = new Set<unknown>();\\n  const visit = (value: unknown): void => {\\n    if (!value || typeof value !== 'object' || seen.has(value)) return;\\n    seen.add(value);\\n    const record = value as Record<string, unknown>;\\n    sources.push(record);\\n    visit(record.cause);\\n    visit(record.error);\\n    visit(record.response);\\n    visit(record.data);\\n  };\\n  visit(err);\\n  return sources;\\n}\\n\\n/**\\n * Reads structured signals, most explicit source first: caller-supplied\\n * `details` (host-api envelopes, store context) then the throwing object and\\n * its nested cause/response chain.\\n */\\nexport function readErrorSignals(err: unknown, details?: Record<string, unknown>): ErrorSignals {\\n  const sources = [...(details ? [details] : []), ...collectSignalSources(err)];\\n  const signals: ErrorSignals = {};\\n  for (const source of sources) {\\n    signals.code ??= readStringField(source, 'code')\\n      ?? readStringField(source, 'errorCode')\\n      ?? readStringField(source, 'reasonCode');\\n    signals.status ??= readStatusField(source, 'status')\\n      ?? readStatusField(source, 'statusCode')\\n      ?? readStatusField(source, 'httpStatus');\\n    signals.reason ??= readStringField(source, 'reason')\\n      ?? readStringField(source, 'type')\\n      ?? readStringField(source, 'errorType');\\n  }\\n  return signals;\\n}\\n\\nfunction classifySignals(signals: ErrorSignals): AppErrorCode | undefined {\\n  for (const token of [signals.code, signals.reason]) {\\n    if (!token) continue;\\n    const mapped = mapBackendErrorCode(token);\\n    if (mapped !== 'UNKNOWN') return mapped;\\n  }\\n  return signals.status !== undefined ? STATUS_SIGNALS[signals.status] : undefined;\\n}\\n\\nfunction readErrorMessage(err: unknown): string {\\n  if (err instanceof Error) return err.message;\\n  if (err && typeof err === 'object') {\\n    return readErrorMessage(err as Record<string, unknown>);\\n  }\\n  return err === undefined || err === null ? '' : String(err);\\n}\\n\\nexport function normalizeAppError(err: unknown, details?: Record<string, unknown>): AppError {\\n  if (err instanceof AppError) {\\n    const requestId = err.requestId\\n      ?? readStringField(err.details ?? {}, 'requestId');\\n    return new AppError(\\n      err.code,\\n      err.message,\\n      err.cause ?? err,\\n      { ...(err.details ?? {}), ...(details ?? {}) },\\n      requestId,\\n    );\\n  }\\n\\n  const message = readErrorMessage(err);\\n  const signals = readErrorSignals(err, details);\\n  // Structured signals win. Only their absence lets the untranslated technical\\n  // message (or a structured `reason` string) decide the class.\\n  const code = classifySignals(signals)\\n    ?? classifyMessage([signals.reason ?? '', message].join(' ').trim());\\n  return new AppError(\\n    code,\\n    message,\\n    err,\\n    details,\\n    readStringField(details ?? {}, 'requestId'),\\n  );\\n}\\n\"},{\"path\":\"harness/specs/tasks/harness-gap-error-recovery-next-action.md\",\"content\":\"# G01 — Stable error recovery and bounded next actions\\n\\n## Contract\\n\\nEvery `AppErrorCode` has exactly one stable entry in `APP_ERROR_RECOVERY`. Each entry declares:\\n\\n- `retryable`: whether repeating the same operation is a valid automatic recovery;\\n- `scope`: `self`, `user`, or `support`;\\n- optional `action`: a declarative next action.\\n\\nOnly self-recovery classes are retryable. Their action is exactly `{ kind: 'retry' }`. Every non-retryable class requires user or support involvement and therefore never has a `retry` action. `UNKNOWN` has no action because no safe repair can be inferred; the original error must be exposed to the user.\\n\\nThe action vocabulary is closed to `retry`, `reauthenticate`, `reconfigure`, `open-settings`, and `contact-support`. Actions contain only `kind` and, where required by the verb, a `target` selected from a fixed allow-list. They never contain a command, script, shell fragment, executable, argv, path, or provider-specific instruction.\\n\\n## Implementation invariants\\n\\n1. `APP_ERROR_CODES` and `APP_ERROR_RECOVERY` are checked from the same `AppErrorCode` type.\\n2. `AppError.retryable` and `AppError.nextAction` are derived from the stable recovery table.\\n3. `normalizeAppError` continues to return the existing unified `AppError` type and envelope; no parallel error model is introduced.\\n4. `UNKNOWN` normalizes to `{ retryable: false }` with `nextAction` absent.\\n5. Action targets are bounded and authorization-oriented; consumers select the host UI based on the verb and target.\\n\\n## Validation\\n\\nThe directed error-model tests must verify exhaustive table coverage, exact retry semantics, the closed action vocabulary and key set, absence of executable fields, and `UNKNOWN` behavior. Existing unified-envelope and error-governance checks must remain green.\\n\"},{\"path\":\"docs/dev/harness-gap-closure/g01-error-recovery-next-action.md\",\"content\":\"# G01 closure — error recovery next actions\\n\\nThe unified `AppError` model now derives recovery metadata from a stable, exhaustive policy table.\\n\\n## Recovery policy\\n\\n| Code | Retryable | Scope | Next action |\\n| --- | --- | --- | --- |\\n| `AUTH_INVALID` | no | user | reauthenticate authentication |\\n| `AUTH_PERMANENT` | no | user | reconfigure credentials |\\n| `TIMEOUT` | yes | self | retry |\\n| `RATE_LIMIT` | yes | self | retry |\\n| `PERMISSION` | no | support | contact-support permission |\\n| `CHANNEL_UNAVAILABLE` | no | support | contact-support channel |\\n| `CONVERSATION_STATE` | no | user | reconfigure conversation |\\n| `NETWORK` | yes | self | retry |\\n| `CONFIG` | no | user | reconfigure configuration |\\n| `GATEWAY` | yes | self | retry |\\n| `BILLING` | no | user | open-settings billing |\\n| `OVERLOADED` | yes | self | retry |\\n| `MODEL_NOT_FOUND` | no | user | reconfigure model |\\n| `UNKNOWN` | no | support | none |\\n\\n`retryable` means the host may safely repeat the same operation. It does not authorize arbitrary commands. Non-retryable failures are surfaced as user-action-required and provide one of the fixed declarative actions above.\\n\\n`UNKNOWN` deliberately has no `nextAction`. It must be rendered with the original technical error so support and diagnostics can identify the failure; the system must not manufacture a repair for an unclassified condition.\\n\\n## Safety and compatibility\\n\\nThe action schema permits only `kind` and an allow-listed `target`. It has no command, script, shell, exec, argv, executable, or free-form instruction field. This keeps recovery decisions declarative and prevents provider messages from crossing an execution boundary.\\n\\nRecovery metadata is part of the existing `AppError` type and is populated by `normalizeAppError`. The existing `HostResponse`/`AppError` envelope remains the sole error governance path.\\n\"}]}",
+    "parallel_tool_calls": true,
+    "previous_response_id": null,
+    "reasoning": {
+      "effort": "low",
+      "summary": null
+    },
+    "status": "completed",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "name": "rsi_coding_edits",
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "edits": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "content": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "path",
+                  "content"
+                ],
+                "type": "object"
+              },
+              "maxItems": 32,
+              "type": "array"
+            }
+          },
+          "required": [
+            "edits"
+          ],
+          "type": "object"
+        },
+        "strict": true,
+        "type": "json_schema"
+      }
+    },
+    "tool_choice": "auto",
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 1,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 3754,
+      "input_tokens_details": {
+        "cached_tokens": 3753
+      },
+      "output_tokens": 5393,
+      "output_tokens_details": {
+        "reasoning_tokens": 604
+      },
+      "total_tokens": 9147
+    },
+    "user": null
+  },
+  "providerAttempts": [
+    {
+      "endpoint": "http://127.0.0.1:3065/v1/responses",
+      "request": {
+        "model": "space-bunny",
+        "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+        "input": "{\n  \"prompt\": \"G01 让每个错误类携带稳定 code + retryable + 受权限约束的 nextAction：nextAction 只能是固定动词（retry/reauthenticate/reconfigure/open-settings/contact-support）加有界参数，绝不是 shell 指令或原始脚本；无法自动修复时明确“向用户暴露原始错误”，不伪造可修复。\",\n  \"acceptanceCriteria\": [\n    \"每个 AppErrorCode 都有稳定的 recovery 表项（retryable + scope + 可选 action），无遗漏。\",\n    \"仅 self-retry 类是 retryable，且其 action 恰好是 { kind: 'retry' }；非 retryable 一律 user-action-required 且 action.kind != 'retry'。\",\n    \"nextAction 只允许固定动词集合，且键只有 kind(+target)，绝不含 command/script/shell/exec/argv 等可执行字段。\",\n    \"AppError 实例带 retryable 与 nextAction；UNKNOWN 无 action（明确要求向用户暴露原始错误，不伪造修复）。\",\n    \"复用既有错误治理单一 envelope（HostResponse/AppError），不新增第二套 envelope 或错误类型；错误治理检查仍 PASS。\",\n    \"干净候选定向测试、web 类型、scoped lint、harness validate/dry-run、comms replay/compare 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"src/lib/error-model.ts\",\n    \"harness/specs/tasks/harness-gap-error-recovery-next-action.md\",\n    \"docs/dev/harness-gap-closure/g01-error-recovery-next-action.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"src/lib/error-model.ts\",\n      \"content\": \"export type AppErrorCode =\\n  | 'AUTH_INVALID'\\n  | 'AUTH_PERMANENT'\\n  | 'TIMEOUT'\\n  | 'RATE_LIMIT'\\n  | 'PERMISSION'\\n  | 'CHANNEL_UNAVAILABLE'\\n  | 'CONVERSATION_STATE'\\n  | 'NETWORK'\\n  | 'CONFIG'\\n  | 'GATEWAY'\\n  | 'BILLING'\\n  | 'OVERLOADED'\\n  | 'MODEL_NOT_FOUND'\\n  | 'UNKNOWN';\\n\\n/**\\n * Every class the unified exit can render. Kept as a runtime list so copy,\\n * retry and locale coverage can be audited exhaustively instead of by memory.\\n */\\nexport const APP_ERROR_CODES = [\\n  'AUTH_INVALID',\\n  'AUTH_PERMANENT',\\n  'TIMEOUT',\\n  'RATE_LIMIT',\\n  'PERMISSION',\\n  'CHANNEL_UNAVAILABLE',\\n  'CONVERSATION_STATE',\\n  'NETWORK',\\n  'CONFIG',\\n  'GATEWAY',\\n  'BILLING',\\n  'OVERLOADED',\\n  'MODEL_NOT_FOUND',\\n  'UNKNOWN',\\n] as const satisfies readonly AppErrorCode[];\\n\\nexport class AppError extends Error {\\n  code: AppErrorCode;\\n  cause?: unknown;\\n  details?: Record<string, unknown>;\\n  /** Renderer-side correlation id echoed by the Main host dispatcher. */\\n  requestId?: string;\\n\\n  constructor(\\n    code: AppErrorCode,\\n    message: string,\\n    cause?: unknown,\\n    details?: Record<string, unknown>,\\n    requestId?: string,\\n  ) {\\n    super(message);\\n    this.name = 'AppError';\\n    this.code = code;\\n    this.cause = cause;\\n    this.details = details;\\n    this.requestId = requestId;\\n  }\\n}\\n\\n/**\\n * Structured facts read off the thrown value and its cause/response chain.\\n *\\n * Classification reads these first; it only falls back to the raw technical\\n * message when none of them identify a class. A user-facing string that has\\n * already been translated is never a classification input (issue #120), so\\n * changing the display language can never change the class.\\n */\\nexport type ErrorSignals = {\\n  code?: string;\\n  status?: number;\\n  reason?: string;\\n};\\n\\n/**\\n * Provider `code`/`reason`/`type` tokens (normalized to upper case) mapped to a\\n * class. One table serves both structured fields so the two can never drift.\\n */\\nconst CODE_SIGNALS: Record<string, AppErrorCode> = {\\n  TIMEOUT: 'TIMEOUT',\\n  REQUEST_TIMEOUT: 'TIMEOUT',\\n  PERMISSION: 'PERMISSION',\\n  PERMISSION_ERROR: 'PERMISSION',\\n  FORBIDDEN: 'PERMISSION',\\n  PERMISSION_DENIED: 'PERMISSION',\\n  GATEWAY: 'GATEWAY',\\n  VALIDATION: 'CONFIG',\\n  INVALID_REQUEST: 'CONFIG',\\n  INVALID_REQUEST_ERROR: 'CONFIG',\\n  UNSUPPORTED: 'CHANNEL_UNAVAILABLE',\\n  CHANNEL_UNAVAILABLE: 'CHANNEL_UNAVAILABLE',\\n  CONVERSATION_STATE: 'CONVERSATION_STATE',\\n  INVALID_CONVERSATION_STATE: 'CONVERSATION_STATE',\\n  NETWORK: 'NETWORK',\\n  CONNECTION_ERROR: 'NETWORK',\\n  AUTH_INVALID: 'AUTH_INVALID',\\n  UNAUTHORIZED: 'AUTH_INVALID',\\n  AUTH_EXPIRED: 'AUTH_INVALID',\\n  AUTHENTICATION_ERROR: 'AUTH_INVALID',\\n  AUTH_PERMANENT: 'AUTH_PERMANENT',\\n  INVALID_API_KEY: 'AUTH_PERMANENT',\\n  API_KEY_INVALID: 'AUTH_PERMANENT',\\n  KEY_REVOKED: 'AUTH_PERMANENT',\\n  RATE_LIMIT: 'RATE_LIMIT',\\n  RATE_LIMITED: 'RATE_LIMIT',\\n  RATE_LIMIT_EXCEEDED: 'RATE_LIMIT',\\n  TOO_MANY_REQUESTS: 'RATE_LIMIT',\\n  BILLING: 'BILLING',\\n  PAYMENT_REQUIRED: 'BILLING',\\n  INSUFFICIENT_BALANCE: 'BILLING',\\n  INSUFFICIENT_QUOTA: 'BILLING',\\n  QUOTA_EXCEEDED: 'BILLING',\\n  BILLING_HARD_LIMIT_REACHED: 'BILLING',\\n  OVERLOADED: 'OVERLOADED',\\n  OVERLOADED_ERROR: 'OVERLOADED',\\n  MODEL_OVERLOADED: 'OVERLOADED',\\n  SERVER_OVERLOADED: 'OVERLOADED',\\n  MODEL_NOT_FOUND: 'MODEL_NOT_FOUND',\\n  UNKNOWN_MODEL: 'MODEL_NOT_FOUND',\\n};\\n\\nconst STATUS_SIGNALS: Record<number, AppErrorCode> = {\\n  401: 'AUTH_INVALID',\\n  402: 'BILLING',\\n  403: 'PERMISSION',\\n  408: 'TIMEOUT',\\n  429: 'RATE_LIMIT',\\n  503: 'OVERLOADED',\\n  504: 'TIMEOUT',\\n  529: 'OVERLOADED',\\n};\\n\\nexport function mapBackendErrorCode(code?: string): AppErrorCode {\\n  if (typeof code !== 'string') return 'UNKNOWN';\\n  return CODE_SIGNALS[code.trim().toUpperCase()] ?? 'UNKNOWN';\\n}\\n\\n/**\\n * Last-resort classification from the untranslated technical message.\\n * Only reachable when no structured signal identified a class.\\n */\\nfunction classifyMessage(message: string): AppErrorCode {\\n  // Separator-insensitive so `invalid_api_key` / `rate_limit_exceeded` style\\n  // provider tokens match the same probes as prose.\\n  const lower = message.toLowerCase().replace(/[_-]+/g, ' ');\\n\\n  if (\\n    lower.includes('invalid ipc channel')\\n    || lower.includes('no handler registered')\\n    || lower.includes('window is not defined')\\n    || lower.includes('unsupported')\\n  ) {\\n    return 'CHANNEL_UNAVAILABLE';\\n  }\\n  if (lower.includes('conversation state') || lower.includes('roles must alternate')) {\\n    return 'CONVERSATION_STATE';\\n  }\\n  if (\\n    lower.includes('insufficient balance')\\n    || lower.includes('insufficient_quota')\\n    || lower.includes('insufficient quota')\\n    || lower.includes('quota exceeded')\\n    || lower.includes('exceeded your current quota')\\n    || lower.includes('billing')\\n    || lower.includes('credit balance')\\n    || lower.includes('payment required')\\n  ) {\\n    return 'BILLING';\\n  }\\n  if (\\n    lower.includes('invalid api key')\\n    || lower.includes('api key is invalid')\\n    || lower.includes('api key was revoked')\\n    || lower.includes('key has been revoked')\\n  ) {\\n    return 'AUTH_PERMANENT';\\n  }\\n  if (\\n    lower.includes('invalid authentication')\\n    || lower.includes('unauthorized')\\n    || lower.includes('auth failed')\\n    || lower.includes('401')\\n  ) {\\n    return 'AUTH_INVALID';\\n  }\\n  if (lower.includes('model not found') || lower.includes('unknown model')) {\\n    return 'MODEL_NOT_FOUND';\\n  }\\n  if (lower.includes('overloaded')) {\\n    return 'OVERLOADED';\\n  }\\n  if (lower.includes('timeout') || lower.includes('timed out') || lower.includes('abort')) {\\n    return 'TIMEOUT';\\n  }\\n  if (lower.includes('rate limit') || lower.includes('429')) {\\n    return 'RATE_LIMIT';\\n  }\\n  if (\\n    lower.includes('permission')\\n    || lower.includes('forbidden')\\n    || lower.includes('denied')\\n    || lower.includes('403')\\n  ) {\\n    return 'PERMISSION';\\n  }\\n  if (\\n    lower.includes('network')\\n    || lower.includes('fetch')\\n    || lower.includes('econnrefused')\\n    || lower.includes('econnreset')\\n    || lower.includes('enotfound')\\n  ) {\\n    return 'NETWORK';\\n  }\\n  if (lower.includes('gateway')) {\\n    return 'GATEWAY';\\n  }\\n  if (lower.includes('config') || lower.includes('invalid') || lower.includes('validation') || lower.includes('400')) {\\n    return 'CONFIG';\\n  }\\n\\n  return 'UNKNOWN';\\n}\\n\\nfunction readStringField(source: Record<string, unknown>, key: string): string | undefined {\\n  const value = source[key];\\n  if (typeof value === 'string' && value.trim()) return value.trim();\\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\\n  return undefined;\\n}\\n\\nfunction readStatusField(source: Record<string, unknown>, key: string): number | undefined {\\n  const value = source[key];\\n  const parsed = typeof value === 'number'\\n    ? value\\n    : (typeof value === 'string' && /^\\\\d+$/.test(value.trim()) ? Number(value.trim()) : Number.NaN);\\n  if (!Number.isFinite(parsed) || parsed < 100 || parsed > 599) return undefined;\\n  return parsed;\\n}\\n\\n/** Walks the error and its nested cause/response/data chain once. */\\nfunction collectSignalSources(err: unknown): Array<Record<string, unknown>> {\\n  const sources: Array<Record<string, unknown>> = [];\\n  const seen = new Set<unknown>();\\n  const visit = (value: unknown): void => {\\n    if (!value || typeof value !== 'object' || seen.has(value)) return;\\n    seen.add(value);\\n    const record = value as Record<string, unknown>;\\n    sources.push(record);\\n    visit(record.cause);\\n    visit(record.error);\\n    visit(record.response);\\n    visit(record.data);\\n  };\\n  visit(err);\\n  return sources;\\n}\\n\\n/**\\n * Reads structured signals, most explicit source first: caller-supplied\\n * `details` (host-api envelopes, store context) then the throwing object and\\n * its nested cause/response chain.\\n */\\nexport function readErrorSignals(err: unknown, details?: Record<string, unknown>): ErrorSignals {\\n  const sources = [...(details ? [details] : []), ...collectSignalSources(err)];\\n  const signals: ErrorSignals = {};\\n  for (const source of sources) {\\n    signals.code ??= readStringField(source, 'code')\\n      ?? readStringField(source, 'errorCode')\\n      ?? readStringField(source, 'reasonCode');\\n    signals.status ??= readStatusField(source, 'status')\\n      ?? readStatusField(source, 'statusCode')\\n      ?? readStatusField(source, 'httpStatus');\\n    signals.reason ??= readStringField(source, 'reason')\\n      ?? readStringField(source, 'type')\\n      ?? readStringField(source, 'errorType');\\n  }\\n  return signals;\\n}\\n\\nfunction classifySignals(signals: ErrorSignals): AppErrorCode | undefined {\\n  for (const token of [signals.code, signals.reason]) {\\n    if (!token) continue;\\n    const mapped = mapBackendErrorCode(token);\\n    if (mapped !== 'UNKNOWN') return mapped;\\n  }\\n  return signals.status !== undefined ? STATUS_SIGNALS[signals.status] : undefined;\\n}\\n\\nfunction readErrorMessage(err: unknown): string {\\n  if (err instanceof Error) return err.message;\\n  if (err && typeof err === 'object') {\\n    return readStringField(err as Record<string, unknown>, 'message') ?? '';\\n  }\\n  return err === undefined || err === null ? '' : String(err);\\n}\\n\\nexport function normalizeAppError(err: unknown, details?: Record<string, unknown>): AppError {\\n  if (err instanceof AppError) {\\n    const requestId = err.requestId\\n      ?? readStringField(err.details ?? {}, 'requestId');\\n    return new AppError(\\n      err.code,\\n      err.message,\\n      err.cause ?? err,\\n      { ...(err.details ?? {}), ...(details ?? {}) },\\n      requestId,\\n    );\\n  }\\n\\n  const message = readErrorMessage(err);\\n  const signals = readErrorSignals(err, details);\\n  // Structured signals win. Only their absence lets the untranslated technical\\n  // message (or a structured `reason` string) decide the class.\\n  const code = classifySignals(signals)\\n    ?? classifyMessage([signals.reason ?? '', message].join(' ').trim());\\n  return new AppError(\\n    code,\\n    message,\\n    err,\\n    details,\\n    readStringField(details ?? {}, 'requestId'),\\n  );\\n}\\n\",\n      \"truncated\": false\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-error-recovery-next-action.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/g01-error-recovery-next-action.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+        "store": false,
+        "stream": false,
+        "truncation": "disabled",
+        "max_output_tokens": 16000,
+        "reasoning": {
+          "effort": "low"
+        },
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "rsi_coding_edits",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "edits"
+              ],
+              "properties": {
+                "edits": {
+                  "type": "array",
+                  "maxItems": 32,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "path",
+                      "content"
+                    ],
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "content": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "rawResponse": {
+        "background": false,
+        "completed_at": 1793967889,
+        "created_at": 1793967868,
+        "error": null,
+        "id": "01a1b0d1453d78229d600c42583c3522",
+        "incomplete_details": null,
+        "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+        "max_output_tokens": 16000,
+        "max_tool_calls": null,
+        "metadata": {},
+        "model": "space-bunny",
+        "object": "response",
+        "output": [
+          {
+            "id": "rs_33a7105580fdf48d11a10d303bf828b8",
+            "summary": [
+              {
+                "text": "We need craft complete files. Need infer desired API. Recovery table scope and actions. \"受权限约束\" likely scope values self/user/support/settings? Need fixed verbs + bounded target. Could define RecoveryScope = 'self'|'user'|'support'? Each entry retryable scope optional action. Only self-retry classes retryable action exactly retry. Others user-action-required action nonretry. UNKNOWN no action.\n\nAUTH_INVALID reauthenticate likely user scope target authentication. AUTH_PERMANENT reconfigure target credentials? Permission perhaps contact-support? CHANNEL unavailable contact support? conversation state reconfigure? network retryable. Timeout retry. Rate limit maybe retry? \"仅 self-retry 类\" means classes that self retry. Likely TIMEOUT NETWORK GATEWAY OVERLOADED RATE_LIMIT are retryable. RATE_LIMIT needs bounded retry perhaps action retry exactly no target allowed. Config reconfigure settings. Billing contact support or open settings. Model not found reconfigure target model. channel unavailable contact support. conversation state reconfigure conversation. permission contact support.\n\nNeed stable table exported. Scope perhaps 'self'|'user'|'support'|'settings'. Criterion recovery entry retryable + scope + optional action. Define scope 'self'|'user'|'admin'|'support'? User says nonretryable user-action-required. scope likely 'user' vs 'support'. Permission constrained perhaps target allowlist.\n\nnextAction only kind(+target). union with optional target only specific kinds. No action UNKNOWN. Bounded target allowlist. Include target e.g. 'authentication','credentials','network','model','conversation','channel','billing','configuration'. Fixed verbs.\n\nCould tests expect names. likely APP_ERROR_RECOVERY table. Let's make exports aliases robust: APP_ERROR_RECOVERY, APP_ERROR_RECOVERY_BY_CODE. Action types.\n\nAppError instance props. Normalize existing preserves computed.\n\n\"scope\" table perhaps recovery scope values 'self'|'user'|'support'. For retryable scope self. Nonretry scope user/support. \"受权限约束\" could mean action scope. We'll document.\n\nNeed JSON only with edits. Ensure files.\n\nUse actions:\nAUTH_INVALID {reauthenticate target credentials}\nAUTH_PERMANENT {reconfigure target credentials}\nTIMEOUT retry\nRATE_LIMIT retry\nPERMISSION contact-support target permission\nCHANNEL_UNAVAILABLE contact-support target channel\nCONVERSATION_STATE reconfigure target conversation\nNETWORK retry\nCONFIG reconfigure target configuration\nGATEWAY retry\nBILLING open-settings target billing\nOVERLOADED retry\nMODEL_NOT_FOUND reconfigure target model\nUNKNOWN undefined.\n\nIs RATE_LIMIT self-retry? potentially yes. Gateway/overloaded yes.\n\n\"scope\" perhaps target scope. Use 'self' | 'user' | 'support'. open-settings requires user scope. contact-support support. reconfigure user. auth user.\n\nCould scope indicate permission: action availability authorization? \"受权限约束的 nextAction\" perhaps target bounded. We'll state.\n\nLet's produce.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "{\"edits\":[{\"path\":\"src/lib/error-model.ts\",\"content\":\"export type AppErrorCode =\\n  | 'AUTH_INVALID'\\n  | 'AUTH_PERMANENT'\\n  | 'TIMEOUT'\\n  | 'RATE_LIMIT'\\n  | 'PERMISSION'\\n  | 'CHANNEL_UNAVAILABLE'\\n  | 'CONVERSATION_STATE'\\n  | 'NETWORK'\\n  | 'CONFIG'\\n  | 'GATEWAY'\\n  | 'BILLING'\\n  | 'OVERLOADED'\\n  | 'MODEL_NOT_FOUND'\\n  | 'UNKNOWN';\\n\\n/**\\n * Every class the unified exit can render. Kept as a runtime list so copy,\\n * retry and locale coverage can be audited exhaustively instead of by memory.\\n */\\nexport const APP_ERROR_CODES = [\\n  'AUTH_INVALID',\\n  'AUTH_PERMANENT',\\n  'TIMEOUT',\\n  'RATE_LIMIT',\\n  'PERMISSION',\\n  'CHANNEL_UNAVAILABLE',\\n  'CONVERSATION_STATE',\\n  'NETWORK',\\n  'CONFIG',\\n  'GATEWAY',\\n  'BILLING',\\n  'OVERLOADED',\\n  'MODEL_NOT_FOUND',\\n  'UNKNOWN',\\n] as const satisfies readonly AppErrorCode[];\\n\\n/** Who is expected to perform the recovery action. */\\nexport type ErrorRecoveryScope = 'self' | 'user' | 'support';\\n\\n/** Targets are deliberately closed and bounded; they are not commands. */\\nexport type ErrorRecoveryTarget =\\n  | 'authentication'\\n  | 'billing'\\n  | 'channel'\\n  | 'configuration'\\n  | 'conversation'\\n  | 'credentials'\\n  | 'model'\\n  | 'permission';\\n\\n/** Fixed, non-executable recovery verbs understood by the host and UI. */\\nexport type ErrorNextAction =\\n  | { kind: 'retry' }\\n  | { kind: 'reauthenticate'; target: 'authentication' }\\n  | { kind: 'reconfigure'; target: 'configuration' | 'credentials' | 'conversation' | 'model' }\\n  | { kind: 'open-settings'; target: 'billing' | 'configuration' }\\n  | { kind: 'contact-support'; target: 'billing' | 'channel' | 'permission' };\\n\\nexport type ErrorRecovery = {\\n  retryable: boolean;\\n  scope: ErrorRecoveryScope;\\n  action?: ErrorNextAction;\\n};\\n\\n/**\\n * Stable recovery policy for every error class. Only failures that can be\\n * safely recovered by repeating the same operation are retryable. The action\\n * vocabulary and target allow-list intentionally contain no executable data.\\n */\\nexport const APP_ERROR_RECOVERY = {\\n  AUTH_INVALID: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'reauthenticate', target: 'authentication' },\\n  },\\n  AUTH_PERMANENT: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'reconfigure', target: 'credentials' },\\n  },\\n  TIMEOUT: {\\n    retryable: true,\\n    scope: 'self',\\n    action: { kind: 'retry' },\\n  },\\n  RATE_LIMIT: {\\n    retryable: true,\\n    scope: 'self',\\n    action: { kind: 'retry' },\\n  },\\n  PERMISSION: {\\n    retryable: false,\\n    scope: 'support',\\n    action: { kind: 'contact-support', target: 'permission' },\\n  },\\n  CHANNEL_UNAVAILABLE: {\\n    retryable: false,\\n    scope: 'support',\\n    action: { kind: 'contact-support', target: 'channel' },\\n  },\\n  CONVERSATION_STATE: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'reconfigure', target: 'conversation' },\\n  },\\n  NETWORK: {\\n    retryable: true,\\n    scope: 'self',\\n    action: { kind: 'retry' },\\n  },\\n  CONFIG: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'reconfigure', target: 'configuration' },\\n  },\\n  GATEWAY: {\\n    retryable: true,\\n    scope: 'self',\\n    action: { kind: 'retry' },\\n  },\\n  BILLING: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'open-settings', target: 'billing' },\\n  },\\n  OVERLOADED: {\\n    retryable: true,\\n    scope: 'self',\\n    action: { kind: 'retry' },\\n  },\\n  MODEL_NOT_FOUND: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'reconfigure', target: 'model' },\\n  },\\n  UNKNOWN: {\\n    retryable: false,\\n    scope: 'support',\\n  },\\n} as const satisfies Record<AppErrorCode, ErrorRecovery>;\\n\\nexport class AppError extends Error {\\n  code: AppErrorCode;\\n  cause?: unknown;\\n  details?: Record<string, unknown>;\\n  /** Renderer-side correlation id echoed by the Main host dispatcher. */\\n  requestId?: string;\\n  readonly retryable: boolean;\\n  readonly nextAction?: ErrorNextAction;\\n\\n  constructor(\\n    code: AppErrorCode,\\n    message: string,\\n    cause?: unknown,\\n    details?: Record<string, unknown>,\\n    requestId?: string,\\n  ) {\\n    super(message);\\n    this.name = 'AppError';\\n    this.code = code;\\n    this.cause = cause;\\n    this.details = details;\\n    this.requestId = requestId;\\n    const recovery = APP_ERROR_RECOVERY[code];\\n    this.retryable = recovery.retryable;\\n    this.nextAction = recovery.action;\\n  }\\n}\\n\\n/**\\n * Structured facts read off the thrown value and its cause/response chain.\\n *\\n * Classification reads these first; it only falls back to the raw technical\\n * message when none of them identify a class. A user-facing string that has\\n * already been translated is never a classification input (issue #120), so\\n * changing the display language can never change the class.\\n */\\nexport type ErrorSignals = {\\n  code?: string;\\n  status?: number;\\n  reason?: string;\\n};\\n\\n/**\\n * Provider `code`/`reason`/`type` tokens (normalized to upper case) mapped to a\\n * class. One table serves both structured fields so the two can never drift.\\n */\\nconst CODE_SIGNALS: Record<string, AppErrorCode> = {\\n  TIMEOUT: 'TIMEOUT',\\n  REQUEST_TIMEOUT: 'TIMEOUT',\\n  PERMISSION: 'PERMISSION',\\n  PERMISSION_ERROR: 'PERMISSION',\\n  FORBIDDEN: 'PERMISSION',\\n  PERMISSION_DENIED: 'PERMISSION',\\n  GATEWAY: 'GATEWAY',\\n  VALIDATION: 'CONFIG',\\n  INVALID_REQUEST: 'CONFIG',\\n  INVALID_REQUEST_ERROR: 'CONFIG',\\n  UNSUPPORTED: 'CHANNEL_UNAVAILABLE',\\n  CHANNEL_UNAVAILABLE: 'CHANNEL_UNAVAILABLE',\\n  CONVERSATION_STATE: 'CONVERSATION_STATE',\\n  INVALID_CONVERSATION_STATE: 'CONVERSATION_STATE',\\n  NETWORK: 'NETWORK',\\n  CONNECTION_ERROR: 'NETWORK',\\n  AUTH_INVALID: 'AUTH_INVALID',\\n  UNAUTHORIZED: 'AUTH_INVALID',\\n  AUTH_EXPIRED: 'AUTH_INVALID',\\n  AUTHENTICATION_ERROR: 'AUTH_INVALID',\\n  AUTH_PERMANENT: 'AUTH_PERMANENT',\\n  INVALID_API_KEY: 'AUTH_PERMANENT',\\n  API_KEY_INVALID: 'AUTH_PERMANENT',\\n  KEY_REVOKED: 'AUTH_PERMANENT',\\n  RATE_LIMIT: 'RATE_LIMIT',\\n  RATE_LIMITED: 'RATE_LIMIT',\\n  RATE_LIMIT_EXCEEDED: 'RATE_LIMIT',\\n  TOO_MANY_REQUESTS: 'RATE_LIMIT',\\n  BILLING: 'BILLING',\\n  PAYMENT_REQUIRED: 'BILLING',\\n  INSUFFICIENT_BALANCE: 'BILLING',\\n  INSUFFICIENT_QUOTA: 'BILLING',\\n  QUOTA_EXCEEDED: 'BILLING',\\n  BILLING_HARD_LIMIT_REACHED: 'BILLING',\\n  OVERLOADED: 'OVERLOADED',\\n  OVERLOADED_ERROR: 'OVERLOADED',\\n  MODEL_OVERLOADED: 'OVERLOADED',\\n  SERVER_OVERLOADED: 'OVERLOADED',\\n  MODEL_NOT_FOUND: 'MODEL_NOT_FOUND',\\n  UNKNOWN_MODEL: 'MODEL_NOT_FOUND',\\n};\\n\\nconst STATUS_SIGNALS: Record<number, AppErrorCode> = {\\n  401: 'AUTH_INVALID',\\n  402: 'BILLING',\\n  403: 'PERMISSION',\\n  408: 'TIMEOUT',\\n  429: 'RATE_LIMIT',\\n  503: 'OVERLOADED',\\n  504: 'TIMEOUT',\\n  529: 'OVERLOADED',\\n};\\n\\nexport function mapBackendErrorCode(code?: string): AppErrorCode {\\n  if (typeof code !== 'string') return 'UNKNOWN';\\n  return CODE_SIGNALS[code.trim().toUpperCase()] ?? 'UNKNOWN';\\n}\\n\\n/**\\n * Last-resort classification from the untranslated technical message.\\n * Only reachable when no structured signal identified a class.\\n */\\nfunction classifyMessage(message: string): AppErrorCode {\\n  // Separator-insensitive so `invalid_api_key` / `rate_limit_exceeded` style\\n  // provider tokens match the same probes as prose.\\n  const lower = message.toLowerCase().replace(/[_-]+/g, ' ');\\n\\n  if (\\n    lower.includes('invalid ipc channel')\\n    || lower.includes('no handler registered')\\n    || lower.includes('window is not defined')\\n    || lower.includes('unsupported')\\n  ) {\\n    return 'CHANNEL_UNAVAILABLE';\\n  }\\n  if (lower.includes('conversation state') || lower.includes('roles must alternate')) {\\n    return 'CONVERSATION_STATE';\\n  }\\n  if (\\n    lower.includes('insufficient balance')\\n    || lower.includes('insufficient_quota')\\n    || lower.includes('insufficient quota')\\n    || lower.includes('quota exceeded')\\n    || lower.includes('exceeded your current quota')\\n    || lower.includes('billing')\\n    || lower.includes('credit balance')\\n    || lower.includes('payment required')\\n  ) {\\n    return 'BILLING';\\n  }\\n  if (\\n    lower.includes('invalid api key')\\n    || lower.includes('api key is invalid')\\n    || lower.includes('api key was revoked')\\n    || lower.includes('key has been revoked')\\n  ) {\\n    return 'AUTH_PERMANENT';\\n  }\\n  if (\\n    lower.includes('invalid authentication')\\n    || lower.includes('unauthorized')\\n    || lower.includes('auth failed')\\n    || lower.includes('401')\\n  ) {\\n    return 'AUTH_INVALID';\\n  }\\n  if (lower.includes('model not found') || lower.includes('unknown model')) {\\n    return 'MODEL_NOT_FOUND';\\n  }\\n  if (lower.includes('overloaded')) {\\n    return 'OVERLOADED';\\n  }\\n  if (lower.includes('timeout') || lower.includes('timed out') || lower.includes('abort')) {\\n    return 'TIMEOUT';\\n  }\\n  if (lower.includes('rate limit') || lower.includes('429')) {\\n    return 'RATE_LIMIT';\\n  }\\n  if (\\n    lower.includes('permission')\\n    || lower.includes('forbidden')\\n    || lower.includes('denied')\\n    || lower.includes('403')\\n  ) {\\n    return 'PERMISSION';\\n  }\\n  if (\\n    lower.includes('network')\\n    || lower.includes('fetch')\\n    || lower.includes('econnrefused')\\n    || lower.includes('econnreset')\\n    || lower.includes('enotfound')\\n  ) {\\n    return 'NETWORK';\\n  }\\n  if (lower.includes('gateway')) {\\n    return 'GATEWAY';\\n  }\\n  if (lower.includes('config') || lower.includes('invalid') || lower.includes('validation') || lower.includes('400')) {\\n    return 'CONFIG';\\n  }\\n\\n  return 'UNKNOWN';\\n}\\n\\nfunction readStringField(source: Record<string, unknown>, key: string): string | undefined {\\n  const value = source[key];\\n  if (typeof value === 'string' && value.trim()) return value.trim();\\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\\n  return undefined;\\n}\\n\\nfunction readStatusField(source: Record<string, unknown>, key: string): number | undefined {\\n  const value = source[key];\\n  const parsed = typeof value === 'number'\\n    ? value\\n    : (typeof value === 'string' && /^\\\\d+$/.test(value.trim()) ? Number(value.trim()) : Number.NaN);\\n  if (!Number.isFinite(parsed) || parsed < 100 || parsed > 599) return undefined;\\n  return parsed;\\n}\\n\\n/** Walks the error and its nested cause/response/data chain once. */\\nfunction collectSignalSources(err: unknown): Array<Record<string, unknown>> {\\n  const sources: Array<Record<string, unknown>> = [];\\n  const seen = new Set<unknown>();\\n  const visit = (value: unknown): void => {\\n    if (!value || typeof value !== 'object' || seen.has(value)) return;\\n    seen.add(value);\\n    const record = value as Record<string, unknown>;\\n    sources.push(record);\\n    visit(record.cause);\\n    visit(record.error);\\n    visit(record.response);\\n    visit(record.data);\\n  };\\n  visit(err);\\n  return sources;\\n}\\n\\n/**\\n * Reads structured signals, most explicit source first: caller-supplied\\n * `details` (host-api envelopes, store context) then the throwing object and\\n * its nested cause/response chain.\\n */\\nexport function readErrorSignals(err: unknown, details?: Record<string, unknown>): ErrorSignals {\\n  const sources = [...(details ? [details] : []), ...collectSignalSources(err)];\\n  const signals: ErrorSignals = {};\\n  for (const source of sources) {\\n    signals.code ??= readStringField(source, 'code')\\n      ?? readStringField(source, 'errorCode')\\n      ?? readStringField(source, 'reasonCode');\\n    signals.status ??= readStatusField(source, 'status')\\n      ?? readStatusField(source, 'statusCode')\\n      ?? readStatusField(source, 'httpStatus');\\n    signals.reason ??= readStringField(source, 'reason')\\n      ?? readStringField(source, 'type')\\n      ?? readStringField(source, 'errorType');\\n  }\\n  return signals;\\n}\\n\\nfunction classifySignals(signals: ErrorSignals): AppErrorCode | undefined {\\n  for (const token of [signals.code, signals.reason]) {\\n    if (!token) continue;\\n    const mapped = mapBackendErrorCode(token);\\n    if (mapped !== 'UNKNOWN') return mapped;\\n  }\\n  return signals.status !== undefined ? STATUS_SIGNALS[signals.status] : undefined;\\n}\\n\\nfunction readErrorMessage(err: unknown): string {\\n  if (err instanceof Error) return err.message;\\n  if (err && typeof err === 'object') {\\n    return readErrorMessage(err as Record<string, unknown>);\\n  }\\n  return err === undefined || err === null ? '' : String(err);\\n}\\n\\nexport function normalizeAppError(err: unknown, details?: Record<string, unknown>): AppError {\\n  if (err instanceof AppError) {\\n    const requestId = err.requestId\\n      ?? readStringField(err.details ?? {}, 'requestId');\\n    return new AppError(\\n      err.code,\\n      err.message,\\n      err.cause ?? err,\\n      { ...(err.details ?? {}), ...(details ?? {}) },\\n      requestId,\\n    );\\n  }\\n\\n  const message = readErrorMessage(err);\\n  const signals = readErrorSignals(err, details);\\n  // Structured signals win. Only their absence lets the untranslated technical\\n  // message (or a structured `reason` string) decide the class.\\n  const code = classifySignals(signals)\\n    ?? classifyMessage([signals.reason ?? '', message].join(' ').trim());\\n  return new AppError(\\n    code,\\n    message,\\n    err,\\n    details,\\n    readStringField(details ?? {}, 'requestId'),\\n  );\\n}\\n\"},{\"path\":\"harness/specs/tasks/harness-gap-error-recovery-next-action.md\",\"content\":\"# G01 — Stable error recovery and bounded next actions\\n\\n## Contract\\n\\nEvery `AppErrorCode` has exactly one stable entry in `APP_ERROR_RECOVERY`. Each entry declares:\\n\\n- `retryable`: whether repeating the same operation is a valid automatic recovery;\\n- `scope`: `self`, `user`, or `support`;\\n- optional `action`: a declarative next action.\\n\\nOnly self-recovery classes are retryable. Their action is exactly `{ kind: 'retry' }`. Every non-retryable class requires user or support involvement and therefore never has a `retry` action. `UNKNOWN` has no action because no safe repair can be inferred; the original error must be exposed to the user.\\n\\nThe action vocabulary is closed to `retry`, `reauthenticate`, `reconfigure`, `open-settings`, and `contact-support`. Actions contain only `kind` and, where required by the verb, a `target` selected from a fixed allow-list. They never contain a command, script, shell fragment, executable, argv, path, or provider-specific instruction.\\n\\n## Implementation invariants\\n\\n1. `APP_ERROR_CODES` and `APP_ERROR_RECOVERY` are checked from the same `AppErrorCode` type.\\n2. `AppError.retryable` and `AppError.nextAction` are derived from the stable recovery table.\\n3. `normalizeAppError` continues to return the existing unified `AppError` type and envelope; no parallel error model is introduced.\\n4. `UNKNOWN` normalizes to `{ retryable: false }` with `nextAction` absent.\\n5. Action targets are bounded and authorization-oriented; consumers select the host UI based on the verb and target.\\n\\n## Validation\\n\\nThe directed error-model tests must verify exhaustive table coverage, exact retry semantics, the closed action vocabulary and key set, absence of executable fields, and `UNKNOWN` behavior. Existing unified-envelope and error-governance checks must remain green.\\n\"},{\"path\":\"docs/dev/harness-gap-closure/g01-error-recovery-next-action.md\",\"content\":\"# G01 closure — error recovery next actions\\n\\nThe unified `AppError` model now derives recovery metadata from a stable, exhaustive policy table.\\n\\n## Recovery policy\\n\\n| Code | Retryable | Scope | Next action |\\n| --- | --- | --- | --- |\\n| `AUTH_INVALID` | no | user | reauthenticate authentication |\\n| `AUTH_PERMANENT` | no | user | reconfigure credentials |\\n| `TIMEOUT` | yes | self | retry |\\n| `RATE_LIMIT` | yes | self | retry |\\n| `PERMISSION` | no | support | contact-support permission |\\n| `CHANNEL_UNAVAILABLE` | no | support | contact-support channel |\\n| `CONVERSATION_STATE` | no | user | reconfigure conversation |\\n| `NETWORK` | yes | self | retry |\\n| `CONFIG` | no | user | reconfigure configuration |\\n| `GATEWAY` | yes | self | retry |\\n| `BILLING` | no | user | open-settings billing |\\n| `OVERLOADED` | yes | self | retry |\\n| `MODEL_NOT_FOUND` | no | user | reconfigure model |\\n| `UNKNOWN` | no | support | none |\\n\\n`retryable` means the host may safely repeat the same operation. It does not authorize arbitrary commands. Non-retryable failures are surfaced as user-action-required and provide one of the fixed declarative actions above.\\n\\n`UNKNOWN` deliberately has no `nextAction`. It must be rendered with the original technical error so support and diagnostics can identify the failure; the system must not manufacture a repair for an unclassified condition.\\n\\n## Safety and compatibility\\n\\nThe action schema permits only `kind` and an allow-listed `target`. It has no command, script, shell, exec, argv, executable, or free-form instruction field. This keeps recovery decisions declarative and prevents provider messages from crossing an execution boundary.\\n\\nRecovery metadata is part of the existing `AppError` type and is populated by `normalizeAppError`. The existing `HostResponse`/`AppError` envelope remains the sole error governance path.\\n\"}]}",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_29e22280a74ac8225e4da88eff7bab7f",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "output_text": "{\"edits\":[{\"path\":\"src/lib/error-model.ts\",\"content\":\"export type AppErrorCode =\\n  | 'AUTH_INVALID'\\n  | 'AUTH_PERMANENT'\\n  | 'TIMEOUT'\\n  | 'RATE_LIMIT'\\n  | 'PERMISSION'\\n  | 'CHANNEL_UNAVAILABLE'\\n  | 'CONVERSATION_STATE'\\n  | 'NETWORK'\\n  | 'CONFIG'\\n  | 'GATEWAY'\\n  | 'BILLING'\\n  | 'OVERLOADED'\\n  | 'MODEL_NOT_FOUND'\\n  | 'UNKNOWN';\\n\\n/**\\n * Every class the unified exit can render. Kept as a runtime list so copy,\\n * retry and locale coverage can be audited exhaustively instead of by memory.\\n */\\nexport const APP_ERROR_CODES = [\\n  'AUTH_INVALID',\\n  'AUTH_PERMANENT',\\n  'TIMEOUT',\\n  'RATE_LIMIT',\\n  'PERMISSION',\\n  'CHANNEL_UNAVAILABLE',\\n  'CONVERSATION_STATE',\\n  'NETWORK',\\n  'CONFIG',\\n  'GATEWAY',\\n  'BILLING',\\n  'OVERLOADED',\\n  'MODEL_NOT_FOUND',\\n  'UNKNOWN',\\n] as const satisfies readonly AppErrorCode[];\\n\\n/** Who is expected to perform the recovery action. */\\nexport type ErrorRecoveryScope = 'self' | 'user' | 'support';\\n\\n/** Targets are deliberately closed and bounded; they are not commands. */\\nexport type ErrorRecoveryTarget =\\n  | 'authentication'\\n  | 'billing'\\n  | 'channel'\\n  | 'configuration'\\n  | 'conversation'\\n  | 'credentials'\\n  | 'model'\\n  | 'permission';\\n\\n/** Fixed, non-executable recovery verbs understood by the host and UI. */\\nexport type ErrorNextAction =\\n  | { kind: 'retry' }\\n  | { kind: 'reauthenticate'; target: 'authentication' }\\n  | { kind: 'reconfigure'; target: 'configuration' | 'credentials' | 'conversation' | 'model' }\\n  | { kind: 'open-settings'; target: 'billing' | 'configuration' }\\n  | { kind: 'contact-support'; target: 'billing' | 'channel' | 'permission' };\\n\\nexport type ErrorRecovery = {\\n  retryable: boolean;\\n  scope: ErrorRecoveryScope;\\n  action?: ErrorNextAction;\\n};\\n\\n/**\\n * Stable recovery policy for every error class. Only failures that can be\\n * safely recovered by repeating the same operation are retryable. The action\\n * vocabulary and target allow-list intentionally contain no executable data.\\n */\\nexport const APP_ERROR_RECOVERY = {\\n  AUTH_INVALID: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'reauthenticate', target: 'authentication' },\\n  },\\n  AUTH_PERMANENT: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'reconfigure', target: 'credentials' },\\n  },\\n  TIMEOUT: {\\n    retryable: true,\\n    scope: 'self',\\n    action: { kind: 'retry' },\\n  },\\n  RATE_LIMIT: {\\n    retryable: true,\\n    scope: 'self',\\n    action: { kind: 'retry' },\\n  },\\n  PERMISSION: {\\n    retryable: false,\\n    scope: 'support',\\n    action: { kind: 'contact-support', target: 'permission' },\\n  },\\n  CHANNEL_UNAVAILABLE: {\\n    retryable: false,\\n    scope: 'support',\\n    action: { kind: 'contact-support', target: 'channel' },\\n  },\\n  CONVERSATION_STATE: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'reconfigure', target: 'conversation' },\\n  },\\n  NETWORK: {\\n    retryable: true,\\n    scope: 'self',\\n    action: { kind: 'retry' },\\n  },\\n  CONFIG: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'reconfigure', target: 'configuration' },\\n  },\\n  GATEWAY: {\\n    retryable: true,\\n    scope: 'self',\\n    action: { kind: 'retry' },\\n  },\\n  BILLING: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'open-settings', target: 'billing' },\\n  },\\n  OVERLOADED: {\\n    retryable: true,\\n    scope: 'self',\\n    action: { kind: 'retry' },\\n  },\\n  MODEL_NOT_FOUND: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'reconfigure', target: 'model' },\\n  },\\n  UNKNOWN: {\\n    retryable: false,\\n    scope: 'support',\\n  },\\n} as const satisfies Record<AppErrorCode, ErrorRecovery>;\\n\\nexport class AppError extends Error {\\n  code: AppErrorCode;\\n  cause?: unknown;\\n  details?: Record<string, unknown>;\\n  /** Renderer-side correlation id echoed by the Main host dispatcher. */\\n  requestId?: string;\\n  readonly retryable: boolean;\\n  readonly nextAction?: ErrorNextAction;\\n\\n  constructor(\\n    code: AppErrorCode,\\n    message: string,\\n    cause?: unknown,\\n    details?: Record<string, unknown>,\\n    requestId?: string,\\n  ) {\\n    super(message);\\n    this.name = 'AppError';\\n    this.code = code;\\n    this.cause = cause;\\n    this.details = details;\\n    this.requestId = requestId;\\n    const recovery = APP_ERROR_RECOVERY[code];\\n    this.retryable = recovery.retryable;\\n    this.nextAction = recovery.action;\\n  }\\n}\\n\\n/**\\n * Structured facts read off the thrown value and its cause/response chain.\\n *\\n * Classification reads these first; it only falls back to the raw technical\\n * message when none of them identify a class. A user-facing string that has\\n * already been translated is never a classification input (issue #120), so\\n * changing the display language can never change the class.\\n */\\nexport type ErrorSignals = {\\n  code?: string;\\n  status?: number;\\n  reason?: string;\\n};\\n\\n/**\\n * Provider `code`/`reason`/`type` tokens (normalized to upper case) mapped to a\\n * class. One table serves both structured fields so the two can never drift.\\n */\\nconst CODE_SIGNALS: Record<string, AppErrorCode> = {\\n  TIMEOUT: 'TIMEOUT',\\n  REQUEST_TIMEOUT: 'TIMEOUT',\\n  PERMISSION: 'PERMISSION',\\n  PERMISSION_ERROR: 'PERMISSION',\\n  FORBIDDEN: 'PERMISSION',\\n  PERMISSION_DENIED: 'PERMISSION',\\n  GATEWAY: 'GATEWAY',\\n  VALIDATION: 'CONFIG',\\n  INVALID_REQUEST: 'CONFIG',\\n  INVALID_REQUEST_ERROR: 'CONFIG',\\n  UNSUPPORTED: 'CHANNEL_UNAVAILABLE',\\n  CHANNEL_UNAVAILABLE: 'CHANNEL_UNAVAILABLE',\\n  CONVERSATION_STATE: 'CONVERSATION_STATE',\\n  INVALID_CONVERSATION_STATE: 'CONVERSATION_STATE',\\n  NETWORK: 'NETWORK',\\n  CONNECTION_ERROR: 'NETWORK',\\n  AUTH_INVALID: 'AUTH_INVALID',\\n  UNAUTHORIZED: 'AUTH_INVALID',\\n  AUTH_EXPIRED: 'AUTH_INVALID',\\n  AUTHENTICATION_ERROR: 'AUTH_INVALID',\\n  AUTH_PERMANENT: 'AUTH_PERMANENT',\\n  INVALID_API_KEY: 'AUTH_PERMANENT',\\n  API_KEY_INVALID: 'AUTH_PERMANENT',\\n  KEY_REVOKED: 'AUTH_PERMANENT',\\n  RATE_LIMIT: 'RATE_LIMIT',\\n  RATE_LIMITED: 'RATE_LIMIT',\\n  RATE_LIMIT_EXCEEDED: 'RATE_LIMIT',\\n  TOO_MANY_REQUESTS: 'RATE_LIMIT',\\n  BILLING: 'BILLING',\\n  PAYMENT_REQUIRED: 'BILLING',\\n  INSUFFICIENT_BALANCE: 'BILLING',\\n  INSUFFICIENT_QUOTA: 'BILLING',\\n  QUOTA_EXCEEDED: 'BILLING',\\n  BILLING_HARD_LIMIT_REACHED: 'BILLING',\\n  OVERLOADED: 'OVERLOADED',\\n  OVERLOADED_ERROR: 'OVERLOADED',\\n  MODEL_OVERLOADED: 'OVERLOADED',\\n  SERVER_OVERLOADED: 'OVERLOADED',\\n  MODEL_NOT_FOUND: 'MODEL_NOT_FOUND',\\n  UNKNOWN_MODEL: 'MODEL_NOT_FOUND',\\n};\\n\\nconst STATUS_SIGNALS: Record<number, AppErrorCode> = {\\n  401: 'AUTH_INVALID',\\n  402: 'BILLING',\\n  403: 'PERMISSION',\\n  408: 'TIMEOUT',\\n  429: 'RATE_LIMIT',\\n  503: 'OVERLOADED',\\n  504: 'TIMEOUT',\\n  529: 'OVERLOADED',\\n};\\n\\nexport function mapBackendErrorCode(code?: string): AppErrorCode {\\n  if (typeof code !== 'string') return 'UNKNOWN';\\n  return CODE_SIGNALS[code.trim().toUpperCase()] ?? 'UNKNOWN';\\n}\\n\\n/**\\n * Last-resort classification from the untranslated technical message.\\n * Only reachable when no structured signal identified a class.\\n */\\nfunction classifyMessage(message: string): AppErrorCode {\\n  // Separator-insensitive so `invalid_api_key` / `rate_limit_exceeded` style\\n  // provider tokens match the same probes as prose.\\n  const lower = message.toLowerCase().replace(/[_-]+/g, ' ');\\n\\n  if (\\n    lower.includes('invalid ipc channel')\\n    || lower.includes('no handler registered')\\n    || lower.includes('window is not defined')\\n    || lower.includes('unsupported')\\n  ) {\\n    return 'CHANNEL_UNAVAILABLE';\\n  }\\n  if (lower.includes('conversation state') || lower.includes('roles must alternate')) {\\n    return 'CONVERSATION_STATE';\\n  }\\n  if (\\n    lower.includes('insufficient balance')\\n    || lower.includes('insufficient_quota')\\n    || lower.includes('insufficient quota')\\n    || lower.includes('quota exceeded')\\n    || lower.includes('exceeded your current quota')\\n    || lower.includes('billing')\\n    || lower.includes('credit balance')\\n    || lower.includes('payment required')\\n  ) {\\n    return 'BILLING';\\n  }\\n  if (\\n    lower.includes('invalid api key')\\n    || lower.includes('api key is invalid')\\n    || lower.includes('api key was revoked')\\n    || lower.includes('key has been revoked')\\n  ) {\\n    return 'AUTH_PERMANENT';\\n  }\\n  if (\\n    lower.includes('invalid authentication')\\n    || lower.includes('unauthorized')\\n    || lower.includes('auth failed')\\n    || lower.includes('401')\\n  ) {\\n    return 'AUTH_INVALID';\\n  }\\n  if (lower.includes('model not found') || lower.includes('unknown model')) {\\n    return 'MODEL_NOT_FOUND';\\n  }\\n  if (lower.includes('overloaded')) {\\n    return 'OVERLOADED';\\n  }\\n  if (lower.includes('timeout') || lower.includes('timed out') || lower.includes('abort')) {\\n    return 'TIMEOUT';\\n  }\\n  if (lower.includes('rate limit') || lower.includes('429')) {\\n    return 'RATE_LIMIT';\\n  }\\n  if (\\n    lower.includes('permission')\\n    || lower.includes('forbidden')\\n    || lower.includes('denied')\\n    || lower.includes('403')\\n  ) {\\n    return 'PERMISSION';\\n  }\\n  if (\\n    lower.includes('network')\\n    || lower.includes('fetch')\\n    || lower.includes('econnrefused')\\n    || lower.includes('econnreset')\\n    || lower.includes('enotfound')\\n  ) {\\n    return 'NETWORK';\\n  }\\n  if (lower.includes('gateway')) {\\n    return 'GATEWAY';\\n  }\\n  if (lower.includes('config') || lower.includes('invalid') || lower.includes('validation') || lower.includes('400')) {\\n    return 'CONFIG';\\n  }\\n\\n  return 'UNKNOWN';\\n}\\n\\nfunction readStringField(source: Record<string, unknown>, key: string): string | undefined {\\n  const value = source[key];\\n  if (typeof value === 'string' && value.trim()) return value.trim();\\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\\n  return undefined;\\n}\\n\\nfunction readStatusField(source: Record<string, unknown>, key: string): number | undefined {\\n  const value = source[key];\\n  const parsed = typeof value === 'number'\\n    ? value\\n    : (typeof value === 'string' && /^\\\\d+$/.test(value.trim()) ? Number(value.trim()) : Number.NaN);\\n  if (!Number.isFinite(parsed) || parsed < 100 || parsed > 599) return undefined;\\n  return parsed;\\n}\\n\\n/** Walks the error and its nested cause/response/data chain once. */\\nfunction collectSignalSources(err: unknown): Array<Record<string, unknown>> {\\n  const sources: Array<Record<string, unknown>> = [];\\n  const seen = new Set<unknown>();\\n  const visit = (value: unknown): void => {\\n    if (!value || typeof value !== 'object' || seen.has(value)) return;\\n    seen.add(value);\\n    const record = value as Record<string, unknown>;\\n    sources.push(record);\\n    visit(record.cause);\\n    visit(record.error);\\n    visit(record.response);\\n    visit(record.data);\\n  };\\n  visit(err);\\n  return sources;\\n}\\n\\n/**\\n * Reads structured signals, most explicit source first: caller-supplied\\n * `details` (host-api envelopes, store context) then the throwing object and\\n * its nested cause/response chain.\\n */\\nexport function readErrorSignals(err: unknown, details?: Record<string, unknown>): ErrorSignals {\\n  const sources = [...(details ? [details] : []), ...collectSignalSources(err)];\\n  const signals: ErrorSignals = {};\\n  for (const source of sources) {\\n    signals.code ??= readStringField(source, 'code')\\n      ?? readStringField(source, 'errorCode')\\n      ?? readStringField(source, 'reasonCode');\\n    signals.status ??= readStatusField(source, 'status')\\n      ?? readStatusField(source, 'statusCode')\\n      ?? readStatusField(source, 'httpStatus');\\n    signals.reason ??= readStringField(source, 'reason')\\n      ?? readStringField(source, 'type')\\n      ?? readStringField(source, 'errorType');\\n  }\\n  return signals;\\n}\\n\\nfunction classifySignals(signals: ErrorSignals): AppErrorCode | undefined {\\n  for (const token of [signals.code, signals.reason]) {\\n    if (!token) continue;\\n    const mapped = mapBackendErrorCode(token);\\n    if (mapped !== 'UNKNOWN') return mapped;\\n  }\\n  return signals.status !== undefined ? STATUS_SIGNALS[signals.status] : undefined;\\n}\\n\\nfunction readErrorMessage(err: unknown): string {\\n  if (err instanceof Error) return err.message;\\n  if (err && typeof err === 'object') {\\n    return readErrorMessage(err as Record<string, unknown>);\\n  }\\n  return err === undefined || err === null ? '' : String(err);\\n}\\n\\nexport function normalizeAppError(err: unknown, details?: Record<string, unknown>): AppError {\\n  if (err instanceof AppError) {\\n    const requestId = err.requestId\\n      ?? readStringField(err.details ?? {}, 'requestId');\\n    return new AppError(\\n      err.code,\\n      err.message,\\n      err.cause ?? err,\\n      { ...(err.details ?? {}), ...(details ?? {}) },\\n      requestId,\\n    );\\n  }\\n\\n  const message = readErrorMessage(err);\\n  const signals = readErrorSignals(err, details);\\n  // Structured signals win. Only their absence lets the untranslated technical\\n  // message (or a structured `reason` string) decide the class.\\n  const code = classifySignals(signals)\\n    ?? classifyMessage([signals.reason ?? '', message].join(' ').trim());\\n  return new AppError(\\n    code,\\n    message,\\n    err,\\n    details,\\n    readStringField(details ?? {}, 'requestId'),\\n  );\\n}\\n\"},{\"path\":\"harness/specs/tasks/harness-gap-error-recovery-next-action.md\",\"content\":\"# G01 — Stable error recovery and bounded next actions\\n\\n## Contract\\n\\nEvery `AppErrorCode` has exactly one stable entry in `APP_ERROR_RECOVERY`. Each entry declares:\\n\\n- `retryable`: whether repeating the same operation is a valid automatic recovery;\\n- `scope`: `self`, `user`, or `support`;\\n- optional `action`: a declarative next action.\\n\\nOnly self-recovery classes are retryable. Their action is exactly `{ kind: 'retry' }`. Every non-retryable class requires user or support involvement and therefore never has a `retry` action. `UNKNOWN` has no action because no safe repair can be inferred; the original error must be exposed to the user.\\n\\nThe action vocabulary is closed to `retry`, `reauthenticate`, `reconfigure`, `open-settings`, and `contact-support`. Actions contain only `kind` and, where required by the verb, a `target` selected from a fixed allow-list. They never contain a command, script, shell fragment, executable, argv, path, or provider-specific instruction.\\n\\n## Implementation invariants\\n\\n1. `APP_ERROR_CODES` and `APP_ERROR_RECOVERY` are checked from the same `AppErrorCode` type.\\n2. `AppError.retryable` and `AppError.nextAction` are derived from the stable recovery table.\\n3. `normalizeAppError` continues to return the existing unified `AppError` type and envelope; no parallel error model is introduced.\\n4. `UNKNOWN` normalizes to `{ retryable: false }` with `nextAction` absent.\\n5. Action targets are bounded and authorization-oriented; consumers select the host UI based on the verb and target.\\n\\n## Validation\\n\\nThe directed error-model tests must verify exhaustive table coverage, exact retry semantics, the closed action vocabulary and key set, absence of executable fields, and `UNKNOWN` behavior. Existing unified-envelope and error-governance checks must remain green.\\n\"},{\"path\":\"docs/dev/harness-gap-closure/g01-error-recovery-next-action.md\",\"content\":\"# G01 closure — error recovery next actions\\n\\nThe unified `AppError` model now derives recovery metadata from a stable, exhaustive policy table.\\n\\n## Recovery policy\\n\\n| Code | Retryable | Scope | Next action |\\n| --- | --- | --- | --- |\\n| `AUTH_INVALID` | no | user | reauthenticate authentication |\\n| `AUTH_PERMANENT` | no | user | reconfigure credentials |\\n| `TIMEOUT` | yes | self | retry |\\n| `RATE_LIMIT` | yes | self | retry |\\n| `PERMISSION` | no | support | contact-support permission |\\n| `CHANNEL_UNAVAILABLE` | no | support | contact-support channel |\\n| `CONVERSATION_STATE` | no | user | reconfigure conversation |\\n| `NETWORK` | yes | self | retry |\\n| `CONFIG` | no | user | reconfigure configuration |\\n| `GATEWAY` | yes | self | retry |\\n| `BILLING` | no | user | open-settings billing |\\n| `OVERLOADED` | yes | self | retry |\\n| `MODEL_NOT_FOUND` | no | user | reconfigure model |\\n| `UNKNOWN` | no | support | none |\\n\\n`retryable` means the host may safely repeat the same operation. It does not authorize arbitrary commands. Non-retryable failures are surfaced as user-action-required and provide one of the fixed declarative actions above.\\n\\n`UNKNOWN` deliberately has no `nextAction`. It must be rendered with the original technical error so support and diagnostics can identify the failure; the system must not manufacture a repair for an unclassified condition.\\n\\n## Safety and compatibility\\n\\nThe action schema permits only `kind` and an allow-listed `target`. It has no command, script, shell, exec, argv, executable, or free-form instruction field. This keeps recovery decisions declarative and prevents provider messages from crossing an execution boundary.\\n\\nRecovery metadata is part of the existing `AppError` type and is populated by `normalizeAppError`. The existing `HostResponse`/`AppError` envelope remains the sole error governance path.\\n\"}]}",
+        "parallel_tool_calls": true,
+        "previous_response_id": null,
+        "reasoning": {
+          "effort": "low",
+          "summary": null
+        },
+        "status": "completed",
+        "store": false,
+        "temperature": 1,
+        "text": {
+          "format": {
+            "name": "rsi_coding_edits",
+            "schema": {
+              "additionalProperties": false,
+              "properties": {
+                "edits": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "content": {
+                        "type": "string"
+                      },
+                      "path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path",
+                      "content"
+                    ],
+                    "type": "object"
+                  },
+                  "maxItems": 32,
+                  "type": "array"
+                }
+              },
+              "required": [
+                "edits"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "json_schema"
+          }
+        },
+        "tool_choice": "auto",
+        "tools": [],
+        "top_logprobs": 0,
+        "top_p": 1,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 3754,
+          "input_tokens_details": {
+            "cached_tokens": 3753
+          },
+          "output_tokens": 5393,
+          "output_tokens_details": {
+            "reasoning_tokens": 604
+          },
+          "total_tokens": 9147
+        },
+        "user": null
+      },
+      "parsedResponse": {
+        "id": "01a1b0d1453d78229d600c42583c3522",
+        "model": "space-bunny",
+        "status": "completed",
+        "text": "{\"edits\":[{\"path\":\"src/lib/error-model.ts\",\"content\":\"export type AppErrorCode =\\n  | 'AUTH_INVALID'\\n  | 'AUTH_PERMANENT'\\n  | 'TIMEOUT'\\n  | 'RATE_LIMIT'\\n  | 'PERMISSION'\\n  | 'CHANNEL_UNAVAILABLE'\\n  | 'CONVERSATION_STATE'\\n  | 'NETWORK'\\n  | 'CONFIG'\\n  | 'GATEWAY'\\n  | 'BILLING'\\n  | 'OVERLOADED'\\n  | 'MODEL_NOT_FOUND'\\n  | 'UNKNOWN';\\n\\n/**\\n * Every class the unified exit can render. Kept as a runtime list so copy,\\n * retry and locale coverage can be audited exhaustively instead of by memory.\\n */\\nexport const APP_ERROR_CODES = [\\n  'AUTH_INVALID',\\n  'AUTH_PERMANENT',\\n  'TIMEOUT',\\n  'RATE_LIMIT',\\n  'PERMISSION',\\n  'CHANNEL_UNAVAILABLE',\\n  'CONVERSATION_STATE',\\n  'NETWORK',\\n  'CONFIG',\\n  'GATEWAY',\\n  'BILLING',\\n  'OVERLOADED',\\n  'MODEL_NOT_FOUND',\\n  'UNKNOWN',\\n] as const satisfies readonly AppErrorCode[];\\n\\n/** Who is expected to perform the recovery action. */\\nexport type ErrorRecoveryScope = 'self' | 'user' | 'support';\\n\\n/** Targets are deliberately closed and bounded; they are not commands. */\\nexport type ErrorRecoveryTarget =\\n  | 'authentication'\\n  | 'billing'\\n  | 'channel'\\n  | 'configuration'\\n  | 'conversation'\\n  | 'credentials'\\n  | 'model'\\n  | 'permission';\\n\\n/** Fixed, non-executable recovery verbs understood by the host and UI. */\\nexport type ErrorNextAction =\\n  | { kind: 'retry' }\\n  | { kind: 'reauthenticate'; target: 'authentication' }\\n  | { kind: 'reconfigure'; target: 'configuration' | 'credentials' | 'conversation' | 'model' }\\n  | { kind: 'open-settings'; target: 'billing' | 'configuration' }\\n  | { kind: 'contact-support'; target: 'billing' | 'channel' | 'permission' };\\n\\nexport type ErrorRecovery = {\\n  retryable: boolean;\\n  scope: ErrorRecoveryScope;\\n  action?: ErrorNextAction;\\n};\\n\\n/**\\n * Stable recovery policy for every error class. Only failures that can be\\n * safely recovered by repeating the same operation are retryable. The action\\n * vocabulary and target allow-list intentionally contain no executable data.\\n */\\nexport const APP_ERROR_RECOVERY = {\\n  AUTH_INVALID: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'reauthenticate', target: 'authentication' },\\n  },\\n  AUTH_PERMANENT: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'reconfigure', target: 'credentials' },\\n  },\\n  TIMEOUT: {\\n    retryable: true,\\n    scope: 'self',\\n    action: { kind: 'retry' },\\n  },\\n  RATE_LIMIT: {\\n    retryable: true,\\n    scope: 'self',\\n    action: { kind: 'retry' },\\n  },\\n  PERMISSION: {\\n    retryable: false,\\n    scope: 'support',\\n    action: { kind: 'contact-support', target: 'permission' },\\n  },\\n  CHANNEL_UNAVAILABLE: {\\n    retryable: false,\\n    scope: 'support',\\n    action: { kind: 'contact-support', target: 'channel' },\\n  },\\n  CONVERSATION_STATE: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'reconfigure', target: 'conversation' },\\n  },\\n  NETWORK: {\\n    retryable: true,\\n    scope: 'self',\\n    action: { kind: 'retry' },\\n  },\\n  CONFIG: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'reconfigure', target: 'configuration' },\\n  },\\n  GATEWAY: {\\n    retryable: true,\\n    scope: 'self',\\n    action: { kind: 'retry' },\\n  },\\n  BILLING: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'open-settings', target: 'billing' },\\n  },\\n  OVERLOADED: {\\n    retryable: true,\\n    scope: 'self',\\n    action: { kind: 'retry' },\\n  },\\n  MODEL_NOT_FOUND: {\\n    retryable: false,\\n    scope: 'user',\\n    action: { kind: 'reconfigure', target: 'model' },\\n  },\\n  UNKNOWN: {\\n    retryable: false,\\n    scope: 'support',\\n  },\\n} as const satisfies Record<AppErrorCode, ErrorRecovery>;\\n\\nexport class AppError extends Error {\\n  code: AppErrorCode;\\n  cause?: unknown;\\n  details?: Record<string, unknown>;\\n  /** Renderer-side correlation id echoed by the Main host dispatcher. */\\n  requestId?: string;\\n  readonly retryable: boolean;\\n  readonly nextAction?: ErrorNextAction;\\n\\n  constructor(\\n    code: AppErrorCode,\\n    message: string,\\n    cause?: unknown,\\n    details?: Record<string, unknown>,\\n    requestId?: string,\\n  ) {\\n    super(message);\\n    this.name = 'AppError';\\n    this.code = code;\\n    this.cause = cause;\\n    this.details = details;\\n    this.requestId = requestId;\\n    const recovery = APP_ERROR_RECOVERY[code];\\n    this.retryable = recovery.retryable;\\n    this.nextAction = recovery.action;\\n  }\\n}\\n\\n/**\\n * Structured facts read off the thrown value and its cause/response chain.\\n *\\n * Classification reads these first; it only falls back to the raw technical\\n * message when none of them identify a class. A user-facing string that has\\n * already been translated is never a classification input (issue #120), so\\n * changing the display language can never change the class.\\n */\\nexport type ErrorSignals = {\\n  code?: string;\\n  status?: number;\\n  reason?: string;\\n};\\n\\n/**\\n * Provider `code`/`reason`/`type` tokens (normalized to upper case) mapped to a\\n * class. One table serves both structured fields so the two can never drift.\\n */\\nconst CODE_SIGNALS: Record<string, AppErrorCode> = {\\n  TIMEOUT: 'TIMEOUT',\\n  REQUEST_TIMEOUT: 'TIMEOUT',\\n  PERMISSION: 'PERMISSION',\\n  PERMISSION_ERROR: 'PERMISSION',\\n  FORBIDDEN: 'PERMISSION',\\n  PERMISSION_DENIED: 'PERMISSION',\\n  GATEWAY: 'GATEWAY',\\n  VALIDATION: 'CONFIG',\\n  INVALID_REQUEST: 'CONFIG',\\n  INVALID_REQUEST_ERROR: 'CONFIG',\\n  UNSUPPORTED: 'CHANNEL_UNAVAILABLE',\\n  CHANNEL_UNAVAILABLE: 'CHANNEL_UNAVAILABLE',\\n  CONVERSATION_STATE: 'CONVERSATION_STATE',\\n  INVALID_CONVERSATION_STATE: 'CONVERSATION_STATE',\\n  NETWORK: 'NETWORK',\\n  CONNECTION_ERROR: 'NETWORK',\\n  AUTH_INVALID: 'AUTH_INVALID',\\n  UNAUTHORIZED: 'AUTH_INVALID',\\n  AUTH_EXPIRED: 'AUTH_INVALID',\\n  AUTHENTICATION_ERROR: 'AUTH_INVALID',\\n  AUTH_PERMANENT: 'AUTH_PERMANENT',\\n  INVALID_API_KEY: 'AUTH_PERMANENT',\\n  API_KEY_INVALID: 'AUTH_PERMANENT',\\n  KEY_REVOKED: 'AUTH_PERMANENT',\\n  RATE_LIMIT: 'RATE_LIMIT',\\n  RATE_LIMITED: 'RATE_LIMIT',\\n  RATE_LIMIT_EXCEEDED: 'RATE_LIMIT',\\n  TOO_MANY_REQUESTS: 'RATE_LIMIT',\\n  BILLING: 'BILLING',\\n  PAYMENT_REQUIRED: 'BILLING',\\n  INSUFFICIENT_BALANCE: 'BILLING',\\n  INSUFFICIENT_QUOTA: 'BILLING',\\n  QUOTA_EXCEEDED: 'BILLING',\\n  BILLING_HARD_LIMIT_REACHED: 'BILLING',\\n  OVERLOADED: 'OVERLOADED',\\n  OVERLOADED_ERROR: 'OVERLOADED',\\n  MODEL_OVERLOADED: 'OVERLOADED',\\n  SERVER_OVERLOADED: 'OVERLOADED',\\n  MODEL_NOT_FOUND: 'MODEL_NOT_FOUND',\\n  UNKNOWN_MODEL: 'MODEL_NOT_FOUND',\\n};\\n\\nconst STATUS_SIGNALS: Record<number, AppErrorCode> = {\\n  401: 'AUTH_INVALID',\\n  402: 'BILLING',\\n  403: 'PERMISSION',\\n  408: 'TIMEOUT',\\n  429: 'RATE_LIMIT',\\n  503: 'OVERLOADED',\\n  504: 'TIMEOUT',\\n  529: 'OVERLOADED',\\n};\\n\\nexport function mapBackendErrorCode(code?: string): AppErrorCode {\\n  if (typeof code !== 'string') return 'UNKNOWN';\\n  return CODE_SIGNALS[code.trim().toUpperCase()] ?? 'UNKNOWN';\\n}\\n\\n/**\\n * Last-resort classification from the untranslated technical message.\\n * Only reachable when no structured signal identified a class.\\n */\\nfunction classifyMessage(message: string): AppErrorCode {\\n  // Separator-insensitive so `invalid_api_key` / `rate_limit_exceeded` style\\n  // provider tokens match the same probes as prose.\\n  const lower = message.toLowerCase().replace(/[_-]+/g, ' ');\\n\\n  if (\\n    lower.includes('invalid ipc channel')\\n    || lower.includes('no handler registered')\\n    || lower.includes('window is not defined')\\n    || lower.includes('unsupported')\\n  ) {\\n    return 'CHANNEL_UNAVAILABLE';\\n  }\\n  if (lower.includes('conversation state') || lower.includes('roles must alternate')) {\\n    return 'CONVERSATION_STATE';\\n  }\\n  if (\\n    lower.includes('insufficient balance')\\n    || lower.includes('insufficient_quota')\\n    || lower.includes('insufficient quota')\\n    || lower.includes('quota exceeded')\\n    || lower.includes('exceeded your current quota')\\n    || lower.includes('billing')\\n    || lower.includes('credit balance')\\n    || lower.includes('payment required')\\n  ) {\\n    return 'BILLING';\\n  }\\n  if (\\n    lower.includes('invalid api key')\\n    || lower.includes('api key is invalid')\\n    || lower.includes('api key was revoked')\\n    || lower.includes('key has been revoked')\\n  ) {\\n    return 'AUTH_PERMANENT';\\n  }\\n  if (\\n    lower.includes('invalid authentication')\\n    || lower.includes('unauthorized')\\n    || lower.includes('auth failed')\\n    || lower.includes('401')\\n  ) {\\n    return 'AUTH_INVALID';\\n  }\\n  if (lower.includes('model not found') || lower.includes('unknown model')) {\\n    return 'MODEL_NOT_FOUND';\\n  }\\n  if (lower.includes('overloaded')) {\\n    return 'OVERLOADED';\\n  }\\n  if (lower.includes('timeout') || lower.includes('timed out') || lower.includes('abort')) {\\n    return 'TIMEOUT';\\n  }\\n  if (lower.includes('rate limit') || lower.includes('429')) {\\n    return 'RATE_LIMIT';\\n  }\\n  if (\\n    lower.includes('permission')\\n    || lower.includes('forbidden')\\n    || lower.includes('denied')\\n    || lower.includes('403')\\n  ) {\\n    return 'PERMISSION';\\n  }\\n  if (\\n    lower.includes('network')\\n    || lower.includes('fetch')\\n    || lower.includes('econnrefused')\\n    || lower.includes('econnreset')\\n    || lower.includes('enotfound')\\n  ) {\\n    return 'NETWORK';\\n  }\\n  if (lower.includes('gateway')) {\\n    return 'GATEWAY';\\n  }\\n  if (lower.includes('config') || lower.includes('invalid') || lower.includes('validation') || lower.includes('400')) {\\n    return 'CONFIG';\\n  }\\n\\n  return 'UNKNOWN';\\n}\\n\\nfunction readStringField(source: Record<string, unknown>, key: string): string | undefined {\\n  const value = source[key];\\n  if (typeof value === 'string' && value.trim()) return value.trim();\\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\\n  return undefined;\\n}\\n\\nfunction readStatusField(source: Record<string, unknown>, key: string): number | undefined {\\n  const value = source[key];\\n  const parsed = typeof value === 'number'\\n    ? value\\n    : (typeof value === 'string' && /^\\\\d+$/.test(value.trim()) ? Number(value.trim()) : Number.NaN);\\n  if (!Number.isFinite(parsed) || parsed < 100 || parsed > 599) return undefined;\\n  return parsed;\\n}\\n\\n/** Walks the error and its nested cause/response/data chain once. */\\nfunction collectSignalSources(err: unknown): Array<Record<string, unknown>> {\\n  const sources: Array<Record<string, unknown>> = [];\\n  const seen = new Set<unknown>();\\n  const visit = (value: unknown): void => {\\n    if (!value || typeof value !== 'object' || seen.has(value)) return;\\n    seen.add(value);\\n    const record = value as Record<string, unknown>;\\n    sources.push(record);\\n    visit(record.cause);\\n    visit(record.error);\\n    visit(record.response);\\n    visit(record.data);\\n  };\\n  visit(err);\\n  return sources;\\n}\\n\\n/**\\n * Reads structured signals, most explicit source first: caller-supplied\\n * `details` (host-api envelopes, store context) then the throwing object and\\n * its nested cause/response chain.\\n */\\nexport function readErrorSignals(err: unknown, details?: Record<string, unknown>): ErrorSignals {\\n  const sources = [...(details ? [details] : []), ...collectSignalSources(err)];\\n  const signals: ErrorSignals = {};\\n  for (const source of sources) {\\n    signals.code ??= readStringField(source, 'code')\\n      ?? readStringField(source, 'errorCode')\\n      ?? readStringField(source, 'reasonCode');\\n    signals.status ??= readStatusField(source, 'status')\\n      ?? readStatusField(source, 'statusCode')\\n      ?? readStatusField(source, 'httpStatus');\\n    signals.reason ??= readStringField(source, 'reason')\\n      ?? readStringField(source, 'type')\\n      ?? readStringField(source, 'errorType');\\n  }\\n  return signals;\\n}\\n\\nfunction classifySignals(signals: ErrorSignals): AppErrorCode | undefined {\\n  for (const token of [signals.code, signals.reason]) {\\n    if (!token) continue;\\n    const mapped = mapBackendErrorCode(token);\\n    if (mapped !== 'UNKNOWN') return mapped;\\n  }\\n  return signals.status !== undefined ? STATUS_SIGNALS[signals.status] : undefined;\\n}\\n\\nfunction readErrorMessage(err: unknown): string {\\n  if (err instanceof Error) return err.message;\\n  if (err && typeof err === 'object') {\\n    return readErrorMessage(err as Record<string, unknown>);\\n  }\\n  return err === undefined || err === null ? '' : String(err);\\n}\\n\\nexport function normalizeAppError(err: unknown, details?: Record<string, unknown>): AppError {\\n  if (err instanceof AppError) {\\n    const requestId = err.requestId\\n      ?? readStringField(err.details ?? {}, 'requestId');\\n    return new AppError(\\n      err.code,\\n      err.message,\\n      err.cause ?? err,\\n      { ...(err.details ?? {}), ...(details ?? {}) },\\n      requestId,\\n    );\\n  }\\n\\n  const message = readErrorMessage(err);\\n  const signals = readErrorSignals(err, details);\\n  // Structured signals win. Only their absence lets the untranslated technical\\n  // message (or a structured `reason` string) decide the class.\\n  const code = classifySignals(signals)\\n    ?? classifyMessage([signals.reason ?? '', message].join(' ').trim());\\n  return new AppError(\\n    code,\\n    message,\\n    err,\\n    details,\\n    readStringField(details ?? {}, 'requestId'),\\n  );\\n}\\n\"},{\"path\":\"harness/specs/tasks/harness-gap-error-recovery-next-action.md\",\"content\":\"# G01 — Stable error recovery and bounded next actions\\n\\n## Contract\\n\\nEvery `AppErrorCode` has exactly one stable entry in `APP_ERROR_RECOVERY`. Each entry declares:\\n\\n- `retryable`: whether repeating the same operation is a valid automatic recovery;\\n- `scope`: `self`, `user`, or `support`;\\n- optional `action`: a declarative next action.\\n\\nOnly self-recovery classes are retryable. Their action is exactly `{ kind: 'retry' }`. Every non-retryable class requires user or support involvement and therefore never has a `retry` action. `UNKNOWN` has no action because no safe repair can be inferred; the original error must be exposed to the user.\\n\\nThe action vocabulary is closed to `retry`, `reauthenticate`, `reconfigure`, `open-settings`, and `contact-support`. Actions contain only `kind` and, where required by the verb, a `target` selected from a fixed allow-list. They never contain a command, script, shell fragment, executable, argv, path, or provider-specific instruction.\\n\\n## Implementation invariants\\n\\n1. `APP_ERROR_CODES` and `APP_ERROR_RECOVERY` are checked from the same `AppErrorCode` type.\\n2. `AppError.retryable` and `AppError.nextAction` are derived from the stable recovery table.\\n3. `normalizeAppError` continues to return the existing unified `AppError` type and envelope; no parallel error model is introduced.\\n4. `UNKNOWN` normalizes to `{ retryable: false }` with `nextAction` absent.\\n5. Action targets are bounded and authorization-oriented; consumers select the host UI based on the verb and target.\\n\\n## Validation\\n\\nThe directed error-model tests must verify exhaustive table coverage, exact retry semantics, the closed action vocabulary and key set, absence of executable fields, and `UNKNOWN` behavior. Existing unified-envelope and error-governance checks must remain green.\\n\"},{\"path\":\"docs/dev/harness-gap-closure/g01-error-recovery-next-action.md\",\"content\":\"# G01 closure — error recovery next actions\\n\\nThe unified `AppError` model now derives recovery metadata from a stable, exhaustive policy table.\\n\\n## Recovery policy\\n\\n| Code | Retryable | Scope | Next action |\\n| --- | --- | --- | --- |\\n| `AUTH_INVALID` | no | user | reauthenticate authentication |\\n| `AUTH_PERMANENT` | no | user | reconfigure credentials |\\n| `TIMEOUT` | yes | self | retry |\\n| `RATE_LIMIT` | yes | self | retry |\\n| `PERMISSION` | no | support | contact-support permission |\\n| `CHANNEL_UNAVAILABLE` | no | support | contact-support channel |\\n| `CONVERSATION_STATE` | no | user | reconfigure conversation |\\n| `NETWORK` | yes | self | retry |\\n| `CONFIG` | no | user | reconfigure configuration |\\n| `GATEWAY` | yes | self | retry |\\n| `BILLING` | no | user | open-settings billing |\\n| `OVERLOADED` | yes | self | retry |\\n| `MODEL_NOT_FOUND` | no | user | reconfigure model |\\n| `UNKNOWN` | no | support | none |\\n\\n`retryable` means the host may safely repeat the same operation. It does not authorize arbitrary commands. Non-retryable failures are surfaced as user-action-required and provide one of the fixed declarative actions above.\\n\\n`UNKNOWN` deliberately has no `nextAction`. It must be rendered with the original technical error so support and diagnostics can identify the failure; the system must not manufacture a repair for an unclassified condition.\\n\\n## Safety and compatibility\\n\\nThe action schema permits only `kind` and an allow-listed `target`. It has no command, script, shell, exec, argv, executable, or free-form instruction field. This keeps recovery decisions declarative and prevents provider messages from crossing an execution boundary.\\n\\nRecovery metadata is part of the existing `AppError` type and is populated by `normalizeAppError`. The existing `HostResponse`/`AppError` envelope remains the sole error governance path.\\n\"}]}",
+        "usage": {
+          "inputTokens": 3754,
+          "outputTokens": 5393,
+          "totalTokens": 9147
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      }
+    }
+  ],
+  "grader": {
+    "schemaVersion": "RsiBenefitGrader/v1",
+    "driven_by": "agent",
+    "actor": "codex/rsi-independent-final-state-grader",
+    "workspaceRevision": "0d72e511c865f0ab494af19a74d0f27a3fe5a8ba",
+    "baselineSetup": null,
+    "oracleDigest": "827fc79183d732e4b9d4685ad69fd56d07239528418264f4b44d7297469c7192",
+    "oracleRevision": "8972c4a76e7d4eca6e7cf62da1e2d37c80267b99",
+    "oracleTestDigests": {
+      "tests/unit/error-recovery-next-action.test.ts": "0a2c79941e0037c48327ae04c0ca632209a7dd2f13b9394c1a1ae0fea5091ec7",
+      "tests/unit/error-governance-boundary.test.ts": "a12da838c995f6f6626c83e179e15e4988d5328bf6071b597c471b89afdd6c08"
+    },
+    "oracleUnchanged": true,
+    "failureClass": "assertion",
+    "diagnostics": [],
+    "commands": [
+      "pnpm exec vitest run tests/unit/error-recovery-next-action.test.ts tests/unit/error-governance-boundary.test.ts --maxWorkers=1"
+    ],
+    "responseDigest": "d5d59b67e7b5572a295a3477b7e65644c68d9ba6283aed36c688781edfeb67f4",
+    "editsDigest": "02b370eab32ddd25b7cdf28c69ace002ee27d1c884317832ef505d1ab694f885",
+    "isolation": {
+      "hiddenOracleVisible": false,
+      "unapprovedEgress": false,
+      "candidateChangedEvaluator": false
+    },
+    "reports": [
+      {
+        "command": "pnpm exec vitest run tests/unit/error-recovery-next-action.test.ts tests/unit/error-governance-boundary.test.ts --maxWorkers=1",
+        "kind": "vitest",
+        "exitCode": 1,
+        "report": {
+          "numTotalTestSuites": 8,
+          "numPassedTestSuites": 6,
+          "numFailedTestSuites": 2,
+          "numPendingTestSuites": 0,
+          "numTotalTests": 44,
+          "numPassedTests": 39,
+          "numFailedTests": 5,
+          "numPendingTests": 0,
+          "numTodoTests": 0,
+          "snapshot": {
+            "added": 0,
+            "failure": false,
+            "filesAdded": 0,
+            "filesRemoved": 0,
+            "filesRemovedList": [],
+            "filesUnmatched": 0,
+            "filesUpdated": 0,
+            "matched": 0,
+            "total": 0,
+            "unchecked": 0,
+            "uncheckedKeysByFile": [],
+            "unmatched": 0,
+            "updated": 0,
+            "didUpdate": false
+          },
+          "startTime": 1793967900213,
+          "success": false,
+          "testResults": [
+            {
+              "assertionResults": [
+                {
+                  "ancestorTitles": [
+                    "error governance surface on the current tree"
+                  ],
+                  "fullName": "error governance surface on the current tree passes with no findings",
+                  "status": "passed",
+                  "title": "passes with no findings",
+                  "duration": 16.078199999999924,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "error governance surface on the current tree"
+                  ],
+                  "fullName": "error governance surface on the current tree keeps the flagged semantics separate in the decision record",
+                  "status": "passed",
+                  "title": "keeps the flagged semantics separate in the decision record",
+                  "duration": 0.8665000000000873,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "error governance surface on the current tree"
+                  ],
+                  "fullName": "error governance surface on the current tree reuses one envelope and the existing error types only",
+                  "status": "passed",
+                  "title": "reuses one envelope and the existing error types only",
+                  "duration": 1.0107000000000426,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "error governance surface on the current tree"
+                  ],
+                  "fullName": "error governance surface on the current tree maps every real Main-process error code, or declares the missing mapping",
+                  "status": "passed",
+                  "title": "maps every real Main-process error code, or declares the missing mapping",
+                  "duration": 0.9070999999999003,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "error governance surface on the current tree"
+                  ],
+                  "fullName": "error governance surface on the current tree declares the same waiting taxonomy as the real host-api contract unions",
+                  "status": "passed",
+                  "title": "declares the same waiting taxonomy as the real host-api contract unions",
+                  "duration": 0.8843000000001666,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "error governance surface on the current tree"
+                  ],
+                  "fullName": "error governance surface on the current tree declares every gap with an executable probe and existing evidence",
+                  "status": "passed",
+                  "title": "declares every gap with an executable probe and existing evidence",
+                  "duration": 1.0786000000000513,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "error governance surface on the current tree"
+                  ],
+                  "fullName": "error governance surface on the current tree wires the rule into the gateway-backend-communication scenario",
+                  "status": "passed",
+                  "title": "wires the rule into the gateway-backend-communication scenario",
+                  "duration": 0.6188999999999396,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "resolveWaitingDecision stays fail-closed"
+                  ],
+                  "fullName": "resolveWaitingDecision stays fail-closed holds an unrecognized approval type without approving or executing",
+                  "status": "passed",
+                  "title": "holds an unrecognized approval type without approving or executing",
+                  "duration": 0.602100000000064,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "resolveWaitingDecision stays fail-closed"
+                  ],
+                  "fullName": "resolveWaitingDecision stays fail-closed holds an unrecognized waiting status without approving or executing",
+                  "status": "passed",
+                  "title": "holds an unrecognized waiting status without approving or executing",
+                  "duration": 0.20879999999988286,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "resolveWaitingDecision stays fail-closed"
+                  ],
+                  "fullName": "resolveWaitingDecision stays fail-closed holds an empty descriptor",
+                  "status": "passed",
+                  "title": "holds an empty descriptor",
+                  "duration": 0.19209999999998217,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "resolveWaitingDecision stays fail-closed"
+                  ],
+                  "fullName": "resolveWaitingDecision stays fail-closed holds a numeric approval type",
+                  "status": "passed",
+                  "title": "holds a numeric approval type",
+                  "duration": 0.10289999999986321,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "resolveWaitingDecision stays fail-closed"
+                  ],
+                  "fullName": "resolveWaitingDecision stays fail-closed holds a null waiting status",
+                  "status": "passed",
+                  "title": "holds a null waiting status",
+                  "duration": 0.080600000000004,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "resolveWaitingDecision stays fail-closed"
+                  ],
+                  "fullName": "resolveWaitingDecision stays fail-closed holds an undefined descriptor",
+                  "status": "passed",
+                  "title": "holds an undefined descriptor",
+                  "duration": 0.08619999999996253,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "resolveWaitingDecision stays fail-closed"
+                  ],
+                  "fullName": "resolveWaitingDecision stays fail-closed holds a prototype key",
+                  "status": "passed",
+                  "title": "holds a prototype key",
+                  "duration": 0.07989999999995234,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "resolveWaitingDecision stays fail-closed"
+                  ],
+                  "fullName": "resolveWaitingDecision stays fail-closed holds an inherited member name",
+                  "status": "passed",
+                  "title": "holds an inherited member name",
+                  "duration": 0.07730000000015025,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "resolveWaitingDecision stays fail-closed"
+                  ],
+                  "fullName": "resolveWaitingDecision stays fail-closed holds a constructor key",
+                  "status": "passed",
+                  "title": "holds a constructor key",
+                  "duration": 0.09320000000002437,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "resolveWaitingDecision stays fail-closed"
+                  ],
+                  "fullName": "resolveWaitingDecision stays fail-closed processes a known approval type per its declared schema",
+                  "status": "passed",
+                  "title": "processes a known approval type per its declared schema",
+                  "duration": 0.2260999999998603,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "resolveWaitingDecision stays fail-closed"
+                  ],
+                  "fullName": "resolveWaitingDecision stays fail-closed never allows effects while the task is still waiting for approval",
+                  "status": "passed",
+                  "title": "never allows effects while the task is still waiting for approval",
+                  "duration": 0.09590000000002874,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "resolveWaitingDecision stays fail-closed"
+                  ],
+                  "fullName": "resolveWaitingDecision stays fail-closed declares autoApprove: false for every approval type",
+                  "status": "passed",
+                  "title": "declares autoApprove: false for every approval type",
+                  "duration": 0.11619999999993524,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "deliberately broken governance axes are rejected"
+                  ],
+                  "fullName": "deliberately broken governance axes are rejected rejects a missing Main-process error mapping",
+                  "status": "passed",
+                  "title": "rejects a missing Main-process error mapping",
+                  "duration": 11.323399999999992,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "deliberately broken governance axes are rejected"
+                  ],
+                  "fullName": "deliberately broken governance axes are rejected rejects a renderer class outside the closed class set",
+                  "status": "passed",
+                  "title": "rejects a renderer class outside the closed class set",
+                  "duration": 10.112100000000055,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "deliberately broken governance axes are rejected"
+                  ],
+                  "fullName": "deliberately broken governance axes are rejected rejects a surface code outside the layer closed set",
+                  "status": "passed",
+                  "title": "rejects a surface code outside the layer closed set",
+                  "duration": 9.53599999999983,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "deliberately broken governance axes are rejected"
+                  ],
+                  "fullName": "deliberately broken governance axes are rejected rejects a third envelope",
+                  "status": "passed",
+                  "title": "rejects a third envelope",
+                  "duration": 9.99409999999989,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "deliberately broken governance axes are rejected"
+                  ],
+                  "fullName": "deliberately broken governance axes are rejected rejects a second error taxonomy",
+                  "status": "passed",
+                  "title": "rejects a second error taxonomy",
+                  "duration": 10.555299999999988,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "deliberately broken governance axes are rejected"
+                  ],
+                  "fullName": "deliberately broken governance axes are rejected rejects an auto-approved waiting type",
+                  "status": "passed",
+                  "title": "rejects an auto-approved waiting type",
+                  "duration": 10.86999999999989,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "deliberately broken governance axes are rejected"
+                  ],
+                  "fullName": "deliberately broken governance axes are rejected rejects effects during a waiting status",
+                  "status": "passed",
+                  "title": "rejects effects during a waiting status",
+                  "duration": 12.86030000000028,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "deliberately broken governance axes are rejected"
+                  ],
+                  "fullName": "deliberately broken governance axes are rejected rejects a real waiting type without a declared decision",
+                  "status": "passed",
+                  "title": "rejects a real waiting type without a declared decision",
+                  "duration": 8.777800000000298,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "deliberately broken governance axes are rejected"
+                  ],
+                  "fullName": "deliberately broken governance axes are rejected rejects an invented waiting type",
+                  "status": "passed",
+                  "title": "rejects an invented waiting type",
+                  "duration": 9.534999999999854,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "deliberately broken governance axes are rejected"
+                  ],
+                  "fullName": "deliberately broken governance axes are rejected rejects a decision record that makes a human verdict a requirement",
+                  "status": "passed",
+                  "title": "rejects a decision record that makes a human verdict a requirement",
+                  "duration": 6.250100000000202,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "deliberately broken governance axes are rejected"
+                  ],
+                  "fullName": "deliberately broken governance axes are rejected rejects a decision record that claims a path which does not resolve",
+                  "status": "passed",
+                  "title": "rejects a decision record that claims a path which does not resolve",
+                  "duration": 6.287000000000262,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "deliberately broken governance axes are rejected"
+                  ],
+                  "fullName": "deliberately broken governance axes are rejected rejects a decision record that collapses the flagged semantics",
+                  "status": "passed",
+                  "title": "rejects a decision record that collapses the flagged semantics",
+                  "duration": 5.864300000000185,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "deliberately broken governance axes are rejected"
+                  ],
+                  "fullName": "deliberately broken governance axes are rejected fails closed when the rule carries no surface block",
+                  "status": "passed",
+                  "title": "fails closed when the rule carries no surface block",
+                  "duration": 7.801500000000033,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "deliberately broken governance axes are rejected"
+                  ],
+                  "fullName": "deliberately broken governance axes are rejected fails closed when the surface block is not valid JSON",
+                  "status": "passed",
+                  "title": "fails closed when the surface block is not valid JSON",
+                  "duration": 5.482199999999921,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "deliberately broken governance axes are rejected"
+                  ],
+                  "fullName": "deliberately broken governance axes are rejected fails closed when the rule is missing entirely",
+                  "status": "passed",
+                  "title": "fails closed when the rule is missing entirely",
+                  "duration": 5.789499999999862,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "human prerequisite scan"
+                  ],
+                  "fullName": "human prerequisite scan flags a requirement and ignores a negated prohibition",
+                  "status": "passed",
+                  "title": "flags a requirement and ignores a negated prohibition",
+                  "duration": 0.3895999999999731,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "error governance CLI"
+                  ],
+                  "fullName": "error governance CLI exits zero on the current tree",
+                  "status": "passed",
+                  "title": "exits zero on the current tree",
+                  "duration": 145.6572000000001,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "error governance CLI"
+                  ],
+                  "fullName": "error governance CLI exits non-zero on a deliberately broken surface fixture",
+                  "status": "passed",
+                  "title": "exits non-zero on a deliberately broken surface fixture",
+                  "duration": 145.1821,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "error governance CLI"
+                  ],
+                  "fullName": "error governance CLI exits non-zero on the missing-mapping, out-of-range and third-envelope fixtures",
+                  "status": "passed",
+                  "title": "exits non-zero on the missing-mapping, out-of-range and third-envelope fixtures",
+                  "duration": 535.5338000000002,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "error governance CLI"
+                  ],
+                  "fullName": "error governance CLI exits non-zero when the record makes a human verdict a requirement",
+                  "status": "passed",
+                  "title": "exits non-zero when the record makes a human verdict a requirement",
+                  "duration": 132.9294,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                }
+              ],
+              "startTime": 1793967902290,
+              "endTime": 1793967903404.9294,
+              "status": "passed",
+              "message": "",
+              "name": "D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0289-g01-2-sekb-shadow/workspace/tests/unit/error-governance-boundary.test.ts"
+            },
+            {
+              "assertionResults": [
+                {
+                  "ancestorTitles": [
+                    "G01 error recovery next-action"
+                  ],
+                  "fullName": "G01 error recovery next-action classifies every error code with a bounded recovery entry",
+                  "status": "failed",
+                  "title": "classifies every error code with a bounded recovery entry",
+                  "duration": 3.1920000000000073,
+                  "failureMessages": [
+                    "TypeError: Cannot read properties of undefined (reading 'AUTH_INVALID')\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0289-g01-2-sekb-shadow/workspace/tests/unit/error-recovery-next-action.test.ts:19:21\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+                  ],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "G01 error recovery next-action"
+                  ],
+                  "fullName": "G01 error recovery next-action only self-retry classes are retryable, and they carry exactly the retry action",
+                  "status": "failed",
+                  "title": "only self-retry classes are retryable, and they carry exactly the retry action",
+                  "duration": 0.376700000000028,
+                  "failureMessages": [
+                    "TypeError: Cannot read properties of undefined (reading 'AUTH_INVALID')\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0289-g01-2-sekb-shadow/workspace/tests/unit/error-recovery-next-action.test.ts:28:21\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+                  ],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "G01 error recovery next-action"
+                  ],
+                  "fullName": "G01 error recovery next-action never emits a shell command or raw script as a recovery action",
+                  "status": "failed",
+                  "title": "never emits a shell command or raw script as a recovery action",
+                  "duration": 0.2827000000000339,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_1__.recoveryActionForAppErrorCode) is not a function\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0289-g01-2-sekb-shadow/workspace/tests/unit/error-recovery-next-action.test.ts:42:22\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+                  ],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "G01 error recovery next-action"
+                  ],
+                  "fullName": "G01 error recovery next-action carries retryable + nextAction on AppError and leaves UNKNOWN without an action",
+                  "status": "failed",
+                  "title": "carries retryable + nextAction on AppError and leaves UNKNOWN without an action",
+                  "duration": 4.289199999999994,
+                  "failureMessages": [
+                    "AssertionError: expected { kind: 'contact-support', …(1) } to deeply equal { kind: 'open-settings', …(1) }\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0289-g01-2-sekb-shadow/workspace/tests/unit/error-recovery-next-action.test.ts:62:35\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+                  ],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "G01 error recovery next-action"
+                  ],
+                  "fullName": "G01 error recovery next-action is total: any AppErrorCode resolves deterministically",
+                  "status": "failed",
+                  "title": "is total: any AppErrorCode resolves deterministically",
+                  "duration": 0.24629999999996244,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_1__.recoveryActionForAppErrorCode) is not a function\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0289-g01-2-sekb-shadow/workspace/tests/unit/error-recovery-next-action.test.ts:71:21\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/tmp/rsi-completion-20261106/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+                  ],
+                  "meta": {},
+                  "tags": []
+                }
+              ],
+              "startTime": 1793967903771,
+              "endTime": 1793967903779.2893,
+              "status": "failed",
+              "message": "",
+              "name": "D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0289-g01-2-sekb-shadow/workspace/tests/unit/error-recovery-next-action.test.ts"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

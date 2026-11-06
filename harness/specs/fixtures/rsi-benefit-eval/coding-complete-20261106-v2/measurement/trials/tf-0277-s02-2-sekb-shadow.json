@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "RsiBenefitTrial/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-benefit-eval/executor",
+  "planDigest": "133d3b5ff68949682b9c402b3275fd95e232ca4ce6a497a1903deaac5ee04004",
+  "slot": {
+    "id": "tf-0277-s02-2-sekb-shadow",
+    "caseId": "tf-0277-s02",
+    "repeat": 2,
+    "arm": "sekb-shadow",
+    "caseDigest": "a38ff99b0de1f9881e170ae9ee6ad0b09e3b68ede577da2ad23ba4cf82519e25",
+    "pairSeed": 38,
+    "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+    "position": 111
+  },
+  "evidenceKind": "live-provider",
+  "request": {
+    "model": "space-bunny",
+    "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+    "input": "{\n  \"prompt\": \"S02 对既有的敏感 sink provenance 分类做执行化核对，逐 sink 记录 enforced/partial/residual，并显式列出 network-send 未接入 cross-context 闸门的残余出口；不新建第二套 provenance 引擎，不把单条路径通过或 classification-only 当成全网强制。\",\n  \"acceptanceCriteria\": [\n    \"逐 sink 记录 enforcement（narrow / source-dependent / classification-only）与 policyFile/导出符号/生产调用点/拒绝形态，来源为权威代码而非自述。\",\n    \"显式列出 network-send 未接入 provenance 闸门的残余出口（outbound-send-service / message-action-dispatch / cli-runtime outbound / sessions send-policy / auto-reply send-policy / server-broadcast），并以可执行测试钉住。\",\n    \"不把“某条路径会拒绝”或 classification-only 推导成全网强制；台账明确写出“不是全网强制”。\",\n    \"既有 drift guard 仍通过（登记点必须真实存在/被调用），新增 provenance 闸门会被反向扫描要求登记。\",\n    \"干净候选定向测试、类型、scoped lint、harness validate/dry-run 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\",\n    \"不改产品默认值/锁/approval，不新建第二套 engine；已复核 README 四语：无用户可见接口变化，故不改。\"\n  ],\n  \"targetScope\": [\n    \"docs/dev/harness-gap-closure/s02-sink-ledger.md\",\n    \"harness/specs/tasks/harness-gap-sink-ledger.md\",\n    \"harness/specs/rules/sensitive-sink-ledger-boundary.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"docs/dev/harness-gap-closure/s02-sink-ledger.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-sink-ledger.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"harness/specs/rules/sensitive-sink-ledger-boundary.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+    "store": false,
+    "stream": false,
+    "truncation": "disabled",
+    "max_output_tokens": 16000,
+    "reasoning": {
+      "effort": "low"
+    },
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "name": "rsi_coding_edits",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "edits"
+          ],
+          "properties": {
+            "edits": {
+              "type": "array",
+              "maxItems": 32,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "content"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "requestDigest": "613913695004fa9a037859eec46eeff316dc99dd770a9d2c648ecfa33f0a77cb",
+  "runtime": {
+    "flags": {
+      "enabled": true,
+      "shadowEvaluation": true,
+      "injection": false
+    },
+    "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+    "candidateDigest": "7c2408a2afc3c71ec509c11c705ba3775d427c4166aef58a0b42db1c031f54a0",
+    "injectionDigest": null,
+    "isolationId": "2bb4141c-a536-443a-8b89-0fbfd0082edf/tf-0277-s02-2-sekb-shadow",
+    "runtimeEffectMeasured": true
+  },
+  "edits": [],
+  "execution": {
+    "status": "timeout",
+    "failureClass": "infrastructure",
+    "failureCategory": "provider",
+    "attempts": 1,
+    "providerCalls": 1,
+    "wallClockMs": 240230,
+    "costUsd": null,
+    "toolEvents": [],
+    "runPosition": 111,
+    "startedAt": "2026-11-06T14:48:00.837Z",
+    "endedAt": "2026-11-06T14:52:01.067Z",
+    "measurementBasis": "live-provider",
+    "note": "Responses request timed out"
+  },
+  "rawResponse": null,
+  "providerAttempts": [
+    {
+      "endpoint": "http://127.0.0.1:3065/v1/responses",
+      "request": {
+        "model": "space-bunny",
+        "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+        "input": "{\n  \"prompt\": \"S02 对既有的敏感 sink provenance 分类做执行化核对，逐 sink 记录 enforced/partial/residual，并显式列出 network-send 未接入 cross-context 闸门的残余出口；不新建第二套 provenance 引擎，不把单条路径通过或 classification-only 当成全网强制。\",\n  \"acceptanceCriteria\": [\n    \"逐 sink 记录 enforcement（narrow / source-dependent / classification-only）与 policyFile/导出符号/生产调用点/拒绝形态，来源为权威代码而非自述。\",\n    \"显式列出 network-send 未接入 provenance 闸门的残余出口（outbound-send-service / message-action-dispatch / cli-runtime outbound / sessions send-policy / auto-reply send-policy / server-broadcast），并以可执行测试钉住。\",\n    \"不把“某条路径会拒绝”或 classification-only 推导成全网强制；台账明确写出“不是全网强制”。\",\n    \"既有 drift guard 仍通过（登记点必须真实存在/被调用），新增 provenance 闸门会被反向扫描要求登记。\",\n    \"干净候选定向测试、类型、scoped lint、harness validate/dry-run 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\",\n    \"不改产品默认值/锁/approval，不新建第二套 engine；已复核 README 四语：无用户可见接口变化，故不改。\"\n  ],\n  \"targetScope\": [\n    \"docs/dev/harness-gap-closure/s02-sink-ledger.md\",\n    \"harness/specs/tasks/harness-gap-sink-ledger.md\",\n    \"harness/specs/rules/sensitive-sink-ledger-boundary.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"docs/dev/harness-gap-closure/s02-sink-ledger.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-sink-ledger.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"harness/specs/rules/sensitive-sink-ledger-boundary.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+        "store": false,
+        "stream": false,
+        "truncation": "disabled",
+        "max_output_tokens": 16000,
+        "reasoning": {
+          "effort": "low"
+        },
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "rsi_coding_edits",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "edits"
+              ],
+              "properties": {
+                "edits": {
+                  "type": "array",
+                  "maxItems": 32,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "path",
+                      "content"
+                    ],
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "content": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "rawResponse": null,
+      "parsedResponse": null
+    }
+  ],
+  "grader": null
+}
