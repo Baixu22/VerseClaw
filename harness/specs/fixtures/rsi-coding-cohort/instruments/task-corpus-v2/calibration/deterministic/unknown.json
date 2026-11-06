@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "AgentFirstCalibrationFixture/v1",
+  "driven_by": "agent",
+  "actor": "codex/tf0590-corpus-owner",
+  "graderId": "deterministic-final-state",
+  "version": "tf0590-graders/v1",
+  "expectation": "unknown",
+  "cases": [
+    {
+      "id": "unknown-no-observer",
+      "expected": "unknown",
+      "record": {
+        "producerRole": "subject-output",
+        "taskId": "tf-0274-e01",
+        "commandLine": "pnpm exec vitest run tests/unit/agent-dev-reliability-aggregation.test.ts --maxWorkers=1",
+        "taskDigest": "9edc9940d7f1fefc234e7a181f88f49c03f766088fb90e409e83bc8cf10dbe3d",
+        "sourceInputsVerified": true,
+        "testsMutated": false,
+        "exitCode": 0,
+        "timedOut": false,
+        "claims": {
+          "realHuman": false
+        },
+        "counts": {
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "total": 6
+        }
+      },
+      "stdout": "Test Files 1 passed (1)\nTests 6 passed (6)\n",
+      "stderr": ""
+    },
+    {
+      "id": "unknown-no-counts",
+      "expected": "unknown",
+      "record": {
+        "producerRole": "grader-owned-runner",
+        "taskId": "tf-0274-e01",
+        "commandLine": "pnpm exec vitest run tests/unit/agent-dev-reliability-aggregation.test.ts --maxWorkers=1",
+        "taskDigest": "9edc9940d7f1fefc234e7a181f88f49c03f766088fb90e409e83bc8cf10dbe3d",
+        "sourceInputsVerified": true,
+        "testsMutated": false,
+        "exitCode": 0,
+        "timedOut": false,
+        "claims": {
+          "realHuman": false
+        },
+        "counts": {
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "total": 6
+        }
+      },
+      "stdout": "The task succeeded",
+      "stderr": ""
+    }
+  ],
+  "claimBoundary": "Labelled grader calibration fixtures; no product trial is claimed."
+}

@@ -14,6 +14,11 @@ const readAcceptance = () => JSON.parse(readFileSync(join(ROOT, PATHS.acceptance
 const codes = (result: { errors: Array<{ code: string }> }) => result.errors.map((entry) => entry.code);
 
 describe('rsi decision acceptance readback', () => {
+  it('rejects a current revalidation that loses the immutable historical acceptance identity', () => {
+    const acceptance = readAcceptance();
+    acceptance.historicalAcceptance.gitBlob = '0'.repeat(40);
+    expect(codes(validateDecisionAcceptance(acceptance, ROOT, { allowDirty: true }))).toContain('historical-acceptance-binding');
+  });
   it('rejects an emptied hash inventory or a judged source relabelled non-judged', () => {
     const missing = readAcceptance();
     missing.source.gitBlobHashes = {};

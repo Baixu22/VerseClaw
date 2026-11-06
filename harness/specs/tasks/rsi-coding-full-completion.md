@@ -75,3 +75,10 @@ their output nor evaluation feedback changes the previously frozen SEKB candidat
 The run remains source-harness evidence, not packaged desktop or OS sandbox
 acceptance. Endpoint model identity is an alias. Explicit agent actors and actual
 command exits are retained; no human identity or positive benefit is fabricated.
+
+Current maintenance snapshots live under `rsi-coding-cohort/instruments/`. The
+original decision acceptance, TF-0590 corpus and TF-0592 reservation remain byte
+identical. New snapshots revalidate source and registry bindings and replay the
+existing labelled grader/control inputs; they do not claim new model calibration
+or historical task execution. The live measurement continues to use the original
+frozen cohort plus explicit reconstruction bindings and reference-revision tests.

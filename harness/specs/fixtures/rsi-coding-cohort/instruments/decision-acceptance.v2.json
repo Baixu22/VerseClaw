@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "RsiDecisionImplementationAcceptance/v1",
+  "bindingRevision": 2,
+  "driven_by": "agent",
+  "actor": "codex/rsi-current-binding-verifier",
+  "status": "current-source-revalidation",
+  "historicalAcceptance": {
+    "path": "harness/specs/fixtures/rsi-evidence-loop/decision-implementation-validation.v1.json",
+    "gitBlob": "0e6df98846fe1641da2e9c202745398cdd05cc81"
+  },
+  "decisions": [
+    {
+      "id": "D1",
+      "choice": "C",
+      "implemented": true
+    },
+    {
+      "id": "D2",
+      "choice": "B",
+      "implemented": true
+    },
+    {
+      "id": "D3",
+      "choice": "A",
+      "implemented": true
+    },
+    {
+      "id": "D4",
+      "choice": "A",
+      "implemented": true
+    },
+    {
+      "id": "D5",
+      "choice": "A",
+      "implemented": true
+    },
+    {
+      "id": "D6",
+      "choice": "B",
+      "implemented": true
+    }
+  ],
+  "boundaries": {
+    "driven_by": "agent",
+    "realHuman": false,
+    "additionalProviderCalls": 0,
+    "completeRsiImplementation": false,
+    "liveReady": false,
+    "productApproved": false,
+    "defaultOn": false,
+    "releaseApproved": false
+  },
+  "source": {
+    "gitBlobHashes": {
+      ".gitignore": "bb6994ab0dca515a832d911e1f45391f8533fc98",
+      "README.ja-JP.md": "f0fefa3c3a3c8411fb820ad93b144eaf88ce23a7",
+      "README.md": "ae738bf177f911169cce1fd68cc1a54c2d80900a",
+      "README.zh-CN.md": "f0ab83dd208bfbd4902f96c0d7034bd8248afaed",
+      "docs/dev/rsi-capability-and-boundaries.md": "150663a86e5c872ccae838d54aae6dd6cc81959f",
+      "docs/dev/rsi-decision-implementation.md": "f43845a96461902e86fabbc2320a1f023d1067b0",
+      "harness/specs/fixtures/agent-first-framework/loop-validation-report.json": "a368708d02860efa95da56af21112592b8fc5357",
+      "harness/specs/fixtures/rsi-evidence-loop/capability-matrix.v1.json": "47db72ba4f84b901283954e53383123e3acf8ded",
+      "harness/specs/fixtures/rsi-evidence-loop/decisions.20261101.json": "9a67661799ef62d56faa0fc9e8f759f62ae9f95b",
+      "harness/specs/fixtures/rsi-evidence-loop/evidence-identities.v1.json": "7277b870e7563091e8c0d4bfcc1b622dd677f067",
+      "harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v2.json": "eb3383a653054eaf1eacddeb4afddbcf46787d22",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/SHA256SUMS": "6adc4496d8d80a5a9fa1a8e5c5094a88ac112c61",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/aggregate.json": "e803855d85f233a16e330c73693969f52122af7b",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/corpus.v1.json": "ed671677d1e6007b2018f18709b2b0bd31a4cc33",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/manifest.json": "a1ce59d56bdd250123051c4c77f9bfbbb626fed9",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/progress.json": "a3850d71a60e7525ccbfd11cc73f8fd20d5809bf",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/promotion-policy.v1.json": "d602700d0ebc47870a3ba2db14f5fba20bb37d1e",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/provenance.v1.json": "0f9a9784872e554369497b39cfdfef4dbfdf19a9",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/raw-trials.v1.json": "5f9f3c1bcabbac6f5936efdefd8224777c50a429",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/run-audit.json": "b14375658165bfab30b5ba08e4ee9fa191c4b30c",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/run-exclusions.json": "8e80ee5f008a7f84dcc92f5ff1be341e9df40907",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run/verification.v1.json": "101c75702d88bd12e9606761c95f8155cccd8b27",
+      "harness/specs/rules/paired-ablation-boundary.md": "8655dd44cb006a6811708d5293e279583976c5cf",
+      "harness/specs/rules/reliability-aggregation-boundary.md": "c9ba3d09623afa72150b01b447c700e2175b2675",
+      "harness/specs/tasks/rsi-decision-implementation.md": "a8aa8c36b2f1f5ade1b5a75bbdfae89eb7cd8fc4",
+      "harness/specs/tasks/rsi-evidence-loop-contract.md": "410d599780f0852e6778e029a9c07eb9484d2c51",
+      "harness/specs/tasks/rsi-tf0592-statistical-adjudication.md": "1dc7598bd27fedf4699637569388029913c298ec",
+      "harness/specs/tasks/rsi-tf0604-baseline-corpus.md": "88b2dd6a1180d4198771500bc5c0985ba311fa1f",
+      "openclaw_runtime/src/context-engine/handlers/task-loop-handler.test.ts": "b6926fa7e1acad924599be09966de0fda65c3a8f",
+      "openclaw_runtime/src/context-engine/handlers/task-loop-handler.ts": "353dd9ba75fdfd249d2be6c1c6eced0783d7c061",
+      "scripts/lib/paired-ablation.d.mts": "afe2f93706ba7cf90021b35685cb1be432bfada0",
+      "scripts/lib/paired-ablation.mjs": "6703ac709785b9ade77da13aa3748e93ded3e5c7",
+      "scripts/lib/reliability-aggregation.d.mts": "3f9fcb01ff248289528d23e80b5c9d982f189c48",
+      "scripts/lib/reliability-aggregation.mjs": "9f487e8701b1eb7c7cfe6bcebd56f95133f6be8e",
+      "scripts/repository-artifacts.json": "a34bffda249e9d07bdb392734a802d4edd1ca5a6",
+      "scripts/rsi-measurement-archive.d.mts": "78d244ff99d4e992c2616ade50d10272d933dc7e",
+      "scripts/rsi-measurement-archive.mjs": "684de7726f564282c49d5cc2a9b33fc2180c8416",
+      "scripts/rsi-tf0592-statistical-adjudication.d.mts": "523d6c0b19b2ed10434c8bbaf46681c5bba02fda",
+      "scripts/rsi-tf0592-statistical-adjudication.mjs": "06827e168d5910d6eded293ec9c8c9dab7ee1ba1",
+      "scripts/rsi-tf0604-baseline.d.mts": "11c94178f9deeb91dd932487e73cdf7153dfa77d",
+      "scripts/rsi-tf0604-baseline.mjs": "537e06b97736eee1350ae08241a17d26e4c9740a",
+      "shared/i18n/locales/en/agents.json": "c94f6213e043251d71ad7e06f14a33ac727287a9",
+      "shared/i18n/locales/en/knowledge.json": "f2d8010762488df7b80257ff87bc7ceb7061ec6b",
+      "shared/i18n/locales/ja/agents.json": "a3e2f37aa7f1ccef420dc7d2e6ec7ee4474d2c66",
+      "shared/i18n/locales/ja/knowledge.json": "450aa883916ee2eee9ba484bb81f171d61770912",
+      "shared/i18n/locales/ru/agents.json": "536e42ec161ecdda55c84f984a5dd68beb9aac12",
+      "shared/i18n/locales/ru/knowledge.json": "b2d86733ed002e6ef350b5a8210b96d1f4912d72",
+      "shared/i18n/locales/zh/agents.json": "b1d864069df7477a207b3df690689e343550e891",
+      "shared/i18n/locales/zh/knowledge.json": "f5117d6dc307ba549a6b25b40e0c030abc10ef32",
+      "src/components/agents/RolesOrchestrationPanel.tsx": "9a9827a672f8917427a1c4679f204a470e6518b8",
+      "src/pages/Knowledge/index.tsx": "b425f875dd8e2ba0f69c44c7b0adbb8a019001b7",
+      "tests/e2e/knowledge-hub.spec.ts": "c4ab133e92c1b99ab30f8784b15957449bc4b92f",
+      "tests/e2e/role-memory-panel.spec.ts": "80d9e7ced23a7161d1d96e85f93d23977253d06c",
+      "tests/unit/agent-dev-ablation-verdict-guards.test.ts": "1b7d62b456dfaf76cc5d00f117c7d3db8b85fa41",
+      "tests/unit/agent-dev-paired-ablation.test.ts": "c193f11eae58d1df2fb8439782809e7a93c1f737",
+      "tests/unit/agent-dev-reliability-aggregation.test.ts": "e1cd3d7d16cad5336ac0e633a809a8e89848c882",
+      "tests/unit/rsi-evidence-loop-contract.test.ts": "3a26c2feb9c4217012c141216d91ef68c4362eb7",
+      "tests/unit/rsi-measurement-archive.test.ts": "af93bbfcbe5de39f59792fcddc3c0082162c4b7d",
+      "tests/unit/rsi-tf0592-statistical-adjudication.test.ts": "386149105c5029efff37306966f09dc51ebfe15a",
+      "tests/unit/runtime-memory-paired-ablation.test.ts": "f12501cb4bd0a15caacf780f1d2f53f1298d6ec0",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0604/task-corpus.v1.json": "5e0e607057a624a0a5d7b5965483056b8e88d2fd",
+      "scripts/lib/evidence-binding.d.mts": "126b639dd1d4ea73d5c7135c33927b4903ac9c92",
+      "scripts/lib/evidence-binding.mjs": "77539e218eb605446826eb667d616e8d65c95d49",
+      "scripts/rsi-decision-check.mjs": "1c71f09afc57d7d989f64037ac2ea4b80dd4f534",
+      "scripts/rsi-feedback-export.d.mts": "fbffc1d00c836667bc45a29d211a26a0791c3f36",
+      "scripts/rsi-feedback-export.mjs": "d2e383cf1949040185844ac73e55eeb77a8582bb",
+      "scripts/rsi-feedback-pilot.d.mts": "c7158cd556e416d0d80bebe673221cc17c7fd8b7",
+      "scripts/rsi-feedback-pilot.mjs": "e502cd7f1af3892905f991f68f13018cd6274103",
+      "scripts/rsi-sekb-arms.d.mts": "0dd8407b79607ab699a6e3519d842e4685910e37",
+      "scripts/rsi-sekb-arms.mjs": "d32a17abc82224337e50cefbe9c6436b270b4bb2",
+      "tests/unit/evidence-binding.test.ts": "ad8c56f81f335e721ab6886e32f7de1f5245c545",
+      "tests/unit/rsi-decision-check.test.ts": "b5f9c3ca1641f780fdffc142d2ea425ef98e5062",
+      "tests/unit/rsi-feedback-export.test.ts": "befab3162d165e1daf5786d58e4fe4f31753ea96",
+      "tests/unit/rsi-feedback-pilot.test.ts": "2a691be43e69cb66381afa8ad14eb7713f2882df",
+      "tests/unit/rsi-sekb-arms.test.ts": "f0e1c86e6d5049af00119051c1d6c04ccbd4dc1d"
+    },
+    "nonJudgedInputs": {
+      ".gitignore": "repository hygiene registry edited by unrelated tasks; not a judged RSI input",
+      "README.ja-JP.md": "README documentation edited by unrelated tasks; not a judged RSI input",
+      "README.md": "README documentation edited by unrelated tasks; not a judged RSI input",
+      "README.zh-CN.md": "README documentation edited by unrelated tasks; not a judged RSI input",
+      "scripts/repository-artifacts.json": "repository retention registry edited by unrelated tasks; not a judged RSI input"
+    }
+  },
+  "boundary": "Fresh source binding and semantic decision readback only; original test runs and model observations are retained at the historical acceptance path and are not claimed for this source revision."
+}

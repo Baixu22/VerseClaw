@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "RsiTf0592ValidationReport/v1",
+  "taskId": "TF-0592",
+  "generatedAt": "2026-11-04T13:47:11.826Z",
+  "driven_by": "agent",
+  "actor": "codex/rsi-tf0592-executor",
+  "sealState": "sealed",
+  "reportStatus": "insufficient-evidence",
+  "reportValidation": {
+    "passed": true,
+    "errors": [],
+    "warnings": []
+  },
+  "negativeControls": {
+    "passed": true,
+    "count": 12,
+    "results": [
+      {
+        "id": "complete-floor-bypass",
+        "mutation": "complete-floor-bypass",
+        "expectedCode": "insufficient-evidence-bypass",
+        "observedCodes": [
+          "insufficient-evidence-bypass",
+          "statistical-recomputation"
+        ],
+        "passed": true
+      },
+      {
+        "id": "pass-metric-on-thin-sample",
+        "mutation": "pass-metric-on-thin-sample",
+        "expectedCode": "thin-sample-metric",
+        "observedCodes": [
+          "thin-sample-metric",
+          "statistical-recomputation"
+        ],
+        "passed": true
+      },
+      {
+        "id": "unknown-failure-class",
+        "mutation": "unknown-failure-class",
+        "expectedCode": "unknown-failure-class",
+        "observedCodes": [
+          "unknown-failure-class",
+          "statistical-recomputation"
+        ],
+        "passed": true
+      },
+      {
+        "id": "resource-fingerprint-missing",
+        "mutation": "resource-fingerprint-missing",
+        "expectedCode": "resource-fingerprint-missing",
+        "observedCodes": [
+          "resource-fingerprint-missing",
+          "resource-envelope"
+        ],
+        "passed": true
+      },
+      {
+        "id": "dirty-candidate",
+        "mutation": "dirty-candidate",
+        "expectedCode": "dirty-candidate",
+        "observedCodes": [
+          "dirty-candidate"
+        ],
+        "passed": true
+      },
+      {
+        "id": "dropped-incomplete-trial",
+        "mutation": "dropped-incomplete-trial",
+        "expectedCode": "incomplete-trial-dropped",
+        "observedCodes": [
+          "incomplete-trial-dropped",
+          "statistical-recomputation"
+        ],
+        "passed": true
+      },
+      {
+        "id": "paired-diff-without-pairs",
+        "mutation": "paired-diff-without-pairs",
+        "expectedCode": "paired-diff-without-pairs",
+        "observedCodes": [
+          "paired-diff-without-pairs",
+          "statistical-recomputation"
+        ],
+        "passed": true
+      },
+      {
+        "id": "input-digest-tamper",
+        "mutation": "input-digest-tamper",
+        "expectedCode": "input-digest-mismatch",
+        "observedCodes": [
+          "input-digest-mismatch"
+        ],
+        "passed": true
+      },
+      {
+        "id": "source-digest-tamper",
+        "mutation": "source-digest-tamper",
+        "expectedCode": "source-digest-mismatch",
+        "observedCodes": [
+          "source-digest-mismatch"
+        ],
+        "passed": true
+      },
+      {
+        "id": "fabricated-trial-count",
+        "mutation": "fabricated-trial-count",
+        "expectedCode": "statistical-recomputation",
+        "observedCodes": [
+          "statistical-recomputation"
+        ],
+        "passed": true
+      },
+      {
+        "id": "resource-envelope-tamper",
+        "mutation": "resource-envelope-tamper",
+        "expectedCode": "resource-envelope",
+        "observedCodes": [
+          "resource-envelope"
+        ],
+        "passed": true
+      },
+      {
+        "id": "real-human-claim",
+        "mutation": "real-human-claim",
+        "expectedCode": "claim-boundary",
+        "observedCodes": [
+          "claim-boundary",
+          "statistical-recomputation"
+        ],
+        "passed": true
+      }
+    ]
+  },
+  "claims": {
+    "realHuman": false,
+    "liveProvider": false,
+    "promotionReady": false,
+    "productLocksChanged": false
+  }
+}

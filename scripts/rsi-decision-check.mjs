@@ -114,7 +114,7 @@ const REQUIRED_BOUND_PATHS = [
   'tests/unit/runtime-memory-paired-ablation.test.ts',
 ];
 export const PATHS = {
-  acceptance: 'harness/specs/fixtures/rsi-evidence-loop/decision-implementation-validation.v1.json',
+  acceptance: 'harness/specs/fixtures/rsi-coding-cohort/instruments/decision-acceptance.v2.json',
   decisions: 'harness/specs/fixtures/rsi-evidence-loop/decisions.20261101.json',
   policyV2: 'harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v2.json',
   corpus: 'harness/specs/fixtures/rsi-evidence-loop/tf0604/task-corpus.v1.json',
@@ -145,6 +145,11 @@ function gitStatus(root) {
 export function validateDecisionAcceptance(acceptance, root = ROOT, options = {}) {
   const errors = [];
   const warnings = [];
+  const originalPath = 'harness/specs/fixtures/rsi-evidence-loop/decision-implementation-validation.v1.json';
+  if (acceptance?.bindingRevision !== 2 || acceptance.historicalAcceptance?.path !== originalPath
+    || acceptance.historicalAcceptance?.gitBlob !== gitHashObject(root, originalPath)) {
+    errors.push(error('historical-acceptance-binding', 'current readback must preserve the immutable original acceptance identity'));
+  }
 
   if (acceptance?.schemaVersion !== 'RsiDecisionImplementationAcceptance/v1') {
     errors.push(error('schema-version', 'unexpected acceptance schema'));

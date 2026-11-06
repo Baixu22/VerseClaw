@@ -13,7 +13,8 @@ import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { changedPathsBetween, splitDirtyPaths } from './lib/evidence-binding.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-export const TF0592_PACK_DIR = 'harness/specs/fixtures/rsi-evidence-loop/tf0592';
+// A fresh instrument snapshot; the historical reservation is never re-signed.
+export const TF0592_PACK_DIR = 'harness/specs/fixtures/rsi-coding-cohort/instruments/statistics-v2';
 const ACTOR = 'codex/rsi-tf0592-executor';
 const K = 3;
 const MIN_CASES = 20;
