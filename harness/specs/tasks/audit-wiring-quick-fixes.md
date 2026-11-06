@@ -6,6 +6,8 @@ taskType: runtime-bridge
 diffBase: c7573ec11095b541f3a4a9c5470bf4e0727489bc
 intent: Repair the reproduced configuration and event wiring defects using the existing runtime config, skill service, and Gateway event channels.
 ownedPaths:
+  - harness/specs/fixtures/audit-wiring-quick-fixes/**
+  - artifacts/agent-dev-workbench/evidence.json
   - electron/utils/skill-config.ts
   - electron/gateway/config-sync.ts
   - electron/gateway/clawhub.ts
@@ -28,6 +30,8 @@ ownedPaths:
   - README.ja-JP.md
   - docs/agent-dev-control-plane.md
 touchedAreas:
+  - harness/specs/fixtures/audit-wiring-quick-fixes/**
+  - artifacts/agent-dev-workbench/evidence.json
   - electron/utils/skill-config.ts
   - electron/gateway/config-sync.ts
   - electron/gateway/clawhub.ts
