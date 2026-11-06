@@ -74,6 +74,16 @@ describe('TF-0772 session MCP management', () => {
     expect(await invoke('mcp.listTools')).toMatchObject({ success: true, status: 'connected', tools: [] });
     expect(await invoke('mcp.listTools', { serverId: 'missing' })).toMatchObject({ success: false, errorCode: 'VALIDATION', status: 'error' });
   });
+  it('keeps a healthy server usable when another server times out during catalog discovery', async () => {
+    const healthy = await endpoint();
+    const failed = await startCodingMcpServer({ delayMs: 700 });
+    endpoints.push(failed);
+    state.cfg.mcp!.servers!.slow = { url: failed.url, transport: 'streamable-http', networkPolicy: 'localOnly', requestTimeoutMs: 300 };
+    expect(await invoke('mcp.listTools')).toMatchObject({ success: true, status: 'connected' });
+    expect(await invoke('mcp.callTool', { toolName: 'echo', args: { message: 'healthy-peer' } })).toMatchObject({ success: true });
+    expect(healthy.requests.some((request) => request.method === 'tools/call')).toBe(true);
+    expect(await invoke('mcp.listTools', { serverId: 'slow' })).toMatchObject({ success: false, errorCode: 'TIMEOUT' });
+  });
   it.each([
     ['unknown-session', { sessionKey: 'agent:main:missing' }],
     ['wrong-agent', { agentId: 'other' }],

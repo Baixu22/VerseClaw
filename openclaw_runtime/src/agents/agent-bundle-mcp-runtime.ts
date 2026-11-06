@@ -836,8 +836,9 @@ export function createSessionMcpRuntime(params: {
                 : {}),
             });
             if (!reusedSession) {
-              await disposeSession(session);
               sessions.delete(serverName);
+              // Intentional startup cleanup must not invalidate healthy peers via onclose.
+              await disposeSession(session);
             }
             failIfDisposed();
           }
