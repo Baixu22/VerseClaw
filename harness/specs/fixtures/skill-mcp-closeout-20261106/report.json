@@ -1,0 +1,150 @@
+{
+  "schema": "SkillMcpCloseout/v1",
+  "driven_by": "agent",
+  "actor": "codex-skill-mcp-closeout",
+  "observedAt": "2026-11-06T05:10:59.672Z",
+  "taskId": "TF-0810",
+  "candidate": {
+    "commit": "458a1570b7e3b7684699135b7cc4c28febd0ea7a",
+    "base": "c97ea58faf2e66cc52cabe1df7f9c5b31bc387cd",
+    "dirtyAtVerification": false,
+    "branch": "codex/skill-mcp-closeout-20261106",
+    "sourceManifest": "sources.json",
+    "deployment": "isolated local worktree; not merged into main"
+  },
+  "changes": [
+    "Skill reads and writes use openclaw.json under the existing config/file lock.",
+    "Legacy local entries migrate once; existing runtime fields win and the marker is written after durable persistence.",
+    "Existing managed Skill directory is registered in skills.load.extraDirs before Gateway launch.",
+    "Install enablement propagates persistence errors instead of returning success.",
+    "Selected runtime/browser/VerseShell direct MCP SDK versions use 1.32.2."
+  ],
+  "sdk": [
+    {
+      "owner": "openclaw_runtime",
+      "declared": "1.32.2",
+      "loaded": "1.32.2"
+    },
+    {
+      "owner": "packages/versebrowser",
+      "declared": "1.32.2",
+      "loaded": "1.32.2"
+    },
+    {
+      "owner": "resources/verseshell-mcp",
+      "declared": "1.32.2",
+      "loaded": "1.32.2"
+    }
+  ],
+  "validation": {
+    "unit": {
+      "files": 8,
+      "passed": 60,
+      "exitCode": 0,
+      "artifact": "unit.json"
+    },
+    "runtimeMcp": {
+      "passed": 15,
+      "exitCode": 0,
+      "artifact": "mcp-runtime.json"
+    },
+    "browserMcp": {
+      "passed": 37,
+      "exitCode": 0,
+      "artifact": "browser.json"
+    },
+    "verseshell": {
+      "passed": 11,
+      "exitCode": 0,
+      "artifact": "verseshell.txt"
+    },
+    "totalUnitAndProtocol": 123,
+    "electron": {
+      "passed": 1,
+      "unexpected": 0,
+      "skipped": 0,
+      "exitCode": 0,
+      "artifact": "electron.json",
+      "scope": "Real Electron Host API enable/disable and relaunch readback; not a real-model quality test."
+    },
+    "runtimeConfig": {
+      "exitCode": 0,
+      "artifact": "runtime-config.json",
+      "scope": "Real Main config persistence and runtime Skill loader on an isolated filesystem."
+    },
+    "build": {
+      "exitCode": 0,
+      "artifact": "build.txt"
+    },
+    "nodeTypes": {
+      "exitCode": 0,
+      "artifact": "type-node.txt"
+    },
+    "touchedTestTypes": {
+      "exitCode": 0,
+      "artifact": "type-tests.txt"
+    },
+    "lint": {
+      "exitCode": 0,
+      "artifact": "lint.txt"
+    },
+    "hostContract": {
+      "exitCode": 0,
+      "artifact": "contract.txt"
+    },
+    "harness": {
+      "validateExitCode": 0,
+      "dryRunExitCode": 0,
+      "noDiff": false,
+      "artifacts": [
+        "harness.txt",
+        "harness-dry-run.txt"
+      ]
+    },
+    "comms": {
+      "replayExitCode": 0,
+      "compareExitCode": 0,
+      "artifacts": [
+        "comms-replay.json",
+        "comms-compare.json"
+      ]
+    },
+    "diffCheck": {
+      "exitCode": 0
+    }
+  },
+  "reproduction": {
+    "scratchPolicy": "TEMP/TMP on D; low-integrity native build uses the ignored D:/ClawX/.local scratch directory.",
+    "runtimeProbe": "node openclaw_runtime/node_modules/tsx/dist/cli.mjs --tsconfig openclaw_runtime/tsconfig.json harness/specs/fixtures/skill-mcp-closeout-20261106/verify-runtime.mts <output.json>",
+    "testTypes": "node node_modules/@typescript/native-preview/bin/tsgo.js -p harness/specs/fixtures/skill-mcp-closeout-20261106/tsconfig.tests.json",
+    "dependencyReuse": "Existing lockfile-matching packages were reused with worktree-owned absolute links; missing framer-motion/motion-dom archives were verified against lock SHA-512. No product dependency version was changed to repair the environment."
+  },
+  "historicalEvidence": {
+    "directory": "../skill-mcp-handling-20261105",
+    "sha256FilesVerified": 16,
+    "rewritten": false
+  },
+  "residuals": [
+    {
+      "id": "repository-artifacts-baseline",
+      "status": "pre-existing",
+      "detail": "Full repository retention check finds eight tracked-but-ignored RSI calibration .log paths. None is changed by this task."
+    },
+    {
+      "id": "full-test-type-environment",
+      "status": "not-claimed",
+      "detail": "Full tsconfig.test includes diagnostics-otel plugin dependencies absent from the reused environment. All changed tests pass the scoped test typecheck; full Node typecheck passes."
+    },
+    {
+      "id": "mcp-v2-and-remote-skills",
+      "status": "not-implemented",
+      "detail": "MCP 2026-07-28 / SDK v2 and Skills-over-MCP remain documented migrations; v1 maintenance is not their implementation."
+    },
+    {
+      "id": "skill-marketplace",
+      "status": "not-implemented",
+      "detail": "Catalog unresolved-version fallback, uninstall no-op, metadata projection and OAuth UI improvements remain separate from this configuration closeout."
+    }
+  ],
+  "acceptance": "passed for the bounded Skill configuration and MCP v1 maintenance slice; no GA, publishing, packaged release or live-model claim"
+}

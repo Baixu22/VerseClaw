@@ -54,7 +54,7 @@ forbiddenPatterns:
   - Registering external search services or changing local personal skills for this application task.
   - Changing product locks or automatically activating remotely obtained instructions.
 requiredTests:
-  - node --import ./openclaw_runtime/node_modules/tsx/dist/loader.mjs harness/specs/fixtures/skill-mcp-closeout-20261106/verify-runtime.mts artifacts/skill-runtime-verification.json
+  - node openclaw_runtime/node_modules/tsx/dist/cli.mjs --tsconfig openclaw_runtime/tsconfig.json harness/specs/fixtures/skill-mcp-closeout-20261106/verify-runtime.mts artifacts/skill-runtime-verification.json
   - pnpm exec vitest run tests/unit/skill-config-runtime-sync.test.ts tests/unit/skills-api-install-trust-gate.test.ts tests/unit/config-sync-source-runtime.test.ts --maxWorkers=1
   - pnpm exec playwright test tests/e2e/skills-runtime-config.spec.ts --workers=1
   - pnpm harness context --spec harness/specs/tasks/skill-mcp-version-alignment.md
