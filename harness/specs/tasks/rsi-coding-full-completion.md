@@ -17,6 +17,8 @@ touchedAreas:
   - harness/specs/fixtures/rsi-benefit-eval/coding-complete-20261106-v2/**
   - harness/specs/fixtures/rsi-live-acceptance/complete-cohort-20261106-v8/**
   - docs/dev/rsi-capability-and-boundaries.md
+  - docs/generated/catalogs/prod-flags.md
+  - docs/generated/catalogs/tools.md
 requiredProfiles:
   - rsi
 requiredRules:
@@ -91,3 +93,7 @@ frozen cohort plus explicit reconstruction bindings and reference-revision tests
 The existing duplicate-asset registry records the exact calibration mirrors needed
 by the independently readable admission and measurement packs. Registration keeps
 their original bytes and hash manifests unchanged.
+
+Generated flag and tool catalogues are refreshed with the existing catalogue
+generator so the full CI baseline describes the current source. Product defaults
+and tool policies are unchanged.

@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: openclaw_runtime/src/agents/tool-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-10-25T13:54:26.243Z
+Generated at: 2026-11-06T10:40:39.985Z
 -->
 
 Built-in core tool sections with their profiles. This file is generated —

@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: shared/dcs/prod-flags-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-10-25T13:54:26.243Z
+Generated at: 2026-11-06T10:40:39.985Z
 -->
 
 Machine-readable source of truth for defaults, risk, enable, and rollback.
@@ -311,9 +311,9 @@ This file is generated — edit the source of truth instead.
 - default: false
 - defaultDisplay: off (opt-in)
 - risk: opt-in
-- enable: Set env OPENCLAW_RC03_SEAL=1 (or runtime.rc03.seal = true) and restart gateway/runtime. Enabling turns on RC-03 message-replacement sealing plus the correlated runtime/wire receipts; it does not change returned summaries.
+- enable: Set env OPENCLAW_RC03_SEAL=1 (or runtime.rc03.seal = true) and restart gateway/runtime. Enabling turns on RC-03 producer admission, message-replacement sealing and correlated runtime/wire receipts. Unknown applied producers and post-seal system-prompt changes reject before the embedded provider function runs.
 - rollback: Unset OPENCLAW_RC03_SEAL or set runtime.rc03.seal = false and restart. With the flag off no seal, runtime receipt, or wire receipt is written.
 - executor: wired — `openclaw_runtime/src/context-engine/context-orchestrator.ts:376`
 
-> Opt-in observation only. Before this entry existed, the "RC-03 is opt-in" intent had no referencable record, so a reviewer could not cite it as proven design intent (deviation TFD-lane2-rc03-seal-default-zero-2026-08-27). Keep default-off; do not flip it inside an implementation task.
+> Opt-in semantic admission; receipt persistence remains observational. Before this entry existed, the "RC-03 is opt-in" intent had no referencable record, so a reviewer could not cite it as proven design intent (deviation TFD-lane2-rc03-seal-default-zero-2026-08-27). Keep default-off; do not flip it inside an implementation task.
 
