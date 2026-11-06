@@ -1,44 +1,17 @@
 {
   "schemaVersion": "RsiTf0592ResourceFingerprint/v1",
-  "generatedAt": "2026-11-04T13:47:11.826Z",
+  "generatedAt": "2026-11-06T08:50:12.344Z",
   "driven_by": "agent",
   "actor": "codex/rsi-tf0592-executor",
   "candidate": {
-    "commit": "4b930199a320b5e9d0a3ab542c2f16c7e8b8dfb5",
-    "tree": "debbeb63ac47120e6a5a9e9fb219c68d6e80f812",
-    "branch": "main",
+    "commit": "dfed8b83b5c07774ae14532bff4151487ae84f32",
+    "tree": "65ac43905fefea67a82126232d4ec633ad1bb30f",
+    "branch": "codex/rsi-full-completion-20261106",
     "dirty": false,
     "dirtyPaths": [],
-    "unrelatedDirtyPaths": [
-      "electron/services/session-delegation-admission.ts",
-      "electron/services/sessions-api.ts",
-      "harness/specs/fixtures/agent-first-task-corpus/SHA256SUMS",
-      "harness/specs/fixtures/agent-first-task-corpus/registry-extension.v1.json",
-      "harness/specs/fixtures/agent-first-task-corpus/task-corpus.v1.json",
-      "harness/specs/fixtures/agent-first-task-corpus/validation-report.v1.json",
-      "tests/unit/long-session-delegation-admission.test.ts",
-      "Dtmptf-list.json",
-      "artifacts/runs/verse-claw-e2e-run-0EKTPi/verse-claw-e2e-home-0mXmuK/a3-positive-source/",
-      "artifacts/runs/verse-claw-e2e-run-0EKTPi/verse-claw-e2e-home-laYNW6/.openclaw/workspace/",
-      "artifacts/runs/verse-claw-e2e-run-0l6dCZ/verse-claw-e2e-home-Tw2lK0/.openclaw/workspace/",
-      "artifacts/runs/verse-claw-e2e-run-0l6dCZ/verse-claw-e2e-home-kLEsTD/a3-positive-source/",
-      "artifacts/runs/verse-claw-e2e-run-1fmHuK/verse-claw-e2e-home-3XJTU9/a3-positive-source/",
-      "artifacts/runs/verse-claw-e2e-run-1fmHuK/verse-claw-e2e-home-rEtQKi/.openclaw/workspace/",
-      "artifacts/runs/verse-claw-e2e-run-SztvTw/verse-claw-e2e-home-OuHBZf/.openclaw/workspace/",
-      "artifacts/runs/verse-claw-e2e-run-SztvTw/verse-claw-e2e-home-VTS8wv/a3-positive-source/",
-      "artifacts/runs/verse-claw-e2e-run-T7dpfm/verse-claw-e2e-home-OHZHqI/.openclaw/workspace/",
-      "artifacts/runs/verse-claw-e2e-run-T7dpfm/verse-claw-e2e-home-bbcmmn/a3-positive-source/",
-      "artifacts/runs/verse-claw-e2e-run-WWpmH7/verse-claw-e2e-home-PBIGb6/a3-positive-source/",
-      "artifacts/runs/verse-claw-e2e-run-WWpmH7/verse-claw-e2e-home-RlQYNJ/.openclaw/workspace/",
-      "artifacts/runs/verse-claw-e2e-run-k0yygs/verse-claw-e2e-home-hh3wZO/a3-positive-source/",
-      "artifacts/runs/verse-claw-e2e-run-kGmEh9/verse-claw-e2e-home-1q2O0p/.openclaw/workspace/",
-      "artifacts/runs/verse-claw-e2e-run-kGmEh9/verse-claw-e2e-home-Yiesm2/a3-positive-source/",
-      "artifacts/runs/verse-claw-e2e-run-tmcAE5/verse-claw-e2e-home-l74BeZ/a3-positive-source/",
-      "artifacts/runs/verse-claw-e2e-run-wkT09z/verse-claw-e2e-home-6YJ0Xx/a3-positive-source/",
-      "artifacts/runs/verse-claw-e2e-run-wkT09z/verse-claw-e2e-home-oQearF/.openclaw/workspace/"
-    ],
+    "unrelatedDirtyPaths": [],
     "sourceHashes": {
-      "scripts/rsi-tf0592-statistical-adjudication.mjs": "586819cea8c88a6c32d391ecb8634f863967e2de9592eeec4318f8b5bc9a4291",
+      "scripts/rsi-tf0592-statistical-adjudication.mjs": "c66f37616a487da5e8a823d3cf8ceadb6e4aa9e4c1c563f3e284bce83303135a",
       "scripts/rsi-tf0592-statistical-adjudication.d.mts": "3db43e10678cd94838e4f0b8d17775f9ec397a0a2cc67241a4f407884a434d41",
       "scripts/rsi-tf0604-baseline.mjs": "796a6238586dea788d172cde296fc6dd86eafc17b7c6301e6e8349cefbe5a57b",
       "scripts/lib/reliability-aggregation.mjs": "764b31e2244dc70945ba4a15a90c9be6b6b7b7b02e40236fd86c5b54adb37483",
@@ -53,7 +26,7 @@
       "harness/specs/rules/agent-engineering-acceptance-boundary.md": "f924e474ecb35c1de826b9fa8174bcf63c356841aaa24b0ab9e3622a45f53028",
       "harness/specs/rules/task-forest-autoclose-and-roles.md": "f67d386dda19c71434212d2719b75bfb07a4ea008580dc275e5bb2dc92715be7",
       "harness/src/profiles.mjs": "6f52c8ea317661c6f8508537c72ccdf23bd9a01e6186b6dc2c535438d22634c1",
-      "package.json": "9f7cd642d9258defd192c3148a2943676307bc7a4fa7d0d5f8c4b6209648ad93",
+      "package.json": "f82adc8c38bb41c60521a3352582f5022775b1bef893ea9e5e3d244c978843fc",
       "pnpm-lock.yaml": "6427882a1725aa5929da2db9d55d1397237dee1a354bb6db3dfb63bb61abb441"
     }
   },
@@ -67,9 +40,9 @@
   "observedResources": {
     "cpuCount": 16,
     "totalMemoryBytes": 16295432192,
-    "freeMemoryBytes": 1419722752,
+    "freeMemoryBytes": 2666582016,
     "disk": {
-      "freeBytes": 95430463488,
+      "freeBytes": 28486553600,
       "totalBytes": 701020237824,
       "status": "measured"
     }
