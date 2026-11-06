@@ -6,6 +6,11 @@ intent: Finish TF-0809 with a clean dependency environment, a preregistered boun
 diffBase: 0494e19c70af2ef1e0beaa0bdb11c2dac871a271
 touchedAreas:
   - scripts/duplicate-assets-allowlist.json
+  - artifacts/agent-dev-deep-test/history.json
+  - artifacts/agent-dev-deep-test/report.json
+  - artifacts/agent-dev-deep-test/report.md
+  - artifacts/agent-dev-quality/report.json
+  - artifacts/agent-dev-workbench/evidence.json
   - scripts/rsi-*.mjs
   - scripts/rsi-*.mts
   - scripts/rsi-*.d.mts
