@@ -1815,7 +1815,7 @@ function McpServicesPanel() {
                   <div className="rounded-xl bg-black/5 p-3 dark:bg-white/5">
                     <p className="text-tiny text-muted-foreground">Tools</p>
                     <p className="mt-1 font-mono text-xs text-foreground">
-                      {toolsById[selectedServer.id]?.tools.length ?? selectedServer.toolCount ?? 0}
+                      {toolsById[selectedServer.id]?.success === false ? '-' : toolsById[selectedServer.id]?.tools.length ?? selectedServer.toolCount ?? 0}
                     </p>
                   </div>
                 </div>
@@ -1857,7 +1857,11 @@ function McpServicesPanel() {
                   {toolsById[selectedServer.id] && (
                     <div className="rounded-xl border border-black/5 p-3 dark:border-white/5">
                       <p className="mb-2 text-xs font-medium text-foreground">{t('mcp.detail.toolCatalog')}</p>
-                      {toolsById[selectedServer.id].tools.length === 0 ? (
+                      {!toolsById[selectedServer.id].success ? (
+                        <p role="alert" className="text-xs text-destructive">
+                          {toolsById[selectedServer.id].error || t('common:status.error')}
+                        </p>
+                      ) : toolsById[selectedServer.id].tools.length === 0 ? (
                         <p className="text-xs text-muted-foreground">
                           {toolsById[selectedServer.id].message || t('mcp.detail.noRuntimeTools')}
                         </p>

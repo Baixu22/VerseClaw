@@ -96,6 +96,25 @@ vi.mock('@electron/utils/config-mutex', () => ({
   withConfigLock: async <T>(fn: () => Promise<T>) => fn(),
 }));
 
+vi.mock('@electron/services/workspaces-api', () => ({
+  getActiveWorkspaceProfile: vi.fn(async () => ({ id: 'workspace-a', rootPath: 'D:/tmp/mcp-workspace-a', agentId: 'main', activeSessionKey: 'agent:main:main', permissionMode: 'fullAccess' })),
+  getWorkspaceRootPathById: vi.fn(async () => 'D:/tmp/mcp-workspace-a'),
+}));
+
+function registerHttpFixture() {
+  storeState.servers.push({ id: 'http-local', name: 'HTTP Local', transport: 'http', url: 'http://127.0.0.1:4000/mcp',
+    scope: 'global', enabled: true, createdAt: 1, updatedAt: 1 });
+}
+
+function gatewayRoute(invoke: () => Promise<unknown>) {
+  return async (payload?: unknown) => {
+    const request = payload as { method?: string; params?: { key?: string } };
+    return request.method === 'sessions.describe'
+      ? { session: { key: request.params?.key, sessionId: 'generation-1' } }
+      : await invoke();
+  };
+}
+
 describe('mcp api registry', () => {
   beforeEach(() => {
     storeState.servers = [];
@@ -106,6 +125,71 @@ describe('mcp api registry', () => {
     });
     createGitApiMock.mockClear();
     Object.values(gitApiMock).forEach((mock) => mock.mockReset());
+  });
+
+  it.each(['listTools', 'heartbeat'] as const)('%s preserves an unavailable Gateway as a failure', async (operation) => {
+    const { createMcpApi } = await import('@electron/services/mcp-api');
+    const api = createMcpApi();
+    await api.createServer({ name: 'Offline', transport: 'stdio', command: 'node', scope: 'global' });
+    await expect(api[operation]({ serverId: 'offline' })).resolves.toMatchObject({
+      success: false,
+      serverId: 'offline',
+      status: 'error',
+      error: expect.stringMatching(/gateway.*unavailable/i),
+    });
+  });
+
+  it.each(['response', 'transport'] as const)('TF-0772 preserves failed MCP discovery (%s)', async (failure) => {
+    const { createMcpApi, createMcpApiWithContext } = await import('@electron/services/mcp-api');
+    await createMcpApi().createServer({ name: 'Discovery regression', transport: 'stdio', command: 'node', scope: 'global' });
+    const gatewayManager = {
+      getStatus: vi.fn(() => ({ state: 'running' })),
+      rpc: vi.fn(async () => {
+        if (failure === 'transport') throw new Error('MCP catalog unavailable');
+        return { success: false, serverId: 'discovery-regression', tools: [], status: 'error', error: 'MCP catalog unavailable' };
+      }),
+    };
+    const api = createMcpApiWithContext({ gatewayManager: gatewayManager as never, gatewayRpc: gatewayRoute(() => gatewayManager.rpc()) });
+    await expect(api.listTools({ serverId: 'discovery-regression' })).resolves.toMatchObject({
+      success: false, serverId: 'discovery-regression', tools: [], status: 'error', error: 'MCP catalog unavailable',
+    });
+  });
+
+  it('TF-0772 rejects a same-agent session that is not bound to the active workspace', async () => {
+    registerHttpFixture();
+    const { createMcpApiWithContext } = await import('@electron/services/mcp-api');
+    const gatewayManager = { getStatus: vi.fn(() => ({ state: 'running' })), rpc: vi.fn(async () => ({ success: true })) };
+    const gatewayRpc = vi.fn(gatewayRoute(() => gatewayManager.rpc()));
+    const api = createMcpApiWithContext({ gatewayManager: gatewayManager as never, gatewayRpc });
+    expect(await api.listTools({ serverId: 'http-local', sessionKey: 'agent:main:foreign-workspace' }))
+      .toMatchObject({ success: false, errorCode: 'VALIDATION' });
+    expect(gatewayRpc).not.toHaveBeenCalled();
+  });
+
+  it('TF-0772 pins the bound session generation and stored root before forwarding, and rejects an old generation', async () => {
+    registerHttpFixture();
+    const { createMcpApiWithContext } = await import('@electron/services/mcp-api');
+    const gatewayManager = { getStatus: vi.fn(() => ({ state: 'running' })), rpc: vi.fn(async () => (
+      { success: true, serverId: 'http-local', tools: [], status: 'connected' }
+    )) };
+    const gatewayRpc = vi.fn(gatewayRoute(() => gatewayManager.rpc()));
+    const api = createMcpApiWithContext({ gatewayManager: gatewayManager as never, gatewayRpc });
+    expect((await api.listTools({ serverId: 'http-local' })).success).toBe(true);
+    expect(gatewayRpc.mock.calls.find(([payload]) => (payload as { method: string }).method === 'mcp.listTools')?.[0])
+      .toMatchObject({ params: { sessionKey: 'agent:main:main', expectedSessionGeneration: 'generation-1', workspaceDir: 'D:/tmp/mcp-workspace-a' } });
+    expect(await api.listTools({ serverId: 'http-local', expectedSessionGeneration: 'old' }))
+      .toMatchObject({ success: false, errorCode: 'VALIDATION' });
+    expect(gatewayManager.rpc).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(['listTools', 'heartbeat', 'callTool'] as const)('TF-0772 rejects a foreign successful %s response', async (operation) => {
+    registerHttpFixture();
+    const { createMcpApiWithContext } = await import('@electron/services/mcp-api');
+    const gatewayManager = { getStatus: vi.fn(() => ({ state: 'running' })), rpc: vi.fn(async () => (
+      { success: true, serverId: 'other-server', toolName: 'echo', tools: [], status: 'connected' }
+    )) };
+    const api = createMcpApiWithContext({ gatewayManager: gatewayManager as never, gatewayRpc: gatewayRoute(() => gatewayManager.rpc()) });
+    expect(await api[operation]({ serverId: 'http-local', toolName: 'echo' })).toMatchObject({ success: false, errorCode: 'VALIDATION' });
   });
 
   it('creates, validates, updates, resolves, and deletes MCP servers', async () => {
@@ -152,11 +236,11 @@ describe('mcp api registry', () => {
       message: 'Verse Claw Git tools are host-native: served by the host Git service, not an MCP server.',
     });
 
-    // A stdio config check is not an MCP handshake, so the fallback never reports connected.
     await expect(api.heartbeat({ serverId: 'filesystem' })).resolves.toMatchObject({
-      success: true,
-      status: 'registered',
-      server: expect.objectContaining({ runtimeStatus: 'registered' }),
+      success: false,
+      status: 'error',
+      error: 'MCP Gateway is unavailable',
+      server: expect.objectContaining({ runtimeStatus: 'error' }),
     });
 
     await expect(api.createServer({
@@ -315,10 +399,10 @@ describe('mcp api registry', () => {
     });
 
     await expect(api.listTools({ serverId: 'http-local' })).resolves.toMatchObject({
-      success: true,
+      success: false,
       serverId: 'http-local',
       tools: [],
-      status: 'registered',
+      status: 'error',
     });
     await expect(api.callTool({ serverId: 'http-local', toolName: 'demo' })).resolves.toMatchObject({
       success: false,
@@ -329,6 +413,7 @@ describe('mcp api registry', () => {
   });
 
   it('emits MCP tool-call shadows for successful runtime calls without changing the legacy response shape', async () => {
+    registerHttpFixture();
     const { createMcpApiWithContext } = await import('@electron/services/mcp-api');
     const shadows: McpToolCallShadowRecord[] = [];
     const legacy = {
@@ -343,6 +428,7 @@ describe('mcp api registry', () => {
     };
     const api = createMcpApiWithContext({
       gatewayManager: gatewayManager as never,
+      gatewayRpc: gatewayRoute(() => gatewayManager.rpc()),
       runtime: { toolProtocol: { mcpShadow: true } },
       toolProtocolShadowSink: (record) => shadows.push(record),
     });
@@ -401,6 +487,7 @@ describe('mcp api registry', () => {
   });
 
   it('does not emit MCP tool-call shadows when the feature flag is off', async () => {
+    registerHttpFixture();
     const { createMcpApiWithContext } = await import('@electron/services/mcp-api');
     const legacy = {
       success: true,
@@ -415,6 +502,7 @@ describe('mcp api registry', () => {
     };
     const api = createMcpApiWithContext({
       gatewayManager: gatewayManager as never,
+      gatewayRpc: gatewayRoute(() => gatewayManager.rpc()),
       runtime: { toolProtocol: { mcpShadow: false } },
       toolProtocolShadowSink: sink,
     });
@@ -515,7 +603,8 @@ describe('mcp api registry', () => {
     expect(isToolCallResult(waitingShadow.result)).toBe(true);
   });
 
-  it('maps gateway unavailable MCP fallback to a blocked shadow without changing the legacy fallback shape', async () => {
+  it('reports unavailable MCP calls as blocked shadows', async () => {
+    registerHttpFixture();
     const { createMcpApiWithContext } = await import('@electron/services/mcp-api');
     const shadows: McpToolCallShadowRecord[] = [];
     const api = createMcpApiWithContext({
@@ -531,10 +620,8 @@ describe('mcp api registry', () => {
       serverId: 'http-local',
       toolName: 'demo',
     });
-    expect(JSON.stringify(result)).toBe(
-      `{"success":false,"serverId":"http-local","toolName":"demo","blocked":true,"reason":${JSON.stringify(result.reason)}}`,
-    );
-    expect(Object.keys(result)).toEqual(['success', 'serverId', 'toolName', 'blocked', 'reason']);
+    expect(result.error).toBe('MCP Gateway is unavailable');
+    expect(result.errorCode).toBe('INTERNAL');
     expect(shadows[1]).toMatchObject({
       kind: 'tool_call.result',
       target: { serverId: 'http-local', toolName: 'demo' },

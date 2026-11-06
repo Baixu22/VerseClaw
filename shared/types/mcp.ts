@@ -74,6 +74,9 @@ export interface McpListToolsResult {
   latencyMs?: number;
   message?: string;
   error?: string;
+  errorCode?: string;
+  catalogRevision?: string;
+  sessionGeneration?: string;
 }
 
 export interface McpHeartbeatResult {
@@ -83,6 +86,7 @@ export interface McpHeartbeatResult {
   latencyMs?: number;
   message?: string;
   error?: string;
+  errorCode?: string;
   server?: McpServerConfig;
 }
 
@@ -96,6 +100,7 @@ export interface McpCallToolResult {
   approvalId?: string;
   reason?: string;
   error?: string;
+  errorCode?: string;
 }
 
 export interface McpReloadRuntimeResult {

@@ -120,6 +120,24 @@ describe('gateway permission approval flow', () => {
     activeWorkspace.profile = workspace();
   });
 
+  it.each([
+    { workspaceId: 'other-workspace' },
+    { workspaceDir: 'D:/tmp/other-workspace' },
+    { sessionKey: 'agent:main:foreign-workspace' },
+  ])('TF-0772 rejects MCP scope drift before the workspace permission gate: %j', async (changed) => {
+    activeWorkspace.profile = workspace('fullAccess');
+    const gatewayManager = { rpc: vi.fn(async () => ({ success: true })) };
+    const fabric = { run: vi.fn((method, params, timeoutMs, run) => run(method, params, timeoutMs)) };
+    const { createGatewayApi } = await import('@electron/services/gateway-api');
+    const api = createGatewayApi(gatewayManager as never, fabric as never);
+    expect(await api.rpc({ method: 'mcp.callTool', params: {
+      serverId: 'fixture', toolName: 'echo', workspaceId: activeWorkspace.profile.id,
+      workspaceDir: activeWorkspace.profile.rootPath, sessionKey: activeWorkspace.profile.activeSessionKey,
+      agentId: 'main', expectedSessionGeneration: 'generation-1', ...changed,
+    } })).toMatchObject({ success: false, blocked: true });
+    expect(gatewayManager.rpc).not.toHaveBeenCalled();
+  });
+
   it('requires approval for dangerous gateway RPC and consumes approval before replay', async () => {
     const gatewayManager = {
       getStatus: vi.fn(() => ({ state: 'running', port: 18789 })),

@@ -285,7 +285,7 @@ MCP server 可配置：
 - tool listed 不等于 allowed；
 - tool call `success:false` 与 Host transport failure 分开；
 - `approvalRequired`/`blocked` 必须保留；
-- runtime reload 可能要求 Gateway restart；
+- MCP 配置更新通过当前会话 runtime 热重载，旧目录 revision 的调用会被拒绝；
 - MCP 不是绕过 Host API 的第二 action transport。
 
 ## 8. Code Review 与 Remote Forge

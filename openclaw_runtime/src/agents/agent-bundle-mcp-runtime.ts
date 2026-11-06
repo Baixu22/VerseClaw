@@ -3,7 +3,7 @@ import crypto from "node:crypto";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
-import { ErrorCode, type CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import { ErrorCode, McpError, type CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { ServerCapabilities } from "@modelcontextprotocol/sdk/types.js";
 import { AjvJsonSchemaValidator } from "@modelcontextprotocol/sdk/validation/ajv-provider.js";
 import type {
@@ -195,7 +195,13 @@ function connectWithTimeout(
 ): Promise<void> {
   return new Promise<void>((resolve, reject) => {
     const timer = setTimeout(
-      () => reject(new Error(`MCP server connection timed out after ${timeoutMs}ms`)),
+      () =>
+        reject(
+          new McpError(
+            ErrorCode.RequestTimeout,
+            `MCP server connection timed out after ${timeoutMs}ms`,
+          ),
+        ),
       timeoutMs,
     );
     client.connect(transport).then(
@@ -825,6 +831,9 @@ export function createSessionMcpRuntime(params: {
               safeServerName,
               launchSummary: resolved.description,
               message,
+              ...(isMcpConfigRecord(error) && typeof error.code === "number"
+                ? { errorCode: error.code }
+                : {}),
             });
             if (!reusedSession) {
               await disposeSession(session);
@@ -916,6 +925,15 @@ export function createSessionMcpRuntime(params: {
             undefined,
             { timeout: session.requestTimeoutMs },
           )) as CallToolResult,
+      );
+    },
+    async ping(serverName) {
+      failIfDisposed();
+      await getCatalog();
+      const session = sessions.get(serverName);
+      if (!session) throw new Error(`bundle-mcp server "${serverName}" is not connected`);
+      await runGuardedServerRequest(serverName, () =>
+        session.client.ping({ timeout: session.requestTimeoutMs }),
       );
     },
     async listResources(serverName) {

@@ -13,6 +13,11 @@ const mocks = vi.hoisted(() => ({
   getPluginToolMeta: vi.fn(),
   getChannelAgentToolMeta: vi.fn(),
   isKnownCoreToolId: vi.fn(),
+  prepareSessionMcpManagement: vi.fn(),
+}));
+
+vi.mock("./mcp-management.js", () => ({
+  prepareSessionMcpManagement: mocks.prepareSessionMcpManagement,
 }));
 
 vi.mock("../../agents/agent-bundle-mcp-materialize.js", () => ({
@@ -103,10 +108,24 @@ describe("invokeGatewayTool warm MCP fallback", () => {
     const execute = vi.fn().mockResolvedValue({
       content: [{ type: "text", text: "hello" }],
     });
-    mocks.peekSessionMcpRuntime.mockReturnValue({ peekCatalog: () => ({ tools: [] }) });
+    const runtime = { sessionId: "session-1", peekCatalog: () => ({ tools: [] }) };
+    mocks.peekSessionMcpRuntime.mockReturnValue(runtime);
     mocks.materializeBundleMcpToolsForRun.mockResolvedValue({
       tools: [{ name: "test-echo__echo", parameters: {}, execute }],
       dispose,
+    });
+    mocks.getPluginToolMeta.mockReturnValue({
+      mcp: { serverName: "test-echo", toolName: "echo", operation: "tool" },
+    });
+    mocks.prepareSessionMcpManagement.mockResolvedValue({
+      runtime,
+      cfg: {},
+      owner: { agentId: "main", expectedSessionId: "session-1" },
+      tools: [{ name: "test-echo__echo" }],
+      catalog: { tools: [{ serverName: "test-echo", toolName: "echo", inputSchema: {} }] },
+      validateArgs: vi.fn(),
+      assertCurrent: vi.fn(),
+      release: vi.fn(),
     });
     mocks.runBeforeToolCallHook.mockImplementation(async ({ params }) => ({
       blocked: false,

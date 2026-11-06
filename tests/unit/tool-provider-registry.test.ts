@@ -20,7 +20,8 @@ import {
 vi.mock('electron-store', () => {
   class MockStore {
     get(key: string) {
-      return key === 'servers' ? [] : undefined;
+      return key === 'servers' ? [{ id: 'http-local', name: 'HTTP Local', transport: 'http', url: 'http://127.0.0.1:4000/mcp',
+        scope: 'global', enabled: true, createdAt: 1, updatedAt: 1 }] : undefined;
     }
 
     set() {}
@@ -39,6 +40,19 @@ vi.mock('@electron/utils/agent-config', () => ({
 vi.mock('@electron/services/git-api', () => ({
   createGitApi: () => ({}),
 }));
+
+vi.mock('@electron/services/workspaces-api', () => ({
+  getActiveWorkspaceProfile: vi.fn(async () => ({ id: 'workspace-a', rootPath: 'D:/tmp/mcp-workspace-a', agentId: 'main', activeSessionKey: 'agent:main:main', permissionMode: 'fullAccess' })),
+}));
+
+function gatewayRoute(invoke: () => Promise<unknown>) {
+  return async (payload?: unknown) => {
+    const request = payload as { method?: string; params?: { key?: string } };
+    return request.method === 'sessions.describe'
+      ? { session: { key: request.params?.key, sessionId: 'generation-1' } }
+      : await invoke();
+  };
+}
 
 describe('MCP tool provider registry pilot', () => {
   it('declares MCP callTool as a shadow-only compatibility tool provider', () => {
@@ -79,6 +93,7 @@ describe('MCP tool provider registry pilot', () => {
     };
     const api = createMcpApiWithContext({
       gatewayManager: gatewayManager as never,
+      gatewayRpc: gatewayRoute(() => gatewayManager.rpc()),
       runtime: { toolRegistry: { shadow: true }, toolProtocol: { mcpShadow: false } },
       toolProtocolShadowSink: protocolSink,
       toolProviderRegistryShadowSink: (record) => registryShadows.push(record),
@@ -155,6 +170,7 @@ describe('MCP tool provider registry pilot', () => {
     const api = createMcpApiWithContext({
       gatewayManager: gatewayManager as never,
       runtime: { toolRegistry: { shadow: true } },
+      gatewayRpc: gatewayRoute(() => gatewayManager.rpc()),
       toolProviderRegistryShadowSink: (record) => registryShadows.push(record),
     });
 
@@ -322,6 +338,7 @@ describe('MCP tool provider registry pilot', () => {
     const api = createMcpApiWithContext({
       gatewayManager: gatewayManager as never,
       runtime: { toolRegistry: { shadow: false } },
+      gatewayRpc: gatewayRoute(() => gatewayManager.rpc()),
       toolProviderRegistryShadowSink: registrySink,
     });
 

@@ -63,11 +63,14 @@ const WRITE_PATTERNS = [
 const SAFE_GATEWAY_METHODS = new Set([
   'chat.history',
   'sessions.list',
+  'sessions.describe',
   'skills.status',
   'models.list',
   'chat.send',
   'chat.abort',
   'health',
+  'mcp.listTools',
+  'mcp.heartbeat',
   // Role-first runtime read methods (registry/templates/planning are side-effect free).
   // orchestrator.run is intentionally NOT here: it spawns subagents and is gated as a
   // mutating request so it requires approval outside fullAccess mode.
