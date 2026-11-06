@@ -1,4 +1,34 @@
 import { describe, expect, it, vi } from 'vitest';
+import { mkdtemp, readFile, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
+describe('TF-0772 source runtime MCP config', () => {
+  it('writes the live source MCP namespace atomically and preserves other configuration', async () => {
+    const { syncSourceRuntimeMcpConfig } = await import('@electron/utils/channel-config');
+    const directory = await mkdtemp(join(tmpdir(), 'source-mcp-config-'));
+    const path = join(directory, 'openclaw.json');
+    const runtime = { coding: { worktree: { backend: 'git' } } };
+    await writeFile(path, JSON.stringify({ runtime, mcp: { servers: { old: { command: 'node' } } } }));
+    const mcp = { servers: { current: { command: 'node', exposure: { agents: ['main'] }, networkPolicy: 'disabled' } } };
+    await syncSourceRuntimeMcpConfig(mcp, path);
+    expect(JSON.parse(await readFile(path, 'utf8'))).toEqual({ runtime, mcp });
+    await syncSourceRuntimeMcpConfig({ servers: {} }, path);
+    expect(JSON.parse(await readFile(path, 'utf8'))).toEqual({ runtime, mcp: { servers: {} } });
+  });
+  it('copies MCP servers into a new source runtime configuration', async () => {
+    const { buildInitialSourceRuntimeIsolationConfig } = await import('@electron/gateway/config-sync');
+    const mcp = { servers: { fixture: { command: 'node', networkPolicy: 'disabled', exposure: { agents: ['main'] } } } };
+    expect(buildInitialSourceRuntimeIsolationConfig({ mcp }).mcp).toEqual(mcp);
+  });
+  it('propagates a changed or explicitly empty MCP namespace into the source snapshot', async () => {
+    const { applySourceRuntimeIsolationUserConfig } = await import('@electron/gateway/config-sync');
+    const original = { mcp: { servers: { old: { command: 'old' } } }, runtime: { coding: { worktree: { backend: 'git' } } } };
+    const mcp = { servers: { current: { url: 'http://127.0.0.1:4000/mcp', toolFilter: { exclude: ['write'] } } } };
+    expect(applySourceRuntimeIsolationUserConfig(original, { mcp })).toMatchObject({ changed: true, config: { mcp, runtime: original.runtime } });
+    expect(applySourceRuntimeIsolationUserConfig(original, { mcp: { servers: {} } }).config.mcp).toEqual({ servers: {} });
+  });
+});
 
 const {
   mockExecFile,

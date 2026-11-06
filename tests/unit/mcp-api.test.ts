@@ -90,6 +90,7 @@ vi.mock('@electron/services/git-api', () => ({
 vi.mock('@electron/utils/channel-config', () => ({
   readOpenClawConfig: vi.fn(async () => ({})),
   writeOpenClawConfig: vi.fn(async () => undefined),
+  syncSourceRuntimeMcpConfig: vi.fn(async () => undefined),
 }));
 
 vi.mock('@electron/utils/config-mutex', () => ({
@@ -375,7 +376,7 @@ describe('mcp api registry', () => {
     // No dead mcp.reload RPC is issued; the runtime consumes openclaw.json instead.
     expect(gatewayManager.rpc).not.toHaveBeenCalled();
     expect(writeOpenClawConfig).toHaveBeenCalled();
-    expect(gatewayManager.debouncedReload).toHaveBeenCalled();
+    expect(gatewayManager.debouncedReload).not.toHaveBeenCalled();
     const mirrored = (writeOpenClawConfig as ReturnType<typeof vi.fn>).mock.calls.at(-1)?.[0] as {
       mcp?: { servers?: Record<string, unknown> };
     };

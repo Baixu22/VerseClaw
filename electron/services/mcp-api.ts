@@ -23,7 +23,7 @@ import { isRecord } from './payload-utils';
 import { listResourceEnvelopeEntries, recordResourceEnvelopeEntry, removeResourceEnvelopeEntry } from './resource-envelope';
 import { readAgentBootstrapTools } from '../utils/agent-config';
 import { proxyAwareFetch } from '../utils/proxy-fetch';
-import { readOpenClawConfig, writeOpenClawConfig } from '../utils/channel-config';
+import { readOpenClawConfig, syncSourceRuntimeMcpConfig, writeOpenClawConfig } from '../utils/channel-config';
 import { withConfigLock } from '../utils/config-mutex';
 import { getDataDir } from '../utils/paths';
 import { getActiveWorkspaceProfile, getWorkspaceRootPathById } from './workspaces-api';
@@ -986,6 +986,7 @@ export async function syncAgentMcpExposureToOpenClawConfig(
     mcp.servers = currentServers;
     config.mcp = mcp;
     await writeOpenClawConfig(config);
+    await syncSourceRuntimeMcpConfig(config.mcp);
   });
 }
 
@@ -1042,6 +1043,7 @@ export async function syncAllMcpServersToOpenClawConfig(): Promise<void> {
     mcp.servers = nextServers;
     config.mcp = mcp;
     await writeOpenClawConfig(config);
+    await syncSourceRuntimeMcpConfig(config.mcp);
   });
 }
 
@@ -1519,7 +1521,6 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
         agentId,
       };
     }
-    ctx.gatewayManager?.debouncedReload?.();
     return {
       ok: true,
       hotReloaded: true,

@@ -43,17 +43,20 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
     }
     await startGateway(app);
     const rpc = <T,>(method: string, params: Record<string, unknown>) => hostInvoke<T>(app!, 'gateway', 'rpc', { method, params, timeoutMs: 90_000 });
+    const runtimeConfig = await rpc<{ path?: string; config?: { mcp?: { servers?: Record<string, unknown> }; agents?: unknown } }>('config.get', {});
+    evidence.runtimeConfig = { path: runtimeConfig.path, mcpServerIds: Object.keys(runtimeConfig.config?.mcp?.servers ?? {}), agents: runtimeConfig.config?.agents };
     const parent = await rpc<{ key: string; entry: { sessionId: string } }>('sessions.create', { agentId: 'main', label: 'P2 bound session' });
     await hostInvoke(app, 'workspaces', 'update', { id: workspaceId, activeSessionKey: parent.key });
+    evidence.activeWorkspace = (await hostInvoke<WorkspaceSnapshot>(app, 'workspaces', 'getActive')).activeWorkspace;
     evidence.parent = parent;
     let list: McpListToolsResult | undefined;
     const discoveryAttempts: unknown[] = [];
+    evidence.discovery = discoveryAttempts;
     await expect.poll(async () => {
       list = await hostInvoke<McpListToolsResult>(app!, 'mcp', 'listTools', { serverId: 'fixture' });
       discoveryAttempts.push(list);
       return list.success;
     }, { timeout: 90_000, intervals: [1000, 2000] }).toBe(true);
-    evidence.discovery = discoveryAttempts;
     expect(list).toMatchObject({ status: 'connected', sessionGeneration: parent.entry.sessionId,
       tools: expect.arrayContaining([expect.objectContaining({ name: 'echo' })]) });
     const call = (payload: Record<string, unknown>) => hostInvoke<McpCallToolResult>(app!, 'mcp', 'callTool', { serverId: 'fixture', toolName: 'echo', ...payload });

@@ -8,7 +8,7 @@ import { access, mkdir, readFile, readdir, stat, rm } from 'fs/promises';
 import { writeJsonAtomic, readJsonAtomic, AtomicWriteError } from './atomic-write';
 import { constants } from 'fs';
 import { join } from 'path';
-import { getOpenClawResolvedDir, getOpenClawConfigDir } from './paths';
+import { getDataDir, getOpenClawResolvedDir, getOpenClawConfigDir } from './paths';
 import * as logger from './logger';
 import { proxyAwareFetch } from './proxy-fetch';
 import { withConfigLock } from './config-mutex';
@@ -508,6 +508,18 @@ export async function readOpenClawConfig(): Promise<OpenClawConfig> {
         console.error('Failed to read OpenClaw config:', error);
         return {};
     }
+}
+
+/** Keep the existing source-runtime projection on the same MCP namespace as Main. */
+export async function syncSourceRuntimeMcpConfig(
+    mcp: unknown,
+    configPath = join(getDataDir(), 'openclaw-source-state', 'openclaw.json'),
+): Promise<void> {
+    if (!(await fileExists(configPath))) return;
+    const { data } = await readJsonAtomic<Record<string, unknown>>(configPath);
+    if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Source runtime config is invalid');
+    if (JSON.stringify(data.mcp) === JSON.stringify(mcp)) return;
+    await writeJsonAtomic(configPath, { ...data, mcp });
 }
 
 export async function writeOpenClawConfig(config: OpenClawConfig): Promise<void> {

@@ -819,7 +819,7 @@ export function buildSourceRuntimeIsolationEnv(params: {
  * 3. stripSourceRuntimeIncompatibleConfigKeys still only removes agents.list[].reasoningEffort
  *    and must not touch runtime.* keys.
  */
-export const SOURCE_RUNTIME_ISOLATION_SYNC_KEYS = ['agents', 'models', 'plugins', 'runtime', 'tools', 'channels'] as const;
+export const SOURCE_RUNTIME_ISOLATION_SYNC_KEYS = ['agents', 'models', 'plugins', 'runtime', 'tools', 'channels', 'mcp'] as const;
 export type SourceRuntimeIsolationSyncKey = typeof SOURCE_RUNTIME_ISOLATION_SYNC_KEYS[number];
 
 export function applySourceRuntimeIsolationUserConfig(
@@ -867,6 +867,7 @@ export function buildInitialSourceRuntimeIsolationConfig(
     // Carry the channel block so the isolated gateway can start the channels the
     // desktop configured (RC-10 H-02..H-06 need a real channel effect).
     channels: userConfig.channels ?? {},
+    ...(userConfig.mcp != null ? { mcp: userConfig.mcp } : {}),
   };
 }
 
