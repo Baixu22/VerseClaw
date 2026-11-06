@@ -411,6 +411,13 @@ function readTrial(plan, slot, directory, supplied) {
         assert.equal(row.grader, null, 'format-failure-cannot-claim-grade');
         assert.deepEqual(row.edits, [], 'format-failure-cannot-claim-edits');
         assert.throws(() => parseCodingEdits(response.text, task), undefined, 'valid-output-misclassified');
+      } else if (plan.collector?.incompleteOutcome === 'known-output-limit-is-failure'
+        && execution.failureCategory === 'model-output-limit') {
+        assert.equal(response.status, 'incomplete', 'output-limit-response-status');
+        assert.equal(response.incompleteReason, 'max_output_tokens', 'output-limit-reason');
+        assert(response.usage !== null, 'output-limit-usage-required');
+        assert.equal(row.grader, null, 'output-limit-cannot-claim-grade');
+        assert.deepEqual(row.edits, [], 'output-limit-cannot-claim-edits');
       } else { success = gradeMeasuredObservation(plan, slot, row); if (success) assert(row.edits.length > 0, 'pass-without-edits'); }
     }
     else try { const answer = JSON.parse(response.text); success = answer.caseId === slot.caseId && answer.probeValue === 'ok'; } catch { /* Malformed output is an agent failure. */ }
