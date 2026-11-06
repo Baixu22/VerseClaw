@@ -1,0 +1,9 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-knowledge-closeout",
+  "reason": "Remove only trailing blank line from retained lint output for merge diff hygiene; candidate IDs and observed test results remain historical.",
+  "file": "lint.txt",
+  "beforeSha256": "79060ca7d9abdcbe4ac7fbf0f725266b4f67f2da3e9fbe4d5abfeaa7a72859a1",
+  "afterSha256": "b2300bf31854b30902f160781f9477103c3a15365c72f927c4257c1246633f9b",
+  "originalAvailableAt": "git:c23d4b9cc:harness/specs/fixtures/knowledge-retrieval-governance-completion/lint.txt"
+}

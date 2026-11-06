@@ -1,0 +1,79 @@
+{
+  "id": "zh-port",
+  "baseline": {
+    "mode": "first-80-lines-240-character-excerpt",
+    "answer": "网关部署端口配置为8080。",
+    "taskComplete": true,
+    "lexicalHit": false
+  },
+  "admission": {
+    "sources": [
+      {
+        "id": "部署.md",
+        "lookup": "部署.md",
+        "path": "部署.md",
+        "title": "部署.md",
+        "excerpt": "网关部署端口配置为8080。",
+        "updatedAt": "2026-11-05T00:00:00Z",
+        "readRange": {
+          "fromLine": 1,
+          "toLine": 1,
+          "totalLines": 1,
+          "truncated": false
+        },
+        "citation": {
+          "refId": "memory-wiki:部署.md",
+          "owner": "memory-wiki",
+          "subjectId": "部署.md",
+          "revision": "1",
+          "contentDigest": "sha256:7b1d0a03398f6d4df85bf8fdb28164cd4de7eda9e363e073a1b86a30304e0704",
+          "sourceRefs": [
+            "部署.md"
+          ]
+        }
+      }
+    ],
+    "rejections": [],
+    "conflicts": [],
+    "reads": [
+      {
+        "path": "部署.md",
+        "fromLine": 1,
+        "lineCount": 80
+      }
+    ],
+    "lexicalHit": true
+  },
+  "liveModel": true,
+  "taskComplete": true,
+  "abstentionCorrect": true,
+  "quoteCitationsValid": true,
+  "promptHash": "c896b7bcefdbb12b029d7ced8ba0f4e1ff9f8dce5c2141c15d7e86ae5a6d41c2",
+  "provider": {
+    "text": "{\"claims\":[{\"text\":\"网关部署端口为8080。\",\"citations\":[{\"sourceId\":\"memory-wiki:部署.md\",\"quote\":\"网关部署端口配置为8080。\"}]}],\"unknowns\":[]}",
+    "responseId": "01a1ab5a34fd7d8daa9d5f957e665ffb",
+    "model": "space-bunny",
+    "status": "completed",
+    "usage": {
+      "inputTokens": 443,
+      "outputTokens": 45,
+      "totalTokens": 488
+    }
+  },
+  "parsed": {
+    "claims": [
+      {
+        "text": "网关部署端口为8080。",
+        "citations": [
+          {
+            "sourceId": "memory-wiki:部署.md",
+            "quote": "网关部署端口配置为8080。"
+          }
+        ]
+      }
+    ],
+    "unknowns": []
+  },
+  "answer": "网关部署端口为8080。",
+  "durationMs": 2076
+}

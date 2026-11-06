@@ -1,0 +1,45 @@
+{
+  "schema": "GatewayStartupNegativeControls/v1",
+  "driven_by": "agent",
+  "candidate": "5c91a6f25ffd908d579116cd188e5fd8d949b835",
+  "missingProof": {
+    "passed": true,
+    "expectedProcessExit": 1,
+    "actualProcessExit": 1,
+    "results": [
+      {
+        "arm": "before",
+        "authenticatedRpcReadyMs": 34812.9081,
+        "accepted": false,
+        "error": "Measured doctor loader was not observed: ENOENT: no such file or directory, open 'D:\\ClawX\\.tmp\\gateway-startup-verify-20261105\\.tmp\\gateway-startup-ea17973c-4e11-45ef-95ff-0bc0a9bdce2a\\1-before\\doctor-loader-proof.json'"
+      },
+      {
+        "arm": "after",
+        "authenticatedRpcReadyMs": 15023.9232,
+        "accepted": false,
+        "error": "Measured doctor loader was not observed: ENOENT: no such file or directory, open 'D:\\ClawX\\.tmp\\gateway-startup-verify-20261105\\.tmp\\gateway-startup-ea17973c-4e11-45ef-95ff-0bc0a9bdce2a\\1-after\\doctor-loader-proof.json'"
+      }
+    ]
+  },
+  "dnsUnavailable": {
+    "oldClientTests": 1,
+    "oldClientFailures": 1,
+    "updatedClientTests": 1,
+    "updatedClientFailures": 0
+  },
+  "inheritedOverrides": {
+    "passed": true,
+    "submitted": {
+      "OPENCLAW_GATEWAY_BIND": "lan",
+      "OPENCLAW_SKIP_LEGACY_STATE_MIGRATION": "1",
+      "OPENCLAW_DISABLE_BUNDLED_PLUGINS": "1"
+    },
+    "observedLoaderProofs": 6,
+    "configuredBind": "loopback",
+    "credentials": "32 random bytes per attempt, never included in reports"
+  },
+  "excludedDiagnostic": {
+    "file": "negative-control.json",
+    "reason": "Injecting the migration skip after isolation did not isolate all doctor-loading paths: one arm timed out and one still invoked the loader. Its timings and verdict are not used as acceptance evidence."
+  }
+}

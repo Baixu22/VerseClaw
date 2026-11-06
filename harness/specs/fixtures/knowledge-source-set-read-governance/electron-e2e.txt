@@ -1,0 +1,48 @@
+
+Running 1 test using 1 worker
+
+(node:23440) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23440) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[app:out] [2026-11-05T03:03:33.074Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)
+[app:out] [2026-11-05T03:03:33.074Z] [INFO] [ResourceTracker] Started heartbeat interval
+[2026-11-05T03:03:33.074Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=1796, ppid=27756
+[2026-11-05T03:03:33.074Z] [INFO] Running in E2E mode: startup side effects minimized
+[app:out] [2026-11-05T03:03:33.174Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"window-hidden","activeReasons":["window-hidden"],"transitionCount":1}
+[app:err] [2026-11-05T03:03:33.179Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[app:err] [2026-11-05T03:03:33.179Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[2026-11-05T03:03:33.179Z] [WARN] [webview-security] deny permission-check: WebView permission "web-app-installation" denied by default (fail-closed)
+[2026-11-05T03:03:33.179Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default
+[app:out] [2026-11-05T03:03:33.234Z] [INFO] [extensions] Extension "builtin/clawhub-marketplace" initialized
+[app:out] [2026-11-05T03:03:33.234Z] [INFO] [extensions] Extension "builtin/diagnostics" initialized
+[app:err] [1796:1105/110333.323:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[1796:1105/110333.323:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[app:out] [2026-11-05T03:03:33.798Z] [INFO] [efficiency] shed state changed {"shedding":false,"reason":null,"activeReasons":[],"transitionCount":2}
+[app:out] [2026-11-05T03:03:33.800Z] [INFO] Gateway auto-start skipped in E2E mode
+[app:err] [2026-11-05T03:03:33.800Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-05T03:03:33.801Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-05T03:03:33.801Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-05T03:03:33.801Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-05T03:03:34.203Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-05T03:03:34.204Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-05T03:03:34.204Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-05T03:03:34.204Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-05T03:03:35.990Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-05T03:03:35.991Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-05T03:03:35.991Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-05T03:03:35.991Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-05T03:03:36.605Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-05T03:03:36.605Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-05T03:03:36.606Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-05T03:03:36.606Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-05T03:03:40.152Z] [INFO] Gateway stop requested
+[app:out] [2026-11-05T03:03:40.153Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)
+[app:out] [2026-11-05T03:03:40.183Z] [INFO] [ResourceTracker] Stopped
+[app:out] [2026-11-05T03:03:40.183Z] [INFO] [ResourceTracker] Shutdown complete
+[2026-11-05T03:03:40.183Z] [INFO] [efficiency-sampler] stopped
+[2026-11-05T03:03:40.183Z] [INFO] [efficiency] runtime efficiency sampling stopped
+[app:err] Waiting for the debugger to disconnect...
+  ok 1 tests\e2e\knowledge-hub.spec.ts:704:7 › Knowledge Hub MVP › creates a Source Set, displays partial excerpt evidence, and generates a review-only Studio draft (23.2s)
+
+  1 passed (26.7s)

@@ -41,6 +41,9 @@ class MockWindow {
   close(): void {
     this.destroyed = true;
   }
+  destroy(): void {
+    this.destroyed = true;
+  }
   focus(): void {}
   hide(): void {}
   isDestroyed(): boolean {

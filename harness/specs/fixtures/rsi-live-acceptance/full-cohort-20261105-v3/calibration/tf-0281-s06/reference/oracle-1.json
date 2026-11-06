@@ -1,0 +1,264 @@
+{
+  "numTotalTestSuites": 7,
+  "numPassedTestSuites": 5,
+  "numFailedTestSuites": 2,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 13,
+  "numPassedTests": 13,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793854258331,
+  "success": false,
+  "testResults": [
+    {
+      "assertionResults": [],
+      "startTime": 1793854258331,
+      "endTime": 1793854258331,
+      "status": "failed",
+      "message": "Cannot find package 'tslog' imported from D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0281-s06/reference/workspace/openclaw_runtime/src/logging/logger.ts",
+      "name": "D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0281-s06/reference/workspace/openclaw_runtime/src/agents/stage1-effect-receipt.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "apply_patch effect receipt: outcome mapping"
+          ],
+          "fullName": "apply_patch effect receipt: outcome mapping maps each terminal batch state and refuses to speak for a prepared one",
+          "status": "passed",
+          "title": "maps each terminal batch state and refuses to speak for a prepared one",
+          "duration": 1.1691000000009808,
+          "failureMessages": [],
+          "location": {
+            "line": 49,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "apply_patch effect receipt: shape"
+          ],
+          "fullName": "apply_patch effect receipt: shape names the write journal as the executor and carries no approval decision",
+          "status": "passed",
+          "title": "names the write journal as the executor and carries no approval decision",
+          "duration": 1.2171999999991385,
+          "failureMessages": [],
+          "location": {
+            "line": 61,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "apply_patch effect receipt: shape"
+          ],
+          "fullName": "apply_patch effect receipt: shape ties the receipt to the preview that authorised the commit",
+          "status": "passed",
+          "title": "ties the receipt to the preview that authorised the commit",
+          "duration": 0.16749999999956344,
+          "failureMessages": [],
+          "location": {
+            "line": 80,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "apply_patch effect receipt: shape"
+          ],
+          "fullName": "apply_patch effect receipt: shape sorts the proposal path lists so the stored digest is order-independent",
+          "status": "passed",
+          "title": "sorts the proposal path lists so the stored digest is order-independent",
+          "duration": 0.2745999999988271,
+          "failureMessages": [],
+          "location": {
+            "line": 93,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "apply_patch effect receipt: shape"
+          ],
+          "fullName": "apply_patch effect receipt: shape records an incomplete rollback as recoverable through its recovery ref",
+          "status": "passed",
+          "title": "records an incomplete rollback as recoverable through its recovery ref",
+          "duration": 0.12899999999899592,
+          "failureMessages": [],
+          "location": {
+            "line": 106,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "apply_patch effect receipt: shape"
+          ],
+          "fullName": "apply_patch effect receipt: shape says none rather than undo_write when the batch is not undoable",
+          "status": "passed",
+          "title": "says none rather than undo_write when the batch is not undoable",
+          "duration": 0.11769999999887659,
+          "failureMessages": [],
+          "location": {
+            "line": 116,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "apply_patch effect receipt: shape"
+          ],
+          "fullName": "apply_patch effect receipt: shape produces nothing for a batch that never left prepared",
+          "status": "passed",
+          "title": "produces nothing for a batch that never left prepared",
+          "duration": 0.0988999999990483,
+          "failureMessages": [],
+          "location": {
+            "line": 125,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "apply_patch effect receipt: diff artifact association (AC-3)"
+          ],
+          "fullName": "apply_patch effect receipt: diff artifact association (AC-3) joins handles into the single artifact_ref column and annotates truncation",
+          "status": "passed",
+          "title": "joins handles into the single artifact_ref column and annotates truncation",
+          "duration": 0.3069999999988795,
+          "failureMessages": [],
+          "location": {
+            "line": 138,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "apply_patch effect receipt: diff artifact association (AC-3)"
+          ],
+          "fullName": "apply_patch effect receipt: diff artifact association (AC-3) puts the readable prefix on the row and the whole set under the digest",
+          "status": "passed",
+          "title": "puts the readable prefix on the row and the whole set under the digest",
+          "duration": 0.20869999999922584,
+          "failureMessages": [],
+          "location": {
+            "line": 154,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "apply_patch effect receipt: diff artifact association (AC-3)"
+          ],
+          "fullName": "apply_patch effect receipt: diff artifact association (AC-3) omits artifact_ref entirely when no diff was archived",
+          "status": "passed",
+          "title": "omits artifact_ref entirely when no diff was archived",
+          "duration": 0.22960000000057335,
+          "failureMessages": [],
+          "location": {
+            "line": 173,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "apply_patch effect receipt: wiring and fail-open"
+          ],
+          "fullName": "apply_patch effect receipt: wiring and fail-open writes exactly one receipt when the batch produced journal evidence",
+          "status": "passed",
+          "title": "writes exactly one receipt when the batch produced journal evidence",
+          "duration": 0.8179000000000087,
+          "failureMessages": [],
+          "location": {
+            "line": 199,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "apply_patch effect receipt: wiring and fail-open"
+          ],
+          "fullName": "apply_patch effect receipt: wiring and fail-open writes nothing when there is no journal evidence",
+          "status": "passed",
+          "title": "writes nothing when there is no journal evidence",
+          "duration": 0.11709999999948195,
+          "failureMessages": [],
+          "location": {
+            "line": 214,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "apply_patch effect receipt: wiring and fail-open"
+          ],
+          "fullName": "apply_patch effect receipt: wiring and fail-open swallows a store that throws, because a receipt must never fail a write",
+          "status": "passed",
+          "title": "swallows a store that throws, because a receipt must never fail a write",
+          "duration": 0.47880000000077416,
+          "failureMessages": [],
+          "location": {
+            "line": 225,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793854259396,
+      "endTime": 1793854259401.4788,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0281-s06/reference/workspace/openclaw_runtime/src/agents/apply-patch-effect-receipt.test.ts"
+    },
+    {
+      "assertionResults": [],
+      "startTime": 1793854258331,
+      "endTime": 1793854258331,
+      "status": "failed",
+      "message": "Cannot find package 'tslog' imported from D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0281-s06/reference/workspace/openclaw_runtime/src/logging/logger.ts",
+      "name": "D:/tmp/rsi-live-admission-20261105-v3/calibration/tf-0281-s06/reference/workspace/openclaw_runtime/src/runtime-core/memory-effect-receipt.test.ts"
+    }
+  ]
+}

@@ -1,0 +1,189 @@
+{
+  "schemaVersion": "RsiLayerReviewAcceptance/v1",
+  "generatedAt": "2026-11-04T23:07:05.686Z",
+  "driven_by": "agent",
+  "actor": "codex/rsi-layer-audit",
+  "candidate": {
+    "baseline": "bfcf57616",
+    "codeCommits": [
+      "7b162f40f249dbed42467c49d1e570c9a41a3b7a",
+      "aaea841f6"
+    ],
+    "head": "aaea841f6",
+    "sourceHashes": {
+      "docs/dev/rsi-capability-and-boundaries.md": "a5439d2194a5aea517178b1ca9ce77ea8efeb26fb1a478df08b1acd146024e6e",
+      "docs/dev/rsi-decision-implementation.md": "d7843ca050239425af5845f1fa0a958f9e8476b58047da06ae986a72da1d16cf",
+      "harness/specs/tasks/rsi-benefit-eval.md": "ee3d33a556351dbc0b41a6cf45a366f82ebfdb7dca0ed473e9be72c1d2bd68fd",
+      "harness/specs/tasks/rsi-live-acceptance.md": "c1b9f2c483aab5c5d958a3ca12811255fd672ff77bd0391a1d4b7b7cdd0bc135",
+      "harness/specs/tasks/rsi-layer-convergence-20261105.md": "cc0943e3f23ea92b334cd64882d3d4e55adecaed56fbb51fe2321a5dd2beebb6",
+      "harness/specs/fixtures/rsi-evidence-loop/decision-implementation-validation.v1.json": "e3a51d6f8cf3e6c17b147dcd7b7b69ee2cd7edd0eaccfe0b4c838995411efa74",
+      "harness/specs/fixtures/rsi-live-acceptance/admission-report.json": "ae645ca466aa30d3518e9773bd19227722bda153f5630a5ed8ea217351dbec27",
+      "harness/specs/fixtures/rsi-live-acceptance/SHA256SUMS": "028cf5eac0012027c3a88eca550b8036f9faa1c640c0eb4230f76c497b7ff9d5",
+      "scripts/lib/rsi-benefit-eval.mjs": "fe192a04b5be30023c14ad2a95a152cae21fc546b818d5638cac06360737b587",
+      "scripts/lib/rsi-benefit-eval.d.mts": "a6157a9acb13288645f8f05eaf2e3b16bd8566eeac5e81977d9785ecf26cd635",
+      "scripts/rsi-benefit-eval.mjs": "50924cecbe32d82a1bda5baec932f88ea16f4cfe3e890c0008702387f1cbeedf",
+      "scripts/rsi-decision-check.mjs": "31b8eebeaa6963643b46bfd4cf66e7eec98e8298b2649ac8f675fa2b994a9fb2",
+      "scripts/rsi-historical-task-corpus.mjs": "ef5f3644c3d9ea279fe4d9ca0a1e02c2790992cf83cf82960137ccd6899604fa",
+      "scripts/rsi-live-acceptance.mjs": "e0ca85460deaa95ce3cd47b527e8c1b5fd7cd8128e36c3e9046c026ec53d433e",
+      "scripts/rsi-live-acceptance.d.mts": "a8a2266ba82c5a28ee36325e8d16b42f7690037f3e5b3435ed977b63b8712264",
+      "tests/unit/rsi-benefit-eval.test.ts": "dd68e9825a117813eeeefed0cbac841b90cd5cc85159e855bceb8816e080a3d9",
+      "tests/unit/rsi-decision-check.test.ts": "fd737babfcd7f9958fe75fc6ee6d03c89eebc21ba598199b347a2a5b4a1533d8",
+      "tests/unit/rsi-historical-task-corpus.test.ts": "e2c968c78742c6d17eed500950b7a92932b4caadcd67d1491ec4792a1b0533b8",
+      "tests/unit/rsi-live-acceptance.test.ts": "d33d0875ed9cb1312dc072304369c112dba8681381a7c5ad9aa2a102a35e0e78",
+      "harness/specs/fixtures/agent-first-task-corpus/task-corpus.v1.json": "b62d7190d5a22b086827d6aad23d2ae7e46f92bbee5714db164506ef51fd8d61",
+      "harness/specs/fixtures/agent-first-task-corpus/validation-report.v1.json": "5321b09566f7c220a968c5d49684855cefe172207c81aea3a3465c8c2e98cf29",
+      "harness/specs/fixtures/agent-first-task-corpus/SHA256SUMS": "835a061554c29113eb57e11547d8f7bc2896cf09a206dd263d616d3640d307b8"
+    }
+  },
+  "scope": "Decision documentation scope, measured task source identity, replayable edits, live calibration adoption, provider preflight and run-lock recovery.",
+  "findings": [
+    {
+      "id": "R1",
+      "severity": "high",
+      "status": "fixed",
+      "summary": "README edits from unrelated work invalidated the RSI decision readback even though the documented evidence-binding rule makes documentation non-judged."
+    },
+    {
+      "id": "R2",
+      "severity": "high",
+      "status": "fixed",
+      "summary": "Measured benefit plans did not bind task source-record content, base/reference revisions, target scope or acceptance criteria."
+    },
+    {
+      "id": "R3",
+      "severity": "high",
+      "status": "fixed",
+      "summary": "Measured trial receipts had no replayable edits or grader-to-workspace binding, while passing trials could be accepted without an edit."
+    },
+    {
+      "id": "R4",
+      "severity": "high",
+      "status": "fixed",
+      "summary": "Live calibration artefacts had no supported path into a measured benefit pack, and synthetic calibration claims could be imported."
+    },
+    {
+      "id": "R5",
+      "severity": "high",
+      "status": "fixed",
+      "summary": "Live admission could become ready without consuming a provider preflight whose endpoint/model matched the measured plan."
+    },
+    {
+      "id": "R6",
+      "severity": "medium",
+      "status": "fixed",
+      "summary": "A hard-killed offline run left a permanent lock; an empty measured pack also reported invented zero token and dollar cost."
+    }
+  ],
+  "fixes": [
+    "Treat README files as hash-recorded but non-judged decision inputs; keep RSI code/fixtures/rules/acceptance records hard-failed.",
+    "Freeze sourceRecord, recordDigest, base, reference, targetScope and acceptanceCriteria for all 24 measured tasks and include source records in plan bindings.",
+    "Require measured receipts to carry replayable edits and grader schemaVersion, workspaceRevision and editsDigest; reject hidden-oracle, out-of-scope, duplicate or missing edits and pass-without-edit.",
+    "Add calibrate --calibration-dir to validate, recompute and copy a ready live admission report, 24 admissions and matching provider preflight idempotently.",
+    "Require provider preflight endpoint/model identity and a ready admission report before measured record/report/check.",
+    "Reclaim locks owned by dead PIDs while failing closed on live or malformed locks; preserve null cost when no measured receipt exists."
+  ],
+  "tests": {
+    "command": "pnpm exec vitest run <15 RSI files> --maxWorkers=1",
+    "files": 15,
+    "passed": 164,
+    "failed": 0,
+    "skipped": 0
+  },
+  "typecheck": {
+    "worktree": "D:/tmp/rsi-layer-verify-20261105",
+    "commands": [
+      "pnpm run typecheck:node",
+      "pnpm run typecheck:web",
+      "pnpm run typecheck:test"
+    ],
+    "exitCodes": [
+      0,
+      0,
+      0
+    ],
+    "dependencyMode": "Reused the main checkout node_modules, generated the empty extension bridge, and linked the existing VerseBrowser dist; this is a clean-source typecheck, not a fresh dependency install."
+  },
+  "harness": {
+    "validate": 0,
+    "dryRun": 0
+  },
+  "lint": {
+    "scope": "changed RSI mjs/ts files",
+    "exitCode": 0,
+    "warnings": 0,
+    "log": "D:/tmp/rsi-audit-20261105/eslint-scoped.log"
+  },
+  "readbacks": [
+    {
+      "name": "decision",
+      "exit": 0
+    },
+    {
+      "name": "feedback-pilot",
+      "exit": 0
+    },
+    {
+      "name": "se-kb-arms",
+      "exit": 0
+    },
+    {
+      "name": "corpus",
+      "exit": 0
+    },
+    {
+      "name": "tf0604",
+      "exit": 0
+    },
+    {
+      "name": "tf0592",
+      "exit": 0
+    },
+    {
+      "name": "archive",
+      "exit": 0
+    },
+    {
+      "name": "live-acceptance",
+      "exit": 0
+    },
+    {
+      "name": "benefit-full",
+      "exit": 0
+    }
+  ],
+  "offlineRun": {
+    "runDir": "D:/tmp/rsi-benefit-eval-20261105b/offline-portable",
+    "planned": 216,
+    "recorded": 216,
+    "missing": [],
+    "incomplete": [],
+    "status": "synthetic-wiring-only",
+    "benefitStatus": "insufficient-evidence",
+    "checks": {
+      "partialExit": 1,
+      "fullExit": 0
+    }
+  },
+  "liveAcceptance": {
+    "runDir": "harness/specs/fixtures/rsi-live-acceptance",
+    "status": "NO_GO",
+    "measuredTaskTrials": 0,
+    "unexecutedSlots": 216,
+    "providerAttempts": 4,
+    "completedResponses": 2,
+    "knownTokens": 404
+  },
+  "residuals": [
+    "The retained real-provider admission remains NO_GO; no task quality trial or RSI benefit was measured.",
+    "The shared checkout has unrelated UI changes; RSI judged inputs are committed and clean, while unrelated drift is warning-only."
+  ],
+  "claims": {
+    "benefit": false,
+    "promotionReady": false,
+    "liveProvider": false,
+    "realHuman": false,
+    "productLocksChanged": false,
+    "completeRsiImplementation": false,
+    "releaseApproved": false
+  }
+}

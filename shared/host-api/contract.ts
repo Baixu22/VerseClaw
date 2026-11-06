@@ -4094,6 +4094,9 @@ export type KnowledgeSourceRef = {
   kind?: 'chat' | 'file' | 'wiki' | 'task_ledger' | 'trace' | 'task_loop' | 'manual' | 'search_result' | 'other';
   path?: string;
   url?: string;
+  /** Optional owner version and digest pins; selection never overrides these. */
+  revision?: string;
+  contentDigest?: string;
 };
 export type KnowledgeInteractionMvpMetadata = {
   mvpVersion: 'knowledge-interaction-mvp-1';
@@ -4471,6 +4474,14 @@ export type KnowledgeSaveSourceSetPayload = {
 export type KnowledgeSourceSetResult = HostSuccess & { sourceSet?: KnowledgeSourceSet };
 export type KnowledgeListSourceSetsResult = HostSuccess & { sourceSets: KnowledgeSourceSet[] };
 export type KnowledgeDeleteSourceSetPayload = { id: string };
+export type KnowledgeSourceSetCitation = {
+  refId: string;
+  owner: string;
+  subjectId: string;
+  revision: string;
+  contentDigest: string;
+  sourceRefs: string[];
+};
 export type KnowledgeSourceSetAnswerSource = {
   id: string;
   lookup: string;
@@ -4478,6 +4489,9 @@ export type KnowledgeSourceSetAnswerSource = {
   excerpt: string;
   path?: string;
   content?: string;
+  citation?: KnowledgeSourceSetCitation;
+  updatedAt?: string;
+  readRange?: { fromLine: number; toLine: number; totalLines?: number; truncated: boolean };
 };
 export type KnowledgeAnswerFromSourceSetPayload = {
   question: string;
@@ -4485,6 +4499,10 @@ export type KnowledgeAnswerFromSourceSetPayload = {
   artifactType?: KnowledgeArtifactType;
   sourceSetId?: string;
   semantic?: boolean;
+  /** Retrieval context filter, not an ACL grant. */
+  workspaceId?: string;
+  synthesis?: boolean;
+  history?: Array<{ role: 'user' | 'assistant'; content: string }>;
 };
 export type KnowledgeAnswerFromSourceSetResult = HostSuccess & {
   question: string;
@@ -4493,7 +4511,13 @@ export type KnowledgeAnswerFromSourceSetResult = HostSuccess & {
   unknowns: string[];
   suggestedNextActions: string[];
   groundingStatus: 'grounded' | 'partial' | 'missing_sources';
-  confidence: number;
+  /** Populated only by a measured answer path; template excerpts omit it. */
+  confidence?: number;
+  synthesisMode?: 'source-excerpts' | 'model';
+  model?: { status: 'completed' | 'unavailable' | 'error'; runId?: string; reason?: string };
+  claims?: Array<{ text: string; citations: Array<{ sourceId: string; quote: string }> }>;
+  rejections?: Array<{ refId: string; owner: string; subjectId: string; reason: string; visibleReason: string }>;
+  conflictSet?: Array<{ kind: 'claim' | 'source'; key: string; description: string; stances?: string[]; citations: KnowledgeSourceSetCitation[] }>;
   retrievalDiagnostics: KnowledgeRetrievalDiagnostics;
   semanticRequested?: boolean;
   semanticLane?: {
@@ -4510,6 +4534,7 @@ export type KnowledgeCreateArtifactDraftPayload = {
   sourceRefs: KnowledgeSourceRef[];
   sourceSetId?: string;
   semantic?: boolean;
+  workspaceId?: string;
   metadata?: Record<string, unknown>;
 };
 export type KnowledgeListDraftsPayload = {
@@ -4618,6 +4643,25 @@ export type KnowledgeStewardReviewResult = HostSuccess & {
   tags: string[];
   warnings: string[];
   notes: string;
+  findings?: KnowledgeStewardFinding[];
+  reviewEvidence?: {
+    draftRevision?: number;
+    draftDigest: string;
+    reviewFocus: string[];
+    sources: Array<{ sourceId: string; revision: string; contentDigest: string }>;
+    unverified: string[];
+    modelStatus: 'heuristic' | 'completed' | 'unavailable';
+    driven_by: 'agent';
+    actor: 'knowledge-steward';
+  };
+};
+export type KnowledgeStewardFinding = {
+  kind: 'duplicate' | 'conflict' | 'stale' | 'quality';
+  severity: 'info' | 'warning' | 'error';
+  message: string;
+  citations: Array<{ sourceId: string; quote: string; revision?: string; contentDigest?: string }>;
+  verified?: boolean;
+  unverifiedReason?: string;
 };
 /**
  * Area 5 §3.2 — structured output from the optional semantic steward pass.
@@ -4632,6 +4676,7 @@ export type StewardSemanticReview = {
   tags: string[];
   warnings: Array<{ kind: 'duplicate' | 'conflict' | 'stale' | 'quality'; message: string; relatedPageId?: string }>;
   confidence: number;
+  findings?: KnowledgeStewardFinding[];
 };
 export type KnowledgeProvenanceTargetKind = 'wiki-page' | 'draft' | 'inbox' | 'okf-concept' | 'manual';
 export type KnowledgeReferenceKind = 'chat' | 'search' | 'draft' | 'task-ledger' | 'clawgraph' | 'manual';
@@ -4752,6 +4797,32 @@ export type KnowledgeWatchedDirectoryEvent = {
 export type KnowledgeListWatchedDirectoryEventsPayload = {
   configId: string;
   limit?: number;
+};
+
+export type KnowledgeGithubConnectorConfig = {
+  id: string;
+  kind: 'github-public-directory';
+  owner: string;
+  repo: string;
+  ref: string;
+  /** One file or one directory; directory traversal is deliberately nonrecursive. */
+  path: string;
+  enabled: boolean;
+  intervalSeconds: number;
+};
+export type KnowledgeConnectorReceipt = {
+  connectorId: string;
+  observedAt: string;
+  lastSuccessAt?: string;
+  retryAt?: string;
+  status: 'ok' | 'access-lost' | 'error';
+  created: number;
+  updated: number;
+  withdrawn: number;
+  unchanged: number;
+  error?: string;
+  driven_by: 'agent';
+  actor: 'knowledge-github-connector';
 };
 
 export type CronUpdatePayload = { id: string; input: CronJobUpdateInput };
@@ -6072,6 +6143,10 @@ export type HostApiContract = {
     governanceAudit: () => KnowledgeGovernanceResult;
     listGovernanceReceipts: () => KnowledgeListGovernanceReceiptsResult;
     listWatchedDirectories: () => KnowledgeWatchedDirectoryConfig[];
+    listSourceConnectors: () => HostSuccess & { connectors: Array<KnowledgeGithubConnectorConfig & { receipt?: KnowledgeConnectorReceipt }> };
+    upsertSourceConnector: (config: KnowledgeGithubConnectorConfig) => HostSuccess;
+    syncSourceConnector: (payload: { id: string }) => HostSuccess & { receipt?: KnowledgeConnectorReceipt };
+    removeSourceConnector: (payload: { id: string }) => HostSuccess;
     addWatchedDirectory: (config: KnowledgeWatchedDirectoryConfig) => HostSuccess;
     updateWatchedDirectory: (payload: { id: string; config: Partial<KnowledgeWatchedDirectoryConfig> }) => HostSuccess;
     removeWatchedDirectory: (payload: { id: string }) => HostSuccess;

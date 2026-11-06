@@ -58,9 +58,13 @@ Verse Claw は、組み込み OpenClaw Runtime 上に構築された Electron �
 - Runtime Memory injection、SEKB automatic writeback、Browser private network は default-on ではありません。
 - メモリのフィードバックと SEKB 採用回数は診断専用です。フィードバックは検索順位や保持判断に影響しません。[RSI の証拠と境界](docs/dev/rsi-capability-and-boundaries.md) では過去の測定と決定的なリプレイを区別します。
 - VToken は retired。旧 env/config では production assembly / sidecar を再有効化できません。
-- VerseGit は default-off / landed-unwired。VerseShell は default-off controlled foundation。VerseBrowser は live driver snapshot の action のみ advertise します。
+- VerseGit と VerseShell は既定で無効です。ホスト統合は以下の責務と権限の境界を維持します。
 - Dreams は retired。Image Generation は developer/test gate で、通常の製品 navigation ではありません。
 - `liveReady=false`、`productApproved=false`、`defaultOn=false` は product lock として維持されます。
+
+<!-- VERSE-TOOLS-BOUNDARY-START -->
+**VerseGit の境界付きコーディングループ：**既定で無効、一般提供は未承認です。win32-x64 M1 provider はリポジトリの事実を提供し、候補の検証は VerseShell で実行します。write journal と Git apply はホストが管理します。M4 landing/admission は未承認で、`liveReady=false` と `productApproved=false` を維持します。VerseShell も既定で無効です。VerseBrowser は利用可能かつ所有セッションに紐づく runtime action のみ受け付け、モデルの引数でホストの承認を代替できません。リクエスト単位の private-network 検査はリダイレクトとサブリソースも対象です。[Verse の境界](docs/modules/verse-tools.md)を参照してください。
+<!-- VERSE-TOOLS-BOUNDARY-END -->
 
 Default や release claim を変更する前に、[default configuration](docs/dev/default-config-matrix.md)、[product semantics](docs/clawx-product-semantics.md)、[capability claims](shared/capability-claims.ts) を確認してください。
 
@@ -99,6 +103,8 @@ pnpm dev
 ```
 
 `pnpm dev` は VerseBrowser、embedded runtime、bundled skills を build してから Vite と Electron を起動します。Gateway の ready には通常 10–30 秒必要です。Vite page だけでは完全な Electron Host services は得られません。
+
+ビルド済み Gateway は解決済みの JavaScript Doctor 契約をネイティブで読み込み、SDK エイリアスの準備を減らします。マウントしたソースと外部プラグインはそれぞれの契約を使い、移行チェックも継続します。`pnpm run build:runtime` の後に `node scripts/measure-gateway-startup.mjs` を実行すると、隔離したループバック環境と空のキャッシュで比較できます。有効な各サンプルは対象ローダーの呼び出しと認証済み RPC の完了を確認します。
 
 最初の session：
 
@@ -170,6 +176,9 @@ Main layers：
 - Session は JSONL transcript、runtime state は SQLite も使用。
 - Token history は structured session usage record から集計。Cost は推定値。
 - Knowledge は `memory-wiki` vault と local governance metadata を使用。
+- 監視フォルダーは追加・変更・削除を版付きの審査候補へ同期し、停止中の変更も再走査します。
+- Librarian は許可済みの証拠と制限された会話履歴を設定済み Gateway モデルへ渡し、原文引用と版を検証します。部分読み取り、矛盾、モデル失敗を明示し、Studio はレビュー用の抜粋草稿を保存します。
+- 中国語検索、長文の制限付き続読、provider 別 embedding キャッシュ、版に紐付く Steward 所見を実装しています。任意の公開 GitHub ディレクトリ接続は更新と撤回を Inbox へ送ります。他の SaaS 接続は未実装です。
 - Log、trace、screenshot、Task Forest、handoff は明示的に curated されない限り local working data。
 
 Local storage は offline execution を意味しません。Online model、channel、browser、external tool は設定に従って data を受け取ります。Credential や private transcript を commit / public issue に含めないでください。

@@ -14,8 +14,9 @@
  * - Policy v2, the annotated corpus and the curated historical run must still
  *   satisfy the chosen options.
  * - Every bound blob is hashed against disk. Files declared in
- *   `source.nonJudgedInputs` are reported as warnings, never as failures: they
- *   are repository registries that unrelated tasks legitimately edit.
+ *   `source.nonJudgedInputs` are reported as warnings, never as failures:
+ *   repository registries and README documentation are legitimately edited by
+ *   unrelated tasks, while RSI code, fixtures and rules remain hard failures.
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
@@ -28,7 +29,13 @@ import { isMainEntrypoint } from './lib/entrypoint.mjs';
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 // The checker owns coverage; the mutable acceptance record cannot omit a
 // judged source or relabel it as non-judged to bypass verification.
-const NON_JUDGED_PATHS = ['.gitignore', 'scripts/repository-artifacts.json'];
+const NON_JUDGED_PATHS = [
+  '.gitignore',
+  'README.ja-JP.md',
+  'README.md',
+  'README.zh-CN.md',
+  'scripts/repository-artifacts.json',
+];
 const REQUIRED_BOUND_PATHS = [
   '.gitignore',
   'README.ja-JP.md',

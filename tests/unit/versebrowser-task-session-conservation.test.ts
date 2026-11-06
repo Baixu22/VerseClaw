@@ -25,6 +25,7 @@ function passedExecution(task: AgentBrowserTask, runId = 'run-1') {
 }
 
 class FakeWebContents extends EventEmitter {
+  setWebRTCIPHandlingPolicy() {}
   readonly id = Math.floor(Math.random() * 100000) + 1;
   url = '';
   title = '';
@@ -45,6 +46,7 @@ class FakeWindow {
     });
   }
   close() { this.closed = true; }
+  destroy() { this.closed = true; this.webContents.emit('destroyed'); }
   isDestroyed() { return this.closed; }
   show() {}
   hide() {}

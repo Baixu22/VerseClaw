@@ -55,6 +55,18 @@ describe('rsi decision acceptance readback', () => {
     expect(result.passed).toBe(true);
   });
 
+  it('keeps README documentation drift out of the RSI hard-failure scope', () => {
+    const acceptance = readAcceptance();
+    for (const path of ['README.ja-JP.md', 'README.md', 'README.zh-CN.md']) {
+      acceptance.source.gitBlobHashes[path] = '0'.repeat(40);
+    }
+
+    const result = validateDecisionAcceptance(acceptance, ROOT, { allowDirty: true });
+
+    expect(codes(result)).not.toContain('bound-file-drift');
+    expect(result.warnings.filter((entry) => entry.code === 'non-judged-drift' && entry.message.startsWith('README.'))).toHaveLength(3);
+    expect(result.passed).toBe(true);
+  });
   it('fails when the acceptance disagrees with the decisions file', () => {
     const acceptance = readAcceptance();
     acceptance.decisions.find((entry: { id: string }) => entry.id === 'D1').choice = 'A';

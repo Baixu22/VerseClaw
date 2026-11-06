@@ -1,5 +1,8 @@
-import { app } from 'electron';
+import { app, session as electronSession } from 'electron';
 import { createHash, randomUUID } from 'node:crypto';
+import { lookup } from 'node:dns/promises';
+import { isIP } from 'node:net';
+import { createBrowserNetworkProxy } from './agent-browser-network-proxy';
 import { assertSensitiveCaptureAllowed } from './sensitive-capture-gate';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { createPermissionDecisionEvent } from '@shared/product-semantics';
@@ -46,6 +49,9 @@ import {
  * (driven_by=agent) and recorded so evidence can prove where it came from.
  */
 const privateNetworkApprovals = new Map<string, BrowserPrivateNetworkApproval>();
+// Only the host wrapper can reserve an opening grant. It is consumed by the
+// first request's real session id, before initial navigation or redirects.
+const privateNetworkOpenApprovals = new WeakMap<object, BrowserPrivateNetworkApproval>();
 
 /** Actions whose payload carries a navigation target subject to the private-network guard. */
 const NAVIGATION_ACTIONS = new Set<string>(['navigate', 'open', 'createTask']);
@@ -148,6 +154,36 @@ export async function assertBrowserNavigationAllowed(
   await resolveBrowserNavigationApproval(action, payload);
 }
 
+export async function assertBrowserRequestAllowed(
+  url: string,
+  context: { sessionId?: string; sessionKey?: string; workspaceId?: string },
+  lookupAddresses: (hostname: string) => Promise<Array<{ address: string }>> = (hostname) => lookup(hostname, { all: true }),
+): Promise<void> {
+  const target = new URL(url);
+  // These resources do not issue a network request. Their subsequent fetches
+  // still pass through this guard. WebSocket handshakes use the same origin grant.
+  if (['about:', 'data:', 'blob:'].includes(target.protocol)) return;
+  if (target.protocol === 'ws:') target.protocol = 'http:';
+  if (target.protocol === 'wss:') target.protocol = 'https:';
+  const hostname = target.hostname.replace(/^\[|\]$/gu, '');
+  const addresses = isIP(hostname) ? [{ address: hostname }] : await lookupAddresses(hostname);
+  if (addresses.length === 0 || addresses.some(({ address }) => !isIP(address))) {
+    throw Object.assign(new Error('Browser request DNS returned no valid addresses'), { code: 'E_BROWSER_DNS_UNAVAILABLE' });
+  }
+  const decision = decideBrowserNavigation({
+    url: target.href,
+    sessionId: context.sessionId ?? 'unbound',
+    firstPartyOrigins: context.sessionId ? await resolveFirstPartyOrigins(context) : [],
+    approvals: context.sessionId ? [...privateNetworkApprovals.values()] : [],
+    resolvedAddresses: addresses.map(({ address }) => address),
+  });
+  if (!decision.allowed) {
+    throw Object.assign(new Error(`Agent browser request blocked: ${decision.reason} (address class ${decision.addressClass})`), {
+      code: 'E_BROWSER_PRIVATE_NETWORK_DENIED',
+    });
+  }
+}
+
 async function resolveBrowserNavigationApproval(
   action: string,
   payload: unknown,
@@ -164,9 +200,10 @@ async function resolveBrowserNavigationApproval(
     firstPartyOrigins,
   });
   if (decision.allowed) {
-    return decision.reason === 'approved-private'
-      ? privateNetworkApprovals.get(`${sessionId}|${browserOriginOf(url)}`)
-      : undefined;
+    // A public-looking hostname may resolve privately at request time. Reserve
+    // its explicit host grant too, so the real browser session receives it.
+    const approval = privateNetworkApprovals.get(`${sessionId}|${browserOriginOf(url)}`);
+    return approval && approval.expiresAt > Date.now() ? approval : undefined;
   }
   const error = new Error(
     `Agent browser ${action} blocked: ${decision.reason} (address class ${decision.addressClass})`,
@@ -212,7 +249,11 @@ export function assertAgentBrowserPermissionEffect(
   const binding = permissionEffectBindingFor('browser');
   if (!binding) throw new Error('permission-effect-binding-missing');
   const nowMs = Date.now();
-  const sessionKey = input.sessionKey?.trim() || `browser:${input.requestId}`;
+  const rawSessionKey = input.sessionKey?.trim() || `browser:${input.requestId}`;
+  // Receipt actor keys are bounded independently of runtime session identity.
+  // Hash, never truncate: distinct owners must not collapse to the same prefix.
+  const sessionKey = rawSessionKey.length <= 256 ? rawSessionKey
+    : `browser-owner:${createHash('sha256').update(rawSessionKey).digest('hex')}`;
   const workspaceId = input.workspaceId?.trim() || 'workspace-global';
   const sessionId = input.sessionId?.trim();
   const effectDigest = createHash('sha256')
@@ -312,7 +353,95 @@ async function prepareHostContext(): Promise<void> {
   }
 }
 
-class HostAgentBrowserService extends ModuleAgentBrowserService {
+export class HostAgentBrowserService extends ModuleAgentBrowserService {
+  private readonly networkProfiles = new Map<string, Promise<Awaited<ReturnType<typeof createBrowserNetworkProxy>>>>();
+  private readonly networkSessions = new Map<string, { profile: string; sessionKey?: string; workspaceId?: string }>();
+  private readonly openingNetworkGrants = new Map<string, BrowserPrivateNetworkApproval>();
+  private readonly lastProxyUrls = new Map<string, string>();
+  protected override async resolveBrowserAddresses(profile: string, hostname: string) {
+    const proxy = await this.networkProfiles.get(profile);
+    if (!proxy) throw new Error('Browser network owner is unavailable');
+    return proxy.resolveAddresses(hostname);
+  }
+
+  protected override browserWindowDestroyed(sessionId: string): void {
+    const owner = this.networkSessions.get(sessionId);
+    if (owner) void this.networkProfiles.get(owner.profile)?.then(proxy => proxy.revokeConnections()).catch(() => undefined);
+  }
+
+  protected override async prepareBrowserSession(session: ReturnType<ModuleAgentBrowserService['list']>[number], partition: string): Promise<void> {
+    this.networkSessions.set(session.id, { profile: session.profile, sessionKey: session.sessionKey, workspaceId: session.workspaceId });
+    const openingGrant = session.sessionKey ? this.openingNetworkGrants.get(session.sessionKey) : undefined;
+    if (openingGrant) {
+      this.openingNetworkGrants.delete(session.sessionKey!);
+      privateNetworkApprovals.set(`${session.id}|${openingGrant.origin}`, { ...openingGrant, sessionId: session.id });
+    }
+    let pending = this.networkProfiles.get(session.profile);
+    if (!pending) {
+      pending = (async () => {
+        const transport = electronSession.fromPartition(partition);
+        const upstreamRoute = await transport.resolveProxy('https://example.com');
+        const systemRoute = await electronSession.defaultSession.resolveProxy('https://example.com');
+        const ownPreviousProxy = this.lastProxyUrls.get(session.profile);
+        if (upstreamRoute !== systemRoute && upstreamRoute !== `PROXY ${ownPreviousProxy ? new URL(ownPreviousProxy).host : ''}`) {
+          throw new Error('Browser network requires an upstream proxy; direct egress is refused');
+        }
+        const proxy = await createBrowserNetworkProxy({
+          resolveUpstreamProxy: url => electronSession.defaultSession.resolveProxy(url),
+          lookupAddresses: async hostname => (await transport.resolveHost(hostname)).endpoints.map(endpoint => ({ address: endpoint.address, family: endpoint.family === 'ipv4' ? 4 : 6 })),
+          authorize: async (url, addresses, tunnel) => {
+            const owners = [...this.networkSessions].filter(([, owner]) => owner.profile === session.profile);
+            if (owners.length === 0) throw new Error('Browser network profile has no live owner');
+            let expiresAt: number | undefined;
+            // Electron pools connections per persistent profile, not browser tab.
+            // A private tunnel is allowed only while every owner of that shared
+            // transport permits it; it cannot borrow another session's grant.
+            for (const [sessionId, owner] of owners) {
+              const firstPartyOrigins = await resolveFirstPartyOrigins(owner);
+              const targets = [url];
+              if (tunnel) {
+                // CONNECT carries no URL scheme and Chromium also uses it for ws.
+                // The per-request guard enforces the precise ws/wss origin; here
+                // either scheme must authorize this same host and numeric port.
+                const target = new URL(url);
+                targets.push(`http://${target.hostname}:${target.port || '443'}/`);
+              }
+              const allowed = targets.map(target => ({ target, decision: decideBrowserNavigation({ url: target, sessionId,
+                approvals: [...privateNetworkApprovals.values()], firstPartyOrigins, resolvedAddresses: addresses }) })).find(result => result.decision.allowed);
+              if (!allowed) throw new Error('Browser destination denied by profile owners');
+              if (allowed.decision.allowed && allowed.decision.reason === 'approved-private') {
+                const grant = privateNetworkApprovals.get(`${sessionId}|${browserOriginOf(allowed.target)}`);
+                if (!grant) throw new Error('Browser private grant expired');
+                expiresAt = Math.min(expiresAt ?? grant.expiresAt, grant.expiresAt);
+              }
+            }
+            return expiresAt;
+          },
+        });
+        const onLogin = (event: Electron.Event, contents: Electron.WebContents, _details: Electron.AuthenticationResponseDetails, authInfo: Electron.AuthInfo, callback: (username?: string, password?: string) => void) => {
+          if (!authInfo.isProxy || authInfo.host !== '127.0.0.1' || authInfo.port !== Number(new URL(proxy.url).port) || contents?.session !== transport) return;
+          event.preventDefault(); callback(proxy.credentials.username, proxy.credentials.password);
+        };
+        app.on('login', onLogin);
+        proxy.onClose(() => app.off('login', onLogin));
+        try {
+          await transport.setProxy({ mode: 'fixed_servers', proxyRules: proxy.url, proxyBypassRules: '<-loopback>' });
+          this.lastProxyUrls.set(session.profile, proxy.url);
+          await transport.closeAllConnections();
+          return proxy;
+        } catch (error) { proxy.close(); throw error; }
+      })();
+      this.networkProfiles.set(session.profile, pending);
+    }
+    try {
+      const proxy = await pending;
+      proxy.revokeConnections(); // Joining a profile changes its permission intersection.
+    } catch (error) {
+      if (this.networkProfiles.get(session.profile) === pending) this.networkProfiles.delete(session.profile);
+      throw error;
+    }
+  }
+
   async open(payload: Parameters<ModuleAgentBrowserService['open']>[0] = {}) {
     const sessionKey = payload.sessionKey?.trim();
     if (sessionKey && await findSessionDeleteGateBySession(sessionKey)) {
@@ -327,7 +456,18 @@ class HostAgentBrowserService extends ModuleAgentBrowserService {
       throw error;
     }
     const workspaceId = workspace?.id ?? payload.workspaceId;
-    const result = await super.open(workspaceId ? { ...payload, workspaceId } : payload);
+    const openingApproval = privateNetworkOpenApprovals.get(payload);
+    if (openingApproval && sessionKey) this.openingNetworkGrants.set(sessionKey, openingApproval);
+    let result: Awaited<ReturnType<ModuleAgentBrowserService['open']>>;
+    try {
+      result = await super.open(workspaceId ? { ...payload, workspaceId } : payload, async (url, options) => {
+        const proxy = await this.networkProfiles.get(options.profile);
+        if (!proxy) throw new Error('Browser network owner is unavailable');
+        await assertBrowserRequestAllowed(url, { sessionId: options.sessionId, sessionKey, workspaceId }, proxy.resolveAddresses);
+      });
+    } finally {
+      if (sessionKey) this.openingNetworkGrants.delete(sessionKey);
+    }
     recordResourceEnvelopeEntry({
       id: `main:browser-session:${result.session.id}`,
       // Resource accounting needs an owner-resolved scope. A host-global browser
@@ -351,7 +491,18 @@ class HostAgentBrowserService extends ModuleAgentBrowserService {
     try {
       super.close(sessionId);
     } finally {
+      const owner = this.networkSessions.get(sessionId);
+      this.networkSessions.delete(sessionId);
+      if (owner) {
+        const pending = this.networkProfiles.get(owner.profile);
+        const profileActive = [...this.networkSessions.values()].some(entry => entry.profile === owner.profile);
+        if (!profileActive) this.networkProfiles.delete(owner.profile);
+        void pending?.then(proxy => profileActive ? proxy.revokeConnections() : proxy.close()).catch(() => undefined);
+      }
       removeResourceEnvelopeEntry(`main:browser-session:${sessionId}`);
+      for (const [key, approval] of privateNetworkApprovals) {
+        if (approval.sessionId === sessionId) privateNetworkApprovals.delete(key);
+      }
     }
   }
 }
@@ -592,8 +743,14 @@ function withHostGuards<T extends object>(api: T): T {
             throw Object.assign(new Error('Private-network approval expired or was already consumed'), { code: 'E_BROWSER_PRIVATE_NETWORK_DENIED' });
           }
           privateNetworkApprovals.delete(approvalKey);
+          privateNetworkOpenApprovals.set(payload, privateApproval);
         }
-        const result = await bound(...args);
+        let result: unknown;
+        try {
+          result = await bound(...args);
+        } finally {
+          privateNetworkOpenApprovals.delete(payload);
+        }
         if (prop === 'open' && privateApproval) {
           const session = result && typeof result === 'object'
             ? (result as { session?: { id?: string } }).session

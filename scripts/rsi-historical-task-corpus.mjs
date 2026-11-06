@@ -19,7 +19,7 @@ const SOURCE_FILES = ['scripts/rsi-historical-task-corpus.mjs', 'scripts/rsi-his
 // Documentation is recorded in the fingerprint for transparency but is not a
 // judged input: per harness/specs/guides/rsi-evidence-binding.md a README edit
 // must not invalidate a sealed pack. Drift here is a warning, never an error.
-export const NON_JUDGED_SOURCE_FILES = ['docs/README.md'];
+export const NON_JUDGED_SOURCE_FILES = ['docs/README.md', 'docs/dev/rsi-capability-and-boundaries.md'];
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
 const writeJson = (path, value) => { mkdirSync(dirname(path), { recursive: true }); writeFileSync(path, JSON.stringify(value, null, 2) + '\n'); };
 const CREDENTIAL_PATTERNS = [

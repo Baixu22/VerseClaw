@@ -1,0 +1,589 @@
+{
+  "numTotalTestSuites": 8,
+  "numPassedTestSuites": 4,
+  "numFailedTestSuites": 4,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 44,
+  "numPassedTests": 38,
+  "numFailedTests": 6,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793865205881,
+  "success": false,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "error governance surface on the current tree"
+          ],
+          "fullName": "error governance surface on the current tree passes with no findings",
+          "status": "passed",
+          "title": "passes with no findings",
+          "duration": 46.10530000000017,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "error governance surface on the current tree"
+          ],
+          "fullName": "error governance surface on the current tree keeps the flagged semantics separate in the decision record",
+          "status": "passed",
+          "title": "keeps the flagged semantics separate in the decision record",
+          "duration": 0.781400000000076,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "error governance surface on the current tree"
+          ],
+          "fullName": "error governance surface on the current tree reuses one envelope and the existing error types only",
+          "status": "passed",
+          "title": "reuses one envelope and the existing error types only",
+          "duration": 1.0454999999999472,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "error governance surface on the current tree"
+          ],
+          "fullName": "error governance surface on the current tree maps every real Main-process error code, or declares the missing mapping",
+          "status": "passed",
+          "title": "maps every real Main-process error code, or declares the missing mapping",
+          "duration": 0.9346000000000458,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "error governance surface on the current tree"
+          ],
+          "fullName": "error governance surface on the current tree declares the same waiting taxonomy as the real host-api contract unions",
+          "status": "passed",
+          "title": "declares the same waiting taxonomy as the real host-api contract unions",
+          "duration": 0.8570999999999458,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "error governance surface on the current tree"
+          ],
+          "fullName": "error governance surface on the current tree declares every gap with an executable probe and existing evidence",
+          "status": "failed",
+          "title": "declares every gap with an executable probe and existing evidence",
+          "duration": 6.753099999999904,
+          "failureMessages": [
+            "AssertionError: expected [ …(2) ] to deeply equal [ 'duplicate-host-response-copies' ]\n    at D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0289-g01/baseline/workspace/tests/unit/error-governance-boundary.test.ts:153:62\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "error governance surface on the current tree"
+          ],
+          "fullName": "error governance surface on the current tree wires the rule into the gateway-backend-communication scenario",
+          "status": "passed",
+          "title": "wires the rule into the gateway-backend-communication scenario",
+          "duration": 0.6519000000000688,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "resolveWaitingDecision stays fail-closed"
+          ],
+          "fullName": "resolveWaitingDecision stays fail-closed holds an unrecognized approval type without approving or executing",
+          "status": "passed",
+          "title": "holds an unrecognized approval type without approving or executing",
+          "duration": 0.9330999999999676,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "resolveWaitingDecision stays fail-closed"
+          ],
+          "fullName": "resolveWaitingDecision stays fail-closed holds an unrecognized waiting status without approving or executing",
+          "status": "passed",
+          "title": "holds an unrecognized waiting status without approving or executing",
+          "duration": 0.23080000000004475,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "resolveWaitingDecision stays fail-closed"
+          ],
+          "fullName": "resolveWaitingDecision stays fail-closed holds an empty descriptor",
+          "status": "passed",
+          "title": "holds an empty descriptor",
+          "duration": 0.20000000000004547,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "resolveWaitingDecision stays fail-closed"
+          ],
+          "fullName": "resolveWaitingDecision stays fail-closed holds a numeric approval type",
+          "status": "passed",
+          "title": "holds a numeric approval type",
+          "duration": 0.12380000000007385,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "resolveWaitingDecision stays fail-closed"
+          ],
+          "fullName": "resolveWaitingDecision stays fail-closed holds a null waiting status",
+          "status": "passed",
+          "title": "holds a null waiting status",
+          "duration": 0.09639999999990323,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "resolveWaitingDecision stays fail-closed"
+          ],
+          "fullName": "resolveWaitingDecision stays fail-closed holds an undefined descriptor",
+          "status": "passed",
+          "title": "holds an undefined descriptor",
+          "duration": 0.07889999999997599,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "resolveWaitingDecision stays fail-closed"
+          ],
+          "fullName": "resolveWaitingDecision stays fail-closed holds a prototype key",
+          "status": "passed",
+          "title": "holds a prototype key",
+          "duration": 0.08549999999991087,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "resolveWaitingDecision stays fail-closed"
+          ],
+          "fullName": "resolveWaitingDecision stays fail-closed holds an inherited member name",
+          "status": "passed",
+          "title": "holds an inherited member name",
+          "duration": 0.0808999999999287,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "resolveWaitingDecision stays fail-closed"
+          ],
+          "fullName": "resolveWaitingDecision stays fail-closed holds a constructor key",
+          "status": "passed",
+          "title": "holds a constructor key",
+          "duration": 0.09279999999989741,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "resolveWaitingDecision stays fail-closed"
+          ],
+          "fullName": "resolveWaitingDecision stays fail-closed processes a known approval type per its declared schema",
+          "status": "passed",
+          "title": "processes a known approval type per its declared schema",
+          "duration": 0.19990000000007058,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "resolveWaitingDecision stays fail-closed"
+          ],
+          "fullName": "resolveWaitingDecision stays fail-closed never allows effects while the task is still waiting for approval",
+          "status": "passed",
+          "title": "never allows effects while the task is still waiting for approval",
+          "duration": 0.12169999999991887,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "resolveWaitingDecision stays fail-closed"
+          ],
+          "fullName": "resolveWaitingDecision stays fail-closed declares autoApprove: false for every approval type",
+          "status": "passed",
+          "title": "declares autoApprove: false for every approval type",
+          "duration": 0.11000000000012733,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "deliberately broken governance axes are rejected"
+          ],
+          "fullName": "deliberately broken governance axes are rejected rejects a missing Main-process error mapping",
+          "status": "passed",
+          "title": "rejects a missing Main-process error mapping",
+          "duration": 10.910800000000108,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "deliberately broken governance axes are rejected"
+          ],
+          "fullName": "deliberately broken governance axes are rejected rejects a renderer class outside the closed class set",
+          "status": "passed",
+          "title": "rejects a renderer class outside the closed class set",
+          "duration": 9.186799999999948,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "deliberately broken governance axes are rejected"
+          ],
+          "fullName": "deliberately broken governance axes are rejected rejects a surface code outside the layer closed set",
+          "status": "passed",
+          "title": "rejects a surface code outside the layer closed set",
+          "duration": 9.180299999999988,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "deliberately broken governance axes are rejected"
+          ],
+          "fullName": "deliberately broken governance axes are rejected rejects a third envelope",
+          "status": "passed",
+          "title": "rejects a third envelope",
+          "duration": 8.853000000000065,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "deliberately broken governance axes are rejected"
+          ],
+          "fullName": "deliberately broken governance axes are rejected rejects a second error taxonomy",
+          "status": "passed",
+          "title": "rejects a second error taxonomy",
+          "duration": 9.551400000000058,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "deliberately broken governance axes are rejected"
+          ],
+          "fullName": "deliberately broken governance axes are rejected rejects an auto-approved waiting type",
+          "status": "passed",
+          "title": "rejects an auto-approved waiting type",
+          "duration": 10.200700000000097,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "deliberately broken governance axes are rejected"
+          ],
+          "fullName": "deliberately broken governance axes are rejected rejects effects during a waiting status",
+          "status": "passed",
+          "title": "rejects effects during a waiting status",
+          "duration": 19.08050000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "deliberately broken governance axes are rejected"
+          ],
+          "fullName": "deliberately broken governance axes are rejected rejects a real waiting type without a declared decision",
+          "status": "passed",
+          "title": "rejects a real waiting type without a declared decision",
+          "duration": 8.09030000000007,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "deliberately broken governance axes are rejected"
+          ],
+          "fullName": "deliberately broken governance axes are rejected rejects an invented waiting type",
+          "status": "passed",
+          "title": "rejects an invented waiting type",
+          "duration": 8.783400000000029,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "deliberately broken governance axes are rejected"
+          ],
+          "fullName": "deliberately broken governance axes are rejected rejects a decision record that makes a human verdict a requirement",
+          "status": "passed",
+          "title": "rejects a decision record that makes a human verdict a requirement",
+          "duration": 10.482600000000048,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "deliberately broken governance axes are rejected"
+          ],
+          "fullName": "deliberately broken governance axes are rejected rejects a decision record that claims a path which does not resolve",
+          "status": "passed",
+          "title": "rejects a decision record that claims a path which does not resolve",
+          "duration": 5.7409000000000106,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "deliberately broken governance axes are rejected"
+          ],
+          "fullName": "deliberately broken governance axes are rejected rejects a decision record that collapses the flagged semantics",
+          "status": "passed",
+          "title": "rejects a decision record that collapses the flagged semantics",
+          "duration": 5.189499999999953,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "deliberately broken governance axes are rejected"
+          ],
+          "fullName": "deliberately broken governance axes are rejected fails closed when the rule carries no surface block",
+          "status": "passed",
+          "title": "fails closed when the rule carries no surface block",
+          "duration": 4.908799999999928,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "deliberately broken governance axes are rejected"
+          ],
+          "fullName": "deliberately broken governance axes are rejected fails closed when the surface block is not valid JSON",
+          "status": "passed",
+          "title": "fails closed when the surface block is not valid JSON",
+          "duration": 6.446100000000115,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "deliberately broken governance axes are rejected"
+          ],
+          "fullName": "deliberately broken governance axes are rejected fails closed when the rule is missing entirely",
+          "status": "passed",
+          "title": "fails closed when the rule is missing entirely",
+          "duration": 4.8771999999999025,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "human prerequisite scan"
+          ],
+          "fullName": "human prerequisite scan flags a requirement and ignores a negated prohibition",
+          "status": "passed",
+          "title": "flags a requirement and ignores a negated prohibition",
+          "duration": 0.362999999999829,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "error governance CLI"
+          ],
+          "fullName": "error governance CLI exits zero on the current tree",
+          "status": "passed",
+          "title": "exits zero on the current tree",
+          "duration": 680.2528000000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "error governance CLI"
+          ],
+          "fullName": "error governance CLI exits non-zero on a deliberately broken surface fixture",
+          "status": "passed",
+          "title": "exits non-zero on a deliberately broken surface fixture",
+          "duration": 131.61079999999993,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "error governance CLI"
+          ],
+          "fullName": "error governance CLI exits non-zero on the missing-mapping, out-of-range and third-envelope fixtures",
+          "status": "passed",
+          "title": "exits non-zero on the missing-mapping, out-of-range and third-envelope fixtures",
+          "duration": 373.9964,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "error governance CLI"
+          ],
+          "fullName": "error governance CLI exits non-zero when the record makes a human verdict a requirement",
+          "status": "passed",
+          "title": "exits non-zero when the record makes a human verdict a requirement",
+          "duration": 124.84140000000025,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793865207629,
+      "endTime": 1793865209131.8413,
+      "status": "failed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0289-g01/baseline/workspace/tests/unit/error-governance-boundary.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "G01 error recovery next-action"
+          ],
+          "fullName": "G01 error recovery next-action classifies every error code with a bounded recovery entry",
+          "status": "failed",
+          "title": "classifies every error code with a bounded recovery entry",
+          "duration": 3.1674000000000433,
+          "failureMessages": [
+            "TypeError: Cannot read properties of undefined (reading 'AUTH_INVALID')\n    at D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0289-g01/baseline/workspace/tests/unit/error-recovery-next-action.test.ts:19:21\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "G01 error recovery next-action"
+          ],
+          "fullName": "G01 error recovery next-action only self-retry classes are retryable, and they carry exactly the retry action",
+          "status": "failed",
+          "title": "only self-retry classes are retryable, and they carry exactly the retry action",
+          "duration": 0.3856999999999857,
+          "failureMessages": [
+            "TypeError: Cannot read properties of undefined (reading 'AUTH_INVALID')\n    at D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0289-g01/baseline/workspace/tests/unit/error-recovery-next-action.test.ts:28:21\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "G01 error recovery next-action"
+          ],
+          "fullName": "G01 error recovery next-action never emits a shell command or raw script as a recovery action",
+          "status": "failed",
+          "title": "never emits a shell command or raw script as a recovery action",
+          "duration": 0.32920000000001437,
+          "failureMessages": [
+            "TypeError: (0 , __vite_ssr_import_1__.recoveryActionForAppErrorCode) is not a function\n    at D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0289-g01/baseline/workspace/tests/unit/error-recovery-next-action.test.ts:42:22\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "G01 error recovery next-action"
+          ],
+          "fullName": "G01 error recovery next-action carries retryable + nextAction on AppError and leaves UNKNOWN without an action",
+          "status": "failed",
+          "title": "carries retryable + nextAction on AppError and leaves UNKNOWN without an action",
+          "duration": 1.8483999999999696,
+          "failureMessages": [
+            "AssertionError: expected undefined to be true // Object.is equality\n    at D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0289-g01/baseline/workspace/tests/unit/error-recovery-next-action.test.ts:57:31\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "G01 error recovery next-action"
+          ],
+          "fullName": "G01 error recovery next-action is total: any AppErrorCode resolves deterministically",
+          "status": "failed",
+          "title": "is total: any AppErrorCode resolves deterministically",
+          "duration": 0.25839999999999463,
+          "failureMessages": [
+            "TypeError: (0 , __vite_ssr_import_1__.recoveryActionForAppErrorCode) is not a function\n    at D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0289-g01/baseline/workspace/tests/unit/error-recovery-next-action.test.ts:71:21\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+          ],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793865209459,
+      "endTime": 1793865209465.2583,
+      "status": "failed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0289-g01/baseline/workspace/tests/unit/error-recovery-next-action.test.ts"
+    }
+  ]
+}

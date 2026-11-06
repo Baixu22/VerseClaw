@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "RsiLiveTaskAdmission/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-independent-calibrator",
+  "taskId": "tf-0279-s04",
+  "source": {
+    "id": "tf-0279-s04",
+    "base": "ca413cdc436c00f7eddb06584783fd98996939c9",
+    "reference": "ce7ebd94cdd5814470daade4a3c7fa67ab8e77a4",
+    "productChanges": [],
+    "originalDecision": "PASS",
+    "sourceRecord": "docs/dev/harness-gap-closure/s04-acceptance.json",
+    "sourceRecordDigest": "b35b8861b4e37a7f9117c40451783debd7e57d71c5298b95be18d0471208510e",
+    "oraclePaths": [
+      "openclaw_runtime/src/agents/tools/agent-browser-external-access-policy.test.ts",
+      "openclaw_runtime/src/agents/tools/agent-browser-tool.provenance.test.ts",
+      "openclaw_runtime/src/agents/agent-browser-provenance-wiring.test.ts",
+      "tests/unit/browser-effect-boundary-ledger.test.ts"
+    ],
+    "commands": [
+      "pnpm exec vitest run tests/unit/browser-effect-boundary-ledger.test.ts --maxWorkers=1",
+      "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/tools/agent-browser-external-access-policy.test.ts src/agents/tools/agent-browser-tool.provenance.test.ts src/agents/agent-browser-provenance-wiring.test.ts --maxWorkers=1"
+    ]
+  },
+  "stages": {
+    "reference": {
+      "passed": false,
+      "failureClass": "oracle-input-drift",
+      "error": "frozen oracle digest mismatch: openclaw_runtime/src/agents/tools/agent-browser-tool.provenance.test.ts",
+      "executions": [],
+      "diagnostics": []
+    },
+    "baseline": {
+      "passed": false,
+      "failureClass": "oracle-input-drift",
+      "error": "frozen oracle digest mismatch: openclaw_runtime/src/agents/tools/agent-browser-tool.provenance.test.ts",
+      "executions": [],
+      "diagnostics": []
+    }
+  },
+  "admission": {
+    "passed": false,
+    "issues": [
+      "reference-oracle-input-drift",
+      "baseline-oracle-input-drift"
+    ]
+  },
+  "claims": {
+    "modelQuality": false,
+    "benefit": false,
+    "realHuman": false
+  }
+}

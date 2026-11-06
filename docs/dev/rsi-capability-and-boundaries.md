@@ -110,6 +110,21 @@ counts recorded task labels; `completeCases` remains zero because feedback
 records contain no experimental arm/repeat identity. Both pilot and three-arm
 check commands compare the retained report with a fresh derivation.
 
+The grader must expose root, runtime and package-local dependencies while running an oracle; dependency-only reference failures must not be recorded as task failures. The current 2026-11-06 v6 readback at `harness/specs/fixtures/rsi-live-acceptance/version-bound-cohort-20261106-v6/` records 24 calibrated tasks, 21 admitted, 3 baseline-already-passes rejections and 216 slots not-run. Hidden test files are restored from each historical reference revision, with the revision and test digests rechecked by final admission. The local support package `markdown-it` resolves as 14.1.1 while `markdown-core` declares 14.2.0; that mismatch is disclosed in `oracle-binding.v1.json` and remains a residual. No trial or benefit claim follows from this NO_GO.
+
+A baseline whose only failure is an expected missing module inside the declared target scope is admitted with the warning `baseline-target-module-absent`; missing dependencies outside target scope still fail closed. The model smoke demonstrates capability plumbing only, not benefit.
+
+The 2026-11-05 local review keeps README files hash-recorded but non-judged:
+documentation edits from parallel work are warnings, while RSI code, fixtures,
+rules and acceptance records still fail closed on drift.
+
+The measured benefit path now freezes each task's source-record digest,
+base/reference revisions, target scope and acceptance criteria. Its collector
+receipt must carry replayable edits plus a grader revision and edits digest, and
+`calibrate` imports a live package only after the admission report is ready and
+the provider preflight matches the planned endpoint/model. A stale lock left by a
+dead process is reclaimed on resume; a live lock still fails closed.
+
 Seal readback is scoped to judged inputs: an unrelated in-flight edit in the
 shared checkout is a warning, while a dirty judged input still fails closed.
 

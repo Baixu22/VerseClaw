@@ -1,0 +1,37 @@
+{
+  "id": "revoked",
+  "baseline": {
+    "mode": "first-80-lines-240-character-excerpt",
+    "answer": "",
+    "taskComplete": false,
+    "lexicalHit": true
+  },
+  "admission": {
+    "sources": [],
+    "rejections": [
+      {
+        "refId": "memory-wiki:revoked.md",
+        "owner": "memory-wiki",
+        "subjectId": "revoked.md",
+        "reason": "revoked",
+        "visibleReason": "Source \"memory-wiki:revoked.md\" is status is revoked and cannot ground an answer."
+      }
+    ],
+    "conflicts": [],
+    "reads": [
+      {
+        "path": "revoked.md",
+        "fromLine": 1,
+        "lineCount": 80
+      }
+    ],
+    "lexicalHit": true
+  },
+  "liveModel": false,
+  "taskComplete": true,
+  "abstentionCorrect": true,
+  "quoteCitationsValid": null,
+  "answer": "No admitted sources.",
+  "inferenceSkipped": "No admitted sources or structured conflict",
+  "durationMs": 0
+}

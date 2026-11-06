@@ -1,0 +1,14 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "main": "bfcf57616b361a12845014b3f054b95e31c4021c",
+  "repair": "6fe4bce0830e6c034449ebd02a080f6f3a1bbc08",
+  "resolvedTree": "5697c4bd778127e0b2763d49948e3772e06028b1",
+  "conflicts": [
+    "scripts/rsi-sekb-arms.d.mts"
+  ],
+  "resolution": "Keep the existing richer main declaration, which already exposes promotion.",
+  "workingTreePatchCheckExitCode": 0,
+  "checkOutput": "",
+  "applied": false
+}

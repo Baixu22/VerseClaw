@@ -1,0 +1,4 @@
+$ pnpm --filter @verse-claw/versebrowser build
+$ node scripts/patch-upstream.mjs && tsc -p tsconfig.build.json
+{"patch":"versebrowser-log-pointer-focus-files-downloads-v1","owner":"@playwright/mcp","upstream":"1.64.0-alpha-1790635538000","sha256":"1532f36aa4fcd0dbdd6a0c0cb49fbb7e55b30b649d67eadde69d5eb70be33c13"}
+{"patch":"versebrowser-log-pointer-focus-files-downloads-v1","owner":"playwright","upstream":"1.64.0-alpha-1790635538000","sha256":"1532f36aa4fcd0dbdd6a0c0cb49fbb7e55b30b649d67eadde69d5eb70be33c13"}

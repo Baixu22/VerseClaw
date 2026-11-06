@@ -1,0 +1,136 @@
+{
+  "numTotalTestSuites": 2,
+  "numPassedTestSuites": 2,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 8,
+  "numPassedTests": 8,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793863229036,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "external content provenance baseline"
+          ],
+          "fullName": "external content provenance baseline marks channel and web content as untrusted",
+          "status": "passed",
+          "title": "marks channel and web content as untrusted",
+          "duration": 7.258699999998498,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "external content provenance baseline"
+          ],
+          "fullName": "external content provenance baseline keeps structured labels out of the existing wrapped prompt text",
+          "status": "passed",
+          "title": "keeps structured labels out of the existing wrapped prompt text",
+          "duration": 2.172000000005937,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "external content provenance baseline"
+          ],
+          "fullName": "external content provenance baseline derives tool results as derived-untrusted from external content",
+          "status": "passed",
+          "title": "derives tool results as derived-untrusted from external content",
+          "duration": 0.6297999999951571,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "external content provenance baseline"
+          ],
+          "fullName": "external content provenance baseline preserves ancestry across agent handoff derivation",
+          "status": "passed",
+          "title": "preserves ancestry across agent handoff derivation",
+          "duration": 0.4260999999969499,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "external content provenance baseline"
+          ],
+          "fullName": "external content provenance baseline does not allow ordinary metadata to promote untrusted content",
+          "status": "passed",
+          "title": "does not allow ordinary metadata to promote untrusted content",
+          "duration": 0.480199999998149,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "external content provenance baseline"
+          ],
+          "fullName": "external content provenance baseline keeps derived trust and the external-content bit internally consistent",
+          "status": "passed",
+          "title": "keeps derived trust and the external-content bit internally consistent",
+          "duration": 0.4389000000010128,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "external content provenance baseline"
+          ],
+          "fullName": "external content provenance baseline reports missing provenance explicitly instead of treating it as trusted",
+          "status": "passed",
+          "title": "reports missing provenance explicitly instead of treating it as trusted",
+          "duration": 0.36520000000018626,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "external content provenance baseline"
+          ],
+          "fullName": "external content provenance baseline records narrow enforcement for every sink that already rejects on a production path",
+          "status": "passed",
+          "title": "records narrow enforcement for every sink that already rejects on a production path",
+          "duration": 0.7661000000007334,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793863263449,
+      "endTime": 1793863263461.766,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/rsi-live-admission-20261105-v5-final/calibration/tf-0278-s03/reference/workspace/tests/unit/external-content-provenance.test.ts"
+    }
+  ]
+}

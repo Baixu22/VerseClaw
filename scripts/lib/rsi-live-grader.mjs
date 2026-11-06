@@ -7,6 +7,7 @@ import {
   mkdirSync,
   openSync,
   readFileSync,
+  readdirSync,
   symlinkSync,
   rmdirSync,
   writeFileSync,
@@ -71,6 +72,10 @@ function gitObjectExists(root, revision) {
   }
 }
 
+function gitBlob(root, revision, path) {
+  return execFileSync('git', ['-C', root, 'show', `${revision}:${path}`], { windowsHide: true, maxBuffer: 64 * 1024 * 1024 });
+}
+
 function readJson(path) {
   return JSON.parse(readFileSync(path, 'utf8'));
 }
@@ -93,6 +98,15 @@ export function resolveHistoricalTask(root, taskId) {
   if (task.referenceSolution.referenceCommit && task.referenceSolution.referenceCommit !== ref) throw new Error(`reference revision mismatch for ${task.id}`);
   if (!gitObjectExists(root, base)) throw new Error(`git object missing for ${task.id}: ${base}`);
   if (!gitObjectExists(root, ref)) throw new Error(`git object missing for ${task.id}: ${ref}`);
+  const oracleTestDigests = {};
+  for (const testPath of task.oracle?.testPaths ?? []) {
+    const path = safeRelativePath(testPath);
+    try {
+      oracleTestDigests[path] = digest(gitBlob(root, ref, path));
+    } catch {
+      throw new Error(`reference oracle test missing for ${task.id}: ${path}`);
+    }
+  }
   return {
     ...task,
     base,
@@ -102,6 +116,8 @@ export function resolveHistoricalTask(root, taskId) {
     sourceRecordData: record,
     oracleDigest: rawDigest(task.oracle),
     inputDigest: task.oracle.inputDigests,
+    oracleRevision: ref,
+    oracleTestDigests,
   };
 }
 
@@ -177,13 +193,13 @@ function restoreOracles(workspace, root, task) {
   const restored = [];
   for (const testPath of task.oracle?.testPaths ?? []) {
     const path = safeRelativePath(testPath);
-    const expected = task.oracle.inputDigests?.[path];
+    const expected = task.oracleTestDigests?.[path] ?? task.oracle.inputDigests?.[path];
     if (!expected) throw new Error(`frozen input digest missing for oracle: ${path}`);
-    const source = assertNoSymlinkChain(root, path);
-    if (fileDigest(source) !== expected) throw new Error(`frozen oracle digest mismatch: ${path}`);
+    const bytes = task.oracleRevision ? gitBlob(root, task.oracleRevision, path) : readFileSync(assertNoSymlinkChain(root, path));
+    if (digest(bytes) !== expected) throw new Error(`frozen oracle digest mismatch: ${path}`);
     const target = assertNoSymlinkChain(workspace, path);
     mkdirSync(dirname(target), { recursive: true });
-    writeFileSync(target, readFileSync(source));
+    writeFileSync(target, bytes);
     restored.push(path);
   }
   return restored;
@@ -256,6 +272,72 @@ function directoryLink(source, target) {
   symlinkSync(source, target, process.platform === 'win32' ? 'junction' : 'dir');
 }
 
+function findPnpmPackage(root, packageName) {
+  const bases = [join(root, 'openclaw_runtime', 'node_modules', '.pnpm'), join(root, 'node_modules', '.pnpm')];
+  for (const base of bases) {
+    if (!existsSync(base)) continue;
+    for (const entry of readdirSync(base)) {
+      if (!entry.startsWith(`${packageName}@`)) continue;
+      const candidate = join(base, entry, 'node_modules', packageName);
+      if (existsSync(candidate)) return candidate;
+    }
+  }
+  return null;
+}
+
+const ORACLE_SUPPORT_PACKAGES = [
+  { packageName: 'markdown-it', importerPrefix: 'openclaw_runtime/packages/markdown-core/' },
+];
+
+function linkOracleSupportPackages(root, workspace) {
+  const links = [];
+  for (const { packageName, importerPrefix } of ORACLE_SUPPORT_PACKAGES) {
+    const importerRoot = join(workspace, importerPrefix);
+    if (!existsSync(importerRoot)) continue;
+    const source = findPnpmPackage(root, packageName);
+    if (!source) throw new Error(`oracle support package missing: ${packageName}`);
+    const target = join(importerRoot, 'node_modules', packageName);
+    if (existsSync(target)) continue;
+    mkdirSync(dirname(target), { recursive: true });
+    directoryLink(source, target);
+    links.push(target);
+  }
+  return links;
+}
+
+export function classifyMissingModuleFailure(diagnostics = []) {
+  const entries = Array.isArray(diagnostics) ? diagnostics.filter((entry) => entry?.kind === 'missing-module') : [];
+  if (entries.length === 0) return { failureClass: 'assertion', inTargetScope: false, diagnostics: [] };
+  return {
+    failureClass: entries.some((entry) => entry.inTargetScope !== true) ? 'infrastructure' : 'target-module-absent',
+    inTargetScope: entries.every((entry) => entry.inTargetScope === true),
+    diagnostics: entries,
+  };
+}
+export function linkGraderDependencies(root, workspace, descriptors) {
+  const links = [];
+  try {
+    if (descriptors.some((entry) => entry.usesRootDeps)) {
+      const target = join(workspace, 'node_modules');
+      directoryLink(join(root, 'node_modules'), target);
+      links.push(target);
+    }
+    if (descriptors.some((entry) => entry.usesRuntimeDeps)) {
+      const target = join(workspace, 'openclaw_runtime', 'node_modules');
+      if (existsSync(target)) throw new Error(`dependency target already exists: ${target}`);
+      const candidates = [join(root, 'openclaw_runtime', 'node_modules'), join(root, 'node_modules')].filter((source) => existsSync(source));
+      if (candidates.length === 0) throw new Error('runtime dependency directory missing');
+      mkdirSync(dirname(target), { recursive: true });
+      directoryLink(candidates[0], target);
+      links.push(target);
+    }
+    links.push(...linkOracleSupportPackages(root, workspace));
+    return links;
+  } catch (error) {
+    for (const target of links.reverse()) removeOwnedDirectoryLink(target);
+    throw error;
+  }
+}
 function removeOwnedDirectoryLink(target) {
   if (!existsSync(target)) return;
   if (lstatSync(target).isSymbolicLink()) rmdirSync(target);
@@ -291,34 +373,49 @@ function oracleState(root, workspace, task) {
   const files = {};
   for (const testPath of task.oracle?.testPaths ?? []) {
     const path = safeRelativePath(testPath);
-    const expected = task.oracle.inputDigests?.[path];
+    const expected = task.oracleTestDigests?.[path] ?? task.oracle.inputDigests?.[path];
     if (!expected) throw new Error(`frozen input digest missing for oracle: ${path}`);
     files[path] = {
       expected,
-      root: fileDigest(assertNoSymlinkChain(root, path)),
+      root: task.oracleRevision ? digest(gitBlob(root, task.oracleRevision, path)) : fileDigest(assertNoSymlinkChain(root, path)),
       workspace: fileDigest(assertNoSymlinkChain(workspace, path)),
     };
   }
   return { task: rawDigest(task.oracle), files, combined: rawDigest({ oracle: task.oracle, files }) };
 }
 
-function missingModuleDiagnostics(report, workspace, task) {
+export function missingModuleDiagnostics(report, workspace, task) {
   const diagnostics = [];
-  const scope = new Set((task.input?.targetScope ?? []).map((entry) => slash(entry).replace(/^\.\//u, '')));
+  const scope = (task.input?.targetScope ?? []).map((entry) => slash(entry).replace(/^\.\//u, ''));
+  const canonical = (path) => path.replace(/\.(?:c|m)?[jt]sx?$/u, '');
+  const scopeMatches = (missingPath) => {
+    const target = canonical(missingPath);
+    return scope.some((entry) => {
+      const wanted = canonical(entry);
+      return target === wanted || target.startsWith(`${wanted}/`);
+    });
+  };
+  const record = (message, importer) => {
+    if (typeof message !== 'string') return;
+    const matched = message.match(/Failed to resolve import ["']([^"']+)["']/u)
+      ?? message.match(/Cannot find module ["']([^"']+)["']/u)
+      ?? message.match(/Cannot find package ["']([^"']+)["']/u);
+    if (!matched) return;
+    let missingPath = matched[1];
+    if (missingPath.startsWith('.') && importer) missingPath = slash(join(dirname(importer), missingPath));
+    missingPath = slash(missingPath).replace(/^\.\//u, '');
+    const diagnostic = { kind: 'missing-module', missingPath, importer, inTargetScope: scopeMatches(missingPath) };
+    if (!diagnostics.some((entry) => entry.missingPath === diagnostic.missingPath && entry.importer === diagnostic.importer)) diagnostics.push(diagnostic);
+  };
   for (const result of report?.testResults ?? []) {
     const importer = result.name && isAbsolute(result.name) ? slash(relative(workspace, result.name)) : null;
-    for (const message of result.assertionResults?.map((entry) => entry.failureMessages?.join('\n')).filter(Boolean) ?? []) {
-      const matched = message.match(/Failed to resolve import ["']([^"']+)["']/u) ?? message.match(/Cannot find module ["']([^"']+)["']/u);
-      if (!matched) continue;
-      let missingPath = matched[1];
-      if (missingPath.startsWith('.') && importer) missingPath = slash(join(dirname(importer), missingPath));
-      missingPath = missingPath.replace(/^\.\//u, '');
-      diagnostics.push({ kind: 'missing-module', missingPath, importer, inTargetScope: scope.has(missingPath) });
+    record(result.message, importer);
+    for (const assertion of result.assertionResults ?? []) {
+      for (const message of assertion.failureMessages ?? []) record(message, importer);
     }
   }
   return diagnostics;
 }
-
 function aggregates(executions) {
   return executions.reduce((counts, execution) => {
     if (execution.kind !== 'vitest' || !execution.report) return counts;
@@ -340,24 +437,16 @@ export async function runLiveTaskOracles({ root, task, workspace, outDir, timeou
 
   const commands = commandLines(task);
   const descriptors = commands.map((command) => ({ command, ...resolveRegisteredCommand(command, { root, workspace }) }));
+  if (descriptors.some((descriptor) => descriptor.kind === 'vitest')) {
+    for (const descriptor of descriptors) descriptor.usesRuntimeDeps = true;
+  }
   const before = oracleState(root, workspace, task);
   if (Object.values(before.files).some((entry) => entry.root !== entry.expected || entry.workspace !== entry.expected)) throw new Error('frozen-oracle-input-drift');
   const executions = [];
   const diagnostics = [];
-  const ownedLinks = [];
-
+  let ownedLinks = [];
   try {
-    if (descriptors.some((entry) => entry.usesRootDeps)) {
-      const target = join(workspace, 'node_modules');
-      directoryLink(join(root, 'node_modules'), target);
-      ownedLinks.push(target);
-    }
-    if (descriptors.some((entry) => entry.usesRuntimeDeps)) {
-      const target = join(workspace, 'openclaw_runtime', 'node_modules');
-      directoryLink(join(root, 'openclaw_runtime', 'node_modules'), target);
-      ownedLinks.push(target);
-    }
-
+    ownedLinks = linkGraderDependencies(root, workspace, descriptors);
     for (const [index, descriptor] of descriptors.entries()) {
       const stem = String(index + 1).padStart(2, '0');
       const stdoutPath = join(outDir, `${stem}-stdout.log`);
@@ -410,6 +499,14 @@ export async function runLiveTaskOracles({ root, task, workspace, outDir, timeou
     && executions.length === commands.length
     && executions.every((execution) => execution.exitCode === 0 && !execution.timedOut && execution.error === null)
     && executions.every(validTests);
+  const missingFailure = classifyMissingModuleFailure(diagnostics);
+  const executionInfrastructure = diagnostics.some((entry) => entry.kind === 'vitest-report-missing' || entry.kind === 'oracle-hash-after-error')
+    || executions.some((execution) => execution.timedOut || execution.error !== null);
+  const failureClass = passed ? null
+    : !oracleUnchanged ? 'oracle-input-drift'
+      : missingFailure.failureClass === 'infrastructure' || executionInfrastructure ? 'infrastructure'
+        : missingFailure.failureClass === 'target-module-absent' ? 'target-module-absent'
+          : 'assertion';
 
   const report = {
     schemaVersion: 'RsiLiveTaskGrader/v1',
@@ -420,11 +517,14 @@ export async function runLiveTaskOracles({ root, task, workspace, outDir, timeou
     executions,
     ...counts,
     passed,
+    failureClass,
     timeoutMs,
     oracleHashBefore: before.combined,
     oracleHashAfter: after.combined,
     oracleUnchanged,
     inputDigests: task.oracle.inputDigests,
+    oracleRevision: task.oracleRevision ?? null,
+    oracleTestDigests: task.oracleTestDigests ?? null,
     diagnostics,
     workspace: resolve(workspace),
   };

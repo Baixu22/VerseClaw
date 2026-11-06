@@ -1,0 +1,115 @@
+{
+  "id": "conflict",
+  "baseline": {
+    "mode": "first-80-lines-240-character-excerpt",
+    "answer": "The deployment port is 8080.\nThe deployment port is 9090.",
+    "taskComplete": false,
+    "lexicalHit": true
+  },
+  "admission": {
+    "sources": [
+      {
+        "id": "a.md",
+        "lookup": "a.md",
+        "path": "a.md",
+        "title": "a.md",
+        "excerpt": "The deployment port is 8080.",
+        "updatedAt": "2026-11-05T00:00:00Z",
+        "readRange": {
+          "fromLine": 1,
+          "toLine": 1,
+          "totalLines": 1,
+          "truncated": false
+        },
+        "citation": {
+          "refId": "memory-wiki:a.md",
+          "owner": "memory-wiki",
+          "subjectId": "a.md",
+          "revision": "1",
+          "contentDigest": "sha256:a1b2e85d778c63bb12b4dc7720f474e56e0f1f19061bcc3a0fd4af882e3c80b4",
+          "sourceRefs": [
+            "a.md"
+          ]
+        }
+      },
+      {
+        "id": "b.md",
+        "lookup": "b.md",
+        "path": "b.md",
+        "title": "b.md",
+        "excerpt": "The deployment port is 9090.",
+        "updatedAt": "2026-11-05T00:00:00Z",
+        "readRange": {
+          "fromLine": 1,
+          "toLine": 1,
+          "totalLines": 1,
+          "truncated": false
+        },
+        "citation": {
+          "refId": "memory-wiki:b.md",
+          "owner": "memory-wiki",
+          "subjectId": "b.md",
+          "revision": "1",
+          "contentDigest": "sha256:09d0c09ca84b0d0a78ba78be2505463abb8f1b24eb912d8b6a31a9856d672ee1",
+          "sourceRefs": [
+            "b.md"
+          ]
+        }
+      }
+    ],
+    "rejections": [],
+    "conflicts": [
+      {
+        "kind": "claim",
+        "key": "claim:port",
+        "description": "Conflicting stances for claim \"port\": 8080 vs 9090.",
+        "stances": [
+          "8080",
+          "9090"
+        ],
+        "citations": [
+          {
+            "refId": "memory-wiki:a.md",
+            "owner": "memory-wiki",
+            "subjectId": "a.md",
+            "revision": "1",
+            "contentDigest": "sha256:a1b2e85d778c63bb12b4dc7720f474e56e0f1f19061bcc3a0fd4af882e3c80b4",
+            "sourceRefs": [
+              "a.md"
+            ]
+          },
+          {
+            "refId": "memory-wiki:b.md",
+            "owner": "memory-wiki",
+            "subjectId": "b.md",
+            "revision": "1",
+            "contentDigest": "sha256:09d0c09ca84b0d0a78ba78be2505463abb8f1b24eb912d8b6a31a9856d672ee1",
+            "sourceRefs": [
+              "b.md"
+            ]
+          }
+        ]
+      }
+    ],
+    "reads": [
+      {
+        "path": "a.md",
+        "fromLine": 1,
+        "lineCount": 80
+      },
+      {
+        "path": "b.md",
+        "fromLine": 1,
+        "lineCount": 80
+      }
+    ],
+    "lexicalHit": true
+  },
+  "liveModel": false,
+  "taskComplete": true,
+  "abstentionCorrect": true,
+  "quoteCitationsValid": null,
+  "answer": "Conflicting admitted evidence; no single answer.",
+  "inferenceSkipped": "No admitted sources or structured conflict",
+  "durationMs": 7
+}

@@ -1,0 +1,102 @@
+{
+  "numTotalTestSuites": 2,
+  "numPassedTestSuites": 0,
+  "numFailedTestSuites": 2,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 5,
+  "numPassedTests": 4,
+  "numFailedTests": 1,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1793899895122,
+  "success": false,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "S04 browser effect boundary ledger"
+          ],
+          "fullName": "S04 browser effect boundary ledger denies external/unknown provenance the external connection modes, allows managed",
+          "status": "passed",
+          "title": "denies external/unknown provenance the external connection modes, allows managed",
+          "duration": 2.144200000000012,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "S04 browser effect boundary ledger"
+          ],
+          "fullName": "S04 browser effect boundary ledger allows trusted provenance every connection mode",
+          "status": "passed",
+          "title": "allows trusted provenance every connection mode",
+          "duration": 0.254600000000039,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "S04 browser effect boundary ledger"
+          ],
+          "fullName": "S04 browser effect boundary ledger requires a Main-owned managed session for click/type under external/unknown provenance",
+          "status": "passed",
+          "title": "requires a Main-owned managed session for click/type under external/unknown provenance",
+          "duration": 0.8634000000000128,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "S04 browser effect boundary ledger"
+          ],
+          "fullName": "S04 browser effect boundary ledger pins the wiring: external-access on every action, session gate only on click/type",
+          "status": "passed",
+          "title": "pins the wiring: external-access on every action, session gate only on click/type",
+          "duration": 0.4970000000000141,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "S04 browser effect boundary ledger"
+          ],
+          "fullName": "S04 browser effect boundary ledger records every action and the residual session-gate gap in the ledger doc",
+          "status": "failed",
+          "title": "records every action and the residual session-gate gap in the ledger doc",
+          "duration": 2.1528999999999883,
+          "failureMessages": [
+            "Error: ENOENT: no such file or directory, open 'D:\\tmp\\rsi-versioned-v6-final-20261106\\calibration\\tf-0279-s04\\baseline\\workspace\\docs\\dev\\harness-gap-closure\\s04-browser-effect-boundary.md'\n    at readFileSync (node:fs:483:20)\n    at read (D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0279-s04/baseline/workspace/tests/unit/browser-effect-boundary-ledger.test.ts:36:10)\n    at D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0279-s04/baseline/workspace/tests/unit/browser-effect-boundary-ledger.test.ts:77:17\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)"
+          ],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1793899895760,
+      "endTime": 1793899895766.1528,
+      "status": "failed",
+      "message": "",
+      "name": "D:/tmp/rsi-versioned-v6-final-20261106/calibration/tf-0279-s04/baseline/workspace/tests/unit/browser-effect-boundary-ledger.test.ts"
+    }
+  ]
+}

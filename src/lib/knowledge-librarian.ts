@@ -3,6 +3,7 @@ import type {
   KnowledgeCreateInboxItemPayload,
   KnowledgeDraftType,
   KnowledgeSourceRef,
+  KnowledgeSourceSetAnswerSource,
 } from '@shared/host-api/contract';
 
 export type KnowledgeLibrarianGroundingStatus = 'grounded' | 'partial' | 'missing_sources';
@@ -16,6 +17,9 @@ export type KnowledgeLibrarianGroundedSource = {
   corpus?: 'wiki' | 'memory' | 'all';
   score?: number;
   reason?: string;
+  citation?: KnowledgeSourceSetAnswerSource['citation'];
+  readRange?: KnowledgeSourceSetAnswerSource['readRange'];
+  updatedAt?: string;
 };
 
 export type KnowledgeLibrarianRetrievalInspector = {
@@ -33,7 +37,7 @@ export type KnowledgeLibrarianGroundedAnswer = {
   unknowns: string[];
   suggestions: string[];
   nextActions: string[];
-  confidence: number;
+  confidence?: number;
   groundingStatus: KnowledgeLibrarianGroundingStatus;
   retrieval: KnowledgeLibrarianRetrievalInspector;
 };
@@ -68,6 +72,7 @@ function sourceRefsFromAnswer(answer: KnowledgeLibrarianGroundedAnswer): Knowled
     kind: 'wiki',
     label: source.title,
     path: source.path || source.lookup,
+    ...(source.citation ? { revision: source.citation.revision, contentDigest: source.citation.contentDigest } : {}),
   }));
 }
 

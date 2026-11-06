@@ -1,0 +1,25 @@
+{
+  "schema": "GatewayStartupTypes/v1",
+  "driven_by": "agent",
+  "candidate": "5c91a6f25ffd908d579116cd188e5fd8d949b835",
+  "passed": true,
+  "node": {
+    "commandLine": "pnpm run typecheck:node",
+    "exitCode": 0,
+    "durationMs": 86764,
+    "candidate": "0b152a30ad1b5cfc3f7d12ee2f7ec3f0d4dd4a47"
+  },
+  "web": {
+    "commandLine": "pnpm run typecheck:web",
+    "exitCode": 0,
+    "durationMs": 17711,
+    "candidate": "0b152a30ad1b5cfc3f7d12ee2f7ec3f0d4dd4a47"
+  },
+  "test": {
+    "commandLine": "pnpm run typecheck:test",
+    "exitCode": 0,
+    "candidate": "5c91a6f25ffd908d579116cd188e5fd8d949b835",
+    "logSha256": "d3d1fa1e880f14d028c73f22eb6b438fbcbcc3c775a9a0d33d08e69a5b7de5ae"
+  },
+  "note": "Initial combined run failed only the nullable address in the new test. That test was corrected and its project rerun. Node/web production inputs did not change; this is a per-project aggregation, not a claim that the earlier combined command exited zero."
+}

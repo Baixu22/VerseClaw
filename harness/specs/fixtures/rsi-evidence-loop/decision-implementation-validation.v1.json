@@ -44,6 +44,9 @@
     "currentSourceMatchesFrozenVerification": false,
     "nonJudgedInputs": {
       ".gitignore": "repository hygiene registry edited by unrelated tasks; not a judged RSI input",
+      "README.ja-JP.md": "README documentation edited by unrelated tasks; not a judged RSI input",
+      "README.md": "README documentation edited by unrelated tasks; not a judged RSI input",
+      "README.zh-CN.md": "README documentation edited by unrelated tasks; not a judged RSI input",
       "scripts/repository-artifacts.json": "repository retention registry edited by unrelated tasks; not a judged RSI input"
     },
     "gitBlobHashes": {
@@ -51,8 +54,8 @@
       "README.ja-JP.md": "f0fefa3c3a3c8411fb820ad93b144eaf88ce23a7",
       "README.md": "ae738bf177f911169cce1fd68cc1a54c2d80900a",
       "README.zh-CN.md": "f0ab83dd208bfbd4902f96c0d7034bd8248afaed",
-      "docs/dev/rsi-capability-and-boundaries.md": "9793630ddd2b4c683c87f09384a72bc949bc518a",
-      "docs/dev/rsi-decision-implementation.md": "431dab97e7f085dc21e9acad7aa80fd1817bd700",
+      "docs/dev/rsi-capability-and-boundaries.md": "150663a86e5c872ccae838d54aae6dd6cc81959f",
+      "docs/dev/rsi-decision-implementation.md": "f43845a96461902e86fabbc2320a1f023d1067b0",
       "harness/specs/fixtures/agent-first-framework/loop-validation-report.json": "a368708d02860efa95da56af21112592b8fc5357",
       "harness/specs/fixtures/rsi-evidence-loop/capability-matrix.v1.json": "47db72ba4f84b901283954e53383123e3acf8ded",
       "harness/specs/fixtures/rsi-evidence-loop/decisions.20261101.json": "9a67661799ef62d56faa0fc9e8f759f62ae9f95b",
@@ -110,7 +113,7 @@
       "harness/specs/fixtures/rsi-evidence-loop/tf0604/task-corpus.v1.json": "5e0e607057a624a0a5d7b5965483056b8e88d2fd",
       "scripts/lib/evidence-binding.d.mts": "126b639dd1d4ea73d5c7135c33927b4903ac9c92",
       "scripts/lib/evidence-binding.mjs": "77539e218eb605446826eb667d616e8d65c95d49",
-      "scripts/rsi-decision-check.mjs": "5f670bfcb976167416c1ed146f393519a775829d",
+      "scripts/rsi-decision-check.mjs": "1c71f09afc57d7d989f64037ac2ea4b80dd4f534",
       "scripts/rsi-feedback-export.d.mts": "fbffc1d00c836667bc45a29d211a26a0791c3f36",
       "scripts/rsi-feedback-export.mjs": "d2e383cf1949040185844ac73e55eeb77a8582bb",
       "scripts/rsi-feedback-pilot.d.mts": "c7158cd556e416d0d80bebe673221cc17c7fd8b7",
@@ -118,7 +121,7 @@
       "scripts/rsi-sekb-arms.d.mts": "0dd8407b79607ab699a6e3519d842e4685910e37",
       "scripts/rsi-sekb-arms.mjs": "d32a17abc82224337e50cefbe9c6436b270b4bb2",
       "tests/unit/evidence-binding.test.ts": "ad8c56f81f335e721ab6886e32f7de1f5245c545",
-      "tests/unit/rsi-decision-check.test.ts": "22001ba76a5c7c02d7c3b530e9a4c7d9fa209fe3",
+      "tests/unit/rsi-decision-check.test.ts": "b5f9c3ca1641f780fdffc142d2ea425ef98e5062",
       "tests/unit/rsi-feedback-export.test.ts": "befab3162d165e1daf5786d58e4fe4f31753ea96",
       "tests/unit/rsi-feedback-pilot.test.ts": "2a691be43e69cb66381afa8ad14eb7713f2882df",
       "tests/unit/rsi-sekb-arms.test.ts": "f0e1c86e6d5049af00119051c1d6c04ccbd4dc1d"
@@ -359,5 +362,12 @@
     "productApproved": false,
     "defaultOn": false,
     "releaseApproved": false
+  },
+  "review20261105": {
+    "driven_by": "agent",
+    "actor": "codex/rsi-layer-audit",
+    "scope": "README scope, task source identity, replayable edits, live calibration adoption, provider preflight and stale-lock recovery",
+    "productLocksChanged": false,
+    "realHuman": false
   }
 }

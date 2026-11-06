@@ -200,6 +200,12 @@
       ]
     }
   ],
+  "provider": {
+    "status": "not-evaluated",
+    "receipt": "provider-preflight.json",
+    "responseId": null,
+    "usage": null
+  },
   "trialSlots": [
     {
       "taskId": "tf-0274-e01",

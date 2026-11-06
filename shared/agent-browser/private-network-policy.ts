@@ -46,8 +46,22 @@ function parseIpv4(hostname: string): number[] | null {
 }
 
 function classifyHost(hostnameRaw: string): BrowserPrivateNetworkClass {
-  const hostname = hostnameRaw.trim().toLowerCase().replace(/^\[|\]$/gu, '');
-  if (hostname === 'localhost' || hostname.endsWith('.localhost') || hostname === 'local') return 'local-name';
+  let hostname = hostnameRaw.trim().toLowerCase().replace(/^\[|\]$/gu, '').replace(/\.$/u, '');
+  if (hostname.includes(':')) {
+    try { hostname = new URL(`http://[${hostname}]/`).hostname.slice(1, -1); }
+    catch { return 'ipv6-local'; }
+  }
+  if (/(?:^|\.)(?:localhost|local|internal|home\.arpa)$/u.test(hostname)) return 'local-name';
+  // Both IPv4-mapped and IPv4-translatable IPv6 retain the IPv4 destination's
+  // classification; URL canonicalization renders their last 32 bits in hex.
+  const mapped = hostname.match(/^::ffff:(?:0:)?([0-9a-f]{1,4}):([0-9a-f]{1,4})$/u);
+  if (mapped) {
+    const high = Number.parseInt(mapped[1], 16);
+    const low = Number.parseInt(mapped[2], 16);
+    return classifyHost(`${high >> 8}.${high & 255}.${low >> 8}.${low & 255}`);
+  }
+  if (hostname.startsWith('::ffff:0:')) return classifyHost(hostname.slice(9));
+  if (hostname.startsWith('::ffff:')) return classifyHost(hostname.slice(7));
   const v4 = parseIpv4(hostname);
   if (v4) {
     const [a, b] = v4;
@@ -56,12 +70,14 @@ function classifyHost(hostnameRaw: string): BrowserPrivateNetworkClass {
     if (a === 172 && b >= 16 && b <= 31) return 'rfc1918';
     if (a === 192 && b === 168) return 'rfc1918';
     if (a === 169 && b === 254) return 'link-local';
+    if ((a === 100 && b >= 64 && b <= 127) || a >= 224 || (a === 192 && b === 0)) return 'rfc1918';
     if (a === 0) return 'loopback';
     return 'public';
   }
-  if (hostname === '::1' || hostname === '0:0:0:0:0:0:0:1') return 'loopback';
-  if (hostname.startsWith('fc') || hostname.startsWith('fd')) return 'ipv6-local';
-  if (hostname.startsWith('fe8') || hostname.startsWith('fe9') || hostname.startsWith('fea') || hostname.startsWith('feb')) return 'ipv6-local';
+  if (hostname === '::' || hostname === '::1' || hostname === '0:0:0:0:0:0:0:1') return 'loopback';
+  // Deprecated site-local (RFC 3879) and multicast (RFC 4291) are not public
+  // unicast destinations either; neither can inherit the loopback preview grant.
+  if (hostname.includes(':') && /^(?:fc|fd|fe[89a-f]|ff)/u.test(hostname)) return 'ipv6-local';
   return 'public';
 }
 
@@ -103,6 +119,8 @@ export function decideBrowserNavigation(input: {
    * from the caller payload. Localhost only; metadata and RFC1918 stay denied.
    */
   firstPartyOrigins?: readonly string[];
+  /** Addresses resolved by the network owner for this request, never caller input. */
+  resolvedAddresses?: readonly string[];
   now?: number;
 }): BrowserPrivateNetworkDecision {
   const evaluated = evaluateExternalNavigationUrl(input.url);
@@ -110,7 +128,12 @@ export function decideBrowserNavigation(input: {
     return { allowed: false, addressClass: 'public', reason: 'invalid-url' };
   }
   const origin = new URL(evaluated.href).origin;
-  const addressClass = classifyHost(new URL(evaluated.href).hostname);
+  const targetClass = classifyHost(new URL(evaluated.href).hostname);
+  const resolvedPrivate = input.resolvedAddresses?.map(classifyHost).filter(isPrivateNetworkClass) ?? [];
+  // A local-looking hostname or first loopback answer cannot hide an additional
+  // private destination from the preview exemption.
+  const nonLoopbackPrivate = resolvedPrivate.find(addressClass => addressClass !== 'loopback');
+  const addressClass = nonLoopbackPrivate ?? (isPrivateNetworkClass(targetClass) ? targetClass : resolvedPrivate[0] ?? targetClass);
   if (!isPrivateNetworkClass(addressClass)) {
     return { allowed: true, addressClass, reason: 'public' };
   }

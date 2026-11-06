@@ -1,0 +1,23 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "pass",
+  "backend": "pwsh.exe",
+  "unicodeOwnerMatched": true,
+  "observedPid": 17004,
+  "durationMs": 3962,
+  "cleanup": {
+    "appExited": true,
+    "forcedShutdown": true,
+    "killed": 1,
+    "initialResidualProcesses": 1,
+    "initialResidualNames": [
+      "node.exe"
+    ],
+    "residualCleanupAttempts": 1,
+    "residualProcesses": 0,
+    "residualNames": [],
+    "runDirReclaimed": true,
+    "errors": []
+  }
+}

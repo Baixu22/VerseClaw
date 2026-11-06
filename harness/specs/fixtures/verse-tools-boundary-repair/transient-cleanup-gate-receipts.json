@@ -1,0 +1,46 @@
+[
+  {
+    "id": "n8",
+    "sourceCommit": "8474cad20b77216d2246dee07d267a150fb5bd62",
+    "durationMs": 27864,
+    "exitCode": 0,
+    "program": "node",
+    "completedAt": "2026-11-04T23:06:35.7909660Z",
+    "log": "D:\\tmp\\clawx-verse-fix-20261104\\n8-bound.log",
+    "startedAt": "2026-11-04T23:06:07.9248561Z",
+    "argv": [
+      "scripts/versebrowser-m10-packaged-flow-verify.mjs",
+      "--exe",
+      "D:/ClawX/.ae/verse-tools-package-20261104/win-unpacked/Verse Claw.exe",
+      "--temp-root",
+      "D:/ClawX/.ae/verse-tools-runs-20261104",
+      "--output",
+      "D:\\tmp\\clawx-verse-fix-20261104/n8-bound-current.json"
+    ]
+  },
+  {
+    "id": "n9",
+    "sourceCommit": "8474cad20b77216d2246dee07d267a150fb5bd62",
+    "durationMs": 858168,
+    "exitCode": 1,
+    "program": "node",
+    "completedAt": "2026-11-04T23:20:53.9826998Z",
+    "log": "D:\\tmp\\clawx-verse-fix-20261104\\n9-bound.log",
+    "startedAt": "2026-11-04T23:06:35.8025316Z",
+    "argv": [
+      "scripts/versebrowser-n9-stability-probe.mjs",
+      "--exe",
+      "D:/ClawX/.ae/verse-tools-package-20261104/win-unpacked/Verse Claw.exe",
+      "--temp-root",
+      "D:/ClawX/.ae/verse-tools-runs-20261104",
+      "--cold-starts",
+      "10",
+      "--loops",
+      "30",
+      "--interrupts",
+      "3",
+      "--output",
+      "D:\\tmp\\clawx-verse-fix-20261104/n9-bound-current.json"
+    ]
+  }
+]

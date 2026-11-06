@@ -6,7 +6,10 @@ import type { ResponsesReply } from './rsi-responses-provider.mjs';
 export type BenefitArm = 'sekb-off' | 'sekb-shadow' | 'sekb-confirmed';
 export type BenefitTask = {
   id: string; taskId: string; split: 'public' | 'held-out'; safetyRequired: boolean;
-  anchor: 'positive' | 'negative' | null; negativeExpectedOutcome: 'pass' | 'fail'; prompt: string; oracleDigest: string;
+  anchor: 'positive' | 'negative' | null; negativeExpectedOutcome: 'pass' | 'fail';
+  prompt: string; acceptanceCriteria: string[]; targetScope: string[];
+  source: { recordPath: string; recordDigest: string; base: string; reference: string };
+  oracleDigest: string;
   oracle: { commands: string[]; testPaths: string[]; expectedSkips: number; inputDigests: Record<string, string> };
 };
 export type BenefitSlot = {
@@ -42,13 +45,14 @@ export type BenefitTrialReceipt = {
   request: ReturnType<typeof buildResponsesRequest>; requestDigest: string;
   runtime: { flags: BenefitPlan['arms'][BenefitArm]; flagsDigest: string; candidateDigest: string;
     injectionDigest: string | null; isolationId: string; runtimeEffectMeasured: boolean };
+  edits: Array<{ path: string; content: string }>;
   execution: { status: 'completed' | 'timeout' | 'crash'; failureClass: 'infrastructure' | null;
     attempts: 1; providerCalls: number; wallClockMs: number; costUsd: number | null;
     toolEvents: Array<{ type: 'tool-call'; callId: string; name: string; arguments: string; output: string }>;
     runPosition: number; startedAt: string; endedAt: string; measurementBasis: string; note: string };
   rawResponse: unknown;
   providerAttempts: Array<{ endpoint: string; request: ReturnType<typeof buildResponsesRequest>; rawResponse: unknown; parsedResponse: ResponsesReply }>;
-  grader: null | { driven_by: 'agent'; actor: string; oracleDigest: string; commands: string[]; responseDigest: string;
+  grader: null | { schemaVersion: 'RsiBenefitGrader/v1'; driven_by: 'agent'; actor: string; workspaceRevision: string; oracleDigest: string; commands: string[]; responseDigest: string; editsDigest: string;
     isolation: { hiddenOracleVisible: false; unapprovedEgress: false; candidateChangedEvaluator: false };
     reports: Array<{ command: string; exitCode: number; report: { success: boolean; numTotalTests: number;
       numPassedTests: number; numFailedTests: number; numPendingTests: number; numSkippedTests?: number; numTodoTests?: number;
@@ -62,6 +66,7 @@ export function writeBenefitPlan(root: string, directory: string, options?: Bene
 export function buildBenefitRequest(plan: BenefitPlan, slot: BenefitSlot): ReturnType<typeof buildResponsesRequest>;
 export function runOfflineBenefit(root: string, directory: string, options?: { limit?: number }): { written: number; resumed: number; planned: number; providerCalls: number };
 export function recordMeasuredBenefitTrials(root: string, directory: string, receipts: unknown[]): Array<{ row: { slot: BenefitSlot }; outcome: string }>;
+export function adoptLiveCalibration(root: string, directory: string, calibrationDir: string): { copied: number; existing: number; reportDigest: string; status: string };
 export function summarizeBenefitRun(root: string, directory: string, actor?: string): BenefitReport;
 export function sealBenefitRun(root: string, directory: string, actor?: string): BenefitReport;
 export function checkBenefitRun(root: string, directory: string): { passed: boolean; errors: string[]; evidenceKind: string; reportStatus: string; benefitStatus: string; coverage: BenefitReport['coverage'] | null; claims: Record<string, boolean> };
