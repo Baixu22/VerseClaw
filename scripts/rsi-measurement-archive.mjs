@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
@@ -11,6 +11,7 @@ import { evaluateAblation, pairedEffect } from './lib/paired-ablation.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const MEASUREMENT_ARCHIVE_DIR = 'harness/specs/fixtures/rsi-evidence-loop/tf0604-system-run';
+export const MEASUREMENT_REVALIDATION_DIR = 'harness/specs/fixtures/rsi-coding-cohort/instruments/measurement-archive-v2';
 const ORIGINAL_FILES = ['manifest.json', 'aggregate.json', 'run-audit.json', 'run-exclusions.json', 'progress.json', 'promotion-policy.v1.json'];
 const FILES = [...ORIGINAL_FILES, 'corpus.v1.json', 'raw-trials.v1.json', 'provenance.v1.json', 'verification.v1.json'];
 const SOURCES = ['scripts/rsi-measurement-archive.mjs', 'scripts/rsi-tf0592-statistical-adjudication.mjs',
@@ -135,7 +136,18 @@ export function validateMeasurementArchive(root = ROOT) {
     errors.push(...validateInputs(root));
     const recomputed = recomputeMeasurementArchive(root);
     if (!recomputed.decisionControls.results.every((entry) => entry.passed)) errors.push('decision-negative-control');
-    if (!same(read(root, 'verification.v1.json'), recomputed)) errors.push('archive-statistical-recomputation');
+    const current = join(root, MEASUREMENT_REVALIDATION_DIR);
+    if (existsSync(current)) {
+      const file = 'verification.v2.json';
+      if (!same(readdirSync(current).sort(), ['SHA256SUMS', file])) errors.push('archive-revalidation-inventory');
+      if (readFileSync(join(current, 'SHA256SUMS'), 'utf8') !== `${sha256File(join(current, file))}  ${file}\n`) errors.push('archive-revalidation-digest');
+      const record = JSON.parse(readFileSync(join(current, file), 'utf8'));
+      if (record.schemaVersion !== 'RsiHistoricalMeasurementRevalidation/v1' || record.driven_by !== 'agent'
+        || !record.actor || record.claims?.newProviderRun !== false || record.claims?.realHuman !== false
+        || record.claims?.promotionReady !== false || record.claims?.originalVerdictChanged !== false) errors.push('archive-revalidation-identity');
+      if (!same(record.originalDigests, Object.fromEntries(FILES.map(file => [file, digest(root, file)])))) errors.push('archive-revalidation-original-drift');
+      if (!same(record.recomputed, recomputed)) errors.push('archive-statistical-recomputation');
+    } else if (!same(read(root, 'verification.v1.json'), recomputed)) errors.push('archive-statistical-recomputation');
     const old = read(root, 'aggregate.json').statistics, reproduced = recomputed.originalProtocol;
     if (!same(old.run, reproduced.run) || old.aggregate.passK !== reproduced.aggregate.passK
       || old.treatment.aggregate.passK !== reproduced.treatment.aggregate.passK
@@ -154,9 +166,15 @@ export function validateMeasurementArchive(root = ROOT) {
 export function writeMeasurementVerification(root = ROOT) {
   const errors = validateInputs(root);
   if (errors.length) throw new Error(errors.join(', '));
-  const pack = join(root, MEASUREMENT_ARCHIVE_DIR);
-  writeFileSync(join(pack, 'verification.v1.json'), `${JSON.stringify(recomputeMeasurementArchive(root), null, 2)}\n`);
-  writeFileSync(join(pack, 'SHA256SUMS'), `${FILES.map((file) => `${digest(root, file)}  ${file}`).join('\n')}\n`);
+  const pack = join(root, MEASUREMENT_REVALIDATION_DIR), file = 'verification.v2.json';
+  if (existsSync(pack)) throw new Error('archive-revalidation-already-exists');
+  mkdirSync(pack, { recursive: true });
+  const record = { schemaVersion: 'RsiHistoricalMeasurementRevalidation/v1', driven_by: 'agent', actor: 'codex/rsi-archive-maintenance-verifier',
+    generatedAt: new Date().toISOString(), boundary: 'Current evaluator replay of retained inputs; original archive bytes and verdict are unchanged.',
+    originalDigests: Object.fromEntries(FILES.map(file => [file, digest(root, file)])), recomputed: recomputeMeasurementArchive(root),
+    claims: { newProviderRun: false, realHuman: false, promotionReady: false, originalVerdictChanged: false } };
+  writeFileSync(join(pack, file), `${JSON.stringify(record, null, 2)}\n`, { flag: 'wx' });
+  writeFileSync(join(pack, 'SHA256SUMS'), `${sha256File(join(pack, file))}  ${file}\n`, { flag: 'wx' });
   return validateMeasurementArchive(root);
 }
 

@@ -44,6 +44,8 @@ const REQUIRED_BOUND_PATHS = [
   'docs/dev/rsi-capability-and-boundaries.md',
   'docs/dev/rsi-decision-implementation.md',
   'harness/specs/fixtures/agent-first-framework/loop-validation-report.json',
+  'harness/specs/fixtures/rsi-coding-cohort/instruments/measurement-archive-v2/SHA256SUMS',
+  'harness/specs/fixtures/rsi-coding-cohort/instruments/measurement-archive-v2/verification.v2.json',
   'harness/specs/fixtures/rsi-evidence-loop/capability-matrix.v1.json',
   'harness/specs/fixtures/rsi-evidence-loop/decisions.20261101.json',
   'harness/specs/fixtures/rsi-evidence-loop/evidence-identities.v1.json',
@@ -114,7 +116,7 @@ const REQUIRED_BOUND_PATHS = [
   'tests/unit/runtime-memory-paired-ablation.test.ts',
 ];
 export const PATHS = {
-  acceptance: 'harness/specs/fixtures/rsi-coding-cohort/instruments/decision-acceptance.v2.json',
+  acceptance: 'harness/specs/fixtures/rsi-coding-cohort/instruments/decision-acceptance.v3.json',
   decisions: 'harness/specs/fixtures/rsi-evidence-loop/decisions.20261101.json',
   policyV2: 'harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v2.json',
   corpus: 'harness/specs/fixtures/rsi-evidence-loop/tf0604/task-corpus.v1.json',

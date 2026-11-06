@@ -2,12 +2,16 @@
 import { copyFileSync, cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { MEASUREMENT_ARCHIVE_DIR, validateMeasurementArchive } from '../../scripts/rsi-measurement-archive.mjs';
+import { MEASUREMENT_ARCHIVE_DIR, MEASUREMENT_REVALIDATION_DIR, validateMeasurementArchive } from '../../scripts/rsi-measurement-archive.mjs';
 import { sha256File } from '../../scripts/rsi-tf0604-baseline.mjs';
 
 describe('retained real-provider measurement', () => {
   it('recomputes the historic failure and the prospective controls from retained inputs', () => {
+    const originalDigest = sha256File(join(MEASUREMENT_ARCHIVE_DIR, 'verification.v1.json'));
     expect(validateMeasurementArchive()).toMatchObject({ passed: true, recordedTrialSlots: 144, originalStatus: 'fail', reproducedStatus: 'fail', reanalysisStatus: 'fail', promotionReady: false });
+    const current = JSON.parse(readFileSync(join(MEASUREMENT_REVALIDATION_DIR, 'verification.v2.json'), 'utf8'));
+    expect(current.originalDigests['verification.v1.json']).toBe(originalDigest);
+    expect(sha256File(join(MEASUREMENT_ARCHIVE_DIR, 'verification.v1.json'))).toBe(originalDigest);
     const verification = JSON.parse(readFileSync(join(MEASUREMENT_ARCHIVE_DIR, 'verification.v1.json'), 'utf8'));
     expect(verification.originalProtocol.power.requiredCasesApprox).toBe(992);
     expect(verification.decisionControls.results).toHaveLength(5);
@@ -18,6 +22,7 @@ describe('retained real-provider measurement', () => {
     const temp = mkdtempSync('D:/tmp/rsi-archive-test-');
     try {
       cpSync(MEASUREMENT_ARCHIVE_DIR, join(temp, MEASUREMENT_ARCHIVE_DIR), { recursive: true });
+      cpSync(MEASUREMENT_REVALIDATION_DIR, join(temp, MEASUREMENT_REVALIDATION_DIR), { recursive: true });
       const verification = JSON.parse(readFileSync(join(MEASUREMENT_ARCHIVE_DIR, 'verification.v1.json'), 'utf8'));
       for (const source of Object.keys(verification.evaluatorInputHashes)) {
         mkdirSync(dirname(join(temp, source)), { recursive: true });
