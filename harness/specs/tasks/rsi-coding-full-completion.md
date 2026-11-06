@@ -17,6 +17,7 @@ touchedAreas:
   - scripts/lib/rsi-*.mjs
   - scripts/lib/rsi-*.d.mts
   - tests/unit/rsi-*.test.ts
+  - tests/e2e/fixtures/electron.ts
   - harness/specs/tasks/rsi-*.md
   - harness/specs/fixtures/rsi-coding-cohort/**
   - harness/specs/fixtures/rsi-benefit-eval/coding-complete-20261106-v2/**
@@ -40,6 +41,7 @@ expectedUserBehavior:
 requiredTests:
   - node node_modules/vitest/vitest.mjs run tests/unit/rsi-coding-collector.test.ts tests/unit/rsi-benefit-eval.test.ts tests/unit/rsi-responses-provider.test.ts tests/unit/rsi-live-grader.test.ts tests/unit/rsi-live-acceptance.test.ts --maxWorkers=1
   - pnpm run typecheck
+  - pnpm run test:e2e:agent-dev-quality:run
   - pnpm harness validate --spec harness/specs/tasks/rsi-coding-full-completion.md
   - git diff --check
 acceptance:
@@ -53,6 +55,7 @@ acceptance:
   - V2 continues other scheduled slots after a retained provider/infrastructure failure while reserving the full input-byte plus output-token bound for unknown usage. The reservation is not reported as measured usage. Oracle drift or a changed evaluator still fails closed.
   - The independent report recomputes all outcomes, case-cluster statistics, cost and safety gates. A non-promoting or negative result closes the experiment without claiming RSI benefit or changing product defaults or locks.
   - All maintained RSI readbacks and negative controls pass at their intended source boundary, reports have complete hashes and zero credential hits, and the evidence-complete Task Forest proposal is applied, validated and exported.
+  - The seeded Electron quality scenarios wait for the nonblank bootstrap renderer to finish loading before navigating; their existing functional and visual assertions pass without triggering a cancelled bootstrap load dialog.
 docs:
   required: true
   files:
