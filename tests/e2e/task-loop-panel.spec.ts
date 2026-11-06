@@ -1,8 +1,12 @@
 import { completeSetup, expect, test } from './fixtures/electron';
+import { spawnSync } from 'node:child_process';
+import { writeFile } from 'node:fs/promises';
+import { parseCodingRunJsonl } from '../../shared/types/coding-run';
 
 test.describe('Agent task loop panel', () => {
-  test('starts a task loop through gateway RPC and renders lifecycle state', async ({ electronApp, page }) => {
-    await electronApp.evaluate(({ ipcMain, BrowserWindow }) => {
+  for (const withGate of [true, false]) {
+  test(`starts a task loop through gateway RPC and exports evidence (gate=${withGate})`, async ({ electronApp, page }, testInfo) => {
+    await electronApp.evaluate(({ ipcMain, BrowserWindow }, withGate) => {
       const state = {
         methods: [] as string[],
         taskLoopRuns: 0,
@@ -13,8 +17,14 @@ test.describe('Agent task loop panel', () => {
       const originalHostInvoke = (ipcMain as unknown as {
         _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
       })._invokeHandlers?.get('host:invoke');
-      const respond = (id: unknown, data: unknown) => ({ id: typeof id === 'string' ? id : undefined, ok: true, data });
+      const respond = (id: unknown, data: unknown) => {
+        if (!withGate && data && typeof data === 'object' && 'loop' in data) {
+          delete (data.loop as { evidenceGate?: unknown }).evidenceGate;
+        }
+        return { id: typeof id === 'string' ? id : undefined, ok: true, data };
+      };
       const emitTaskLoop = (payload: Record<string, unknown>) => {
+        if (!withGate) delete payload.evidenceGate;
         for (const window of BrowserWindow.getAllWindows()) {
           window.webContents.send('agent:task-loop-lifecycle', payload);
         }
@@ -140,7 +150,7 @@ test.describe('Agent task loop panel', () => {
 
         return originalHostInvoke?.(event, request) ?? respond(request?.id, {});
       });
-    });
+    }, withGate);
 
     await completeSetup(page);
     await page.evaluate(() => {
@@ -155,15 +165,31 @@ test.describe('Agent task loop panel', () => {
     await expect(page.getByTestId('role-task-loop-event')).toContainText('self_check');
     await expect(page.getByTestId('role-task-loop-event')).toContainText('running');
     await expect(page.getByTestId('role-task-loop-event')).toContainText('complete');
-    await expect(page.getByTestId('role-task-loop-result')).toContainText('Task loop complete (verified) at complete');
-    await expect(page.getByTestId('role-task-loop-result-gate')).toContainText('pass');
+    await expect(page.getByTestId('role-task-loop-result')).toContainText(withGate ? 'Task loop complete (verified) at complete' : 'Task loop complete at complete');
+    if (withGate) await expect(page.getByTestId('role-task-loop-result-gate')).toContainText('pass');
+    else await expect(page.getByTestId('role-task-loop-result-gate')).toHaveCount(0);
     await expect(page.getByTestId('role-task-loop-result')).not.toHaveAttribute('data-completion-authority', 'task-ledger');
-    await expect(page.getByTestId('role-task-loop-result-quality')).toContainText('3/0/0');
-    await expect(page.getByTestId('role-task-loop-files')).toContainText('1');
-    await expect(page.getByTestId('role-task-loop-tests')).toContainText('1');
+    if (withGate) await expect(page.getByTestId('role-task-loop-result-quality')).toContainText('3/0/0');
+    if (withGate) {
+      await expect(page.getByTestId('role-task-loop-files')).toContainText('1');
+      await expect(page.getByTestId('role-task-loop-tests')).toContainText('1');
+    } else {
+      await expect(page.getByTestId('role-task-loop-files')).toHaveCount(0);
+      await expect(page.getByTestId('role-task-loop-tests')).toHaveCount(0);
+    }
     await expect(page.getByTestId('role-task-loop-trace')).toContainText('trace-loop-e2e');
     await page.getByTestId('role-task-loop-coding-run').locator('summary').click();
     await expect(page.getByTestId('role-task-loop-coding-run')).toContainText('"type":"verification"');
+    const jsonl = await page.getByTestId('role-task-loop-coding-run').locator('pre').innerText();
+    const exportFile = testInfo.outputPath('coding-run.jsonl');
+    await writeFile(exportFile, jsonl, 'utf8');
+    expect(parseCodingRunJsonl(jsonl).status).toBe('ok');
+    const cli = spawnSync(process.execPath, ['scripts/coding-run-summary.mjs', exportFile], { cwd: process.cwd(), encoding: 'utf8', windowsHide: true });
+    expect(cli.status, cli.stderr).toBe(0);
+    expect(JSON.parse(cli.stdout)).toMatchObject({ codingRunId: 'task-loop:loop-e2e', finalStatus: withGate ? 'completed' : 'unavailable' });
+    await writeFile(testInfo.outputPath('coding-run-cli.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex-coding-p1',
+      realHumanEvidence: false, boundary: 'Electron UI with injected host RPC', withGate, exitCode: cli.status, summary: JSON.parse(cli.stdout) }, null, 2));
+    await page.getByTestId('role-task-loop-result').screenshot({ path: testInfo.outputPath('coding-run-panel.png') });
 
     const calls = await electronApp.evaluate(() => {
       const state = (globalThis as unknown as { __taskLoopPanelState?: { methods: string[]; taskLoopRuns: number } }).__taskLoopPanelState;
@@ -172,4 +198,5 @@ test.describe('Agent task loop panel', () => {
     expect(calls.taskLoopRuns).toBe(1);
     expect(calls.methods).toContain('task_loop.run');
   });
+  }
 });

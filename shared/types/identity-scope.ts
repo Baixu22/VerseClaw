@@ -107,14 +107,12 @@ export function normalizeTaskReference(value: unknown): TaskIdentityReference {
   return { kind, [field]: requiredText(input[field], field) } as TaskIdentityReference;
 }
 
-export type CompletionAuthority =
-  | "turn"
-  | "run"
-  | "task-loop-verification"
-  | "task-ledger";
-
-export type CompletionStatus = "running" | "completed" | "error" | "aborted" | "unavailable";
-export type VerificationStatus = "passed" | "unavailable" | "failed";
+export const COMPLETION_AUTHORITIES = ['turn', 'run', 'task-loop-verification', 'task-ledger'] as const;
+export const COMPLETION_STATUSES = ['running', 'completed', 'error', 'aborted', 'unavailable'] as const;
+export const VERIFICATION_STATUSES = ['passed', 'unavailable', 'failed'] as const;
+export type CompletionAuthority = (typeof COMPLETION_AUTHORITIES)[number];
+export type CompletionStatus = (typeof COMPLETION_STATUSES)[number];
+export type VerificationStatus = (typeof VERIFICATION_STATUSES)[number];
 
 /**
  * The four distinct completion facts the UI may display. They do not imply

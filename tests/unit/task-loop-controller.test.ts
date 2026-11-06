@@ -1,4 +1,6 @@
 import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { projectTaskLoopCodingRun, serializeCodingRunJsonl } from '../../shared/types/coding-run';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -55,6 +57,19 @@ type FakeFailure = { roleName: string; status: 'error' | 'forbidden' | 'timeout'
 
 const taskLoopRuntimeMemoryTempDirs: string[] = [];
 const AGENTMAP_CANDIDATE_SENTINEL = 'AGENTMAP_CANDIDATE_SENTINEL_DO_NOT_LEAK';
+
+function verifyCodingRunCli(result: Awaited<ReturnType<typeof runTaskLoop>>, finalStatus: string): void {
+  const dir = mkdtempSync(path.join(os.tmpdir(), 'task-loop-coding-export-'));
+  taskLoopRuntimeMemoryTempDirs.push(dir);
+  const projected = projectTaskLoopCodingRun(result);
+  const file = path.join(dir, 'export.jsonl');
+  writeFileSync(file, serializeCodingRunJsonl(projected.codingRun, projected.events));
+  const cli = spawnSync(process.execPath, ['scripts/coding-run-summary.mjs', file], {
+    cwd: process.cwd(), windowsHide: true, encoding: 'utf8', timeout: 20_000,
+  });
+  expect(cli.status, cli.stderr).toBe(0);
+  expect(JSON.parse(cli.stdout)).toMatchObject({ codingRunId: `task-loop:${result.loopRunId}`, finalStatus });
+}
 
 function fakeResult(templateId = 'quick-development', failures: FakeFailure[] = []) {
   const plan: FakePlan = {
@@ -670,6 +685,7 @@ describe('runTaskLoop', () => {
     expect(result.phase).toBe('complete');
     expect(result.finalSummary).toBe('done');
     expect(result.evidenceGate?.status).toBe('pass');
+    verifyCodingRunCli(result, 'completed');
     expect(result.subagentEvidence.every((entry) => entry.completionStatus === 'completed')).toBe(true);
     expect(result.roleQualitySummary.good).toBeGreaterThan(0);
     expect(getTaskLoopRun(result.loopRunId)?.status).toBe('complete');
@@ -2757,6 +2773,8 @@ describe('runTaskLoop', () => {
     expect(result.phase).toBe('error');
     expect(result.error).toBe('orchestration transport failed');
     expect(result.evidenceVerifierReport).toBeUndefined();
+    expect(result.evidenceGate).toBeUndefined();
+    verifyCodingRunCli(result, 'error');
   });
 
   it('extracts structured subagent evidence into files tests risks and followups', async () => {

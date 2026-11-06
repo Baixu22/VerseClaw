@@ -71,7 +71,8 @@ import { AgencyRolePromotionPanel } from './AgencyRolePromotionPanel';
 import { ProposeFactsConfirmQueue } from './ProposeFactsConfirmQueue';
 import { buildMemoryExportSnapshot } from './memory-surface';
 import { AgentRoleIdentity, RoleBadge } from './AgentAvatar';
-import { createCodingRunView, isTaskLoopPassed, serializeCodingRunJsonl, type CodingRunEvidenceEvent } from '@shared/product-semantics';
+import { isTaskLoopPassed, serializeCodingRunJsonl } from '@shared/product-semantics';
+import { projectTaskLoopCodingRun } from '@shared/types/coding-run';
 import type { AgentAvatarView } from '@shared/types/agent';
 import { subagentLifecycleIdentityKey } from '@shared/subagent-lifecycle';
 
@@ -3182,44 +3183,7 @@ export default function RolesOrchestrationPanel({ agents, showMemoryPanel = true
             )}
 
             {taskLoopResult && (() => {
-              const taskLoopCodingRun = createCodingRunView({
-                codingRunId: `task-loop:${taskLoopResult.loopRunId}`,
-                objective: taskLoopResult.loopRunId ?? null,
-                traceId: taskLoopResult.traceId ?? null,
-                completion: {
-                  turnStatus: taskLoopResult.status === 'running' ? 'running'
-                    : taskLoopResult.status === 'error' ? 'error' : 'completed',
-                  runStatus: taskLoopResult.status === 'running' ? 'running'
-                    : taskLoopResult.status === 'error' ? 'error' : 'completed',
-                  verification: taskLoopResult.evidenceGate?.status === 'pass' ? 'passed'
-                    : taskLoopResult.evidenceGate ? 'failed' : 'unavailable',
-                  taskStatus: taskLoopResult.status === 'complete' && taskLoopResult.evidenceGate?.status === 'pass'
-                    ? 'completed' : 'running',
-                  completionAuthority: taskLoopResult.evidenceGate?.status === 'pass' ? 'task-loop-verification' : null,
-                },
-              });
-              const taskLoopEvents: CodingRunEvidenceEvent[] = [
-                {
-                  type: 'loop',
-                  codingRunId: taskLoopCodingRun.codingRunId,
-                  phase: taskLoopResult.phase,
-                  status: taskLoopResult.status,
-                  iteration: null,
-                  ...(taskLoopResult.evidenceGate ? {} : { warning: 'Evidence gate unavailable' }),
-                },
-                ...(taskLoopResult.testsRun ?? []).map((command) => ({
-                  type: 'test' as const,
-                  codingRunId: taskLoopCodingRun.codingRunId,
-                  command,
-                  status: taskLoopResult.evidenceGate?.status === 'pass' ? 'passed' : 'unknown',
-                })),
-                {
-                  type: 'verification',
-                  codingRunId: taskLoopCodingRun.codingRunId,
-                  status: taskLoopCodingRun.completion?.verification ?? 'unavailable',
-                  authority: taskLoopCodingRun.completion?.completionAuthority ?? null,
-                },
-              ];
+              const { codingRun: taskLoopCodingRun, events: taskLoopEvents } = projectTaskLoopCodingRun(taskLoopResult);
               return (
               <div data-testid="role-task-loop-result" className="rounded-xl border border-border/60 bg-surface-input p-3">
                 <div className="flex items-center gap-2">

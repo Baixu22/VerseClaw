@@ -324,6 +324,8 @@ Remote forge 有独立 Host API：
 - CodingRun 关联 code review、runs、files、evidence，但不夺走任务权威；
 - 代码审查可读性成功不能自动把 Task Ledger node 改为 done。
 
+CodingRun 的 `coding-run/v1` JSONL 由同一个合同解析：`run`/`loop` 的 `warning` 可省略，scope、runIds、completion 和事件字段逐层校验，事件的 codingRunId 必须与首行一致。错误版本、乱序和跨运行证据会使 `scripts/coding-run-summary.mjs` 非零退出。Task Loop 页面和导出共用完成状态映射；取消、错误、blocked 以及无 evidenceGate 的结果不会被提升为已完成任务，导出也不会更新 Task Ledger。
+
 ## 12. Workspace 与长会话资源
 
 Workspace coordinator 绑定会记录：

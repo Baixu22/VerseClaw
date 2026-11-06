@@ -5,6 +5,7 @@ import type {
   SessionKey,
   TaskId,
 } from './identity-scope.js';
+import { COMPLETION_AUTHORITIES, COMPLETION_STATUSES, VERIFICATION_STATUSES } from './identity-scope.ts';
 
 /**
  * A read-only association view. CodingRun does not own a state machine,
@@ -185,6 +186,40 @@ export function createCodingRunView(input: CodingRunProjectionInput): CodingRunV
   };
 }
 
+/** One projection for Task Loop display and its JSONL export, without task ownership. */
+export function projectTaskLoopCodingRun(input: {
+  loopRunId: string;
+  status: string;
+  phase: string;
+  traceId?: string;
+  evidenceGate?: { status: string } | null;
+  testsRun?: readonly string[];
+}): { codingRun: CodingRunView; events: CodingRunEvidenceEvent[] } {
+  const terminal = input.status === 'error' ? 'error'
+    : input.status === 'cancelled' || input.status === 'aborted' ? 'aborted'
+      : input.status === 'complete' ? 'completed'
+        : input.status === 'running' ? 'running' : 'unavailable';
+  const passed = input.status === 'complete' && input.evidenceGate?.status === 'pass';
+  const codingRun = createCodingRunView({
+    codingRunId: `task-loop:${input.loopRunId}`, objective: input.loopRunId, traceId: input.traceId ?? null,
+    completion: {
+      turnStatus: terminal, runStatus: terminal,
+      verification: input.evidenceGate?.status === 'pass' ? 'passed' : input.evidenceGate ? 'failed' : 'unavailable',
+      taskStatus: passed ? 'completed' : terminal === 'error' || terminal === 'aborted' ? terminal : 'unavailable',
+      completionAuthority: passed ? 'task-loop-verification' : null,
+    },
+  });
+  const events: CodingRunEvidenceEvent[] = [
+    { type: 'loop', codingRunId: codingRun.codingRunId, phase: input.phase, status: input.status, iteration: null,
+      ...(input.evidenceGate ? {} : { warning: 'Evidence gate unavailable' }) },
+    ...(input.testsRun ?? []).map((command) => ({ type: 'test' as const, codingRunId: codingRun.codingRunId,
+      command, status: input.evidenceGate?.status === 'pass' ? 'passed' : 'unknown' })),
+    { type: 'verification', codingRunId: codingRun.codingRunId,
+      status: codingRun.completion!.verification, authority: codingRun.completion!.completionAuthority },
+  ];
+  return { codingRun, events };
+}
+
 function relationMatches(view: CodingRunView, relation: CodingRunRelation): boolean {
   switch (relation.kind) {
     case 'coding-run':
@@ -304,10 +339,37 @@ function assertStringOrNull(value: unknown, field: string, line: number): string
 }
 
 function assertStringArray(value: unknown, field: string, line: number): string[] {
-  if (!Array.isArray(value) || value.some((entry) => typeof entry !== 'string')) {
+  if (!Array.isArray(value) || value.some((entry) => typeof entry !== 'string' || !entry.trim())) {
     throw protocolError('INVALID_FIELD', line, `${field} must be an array of strings`, field);
   }
   return value as string[];
+}
+
+function assertEnum(value: unknown, allowed: readonly string[], field: string, line: number, nullable = false): void {
+  if (value === null && nullable) return;
+  if (typeof value !== 'string' || !allowed.includes(value)) throw protocolError('INVALID_FIELD', line, `Invalid ${field}`, field);
+}
+
+function assertFields(value: unknown, required: readonly string[], optional: readonly string[], field: string, line: number): asserts value is Record<string, unknown> {
+  if (!isRecord(value)) throw protocolError('INVALID_FIELD', line, `${field} must be an object`, field);
+  for (const key of Object.keys(value)) {
+    if (!required.includes(key) && !optional.includes(key)) throw protocolError('UNKNOWN_FIELD', line, `Unknown ${field}.${key}`, `${field}.${key}`);
+  }
+  for (const key of required) if (!hasOwn(value, key)) throw protocolError('MISSING_FIELD', line, `Missing ${field}.${key}`, `${field}.${key}`);
+}
+
+function validateScope(value: unknown, field: string, line: number): void {
+  assertFields(value, ['workspaceId', 'projectId'], ['sessionKey'], field, line);
+  assertString(value.workspaceId, `${field}.workspaceId`, line);
+  assertString(value.projectId, `${field}.projectId`, line);
+  if (hasOwn(value, 'sessionKey')) assertString(value.sessionKey, `${field}.sessionKey`, line);
+}
+
+function validateCompletion(value: unknown, line: number): void {
+  assertFields(value, ['turnStatus', 'runStatus', 'verification', 'taskStatus', 'completionAuthority'], [], 'completion', line);
+  for (const field of ['turnStatus', 'runStatus', 'taskStatus']) assertEnum(value[field], COMPLETION_STATUSES, `completion.${field}`, line);
+  assertEnum(value.verification, VERIFICATION_STATUSES, 'completion.verification', line);
+  assertEnum(value.completionAuthority, COMPLETION_AUTHORITIES, 'completion.completionAuthority', line, true);
 }
 
 function validateCodingRunPayload(value: unknown, line: number): asserts value is CodingRunView {
@@ -325,9 +387,15 @@ function validateCodingRunPayload(value: unknown, line: number): asserts value i
   assertStringOrNull(value.permissionEnvelopeRef, 'permissionEnvelopeRef', line);
   assertStringOrNull(value.contextFingerprint, 'contextFingerprint', line);
   assertStringArray(value.attemptIds, 'attemptIds', line);
-  if (value.scope !== null && !isRecord(value.scope)) throw protocolError('INVALID_FIELD', line, 'scope must be an object or null', 'scope');
+  assertStringOrNull(value.taskLedgerRootId, 'taskLedgerRootId', line);
+  if (value.scope !== null) validateScope(value.scope, 'scope', line);
   if (!Array.isArray(value.runIds)) throw protocolError('INVALID_FIELD', line, 'runIds must be an array', 'runIds');
-  if (value.completion !== null && !isRecord(value.completion)) throw protocolError('INVALID_FIELD', line, 'completion must be an object or null', 'completion');
+  for (const [index, run] of value.runIds.entries()) {
+    assertFields(run, ['runId', 'scope'], [], `runIds[${index}]`, line);
+    assertString(run.runId, `runIds[${index}].runId`, line);
+    validateScope(run.scope, `runIds[${index}].scope`, line);
+  }
+  if (value.completion !== null) validateCompletion(value.completion, line);
 }
 
 function validateEventPayload(value: unknown, line: number): asserts value is CodingRunEvidenceEvent {
@@ -340,9 +408,43 @@ function validateEventPayload(value: unknown, line: number): asserts value is Co
   const unknown = Object.keys(value).filter((key) => !allowed.includes(key));
   if (unknown.length > 0) throw protocolError('UNKNOWN_FIELD', line, `Unknown ${type} field: ${unknown[0]}`, unknown[0]);
   for (const field of allowed) {
+    if (field === 'warning') continue;
     if (!hasOwn(value, field)) throw protocolError('MISSING_FIELD', line, `Missing ${type}.${field}`, field);
   }
   assertString(value.codingRunId, 'codingRunId', line);
+  if (hasOwn(value, 'warning')) assertString(value.warning, 'warning', line);
+  switch (type) {
+    case 'run':
+      assertEnum(value.event, ['projected', 'warning'], 'event', line);
+      assertStringArray(value.runIds, 'runIds', line);
+      break;
+    case 'turn':
+      assertStringOrNull(value.sessionKey, 'sessionKey', line);
+      assertEnum(value.status, COMPLETION_STATUSES, 'status', line, true);
+      break;
+    case 'item':
+      assertEnum(value.itemKind, ['message', 'tool', 'artifact'], 'itemKind', line);
+      assertString(value.itemId, 'itemId', line); assertString(value.status, 'status', line);
+      break;
+    case 'approval':
+      assertStringOrNull(value.approvalId, 'approvalId', line); assertStringOrNull(value.decision, 'decision', line);
+      break;
+    case 'file':
+      assertString(value.path, 'path', line); assertStringOrNull(value.operation, 'operation', line);
+      break;
+    case 'test':
+      assertString(value.command, 'command', line); assertString(value.status, 'status', line);
+      break;
+    case 'verification':
+      assertEnum(value.status, VERIFICATION_STATUSES, 'status', line);
+      assertEnum(value.authority, COMPLETION_AUTHORITIES, 'authority', line, true);
+      break;
+    case 'loop':
+      assertString(value.phase, 'phase', line); assertString(value.status, 'status', line);
+      if (value.iteration !== null && (!Number.isSafeInteger(value.iteration) || (value.iteration as number) < 0)) {
+        throw protocolError('INVALID_FIELD', line, 'iteration must be a nonnegative integer or null', 'iteration');
+      }
+  }
 }
 
 /** Stable versioned JSONL serialization for display and CI consumption. */
@@ -399,6 +501,9 @@ export function parseCodingRunJsonl(input: string): CodingRunProtocolParseResult
       }
       if ((parsed.payload as CodingRunEvidenceEvent).type !== parsed.recordType) {
         return protocolError('INVALID_FIELD', index + 1, 'recordType must match payload.type', 'recordType');
+      }
+      if ((parsed.payload as CodingRunEvidenceEvent).codingRunId !== (records[0].payload as CodingRunView).codingRunId) {
+        return protocolError('INVALID_FIELD', index + 1, 'Event codingRunId must match the header', 'codingRunId');
       }
     } else {
       try {
