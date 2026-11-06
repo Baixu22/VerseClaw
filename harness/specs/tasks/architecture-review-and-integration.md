@@ -1,7 +1,7 @@
 ---
 id: architecture-review-and-integration
 lifecycleStatus: active
-diffBase: c97ea58faf2e66cc52cabe1df7f9c5b31bc387cd
+diffBase: 2fff49d09cf605b4d1e4808c77c8992e464aadb4
 title: 架构收敛独立审查、修复与主分支集成
 type: task
 intent: 以同模型独立审查定位架构收敛缺口，修复并在合并候选验证，保留主仓其他会话改动及历史证据，回收本轮进程和磁盘产物。
