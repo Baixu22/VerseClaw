@@ -33,6 +33,51 @@ function deferred() {
 const flush = () => new Promise<void>((resolve) => setTimeout(resolve, 0));
 
 describe("workspace resource leases", () => {
+  it('cancels a queued request without waiting for the holder or invoking its effect', async () => {
+    const hold = deferred();
+    const controller = new AbortController();
+    let effect = false;
+    const first = withWorkspaceResourceLease('workspaceWriter', 'cancel-queued', () => hold.promise);
+    const second = withWorkspaceResourceLease('workspaceWriter', 'cancel-queued', async () => { effect = true; },
+      { signal: controller.signal }).then(() => 'executed', () => 'aborted');
+    await flush();
+    controller.abort();
+    const outcome = await Promise.race([second, new Promise(resolve => setTimeout(() => resolve('still-waiting'), 25))]);
+    hold.resolve();
+    await Promise.all([first, second]);
+    expect(outcome).toBe('aborted');
+    expect(effect).toBe(false);
+  });
+
+  it('checks cancellation again between granting a slot and starting the callback', async () => {
+    const controller = new AbortController();
+    let effect = false;
+    const request = withWorkspaceResourceLease('workspaceWriter', 'cancel-granted', async () => { effect = true; },
+      { signal: controller.signal });
+    controller.abort();
+    await expect(request).rejects.toMatchObject({ name: 'AbortError' });
+    expect(effect).toBe(false);
+  });
+
+  it('keeps an already-started operation holding capacity until its owner settles', async () => {
+    const hold = deferred();
+    const controller = new AbortController();
+    let started = false, follower = false;
+    const first = withWorkspaceResourceLease('workspaceWriter', 'cancel-active', async () => {
+      started = true;
+      await hold.promise;
+    }, { signal: controller.signal });
+    await flush();
+    expect(started).toBe(true);
+    controller.abort();
+    const second = withWorkspaceResourceLease('workspaceWriter', 'cancel-active', async () => { follower = true; });
+    await flush();
+    expect(follower).toBe(false);
+    hold.resolve();
+    await Promise.all([first, second]);
+    expect(follower).toBe(true);
+  });
+
   it("caps workspaceSearch at 2 and queues the third with queuedMs > 0", async () => {
     const gate = deferred();
     const started: number[] = [];

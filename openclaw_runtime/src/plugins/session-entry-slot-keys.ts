@@ -18,6 +18,7 @@ const SESSION_ENTRY_RESERVED_SLOT_KEY_LIST = [
   "spawnedBy",
   "spawnedWorkspaceDir",
   "workspaceDir",
+  "workspaceId",
   "spawnedCwd",
   "spawnedWriteSet",
   "parentSessionKey",

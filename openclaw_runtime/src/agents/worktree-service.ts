@@ -11,20 +11,21 @@
  * Does NOT flip production defaults.
  */
 import { execFileSync } from "node:child_process";
+import { randomUUID } from "node:crypto";
 import {
-  closeSync,
   cpSync,
   existsSync,
+  lstatSync,
   mkdirSync,
-  openSync,
   readFileSync,
   readdirSync,
+  realpathSync,
   rmSync,
   statSync,
-  unlinkSync,
   writeFileSync,
 } from "node:fs";
 import path from "node:path";
+import { withTaskLedgerJournalLockSync } from '../../../shared/task-ledger-journal-lock.js';
 import {
   LongSessionCoordinationError,
   decideLongSessionCoordination,
@@ -65,6 +66,7 @@ export type WorktreeLifecycleResult = {
 
 export type WorktreeRecord = {
   id: string;
+  generation: string;
   root: string;
   baseRoot: string;
   createdAtMs: number;
@@ -92,11 +94,16 @@ export type WorktreeChangedFiles = {
   source: "git-status" | "declared-writeSet" | "unavailable";
 };
 
+export type WorktreeIsolationInspection =
+  | { status: 'verified'; root: string; generation: string; headOid: string; gitDir: string; commonDir: string }
+  | { status: 'unverified'; reason: 'missing-worktree' | 'stale-generation' | 'simulated-backend' | 'checkout-mismatch' | 'owner-unavailable' };
+
 export type WorktreeService = {
   backend: WorktreeBackend;
   create(id: string, options?: { writeSet?: string[]; seedFiles?: string[]; installStrategy?: WorktreeInstallStrategy; owner?: WorktreeLifecycleOwner }): WorktreeRecord & { install?: WorktreeInstallResult };
   pathFor(id: string): string;
   list(): WorktreeRecord[];
+  inspectIsolation(id: string, generation: string): WorktreeIsolationInspection;
   listChangedFiles(id: string): WorktreeChangedFiles;
   enqueueMerge(item: Omit<MergeQueueItem, "status"> & { status?: MergeQueueItem["status"] }): MergeQueueItem;
   processMergeQueue(
@@ -117,13 +124,38 @@ export type CreateWorktreeServiceOptions = {
 const registry = new Map<string, { records: Map<string, WorktreeRecord>; queue: MergeQueueItem[] }>();
 
 function scope(baseRoot: string) {
-  const key = path.resolve(baseRoot);
+  const resolved = realpathSync.native(baseRoot);
+  const key = process.platform === 'win32' ? resolved.toLowerCase() : resolved;
   let s = registry.get(key);
   if (!s) {
     s = { records: new Map(), queue: [] };
     registry.set(key, s);
   }
   return s;
+}
+
+function safeWorktreeId(id: string): string {
+  const safeId = id.replace(/[^a-zA-Z0-9._-]/g, "-").slice(0, 64) || "wt";
+  if (safeId === '.' || safeId === '..') throw new Error('unsafe_worktree_id');
+  return safeId;
+}
+
+function pathEntryExists(target: string): boolean {
+  try { lstatSync(target); return true; }
+  catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return false;
+    throw error;
+  }
+}
+
+function recordSnapshot(record: WorktreeRecord): WorktreeRecord {
+  return { ...record, ...(record.owner ? { owner: { ...record.owner } } : {}),
+    ...(record.writeSet ? { writeSet: [...record.writeSet] } : {}) };
+}
+
+function canonicalPath(target: string): string {
+  const resolved = realpathSync.native(target);
+  return process.platform === 'win32' ? resolved.toLowerCase() : resolved;
 }
 
 /** Normalize relative paths for Windows separators and reject traversal. */
@@ -210,10 +242,6 @@ function git(args: string[], cwd: string): string {
   });
 }
 
-function backendSupportsOid(baseRoot: string): boolean {
-  return isGitRepo(baseRoot);
-}
-
 function resolveBackend(baseRoot: string, requested: WorktreeBackend): WorktreeBackend {
   if (requested !== "git") return "inprocess";
   return isGitRepo(baseRoot) ? "git" : "inprocess";
@@ -226,50 +254,16 @@ function sleepMs(ms: number): void {
   }
 }
 
-/** Exclusive create lock with stale recovery (C4-H merge/cleanup serialization). */
-function withWorktreeLock(baseRoot: string, fn: () => void): void {
+/** Age never proves a writer has stopped. Reuse the incarnation-aware mutex. */
+function withWorktreeLock<T>(baseRoot: string, fn: () => T): T {
   const lockDir = path.join(path.resolve(baseRoot), ".openclaw", "worktrees");
   mkdirSync(lockDir, { recursive: true });
+  if (canonicalPath(lockDir) !== (process.platform === 'win32' ? path.resolve(lockDir).toLowerCase() : path.resolve(lockDir))) {
+    throw new Error('worktree_root_redirected');
+  }
   const lockPath = path.join(lockDir, ".merge.lock");
-  const started = Date.now();
-  let fd: number | undefined;
-  while (Date.now() - started < 3000) {
-    try {
-      fd = openSync(lockPath, "wx");
-      writeFileSync(lockPath, `${process.pid}\n${Date.now()}\n`, "utf8");
-      break;
-    } catch {
-      try {
-        if (existsSync(lockPath)) {
-          const raw = readFileSync(lockPath, "utf8");
-          const ts = Number(raw.split(/\r?\n/)[1] ?? 0);
-          if (ts > 0 && Date.now() - ts > 10_000) {
-            unlinkSync(lockPath);
-            continue;
-          }
-        }
-      } catch {
-        // ignore
-      }
-      sleepMs(10);
-    }
-  }
-  try {
-    fn();
-  } finally {
-    if (fd !== undefined) {
-      try {
-        closeSync(fd);
-      } catch {
-        // ignore
-      }
-      try {
-        unlinkSync(lockPath);
-      } catch {
-        // ignore
-      }
-    }
-  }
+  if (pathEntryExists(lockPath)) throw new Error('worktree_legacy_lock_unavailable');
+  return withTaskLedgerJournalLockSync(lockPath, fn, { timeoutMs: 3000 });
 }
 
 function applyConflictPolicy(
@@ -360,10 +354,9 @@ export function createWorktreeService(
   baseRoot: string,
   options?: CreateWorktreeServiceOptions,
 ): WorktreeService {
-  const resolved = path.resolve(baseRoot);
+  const resolved = realpathSync.native(baseRoot);
   const requested = options?.backend ?? "inprocess";
   const backend = resolveBackend(resolved, requested);
-  const baseOid = backend === "git" && backendSupportsOid(resolved) ? git(["rev-parse", "HEAD"], resolved).trim() : undefined;
   const defaultConflictPolicy: MergeConflictPolicy = options?.conflictPolicy ?? "mark_conflict";
   const rootDir = path.join(resolved, ".openclaw", "worktrees");
 
@@ -387,68 +380,58 @@ export function createWorktreeService(
         });
         if (!budget.allowed) throw new LongSessionCoordinationError(budget);
       }
-      const safeId = id.replace(/[^a-zA-Z0-9._-]/g, "-").slice(0, 64) || "wt";
+      const safeId = safeWorktreeId(id);
+      const writeSet = createOptions?.writeSet?.map(normalizeWorktreeRelPath);
+      const seedFiles = createOptions?.seedFiles?.map(normalizeWorktreeRelPath);
       const wtRoot = hardenFsRoot(path.join(rootDir, safeId));
-      let gitBranch: string | undefined;
       let recBackend: WorktreeBackend = "inprocess";
 
-      withWorktreeLock(resolved, () => {
+      return withWorktreeLock(resolved, () => {
         mkdirSync(rootDir, { recursive: true });
-        if (existsSync(wtRoot)) {
-          removePathWithRetries(wtRoot);
+        if (pathEntryExists(wtRoot) || (s.records.has(safeId) && s.records.get(safeId)?.status !== 'cleaned')) {
+          throw new Error(`worktree_already_exists:${safeId}`);
         }
 
         if (backend === "git") {
-          gitBranch = `openclaw/wt-${safeId.slice(0, 40)}`;
-          const absWt = path.resolve(wtRoot);
-          try {
-            git(["worktree", "add", "--detach", absWt, "HEAD"], resolved);
-            recBackend = "git";
-          } catch {
-            try {
-              git(["worktree", "add", "-B", gitBranch, absWt, "HEAD"], resolved);
-              recBackend = "git";
-            } catch {
-              mkdirSync(wtRoot, { recursive: true });
-              gitBranch = undefined;
-              recBackend = "inprocess";
-            }
-          }
+          // Preserve a failed real checkout for diagnosis. Resetting a branch or
+          // falling back to a directory would manufacture an isolation success.
+          git(["worktree", "add", "--detach", path.resolve(wtRoot), "HEAD"], resolved);
+          recBackend = "git";
         } else {
           mkdirSync(wtRoot, { recursive: true });
           recBackend = "inprocess";
         }
 
-        seedFilesInto(wtRoot, resolved, createOptions?.seedFiles);
-      });
+        seedFilesInto(wtRoot, resolved, seedFiles);
 
-      let install: WorktreeInstallResult | undefined;
-      if (createOptions?.installStrategy && createOptions.installStrategy !== "none") {
-        install = installWorktreeDependencies({
-          worktreeRoot: wtRoot,
+        let install: WorktreeInstallResult | undefined;
+        if (createOptions?.installStrategy && createOptions.installStrategy !== "none") {
+          install = installWorktreeDependencies({
+            worktreeRoot: wtRoot,
+            baseRoot: resolved,
+            strategy: createOptions.installStrategy,
+          });
+        }
+
+        const rec: WorktreeRecord = {
+          id: safeId,
+          generation: randomUUID(),
+          root: wtRoot,
           baseRoot: resolved,
-          strategy: createOptions.installStrategy,
-        });
-      }
-
-      const rec: WorktreeRecord = {
-        id: safeId,
-        root: wtRoot,
-        baseRoot: resolved,
-        createdAtMs: Date.now(),
-        status: "active",
-        writeSet: createOptions?.writeSet?.map((p) => normalizeWorktreeRelPath(p)),
-        backend: recBackend,
-        gitBranch,
-        ...(baseOid ? { baseOid } : {}),
-        ...(owner ? { owner: { ...owner, retention: owner.retention ?? "keep" } } : {}),
-      };
-      s.records.set(safeId, rec);
-      if (safeId !== id) s.records.set(id, rec);
-      return install ? { ...rec, install } : rec;
+          createdAtMs: Date.now(),
+          status: "active",
+          writeSet,
+          backend: recBackend,
+          ...(recBackend === 'git' ? { baseOid: git(['rev-parse', 'HEAD'], wtRoot).trim() } : {}),
+          ...(owner ? { owner: { ...owner, retention: owner.retention ?? "keep" } } : {}),
+        };
+        s.records.set(safeId, rec);
+        if (safeId !== id) s.records.set(id, rec);
+        return install ? { ...recordSnapshot(rec), install } : recordSnapshot(rec);
+      });
     },
     pathFor(id) {
-      const safeId = id.replace(/[^a-zA-Z0-9._-]/g, "-").slice(0, 64) || "wt";
+      const safeId = safeWorktreeId(id);
       return path.join(rootDir, safeId);
     },
     list() {
@@ -457,9 +440,37 @@ export function createWorktreeService(
       for (const rec of scope(resolved).records.values()) {
         if (seen.has(rec.id)) continue;
         seen.add(rec.id);
-        out.push(rec);
+        out.push(recordSnapshot(rec));
       }
       return out;
+    },
+    inspectIsolation(id, generation) {
+      try {
+        return withWorktreeLock(resolved, (): WorktreeIsolationInspection => {
+          const rec = scope(resolved).records.get(id);
+          if (!rec || rec.status === 'cleaned') return { status: 'unverified', reason: 'missing-worktree' };
+          if (rec.generation !== generation) return { status: 'unverified', reason: 'stale-generation' };
+          if (rec.backend !== 'git') return { status: 'unverified', reason: 'simulated-backend' };
+          const root = canonicalPath(rec.root);
+          const expectedRoot = path.resolve(rec.root.replace(/^\\\\\?\\/u, ''));
+          if (root !== (process.platform === 'win32' ? expectedRoot.toLowerCase() : expectedRoot)) {
+            return { status: 'unverified', reason: 'checkout-mismatch' };
+          }
+          const topLevel = canonicalPath(git(['rev-parse', '--show-toplevel'], rec.root).trim());
+          const gitDir = canonicalPath(git(['rev-parse', '--absolute-git-dir'], rec.root).trim());
+          const commonDir = canonicalPath(git(['rev-parse', '--path-format=absolute', '--git-common-dir'], rec.root).trim());
+          const baseCommonDir = canonicalPath(git(['rev-parse', '--path-format=absolute', '--git-common-dir'], resolved).trim());
+          // The back-pointer binds the private index/HEAD to this checkout. A
+          // copied .git file or caller-declared backend cannot establish isolation.
+          const registeredRoot = canonicalPath(path.dirname(readFileSync(path.join(gitDir, 'gitdir'), 'utf8').trim()));
+          if (root !== topLevel || root !== registeredRoot || commonDir !== baseCommonDir || gitDir === commonDir
+            || root === canonicalPath(resolved)) return { status: 'unverified', reason: 'checkout-mismatch' };
+          return { status: 'verified', root: rec.root, generation: rec.generation,
+            headOid: git(['rev-parse', 'HEAD'], rec.root).trim(), gitDir, commonDir };
+        });
+      } catch {
+        return { status: 'unverified', reason: 'owner-unavailable' };
+      }
     },
     listChangedFiles(id) {
       const rec = scope(resolved).records.get(id);
@@ -616,7 +627,7 @@ export function createWorktreeService(
         && record.owner?.agentId === owner.agentId
         && record.owner.sessionKey === owner.sessionKey
         && record.owner.expectedSessionId === owner.expectedSessionId
-      ));
+      )).map(recordSnapshot);
     },
     cleanupOwned(owner) {
       const uniqueRecords = new Set(scope(resolved).records.values());

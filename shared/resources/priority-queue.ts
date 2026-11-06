@@ -9,7 +9,7 @@ export type PriorityItem<T> = {
 
 const RANK: Record<QosClass, number> = { interactive: 0, background: 1, opportunistic: 2 };
 
-/** Stable QoS queue with explicit priority boost and opportunistic age promotion. */
+/** Stable QoS queue with bounded age promotion, including past temporary boosts. */
 export class PriorityQueue<T> {
   private readonly items: PriorityItem<T>[] = [];
   private readonly agePromotionMs: number;
@@ -69,8 +69,9 @@ export class PriorityQueue<T> {
   }
 
   private ageRank(item: PriorityItem<T>, now: number): number {
-    return item.qos === 'opportunistic' && now - item.enqueuedAt >= this.agePromotionMs
-      ? RANK.background
-      : RANK[item.qos];
+    // Reaching the boost rank lets old work eventually precede a continuous
+    // stream of newly boosted interactive arrivals. Ties retain FIFO order.
+    const promotions = Math.floor(Math.max(0, now - item.enqueuedAt) / Math.max(1, this.agePromotionMs));
+    return Math.max(-1, RANK[item.qos] - promotions);
   }
 }

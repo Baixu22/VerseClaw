@@ -962,6 +962,37 @@ export interface PluginStateEntries {
   value_json: string;
 }
 
+export interface ProviderSpendAllocations {
+  call_id: string;
+  scope_key: string;
+}
+
+export interface ProviderSpendCalls {
+  actual_cost_micros: number | null;
+  actual_tokens: number | null;
+  call_id: string;
+  created_at: number;
+  model: string;
+  owner_token: string;
+  provider: string;
+  reconciliation_ref: string | null;
+  request_digest: string;
+  reserved_cost_micros: number | null;
+  reserved_tokens: number;
+  run_id: string;
+  scope_json: string;
+  settled_at: number | null;
+  state: string;
+}
+
+export interface ProviderSpendReconciliations {
+  call_id: string;
+  cost_micros: number | null;
+  evidence_ref: string;
+  recorded_at: number;
+  tokens: number | null;
+}
+
 export interface RuntimeReceipts {
   adapter_id: string | null;
   attempt_index: number;
@@ -1360,6 +1391,9 @@ export interface DB {
   plugin_binding_approvals: PluginBindingApprovals;
   plugin_blob_entries: PluginBlobEntries;
   plugin_state_entries: PluginStateEntries;
+  provider_spend_allocations: ProviderSpendAllocations;
+  provider_spend_calls: ProviderSpendCalls;
+  provider_spend_reconciliations: ProviderSpendReconciliations;
   runtime_receipts: RuntimeReceipts;
   runtime_task_event_log_records: RuntimeTaskEventLogRecords;
   sandbox_registry_entries: SandboxRegistryEntries;

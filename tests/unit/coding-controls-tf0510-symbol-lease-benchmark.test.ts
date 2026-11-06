@@ -17,6 +17,7 @@ import { execFile } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { randomUUID } from "node:crypto";
 import { afterEach, describe, expect, it } from "vitest";
 
 const WORKERS = 4;
@@ -24,7 +25,7 @@ const ROUNDS = 12;
 const WORKER = "tests/unit/fixtures/coding-controls-tf0510/symbol-lease-worker.mts";
 const TSX = path.join(process.cwd(), "openclaw_runtime", "node_modules", ".bin", "tsx.CMD");
 
-type WorkerResult = { holderId: string; acquired: number; denied: number; effects: number };
+type WorkerResult = { holderId: string; acquired: number; denied: number; effects: number; overlaps: number };
 
 function runWorker(job: unknown): Promise<WorkerResult> {
   return new Promise((resolve, reject) => {
@@ -78,8 +79,9 @@ describe("TF-0510 symbol-lease multi-process benchmark", () => {
         acquired: acc.acquired + entry.acquired,
         denied: acc.denied + entry.denied,
         effects: acc.effects + entry.effects,
+        overlaps: acc.overlaps + entry.overlaps,
       }),
-      { acquired: 0, denied: 0, effects: 0 },
+      { acquired: 0, denied: 0, effects: 0, overlaps: 0 },
     );
 
     const sideEffectLines = fs
@@ -87,10 +89,13 @@ describe("TF-0510 symbol-lease multi-process benchmark", () => {
       .split(/\r?\n/u)
       .filter((line) => line.trim().length > 0);
 
-    // A lease that failed to serialize would let more side effects through than acquisitions.
+    // Count correspondence alone cannot prove exclusion; the worker also
+    // records overlapping critical sections through an independent marker.
     const duplicateMutationSideEffects = sideEffectLines.length - totals.acquired;
 
     const report = {
+      driven_by: 'agent',
+      actor: 'codex-r1-multiprocess-benchmark',
       workers: WORKERS,
       roundsPerWorker: ROUNDS,
       durationMs,
@@ -102,9 +107,13 @@ describe("TF-0510 symbol-lease multi-process benchmark", () => {
       perWorker: results,
     };
     console.log(JSON.stringify(report, null, 1));
+    const evidenceDir = path.join(process.cwd(), 'artifacts/runs/autonomy-resource-admission');
+    fs.mkdirSync(evidenceDir, { recursive: true });
+    fs.writeFileSync(path.join(evidenceDir, 'contention-' + randomUUID() + '.json'), JSON.stringify(report, null, 2) + '\n');
 
     // Correctness: every side effect corresponds to exactly one successful acquisition.
     expect(duplicateMutationSideEffects).toBe(0);
+    expect(totals.overlaps).toBe(0);
     expect(sideEffectLines.length).toBe(totals.acquired);
     // Each worker must have completed its rounds (acquired + denied).
     for (const entry of results) {

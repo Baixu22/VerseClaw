@@ -8,6 +8,7 @@ import type { SubagentRunOutcome } from "./subagent-announce-output.js";
 import type { SubagentLifecycleEndedReason } from "./subagent-lifecycle-events.js";
 import type { SpawnSubagentMode } from "./subagent-spawn.types.js";
 import type { WorktreeBackend } from "../context-engine/coding-runtime-flags.js";
+import type { WorkerOutputHandoffArtifact } from './handoff-artifacts.js';
 import type {
   CodingIsolationMode,
   OrchestrationQualityPolicy,
@@ -83,6 +84,7 @@ export type TeamOrchestrationMetadata = {
   executionWaves?: OrchestrationExecutionWave[];
   isolation?: CodingIsolationMode;
   worktreeId?: string;
+  worktreeGeneration?: string;
   worktreeBackend?: WorktreeBackend;
   worktreeWriteSet?: string[];
   worktreeMergeStatus?: "merged" | "conflict" | "rework" | "missing" | "error";
@@ -94,6 +96,7 @@ export type TeamOrchestrationMetadata = {
   repairPolicy?: OrchestrationRepairPolicy;
   workerCommunication?: WorkerCommunicationPolicy;
   handoffArtifactsMode?: "off" | "on";
+  handoffArtifacts?: WorkerOutputHandoffArtifact[];
   allowFollowupPlanning?: boolean;
   /** Explicit execution-side patch-flow opt-in; advisory output alone never sets this. */
   patchFlowExecution?: true;
@@ -163,7 +166,7 @@ export type PendingFinalDeliveryPayload = {
 };
 
 export type SubagentExecutionState = {
-  status: "running" | "interrupted" | "terminal";
+  status: "queued" | "pending" | "running" | "interrupted" | "terminal";
   startedAt?: number;
   endedAt?: number;
   outcome?: SubagentRunOutcome;
@@ -222,6 +225,15 @@ export type SubagentCompletionDeliveryState = {
 
 export type SubagentRunRecord = {
   runId: string;
+  /** Prepared agent RPC owned by this registry; retained until dispatch is acknowledged. */
+  queuedDispatch?: {
+    params: Record<string, unknown>;
+    timeoutMs: number;
+    controllerSessionId: string;
+    maxChildren: number;
+  };
+  /** Persisted pre-dispatch reservation. Unknown dispatch never releases it by age. */
+  dispatchPending?: true;
   childSessionKey: string;
   controllerSessionKey?: string;
   requesterSessionKey: string;

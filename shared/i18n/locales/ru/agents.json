@@ -239,6 +239,8 @@
         "runSummary": "Запущено субагентов: {{count}}",
         "runFailed": "Не удалось создать субагентов",
         "synthesisTitle": "Сводка",
+        "synthesisPending": "Ожидается",
+        "synthesisPendingSummary": "Ожидается результат выполнения или проверки.",
         "synthesisEvidence": "Доказательства",
         "synthesisTraces": "Трассы",
         "synthesisVerifier": "Проверка",

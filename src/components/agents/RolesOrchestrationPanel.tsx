@@ -3425,14 +3425,14 @@ export default function RolesOrchestrationPanel({ agents, showMemoryPanel = true
                           </p>
                           {synthesis.summary && (
                             <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                              {synthesis.summary}
+                              {synthesis.status === 'pending' ? t('roles.synthesisPendingSummary') : synthesis.summary}
                             </p>
                           )}
                         </div>
                       </div>
                       {synthesis.status && (
                         <Badge variant="outline" className="shrink-0 rounded-full text-2xs">
-                          {synthesis.status}
+                          {synthesis.status === 'pending' ? t('roles.synthesisPending') : synthesis.status}
                         </Badge>
                       )}
                     </div>

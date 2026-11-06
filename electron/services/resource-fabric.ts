@@ -17,7 +17,7 @@ import type { ResourceKind, ResourceLimitEvent } from '../../shared/types/resour
 import { checkResourceWait, watchResourceWait, resourceQueueFullError, type ResourceWaitOptions } from '../../shared/resources/wait';
 import { getHostDeadline, runWithHostDeadline } from '../utils/host-deadline-context';
 
-type FabricAcquireOptions = ResourceWaitOptions & { qos?: QosClass; timeoutMs?: number; tenant?: string };
+export type FabricAcquireOptions = ResourceWaitOptions & { qos?: QosClass; timeoutMs?: number; tenant?: string };
 
 export type FabricResource = 'workspaceExec' | 'chatHistory';
 
@@ -94,6 +94,7 @@ type FabricAccountDiagnostics = {
   limit: number;
   minLimit: number;
   maxLimit: number;
+  queueLimit: number;
   activeByQos: Record<QosClass, number>;
   limitHistory: ResourceLimitEvent[];
 };
@@ -176,6 +177,7 @@ class FabricAccount {
     private readonly config: FabricAccountConfig,
     private readonly drf: DrfShare,
     private readonly now: () => number,
+    private readonly wakeAccounts: () => void,
   ) {
     this.limit = new AdaptiveLimit({
       initialLimit: config.initialLimit,
@@ -199,11 +201,7 @@ class FabricAccount {
       const deadline = Math.min(this.now() + timeoutMs, options.deadline ?? Infinity);
       const expired = () => new ResourceFabricTimeoutError({ resource: this.resource, leaseKey: this.accountKey, timeoutMs });
       checkResourceWait({ signal: options.signal, deadline }, expired, this.now);
-      this.drain();
-      if ((this.active >= this.limit.limit || this.queue.size > 0) && this.queue.size >= this.config.queueLength) {
-        reject(resourceQueueFullError());
-        return;
-      }
+      this.wakeAccounts();
       const waiter: Waiter = {
         id: this.nextWaiterId++,
         resource: this.resource,
@@ -219,14 +217,15 @@ class FabricAccount {
         cleanup: () => {},
         settled: false,
       };
-      if (this.queue.size === 0 && this.active < this.limit.limit) {
-        this.grant(waiter);
+      if (this.queue.size === 0 && this.active < this.limit.limit && this.grant(waiter)) return;
+      if (this.queue.size >= this.config.queueLength) {
+        reject(resourceQueueFullError());
         return;
       }
       this.queue.push(waiter, qos);
       waiter.cleanup = watchResourceWait(waiter, error => {
         this.reject(waiter, error);
-        this.drain();
+        this.wakeAccounts();
       }, expired, this.now);
       if (waiter.settled) waiter.cleanup();
       if (qos === 'interactive' && this.hasLowerQosActive()) {
@@ -254,12 +253,14 @@ class FabricAccount {
   }
 
   diagnostics(): FabricAccountDiagnostics {
+    this.syncEnvelope();
     return {
       active: this.active,
       queued: this.queue.size,
       limit: this.limit.limit,
       minLimit: this.config.minLimit,
       maxLimit: this.config.maxLimit,
+      queueLimit: this.config.queueLength,
       activeByQos: { ...this.activeQos },
       limitHistory: this.limitHistory.map((event) => ({ ...event })),
     };
@@ -274,24 +275,30 @@ class FabricAccount {
     this.limitHistory.length = 0;
   }
 
-  private drain(): void {
+  get oldestWaiterAt(): number {
+    return this.queue.peek()?.requestedAt ?? Number.POSITIVE_INFINITY;
+  }
+
+  drain(): void {
     while (this.active < this.limit.limit) {
-      const waiter = this.queue.dequeue();
+      const waiter = this.queue.peek();
       if (!waiter) return;
-      if (waiter.settled) continue;
-      this.grant(waiter);
+      if (waiter.settled) { this.queue.remove(candidate => candidate === waiter); continue; }
+      if (!this.grant(waiter)) return;
     }
   }
 
-  private grant(waiter: Waiter): void {
+  private grant(waiter: Waiter): boolean {
     try {
       checkResourceWait(waiter, () => new ResourceFabricTimeoutError({
         resource: this.resource, leaseKey: this.accountKey, timeoutMs: waiter.timeoutMs,
       }), this.now);
-    } catch (error) { this.reject(waiter, error as Error); return; }
+    } catch (error) { this.reject(waiter, error as Error); return true; }
+    // Reserve globally only after wait validity is checked; a refusal remains queued.
+    if (!this.drf.tryReserve(waiter.tenant, { concurrency: 1 })) return false;
+    this.queue.remove(candidate => candidate === waiter);
     this.active += 1;
     this.activeQos[waiter.qos] += 1;
-    this.drf.reserve(waiter.tenant, { concurrency: 1 });
     const queuedMs = Math.max(0, this.now() - waiter.requestedAt);
     waiter.settled = true;
     waiter.cleanup();
@@ -311,6 +318,7 @@ class FabricAccount {
       },
     });
     this.syncEnvelope(queuedMs, 'admitted');
+    return true;
   }
 
   private reject(waiter: Waiter, error: Error): void {
@@ -328,7 +336,7 @@ class FabricAccount {
     this.drf.release(waiter.tenant, { concurrency: 1 });
     this.observeLatency(Math.max(1, this.now() - startedAt), this.queue.size);
     this.syncEnvelope(queuedMs, 'released');
-    this.drain();
+    this.wakeAccounts();
   }
 
   private hasLowerQosActive(): boolean {
@@ -370,7 +378,7 @@ export class ResourceFabric {
   private readonly now: () => number;
   private readonly accountConfigs: Record<FabricResource, FabricAccountConfig>;
   private readonly accounts = new Map<string, FabricAccount>();
-  private readonly drf = new DrfShare({ processes: 64, concurrency: 64 });
+  private drf = new DrfShare({ processes: 64, concurrency: 64 });
   private historyFlights = new Singleflight<string, unknown>();
 
   constructor(options: ResourceFabricOptions = {}) {
@@ -482,6 +490,7 @@ export class ResourceFabric {
   resetForTest(): void {
     for (const account of this.accounts.values()) account.resetForTest();
     this.accounts.clear();
+    this.drf = new DrfShare({ processes: 64, concurrency: 64 });
     this.historyFlights = new Singleflight<string, unknown>();
     const ledger = getResourceEnvelopeLedger();
     for (const entry of ledger.list()) {
@@ -504,6 +513,10 @@ export class ResourceFabric {
       config,
       this.drf,
       this.now,
+      () => {
+        const waiting = [...this.accounts.values()].sort((a, b) => a.oldestWaiterAt - b.oldestWaiterAt);
+        for (const account of waiting) account.drain();
+      },
     );
     this.accounts.set(accountKey, account);
     return account;

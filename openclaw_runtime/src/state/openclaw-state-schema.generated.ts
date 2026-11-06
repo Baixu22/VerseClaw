@@ -37,6 +37,39 @@ CREATE TABLE IF NOT EXISTS diagnostic_stability_bundles (
 CREATE INDEX IF NOT EXISTS idx_diagnostic_stability_bundles_created
   ON diagnostic_stability_bundles(created_at DESC, bundle_key);
 
+-- ProviderOutboundBudget owns this admission journal. No transcript payload or credential is stored.
+CREATE TABLE IF NOT EXISTS provider_spend_calls (
+  call_id TEXT NOT NULL PRIMARY KEY,
+  owner_token TEXT NOT NULL,
+  request_digest TEXT NOT NULL,
+  run_id TEXT NOT NULL,
+  provider TEXT NOT NULL,
+  model TEXT NOT NULL,
+  scope_json TEXT NOT NULL,
+  state TEXT NOT NULL CHECK(state IN ('reserved', 'sent', 'settled', 'unknown', 'cancelled')),
+  reserved_tokens INTEGER NOT NULL CHECK(reserved_tokens >= 0),
+  reserved_cost_micros INTEGER CHECK(reserved_cost_micros >= 0),
+  actual_tokens INTEGER CHECK(actual_tokens >= 0),
+  actual_cost_micros INTEGER CHECK(actual_cost_micros >= 0),
+  created_at INTEGER NOT NULL,
+  settled_at INTEGER,
+  reconciliation_ref TEXT
+);
+CREATE TABLE IF NOT EXISTS provider_spend_allocations (
+  scope_key TEXT NOT NULL,
+  call_id TEXT NOT NULL REFERENCES provider_spend_calls(call_id),
+  PRIMARY KEY(scope_key, call_id)
+);
+CREATE INDEX IF NOT EXISTS idx_provider_spend_run ON provider_spend_calls(run_id, created_at);
+CREATE TABLE IF NOT EXISTS provider_spend_reconciliations (
+  call_id TEXT NOT NULL REFERENCES provider_spend_calls(call_id),
+  evidence_ref TEXT NOT NULL,
+  tokens INTEGER,
+  cost_micros INTEGER,
+  recorded_at INTEGER NOT NULL,
+  PRIMARY KEY(call_id, evidence_ref)
+);
+
 CREATE TABLE IF NOT EXISTS state_leases (
   scope TEXT NOT NULL,
   lease_key TEXT NOT NULL,

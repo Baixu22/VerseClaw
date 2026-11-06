@@ -1250,6 +1250,14 @@ export function createSubagentRegistryLifecycleController(params: {
       };
       mutated = true;
     }
+    if (entry.dispatchPending) {
+      delete entry.dispatchPending;
+      mutated = true;
+    }
+    if (entry.queuedDispatch) {
+      delete entry.queuedDispatch;
+      mutated = true;
+    }
     const outcome = withSubagentOutcomeTiming(completionOutcome, {
       startedAt: entry.startedAt,
       endedAt,

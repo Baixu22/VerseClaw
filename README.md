@@ -4,6 +4,8 @@
 
 Review Center includes a collapsed, opt-in Change Context view for four comparison modes, digest-anchored comments and explicit review verdicts. Pull Changes uses the existing approval, Git and Coding journal owners; review approval never completes a task or merges code. See [Workspace and coding](docs/modules/workspace-and-coding.md). The Windows source-host acceptance and feature-gate rollback are documented in [Controlled rollout](docs/dev/change-context-review-loop/rollout.md).
 
+Provider spend limits can be enabled explicitly with `runtime.providerBudget` for host, project and session scopes. Child calls inherit the session owner's workspace; reservations and unknown costs are retained by the runtime owner. See [Resources and observability](docs/modules/resources-and-observability.md) for coverage and accounting limits.
+
 # Verse Claw
 
 Conversations can initialize a Git repository, select an independent worktree, and restore its draft. `/storage` and **Settings → Storage** share a resource page for conversation files, process memory, and worktrees. [Usage and ownership](docs/dev/session-worktree-storage.md).

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { mkdtempSync, rmSync } from "node:fs";
+import { appendFileSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import {
@@ -22,7 +22,7 @@ describe("symbol-lease (C5-1 + C5-H)", () => {
     rmSync(root, { recursive: true, force: true });
   });
 
-  it("second holder blocked until release/expiry (memory)", () => {
+  it("second holder blocked until owner release (memory)", () => {
     const a = acquireSymbolLease({
       workspaceRoot: root,
       holderId: "w1",
@@ -33,6 +33,7 @@ describe("symbol-lease (C5-1 + C5-H)", () => {
       mode: "memory",
     });
     expect(a.ok).toBe(true);
+    if (!a.ok) throw new Error("initial lease refused");
     const b = acquireSymbolLease({
       workspaceRoot: root,
       holderId: "w2",
@@ -50,6 +51,7 @@ describe("symbol-lease (C5-1 + C5-H)", () => {
         symbolName: "login",
         filePath: "src/a.ts",
         mode: "memory",
+        leaseId: a.lease.leaseId,
       }),
     ).toBe(true);
     const c = acquireSymbolLease({
@@ -63,7 +65,7 @@ describe("symbol-lease (C5-1 + C5-H)", () => {
     expect(c.ok).toBe(true);
   });
 
-  it("C5-H wal: expired holder is reclaimable after TTL", () => {
+  it("C5-H wal: expiry fences a live holder instead of admitting a second writer", () => {
     const a = acquireSymbolLease({
       workspaceRoot: root,
       holderId: "w1",
@@ -83,7 +85,9 @@ describe("symbol-lease (C5-1 + C5-H)", () => {
       nowMs: 1000 + 101,
       mode: "wal",
     });
-    expect(b.ok).toBe(true);
+    expect(b).toMatchObject({ ok: false, reason: "fenced", holderId: "w1" });
+    const wal = readFileSync(path.join(root, ".openclaw", "leases", "symbol-leases.wal.jsonl"), "utf8");
+    expect(wal).toContain('"op":"fence"');
   });
 
   it("C5-H wal: rehydrate from WAL blocks second logical process (crash recovery path)", () => {
@@ -116,8 +120,7 @@ describe("symbol-lease (C5-1 + C5-H)", () => {
   });
 
   it("C5-H wal: release then second process can acquire", () => {
-    expect(
-      acquireSymbolLease({
+    const first = acquireSymbolLease({
         workspaceRoot: root,
         holderId: "p1",
         symbolName: "Bar",
@@ -125,8 +128,9 @@ describe("symbol-lease (C5-1 + C5-H)", () => {
         ttlMs: 60_000,
         nowMs: 7000,
         mode: "wal",
-      }).ok,
-    ).toBe(true);
+      });
+    expect(first.ok).toBe(true);
+    if (!first.ok) throw new Error("initial lease refused");
     expect(
       releaseSymbolLease({
         workspaceRoot: root,
@@ -134,6 +138,7 @@ describe("symbol-lease (C5-1 + C5-H)", () => {
         symbolName: "Bar",
         filePath: "src/y.ts",
         mode: "wal",
+        leaseId: first.lease.leaseId,
       }),
     ).toBe(true);
     __resetSymbolLeases();
@@ -196,5 +201,48 @@ describe("symbol-lease (C5-1 + C5-H)", () => {
       mode: "wal",
     });
     expect(blocked.ok).toBe(false);
+  });
+
+  it("does not free an expired live lease when the process-local view is cleared", () => {
+    const first = acquireSymbolLease({ workspaceRoot: root, holderId: "live", symbolName: "x", ttlMs: 1, nowMs: 1, mode: "wal" });
+    expect(first.ok).toBe(true);
+    __resetSymbolLeases();
+    expect(acquireSymbolLease({ workspaceRoot: root, holderId: "other", symbolName: "x", nowMs: 3, mode: "wal" }))
+      .toMatchObject({ ok: false, reason: "fenced" });
+  });
+
+  it("requires the issued nonce and cannot use an old release against a replacement", () => {
+    const first = acquireSymbolLease({ workspaceRoot: root, holderId: "same", symbolName: "x", mode: "wal" });
+    if (!first.ok) throw new Error("initial lease refused");
+    expect(releaseSymbolLease({ workspaceRoot: root, holderId: "same", symbolName: "x", mode: "wal" })).toBe(false);
+    expect(releaseSymbolLease({ workspaceRoot: root, holderId: "same", symbolName: "x", mode: "wal", leaseId: first.lease.leaseId })).toBe(true);
+    const replacement = acquireSymbolLease({ workspaceRoot: root, holderId: "same", symbolName: "x", mode: "wal" });
+    if (!replacement.ok) throw new Error("replacement refused");
+    expect(replacement.lease.leaseId).not.toBe(first.lease.leaseId);
+    expect(releaseSymbolLease({ workspaceRoot: root, holderId: "same", symbolName: "x", mode: "wal", leaseId: first.lease.leaseId })).toBe(false);
+    expect(acquireSymbolLease({ workspaceRoot: root, holderId: "other", symbolName: "x", mode: "wal" }).ok).toBe(false);
+  });
+
+  it("keeps a legacy expired lease with no provable process owner unavailable", () => {
+    const first = acquireSymbolLease({ workspaceRoot: root, holderId: "first", symbolName: "x", mode: "wal" });
+    if (!first.ok) throw new Error("initial lease refused");
+    const wal = path.join(root, ".openclaw", "leases", "symbol-leases.wal.jsonl");
+    appendFileSync(wal, JSON.stringify({ op: "acquire", lease: { symbolKey: "::x", holderId: "legacy", acquiredAtMs: 1, expiresAtMs: 2 } }) + "\n");
+    expect(acquireSymbolLease({ workspaceRoot: root, holderId: "new", symbolName: "x", mode: "wal", nowMs: 3 }))
+      .toMatchObject({ ok: false, reason: "owner_unknown" });
+  });
+
+  it("refuses admission when the owner journal contains a torn record", () => {
+    acquireSymbolLease({ workspaceRoot: root, holderId: "first", symbolName: "x", mode: "wal" });
+    appendFileSync(path.join(root, ".openclaw", "leases", "symbol-leases.wal.jsonl"), '{"op":');
+    expect(() => acquireSymbolLease({ workspaceRoot: root, holderId: "new", symbolName: "other", mode: "wal" })).toThrow();
+  });
+
+  it("does not turn a missing previously initialized journal into empty capacity", () => {
+    acquireSymbolLease({ workspaceRoot: root, holderId: "first", symbolName: "x", mode: "wal" });
+    rmSync(path.join(root, ".openclaw", "leases", "symbol-leases.wal.jsonl"));
+    __resetSymbolLeases();
+    expect(() => acquireSymbolLease({ workspaceRoot: root, holderId: "new", symbolName: "x", mode: "wal" }))
+      .toThrow("symbol_lease_owner_journal_missing");
   });
 });

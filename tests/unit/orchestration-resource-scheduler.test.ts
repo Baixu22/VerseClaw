@@ -71,6 +71,13 @@ function role(params: {
 }
 
 describe('resource-aware orchestration scheduler', () => {
+  it.each([undefined, 0.5, Number.NaN, Number.POSITIVE_INFINITY])('never treats unmeasured cap %s as infinite or a zero-sized wave', (maxActiveRoles) => {
+    const result = scheduleResourceAwareWaves({ graph: graph([
+      node({ taskNodeId: 'a', roleName: 'planner' }), node({ taskNodeId: 'b', roleName: 'reviewer' }),
+    ]), roles: [role({ name: 'planner' }), role({ name: 'reviewer' })], options: { maxActiveRoles } });
+    expect(result.metrics.concurrencyCap).toBe(1);
+    expect(result.waves.map(wave => wave.taskNodeIds)).toEqual([['a'], ['b']]);
+  });
   it('produces deterministic waves and metrics for identical task graphs', () => {
     const inputGraph = graph([
       node({ taskNodeId: 'planner-1', roleName: 'planner' }),
@@ -95,7 +102,8 @@ describe('resource-aware orchestration scheduler', () => {
     expect(first.metrics).toMatchObject({
       queued: 3,
       running: 0,
-      completed: 3,
+      scheduled: 3,
+      completed: 0,
       skipped: 0,
       concurrencyCap: 2,
     });
@@ -309,15 +317,16 @@ describe('resource-aware orchestration scheduler', () => {
     expect(result.waves[0]?.deferredReasons).toContain('write-set-conflict');
   });
 
-  it('allows overlapping writers in one wave only after verified checkout isolation', () => {
+  it('ignores a caller boolean claiming worktree isolation', () => {
+    const callerOptions = { maxActiveRoles: 2, verifiedWorktreeIsolation: true };
     const result = scheduleResourceAwareWaves({
       graph: graph([
         node({ taskNodeId: 'implementer-1', roleName: 'implementer', writeSet: ['src/shared.ts'], isolation: 'worktree' }),
         node({ taskNodeId: 'implementer-2', roleName: 'implementer', writeSet: ['src/shared.ts'], isolation: 'worktree' }),
       ]),
       roles: [role({ name: 'implementer', tools: ['read', 'write'] })],
-      options: { maxActiveRoles: 2, verifiedWorktreeIsolation: true },
+      options: callerOptions,
     });
-    expect(result.waves.map((wave) => wave.taskNodeIds)).toEqual([['implementer-1', 'implementer-2']]);
+    expect(result.waves.map((wave) => wave.taskNodeIds)).toEqual([['implementer-1'], ['implementer-2']]);
   });
 });

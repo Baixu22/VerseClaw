@@ -130,12 +130,17 @@ dependence 已满足的节点才进入 ready set。以下情况会 defer：
 
 - 都有 write-set；
 - 写集不冲突；
-- 或两个都是 verified worktree 隔离；
 - 否则串行/推迟。
+
+规划阶段按写集判断冲突，实际派发再由 worktree owner 验证 checkout 和 generation。
 
 `ResourceAwareWaveScheduler` 另有 wave immutability：已 started/completed 的 wave 不能被 re-plan；只能修改后续 planned wave。
 
-如果未显式给 worker cap，wave scheduler 的保守硬默认是 64，避免无限并发；真实产品路径通常由 session/resource policy 提供更低的有效上限。
+未显式配置 worker cap 时，wave scheduler 采用串行1并注明容量尚未测量。派发结果
+保持 pending；scheduled 记录规划数量，queued/running/completed/failed/unknown
+由实际 subagent registry 投影，completed 只计成功终态。
+开启handoff后，提交仍先返回queued。原registry在派发前读取并验证前序冻结输出，
+把带hash的有界内容附加到请求；缺失或错配输出会阻止后续派发。
 
 ## 7. Subagent 生命周期
 

@@ -544,7 +544,8 @@ describe('long-session delegation admission', () => {
     const record = service.create('receipt-git-checkout', { writeSet: ['src/a.ts'] });
     expect(record.backend).toBe('git');
     expect(record.root).toBeTruthy();
-    expect(record.gitBranch).toBeTruthy();
+    expect(record.gitBranch).toBeUndefined(); // The owner creates a detached checkout.
+    expect(service.inspectIsolation(record.id, record.generation).status).toBe('verified');
     service.cleanup(record.id);
   });
 });

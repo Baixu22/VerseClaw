@@ -7,6 +7,7 @@ import {
 } from '../../openclaw_runtime/src/resources/resource-envelope-snapshot-store';
 import { ProcessTreeSampler } from '../../openclaw_runtime/src/process/process-tree-sampler';
 import type { ProcessTreeSample } from '../../openclaw_runtime/src/process/process-tree-sampler';
+import { getResourceFabric } from './resource-fabric';
 
 let cachedMainTreeSample: ProcessTreeSample | null = null;
 let cachedMainTreeSampleAt = 0;
@@ -40,6 +41,7 @@ export function removeResourceEnvelopeEntry(id: string): void {
 }
 export async function getMainResourceEnvelopeSnapshot(): Promise<ResourceEnvelopeSnapshot> {
   const ledger = getResourceEnvelopeLedger();
+  getResourceFabric().getDiagnostics();
   const warnings: string[] = [];
   try {
     const sample = await readMainProcessTreeSample();

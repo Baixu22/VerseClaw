@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import {
@@ -397,7 +397,7 @@ describe("checkpoint-rollback-executor (A3)", () => {
         metadata: { worktreeId: "wt-1" },
       });
       const root = resolveCheckpointJournalRoot(record, repoRoot, [
-        { id: "wt-1", root: path.join(repoRoot, ".openclaw", "worktrees", "wt-1") } as never,
+        { id: "wt-1", root: path.join(repoRoot, ".openclaw", "worktrees", "wt-1") },
       ]);
       expect(root).toBe(path.join(repoRoot, ".openclaw", "worktrees", "wt-1"));
     });
@@ -413,6 +413,22 @@ describe("checkpoint-rollback-executor (A3)", () => {
   });
 
   describe("createCheckpointRollbackDeps + executeReplayRollback", () => {
+    it('restores a discovered worktree journal using its absolute root', async () => {
+      const worktreeRoot = path.join(repoRoot, '.openclaw', 'worktrees', 'restore-worker');
+      mkdirSync(worktreeRoot, { recursive: true });
+      const file = path.join(worktreeRoot, 'f.ts');
+      writeFileSync(file, 'before\n');
+      const checkpoint = makeCheckpointRecord({
+        id: 'worktree-checkpoint', sessionKey, createdAt: new Date().toISOString(),
+        metadata: { worktreeId: 'restore-worker' },
+      });
+      await sleepMs(5);
+      snapshotBeforeWrite({ workspaceRoot: worktreeRoot, sessionId: journalSessionId, filePath: 'f.ts', toolName: 'write' });
+      writeFileSync(file, 'after\n');
+      await createCheckpointRollbackDeps({ workspaceRoot: repoRoot, sessionId: journalSessionId }).applyCheckpoint(checkpoint);
+      expect(readFileSync(file, 'utf8')).toBe('before\n');
+    });
+
     it("legacy checkpoint path restores and records outcome", async () => {
       const file = path.join(repoRoot, "f.ts");
       writeFileSync(file, "v0\n", "utf8");

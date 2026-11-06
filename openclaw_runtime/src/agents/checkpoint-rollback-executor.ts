@@ -214,7 +214,7 @@ export function undoCheckpointWrites(params: {
 export function resolveCheckpointJournalRoot(
   checkpoint: LongTaskCheckpointRecord,
   workspaceRoot: string,
-  worktrees?: WorktreeRecord[],
+  worktrees?: Pick<WorktreeRecord, 'id' | 'root'>[],
 ): string {
   const metadata = checkpoint.checkpoint.metadata;
   const worktreeId =
@@ -258,18 +258,11 @@ export function createCheckpointRollbackDeps(
       }
       // Worktree-aware root resolution: journal entries written inside a
       // worktree live under the worktree root.
-      const worktreeRoots = listWorktreeDirs(options.workspaceRoot).map((root) => {
-        const id = path.basename(root);
-        const record: WorktreeRecord = {
-          id,
-          root,
-          baseRoot: options.workspaceRoot,
-          createdAtMs: 0,
-          status: "active",
-          backend: "inprocess",
-        };
-        return record;
-      });
+      // Directory discovery is only a path projection, not a lifecycle owner
+      // record. Never invent a generation/status to locate a journal.
+      const worktreeRoots = listWorktreeDirs(options.workspaceRoot).map((id) => ({
+        id, root: path.join(options.workspaceRoot, '.openclaw', 'worktrees', id),
+      }));
       const journalRoot = resolveCheckpointJournalRoot(
         record,
         options.workspaceRoot,

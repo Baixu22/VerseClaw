@@ -213,7 +213,7 @@ export function buildWorkerOutputHandoffArtifact(input: {
 
 export function resolveHandoffArtifactPrompt(params: {
   node: OrchestrationTaskNode | undefined;
-  plan: OrchestratorPlan;
+    plan: Pick<OrchestratorPlan, 'taskGraph'>;
   orchestrationRunId: string;
   ownerSessionKey: string;
   artifacts: readonly WorkerOutputHandoffArtifact[];
@@ -281,8 +281,13 @@ export async function captureRuntimeWorkerOutputUsing(
 ): Promise<HandoffOutputCapture> {
   const wait = await deps.waitForRun(input.childRunId, input.timeoutMs);
   if (wait.status !== "ok") return { status: "unavailable", reason: "wait-failed" };
+  return readFrozenWorkerOutput(input, deps.getRunById(input.childRunId));
+}
 
-  const entry = deps.getRunById(input.childRunId);
+export function readFrozenWorkerOutput(
+  input: Omit<CaptureRuntimeWorkerOutputInput, 'timeoutMs'>,
+  entry: SubagentRunRecord | null,
+): HandoffOutputCapture {
   if (!entry) return { status: "unavailable", reason: "run-not-found" };
   if (typeof entry.endedAt !== "number" || entry.outcome?.status !== "ok") {
     return { status: "unavailable", reason: "run-not-terminal" };

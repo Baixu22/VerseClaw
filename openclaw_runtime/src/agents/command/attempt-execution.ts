@@ -711,6 +711,7 @@ export function runAgentAttempt(params: {
     senderIsOwner: params.opts.senderIsOwner,
     sessionFile: params.sessionFile,
     workspaceDir: params.workspaceDir,
+    workspaceId: params.sessionEntry?.workspaceId,
     cwd: params.cwd,
     config: params.cfg,
     agentHarnessId: embeddedAgentHarnessOverride,

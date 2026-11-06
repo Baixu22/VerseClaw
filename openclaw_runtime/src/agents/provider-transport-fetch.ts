@@ -63,6 +63,7 @@ import {
   type ShadowReceiptOptions,
 } from "./shadow-census.js";
 import { buildStage1RequestEnvelope } from "./stage1-request-envelope.js";
+import { admitProviderSpendWireAttempt } from './provider-spend-context.js';
 
 const DEFAULT_MAX_SDK_RETRY_WAIT_SECONDS = 60;
 const OPENAI_SDK_STREAM_CONTENT_SNIFF_BYTES = 2 * 1024;
@@ -609,15 +610,15 @@ function buildManagedResponse(
       try {
         const chunk = await reader?.read();
         if (!chunk || chunk.done) {
-          controller.close();
           await finalize();
+          controller.close();
           return;
         }
         refreshTimeout?.();
         controller.enqueue(chunk.value);
       } catch (error) {
-        controller.error(error);
         await finalize();
+        controller.error(error);
       }
     },
     async cancel(reason) {
@@ -753,7 +754,7 @@ export function buildGuardedModelFetch(
       `message=${error instanceof Error ? error.message : read(record.message)}`,
     ].join(" ");
   };
-  return async (input, init) => {
+  const fetchRequest = async (input: Parameters<typeof fetch>[0], init: Parameters<typeof fetch>[1], spendTicket: ReturnType<typeof admitProviderSpendWireAttempt>) => {
     // NET-E (TF-0442): share the caller's logical deadline. An already-expired
     // deadline fails closed before any provider request is prepared, and a live
     // budget tightens the provider window to what remains.
@@ -983,6 +984,7 @@ export function buildGuardedModelFetch(
         baseInit?.headers,
         localServiceSignal,
       );
+      spendTicket?.markSent();
       result = await fetchWithSsrFGuard(
         useEnvProxy
           ? withTrustedEnvProxyGuardedFetchMode(guardedFetchOptions)
@@ -1035,5 +1037,10 @@ export function buildGuardedModelFetch(
     return options?.sanitizeSse === false || !shouldSanitizeOpenAISdkSseResponse(model)
       ? response
       : sanitizeOpenAISdkSseResponse(response, { synthesizeJsonAsSse });
+  };
+  return async (input, init) => {
+    const ticket = admitProviderSpendWireAttempt();
+    try { return await fetchRequest(input, init, ticket); }
+    catch (error) { ticket?.rejectBeforeSend(); throw error; }
   };
 }

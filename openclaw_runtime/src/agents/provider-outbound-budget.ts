@@ -17,8 +17,8 @@
  * one canonical group with `quotaGroupAliases`.
  *
  * Deliberate boundaries:
- * - **No default limit.** With nothing configured the boundary is a single map lookup and the
- *   request proceeds ungated; the issue explicitly forbids freezing an example concurrency
+ * - **No default limit.** With nothing configured the request proceeds ungated; the owner keeps
+ *   only its live handle count so later activation cannot forget outstanding requests. The issue forbids freezing an example concurrency
  *   number as a product default. Operators opt in through the environment (below) or through
  *   `configureProviderOutboundBudget()`.
  * - The account discriminator is a truncated SHA-256 of the resolved credential, computed in
@@ -101,6 +101,8 @@ export type ProviderOutboundGroupStats = BoundedConcurrencyStats & {
   endpoint: string;
   account: string;
   providers: string[];
+  /** Current operator policy; null means old held slots are draining without a configured limit. */
+  effectiveLimits: ProviderOutboundQuotaLimits | null;
 };
 
 /**
@@ -219,11 +221,21 @@ type ManagedGroup = {
   gate: BoundedConcurrencyGate;
   limits: ProviderOutboundQuotaLimits;
   providers: Set<string>;
+  members: Set<string>;
 };
 
 let config: ProviderOutboundBudgetConfig | undefined;
 let envConfigLoaded = false;
 let groups = new Map<string, ManagedGroup>();
+let ungatedRequests = new Map<string, number>();
+
+export class ProviderBudgetReconfigureBusyError extends Error {
+  readonly code = "E_PROVIDER_BUDGET_RECONFIGURE_BUSY";
+  readonly retryable = true;
+  constructor() {
+    super("Provider budget reconfiguration must wait for the affected request owners to settle");
+  }
+}
 
 /** Truncated SHA-256 used only as an in-memory account discriminator. */
 function accountFingerprint(value: string): string {
@@ -285,20 +297,22 @@ export function resolveProviderOutboundQuotaGroup(params: {
   };
 }
 
-/** Resolves one alias hop chain (bounded to avoid cycles). */
+/** Resolve the complete declared quota relation; cycles never mint another budget. */
 function resolveAlias(groupId: string, aliases: Record<string, string> | undefined): string {
   if (!aliases) {
     return groupId;
   }
   let current = groupId;
-  for (let hop = 0; hop < 4; hop += 1) {
+  const visited = new Set<string>();
+  for (;;) {
+    if (visited.has(current)) throw new TypeError("Provider quota aliases contain a cycle");
+    visited.add(current);
     const next = aliases[current];
     if (typeof next !== "string" || !next.trim() || next === current) {
       return current;
     }
     current = next;
   }
-  return current;
 }
 
 /** Resolves the effective limits for a group, or `undefined` when ungated. */
@@ -310,8 +324,14 @@ export function resolveProviderOutboundLimits(
     return undefined;
   }
   const canonical = resolveAlias(groupId, active.quotaGroupAliases);
-  const perGroup = active.quotas?.[groupId] ?? active.quotas?.[canonical];
-  const limits = perGroup ?? active.limits;
+  const declared = Object.entries(active.quotas ?? {})
+    .filter(([id]) => resolveAlias(id, active.quotaGroupAliases) === canonical)
+    .map(([, value]) => value);
+  const limits = declared.length ? {
+    maxConcurrent: Math.min(...declared.map(value => value.maxConcurrent)),
+    maxQueue: Math.min(...declared.map(value => value.maxQueue ?? value.maxConcurrent)),
+    queueTimeoutMs: Math.min(...declared.map(value => value.queueTimeoutMs ?? 30_000)),
+  } : active.limits;
   if (!limits || !Number.isFinite(limits.maxConcurrent) || limits.maxConcurrent < 1) {
     return undefined;
   }
@@ -319,7 +339,7 @@ export function resolveProviderOutboundLimits(
 }
 
 /** Parses a positive integer environment value; unusable values are ignored. */
-function readPositiveEnvInt(raw: string | undefined): number | undefined {
+function readPositiveEnvInt(raw: string | undefined, minimum = 1): number | undefined {
   if (raw === undefined) {
     return undefined;
   }
@@ -328,7 +348,7 @@ function readPositiveEnvInt(raw: string | undefined): number | undefined {
     return undefined;
   }
   const value = Number.parseInt(trimmed, 10);
-  return Number.isFinite(value) && value > 0 ? value : undefined;
+  return Number.isSafeInteger(value) && value >= minimum ? value : undefined;
 }
 
 /** Reads `a=b,c=d` alias pairs. Invalid entries are ignored rather than guessed. */
@@ -363,8 +383,8 @@ export function readProviderOutboundBudgetConfigFromEnv(
   if (maxConcurrent === undefined) {
     return aliases ? { quotaGroupAliases: aliases } : undefined;
   }
-  const maxQueue = readPositiveEnvInt(env[PROVIDER_OUTBOUND_ENV.maxQueue]);
-  const queueTimeoutMs = readPositiveEnvInt(env[PROVIDER_OUTBOUND_ENV.queueTimeoutMs]);
+  const maxQueue = readPositiveEnvInt(env[PROVIDER_OUTBOUND_ENV.maxQueue], 0);
+  const queueTimeoutMs = readPositiveEnvInt(env[PROVIDER_OUTBOUND_ENV.queueTimeoutMs], 0);
   return {
     limits: {
       maxConcurrent,
@@ -375,16 +395,60 @@ export function readProviderOutboundBudgetConfigFromEnv(
   };
 }
 
-/** Replaces the budget configuration. `undefined` disables every limit. */
+/** Reconfigure the existing owners; held or queued requests never disappear. */
 export function configureProviderOutboundBudget(next: ProviderOutboundBudgetConfig | undefined): void {
-  groups = new Map();
-  config = next;
+  const copied = next ? {
+    ...next,
+    ...(next.limits ? { limits: { ...next.limits } } : {}),
+    ...(next.quotas ? { quotas: Object.fromEntries(Object.entries(next.quotas).map(([key, value]) => [key, { ...value }])) } : {}),
+    ...(next.quotaGroupAliases ? { quotaGroupAliases: { ...next.quotaGroupAliases } } : {}),
+  } : undefined;
+  for (const limits of [copied?.limits, ...Object.values(copied?.quotas ?? {})]) {
+    if (!limits) continue;
+    if (!Number.isSafeInteger(limits.maxConcurrent) || limits.maxConcurrent < 1
+      || limits.maxQueue !== undefined && (!Number.isSafeInteger(limits.maxQueue) || limits.maxQueue < 0)
+      || limits.queueTimeoutMs !== undefined && (!Number.isSafeInteger(limits.queueTimeoutMs) || limits.queueTimeoutMs < 0)) {
+      throw new RangeError("Provider quota limits must be valid finite integers");
+    }
+  }
+  for (const [key, value] of Object.entries(copied?.quotaGroupAliases ?? {})) {
+    if (!key.trim() || typeof value !== "string" || !value.trim()) throw new TypeError("Provider quota aliases require nonempty identities");
+    resolveAlias(key, copied?.quotaGroupAliases);
+  }
+  for (const [id, count] of ungatedRequests) {
+    if (count > 0 && resolveProviderOutboundLimits(id, copied)) throw new ProviderBudgetReconfigureBusyError();
+  }
+  for (const managed of groups.values()) {
+    const state = managed.gate.stats();
+    if (!state.active && !state.queued) continue;
+    if (state.closed || config?.now !== copied?.now
+      || [...managed.members].some(id => resolveAlias(id, copied?.quotaGroupAliases) !== managed.groupId)) {
+      throw new ProviderBudgetReconfigureBusyError();
+    }
+  }
+  const previousClock = config?.now;
+  config = copied;
   envConfigLoaded = true;
+  for (const [id, managed] of groups) {
+    const state = managed.gate.stats();
+    const topologyChanged = [...managed.members].some(member => resolveAlias(member, copied?.quotaGroupAliases) !== id);
+    if (!state.active && !state.queued && (state.closed || topologyChanged || previousClock !== copied?.now)) {
+      groups.delete(id);
+      continue;
+    }
+    const limits = resolveProviderOutboundLimits([...managed.members][0], copied);
+    if (limits) {
+      managed.limits = { ...limits };
+      managed.gate.setLimits({ maxConcurrent: limits.maxConcurrent, maxQueue: limits.maxQueue ?? limits.maxConcurrent, queueTimeoutMs: limits.queueTimeoutMs ?? 30_000 });
+    }
+  }
 }
 
 /** Restores the environment-derived configuration and drops all gates (test helper). */
 export function resetProviderOutboundBudget(): void {
+  closeProviderOutboundBudget();
   groups = new Map();
+  ungatedRequests = new Map();
   config = undefined;
   envConfigLoaded = false;
 }
@@ -406,6 +470,7 @@ function gateFor(params: {
   const existing = groups.get(canonical);
   if (existing) {
     existing.providers.add(params.group.provider);
+    existing.members.add(params.group.groupId);
     return existing;
   }
   const created: ManagedGroup = {
@@ -414,6 +479,7 @@ function gateFor(params: {
     account: params.group.account,
     limits: params.limits,
     providers: new Set([params.group.provider]),
+    members: new Set([params.group.groupId]),
     gate: createBoundedConcurrencyGate({
       maxConcurrent: params.limits.maxConcurrent,
       ...(params.limits.maxQueue === undefined ? {} : { maxQueue: params.limits.maxQueue }),
@@ -452,13 +518,24 @@ export async function acquireProviderOutboundSlot(params: {
   const active = activeConfig();
   const limits = resolveProviderOutboundLimits(params.group.groupId, active);
   if (!limits) {
+    const tracking = ungatedRequests;
+    const id = params.group.groupId;
+    tracking.set(id, (tracking.get(id) ?? 0) + 1);
+    let released = false;
     return {
       ok: true,
       slot: {
         groupId: params.group.groupId,
         limited: false,
         waitedMs: 0,
-        release: () => true,
+        release: () => {
+          if (released) return false;
+          released = true;
+          const remaining = (tracking.get(id) ?? 1) - 1;
+          if (remaining > 0) tracking.set(id, remaining);
+          else tracking.delete(id);
+          return true;
+        },
       },
     };
   }
@@ -488,15 +565,19 @@ export async function acquireProviderOutboundSlot(params: {
   };
 }
 
-/** Snapshot of every gated group (ungated groups never allocate a slot). */
+/** Snapshot of gated owners. Ungated lifetime counts are not configured limits. */
 export function providerOutboundBudgetStats(): ProviderOutboundGroupStats[] {
-  return [...groups.values()].map((managed) => ({
-    ...managed.gate.stats(),
-    groupId: managed.groupId,
-    endpoint: managed.endpoint,
-    account: managed.account,
-    providers: [...managed.providers].sort(),
-  }));
+  return [...groups.values()].map((managed) => {
+    const limits = resolveProviderOutboundLimits([...managed.members][0], activeConfig());
+    return {
+      ...managed.gate.stats(),
+      groupId: managed.groupId,
+      endpoint: managed.endpoint,
+      account: managed.account,
+      providers: [...managed.providers].sort(),
+      effectiveLimits: limits ? { ...limits } : null,
+    };
+  });
 }
 
 /** Closes every gate and rejects the queues; used by tests and shutdown paths. */

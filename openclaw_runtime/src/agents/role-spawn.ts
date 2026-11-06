@@ -82,6 +82,7 @@ export type RoleSpawnContext = {
 /** Result shape returned by a spawn call. */
 export type RoleSpawnResultShape = {
   status: "accepted" | "forbidden" | "error";
+  runState?: 'queued';
   runId?: string;
   childSessionKey?: string;
   mode?: "run" | "session";

@@ -11,11 +11,6 @@ export type ResourceSchedulerOptions = {
   maxActiveRoles?: number;
   exclusiveToolGroups?: readonly (readonly string[])[];
   roleCost?: Partial<Record<string, number>>;
-  /**
-   * Worktree intent alone is not isolation proof. Set this only when the
-   * existing worktree owner has produced verified checkouts for the nodes.
-   */
-  verifiedWorktreeIsolation?: boolean;
 };
 
 export type ResourceScheduleDeferReason =
@@ -36,6 +31,11 @@ export type SchedulerSkippedNode = {
 };
 
 export type ResourceSchedulerMetrics = {
+  /** Planning count; it is not an execution completion receipt. */
+  scheduled?: number;
+  /** Owner records with no confirmed runtime state or terminal outcome. */
+  unknown?: number;
+  failed?: number;
   queued: number;
   running: number;
   completed: number;
@@ -64,9 +64,9 @@ const EFFORT_COST: Record<RoleContract["effort"], number> = {
 };
 
 function resolveConcurrencyCap(value: number | undefined): number {
-  return typeof value === "number" && Number.isFinite(value) && value > 0
-    ? Math.floor(value)
-    : Number.MAX_SAFE_INTEGER;
+  // Missing capacity is unmeasured. The recovery contract permits serialized
+  // planning, never an invented unlimited capacity or a zero-sized wave.
+  return typeof value === "number" && Number.isSafeInteger(value) && value > 0 ? value : 1;
 }
 
 function roleByName(roles: readonly RoleContract[]): Map<string, RoleContract> {
@@ -142,19 +142,13 @@ function writeSetDeferReason(
   candidate: OrchestrationTaskNode,
   chunk: readonly OrchestrationTaskNode[],
   roles: Map<string, RoleContract>,
-  options: ResourceSchedulerOptions | undefined,
 ): ResourceScheduleDeferReason | undefined {
   if (!isWriteCapableNode(candidate, roles)) return undefined;
 
   for (const existing of chunk) {
     if (!isWriteCapableNode(existing, roles)) continue;
-    if (
-      options?.verifiedWorktreeIsolation === true &&
-      existing.isolation === "worktree" &&
-      candidate.isolation === "worktree"
-    ) {
-      continue;
-    }
+    // Planning precedes checkout creation. Only the execution owner can verify
+    // isolation at dispatch; caller assertions never bypass write-set checks.
     if (!existing.writeSet?.length || !candidate.writeSet?.length) {
       return "insufficient-writeSet-proof";
     }
@@ -197,7 +191,7 @@ function takeContentionSafeChunk(params: {
       deferredReasons.add("concurrency-cap");
       continue;
     }
-    const writeSetReason = writeSetDeferReason(node, chunk, params.roles, params.options);
+    const writeSetReason = writeSetDeferReason(node, chunk, params.roles);
     if (writeSetReason) {
       deferred += 1;
       deferredTaskNodeIds.push(node.taskNodeId);
@@ -212,9 +206,6 @@ function takeContentionSafeChunk(params: {
       conflictingKeys.every((key) =>
         (usedExclusiveKeys.get(key) ?? []).every(
           (existing) =>
-            (params.options?.verifiedWorktreeIsolation === true &&
-              existing.isolation === "worktree" &&
-              node.isolation === "worktree") ||
             (Boolean(existing.writeSet?.length) &&
               Boolean(node.writeSet?.length) &&
               !writeSetsConflict(existing.writeSet, node.writeSet)),
@@ -284,6 +275,9 @@ export function scheduleResourceAwareWaves(params: {
         : `scheduled ${chunk.length} ready node(s) within concurrency cap ${concurrencyCap}`,
       ...(deferredReasons.size > 0 ? { deferredReasons: [...deferredReasons] } : {}),
     });
+    if (params.options?.maxActiveRoles === undefined) {
+      waves[waves.length - 1].reason += '; capacity unverified; serialized planning';
+    }
     for (const taskNodeId of deferredTaskNodeIds) {
       deferredForContention.add(taskNodeId);
     }
@@ -305,7 +299,8 @@ export function scheduleResourceAwareWaves(params: {
     metrics: {
       queued: params.graph.nodes.length,
       running: 0,
-      completed: completed.size,
+      scheduled: completed.size,
+      completed: 0,
       skipped: skipped.length,
       concurrencyCap,
       budgetEstimate: roleCostSummary.reduce((total, entry) => total + entry.estimatedCost, 0),

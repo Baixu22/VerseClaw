@@ -6,7 +6,7 @@
  * one line to a shared side-effect file. If the lease is correct, the number of side-effect
  * lines can never exceed the number of successful acquisitions.
  */
-import { appendFileSync } from "node:fs";
+import { appendFileSync, closeSync, openSync, unlinkSync } from "node:fs";
 import { acquireSymbolLease, releaseSymbolLease } from "../../../../openclaw_runtime/src/context-engine/factstore/symbol-lease.js";
 
 type Job = {
@@ -31,6 +31,7 @@ const sleep = (ms: number) => new Promise<void>((done) => setTimeout(done, ms));
 let acquired = 0;
 let denied = 0;
 let effects = 0;
+let overlaps = 0;
 
 for (let round = 0; round < job.rounds; round += 1) {
   const result = acquireSymbolLease({
@@ -45,16 +46,31 @@ for (let round = 0; round < job.rounds; round += 1) {
     continue;
   }
   acquired += 1;
-  appendFileSync(job.effectsPath, job.holderId + ":" + round + "\n");
-  effects += 1;
-  // Keep the critical section open so peers actually contend.
-  await sleep(HOLD_MS);
-  releaseSymbolLease({
-    workspaceRoot: job.workspaceRoot,
-    holderId: job.holderId,
-    symbolName: job.symbol,
-    mode: "wal",
-  });
+  let marker: number | undefined;
+  const markerPath = job.effectsPath + ".active";
+  try {
+    try { marker = openSync(markerPath, "wx"); }
+    catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
+      overlaps += 1;
+    }
+    if (marker !== undefined) {
+      appendFileSync(job.effectsPath, job.holderId + ":" + round + "\n");
+      effects += 1;
+      // An independent marker observes actual simultaneous critical sections,
+      // not merely a matching number of grants and side-effect lines.
+      await sleep(HOLD_MS);
+    }
+  } finally {
+    if (marker !== undefined) { closeSync(marker); unlinkSync(markerPath); }
+    releaseSymbolLease({
+      workspaceRoot: job.workspaceRoot,
+      holderId: job.holderId,
+      symbolName: job.symbol,
+      mode: "wal",
+      leaseId: result.lease.leaseId,
+    });
+  }
 }
 
-process.stdout.write(JSON.stringify({ holderId: job.holderId, acquired, denied, effects }));
+process.stdout.write(JSON.stringify({ holderId: job.holderId, acquired, denied, effects, overlaps }));

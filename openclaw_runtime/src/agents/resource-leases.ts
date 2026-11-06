@@ -44,6 +44,7 @@ type ResourceLeaseMode = "semaphore" | "path";
 export type ResourceLeaseOptions = ResourceWaitOptions & {
   /** Maximum time to wait for the lease. `<= 0` waits indefinitely. */
   timeoutMs?: number;
+  signal?: AbortSignal;
 };
 
 const DEFAULT_ACQUIRE_TIMEOUT_MS = 30_000;

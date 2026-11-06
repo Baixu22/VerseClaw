@@ -29,6 +29,26 @@ function deferred() {
 const flush = () => new Promise<void>((resolve) => setTimeout(resolve, 0));
 
 describe("bash workspaceExec admission", () => {
+  it('settles cancellation while both slots remain held and never starts the shell', async () => {
+    const cwd = process.cwd(), key = normalizeWorkspaceLeaseKey(cwd);
+    const gate = deferred();
+    const held = [
+      withWorkspaceResourceLease('workspaceExec', key, () => gate.promise),
+      withWorkspaceResourceLease('workspaceExec', key, () => gate.promise),
+    ];
+    await flush();
+    const controller = new AbortController();
+    let output = '';
+    const queued = createLocalBashOperations().exec('echo unexpected-effect', cwd,
+      { signal: controller.signal, onData: data => { output += data.toString(); } }).then(() => 'executed', () => 'aborted');
+    controller.abort();
+    const outcome = await Promise.race([queued, new Promise(resolve => setTimeout(() => resolve('still-waiting'), 25))]);
+    gate.resolve();
+    await Promise.all([...held, queued]);
+    expect(outcome).toBe('aborted');
+    expect(output).toBe('');
+  });
+
   it("queues behind the workspace budget before spawning the shell", async () => {
     const cwd = process.cwd();
     const key = normalizeWorkspaceLeaseKey(cwd);

@@ -185,7 +185,7 @@ export type LongSessionCoordinationDecision = {
   }>;
 };
 
-export type SessionOwnerInventoryKind = ReclaimOwnerKind | 'process';
+export type SessionOwnerInventoryKind = ReclaimOwnerKind | 'process' | 'provider';
 
 export type SessionOwnerInventory = {
   kind: SessionOwnerInventoryKind;
@@ -204,6 +204,11 @@ export type SessionOwnerInventory = {
   worktreeIds: string[] | null;
   sessionIds: string[] | null;
   detail?: string;
+  /** Read directly from provider owner records; never used as an admission authority. */
+  spend?: Array<{
+    scope: 'host' | 'project' | 'session'; spentTokens: number; spentCostMicros: number;
+    heldTokens: number; heldCostMicros: number; activeCalls: number; unknownTokenCalls: number; unknownCostCalls: number;
+  }>;
 };
 
 export type LongSessionResourceInventory = {

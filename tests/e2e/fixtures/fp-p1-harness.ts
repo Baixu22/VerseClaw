@@ -93,7 +93,7 @@ export type LlmScript = (
   userText: string,
   toolResults: Record<string, string>,
   requestIndex: number,
-) => { toolCall?: ToolCallSpec; text?: string };
+) => { toolCall?: ToolCallSpec; text?: string } | Promise<{ toolCall?: ToolCallSpec; text?: string }>;
 
 /**
  * Scripted OpenAI-compatible chat/completions endpoint. The script decides the
@@ -141,7 +141,7 @@ export function startScriptedLlm(script: LlmScript): Promise<{
       }
       let body = '';
       req.on('data', (chunk) => { body += chunk; });
-      req.on('end', () => {
+      req.on('end', async () => {
         try {
         let parsed: {
           stream?: boolean;
@@ -182,7 +182,7 @@ export function startScriptedLlm(script: LlmScript): Promise<{
         }
         // A filtered tool never produces a result frame. Let the scripted
         // control terminate from the request count in that case.
-        const action = script(userText, toolResults, log.length);
+        const action = await script(userText, toolResults, log.length);
         log.push({
           turn: userText.slice(0, 60),
           toolResults,

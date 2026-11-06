@@ -15,6 +15,7 @@ export type BlackboardSynthesisSummary = {
 };
 
 export type OrchestrationSynthesisStatus =
+  | "pending"
   | "verified"
   | "partial"
   | "failed"
@@ -95,6 +96,9 @@ function deriveSynthesisStatus(bundle: OrchestrationResultBundle): Orchestration
   if (bundle.status === "partial" || bundle.failures.length > 0) {
     return "partial";
   }
+  if (bundle.phase === "spawn" || bundle.status === "pending" || bundle.roleOutcomes.some(outcome => outcome.status === "accepted")) {
+    return "pending";
+  }
   return "verified";
 }
 
@@ -148,6 +152,9 @@ function summaryFor(params: {
   const roleCount = params.bundle.roleOutcomes.length;
   const evidenceCount = params.bundle.evidenceRefs.length;
   const artifactCount = params.bundle.artifacts.length;
+  if (params.status === "pending") {
+    return `Execution or verification is pending; ${roleCount} role receipt(s).`;
+  }
   if (params.status === "failed") {
     return `Verifier failed; ${params.failureCount} failure(s), ${roleCount} role contribution(s), ${evidenceCount} evidence ref(s), ${artifactCount} artifact(s).`;
   }

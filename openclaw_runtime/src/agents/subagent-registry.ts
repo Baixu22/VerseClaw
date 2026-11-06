@@ -6,6 +6,7 @@
 import { createHash } from "node:crypto";
 import type { cleanupBrowserSessionsForLifecycleEnd } from "../browser-lifecycle-cleanup.js";
 import { getRuntimeConfig } from "../config/config.js";
+import { DEFAULT_SUBAGENT_MAX_CHILDREN_PER_AGENT } from '../config/agent-limits.js';
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import type { ResolveContextEngineOptions } from "../context-engine/registry.js";
 import type { ContextEngine, SubagentEndReason } from "../context-engine/types.js";
@@ -87,6 +88,8 @@ import {
 } from "./subagent-registry-state.js";
 import { configureSubagentRegistrySteerRuntime } from "./subagent-registry-steer-runtime.js";
 import type { SubagentRunRecord } from "./subagent-registry.types.js";
+import { createSubagentDispatchQueue, type QueuedSubagentDispatchResult } from './subagent-registry-dispatch.js';
+import { withSubagentRegistryCapacity, refreshSubagentRegistrySnapshot } from './subagent-registry.store.sqlite.js';
 import {
   loadSubagentSessionEntry,
   resolveCompletionFromSessionEntry,
@@ -115,6 +118,9 @@ type BrowserCleanupModule = Pick<
 >;
 
 type SubagentRegistryDeps = {
+  withCapacity: typeof withSubagentRegistryCapacity;
+  refreshRuns: typeof refreshSubagentRegistrySnapshot;
+  dispatchQueuedSubagent(entry: SubagentRunRecord): Promise<QueuedSubagentDispatchResult>;
   callGateway: typeof callGateway;
   captureSubagentCompletionReply: SubagentAnnounceModule["captureSubagentCompletionReply"];
   cleanupBrowserSessionsForLifecycleEnd: typeof cleanupBrowserSessionsForLifecycleEnd;
@@ -154,6 +160,9 @@ async function loadCleanupBrowserSessionsForLifecycleEnd(): Promise<
 }
 
 const defaultSubagentRegistryDeps: SubagentRegistryDeps = {
+  withCapacity: withSubagentRegistryCapacity,
+  refreshRuns: refreshSubagentRegistrySnapshot,
+  dispatchQueuedSubagent: async entry => (await import('./subagent-spawn.js')).dispatchQueuedSubagentRun(entry),
   callGateway,
   captureSubagentCompletionReply: async (sessionKey, options) =>
     (await loadSubagentAnnounceModule()).captureSubagentCompletionReply(sessionKey, options),
@@ -376,6 +385,7 @@ type CompleteSubagentRunParams = {
 async function completeSubagentRunWithRecovery(params: CompleteSubagentRunParams, source: string) {
   try {
     await completeSubagentRun(params);
+    await subagentDispatchQueue.drain();
     await maybeStartDeferredOrchestrationVerifier(params.runId);
     return;
   } catch (error) {
@@ -400,6 +410,7 @@ async function completeSubagentRunWithRecovery(params: CompleteSubagentRunParams
 
   try {
     await completeSubagentRun(params);
+    await subagentDispatchQueue.drain();
     await maybeStartDeferredOrchestrationVerifier(params.runId);
     return;
   } catch (retryError) {
@@ -589,6 +600,10 @@ async function maybeStartDeferredOrchestrationVerifier(completedRunId: string): 
   }
   const orchestrationRunId = completedMeta.orchestrationRunId;
   const workers = listOrchestrationWorkers(orchestrationRunId);
+  // The whole plan is frozen before any worker is started. A fast first wave
+  // must not trigger verification while later nodes are still being enqueued.
+  const expectedNodeIds = completedMeta.taskGraph?.nodes.filter(node => !node.isVerifier).map(node => node.taskNodeId) ?? [];
+  if (expectedNodeIds.some(id => !workers.some(worker => worker.orchestration?.taskNodeId === id))) return;
   const expectedWorkerRunIds =
     completedMeta.expectedWorkerRunIds?.length
       ? completedMeta.expectedWorkerRunIds
@@ -1018,6 +1033,12 @@ function resumeSubagentRun(runId: string) {
   if (entry.cleanupCompletedAt) {
     return;
   }
+  if (entry.queuedDispatch && !entry.dispatchPending && typeof entry.endedAt !== 'number') {
+    startSweeper();
+    void subagentDispatchQueue.drain().catch(error => log.warn('queued dispatch recovery failed', { error }));
+    return;
+  }
+  if (entry.dispatchPending && typeof entry.endedAt !== 'number') return;
   if (typeof entry.endedAt === "number" && isDeliverySuspended(entry)) {
     return;
   }
@@ -1285,6 +1306,19 @@ async function sweepSubagentRuns() {
       });
     }
     for (const [runId, entry] of subagentRuns.entries()) {
+      if (entry.queuedDispatch && !entry.dispatchPending && typeof entry.endedAt !== 'number') continue;
+      // A transport failure leaves dispatch unknown. Only a real terminal
+      // event/session receipt or confirmed cancellation may free this row.
+      if (entry.dispatchPending && typeof entry.endedAt !== 'number') {
+        const completion = resolveSubagentSessionCompletion({
+          childSessionKey: entry.childSessionKey, fallbackEndedAt: now, notBeforeMs: entry.createdAt,
+        });
+        if (completion) await completeSubagentRunWithRecovery({
+          runId, startedAt: completion.startedAt, endedAt: completion.endedAt,
+          outcome: completion.outcome, reason: completion.reason, triggerCleanup: true,
+        }, 'dispatch-reservation-terminal');
+        continue;
+      }
       if (isSuspendedPendingFinalDelivery(entry)) {
         const suspendedAgeMs = now - (entry.delivery?.suspendedAt ?? now);
         const expired = suspendedAgeMs >= resolveSuspendedDeliveryExpiryMs(entry);
@@ -1352,21 +1386,11 @@ async function sweepSubagentRuns() {
             continue;
           }
 
-          await completeSubagentRunWithRecovery(
-            {
-              runId,
-              endedAt: now,
-              outcome: {
-                status: "error",
-                error: "subagent run lost active execution context",
-              },
-              reason: SUBAGENT_ENDED_REASON_ERROR,
-              sendFarewell: true,
-              accountId: entry.requesterOrigin?.accountId,
-              triggerCleanup: true,
-            },
-            "sweeper-lost-context",
-          );
+          if (entry.execution?.status !== 'interrupted') {
+            entry.execution = { ...entry.execution, status: 'interrupted', interruptedAt: now,
+              interruptionReason: 'lost-execution-context' };
+            mutated = true;
+          }
           continue;
         }
       }
@@ -1425,6 +1449,7 @@ async function sweepSubagentRuns() {
     if (mutated) {
       persistSubagentRuns();
     }
+    await subagentDispatchQueue.drain();
     if (subagentRuns.size === 0) {
       stopSweeper();
     }
@@ -1598,7 +1623,28 @@ const subagentRunManager = createSubagentRunManager({
   resolveSubagentSessionStartedAt,
   notifyContextEngineSubagentEnded,
   completeCleanupBookkeeping,
-  completeSubagentRun,
+  completeSubagentRun: params => completeSubagentRunWithRecovery(params, 'registry-wait'),
+});
+
+const subagentDispatchQueue = createSubagentDispatchQueue({
+  runs: subagentRuns,
+  persist: persistSubagentRunsOrThrow,
+  refresh: () => subagentRegistryDeps.refreshRuns(subagentRuns),
+  claim: (entry, cap, claim) => subagentRegistryDeps.withCapacity({
+    controller: entry.controllerSessionKey ?? entry.requesterSessionKey, maxChildren: cap, queuedRunId: entry.runId,
+  }, claim),
+  capacity: () => subagentRegistryDeps.getRuntimeConfig().agents?.defaults?.subagents?.maxChildrenPerAgent
+    ?? DEFAULT_SUBAGENT_MAX_CHILDREN_PER_AGENT,
+  dispatch: entry => subagentRegistryDeps.dispatchQueuedSubagent(entry),
+  accepted: (entry, runId) => {
+    const { queuedDispatch: _request, dispatchPending: _pending, ...record } = entry;
+    subagentRunManager.registerSubagentRun({ ...record, runId, reservationRunId: entry.runId });
+  },
+  rejected: async (entry, error) => {
+    await completeSubagentRun({ runId: entry.runId, outcome: { status: 'error', error },
+      reason: SUBAGENT_ENDED_REASON_ERROR, triggerCleanup: false });
+  },
+  warn: error => log.warn('queued subagent dispatch remains unknown', { error }),
 });
 
 configureSubagentRegistrySteerRuntime({
@@ -1644,6 +1690,21 @@ export function updateSubagentRunContextFoldMetadata(
   }
   persistSubagentRuns();
   return true;
+}
+
+/** Reserve under the shared owner transaction before the first dispatch await. */
+export function reserveSubagentRun(params: RegisterSubagentRunParams, maxChildren: number): boolean {
+  if (!Number.isSafeInteger(maxChildren) || maxChildren < 1) throw new Error('invalid subagent capacity');
+  const controller = params.controllerSessionKey ?? params.requesterSessionKey;
+  return subagentRegistryDeps.withCapacity({ controller, maxChildren }, () => subagentRunManager.reserveSubagentRun(params));
+}
+
+export function enqueueSubagentRun(params: RegisterSubagentRunParams & { queuedDispatch: NonNullable<SubagentRunRecord['queuedDispatch']> }): void {
+  if (!Number.isSafeInteger(params.queuedDispatch.maxChildren) || params.queuedDispatch.maxChildren < 1) {
+    throw new Error('invalid queued subagent capacity');
+  }
+  subagentRunManager.reserveSubagentRun(params);
+  void subagentDispatchQueue.drain().catch(error => log.warn('queued subagent admission failed', { error }));
 }
 
 export function updateSubagentRunOrchestrationMetadata(
@@ -1722,6 +1783,14 @@ export const testing = {
           ...overrides,
         }
       : defaultSubagentRegistryDeps;
+    if (overrides && !overrides.withCapacity && overrides.persistSubagentRunsToDiskOrThrow
+      && overrides.persistSubagentRunsToDiskOrThrow !== persistSubagentRunsToDiskOrThrow) {
+      subagentRegistryDeps.withCapacity = (scope, reserve) => {
+        if (countActiveRunsForSessionFromRuns(subagentRuns, scope.controller) >= scope.maxChildren) return false;
+        reserve(); return true;
+      };
+      if (!overrides.refreshRuns) subagentRegistryDeps.refreshRuns = () => {};
+    }
   },
 } as const;
 
@@ -1819,7 +1888,9 @@ export function markSubagentRunTerminated(params: {
   childSessionKey?: string;
   reason?: string;
 }): number {
-  return subagentRunManager.markSubagentRunTerminated(params);
+  const updated = subagentRunManager.markSubagentRunTerminated(params);
+  if (updated) void subagentDispatchQueue.drain().catch(error => log.warn('queued cancellation progression failed', { error }));
+  return updated;
 }
 
 export function listSubagentRunsForRequester(

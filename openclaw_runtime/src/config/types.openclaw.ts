@@ -88,6 +88,12 @@ export type SurfaceConfigEntry = {
 };
 
 export type RuntimeFeatureConfig = {
+  /** Opt-in provider spend ceilings. Counts begin at first admission; omission preserves defaults. */
+  providerBudget?: {
+    host?: { maxTokens?: number; maxCostUsd?: number };
+    project?: { maxTokens?: number; maxCostUsd?: number };
+    session?: { maxTokens?: number; maxCostUsd?: number };
+  };
   /** Desktop session relay depth policy. Disabled unless explicitly enabled. */
   handoff?: { enabled?: boolean; maxDepth?: number };
   /** VerseShell typed ACI rollout. Every leaf is default-off and independently gated. */
