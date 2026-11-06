@@ -2559,7 +2559,22 @@
     "docs/dev/evidence/semantic-convergence-20261104/tf-0747/SHA256SUMS",
     "docs/dev/evidence/semantic-convergence-20261104/tf-0747/commands.json",
     "docs/dev/evidence/semantic-convergence-20261104/tf-0747/credential-scan.json",
-    "docs/dev/evidence/semantic-convergence-20261104/tf-0747/source-manifest.json"
+    "docs/dev/evidence/semantic-convergence-20261104/tf-0747/source-manifest.json",
+    "docs/dev/evidence/semantic-convergence-20261104/integration-closeout-20261106/.gitattributes",
+    "docs/dev/evidence/semantic-convergence-20261104/integration-closeout-20261106/README.md",
+    "docs/dev/evidence/semantic-convergence-20261104/integration-closeout-20261106/SHA256SUMS",
+    "docs/dev/evidence/semantic-convergence-20261104/integration-closeout-20261106/agents-tests.json",
+    "docs/dev/evidence/semantic-convergence-20261104/integration-closeout-20261106/credential-scan.json",
+    "docs/dev/evidence/semantic-convergence-20261104/integration-closeout-20261106/dependency-links.json",
+    "docs/dev/evidence/semantic-convergence-20261104/integration-closeout-20261106/embedded-tests.json",
+    "docs/dev/evidence/semantic-convergence-20261104/integration-closeout-20261106/infra-tests.json",
+    "docs/dev/evidence/semantic-convergence-20261104/integration-closeout-20261106/landing.json",
+    "docs/dev/evidence/semantic-convergence-20261104/integration-closeout-20261106/report.json",
+    "docs/dev/evidence/semantic-convergence-20261104/integration-closeout-20261106/retry-invariants-tests.json",
+    "docs/dev/evidence/semantic-convergence-20261104/integration-closeout-20261106/root-tests.json",
+    "docs/dev/evidence/semantic-convergence-20261104/integration-closeout-20261106/runtime-tests.json",
+    "docs/dev/evidence/semantic-convergence-20261104/integration-closeout-20261106/temporary-resources.json",
+    "docs/dev/evidence/semantic-convergence-20261104/integration-closeout-20261106/types.json"
   ],
   "artifactBatches": {}
 }

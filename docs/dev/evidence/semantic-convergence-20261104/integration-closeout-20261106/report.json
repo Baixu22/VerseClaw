@@ -1,0 +1,274 @@
+{
+  "schema": "SemanticConvergenceIntegrationCloseout/v1",
+  "driven_by": "agent",
+  "actor": "codex/semantic-goal",
+  "verifiedAt": "2026-11-06T04:57:14.969Z",
+  "candidate": "63bb2ea8e87082f5f87d3a6189c5dec6ceee4ef7",
+  "mainContainsCandidate": true,
+  "program": {
+    "root": "TF-0725",
+    "allRelatedNodesDone": true,
+    "decision": "keep-retired",
+    "persist": false,
+    "productDefaultsChanged": false
+  },
+  "regression": {
+    "counts": {
+      "root": 331,
+      "runtime": 124,
+      "agents": 36,
+      "embedded": 12,
+      "retry-invariants": 5,
+      "infra": 5
+    },
+    "totalPassed": 513,
+    "failed": 0,
+    "skipped": 0,
+    "gates": [
+      {
+        "id": "tf0746-root",
+        "candidate": {
+          "commit": "63bb2ea8e87082f5f87d3a6189c5dec6ceee4ef7",
+          "tree": "d463e747d38a8c8bb96244ad4d73fc25f4e6e096",
+          "dirty": false
+        },
+        "command": [
+          "node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "tests/unit/semantic-convergence-retry-identity.test.ts",
+          "tests/unit/semantic-convergence-provider-validation-matrix.test.ts",
+          "tests/unit/semantic-convergence-provider-network-parity.test.ts",
+          "tests/unit/provider-validation.test.ts",
+          "tests/unit/provider-store-validation.test.ts",
+          "tests/unit/setup-provider-validation.test.ts",
+          "tests/unit/provider-error-retry-boundaries.test.ts",
+          "tests/unit/knowledge-embedding-deadline.test.ts",
+          "tests/unit/semantic-convergence-prompt-authority.test.ts",
+          "tests/unit/semantic-convergence-prompt-budget.test.ts",
+          "tests/unit/rc03-seal-coverage.test.ts",
+          "tests/unit/rc03-btw-seal.test.ts",
+          "tests/unit/rc03-manual-compaction-seal.test.ts",
+          "tests/unit/memory-self-edit-provenance.test.ts",
+          "tests/unit/runtime-memory-context-contracts.test.ts",
+          "tests/unit/runtime-memory-self-edit-persistence.test.ts",
+          "tests/unit/memory-atomic-update.test.ts",
+          "tests/unit/memory-read-consistency.test.ts",
+          "tests/unit/memory-facade-disposition.test.ts",
+          "tests/unit/memory-query-tool.test.ts",
+          "tests/unit/memory-self-edit-adapter.test.ts",
+          "tests/unit/memory-tf0500-persistence-retirement.test.ts",
+          "tests/unit/context-control-plane-stage5-contracts.test.ts",
+          "tests/integration/semantic-convergence-provider-recovery.test.ts",
+          "--maxWorkers=1",
+          "--reporter=verbose",
+          "--reporter=json",
+          "--outputFile",
+          "D:/tmp/tf0746-root.json"
+        ],
+        "cwd": "D:\\ClawX-work\\semantic-convergence-20261104",
+        "exitCode": 0,
+        "durationMs": 142281,
+        "sourceStable": true
+      },
+      {
+        "id": "tf0746-runtime",
+        "candidate": {
+          "commit": "63bb2ea8e87082f5f87d3a6189c5dec6ceee4ef7",
+          "tree": "d463e747d38a8c8bb96244ad4d73fc25f4e6e096",
+          "dirty": false
+        },
+        "command": [
+          "node",
+          "scripts/run-vitest.mjs",
+          "run",
+          "--config",
+          "test/vitest/vitest.unit.config.ts",
+          "src/context-engine/prompt-contribution-authority.test.ts",
+          "src/context-engine/turn-injection-budget.test.ts",
+          "src/context-engine/context-candidate.test.ts",
+          "src/context-engine/context-orchestrator.test.ts",
+          "src/context-engine/context-orchestrator.compass.test.ts",
+          "src/context-engine/rc03-seal.test.ts",
+          "src/context-engine/rc03-seal-wiring.test.ts",
+          "src/context-engine/stage5-memory-facade.test.ts",
+          "src/context-engine/stage5-unit-aware-packer.test.ts",
+          "--maxWorkers=1",
+          "--reporter=verbose",
+          "--reporter=json",
+          "--outputFile",
+          "D:/tmp/tf0746-runtime.json"
+        ],
+        "cwd": "D:\\ClawX-work\\semantic-convergence-20261104\\openclaw_runtime",
+        "exitCode": 0,
+        "durationMs": 17325,
+        "sourceStable": true
+      },
+      {
+        "id": "tf0746-agents",
+        "candidate": {
+          "commit": "63bb2ea8e87082f5f87d3a6189c5dec6ceee4ef7",
+          "tree": "d463e747d38a8c8bb96244ad4d73fc25f4e6e096",
+          "dirty": false
+        },
+        "command": [
+          "node",
+          "scripts/run-vitest.mjs",
+          "run",
+          "--config",
+          "test/vitest/vitest.agents-core.config.ts",
+          "src/agents/request-attempt-budget.test.ts",
+          "src/agents/model-fallback.loop-termination.test.ts",
+          "src/agents/rc03-entry-transitions.acceptance.test.ts",
+          "--maxWorkers=1",
+          "--reporter=verbose",
+          "--reporter=json",
+          "--outputFile",
+          "D:/tmp/tf0746-agents.json"
+        ],
+        "cwd": "D:\\ClawX-work\\semantic-convergence-20261104\\openclaw_runtime",
+        "exitCode": 0,
+        "durationMs": 229412,
+        "sourceStable": true
+      },
+      {
+        "id": "tf0746-embedded",
+        "candidate": {
+          "commit": "63bb2ea8e87082f5f87d3a6189c5dec6ceee4ef7",
+          "tree": "d463e747d38a8c8bb96244ad4d73fc25f4e6e096",
+          "dirty": false
+        },
+        "command": [
+          "node",
+          "scripts/run-vitest.mjs",
+          "run",
+          "--config",
+          "test/vitest/vitest.agents-embedded-agent.config.ts",
+          "src/agents/embedded-agent-runner/extensions.knowledge.test.ts",
+          "src/agents/embedded-agent-runner/extensions.working-memory-regather.test.ts",
+          "--maxWorkers=1",
+          "--reporter=verbose",
+          "--reporter=json",
+          "--outputFile",
+          "D:/tmp/tf0746-embedded.json"
+        ],
+        "cwd": "D:\\ClawX-work\\semantic-convergence-20261104\\openclaw_runtime",
+        "exitCode": 0,
+        "durationMs": 31220,
+        "sourceStable": true
+      },
+      {
+        "id": "tf0746-retry-invariants",
+        "candidate": {
+          "commit": "63bb2ea8e87082f5f87d3a6189c5dec6ceee4ef7",
+          "tree": "d463e747d38a8c8bb96244ad4d73fc25f4e6e096",
+          "dirty": false
+        },
+        "command": [
+          "node",
+          "scripts/run-vitest.mjs",
+          "run",
+          "--config",
+          "test/vitest/vitest.unit-fast.config.ts",
+          "src/agents/retry-budget-invariants.test.ts",
+          "--maxWorkers=1",
+          "--reporter=json",
+          "--outputFile",
+          "D:/tmp/tf0746-retry-invariants.json"
+        ],
+        "cwd": "D:\\ClawX-work\\semantic-convergence-20261104\\openclaw_runtime",
+        "exitCode": 0,
+        "durationMs": 4096,
+        "sourceStable": true
+      },
+      {
+        "id": "tf0746-infra",
+        "candidate": {
+          "commit": "63bb2ea8e87082f5f87d3a6189c5dec6ceee4ef7",
+          "tree": "d463e747d38a8c8bb96244ad4d73fc25f4e6e096",
+          "dirty": false
+        },
+        "command": [
+          "node",
+          "scripts/run-vitest.mjs",
+          "run",
+          "--config",
+          "test/vitest/vitest.infra.config.ts",
+          "src/infra/retry.test.ts",
+          "--maxWorkers=1",
+          "--reporter=json",
+          "--outputFile",
+          "D:/tmp/tf0746-infra.json"
+        ],
+        "cwd": "D:\\ClawX-work\\semantic-convergence-20261104\\openclaw_runtime",
+        "exitCode": 0,
+        "durationMs": 3506,
+        "sourceStable": true
+      }
+    ]
+  },
+  "types": {
+    "node": 0,
+    "web": 0,
+    "test": 0,
+    "mode": "uncached serial tsgo all three projects; shared dependency links reused, no fresh install"
+  },
+  "earlierElectron": {
+    "candidate": "300631d8588062209a06236d552ddf1f8b08eb52",
+    "cases": 4,
+    "artifact": "../tf-0746/electron-verdicts.json",
+    "boundary": "agent-driven real Electron/Main/Gateway/local HTTP; historical candidate, not re-signed for integration"
+  },
+  "integration": {
+    "merges": [
+      "13e5dd772",
+      "f8d7c9a96",
+      "63bb2ea8e"
+    ],
+    "conflicts": [
+      "knowledge-api.ts: keep current knowledge owner and total deadline",
+      "knowledge-embedding-provider.ts: preserve shared bounded cache and total deadline, isolate injected transport caches",
+      "rsi-sekb-arms.d.mts: retain current sealed Main declaration and its historical hash"
+    ],
+    "extraDeadlineCacheTests": 2
+  },
+  "resources": {
+    "worktrees": [
+      {
+        "path": "D:/ClawX-work/semantic-convergence-20261104",
+        "removed": true,
+        "ordinaryBytes": 479635373
+      },
+      {
+        "path": "C:/Users/27933/.codex/worktrees/semantic-convergence/ClawX",
+        "removed": true,
+        "ordinaryBytes": 294206903
+      },
+      {
+        "path": "D:/ClawX-work/tf0741-memory-provenance-20261104",
+        "removed": true,
+        "ordinaryBytes": 294886210
+      }
+    ],
+    "ordinaryWorktreeBytes": 1068728486,
+    "sharedDependencyTargetsRetained": true,
+    "branchesRetained": true,
+    "localArchive": "D:/ClawX/.local/semantic-closeout-20261106",
+    "activeWorktreeProcesses": 0,
+    "taskForestRelocation": "current evidence paths are being migrated to D:/ClawX via proposal; final receipt stored locally"
+  },
+  "preservation": {
+    "receipt": "landing.json",
+    "mainHasOtherConcurrentWork": true,
+    "otherWorkNotClaimed": true
+  },
+  "limits": [
+    "All acceptance evidence remains bound to its original candidate. Integration types and 513 regressions bind the integration candidate; prior 4 Electron cases are reported separately.",
+    "No paid/live-provider performance gain, release/GA or product-default graduation is claimed.",
+    "Main has concurrent user/agent edits; do not claim its working tree is clean."
+  ],
+  "taskForest": {
+    "closedProposal": "TFP-semantic-program-close-20261106",
+    "relocationProposal": "TFP-semantic-main-evidence-relocation-20261106"
+  }
+}
