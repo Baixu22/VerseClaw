@@ -1,3 +1,23 @@
+import { Agent, request as httpRequest } from 'node:http';
+import { Readable } from 'node:stream';
+
+// A declared loopback resource must not inherit a machine-wide fetch proxy.
+const loopbackAgent = new Agent({ keepAlive: false, proxyEnv: {} });
+function sendLoopback(url, init) {
+  return new Promise((resolveReply, rejectReply) => {
+    const request = httpRequest(url, { method: init.method, headers: init.headers,
+      signal: init.signal, agent: loopbackAgent }, response => {
+      const status = response.statusCode ?? 500;
+      const body = [204, 205, 304].includes(status) ? null : Readable.toWeb(response);
+      resolveReply(new Response(body, { status, headers: {
+        'content-type': String(response.headers['content-type'] ?? 'application/json'),
+      } }));
+    });
+    request.on('error', rejectReply);
+    request.end(init.body);
+  });
+}
+
 const RESPONSE_STATUSES = new Set([
   'completed',
   'failed',
@@ -240,7 +260,7 @@ export function createResponsesProvider({
   assertPositiveInteger(timeoutMs, 'timeoutMs');
   assertPositiveInteger(maxOutputTokens, 'maxOutputTokens');
 
-  const send = transport ?? globalThis.fetch;
+  const send = transport ?? (url.protocol === 'http:' ? sendLoopback : globalThis.fetch);
   if (typeof send !== 'function') throw new Error('transport must be a function');
 
   return async ({ instructions, input }) => {

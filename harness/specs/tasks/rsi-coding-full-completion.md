@@ -62,6 +62,10 @@ known terminal output-limit response was interpreted as missing, and the campaig
 stopped with an additional unknown dispatch. No v1 slot is retried or overwritten.
 
 V2 is a new experiment with an explicit response schema in the transport request.
+The local resource may not enforce that native schema hint; JSON edits are always
+strictly validated locally, and invalid output remains a recorded model failure.
+Explicit loopback HTTP uses a direct Node HTTP agent rather than an inherited
+system fetch proxy. It retains the same timeout, redirect refusal and body limit.
 An output-limit response whose terminal status, reason and usage are retained is
 an observed unsuccessful attempt; it contributes failure, not success, to case
 aggregation. No partial code is applied or graded. Unknown responses and usage

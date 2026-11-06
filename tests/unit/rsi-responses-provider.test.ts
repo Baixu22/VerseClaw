@@ -1,5 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it, vi } from 'vitest';
+import { createServer } from 'node:http';
 import {
   buildResponsesRequest,
   createResponsesProvider,
@@ -23,6 +24,32 @@ function responseLike(ok: boolean, status: number, text: () => Promise<string>):
 }
 
 describe('Responses request and reply adapter', () => {
+  it('uses direct bounded HTTP for loopback even when global fetch is proxied, and never follows redirects', async () => {
+    const requests: Array<{ url: string; authorization?: string; body: string }> = [];
+    const server = createServer((request, response) => {
+      let body = ''; request.on('data', chunk => { body += chunk; });
+      request.on('end', () => {
+        requests.push({ url: request.url ?? '', authorization: request.headers.authorization, body });
+        if (request.url === '/redirect') { response.writeHead(302, { location: 'http://provider.invalid/forbidden' }); response.end(); return; }
+        response.setHeader('content-type', 'application/json');
+        response.end(JSON.stringify(payload({ output: [{ type: 'message', content: [{ type: 'output_text', text: 'direct' }] }] })));
+      });
+    });
+    await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+    const address = server.address(); if (!address || typeof address === 'string') throw Error('Missing local test port');
+    const fetch = vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('Proxy must not receive loopback credentials'));
+    try {
+      const options = { model: 'space-bunny', apiKey: 'offline-local-secret', timeoutMs: 1000, maxOutputTokens: 128 };
+      const send = createResponsesProvider({ ...options, endpoint: `http://127.0.0.1:${address.port}/responses` });
+      const receipt = await send({ instructions: 'Reply.', input: 'local fixture' });
+      expect(receipt.response.text).toBe('direct');
+      expect(requests[0].authorization).toBe('Bearer offline-local-secret');
+      expect(JSON.parse(requests[0].body)).toEqual(receipt.request.body);
+      const redirect = createResponsesProvider({ ...options, endpoint: `http://127.0.0.1:${address.port}/redirect` });
+      await expect(redirect({ instructions: 'Reply.', input: 'redirect fixture' })).rejects.toThrow('HTTP 302');
+      expect(requests).toHaveLength(2); expect(fetch).not.toHaveBeenCalled();
+    } finally { fetch.mockRestore(); server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); }
+  });
   it('builds the required non-streaming Responses request without temperature', () => {
     const request = buildResponsesRequest({
       model: 'space-bunny',

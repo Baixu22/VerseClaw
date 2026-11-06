@@ -14,6 +14,7 @@ export const STRUCTURED_CODING_COLLECTOR = Object.freeze({ ...CODING_COLLECTOR,
   version: 'RsiCodingCollector/v2', responseFormat: 'strict-json-schema',
   incompleteOutcome: 'known-output-limit-is-failure',
   infrastructurePolicy: 'retain-slot-and-continue', unknownUsagePolicy: 'reserve-request-upper-bound',
+  loopbackTransport: 'direct-node-http', schemaEnforcement: 'local-strict-validation',
 });
 
 export function codingCollectorConfig(version = CODING_COLLECTOR.version) {
