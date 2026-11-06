@@ -231,7 +231,25 @@ function buildResumeMessage(pendingFinalDeliveryText?: string | null): string {
   return base;
 }
 
+function hasSamePendingFinalDelivery(current: SessionEntry, expected: SessionEntry): boolean {
+  return (
+    current.pendingFinalDelivery === expected.pendingFinalDelivery &&
+    current.pendingFinalDeliveryRunId === expected.pendingFinalDeliveryRunId &&
+    current.pendingFinalDeliveryRecoveryRunId === expected.pendingFinalDeliveryRecoveryRunId &&
+    current.pendingFinalDeliveryText === expected.pendingFinalDeliveryText &&
+    current.pendingFinalDeliveryCreatedAt === expected.pendingFinalDeliveryCreatedAt &&
+    current.pendingFinalDeliveryIntentId === expected.pendingFinalDeliveryIntentId &&
+    current.pendingFinalDeliveryContext?.channel ===
+      expected.pendingFinalDeliveryContext?.channel &&
+    current.pendingFinalDeliveryContext?.to === expected.pendingFinalDeliveryContext?.to &&
+    current.pendingFinalDeliveryContext?.accountId ===
+      expected.pendingFinalDeliveryContext?.accountId &&
+    current.pendingFinalDeliveryContext?.threadId === expected.pendingFinalDeliveryContext?.threadId
+  );
+}
+
 async function markSessionFailed(params: {
+  entry: SessionEntry;
   storePath: string;
   sessionKey: string;
   reason: string;
@@ -240,20 +258,31 @@ async function markSessionFailed(params: {
     params.storePath,
     (store) => {
       const entry = store[params.sessionKey];
-      if (!entry || entry.status !== "running") {
+      if (
+        !entry ||
+        entry.status !== "running" ||
+        entry.sessionId !== params.entry.sessionId ||
+        entry.lifecycleRunId !== params.entry.lifecycleRunId
+      ) {
         return;
       }
       entry.status = "failed";
       entry.abortedLastRun = true;
       entry.endedAt = Date.now();
       entry.updatedAt = entry.endedAt;
-      entry.pendingFinalDelivery = undefined;
-      entry.pendingFinalDeliveryText = undefined;
-      entry.pendingFinalDeliveryCreatedAt = undefined;
-      entry.pendingFinalDeliveryLastAttemptAt = undefined;
-      entry.pendingFinalDeliveryAttemptCount = undefined;
-      entry.pendingFinalDeliveryLastError = undefined;
-      entry.pendingFinalDeliveryContext = undefined;
+      // A previous or concurrently replaced delivery remains owned by its sender.
+      if (hasSamePendingFinalDelivery(entry, params.entry)) {
+        entry.pendingFinalDelivery = undefined;
+        entry.pendingFinalDeliveryText = undefined;
+        entry.pendingFinalDeliveryRunId = undefined;
+        entry.pendingFinalDeliveryRecoveryRunId = undefined;
+        entry.pendingFinalDeliveryCreatedAt = undefined;
+        entry.pendingFinalDeliveryLastAttemptAt = undefined;
+        entry.pendingFinalDeliveryAttemptCount = undefined;
+        entry.pendingFinalDeliveryLastError = undefined;
+        entry.pendingFinalDeliveryContext = undefined;
+        entry.pendingFinalDeliveryIntentId = undefined;
+      }
       entry.restartRecoveryDeliveryContext = undefined;
       entry.restartRecoveryDeliveryRunId = undefined;
       store[params.sessionKey] = entry;
@@ -370,8 +399,16 @@ async function resumeMainSession(params: {
     sessionKey: params.sessionKey,
   });
   try {
-    let recoveryRunId: string = crypto.randomUUID();
-    if (isExecutionPhaseWriterEnabled()) {
+    const phaseWriter = isExecutionPhaseWriterEnabled();
+    const carriesPendingFinal = Boolean(
+      params.entry.pendingFinalDelivery || params.entry.pendingFinalDeliveryText,
+    );
+    // Reuse the admitted continuation while this exact payload remains pending.
+    // Replacing it before RPC start can orphan the prior lifecycle on a failed RPC.
+    let recoveryRunId =
+      (carriesPendingFinal && params.entry.pendingFinalDeliveryRecoveryRunId) || crypto.randomUUID();
+    let pendingSnapshot = params.entry;
+    if (phaseWriter || carriesPendingFinal) {
       let admitted = false;
       await updateSessionStore(
         params.storePath,
@@ -380,32 +417,42 @@ async function resumeMainSession(params: {
           if (
             !current ||
             current.sessionId !== params.entry.sessionId ||
+            current.lifecycleRunId !== params.entry.lifecycleRunId ||
             current.abortedLastRun !== true
-          ) {
-            throw new Error("restart recovery session generation changed");
+          )
+            throw new Error("restart recovery session or run identity changed");
+          if (carriesPendingFinal && !hasSamePendingFinalDelivery(current, params.entry))
+            throw new Error("restart recovery pending delivery changed");
+          if (phaseWriter) {
+            const previous =
+              current.restartRecovery?.sessionId === current.sessionId &&
+              current.restartRecovery.boundary === params.recoveryBoundary
+                ? current.restartRecovery
+                : undefined;
+            if (
+              previous &&
+              (previous.state === "wedged" || previous.attempts >= MAX_RECOVERY_RETRIES)
+            ) {
+              current.restartRecovery = { ...previous, state: "wedged" };
+              current.status = "failed";
+              current.endedAt = Date.now();
+              return;
+            }
+            recoveryRunId = previous?.runId ?? recoveryRunId;
+            current.restartRecovery = {
+              sessionId: current.sessionId,
+              boundary: params.recoveryBoundary,
+              runId: recoveryRunId,
+              attempts: (previous?.attempts ?? 0) + 1,
+              state: "admitted",
+            };
           }
-          const previous =
-            current.restartRecovery?.sessionId === current.sessionId &&
-            current.restartRecovery.boundary === params.recoveryBoundary
-              ? current.restartRecovery
-              : undefined;
-          if (
-            previous &&
-            (previous.state === "wedged" || previous.attempts >= MAX_RECOVERY_RETRIES)
-          ) {
-            current.restartRecovery = { ...previous, state: "wedged" };
-            current.status = "failed";
-            current.endedAt = Date.now();
-            return;
+          if (carriesPendingFinal) {
+            // Keep the producer identity and bind its continuation before dispatch.
+            // Another crash may refresh startedAt without changing delivery ownership.
+            current.pendingFinalDeliveryRecoveryRunId = recoveryRunId;
+            pendingSnapshot = { ...params.entry, pendingFinalDeliveryRecoveryRunId: recoveryRunId };
           }
-          recoveryRunId = previous?.runId ?? recoveryRunId;
-          current.restartRecovery = {
-            sessionId: current.sessionId,
-            boundary: params.recoveryBoundary,
-            runId: recoveryRunId,
-            attempts: (previous?.attempts ?? 0) + 1,
-            state: "admitted",
-          };
           admitted = true;
         },
         { skipMaintenance: true },
@@ -440,7 +487,12 @@ async function resumeMainSession(params: {
       params.storePath,
       (store) => {
         const entry = store[params.sessionKey];
-        if (!entry || entry.sessionId !== params.entry.sessionId) {
+        if (
+          !entry ||
+          entry.sessionId !== params.entry.sessionId ||
+          (entry.lifecycleRunId !== params.entry.lifecycleRunId &&
+            entry.lifecycleRunId !== recoveryRunId)
+        ) {
           return;
         }
         if (isExecutionPhaseWriterEnabled()) {
@@ -450,7 +502,12 @@ async function resumeMainSession(params: {
         const now = Date.now();
         entry.abortedLastRun = false;
         entry.updatedAt = now;
-        if (entry.pendingFinalDelivery || entry.pendingFinalDeliveryText) {
+        // The RPC may finish after a new result has replaced this delivery.
+        // Only update the exact pending payload observed before dispatch.
+        if (
+          (params.entry.pendingFinalDelivery || params.entry.pendingFinalDeliveryText) &&
+          hasSamePendingFinalDelivery(entry, pendingSnapshot)
+        ) {
           if (sanitizedPendingText) {
             entry.pendingFinalDeliveryLastAttemptAt = now;
             entry.pendingFinalDeliveryAttemptCount =
@@ -460,6 +517,8 @@ async function resumeMainSession(params: {
           } else {
             entry.pendingFinalDelivery = undefined;
             entry.pendingFinalDeliveryText = undefined;
+            entry.pendingFinalDeliveryRunId = undefined;
+            entry.pendingFinalDeliveryRecoveryRunId = undefined;
             entry.pendingFinalDeliveryCreatedAt = undefined;
             entry.pendingFinalDeliveryLastAttemptAt = undefined;
             entry.pendingFinalDeliveryAttemptCount = undefined;
@@ -576,6 +635,22 @@ async function recoverStore(params: {
       continue;
     }
 
+    // Lifecycle timestamps change on every recovery attempt. Only the durable
+    // producer or its admitted continuation may carry this pending delivery.
+    // Unbound/older payloads remain with their delivery owner, never discarded.
+    const pendingBelongsToRun = Boolean(
+      entry.lifecycleRunId &&
+      (entry.pendingFinalDeliveryRunId === entry.lifecycleRunId ||
+        entry.pendingFinalDeliveryRecoveryRunId === entry.lifecycleRunId),
+    );
+    const recoveryEntry = pendingBelongsToRun
+      ? entry
+      : {
+          ...entry,
+          pendingFinalDelivery: undefined,
+          pendingFinalDeliveryText: undefined,
+          pendingFinalDeliveryContext: undefined,
+        };
     const resumeBlockReason = resolveMainSessionResumeBlockReason(messages);
 
     // Compare with the observed owner outcome, including failed admission/RPC.
@@ -591,9 +666,7 @@ async function recoverStore(params: {
           resumable: !resumeBlockReason,
           approvalPending: Boolean(resumeBlockReason?.includes("approval-pending")),
           visibleOutputObserved: false,
-          pendingFinalDelivery: Boolean(
-            (entry as { pendingFinalDeliveryText?: unknown }).pendingFinalDeliveryText,
-          ),
+          pendingFinalDelivery: Boolean(recoveryEntry.pendingFinalDeliveryText),
         });
         const decision = recoveryAuthorityV1.decide(request);
         const record = compareRecoveryShadow(request, decision, outcome);
@@ -648,11 +721,12 @@ async function recoverStore(params: {
       });
       await sendUnresumableSessionNotice({
         cfg: params.cfg,
-        entry,
+        entry: recoveryEntry,
         sessionKey,
         reason: effectiveResumeBlockReason,
       });
       await markSessionFailed({
+        entry: recoveryEntry,
         storePath: params.storePath,
         sessionKey,
         reason: effectiveResumeBlockReason,
@@ -664,10 +738,10 @@ async function recoverStore(params: {
     recordRecoveryEvalDecision({ sessionKey, sessionId: entry.sessionId, action: "resume" });
     const resumed = await resumeMainSession({
       cfg: params.cfg,
-      entry,
+      entry: recoveryEntry,
       storePath: params.storePath,
       sessionKey,
-      pendingFinalDeliveryText: entry.pendingFinalDeliveryText,
+      pendingFinalDeliveryText: recoveryEntry.pendingFinalDeliveryText,
       recoveryBoundary: crypto
         .createHash("sha256")
         .update(JSON.stringify(messages.slice(-1)))

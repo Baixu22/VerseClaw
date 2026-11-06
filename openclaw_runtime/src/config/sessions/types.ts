@@ -303,6 +303,8 @@ export type SessionEntry = {
   runtimeMs?: number;
   /** Final persisted subagent run status, used after in-memory run archival. */
   status?: "running" | "done" | "failed" | "killed" | "timeout";
+  /** Run identity written by the lifecycle owner together with status=running. */
+  lifecycleRunId?: string;
   /**
    * Session-level stop cutoff captured when /stop is received.
    * Messages at/before this boundary are skipped to avoid replaying
@@ -364,6 +366,10 @@ export type SessionEntry = {
   totalTokens?: number;
   /** Durable marker that final user reply delivery still needs a retry/resume pass. */
   pendingFinalDelivery?: boolean;
+  /** Run that produced the pending payload; immutable across restart attempts. */
+  pendingFinalDeliveryRunId?: string;
+  /** Recovery run currently carrying the same pending payload. */
+  pendingFinalDeliveryRecoveryRunId?: string;
   pendingFinalDeliveryCreatedAt?: number;
   pendingFinalDeliveryLastAttemptAt?: number;
   pendingFinalDeliveryAttemptCount?: number;

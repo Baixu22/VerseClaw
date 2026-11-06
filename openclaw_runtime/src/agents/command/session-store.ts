@@ -48,6 +48,8 @@ function resolvePositiveInteger(value: number | undefined): number | undefined {
 
 function removeLifecycleStateFromMetadataPatch(entry: SessionEntry): SessionEntry {
   const next = { ...entry };
+  // Only lifecycle events transfer run ownership; metadata uses a pre-run snapshot.
+  delete next.lifecycleRunId;
   delete next.status;
   delete next.startedAt;
   delete next.endedAt;
@@ -333,7 +335,7 @@ export async function clearCliSessionInStore(params: {
   next.updatedAt = Date.now();
 
   const persisted = await updateSessionStore(storePath, (store) => {
-    const merged = mergeSessionEntry(store[sessionKey], next);
+    const merged = mergeSessionEntry(store[sessionKey], removeLifecycleStateFromMetadataPatch(next));
     store[sessionKey] = merged;
     return merged;
   });
@@ -402,7 +404,7 @@ export async function recordCliCompactionInStore(params: {
   }
 
   const persisted = await updateSessionStore(storePath, (store) => {
-    const merged = mergeSessionEntry(store[sessionKey], next);
+    const merged = mergeSessionEntry(store[sessionKey], removeLifecycleStateFromMetadataPatch(next));
     store[sessionKey] = merged;
     return merged;
   });

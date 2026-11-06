@@ -149,7 +149,13 @@
     "harness/specs/fixtures/recovery-contract-eval/final-20261105/source-index.json",
     "harness/specs/fixtures/recovery-contract-eval/final-20261105/closeout-gates-raw.json.gz",
     "harness/specs/fixtures/recovery-contract-eval/final-20261105/closeout-gates.json",
-    "harness/specs/fixtures/recovery-contract-eval/final-20261105/HASHES.json"
+    "harness/specs/fixtures/recovery-contract-eval/final-20261105/HASHES.json",
+    "harness/specs/fixtures/recovery-contract-eval/followup-20261106/README.md",
+    "harness/specs/fixtures/recovery-contract-eval/followup-20261106/raw-evidence.json.gz",
+    "harness/specs/fixtures/recovery-contract-eval/followup-20261106/report.json",
+    "harness/specs/fixtures/recovery-contract-eval/followup-20261106/credential-scan.json",
+    "harness/specs/fixtures/recovery-contract-eval/followup-20261106/verification.json",
+    "harness/specs/fixtures/recovery-contract-eval/followup-20261106/HASHES.json"
   ],
   "preservedMixedUseDirectories": [
     "artifacts/agent-dev-workbench",
@@ -2359,7 +2365,8 @@
     "docs/dev/recovery-contract/EXECUTION-PHASE.zh-CN.md",
     "docs/dev/recovery-contract/INTEGRATION-NOTES.zh-CN.md",
     "docs/dev/recovery-contract/REDISPATCH-20261104.md",
-    "docs/dev/recovery-contract/FINAL-20261105.zh-CN.md"
+    "docs/dev/recovery-contract/FINAL-20261105.zh-CN.md",
+    "docs/dev/recovery-contract/FOLLOWUP-20261106.zh-CN.md"
   ],
   "artifactBatches": {}
 }

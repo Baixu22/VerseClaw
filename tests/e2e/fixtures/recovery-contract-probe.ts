@@ -14,6 +14,8 @@ export type SessionRow = {
   abortedLastRun?: boolean;
   label?: string;
   spawnedBy?: string;
+  pendingFinalDelivery?: boolean;
+  pendingFinalDeliveryText?: string | null;
 };
 
 function query(file: string, sql: string): Array<Record<string, unknown>> {
@@ -74,6 +76,25 @@ export function readRecoveryDisk(stateDir: string, sessionKey = MAIN_RECOVERY_KE
     transcriptSha256: createHash("sha256").update(raw).digest("hex"),
   };
 }
+/** A transcript answer can precede final delivery cleanup and lifecycle settlement. */
+export function isRecoveryWarmupSettled(
+  disk: ReturnType<typeof readRecoveryDisk>,
+  terminalStatus: string,
+): boolean {
+  return (
+    terminalStatus === "ok" &&
+    disk.main?.status === "done" &&
+    !disk.main.pendingFinalDelivery &&
+    !disk.main.pendingFinalDeliveryText &&
+    disk.branch.some(
+      (entry) =>
+        entry.message?.role === "assistant" &&
+        entry.message.stopReason === "stop" &&
+        JSON.stringify(entry.message).includes("warmup complete"),
+    )
+  );
+}
+
 export function effectLines(path: string): string[] {
   return existsSync(path) ? readFileSync(path, "utf8").trim().split("\n").filter(Boolean) : [];
 }

@@ -5,7 +5,7 @@ import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { observeRecoveryVerdict, persistFailedRecoveryObservation } from "../e2e/fixtures/recovery-contract-probe";
+import { observeRecoveryVerdict, persistFailedRecoveryObservation, isRecoveryWarmupSettled } from "../e2e/fixtures/recovery-contract-probe";
 
 it("retains the last actual stalled state and timeout instead of discarding the trial", async () => {
   let reads = 0;
@@ -48,4 +48,19 @@ it.each([false, true])("persists a mid-sequence failure when snapshot read fails
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
+});
+
+it("waits for lifecycle and pending delivery settlement after the warmup answer", () => {
+  const disk = {
+    main: { sessionId: "warmup", status: "running" },
+    branch: [{ message: { role: "assistant", stopReason: "stop", content: "warmup complete" } }],
+  };
+  const settled = (value: unknown, terminalStatus = "ok") => isRecoveryWarmupSettled(value as Parameters<typeof isRecoveryWarmupSettled>[0], terminalStatus);
+  expect(settled(disk)).toBe(false);
+  expect(settled({ ...disk, main: { ...disk.main, status: "done", pendingFinalDelivery: true, pendingFinalDeliveryText: "warmup complete" } })).toBe(false);
+  expect(settled({ ...disk, main: { ...disk.main, status: "done" } })).toBe(true);
+  // The model has finished, but the chat pipeline has not yet persisted/delivered the final.
+  expect(settled({ ...disk, main: { ...disk.main, status: "done" } }, "timeout")).toBe(false);
+  expect(settled({ ...disk, main: { ...disk.main, status: "done" } }, "error")).toBe(false);
+  expect(settled({ ...disk, main: { ...disk.main, status: "done" }, branch: [] })).toBe(false);
 });

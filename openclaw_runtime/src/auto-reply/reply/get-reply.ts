@@ -528,6 +528,8 @@ export async function getReplyFromConfig(
       if (heartbeatPending.shouldClear) {
         sessionEntry.pendingFinalDelivery = undefined;
         sessionEntry.pendingFinalDeliveryText = undefined;
+        sessionEntry.pendingFinalDeliveryRunId = undefined;
+        sessionEntry.pendingFinalDeliveryRecoveryRunId = undefined;
         sessionEntry.pendingFinalDeliveryCreatedAt = undefined;
         sessionEntry.pendingFinalDeliveryLastAttemptAt = undefined;
         sessionEntry.pendingFinalDeliveryAttemptCount = undefined;
@@ -546,6 +548,8 @@ export async function getReplyFromConfig(
             patch: {
               pendingFinalDelivery: undefined,
               pendingFinalDeliveryText: undefined,
+              pendingFinalDeliveryRunId: undefined,
+              pendingFinalDeliveryRecoveryRunId: undefined,
               pendingFinalDeliveryCreatedAt: undefined,
               pendingFinalDeliveryLastAttemptAt: undefined,
               pendingFinalDeliveryAttemptCount: undefined,

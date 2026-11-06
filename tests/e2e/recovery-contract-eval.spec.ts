@@ -18,6 +18,7 @@ import {
   closeRecoveryApp,
   effectLines,
   eventually,
+  isRecoveryWarmupSettled,
   observeRecoveryVerdict,
   persistEvidence,
   persistFailedRecoveryObservation,
@@ -165,17 +166,21 @@ test.describe("recovery contract eval windows", () => {
         await hostInvoke(app, "gateway", "start");
         await ready(app);
         await send(app, "RECOVERY-WARMUP", "warmup-" + id);
-        await eventually(
-          () => readRecoveryDisk(stateDir),
-          (disk) =>
-            disk.entries.some(
-              (entry) =>
-                entry.message?.role === "assistant" &&
-                JSON.stringify(entry.message).includes("warmup complete"),
-            ),
-          "warmup transcript",
+        // chat.send lifecycle can end before final delivery is persisted/cleared.
+        // agent.wait prefers the chat pipeline's terminal acknowledgement.
+        const warmup = await eventually(
+          async () => ({
+            terminal: await hostInvoke<{ status: string }>(app!, "gateway", "rpc", {
+              method: "agent.wait",
+              params: { runId: "warmup-" + id, timeoutMs: 1_000 },
+              timeoutMs: 30_000,
+            }),
+            disk: readRecoveryDisk(stateDir),
+          }),
+          (value) => isRecoveryWarmupSettled(value.disk, value.terminal.status),
+          "warmup lifecycle and delivery settlement",
         );
-        const before = readRecoveryDisk(stateDir);
+        const before = warmup.disk;
         evidence.push(persistEvidence(trialDir, "before.json", before));
         const baseRequests = llm.log.length;
         started = Date.now();

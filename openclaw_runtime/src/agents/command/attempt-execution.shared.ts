@@ -42,6 +42,17 @@ export async function persistSessionEntry(
         return current;
       }
       const merged = mergeSessionEntry(store[params.sessionKey], params.entry);
+      // Metadata snapshots are not lifecycle writes. Preserve the live owner's
+      // whole projection, including cleared terminal fields, so a late metadata
+      // save cannot restore an old run or resurrect a completed one.
+      if (current?.sessionId === merged.sessionId) {
+        merged.lifecycleRunId = current.lifecycleRunId;
+        merged.status = current.status;
+        merged.startedAt = current.startedAt;
+        merged.endedAt = current.endedAt;
+        merged.runtimeMs = current.runtimeMs;
+        merged.abortedLastRun = current.abortedLastRun;
+      }
       if (params.preserveTranscriptMarkerUpdatedAt) {
         const currentUpdatedAt = normalizeTranscriptMarkerUpdatedAt(current?.updatedAt);
         const markerUpdatedAt = normalizeTranscriptMarkerUpdatedAt(params.entry.updatedAt);

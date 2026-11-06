@@ -148,6 +148,229 @@ describe("main session restart recovery flow", () => {
     });
   });
 
+  it("ignores an older run's pending final regardless of attempt timestamps", async () => {
+    vi.stubEnv("OPENCLAW_RECOVERY_AUTHORITY_SHADOW", "1");
+    Object.assign(recoveryMocks.store[sessionKey], {
+      startedAt: 100,
+      lifecycleRunId: "new-user-run",
+      pendingFinalDeliveryRunId: "previous-run",
+      pendingFinalDelivery: true,
+      pendingFinalDeliveryText: "previous response",
+      pendingFinalDeliveryCreatedAt: 200,
+      pendingFinalDeliveryContext: { channel: "telegram", to: "prior-recipient" },
+    });
+    recoveryMocks.messages = [{ role: "user", content: "new request", timestamp: 250 }];
+    try {
+      expect(await recoverRestartAbortedMainSessions({ stateDir: "C:/state" })).toMatchObject({
+        recovered: 1,
+      });
+      const call = recoveryMocks.callGateway.mock.calls[0][0];
+      expect(call.params.message).not.toContain("previous response");
+      expect(call.params.deliver).toBe(false);
+      expect(call.params.to).toBeUndefined();
+      expect(recoveryShadowSink.snapshot().records.at(-1)?.authorityKind).toBe("reconcile");
+      expect(recoveryMocks.store[sessionKey].pendingFinalDeliveryText).toBe("previous response");
+      expect(recoveryMocks.store[sessionKey].pendingFinalDeliveryAttemptCount).toBeUndefined();
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  it("does not overwrite a newer pending final when the resume RPC completes", async () => {
+    Object.assign(recoveryMocks.store[sessionKey], {
+      startedAt: 100,
+      lifecycleRunId: "current-run",
+      pendingFinalDeliveryRunId: "current-run",
+      pendingFinalDelivery: true,
+      pendingFinalDeliveryText: "interrupted response",
+      pendingFinalDeliveryCreatedAt: 200,
+    });
+    recoveryMocks.messages = [{ role: "assistant", stopReason: "aborted", timestamp: 150 }];
+    recoveryMocks.callGateway.mockImplementation(async () => {
+      Object.assign(recoveryMocks.store[sessionKey], {
+        pendingFinalDeliveryText: "new response",
+        pendingFinalDeliveryCreatedAt: 300,
+        pendingFinalDeliveryRunId: "new-result-run",
+      });
+      return { runId: "recovered-run" };
+    });
+    expect(await recoverRestartAbortedMainSessions({ stateDir: "C:/state" })).toMatchObject({
+      recovered: 1,
+    });
+    expect(recoveryMocks.store[sessionKey]).toMatchObject({
+      pendingFinalDeliveryText: "new response",
+      pendingFinalDeliveryCreatedAt: 300,
+    });
+    expect(recoveryMocks.store[sessionKey].pendingFinalDeliveryAttemptCount).toBeUndefined();
+  });
+
+  it("retains the current interrupted turn's pending delivery", async () => {
+    Object.assign(recoveryMocks.store[sessionKey], {
+      startedAt: 100,
+      lifecycleRunId: "current-run",
+      pendingFinalDeliveryRunId: "current-run",
+      pendingFinalDelivery: true,
+      pendingFinalDeliveryText: "current response",
+      pendingFinalDeliveryCreatedAt: 200,
+      pendingFinalDeliveryContext: { channel: "telegram", to: "current-recipient" },
+    });
+    recoveryMocks.messages = [{ role: "assistant", stopReason: "aborted", timestamp: 150 }];
+    expect(await recoverRestartAbortedMainSessions({ stateDir: "C:/state" })).toMatchObject({
+      recovered: 1,
+    });
+    expect(recoveryMocks.callGateway.mock.calls[0][0].params).toMatchObject({
+      deliver: true,
+      to: "current-recipient",
+      message: expect.stringContaining("current response"),
+    });
+    expect(recoveryMocks.store[sessionKey]).toMatchObject({
+      pendingFinalDeliveryText: "current response",
+      pendingFinalDeliveryAttemptCount: 1,
+    });
+  });
+
+  it("preserves an older delivery when the newer turn cannot resume", async () => {
+    Object.assign(recoveryMocks.store[sessionKey], {
+      startedAt: 300,
+      lifecycleRunId: "new-user-run",
+      pendingFinalDeliveryRunId: "previous-run",
+      pendingFinalDelivery: true,
+      pendingFinalDeliveryText: "previous response",
+      pendingFinalDeliveryCreatedAt: 200,
+      pendingFinalDeliveryContext: { channel: "telegram", to: "prior-recipient" },
+    });
+    recoveryMocks.messages = [{ role: "assistant", stopReason: "error", timestamp: 350 }];
+    expect(await recoverRestartAbortedMainSessions({ stateDir: "C:/state" })).toMatchObject({
+      failed: 1,
+    });
+    expect(recoveryMocks.callGateway).not.toHaveBeenCalled();
+    expect(recoveryMocks.store[sessionKey]).toMatchObject({
+      status: "failed",
+      pendingFinalDeliveryText: "previous response",
+    });
+  });
+
+  it.each(["legacy", "taskflow"])(
+    "preserves pending delivery identity through repeated recovery attempts: %s",
+    async (writer) => {
+      const dir = mkdtempSync(join(tmpdir(), "recovery-delivery-lineage-"));
+      vi.stubEnv("OPENCLAW_STATE_DIR", dir);
+      vi.stubEnv("OPENCLAW_EXECUTION_PHASE_WRITER", writer);
+      vi.stubEnv("OPENCLAW_TASK_LOOP_LIFECYCLE_WRITER", writer);
+      Object.assign(recoveryMocks.store[sessionKey], {
+        lifecycleRunId: "original-run",
+        startedAt: 100,
+        pendingFinalDelivery: true,
+        pendingFinalDeliveryText: "still pending",
+        pendingFinalDeliveryRunId: "original-run",
+        pendingFinalDeliveryCreatedAt: 200,
+        pendingFinalDeliveryContext: { channel: "telegram", to: "original-recipient" },
+      });
+      recoveryMocks.messages = [{ role: "assistant", stopReason: "aborted", timestamp: 150 }];
+      recoveryMocks.callGateway.mockImplementation(async (call) => {
+        Object.assign(recoveryMocks.store[sessionKey], {
+          lifecycleRunId: call.params.idempotencyKey,
+          startedAt: 500,
+        });
+        return { runId: call.params.idempotencyKey };
+      });
+      try {
+        for (let attempt = 0; attempt < 3; attempt++) {
+          recoveryMocks.store[sessionKey].abortedLastRun = true;
+          expect(await recoverRestartAbortedMainSessions({ stateDir: dir })).toMatchObject({
+            recovered: 1,
+          });
+        }
+        for (const [call] of recoveryMocks.callGateway.mock.calls) {
+          expect(call.params.message).toContain("still pending");
+          expect(call.params).toMatchObject({ deliver: true, to: "original-recipient" });
+        }
+        expect(recoveryMocks.store[sessionKey].pendingFinalDeliveryText).toBe("still pending");
+      } finally {
+        closeOpenClawStateDatabase();
+        vi.unstubAllEnvs();
+        rmSync(dir, { recursive: true, force: true });
+      }
+    },
+  );
+
+  it("does not carry an unbound pending final just because its timestamp is recent", async () => {
+    Object.assign(recoveryMocks.store[sessionKey], {
+      lifecycleRunId: "current-run",
+      startedAt: 100,
+      pendingFinalDelivery: true,
+      pendingFinalDeliveryText: "unbound response",
+      pendingFinalDeliveryCreatedAt: 999,
+      pendingFinalDeliveryContext: { channel: "telegram", to: "unbound-recipient" },
+    });
+    recoveryMocks.messages = [{ role: "user", content: "new work" }];
+    expect(await recoverRestartAbortedMainSessions({ stateDir: "C:/state" })).toMatchObject({
+      recovered: 1,
+    });
+    expect(recoveryMocks.callGateway.mock.calls[0][0].params.message).not.toContain(
+      "unbound response",
+    );
+    expect(recoveryMocks.callGateway.mock.calls[0][0].params.deliver).toBe(false);
+    expect(recoveryMocks.store[sessionKey].pendingFinalDeliveryText).toBe("unbound response");
+  });
+
+  it.each(["legacy", "taskflow"])(
+    "retains pending delivery after a continuation RPC fails before lifecycle start: %s",
+    async (writer) => {
+      const dir = mkdtempSync(join(tmpdir(), "recovery-delivery-rpc-"));
+      vi.stubEnv("OPENCLAW_STATE_DIR", dir);
+      vi.stubEnv("OPENCLAW_EXECUTION_PHASE_WRITER", writer);
+      vi.stubEnv("OPENCLAW_TASK_LOOP_LIFECYCLE_WRITER", writer);
+      Object.assign(recoveryMocks.store[sessionKey], {
+        lifecycleRunId: "original-run",
+        pendingFinalDelivery: true,
+        pendingFinalDeliveryText: "still pending",
+        pendingFinalDeliveryRunId: "original-run",
+        pendingFinalDeliveryContext: { channel: "telegram", to: "original-recipient" },
+      });
+      recoveryMocks.messages = [{ role: "assistant", stopReason: "aborted", timestamp: 100 }];
+      recoveryMocks.callGateway.mockImplementation(async (call) => {
+        recoveryMocks.store[sessionKey].lifecycleRunId = call.params.idempotencyKey;
+        return { runId: call.params.idempotencyKey };
+      });
+      try {
+        expect(await recoverRestartAbortedMainSessions({ stateDir: dir })).toMatchObject({ recovered: 1 });
+        recoveryMocks.store[sessionKey].abortedLastRun = true;
+        recoveryMocks.messages = [{ role: "assistant", stopReason: "aborted", timestamp: 200 }];
+        recoveryMocks.callGateway.mockRejectedValueOnce(new Error("RPC failed before start"));
+        expect(await recoverRestartAbortedMainSessions({ stateDir: dir })).toMatchObject({ failed: 1 });
+        expect(await recoverRestartAbortedMainSessions({ stateDir: dir })).toMatchObject({ recovered: 1 });
+        const calls = recoveryMocks.callGateway.mock.calls.map(([call]) => call.params);
+        expect(new Set(calls.map((call) => call.idempotencyKey)).size).toBe(1);
+        for (const call of calls) {
+          expect(call.message).toContain("still pending");
+          expect(call).toMatchObject({ deliver: true, to: "original-recipient" });
+        }
+      } finally {
+        closeOpenClawStateDatabase();
+        vi.unstubAllEnvs();
+        rmSync(dir, { recursive: true, force: true });
+      }
+    },
+  );
+
+  it("does not clear a newer run's restart marker when an older resume RPC returns", async () => {
+    Object.assign(recoveryMocks.store[sessionKey], { lifecycleRunId: "old-run", startedAt: 100 });
+    recoveryMocks.messages = [{ role: "user", content: "durable request" }];
+    recoveryMocks.callGateway.mockImplementation(async () => {
+      Object.assign(recoveryMocks.store[sessionKey], {
+        lifecycleRunId: "new-run",
+        abortedLastRun: true,
+      });
+      return { runId: "old-recovery" };
+    });
+    await recoverRestartAbortedMainSessions({ stateDir: "C:/state" });
+    expect(recoveryMocks.store[sessionKey]).toMatchObject({
+      lifecycleRunId: "new-run",
+      abortedLastRun: true,
+    });
+  });
+
   it("authorizes the durable dispatch before requesting the resumed agent run", async () => {
     const dir = mkdtempSync(join(tmpdir(), "recovery-owner-"));
     vi.stubEnv("OPENCLAW_STATE_DIR", dir);

@@ -912,30 +912,40 @@ export async function startGatewaySidecars(params: {
     scheduleGatewayMemoryBackend({ cfg: params.cfg, log: params.log, policy });
   });
 
-  schedulePostReadySidecarTask({
-    startupTrace: params.startupTrace,
-    name: "sidecars.session-locks",
-    log: params.log,
-    run: async (isStopped) => {
-      try {
-        const [{ resolveAgentSessionDirs }, { cleanStaleLockFiles }] = await Promise.all([
-          import("../agents/session-dirs.js"),
-          import("../agents/session-write-lock.js"),
-        ]);
-        const stateDir = resolveStateDir(process.env);
-        const sessionDirs = await resolveAgentSessionDirs(stateDir);
-        await cleanupStaleSessionLocks({
-          sessionDirs,
-          cfg: params.cfg,
-          log: params.log,
-          isStopped,
-          cleanStaleLockFiles,
+  postReadySidecars.push(
+    schedulePostReadySidecarTask({
+      startupTrace: params.startupTrace,
+      name: "sidecars.session-locks",
+      log: params.log,
+      run: async (isStopped) => {
+        try {
+          const [{ resolveAgentSessionDirs }, { cleanStaleLockFiles }] = await Promise.all([
+            import("../agents/session-dirs.js"),
+            import("../agents/session-write-lock.js"),
+          ]);
+          const stateDir = resolveStateDir(process.env);
+          const sessionDirs = await resolveAgentSessionDirs(stateDir);
+          await cleanupStaleSessionLocks({
+            sessionDirs,
+            cfg: params.cfg,
+            log: params.log,
+            isStopped,
+            cleanStaleLockFiles,
+          });
+        } catch (err) {
+          params.log.warn(`session lock cleanup failed on startup: ${String(err)}`);
+        }
+        if (isStopped()) return;
+        // Recovery scans abortedLastRun, which the lock cleanup above writes.
+        // Scheduling both independently can make an early empty scan lose the wake.
+        await measureStartup(params.startupTrace, "sidecars.main-session-recovery", async () => {
+          const { scheduleRestartAbortedMainSessionRecovery } =
+            await loadMainSessionRestartRecoveryModule();
+          if (!isStopped()) scheduleRestartAbortedMainSessionRecovery({ cfg: params.cfg });
         });
-      } catch (err) {
-        params.log.warn(`session lock cleanup failed on startup: ${String(err)}`);
-      }
-    },
-  });
+      },
+    }),
+  );
 
   schedulePostReadySidecarTask({
     startupTrace: params.startupTrace,
@@ -967,17 +977,6 @@ export async function startGatewaySidecars(params: {
     run: async () => {
       const { scheduleSubagentOrphanRecovery } = await import("../agents/subagent-registry.js");
       scheduleSubagentOrphanRecovery();
-    },
-  });
-
-  schedulePostReadySidecarTask({
-    startupTrace: params.startupTrace,
-    name: "sidecars.main-session-recovery",
-    log: params.log,
-    run: async () => {
-      const { scheduleRestartAbortedMainSessionRecovery } =
-        await loadMainSessionRestartRecoveryModule();
-      scheduleRestartAbortedMainSessionRecovery({ cfg: params.cfg });
     },
   });
 

@@ -8,10 +8,22 @@ intent: Complete TF-0719 by binding durable dispatch to the session generation a
 diffBase: f719c3688
 humanEvidence: not-required
 touchedAreas:
+  - openclaw_runtime/src/agents/command/attempt-execution.shared.ts
+  - openclaw_runtime/src/agents/command/session.ts
+  - openclaw_runtime/src/agents/command/session-store.ts
+  - tests/unit/session-lifecycle-generation-barrier.test.ts
+  - openclaw_runtime/src/gateway/session-lifecycle-state.ts
+  - openclaw_runtime/src/config/sessions/store-load.ts
+  - openclaw_runtime/src/auto-reply/reply/get-reply.ts
+  - openclaw_runtime/src/auto-reply/reply/dispatch-from-config.ts
+  - openclaw_runtime/src/auto-reply/reply/agent-runner.ts
+  - openclaw_runtime/src/agents/agent-command.ts
   - openclaw_runtime/src/agents/execution-phase/**
   - openclaw_runtime/src/agents/agent-tool-definition-adapter.ts
   - openclaw_runtime/src/agents/main-session-restart-recovery.ts
   - openclaw_runtime/src/agents/main-session-restart-recovery.flow.test.ts
+  - openclaw_runtime/src/gateway/server-startup-post-attach.ts
+  - openclaw_runtime/src/gateway/server-startup-post-attach.recovery-order.test.ts
   - openclaw_runtime/src/tasks/task-flow-cas.ts
   - openclaw_runtime/src/tasks/task-flow-cas.test.ts
   - openclaw_runtime/src/tasks/task-flow-registry.store.sqlite.ts
@@ -76,6 +88,9 @@ expectedUserBehavior:
   - Unknown outcomes, legacy unbound rows, changed arguments, and missing durable authorization never execute automatically.
   - Normal tool validation, policy hooks, abort handling, and transcript persistence apply to recovered calls.
 requiredTests:
+  - tests/unit/session-lifecycle-generation-barrier.test.ts
+  - openclaw_runtime/src/agents/main-session-restart-recovery.flow.test.ts
+  - openclaw_runtime/src/gateway/server-startup-post-attach.recovery-order.test.ts
   - tests/unit/recovery-contract-eval.test.ts
   - tests/unit/recovery-quality-readback.test.ts
   - tests/unit/recovery-observation.test.ts
@@ -84,12 +99,18 @@ requiredTests:
   - openclaw_runtime/src/agents/execution-phase/store.test.ts
   - openclaw_runtime/src/agents/execution-phase/recovery.test.ts
 acceptance:
+  - Same-session late terminal events cannot finish a different lifecycle run; stale starts cannot roll ownership backward, and command metadata snapshots preserve the live lifecycle projection.
+  - A continuation error before lifecycle start can settle its newer attempt when its explicit attempt start is later than the stored lifecycle start; arrival time alone does not admit a different run.
+  - A pending final keeps its admitted continuation identity across RPC failures before lifecycle start, including subsequent interrupted transcript boundaries.
+  - Startup recovery is scheduled only after stale-lock cleanup has persisted aborted-session markers; shutdown during cleanup prevents the later recovery schedule.
   - New dispatch records include a versioned boundary, sessionKey, sessionId, toolCallId, and argument digest; no raw arguments or results enter SQLite.
   - effect_pending commits before tool.execute and a duplicate claim cannot execute a second effect.
   - Startup preserves pending dispatches; unknown outcomes and storage errors fail closed.
   - Pending calls are read from the active transcript and executed with the existing validated executor before synthetic-result repair and before the next model request.
   - A persisted real result prevents replay; unrelated generations and changed arguments cannot acquire authorization.
   - User intent, assistant tool dispatch and real tool results are flushed to stable storage before their next acknowledged boundary; flush and synchronous dispatch-commit failures stop continuation.
+  - Recovery prompts, routing and shadow facts accept pending finals only when their durable producer or admitted recovery run matches the lifecycle run; attempt timestamps never determine ownership; asynchronous acknowledgement cannot replace a newer pending payload or discard an older delivery owned by its sender.
+  - Fault sampling waits for warmup terminal lifecycle and pending-delivery settlement before arming the probe; the frozen injection window and observation budgets remain unchanged.
   - A newer user turn excludes older assistant calls from recovery; shadow records the observed resume outcome rather than predicting RPC success.
   - Process interruption tests inspect disk state and prove one effect for a pre-execution crash and zero replays for an uncertain effect.
   - Measurement adapters retain the observed injection point rather than substituting the frozen annotation.

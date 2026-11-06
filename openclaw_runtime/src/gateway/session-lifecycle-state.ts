@@ -12,6 +12,7 @@ import type { GatewaySessionRow, SessionRunStatus } from "./session-utils.types.
 type LifecyclePhase = "start" | "end" | "error";
 
 type LifecycleEventLike = Pick<AgentEventPayload, "ts" | "sessionId"> & {
+  runId?: string;
   data?: {
     phase?: unknown;
     startedAt?: unknown;
@@ -32,7 +33,13 @@ type LifecycleSessionShape = Pick<
 
 type PersistedLifecycleSessionShape = Pick<
   SessionEntry,
-  "updatedAt" | "status" | "startedAt" | "endedAt" | "runtimeMs" | "abortedLastRun"
+  | "updatedAt"
+  | "status"
+  | "startedAt"
+  | "endedAt"
+  | "runtimeMs"
+  | "abortedLastRun"
+  | "lifecycleRunId"
 >;
 
 type GatewaySessionLifecycleSnapshot = Partial<LifecycleSessionShape>;
@@ -172,6 +179,11 @@ export function derivePersistedSessionLifecyclePatch(params: {
   });
   return {
     ...snapshot,
+    // Attempt timestamps change on recovery; the actual lifecycle run identifies
+    // whether a pending final belongs to this work or to an older user turn.
+    ...(resolveLifecyclePhase(params.event) === "start" || params.event.runId
+      ? { lifecycleRunId: params.event.runId }
+      : {}),
     updatedAt: typeof snapshot.updatedAt === "number" ? snapshot.updatedAt : undefined,
   };
 }
@@ -225,6 +237,35 @@ export async function persistGatewaySessionLifecycleEvent(params: {
       // to a new sessionId under the same sessionKey, so an old in-flight run's
       // late start/end/error must not overwrite the fresh row's status (#88538).
       if (isStaleLifecycleEventForSession({ owningSessionId, currentSessionId: entry.sessionId })) {
+        return null;
+      }
+      // Runs share a sessionId. A delayed terminal from a previous run must not
+      // finish the current run or clear its restart marker. Start events can
+      // transfer ownership, but an older start must not roll it back.
+      if (
+        phase !== "start" &&
+        params.event.runId &&
+        entry.lifecycleRunId &&
+        params.event.runId !== entry.lifecycleRunId &&
+        // Agent-command errors include their attempt start even when auth/model
+        // setup failed before the runtime emitted start. A strictly newer attempt
+        // can claim its terminal state; event arrival time alone cannot do so.
+        !(
+          isFiniteTimestamp(params.event.data?.startedAt) &&
+          isFiniteTimestamp(entry.startedAt) &&
+          params.event.data.startedAt > entry.startedAt
+        )
+      ) {
+        return null;
+      }
+      const eventStartedAt = isFiniteTimestamp(params.event.data?.startedAt)
+        ? params.event.data.startedAt
+        : params.event.ts;
+      if (
+        phase === "start" &&
+        isFiniteTimestamp(entry.startedAt) &&
+        eventStartedAt < entry.startedAt
+      ) {
         return null;
       }
       return derivePersistedSessionLifecyclePatch({
