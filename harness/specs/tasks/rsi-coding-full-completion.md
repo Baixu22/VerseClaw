@@ -103,3 +103,12 @@ their original bytes and hash manifests unchanged.
 Generated flag and tool catalogues are refreshed with the existing catalogue
 generator so the full CI baseline describes the current source. Product defaults
 and tool policies are unchanged.
+
+`scripts/rsi-coding-independent-replay.mjs` reads each captured provider response
+and final-state grader report, checks the single-attempt identities, sums known
+usage and independently recomputes the complete-case pass^3 difference and 95%
+interval. Its `--root` selects the frozen evaluator checkout; `--run-dir` selects
+the retained pack and `--out` must name a new output file. Below the 20-case floor,
+the reported inferential effect stays null and the observed case difference is
+kept separately as descriptive data. An incomplete measurement gate retains its
+failure and exit code.
