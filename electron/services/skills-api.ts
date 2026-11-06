@@ -237,7 +237,8 @@ export function createSkillsApi({
             `digest=sha256:${identity.contentDigest.slice(0, 12)}… ` +
             `declaredVersion=${identity.declaredCatalogVersion} requested=${identity.requestedVersionStatus}`,
         );
-        await updateSkillConfig(slug, { enabled: true });
+        const saved = await updateSkillConfig(slug, { enabled: true });
+        if (!saved.success) throw new Error(saved.error || 'Failed to enable installed skill');
         return { success: true, result: null };
       } catch (error) {
         return { success: false, error: errorMessage(error) };

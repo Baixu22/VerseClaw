@@ -1,0 +1,10 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-skill-mcp-audit",
+  "result": {
+    "success": true
+  },
+  "localEnabled": false,
+  "runtimeEnabled": true,
+  "scope": "Isolated filesystem call to the real Main config function; not Electron end-to-end."
+}

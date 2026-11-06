@@ -210,6 +210,8 @@ pnpm harness run --spec <task-spec> --dry-run
 
 UI changes должны включать Electron E2E и строки en/zh/ja/ru. Communication changes дополнительно требуют `pnpm run comms:replay` и `pnpm run comms:compare`. Build success, install success и release authorization — разные факты.
 
+Состояние включения Skill сохраняется в конфигурации runtime OpenClaw, а управляемый каталог Skill регистрируется до запуска Gateway. Локальное обнаружение, видимость в runtime и доверие к выполнению остаются отдельными проверками.
+
 Полная карта gates: [development and validation](docs/modules/development-and-validation.md).
 
 <a id="troubleshooting"></a>

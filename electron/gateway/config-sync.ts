@@ -40,6 +40,7 @@ import { cleanupDanglingWeChatPluginState, listConfiguredChannelsFromConfig, rea
 import { sanitizeOpenClawConfig, batchSyncConfigFields } from '../utils/openclaw-auth';
 import { buildProxyEnv, resolveProxySettings } from '../utils/proxy';
 import { syncProxyConfigToOpenClaw } from '../utils/openclaw-proxy';
+import { syncSkillsToRuntimeConfig } from '../utils/skill-config';
 import { logger } from '../utils/logger';
 import { applyDcsProdFlagsToGatewayEnv } from '../utils/dcs-prod-flags-env';
 import {
@@ -452,6 +453,9 @@ export async function syncGatewayConfigBeforeLaunch(
   } catch (err) {
     logger.warn('Failed to clean dangling WeChat plugin state before launch:', err);
   }
+
+  // Skill choices and the managed directory must reach the config consumed by this launch.
+  await measureAsync(timingsMs, 'skillsSyncMs', syncSkillsToRuntimeConfig);
 
   // Remove stale copies of built-in extensions (Discord, Telegram) that
   // override OpenClaw's working built-in plugins and break channel loading.

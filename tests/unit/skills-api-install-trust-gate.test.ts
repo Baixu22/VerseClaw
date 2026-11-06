@@ -76,6 +76,7 @@ describe('skills.clawhubInstall install-trust gate (#131)', () => {
     vi.clearAllMocks();
     vi.spyOn(console, 'log').mockImplementation(() => {});
     installMock.mockResolvedValue(VERIFIED_IDENTITY);
+    updateSkillConfigMock.mockResolvedValue({ success: true });
     verifyMock.mockReturnValue({ verified: true, reason: 'verified' });
   });
 
@@ -103,6 +104,12 @@ describe('skills.clawhubInstall install-trust gate (#131)', () => {
     expect(result.success).toBe(false);
     expect(result.error).toMatch(/failed integrity verification \(digest-mismatch\)/);
     expect(updateSkillConfigMock).not.toHaveBeenCalled();
+  });
+
+  it('returns failure when enabling the verified install cannot persist', async () => {
+    updateSkillConfigMock.mockResolvedValue({ success: false, error: 'config write failed' });
+    const result = await createApi().clawhubInstall({ slug: 'pdf' });
+    expect(result).toEqual({ success: false, error: 'config write failed' });
   });
 
   it('refuses slugs outside the built-in catalog without invoking the installer', async () => {
