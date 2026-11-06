@@ -1,0 +1,20 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-coding-p1",
+  "argv": [
+    "node",
+    "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+    "install",
+    "--prefer-offline",
+    "--frozen-lockfile",
+    "--ignore-scripts",
+    "--reporter=append-only"
+  ],
+  "exitCode": 0,
+  "seconds": 435.5,
+  "packages": 1822,
+  "lockfileChanged": false,
+  "rootDependencies": "private install",
+  "runtimeDependencies": "private frozen-lock install from TF-0768",
+  "electron": "reuse exact 40.8.4 dist; no download or version change"
+}
