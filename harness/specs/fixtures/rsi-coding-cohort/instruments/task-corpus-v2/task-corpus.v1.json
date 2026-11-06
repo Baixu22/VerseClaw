@@ -4,7 +4,7 @@
   "driven_by": "agent",
   "actor": "codex/tf0590-corpus-owner",
   "taskNode": "TF-0590",
-  "sourceCommit": "7b162f40f249dbed42467c49d1e570c9a41a3b7a",
+  "sourceCommit": "ff3eecbd909e0bf61f6a565eae53c85818abbd3a",
   "sourceCorpusPath": "harness/specs/fixtures/rsi-evidence-loop/tf0604/task-corpus.v1.json",
   "sourceCorpusSha256": "a4f9b3017288164d51126732f6dd588eff1917e649f6054669ac1060b4775261",
   "tasks": [
@@ -1709,7 +1709,7 @@
         "inputDigests": {
           "harness/specs/tasks/harness-gap-browser-effect-boundary.md": "33af143e068b540096b7f81936f4bde96c502c4395df8022bea2357cc07894c2",
           "openclaw_runtime/src/agents/tools/agent-browser-external-access-policy.test.ts": "fbb24d2415a938e5589a8b788e6b2ad9e9a38b341bec891b1ac47c100dd60b17",
-          "openclaw_runtime/src/agents/tools/agent-browser-tool.provenance.test.ts": "f6fd297b0d31960fd0236f0ac97ff776cef497ccdc5de7755f2c31476260a5c4",
+          "openclaw_runtime/src/agents/tools/agent-browser-tool.provenance.test.ts": "07ab4e40286b82a54a79dba190c7ee05518df80b03a6429b9b6f1136776d4d96",
           "openclaw_runtime/src/agents/agent-browser-provenance-wiring.test.ts": "9b443a49873b8f1046f14f44f94454ff2a33caa6fe7389665026ab91aa60e9c9",
           "tests/unit/browser-effect-boundary-ledger.test.ts": "42d481e78e431e7c9d05e52ab6e4779dc1d882b2419c22a2f95ce13a13119b1e"
         }
