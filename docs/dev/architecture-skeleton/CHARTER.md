@@ -244,7 +244,7 @@ A 与 B 并行前提：写入集不重叠（A 触 contract-check 与 ipc-handler
 
 ## 9. 当前状态与已知风险
 
-- 当前修复基线为 `bfcf57616b361a12845014b3f054b95e31c4021c`。TF-0789 的实现提交为 `b834bf3e1`，验收包由归档快照 `2d1373988` 完整保留；接力实施树为 `C:/Users/27933/.codex/worktrees/architecture-convergence-recovered/ClawX`，分支 `codex/architecture-convergence-recovery-20261105`。`D:/ClawX-work/architecture-convergence-20261105` 保留首叶冻结现场；本地任务图唯一目标仍为 `D:/ClawX/.agent-workbench/task-forest`。
+- 当前修复基线为 `bfcf57616b361a12845014b3f054b95e31c4021c`。TF-0789 的实现提交为 `b834bf3e1`，验收包由归档快照 `2d1373988` 完整保留；接力分支为 `codex/architecture-convergence-recovery-20261105`；2026-11-06审查集成后主仓路径为 `D:/ClawX`。首叶冻结现场与临时树按用户要求回收，原日志/图保存在私有压缩归档 `D:/ClawX-acceptance/architecture-review-merge-20261106/prior-architecture-raw-complete.zip`，同目录index给出恢复原路径；本地任务图唯一目标仍为 `D:/ClawX/.agent-workbench/task-forest`。
 - A/B/C 与审查后续已经实施；A3–A6 已验收，历史全仓失败不改写为通过。旧规划和验收记录保留原候选、日期与范围。
 - `TF-0787` 的接入门禁限定验收通过：72/72 测试、38 项真实入口负例拒绝，完整类型与十项记录门禁均 exit 0。候选 `11adcfbdb`，36 份保留文件的清单读回 35/35 匹配、凭据扫描 0 命中。机制与限制见 `ADMISSION-GATE.md`；证据位于 `harness/specs/fixtures/architecture-admission-ast/report.json`。
 - `TF-0788` 把同步叶模块的 workspace 查询改为 owner 传入的读取函数，sandbox API 与同步复用同一个 `sandbox-state` 存储；只读工具目录持有四个名称常量，工厂保持原导出。持久存储、权限 mapper、工具名称/顺序/摘要和注册条件保持。前后依赖图、owner 测试、原循环门禁残差与最终候选见 `harness/specs/fixtures/architecture-small-cycles/report.json`。README 三语已复核，内部依赖重排无需产品说明更新。
@@ -256,3 +256,21 @@ A 与 B 并行前提：写入集不重叠（A 触 contract-check 与 ipc-handler
 - 同候选应用静态图826文件/2375值边，环0与禁止层间边0；runtime9159文件，环0。9985图输入匹配候选Git原字节，前四叶85哈希匹配；最终证据在 `harness/specs/fixtures/architecture-convergence-final/report.json` 与 `report.md`，18文件/17哈希/凭据0。
 - 完整runtime source仍exit1，最后LOC子门禁保留23个未登记超500行及110个超既有基线文件，与TF-0789逐字相同；未新增或加重。额外Harness CI在5文件59测试和policy/catalog通过后，因四份Agent Dev产物过24小时而exit1；CI后续evidence及test-coverage单独通过。详情见最终包 `residuals.json`。不改变LOC基线、时效门槛或旧证据日期。
 - 本根收口表示其声明的接入、静态依赖、权威描述与关系约束范围有证据，不能外推为全仓健康、完整发行构建、Electron/live provider效果或GA。维护效率、agent成功率与可靠性净收益尚无本轮对照测量。35gap仍保留，批次D消费需求未证实。
+
+
+## 10. 合并前独立审查与集成（2026-11-06）
+
+三个同模型子代理分别核查IPC、运行拆环、语义/证据。运行拆环44项测试及服务组合复现通过；
+审查发现并修复四类IPC漏检、历史gap哈希钉死活源码及旧报告verify未重跑规则探针，共六项。
+修复提交9394c6142、fixture EOF提交23d53a29a；原历史证据不修改。
+
+合并候选已包含main的2fff49d09。615项相关测试全部通过，node/web/test完整类型及VerseBrowser声明
+通过；契约、权威、证据report/verify、comms、循环门禁、lint、retention与Harness通过。
+测试候选23d53a29a，复验候选d5750f2ba仅变更task spec比较基准，所有受测实现相同。
+LOC仍exit1：与当前main同23个未登记/111个增长文件；较main的唯一行数差为此前TF-0788
+格式化保留的context-agent-tools +40行，review没有新增runtime/tool行数。
+
+详见 `harness/specs/fixtures/architecture-review-integration/report.json` 与 `report.md`。
+这是独立agent审查，非真人；共享依赖安装曾被意外触发并中止，随后在隔离临时依赖上完成验证，
+该副作用与失败尝试已记录。主仓快进与其它会话脏文件的保留、进程/工作树清理结果记录在本地
+`docs/dev/handoffs/ARCHITECTURE-REVIEW-MERGED-20261106.md`，不由旧报告推断。
