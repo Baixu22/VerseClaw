@@ -1,0 +1,14 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "flat-ipc-bound-channel",
+  "rule": "flat-ipc/bypass-registry",
+  "expect": "[flat-ipc/bypass-registry]",
+  "description": "Regression for local IPC aliases, bound channels and binding origins through the real checker entrypoint.",
+  "mutations": [
+    {
+      "file": "electron/main/ipc/host-invoke.ts",
+      "append": "\n{\nconst register = ipcMain.handle.bind(ipcMain, 'rogue:bound');\nregister('host:invoke', () => 1);\n}\n"
+    }
+  ]
+}
+

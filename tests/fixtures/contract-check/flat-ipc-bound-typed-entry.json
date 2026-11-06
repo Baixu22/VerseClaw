@@ -1,0 +1,14 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "flat-ipc-bound-typed-entry",
+  "expectCode": 0,
+  "description": "A bound host:invoke registration still satisfies exactly one persistent typed entry.",
+  "mutations": [
+    {
+      "file": "electron/main/ipc/host-invoke.ts",
+      "find": "ipcMain.handle('host:invoke', async",
+      "replace": "const registerHost = ipcMain.handle.bind(ipcMain, 'host:invoke');\n  registerHost(async"
+    }
+  ]
+}
+

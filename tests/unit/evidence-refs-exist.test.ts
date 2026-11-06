@@ -452,6 +452,20 @@ describe('--fixture negatives through the real entry (in-memory rewrites, tree u
     expect(generated.unverified).toEqual([]);
   });
 
+  it('rechecks the validator probes when verifying an earlier valid report', async () => {
+    const generated = await report(['--actor', ACTOR]);
+    expect(generated.code).toBe(0);
+    const bytes = readFileSync(generated.file);
+    const candidate = describeCandidate(SANDBOX);
+
+    const verified = await run(['--fixture', `${FIXTURES}/validator-noop.json`, '--verify', generated.file]);
+    expect(verified.code).toBe(1);
+    expect(verified.stderr).toContain('[report-field-missing] - rulesEvaluated:');
+    for (const rule of semantics.PRODUCT_SEMANTIC_RELATION_RULES) expect(verified.stderr).toContain(rule);
+    expect(readFileSync(generated.file)).toEqual(bytes);
+    expect(describeCandidate(SANDBOX)).toEqual(candidate);
+  });
+
   it('a deleted or moved source is recorded as missing and unverified', async () => {
     const { report: generated, fixture } = await negative('source-missing');
     const ref = generated.relations[3].sourceRefs[0];
@@ -636,7 +650,30 @@ describe('--verify invalidates tampered or incomplete reports', () => {
     expect(base.status).toBe('valid');
     expect(base.candidate.dirty).toBe(false);
     const result = verifyEvidenceReport(base, options);
-    expect(result).toEqual({ status: 'valid', diagnostics: [], rulesEvaluated: [...SOURCE_DIAGNOSTIC_RULES] });
+    expect(result).toEqual({ status: 'valid', diagnostics: [], rulesEvaluated: [...semantics.PRODUCT_SEMANTIC_RELATION_RULES, ...SOURCE_DIAGNOSTIC_RULES] });
+  });
+
+  it.each(['missing', 'unknown'] as const)('rejects %s rules observed from the current validator probes', (mutation) => {
+    const registry = {
+      ...semantics,
+      validateProductSemanticRelations: (...args: Parameters<typeof semantics.validateProductSemanticRelations>) => {
+        const result = semantics.validateProductSemanticRelations(...args);
+        const diagnostics = mutation === 'missing'
+          ? result.diagnostics.filter(({ rule }) => rule !== 'relation-endpoint-mismatch')
+          : result.diagnostics.length > 0
+            ? [...result.diagnostics, { ...result.diagnostics[0], rule: 'undeclared-probe-rule' }]
+            : result.diagnostics;
+        return { ok: diagnostics.length === 0, diagnostics };
+      },
+    };
+    const result = verifyEvidenceReport(base, { ...options, registry });
+    expect(result.status).toBe('invalid');
+    expect(result.diagnostics).toContainEqual(expect.objectContaining({
+      rule: 'report-field-missing', field: 'rulesEvaluated',
+      message: expect.stringContaining(mutation === 'missing' ? 'missing: relation-endpoint-mismatch' : 'unknown: undeclared-probe-rule'),
+    }));
+    if (mutation === 'missing') expect(result.rulesEvaluated).not.toContain('relation-endpoint-mismatch');
+    else expect(result.rulesEvaluated).toContain('undeclared-probe-rule');
   });
 
   const TAMPER_CASES: Array<[string, (copy: Json) => void, string, string]> = [

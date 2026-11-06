@@ -1,0 +1,14 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "flat-ipc-preload-nested-destructured-method",
+  "rule": "flat-ipc/preload-direct-invoke",
+  "expect": "[flat-ipc/preload-direct-invoke]",
+  "description": "Regression for local IPC aliases, bound channels and binding origins through the real checker entrypoint.",
+  "mutations": [
+    {
+      "file": "electron/preload/index.ts",
+      "append": "\n{\nconst { ipcRenderer: { invoke: request } } = require('electron');\nrequest.call(require('electron').ipcRenderer, 'rogue:nested');\n}\n"
+    }
+  ]
+}
+

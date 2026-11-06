@@ -255,9 +255,19 @@ function parseIpcCalls(text, file, ipcName, methods) {
     if (ts.isElementAccessExpression(node)) return staticString(node.argumentExpression);
     return null;
   }
-  function bindingName(node) {
-    const name = node.propertyName ?? node.name;
-    return ts.isIdentifier(name) ? name.text : ts.isComputedPropertyName(name) ? staticString(name.expression) : staticString(name);
+  function bindingSources(entry) {
+    if (!ts.isObjectBindingPattern(entry.parent) || entry.dotDotDotToken) return [];
+    const owner = entry.parent.parent;
+    const sources = ts.isBindingElement(owner) ? bindingSources(owner) : owner.initializer ? [owner.initializer] : [];
+    const name = entry.propertyName ?? entry.name;
+    const key = ts.isComputedPropertyName(name) ? name.expression
+      : ts.isIdentifier(name) ? ts.factory.createStringLiteral(name.text) : name;
+    // Keep original expressions for symbol resolution and binding defaults.
+    // Nested patterns select from their parent's value, not its initializer.
+    return [
+      ...sources.map((value) => ts.factory.createElementAccessExpression(value, key)),
+      ...(entry.initializer ? [entry.initializer] : []),
+    ];
   }
   function electronImport(node) {
     while (node && !ts.isImportDeclaration(node)) node = node.parent;
@@ -272,9 +282,11 @@ function parseIpcCalls(text, file, ipcName, methods) {
     if (!ts.isIdentifier(node)) return false;
     return declarations(node).some((entry) =>
       ((ts.isNamespaceImport(entry) || ts.isImportClause(entry)) && electronImport(entry))
+      || (ts.isImportSpecifier(entry) && (entry.propertyName ?? entry.name).text === 'default' && electronImport(entry))
       || (ts.isImportEqualsDeclaration(entry) && ts.isExternalModuleReference(entry.moduleReference)
         && staticString(entry.moduleReference.expression) === 'electron')
-      || (ts.isVariableDeclaration(entry) && isElectron(entry.initializer, seen)));
+      || (ts.isVariableDeclaration(entry) && isElectron(entry.initializer, seen))
+      || (ts.isBindingElement(entry) && bindingSources(entry).some((value) => isElectron(value, seen))));
   }
   function isIpc(node, seen = new Set()) {
     node = unwrap(node);
@@ -288,8 +300,7 @@ function parseIpcCalls(text, file, ipcName, methods) {
     return entries.some((entry) =>
       (ts.isImportSpecifier(entry) && (entry.propertyName ?? entry.name).text === ipcName && electronImport(entry))
       || (ts.isVariableDeclaration(entry) && isIpc(entry.initializer, seen))
-      || (ts.isBindingElement(entry) && ts.isObjectBindingPattern(entry.parent)
-        && bindingName(entry) === ipcName && isElectron(entry.parent.parent.initializer)));
+      || (ts.isBindingElement(entry) && bindingSources(entry).some((value) => isIpc(value, seen))));
   }
   function ipcMethod(node, seen = new Set()) {
     node = unwrap(node);
@@ -298,16 +309,29 @@ function parseIpcCalls(text, file, ipcName, methods) {
     if (ts.isPropertyAccessExpression(node) || ts.isElementAccessExpression(node)) {
       const name = member(node);
       if (name === 'call' || name === 'apply') return ipcMethod(node.expression, seen);
-      if ((name === null || methods.includes(name)) && isIpc(node.expression)) return name ?? '<unresolved>';
+      if ((name === null || methods.includes(name)) && isIpc(node.expression)) return { name: name ?? '<unresolved>' };
     }
-    if (ts.isCallExpression(node) && member(node.expression) === 'bind') return ipcMethod(node.expression.expression, seen);
+    if (ts.isCallExpression(node) && member(unwrap(node.expression)) === 'bind') {
+      const method = ipcMethod(unwrap(node.expression).expression, seen);
+      if (method) {
+        // The first bound channel wins across aliases and successive binds.
+        // A spread supplying thisArg can also supply an unknown channel.
+        const boundChannel = node.arguments[0] && ts.isSpreadElement(node.arguments[0])
+          ? node.arguments[0] : node.arguments[1];
+        return { ...method, boundChannel: method.boundChannel ?? boundChannel };
+      }
+    }
     if (!ts.isIdentifier(node)) return null;
     for (const entry of declarations(node)) {
       if (ts.isVariableDeclaration(entry)) {
         const method = ipcMethod(entry.initializer, seen);
         if (method) return method;
-      } else if (ts.isBindingElement(entry) && ts.isObjectBindingPattern(entry.parent)
-        && methods.includes(bindingName(entry)) && isIpc(entry.parent.parent.initializer)) return bindingName(entry);
+      } else if (ts.isBindingElement(entry)) {
+        for (const value of bindingSources(entry)) {
+          const method = ipcMethod(value, seen);
+          if (method) return method;
+        }
+      }
     }
     return null;
   }
@@ -323,12 +347,13 @@ function parseIpcCalls(text, file, ipcName, methods) {
           const argumentsArray = unwrap(node.arguments[1]);
           rawArgument = argumentsArray && ts.isArrayLiteralExpression(argumentsArray) ? argumentsArray.elements[0] : undefined;
         }
+        rawArgument = method.boundChannel ?? rawArgument;
         const argument = unwrap(rawArgument);
         const line = source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1;
         sites.push({ file, line, channel: argument && ts.isStringLiteralLike(argument) ? argument.text : null,
           expression: rawArgument?.getText(source) ?? node.arguments[1]?.getText(source) ?? '<missing>',
-          ...(method === '<unresolved>' ? { unresolvedMethod: node.expression.getText(source) } : {}),
-          ...(method === 'handleOnce' ? { method } : {}) });
+          ...(method.name === '<unresolved>' ? { unresolvedMethod: node.expression.getText(source) } : {}),
+          ...(method.name === 'handleOnce' ? { method: method.name } : {}) });
       }
     }
     ts.forEachChild(node, visit);

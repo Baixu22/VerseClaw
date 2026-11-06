@@ -323,3 +323,13 @@ preload 的等价 invoke 以及非字面量 channel 同样检查，只有 `host:
 这里验证静态局部调用形状，不声称全程序别名分析、跨模块 opaque export、反射或
 动态模块加载已经覆盖。已知 Electron 接收对象上的不可枚举方法选择会被拒绝。
 README 三种语言已复核：本轮只修改开发门禁，没有产品可见行为变化，故无需更新。
+
+
+## 2026-11-06 合并前独立审查修正
+
+同模型agent审查通过原checker入口复现四类漏检：bind预绑定channel被丢弃、动态计算解构失去IPC来源、
+`import { default as electron }`遗漏、解构默认值/嵌套绑定未追溯。修复继续使用现有AST枚举：
+保留首个已绑定channel（未知值拒绝）；已知IPC对象的动态方法标记unresolved；解析named-default、
+嵌套binding与默认来源。真实入口反例和合法host:invoke预绑定对照均纳入原测试文件。
+静态分析仍限本地可解析导入/别名/绑定，不声称覆盖任意JavaScript反射或跨模块数据流。
+历史验收包不改；修复和合并候选证据见 `harness/specs/fixtures/architecture-review-integration/`。

@@ -69,3 +69,4 @@ harness/specs/fixtures/architecture-small-cycles/** -text
 harness/specs/fixtures/architecture-runtime-cycles/** -text
 harness/specs/fixtures/architecture-authority-convergence/** -text
 harness/specs/fixtures/architecture-convergence-final/** -text
+harness/specs/fixtures/architecture-review-integration/** -text

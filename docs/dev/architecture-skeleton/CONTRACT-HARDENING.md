@@ -596,3 +596,16 @@ HEAD `698d59d6a`）；worktree 用后 `remove --force` + `prune`，日志在 `D:
 scoped lint和Harness以同一干净候选运行。全仓pnpm test、Electron、完整runtime build和收益指标
 不在此限定验收内；已有LOC残差保留exit1并与原候选比较。最终报告位于
 `harness/specs/fixtures/architecture-convergence-final/`，提供逐项范围、来源和实际结果。
+
+
+## 2026-11-06 合并前审查修正
+
+独立agent发现默认测试把TF-0790历史gap审计的原字节摘要/行号钉在当前工作树，
+主仓合法移动hybridSearchFacts也使测试失败。历史gap-classification原字节保留；
+日常测试检查完整gap映射、分类、数量及当前源码锚点存在，允许无关注释/行号变化，删除锚点仍拒绝。
+原摘要/行号通过原候选Git blob重放核验，不能用今天的源码重新签名历史审计。
+
+另一复现表明旧 `--verify` 仅对比声明规则列表，未重新观测validator探针；停用validator后旧有效报告仍可验证。
+修复在verify时复用现有规则观测函数，缺失或未知诊断规则立即invalid。新增真实入口validator-noop verify负例，
+原报告字节保持。此更强检查不授予运行权限，也不改六条关系和任何执行owner。
+新审查/合并证据在 `harness/specs/fixtures/architecture-review-integration/`，既有final包保留原候选。

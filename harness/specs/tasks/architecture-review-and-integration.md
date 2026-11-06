@@ -13,7 +13,9 @@ requiredRules:
   - disk-temp-policy
 ownedPaths:
   - scripts/contract-check.mjs
+  - scripts/contract-check.d.mts
   - scripts/check-evidence-refs.mjs
+  - scripts/check-evidence-refs.d.mts
   - scripts/check-semantic-authority-adjudication.json
   - scripts/repository-artifacts.json
   - shared/component-authority-manifest.ts

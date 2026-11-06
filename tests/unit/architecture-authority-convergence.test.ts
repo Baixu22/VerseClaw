@@ -1,10 +1,14 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
-import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { COMPONENT_AUTHORITY_MANIFEST } from '../../shared/component-authority-manifest';
 import { COMPONENT_DISPOSITION_ENTRIES } from '../../shared/dcs/component-disposition-catalog';
 import { DCS_PROD_FLAGS } from '../../shared/dcs/prod-flags-catalog';
+
+function expectCurrentSourceAnchor(text: string, anchor: string): void {
+  expect(anchor.trim().length).toBeGreaterThan(0);
+  expect(text).toContain(anchor);
+}
 
 describe('component declarations reflect the already enacted product decisions', () => {
   it.each([
@@ -39,11 +43,21 @@ describe('component declarations reflect the already enacted product decisions',
     for (const row of audit.rows) {
       expect(['external-owner', 'description-gap', 'implementation-gap']).toContain(row.category);
       expect(row.registrationResolved).toBe(false);
-      const bytes = readFileSync(row.source);
-      expect(createHash('sha256').update(bytes.toString('utf8').replace(/\r\n/g, '\n')).digest('hex')).toBe(row.sha256);
-      expect(bytes.toString('utf8').split(/\r?\n/)[row.line - 1]).toContain(row.anchor);
+      // Hashes and line numbers describe the historical audit candidate, not the live source.
+      expectCurrentSourceAnchor(readFileSync(row.source, 'utf8'), row.anchor);
       counts[row.category] = (counts[row.category] ?? 0) + 1;
     }
     expect(counts).toEqual(audit.counts);
+  });
+
+  it('allows unrelated source comments to move a classification anchor', () => {
+    const source = 'export function hybridSearchFacts() {}\n';
+    expectCurrentSourceAnchor(`// Unrelated header\n${source}// Unrelated footer\n`, 'export function hybridSearchFacts');
+  });
+
+  it('rejects a removed live classification anchor', () => {
+    const anchor = 'export function hybridSearchFacts';
+    const source = `${anchor}() {}\n`;
+    expect(() => expectCurrentSourceAnchor(source.replace(anchor, ''), anchor)).toThrow();
   });
 });

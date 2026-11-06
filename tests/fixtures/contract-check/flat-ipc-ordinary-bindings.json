@@ -1,0 +1,17 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "flat-ipc-ordinary-bindings",
+  "expectCode": 0,
+  "description": "Dynamic keys, binding defaults, nested aliases and binds on ordinary or shadowed objects are not Electron IPC.",
+  "mutations": [
+    {
+      "file": "electron/contract-check-ordinary-bindings.cjs",
+      "create": "const local = { handle: () => undefined };\nconst method = ['handle'][0];\nconst { [method]: request = local.handle.bind(local) } = local;\nrequest('ordinary');\nconst { ipcMain: { handle: nested } = local } = {};\nnested('ordinary');\nconst { ipcMain = local } = {};\nipcMain.handle('ordinary');\n"
+    },
+    {
+      "file": "electron/preload/index.ts",
+      "append": "\nfunction ordinaryIpcReceiver(ipcRenderer: { invoke: (channel: string) => void }) {\n  const method = ['invoke'][0];\n  const { [method]: request = ipcRenderer.invoke.bind(ipcRenderer) } = ipcRenderer;\n  request('ordinary');\n}\n"
+    }
+  ]
+}
+
