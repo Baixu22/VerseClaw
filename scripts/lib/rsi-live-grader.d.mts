@@ -1,4 +1,5 @@
 export const HISTORICAL_CORPUS_PATH: string;
+export const CODING_BINDINGS_PATH: string;
 export const DEFAULT_COMMAND_TIMEOUT_MS: number;
 export const TEMP_ROOT: string;
 
@@ -28,12 +29,12 @@ export type GradeEdit = { path: string; content: string | Uint8Array };
 export type GradeEdits = GradeEdit[] | Record<string, string | Uint8Array>;
 
 export function missingModuleDiagnostics(report: any, workspace: string, task: HistoricalGradeTask): OracleDiagnostic[];
-export function linkGraderDependencies(root: string, workspace: string, descriptors: Array<{ usesRootDeps?: boolean; usesRuntimeDeps?: boolean }>): string[];
+export function linkGraderDependencies(root: string, workspace: string, descriptors: Array<{ usesRootDeps?: boolean; usesRuntimeDeps?: boolean }>, supportRoot?: string): string[];
 export type OracleFailureClass = 'assertion' | 'infrastructure' | 'target-module-absent' | 'oracle-input-drift';
 
 export function classifyMissingModuleFailure(diagnostics?: OracleDiagnostic[]): { failureClass: 'assertion' | 'infrastructure' | 'target-module-absent'; inTargetScope: boolean; diagnostics: OracleDiagnostic[] };
 
-export function resolveHistoricalTask(root: string, taskId: string): HistoricalGradeTask;
+export function resolveHistoricalTask(root: string, taskId: string, options?: { codingCohort?: boolean }): HistoricalGradeTask;
 
 export function prepareGradeWorkspace(options: {
   root: string;
@@ -73,6 +74,7 @@ export function runLiveTaskOracles(options: {
   workspace: string;
   outDir: string;
   timeoutMs?: number;
+  supportRoot?: string;
 }): Promise<{
   schemaVersion: 'RsiLiveTaskGrader/v1';
   driven_by: 'agent';

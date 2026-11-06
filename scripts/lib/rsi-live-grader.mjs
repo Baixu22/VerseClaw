@@ -10,6 +10,7 @@ import {
   readdirSync,
   symlinkSync,
   rmdirSync,
+  unlinkSync,
   writeFileSync,
 } from 'node:fs';
 import { createRequire } from 'node:module';
@@ -17,6 +18,7 @@ import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { sha256File } from '../rsi-tf0604-baseline.mjs';
 
 export const HISTORICAL_CORPUS_PATH = 'harness/specs/fixtures/agent-first-task-corpus/task-corpus.v1.json';
+export const CODING_BINDINGS_PATH = 'harness/specs/fixtures/rsi-coding-cohort/task-bindings.v1.json';
 export const DEFAULT_COMMAND_TIMEOUT_MS = 120_000;
 export const TEMP_ROOT = resolve('D:/tmp');
 
@@ -80,7 +82,7 @@ function readJson(path) {
   return JSON.parse(readFileSync(path, 'utf8'));
 }
 
-export function resolveHistoricalTask(root, taskId) {
+export function resolveHistoricalTask(root, taskId, { codingCohort = false } = {}) {
   if (!root || !taskId) throw new Error('root and taskId are required');
   const corpus = readJson(join(root, HISTORICAL_CORPUS_PATH));
   const task = corpus.tasks?.find((entry) => entry.id === taskId || entry.sourceTaskId === taskId);
@@ -107,8 +109,28 @@ export function resolveHistoricalTask(root, taskId) {
       throw new Error(`reference oracle test missing for ${task.id}: ${path}`);
     }
   }
-  return {
+  let redefinition = {};
+  if (codingCohort) {
+    const bindings = readJson(join(root, CODING_BINDINGS_PATH));
+    if (bindings.schemaVersion !== 'RsiCodingTaskBindings/v1' || bindings.driven_by !== 'agent') throw new Error('invalid coding bindings');
+    const binding = bindings.tasks.find((entry) => entry.id === task.id);
+    if (binding) {
+      if (binding.base !== base || binding.reference !== ref || binding.sourceRecord !== recordPath
+        || binding.sourceRecordSha256 !== task.referenceSolution.sourceRecordSha256) throw new Error('coding binding source drift');
+      if (!binding.removePaths?.length || !binding.targetScope?.length || typeof binding.prompt !== 'string') throw new Error('invalid reconstruction definition');
+      for (const entry of binding.removePaths) {
+        const path = safeRelativePath(entry.path);
+        if (!binding.targetScope.includes(path) || task.oracle.testPaths.includes(path)
+          || /(?:^|\/)(?:tests|harness|docs)\/|\.test\./u.test(path)) throw new Error('invalid reconstruction target');
+        if (digest(gitBlob(root, base, path)) !== entry.sha256) throw new Error('reconstruction base blob drift');
+      }
+      redefinition = { version: binding.version, input: { ...task.input, prompt: binding.prompt, targetScope: binding.targetScope },
+        baselineSetup: { kind: 'implementation-reconstruction', removePaths: binding.removePaths } };
+    }
+  }
+  const result = {
     ...task,
+    ...redefinition,
     base,
     ref,
     baseCommit: base,
@@ -119,6 +141,7 @@ export function resolveHistoricalTask(root, taskId) {
     oracleRevision: ref,
     oracleTestDigests,
   };
+  return result;
 }
 
 function normalizedEdits(edits) {
@@ -213,6 +236,15 @@ export async function prepareGradeWorkspace({ root, task, workspace, revision, e
   mkdirSync(dirname(resolve(workspace)), { recursive: true });
   mkdirSync(workspace);
   await extractRevision(root, revision, workspace);
+  if (task.baselineSetup && revision === task.base) {
+    for (const entry of task.baselineSetup.removePaths) {
+      const path = safeRelativePath(entry.path);
+      if (!editMatchesScope(path, task) || task.oracle.testPaths.includes(path)) throw new Error('invalid reconstruction target');
+      const target = assertNoSymlinkChain(workspace, path);
+      if (digest(readFileSync(target)) !== entry.sha256) throw new Error('reconstruction base blob drift');
+      unlinkSync(target);
+    }
+  }
   const applied = applyEdits(workspace, task, edits);
   const oracleFiles = restoreOracles(workspace, root, task);
   return { workspace: resolve(workspace), revision, edits: applied, oracleFiles };
@@ -289,13 +321,18 @@ const ORACLE_SUPPORT_PACKAGES = [
   { packageName: 'markdown-it', importerPrefix: 'openclaw_runtime/packages/markdown-core/' },
 ];
 
-function linkOracleSupportPackages(root, workspace) {
+function linkOracleSupportPackages(root, workspace, supportRoot) {
   const links = [];
   for (const { packageName, importerPrefix } of ORACLE_SUPPORT_PACKAGES) {
     const importerRoot = join(workspace, importerPrefix);
     if (!existsSync(importerRoot)) continue;
-    const source = findPnpmPackage(root, packageName);
+    const source = supportRoot ? join(resolve(supportRoot), 'node_modules', packageName) : findPnpmPackage(root, packageName);
     if (!source) throw new Error(`oracle support package missing: ${packageName}`);
+    if (supportRoot) {
+      const declared = readJson(join(importerRoot, 'package.json')).dependencies?.[packageName];
+      const installed = readJson(join(source, 'package.json')).version;
+      if (declared !== installed) throw new Error(`oracle support version mismatch: ${packageName} declared=${declared} installed=${installed}`);
+    }
     const target = join(importerRoot, 'node_modules', packageName);
     if (existsSync(target)) continue;
     mkdirSync(dirname(target), { recursive: true });
@@ -314,7 +351,7 @@ export function classifyMissingModuleFailure(diagnostics = []) {
     diagnostics: entries,
   };
 }
-export function linkGraderDependencies(root, workspace, descriptors) {
+export function linkGraderDependencies(root, workspace, descriptors, supportRoot) {
   const links = [];
   try {
     if (descriptors.some((entry) => entry.usesRootDeps)) {
@@ -331,7 +368,7 @@ export function linkGraderDependencies(root, workspace, descriptors) {
       directoryLink(candidates[0], target);
       links.push(target);
     }
-    links.push(...linkOracleSupportPackages(root, workspace));
+    links.push(...linkOracleSupportPackages(root, workspace, supportRoot));
     return links;
   } catch (error) {
     for (const target of links.reverse()) removeOwnedDirectoryLink(target);
@@ -427,7 +464,7 @@ function aggregates(executions) {
   }, { numTotalTests: 0, numPassedTests: 0, numFailedTests: 0, numPendingTests: 0 });
 }
 
-export async function runLiveTaskOracles({ root, task, workspace, outDir, timeoutMs = DEFAULT_COMMAND_TIMEOUT_MS } = {}) {
+export async function runLiveTaskOracles({ root, task, workspace, outDir, timeoutMs = DEFAULT_COMMAND_TIMEOUT_MS, supportRoot } = {}) {
   if (!root || !task || !workspace || !outDir) throw new Error('root, task, workspace and outDir are required');
   assertTempPath(workspace, 'grade workspace');
   assertTempPath(outDir, 'grader output');
@@ -446,7 +483,7 @@ export async function runLiveTaskOracles({ root, task, workspace, outDir, timeou
   const diagnostics = [];
   let ownedLinks = [];
   try {
-    ownedLinks = linkGraderDependencies(root, workspace, descriptors);
+    ownedLinks = linkGraderDependencies(root, workspace, descriptors, supportRoot);
     for (const [index, descriptor] of descriptors.entries()) {
       const stem = String(index + 1).padStart(2, '0');
       const stdoutPath = join(outDir, `${stem}-stdout.log`);
@@ -525,6 +562,11 @@ export async function runLiveTaskOracles({ root, task, workspace, outDir, timeou
     inputDigests: task.oracle.inputDigests,
     oracleRevision: task.oracleRevision ?? null,
     oracleTestDigests: task.oracleTestDigests ?? null,
+    ...(task.baselineSetup ? { baselineSetup: task.baselineSetup } : {}),
+    ...(supportRoot ? { supportPackages: ORACLE_SUPPORT_PACKAGES.filter(({ importerPrefix }) => existsSync(join(workspace, importerPrefix)))
+      .map(({ packageName, importerPrefix }) => ({ name: packageName,
+        declaredVersion: readJson(join(workspace, importerPrefix, 'package.json')).dependencies?.[packageName],
+        resolvedVersion: readJson(join(supportRoot, 'node_modules', packageName, 'package.json')).version })) } : {}),
     diagnostics,
     workspace: resolve(workspace),
   };

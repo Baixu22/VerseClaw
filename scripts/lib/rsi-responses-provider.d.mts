@@ -14,6 +14,7 @@ export interface ResponsesRequest {
   stream: false;
   truncation: 'disabled';
   max_output_tokens: number;
+  reasoning?: { effort: 'low' };
 }
 
 export interface ResponsesUsage {
@@ -65,6 +66,7 @@ export interface ResponsesProviderOptions {
   timeoutMs: number;
   maxOutputTokens: number;
   transport?: ResponsesTransport;
+  reasoningEffort?: 'low';
 }
 
 export function buildResponsesRequest(input: {
@@ -72,6 +74,7 @@ export function buildResponsesRequest(input: {
   instructions: string;
   input: unknown;
   maxOutputTokens: number;
+  reasoningEffort?: 'low';
 }): ResponsesRequest;
 
 export function parseResponsesReply(payload: unknown): ResponsesReply;

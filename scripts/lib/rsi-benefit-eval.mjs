@@ -9,6 +9,8 @@ import { summarizeTf0592Trials } from '../rsi-tf0592-statistical-adjudication.mj
 import { sha256File } from '../rsi-tf0604-baseline.mjs';
 import { buildResponsesRequest, parseResponsesReply } from './rsi-responses-provider.mjs';
 import { assessTaskAdmission, finalizeLiveAdmission } from '../rsi-live-acceptance.mjs';
+import { CODING_BINDINGS_PATH, resolveHistoricalTask } from './rsi-live-grader.mjs';
+import { CODING_COLLECTOR, CODING_INSTRUCTIONS, parseCodingEdits } from './rsi-coding-protocol.mjs';
 
 export const BENEFIT_ARMS = Object.freeze(['sekb-off', 'sekb-shadow', 'sekb-confirmed']);
 const CORPUS = 'harness/specs/fixtures/rsi-evidence-loop/tf0604/task-corpus.v1.json';
@@ -105,19 +107,55 @@ function releaseRunLock(path) {
 }function git(root, args) {
   return execFileSync('git', args, { cwd: root, encoding: 'utf8', windowsHide: true, timeout: 15000 }).trim();
 }
-function taskSet(root) {
+const codingContextCache = new Map();
+function codingContext(root, task) {
+  const key = `${root}:${task.base}:${benefitDigest(task.input.targetScope)}:${benefitDigest(task.baselineSetup ?? null)}`;
+  if (codingContextCache.has(key)) return codingContextCache.get(key);
+  const missing = new Set(task.baselineSetup?.removePaths.map(entry => entry.path) ?? []);
+  const queue = task.input.targetScope.filter(p => /\.(?:[cm]?[jt]sx?|json|md)$/u.test(p));
+  const seen = new Set(), files = [];
+  let remaining = CODING_COLLECTOR.maxContextChars;
+  while (queue.length && files.length < 24 && remaining > 0) {
+    const path = queue.shift().replaceAll('\\', '/');
+    if (seen.has(path) || path.includes('..') || task.oracle.testPaths.includes(path)
+      || path === task.referenceSolution.sourceRecord
+      || /(?:^|\/)(?:tests|fixtures)\/|\.test\.|\.spec\.|SHA256SUMS$/u.test(path)) continue;
+    seen.add(path);
+    let bytes;
+    try { bytes = execFileSync('git', ['show', `${task.base}:${path}`], { cwd: root, windowsHide: true, stdio: ['ignore', 'pipe', 'ignore'] }); }
+    catch { files.push({ path, content: null, missing: true }); continue; }
+    if (missing.has(path)) { files.push({ path, content: null, missing: true }); continue; }
+    const content = bytes.toString('utf8');
+    const selected = content.slice(0, remaining);
+    files.push({ path, content: selected, truncated: selected.length !== content.length }); remaining -= selected.length;
+    for (const match of content.matchAll(/(?:from\s*|import\s*\()\s*['"](\.[^'"]+)['"]/gu)) {
+      const stem = join(dirname(path), match[1]).replaceAll('\\', '/');
+      const options = /\.[cm]?[jt]sx?$/u.test(stem) ? [stem.replace(/\.js$/u, '.ts'), stem] : [`${stem}.ts`, `${stem}.mjs`, `${stem}.tsx`];
+      for (const candidate of options) {
+        try { execFileSync('git', ['cat-file', '-e', `${task.base}:${candidate}`], { cwd: root, windowsHide: true, stdio: 'ignore' }); queue.push(candidate); break; } catch { /* Absent at this historical base. */ }
+      }
+    }
+  }
+  codingContextCache.set(key, files);
+  return files;
+}
+function taskSet(root, codingCollector = false) {
   const corpus = read(join(root, CORPUS));
   const historical = read(join(root, TASKS));
   const tasks = corpus.cases.map((entry) => {
-    const task = historical.tasks.find((task) => task.id === entry.id);
+    const task = codingCollector ? resolveHistoricalTask(root, entry.id, { codingCohort: true })
+      : historical.tasks.find((task) => task.id === entry.id);
     assert(task, `task-source-missing:${entry.id}`);
     assert(text(task.input?.prompt), `task-prompt-missing:${entry.id}`);
-    const targetScope = (task.input?.targetScope ?? []).map((path) => repoPath(path, 'target-scope'));
+    const originalScope = (task.input?.targetScope ?? []).map((path) => repoPath(path, 'target-scope'));
+    const targetScope = codingCollector ? originalScope.filter(path => !task.oracle.testPaths.includes(path)
+      && path !== task.referenceSolution.sourceRecord
+      && !/(?:^|\/)tests\/|\.test\.|\.spec\.|SHA256SUMS$/u.test(path)) : originalScope;
     const acceptanceCriteria = (task.input?.acceptanceCriteria ?? []).map((criterion, index) => {
       assert(text(criterion), `task-acceptance-criterion-missing:${entry.id}:${index}`);
       return criterion;
     });
-    assert(targetScope.length > 0 && task.input.targetScope.length === targetScope.length, `task-target-scope-required:${entry.id}`);
+    assert(targetScope.length > 0, `task-target-scope-required:${entry.id}`);
     const recordPath = repoPath(task.referenceSolution?.sourceRecord, 'source-record-path');
     const recordDigest = sha256File(artifactPath(root, recordPath));
     assert.equal(recordDigest, task.referenceSolution.sourceRecordSha256, `source-record-digest-mismatch:${entry.id}`);
@@ -132,6 +170,7 @@ function taskSet(root) {
       negativeExpectedOutcome: entry.negativeExpectedOutcome ?? 'fail',
       prompt: task.input.prompt, acceptanceCriteria, targetScope,
       source: { recordPath, recordDigest, base, reference },
+      ...(codingCollector ? { baselineSetup: task.baselineSetup ?? null, contextFiles: codingContext(root, task), oracleTestDigests: task.oracleTestDigests } : {}),
       oracleDigest: benefitDigest(task.oracle),
       oracle: { commands: task.oracle.commandLines, testPaths: task.oracle.testPaths,
         expectedSkips: task.oracle.expectedSkips, inputDigests: task.oracle.inputDigests },
@@ -154,7 +193,7 @@ function taskSet(root) {
 
 export function createBenefitPlan(root, options = {}) {
   root = resolve(root);
-  const tasks = taskSet(root), policy = read(join(root, POLICY));
+  const tasks = taskSet(root, options.codingCollector), policy = read(join(root, POLICY));
   assert.equal(tasks.length, 24, 'existing-corpus-required');
   assert.equal(policy.taskSet.k, 3); assert.equal(policy.taskSet.minimumCompleteCases, 20);
   assert.equal(policy.promotion.thresholds.passKAbsoluteImprovement.minimum, 0.05);
@@ -175,11 +214,24 @@ export function createBenefitPlan(root, options = {}) {
   assert.deepEqual(Object.keys(candidate).sort(), ['context', 'id', 'kind', 'sourceCaseIds'], 'undeclared-candidate-fields');
   assert(Array.isArray(candidate.sourceCaseIds) && candidate.sourceCaseIds.length > 0, 'candidate-provenance-required');
   assert(candidate.sourceCaseIds.every((id) => text(id) && !tasks.some((task) => task.id === id)), 'training-evaluation-overlap');
+  if (options.codingCollector && mode === 'measured') {
+    const frozen = read(join(root, 'harness/specs/fixtures/rsi-coding-cohort/candidate.json'));
+    const provenance = read(join(root, 'harness/specs/fixtures/rsi-coding-cohort/candidate-provenance.json'));
+    assert.deepEqual(candidate, frozen, 'coding-candidate-drift');
+    assert.equal(provenance.candidateDigest, benefitDigest(candidate), 'coding-candidate-provenance-drift');
+    assert(provenance.driven_by === 'agent' && provenance.principle?.created_by === 'agent', 'candidate-agent-provenance-required');
+    assert.deepEqual(provenance.records.map(item => item.id), candidate.sourceCaseIds, 'candidate-source-case-drift');
+    assert(provenance.records.every(item => item.results?.length === 2 && item.results[0].exitCode === 1 && item.results[1].exitCode === 0), 'candidate-training-evidence-required');
+  }
   const maxProviderCalls = mode === 'offline' ? 0 : options.maxProviderCalls;
   const maxTotalTokens = mode === 'offline' ? null : options.maxTotalTokens;
   if (mode === 'measured') assert(Number.isSafeInteger(maxProviderCalls) && maxProviderCalls >= 216
     && Number.isSafeInteger(maxTotalTokens) && maxTotalTokens > 0, 'explicit-measurement-budget-required');
-  const paths = [...new Set([...SOURCES, ...tasks.flatMap((task) => [task.source.recordPath, ...Object.keys(task.oracle.inputDigests)])])].sort();
+  const paths = [...new Set([...SOURCES, ...(options.codingCollector ? [CODING_BINDINGS_PATH,
+    'scripts/rsi-coding-collector.mjs', 'scripts/rsi-coding-collector.d.mts', 'scripts/rsi-coding-candidate.mts',
+    'scripts/lib/rsi-coding-protocol.mjs', 'scripts/lib/rsi-coding-protocol.d.mts', 'tests/unit/rsi-coding-collector.test.ts',
+    'harness/specs/fixtures/rsi-coding-cohort/candidate.json', 'harness/specs/fixtures/rsi-coding-cohort/candidate-provenance.json'] : []),
+    ...tasks.flatMap((task) => [task.source.recordPath, ...Object.keys(task.oracle.inputDigests)])])].sort();
   // Source bindings use the repository's canonical text bytes across LF/CRLF
   // checkouts. Raw run receipts and their manifest remain byte-addressed.
   const bindings = Object.fromEntries(paths.map((path) => [path, sha256File(artifactPath(root, path))]));
@@ -189,7 +241,8 @@ export function createBenefitPlan(root, options = {}) {
     runId: options.runId ?? randomUUID(), evidenceKind: mode === 'offline' ? 'synthetic-wiring-fixture' : 'live-provider',
     source: { commit, tree: git(root, ['rev-parse', 'HEAD^{tree}']), bindings,
       boundary: 'Bindings pin working bytes; measured receipts also require a clean committed evaluator at final check.' },
-    provider: { endpoint, model, maxOutputTokens: 2048 },
+    provider: { endpoint, model, maxOutputTokens: options.codingCollector ? CODING_COLLECTOR.maxOutputTokens : 2048 },
+    ...(options.codingCollector ? { collector: structuredClone(CODING_COLLECTOR) } : {}),
     budget: { providerCallsAuthorized: maxProviderCalls, maxTotalTokens, network: mode === 'offline' ? 'none' : 'declared-provider-only', retries: 0 },
     design: { k: 3, minimumCompleteCases: 20, primaryComparison: 'sekb-confirmed-vs-off', order: 'rotating-three-arm',
       unit: 'caseId', minimumImprovement: 0.05, costIncreaseMaximum: 0.1 },
@@ -205,7 +258,8 @@ export function validateBenefitPlan(plan, root) {
   const expected = createBenefitPlan(root, { endpoint: plan.provider?.endpoint, model: plan.provider?.model,
     actor: plan.actor, runId: plan.runId, candidate: plan.candidate,
     mode: plan.evidenceKind === 'live-provider' ? 'measured' : 'offline',
-    maxProviderCalls: plan.budget?.providerCallsAuthorized, maxTotalTokens: plan.budget?.maxTotalTokens });
+    maxProviderCalls: plan.budget?.providerCallsAuthorized, maxTotalTokens: plan.budget?.maxTotalTokens, codingCollector: Boolean(plan.collector) });
+  assert.deepEqual(plan.collector, expected.collector, 'frozen-collector-drift');
   for (const field of ['provider', 'budget', 'design', 'arms', 'candidate', 'candidateDigest', 'tasks', 'policy', 'slots', 'claims']) {
     assert.deepEqual(plan[field], expected[field], `frozen-${field}-drift`);
   }
@@ -236,9 +290,12 @@ export function buildBenefitRequest(plan, slot) {
   // Only this projection reaches the subject. Oracle content, split membership and
   // reference solutions remain evaluator-only; task criteria and target scope are
   // subject inputs rather than hidden grading metadata.
-  const instructions = 'Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.';
-  const input = JSON.stringify({ prompt: task.prompt, acceptanceCriteria: task.acceptanceCriteria, targetScope: task.targetScope }, null, 2);
+  const instructions = 'Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.'
+    + (plan.collector ? `\n${CODING_INSTRUCTIONS}` : '');
+  const input = JSON.stringify({ prompt: task.prompt, acceptanceCriteria: task.acceptanceCriteria, targetScope: task.targetScope,
+    ...(plan.collector ? { responseSchema: plan.collector.responseSchema, baseFiles: task.contextFiles } : {}) }, null, 2);
   return buildResponsesRequest({ model: plan.provider.model, maxOutputTokens: plan.provider.maxOutputTokens,
+    ...(plan.collector ? { reasoningEffort: plan.collector.reasoningEffort } : {}),
     instructions: slot.arm === 'sekb-confirmed' ? [instructions, plan.candidate.context].join("\n") : instructions,
     input });
 }
@@ -334,7 +391,7 @@ function readTrial(plan, slot, directory, supplied) {
   if (execution.status !== 'completed') {
     assert(row.rawResponse === null && execution.failureClass === 'infrastructure', 'invalid-interrupted-trial');
     return { row, outcome: execution.status, failureClass: 'infrastructure',
-      tokens: attempts.length && attempts.every((attempt) => attempt.usage) ? attempts.reduce((n, attempt) => n + attempt.usage.totalTokens, 0) : null,
+      tokens: attempts.length && attempts.every((attempt) => attempt?.usage) ? attempts.reduce((n, attempt) => n + attempt.usage.totalTokens, 0) : null,
       turns: attempts.length || null, toolCalls: execution.toolEvents.length };
   }
   assert.equal(execution.failureClass, null, 'completed-failure-class');
@@ -345,12 +402,18 @@ function readTrial(plan, slot, directory, supplied) {
   assert.equal(response.functionCalls.length, 0, 'unconsumed-terminal-tool-call');
   let success = false;
   if (response.status === 'completed') {
-    if (measured) { success = gradeMeasuredObservation(plan, slot, row); if (success) assert(row.edits.length > 0, 'pass-without-edits'); }
+    if (measured) {
+      if (plan.collector && execution.failureCategory === 'model-format') {
+        assert.equal(row.grader, null, 'format-failure-cannot-claim-grade');
+        assert.deepEqual(row.edits, [], 'format-failure-cannot-claim-edits');
+        assert.throws(() => parseCodingEdits(response.text, task), undefined, 'valid-output-misclassified');
+      } else { success = gradeMeasuredObservation(plan, slot, row); if (success) assert(row.edits.length > 0, 'pass-without-edits'); }
+    }
     else try { const answer = JSON.parse(response.text); success = answer.caseId === slot.caseId && answer.probeValue === 'ok'; } catch { /* Malformed output is an agent failure. */ }
   }
   const outcome = response.status === 'completed' ? success ? 'pass' : 'fail' : 'missing';
   return { row, outcome, failureClass: outcome === 'pass' ? null : 'agent',
-    tokens: measured ? attempts.every((attempt) => attempt.usage) ? attempts.reduce((n, attempt) => n + attempt.usage.totalTokens, 0) : null : response.usage?.totalTokens ?? null,
+    tokens: measured ? attempts.every((attempt) => attempt?.usage) ? attempts.reduce((n, attempt) => n + attempt.usage.totalTokens, 0) : null : response.usage?.totalTokens ?? null,
     turns: measured ? attempts.length : 1, toolCalls: execution.toolEvents.filter((event) => event.type === 'tool-call').length };
 }
 
@@ -365,12 +428,17 @@ function readProviderAttempts(plan, row) {
     assert.deepEqual(Object.keys(attempt.request).sort(), Object.keys(row.request).sort(), 'provider-request-fields');
     for (const field of ['store', 'stream', 'truncation', 'max_output_tokens']) assert.deepEqual(attempt.request[field], row.request[field], 'provider-request-policy');
     if (index === 0) assert.deepEqual(attempt.request, row.request, 'initial-provider-request-drift');
+    if (plan.collector && attempt.rawResponse === null) {
+      assert(row.execution.status !== 'completed' && attempt.parsedResponse === null, 'invalid-provider-failure-attempt');
+      return null;
+    }
     const parsed = parseResponsesReply(attempt.rawResponse);
     assert.deepEqual(attempt.parsedResponse, parsed, 'raw-parsed-response-drift');
     assert.equal(parsed.model, plan.provider.model, 'resolved-model-drift');
     calls.push(...parsed.functionCalls);
     return parsed;
   });
+  if (plan.collector) assert(attempts.length <= 1, 'coding-provider-retry');
   for (let index = 0; index < attempts.length - 1; index++) {
     assert(attempts[index].status === 'completed' && attempts[index].functionCalls.length > 0, 'undeclared-provider-retry');
     const nextInput = row.providerAttempts[index + 1].request.input;
@@ -398,6 +466,13 @@ function gradeMeasuredObservation(plan, slot, row) {
   assert.equal(grader.workspaceRevision, task.source.base, 'grader-workspace-revision-drift');
   assert.equal(grader.oracleDigest, task.oracleDigest, 'grader-oracle-drift');
   assert.equal(grader.editsDigest, benefitDigest(row.edits), 'grader-edits-drift');
+  if (plan.collector) {
+    assert.deepEqual(parseCodingEdits(parseResponsesReply(row.rawResponse).text, task), row.edits, 'response-edits-drift');
+    assert.deepEqual(grader.baselineSetup ?? null, task.baselineSetup, 'grader-baseline-setup-drift');
+    assert.equal(grader.oracleRevision, task.source.reference, 'grader-reference-drift');
+    assert.deepEqual(grader.oracleTestDigests, task.oracleTestDigests, 'grader-test-digest-drift');
+    assert.equal(grader.oracleUnchanged, true, 'grader-oracle-drift');
+  }
   assert.deepEqual(grader.commands, task.oracle.commands, 'grader-command-drift');
   assert.equal(grader.responseDigest, benefitDigest(row.rawResponse), 'grader-response-drift');
   assert(grader.isolation?.hiddenOracleVisible === false && grader.isolation?.unapprovedEgress === false
@@ -407,6 +482,13 @@ function gradeMeasuredObservation(plan, slot, row) {
   assert.equal(task.oracle.expectedSkips, 0, 'zero-skip-oracle-required');
   for (const [index, item] of grader.reports.entries()) {
     assert.equal(item.command, task.oracle.commands[index], 'grader-report-command-drift');
+    if (plan.collector && item.kind === 'command') {
+      assert(/^node scripts\//u.test(item.command) && item.report?.kind === 'command', 'grader-command-kind');
+      assert(Number.isInteger(item.exitCode) && item.exitCode === item.report.exitCode, 'grader-command-exit-drift');
+      for (const digest of [item.report.stdoutDigest, item.report.stderrDigest]) assert(/^[a-f0-9]{64}$/u.test(digest), 'grader-command-output-missing');
+      outcomes.push(item.exitCode === 0);
+      continue;
+    }
     assert(Number.isInteger(item.exitCode) && Array.isArray(item.report?.testResults), 'grader-result-missing');
     const assertions = item.report.testResults.flatMap((suite) => {
       const path = typeof suite.name === 'string' ? suite.name.replaceAll('\\', '/') : '';
@@ -414,6 +496,11 @@ function gradeMeasuredObservation(plan, slot, row) {
       assert(Array.isArray(suite.assertionResults), 'grader-assertions-missing');
       return suite.assertionResults;
     });
+    if (plan.collector && item.report.success === false && item.exitCode !== 0 && assertions.length === 0) {
+      assert(item.report.testResults.some(suite => typeof suite.message === 'string' && suite.message.length > 0), 'grader-suite-error-missing');
+      outcomes.push(false);
+      continue;
+    }
     assert(assertions.length > 0 && assertions.length === item.report.numTotalTests, 'grader-test-count-drift');
     const failed = assertions.filter((entry) => entry.status === 'failed').length;
     const passed = assertions.filter((entry) => entry.status === 'passed').length;
@@ -498,6 +585,17 @@ function verifyLiveAdmissionReport(root, directory, plan) {
   assert(saved.admissions.every((entry) => entry.passed === true && entry.status === 'admitted'), 'live-admission-task-rejected');
   return saved;
 }
+export function verifyCodingAdmission(root, directory, plan) {
+  assert.deepEqual(plan.collector, CODING_COLLECTOR, 'coding-plan-required');
+  verifyTaskAdmissions(root, directory, plan, new Set(plan.tasks.map(task => task.id)));
+  verifyLiveAdmissionReport(root, directory, plan);
+  assert.equal(git(root, ['status', '--porcelain', '--', ...Object.keys(plan.source.bindings)]), '', 'measured-evaluator-uncommitted');
+  for (const [path, digest] of Object.entries(plan.source.bindings)) {
+    const bytes = execFileSync('git', ['show', `${plan.source.commit}:${path}`], { cwd: root, windowsHide: true, encoding: 'utf8' });
+    assert.equal(benefitDigest(bytes.replace(/\r\n?/gu, '\n')), digest, 'measured-source-not-in-candidate');
+  }
+  return true;
+}
 export function adoptLiveCalibration(root, directory, calibrationDir) {
   root = resolve(root); directory = resolve(directory); calibrationDir = resolve(calibrationDir);
   const plan = loadPlan(root, directory);
@@ -524,6 +622,7 @@ export function adoptLiveCalibration(root, directory, calibrationDir) {
   };
   copyExact(sourceReportPath, artifactPath(directory, 'calibration/admission-report.json'));
   copyExact(artifactPath(calibrationDir, 'provider-preflight.json'), artifactPath(directory, 'provider-preflight.json'));
+  if (plan.collector) copyExact(artifactPath(calibrationDir, 'task-bindings.json'), artifactPath(directory, 'task-bindings.json'));
   for (const task of plan.tasks) {
     const source = artifactPath(calibrationDir, `calibration/${task.id}/admission.json`);
     const target = artifactPath(directory, `calibration/${task.id}/admission.json`);
@@ -545,7 +644,7 @@ export function adoptLiveCalibration(root, directory, calibrationDir) {
   }
   assert(actual.every((record, index) => index === 0 || Date.parse(record.row.execution.startedAt) >= Date.parse(actual[index - 1].row.execution.endedAt)), 'collector-order-or-overlap');
   assert(actual.every((record) => record.row.grader?.actor !== actor), 'verifier-cannot-grade-own-run');
-  const responseIds = actual.flatMap((record) => record.row.providerAttempts.map((attempt) => attempt.rawResponse.id));
+  const responseIds = actual.flatMap((record) => record.row.providerAttempts.filter(attempt => attempt.rawResponse !== null).map((attempt) => attempt.rawResponse.id));
   assert.equal(new Set(responseIds).size, responseIds.length, 'reused-provider-response');
   const providerCalls = actual.reduce((total, record) => total + record.row.execution.providerCalls, 0);
   assert(providerCalls <= plan.budget.providerCallsAuthorized, 'provider-call-budget-exceeded');
@@ -631,6 +730,7 @@ function packFiles(directory) {
 }
 function allowedFiles(plan) {
   return new Set(['plan.json', 'plan.sha256', 'report.json', ...plan.slots.flatMap((slot) => [recordPath(slot), startPath(slot)]),
+    ...(plan.collector ? ['task-bindings.json'] : []),
     ...(plan.evidenceKind === 'live-provider' ? ['provider-preflight.json', 'calibration/admission-report.json',
       ...plan.tasks.map((task) => `calibration/${task.id}/admission.json`)] : [])]);
 }
