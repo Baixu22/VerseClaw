@@ -71,7 +71,7 @@ function gitObjectExists(root, revision) {
   const key = `${resolve(root)}\0${revision}`;
   if (commitExistsCache.has(key)) return true;
   try {
-    execFileSync('git', ['-C', root, 'cat-file', '-e', `${revision}^{commit}`], { stdio: 'ignore', windowsHide: true });
+    execFileSync('git', ['-C', root, 'cat-file', '-e', `${revision}^{commit}`], { stdio: 'ignore', windowsHide: true, timeout: 120000 });
     commitExistsCache.add(key);
     return true;
   } catch {
@@ -81,7 +81,7 @@ function gitObjectExists(root, revision) {
 
 function gitBlob(root, revision, path) {
   const key = `${resolve(root)}\0${revision}\0${path}`;
-  if (!gitBlobCache.has(key)) gitBlobCache.set(key, execFileSync('git', ['-C', root, 'show', `${revision}:${path}`], { windowsHide: true, maxBuffer: 64 * 1024 * 1024 }));
+  if (!gitBlobCache.has(key)) gitBlobCache.set(key, execFileSync('git', ['-C', root, 'show', `${revision}:${path}`], { windowsHide: true, timeout: 120000, maxBuffer: 64 * 1024 * 1024 }));
   return gitBlobCache.get(key);
 }
 

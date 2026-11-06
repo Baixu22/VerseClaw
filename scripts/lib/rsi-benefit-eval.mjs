@@ -105,7 +105,7 @@ function acquireRunLock(directory, planDigest) {
 function releaseRunLock(path) {
   try { unlinkSync(path); } catch (error) { if (error?.code !== 'ENOENT') throw error; }
 }function git(root, args) {
-  return execFileSync('git', args, { cwd: root, encoding: 'utf8', windowsHide: true, timeout: 15000 }).trim();
+  return execFileSync('git', args, { cwd: root, encoding: 'utf8', windowsHide: true, timeout: 120000 }).trim();
 }
 const codingContextCache = new Map();
 function codingContext(root, task) {
