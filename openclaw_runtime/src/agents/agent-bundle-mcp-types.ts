@@ -93,7 +93,12 @@ export type SessionMcpRuntime = {
   /** Returns the cached catalog only; must not start runtimes, connect transports, or issue tools/list. */
   peekCatalog: () => McpToolCatalog | null;
   markUsed: () => void;
-  callTool: (serverName: string, toolName: string, input: unknown) => Promise<CallToolResult>;
+  callTool: (
+    serverName: string,
+    toolName: string,
+    input: unknown,
+    signal?: AbortSignal,
+  ) => Promise<CallToolResult>;
   ping?: (serverName: string) => Promise<void>;
   listResources?: (serverName: string) => Promise<unknown>;
   readResource?: (serverName: string, uri: string) => Promise<unknown>;

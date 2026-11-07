@@ -147,6 +147,7 @@ type HookOutcome =
       blocked: true;
       kind?: HookBlockedKind;
       deniedReason?: HookBlockedReason;
+      approvalState?: "waiting" | "denied" | "timeout" | "unavailable";
       reason: string;
       params?: unknown;
     }
@@ -514,6 +515,7 @@ async function requestPluginToolApproval(params: {
         kind: "failure",
         deniedReason: "plugin-approval",
         reason: approval.description || "Plugin approval request failed",
+        approvalState: "unavailable",
         params: params.baseParams,
       };
     }
@@ -528,6 +530,7 @@ async function requestPluginToolApproval(params: {
           kind: "failure",
           deniedReason: "plugin-approval",
           reason: "Plugin approval unavailable (no approval route)",
+          approvalState: "unavailable",
           params: params.baseParams,
         };
       }
@@ -570,6 +573,7 @@ async function requestPluginToolApproval(params: {
         kind: "failure",
         deniedReason: "plugin-approval",
         reason: "Denied by user",
+        approvalState: "denied",
         params: params.baseParams,
       };
     }
@@ -586,6 +590,7 @@ async function requestPluginToolApproval(params: {
       kind: "failure",
       deniedReason: "plugin-approval",
       reason: "Approval timed out",
+      approvalState: "timeout",
       params: params.baseParams,
     };
   } catch (err) {
@@ -599,6 +604,7 @@ async function requestPluginToolApproval(params: {
       kind: "failure",
       deniedReason: "plugin-approval",
       reason: "Plugin approval required (gateway unavailable)",
+      approvalState: "unavailable",
       params: params.baseParams,
     };
   }
@@ -662,6 +668,7 @@ async function resolveBeforeToolCallApprovalOutcome(params: {
       kind: "failure",
       deniedReason: "plugin-approval",
       reason: approval.description || approval.title || "Plugin approval required",
+      approvalState: "waiting",
       params: params.baseParams,
     };
   }
@@ -1217,7 +1224,10 @@ export function wrapToolWithBeforeToolCallHook(
       signal?.throwIfAborted();
       if (outcome.blocked) {
         if (outcome.kind !== "veto") {
-          throw new Error(outcome.reason);
+          throw Object.assign(new Error(outcome.reason), {
+            deniedReason: outcome.deniedReason,
+            approvalState: outcome.approvalState,
+          });
         }
         const normalizedToolName = normalizeToolName(toolName || "tool");
         const trace = resolveToolDiagnosticTrace(ctx);

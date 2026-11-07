@@ -1,7 +1,10 @@
 /** Session-scoped MCP runtime manager, catalog loader, and transport lifecycle. */
 import crypto from "node:crypto";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+import {
+  StreamableHTTPClientTransport,
+  StreamableHTTPError,
+} from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import { ErrorCode, McpError, type CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { ServerCapabilities } from "@modelcontextprotocol/sdk/types.js";
@@ -569,7 +572,9 @@ export function createSessionMcpRuntime(params: {
   };
   const runGuardedServerRequest = async <T>(
     serverName: string,
+    session: BundleMcpSession,
     request: () => Promise<T>,
+    signal?: AbortSignal,
   ): Promise<T> => {
     const nowMs = Date.now();
     const backoff = serverBackoff.get(serverName);
@@ -580,10 +585,13 @@ export function createSessionMcpRuntime(params: {
     }
     try {
       const result = await request();
-      serverBackoff.delete(serverName);
+      if (sessions.get(serverName) === session) serverBackoff.delete(serverName);
       return result;
     } catch (error) {
-      recordServerToolFailure(serverName, nowMs);
+      await retireRejectedHttpSession(serverName, session, error);
+      if (!signal?.aborted && sessions.get(serverName) === session) {
+        recordServerToolFailure(serverName, nowMs);
+      }
       throw error;
     }
   };
@@ -606,6 +614,25 @@ export function createSessionMcpRuntime(params: {
     catalogInvalidationGeneration += 1;
     catalog = null;
     catalogInFlight = undefined;
+  };
+  const retireRejectedHttpSession = async (
+    serverName: string,
+    session: BundleMcpSession,
+    error: unknown,
+  ) => {
+    if (
+      sessions.get(serverName) !== session ||
+      !(error instanceof StreamableHTTPError) ||
+      error.code !== 404 ||
+      !(session?.transport instanceof StreamableHTTPClientTransport) ||
+      !session.transport.sessionId
+    )
+      return;
+    // The SDK retains expired HTTP session IDs. Retire the requesting connection
+    // only; late errors must not close its replacement or replay the tool effect.
+    sessions.delete(serverName);
+    invalidateCatalogMemo();
+    await disposeSession(session);
   };
 
   /**
@@ -833,6 +860,7 @@ export function createSessionMcpRuntime(params: {
               });
             }
           } catch (error) {
+            await retireRejectedHttpSession(serverName, session, error);
             const message = redactErrorUrls(error);
             if (!disposed) {
               const action = reusedSession ? "refresh" : "start";
@@ -922,15 +950,18 @@ export function createSessionMcpRuntime(params: {
     markUsed() {
       lastUsedAt = Date.now();
     },
-    async callTool(serverName, toolName, input) {
+    async callTool(serverName, toolName, input, signal) {
       failIfDisposed();
+      signal?.throwIfAborted();
       await getCatalog();
+      signal?.throwIfAborted();
       const session = sessions.get(serverName);
       if (!session) {
         throw new Error(`bundle-mcp server "${serverName}" is not connected`);
       }
       return await runGuardedServerRequest(
         serverName,
+        session,
         async () =>
           (await session.client.callTool(
             {
@@ -938,8 +969,9 @@ export function createSessionMcpRuntime(params: {
               arguments: isMcpConfigRecord(input) ? input : {},
             },
             undefined,
-            { timeout: session.requestTimeoutMs },
+            { timeout: session.requestTimeoutMs, signal },
           )) as CallToolResult,
+        signal,
       );
     },
     async ping(serverName) {
@@ -947,7 +979,7 @@ export function createSessionMcpRuntime(params: {
       await getCatalog();
       const session = sessions.get(serverName);
       if (!session) throw new Error(`bundle-mcp server "${serverName}" is not connected`);
-      await runGuardedServerRequest(serverName, () =>
+      await runGuardedServerRequest(serverName, session, () =>
         session.client.ping({ timeout: session.requestTimeoutMs }),
       );
     },
@@ -958,7 +990,7 @@ export function createSessionMcpRuntime(params: {
       if (!session) {
         throw new Error(`bundle-mcp server "${serverName}" is not connected`);
       }
-      return await runGuardedServerRequest(serverName, async () =>
+      return await runGuardedServerRequest(serverName, session, async () =>
         listAllResources(session.client, session.requestTimeoutMs),
       );
     },
@@ -971,6 +1003,7 @@ export function createSessionMcpRuntime(params: {
       }
       return await runGuardedServerRequest(
         serverName,
+        session,
         async () =>
           await session.client.readResource({ uri }, { timeout: session.requestTimeoutMs }),
       );
@@ -982,7 +1015,7 @@ export function createSessionMcpRuntime(params: {
       if (!session) {
         throw new Error(`bundle-mcp server "${serverName}" is not connected`);
       }
-      return await runGuardedServerRequest(serverName, async () =>
+      return await runGuardedServerRequest(serverName, session, async () =>
         listAllPrompts(session.client, session.requestTimeoutMs),
       );
     },
@@ -995,6 +1028,7 @@ export function createSessionMcpRuntime(params: {
       }
       return await runGuardedServerRequest(
         serverName,
+        session,
         async () =>
           await session.client.getPrompt(
             { name, ...(args ? { arguments: args } : {}) },

@@ -2,7 +2,7 @@
 // Implements initialize, tools/list, tools/call, and notification handling.
 import crypto from "node:crypto";
 import { runBeforeToolCallHook, type HookContext } from "../agents/agent-tools.before-tool-call.js";
-import { formatErrorMessage } from "../infra/errors.js";
+import { mcpToolError, toMcpToolResult } from "../shared/mcp-tool-result.js";
 import {
   MCP_LOOPBACK_SERVER_NAME,
   MCP_LOOPBACK_SERVER_VERSION,
@@ -17,29 +17,6 @@ import {
   type McpToolSchemaEntry,
 } from "./mcp-http.schema.js";
 
-type McpTextContent = {
-  type: "text";
-  text: string;
-};
-
-// Tool implementations may return MCP content blocks, plain strings, or
-// arbitrary JSON. Normalize them into text blocks for consistent loopback output.
-function normalizeToolCallContent(result: unknown): McpTextContent[] {
-  const content = (result as { content?: unknown })?.content;
-  if (Array.isArray(content)) {
-    return content.map((block: { type?: string; text?: string }) => ({
-      type: (block.type ?? "text") as "text",
-      text: block.text ?? (typeof block === "string" ? block : JSON.stringify(block)),
-    }));
-  }
-  return [
-    {
-      type: "text",
-      text: typeof result === "string" ? result : JSON.stringify(result),
-    },
-  ];
-}
-
 /** Handles one MCP loopback JSON-RPC message and returns a response or notification null. */
 export async function handleMcpJsonRpc(params: {
   message: JsonRpcRequest;
@@ -47,6 +24,7 @@ export async function handleMcpJsonRpc(params: {
   toolSchema: McpToolSchemaEntry[];
   hookContext?: HookContext;
   signal?: AbortSignal;
+  protocolVersion?: string;
 }): Promise<object | null> {
   const { id, method, params: methodParams } = params.message;
 
@@ -98,6 +76,7 @@ export async function handleMcpJsonRpc(params: {
       }
       const toolCallId = `mcp-${crypto.randomUUID()}`;
       try {
+        params.signal?.throwIfAborted();
         // Gateway before-tool hooks still run for loopback MCP calls so policy
         // and audit behavior matches native tool calls from normal chat runs.
         const hookResult = await runBeforeToolCallHook({
@@ -108,22 +87,20 @@ export async function handleMcpJsonRpc(params: {
           signal: params.signal,
         });
         if (hookResult.blocked) {
-          return jsonRpcResult(id, {
-            content: [{ type: "text", text: hookResult.reason }],
-            isError: true,
-          });
+          return jsonRpcResult(
+            id,
+            toMcpToolResult({
+              content: [{ type: "text", text: hookResult.reason }],
+              isError: true,
+              approvalRequired: hookResult.approvalState === "waiting",
+              details: { status: hookResult.approvalState ?? "blocked" },
+            }),
+          );
         }
         const result = await tool.execute(toolCallId, hookResult.params, params.signal);
-        return jsonRpcResult(id, {
-          content: normalizeToolCallContent(result),
-          isError: false,
-        });
+        return jsonRpcResult(id, toMcpToolResult(result, params.signal, params.protocolVersion));
       } catch (error) {
-        const message = formatErrorMessage(error);
-        return jsonRpcResult(id, {
-          content: [{ type: "text", text: message || "tool execution failed" }],
-          isError: true,
-        });
+        return jsonRpcResult(id, mcpToolError(error, params.signal));
       }
     }
     default:

@@ -145,7 +145,9 @@ function readApprovalInfo(result: McpCallToolResult): { required: boolean; appro
   const directRequired = result.approvalRequired === true;
   const directApprovalId = normalizeOptionalString(result.approvalId);
   const nested = isRecord(result.result) ? result.result : undefined;
-  const nestedRequired = nested?.approvalRequired === true;
+  const details = nested && isRecord(nested.details) ? nested.details : undefined;
+  const meta = nested && isRecord(nested._meta) ? nested._meta : details && isRecord(details.mcpMeta) ? details.mcpMeta : undefined;
+  const nestedRequired = nested?.approvalRequired === true || details?.approvalRequired === true || details?.status === 'waiting' || meta?.['openclaw/resultStatus'] === 'waiting';
   const nestedApprovalId = nested ? readApprovalIdFromRecord(nested) : undefined;
   return {
     required: directRequired || nestedRequired,
@@ -286,6 +288,12 @@ export function createMcpToolCallResultShadow(
 ): McpToolCallResultShadow {
   const approval = readApprovalInfo(result);
   const message = normalizeOptionalString(result.reason) ?? normalizeOptionalString(result.error);
+  const nested = isRecord(result.result) ? result.result : {};
+  const details = isRecord(nested.details) ? nested.details : {};
+  const meta = isRecord(nested._meta) ? nested._meta : isRecord(details.mcpMeta) ? details.mcpMeta : {};
+  const nestedStatus = meta['openclaw/resultStatus'] ?? details.status;
+  const nestedFailed = nested.isError === true || nested.success === false || details.status === 'error'
+    || ['error', 'failed', 'cancelled', 'aborted', 'timeout', 'blocked', 'denied', 'unavailable'].includes(String(nestedStatus));
 
   if (approval.required) {
     const reason: McpToolCallShadowReason = {
@@ -312,7 +320,7 @@ export function createMcpToolCallResultShadow(
     );
   }
 
-  if (result.success) {
+  if (result.success && !nestedFailed) {
     const structuredData = toOptionalRuntimeCoreJsonValue(result.result);
     return createBridgeResult(
       request,
@@ -350,7 +358,7 @@ export function createMcpToolCallResultShadow(
     request,
     createBaseResult(
       request,
-      'error',
+      nestedStatus === 'cancelled' || nestedStatus === 'aborted' ? 'cancelled' : 'error',
       createDiagnosticData('error', reason, result.result),
       createRuntimeError('tool', resolvedMessage, false),
     ),
