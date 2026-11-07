@@ -140,7 +140,7 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
     await expect(detail.getByText('echo', { exact: true })).toBeVisible({ timeout: 45_000 });
     await expect(detail.getByRole('paragraph').filter({ hasText: /^connected$/ })).toBeVisible();
     await detail.getByText('echo', { exact: true }).scrollIntoViewIfNeeded();
-    await page.screenshot({ path: testInfo.outputPath('mcp-connected.png'), fullPage: true });
+    await page.screenshot({ path: testInfo.outputPath('mcp-connected.png'), animations: 'disabled' });
     const configInput = detail.getByRole('textbox');
     const uiConfig = JSON.parse(await configInput.inputValue());
     await configInput.fill(JSON.stringify({ ...uiConfig, networkPolicy: 'disabled' }, null, 2));
@@ -155,7 +155,7 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
     expect(evidence.networkDenied).toMatchObject({ success: false });
     expect(server.requests.filter((request) => request.method === 'tools/call')).toHaveLength(callsBeforeNetworkDenial);
     await detail.getByRole('alert').scrollIntoViewIfNeeded();
-    await page.screenshot({ path: testInfo.outputPath('mcp-error.png'), fullPage: true });
+    await page.screenshot({ path: testInfo.outputPath('mcp-error.png'), animations: 'disabled' });
     evidence.status = 'pass';
   } catch (error) {
     evidence.status = 'failed';

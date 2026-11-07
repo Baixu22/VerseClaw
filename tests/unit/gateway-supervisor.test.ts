@@ -128,6 +128,22 @@ describe('gateway supervisor process cleanup', () => {
     });
     expect(child.kill).not.toHaveBeenCalled();
   });
+  it('waits for the owned exit event when the pid disappears before Electron delivers it', async () => {
+    setPlatform('win32');
+    const child = new MockUtilityChild(4321);
+    mockExecFile.mockImplementation(() => ({}));
+    vi.spyOn(process, 'kill').mockImplementation(() => { throw Object.assign(new Error('kill ESRCH'), { code: 'ESRCH' }); });
+    const { terminateOwnedGatewayProcess } = await import('@electron/gateway/supervisor');
+    vi.useFakeTimers();
+    let state = 'pending';
+    const stopped = terminateOwnedGatewayProcess(child as unknown as Electron.UtilityProcess)
+      .then(() => { state = 'exited'; }, () => { state = 'rejected'; });
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(state).toBe('pending');
+    child.emit('exit', 0);
+    await stopped;
+    expect(state).toBe('exited');
+  });
 
   it('uses direct child.kill for owned process on non-Windows', async () => {
     setPlatform('linux');

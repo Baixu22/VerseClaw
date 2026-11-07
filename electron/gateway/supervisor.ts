@@ -49,6 +49,9 @@ export async function terminateOwnedGatewayProcess(child: Electron.UtilityProces
         if (child.pid) process.kill(child.pid, 'SIGKILL');
         else child.kill();
       } catch (error) {
+        // The process can exit before Electron delivers its queued exit event.
+        // Keep the listener and deadline until that event confirms ownership release.
+        if ((error as NodeJS.ErrnoException).code === 'ESRCH') return;
         clearTimeout(timeout);
         child.removeListener('exit', onExit);
         reject(error);
