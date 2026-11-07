@@ -7,5 +7,5 @@
   "sha256": "44266dcc61563c62ecf9d1bce098d1750451705bf07841cf57355d25016b5d79",
   "bytes": 105424,
   "summary": "verification.v1.json",
-  "commandLog": "verification/diagnostic-current.log"
+  "commandLogArchive": "verification/validation-log-archive.json"
 }

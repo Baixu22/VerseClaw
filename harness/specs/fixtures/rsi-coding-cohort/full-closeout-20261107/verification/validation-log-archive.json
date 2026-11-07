@@ -1,0 +1,19 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-validation-log-retention",
+  "archivePath": "D:/ClawX-acceptance/rsi-full-closeout-20261106/validation-logs.zip",
+  "sha256": "c6a3655a30df4d1e501cd532e9a313c1fa6bc4d855b529453bd9791394664ac7",
+  "bytes": 31752,
+  "files": {
+    "verification/agent-dev-deep-test-final.log": "13a847eb20d9a4d87283309b7630064e80826a28e6899f61967d7d5386982d17",
+    "verification/diagnostic-current.log": "45b16741057bd76c04b1f7f0fe2f944aef9612a5b3d4827bed4467255f2632cc",
+    "verification/e2e-bootstrap-readiness.log": "bf6b1891449fdffb77d18646c1051f9a39e6559b6dde230917f396bef57c2403",
+    "verification/full-typecheck.log": "2505ed559a53a34614015401b408a326c53a3344b35f476303734e78ae680247",
+    "verification/harness-ci-before-final.log": "a22f227a1d73d61fa9c0988c76c3c57a83ca9dee494634e579c037ba5c2c949a",
+    "verification/harness-ci-final.log": "2732d02e6d0b621659769efc6a5aaff458fd02a504adb6b4324d200bb345322c",
+    "verification/rsi-profile.log": "55d29e9e136145bb26fff11d8fa29ccd3df22c25a572fc92b89282f78f5cf8ce",
+    "verification/rsi-timeout-investigation.log": "b51a4e55b296e62639d1ed4d44c0dd333133e50ba8c258ccadcd3602e4a51867"
+  },
+  "readbackMismatches": 0,
+  "recovery": "Extract into a new D:/tmp directory and verify each file hash; the source tree retains curated JSON reports and command completion records."
+}
