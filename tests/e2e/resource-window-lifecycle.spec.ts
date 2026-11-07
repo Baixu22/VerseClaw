@@ -75,7 +75,7 @@ test('integrated main and browser windows retain visibility, observers and backg
     const browser = await openBrowser();
     await control(browser.browserId, 'hide'); await expect.poll(shed).toBe(false);
     await control(browser.browserId, 'showInactive'); await control(mainId, 'hide'); await expect.poll(shed).toBe(false);
-    await expect.poll(() => page.evaluate(() => document.visibilityState)).toBe('hidden');
+    await expect.poll(() => invoke(page, 'window', 'isVisible')).toBe(false);
     await writeFile(testInfo.outputPath('hidden-window.json'), JSON.stringify(await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows().map(w => ({ id: w.id, visible: w.isVisible(), minimized: w.isMinimized(), backgroundThrottling: w.webContents.getBackgroundThrottling() }))), null, 2));
     const heartbeatBefore = await size(); const hiddenBefore = await calls();
     await page.waitForTimeout(11_000);

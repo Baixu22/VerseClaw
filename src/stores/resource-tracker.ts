@@ -43,8 +43,8 @@ export const useResourceStore = create<ResourceTrackerState>((set, get) => ({
     const ownerGeneration = generation;
     set({ isInitialized: true, observerCount: get().observerCount + 1 });
     if (first) {
-      if (typeof document === 'undefined' || document.visibilityState !== 'hidden') void get().refresh();
       stopPolling = createPollScheduler({
+      immediate: true,
       intervalMs: POLL_INTERVAL_MS,
       priority: 'background',
       isShed: isResourceShed,

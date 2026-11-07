@@ -11,6 +11,13 @@ expectedUserBehavior:
   - Closing a resource panel releases its observation while other observers and running tasks continue.
 touchedAreas:
   - electron/services/efficiency-orchestrator.ts
+  - electron/main/index.ts
+  - electron/main/window-visibility.ts
+  - electron/services/system-notifications-api.ts
+  - shared/host-api/contract.ts
+  - shared/host-events/contract.ts
+  - src/lib/host-api.ts
+  - src/lib/host-events.ts
   - openclaw_runtime/src/resources/background-work-gate.ts
   - src/lib/poll-scheduler.ts
   - src/stores/resource-tracker.ts

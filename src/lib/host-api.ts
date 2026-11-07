@@ -755,6 +755,7 @@ export const hostApi = {
     message: (input: DialogMessagePayload) => invokeHost('dialog', 'message', input),
   },
   window: {
+    isVisible: () => invokeHost('window', 'isVisible'),
     syncTrafficLightPosition: (sidebarCollapsed: boolean) => (
       invokeHost('window', 'syncTrafficLightPosition', { sidebarCollapsed })
     ),

@@ -5705,6 +5705,7 @@ export type HostApiContract = {
     maximize: () => void;
     close: () => void;
     isMaximized: () => boolean;
+    isVisible: () => boolean;
   };
   updates: {
     check: () => AppUpdateStatusResult;

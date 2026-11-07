@@ -265,6 +265,7 @@ export type HostEventContract = {
     devServerOutput: (payload: WebPreviewDevServerOutputEvent) => void;
   };
   app: {
+    windowVisibility: (visible: boolean) => void;
     navigate: (path: string) => void;
     newChat: () => void;
     openClawCliInstalled: (installedPath: string) => void;
@@ -339,6 +340,7 @@ export const HOST_EVENT_CHANNELS = {
     devServerOutput: 'web-preview:dev-server-output',
   },
   app: {
+    windowVisibility: 'window:visibility',
     navigate: 'navigate',
     newChat: 'new-chat',
     openClawCliInstalled: 'openclaw:cli-installed',

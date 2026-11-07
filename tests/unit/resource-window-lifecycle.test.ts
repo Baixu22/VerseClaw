@@ -13,8 +13,11 @@ vi.mock('../../shared/resources', () => ({ getTimerAligner: () => ({ setShedding
 import { app, powerMonitor } from 'electron';
 import { getEfficiencyShedState, startRuntimeEfficiency, stopRuntimeEfficiency, resetRuntimeEfficiencyForTests } from '../../electron/services/efficiency-orchestrator';
 import { getBackgroundWorkGate } from '../../openclaw_runtime/src/resources/background-work-gate';
+import { registerWindowVisibility } from '../../electron/main/window-visibility';
+import type { BrowserWindow } from 'electron';
 
 class FakeWindow extends EventEmitter {
+  webContents = Object.assign(new EventEmitter(), { isDestroyed: () => false, send: vi.fn() });
   visible = true; minimized = false; destroyed = false;
   isVisible() { if (this.destroyed) throw new Error('Window destroyed'); return this.visible; }
   isMinimized() { return this.minimized; }
@@ -28,6 +31,13 @@ beforeEach(() => { mocks.windows = []; mocks.snapshot.mockReset().mockResolvedVa
 afterEach(() => { resetRuntimeEfficiencyForTests(); app.removeAllListeners(); powerMonitor.removeAllListeners(); });
 
 describe('window resource lifetimes', () => {
+  it('publishes per-window native visibility and releases bridge listeners on close', () => {
+    const win = new FakeWindow(); registerWindowVisibility(win as unknown as BrowserWindow);
+    win.webContents.emit('did-finish-load');
+    expect(win.webContents.send).toHaveBeenLastCalledWith('window:visibility', true);
+    win.hide(); expect(win.webContents.send).toHaveBeenLastCalledWith('window:visibility', false);
+    win.close(); expect(win.listenerCount('show')).toBe(0); expect(win.webContents.listenerCount('did-finish-load')).toBe(0);
+  });
   it('aggregates visibility and detaches a closed window before reopen', async () => {
     const first = new FakeWindow(); const second = new FakeWindow(); mocks.windows = [first, second];
     startRuntimeEfficiency(); await flush();

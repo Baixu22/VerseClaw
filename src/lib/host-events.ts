@@ -190,6 +190,7 @@ export const hostEvents = {
     onWebPreviewEvent('devServerOutput', handler)
   ),
   onNavigate: (handler: HostEventHandler<'app', 'navigate'>) => onAppEvent('navigate', handler),
+  onWindowVisibility: (handler: HostEventHandler<'app', 'windowVisibility'>) => onAppEvent('windowVisibility', handler),
   onNewChat: (handler: HostEventHandler<'app', 'newChat'>) => onAppEvent('newChat', handler),
   onOpenClawCliInstalled: (
     handler: HostEventHandler<'app', 'openClawCliInstalled'>,
