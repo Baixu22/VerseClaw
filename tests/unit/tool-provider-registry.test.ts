@@ -31,6 +31,7 @@ vi.mock('electron-store', () => {
 });
 
 vi.mock('@electron/utils/agent-config', () => ({
+  listConfiguredAgentIds: vi.fn(async () => ['main']),
   readAgentBootstrapTools: vi.fn(async () => ({
     defaultSkillIds: [],
     defaultMcpServerIds: [],
@@ -42,6 +43,7 @@ vi.mock('@electron/services/git-api', () => ({
 }));
 
 vi.mock('@electron/services/workspaces-api', () => ({
+  getWorkspaceRootPathById: vi.fn(async () => 'D:/tmp/mcp-workspace-a'),
   getActiveWorkspaceProfile: vi.fn(async () => ({ id: 'workspace-a', rootPath: 'D:/tmp/mcp-workspace-a', agentId: 'main', activeSessionKey: 'agent:main:main', permissionMode: 'fullAccess' })),
 }));
 

@@ -556,6 +556,7 @@ export function createSessionMcpRuntime(params: {
   let catalogInFlight: Promise<McpToolCatalog> | undefined;
   let catalogInvalidationGeneration = 0;
   const sessions = new Map<string, BundleMcpSession>();
+  const listingServers = new Set<string>();
   const serverBackoff = new Map<string, McpServerBackoffState>();
   const recordServerToolFailure = (serverName: string, nowMs: number) => {
     const previous = serverBackoff.get(serverName);
@@ -632,6 +633,9 @@ export function createSessionMcpRuntime(params: {
       if (!sessions.has(serverName)) {
         return;
       }
+      // The in-flight tools/list already captures this server's error in diagnostics.
+      // Invalidating its enclosing discovery would discard healthy peer results too.
+      if (listingServers.has(serverName)) return;
       invalidateCatalogMemo();
       return;
     }
@@ -753,13 +757,19 @@ export function createSessionMcpRuntime(params: {
             const capabilities = summarizeServerCapabilities(
               session.client.getServerCapabilities(),
             );
-            const listedTools = await listAllToolsBestEffort({
-              client: session.client,
-              timeoutMs: getCatalogListTimeoutMs(rawServer, resolved.requestTimeoutMs),
-              suppressUnsupported: Boolean(
-                !capabilities.tools && (capabilities.resources || capabilities.prompts),
-              ),
-            });
+            listingServers.add(serverName);
+            let listedTools: ListedTool[];
+            try {
+              listedTools = await listAllToolsBestEffort({
+                client: session.client,
+                timeoutMs: getCatalogListTimeoutMs(rawServer, resolved.requestTimeoutMs),
+                suppressUnsupported: Boolean(
+                  !capabilities.tools && (capabilities.resources || capabilities.prompts),
+                ),
+              });
+            } finally {
+              listingServers.delete(serverName);
+            }
             failIfDisposed();
             const selection = getMcpToolSelection(rawServer);
             const exposedTools = listedTools.filter((tool) =>

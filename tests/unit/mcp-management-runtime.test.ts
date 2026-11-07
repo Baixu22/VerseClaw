@@ -74,6 +74,29 @@ describe('TF-0772 session MCP management', () => {
     expect(await invoke('mcp.listTools')).toMatchObject({ success: true, status: 'connected', tools: [] });
     expect(await invoke('mcp.listTools', { serverId: 'missing' })).toMatchObject({ success: false, errorCode: 'VALIDATION', status: 'error' });
   });
+  it('keeps a stable healthy catalog when a peer returns HTTP 503 during discovery', async () => {
+    const healthy = await endpoint();
+    const failed = await startCodingMcpServer({ listHttpError: true });
+    endpoints.push(failed);
+    state.cfg.mcp!.servers!.unavailable = { url: failed.url, transport: 'streamable-http', networkPolicy: 'localOnly' };
+    expect(await invoke('mcp.listTools')).toMatchObject({ success: true, status: 'connected' });
+    expect(await invoke('mcp.callTool', { toolName: 'echo', args: { message: 'healthy-peer' } })).toMatchObject({ success: true });
+    expect(healthy.requests.filter((request) => request.method === 'tools/call')).toHaveLength(1);
+  });
+  it('applies the active sandbox tool policy to management and warm tools.invoke', async () => {
+    const server = await endpoint();
+    state.cfg.agents!.defaults!.sandbox = { mode: 'all', workspaceAccess: 'rw' };
+    state.cfg.tools = { profile: 'full', sandbox: { tools: { allow: ['*'], deny: ['fixture__echo'] } } };
+    const list = await invoke('mcp.listTools');
+    expect(list).toMatchObject({ success: true });
+    expect((list.tools as Array<{name: string}>).some((tool) => tool.name === 'echo')).toBe(false);
+    expect(await invoke('mcp.callTool', { toolName: 'echo', args: { message: 'denied' } })).toMatchObject({ success: false });
+    const outcome = await invokeGatewayTool({ cfg: state.cfg, input: {
+      name: 'fixture__echo', sessionKey, args: { message: 'also-denied' },
+    }, toolCallIdPrefix: 'p2-sandbox', approvalMode: 'report' });
+    expect(outcome.ok).toBe(false);
+    expect(server.requests.filter((request) => request.method === 'tools/call')).toHaveLength(0);
+  });
   it('keeps a healthy server usable when another server times out during catalog discovery', async () => {
     const healthy = await endpoint();
     const failed = await startCodingMcpServer({ delayMs: 700 });

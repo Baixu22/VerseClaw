@@ -334,6 +334,8 @@ CodingRun 的 `coding-run/v1` JSONL 由同一个合同解析：`run`/`loop` 的 
 
 ## 12. Workspace 与长会话资源
 
+MCP 管理入口按当前工作区的持久化会话和代际读取目录、调用工具及执行 SDK ping。作用域或所有者变更后重新投影当前授权，保留助手的显式默认选择，并撤销旧作用域授权；管理调用与模型运行使用相同的沙箱工具策略。单个服务的超时或 HTTP 错误会保留为该服务的诊断，健康服务仍可调用。
+
 Workspace coordinator 绑定会记录：
 
 - workspace root / managed worktree；

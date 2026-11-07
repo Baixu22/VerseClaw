@@ -5,7 +5,7 @@ import { StreamableHTTPServerTransport } from '../../../openclaw_runtime/node_mo
 import { CallToolRequestSchema, ListToolsRequestSchema, PingRequestSchema } from '../../../openclaw_runtime/node_modules/@modelcontextprotocol/sdk/dist/esm/types.js';
 
 /** Real SDK endpoint shared by management integration and Electron acceptance. */
-export async function startCodingMcpServer(options: { empty?: boolean; delayMs?: number } = {}) {
+export async function startCodingMcpServer(options: { empty?: boolean; delayMs?: number; listHttpError?: boolean } = {}) {
   const requests: Array<{ method: string; params?: unknown }> = [];
   const active = new Set<Server>();
   const stop = new AbortController();
@@ -32,6 +32,11 @@ export async function startCodingMcpServer(options: { empty?: boolean; delayMs?:
       for await (const chunk of request) body += String(chunk);
       const parsed = body ? JSON.parse(body) : undefined;
       if (parsed?.method) requests.push({ method: parsed.method, params: parsed.params });
+      if (options.listHttpError && parsed?.method === 'tools/list') {
+        response.writeHead(503, { 'content-type': 'text/plain' });
+        response.end('Fixture unavailable');
+        return;
+      }
       await rpc.connect(transport);
       await transport.handleRequest(request, response, parsed);
     } catch (error) {

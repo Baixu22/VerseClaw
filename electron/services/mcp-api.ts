@@ -21,7 +21,7 @@ import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { GatewayManager } from '../gateway/manager';
 import { isRecord } from './payload-utils';
 import { listResourceEnvelopeEntries, recordResourceEnvelopeEntry, removeResourceEnvelopeEntry } from './resource-envelope';
-import { readAgentBootstrapTools } from '../utils/agent-config';
+import { listConfiguredAgentIds, readAgentBootstrapTools } from '../utils/agent-config';
 import { proxyAwareFetch } from '../utils/proxy-fetch';
 import { readOpenClawConfig, syncSourceRuntimeMcpConfig, writeOpenClawConfig } from '../utils/channel-config';
 import { withConfigLock } from '../utils/config-mutex';
@@ -644,11 +644,11 @@ function normalizeStringArray(value: unknown): string[] | undefined {
 function normalizeExposure(value: unknown): McpServerConfig['exposure'] {
   if (!isRecord(value)) return undefined;
   const exposure = {
-    agents: normalizeStringArray(value.agents),
-    workspaces: normalizeStringArray(value.workspaces),
-    roles: normalizeStringArray(value.roles),
+    ...(value.agents !== undefined ? { agents: normalizeStringArray(value.agents) ?? [] } : {}),
+    ...(value.workspaces !== undefined ? { workspaces: normalizeStringArray(value.workspaces) ?? [] } : {}),
+    ...(value.roles !== undefined ? { roles: normalizeStringArray(value.roles) ?? [] } : {}),
   };
-  return exposure.agents || exposure.workspaces || exposure.roles ? exposure : undefined;
+  return Object.keys(exposure).length > 0 ? exposure : undefined;
 }
 
 function normalizeEnv(value: unknown): Record<string, string> | undefined {
@@ -901,18 +901,30 @@ async function toRuntimeServer(
 async function projectServerToRuntimeConfig(
   server: McpServerConfig,
   current: Record<string, unknown> | undefined,
+  selectedAgentIds: string[],
 ): Promise<Record<string, unknown>> {
   const next: Record<string, unknown> = { ...(current ?? {}) };
   next.enabled = server.enabled !== false;
-  const exposure = { ...(isRecord(next.exposure) ? next.exposure : {}), ...(server.exposure ?? {}) };
-  if (server.scope === 'agent' && server.ownerId) {
-    exposure.agents = withMembership(normalizeStringArray(exposure.agents), server.ownerId, true);
+  // Rebuild grants from their owners. The runtime projection can contain revoked scope grants.
+  const exposure: NonNullable<McpServerConfig['exposure']> = { ...server.exposure };
+  if (exposure.workspaces) {
+    exposure.workspaces = await Promise.all(exposure.workspaces.map(async (value) => await getWorkspaceRootPathById(value) ?? value));
+  }
+  if (server.scope === 'agent') {
+    exposure.agents = server.ownerId
+      ? withMembership(exposure.agents, server.ownerId, true)
+      : exposure.agents ?? [];
   }
   if (server.scope === 'workspace') {
     const root = server.ownerId ? await getWorkspaceRootPathById(server.ownerId) : undefined;
     exposure.workspaces = root ? withMembership(normalizeStringArray(exposure.workspaces), root, true) : [];
   }
-  if (Object.keys(exposure).length > 0) next.exposure = exposure;
+  if (Object.keys(exposure).length > 0 || server.scope !== 'global') {
+    for (const agentId of selectedAgentIds) exposure.agents = withMembership(exposure.agents, agentId, true);
+    next.exposure = exposure;
+  } else {
+    delete next.exposure;
+  }
   if (server.transport === 'stdio') {
     next.command = server.command;
     next.args = server.args;
@@ -948,46 +960,7 @@ export async function syncAgentMcpExposureToOpenClawConfig(
   agentId: string,
   defaultMcpServerIds: string[],
 ): Promise<void> {
-  const selectedIds = new Set(defaultMcpServerIds);
-  selectedIds.delete(VERSE_CLAW_GIT_MCP_SERVER_ID);
-  const servers = await readServers();
-  await withConfigLock(async () => {
-    const config = await readOpenClawConfig();
-    const mcp = isRecord(config.mcp) ? { ...config.mcp } as Record<string, unknown> : {};
-    const currentServers = isRecord(mcp.servers)
-      ? { ...(mcp.servers as Record<string, unknown>) }
-      : {};
-    for (const server of servers) {
-      const selected = selectedIds.has(server.id);
-      const existing = isRecord(currentServers[server.id])
-        ? { ...(currentServers[server.id] as Record<string, unknown>) }
-        : undefined;
-      if (!selected && !existing) {
-        continue;
-      }
-      const vault = await readEnvVault();
-      const runtimeServer = selected ? await toRuntimeServer(server, vault) : (server as McpServerConfig);
-      const next = selected
-        ? await projectServerToRuntimeConfig(runtimeServer, existing)
-        : { ...(existing ?? {}) };
-      const exposure = isRecord(next.exposure) ? { ...next.exposure } as Record<string, unknown> : {};
-      const agents = withMembership(normalizeStringArray(exposure.agents), agentId, selected);
-      if (agents) {
-        exposure.agents = agents;
-      } else {
-        delete exposure.agents;
-      }
-      if (!selected && Object.keys(exposure).length === 0) {
-        exposure.agents = [];
-      }
-      next.exposure = exposure;
-      currentServers[server.id] = next;
-    }
-    mcp.servers = currentServers;
-    config.mcp = mcp;
-    await writeOpenClawConfig(config);
-    await syncSourceRuntimeMcpConfig(config.mcp);
-  });
+  await syncAllMcpServersToOpenClawConfig({ agentId, defaultMcpServerIds });
 }
 
 /**
@@ -998,7 +971,7 @@ export async function syncAgentMcpExposureToOpenClawConfig(
  * method. Built-in ClawX bridge servers (`clawx://` localAddress) are
  * Main-process-local and intentionally not mirrored.
  */
-export async function syncAllMcpServersToOpenClawConfig(): Promise<void> {
+export async function syncAllMcpServersToOpenClawConfig(selection?: { agentId: string; defaultMcpServerIds: string[] }): Promise<void> {
   const servers = (await readServers()).filter((server) => !isClawxBridgeServer(server));
   await withConfigLock(async () => {
     const config = await readOpenClawConfig();
@@ -1007,6 +980,12 @@ export async function syncAllMcpServersToOpenClawConfig(): Promise<void> {
       ? { ...(mcp.servers as Record<string, unknown>) }
       : {};
     const vault = await readEnvVault();
+    const agentIds = new Set(await listConfiguredAgentIds());
+    if (selection) agentIds.add(selection.agentId);
+    const selections = await Promise.all([...agentIds].map(async (id) => ({
+      id,
+      serverIds: id === selection?.agentId ? selection.defaultMcpServerIds : (await readAgentBootstrapTools(id)).defaultMcpServerIds,
+    })));
     const nextServers: Record<string, unknown> = {};
     for (const server of servers) {
       const runtimeServer = await toRuntimeServer(server, vault);
@@ -1015,6 +994,7 @@ export async function syncAllMcpServersToOpenClawConfig(): Promise<void> {
         isRecord(currentServers[server.id])
           ? (currentServers[server.id] as Record<string, unknown>)
           : undefined,
+        selections.filter((entry) => entry.serverIds.includes(server.id)).map((entry) => entry.id),
       );
     }
     const activeIds = new Set(servers.filter((server) => server.enabled !== false).map((server) => server.id));
@@ -1069,12 +1049,16 @@ export async function listMcpServersForCapabilityPublication(input: {
   });
 }
 
-function matchesContext(server: McpServerConfig, workspaceId?: string | null, agentId?: string | null): boolean {
+function matchesContext(server: McpServerConfig, workspaceId?: string | null, agentId?: string | null, workspaceRoot?: string): boolean {
   if (!server.enabled) return false;
-  if (server.scope === 'global') return true;
-  if (server.scope === 'agent') return Boolean(agentId && server.ownerId === agentId);
-  if (server.scope === 'workspace') return Boolean(workspaceId && server.ownerId === workspaceId);
-  return false;
+  if (server.scope === 'global' && !server.exposure) return true;
+  return Boolean(
+    (server.scope === 'agent' && agentId && server.ownerId === agentId)
+    || (server.scope === 'workspace' && workspaceId && server.ownerId === workspaceId)
+    || (agentId && server.exposure?.agents?.includes(agentId))
+    || (workspaceId && server.exposure?.workspaces?.includes(workspaceId))
+    || (workspaceRoot && server.exposure?.workspaces?.includes(workspaceRoot))
+  );
 }
 
 function orderResolvedServers(servers: McpServerConfig[], defaultIdSet = new Set<string>()): McpServerConfig[] {
@@ -1105,8 +1089,9 @@ export async function resolveMcpServersForContext(input: {
     ? (await readAgentBootstrapTools(input.agentId).catch(() => ({ defaultMcpServerIds: [] }))).defaultMcpServerIds
     : [];
   const defaultIdSet = new Set(defaultMcpServerIds);
+  const workspaceRoot = input.workspaceId ? await getWorkspaceRootPathById(input.workspaceId) : undefined;
   const resolved = servers.filter((server) => (
-    matchesContext(server as McpServerConfig, input.workspaceId, input.agentId)
+    matchesContext(server as McpServerConfig, input.workspaceId, input.agentId, workspaceRoot)
     || (server.enabled && defaultIdSet.has(server.id))
   ));
   const ordered = orderResolvedServers(resolved as McpServerConfig[], defaultIdSet) as StoredMcpServer[];

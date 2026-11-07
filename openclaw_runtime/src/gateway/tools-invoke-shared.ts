@@ -605,7 +605,8 @@ export async function invokeGatewayTool(params: {
     }
     assertScopeCurrent();
     const result = await gatewayTool.execute?.(toolCallId, hookResult.params);
-    assertScopeCurrent();
+    // Admission is checked before execution. A successful tool may itself change
+    // configuration or session state; preserve the returned effect instead of inviting replay.
     return recordAndReturn({
       ok: true,
       status: 200,

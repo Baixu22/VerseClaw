@@ -15,6 +15,7 @@ import {
 import { applyFinalEffectiveToolPolicy } from "../../agents/embedded-agent-runner/effective-tool-policy.js";
 import { runBeforeToolCallHook } from "../../agents/agent-tools.before-tool-call.js";
 import { resolveOrchestrationContext } from "../../agents/orchestration-workspace-context.js";
+import { resolveSandboxRuntimeStatus } from "../../agents/sandbox/runtime-status.js";
 import { ToolInputError } from "../../agents/tools/common.js";
 import type { McpCatalogTool } from "../../agents/agent-bundle-mcp-types.js";
 import { resolveRuntimeConfigCacheKey } from "../../config/runtime-snapshot.js";
@@ -82,9 +83,11 @@ export async function prepareSessionMcpManagement(
     }
     const model = resolveSessionModelRef(cfg, loaded.entry, owner.agentId);
     const delivery = deliveryContextFromSession(loaded.entry);
+    const sandbox = resolveSandboxRuntimeStatus({ cfg, sessionKey: owner.sessionKey });
     const tools = applyFinalEffectiveToolPolicy({
       bundledTools: buildBundleMcpToolsFromCatalog({ catalog }),
       config: cfg,
+      sandboxToolPolicy: sandbox.sandboxed ? sandbox.toolPolicy : undefined,
       sessionKey: owner.sessionKey,
       agentId: owner.agentId,
       modelProvider: model.provider,
