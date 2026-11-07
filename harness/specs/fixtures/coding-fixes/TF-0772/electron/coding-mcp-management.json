@@ -1,0 +1,791 @@
+{
+  "schema": "CodingMcpManagement/v1",
+  "driven_by": "agent",
+  "actor": "codex-coding-p2-01a1b07b",
+  "realHumanEvidence": false,
+  "runtime": "source",
+  "provider": "scripted-local",
+  "workspace": "D:\\ClawX\\.tmp\\coding-p2-01a1ab23-final\\verse-claw-e2e-run-fW8RV5\\verse-claw-e2e-user-data-7nrjXt\\workspace",
+  "runtimeConfig": {
+    "path": "D:\\ClawX\\.tmp\\coding-p2-01a1ab23-final\\verse-claw-e2e-run-fW8RV5\\verse-claw-e2e-user-data-7nrjXt\\openclaw-source-state\\openclaw.json",
+    "mcpServerIds": [
+      "delayed",
+      "slow",
+      "empty",
+      "fixture"
+    ],
+    "agents": {
+      "defaults": {
+        "model": {
+          "primary": "openai/mock-coder",
+          "fallbacks": []
+        },
+        "workspace": "D:\\ClawX\\.tmp\\coding-p2-01a1ab23-final\\verse-claw-e2e-run-fW8RV5\\verse-claw-e2e-user-data-7nrjXt\\workspace",
+        "skipBootstrap": true,
+        "sandbox": {
+          "mode": "off",
+          "backend": "openshell",
+          "workspaceAccess": "none",
+          "scope": "session"
+        },
+        "maxConcurrent": 4,
+        "subagents": {
+          "maxConcurrent": 8,
+          "archiveAfterMinutes": 60
+        }
+      },
+      "list": [
+        {
+          "id": "main",
+          "default": true,
+          "sandbox": {
+            "mode": "off"
+          }
+        }
+      ]
+    }
+  },
+  "activeWorkspace": {
+    "id": "p2-mcp-workspace",
+    "name": "P2 MCP workspace",
+    "rootPath": "D:\\ClawX\\.tmp\\coding-p2-01a1ab23-final\\verse-claw-e2e-run-fW8RV5\\verse-claw-e2e-user-data-7nrjXt\\workspace",
+    "agentId": "main",
+    "selectedAgentId": "main",
+    "activeSessionKey": "agent:main:dashboard:dc3425a5-8a1f-4005-937a-bc29187e3aef",
+    "agentBindings": {
+      "main": {
+        "workspaceId": "p2-mcp-workspace",
+        "agentId": "main",
+        "sessionKey": "agent:main:dashboard:dc3425a5-8a1f-4005-937a-bc29187e3aef"
+      }
+    },
+    "permissionMode": "fullAccess",
+    "createdAt": 1794042029529,
+    "updatedAt": 1794042086513,
+    "lastOpenedAt": 1794042029529,
+    "state": {},
+    "sessionStates": {
+      "agent:main:main": {
+        "chatFooter": {
+          "contextRangeVisible": true,
+          "tokenUsageVisible": true,
+          "workContextVisible": true
+        },
+        "draftInput": "",
+        "composerRunState": "idle",
+        "activeTopicId": null,
+        "knowledgeScope": "none",
+        "knowledgeMode": "suggest",
+        "artifactPanel": {
+          "open": false,
+          "expanded": false,
+          "tabs": []
+        },
+        "turnSummaryExpanded": {},
+        "turnSummaryStepDetailsExpanded": {}
+      },
+      "agent:main:dashboard:dc3425a5-8a1f-4005-937a-bc29187e3aef": {}
+    },
+    "sessionFolders": [],
+    "sessionFolderAssignments": {}
+  },
+  "parent": {
+    "ok": true,
+    "key": "agent:main:dashboard:dc3425a5-8a1f-4005-937a-bc29187e3aef",
+    "sessionId": "f2dc2a2f-7aa0-40f3-9ae5-47f3bf775dbd",
+    "entry": {
+      "sessionId": "f2dc2a2f-7aa0-40f3-9ae5-47f3bf775dbd",
+      "sessionFile": "D:\\ClawX\\.tmp\\coding-p2-01a1ab23-final\\verse-claw-e2e-run-fW8RV5\\verse-claw-e2e-user-data-7nrjXt\\openclaw-source-state\\agents\\main\\sessions\\f2dc2a2f-7aa0-40f3-9ae5-47f3bf775dbd.jsonl",
+      "updatedAt": 1794042086285,
+      "label": "P2 bound session"
+    },
+    "runStarted": false
+  },
+  "discovery": [
+    {
+      "success": true,
+      "serverId": "fixture",
+      "tools": [
+        {
+          "name": "echo",
+          "description": "Echo one message",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "message"
+            ],
+            "additionalProperties": false
+          },
+          "serverId": "fixture"
+        },
+        {
+          "name": "fail",
+          "description": "Return a tool failure",
+          "inputSchema": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          },
+          "serverId": "fixture"
+        }
+      ],
+      "status": "connected",
+      "catalogRevision": "edf8d79cf8308aae35bb0061a7bc2bdf5f3e045e6642d24f0585dda5c1ce3d1a",
+      "sessionGeneration": "f2dc2a2f-7aa0-40f3-9ae5-47f3bf775dbd",
+      "latencyMs": 10062
+    }
+  ],
+  "call": {
+    "success": true,
+    "serverId": "fixture",
+    "toolName": "echo",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "main-sdk-round-trip"
+        }
+      ],
+      "isError": false
+    }
+  },
+  "heartbeat": {
+    "success": true,
+    "serverId": "fixture",
+    "status": "connected",
+    "latencyMs": 1046,
+    "server": {
+      "id": "fixture",
+      "name": "Fixture",
+      "localAddress": "clawx://mcp/fixture",
+      "transport": "http",
+      "canonicalTransport": "streamable-http",
+      "url": "http://127.0.0.1:61919/mcp",
+      "enabled": true,
+      "scope": "global",
+      "networkPolicy": "localOnly",
+      "runtimeStatus": "connected",
+      "toolCount": 2,
+      "createdAt": 1794042030022,
+      "updatedAt": 1794042100744,
+      "lastHeartbeatAt": 1794042100743,
+      "lastHeartbeatMs": 1046
+    }
+  },
+  "delayedCall": {
+    "success": true,
+    "serverId": "delayed",
+    "toolName": "echo",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "six-second-effect"
+        }
+      ],
+      "isError": false
+    }
+  },
+  "delayedCallMs": 7636,
+  "empty": {
+    "success": true,
+    "serverId": "empty",
+    "tools": [],
+    "status": "connected",
+    "catalogRevision": "edf8d79cf8308aae35bb0061a7bc2bdf5f3e045e6642d24f0585dda5c1ce3d1a",
+    "sessionGeneration": "f2dc2a2f-7aa0-40f3-9ae5-47f3bf775dbd",
+    "latencyMs": 1222
+  },
+  "timeout": {
+    "success": false,
+    "serverId": "slow",
+    "error": "McpError: MCP error -32001: Request timed out",
+    "errorCode": "TIMEOUT",
+    "status": "error",
+    "tools": []
+  },
+  "hostNative": {
+    "success": true,
+    "serverId": "clawx-git",
+    "status": "registered",
+    "latencyMs": 0,
+    "message": "Verse Claw Git tools are host-native: served by the host Git service, not an MCP server.",
+    "server": {
+      "id": "clawx-git",
+      "name": "Verse Claw Git",
+      "localAddress": "clawx://mcp/clawx-git",
+      "transport": "stdio",
+      "canonicalTransport": "stdio",
+      "enabled": true,
+      "scope": "workspace",
+      "ownerId": "*",
+      "networkPolicy": "disabled",
+      "runtimeStatus": "registered",
+      "toolCount": 36,
+      "createdAt": 1,
+      "updatedAt": 1
+    }
+  },
+  "modelRun": {
+    "runId": "p2-model-1794042113435",
+    "sessionKey": "agent:main:dashboard:dc3425a5-8a1f-4005-937a-bc29187e3aef",
+    "status": "accepted",
+    "acceptedAt": 1794042114410
+  },
+  "modelTerminal": {
+    "runId": "p2-model-1794042113435",
+    "status": "ok",
+    "startedAt": 1794042129468,
+    "endedAt": 1794042130700,
+    "stopReason": "stop",
+    "livenessState": "working"
+  },
+  "denials": [
+    {
+      "success": false,
+      "serverId": "fixture",
+      "error": "data/message must be string",
+      "errorCode": "VALIDATION",
+      "toolName": "echo",
+      "blocked": true,
+      "reason": "data/message must be string"
+    },
+    {
+      "success": false,
+      "serverId": "fixture",
+      "toolName": "echo",
+      "blocked": true,
+      "reason": "MCP session is not bound to the active workspace",
+      "error": "MCP session is not bound to the active workspace",
+      "errorCode": "VALIDATION"
+    },
+    {
+      "success": false,
+      "serverId": "fixture",
+      "toolName": "echo",
+      "blocked": true,
+      "reason": "MCP request differs from the active workspace or assistant",
+      "error": "MCP request differs from the active workspace or assistant",
+      "errorCode": "VALIDATION"
+    },
+    {
+      "success": false,
+      "serverId": "fixture",
+      "toolName": "echo",
+      "blocked": true,
+      "reason": "The bound MCP session generation changed",
+      "error": "The bound MCP session generation changed",
+      "errorCode": "VALIDATION"
+    },
+    {
+      "success": false,
+      "serverId": "missing",
+      "tools": [],
+      "status": "error",
+      "error": "MCP server \"missing\" not found",
+      "errorCode": "INTERNAL"
+    }
+  ],
+  "readOnly": {
+    "success": false,
+    "blocked": true,
+    "error": "Read-only mode does not allow Gateway mutations",
+    "serverId": "fixture",
+    "toolName": "echo"
+  },
+  "waiting": {
+    "success": false,
+    "blocked": true,
+    "approvalRequired": true,
+    "approval": {
+      "id": "approval-mw66d8bj-7mfhz3",
+      "workspaceId": "p2-mcp-workspace",
+      "sessionKey": "agent:main:dashboard:dc3425a5-8a1f-4005-937a-bc29187e3aef",
+      "runId": null,
+      "mode": "acceptEdits",
+      "source": "gateway",
+      "requestedAt": 1794042136927,
+      "status": "pending",
+      "risk": "destructive",
+      "command": "mcp.callTool",
+      "requestHash": "mcp.callTool:{\"agentId\":\"main\",\"args\":{\"message\":\"approved-once\"},\"expectedSessionGeneration\":\"f2dc2a2f-7aa0-40f3-9ae5-47f3bf775dbd\",\"serverId\":\"fixture\",\"sessionKey\":\"agent:main:dashboard:dc3425a5-8a1f-4005-937a-bc29187e3aef\",\"toolName\":\"echo\",\"workspaceDir\":\"D:\\\\ClawX\\\\.tmp\\\\coding-p2-01a1ab23-final\\\\verse-claw-e2e-run-fW8RV5\\\\verse-claw-e2e-user-data-7nrjXt\\\\workspace\",\"workspaceId\":\"p2-mcp-workspace\"}",
+      "paramsPreview": "{\"agentId\":\"main\",\"args\":{\"message\":\"approved-once\"},\"expectedSessionGeneration\":\"f2dc2a2f-7aa0-40f3-9ae5-47f3bf775dbd\",\"serverId\":\"fixture\",\"sessionKey\":\"agent:main:dashboard:dc3425a5-8a1f-4005-937a-bc29187e3aef\",\"toolName\":\"echo\",\"workspaceDir\":\"D:\\\\ClawX\\\\.tmp\\\\coding-p2-01a1ab23-final\\\\verse-claw-e2e-run-fW8RV5\\\\verse-claw-e2e-user-data-7nrjXt\\\\workspace\",\"workspaceId\":\"p2-mcp-workspace\"}",
+      "reason": "Gateway mutations require approval"
+    },
+    "error": "Gateway mutations require approval",
+    "serverId": "fixture",
+    "toolName": "echo",
+    "approvalId": "approval-mw66d8bj-7mfhz3"
+  },
+  "approved": {
+    "success": true,
+    "serverId": "fixture",
+    "toolName": "echo",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "approved-once"
+        }
+      ],
+      "isError": false
+    }
+  },
+  "consumed": {
+    "success": false,
+    "blocked": true,
+    "approvalRequired": true,
+    "approval": {
+      "id": "approval-mw66d9lh-v5bw1m",
+      "workspaceId": "p2-mcp-workspace",
+      "sessionKey": "agent:main:dashboard:dc3425a5-8a1f-4005-937a-bc29187e3aef",
+      "runId": null,
+      "mode": "acceptEdits",
+      "source": "gateway",
+      "requestedAt": 1794042138581,
+      "status": "pending",
+      "risk": "destructive",
+      "command": "mcp.callTool",
+      "requestHash": "mcp.callTool:{\"agentId\":\"main\",\"args\":{\"message\":\"approved-once\"},\"expectedSessionGeneration\":\"f2dc2a2f-7aa0-40f3-9ae5-47f3bf775dbd\",\"serverId\":\"fixture\",\"sessionKey\":\"agent:main:dashboard:dc3425a5-8a1f-4005-937a-bc29187e3aef\",\"toolName\":\"echo\",\"workspaceDir\":\"D:\\\\ClawX\\\\.tmp\\\\coding-p2-01a1ab23-final\\\\verse-claw-e2e-run-fW8RV5\\\\verse-claw-e2e-user-data-7nrjXt\\\\workspace\",\"workspaceId\":\"p2-mcp-workspace\"}",
+      "paramsPreview": "{\"agentId\":\"main\",\"args\":{\"message\":\"approved-once\"},\"expectedSessionGeneration\":\"f2dc2a2f-7aa0-40f3-9ae5-47f3bf775dbd\",\"serverId\":\"fixture\",\"sessionKey\":\"agent:main:dashboard:dc3425a5-8a1f-4005-937a-bc29187e3aef\",\"toolName\":\"echo\",\"workspaceDir\":\"D:\\\\ClawX\\\\.tmp\\\\coding-p2-01a1ab23-final\\\\verse-claw-e2e-run-fW8RV5\\\\verse-claw-e2e-user-data-7nrjXt\\\\workspace\",\"workspaceId\":\"p2-mcp-workspace\"}",
+      "reason": "Gateway mutations require approval"
+    },
+    "error": "Gateway mutations require approval",
+    "serverId": "fixture",
+    "toolName": "echo",
+    "approvalId": "approval-mw66d9lh-v5bw1m"
+  },
+  "staleCatalog": {
+    "success": false,
+    "serverId": "fixture",
+    "error": "MCP catalog revision changed; list tools again",
+    "errorCode": "VALIDATION",
+    "toolName": "echo",
+    "blocked": true,
+    "reason": "MCP catalog revision changed; list tools again"
+  },
+  "restoredCatalogs": [
+    {
+      "success": true,
+      "serverId": "fixture",
+      "tools": [
+        {
+          "name": "fail",
+          "description": "Return a tool failure",
+          "inputSchema": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          },
+          "serverId": "fixture"
+        }
+      ],
+      "status": "connected",
+      "catalogRevision": "222eeee8c759e677b620d8fb3a268a3429795598e4e8ac05aa400e51b92a5f7f",
+      "sessionGeneration": "f2dc2a2f-7aa0-40f3-9ae5-47f3bf775dbd",
+      "latencyMs": 928
+    },
+    {
+      "success": true,
+      "serverId": "fixture",
+      "tools": [
+        {
+          "name": "fail",
+          "description": "Return a tool failure",
+          "inputSchema": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          },
+          "serverId": "fixture"
+        }
+      ],
+      "status": "connected",
+      "catalogRevision": "222eeee8c759e677b620d8fb3a268a3429795598e4e8ac05aa400e51b92a5f7f",
+      "sessionGeneration": "f2dc2a2f-7aa0-40f3-9ae5-47f3bf775dbd",
+      "latencyMs": 1487
+    },
+    {
+      "success": true,
+      "serverId": "fixture",
+      "tools": [
+        {
+          "name": "echo",
+          "description": "Echo one message",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "message"
+            ],
+            "additionalProperties": false
+          },
+          "serverId": "fixture"
+        },
+        {
+          "name": "fail",
+          "description": "Return a tool failure",
+          "inputSchema": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          },
+          "serverId": "fixture"
+        }
+      ],
+      "status": "connected",
+      "catalogRevision": "b7fc0612d69ba7d0c8cac4d4b3fe186eaa7613d3403f5f53476cbffb6347ee93",
+      "sessionGeneration": "f2dc2a2f-7aa0-40f3-9ae5-47f3bf775dbd",
+      "latencyMs": 5528
+    }
+  ],
+  "networkDenied": {
+    "success": false,
+    "serverId": "fixture",
+    "toolName": "echo",
+    "blocked": true,
+    "reason": "MCP network policy is disabled; remote MCP I/O is blocked",
+    "error": "MCP network policy is disabled; remote MCP I/O is blocked",
+    "errorCode": "VALIDATION"
+  },
+  "status": "pass",
+  "requests": {
+    "normal": [
+      {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "openclaw-bundle-mcp",
+            "version": "0.0.0"
+          }
+        }
+      },
+      {
+        "method": "notifications/initialized"
+      },
+      {
+        "method": "tools/list"
+      },
+      {
+        "method": "tools/call",
+        "params": {
+          "name": "echo",
+          "arguments": {
+            "message": "main-sdk-round-trip"
+          }
+        }
+      },
+      {
+        "method": "ping"
+      },
+      {
+        "method": "tools/list"
+      },
+      {
+        "method": "tools/call",
+        "params": {
+          "name": "echo",
+          "arguments": {
+            "message": "model-sdk-round-trip"
+          }
+        }
+      },
+      {
+        "method": "tools/call",
+        "params": {
+          "name": "echo",
+          "arguments": {
+            "message": "approved-once"
+          }
+        }
+      },
+      {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "openclaw-bundle-mcp",
+            "version": "0.0.0"
+          }
+        }
+      },
+      {
+        "method": "notifications/initialized"
+      },
+      {
+        "method": "tools/list"
+      },
+      {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "openclaw-bundle-mcp",
+            "version": "0.0.0"
+          }
+        }
+      },
+      {
+        "method": "notifications/initialized"
+      },
+      {
+        "method": "tools/list"
+      }
+    ],
+    "empty": [
+      {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "openclaw-bundle-mcp",
+            "version": "0.0.0"
+          }
+        }
+      },
+      {
+        "method": "notifications/initialized"
+      },
+      {
+        "method": "tools/list"
+      },
+      {
+        "method": "tools/list"
+      },
+      {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "openclaw-bundle-mcp",
+            "version": "0.0.0"
+          }
+        }
+      },
+      {
+        "method": "notifications/initialized"
+      },
+      {
+        "method": "tools/list"
+      },
+      {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "openclaw-bundle-mcp",
+            "version": "0.0.0"
+          }
+        }
+      },
+      {
+        "method": "notifications/initialized"
+      },
+      {
+        "method": "tools/list"
+      }
+    ],
+    "slow": [
+      {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "openclaw-bundle-mcp",
+            "version": "0.0.0"
+          }
+        }
+      },
+      {
+        "method": "notifications/initialized"
+      },
+      {
+        "method": "tools/list"
+      },
+      {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "openclaw-bundle-mcp",
+            "version": "0.0.0"
+          }
+        }
+      },
+      {
+        "method": "notifications/initialized"
+      },
+      {
+        "method": "tools/list"
+      },
+      {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "openclaw-bundle-mcp",
+            "version": "0.0.0"
+          }
+        }
+      },
+      {
+        "method": "notifications/initialized"
+      },
+      {
+        "method": "tools/list"
+      },
+      {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "openclaw-bundle-mcp",
+            "version": "0.0.0"
+          }
+        }
+      },
+      {
+        "method": "notifications/initialized"
+      },
+      {
+        "method": "tools/list"
+      }
+    ],
+    "delayed": [
+      {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "openclaw-bundle-mcp",
+            "version": "0.0.0"
+          }
+        }
+      },
+      {
+        "method": "notifications/initialized"
+      },
+      {
+        "method": "tools/list"
+      },
+      {
+        "method": "tools/call",
+        "params": {
+          "name": "echo",
+          "arguments": {
+            "message": "six-second-effect"
+          }
+        }
+      },
+      {
+        "method": "tools/list"
+      },
+      {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "openclaw-bundle-mcp",
+            "version": "0.0.0"
+          }
+        }
+      },
+      {
+        "method": "notifications/initialized"
+      },
+      {
+        "method": "tools/list"
+      },
+      {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "openclaw-bundle-mcp",
+            "version": "0.0.0"
+          }
+        }
+      },
+      {
+        "method": "notifications/initialized"
+      },
+      {
+        "method": "tools/list"
+      }
+    ]
+  },
+  "providerLog": [
+    {
+      "turn": "[Sat 2026-11-07 17:02 GMT+8] P2-MODEL: call fixture__echo wi",
+      "toolResults": {},
+      "issued": "sdk_echo"
+    },
+    {
+      "turn": "[Sat 2026-11-07 17:02 GMT+8] P2-MODEL: call fixture__echo wi",
+      "toolResults": {
+        "sdkecho": "model-sdk-round-trip"
+      },
+      "issued": "text:P2-MODEL-DONE"
+    }
+  ],
+  "providerAnomalies": [],
+  "appPid": 35592,
+  "launcherPid": 30440,
+  "gatewayAfterStop": {
+    "state": "stopped",
+    "port": 52711,
+    "reconnectAttempts": 0
+  },
+  "appClose": {
+    "mainExited": true,
+    "launcherExited": true
+  },
+  "launcherExitCode": 0,
+  "launcherSignalCode": null,
+  "mainProcessAliveAfterClose": false,
+  "endpointCleanup": [
+    {
+      "listening": false,
+      "sessions": 0,
+      "connections": 0
+    },
+    {
+      "listening": false,
+      "sessions": 0,
+      "connections": 0
+    },
+    {
+      "listening": false,
+      "sessions": 0,
+      "connections": 0
+    },
+    {
+      "listening": false,
+      "sessions": 0,
+      "connections": 0
+    }
+  ]
+}

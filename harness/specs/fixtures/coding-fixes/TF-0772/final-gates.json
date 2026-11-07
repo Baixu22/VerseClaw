@@ -1,0 +1,201 @@
+{
+  "candidate": {
+    "commit": "d9bbffa8daaca596aa9fa027ba6065ae829f6af9",
+    "tree": "c8f1fa8973e7f4c66296d1482ad8e6b89b93c698",
+    "dirty": false
+  },
+  "driven_by": "agent",
+  "actor": "codex-01a1ab23",
+  "realHumanEvidence": false,
+  "commands": [
+    {
+      "name": "focused-units",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/mcp-api.test.ts",
+        "tests/unit/mcp-p4-003-runtime-surface.test.ts",
+        "tests/unit/rc08a-mcp-host-native-tool-convergence.test.ts",
+        "tests/unit/tool-provider-registry.test.ts",
+        "tests/unit/workspace-permissions.test.ts",
+        "tests/unit/gateway-permissions-api.test.ts",
+        "tests/unit/mcp-management-runtime.test.ts",
+        "tests/unit/config-sync-source-runtime.test.ts",
+        "tests/unit/gateway-supervisor.test.ts",
+        "--maxWorkers=1",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile.json=D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-units.json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 243.84614372253418,
+      "startedAt": "2026-11-07T08:44:46.975563+00:00",
+      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-focused-units-attempt-1.log"
+    },
+    {
+      "name": "runtime-invoke",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/run-vitest.mjs",
+        "run",
+        "src/gateway/server-methods/tools-invoke-mcp-fallback.test.ts",
+        "--maxWorkers=1",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile.json=D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-invoke.json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime",
+      "exitCode": 0,
+      "seconds": 55.884233713150024,
+      "startedAt": "2026-11-07T08:48:51.245150+00:00",
+      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-runtime-invoke-attempt-1.log"
+    },
+    {
+      "name": "runtime-lifecycle",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/run-vitest.mjs",
+        "run",
+        "src/agents/agent-bundle-mcp-runtime.test.ts",
+        "--maxWorkers=1",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile.json=D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-lifecycle.json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime",
+      "exitCode": 0,
+      "seconds": 40.37407660484314,
+      "startedAt": "2026-11-07T08:49:47.705618+00:00",
+      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-runtime-lifecycle-attempt-1.log"
+    },
+    {
+      "name": "typecheck",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        ".audit/TF-0772/typecheck-sequential.mjs",
+        "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-typecheck.json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 103.53661274909973,
+      "startedAt": "2026-11-07T08:50:28.265839+00:00",
+      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-typecheck-attempt-1.log"
+    },
+    {
+      "name": "contract",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 0.6217663288116455,
+      "startedAt": "2026-11-07T08:52:12.163979+00:00",
+      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-contract-attempt-1.log"
+    },
+    {
+      "name": "comms-replay",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 0.5398595333099365,
+      "startedAt": "2026-11-07T08:52:13.027428+00:00",
+      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-comms-replay-attempt-1.log"
+    },
+    {
+      "name": "comms-compare",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 0.6285886764526367,
+      "startedAt": "2026-11-07T08:52:13.822220+00:00",
+      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-comms-compare-attempt-1.log"
+    },
+    {
+      "name": "harness",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/coding-mcp-management-runtime.md"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 1.0534753799438477,
+      "startedAt": "2026-11-07T08:52:14.628250+00:00",
+      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-harness-attempt-1.log"
+    },
+    {
+      "name": "harness-dry-run",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/coding-mcp-management-runtime.md",
+        "--dry-run"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 0.9175717830657959,
+      "startedAt": "2026-11-07T08:52:15.863830+00:00",
+      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-harness-dry-run-attempt-1.log"
+    },
+    {
+      "name": "artifact-policy",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 46.271082639694214,
+      "startedAt": "2026-11-07T08:52:16.906877+00:00",
+      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-artifact-policy-attempt-1.log"
+    },
+    {
+      "name": "lint",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/eslint/bin/eslint.js",
+        "electron/gateway/config-sync.ts",
+        "electron/gateway/supervisor.ts",
+        "electron/main/ipc-handlers.ts",
+        "electron/services/gateway-api.ts",
+        "electron/services/mcp-api.ts",
+        "electron/services/workspace-permissions.ts",
+        "electron/utils/channel-config.ts",
+        "shared/host-api/contract.ts",
+        "shared/types/mcp.ts",
+        "src/pages/Skills/index.tsx",
+        "src/stores/mcp.ts",
+        "tests/e2e/coding-mcp-management.spec.ts",
+        "tests/e2e/fixtures/coding-mcp-server.ts",
+        "tests/e2e/fixtures/electron.ts",
+        "tests/unit/config-sync-source-runtime.test.ts",
+        "tests/unit/gateway-permissions-api.test.ts",
+        "tests/unit/gateway-supervisor.test.ts",
+        "tests/unit/mcp-api.test.ts",
+        "tests/unit/mcp-management-runtime.test.ts",
+        "tests/unit/mcp-p4-003-runtime-surface.test.ts",
+        "tests/unit/tool-provider-registry.test.ts",
+        "--max-warnings",
+        "0"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 10.828084230422974,
+      "startedAt": "2026-11-07T09:16:37.776351+00:00",
+      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-lint.log"
+    }
+  ]
+}
