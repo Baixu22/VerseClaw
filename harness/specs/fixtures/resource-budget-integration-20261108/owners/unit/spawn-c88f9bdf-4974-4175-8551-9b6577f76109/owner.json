@@ -1,0 +1,20 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r1-subagent-owner-test",
+  "result": {
+    "status": "error",
+    "error": "agent-injected lost acknowledgement",
+    "childSessionKey": "agent:main:subagent:f2022358-27df-4fe4-ae15-3d621461490a",
+    "runId": "85ac76f3-69bc-4599-a4b2-e18e92c8d619"
+  },
+  "rows": [
+    {
+      "run_id": "85ac76f3-69bc-4599-a4b2-e18e92c8d619",
+      "ended_at": null,
+      "payload_json": "{\"runId\":\"85ac76f3-69bc-4599-a4b2-e18e92c8d619\",\"childSessionKey\":\"agent:main:subagent:f2022358-27df-4fe4-ae15-3d621461490a\",\"controllerSessionKey\":\"agent:main:main\",\"requesterSessionKey\":\"agent:main:main\",\"requesterSessionId\":\"parent-generation\",\"requesterDisplayKey\":\"agent:main:main\",\"task\":\"durable unknown dispatch\",\"cleanup\":\"keep\",\"expectsCompletionMessage\":true,\"spawnMode\":\"run\",\"model\":\"example/test-model\",\"agentDir\":\"D:\\\\tmp\\\\autonomy-spawn-state-l7hFzM\\\\agents\\\\main\\\\agent\",\"workspaceDir\":\"C:\\\\Users\\\\27933\\\\.openclaw\\\\workspace\",\"runTimeoutSeconds\":0,\"createdAt\":1794073010240,\"execution\":{\"status\":\"pending\"},\"dispatchPending\":true,\"completion\":{\"required\":true},\"delivery\":{\"status\":\"pending\",\"lastError\":null},\"accumulatedRuntimeMs\":0,\"cleanupHandled\":false}"
+    }
+  ],
+  "restoredCapacity": 1,
+  "retainedStateDir": "D:\\tmp\\autonomy-spawn-state-l7hFzM",
+  "limit": "single gateway owner; transport failure injected; cross-process simultaneous admission not covered"
+}

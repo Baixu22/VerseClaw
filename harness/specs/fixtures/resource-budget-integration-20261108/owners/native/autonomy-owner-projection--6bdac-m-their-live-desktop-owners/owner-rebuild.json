@@ -1,0 +1,894 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r1-desktop-owner-probe",
+  "workspaceId": "default",
+  "opened": {
+    "success": true,
+    "session": {
+      "id": "e074f52c-cefd-4fed-826f-2e433e366fd5",
+      "profile": "default",
+      "mode": "headless",
+      "authPersistence": "session-name",
+      "authStateName": "default",
+      "connection": {
+        "mode": "managed"
+      },
+      "createdAt": "2026-11-07T17:21:21.289Z",
+      "updatedAt": "2026-11-07T17:21:21.600Z",
+      "runtimeMode": "normal_restricted",
+      "workspaceId": "default",
+      "sessionKey": "agent:main:r1-owner-projection",
+      "url": "http://127.0.0.1:56802/",
+      "title": "R1 owner fixture"
+    },
+    "textSample": "Agent-driven owner projection"
+  },
+  "navigationReadbacks": [
+    {
+      "failureMode": "reject",
+      "beforeFailure": {
+        "windowId": 2,
+        "listeners": {
+          "did-finish-load": 0,
+          "dom-ready": 0,
+          "did-fail-load": 0
+        }
+      },
+      "afterFailure": {
+        "did-finish-load": 0,
+        "dom-ready": 0,
+        "did-fail-load": 0
+      },
+      "recovered": {
+        "success": true,
+        "session": {
+          "id": "e074f52c-cefd-4fed-826f-2e433e366fd5",
+          "profile": "default",
+          "mode": "headless",
+          "authPersistence": "session-name",
+          "authStateName": "default",
+          "connection": {
+            "mode": "managed"
+          },
+          "createdAt": "2026-11-07T17:21:21.289Z",
+          "updatedAt": "2026-11-07T17:21:21.721Z",
+          "runtimeMode": "normal_restricted",
+          "workspaceId": "default",
+          "sessionKey": "agent:main:r1-owner-projection",
+          "url": "http://127.0.0.1:56802/",
+          "title": "R1 owner fixture"
+        }
+      }
+    },
+    {
+      "failureMode": "throw",
+      "beforeFailure": {
+        "windowId": 2,
+        "listeners": {
+          "did-finish-load": 0,
+          "dom-ready": 0,
+          "did-fail-load": 0
+        }
+      },
+      "afterFailure": {
+        "did-finish-load": 0,
+        "dom-ready": 0,
+        "did-fail-load": 0
+      },
+      "recovered": {
+        "success": true,
+        "session": {
+          "id": "e074f52c-cefd-4fed-826f-2e433e366fd5",
+          "profile": "default",
+          "mode": "headless",
+          "authPersistence": "session-name",
+          "authStateName": "default",
+          "connection": {
+            "mode": "managed"
+          },
+          "createdAt": "2026-11-07T17:21:21.289Z",
+          "updatedAt": "2026-11-07T17:21:21.837Z",
+          "runtimeMode": "normal_restricted",
+          "workspaceId": "default",
+          "sessionKey": "agent:main:r1-owner-projection",
+          "url": "http://127.0.0.1:56802/",
+          "title": "R1 owner fixture"
+        }
+      }
+    }
+  ],
+  "browserWindowId": 2,
+  "retainedAfterCloseFailure": {
+    "measured": true,
+    "snapshot": {
+      "schema": "openclaw.resource-envelope/v1",
+      "generatedAt": 1794072084482,
+      "mode": "shadow",
+      "entries": [
+        {
+          "id": "main:browser-session:e074f52c-cefd-4fed-826f-2e433e366fd5",
+          "workspaceKey": "default",
+          "kind": "browser-session",
+          "pids": [],
+          "reason": "HostAgentBrowserService session",
+          "owner": "main",
+          "priority": "foreground",
+          "activeSlots": 1,
+          "queuedCount": 0,
+          "queueWaitMs": 0,
+          "processCount": 0,
+          "treeRssBytes": 0,
+          "treeCpuPercent": 0,
+          "limits": {
+            "memoryBytes": 2147483648,
+            "cpuPercent": 200,
+            "processCount": 64,
+            "concurrencySlots": 4,
+            "queueLength": 16
+          },
+          "updatedAt": 1794072084481
+        },
+        {
+          "id": "main:process-tree",
+          "workspaceKey": "D:\\tmp\\tf0830\\candidate-scope",
+          "kind": "agent-turn",
+          "priority": "foreground",
+          "owner": "main",
+          "activeSlots": 0,
+          "queuedCount": 0,
+          "queueWaitMs": 0,
+          "processCount": 6,
+          "treeRssBytes": 1052200960,
+          "treeCpuPercent": 0,
+          "pids": [
+            43468
+          ],
+          "processMeasurement": {
+            "status": "ok",
+            "sampledAt": 1794072084446,
+            "ownerEpoch": "a2442a60-d71d-4bce-9e04-c4d970732754",
+            "rootPids": [
+              43468
+            ],
+            "processes": [
+              {
+                "pid": 43468,
+                "parentPid": 46468,
+                "creationToken": "134385456698501320",
+                "rssBytes": 644227072,
+                "privateBytes": 540475392,
+                "cpuTimeMs": 10015.625,
+                "cpuPercent": null
+              },
+              {
+                "pid": 42472,
+                "parentPid": 43468,
+                "creationToken": "134385456795245820",
+                "rssBytes": 60923904,
+                "privateBytes": 15155200,
+                "cpuTimeMs": 203.125,
+                "cpuPercent": null
+              },
+              {
+                "pid": 46404,
+                "parentPid": 43468,
+                "creationToken": "134385456801557760",
+                "rssBytes": 226451456,
+                "privateBytes": 124579840,
+                "cpuTimeMs": 2828.125,
+                "cpuPercent": null
+              },
+              {
+                "pid": 10684,
+                "parentPid": 43468,
+                "creationToken": "134385456813563250",
+                "rssBytes": 106815488,
+                "privateBytes": 34480128,
+                "cpuTimeMs": 218.75,
+                "cpuPercent": null
+              },
+              {
+                "pid": 19144,
+                "parentPid": 43468,
+                "creationToken": "134385456819152420",
+                "rssBytes": 8376320,
+                "privateBytes": 1609728,
+                "cpuTimeMs": 31.25,
+                "cpuPercent": null
+              },
+              {
+                "pid": 4076,
+                "parentPid": 43468,
+                "creationToken": "134385456819787230",
+                "rssBytes": 5406720,
+                "privateBytes": 5353472,
+                "cpuTimeMs": 15.625,
+                "cpuPercent": null
+              }
+            ]
+          },
+          "reason": "main process tree sample",
+          "limits": {
+            "memoryBytes": 2147483648,
+            "cpuPercent": 400,
+            "processCount": 64,
+            "concurrencySlots": 8,
+            "queueLength": 32
+          },
+          "updatedAt": 1794072084481
+        },
+        {
+          "id": "main:pty-session:31ecbb9b-7877-4507-a44a-de38f7a312f2",
+          "workspaceKey": "default",
+          "kind": "pty-session",
+          "pids": [
+            4076
+          ],
+          "reason": "TerminalSessionManager session",
+          "owner": "main",
+          "priority": "foreground",
+          "activeSlots": 1,
+          "queuedCount": 0,
+          "queueWaitMs": 0,
+          "processCount": 1,
+          "treeRssBytes": 0,
+          "treeCpuPercent": 0,
+          "limits": {
+            "memoryBytes": 536870912,
+            "cpuPercent": 100,
+            "processCount": 16,
+            "concurrencySlots": 8,
+            "queueLength": 32
+          },
+          "updatedAt": 1794072084481
+        }
+      ],
+      "totals": {
+        "activeSlots": 2,
+        "queuedCount": 0,
+        "queueWaitMs": 0,
+        "processCount": 6,
+        "treeRssBytes": 1052200960,
+        "treeCpuPercent": 0
+      },
+      "exceeded": [],
+      "warnings": [
+        "gateway resource-envelope snapshot unavailable"
+      ],
+      "processTotals": {
+        "processCount": 6,
+        "rssBytes": 1052200960,
+        "privateBytes": 721653760,
+        "cpuPercent": null
+      },
+      "machineMemory": {
+        "sampledAt": 1794072084481,
+        "availablePhysicalBytes": 2712784896,
+        "totalPhysicalBytes": 16295432192
+      }
+    }
+  },
+  "retainedWhileClosing": {
+    "measured": true,
+    "snapshot": {
+      "schema": "openclaw.resource-envelope/v1",
+      "generatedAt": 1794072084744,
+      "mode": "shadow",
+      "entries": [
+        {
+          "id": "main:browser-session:e074f52c-cefd-4fed-826f-2e433e366fd5",
+          "workspaceKey": "default",
+          "kind": "browser-session",
+          "pids": [],
+          "reason": "HostAgentBrowserService session",
+          "owner": "main",
+          "priority": "foreground",
+          "activeSlots": 1,
+          "queuedCount": 0,
+          "queueWaitMs": 0,
+          "processCount": 0,
+          "treeRssBytes": 0,
+          "treeCpuPercent": 0,
+          "limits": {
+            "memoryBytes": 2147483648,
+            "cpuPercent": 200,
+            "processCount": 64,
+            "concurrencySlots": 4,
+            "queueLength": 16
+          },
+          "updatedAt": 1794072084744
+        },
+        {
+          "id": "main:process-tree",
+          "workspaceKey": "D:\\tmp\\tf0830\\candidate-scope",
+          "kind": "agent-turn",
+          "priority": "foreground",
+          "owner": "main",
+          "activeSlots": 0,
+          "queuedCount": 0,
+          "queueWaitMs": 0,
+          "processCount": 6,
+          "treeRssBytes": 1052200960,
+          "treeCpuPercent": 0,
+          "pids": [
+            43468
+          ],
+          "processMeasurement": {
+            "status": "ok",
+            "sampledAt": 1794072084446,
+            "ownerEpoch": "a2442a60-d71d-4bce-9e04-c4d970732754",
+            "rootPids": [
+              43468
+            ],
+            "processes": [
+              {
+                "pid": 43468,
+                "parentPid": 46468,
+                "creationToken": "134385456698501320",
+                "rssBytes": 644227072,
+                "privateBytes": 540475392,
+                "cpuTimeMs": 10015.625,
+                "cpuPercent": null
+              },
+              {
+                "pid": 42472,
+                "parentPid": 43468,
+                "creationToken": "134385456795245820",
+                "rssBytes": 60923904,
+                "privateBytes": 15155200,
+                "cpuTimeMs": 203.125,
+                "cpuPercent": null
+              },
+              {
+                "pid": 46404,
+                "parentPid": 43468,
+                "creationToken": "134385456801557760",
+                "rssBytes": 226451456,
+                "privateBytes": 124579840,
+                "cpuTimeMs": 2828.125,
+                "cpuPercent": null
+              },
+              {
+                "pid": 10684,
+                "parentPid": 43468,
+                "creationToken": "134385456813563250",
+                "rssBytes": 106815488,
+                "privateBytes": 34480128,
+                "cpuTimeMs": 218.75,
+                "cpuPercent": null
+              },
+              {
+                "pid": 19144,
+                "parentPid": 43468,
+                "creationToken": "134385456819152420",
+                "rssBytes": 8376320,
+                "privateBytes": 1609728,
+                "cpuTimeMs": 31.25,
+                "cpuPercent": null
+              },
+              {
+                "pid": 4076,
+                "parentPid": 43468,
+                "creationToken": "134385456819787230",
+                "rssBytes": 5406720,
+                "privateBytes": 5353472,
+                "cpuTimeMs": 15.625,
+                "cpuPercent": null
+              }
+            ]
+          },
+          "reason": "main process tree sample",
+          "limits": {
+            "memoryBytes": 2147483648,
+            "cpuPercent": 400,
+            "processCount": 64,
+            "concurrencySlots": 8,
+            "queueLength": 32
+          },
+          "updatedAt": 1794072084744
+        }
+      ],
+      "totals": {
+        "activeSlots": 1,
+        "queuedCount": 0,
+        "queueWaitMs": 0,
+        "processCount": 6,
+        "treeRssBytes": 1052200960,
+        "treeCpuPercent": 0
+      },
+      "exceeded": [],
+      "warnings": [
+        "gateway resource-envelope snapshot unavailable"
+      ],
+      "processTotals": {
+        "processCount": 6,
+        "rssBytes": 1052200960,
+        "privateBytes": 721653760,
+        "cpuPercent": null
+      },
+      "machineMemory": {
+        "sampledAt": 1794072084744,
+        "availablePhysicalBytes": 2700115968,
+        "totalPhysicalBytes": 16295432192
+      }
+    }
+  },
+  "browserClosed": true,
+  "terminal": {
+    "success": true,
+    "sessionId": "31ecbb9b-7877-4507-a44a-de38f7a312f2",
+    "workspaceId": "default",
+    "sessionKey": "agent:main:r1-owner-projection",
+    "expectedSessionId": null,
+    "kind": "interactive",
+    "cwd": "D:\\tmp\\tf0830\\scope-electron-runs\\verse-claw-e2e-run-R9oRWr\\verse-claw-e2e-home-GR0hRX",
+    "pid": 4076,
+    "cols": 80,
+    "rows": 24,
+    "status": "running",
+    "exitCode": null,
+    "scrollback": "\u001b[?9001h\u001b[?1004h\u001b[?25l\u001b[2J\u001b[m\u001b[HMicrosoft Windows [版本 10.0.26200.8037]\u001b]0;C:\\WINDOWS\\system32\\cmd.exe\u0007\u001b[?25h\u001b[?25l\r\n(c) Microsoft Corporation。保留所有权利。\u001b[4;1HD:\\tmp\\tf0830\\scope-electron-runs\\verse-claw-e2e-run-R9oRWr\\verse-claw-e2e-home-GR0hRX>\u001b[?25h"
+  },
+  "before": {
+    "measured": true,
+    "snapshot": {
+      "schema": "openclaw.resource-envelope/v1",
+      "generatedAt": 1794072084450,
+      "mode": "shadow",
+      "entries": [
+        {
+          "id": "main:browser-session:e074f52c-cefd-4fed-826f-2e433e366fd5",
+          "workspaceKey": "default",
+          "kind": "browser-session",
+          "pids": [],
+          "reason": "HostAgentBrowserService session",
+          "owner": "main",
+          "priority": "foreground",
+          "activeSlots": 1,
+          "queuedCount": 0,
+          "queueWaitMs": 0,
+          "processCount": 0,
+          "treeRssBytes": 0,
+          "treeCpuPercent": 0,
+          "limits": {
+            "memoryBytes": 2147483648,
+            "cpuPercent": 200,
+            "processCount": 64,
+            "concurrencySlots": 4,
+            "queueLength": 16
+          },
+          "updatedAt": 1794072084415
+        },
+        {
+          "id": "main:process-tree",
+          "workspaceKey": "D:\\tmp\\tf0830\\candidate-scope",
+          "kind": "agent-turn",
+          "priority": "foreground",
+          "owner": "main",
+          "activeSlots": 0,
+          "queuedCount": 0,
+          "queueWaitMs": 0,
+          "processCount": 6,
+          "treeRssBytes": 1052200960,
+          "treeCpuPercent": 0,
+          "pids": [
+            43468
+          ],
+          "processMeasurement": {
+            "status": "ok",
+            "sampledAt": 1794072084446,
+            "ownerEpoch": "592a78fe-68ac-4a3a-97c3-6ce41aa937ca",
+            "rootPids": [
+              43468
+            ],
+            "processes": [
+              {
+                "pid": 43468,
+                "parentPid": 46468,
+                "creationToken": "134385456698501320",
+                "rssBytes": 644227072,
+                "privateBytes": 540475392,
+                "cpuTimeMs": 10015.625,
+                "cpuPercent": null
+              },
+              {
+                "pid": 42472,
+                "parentPid": 43468,
+                "creationToken": "134385456795245820",
+                "rssBytes": 60923904,
+                "privateBytes": 15155200,
+                "cpuTimeMs": 203.125,
+                "cpuPercent": null
+              },
+              {
+                "pid": 46404,
+                "parentPid": 43468,
+                "creationToken": "134385456801557760",
+                "rssBytes": 226451456,
+                "privateBytes": 124579840,
+                "cpuTimeMs": 2828.125,
+                "cpuPercent": null
+              },
+              {
+                "pid": 10684,
+                "parentPid": 43468,
+                "creationToken": "134385456813563250",
+                "rssBytes": 106815488,
+                "privateBytes": 34480128,
+                "cpuTimeMs": 218.75,
+                "cpuPercent": null
+              },
+              {
+                "pid": 19144,
+                "parentPid": 43468,
+                "creationToken": "134385456819152420",
+                "rssBytes": 8376320,
+                "privateBytes": 1609728,
+                "cpuTimeMs": 31.25,
+                "cpuPercent": null
+              },
+              {
+                "pid": 4076,
+                "parentPid": 43468,
+                "creationToken": "134385456819787230",
+                "rssBytes": 5406720,
+                "privateBytes": 5353472,
+                "cpuTimeMs": 15.625,
+                "cpuPercent": null
+              }
+            ]
+          },
+          "reason": "main process tree sample",
+          "limits": {
+            "memoryBytes": 2147483648,
+            "cpuPercent": 400,
+            "processCount": 64,
+            "concurrencySlots": 8,
+            "queueLength": 32
+          },
+          "updatedAt": 1794072084448
+        },
+        {
+          "id": "main:pty-session:31ecbb9b-7877-4507-a44a-de38f7a312f2",
+          "workspaceKey": "default",
+          "kind": "pty-session",
+          "pids": [
+            4076
+          ],
+          "reason": "TerminalSessionManager session",
+          "owner": "main",
+          "priority": "foreground",
+          "activeSlots": 1,
+          "queuedCount": 0,
+          "queueWaitMs": 0,
+          "processCount": 1,
+          "treeRssBytes": 0,
+          "treeCpuPercent": 0,
+          "limits": {
+            "memoryBytes": 536870912,
+            "cpuPercent": 100,
+            "processCount": 16,
+            "concurrencySlots": 8,
+            "queueLength": 32
+          },
+          "updatedAt": 1794072084415
+        }
+      ],
+      "totals": {
+        "activeSlots": 2,
+        "queuedCount": 0,
+        "queueWaitMs": 0,
+        "processCount": 6,
+        "treeRssBytes": 1052200960,
+        "treeCpuPercent": 0
+      },
+      "exceeded": [],
+      "warnings": [
+        "gateway resource-envelope snapshot unavailable"
+      ],
+      "processTotals": {
+        "processCount": 6,
+        "rssBytes": 1052200960,
+        "privateBytes": 721653760,
+        "cpuPercent": null
+      },
+      "machineMemory": {
+        "sampledAt": 1794072084448,
+        "availablePhysicalBytes": 2693107712,
+        "totalPhysicalBytes": 16295432192
+      }
+    }
+  },
+  "rebuilt": {
+    "measured": true,
+    "snapshot": {
+      "schema": "openclaw.resource-envelope/v1",
+      "generatedAt": 1794072084463,
+      "mode": "shadow",
+      "entries": [
+        {
+          "id": "main:browser-session:e074f52c-cefd-4fed-826f-2e433e366fd5",
+          "workspaceKey": "default",
+          "kind": "browser-session",
+          "pids": [],
+          "reason": "HostAgentBrowserService session",
+          "owner": "main",
+          "priority": "foreground",
+          "activeSlots": 1,
+          "queuedCount": 0,
+          "queueWaitMs": 0,
+          "processCount": 0,
+          "treeRssBytes": 0,
+          "treeCpuPercent": 0,
+          "limits": {
+            "memoryBytes": 2147483648,
+            "cpuPercent": 200,
+            "processCount": 64,
+            "concurrencySlots": 4,
+            "queueLength": 16
+          },
+          "updatedAt": 1794072084463
+        },
+        {
+          "id": "main:process-tree",
+          "workspaceKey": "D:\\tmp\\tf0830\\candidate-scope",
+          "kind": "agent-turn",
+          "priority": "foreground",
+          "owner": "main",
+          "activeSlots": 0,
+          "queuedCount": 0,
+          "queueWaitMs": 0,
+          "processCount": 6,
+          "treeRssBytes": 1052200960,
+          "treeCpuPercent": 0,
+          "pids": [
+            43468
+          ],
+          "processMeasurement": {
+            "status": "ok",
+            "sampledAt": 1794072084446,
+            "ownerEpoch": "a2442a60-d71d-4bce-9e04-c4d970732754",
+            "rootPids": [
+              43468
+            ],
+            "processes": [
+              {
+                "pid": 43468,
+                "parentPid": 46468,
+                "creationToken": "134385456698501320",
+                "rssBytes": 644227072,
+                "privateBytes": 540475392,
+                "cpuTimeMs": 10015.625,
+                "cpuPercent": null
+              },
+              {
+                "pid": 42472,
+                "parentPid": 43468,
+                "creationToken": "134385456795245820",
+                "rssBytes": 60923904,
+                "privateBytes": 15155200,
+                "cpuTimeMs": 203.125,
+                "cpuPercent": null
+              },
+              {
+                "pid": 46404,
+                "parentPid": 43468,
+                "creationToken": "134385456801557760",
+                "rssBytes": 226451456,
+                "privateBytes": 124579840,
+                "cpuTimeMs": 2828.125,
+                "cpuPercent": null
+              },
+              {
+                "pid": 10684,
+                "parentPid": 43468,
+                "creationToken": "134385456813563250",
+                "rssBytes": 106815488,
+                "privateBytes": 34480128,
+                "cpuTimeMs": 218.75,
+                "cpuPercent": null
+              },
+              {
+                "pid": 19144,
+                "parentPid": 43468,
+                "creationToken": "134385456819152420",
+                "rssBytes": 8376320,
+                "privateBytes": 1609728,
+                "cpuTimeMs": 31.25,
+                "cpuPercent": null
+              },
+              {
+                "pid": 4076,
+                "parentPid": 43468,
+                "creationToken": "134385456819787230",
+                "rssBytes": 5406720,
+                "privateBytes": 5353472,
+                "cpuTimeMs": 15.625,
+                "cpuPercent": null
+              }
+            ]
+          },
+          "reason": "main process tree sample",
+          "limits": {
+            "memoryBytes": 2147483648,
+            "cpuPercent": 400,
+            "processCount": 64,
+            "concurrencySlots": 8,
+            "queueLength": 32
+          },
+          "updatedAt": 1794072084463
+        },
+        {
+          "id": "main:pty-session:31ecbb9b-7877-4507-a44a-de38f7a312f2",
+          "workspaceKey": "default",
+          "kind": "pty-session",
+          "pids": [
+            4076
+          ],
+          "reason": "TerminalSessionManager session",
+          "owner": "main",
+          "priority": "foreground",
+          "activeSlots": 1,
+          "queuedCount": 0,
+          "queueWaitMs": 0,
+          "processCount": 1,
+          "treeRssBytes": 0,
+          "treeCpuPercent": 0,
+          "limits": {
+            "memoryBytes": 536870912,
+            "cpuPercent": 100,
+            "processCount": 16,
+            "concurrencySlots": 8,
+            "queueLength": 32
+          },
+          "updatedAt": 1794072084463
+        }
+      ],
+      "totals": {
+        "activeSlots": 2,
+        "queuedCount": 0,
+        "queueWaitMs": 0,
+        "processCount": 6,
+        "treeRssBytes": 1052200960,
+        "treeCpuPercent": 0
+      },
+      "exceeded": [],
+      "warnings": [
+        "gateway resource-envelope snapshot unavailable"
+      ],
+      "processTotals": {
+        "processCount": 6,
+        "rssBytes": 1052200960,
+        "privateBytes": 721653760,
+        "cpuPercent": null
+      },
+      "machineMemory": {
+        "sampledAt": 1794072084463,
+        "availablePhysicalBytes": 2690953216,
+        "totalPhysicalBytes": 16295432192
+      }
+    }
+  },
+  "released": {
+    "measured": true,
+    "snapshot": {
+      "schema": "openclaw.resource-envelope/v1",
+      "generatedAt": 1794072084766,
+      "mode": "shadow",
+      "entries": [
+        {
+          "id": "main:process-tree",
+          "workspaceKey": "D:\\tmp\\tf0830\\candidate-scope",
+          "kind": "agent-turn",
+          "priority": "foreground",
+          "owner": "main",
+          "activeSlots": 0,
+          "queuedCount": 0,
+          "queueWaitMs": 0,
+          "processCount": 6,
+          "treeRssBytes": 1052200960,
+          "treeCpuPercent": 0,
+          "pids": [
+            43468
+          ],
+          "processMeasurement": {
+            "status": "ok",
+            "sampledAt": 1794072084446,
+            "ownerEpoch": "a2442a60-d71d-4bce-9e04-c4d970732754",
+            "rootPids": [
+              43468
+            ],
+            "processes": [
+              {
+                "pid": 43468,
+                "parentPid": 46468,
+                "creationToken": "134385456698501320",
+                "rssBytes": 644227072,
+                "privateBytes": 540475392,
+                "cpuTimeMs": 10015.625,
+                "cpuPercent": null
+              },
+              {
+                "pid": 42472,
+                "parentPid": 43468,
+                "creationToken": "134385456795245820",
+                "rssBytes": 60923904,
+                "privateBytes": 15155200,
+                "cpuTimeMs": 203.125,
+                "cpuPercent": null
+              },
+              {
+                "pid": 46404,
+                "parentPid": 43468,
+                "creationToken": "134385456801557760",
+                "rssBytes": 226451456,
+                "privateBytes": 124579840,
+                "cpuTimeMs": 2828.125,
+                "cpuPercent": null
+              },
+              {
+                "pid": 10684,
+                "parentPid": 43468,
+                "creationToken": "134385456813563250",
+                "rssBytes": 106815488,
+                "privateBytes": 34480128,
+                "cpuTimeMs": 218.75,
+                "cpuPercent": null
+              },
+              {
+                "pid": 19144,
+                "parentPid": 43468,
+                "creationToken": "134385456819152420",
+                "rssBytes": 8376320,
+                "privateBytes": 1609728,
+                "cpuTimeMs": 31.25,
+                "cpuPercent": null
+              },
+              {
+                "pid": 4076,
+                "parentPid": 43468,
+                "creationToken": "134385456819787230",
+                "rssBytes": 5406720,
+                "privateBytes": 5353472,
+                "cpuTimeMs": 15.625,
+                "cpuPercent": null
+              }
+            ]
+          },
+          "reason": "main process tree sample",
+          "limits": {
+            "memoryBytes": 2147483648,
+            "cpuPercent": 400,
+            "processCount": 64,
+            "concurrencySlots": 8,
+            "queueLength": 32
+          },
+          "updatedAt": 1794072084766
+        }
+      ],
+      "totals": {
+        "activeSlots": 0,
+        "queuedCount": 0,
+        "queueWaitMs": 0,
+        "processCount": 6,
+        "treeRssBytes": 1052200960,
+        "treeCpuPercent": 0
+      },
+      "exceeded": [],
+      "warnings": [
+        "gateway resource-envelope snapshot unavailable"
+      ],
+      "processTotals": {
+        "processCount": 6,
+        "rssBytes": 1052200960,
+        "privateBytes": 721653760,
+        "cpuPercent": null
+      },
+      "machineMemory": {
+        "sampledAt": 1794072084766,
+        "availablePhysicalBytes": 2694791168,
+        "totalPhysicalBytes": 16295432192
+      }
+    }
+  }
+}

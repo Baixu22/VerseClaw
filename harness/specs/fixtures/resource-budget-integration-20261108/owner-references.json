@@ -1,0 +1,122 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "files": [
+    {
+      "path": "owners\\unit\\contention-3aa95948-9668-424e-8d8a-cb0b1fecb8ea.json",
+      "sha256": "b390ab25af2d3890d9c5d37b3d5e133d2c693fe0611fe09354dd74c00d22ec05"
+    },
+    {
+      "path": "owners\\unit\\inconsistent-r1-spend-dpI5Tr\\owner.json",
+      "sha256": "f975cae8b9b6fa8a2fcd7ab19e9693d97244a87fbe0282da67ff8fa8cbe703ff"
+    },
+    {
+      "path": "owners\\unit\\inconsistent-r1-spend-rLwq18\\owner.json",
+      "sha256": "a461be50a095e1e7e7c53d3d681036d97cf3307d3e462599d9671899384740aa"
+    },
+    {
+      "path": "owners\\unit\\native-owner-fb09e835-88fb-4ad9-9eff-f0e51086ba67.json",
+      "sha256": "e948cda1582ae5b58af376361ecda684f923f15e06386659f7c3d26fd02fd6ce"
+    },
+    {
+      "path": "owners\\unit\\process-owner-1794072938032\\process-owner-rebuild.json",
+      "sha256": "ab1929ae972c4469462f00057feb567bfe20243d36e24fe66e2755d9b7977a2c"
+    },
+    {
+      "path": "owners\\unit\\provider-http-5787ff81-8299-4aea-8327-d856c479d5c9.json",
+      "sha256": "8a69f5dfac6bf824be0b2c24ccb35cc1203eacd03e32c3b120e318a25e439f20"
+    },
+    {
+      "path": "owners\\unit\\registry-r1-registry-1D7GGw\\owner.json",
+      "sha256": "a6ddade21b2d0453bf3655c32406b1f1d1db9af21a3b9708a5a6414ba3a257d2"
+    },
+    {
+      "path": "owners\\unit\\registry-r1-registry-ktms3C\\owner.json",
+      "sha256": "8b8b45441b07d3aa148b40074bd197f6e416567cda57b26fd1117b3f805f0880"
+    },
+    {
+      "path": "owners\\unit\\spawn-c88f9bdf-4974-4175-8551-9b6577f76109\\owner.json",
+      "sha256": "5c9af2537a956368f1c0f1ab2c3edb25085f8700b24bef705f2f025af3c4de6e"
+    },
+    {
+      "path": "owners\\unit\\spend-native-r1-spend-7tbD4m\\owner.json",
+      "sha256": "dff274ec3cf2ca583585d143badb04f794a9d45c34e6267cc3f01df384c7151a"
+    },
+    {
+      "path": "owners\\unit\\spend-native-r1-spend-9ObEHY\\owner.json",
+      "sha256": "f05eeab31f906d3038ed6734b0bcc8d78e62843ddb468e9c1e548c5e1a728721"
+    },
+    {
+      "path": "owners\\unit\\spend-native-r1-spend-bJjOFk\\owner.json",
+      "sha256": "b20a241324d25e184a7bc8053e6c39b7416133454a26cf54f0c3f7c566780439"
+    },
+    {
+      "path": "owners\\unit\\spend-native-r1-spend-cbKd5m\\owner.json",
+      "sha256": "7844ed13f88236e5529ca464abc424202ca6359805cdf47d1bf9ec7d587732de"
+    },
+    {
+      "path": "owners\\unit\\spend-native-r1-spend-Sv8qgF\\owner.json",
+      "sha256": "787409a4795bea7e6420b9ff0e47f9b4a10a7176bce209d71586725df9dfb85a"
+    },
+    {
+      "path": "owners\\unit\\spend-native-r1-spend-ZzEH8j\\owner.json",
+      "sha256": "e70ea67be484adee3fa55eb2089d58b781f2b4dd06f3d9860abcb915e436c8bc"
+    },
+    {
+      "path": "owners\\unit\\spend-r1-spend-DVHG64\\owner.json",
+      "sha256": "2374850299d89048f9b743083e263fba025e4d2f3564ba1821738d8b716a72e2"
+    },
+    {
+      "path": "owners\\unit\\waves-32abde08-9a70-4707-8c93-9af8002d5089\\owner.json",
+      "sha256": "30d1d43462bbd911ed9e57cc50dd924dd6fe37e5abf1045721bccbc2712799f9"
+    },
+    {
+      "path": "owners\\unit\\worktree-native-439bc48b-66ea-4c64-b61a-eb96bd9ee4de.json",
+      "sha256": "b2f6c286375778e084d0dca6428a65862a7b0d27aeac07b6dc4fdf51b9e15fd2"
+    },
+    {
+      "path": "owners\\native\\autonomy-owner-projection--6bdac-m-their-live-desktop-owners\\owner-rebuild.json",
+      "sha256": "9fc7ab27f006f4aa480b3ef65d739f6f4d2a5dbbe5b59a8fd43fb288fe400e24"
+    },
+    {
+      "path": "owners\\native\\autonomy-resource-admissio-532e3-econciles-actual-usage-USD-\\r1-spend-owner.json",
+      "sha256": "10e3144c2589cee6072a4e9c296051dff0632baf335d69db657ed86c38727a93"
+    },
+    {
+      "path": "owners\\native\\autonomy-resource-admissio-8fabb-nciles-actual-usage-tokens-\\r1-spend-owner.json",
+      "sha256": "7683414cf555e30eb4e39f840eda5d9a5280af1e8e92482fc4ae8b061fcb0f2f"
+    },
+    {
+      "path": "owners\\native\\resource-window-lifecycle--60e0b-rs-and-background-execution\\acceptance.json",
+      "sha256": "ee11cc2fd5c45d67a7fa1864ab0cb593d9d8db17255d84ca6c9490080cc10379"
+    },
+    {
+      "path": "owners\\native\\resource-window-lifecycle--60e0b-rs-and-background-execution\\hidden-window.json",
+      "sha256": "4948421c065fc863a90e8b2f545a6a2d5f230b471682d131a45c4c860d8caa61"
+    },
+    {
+      "path": "owners\\native\\resource-window-lifecycle--60e0b-rs-and-background-execution\\owned-process-cleanup.json",
+      "sha256": "97c15218cdd44c5ad142deedf1ced10be36d02b7b107e43df2e971ba41812385"
+    },
+    {
+      "path": "owners\\native\\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\\acceptance.json",
+      "sha256": "0adc004336545a6a83b494457d14acf714d1ad16635646ed8810784f0e0d499d"
+    },
+    {
+      "path": "owners\\native\\autonomy-resource-admissio-006e0-run-terminates-handoff-off-\\r1-native-stop.json",
+      "sha256": "24ea1ccccca4118520a4f4593fd74f486cde630a2a8a5ca9647bda3dde3b920f"
+    },
+    {
+      "path": "owners\\native\\autonomy-resource-admissio-006e0-run-terminates-handoff-off-\\r1-waves-owner.json",
+      "sha256": "acee62f12bd24102351f21844e529355f9f7b0517fad624d7d425809a3d3a1e9"
+    },
+    {
+      "path": "owners\\native\\autonomy-resource-admissio-92759--run-terminates-handoff-on-\\r1-native-stop.json",
+      "sha256": "f4e9fac98de6a2eb200df3dc497daa3f8345ec42fd786b6b3001c2801e947718"
+    },
+    {
+      "path": "owners\\native\\autonomy-resource-admissio-92759--run-terminates-handoff-on-\\r1-waves-owner.json",
+      "sha256": "f3ffa18ecb8c630b820b693bbb558e15d794bef6987d0d0a1015808196e1a6b3"
+    }
+  ]
+}

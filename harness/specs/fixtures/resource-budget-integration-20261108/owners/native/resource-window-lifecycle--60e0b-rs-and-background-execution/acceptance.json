@@ -1,0 +1,55 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "gateway": "idle transport fixture",
+  "windows": "real Electron",
+  "services": [
+    "sessionStorage",
+    "terminal",
+    "agentBrowser",
+    "efficiency",
+    "resourceTracker"
+  ],
+  "networkApproval": {
+    "sessionId": "agent:main:window-lifecycle",
+    "origin": "http://127.0.0.1:59676",
+    "grantedAt": 1794072570970,
+    "expiresAt": 1794073170970,
+    "grantedBy": "agent"
+  },
+  "visibility": {
+    "oneHiddenKeepsVisible": true,
+    "allHiddenSheds": true,
+    "restoreRecovers": true,
+    "browserReopened": true
+  },
+  "observation": {
+    "hiddenBefore": {
+      "resourcePolls": 1,
+      "stopControls": 0,
+      "efficiencyReads": 3
+    },
+    "hiddenAfter": {
+      "resourcePolls": 1,
+      "stopControls": 0,
+      "efficiencyReads": 3
+    },
+    "beforeLeave": {
+      "resourcePolls": 2,
+      "stopControls": 0,
+      "efficiencyReads": 7
+    },
+    "afterLeave": {
+      "resourcePolls": 2,
+      "stopControls": 0,
+      "efficiencyReads": 7
+    },
+    "observersBeforeLeave": 2,
+    "observersAfterLeave": 0,
+    "backgroundHeartbeat": 62
+  },
+  "cleanup": {
+    "terminalClosed": [],
+    "remainingWindows": 1
+  }
+}

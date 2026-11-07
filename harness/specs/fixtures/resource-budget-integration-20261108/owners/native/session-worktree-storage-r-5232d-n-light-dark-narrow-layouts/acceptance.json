@@ -1,0 +1,82 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "git": "real",
+  "hostStorage": "real",
+  "gateway": "mocked idle transport",
+  "repositoryInitialized": true,
+  "worktreeCreated": true,
+  "independentSession": true,
+  "draftRestored": true,
+  "realTerminalReleased": true,
+  "worktreeRemovedWithBranchRetained": true,
+  "slashAndSettings": true,
+  "settingsEntry": true,
+  "snapshot": {
+    "success": true,
+    "measuredAt": "2026-11-07T17:30:35.588Z",
+    "applicationMemoryBytes": 710328320,
+    "sessions": [
+      {
+        "workspaceId": "workspace-demo",
+        "workspaceName": "Workspace demo",
+        "sessionKey": "agent:main:storage-demo",
+        "disk": {
+          "bytes": 0,
+          "partial": false
+        },
+        "label": "agent:main:storage-demo",
+        "memoryBytes": 0,
+        "terminals": 0,
+        "browsers": 0,
+        "servers": 0
+      },
+      {
+        "workspaceId": "codex-storage-demo",
+        "workspaceName": "codex/storage-demo",
+        "sessionKey": "agent:main:session-1794072614034-i0dihq",
+        "disk": {
+          "bytes": 0,
+          "partial": false
+        },
+        "label": "agent:main:session-1794072614034-i0dihq",
+        "memoryBytes": 0,
+        "terminals": 0,
+        "browsers": 0,
+        "servers": 0
+      }
+    ],
+    "worktrees": [
+      {
+        "path": "D:/tmp/tf0830/candidate-scope/.tmp/storage-acceptance-37Umqi/workspace-demo",
+        "head": "5894e1b77ca7c388e590f63ba814e13bdc6a8a41",
+        "branch": "master",
+        "repositoryWorkspaceId": "workspace-demo",
+        "repositoryName": "Workspace demo",
+        "workspaceIds": [
+          "workspace-demo"
+        ],
+        "protection": "primary",
+        "disk": {
+          "bytes": 11434,
+          "partial": false
+        }
+      },
+      {
+        "path": "D:/tmp/tf0830/candidate-scope/.tmp/storage-acceptance-37Umqi/workspace-demo-codex-storage-demo",
+        "head": "5894e1b77ca7c388e590f63ba814e13bdc6a8a41",
+        "branch": "codex/storage-demo",
+        "repositoryWorkspaceId": "workspace-demo",
+        "repositoryName": "Workspace demo",
+        "workspaceIds": [
+          "codex-storage-demo"
+        ],
+        "protection": "active",
+        "disk": {
+          "bytes": 11804,
+          "partial": false
+        }
+      }
+    ]
+  }
+}

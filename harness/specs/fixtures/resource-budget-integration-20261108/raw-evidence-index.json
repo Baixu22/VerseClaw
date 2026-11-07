@@ -1,0 +1,454 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "files": [
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\browser.json",
+      "sha256": "f43ea8b0bc577d32f95162e1e7b1d3439463221f148d3cf28e8e674083b0d7eb"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\browser.log",
+      "sha256": "ab32279e96732b195ff4c6e0ba93f0b86f9b7ab4ea085adf174c6121a56363f7"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\commands.json",
+      "sha256": "2c272ae58f2ab1628c832af2f39fbe33dbf0e334efaef6ccea64e6b4a9a3ba9a"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\comms\\compare-report.json",
+      "sha256": "b025cbe5221a21a3001df739ab6ec7c2ff63c5ff5aeb3632bf8a101dadafb826"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\comms\\compare-report.md",
+      "sha256": "49d2cf878a3eddda930acb8c8759d8998629a5373a834284b519d352933f2e9c"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\comms\\current-metrics.json",
+      "sha256": "5b41d1c2a0a2b2d7b5587dc7dbd000b93ef9fc79edf3ec0300e30a73db3bfdbb"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\comms-compare.log",
+      "sha256": "283990154227515b449f41e1c8642c2672d55802698d9d00eadbf5f09dd07d82"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\comms-replay.log",
+      "sha256": "4088e2d5bb8c8012529343fac4f9a2a239a767cb45f7e9a531b0f28ea5679a8f"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\contract.log",
+      "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\cross-workspace-pressure.json",
+      "sha256": "1c2dadad9b779970893e6e65e3ba7e3f495cedae0a7d128bffef12544eefba06"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\diff-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\harness-context.log",
+      "sha256": "618b1fc325132d9ebce055ddd6f1813552a594c5b41945d7ea1d703860437930"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\harness-run.log",
+      "sha256": "5b03f9bb38176a9c91c5fe3fbb328da6b1ecf32a42f801002979bf6dd7b4fd3c"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\harness-validate.log",
+      "sha256": "45a46a7c81edb205154964586cf88a6894eca85e8c1266fb4d42f86300349127"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\i18n.log",
+      "sha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\lint.json",
+      "sha256": "661e4b0f5a54a1d6867df66adfbd6e1b570399566078df095979058cf5566a4c"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\lint.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\node-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\pressure-fabric.json",
+      "sha256": "72a8d9d5642096b8d3ec4f04db89c15ea09127be8397bd76ebe2304d13da31b0"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\pressure-runtime.json",
+      "sha256": "c5f1fe9ec51d33d12456756b075697889a2a217b9382a81f6a9ca1e50f8c8df1"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\report.json",
+      "sha256": "c47c6571edd3560899fb42bebfd2422de2d389820eaef6f5bd9a8fc281d7b224"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\retention.log",
+      "sha256": "b76a865016532d27a9e6a057bbd6e48361eab5936523ff85a626eb4dc9a9bd83"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\root.json",
+      "sha256": "cbf94d5f8fc17000c4c4e7ec36fb46d03cf7418f1f487dceecc4b072da583bdb"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\root.log",
+      "sha256": "3fa90311728a800be7c635136d8c113dbaa6235b08a384b9a3a0947727644f56"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\runtime.json",
+      "sha256": "fe9d2baa23f83374b41c98e7b1c03f69ffb5ca90bf829d4c6eef0fa213fe529c"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\runtime.log",
+      "sha256": "47b7a36c66fa790c0eca1b7e54d6c1c5ea96f4c1d1641b19dac4fab3ff7166b2"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\acceptance-scope\\web-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\.last-run.json",
+      "sha256": "7e97f0b2886ce2558d1c496c915e2279d3282647379818bbf7ca55067f2e8a80"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\autonomy-owner-projection--6bdac-m-their-live-desktop-owners\\owner-rebuild.json",
+      "sha256": "9fc7ab27f006f4aa480b3ef65d739f6f4d2a5dbbe5b59a8fd43fb288fe400e24"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\autonomy-resource-admissio-006e0-run-terminates-handoff-off-\\attachments\\r1-waves-owner-7b51978b392d8ef9a2873cd1de61ac9b802ff7e9.json",
+      "sha256": "1036b4ad3918707356933f84655925fa2f69c2dc1dd65a264c9cbd4823614c19"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\autonomy-resource-admissio-006e0-run-terminates-handoff-off-\\error-context.md",
+      "sha256": "3acf66d038700bda6bdbaf10eb10a83017bb84579e1ab6c361ced5f4c82cf0f8"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\autonomy-resource-admissio-006e0-run-terminates-handoff-off-\\r1-electron.png",
+      "sha256": "e71764b54d750f97d02cbe279261118d7724556f2236852616102a1cde4940fc"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\autonomy-resource-admissio-006e0-run-terminates-handoff-off-\\r1-waves-owner.json",
+      "sha256": "1036b4ad3918707356933f84655925fa2f69c2dc1dd65a264c9cbd4823614c19"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\autonomy-resource-admissio-006e0-run-terminates-handoff-off-\\r1-waves-preassert.json",
+      "sha256": "00a5d328b3782f2ed2ac35502640e9812b9cff04b0bd5e3cc638a309e19136c5"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\autonomy-resource-admissio-006e0-run-terminates-handoff-off-\\test-failed-1.png",
+      "sha256": "24ffe858f69aa9f61af0f887d4aa3b57330c77ca05995d954df798bea2a311c6"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\autonomy-resource-admissio-006e0-run-terminates-handoff-off-\\trace.zip",
+      "sha256": "3b2a23135c4c15c66635299e652d4bdedc7c373198e0b4ecf5817d068d890af2"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\autonomy-resource-admissio-532e3-econciles-actual-usage-USD-\\r1-spend-owner.json",
+      "sha256": "10e3144c2589cee6072a4e9c296051dff0632baf335d69db657ed86c38727a93"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\autonomy-resource-admissio-532e3-econciles-actual-usage-USD-\\spend.sqlite",
+      "sha256": "ec4e4af78bfb10ad7216de8c56cd017c601053f3e35c1932e5b9ce9e31c2b934"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\autonomy-resource-admissio-532e3-econciles-actual-usage-USD-\\spend.sqlite-shm",
+      "sha256": "45f834521c62403cefdf551ac3f1d42b6a3b20f0821a586c50c32f7df736f885"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\autonomy-resource-admissio-532e3-econciles-actual-usage-USD-\\spend.sqlite-wal",
+      "sha256": "b3cb7beabc111e8b7caa0613af4404bbf7b2b74dd36f0d09ffd83c306b78e2de"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\autonomy-resource-admissio-8fabb-nciles-actual-usage-tokens-\\r1-spend-owner.json",
+      "sha256": "7683414cf555e30eb4e39f840eda5d9a5280af1e8e92482fc4ae8b061fcb0f2f"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\autonomy-resource-admissio-8fabb-nciles-actual-usage-tokens-\\spend.sqlite",
+      "sha256": "e1151d2778f9710a9acbde4a721cc549ee55840bb093b5eec466dc57a5b1283e"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\autonomy-resource-admissio-8fabb-nciles-actual-usage-tokens-\\spend.sqlite-shm",
+      "sha256": "82c771dcadffe9888e77a2c13b89b5202ddceeb04b322a4d313d094d26591a7b"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\autonomy-resource-admissio-8fabb-nciles-actual-usage-tokens-\\spend.sqlite-wal",
+      "sha256": "846ffcd944d93d4d0c32338de54de5891581d9bb6602daf472c96f11d33c5d29"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\autonomy-resource-admissio-92759--run-terminates-handoff-on-\\attachments\\r1-waves-owner-8c81a23b1d307f2a2948c363bb35c84184acf0f9.json",
+      "sha256": "d7be5c105df6c7ed74fe6d66067640af9be6afbe2078d8267ec8dd695da90beb"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\autonomy-resource-admissio-92759--run-terminates-handoff-on-\\error-context.md",
+      "sha256": "1959800bd5bb882c7245c05209eb3a61212fc98f4b2fa151656ed2c20d7cee25"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\autonomy-resource-admissio-92759--run-terminates-handoff-on-\\r1-electron.png",
+      "sha256": "b16a758099aa0f713cd651bc710756e69376d4af2c37e5e3916b36ced5a9e02d"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\autonomy-resource-admissio-92759--run-terminates-handoff-on-\\r1-waves-owner.json",
+      "sha256": "d7be5c105df6c7ed74fe6d66067640af9be6afbe2078d8267ec8dd695da90beb"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\autonomy-resource-admissio-92759--run-terminates-handoff-on-\\r1-waves-preassert.json",
+      "sha256": "1f77d10133fa9f3a0ec9fd4d322e7f74c7b05112a126bb1f4bb7c08c2974a15b"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\autonomy-resource-admissio-92759--run-terminates-handoff-on-\\test-failed-1.png",
+      "sha256": "1e2ef70a727e52253cc3afc1fad7eb8ffbd4bbbcb3559a5b85e6ac78d2d90ea4"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\autonomy-resource-admissio-92759--run-terminates-handoff-on-\\trace.zip",
+      "sha256": "5fc3459233c38b8fc79fa483bc1ac6381c996d567196efbd3c93b8c779951f8c"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\electron-process-cleanup.json",
+      "sha256": "daa91cce572b38e20f5ec99952c7c5b922338829009042dea67f3c13f9f4661b"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\electron-process-run.json",
+      "sha256": "1bd40b4ccf8df41bd36176d12286ad1a82607da3db46b5c8f340f7098dffec16"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\resource-window-lifecycle--60e0b-rs-and-background-execution\\acceptance.json",
+      "sha256": "ee11cc2fd5c45d67a7fa1864ab0cb593d9d8db17255d84ca6c9490080cc10379"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\resource-window-lifecycle--60e0b-rs-and-background-execution\\hidden-window.json",
+      "sha256": "4948421c065fc863a90e8b2f545a6a2d5f230b471682d131a45c4c860d8caa61"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\resource-window-lifecycle--60e0b-rs-and-background-execution\\main-after-browser-reopen.png",
+      "sha256": "7e608d9c7532c1edc803c7a50b6947f167184ca6ce487b6cc3a66ca84b6770fc"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\resource-window-lifecycle--60e0b-rs-and-background-execution\\owned-process-cleanup.json",
+      "sha256": "97c15218cdd44c5ad142deedf1ced10be36d02b7b107e43df2e971ba41812385"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\\acceptance.json",
+      "sha256": "0adc004336545a6a83b494457d14acf714d1ad16635646ed8810784f0e0d499d"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\\resource-release-confirm.png",
+      "sha256": "604d4a836998f8b4ff61aaffe7a60592245150a158ded6b1f0375753c6534984"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\\storage-dark-1280.png",
+      "sha256": "e9691695f3ef7273debceff6bfbc0d8c5a4884f01c7e62c6a872bbe63f801689"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\\storage-light-760.png",
+      "sha256": "3eef437277ae197df6e349e183915fdcca2b1e47dbd0b9f8c9ff822a12fdef58"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\\storage-light.png",
+      "sha256": "7281ca19cea5f2dcef74a0e5caad14e2d802642500094acc6a5d53a486d877a6"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\\worktree-create-light.png",
+      "sha256": "b4729a078ca0e6641f10a1a924aa2d13b43c15533f7d91a30833672ab9353b19"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\\worktree-remove-confirm.png",
+      "sha256": "acf368e62c678ebe5e419e7e0058625a16432cc51c7c7a6c3c25604a8925c70d"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\\worktrees-light.png",
+      "sha256": "ae60fe2766be476a714a1a59d1f1d89cb0b4417b7b4b08e1a1a54aab6b0cbbe0"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\source-mutation-guard.json",
+      "sha256": "0ba7d80917409735168a888cfc82ff1a0624c7be7550cf345598aa421b0a8390"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\source-state-after.json",
+      "sha256": "401cd57d68d6d9ec30214c9010d1401f202c4eb5367dda2e28322117875705b8"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\native-scope-results\\source-state-before.json",
+      "sha256": "401cd57d68d6d9ec30214c9010d1401f202c4eb5367dda2e28322117875705b8"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\revalidate-serial.py",
+      "sha256": "eae53461d968ab2c0c6c45c220ef163a1758bad153b916d6bb8008589ac31be1"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\seal-negative-controls.py",
+      "sha256": "0ff74862531921558fd2a97ef5bfc7fbf24216c164e552abf56458b50797a275"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\sealed-negatives\\browser-cancel.json",
+      "sha256": "af6cfefa408786731b7f01fdba9d1429fbec026c97f40580033ba7327a43617e"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\sealed-negatives\\browser-cancel.log",
+      "sha256": "555d3b42ee55eaf8011ec029874eb775093479ef1184a1c8d5c379e0b88c519a"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\sealed-negatives\\fairness.json",
+      "sha256": "a86b1c2be14e58ada3448df5b8fd57ae0098660334d5acb16cb4f95f47157b08"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\sealed-negatives\\fairness.log",
+      "sha256": "7225dbbd4ca126c6b651248e0f5f3093c0c21e4884d0da93770327c61f76683f"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\sealed-negatives\\report.json",
+      "sha256": "da70c73bca1e2eac87d109b67b3a223ece0d6a4b37634bcbeaeb3e7dacfb0a16"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\sealed-negatives\\terminal-release.json",
+      "sha256": "2487a1812c6d38221a7c271ac8173d24d6245295e184db75745ecc3a0cc12814"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\sealed-negatives\\terminal-release.log",
+      "sha256": "30578595bfac274e6a6d25b2f4dfaae13b6577a31817cc96e3f95d4127a38c88"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\commands.json",
+      "sha256": "40baec640a2b3045a64ac3a164c69df733b6ffa58e332bd6e41302aef0214d0b"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\cross-workspace-pressure.json",
+      "sha256": "1c2dadad9b779970893e6e65e3ba7e3f495cedae0a7d128bffef12544eefba06"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\native-results\\.last-run.json",
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\native-results\\autonomy-resource-admissio-006e0-run-terminates-handoff-off-\\attachments\\r1-waves-owner-f90377cb61eacf4251f4346da0fb6e199b2da122.json",
+      "sha256": "acee62f12bd24102351f21844e529355f9f7b0517fad624d7d425809a3d3a1e9"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\native-results\\autonomy-resource-admissio-006e0-run-terminates-handoff-off-\\owner.sqlite",
+      "sha256": "9dece3c7c1b8b4ef4c7ace5459cef5ed4e1f6c269cfe9915ec7726e01baf943a"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\native-results\\autonomy-resource-admissio-006e0-run-terminates-handoff-off-\\owner.sqlite-shm",
+      "sha256": "7288b60638c21f6fb0342c452fc7e2d4ce41b22082356dccc213bc1b809493f0"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\native-results\\autonomy-resource-admissio-006e0-run-terminates-handoff-off-\\owner.sqlite-wal",
+      "sha256": "89d7aef01f0c1e1887f6dfb16762739a97d92f18be6aa555d779925847e48bc8"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\native-results\\autonomy-resource-admissio-006e0-run-terminates-handoff-off-\\r1-electron.png",
+      "sha256": "876174e061c94720b40cfe92009eebdda46c3e1e13d9a0d19f76a6adc35366b0"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\native-results\\autonomy-resource-admissio-006e0-run-terminates-handoff-off-\\r1-native-stop.json",
+      "sha256": "24ea1ccccca4118520a4f4593fd74f486cde630a2a8a5ca9647bda3dde3b920f"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\native-results\\autonomy-resource-admissio-006e0-run-terminates-handoff-off-\\r1-waves-owner.json",
+      "sha256": "acee62f12bd24102351f21844e529355f9f7b0517fad624d7d425809a3d3a1e9"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\native-results\\autonomy-resource-admissio-006e0-run-terminates-handoff-off-\\r1-waves-preassert.json",
+      "sha256": "9e3fa949c0d47a7fe62b1e354ea6d78c4efe55e291ad5dff081757c1d715e261"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\native-results\\autonomy-resource-admissio-92759--run-terminates-handoff-on-\\attachments\\r1-waves-owner-99d8c8196d637ce89b0f518a71ab31be65fafcdd.json",
+      "sha256": "f3ffa18ecb8c630b820b693bbb558e15d794bef6987d0d0a1015808196e1a6b3"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\native-results\\autonomy-resource-admissio-92759--run-terminates-handoff-on-\\owner.sqlite",
+      "sha256": "a525e300c85238051a8c80925e17d876d41b7d3ec0f90c44502a48d04edae5f0"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\native-results\\autonomy-resource-admissio-92759--run-terminates-handoff-on-\\owner.sqlite-shm",
+      "sha256": "283cf60c217ce4af7abdddf925d66ece85cde635304a5986b446fe791236e38d"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\native-results\\autonomy-resource-admissio-92759--run-terminates-handoff-on-\\owner.sqlite-wal",
+      "sha256": "ec37d1317f46c51eb3530074334f8df3424227fe4d46cc6ff17b766935300258"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\native-results\\autonomy-resource-admissio-92759--run-terminates-handoff-on-\\r1-electron.png",
+      "sha256": "9cccae57ecee92cd0d994cc9d9d03cfcd59d4476dba82db2e311f785e1ed3d3b"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\native-results\\autonomy-resource-admissio-92759--run-terminates-handoff-on-\\r1-native-stop.json",
+      "sha256": "f4e9fac98de6a2eb200df3dc497daa3f8345ec42fd786b6b3001c2801e947718"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\native-results\\autonomy-resource-admissio-92759--run-terminates-handoff-on-\\r1-waves-owner.json",
+      "sha256": "f3ffa18ecb8c630b820b693bbb558e15d794bef6987d0d0a1015808196e1a6b3"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\native-results\\autonomy-resource-admissio-92759--run-terminates-handoff-on-\\r1-waves-preassert.json",
+      "sha256": "74e71395b95f41708a5567753d05b2c7c78500965f90cd4b0cd456f3de93419d"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\native-results\\electron-process-cleanup.json",
+      "sha256": "b5ba5d784110942cd2bbc95894ea626e50d9f413e6537a08a505dc0a5e13cf1b"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\native-results\\electron-process-run.json",
+      "sha256": "5d340ebf8421f94de7219fe631c3cfe0cb050d31df1b2bede4749c34a41211c0"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\native-results\\role-orchestration-synthes-1e405--after-an-accepted-dispatch\\pending-synthesis.png",
+      "sha256": "3d198fd91b866c25cd12beaeec7917b6cb1ac8be966f089c47a4a1fb1f3cb3f0"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\native-results\\source-mutation-guard.json",
+      "sha256": "0ba7d80917409735168a888cfc82ff1a0624c7be7550cf345598aa421b0a8390"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\native-results\\source-state-after.json",
+      "sha256": "401cd57d68d6d9ec30214c9010d1401f202c4eb5367dda2e28322117875705b8"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\native-results\\source-state-before.json",
+      "sha256": "401cd57d68d6d9ec30214c9010d1401f202c4eb5367dda2e28322117875705b8"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\native.exit",
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\native.json",
+      "sha256": "90898a55ef8590eefddf4ef4e4a42ee71185101366f5a9c234f9ae24dc383c38"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\native.log",
+      "sha256": "b3a40d7a578ec5f66411f3ee4f86720b1aad83fbf66760bcc6f635ad1b584199"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\pressure-fabric.json",
+      "sha256": "72a8d9d5642096b8d3ec4f04db89c15ea09127be8397bd76ebe2304d13da31b0"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\pressure-runtime.json",
+      "sha256": "c5f1fe9ec51d33d12456756b075697889a2a217b9382a81f6a9ca1e50f8c8df1"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\report.json",
+      "sha256": "7995789a78682ab1d435fc9ef0f4e7d3f7e10bd516ec40ca1354928dab4668cf"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\root.exit",
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\root.json",
+      "sha256": "4b50b7aeb2b8bf0dae4c5de637245afab5da303eb71661fda5d85d65368232c8"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\serial\\root.log",
+      "sha256": "ad7125c85765c0dd388c3ef8f62b66ac39d421a752f8653127229c9e44e9eb71"
+    },
+    {
+      "path": "D:\\tmp\\tf0830\\verify-scope.py",
+      "sha256": "f8d1cadf67bea45f84ca53204c0e33704582022ce7a60963388358313ffdfe2c"
+    }
+  ]
+}
