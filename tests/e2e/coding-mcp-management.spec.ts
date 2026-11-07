@@ -203,7 +203,12 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
       evidence.wrapperPid = child.pid;
       await hostInvoke(app, 'gateway', 'stop').catch((error) => { evidence.gatewayStopError = String(error); });
       evidence.gatewayAfterStop = await hostInvoke(app, 'gateway', 'status').catch(() => null);
-      try { evidence.appCleanup = await closeElectronApp(app); }
+      try {
+        const cleanup = await closeElectronApp(app);
+        evidence.appCleanup = cleanup;
+        if (!cleanup.mainExited || !cleanup.launcherExited) evidence.appCleanupError = 'Electron process exit was not confirmed';
+        evidence.repeatedAppCleanup = await closeElectronApp(app);
+      }
       catch (error) { evidence.appCleanupError = String(error); }
       evidence.wrapperExitCode = child.exitCode;
       evidence.wrapperSignalCode = child.signalCode;

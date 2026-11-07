@@ -275,7 +275,11 @@ async function bounded<T>(operation: Promise<T>, timeoutMs: number, phase: strin
 
 async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000) {
   const owned = electronProcesses.get(app);
-  const launcher = owned?.launcher ?? app.process();
+  const errors: string[] = [];
+  let launcher = owned?.launcher;
+  if (!launcher) {
+    try { launcher = app.process(); } catch (error) { errors.push(String(error)); }
+  }
   let snapshotError: string | undefined;
   if (process.platform === 'win32' && owned) {
     try {
@@ -287,26 +291,32 @@ async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000) {
     } catch (error) { snapshotError = String(error); }
   }
   // Playwright must close its inspector before the Windows launcher exits.
-  const closing = app.close().then(() => true, () => false);
+  const closing = app.close().then(() => true, (error: unknown) => { errors.push(String(error)); return false; });
   let graceful = false;
   try { graceful = await bounded(closing, timeoutMs, 'Playwright close'); } catch { /* fall back to owned handles */ }
   let processes: WindowsProcessCheck[] = [];
-  let processError: unknown;
   try {
     if (process.platform === 'win32' && owned) processes = await checkWindowsProcesses(owned.identities, true);
-  } catch (error) { processError = error; }
-  if (launcher.exitCode === null && launcher.signalCode === null) {
+  } catch (error) { errors.push(String(error)); }
+  if (launcher && launcher.exitCode === null && launcher.signalCode === null) {
     // ChildProcess.kill uses the launcher's existing native handle on Windows.
     const exited = new Promise<void>((resolve) => launcher.once('exit', () => resolve()));
-    launcher.kill('SIGKILL');
-    await bounded(exited, 2_000, 'Electron launcher exit');
+    try {
+      launcher.kill('SIGKILL');
+      await bounded(exited, timeoutMs, 'Electron launcher exit');
+    } catch (error) { errors.push(String(error)); }
   }
-  await bounded(closing, 2_000, 'Playwright close after launcher exit');
-  if (processError) throw processError;
-  if (processes.some(({ status }) => status === 'alive' || status === 'unavailable')) {
-    throw new Error(`Electron cleanup failed: ${JSON.stringify(processes)}`);
-  }
-  return { graceful, processes, ...(snapshotError ? { snapshotError } : {}) };
+  let closeSettled = false;
+  try { closeSettled = await bounded(closing, 2_000, 'Playwright close after launcher exit'); }
+  catch (error) { errors.push(String(error)); }
+  const launcherExited = Boolean(launcher && (launcher.exitCode !== null || launcher.signalCode !== null));
+  const mainExited = process.platform === 'win32'
+    ? Boolean(owned?.identities.length && processes.length === owned.identities.length
+      && processes.every(({ status }) => status === 'exited' || status === 'replaced' || status === 'terminated'))
+    : launcherExited;
+  // Other E2E callers close sockets after this helper. Return exit confirmation
+  // so those cleanups run even when a process or inspector cannot be closed.
+  return { mainExited, launcherExited, graceful, closeSettled, processes, errors, ...(snapshotError ? { snapshotError } : {}) };
 }
 
 async function seedE2eSettings(userDataDir: string, theme?: LaunchElectronOptions['theme']): Promise<void> {
