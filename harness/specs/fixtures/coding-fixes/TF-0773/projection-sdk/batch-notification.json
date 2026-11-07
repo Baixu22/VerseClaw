@@ -1,0 +1,43 @@
+{
+  "driven_by": "agent",
+  "actor": "mcp-sdk-runner",
+  "realHumanEvidence": false,
+  "evidence": {
+    "response": [
+      {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "batch-1"
+            }
+          ],
+          "isError": false
+        }
+      },
+      {
+        "jsonrpc": "2.0",
+        "id": 2,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "MCP request cancelled"
+            }
+          ],
+          "_meta": {
+            "openclaw/resultStatus": "cancelled"
+          },
+          "isError": true
+        }
+      }
+    ],
+    "events": [
+      "start:slow:batch-1",
+      "finish:slow:batch-1"
+    ],
+    "queuedEffectExecuted": false
+  }
+}

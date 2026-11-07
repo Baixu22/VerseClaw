@@ -1,0 +1,146 @@
+{
+  "driven_by": "agent",
+  "actor": "mcp-sdk-runner",
+  "realHumanEvidence": false,
+  "evidence": {
+    "results": {
+      "text": {
+        "content": [
+          {
+            "type": "text",
+            "text": "text"
+          }
+        ],
+        "isError": false
+      },
+      "image": {
+        "content": [
+          {
+            "type": "image",
+            "data": "AA==",
+            "mimeType": "image/png"
+          }
+        ],
+        "isError": false
+      },
+      "audio": {
+        "content": [
+          {
+            "type": "audio",
+            "data": "AA==",
+            "mimeType": "audio/wav"
+          }
+        ],
+        "isError": false
+      },
+      "resource": {
+        "content": [
+          {
+            "type": "resource",
+            "resource": {
+              "uri": "file:///fixture.txt",
+              "text": "fixture"
+            }
+          }
+        ],
+        "isError": false
+      },
+      "structured": {
+        "_meta": {
+          "openclaw/contentLoss": [
+            "structuredContent:2025-03-26"
+          ]
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "structured"
+          },
+          {
+            "type": "text",
+            "text": "structuredContent:\n{\"count\":1}"
+          }
+        ],
+        "isError": false
+      },
+      "error": {
+        "_meta": {
+          "openclaw/resultStatus": "error"
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "error"
+          }
+        ],
+        "isError": true
+      },
+      "throw": {
+        "_meta": {
+          "openclaw/resultStatus": "error"
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Fixture failure"
+          }
+        ],
+        "isError": true
+      },
+      "waiting": {
+        "_meta": {
+          "openclaw/resultStatus": "waiting"
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "waiting"
+          }
+        ],
+        "isError": true
+      },
+      "afterCancelAndTimeout": {
+        "content": [
+          {
+            "type": "text",
+            "text": "next-call"
+          }
+        ],
+        "isError": false
+      }
+    },
+    "stdioPid": null,
+    "processExited": true,
+    "events": [
+      "start:text:",
+      "finish:text:",
+      "start:image:",
+      "finish:image:",
+      "start:audio:",
+      "finish:audio:",
+      "start:resource:",
+      "finish:resource:",
+      "start:structured:",
+      "finish:structured:",
+      "start:error:",
+      "finish:error:",
+      "start:throw:",
+      "start:waiting:",
+      "finish:waiting:",
+      "start:slow:cancel-me",
+      "aborted:cancel-me",
+      "start:slow:timeout-me",
+      "aborted:timeout-me",
+      "start:text:next-call",
+      "finish:text:next-call",
+      "start:slow:runtime-0",
+      "aborted:runtime-0",
+      "start:slow:runtime-1",
+      "aborted:runtime-1",
+      "start:slow:runtime-2",
+      "start:text:after-cancels",
+      "finish:text:after-cancels",
+      "aborted:runtime-2"
+    ]
+  }
+}

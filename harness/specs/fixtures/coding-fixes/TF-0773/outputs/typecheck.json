@@ -1,0 +1,15 @@
+{
+  "actor": "codex-01a1b4da",
+  "driven_by": "agent",
+  "name": "typecheck",
+  "argv": [
+    "C:/Program Files/nodejs/node.exe",
+    ".audit/TF-0772/typecheck-sequential.mjs",
+    "D:\\tmp\\coding-relay-01a1b4da\\tf0773-final\\typecheck.json"
+  ],
+  "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+  "exitCode": 0,
+  "seconds": 35.333043575286865,
+  "log": "typecheck.log",
+  "output": "START bridge\n{\"name\":\"bridge\",\"argv\":[\"C:\\\\Program Files\\\\nodejs\\\\node.exe\",\"scripts/generate-ext-bridge.mjs\"],\"exitCode\":0,\"seconds\":0.134,\"output\":\"[ext-bridge] No external extensions configured \u2014 empty stubs up to date.\\n\"}\nSTART node\n{\"name\":\"node\",\"argv\":[\"C:\\\\Program Files\\\\nodejs\\\\node.exe\",\"node_modules/@typescript/native-preview/bin/tsgo.js\",\"--noEmit\",\"-p\",\"tsconfig.node.json\",\"--composite\",\"false\"],\"exitCode\":0,\"seconds\":12.06,\"output\":\"\"}\nSTART web\n{\"name\":\"web\",\"argv\":[\"C:\\\\Program Files\\\\nodejs\\\\node.exe\",\"node_modules/@typescript/native-preview/bin/tsgo.js\",\"--noEmit\",\"-p\",\"tsconfig.web.json\",\"--composite\",\"false\"],\"exitCode\":0,\"seconds\":5.613,\"output\":\"\"}\nSTART test\n{\"name\":\"test\",\"argv\":[\"C:\\\\Program Files\\\\nodejs\\\\node.exe\",\"node_modules/@typescript/native-preview/bin/tsgo.js\",\"--noEmit\",\"-p\",\"tsconfig.test.json\",\"--composite\",\"false\"],\"exitCode\":0,\"seconds\":17.265,\"output\":\"\"}\n"
+}

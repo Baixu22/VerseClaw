@@ -1,0 +1,17 @@
+{
+  "driven_by": "agent",
+  "actor": "mcp-sdk-runner",
+  "realHumanEvidence": false,
+  "evidence": {
+    "events": [
+      "start:slow:first-client",
+      "start:text:second-client",
+      "finish:text:second-client",
+      "finish:slow:first-client"
+    ],
+    "distinctSessionIds": true,
+    "replayRejected": true,
+    "foreignSessionRejected": true,
+    "changedVersionRejected": true
+  }
+}

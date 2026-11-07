@@ -1,0 +1,14 @@
+{
+  "actor": "codex-01a1b4da",
+  "driven_by": "agent",
+  "name": "comms-replay",
+  "argv": [
+    "C:/Program Files/nodejs/node.exe",
+    "scripts/comms/replay.mjs"
+  ],
+  "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+  "exitCode": 0,
+  "seconds": 0.485321044921875,
+  "log": "comms-replay.log",
+  "output": "Wrote comms replay metrics to D:\\ClawX-work\\coding-vg-sts-jj-20261104\\artifacts\\comms\\current-metrics.json\n"
+}

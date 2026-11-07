@@ -1,0 +1,18 @@
+{
+  "findings": [
+    {
+      "body": "The guarded catch awaits `retireRejectedHttpSession`, which awaits `disposeSession` before rethrowing the original 404. `disposeSession` has a 5-second timeout, so an expired HTTP call can now remain pending for up to five seconds before the caller receives its failure and before normal backoff bookkeeping runs. Retirement should be decoupled from propagation of the original request error, with cleanup performed asynchronously and errors isolated.",
+      "category": "bug",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/agents/agent-bundle-mcp-runtime.ts",
+        "line": 588
+      },
+      "confidence": 0.88,
+      "priority": "P2",
+      "title": "Avoid delaying expired-call failures on session retirement"
+    }
+  ],
+  "overall_confidence": 0.88,
+  "overall_correctness": "patch is incorrect",
+  "overall_explanation": "The identity checks correctly prevent a late 404 from retiring a replacement connection. However, the new retirement path synchronously waits for transport disposal in the request error path; the disposal safety timeout can add up to five seconds to every expired-session failure and delays backoff handling. The concurrency fix should preserve prompt failure propagation while retiring the stale session independently."
+}

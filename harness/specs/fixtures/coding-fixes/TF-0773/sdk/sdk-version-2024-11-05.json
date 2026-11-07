@@ -1,0 +1,112 @@
+{
+  "driven_by": "agent",
+  "actor": "mcp-sdk-runner",
+  "realHumanEvidence": false,
+  "evidence": {
+    "receipts": [
+      {
+        "kind": "audio",
+        "http": {
+          "content": [
+            {
+              "type": "text",
+              "text": "[MCP audio converted to text for 2024-11-05] {\"type\":\"audio\",\"data\":\"AA==\",\"mimeType\":\"audio/wav\"}"
+            }
+          ],
+          "_meta": {
+            "openclaw/contentLoss": [
+              "0:audio:2024-11-05"
+            ]
+          },
+          "isError": false
+        },
+        "stdio": {
+          "_meta": {
+            "openclaw/contentLoss": [
+              "0:audio:2024-11-05"
+            ]
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "[MCP audio converted to text for 2024-11-05] {\"type\":\"audio\",\"data\":\"AA==\",\"mimeType\":\"audio/wav\"}"
+            }
+          ],
+          "isError": false
+        }
+      },
+      {
+        "kind": "resource_link",
+        "http": {
+          "content": [
+            {
+              "type": "text",
+              "text": "[MCP resource_link converted to text for 2024-11-05] {\"name\":\"fixture\",\"uri\":\"file:///fixture.txt\",\"type\":\"resource_link\"}"
+            }
+          ],
+          "_meta": {
+            "openclaw/contentLoss": [
+              "0:resource_link:2024-11-05"
+            ]
+          },
+          "isError": false
+        },
+        "stdio": {
+          "_meta": {
+            "openclaw/contentLoss": [
+              "0:resource_link:2024-11-05"
+            ]
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "[MCP resource_link converted to text for 2024-11-05] {\"name\":\"fixture\",\"uri\":\"file:///fixture.txt\",\"type\":\"resource_link\"}"
+            }
+          ],
+          "isError": false
+        }
+      },
+      {
+        "kind": "structured",
+        "http": {
+          "content": [
+            {
+              "type": "text",
+              "text": "structured"
+            },
+            {
+              "type": "text",
+              "text": "structuredContent:\n{\"count\":1}"
+            }
+          ],
+          "_meta": {
+            "openclaw/contentLoss": [
+              "structuredContent:2024-11-05"
+            ]
+          },
+          "isError": false
+        },
+        "stdio": {
+          "_meta": {
+            "openclaw/contentLoss": [
+              "structuredContent:2024-11-05"
+            ]
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "structured"
+            },
+            {
+              "type": "text",
+              "text": "structuredContent:\n{\"count\":1}"
+            }
+          ],
+          "isError": false
+        }
+      }
+    ],
+    "pid": 30996,
+    "processExited": true
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "driven_by": "agent",
+  "actor": "mcp-sdk-runner",
+  "realHumanEvidence": false,
+  "evidence": {
+    "events": [
+      "start:text:fresh-call",
+      "finish:text:fresh-call"
+    ],
+    "expiredAttemptExecuted": false,
+    "explicitRecoveryPassed": true
+  }
+}
