@@ -179,15 +179,17 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
         ? await call({ args: { message } })
         : await rpc('tools.invoke', { name: 'fixture__echo', sessionKey: parent.key,
           expectedSessionGeneration: parent.entry.sessionId, workspaceDir: workspace, args: { message } });
-      const applied = await readFile(join(workspace, `${message}.txt`), 'utf8');
-      const current = await rpc<{ config: { agents: { defaults: { thinkingDefault: string } } } }>('config.get', {});
-      configEffects.push({ surface, result, applied, thinkingDefault: current.config.agents.defaults.thinkingDefault });
-      expect(applied).toBe(message);
-      expect(server.requests.filter((request) => request.method === 'tools/call')).toHaveLength(before + 1);
-      expect(current.config.agents.defaults.thinkingDefault).toBe(thinkingDefault);
+      const effect: Record<string, unknown> = { surface, result };
+      configEffects.push(effect);
       expect(result).toMatchObject(surface === 'management'
         ? { success: true, result: { content: [{ type: 'text', text: message }] } }
         : { ok: true, output: { content: [{ type: 'text', text: message }] } });
+      const applied = await readFile(join(workspace, `${message}.txt`), 'utf8');
+      const current = await rpc<{ config: { agents: { defaults: { thinkingDefault: string } } } }>('config.get', {});
+      Object.assign(effect, { applied, thinkingDefault: current.config.agents.defaults.thinkingDefault });
+      expect(applied).toBe(message);
+      expect(server.requests.filter((request) => request.method === 'tools/call')).toHaveLength(before + 1);
+      expect(current.config.agents.defaults.thinkingDefault).toBe(thinkingDefault);
     }
     evidence.status = 'pass';
   } catch (error) {
