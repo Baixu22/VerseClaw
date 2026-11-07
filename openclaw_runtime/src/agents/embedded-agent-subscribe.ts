@@ -1267,7 +1267,8 @@ export function subscribeEmbeddedAgentSession(params: SubscribeEmbeddedAgentSess
     getLastCompactionTokensAfter: () => state.lastCompactionTokensAfter,
   };
 
-  const sessionUnsubscribe = params.session.subscribe(createEmbeddedAgentSessionEventHandler(ctx));
+  const handleSessionEvent = createEmbeddedAgentSessionEventHandler(ctx);
+  const sessionUnsubscribe = params.session.subscribe(handleSessionEvent);
 
   const unsubscribe = () => {
     if (state.unsubscribed) {
@@ -1305,6 +1306,7 @@ export function subscribeEmbeddedAgentSession(params: SubscribeEmbeddedAgentSess
   return {
     assistantTexts,
     toolMetas,
+    handleSessionEvent,
     getBrowserAutomationEvents: () => state.browserAutomationEvents.slice(),
     getAcceptedSessionSpawns: () => state.acceptedSessionSpawns.slice(),
     runToolLifecycle: async <T>(toolParams: {

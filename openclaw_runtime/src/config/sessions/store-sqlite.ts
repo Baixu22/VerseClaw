@@ -2,6 +2,7 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import { isDeepStrictEqual } from "node:util";
 import { isRecord } from "@openclaw/normalization-core/record-coerce";
 import {
   executeSqliteQuerySync,
@@ -162,11 +163,37 @@ export function readSqliteSessionEntry(
 export function replaceSqliteSessionStore(
   storePath: string,
   store: Record<string, SessionEntry>,
-  opts?: { compact?: boolean; journalRows?: SessionDeleteOperationJournalRow[] },
+  opts?: {
+    compact?: boolean;
+    journalRows?: SessionDeleteOperationJournalRow[];
+    expectedStore?: Record<string, SessionEntry>;
+    deferCheckpoint?: boolean;
+  },
 ): void {
   const databaseOptions = resolveSessionStoreDatabaseOptions(storePath);
   runOpenClawAgentWriteTransaction((database) => {
     const db = getNodeSqliteKysely<SessionStoreDatabase>(database.db);
+    if (opts?.expectedStore) {
+      const current = loadSqliteSessionStore(storePath);
+      const changedKeys = new Set(
+        [...Object.keys(opts.expectedStore), ...Object.keys(store)].filter(
+          (key) => !isDeepStrictEqual(opts.expectedStore?.[key], store[key]),
+        ),
+      );
+      for (const key of changedKeys) {
+        if (!isDeepStrictEqual(current[key], opts.expectedStore[key])) {
+          throw new Error(`session store revision conflict for ${key}`);
+        }
+      }
+      // Preserve entries written by another process when this update did not
+      // change them. Only the caller's changed keys are eligible for replacement.
+      for (const key of Object.keys(store)) {
+        if (!changedKeys.has(key)) delete store[key];
+      }
+      for (const [key, entry] of Object.entries(current)) {
+        if (!changedKeys.has(key)) store[key] = entry;
+      }
+    }
     executeSqliteQuerySync(
       database.db,
       db.deleteFrom("cache_entries").where("scope", "=", SESSION_STORE_SCOPE),
@@ -213,7 +240,26 @@ export function replaceSqliteSessionStore(
   if (opts?.compact) {
     database.db.exec("VACUUM;");
   }
-  database.walMaintenance.checkpoint();
+  if (!opts?.deferCheckpoint) database.walMaintenance.checkpoint();
+}
+
+/** Synchronous owner admission reads and writes under one SQLite write lock. */
+export function mutateSqliteSessionStoreAtomic<T>(
+  storePath: string,
+  mutator: (store: Record<string, SessionEntry>) => T,
+): T {
+  const options = resolveSessionStoreDatabaseOptions(storePath);
+  const result = runOpenClawAgentWriteTransaction(() => {
+    const store = loadSqliteSessionStore(storePath);
+    const next = mutator(store);
+    if (next && typeof (next as { then?: unknown }).then === "function") {
+      throw new Error("atomic session admission requires a synchronous mutator");
+    }
+    replaceSqliteSessionStore(storePath, store, { deferCheckpoint: true });
+    return next;
+  }, options);
+  openOpenClawAgentDatabase(options).walMaintenance.checkpoint();
+  return result;
 }
 
 export function readSessionDeleteOperationJournalRow(

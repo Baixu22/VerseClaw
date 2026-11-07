@@ -17,7 +17,7 @@ import { createLazyImportLoader, createLazyPromiseLoader } from "../shared/lazy-
 import { importRuntimeModule } from "../shared/runtime-import.js";
 import { normalizeDeliveryContext } from "../utils/delivery-context.shared.js";
 import type { VerseGitCompletionSink } from "../../../shared/types/versegit.js";
-import { createVerseGitCleanupBarrier } from '../../../shared/versegit-cleanup-barrier.js';
+import { createVerseGitCleanupBarrier } from "../../../shared/versegit-cleanup-barrier.js";
 import type { DeliveryContext } from "../utils/delivery-context.types.js";
 import {
   ackLeasedAgentSteeringItemsFromSubagentRuns,
@@ -28,6 +28,7 @@ import {
 import { makeTaskLedgerEntry, taskGraphVerifierNode } from "./orchestration-protocol.js";
 import { buildOrchestrationCompletionBatches } from "./orchestration-completion-batches.js";
 import { isAbortedAgentStopReason } from "./run-termination.js";
+import { hasReservedSubagentRecovery } from "./subagent-recovery-state.js";
 import type { ensureRuntimePluginsLoaded as ensureRuntimePluginsLoadedFn } from "./runtime-plugins.js";
 import type { SubagentRunOutcome } from "./subagent-announce-output.js";
 import {
@@ -58,7 +59,10 @@ import {
 } from "./subagent-registry-helpers.js";
 import { createSubagentRegistryLifecycleController } from "./subagent-registry-lifecycle.js";
 import type { CandidateApplyHost } from "./orchestration-candidate-apply.js";
-import { applyDeferredPatchFlow, recordDeferredPatchFlowCompletion } from "./orchestration-patch-flow.js";
+import {
+  applyDeferredPatchFlow,
+  recordDeferredPatchFlowCompletion,
+} from "./orchestration-patch-flow.js";
 import { subagentRuns } from "./subagent-registry-memory.js";
 import {
   countActiveDescendantRunsFromRuns,
@@ -555,7 +559,8 @@ async function processCompletedOrchestrationWorktrees(
     }
   }
   persistSubagentRuns();
-}function buildVerifierTask(params: { originalTask: string; workers: SubagentRunRecord[] }): string {
+}
+function buildVerifierTask(params: { originalTask: string; workers: SubagentRunRecord[] }): string {
   const sections = params.workers.map((worker, index) => {
     const meta = worker.orchestration;
     const status = worker.outcome?.status ?? "unknown";
@@ -589,10 +594,9 @@ async function maybeStartDeferredOrchestrationVerifier(completedRunId: string): 
   }
   const orchestrationRunId = completedMeta.orchestrationRunId;
   const workers = listOrchestrationWorkers(orchestrationRunId);
-  const expectedWorkerRunIds =
-    completedMeta.expectedWorkerRunIds?.length
-      ? completedMeta.expectedWorkerRunIds
-      : workers.map((worker) => worker.runId);
+  const expectedWorkerRunIds = completedMeta.expectedWorkerRunIds?.length
+    ? completedMeta.expectedWorkerRunIds
+    : workers.map((worker) => worker.runId);
   const expectedWorkers = expectedWorkerRunIds
     .map((runId) => subagentRuns.get(runId))
     .filter((entry): entry is SubagentRunRecord => Boolean(entry?.orchestration));
@@ -621,9 +625,7 @@ async function maybeStartDeferredOrchestrationVerifier(completedRunId: string): 
           patch: {
             patchFlowStatus: "blocked",
             patchFlowAppliedAt: Date.now(),
-            patchFlowError: !host
-              ? "candidate_apply_host_missing"
-              : "patch_flow_workspace_missing",
+            patchFlowError: !host ? "candidate_apply_host_missing" : "patch_flow_workspace_missing",
             verifierSkippedReason: "candidate-apply-host-missing",
             verifierSkippedAt: Date.now(),
           },
@@ -648,8 +650,8 @@ async function maybeStartDeferredOrchestrationVerifier(completedRunId: string): 
         const traceDigest = createHash("sha256")
           .update(JSON.stringify(outcome.trace ?? []))
           .digest("hex");
-        const journalRefs = (outcome.results ?? []).flatMap((result) =>
-          result.journal?.snapshotIds ?? []
+        const journalRefs = (outcome.results ?? []).flatMap(
+          (result) => result.journal?.snapshotIds ?? [],
         );
         const completionSink = subagentRegistryDeps.completionFactSink;
         const completionFactRecord = recordDeferredPatchFlowCompletion({
@@ -743,15 +745,24 @@ async function maybeStartDeferredOrchestrationVerifier(completedRunId: string): 
       import("./subagent-spawn.js"),
     ]);
     const cfg = subagentRegistryDeps.getRuntimeConfig();
-    const verifierTask = buildVerifierTask({ originalTask: latestMeta.originalTask, workers: expectedWorkers });
-    const verifierNode = latestMeta.taskGraph ? taskGraphVerifierNode(latestMeta.taskGraph) : undefined;
+    const verifierTask = buildVerifierTask({
+      originalTask: latestMeta.originalTask,
+      workers: expectedWorkers,
+    });
+    const verifierNode = latestMeta.taskGraph
+      ? taskGraphVerifierNode(latestMeta.taskGraph)
+      : undefined;
     const verifierLedger = makeTaskLedgerEntry({
       orchestrationRunId,
       roleName: latestMeta.verifierRole,
       task: verifierTask,
       index: expectedWorkers.length,
       phase: "verifier",
-      requiredCapabilities: verifierNode?.requiredCapabilities ?? latestMeta.requiredCapabilities ?? latestMeta.routeDiagnostics?.requiredCapabilities ?? [],
+      requiredCapabilities:
+        verifierNode?.requiredCapabilities ??
+        latestMeta.requiredCapabilities ??
+        latestMeta.routeDiagnostics?.requiredCapabilities ??
+        [],
       taskNodeId: verifierNode?.taskNodeId,
       graphRunId: latestMeta.graphRunId,
       dependsOn: verifierNode?.dependsOn,
@@ -1013,6 +1024,11 @@ function resumeSubagentRun(runId: string) {
   }
   const entry = subagentRuns.get(runId);
   if (!entry) {
+    return;
+  }
+  const recoveryOwner = loadSubagentSessionEntry({ childSessionKey: entry.childSessionKey });
+  if (hasReservedSubagentRecovery(recoveryOwner, runId)) {
+    scheduleSubagentOrphanRecovery({ delayMs: 1_000 });
     return;
   }
   if (entry.cleanupCompletedAt) {
@@ -1285,6 +1301,14 @@ async function sweepSubagentRuns() {
       });
     }
     for (const [runId, entry] of subagentRuns.entries()) {
+      const recoveryOwner = loadSubagentSessionEntry({
+        childSessionKey: entry.childSessionKey,
+        storeCache,
+      });
+      if (hasReservedSubagentRecovery(recoveryOwner, runId)) {
+        scheduleSubagentOrphanRecovery({ delayMs: 1_000 });
+        continue;
+      }
       if (isSuspendedPendingFinalDelivery(entry)) {
         const suspendedAgeMs = now - (entry.delivery?.suspendedAt ?? now);
         const expired = suspendedAgeMs >= resolveSuspendedDeliveryExpiryMs(entry);
@@ -1443,7 +1467,7 @@ function ensureListener() {
       if (!evt || evt.stream !== "lifecycle") {
         return;
       }
-      const phase = evt.data?.phase;
+      const phase = typeof evt.data?.phase === "string" ? evt.data.phase : undefined;
       const cleanupRoot = process.env.CLAWX_VERSGIT_CLEANUP_ROOT?.trim();
       if (phase && cleanupRoot) {
         const barrier = createVerseGitCleanupBarrier(cleanupRoot);
@@ -1451,7 +1475,7 @@ function ensureListener() {
         if (sealed) {
           barrier.observeLateEvent({
             runId: evt.runId,
-            event: String(phase),
+            event: phase,
             epoch: Number(evt.data?.epoch ?? sealed.expected.epoch),
           });
           return;
@@ -1621,6 +1645,7 @@ export function replaceSubagentRunAfterSteer(params: {
   runTimeoutSeconds?: number;
   preserveFrozenResultFallback?: boolean;
   transcriptFile?: string;
+  startedAt?: number;
 }) {
   return subagentRunManager.replaceSubagentRunAfterSteer(params);
 }

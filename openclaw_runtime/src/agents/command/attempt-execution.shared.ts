@@ -41,6 +41,11 @@ export async function persistSessionEntry(
       if (params.shouldPersist && !params.shouldPersist(current)) {
         return current;
       }
+      if (current && current.sessionId !== params.entry.sessionId && !params.shouldPersist) {
+        // Generation changes belong to the session owner. Ordinary metadata
+        // cannot restore the generation from an earlier run snapshot.
+        return current;
+      }
       const merged = mergeSessionEntry(store[params.sessionKey], params.entry);
       // Metadata snapshots are not lifecycle writes. Preserve the live owner's
       // whole projection, including cleared terminal fields, so a late metadata
@@ -52,6 +57,10 @@ export async function persistSessionEntry(
         merged.endedAt = current.endedAt;
         merged.runtimeMs = current.runtimeMs;
         merged.abortedLastRun = current.abortedLastRun;
+        // Recovery admission is owner state; a pre-run snapshot cannot refund
+        // its budget or erase a reservation that was committed meanwhile.
+        merged.subagentRecovery = current.subagentRecovery;
+        merged.restartRecovery = current.restartRecovery;
       }
       if (params.preserveTranscriptMarkerUpdatedAt) {
         const currentUpdatedAt = normalizeTranscriptMarkerUpdatedAt(current?.updatedAt);

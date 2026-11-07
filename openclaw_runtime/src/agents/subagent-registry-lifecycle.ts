@@ -4,6 +4,7 @@
  * Completes/fails task runs, clears delivery state, emits lifecycle events, and cleans attached resources.
  */
 import { uniqueStrings } from "@openclaw/normalization-core/string-normalization";
+import { hasReservedSubagentRecovery } from "./subagent-recovery-state.js";
 import { isSilentReplyText, SILENT_REPLY_TOKEN } from "../auto-reply/tokens.js";
 import type { cleanupBrowserSessionsForLifecycleEnd } from "../browser-lifecycle-cleanup.js";
 import type { callGateway as defaultCallGateway } from "../gateway/call.js";
@@ -61,9 +62,9 @@ import {
 import type { PendingFinalDeliveryPayload, SubagentRunRecord } from "./subagent-registry.types.js";
 import { resolveSubagentRunDeadlineMs } from "./subagent-run-timeout.js";
 import { deleteSubagentSessionForCleanup } from "./subagent-session-cleanup.js";
-import { createWorktreeService } from './worktree-service.js';
-import { runSubagentVerseGitCleanup } from './subagent-versegit-cleanup.js';
-import { loadSubagentSessionEntry } from './subagent-session-reconciliation.js';
+import { createWorktreeService } from "./worktree-service.js";
+import { runSubagentVerseGitCleanup } from "./subagent-versegit-cleanup.js";
+import { loadSubagentSessionEntry } from "./subagent-session-reconciliation.js";
 
 type CaptureSubagentCompletionReply =
   (typeof import("./subagent-announce.js"))["captureSubagentCompletionReply"];
@@ -659,11 +660,13 @@ export function createSubagentRegistryLifecycleController(params: {
     const completion = ensureCompletionState(giveUpParams.entry);
     completion.fallbackResultText = undefined;
     completion.fallbackCapturedAt = undefined;
-    if (!(await runTerminalCleanup({
-      runId: giveUpParams.runId,
-      entry: giveUpParams.entry,
-      cleanup: giveUpParams.entry.cleanup,
-    }))) {
+    if (
+      !(await runTerminalCleanup({
+        runId: giveUpParams.runId,
+        entry: giveUpParams.entry,
+        cleanup: giveUpParams.entry.cleanup,
+      }))
+    ) {
       return;
     }
     const completionReason = resolveCleanupCompletionReason(giveUpParams.entry);
@@ -749,7 +752,9 @@ export function createSubagentRegistryLifecycleController(params: {
     }
     let sessionPresent: boolean;
     try {
-      sessionPresent = Boolean(loadSubagentSessionEntry({ childSessionKey: entry.childSessionKey }));
+      sessionPresent = Boolean(
+        loadSubagentSessionEntry({ childSessionKey: entry.childSessionKey }),
+      );
     } catch {
       // An unreadable session store must fail closed rather than skip deletion.
       sessionPresent = true;
@@ -757,12 +762,12 @@ export function createSubagentRegistryLifecycleController(params: {
     const shouldDeleteAttachments = cleanup === "delete" || !entry.retainAttachmentsOnKeep;
     const bindingEndReason =
       entry.endedReason === SUBAGENT_ENDED_REASON_KILLED
-        ? "cancelled" as const
+        ? ("cancelled" as const)
         : entry.outcome?.status === "timeout"
-          ? "timeout" as const
+          ? ("timeout" as const)
           : entry.endedReason === SUBAGENT_ENDED_REASON_COMPLETE && entry.outcome?.status === "ok"
-            ? "completed" as const
-            : "failed" as const;
+            ? ("completed" as const)
+            : ("failed" as const);
     const result = await runSubagentVerseGitCleanup({
       runId,
       entry,
@@ -780,23 +785,24 @@ export function createSubagentRegistryLifecycleController(params: {
               });
             }
           : undefined,
-        deleteSession: cleanup === "delete" && sessionPresent
-          ? async () => {
-              const deleted = await deleteSubagentSessionForCleanup({
-                callGateway: params.callGateway,
-                childSessionKey: entry.childSessionKey,
-                runId,
-                spawnMode: entry.spawnMode,
-                onError: (error) =>
-                  params.warn("sessions.delete failed during subagent cleanup", {
-                    error: buildSafeLifecycleErrorMeta(error),
-                    runId: maskRunId(runId),
-                    childSessionKey: maskSessionKey(entry.childSessionKey),
-                  }),
-              });
-              if (!deleted.ok) throw deleted.error ?? new Error("subagent_session_delete_failed");
-            }
-          : undefined,
+        deleteSession:
+          cleanup === "delete" && sessionPresent
+            ? async () => {
+                const deleted = await deleteSubagentSessionForCleanup({
+                  callGateway: params.callGateway,
+                  childSessionKey: entry.childSessionKey,
+                  runId,
+                  spawnMode: entry.spawnMode,
+                  onError: (error) =>
+                    params.warn("sessions.delete failed during subagent cleanup", {
+                      error: buildSafeLifecycleErrorMeta(error),
+                      runId: maskRunId(runId),
+                      childSessionKey: maskSessionKey(entry.childSessionKey),
+                    }),
+                });
+                if (!deleted.ok) throw deleted.error ?? new Error("subagent_session_delete_failed");
+              }
+            : undefined,
         deleteAttachments: shouldDeleteAttachments
           ? async () => {
               await safeRemoveAttachmentsDir(entry);
@@ -1187,11 +1193,20 @@ export function createSubagentRegistryLifecycleController(params: {
     triggerCleanup: boolean;
     startedAt?: number;
   }) => {
-    params.clearPendingLifecycleError(completeParams.runId);
     const entry = params.runs.get(completeParams.runId);
     if (!entry) {
       return;
     }
+
+    // Old terminal events cannot clean up a child owned by unresolved recovery.
+    if (
+      hasReservedSubagentRecovery(
+        loadSubagentSessionEntry({ childSessionKey: entry.childSessionKey }),
+        completeParams.runId,
+      )
+    )
+      return;
+    params.clearPendingLifecycleError(completeParams.runId);
 
     let mutated = false;
     if (

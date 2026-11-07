@@ -6,6 +6,53 @@ import {
 } from "./store.js";
 import { buildToolIntentIdempotencyKey, isExecutionPhaseWriterEnabled } from "./tool-boundary.js";
 import { planPendingToolRecovery } from "./retry-authorization.js";
+import type { SessionEntry } from "../../config/sessions/types.js";
+import { redispatchPendingToolCalls } from "./redispatch.js";
+
+export function hasPersistedToolRecoveryAdmission(
+  entry: SessionEntry | undefined,
+  sessionId: string,
+  runId: string,
+): boolean {
+  const main = entry?.restartRecovery;
+  const subagent = entry?.subagentRecovery?.authority;
+  return (
+    entry?.sessionId === sessionId &&
+    ((main?.sessionId === sessionId && main.runId === runId && main.state !== "wedged") ||
+      (subagent?.idempotencyKey === runId &&
+        subagent.decision.entry === "subagent-orphan" &&
+        subagent.decision.kind === "resume" &&
+        subagent.attempts > 0 &&
+        (subagent.state === "pending" ||
+          subagent.state === "accepted" ||
+          subagent.state === "reconcile")))
+  );
+}
+
+export async function redispatchAdmittedSessionTools(
+  params: Parameters<typeof redispatchPendingToolCalls>[0] & {
+    entry: SessionEntry | undefined;
+    runId: string;
+  },
+): Promise<Awaited<ReturnType<typeof redispatchPendingToolCalls>>> {
+  const admitted = hasPersistedToolRecoveryAdmission(params.entry, params.sessionId, params.runId);
+  if (!admitted) return params.context.messages;
+  const messages = await redispatchPendingToolCalls(params);
+  let end = messages.length;
+  while (end > 0) {
+    const tail = messages[end - 1];
+    if (
+      tail.role !== "assistant" ||
+      tail.stopReason !== "aborted" ||
+      tail.content.some((part) => part.type === "toolCall")
+    )
+      break;
+    end--;
+  }
+  // Keep interrupted assistant output in the transcript; model continuation
+  // resumes from the durable user intent or tool result that preceded it.
+  return end === messages.length ? messages : messages.slice(0, end);
+}
 
 export type ExecutionPhaseRecoveryAction = "none" | "resume" | "reconcile";
 export type ExecutionPhaseRecovery = {

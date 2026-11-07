@@ -5,10 +5,15 @@ import { Type } from "@sinclair/typebox";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { closeOpenClawStateDatabase } from "../../state/openclaw-state-db.js";
 import { toToolDefinitions } from "../agent-tool-definition-adapter.js";
+import { createSubscribedSessionHarness } from "../embedded-agent-subscribe.e2e-harness.js";
 import type { AgentContext, AgentMessage, AgentTool } from "../runtime/index.js";
 import { makeMissingToolResult, repairToolUseResultPairing } from "../session-transcript-repair.js";
 import { redispatchPendingToolCalls } from "./redispatch.js";
-import { authorizePendingToolRecovery } from "./recovery.js";
+import { authorizePendingToolRecovery, redispatchAdmittedSessionTools } from "./recovery.js";
+import {
+  prepareOwnerRecoveryAdmission,
+  finishOwnerRecoveryAdmission,
+} from "../recovery-authority/owner-admission.js";
 import { readOpenExecutionPhases } from "./store.js";
 import { recordAssistantToolDispatches } from "./tool-boundary.js";
 
@@ -83,6 +88,255 @@ function setup(
 }
 
 describe("deterministic recovery through the actual tool adapter", () => {
+  it("records a recovered messaging effect through the session event owner", async () => {
+    const args = {
+      action: "send",
+      channel: "telegram",
+      target: "fixture-target",
+      message: "original delivery",
+    };
+    const pending: AgentMessage = {
+      ...assistant,
+      content: [{ type: "toolCall", id: "message-call", name: "message", arguments: args }],
+    };
+    const execute = vi.fn<AgentTool["execute"]>(async (_id, _args, _signal, onUpdate) => {
+      onUpdate?.({ content: [{ type: "text", text: "sending" }], details: {} });
+      return { content: [{ type: "text" as const, text: "sent" }], details: { status: "sent" } };
+    });
+    const [tool] = toToolDefinitions(
+      [
+        {
+          name: "message",
+          label: "message",
+          description: "local delivery fixture",
+          parameters: Type.Object({
+            action: Type.String(),
+            channel: Type.String(),
+            target: Type.String(),
+            message: Type.String(),
+          }),
+          execute,
+        },
+      ],
+      { ...identity, runId: "recovery-run" },
+    );
+    const context: AgentContext = {
+      systemPrompt: "",
+      messages: [pending],
+      tools: [
+        {
+          ...tool,
+          execute: (id, input, signal, onUpdate) =>
+            tool.execute(id, input, signal, onUpdate, undefined as never),
+        },
+      ],
+    };
+    const { subscription } = createSubscribedSessionHarness({
+      runId: "recovery-run",
+      sessionKey: identity.sessionKey,
+      builtinToolNames: new Set(["message"]),
+    });
+    const persisted: AgentMessage[] = [];
+    const events: string[] = [];
+    recordAssistantToolDispatches(pending, identity);
+    authorizePendingToolRecovery({ ...identity, messages: context.messages });
+    try {
+      await redispatchPendingToolCalls({
+        ...identity,
+        context,
+        config: {},
+        appendResult: (message) => {
+          persisted.push(message);
+          return "persisted-result";
+        },
+        onEvent: (event) => {
+          events.push(event.type);
+          subscription.handleSessionEvent?.(event);
+        },
+      });
+      await subscription.waitForPendingEvents();
+      expect(execute).toHaveBeenCalledTimes(1);
+      expect(persisted).toHaveLength(1);
+      expect(subscription.didSendViaMessagingTool()).toBe(true);
+      expect(subscription.getMessagingToolSentTexts()).toEqual(["original delivery"]);
+      expect(subscription.getItemLifecycle()).toMatchObject({
+        startedCount: 1,
+        completedCount: 1,
+        activeCount: 0,
+      });
+      expect(events).toEqual(
+        expect.arrayContaining([
+          "tool_execution_start",
+          "tool_execution_update",
+          "tool_execution_end",
+        ]),
+      );
+    } finally {
+      subscription.unsubscribe();
+    }
+  });
+
+  it("resumes an aborted text tail from its durable user intent without deleting transcript evidence", async () => {
+    const run = setup();
+    const user: AgentMessage = { role: "user", content: "finish the original task", timestamp: 1 };
+    const partial: AgentMessage = {
+      ...assistant,
+      content: [{ type: "text", text: "interrupted output" }],
+      stopReason: "aborted",
+    };
+    const original = [user, partial];
+    run.context.messages = original;
+    const messages = await redispatchAdmittedSessionTools({
+      ...identity,
+      ...run,
+      runId: "recovery-run",
+      config: {},
+      entry: {
+        sessionId: identity.sessionId,
+        updatedAt: 1,
+        restartRecovery: {
+          sessionId: identity.sessionId,
+          boundary: "original-intent",
+          runId: "recovery-run",
+          attempts: 1,
+          state: "admitted",
+        },
+      },
+    });
+    expect(messages).toEqual([user]);
+    expect(original).toEqual([user, partial]);
+    expect(run.persisted).toEqual([]);
+    expect(run.execute).not.toHaveBeenCalled();
+  });
+  it.each(["pending", "accepted", "reconcile"] as const)(
+    "executes the original subagent call with %s admission",
+    async (state) => {
+      const run = setup();
+      recordAssistantToolDispatches(assistant, identity);
+      authorizePendingToolRecovery({ ...identity, messages: run.context.messages });
+      const admission = prepareOwnerRecoveryAdmission({
+        requestId: "subagent-resume",
+        entry: "subagent-orphan",
+        owner: {
+          kind: "subagent-run",
+          ownerId: identity.runId,
+          runId: identity.runId,
+          sessionKey: identity.sessionKey,
+        },
+        admission: {
+          trigger: "gateway-restart",
+          requiredPreState: "active-subagent-run",
+          admitted: true,
+          visibleOutputObserved: false,
+        },
+        budget: {
+          attempts: { current: 0, max: 2 },
+          backoff: { initialMs: 5000, multiplier: 2 },
+          wedge: { afterAttempts: 2, wedged: false },
+        },
+        replayClass: "reconcile",
+        effect: "not_applied",
+        requestedAction: "resume",
+        idempotencyKey: "recovery-run",
+        evidence: [],
+        requestedAt: Date.now(),
+      });
+      if (!admission.admitted) throw new Error("subagent admission missing");
+      const record =
+        state === "pending"
+          ? admission.record
+          : finishOwnerRecoveryAdmission(admission.record, admission.record, state)!;
+      const entry = {
+        sessionId: identity.sessionId,
+        updatedAt: Date.now(),
+        subagentRecovery: { authority: record },
+      };
+      const messages = await redispatchAdmittedSessionTools({
+        ...identity,
+        ...run,
+        entry,
+        runId: "recovery-run",
+        config: {},
+      });
+      expect(run.execute).toHaveBeenCalledTimes(1);
+      expect(run.persisted[0]).toMatchObject({
+        toolCallId: "call-1",
+        content: [{ text: "actual-result" }],
+      });
+      await redispatchAdmittedSessionTools({
+        ...identity,
+        ...run,
+        entry,
+        runId: "recovery-run",
+        config: {},
+        context: { ...run.context, messages },
+      });
+      expect(run.execute).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  it("does not execute a reconciliation that never admitted this run", async () => {
+    const run = setup();
+    recordAssistantToolDispatches(assistant, identity);
+    authorizePendingToolRecovery({ ...identity, messages: run.context.messages });
+    const rejected = prepareOwnerRecoveryAdmission({
+      requestId: "unknown-owner",
+      entry: "subagent-orphan",
+      owner: {
+        kind: "subagent-run",
+        ownerId: identity.runId,
+        runId: identity.runId,
+        sessionKey: identity.sessionKey,
+      },
+      admission: {
+        trigger: "gateway-restart",
+        requiredPreState: "active-subagent-run",
+        admitted: true,
+        visibleOutputObserved: false,
+      },
+      budget: {
+        attempts: { current: 1, max: 2 },
+        backoff: { initialMs: 5000, multiplier: 2 },
+        wedge: { afterAttempts: 2, wedged: false },
+      },
+      replayClass: "reconcile",
+      effect: "unknown",
+      requestedAction: "resume",
+      idempotencyKey: "recovery-run",
+      evidence: [],
+      requestedAt: Date.now(),
+    });
+    expect(rejected.admitted).toBe(false);
+    await redispatchAdmittedSessionTools({
+      ...identity,
+      ...run,
+      runId: "recovery-run",
+      config: {},
+      entry: {
+        sessionId: identity.sessionId,
+        updatedAt: 1,
+        subagentRecovery: { authority: rejected.record },
+      },
+    });
+    expect(run.execute).not.toHaveBeenCalled();
+  });
+
+  it("rejects a different runner identity before executing an admitted subagent call", async () => {
+    const run = setup();
+    recordAssistantToolDispatches(assistant, identity);
+    authorizePendingToolRecovery({ ...identity, messages: run.context.messages });
+    const before = run.context.messages;
+    const messages = await redispatchAdmittedSessionTools({
+      ...identity,
+      ...run,
+      entry: { sessionId: "other-generation", updatedAt: Date.now() },
+      runId: "other-run",
+      config: {},
+    });
+    expect(messages).toBe(before);
+    expect(run.execute).not.toHaveBeenCalled();
+  });
+
   it("executes original arguments once and replaces repair noise with the real result", async () => {
     const run = setup();
     recordAssistantToolDispatches(assistant, identity);

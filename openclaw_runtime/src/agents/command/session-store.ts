@@ -6,6 +6,7 @@ import { normalizeOptionalString } from "@openclaw/normalization-core/string-coe
 import {
   canonicalizeAbsoluteSessionFilePath,
   mergeSessionEntry,
+  mergeSessionEntryWithPolicy,
   resolveSessionFilePath,
   resolveSessionFilePathOptions,
   setSessionRuntimeModel,
@@ -54,6 +55,9 @@ function removeLifecycleStateFromMetadataPatch(entry: SessionEntry): SessionEntr
   delete next.startedAt;
   delete next.endedAt;
   delete next.runtimeMs;
+  delete next.abortedLastRun;
+  delete next.subagentRecovery;
+  delete next.restartRecovery;
   return next;
 }
 
@@ -292,16 +296,39 @@ export async function updateSessionStoreAfterAgentRun(params: {
     ? {
         updatedAt: next.updatedAt,
         ...(touchInteraction ? { lastInteractionAt: next.lastInteractionAt } : {}),
+        ...(entry.sessionId !== sessionId
+          ? {
+              sessionId: next.sessionId,
+              sessionFile: next.sessionFile,
+              sessionStartedAt: next.sessionStartedAt,
+              usageFamilyKey: next.usageFamilyKey,
+              usageFamilySessionIds: next.usageFamilySessionIds,
+              ...(compactionsThisRun > 0
+                ? { compactionCount: (entry.compactionCount ?? 0) + compactionsThisRun }
+                : {}),
+            }
+          : {}),
       }
     : removeLifecycleStateFromMetadataPatch(next);
   const maintenanceConfig = resolveMaintenanceConfigFromInput(cfg.session?.maintenance);
   const persisted = await updateSessionStore(
     storePath,
     (store) => {
+      if (
+        store[sessionKey] &&
+        store[sessionKey].sessionId !== entry.sessionId &&
+        store[sessionKey].sessionId !== sessionId
+      ) {
+        return store[sessionKey];
+      }
       if (preserveUserFacingRunState && !store[sessionKey]) {
         return undefined;
       }
-      const merged = mergeSessionEntry(store[sessionKey], metadataPatch);
+      const merged = mergeSessionEntryWithPolicy(
+        store[sessionKey],
+        metadataPatch,
+        compactionsThisRun > 0 ? { identityTransition: "compaction" } : undefined,
+      );
       store[sessionKey] = merged;
       return merged;
     },
@@ -335,7 +362,13 @@ export async function clearCliSessionInStore(params: {
   next.updatedAt = Date.now();
 
   const persisted = await updateSessionStore(storePath, (store) => {
-    const merged = mergeSessionEntry(store[sessionKey], removeLifecycleStateFromMetadataPatch(next));
+    if (store[sessionKey] && store[sessionKey].sessionId !== entry.sessionId) {
+      return store[sessionKey];
+    }
+    const merged = mergeSessionEntry(
+      store[sessionKey],
+      removeLifecycleStateFromMetadataPatch(next),
+    );
     store[sessionKey] = merged;
     return merged;
   });
@@ -404,7 +437,14 @@ export async function recordCliCompactionInStore(params: {
   }
 
   const persisted = await updateSessionStore(storePath, (store) => {
-    const merged = mergeSessionEntry(store[sessionKey], removeLifecycleStateFromMetadataPatch(next));
+    if (store[sessionKey] && store[sessionKey].sessionId !== entry.sessionId) {
+      return store[sessionKey];
+    }
+    const merged = mergeSessionEntryWithPolicy(
+      store[sessionKey],
+      removeLifecycleStateFromMetadataPatch(next),
+      { identityTransition: "compaction" },
+    );
     store[sessionKey] = merged;
     return merged;
   });

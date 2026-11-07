@@ -1,5 +1,6 @@
 // Session store types define durable per-session metadata and merge/usage helpers.
 import crypto from "node:crypto";
+import type { RecoveryOwnerAdmission } from "../../../../shared/recovery-authority/contract.js";
 import type {
   AcpSessionRuntimeOptions,
   SessionAcpIdentity,
@@ -153,6 +154,8 @@ export type SessionPluginNextTurnInjection = {
 };
 
 export type SubagentRecoveryState = {
+  /** Gated owner decision and attempts, persisted before the recovery RPC. */
+  authority?: RecoveryOwnerAdmission;
   /** Consecutive accepted automatic orphan-recovery resumes in the rapid re-wedge window. */
   automaticAttempts?: number;
   /** Timestamp (ms) of the latest accepted automatic orphan-recovery resume. */
@@ -556,6 +559,7 @@ export type SessionEntryMergePolicy = "touch-activity" | "preserve-activity";
 type MergeSessionEntryOptions = {
   policy?: SessionEntryMergePolicy;
   now?: number;
+  identityTransition?: "compaction";
 };
 
 function resolveMergedUpdatedAt(
@@ -605,6 +609,12 @@ export function mergeSessionEntryWithPolicy(
   };
 
   if (existing.sessionId !== sessionId) {
+    // Usage families aggregate history across ordinary rotations too. Only a
+    // compaction transition may transfer the prior generation's recovery owner.
+    if (options?.identityTransition !== "compaction") {
+      delete next.subagentRecovery;
+      delete next.restartRecovery;
+    }
     // Session id rotations should move transcript paths when they match known reset/fork shapes.
     const patchHasSessionFile = Object.hasOwn(patch, "sessionFile");
     const candidateSessionFile = patchHasSessionFile ? patch.sessionFile : existing.sessionFile;

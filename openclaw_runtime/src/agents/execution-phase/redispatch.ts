@@ -13,6 +13,7 @@ export async function redispatchPendingToolCalls(params: {
   sessionId: string;
   context: AgentContext;
   config: ToolCallExecutionConfig;
+  onEvent?: Parameters<typeof executeToolCalls>[4];
   signal?: AbortSignal;
   appendResult: (message: Extract<AgentMessage, { role: "toolResult" }>) => string | undefined;
   options?: ExecutionPhaseOptions;
@@ -43,13 +44,14 @@ export async function redispatchPendingToolCalls(params: {
     pending,
     { ...params.config, toolExecution: "sequential" },
     params.signal,
-    (event) => {
+    async (event) => {
       if (event.type === "message_end" && event.message.role === "toolResult") {
         if (!params.appendResult(event.message)) {
           throw new Error("recovered tool result was not persisted; reconciliation required");
         }
         messages.push(event.message);
       }
+      await params.onEvent?.(event);
     },
   );
   return messages;

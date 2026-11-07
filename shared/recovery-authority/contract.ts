@@ -230,6 +230,24 @@ export type RecoveryDecision = {
   readonly decidedAt: number;
 };
 
+/** A bounded admission record stored by the existing recovery owner. */
+export type RecoveryOwnerAdmission = {
+  readonly idempotencyKey: string;
+  readonly ownerId: string;
+  readonly attempts: number;
+  readonly state: "pending" | "accepted" | "failed" | "reconcile" | "wedged" | "settled";
+  readonly decision: RecoveryDecision;
+  readonly updatedAt: number;
+  readonly processId: number;
+  readonly ownerEpoch: string;
+};
+
+/** Identifies the exact persisted admission carried across the existing RPC. */
+export type RecoveryAdmissionIdentity = Pick<
+  RecoveryOwnerAdmission,
+  "idempotencyKey" | "ownerId" | "attempts" | "ownerEpoch"
+>;
+
 /**
  * The single decision surface. Implementations MUST NOT fan one request out to
  * multiple independent recovery decisions; entry adapters supply facts, and the
@@ -320,7 +338,12 @@ function isAdmissionBoundary(value: unknown): value is AdmissionBoundary {
 }
 
 function isRecoveryBudget(value: unknown): value is RecoveryBudget {
-  if (!isRecord(value) || !isRecord(value.attempts) || !isRecord(value.backoff) || !isRecord(value.wedge)) {
+  if (
+    !isRecord(value) ||
+    !isRecord(value.attempts) ||
+    !isRecord(value.backoff) ||
+    !isRecord(value.wedge)
+  ) {
     return false;
   }
   const attempts = value.attempts;
@@ -399,7 +422,10 @@ export function validateRecoveryAuthorityRequest(value: unknown): RecoveryReques
     return { ok: false, reason: "admission boundary is missing or malformed" };
   }
   if (!isRecoveryBudget(value.budget)) {
-    return { ok: false, reason: "budget is missing or malformed; maxAttempts must be finite and non-zero" };
+    return {
+      ok: false,
+      reason: "budget is missing or malformed; maxAttempts must be finite and non-zero",
+    };
   }
   if (!isReplayClass(value.replayClass)) {
     return { ok: false, reason: "replayClass must be safe, unsafe, or reconcile" };
@@ -416,7 +442,8 @@ export function validateRecoveryAuthorityRequest(value: unknown): RecoveryReques
   if (!Array.isArray(value.evidence) || !value.evidence.every(isEvidenceRef)) {
     return {
       ok: false,
-      reason: "evidence must contain only event-log/effect-receipt/transcript evidence or domain-journal effect truth",
+      reason:
+        "evidence must contain only event-log/effect-receipt/transcript evidence or domain-journal effect truth",
     };
   }
   if (!isNonNegativeFiniteNumber(value.requestedAt)) {
@@ -480,9 +507,9 @@ function rejectInvalidRequest(input: unknown, reason: string): RecoveryDecision 
 }
 
 /**
- * Pure reference decision function. It is not wired into production. It
- * demonstrates the fail-closed ordering that the frozen contract requires:
- * invalid input > budget/wedge > admission > effect certainty > replay policy.
+ * Pure decision function shared by owner admission and shadow evaluation.
+ * Known outcomes settle before budgeting another attempt; admission and effect
+ * certainty govern whether the existing owner may continue.
  */
 export function evaluateRecoveryRequest(input: unknown): RecoveryDecision {
   const validation = validateRecoveryAuthorityRequest(input);
@@ -491,6 +518,20 @@ export function evaluateRecoveryRequest(input: unknown): RecoveryDecision {
   }
   const request = validation.request;
   const { current, max } = request.budget.attempts;
+
+  // A known outcome needs no new attempt. Exhaustion must not hide an effect
+  // already settled by its owner or turn a delivered result into a failure.
+  if (
+    request.admission.admitted &&
+    (request.effect === "applied" || request.effect === "reconciled")
+  ) {
+    return makeDecision({
+      request,
+      kind: "settle",
+      basis: "effect-certainty",
+      reason: "effect is already settled; replay is forbidden",
+    });
+  }
 
   if (request.budget.wedge.wedged || current >= max) {
     return makeDecision({
@@ -537,15 +578,6 @@ export function evaluateRecoveryRequest(input: unknown): RecoveryDecision {
     });
   }
 
-  if (request.effect === "applied" || request.effect === "reconciled") {
-    return makeDecision({
-      request,
-      kind: "settle",
-      basis: "effect-certainty",
-      reason: "effect is already settled; replay is forbidden",
-    });
-  }
-
   if (request.requestedAction === "replay") {
     if (request.replayClass !== "safe") {
       return makeDecision({
@@ -588,4 +620,3 @@ export function evaluateRecoveryRequest(input: unknown): RecoveryDecision {
     reason: "owner state and admission boundary permit a resumed turn",
   });
 }
-

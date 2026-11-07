@@ -249,3 +249,5 @@ Historical plan と acceptance snapshot には固有の日付と candidate が�
 Verse Claw は [OpenClaw](https://github.com/openclaw/openclaw) と ValueCell team の ClawX を基盤にしています。Repository は [MIT License](LICENSE) を使用します。Bundled component は各自の license/source obligation を保持します。詳細は [VerseShell notices](resources/verseshell/SOURCE.md)。一部 conversation/workspace interaction（web search source card を含む）は Swami Malode の [Rare UI](https://rareui.com) を基にし、attribution は `src/components/rareui` に保持されています。
 
 復旧の実装と証拠：任意の execution writer は TaskFlow にツールの実行フェーズを保存し、副作用の前に CAS で実行権を取得します。owner が許可した処理のみ再開します。lifecycle と execution の両 writer で `taskflow` を明示する必要があり、既定値は `legacy` のままです。不明な副作用は照合が必要です。追加修正では保留応答のrun所有関係と起動時の復旧順序を修正しました。[検証状況](docs/dev/recovery-contract/FOLLOWUP-20261106.zh-CN.md)を参照してください。[2026-11-05の評価](docs/dev/recovery-contract/FINAL-20261105.zh-CN.md)では60件のlive回答と30件の主障害試行を保存しています。候補の状態分類は改善しましたが、固定レイテンシ基準はFAIL/NO-GOです。
+
+サブエージェントの復旧は、`OPENCLAW_RECOVERY_AUTHORITY_MODE=authority` と両 writer の `taskflow` 設定で、RPC の前に判断と試行予算を保存します。不明な結果は照合状態として保持します。復旧ツールのイベントも同じ実行の購読処理に渡され、送信記録と完了状態を更新します。[復旧の準入ガイド](docs/dev/recovery-contract/GA-READINESS-20261106.md)を参照してください。
