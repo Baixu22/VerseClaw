@@ -176,6 +176,24 @@ describe('gateway supervisor process cleanup', () => {
     expect(child.kill).toHaveBeenCalledTimes(1);
   });
 
+  it('still force-kills a POSIX gateway that ignores graceful termination', async () => {
+    setPlatform('linux');
+    const child = new MockUtilityChild(9876);
+    child.kill.mockReturnValue(true);
+    const kill = vi.spyOn(process, 'kill').mockImplementation(() => {
+      queueMicrotask(() => child.emit('exit', 1));
+      return true;
+    });
+    const { terminateOwnedGatewayProcess } = await import('@electron/gateway/supervisor');
+    vi.useFakeTimers();
+    const stopped = terminateOwnedGatewayProcess(child as unknown as Electron.UtilityProcess)
+      .then(() => 'exited', () => 'timeout');
+    await vi.advanceTimersByTimeAsync(10_001);
+    expect(await stopped).toBe('exited');
+    expect(kill).toHaveBeenCalledWith(9876, 'SIGKILL');
+    expect(child.kill).toHaveBeenCalledOnce();
+  });
+
   it('uses the owned pid when Windows taskkill fails and waits for exit', async () => {
     setPlatform('win32');
     const child = new MockUtilityChild(4321);

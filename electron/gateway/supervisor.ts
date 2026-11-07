@@ -46,7 +46,9 @@ export async function terminateOwnedGatewayProcess(child: Electron.UtilityProces
         reject(new Error(`Owned Gateway process did not exit (pid=${child.pid ?? 'unknown'})`));
       }, 5000);
       try {
-        if (!child.kill() && child.pid) process.kill(child.pid, 'SIGKILL');
+        if (process.platform === 'win32' && child.kill()) return;
+        if (child.pid) process.kill(child.pid, 'SIGKILL');
+        else child.kill();
       } catch (error) {
         // The process can exit before Electron delivers its queued exit event.
         // Keep the listener and deadline until that event confirms ownership release.
