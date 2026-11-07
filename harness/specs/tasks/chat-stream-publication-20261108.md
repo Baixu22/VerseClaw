@@ -19,6 +19,7 @@ touchedAreas:
   - tests/unit/chat-stream-publication.test.ts
   - tests/unit/chat-runtime-sequence.test.ts
   - tests/unit/chat-completed-projection.test.ts
+  - tests/unit/chat-page-execution-graph.test.tsx
   - tests/e2e/chat-stream-publication.spec.ts
   - harness/specs/tasks/chat-stream-publication-20261108.md
   - harness/specs/rules/chat-stream-publication.md

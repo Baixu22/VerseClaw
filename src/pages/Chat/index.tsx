@@ -257,6 +257,7 @@ function generatedFileToTarget(file: GeneratedFile): FilePreviewTarget {
 // steps without tripping React's set-state-in-effect lint rule.
 const _GRAPH_STEP_CACHE_MAX = 50;
 const graphStepCacheStore = new Map<string, Record<string, GraphStepCacheEntry>>();
+const EMPTY_GRAPH_STEP_CACHE: Record<string, GraphStepCacheEntry> = {};
 
 function gcGraphStepCache(): void {
   if (graphStepCacheStore.size <= _GRAPH_STEP_CACHE_MAX) return;
@@ -1397,10 +1398,7 @@ export function Chat() {
       lastObservedSessionKeyRef.current = currentSessionKey;
     }
   }, [currentSessionKey, persistCurrentWorkspaceSessionState]);
-  const graphStepCache = useMemo<Record<string, GraphStepCacheEntry>>(
-    () => graphStepCacheStore.get(currentSessionKey) ?? {},
-    [graphStepCacheStore, currentSessionKey],
-  );
+  const graphStepCache = graphStepCacheStore.get(currentSessionKey) ?? EMPTY_GRAPH_STEP_CACHE;
 
   /**
    * Optimistic "a run is in flight" window for the transcript's scroll pin.
