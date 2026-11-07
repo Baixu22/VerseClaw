@@ -1,0 +1,30 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-interrupted-attempt-recovery",
+  "observedAt": "2026-11-06T15:36:17.371Z",
+  "endedAt": "2026-11-06T15:37:50.311Z",
+  "slotId": "tf-0279-s04-3-sekb-off",
+  "providerCallsDuringRecovery": 0,
+  "savedResponseId": "01a1b17a34807f839e7cf687f30c488f",
+  "knownUsage": {
+    "inputTokens": 782,
+    "outputTokens": 4941,
+    "totalTokens": 5723
+  },
+  "gradePassed": true,
+  "gradeFailureClass": null,
+  "commands": [
+    {
+      "command": "pnpm exec vitest run tests/unit/browser-effect-boundary-ledger.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/tools/agent-browser-external-access-policy.test.ts src/agents/tools/agent-browser-tool.provenance.test.ts src/agents/agent-browser-provenance-wiring.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "timedOut": false
+    }
+  ],
+  "receiptDigest": "ab5ecb29ec7ebab47dc6a0769e8961a92dc2c8233345c3cdc3ee2e6d8453899e",
+  "recoveryIncludesDowntime": true
+}

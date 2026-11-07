@@ -1,2 +1,3 @@
 * -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 closeout-20261106/** -text whitespace=-trailing-space
+full-closeout-20261107/** -text whitespace=-trailing-space

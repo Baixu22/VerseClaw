@@ -1,0 +1,350 @@
+{
+  "schemaVersion": "RsiLiveTaskAdmission/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-independent-calibrator",
+  "taskId": "tf-0276-s01",
+  "source": {
+    "id": "tf-0276-s01",
+    "base": "ca24fb81ae83dde9907561b583b7990df6844b67",
+    "reference": "f064ff2c592580763a564c5635f554130a8fa992",
+    "productChanges": [
+      "openclaw_runtime/src/agents/provider-transport-fetch.ts",
+      "openclaw_runtime/src/agents/shadow-census.ts"
+    ],
+    "originalDecision": "PASS",
+    "codingBindingDigest": "2697e0f57ca40ab8e7b547d0d82595dd56b11f3281acf316c03df819590cf417",
+    "baselineSetup": null,
+    "targetScope": [
+      "openclaw_runtime/src/agents/shadow-census.ts",
+      "openclaw_runtime/src/agents/provider-transport-fetch.ts",
+      "openclaw_runtime/src/agents/rc02-envelope-reject.test.ts",
+      "harness/specs/tasks/harness-gap-envelope-reject.md",
+      "harness/specs/rules/provider-envelope-reject-boundary.md",
+      "docs/dev/harness-gap-closure/s01-envelope-reject.md",
+      "docs/dev/harness-gap-closure/s01-acceptance.json",
+      "docs/dev/harness-gap-closure/S01-SHA256SUMS"
+    ],
+    "prompt": "S01 把一个 provider 适配器的请求信封守卫从 shadow-only 观察升级为 opt-in 可拒绝边界：开启后非法/未知信封在 wire 之前被拒绝且不发送任何字节，关闭时保持原观察语义与字节不变；不改默认值、产品锁或网络 SSRF 规则。",
+    "sourceRecord": "docs/dev/harness-gap-closure/s01-acceptance.json",
+    "sourceRecordDigest": "91eccf66cb8f2b34a5289cd264ff90bf1319c0181c4bc0a4ef8ccd43bea5d276",
+    "oraclePaths": [
+      "openclaw_runtime/src/agents/rc02-envelope-reject.test.ts"
+    ],
+    "commands": [
+      "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/rc02-envelope-reject.test.ts --maxWorkers=1"
+    ]
+  },
+  "stages": {
+    "reference": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0276-s01",
+      "commands": [
+        "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/rc02-envelope-reject.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/rc02-envelope-reject.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0276-s01\\reference\\workspace\\openclaw_runtime\\scripts\\run-vitest.mjs",
+            "run",
+            "src/agents/rc02-envelope-reject.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0276-s01\\reference\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0276-s01\\reference\\workspace\\openclaw_runtime",
+          "exitCode": 0,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 2,
+            "numPassedTestSuites": 2,
+            "numFailedTestSuites": 0,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 3,
+            "numPassedTests": 3,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793955480981,
+            "success": true,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "S01 provider envelope reject boundary"
+                    ],
+                    "fullName": "S01 provider envelope reject boundary resolveEnvelopeRejectEnabled is off by default and opt-in only",
+                    "status": "passed",
+                    "title": "resolveEnvelopeRejectEnabled is off by default and opt-in only",
+                    "duration": 121.97060000000056,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 66,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S01 provider envelope reject boundary"
+                    ],
+                    "fullName": "S01 provider envelope reject boundary rejects an invalid envelope before any provider bytes are sent (0 fetch calls)",
+                    "status": "passed",
+                    "title": "rejects an invalid envelope before any provider bytes are sent (0 fetch calls)",
+                    "duration": 211.38739999999962,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 81,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S01 provider envelope reject boundary"
+                    ],
+                    "fullName": "S01 provider envelope reject boundary keeps the default (flag off) path observational: the request still goes out",
+                    "status": "passed",
+                    "title": "keeps the default (flag off) path observational: the request still goes out",
+                    "duration": 29.414600000000064,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 91,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793955484722,
+                "endTime": 1793955485085.4146,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-completion-control-20261106/v8-calibration/calibration/tf-0276-s01/reference/workspace/openclaw_runtime/src/agents/rc02-envelope-reject.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0276-s01\\reference\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0276-s01\\reference\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0276-s01\\reference\\oracle\\01-stderr.log"
+        }
+      ],
+      "numTotalTests": 3,
+      "numPassedTests": 3,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "passed": true,
+      "failureClass": null,
+      "timeoutMs": 300000,
+      "oracleHashBefore": "74a7d1669a0a8e7175b83ce10b6876952a4a15e8d5bbb99a078df917726bb0b7",
+      "oracleHashAfter": "74a7d1669a0a8e7175b83ce10b6876952a4a15e8d5bbb99a078df917726bb0b7",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-envelope-reject.md": "d42d8423b651d0f9a4b452ff0a6d364655e86d3afe696fbb1db0c20f624c787c",
+        "openclaw_runtime/src/agents/rc02-envelope-reject.test.ts": "b84850fa4e657a7d5b2f8aca0c3e86c13e3d03829efcd3fced46bc566c01aa39"
+      },
+      "oracleRevision": "f064ff2c592580763a564c5635f554130a8fa992",
+      "oracleTestDigests": {
+        "openclaw_runtime/src/agents/rc02-envelope-reject.test.ts": "1a22f70342bd367fe46c2f5b21dda9e2870a9fbf0e296c6a12c8fc14d9a21b7b"
+      },
+      "supportPackages": [
+        {
+          "name": "markdown-it",
+          "declaredVersion": "14.2.0",
+          "resolvedVersion": "14.2.0"
+        }
+      ],
+      "diagnostics": [],
+      "workspace": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0276-s01\\reference\\workspace",
+      "outDir": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0276-s01\\reference\\oracle",
+      "reportPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0276-s01\\reference\\oracle\\run-report.json"
+    },
+    "baseline": {
+      "schemaVersion": "RsiLiveTaskGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-live-grader",
+      "taskId": "tf-0276-s01",
+      "commands": [
+        "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/rc02-envelope-reject.test.ts --maxWorkers=1"
+      ],
+      "executions": [
+        {
+          "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/rc02-envelope-reject.test.ts --maxWorkers=1",
+          "actualArgv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0276-s01\\baseline\\workspace\\openclaw_runtime\\scripts\\run-vitest.mjs",
+            "run",
+            "src/agents/rc02-envelope-reject.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0276-s01\\baseline\\oracle\\01-vitest-report.json"
+          ],
+          "kind": "vitest",
+          "cwd": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0276-s01\\baseline\\workspace\\openclaw_runtime",
+          "exitCode": 1,
+          "timedOut": false,
+          "signal": null,
+          "error": null,
+          "report": {
+            "numTotalTestSuites": 2,
+            "numPassedTestSuites": 0,
+            "numFailedTestSuites": 2,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 3,
+            "numPassedTests": 1,
+            "numFailedTests": 2,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1793955522914,
+            "success": false,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "S01 provider envelope reject boundary"
+                    ],
+                    "fullName": "S01 provider envelope reject boundary resolveEnvelopeRejectEnabled is off by default and opt-in only",
+                    "status": "failed",
+                    "title": "resolveEnvelopeRejectEnabled is off by default and opt-in only",
+                    "duration": 150.65539999999964,
+                    "failureMessages": [
+                      "TypeError: (0 , __vite_ssr_import_3__.resolveEnvelopeRejectEnabled) is not a function\n    at D:/tmp/rsi-completion-control-20261106/v8-calibration/calibration/tf-0276-s01/baseline/workspace/openclaw_runtime/src/agents/rc02-envelope-reject.test.ts:70:14\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2955:64"
+                    ],
+                    "location": {
+                      "line": 66,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S01 provider envelope reject boundary"
+                    ],
+                    "fullName": "S01 provider envelope reject boundary rejects an invalid envelope before any provider bytes are sent (0 fetch calls)",
+                    "status": "failed",
+                    "title": "rejects an invalid envelope before any provider bytes are sent (0 fetch calls)",
+                    "duration": 361.52289999999994,
+                    "failureMessages": [
+                      "AssertionError: expected false to be true // Object.is equality\n    at D:/tmp/rsi-completion-control-20261106/v8-calibration/calibration/tf-0276-s01/baseline/workspace/openclaw_runtime/src/agents/rc02-envelope-reject.test.ts:87:22\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+                    ],
+                    "location": {
+                      "line": 81,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "S01 provider envelope reject boundary"
+                    ],
+                    "fullName": "S01 provider envelope reject boundary keeps the default (flag off) path observational: the request still goes out",
+                    "status": "passed",
+                    "title": "keeps the default (flag off) path observational: the request still goes out",
+                    "duration": 7.990200000000186,
+                    "failureMessages": [],
+                    "location": {
+                      "line": 91,
+                      "column": 3
+                    },
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1793955526088,
+                "endTime": 1793955526607.9902,
+                "status": "failed",
+                "message": "",
+                "name": "D:/tmp/rsi-completion-control-20261106/v8-calibration/calibration/tf-0276-s01/baseline/workspace/openclaw_runtime/src/agents/rc02-envelope-reject.test.ts"
+              }
+            ]
+          },
+          "reportPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0276-s01\\baseline\\oracle\\01-vitest-report.json",
+          "stdoutPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0276-s01\\baseline\\oracle\\01-stdout.log",
+          "stderrPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0276-s01\\baseline\\oracle\\01-stderr.log"
+        }
+      ],
+      "numTotalTests": 3,
+      "numPassedTests": 1,
+      "numFailedTests": 2,
+      "numPendingTests": 0,
+      "passed": false,
+      "failureClass": "assertion",
+      "timeoutMs": 300000,
+      "oracleHashBefore": "74a7d1669a0a8e7175b83ce10b6876952a4a15e8d5bbb99a078df917726bb0b7",
+      "oracleHashAfter": "74a7d1669a0a8e7175b83ce10b6876952a4a15e8d5bbb99a078df917726bb0b7",
+      "oracleUnchanged": true,
+      "inputDigests": {
+        "harness/specs/tasks/harness-gap-envelope-reject.md": "d42d8423b651d0f9a4b452ff0a6d364655e86d3afe696fbb1db0c20f624c787c",
+        "openclaw_runtime/src/agents/rc02-envelope-reject.test.ts": "b84850fa4e657a7d5b2f8aca0c3e86c13e3d03829efcd3fced46bc566c01aa39"
+      },
+      "oracleRevision": "f064ff2c592580763a564c5635f554130a8fa992",
+      "oracleTestDigests": {
+        "openclaw_runtime/src/agents/rc02-envelope-reject.test.ts": "1a22f70342bd367fe46c2f5b21dda9e2870a9fbf0e296c6a12c8fc14d9a21b7b"
+      },
+      "supportPackages": [
+        {
+          "name": "markdown-it",
+          "declaredVersion": "14.2.0",
+          "resolvedVersion": "14.2.0"
+        }
+      ],
+      "diagnostics": [],
+      "workspace": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0276-s01\\baseline\\workspace",
+      "outDir": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0276-s01\\baseline\\oracle",
+      "reportPath": "D:\\tmp\\rsi-completion-control-20261106\\v8-calibration\\calibration\\tf-0276-s01\\baseline\\oracle\\run-report.json"
+    }
+  },
+  "admission": {
+    "passed": true,
+    "issues": []
+  },
+  "claims": {
+    "modelQuality": false,
+    "benefit": false,
+    "realHuman": false
+  }
+}

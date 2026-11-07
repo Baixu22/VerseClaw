@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "RsiLiveAdmissionBatchResult/v1",
+  "generatedAt": "2026-11-06T09:40:39.333Z",
+  "driven_by": "agent",
+  "actor": "codex/rsi-completion-admission-sealer",
+  "status": "ready-for-measurement",
+  "candidate": {
+    "commit": "e3ada7f13b1bb31049d1818027358077f3be1f4f",
+    "tree": "6e09277faadacf635d82fc58af5e4b15d486d62a",
+    "dirty": false,
+    "sourceHashes": {
+      "scripts/lib/rsi-live-grader.mjs": "945181537cd8b21a6ad63d629c3f17024bcf61d2c1a56eb286d4ba550c49691c",
+      "scripts/rsi-live-acceptance.mjs": "190c2c8837af7004c631c672c8e04361b3a6b6baac767907d5bd62a08491da8b",
+      "harness/specs/fixtures/rsi-coding-cohort/task-bindings.v1.json": "2697e0f57ca40ab8e7b547d0d82595dd56b11f3281acf316c03df819590cf417",
+      "pnpm-lock.yaml": "6427882a1725aa5929da2db9d55d1397237dee1a354bb6db3dfb63bb61abb441",
+      "openclaw_runtime/pnpm-lock.yaml": "3ee305722a4f52a314f25871e0386f4d1cf214eb9ad7fc17f24b4908f5456013"
+    },
+    "boundary": "Committed sealer; actual calibration source and timestamps are retained separately in calibration-source.json and admission receipts."
+  },
+  "batch": {
+    "plannedTasks": 24,
+    "admittedTasks": 24,
+    "rejectedTasks": 0
+  },
+  "oracleBinding": {
+    "policy": "reference-revision-hidden-tests",
+    "supportPackage": "markdown-it",
+    "version": "14.2.0",
+    "versionMatched": true
+  },
+  "trialExecution": {
+    "planned": 216,
+    "executed": 0,
+    "unexecuted": 216,
+    "reason": "measurement-separate"
+  },
+  "claims": {
+    "taskQualityMeasured": false,
+    "benefit": false,
+    "promotionReady": false,
+    "realHuman": false,
+    "productLocksChanged": false,
+    "completeRsiImplementation": false
+  },
+  "limitations": [
+    "Three task starts are explicitly constructed reconstructions.",
+    "Calibration reused dependencies from the separately fresh-installed isolated checkout.",
+    "Provider identity is an endpoint alias; native schema enforcement is not assumed.",
+    "Admission and protocol preflight are not cohort benefit measurements."
+  ]
+}

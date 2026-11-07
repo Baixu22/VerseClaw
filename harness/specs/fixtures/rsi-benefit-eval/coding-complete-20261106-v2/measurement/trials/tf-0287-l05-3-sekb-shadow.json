@@ -1,0 +1,1065 @@
+{
+  "schemaVersion": "RsiBenefitTrial/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-benefit-eval/executor",
+  "planDigest": "133d3b5ff68949682b9c402b3275fd95e232ca4ce6a497a1903deaac5ee04004",
+  "slot": {
+    "id": "tf-0287-l05-3-sekb-shadow",
+    "caseId": "tf-0287-l05",
+    "repeat": 3,
+    "arm": "sekb-shadow",
+    "caseDigest": "42038408d1bd790098cc095d1d6e25e670fcbbf6f897827d7b93c74bf53f60f0",
+    "pairSeed": 30,
+    "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+    "position": 89
+  },
+  "evidenceKind": "live-provider",
+  "request": {
+    "model": "space-bunny",
+    "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+    "input": "{\n  \"prompt\": \"L05 为异常调用速率提供有限状态断路器：closed 累积窗口内失败，达阈值转 open 并在 cooldown 内拒绝（不再产生效果），cooldown 后转 half-open 只放行单个探测，探测成功回 closed、失败重新 open；纯合法速率永不误断。不与既有 budget/loop guard 重复，不放松 SSRF/loop guard/approval。\",\n  \"acceptanceCriteria\": [\n    \"状态机有限且确定：closed -> open -> half-open -> (closed | open)；由注入时钟驱动，可重放。\",\n    \"open 在 cooldown 内拒绝请求（不再产生效果）；cooldown 结束转 half-open。\",\n    \"half-open 只放行 **单个** 探测；探测进行中不再放行第二个；探测成功回 closed，失败重新 open 并重置 cooldown。\",\n    \"纯合法速率（无失败）永不 trip；窗口滑动使旧失败过期，合法后续窗口不 false-trip。\",\n    \"断路器是速率边界而非生产默认；不替代/放松 SSRF、loop guard、approval 与既有 budget/loop guard（沿用 tool-loop-detection 正反回归）。\",\n    \"干净候选定向测试、runtime core 类型、scoped lint、harness validate/dry-run、comms replay/compare 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"openclaw_runtime/src/agents/rate-circuit-breaker.ts\",\n    \"harness/specs/tasks/harness-gap-rate-circuit-breaker.md\",\n    \"docs/dev/harness-gap-closure/l05-rate-circuit-breaker.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"openclaw_runtime/src/agents/rate-circuit-breaker.ts\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-rate-circuit-breaker.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/l05-rate-circuit-breaker.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+    "store": false,
+    "stream": false,
+    "truncation": "disabled",
+    "max_output_tokens": 16000,
+    "reasoning": {
+      "effort": "low"
+    },
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "name": "rsi_coding_edits",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "edits"
+          ],
+          "properties": {
+            "edits": {
+              "type": "array",
+              "maxItems": 32,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "content"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "requestDigest": "613e316cef06f48a5f0ddc3e24f1e03ede163ce3edcb76efd51bd370ef7861d6",
+  "runtime": {
+    "flags": {
+      "enabled": true,
+      "shadowEvaluation": true,
+      "injection": false
+    },
+    "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+    "candidateDigest": "7c2408a2afc3c71ec509c11c705ba3775d427c4166aef58a0b42db1c031f54a0",
+    "injectionDigest": null,
+    "isolationId": "2bb4141c-a536-443a-8b89-0fbfd0082edf/tf-0287-l05-3-sekb-shadow",
+    "runtimeEffectMeasured": true
+  },
+  "edits": [
+    {
+      "path": "openclaw_runtime/src/agents/rate-circuit-breaker.ts",
+      "content": "export type RateCircuitBreakerState = \"closed\" | \"open\" | \"half-open\";\n\nexport interface RateCircuitBreakerOptions {\n  /** Number of failures in the sliding window required to open the circuit. */\n  threshold: number;\n  /** Length of the sliding failure window, in milliseconds. */\n  windowMs: number;\n  /** Time spent open before a single probe is allowed, in milliseconds. */\n  cooldownMs: number;\n  /** Injectable monotonic-enough clock. The default is Date.now. */\n  now?: () => number;\n}\n\nexport interface RateCircuitBreakerSnapshot {\n  state: RateCircuitBreakerState;\n  failuresInWindow: number;\n  probeInFlight: boolean;\n  openedAt?: number;\n  nextProbeAt?: number;\n}\n\n/**\n * A small, deterministic circuit breaker for exceptional request rates.\n *\n * It is deliberately a rate boundary only. It does not implement or relax\n * SSRF, loop detection, approval, budget, or any other authorization policy.\n */\nexport class RateCircuitBreaker {\n  private readonly threshold: number;\n  private readonly windowMs: number;\n  private readonly cooldownMs: number;\n  private readonly clock: () => number;\n  private stateValue: RateCircuitBreakerState = \"closed\";\n  private failures: number[] = [];\n  private openedAtValue?: number;\n  private probeInFlightValue = false;\n\n  public constructor(options: RateCircuitBreakerOptions) {\n    if (!Number.isFinite(options.threshold) || options.threshold <= 0) {\n      throw new Error(\"threshold must be a positive finite number\");\n    }\n    if (!Number.isFinite(options.windowMs) || options.windowMs < 0) {\n      throw new Error(\"windowMs must be a non-negative finite number\");\n    }\n    if (!Number.isFinite(options.cooldownMs) || options.cooldownMs < 0) {\n      throw new Error(\"cooldownMs must be a non-negative finite number\");\n    }\n    this.threshold = options.threshold;\n    this.windowMs = options.windowMs;\n    this.cooldownMs = options.cooldownMs;\n    this.clock = options.now ?? Date.now;\n  }\n\n  public get state(): RateCircuitBreakerState {\n    this.refreshState();\n    return this.stateValue;\n  }\n\n  public get isOpen(): boolean {\n    return this.state === \"open\";\n  }\n\n  public get isProbeInFlight(): boolean {\n    this.refreshState();\n    return this.probeInFlightValue;\n  }\n\n  /**\n   * Reserve capacity for one request. A false result means the request must\n   * not be executed and must not have any downstream effect.\n   */\n  public allowRequest(): boolean {\n    this.refreshState();\n    if (this.stateValue === \"open\") {\n      return false;\n    }\n    if (this.stateValue === \"half-open\") {\n      if (this.probeInFlightValue) {\n        return false;\n      }\n      this.probeInFlightValue = true;\n      return true;\n    }\n    return true;\n  }\n\n  /** Alias useful to callers that use a preflight/check vocabulary. */\n  public beforeRequest(): boolean {\n    return this.allowRequest();\n  }\n\n  /** Record a successful request. Only a successful half-open probe closes it. */\n  public recordSuccess(): void {\n    this.refreshState();\n    if (this.stateValue === \"half-open\" && this.probeInFlightValue) {\n      this.stateValue = \"closed\";\n      this.probeInFlightValue = false;\n      this.failures = [];\n      this.openedAtValue = undefined;\n      return;\n    }\n    // A normal success does not erase failures in the sliding window.\n  }\n\n  /** Record a failed request. */\n  public recordFailure(): void {\n    this.refreshState();\n    if (this.stateValue === \"half-open\") {\n      if (!this.probeInFlightValue) {\n        return;\n      }\n      this.probeInFlightValue = false;\n      this.openCircuit();\n      return;\n    }\n    if (this.stateValue === \"open\") {\n      return;\n    }\n    const now = this.clock();\n    this.failures = this.failures.filter((time) => time > now - this.windowMs);\n    this.failures.push(now);\n    if (this.failures.length >= this.threshold) {\n      this.openCircuit();\n    }\n  }\n\n  public onSuccess(): void {\n    this.recordSuccess();\n  }\n\n  public onFailure(): void {\n    this.recordFailure();\n  }\n\n  /** Execute an operation only when the circuit permits it. */\n  public async execute<T>(operation: () => T | Promise<T>): Promise<T> {\n    if (!this.allowRequest()) {\n      throw new RateCircuitOpenError();\n    }\n    try {\n      const result = await operation();\n      this.recordSuccess();\n      return result;\n    } catch (error) {\n      this.recordFailure();\n      throw error;\n    }\n  }\n\n  public snapshot(): RateCircuitBreakerSnapshot {\n    this.refreshState();\n    const failuresInWindow = this.failures.filter(\n      (time) => time > this.clock() - this.windowMs,\n    ).length;\n    return {\n      state: this.stateValue,\n      failuresInWindow,\n      probeInFlight: this.probeInFlightValue,\n      ...(this.openedAtValue === undefined\n        ? {}\n        : { openedAt: this.openedAtValue }),\n      ...(this.openedAtValue === undefined\n        ? {}\n        : { nextProbeAt: this.openedAtValue + this.cooldownMs }),\n    };\n  }\n\n  public reset(): void {\n    this.stateValue = \"closed\";\n    this.failures = [];\n    this.openedAtValue = undefined;\n    this.probeInFlightValue = false;\n  }\n\n  private openCircuit(): void {\n    this.stateValue = \"open\";\n    this.openedAtValue = this.clock();\n    this.probeInFlightValue = false;\n  }\n\n  private refreshState(): void {\n    if (this.stateValue !== \"open\" || this.openedAtValue === undefined) {\n      return;\n    }\n    if (this.clock() - this.openedAtValue >= this.cooldownMs) {\n      this.stateValue = \"half-open\";\n      this.probeInFlightValue = false;\n    }\n  }\n}\n\nexport class RateCircuitOpenError extends Error {\n  public constructor() {\n    super(\"rate circuit breaker is open\");\n    this.name = \"RateCircuitOpenError\";\n  }\n}\n\nexport default RateCircuitBreaker;\n"
+    },
+    {
+      "path": "harness/specs/tasks/harness-gap-rate-circuit-breaker.md",
+      "content": "# L05：异常调用速率断路器\n\n## 目标\n\n为异常调用速率提供一个有限、可重放的断路器边界。断路器只根据调用结果中的失败进行判断，不影响合法请求；它不是生产默认，也不替代 SSRF、loop guard、approval、budget 或其它既有安全边界。\n\n## 状态机\n\n- `closed`：正常接收请求，并在滑动窗口内记录失败。失败数达到阈值后转为 `open`。\n- `open`：cooldown 内拒绝请求；拒绝的请求不得执行，不得产生任何效果。cooldown 结束后转为 `half-open`。\n- `half-open`：只允许一个探测请求。探测期间其它请求均拒绝。成功转回 `closed` 并清空窗口；失败重新转 `open`，并从失败时刻重新计算 cooldown。\n\n状态只能按 `closed -> open -> half-open -> (closed | open)` 转移。状态转移由注入时钟驱动，便于回放和确定性测试。\n\n## 滑动窗口\n\n失败时间戳只保留当前 `windowMs` 窗口内的记录。旧失败过期后，即使达到过阈值，后续合法请求窗口也不得再次误触发。纯合法（没有失败）的速率永不 trip。\n\n## 接口约定\n\n实现位于 `openclaw_runtime/src/agents/rate-circuit-breaker.ts`。构造参数包括 `threshold`、`windowMs`、`cooldownMs` 和可选 `now`。\n\n- `allowRequest()`/`beforeRequest()` 返回是否允许调用；返回 `false` 时调用方必须停止执行。\n- `recordSuccess()` 和 `recordFailure()` 记录结果；也可使用 `execute()` 包装一次调用。\n- `snapshot()` 返回当前状态、窗口内失败数和探测状态。\n\n## 安全边界\n\n该组件不得绕过或放宽 SSRF、loop guard、approval、budget及其它既有防护。调用方仍须在执行前完成所有授权和安全检查；断路器拒绝只表示“不执行”，不表示可以重试其它安全策略。\n\n## 验证\n\n应覆盖：阈值触发、open cooldown 拒绝、cooldown 后单探测、探测并发只放行一个、探测成功/失败、滑动窗口过期、纯合法流量以及既有 tool-loop-detection 正反回归。\n"
+    },
+    {
+      "path": "docs/dev/harness-gap-closure/l05-rate-circuit-breaker.md",
+      "content": "# L05 Rate Circuit Breaker\n\n## 设计\n\n`RateCircuitBreaker` 是一个显式启用的速率边界，而不是生产默认。它使用注入的 `now()` 时钟，因此相同的时间序列可以重放并得到相同的状态转移。\n\n组件维护 `closed`、`open`、`half-open` 三个状态。`closed` 按滑动时间窗累计失败；达到 `threshold` 后进入 `open`。`open` 在 `cooldownMs` 内拒绝请求，调用不得继续执行。冷却期满后进入 `half-open`，只发放一个探测令牌；探测成功后回到 `closed`，失败则从该时刻重新进入 `open`。\n\n失败窗口按失败发生时间剔除过期记录。正常成功不会清除窗口内失败，但没有任何失败的纯合法速率永远不会触发断路器。\n\n## 使用原则\n\n断路器应位于已有安全检查之后，并在真正产生副作用之前调用 `allowRequest()`。拒绝请求时不得执行调用、重试副作用或绕过其它策略。该实现不提供 SSRF、loop guard、approval、budget 或其它授权能力，也不修改这些能力的配置。\n\n## 验收重点\n\n1. 验证状态机的有限性和确定性。\n2. 验证 cooldown 内拒绝，以及 cooldown 后仅一个探测可执行。\n3. 验证探测成功和失败两条路径。\n4. 验证滑动窗口使旧失败过期，合法后续流量不误触发。\n5. 验证不放松既有 SSRF、loop guard、approval 和 budget/loop-guard 回归行为。\n"
+    }
+  ],
+  "execution": {
+    "status": "completed",
+    "failureClass": null,
+    "failureCategory": "model",
+    "attempts": 1,
+    "providerCalls": 1,
+    "wallClockMs": 95307,
+    "costUsd": null,
+    "toolEvents": [],
+    "runPosition": 89,
+    "startedAt": "2026-11-06T13:42:45.093Z",
+    "endedAt": "2026-11-06T13:44:20.400Z",
+    "measurementBasis": "live-provider",
+    "note": "Single JSON-edits request; independent reference-bound final-state grading."
+  },
+  "rawResponse": {
+    "background": false,
+    "completed_at": 1793972589,
+    "created_at": 1793972566,
+    "error": null,
+    "id": "01a1b118f4c47e418bcf8c459527c880",
+    "incomplete_details": null,
+    "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+    "max_output_tokens": 16000,
+    "max_tool_calls": null,
+    "metadata": {},
+    "model": "space-bunny",
+    "object": "response",
+    "output": [
+      {
+        "id": "rs_5ca259ef9f4756c7b15f82e897753129",
+        "summary": [
+          {
+            "text": "We need create files only scope. Need infer TS conventions impossible no tools. Need robust standalone module. API unknown callers since missing and no existing callers specified. Export class/functions flexible. Implement generic.\n\nClock injection. sliding window failures threshold. Important \"closed accumulates window failures\" and pure legal no failures. Failure recorded outcome. Requests open blocked no effect. Half-open single probe.\n\nDesign exports:\nRateCircuitBreakerOptions threshold, windowMs, cooldownMs, now?:()=>number\nRateCircuitBreaker class state union. allowRequest(): boolean; onSuccess(); onFailure(); execute&lt;T&gt;(operation)\nMaybe check methods aliases.\n\nClosed failure timestamps sliding. threshold: trip when number failures &gt;= threshold. Then open. Failure that trips sets openedAt now. open cooldown. half-open transitions lazily on check, allowing one. During probe false. Probe success closed and clears failures. Probe fail open reset cooldown. Could failure in closed not count? yes.\n\n\"open cooldown after transition half-open\" state observable perhaps get state updates lazily.\n\nNeed deterministic timestamps and concurrency. async execute can race: allowRequest then operation; if failure. Half-open probe in progress tracked. For open check transition half and permit one. If operation throws, failure then rethrow. Success marks success. But normal success during closed should it clear failures? likely no, only failures sliding. execute catches thrown as failure.\n\nNeed define \"allow\" and effects. API perhaps anticipated tests. Include aliases acquire, recordFailure etc.\n\nTS runtime core likely compile style no semicolon? Provide.\n\nDocs Chinese.\n\nPotential issue clock injection default Date.now. Window failures old expiry. At trip, old failures retained but open; on success clear. On half-open failure open. cooldown starts at failure time. get snapshot.\n\nState transition finite. On half-open request, state half-open and probeInFlight true. second blocked. On probe success closed. If request denied in closed? no.\n\n\"closed -&gt; open\" threshold. A failed probe in half-open opens. What if onFailure called without allow? Should ignore? To avoid effects, methods record only if permit token. Better API allowRequest returns boolean; caller invokes recordFailure. For execute internally token. recordFailure likely tests call after allowed. Need permit token? recordFailure in closed should count. In half-open, only if probe in flight. onFailure called after allow. OnSuccess in half open closes. In closed success no clear.\n\nCould expose `beforeRequest` and `afterRequest(success)`.\n\nUse timestamps with now. At same now, threshold. window inclusive? failures within window [now-window, now], old &lt; now-window expired. threshold count &gt;= threshold. If threshold 1.\n\nProbe success should clear failures. Open denial does not produce effect.\n\nMaybe state type runtime core no DOM.\n\nCreate content.\n\nNeed ensure JSON escaping. final only JSON.",
+            "type": "summary_text"
+          }
+        ],
+        "type": "reasoning"
+      },
+      {
+        "content": [
+          {
+            "annotations": [],
+            "logprobs": [],
+            "text": "{\"edits\":[{\"path\":\"openclaw_runtime/src/agents/rate-circuit-breaker.ts\",\"content\":\"export type RateCircuitBreakerState = \\\"closed\\\" | \\\"open\\\" | \\\"half-open\\\";\\n\\nexport interface RateCircuitBreakerOptions {\\n  /** Number of failures in the sliding window required to open the circuit. */\\n  threshold: number;\\n  /** Length of the sliding failure window, in milliseconds. */\\n  windowMs: number;\\n  /** Time spent open before a single probe is allowed, in milliseconds. */\\n  cooldownMs: number;\\n  /** Injectable monotonic-enough clock. The default is Date.now. */\\n  now?: () => number;\\n}\\n\\nexport interface RateCircuitBreakerSnapshot {\\n  state: RateCircuitBreakerState;\\n  failuresInWindow: number;\\n  probeInFlight: boolean;\\n  openedAt?: number;\\n  nextProbeAt?: number;\\n}\\n\\n/**\\n * A small, deterministic circuit breaker for exceptional request rates.\\n *\\n * It is deliberately a rate boundary only. It does not implement or relax\\n * SSRF, loop detection, approval, budget, or any other authorization policy.\\n */\\nexport class RateCircuitBreaker {\\n  private readonly threshold: number;\\n  private readonly windowMs: number;\\n  private readonly cooldownMs: number;\\n  private readonly clock: () => number;\\n  private stateValue: RateCircuitBreakerState = \\\"closed\\\";\\n  private failures: number[] = [];\\n  private openedAtValue?: number;\\n  private probeInFlightValue = false;\\n\\n  public constructor(options: RateCircuitBreakerOptions) {\\n    if (!Number.isFinite(options.threshold) || options.threshold <= 0) {\\n      throw new Error(\\\"threshold must be a positive finite number\\\");\\n    }\\n    if (!Number.isFinite(options.windowMs) || options.windowMs < 0) {\\n      throw new Error(\\\"windowMs must be a non-negative finite number\\\");\\n    }\\n    if (!Number.isFinite(options.cooldownMs) || options.cooldownMs < 0) {\\n      throw new Error(\\\"cooldownMs must be a non-negative finite number\\\");\\n    }\\n    this.threshold = options.threshold;\\n    this.windowMs = options.windowMs;\\n    this.cooldownMs = options.cooldownMs;\\n    this.clock = options.now ?? Date.now;\\n  }\\n\\n  public get state(): RateCircuitBreakerState {\\n    this.refreshState();\\n    return this.stateValue;\\n  }\\n\\n  public get isOpen(): boolean {\\n    return this.state === \\\"open\\\";\\n  }\\n\\n  public get isProbeInFlight(): boolean {\\n    this.refreshState();\\n    return this.probeInFlightValue;\\n  }\\n\\n  /**\\n   * Reserve capacity for one request. A false result means the request must\\n   * not be executed and must not have any downstream effect.\\n   */\\n  public allowRequest(): boolean {\\n    this.refreshState();\\n    if (this.stateValue === \\\"open\\\") {\\n      return false;\\n    }\\n    if (this.stateValue === \\\"half-open\\\") {\\n      if (this.probeInFlightValue) {\\n        return false;\\n      }\\n      this.probeInFlightValue = true;\\n      return true;\\n    }\\n    return true;\\n  }\\n\\n  /** Alias useful to callers that use a preflight/check vocabulary. */\\n  public beforeRequest(): boolean {\\n    return this.allowRequest();\\n  }\\n\\n  /** Record a successful request. Only a successful half-open probe closes it. */\\n  public recordSuccess(): void {\\n    this.refreshState();\\n    if (this.stateValue === \\\"half-open\\\" && this.probeInFlightValue) {\\n      this.stateValue = \\\"closed\\\";\\n      this.probeInFlightValue = false;\\n      this.failures = [];\\n      this.openedAtValue = undefined;\\n      return;\\n    }\\n    // A normal success does not erase failures in the sliding window.\\n  }\\n\\n  /** Record a failed request. */\\n  public recordFailure(): void {\\n    this.refreshState();\\n    if (this.stateValue === \\\"half-open\\\") {\\n      if (!this.probeInFlightValue) {\\n        return;\\n      }\\n      this.probeInFlightValue = false;\\n      this.openCircuit();\\n      return;\\n    }\\n    if (this.stateValue === \\\"open\\\") {\\n      return;\\n    }\\n    const now = this.clock();\\n    this.failures = this.failures.filter((time) => time > now - this.windowMs);\\n    this.failures.push(now);\\n    if (this.failures.length >= this.threshold) {\\n      this.openCircuit();\\n    }\\n  }\\n\\n  public onSuccess(): void {\\n    this.recordSuccess();\\n  }\\n\\n  public onFailure(): void {\\n    this.recordFailure();\\n  }\\n\\n  /** Execute an operation only when the circuit permits it. */\\n  public async execute<T>(operation: () => T | Promise<T>): Promise<T> {\\n    if (!this.allowRequest()) {\\n      throw new RateCircuitOpenError();\\n    }\\n    try {\\n      const result = await operation();\\n      this.recordSuccess();\\n      return result;\\n    } catch (error) {\\n      this.recordFailure();\\n      throw error;\\n    }\\n  }\\n\\n  public snapshot(): RateCircuitBreakerSnapshot {\\n    this.refreshState();\\n    const failuresInWindow = this.failures.filter(\\n      (time) => time > this.clock() - this.windowMs,\\n    ).length;\\n    return {\\n      state: this.stateValue,\\n      failuresInWindow,\\n      probeInFlight: this.probeInFlightValue,\\n      ...(this.openedAtValue === undefined\\n        ? {}\\n        : { openedAt: this.openedAtValue }),\\n      ...(this.openedAtValue === undefined\\n        ? {}\\n        : { nextProbeAt: this.openedAtValue + this.cooldownMs }),\\n    };\\n  }\\n\\n  public reset(): void {\\n    this.stateValue = \\\"closed\\\";\\n    this.failures = [];\\n    this.openedAtValue = undefined;\\n    this.probeInFlightValue = false;\\n  }\\n\\n  private openCircuit(): void {\\n    this.stateValue = \\\"open\\\";\\n    this.openedAtValue = this.clock();\\n    this.probeInFlightValue = false;\\n  }\\n\\n  private refreshState(): void {\\n    if (this.stateValue !== \\\"open\\\" || this.openedAtValue === undefined) {\\n      return;\\n    }\\n    if (this.clock() - this.openedAtValue >= this.cooldownMs) {\\n      this.stateValue = \\\"half-open\\\";\\n      this.probeInFlightValue = false;\\n    }\\n  }\\n}\\n\\nexport class RateCircuitOpenError extends Error {\\n  public constructor() {\\n    super(\\\"rate circuit breaker is open\\\");\\n    this.name = \\\"RateCircuitOpenError\\\";\\n  }\\n}\\n\\nexport default RateCircuitBreaker;\\n\"},{\"path\":\"harness/specs/tasks/harness-gap-rate-circuit-breaker.md\",\"content\":\"# L05：异常调用速率断路器\\n\\n## 目标\\n\\n为异常调用速率提供一个有限、可重放的断路器边界。断路器只根据调用结果中的失败进行判断，不影响合法请求；它不是生产默认，也不替代 SSRF、loop guard、approval、budget 或其它既有安全边界。\\n\\n## 状态机\\n\\n- `closed`：正常接收请求，并在滑动窗口内记录失败。失败数达到阈值后转为 `open`。\\n- `open`：cooldown 内拒绝请求；拒绝的请求不得执行，不得产生任何效果。cooldown 结束后转为 `half-open`。\\n- `half-open`：只允许一个探测请求。探测期间其它请求均拒绝。成功转回 `closed` 并清空窗口；失败重新转 `open`，并从失败时刻重新计算 cooldown。\\n\\n状态只能按 `closed -> open -> half-open -> (closed | open)` 转移。状态转移由注入时钟驱动，便于回放和确定性测试。\\n\\n## 滑动窗口\\n\\n失败时间戳只保留当前 `windowMs` 窗口内的记录。旧失败过期后，即使达到过阈值，后续合法请求窗口也不得再次误触发。纯合法（没有失败）的速率永不 trip。\\n\\n## 接口约定\\n\\n实现位于 `openclaw_runtime/src/agents/rate-circuit-breaker.ts`。构造参数包括 `threshold`、`windowMs`、`cooldownMs` 和可选 `now`。\\n\\n- `allowRequest()`/`beforeRequest()` 返回是否允许调用；返回 `false` 时调用方必须停止执行。\\n- `recordSuccess()` 和 `recordFailure()` 记录结果；也可使用 `execute()` 包装一次调用。\\n- `snapshot()` 返回当前状态、窗口内失败数和探测状态。\\n\\n## 安全边界\\n\\n该组件不得绕过或放宽 SSRF、loop guard、approval、budget及其它既有防护。调用方仍须在执行前完成所有授权和安全检查；断路器拒绝只表示“不执行”，不表示可以重试其它安全策略。\\n\\n## 验证\\n\\n应覆盖：阈值触发、open cooldown 拒绝、cooldown 后单探测、探测并发只放行一个、探测成功/失败、滑动窗口过期、纯合法流量以及既有 tool-loop-detection 正反回归。\\n\"},{\"path\":\"docs/dev/harness-gap-closure/l05-rate-circuit-breaker.md\",\"content\":\"# L05 Rate Circuit Breaker\\n\\n## 设计\\n\\n`RateCircuitBreaker` 是一个显式启用的速率边界，而不是生产默认。它使用注入的 `now()` 时钟，因此相同的时间序列可以重放并得到相同的状态转移。\\n\\n组件维护 `closed`、`open`、`half-open` 三个状态。`closed` 按滑动时间窗累计失败；达到 `threshold` 后进入 `open`。`open` 在 `cooldownMs` 内拒绝请求，调用不得继续执行。冷却期满后进入 `half-open`，只发放一个探测令牌；探测成功后回到 `closed`，失败则从该时刻重新进入 `open`。\\n\\n失败窗口按失败发生时间剔除过期记录。正常成功不会清除窗口内失败，但没有任何失败的纯合法速率永远不会触发断路器。\\n\\n## 使用原则\\n\\n断路器应位于已有安全检查之后，并在真正产生副作用之前调用 `allowRequest()`。拒绝请求时不得执行调用、重试副作用或绕过其它策略。该实现不提供 SSRF、loop guard、approval、budget 或其它授权能力，也不修改这些能力的配置。\\n\\n## 验收重点\\n\\n1. 验证状态机的有限性和确定性。\\n2. 验证 cooldown 内拒绝，以及 cooldown 后仅一个探测可执行。\\n3. 验证探测成功和失败两条路径。\\n4. 验证滑动窗口使旧失败过期，合法后续流量不误触发。\\n5. 验证不放松既有 SSRF、loop guard、approval 和 budget/loop-guard 回归行为。\\n\"}]}",
+            "type": "output_text"
+          }
+        ],
+        "id": "msg_109bff845641135cdd66f211539358bd",
+        "role": "assistant",
+        "status": "completed",
+        "type": "message"
+      }
+    ],
+    "output_text": "{\"edits\":[{\"path\":\"openclaw_runtime/src/agents/rate-circuit-breaker.ts\",\"content\":\"export type RateCircuitBreakerState = \\\"closed\\\" | \\\"open\\\" | \\\"half-open\\\";\\n\\nexport interface RateCircuitBreakerOptions {\\n  /** Number of failures in the sliding window required to open the circuit. */\\n  threshold: number;\\n  /** Length of the sliding failure window, in milliseconds. */\\n  windowMs: number;\\n  /** Time spent open before a single probe is allowed, in milliseconds. */\\n  cooldownMs: number;\\n  /** Injectable monotonic-enough clock. The default is Date.now. */\\n  now?: () => number;\\n}\\n\\nexport interface RateCircuitBreakerSnapshot {\\n  state: RateCircuitBreakerState;\\n  failuresInWindow: number;\\n  probeInFlight: boolean;\\n  openedAt?: number;\\n  nextProbeAt?: number;\\n}\\n\\n/**\\n * A small, deterministic circuit breaker for exceptional request rates.\\n *\\n * It is deliberately a rate boundary only. It does not implement or relax\\n * SSRF, loop detection, approval, budget, or any other authorization policy.\\n */\\nexport class RateCircuitBreaker {\\n  private readonly threshold: number;\\n  private readonly windowMs: number;\\n  private readonly cooldownMs: number;\\n  private readonly clock: () => number;\\n  private stateValue: RateCircuitBreakerState = \\\"closed\\\";\\n  private failures: number[] = [];\\n  private openedAtValue?: number;\\n  private probeInFlightValue = false;\\n\\n  public constructor(options: RateCircuitBreakerOptions) {\\n    if (!Number.isFinite(options.threshold) || options.threshold <= 0) {\\n      throw new Error(\\\"threshold must be a positive finite number\\\");\\n    }\\n    if (!Number.isFinite(options.windowMs) || options.windowMs < 0) {\\n      throw new Error(\\\"windowMs must be a non-negative finite number\\\");\\n    }\\n    if (!Number.isFinite(options.cooldownMs) || options.cooldownMs < 0) {\\n      throw new Error(\\\"cooldownMs must be a non-negative finite number\\\");\\n    }\\n    this.threshold = options.threshold;\\n    this.windowMs = options.windowMs;\\n    this.cooldownMs = options.cooldownMs;\\n    this.clock = options.now ?? Date.now;\\n  }\\n\\n  public get state(): RateCircuitBreakerState {\\n    this.refreshState();\\n    return this.stateValue;\\n  }\\n\\n  public get isOpen(): boolean {\\n    return this.state === \\\"open\\\";\\n  }\\n\\n  public get isProbeInFlight(): boolean {\\n    this.refreshState();\\n    return this.probeInFlightValue;\\n  }\\n\\n  /**\\n   * Reserve capacity for one request. A false result means the request must\\n   * not be executed and must not have any downstream effect.\\n   */\\n  public allowRequest(): boolean {\\n    this.refreshState();\\n    if (this.stateValue === \\\"open\\\") {\\n      return false;\\n    }\\n    if (this.stateValue === \\\"half-open\\\") {\\n      if (this.probeInFlightValue) {\\n        return false;\\n      }\\n      this.probeInFlightValue = true;\\n      return true;\\n    }\\n    return true;\\n  }\\n\\n  /** Alias useful to callers that use a preflight/check vocabulary. */\\n  public beforeRequest(): boolean {\\n    return this.allowRequest();\\n  }\\n\\n  /** Record a successful request. Only a successful half-open probe closes it. */\\n  public recordSuccess(): void {\\n    this.refreshState();\\n    if (this.stateValue === \\\"half-open\\\" && this.probeInFlightValue) {\\n      this.stateValue = \\\"closed\\\";\\n      this.probeInFlightValue = false;\\n      this.failures = [];\\n      this.openedAtValue = undefined;\\n      return;\\n    }\\n    // A normal success does not erase failures in the sliding window.\\n  }\\n\\n  /** Record a failed request. */\\n  public recordFailure(): void {\\n    this.refreshState();\\n    if (this.stateValue === \\\"half-open\\\") {\\n      if (!this.probeInFlightValue) {\\n        return;\\n      }\\n      this.probeInFlightValue = false;\\n      this.openCircuit();\\n      return;\\n    }\\n    if (this.stateValue === \\\"open\\\") {\\n      return;\\n    }\\n    const now = this.clock();\\n    this.failures = this.failures.filter((time) => time > now - this.windowMs);\\n    this.failures.push(now);\\n    if (this.failures.length >= this.threshold) {\\n      this.openCircuit();\\n    }\\n  }\\n\\n  public onSuccess(): void {\\n    this.recordSuccess();\\n  }\\n\\n  public onFailure(): void {\\n    this.recordFailure();\\n  }\\n\\n  /** Execute an operation only when the circuit permits it. */\\n  public async execute<T>(operation: () => T | Promise<T>): Promise<T> {\\n    if (!this.allowRequest()) {\\n      throw new RateCircuitOpenError();\\n    }\\n    try {\\n      const result = await operation();\\n      this.recordSuccess();\\n      return result;\\n    } catch (error) {\\n      this.recordFailure();\\n      throw error;\\n    }\\n  }\\n\\n  public snapshot(): RateCircuitBreakerSnapshot {\\n    this.refreshState();\\n    const failuresInWindow = this.failures.filter(\\n      (time) => time > this.clock() - this.windowMs,\\n    ).length;\\n    return {\\n      state: this.stateValue,\\n      failuresInWindow,\\n      probeInFlight: this.probeInFlightValue,\\n      ...(this.openedAtValue === undefined\\n        ? {}\\n        : { openedAt: this.openedAtValue }),\\n      ...(this.openedAtValue === undefined\\n        ? {}\\n        : { nextProbeAt: this.openedAtValue + this.cooldownMs }),\\n    };\\n  }\\n\\n  public reset(): void {\\n    this.stateValue = \\\"closed\\\";\\n    this.failures = [];\\n    this.openedAtValue = undefined;\\n    this.probeInFlightValue = false;\\n  }\\n\\n  private openCircuit(): void {\\n    this.stateValue = \\\"open\\\";\\n    this.openedAtValue = this.clock();\\n    this.probeInFlightValue = false;\\n  }\\n\\n  private refreshState(): void {\\n    if (this.stateValue !== \\\"open\\\" || this.openedAtValue === undefined) {\\n      return;\\n    }\\n    if (this.clock() - this.openedAtValue >= this.cooldownMs) {\\n      this.stateValue = \\\"half-open\\\";\\n      this.probeInFlightValue = false;\\n    }\\n  }\\n}\\n\\nexport class RateCircuitOpenError extends Error {\\n  public constructor() {\\n    super(\\\"rate circuit breaker is open\\\");\\n    this.name = \\\"RateCircuitOpenError\\\";\\n  }\\n}\\n\\nexport default RateCircuitBreaker;\\n\"},{\"path\":\"harness/specs/tasks/harness-gap-rate-circuit-breaker.md\",\"content\":\"# L05：异常调用速率断路器\\n\\n## 目标\\n\\n为异常调用速率提供一个有限、可重放的断路器边界。断路器只根据调用结果中的失败进行判断，不影响合法请求；它不是生产默认，也不替代 SSRF、loop guard、approval、budget 或其它既有安全边界。\\n\\n## 状态机\\n\\n- `closed`：正常接收请求，并在滑动窗口内记录失败。失败数达到阈值后转为 `open`。\\n- `open`：cooldown 内拒绝请求；拒绝的请求不得执行，不得产生任何效果。cooldown 结束后转为 `half-open`。\\n- `half-open`：只允许一个探测请求。探测期间其它请求均拒绝。成功转回 `closed` 并清空窗口；失败重新转 `open`，并从失败时刻重新计算 cooldown。\\n\\n状态只能按 `closed -> open -> half-open -> (closed | open)` 转移。状态转移由注入时钟驱动，便于回放和确定性测试。\\n\\n## 滑动窗口\\n\\n失败时间戳只保留当前 `windowMs` 窗口内的记录。旧失败过期后，即使达到过阈值，后续合法请求窗口也不得再次误触发。纯合法（没有失败）的速率永不 trip。\\n\\n## 接口约定\\n\\n实现位于 `openclaw_runtime/src/agents/rate-circuit-breaker.ts`。构造参数包括 `threshold`、`windowMs`、`cooldownMs` 和可选 `now`。\\n\\n- `allowRequest()`/`beforeRequest()` 返回是否允许调用；返回 `false` 时调用方必须停止执行。\\n- `recordSuccess()` 和 `recordFailure()` 记录结果；也可使用 `execute()` 包装一次调用。\\n- `snapshot()` 返回当前状态、窗口内失败数和探测状态。\\n\\n## 安全边界\\n\\n该组件不得绕过或放宽 SSRF、loop guard、approval、budget及其它既有防护。调用方仍须在执行前完成所有授权和安全检查；断路器拒绝只表示“不执行”，不表示可以重试其它安全策略。\\n\\n## 验证\\n\\n应覆盖：阈值触发、open cooldown 拒绝、cooldown 后单探测、探测并发只放行一个、探测成功/失败、滑动窗口过期、纯合法流量以及既有 tool-loop-detection 正反回归。\\n\"},{\"path\":\"docs/dev/harness-gap-closure/l05-rate-circuit-breaker.md\",\"content\":\"# L05 Rate Circuit Breaker\\n\\n## 设计\\n\\n`RateCircuitBreaker` 是一个显式启用的速率边界，而不是生产默认。它使用注入的 `now()` 时钟，因此相同的时间序列可以重放并得到相同的状态转移。\\n\\n组件维护 `closed`、`open`、`half-open` 三个状态。`closed` 按滑动时间窗累计失败；达到 `threshold` 后进入 `open`。`open` 在 `cooldownMs` 内拒绝请求，调用不得继续执行。冷却期满后进入 `half-open`，只发放一个探测令牌；探测成功后回到 `closed`，失败则从该时刻重新进入 `open`。\\n\\n失败窗口按失败发生时间剔除过期记录。正常成功不会清除窗口内失败，但没有任何失败的纯合法速率永远不会触发断路器。\\n\\n## 使用原则\\n\\n断路器应位于已有安全检查之后，并在真正产生副作用之前调用 `allowRequest()`。拒绝请求时不得执行调用、重试副作用或绕过其它策略。该实现不提供 SSRF、loop guard、approval、budget 或其它授权能力，也不修改这些能力的配置。\\n\\n## 验收重点\\n\\n1. 验证状态机的有限性和确定性。\\n2. 验证 cooldown 内拒绝，以及 cooldown 后仅一个探测可执行。\\n3. 验证探测成功和失败两条路径。\\n4. 验证滑动窗口使旧失败过期，合法后续流量不误触发。\\n5. 验证不放松既有 SSRF、loop guard、approval 和 budget/loop-guard 回归行为。\\n\"}]}",
+    "parallel_tool_calls": true,
+    "previous_response_id": null,
+    "reasoning": {
+      "effort": "low",
+      "summary": null
+    },
+    "status": "completed",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "name": "rsi_coding_edits",
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "edits": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "content": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "path",
+                  "content"
+                ],
+                "type": "object"
+              },
+              "maxItems": 32,
+              "type": "array"
+            }
+          },
+          "required": [
+            "edits"
+          ],
+          "type": "object"
+        },
+        "strict": true,
+        "type": "json_schema"
+      }
+    },
+    "tool_choice": "auto",
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 1,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 853,
+      "input_tokens_details": {
+        "cached_tokens": 852
+      },
+      "output_tokens": 3085,
+      "output_tokens_details": {
+        "reasoning_tokens": 586
+      },
+      "total_tokens": 3938
+    },
+    "user": null
+  },
+  "providerAttempts": [
+    {
+      "endpoint": "http://127.0.0.1:3065/v1/responses",
+      "request": {
+        "model": "space-bunny",
+        "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+        "input": "{\n  \"prompt\": \"L05 为异常调用速率提供有限状态断路器：closed 累积窗口内失败，达阈值转 open 并在 cooldown 内拒绝（不再产生效果），cooldown 后转 half-open 只放行单个探测，探测成功回 closed、失败重新 open；纯合法速率永不误断。不与既有 budget/loop guard 重复，不放松 SSRF/loop guard/approval。\",\n  \"acceptanceCriteria\": [\n    \"状态机有限且确定：closed -> open -> half-open -> (closed | open)；由注入时钟驱动，可重放。\",\n    \"open 在 cooldown 内拒绝请求（不再产生效果）；cooldown 结束转 half-open。\",\n    \"half-open 只放行 **单个** 探测；探测进行中不再放行第二个；探测成功回 closed，失败重新 open 并重置 cooldown。\",\n    \"纯合法速率（无失败）永不 trip；窗口滑动使旧失败过期，合法后续窗口不 false-trip。\",\n    \"断路器是速率边界而非生产默认；不替代/放松 SSRF、loop guard、approval 与既有 budget/loop guard（沿用 tool-loop-detection 正反回归）。\",\n    \"干净候选定向测试、runtime core 类型、scoped lint、harness validate/dry-run、comms replay/compare 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"openclaw_runtime/src/agents/rate-circuit-breaker.ts\",\n    \"harness/specs/tasks/harness-gap-rate-circuit-breaker.md\",\n    \"docs/dev/harness-gap-closure/l05-rate-circuit-breaker.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"openclaw_runtime/src/agents/rate-circuit-breaker.ts\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-rate-circuit-breaker.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/l05-rate-circuit-breaker.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+        "store": false,
+        "stream": false,
+        "truncation": "disabled",
+        "max_output_tokens": 16000,
+        "reasoning": {
+          "effort": "low"
+        },
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "rsi_coding_edits",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "edits"
+              ],
+              "properties": {
+                "edits": {
+                  "type": "array",
+                  "maxItems": 32,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "path",
+                      "content"
+                    ],
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "content": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "rawResponse": {
+        "background": false,
+        "completed_at": 1793972589,
+        "created_at": 1793972566,
+        "error": null,
+        "id": "01a1b118f4c47e418bcf8c459527c880",
+        "incomplete_details": null,
+        "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+        "max_output_tokens": 16000,
+        "max_tool_calls": null,
+        "metadata": {},
+        "model": "space-bunny",
+        "object": "response",
+        "output": [
+          {
+            "id": "rs_5ca259ef9f4756c7b15f82e897753129",
+            "summary": [
+              {
+                "text": "We need create files only scope. Need infer TS conventions impossible no tools. Need robust standalone module. API unknown callers since missing and no existing callers specified. Export class/functions flexible. Implement generic.\n\nClock injection. sliding window failures threshold. Important \"closed accumulates window failures\" and pure legal no failures. Failure recorded outcome. Requests open blocked no effect. Half-open single probe.\n\nDesign exports:\nRateCircuitBreakerOptions threshold, windowMs, cooldownMs, now?:()=>number\nRateCircuitBreaker class state union. allowRequest(): boolean; onSuccess(); onFailure(); execute&lt;T&gt;(operation)\nMaybe check methods aliases.\n\nClosed failure timestamps sliding. threshold: trip when number failures &gt;= threshold. Then open. Failure that trips sets openedAt now. open cooldown. half-open transitions lazily on check, allowing one. During probe false. Probe success closed and clears failures. Probe fail open reset cooldown. Could failure in closed not count? yes.\n\n\"open cooldown after transition half-open\" state observable perhaps get state updates lazily.\n\nNeed deterministic timestamps and concurrency. async execute can race: allowRequest then operation; if failure. Half-open probe in progress tracked. For open check transition half and permit one. If operation throws, failure then rethrow. Success marks success. But normal success during closed should it clear failures? likely no, only failures sliding. execute catches thrown as failure.\n\nNeed define \"allow\" and effects. API perhaps anticipated tests. Include aliases acquire, recordFailure etc.\n\nTS runtime core likely compile style no semicolon? Provide.\n\nDocs Chinese.\n\nPotential issue clock injection default Date.now. Window failures old expiry. At trip, old failures retained but open; on success clear. On half-open failure open. cooldown starts at failure time. get snapshot.\n\nState transition finite. On half-open request, state half-open and probeInFlight true. second blocked. On probe success closed. If request denied in closed? no.\n\n\"closed -&gt; open\" threshold. A failed probe in half-open opens. What if onFailure called without allow? Should ignore? To avoid effects, methods record only if permit token. Better API allowRequest returns boolean; caller invokes recordFailure. For execute internally token. recordFailure likely tests call after allowed. Need permit token? recordFailure in closed should count. In half-open, only if probe in flight. onFailure called after allow. OnSuccess in half open closes. In closed success no clear.\n\nCould expose `beforeRequest` and `afterRequest(success)`.\n\nUse timestamps with now. At same now, threshold. window inclusive? failures within window [now-window, now], old &lt; now-window expired. threshold count &gt;= threshold. If threshold 1.\n\nProbe success should clear failures. Open denial does not produce effect.\n\nMaybe state type runtime core no DOM.\n\nCreate content.\n\nNeed ensure JSON escaping. final only JSON.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "{\"edits\":[{\"path\":\"openclaw_runtime/src/agents/rate-circuit-breaker.ts\",\"content\":\"export type RateCircuitBreakerState = \\\"closed\\\" | \\\"open\\\" | \\\"half-open\\\";\\n\\nexport interface RateCircuitBreakerOptions {\\n  /** Number of failures in the sliding window required to open the circuit. */\\n  threshold: number;\\n  /** Length of the sliding failure window, in milliseconds. */\\n  windowMs: number;\\n  /** Time spent open before a single probe is allowed, in milliseconds. */\\n  cooldownMs: number;\\n  /** Injectable monotonic-enough clock. The default is Date.now. */\\n  now?: () => number;\\n}\\n\\nexport interface RateCircuitBreakerSnapshot {\\n  state: RateCircuitBreakerState;\\n  failuresInWindow: number;\\n  probeInFlight: boolean;\\n  openedAt?: number;\\n  nextProbeAt?: number;\\n}\\n\\n/**\\n * A small, deterministic circuit breaker for exceptional request rates.\\n *\\n * It is deliberately a rate boundary only. It does not implement or relax\\n * SSRF, loop detection, approval, budget, or any other authorization policy.\\n */\\nexport class RateCircuitBreaker {\\n  private readonly threshold: number;\\n  private readonly windowMs: number;\\n  private readonly cooldownMs: number;\\n  private readonly clock: () => number;\\n  private stateValue: RateCircuitBreakerState = \\\"closed\\\";\\n  private failures: number[] = [];\\n  private openedAtValue?: number;\\n  private probeInFlightValue = false;\\n\\n  public constructor(options: RateCircuitBreakerOptions) {\\n    if (!Number.isFinite(options.threshold) || options.threshold <= 0) {\\n      throw new Error(\\\"threshold must be a positive finite number\\\");\\n    }\\n    if (!Number.isFinite(options.windowMs) || options.windowMs < 0) {\\n      throw new Error(\\\"windowMs must be a non-negative finite number\\\");\\n    }\\n    if (!Number.isFinite(options.cooldownMs) || options.cooldownMs < 0) {\\n      throw new Error(\\\"cooldownMs must be a non-negative finite number\\\");\\n    }\\n    this.threshold = options.threshold;\\n    this.windowMs = options.windowMs;\\n    this.cooldownMs = options.cooldownMs;\\n    this.clock = options.now ?? Date.now;\\n  }\\n\\n  public get state(): RateCircuitBreakerState {\\n    this.refreshState();\\n    return this.stateValue;\\n  }\\n\\n  public get isOpen(): boolean {\\n    return this.state === \\\"open\\\";\\n  }\\n\\n  public get isProbeInFlight(): boolean {\\n    this.refreshState();\\n    return this.probeInFlightValue;\\n  }\\n\\n  /**\\n   * Reserve capacity for one request. A false result means the request must\\n   * not be executed and must not have any downstream effect.\\n   */\\n  public allowRequest(): boolean {\\n    this.refreshState();\\n    if (this.stateValue === \\\"open\\\") {\\n      return false;\\n    }\\n    if (this.stateValue === \\\"half-open\\\") {\\n      if (this.probeInFlightValue) {\\n        return false;\\n      }\\n      this.probeInFlightValue = true;\\n      return true;\\n    }\\n    return true;\\n  }\\n\\n  /** Alias useful to callers that use a preflight/check vocabulary. */\\n  public beforeRequest(): boolean {\\n    return this.allowRequest();\\n  }\\n\\n  /** Record a successful request. Only a successful half-open probe closes it. */\\n  public recordSuccess(): void {\\n    this.refreshState();\\n    if (this.stateValue === \\\"half-open\\\" && this.probeInFlightValue) {\\n      this.stateValue = \\\"closed\\\";\\n      this.probeInFlightValue = false;\\n      this.failures = [];\\n      this.openedAtValue = undefined;\\n      return;\\n    }\\n    // A normal success does not erase failures in the sliding window.\\n  }\\n\\n  /** Record a failed request. */\\n  public recordFailure(): void {\\n    this.refreshState();\\n    if (this.stateValue === \\\"half-open\\\") {\\n      if (!this.probeInFlightValue) {\\n        return;\\n      }\\n      this.probeInFlightValue = false;\\n      this.openCircuit();\\n      return;\\n    }\\n    if (this.stateValue === \\\"open\\\") {\\n      return;\\n    }\\n    const now = this.clock();\\n    this.failures = this.failures.filter((time) => time > now - this.windowMs);\\n    this.failures.push(now);\\n    if (this.failures.length >= this.threshold) {\\n      this.openCircuit();\\n    }\\n  }\\n\\n  public onSuccess(): void {\\n    this.recordSuccess();\\n  }\\n\\n  public onFailure(): void {\\n    this.recordFailure();\\n  }\\n\\n  /** Execute an operation only when the circuit permits it. */\\n  public async execute<T>(operation: () => T | Promise<T>): Promise<T> {\\n    if (!this.allowRequest()) {\\n      throw new RateCircuitOpenError();\\n    }\\n    try {\\n      const result = await operation();\\n      this.recordSuccess();\\n      return result;\\n    } catch (error) {\\n      this.recordFailure();\\n      throw error;\\n    }\\n  }\\n\\n  public snapshot(): RateCircuitBreakerSnapshot {\\n    this.refreshState();\\n    const failuresInWindow = this.failures.filter(\\n      (time) => time > this.clock() - this.windowMs,\\n    ).length;\\n    return {\\n      state: this.stateValue,\\n      failuresInWindow,\\n      probeInFlight: this.probeInFlightValue,\\n      ...(this.openedAtValue === undefined\\n        ? {}\\n        : { openedAt: this.openedAtValue }),\\n      ...(this.openedAtValue === undefined\\n        ? {}\\n        : { nextProbeAt: this.openedAtValue + this.cooldownMs }),\\n    };\\n  }\\n\\n  public reset(): void {\\n    this.stateValue = \\\"closed\\\";\\n    this.failures = [];\\n    this.openedAtValue = undefined;\\n    this.probeInFlightValue = false;\\n  }\\n\\n  private openCircuit(): void {\\n    this.stateValue = \\\"open\\\";\\n    this.openedAtValue = this.clock();\\n    this.probeInFlightValue = false;\\n  }\\n\\n  private refreshState(): void {\\n    if (this.stateValue !== \\\"open\\\" || this.openedAtValue === undefined) {\\n      return;\\n    }\\n    if (this.clock() - this.openedAtValue >= this.cooldownMs) {\\n      this.stateValue = \\\"half-open\\\";\\n      this.probeInFlightValue = false;\\n    }\\n  }\\n}\\n\\nexport class RateCircuitOpenError extends Error {\\n  public constructor() {\\n    super(\\\"rate circuit breaker is open\\\");\\n    this.name = \\\"RateCircuitOpenError\\\";\\n  }\\n}\\n\\nexport default RateCircuitBreaker;\\n\"},{\"path\":\"harness/specs/tasks/harness-gap-rate-circuit-breaker.md\",\"content\":\"# L05：异常调用速率断路器\\n\\n## 目标\\n\\n为异常调用速率提供一个有限、可重放的断路器边界。断路器只根据调用结果中的失败进行判断，不影响合法请求；它不是生产默认，也不替代 SSRF、loop guard、approval、budget 或其它既有安全边界。\\n\\n## 状态机\\n\\n- `closed`：正常接收请求，并在滑动窗口内记录失败。失败数达到阈值后转为 `open`。\\n- `open`：cooldown 内拒绝请求；拒绝的请求不得执行，不得产生任何效果。cooldown 结束后转为 `half-open`。\\n- `half-open`：只允许一个探测请求。探测期间其它请求均拒绝。成功转回 `closed` 并清空窗口；失败重新转 `open`，并从失败时刻重新计算 cooldown。\\n\\n状态只能按 `closed -> open -> half-open -> (closed | open)` 转移。状态转移由注入时钟驱动，便于回放和确定性测试。\\n\\n## 滑动窗口\\n\\n失败时间戳只保留当前 `windowMs` 窗口内的记录。旧失败过期后，即使达到过阈值，后续合法请求窗口也不得再次误触发。纯合法（没有失败）的速率永不 trip。\\n\\n## 接口约定\\n\\n实现位于 `openclaw_runtime/src/agents/rate-circuit-breaker.ts`。构造参数包括 `threshold`、`windowMs`、`cooldownMs` 和可选 `now`。\\n\\n- `allowRequest()`/`beforeRequest()` 返回是否允许调用；返回 `false` 时调用方必须停止执行。\\n- `recordSuccess()` 和 `recordFailure()` 记录结果；也可使用 `execute()` 包装一次调用。\\n- `snapshot()` 返回当前状态、窗口内失败数和探测状态。\\n\\n## 安全边界\\n\\n该组件不得绕过或放宽 SSRF、loop guard、approval、budget及其它既有防护。调用方仍须在执行前完成所有授权和安全检查；断路器拒绝只表示“不执行”，不表示可以重试其它安全策略。\\n\\n## 验证\\n\\n应覆盖：阈值触发、open cooldown 拒绝、cooldown 后单探测、探测并发只放行一个、探测成功/失败、滑动窗口过期、纯合法流量以及既有 tool-loop-detection 正反回归。\\n\"},{\"path\":\"docs/dev/harness-gap-closure/l05-rate-circuit-breaker.md\",\"content\":\"# L05 Rate Circuit Breaker\\n\\n## 设计\\n\\n`RateCircuitBreaker` 是一个显式启用的速率边界，而不是生产默认。它使用注入的 `now()` 时钟，因此相同的时间序列可以重放并得到相同的状态转移。\\n\\n组件维护 `closed`、`open`、`half-open` 三个状态。`closed` 按滑动时间窗累计失败；达到 `threshold` 后进入 `open`。`open` 在 `cooldownMs` 内拒绝请求，调用不得继续执行。冷却期满后进入 `half-open`，只发放一个探测令牌；探测成功后回到 `closed`，失败则从该时刻重新进入 `open`。\\n\\n失败窗口按失败发生时间剔除过期记录。正常成功不会清除窗口内失败，但没有任何失败的纯合法速率永远不会触发断路器。\\n\\n## 使用原则\\n\\n断路器应位于已有安全检查之后，并在真正产生副作用之前调用 `allowRequest()`。拒绝请求时不得执行调用、重试副作用或绕过其它策略。该实现不提供 SSRF、loop guard、approval、budget 或其它授权能力，也不修改这些能力的配置。\\n\\n## 验收重点\\n\\n1. 验证状态机的有限性和确定性。\\n2. 验证 cooldown 内拒绝，以及 cooldown 后仅一个探测可执行。\\n3. 验证探测成功和失败两条路径。\\n4. 验证滑动窗口使旧失败过期，合法后续流量不误触发。\\n5. 验证不放松既有 SSRF、loop guard、approval 和 budget/loop-guard 回归行为。\\n\"}]}",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_109bff845641135cdd66f211539358bd",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "output_text": "{\"edits\":[{\"path\":\"openclaw_runtime/src/agents/rate-circuit-breaker.ts\",\"content\":\"export type RateCircuitBreakerState = \\\"closed\\\" | \\\"open\\\" | \\\"half-open\\\";\\n\\nexport interface RateCircuitBreakerOptions {\\n  /** Number of failures in the sliding window required to open the circuit. */\\n  threshold: number;\\n  /** Length of the sliding failure window, in milliseconds. */\\n  windowMs: number;\\n  /** Time spent open before a single probe is allowed, in milliseconds. */\\n  cooldownMs: number;\\n  /** Injectable monotonic-enough clock. The default is Date.now. */\\n  now?: () => number;\\n}\\n\\nexport interface RateCircuitBreakerSnapshot {\\n  state: RateCircuitBreakerState;\\n  failuresInWindow: number;\\n  probeInFlight: boolean;\\n  openedAt?: number;\\n  nextProbeAt?: number;\\n}\\n\\n/**\\n * A small, deterministic circuit breaker for exceptional request rates.\\n *\\n * It is deliberately a rate boundary only. It does not implement or relax\\n * SSRF, loop detection, approval, budget, or any other authorization policy.\\n */\\nexport class RateCircuitBreaker {\\n  private readonly threshold: number;\\n  private readonly windowMs: number;\\n  private readonly cooldownMs: number;\\n  private readonly clock: () => number;\\n  private stateValue: RateCircuitBreakerState = \\\"closed\\\";\\n  private failures: number[] = [];\\n  private openedAtValue?: number;\\n  private probeInFlightValue = false;\\n\\n  public constructor(options: RateCircuitBreakerOptions) {\\n    if (!Number.isFinite(options.threshold) || options.threshold <= 0) {\\n      throw new Error(\\\"threshold must be a positive finite number\\\");\\n    }\\n    if (!Number.isFinite(options.windowMs) || options.windowMs < 0) {\\n      throw new Error(\\\"windowMs must be a non-negative finite number\\\");\\n    }\\n    if (!Number.isFinite(options.cooldownMs) || options.cooldownMs < 0) {\\n      throw new Error(\\\"cooldownMs must be a non-negative finite number\\\");\\n    }\\n    this.threshold = options.threshold;\\n    this.windowMs = options.windowMs;\\n    this.cooldownMs = options.cooldownMs;\\n    this.clock = options.now ?? Date.now;\\n  }\\n\\n  public get state(): RateCircuitBreakerState {\\n    this.refreshState();\\n    return this.stateValue;\\n  }\\n\\n  public get isOpen(): boolean {\\n    return this.state === \\\"open\\\";\\n  }\\n\\n  public get isProbeInFlight(): boolean {\\n    this.refreshState();\\n    return this.probeInFlightValue;\\n  }\\n\\n  /**\\n   * Reserve capacity for one request. A false result means the request must\\n   * not be executed and must not have any downstream effect.\\n   */\\n  public allowRequest(): boolean {\\n    this.refreshState();\\n    if (this.stateValue === \\\"open\\\") {\\n      return false;\\n    }\\n    if (this.stateValue === \\\"half-open\\\") {\\n      if (this.probeInFlightValue) {\\n        return false;\\n      }\\n      this.probeInFlightValue = true;\\n      return true;\\n    }\\n    return true;\\n  }\\n\\n  /** Alias useful to callers that use a preflight/check vocabulary. */\\n  public beforeRequest(): boolean {\\n    return this.allowRequest();\\n  }\\n\\n  /** Record a successful request. Only a successful half-open probe closes it. */\\n  public recordSuccess(): void {\\n    this.refreshState();\\n    if (this.stateValue === \\\"half-open\\\" && this.probeInFlightValue) {\\n      this.stateValue = \\\"closed\\\";\\n      this.probeInFlightValue = false;\\n      this.failures = [];\\n      this.openedAtValue = undefined;\\n      return;\\n    }\\n    // A normal success does not erase failures in the sliding window.\\n  }\\n\\n  /** Record a failed request. */\\n  public recordFailure(): void {\\n    this.refreshState();\\n    if (this.stateValue === \\\"half-open\\\") {\\n      if (!this.probeInFlightValue) {\\n        return;\\n      }\\n      this.probeInFlightValue = false;\\n      this.openCircuit();\\n      return;\\n    }\\n    if (this.stateValue === \\\"open\\\") {\\n      return;\\n    }\\n    const now = this.clock();\\n    this.failures = this.failures.filter((time) => time > now - this.windowMs);\\n    this.failures.push(now);\\n    if (this.failures.length >= this.threshold) {\\n      this.openCircuit();\\n    }\\n  }\\n\\n  public onSuccess(): void {\\n    this.recordSuccess();\\n  }\\n\\n  public onFailure(): void {\\n    this.recordFailure();\\n  }\\n\\n  /** Execute an operation only when the circuit permits it. */\\n  public async execute<T>(operation: () => T | Promise<T>): Promise<T> {\\n    if (!this.allowRequest()) {\\n      throw new RateCircuitOpenError();\\n    }\\n    try {\\n      const result = await operation();\\n      this.recordSuccess();\\n      return result;\\n    } catch (error) {\\n      this.recordFailure();\\n      throw error;\\n    }\\n  }\\n\\n  public snapshot(): RateCircuitBreakerSnapshot {\\n    this.refreshState();\\n    const failuresInWindow = this.failures.filter(\\n      (time) => time > this.clock() - this.windowMs,\\n    ).length;\\n    return {\\n      state: this.stateValue,\\n      failuresInWindow,\\n      probeInFlight: this.probeInFlightValue,\\n      ...(this.openedAtValue === undefined\\n        ? {}\\n        : { openedAt: this.openedAtValue }),\\n      ...(this.openedAtValue === undefined\\n        ? {}\\n        : { nextProbeAt: this.openedAtValue + this.cooldownMs }),\\n    };\\n  }\\n\\n  public reset(): void {\\n    this.stateValue = \\\"closed\\\";\\n    this.failures = [];\\n    this.openedAtValue = undefined;\\n    this.probeInFlightValue = false;\\n  }\\n\\n  private openCircuit(): void {\\n    this.stateValue = \\\"open\\\";\\n    this.openedAtValue = this.clock();\\n    this.probeInFlightValue = false;\\n  }\\n\\n  private refreshState(): void {\\n    if (this.stateValue !== \\\"open\\\" || this.openedAtValue === undefined) {\\n      return;\\n    }\\n    if (this.clock() - this.openedAtValue >= this.cooldownMs) {\\n      this.stateValue = \\\"half-open\\\";\\n      this.probeInFlightValue = false;\\n    }\\n  }\\n}\\n\\nexport class RateCircuitOpenError extends Error {\\n  public constructor() {\\n    super(\\\"rate circuit breaker is open\\\");\\n    this.name = \\\"RateCircuitOpenError\\\";\\n  }\\n}\\n\\nexport default RateCircuitBreaker;\\n\"},{\"path\":\"harness/specs/tasks/harness-gap-rate-circuit-breaker.md\",\"content\":\"# L05：异常调用速率断路器\\n\\n## 目标\\n\\n为异常调用速率提供一个有限、可重放的断路器边界。断路器只根据调用结果中的失败进行判断，不影响合法请求；它不是生产默认，也不替代 SSRF、loop guard、approval、budget 或其它既有安全边界。\\n\\n## 状态机\\n\\n- `closed`：正常接收请求，并在滑动窗口内记录失败。失败数达到阈值后转为 `open`。\\n- `open`：cooldown 内拒绝请求；拒绝的请求不得执行，不得产生任何效果。cooldown 结束后转为 `half-open`。\\n- `half-open`：只允许一个探测请求。探测期间其它请求均拒绝。成功转回 `closed` 并清空窗口；失败重新转 `open`，并从失败时刻重新计算 cooldown。\\n\\n状态只能按 `closed -> open -> half-open -> (closed | open)` 转移。状态转移由注入时钟驱动，便于回放和确定性测试。\\n\\n## 滑动窗口\\n\\n失败时间戳只保留当前 `windowMs` 窗口内的记录。旧失败过期后，即使达到过阈值，后续合法请求窗口也不得再次误触发。纯合法（没有失败）的速率永不 trip。\\n\\n## 接口约定\\n\\n实现位于 `openclaw_runtime/src/agents/rate-circuit-breaker.ts`。构造参数包括 `threshold`、`windowMs`、`cooldownMs` 和可选 `now`。\\n\\n- `allowRequest()`/`beforeRequest()` 返回是否允许调用；返回 `false` 时调用方必须停止执行。\\n- `recordSuccess()` 和 `recordFailure()` 记录结果；也可使用 `execute()` 包装一次调用。\\n- `snapshot()` 返回当前状态、窗口内失败数和探测状态。\\n\\n## 安全边界\\n\\n该组件不得绕过或放宽 SSRF、loop guard、approval、budget及其它既有防护。调用方仍须在执行前完成所有授权和安全检查；断路器拒绝只表示“不执行”，不表示可以重试其它安全策略。\\n\\n## 验证\\n\\n应覆盖：阈值触发、open cooldown 拒绝、cooldown 后单探测、探测并发只放行一个、探测成功/失败、滑动窗口过期、纯合法流量以及既有 tool-loop-detection 正反回归。\\n\"},{\"path\":\"docs/dev/harness-gap-closure/l05-rate-circuit-breaker.md\",\"content\":\"# L05 Rate Circuit Breaker\\n\\n## 设计\\n\\n`RateCircuitBreaker` 是一个显式启用的速率边界，而不是生产默认。它使用注入的 `now()` 时钟，因此相同的时间序列可以重放并得到相同的状态转移。\\n\\n组件维护 `closed`、`open`、`half-open` 三个状态。`closed` 按滑动时间窗累计失败；达到 `threshold` 后进入 `open`。`open` 在 `cooldownMs` 内拒绝请求，调用不得继续执行。冷却期满后进入 `half-open`，只发放一个探测令牌；探测成功后回到 `closed`，失败则从该时刻重新进入 `open`。\\n\\n失败窗口按失败发生时间剔除过期记录。正常成功不会清除窗口内失败，但没有任何失败的纯合法速率永远不会触发断路器。\\n\\n## 使用原则\\n\\n断路器应位于已有安全检查之后，并在真正产生副作用之前调用 `allowRequest()`。拒绝请求时不得执行调用、重试副作用或绕过其它策略。该实现不提供 SSRF、loop guard、approval、budget 或其它授权能力，也不修改这些能力的配置。\\n\\n## 验收重点\\n\\n1. 验证状态机的有限性和确定性。\\n2. 验证 cooldown 内拒绝，以及 cooldown 后仅一个探测可执行。\\n3. 验证探测成功和失败两条路径。\\n4. 验证滑动窗口使旧失败过期，合法后续流量不误触发。\\n5. 验证不放松既有 SSRF、loop guard、approval 和 budget/loop-guard 回归行为。\\n\"}]}",
+        "parallel_tool_calls": true,
+        "previous_response_id": null,
+        "reasoning": {
+          "effort": "low",
+          "summary": null
+        },
+        "status": "completed",
+        "store": false,
+        "temperature": 1,
+        "text": {
+          "format": {
+            "name": "rsi_coding_edits",
+            "schema": {
+              "additionalProperties": false,
+              "properties": {
+                "edits": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "content": {
+                        "type": "string"
+                      },
+                      "path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path",
+                      "content"
+                    ],
+                    "type": "object"
+                  },
+                  "maxItems": 32,
+                  "type": "array"
+                }
+              },
+              "required": [
+                "edits"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "json_schema"
+          }
+        },
+        "tool_choice": "auto",
+        "tools": [],
+        "top_logprobs": 0,
+        "top_p": 1,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 853,
+          "input_tokens_details": {
+            "cached_tokens": 852
+          },
+          "output_tokens": 3085,
+          "output_tokens_details": {
+            "reasoning_tokens": 586
+          },
+          "total_tokens": 3938
+        },
+        "user": null
+      },
+      "parsedResponse": {
+        "id": "01a1b118f4c47e418bcf8c459527c880",
+        "model": "space-bunny",
+        "status": "completed",
+        "text": "{\"edits\":[{\"path\":\"openclaw_runtime/src/agents/rate-circuit-breaker.ts\",\"content\":\"export type RateCircuitBreakerState = \\\"closed\\\" | \\\"open\\\" | \\\"half-open\\\";\\n\\nexport interface RateCircuitBreakerOptions {\\n  /** Number of failures in the sliding window required to open the circuit. */\\n  threshold: number;\\n  /** Length of the sliding failure window, in milliseconds. */\\n  windowMs: number;\\n  /** Time spent open before a single probe is allowed, in milliseconds. */\\n  cooldownMs: number;\\n  /** Injectable monotonic-enough clock. The default is Date.now. */\\n  now?: () => number;\\n}\\n\\nexport interface RateCircuitBreakerSnapshot {\\n  state: RateCircuitBreakerState;\\n  failuresInWindow: number;\\n  probeInFlight: boolean;\\n  openedAt?: number;\\n  nextProbeAt?: number;\\n}\\n\\n/**\\n * A small, deterministic circuit breaker for exceptional request rates.\\n *\\n * It is deliberately a rate boundary only. It does not implement or relax\\n * SSRF, loop detection, approval, budget, or any other authorization policy.\\n */\\nexport class RateCircuitBreaker {\\n  private readonly threshold: number;\\n  private readonly windowMs: number;\\n  private readonly cooldownMs: number;\\n  private readonly clock: () => number;\\n  private stateValue: RateCircuitBreakerState = \\\"closed\\\";\\n  private failures: number[] = [];\\n  private openedAtValue?: number;\\n  private probeInFlightValue = false;\\n\\n  public constructor(options: RateCircuitBreakerOptions) {\\n    if (!Number.isFinite(options.threshold) || options.threshold <= 0) {\\n      throw new Error(\\\"threshold must be a positive finite number\\\");\\n    }\\n    if (!Number.isFinite(options.windowMs) || options.windowMs < 0) {\\n      throw new Error(\\\"windowMs must be a non-negative finite number\\\");\\n    }\\n    if (!Number.isFinite(options.cooldownMs) || options.cooldownMs < 0) {\\n      throw new Error(\\\"cooldownMs must be a non-negative finite number\\\");\\n    }\\n    this.threshold = options.threshold;\\n    this.windowMs = options.windowMs;\\n    this.cooldownMs = options.cooldownMs;\\n    this.clock = options.now ?? Date.now;\\n  }\\n\\n  public get state(): RateCircuitBreakerState {\\n    this.refreshState();\\n    return this.stateValue;\\n  }\\n\\n  public get isOpen(): boolean {\\n    return this.state === \\\"open\\\";\\n  }\\n\\n  public get isProbeInFlight(): boolean {\\n    this.refreshState();\\n    return this.probeInFlightValue;\\n  }\\n\\n  /**\\n   * Reserve capacity for one request. A false result means the request must\\n   * not be executed and must not have any downstream effect.\\n   */\\n  public allowRequest(): boolean {\\n    this.refreshState();\\n    if (this.stateValue === \\\"open\\\") {\\n      return false;\\n    }\\n    if (this.stateValue === \\\"half-open\\\") {\\n      if (this.probeInFlightValue) {\\n        return false;\\n      }\\n      this.probeInFlightValue = true;\\n      return true;\\n    }\\n    return true;\\n  }\\n\\n  /** Alias useful to callers that use a preflight/check vocabulary. */\\n  public beforeRequest(): boolean {\\n    return this.allowRequest();\\n  }\\n\\n  /** Record a successful request. Only a successful half-open probe closes it. */\\n  public recordSuccess(): void {\\n    this.refreshState();\\n    if (this.stateValue === \\\"half-open\\\" && this.probeInFlightValue) {\\n      this.stateValue = \\\"closed\\\";\\n      this.probeInFlightValue = false;\\n      this.failures = [];\\n      this.openedAtValue = undefined;\\n      return;\\n    }\\n    // A normal success does not erase failures in the sliding window.\\n  }\\n\\n  /** Record a failed request. */\\n  public recordFailure(): void {\\n    this.refreshState();\\n    if (this.stateValue === \\\"half-open\\\") {\\n      if (!this.probeInFlightValue) {\\n        return;\\n      }\\n      this.probeInFlightValue = false;\\n      this.openCircuit();\\n      return;\\n    }\\n    if (this.stateValue === \\\"open\\\") {\\n      return;\\n    }\\n    const now = this.clock();\\n    this.failures = this.failures.filter((time) => time > now - this.windowMs);\\n    this.failures.push(now);\\n    if (this.failures.length >= this.threshold) {\\n      this.openCircuit();\\n    }\\n  }\\n\\n  public onSuccess(): void {\\n    this.recordSuccess();\\n  }\\n\\n  public onFailure(): void {\\n    this.recordFailure();\\n  }\\n\\n  /** Execute an operation only when the circuit permits it. */\\n  public async execute<T>(operation: () => T | Promise<T>): Promise<T> {\\n    if (!this.allowRequest()) {\\n      throw new RateCircuitOpenError();\\n    }\\n    try {\\n      const result = await operation();\\n      this.recordSuccess();\\n      return result;\\n    } catch (error) {\\n      this.recordFailure();\\n      throw error;\\n    }\\n  }\\n\\n  public snapshot(): RateCircuitBreakerSnapshot {\\n    this.refreshState();\\n    const failuresInWindow = this.failures.filter(\\n      (time) => time > this.clock() - this.windowMs,\\n    ).length;\\n    return {\\n      state: this.stateValue,\\n      failuresInWindow,\\n      probeInFlight: this.probeInFlightValue,\\n      ...(this.openedAtValue === undefined\\n        ? {}\\n        : { openedAt: this.openedAtValue }),\\n      ...(this.openedAtValue === undefined\\n        ? {}\\n        : { nextProbeAt: this.openedAtValue + this.cooldownMs }),\\n    };\\n  }\\n\\n  public reset(): void {\\n    this.stateValue = \\\"closed\\\";\\n    this.failures = [];\\n    this.openedAtValue = undefined;\\n    this.probeInFlightValue = false;\\n  }\\n\\n  private openCircuit(): void {\\n    this.stateValue = \\\"open\\\";\\n    this.openedAtValue = this.clock();\\n    this.probeInFlightValue = false;\\n  }\\n\\n  private refreshState(): void {\\n    if (this.stateValue !== \\\"open\\\" || this.openedAtValue === undefined) {\\n      return;\\n    }\\n    if (this.clock() - this.openedAtValue >= this.cooldownMs) {\\n      this.stateValue = \\\"half-open\\\";\\n      this.probeInFlightValue = false;\\n    }\\n  }\\n}\\n\\nexport class RateCircuitOpenError extends Error {\\n  public constructor() {\\n    super(\\\"rate circuit breaker is open\\\");\\n    this.name = \\\"RateCircuitOpenError\\\";\\n  }\\n}\\n\\nexport default RateCircuitBreaker;\\n\"},{\"path\":\"harness/specs/tasks/harness-gap-rate-circuit-breaker.md\",\"content\":\"# L05：异常调用速率断路器\\n\\n## 目标\\n\\n为异常调用速率提供一个有限、可重放的断路器边界。断路器只根据调用结果中的失败进行判断，不影响合法请求；它不是生产默认，也不替代 SSRF、loop guard、approval、budget 或其它既有安全边界。\\n\\n## 状态机\\n\\n- `closed`：正常接收请求，并在滑动窗口内记录失败。失败数达到阈值后转为 `open`。\\n- `open`：cooldown 内拒绝请求；拒绝的请求不得执行，不得产生任何效果。cooldown 结束后转为 `half-open`。\\n- `half-open`：只允许一个探测请求。探测期间其它请求均拒绝。成功转回 `closed` 并清空窗口；失败重新转 `open`，并从失败时刻重新计算 cooldown。\\n\\n状态只能按 `closed -> open -> half-open -> (closed | open)` 转移。状态转移由注入时钟驱动，便于回放和确定性测试。\\n\\n## 滑动窗口\\n\\n失败时间戳只保留当前 `windowMs` 窗口内的记录。旧失败过期后，即使达到过阈值，后续合法请求窗口也不得再次误触发。纯合法（没有失败）的速率永不 trip。\\n\\n## 接口约定\\n\\n实现位于 `openclaw_runtime/src/agents/rate-circuit-breaker.ts`。构造参数包括 `threshold`、`windowMs`、`cooldownMs` 和可选 `now`。\\n\\n- `allowRequest()`/`beforeRequest()` 返回是否允许调用；返回 `false` 时调用方必须停止执行。\\n- `recordSuccess()` 和 `recordFailure()` 记录结果；也可使用 `execute()` 包装一次调用。\\n- `snapshot()` 返回当前状态、窗口内失败数和探测状态。\\n\\n## 安全边界\\n\\n该组件不得绕过或放宽 SSRF、loop guard、approval、budget及其它既有防护。调用方仍须在执行前完成所有授权和安全检查；断路器拒绝只表示“不执行”，不表示可以重试其它安全策略。\\n\\n## 验证\\n\\n应覆盖：阈值触发、open cooldown 拒绝、cooldown 后单探测、探测并发只放行一个、探测成功/失败、滑动窗口过期、纯合法流量以及既有 tool-loop-detection 正反回归。\\n\"},{\"path\":\"docs/dev/harness-gap-closure/l05-rate-circuit-breaker.md\",\"content\":\"# L05 Rate Circuit Breaker\\n\\n## 设计\\n\\n`RateCircuitBreaker` 是一个显式启用的速率边界，而不是生产默认。它使用注入的 `now()` 时钟，因此相同的时间序列可以重放并得到相同的状态转移。\\n\\n组件维护 `closed`、`open`、`half-open` 三个状态。`closed` 按滑动时间窗累计失败；达到 `threshold` 后进入 `open`。`open` 在 `cooldownMs` 内拒绝请求，调用不得继续执行。冷却期满后进入 `half-open`，只发放一个探测令牌；探测成功后回到 `closed`，失败则从该时刻重新进入 `open`。\\n\\n失败窗口按失败发生时间剔除过期记录。正常成功不会清除窗口内失败，但没有任何失败的纯合法速率永远不会触发断路器。\\n\\n## 使用原则\\n\\n断路器应位于已有安全检查之后，并在真正产生副作用之前调用 `allowRequest()`。拒绝请求时不得执行调用、重试副作用或绕过其它策略。该实现不提供 SSRF、loop guard、approval、budget 或其它授权能力，也不修改这些能力的配置。\\n\\n## 验收重点\\n\\n1. 验证状态机的有限性和确定性。\\n2. 验证 cooldown 内拒绝，以及 cooldown 后仅一个探测可执行。\\n3. 验证探测成功和失败两条路径。\\n4. 验证滑动窗口使旧失败过期，合法后续流量不误触发。\\n5. 验证不放松既有 SSRF、loop guard、approval 和 budget/loop-guard 回归行为。\\n\"}]}",
+        "usage": {
+          "inputTokens": 853,
+          "outputTokens": 3085,
+          "totalTokens": 3938
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      }
+    }
+  ],
+  "grader": {
+    "schemaVersion": "RsiBenefitGrader/v1",
+    "driven_by": "agent",
+    "actor": "codex/rsi-independent-final-state-grader",
+    "workspaceRevision": "679b7124972f25a68d8ab15032afe4aee44ef19b",
+    "baselineSetup": null,
+    "oracleDigest": "c4470b9a91878a5d3d0f12d9ee30b39ce31564d2d96ab47128f07bea973b8cfb",
+    "oracleRevision": "617aee4e85636ad4217eeec6cec6e66aaa4e0058",
+    "oracleTestDigests": {
+      "openclaw_runtime/src/agents/rate-circuit-breaker.test.ts": "d6e73fa68719e77bca0546044ee91cfe5eeeaf1c43ef4d453f80072d32653394",
+      "openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts": "a8506c0c02981b224d4147e6d1b20deda50674cd9c82e731ddd3ba3d8215724e"
+    },
+    "oracleUnchanged": true,
+    "failureClass": "assertion",
+    "diagnostics": [],
+    "commands": [
+      "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/rate-circuit-breaker.test.ts src/agents/tool-loop-detection.progress.test.ts --maxWorkers=1"
+    ],
+    "responseDigest": "bf711570017d3576549e3a5f25d7a186659ad9046d8310b83dc397f01e320be2",
+    "editsDigest": "3a229bd365c0fa7dacf7e9a57a353d4bcbe3ff261ea07b0c87c41b25cd821604",
+    "isolation": {
+      "hiddenOracleVisible": false,
+      "unapprovedEgress": false,
+      "candidateChangedEvaluator": false
+    },
+    "reports": [
+      {
+        "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/rate-circuit-breaker.test.ts src/agents/tool-loop-detection.progress.test.ts --maxWorkers=1",
+        "kind": "vitest",
+        "exitCode": 1,
+        "report": {
+          "numTotalTestSuites": 4,
+          "numPassedTestSuites": 2,
+          "numFailedTestSuites": 2,
+          "numPendingTestSuites": 0,
+          "numTotalTests": 37,
+          "numPassedTests": 31,
+          "numFailedTests": 6,
+          "numPendingTests": 0,
+          "numTodoTests": 0,
+          "snapshot": {
+            "added": 0,
+            "failure": false,
+            "filesAdded": 0,
+            "filesRemoved": 0,
+            "filesRemovedList": [],
+            "filesUnmatched": 0,
+            "filesUpdated": 0,
+            "matched": 0,
+            "total": 0,
+            "unchecked": 0,
+            "uncheckedKeysByFile": [],
+            "unmatched": 0,
+            "updated": 0,
+            "didUpdate": false
+          },
+          "startTime": 1793972645647,
+          "success": false,
+          "testResults": [
+            {
+              "assertionResults": [
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence TF-0212 alias merge counts one call once with outcomes in both",
+                  "status": "passed",
+                  "title": "TF-0212 alias merge counts one call once with outcomes in both",
+                  "duration": 109.27080000000205,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 59,
+                    "column": 51
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence TF-0212 alias merge counts one call once with outcomes in id-only",
+                  "status": "passed",
+                  "title": "TF-0212 alias merge counts one call once with outcomes in id-only",
+                  "duration": 0.7885000000023865,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 59,
+                    "column": 51
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence TF-0212 alias merge counts one call once with outcomes in key-only",
+                  "status": "passed",
+                  "title": "TF-0212 alias merge counts one call once with outcomes in key-only",
+                  "duration": 0.45639999999912106,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 59,
+                    "column": 51
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence TF-0212 preserves distinct run identities during alias merge",
+                  "status": "passed",
+                  "title": "TF-0212 preserves distinct run identities during alias merge",
+                  "duration": 0.3621999999995751,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 104,
+                    "column": 48
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence TF-0212 preserves distinct tool identities during alias merge",
+                  "status": "passed",
+                  "title": "TF-0212 preserves distinct tool identities during alias merge",
+                  "duration": 0.30489999999917927,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 104,
+                    "column": 48
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence TF-0212 preserves distinct anonymous identities during alias merge",
+                  "status": "passed",
+                  "title": "TF-0212 preserves distinct anonymous identities during alias merge",
+                  "duration": 0.24759999999878346,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 104,
+                    "column": 48
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence TF-0213 changing poll wait duration cannot reset a no-progress streak",
+                  "status": "passed",
+                  "title": "TF-0213 changing poll wait duration cannot reset a no-progress streak",
+                  "duration": 1.9694999999992433,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 130,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence TF-0207 replay after history trimming stays ignored across alias merge=false",
+                  "status": "passed",
+                  "title": "TF-0207 replay after history trimming stays ignored across alias merge=false",
+                  "duration": 1.3557000000000698,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 179,
+                    "column": 24
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence TF-0207 replay after history trimming stays ignored across alias merge=true",
+                  "status": "passed",
+                  "title": "TF-0207 replay after history trimming stays ignored across alias merge=true",
+                  "duration": 1.1974999999983993,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 179,
+                    "column": 24
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence TF-0207 still observes the first result-only delivery when general loop detection is disabled",
+                  "status": "passed",
+                  "title": "TF-0207 still observes the first result-only delivery when general loop detection is disabled",
+                  "duration": 0.4150000000008731,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 212,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence TF-0208 retains four completed calls even when every configured threshold fits three",
+                  "status": "passed",
+                  "title": "TF-0208 retains four completed calls even when every configured threshold fits three",
+                  "duration": 0.5604000000021188,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 227,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence TF-0207 duplicate terminal delivery does not inflate one run's loop history",
+                  "status": "passed",
+                  "title": "TF-0207 duplicate terminal delivery does not inflate one run's loop history",
+                  "duration": 0.5680000000029395,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 252,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence TF-0208 ping-pong requires repeated outcomes on both sides",
+                  "status": "passed",
+                  "title": "TF-0208 ping-pong requires repeated outcomes on both sides",
+                  "duration": 0.41990000000078,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 277,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence TF-0188 merges session aliases in chronological order so old outcomes cannot hide progress",
+                  "status": "passed",
+                  "title": "TF-0188 merges session aliases in chronological order so old outcomes cannot hide progress",
+                  "duration": 0.4294999999983702,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 298,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence retains enough bounded history to reach generic_repeat",
+                  "status": "passed",
+                  "title": "retains enough bounded history to reach generic_repeat",
+                  "duration": 0.5046999999976833,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 319,
+                    "column": 87
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence retains enough bounded history to reach global_circuit_breaker",
+                  "status": "passed",
+                  "title": "retains enough bounded history to reach global_circuit_breaker",
+                  "duration": 0.4400999999998021,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 319,
+                    "column": 87
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence retains enough bounded history to reach unknown_tool_repeat",
+                  "status": "passed",
+                  "title": "retains enough bounded history to reach unknown_tool_repeat",
+                  "duration": 0.7740000000012515,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 319,
+                    "column": 87
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence keeps default termination thresholds unchanged",
+                  "status": "passed",
+                  "title": "keeps default termination thresholds unchanged",
+                  "duration": 0.7178999999996449,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 356,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence does not let another run evict the current run's termination evidence",
+                  "status": "passed",
+                  "title": "does not let another run evict the current run's termination evidence",
+                  "duration": 0.5564000000013039,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 372,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence ignores changing process poll idle duration when judging no progress",
+                  "status": "passed",
+                  "title": "ignores changing process poll idle duration when judging no progress",
+                  "duration": 0.3235999999997148,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 400,
+                    "column": 35
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence ignores changing process log idle duration when judging no progress",
+                  "status": "passed",
+                  "title": "ignores changing process log idle duration when judging no progress",
+                  "duration": 0.2691000000013446,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 400,
+                    "column": 35
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence distinguishes changing image content from a repeated outcome",
+                  "status": "passed",
+                  "title": "distinguishes changing image content from a repeated outcome",
+                  "duration": 1.3840999999993073,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 446,
+                    "column": 41
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence distinguishes changing audio content from a repeated outcome",
+                  "status": "passed",
+                  "title": "distinguishes changing audio content from a repeated outcome",
+                  "duration": 1.1239999999997963,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 446,
+                    "column": 41
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence distinguishes changing resource content from a repeated outcome",
+                  "status": "passed",
+                  "title": "distinguishes changing resource content from a repeated outcome",
+                  "duration": 1.1401000000005297,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 446,
+                    "column": 41
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence TF-0195 does not warn on ping-pong that is still making progress",
+                  "status": "passed",
+                  "title": "TF-0195 does not warn on ping-pong that is still making progress",
+                  "duration": 0.35820000000239816,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 473,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence TF-0197 alias merge keeps existing stuck and long-running warn timestamps",
+                  "status": "passed",
+                  "title": "TF-0197 alias merge keeps existing stuck and long-running warn timestamps",
+                  "duration": 0.1926999999996042,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 496,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence TF-0197 newer 'id' activity keeps its warning cycle (undefined)",
+                  "status": "passed",
+                  "title": "TF-0197 newer 'id' activity keeps its warning cycle (undefined)",
+                  "duration": 0.1837999999988824,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 517,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence TF-0197 newer 'key' activity keeps its warning cycle (undefined)",
+                  "status": "passed",
+                  "title": "TF-0197 newer 'key' activity keeps its warning cycle (undefined)",
+                  "duration": 0.10130000000208383,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 517,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence TF-0197 newer 'id' activity keeps its warning cycle (1000)",
+                  "status": "passed",
+                  "title": "TF-0197 newer 'id' activity keeps its warning cycle (1000)",
+                  "duration": 0.08770000000004075,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 517,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence TF-0197 newer 'key' activity keeps its warning cycle (1000)",
+                  "status": "passed",
+                  "title": "TF-0197 newer 'key' activity keeps its warning cycle (1000)",
+                  "duration": 0.0838000000003376,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 517,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "tool-loop progress evidence"
+                  ],
+                  "fullName": "tool-loop progress evidence TF-0197 the same activity cycle keeps the later warning backoff",
+                  "status": "passed",
+                  "title": "TF-0197 the same activity cycle keeps the later warning backoff",
+                  "duration": 0.1555000000007567,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 543,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                }
+              ],
+              "startTime": 1793972650135,
+              "endTime": 1793972650262.1838,
+              "status": "passed",
+              "message": "",
+              "name": "D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0287-l05-3-sekb-shadow/workspace/openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts"
+            },
+            {
+              "assertionResults": [
+                {
+                  "ancestorTitles": [
+                    "L05 rate circuit breaker"
+                  ],
+                  "fullName": "L05 rate circuit breaker never trips on a purely legal rate",
+                  "status": "failed",
+                  "title": "never trips on a purely legal rate",
+                  "duration": 1.8083999999998923,
+                  "failureMessages": [
+                    "Error: threshold must be a positive finite number\n    at new RateCircuitBreaker (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0287-l05-3-sekb-shadow/workspace/openclaw_runtime/src/agents/rate-circuit-breaker.ts:40:13)\n    at make (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0287-l05-3-sekb-shadow/workspace/openclaw_runtime/src/agents/rate-circuit-breaker.test.ts:14:19)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0287-l05-3-sekb-shadow/workspace/openclaw_runtime/src/agents/rate-circuit-breaker.test.ts:20:28\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+                  ],
+                  "location": {
+                    "line": 19,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "L05 rate circuit breaker"
+                  ],
+                  "fullName": "L05 rate circuit breaker opens after crossing the failure threshold and refuses requests during cooldown",
+                  "status": "failed",
+                  "title": "opens after crossing the failure threshold and refuses requests during cooldown",
+                  "duration": 0.28590000000076543,
+                  "failureMessages": [
+                    "Error: threshold must be a positive finite number\n    at new RateCircuitBreaker (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0287-l05-3-sekb-shadow/workspace/openclaw_runtime/src/agents/rate-circuit-breaker.ts:40:13)\n    at make (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0287-l05-3-sekb-shadow/workspace/openclaw_runtime/src/agents/rate-circuit-breaker.test.ts:14:19)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0287-l05-3-sekb-shadow/workspace/openclaw_runtime/src/agents/rate-circuit-breaker.test.ts:30:28\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+                  ],
+                  "location": {
+                    "line": 29,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "L05 rate circuit breaker"
+                  ],
+                  "fullName": "L05 rate circuit breaker admits exactly ONE half-open probe after the cooldown",
+                  "status": "failed",
+                  "title": "admits exactly ONE half-open probe after the cooldown",
+                  "duration": 0.25979999999981374,
+                  "failureMessages": [
+                    "Error: threshold must be a positive finite number\n    at new RateCircuitBreaker (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0287-l05-3-sekb-shadow/workspace/openclaw_runtime/src/agents/rate-circuit-breaker.ts:40:13)\n    at make (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0287-l05-3-sekb-shadow/workspace/openclaw_runtime/src/agents/rate-circuit-breaker.test.ts:14:19)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0287-l05-3-sekb-shadow/workspace/openclaw_runtime/src/agents/rate-circuit-breaker.test.ts:39:28\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+                  ],
+                  "location": {
+                    "line": 38,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "L05 rate circuit breaker"
+                  ],
+                  "fullName": "L05 rate circuit breaker closes on a clean probe and re-opens with a fresh cooldown on a failed probe",
+                  "status": "failed",
+                  "title": "closes on a clean probe and re-opens with a fresh cooldown on a failed probe",
+                  "duration": 0.2589000000007218,
+                  "failureMessages": [
+                    "Error: threshold must be a positive finite number\n    at new RateCircuitBreaker (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0287-l05-3-sekb-shadow/workspace/openclaw_runtime/src/agents/rate-circuit-breaker.ts:40:13)\n    at make (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0287-l05-3-sekb-shadow/workspace/openclaw_runtime/src/agents/rate-circuit-breaker.test.ts:14:19)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0287-l05-3-sekb-shadow/workspace/openclaw_runtime/src/agents/rate-circuit-breaker.test.ts:49:28\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+                  ],
+                  "location": {
+                    "line": 48,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "L05 rate circuit breaker"
+                  ],
+                  "fullName": "L05 rate circuit breaker prunes old failures so a legal later window does not false-trip",
+                  "status": "failed",
+                  "title": "prunes old failures so a legal later window does not false-trip",
+                  "duration": 0.24479999999857682,
+                  "failureMessages": [
+                    "Error: threshold must be a positive finite number\n    at new RateCircuitBreaker (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0287-l05-3-sekb-shadow/workspace/openclaw_runtime/src/agents/rate-circuit-breaker.ts:40:13)\n    at make (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0287-l05-3-sekb-shadow/workspace/openclaw_runtime/src/agents/rate-circuit-breaker.test.ts:14:19)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0287-l05-3-sekb-shadow/workspace/openclaw_runtime/src/agents/rate-circuit-breaker.test.ts:69:28\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+                  ],
+                  "location": {
+                    "line": 68,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "L05 rate circuit breaker"
+                  ],
+                  "fullName": "L05 rate circuit breaker is deterministic under the injected clock",
+                  "status": "failed",
+                  "title": "is deterministic under the injected clock",
+                  "duration": 0.22700000000077125,
+                  "failureMessages": [
+                    "Error: threshold must be a positive finite number\n    at new RateCircuitBreaker (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0287-l05-3-sekb-shadow/workspace/openclaw_runtime/src/agents/rate-circuit-breaker.ts:40:13)\n    at make (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0287-l05-3-sekb-shadow/workspace/openclaw_runtime/src/agents/rate-circuit-breaker.test.ts:14:19)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0287-l05-3-sekb-shadow/workspace/openclaw_runtime/src/agents/rate-circuit-breaker.test.ts:79:15\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+                  ],
+                  "location": {
+                    "line": 78,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                }
+              ],
+              "startTime": 1793972646459,
+              "endTime": 1793972646462.2449,
+              "status": "failed",
+              "message": "",
+              "name": "D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0287-l05-3-sekb-shadow/workspace/openclaw_runtime/src/agents/rate-circuit-breaker.test.ts"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

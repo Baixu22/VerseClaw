@@ -1,0 +1,792 @@
+{
+  "schemaVersion": "RsiBenefitTrial/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-benefit-eval/executor",
+  "planDigest": "133d3b5ff68949682b9c402b3275fd95e232ca4ce6a497a1903deaac5ee04004",
+  "slot": {
+    "id": "tf-0280-s05-2-sekb-confirmed",
+    "caseId": "tf-0280-s05",
+    "repeat": 2,
+    "arm": "sekb-confirmed",
+    "caseDigest": "155bf5539abf0eb5a33f56d378efcc8b63bf5cdae3706551baeb6d12ee6cc24d",
+    "pairSeed": 47,
+    "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+    "position": 139
+  },
+  "evidenceKind": "live-provider",
+  "request": {
+    "model": "space-bunny",
+    "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.\n[Relevant SEKB principle 1] Preserve the caller contract when implementing a small change\nCondition: When implementing an API from a behavior contract and existing callers\nAction: Keep names, return shapes and caller-owned inputs stable. Preserve meaningful zero, false, empty and null values. Prefer standard-library operations with the required semantics. Check both ordinary and edge inputs before returning complete source files.\nReason: Independent JSON roundtrip and array sorting exercises failed when values were filtered or caller inputs were mutated; standard-library repairs passed the same assertions.\n---",
+    "input": "{\n  \"prompt\": \"S05 核验 image 生成的 provider override 凭据使用窄闸门：external/unknown 来源的显式 override 只能落在 host 绑定的 provider 范围；拒绝发生在读取凭据前；策略输入不含凭据值。逐项记录覆盖与残余，不新建第二套凭据策略。\",\n  \"acceptanceCriteria\": [\n    \"trusted system / direct operator 的 provider override 保留既有语义；无显式 override 的默认/fallback 路径不经该闸门。\",\n    \"external/derived-untrusted/missing/invalid 来源 + 显式 override 时，请求 provider 必须落在 host 绑定的 image provider 范围，否则拒绝。\",\n    \"拒绝发生在读取任何 provider 凭据之前，且策略输入/拒绝原因不含凭据值。\",\n    \"逐项记录覆盖与残余：该闸门仅接在 image-generate 的显式 override 分支；其它凭据使用路径显式记为 residual，不冒充已覆盖。\",\n    \"不新建第二套凭据策略；不改默认 provider、fallback 或凭据存储。\",\n    \"干净候选定向测试、类型、scoped lint、harness validate/dry-run、comms replay/compare 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"docs/dev/harness-gap-closure/s05-credential-use-boundary.md\",\n    \"harness/specs/tasks/harness-gap-credential-use-boundary.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"docs/dev/harness-gap-closure/s05-credential-use-boundary.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-credential-use-boundary.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+    "store": false,
+    "stream": false,
+    "truncation": "disabled",
+    "max_output_tokens": 16000,
+    "reasoning": {
+      "effort": "low"
+    },
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "name": "rsi_coding_edits",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "edits"
+          ],
+          "properties": {
+            "edits": {
+              "type": "array",
+              "maxItems": 32,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "content"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "requestDigest": "918a52845f3f8c333eb718573a202ac1f79a9e092c58f9611b32d800f65a96e9",
+  "runtime": {
+    "flags": {
+      "enabled": true,
+      "shadowEvaluation": true,
+      "injection": true
+    },
+    "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+    "candidateDigest": "7c2408a2afc3c71ec509c11c705ba3775d427c4166aef58a0b42db1c031f54a0",
+    "injectionDigest": "d17fd84ffe6ea6fa2ba3c8cd062a6f6464144ea3c64af932d581018bff6f9d9d",
+    "isolationId": "2bb4141c-a536-443a-8b89-0fbfd0082edf/tf-0280-s05-2-sekb-confirmed",
+    "runtimeEffectMeasured": true
+  },
+  "edits": [
+    {
+      "path": "docs/dev/harness-gap-closure/s05-credential-use-boundary.md",
+      "content": "# S05 核验 image 生成 provider override 凭据使用窄闸门\n\n## 目标与范围\n\n本记录核验 `image-generate` 显式 provider override 分支上的凭据使用边界。闸门只判断请求 provider 是否属于当前 host 绑定的 image provider 范围；它不选择默认 provider，不实现 fallback，不读取或改写凭据存储，也不建立第二套凭据策略。\n\n## 调用路径\n\n1. 识别是否存在调用方显式指定的 provider override。\n2. 若不存在显式 override，保持既有默认/fallback 路径语义，不进入本闸门。\n3. 若存在显式 override，先根据来源可信度和 host 绑定范围执行边界判断。\n4. 仅在边界判断允许后，才沿既有流程读取该 provider 的凭据并执行 image 生成。\n\n## 覆盖矩阵\n\n| 来源 | 显式 provider override | 闸门行为 | 覆盖结论 |\n|---|---|---|---|\n| trusted system | 有 | 保留既有可信来源语义，允许进入既有凭据读取流程 | 已覆盖 |\n| direct operator | 有 | 保留既有直接操作者语义，允许进入既有凭据读取流程 | 已覆盖 |\n| external | 有 | 请求 provider 必须属于当前 host 绑定的 image provider 范围；否则在读取任何 provider 凭据前拒绝 | 已覆盖 |\n| derived-untrusted | 有 | 请求 provider 必须属于当前 host 绑定的 image provider 范围；否则在读取任何 provider 凭据前拒绝 | 已覆盖 |\n| missing | 有 | 请求 provider 必须属于当前 host 绑定的 image provider 范围；否则在读取任何 provider 凭据前拒绝 | 已覆盖 |\n| invalid | 有 | 请求 provider 必须属于当前 host 绑定的 image provider 范围；否则在读取任何 provider 凭据前拒绝 | 已覆盖 |\n| 任意来源 | 无 | 不经过本闸门，继续既有默认/fallback 路径 | 已覆盖（明确排除） |\n\n## 判定契约\n\n- “显式 override”仅指调用方在 `image-generate` 请求中明确提供的 provider；隐式默认解析和 fallback 不属于该分支。\n- host 绑定的 image provider 范围来自既有 host/provider 绑定配置，不新增 provider allowlist 或凭据策略。\n- 对 external、derived-untrusted、missing、invalid 来源，请求 provider 必须精确落在允许范围内。\n- trusted system 与 direct operator 保留既有授权语义；即使请求 provider 不在 host 绑定范围内，也不得由本闸门改变其既有行为。\n- 闸门只接收判定所需元数据，例如来源分类、请求 provider、host 绑定 provider 范围以及最小必要的诊断标识。\n- 策略输入不得包含 token、API key、password、credential material 或任何可还原凭据值的字段。\n\n## 拒绝顺序与信息最小化\n\n拒绝必须发生在 provider 凭据读取之前。不得为了判定 provider 范围、来源或绑定关系而预先读取 provider 凭据。\n\n拒绝原因只描述可安全诊断的非敏感事实，例如：来源类别不受窄闸门信任、请求 provider 不在 host 绑定范围、来源元数据缺失或无效。拒绝原因不得包含凭据值、凭据片段、鉴权头、provider secret 或由凭据派生的值。\n\n## 残余范围\n\n以下路径没有被本闸门覆盖，必须作为 residual 显式保留，不得表述为已覆盖：\n\n- `image-generate` 无显式 provider override 时的默认 provider 选择。\n- `image-generate` 无显式 provider override 时的 fallback 路径。\n- `image-generate` 以外的所有凭据读取和使用路径。\n- 其它功能对 provider 凭据的存储、轮换、注入和授权。\n- trusted system / direct operator 既有授权策略的内部实现。\n\n这些残余继续由既有机制负责。本记录不改变其行为，也不以本闸门替代它们。\n\n## 核验要求\n\n定向核验至少应证明：\n\n1. trusted system 与 direct operator 的显式 override 行为保持不变。\n2. 无显式 override 时不会调用该窄闸门，默认/fallback 路径保持不变。\n3. external、derived-untrusted、missing、invalid 四类来源分别覆盖“范围内允许”和“范围外拒绝”。\n4. 范围外请求的拒绝点早于任何 provider 凭据读取。\n5. 闸门输入和拒绝诊断中不存在凭据值或凭据材料。\n6. 其它凭据使用路径仅记录为 residual，没有被纳入覆盖声明。\n\n完整候选应通过干净环境中的定向测试、类型检查、scoped lint、harness validate/dry-run、comms replay/compare 和凭据扫描。凭据扫描应为 0 命中；生成的 `SHA256SUMS` 必须可回读，并用于核对候选文件完整性。核验记录不得写入任何真实或伪造的凭据值。\n\n## 不变量\n\n- 不新建第二套凭据策略。\n- 不修改默认 provider、fallback 或凭据存储。\n- 不改变调用方输入、返回形状或既有调用顺序契约，除在不受信任显式 override 的范围外请求上增加必要拒绝。\n- 不在日志、策略输入、拒绝原因、测试快照或文档中记录凭据值。\n"
+    },
+    {
+      "path": "harness/specs/tasks/harness-gap-credential-use-boundary.md",
+      "content": "# Harness gap task: credential use boundary\n\n## Task ID\n\nS05\n\n## Intent\n\n在 `image-generate` 的显式 provider override 分支上核验窄闸门：external、derived-untrusted、missing、invalid 来源的请求 provider 必须属于当前 host 绑定的 image provider 范围。拒绝必须先于任何 provider 凭据读取，且策略输入和拒绝原因不得携带凭据值。\n\n本任务不是新的凭据授权系统。默认 provider、fallback、凭据存储以及其它凭据使用路径均保持现状。\n\n## Scope\n\n### In scope\n\n- `image-generate` 存在调用方显式 provider override 的分支。\n- 来源分类：trusted system、direct operator、external、derived-untrusted、missing、invalid。\n- 当前 host 绑定的 image provider 范围。\n- 闸门判定与凭据读取之间的先后顺序。\n- 策略输入和拒绝诊断的凭据值排除。\n\n### Out of scope / residual\n\n- `image-generate` 无显式 override 时的默认 provider 选择。\n- `image-generate` 无显式 override 时的 fallback。\n- `image-generate` 以外的凭据读取和使用。\n- 其它功能的凭据存储、轮换、注入和授权。\n- trusted system / direct operator 既有授权语义的改造。\n\n上述 out-of-scope 项必须记录为 residual，不得宣称由 S05 闸门覆盖。\n\n## Preconditions\n\n- 复用既有来源分类、host/provider 绑定配置和凭据读取机制。\n- 能区分“没有显式 override”与“显式提供了 provider”。\n- 测试或观测手段能够在凭据读取边界上验证调用顺序，但不得读取真实凭据。\n\n## Required behavior\n\n1. 若请求没有显式 provider override，则不经过 S05 窄闸门，继续既有默认/fallback 流程。\n2. 若来源为 trusted system 或 direct operator，则保留既有语义，不因 S05 闸门新增限制。\n3. 若来源为 external、derived-untrusted、missing 或 invalid，则：\n   - 请求 provider 属于当前 host 绑定的 image provider 范围时，允许继续既有流程；\n   - 请求 provider 不属于该范围时，立即拒绝，不进入 provider 凭据读取流程。\n4. 闸门策略输入只能包含完成上述判断所需的非敏感元数据。禁止传入 token、API key、password、credential material、鉴权头或凭据派生值。\n5. 拒绝原因只能描述来源类别、provider 范围不匹配或输入元数据无效等非敏感事实，禁止包含凭据值、片段或可还原凭据的信息。\n6. 不复制或扩展出第二套 provider allowlist、凭据来源规则或凭据存储策略；host 绑定范围与既有凭据机制均为单一事实来源。\n\n## Acceptance criteria\n\n- [ ] trusted system + 显式 override 的既有行为保持不变。\n- [ ] direct operator + 显式 override 的既有行为保持不变。\n- [ ] external + 显式 override + 范围内 provider 被允许。\n- [ ] external + 显式 override + 范围外 provider 在凭据读取前被拒绝。\n- [ ] derived-untrusted + 显式 override 的范围内/范围外分支均符合契约。\n- [ ] missing + 显式 override 的范围内/范围外分支均符合契约。\n- [ ] invalid + 显式 override 的范围内/范围外分支均符合契约。\n- [ ] 无显式 override 时窄闸门不被调用，默认/fallback 行为不变。\n- [ ] 每次范围外拒绝都发生在任何 provider 凭据读取之前。\n- [ ] 闸门策略输入不含凭据值。\n- [ ] 拒绝原因不含凭据值、凭据片段、鉴权头或凭据派生值。\n- [ ] 文档逐项区分 covered 与 residual，且其它凭据路径仅列为 residual。\n- [ ] 没有新增第二套凭据策略，默认 provider、fallback 和凭据存储未改变。\n\n## Verification matrix\n\n| Case | Source | Explicit override | Provider relation | Expected gate result | Credential read |\n|---|---|---:|---|---|---:|\n| C01 | trusted system | yes | any | preserve existing trusted semantics | according to existing flow |\n| C02 | direct operator | yes | any | preserve existing operator semantics | according to existing flow |\n| C03 | external | yes | in host-bound image scope | allow | yes, existing flow |\n| C04 | external | yes | outside host-bound image scope | deny before read | no |\n| C05 | derived-untrusted | yes | in host-bound image scope | allow | yes, existing flow |\n| C06 | derived-untrusted | yes | outside host-bound image scope | deny before read | no |\n| C07 | missing | yes | in host-bound image scope | allow | yes, existing flow |\n| C08 | missing | yes | outside host-bound image scope | deny before read | no |\n| C09 | invalid | yes | in host-bound image scope | allow | yes, existing flow |\n| C10 | invalid | yes | outside host-bound image scope | deny before read | no |\n| C11 | any | no | n/a | gate not entered | according to existing default/fallback flow |\n\n## Validation commands\n\nThe exact command names must follow repository conventions discovered by the harness. The candidate validation set must include:\n\n1. 干净候选中的 S05 定向测试。\n2. 类型检查。\n3. 仅限本次变更范围的 lint。\n4. harness validate。\n5. harness dry-run。\n6. comms replay。\n7. comms compare。\n8. 凭据扫描，结果必须为 0 命中。\n9. 生成或校验 `SHA256SUMS`，并验证清单可回读且条目与候选文件一致。\n\n不得在实现或测试运行时读取测试目录、访问网络或产生外部进程副作用。验证失败时应保留可诊断的非敏感输出，不得用凭据值复现或对比失败。\n\n## Deliverables\n\n- `docs/dev/harness-gap-closure/s05-credential-use-boundary.md`：覆盖矩阵、拒绝顺序、信息最小化、逐项 residual 与核验记录。\n- `harness/specs/tasks/harness-gap-credential-use-boundary.md`：本行为契约、验收矩阵和验证要求。\n\n## Completion rule\n\n仅当行为矩阵全部满足、默认/fallback 与凭据存储无变化、凭据扫描为 0 命中、全部指定验证通过且 `SHA256SUMS` 可回读时，S05 才可标记完成。任何未进入本闸门的凭据路径都必须继续明确列为 residual。\n"
+    }
+  ],
+  "execution": {
+    "status": "completed",
+    "failureClass": null,
+    "failureCategory": null,
+    "attempts": 1,
+    "providerCalls": 1,
+    "wallClockMs": 170081,
+    "costUsd": null,
+    "toolEvents": [],
+    "runPosition": 139,
+    "startedAt": "2026-11-06T16:09:16.972Z",
+    "endedAt": "2026-11-06T16:12:07.054Z",
+    "measurementBasis": "live-provider",
+    "note": "Single JSON-edits request; independent reference-bound final-state grading."
+  },
+  "rawResponse": {
+    "background": false,
+    "completed_at": 1793981424,
+    "created_at": 1793981388,
+    "error": null,
+    "id": "01a1b19f650570cf909eb7ba8c075c54",
+    "incomplete_details": null,
+    "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.\n[Relevant SEKB principle 1] Preserve the caller contract when implementing a small change\nCondition: When implementing an API from a behavior contract and existing callers\nAction: Keep names, return shapes and caller-owned inputs stable. Preserve meaningful zero, false, empty and null values. Prefer standard-library operations with the required semantics. Check both ordinary and edge inputs before returning complete source files.\nReason: Independent JSON roundtrip and array sorting exercises failed when values were filtered or caller inputs were mutated; standard-library repairs passed the same assertions.\n---",
+    "max_output_tokens": 16000,
+    "max_tool_calls": null,
+    "metadata": {},
+    "model": "space-bunny",
+    "object": "response",
+    "output": [
+      {
+        "id": "rs_ef4f38e390b98db3563bbce884662755",
+        "summary": [
+          {
+            "text": "We need create docs only target scope. Need infer format. Chinese prompt. Must output strict JSON. We don't know existing conventions. Need implement files based contract. Likely S05 doc and task spec. Need comprehensive. Could create Chinese docs recording coverage/residual, policy contract, tests. Ensure not claim code? Prompt asks \"逐项记录覆盖与残余\" likely documentation task. We can write acceptance-oriented spec. Need only files. JSON escaped. Let's craft two markdown files. One perhaps closure record, one task spec. Mention no credentials values, gate before credential read, override only explicit branch image generate. Trusted/direct semantics. Allowed host bound provider scope. Derived untrusted. Invalid. Policy inputs source metadata/provider ID/host binding scope. Denial reasons no secret. Residual other credential paths.\n\nNeed distinguish direct operator trusted system. External/derived-untrusted/missing/invalid + explicit override. \"external/unknown 来源\" but criteria names. provider override semantics maybe host binding scope. Define.\n\nTesting claims shouldn't say passed unless executed. Acceptance says required; docs can list verification. Since no code changes target, these docs likely the desired deliverables, harness validates docs. Write task with checkboxes maybe. No SHA actual. Could include SHA256SUMS procedure but not fabricate. \"SHA256SUMS 可回读\" acceptance. Maybe docs should specify. We shouldn't claim actual pass. However task asks docs recording coverage. Need document implementation gap? Could mark coverage as required and residual explicit.\n\nLet's formulate clear.",
+            "type": "summary_text"
+          }
+        ],
+        "type": "reasoning"
+      },
+      {
+        "content": [
+          {
+            "annotations": [],
+            "logprobs": [],
+            "text": "{\"edits\":[{\"path\":\"docs/dev/harness-gap-closure/s05-credential-use-boundary.md\",\"content\":\"# S05 核验 image 生成 provider override 凭据使用窄闸门\\n\\n## 目标与范围\\n\\n本记录核验 `image-generate` 显式 provider override 分支上的凭据使用边界。闸门只判断请求 provider 是否属于当前 host 绑定的 image provider 范围；它不选择默认 provider，不实现 fallback，不读取或改写凭据存储，也不建立第二套凭据策略。\\n\\n## 调用路径\\n\\n1. 识别是否存在调用方显式指定的 provider override。\\n2. 若不存在显式 override，保持既有默认/fallback 路径语义，不进入本闸门。\\n3. 若存在显式 override，先根据来源可信度和 host 绑定范围执行边界判断。\\n4. 仅在边界判断允许后，才沿既有流程读取该 provider 的凭据并执行 image 生成。\\n\\n## 覆盖矩阵\\n\\n| 来源 | 显式 provider override | 闸门行为 | 覆盖结论 |\\n|---|---|---|---|\\n| trusted system | 有 | 保留既有可信来源语义，允许进入既有凭据读取流程 | 已覆盖 |\\n| direct operator | 有 | 保留既有直接操作者语义，允许进入既有凭据读取流程 | 已覆盖 |\\n| external | 有 | 请求 provider 必须属于当前 host 绑定的 image provider 范围；否则在读取任何 provider 凭据前拒绝 | 已覆盖 |\\n| derived-untrusted | 有 | 请求 provider 必须属于当前 host 绑定的 image provider 范围；否则在读取任何 provider 凭据前拒绝 | 已覆盖 |\\n| missing | 有 | 请求 provider 必须属于当前 host 绑定的 image provider 范围；否则在读取任何 provider 凭据前拒绝 | 已覆盖 |\\n| invalid | 有 | 请求 provider 必须属于当前 host 绑定的 image provider 范围；否则在读取任何 provider 凭据前拒绝 | 已覆盖 |\\n| 任意来源 | 无 | 不经过本闸门，继续既有默认/fallback 路径 | 已覆盖（明确排除） |\\n\\n## 判定契约\\n\\n- “显式 override”仅指调用方在 `image-generate` 请求中明确提供的 provider；隐式默认解析和 fallback 不属于该分支。\\n- host 绑定的 image provider 范围来自既有 host/provider 绑定配置，不新增 provider allowlist 或凭据策略。\\n- 对 external、derived-untrusted、missing、invalid 来源，请求 provider 必须精确落在允许范围内。\\n- trusted system 与 direct operator 保留既有授权语义；即使请求 provider 不在 host 绑定范围内，也不得由本闸门改变其既有行为。\\n- 闸门只接收判定所需元数据，例如来源分类、请求 provider、host 绑定 provider 范围以及最小必要的诊断标识。\\n- 策略输入不得包含 token、API key、password、credential material 或任何可还原凭据值的字段。\\n\\n## 拒绝顺序与信息最小化\\n\\n拒绝必须发生在 provider 凭据读取之前。不得为了判定 provider 范围、来源或绑定关系而预先读取 provider 凭据。\\n\\n拒绝原因只描述可安全诊断的非敏感事实，例如：来源类别不受窄闸门信任、请求 provider 不在 host 绑定范围、来源元数据缺失或无效。拒绝原因不得包含凭据值、凭据片段、鉴权头、provider secret 或由凭据派生的值。\\n\\n## 残余范围\\n\\n以下路径没有被本闸门覆盖，必须作为 residual 显式保留，不得表述为已覆盖：\\n\\n- `image-generate` 无显式 provider override 时的默认 provider 选择。\\n- `image-generate` 无显式 provider override 时的 fallback 路径。\\n- `image-generate` 以外的所有凭据读取和使用路径。\\n- 其它功能对 provider 凭据的存储、轮换、注入和授权。\\n- trusted system / direct operator 既有授权策略的内部实现。\\n\\n这些残余继续由既有机制负责。本记录不改变其行为，也不以本闸门替代它们。\\n\\n## 核验要求\\n\\n定向核验至少应证明：\\n\\n1. trusted system 与 direct operator 的显式 override 行为保持不变。\\n2. 无显式 override 时不会调用该窄闸门，默认/fallback 路径保持不变。\\n3. external、derived-untrusted、missing、invalid 四类来源分别覆盖“范围内允许”和“范围外拒绝”。\\n4. 范围外请求的拒绝点早于任何 provider 凭据读取。\\n5. 闸门输入和拒绝诊断中不存在凭据值或凭据材料。\\n6. 其它凭据使用路径仅记录为 residual，没有被纳入覆盖声明。\\n\\n完整候选应通过干净环境中的定向测试、类型检查、scoped lint、harness validate/dry-run、comms replay/compare 和凭据扫描。凭据扫描应为 0 命中；生成的 `SHA256SUMS` 必须可回读，并用于核对候选文件完整性。核验记录不得写入任何真实或伪造的凭据值。\\n\\n## 不变量\\n\\n- 不新建第二套凭据策略。\\n- 不修改默认 provider、fallback 或凭据存储。\\n- 不改变调用方输入、返回形状或既有调用顺序契约，除在不受信任显式 override 的范围外请求上增加必要拒绝。\\n- 不在日志、策略输入、拒绝原因、测试快照或文档中记录凭据值。\\n\"},{\"path\":\"harness/specs/tasks/harness-gap-credential-use-boundary.md\",\"content\":\"# Harness gap task: credential use boundary\\n\\n## Task ID\\n\\nS05\\n\\n## Intent\\n\\n在 `image-generate` 的显式 provider override 分支上核验窄闸门：external、derived-untrusted、missing、invalid 来源的请求 provider 必须属于当前 host 绑定的 image provider 范围。拒绝必须先于任何 provider 凭据读取，且策略输入和拒绝原因不得携带凭据值。\\n\\n本任务不是新的凭据授权系统。默认 provider、fallback、凭据存储以及其它凭据使用路径均保持现状。\\n\\n## Scope\\n\\n### In scope\\n\\n- `image-generate` 存在调用方显式 provider override 的分支。\\n- 来源分类：trusted system、direct operator、external、derived-untrusted、missing、invalid。\\n- 当前 host 绑定的 image provider 范围。\\n- 闸门判定与凭据读取之间的先后顺序。\\n- 策略输入和拒绝诊断的凭据值排除。\\n\\n### Out of scope / residual\\n\\n- `image-generate` 无显式 override 时的默认 provider 选择。\\n- `image-generate` 无显式 override 时的 fallback。\\n- `image-generate` 以外的凭据读取和使用。\\n- 其它功能的凭据存储、轮换、注入和授权。\\n- trusted system / direct operator 既有授权语义的改造。\\n\\n上述 out-of-scope 项必须记录为 residual，不得宣称由 S05 闸门覆盖。\\n\\n## Preconditions\\n\\n- 复用既有来源分类、host/provider 绑定配置和凭据读取机制。\\n- 能区分“没有显式 override”与“显式提供了 provider”。\\n- 测试或观测手段能够在凭据读取边界上验证调用顺序，但不得读取真实凭据。\\n\\n## Required behavior\\n\\n1. 若请求没有显式 provider override，则不经过 S05 窄闸门，继续既有默认/fallback 流程。\\n2. 若来源为 trusted system 或 direct operator，则保留既有语义，不因 S05 闸门新增限制。\\n3. 若来源为 external、derived-untrusted、missing 或 invalid，则：\\n   - 请求 provider 属于当前 host 绑定的 image provider 范围时，允许继续既有流程；\\n   - 请求 provider 不属于该范围时，立即拒绝，不进入 provider 凭据读取流程。\\n4. 闸门策略输入只能包含完成上述判断所需的非敏感元数据。禁止传入 token、API key、password、credential material、鉴权头或凭据派生值。\\n5. 拒绝原因只能描述来源类别、provider 范围不匹配或输入元数据无效等非敏感事实，禁止包含凭据值、片段或可还原凭据的信息。\\n6. 不复制或扩展出第二套 provider allowlist、凭据来源规则或凭据存储策略；host 绑定范围与既有凭据机制均为单一事实来源。\\n\\n## Acceptance criteria\\n\\n- [ ] trusted system + 显式 override 的既有行为保持不变。\\n- [ ] direct operator + 显式 override 的既有行为保持不变。\\n- [ ] external + 显式 override + 范围内 provider 被允许。\\n- [ ] external + 显式 override + 范围外 provider 在凭据读取前被拒绝。\\n- [ ] derived-untrusted + 显式 override 的范围内/范围外分支均符合契约。\\n- [ ] missing + 显式 override 的范围内/范围外分支均符合契约。\\n- [ ] invalid + 显式 override 的范围内/范围外分支均符合契约。\\n- [ ] 无显式 override 时窄闸门不被调用，默认/fallback 行为不变。\\n- [ ] 每次范围外拒绝都发生在任何 provider 凭据读取之前。\\n- [ ] 闸门策略输入不含凭据值。\\n- [ ] 拒绝原因不含凭据值、凭据片段、鉴权头或凭据派生值。\\n- [ ] 文档逐项区分 covered 与 residual，且其它凭据路径仅列为 residual。\\n- [ ] 没有新增第二套凭据策略，默认 provider、fallback 和凭据存储未改变。\\n\\n## Verification matrix\\n\\n| Case | Source | Explicit override | Provider relation | Expected gate result | Credential read |\\n|---|---|---:|---|---|---:|\\n| C01 | trusted system | yes | any | preserve existing trusted semantics | according to existing flow |\\n| C02 | direct operator | yes | any | preserve existing operator semantics | according to existing flow |\\n| C03 | external | yes | in host-bound image scope | allow | yes, existing flow |\\n| C04 | external | yes | outside host-bound image scope | deny before read | no |\\n| C05 | derived-untrusted | yes | in host-bound image scope | allow | yes, existing flow |\\n| C06 | derived-untrusted | yes | outside host-bound image scope | deny before read | no |\\n| C07 | missing | yes | in host-bound image scope | allow | yes, existing flow |\\n| C08 | missing | yes | outside host-bound image scope | deny before read | no |\\n| C09 | invalid | yes | in host-bound image scope | allow | yes, existing flow |\\n| C10 | invalid | yes | outside host-bound image scope | deny before read | no |\\n| C11 | any | no | n/a | gate not entered | according to existing default/fallback flow |\\n\\n## Validation commands\\n\\nThe exact command names must follow repository conventions discovered by the harness. The candidate validation set must include:\\n\\n1. 干净候选中的 S05 定向测试。\\n2. 类型检查。\\n3. 仅限本次变更范围的 lint。\\n4. harness validate。\\n5. harness dry-run。\\n6. comms replay。\\n7. comms compare。\\n8. 凭据扫描，结果必须为 0 命中。\\n9. 生成或校验 `SHA256SUMS`，并验证清单可回读且条目与候选文件一致。\\n\\n不得在实现或测试运行时读取测试目录、访问网络或产生外部进程副作用。验证失败时应保留可诊断的非敏感输出，不得用凭据值复现或对比失败。\\n\\n## Deliverables\\n\\n- `docs/dev/harness-gap-closure/s05-credential-use-boundary.md`：覆盖矩阵、拒绝顺序、信息最小化、逐项 residual 与核验记录。\\n- `harness/specs/tasks/harness-gap-credential-use-boundary.md`：本行为契约、验收矩阵和验证要求。\\n\\n## Completion rule\\n\\n仅当行为矩阵全部满足、默认/fallback 与凭据存储无变化、凭据扫描为 0 命中、全部指定验证通过且 `SHA256SUMS` 可回读时，S05 才可标记完成。任何未进入本闸门的凭据路径都必须继续明确列为 residual。\\n\"}]}",
+            "type": "output_text"
+          }
+        ],
+        "id": "msg_8b026055c9976bae1f83dc630a6b9b8c",
+        "role": "assistant",
+        "status": "completed",
+        "type": "message"
+      }
+    ],
+    "output_text": "{\"edits\":[{\"path\":\"docs/dev/harness-gap-closure/s05-credential-use-boundary.md\",\"content\":\"# S05 核验 image 生成 provider override 凭据使用窄闸门\\n\\n## 目标与范围\\n\\n本记录核验 `image-generate` 显式 provider override 分支上的凭据使用边界。闸门只判断请求 provider 是否属于当前 host 绑定的 image provider 范围；它不选择默认 provider，不实现 fallback，不读取或改写凭据存储，也不建立第二套凭据策略。\\n\\n## 调用路径\\n\\n1. 识别是否存在调用方显式指定的 provider override。\\n2. 若不存在显式 override，保持既有默认/fallback 路径语义，不进入本闸门。\\n3. 若存在显式 override，先根据来源可信度和 host 绑定范围执行边界判断。\\n4. 仅在边界判断允许后，才沿既有流程读取该 provider 的凭据并执行 image 生成。\\n\\n## 覆盖矩阵\\n\\n| 来源 | 显式 provider override | 闸门行为 | 覆盖结论 |\\n|---|---|---|---|\\n| trusted system | 有 | 保留既有可信来源语义，允许进入既有凭据读取流程 | 已覆盖 |\\n| direct operator | 有 | 保留既有直接操作者语义，允许进入既有凭据读取流程 | 已覆盖 |\\n| external | 有 | 请求 provider 必须属于当前 host 绑定的 image provider 范围；否则在读取任何 provider 凭据前拒绝 | 已覆盖 |\\n| derived-untrusted | 有 | 请求 provider 必须属于当前 host 绑定的 image provider 范围；否则在读取任何 provider 凭据前拒绝 | 已覆盖 |\\n| missing | 有 | 请求 provider 必须属于当前 host 绑定的 image provider 范围；否则在读取任何 provider 凭据前拒绝 | 已覆盖 |\\n| invalid | 有 | 请求 provider 必须属于当前 host 绑定的 image provider 范围；否则在读取任何 provider 凭据前拒绝 | 已覆盖 |\\n| 任意来源 | 无 | 不经过本闸门，继续既有默认/fallback 路径 | 已覆盖（明确排除） |\\n\\n## 判定契约\\n\\n- “显式 override”仅指调用方在 `image-generate` 请求中明确提供的 provider；隐式默认解析和 fallback 不属于该分支。\\n- host 绑定的 image provider 范围来自既有 host/provider 绑定配置，不新增 provider allowlist 或凭据策略。\\n- 对 external、derived-untrusted、missing、invalid 来源，请求 provider 必须精确落在允许范围内。\\n- trusted system 与 direct operator 保留既有授权语义；即使请求 provider 不在 host 绑定范围内，也不得由本闸门改变其既有行为。\\n- 闸门只接收判定所需元数据，例如来源分类、请求 provider、host 绑定 provider 范围以及最小必要的诊断标识。\\n- 策略输入不得包含 token、API key、password、credential material 或任何可还原凭据值的字段。\\n\\n## 拒绝顺序与信息最小化\\n\\n拒绝必须发生在 provider 凭据读取之前。不得为了判定 provider 范围、来源或绑定关系而预先读取 provider 凭据。\\n\\n拒绝原因只描述可安全诊断的非敏感事实，例如：来源类别不受窄闸门信任、请求 provider 不在 host 绑定范围、来源元数据缺失或无效。拒绝原因不得包含凭据值、凭据片段、鉴权头、provider secret 或由凭据派生的值。\\n\\n## 残余范围\\n\\n以下路径没有被本闸门覆盖，必须作为 residual 显式保留，不得表述为已覆盖：\\n\\n- `image-generate` 无显式 provider override 时的默认 provider 选择。\\n- `image-generate` 无显式 provider override 时的 fallback 路径。\\n- `image-generate` 以外的所有凭据读取和使用路径。\\n- 其它功能对 provider 凭据的存储、轮换、注入和授权。\\n- trusted system / direct operator 既有授权策略的内部实现。\\n\\n这些残余继续由既有机制负责。本记录不改变其行为，也不以本闸门替代它们。\\n\\n## 核验要求\\n\\n定向核验至少应证明：\\n\\n1. trusted system 与 direct operator 的显式 override 行为保持不变。\\n2. 无显式 override 时不会调用该窄闸门，默认/fallback 路径保持不变。\\n3. external、derived-untrusted、missing、invalid 四类来源分别覆盖“范围内允许”和“范围外拒绝”。\\n4. 范围外请求的拒绝点早于任何 provider 凭据读取。\\n5. 闸门输入和拒绝诊断中不存在凭据值或凭据材料。\\n6. 其它凭据使用路径仅记录为 residual，没有被纳入覆盖声明。\\n\\n完整候选应通过干净环境中的定向测试、类型检查、scoped lint、harness validate/dry-run、comms replay/compare 和凭据扫描。凭据扫描应为 0 命中；生成的 `SHA256SUMS` 必须可回读，并用于核对候选文件完整性。核验记录不得写入任何真实或伪造的凭据值。\\n\\n## 不变量\\n\\n- 不新建第二套凭据策略。\\n- 不修改默认 provider、fallback 或凭据存储。\\n- 不改变调用方输入、返回形状或既有调用顺序契约，除在不受信任显式 override 的范围外请求上增加必要拒绝。\\n- 不在日志、策略输入、拒绝原因、测试快照或文档中记录凭据值。\\n\"},{\"path\":\"harness/specs/tasks/harness-gap-credential-use-boundary.md\",\"content\":\"# Harness gap task: credential use boundary\\n\\n## Task ID\\n\\nS05\\n\\n## Intent\\n\\n在 `image-generate` 的显式 provider override 分支上核验窄闸门：external、derived-untrusted、missing、invalid 来源的请求 provider 必须属于当前 host 绑定的 image provider 范围。拒绝必须先于任何 provider 凭据读取，且策略输入和拒绝原因不得携带凭据值。\\n\\n本任务不是新的凭据授权系统。默认 provider、fallback、凭据存储以及其它凭据使用路径均保持现状。\\n\\n## Scope\\n\\n### In scope\\n\\n- `image-generate` 存在调用方显式 provider override 的分支。\\n- 来源分类：trusted system、direct operator、external、derived-untrusted、missing、invalid。\\n- 当前 host 绑定的 image provider 范围。\\n- 闸门判定与凭据读取之间的先后顺序。\\n- 策略输入和拒绝诊断的凭据值排除。\\n\\n### Out of scope / residual\\n\\n- `image-generate` 无显式 override 时的默认 provider 选择。\\n- `image-generate` 无显式 override 时的 fallback。\\n- `image-generate` 以外的凭据读取和使用。\\n- 其它功能的凭据存储、轮换、注入和授权。\\n- trusted system / direct operator 既有授权语义的改造。\\n\\n上述 out-of-scope 项必须记录为 residual，不得宣称由 S05 闸门覆盖。\\n\\n## Preconditions\\n\\n- 复用既有来源分类、host/provider 绑定配置和凭据读取机制。\\n- 能区分“没有显式 override”与“显式提供了 provider”。\\n- 测试或观测手段能够在凭据读取边界上验证调用顺序，但不得读取真实凭据。\\n\\n## Required behavior\\n\\n1. 若请求没有显式 provider override，则不经过 S05 窄闸门，继续既有默认/fallback 流程。\\n2. 若来源为 trusted system 或 direct operator，则保留既有语义，不因 S05 闸门新增限制。\\n3. 若来源为 external、derived-untrusted、missing 或 invalid，则：\\n   - 请求 provider 属于当前 host 绑定的 image provider 范围时，允许继续既有流程；\\n   - 请求 provider 不属于该范围时，立即拒绝，不进入 provider 凭据读取流程。\\n4. 闸门策略输入只能包含完成上述判断所需的非敏感元数据。禁止传入 token、API key、password、credential material、鉴权头或凭据派生值。\\n5. 拒绝原因只能描述来源类别、provider 范围不匹配或输入元数据无效等非敏感事实，禁止包含凭据值、片段或可还原凭据的信息。\\n6. 不复制或扩展出第二套 provider allowlist、凭据来源规则或凭据存储策略；host 绑定范围与既有凭据机制均为单一事实来源。\\n\\n## Acceptance criteria\\n\\n- [ ] trusted system + 显式 override 的既有行为保持不变。\\n- [ ] direct operator + 显式 override 的既有行为保持不变。\\n- [ ] external + 显式 override + 范围内 provider 被允许。\\n- [ ] external + 显式 override + 范围外 provider 在凭据读取前被拒绝。\\n- [ ] derived-untrusted + 显式 override 的范围内/范围外分支均符合契约。\\n- [ ] missing + 显式 override 的范围内/范围外分支均符合契约。\\n- [ ] invalid + 显式 override 的范围内/范围外分支均符合契约。\\n- [ ] 无显式 override 时窄闸门不被调用，默认/fallback 行为不变。\\n- [ ] 每次范围外拒绝都发生在任何 provider 凭据读取之前。\\n- [ ] 闸门策略输入不含凭据值。\\n- [ ] 拒绝原因不含凭据值、凭据片段、鉴权头或凭据派生值。\\n- [ ] 文档逐项区分 covered 与 residual，且其它凭据路径仅列为 residual。\\n- [ ] 没有新增第二套凭据策略，默认 provider、fallback 和凭据存储未改变。\\n\\n## Verification matrix\\n\\n| Case | Source | Explicit override | Provider relation | Expected gate result | Credential read |\\n|---|---|---:|---|---|---:|\\n| C01 | trusted system | yes | any | preserve existing trusted semantics | according to existing flow |\\n| C02 | direct operator | yes | any | preserve existing operator semantics | according to existing flow |\\n| C03 | external | yes | in host-bound image scope | allow | yes, existing flow |\\n| C04 | external | yes | outside host-bound image scope | deny before read | no |\\n| C05 | derived-untrusted | yes | in host-bound image scope | allow | yes, existing flow |\\n| C06 | derived-untrusted | yes | outside host-bound image scope | deny before read | no |\\n| C07 | missing | yes | in host-bound image scope | allow | yes, existing flow |\\n| C08 | missing | yes | outside host-bound image scope | deny before read | no |\\n| C09 | invalid | yes | in host-bound image scope | allow | yes, existing flow |\\n| C10 | invalid | yes | outside host-bound image scope | deny before read | no |\\n| C11 | any | no | n/a | gate not entered | according to existing default/fallback flow |\\n\\n## Validation commands\\n\\nThe exact command names must follow repository conventions discovered by the harness. The candidate validation set must include:\\n\\n1. 干净候选中的 S05 定向测试。\\n2. 类型检查。\\n3. 仅限本次变更范围的 lint。\\n4. harness validate。\\n5. harness dry-run。\\n6. comms replay。\\n7. comms compare。\\n8. 凭据扫描，结果必须为 0 命中。\\n9. 生成或校验 `SHA256SUMS`，并验证清单可回读且条目与候选文件一致。\\n\\n不得在实现或测试运行时读取测试目录、访问网络或产生外部进程副作用。验证失败时应保留可诊断的非敏感输出，不得用凭据值复现或对比失败。\\n\\n## Deliverables\\n\\n- `docs/dev/harness-gap-closure/s05-credential-use-boundary.md`：覆盖矩阵、拒绝顺序、信息最小化、逐项 residual 与核验记录。\\n- `harness/specs/tasks/harness-gap-credential-use-boundary.md`：本行为契约、验收矩阵和验证要求。\\n\\n## Completion rule\\n\\n仅当行为矩阵全部满足、默认/fallback 与凭据存储无变化、凭据扫描为 0 命中、全部指定验证通过且 `SHA256SUMS` 可回读时，S05 才可标记完成。任何未进入本闸门的凭据路径都必须继续明确列为 residual。\\n\"}]}",
+    "parallel_tool_calls": true,
+    "previous_response_id": null,
+    "reasoning": {
+      "effort": "low",
+      "summary": null
+    },
+    "status": "completed",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "name": "rsi_coding_edits",
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "edits": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "content": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "path",
+                  "content"
+                ],
+                "type": "object"
+              },
+              "maxItems": 32,
+              "type": "array"
+            }
+          },
+          "required": [
+            "edits"
+          ],
+          "type": "object"
+        },
+        "strict": true,
+        "type": "json_schema"
+      }
+    },
+    "tool_choice": "auto",
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 1,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 896,
+      "input_tokens_details": {
+        "cached_tokens": 128
+      },
+      "output_tokens": 3042,
+      "output_tokens_details": {
+        "reasoning_tokens": 305
+      },
+      "total_tokens": 3938
+    },
+    "user": null
+  },
+  "providerAttempts": [
+    {
+      "endpoint": "http://127.0.0.1:3065/v1/responses",
+      "request": {
+        "model": "space-bunny",
+        "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.\n[Relevant SEKB principle 1] Preserve the caller contract when implementing a small change\nCondition: When implementing an API from a behavior contract and existing callers\nAction: Keep names, return shapes and caller-owned inputs stable. Preserve meaningful zero, false, empty and null values. Prefer standard-library operations with the required semantics. Check both ordinary and edge inputs before returning complete source files.\nReason: Independent JSON roundtrip and array sorting exercises failed when values were filtered or caller inputs were mutated; standard-library repairs passed the same assertions.\n---",
+        "input": "{\n  \"prompt\": \"S05 核验 image 生成的 provider override 凭据使用窄闸门：external/unknown 来源的显式 override 只能落在 host 绑定的 provider 范围；拒绝发生在读取凭据前；策略输入不含凭据值。逐项记录覆盖与残余，不新建第二套凭据策略。\",\n  \"acceptanceCriteria\": [\n    \"trusted system / direct operator 的 provider override 保留既有语义；无显式 override 的默认/fallback 路径不经该闸门。\",\n    \"external/derived-untrusted/missing/invalid 来源 + 显式 override 时，请求 provider 必须落在 host 绑定的 image provider 范围，否则拒绝。\",\n    \"拒绝发生在读取任何 provider 凭据之前，且策略输入/拒绝原因不含凭据值。\",\n    \"逐项记录覆盖与残余：该闸门仅接在 image-generate 的显式 override 分支；其它凭据使用路径显式记为 residual，不冒充已覆盖。\",\n    \"不新建第二套凭据策略；不改默认 provider、fallback 或凭据存储。\",\n    \"干净候选定向测试、类型、scoped lint、harness validate/dry-run、comms replay/compare 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"docs/dev/harness-gap-closure/s05-credential-use-boundary.md\",\n    \"harness/specs/tasks/harness-gap-credential-use-boundary.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"docs/dev/harness-gap-closure/s05-credential-use-boundary.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-credential-use-boundary.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+        "store": false,
+        "stream": false,
+        "truncation": "disabled",
+        "max_output_tokens": 16000,
+        "reasoning": {
+          "effort": "low"
+        },
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "rsi_coding_edits",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "edits"
+              ],
+              "properties": {
+                "edits": {
+                  "type": "array",
+                  "maxItems": 32,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "path",
+                      "content"
+                    ],
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "content": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "rawResponse": {
+        "background": false,
+        "completed_at": 1793981424,
+        "created_at": 1793981388,
+        "error": null,
+        "id": "01a1b19f650570cf909eb7ba8c075c54",
+        "incomplete_details": null,
+        "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.\n[Relevant SEKB principle 1] Preserve the caller contract when implementing a small change\nCondition: When implementing an API from a behavior contract and existing callers\nAction: Keep names, return shapes and caller-owned inputs stable. Preserve meaningful zero, false, empty and null values. Prefer standard-library operations with the required semantics. Check both ordinary and edge inputs before returning complete source files.\nReason: Independent JSON roundtrip and array sorting exercises failed when values were filtered or caller inputs were mutated; standard-library repairs passed the same assertions.\n---",
+        "max_output_tokens": 16000,
+        "max_tool_calls": null,
+        "metadata": {},
+        "model": "space-bunny",
+        "object": "response",
+        "output": [
+          {
+            "id": "rs_ef4f38e390b98db3563bbce884662755",
+            "summary": [
+              {
+                "text": "We need create docs only target scope. Need infer format. Chinese prompt. Must output strict JSON. We don't know existing conventions. Need implement files based contract. Likely S05 doc and task spec. Need comprehensive. Could create Chinese docs recording coverage/residual, policy contract, tests. Ensure not claim code? Prompt asks \"逐项记录覆盖与残余\" likely documentation task. We can write acceptance-oriented spec. Need only files. JSON escaped. Let's craft two markdown files. One perhaps closure record, one task spec. Mention no credentials values, gate before credential read, override only explicit branch image generate. Trusted/direct semantics. Allowed host bound provider scope. Derived untrusted. Invalid. Policy inputs source metadata/provider ID/host binding scope. Denial reasons no secret. Residual other credential paths.\n\nNeed distinguish direct operator trusted system. External/derived-untrusted/missing/invalid + explicit override. \"external/unknown 来源\" but criteria names. provider override semantics maybe host binding scope. Define.\n\nTesting claims shouldn't say passed unless executed. Acceptance says required; docs can list verification. Since no code changes target, these docs likely the desired deliverables, harness validates docs. Write task with checkboxes maybe. No SHA actual. Could include SHA256SUMS procedure but not fabricate. \"SHA256SUMS 可回读\" acceptance. Maybe docs should specify. We shouldn't claim actual pass. However task asks docs recording coverage. Need document implementation gap? Could mark coverage as required and residual explicit.\n\nLet's formulate clear.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "{\"edits\":[{\"path\":\"docs/dev/harness-gap-closure/s05-credential-use-boundary.md\",\"content\":\"# S05 核验 image 生成 provider override 凭据使用窄闸门\\n\\n## 目标与范围\\n\\n本记录核验 `image-generate` 显式 provider override 分支上的凭据使用边界。闸门只判断请求 provider 是否属于当前 host 绑定的 image provider 范围；它不选择默认 provider，不实现 fallback，不读取或改写凭据存储，也不建立第二套凭据策略。\\n\\n## 调用路径\\n\\n1. 识别是否存在调用方显式指定的 provider override。\\n2. 若不存在显式 override，保持既有默认/fallback 路径语义，不进入本闸门。\\n3. 若存在显式 override，先根据来源可信度和 host 绑定范围执行边界判断。\\n4. 仅在边界判断允许后，才沿既有流程读取该 provider 的凭据并执行 image 生成。\\n\\n## 覆盖矩阵\\n\\n| 来源 | 显式 provider override | 闸门行为 | 覆盖结论 |\\n|---|---|---|---|\\n| trusted system | 有 | 保留既有可信来源语义，允许进入既有凭据读取流程 | 已覆盖 |\\n| direct operator | 有 | 保留既有直接操作者语义，允许进入既有凭据读取流程 | 已覆盖 |\\n| external | 有 | 请求 provider 必须属于当前 host 绑定的 image provider 范围；否则在读取任何 provider 凭据前拒绝 | 已覆盖 |\\n| derived-untrusted | 有 | 请求 provider 必须属于当前 host 绑定的 image provider 范围；否则在读取任何 provider 凭据前拒绝 | 已覆盖 |\\n| missing | 有 | 请求 provider 必须属于当前 host 绑定的 image provider 范围；否则在读取任何 provider 凭据前拒绝 | 已覆盖 |\\n| invalid | 有 | 请求 provider 必须属于当前 host 绑定的 image provider 范围；否则在读取任何 provider 凭据前拒绝 | 已覆盖 |\\n| 任意来源 | 无 | 不经过本闸门，继续既有默认/fallback 路径 | 已覆盖（明确排除） |\\n\\n## 判定契约\\n\\n- “显式 override”仅指调用方在 `image-generate` 请求中明确提供的 provider；隐式默认解析和 fallback 不属于该分支。\\n- host 绑定的 image provider 范围来自既有 host/provider 绑定配置，不新增 provider allowlist 或凭据策略。\\n- 对 external、derived-untrusted、missing、invalid 来源，请求 provider 必须精确落在允许范围内。\\n- trusted system 与 direct operator 保留既有授权语义；即使请求 provider 不在 host 绑定范围内，也不得由本闸门改变其既有行为。\\n- 闸门只接收判定所需元数据，例如来源分类、请求 provider、host 绑定 provider 范围以及最小必要的诊断标识。\\n- 策略输入不得包含 token、API key、password、credential material 或任何可还原凭据值的字段。\\n\\n## 拒绝顺序与信息最小化\\n\\n拒绝必须发生在 provider 凭据读取之前。不得为了判定 provider 范围、来源或绑定关系而预先读取 provider 凭据。\\n\\n拒绝原因只描述可安全诊断的非敏感事实，例如：来源类别不受窄闸门信任、请求 provider 不在 host 绑定范围、来源元数据缺失或无效。拒绝原因不得包含凭据值、凭据片段、鉴权头、provider secret 或由凭据派生的值。\\n\\n## 残余范围\\n\\n以下路径没有被本闸门覆盖，必须作为 residual 显式保留，不得表述为已覆盖：\\n\\n- `image-generate` 无显式 provider override 时的默认 provider 选择。\\n- `image-generate` 无显式 provider override 时的 fallback 路径。\\n- `image-generate` 以外的所有凭据读取和使用路径。\\n- 其它功能对 provider 凭据的存储、轮换、注入和授权。\\n- trusted system / direct operator 既有授权策略的内部实现。\\n\\n这些残余继续由既有机制负责。本记录不改变其行为，也不以本闸门替代它们。\\n\\n## 核验要求\\n\\n定向核验至少应证明：\\n\\n1. trusted system 与 direct operator 的显式 override 行为保持不变。\\n2. 无显式 override 时不会调用该窄闸门，默认/fallback 路径保持不变。\\n3. external、derived-untrusted、missing、invalid 四类来源分别覆盖“范围内允许”和“范围外拒绝”。\\n4. 范围外请求的拒绝点早于任何 provider 凭据读取。\\n5. 闸门输入和拒绝诊断中不存在凭据值或凭据材料。\\n6. 其它凭据使用路径仅记录为 residual，没有被纳入覆盖声明。\\n\\n完整候选应通过干净环境中的定向测试、类型检查、scoped lint、harness validate/dry-run、comms replay/compare 和凭据扫描。凭据扫描应为 0 命中；生成的 `SHA256SUMS` 必须可回读，并用于核对候选文件完整性。核验记录不得写入任何真实或伪造的凭据值。\\n\\n## 不变量\\n\\n- 不新建第二套凭据策略。\\n- 不修改默认 provider、fallback 或凭据存储。\\n- 不改变调用方输入、返回形状或既有调用顺序契约，除在不受信任显式 override 的范围外请求上增加必要拒绝。\\n- 不在日志、策略输入、拒绝原因、测试快照或文档中记录凭据值。\\n\"},{\"path\":\"harness/specs/tasks/harness-gap-credential-use-boundary.md\",\"content\":\"# Harness gap task: credential use boundary\\n\\n## Task ID\\n\\nS05\\n\\n## Intent\\n\\n在 `image-generate` 的显式 provider override 分支上核验窄闸门：external、derived-untrusted、missing、invalid 来源的请求 provider 必须属于当前 host 绑定的 image provider 范围。拒绝必须先于任何 provider 凭据读取，且策略输入和拒绝原因不得携带凭据值。\\n\\n本任务不是新的凭据授权系统。默认 provider、fallback、凭据存储以及其它凭据使用路径均保持现状。\\n\\n## Scope\\n\\n### In scope\\n\\n- `image-generate` 存在调用方显式 provider override 的分支。\\n- 来源分类：trusted system、direct operator、external、derived-untrusted、missing、invalid。\\n- 当前 host 绑定的 image provider 范围。\\n- 闸门判定与凭据读取之间的先后顺序。\\n- 策略输入和拒绝诊断的凭据值排除。\\n\\n### Out of scope / residual\\n\\n- `image-generate` 无显式 override 时的默认 provider 选择。\\n- `image-generate` 无显式 override 时的 fallback。\\n- `image-generate` 以外的凭据读取和使用。\\n- 其它功能的凭据存储、轮换、注入和授权。\\n- trusted system / direct operator 既有授权语义的改造。\\n\\n上述 out-of-scope 项必须记录为 residual，不得宣称由 S05 闸门覆盖。\\n\\n## Preconditions\\n\\n- 复用既有来源分类、host/provider 绑定配置和凭据读取机制。\\n- 能区分“没有显式 override”与“显式提供了 provider”。\\n- 测试或观测手段能够在凭据读取边界上验证调用顺序，但不得读取真实凭据。\\n\\n## Required behavior\\n\\n1. 若请求没有显式 provider override，则不经过 S05 窄闸门，继续既有默认/fallback 流程。\\n2. 若来源为 trusted system 或 direct operator，则保留既有语义，不因 S05 闸门新增限制。\\n3. 若来源为 external、derived-untrusted、missing 或 invalid，则：\\n   - 请求 provider 属于当前 host 绑定的 image provider 范围时，允许继续既有流程；\\n   - 请求 provider 不属于该范围时，立即拒绝，不进入 provider 凭据读取流程。\\n4. 闸门策略输入只能包含完成上述判断所需的非敏感元数据。禁止传入 token、API key、password、credential material、鉴权头或凭据派生值。\\n5. 拒绝原因只能描述来源类别、provider 范围不匹配或输入元数据无效等非敏感事实，禁止包含凭据值、片段或可还原凭据的信息。\\n6. 不复制或扩展出第二套 provider allowlist、凭据来源规则或凭据存储策略；host 绑定范围与既有凭据机制均为单一事实来源。\\n\\n## Acceptance criteria\\n\\n- [ ] trusted system + 显式 override 的既有行为保持不变。\\n- [ ] direct operator + 显式 override 的既有行为保持不变。\\n- [ ] external + 显式 override + 范围内 provider 被允许。\\n- [ ] external + 显式 override + 范围外 provider 在凭据读取前被拒绝。\\n- [ ] derived-untrusted + 显式 override 的范围内/范围外分支均符合契约。\\n- [ ] missing + 显式 override 的范围内/范围外分支均符合契约。\\n- [ ] invalid + 显式 override 的范围内/范围外分支均符合契约。\\n- [ ] 无显式 override 时窄闸门不被调用，默认/fallback 行为不变。\\n- [ ] 每次范围外拒绝都发生在任何 provider 凭据读取之前。\\n- [ ] 闸门策略输入不含凭据值。\\n- [ ] 拒绝原因不含凭据值、凭据片段、鉴权头或凭据派生值。\\n- [ ] 文档逐项区分 covered 与 residual，且其它凭据路径仅列为 residual。\\n- [ ] 没有新增第二套凭据策略，默认 provider、fallback 和凭据存储未改变。\\n\\n## Verification matrix\\n\\n| Case | Source | Explicit override | Provider relation | Expected gate result | Credential read |\\n|---|---|---:|---|---|---:|\\n| C01 | trusted system | yes | any | preserve existing trusted semantics | according to existing flow |\\n| C02 | direct operator | yes | any | preserve existing operator semantics | according to existing flow |\\n| C03 | external | yes | in host-bound image scope | allow | yes, existing flow |\\n| C04 | external | yes | outside host-bound image scope | deny before read | no |\\n| C05 | derived-untrusted | yes | in host-bound image scope | allow | yes, existing flow |\\n| C06 | derived-untrusted | yes | outside host-bound image scope | deny before read | no |\\n| C07 | missing | yes | in host-bound image scope | allow | yes, existing flow |\\n| C08 | missing | yes | outside host-bound image scope | deny before read | no |\\n| C09 | invalid | yes | in host-bound image scope | allow | yes, existing flow |\\n| C10 | invalid | yes | outside host-bound image scope | deny before read | no |\\n| C11 | any | no | n/a | gate not entered | according to existing default/fallback flow |\\n\\n## Validation commands\\n\\nThe exact command names must follow repository conventions discovered by the harness. The candidate validation set must include:\\n\\n1. 干净候选中的 S05 定向测试。\\n2. 类型检查。\\n3. 仅限本次变更范围的 lint。\\n4. harness validate。\\n5. harness dry-run。\\n6. comms replay。\\n7. comms compare。\\n8. 凭据扫描，结果必须为 0 命中。\\n9. 生成或校验 `SHA256SUMS`，并验证清单可回读且条目与候选文件一致。\\n\\n不得在实现或测试运行时读取测试目录、访问网络或产生外部进程副作用。验证失败时应保留可诊断的非敏感输出，不得用凭据值复现或对比失败。\\n\\n## Deliverables\\n\\n- `docs/dev/harness-gap-closure/s05-credential-use-boundary.md`：覆盖矩阵、拒绝顺序、信息最小化、逐项 residual 与核验记录。\\n- `harness/specs/tasks/harness-gap-credential-use-boundary.md`：本行为契约、验收矩阵和验证要求。\\n\\n## Completion rule\\n\\n仅当行为矩阵全部满足、默认/fallback 与凭据存储无变化、凭据扫描为 0 命中、全部指定验证通过且 `SHA256SUMS` 可回读时，S05 才可标记完成。任何未进入本闸门的凭据路径都必须继续明确列为 residual。\\n\"}]}",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_8b026055c9976bae1f83dc630a6b9b8c",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "output_text": "{\"edits\":[{\"path\":\"docs/dev/harness-gap-closure/s05-credential-use-boundary.md\",\"content\":\"# S05 核验 image 生成 provider override 凭据使用窄闸门\\n\\n## 目标与范围\\n\\n本记录核验 `image-generate` 显式 provider override 分支上的凭据使用边界。闸门只判断请求 provider 是否属于当前 host 绑定的 image provider 范围；它不选择默认 provider，不实现 fallback，不读取或改写凭据存储，也不建立第二套凭据策略。\\n\\n## 调用路径\\n\\n1. 识别是否存在调用方显式指定的 provider override。\\n2. 若不存在显式 override，保持既有默认/fallback 路径语义，不进入本闸门。\\n3. 若存在显式 override，先根据来源可信度和 host 绑定范围执行边界判断。\\n4. 仅在边界判断允许后，才沿既有流程读取该 provider 的凭据并执行 image 生成。\\n\\n## 覆盖矩阵\\n\\n| 来源 | 显式 provider override | 闸门行为 | 覆盖结论 |\\n|---|---|---|---|\\n| trusted system | 有 | 保留既有可信来源语义，允许进入既有凭据读取流程 | 已覆盖 |\\n| direct operator | 有 | 保留既有直接操作者语义，允许进入既有凭据读取流程 | 已覆盖 |\\n| external | 有 | 请求 provider 必须属于当前 host 绑定的 image provider 范围；否则在读取任何 provider 凭据前拒绝 | 已覆盖 |\\n| derived-untrusted | 有 | 请求 provider 必须属于当前 host 绑定的 image provider 范围；否则在读取任何 provider 凭据前拒绝 | 已覆盖 |\\n| missing | 有 | 请求 provider 必须属于当前 host 绑定的 image provider 范围；否则在读取任何 provider 凭据前拒绝 | 已覆盖 |\\n| invalid | 有 | 请求 provider 必须属于当前 host 绑定的 image provider 范围；否则在读取任何 provider 凭据前拒绝 | 已覆盖 |\\n| 任意来源 | 无 | 不经过本闸门，继续既有默认/fallback 路径 | 已覆盖（明确排除） |\\n\\n## 判定契约\\n\\n- “显式 override”仅指调用方在 `image-generate` 请求中明确提供的 provider；隐式默认解析和 fallback 不属于该分支。\\n- host 绑定的 image provider 范围来自既有 host/provider 绑定配置，不新增 provider allowlist 或凭据策略。\\n- 对 external、derived-untrusted、missing、invalid 来源，请求 provider 必须精确落在允许范围内。\\n- trusted system 与 direct operator 保留既有授权语义；即使请求 provider 不在 host 绑定范围内，也不得由本闸门改变其既有行为。\\n- 闸门只接收判定所需元数据，例如来源分类、请求 provider、host 绑定 provider 范围以及最小必要的诊断标识。\\n- 策略输入不得包含 token、API key、password、credential material 或任何可还原凭据值的字段。\\n\\n## 拒绝顺序与信息最小化\\n\\n拒绝必须发生在 provider 凭据读取之前。不得为了判定 provider 范围、来源或绑定关系而预先读取 provider 凭据。\\n\\n拒绝原因只描述可安全诊断的非敏感事实，例如：来源类别不受窄闸门信任、请求 provider 不在 host 绑定范围、来源元数据缺失或无效。拒绝原因不得包含凭据值、凭据片段、鉴权头、provider secret 或由凭据派生的值。\\n\\n## 残余范围\\n\\n以下路径没有被本闸门覆盖，必须作为 residual 显式保留，不得表述为已覆盖：\\n\\n- `image-generate` 无显式 provider override 时的默认 provider 选择。\\n- `image-generate` 无显式 provider override 时的 fallback 路径。\\n- `image-generate` 以外的所有凭据读取和使用路径。\\n- 其它功能对 provider 凭据的存储、轮换、注入和授权。\\n- trusted system / direct operator 既有授权策略的内部实现。\\n\\n这些残余继续由既有机制负责。本记录不改变其行为，也不以本闸门替代它们。\\n\\n## 核验要求\\n\\n定向核验至少应证明：\\n\\n1. trusted system 与 direct operator 的显式 override 行为保持不变。\\n2. 无显式 override 时不会调用该窄闸门，默认/fallback 路径保持不变。\\n3. external、derived-untrusted、missing、invalid 四类来源分别覆盖“范围内允许”和“范围外拒绝”。\\n4. 范围外请求的拒绝点早于任何 provider 凭据读取。\\n5. 闸门输入和拒绝诊断中不存在凭据值或凭据材料。\\n6. 其它凭据使用路径仅记录为 residual，没有被纳入覆盖声明。\\n\\n完整候选应通过干净环境中的定向测试、类型检查、scoped lint、harness validate/dry-run、comms replay/compare 和凭据扫描。凭据扫描应为 0 命中；生成的 `SHA256SUMS` 必须可回读，并用于核对候选文件完整性。核验记录不得写入任何真实或伪造的凭据值。\\n\\n## 不变量\\n\\n- 不新建第二套凭据策略。\\n- 不修改默认 provider、fallback 或凭据存储。\\n- 不改变调用方输入、返回形状或既有调用顺序契约，除在不受信任显式 override 的范围外请求上增加必要拒绝。\\n- 不在日志、策略输入、拒绝原因、测试快照或文档中记录凭据值。\\n\"},{\"path\":\"harness/specs/tasks/harness-gap-credential-use-boundary.md\",\"content\":\"# Harness gap task: credential use boundary\\n\\n## Task ID\\n\\nS05\\n\\n## Intent\\n\\n在 `image-generate` 的显式 provider override 分支上核验窄闸门：external、derived-untrusted、missing、invalid 来源的请求 provider 必须属于当前 host 绑定的 image provider 范围。拒绝必须先于任何 provider 凭据读取，且策略输入和拒绝原因不得携带凭据值。\\n\\n本任务不是新的凭据授权系统。默认 provider、fallback、凭据存储以及其它凭据使用路径均保持现状。\\n\\n## Scope\\n\\n### In scope\\n\\n- `image-generate` 存在调用方显式 provider override 的分支。\\n- 来源分类：trusted system、direct operator、external、derived-untrusted、missing、invalid。\\n- 当前 host 绑定的 image provider 范围。\\n- 闸门判定与凭据读取之间的先后顺序。\\n- 策略输入和拒绝诊断的凭据值排除。\\n\\n### Out of scope / residual\\n\\n- `image-generate` 无显式 override 时的默认 provider 选择。\\n- `image-generate` 无显式 override 时的 fallback。\\n- `image-generate` 以外的凭据读取和使用。\\n- 其它功能的凭据存储、轮换、注入和授权。\\n- trusted system / direct operator 既有授权语义的改造。\\n\\n上述 out-of-scope 项必须记录为 residual，不得宣称由 S05 闸门覆盖。\\n\\n## Preconditions\\n\\n- 复用既有来源分类、host/provider 绑定配置和凭据读取机制。\\n- 能区分“没有显式 override”与“显式提供了 provider”。\\n- 测试或观测手段能够在凭据读取边界上验证调用顺序，但不得读取真实凭据。\\n\\n## Required behavior\\n\\n1. 若请求没有显式 provider override，则不经过 S05 窄闸门，继续既有默认/fallback 流程。\\n2. 若来源为 trusted system 或 direct operator，则保留既有语义，不因 S05 闸门新增限制。\\n3. 若来源为 external、derived-untrusted、missing 或 invalid，则：\\n   - 请求 provider 属于当前 host 绑定的 image provider 范围时，允许继续既有流程；\\n   - 请求 provider 不属于该范围时，立即拒绝，不进入 provider 凭据读取流程。\\n4. 闸门策略输入只能包含完成上述判断所需的非敏感元数据。禁止传入 token、API key、password、credential material、鉴权头或凭据派生值。\\n5. 拒绝原因只能描述来源类别、provider 范围不匹配或输入元数据无效等非敏感事实，禁止包含凭据值、片段或可还原凭据的信息。\\n6. 不复制或扩展出第二套 provider allowlist、凭据来源规则或凭据存储策略；host 绑定范围与既有凭据机制均为单一事实来源。\\n\\n## Acceptance criteria\\n\\n- [ ] trusted system + 显式 override 的既有行为保持不变。\\n- [ ] direct operator + 显式 override 的既有行为保持不变。\\n- [ ] external + 显式 override + 范围内 provider 被允许。\\n- [ ] external + 显式 override + 范围外 provider 在凭据读取前被拒绝。\\n- [ ] derived-untrusted + 显式 override 的范围内/范围外分支均符合契约。\\n- [ ] missing + 显式 override 的范围内/范围外分支均符合契约。\\n- [ ] invalid + 显式 override 的范围内/范围外分支均符合契约。\\n- [ ] 无显式 override 时窄闸门不被调用，默认/fallback 行为不变。\\n- [ ] 每次范围外拒绝都发生在任何 provider 凭据读取之前。\\n- [ ] 闸门策略输入不含凭据值。\\n- [ ] 拒绝原因不含凭据值、凭据片段、鉴权头或凭据派生值。\\n- [ ] 文档逐项区分 covered 与 residual，且其它凭据路径仅列为 residual。\\n- [ ] 没有新增第二套凭据策略，默认 provider、fallback 和凭据存储未改变。\\n\\n## Verification matrix\\n\\n| Case | Source | Explicit override | Provider relation | Expected gate result | Credential read |\\n|---|---|---:|---|---|---:|\\n| C01 | trusted system | yes | any | preserve existing trusted semantics | according to existing flow |\\n| C02 | direct operator | yes | any | preserve existing operator semantics | according to existing flow |\\n| C03 | external | yes | in host-bound image scope | allow | yes, existing flow |\\n| C04 | external | yes | outside host-bound image scope | deny before read | no |\\n| C05 | derived-untrusted | yes | in host-bound image scope | allow | yes, existing flow |\\n| C06 | derived-untrusted | yes | outside host-bound image scope | deny before read | no |\\n| C07 | missing | yes | in host-bound image scope | allow | yes, existing flow |\\n| C08 | missing | yes | outside host-bound image scope | deny before read | no |\\n| C09 | invalid | yes | in host-bound image scope | allow | yes, existing flow |\\n| C10 | invalid | yes | outside host-bound image scope | deny before read | no |\\n| C11 | any | no | n/a | gate not entered | according to existing default/fallback flow |\\n\\n## Validation commands\\n\\nThe exact command names must follow repository conventions discovered by the harness. The candidate validation set must include:\\n\\n1. 干净候选中的 S05 定向测试。\\n2. 类型检查。\\n3. 仅限本次变更范围的 lint。\\n4. harness validate。\\n5. harness dry-run。\\n6. comms replay。\\n7. comms compare。\\n8. 凭据扫描，结果必须为 0 命中。\\n9. 生成或校验 `SHA256SUMS`，并验证清单可回读且条目与候选文件一致。\\n\\n不得在实现或测试运行时读取测试目录、访问网络或产生外部进程副作用。验证失败时应保留可诊断的非敏感输出，不得用凭据值复现或对比失败。\\n\\n## Deliverables\\n\\n- `docs/dev/harness-gap-closure/s05-credential-use-boundary.md`：覆盖矩阵、拒绝顺序、信息最小化、逐项 residual 与核验记录。\\n- `harness/specs/tasks/harness-gap-credential-use-boundary.md`：本行为契约、验收矩阵和验证要求。\\n\\n## Completion rule\\n\\n仅当行为矩阵全部满足、默认/fallback 与凭据存储无变化、凭据扫描为 0 命中、全部指定验证通过且 `SHA256SUMS` 可回读时，S05 才可标记完成。任何未进入本闸门的凭据路径都必须继续明确列为 residual。\\n\"}]}",
+        "parallel_tool_calls": true,
+        "previous_response_id": null,
+        "reasoning": {
+          "effort": "low",
+          "summary": null
+        },
+        "status": "completed",
+        "store": false,
+        "temperature": 1,
+        "text": {
+          "format": {
+            "name": "rsi_coding_edits",
+            "schema": {
+              "additionalProperties": false,
+              "properties": {
+                "edits": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "content": {
+                        "type": "string"
+                      },
+                      "path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path",
+                      "content"
+                    ],
+                    "type": "object"
+                  },
+                  "maxItems": 32,
+                  "type": "array"
+                }
+              },
+              "required": [
+                "edits"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "json_schema"
+          }
+        },
+        "tool_choice": "auto",
+        "tools": [],
+        "top_logprobs": 0,
+        "top_p": 1,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 896,
+          "input_tokens_details": {
+            "cached_tokens": 128
+          },
+          "output_tokens": 3042,
+          "output_tokens_details": {
+            "reasoning_tokens": 305
+          },
+          "total_tokens": 3938
+        },
+        "user": null
+      },
+      "parsedResponse": {
+        "id": "01a1b19f650570cf909eb7ba8c075c54",
+        "model": "space-bunny",
+        "status": "completed",
+        "text": "{\"edits\":[{\"path\":\"docs/dev/harness-gap-closure/s05-credential-use-boundary.md\",\"content\":\"# S05 核验 image 生成 provider override 凭据使用窄闸门\\n\\n## 目标与范围\\n\\n本记录核验 `image-generate` 显式 provider override 分支上的凭据使用边界。闸门只判断请求 provider 是否属于当前 host 绑定的 image provider 范围；它不选择默认 provider，不实现 fallback，不读取或改写凭据存储，也不建立第二套凭据策略。\\n\\n## 调用路径\\n\\n1. 识别是否存在调用方显式指定的 provider override。\\n2. 若不存在显式 override，保持既有默认/fallback 路径语义，不进入本闸门。\\n3. 若存在显式 override，先根据来源可信度和 host 绑定范围执行边界判断。\\n4. 仅在边界判断允许后，才沿既有流程读取该 provider 的凭据并执行 image 生成。\\n\\n## 覆盖矩阵\\n\\n| 来源 | 显式 provider override | 闸门行为 | 覆盖结论 |\\n|---|---|---|---|\\n| trusted system | 有 | 保留既有可信来源语义，允许进入既有凭据读取流程 | 已覆盖 |\\n| direct operator | 有 | 保留既有直接操作者语义，允许进入既有凭据读取流程 | 已覆盖 |\\n| external | 有 | 请求 provider 必须属于当前 host 绑定的 image provider 范围；否则在读取任何 provider 凭据前拒绝 | 已覆盖 |\\n| derived-untrusted | 有 | 请求 provider 必须属于当前 host 绑定的 image provider 范围；否则在读取任何 provider 凭据前拒绝 | 已覆盖 |\\n| missing | 有 | 请求 provider 必须属于当前 host 绑定的 image provider 范围；否则在读取任何 provider 凭据前拒绝 | 已覆盖 |\\n| invalid | 有 | 请求 provider 必须属于当前 host 绑定的 image provider 范围；否则在读取任何 provider 凭据前拒绝 | 已覆盖 |\\n| 任意来源 | 无 | 不经过本闸门，继续既有默认/fallback 路径 | 已覆盖（明确排除） |\\n\\n## 判定契约\\n\\n- “显式 override”仅指调用方在 `image-generate` 请求中明确提供的 provider；隐式默认解析和 fallback 不属于该分支。\\n- host 绑定的 image provider 范围来自既有 host/provider 绑定配置，不新增 provider allowlist 或凭据策略。\\n- 对 external、derived-untrusted、missing、invalid 来源，请求 provider 必须精确落在允许范围内。\\n- trusted system 与 direct operator 保留既有授权语义；即使请求 provider 不在 host 绑定范围内，也不得由本闸门改变其既有行为。\\n- 闸门只接收判定所需元数据，例如来源分类、请求 provider、host 绑定 provider 范围以及最小必要的诊断标识。\\n- 策略输入不得包含 token、API key、password、credential material 或任何可还原凭据值的字段。\\n\\n## 拒绝顺序与信息最小化\\n\\n拒绝必须发生在 provider 凭据读取之前。不得为了判定 provider 范围、来源或绑定关系而预先读取 provider 凭据。\\n\\n拒绝原因只描述可安全诊断的非敏感事实，例如：来源类别不受窄闸门信任、请求 provider 不在 host 绑定范围、来源元数据缺失或无效。拒绝原因不得包含凭据值、凭据片段、鉴权头、provider secret 或由凭据派生的值。\\n\\n## 残余范围\\n\\n以下路径没有被本闸门覆盖，必须作为 residual 显式保留，不得表述为已覆盖：\\n\\n- `image-generate` 无显式 provider override 时的默认 provider 选择。\\n- `image-generate` 无显式 provider override 时的 fallback 路径。\\n- `image-generate` 以外的所有凭据读取和使用路径。\\n- 其它功能对 provider 凭据的存储、轮换、注入和授权。\\n- trusted system / direct operator 既有授权策略的内部实现。\\n\\n这些残余继续由既有机制负责。本记录不改变其行为，也不以本闸门替代它们。\\n\\n## 核验要求\\n\\n定向核验至少应证明：\\n\\n1. trusted system 与 direct operator 的显式 override 行为保持不变。\\n2. 无显式 override 时不会调用该窄闸门，默认/fallback 路径保持不变。\\n3. external、derived-untrusted、missing、invalid 四类来源分别覆盖“范围内允许”和“范围外拒绝”。\\n4. 范围外请求的拒绝点早于任何 provider 凭据读取。\\n5. 闸门输入和拒绝诊断中不存在凭据值或凭据材料。\\n6. 其它凭据使用路径仅记录为 residual，没有被纳入覆盖声明。\\n\\n完整候选应通过干净环境中的定向测试、类型检查、scoped lint、harness validate/dry-run、comms replay/compare 和凭据扫描。凭据扫描应为 0 命中；生成的 `SHA256SUMS` 必须可回读，并用于核对候选文件完整性。核验记录不得写入任何真实或伪造的凭据值。\\n\\n## 不变量\\n\\n- 不新建第二套凭据策略。\\n- 不修改默认 provider、fallback 或凭据存储。\\n- 不改变调用方输入、返回形状或既有调用顺序契约，除在不受信任显式 override 的范围外请求上增加必要拒绝。\\n- 不在日志、策略输入、拒绝原因、测试快照或文档中记录凭据值。\\n\"},{\"path\":\"harness/specs/tasks/harness-gap-credential-use-boundary.md\",\"content\":\"# Harness gap task: credential use boundary\\n\\n## Task ID\\n\\nS05\\n\\n## Intent\\n\\n在 `image-generate` 的显式 provider override 分支上核验窄闸门：external、derived-untrusted、missing、invalid 来源的请求 provider 必须属于当前 host 绑定的 image provider 范围。拒绝必须先于任何 provider 凭据读取，且策略输入和拒绝原因不得携带凭据值。\\n\\n本任务不是新的凭据授权系统。默认 provider、fallback、凭据存储以及其它凭据使用路径均保持现状。\\n\\n## Scope\\n\\n### In scope\\n\\n- `image-generate` 存在调用方显式 provider override 的分支。\\n- 来源分类：trusted system、direct operator、external、derived-untrusted、missing、invalid。\\n- 当前 host 绑定的 image provider 范围。\\n- 闸门判定与凭据读取之间的先后顺序。\\n- 策略输入和拒绝诊断的凭据值排除。\\n\\n### Out of scope / residual\\n\\n- `image-generate` 无显式 override 时的默认 provider 选择。\\n- `image-generate` 无显式 override 时的 fallback。\\n- `image-generate` 以外的凭据读取和使用。\\n- 其它功能的凭据存储、轮换、注入和授权。\\n- trusted system / direct operator 既有授权语义的改造。\\n\\n上述 out-of-scope 项必须记录为 residual，不得宣称由 S05 闸门覆盖。\\n\\n## Preconditions\\n\\n- 复用既有来源分类、host/provider 绑定配置和凭据读取机制。\\n- 能区分“没有显式 override”与“显式提供了 provider”。\\n- 测试或观测手段能够在凭据读取边界上验证调用顺序，但不得读取真实凭据。\\n\\n## Required behavior\\n\\n1. 若请求没有显式 provider override，则不经过 S05 窄闸门，继续既有默认/fallback 流程。\\n2. 若来源为 trusted system 或 direct operator，则保留既有语义，不因 S05 闸门新增限制。\\n3. 若来源为 external、derived-untrusted、missing 或 invalid，则：\\n   - 请求 provider 属于当前 host 绑定的 image provider 范围时，允许继续既有流程；\\n   - 请求 provider 不属于该范围时，立即拒绝，不进入 provider 凭据读取流程。\\n4. 闸门策略输入只能包含完成上述判断所需的非敏感元数据。禁止传入 token、API key、password、credential material、鉴权头或凭据派生值。\\n5. 拒绝原因只能描述来源类别、provider 范围不匹配或输入元数据无效等非敏感事实，禁止包含凭据值、片段或可还原凭据的信息。\\n6. 不复制或扩展出第二套 provider allowlist、凭据来源规则或凭据存储策略；host 绑定范围与既有凭据机制均为单一事实来源。\\n\\n## Acceptance criteria\\n\\n- [ ] trusted system + 显式 override 的既有行为保持不变。\\n- [ ] direct operator + 显式 override 的既有行为保持不变。\\n- [ ] external + 显式 override + 范围内 provider 被允许。\\n- [ ] external + 显式 override + 范围外 provider 在凭据读取前被拒绝。\\n- [ ] derived-untrusted + 显式 override 的范围内/范围外分支均符合契约。\\n- [ ] missing + 显式 override 的范围内/范围外分支均符合契约。\\n- [ ] invalid + 显式 override 的范围内/范围外分支均符合契约。\\n- [ ] 无显式 override 时窄闸门不被调用，默认/fallback 行为不变。\\n- [ ] 每次范围外拒绝都发生在任何 provider 凭据读取之前。\\n- [ ] 闸门策略输入不含凭据值。\\n- [ ] 拒绝原因不含凭据值、凭据片段、鉴权头或凭据派生值。\\n- [ ] 文档逐项区分 covered 与 residual，且其它凭据路径仅列为 residual。\\n- [ ] 没有新增第二套凭据策略，默认 provider、fallback 和凭据存储未改变。\\n\\n## Verification matrix\\n\\n| Case | Source | Explicit override | Provider relation | Expected gate result | Credential read |\\n|---|---|---:|---|---|---:|\\n| C01 | trusted system | yes | any | preserve existing trusted semantics | according to existing flow |\\n| C02 | direct operator | yes | any | preserve existing operator semantics | according to existing flow |\\n| C03 | external | yes | in host-bound image scope | allow | yes, existing flow |\\n| C04 | external | yes | outside host-bound image scope | deny before read | no |\\n| C05 | derived-untrusted | yes | in host-bound image scope | allow | yes, existing flow |\\n| C06 | derived-untrusted | yes | outside host-bound image scope | deny before read | no |\\n| C07 | missing | yes | in host-bound image scope | allow | yes, existing flow |\\n| C08 | missing | yes | outside host-bound image scope | deny before read | no |\\n| C09 | invalid | yes | in host-bound image scope | allow | yes, existing flow |\\n| C10 | invalid | yes | outside host-bound image scope | deny before read | no |\\n| C11 | any | no | n/a | gate not entered | according to existing default/fallback flow |\\n\\n## Validation commands\\n\\nThe exact command names must follow repository conventions discovered by the harness. The candidate validation set must include:\\n\\n1. 干净候选中的 S05 定向测试。\\n2. 类型检查。\\n3. 仅限本次变更范围的 lint。\\n4. harness validate。\\n5. harness dry-run。\\n6. comms replay。\\n7. comms compare。\\n8. 凭据扫描，结果必须为 0 命中。\\n9. 生成或校验 `SHA256SUMS`，并验证清单可回读且条目与候选文件一致。\\n\\n不得在实现或测试运行时读取测试目录、访问网络或产生外部进程副作用。验证失败时应保留可诊断的非敏感输出，不得用凭据值复现或对比失败。\\n\\n## Deliverables\\n\\n- `docs/dev/harness-gap-closure/s05-credential-use-boundary.md`：覆盖矩阵、拒绝顺序、信息最小化、逐项 residual 与核验记录。\\n- `harness/specs/tasks/harness-gap-credential-use-boundary.md`：本行为契约、验收矩阵和验证要求。\\n\\n## Completion rule\\n\\n仅当行为矩阵全部满足、默认/fallback 与凭据存储无变化、凭据扫描为 0 命中、全部指定验证通过且 `SHA256SUMS` 可回读时，S05 才可标记完成。任何未进入本闸门的凭据路径都必须继续明确列为 residual。\\n\"}]}",
+        "usage": {
+          "inputTokens": 896,
+          "outputTokens": 3042,
+          "totalTokens": 3938
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      }
+    }
+  ],
+  "grader": {
+    "schemaVersion": "RsiBenefitGrader/v1",
+    "driven_by": "agent",
+    "actor": "codex/rsi-independent-final-state-grader",
+    "workspaceRevision": "ae9ea9162c105f734566f5a696d55b5eae5071df",
+    "baselineSetup": null,
+    "oracleDigest": "4f9e8acf25d909851d6512f6dee420dd02c1d927340466317e89c584c1d452a7",
+    "oracleRevision": "eda64ac3defe18e9c42de31d60e39722f40407e5",
+    "oracleTestDigests": {
+      "openclaw_runtime/src/agents/tools/provider-credential-use-policy.test.ts": "902828bfed65084508bc72f10f3e2c11b14c4e7a514dcb18026f64cf08aaef9c",
+      "openclaw_runtime/src/agents/tools/image-generate-tool.credential-use-provenance.test.ts": "1587800ab0562be008122ba56f190bf79f3d8209c9e939d9b7a54711bff02d9a",
+      "tests/unit/provider-credential-use-boundary-ledger.test.ts": "3f76e97baa0c611a7c1fd4f6b1ae4e1875044bdf02460b188efcfb44ed8d9cf5"
+    },
+    "oracleUnchanged": true,
+    "failureClass": null,
+    "diagnostics": [],
+    "commands": [
+      "pnpm exec vitest run tests/unit/provider-credential-use-boundary-ledger.test.ts --maxWorkers=1",
+      "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/tools/provider-credential-use-policy.test.ts src/agents/tools/image-generate-tool.credential-use-provenance.test.ts --maxWorkers=1"
+    ],
+    "responseDigest": "4361e14205d19aefdc832a08117fadac69e47315dc99434d423e8679ff4eabf9",
+    "editsDigest": "b94009ea17733c7db45a76a50c8891aa21201c9a29c67537506011764c39cee4",
+    "isolation": {
+      "hiddenOracleVisible": false,
+      "unapprovedEgress": false,
+      "candidateChangedEvaluator": false
+    },
+    "reports": [
+      {
+        "command": "pnpm exec vitest run tests/unit/provider-credential-use-boundary-ledger.test.ts --maxWorkers=1",
+        "kind": "vitest",
+        "exitCode": 0,
+        "report": {
+          "numTotalTestSuites": 2,
+          "numPassedTestSuites": 2,
+          "numFailedTestSuites": 0,
+          "numPendingTestSuites": 0,
+          "numTotalTests": 4,
+          "numPassedTests": 4,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "numTodoTests": 0,
+          "snapshot": {
+            "added": 0,
+            "failure": false,
+            "filesAdded": 0,
+            "filesRemoved": 0,
+            "filesRemovedList": [],
+            "filesUnmatched": 0,
+            "filesUpdated": 0,
+            "matched": 0,
+            "total": 0,
+            "unchecked": 0,
+            "uncheckedKeysByFile": [],
+            "unmatched": 0,
+            "updated": 0,
+            "didUpdate": false
+          },
+          "startTime": 1793981462686,
+          "success": true,
+          "testResults": [
+            {
+              "assertionResults": [
+                {
+                  "ancestorTitles": [
+                    "S05 provider credential-use boundary ledger"
+                  ],
+                  "fullName": "S05 provider credential-use boundary ledger allows trusted provenance and no-override paths unchanged",
+                  "status": "passed",
+                  "title": "allows trusted provenance and no-override paths unchanged",
+                  "duration": 1.9446000000000367,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "S05 provider credential-use boundary ledger"
+                  ],
+                  "fullName": "S05 provider credential-use boundary ledger keeps external/unknown provenance inside the bound provider scope",
+                  "status": "passed",
+                  "title": "keeps external/unknown provenance inside the bound provider scope",
+                  "duration": 0.6613999999999578,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "S05 provider credential-use boundary ledger"
+                  ],
+                  "fullName": "S05 provider credential-use boundary ledger never takes credential values as policy input",
+                  "status": "passed",
+                  "title": "never takes credential values as policy input",
+                  "duration": 0.6988000000001193,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "S05 provider credential-use boundary ledger"
+                  ],
+                  "fullName": "S05 provider credential-use boundary ledger pins the single call site and records the residual credential users",
+                  "status": "passed",
+                  "title": "pins the single call site and records the residual credential users",
+                  "duration": 6.515300000000025,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                }
+              ],
+              "startTime": 1793981464136,
+              "endTime": 1793981464145.5154,
+              "status": "passed",
+              "message": "",
+              "name": "D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0280-s05-2-sekb-confirmed/workspace/tests/unit/provider-credential-use-boundary-ledger.test.ts"
+            }
+          ]
+        }
+      },
+      {
+        "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/tools/provider-credential-use-policy.test.ts src/agents/tools/image-generate-tool.credential-use-provenance.test.ts --maxWorkers=1",
+        "kind": "vitest",
+        "exitCode": 0,
+        "report": {
+          "numTotalTestSuites": 4,
+          "numPassedTestSuites": 4,
+          "numFailedTestSuites": 0,
+          "numPendingTestSuites": 0,
+          "numTotalTests": 15,
+          "numPassedTests": 15,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "numTodoTests": 0,
+          "snapshot": {
+            "added": 0,
+            "failure": false,
+            "filesAdded": 0,
+            "filesRemoved": 0,
+            "filesRemovedList": [],
+            "filesUnmatched": 0,
+            "filesUpdated": 0,
+            "matched": 0,
+            "total": 0,
+            "unchecked": 0,
+            "uncheckedKeysByFile": [],
+            "unmatched": 0,
+            "updated": 0,
+            "didUpdate": false
+          },
+          "startTime": 1793981488347,
+          "success": true,
+          "testResults": [
+            {
+              "assertionResults": [
+                {
+                  "ancestorTitles": [
+                    "provider credential-use provenance policy"
+                  ],
+                  "fullName": "provider credential-use provenance policy denies an unbound provider override for untrusted provenance",
+                  "status": "passed",
+                  "title": "denies an unbound provider override for untrusted provenance",
+                  "duration": 2.707699999999022,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 31,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "provider credential-use provenance policy"
+                  ],
+                  "fullName": "provider credential-use provenance policy denies an unbound provider override for derived-untrusted provenance",
+                  "status": "passed",
+                  "title": "denies an unbound provider override for derived-untrusted provenance",
+                  "duration": 0.30340000000069267,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 31,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "provider credential-use provenance policy"
+                  ],
+                  "fullName": "provider credential-use provenance policy denies an unbound provider override for missing provenance",
+                  "status": "passed",
+                  "title": "denies an unbound provider override for missing provenance",
+                  "duration": 0.189699999998993,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 31,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "provider credential-use provenance policy"
+                  ],
+                  "fullName": "provider credential-use provenance policy denies an unbound provider override for invalid provenance",
+                  "status": "passed",
+                  "title": "denies an unbound provider override for invalid provenance",
+                  "duration": 0.14660000000003492,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 31,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "provider credential-use provenance policy"
+                  ],
+                  "fullName": "provider credential-use provenance policy allows same-provider and explicitly configured fallback overrides",
+                  "status": "passed",
+                  "title": "allows same-provider and explicitly configured fallback overrides",
+                  "duration": 0.2579999999998108,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 38,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "provider credential-use provenance policy"
+                  ],
+                  "fullName": "provider credential-use provenance policy fails closed when an explicit override has no resolvable provider",
+                  "status": "passed",
+                  "title": "fails closed when an explicit override has no resolvable provider",
+                  "duration": 0.15539999999964493,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 51,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "provider credential-use provenance policy"
+                  ],
+                  "fullName": "provider credential-use provenance policy does not constrain calls without an explicit model override",
+                  "status": "passed",
+                  "title": "does not constrain calls without an explicit model override",
+                  "duration": 0.1712999999999738,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 58,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "provider credential-use provenance policy"
+                  ],
+                  "fullName": "provider credential-use provenance policy does not constrain trusted system or direct operator provenance",
+                  "status": "passed",
+                  "title": "does not constrain trusted system or direct operator provenance",
+                  "duration": 0.31850000000122236,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 65,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "provider credential-use provenance policy"
+                  ],
+                  "fullName": "provider credential-use provenance policy does not treat an ordinary trust field as an operator boundary",
+                  "status": "passed",
+                  "title": "does not treat an ordinary trust field as an operator boundary",
+                  "duration": 0.21349999999983993,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 81,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                }
+              ],
+              "startTime": 1793981488991,
+              "endTime": 1793981488996.2134,
+              "status": "passed",
+              "message": "",
+              "name": "D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0280-s05-2-sekb-confirmed/workspace/openclaw_runtime/src/agents/tools/provider-credential-use-policy.test.ts"
+            },
+            {
+              "assertionResults": [
+                {
+                  "ancestorTitles": [
+                    "image_generate credential-use provenance boundary"
+                  ],
+                  "fullName": "image_generate credential-use provenance boundary denies an external cross-provider override before provider execution",
+                  "status": "passed",
+                  "title": "denies an external cross-provider override before provider execution",
+                  "duration": 18.32430000000022,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 88,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "image_generate credential-use provenance boundary"
+                  ],
+                  "fullName": "image_generate credential-use provenance boundary denies a discovered cross-provider override before provider credential resolution",
+                  "status": "passed",
+                  "title": "denies a discovered cross-provider override before provider credential resolution",
+                  "duration": 0.9731000000028871,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 107,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "image_generate credential-use provenance boundary"
+                  ],
+                  "fullName": "image_generate credential-use provenance boundary keeps the resolved default primary provider usable without explicit config",
+                  "status": "passed",
+                  "title": "keeps the resolved default primary provider usable without explicit config",
+                  "duration": 3.8681999999971595,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 123,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "image_generate credential-use provenance boundary"
+                  ],
+                  "fullName": "image_generate credential-use provenance boundary keeps an operator-configured fallback provider usable",
+                  "status": "passed",
+                  "title": "keeps an operator-configured fallback provider usable",
+                  "duration": 0.7043000000048778,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 143,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "image_generate credential-use provenance boundary"
+                  ],
+                  "fullName": "image_generate credential-use provenance boundary keeps a same-provider model override usable",
+                  "status": "passed",
+                  "title": "keeps a same-provider model override usable",
+                  "duration": 0.5841999999975087,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 168,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "image_generate credential-use provenance boundary"
+                  ],
+                  "fullName": "image_generate credential-use provenance boundary keeps the resolved default provider and automatic fallback when no override is supplied",
+                  "status": "passed",
+                  "title": "keeps the resolved default provider and automatic fallback when no override is supplied",
+                  "duration": 0.4647000000040862,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 186,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                }
+              ],
+              "startTime": 1793981518665,
+              "endTime": 1793981518689.5842,
+              "status": "passed",
+              "message": "",
+              "name": "D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0280-s05-2-sekb-confirmed/workspace/openclaw_runtime/src/agents/tools/image-generate-tool.credential-use-provenance.test.ts"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

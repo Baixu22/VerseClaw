@@ -1,0 +1,29 @@
+{
+  "sourceCommit": "d18231b6664d376a0388c61118c77cf105b5d99b",
+  "files": [
+    "tests/unit\\rsi-tf0604-baseline.test.ts",
+    "tests/unit\\rsi-tf0592-statistical-adjudication.test.ts",
+    "tests/unit\\rsi-sekb-arms.test.ts",
+    "tests/unit\\rsi-sekb-arms-decision.test.ts",
+    "tests/unit\\rsi-responses-provider.test.ts",
+    "tests/unit\\rsi-measurement-archive.test.ts",
+    "tests/unit\\rsi-live-grader.test.ts",
+    "tests/unit\\rsi-live-acceptance.test.ts",
+    "tests/unit\\rsi-historical-task-corpus.test.ts",
+    "tests/unit\\rsi-feedback-pilot.test.ts",
+    "tests/unit\\rsi-feedback-export.test.ts",
+    "tests/unit\\rsi-evidence-loop-contract.test.ts",
+    "tests/unit\\rsi-decision-check.test.ts",
+    "tests/unit\\rsi-coding-collector.test.ts",
+    "tests/unit\\rsi-benefit-eval.test.ts",
+    "tests/unit/agent-dev-paired-ablation.test.ts",
+    "tests/unit/agent-dev-reliability-aggregation.test.ts",
+    "tests/unit/runtime-memory-paired-ablation.test.ts"
+  ],
+  "startedAt": "2026-11-07T12:09:18.7663247+08:00",
+  "command": "node node_modules/vitest/vitest.mjs run <18 RSI and shared-statistics files> --maxWorkers=1 --reporter=json",
+  "actor": "codex/rsi-final-regression-verifier",
+  "endedAt": "2026-11-07T12:15:26.0632215+08:00",
+  "driven_by": "agent",
+  "exitCode": 1
+}

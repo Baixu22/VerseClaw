@@ -1,0 +1,9 @@
+{
+  "actor": "codex/rsi-relay-verifier",
+  "exitCode": 0,
+  "driven_by": "agent",
+  "command": "node node_modules/vitest/vitest.mjs run tests/unit/agent-dev-paired-ablation.test.ts tests/unit/agent-dev-reliability-aggregation.test.ts tests/unit/runtime-memory-paired-ablation.test.ts --maxWorkers=1 --reporter=json",
+  "candidate": "c7573ec11095b541f3a4a9c5470bf4e0727489bc",
+  "endedAt": "2026-11-06T23:22:14.0796271+08:00",
+  "startedAt": "2026-11-06T23:22:02.5110294+08:00"
+}

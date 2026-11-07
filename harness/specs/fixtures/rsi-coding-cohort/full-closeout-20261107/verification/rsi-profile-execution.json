@@ -1,0 +1,9 @@
+{
+  "driven_by": "agent",
+  "exitCode": 0,
+  "startedAt": "2026-11-07T12:43:13.5393685+08:00",
+  "endedAt": "2026-11-07T12:43:22.5620755+08:00",
+  "actor": "codex/rsi-profile-final-verifier",
+  "sourceCommit": "95ebd762f1ced7b7ba51f40e4322917ac0c1f3c5",
+  "command": "node harness/src/cli.mjs -- run --spec harness/specs/tasks/rsi-coding-full-completion.md"
+}

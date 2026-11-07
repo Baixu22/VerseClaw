@@ -1,0 +1,11 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-diagnostic-retention-verifier",
+  "sourceGitCommit": "95ebd762f1ced7b7ba51f40e4322917ac0c1f3c5",
+  "sourceTrackedPath": "artifacts/agent-dev-deep-test/report.json",
+  "archivePath": "D:/ClawX-acceptance/rsi-full-closeout-20261106/agent-dev-current-report.json",
+  "sha256": "44266dcc61563c62ecf9d1bce098d1750451705bf07841cf57355d25016b5d79",
+  "bytes": 105424,
+  "summary": "verification.v1.json",
+  "commandLog": "verification/diagnostic-current.log"
+}

@@ -1,0 +1,10 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-structured-resource-admission",
+  "scope": "provider admission; not a task outcome",
+  "attempt": 2,
+  "startedAt": "2026-11-06T08:42:20.907Z",
+  "durationMs": 120313,
+  "passed": false,
+  "error": "Responses request timed out"
+}

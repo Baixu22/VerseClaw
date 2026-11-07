@@ -1,0 +1,1580 @@
+{
+  "schemaVersion": "RsiBenefitTrial/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-benefit-eval/executor",
+  "planDigest": "133d3b5ff68949682b9c402b3275fd95e232ca4ce6a497a1903deaac5ee04004",
+  "slot": {
+    "id": "tf-0278-s03-2-sekb-off",
+    "caseId": "tf-0278-s03",
+    "repeat": 2,
+    "arm": "sekb-off",
+    "caseDigest": "571d8175ca682e8c2f537bc02845ef7474d7ea6403f9f9b1952112dd26994f8f",
+    "pairSeed": 41,
+    "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+    "position": 121
+  },
+  "evidenceKind": "live-provider",
+  "request": {
+    "model": "space-bunny",
+    "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+    "input": "{\n  \"prompt\": \"Reconstruct the missing implementation files listed in targetScope. Preserve the following behavior contract. S03 核验 write/edit/apply_patch 的工作区外写入边界：非法来源的写必须无副作用修改，合法（trusted/operator）外写保留原语义，路径逃逸（父目录/绝对/别名/大小写）被拒且文件不变；只核实既有单一边界，不新建第二套策略。\",\n  \"acceptanceCriteria\": [\n    \"非法（external/derived/invalid/missing）来源对工作区外目标 write/edit/apply_patch 必须在文件系统操作前拒绝，且目标文件字节不变。\",\n    \"合法（trusted system / direct operator）外写保留既有语义：写入成功且内容精确一致。\",\n    \"路径逃逸矩阵（父目录 ..、绝对外部路径、已存在别名 symlink/junction、硬链接、win32 大小写变体）对非法来源一律拒绝且目标不变。\",\n    \"只复用既有单一边界（workspace-external-write-provenance-policy + fs-safe 别名解析）；不新建第二套策略、不改 in-workspace 写语义。\",\n    \"残余（UNC / device-namespace 路径）在本机无法确定性触发，显式记为 residual，不冒充已覆盖。\",\n    \"干净候选定向测试、runtime core 类型、scoped lint、harness validate/dry-run、comms replay/compare 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+    "store": false,
+    "stream": false,
+    "truncation": "disabled",
+    "max_output_tokens": 16000,
+    "reasoning": {
+      "effort": "low"
+    },
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "name": "rsi_coding_edits",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "edits"
+          ],
+          "properties": {
+            "edits": {
+              "type": "array",
+              "maxItems": 32,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "content"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "requestDigest": "b4cc6bb9b62ff9bafb063dc53ddf301bc4cb70c7e86a688612924d9fc285e36e",
+  "runtime": {
+    "flags": {
+      "enabled": false,
+      "shadowEvaluation": false,
+      "injection": false
+    },
+    "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+    "candidateDigest": "7c2408a2afc3c71ec509c11c705ba3775d427c4166aef58a0b42db1c031f54a0",
+    "injectionDigest": null,
+    "isolationId": "2bb4141c-a536-443a-8b89-0fbfd0082edf/tf-0278-s03-2-sekb-off",
+    "runtimeEffectMeasured": true
+  },
+  "edits": [
+    {
+      "path": "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts",
+      "content": "export const WORKSPACE_EXTERNAL_WRITE_PROVENANCES = [\n  \"trusted\",\n  \"operator\",\n  \"external\",\n  \"derived\",\n  \"invalid\",\n  \"missing\",\n] as const;\n\nexport type WorkspaceExternalWriteProvenance =\n  (typeof WORKSPACE_EXTERNAL_WRITE_PROVENANCES)[number];\n\nexport interface WorkspaceExternalWriteProvenancePolicyInput {\n  provenance?: WorkspaceExternalWriteProvenance | null;\n}\n\nexport type WorkspaceExternalWriteProvenanceDecision =\n  | { allowed: true; provenance: \"trusted\" | \"operator\" }\n  | {\n      allowed: false;\n      provenance: WorkspaceExternalWriteProvenance | \"missing\";\n      reason: \"untrusted-provenance\" | \"missing-provenance\";\n    };\n\nfunction normalizeProvenance(\n  input:\n    | WorkspaceExternalWriteProvenance\n    | WorkspaceExternalWriteProvenancePolicyInput\n    | null\n    | undefined,\n): WorkspaceExternalWriteProvenance | \"missing\" {\n  if (input === null || input === undefined) {\n    return \"missing\";\n  }\n\n  const provenance =\n    typeof input === \"string\" ? input : input.provenance ?? \"missing\";\n\n  if (\n    provenance === \"trusted\" ||\n    provenance === \"operator\" ||\n    provenance === \"external\" ||\n    provenance === \"derived\" ||\n    provenance === \"invalid\" ||\n    provenance === \"missing\"\n  ) {\n    return provenance;\n  }\n\n  return \"invalid\";\n}\n\nexport function evaluateWorkspaceExternalWriteProvenance(\n  input:\n    | WorkspaceExternalWriteProvenance\n    | WorkspaceExternalWriteProvenancePolicyInput\n    | null\n    | undefined,\n): WorkspaceExternalWriteProvenanceDecision {\n  const provenance = normalizeProvenance(input);\n\n  if (provenance === \"trusted\" || provenance === \"operator\") {\n    return { allowed: true, provenance };\n  }\n\n  return {\n    allowed: false,\n    provenance,\n    reason: provenance === \"missing\" ? \"missing-provenance\" : \"untrusted-provenance\",\n  };\n}\n\nexport function isWorkspaceExternalWriteAllowed(\n  input:\n    | WorkspaceExternalWriteProvenance\n    | WorkspaceExternalWriteProvenancePolicyInput\n    | null\n    | undefined,\n): boolean {\n  return evaluateWorkspaceExternalWriteProvenance(input).allowed;\n}\n\nexport function assertWorkspaceExternalWriteAllowed(\n  input:\n    | WorkspaceExternalWriteProvenance\n    | WorkspaceExternalWriteProvenancePolicyInput\n    | null\n    | undefined,\n): void {\n  const decision = evaluateWorkspaceExternalWriteProvenance(input);\n  if (!decision.allowed) {\n    throw new Error(\n      `Workspace-external write rejected: ${decision.reason} (${decision.provenance})`,\n    );\n  }\n}\n"
+    }
+  ],
+  "execution": {
+    "status": "completed",
+    "failureClass": null,
+    "failureCategory": "model",
+    "attempts": 1,
+    "providerCalls": 1,
+    "wallClockMs": 74194,
+    "costUsd": null,
+    "toolEvents": [],
+    "runPosition": 121,
+    "startedAt": "2026-11-06T15:08:29.206Z",
+    "endedAt": "2026-11-06T15:09:43.400Z",
+    "measurementBasis": "live-provider",
+    "note": "Single JSON-edits request; independent reference-bound final-state grading."
+  },
+  "rawResponse": {
+    "background": false,
+    "completed_at": 1793977723,
+    "created_at": 1793977710,
+    "error": null,
+    "id": "01a1b16773537d238c53270f145ef298",
+    "incomplete_details": null,
+    "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+    "max_output_tokens": 16000,
+    "max_tool_calls": null,
+    "metadata": {},
+    "model": "space-bunny",
+    "object": "response",
+    "output": [
+      {
+        "id": "rs_c9bd70f2a777fb7dd961d4dadae3fa92",
+        "summary": [
+          {
+            "text": "We need infer API. No repo access. Need create likely module. Chinese task. Need guess names expected. Search conceptual existing callers impossible. Could provide implementation exports broad. Filename policy. Need strict JSON. Perhaps likely expected exports like isWorkspaceExternalWriteAllowed, assert... Need derive terminology \"workspace-external-write-provenance-policy + fs-safe alias resolution\". Existing caller imports perhaps `canWriteOutsideWorkspace` etc.\n\nCould make module with many aliases to maximize compatibility, but TS compile no deps. Need provenance types. Contract mentions source classifications trusted/operator vs external/derived/invalid/missing. Could export default functions.\n\nPotential source shape from tool calls: provenance perhaps string values. Need robust normalization. A policy likely function called `isWorkspaceExternalWriteAllowed(source)`.\n\nDesign generic:\nexport type WorkspaceExternalWriteProvenance = \"trusted-system\" | \"direct-operator\" | \"external\" | \"derived\" | \"invalid\" | \"missing\" | string\nfunction evaluate... accepts source directly or object `{provenance}` / `{source}` / `{origin}`.\nAllowed only trusted-system/direct-operator, perhaps actual values `\"trusted\"` `\"operator\"`. Task explicitly legal（trusted/operator）. Sources invalid etc. Allow exact trusted/operator likely.\n\nFunction names aliases. Risk exports unused okay. No filesystem path handling belongs fs-safe. This module only provenance. Need avoid second policy. Maybe callers expect `assertWorkspaceExternalWriteAllowed(provenance): void`.\n\nCan export several. But runtime lint may ban broad aliases? Acceptance scoped lint. Better likely expected singular. Existing source naming conventions unknown.\n\n\"workspace-external-write-provenance-policy\" could export `isWorkspaceExternalWriteProvenanceTrusted`. Search intuition OpenClaw code. Tool provenance likely `ToolSource = \"trusted\" | \"operator\" | ...`. Function perhaps `isTrustedWriteSource`.\n\nImplement canonical `isWorkspaceExternalWriteAllowed(provenance)` and `assertWorkspaceExternalWriteAllowed`. Extra aliases maybe harmless but lint unused exports? ESLint no-unused exports doesn't apply.\n\nInput perhaps provenance object. Need exact content consistency. Export enum.\n\nMaybe expected function `canWriteOutsideWorkspace({source})`. Provide flexible default object risks type mismatch callers. TS structural overload.\n\nLet's craft clean:\n`export function isWorkspaceExternalWriteAllowed(provenance: WorkspaceExternalWriteProvenance | { provenance: ...}): boolean`\nAllowed values `\"trusted\" | \"operator\"` plus maybe `\"trusted-system\" | \"direct-operator\"` but latter could be seen alternate policy. Prompt says trusted/operator, likely source values.\n\nReject missing/undefined, external/derived/invalid. Objects provenance only. If caller passes `{kind:\"operator\"}` fails legal. Add fields origin/source? This broadens potentially violating invalid source object. Better canonical likely enum.\n\nError before fs achieved assert throws.\n\nUse `provenance` property likely. Could define `WorkspaceExternalWriteProvenance` string union.\n\nCould also export `evaluateWorkspaceExternalWriteProvenance` returning reason.\n\nNeed content JSONescaped.",
+            "type": "summary_text"
+          }
+        ],
+        "type": "reasoning"
+      },
+      {
+        "content": [
+          {
+            "annotations": [],
+            "logprobs": [],
+            "text": "{\"edits\":[{\"path\":\"openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts\",\"content\":\"export const WORKSPACE_EXTERNAL_WRITE_PROVENANCES = [\\n  \\\"trusted\\\",\\n  \\\"operator\\\",\\n  \\\"external\\\",\\n  \\\"derived\\\",\\n  \\\"invalid\\\",\\n  \\\"missing\\\",\\n] as const;\\n\\nexport type WorkspaceExternalWriteProvenance =\\n  (typeof WORKSPACE_EXTERNAL_WRITE_PROVENANCES)[number];\\n\\nexport interface WorkspaceExternalWriteProvenancePolicyInput {\\n  provenance?: WorkspaceExternalWriteProvenance | null;\\n}\\n\\nexport type WorkspaceExternalWriteProvenanceDecision =\\n  | { allowed: true; provenance: \\\"trusted\\\" | \\\"operator\\\" }\\n  | {\\n      allowed: false;\\n      provenance: WorkspaceExternalWriteProvenance | \\\"missing\\\";\\n      reason: \\\"untrusted-provenance\\\" | \\\"missing-provenance\\\";\\n    };\\n\\nfunction normalizeProvenance(\\n  input:\\n    | WorkspaceExternalWriteProvenance\\n    | WorkspaceExternalWriteProvenancePolicyInput\\n    | null\\n    | undefined,\\n): WorkspaceExternalWriteProvenance | \\\"missing\\\" {\\n  if (input === null || input === undefined) {\\n    return \\\"missing\\\";\\n  }\\n\\n  const provenance =\\n    typeof input === \\\"string\\\" ? input : input.provenance ?? \\\"missing\\\";\\n\\n  if (\\n    provenance === \\\"trusted\\\" ||\\n    provenance === \\\"operator\\\" ||\\n    provenance === \\\"external\\\" ||\\n    provenance === \\\"derived\\\" ||\\n    provenance === \\\"invalid\\\" ||\\n    provenance === \\\"missing\\\"\\n  ) {\\n    return provenance;\\n  }\\n\\n  return \\\"invalid\\\";\\n}\\n\\nexport function evaluateWorkspaceExternalWriteProvenance(\\n  input:\\n    | WorkspaceExternalWriteProvenance\\n    | WorkspaceExternalWriteProvenancePolicyInput\\n    | null\\n    | undefined,\\n): WorkspaceExternalWriteProvenanceDecision {\\n  const provenance = normalizeProvenance(input);\\n\\n  if (provenance === \\\"trusted\\\" || provenance === \\\"operator\\\") {\\n    return { allowed: true, provenance };\\n  }\\n\\n  return {\\n    allowed: false,\\n    provenance,\\n    reason: provenance === \\\"missing\\\" ? \\\"missing-provenance\\\" : \\\"untrusted-provenance\\\",\\n  };\\n}\\n\\nexport function isWorkspaceExternalWriteAllowed(\\n  input:\\n    | WorkspaceExternalWriteProvenance\\n    | WorkspaceExternalWriteProvenancePolicyInput\\n    | null\\n    | undefined,\\n): boolean {\\n  return evaluateWorkspaceExternalWriteProvenance(input).allowed;\\n}\\n\\nexport function assertWorkspaceExternalWriteAllowed(\\n  input:\\n    | WorkspaceExternalWriteProvenance\\n    | WorkspaceExternalWriteProvenancePolicyInput\\n    | null\\n    | undefined,\\n): void {\\n  const decision = evaluateWorkspaceExternalWriteProvenance(input);\\n  if (!decision.allowed) {\\n    throw new Error(\\n      `Workspace-external write rejected: ${decision.reason} (${decision.provenance})`,\\n    );\\n  }\\n}\\n\"}]}",
+            "type": "output_text"
+          }
+        ],
+        "id": "msg_8145db0253d1dc5bdb1d49f6b1d5703b",
+        "role": "assistant",
+        "status": "completed",
+        "type": "message"
+      }
+    ],
+    "output_text": "{\"edits\":[{\"path\":\"openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts\",\"content\":\"export const WORKSPACE_EXTERNAL_WRITE_PROVENANCES = [\\n  \\\"trusted\\\",\\n  \\\"operator\\\",\\n  \\\"external\\\",\\n  \\\"derived\\\",\\n  \\\"invalid\\\",\\n  \\\"missing\\\",\\n] as const;\\n\\nexport type WorkspaceExternalWriteProvenance =\\n  (typeof WORKSPACE_EXTERNAL_WRITE_PROVENANCES)[number];\\n\\nexport interface WorkspaceExternalWriteProvenancePolicyInput {\\n  provenance?: WorkspaceExternalWriteProvenance | null;\\n}\\n\\nexport type WorkspaceExternalWriteProvenanceDecision =\\n  | { allowed: true; provenance: \\\"trusted\\\" | \\\"operator\\\" }\\n  | {\\n      allowed: false;\\n      provenance: WorkspaceExternalWriteProvenance | \\\"missing\\\";\\n      reason: \\\"untrusted-provenance\\\" | \\\"missing-provenance\\\";\\n    };\\n\\nfunction normalizeProvenance(\\n  input:\\n    | WorkspaceExternalWriteProvenance\\n    | WorkspaceExternalWriteProvenancePolicyInput\\n    | null\\n    | undefined,\\n): WorkspaceExternalWriteProvenance | \\\"missing\\\" {\\n  if (input === null || input === undefined) {\\n    return \\\"missing\\\";\\n  }\\n\\n  const provenance =\\n    typeof input === \\\"string\\\" ? input : input.provenance ?? \\\"missing\\\";\\n\\n  if (\\n    provenance === \\\"trusted\\\" ||\\n    provenance === \\\"operator\\\" ||\\n    provenance === \\\"external\\\" ||\\n    provenance === \\\"derived\\\" ||\\n    provenance === \\\"invalid\\\" ||\\n    provenance === \\\"missing\\\"\\n  ) {\\n    return provenance;\\n  }\\n\\n  return \\\"invalid\\\";\\n}\\n\\nexport function evaluateWorkspaceExternalWriteProvenance(\\n  input:\\n    | WorkspaceExternalWriteProvenance\\n    | WorkspaceExternalWriteProvenancePolicyInput\\n    | null\\n    | undefined,\\n): WorkspaceExternalWriteProvenanceDecision {\\n  const provenance = normalizeProvenance(input);\\n\\n  if (provenance === \\\"trusted\\\" || provenance === \\\"operator\\\") {\\n    return { allowed: true, provenance };\\n  }\\n\\n  return {\\n    allowed: false,\\n    provenance,\\n    reason: provenance === \\\"missing\\\" ? \\\"missing-provenance\\\" : \\\"untrusted-provenance\\\",\\n  };\\n}\\n\\nexport function isWorkspaceExternalWriteAllowed(\\n  input:\\n    | WorkspaceExternalWriteProvenance\\n    | WorkspaceExternalWriteProvenancePolicyInput\\n    | null\\n    | undefined,\\n): boolean {\\n  return evaluateWorkspaceExternalWriteProvenance(input).allowed;\\n}\\n\\nexport function assertWorkspaceExternalWriteAllowed(\\n  input:\\n    | WorkspaceExternalWriteProvenance\\n    | WorkspaceExternalWriteProvenancePolicyInput\\n    | null\\n    | undefined,\\n): void {\\n  const decision = evaluateWorkspaceExternalWriteProvenance(input);\\n  if (!decision.allowed) {\\n    throw new Error(\\n      `Workspace-external write rejected: ${decision.reason} (${decision.provenance})`,\\n    );\\n  }\\n}\\n\"}]}",
+    "parallel_tool_calls": true,
+    "previous_response_id": null,
+    "reasoning": {
+      "effort": "low",
+      "summary": null
+    },
+    "status": "completed",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "name": "rsi_coding_edits",
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "edits": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "content": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "path",
+                  "content"
+                ],
+                "type": "object"
+              },
+              "maxItems": 32,
+              "type": "array"
+            }
+          },
+          "required": [
+            "edits"
+          ],
+          "type": "object"
+        },
+        "strict": true,
+        "type": "json_schema"
+      }
+    },
+    "tool_choice": "auto",
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 1,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 777,
+      "input_tokens_details": {
+        "cached_tokens": 776
+      },
+      "output_tokens": 1299,
+      "output_tokens_details": {
+        "reasoning_tokens": 606
+      },
+      "total_tokens": 2076
+    },
+    "user": null
+  },
+  "providerAttempts": [
+    {
+      "endpoint": "http://127.0.0.1:3065/v1/responses",
+      "request": {
+        "model": "space-bunny",
+        "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+        "input": "{\n  \"prompt\": \"Reconstruct the missing implementation files listed in targetScope. Preserve the following behavior contract. S03 核验 write/edit/apply_patch 的工作区外写入边界：非法来源的写必须无副作用修改，合法（trusted/operator）外写保留原语义，路径逃逸（父目录/绝对/别名/大小写）被拒且文件不变；只核实既有单一边界，不新建第二套策略。\",\n  \"acceptanceCriteria\": [\n    \"非法（external/derived/invalid/missing）来源对工作区外目标 write/edit/apply_patch 必须在文件系统操作前拒绝，且目标文件字节不变。\",\n    \"合法（trusted system / direct operator）外写保留既有语义：写入成功且内容精确一致。\",\n    \"路径逃逸矩阵（父目录 ..、绝对外部路径、已存在别名 symlink/junction、硬链接、win32 大小写变体）对非法来源一律拒绝且目标不变。\",\n    \"只复用既有单一边界（workspace-external-write-provenance-policy + fs-safe 别名解析）；不新建第二套策略、不改 in-workspace 写语义。\",\n    \"残余（UNC / device-namespace 路径）在本机无法确定性触发，显式记为 residual，不冒充已覆盖。\",\n    \"干净候选定向测试、runtime core 类型、scoped lint、harness validate/dry-run、comms replay/compare 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+        "store": false,
+        "stream": false,
+        "truncation": "disabled",
+        "max_output_tokens": 16000,
+        "reasoning": {
+          "effort": "low"
+        },
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "rsi_coding_edits",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "edits"
+              ],
+              "properties": {
+                "edits": {
+                  "type": "array",
+                  "maxItems": 32,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "path",
+                      "content"
+                    ],
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "content": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "rawResponse": {
+        "background": false,
+        "completed_at": 1793977723,
+        "created_at": 1793977710,
+        "error": null,
+        "id": "01a1b16773537d238c53270f145ef298",
+        "incomplete_details": null,
+        "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+        "max_output_tokens": 16000,
+        "max_tool_calls": null,
+        "metadata": {},
+        "model": "space-bunny",
+        "object": "response",
+        "output": [
+          {
+            "id": "rs_c9bd70f2a777fb7dd961d4dadae3fa92",
+            "summary": [
+              {
+                "text": "We need infer API. No repo access. Need create likely module. Chinese task. Need guess names expected. Search conceptual existing callers impossible. Could provide implementation exports broad. Filename policy. Need strict JSON. Perhaps likely expected exports like isWorkspaceExternalWriteAllowed, assert... Need derive terminology \"workspace-external-write-provenance-policy + fs-safe alias resolution\". Existing caller imports perhaps `canWriteOutsideWorkspace` etc.\n\nCould make module with many aliases to maximize compatibility, but TS compile no deps. Need provenance types. Contract mentions source classifications trusted/operator vs external/derived/invalid/missing. Could export default functions.\n\nPotential source shape from tool calls: provenance perhaps string values. Need robust normalization. A policy likely function called `isWorkspaceExternalWriteAllowed(source)`.\n\nDesign generic:\nexport type WorkspaceExternalWriteProvenance = \"trusted-system\" | \"direct-operator\" | \"external\" | \"derived\" | \"invalid\" | \"missing\" | string\nfunction evaluate... accepts source directly or object `{provenance}` / `{source}` / `{origin}`.\nAllowed only trusted-system/direct-operator, perhaps actual values `\"trusted\"` `\"operator\"`. Task explicitly legal（trusted/operator）. Sources invalid etc. Allow exact trusted/operator likely.\n\nFunction names aliases. Risk exports unused okay. No filesystem path handling belongs fs-safe. This module only provenance. Need avoid second policy. Maybe callers expect `assertWorkspaceExternalWriteAllowed(provenance): void`.\n\nCan export several. But runtime lint may ban broad aliases? Acceptance scoped lint. Better likely expected singular. Existing source naming conventions unknown.\n\n\"workspace-external-write-provenance-policy\" could export `isWorkspaceExternalWriteProvenanceTrusted`. Search intuition OpenClaw code. Tool provenance likely `ToolSource = \"trusted\" | \"operator\" | ...`. Function perhaps `isTrustedWriteSource`.\n\nImplement canonical `isWorkspaceExternalWriteAllowed(provenance)` and `assertWorkspaceExternalWriteAllowed`. Extra aliases maybe harmless but lint unused exports? ESLint no-unused exports doesn't apply.\n\nInput perhaps provenance object. Need exact content consistency. Export enum.\n\nMaybe expected function `canWriteOutsideWorkspace({source})`. Provide flexible default object risks type mismatch callers. TS structural overload.\n\nLet's craft clean:\n`export function isWorkspaceExternalWriteAllowed(provenance: WorkspaceExternalWriteProvenance | { provenance: ...}): boolean`\nAllowed values `\"trusted\" | \"operator\"` plus maybe `\"trusted-system\" | \"direct-operator\"` but latter could be seen alternate policy. Prompt says trusted/operator, likely source values.\n\nReject missing/undefined, external/derived/invalid. Objects provenance only. If caller passes `{kind:\"operator\"}` fails legal. Add fields origin/source? This broadens potentially violating invalid source object. Better canonical likely enum.\n\nError before fs achieved assert throws.\n\nUse `provenance` property likely. Could define `WorkspaceExternalWriteProvenance` string union.\n\nCould also export `evaluateWorkspaceExternalWriteProvenance` returning reason.\n\nNeed content JSONescaped.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "{\"edits\":[{\"path\":\"openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts\",\"content\":\"export const WORKSPACE_EXTERNAL_WRITE_PROVENANCES = [\\n  \\\"trusted\\\",\\n  \\\"operator\\\",\\n  \\\"external\\\",\\n  \\\"derived\\\",\\n  \\\"invalid\\\",\\n  \\\"missing\\\",\\n] as const;\\n\\nexport type WorkspaceExternalWriteProvenance =\\n  (typeof WORKSPACE_EXTERNAL_WRITE_PROVENANCES)[number];\\n\\nexport interface WorkspaceExternalWriteProvenancePolicyInput {\\n  provenance?: WorkspaceExternalWriteProvenance | null;\\n}\\n\\nexport type WorkspaceExternalWriteProvenanceDecision =\\n  | { allowed: true; provenance: \\\"trusted\\\" | \\\"operator\\\" }\\n  | {\\n      allowed: false;\\n      provenance: WorkspaceExternalWriteProvenance | \\\"missing\\\";\\n      reason: \\\"untrusted-provenance\\\" | \\\"missing-provenance\\\";\\n    };\\n\\nfunction normalizeProvenance(\\n  input:\\n    | WorkspaceExternalWriteProvenance\\n    | WorkspaceExternalWriteProvenancePolicyInput\\n    | null\\n    | undefined,\\n): WorkspaceExternalWriteProvenance | \\\"missing\\\" {\\n  if (input === null || input === undefined) {\\n    return \\\"missing\\\";\\n  }\\n\\n  const provenance =\\n    typeof input === \\\"string\\\" ? input : input.provenance ?? \\\"missing\\\";\\n\\n  if (\\n    provenance === \\\"trusted\\\" ||\\n    provenance === \\\"operator\\\" ||\\n    provenance === \\\"external\\\" ||\\n    provenance === \\\"derived\\\" ||\\n    provenance === \\\"invalid\\\" ||\\n    provenance === \\\"missing\\\"\\n  ) {\\n    return provenance;\\n  }\\n\\n  return \\\"invalid\\\";\\n}\\n\\nexport function evaluateWorkspaceExternalWriteProvenance(\\n  input:\\n    | WorkspaceExternalWriteProvenance\\n    | WorkspaceExternalWriteProvenancePolicyInput\\n    | null\\n    | undefined,\\n): WorkspaceExternalWriteProvenanceDecision {\\n  const provenance = normalizeProvenance(input);\\n\\n  if (provenance === \\\"trusted\\\" || provenance === \\\"operator\\\") {\\n    return { allowed: true, provenance };\\n  }\\n\\n  return {\\n    allowed: false,\\n    provenance,\\n    reason: provenance === \\\"missing\\\" ? \\\"missing-provenance\\\" : \\\"untrusted-provenance\\\",\\n  };\\n}\\n\\nexport function isWorkspaceExternalWriteAllowed(\\n  input:\\n    | WorkspaceExternalWriteProvenance\\n    | WorkspaceExternalWriteProvenancePolicyInput\\n    | null\\n    | undefined,\\n): boolean {\\n  return evaluateWorkspaceExternalWriteProvenance(input).allowed;\\n}\\n\\nexport function assertWorkspaceExternalWriteAllowed(\\n  input:\\n    | WorkspaceExternalWriteProvenance\\n    | WorkspaceExternalWriteProvenancePolicyInput\\n    | null\\n    | undefined,\\n): void {\\n  const decision = evaluateWorkspaceExternalWriteProvenance(input);\\n  if (!decision.allowed) {\\n    throw new Error(\\n      `Workspace-external write rejected: ${decision.reason} (${decision.provenance})`,\\n    );\\n  }\\n}\\n\"}]}",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_8145db0253d1dc5bdb1d49f6b1d5703b",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "output_text": "{\"edits\":[{\"path\":\"openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts\",\"content\":\"export const WORKSPACE_EXTERNAL_WRITE_PROVENANCES = [\\n  \\\"trusted\\\",\\n  \\\"operator\\\",\\n  \\\"external\\\",\\n  \\\"derived\\\",\\n  \\\"invalid\\\",\\n  \\\"missing\\\",\\n] as const;\\n\\nexport type WorkspaceExternalWriteProvenance =\\n  (typeof WORKSPACE_EXTERNAL_WRITE_PROVENANCES)[number];\\n\\nexport interface WorkspaceExternalWriteProvenancePolicyInput {\\n  provenance?: WorkspaceExternalWriteProvenance | null;\\n}\\n\\nexport type WorkspaceExternalWriteProvenanceDecision =\\n  | { allowed: true; provenance: \\\"trusted\\\" | \\\"operator\\\" }\\n  | {\\n      allowed: false;\\n      provenance: WorkspaceExternalWriteProvenance | \\\"missing\\\";\\n      reason: \\\"untrusted-provenance\\\" | \\\"missing-provenance\\\";\\n    };\\n\\nfunction normalizeProvenance(\\n  input:\\n    | WorkspaceExternalWriteProvenance\\n    | WorkspaceExternalWriteProvenancePolicyInput\\n    | null\\n    | undefined,\\n): WorkspaceExternalWriteProvenance | \\\"missing\\\" {\\n  if (input === null || input === undefined) {\\n    return \\\"missing\\\";\\n  }\\n\\n  const provenance =\\n    typeof input === \\\"string\\\" ? input : input.provenance ?? \\\"missing\\\";\\n\\n  if (\\n    provenance === \\\"trusted\\\" ||\\n    provenance === \\\"operator\\\" ||\\n    provenance === \\\"external\\\" ||\\n    provenance === \\\"derived\\\" ||\\n    provenance === \\\"invalid\\\" ||\\n    provenance === \\\"missing\\\"\\n  ) {\\n    return provenance;\\n  }\\n\\n  return \\\"invalid\\\";\\n}\\n\\nexport function evaluateWorkspaceExternalWriteProvenance(\\n  input:\\n    | WorkspaceExternalWriteProvenance\\n    | WorkspaceExternalWriteProvenancePolicyInput\\n    | null\\n    | undefined,\\n): WorkspaceExternalWriteProvenanceDecision {\\n  const provenance = normalizeProvenance(input);\\n\\n  if (provenance === \\\"trusted\\\" || provenance === \\\"operator\\\") {\\n    return { allowed: true, provenance };\\n  }\\n\\n  return {\\n    allowed: false,\\n    provenance,\\n    reason: provenance === \\\"missing\\\" ? \\\"missing-provenance\\\" : \\\"untrusted-provenance\\\",\\n  };\\n}\\n\\nexport function isWorkspaceExternalWriteAllowed(\\n  input:\\n    | WorkspaceExternalWriteProvenance\\n    | WorkspaceExternalWriteProvenancePolicyInput\\n    | null\\n    | undefined,\\n): boolean {\\n  return evaluateWorkspaceExternalWriteProvenance(input).allowed;\\n}\\n\\nexport function assertWorkspaceExternalWriteAllowed(\\n  input:\\n    | WorkspaceExternalWriteProvenance\\n    | WorkspaceExternalWriteProvenancePolicyInput\\n    | null\\n    | undefined,\\n): void {\\n  const decision = evaluateWorkspaceExternalWriteProvenance(input);\\n  if (!decision.allowed) {\\n    throw new Error(\\n      `Workspace-external write rejected: ${decision.reason} (${decision.provenance})`,\\n    );\\n  }\\n}\\n\"}]}",
+        "parallel_tool_calls": true,
+        "previous_response_id": null,
+        "reasoning": {
+          "effort": "low",
+          "summary": null
+        },
+        "status": "completed",
+        "store": false,
+        "temperature": 1,
+        "text": {
+          "format": {
+            "name": "rsi_coding_edits",
+            "schema": {
+              "additionalProperties": false,
+              "properties": {
+                "edits": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "content": {
+                        "type": "string"
+                      },
+                      "path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path",
+                      "content"
+                    ],
+                    "type": "object"
+                  },
+                  "maxItems": 32,
+                  "type": "array"
+                }
+              },
+              "required": [
+                "edits"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "json_schema"
+          }
+        },
+        "tool_choice": "auto",
+        "tools": [],
+        "top_logprobs": 0,
+        "top_p": 1,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 777,
+          "input_tokens_details": {
+            "cached_tokens": 776
+          },
+          "output_tokens": 1299,
+          "output_tokens_details": {
+            "reasoning_tokens": 606
+          },
+          "total_tokens": 2076
+        },
+        "user": null
+      },
+      "parsedResponse": {
+        "id": "01a1b16773537d238c53270f145ef298",
+        "model": "space-bunny",
+        "status": "completed",
+        "text": "{\"edits\":[{\"path\":\"openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts\",\"content\":\"export const WORKSPACE_EXTERNAL_WRITE_PROVENANCES = [\\n  \\\"trusted\\\",\\n  \\\"operator\\\",\\n  \\\"external\\\",\\n  \\\"derived\\\",\\n  \\\"invalid\\\",\\n  \\\"missing\\\",\\n] as const;\\n\\nexport type WorkspaceExternalWriteProvenance =\\n  (typeof WORKSPACE_EXTERNAL_WRITE_PROVENANCES)[number];\\n\\nexport interface WorkspaceExternalWriteProvenancePolicyInput {\\n  provenance?: WorkspaceExternalWriteProvenance | null;\\n}\\n\\nexport type WorkspaceExternalWriteProvenanceDecision =\\n  | { allowed: true; provenance: \\\"trusted\\\" | \\\"operator\\\" }\\n  | {\\n      allowed: false;\\n      provenance: WorkspaceExternalWriteProvenance | \\\"missing\\\";\\n      reason: \\\"untrusted-provenance\\\" | \\\"missing-provenance\\\";\\n    };\\n\\nfunction normalizeProvenance(\\n  input:\\n    | WorkspaceExternalWriteProvenance\\n    | WorkspaceExternalWriteProvenancePolicyInput\\n    | null\\n    | undefined,\\n): WorkspaceExternalWriteProvenance | \\\"missing\\\" {\\n  if (input === null || input === undefined) {\\n    return \\\"missing\\\";\\n  }\\n\\n  const provenance =\\n    typeof input === \\\"string\\\" ? input : input.provenance ?? \\\"missing\\\";\\n\\n  if (\\n    provenance === \\\"trusted\\\" ||\\n    provenance === \\\"operator\\\" ||\\n    provenance === \\\"external\\\" ||\\n    provenance === \\\"derived\\\" ||\\n    provenance === \\\"invalid\\\" ||\\n    provenance === \\\"missing\\\"\\n  ) {\\n    return provenance;\\n  }\\n\\n  return \\\"invalid\\\";\\n}\\n\\nexport function evaluateWorkspaceExternalWriteProvenance(\\n  input:\\n    | WorkspaceExternalWriteProvenance\\n    | WorkspaceExternalWriteProvenancePolicyInput\\n    | null\\n    | undefined,\\n): WorkspaceExternalWriteProvenanceDecision {\\n  const provenance = normalizeProvenance(input);\\n\\n  if (provenance === \\\"trusted\\\" || provenance === \\\"operator\\\") {\\n    return { allowed: true, provenance };\\n  }\\n\\n  return {\\n    allowed: false,\\n    provenance,\\n    reason: provenance === \\\"missing\\\" ? \\\"missing-provenance\\\" : \\\"untrusted-provenance\\\",\\n  };\\n}\\n\\nexport function isWorkspaceExternalWriteAllowed(\\n  input:\\n    | WorkspaceExternalWriteProvenance\\n    | WorkspaceExternalWriteProvenancePolicyInput\\n    | null\\n    | undefined,\\n): boolean {\\n  return evaluateWorkspaceExternalWriteProvenance(input).allowed;\\n}\\n\\nexport function assertWorkspaceExternalWriteAllowed(\\n  input:\\n    | WorkspaceExternalWriteProvenance\\n    | WorkspaceExternalWriteProvenancePolicyInput\\n    | null\\n    | undefined,\\n): void {\\n  const decision = evaluateWorkspaceExternalWriteProvenance(input);\\n  if (!decision.allowed) {\\n    throw new Error(\\n      `Workspace-external write rejected: ${decision.reason} (${decision.provenance})`,\\n    );\\n  }\\n}\\n\"}]}",
+        "usage": {
+          "inputTokens": 777,
+          "outputTokens": 1299,
+          "totalTokens": 2076
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      }
+    }
+  ],
+  "grader": {
+    "schemaVersion": "RsiBenefitGrader/v1",
+    "driven_by": "agent",
+    "actor": "codex/rsi-independent-final-state-grader",
+    "workspaceRevision": "8bb11a7d83603611d3fcd99160334f85f2e6e3be",
+    "baselineSetup": {
+      "kind": "implementation-reconstruction",
+      "removePaths": [
+        {
+          "path": "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts",
+          "sha256": "79124f66fb05890063f0ede7c10f7e1dbb7b67cabe840a1a433aabfb5de46212"
+        }
+      ]
+    },
+    "oracleDigest": "6430449c2f313bf907b570f9a39470e1fd4fde077324f224b55485c975bc944c",
+    "oracleRevision": "3f7060cb2bade7b693c407b70cfa71c698988444",
+    "oracleTestDigests": {
+      "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts": "b6ac5977cf5bdbda57cf65a5478d0bc3a1259248ab0fa80117c79eb356bc414b",
+      "openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts": "d406769bef60ff050c13dbfeff0048fbf06e8051e334fc2b1a2d6b79ec8bf8f9",
+      "openclaw_runtime/src/agents/apply-patch-consistency.test.ts": "7b131dc4b8abbc9c84b592fc1a15f9d8aabf0a8e85d139136f8e7f7f35b7ca28",
+      "openclaw_runtime/src/agents/sessions/tools/write.test.ts": "07e02c3c8a83e687ef7250fa9d00e7c4bdd4cf4f907ac30a617ea9c84541f883",
+      "openclaw_runtime/src/agents/sessions/tools/edit.test.ts": "69ac088add7bf0e874c4b1af32c45559422d236f56a1fe41fa214878635b99c3",
+      "tests/unit/external-content-provenance.test.ts": "c2c989f4e1c4e0e0e5a1ff0f07a66795b69b77a5492ac4ca95a44daf5883c55e"
+    },
+    "oracleUnchanged": true,
+    "failureClass": "assertion",
+    "diagnostics": [],
+    "commands": [
+      "pnpm exec vitest run tests/unit/external-content-provenance.test.ts --maxWorkers=1",
+      "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/workspace-external-write-provenance-policy.test.ts src/agents/agent-tools.workspace-boundary.test.ts src/agents/apply-patch-consistency.test.ts src/agents/sessions/tools/write.test.ts src/agents/sessions/tools/edit.test.ts --maxWorkers=1"
+    ],
+    "responseDigest": "04d74fe5cfe59f65e548fbf46d8a3a4f6289e4ad1c0379668c6b7befc0a586a9",
+    "editsDigest": "93c5a254455196c95a6a58fc664dc29f05aec16e8a28526d4d26f2a26c105830",
+    "isolation": {
+      "hiddenOracleVisible": false,
+      "unapprovedEgress": false,
+      "candidateChangedEvaluator": false
+    },
+    "reports": [
+      {
+        "command": "pnpm exec vitest run tests/unit/external-content-provenance.test.ts --maxWorkers=1",
+        "kind": "vitest",
+        "exitCode": 0,
+        "report": {
+          "numTotalTestSuites": 2,
+          "numPassedTestSuites": 2,
+          "numFailedTestSuites": 0,
+          "numPendingTestSuites": 0,
+          "numTotalTests": 8,
+          "numPassedTests": 8,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "numTodoTests": 0,
+          "snapshot": {
+            "added": 0,
+            "failure": false,
+            "filesAdded": 0,
+            "filesRemoved": 0,
+            "filesRemovedList": [],
+            "filesUnmatched": 0,
+            "filesUpdated": 0,
+            "matched": 0,
+            "total": 0,
+            "unchecked": 0,
+            "uncheckedKeysByFile": [],
+            "unmatched": 0,
+            "updated": 0,
+            "didUpdate": false
+          },
+          "startTime": 1793977733474,
+          "success": true,
+          "testResults": [
+            {
+              "assertionResults": [
+                {
+                  "ancestorTitles": [
+                    "external content provenance baseline"
+                  ],
+                  "fullName": "external content provenance baseline marks channel and web content as untrusted",
+                  "status": "passed",
+                  "title": "marks channel and web content as untrusted",
+                  "duration": 4.894400000000132,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "external content provenance baseline"
+                  ],
+                  "fullName": "external content provenance baseline keeps structured labels out of the existing wrapped prompt text",
+                  "status": "passed",
+                  "title": "keeps structured labels out of the existing wrapped prompt text",
+                  "duration": 1.1970000000001164,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "external content provenance baseline"
+                  ],
+                  "fullName": "external content provenance baseline derives tool results as derived-untrusted from external content",
+                  "status": "passed",
+                  "title": "derives tool results as derived-untrusted from external content",
+                  "duration": 0.390400000000227,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "external content provenance baseline"
+                  ],
+                  "fullName": "external content provenance baseline preserves ancestry across agent handoff derivation",
+                  "status": "passed",
+                  "title": "preserves ancestry across agent handoff derivation",
+                  "duration": 0.2930999999998676,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "external content provenance baseline"
+                  ],
+                  "fullName": "external content provenance baseline does not allow ordinary metadata to promote untrusted content",
+                  "status": "passed",
+                  "title": "does not allow ordinary metadata to promote untrusted content",
+                  "duration": 0.2998999999999796,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "external content provenance baseline"
+                  ],
+                  "fullName": "external content provenance baseline keeps derived trust and the external-content bit internally consistent",
+                  "status": "passed",
+                  "title": "keeps derived trust and the external-content bit internally consistent",
+                  "duration": 0.2989000000006854,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "external content provenance baseline"
+                  ],
+                  "fullName": "external content provenance baseline reports missing provenance explicitly instead of treating it as trusted",
+                  "status": "passed",
+                  "title": "reports missing provenance explicitly instead of treating it as trusted",
+                  "duration": 0.25320000000010623,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "external content provenance baseline"
+                  ],
+                  "fullName": "external content provenance baseline records narrow enforcement for every sink that already rejects on a production path",
+                  "status": "passed",
+                  "title": "records narrow enforcement for every sink that already rejects on a production path",
+                  "duration": 0.7802000000001499,
+                  "failureMessages": [],
+                  "meta": {},
+                  "tags": []
+                }
+              ],
+              "startTime": 1793977738006,
+              "endTime": 1793977738014.7803,
+              "status": "passed",
+              "message": "",
+              "name": "D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/tests/unit/external-content-provenance.test.ts"
+            }
+          ]
+        }
+      },
+      {
+        "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/workspace-external-write-provenance-policy.test.ts src/agents/agent-tools.workspace-boundary.test.ts src/agents/apply-patch-consistency.test.ts src/agents/sessions/tools/write.test.ts src/agents/sessions/tools/edit.test.ts --maxWorkers=1",
+        "kind": "vitest",
+        "exitCode": 1,
+        "report": {
+          "numTotalTestSuites": 19,
+          "numPassedTestSuites": 14,
+          "numFailedTestSuites": 5,
+          "numPendingTestSuites": 0,
+          "numTotalTests": 56,
+          "numPassedTests": 31,
+          "numFailedTests": 25,
+          "numPendingTests": 0,
+          "numTodoTests": 0,
+          "snapshot": {
+            "added": 0,
+            "failure": false,
+            "filesAdded": 0,
+            "filesRemoved": 0,
+            "filesRemovedList": [],
+            "filesUnmatched": 0,
+            "filesUpdated": 0,
+            "matched": 0,
+            "total": 0,
+            "unchecked": 0,
+            "uncheckedKeysByFile": [],
+            "unmatched": 0,
+            "updated": 0,
+            "didUpdate": false
+          },
+          "startTime": 1793977758200,
+          "success": false,
+          "testResults": [
+            {
+              "assertionResults": [
+                {
+                  "ancestorTitles": [
+                    "coding mutation workspace boundary"
+                  ],
+                  "fullName": "coding mutation workspace boundary allows trusted operator write, edit, and apply_patch outside the workspace",
+                  "status": "failed",
+                  "title": "allows trusted operator write, edit, and apply_patch outside the workspace",
+                  "duration": 21.708000000002357,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_34__.wrapToolWithWorkspaceExternalWriteProvenance) is not a function\n    at applyWriteKit (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:918:12)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1098:20\n    at Array.map (<anonymous>)\n    at createOpenClawCodingTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1092:10)\n    at createTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:43:10)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:86:19\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+                  ],
+                  "location": {
+                    "line": 84,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "coding mutation workspace boundary"
+                  ],
+                  "fullName": "coding mutation workspace boundary blocks external, derived, invalid, and missing provenance before write mutates outside the workspace",
+                  "status": "failed",
+                  "title": "blocks external, derived, invalid, and missing provenance before write mutates outside the workspace",
+                  "duration": 3.4631999999983236,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_34__.wrapToolWithWorkspaceExternalWriteProvenance) is not a function\n    at applyWriteKit (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:918:12)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1098:20\n    at Array.map (<anonymous>)\n    at createOpenClawCodingTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1092:10)\n    at createTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:43:10)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:142:23\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+                  ],
+                  "location": {
+                    "line": 110,
+                    "column": 52
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "coding mutation workspace boundary"
+                  ],
+                  "fullName": "coding mutation workspace boundary blocks external, derived, invalid, and missing provenance before edit mutates outside the workspace",
+                  "status": "failed",
+                  "title": "blocks external, derived, invalid, and missing provenance before edit mutates outside the workspace",
+                  "duration": 2.6666999999979453,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_34__.wrapToolWithWorkspaceExternalWriteProvenance) is not a function\n    at applyWriteKit (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:918:12)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1098:20\n    at Array.map (<anonymous>)\n    at createOpenClawCodingTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1092:10)\n    at createTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:43:10)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:142:23\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+                  ],
+                  "location": {
+                    "line": 110,
+                    "column": 52
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "coding mutation workspace boundary"
+                  ],
+                  "fullName": "coding mutation workspace boundary blocks external, derived, invalid, and missing provenance before apply_patch mutates outside the workspace",
+                  "status": "failed",
+                  "title": "blocks external, derived, invalid, and missing provenance before apply_patch mutates outside the workspace",
+                  "duration": 2.249100000000908,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_34__.wrapToolWithWorkspaceExternalWriteProvenance) is not a function\n    at applyWriteKit (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:918:12)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1098:20\n    at Array.map (<anonymous>)\n    at createOpenClawCodingTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1092:10)\n    at createTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:43:10)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:142:23\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+                  ],
+                  "location": {
+                    "line": 110,
+                    "column": 52
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "coding mutation workspace boundary"
+                  ],
+                  "fullName": "coding mutation workspace boundary keeps in-workspace writes usable for external and missing provenance",
+                  "status": "failed",
+                  "title": "keeps in-workspace writes usable for external and missing provenance",
+                  "duration": 2.5169999999998254,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_34__.wrapToolWithWorkspaceExternalWriteProvenance) is not a function\n    at applyWriteKit (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:918:12)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1098:20\n    at Array.map (<anonymous>)\n    at createOpenClawCodingTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1092:10)\n    at createTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:43:10)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:172:21\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+                  ],
+                  "location": {
+                    "line": 161,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "coding mutation workspace boundary"
+                  ],
+                  "fullName": "coding mutation workspace boundary treats a sibling of cwd as in-workspace when workspaceDir is broader",
+                  "status": "failed",
+                  "title": "treats a sibling of cwd as in-workspace when workspaceDir is broader",
+                  "duration": 2.8679000000011,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_34__.wrapToolWithWorkspaceExternalWriteProvenance) is not a function\n    at applyWriteKit (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:918:12)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1098:20\n    at Array.map (<anonymous>)\n    at createOpenClawCodingTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1092:10)\n    at createTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:43:10)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:186:19\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+                  ],
+                  "location": {
+                    "line": 181,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "coding mutation workspace boundary"
+                  ],
+                  "fullName": "coding mutation workspace boundary uses cwd as the fallback workspace when workspaceDir is omitted",
+                  "status": "failed",
+                  "title": "uses cwd as the fallback workspace when workspaceDir is omitted",
+                  "duration": 2.175200000001496,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_34__.wrapToolWithWorkspaceExternalWriteProvenance) is not a function\n    at applyWriteKit (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:918:12)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1098:20\n    at Array.map (<anonymous>)\n    at createOpenClawCodingTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1092:10)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:205:19\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+                  ],
+                  "location": {
+                    "line": 203,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "coding mutation workspace boundary"
+                  ],
+                  "fullName": "coding mutation workspace boundary fails missing provenance closed for an external target",
+                  "status": "failed",
+                  "title": "fails missing provenance closed for an external target",
+                  "duration": 2.0509000000020023,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_34__.wrapToolWithWorkspaceExternalWriteProvenance) is not a function\n    at applyWriteKit (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:918:12)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1098:20\n    at Array.map (<anonymous>)\n    at createOpenClawCodingTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1092:10)\n    at createTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:43:10)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:239:19\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+                  ],
+                  "location": {
+                    "line": 237,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "coding mutation workspace boundary"
+                  ],
+                  "fullName": "coding mutation workspace boundary preserves the existing malformed apply_patch validation error",
+                  "status": "failed",
+                  "title": "preserves the existing malformed apply_patch validation error",
+                  "duration": 2.230599999998958,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_34__.wrapToolWithWorkspaceExternalWriteProvenance) is not a function\n    at applyWriteKit (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:918:12)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1098:20\n    at Array.map (<anonymous>)\n    at createOpenClawCodingTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1092:10)\n    at createTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:43:10)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:251:19\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+                  ],
+                  "location": {
+                    "line": 249,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "coding mutation workspace boundary"
+                  ],
+                  "fullName": "coding mutation workspace boundary denies workspace paths whose existing alias resolves outside the workspace",
+                  "status": "failed",
+                  "title": "denies workspace paths whose existing alias resolves outside the workspace",
+                  "duration": 6.628499999998894,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_34__.wrapToolWithWorkspaceExternalWriteProvenance) is not a function\n    at applyWriteKit (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:918:12)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1098:20\n    at Array.map (<anonymous>)\n    at createOpenClawCodingTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1092:10)\n    at createTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:43:10)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:267:19\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+                  ],
+                  "location": {
+                    "line": 259,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "coding mutation workspace boundary"
+                  ],
+                  "fullName": "coding mutation workspace boundary fails closed for an in-workspace hardlink alias",
+                  "status": "failed",
+                  "title": "fails closed for an in-workspace hardlink alias",
+                  "duration": 4.344099999998434,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_34__.wrapToolWithWorkspaceExternalWriteProvenance) is not a function\n    at applyWriteKit (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:918:12)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1098:20\n    at Array.map (<anonymous>)\n    at createOpenClawCodingTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1092:10)\n    at createTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:43:10)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:289:19\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+                  ],
+                  "location": {
+                    "line": 285,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "coding mutation workspace boundary"
+                  ],
+                  "fullName": "coding mutation workspace boundary keeps the fs workspace-only policy authoritative for every mutation tool",
+                  "status": "failed",
+                  "title": "keeps the fs workspace-only policy authoritative for every mutation tool",
+                  "duration": 3.2289999999993597,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_34__.wrapToolWithWorkspaceExternalWriteProvenance) is not a function\n    at applyWriteKit (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:918:12)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1098:20\n    at Array.map (<anonymous>)\n    at createOpenClawCodingTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1092:10)\n    at createTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:43:10)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:309:19\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+                  ],
+                  "location": {
+                    "line": 307,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "coding mutation workspace boundary"
+                  ],
+                  "fullName": "coding mutation workspace boundary supports an explicit apply_patch-only workspace restriction",
+                  "status": "failed",
+                  "title": "supports an explicit apply_patch-only workspace restriction",
+                  "duration": 2.1446000000032654,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_34__.wrapToolWithWorkspaceExternalWriteProvenance) is not a function\n    at applyWriteKit (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:918:12)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1098:20\n    at Array.map (<anonymous>)\n    at createOpenClawCodingTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1092:10)\n    at createTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:43:10)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:342:19\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+                  ],
+                  "location": {
+                    "line": 340,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "S03 workspace external-write path-escape matrix"
+                  ],
+                  "fullName": "S03 workspace external-write path-escape matrix denies relative-parent-escape for external provenance without modifying the target",
+                  "status": "failed",
+                  "title": "denies relative-parent-escape for external provenance without modifying the target",
+                  "duration": 2.2388000000028114,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_34__.wrapToolWithWorkspaceExternalWriteProvenance) is not a function\n    at applyWriteKit (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:918:12)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1098:20\n    at Array.map (<anonymous>)\n    at createOpenClawCodingTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1092:10)\n    at createTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:43:10)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:383:21\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+                  ],
+                  "location": {
+                    "line": 379,
+                    "column": 22
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "S03 workspace external-write path-escape matrix"
+                  ],
+                  "fullName": "S03 workspace external-write path-escape matrix denies absolute-outside for external provenance without modifying the target",
+                  "status": "failed",
+                  "title": "denies absolute-outside for external provenance without modifying the target",
+                  "duration": 2.036500000001979,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_34__.wrapToolWithWorkspaceExternalWriteProvenance) is not a function\n    at applyWriteKit (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:918:12)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1098:20\n    at Array.map (<anonymous>)\n    at createOpenClawCodingTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1092:10)\n    at createTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:43:10)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:383:21\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+                  ],
+                  "location": {
+                    "line": 379,
+                    "column": 22
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "S03 workspace external-write path-escape matrix"
+                  ],
+                  "fullName": "S03 workspace external-write path-escape matrix denies win32-case-variant for external provenance without modifying the target",
+                  "status": "failed",
+                  "title": "denies win32-case-variant for external provenance without modifying the target",
+                  "duration": 2.050999999999476,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_34__.wrapToolWithWorkspaceExternalWriteProvenance) is not a function\n    at applyWriteKit (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:918:12)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1098:20\n    at Array.map (<anonymous>)\n    at createOpenClawCodingTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1092:10)\n    at createTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:43:10)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:383:21\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+                  ],
+                  "location": {
+                    "line": 379,
+                    "column": 22
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "S03 workspace external-write path-escape matrix"
+                  ],
+                  "fullName": "S03 workspace external-write path-escape matrix keeps a trusted operator external write authoritative (content preserved exactly)",
+                  "status": "failed",
+                  "title": "keeps a trusted operator external write authoritative (content preserved exactly)",
+                  "duration": 1.7714000000014494,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_34__.wrapToolWithWorkspaceExternalWriteProvenance) is not a function\n    at applyWriteKit (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:918:12)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1098:20\n    at Array.map (<anonymous>)\n    at createOpenClawCodingTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.ts:1092:10)\n    at createTools (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:43:10)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts:403:19\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+                  ],
+                  "location": {
+                    "line": 401,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                }
+              ],
+              "startTime": 1793977777309,
+              "endTime": 1793977777375.7715,
+              "status": "failed",
+              "message": "",
+              "name": "D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts"
+            },
+            {
+              "assertionResults": [
+                {
+                  "ancestorTitles": [
+                    "UAS-04 preflight"
+                  ],
+                  "fullName": "UAS-04 preflight touches no files when a later target is missing",
+                  "status": "passed",
+                  "title": "touches no files when a later target is missing",
+                  "duration": 12.045799999999872,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 96,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "UAS-04 preflight"
+                  ],
+                  "fullName": "UAS-04 preflight reports every committed add, update, and delete",
+                  "status": "passed",
+                  "title": "reports every committed add, update, and delete",
+                  "duration": 5.486300000000483,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 108,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "UAS-04 rollback and recovery"
+                  ],
+                  "fullName": "UAS-04 rollback and recovery restores earlier writes when a later write fails",
+                  "status": "passed",
+                  "title": "restores earlier writes when a later write fails",
+                  "duration": 8.835799999997107,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 134,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "UAS-04 rollback and recovery"
+                  ],
+                  "fullName": "UAS-04 rollback and recovery retains journal entries and a recovery reference when rollback fails",
+                  "status": "passed",
+                  "title": "retains journal entries and a recovery reference when rollback fails",
+                  "duration": 76.41049999999814,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 159,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "UAS-04 rollback and recovery"
+                  ],
+                  "fullName": "UAS-04 rollback and recovery restores both sides when a move fails after writing its destination",
+                  "status": "passed",
+                  "title": "restores both sides when a move fails after writing its destination",
+                  "duration": 5.404999999998836,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 188,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "UAS-04 lease and restart semantics"
+                  ],
+                  "fullName": "UAS-04 lease and restart semantics journals exactly once inside the production tool batch lease",
+                  "status": "passed",
+                  "title": "journals exactly once inside the production tool batch lease",
+                  "duration": 7.830400000002555,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 217,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "UAS-04 lease and restart semantics"
+                  ],
+                  "fullName": "UAS-04 lease and restart semantics detects a prepared journal batch after in-memory state is reset",
+                  "status": "passed",
+                  "title": "detects a prepared journal batch after in-memory state is reset",
+                  "duration": 5.164300000000367,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 241,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "UAS-04 lease and restart semantics"
+                  ],
+                  "fullName": "UAS-04 lease and restart semantics serializes overlapping patches before preflight and rejects stale context",
+                  "status": "passed",
+                  "title": "serializes overlapping patches before preflight and rejects stale context",
+                  "duration": 5.90849999999773,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 253,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                }
+              ],
+              "startTime": 1793977777446,
+              "endTime": 1793977777573.9084,
+              "status": "passed",
+              "message": "",
+              "name": "D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/apply-patch-consistency.test.ts"
+            },
+            {
+              "assertionResults": [
+                {
+                  "ancestorTitles": [
+                    "edit tool: successful replacement"
+                  ],
+                  "fullName": "edit tool: successful replacement applies a single unique replacement and returns diff/patch details",
+                  "status": "passed",
+                  "title": "applies a single unique replacement and returns diff/patch details",
+                  "duration": 133.46319999999832,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 43,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "edit tool: successful replacement"
+                  ],
+                  "fullName": "edit tool: successful replacement applies multiple disjoint edits in one call",
+                  "status": "passed",
+                  "title": "applies multiple disjoint edits in one call",
+                  "duration": 4.098699999998644,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 71,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "edit tool: match failures"
+                  ],
+                  "fullName": "edit tool: match failures appends the current file contents as a hint when the text is not found",
+                  "status": "passed",
+                  "title": "appends the current file contents as a hint when the text is not found",
+                  "duration": 6.09939999999915,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 88,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "edit tool: match failures"
+                  ],
+                  "fullName": "edit tool: match failures truncates the mismatch hint at 800 characters",
+                  "status": "passed",
+                  "title": "truncates the mismatch hint at 800 characters",
+                  "duration": 3.4768999999978405,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 102,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "edit tool: match failures"
+                  ],
+                  "fullName": "edit tool: match failures reports ambiguous matches with an occurrence count and NO contents hint",
+                  "status": "passed",
+                  "title": "reports ambiguous matches with an occurrence count and NO contents hint",
+                  "duration": 2.682200000002922,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 112,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "edit tool: match failures"
+                  ],
+                  "fullName": "edit tool: match failures rejects an empty oldText",
+                  "status": "passed",
+                  "title": "rejects an empty oldText",
+                  "duration": 2.692399999999907,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 123,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "edit tool: match failures"
+                  ],
+                  "fullName": "edit tool: match failures rejects an empty edits array before touching the filesystem",
+                  "status": "passed",
+                  "title": "rejects an empty edits array before touching the filesystem",
+                  "duration": 1.385999999998603,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 132,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "edit tool: match failures"
+                  ],
+                  "fullName": "edit tool: match failures reports a missing file with the Node error code only",
+                  "status": "passed",
+                  "title": "reports a missing file with the Node error code only",
+                  "duration": 1.6591000000007625,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 139,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "edit tool: line-ending round trips"
+                  ],
+                  "fullName": "edit tool: line-ending round trips preserves CRLF endings and converts inserted LF newlines to CRLF",
+                  "status": "passed",
+                  "title": "preserves CRLF endings and converts inserted LF newlines to CRLF",
+                  "duration": 3.0240999999987253,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 149,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "edit tool: line-ending round trips"
+                  ],
+                  "fullName": "edit tool: line-ending round trips preserves each existing ending in a mixed-endings file",
+                  "status": "passed",
+                  "title": "preserves each existing ending in a mixed-endings file",
+                  "duration": 3.5750999999982014,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 160,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "edit tool: line-ending round trips"
+                  ],
+                  "fullName": "edit tool: line-ending round trips preserves lone-CR (classic Mac) line endings",
+                  "status": "passed",
+                  "title": "preserves lone-CR (classic Mac) line endings",
+                  "duration": 3.3385999999991327,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 169,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "edit tool: BOM handling"
+                  ],
+                  "fullName": "edit tool: BOM handling matches oldText ignoring the BOM and re-attaches the BOM on write",
+                  "status": "passed",
+                  "title": "matches oldText ignoring the BOM and re-attaches the BOM on write",
+                  "duration": 3.3403999999973166,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 180,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "edit tool: BOM handling"
+                  ],
+                  "fullName": "edit tool: BOM handling preserves UTF-16LE encoding and BOM while editing decoded text",
+                  "status": "passed",
+                  "title": "preserves UTF-16LE encoding and BOM while editing decoded text",
+                  "duration": 2.8247000000010303,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 191,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "edit tool: fuzzy matching boundaries"
+                  ],
+                  "fullName": "edit tool: fuzzy matching boundaries keeps untouched punctuation and trailing whitespace during a fuzzy edit",
+                  "status": "passed",
+                  "title": "keeps untouched punctuation and trailing whitespace during a fuzzy edit",
+                  "duration": 3.664099999998143,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 208,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "edit tool: prepareArguments legacy shapes"
+                  ],
+                  "fullName": "edit tool: prepareArguments legacy shapes converts top-level oldText/newText into an edits array",
+                  "status": "passed",
+                  "title": "converts top-level oldText/newText into an edits array",
+                  "duration": 0.8535999999985506,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 224,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "edit tool: prepareArguments legacy shapes"
+                  ],
+                  "fullName": "edit tool: prepareArguments legacy shapes parses edits sent as a JSON string",
+                  "status": "passed",
+                  "title": "parses edits sent as a JSON string",
+                  "duration": 0.6782000000021071,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 234,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                }
+              ],
+              "startTime": 1793977779255,
+              "endTime": 1793977779432.6782,
+              "status": "passed",
+              "message": "",
+              "name": "D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/sessions/tools/edit.test.ts"
+            },
+            {
+              "assertionResults": [
+                {
+                  "ancestorTitles": [
+                    "write tool: create and overwrite"
+                  ],
+                  "fullName": "write tool: create and overwrite creates a new file and reports the byte count in the success message",
+                  "status": "passed",
+                  "title": "creates a new file and reports the byte count in the success message",
+                  "duration": 3.4993000000031316,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 31,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "write tool: create and overwrite"
+                  ],
+                  "fullName": "write tool: create and overwrite overwrites an existing file",
+                  "status": "passed",
+                  "title": "overwrites an existing file",
+                  "duration": 3.099900000001071,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 42,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "write tool: create and overwrite"
+                  ],
+                  "fullName": "write tool: create and overwrite creates missing parent directories automatically",
+                  "status": "passed",
+                  "title": "creates missing parent directories automatically",
+                  "duration": 4.314100000003236,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 49,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "write tool: create and overwrite"
+                  ],
+                  "fullName": "write tool: create and overwrite writes empty content",
+                  "status": "passed",
+                  "title": "writes empty content",
+                  "duration": 2.3676999999988766,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 55,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "write tool: line endings and byte counting"
+                  ],
+                  "fullName": "write tool: line endings and byte counting writes CRLF content verbatim without normalizing line endings",
+                  "status": "passed",
+                  "title": "writes CRLF content verbatim without normalizing line endings",
+                  "duration": 3.3338000000003376,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 63,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "write tool: line endings and byte counting"
+                  ],
+                  "fullName": "write tool: line endings and byte counting reports the actual UTF-8 byte length in the success message",
+                  "status": "passed",
+                  "title": "reports the actual UTF-8 byte length in the success message",
+                  "duration": 2.282099999996717,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 76,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "write tool: line endings and byte counting"
+                  ],
+                  "fullName": "write tool: line endings and byte counting reports an astral emoji using its UTF-8 byte length",
+                  "status": "passed",
+                  "title": "reports an astral emoji using its UTF-8 byte length",
+                  "duration": 1.870599999998376,
+                  "failureMessages": [],
+                  "location": {
+                    "line": 86,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                }
+              ],
+              "startTime": 1793977779485,
+              "endTime": 1793977779505.8706,
+              "status": "passed",
+              "message": "",
+              "name": "D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/sessions/tools/write.test.ts"
+            },
+            {
+              "assertionResults": [
+                {
+                  "ancestorTitles": [
+                    "workspace external-write provenance policy"
+                  ],
+                  "fullName": "workspace external-write provenance policy denies an external target for untrusted provenance",
+                  "status": "failed",
+                  "title": "denies an external target for untrusted provenance",
+                  "duration": 1.5393999999996595,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_3__.resolveWorkspaceExternalWritePolicy) is not a function\n    at evaluate (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts:28:10)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts:45:20\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2025:60\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+                  ],
+                  "location": {
+                    "line": 44,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "workspace external-write provenance policy"
+                  ],
+                  "fullName": "workspace external-write provenance policy denies an external target for derived-untrusted provenance",
+                  "status": "failed",
+                  "title": "denies an external target for derived-untrusted provenance",
+                  "duration": 0.23850000000129512,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_3__.resolveWorkspaceExternalWritePolicy) is not a function\n    at evaluate (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts:28:10)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts:45:20\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2025:60\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+                  ],
+                  "location": {
+                    "line": 44,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "workspace external-write provenance policy"
+                  ],
+                  "fullName": "workspace external-write provenance policy denies an external target for missing provenance",
+                  "status": "failed",
+                  "title": "denies an external target for missing provenance",
+                  "duration": 0.21969999999964784,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_3__.resolveWorkspaceExternalWritePolicy) is not a function\n    at evaluate (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts:28:10)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts:45:20\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2025:60\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+                  ],
+                  "location": {
+                    "line": 44,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "workspace external-write provenance policy"
+                  ],
+                  "fullName": "workspace external-write provenance policy denies an external target for invalid provenance",
+                  "status": "failed",
+                  "title": "denies an external target for invalid provenance",
+                  "duration": 0.20470000000022992,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_3__.resolveWorkspaceExternalWritePolicy) is not a function\n    at evaluate (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts:28:10)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts:45:20\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2025:60\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+                  ],
+                  "location": {
+                    "line": 44,
+                    "column": 4
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "workspace external-write provenance policy"
+                  ],
+                  "fullName": "workspace external-write provenance policy keeps in-workspace coding available for external and unknown provenance",
+                  "status": "failed",
+                  "title": "keeps in-workspace coding available for external and unknown provenance",
+                  "duration": 0.2114000000001397,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_3__.resolveWorkspaceExternalWritePolicy) is not a function\n    at evaluate (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts:28:10)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts:56:12\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+                  ],
+                  "location": {
+                    "line": 55,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "workspace external-write provenance policy"
+                  ],
+                  "fullName": "workspace external-write provenance policy keeps trusted system and direct operator external targets unchanged",
+                  "status": "failed",
+                  "title": "keeps trusted system and direct operator external targets unchanged",
+                  "duration": 0.2592000000004191,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_3__.resolveWorkspaceExternalWritePolicy) is not a function\n    at evaluate (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts:28:10)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts:69:9\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+                  ],
+                  "location": {
+                    "line": 66,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "workspace external-write provenance policy"
+                  ],
+                  "fullName": "workspace external-write provenance policy fails closed when external or unknown input has no determinable target",
+                  "status": "failed",
+                  "title": "fails closed when external or unknown input has no determinable target",
+                  "duration": 0.2232000000003609,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_3__.resolveWorkspaceExternalWritePolicy) is not a function\n    at evaluate (D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts:28:10)\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts:83:12\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+                  ],
+                  "location": {
+                    "line": 82,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                },
+                {
+                  "ancestorTitles": [
+                    "workspace external-write provenance policy"
+                  ],
+                  "fullName": "workspace external-write provenance policy denies a mixed patch target set when any destination is external",
+                  "status": "failed",
+                  "title": "denies a mixed patch target set when any destination is external",
+                  "duration": 0.19629999999961,
+                  "failureMessages": [
+                    "TypeError: (0 , __vite_ssr_import_3__.resolveWorkspaceExternalWritePolicy) is not a function\n    at D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts:109:7\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///D:/tmp/rsi-completion-20261106/openclaw_runtime/node_modules/.pnpm/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:2955:64"
+                  ],
+                  "location": {
+                    "line": 107,
+                    "column": 3
+                  },
+                  "meta": {},
+                  "tags": []
+                }
+              ],
+              "startTime": 1793977758488,
+              "endTime": 1793977758491.2593,
+              "status": "failed",
+              "message": "",
+              "name": "D:/tmp/rsi-completion-control-20261106/attempts-v3/tf-0278-s03-2-sekb-off/workspace/openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

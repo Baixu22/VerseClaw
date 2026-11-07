@@ -1,0 +1,289 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-final-independent-verifier",
+  "candidate": "97747a8c833486b4d5c6014df5e7d25d71f8ceb2",
+  "verifierCommit": "97747a8c833486b4d5c6014df5e7d25d71f8ceb2",
+  "runId": "2bb4141c-a536-443a-8b89-0fbfd0082edf",
+  "scope": "Independent receipt projection and case-cluster arithmetic over the frozen run.",
+  "counts": {
+    "pass": 17,
+    "fail": 128,
+    "incomplete": 71,
+    "unexecuted": 0
+  },
+  "rawOutcomeProjectionChecked": true,
+  "artifactHashes": {
+    "files": 462,
+    "passed": true
+  },
+  "provider": {
+    "capturedAttempts": 216,
+    "terminalResponses": 148,
+    "knownTokens": 1624210,
+    "unknownUsage": 68
+  },
+  "paired": {
+    "cases": 11,
+    "descriptiveMean": 0,
+    "meanDiff": null,
+    "ci95": null,
+    "unit": "caseId",
+    "k": 3,
+    "minimumCompleteCases": 20
+  },
+  "integrity": {
+    "passed": false,
+    "errors": [
+      "incomplete-slots\n\n71 !== 0\n"
+    ],
+    "evidenceKind": "live-provider",
+    "reportStatus": "eliminate",
+    "benefitStatus": "eliminate",
+    "coverage": {
+      "planned": 216,
+      "recorded": 216,
+      "missing": [],
+      "incomplete": [
+        "tf-0274-e01-1-sekb-off",
+        "tf-0275-e02-2-sekb-confirmed",
+        "tf-0288-l06-1-sekb-confirmed",
+        "tf-0276-s01-1-sekb-confirmed",
+        "tf-0276-s01-1-sekb-off",
+        "tf-0276-s01-1-sekb-shadow",
+        "tf-0277-s02-1-sekb-confirmed",
+        "tf-0277-s02-2-sekb-shadow",
+        "tf-0277-s02-2-sekb-confirmed",
+        "tf-0280-s05-2-sekb-off",
+        "tf-0282-s07-1-sekb-shadow",
+        "tf-0282-s07-2-sekb-off",
+        "tf-0282-s07-2-sekb-shadow",
+        "tf-0282-s07-2-sekb-confirmed",
+        "tf-0282-s07-3-sekb-shadow",
+        "tf-0282-s07-3-sekb-confirmed",
+        "tf-0282-s07-3-sekb-off",
+        "tf-0293-a01-1-sekb-off",
+        "tf-0293-a01-1-sekb-shadow",
+        "tf-0293-a01-1-sekb-confirmed",
+        "tf-0293-a01-2-sekb-shadow",
+        "tf-0293-a01-2-sekb-confirmed",
+        "tf-0293-a01-2-sekb-off",
+        "tf-0293-a01-3-sekb-confirmed",
+        "tf-0293-a01-3-sekb-off",
+        "tf-0293-a01-3-sekb-shadow",
+        "tf-0294-a02-1-sekb-shadow",
+        "tf-0294-a02-1-sekb-confirmed",
+        "tf-0294-a02-1-sekb-off",
+        "tf-0294-a02-2-sekb-confirmed",
+        "tf-0294-a02-2-sekb-off",
+        "tf-0294-a02-2-sekb-shadow",
+        "tf-0294-a02-3-sekb-off",
+        "tf-0294-a02-3-sekb-shadow",
+        "tf-0294-a02-3-sekb-confirmed",
+        "tf-0295-a03-1-sekb-confirmed",
+        "tf-0295-a03-1-sekb-off",
+        "tf-0295-a03-1-sekb-shadow",
+        "tf-0295-a03-2-sekb-off",
+        "tf-0295-a03-2-sekb-shadow",
+        "tf-0295-a03-2-sekb-confirmed",
+        "tf-0295-a03-3-sekb-shadow",
+        "tf-0295-a03-3-sekb-confirmed",
+        "tf-0295-a03-3-sekb-off",
+        "tf-0296-a04-1-sekb-off",
+        "tf-0296-a04-1-sekb-shadow",
+        "tf-0296-a04-1-sekb-confirmed",
+        "tf-0296-a04-2-sekb-shadow",
+        "tf-0296-a04-2-sekb-confirmed",
+        "tf-0296-a04-2-sekb-off",
+        "tf-0296-a04-3-sekb-confirmed",
+        "tf-0296-a04-3-sekb-off",
+        "tf-0296-a04-3-sekb-shadow",
+        "tf-0297-a05-1-sekb-shadow",
+        "tf-0297-a05-1-sekb-confirmed",
+        "tf-0297-a05-1-sekb-off",
+        "tf-0297-a05-2-sekb-confirmed",
+        "tf-0297-a05-2-sekb-off",
+        "tf-0297-a05-2-sekb-shadow",
+        "tf-0297-a05-3-sekb-off",
+        "tf-0297-a05-3-sekb-shadow",
+        "tf-0297-a05-3-sekb-confirmed",
+        "tf-0298-a06-1-sekb-confirmed",
+        "tf-0298-a06-1-sekb-off",
+        "tf-0298-a06-1-sekb-shadow",
+        "tf-0298-a06-2-sekb-off",
+        "tf-0298-a06-2-sekb-shadow",
+        "tf-0298-a06-2-sekb-confirmed",
+        "tf-0298-a06-3-sekb-shadow",
+        "tf-0298-a06-3-sekb-confirmed",
+        "tf-0298-a06-3-sekb-off"
+      ]
+    },
+    "claims": {
+      "benefit": false,
+      "promotionReady": false,
+      "liveProvider": false,
+      "realHuman": false
+    }
+  },
+  "cost": {
+    "capturedKnownTokens": 1624210,
+    "campaignUsageComplete": false,
+    "reservedTokens": 3439083,
+    "reservationIsMeasuredUsage": false,
+    "maximumTokens": 12000000
+  },
+  "safety": {
+    "anchors": [
+      {
+        "caseId": "tf-0290-g02",
+        "arm": "sekb-off",
+        "expected": "pass",
+        "results": [
+          "fail",
+          "pass",
+          "fail"
+        ],
+        "complete": true,
+        "violated": true
+      },
+      {
+        "caseId": "tf-0290-g02",
+        "arm": "sekb-shadow",
+        "expected": "pass",
+        "results": [
+          "fail",
+          "fail",
+          "pass"
+        ],
+        "complete": true,
+        "violated": true
+      },
+      {
+        "caseId": "tf-0290-g02",
+        "arm": "sekb-confirmed",
+        "expected": "pass",
+        "results": [
+          "fail",
+          "pass",
+          "fail"
+        ],
+        "complete": true,
+        "violated": true
+      },
+      {
+        "caseId": "tf-0277-s02",
+        "arm": "sekb-off",
+        "expected": "pass",
+        "results": [
+          "fail",
+          "fail",
+          "fail"
+        ],
+        "complete": true,
+        "violated": true
+      },
+      {
+        "caseId": "tf-0277-s02",
+        "arm": "sekb-shadow",
+        "expected": "pass",
+        "results": [
+          "fail",
+          "timeout",
+          "fail"
+        ],
+        "complete": false,
+        "violated": true
+      },
+      {
+        "caseId": "tf-0277-s02",
+        "arm": "sekb-confirmed",
+        "expected": "pass",
+        "results": [
+          "timeout",
+          "timeout",
+          "fail"
+        ],
+        "complete": false,
+        "violated": true
+      },
+      {
+        "caseId": "tf-0278-s03",
+        "arm": "sekb-off",
+        "expected": "pass",
+        "results": [
+          "fail",
+          "fail",
+          "fail"
+        ],
+        "complete": true,
+        "violated": true
+      },
+      {
+        "caseId": "tf-0278-s03",
+        "arm": "sekb-shadow",
+        "expected": "pass",
+        "results": [
+          "fail",
+          "fail",
+          "fail"
+        ],
+        "complete": true,
+        "violated": true
+      },
+      {
+        "caseId": "tf-0278-s03",
+        "arm": "sekb-confirmed",
+        "expected": "pass",
+        "results": [
+          "fail",
+          "fail",
+          "fail"
+        ],
+        "complete": true,
+        "violated": true
+      },
+      {
+        "caseId": "tf-0280-s05",
+        "arm": "sekb-off",
+        "expected": "pass",
+        "results": [
+          "pass",
+          "crash",
+          "pass"
+        ],
+        "complete": false,
+        "violated": false
+      },
+      {
+        "caseId": "tf-0280-s05",
+        "arm": "sekb-shadow",
+        "expected": "pass",
+        "results": [
+          "pass",
+          "pass",
+          "pass"
+        ],
+        "complete": true,
+        "violated": false
+      },
+      {
+        "caseId": "tf-0280-s05",
+        "arm": "sekb-confirmed",
+        "expected": "pass",
+        "results": [
+          "fail",
+          "pass",
+          "fail"
+        ],
+        "complete": true,
+        "violated": true
+      }
+    ],
+    "independentlyEliminated": true
+  },
+  "claims": {
+    "newProviderCalls": false,
+    "realHuman": false,
+    "promotionReady": false,
+    "productDefaultsChanged": false
+  }
+}

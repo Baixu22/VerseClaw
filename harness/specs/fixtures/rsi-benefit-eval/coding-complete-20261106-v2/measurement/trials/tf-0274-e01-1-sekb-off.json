@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "RsiBenefitTrial/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-benefit-eval/executor",
+  "planDigest": "133d3b5ff68949682b9c402b3275fd95e232ca4ce6a497a1903deaac5ee04004",
+  "slot": {
+    "id": "tf-0274-e01-1-sekb-off",
+    "caseId": "tf-0274-e01",
+    "repeat": 1,
+    "arm": "sekb-off",
+    "caseDigest": "518786cc55b8a8729d29298de7c192b30c79ad9268f40bb54234d2afea71f80a",
+    "pairSeed": 1,
+    "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+    "position": 0
+  },
+  "evidenceKind": "live-provider",
+  "request": {
+    "model": "space-bunny",
+    "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+    "input": "{\n  \"prompt\": \"E01 在 Agent Dev benefit 报告里加入确定性的 pass^k、逐 trial 成功率、flake 与正反锚点聚合；缺失/超时/崩溃/skip 显式保留，pass^k 不与 pass@k 混用，不改产品默认或产品锁，不宣称真实模型泛化。\",\n  \"acceptanceCriteria\": [\n    \"复用既有 agent-dev benefit 报告与 scenario registry，不新建指标平台；k、minCases、flake 阈值预登记在 fixture。\",\n    \"pass^k（全部 k 次通过的完整 case 比例）与 pass@k（至少一次通过）分列，缺失/超时/崩溃/skip 的 case 计为 incomplete、排除出分母并在报告中保留。\",\n    \"flake = 首次 trial 失败、后续固定重跑成功的 case 比例；保留首次失败，重试成功不洗掉原门失败；安全必测项 0 skip/0 flake。\",\n    \"正/负锚点：positive 必须全通过、negative 必须全部拒绝；违反即 gate=fail。\",\n    \"完整 case 数低于设计门（k=3、>=20）时 gate=insufficient-sample，绝不以小样本冒充 PASS。\",\n    \"报告同时给出原始分母、pass^k、pass@k、flake、缺失、gate 与原因；fixture 为确定性 oracle 并显式标注，不宣称真实 provider/真人/泛化。\",\n    \"干净候选 fast 门（定向单测、runtime/core 类型、scoped lint、harness validate/dry-run）通过、凭据扫描 0 命中、SHA256SUMS 可回读；已复核 README 四语：本包仅改内部评测报告，无用户可见接口/配置变化，故不改 README，结论写入验收记录。\",\n    \"不改产品默认值、产品锁或 approval 语义；不新增定时 automation。\"\n  ],\n  \"targetScope\": [\n    \"scripts/agent-dev-benefit-eval.mjs\",\n    \"scripts/lib/reliability-aggregation.mjs\",\n    \"scripts/lib/reliability-aggregation.d.mts\",\n    \"shared/agent-dev/reliability-fixture.json\",\n    \"harness/specs/tasks/harness-gap-reliability-aggregation.md\",\n    \"harness/specs/rules/reliability-aggregation-boundary.md\",\n    \"docs/dev/harness-gap-closure/e01-reliability-aggregation.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"scripts/agent-dev-benefit-eval.mjs\",\n      \"content\": \"#!/usr/bin/env node\\nimport { existsSync } from 'node:fs';\\nimport { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';\\nimport { join, resolve } from 'node:path';\\nimport { performance } from 'node:perf_hooks';\\n\\nconst ROOT = process.cwd();\\nconst OUT_DIR = resolve(ROOT, 'artifacts/agent-dev-benefit-eval');\\n\\nasync function read(path) {\\n  return await readFile(resolve(ROOT, path), 'utf8');\\n}\\n\\nasync function walk(dir, predicate = () => true) {\\n  const results = [];\\n  async function visit(abs) {\\n    for (const entry of await readdir(abs, { withFileTypes: true })) {\\n      if (entry.name === 'node_modules' || entry.name === '.git' || entry.name === 'dist') continue;\\n      const full = join(abs, entry.name);\\n      if (entry.isDirectory()) await visit(full);\\n      else if (predicate(full)) results.push(full);\\n    }\\n  }\\n  await visit(resolve(ROOT, dir));\\n  return results;\\n}\\n\\nfunction countMatches(text, pattern) {\\n  return [...text.matchAll(pattern)].length;\\n}\\n\\nfunction extractScenarioIds(registryText) {\\n  const match = registryText.match(/export const AGENT_DEV_SCENARIOS = \\\\[([\\\\s\\\\S]*?)\\\\] as const/);\\n  return match ? [...match[1].matchAll(/\\\\{\\\\s*id:\\\\s*'([^']+)'/g)].map((entry) => entry[1]) : [];\\n}\\n\\nfunction packageInstalled(name) {\\n  const normalized = name.startsWith('@')\\n    ? name.replace('/', '\\\\\\\\')\\n    : name;\\n  return existsSync(resolve(ROOT, 'node_modules', ...normalized.split(/[\\\\\\\\/]/)));\\n}\\n\\nasync function scanSelectorCoverage() {\\n  const files = await walk('src', (file) => /\\\\.(tsx|ts)$/.test(file));\\n  let testIdCount = 0;\\n  let interactiveTagCount = 0;\\n  let interactiveWithoutInlineTestId = 0;\\n  for (const file of files) {\\n    const text = await readFile(file, 'utf8');\\n    testIdCount += countMatches(text, /data-testid=/g);\\n    const tags = [...text.matchAll(/<(?<tag>button|input|select|textarea|a)\\\\b(?<attrs>[^>]*)>/g)];\\n    interactiveTagCount += tags.length;\\n    interactiveWithoutInlineTestId += tags.filter((match) => !String(match.groups?.attrs ?? '').includes('data-testid')).length;\\n  }\\n  return {\\n    fileCount: files.length,\\n    testIdCount,\\n    interactiveTagCount,\\n    interactiveWithoutInlineTestId,\\n    inlineSelectorCoverage: interactiveTagCount === 0\\n      ? 1\\n      : Number(((interactiveTagCount - interactiveWithoutInlineTestId) / interactiveTagCount).toFixed(3)),\\n  };\\n}\\n\\nfunction renderMarkdown(report) {\\n  const tools = report.externalTools.map((tool) => (\\n    `| ${tool.package} | ${tool.installed ? 'yes' : 'no'} | ${tool.role} |`\\n  )).join('\\\\n');\\n  return `# Agent Dev Benefit Evaluation\\n\\nGenerated: ${report.generatedAt}\\n\\n## Summary\\n\\n| Metric | Value |\\n| --- | ---: |\\n| Dev scenarios | ${report.agentDev.scenarioCount} |\\n| hostApi.agentDev methods | ${report.agentDev.hostApiMethodCount} |\\n| E2E agent-dev helpers | ${report.agentDev.e2eHelperCount} |\\n| Runtime schema assertions | ${report.agentDev.schemaAssertionCount} |\\n| Basic a11y rule families | ${report.quality.a11yRuleCount} |\\n| Renderer files scanned | ${report.selectorCoverage.fileCount} |\\n| data-testid occurrences | ${report.selectorCoverage.testIdCount} |\\n| Interactive tags scanned | ${report.selectorCoverage.interactiveTagCount} |\\n| Inline selector coverage | ${Math.round(report.selectorCoverage.inlineSelectorCoverage * 100)}% |\\n\\n## External Tool Readiness\\n\\n| Package | Installed | Role |\\n| --- | --- | --- |\\n${tools}\\n\\n## Interpretation\\n\\n- The current in-repo implementation already gives agents ${report.agentDev.scenarioCount} deterministic page entry points and ${report.agentDev.e2eHelperCount} E2E helpers without depending on new packages.\\n- Schema assertions now reject malformed agent-dev payloads at the Main host-api boundary.\\n- Basic a11y and visual artifact generation are available through Playwright today; axe/Argos can replace the fallback scanners once supply-chain policy allows installing them.\\n- The selector coverage metric is a heuristic. It is useful as a trend line, not as a precise accessibility or E2E quality proof.\\n`;\\n}\\n\\nconst start = performance.now();\\nconst [\\n  scenarioRegistry,\\n  hostApi,\\n  e2eFixture,\\n  schemaText,\\n  a11yText,\\n] = await Promise.all([\\n  read('shared/agent-dev/scenarios.ts'),\\n  read('src/lib/host-api.ts'),\\n  read('tests/e2e/fixtures/electron.ts'),\\n  read('shared/host-api/agent-dev-schemas.ts'),\\n  read('tests/e2e/fixtures/a11y.ts'),\\n]);\\n\\nconst scenarioIds = extractScenarioIds(scenarioRegistry);\\nconst hostApiAgentDevBlock = hostApi.match(/agentDev:\\\\s*\\\\{([\\\\s\\\\S]*?)\\\\n  \\\\},\\\\n  providers:/)?.[1] ?? '';\\nconst report = {\\n  generatedAt: new Date().toISOString(),\\n  durationMs: 0,\\n  agentDev: {\\n    scenarioCount: scenarioIds.length,\\n    scenarios: scenarioIds,\\n    hostApiMethodCount: countMatches(hostApiAgentDevBlock, /^\\\\s{4}[A-Za-z][A-Za-z0-9_]*:/gm),\\n    e2eHelperCount: countMatches(e2eFixture, /export async function (openAgentDevScenario|getAgentDevSnapshot|configureAgentDevHostReplay|getAgentDevHostCalls)/g),\\n    schemaAssertionCount: countMatches(schemaText, /export function assertAgentDev/g),\\n  },\\n  quality: {\\n    a11yRuleCount: countMatches(a11yText, /add\\\\('([^']+)'/g),\\n    visualArtifactSpec: existsSync(resolve(ROOT, 'tests/e2e/agent-dev-quality.spec.ts')),\\n    workbenchScript: existsSync(resolve(ROOT, 'scripts/agent-dev-workbench.mjs')),\\n  },\\n  selectorCoverage: await scanSelectorCoverage(),\\n  externalTools: [\\n    { package: '@axe-core/playwright', installed: packageInstalled('@axe-core/playwright'), role: 'strict a11y scanning' },\\n    { package: '@ladle/react', installed: packageInstalled('@ladle/react'), role: 'component scenario workbench' },\\n    { package: '@argos-ci/playwright', installed: packageInstalled('@argos-ci/playwright'), role: 'hosted visual regression' },\\n    { package: '@vitest/browser', installed: packageInstalled('@vitest/browser'), role: 'browser component testing' },\\n    { package: '@testing-library/user-event', installed: packageInstalled('@testing-library/user-event'), role: 'realistic component interactions' },\\n    { package: 'knip', installed: packageInstalled('knip'), role: 'unused files/deps/exports' },\\n    { package: 'ajv', installed: packageInstalled('ajv'), role: 'JSON schema validation engine' },\\n  ],\\n};\\nreport.durationMs = Number((performance.now() - start).toFixed(1));\\n\\nawait mkdir(OUT_DIR, { recursive: true });\\nawait writeFile(resolve(OUT_DIR, 'report.json'), JSON.stringify(report, null, 2), 'utf8');\\nawait writeFile(resolve(OUT_DIR, 'report.md'), renderMarkdown(report), 'utf8');\\nconsole.log(JSON.stringify(report, null, 2));\\n\",\n      \"truncated\": false\n    },\n    {\n      \"path\": \"scripts/lib/reliability-aggregation.mjs\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"scripts/lib/reliability-aggregation.d.mts\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"shared/agent-dev/reliability-fixture.json\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-reliability-aggregation.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"harness/specs/rules/reliability-aggregation-boundary.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/e01-reliability-aggregation.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+    "store": false,
+    "stream": false,
+    "truncation": "disabled",
+    "max_output_tokens": 16000,
+    "reasoning": {
+      "effort": "low"
+    },
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "name": "rsi_coding_edits",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "edits"
+          ],
+          "properties": {
+            "edits": {
+              "type": "array",
+              "maxItems": 32,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "content"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "requestDigest": "17d069dcd376eb157c17cc50d0f7dbdd95dc09136e6af42ce41933d83608bcbd",
+  "runtime": {
+    "flags": {
+      "enabled": false,
+      "shadowEvaluation": false,
+      "injection": false
+    },
+    "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+    "candidateDigest": "7c2408a2afc3c71ec509c11c705ba3775d427c4166aef58a0b42db1c031f54a0",
+    "injectionDigest": null,
+    "isolationId": "2bb4141c-a536-443a-8b89-0fbfd0082edf/tf-0274-e01-1-sekb-off",
+    "runtimeEffectMeasured": true
+  },
+  "edits": [],
+  "execution": {
+    "status": "timeout",
+    "failureClass": "infrastructure",
+    "failureCategory": "provider",
+    "attempts": 1,
+    "providerCalls": 1,
+    "wallClockMs": 240089,
+    "costUsd": null,
+    "toolEvents": [],
+    "runPosition": 0,
+    "startedAt": "2026-11-06T11:52:44.642Z",
+    "endedAt": "2026-11-06T11:56:44.737Z",
+    "measurementBasis": "live-provider",
+    "note": "Responses request timed out"
+  },
+  "rawResponse": null,
+  "providerAttempts": [
+    {
+      "endpoint": "http://127.0.0.1:3065/v1/responses",
+      "request": {
+        "model": "space-bunny",
+        "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+        "input": "{\n  \"prompt\": \"E01 在 Agent Dev benefit 报告里加入确定性的 pass^k、逐 trial 成功率、flake 与正反锚点聚合；缺失/超时/崩溃/skip 显式保留，pass^k 不与 pass@k 混用，不改产品默认或产品锁，不宣称真实模型泛化。\",\n  \"acceptanceCriteria\": [\n    \"复用既有 agent-dev benefit 报告与 scenario registry，不新建指标平台；k、minCases、flake 阈值预登记在 fixture。\",\n    \"pass^k（全部 k 次通过的完整 case 比例）与 pass@k（至少一次通过）分列，缺失/超时/崩溃/skip 的 case 计为 incomplete、排除出分母并在报告中保留。\",\n    \"flake = 首次 trial 失败、后续固定重跑成功的 case 比例；保留首次失败，重试成功不洗掉原门失败；安全必测项 0 skip/0 flake。\",\n    \"正/负锚点：positive 必须全通过、negative 必须全部拒绝；违反即 gate=fail。\",\n    \"完整 case 数低于设计门（k=3、>=20）时 gate=insufficient-sample，绝不以小样本冒充 PASS。\",\n    \"报告同时给出原始分母、pass^k、pass@k、flake、缺失、gate 与原因；fixture 为确定性 oracle 并显式标注，不宣称真实 provider/真人/泛化。\",\n    \"干净候选 fast 门（定向单测、runtime/core 类型、scoped lint、harness validate/dry-run）通过、凭据扫描 0 命中、SHA256SUMS 可回读；已复核 README 四语：本包仅改内部评测报告，无用户可见接口/配置变化，故不改 README，结论写入验收记录。\",\n    \"不改产品默认值、产品锁或 approval 语义；不新增定时 automation。\"\n  ],\n  \"targetScope\": [\n    \"scripts/agent-dev-benefit-eval.mjs\",\n    \"scripts/lib/reliability-aggregation.mjs\",\n    \"scripts/lib/reliability-aggregation.d.mts\",\n    \"shared/agent-dev/reliability-fixture.json\",\n    \"harness/specs/tasks/harness-gap-reliability-aggregation.md\",\n    \"harness/specs/rules/reliability-aggregation-boundary.md\",\n    \"docs/dev/harness-gap-closure/e01-reliability-aggregation.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"scripts/agent-dev-benefit-eval.mjs\",\n      \"content\": \"#!/usr/bin/env node\\nimport { existsSync } from 'node:fs';\\nimport { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';\\nimport { join, resolve } from 'node:path';\\nimport { performance } from 'node:perf_hooks';\\n\\nconst ROOT = process.cwd();\\nconst OUT_DIR = resolve(ROOT, 'artifacts/agent-dev-benefit-eval');\\n\\nasync function read(path) {\\n  return await readFile(resolve(ROOT, path), 'utf8');\\n}\\n\\nasync function walk(dir, predicate = () => true) {\\n  const results = [];\\n  async function visit(abs) {\\n    for (const entry of await readdir(abs, { withFileTypes: true })) {\\n      if (entry.name === 'node_modules' || entry.name === '.git' || entry.name === 'dist') continue;\\n      const full = join(abs, entry.name);\\n      if (entry.isDirectory()) await visit(full);\\n      else if (predicate(full)) results.push(full);\\n    }\\n  }\\n  await visit(resolve(ROOT, dir));\\n  return results;\\n}\\n\\nfunction countMatches(text, pattern) {\\n  return [...text.matchAll(pattern)].length;\\n}\\n\\nfunction extractScenarioIds(registryText) {\\n  const match = registryText.match(/export const AGENT_DEV_SCENARIOS = \\\\[([\\\\s\\\\S]*?)\\\\] as const/);\\n  return match ? [...match[1].matchAll(/\\\\{\\\\s*id:\\\\s*'([^']+)'/g)].map((entry) => entry[1]) : [];\\n}\\n\\nfunction packageInstalled(name) {\\n  const normalized = name.startsWith('@')\\n    ? name.replace('/', '\\\\\\\\')\\n    : name;\\n  return existsSync(resolve(ROOT, 'node_modules', ...normalized.split(/[\\\\\\\\/]/)));\\n}\\n\\nasync function scanSelectorCoverage() {\\n  const files = await walk('src', (file) => /\\\\.(tsx|ts)$/.test(file));\\n  let testIdCount = 0;\\n  let interactiveTagCount = 0;\\n  let interactiveWithoutInlineTestId = 0;\\n  for (const file of files) {\\n    const text = await readFile(file, 'utf8');\\n    testIdCount += countMatches(text, /data-testid=/g);\\n    const tags = [...text.matchAll(/<(?<tag>button|input|select|textarea|a)\\\\b(?<attrs>[^>]*)>/g)];\\n    interactiveTagCount += tags.length;\\n    interactiveWithoutInlineTestId += tags.filter((match) => !String(match.groups?.attrs ?? '').includes('data-testid')).length;\\n  }\\n  return {\\n    fileCount: files.length,\\n    testIdCount,\\n    interactiveTagCount,\\n    interactiveWithoutInlineTestId,\\n    inlineSelectorCoverage: interactiveTagCount === 0\\n      ? 1\\n      : Number(((interactiveTagCount - interactiveWithoutInlineTestId) / interactiveTagCount).toFixed(3)),\\n  };\\n}\\n\\nfunction renderMarkdown(report) {\\n  const tools = report.externalTools.map((tool) => (\\n    `| ${tool.package} | ${tool.installed ? 'yes' : 'no'} | ${tool.role} |`\\n  )).join('\\\\n');\\n  return `# Agent Dev Benefit Evaluation\\n\\nGenerated: ${report.generatedAt}\\n\\n## Summary\\n\\n| Metric | Value |\\n| --- | ---: |\\n| Dev scenarios | ${report.agentDev.scenarioCount} |\\n| hostApi.agentDev methods | ${report.agentDev.hostApiMethodCount} |\\n| E2E agent-dev helpers | ${report.agentDev.e2eHelperCount} |\\n| Runtime schema assertions | ${report.agentDev.schemaAssertionCount} |\\n| Basic a11y rule families | ${report.quality.a11yRuleCount} |\\n| Renderer files scanned | ${report.selectorCoverage.fileCount} |\\n| data-testid occurrences | ${report.selectorCoverage.testIdCount} |\\n| Interactive tags scanned | ${report.selectorCoverage.interactiveTagCount} |\\n| Inline selector coverage | ${Math.round(report.selectorCoverage.inlineSelectorCoverage * 100)}% |\\n\\n## External Tool Readiness\\n\\n| Package | Installed | Role |\\n| --- | --- | --- |\\n${tools}\\n\\n## Interpretation\\n\\n- The current in-repo implementation already gives agents ${report.agentDev.scenarioCount} deterministic page entry points and ${report.agentDev.e2eHelperCount} E2E helpers without depending on new packages.\\n- Schema assertions now reject malformed agent-dev payloads at the Main host-api boundary.\\n- Basic a11y and visual artifact generation are available through Playwright today; axe/Argos can replace the fallback scanners once supply-chain policy allows installing them.\\n- The selector coverage metric is a heuristic. It is useful as a trend line, not as a precise accessibility or E2E quality proof.\\n`;\\n}\\n\\nconst start = performance.now();\\nconst [\\n  scenarioRegistry,\\n  hostApi,\\n  e2eFixture,\\n  schemaText,\\n  a11yText,\\n] = await Promise.all([\\n  read('shared/agent-dev/scenarios.ts'),\\n  read('src/lib/host-api.ts'),\\n  read('tests/e2e/fixtures/electron.ts'),\\n  read('shared/host-api/agent-dev-schemas.ts'),\\n  read('tests/e2e/fixtures/a11y.ts'),\\n]);\\n\\nconst scenarioIds = extractScenarioIds(scenarioRegistry);\\nconst hostApiAgentDevBlock = hostApi.match(/agentDev:\\\\s*\\\\{([\\\\s\\\\S]*?)\\\\n  \\\\},\\\\n  providers:/)?.[1] ?? '';\\nconst report = {\\n  generatedAt: new Date().toISOString(),\\n  durationMs: 0,\\n  agentDev: {\\n    scenarioCount: scenarioIds.length,\\n    scenarios: scenarioIds,\\n    hostApiMethodCount: countMatches(hostApiAgentDevBlock, /^\\\\s{4}[A-Za-z][A-Za-z0-9_]*:/gm),\\n    e2eHelperCount: countMatches(e2eFixture, /export async function (openAgentDevScenario|getAgentDevSnapshot|configureAgentDevHostReplay|getAgentDevHostCalls)/g),\\n    schemaAssertionCount: countMatches(schemaText, /export function assertAgentDev/g),\\n  },\\n  quality: {\\n    a11yRuleCount: countMatches(a11yText, /add\\\\('([^']+)'/g),\\n    visualArtifactSpec: existsSync(resolve(ROOT, 'tests/e2e/agent-dev-quality.spec.ts')),\\n    workbenchScript: existsSync(resolve(ROOT, 'scripts/agent-dev-workbench.mjs')),\\n  },\\n  selectorCoverage: await scanSelectorCoverage(),\\n  externalTools: [\\n    { package: '@axe-core/playwright', installed: packageInstalled('@axe-core/playwright'), role: 'strict a11y scanning' },\\n    { package: '@ladle/react', installed: packageInstalled('@ladle/react'), role: 'component scenario workbench' },\\n    { package: '@argos-ci/playwright', installed: packageInstalled('@argos-ci/playwright'), role: 'hosted visual regression' },\\n    { package: '@vitest/browser', installed: packageInstalled('@vitest/browser'), role: 'browser component testing' },\\n    { package: '@testing-library/user-event', installed: packageInstalled('@testing-library/user-event'), role: 'realistic component interactions' },\\n    { package: 'knip', installed: packageInstalled('knip'), role: 'unused files/deps/exports' },\\n    { package: 'ajv', installed: packageInstalled('ajv'), role: 'JSON schema validation engine' },\\n  ],\\n};\\nreport.durationMs = Number((performance.now() - start).toFixed(1));\\n\\nawait mkdir(OUT_DIR, { recursive: true });\\nawait writeFile(resolve(OUT_DIR, 'report.json'), JSON.stringify(report, null, 2), 'utf8');\\nawait writeFile(resolve(OUT_DIR, 'report.md'), renderMarkdown(report), 'utf8');\\nconsole.log(JSON.stringify(report, null, 2));\\n\",\n      \"truncated\": false\n    },\n    {\n      \"path\": \"scripts/lib/reliability-aggregation.mjs\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"scripts/lib/reliability-aggregation.d.mts\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"shared/agent-dev/reliability-fixture.json\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-reliability-aggregation.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"harness/specs/rules/reliability-aggregation-boundary.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/e01-reliability-aggregation.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+        "store": false,
+        "stream": false,
+        "truncation": "disabled",
+        "max_output_tokens": 16000,
+        "reasoning": {
+          "effort": "low"
+        },
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "rsi_coding_edits",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "edits"
+              ],
+              "properties": {
+                "edits": {
+                  "type": "array",
+                  "maxItems": 32,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "path",
+                      "content"
+                    ],
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "content": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "rawResponse": null,
+      "parsedResponse": null
+    }
+  ],
+  "grader": null
+}

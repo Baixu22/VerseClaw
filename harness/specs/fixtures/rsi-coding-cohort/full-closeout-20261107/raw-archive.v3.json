@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "RsiRawArchive/v2",
+  "driven_by": "agent",
+  "actor": "codex/rsi-raw-archive-verifier",
+  "archivePath": "D:/ClawX-acceptance/rsi-full-closeout-20261106/measurement-v3-raw.zip",
+  "sha256": "c6be19af6796921c15df90810a0f7f7a0284314d6116f713fe6aab2c08bcb12c",
+  "bytes": 10031922,
+  "runId": "2bb4141c-a536-443a-8b89-0fbfd0082edf",
+  "manifestSha256": "7858c7c4336ca2a66328c8602179a4813bf17d2e74db883435b03021fc2410bd",
+  "archivedFiles": 1431,
+  "credentialFindings": 0,
+  "readbackMismatches": 0,
+  "excludedGeneratedDirectories": [
+    "workspace",
+    "home"
+  ],
+  "recovery": "Extract into a new D:/tmp directory. Compare MANIFEST.json and each recorded file hash. Reconstruct source workspaces from the retained base revisions and edits; do not redispatch any recorded attempt."
+}

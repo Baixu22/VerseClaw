@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "RsiBenefitTrial/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-benefit-eval/executor",
+  "planDigest": "133d3b5ff68949682b9c402b3275fd95e232ca4ce6a497a1903deaac5ee04004",
+  "slot": {
+    "id": "tf-0296-a04-1-sekb-off",
+    "caseId": "tf-0296-a04",
+    "repeat": 1,
+    "arm": "sekb-off",
+    "caseDigest": "52c1bbcffec311a148980d791cdbbab8f9891070119c853c5d5cc0da0be380e5",
+    "pairSeed": 64,
+    "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+    "position": 189
+  },
+  "evidenceKind": "live-provider",
+  "request": {
+    "model": "space-bunny",
+    "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+    "input": "{\n  \"prompt\": \"A04 按原 spec 门限复验 A4 Decision Quality 受控 pilot 门；逐条映射现有可执行证据，不重定义门限；确认 A4 是文档规定的 offline/dev-tool-only 模块，补齐 spec 的 requiredTests 漂移，并把生产审计 caller 缺失与 A4 累计延迟未测如实记为 NO-GO residual。\",\n  \"acceptanceCriteria\": [\n    \"判据1 lowQualityDecisions rate ≤ 10% + >10% → degrade_to_audit_only：decision-quality-auditor、deprecation-counters 与 a4-deep 有当前断言；PASS（原门限未改）。\",\n    \"判据2 audit coverage（shadow sampling rate = 1.0）：模块内 auditBatch 按记录数 1:1 记 audited；但生产审计 caller 按开发手册明确禁止，当前不存在生产 coverage，原 Active Pilot 生产门保持 NO-GO。\",\n    \"判据3 budget violation response：degrade_to_audit_only 在 >10% 时触发；PASS。\",\n    \"判据4 degradation order：trace-truncation 断言 a4→a3→a5 先于 a1 被丢弃；A4 不在生产 turn path，per-turn cumulative latency smoke 未覆盖 A4，数值延迟门保持 NOT-MEASURED/NO-GO。\",\n    \"修正 spec drift：requiredTests 补入 auditor、a4-deep 与 degradation-order 测试，并加 A04 coverage 守卫。\",\n    \"干净候选定向测试、类型、scoped lint、harness validate/dry-run、comms replay/compare 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"harness/specs/tasks/a4-decision-quality-pilot.md\",\n    \"harness/specs/tasks/harness-gap-a04-decision-quality-pilot-reverify.md\",\n    \"docs/dev/harness-gap-closure/a04-decision-quality-gate.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"harness/specs/tasks/a4-decision-quality-pilot.md\",\n      \"content\": \"---\\nlifecycleStatus: archived\\nid: a4-decision-quality-pilot\\ntitle: A4 Decision Quality — Active Pilot Gate\\nscenario: gateway-backend-communication\\ntaskType: runtime-bridge\\nintent: Promote the A4 decision quality audit from shadow to active pilot, gated by audit coverage and budget compliance.\\ntouchedAreas:\\n  - openclaw_runtime/src/observability/deprecation-counters.ts\\nrequiredProfiles:\\n  - fast\\n  - comms\\nrequiredRules:\\n  - backend-communication-boundary\\n  - comms-regression\\nexpectedUserBehavior:\\n  - With the A4 pilot gate enabled, decisions are audited and the low-quality counter stays at or under the 10% graduation budget.\\n  - Every audited decision is covered in shadow mode (sampling rate 1.0) before the audit is treated as a gate.\\n  - When the low-quality rate exceeds 10%, the pilot responds with `degrade_to_audit_only` instead of spending the rest of the turn budget.\\n  - A4 degrades first in the documented order (A4→A3→A5→A1), so the per-turn cumulative latency budget is respected.\\n  - With the pilot flag off, decision outcomes and the audit surface are unchanged.\\nrequiredTests:\\n  - tests/unit/deprecation-counters.test.ts\\n  - tests/unit/performance-budgets.test.ts\\nacceptance:\\n  - A4 deprecation counter `lowQualityDecisions` rate ≤ 10% over audited decisions\\n  - A4 budget violation response `degrade_to_audit_only` triggers when low-quality rate > 10%\\n  - Per-turn cumulative latency budget respected (A4 is part of degradation order: A4→A3→A5→A1)\\ndocs:\\n  required: true\\n---\\n\\n## Graduation gate\\n\\nA4 graduates from shadow to active pilot when ALL of the following hold:\\n\\n1. **Low-quality decision rate** ≤ 10%: `lowQualityDecisions / auditedDecisions ≤ 0.10`.\\n2. **Audit coverage**: every decision is audited in shadow mode (sampling rate = 1.0).\\n3. **Budget violation response**: `degrade_to_audit_only` triggers when rate > 10% (criterion 4.14).\\n4. **Per-turn cumulative budget**: A4 is the first to degrade (degradation order A4→A3→A5→A1).\\n\\n## Out of scope\\n\\n- Post-promotion sampling (OQ-004, Stage 5).\\n- Decision quality scoring model (Stage 5 enhancement).\\n\",\n      \"truncated\": false\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-a04-decision-quality-pilot-reverify.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/a04-decision-quality-gate.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+    "store": false,
+    "stream": false,
+    "truncation": "disabled",
+    "max_output_tokens": 16000,
+    "reasoning": {
+      "effort": "low"
+    },
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "name": "rsi_coding_edits",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "edits"
+          ],
+          "properties": {
+            "edits": {
+              "type": "array",
+              "maxItems": 32,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "content"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "requestDigest": "dfecb3e70e708238a524bfb2290cf6489b5c167b043eb62b71d09878043bde07",
+  "runtime": {
+    "flags": {
+      "enabled": false,
+      "shadowEvaluation": false,
+      "injection": false
+    },
+    "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+    "candidateDigest": "7c2408a2afc3c71ec509c11c705ba3775d427c4166aef58a0b42db1c031f54a0",
+    "injectionDigest": null,
+    "isolationId": "2bb4141c-a536-443a-8b89-0fbfd0082edf/tf-0296-a04-1-sekb-off",
+    "runtimeEffectMeasured": true
+  },
+  "edits": [],
+  "execution": {
+    "status": "crash",
+    "failureClass": "infrastructure",
+    "failureCategory": "provider",
+    "attempts": 1,
+    "providerCalls": 1,
+    "wallClockMs": 7,
+    "costUsd": null,
+    "toolEvents": [],
+    "runPosition": 189,
+    "startedAt": "2026-11-06T16:57:30.323Z",
+    "endedAt": "2026-11-06T16:57:30.330Z",
+    "measurementBasis": "live-provider",
+    "note": "Responses transport failed (network error)"
+  },
+  "rawResponse": null,
+  "providerAttempts": [
+    {
+      "endpoint": "http://127.0.0.1:3065/v1/responses",
+      "request": {
+        "model": "space-bunny",
+        "instructions": "Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.\nReturn only strict JSON matching the supplied responseSchema: {\"edits\":[{\"path\":\"repository/relative/path\",\"content\":\"complete UTF-8 file content\"}]}. No tools, markdown fences or commentary. Edit only targetScope. Preserve tests, graders, permissions and dependency configuration. Base files marked missing must be implemented from the supplied behavior contract and existing callers. Do not read tests at runtime or perform network or process effects in the implementation.",
+        "input": "{\n  \"prompt\": \"A04 按原 spec 门限复验 A4 Decision Quality 受控 pilot 门；逐条映射现有可执行证据，不重定义门限；确认 A4 是文档规定的 offline/dev-tool-only 模块，补齐 spec 的 requiredTests 漂移，并把生产审计 caller 缺失与 A4 累计延迟未测如实记为 NO-GO residual。\",\n  \"acceptanceCriteria\": [\n    \"判据1 lowQualityDecisions rate ≤ 10% + >10% → degrade_to_audit_only：decision-quality-auditor、deprecation-counters 与 a4-deep 有当前断言；PASS（原门限未改）。\",\n    \"判据2 audit coverage（shadow sampling rate = 1.0）：模块内 auditBatch 按记录数 1:1 记 audited；但生产审计 caller 按开发手册明确禁止，当前不存在生产 coverage，原 Active Pilot 生产门保持 NO-GO。\",\n    \"判据3 budget violation response：degrade_to_audit_only 在 >10% 时触发；PASS。\",\n    \"判据4 degradation order：trace-truncation 断言 a4→a3→a5 先于 a1 被丢弃；A4 不在生产 turn path，per-turn cumulative latency smoke 未覆盖 A4，数值延迟门保持 NOT-MEASURED/NO-GO。\",\n    \"修正 spec drift：requiredTests 补入 auditor、a4-deep 与 degradation-order 测试，并加 A04 coverage 守卫。\",\n    \"干净候选定向测试、类型、scoped lint、harness validate/dry-run、comms replay/compare 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"harness/specs/tasks/a4-decision-quality-pilot.md\",\n    \"harness/specs/tasks/harness-gap-a04-decision-quality-pilot-reverify.md\",\n    \"docs/dev/harness-gap-closure/a04-decision-quality-gate.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"edits\"\n    ],\n    \"properties\": {\n      \"edits\": {\n        \"type\": \"array\",\n        \"maxItems\": 32,\n        \"items\": {\n          \"type\": \"object\",\n          \"additionalProperties\": false,\n          \"required\": [\n            \"path\",\n            \"content\"\n          ],\n          \"properties\": {\n            \"path\": {\n              \"type\": \"string\"\n            },\n            \"content\": {\n              \"type\": \"string\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"harness/specs/tasks/a4-decision-quality-pilot.md\",\n      \"content\": \"---\\nlifecycleStatus: archived\\nid: a4-decision-quality-pilot\\ntitle: A4 Decision Quality — Active Pilot Gate\\nscenario: gateway-backend-communication\\ntaskType: runtime-bridge\\nintent: Promote the A4 decision quality audit from shadow to active pilot, gated by audit coverage and budget compliance.\\ntouchedAreas:\\n  - openclaw_runtime/src/observability/deprecation-counters.ts\\nrequiredProfiles:\\n  - fast\\n  - comms\\nrequiredRules:\\n  - backend-communication-boundary\\n  - comms-regression\\nexpectedUserBehavior:\\n  - With the A4 pilot gate enabled, decisions are audited and the low-quality counter stays at or under the 10% graduation budget.\\n  - Every audited decision is covered in shadow mode (sampling rate 1.0) before the audit is treated as a gate.\\n  - When the low-quality rate exceeds 10%, the pilot responds with `degrade_to_audit_only` instead of spending the rest of the turn budget.\\n  - A4 degrades first in the documented order (A4→A3→A5→A1), so the per-turn cumulative latency budget is respected.\\n  - With the pilot flag off, decision outcomes and the audit surface are unchanged.\\nrequiredTests:\\n  - tests/unit/deprecation-counters.test.ts\\n  - tests/unit/performance-budgets.test.ts\\nacceptance:\\n  - A4 deprecation counter `lowQualityDecisions` rate ≤ 10% over audited decisions\\n  - A4 budget violation response `degrade_to_audit_only` triggers when low-quality rate > 10%\\n  - Per-turn cumulative latency budget respected (A4 is part of degradation order: A4→A3→A5→A1)\\ndocs:\\n  required: true\\n---\\n\\n## Graduation gate\\n\\nA4 graduates from shadow to active pilot when ALL of the following hold:\\n\\n1. **Low-quality decision rate** ≤ 10%: `lowQualityDecisions / auditedDecisions ≤ 0.10`.\\n2. **Audit coverage**: every decision is audited in shadow mode (sampling rate = 1.0).\\n3. **Budget violation response**: `degrade_to_audit_only` triggers when rate > 10% (criterion 4.14).\\n4. **Per-turn cumulative budget**: A4 is the first to degrade (degradation order A4→A3→A5→A1).\\n\\n## Out of scope\\n\\n- Post-promotion sampling (OQ-004, Stage 5).\\n- Decision quality scoring model (Stage 5 enhancement).\\n\",\n      \"truncated\": false\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-a04-decision-quality-pilot-reverify.md\",\n      \"content\": null,\n      \"missing\": true\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/a04-decision-quality-gate.md\",\n      \"content\": null,\n      \"missing\": true\n    }\n  ]\n}",
+        "store": false,
+        "stream": false,
+        "truncation": "disabled",
+        "max_output_tokens": 16000,
+        "reasoning": {
+          "effort": "low"
+        },
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "rsi_coding_edits",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "edits"
+              ],
+              "properties": {
+                "edits": {
+                  "type": "array",
+                  "maxItems": 32,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "path",
+                      "content"
+                    ],
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "content": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "rawResponse": null,
+      "parsedResponse": null
+    }
+  ],
+  "grader": null
+}

@@ -116,7 +116,7 @@ const REQUIRED_BOUND_PATHS = [
   'tests/unit/runtime-memory-paired-ablation.test.ts',
 ];
 export const PATHS = {
-  acceptance: 'harness/specs/fixtures/rsi-coding-cohort/instruments/decision-acceptance.v3.json',
+  acceptance: 'harness/specs/fixtures/rsi-coding-cohort/instruments/decision-acceptance.v4.json',
   decisions: 'harness/specs/fixtures/rsi-evidence-loop/decisions.20261101.json',
   policyV2: 'harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v2.json',
   corpus: 'harness/specs/fixtures/rsi-evidence-loop/tf0604/task-corpus.v1.json',

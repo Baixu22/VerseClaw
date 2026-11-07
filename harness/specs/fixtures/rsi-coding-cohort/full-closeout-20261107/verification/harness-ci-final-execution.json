@@ -1,0 +1,9 @@
+{
+  "actor": "codex/rsi-ci-final-verifier",
+  "sourceCommit": "f43ba341787d87f307d4b57f774c07174f956d6a",
+  "driven_by": "agent",
+  "endedAt": "2026-11-07T12:50:45.5083522+08:00",
+  "command": "pnpm run harness:ci",
+  "exitCode": 1,
+  "startedAt": "2026-11-07T12:50:19.5211900+08:00"
+}

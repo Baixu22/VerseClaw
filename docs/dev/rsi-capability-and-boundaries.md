@@ -1,7 +1,6 @@
 # RSI capability and boundaries
 
-Updated 2026-11-06. `driven_by: agent`, `actor: codex/rsi-review`.
-No human evidence is claimed or required.
+Updated 2026-11-07. `driven_by: agent`, `actor: codex/rsi-final-independent-verifier`.
 
 **ClawX has no complete RSI implementation.** It has an explicitly confirmed,
 default-off experience loop, evaluation instruments, controlled research and a
@@ -42,14 +41,16 @@ the durable write path. No automatic writeback or permission change is added.
 
 ## Evaluation inputs and distinct runs
 
-The coding collector in `scripts/rsi-coding-collector.mjs` freezes a single
-Responses request per slot (low reasoning, 16000 output tokens, 240-second request
-timeout). Before dispatch it checks all task admissions, the provider preflight,
-the committed evaluator and the independent frozen SEKB candidate. Grading uses a
-fresh historical workspace and reference-revision oracle bytes. Transport or
-infrastructure failure stops the campaign with unexecuted slots visible.
+The coding collector in `scripts/rsi-coding-collector.mjs` freezes one Responses
+attempt per slot: low reasoning, 16000 output tokens and a 240-second request
+timeout. Admission, provider preflight, committed evaluator and independent SEKB
+candidate bindings are checked before dispatch. Grading runs in a fresh historical
+workspace with reference-revision oracle bytes. V1 stops on a retained transport
+or infrastructure failure. V2 continues the other scheduled slots, keeps failed
+attempts explicit, and reserves the request-byte plus output-token bound when
+usage is unknown. Oracle drift still stops the run.
 
-The reconstructed v7 cohort opts into `rsi-coding-cohort/task-bindings.v1.json`:
+The reconstructed v7/v8 cohorts opt into `rsi-coding-cohort/task-bindings.v1.json`:
 S03/L01/L03 remove explicitly hashed implementation files from the historical base.
 These are constructed coding starts, not naturally occurring historical defects.
 Exact `markdown-it 14.2.0` support dependencies are used. The candidate has two
@@ -60,12 +61,36 @@ agent, and its local grader is not an operating-system sandbox. Trial evidence a
 benefit conclusions require the separate frozen run report; calibration alone does
 not establish benefit.
 
-The 2026-11-06 frozen run stopped at the hard completion gate: 16 dispatches,
+The original v1 run on 2026-11-06 stopped at the hard completion gate: 16 dispatches,
 15 final provider responses (10 oracle failures, 4 format failures, 1 incomplete
 at the 16000-token output limit), 1 in-flight result unknown and 200 slots not
 started. Known response usage is 172119 tokens; total usage remains unknown.
 The retained result is `NO_GO` / `insufficient-evidence`, not a completed 216-slot
 measurement. See `harness/specs/fixtures/rsi-coding-cohort/closeout-20261106/REPORT.md`.
+
+The completed v2 dispatch campaign is retained at
+`harness/specs/fixtures/rsi-benefit-eval/coding-complete-20261106-v2/measurement/`.
+Its run ID is `2bb4141c-a536-443a-8b89-0fbfd0082edf`, with frozen evaluator commit
+`97747a8c833486b4d5c6014df5e7d25d71f8ceb2`. All 216 planned slots have one attempt
+receipt: 17 oracle passes, 128 model failures and 71 incomplete outcomes. There are
+148 captured provider terminal responses; 68 attempts have unknown terminal usage.
+Known usage is 1,624,210 tokens and the total remains unknown. The last 61 attempts
+recorded network errors. The independently reconstructed comparison has 11 complete
+case pairs against the 20-case floor, so its inferential difference and 95% interval
+are null. Observed safety/anchor failures produce `NO_GO` / `eliminate`.
+
+V8 admission retained 24 accepted tasks and 96 hashed files with exact
+`markdown-it 14.2.0`. The 462-file measurement manifest and every trial outcome
+were independently read back. One saved provider response was regraded after an
+interrupted collector, and a later saved receipt was imported; neither recovery
+redispatched a provider request. Request configurations are recorded for all slots,
+with terminal-response coverage of 148/216.
+
+`scripts/rsi-coding-independent-replay.mjs` selects the frozen evaluator through
+`--root`, checks retained outcomes, hashes, usage reservations and safety anchors,
+and writes to a new `--out` path. Full reproduction commands and the private raw
+archive recovery index are in
+`harness/specs/fixtures/rsi-coding-cohort/full-closeout-20261107/REPORT.md`.
 
 The TF-0604 corpus has 24 repository-sourced tasks and eight integrity controls.
 Prospective annotation revision 2 marks S02/S03/S05 as safety-required negative
@@ -135,7 +160,14 @@ counts recorded task labels; `completeCases` remains zero because feedback
 records contain no experimental arm/repeat identity. Both pilot and three-arm
 check commands compare the retained report with a fresh derivation.
 
-The grader must expose root, runtime and package-local dependencies while running an oracle; dependency-only reference failures must not be recorded as task failures. The current 2026-11-06 v6 readback at `harness/specs/fixtures/rsi-live-acceptance/version-bound-cohort-20261106-v6/` records 24 calibrated tasks, 21 admitted, 3 baseline-already-passes rejections and 216 slots not-run. Hidden test files are restored from each historical reference revision, with the revision and test digests rechecked by final admission. The local support package `markdown-it` resolves as 14.1.1 while `markdown-core` declares 14.2.0; that mismatch is disclosed in `oracle-binding.v1.json` and remains a residual. No trial or benefit claim follows from this NO_GO.
+The grader exposes root, runtime and package-local dependencies while running an
+oracle. The historical v6 pack at
+`harness/specs/fixtures/rsi-live-acceptance/version-bound-cohort-20261106-v6/`
+retains 24 calibrated tasks, 21 admissions, 3 baseline-already-passes rejections and
+216 unrun slots. Its original `markdown-it 14.1.1` versus declared `14.2.0`
+mismatch remains recorded in `oracle-binding.v1.json`; v8 used exact `14.2.0`.
+Hidden tests are restored from each historical reference revision, and final
+admission rechecks that revision and its test digests.
 
 A baseline whose only failure is an expected missing module inside the declared target scope is admitted with the warning `baseline-target-module-absent`; missing dependencies outside target scope still fail closed. The model smoke demonstrates capability plumbing only, not benefit.
 
@@ -153,7 +185,7 @@ dead process is reclaimed on resume; a live lock still fails closed.
 Seal readback is scoped to judged inputs: an unrelated in-flight edit in the
 shared checkout is a warning, while a dirty judged input still fails closed.
 
-The active v2 reservation still contains zero completed model trials.
+The separate TF-0592 statistics-v2 reservation contains zero completed model trials.
 `pnpm rsi:tf0592:check` verifies an instrument pack whose report remains
 `insufficient-evidence`; it does not convert a reservation into measurement.
 
