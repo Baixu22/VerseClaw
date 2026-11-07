@@ -55,6 +55,11 @@ forbiddenPatterns:
 
 Gateway backend communication covers all Verse Claw paths that move data between the visual desktop UI and OpenClaw runtime/backend services.
 
+Coding retirement also crosses this boundary. Legacy Patch Flow requests and restored worker
+metadata must not revive proposal-only execution or delayed candidate application. Developer
+flags show retired controls as unavailable, while ordinary journal-backed coding and explicit
+worktree isolation remain the supported paths. See `harness/specs/tasks/coding-retired-control-admission.md`.
+
 Allowed flow:
 Renderer page/component -> `src/lib/host-api.ts` (typed facade) or `src/lib/host-api-client.ts` (typed request client) -> Electron Main typed host service or IPC handler -> Main-owned OpenClaw Gateway WebSocket -> runtime result -> store/UI.
 

@@ -13,7 +13,7 @@ import {
 } from "./orchestrator.js";
 import type { RoleRegistryConfigCarrier } from "./role-registry.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
-import { isCodingPatchFlowDefault, resolveWorktreeBackend } from "../context-engine/coding-runtime-flags.js";
+import { resolveWorktreeBackend } from "../context-engine/coding-runtime-flags.js";
 import {
   spawnRoleSubagent,
   type RoleSpawnContext,
@@ -74,11 +74,20 @@ import {
   type RuntimeBlackboardFailure,
 } from "./orchestration-runtime-blackboard.js";
 import type { BlackboardSynthesisSummary } from "./orchestration-synthesizer.js";
-import { createWorktreeService, isManagedWorktreeCurrent, isVerifiedGitWorktree, type WorktreeRecord, type WorktreeService } from "./worktree-service.js";
-import { PATCH_FLOW_PROPOSAL_ONLY_DENIED_TOOLS } from "./orchestration-patch-flow.js";
+import {
+  createWorktreeService,
+  isManagedWorktreeCurrent,
+  isVerifiedGitWorktree,
+  type WorktreeRecord,
+  type WorktreeService,
+} from "./worktree-service.js";
 import { createVerseGitRuntimeBindingPortFromEnv } from "../plugin-sdk/versegit-binding-port.js";
 import { registerVerseGitRuntimeBinding } from "../plugin-sdk/versegit-binding-registry.js";
-import type { VerseGitBindingEndReason, VerseGitBindingRecord, VerseGitRuntimeBindingPort } from "../../../shared/versegit-runtime-contract.ts";
+import type {
+  VerseGitBindingEndReason,
+  VerseGitBindingRecord,
+  VerseGitRuntimeBindingPort,
+} from "../../../shared/versegit-runtime-contract.ts";
 import {
   buildDelegationAdmissionReceipt,
   type DelegationAdmissionContext,
@@ -96,11 +105,7 @@ export type ObservedOrchestrationRunRequest = OrchestratorRequest & {
   includeVerifier?: boolean;
   orchestrationRunId?: string;
   patchRegistryMetadata?: boolean;
-  /**
-   * P2b explicit execution-side opt-in. Advisory patch-flow output alone never
-   * enables this; the caller must request execution and the plan must recommend
-   * patch-flow before workers switch to proposal-only mode.
-   */
+  /** Legacy request marker; retirement disables execution through this field. */
   patchFlowExecution?: true;
   verseGitBindingPort?: VerseGitRuntimeBindingPort;
 };
@@ -388,9 +393,13 @@ export async function runOrchestrationWithRecorder(
   const handoffArtifacts: WorkerOutputHandoffArtifact[] = [];
   const admissionReceipts: DelegationAdmissionReceipt[] = [];
   const orchestrationRunId = request.orchestrationRunId ?? `orch_${Date.now().toString(36)}`;
-  const verseGitBindingPort = request.verseGitBindingPort ?? createVerseGitRuntimeBindingPortFromEnv();
+  const verseGitBindingPort =
+    request.verseGitBindingPort ?? createVerseGitRuntimeBindingPortFromEnv();
   const pendingVerseGitBindings = new Set<string>();
-  const endPendingVerseGitBinding = async (bindingId: string, reason: VerseGitBindingEndReason): Promise<void> => {
+  const endPendingVerseGitBinding = async (
+    bindingId: string,
+    reason: VerseGitBindingEndReason,
+  ): Promise<void> => {
     if (!verseGitBindingPort) return;
     try {
       await verseGitBindingPort.end({ bindingId, reason });
@@ -405,9 +414,8 @@ export async function runOrchestrationWithRecorder(
     }
   };
   const handoffMode = resolveHandoffArtifactsPilotMode(request.cfg);
-  const rawOwnerSessionKey = handoffMode === "on"
-    ? (ctx.completionOwnerKey ?? ctx.agentSessionKey)?.trim()
-    : undefined;
+  const rawOwnerSessionKey =
+    handoffMode === "on" ? (ctx.completionOwnerKey ?? ctx.agentSessionKey)?.trim() : undefined;
   let ownerSessionKey = rawOwnerSessionKey;
   if (rawOwnerSessionKey && request.cfg) {
     try {
@@ -432,13 +440,18 @@ export async function runOrchestrationWithRecorder(
     const existing = worktreeRecords.get(node.taskNodeId);
     if (existing) return existing;
     if (!worktreeService) throw new Error("worktree isolation requires an authorized workspaceDir");
-    const record = worktreeService.create(node.worktreeId ?? `${orchestrationRunId}:${node.taskNodeId}`, {
-      writeSet: node.writeSet,
-      seedFiles: node.writeSet,
-      owner: ctx.workspaceOwner,
-    });
-    if (record.backend !== worktreeService.backend
-      || (record.backend === "git" && !isVerifiedGitWorktree(record))) {
+    const record = worktreeService.create(
+      node.worktreeId ?? `${orchestrationRunId}:${node.taskNodeId}`,
+      {
+        writeSet: node.writeSet,
+        seedFiles: node.writeSet,
+        owner: ctx.workspaceOwner,
+      },
+    );
+    if (
+      record.backend !== worktreeService.backend ||
+      (record.backend === "git" && !isVerifiedGitWorktree(record))
+    ) {
       throw new Error("Requested worktree backend could not be verified; no worker was spawned");
     }
     worktreeRecords.set(node.taskNodeId, record);
@@ -454,10 +467,12 @@ export async function runOrchestrationWithRecorder(
     plan = createOrchestratorPlan(request);
     ctx.assertWorkspaceCurrent?.();
     if (plan.taskGraph.nodes.some((node) => node.isolation === "worktree")) {
-      if (!ctx.workspaceDir) throw new Error("worktree isolation requires an authorized workspaceDir");
+      if (!ctx.workspaceDir)
+        throw new Error("worktree isolation requires an authorized workspaceDir");
       const backend = resolveWorktreeBackend(request.cfg as OpenClawConfig | undefined);
       worktreeService = createWorktreeService(ctx.workspaceDir, { backend });
-      if (worktreeService.backend !== backend) throw new Error("Requested worktree backend is unavailable");
+      if (worktreeService.backend !== backend)
+        throw new Error("Requested worktree backend is unavailable");
       for (const node of plan.taskGraph.nodes) {
         if (node.isolation === "worktree") prepareWorktree(node);
       }
@@ -526,15 +541,16 @@ export async function runOrchestrationWithRecorder(
       startedAt: Date.now(),
     });
     let verseGitBinding: VerseGitBindingRecord | null = null;
-    const handoffPrompt = handoffMode === "on"
-      ? resolveHandoffArtifactPrompt({
-          node,
-          plan,
-          orchestrationRunId,
-          ownerSessionKey: ownerSessionKey ?? "",
-          artifacts: handoffArtifacts,
-        })
-      : { status: "not-required" as const };
+    const handoffPrompt =
+      handoffMode === "on"
+        ? resolveHandoffArtifactPrompt({
+            node,
+            plan,
+            orchestrationRunId,
+            ownerSessionKey: ownerSessionKey ?? "",
+            artifacts: handoffArtifacts,
+          })
+        : { status: "not-required" as const };
     // Stable node and role-instance ids let renderer projections keep duplicate
     // roles separate while the asynchronous spawn is still in flight.
     try {
@@ -563,22 +579,23 @@ export async function runOrchestrationWithRecorder(
           status: "failed",
           endedAt: Date.now(),
         };
-        const admissionReceipt = request.delegationAdmission && !isVerifier
-          ? buildDelegationAdmissionReceipt({
-              admission: request.delegationAdmission,
-              roleName,
-              task,
-              orchestrationRunId,
-              taskNodeId: endedLedger.taskNodeId ?? null,
-              taskId: endedLedger.taskId,
-              roleInstanceId: endedLedger.roleInstanceId,
-              executionWave,
-              concurrentSiblings: parallelSiblingCount,
-              isWriter: isWriterLikeRole(roleName) || Boolean(node?.writeSet?.length),
-              writeSet: node?.writeSet ?? [],
-              spawn,
-            })
-          : undefined;
+        const admissionReceipt =
+          request.delegationAdmission && !isVerifier
+            ? buildDelegationAdmissionReceipt({
+                admission: request.delegationAdmission,
+                roleName,
+                task,
+                orchestrationRunId,
+                taskNodeId: endedLedger.taskNodeId ?? null,
+                taskId: endedLedger.taskId,
+                roleInstanceId: endedLedger.roleInstanceId,
+                executionWave,
+                concurrentSiblings: parallelSiblingCount,
+                isWriter: isWriterLikeRole(roleName) || Boolean(node?.writeSet?.length),
+                writeSet: node?.writeSet ?? [],
+                spawn,
+              })
+            : undefined;
         if (admissionReceipt) admissionReceipts.push(admissionReceipt);
         outcomes.push({
           roleName,
@@ -619,26 +636,9 @@ export async function runOrchestrationWithRecorder(
         return;
       }
       const role = resolvePlanRole(roleName, request);
-      const proposalOnly = patchFlowExecution && !isVerifier;
-      const framing = orchestrationFraming(plan, request.task, roleName, isVerifier, role);
-      const systemPrompt = proposalOnly
-        ? `${framing}\n\n## Patch-Flow Proposal Contract\n- This worker is proposal-only; direct write and shell tools are denied.\n- Return exactly one fenced \`\`\`apply_patch block containing a complete patch from \`*** Begin Patch\` through \`*** End Patch\`.\n- Do not modify disk directly. The orchestration lead applies all proposals serially after every worker completes.`
-        : framing;
-      const spawnCtx = proposalOnly
-        ? {
-            ...ctx,
-            inheritedToolDenylist: [
-              ...new Set([
-                ...(ctx.inheritedToolDenylist ?? []),
-                ...PATCH_FLOW_PROPOSAL_ONLY_DENIED_TOOLS,
-              ]),
-            ],
-          }
-        : ctx;
-      const worktree =
-        node?.isolation === "worktree"
-          ? prepareWorktree(node)
-          : undefined;
+      const systemPrompt = orchestrationFraming(plan, request.task, roleName, isVerifier, role);
+      const spawnCtx = ctx;
+      const worktree = node?.isolation === "worktree" ? prepareWorktree(node) : undefined;
       if (verseGitBindingPort) {
         const worktreePath = worktree?.root ?? ctx.workspaceDir;
         if (worktreePath) {
@@ -654,7 +654,13 @@ export async function runOrchestrationWithRecorder(
             });
             pendingVerseGitBindings.add(verseGitBinding.bindingId);
             recorder.recordEvent("versegit.binding.bound", "VerseGit binding acquired", {
-              attributes: { bindingId: verseGitBinding.bindingId, repoId: verseGitBinding.repoId, worktreeId: verseGitBinding.worktreeId, roleName, attempt: ledger.attempt },
+              attributes: {
+                bindingId: verseGitBinding.bindingId,
+                repoId: verseGitBinding.repoId,
+                worktreeId: verseGitBinding.worktreeId,
+                roleName,
+                attempt: ledger.attempt,
+              },
             });
           } catch (error) {
             recorder.recordEvent("versegit.binding.unavailable", "VerseGit binding unavailable", {
@@ -676,9 +682,10 @@ export async function runOrchestrationWithRecorder(
           // session so the embedded handoff entity snapshot knows the files this
           // worker is expected to touch (no-op when the node has none).
           ...(node?.writeSet ? { writeSet: [...node.writeSet] } : {}),
-          extraSystemPrompt: handoffPrompt.status === "ready"
-            ? `${systemPrompt}\n\n${handoffPrompt.prompt}`
-            : systemPrompt,
+          extraSystemPrompt:
+            handoffPrompt.status === "ready"
+              ? `${systemPrompt}\n\n${handoffPrompt.prompt}`
+              : systemPrompt,
           ...(orchestrationRunId
             ? {
                 orchestration: {
@@ -715,12 +722,6 @@ export async function runOrchestrationWithRecorder(
                       }
                     : {}),
                   routeDiagnostics: plan.routeDiagnostics,
-                  ...(proposalOnly
-                    ? {
-                        patchFlowExecution: true as const,
-                        ...(node?.writeSet ? { patchFlowWriteSet: [...node.writeSet] } : {}),
-                      }
-                    : {}),
                   qualityPolicy: request.qualityPolicy,
                   repairPolicy: request.repairPolicy,
                   workerCommunication: request.workerCommunication ?? "none",
@@ -735,8 +736,11 @@ export async function runOrchestrationWithRecorder(
           workspaceDir: worktree?.root ?? ctx.workspaceDir,
           assertWorkspaceCurrent() {
             ctx.assertWorkspaceCurrent?.();
-            if (worktree && (!isManagedWorktreeCurrent(worktree)
-              || (worktree.backend === "git" && !isVerifiedGitWorktree(worktree)))) {
+            if (
+              worktree &&
+              (!isManagedWorktreeCurrent(worktree) ||
+                (worktree.backend === "git" && !isVerifiedGitWorktree(worktree)))
+            ) {
               throw new Error("Worktree checkout identity changed before spawn");
             }
           },
@@ -748,10 +752,15 @@ export async function runOrchestrationWithRecorder(
         const childSessionKey = spawn.result?.childSessionKey;
         if (spawn.status === "accepted" && childRunId && childSessionKey) {
           try {
-            verseGitBinding = await verseGitBindingPort.attach({ bindingId: verseGitBinding.bindingId, childSessionKey, childRunId });
+            verseGitBinding = await verseGitBindingPort.attach({
+              bindingId: verseGitBinding.bindingId,
+              childSessionKey,
+              childRunId,
+            });
             registerVerseGitRuntimeBinding(childRunId, verseGitBinding, verseGitBindingPort);
             try {
-              const { updateSubagentRunOrchestrationMetadata } = await import("./subagent-registry.js");
+              const { updateSubagentRunOrchestrationMetadata } =
+                await import("./subagent-registry.js");
               updateSubagentRunOrchestrationMetadata(childRunId, {
                 verseGitCleanup: {
                   bindingId: verseGitBinding.bindingId,
@@ -771,13 +780,30 @@ export async function runOrchestrationWithRecorder(
               // missing persisted copy only makes restart cleanup fail closed.
             }
             pendingVerseGitBindings.delete(verseGitBinding.bindingId);
-            recorder.recordEvent("versegit.binding.attached", "VerseGit binding attached to worker", {
-              attributes: { bindingId: verseGitBinding.bindingId, childSessionKey, childRunId, roleName },
-            });
+            recorder.recordEvent(
+              "versegit.binding.attached",
+              "VerseGit binding attached to worker",
+              {
+                attributes: {
+                  bindingId: verseGitBinding.bindingId,
+                  childSessionKey,
+                  childRunId,
+                  roleName,
+                },
+              },
+            );
           } catch (error) {
-            recorder.recordEvent("versegit.binding.attach_failed", "VerseGit binding attach failed", {
-              attributes: { bindingId: verseGitBinding.bindingId, roleName, error: String(error).slice(0, 240) },
-            });
+            recorder.recordEvent(
+              "versegit.binding.attach_failed",
+              "VerseGit binding attach failed",
+              {
+                attributes: {
+                  bindingId: verseGitBinding.bindingId,
+                  roleName,
+                  error: String(error).slice(0, 240),
+                },
+              },
+            );
             await endPendingVerseGitBinding(verseGitBinding.bindingId, "failed");
           }
         } else {
@@ -789,39 +815,46 @@ export async function runOrchestrationWithRecorder(
         status: spawn.status === "accepted" ? "accepted" : "failed",
         endedAt: Date.now(),
       };
-      const admissionReceipt = request.delegationAdmission && !isVerifier
-        ? buildDelegationAdmissionReceipt({
-            admission: request.delegationAdmission,
-            roleName,
-            task,
-            orchestrationRunId,
-            taskNodeId: endedLedger.taskNodeId ?? null,
-            taskId: endedLedger.taskId,
-            roleInstanceId: endedLedger.roleInstanceId,
-            executionWave,
-            concurrentSiblings: parallelSiblingCount,
-            isWriter: isWriterLikeRole(roleName) || Boolean(node?.writeSet?.length),
-            writeSet: node?.writeSet ?? [],
-            worktree,
-            spawn,
-          })
-        : undefined;
+      const admissionReceipt =
+        request.delegationAdmission && !isVerifier
+          ? buildDelegationAdmissionReceipt({
+              admission: request.delegationAdmission,
+              roleName,
+              task,
+              orchestrationRunId,
+              taskNodeId: endedLedger.taskNodeId ?? null,
+              taskId: endedLedger.taskId,
+              roleInstanceId: endedLedger.roleInstanceId,
+              executionWave,
+              concurrentSiblings: parallelSiblingCount,
+              isWriter: isWriterLikeRole(roleName) || Boolean(node?.writeSet?.length),
+              writeSet: node?.writeSet ?? [],
+              worktree,
+              spawn,
+            })
+          : undefined;
       if (admissionReceipt) admissionReceipts.push(admissionReceipt);
-      const execution: DelegationWorkerExecution | undefined = spawn.authorization && "status" in spawn.authorization && ctx.workspaceDir
-        ? {
-            backend: "subagent",
-            toolAuthorization: spawn.authorization,
-            isolation: {
-              mode: worktree ? "worktree" : "shared",
-              backend: worktree?.backend === "git" ? "git-worktree" : worktree ? "inprocess-worktree" : "shared-inprocess",
-              canonicalRoot: worktree?.root ?? ctx.workspaceDir,
-              branch: worktree?.gitBranch ?? null,
-              detachedHead: worktree?.backend === "git" ? !worktree.gitBranch : null,
-              verifiedCheckout: isVerifiedGitWorktree(worktree),
-              ...(worktree ? { worktreeId: worktree.id } : {}),
-            },
-          }
-        : undefined;
+      const execution: DelegationWorkerExecution | undefined =
+        spawn.authorization && "status" in spawn.authorization && ctx.workspaceDir
+          ? {
+              backend: "subagent",
+              toolAuthorization: spawn.authorization,
+              isolation: {
+                mode: worktree ? "worktree" : "shared",
+                backend:
+                  worktree?.backend === "git"
+                    ? "git-worktree"
+                    : worktree
+                      ? "inprocess-worktree"
+                      : "shared-inprocess",
+                canonicalRoot: worktree?.root ?? ctx.workspaceDir,
+                branch: worktree?.gitBranch ?? null,
+                detachedHead: worktree?.backend === "git" ? !worktree.gitBranch : null,
+                verifiedCheckout: isVerifiedGitWorktree(worktree),
+                ...(worktree ? { worktreeId: worktree.id } : {}),
+              },
+            }
+          : undefined;
       outcomes.push({
         roleName,
         agentId: request.agentId,
@@ -900,22 +933,23 @@ export async function runOrchestrationWithRecorder(
       }
       failures.push({ roleName, status: "error", error: message });
       recorder.endSpan(span.id, { status: "error", error: message });
-      const admissionReceipt = request.delegationAdmission && !isVerifier
-        ? buildDelegationAdmissionReceipt({
-            admission: request.delegationAdmission,
-            roleName,
-            task,
-            orchestrationRunId,
-            taskNodeId: ledger.taskNodeId ?? null,
-            taskId: ledger.taskId,
-            roleInstanceId: ledger.roleInstanceId,
-            executionWave,
-            concurrentSiblings: parallelSiblingCount,
-            isWriter: isWriterLikeRole(roleName) || Boolean(node?.writeSet?.length),
-            writeSet: node?.writeSet ?? [],
-            spawn: { status: "error", error: message },
-          })
-        : undefined;
+      const admissionReceipt =
+        request.delegationAdmission && !isVerifier
+          ? buildDelegationAdmissionReceipt({
+              admission: request.delegationAdmission,
+              roleName,
+              task,
+              orchestrationRunId,
+              taskNodeId: ledger.taskNodeId ?? null,
+              taskId: ledger.taskId,
+              roleInstanceId: ledger.roleInstanceId,
+              executionWave,
+              concurrentSiblings: parallelSiblingCount,
+              isWriter: isWriterLikeRole(roleName) || Boolean(node?.writeSet?.length),
+              writeSet: node?.writeSet ?? [],
+              spawn: { status: "error", error: message },
+            })
+          : undefined;
       if (admissionReceipt) admissionReceipts.push(admissionReceipt);
       try {
         lifecycle?.({
@@ -941,81 +975,76 @@ export async function runOrchestrationWithRecorder(
   // see all worker results); v4 executes task graph waves in order and uses
   // Promise.allSettled inside each wave so independent ready nodes run together.
   const workerNodes = taskGraphWorkerNodes(plan.taskGraph);
-  // TF-0510: patch-flow must be reachable from a real product path, not only from an
-  // explicit API argument. It activates when EITHER the request opts in explicitly OR the
-  // operator has enabled runtime.coding.patchFlow.default - in both cases the concurrency
-  // advisory must independently recommend patch-flow. The shipped default stays false.
-  const patchFlowRequested =
-    request.patchFlowExecution === true ||
-    isCodingPatchFlowDefault(request.cfg as OpenClawConfig | undefined);
-  const patchFlowExecution =
-    patchFlowRequested &&
-    plan.routeDiagnostics.isolationAdvisory?.recommendedMode === "patch-flow" &&
-    typeof ctx.workspaceDir === "string";
   const workerNodeById = new Map(workerNodes.map((node) => [node.taskNodeId, node]));
   const fallbackIndex = new Map(workerNodes.map((node, index) => [node.taskNodeId, index]));
   const captureWaveHandoffs = async (nodes: readonly OrchestrationTaskNode[]): Promise<void> => {
     if (handoffMode !== "on") return;
-    const artifactBatches = await Promise.all(nodes.map(async (node) => {
-      const outgoing = plan.taskGraph.edges.filter(
-        (edge) => edge.type === "handoff" && edge.from === node.taskNodeId,
-      );
-      if (outgoing.length === 0) return [];
-      const outcome = outcomes.find((candidate) => candidate.ledger.taskNodeId === node.taskNodeId);
-      const childRunId = outcome?.spawn.result?.runId;
-      const childSessionKey = outcome?.spawn.result?.childSessionKey;
-      if (
-        !ownerSessionKey ||
-        outcome?.spawn.status !== "accepted" ||
-        !childRunId ||
-        !childSessionKey
-      ) {
-        recorder.recordEvent("orchestration.handoff.rejected", "Handoff Capture Rejected", {
-          attributes: {
+    const artifactBatches = await Promise.all(
+      nodes.map(async (node) => {
+        const outgoing = plan.taskGraph.edges.filter(
+          (edge) => edge.type === "handoff" && edge.from === node.taskNodeId,
+        );
+        if (outgoing.length === 0) return [];
+        const outcome = outcomes.find(
+          (candidate) => candidate.ledger.taskNodeId === node.taskNodeId,
+        );
+        const childRunId = outcome?.spawn.result?.runId;
+        const childSessionKey = outcome?.spawn.result?.childSessionKey;
+        if (
+          !ownerSessionKey ||
+          outcome?.spawn.status !== "accepted" ||
+          !childRunId ||
+          !childSessionKey
+        ) {
+          recorder.recordEvent("orchestration.handoff.rejected", "Handoff Capture Rejected", {
+            attributes: {
+              orchestrationRunId,
+              fromTaskId: node.taskNodeId,
+              fromRole: node.roleName,
+              reason: !ownerSessionKey ? "owner-session-unavailable" : "child-identity-unavailable",
+            },
+          });
+          return [];
+        }
+        let capture: HandoffOutputCapture;
+        try {
+          capture = await captureHandoffOutput({
             orchestrationRunId,
-            fromTaskId: node.taskNodeId,
-            fromRole: node.roleName,
-            reason: !ownerSessionKey ? "owner-session-unavailable" : "child-identity-unavailable",
-          },
-        });
-        return [];
-      }
-      let capture: HandoffOutputCapture;
-      try {
-        capture = await captureHandoffOutput({
-          orchestrationRunId,
-          ownerSessionKey,
-          fromTaskId: node.taskNodeId,
-          fromRole: node.roleName,
-          attempt: outcome.ledger.attempt,
-          childRunId,
-          childSessionKey,
-          timeoutMs: resolveHandoffCaptureTimeoutMs(request.runTimeoutSeconds),
-        });
-      } catch {
-        capture = { status: "unavailable" as const, reason: "wait-failed" as const };
-      }
-      return outgoing.flatMap((edge) => {
-        const target = workerNodeById.get(edge.to);
-        if (!target) return [];
-        return [buildWorkerOutputHandoffArtifact({
-          identity: {
-            orchestrationRunId,
-            taskGraphId: plan.taskGraph.graphRunId,
             ownerSessionKey,
             fromTaskId: node.taskNodeId,
             fromRole: node.roleName,
-            fromRoleInstanceId: outcome.ledger.roleInstanceId,
-            toTaskId: target.taskNodeId,
-            toRole: target.roleName,
             attempt: outcome.ledger.attempt,
             childRunId,
             childSessionKey,
-          },
-          capture,
-        })];
-      });
-    }));
+            timeoutMs: resolveHandoffCaptureTimeoutMs(request.runTimeoutSeconds),
+          });
+        } catch {
+          capture = { status: "unavailable" as const, reason: "wait-failed" as const };
+        }
+        return outgoing.flatMap((edge) => {
+          const target = workerNodeById.get(edge.to);
+          if (!target) return [];
+          return [
+            buildWorkerOutputHandoffArtifact({
+              identity: {
+                orchestrationRunId,
+                taskGraphId: plan.taskGraph.graphRunId,
+                ownerSessionKey,
+                fromTaskId: node.taskNodeId,
+                fromRole: node.roleName,
+                fromRoleInstanceId: outcome.ledger.roleInstanceId,
+                toTaskId: target.taskNodeId,
+                toRole: target.roleName,
+                attempt: outcome.ledger.attempt,
+                childRunId,
+                childSessionKey,
+              },
+              capture,
+            }),
+          ];
+        });
+      }),
+    );
     for (const artifact of artifactBatches.flat()) {
       handoffArtifacts.push(artifact);
       recorder.recordEvent(
@@ -1179,7 +1208,9 @@ export async function runOrchestrationWithRecorder(
     : resolvedHandoffState;
   if (verseGitBindingPort) {
     const reason = failures.length > 0 ? "orchestration_error" : "orchestration_completed";
-    for (const bindingId of [...pendingVerseGitBindings]) {
+    // Ending a binding mutates the set; capture this run's cleanup batch before awaits.
+    const bindingsToRelease = [...pendingVerseGitBindings];
+    for (const bindingId of bindingsToRelease) {
       await endPendingVerseGitBinding(bindingId, reason);
     }
   }

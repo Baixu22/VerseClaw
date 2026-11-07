@@ -933,7 +933,7 @@ describe('runOrchestrationObserved (observed execution + tracing)', () => {
     expect(getRuntimeTraceBuffer().length).toBeGreaterThanOrEqual(1);
   });
 
-  it('enables proposal-only patch-flow execution only with explicit opt-in and advisory', async () => {
+  it.each([false, true])('TF-0774 keeps three workers ordinary with legacy opt-in and config default %s', async (configDefault) => {
     const spawned: FakeSpawnParams[] = [];
     const contexts: FakeSpawnContext[] = [];
     let counter = 0;
@@ -957,33 +957,57 @@ describe('runOrchestrationObserved (observed execution + tracing)', () => {
         ],
         durationMinutes: 45,
         patchFlowExecution: true,
+        cfg: { runtime: { coding: { patchFlow: { default: configDefault } } } } as OpenClawConfig,
       },
-      { agentSessionKey: 'agent:main:abc', workspaceDir: 'D:/workspace' },
+      { agentSessionKey: 'agent:main:abc', workspaceDir: handlerFixtureRoot },
       { spawn: fakeSpawn as unknown as never },
     );
 
     expect(result.plan.routeDiagnostics.isolationAdvisory).toMatchObject({
-      recommendedMode: 'patch-flow',
+      recommendedMode: 'worktree',
       applied: false,
     });
     expect(result.plan.isolation).toBe('shared');
     expect(spawned).toHaveLength(3);
     expect(contexts.length).toBe(3);
     for (const context of contexts) {
-      expect(context.inheritedToolDenylist).toEqual(
-        expect.arrayContaining(['write', 'edit', 'apply_patch', 'bash', 'exec']),
-      );
+      for (const tool of ['write', 'edit', 'apply_patch', 'bash', 'exec']) {
+        expect(context.inheritedToolDenylist ?? []).not.toContain(tool);
+      }
     }
-    for (const [index, params] of spawned.entries()) {
-      expect(params.roleSystemPrompt).toContain('## Patch-Flow Proposal Contract');
+    for (const params of spawned) {
+      expect(params.roleSystemPrompt).not.toContain('## Patch-Flow Proposal Contract');
       const orchestration = params.orchestration as unknown as {
         patchFlowExecution?: true;
         patchFlowWriteSet?: string[];
       };
-      expect(orchestration.patchFlowExecution).toBe(true);
-      expect(orchestration.patchFlowWriteSet).toEqual(['src/shared.ts']);
-      expect((params.orchestration as { executionWave?: number }).executionWave).toBe(index + 1);
+      expect(orchestration.patchFlowExecution).toBeUndefined();
+      expect(orchestration.patchFlowWriteSet).toBeUndefined();
+      expect((params.orchestration as { executionWave?: number }).executionWave).toBeGreaterThanOrEqual(1);
     }
+  });
+
+  it('TF-0774 Gateway API ignores legacy patch-flow opt-in for three workers', async () => {
+    let counter = 0;
+    const contexts: FakeSpawnContext[] = [];
+    vi.mocked(spawnSubagentDirect).mockImplementation(async (_params, context) => {
+      contexts.push(context);
+      counter += 1;
+      return { status: 'accepted', runId: `retired-api-${counter}`, childSessionKey: `agent:main:retired-${counter}` };
+    });
+    const result = await callHandler('orchestrator.run', {
+      task: 'long dense overlapping coding task', sessionKey: 'agent:main:retired-api',
+      durationMinutes: 45, maxWorkers: 3, graphMode: 'flat', includeVerifier: false,
+      patchFlowExecution: true,
+      workers: [1, 2, 3].map((index) => ({ roleName: 'implementer', task: `edit shared ${index}`, writeSet: ['src/shared.ts'] })),
+    });
+    expect(result?.ok).toBe(true);
+    expect(spawnSubagentDirect).toHaveBeenCalledTimes(3);
+    for (const [params] of vi.mocked(spawnSubagentDirect).mock.calls) {
+      expect(params.roleSystemPrompt).not.toContain('Patch-Flow Proposal Contract');
+      expect(params.orchestration?.patchFlowExecution).toBeUndefined();
+    }
+    for (const context of contexts) expect(context.inheritedToolDenylist ?? []).not.toContain('write');
   });
 
   it('keeps ordinary worker execution unchanged when patchFlowExecution is omitted', async () => {

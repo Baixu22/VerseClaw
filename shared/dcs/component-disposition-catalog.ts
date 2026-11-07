@@ -346,13 +346,13 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
   entry({
     id: 'feature.symbol-lease', label: 'Symbol lease', disposition: 'retired', owner: 'TF-0510', implementationNodeId: 'TF-0510', currentMode: 'retired', targetDefaultMode: 'retired',
     ...retired('Retired by TF-0510: isolated git worktrees plus the merge queue are the supported answer to concurrent writers. A measured 4-process benchmark showed the lease serialises correctly but denies 75% of attempts (12 wins / 36 denials), so it throttles throughput without adding safety over worktree isolation. Code is retained and unreachable; no user data is migrated.'),
-    currentConsumers: ['retired symbol-lease guard', 'retired multi-writer coding guard'], evidenceRefs: [...EXECUTION_EVIDENCE, DCS],
+    currentConsumers: [], evidenceRefs: [...EXECUTION_EVIDENCE, DCS],
     coverage: { dcsFlagIds: ['symbol-lease', 'symbol-lease-mode'], runtimeLeafPatterns: ['coding.symbolLease.*'] },
   }),
   entry({
     id: 'feature.patch-flow', label: 'Patch flow', disposition: 'retired', owner: 'TF-0510', implementationNodeId: 'TF-0510', currentMode: 'retired', targetDefaultMode: 'retired',
     ...retired('Retired by TF-0510: no evidence shows serial fenced patch application improves coding outcomes over ordinary tool writes, and the concurrency case it targeted is covered by worktree isolation plus the merge queue. The gate could only ever recommend, never demonstrate a benefit. Code is retained and unreachable; the write journal remains the mutation authority.'),
-    currentConsumers: ['retired patch-flow orchestration', 'write journal recovery path'], evidenceRefs: [...EXECUTION_EVIDENCE, DCS],
+    currentConsumers: [], evidenceRefs: [...EXECUTION_EVIDENCE, DCS],
     coverage: { dcsFlagIds: ['patch-flow'], runtimeLeafPatterns: ['coding.patchFlow.*'] },
   }),
   entry({

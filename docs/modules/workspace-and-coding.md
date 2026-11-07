@@ -276,6 +276,11 @@ Remote forge 有独立 Host API：
 | Symbol lease | retired | 不作为当前写锁或客户端能力 |
 | Auto verify | default `auto` | 检测 runner 时执行；否则 skip；timeout 最大 90 秒 |
 
+Patch Flow 的旧 `patchFlowExecution` 请求、配置默认值与 override 均不启用执行；
+worker 保留普通工具和提示词。恢复中的旧标记也不会发起新的串行候选应用，
+已经记录的历史 applied 状态与效果保留。Developer 将 Patch Flow 与 Symbol Lease
+显示为退役条目；并发编码可显式选择工作树隔离，由现有 journal 与候选回流 owner 处理。
+
 ### Write journal
 
 限域 write/edit 在读取 journal 原文件快照前验证工作区边界；可信来源也不能绕过

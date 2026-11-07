@@ -1,9 +1,12 @@
 /**
  * C5-P: patch-flow default orchestration graduation assessment.
  * Always keeps runtime.coding.patchFlow.default = false from this pack.
- * Product may consider default-on only after explicit soak + approval (out of band).
+ * Retained capability diagnostics obey the approved Patch Flow retirement.
  */
-import { isCodingPatchFlowDefault } from "../context-engine/coding-runtime-flags.js";
+import {
+  isCodingPatchFlowDefault,
+  PATCH_FLOW_RETIRED,
+} from "../context-engine/coding-runtime-flags.js";
 import {
   applyPatchProposalsSerial,
   classifyPatchProposalDestructive,
@@ -36,10 +39,8 @@ export type AssessPatchFlowGraduationParams = {
 };
 
 /**
- * Assess whether patch-flow may become a default orchestration path.
- * Hard rule: packaging recommendation is keep-off unless productSoakApproved
- * AND capability smoke green — even then recommendation is consider-default-on,
- * never auto-flips the flag.
+ * Assess retained capability diagnostics while honoring current retirement.
+ * Legacy soak approval cannot make a retired execution path eligible.
  */
 export async function assessPatchFlowDefaultGraduation(
   params?: AssessPatchFlowGraduationParams,
@@ -76,10 +77,7 @@ export async function assessPatchFlowDefaultGraduation(
       writeDensity: 0.6,
       writeSetOverlapRisk: 0.6,
     });
-    // recommendIsolationMode may suggest patch-flow mode; that is advisory only.
-    if (rec.mode === "patch-flow") {
-      notes.push("isolation matrix may recommend patch-flow mode; default flag stays false");
-    }
+    notes.push(`current isolation recommendation=${rec.mode}`);
   }
 
   const currentDefault = isCodingPatchFlowDefault();
@@ -88,14 +86,13 @@ export async function assessPatchFlowDefaultGraduation(
   }
 
   // Graduation gate for default-on is intentionally strict and never auto-applied.
-  const meetsGate = capabilityReady && productSoakApproved && currentDefault === false;
+  const meetsGate =
+    !PATCH_FLOW_RETIRED && capabilityReady && productSoakApproved && currentDefault === false;
   const recommendation = meetsGate ? "consider-default-on" : "keep-off";
 
-  const residual: string[] = [
-    "runtime.coding.patchFlow.default remains false (recommend-only orchestration)",
-    "Default-on requires product soak + explicit config change out of band",
-  ];
-  if (!productSoakApproved) residual.push("productSoakApproved not set");
+  const residual: string[] = PATCH_FLOW_RETIRED
+    ? ["Patch Flow retired by TF-0510; retained diagnostics have no execution opt-in"]
+    : ["Default-on requires an explicit product decision"];
 
   notes.push("C5-P pack never flips patchFlow.default");
   notes.push(`recommendation=${recommendation}`);
@@ -104,31 +101,30 @@ export async function assessPatchFlowDefaultGraduation(
     ok: true,
     card: "C5-P",
     wave: "C5-P",
-    completionClass: capabilityReady
-      ? "done (hard-gates+keep-off)"
-      : "done (partial+keep-off)",
+    completionClass: PATCH_FLOW_RETIRED
+      ? "retired"
+      : capabilityReady
+        ? "done (hard-gates+keep-off)"
+        : "done (partial+keep-off)",
     patchFlowDefault: false,
-    // TF-0510: the gate must be able to report a real outcome. It is still false unless
-    // the capability smoke passed AND an explicit product soak was approved, but it is no
-    // longer hard-coded to false - a permanent keep-off is an API-only exit.
+    // Diagnostic success cannot graduate a retired path.
     meetsGate,
     recommendation,
     defaultsUnchanged: true,
     capabilityReady,
     residual,
-    howToOptIn:
-      "Call applyPatchProposalsSerial() / recommendIsolationMode() opt-in. Do NOT set runtime.coding.patchFlow.default=true without product approval after soak.",
+    howToOptIn: "Patch Flow is retired. Use ordinary coding tools and explicit worktree isolation.",
     notes: [
       ...notes,
-      productSoakApproved
-        ? "productSoakApproved=true: humans may consider default-on out of band; this pack still keep-off"
-        : "productSoakApproved=false: keep-off",
-      meetsGate
-        ? "advisory: criteria green for human consider-default-on (flag still false)"
-        : "criteria not green for default-on consideration",
+      `legacy productSoakApproved=${productSoakApproved}`,
+      PATCH_FLOW_RETIRED ? "execution retired" : `default graduation eligible=${meetsGate}`,
     ],
     checklist: [
-      { id: "capability-ready", ok: capabilityReady, note: "serial apply + destructive hold surface" },
+      {
+        id: "capability-ready",
+        ok: capabilityReady,
+        note: "serial apply + destructive hold surface",
+      },
       { id: "default-false", ok: currentDefault === false, note: "patchFlow.default === false" },
       { id: "no-auto-flip", ok: true, note: "pack never writes default true" },
       {
