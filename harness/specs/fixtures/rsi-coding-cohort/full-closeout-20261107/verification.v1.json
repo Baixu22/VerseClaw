@@ -1,0 +1,143 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-final-validation-verifier",
+  "rsiTests": {
+    "files": 18,
+    "total": 199,
+    "passed": 199,
+    "failed": 0,
+    "pending": 0,
+    "report": "verification/rsi-final.json",
+    "execution": "verification/rsi-final-execution.json"
+  },
+  "agentDevTests": {
+    "files": 7,
+    "total": 183,
+    "passed": 183,
+    "failed": 0
+  },
+  "typecheck": {
+    "node": true,
+    "web": true,
+    "test": true,
+    "cache": false,
+    "exitCode": 0
+  },
+  "electron": {
+    "full": true,
+    "passed": 4,
+    "failed": 0,
+    "productBuildReused": true,
+    "unchangedProductBuildSource": "c1f4907d755c617c844cf2c0b8fe938a912af95f"
+  },
+  "diagnostic": {
+    "functionalExit": 0,
+    "decision": "blocked",
+    "performanceLimits": [
+      "vitest-agent-dev",
+      "typecheck",
+      "playwright-agent-dev",
+      "contract"
+    ],
+    "results": [
+      {
+        "id": "typecheck",
+        "exitCode": 0,
+        "durationMs": 118138,
+        "skipped": false
+      },
+      {
+        "id": "contract",
+        "exitCode": 0,
+        "durationMs": 4845,
+        "skipped": false
+      },
+      {
+        "id": "i18n",
+        "exitCode": 0,
+        "durationMs": 1072,
+        "skipped": false
+      },
+      {
+        "id": "workbench",
+        "exitCode": 0,
+        "durationMs": 547,
+        "skipped": false
+      },
+      {
+        "id": "harness-agent-dev",
+        "exitCode": 0,
+        "durationMs": 2002,
+        "skipped": false
+      },
+      {
+        "id": "vitest-agent-dev",
+        "exitCode": 0,
+        "durationMs": 207581,
+        "skipped": false
+      },
+      {
+        "id": "comms-replay",
+        "exitCode": 0,
+        "durationMs": 847,
+        "skipped": false
+      },
+      {
+        "id": "comms-compare",
+        "exitCode": 0,
+        "durationMs": 618,
+        "skipped": false
+      },
+      {
+        "id": "e2e-build",
+        "exitCode": 0,
+        "durationMs": 1,
+        "skipped": true
+      },
+      {
+        "id": "playwright-agent-dev",
+        "exitCode": 0,
+        "durationMs": 56954,
+        "skipped": false
+      },
+      {
+        "id": "workbench-refresh",
+        "exitCode": 0,
+        "durationMs": 492,
+        "skipped": false
+      }
+    ]
+  },
+  "measurementReplay": {
+    "sourceCommit": "97747a8c833486b4d5c6014df5e7d25d71f8ceb2",
+    "manifestFiles": 462,
+    "hashesPassed": true,
+    "outcomesPassed": true,
+    "expectedNegativeGate": "incomplete-slots",
+    "incomplete": 71,
+    "exitCode": 1
+  },
+  "admission": {
+    "tasks": 24,
+    "passed": true,
+    "manifestFiles": 96
+  },
+  "decisions": {
+    "binding": "decision-acceptance.v4.json",
+    "boundFiles": 77,
+    "passed": true,
+    "hashDrift": 0
+  },
+  "dependencies": {
+    "freshRootInstallation": "verification/initial-install-command-evidence.json",
+    "verifierMode": "reused dependency junctions; no shared module installation"
+  },
+  "historicalV1": {
+    "hashesPassed": true,
+    "files": 60,
+    "recorded": 15,
+    "incomplete": 1,
+    "unexecuted": 201,
+    "expectedNegativeGate": "unexecuted-slots"
+  }
+}

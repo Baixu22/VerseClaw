@@ -1,0 +1,13 @@
+{
+  "buildSource": "c1f4907d755c617c844cf2c0b8fe938a912af95f",
+  "productBuildReused": true,
+  "command": "node scripts/agent-dev-deep-test.mjs --reuse-build",
+  "actor": "codex/rsi-current-baseline-verifier",
+  "startedAt": "2026-11-07T12:32:22.8676340+08:00",
+  "exitCode": 0,
+  "sourceCommit": "d18231b6664d376a0388c61118c77cf105b5d99b",
+  "endedAt": "2026-11-07T12:38:56.4218240+08:00",
+  "e2eMode": "full",
+  "typecheckMode": "full-uncached",
+  "driven_by": "agent"
+}

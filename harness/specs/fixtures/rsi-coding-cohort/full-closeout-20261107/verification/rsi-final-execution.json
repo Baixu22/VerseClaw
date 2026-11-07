@@ -1,0 +1,10 @@
+{
+  "endedAt": "2026-11-07T12:32:22.7650899+08:00",
+  "startedAt": "2026-11-07T12:29:04.0511783+08:00",
+  "driven_by": "agent",
+  "exitCode": 0,
+  "testTimeoutUnchanged": true,
+  "sourceCommit": "d18231b6664d376a0388c61118c77cf105b5d99b",
+  "command": "node node_modules/vitest/vitest.mjs run <18 RSI and statistics files> --maxWorkers=1 --reporter=json",
+  "actor": "codex/rsi-final-regression-verifier"
+}

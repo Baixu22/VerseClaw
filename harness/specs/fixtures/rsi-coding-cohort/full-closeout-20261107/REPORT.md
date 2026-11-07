@@ -31,6 +31,8 @@ V8 准入的 24 个任务及 96 个文件已校验；markdown-it 使用精确 14
 
 整仓 Agent Dev 性能门仍有实测超限。首次 fresh-build 诊断的 typecheck 为 154206ms、Agent Dev unit 为 167195ms、contract 为 4033ms；对应限额为 45000ms、21000ms、3000ms。构建与 Electron 阶段的耗时也保留在诊断报告中。相关报告与退出状态见 `verification/`，性能限额没有调整。
 
+当前源码的最终诊断复用了上述已通过的产品构建，执行完整单测、无缓存类型检查和完整 Electron 质量测试，功能步骤全部退出 0。类型检查为 118138ms，Agent Dev unit 为 207581ms，Electron 为 56954ms，contract 为 4845ms；性能判定仍为 blocked。最终 RSI 回归为 199/199、18 文件、0 skipped。先前两项完整离线回放曾超出 30 秒默认测试限额；单独复现及随后完整回归通过，原失败记录与原限额均保留。
+
 从主仓读取保留测量时，使用其冻结评估器检出。以下命令只回放数据：
 
 ```powershell
