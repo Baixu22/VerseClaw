@@ -25,6 +25,17 @@ function setup(history: (input: { sessionKey: string; fromSeq: number; limit: nu
 }
 
 describe('production trajectory view supply', () => {
+  it.each([
+    [{ status: 'interrupted', timedOut: true }, 'failed'],
+    [{ status: 'interrupted', externalAbort: true }, 'aborted'],
+    [{ status: 'success' }, 'completed'],
+    [{ status: 'unclassified' }, 'idle'],
+  ] as const)('uses the runtime terminal state %j without inventing completion', async (state, status) => {
+    const h = setup(async () => page(0, [row(1), { ...row(2, 'end'), state: { ...state } }]));
+    await h.feed.refresh('session-a');
+    expect(sessionFromTrajectory(h.view()).status).toBe(status);
+    h.stop();
+  });
   it('joins paged history and buffered realtime at asOfSeq without applying a duplicate', async () => {
     let release!: (value: ObservabilityTrajectoryHistoryPage<TrajectoryEventV2>) => void;
     const pending = new Promise<ObservabilityTrajectoryHistoryPage<TrajectoryEventV2>>((resolve) => { release = resolve; });

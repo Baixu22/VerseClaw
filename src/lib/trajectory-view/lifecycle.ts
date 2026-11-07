@@ -24,7 +24,9 @@ function data(event: TrajectoryEventV2, id: string, startedAt = timestamp(event)
     id, role: event.role, runId: event.runId, seq: event.seq,
     status: event.phase !== 'end' ? 'running'
       : ['error', 'failed', 'timeout'].includes(status) ? 'failed'
-        : ['aborted', 'cancelled', 'canceled'].includes(status) ? 'aborted' : 'completed',
+        : status === 'interrupted' ? (event.state.timedOut === true ? 'failed' : 'aborted')
+          : ['aborted', 'cancelled', 'canceled'].includes(status) ? 'aborted'
+            : ['success', 'completed', 'ok'].includes(status) ? 'completed' : 'idle',
     startedAt,
     endedAt: event.phase === 'end' ? timestamp(event) : null,
     updatedAt: timestamp(event),

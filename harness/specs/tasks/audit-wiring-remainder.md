@@ -64,6 +64,7 @@ requiredRules:
   - docs-sync
   - repository-artifact-retention
   - disk-temp-policy
+  - lifecycle-projection-owner
 expectedUserBehavior:
   - Verifier failures use the configured discipline and the existing bounded lead repair flow.
   - Session activity and Observability lifecycle consume raw v2 assembler output with session isolation and deterministic history/realtime handoff.
