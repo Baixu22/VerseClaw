@@ -3,7 +3,7 @@ import { execFile, spawn } from 'node:child_process';
 import { once } from 'node:events';
 import { promisify } from 'node:util';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { createRequire } from 'node:module';
 import { expect, test, vi } from 'vitest';
@@ -51,6 +51,7 @@ test.skipIf(process.platform !== 'win32')('cleanup preserves a reused PID and te
 
 test.skipIf(process.platform !== 'win32')('Electron creation time matches the native process identity', async () => {
   const root = await mkdtemp(join(tmpdir(), 'electron-identity-'));
+  const otherRoot = await mkdtemp(join(tmpdir(), 'electron-unrelated-'));
   const entry = join(root, 'main.cjs');
   const output = join(root, 'identity.json');
   await writeFile(entry, `const { app } = require('electron');
@@ -61,7 +62,9 @@ test.skipIf(process.platform !== 'win32')('Electron creation time matches the na
   const electronBinaryPath = createRequire(import.meta.url)('electron') as string;
   const env = { ...process.env };
   delete env.ELECTRON_RUN_AS_NODE;
-  const child = spawn(electronBinaryPath, ['--no-sandbox', `--user-data-dir=${join(root, 'profile')}`, entry], { stdio: 'ignore', windowsHide: true, env });
+  const child = spawn(electronBinaryPath, ['--no-sandbox',
+    `--user-data-dir=${otherRoot}\\..\\${basename(root)}\\profile`,
+    `--log-file=${join(otherRoot, 'electron.log')}`, entry], { stdio: 'ignore', windowsHide: true, env });
   await once(child, 'spawn');
   const exited = once(child, 'exit');
   try {
@@ -73,6 +76,8 @@ test.skipIf(process.platform !== 'win32')('Electron creation time matches the na
     expect(await discoverWindowsElectronProcesses(root)).toEqual(expect.arrayContaining([
       expect.objectContaining({ pid: identity.pid, creationTime: Math.floor(identity.creationTime), ParentAlive: true }),
     ]));
+    expect(await discoverWindowsElectronProcesses(otherRoot)).toEqual([]);
+    expect(child.exitCode).toBeNull();
     expect((await checkWindowsProcesses([identity]))[0]).toMatchObject({ pid: identity.pid, status: 'alive' });
     expect((await checkWindowsProcesses([identity], true))[0].status).toBe('terminated');
     await exited;
@@ -81,5 +86,6 @@ test.skipIf(process.platform !== 'win32')('Electron creation time matches the na
     if (child.exitCode === null && child.signalCode === null) child.kill();
     await exited;
     await rm(root, { recursive: true, force: true });
+    await rm(otherRoot, { recursive: true, force: true });
   }
 }, 30_000);

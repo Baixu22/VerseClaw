@@ -19,6 +19,29 @@ using System;
 using System.Runtime.InteropServices;
 public static class ElectronProcessInfo {
   [DllImport("ntdll.dll")] static extern int NtQueryInformationProcess(IntPtr handle, int kind, IntPtr data, int length, out int needed);
+  [DllImport("kernel32.dll", SetLastError=true)] public static extern IntPtr OpenProcess(uint access, bool inherit, int pid);
+  [DllImport("kernel32.dll")] public static extern bool CloseHandle(IntPtr handle);
+  [DllImport("kernel32.dll")] static extern bool GetProcessTimes(IntPtr handle, out long created, out long exited, out long kernel, out long user);
+  [DllImport("shell32.dll", SetLastError=true)] static extern IntPtr CommandLineToArgvW([MarshalAs(UnmanagedType.LPWStr)] string command, out int count);
+  [DllImport("kernel32.dll")] static extern IntPtr LocalFree(IntPtr value);
+  public static long CreationTime(IntPtr handle) {
+    long created, exited, kernel, user;
+    if (!GetProcessTimes(handle, out created, out exited, out kernel, out user)) throw new InvalidOperationException("Process times unavailable");
+    return created / 10000 - 11644473600000L;
+  }
+  public static string UserDataDir(string command) {
+    int count;
+    IntPtr argv = CommandLineToArgvW(command, out count);
+    if (argv == IntPtr.Zero) throw new InvalidOperationException("Invalid process command line");
+    try {
+      for (int i = 1; i < count; i++) {
+        string arg = Marshal.PtrToStringUni(Marshal.ReadIntPtr(argv, i * IntPtr.Size));
+        if (arg.StartsWith("--user-data-dir=", StringComparison.Ordinal)) return arg.Substring(16);
+        if (arg == "--user-data-dir" && i + 1 < count) return Marshal.PtrToStringUni(Marshal.ReadIntPtr(argv, (i + 1) * IntPtr.Size));
+      }
+      return null;
+    } finally { LocalFree(argv); }
+  }
   public static string CommandLine(IntPtr handle) {
     int needed;
     NtQueryInformationProcess(handle, 60, IntPtr.Zero, 0, out needed);
@@ -40,15 +63,22 @@ public static class ElectronProcessInfo {
 }
 '@
 $rows = @(foreach ($process in [Diagnostics.Process]::GetProcessesByName('electron')) {
+  $handle = [IntPtr]::Zero
   try {
-    $handle = $process.Handle
-    if ($process.HasExited) { continue }
+    $handle = [ElectronProcessInfo]::OpenProcess(0x1000, $false, $process.Id)
+    if ($handle -eq [IntPtr]::Zero) { continue }
     $command = [ElectronProcessInfo]::CommandLine($handle)
-    if (-not $command.Contains('--user-data-dir') -or $command.IndexOf($root, [StringComparison]::OrdinalIgnoreCase) -lt 0) { continue }
+    $profile = [ElectronProcessInfo]::UserDataDir($command)
+    if (-not $profile) { continue }
+    $profile = [IO.Path]::GetFullPath($profile).TrimEnd('\') + '\'
+    if (-not $profile.StartsWith($root, [StringComparison]::OrdinalIgnoreCase)) { continue }
     $parent = [ElectronProcessInfo]::Parent($handle)
-    [pscustomobject]@{ pid = $process.Id; creationTime = ([DateTimeOffset]$process.StartTime).ToUnixTimeMilliseconds(); ProcessId = $process.Id;
+    [pscustomobject]@{ pid = $process.Id; creationTime = [ElectronProcessInfo]::CreationTime($handle); ProcessId = $process.Id;
       ParentProcessId = $parent; ParentAlive = $null -ne (Get-Process -Id $parent -ErrorAction SilentlyContinue) }
-  } catch { if (-not $process.HasExited) { throw } } finally { $process.Dispose() }
+  } catch { Write-Verbose $_.Exception.Message } finally {
+    if ($handle -ne [IntPtr]::Zero) { $null = [ElectronProcessInfo]::CloseHandle($handle) }
+    $process.Dispose()
+  }
 })
 ConvertTo-Json -InputObject $rows -Depth 3 -Compress
 `,

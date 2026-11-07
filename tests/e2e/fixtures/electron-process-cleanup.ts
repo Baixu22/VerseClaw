@@ -61,13 +61,16 @@ export async function cleanupElectronProcesses(runRoot: string, outputDir: strin
     pending = (await readdir(runRoot)).filter((name) => /^electron-launch-[\da-f-]+\.json$/.test(name));
     // The runner owns cleanup even when its worker aborts inside Electron spawn,
     // before Playwright returns an app and before any native identity is recorded.
-    if (pending.length || !ledger.length) owned = await discoverWindowsElectronProcesses(runRoot);
+    if (pending.length || !ledger.length) {
+      try { owned = await discoverWindowsElectronProcesses(runRoot); }
+      catch (error) { failure = error; }
+    }
     const identities = [...new Map([...ledger, ...owned].map((entry) => [`${entry.pid}:${entry.creationTime}`, entry])).values()];
     checks = await checkWindowsProcesses(identities, true);
     if (checks.some(({ status }) => status === 'alive' || status === 'unavailable')) {
       throw new Error('Owned Electron processes survived cleanup or could not be checked');
     }
-    await Promise.all(pending.map((name) => unlink(join(runRoot, name))));
+    if (!failure) await Promise.all(pending.map((name) => unlink(join(runRoot, name))));
   } catch (error) { failure = error; }
   await writeFile(join(outputDir, 'electron-process-cleanup.json'), JSON.stringify({
     driven_by: 'agent', actor: 'playwright-runner', runRoot, ledgerEntries: ledger.length,
