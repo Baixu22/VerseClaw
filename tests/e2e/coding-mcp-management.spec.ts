@@ -121,13 +121,13 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
     const detail = page.getByRole('dialog');
     await detail.getByRole('button', { name: 'Refresh', exact: true }).click();
     await expect(detail.getByText('echo', { exact: true })).toBeVisible({ timeout: 45_000 });
-    await expect(detail.getByText('connected', { exact: true })).toBeVisible();
+    await expect(detail.getByRole('paragraph').filter({ hasText: /^connected$/ })).toBeVisible();
     await page.screenshot({ path: testInfo.outputPath('mcp-connected.png'), fullPage: true });
     await hostInvoke(app, 'mcp', 'updateServer', { id: 'fixture', networkPolicy: 'disabled' });
     const callsBeforeNetworkDenial = server.requests.filter((request) => request.method === 'tools/call').length;
     await detail.getByRole('button', { name: 'Refresh', exact: true }).click();
     await expect(detail.getByRole('alert')).toContainText('network policy is disabled');
-    await expect(detail.getByText('error', { exact: true })).toBeVisible();
+    await expect(detail.getByRole('paragraph').filter({ hasText: /^error$/ })).toBeVisible();
     await expect(detail.getByText('echo', { exact: true })).toHaveCount(0);
     evidence.networkDenied = await call({ args: { message: 'network-denied' } });
     expect(evidence.networkDenied).toMatchObject({ success: false });
