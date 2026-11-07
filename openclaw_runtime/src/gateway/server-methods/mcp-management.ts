@@ -258,7 +258,7 @@ async function handle(
     prepared.validateArgs(entry.inputSchema, hook.params);
     prepared.assertCurrent();
     const result = await prepared.runtime.callTool(serverId, toolName, hook.params);
-    prepared.assertCurrent();
+    // Preserve this completed call's result; new configuration applies to later admissions.
     respond(true, {
       success: result.isError !== true,
       serverId,

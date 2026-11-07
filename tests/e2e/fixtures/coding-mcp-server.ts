@@ -5,7 +5,11 @@ import { StreamableHTTPServerTransport } from '../../../openclaw_runtime/node_mo
 import { CallToolRequestSchema, ListToolsRequestSchema, PingRequestSchema } from '../../../openclaw_runtime/node_modules/@modelcontextprotocol/sdk/dist/esm/types.js';
 
 /** Real SDK endpoint shared by management integration and Electron acceptance. */
-export async function startCodingMcpServer(options: { empty?: boolean; delayMs?: number } = {}) {
+export async function startCodingMcpServer(options: {
+  empty?: boolean;
+  delayMs?: number;
+  onCall?: (args: Record<string, unknown> | undefined) => void | Promise<void>;
+} = {}) {
   const requests: Array<{ method: string; params?: unknown }> = [];
   const active = new Set<Server>();
   const stop = new AbortController();
@@ -19,10 +23,14 @@ export async function startCodingMcpServer(options: { empty?: boolean; delayMs?:
         { name: 'fail', description: 'Return a tool failure', inputSchema: { type: 'object' as const, properties: {}, additionalProperties: false } },
       ] };
     });
-    rpc.setRequestHandler(CallToolRequestSchema, async (input) => ({
-      content: [{ type: 'text' as const, text: input.params.name === 'fail' ? 'Fixture tool failure' : String(input.params.arguments?.message ?? '') }],
-      isError: input.params.name === 'fail',
-    }));
+    rpc.setRequestHandler(CallToolRequestSchema, async (input) => {
+      const result = {
+        content: [{ type: 'text' as const, text: input.params.name === 'fail' ? 'Fixture tool failure' : String(input.params.arguments?.message ?? '') }],
+        isError: input.params.name === 'fail',
+      };
+      await options.onCall?.(input.params.arguments);
+      return result;
+    });
     rpc.setRequestHandler(PingRequestSchema, async () => ({}));
     const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
     active.add(rpc);

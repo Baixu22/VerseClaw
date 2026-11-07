@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { ElectronApplication } from '@playwright/test';
 import type { McpCallToolResult, McpHeartbeatResult, McpListToolsResult } from '../../shared/types/mcp';
@@ -11,7 +11,15 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
   test.setTimeout(420_000);
   const workspace = join(userDataDir, 'workspace');
   await mkdir(workspace, { recursive: true });
-  const server = await startCodingMcpServer();
+  let app: ElectronApplication | undefined;
+  const rpc = <T,>(method: string, params: Record<string, unknown>) => hostInvoke<T>(app!, 'gateway', 'rpc', { method, params, timeoutMs: 90_000 });
+  const server = await startCodingMcpServer({ onCall: async (args) => {
+    if (args?.message !== 'after-effect-management' && args?.message !== 'after-effect-invoke') return;
+    await writeFile(join(workspace, `${args.message}.txt`), args.message);
+    const snapshot = await rpc<{ hash: string }>('config.get', {});
+    await rpc('config.patch', { baseHash: snapshot.hash, restartDelayMs: 60_000,
+      raw: JSON.stringify({ agents: { defaults: { thinkingDefault: args.message === 'after-effect-management' ? 'medium' : 'high' } } }) });
+  } });
   const empty = await startCodingMcpServer({ empty: true });
   const slow = await startCodingMcpServer({ delayMs: 2500 });
   const llm = await startScriptedLlm((text, results) => {
@@ -29,7 +37,6 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
   }
   const evidence: Record<string, unknown> = { schema: 'CodingMcpManagement/v1', driven_by: 'agent',
     actor: 'codex-coding-p2-01a1b07b', realHumanEvidence: false, runtime: 'source', provider: 'scripted-local', workspace };
-  let app: ElectronApplication | undefined;
   try {
     app = await launchElectronApp({ skipSetup: true, env: { VERSE_CLAW_OPENCLAW_RUNTIME: 'source' } });
     const page = await getStableWindow(app);
@@ -42,7 +49,6 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
       await hostInvoke(app, 'mcp', 'createServer', { name, transport: 'http', url: endpoint.url, scope: 'global', networkPolicy: 'localOnly' });
     }
     await startGateway(app);
-    const rpc = <T,>(method: string, params: Record<string, unknown>) => hostInvoke<T>(app!, 'gateway', 'rpc', { method, params, timeoutMs: 90_000 });
     const runtimeConfig = await rpc<{ path?: string; config?: { mcp?: { servers?: Record<string, unknown> }; agents?: unknown } }>('config.get', {});
     evidence.runtimeConfig = { path: runtimeConfig.path, mcpServerIds: Object.keys(runtimeConfig.config?.mcp?.servers ?? {}), agents: runtimeConfig.config?.agents };
     const parent = await rpc<{ key: string; entry: { sessionId: string } }>('sessions.create', { agentId: 'main', label: 'P2 bound session' });
@@ -141,6 +147,30 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
     expect(evidence.networkDenied).toMatchObject({ success: false });
     expect(server.requests.filter((request) => request.method === 'tools/call')).toHaveLength(callsBeforeNetworkDenial);
     await page.screenshot({ path: testInfo.outputPath('mcp-error.png'), fullPage: true });
+    await hostInvoke(app, 'mcp', 'updateServer', { id: 'fixture', networkPolicy: 'localOnly' });
+    await expect.poll(async () => (await hostInvoke<McpListToolsResult>(app!, 'mcp', 'listTools', { serverId: 'fixture' })).success,
+      { timeout: 60_000, intervals: [1000] }).toBe(true);
+    const configEffects: unknown[] = [];
+    evidence.configEffects = configEffects;
+    for (const [surface, message, thinkingDefault] of [
+      ['management', 'after-effect-management', 'medium'],
+      ['tools.invoke', 'after-effect-invoke', 'high'],
+    ] as const) {
+      const before = server.requests.filter((request) => request.method === 'tools/call').length;
+      const result = surface === 'management'
+        ? await call({ args: { message } })
+        : await rpc('tools.invoke', { name: 'fixture__echo', sessionKey: parent.key,
+          expectedSessionGeneration: parent.entry.sessionId, workspaceDir: workspace, args: { message } });
+      const applied = await readFile(join(workspace, `${message}.txt`), 'utf8');
+      const current = await rpc<{ config: { agents: { defaults: { thinkingDefault: string } } } }>('config.get', {});
+      configEffects.push({ surface, result, applied, thinkingDefault: current.config.agents.defaults.thinkingDefault });
+      expect(applied).toBe(message);
+      expect(server.requests.filter((request) => request.method === 'tools/call')).toHaveLength(before + 1);
+      expect(current.config.agents.defaults.thinkingDefault).toBe(thinkingDefault);
+      expect(result).toMatchObject(surface === 'management'
+        ? { success: true, result: { content: [{ type: 'text', text: message }] } }
+        : { ok: true, output: { content: [{ type: 'text', text: message }] } });
+    }
     evidence.status = 'pass';
   } catch (error) {
     evidence.status = 'failed';

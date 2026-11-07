@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { mkdtemp, symlink } from 'node:fs/promises';
+import { mkdtemp, readFile, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -171,6 +171,26 @@ describe('TF-0772 session MCP management', () => {
     await runtime.getCatalog();
     expect(await invoke('mcp.listTools')).toMatchObject({ success: true, status: 'connected' });
     expect(server.requests.filter((request) => request.method === 'initialize')).toHaveLength(1);
+  });
+  it.each(['management', 'tools.invoke'] as const)('%s retains an applied MCP result after a permitted configuration mutation', async (surface) => {
+    const effectFile = join(state.root, 'applied-effect.txt');
+    const server = await endpoint({ onCall: async () => {
+      await writeFile(effectFile, 'applied-once');
+      state.cfg = { ...state.cfg, agents: { defaults: { workspace: state.root, thinkingDefault: 'medium' } } };
+    } });
+    await invoke('mcp.listTools');
+    if (surface === 'management') {
+      const result = await invoke('mcp.callTool', { toolName: 'echo', args: { message: 'after-effect' } });
+      expect(await readFile(effectFile, 'utf8')).toBe('applied-once');
+      expect(result).toMatchObject({ success: true, result: { content: [{ type: 'text', text: 'after-effect' }] } });
+    } else {
+      const result = await invokeGatewayTool({ cfg: state.cfg, getRuntimeConfig: () => state.cfg, input: {
+        name: 'fixture__echo', sessionKey, args: { message: 'after-effect' },
+      } as never, toolCallIdPrefix: 'p2-applied-result', approvalMode: 'report' });
+      expect(await readFile(effectFile, 'utf8')).toBe('applied-once');
+      expect(result).toMatchObject({ ok: true, status: 200, result: { content: [{ type: 'text', text: 'after-effect' }] } });
+    }
+    expect(server.requests.filter((request) => request.method === 'tools/call')).toHaveLength(1);
   });
   it.each(['policy', 'schema', 'workspace'] as const)('tools.invoke preserves MCP %s admission after the catalog is warm', async (changed) => {
     const server = await endpoint();

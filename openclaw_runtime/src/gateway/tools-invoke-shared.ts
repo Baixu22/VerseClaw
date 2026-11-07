@@ -362,7 +362,7 @@ async function invokeWarmMcpTool(params: {
     admission.validateArgs(inputSchema, hookResult.params);
     admission.assertCurrent();
     const result = await tool.execute?.(toolCallId, hookResult.params);
-    admission.assertCurrent();
+    // Preserve this completed call's result; new configuration applies to later admissions.
     return {
       ok: true,
       status: 200,
