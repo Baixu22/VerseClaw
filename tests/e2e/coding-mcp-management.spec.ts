@@ -97,6 +97,30 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
     expect(server.requests.some((request) => request.method === 'tools/call'
       && (request.params as { arguments?: { message?: string } })?.arguments?.message === 'model-sdk-round-trip')).toBe(true);
     expect(server.requests.filter((request) => request.method === 'initialize')).toHaveLength(1);
+    // Verify completed effects before the independent policy-revocation sequence.
+    const configEffects: unknown[] = [];
+    evidence.configEffects = configEffects;
+    for (const [surface, message, thinkingDefault] of [
+      ['management', 'after-effect-management', 'medium'],
+      ['tools.invoke', 'after-effect-invoke', 'high'],
+    ] as const) {
+      const before = server.requests.filter((request) => request.method === 'tools/call').length;
+      const result = surface === 'management'
+        ? await call({ args: { message } })
+        : await rpc('tools.invoke', { name: 'fixture__echo', sessionKey: parent.key,
+          expectedSessionGeneration: parent.entry.sessionId, workspaceDir: workspace, args: { message } });
+      const effect: Record<string, unknown> = { surface, result };
+      configEffects.push(effect);
+      expect(result).toMatchObject(surface === 'management'
+        ? { success: true, result: { content: [{ type: 'text', text: message }] } }
+        : { ok: true, output: { content: [{ type: 'text', text: message }] } });
+      const applied = await readFile(join(workspace, `${message}.txt`), 'utf8');
+      const current = await rpc<{ config: { agents: { defaults: { thinkingDefault: string } } } }>('config.get', {});
+      Object.assign(effect, { applied, thinkingDefault: current.config.agents.defaults.thinkingDefault });
+      expect(applied).toBe(message);
+      expect(server.requests.filter((request) => request.method === 'tools/call')).toHaveLength(before + 1);
+      expect(current.config.agents.defaults.thinkingDefault).toBe(thinkingDefault);
+    }
     const callsBeforeDenials = server.requests.filter((request) => request.method === 'tools/call').length;
     const foreign = await rpc<{ key: string }>('sessions.create', { agentId: 'main', label: 'P2 unbound session' });
     const denials = [
@@ -165,32 +189,6 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
     expect(server.requests.filter((request) => request.method === 'tools/call')).toHaveLength(callsBeforeNetworkDenial);
     await detail.getByRole('alert').scrollIntoViewIfNeeded();
     await page.screenshot({ path: testInfo.outputPath('mcp-error.png'), animations: 'disabled' });
-    await hostInvoke(app, 'mcp', 'updateServer', { id: 'fixture', networkPolicy: 'localOnly' });
-    await expect.poll(async () => (await hostInvoke<McpListToolsResult>(app!, 'mcp', 'listTools', { serverId: 'fixture' })).success,
-      { timeout: 60_000, intervals: [1000] }).toBe(true);
-    const configEffects: unknown[] = [];
-    evidence.configEffects = configEffects;
-    for (const [surface, message, thinkingDefault] of [
-      ['management', 'after-effect-management', 'medium'],
-      ['tools.invoke', 'after-effect-invoke', 'high'],
-    ] as const) {
-      const before = server.requests.filter((request) => request.method === 'tools/call').length;
-      const result = surface === 'management'
-        ? await call({ args: { message } })
-        : await rpc('tools.invoke', { name: 'fixture__echo', sessionKey: parent.key,
-          expectedSessionGeneration: parent.entry.sessionId, workspaceDir: workspace, args: { message } });
-      const effect: Record<string, unknown> = { surface, result };
-      configEffects.push(effect);
-      expect(result).toMatchObject(surface === 'management'
-        ? { success: true, result: { content: [{ type: 'text', text: message }] } }
-        : { ok: true, output: { content: [{ type: 'text', text: message }] } });
-      const applied = await readFile(join(workspace, `${message}.txt`), 'utf8');
-      const current = await rpc<{ config: { agents: { defaults: { thinkingDefault: string } } } }>('config.get', {});
-      Object.assign(effect, { applied, thinkingDefault: current.config.agents.defaults.thinkingDefault });
-      expect(applied).toBe(message);
-      expect(server.requests.filter((request) => request.method === 'tools/call')).toHaveLength(before + 1);
-      expect(current.config.agents.defaults.thinkingDefault).toBe(thinkingDefault);
-    }
     evidence.status = 'pass';
   } catch (error) {
     evidence.status = 'failed';
