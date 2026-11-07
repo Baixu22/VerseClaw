@@ -109,9 +109,9 @@ export async function taskSystemCommand(
 ): Promise<unknown> {
   const store = await openTaskSystem(workspaceId, true);
   if (!store) throw new Error("TASK_STORE_UNAVAILABLE");
-  const generationFor = async (sessionKey: string) => {
+  const generationFor = async (sessionKey: string, bindingWorkspaceId=workspaceId) => {
     if (!gateway) throw new Error("TASK_SESSION_OWNER_UNAVAILABLE");
-    const binding = await getPersistedCoordinatorBinding(workspaceId, sessionKey);
+    const binding = await getPersistedCoordinatorBinding(bindingWorkspaceId, sessionKey);
     if (!binding || binding.state !== "active") throw new Error("TASK_COORDINATOR_REQUIRED");
     const described = await gateway.rpc<{ session?: { sessionId?: string } }>(
       "sessions.describe",
@@ -179,7 +179,7 @@ export async function taskSystemCommand(
     try {
       if (command.action === "checkpoint") return scoped.checkpoint(credential, command.checkpoint);
       if (command.action === "handoff") {
-        const next = await generationFor(command.targetSessionKey);
+        const next = await generationFor(command.targetSessionKey,command.targetWorkspaceId??workspaceId);
         return scoped.handoff(credential, command.targetSessionKey, next.generation, next.worktree);
       }
       if (command.action === "submit") return scoped.submit(credential, command.candidate);

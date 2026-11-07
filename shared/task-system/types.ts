@@ -95,7 +95,7 @@ export type TaskSystemCommand =
   | { action: "claim"; taskNodeId: string; sessionKey: string; requestId: string }
   | { action: "checkpoint"; credential: TaskCredential; checkpoint: TaskCheckpoint }
   | { action: "pause" | "release" | "cancel" | "renew"; credential: TaskCredential }
-  | { action: "handoff"; credential: TaskCredential; targetSessionKey: string }
+  | { action: "handoff"; credential: TaskCredential; targetSessionKey: string; targetWorkspaceId?:string }
   | { action: "recover"; taskNodeId: string; targetSessionKey: string }
   | { action: "submit"; credential: TaskCredential; candidate: string }
   | {
