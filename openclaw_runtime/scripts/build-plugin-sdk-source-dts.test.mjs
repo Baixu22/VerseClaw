@@ -8,7 +8,15 @@ import {
   resolvePackageDeclarationPath,
   resolveStagedDeclarationPath,
   stagePluginSdkDeclarations,
+  resolveDeclarationCompiler,
 } from "./build-plugin-sdk-source-dts.mjs";
+
+test('uses the existing TypeScript emitter on Windows and keeps explicit compiler selection',()=>{
+  assert.equal(resolveDeclarationCompiler({runtimeRoot:'/runtime',platform:'win32'}),path.join('/runtime','node_modules','typescript','bin','tsc'));
+  assert.equal(resolveDeclarationCompiler({runtimeRoot:'/runtime',platform:'linux'}),path.join('/runtime','scripts','run-tsgo.mjs'));
+  assert.equal(resolveDeclarationCompiler({runtimeRoot:'/runtime',platform:'win32',compiler:'tsgo'}),path.join('/runtime','scripts','run-tsgo.mjs'));
+  assert.throws(()=>resolveDeclarationCompiler({runtimeRoot:'/runtime',compiler:'skip'}),/Unknown/);
+});
 
 test("maps common-root declaration output into the retained source-shaped layout", () => {
   assert.equal(
