@@ -28,7 +28,7 @@ test('raw v2 lifecycle drives visible errors while delayed legacy events cannot 
     snapshot.backgroundRead = { state: 'known', readAt: 1760000000000, failedAt: null };
     snapshot.availability.git = true;
     snapshot.availability.terminals = true;
-    snapshot.processes = [{ id: 'completed-process', kind: 'bash', label: 'Completed process', status: 'completed', updatedAt: 1760000000000 }];
+    snapshot.processes = [{ id: 'background-process', kind: 'bash', label: 'Background process', status: 'running', updatedAt: 1760000000000 }];
     await installIpcMocks(app, {
       gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
       gatewayRpc: {
@@ -54,6 +54,9 @@ test('raw v2 lifecycle drives visible errors while delayed legacy events cannot 
     await expect(page.getByText('Observe trajectory lifecycle')).toBeVisible({ timeout: 30000 });
     const toggle = page.getByTestId('chat-session-activity-toggle');
     if (await toggle.getAttribute('aria-expanded') !== 'true') await toggle.click();
+    await expect.poll(() => app.evaluate(() => (globalThis as unknown as {
+      __verseClawE2eHostCalls?: Array<{ module?: string; action?: string }>;
+    }).__verseClawE2eHostCalls?.filter((call) => call.module === 'observability' && call.action === 'trajectoryHistory').length ?? 0)).toBeGreaterThan(0);
     await expect(page.getByTestId('session-activity-panel')).toBeVisible();
     await expect(page.getByTestId('session-activity-alert')).toHaveCount(0);
     await page.screenshot({ path: info.outputPath('trajectory-running.png'), animations: 'disabled' });
