@@ -203,7 +203,6 @@ test.describe('FakeCoding Inbox navigation', () => {
 
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.getByTestId('sidebar-nav-settings').click();
-    await page.getByTestId('settings-nav-general').click();
     const themeMode = page.getByTestId('settings-theme-mode');
     const darkMode = themeMode.getByRole('radio', { name: 'Dark', exact: true });
     await darkMode.click();
