@@ -254,10 +254,12 @@ export function wrapProviderSpendStream(inner: StreamFn, run: ProviderSpendRunCo
         // Normalized adapters can synthesize all-zero usage for a missing frame;
         // that is unknown billing, never evidence of a free model request.
         const usage = message.usage;
-        const measured = Number.isSafeInteger(usage?.totalTokens) && usage.totalTokens > 0;
+        const reported = Number.isSafeInteger(usage?.totalTokens) && usage.totalTokens > 0;
+        const partsValid = reported && [usage.input, usage.output, usage.cacheRead, usage.cacheWrite].every(value => Number.isSafeInteger(value) && value >= 0);
+        const partTotal = partsValid ? usage.input + usage.output + usage.cacheRead + usage.cacheWrite : 0;
+        const measured = reported && (partTotal === 0 || partTotal === usage.totalTokens);
         if (!measured && !active.sent && active.refused) { cancel(active); return message; }
-        const breakdown = measured && [usage.input, usage.output, usage.cacheRead, usage.cacheWrite].every(value => Number.isSafeInteger(value) && value >= 0)
-          && usage.input + usage.output + usage.cacheRead + usage.cacheWrite > 0;
+        const breakdown = measured && partsValid && partTotal === usage.totalTokens;
         const calculated = breakdown && knownPrice(quotedModel) ? calculateCost(quotedModel, { ...usage, cost: { ...usage.cost } }).total : null;
         const actualCost = calculated !== null && Number.isFinite(calculated) && calculated >= 0 ? calculated : null;
         markSent(active);

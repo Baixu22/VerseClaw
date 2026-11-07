@@ -189,8 +189,10 @@ project 必须有执行 owner 提供的逻辑 workspace 身份，session 包含�
 整数微美元。核销按本次调用固定的费率和最终token明细计算，保留原usage记录。
 transport确认未发送并结束的调用归还预留，已发送重试另占额度，没有usage的旧尝试
 保留unknown。响应EOF或错误返回之前完成并发槽位释放。全零价格按未知处理，有
-USD限额时拒绝未知价格。计数从显式
-启用后的第一笔预算准入开始，不追补既有 transcript 历史，也不代表服务商账单。
+USD限额时拒绝未知价格。计数从显式启用后的第一笔预算准入开始，不追补既有 transcript
+历史，也不代表服务商账单。
+usage分项合计为正且与总量不一致时，token和USD均保持unknown并保留原预留。只有总量
+有效、分项缺失时，可单独核销token；USD成本仍保持unknown。
 运行时在发送前从既有会话 owner 核对 generation 并绑定逻辑 workspace；同 generation
 的 workspace 漂移拒绝发送。子代理通过原会话存储继承该逻辑身份，磁盘 checkout 不
 改变项目余额。缺失 owner 或逻辑 workspace 的调用在 project 限额下拒绝；跨工具和

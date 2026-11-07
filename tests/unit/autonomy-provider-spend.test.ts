@@ -258,6 +258,22 @@ describe('provider owner layered spend reservation', () => {
     expect(providerSpendSnapshot(scope())[0]).toMatchObject({ spentTokens: 10, unknownCostCalls: 1, heldCostMicros: 200 });
   });
 
+  it.each([5, 15])('retains token and USD liabilities when usage components %i disagree with the reported total', async input => {
+    const raw = message(10); raw.usage.input = input;
+    const inner: StreamFn = () => { const stream = createAssistantMessageEventStream(); stream.push({ type: 'done', reason: 'stop', message: raw }); return stream; };
+    await (await wrapProviderSpendStream(inner, { workspaceId: 'project-a', sessionKey: 'session-a', sessionGeneration: 'generation-one',
+      runId: 'inconsistent-usage-' + input, config: { host: { maxTokens: 100, maxCostUsd: 1 } } })(model, { messages: [] })).result();
+    const snapshot = providerSpendSnapshot(scope());
+    const db = openOpenClawStateDatabase();
+    const evidence = path.join(process.cwd(), 'artifacts/runs/autonomy-resource-admission', 'inconsistent-' + path.basename(root));
+    mkdirSync(evidence, { recursive: true });
+    writeFileSync(path.join(evidence, 'owner.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex-r1-inconsistent-usage-reader',
+      usage: raw.usage, snapshot, rows: db.db.prepare('SELECT * FROM provider_spend_calls').all(), databasePath: db.path }, null, 2));
+    expect(snapshot[0]).toMatchObject({ spentTokens: 0, spentCostMicros: 0, unknownTokenCalls: 1, unknownCostCalls: 1, heldTokens: 100, heldCostMicros: 200 });
+    expect(() => reserve('after-inconsistent-token', { config: { host: { maxTokens: 100 } } })).toThrow(/tokens/);
+    expect(() => reserve('after-inconsistent', { config: { host: { maxCostUsd: 1 } } })).toThrow(/unknown-cost/);
+  });
+
   it('rejects a zero model bound before reserving or invoking the provider', async () => {
     const inner = vi.fn<StreamFn>();
     await expect(wrapProviderSpendStream(inner, { sessionKey: 'session-a', sessionGeneration: 'generation-one', runId: 'unmeasured-input-bound',
