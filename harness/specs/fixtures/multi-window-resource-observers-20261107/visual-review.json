@@ -1,0 +1,20 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "passed",
+  "files": [
+    "main-after-browser-reopen.png",
+    "resource-release-confirm.png",
+    "storage-dark-1280.png",
+    "storage-light-760.png",
+    "storage-light.png",
+    "worktree-create-light.png",
+    "worktree-remove-confirm.png",
+    "worktrees-light.png"
+  ],
+  "checks": [
+    "Main window retains the resource/worktree controls after browser reopen",
+    "Storage page readable in light, dark and narrow layouts",
+    "Create/release/remove dialogs stay within viewport with readable confirmation controls"
+  ]
+}

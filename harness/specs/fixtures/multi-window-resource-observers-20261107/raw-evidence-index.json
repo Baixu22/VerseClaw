@@ -1,0 +1,228 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "files": [
+    {
+      "path": "D:\\tmp\\tf0832\\final\\commands.json",
+      "sha256": "d3366976ea1f35dba5e4fb49b9fb607fb684596607e1419574fb1ae283dbf36b"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\final\\comms\\compare-report.json",
+      "sha256": "349ad2b02683b3c40a9444c98d61851b4263ed25ad5091cd8a911aeabc73332d"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\final\\comms\\compare-report.md",
+      "sha256": "76a932da389ed074e40c1cf77e1573d9b76c16fa34592a4551a19344635c63a5"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\final\\comms\\current-metrics.json",
+      "sha256": "22f231df08d58a60ec90db53b55c4cfd0740f2b24dbf87b51862023f1dbb6224"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\final\\comms-compare.log",
+      "sha256": "15f33a23d72ca748f6de3c5be8af96ae628f2c2538a866be57396345bdc3162b"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\final\\comms-replay.log",
+      "sha256": "e67ff86d013658b03bc577457ff7f0be62c587cfd0bcd03383fd1d195b68540b"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\final\\contract.log",
+      "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\final\\diff.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\final\\harness-context.log",
+      "sha256": "ee02af03dd44924c37f4ea2b9c72b8d25aa521b85160a63472389bbb6893fdbc"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\final\\harness-run.log",
+      "sha256": "30974247ceed4b99b04b970d1cf28a879caafda964767f9ddf687567ac95713e"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\final\\harness-validate.log",
+      "sha256": "9012e89ad4c613f880b594850332516f208d7c2effb8bc1884e0fda42c444e24"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\final\\i18n.log",
+      "sha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\final\\lint.json",
+      "sha256": "d98684ac41755e9fc3ed04d2aa66eb076fc9a5eecb397e673215c9c81eb59f44"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\final\\lint.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\final\\node-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\final\\report.json",
+      "sha256": "e3c37279ca931dde3580a581cba93654bbfdf0db2fd8dd81b40eb6d9e56101b9"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\final\\retention.log",
+      "sha256": "100b4bd15fb1f1cf7dc8a2906b91bc40176976c7f53f0fabe3932c4af2768007"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\final\\test-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\final\\unit.json",
+      "sha256": "b7f7fc9c96a40d9f98cd46653960a0b80a3fd85113d3e8c547c7548bd7a70975"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\final\\unit.log",
+      "sha256": "e5cc0b7ef0a1064c602c35e3da8e9c8639fb0bb510f67c6d465cab4bfe74e206"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\final\\web-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\e2e-results10\\.last-run.json",
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\e2e-results10\\electron-process-cleanup.json",
+      "sha256": "d76b6a558c439067a4030f3ee2e416247365f23ed817c9ce6deecabcefeff8d1"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\e2e-results10\\electron-process-run.json",
+      "sha256": "134b55a0e5c38d4b7e761760a6b144a05ee11dd1f9eff4bb7b44163aff42acef"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\e2e-results10\\resource-window-lifecycle--60e0b-rs-and-background-execution\\acceptance.json",
+      "sha256": "df9ed3b7c99eb11c0291d9ae469ec317e48f4248812ecf5867c658c25419c4ec"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\e2e-results10\\resource-window-lifecycle--60e0b-rs-and-background-execution\\hidden-window.json",
+      "sha256": "4948421c065fc863a90e8b2f545a6a2d5f230b471682d131a45c4c860d8caa61"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\e2e-results10\\resource-window-lifecycle--60e0b-rs-and-background-execution\\main-after-browser-reopen.png",
+      "sha256": "1089b57aa1a21a6d115bb734d0de376b37729733e3dfc00e593dd5bb6007f851"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\e2e-results10\\resource-window-lifecycle--60e0b-rs-and-background-execution\\owned-process-cleanup.json",
+      "sha256": "20444926f4361b2d79f709c3852748f2572bb7af2212dcac08b7a4040a6b4231"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\e2e-results10\\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\\acceptance.json",
+      "sha256": "6aab9f79d52440b97f7694bdd79ad758cff53e95229179ffcb4abcae73e503fe"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\e2e-results10\\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\\resource-release-confirm.png",
+      "sha256": "4bf9e907c659135d48a177ba1b0e56ebd2c188f8cf3c756e3e03f3c62e60734f"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\e2e-results10\\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\\storage-dark-1280.png",
+      "sha256": "9700cc4528f50caae85ed638da19c89b526f311313c336d19918210bd6b10c4b"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\e2e-results10\\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\\storage-light-760.png",
+      "sha256": "4e09f46c94f9a953babc9f410309fed25750f4fa9aa040c6e8c6e21b3375f41c"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\e2e-results10\\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\\storage-light.png",
+      "sha256": "a216d0463f6ca9c62e5fb107ce9a3832efdceda212be603302e9aa328245d9ed"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\e2e-results10\\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\\worktree-create-light.png",
+      "sha256": "17b72cf616a7984a3d35757d3cb253f8152b79d9ada9cec5abda1449ce687d48"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\e2e-results10\\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\\worktree-remove-confirm.png",
+      "sha256": "51d370475af876e15a992c599f7d527fa0fd54844fb33f8be8f5f508f7b31b12"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\e2e-results10\\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\\worktrees-light.png",
+      "sha256": "7165d44c7fc29e3121394668fe425b0eaa012b0fa36ab714c287b953f119857a"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\e2e-results10\\source-mutation-guard.json",
+      "sha256": "3670b6602ab07c4f1086799a52d230e5ae70b16e24c203850a131f81edbf172d"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\e2e-results10\\source-state-after.json",
+      "sha256": "596b6dfd53ef6e7932e30afe8beb5736096e51299fafe8fafe562f420d4dd678"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\e2e-results10\\source-state-before.json",
+      "sha256": "596b6dfd53ef6e7932e30afe8beb5736096e51299fafe8fafe562f420d4dd678"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\e2e10.json",
+      "sha256": "ef6dcc42e0cf9ee0f4649d19407a9a50e7084eb7425bbcc86258e1ef2456e1f3"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\e2e10.exit",
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\e2e10.log",
+      "sha256": "c582986da06d43878f3b1b6fcddf8b7e07c9b9e099c2acb8a37928c42554034f"
+    },
+    {
+      "path": "D:\\tmp\\tf0832\\verify-final.py",
+      "sha256": "2251c6fa725301ba4ce6545e06f3c4fdfed79bd31619646395697c5964722ec7"
+    }
+  ],
+  "historicalRuns": [
+    {
+      "run": "e2e2",
+      "directory": "D:\\tmp\\tf0832\\e2e-results2",
+      "state": "prior run; see original report"
+    },
+    {
+      "run": "e2e3",
+      "directory": "D:\\tmp\\tf0832\\e2e-results3",
+      "state": "prior run; see original report"
+    },
+    {
+      "run": "e2e4",
+      "directory": "D:\\tmp\\tf0832\\e2e-results4",
+      "state": "prior run; see original report"
+    },
+    {
+      "run": "e2e5",
+      "directory": "D:\\tmp\\tf0832\\e2e-results5",
+      "state": "prior run; see original report"
+    },
+    {
+      "run": "e2e6",
+      "directory": "D:\\tmp\\tf0832\\e2e-results6",
+      "state": "prior run; see original report"
+    },
+    {
+      "run": "e2e7",
+      "directory": "D:\\tmp\\tf0832\\e2e-results7",
+      "state": "prior run; see original report"
+    },
+    {
+      "run": "e2e8",
+      "directory": "D:\\tmp\\tf0832\\e2e-results8",
+      "state": "interrupted without final report"
+    },
+    {
+      "run": "e2e9",
+      "directory": "D:\\tmp\\tf0832\\e2e-results9",
+      "state": "prior run; see original report"
+    }
+  ],
+  "dependencyView": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX\\node_modules",
+  "localLogs": "D:\\tmp\\tf0832",
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "GOMEMLIMIT": "1GiB",
+    "GOMAXPROCS": "2"
+  }
+}
