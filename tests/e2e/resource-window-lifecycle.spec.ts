@@ -51,7 +51,7 @@ test('integrated main and browser windows retain visibility, observers and backg
     const shed = async () => Boolean(((await invoke(page, 'efficiency', 'getState')).shed as { shedding?: boolean } | null)?.shedding);
     const mainId = await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].id);
     const openBrowser = async () => {
-      const opened = await invoke(page, 'agentBrowser', 'open', { ...scope, url: 'about:blank', mode: 'visible', profile: 'window-lifecycle' });
+      const opened = await invoke(page, 'agentBrowser', 'open', { ...scope, mode: 'visible', profile: 'window-lifecycle' });
       expect(opened.success).toBe(true);
       const browserId = await app.evaluate(({ BrowserWindow }, mainId) => BrowserWindow.getAllWindows().find(w => w.id !== mainId)?.id, mainId);
       expect(browserId).toBeTruthy();
