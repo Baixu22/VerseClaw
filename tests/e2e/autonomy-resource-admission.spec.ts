@@ -3,7 +3,7 @@ import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { GatewayStatus } from '../../shared/types/gateway';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
-import { buildMockProviderConfig, hostInvoke, startGateway, startScriptedLlm } from './fixtures/fp-p1-harness';
+import { buildMockProviderConfig, hostInvoke, SCRIPTED_LLM_USAGE, startGateway, startScriptedLlm } from './fixtures/fp-p1-harness';
 
 for (const handoffMode of ['off', 'on'] as const) {
 test(`R1 real Host/Gateway queues conflicting waves until the prior provider run terminates (handoff ${handoffMode})`, async ({ launchElectronApp, homeDir, userDataDir }, testInfo) => {
@@ -178,9 +178,14 @@ test(`R1 provider owner prevents concurrent host overspend and reconciles actual
     : { host: { maxTokens: 200000 }, project: { maxTokens: 200000 }, session: { maxTokens: 200000 } };
   (config.runtime as Record<string, unknown>).providerBudget = spendPolicy;
   const budgetModel = (config.models as { providers: { openai: { models: Array<Record<string, unknown>> } } }).providers.openai.models[0];
+  const fixturePricing = { input: 1, output: 2, cacheRead: 1, cacheWrite: 1 };
+  const expectedCostMicros = spendMode === 'USD'
+    ? SCRIPTED_LLM_USAGE.prompt_tokens * fixturePricing.input + SCRIPTED_LLM_USAGE.completion_tokens * fixturePricing.output
+    : null;
+  const expectedTokens = SCRIPTED_LLM_USAGE.total_tokens;
   budgetModel.reasoning = true;
   budgetModel.compat = { supportsReasoningEffort: true, supportedReasoningEfforts: ['low', 'medium', 'high'] };
-  if (spendMode === 'USD') budgetModel.cost = { input: 1, output: 2, cacheRead: 1, cacheWrite: 1 };
+  if (spendMode === 'USD') budgetModel.cost = fixturePricing;
   const sourceState = join(userDataDir, 'openclaw-source-state');
   await mkdir(sourceState, { recursive: true });
   await writeFile(join(homeDir, '.openclaw/openclaw.json'), JSON.stringify(config));
@@ -222,25 +227,25 @@ test(`R1 provider owner prevents concurrent host overspend and reconciles actual
     expect(calls).toEqual(['first']);
     expect(readCalls()).toHaveLength(1);
     release();
-    await expect.poll(() => readCalls().some(row => row.actual_tokens === 150), { timeout: 120_000 }).toBe(true);
+    await expect.poll(() => readCalls().some(row => row.actual_tokens === expectedTokens), { timeout: 120_000 }).toBe(true);
     const after = await send(second.key, 'SPEND-AFTER');
     await expect.poll(() => calls.includes('after'), { timeout: 120_000 }).toBe(true);
-    await expect.poll(() => readCalls().filter(row => row.actual_tokens === 150).length, { timeout: 120_000 }).toBe(2);
+    await expect.poll(() => readCalls().filter(row => row.actual_tokens === expectedTokens).length, { timeout: 120_000 }).toBe(2);
     const child = await hostInvoke<{ spawnedRunIds: string[] }>(app, 'gateway', 'rpc', { method: 'orchestrator.run', timeoutMs: 60_000,
       params: { task: 'Verify inherited project budget', sessionKey: first.key, maxWorkers: 1, includeVerifier: false,
         workers: [{ roleName: 'implementer', task: 'SPEND-CHILD: report the controlled scope receipt', writeSet: ['scope-receipt.txt'] }] } });
     expect(child.spawnedRunIds).toHaveLength(1);
-    await expect.poll(() => readCalls().filter(row => child.spawnedRunIds.includes(String(row.run_id)) && row.actual_tokens === 150).length,
+    await expect.poll(() => readCalls().filter(row => child.spawnedRunIds.includes(String(row.run_id)) && row.actual_tokens === expectedTokens).length,
       { timeout: 120_000 }).toBe(1);
     const childCalls = readCalls().filter(row => child.spawnedRunIds.includes(String(row.run_id)));
     expect(childCalls.every(row => JSON.parse(String(row.scope_json)).workspaceId === active.activeWorkspace.id)).toBe(true);
     expect(calls).toContain('child');
     const settledState = spendMode === 'USD' ? 'settled' : 'unknown';
-    await expect.poll(() => readCalls().every(row => row.actual_tokens === 150 && row.state === settledState), { timeout: 120_000 }).toBe(true);
+    await expect.poll(() => readCalls().every(row => row.actual_tokens === expectedTokens && row.state === settledState), { timeout: 120_000 }).toBe(true);
     const settled = readCalls();
-    if (spendMode === 'USD') expect(settled.every(row => Number(row.actual_cost_micros) === 200)).toBe(true);
+    if (spendMode === 'USD') expect(settled.every(row => Number(row.actual_cost_micros) === expectedCostMicros)).toBe(true);
     else expect(settled.every(row => row.actual_cost_micros === null && row.state === 'unknown')).toBe(true);
-    const record = { driven_by: 'agent', actor: 'codex-r1-electron-spend', spendMode, spendPolicy, pricingSource: 'scripted-fixture model configuration', held, settled, calls, acceptedFirst, acceptedSecond, secondEnd, after, child, childCalls,
+    const record = { driven_by: 'agent', actor: 'codex-r1-electron-spend', spendMode, spendPolicy, pricingSource: 'scripted-fixture model configuration', fixtureUsage: SCRIPTED_LLM_USAGE, fixturePricing: budgetModel.cost, expectedCostMicros, expectedTokens, held, settled, calls, acceptedFirst, acceptedSecond, secondEnd, after, child, childCalls,
       limits: ['scripted provider, real Host/Gateway/provider owner', 'same-workspace three-scope allocation; multiple state directories not measured'] };
     await writeFile(testInfo.outputPath('r1-spend-owner.json'), JSON.stringify(record, null, 2));
     await hostInvoke(app, 'gateway', 'stop');
@@ -249,7 +254,7 @@ test(`R1 provider owner prevents concurrent host overspend and reconciles actual
     try { await copyFile(source + '-wal', retained + '-wal'); } catch (error) { if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error; }
     const db = new DatabaseSync(retained, { readOnly: true });
     try {
-      expect(db.prepare('SELECT actual_tokens FROM provider_spend_calls WHERE actual_tokens = 150').all().length).toBeGreaterThanOrEqual(3);
+      expect(db.prepare('SELECT actual_tokens FROM provider_spend_calls WHERE actual_tokens = ?').all(expectedTokens).length).toBeGreaterThanOrEqual(3);
       for (const runId of child.spawnedRunIds) expect(db.prepare('SELECT scope_key FROM provider_spend_allocations INNER JOIN provider_spend_calls USING (call_id) WHERE run_id = ?').all(runId)).toHaveLength(3);
     }
     finally { db.close(); }

@@ -94,6 +94,8 @@ export type LlmRequestLog = {
   issued: string | null;
 };
 
+export const SCRIPTED_LLM_USAGE = Object.freeze({ prompt_tokens: 120, completion_tokens: 30, total_tokens: 150 });
+
 export type LlmScript = (
   userText: string,
   toolResults: Record<string, string>,
@@ -194,7 +196,7 @@ export function startScriptedLlm(script: LlmScript): Promise<{
           issued: action.toolCall ? action.toolCall.id : `text:${action.text?.slice(0, 40)}`,
         });
 
-        const usage = { prompt_tokens: 120, completion_tokens: 30, total_tokens: 150 };
+        const usage = SCRIPTED_LLM_USAGE;
         const finishReason = action.toolCall ? 'tool_calls' : 'stop';
 
         if (parsed.stream) {

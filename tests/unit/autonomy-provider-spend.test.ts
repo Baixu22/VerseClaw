@@ -298,12 +298,17 @@ describe('provider owner layered spend reservation', () => {
     }
   });
 
-  it('prevents two real processes from double spending the same host capacity', async () => {
+  it.each([
+    ['host', 'tokens'], ['project', 'tokens'], ['session', 'tokens'],
+    ['host', 'cost'], ['project', 'cost'], ['session', 'cost'],
+  ] as const)('prevents two real processes from double spending %s %s capacity', async (limiter, resource) => {
     // Initialize the shared owner schema before the two independent processes contend.
     openOpenClawStateDatabase();
+    const budgetConfig = Object.fromEntries(['host', 'project', 'session'].map(name => [name,
+      resource === 'tokens' ? { maxTokens: name === limiter ? 100 : 1000 } : { maxCostUsd: name === limiter ? 0.01 : 1 }]));
     const startOwner = (id: string) => {
       const child = spawn(process.execPath, ['--import', 'tsx', path.join(process.cwd(), 'tests/unit/fixtures/autonomy-provider-spend-worker.mts'),
-        Buffer.from(JSON.stringify({ id })).toString('base64')], { cwd: path.join(process.cwd(), 'openclaw_runtime'),
+        Buffer.from(JSON.stringify({ id, sessionKey: 'native-shared-session', config: budgetConfig })).toString('base64')], { cwd: path.join(process.cwd(), 'openclaw_runtime'),
         env: { ...process.env, OPENCLAW_STATE_DIR: root }, windowsHide: true, stdio: ['pipe', 'pipe', 'pipe'] });
       const rows: Array<{ ready?: boolean; admitted?: boolean; error?: string }> = [];
       let output = '', stderr = '';
@@ -324,13 +329,20 @@ describe('provider owner layered spend reservation', () => {
       processes.forEach(process => process.child.stdin.end('reserve\n'));
       expect(await Promise.all(processes.map(process => process.exited))).toEqual([0, 0]);
       expect(processes.filter(process => process.rows[1]?.admitted)).toHaveLength(1);
-      expect(processes.find(process => !process.rows[1]?.admitted)!.rows[1]?.error).toContain('tokens (host)');
-      expect(providerSpendSnapshot(scope())[0].heldTokens).toBe(60);
+      expect(processes.find(process => !process.rows[1]?.admitted)!.rows[1]?.error).toContain(`${resource} (${limiter})`);
+      const db = openOpenClawStateDatabase();
+      const saved = db.db.prepare('SELECT * FROM provider_spend_calls').all();
+      expect(saved).toHaveLength(1);
+      expect(db.db.prepare('SELECT * FROM provider_spend_allocations').all()).toHaveLength(3);
+      const nativeScope = JSON.parse(String(saved[0]!.scope_json)) as Parameters<typeof providerSpendSnapshot>[0];
+      const snapshot = providerSpendSnapshot(nativeScope);
+      expect(snapshot).toHaveLength(3);
+      expect(snapshot.every(row => row.heldTokens === 60 && row.heldCostMicros === 6000 && row.activeCalls === 1)).toBe(true);
       const dir = path.join(process.cwd(), 'artifacts/runs/autonomy-resource-admission', 'spend-native-' + path.basename(root));
       mkdirSync(dir, { recursive: true });
       writeFileSync(path.join(dir, 'owner.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex-r1-spend-native',
         processes: processes.map(process => ({ pid: process.child.pid, rows: process.rows, exit: process.child.exitCode })),
-        snapshot: providerSpendSnapshot(scope()), databasePath: openOpenClawStateDatabase().path }, null, 2) + '\n');
+        limiter, resource, budgetConfig, saved, snapshot, databasePath: db.path }, null, 2) + '\n');
     } finally { for (const p of processes) if (p.child.exitCode === null && p.child.signalCode === null) p.child.kill(); await Promise.allSettled(processes.map(p => p.exited)); }
   }, 60_000);
 });
