@@ -1,5 +1,7 @@
 # Recovery Authority 五入口映射（TF-0713）
 
+2026-11-08 契约复核补充：经过校验且已接纳的请求，若 owner 已确认效果为 `applied` 或 `reconciled`，纯决策函数直接返回 `settle`。交付、已有输出或预算耗尽均保留这个已确认结果，attempt 计数维持原值；新恢复尝试继续由原预算与 admission 边界约束。下表的生产调用点与缺口对应原研究基线 `99c142fef`。
+
 > 状态：研究 + 契约冻结；`driven_by: agent`，`actor: recovery-authority-agent`。  
 > 基线：`main@99c142fef`。  
 > 本文件只做源码映射、契约判断和收口建议，**不改变任何生产行为、默认值、产品锁或运行时开关**。  

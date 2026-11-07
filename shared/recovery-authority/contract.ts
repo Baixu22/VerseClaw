@@ -480,9 +480,9 @@ function rejectInvalidRequest(input: unknown, reason: string): RecoveryDecision 
 }
 
 /**
- * Pure reference decision function. It is not wired into production. It
- * demonstrates the fail-closed ordering that the frozen contract requires:
- * invalid input > budget/wedge > admission > effect certainty > replay policy.
+ * Pure reference decision function. Valid, admitted requests with a known
+ * settled effect return that outcome before considering another attempt.
+ * New work follows budget/wedge, admission, effect certainty, and replay policy.
  */
 export function evaluateRecoveryRequest(input: unknown): RecoveryDecision {
   const validation = validateRecoveryAuthorityRequest(input);
@@ -491,6 +491,18 @@ export function evaluateRecoveryRequest(input: unknown): RecoveryDecision {
   }
   const request = validation.request;
   const { current, max } = request.budget.attempts;
+
+  if (
+    request.admission.admitted &&
+    (request.effect === "applied" || request.effect === "reconciled")
+  ) {
+    return makeDecision({
+      request,
+      kind: "settle",
+      basis: "effect-certainty",
+      reason: "effect is already settled; replay is forbidden",
+    });
+  }
 
   if (request.budget.wedge.wedged || current >= max) {
     return makeDecision({
@@ -534,15 +546,6 @@ export function evaluateRecoveryRequest(input: unknown): RecoveryDecision {
       kind: "deliver",
       basis: "owner-state",
       reason: "final delivery is owned by the existing delivery path",
-    });
-  }
-
-  if (request.effect === "applied" || request.effect === "reconciled") {
-    return makeDecision({
-      request,
-      kind: "settle",
-      basis: "effect-certainty",
-      reason: "effect is already settled; replay is forbidden",
     });
   }
 
