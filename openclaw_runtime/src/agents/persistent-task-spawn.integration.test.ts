@@ -13,10 +13,14 @@ import { createSubagentRegistryLifecycleController } from "./subagent-registry-l
 import type { SubagentRunRecord } from "./subagent-registry.types.js";
 import { setRuntimeConfigSnapshot, clearRuntimeConfigSnapshot } from "../config/config.js";
 
-const mocks = vi.hoisted(() => ({ registered: vi.fn() }));
+const mocks = vi.hoisted(() => ({ registered: vi.fn(),reserved:vi.fn(()=>true) }));
 vi.mock("./subagent-registry.js", () => ({
   countActiveRunsForSession: () => 0,
   registerSubagentRun: mocks.registered,
+  reserveSubagentRun:mocks.reserved,
+  enqueueSubagentRun:vi.fn(),
+  getSubagentRunByRunId:()=>null,
+  releaseSubagentRun:vi.fn(),
 }));
 let root: string;
 let store: TaskSystemStore;
@@ -57,6 +61,7 @@ beforeEach(async () => {
   ).task;
   store.claim(t.contract.taskNodeId, "agent:main:main", "parent-generation", "claim");
   mocks.registered.mockReset();
+  mocks.reserved.mockClear();
 });
 afterEach(() => {
   testing.setDepsForTest();

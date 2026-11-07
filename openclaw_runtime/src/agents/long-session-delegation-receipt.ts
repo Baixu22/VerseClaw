@@ -260,7 +260,8 @@ export function buildDelegationReceipt(params: {
       metrics: {
         queued: params.result.schedulerMetrics.queued,
         running: params.result.schedulerMetrics.running,
-        scheduled: params.result.schedulerMetrics.completed,
+        scheduled: params.result.schedulerMetrics.scheduled
+          ?? new Set(params.result.executionWaves.flatMap(wave => wave.taskNodeIds)).size,
         skipped: params.result.schedulerMetrics.skipped,
         concurrencyCap: params.result.schedulerMetrics.concurrencyCap,
         budgetEstimate: params.result.schedulerMetrics.budgetEstimate,

@@ -1656,6 +1656,7 @@ export async function runEmbeddedAgent(
             hasRepliedRef: params.hasRepliedRef,
             sessionFile: activeSessionFile,
             workspaceDir: resolvedWorkspace,
+            workspaceId: params.workspaceId,
             cwd: params.cwd,
             agentDir,
             config: params.config,

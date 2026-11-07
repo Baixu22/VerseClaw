@@ -87,6 +87,10 @@ export type TaskWriterDelegation = {
   contractRevision?: number;
   candidateArtifacts?: Array<{ path: string; sha256: string }>;
 };
+export type TaskDelegationIntent={
+  workspace:string;childWorkspace:string;parentSessionKey:string;parentGeneration:string;
+  childSessionKey:string;childGeneration:string;childRunId:string;observer:boolean;expectedParent:TaskCredential;
+};
 export type TaskResolution = { kind: "created" | "existing" | "duplicate"; task: TaskView };
 export type TaskSystemCommand =
   | { action: "create"; requestId: string; contract: TaskContractInput }

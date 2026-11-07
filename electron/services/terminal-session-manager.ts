@@ -93,6 +93,8 @@ type TerminalSessionRecord = {
   lastInteractionAtMs: number | null;
   /** Whether renderer teardown keeps this terminal alive; defaults to true. */
   keepOnLeave?: boolean;
+  exited: Promise<void>;
+  resolveExit: () => void;
 };
 
 type TerminalSessionSnapshot = {
@@ -248,6 +250,8 @@ export class TerminalSessionManager {
       cwd,
       env: buildEnvironment(),
     });
+    let resolveExit!: () => void;
+    const exited = new Promise<void>(resolve => { resolveExit = resolve; });
     const session: TerminalSessionRecord = {
       id,
       workspaceId: input.workspace.id,
@@ -256,7 +260,7 @@ export class TerminalSessionManager {
       kind,
       cwd,
       ptyProcess,
-      pid: ptyProcess.pid,
+      pid: Number.isSafeInteger(ptyProcess.pid) && ptyProcess.pid > 0 ? ptyProcess.pid : null,
       cols,
       rows,
       status: 'running',
@@ -267,6 +271,8 @@ export class TerminalSessionManager {
       lastOutputAtMs: null,
       lastInteractionAtMs: this.now(),
       keepOnLeave: input.keepOnLeave !== false,
+      exited,
+      resolveExit,
     };
 
     this.sessions.set(id, session);
@@ -306,13 +312,14 @@ export class TerminalSessionManager {
     session.ptyProcess?.write('\x03');
   }
 
-  close(sessionId: string, reason: TerminalCloseReason = 'user-close'): TerminalSessionSnapshot {
+  async close(sessionId: string, reason: TerminalCloseReason = 'user-close'): Promise<TerminalSessionSnapshot> {
     const session = this.sessions.get(sessionId);
     // R0-3: records are reclaimed on exit — closing an already-reclaimed (or
     // unknown) session is an idempotent no-op, mirroring status()'s idle
     // semantics, so a renderer "End" click after exit cannot throw.
     if (!session) return this.idleSnapshot();
     this.closeSession(session, reason);
+    await session.exited;
     return this.toSnapshot(session, true);
   }
 
@@ -340,10 +347,8 @@ export class TerminalSessionManager {
   /** Kill every live session and drop all bookkeeping (app quit path). */
   shutdownAll(): void {
     for (const session of Array.from(this.sessions.values())) {
-      this.closeSession(session, 'app-shutdown');
+      try { this.closeSession(session, 'app-shutdown'); } catch { /* Retain a failed native owner until its exit callback. */ }
     }
-    this.sessions.clear();
-    this.activeByWorkspaceSession.clear();
     this.registeredWorkspaces.clear();
   }
 
@@ -365,16 +370,17 @@ export class TerminalSessionManager {
    * Returns owner counts so the caller can build a receipt instead of assuming
    * that calling close means the owner released it.
    */
-  reclaimForSession(params: {
+  async reclaimForSession(params: {
     sessionKey: string;
     reason: TerminalCloseReason;
     honorKeepOnLeave?: boolean;
     workspaceId?: string;
     expectedSessionId?: string | null;
-  }): { attempted: number; reclaimed: number; kept: number } {
+  }): Promise<{ attempted: number; reclaimed: number; kept: number; failed?: number }> {
     let attempted = 0;
     let reclaimed = 0;
     let kept = 0;
+    let failed = 0;
     for (const session of Array.from(this.sessions.values())) {
       if (session.sessionKey !== params.sessionKey) continue;
       if (params.workspaceId && session.workspaceId !== params.workspaceId) continue;
@@ -384,10 +390,10 @@ export class TerminalSessionManager {
         kept += 1;
         continue;
       }
-      this.closeSession(session, params.reason);
-      reclaimed += 1;
+      try { await this.close(session.id, params.reason); reclaimed += 1; }
+      catch { failed += 1; }
     }
-    return { attempted, reclaimed, kept };
+    return { attempted, reclaimed, kept, ...(failed ? { failed } : {}) };
   }
 
   /** Count live terminals for a scope without mutating anything. */
@@ -420,7 +426,7 @@ export class TerminalSessionManager {
         workspaceId: session.workspaceId,
         sessionKey: session.sessionKey,
         expectedSessionId: session.expectedSessionId,
-        pid: session.pid,
+        pid: this.readProcessId(session),
         keepOnLeave: session.keepOnLeave !== false,
       }));
   }
@@ -436,25 +442,20 @@ export class TerminalSessionManager {
   }
 
   private closeSession(session: TerminalSessionRecord, reason: TerminalCloseReason): void {
+    if (session.closeReason) return;
+    const previousReason = session.closeReason;
     session.closeReason = reason;
-    if (session.status !== 'exited') {
-      session.status = 'exited';
-      this.emit(HOST_EVENT_CHANNELS.terminal.statusChanged, this.toEvent(session));
-      this.emit(HOST_EVENT_CHANNELS.terminal.unregistered, this.toExitEvent(session, session.exitCode, reason));
-    }
+    this.readProcessId(session);
     if (session.ptyProcess) {
-      const processRef = session.ptyProcess;
-      session.ptyProcess = null;
-      try {
-        processRef.kill();
-      } catch {
-        // noop
+      try { session.ptyProcess.kill(); }
+      catch (error) {
+        if (!this.sessions.has(session.id)) return;
+        session.closeReason = previousReason;
+        throw new Error('Terminal owner could not stop its process', { cause: error });
       }
+      if (!this.sessions.has(session.id)) return;
     }
-    this.deleteActiveKey(session);
-    // R0-3: reclaim the record — exited sessions must not accumulate in the
-    // map for the lifetime of the app.
-    this.sessions.delete(session.id);
+    // The native exit callback owns capacity release and terminal receipts.
   }
 
   private handleData(sessionId: string, data: string): void {
@@ -481,6 +482,7 @@ export class TerminalSessionManager {
   private handleExit(sessionId: string, exitCode: number | null): void {
     const session = this.sessions.get(sessionId);
     if (!session) return;
+    this.readProcessId(session);
     session.exitCode = exitCode;
     session.status = 'exited';
     session.ptyProcess = null;
@@ -488,8 +490,10 @@ export class TerminalSessionManager {
     const reason = session.closeReason ?? 'process-exit';
     this.emit(HOST_EVENT_CHANNELS.terminal.exit, this.toExitEvent(session, exitCode, reason));
     this.emit(HOST_EVENT_CHANNELS.terminal.statusChanged, this.toEvent(session));
+    if (session.closeReason) this.emit(HOST_EVENT_CHANNELS.terminal.unregistered, this.toExitEvent(session, exitCode, reason));
     // R0-3: reclaim the record once the exit has been surfaced.
     this.sessions.delete(session.id);
+    session.resolveExit();
   }
 
   private deleteActiveKey(session: TerminalSessionRecord): void {
@@ -507,7 +511,7 @@ export class TerminalSessionManager {
 
   private requireRunningSession(sessionId: string): TerminalSessionRecord {
     const session = this.requireSession(sessionId);
-    if (session.status !== 'running' || !session.ptyProcess) {
+    if (session.status !== 'running' || !session.ptyProcess || session.closeReason) {
       throw new Error('Terminal session is not running');
     }
     return session;
@@ -521,7 +525,7 @@ export class TerminalSessionManager {
       kind: session.kind,
       sessionId: session.id,
       cwd: session.cwd,
-      pid: session.pid,
+      pid: this.readProcessId(session),
       cols: session.cols,
       rows: session.rows,
       seq: session.seq,
@@ -561,7 +565,7 @@ export class TerminalSessionManager {
       expectedSessionId: session.expectedSessionId,
       kind: session.kind,
       cwd: session.cwd,
-      pid: session.pid,
+      pid: this.readProcessId(session),
       cols: session.cols,
       rows: session.rows,
       status: session.status,
@@ -570,6 +574,12 @@ export class TerminalSessionManager {
       idle: this.toIdleReport(session),
       keepOnLeave: session.keepOnLeave !== false,
     };
+  }
+
+  private readProcessId(session: TerminalSessionRecord): number | null {
+    const pid = session.ptyProcess?.pid;
+    if (typeof pid === 'number' && Number.isSafeInteger(pid) && pid > 0) session.pid = pid;
+    return session.pid;
   }
 
   private idleSnapshot(workspaceId: string | null = null, sessionKey: string | null = null): TerminalSessionSnapshot {

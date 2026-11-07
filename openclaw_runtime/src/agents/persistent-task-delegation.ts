@@ -1,9 +1,22 @@
 import { existsSync } from "node:fs";
 import { TaskSystemStore } from "../../../shared/task-system/store.js";
 import { resolveTaskDomain } from "../../../shared/task-system/identity.js";
-import type { TaskWriterDelegation } from "../../../shared/task-system/types.js";
+import type { TaskWriterDelegation,TaskCredential,TaskDelegationIntent } from "../../../shared/task-system/types.js";
 
 export type PreparedTaskDelegation = { workspace: string; record: TaskWriterDelegation };
+
+export function capturePersistentTaskDelegationIntent(input:{workspace?:string;childWorkspace?:string;parentSessionKey:string;parentGeneration?:string;childSessionKey:string;childGeneration?:string;childRunId:string;observer?:boolean}):TaskDelegationIntent|null{
+  if(!input.workspace||!existsSync(input.workspace))return null;
+  const domain=resolveTaskDomain(input.workspace);if(!existsSync(domain.database))return null;
+  const store=new TaskSystemStore(domain);
+  try{
+    const parent=store.binding(input.parentSessionKey,input.parentGeneration);
+    if(!parent)return null;
+    if(parent.referenceOnly||!parent.claim||!input.parentGeneration||!input.childGeneration)throw new Error('TASK_DELEGATION_PARENT_NOT_WRITER');
+    store.assertOwner(parent.claim);
+    return {...input,workspace:input.workspace,childWorkspace:input.childWorkspace??input.workspace,parentGeneration:input.parentGeneration,childGeneration:input.childGeneration,observer:input.observer===true,expectedParent:{taskNodeId:parent.claim.taskNodeId,sessionKey:parent.claim.sessionKey,generation:parent.claim.generation,epoch:parent.claim.epoch}};
+  }finally{store.close();}
+}
 
 /** Called after the child generation is durable and before Gateway dispatch. */
 export function preparePersistentTaskDelegation(input: {
@@ -15,6 +28,7 @@ export function preparePersistentTaskDelegation(input: {
   childGeneration?: string;
   childRunId: string;
   observer?: boolean;
+  expectedParent?:TaskCredential;
 }): PreparedTaskDelegation | null {
   if (!input.workspace || !existsSync(input.workspace)) return null;
   const domain = resolveTaskDomain(input.workspace);
@@ -38,6 +52,7 @@ export function preparePersistentTaskDelegation(input: {
     const parent = store.binding(input.parentSessionKey, input.parentGeneration);
     if (!parent) return null;
     if (parent.referenceOnly || !parent.claim) throw new Error("TASK_DELEGATION_PARENT_NOT_WRITER");
+    if(input.expectedParent&&(parent.claim.taskNodeId!==input.expectedParent.taskNodeId||parent.claim.epoch!==input.expectedParent.epoch||parent.claim.generation!==input.expectedParent.generation))throw new Error('TASK_DELEGATION_PARENT_CHANGED_WHILE_QUEUED');
     if (!input.parentGeneration || parent.claim.generation !== input.parentGeneration)
       throw new Error("TASK_DELEGATION_PARENT_GENERATION_REQUIRED");
     if (!input.childGeneration) throw new Error("TASK_DELEGATION_CHILD_GENERATION_REQUIRED");

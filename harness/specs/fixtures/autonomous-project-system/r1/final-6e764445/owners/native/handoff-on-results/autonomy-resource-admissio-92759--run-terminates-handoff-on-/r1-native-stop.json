@@ -1,0 +1,21 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r1-native-stop",
+  "mode": "taskkill-failure",
+  "nativeBefore": {
+    "state": "running",
+    "port": 55404,
+    "reconnectAttempts": 0,
+    "gatewayReady": true,
+    "pid": 28136,
+    "connectedAt": 1794061117024,
+    "uptime": 1
+  },
+  "nativeAfter": {
+    "state": "stopped",
+    "port": 55404,
+    "reconnectAttempts": 0
+  },
+  "forcedAttempts": 1,
+  "kernelPidExited": true
+}

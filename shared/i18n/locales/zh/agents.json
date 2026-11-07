@@ -239,6 +239,8 @@
         "runSummary": "已启动 {{count}} 个子代理",
         "runFailed": "编排未成功启动子代理",
         "synthesisTitle": "综合结果",
+        "synthesisPending": "待完成",
+        "synthesisPendingSummary": "等待执行或核验结果。",
         "synthesisEvidence": "证据",
         "synthesisTraces": "Trace",
         "synthesisVerifier": "验证",

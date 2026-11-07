@@ -1,0 +1,239 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "runs": [
+    {
+      "report": "D:\\tmp\\tf0830\\acceptance\\report.json",
+      "sha256": "a63aa0cdf42790a1df941f04a7e868f0b92293a62e3600651a91f650c0b33886",
+      "candidate": "44f8e7474ae6b46b3e811cef4b55028863f3f8b6",
+      "failedCommands": [
+        {
+          "id": "root",
+          "argv": [
+            "node",
+            "node_modules/vitest/vitest.mjs",
+            "run",
+            "tests/unit/browser-session-reap-tf0503.test.ts",
+            "tests/unit/workspaces-api.test.ts",
+            "tests/unit/task-ledger-process.test.ts",
+            "tests/unit/gateway-supervisor.test.ts",
+            "tests/unit/r0-2-sessions-delete-fail.test.ts",
+            "tests/unit/long-session-owner-reclamation-adapter.test.ts",
+            "tests/unit/component-disposition-catalog.test.ts",
+            "tests/unit/component-authority-manifest.test.ts",
+            "tests/unit/r0-3-terminal-session-reclaim.test.ts",
+            "tests/unit/terminal-session-manager.test.ts",
+            "tests/unit/long-session-resource-reclamation.test.ts",
+            "tests/unit/gateway-permissions-api.test.ts",
+            "tests/unit/autonomy-owner-projection.test.ts",
+            "tests/unit/long-session-runtime-resource-inventory.test.ts",
+            "tests/unit/autonomy-resource-admission.test.ts",
+            "tests/unit/autonomy-provider-spend.test.ts",
+            "tests/unit/handoff-artifacts.test.ts",
+            "tests/unit/autonomy-orchestration-waves.test.ts",
+            "tests/unit/autonomy-subagent-persistence.test.ts",
+            "tests/unit/autonomy-subagent-admission.test.ts",
+            "tests/unit/orchestration-resource-scheduler.test.ts",
+            "tests/unit/orchestration-synthesizer.test.ts",
+            "tests/unit/long-session-delegation-admission.test.ts",
+            "tests/unit/roles-orchestration-panel.test.tsx",
+            "tests/unit/config-schema-parity.test.ts",
+            "tests/unit/autonomy-worktree-native.test.ts",
+            "tests/unit/autonomy-worktree-owner.test.ts",
+            "tests/unit/orchestration-worktree-merge.test.ts",
+            "tests/unit/versegit-cleanup-barrier.test.ts",
+            "tests/unit/role-spawn.test.ts",
+            "tests/unit/autonomy-provider-budget.test.ts",
+            "tests/unit/autonomy-provider-transport.test.ts",
+            "tests/unit/autonomy-resource-lease-owner.test.ts",
+            "tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts",
+            "tests/unit/resource-fabric-primitives.test.ts",
+            "tests/unit/resource-fabric-invariants.test.ts",
+            "tests/unit/resource-fabric-workspace-exec.test.ts",
+            "tests/unit/resource-fabric-chat-history.test.ts",
+            "tests/unit/resource-fabric-pressure.test.ts",
+            "tests/unit/resource-budget-integration.test.ts",
+            "tests/unit/resource-fabric-bounded-waiting.test.ts",
+            "tests/unit/resource-metrics-calibration.test.ts",
+            "tests/unit/resource-metrics-owner.test.ts",
+            "tests/unit/resource-window-lifecycle.test.ts",
+            "tests/unit/resource-observer-lifecycle.test.ts",
+            "tests/unit/session-storage-api.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\tf0830\\acceptance\\root.json"
+          ],
+          "cwd": "D:\\tmp\\tf0830\\candidate",
+          "exitCode": 1,
+          "durationMs": 399313
+        }
+      ],
+      "failedCases": [
+        {
+          "name": "TF-0510 symbol-lease multi-process benchmark serializes overlapping writers across real processes with zero duplicate side effects",
+          "messages": [
+            "Error: D:\\tmp\\tf0830\\candidate\\shared\\task-ledger-journal-lock.ts:101\r\n  return Object.assign(new Error(`Timed out acquiring Task Ledger write lock for ${path}`), { code: 'LOCK_TIMEOUT', retryable: true });\r\n                       ^\r\n\r\nError: Timed out acquiring Task Ledger write lock for D:\\tmp\\tf0510-lease-bench-BsaV8j\\.openclaw\\leases\\symbol-leases.wal.jsonl\r\n    at timeout (D:\\tmp\\tf0830\\candidate\\shared\\task-ledger-journal-lock.ts:101:24)\r\n    at withTaskLedgerJournalLockSync (D:\\tmp\\tf0830\\candidate\\shared\\task-ledger-journal-lock.ts:124:72)\r\n    at withLock (D:\\tmp\\tf0830\\candidate\\openclaw_runtime\\src\\context-engine\\factstore\\symbol-lease.ts:135:3)\r\n    at releaseSymbolLease (D:\\tmp\\tf0830\\candidate\\openclaw_runtime\\src\\context-engine\\factstore\\symbol-lease.ts:272:3)\r\n    at <anonymous> (D:\\tmp\\tf0830\\candidate\\tests\\unit\\fixtures\\coding-controls-tf0510\\symbol-lease-worker.mts:66:5) {\r\n  code: 'LOCK_TIMEOUT',\r\n  retryable: true\r\n}\r\n\r\nNode.js v24.22.1\r\n\n    at D:/tmp/tf0830/candidate/tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts:39:18\n    at ChildProcess.exithandler (node:child_process:424:5)\n    at ChildProcess.emit (node:events:514:28)\n    at maybeClose (node:internal/child_process:1172:16)\n    at Process.ChildProcess._handle.onexit (node:internal/child_process:335:5)"
+          ]
+        }
+      ]
+    },
+    {
+      "report": "D:\\tmp\\tf0830\\acceptance-scope\\report.json",
+      "sha256": "c47c6571edd3560899fb42bebfd2422de2d389820eaef6f5bd9a8fc281d7b224",
+      "candidate": "d607437e684d11ed259996de21ff1861d4cbbfb3",
+      "failedCommands": [
+        {
+          "id": "root",
+          "argv": [
+            "node",
+            "node_modules/vitest/vitest.mjs",
+            "run",
+            "tests/unit/browser-session-reap-tf0503.test.ts",
+            "tests/unit/workspaces-api.test.ts",
+            "tests/unit/task-ledger-process.test.ts",
+            "tests/unit/gateway-supervisor.test.ts",
+            "tests/unit/r0-2-sessions-delete-fail.test.ts",
+            "tests/unit/long-session-owner-reclamation-adapter.test.ts",
+            "tests/unit/component-disposition-catalog.test.ts",
+            "tests/unit/component-authority-manifest.test.ts",
+            "tests/unit/r0-3-terminal-session-reclaim.test.ts",
+            "tests/unit/terminal-session-manager.test.ts",
+            "tests/unit/long-session-resource-reclamation.test.ts",
+            "tests/unit/gateway-permissions-api.test.ts",
+            "tests/unit/autonomy-owner-projection.test.ts",
+            "tests/unit/long-session-runtime-resource-inventory.test.ts",
+            "tests/unit/autonomy-resource-admission.test.ts",
+            "tests/unit/autonomy-provider-spend.test.ts",
+            "tests/unit/handoff-artifacts.test.ts",
+            "tests/unit/autonomy-orchestration-waves.test.ts",
+            "tests/unit/autonomy-subagent-persistence.test.ts",
+            "tests/unit/autonomy-subagent-admission.test.ts",
+            "tests/unit/orchestration-resource-scheduler.test.ts",
+            "tests/unit/orchestration-synthesizer.test.ts",
+            "tests/unit/long-session-delegation-admission.test.ts",
+            "tests/unit/roles-orchestration-panel.test.tsx",
+            "tests/unit/config-schema-parity.test.ts",
+            "tests/unit/autonomy-worktree-native.test.ts",
+            "tests/unit/autonomy-worktree-owner.test.ts",
+            "tests/unit/orchestration-worktree-merge.test.ts",
+            "tests/unit/versegit-cleanup-barrier.test.ts",
+            "tests/unit/role-spawn.test.ts",
+            "tests/unit/autonomy-provider-budget.test.ts",
+            "tests/unit/autonomy-provider-transport.test.ts",
+            "tests/unit/autonomy-resource-lease-owner.test.ts",
+            "tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts",
+            "tests/unit/resource-fabric-primitives.test.ts",
+            "tests/unit/resource-fabric-invariants.test.ts",
+            "tests/unit/resource-fabric-workspace-exec.test.ts",
+            "tests/unit/resource-fabric-chat-history.test.ts",
+            "tests/unit/resource-fabric-pressure.test.ts",
+            "tests/unit/resource-budget-integration.test.ts",
+            "tests/unit/resource-fabric-bounded-waiting.test.ts",
+            "tests/unit/resource-metrics-calibration.test.ts",
+            "tests/unit/resource-metrics-owner.test.ts",
+            "tests/unit/resource-window-lifecycle.test.ts",
+            "tests/unit/resource-observer-lifecycle.test.ts",
+            "tests/unit/session-storage-api.test.ts",
+            "--maxWorkers=1",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\tf0830\\acceptance-scope\\root.json"
+          ],
+          "cwd": "D:\\tmp\\tf0830\\candidate-scope",
+          "exitCode": 1,
+          "durationMs": 304797
+        }
+      ],
+      "failedCases": [
+        {
+          "name": "Task Ledger physical process identity reads the same native birth identity after the preferred shell times out",
+          "messages": [
+            "AssertionError: expected null to be '134385458534297595' // Object.is equality\n    at D:/tmp/tf0830/candidate-scope/tests/unit/task-ledger-process.test.ts:70:61\n    at file:///D:/ClawX-work/coding-vg-sts-jj-20261104/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX-work/coding-vg-sts-jj-20261104/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX-work/coding-vg-sts-jj-20261104/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX-work/coding-vg-sts-jj-20261104/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX-work/coding-vg-sts-jj-20261104/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///D:/ClawX-work/coding-vg-sts-jj-20261104/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2262:10)\n    at file:///D:/ClawX-work/coding-vg-sts-jj-20261104/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2945:64"
+          ]
+        }
+      ]
+    },
+    {
+      "report": "D:\\tmp\\tf0830\\native.json",
+      "sha256": "75b9dfb05615405fcf68187a6037141947aa7b8d3858ba3d661f03a26f193a88",
+      "candidate": "44f8e7474ae6b46b3e811cef4b55028863f3f8b6",
+      "stats": {
+        "startTime": "2026-11-07T16:59:58.509Z",
+        "duration": 1142960.707,
+        "expected": 10,
+        "skipped": 0,
+        "unexpected": 2,
+        "flaky": 0
+      },
+      "failedCases": [
+        {
+          "file": "autonomy-resource-admission.spec.ts",
+          "title": "R1 provider owner prevents concurrent host overspend and reconciles actual usage (tokens)",
+          "status": "unexpected",
+          "results": [
+            {
+              "status": "failed",
+              "duration": 249078,
+              "retry": 0,
+              "error": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\nCall Log:\n- Timeout 120000ms exceeded while waiting on the predicate"
+            }
+          ]
+        },
+        {
+          "file": "autonomy-resource-admission.spec.ts",
+          "title": "R1 provider owner prevents concurrent host overspend and reconciles actual usage (USD)",
+          "status": "unexpected",
+          "results": [
+            {
+              "status": "failed",
+              "duration": 242097,
+              "retry": 0,
+              "error": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\nCall Log:\n- Timeout 120000ms exceeded while waiting on the predicate"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "report": "D:\\tmp\\tf0830\\native-scope.json",
+      "sha256": "913fc1c9b214362c3d9239855bd81b3321561e72fcea8d8ee16caf27ce68e366",
+      "candidate": "d607437e684d11ed259996de21ff1861d4cbbfb3",
+      "stats": {
+        "startTime": "2026-11-07T17:21:06.591Z",
+        "duration": 586941.538,
+        "expected": 5,
+        "skipped": 0,
+        "unexpected": 2,
+        "flaky": 0
+      },
+      "failedCases": [
+        {
+          "file": "autonomy-resource-admission.spec.ts",
+          "title": "R1 real Host/Gateway queues conflicting waves until the prior provider run terminates (handoff off)",
+          "status": "unexpected",
+          "results": [
+            {
+              "status": "failed",
+              "duration": 96222,
+              "retry": 0,
+              "error": "Error: [INTERNAL] Owned Gateway process did not exit (pid=46540)"
+            }
+          ]
+        },
+        {
+          "file": "autonomy-resource-admission.spec.ts",
+          "title": "R1 real Host/Gateway queues conflicting waves until the prior provider run terminates (handoff on)",
+          "status": "unexpected",
+          "results": [
+            {
+              "status": "failed",
+              "duration": 80248,
+              "retry": 0,
+              "error": "Error: [INTERNAL] Owned Gateway process did not exit (pid=22744)"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "resolution": "Forward logical workspace into embedded attempts (d607437e6). Repeat process-probe and Gateway-stop checks serially with unchanged assertions and timeouts; retain original concurrent-run failures."
+}

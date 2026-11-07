@@ -1,0 +1,4808 @@
+{
+  "schema": "clawx.resource-budget-integration/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": {
+    "commit": "d607437e684d11ed259996de21ff1861d4cbbfb3",
+    "tree": "7390181d165b4d9d0be9550318fd7df200a90154",
+    "dirty": false
+  },
+  "task": "TF-0830",
+  "tests": {
+    "root": {
+      "numTotalTests": 519,
+      "numPassedTests": 519,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "success": true,
+      "numFailedTestSuites": 0,
+      "cases": [
+        {
+          "name": "orchestration waves follow actual registry terminal state returns queued nodes promptly and dispatches the next wave exactly once after a terminal event",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state does not project an accepted spawn bundle as a verified result",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state returns owner-backed handoff waves before a submission-side output capture settles",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state binds only an available frozen owner handoff (available=true)",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state binds only an available frozen owner handoff (available=false)",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state keeps successors queued while the previous accepted run has no terminal owner receipt",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state rejects queued work when the coordinator generation changes",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state does not dispatch a successor after cancellation of its predecessor",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state waits for agent.wait owner completion as well as lifecycle events",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state retains a lost dispatch acknowledgement without starting later waves",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state rejects a queued payload whose child identity no longer matches its owner row",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state restores the queued wave from owner SQLite and advances only after the prior run ends",
+          "status": "passed"
+        },
+        {
+          "name": "resource envelopes rebuild from existing owners reconstructs browser and terminal occupancy after the Main projection is cleared",
+          "status": "passed"
+        },
+        {
+          "name": "resource envelopes rebuild from existing owners reconstructs active and waiting runtime leases without freeing capacity",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 bounded gate keeps actual leases while limits change does not refill released slots while active ownership still exceeds the reduced limit",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 bounded gate keeps actual leases while limits change serves existing waiters immediately when the owner increases capacity",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 bounded gate keeps actual leases while limits change does not admit a waiter whose deadline passed before its timer callback ran",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 provider owner reconfiguration does not create fresh capacity when the same configuration is reapplied",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 provider owner reconfiguration keeps held slots and waiting callers on the same owner when capacity shrinks",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 provider owner reconfiguration refuses to move an occupied quota to a new alias instead of dropping its ownership",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 provider owner reconfiguration does not claim a new cap is effective while an ungated request remains alive",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 provider owner reconfiguration retains live gated requests across disable and re-enable",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 provider owner reconfiguration validates new limits before replacing a valid configuration",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 provider owner reconfiguration owns its configuration snapshot instead of observing later caller mutations",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 provider owner reconfiguration does not let a diagnostic snapshot mutate the published owner policy",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 provider owner reconfiguration shares a quota through a complete alias chain and rejects alias cycles",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 provider owner reconfiguration uses one effective ceiling for differently overridden members of an aliased quota",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 provider owner reconfiguration does not replace an occupied clock and installs a new clock once the owner is idle",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 provider owner reconfiguration honors explicitly declared zero queue and timeout values",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation rejects a plugin slot that would overwrite the owner workspace budget identity",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation reserves every scope atomically, denies overspend across sessions, and reconciles once",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation enforces project even with a larger host quota and preserves rollback",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation enforces session even with a larger host quota and preserves rollback",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation reserves known USD across projects without charging the same reconciliation twice",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation keeps project ceilings shared by sessions and isolated between owner-supplied projects",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation session budget cannot be reset by changing the project coordinate",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation rebuilds the runtime provider projection after caches and DB handles are cleared",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation unknown usage survives SQLite reopen and cannot be freed by TTL or forged owner",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation rejects unknown scope and cost before reserving, and compensates only unsent reservations",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation rejects invalid estimates instead of allowing NaN or negative cost to mint capacity",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation never rounds a fractional microdollar ceiling upward or lets actual overruns create credit",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation gates the real stream boundary and settles from final usage before returning its result",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation keeps the disabled stream unchanged and never treats unpriced usage as zero USD",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation pins the run identity before mutable caller metadata changes",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation reads the session owner project and rejects missing, stale or conflicting identities before sending",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation persists the trusted initial workspace and recovers it after the owner DB is reopened",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation the production stream resolver and guarded HTTP boundary refuse a physical retry before a second send",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation settles priced usage from the captured rate and preserves the raw normalized message",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation does not price an incomplete usage breakdown as a free request",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation retains token and USD liabilities when usage components 5 disagree with the reported total",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation retains token and USD liabilities when usage components 15 disagree with the reported total",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation rejects a zero model bound before reserving or invoking the provider",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation compensates the spend reservation when the transport confirms overloaded before wire dispatch",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation compensates the spend reservation when the transport confirms cancelled before wire dispatch",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation prevents two real processes from double spending host tokens capacity",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation prevents two real processes from double spending project tokens capacity",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation prevents two real processes from double spending session tokens capacity",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation prevents two real processes from double spending host cost capacity",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation prevents two real processes from double spending project cost capacity",
+          "status": "passed"
+        },
+        {
+          "name": "provider owner layered spend reservation prevents two real processes from double spending session cost capacity",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 actual provider transport ownership releases the owner slot before an EOF response is returned to its consumer",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 actual provider transport ownership retains the quota across reconfiguration and sends no queued or aborted HTTP request",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 existing Fabric admission owners does not spend the same host capacity independently for different tenants",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 existing Fabric admission owners rejects a non-finite or fractional reservation: NaN",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 existing Fabric admission owners rejects a non-finite or fractional reservation: Infinity",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 existing Fabric admission owners rejects a non-finite or fractional reservation: 0.5",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 existing Fabric admission owners eventually serves old background work before new interactive arrivals",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 existing Fabric admission owners eventually serves old opportunistic work before new interactive arrivals",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 existing Fabric admission owners does not let repeated temporary boosts starve old work",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 existing Fabric admission owners keeps all workspace accounts within the existing shared host capacity and wakes another account",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 existing Fabric admission owners bounds the existing account queue without losing the older waiter",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 existing Fabric admission owners cancels a waiting acquisition without releasing the active owner or running cancelled work",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 existing Fabric admission owners checks cancellation again after a grant and before dispatching the work",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 existing Fabric admission owners rebuilds the shadow envelope from the live Fabric owner after the view is cleared",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 existing Fabric admission owners keeps stop and control RPCs reachable while the history admission queue is occupied",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0679 native lease owner fencing retains an expired live owner, then reclaims only after its actual process exits",
+          "status": "passed"
+        },
+        {
+          "name": "real subagent spawn reservation lifecycle inherits the logical workspace from the parent owner before agent dispatch",
+          "status": "passed"
+        },
+        {
+          "name": "real subagent spawn reservation lifecycle counts an in-flight dispatch and keeps capacity after acceptance until owner termination",
+          "status": "passed"
+        },
+        {
+          "name": "real subagent spawn reservation lifecycle does not resurrect a child cancelled before its acceptance reply",
+          "status": "passed"
+        },
+        {
+          "name": "real subagent spawn reservation lifecycle preserves another session when a dispatch response collides with its run id",
+          "status": "passed"
+        },
+        {
+          "name": "real subagent spawn reservation lifecycle retains capacity for timeout without a terminal receipt past the configured deadline",
+          "status": "passed"
+        },
+        {
+          "name": "real subagent spawn reservation lifecycle retains capacity for error without a terminal receipt past the configured deadline",
+          "status": "passed"
+        },
+        {
+          "name": "real subagent spawn reservation lifecycle does not let an orphan sweep release an old run without execution exit evidence",
+          "status": "passed"
+        },
+        {
+          "name": "real subagent spawn reservation lifecycle retains unknown dispatch when cancellation is unconfirmed, including a sweep",
+          "status": "passed"
+        },
+        {
+          "name": "real subagent spawn reservation lifecycle releases failed dispatch only for deleted=true (deleted=true)",
+          "status": "passed"
+        },
+        {
+          "name": "real subagent spawn reservation lifecycle releases failed dispatch only for deleted=true (deleted=false)",
+          "status": "passed"
+        },
+        {
+          "name": "real subagent spawn reservation lifecycle rehydrates unknown dispatch from the actual owner SQLite after memory is cleared",
+          "status": "passed"
+        },
+        {
+          "name": "subagent SQLite concurrency preserves records absent from another gateway snapshot",
+          "status": "passed"
+        },
+        {
+          "name": "subagent SQLite concurrency rejects a stale update that would resurrect an ended run and rolls back sibling changes",
+          "status": "passed"
+        },
+        {
+          "name": "subagent SQLite concurrency rebases unchanged owner facts and rejects stale deletion",
+          "status": "passed"
+        },
+        {
+          "name": "subagent SQLite concurrency refuses an unrelated record with a colliding run id",
+          "status": "passed"
+        },
+        {
+          "name": "subagent SQLite concurrency keeps the original child and controller identity when metadata changes",
+          "status": "passed"
+        },
+        {
+          "name": "subagent SQLite concurrency preserves active sweep iterator positions when records are saved",
+          "status": "passed"
+        },
+        {
+          "name": "subagent SQLite concurrency includes typed owner columns in conflict detection",
+          "status": "passed"
+        },
+        {
+          "name": "subagent SQLite concurrency allows only one reserve when two real processes share a child cap of one",
+          "status": "passed"
+        },
+        {
+          "name": "subagent SQLite concurrency allows only one queue when two real processes share a child cap of one",
+          "status": "passed"
+        },
+        {
+          "name": "worktree native owner admission keeps a live lock exclusive and refuses duplicate creation across processes",
+          "status": "passed"
+        },
+        {
+          "name": "autonomy worktree owner admission never replaces an occupied checkout for worker",
+          "status": "passed"
+        },
+        {
+          "name": "autonomy worktree owner admission never replaces an occupied checkout for same:id",
+          "status": "passed"
+        },
+        {
+          "name": "autonomy worktree owner admission never replaces an occupied checkout for same/id",
+          "status": "passed"
+        },
+        {
+          "name": "autonomy worktree owner admission rejects sanitized id collisions and directories surviving registry loss",
+          "status": "passed"
+        },
+        {
+          "name": "autonomy worktree owner admission returns snapshots whose mutation cannot rewrite owner state",
+          "status": "passed"
+        },
+        {
+          "name": "autonomy worktree owner admission does not execute under an existing legacy mutex aged 0 ms",
+          "status": "passed"
+        },
+        {
+          "name": "autonomy worktree owner admission does not execute under an existing legacy mutex aged 60000 ms",
+          "status": "passed"
+        },
+        {
+          "name": "autonomy worktree owner admission rejects . as a checkout identity without removing the parent",
+          "status": "passed"
+        },
+        {
+          "name": "autonomy worktree owner admission rejects .. as a checkout identity without removing the parent",
+          "status": "passed"
+        },
+        {
+          "name": "autonomy worktree owner admission records the actual checkout HEAD when the base advances after service creation",
+          "status": "passed"
+        },
+        {
+          "name": "autonomy worktree owner admission never promotes directory simulation or missing owner records to verified isolation",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser session reaper (no orphan sessions) closes every live session through the same owner that listed it",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser session reaper (no orphan sessions) is a no-op when no sessions exist",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser session reaper (no orphan sessions) reports a session that refuses to close instead of throwing",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser session reaper (no orphan sessions) survives a service whose list() itself throws",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser session reaper (no orphan sessions) skips sessions without an id",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser session reaper (no orphan sessions) rejects a listed owner without a close capability",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser session reaper (no orphan sessions) waits for an asynchronous close receipt before reporting cleanup",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser session reaper (no orphan sessions) drops the resource-envelope entry for a closed session",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser session reaper (no orphan sessions) registering the reaper outside Electron is safe",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0510 symbol-lease multi-process benchmark serializes overlapping writers across real processes with zero duplicate side effects",
+          "status": "passed"
+        },
+        {
+          "name": "component authority manifest keeps every component mapped to at least one domain and every domain owned",
+          "status": "passed"
+        },
+        {
+          "name": "component authority manifest maps every existing DCS flag to exactly one component",
+          "status": "passed"
+        },
+        {
+          "name": "component authority manifest preserves the Context, Memory, Knowledge, Capability, Execution, Browser and Observability separations",
+          "status": "passed"
+        },
+        {
+          "name": "component authority manifest rejects a second accepted-memory writer",
+          "status": "passed"
+        },
+        {
+          "name": "component authority manifest rejects a second context assembly owner",
+          "status": "passed"
+        },
+        {
+          "name": "component authority manifest rejects a second domain executor",
+          "status": "passed"
+        },
+        {
+          "name": "component authority manifest rejects permission escalation and unauthorized cross-domain writes",
+          "status": "passed"
+        },
+        {
+          "name": "component authority manifest cross-checks the product semantic and default-config surfaces",
+          "status": "passed"
+        },
+        {
+          "name": "component authority manifest keeps every declared source anchor present in the current tree with exact path case",
+          "status": "passed"
+        },
+        {
+          "name": "component authority manifest documents the machine manifest in runtime-control-planes.md",
+          "status": "passed"
+        },
+        {
+          "name": "component authority manifest guards renderer transport against direct Gateway, IPC and domain-store access",
+          "status": "passed"
+        },
+        {
+          "name": "component authority manifest builds a static and effective model-safe component profile",
+          "status": "passed"
+        },
+        {
+          "name": "ComponentDispositionManifest/v1 covers every authority component, DCS flag, runtime leaf, route, Settings section and Settings panel exactly once",
+          "status": "passed"
+        },
+        {
+          "name": "ComponentDispositionManifest/v1 records current consumer, owner, implementation/retirement node and evidence refs for every entry",
+          "status": "passed"
+        },
+        {
+          "name": "ComponentDispositionManifest/v1 covers every writable DCS control and keeps the product preview combo in a visible disposition",
+          "status": "passed"
+        },
+        {
+          "name": "ComponentDispositionManifest/v1 keeps every registered authority component mapped to one disposition",
+          "status": "passed"
+        },
+        {
+          "name": "ComponentDispositionManifest/v1 requires owner, future expiry and graduate/retire criteria on every experiment",
+          "status": "passed"
+        },
+        {
+          "name": "ComponentDispositionManifest/v1 explicitly covers the required special surfaces",
+          "status": "passed"
+        },
+        {
+          "name": "ComponentDispositionManifest/v1 does not expose any shadow or experiment capability as a user surface",
+          "status": "passed"
+        },
+        {
+          "name": "ComponentDispositionManifest/v1 rejects an unclassified route",
+          "status": "passed"
+        },
+        {
+          "name": "ComponentDispositionManifest/v1 rejects a second disposition for the same authority component",
+          "status": "passed"
+        },
+        {
+          "name": "ComponentDispositionManifest/v1 rejects an experiment without expiry or owner",
+          "status": "passed"
+        },
+        {
+          "name": "ComponentDispositionManifest/v1 rejects an internal capability with a user entry",
+          "status": "passed"
+        },
+        {
+          "name": "ComponentDispositionManifest/v1 documents the single-page disposition table and links it from runtime control planes",
+          "status": "passed"
+        },
+        {
+          "name": "ComponentDispositionManifest/v1 projects the stable disposition index for a later ModelCapabilityProfile",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity sanity: the exhaustive fixture is non-trivial",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.providerBudget.host.maxTokens",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.providerBudget.host.maxCostUsd",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.providerBudget.project.maxTokens",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.providerBudget.project.maxCostUsd",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.providerBudget.session.maxTokens",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.providerBudget.session.maxCostUsd",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.handoff.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.handoff.maxDepth",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.verseShellFoundation.killSwitch",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.verseShellFoundation.verifiedRuntime",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.verseShellFoundation.typedAci",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.verseShellFoundation.facade",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.verseShellFoundation.deferredOps",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.verseShellFoundation.governedExec",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.verseShellFoundation.artifactResults",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.verseShellFoundation.patchPreview",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.verseShellFoundation.mcpCompatibility",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.verseShellFoundation.legacyEval",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.verseShellFoundation.compatibilityNativeFallback",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.verseShellFoundation.readOnlyShadow",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.registryPilot.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.providerRegistry.shadow",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextProviders.shadow",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextProviders.loopPackShadow",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextProviders.registryPilot",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.working-memory.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.tool-registry.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.compass.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.role-memory.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.sekb.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.sekb.shadowEvaluation.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.sekb.batchDistillationAssistant.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.sekb.phaseCWouldTrigger.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.sekb.phaseCWouldTrigger.owner",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.sekb.phaseCWouldTrigger.timeoutMs",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.injectionBudget.totalChars",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.injectionBudget.dropAlertRatio",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.injectionBudget.channelDecay",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.sessionStartInjection.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.sessionStartInjection.budgetChars",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.checkpointedContextReset.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.contextFolding.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.context-write.role",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.context-understand.budgetChars",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.parseOnTouch.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.staleWriteGuard.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.writeJournal.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.autoVerify.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.autoVerify.timeoutSeconds",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.autoVerify.command",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.worktree.backend",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.symbolLease.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.symbolLease.mode",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.patchFlow.default",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.patchFlow.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.sekb.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.sekb.experienceShadow",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.sekb.retrievalShadow",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.routingMemo.shadow",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.routingMemo.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.verifier.noSelfRepair",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextRuntimeKit.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextRuntimeKit.shadow",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextFamily.observationMasking.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextFamily.observationMasking.minChars",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextFamily.observationMasking.preserveNewestObservationCount",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextFamily.contextStatus.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.eventLog.shadow",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.eventLog.persist",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.checkpointSerializer.shadow",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.resume.replayShadow",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.toolRegistry.shadow",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.mission.rollback.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.mission.goalWake.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.mission.goalWake.maxActiveGoalWaits",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.mission.goalWake.maxFlows",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.mission.goalWake.tickFailureBackoffMs",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.mission.goalWake.durableHelper.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.mission.goalWake.durableHelper.maxRunsPerSession",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.mission.goalWake.durableHelper.maxOutputBytesPerRun",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.mission.goalWake.durableHelper.runTtlMs",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.mission.goalWake.durableHelper.sweepIntervalMs",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.registryDiagnostics.collector",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.toolProtocol.mcpShadow",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.toolGovernance.destructiveOperationGuard.preflight.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.evidenceVerifier.shadow",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.traceContext.shadow",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.traceContext.provider",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.traceContext.propagation",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.memory.shadow",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.memory.provider",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.memory.proposeFacts",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.memory.persist",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.memory.candidateGeneration",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.memory.injectPilot.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.memory.injectPilot.providers",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.memory.injectPilot.totalTokenBudget",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.memory.injectPilot.sessions",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextEnhancement.killSwitch",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.vtoken.assembly.enabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.vtoken.assembly.budgetTokens",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.vtoken.assembly.renderMode",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.vtoken.assembly.sessions",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.vtoken.assembly.timeoutMs",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.vtoken.assembly.maxSourceFiles",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.vtoken.assembly.maxSourceChars",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.agentMap.provider",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.agentMap.promptAssemblyExperiment",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.agentMap.promptCandidateRuntimeShadow",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.agentMap.promptCandidateControlledCutoverPilot",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.agentMap.promptCandidateTaskLoopExplicitInvocationPilot",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.localControlPlane.contextReport",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.localControlPlane.modelRouterReport",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.localControlPlane.capabilityReport",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.localControlPlane.evidenceReport",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.localControlPlane.missionReport",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.orchestration.routingMemoPilot",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.orchestration.handoffArtifacts",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.resilience.anomalyClassifierPilot",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.rc03.seal",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.rc05.operatorSliceEnabled",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.rc05.cronAutoApprove",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity every schema-accepted runtime leaf exists in the compile-checked type fixture",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity every runtime.* key documented in schema.labels.ts is a real, schema-accepted config node",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity every runtime.* key documented in schema.help.ts is a real, schema-accepted config node",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity regression: runtime.contextEnhancement.killSwitch is schema-accepted",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity the runtime schema is still strict (unknown leaves are rejected)",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity every intentional gap entry has a non-empty reason",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity every DCS config catalog entry is accepted by the strict runtime schema",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity rejects the removed runtime.coding.factViews compatibility leaf",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P0-06 config type / zod schema parity documents automatic discovery and the env rollback in the production catalog",
+          "status": "passed"
+        },
+        {
+          "name": "gateway permission approval flow binds chat workspace identity to the Main owner and refuses forged scopes",
+          "status": "passed"
+        },
+        {
+          "name": "gateway permission approval flow rejects verification for a workspace whose permissions were not evaluated",
+          "status": "passed"
+        },
+        {
+          "name": "gateway permission approval flow refuses verification when its persisted physical root differs from Main",
+          "status": "passed"
+        },
+        {
+          "name": "gateway permission approval flow requires approval for dangerous gateway RPC and consumes approval before replay",
+          "status": "passed"
+        },
+        {
+          "name": "gateway permission approval flow does not allow an approved gateway request to be reused for different params",
+          "status": "passed"
+        },
+        {
+          "name": "gateway permission approval flow captures mission knowledge draft candidates into Knowledge Inbox without changing the RPC result",
+          "status": "passed"
+        },
+        {
+          "name": "gateway permission approval flow returns structured sandbox denial details for a fail-closed gateway action",
+          "status": "passed"
+        },
+        {
+          "name": "gateway supervisor process cleanup uses a native exit receipt emitted before stop was called",
+          "status": "passed"
+        },
+        {
+          "name": "gateway supervisor process cleanup shares one native termination request between concurrent stop callers",
+          "status": "passed"
+        },
+        {
+          "name": "gateway supervisor process cleanup keeps termination unconfirmed when the native owner emits no exit receipt",
+          "status": "passed"
+        },
+        {
+          "name": "gateway supervisor process cleanup uses taskkill tree strategy for owned process on Windows",
+          "status": "passed"
+        },
+        {
+          "name": "gateway supervisor process cleanup uses direct child.kill for owned process on non-Windows",
+          "status": "passed"
+        },
+        {
+          "name": "gateway supervisor process cleanup forces the owned PID when Windows taskkill fails and waits for native exit",
+          "status": "passed"
+        },
+        {
+          "name": "gateway supervisor process cleanup waits for the original exit receipt when the forced PID has already exited",
+          "status": "passed"
+        },
+        {
+          "name": "gateway supervisor process cleanup fails closed on a foreign listener instead of killing it",
+          "status": "passed"
+        },
+        {
+          "name": "gateway supervisor process cleanup treats the owned gateway pid as its own listener and probes the port",
+          "status": "passed"
+        },
+        {
+          "name": "handoff artifacts stays default-off and only enables the explicit config value",
+          "status": "passed"
+        },
+        {
+          "name": "handoff artifacts builds a provenance-bound artifact from real worker output",
+          "status": "passed"
+        },
+        {
+          "name": "handoff artifacts keeps parent source IDs across the agent handoff boundary",
+          "status": "passed"
+        },
+        {
+          "name": "handoff artifacts redacts secrets before hashing or delivery",
+          "status": "passed"
+        },
+        {
+          "name": "handoff artifacts truncates oversized output to the explicit bound",
+          "status": "passed"
+        },
+        {
+          "name": "handoff artifacts rejects malformed output 0",
+          "status": "passed"
+        },
+        {
+          "name": "handoff artifacts rejects malformed output 1",
+          "status": "passed"
+        },
+        {
+          "name": "handoff artifacts captures only the matching terminal registry record",
+          "status": "passed"
+        },
+        {
+          "name": "handoff artifacts rejects cross-identity run leakage",
+          "status": "passed"
+        },
+        {
+          "name": "handoff artifacts rejects cross-identity session leakage",
+          "status": "passed"
+        },
+        {
+          "name": "handoff artifacts rejects cross-identity task leakage",
+          "status": "passed"
+        },
+        {
+          "name": "handoff artifacts rejects cross-identity role leakage",
+          "status": "passed"
+        },
+        {
+          "name": "handoff artifacts rejects cross-identity attempt leakage",
+          "status": "passed"
+        },
+        {
+          "name": "handoff artifacts rejects cross-identity child session leakage",
+          "status": "passed"
+        },
+        {
+          "name": "handoff artifacts does not accept a same-string taskId as the ledger taskNodeId",
+          "status": "passed"
+        },
+        {
+          "name": "handoff artifacts fails closed for wait, terminal-state, and missing-output failures",
+          "status": "passed"
+        },
+        {
+          "name": "handoff artifacts injects only the matching run and session artifact as untrusted evidence",
+          "status": "passed"
+        },
+        {
+          "name": "handoff artifacts blocks the dependent worker when the artifact is missing or rejected",
+          "status": "passed"
+        },
+        {
+          "name": "handoff artifacts reports disabled, idle, ready, and blocked runtime states",
+          "status": "passed"
+        },
+        {
+          "name": "long-session delegation admission binds accepted children to coordinator, task, backend, permissions, and actual shared isolation without claiming completion",
+          "status": "passed"
+        },
+        {
+          "name": "long-session delegation admission replays a terminal receipt after owner restart without issuing another spawn",
+          "status": "passed"
+        },
+        {
+          "name": "long-session delegation admission coalesces a concurrent duplicate submission into one Gateway admission",
+          "status": "passed"
+        },
+        {
+          "name": "long-session delegation admission turns an in-flight record left by a terminated owner into outcome-unknown without retrying",
+          "status": "passed"
+        },
+        {
+          "name": "long-session delegation admission rejects a parent reset that crosses admission without reporting an accepted worker",
+          "status": "passed"
+        },
+        {
+          "name": "long-session delegation admission rejects a concurrent stop and never upgrades the stale accepted evidence",
+          "status": "passed"
+        },
+        {
+          "name": "long-session delegation admission does not reuse an expired or revoked grant and allows retry only through a fresh owner-approved id",
+          "status": "passed"
+        },
+        {
+          "name": "long-session delegation admission clamps child tool authorization to the parent allowlist",
+          "status": "passed"
+        },
+        {
+          "name": "long-session delegation admission marks an accepted spawn without both child session and run identifiers as rejected",
+          "status": "passed"
+        },
+        {
+          "name": "long-session delegation admission records a refused spawn as rejected with no completion evidence",
+          "status": "passed"
+        },
+        {
+          "name": "long-session delegation admission records a real Git worktree as verified checkout isolation",
+          "status": "passed"
+        },
+        {
+          "name": "Main owner reclamation adapter closes only browser sessions for the exact session scope",
+          "status": "passed"
+        },
+        {
+          "name": "Main owner reclamation adapter leaves observed ports untouched and marks a remaining managed port for recovery",
+          "status": "passed"
+        },
+        {
+          "name": "Main owner reclamation adapter counts keep_on_leave terminals on archive without closing them",
+          "status": "passed"
+        },
+        {
+          "name": "desktop lifecycle helpers workspace delete closes only browser sessions in the removed workspace",
+          "status": "passed"
+        },
+        {
+          "name": "desktop lifecycle helpers app quit closes every process-scoped browser session",
+          "status": "passed"
+        },
+        {
+          "name": "E2 resource owner inventory retains a failed terminal owner result when another terminal was reclaimed",
+          "status": "passed"
+        },
+        {
+          "name": "E2 resource owner inventory describes exactly the five existing owners, with no universal resource table",
+          "status": "passed"
+        },
+        {
+          "name": "E2 resource owner inventory keeps ui-unload, run-cancel, archive and delete as distinct contracts",
+          "status": "passed"
+        },
+        {
+          "name": "E2 resource owner inventory never honors keep_on_leave for a delete, only for life-cycle actions",
+          "status": "passed"
+        },
+        {
+          "name": "E2 reclamation receipts does not touch any owner on ui-unload and records keep_on_leave separately",
+          "status": "passed"
+        },
+        {
+          "name": "E2 reclamation receipts reclaims every owned handle on session-delete and honors a keep_on_leave terminal",
+          "status": "passed"
+        },
+        {
+          "name": "E2 reclamation receipts marks recovery_required with a retry identity on owner failure or unknown",
+          "status": "passed"
+        },
+        {
+          "name": "E2 reclamation receipts keeps unknown/unsupported owners explicit instead of claiming reclamation",
+          "status": "passed"
+        },
+        {
+          "name": "E2 50 create/stop/archive-restore cycles leaves zero lane residue after 50 cycles and counts keep_on_leave separately",
+          "status": "passed"
+        },
+        {
+          "name": "E2 explicit coordination policy reads only explicit session limits and preserves unset values as null",
+          "status": "passed"
+        },
+        {
+          "name": "E2 explicit coordination policy rejects an exceeded budget and never treats an unavailable measurement as zero",
+          "status": "passed"
+        },
+        {
+          "name": "E2 explicit coordination policy fails closed when an action needs an owner but that owner is unavailable",
+          "status": "passed"
+        },
+        {
+          "name": "runtime long-session resource inventory reads admission permits and generation-bound worktrees without inventing measurements",
+          "status": "passed"
+        },
+        {
+          "name": "runtime long-session resource inventory keeps missing generation and missing workspace ownership explicit as unknown",
+          "status": "passed"
+        },
+        {
+          "name": "runtime long-session process budget rejects a second lifecycle-owned process before spawn when maxProcesses is one",
+          "status": "passed"
+        },
+        {
+          "name": "resource-aware orchestration scheduler never treats unmeasured cap undefined as infinite or a zero-sized wave",
+          "status": "passed"
+        },
+        {
+          "name": "resource-aware orchestration scheduler never treats unmeasured cap 0.5 as infinite or a zero-sized wave",
+          "status": "passed"
+        },
+        {
+          "name": "resource-aware orchestration scheduler never treats unmeasured cap NaN as infinite or a zero-sized wave",
+          "status": "passed"
+        },
+        {
+          "name": "resource-aware orchestration scheduler never treats unmeasured cap Infinity as infinite or a zero-sized wave",
+          "status": "passed"
+        },
+        {
+          "name": "resource-aware orchestration scheduler produces deterministic waves and metrics for identical task graphs",
+          "status": "passed"
+        },
+        {
+          "name": "resource-aware orchestration scheduler enforces max active roles in each ready wave",
+          "status": "passed"
+        },
+        {
+          "name": "resource-aware orchestration scheduler splits roles with exclusive tool contention into separate waves",
+          "status": "passed"
+        },
+        {
+          "name": "resource-aware orchestration scheduler skips nodes with unsatisfied dependencies and reports skipped metrics",
+          "status": "passed"
+        },
+        {
+          "name": "resource-aware orchestration scheduler uses custom exclusive tool groups and role cost overrides in metrics",
+          "status": "passed"
+        },
+        {
+          "name": "resource-aware orchestration scheduler packs disjoint write sets into the same wave and splits intersecting write sets",
+          "status": "passed"
+        },
+        {
+          "name": "resource-aware orchestration scheduler does not let custom roles bypass write-set conflicts without default write tools",
+          "status": "passed"
+        },
+        {
+          "name": "resource-aware orchestration scheduler keeps shared writers with incomplete write sets in single-writer waves",
+          "status": "passed"
+        },
+        {
+          "name": "resource-aware orchestration scheduler serializes worktree-intent writers until checkout isolation is verified",
+          "status": "passed"
+        },
+        {
+          "name": "resource-aware orchestration scheduler ignores a caller boolean claiming worktree isolation",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration synthesizer returns deterministic synthesis while preserving roles, evidence, artifacts, traces, and blackboard summary",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration synthesizer preserves verifier failure instead of reporting success",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration synthesizer keeps repair-required status visible without granting tools or memory writes",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration worktree merge evidence merges the first overlapping worktree and records the conflict for the second",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration worktree merge evidence reports declared-vs-actual write-set drift from the git worktree status",
+          "status": "passed"
+        },
+        {
+          "name": "worktree long-session ownership cleans only explicit ephemeral worktrees for the exact generation",
+          "status": "passed"
+        },
+        {
+          "name": "worktree long-session ownership rejects a new owned worktree before filesystem creation when maxWorktrees is reached",
+          "status": "passed"
+        },
+        {
+          "name": "R0-2 sessions.delete partial failures returns partial with remainingPaths and keeps the index entry when an artefact unlink fails",
+          "status": "passed"
+        },
+        {
+          "name": "R0-2 sessions.delete partial failures returns partial when sessions.json read-modify-write fails after files were removed",
+          "status": "passed"
+        },
+        {
+          "name": "R0-2 sessions.delete partial failures reports success only when every artefact and the index update succeed",
+          "status": "passed"
+        },
+        {
+          "name": "R0-2 sessions.delete partial failures succeeds without a legacy sessions.json instead of failing the committed delete",
+          "status": "passed"
+        },
+        {
+          "name": "R0-2 sessions.delete partial failures keeps an unverified missing local store as a failure",
+          "status": "passed"
+        },
+        {
+          "name": "R0-2 sessions.delete partial failures retries the same runtime operation until its terminal owner confirms cleanup",
+          "status": "passed"
+        },
+        {
+          "name": "R0-2 sessions.delete partial failures removes runtime .jsonl.deleted.<timestamp> transcripts during hard delete",
+          "status": "passed"
+        },
+        {
+          "name": "R0-2 context archive cleanup (#101) permanentDelete removes the context archive and retains the archive index on partial failure",
+          "status": "passed"
+        },
+        {
+          "name": "R0-2 context archive cleanup (#101) emptyArchive removes the context archive when all derivatives are deletable",
+          "status": "passed"
+        },
+        {
+          "name": "R0-2 sessions.emptyArchive failures does not report success when an archived file could not be removed",
+          "status": "passed"
+        },
+        {
+          "name": "R0-3 terminal session reclamation does not accumulate closed sessions in the map",
+          "status": "passed"
+        },
+        {
+          "name": "R0-3 terminal session reclamation reclaims records on process exit and hides exited sessions from list()",
+          "status": "passed"
+        },
+        {
+          "name": "R0-3 terminal session reclamation close on an already-reclaimed session is an idempotent no-op",
+          "status": "passed"
+        },
+        {
+          "name": "R0-3 terminal session reclamation shutdownAll kills every live session and empties all bookkeeping",
+          "status": "passed"
+        },
+        {
+          "name": "integrated host budget and bounded waiting classifies 200 cross-workspace requests within the host cap and releases every wait resource",
+          "status": "passed"
+        },
+        {
+          "name": "integrated host budget and bounded waiting prefers a less-used tenant at equal QoS when global capacity is released",
+          "status": "passed"
+        },
+        {
+          "name": "integrated host budget and bounded waiting refuses a zero-length queue when only the global owner is saturated",
+          "status": "passed"
+        },
+        {
+          "name": "integrated host budget and bounded waiting expires and cancels global waiters without reserving capacity and rebuilds the live cap",
+          "status": "passed"
+        },
+        {
+          "name": "fabric bounded waiting enforces the exact waiting boundary and readmits after release",
+          "status": "passed"
+        },
+        {
+          "name": "fabric bounded waiting allows immediate grants with zero waiting slots",
+          "status": "passed"
+        },
+        {
+          "name": "fabric bounded waiting cancels before enqueue and during waiting, removing timers and listeners",
+          "status": "passed"
+        },
+        {
+          "name": "fabric bounded waiting checks expired admission, waiting expiration and expiration at grant",
+          "status": "passed"
+        },
+        {
+          "name": "fabric bounded waiting classifies all 200 requests with bounded peaks and no residual resources",
+          "status": "passed"
+        },
+        {
+          "name": "runtime bounded waiting enforces the exact waiting boundary and readmits after release",
+          "status": "passed"
+        },
+        {
+          "name": "runtime bounded waiting allows immediate grants with zero waiting slots",
+          "status": "passed"
+        },
+        {
+          "name": "runtime bounded waiting cancels before enqueue and during waiting, removing timers and listeners",
+          "status": "passed"
+        },
+        {
+          "name": "runtime bounded waiting checks expired admission, waiting expiration and expiration at grant",
+          "status": "passed"
+        },
+        {
+          "name": "runtime bounded waiting classifies all 200 requests with bounded peaks and no residual resources",
+          "status": "passed"
+        },
+        {
+          "name": "regression: old Fabric admission rejects overflow before adding a timer or waiter",
+          "status": "passed"
+        },
+        {
+          "name": "regression: old Fabric admission never invokes work cancelled between grant and callback",
+          "status": "passed"
+        },
+        {
+          "name": "regression: old Fabric admission does not grant an already expired deadline",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits admits fresh history subscribers after abort without releasing abandoned work",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits admits fresh history subscribers after deadline without releasing abandoned work",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits expires the actual host caller while another history subscriber keeps its own deadline",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits removes a host-expired history waiter before it can start",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits fabric checks grant races and retains running capacity until work settles",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits runtime checks grant races and retains running capacity until work settles",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits isolates subscriber aborts and deadlines, including all leaving before work begins",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits passes only remaining history time and cancels abandoned queued flights",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits keeps a surviving subscriber when another deadline expires during shared work",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits preserves shared rejection including undefined",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits preserves shared rejection including Error: failed",
+          "status": "passed"
+        },
+        {
+          "name": "ResourceFabric chat.history admission coalesces duplicate in-flight chat.history requests",
+          "status": "passed"
+        },
+        {
+          "name": "ResourceFabric chat.history admission releases the singleflight after a slow history request so a later retry runs again",
+          "status": "passed"
+        },
+        {
+          "name": "ResourceFabric chat.history admission limits distinct chat.history requests while allowing non-history RPCs through",
+          "status": "passed"
+        },
+        {
+          "name": "ResourceFabric invariants I1: interactive work is never rejected by the account limit",
+          "status": "passed"
+        },
+        {
+          "name": "ResourceFabric invariants I2: active usage never exceeds the current account limit",
+          "status": "passed"
+        },
+        {
+          "name": "ResourceFabric invariants I3: DRF-lite share stays within the two-times fairness bound",
+          "status": "passed"
+        },
+        {
+          "name": "ResourceFabric invariants writes each limit adjustment into the resource-envelope ledger",
+          "status": "passed"
+        },
+        {
+          "name": "ResourceFabric P2 pressure runs 20 exec plus 20 history with zero timeouts and a replayable limit trace",
+          "status": "passed"
+        },
+        {
+          "name": "resource fabric P0 primitives evicts LRU entries, expires by injected TTL, and invalidates by prefix",
+          "status": "passed"
+        },
+        {
+          "name": "resource fabric P0 primitives coalesces same-key work and does not cache rejected calls",
+          "status": "passed"
+        },
+        {
+          "name": "resource fabric P0 primitives adjusts adaptive limits with bounds and a dead zone",
+          "status": "passed"
+        },
+        {
+          "name": "resource fabric P0 primitives removes and clears queued priority items",
+          "status": "passed"
+        },
+        {
+          "name": "resource fabric P0 primitives enforces token-bucket bursts with injected time and rejects invalid input",
+          "status": "passed"
+        },
+        {
+          "name": "resource fabric P0 primitives orders QoS, boosts explicit work, and ages opportunistic work",
+          "status": "passed"
+        },
+        {
+          "name": "resource fabric P0 primitives enforces DRF-lite capacity and fairness bounds",
+          "status": "passed"
+        },
+        {
+          "name": "workspace exec lease preserves FIFO, capacity and queuedMs for 200 queued requests",
+          "status": "passed"
+        },
+        {
+          "name": "workspace exec lease removes timed-out work and admits the next waiter after release",
+          "status": "passed"
+        },
+        {
+          "name": "workspace exec lease releases a slot after synchronous throws and asynchronous rejections",
+          "status": "passed"
+        },
+        {
+          "name": "workspace exec lease does not let a stale double release over-admit while another lease is held",
+          "status": "passed"
+        },
+        {
+          "name": "workspace exec lease grants up to capacity 2 immediately and queues the third",
+          "status": "passed"
+        },
+        {
+          "name": "workspace exec lease does not block a different workspace key",
+          "status": "passed"
+        },
+        {
+          "name": "workspace exec lease records active and queued slots in the shadow resource envelope",
+          "status": "passed"
+        },
+        {
+          "name": "workspace exec lease rejects with a typed timeout error when the slot never frees",
+          "status": "passed"
+        },
+        {
+          "name": "process metrics calibration deduplicates overlapping Main/Gateway trees while preserving logical leases",
+          "status": "passed"
+        },
+        {
+          "name": "process metrics calibration uses the latest generation of a reused PID rather than adding both",
+          "status": "passed"
+        },
+        {
+          "name": "process metrics calibration rejects stale and future snapshots before their logical occupancy is added",
+          "status": "passed"
+        },
+        {
+          "name": "process metrics calibration selects the latest producer epoch and does not refresh a stale measurement on merge",
+          "status": "passed"
+        },
+        {
+          "name": "process metrics calibration starts a new CPU interval after PID reuse, discovery failure or an expired sample",
+          "status": "passed"
+        },
+        {
+          "name": "resource measurement owners holds background work for a busy Gateway while Main is idle and waits for measured recovery",
+          "status": "passed"
+        },
+        {
+          "name": "resource measurement owners projects the existing Gateway event-loop classification with an epoch and clears it on stop",
+          "status": "passed"
+        },
+        {
+          "name": "resource measurement owners feeds fresh event-loop pressure to the existing background gate",
+          "status": "passed"
+        },
+        {
+          "name": "resource observer lifetime recovers from synchronous and asynchronous polling failures without overlapping work",
+          "status": "passed"
+        },
+        {
+          "name": "resource observer lifetime uses native visibility over Chromium and ignores an older visibility response",
+          "status": "passed"
+        },
+        {
+          "name": "resource observer lifetime shares a single refresh and releases only the final observer",
+          "status": "passed"
+        },
+        {
+          "name": "resource observer lifetime ignores a stopped generation response and shares explicit refreshes",
+          "status": "passed"
+        },
+        {
+          "name": "resource observer lifetime does not issue shed requests while hidden and refreshes when visible",
+          "status": "passed"
+        },
+        {
+          "name": "window resource lifetimes publishes per-window native visibility and releases bridge listeners on close",
+          "status": "passed"
+        },
+        {
+          "name": "window resource lifetimes aggregates visibility and detaches a closed window before reopen",
+          "status": "passed"
+        },
+        {
+          "name": "window resource lifetimes releases power listeners on stop and creates one set on restart",
+          "status": "passed"
+        },
+        {
+          "name": "window resource lifetimes ignores a late pressure result after stopping and restarting its generation",
+          "status": "passed"
+        },
+        {
+          "name": "window resource lifetimes releases observation pressure on stop without dropping queued work",
+          "status": "passed"
+        },
+        {
+          "name": "role registry exposes built-in roles when no config roles are present",
+          "status": "passed"
+        },
+        {
+          "name": "role registry merges config roles and lets config override a built-in by name",
+          "status": "passed"
+        },
+        {
+          "name": "role registry skips invalid config roles and records issues without throwing",
+          "status": "passed"
+        },
+        {
+          "name": "role effort mapping maps role effort to a thinking level, with auto -> adaptive",
+          "status": "passed"
+        },
+        {
+          "name": "role permissions policy denies write/edit/exec/bash when filesystem is read",
+          "status": "passed"
+        },
+        {
+          "name": "role permissions policy denies all fs tools + shell when filesystem is none",
+          "status": "passed"
+        },
+        {
+          "name": "role permissions policy denies network tools when network is none",
+          "status": "passed"
+        },
+        {
+          "name": "role-driven spawn mapping compiles SOUL into the role system prompt",
+          "status": "passed"
+        },
+        {
+          "name": "role-driven spawn mapping maps model/effort/SOUL into spawn params",
+          "status": "passed"
+        },
+        {
+          "name": "role-driven spawn mapping injects role memory through a context pack and records an explain entry",
+          "status": "passed"
+        },
+        {
+          "name": "role-driven spawn mapping #183 counts the role-spawn memory injection it cannot charge to a turn budget",
+          "status": "passed"
+        },
+        {
+          "name": "role-driven spawn mapping does not inject or record role memory when Role Memory is disabled",
+          "status": "passed"
+        },
+        {
+          "name": "role-driven spawn mapping #183 skips the role-spawn memory block when the DCS projection owns it",
+          "status": "passed"
+        },
+        {
+          "name": "role-driven spawn mapping #183 keeps the role-spawn memory block when the projection is off",
+          "status": "passed"
+        },
+        {
+          "name": "role-driven spawn mapping sets a hard tool allowlist from the role tools + permission-derived deny",
+          "status": "passed"
+        },
+        {
+          "name": "role-driven spawn mapping spawns through an injected spawn fn and reports role-not-found",
+          "status": "passed"
+        },
+        {
+          "name": "orchestrator run bridge spawns initial workers and defers verifier through orchestration metadata",
+          "status": "passed"
+        },
+        {
+          "name": "orchestrator run bridge records failures when a spawn is rejected",
+          "status": "passed"
+        },
+        {
+          "name": "orchestrator run bridge honors template roles and maxWorkers before spawning",
+          "status": "passed"
+        },
+        {
+          "name": "orchestrator run bridge keeps production execution waves aligned with the plan write-set contract",
+          "status": "passed"
+        },
+        {
+          "name": "orchestrator run bridge creates a worktree and passes its cwd to isolated workers",
+          "status": "passed"
+        },
+        {
+          "name": "orchestrator run bridge checks actual Git isolation after async preparation (tampered=false)",
+          "status": "passed"
+        },
+        {
+          "name": "orchestrator run bridge checks actual Git isolation after async preparation (tampered=true)",
+          "status": "passed"
+        },
+        {
+          "name": "RolesOrchestrationPanel records successful orchestration plan previews to Task Ledger as read-only projections",
+          "status": "passed"
+        },
+        {
+          "name": "RolesOrchestrationPanel saves lightweight plan edits to Task Ledger without creating a DAG editor",
+          "status": "passed"
+        },
+        {
+          "name": "RolesOrchestrationPanel creates a config-backed role through the typed host API and shows pending runtime refresh state",
+          "status": "passed"
+        },
+        {
+          "name": "RolesOrchestrationPanel edits only config roles from the selected role detail",
+          "status": "passed"
+        },
+        {
+          "name": "RolesOrchestrationPanel does not offer editing for built-in roles",
+          "status": "passed"
+        },
+        {
+          "name": "RolesOrchestrationPanel exports accepted memory through the single surface and deletes through tombstone confirmation",
+          "status": "passed"
+        },
+        {
+          "name": "RolesOrchestrationPanel shows memory proposal source metadata in the review queue without claiming automatic writes",
+          "status": "passed"
+        },
+        {
+          "name": "session storage with real Git and files measures files, marks bounded scans and never follows junctions",
+          "status": "passed"
+        },
+        {
+          "name": "session storage with real Git and files reports real worktrees and protects primary, dirty, locked and registered checkouts",
+          "status": "passed"
+        },
+        {
+          "name": "session storage with real Git and files retains the branch after approved idle removal and rejects stale cleanup of new changes",
+          "status": "passed"
+        },
+        {
+          "name": "session storage with real Git and files sizes session transcripts and releases only the exact workspace/session owners",
+          "status": "passed"
+        },
+        {
+          "name": "session storage with real Git and files waits for terminal owner exit and records a rejected cleanup as failed",
+          "status": "passed"
+        },
+        {
+          "name": "Task Ledger physical process identity keeps a real OS birth identity when the project cwd contains shadow shell executables",
+          "status": "passed"
+        },
+        {
+          "name": "Task Ledger physical process identity keeps query failure unknown and refuses to publish a guessed own incarnation",
+          "status": "passed"
+        },
+        {
+          "name": "Task Ledger physical process identity reads the same native birth identity after the preferred shell times out",
+          "status": "passed"
+        },
+        {
+          "name": "TerminalSessionManager holds a terminal close receipt until the native owner reports exit",
+          "status": "passed"
+        },
+        {
+          "name": "TerminalSessionManager retains terminal occupancy when the native owner rejects termination",
+          "status": "passed"
+        },
+        {
+          "name": "TerminalSessionManager reads a PID that becomes available after the native PTY connection starts",
+          "status": "passed"
+        },
+        {
+          "name": "TerminalSessionManager adds a managed OfficeCLI install dir to interactive terminal PATH",
+          "status": "passed"
+        },
+        {
+          "name": "TerminalSessionManager idle classification classifies pure states including output freshness winning over interaction staleness",
+          "status": "passed"
+        },
+        {
+          "name": "TerminalSessionManager idle classification transitions interactive -> running-process -> interactive -> idle with real event flow",
+          "status": "passed"
+        },
+        {
+          "name": "TerminalSessionManager idle classification honors the CLAWX_TERMINAL_OUTPUT_IDLE_MS environment override",
+          "status": "passed"
+        },
+        {
+          "name": "TerminalSessionManager long-session lifecycle defaults keep_on_leave to true and preserves the physical generation",
+          "status": "passed"
+        },
+        {
+          "name": "TerminalSessionManager long-session lifecycle rejects a terminal before spawn when the explicit background terminal budget is full",
+          "status": "passed"
+        },
+        {
+          "name": "TerminalSessionManager long-session lifecycle runs 50 archive/delete cycles without terminal residue",
+          "status": "passed"
+        },
+        {
+          "name": "TerminalSessionManager long-session lifecycle reclaims only terminals bound to the requested generation",
+          "status": "passed"
+        },
+        {
+          "name": "VerseGit cleanup barrier protocol seals, detaches, completes and rejects every identity drift before deletion",
+          "status": "passed"
+        },
+        {
+          "name": "VerseGit cleanup barrier protocol fails closed for references, unobserved inventory, missing evidence, preserved resources and premature completion",
+          "status": "passed"
+        },
+        {
+          "name": "VerseGit cleanup barrier protocol records late events without overwriting a sealed or deleted outcome",
+          "status": "passed"
+        },
+        {
+          "name": "VerseGit cleanup barrier protocol resumes a sealed record after restart and reports survivors as recovery_required",
+          "status": "passed"
+        },
+        {
+          "name": "production cleanup caller uses the same barrier for normal cleanup and removes owned worktree/temp/manager resources",
+          "status": "passed"
+        },
+        {
+          "name": "production cleanup caller uses the same barrier for failure cleanup and removes owned worktree/temp/manager resources",
+          "status": "passed"
+        },
+        {
+          "name": "production cleanup caller uses the same barrier for cancel cleanup and removes owned worktree/temp/manager resources",
+          "status": "passed"
+        },
+        {
+          "name": "production cleanup caller uses the same barrier for stale cleanup and removes owned worktree/temp/manager resources",
+          "status": "passed"
+        },
+        {
+          "name": "production cleanup caller preserves user changes outside the agent write set and reports recovery_required",
+          "status": "passed"
+        },
+        {
+          "name": "production cleanup caller refuses a direct worktree delete when VerseGit cleanup has no detached seal",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration hydrates old agentId/session fields into selectedAgentId and agentBindings",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration normalizes legacy nested session folders and new parent input to one level",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration creates the default workspace from list when no workspace exists",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration falls back to the default workspace when the stored active id is missing",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration keeps independent UI state for each session inside a workspace",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration does not copy the previous active session state into a newly selected empty session",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration keeps each agent binding session independent within the same workspace",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration does not inherit the previous agent state when switching to a new agent binding",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration seeds the Verse Claw harness when creating a workspace profile",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration switches workspaces without rewriting the target workspace session or state",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration P2-001: creates new workspaces with readOnly permission mode by default",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration P2-001: preserves explicit acceptEdits and audits permission mode changes",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration P2-001: auto-default workspace is readOnly and invalid modes migrate to readOnly not acceptEdits",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration switches workspaces without closing the previous workspace resources",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration workspace delete reclaims Main browser and managed-port owners",
+          "status": "passed"
+        }
+      ]
+    },
+    "runtime": {
+      "numTotalTests": 107,
+      "numPassedTests": 107,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "success": true,
+      "numFailedTestSuites": 0,
+      "cases": [
+        {
+          "name": "checkpoint-rollback-executor (A3) validateCheckpointRecord accepts a structurally valid checkpoint",
+          "status": "passed"
+        },
+        {
+          "name": "checkpoint-rollback-executor (A3) validateCheckpointRecord rejects missing/invalid shape",
+          "status": "passed"
+        },
+        {
+          "name": "checkpoint-rollback-executor (A3) validateCheckpointRecord rejects unparseable createdAt",
+          "status": "passed"
+        },
+        {
+          "name": "checkpoint-rollback-executor (A3) applyCheckpointToJournal restores files to the checkpoint instant (post-checkpoint writes undone)",
+          "status": "passed"
+        },
+        {
+          "name": "checkpoint-rollback-executor (A3) applyCheckpointToJournal restores created files (hadPrior=false) by unlinking them",
+          "status": "passed"
+        },
+        {
+          "name": "checkpoint-rollback-executor (A3) applyCheckpointToJournal no-op when no journal entries exist after the checkpoint",
+          "status": "passed"
+        },
+        {
+          "name": "checkpoint-rollback-executor (A3) applyCheckpointToJournal #176 fails closed when the journal id is the canonical key, not the session UUID",
+          "status": "passed"
+        },
+        {
+          "name": "checkpoint-rollback-executor (A3) applyCheckpointToJournal #176 refuses to roll back when no journal session id is supplied",
+          "status": "passed"
+        },
+        {
+          "name": "checkpoint-rollback-executor (A3) applyCheckpointToJournal #175 aborts instead of deleting a concurrent write that landed after the selection",
+          "status": "passed"
+        },
+        {
+          "name": "checkpoint-rollback-executor (A3) applyCheckpointToJournal uses metadata.journalSeq as the boundary when stamped (partial rollback without same-ms ambiguity)",
+          "status": "passed"
+        },
+        {
+          "name": "checkpoint-rollback-executor (A3) applyCheckpointToJournal ignores a non-numeric journalSeq and falls back to createdAt filtering",
+          "status": "passed"
+        },
+        {
+          "name": "checkpoint-rollback-executor (A3) resolveCheckpointJournalRoot prefers the matching worktree root when metadata.worktreeId is set",
+          "status": "passed"
+        },
+        {
+          "name": "checkpoint-rollback-executor (A3) resolveCheckpointJournalRoot falls back to workspace root without worktree metadata",
+          "status": "passed"
+        },
+        {
+          "name": "checkpoint-rollback-executor (A3) createCheckpointRollbackDeps + executeReplayRollback restores a discovered worktree journal using its absolute root",
+          "status": "passed"
+        },
+        {
+          "name": "checkpoint-rollback-executor (A3) createCheckpointRollbackDeps + executeReplayRollback legacy checkpoint path restores and records outcome",
+          "status": "passed"
+        },
+        {
+          "name": "checkpoint-rollback-executor (A3) createCheckpointRollbackDeps + executeReplayRollback #175/#176 surface a failed rollback as a thrown failure, never a silent success",
+          "status": "passed"
+        },
+        {
+          "name": "checkpoint-rollback-executor (A3) createCheckpointRollbackDeps + executeReplayRollback #175 serializes the rollback against a writer holding the same file lease",
+          "status": "passed"
+        },
+        {
+          "name": "checkpoint-rollback-executor (A3) createCheckpointRollbackDeps + executeReplayRollback event_log target fails explicitly when pilot is disabled (no fake success)",
+          "status": "passed"
+        },
+        {
+          "name": "checkpoint-rollback-executor (A3) createCheckpointRollbackDeps + executeReplayRollback invalid decision is rejected",
+          "status": "passed"
+        },
+        {
+          "name": "checkpoint-rollback-executor (A3) default recordOutcome (console sink) is wired when no explicit sink is given",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration token budget + concurrent metrics (C3-4) aborts when goal budget exceeded",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration token budget + concurrent metrics (C3-4) resets wave budget on advance",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration token budget + concurrent metrics (C3-4) records wave conflict checks when packing",
+          "status": "passed"
+        },
+        {
+          "name": "provider outbound concurrency budget quota identity normalizes endpoint identity and treats default ports as equal",
+          "status": "passed"
+        },
+        {
+          "name": "provider outbound concurrency budget quota identity shares one group across model names on the same endpoint and credential",
+          "status": "passed"
+        },
+        {
+          "name": "provider outbound concurrency budget quota identity separates different credentials on the same endpoint and different endpoints",
+          "status": "passed"
+        },
+        {
+          "name": "provider outbound concurrency budget quota identity never puts the raw credential into the group id",
+          "status": "passed"
+        },
+        {
+          "name": "provider outbound concurrency budget configuration surface is inert until an operator configures a limit",
+          "status": "passed"
+        },
+        {
+          "name": "provider outbound concurrency budget configuration surface keeps the coverage table honest about what is not gated",
+          "status": "passed"
+        },
+        {
+          "name": "provider outbound concurrency budget guarded transport boundary sends nothing while ungated and shares one slot when a limit is configured",
+          "status": "passed"
+        },
+        {
+          "name": "provider outbound concurrency budget guarded transport boundary rejects an over-capacity request without sending it to the provider",
+          "status": "passed"
+        },
+        {
+          "name": "provider outbound concurrency budget guarded transport boundary releases only when the guarded request is confirmed finished",
+          "status": "passed"
+        },
+        {
+          "name": "provider outbound concurrency budget guarded transport boundary releases the slot when the transport fails and re-admits the retry",
+          "status": "passed"
+        },
+        {
+          "name": "provider outbound concurrency budget guarded transport boundary does not block a different account or a different endpoint",
+          "status": "passed"
+        },
+        {
+          "name": "provider outbound concurrency budget guarded transport boundary maps two derived groups onto one quota group through an explicit alias",
+          "status": "passed"
+        },
+        {
+          "name": "provider outbound concurrency budget guarded transport boundary leaves no slot behind when a queued caller is aborted",
+          "status": "passed"
+        },
+        {
+          "name": "provider outbound concurrency budget logical request budget records a physical provider attempt inside an ambient logical request",
+          "status": "passed"
+        },
+        {
+          "name": "provider outbound concurrency budget logical request budget fails closed before sending when the ambient budget is already exhausted",
+          "status": "passed"
+        },
+        {
+          "name": "provider outbound concurrency budget shutdown and fairness rejects queued waiters on shutdown and leaves no slot behind",
+          "status": "passed"
+        },
+        {
+          "name": "provider outbound concurrency budget shutdown and fairness does not starve a waiter when the holder keeps running",
+          "status": "passed"
+        },
+        {
+          "name": "workspace resource leases cancels a queued request without waiting for the holder or invoking its effect",
+          "status": "passed"
+        },
+        {
+          "name": "workspace resource leases checks cancellation again between granting a slot and starting the callback",
+          "status": "passed"
+        },
+        {
+          "name": "workspace resource leases keeps an already-started operation holding capacity until its owner settles",
+          "status": "passed"
+        },
+        {
+          "name": "workspace resource leases caps workspaceSearch at 2 and queues the third with queuedMs > 0",
+          "status": "passed"
+        },
+        {
+          "name": "workspace resource leases serializes overlapping fileMutation paths and runs disjoint paths in parallel",
+          "status": "passed"
+        },
+        {
+          "name": "workspace resource leases serializes overlapping subtreeMutation paths and runs disjoint subtrees in parallel",
+          "status": "passed"
+        },
+        {
+          "name": "workspace resource leases keeps different workspace keys independent",
+          "status": "passed"
+        },
+        {
+          "name": "workspace resource leases caps 8 concurrent workspaceExec acquisitions at the workspace budget",
+          "status": "passed"
+        },
+        {
+          "name": "workspace resource leases releases idempotently without over-admitting the next batch",
+          "status": "passed"
+        },
+        {
+          "name": "workspace resource leases records gateway leases in the shadow resource envelope",
+          "status": "passed"
+        },
+        {
+          "name": "workspace resource leases rejects with a typed timeout error and reclaims the slot after release",
+          "status": "passed"
+        },
+        {
+          "name": "subagent spawn quota release (issue #32) does not release capacity merely because an unended execution is old",
+          "status": "passed"
+        },
+        {
+          "name": "subagent spawn quota release (issue #32) retains an ended parent slot while its old descendant still has no terminal evidence",
+          "status": "passed"
+        },
+        {
+          "name": "subagent spawn quota release (issue #32) counts only still-running children, even when cleanup is pending",
+          "status": "passed"
+        },
+        {
+          "name": "subagent spawn quota release (issue #32) counts zero once every child in the lineage has finished, even with cleanup pending",
+          "status": "passed"
+        },
+        {
+          "name": "symbol-lease-guard (C5-1 wiring) is a no-op when enabled is not true",
+          "status": "passed"
+        },
+        {
+          "name": "symbol-lease-guard (C5-1 wiring) blocks concurrent holders on the same path symbol when enabled",
+          "status": "passed"
+        },
+        {
+          "name": "symbol-lease-guard (C5-1 wiring) resolves apply_patch paths to file-level symbols",
+          "status": "passed"
+        },
+        {
+          "name": "symbol-lease-guard (C5-1 wiring) orders owner keys and compensates the first lease when a later resource is held",
+          "status": "passed"
+        },
+        {
+          "name": "symbol-lease-guard (C5-1 wiring) does not acquire a lease or execute an already cancelled tool request",
+          "status": "passed"
+        },
+        {
+          "name": "worktree-service (C4 interface) create seeds files and cleanup removes tree (inprocess default)",
+          "status": "passed"
+        },
+        {
+          "name": "worktree-service (C4 interface) merge queue serializes and detects overlapping conflicts (2-worker same file)",
+          "status": "passed"
+        },
+        {
+          "name": "worktree-service (C4 interface) conflict policy can return work to worker",
+          "status": "passed"
+        },
+        {
+          "name": "worktree-service (C4 interface) merge missing worktree fails cleanly",
+          "status": "passed"
+        },
+        {
+          "name": "worktree-service (C4 interface) git backend creates isolated worktree when available (opt-in, not production default)",
+          "status": "passed"
+        },
+        {
+          "name": "worktree-service (C4 interface) git backend falls back to inprocess when not a git repo",
+          "status": "passed"
+        },
+        {
+          "name": "worktree-service (C4 interface) resolveWorktreeBackend defaults to inprocess",
+          "status": "passed"
+        },
+        {
+          "name": "C4 isolation request + HandoffPack coordinates normalizeIsolationMode defaults to shared",
+          "status": "passed"
+        },
+        {
+          "name": "C4 isolation request + HandoffPack coordinates orchestrator plan isolation defaults shared and accepts worktree",
+          "status": "passed"
+        },
+        {
+          "name": "C4 isolation request + HandoffPack coordinates HandoffPack carries writeSet/worktreeId/isolation and parse round-trips",
+          "status": "passed"
+        },
+        {
+          "name": "C4 isolation request + HandoffPack coordinates empty writeSet handoff remains compatible (omit field)",
+          "status": "passed"
+        },
+        {
+          "name": "worktree-service C4-H hardening exports PRODUCTION_GIT_WORKTREE_HARDENED without flipping defaults",
+          "status": "passed"
+        },
+        {
+          "name": "worktree-service C4-H hardening normalizes Windows separators and rejects traversal",
+          "status": "passed"
+        },
+        {
+          "name": "worktree-service C4-H hardening writeWorktreeFile accepts backslash rel paths",
+          "status": "passed"
+        },
+        {
+          "name": "worktree-service C4-H hardening git backend concurrent create/merge/cleanup stays isolated (C4-H)",
+          "status": "passed"
+        },
+        {
+          "name": "worktree-service C4-H hardening hardened git env disables repository hooks (C4-H parity with Codex info.rs)",
+          "status": "passed"
+        },
+        {
+          "name": "managed process capacity admits everything and allocates no counter until a capacity is declared",
+          "status": "passed"
+        },
+        {
+          "name": "managed process capacity bounds the instance-wide live count and refuses beyond it",
+          "status": "passed"
+        },
+        {
+          "name": "managed process capacity counts a double release without freeing a second slot",
+          "status": "passed"
+        },
+        {
+          "name": "managed process capacity reads the declared capacity and per-run defaults from the environment",
+          "status": "passed"
+        },
+        {
+          "name": "managed process capacity exposes the declared default limits to the process boundary",
+          "status": "passed"
+        },
+        {
+          "name": "symbol-lease (C5-1 + C5-H) second holder blocked until owner release (memory)",
+          "status": "passed"
+        },
+        {
+          "name": "symbol-lease (C5-1 + C5-H) C5-H wal: expiry fences a live holder instead of admitting a second writer",
+          "status": "passed"
+        },
+        {
+          "name": "symbol-lease (C5-1 + C5-H) C5-H wal: rehydrate from WAL blocks second logical process (crash recovery path)",
+          "status": "passed"
+        },
+        {
+          "name": "symbol-lease (C5-1 + C5-H) C5-H wal: release then second process can acquire",
+          "status": "passed"
+        },
+        {
+          "name": "symbol-lease (C5-1 + C5-H) exports MULTI_PROCESS_WAL_HARDENED capability (defaults unchanged elsewhere)",
+          "status": "passed"
+        },
+        {
+          "name": "symbol-lease (C5-1 + C5-H) C5-H wal: concurrent acquire under lock yields single winner",
+          "status": "passed"
+        },
+        {
+          "name": "symbol-lease (C5-1 + C5-H) C5-H wal: compact keeps active acquire rows",
+          "status": "passed"
+        },
+        {
+          "name": "symbol-lease (C5-1 + C5-H) does not free an expired live lease when the process-local view is cleared",
+          "status": "passed"
+        },
+        {
+          "name": "symbol-lease (C5-1 + C5-H) requires the issued nonce and cannot use an old release against a replacement",
+          "status": "passed"
+        },
+        {
+          "name": "symbol-lease (C5-1 + C5-H) keeps a legacy expired lease with no provable process owner unavailable",
+          "status": "passed"
+        },
+        {
+          "name": "symbol-lease (C5-1 + C5-H) refuses admission when the owner journal contains a torn record",
+          "status": "passed"
+        },
+        {
+          "name": "symbol-lease (C5-1 + C5-H) does not turn a missing previously initialized journal into empty capacity",
+          "status": "passed"
+        },
+        {
+          "name": "symbol-lease (C5-1 + C5-H) does not treat the first contended lock directory as an initialized lease journal",
+          "status": "passed"
+        },
+        {
+          "name": "bash workspaceExec admission settles cancellation while both slots remain held and never starts the shell",
+          "status": "passed"
+        },
+        {
+          "name": "bash workspaceExec admission queues behind the workspace budget before spawning the shell",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers preserves write owner-confirmed completion after cancellation",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers preserves edit owner-confirmed completion after cancellation",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers cancels bash while queued without starting the operation",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers cancels find while queued without starting the operation",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers cancels grep while queued without starting the operation",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers cancels write while queued without starting the operation",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers cancels edit while queued without starting the operation",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers uses remaining bash time and retains the lease until observed child close",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers keeps running find ownership through cancellation until close",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers keeps running grep ownership through cancellation until close",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers does not spawn grep after cancellation during asynchronous preparation",
+          "status": "passed"
+        }
+      ]
+    },
+    "browser": {
+      "numTotalTests": 45,
+      "numPassedTests": 45,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "success": true,
+      "numFailedTestSuites": 0,
+      "cases": [
+        {
+          "name": "agent browser runtime mode open 默认 normal_restricted 模式",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode normal_restricted 下 takeSnapshot/clickByUid/fillByUid/pressKey 被拒",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode requestModeUpgrade 升级到 controlled_enhanced 后动作可用",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode requestModeUpgrade 升级到 full_access 后动作可用",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode requestModeUpgrade 带 expiresInMs 过期后自动回退 normal_restricted",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode 降级回 normal_restricted 清理过期时间",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode respondBoundaryChoice 对不存在会话返回 false",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode setBoundaryChoiceNotifier 注册回调可被调用",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode open 时指定 runtimeMode=controlled_enhanced 生效",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode requestModeUpgrade without userApproval is rejected (approval gate)",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser service cleans a failed open and retains its owner when native cleanup fails",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser service retains the owner until the original window closes and shares concurrent close requests",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser service retains a browser owner after close failure and permits a later retry",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser service applies supervised request guards to navigation redirects and subresources",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser service prefers the bundled agent-browser CLI runner when available",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser service preserves the creation-time external connection when CLI metadata claims managed",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser service drives a hidden BrowserWindow session",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser service drives browser-control CDP actions (takeSnapshot/clickByUid/fillByUid/pressKey)",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser service rejects browser-control actions on the agent-browser-cli engine",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser service lists and saves reusable browser profiles",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser service validates a browser task and cleans up the temporary session",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser service records a caller-provided canonical runId verbatim with a dir-safe artifact path",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser service rejects traversal-shaped external runIds instead of minting a new id",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser service returns validation failures without keeping the session open",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser service exposes the service through the host api adapter",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser service binds an injected CLI runner to the CLI engine at construction",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser service keeps browser-window authoritative even when a CLI runner exists",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser service fails closed instead of falling back when the CLI engine is unavailable",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser supervised task network policy denies private, local, and special-use addresses",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser supervised task network policy denies DNS rebinding, unapproved domains, and URL credentials",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser supervised task network policy accepts public addresses inside the approved domain set",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser supervised task executor awaits one asynchronous owner cleanup before completing cancellation",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser supervised task executor executes ordered steps and verifies success with progress counters",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser supervised task executor returns an explainable verification failure instead of completing on navigation alone",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser supervised task executor fails closed when the request guard blocks traffic during success verification",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser supervised task executor fails before opening a session when the target resolves private",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser supervised task executor closes the session and skips verification when cancelled during a step",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser supervised task executor completes 20 sequential synthetic public runs with a fresh approval each time",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser supervised task executor fails an unknown step action instead of recording it as a passed no-op",
+          "status": "passed"
+        },
+        {
+          "name": "R0-4 agent browser navigation timeout stops the load and rejects when navigation never finishes",
+          "status": "passed"
+        },
+        {
+          "name": "R0-4 agent browser navigation timeout resolves on the navigation event and never calls stop",
+          "status": "passed"
+        },
+        {
+          "name": "R0-4 agent browser navigation timeout rejects on did-fail-load with the error code",
+          "status": "passed"
+        },
+        {
+          "name": "R0-4 agent browser navigation timeout ignores failed subframes but still observes a later main-frame failure",
+          "status": "passed"
+        },
+        {
+          "name": "R0-4 agent browser navigation timeout preserves a loaded main page after an optional iframe is blocked",
+          "status": "passed"
+        },
+        {
+          "name": "R0-4 agent browser navigation timeout cleans the wait when loadURL rejects before a navigation event",
+          "status": "passed"
+        }
+      ]
+    }
+  },
+  "commands": [
+    {
+      "id": "runtime",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.resource-budget.config.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\tf0830\\acceptance-scope\\runtime.json"
+      ],
+      "cwd": "D:\\tmp\\tf0830\\candidate-scope\\openclaw_runtime",
+      "exitCode": 0,
+      "durationMs": 34875
+    },
+    {
+      "id": "browser",
+      "argv": [
+        "node",
+        "../../node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/r0-4-agent-browser-nav-timeout.test.ts",
+        "tests/agent-browser-service.test.ts",
+        "tests/agent-browser-runtime-mode.test.ts",
+        "tests/agent-browser-supervised-task-executor.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\tf0830\\acceptance-scope\\browser.json"
+      ],
+      "cwd": "D:\\tmp\\tf0830\\candidate-scope\\packages\\versebrowser",
+      "exitCode": 0,
+      "durationMs": 12125
+    },
+    {
+      "id": "node-types",
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\tf0830\\candidate-scope",
+      "exitCode": 0,
+      "durationMs": 108672
+    },
+    {
+      "id": "web-types",
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\tf0830\\candidate-scope",
+      "exitCode": 0,
+      "durationMs": 21203
+    },
+    {
+      "id": "lint",
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "electron/gateway/agent-browser-bridge.ts",
+        "electron/gateway/process-launcher.ts",
+        "electron/gateway/supervisor.ts",
+        "electron/main/index.ts",
+        "electron/main/ipc-handlers.ts",
+        "electron/services/agent-browser-api.ts",
+        "electron/services/gateway-api.ts",
+        "electron/services/long-session-resource-reclamation.ts",
+        "electron/services/resource-envelope-api.ts",
+        "electron/services/resource-envelope.ts",
+        "electron/services/resource-fabric.ts",
+        "electron/services/session-storage-api.ts",
+        "electron/services/sessions-api.ts",
+        "electron/services/terminal-api.ts",
+        "electron/services/terminal-session-manager.ts",
+        "electron/services/workspaces-api.ts",
+        "openclaw_runtime/src/agents/checkpoint-rollback-executor.test.ts",
+        "openclaw_runtime/src/agents/checkpoint-rollback-executor.ts",
+        "openclaw_runtime/src/agents/command/attempt-execution.ts",
+        "openclaw_runtime/src/agents/embedded-agent-runner/run.ts",
+        "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+        "openclaw_runtime/src/agents/embedded-agent-runner/stream-resolution.ts",
+        "openclaw_runtime/src/agents/handoff-artifacts.ts",
+        "openclaw_runtime/src/agents/long-session-delegation-receipt.ts",
+        "openclaw_runtime/src/agents/orchestration-resource-scheduler.ts",
+        "openclaw_runtime/src/agents/orchestration-synthesizer.ts",
+        "openclaw_runtime/src/agents/orchestrator-run-observed.ts",
+        "openclaw_runtime/src/agents/provider-outbound-budget.ts",
+        "openclaw_runtime/src/agents/provider-spend-budget.ts",
+        "openclaw_runtime/src/agents/provider-spend-context.ts",
+        "openclaw_runtime/src/agents/provider-transport-fetch.ts",
+        "openclaw_runtime/src/agents/resource-leases.test.ts",
+        "openclaw_runtime/src/agents/resource-leases.ts",
+        "openclaw_runtime/src/agents/role-spawn.ts",
+        "openclaw_runtime/src/agents/sessions/tools/bash-workspace-lease.test.ts",
+        "openclaw_runtime/src/agents/subagent-registry-dispatch.ts",
+        "openclaw_runtime/src/agents/subagent-registry-helpers.ts",
+        "openclaw_runtime/src/agents/subagent-registry-lifecycle.ts",
+        "openclaw_runtime/src/agents/subagent-registry-queries.quota.test.ts",
+        "openclaw_runtime/src/agents/subagent-registry-queries.ts",
+        "openclaw_runtime/src/agents/subagent-registry-run-manager.ts",
+        "openclaw_runtime/src/agents/subagent-registry-state.ts",
+        "openclaw_runtime/src/agents/subagent-registry.store.sqlite.ts",
+        "openclaw_runtime/src/agents/subagent-registry.ts",
+        "openclaw_runtime/src/agents/subagent-registry.types.ts",
+        "openclaw_runtime/src/agents/subagent-spawn.ts",
+        "openclaw_runtime/src/agents/symbol-lease-guard.test.ts",
+        "openclaw_runtime/src/agents/symbol-lease-guard.ts",
+        "openclaw_runtime/src/agents/worktree-service.ts",
+        "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+        "openclaw_runtime/src/config/schema.help.ts",
+        "openclaw_runtime/src/config/schema.labels.ts",
+        "openclaw_runtime/src/config/sessions/types.ts",
+        "openclaw_runtime/src/config/types.openclaw.ts",
+        "openclaw_runtime/src/config/zod-schema.ts",
+        "openclaw_runtime/src/context-engine/factstore/symbol-lease.test.ts",
+        "openclaw_runtime/src/context-engine/factstore/symbol-lease.ts",
+        "openclaw_runtime/src/gateway/server-methods/chat.ts",
+        "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts",
+        "openclaw_runtime/src/gateway/session-resource-inventory.ts",
+        "openclaw_runtime/src/infra/bounded-concurrency.ts",
+        "openclaw_runtime/src/plugins/session-entry-slot-keys.ts",
+        "openclaw_runtime/src/state/openclaw-state-db.generated.d.ts",
+        "openclaw_runtime/src/state/openclaw-state-schema.generated.ts",
+        "openclaw_runtime/test/vitest/vitest.resource-budget.config.ts",
+        "packages/versebrowser/src/engine/api.ts",
+        "packages/versebrowser/src/engine/service.ts",
+        "packages/versebrowser/src/engine/supervised-task-executor.ts",
+        "packages/versebrowser/src/gateway/bridge.ts",
+        "packages/versebrowser/tests/agent-browser-runtime-mode.test.ts",
+        "packages/versebrowser/tests/agent-browser-service.test.ts",
+        "packages/versebrowser/tests/agent-browser-supervised-task-executor.test.ts",
+        "packages/versebrowser/tests/r0-4-agent-browser-nav-timeout.test.ts",
+        "shared/dcs/component-disposition-catalog.ts",
+        "shared/long-session-resource-reclamation.ts",
+        "shared/resources/drf-share.ts",
+        "shared/resources/priority-queue.ts",
+        "shared/task-ledger-journal-lock.ts",
+        "shared/task-ledger-process.ts",
+        "src/components/agents/RolesOrchestrationPanel.tsx",
+        "tests/e2e/autonomy-owner-projection.spec.ts",
+        "tests/e2e/autonomy-resource-admission.spec.ts",
+        "tests/e2e/fixtures/fp-p1-harness.ts",
+        "tests/e2e/role-orchestration-synthesis.spec.ts",
+        "tests/unit/autonomy-orchestration-waves.test.ts",
+        "tests/unit/autonomy-owner-projection.test.ts",
+        "tests/unit/autonomy-provider-budget.test.ts",
+        "tests/unit/autonomy-provider-spend.test.ts",
+        "tests/unit/autonomy-provider-transport.test.ts",
+        "tests/unit/autonomy-resource-admission.test.ts",
+        "tests/unit/autonomy-resource-lease-owner.test.ts",
+        "tests/unit/autonomy-subagent-admission.test.ts",
+        "tests/unit/autonomy-subagent-persistence.test.ts",
+        "tests/unit/autonomy-worktree-native.test.ts",
+        "tests/unit/autonomy-worktree-owner.test.ts",
+        "tests/unit/browser-session-reap-tf0503.test.ts",
+        "tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts",
+        "tests/unit/gateway-permissions-api.test.ts",
+        "tests/unit/gateway-supervisor.test.ts",
+        "tests/unit/long-session-delegation-admission.test.ts",
+        "tests/unit/long-session-owner-reclamation-adapter.test.ts",
+        "tests/unit/long-session-resource-reclamation.test.ts",
+        "tests/unit/long-session-runtime-resource-inventory.test.ts",
+        "tests/unit/orchestration-resource-scheduler.test.ts",
+        "tests/unit/r0-2-sessions-delete-fail.test.ts",
+        "tests/unit/r0-3-terminal-session-reclaim.test.ts",
+        "tests/unit/resource-budget-integration.test.ts",
+        "tests/unit/resource-fabric-primitives.test.ts",
+        "tests/unit/role-spawn.test.ts",
+        "tests/unit/session-storage-api.test.ts",
+        "tests/unit/task-ledger-process.test.ts",
+        "tests/unit/terminal-session-manager.test.ts",
+        "--format=json",
+        "--output-file",
+        "D:\\tmp\\tf0830\\acceptance-scope\\lint.json"
+      ],
+      "cwd": "D:\\tmp\\tf0830\\candidate-scope",
+      "exitCode": 0,
+      "durationMs": 26672
+    },
+    {
+      "id": "contract",
+      "argv": [
+        "node",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0830\\candidate-scope",
+      "exitCode": 0,
+      "durationMs": 7953
+    },
+    {
+      "id": "i18n",
+      "argv": [
+        "node",
+        "scripts/i18n-lint.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0830\\candidate-scope",
+      "exitCode": 0,
+      "durationMs": 3859
+    },
+    {
+      "id": "retention",
+      "argv": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0830\\candidate-scope",
+      "exitCode": 0,
+      "durationMs": 18281
+    },
+    {
+      "id": "comms-replay",
+      "argv": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0830\\candidate-scope",
+      "exitCode": 0,
+      "durationMs": 391
+    },
+    {
+      "id": "comms-compare",
+      "argv": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0830\\candidate-scope",
+      "exitCode": 0,
+      "durationMs": 297
+    },
+    {
+      "id": "harness-context",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "context",
+        "--spec",
+        "harness/specs/tasks/resource-budget-integration-20261108.md"
+      ],
+      "cwd": "D:\\tmp\\tf0830\\candidate-scope",
+      "exitCode": 0,
+      "durationMs": 250
+    },
+    {
+      "id": "harness-validate",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/resource-budget-integration-20261108.md"
+      ],
+      "cwd": "D:\\tmp\\tf0830\\candidate-scope",
+      "exitCode": 0,
+      "durationMs": 1000
+    },
+    {
+      "id": "harness-run",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/resource-budget-integration-20261108.md",
+        "--dry-run"
+      ],
+      "cwd": "D:\\tmp\\tf0830\\candidate-scope",
+      "exitCode": 0,
+      "durationMs": 891
+    },
+    {
+      "id": "diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "591662157",
+        "HEAD"
+      ],
+      "cwd": "D:\\tmp\\tf0830\\candidate-scope",
+      "exitCode": 0,
+      "durationMs": 203
+    },
+    {
+      "id": "root",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/browser-session-reap-tf0503.test.ts",
+        "tests/unit/workspaces-api.test.ts",
+        "tests/unit/task-ledger-process.test.ts",
+        "tests/unit/gateway-supervisor.test.ts",
+        "tests/unit/r0-2-sessions-delete-fail.test.ts",
+        "tests/unit/long-session-owner-reclamation-adapter.test.ts",
+        "tests/unit/component-disposition-catalog.test.ts",
+        "tests/unit/component-authority-manifest.test.ts",
+        "tests/unit/r0-3-terminal-session-reclaim.test.ts",
+        "tests/unit/terminal-session-manager.test.ts",
+        "tests/unit/long-session-resource-reclamation.test.ts",
+        "tests/unit/gateway-permissions-api.test.ts",
+        "tests/unit/autonomy-owner-projection.test.ts",
+        "tests/unit/long-session-runtime-resource-inventory.test.ts",
+        "tests/unit/autonomy-resource-admission.test.ts",
+        "tests/unit/autonomy-provider-spend.test.ts",
+        "tests/unit/handoff-artifacts.test.ts",
+        "tests/unit/autonomy-orchestration-waves.test.ts",
+        "tests/unit/autonomy-subagent-persistence.test.ts",
+        "tests/unit/autonomy-subagent-admission.test.ts",
+        "tests/unit/orchestration-resource-scheduler.test.ts",
+        "tests/unit/orchestration-synthesizer.test.ts",
+        "tests/unit/long-session-delegation-admission.test.ts",
+        "tests/unit/roles-orchestration-panel.test.tsx",
+        "tests/unit/config-schema-parity.test.ts",
+        "tests/unit/autonomy-worktree-native.test.ts",
+        "tests/unit/autonomy-worktree-owner.test.ts",
+        "tests/unit/orchestration-worktree-merge.test.ts",
+        "tests/unit/versegit-cleanup-barrier.test.ts",
+        "tests/unit/role-spawn.test.ts",
+        "tests/unit/autonomy-provider-budget.test.ts",
+        "tests/unit/autonomy-provider-transport.test.ts",
+        "tests/unit/autonomy-resource-lease-owner.test.ts",
+        "tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts",
+        "tests/unit/resource-fabric-primitives.test.ts",
+        "tests/unit/resource-fabric-invariants.test.ts",
+        "tests/unit/resource-fabric-workspace-exec.test.ts",
+        "tests/unit/resource-fabric-chat-history.test.ts",
+        "tests/unit/resource-fabric-pressure.test.ts",
+        "tests/unit/resource-budget-integration.test.ts",
+        "tests/unit/resource-fabric-bounded-waiting.test.ts",
+        "tests/unit/resource-metrics-calibration.test.ts",
+        "tests/unit/resource-metrics-owner.test.ts",
+        "tests/unit/resource-window-lifecycle.test.ts",
+        "tests/unit/resource-observer-lifecycle.test.ts",
+        "tests/unit/session-storage-api.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\tf0830\\serial\\root.json"
+      ],
+      "cwd": "D:\\tmp\\tf0830\\candidate-scope",
+      "exitCode": 0,
+      "durationMs": 218563
+    },
+    {
+      "id": "native",
+      "argv": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/autonomy-resource-admission.spec.ts",
+        "tests/e2e/role-orchestration-synthesis.spec.ts",
+        "--grep",
+        "R1 real Host/Gateway|synthesis",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=list,json",
+        "--output=D:\\tmp\\tf0830\\serial\\native-results"
+      ],
+      "cwd": "D:\\tmp\\tf0830\\candidate-scope",
+      "exitCode": 0,
+      "durationMs": 175015
+    }
+  ],
+  "cleanAfter": true,
+  "sourceHashes": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "60f4fba1a339b8073d459cdff40f5e253beb1faa93c1957f9c6daef7be03f292"
+    },
+    {
+      "path": "README.md",
+      "sha256": "a4c3f84143981c1793fcdb9b0eadc08b031dec39fed2ad5a465d27cebb8d3f42"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "12ba4dd25f2b1004c03732bec77c9adcdf1f56ecb3021ff6fa3e29fe4e4e8737"
+    },
+    {
+      "path": "docs/modules/multi-agent-and-tasks.md",
+      "sha256": "40873fd81623ca99873d061d7ec141cb5cc5d06909440658be8c2fe59e06758c"
+    },
+    {
+      "path": "docs/modules/resources-and-observability.md",
+      "sha256": "1bc70e44578339f1e6ee33a3d8ea764033dc2ff0c4640dd7fdf9bcba577150df"
+    },
+    {
+      "path": "electron/gateway/agent-browser-bridge.ts",
+      "sha256": "1c865dba120ab023a3a64f19b64f5c30a62145c3f02468a351cfd60f0ddf73ee"
+    },
+    {
+      "path": "electron/gateway/process-launcher.ts",
+      "sha256": "c1c58d9ec889a9009daa8fcb7d12944e61103fd992ae53e6843eb17bc38d373c"
+    },
+    {
+      "path": "electron/gateway/supervisor.ts",
+      "sha256": "6888f4e17bfb07aa4128458ce2372eeb64f71c40c79891349b92460001c099d6"
+    },
+    {
+      "path": "electron/main/index.ts",
+      "sha256": "ef934c0bacba4ceb6332a44f1222fb10739d0d65b634faa2d10610821046e99e"
+    },
+    {
+      "path": "electron/main/ipc-handlers.ts",
+      "sha256": "3d4d73240870ab7bb6935b447309e0d3b1c9e7b3b657d44fa7de6c5950326d29"
+    },
+    {
+      "path": "electron/services/agent-browser-api.ts",
+      "sha256": "22035afcc9069d7cfab5af06e71e47ae8b8d97c1c0061676c1ba48636b1899cb"
+    },
+    {
+      "path": "electron/services/gateway-api.ts",
+      "sha256": "a55e1936f6330c8d6d883c2dba4c1618195b2ded116edc2a71dbd8bbcf6cd0a8"
+    },
+    {
+      "path": "electron/services/long-session-resource-reclamation.ts",
+      "sha256": "78969954e33d23b984898a065d0c4ea9da5357aa5499f61323471d9d0d8afea9"
+    },
+    {
+      "path": "electron/services/resource-envelope-api.ts",
+      "sha256": "79172d18c4085b13445b5f0c2538712c5645ba3a5767468adeffe83a6eb8fd25"
+    },
+    {
+      "path": "electron/services/resource-envelope.ts",
+      "sha256": "8b3e78472a0f1db8bf0638c119b3b9af611508140f0baca038b8e91ce821c492"
+    },
+    {
+      "path": "electron/services/resource-fabric.ts",
+      "sha256": "59687bff5d7eebb14f7ba0e79dc641d1960099fe3deed4a39cee2b672dfe060c"
+    },
+    {
+      "path": "electron/services/session-storage-api.ts",
+      "sha256": "d3d7dbca7d0df83ba7354acdc20dba26ba6aae2890ca40dc453c9264543c01aa"
+    },
+    {
+      "path": "electron/services/sessions-api.ts",
+      "sha256": "07cd4ad0700ff5d6211efd5422b181ead70b2bb332299e0cb4848883f6189304"
+    },
+    {
+      "path": "electron/services/terminal-api.ts",
+      "sha256": "e1a5db9485cc66c04485ccf2bd24e9bebc6c4c344f2a27c4c19f1c6dbc6659db"
+    },
+    {
+      "path": "electron/services/terminal-session-manager.ts",
+      "sha256": "6b86e61a5522c092f5cd4655062226ca060422fddae1da903eba51ce775826b1"
+    },
+    {
+      "path": "electron/services/workspaces-api.ts",
+      "sha256": "be664f628672809476930b7498cc3d67de7238521f38a5bb60bc969d6fcb051e"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/REPORT.md",
+      "sha256": "4063b1b9bd44930fb470c6f73f8ebf6d6aeb18af03d94fcf56b771eaf64d682d"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/REPORT.md",
+      "sha256": "36d53b77d9455df5ffcebe042864af72a3a2abf6e7a60d686d93c3e1595e98f6"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/SHA256SUMS",
+      "sha256": "173ccb167cd55efc83946440e20ea5234eee51d07767c6eca8a3ad68eded799a"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/acceptance.json",
+      "sha256": "0fc33e521276e438fea1382486da432e8871a37865b437a0a588b3c455c304ab"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/ci-boundary.json",
+      "sha256": "0c2d55c16306b211323cb61174a874caee86ac0d4d2bc5eacf8ffc76f5e06db2"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/contract-audit.json",
+      "sha256": "a9979ee950d6fc4617d4ccf4aa0410b07b26cd5c0425cd19168ce25891f5628a"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/credential-scan.json",
+      "sha256": "99cfb7af4c551b129a44ac9bf41dba1c4fee4602e9a5be2b4703ca9f84ee0ecd"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/effective-resource-limits.json",
+      "sha256": "fe8ac97e9b15bc4557411cbe0198280ae7971d474971c828292fe8db209092b7"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/fairness-contention.json",
+      "sha256": "f0b402b23e7beb96d5ff7a495acae6c86a443cfd6f717c49f1a16f79ef5e7692"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/gates.json",
+      "sha256": "97345caf18c232b8f30bf1aa0cd9447837cb5537ff00c030ff93da94e0e700f5"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/lease-ledger-refs.json",
+      "sha256": "8cc50d00e10e1870e962e94aba5ff6615bc681263bd30e53b547aa1ba9148900"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/manifest.json",
+      "sha256": "87ae19228d67e11185c3a7e8e990784c1ee3b173fe4225d5e38ed15b6682df2e"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owner-projection.json",
+      "sha256": "6d5b9b5b34e15c6b56baee766cd91e7140e638ac8c3b610c0b40e19f6cb38e0d"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owner-store-readback.json",
+      "sha256": "ea526091e579c887618f052a98a1e639f94c355ca88d4328d6a3c40f0e1a5e04"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/native/handoff-off-results/autonomy-resource-admissio-006e0-run-terminates-handoff-off-/r1-native-stop.json",
+      "sha256": "8f980e44b448cd344fc38532933045f481e159191e21dde2ccec7cae6a148a5a"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/native/handoff-off-results/autonomy-resource-admissio-006e0-run-terminates-handoff-off-/r1-waves-owner.json",
+      "sha256": "8bee324053b7e75d3953dc3e9d8537012d8bd6c78143d9c8cd67eeba95e69dd8"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/native/handoff-on-results/autonomy-resource-admissio-92759--run-terminates-handoff-on-/r1-native-stop.json",
+      "sha256": "4e53b6195231fac680ba250aba79880c79c3e22e3f4af94fe22d7b31c9243d5f"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/native/handoff-on-results/autonomy-resource-admissio-92759--run-terminates-handoff-on-/r1-waves-owner.json",
+      "sha256": "649910bedfc7086ec6bf7e11b2de2b63cc07b3b69c51cd7bc7affd3bed4cb729"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/native/owner-results/autonomy-owner-projection--6bdac-m-their-live-desktop-owners/owner-rebuild.json",
+      "sha256": "d57f976fcd47fc2249a398f31053d2f399fbf6a8ca9f7e2d1a8b28c174623823"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/native/token-results/autonomy-resource-admissio-8fabb-nciles-actual-usage-tokens-/r1-spend-owner.json",
+      "sha256": "0ab9405b0e6ac43b34a45e9ebbb820a43311819282d49917c09927afad5d6aaa"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/native/usd-results/autonomy-resource-admissio-532e3-econciles-actual-usage-USD-/r1-spend-owner.json",
+      "sha256": "afd85f7aff159d50ae10122de75ba60b5f498410952e1d967697e27568d21d3a"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/contention-8b360db2-b020-47a3-9241-484c39fe56e5.json",
+      "sha256": "cbd4d6062baec1021d88de41c713ef415ff4a0d5c516f4054d456ac19e63af2a"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/inconsistent-r1-spend-OBALjJ/owner.json",
+      "sha256": "08c57928dee4d83c7fb4b24d489f258085b1e676dd123500986cada9cc17bc30"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/inconsistent-r1-spend-aAkSXQ/owner.json",
+      "sha256": "da0502dfc253de2ac6114c6a73ce167cb1d9a5ac6d1ababcb455ffa17649c40b"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/native-owner-84067f61-9d5d-4b46-863f-ee721ecf2653.json",
+      "sha256": "a66ddc8c08a68cf8a174117cb743470d0e41dfe699621158f72790c2f55beea6"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/process-owner-1794060205703/process-owner-rebuild.json",
+      "sha256": "b443c8bb5e3a36f051824c2db49f9b732c626cd823001b82140e87e7a254ecd0"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/provider-http-22fbad98-a44a-43eb-a5c8-0d8360adfbf2.json",
+      "sha256": "8a69f5dfac6bf824be0b2c24ccb35cc1203eacd03e32c3b120e318a25e439f20"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/registry-r1-registry-vrSD8O/owner.json",
+      "sha256": "ab9946c5c79b1a7bf65e0f2d61e404a2533c1ce35bb2e1ff059c365aa4420308"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/registry-r1-registry-x9zwEw/owner.json",
+      "sha256": "f95d771021b033c0471e324360e739eee15f793f74046d7e62e21084620cc50a"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/spawn-918e40de-8147-42a6-8bb9-66fc872e7b29/owner.json",
+      "sha256": "21b841a57ca9e924022b8e89ab87503b03c9c5fb2640249a4a3f9fc240f04ea2"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/spend-native-r1-spend-4OuSv4/owner.json",
+      "sha256": "2ef07a8caae12d7412afabdf263a3f8c929792026719b98452173c60391c3c29"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/spend-native-r1-spend-6Wuuj7/owner.json",
+      "sha256": "4a3c1d24db1477675fa51c2108f239c0d4aae04ac34fbd9a3d7d5a5e67a3e558"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/spend-native-r1-spend-Allkqs/owner.json",
+      "sha256": "520c457e151143b775320904860707ccbef01c76c86acdda75f3758dfe7a14b9"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/spend-native-r1-spend-VFFQie/owner.json",
+      "sha256": "55e8baa84f35c20c8083d32f49914245de60b692bea1058ba2c8c8c9e17d7b09"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/spend-native-r1-spend-VMuOzI/owner.json",
+      "sha256": "671e39600144dfb5e57011353bfec7061c9fc2c0ff39440e976ba3e625c8896f"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/spend-native-r1-spend-pwPVUy/owner.json",
+      "sha256": "de4952b60b946e2b52ce311fe592bb5b2e6c767b8d2fc327632cd48e376af03a"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/spend-r1-spend-n8esat/owner.json",
+      "sha256": "a6f3f6a2829aa4837989ab221377390eee5bebce4c4ec61450df9c4a7c5be470"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/waves-d48057ba-dcd2-4b29-9419-6287a2724a26/owner.json",
+      "sha256": "fc511eb291041f5363006bf07f235fe3a0c2a92f6f535a3887e283023dc2ec25"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/worktree-native-5c320a75-a9e0-4a66-9795-53505e288de6.json",
+      "sha256": "42589d84ab999ae67be31e0a318f41427ddf3136d6f94340dd04a2e8a08652a5"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/pending-synthesis.png",
+      "sha256": "3d198fd91b866c25cd12beaeec7917b6cb1ac8be966f089c47a4a1fb1f3cb3f0"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/raw-run-index.json",
+      "sha256": "80eade856f96751a3dc55422c26c32cf6a8a145c5df74ddd8591e61d96ea536e"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/source-inputs.json",
+      "sha256": "790f1a470c26c00020fe3df68d986e978645e0449933cb3d6c6a855dc686fc31"
+    },
+    {
+      "path": "harness/specs/rules/autonomy-resource-owner-admission.md",
+      "sha256": "4cb7da832455f646322d400f67647aba4becb97e3f99fa6ca3b3f04f4775ba8d"
+    },
+    {
+      "path": "harness/specs/rules/resource-budget-integration.md",
+      "sha256": "f61de4cb5e912d9251d1e908f1d77fe94007c0d503c30acf4661e34bef20b92c"
+    },
+    {
+      "path": "harness/specs/scenarios/autonomy-resource-admission.md",
+      "sha256": "8c243ed505beb1d95d2a5969c246b4f4492a11aad9918afd723c452b4a2d3b1e"
+    },
+    {
+      "path": "harness/specs/tasks/autonomy-resource-admission.md",
+      "sha256": "c31ca4ed1f77f5c4c77f2c93a817aa6e967767a320159ba981782d3bb4b66a9a"
+    },
+    {
+      "path": "harness/specs/tasks/resource-budget-integration-20261108.md",
+      "sha256": "e008434e7274fe67b58212cdfb005681aa464f12e227c32448d5b0eb1a6eda15"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/checkpoint-rollback-executor.test.ts",
+      "sha256": "796d9b0852bb5ddc994d906217225147a67c98de1744cb49b65e25e7caad2ff8"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/checkpoint-rollback-executor.ts",
+      "sha256": "41c2afb3b764d805e73dc9f881525dd09955f1c6f7723d7f41580ea2ad5b16c4"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/command/attempt-execution.ts",
+      "sha256": "2a69d94ad626974ba91b0dc7a188b2f09faf196c557a06282dba2c1e1fd3b28d"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run.ts",
+      "sha256": "fe2b299c822870bb959aa90df9691ba01d08d93e2dbd8c4dfb07f88cad450ba4"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+      "sha256": "aafd4d8ffabc5db46c2055fbe5046de7d53d6920eac4097ee897fd0096f1f688"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/stream-resolution.ts",
+      "sha256": "f319d558803733adb5f2335dafc2658128e7fe5b295a806bd3b19ee871330667"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/handoff-artifacts.ts",
+      "sha256": "70313ad51df2158cf12003b6ac1f19ebda487b8a21171c11ea264718a5835737"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/long-session-delegation-receipt.ts",
+      "sha256": "9761a249c506e7481a8eb59c1cdd445d06d3be325224bae0a33e2ef2b8f8efe5"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/orchestration-resource-scheduler.ts",
+      "sha256": "42092785352056b4cdea850077475a375f2d151f3b4aa1ae36a360905e2c6b1e"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/orchestration-synthesizer.ts",
+      "sha256": "9fcc48b3a3b0ec733bc16fa6c5d8ae5c73a508427b8d1945b2c6872af0c63971"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/orchestrator-run-observed.ts",
+      "sha256": "a7c919f0be0841671c863c5c9ace45df6fe4b89210d26f73cb771914b6f6e426"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/provider-outbound-budget.ts",
+      "sha256": "bf0a267416aa9033b1dd6ca11abebba5e9cd344caf75b612bf2b858252b00a95"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/provider-spend-budget.ts",
+      "sha256": "16a953d833cafc84b10c654a4e25f6ecddc382a458fb33bbf2a07e9f8352691a"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/provider-spend-context.ts",
+      "sha256": "a22382285b55d34b0a0d4c66c89070d0b91fe4217fc4207b884c02995cd405a1"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/provider-transport-fetch.ts",
+      "sha256": "c64cdba0657062b48ec3eb6ef09850eaae2e262d034b7810485487599e1ad14a"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/resource-leases.test.ts",
+      "sha256": "e39c3d8719ce75695d979d72fcec70c64ce11e4efbf2849b4b41b52b607035fe"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/resource-leases.ts",
+      "sha256": "e64681f0e0123304aab93e725dfc0204b93dce1bed3f6e449ab001f0938936f4"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/role-spawn.ts",
+      "sha256": "c3a14ff414e5cc1a9ce3e76bc6993e1a98973159f5c3d6a9eecfc77f32982e40"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/sessions/tools/bash-workspace-lease.test.ts",
+      "sha256": "104e43f108cef31d9b6db9e0383480993ccddb3c9f7179b56ebabd79d94dd726"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/subagent-registry-dispatch.ts",
+      "sha256": "a72e2aeb3107db017414b7878d87f0ad3e97fc287b2b864483382627630f321b"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/subagent-registry-helpers.ts",
+      "sha256": "885da639b4342cd601ae100f76352fbdd1ca06a042da55879b2c0fe7d7093d4a"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/subagent-registry-lifecycle.ts",
+      "sha256": "b08dc4586133e8cec1bf5fbcae930ebe0d0806ed766955236aa9f6589277e677"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/subagent-registry-queries.quota.test.ts",
+      "sha256": "aa0688ac8306854e1608d35065d913344f38c197fa2806145531d3e000f95f5c"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/subagent-registry-queries.ts",
+      "sha256": "7dbfa78569e080daff754004f69ea3190f3c95d6030da27cc972ddaa7c3137ce"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/subagent-registry-run-manager.ts",
+      "sha256": "22604455d714b4751f4ef2124f08e802635c58768d4cc73e77c989b68aca6ee5"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/subagent-registry-state.ts",
+      "sha256": "486efaff6adea4553820a76a090c30185a50bebfdcf27e78a249696f1a81e8e0"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/subagent-registry.store.sqlite.ts",
+      "sha256": "28c6a7c64fadc8c90f4ccb3a2181af812b05c1c3dbe6708857d8b1f4ad93715d"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/subagent-registry.ts",
+      "sha256": "4b9a6e5244ecc5f5b575305d86a8b8f92f0a94a12029432b7b3adf827f0c8344"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/subagent-registry.types.ts",
+      "sha256": "1aefb09769a5869ebde01784b371c382a7e6f91c949fdaff748d99d8da9b1d8f"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/subagent-spawn.ts",
+      "sha256": "38be37a248ff1cab6ad94dc1bbad53339b81c28188d2d354a8eb301d50da7641"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/symbol-lease-guard.test.ts",
+      "sha256": "899d6c2d5e8a782413058cca0b543bab60cc12f5ba8765f1b0fc13d2f2994fee"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/symbol-lease-guard.ts",
+      "sha256": "f4d7ced5d9846ec3699bcde7b81b5372c44694b1a51accdd2ed19510b621c80e"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/worktree-service.ts",
+      "sha256": "c8066ad8b65ab16fb07260593f8598e3ee8f6551034957b70582c80471b0a5da"
+    },
+    {
+      "path": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+      "sha256": "5ae80a1723393464cee59d690a58cf78ca5dcb48ead654debf442327cf0efc10"
+    },
+    {
+      "path": "openclaw_runtime/src/config/schema.help.ts",
+      "sha256": "2732f85bde628459499d6b265af0f09fb3964d709288cb49ac7e1324613d0d20"
+    },
+    {
+      "path": "openclaw_runtime/src/config/schema.labels.ts",
+      "sha256": "b421b0e9e058d123e118491223b372096d35ff3854e53f0bf5824ffc27dd56a7"
+    },
+    {
+      "path": "openclaw_runtime/src/config/sessions/types.ts",
+      "sha256": "394f701cf1e42de1c8ed300be6c9763df524762539bb23cf3eed46cf19a148cd"
+    },
+    {
+      "path": "openclaw_runtime/src/config/types.openclaw.ts",
+      "sha256": "caa8518d14eefb3107362b343c232f480d3f91c7c3a5125212324c9530c2ef23"
+    },
+    {
+      "path": "openclaw_runtime/src/config/zod-schema.ts",
+      "sha256": "3471437395cc0ec45fd833f0f7433b25f91df26351dc05ae9dcd7e9c95588436"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/factstore/symbol-lease.test.ts",
+      "sha256": "f05a617e831032f2a0698c90149d642dc188e135c9a922c07c17a46d9ee3b8a5"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/factstore/symbol-lease.ts",
+      "sha256": "da408158e2059a4dd69272c408b6bbc36038f052ab9fce5f1e2c17e9b81af09e"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/chat.ts",
+      "sha256": "713fa79ebc33b251973f317f04361cab52b1737b5b7d272703d48442dd7fbf26"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts",
+      "sha256": "0216dd1c95610d9d62b61d408a82c1bfce6466d4d08f97aced082df2b1b1699a"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/session-resource-inventory.ts",
+      "sha256": "2855229e99f7a1702e8bd8e191ae038a5de2e779dedc386168d01046a2b63094"
+    },
+    {
+      "path": "openclaw_runtime/src/infra/bounded-concurrency.ts",
+      "sha256": "49bd7d87f8c0d855c18ad2c15449263933fe0f82a5634afd569e7ea34090c461"
+    },
+    {
+      "path": "openclaw_runtime/src/plugins/session-entry-slot-keys.ts",
+      "sha256": "0966e671788d62459c2d70231c7c09398054b0a025e7e4ef43c1f1f388a6be7a"
+    },
+    {
+      "path": "openclaw_runtime/src/state/openclaw-state-db.generated.d.ts",
+      "sha256": "716a21dc07f5927221498c858b91ae62bd0ff3af0d4789bf8dd28e2b074a8581"
+    },
+    {
+      "path": "openclaw_runtime/src/state/openclaw-state-schema.generated.ts",
+      "sha256": "703e8a2052ca78ad1c1e615d4f23fa07c2af337b8964f1f15eb6f20f39f1a749"
+    },
+    {
+      "path": "openclaw_runtime/src/state/openclaw-state-schema.sql",
+      "sha256": "b283999facdda91423920d6882fc9a5828b96ecb0db0e71e0fe25eb73f8831c7"
+    },
+    {
+      "path": "openclaw_runtime/test/vitest/vitest.resource-budget.config.ts",
+      "sha256": "dcbcbf36ad598d74c7e6f52a609f2f9fa0111c93db43c6a4d5e9149db500ef01"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/api.ts",
+      "sha256": "ea481eb1d48a9c2cca66a77c775a1929daa292bf1c4f7bd09a93d5fae1cad2ef"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/service.ts",
+      "sha256": "dea2b13afd5d1d689cee36d8679c651a1e18d84b7fc3cb11ebd733767823f2e3"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/supervised-task-executor.ts",
+      "sha256": "f8935f5bdcf0aaa11d832aa9dbea7dc1b22eab7decb6509b71b9fc71e8041026"
+    },
+    {
+      "path": "packages/versebrowser/src/gateway/bridge.ts",
+      "sha256": "91b526b72e6c332b1323b8a2d8b6b9aaf8cb45c15f9d075a10daa938d1bf028f"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-runtime-mode.test.ts",
+      "sha256": "eb50180126da60d44bbca67655837fec9bf6f285b6e482dda94e6607af43eda4"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-service.test.ts",
+      "sha256": "d9d1ac6c15775caed3d4bfd85cfdf0209987bbe66aa2e489131a97d951d1d8b6"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-supervised-task-executor.test.ts",
+      "sha256": "e1088b11f06c8860fcd2e396a2ae4f03dae05a2f39d2a63b791c07138907a8c7"
+    },
+    {
+      "path": "packages/versebrowser/tests/r0-4-agent-browser-nav-timeout.test.ts",
+      "sha256": "7db9fe9e5f0307ed9d5f64499e4f227685aaa6221751f0d302d762074eda4017"
+    },
+    {
+      "path": "shared/dcs/component-disposition-catalog.ts",
+      "sha256": "1934f6feedacf54121aa5d8740be72cddefbe49035bb5e2b8db3ba19b640f0fa"
+    },
+    {
+      "path": "shared/i18n/locales/en/agents.json",
+      "sha256": "97edaca1c50463b6b023660ce194b9a46d1fb2838b03cced0bb6731ae7d475ea"
+    },
+    {
+      "path": "shared/i18n/locales/ja/agents.json",
+      "sha256": "2416c76add3ad689268f83fd6cdcc198bdfa44cc0c4ad65e849233d12b374d77"
+    },
+    {
+      "path": "shared/i18n/locales/ru/agents.json",
+      "sha256": "e179fd75d6bbc11bb7d6d8e5c37cbb093005dead9f8879aabec6f387fcf86918"
+    },
+    {
+      "path": "shared/i18n/locales/zh/agents.json",
+      "sha256": "88f6e8ca4abbe319a0aafe4f3f164ec9ace1c3f8d202a07b9ab6318c35289057"
+    },
+    {
+      "path": "shared/long-session-resource-reclamation.ts",
+      "sha256": "36ead351d8c3279c21e5655f317b91e50b67f1af01666a8ed568fbb199b74399"
+    },
+    {
+      "path": "shared/resources/drf-share.ts",
+      "sha256": "36ac8d95320cc36a85c2ec6df5a4eef92749661aed5465af4a46b0fc3ddf9340"
+    },
+    {
+      "path": "shared/resources/priority-queue.ts",
+      "sha256": "2b05c7c673ddad49951b4ee1dd4ebfdb99db0143c673332e67f19c12fc0c46a0"
+    },
+    {
+      "path": "shared/task-ledger-journal-lock.ts",
+      "sha256": "70bd3e06ffaefd5460d251db43e9897c7bb3144db97e49d11fc92deb1434775b"
+    },
+    {
+      "path": "shared/task-ledger-process.ts",
+      "sha256": "021a5fb39b556735ee60dc935323ba7522ab0d189e90c90da7b4997a8720f04e"
+    },
+    {
+      "path": "src/components/agents/RolesOrchestrationPanel.tsx",
+      "sha256": "fb7a019531630a78445684d5804da1b60198981d1aeb0af9f6d1376f0fc3decd"
+    },
+    {
+      "path": "tests/e2e/autonomy-owner-projection.spec.ts",
+      "sha256": "fac1a1c1c27468009973dc9002f59ada017f1e9cc729e3d3280894194fde91e0"
+    },
+    {
+      "path": "tests/e2e/autonomy-resource-admission.spec.ts",
+      "sha256": "16f3d4404f156b275c60200a57da3e9b093bfff17e594a3e376e52267cfe15c1"
+    },
+    {
+      "path": "tests/e2e/fixtures/fp-p1-harness.ts",
+      "sha256": "721d302d70ccc43eeb8fc795193cfc1bfa7d3533ab07b3ce930e886375ea8878"
+    },
+    {
+      "path": "tests/e2e/role-orchestration-synthesis.spec.ts",
+      "sha256": "e0e8562e07eff97140642f7b3226aa074ae14b4874d19dab0603021e8bff51ec"
+    },
+    {
+      "path": "tests/unit/autonomy-orchestration-waves.test.ts",
+      "sha256": "4964fcc469d8d2f8439d84da9419e3ba99411f193171e069744b5669f6b16e65"
+    },
+    {
+      "path": "tests/unit/autonomy-owner-projection.test.ts",
+      "sha256": "a9d521b6f5a25f56e1d6741113faa23f026f3c5a9cc866cb4fc30b6eb8658e83"
+    },
+    {
+      "path": "tests/unit/autonomy-provider-budget.test.ts",
+      "sha256": "73528d389ffac203663349020f9bfe8e300ef4da24479937577654902693a7f5"
+    },
+    {
+      "path": "tests/unit/autonomy-provider-spend.test.ts",
+      "sha256": "77e2771c4c2e4b7413c74aec8ee5170f1fb6b62c53afbf32605851b4b78fa81b"
+    },
+    {
+      "path": "tests/unit/autonomy-provider-transport.test.ts",
+      "sha256": "597a6d3914a5ed425bd3c7ce32773b1daca79c01655d8eb0cebb91912dd3826d"
+    },
+    {
+      "path": "tests/unit/autonomy-resource-admission.test.ts",
+      "sha256": "757a0c77c56f9ff211c0a6abee8b883c7a43cf346602a61cead8f1b618ec98f3"
+    },
+    {
+      "path": "tests/unit/autonomy-resource-lease-owner.test.ts",
+      "sha256": "fa7f8f0e0f0ec3d0f28d22ad024fb31e75d59bcc39a1e75d26b90c7075972667"
+    },
+    {
+      "path": "tests/unit/autonomy-subagent-admission.test.ts",
+      "sha256": "628986630dcb701e487132597f3d808a0c8dc145d9bc6d28f633511cb2a79655"
+    },
+    {
+      "path": "tests/unit/autonomy-subagent-persistence.test.ts",
+      "sha256": "54c2162a0f0fb3af957e27ee462741cd052afc4abdd9ec7ae134cd13b0fe9461"
+    },
+    {
+      "path": "tests/unit/autonomy-worktree-native.test.ts",
+      "sha256": "257449af563e3ee68ac05d79bfcdf7efc82d8daee3d99851400eab6f47d81a6c"
+    },
+    {
+      "path": "tests/unit/autonomy-worktree-owner.test.ts",
+      "sha256": "f6ad7868b78ebf9cfdbf45085ae4e532fa427fbcf0fc5c40191cafdd0b2fa03f"
+    },
+    {
+      "path": "tests/unit/browser-session-reap-tf0503.test.ts",
+      "sha256": "4c24e93c3b2ffed74c6e4163526b123c9ac0646f53d3ae8784beb2eded994337"
+    },
+    {
+      "path": "tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts",
+      "sha256": "f35ec37ec4d8ddcc2d6631a189e1edb22199440b0f7270e312ccb922364db006"
+    },
+    {
+      "path": "tests/unit/fixtures/autonomy-provider-spend-worker.mts",
+      "sha256": "fff7d8ee26232230a41eaa483b164bc9f538be777920237acc06e1680f258fbd"
+    },
+    {
+      "path": "tests/unit/fixtures/autonomy-resource-lease-worker.mts",
+      "sha256": "a32c655b08d552b69a65fdf17f0cd470fc902ebf7e97f30f6134fe988766d4c3"
+    },
+    {
+      "path": "tests/unit/fixtures/autonomy-subagent-reservation-worker.mts",
+      "sha256": "96963bdfa62e5c9a2af757a1d3793f79b283b92eecf79fc9f1a82c5913c03f5e"
+    },
+    {
+      "path": "tests/unit/fixtures/autonomy-worktree-owner-worker.mts",
+      "sha256": "f716e2379db1f0fd296ab7c5774cfe268f1b2190321a1f867ad3e8a3ec1b05ed"
+    },
+    {
+      "path": "tests/unit/fixtures/coding-controls-tf0510/symbol-lease-worker.mts",
+      "sha256": "0ccb58c7cb66bfd112a6e3fcb3981ca92a914070a169438c9e000a13933f964a"
+    },
+    {
+      "path": "tests/unit/gateway-permissions-api.test.ts",
+      "sha256": "c5eb5cf4b5496b4c80af863f3c8ae5b066de578cca98f860fa5f36163f3e22d9"
+    },
+    {
+      "path": "tests/unit/gateway-supervisor.test.ts",
+      "sha256": "29758932989ca694c15c2235e2cab89c5fa727b02fdd56f1809164663afe5095"
+    },
+    {
+      "path": "tests/unit/long-session-delegation-admission.test.ts",
+      "sha256": "3d6f1603266018bf317c420f1b1ff05fce660c909cd0be0538e80861bf4f8cfb"
+    },
+    {
+      "path": "tests/unit/long-session-owner-reclamation-adapter.test.ts",
+      "sha256": "f67916d37413ee91be1b044aa3e6dfcceb108669cb82b592e271ebb900c07a13"
+    },
+    {
+      "path": "tests/unit/long-session-resource-reclamation.test.ts",
+      "sha256": "7f53c8a4e46662ae17388240d4b944ac37065f92e03d19b8084c7153a9ffb1ec"
+    },
+    {
+      "path": "tests/unit/long-session-runtime-resource-inventory.test.ts",
+      "sha256": "cba9bfcc396d191c4aacafcb2157977e8f68deca7b9323be7c98824c4219ad9d"
+    },
+    {
+      "path": "tests/unit/orchestration-resource-scheduler.test.ts",
+      "sha256": "0943e32f581cdbbcedbf644f1f49400ad370c797b06498a5290885f55cd63739"
+    },
+    {
+      "path": "tests/unit/r0-2-sessions-delete-fail.test.ts",
+      "sha256": "4f83170d43e13da3a140085fabe68bd5586bfd006d3ce931c654253b83aac0bd"
+    },
+    {
+      "path": "tests/unit/r0-3-terminal-session-reclaim.test.ts",
+      "sha256": "88a5744d2d33cfd92f6ddd083e6b2cda04a40c75431ea30212c818f548b7d970"
+    },
+    {
+      "path": "tests/unit/resource-budget-integration.test.ts",
+      "sha256": "d5fee0b01e7c8c2ecd3fe33872949dd2f8700a609b637a7b78389b2e4a02d2d9"
+    },
+    {
+      "path": "tests/unit/resource-fabric-primitives.test.ts",
+      "sha256": "824198b89fc4a38a1f43fcb23d81dc0df8f482ebb76a0bc7452ae03df8c791ce"
+    },
+    {
+      "path": "tests/unit/role-spawn.test.ts",
+      "sha256": "5c6e46f00e5417ed8c59d3af4f7af931f631e729cbc6b38f59919d1deb8abd67"
+    },
+    {
+      "path": "tests/unit/session-storage-api.test.ts",
+      "sha256": "54ba54b83e91a728f762a2d8bc1ec1b7abff0852071d0e3d5d6ef7e2c8503bdf"
+    },
+    {
+      "path": "tests/unit/task-ledger-process.test.ts",
+      "sha256": "1d4254a1b6dfe2db6a8b3586637d07392a7b2a50d57ce1701b916a302a0c61f2"
+    },
+    {
+      "path": "tests/unit/terminal-session-manager.test.ts",
+      "sha256": "b388653b075c335393ca113e013e798728ebda02d74abd52fefbdd33e9166900"
+    }
+  ],
+  "verdict": "pass-resource-budget-integration",
+  "dependencies": {
+    "driven_by": "agent",
+    "actor": "codex",
+    "links": 153,
+    "view": "D:\\tmp\\tf0830\\dependency-view-scope\\node_modules",
+    "versebrowser": "D:\\tmp\\tf0830\\candidate-scope\\packages\\versebrowser",
+    "runtime": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\node_modules"
+  },
+  "native": {
+    "passed": 12,
+    "failed": 0,
+    "cases": [
+      {
+        "file": "autonomy-owner-projection.spec.ts",
+        "title": "R1 rebuilds browser and terminal envelopes from their live desktop owners",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "duration": 20723,
+            "retry": 0,
+            "error": null
+          }
+        ]
+      },
+      {
+        "file": "autonomy-resource-admission.spec.ts",
+        "title": "R1 real Host/Gateway queues conflicting waves until the prior provider run terminates (handoff off)",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "duration": 61669,
+            "retry": 0,
+            "error": null
+          }
+        ]
+      },
+      {
+        "file": "autonomy-resource-admission.spec.ts",
+        "title": "R1 real Host/Gateway queues conflicting waves until the prior provider run terminates (handoff on)",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "duration": 42893,
+            "retry": 0,
+            "error": null
+          }
+        ]
+      },
+      {
+        "file": "autonomy-resource-admission.spec.ts",
+        "title": "R1 provider owner prevents concurrent host overspend and reconciles actual usage (tokens)",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "duration": 84089,
+            "retry": 0,
+            "error": null
+          }
+        ]
+      },
+      {
+        "file": "autonomy-resource-admission.spec.ts",
+        "title": "R1 provider owner prevents concurrent host overspend and reconciles actual usage (USD)",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "duration": 166771,
+            "retry": 0,
+            "error": null
+          }
+        ]
+      },
+      {
+        "file": "resource-window-lifecycle.spec.ts",
+        "title": "integrated main and browser windows retain visibility, observers and background execution",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "duration": 63317,
+            "retry": 0,
+            "error": null
+          }
+        ]
+      },
+      {
+        "file": "session-worktree-storage.spec.ts",
+        "title": "real repository, isolated worktree, storage command and settings in light/dark/narrow layouts",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "duration": 60266,
+            "retry": 0,
+            "error": null
+          }
+        ]
+      },
+      {
+        "file": "role-orchestration-synthesis.spec.ts",
+        "title": "shows pending execution and verification after an accepted dispatch",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "duration": 12897,
+            "retry": 0,
+            "error": null
+          }
+        ]
+      },
+      {
+        "file": "role-orchestration-synthesis.spec.ts",
+        "title": "renders P4 synthesis with verifier failure and evidence detail after a run",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "duration": 13554,
+            "retry": 0,
+            "error": null
+          }
+        ]
+      },
+      {
+        "file": "role-orchestration-synthesis.spec.ts",
+        "title": "renders verified synthesis with concrete role, evidence, verifier, trace, and blackboard detail",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "duration": 13119,
+            "retry": 0,
+            "error": null
+          }
+        ]
+      },
+      {
+        "file": "role-orchestration-synthesis.spec.ts",
+        "title": "renders repair-required synthesis without presenting it as verified success",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "duration": 15015,
+            "retry": 0,
+            "error": null
+          }
+        ]
+      },
+      {
+        "file": "role-orchestration-synthesis.spec.ts",
+        "title": "renders repair-after-success as verified while keeping repair evidence visible",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "duration": 10632,
+            "retry": 0,
+            "error": null
+          }
+        ]
+      }
+    ],
+    "reports": [
+      "D:\\tmp\\tf0830\\native-scope.json",
+      "D:\\tmp\\tf0830\\serial\\native.json"
+    ],
+    "selection": "Five successful provider/owner/lifecycle/storage cases from scope run plus seven serial wave/synthesis cases, all on the same unchanged candidate."
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 1
+  },
+  "negativeControls": 3,
+  "ownerDatabases": 15,
+  "pressure": {
+    "driven_by": "agent",
+    "actor": "codex",
+    "requests": 200,
+    "counts": {
+      "success": 168,
+      "cancelled": 16,
+      "timeout": 16,
+      "rejected": 0,
+      "unexpected": 0
+    },
+    "peak": {
+      "active": 64,
+      "queuedPerAccount": 1
+    },
+    "final": {
+      "active": 0,
+      "queued": 0,
+      "timers": 0,
+      "listeners": 0
+    },
+    "outcomes": [
+      {
+        "id": 70,
+        "status": "cancelled"
+      },
+      {
+        "id": 71,
+        "status": "cancelled"
+      },
+      {
+        "id": 72,
+        "status": "cancelled"
+      },
+      {
+        "id": 73,
+        "status": "cancelled"
+      },
+      {
+        "id": 74,
+        "status": "cancelled"
+      },
+      {
+        "id": 75,
+        "status": "cancelled"
+      },
+      {
+        "id": 76,
+        "status": "cancelled"
+      },
+      {
+        "id": 77,
+        "status": "cancelled"
+      },
+      {
+        "id": 78,
+        "status": "cancelled"
+      },
+      {
+        "id": 79,
+        "status": "cancelled"
+      },
+      {
+        "id": 80,
+        "status": "cancelled"
+      },
+      {
+        "id": 81,
+        "status": "cancelled"
+      },
+      {
+        "id": 82,
+        "status": "cancelled"
+      },
+      {
+        "id": 83,
+        "status": "cancelled"
+      },
+      {
+        "id": 84,
+        "status": "cancelled"
+      },
+      {
+        "id": 85,
+        "status": "cancelled"
+      },
+      {
+        "id": 100,
+        "status": "timeout"
+      },
+      {
+        "id": 101,
+        "status": "timeout"
+      },
+      {
+        "id": 102,
+        "status": "timeout"
+      },
+      {
+        "id": 103,
+        "status": "timeout"
+      },
+      {
+        "id": 104,
+        "status": "timeout"
+      },
+      {
+        "id": 105,
+        "status": "timeout"
+      },
+      {
+        "id": 106,
+        "status": "timeout"
+      },
+      {
+        "id": 107,
+        "status": "timeout"
+      },
+      {
+        "id": 108,
+        "status": "timeout"
+      },
+      {
+        "id": 109,
+        "status": "timeout"
+      },
+      {
+        "id": 110,
+        "status": "timeout"
+      },
+      {
+        "id": 111,
+        "status": "timeout"
+      },
+      {
+        "id": 112,
+        "status": "timeout"
+      },
+      {
+        "id": 113,
+        "status": "timeout"
+      },
+      {
+        "id": 114,
+        "status": "timeout"
+      },
+      {
+        "id": 115,
+        "status": "timeout"
+      },
+      {
+        "id": 0,
+        "status": "success"
+      },
+      {
+        "id": 1,
+        "status": "success"
+      },
+      {
+        "id": 2,
+        "status": "success"
+      },
+      {
+        "id": 3,
+        "status": "success"
+      },
+      {
+        "id": 4,
+        "status": "success"
+      },
+      {
+        "id": 5,
+        "status": "success"
+      },
+      {
+        "id": 6,
+        "status": "success"
+      },
+      {
+        "id": 7,
+        "status": "success"
+      },
+      {
+        "id": 8,
+        "status": "success"
+      },
+      {
+        "id": 9,
+        "status": "success"
+      },
+      {
+        "id": 10,
+        "status": "success"
+      },
+      {
+        "id": 11,
+        "status": "success"
+      },
+      {
+        "id": 12,
+        "status": "success"
+      },
+      {
+        "id": 13,
+        "status": "success"
+      },
+      {
+        "id": 14,
+        "status": "success"
+      },
+      {
+        "id": 15,
+        "status": "success"
+      },
+      {
+        "id": 16,
+        "status": "success"
+      },
+      {
+        "id": 17,
+        "status": "success"
+      },
+      {
+        "id": 18,
+        "status": "success"
+      },
+      {
+        "id": 19,
+        "status": "success"
+      },
+      {
+        "id": 20,
+        "status": "success"
+      },
+      {
+        "id": 21,
+        "status": "success"
+      },
+      {
+        "id": 22,
+        "status": "success"
+      },
+      {
+        "id": 23,
+        "status": "success"
+      },
+      {
+        "id": 24,
+        "status": "success"
+      },
+      {
+        "id": 25,
+        "status": "success"
+      },
+      {
+        "id": 26,
+        "status": "success"
+      },
+      {
+        "id": 27,
+        "status": "success"
+      },
+      {
+        "id": 28,
+        "status": "success"
+      },
+      {
+        "id": 29,
+        "status": "success"
+      },
+      {
+        "id": 30,
+        "status": "success"
+      },
+      {
+        "id": 31,
+        "status": "success"
+      },
+      {
+        "id": 32,
+        "status": "success"
+      },
+      {
+        "id": 33,
+        "status": "success"
+      },
+      {
+        "id": 34,
+        "status": "success"
+      },
+      {
+        "id": 35,
+        "status": "success"
+      },
+      {
+        "id": 36,
+        "status": "success"
+      },
+      {
+        "id": 37,
+        "status": "success"
+      },
+      {
+        "id": 38,
+        "status": "success"
+      },
+      {
+        "id": 39,
+        "status": "success"
+      },
+      {
+        "id": 40,
+        "status": "success"
+      },
+      {
+        "id": 41,
+        "status": "success"
+      },
+      {
+        "id": 42,
+        "status": "success"
+      },
+      {
+        "id": 43,
+        "status": "success"
+      },
+      {
+        "id": 44,
+        "status": "success"
+      },
+      {
+        "id": 45,
+        "status": "success"
+      },
+      {
+        "id": 46,
+        "status": "success"
+      },
+      {
+        "id": 47,
+        "status": "success"
+      },
+      {
+        "id": 48,
+        "status": "success"
+      },
+      {
+        "id": 49,
+        "status": "success"
+      },
+      {
+        "id": 50,
+        "status": "success"
+      },
+      {
+        "id": 51,
+        "status": "success"
+      },
+      {
+        "id": 52,
+        "status": "success"
+      },
+      {
+        "id": 53,
+        "status": "success"
+      },
+      {
+        "id": 54,
+        "status": "success"
+      },
+      {
+        "id": 55,
+        "status": "success"
+      },
+      {
+        "id": 56,
+        "status": "success"
+      },
+      {
+        "id": 57,
+        "status": "success"
+      },
+      {
+        "id": 58,
+        "status": "success"
+      },
+      {
+        "id": 59,
+        "status": "success"
+      },
+      {
+        "id": 60,
+        "status": "success"
+      },
+      {
+        "id": 61,
+        "status": "success"
+      },
+      {
+        "id": 62,
+        "status": "success"
+      },
+      {
+        "id": 63,
+        "status": "success"
+      },
+      {
+        "id": 64,
+        "status": "success"
+      },
+      {
+        "id": 65,
+        "status": "success"
+      },
+      {
+        "id": 66,
+        "status": "success"
+      },
+      {
+        "id": 67,
+        "status": "success"
+      },
+      {
+        "id": 68,
+        "status": "success"
+      },
+      {
+        "id": 69,
+        "status": "success"
+      },
+      {
+        "id": 86,
+        "status": "success"
+      },
+      {
+        "id": 87,
+        "status": "success"
+      },
+      {
+        "id": 88,
+        "status": "success"
+      },
+      {
+        "id": 89,
+        "status": "success"
+      },
+      {
+        "id": 90,
+        "status": "success"
+      },
+      {
+        "id": 91,
+        "status": "success"
+      },
+      {
+        "id": 92,
+        "status": "success"
+      },
+      {
+        "id": 93,
+        "status": "success"
+      },
+      {
+        "id": 94,
+        "status": "success"
+      },
+      {
+        "id": 95,
+        "status": "success"
+      },
+      {
+        "id": 96,
+        "status": "success"
+      },
+      {
+        "id": 97,
+        "status": "success"
+      },
+      {
+        "id": 98,
+        "status": "success"
+      },
+      {
+        "id": 99,
+        "status": "success"
+      },
+      {
+        "id": 116,
+        "status": "success"
+      },
+      {
+        "id": 117,
+        "status": "success"
+      },
+      {
+        "id": 118,
+        "status": "success"
+      },
+      {
+        "id": 119,
+        "status": "success"
+      },
+      {
+        "id": 120,
+        "status": "success"
+      },
+      {
+        "id": 121,
+        "status": "success"
+      },
+      {
+        "id": 122,
+        "status": "success"
+      },
+      {
+        "id": 123,
+        "status": "success"
+      },
+      {
+        "id": 124,
+        "status": "success"
+      },
+      {
+        "id": 125,
+        "status": "success"
+      },
+      {
+        "id": 126,
+        "status": "success"
+      },
+      {
+        "id": 127,
+        "status": "success"
+      },
+      {
+        "id": 128,
+        "status": "success"
+      },
+      {
+        "id": 129,
+        "status": "success"
+      },
+      {
+        "id": 130,
+        "status": "success"
+      },
+      {
+        "id": 131,
+        "status": "success"
+      },
+      {
+        "id": 132,
+        "status": "success"
+      },
+      {
+        "id": 133,
+        "status": "success"
+      },
+      {
+        "id": 134,
+        "status": "success"
+      },
+      {
+        "id": 135,
+        "status": "success"
+      },
+      {
+        "id": 136,
+        "status": "success"
+      },
+      {
+        "id": 137,
+        "status": "success"
+      },
+      {
+        "id": 138,
+        "status": "success"
+      },
+      {
+        "id": 139,
+        "status": "success"
+      },
+      {
+        "id": 140,
+        "status": "success"
+      },
+      {
+        "id": 141,
+        "status": "success"
+      },
+      {
+        "id": 142,
+        "status": "success"
+      },
+      {
+        "id": 143,
+        "status": "success"
+      },
+      {
+        "id": 144,
+        "status": "success"
+      },
+      {
+        "id": 145,
+        "status": "success"
+      },
+      {
+        "id": 146,
+        "status": "success"
+      },
+      {
+        "id": 147,
+        "status": "success"
+      },
+      {
+        "id": 148,
+        "status": "success"
+      },
+      {
+        "id": 149,
+        "status": "success"
+      },
+      {
+        "id": 150,
+        "status": "success"
+      },
+      {
+        "id": 151,
+        "status": "success"
+      },
+      {
+        "id": 152,
+        "status": "success"
+      },
+      {
+        "id": 153,
+        "status": "success"
+      },
+      {
+        "id": 154,
+        "status": "success"
+      },
+      {
+        "id": 155,
+        "status": "success"
+      },
+      {
+        "id": 156,
+        "status": "success"
+      },
+      {
+        "id": 157,
+        "status": "success"
+      },
+      {
+        "id": 158,
+        "status": "success"
+      },
+      {
+        "id": 159,
+        "status": "success"
+      },
+      {
+        "id": 160,
+        "status": "success"
+      },
+      {
+        "id": 161,
+        "status": "success"
+      },
+      {
+        "id": 162,
+        "status": "success"
+      },
+      {
+        "id": 163,
+        "status": "success"
+      },
+      {
+        "id": 164,
+        "status": "success"
+      },
+      {
+        "id": 165,
+        "status": "success"
+      },
+      {
+        "id": 166,
+        "status": "success"
+      },
+      {
+        "id": 167,
+        "status": "success"
+      },
+      {
+        "id": 168,
+        "status": "success"
+      },
+      {
+        "id": 169,
+        "status": "success"
+      },
+      {
+        "id": 170,
+        "status": "success"
+      },
+      {
+        "id": 171,
+        "status": "success"
+      },
+      {
+        "id": 172,
+        "status": "success"
+      },
+      {
+        "id": 173,
+        "status": "success"
+      },
+      {
+        "id": 174,
+        "status": "success"
+      },
+      {
+        "id": 175,
+        "status": "success"
+      },
+      {
+        "id": 176,
+        "status": "success"
+      },
+      {
+        "id": 177,
+        "status": "success"
+      },
+      {
+        "id": 178,
+        "status": "success"
+      },
+      {
+        "id": 179,
+        "status": "success"
+      },
+      {
+        "id": 180,
+        "status": "success"
+      },
+      {
+        "id": 181,
+        "status": "success"
+      },
+      {
+        "id": 182,
+        "status": "success"
+      },
+      {
+        "id": 183,
+        "status": "success"
+      },
+      {
+        "id": 184,
+        "status": "success"
+      },
+      {
+        "id": 185,
+        "status": "success"
+      },
+      {
+        "id": 186,
+        "status": "success"
+      },
+      {
+        "id": 187,
+        "status": "success"
+      },
+      {
+        "id": 188,
+        "status": "success"
+      },
+      {
+        "id": 189,
+        "status": "success"
+      },
+      {
+        "id": 190,
+        "status": "success"
+      },
+      {
+        "id": 191,
+        "status": "success"
+      },
+      {
+        "id": 192,
+        "status": "success"
+      },
+      {
+        "id": 193,
+        "status": "success"
+      },
+      {
+        "id": 194,
+        "status": "success"
+      },
+      {
+        "id": 195,
+        "status": "success"
+      },
+      {
+        "id": 196,
+        "status": "success"
+      },
+      {
+        "id": 197,
+        "status": "success"
+      },
+      {
+        "id": 198,
+        "status": "success"
+      },
+      {
+        "id": 199,
+        "status": "success"
+      }
+    ]
+  },
+  "priorFailures": "prior-failures.json",
+  "buildExitCode": 0,
+  "integrationSource": "D:/ClawX-work/autonomy-host-readiness 807cbb833..54e1457b0"
+}

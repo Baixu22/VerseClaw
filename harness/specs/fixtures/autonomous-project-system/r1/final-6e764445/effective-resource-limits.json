@@ -1,0 +1,469 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r1-curated-evidence-reader",
+  "candidate": {
+    "commit": "6e764445cf805b48eb86e5e39f48d05865c70ad6",
+    "tree": "5971f588bfbfdd82fa208d1e6acedc685f2f3c86",
+    "dirty": false
+  },
+  "layeredReservations": [
+    {
+      "file": "owners/unit/spend-native-r1-spend-4OuSv4/owner.json",
+      "limiter": "host",
+      "resource": "cost",
+      "config": {
+        "host": {
+          "maxCostUsd": 0.01
+        },
+        "project": {
+          "maxCostUsd": 1
+        },
+        "session": {
+          "maxCostUsd": 1
+        }
+      },
+      "snapshot": [
+        {
+          "scope": "host",
+          "scopeKey": "host",
+          "spentTokens": 0,
+          "spentCostMicros": 0,
+          "heldTokens": 60,
+          "heldCostMicros": 6000,
+          "activeCalls": 1,
+          "unknownTokenCalls": 0,
+          "unknownCostCalls": 0
+        },
+        {
+          "scope": "project",
+          "scopeKey": "[\"project\",\"project\",\"project\"]",
+          "spentTokens": 0,
+          "spentCostMicros": 0,
+          "heldTokens": 60,
+          "heldCostMicros": 6000,
+          "activeCalls": 1,
+          "unknownTokenCalls": 0,
+          "unknownCostCalls": 0
+        },
+        {
+          "scope": "session",
+          "scopeKey": "[\"session\",\"native-shared-session\",\"g\"]",
+          "spentTokens": 0,
+          "spentCostMicros": 0,
+          "heldTokens": 60,
+          "heldCostMicros": 6000,
+          "activeCalls": 1,
+          "unknownTokenCalls": 0,
+          "unknownCostCalls": 0
+        }
+      ]
+    },
+    {
+      "file": "owners/unit/spend-native-r1-spend-6Wuuj7/owner.json",
+      "limiter": "host",
+      "resource": "tokens",
+      "config": {
+        "host": {
+          "maxTokens": 100
+        },
+        "project": {
+          "maxTokens": 1000
+        },
+        "session": {
+          "maxTokens": 1000
+        }
+      },
+      "snapshot": [
+        {
+          "scope": "host",
+          "scopeKey": "host",
+          "spentTokens": 0,
+          "spentCostMicros": 0,
+          "heldTokens": 60,
+          "heldCostMicros": 6000,
+          "activeCalls": 1,
+          "unknownTokenCalls": 0,
+          "unknownCostCalls": 0
+        },
+        {
+          "scope": "project",
+          "scopeKey": "[\"project\",\"project\",\"project\"]",
+          "spentTokens": 0,
+          "spentCostMicros": 0,
+          "heldTokens": 60,
+          "heldCostMicros": 6000,
+          "activeCalls": 1,
+          "unknownTokenCalls": 0,
+          "unknownCostCalls": 0
+        },
+        {
+          "scope": "session",
+          "scopeKey": "[\"session\",\"native-shared-session\",\"g\"]",
+          "spentTokens": 0,
+          "spentCostMicros": 0,
+          "heldTokens": 60,
+          "heldCostMicros": 6000,
+          "activeCalls": 1,
+          "unknownTokenCalls": 0,
+          "unknownCostCalls": 0
+        }
+      ]
+    },
+    {
+      "file": "owners/unit/spend-native-r1-spend-Allkqs/owner.json",
+      "limiter": "project",
+      "resource": "cost",
+      "config": {
+        "host": {
+          "maxCostUsd": 1
+        },
+        "project": {
+          "maxCostUsd": 0.01
+        },
+        "session": {
+          "maxCostUsd": 1
+        }
+      },
+      "snapshot": [
+        {
+          "scope": "host",
+          "scopeKey": "host",
+          "spentTokens": 0,
+          "spentCostMicros": 0,
+          "heldTokens": 60,
+          "heldCostMicros": 6000,
+          "activeCalls": 1,
+          "unknownTokenCalls": 0,
+          "unknownCostCalls": 0
+        },
+        {
+          "scope": "project",
+          "scopeKey": "[\"project\",\"project\",\"project\"]",
+          "spentTokens": 0,
+          "spentCostMicros": 0,
+          "heldTokens": 60,
+          "heldCostMicros": 6000,
+          "activeCalls": 1,
+          "unknownTokenCalls": 0,
+          "unknownCostCalls": 0
+        },
+        {
+          "scope": "session",
+          "scopeKey": "[\"session\",\"native-shared-session\",\"g\"]",
+          "spentTokens": 0,
+          "spentCostMicros": 0,
+          "heldTokens": 60,
+          "heldCostMicros": 6000,
+          "activeCalls": 1,
+          "unknownTokenCalls": 0,
+          "unknownCostCalls": 0
+        }
+      ]
+    },
+    {
+      "file": "owners/unit/spend-native-r1-spend-pwPVUy/owner.json",
+      "limiter": "session",
+      "resource": "cost",
+      "config": {
+        "host": {
+          "maxCostUsd": 1
+        },
+        "project": {
+          "maxCostUsd": 1
+        },
+        "session": {
+          "maxCostUsd": 0.01
+        }
+      },
+      "snapshot": [
+        {
+          "scope": "host",
+          "scopeKey": "host",
+          "spentTokens": 0,
+          "spentCostMicros": 0,
+          "heldTokens": 60,
+          "heldCostMicros": 6000,
+          "activeCalls": 1,
+          "unknownTokenCalls": 0,
+          "unknownCostCalls": 0
+        },
+        {
+          "scope": "project",
+          "scopeKey": "[\"project\",\"project\",\"project\"]",
+          "spentTokens": 0,
+          "spentCostMicros": 0,
+          "heldTokens": 60,
+          "heldCostMicros": 6000,
+          "activeCalls": 1,
+          "unknownTokenCalls": 0,
+          "unknownCostCalls": 0
+        },
+        {
+          "scope": "session",
+          "scopeKey": "[\"session\",\"native-shared-session\",\"g\"]",
+          "spentTokens": 0,
+          "spentCostMicros": 0,
+          "heldTokens": 60,
+          "heldCostMicros": 6000,
+          "activeCalls": 1,
+          "unknownTokenCalls": 0,
+          "unknownCostCalls": 0
+        }
+      ]
+    },
+    {
+      "file": "owners/unit/spend-native-r1-spend-VFFQie/owner.json",
+      "limiter": "session",
+      "resource": "tokens",
+      "config": {
+        "host": {
+          "maxTokens": 1000
+        },
+        "project": {
+          "maxTokens": 1000
+        },
+        "session": {
+          "maxTokens": 100
+        }
+      },
+      "snapshot": [
+        {
+          "scope": "host",
+          "scopeKey": "host",
+          "spentTokens": 0,
+          "spentCostMicros": 0,
+          "heldTokens": 60,
+          "heldCostMicros": 6000,
+          "activeCalls": 1,
+          "unknownTokenCalls": 0,
+          "unknownCostCalls": 0
+        },
+        {
+          "scope": "project",
+          "scopeKey": "[\"project\",\"project\",\"project\"]",
+          "spentTokens": 0,
+          "spentCostMicros": 0,
+          "heldTokens": 60,
+          "heldCostMicros": 6000,
+          "activeCalls": 1,
+          "unknownTokenCalls": 0,
+          "unknownCostCalls": 0
+        },
+        {
+          "scope": "session",
+          "scopeKey": "[\"session\",\"native-shared-session\",\"g\"]",
+          "spentTokens": 0,
+          "spentCostMicros": 0,
+          "heldTokens": 60,
+          "heldCostMicros": 6000,
+          "activeCalls": 1,
+          "unknownTokenCalls": 0,
+          "unknownCostCalls": 0
+        }
+      ]
+    },
+    {
+      "file": "owners/unit/spend-native-r1-spend-VMuOzI/owner.json",
+      "limiter": "project",
+      "resource": "tokens",
+      "config": {
+        "host": {
+          "maxTokens": 1000
+        },
+        "project": {
+          "maxTokens": 100
+        },
+        "session": {
+          "maxTokens": 1000
+        }
+      },
+      "snapshot": [
+        {
+          "scope": "host",
+          "scopeKey": "host",
+          "spentTokens": 0,
+          "spentCostMicros": 0,
+          "heldTokens": 60,
+          "heldCostMicros": 6000,
+          "activeCalls": 1,
+          "unknownTokenCalls": 0,
+          "unknownCostCalls": 0
+        },
+        {
+          "scope": "project",
+          "scopeKey": "[\"project\",\"project\",\"project\"]",
+          "spentTokens": 0,
+          "spentCostMicros": 0,
+          "heldTokens": 60,
+          "heldCostMicros": 6000,
+          "activeCalls": 1,
+          "unknownTokenCalls": 0,
+          "unknownCostCalls": 0
+        },
+        {
+          "scope": "session",
+          "scopeKey": "[\"session\",\"native-shared-session\",\"g\"]",
+          "spentTokens": 0,
+          "spentCostMicros": 0,
+          "heldTokens": 60,
+          "heldCostMicros": 6000,
+          "activeCalls": 1,
+          "unknownTokenCalls": 0,
+          "unknownCostCalls": 0
+        }
+      ]
+    }
+  ],
+  "nativePolicies": [
+    {
+      "file": "owners/native/token-results/autonomy-resource-admissio-8fabb-nciles-actual-usage-tokens-/r1-spend-owner.json",
+      "policy": {
+        "host": {
+          "maxTokens": 200000
+        },
+        "project": {
+          "maxTokens": 200000
+        },
+        "session": {
+          "maxTokens": 200000
+        }
+      },
+      "held": [
+        {
+          "call_id": "[\"default\",\"default\",\"agent:main:dashboard:b8d64cfe-1b1a-412a-b9a1-73c9551c9d8b\",\"d9f922a6-2626-45e6-b699-c43425e4a461\",\"SPEND-FIRST\",0,0]",
+          "run_id": "SPEND-FIRST",
+          "scope_json": "{\"workspaceId\":\"default\",\"projectId\":\"default\",\"sessionKey\":\"agent:main:dashboard:b8d64cfe-1b1a-412a-b9a1-73c9551c9d8b\",\"sessionGeneration\":\"d9f922a6-2626-45e6-b699-c43425e4a461\"}",
+          "state": "sent",
+          "reserved_tokens": 132096,
+          "reserved_cost_micros": null,
+          "actual_tokens": null,
+          "actual_cost_micros": null
+        }
+      ]
+    },
+    {
+      "file": "owners/native/usd-results/autonomy-resource-admissio-532e3-econciles-actual-usage-USD-/r1-spend-owner.json",
+      "policy": {
+        "host": {
+          "maxTokens": 500000,
+          "maxCostUsd": 0.3
+        },
+        "project": {
+          "maxTokens": 500000,
+          "maxCostUsd": 1
+        },
+        "session": {
+          "maxTokens": 500000,
+          "maxCostUsd": 0.5
+        }
+      },
+      "held": [
+        {
+          "call_id": "[\"default\",\"default\",\"agent:main:dashboard:2e1a0362-8372-4499-a357-ae03d5aa606c\",\"fdb16aa2-2ecf-45b2-a9d9-a97cf92181b5\",\"SPEND-FIRST\",0,0]",
+          "run_id": "SPEND-FIRST",
+          "scope_json": "{\"workspaceId\":\"default\",\"projectId\":\"default\",\"sessionKey\":\"agent:main:dashboard:2e1a0362-8372-4499-a357-ae03d5aa606c\",\"sessionGeneration\":\"fdb16aa2-2ecf-45b2-a9d9-a97cf92181b5\"}",
+          "state": "sent",
+          "reserved_tokens": 132096,
+          "reserved_cost_micros": 264192,
+          "actual_tokens": null,
+          "actual_cost_micros": null
+        }
+      ]
+    }
+  ],
+  "desktopEnvelope": {
+    "schema": "openclaw.resource-envelope/v1",
+    "generatedAt": 1794061047837,
+    "mode": "shadow",
+    "entries": [
+      {
+        "id": "main:browser-session:8f19fcd3-b92b-47e0-b63b-59f22f2f5223",
+        "workspaceKey": "default",
+        "kind": "browser-session",
+        "pids": [],
+        "reason": "HostAgentBrowserService session",
+        "owner": "main",
+        "priority": "foreground",
+        "activeSlots": 1,
+        "queuedCount": 0,
+        "queueWaitMs": 0,
+        "processCount": 0,
+        "treeRssBytes": 0,
+        "treeCpuPercent": 0,
+        "limits": {
+          "memoryBytes": 2147483648,
+          "cpuPercent": 200,
+          "processCount": 64,
+          "concurrencySlots": 4,
+          "queueLength": 16
+        },
+        "updatedAt": 1794061047836
+      },
+      {
+        "id": "main:process-tree",
+        "workspaceKey": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify",
+        "kind": "agent-turn",
+        "priority": "foreground",
+        "owner": "main",
+        "activeSlots": 0,
+        "queuedCount": 0,
+        "queueWaitMs": 0,
+        "processCount": 26,
+        "treeRssBytes": 1819525120,
+        "treeCpuPercent": 0,
+        "pids": [
+          50288
+        ],
+        "reason": "main process tree sample",
+        "limits": {
+          "memoryBytes": 2147483648,
+          "cpuPercent": 400,
+          "processCount": 64,
+          "concurrencySlots": 8,
+          "queueLength": 32
+        },
+        "updatedAt": 1794061047836
+      },
+      {
+        "id": "main:pty-session:c44f6065-4ebc-4056-8083-720bcb44834a",
+        "workspaceKey": "default",
+        "kind": "pty-session",
+        "pids": [
+          24356
+        ],
+        "reason": "TerminalSessionManager session",
+        "owner": "main",
+        "priority": "foreground",
+        "activeSlots": 1,
+        "queuedCount": 0,
+        "queueWaitMs": 0,
+        "processCount": 1,
+        "treeRssBytes": 0,
+        "treeCpuPercent": 0,
+        "limits": {
+          "memoryBytes": 536870912,
+          "cpuPercent": 100,
+          "processCount": 16,
+          "concurrencySlots": 8,
+          "queueLength": 32
+        },
+        "updatedAt": 1794061047836
+      }
+    ],
+    "totals": {
+      "activeSlots": 2,
+      "queuedCount": 0,
+      "queueWaitMs": 0,
+      "processCount": 27,
+      "treeRssBytes": 1819525120,
+      "treeCpuPercent": 0
+    },
+    "exceeded": [],
+    "warnings": []
+  },
+  "unmeasuredSchedulerCap": {
+    "disposition": "serial",
+    "maxParallelism": 1,
+    "oracle": "tests/unit/orchestration-resource-scheduler.test.ts"
+  }
+}

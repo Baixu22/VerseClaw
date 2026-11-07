@@ -85,6 +85,24 @@ test.describe('Role orchestration synthesis', () => {
     await page.getByRole('button', { name: /^Run$/ }).click();
   }
 
+  test('shows pending execution and verification after an accepted dispatch', async ({ electronApp, page }, testInfo) => {
+    await mockRoleOrchestrationRun(electronApp, {
+      schemaVersion: 1, orchestrationRunId: 'orch_e2e_pending', taskGraphId: 'graph_e2e_pending',
+      status: 'pending', summary: 'Execution or verification is pending; 1 role receipt(s).',
+      roleContributions: [{ roleName: 'planner', task: 'Plan', status: 'accepted', phase: 'worker', evidenceRefs: [] }],
+      evidenceRefs: [], artifactRefs: [], visibleFailures: [],
+      verifier: { decision: 'not_required', evidenceRefs: [], reasons: [] }, traceIds: [],
+      policy: { toolAccess: 'none', verifierAuthority: 'preserved', memoryWrite: 'none' },
+    });
+    await runRoleOrchestration(page, 'Show the current execution receipt');
+    const synthesis = page.getByTestId('role-orchestration-synthesis');
+    await expect(synthesis).toContainText('Pending');
+    await expect(synthesis).toContainText('Waiting for execution or verification results.');
+    await expect(synthesis).not.toContainText('Verified result');
+    await synthesis.scrollIntoViewIfNeeded();
+    await synthesis.screenshot({ path: testInfo.outputPath('pending-synthesis.png') });
+  });
+
   test('renders P4 synthesis with verifier failure and evidence detail after a run', async ({ electronApp, page }) => {
     await mockRoleOrchestrationRun(
       electronApp,

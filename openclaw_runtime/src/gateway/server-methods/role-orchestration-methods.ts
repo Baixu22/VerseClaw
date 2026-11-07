@@ -9,6 +9,9 @@
 // validators, so no change to the gateway-protocol package is required.
 import crypto from "node:crypto";
 import { ErrorCodes, errorShape } from "../../../packages/gateway-protocol/src/index.js";
+import { GATEWAY_CLIENT_MODES } from '../../../packages/gateway-protocol/src/client-info.js';
+import { updateSessionStoreEntry } from '../../config/sessions/store.js';
+import { resolveGatewaySessionStoreTargetWithStore, resolveFreshestSessionStoreMatchFromStoreKeys } from '../session-utils.js';
 import { compileRoleContractToSoul } from "../../agents/role-contract.js";
 import { buildRoleRegistry, listRoleContracts, resolveRoleContract, roleOrigin } from "../../agents/role-registry.js";
 import { getTeamTemplateSnapshot, resolveTeamTemplate } from "../../agents/team-template.js";
@@ -484,6 +487,32 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
         errorShape(ErrorCodes.INVALID_REQUEST, `unsupported orchestration backend "${requestedBackend}"`),
       );
       return;
+    }
+    const requestedWorkspaceId = readString(params.workspaceId);
+    if (requestedWorkspaceId) {
+      if (client?.connect?.client?.mode !== GATEWAY_CLIENT_MODES.BACKEND) {
+        respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'Orchestration workspaceId is reserved for backend callers.'));
+        return;
+      }
+      const target = resolveGatewaySessionStoreTargetWithStore({ cfg, key: sessionKey });
+      const parent = resolveFreshestSessionStoreMatchFromStoreKeys(target.store, target.storeKeys)?.entry;
+      if (!parent?.sessionId) {
+        respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'Orchestration workspace requires a session owner generation.'));
+        return;
+      }
+      try {
+        const bound = await updateSessionStoreEntry({ storePath: target.storePath, sessionKey: target.canonicalKey ?? sessionKey,
+          skipMaintenance: true, update: owner => {
+            if (owner.sessionId !== parent.sessionId || owner.workspaceId && owner.workspaceId !== requestedWorkspaceId) {
+              throw new Error('Orchestration session workspace scope changed before dispatch');
+            }
+            return owner.workspaceId ? null : { workspaceId: requestedWorkspaceId };
+          } });
+        if (!bound) throw new Error('Orchestration session owner disappeared before dispatch');
+      } catch (error) {
+        respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, error instanceof Error ? error.message : String(error)));
+        return;
+      }
     }
     const templateId = readTemplateId(params);
     if (!validateTemplateId(respond, cfg, templateId)) {

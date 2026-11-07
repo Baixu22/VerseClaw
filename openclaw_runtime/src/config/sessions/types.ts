@@ -255,6 +255,8 @@ export type SessionEntry = {
   spawnedWorkspaceDir?: string;
   /** Trusted Backend-selected workspace for a normal session. */
   workspaceDir?: string;
+  /** Logical workspace bound by the runtime owner for this session generation. */
+  workspaceId?: string;
   /** Task working directory inherited by spawned sessions and reused on later turns. */
   spawnedCwd?: string;
   /** B-3 v3: write-set coordinate inherited by a spawned worker (files it is expected to touch). */

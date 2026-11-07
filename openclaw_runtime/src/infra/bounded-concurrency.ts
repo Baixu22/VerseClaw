@@ -188,7 +188,8 @@ export function createBoundedConcurrencyGate(params: {
         }
         released = true;
         counters.completed += 1;
-        dispatchNext();
+        active = Math.max(0, active - 1);
+        dispatchAvailable();
         return true;
       },
     };
@@ -209,25 +210,36 @@ export function createBoundedConcurrencyGate(params: {
     waiter.resolve(admission);
   };
 
-  /** Hands a freed slot straight to the head waiter so `active` never dips spuriously. */
-  const dispatchNext = (): void => {
-    while (waiters.length > 0) {
+  /** Reconcile owned slots with current limits before admitting queued work. */
+  const dispatchAvailable = (): void => {
+    if (closed) return;
+    for (const waiter of [...waiters]) {
+      if (waiter.settled) continue;
+      const reason = waiter.signal?.aborted ? "aborted" : now() >= waiter.deadlineMs ? "queue-timeout" : undefined;
+      if (!reason) continue;
+      const index = waiters.indexOf(waiter);
+      if (index < 0) continue;
+      waiters.splice(index, 1);
+      const waitedMs = Math.max(0, now() - waiter.queuedAtMs);
+      reject(waiter, reason, waitedMs);
+      settleWaiter(waiter, { ok: false, reason, waitedMs, snapshot: snapshot() });
+    }
+    while (!closed && active < maxConcurrent && waiters.length > 0) {
       const waiter = waiters.shift();
       if (!waiter || waiter.settled) {
         continue;
       }
       const waitedMs = Math.max(0, now() - waiter.queuedAtMs);
+      active += 1;
       counters.admitted += 1;
+      counters.peakActive = Math.max(counters.peakActive, active);
       counters.queuedWaitTotalMs += waitedMs;
       if (waitedMs > counters.queuedWaitMaxMs) {
         counters.queuedWaitMaxMs = waitedMs;
       }
       settleWaiter(waiter, { ok: true, lease: buildLease(waitedMs), waitedMs });
       emit({ type: "admitted", waitedMs, label: waiter.label, snapshot: snapshot() });
-      return;
     }
-    // No waiter took the slot: the slot is genuinely free again.
-    active = Math.max(0, active - 1);
   };
 
   const reject = (
@@ -259,6 +271,7 @@ export function createBoundedConcurrencyGate(params: {
       reject(waiter, "aborted", 0);
       return { ok: false, reason: "aborted", waitedMs: 0, snapshot: snapshot() };
     }
+    dispatchAvailable();
     if (active < maxConcurrent) {
       active += 1;
       counters.admitted += 1;
@@ -283,7 +296,7 @@ export function createBoundedConcurrencyGate(params: {
       const waiter: Waiter = {
         settled: false,
         queuedAtMs,
-        deadlineMs: queuedAtMs + effectiveTimeoutMs,
+        deadlineMs: effectiveTimeoutMs > 0 ? queuedAtMs + effectiveTimeoutMs : Number.POSITIVE_INFINITY,
         signal: options?.signal,
         label,
         resolve,
@@ -346,6 +359,7 @@ export function createBoundedConcurrencyGate(params: {
       if (next.queueTimeoutMs !== undefined) {
         queueTimeoutMs = resolveNonNegativeInteger(next.queueTimeoutMs, queueTimeoutMs);
       }
+      dispatchAvailable();
     },
     close(reason: BoundedConcurrencyRejection = "aborted"): void {
       closed = true;

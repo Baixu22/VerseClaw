@@ -1,0 +1,241 @@
+---
+lifecycleStatus: active
+id: resource-budget-integration-20261108
+title: 整合既有宿主预算并验证跨租户公平准入
+scenario: gateway-backend-communication
+taskType: runtime-bridge
+diffBase: 5916621573f5c725e6e68028543e71701e1370db
+intent: 完成 TF-0830 / G08–G12，整合 TF-0679 已验收 owner，并保留有界等待、绝对 deadline 和当前采样合同。
+expectedUserBehavior:
+  - Concurrent workspaces share an effective host budget and queued tenants make progress at the same QoS.
+  - Unknown running work retains its reservation; clearing projections cannot release execution capacity.
+touchedAreas:
+  - openclaw_runtime/src/agents/embedded-agent-runner/run.ts
+  - packages/versebrowser/src/engine/supervised-task-executor.ts
+  - packages/versebrowser/tests/agent-browser-supervised-task-executor.test.ts
+  - tests/unit/session-storage-api.test.ts
+  - openclaw_runtime/test/vitest/vitest.resource-budget.config.ts
+  - shared/task-ledger-journal-lock.ts
+  - electron/services/session-storage-api.ts
+  - .gitignore
+  - README.ja-JP.md
+  - README.md
+  - README.zh-CN.md
+  - docs/dev/architecture-skeleton/ADMISSION-CONVERGENCE.md
+  - docs/modules/multi-agent-and-tasks.md
+  - docs/modules/resources-and-observability.md
+  - electron/gateway/agent-browser-bridge.ts
+  - electron/gateway/process-launcher.ts
+  - electron/gateway/supervisor.ts
+  - electron/main/index.ts
+  - electron/main/ipc-handlers.ts
+  - electron/services/agent-browser-api.ts
+  - electron/services/gateway-api.ts
+  - electron/services/long-session-resource-reclamation.ts
+  - electron/services/resource-envelope-api.ts
+  - electron/services/resource-envelope.ts
+  - electron/services/resource-fabric.ts
+  - electron/services/sessions-api.ts
+  - electron/services/terminal-api.ts
+  - electron/services/terminal-session-manager.ts
+  - electron/services/workspaces-api.ts
+  - harness/specs/fixtures/autonomous-project-system/r1/REPORT.md
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/REPORT.md
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/SHA256SUMS
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/acceptance.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/ci-boundary.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/contract-audit.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/credential-scan.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/effective-resource-limits.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/fairness-contention.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/gates.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/lease-ledger-refs.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/manifest.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owner-projection.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owner-store-readback.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/native/handoff-off-results/autonomy-resource-admissio-006e0-run-terminates-handoff-off-/r1-native-stop.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/native/handoff-off-results/autonomy-resource-admissio-006e0-run-terminates-handoff-off-/r1-waves-owner.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/native/handoff-on-results/autonomy-resource-admissio-92759--run-terminates-handoff-on-/r1-native-stop.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/native/handoff-on-results/autonomy-resource-admissio-92759--run-terminates-handoff-on-/r1-waves-owner.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/native/owner-results/autonomy-owner-projection--6bdac-m-their-live-desktop-owners/owner-rebuild.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/native/token-results/autonomy-resource-admissio-8fabb-nciles-actual-usage-tokens-/r1-spend-owner.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/native/usd-results/autonomy-resource-admissio-532e3-econciles-actual-usage-USD-/r1-spend-owner.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/contention-8b360db2-b020-47a3-9241-484c39fe56e5.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/inconsistent-r1-spend-OBALjJ/owner.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/inconsistent-r1-spend-aAkSXQ/owner.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/native-owner-84067f61-9d5d-4b46-863f-ee721ecf2653.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/process-owner-1794060205703/process-owner-rebuild.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/provider-http-22fbad98-a44a-43eb-a5c8-0d8360adfbf2.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/registry-r1-registry-vrSD8O/owner.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/registry-r1-registry-x9zwEw/owner.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/spawn-918e40de-8147-42a6-8bb9-66fc872e7b29/owner.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/spend-native-r1-spend-4OuSv4/owner.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/spend-native-r1-spend-6Wuuj7/owner.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/spend-native-r1-spend-Allkqs/owner.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/spend-native-r1-spend-VFFQie/owner.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/spend-native-r1-spend-VMuOzI/owner.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/spend-native-r1-spend-pwPVUy/owner.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/spend-r1-spend-n8esat/owner.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/waves-d48057ba-dcd2-4b29-9419-6287a2724a26/owner.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/owners/unit/worktree-native-5c320a75-a9e0-4a66-9795-53505e288de6.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/pending-synthesis.png
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/raw-run-index.json
+  - harness/specs/fixtures/autonomous-project-system/r1/final-6e764445/source-inputs.json
+  - harness/specs/fixtures/resource-budget-integration-20261108/**
+  - harness/specs/rules/autonomy-resource-owner-admission.md
+  - harness/specs/rules/resource-budget-integration.md
+  - harness/specs/scenarios/autonomy-resource-admission.md
+  - harness/specs/tasks/autonomy-resource-admission.md
+  - harness/specs/tasks/resource-budget-integration-20261108.md
+  - openclaw_runtime/src/agents/checkpoint-rollback-executor.test.ts
+  - openclaw_runtime/src/agents/checkpoint-rollback-executor.ts
+  - openclaw_runtime/src/agents/command/attempt-execution.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/stream-resolution.ts
+  - openclaw_runtime/src/agents/handoff-artifacts.ts
+  - openclaw_runtime/src/agents/long-session-delegation-receipt.ts
+  - openclaw_runtime/src/agents/orchestration-resource-scheduler.ts
+  - openclaw_runtime/src/agents/orchestration-synthesizer.ts
+  - openclaw_runtime/src/agents/orchestrator-run-observed.ts
+  - openclaw_runtime/src/agents/provider-outbound-budget.ts
+  - openclaw_runtime/src/agents/provider-spend-budget.ts
+  - openclaw_runtime/src/agents/provider-spend-context.ts
+  - openclaw_runtime/src/agents/provider-transport-fetch.ts
+  - openclaw_runtime/src/agents/resource-leases.test.ts
+  - openclaw_runtime/src/agents/resource-leases.ts
+  - openclaw_runtime/src/agents/role-spawn.ts
+  - openclaw_runtime/src/agents/sessions/tools/bash-workspace-lease.test.ts
+  - openclaw_runtime/src/agents/sessions/tools/bash.ts
+  - openclaw_runtime/src/agents/sessions/tools/edit.ts
+  - openclaw_runtime/src/agents/sessions/tools/file-mutation-queue.ts
+  - openclaw_runtime/src/agents/sessions/tools/find.ts
+  - openclaw_runtime/src/agents/sessions/tools/grep.ts
+  - openclaw_runtime/src/agents/sessions/tools/write.ts
+  - openclaw_runtime/src/agents/subagent-registry-dispatch.ts
+  - openclaw_runtime/src/agents/subagent-registry-helpers.ts
+  - openclaw_runtime/src/agents/subagent-registry-lifecycle.ts
+  - openclaw_runtime/src/agents/subagent-registry-queries.quota.test.ts
+  - openclaw_runtime/src/agents/subagent-registry-queries.ts
+  - openclaw_runtime/src/agents/subagent-registry-run-manager.ts
+  - openclaw_runtime/src/agents/subagent-registry-state.ts
+  - openclaw_runtime/src/agents/subagent-registry.store.sqlite.ts
+  - openclaw_runtime/src/agents/subagent-registry.ts
+  - openclaw_runtime/src/agents/subagent-registry.types.ts
+  - openclaw_runtime/src/agents/subagent-spawn.ts
+  - openclaw_runtime/src/agents/symbol-lease-guard.test.ts
+  - openclaw_runtime/src/agents/symbol-lease-guard.ts
+  - openclaw_runtime/src/agents/worktree-service.ts
+  - openclaw_runtime/src/config/runtime-feature-leaves.ts
+  - openclaw_runtime/src/config/schema.help.ts
+  - openclaw_runtime/src/config/schema.labels.ts
+  - openclaw_runtime/src/config/sessions/types.ts
+  - openclaw_runtime/src/config/types.openclaw.ts
+  - openclaw_runtime/src/config/zod-schema.ts
+  - openclaw_runtime/src/context-engine/factstore/symbol-lease.test.ts
+  - openclaw_runtime/src/context-engine/factstore/symbol-lease.ts
+  - openclaw_runtime/src/gateway/server-methods/chat.ts
+  - openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts
+  - openclaw_runtime/src/gateway/session-resource-inventory.ts
+  - openclaw_runtime/src/infra/bounded-concurrency.ts
+  - openclaw_runtime/src/plugins/session-entry-slot-keys.ts
+  - openclaw_runtime/src/state/openclaw-state-db.generated.d.ts
+  - openclaw_runtime/src/state/openclaw-state-schema.generated.ts
+  - openclaw_runtime/src/state/openclaw-state-schema.sql
+  - packages/versebrowser/src/engine/api.ts
+  - packages/versebrowser/src/engine/service.ts
+  - packages/versebrowser/src/gateway/bridge.ts
+  - packages/versebrowser/tests/agent-browser-runtime-mode.test.ts
+  - packages/versebrowser/tests/agent-browser-service.test.ts
+  - packages/versebrowser/tests/r0-4-agent-browser-nav-timeout.test.ts
+  - scripts/repository-artifacts.json
+  - shared/dcs/component-disposition-catalog.ts
+  - shared/i18n/locales/en/agents.json
+  - shared/i18n/locales/ja/agents.json
+  - shared/i18n/locales/ru/agents.json
+  - shared/i18n/locales/zh/agents.json
+  - shared/long-session-resource-reclamation.ts
+  - shared/resources/drf-share.ts
+  - shared/resources/priority-queue.ts
+  - shared/task-ledger-process.ts
+  - src/components/agents/RolesOrchestrationPanel.tsx
+  - tests/e2e/autonomy-owner-projection.spec.ts
+  - tests/e2e/autonomy-resource-admission.spec.ts
+  - tests/e2e/fixtures/electron.ts
+  - tests/e2e/fixtures/fp-p1-harness.ts
+  - tests/e2e/role-orchestration-synthesis.spec.ts
+  - tests/unit/autonomy-orchestration-waves.test.ts
+  - tests/unit/autonomy-owner-projection.test.ts
+  - tests/unit/autonomy-provider-budget.test.ts
+  - tests/unit/autonomy-provider-spend.test.ts
+  - tests/unit/autonomy-provider-transport.test.ts
+  - tests/unit/autonomy-resource-admission.test.ts
+  - tests/unit/autonomy-resource-lease-owner.test.ts
+  - tests/unit/autonomy-subagent-admission.test.ts
+  - tests/unit/autonomy-subagent-persistence.test.ts
+  - tests/unit/autonomy-worktree-native.test.ts
+  - tests/unit/autonomy-worktree-owner.test.ts
+  - tests/unit/browser-session-reap-tf0503.test.ts
+  - tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts
+  - tests/unit/fixtures/autonomy-provider-spend-worker.mts
+  - tests/unit/fixtures/autonomy-resource-lease-worker.mts
+  - tests/unit/fixtures/autonomy-subagent-reservation-worker.mts
+  - tests/unit/fixtures/autonomy-worktree-owner-worker.mts
+  - tests/unit/fixtures/coding-controls-tf0510/symbol-lease-worker.mts
+  - tests/unit/gateway-permissions-api.test.ts
+  - tests/unit/gateway-supervisor.test.ts
+  - tests/unit/long-session-delegation-admission.test.ts
+  - tests/unit/long-session-owner-reclamation-adapter.test.ts
+  - tests/unit/long-session-resource-reclamation.test.ts
+  - tests/unit/long-session-runtime-resource-inventory.test.ts
+  - tests/unit/orchestration-resource-scheduler.test.ts
+  - tests/unit/r0-2-sessions-delete-fail.test.ts
+  - tests/unit/r0-3-terminal-session-reclaim.test.ts
+  - tests/unit/resource-budget-integration.test.ts
+  - tests/unit/resource-fabric-primitives.test.ts
+  - tests/unit/role-spawn.test.ts
+  - tests/unit/task-ledger-process.test.ts
+  - tests/unit/terminal-session-manager.test.ts
+requiredProfiles:
+  - fast
+  - comms
+requiredRules:
+  - backend-communication-boundary
+  - resource-budget-integration
+  - resource-bounded-waiting
+  - process-metrics-identity-and-freshness
+  - disk-temp-policy
+  - repository-artifact-retention
+  - task-forest-autoclose-and-roles
+  - comms-regression
+  - docs-sync
+requiredTests:
+  - node openclaw_runtime/node_modules/vitest/vitest.mjs run --root openclaw_runtime --config openclaw_runtime/test/vitest/vitest.resource-budget.config.ts --maxWorkers=1
+  - node node_modules/vitest/vitest.mjs run tests/unit/resource-budget-integration.test.ts tests/unit/resource-fabric-bounded-waiting.test.ts tests/unit/resource-fabric-primitives.test.ts tests/unit/autonomy-resource-admission.test.ts tests/unit/autonomy-provider-spend.test.ts tests/unit/autonomy-resource-lease-owner.test.ts tests/unit/autonomy-subagent-persistence.test.ts --maxWorkers=1
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/resource-budget-integration-20261108.md
+  - node harness/src/cli.mjs run --spec harness/specs/tasks/resource-budget-integration-20261108.md --dry-run
+  - node scripts/comms/replay.mjs
+  - node scripts/comms/compare.mjs
+  - git diff --check
+acceptance:
+  - Integrate the TF-0679 candidate 54e1457b0 with its existing owner stores and retain its cross-Gateway atomic reservations, unknown liabilities and failure compensation.
+  - Multi-workspace admission never exceeds the existing configured instance cap; same-QoS tenants make progress under contention and old owner identity is checked before reuse after expiry.
+  - Clear the envelope/cache and reconstruct effective caps and current usage from actual owners; logical stage costs remain distinct from physical process measurements.
+  - Queue limits exclude active work, AbortSignal and absolute deadlines remain effective, abandoned singleflight replacement retains correct capacity, and cancelled or expired work never starts.
+  - Preserve current process identity/epoch/TTL metrics and run targeted owner/native regressions on the integrated clean candidate; imported historical reports keep their original candidates.
+  - Record positive and old-source negative tests, command exits/counts, source/dependency provenance, SHA-256 manifest and zero-hit credential scan before closing the node and merging main.
+docs:
+  required: true
+  readmeTranslations: required
+  paths:
+    - harness/specs/rules/resource-budget-integration.md
+    - docs/modules/resources-and-observability.md
+    - README.md
+    - README.zh-CN.md
+    - README.ja-JP.md
+---
+
+TF-0830 为开发包 C。前置 TF-0679 的交付在独立 Git 对象库中，来源
+`D:/ClawX-work/autonomy-host-readiness`，范围为 `807cbb83..54e1457b0` 的七个提交。
+本节点将其接入当前 `591662157` 主线，逐项合并与 TF-0829、TF-0831 的重叠修改。
+使用 ResourceFabric、ResourceLeaseManager、ProviderSpendBudget 与既有 SQLite owner；
+ResourceEnvelopeLedger 继续只投影。保留冻结默认值、未配置预算和 unknown 的现有语义。

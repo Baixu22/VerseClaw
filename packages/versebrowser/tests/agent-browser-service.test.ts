@@ -123,7 +123,7 @@ class FakeWebContents extends EventEmitter {
   }
 }
 
-class FakeWindow {
+class FakeWindow extends EventEmitter {
   readonly webContents = new FakeWebContents();
   closed = false;
   shown = false;
@@ -141,6 +141,7 @@ class FakeWindow {
 
   close() {
     this.closed = true;
+    this.emit('closed');
   }
 
   destroy() {
@@ -160,6 +161,52 @@ class FakeWindow {
 }
 
 describe('agent browser service', () => {
+  it('cleans a failed open and retains its owner when native cleanup fails', async () => {
+    for (const cleanupFails of [false, true]) {
+      const window = new FakeWindow();
+      const loadFailure = new Error('native load failed');
+      vi.spyOn(window, 'loadURL').mockRejectedValueOnce(loadFailure);
+      if (cleanupFails) vi.spyOn(window, 'destroy').mockImplementationOnce(() => { throw new Error('native close failed'); });
+      const service = new AgentBrowserService({ createWindow: () => window as never });
+      const opening = service.open({ url: 'https://example.com' });
+      if (cleanupFails) {
+        await expect(opening).rejects.toMatchObject({ cause: expect.any(Error), errors: [loadFailure, expect.any(Error)] });
+        expect(service.list()).toHaveLength(1);
+        await service.close(service.list()[0]!.id);
+      } else {
+        await expect(opening).rejects.toBe(loadFailure);
+      }
+      expect(service.list()).toEqual([]);
+      expect(window.isDestroyed()).toBe(true);
+    }
+  });
+
+  it('retains the owner until the original window closes and shares concurrent close requests', async () => {
+    const window = new FakeWindow();
+    const close = vi.spyOn(window, 'destroy').mockImplementation(() => undefined);
+    const service = new AgentBrowserService({ createWindow: () => window as never });
+    const opened = await service.open({ url: 'https://example.com' });
+    const first = service.close(opened.session.id);
+    const second = service.close(opened.session.id);
+    expect(service.list()).toEqual([expect.objectContaining({ id: opened.session.id })]);
+    expect(close).toHaveBeenCalledTimes(1);
+    window.closed = true;
+    window.emit('closed');
+    await Promise.all([first, second]);
+    expect(service.list()).toEqual([]);
+  });
+
+  it('retains a browser owner after close failure and permits a later retry', async () => {
+    const window = new FakeWindow();
+    vi.spyOn(window, 'destroy').mockImplementationOnce(() => { throw new Error('native close failed'); });
+    const service = new AgentBrowserService({ createWindow: () => window as never });
+    const opened = await service.open({ url: 'https://example.com' });
+    await expect(Promise.resolve().then(() => service.close(opened.session.id))).rejects.toThrow('native close failed');
+    expect(service.list()).toEqual([expect.objectContaining({ id: opened.session.id })]);
+    await service.close(opened.session.id);
+    expect(service.list()).toEqual([]);
+  });
+
   it('applies supervised request guards to navigation redirects and subresources', async () => {
     const window = new FakeWindow();
     const service = new AgentBrowserService({ createWindow: () => window as never });
@@ -396,7 +443,7 @@ describe('agent browser service', () => {
       maxOutput: undefined,
     });
 
-    service.close(opened.session.id);
+    await service.close(opened.session.id);
     expect(runner.close).toHaveBeenCalledWith(expect.objectContaining({ id: opened.session.id }));
   });
 
@@ -458,7 +505,7 @@ describe('agent browser service', () => {
       .resolves.toMatchObject({ dataUrl: 'data:image/png;base64,abc', format: 'png' });
 
     expect(service.list()).toHaveLength(1);
-    service.close(opened.session.id);
+    await service.close(opened.session.id);
     expect(windows[0].closed).toBe(true);
     expect(service.list()).toHaveLength(0);
   });
@@ -510,7 +557,7 @@ describe('agent browser service', () => {
     await expect(service.clickByUid({ sessionId, uid: 'stale_uid' })).rejects.toThrow();
 
     // close 清理 debugger 连接
-    service.close(sessionId);
+    await service.close(sessionId);
     expect(dbg.detach).toHaveBeenCalled();
   });
 
@@ -548,7 +595,7 @@ describe('agent browser service', () => {
     await expect(service.clickByUid({ sessionId, uid: '1_1' })).rejects.toThrow('browser-window engine');
     await expect(service.fillByUid({ sessionId, uid: '1_1', value: 'x' })).rejects.toThrow('browser-window engine');
     await expect(service.pressKey({ sessionId, key: 'Enter' })).rejects.toThrow('browser-window engine');
-    service.close(sessionId);
+    await service.close(sessionId);
   });
 
   it('lists and saves reusable browser profiles', async () => {
@@ -751,7 +798,7 @@ describe('agent browser service', () => {
       success: true,
       data: { ok: true },
     });
-    expect(api.close({ sessionId: 's1' })).toEqual({ success: true });
+    await expect(api.close({ sessionId: 's1' })).resolves.toEqual({ success: true });
     expect(service.command).toHaveBeenCalledWith({ sessionId: 's1', args: ['snapshot'] });
     expect(service.saveProfile).toHaveBeenCalledWith({ profile: 'Work' });
     expect(service.validate).toHaveBeenCalledWith({ url: 'https://example.com' });
@@ -781,7 +828,7 @@ describe('agent browser service', () => {
     expect(cliRunner.textSample).toHaveBeenCalledTimes(1);
     expect(windows).toHaveLength(0);
     expect(opened.textSample).toBe('cli text');
-    service.close(opened.session.id);
+    await service.close(opened.session.id);
     expect(cliRunner.close).toHaveBeenCalledTimes(1);
   });
 
@@ -808,7 +855,7 @@ describe('agent browser service', () => {
     expect(cliRunner.open).not.toHaveBeenCalled();
     expect(windows).toHaveLength(1);
     expect(opened.session.url).toBe('https://example.com/');
-    service.close(opened.session.id);
+    await service.close(opened.session.id);
   });
 
   it('fails closed instead of falling back when the CLI engine is unavailable', async () => {

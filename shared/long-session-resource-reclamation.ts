@@ -185,7 +185,7 @@ export type LongSessionCoordinationDecision = {
   }>;
 };
 
-export type SessionOwnerInventoryKind = ReclaimOwnerKind | 'process';
+export type SessionOwnerInventoryKind = ReclaimOwnerKind | 'process' | 'provider';
 
 export type SessionOwnerInventory = {
   kind: SessionOwnerInventoryKind;
@@ -204,6 +204,11 @@ export type SessionOwnerInventory = {
   worktreeIds: string[] | null;
   sessionIds: string[] | null;
   detail?: string;
+  /** Read directly from provider owner records; never used as an admission authority. */
+  spend?: Array<{
+    scope: 'host' | 'project' | 'session'; spentTokens: number; spentCostMicros: number;
+    heldTokens: number; heldCostMicros: number; activeCalls: number; unknownTokenCalls: number; unknownCostCalls: number;
+  }>;
 };
 
 export type LongSessionResourceInventory = {
@@ -338,7 +343,7 @@ export function actionClosesTerminals(action: ReclaimAction): boolean {
 }
 export type ReclaimOwnerHandlers = {
   terminals?: {
-    reclaim: (params: { sessionKey: string; workspaceId?: string; expectedSessionId?: string | null; honorKeepOnLeave: boolean }) => { attempted: number; reclaimed: number; kept: number };
+    reclaim: (params: { sessionKey: string; workspaceId?: string; expectedSessionId?: string | null; honorKeepOnLeave: boolean }) => { attempted: number; reclaimed: number; kept: number; failed?: number } | Promise<{ attempted: number; reclaimed: number; kept: number; failed?: number }>;
     count: (params: { sessionKey: string; workspaceId?: string; expectedSessionId?: string | null }) => number;
   };
   browsers?: {
@@ -403,15 +408,17 @@ export async function reclaimLongSessionResources(request: ReclaimRequest): Prom
     results.push(ownerResult('terminal', 'unknown', 0, 0, 0, 'terminal owner is unavailable', 'unknown', generation));
   } else if (contract.closesTerminals && request.owners.terminals) {
     try {
-      const result = request.owners.terminals.reclaim({
+      const result = await request.owners.terminals.reclaim({
         sessionKey: request.scope.sessionKey,
         workspaceId: request.scope.workspaceId,
         expectedSessionId: request.scope.expectedSessionId,
         honorKeepOnLeave: request.action !== 'session-delete',
       });
       const kept = result.kept ?? 0;
-      const outcome = result.attempted === 0 ? 'not-owned' : result.reclaimed > 0 ? 'reclaimed' : kept > 0 ? 'kept' : 'failed';
-      results.push(ownerResult('terminal', outcome, result.attempted, result.reclaimed, kept, undefined, 'managed', generation));
+      const failed = result.failed ?? 0;
+      const outcome = failed > 0 ? 'failed' : result.attempted === 0 ? 'not-owned' : result.reclaimed > 0 ? 'reclaimed' : kept > 0 ? 'kept' : 'failed';
+      results.push(ownerResult('terminal', outcome, result.attempted, result.reclaimed, kept,
+        failed ? `${failed} terminal owner(s) remain` : undefined, 'managed', generation));
     } catch (error) {
       results.push(ownerResult('terminal', 'failed', 0, 0, 0, String(error), 'managed', generation));
     }

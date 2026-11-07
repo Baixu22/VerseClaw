@@ -11,6 +11,7 @@ import type { ElectronApplication } from '@playwright/test';
 export type HostResponse<T> = { ok: boolean; data?: T; error?: { code?: string; message?: string } };
 export type GatewayStatus = { state?: string; port?: number; gatewayReady?: boolean };
 export type HostSuccess = { success: boolean };
+const hostSenderWindows = new WeakMap<ElectronApplication, number>();
 
 export const MOCK_MODEL_ID = 'mock-coder';
 
@@ -35,7 +36,8 @@ export async function hostInvoke<T>(
   action: string,
   payload: Record<string, unknown> | null = null,
 ): Promise<T> {
-  const response = (await app.evaluate(async (_electron, request) => {
+  const bridged = (await app.evaluate(async (_electron, input) => {
+    const { senderWindowId, ...request } = input;
     const { ipcMain, BrowserWindow } = process.mainModule!.require(
       'electron',
     ) as typeof import('electron');
@@ -45,15 +47,18 @@ export async function hostInvoke<T>(
       }
     )._invokeHandlers?.get('host:invoke');
     if (!handler) throw new Error('host:invoke handler is not registered');
-    const win = BrowserWindow.getAllWindows().find((candidate) => !candidate.isDestroyed());
+    const win = BrowserWindow.getAllWindows().find((candidate) => !candidate.isDestroyed()
+      && (senderWindowId === undefined || candidate.id === senderWindowId));
     if (!win) throw new Error('No BrowserWindow available for host:invoke sender auth');
     const sender = win.webContents;
     const event = {
       sender,
       senderFrame: { url: typeof sender.getURL === 'function' ? sender.getURL() : '' },
     };
-    return await handler(event, { id: `fp-p1-${Date.now()}-${Math.random()}`, ...request });
-  }, { module, action, payload })) as HostResponse<T>;
+    return { response: await handler(event, { id: `fp-p1-${Date.now()}-${Math.random()}`, ...request }), windowId: win.id };
+  }, { module, action, payload, senderWindowId: hostSenderWindows.get(app) })) as { response: HostResponse<T>; windowId: number };
+  const response = bridged.response;
+  if (response.ok) hostSenderWindows.set(app, bridged.windowId);
   if (!response.ok) {
     throw new Error(`[${response.error?.code ?? 'HOST'}] ${response.error?.message ?? 'failed'}`);
   }
@@ -89,11 +94,13 @@ export type LlmRequestLog = {
   issued: string | null;
 };
 
+export const SCRIPTED_LLM_USAGE = Object.freeze({ prompt_tokens: 120, completion_tokens: 30, total_tokens: 150 });
+
 export type LlmScript = (
   userText: string,
   toolResults: Record<string, string>,
   requestIndex: number,
-) => { toolCall?: ToolCallSpec; text?: string };
+) => { toolCall?: ToolCallSpec; text?: string } | Promise<{ toolCall?: ToolCallSpec; text?: string }>;
 
 /**
  * Scripted OpenAI-compatible chat/completions endpoint. The script decides the
@@ -141,7 +148,7 @@ export function startScriptedLlm(script: LlmScript): Promise<{
       }
       let body = '';
       req.on('data', (chunk) => { body += chunk; });
-      req.on('end', () => {
+      req.on('end', async () => {
         try {
         let parsed: {
           stream?: boolean;
@@ -182,14 +189,14 @@ export function startScriptedLlm(script: LlmScript): Promise<{
         }
         // A filtered tool never produces a result frame. Let the scripted
         // control terminate from the request count in that case.
-        const action = script(userText, toolResults, log.length);
+        const action = await script(userText, toolResults, log.length);
         log.push({
           turn: userText.slice(0, 60),
           toolResults,
           issued: action.toolCall ? action.toolCall.id : `text:${action.text?.slice(0, 40)}`,
         });
 
-        const usage = { prompt_tokens: 120, completion_tokens: 30, total_tokens: 150 };
+        const usage = SCRIPTED_LLM_USAGE;
         const finishReason = action.toolCall ? 'tool_calls' : 'stop';
 
         if (parsed.stream) {

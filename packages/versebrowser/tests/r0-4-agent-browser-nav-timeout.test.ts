@@ -81,4 +81,18 @@ describe('R0-4 agent browser navigation timeout', () => {
     webContents.emit('did-finish-load');
     await expect(promise).resolves.toBeUndefined();
   });
+
+  it('cleans the wait when loadURL rejects before a navigation event', async () => {
+    const webContents = makeFakeWebContents();
+    const failure = new Error('ERR_FAILED');
+    const loading = Promise.reject(failure);
+    void loading.catch(() => undefined);
+    const wait = waitForWebContents(webContents as never, 'did-finish-load', 1000, loading);
+    const assertion = expect(wait).rejects.toBe(failure);
+    await vi.advanceTimersByTimeAsync(1500);
+    await assertion;
+    expect(webContents.stop).not.toHaveBeenCalled();
+    expect(webContents.removeListener).toHaveBeenCalledWith('did-finish-load', expect.any(Function));
+    expect(webContents.removeListener).toHaveBeenCalledWith('did-fail-load', expect.any(Function));
+  });
 });

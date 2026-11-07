@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { once } from 'node:events';
 import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { electronApp, electronBrowserWindow } from '../host/electron-optional.ts';
@@ -134,6 +135,7 @@ type AgentBrowserRecord = {
   runtimeExpiresAt?: number;
   /** P1-7：多标签页管理器，仅 browser-window 引擎可用。 */
   tabManager?: AgentBrowserTabManager;
+  closing?: Promise<void>;
 };
 
 export type AgentBrowserSupervisedRequestGuard = (
@@ -403,6 +405,7 @@ export async function waitForWebContents(
   webContents: AgentBrowserWebContents,
   eventName: 'did-finish-load' | 'dom-ready',
   timeoutMs: number = NAVIGATION_TIMEOUT_MS,
+  loading?: Promise<unknown>,
 ): Promise<void> {
   await new Promise<void>((resolve, reject) => {
     const events = webContents as unknown as {
@@ -447,6 +450,14 @@ export async function waitForWebContents(
     timer.unref?.();
     events.once(eventName, onReady);
     events.on('did-fail-load', onFail);
+    // loadURL may reject without emitting did-fail-load. Its failure ends the
+    // same wait so an old timer cannot stop a subsequent navigation.
+    void loading?.catch(error => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      reject(error);
+    });
   });
 }
 
@@ -694,7 +705,7 @@ export class AgentBrowserService {
     } finally {
       if (sessionId) {
         try {
-          this.close(sessionId);
+          await this.close(sessionId);
         } catch {
           // Validation sessions are best-effort cleanup.
         }
@@ -784,7 +795,7 @@ export class AgentBrowserService {
       const record = this.sessions.get(session.id)!;
       window.webContents.once('destroyed', () => {
         this.browserWindowDestroyed(session.id);
-        if (!this.closingSessions.has(session.id) && this.sessions.has(session.id)) this.close(session.id);
+        if (!this.closingSessions.has(session.id) && this.sessions.has(session.id)) void this.close(session.id).catch(() => {});
       });
       if (requestGuard) this.installSupervisedRequestGuard(record, requestGuard);
       record.tabManager = new AgentBrowserTabManager({
@@ -808,23 +819,18 @@ export class AgentBrowserService {
       });
       record.tabManager.registerMainWindow(window, url ?? '', '');
       if (url) {
-        try {
-          await this.navigate({ sessionId: session.id, url, waitUntil: 'load' });
-          if (requireCompleteNetwork) this.assertSupervisedRequestSafe(session.id);
-        } catch (error) {
-          if (requestGuard) this.close(session.id);
-          throw error;
-        }
+        await this.navigate({ sessionId: session.id, url, waitUntil: 'load' });
+        if (requireCompleteNetwork) this.assertSupervisedRequestSafe(session.id);
       }
       return { session: this.snapshot(session.id), textSample: await this.textSample(session.id) };
     } catch (error) {
       // Host-owned setup may have registered grants/proxies before a window or
       // service record exists. Always unwind through the same virtual owner.
-      try { this.close(session.id); }
+      try { await this.close(session.id); }
       catch (cleanupError) {
         // A not-yet-published record can be absent while the Host's close
         // finally still releases its setup. Retain actual cleanup failures.
-        if (this.sessions.has(session.id)) throw new AggregateError([error, cleanupError], 'Browser open and cleanup failed');
+        if (this.sessions.has(session.id)) throw new AggregateError([error, cleanupError], 'Browser open and cleanup failed', { cause: cleanupError });
       }
       throw error;
     }
@@ -849,9 +855,9 @@ export class AgentBrowserService {
     }
     const waitUntil = payload.waitUntil === 'dom-ready' ? 'dom-ready' : 'did-finish-load';
     const window = this.requireWindow(record);
-    const wait = waitForWebContents(window.webContents, waitUntil);
-    await window.loadURL(url);
-    await wait;
+    const loading = Promise.resolve().then(() => window.loadURL(url));
+    const wait = waitForWebContents(window.webContents, waitUntil, NAVIGATION_TIMEOUT_MS, loading);
+    await Promise.all([loading, wait]);
     return await this.refresh(record);
   }
 
@@ -1162,38 +1168,49 @@ export class AgentBrowserService {
     return await this.refresh(record);
   }
 
-  close(sessionId: string): void {
-    if (this.closingSessions.has(sessionId)) return;
+  close(sessionId: string): Promise<void> {
     const record = this.sessions.get(sessionId);
     if (!record) throw new Error(`Agent browser session not found: ${sessionId}`);
     this.closingSessions.add(sessionId);
-    try {
-      const controlState = this.browserControlStates.get(sessionId);
-      if (controlState) {
-        this.browserControlStates.delete(sessionId);
-        void controlState.connection.detach();
-      }
-      if (record.engine === 'agent-browser-cli') {
-        this.sessions.delete(sessionId);
-        void this.requireCliRunner().close(record.session);
-        return;
-      }
-      // Session termination is host-owned: beforeunload must not keep a page
-      // alive after its session or request policy has been removed. The destroyed
-      // listeners release each window's guard only after actual destruction.
-      if (record.tabManager) {
-        for (const page of record.tabManager.listPages()) {
-          const pageWindow = record.tabManager.getPageWindow(page.pageId);
-          if (pageWindow && !pageWindow.isDestroyed()) pageWindow.destroy();
+    record.closing ??= this.closeOwnedRecord(sessionId, record).finally(() => {
+      record.closing = undefined; this.closingSessions.delete(sessionId);
+    });
+    return record.closing;
+  }
+
+  private async closeOwnedRecord(sessionId: string, record: AgentBrowserRecord): Promise<void> {
+    const guardedContents = record.window && !record.window.isDestroyed() ? record.window.webContents : undefined;
+    const guardedId = guardedContents?.id;
+    const guardedSession = guardedContents?.session;
+    if (record.engine === 'agent-browser-cli') {
+      await this.requireCliRunner().close(record.session);
+    } else {
+      const windows = record.tabManager
+        ? record.tabManager.listPages().map(page => record.tabManager!.getPageWindow(page.pageId)!)
+        : [this.requireWindow(record)];
+      for (const window of windows) {
+        if (window.isDestroyed()) continue;
+        // Host-owned termination bypasses page beforeunload handlers.
+        window.destroy();
+        if (!window.isDestroyed()) {
+          await once(window as unknown as NodeJS.EventEmitter, 'closed', { signal: AbortSignal.timeout(NAVIGATION_TIMEOUT_MS) });
         }
-        record.tabManager.clear();
-      } else if (record.window && !record.window.isDestroyed()) {
-        record.window.destroy();
+        if (!window.isDestroyed()) throw new Error('Browser close receipt did not confirm window destruction');
       }
-      this.sessions.delete(sessionId);
-    } finally {
-      this.closingSessions.delete(sessionId);
     }
+    this.sessions.delete(sessionId);
+    const controlState = this.browserControlStates.get(sessionId);
+    if (controlState) {
+      this.browserControlStates.delete(sessionId);
+      void controlState.connection.detach();
+    }
+    if (guardedId !== undefined && guardedSession) {
+      this.supervisedRequestGuards.delete(guardedId);
+      const sessionIds = this.supervisedRequestSessionIds.get(guardedSession);
+      sessionIds?.delete(guardedId);
+      if (sessionIds?.size === 0) this.supervisedRequestSessionIds.delete(guardedSession);
+    }
+    record.tabManager?.clear();
   }
 
   private installSupervisedRequestGuard(
@@ -1222,6 +1239,12 @@ export class AgentBrowserService {
       this.supervisedRequestSessionIds.set(electronSession, sessionIds);
     }
     sessionIds.add(webContentsId);
+    window.webContents.once('destroyed', () => {
+      this.supervisedRequestGuards.delete(webContentsId);
+      const remaining = this.supervisedRequestSessionIds.get(electronSession);
+      remaining?.delete(webContentsId);
+      if (remaining?.size === 0) this.supervisedRequestSessionIds.delete(electronSession);
+    });
     if (this.supervisedRequestSessions.has(electronSession)) return;
     this.supervisedRequestSessions.add(electronSession);
     electronSession.webRequest.onBeforeRequest((details, callback) => {
@@ -1352,9 +1375,9 @@ export class AgentBrowserService {
     const { window, entry } = tabManager.navigatePage(payload.url, payload.pageId);
     const waitUntil = payload.waitUntil === 'dom-ready' ? 'dom-ready' : 'did-finish-load';
     // 先设置 wait promise 再 loadURL，避免竞态
-    const wait = waitForWebContents(window.webContents, waitUntil);
-    await window.loadURL(payload.url);
-    await wait;
+    const loading = Promise.resolve().then(() => window.loadURL(payload.url));
+    const wait = waitForWebContents(window.webContents, waitUntil, NAVIGATION_TIMEOUT_MS, loading);
+    await Promise.all([loading, wait]);
     tabManager.updatePageInfo(entry.pageId, {
       url: payload.url,
       title: window.webContents.getTitle(),
@@ -1393,6 +1416,7 @@ export class AgentBrowserService {
 
   private getRecord(sessionId: string): AgentBrowserRecord {
     const record = this.sessions.get(sessionId);
+    if (record?.closing) throw new Error(`Agent browser session is closing: ${sessionId}`);
     if (record?.tabManager) {
       record.tabManager.listPages();
       const activeWindow = record.tabManager.getActiveWindow();
@@ -1402,7 +1426,7 @@ export class AgentBrowserService {
       }
     }
     if (!record || (record.window?.isDestroyed() ?? false)) {
-      if (record) this.close(sessionId);
+      if (record) void this.close(sessionId).catch(() => {});
       throw new Error(`Agent browser session not found: ${sessionId}`);
     }
     return record;

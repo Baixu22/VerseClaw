@@ -33,6 +33,7 @@ import { SUMMARIZATION_SYSTEM_PROMPT } from "../../../packages/agent-core/src/ha
 import type { StreamFn } from "../runtime/index.js";
 import { stripSystemPromptCacheBoundary } from "../system-prompt-cache-boundary.js";
 import type { EmbeddedRunAttemptParams } from "./run/types.js";
+import type { ProviderSpendRunContext } from '../provider-spend-budget.js';
 
 let embeddedAgentBaseStreamFnCache = new WeakMap<object, StreamFn | undefined>();
 let openClawNativeCodexResponsesStreamFnForTest: StreamFn | undefined;
@@ -140,8 +141,9 @@ export async function resolveEmbeddedAgentApiKey(params: {
   return params.authStorage ? await params.authStorage.getApiKey(params.provider) : undefined;
 }
 
-export function resolveEmbeddedAgentStreamFn(params: {
+type EmbeddedStreamResolutionParams = {
   cfg?: unknown;
+  spend?: ProviderSpendRunContext;
   currentStreamFn: StreamFn | undefined;
   providerStreamFn?: StreamFn;
   sessionId: string;
@@ -153,7 +155,22 @@ export function resolveEmbeddedAgentStreamFn(params: {
   resolvedApiKey?: string;
   authProfileId?: string;
   authStorage?: { getApiKey(provider: string): Promise<string | undefined> };
-}): StreamFn {
+};
+
+export function resolveEmbeddedAgentStreamFn(params: EmbeddedStreamResolutionParams): StreamFn {
+  const inner = resolveUnbudgetedEmbeddedAgentStreamFn(params);
+  const spend = params.spend;
+  if (!spend?.config || !Object.values(spend.config).some(limit => limit && (limit.maxTokens !== undefined || limit.maxCostUsd !== undefined))) return inner;
+  const ownerSpend = structuredClone(spend);
+  // Opt-in only: disabled budgets do not load SQLite or change transport behavior.
+  let wrapped: Promise<StreamFn> | undefined;
+  return (model, context, options) => {
+    wrapped ??= import('../provider-spend-budget.js').then(({ wrapProviderSpendStream }) => wrapProviderSpendStream(inner, ownerSpend));
+    return wrapped.then(stream => stream(model, context, options));
+  };
+}
+
+function resolveUnbudgetedEmbeddedAgentStreamFn(params: EmbeddedStreamResolutionParams): StreamFn {
   if (params.providerStreamFn) {
     return wrapEmbeddedAgentStreamFn(params.providerStreamFn, {
       runSignal: params.signal,

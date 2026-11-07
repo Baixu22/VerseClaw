@@ -3232,6 +3232,11 @@ export const chatHandlers: GatewayRequestHandlers = {
       );
       return;
     }
+    if (p.workspaceId !== undefined && !canUseBackendWorkspaceDir(client)
+      && context.getRuntimeConfig().runtime?.providerBudget?.project) {
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'Project budget workspaceId is reserved for backend callers.'));
+      return;
+    }
     const suppressCommandInterpretation = p.suppressCommandInterpretation === true;
     const explicitOriginResult = normalizeExplicitChatSendOrigin({
       originatingChannel: p.originatingChannel,

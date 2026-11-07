@@ -1,0 +1,11 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "passed",
+  "file": "pending-synthesis.png",
+  "checks": [
+    "Pending badge and waiting explanation are readable",
+    "Accepted planner role remains visible",
+    "Verifier and evidence fields fit the panel without clipping"
+  ]
+}

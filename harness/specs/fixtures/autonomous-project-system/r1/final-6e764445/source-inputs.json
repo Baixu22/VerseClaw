@@ -1,0 +1,661 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r1-clean-candidate-reader",
+  "oldHead": "650e8d02b47ec461e95dcda51d7fa47eb3dc2420",
+  "candidate": {
+    "commit": "6e764445cf805b48eb86e5e39f48d05865c70ad6",
+    "tree": "5971f588bfbfdd82fa208d1e6acedc685f2f3c86",
+    "dirty": false
+  },
+  "implementation": "D:/ClawX-work/autonomy-host-readiness",
+  "verifier": "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/clean-verify",
+  "files": [
+    {
+      "file": "README.ja-JP.md",
+      "sha256": "ee233a84ab7e7e0a87167e279153843708ff63180be363b46b13523021a7c42f",
+      "bytes": 21681
+    },
+    {
+      "file": "README.md",
+      "sha256": "29b2db21d69ea3e0cca9a030f3b8ceb41358dca2f166556401dbd77638900eb3",
+      "bytes": 19911
+    },
+    {
+      "file": "README.zh-CN.md",
+      "sha256": "cf14b5804194130dc49ce37b08cb8e0117057887cc46b903eaf8b3eced787271",
+      "bytes": 18362
+    },
+    {
+      "file": "docs/modules/multi-agent-and-tasks.md",
+      "sha256": "0777d26be785c530d446c561f6771c709edf0c3750dc2f0500b30eaeaf09edf1",
+      "bytes": 18197
+    },
+    {
+      "file": "docs/modules/resources-and-observability.md",
+      "sha256": "1bc70e44578339f1e6ee33a3d8ea764033dc2ff0c4640dd7fdf9bcba577150df",
+      "bytes": 20466
+    },
+    {
+      "file": "electron/gateway/agent-browser-bridge.ts",
+      "sha256": "55eea0a5bbc5914c9f1f7dc50ebdcee8d52e30bdf26ac37524742d26f7c2d855",
+      "bytes": 13183
+    },
+    {
+      "file": "electron/gateway/process-launcher.ts",
+      "sha256": "c1c58d9ec889a9009daa8fcb7d12944e61103fd992ae53e6843eb17bc38d373c",
+      "bytes": 12888
+    },
+    {
+      "file": "electron/gateway/supervisor.ts",
+      "sha256": "6888f4e17bfb07aa4128458ce2372eeb64f71c40c79891349b92460001c099d6",
+      "bytes": 12692
+    },
+    {
+      "file": "electron/main/index.ts",
+      "sha256": "b73c16848d6c96cafa4fdff7b22b11b8a45d09031d075f2243d3db1c8a829cc4",
+      "bytes": 59382
+    },
+    {
+      "file": "electron/main/ipc-handlers.ts",
+      "sha256": "d4c9d5b106f26096ebf011a3a0dacabf847b112b4e36155916bfc075b6ff0180",
+      "bytes": 12061
+    },
+    {
+      "file": "electron/services/agent-browser-api.ts",
+      "sha256": "96a8239bf162d925992f445d4719ef55776c45e15b4d1a44fc505cc2a2786695",
+      "bytes": 29913
+    },
+    {
+      "file": "electron/services/gateway-api.ts",
+      "sha256": "7db2202bd878e51272d6d619fe6ee8a4ded4e5a4fda3cd41b07d818fb381dc1e",
+      "bytes": 25119
+    },
+    {
+      "file": "electron/services/long-session-resource-reclamation.ts",
+      "sha256": "78969954e33d23b984898a065d0c4ea9da5357aa5499f61323471d9d0d8afea9",
+      "bytes": 12776
+    },
+    {
+      "file": "electron/services/resource-envelope-api.ts",
+      "sha256": "79172d18c4085b13445b5f0c2538712c5645ba3a5767468adeffe83a6eb8fd25",
+      "bytes": 690
+    },
+    {
+      "file": "electron/services/resource-envelope.ts",
+      "sha256": "63a05e46ac98f869a3f1b0eea3c736916daa71963e6a1ec103f033bac4205b2b",
+      "bytes": 4527
+    },
+    {
+      "file": "electron/services/resource-fabric.ts",
+      "sha256": "8b07961ffb19790f48a867d43147db3fd0fed592c788d46c086514383a598557",
+      "bytes": 19114
+    },
+    {
+      "file": "electron/services/sessions-api.ts",
+      "sha256": "8407156c81ce0cc28585e4c05dc2e5cbf10f2d2b2bb60ffad6ce427d84988c1a",
+      "bytes": 125051
+    },
+    {
+      "file": "electron/services/terminal-api.ts",
+      "sha256": "222f69a7bc109564d486eb3e6b2fba30e461e9b8c9cb588d305ee65addf8e693",
+      "bytes": 25767
+    },
+    {
+      "file": "electron/services/terminal-session-manager.ts",
+      "sha256": "6b86e61a5522c092f5cd4655062226ca060422fddae1da903eba51ce775826b1",
+      "bytes": 23050
+    },
+    {
+      "file": "electron/services/workspaces-api.ts",
+      "sha256": "1b261f0cee7d53039f65c01510867a1cd100c075f10fc9d6d9993933b64afaa9",
+      "bytes": 66547
+    },
+    {
+      "file": "harness/specs/rules/autonomy-resource-owner-admission.md",
+      "sha256": "4cb7da832455f646322d400f67647aba4becb97e3f99fa6ca3b3f04f4775ba8d",
+      "bytes": 8178
+    },
+    {
+      "file": "harness/specs/scenarios/autonomy-resource-admission.md",
+      "sha256": "8c243ed505beb1d95d2a5969c246b4f4492a11aad9918afd723c452b4a2d3b1e",
+      "bytes": 2683
+    },
+    {
+      "file": "harness/specs/tasks/autonomy-resource-admission.md",
+      "sha256": "effc0d232f7d6dabee9680c4adcf0bfc0e55b55996dffe0f17fcfef4e6b2ef63",
+      "bytes": 16481
+    },
+    {
+      "file": "openclaw_runtime/src/agents/checkpoint-rollback-executor.test.ts",
+      "sha256": "796d9b0852bb5ddc994d906217225147a67c98de1744cb49b65e25e7caad2ff8",
+      "bytes": 21603
+    },
+    {
+      "file": "openclaw_runtime/src/agents/checkpoint-rollback-executor.ts",
+      "sha256": "41c2afb3b764d805e73dc9f881525dd09955f1c6f7723d7f41580ea2ad5b16c4",
+      "bytes": 12684
+    },
+    {
+      "file": "openclaw_runtime/src/agents/command/attempt-execution.ts",
+      "sha256": "2a69d94ad626974ba91b0dc7a188b2f09faf196c557a06282dba2c1e1fd3b28d",
+      "bytes": 32473
+    },
+    {
+      "file": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+      "sha256": "13ccd53f55daf35224f35a3facd7d140a18dc7e7c18bd2f14e15f5c7133eef91",
+      "bytes": 263689
+    },
+    {
+      "file": "openclaw_runtime/src/agents/embedded-agent-runner/stream-resolution.ts",
+      "sha256": "a0546b245e0890ec20435852ba9c5d48ab5b057194ca384afcac438d4a420dc0",
+      "bytes": 18152
+    },
+    {
+      "file": "openclaw_runtime/src/agents/handoff-artifacts.ts",
+      "sha256": "70313ad51df2158cf12003b6ac1f19ebda487b8a21171c11ea264718a5835737",
+      "bytes": 11914
+    },
+    {
+      "file": "openclaw_runtime/src/agents/long-session-delegation-receipt.ts",
+      "sha256": "9761a249c506e7481a8eb59c1cdd445d06d3be325224bae0a33e2ef2b8f8efe5",
+      "bytes": 10770
+    },
+    {
+      "file": "openclaw_runtime/src/agents/orchestration-resource-scheduler.ts",
+      "sha256": "42092785352056b4cdea850077475a375f2d151f3b4aa1ae36a360905e2c6b1e",
+      "bytes": 10655
+    },
+    {
+      "file": "openclaw_runtime/src/agents/orchestration-synthesizer.ts",
+      "sha256": "9fcc48b3a3b0ec733bc16fa6c5d8ae5c73a508427b8d1945b2c6872af0c63971",
+      "bytes": 6981
+    },
+    {
+      "file": "openclaw_runtime/src/agents/orchestrator-run-observed.ts",
+      "sha256": "ec1369d0f68b485d7476b921179fc13f9b9fcdec930e9cb5ab5abc23122b6b6e",
+      "bytes": 49585
+    },
+    {
+      "file": "openclaw_runtime/src/agents/provider-outbound-budget.ts",
+      "sha256": "bf0a267416aa9033b1dd6ca11abebba5e9cd344caf75b612bf2b858252b00a95",
+      "bytes": 22798
+    },
+    {
+      "file": "openclaw_runtime/src/agents/provider-spend-budget.ts",
+      "sha256": "16a953d833cafc84b10c654a4e25f6ecddc382a458fb33bbf2a07e9f8352691a",
+      "bytes": 18859
+    },
+    {
+      "file": "openclaw_runtime/src/agents/provider-spend-context.ts",
+      "sha256": "a22382285b55d34b0a0d4c66c89070d0b91fe4217fc4207b884c02995cd405a1",
+      "bytes": 583
+    },
+    {
+      "file": "openclaw_runtime/src/agents/provider-transport-fetch.ts",
+      "sha256": "46b140440dcd68c3d2ce0aafa932086d88cb3bbd7e103849fc0489a011efaa0a",
+      "bytes": 39425
+    },
+    {
+      "file": "openclaw_runtime/src/agents/resource-leases.test.ts",
+      "sha256": "e39c3d8719ce75695d979d72fcec70c64ce11e4efbf2849b4b41b52b607035fe",
+      "bytes": 9994
+    },
+    {
+      "file": "openclaw_runtime/src/agents/resource-leases.ts",
+      "sha256": "e5c7fe6cfbfc39066e2d0172e1a19ac005b65d687d0cb437ee61e4a130f98bdc",
+      "bytes": 15357
+    },
+    {
+      "file": "openclaw_runtime/src/agents/role-spawn.ts",
+      "sha256": "1b1798a397909e46cb9c7215f029e4080ed4b1ed7dcd3269ca689755531b7d8d",
+      "bytes": 15175
+    },
+    {
+      "file": "openclaw_runtime/src/agents/sessions/tools/bash-workspace-lease.test.ts",
+      "sha256": "104e43f108cef31d9b6db9e0383480993ccddb3c9f7179b56ebabd79d94dd726",
+      "bytes": 2881
+    },
+    {
+      "file": "openclaw_runtime/src/agents/sessions/tools/bash.ts",
+      "sha256": "1beaac49b3778eec418c03e785181ad5316dac1d37d4c1b2cb707104156630f8",
+      "bytes": 18441
+    },
+    {
+      "file": "openclaw_runtime/src/agents/sessions/tools/edit.ts",
+      "sha256": "42190a01ebeb1ad6211c3f5a8c1a1a8783d8d9f79d3b7e7e7bde3d275b939ec6",
+      "bytes": 21221
+    },
+    {
+      "file": "openclaw_runtime/src/agents/sessions/tools/file-mutation-queue.ts",
+      "sha256": "867f943b2d3e38bc97a1d7f57daebc073440fc3ad0a14488a9faa3f3005b0d9a",
+      "bytes": 985
+    },
+    {
+      "file": "openclaw_runtime/src/agents/sessions/tools/find.ts",
+      "sha256": "c63aaa654a427ea53917ce06f6effc595b0da3f1fd073ecabdb0bde528278217",
+      "bytes": 15491
+    },
+    {
+      "file": "openclaw_runtime/src/agents/sessions/tools/grep.ts",
+      "sha256": "5e712e1a7beb816080914a1eb0313bdbd9c9e50d83deff0473d197c5c9d22b89",
+      "bytes": 18070
+    },
+    {
+      "file": "openclaw_runtime/src/agents/sessions/tools/write.ts",
+      "sha256": "9347d0bd81b4ee6e599fbf9d4ddd6ad00f6f64e700b66b56bd57e17edb75660c",
+      "bytes": 16570
+    },
+    {
+      "file": "openclaw_runtime/src/agents/subagent-registry-dispatch.ts",
+      "sha256": "a72e2aeb3107db017414b7878d87f0ad3e97fc287b2b864483382627630f321b",
+      "bytes": 8145
+    },
+    {
+      "file": "openclaw_runtime/src/agents/subagent-registry-helpers.ts",
+      "sha256": "885da639b4342cd601ae100f76352fbdd1ca06a042da55879b2c0fe7d7093d4a",
+      "bytes": 14748
+    },
+    {
+      "file": "openclaw_runtime/src/agents/subagent-registry-lifecycle.ts",
+      "sha256": "4a534c8a320bb3fae917bac248bb53c67d07ee2a340b38b08f3668dba7138538",
+      "bytes": 48935
+    },
+    {
+      "file": "openclaw_runtime/src/agents/subagent-registry-queries.quota.test.ts",
+      "sha256": "aa0688ac8306854e1608d35065d913344f38c197fa2806145531d3e000f95f5c",
+      "bytes": 3488
+    },
+    {
+      "file": "openclaw_runtime/src/agents/subagent-registry-queries.ts",
+      "sha256": "7dbfa78569e080daff754004f69ea3190f3c95d6030da27cc972ddaa7c3137ce",
+      "bytes": 16794
+    },
+    {
+      "file": "openclaw_runtime/src/agents/subagent-registry-run-manager.ts",
+      "sha256": "4811d3faced87047c07cf50c1bfa33546c30c34aa98a7830016b99f1e7959574",
+      "bytes": 32484
+    },
+    {
+      "file": "openclaw_runtime/src/agents/subagent-registry-state.ts",
+      "sha256": "486efaff6adea4553820a76a090c30185a50bebfdcf27e78a249696f1a81e8e0",
+      "bytes": 3483
+    },
+    {
+      "file": "openclaw_runtime/src/agents/subagent-registry.store.sqlite.ts",
+      "sha256": "28c6a7c64fadc8c90f4ccb3a2181af812b05c1c3dbe6708857d8b1f4ad93715d",
+      "bytes": 18500
+    },
+    {
+      "file": "openclaw_runtime/src/agents/subagent-registry.ts",
+      "sha256": "37c3e21f3cb0b427511b2d5bce894d46967e1ccaed791ff419ac2ce7d4e6b721",
+      "bytes": 71367
+    },
+    {
+      "file": "openclaw_runtime/src/agents/subagent-registry.types.ts",
+      "sha256": "5008c4e6c94a89ec363a276880217f292d99bc6911c72d0855453336b0489371",
+      "bytes": 8653
+    },
+    {
+      "file": "openclaw_runtime/src/agents/subagent-spawn.ts",
+      "sha256": "38be37a248ff1cab6ad94dc1bbad53339b81c28188d2d354a8eb301d50da7641",
+      "bytes": 67621
+    },
+    {
+      "file": "openclaw_runtime/src/agents/symbol-lease-guard.test.ts",
+      "sha256": "899d6c2d5e8a782413058cca0b543bab60cc12f5ba8765f1b0fc13d2f2994fee",
+      "bytes": 4940
+    },
+    {
+      "file": "openclaw_runtime/src/agents/symbol-lease-guard.ts",
+      "sha256": "f4d7ced5d9846ec3699bcde7b81b5372c44694b1a51accdd2ed19510b621c80e",
+      "bytes": 4868
+    },
+    {
+      "file": "openclaw_runtime/src/agents/worktree-service.ts",
+      "sha256": "c8066ad8b65ab16fb07260593f8598e3ee8f6551034957b70582c80471b0a5da",
+      "bytes": 26207
+    },
+    {
+      "file": "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+      "sha256": "e8b0a8a7e7ad33901fa0f42f7b00313bd47460e18f3a1e767566861fa2cec6a8",
+      "bytes": 6354
+    },
+    {
+      "file": "openclaw_runtime/src/config/schema.help.ts",
+      "sha256": "108d0abbb1979d93a1f02afb181d6be03cc443a5a79bc9af92bb1e6fcac35f01",
+      "bytes": 231595
+    },
+    {
+      "file": "openclaw_runtime/src/config/schema.labels.ts",
+      "sha256": "a543f96087d235d703beef08b00869772a6a429417c7efa2a5141c6660d084d3",
+      "bytes": 75796
+    },
+    {
+      "file": "openclaw_runtime/src/config/sessions/types.ts",
+      "sha256": "4bd40efac6d895cc9f6abacd2eed8e6cfb75382325a3c8cfc457c9051f5b49bb",
+      "bytes": 26594
+    },
+    {
+      "file": "openclaw_runtime/src/config/types.openclaw.ts",
+      "sha256": "ff480d2119c84fcb098824b46194d76c8b143e1d7703c2d8b24f0fedcc994687",
+      "bytes": 30935
+    },
+    {
+      "file": "openclaw_runtime/src/config/zod-schema.ts",
+      "sha256": "8b336db2b552c917f69b4920d6dda287b35430bb7d52a5315d09adb16adfffd6",
+      "bytes": 61218
+    },
+    {
+      "file": "openclaw_runtime/src/context-engine/factstore/symbol-lease.test.ts",
+      "sha256": "f05a617e831032f2a0698c90149d642dc188e135c9a922c07c17a46d9ee3b8a5",
+      "bytes": 9265
+    },
+    {
+      "file": "openclaw_runtime/src/context-engine/factstore/symbol-lease.ts",
+      "sha256": "da408158e2059a4dd69272c408b6bbc36038f052ab9fce5f1e2c17e9b81af09e",
+      "bytes": 11758
+    },
+    {
+      "file": "openclaw_runtime/src/gateway/server-methods/chat.ts",
+      "sha256": "33d42eeebeaa328927a37257f68fb67c46ed7c081549fc6aba13ed0295489ac8",
+      "bytes": 200986
+    },
+    {
+      "file": "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts",
+      "sha256": "cb003ea703a0bfe185eacfe85fa3728eaabd61124e87eee8655637df18018d5e",
+      "bytes": 70077
+    },
+    {
+      "file": "openclaw_runtime/src/gateway/session-resource-inventory.ts",
+      "sha256": "2855229e99f7a1702e8bd8e191ae038a5de2e779dedc386168d01046a2b63094",
+      "bytes": 9816
+    },
+    {
+      "file": "openclaw_runtime/src/infra/bounded-concurrency.ts",
+      "sha256": "49bd7d87f8c0d855c18ad2c15449263933fe0f82a5634afd569e7ea34090c461",
+      "bytes": 12989
+    },
+    {
+      "file": "openclaw_runtime/src/plugins/session-entry-slot-keys.ts",
+      "sha256": "0966e671788d62459c2d70231c7c09398054b0a025e7e4ef43c1f1f388a6be7a",
+      "bytes": 4793
+    },
+    {
+      "file": "openclaw_runtime/src/state/openclaw-state-db.generated.d.ts",
+      "sha256": "716a21dc07f5927221498c858b91ae62bd0ff3af0d4789bf8dd28e2b074a8581",
+      "bytes": 36438
+    },
+    {
+      "file": "openclaw_runtime/src/state/openclaw-state-schema.generated.ts",
+      "sha256": "703e8a2052ca78ad1c1e615d4f23fa07c2af337b8964f1f15eb6f20f39f1a749",
+      "bytes": 57708
+    },
+    {
+      "file": "openclaw_runtime/src/state/openclaw-state-schema.sql",
+      "sha256": "b283999facdda91423920d6882fc9a5828b96ecb0db0e71e0fe25eb73f8831c7",
+      "bytes": 57560
+    },
+    {
+      "file": "packages/versebrowser/src/engine/api.ts",
+      "sha256": "ea481eb1d48a9c2cca66a77c775a1929daa292bf1c4f7bd09a93d5fae1cad2ef",
+      "bytes": 12444
+    },
+    {
+      "file": "packages/versebrowser/src/engine/service.ts",
+      "sha256": "eb7b254c72de0462dbf4c98ba4a76b2d2c8d2dc1099da02b7316bc606de70f67",
+      "bytes": 110897
+    },
+    {
+      "file": "packages/versebrowser/src/gateway/bridge.ts",
+      "sha256": "91b526b72e6c332b1323b8a2d8b6b9aaf8cb45c15f9d075a10daa938d1bf028f",
+      "bytes": 4516
+    },
+    {
+      "file": "packages/versebrowser/tests/agent-browser-runtime-mode.test.ts",
+      "sha256": "cecd86b37707792c821fab9d070133690830864e1eb9d6fe5f23ecf5b0a3c597",
+      "bytes": 10028
+    },
+    {
+      "file": "packages/versebrowser/tests/agent-browser-service.test.ts",
+      "sha256": "6ac2f08ea5378e90cd63c83cd59c590507850858af3fe9662bf4203b5c39178d",
+      "bytes": 35859
+    },
+    {
+      "file": "packages/versebrowser/tests/r0-4-agent-browser-nav-timeout.test.ts",
+      "sha256": "2e9e4aa0b2cd0da26f7f9899a9910626233edab371f08c3e24994a9fb442ed4b",
+      "bytes": 3368
+    },
+    {
+      "file": "shared/dcs/component-disposition-catalog.ts",
+      "sha256": "83ee1f20f19feaf99eef9fc85718830930021875cf7f7a61cd598f2cdd77837d",
+      "bytes": 48293
+    },
+    {
+      "file": "shared/i18n/locales/en/agents.json",
+      "sha256": "97edaca1c50463b6b023660ce194b9a46d1fb2838b03cced0bb6731ae7d475ea",
+      "bytes": 39526
+    },
+    {
+      "file": "shared/i18n/locales/ja/agents.json",
+      "sha256": "2416c76add3ad689268f83fd6cdcc198bdfa44cc0c4ad65e849233d12b374d77",
+      "bytes": 46033
+    },
+    {
+      "file": "shared/i18n/locales/ru/agents.json",
+      "sha256": "e179fd75d6bbc11bb7d6d8e5c37cbb093005dead9f8879aabec6f387fcf86918",
+      "bytes": 55829
+    },
+    {
+      "file": "shared/i18n/locales/zh/agents.json",
+      "sha256": "88f6e8ca4abbe319a0aafe4f3f164ec9ace1c3f8d202a07b9ab6318c35289057",
+      "bytes": 38523
+    },
+    {
+      "file": "shared/long-session-resource-reclamation.ts",
+      "sha256": "36ead351d8c3279c21e5655f317b91e50b67f1af01666a8ed568fbb199b74399",
+      "bytes": 22349
+    },
+    {
+      "file": "shared/resources/drf-share.ts",
+      "sha256": "36ac8d95320cc36a85c2ec6df5a4eef92749661aed5465af4a46b0fc3ddf9340",
+      "bytes": 3721
+    },
+    {
+      "file": "shared/resources/priority-queue.ts",
+      "sha256": "043cbfdeb56c9cb05d3a07ae8c0350f9e9da97c4042a88ee02da4eaf6af4b739",
+      "bytes": 2704
+    },
+    {
+      "file": "shared/task-ledger-process.ts",
+      "sha256": "021a5fb39b556735ee60dc935323ba7522ab0d189e90c90da7b4997a8720f04e",
+      "bytes": 4705
+    },
+    {
+      "file": "src/components/agents/RolesOrchestrationPanel.tsx",
+      "sha256": "fb7a019531630a78445684d5804da1b60198981d1aeb0af9f6d1376f0fc3decd",
+      "bytes": 202560
+    },
+    {
+      "file": "tests/e2e/autonomy-owner-projection.spec.ts",
+      "sha256": "1e63837d3f991e5527855aa62e9b1544085e5908735961a731da3085ccafebbe",
+      "bytes": 9218
+    },
+    {
+      "file": "tests/e2e/autonomy-resource-admission.spec.ts",
+      "sha256": "16f3d4404f156b275c60200a57da3e9b093bfff17e594a3e376e52267cfe15c1",
+      "bytes": 19687
+    },
+    {
+      "file": "tests/e2e/fixtures/electron.ts",
+      "sha256": "b939fe878624b28c1c3dbe0ae23dae39ba724fd888545e856ae330a1edcc7c5a",
+      "bytes": 38446
+    },
+    {
+      "file": "tests/e2e/fixtures/fp-p1-harness.ts",
+      "sha256": "721d302d70ccc43eeb8fc795193cfc1bfa7d3533ab07b3ce930e886375ea8878",
+      "bytes": 13934
+    },
+    {
+      "file": "tests/e2e/role-orchestration-synthesis.spec.ts",
+      "sha256": "e0e8562e07eff97140642f7b3226aa074ae14b4874d19dab0603021e8bff51ec",
+      "bytes": 13872
+    },
+    {
+      "file": "tests/unit/autonomy-orchestration-waves.test.ts",
+      "sha256": "4964fcc469d8d2f8439d84da9419e3ba99411f193171e069744b5669f6b16e65",
+      "bytes": 15916
+    },
+    {
+      "file": "tests/unit/autonomy-owner-projection.test.ts",
+      "sha256": "a549186acfcb10b2bb10e0ab0ac256cec5d0ee56df105901f6d87aaa62883b8f",
+      "bytes": 2363
+    },
+    {
+      "file": "tests/unit/autonomy-provider-budget.test.ts",
+      "sha256": "73528d389ffac203663349020f9bfe8e300ef4da24479937577654902693a7f5",
+      "bytes": 10566
+    },
+    {
+      "file": "tests/unit/autonomy-provider-spend.test.ts",
+      "sha256": "77e2771c4c2e4b7413c74aec8ee5170f1fb6b62c53afbf32605851b4b78fa81b",
+      "bytes": 29625
+    },
+    {
+      "file": "tests/unit/autonomy-provider-transport.test.ts",
+      "sha256": "597a6d3914a5ed425bd3c7ce32773b1daca79c01655d8eb0cebb91912dd3826d",
+      "bytes": 6857
+    },
+    {
+      "file": "tests/unit/autonomy-resource-admission.test.ts",
+      "sha256": "e90397f6b27ba745e4f3b805f1fdd61bb1c072a894a770087ad74622bf8a9ac1",
+      "bytes": 6886
+    },
+    {
+      "file": "tests/unit/autonomy-resource-lease-owner.test.ts",
+      "sha256": "fa7f8f0e0f0ec3d0f28d22ad024fb31e75d59bcc39a1e75d26b90c7075972667",
+      "bytes": 4724
+    },
+    {
+      "file": "tests/unit/autonomy-subagent-admission.test.ts",
+      "sha256": "628986630dcb701e487132597f3d808a0c8dc145d9bc6d28f633511cb2a79655",
+      "bytes": 12960
+    },
+    {
+      "file": "tests/unit/autonomy-subagent-persistence.test.ts",
+      "sha256": "54c2162a0f0fb3af957e27ee462741cd052afc4abdd9ec7ae134cd13b0fe9461",
+      "bytes": 9578
+    },
+    {
+      "file": "tests/unit/autonomy-worktree-native.test.ts",
+      "sha256": "257449af563e3ee68ac05d79bfcdf7efc82d8daee3d99851400eab6f47d81a6c",
+      "bytes": 4581
+    },
+    {
+      "file": "tests/unit/autonomy-worktree-owner.test.ts",
+      "sha256": "f6ad7868b78ebf9cfdbf45085ae4e532fa427fbcf0fc5c40191cafdd0b2fa03f",
+      "bytes": 6237
+    },
+    {
+      "file": "tests/unit/browser-session-reap-tf0503.test.ts",
+      "sha256": "4c24e93c3b2ffed74c6e4163526b123c9ac0646f53d3ae8784beb2eded994337",
+      "bytes": 4006
+    },
+    {
+      "file": "tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts",
+      "sha256": "f35ec37ec4d8ddcc2d6631a189e1edb22199440b0f7270e312ccb922364db006",
+      "bytes": 5152
+    },
+    {
+      "file": "tests/unit/fixtures/autonomy-provider-spend-worker.mts",
+      "sha256": "fff7d8ee26232230a41eaa483b164bc9f538be777920237acc06e1680f258fbd",
+      "bytes": 1378
+    },
+    {
+      "file": "tests/unit/fixtures/autonomy-resource-lease-worker.mts",
+      "sha256": "a32c655b08d552b69a65fdf17f0cd470fc902ebf7e97f30f6134fe988766d4c3",
+      "bytes": 931
+    },
+    {
+      "file": "tests/unit/fixtures/autonomy-subagent-reservation-worker.mts",
+      "sha256": "96963bdfa62e5c9a2af757a1d3793f79b283b92eecf79fc9f1a82c5913c03f5e",
+      "bytes": 2279
+    },
+    {
+      "file": "tests/unit/fixtures/autonomy-worktree-owner-worker.mts",
+      "sha256": "f716e2379db1f0fd296ab7c5774cfe268f1b2190321a1f867ad3e8a3ec1b05ed",
+      "bytes": 1229
+    },
+    {
+      "file": "tests/unit/fixtures/coding-controls-tf0510/symbol-lease-worker.mts",
+      "sha256": "0ccb58c7cb66bfd112a6e3fcb3981ca92a914070a169438c9e000a13933f964a",
+      "bytes": 2600
+    },
+    {
+      "file": "tests/unit/gateway-permissions-api.test.ts",
+      "sha256": "c5eb5cf4b5496b4c80af863f3c8ae5b066de578cca98f860fa5f36163f3e22d9",
+      "bytes": 15499
+    },
+    {
+      "file": "tests/unit/gateway-supervisor.test.ts",
+      "sha256": "29758932989ca694c15c2235e2cab89c5fa727b02fdd56f1809164663afe5095",
+      "bytes": 8865
+    },
+    {
+      "file": "tests/unit/long-session-delegation-admission.test.ts",
+      "sha256": "3d6f1603266018bf317c420f1b1ff05fce660c909cd0be0538e80861bf4f8cfb",
+      "bytes": 22983
+    },
+    {
+      "file": "tests/unit/long-session-owner-reclamation-adapter.test.ts",
+      "sha256": "f67916d37413ee91be1b044aa3e6dfcceb108669cb82b592e271ebb900c07a13",
+      "bytes": 5389
+    },
+    {
+      "file": "tests/unit/long-session-resource-reclamation.test.ts",
+      "sha256": "7f53c8a4e46662ae17388240d4b944ac37065f92e03d19b8084c7153a9ffb1ec",
+      "bytes": 14780
+    },
+    {
+      "file": "tests/unit/long-session-runtime-resource-inventory.test.ts",
+      "sha256": "cba9bfcc396d191c4aacafcb2157977e8f68deca7b9323be7c98824c4219ad9d",
+      "bytes": 7988
+    },
+    {
+      "file": "tests/unit/orchestration-resource-scheduler.test.ts",
+      "sha256": "0943e32f581cdbbcedbf644f1f49400ad370c797b06498a5290885f55cd63739",
+      "bytes": 12410
+    },
+    {
+      "file": "tests/unit/r0-2-sessions-delete-fail.test.ts",
+      "sha256": "4f83170d43e13da3a140085fabe68bd5586bfd006d3ce931c654253b83aac0bd",
+      "bytes": 14293
+    },
+    {
+      "file": "tests/unit/r0-3-terminal-session-reclaim.test.ts",
+      "sha256": "88a5744d2d33cfd92f6ddd083e6b2cda04a40c75431ea30212c818f548b7d970",
+      "bytes": 5420
+    },
+    {
+      "file": "tests/unit/resource-fabric-primitives.test.ts",
+      "sha256": "824198b89fc4a38a1f43fcb23d81dc0df8f482ebb76a0bc7452ae03df8c791ce",
+      "bytes": 5085
+    },
+    {
+      "file": "tests/unit/role-spawn.test.ts",
+      "sha256": "5c6e46f00e5417ed8c59d3af4f7af931f631e729cbc6b38f59919d1deb8abd67",
+      "bytes": 24197
+    },
+    {
+      "file": "tests/unit/task-ledger-process.test.ts",
+      "sha256": "1d4254a1b6dfe2db6a8b3586637d07392a7b2a50d57ce1701b916a302a0c61f2",
+      "bytes": 4214
+    },
+    {
+      "file": "tests/unit/terminal-session-manager.test.ts",
+      "sha256": "b388653b075c335393ca113e013e798728ebda02d74abd52fefbdd33e9166900",
+      "bytes": 13075
+    }
+  ],
+  "sourceEquality": true,
+  "dirty": false
+}

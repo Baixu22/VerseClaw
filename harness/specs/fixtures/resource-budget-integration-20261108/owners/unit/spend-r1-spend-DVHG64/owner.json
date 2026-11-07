@@ -1,0 +1,55 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r1-spend-test",
+  "scope": {
+    "workspaceId": "project-a",
+    "projectId": "project-a",
+    "sessionKey": "session-a",
+    "sessionGeneration": "generation-one"
+  },
+  "calls": 1,
+  "snapshot": [
+    {
+      "scope": "host",
+      "scopeKey": "host",
+      "spentTokens": 10,
+      "spentCostMicros": 10,
+      "heldTokens": 0,
+      "heldCostMicros": 0,
+      "activeCalls": 0,
+      "unknownTokenCalls": 0,
+      "unknownCostCalls": 0
+    },
+    {
+      "scope": "project",
+      "scopeKey": "[\"project\",\"project-a\",\"project-a\"]",
+      "spentTokens": 10,
+      "spentCostMicros": 10,
+      "heldTokens": 0,
+      "heldCostMicros": 0,
+      "activeCalls": 0,
+      "unknownTokenCalls": 0,
+      "unknownCostCalls": 0
+    },
+    {
+      "scope": "session",
+      "scopeKey": "[\"session\",\"session-a\",\"generation-one\"]",
+      "spentTokens": 10,
+      "spentCostMicros": 10,
+      "heldTokens": 0,
+      "heldCostMicros": 0,
+      "activeCalls": 0,
+      "unknownTokenCalls": 0,
+      "unknownCostCalls": 0
+    }
+  ],
+  "databasePath": "D:\\tmp\\r1-spend-DVHG64\\state\\openclaw.sqlite",
+  "raw": [
+    {
+      "call_id": "[\"project-a\",\"project-a\",\"session-a\",\"generation-one\",\"one\",0,0]",
+      "state": "settled",
+      "actual_tokens": 10,
+      "actual_cost_micros": 10
+    }
+  ]
+}

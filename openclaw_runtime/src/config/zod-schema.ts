@@ -55,6 +55,11 @@ const NodeHostSchema = z
 
 const RuntimeFeatureSchema = z
   .object({
+    providerBudget: z.object({
+      host: z.object({ maxTokens: z.number().int().nonnegative().optional(), maxCostUsd: z.number().nonnegative().max(9_000_000).optional() }).strict().optional(),
+      project: z.object({ maxTokens: z.number().int().nonnegative().optional(), maxCostUsd: z.number().nonnegative().max(9_000_000).optional() }).strict().optional(),
+      session: z.object({ maxTokens: z.number().int().nonnegative().optional(), maxCostUsd: z.number().nonnegative().max(9_000_000).optional() }).strict().optional(),
+    }).strict().optional(),
     handoff: z
       .object({
         enabled: z.boolean().optional(),

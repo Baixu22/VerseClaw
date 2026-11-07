@@ -110,4 +110,16 @@ describe('session storage with real Git and files', () => {
     expect(close).toHaveBeenCalledExactlyOnceWith('terminal', 'user-close'); expect(owners.browserClose).toHaveBeenCalledExactlyOnceWith('owned'); expect(owners.serverStop).not.toHaveBeenCalled();
     await expect(api().release({ workspaceId: 'project', sessionKey: 'agent:main:other' })).rejects.toThrow('Unknown');
   });
+  it('waits for terminal owner exit and records a rejected cleanup as failed', async () => {
+    const sessionKey='agent:main:project';
+    terminals.mockReturnValue([{sessionId:'terminal',workspaceId:'project',sessionKey,pid:null}]);
+    let finish!:()=>void; close.mockImplementationOnce(()=>new Promise<void>(resolve=>{finish=resolve;}));
+    let settled=false;
+    const release=Promise.resolve(api().release({workspaceId:'project',sessionKey})).finally(()=>{settled=true;});
+    await vi.waitFor(()=>expect(close).toHaveBeenCalledOnce());
+    expect(settled).toBe(false);finish();
+    expect(await release).toEqual({success:true,released:1,failed:0});
+    close.mockRejectedValueOnce(new Error('native owner still running'));
+    expect(await api().release({workspaceId:'project',sessionKey})).toEqual({success:false,released:0,failed:1});
+  });
 });

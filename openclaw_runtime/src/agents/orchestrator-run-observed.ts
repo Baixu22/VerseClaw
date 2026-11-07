@@ -422,6 +422,15 @@ export async function runOrchestrationWithRecorder(
     }
   }
   const captureHandoffOutput = deps.captureHandoffOutput ?? captureRuntimeWorkerOutput;
+  const { getSubagentRunByRunId: readQueuedOwner } = await import('./subagent-registry-read.js');
+  const ownerQueuedNode = (taskNodeId: string): boolean => {
+    const outcome = outcomes.find(value => value.ledger.taskNodeId === taskNodeId);
+    const runId = outcome?.spawn.result?.runId;
+    if (!runId || outcome?.spawn.result?.runState !== 'queued') return false;
+    const owner = readQueuedOwner(runId);
+    return Boolean(owner && ownerSessionKey && owner.requesterSessionKey === ownerSessionKey
+      && owner.orchestration?.orchestrationRunId === orchestrationRunId && owner.orchestration.taskNodeId === taskNodeId);
+  };
 
   let plan: OrchestratorPlan;
   let schedule: ReturnType<typeof scheduleResourceAwareWaves>;
@@ -506,7 +515,9 @@ export async function runOrchestrationWithRecorder(
       startedAt: Date.now(),
     });
     let verseGitBinding: VerseGitBindingRecord | null = null;
-    const handoffPrompt = handoffMode === "on"
+    const deferredHandoff = handoffMode === 'on' && node && plan.taskGraph.edges.some(edge => edge.type === 'handoff'
+      && edge.to === node.taskNodeId && ownerQueuedNode(edge.from));
+    const handoffPrompt = handoffMode === "on" && !deferredHandoff
       ? resolveHandoffArtifactPrompt({
           node,
           plan,
@@ -630,6 +641,7 @@ export async function runOrchestrationWithRecorder(
                 id: record.id,
                 root: record.root,
                 backend: record.backend,
+                generation: record.generation,
               };
             })()
           : undefined;
@@ -656,6 +668,18 @@ export async function runOrchestrationWithRecorder(
             });
           }
         }
+      }
+      // Re-read after asynchronous binding/candidate preparation, immediately
+      // before dispatch; a receipt captured at creation may already be stale.
+      if (worktree && worktreeService) {
+        const inspection = worktreeService.inspectIsolation(worktree.id, worktree.generation);
+        if (worktree.backend === 'git' && inspection.status !== 'verified') {
+          throw new Error(`worktree_isolation_unverified:${inspection.reason}`);
+        }
+        recorder.recordEvent('orchestration.worktree.inspected', 'Worktree owner inspection', {
+          attributes: { worktreeId: worktree.id, generation: worktree.generation,
+            backend: worktree.backend, ...inspection },
+        });
       }
       const spawn = await spawnRoleSubagent(
         {
@@ -684,7 +708,7 @@ export async function runOrchestrationWithRecorder(
                   expectedWorkerRunIds: [],
                   leadRole: plan.leadRole,
                   originalTask: request.task,
-                  verifierRole: plan.verifierRole,
+                  verifierRole: request.includeVerifier === false ? undefined : plan.verifierRole,
                   verifierModelRef: plan.verifierModelRef,
                   taskId: ledger.taskId,
                   roleInstanceId: ledger.roleInstanceId,
@@ -704,6 +728,7 @@ export async function runOrchestrationWithRecorder(
                     ? {
                         isolation: node?.isolation,
                         worktreeId: worktree.id,
+                        worktreeGeneration: worktree.generation,
                         worktreeBackend: worktree.backend,
                         worktreeWriteSet: [...(node?.writeSet ?? [])],
                       }
@@ -827,7 +852,7 @@ export async function runOrchestrationWithRecorder(
       });
       // Emit lifecycle completion or error based on spawn status.
       try {
-        if (spawn.status === "accepted") {
+        if (spawn.status === "accepted" && spawn.result?.runState !== 'queued') {
           lifecycle?.({
             status: isVerifier ? "verified" : "completed",
             orchestrationRunId,
@@ -842,7 +867,7 @@ export async function runOrchestrationWithRecorder(
             ...(admissionReceipt ? { admissionReceipt } : {}),
             ts: Date.now(),
           });
-        } else {
+        } else if (spawn.status !== 'accepted') {
           lifecycle?.({
             status: "error",
             orchestrationRunId,
@@ -929,6 +954,7 @@ export async function runOrchestrationWithRecorder(
         (edge) => edge.type === "handoff" && edge.from === node.taskNodeId,
       );
       if (outgoing.length === 0) return [];
+      if (ownerQueuedNode(node.taskNodeId)) return [];
       const outcome = outcomes.find((candidate) => candidate.ledger.taskNodeId === node.taskNodeId);
       const childRunId = outcome?.spawn.result?.runId;
       const childSessionKey = outcome?.spawn.result?.childSessionKey;
@@ -1151,6 +1177,17 @@ export async function runOrchestrationWithRecorder(
       await endPendingVerseGitBinding(bindingId, reason);
     }
   }
+  const { getSubagentRunByRunId } = await import('./subagent-registry-read.js');
+  const runtimeMetrics = { ...schedule.metrics,
+    queued: 0, running: 0, completed: 0, failed: 0, unknown: 0 };
+  for (const runId of spawnedRunIds) {
+    const owner = getSubagentRunByRunId(runId);
+    if (owner && Number.isFinite(owner.endedAt) && owner.outcome?.status === 'ok') runtimeMetrics.completed++;
+    else if (owner && Number.isFinite(owner.endedAt) && owner.outcome) runtimeMetrics.failed++;
+    else if (owner?.execution?.status === 'queued') runtimeMetrics.queued++;
+    else if (owner?.execution?.status === 'running') runtimeMetrics.running++;
+    else runtimeMetrics.unknown++;
+  }
   return {
     plan,
     outcomes,
@@ -1159,10 +1196,11 @@ export async function runOrchestrationWithRecorder(
     pendingVerifier,
     attempts: outcomes.map((outcome) => outcome.ledger),
     taskGraph: plan.taskGraph,
-    graphStatus: failures.length > 0 ? "partial" : "completed",
+    graphStatus: failures.length > 0 ? "partial" : spawnedRunIds.length > 0 ? "running" : "completed",
     executionWaves: schedule.waves,
-    schedulerMetrics: schedule.metrics,
-    pendingGraphNodes: [],
+    schedulerMetrics: runtimeMetrics,
+    pendingGraphNodes: plan.taskGraph.nodes.filter(node => outcomes.some(outcome =>
+      outcome.ledger.taskNodeId === node.taskNodeId && outcome.spawn.result?.runState === 'queued')),
     repairNodes,
     rerouteRecommendations,
     orchestrationDiagnostics,

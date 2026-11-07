@@ -487,21 +487,24 @@ export class HostAgentBrowserService extends ModuleAgentBrowserService {
     return result;
   }
 
-  close(sessionId: string): void {
+  async close(sessionId: string): Promise<void> {
     try {
-      super.close(sessionId);
+      await super.close(sessionId);
     } finally {
-      const owner = this.networkSessions.get(sessionId);
-      this.networkSessions.delete(sessionId);
-      if (owner) {
-        const pending = this.networkProfiles.get(owner.profile);
-        const profileActive = [...this.networkSessions.values()].some(entry => entry.profile === owner.profile);
-        if (!profileActive) this.networkProfiles.delete(owner.profile);
-        void pending?.then(proxy => profileActive ? proxy.revokeConnections() : proxy.close()).catch(() => undefined);
-      }
-      removeResourceEnvelopeEntry(`main:browser-session:${sessionId}`);
-      for (const [key, approval] of privateNetworkApprovals) {
-        if (approval.sessionId === sessionId) privateNetworkApprovals.delete(key);
+      // Retain network ownership if native cleanup is still unconfirmed.
+      if (!super.list().some(session => session.id === sessionId)) {
+        const owner = this.networkSessions.get(sessionId);
+        this.networkSessions.delete(sessionId);
+        if (owner) {
+          const pending = this.networkProfiles.get(owner.profile);
+          const profileActive = [...this.networkSessions.values()].some(entry => entry.profile === owner.profile);
+          if (!profileActive) this.networkProfiles.delete(owner.profile);
+          void pending?.then(proxy => profileActive ? proxy.revokeConnections() : proxy.close()).catch(() => undefined);
+        }
+        removeResourceEnvelopeEntry(`main:browser-session:${sessionId}`);
+        for (const [key, approval] of privateNetworkApprovals) {
+          if (approval.sessionId === sessionId) privateNetworkApprovals.delete(key);
+        }
       }
     }
   }
@@ -539,12 +542,12 @@ export function getDefaultAgentBrowserService(): ModuleAgentBrowserService {
  */
 type AgentBrowserSessionHost = {
   list?: () => Array<{ id?: string }>;
-  close?: (sessionId: string) => void;
+  close?: (sessionId: string) => void | Promise<void>;
 };
 
-export function closeAllAgentBrowserSessions(
+export async function closeAllAgentBrowserSessions(
   service: AgentBrowserSessionHost = getDefaultAgentBrowserService() as unknown as AgentBrowserSessionHost,
-): { closed: string[]; failed: string[] } {
+): Promise<{ closed: string[]; failed: string[] }> {
   const closed: string[] = [];
   const failed: string[] = [];
   let sessions: Array<{ id?: string }>;
@@ -559,7 +562,8 @@ export function closeAllAgentBrowserSessions(
     try {
       // Close through the same service that listed the session, so the reaper is
       // coherent and testable: never list from one owner and close through another.
-      service.close?.(id);
+      if (typeof service.close !== 'function') throw new Error('Browser close owner is unavailable');
+      await service.close(id);
       removeResourceEnvelopeEntry(`main:browser-session:${id}`);
       closed.push(id);
     } catch {
@@ -584,7 +588,7 @@ export function registerAgentBrowserShutdownReaper(): void {
   shutdownReaperRegistered = true;
   app.on('will-quit', () => {
     try {
-      closeAllAgentBrowserSessions();
+      void closeAllAgentBrowserSessions();
     } catch {
       // best effort: quitting must never block on a browser session
     }

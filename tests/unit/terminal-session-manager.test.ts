@@ -38,13 +38,16 @@ function workspace(rootPath: string): WorkspaceProfile {
 beforeEach(() => {
   vi.resetModules();
   ptyMocks.spawn.mockReset();
-  ptyMocks.spawn.mockReturnValue({
+  ptyMocks.spawn.mockImplementation(() => {
+    let exit!: (event: { exitCode: number }) => void;
+    return {
     pid: 1234,
     onData: vi.fn(),
-    onExit: vi.fn(),
+    onExit: vi.fn(listener => { exit = listener; }),
     write: vi.fn(),
     resize: vi.fn(),
-    kill: vi.fn(),
+    kill: vi.fn(() => exit({ exitCode: 0 })),
+    };
   });
   process.env = { ...originalEnv };
 });
@@ -59,6 +62,49 @@ afterEach(() => {
 });
 
 describe('TerminalSessionManager', () => {
+  it('holds a terminal close receipt until the native owner reports exit', async () => {
+    let exit!: (event: { exitCode: number }) => void;
+    const native = { pid: 1234, onData: vi.fn(), onExit: vi.fn(listener => { exit = listener; }), write: vi.fn(), resize: vi.fn(), kill: vi.fn() };
+    ptyMocks.spawn.mockReturnValue(native);
+    const { TerminalSessionManager } = await import('@electron/services/terminal-session-manager');
+    const manager = new TerminalSessionManager();
+    const opened = manager.open({ workspace: workspace(process.cwd()) });
+    let settled = false;
+    const closing = Promise.resolve(manager.close(opened.sessionId!)).then(receipt => { settled = true; return receipt; });
+    try {
+      await Promise.resolve();
+      expect(settled).toBe(false);
+      expect(manager.listAll()).toHaveLength(1);
+      expect(manager.status({ sessionId: opened.sessionId! }).status).toBe('running');
+    } finally { exit({ exitCode: 0 }); await closing; }
+    expect(manager.listAll()).toHaveLength(0);
+  });
+
+  it('retains terminal occupancy when the native owner rejects termination', async () => {
+    const native = { pid: 1234, onData: vi.fn(), onExit: vi.fn(), write: vi.fn(), resize: vi.fn(), kill: vi.fn(() => { throw new Error('native termination failed'); }) };
+    ptyMocks.spawn.mockReturnValue(native);
+    const { TerminalSessionManager } = await import('@electron/services/terminal-session-manager');
+    const manager = new TerminalSessionManager();
+    const opened = manager.open({ workspace: workspace(process.cwd()) });
+    await expect(manager.close(opened.sessionId!)).rejects.toThrow(/stop|termination/);
+    expect(manager.status({ sessionId: opened.sessionId! })).toMatchObject({ status: 'running', pid: 1234 });
+    expect(manager.listAll()).toHaveLength(1);
+    expect(await manager.reclaimForSession({ sessionKey: 'agent:main:main', reason: 'session-delete' }))
+      .toMatchObject({ attempted: 1, reclaimed: 0, failed: 1 });
+  });
+
+  it('reads a PID that becomes available after the native PTY connection starts', async () => {
+    const native = { pid: 0, onData: vi.fn(), onExit: vi.fn(), write: vi.fn(), resize: vi.fn(), kill: vi.fn() };
+    ptyMocks.spawn.mockReturnValue(native);
+    const { TerminalSessionManager } = await import('@electron/services/terminal-session-manager');
+    const manager = new TerminalSessionManager();
+    const opened = manager.open({ workspace: workspace(process.cwd()) });
+    expect(opened.pid).toBeNull();
+    native.pid = 1234;
+    expect(manager.status({ sessionId: opened.sessionId! }).pid).toBe(1234);
+    expect(manager.listAll()[0].pid).toBe(1234);
+  });
+
   it('adds a managed OfficeCLI install dir to interactive terminal PATH', async () => {
     setPlatform('win32');
     tempDir = mkdtempSync(join(tmpdir(), 'clawx-officecli-'));
@@ -127,7 +173,7 @@ describe('TerminalSessionManager idle classification', () => {
     nowMs = 13_000;
     expect(manager.classifyTerminal(opened.sessionId ?? '')?.classification).toBe('interactive');
 
-    manager.close(opened.sessionId ?? '');
+    await manager.close(opened.sessionId ?? '');
     expect(manager.classifyTerminal(opened.sessionId ?? '')).toBeNull();
   });
 
@@ -201,7 +247,7 @@ it('runs 50 archive/delete cycles without terminal residue', { timeout: 20_000 }
         keepOnLeave: false,
         kind: 'webPreviewDevServer',
       });
-      const archived = manager.reclaimForSession({
+      const archived = await manager.reclaimForSession({
         sessionKey: `agent:main:cycle-${cycle}`,
         expectedSessionId: `generation-${cycle}`,
         honorKeepOnLeave: true,
@@ -209,7 +255,7 @@ it('runs 50 archive/delete cycles without terminal residue', { timeout: 20_000 }
       });
       archivedKeepOnLeave += archived.kept;
       expect(manager.listAll().filter((terminal) => terminal.sessionKey === `agent:main:cycle-${cycle}`)).toHaveLength(1);
-      const deleted = manager.reclaimForSession({
+      const deleted = await manager.reclaimForSession({
         sessionKey: `agent:main:cycle-${cycle}`,
         expectedSessionId: `generation-${cycle}`,
         honorKeepOnLeave: false,
@@ -237,7 +283,7 @@ it('runs 50 archive/delete cycles without terminal residue', { timeout: 20_000 }
       expectedSessionId: 'generation-new',
       kind: 'webPreviewDevServer',
     });
-    const result = manager.reclaimForSession({
+    const result = await manager.reclaimForSession({
       sessionKey: 'agent:main:long',
       workspaceId: 'workspace-1',
       expectedSessionId: 'generation-old',

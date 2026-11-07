@@ -1245,7 +1245,7 @@ export function createWorkspacesApi(
         const { reclaimBrowserSessionsForWorkspace, reclaimManagedPortsForWorkspace } = await import('./long-session-resource-reclamation');
         ctx.terminalManager?.unregisterWorkspace(id, 'workspace-delete');
         await ctx.webPreviewManager?.stopForWorkspace(id, 'workspace-delete');
-        const browsers = reclaimBrowserSessionsForWorkspace(id);
+        const browsers = await reclaimBrowserSessionsForWorkspace(id);
         const ports = await reclaimManagedPortsForWorkspace(id);
         if (browsers.reclaimed !== browsers.attempted || ports.failed > 0) {
           throw new Error(
@@ -1288,7 +1288,7 @@ export function createWorkspacesApi(
       const { reclaimBrowserSessionsForWorkspace, reclaimManagedPortsForWorkspace } = await import('./long-session-resource-reclamation');
       ctx.terminalManager?.unregisterWorkspace(id, 'workspace-delete');
       await ctx.webPreviewManager?.stopForWorkspace(id, 'workspace-delete');
-      const browsers = reclaimBrowserSessionsForWorkspace(id);
+      const browsers = await reclaimBrowserSessionsForWorkspace(id);
       const ports = await reclaimManagedPortsForWorkspace(id);
       if (browsers.reclaimed !== browsers.attempted || ports.failed > 0) {
         throw new Error(

@@ -301,6 +301,8 @@
         "runSummary": "Started {{count}} subagents",
         "runFailed": "Orchestration failed to spawn subagents",
         "synthesisTitle": "Synthesis",
+        "synthesisPending": "Pending",
+        "synthesisPendingSummary": "Waiting for execution or verification results.",
         "synthesisEvidence": "Evidence",
         "synthesisTraces": "Traces",
         "synthesisVerifier": "Verifier",

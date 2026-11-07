@@ -1,0 +1,996 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r1-curated-evidence-reader",
+  "candidate": {
+    "commit": "6e764445cf805b48eb86e5e39f48d05865c70ad6",
+    "tree": "5971f588bfbfdd82fa208d1e6acedc685f2f3c86",
+    "dirty": false
+  },
+  "matrix": [
+    {
+      "file": "owners/unit/spend-native-r1-spend-4OuSv4/owner.json",
+      "value": {
+        "driven_by": "agent",
+        "actor": "codex-r1-spend-native",
+        "processes": [
+          {
+            "pid": 43772,
+            "rows": [
+              {
+                "ready": true,
+                "pid": 43772
+              },
+              {
+                "admitted": false,
+                "error": "ProviderSpendRejectedError: Provider spend admission rejected: cost (host)"
+              }
+            ],
+            "exit": 0
+          },
+          {
+            "pid": 37852,
+            "rows": [
+              {
+                "ready": true,
+                "pid": 37852
+              },
+              {
+                "admitted": true,
+                "reservation": {
+                  "callId": "native-b",
+                  "ownerToken": "9e731160-1d5c-41d2-974d-f4f85c92321b"
+                }
+              }
+            ],
+            "exit": 0
+          }
+        ],
+        "limiter": "host",
+        "resource": "cost",
+        "budgetConfig": {
+          "host": {
+            "maxCostUsd": 0.01
+          },
+          "project": {
+            "maxCostUsd": 1
+          },
+          "session": {
+            "maxCostUsd": 1
+          }
+        },
+        "saved": [
+          {
+            "call_id": "native-b",
+            "owner_token": "9e731160-1d5c-41d2-974d-f4f85c92321b",
+            "request_digest": "native-b",
+            "run_id": "native-b",
+            "provider": "fixture",
+            "model": "fixture",
+            "scope_json": "{\"workspaceId\":\"project\",\"projectId\":\"project\",\"sessionKey\":\"native-shared-session\",\"sessionGeneration\":\"g\"}",
+            "state": "reserved",
+            "reserved_tokens": 60,
+            "reserved_cost_micros": 6000,
+            "actual_tokens": null,
+            "actual_cost_micros": null,
+            "created_at": 1794060231110,
+            "settled_at": null,
+            "reconciliation_ref": null
+          }
+        ],
+        "snapshot": [
+          {
+            "scope": "host",
+            "scopeKey": "host",
+            "spentTokens": 0,
+            "spentCostMicros": 0,
+            "heldTokens": 60,
+            "heldCostMicros": 6000,
+            "activeCalls": 1,
+            "unknownTokenCalls": 0,
+            "unknownCostCalls": 0
+          },
+          {
+            "scope": "project",
+            "scopeKey": "[\"project\",\"project\",\"project\"]",
+            "spentTokens": 0,
+            "spentCostMicros": 0,
+            "heldTokens": 60,
+            "heldCostMicros": 6000,
+            "activeCalls": 1,
+            "unknownTokenCalls": 0,
+            "unknownCostCalls": 0
+          },
+          {
+            "scope": "session",
+            "scopeKey": "[\"session\",\"native-shared-session\",\"g\"]",
+            "spentTokens": 0,
+            "spentCostMicros": 0,
+            "heldTokens": 60,
+            "heldCostMicros": 6000,
+            "activeCalls": 1,
+            "unknownTokenCalls": 0,
+            "unknownCostCalls": 0
+          }
+        ],
+        "databasePath": "D:\\tmp\\r1-spend-4OuSv4\\state\\openclaw.sqlite"
+      }
+    },
+    {
+      "file": "owners/unit/spend-native-r1-spend-6Wuuj7/owner.json",
+      "value": {
+        "driven_by": "agent",
+        "actor": "codex-r1-spend-native",
+        "processes": [
+          {
+            "pid": 43172,
+            "rows": [
+              {
+                "ready": true,
+                "pid": 43172
+              },
+              {
+                "admitted": true,
+                "reservation": {
+                  "callId": "native-a",
+                  "ownerToken": "10a58b5d-a9c4-4de0-8487-d8a012fd0973"
+                }
+              }
+            ],
+            "exit": 0
+          },
+          {
+            "pid": 20252,
+            "rows": [
+              {
+                "ready": true,
+                "pid": 20252
+              },
+              {
+                "admitted": false,
+                "error": "ProviderSpendRejectedError: Provider spend admission rejected: tokens (host)"
+              }
+            ],
+            "exit": 0
+          }
+        ],
+        "limiter": "host",
+        "resource": "tokens",
+        "budgetConfig": {
+          "host": {
+            "maxTokens": 100
+          },
+          "project": {
+            "maxTokens": 1000
+          },
+          "session": {
+            "maxTokens": 1000
+          }
+        },
+        "saved": [
+          {
+            "call_id": "native-a",
+            "owner_token": "10a58b5d-a9c4-4de0-8487-d8a012fd0973",
+            "request_digest": "native-a",
+            "run_id": "native-a",
+            "provider": "fixture",
+            "model": "fixture",
+            "scope_json": "{\"workspaceId\":\"project\",\"projectId\":\"project\",\"sessionKey\":\"native-shared-session\",\"sessionGeneration\":\"g\"}",
+            "state": "reserved",
+            "reserved_tokens": 60,
+            "reserved_cost_micros": 6000,
+            "actual_tokens": null,
+            "actual_cost_micros": null,
+            "created_at": 1794060227433,
+            "settled_at": null,
+            "reconciliation_ref": null
+          }
+        ],
+        "snapshot": [
+          {
+            "scope": "host",
+            "scopeKey": "host",
+            "spentTokens": 0,
+            "spentCostMicros": 0,
+            "heldTokens": 60,
+            "heldCostMicros": 6000,
+            "activeCalls": 1,
+            "unknownTokenCalls": 0,
+            "unknownCostCalls": 0
+          },
+          {
+            "scope": "project",
+            "scopeKey": "[\"project\",\"project\",\"project\"]",
+            "spentTokens": 0,
+            "spentCostMicros": 0,
+            "heldTokens": 60,
+            "heldCostMicros": 6000,
+            "activeCalls": 1,
+            "unknownTokenCalls": 0,
+            "unknownCostCalls": 0
+          },
+          {
+            "scope": "session",
+            "scopeKey": "[\"session\",\"native-shared-session\",\"g\"]",
+            "spentTokens": 0,
+            "spentCostMicros": 0,
+            "heldTokens": 60,
+            "heldCostMicros": 6000,
+            "activeCalls": 1,
+            "unknownTokenCalls": 0,
+            "unknownCostCalls": 0
+          }
+        ],
+        "databasePath": "D:\\tmp\\r1-spend-6Wuuj7\\state\\openclaw.sqlite"
+      }
+    },
+    {
+      "file": "owners/unit/spend-native-r1-spend-Allkqs/owner.json",
+      "value": {
+        "driven_by": "agent",
+        "actor": "codex-r1-spend-native",
+        "processes": [
+          {
+            "pid": 37780,
+            "rows": [
+              {
+                "ready": true,
+                "pid": 37780
+              },
+              {
+                "admitted": true,
+                "reservation": {
+                  "callId": "native-a",
+                  "ownerToken": "ce4e3147-5d5b-404b-a9d8-03acb662b634"
+                }
+              }
+            ],
+            "exit": 0
+          },
+          {
+            "pid": 41944,
+            "rows": [
+              {
+                "ready": true,
+                "pid": 41944
+              },
+              {
+                "admitted": false,
+                "error": "ProviderSpendRejectedError: Provider spend admission rejected: cost (project)"
+              }
+            ],
+            "exit": 0
+          }
+        ],
+        "limiter": "project",
+        "resource": "cost",
+        "budgetConfig": {
+          "host": {
+            "maxCostUsd": 1
+          },
+          "project": {
+            "maxCostUsd": 0.01
+          },
+          "session": {
+            "maxCostUsd": 1
+          }
+        },
+        "saved": [
+          {
+            "call_id": "native-a",
+            "owner_token": "ce4e3147-5d5b-404b-a9d8-03acb662b634",
+            "request_digest": "native-a",
+            "run_id": "native-a",
+            "provider": "fixture",
+            "model": "fixture",
+            "scope_json": "{\"workspaceId\":\"project\",\"projectId\":\"project\",\"sessionKey\":\"native-shared-session\",\"sessionGeneration\":\"g\"}",
+            "state": "reserved",
+            "reserved_tokens": 60,
+            "reserved_cost_micros": 6000,
+            "actual_tokens": null,
+            "actual_cost_micros": null,
+            "created_at": 1794060232140,
+            "settled_at": null,
+            "reconciliation_ref": null
+          }
+        ],
+        "snapshot": [
+          {
+            "scope": "host",
+            "scopeKey": "host",
+            "spentTokens": 0,
+            "spentCostMicros": 0,
+            "heldTokens": 60,
+            "heldCostMicros": 6000,
+            "activeCalls": 1,
+            "unknownTokenCalls": 0,
+            "unknownCostCalls": 0
+          },
+          {
+            "scope": "project",
+            "scopeKey": "[\"project\",\"project\",\"project\"]",
+            "spentTokens": 0,
+            "spentCostMicros": 0,
+            "heldTokens": 60,
+            "heldCostMicros": 6000,
+            "activeCalls": 1,
+            "unknownTokenCalls": 0,
+            "unknownCostCalls": 0
+          },
+          {
+            "scope": "session",
+            "scopeKey": "[\"session\",\"native-shared-session\",\"g\"]",
+            "spentTokens": 0,
+            "spentCostMicros": 0,
+            "heldTokens": 60,
+            "heldCostMicros": 6000,
+            "activeCalls": 1,
+            "unknownTokenCalls": 0,
+            "unknownCostCalls": 0
+          }
+        ],
+        "databasePath": "D:\\tmp\\r1-spend-Allkqs\\state\\openclaw.sqlite"
+      }
+    },
+    {
+      "file": "owners/unit/spend-native-r1-spend-pwPVUy/owner.json",
+      "value": {
+        "driven_by": "agent",
+        "actor": "codex-r1-spend-native",
+        "processes": [
+          {
+            "pid": 50324,
+            "rows": [
+              {
+                "ready": true,
+                "pid": 50324
+              },
+              {
+                "admitted": false,
+                "error": "ProviderSpendRejectedError: Provider spend admission rejected: cost (session)"
+              }
+            ],
+            "exit": 0
+          },
+          {
+            "pid": 49012,
+            "rows": [
+              {
+                "ready": true,
+                "pid": 49012
+              },
+              {
+                "admitted": true,
+                "reservation": {
+                  "callId": "native-b",
+                  "ownerToken": "5a2ff1f2-edc1-484b-ab11-45412373efbb"
+                }
+              }
+            ],
+            "exit": 0
+          }
+        ],
+        "limiter": "session",
+        "resource": "cost",
+        "budgetConfig": {
+          "host": {
+            "maxCostUsd": 1
+          },
+          "project": {
+            "maxCostUsd": 1
+          },
+          "session": {
+            "maxCostUsd": 0.01
+          }
+        },
+        "saved": [
+          {
+            "call_id": "native-b",
+            "owner_token": "5a2ff1f2-edc1-484b-ab11-45412373efbb",
+            "request_digest": "native-b",
+            "run_id": "native-b",
+            "provider": "fixture",
+            "model": "fixture",
+            "scope_json": "{\"workspaceId\":\"project\",\"projectId\":\"project\",\"sessionKey\":\"native-shared-session\",\"sessionGeneration\":\"g\"}",
+            "state": "reserved",
+            "reserved_tokens": 60,
+            "reserved_cost_micros": 6000,
+            "actual_tokens": null,
+            "actual_cost_micros": null,
+            "created_at": 1794060233172,
+            "settled_at": null,
+            "reconciliation_ref": null
+          }
+        ],
+        "snapshot": [
+          {
+            "scope": "host",
+            "scopeKey": "host",
+            "spentTokens": 0,
+            "spentCostMicros": 0,
+            "heldTokens": 60,
+            "heldCostMicros": 6000,
+            "activeCalls": 1,
+            "unknownTokenCalls": 0,
+            "unknownCostCalls": 0
+          },
+          {
+            "scope": "project",
+            "scopeKey": "[\"project\",\"project\",\"project\"]",
+            "spentTokens": 0,
+            "spentCostMicros": 0,
+            "heldTokens": 60,
+            "heldCostMicros": 6000,
+            "activeCalls": 1,
+            "unknownTokenCalls": 0,
+            "unknownCostCalls": 0
+          },
+          {
+            "scope": "session",
+            "scopeKey": "[\"session\",\"native-shared-session\",\"g\"]",
+            "spentTokens": 0,
+            "spentCostMicros": 0,
+            "heldTokens": 60,
+            "heldCostMicros": 6000,
+            "activeCalls": 1,
+            "unknownTokenCalls": 0,
+            "unknownCostCalls": 0
+          }
+        ],
+        "databasePath": "D:\\tmp\\r1-spend-pwPVUy\\state\\openclaw.sqlite"
+      }
+    },
+    {
+      "file": "owners/unit/spend-native-r1-spend-VFFQie/owner.json",
+      "value": {
+        "driven_by": "agent",
+        "actor": "codex-r1-spend-native",
+        "processes": [
+          {
+            "pid": 45152,
+            "rows": [
+              {
+                "ready": true,
+                "pid": 45152
+              },
+              {
+                "admitted": true,
+                "reservation": {
+                  "callId": "native-a",
+                  "ownerToken": "2095fc52-479f-4933-9edf-1651fe0e5225"
+                }
+              }
+            ],
+            "exit": 0
+          },
+          {
+            "pid": 28676,
+            "rows": [
+              {
+                "ready": true,
+                "pid": 28676
+              },
+              {
+                "admitted": false,
+                "error": "ProviderSpendRejectedError: Provider spend admission rejected: tokens (session)"
+              }
+            ],
+            "exit": 0
+          }
+        ],
+        "limiter": "session",
+        "resource": "tokens",
+        "budgetConfig": {
+          "host": {
+            "maxTokens": 1000
+          },
+          "project": {
+            "maxTokens": 1000
+          },
+          "session": {
+            "maxTokens": 100
+          }
+        },
+        "saved": [
+          {
+            "call_id": "native-a",
+            "owner_token": "2095fc52-479f-4933-9edf-1651fe0e5225",
+            "request_digest": "native-a",
+            "run_id": "native-a",
+            "provider": "fixture",
+            "model": "fixture",
+            "scope_json": "{\"workspaceId\":\"project\",\"projectId\":\"project\",\"sessionKey\":\"native-shared-session\",\"sessionGeneration\":\"g\"}",
+            "state": "reserved",
+            "reserved_tokens": 60,
+            "reserved_cost_micros": 6000,
+            "actual_tokens": null,
+            "actual_cost_micros": null,
+            "created_at": 1794060229688,
+            "settled_at": null,
+            "reconciliation_ref": null
+          }
+        ],
+        "snapshot": [
+          {
+            "scope": "host",
+            "scopeKey": "host",
+            "spentTokens": 0,
+            "spentCostMicros": 0,
+            "heldTokens": 60,
+            "heldCostMicros": 6000,
+            "activeCalls": 1,
+            "unknownTokenCalls": 0,
+            "unknownCostCalls": 0
+          },
+          {
+            "scope": "project",
+            "scopeKey": "[\"project\",\"project\",\"project\"]",
+            "spentTokens": 0,
+            "spentCostMicros": 0,
+            "heldTokens": 60,
+            "heldCostMicros": 6000,
+            "activeCalls": 1,
+            "unknownTokenCalls": 0,
+            "unknownCostCalls": 0
+          },
+          {
+            "scope": "session",
+            "scopeKey": "[\"session\",\"native-shared-session\",\"g\"]",
+            "spentTokens": 0,
+            "spentCostMicros": 0,
+            "heldTokens": 60,
+            "heldCostMicros": 6000,
+            "activeCalls": 1,
+            "unknownTokenCalls": 0,
+            "unknownCostCalls": 0
+          }
+        ],
+        "databasePath": "D:\\tmp\\r1-spend-VFFQie\\state\\openclaw.sqlite"
+      }
+    },
+    {
+      "file": "owners/unit/spend-native-r1-spend-VMuOzI/owner.json",
+      "value": {
+        "driven_by": "agent",
+        "actor": "codex-r1-spend-native",
+        "processes": [
+          {
+            "pid": 19252,
+            "rows": [
+              {
+                "ready": true,
+                "pid": 19252
+              },
+              {
+                "admitted": true,
+                "reservation": {
+                  "callId": "native-a",
+                  "ownerToken": "98994adf-c007-43ad-abc6-54dd0e644e18"
+                }
+              }
+            ],
+            "exit": 0
+          },
+          {
+            "pid": 11132,
+            "rows": [
+              {
+                "ready": true,
+                "pid": 11132
+              },
+              {
+                "admitted": false,
+                "error": "ProviderSpendRejectedError: Provider spend admission rejected: tokens (project)"
+              }
+            ],
+            "exit": 0
+          }
+        ],
+        "limiter": "project",
+        "resource": "tokens",
+        "budgetConfig": {
+          "host": {
+            "maxTokens": 1000
+          },
+          "project": {
+            "maxTokens": 100
+          },
+          "session": {
+            "maxTokens": 1000
+          }
+        },
+        "saved": [
+          {
+            "call_id": "native-a",
+            "owner_token": "98994adf-c007-43ad-abc6-54dd0e644e18",
+            "request_digest": "native-a",
+            "run_id": "native-a",
+            "provider": "fixture",
+            "model": "fixture",
+            "scope_json": "{\"workspaceId\":\"project\",\"projectId\":\"project\",\"sessionKey\":\"native-shared-session\",\"sessionGeneration\":\"g\"}",
+            "state": "reserved",
+            "reserved_tokens": 60,
+            "reserved_cost_micros": 6000,
+            "actual_tokens": null,
+            "actual_cost_micros": null,
+            "created_at": 1794060228530,
+            "settled_at": null,
+            "reconciliation_ref": null
+          }
+        ],
+        "snapshot": [
+          {
+            "scope": "host",
+            "scopeKey": "host",
+            "spentTokens": 0,
+            "spentCostMicros": 0,
+            "heldTokens": 60,
+            "heldCostMicros": 6000,
+            "activeCalls": 1,
+            "unknownTokenCalls": 0,
+            "unknownCostCalls": 0
+          },
+          {
+            "scope": "project",
+            "scopeKey": "[\"project\",\"project\",\"project\"]",
+            "spentTokens": 0,
+            "spentCostMicros": 0,
+            "heldTokens": 60,
+            "heldCostMicros": 6000,
+            "activeCalls": 1,
+            "unknownTokenCalls": 0,
+            "unknownCostCalls": 0
+          },
+          {
+            "scope": "session",
+            "scopeKey": "[\"session\",\"native-shared-session\",\"g\"]",
+            "spentTokens": 0,
+            "spentCostMicros": 0,
+            "heldTokens": 60,
+            "heldCostMicros": 6000,
+            "activeCalls": 1,
+            "unknownTokenCalls": 0,
+            "unknownCostCalls": 0
+          }
+        ],
+        "databasePath": "D:\\tmp\\r1-spend-VMuOzI\\state\\openclaw.sqlite"
+      }
+    }
+  ],
+  "inconsistentUsage": [
+    {
+      "file": "owners/unit/inconsistent-r1-spend-aAkSXQ/owner.json",
+      "value": {
+        "driven_by": "agent",
+        "actor": "codex-r1-inconsistent-usage-reader",
+        "usage": {
+          "input": 15,
+          "output": 0,
+          "totalTokens": 10,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "cost": {
+            "input": 0.00001,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "total": 0.00001
+          }
+        },
+        "snapshot": [
+          {
+            "scope": "host",
+            "scopeKey": "host",
+            "spentTokens": 0,
+            "spentCostMicros": 0,
+            "heldTokens": 100,
+            "heldCostMicros": 200,
+            "activeCalls": 0,
+            "unknownTokenCalls": 1,
+            "unknownCostCalls": 1
+          },
+          {
+            "scope": "project",
+            "scopeKey": "[\"project\",\"project-a\",\"project-a\"]",
+            "spentTokens": 0,
+            "spentCostMicros": 0,
+            "heldTokens": 100,
+            "heldCostMicros": 200,
+            "activeCalls": 0,
+            "unknownTokenCalls": 1,
+            "unknownCostCalls": 1
+          },
+          {
+            "scope": "session",
+            "scopeKey": "[\"session\",\"session-a\",\"generation-one\"]",
+            "spentTokens": 0,
+            "spentCostMicros": 0,
+            "heldTokens": 100,
+            "heldCostMicros": 200,
+            "activeCalls": 0,
+            "unknownTokenCalls": 1,
+            "unknownCostCalls": 1
+          }
+        ],
+        "rows": [
+          {
+            "call_id": "[\"project-a\",\"project-a\",\"session-a\",\"generation-one\",\"inconsistent-usage-15\",0,0]",
+            "owner_token": "e5151409-f41c-4b19-89f0-e9a35b1ebd86",
+            "request_digest": "6023aad58c12a073ef2d153d7b6e94ff693605db87e5d21495af37e32f18553e",
+            "run_id": "inconsistent-usage-15",
+            "provider": "fixture",
+            "model": "fixture",
+            "scope_json": "{\"workspaceId\":\"project-a\",\"projectId\":\"project-a\",\"sessionKey\":\"session-a\",\"sessionGeneration\":\"generation-one\"}",
+            "state": "unknown",
+            "reserved_tokens": 100,
+            "reserved_cost_micros": 200,
+            "actual_tokens": null,
+            "actual_cost_micros": null,
+            "created_at": 1794060225374,
+            "settled_at": 1794060225376,
+            "reconciliation_ref": "065516f168bb30defe8ddcbadda7f1cffde8a28b697f33cef91c994066d19d65"
+          }
+        ],
+        "databasePath": "D:\\tmp\\r1-spend-aAkSXQ\\state\\openclaw.sqlite"
+      }
+    },
+    {
+      "file": "owners/unit/inconsistent-r1-spend-OBALjJ/owner.json",
+      "value": {
+        "driven_by": "agent",
+        "actor": "codex-r1-inconsistent-usage-reader",
+        "usage": {
+          "input": 5,
+          "output": 0,
+          "totalTokens": 10,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "cost": {
+            "input": 0.00001,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "total": 0.00001
+          }
+        },
+        "snapshot": [
+          {
+            "scope": "host",
+            "scopeKey": "host",
+            "spentTokens": 0,
+            "spentCostMicros": 0,
+            "heldTokens": 100,
+            "heldCostMicros": 200,
+            "activeCalls": 0,
+            "unknownTokenCalls": 1,
+            "unknownCostCalls": 1
+          },
+          {
+            "scope": "project",
+            "scopeKey": "[\"project\",\"project-a\",\"project-a\"]",
+            "spentTokens": 0,
+            "spentCostMicros": 0,
+            "heldTokens": 100,
+            "heldCostMicros": 200,
+            "activeCalls": 0,
+            "unknownTokenCalls": 1,
+            "unknownCostCalls": 1
+          },
+          {
+            "scope": "session",
+            "scopeKey": "[\"session\",\"session-a\",\"generation-one\"]",
+            "spentTokens": 0,
+            "spentCostMicros": 0,
+            "heldTokens": 100,
+            "heldCostMicros": 200,
+            "activeCalls": 0,
+            "unknownTokenCalls": 1,
+            "unknownCostCalls": 1
+          }
+        ],
+        "rows": [
+          {
+            "call_id": "[\"project-a\",\"project-a\",\"session-a\",\"generation-one\",\"inconsistent-usage-5\",0,0]",
+            "owner_token": "f2b27bd0-4128-47ae-87ce-192c3656ed65",
+            "request_digest": "6023aad58c12a073ef2d153d7b6e94ff693605db87e5d21495af37e32f18553e",
+            "run_id": "inconsistent-usage-5",
+            "provider": "fixture",
+            "model": "fixture",
+            "scope_json": "{\"workspaceId\":\"project-a\",\"projectId\":\"project-a\",\"sessionKey\":\"session-a\",\"sessionGeneration\":\"generation-one\"}",
+            "state": "unknown",
+            "reserved_tokens": 100,
+            "reserved_cost_micros": 200,
+            "actual_tokens": null,
+            "actual_cost_micros": null,
+            "created_at": 1794060225282,
+            "settled_at": 1794060225284,
+            "reconciliation_ref": "789b1b0947af730310f893c42498ed0fa7aadb106ad6bc26e6dd832e6624a95d"
+          }
+        ],
+        "databasePath": "D:\\tmp\\r1-spend-OBALjJ\\state\\openclaw.sqlite"
+      }
+    }
+  ],
+  "sourceOracles": [
+    {
+      "name": "root",
+      "exitCode": 0,
+      "passed": 467,
+      "failed": 0,
+      "skipped": 0,
+      "files": [
+        "tests/unit/browser-session-reap-tf0503.test.ts",
+        "tests/unit/workspaces-api.test.ts",
+        "tests/unit/task-ledger-process.test.ts",
+        "tests/unit/gateway-supervisor.test.ts",
+        "tests/unit/r0-2-sessions-delete-fail.test.ts",
+        "tests/unit/long-session-owner-reclamation-adapter.test.ts",
+        "tests/unit/component-disposition-catalog.test.ts",
+        "tests/unit/component-authority-manifest.test.ts",
+        "tests/unit/r0-3-terminal-session-reclaim.test.ts",
+        "tests/unit/terminal-session-manager.test.ts",
+        "tests/unit/long-session-resource-reclamation.test.ts",
+        "tests/unit/gateway-permissions-api.test.ts",
+        "tests/unit/autonomy-owner-projection.test.ts",
+        "tests/unit/long-session-runtime-resource-inventory.test.ts",
+        "tests/unit/autonomy-resource-admission.test.ts",
+        "tests/unit/autonomy-provider-spend.test.ts",
+        "tests/unit/handoff-artifacts.test.ts",
+        "tests/unit/autonomy-orchestration-waves.test.ts",
+        "tests/unit/autonomy-subagent-persistence.test.ts",
+        "tests/unit/autonomy-subagent-admission.test.ts",
+        "tests/unit/orchestration-resource-scheduler.test.ts",
+        "tests/unit/orchestration-synthesizer.test.ts",
+        "tests/unit/long-session-delegation-admission.test.ts",
+        "tests/unit/roles-orchestration-panel.test.tsx",
+        "tests/unit/config-schema-parity.test.ts",
+        "tests/unit/autonomy-worktree-native.test.ts",
+        "tests/unit/autonomy-worktree-owner.test.ts",
+        "tests/unit/orchestration-worktree-merge.test.ts",
+        "tests/unit/versegit-cleanup-barrier.test.ts",
+        "tests/unit/role-spawn.test.ts",
+        "tests/unit/autonomy-provider-budget.test.ts",
+        "tests/unit/autonomy-provider-transport.test.ts",
+        "tests/unit/autonomy-resource-lease-owner.test.ts",
+        "tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts",
+        "tests/unit/resource-fabric-primitives.test.ts",
+        "tests/unit/resource-fabric-invariants.test.ts",
+        "tests/unit/resource-fabric-workspace-exec.test.ts",
+        "tests/unit/resource-fabric-chat-history.test.ts",
+        "tests/unit/resource-fabric-pressure.test.ts"
+      ],
+      "frameworkVersion": "4.1.1",
+      "oracle": "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/clean-6e764445/non-native/root.json",
+      "oracleSha256": "b5948c6c9d66cb4ec15bda9e90d7877f43a4ccb0ba02c29b8823715caf0c5d9b"
+    },
+    {
+      "name": "runtime-0",
+      "exitCode": 0,
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0,
+      "files": [
+        "src/agents/resource-leases.test.ts"
+      ],
+      "frameworkVersion": "4.1.7",
+      "oracle": "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/clean-6e764445/non-native/runtime-0.json",
+      "oracleSha256": "44b7bbc7bb07bb5976525b4a83f40291947fea9186038e1ac02bf58588ee7985"
+    },
+    {
+      "name": "runtime-1",
+      "exitCode": 0,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "files": [
+        "src/agents/sessions/tools/bash-workspace-lease.test.ts"
+      ],
+      "frameworkVersion": "4.1.7",
+      "oracle": "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/clean-6e764445/non-native/runtime-1.json",
+      "oracleSha256": "40a9e4d4c13452efe28c65966b02303b84f2b77b134184f976b950a898568984"
+    },
+    {
+      "name": "runtime-2",
+      "exitCode": 0,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "files": [
+        "src/agents/subagent-registry-queries.quota.test.ts"
+      ],
+      "frameworkVersion": "4.1.7",
+      "oracle": "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/clean-6e764445/non-native/runtime-2.json",
+      "oracleSha256": "b1c9d4e89df949f60d2d2df3c9a51987f5219f28a3a80cb322617d1f2383cf89"
+    },
+    {
+      "name": "runtime-3",
+      "exitCode": 0,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "files": [
+        "src/agents/worktree-service.test.ts"
+      ],
+      "frameworkVersion": "4.1.7",
+      "oracle": "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/clean-6e764445/non-native/runtime-3.json",
+      "oracleSha256": "31958b81f249dbcb6ae226b12749b85dfe9756e9dcde88e0f22e0ec054e62132"
+    },
+    {
+      "name": "runtime-4",
+      "exitCode": 0,
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0,
+      "files": [
+        "src/agents/checkpoint-rollback-executor.test.ts"
+      ],
+      "frameworkVersion": "4.1.7",
+      "oracle": "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/clean-6e764445/non-native/runtime-4.json",
+      "oracleSha256": "32b99ec3ae5d615fd68ef9319cd0eeafe4ce2c7f8a92ac25d7a86f361c964f3e"
+    },
+    {
+      "name": "runtime-5",
+      "exitCode": 0,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "files": [
+        "src/agents/orchestration-token-budget.test.ts"
+      ],
+      "frameworkVersion": "4.1.7",
+      "oracle": "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/clean-6e764445/non-native/runtime-5.json",
+      "oracleSha256": "2357ed5a1a4ed79a2c7d4c98973e4eba697f00bd03146cba76b792c1ac41d1e8"
+    },
+    {
+      "name": "runtime-6",
+      "exitCode": 0,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "files": [
+        "src/agents/provider-outbound-budget.test.ts"
+      ],
+      "frameworkVersion": "4.1.7",
+      "oracle": "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/clean-6e764445/non-native/runtime-6.json",
+      "oracleSha256": "7ca2d8cf6f7751d6c603f78f23c2e770f04be68817e21a35bd801dc2af20e354"
+    },
+    {
+      "name": "runtime-7",
+      "exitCode": 0,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "files": [
+        "src/agents/verseshell/managed-process-capacity.test.ts"
+      ],
+      "frameworkVersion": "4.1.7",
+      "oracle": "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/clean-6e764445/non-native/runtime-7.json",
+      "oracleSha256": "63ad3b4692b40d350739cafa673d1b4a74e1d02f48ee1157b06064f8a010a3be"
+    },
+    {
+      "name": "runtime-8",
+      "exitCode": 0,
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0,
+      "files": [
+        "src/context-engine/factstore/symbol-lease.test.ts"
+      ],
+      "frameworkVersion": "4.1.7",
+      "oracle": "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/clean-6e764445/non-native/runtime-8.json",
+      "oracleSha256": "bed8f3751f1f62d45d2cb4d366c94ec23d1a8683535e61ba3996f9188208036f"
+    },
+    {
+      "name": "runtime-9",
+      "exitCode": 0,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "files": [
+        "src/agents/symbol-lease-guard.test.ts"
+      ],
+      "frameworkVersion": "4.1.7",
+      "oracle": "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/clean-6e764445/non-native/runtime-9.json",
+      "oracleSha256": "5c77aceb6b1de435dd7bfd110a58e6394727288c4d0dcd12c5968d8024644abe"
+    }
+  ]
+}

@@ -16,25 +16,43 @@ export class DrfShare {
   private readonly usage = new Map<string, DrfUsage>();
 
   constructor(capacity: ResourceCapacity) {
-    if (!Number.isFinite(capacity.processes) || capacity.processes <= 0
-      || !Number.isFinite(capacity.concurrency) || capacity.concurrency <= 0) {
-      throw new RangeError('capacity must be positive');
+    if (!Number.isSafeInteger(capacity.processes) || capacity.processes <= 0
+      || !Number.isSafeInteger(capacity.concurrency) || capacity.concurrency <= 0) {
+      throw new RangeError('capacity must be a positive integer');
     }
     this.capacity = { ...capacity };
   }
 
   reserve(tenant: string, delta: Partial<DrfUsage> = {}): DrfUsage {
+    const reserved = this.tryReserve(tenant, delta);
+    if (!reserved) throw new RangeError('reservation exceeds capacity');
+    return reserved;
+  }
+
+  /** Check every tenant and commit both dimensions together, without an await. */
+  tryReserve(tenant: string, delta: Partial<DrfUsage> = {}): DrfUsage | undefined {
     if (!tenant.trim()) throw new TypeError('tenant is required');
+    if (!Number.isSafeInteger(delta.processes ?? 0) || !Number.isSafeInteger(delta.concurrency ?? 0)) {
+      throw new RangeError('resource usage must be a finite integer');
+    }
     const next = this.calculate(tenant, delta);
     if (Object.values(next).some((value) => value < 0)) throw new RangeError('usage cannot be negative');
-    if (next.processes > this.capacity.processes || next.concurrency > this.capacity.concurrency) {
-      throw new RangeError('reservation exceeds capacity');
+    const total = { ...next };
+    for (const [owner, used] of this.usage) {
+      if (owner === tenant) continue;
+      total.processes += used.processes;
+      total.concurrency += used.concurrency;
     }
-    this.usage.set(tenant, next);
+    if (total.processes > this.capacity.processes || total.concurrency > this.capacity.concurrency) {
+      return undefined;
+    }
+    if (next.processes === 0 && next.concurrency === 0) this.usage.delete(tenant);
+    else this.usage.set(tenant, next);
     return { ...next };
   }
 
   release(tenant: string, delta: Partial<DrfUsage> = {}): DrfUsage {
+    if ((delta.processes ?? 0) < 0 || (delta.concurrency ?? 0) < 0) throw new RangeError('release cannot reserve usage');
     return this.reserve(tenant, {
       processes: -(delta.processes ?? 0),
       concurrency: -(delta.concurrency ?? 0),

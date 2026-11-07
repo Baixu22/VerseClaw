@@ -1,0 +1,67 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r1-registry-native",
+  "processes": [
+    {
+      "pid": 22260,
+      "events": [
+        {
+          "ready": true,
+          "pid": 22260,
+          "before": 0
+        },
+        {
+          "admitted": true,
+          "pid": 22260,
+          "after": 1
+        }
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 4440,
+      "events": [
+        {
+          "ready": true,
+          "pid": 4440,
+          "before": 0
+        },
+        {
+          "admitted": false,
+          "pid": 4440,
+          "after": 0
+        }
+      ],
+      "exit": 0
+    }
+  ],
+  "saved": [
+    {
+      "runId": "native-a",
+      "childSessionKey": "agent:main:subagent:native-a",
+      "controllerSessionKey": "agent:main:controller",
+      "requesterSessionKey": "agent:main:controller",
+      "requesterSessionId": "controller-generation",
+      "requesterDisplayKey": "agent:main:controller",
+      "task": "controlled reservation",
+      "cleanup": "keep",
+      "expectsCompletionMessage": false,
+      "spawnMode": "run",
+      "runTimeoutSeconds": 0,
+      "createdAt": 1794060187094,
+      "execution": {
+        "status": "pending"
+      },
+      "dispatchPending": true,
+      "completion": {
+        "required": false
+      },
+      "delivery": {
+        "status": "not_required"
+      },
+      "accumulatedRuntimeMs": 0,
+      "cleanupHandled": false
+    }
+  ],
+  "databasePath": "D:\\tmp\\r1-registry-vrSD8O\\state\\openclaw.sqlite"
+}

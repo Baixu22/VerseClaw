@@ -107,14 +107,14 @@ describe('resource fabric P0 primitives', () => {
 
     const aged = new PriorityQueue<string>({ agePromotionMs: 50, now: () => now });
     aged.push('aged-opportunistic', 'opportunistic');
-    aged.push('fresh-background', 'background');
     now = 50;
+    aged.push('fresh-background', 'background');
     expect(aged.dequeue()).toBe('aged-opportunistic');
     expect(aged.dequeue()).toBe('fresh-background');
   });
 
   it('enforces DRF-lite capacity and fairness bounds', () => {
-    const shares = new DrfShare({ processes: 4, concurrency: 4 });
+    const shares = new DrfShare({ processes: 8, concurrency: 4 });
     shares.reserve('a', { processes: 1 });
     shares.reserve('b', { processes: 1 });
     expect(shares.isFair()).toBe(true);

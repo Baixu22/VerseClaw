@@ -147,10 +147,10 @@ export function createSessionStorageApi(context: {
       let released = 0;
       let failed = 0;
       for (const terminal of current.terminals) {
-        try { if (terminal.sessionId) { context.terminalManager.close(terminal.sessionId, 'user-close'); released++; } } catch { failed++; }
+        try { if (terminal.sessionId) { await context.terminalManager.close(terminal.sessionId, 'user-close'); released++; } } catch { failed++; }
       }
       for (const browser of current.browsers) {
-        try { browsers().close(browser.id); released++; } catch { failed++; }
+        try { await browsers().close(browser.id); released++; } catch { failed++; }
       }
       for (const server of current.servers) {
         try { const result = await tracker().stopResource(server.id); if (result.success) released++; else failed++; } catch { failed++; }

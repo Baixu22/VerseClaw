@@ -3070,6 +3070,9 @@ export async function runEmbeddedAttempt(
       });
       activeSession.agent.streamFn = resolveEmbeddedAgentStreamFn({
         cfg: params.config,
+        spend: { config: params.config?.runtime?.providerBudget, workspaceId: params.workspaceId,
+          sessionKey: params.sessionKey, sessionGeneration: params.sessionId, runId: params.runId, attemptIndex: params.attemptIndex,
+          sessionStorePath: params.sessionKey ? resolveStorePath(params.config?.session?.store, { agentId: sessionAgentId }) : undefined },
         currentStreamFn: defaultSessionStreamFn,
         providerStreamFn,
         sessionId: params.sessionId,

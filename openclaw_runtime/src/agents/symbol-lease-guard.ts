@@ -6,7 +6,9 @@
 import {
   acquireSymbolLease,
   releaseSymbolLease,
+  symbolLeaseKey,
   type SymbolLease,
+  type LeaseAcquireResult,
 } from "../context-engine/factstore/symbol-lease.js";
 import type { SymbolLeaseMode } from "../context-engine/coding-runtime-flags.js";
 import { getToolParamsRecord } from "./agent-tools.params.js";
@@ -27,16 +29,18 @@ export class SymbolLeaseHeldError extends Error {
   readonly code = "SYMBOL_LEASE_HELD";
   readonly holderId?: string;
   readonly expiresAtMs?: number;
-  constructor(symbolKey: string, holderId?: string, expiresAtMs?: number) {
+  readonly reason: Extract<LeaseAcquireResult, { ok: false }>["reason"];
+  constructor(symbolKey: string, holderId?: string, expiresAtMs?: number, reason: Extract<LeaseAcquireResult, { ok: false }>["reason"] = "held") {
     super(
-      `Symbol lease held for ${symbolKey}` +
+      `Symbol lease ${reason} for ${symbolKey}` +
         (holderId ? ` by ${holderId}` : "") +
         (expiresAtMs ? ` until ${expiresAtMs}` : "") +
-        ". Wait for release/expiry or write a disjoint path/symbol.",
+        ". Wait for owner release or verified recovery; expiry alone does not release it.",
     );
     this.name = "SymbolLeaseHeldError";
     this.holderId = holderId;
     this.expiresAtMs = expiresAtMs;
+    this.reason = reason;
   }
 }
 
@@ -89,7 +93,11 @@ export function wrapToolWithSymbolLease(
   return {
     ...tool,
     execute: async (toolCallId, args, signal, onUpdate) => {
-      const targets = resolveWriteTargetsFromArgs(tool.name, args);
+      if (signal?.aborted) throw new DOMException("Resource admission aborted", "AbortError");
+      const targets = [...new Map(resolveWriteTargetsFromArgs(tool.name, args)
+        .map(target => [symbolLeaseKey(target), target])).entries()]
+        .sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0)
+        .map(([, target]) => target);
       const held: Array<{ symbolName: string; filePath?: string; lease: SymbolLease }> = [];
       try {
         for (const target of targets) {
@@ -107,19 +115,22 @@ export function wrapToolWithSymbolLease(
               `${(target.filePath ?? "").replace(/\\/g, "/")}::${target.symbolName}`,
               result.holderId,
               result.expiresAtMs,
+              result.reason,
             );
           }
           held.push({ ...target, lease: result.lease });
         }
+        if (signal?.aborted) throw new DOMException("Resource admission aborted", "AbortError");
         return await tool.execute(toolCallId, args, signal, onUpdate);
       } finally {
-        for (const item of held) {
+        for (const item of held.reverse()) {
           releaseSymbolLease({
             workspaceRoot: options.workspaceRoot,
             holderId: options.holderId,
             symbolName: item.symbolName,
             filePath: item.filePath,
             mode: options.mode ?? "memory",
+            leaseId: item.lease.leaseId,
           });
         }
       }

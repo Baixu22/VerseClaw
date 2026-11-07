@@ -1,0 +1,105 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r1-spend-native",
+  "processes": [
+    {
+      "pid": 50324,
+      "rows": [
+        {
+          "ready": true,
+          "pid": 50324
+        },
+        {
+          "admitted": false,
+          "error": "ProviderSpendRejectedError: Provider spend admission rejected: cost (session)"
+        }
+      ],
+      "exit": 0
+    },
+    {
+      "pid": 49012,
+      "rows": [
+        {
+          "ready": true,
+          "pid": 49012
+        },
+        {
+          "admitted": true,
+          "reservation": {
+            "callId": "native-b",
+            "ownerToken": "5a2ff1f2-edc1-484b-ab11-45412373efbb"
+          }
+        }
+      ],
+      "exit": 0
+    }
+  ],
+  "limiter": "session",
+  "resource": "cost",
+  "budgetConfig": {
+    "host": {
+      "maxCostUsd": 1
+    },
+    "project": {
+      "maxCostUsd": 1
+    },
+    "session": {
+      "maxCostUsd": 0.01
+    }
+  },
+  "saved": [
+    {
+      "call_id": "native-b",
+      "owner_token": "5a2ff1f2-edc1-484b-ab11-45412373efbb",
+      "request_digest": "native-b",
+      "run_id": "native-b",
+      "provider": "fixture",
+      "model": "fixture",
+      "scope_json": "{\"workspaceId\":\"project\",\"projectId\":\"project\",\"sessionKey\":\"native-shared-session\",\"sessionGeneration\":\"g\"}",
+      "state": "reserved",
+      "reserved_tokens": 60,
+      "reserved_cost_micros": 6000,
+      "actual_tokens": null,
+      "actual_cost_micros": null,
+      "created_at": 1794060233172,
+      "settled_at": null,
+      "reconciliation_ref": null
+    }
+  ],
+  "snapshot": [
+    {
+      "scope": "host",
+      "scopeKey": "host",
+      "spentTokens": 0,
+      "spentCostMicros": 0,
+      "heldTokens": 60,
+      "heldCostMicros": 6000,
+      "activeCalls": 1,
+      "unknownTokenCalls": 0,
+      "unknownCostCalls": 0
+    },
+    {
+      "scope": "project",
+      "scopeKey": "[\"project\",\"project\",\"project\"]",
+      "spentTokens": 0,
+      "spentCostMicros": 0,
+      "heldTokens": 60,
+      "heldCostMicros": 6000,
+      "activeCalls": 1,
+      "unknownTokenCalls": 0,
+      "unknownCostCalls": 0
+    },
+    {
+      "scope": "session",
+      "scopeKey": "[\"session\",\"native-shared-session\",\"g\"]",
+      "spentTokens": 0,
+      "spentCostMicros": 0,
+      "heldTokens": 60,
+      "heldCostMicros": 6000,
+      "activeCalls": 1,
+      "unknownTokenCalls": 0,
+      "unknownCostCalls": 0
+    }
+  ],
+  "databasePath": "D:\\tmp\\r1-spend-pwPVUy\\state\\openclaw.sqlite"
+}

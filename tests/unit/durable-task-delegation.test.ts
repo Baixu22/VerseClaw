@@ -14,6 +14,7 @@ import {
 } from "../../shared/task-system/runtime";
 import {
   preparePersistentTaskDelegation,
+  capturePersistentTaskDelegationIntent,
   recordPersistentTaskDispatch,
   returnPersistentTaskWriter,
 } from "../../openclaw_runtime/src/agents/persistent-task-delegation";
@@ -80,6 +81,9 @@ function fixture() {
 }
 
 describe("durable production delegation protocol", () => {
+  it('does not transfer queued work until dispatch and rejects changed parent ownership',()=>{
+    const f=fixture();try{const intent=capturePersistentTaskDelegationIntent(f.input)!;expect(f.store.get(f.claim.taskNodeId).claim?.sessionKey).toBe('parent');f.store.handoff(f.claim,'parent','parent-generation');expect(()=>preparePersistentTaskDelegation(intent)).toThrow('PARENT_CHANGED_WHILE_QUEUED');}finally{f.close();}
+  });
   it("transfers before dispatch, preserves read-only parent context and returns from terminal owner evidence", async () => {
     const f = fixture();
     try {

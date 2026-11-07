@@ -1447,7 +1447,7 @@ if (gotTheLock) {
     // R0-3: reclaim every live pty session and stop tracked resources
     // (shutdown() = stop timers + kill tracked processes, best-effort).
     getTerminalSessionManager()?.shutdownAll();
-    closeAllOwnedBrowserSessions();
+    void closeAllOwnedBrowserSessions();
     void getResourceTracker().shutdown();
     disposeCronMaintenance();
     // Release the efficiency sampling timer so quit never waits on it.

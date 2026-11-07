@@ -6,6 +6,7 @@
 import {
   loadSubagentRegistryFromSqlite,
   saveSubagentRegistryToSqlite,
+  adoptSubagentRegistrySnapshot,
 } from "./subagent-registry.store.sqlite.js";
 import type { SubagentRunRecord } from "./subagent-registry.types.js";
 
@@ -56,7 +57,7 @@ export function clearSubagentRunsReadCacheForTest(): void {
 export function persistSubagentRunsToDisk(runs: Map<string, SubagentRunRecord>) {
   try {
     saveSubagentRegistryToSqlite(runs);
-    rememberPersistedSubagentRunsSnapshot(runs);
+    rememberPersistedSubagentRunsSnapshot(loadSubagentRegistryFromSqlite());
   } catch {
     // ignore persistence failures
   }
@@ -64,7 +65,7 @@ export function persistSubagentRunsToDisk(runs: Map<string, SubagentRunRecord>) 
 
 export function persistSubagentRunsToDiskOrThrow(runs: Map<string, SubagentRunRecord>) {
   saveSubagentRegistryToSqlite(runs);
-  rememberPersistedSubagentRunsSnapshot(runs);
+  rememberPersistedSubagentRunsSnapshot(loadSubagentRegistryFromSqlite());
 }
 
 export function restoreSubagentRunsFromDisk(params: {
@@ -86,6 +87,7 @@ export function restoreSubagentRunsFromDisk(params: {
     params.runs.set(runId, entry);
     added += 1;
   }
+  adoptSubagentRegistrySnapshot(params.runs, restored);
   return added;
 }
 
@@ -101,9 +103,7 @@ export function getSubagentRunsSnapshotForRead(
       // Persisted state lets other worker processes observe active runs.
       // Cache this hot cross-process snapshot briefly; writes refresh the local
       // cache and the TTL bounds visibility of changes from other processes.
-      for (const [runId, entry] of loadPersistedSubagentRunsForRead().entries()) {
-        merged.set(runId, entry);
-      }
+      return cloneSubagentRunsSnapshot(loadPersistedSubagentRunsForRead());
     } catch {
       // Ignore disk read failures and fall back to local memory.
     }

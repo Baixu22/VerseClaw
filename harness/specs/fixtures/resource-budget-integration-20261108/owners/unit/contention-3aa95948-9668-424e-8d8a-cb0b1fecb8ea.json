@@ -1,0 +1,47 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r1-multiprocess-benchmark",
+  "workers": 4,
+  "roundsPerWorker": 12,
+  "durationMs": 964,
+  "throughputAcquiresPerSecond": 2.07,
+  "totals": {
+    "acquired": 2,
+    "denied": 46,
+    "effects": 2,
+    "overlaps": 0
+  },
+  "sideEffectLines": 2,
+  "duplicateMutationSideEffects": 0,
+  "contentionObserved": true,
+  "perWorker": [
+    {
+      "holderId": "worker-0",
+      "acquired": 1,
+      "denied": 11,
+      "effects": 1,
+      "overlaps": 0
+    },
+    {
+      "holderId": "worker-1",
+      "acquired": 0,
+      "denied": 12,
+      "effects": 0,
+      "overlaps": 0
+    },
+    {
+      "holderId": "worker-2",
+      "acquired": 1,
+      "denied": 11,
+      "effects": 1,
+      "overlaps": 0
+    },
+    {
+      "holderId": "worker-3",
+      "acquired": 0,
+      "denied": 12,
+      "effects": 0,
+      "overlaps": 0
+    }
+  ]
+}

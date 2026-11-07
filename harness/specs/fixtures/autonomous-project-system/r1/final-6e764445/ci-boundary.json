@@ -1,0 +1,758 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r1-ci-boundary-reader",
+  "codeCandidate": {
+    "commit": "6e764445cf805b48eb86e5e39f48d05865c70ad6",
+    "tree": "5971f588bfbfdd82fa208d1e6acedc685f2f3c86",
+    "dirty": false
+  },
+  "selectedR1": {
+    "unitTests": 595,
+    "nativeScenes": 10,
+    "sourceFiles": 129,
+    "sourceChanged": []
+  },
+  "fullCI": {
+    "initial": {
+      "driven_by": "agent",
+      "actor": "codex-r1-full-baseline-ci",
+      "candidate": {
+        "commit": "6e764445cf805b48eb86e5e39f48d05865c70ad6",
+        "tree": "5971f588bfbfdd82fa208d1e6acedc685f2f3c86",
+        "dirty": false
+      },
+      "records": [
+        {
+          "name": "harness-ci",
+          "command": [
+            "C:/Program Files/nodejs/node.exe",
+            "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+            "harness:ci"
+          ],
+          "cwd": "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/clean-verify",
+          "pid": 23312,
+          "startedAt": "2026-11-07T14:24:11.006Z",
+          "endedAt": "2026-11-07T14:24:15.577Z",
+          "exitCode": 1,
+          "signal": null
+        }
+      ],
+      "success": false
+    },
+    "restored": {
+      "driven_by": "agent",
+      "actor": "codex-r1-full-baseline-ci",
+      "candidate": {
+        "commit": "6e764445cf805b48eb86e5e39f48d05865c70ad6",
+        "tree": "5971f588bfbfdd82fa208d1e6acedc685f2f3c86",
+        "dirty": false
+      },
+      "records": [
+        {
+          "name": "harness-ci",
+          "command": [
+            "C:/Program Files/nodejs/node.exe",
+            "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+            "harness:ci"
+          ],
+          "cwd": "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/clean-verify",
+          "pid": 42172,
+          "startedAt": "2026-11-07T14:27:51.784Z",
+          "endedAt": "2026-11-07T14:28:12.759Z",
+          "exitCode": 1,
+          "signal": null
+        }
+      ],
+      "success": false
+    },
+    "remaining": {
+      "driven_by": "agent",
+      "actor": "codex-r1-ci-remaining-checks",
+      "candidate": {
+        "commit": "6e764445cf805b48eb86e5e39f48d05865c70ad6",
+        "tree": "5971f588bfbfdd82fa208d1e6acedc685f2f3c86",
+        "dirty": true
+      },
+      "records": [
+        {
+          "name": "repository-evidence",
+          "command": [
+            "C:/Program Files/nodejs/node.exe",
+            "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+            "repo:evidence:check"
+          ],
+          "cwd": "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/clean-verify",
+          "pid": 21916,
+          "startedAt": "2026-11-07T14:53:19.599Z",
+          "endedAt": "2026-11-07T14:53:51.252Z",
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "name": "test-coverage",
+          "command": [
+            "C:/Program Files/nodejs/node.exe",
+            "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+            "repo:test-coverage:check"
+          ],
+          "cwd": "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/clean-verify",
+          "pid": 28760,
+          "startedAt": "2026-11-07T14:53:51.271Z",
+          "endedAt": "2026-11-07T14:54:15.820Z",
+          "exitCode": 0,
+          "signal": null
+        }
+      ],
+      "success": true
+    }
+  },
+  "refProvenance": {
+    "driven_by": "agent",
+    "actor": "codex-r1-ci-baseline-reader",
+    "source": "D:/ClawX",
+    "ref": "refs/remotes/origin/main",
+    "sourceRefCommit": "d8d1691a281b14d74096d50b4da16eb0148ffe87",
+    "candidate": {
+      "commit": "6e764445cf805b48eb86e5e39f48d05865c70ad6",
+      "tree": "5971f588bfbfdd82fa208d1e6acedc685f2f3c86",
+      "dirty": false
+    },
+    "policy": "Import the canonical repository ref into the independent verifier; preserve candidate source and avoid no-diff."
+  },
+  "refreshedAgentDev": {
+    "executions": {
+      "driven_by": "agent",
+      "actor": "codex-r1-agent-dev-refresh",
+      "candidate": {
+        "commit": "6e764445cf805b48eb86e5e39f48d05865c70ad6",
+        "tree": "5971f588bfbfdd82fa208d1e6acedc685f2f3c86",
+        "dirty": false
+      },
+      "records": [
+        {
+          "name": "workbench",
+          "command": [
+            "C:/Program Files/nodejs/node.exe",
+            "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+            "agent-dev:workbench"
+          ],
+          "cwd": "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/clean-verify",
+          "pid": 49640,
+          "startedAt": "2026-11-07T14:33:19.601Z",
+          "endedAt": "2026-11-07T14:33:20.645Z",
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "name": "deep-test",
+          "command": [
+            "C:/Program Files/nodejs/node.exe",
+            "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+            "agent-dev:deep-test"
+          ],
+          "cwd": "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/clean-verify",
+          "pid": 28112,
+          "startedAt": "2026-11-07T14:33:20.647Z",
+          "endedAt": "2026-11-07T14:39:02.250Z",
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "name": "audit",
+          "command": [
+            "C:/Program Files/nodejs/node.exe",
+            "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+            "agent-dev:audit"
+          ],
+          "cwd": "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/clean-verify",
+          "pid": 4804,
+          "startedAt": "2026-11-07T14:39:02.257Z",
+          "endedAt": "2026-11-07T14:39:03.953Z",
+          "exitCode": 1,
+          "signal": null
+        }
+      ],
+      "success": false
+    },
+    "audit": {
+      "schema": "clawx.agent-dev.audit.v1",
+      "generatedAt": "2026-11-07T14:39:03.294Z",
+      "policy": {
+        "schema": "clawx.agent-dev.audit.v1",
+        "passScore": 90,
+        "warnScore": 80,
+        "maxEvidenceAgeHours": 24,
+        "maxHistoryEntries": 20,
+        "hardVetoSeverities": [
+          "fail"
+        ],
+        "statusSemantics": {
+          "pass": "Score is at least 90 and no hard-veto findings exist.",
+          "warn": "Score is at least 80 and below 90 with no hard-veto findings.",
+          "fail": "Score is below 80 or at least one hard-veto finding exists."
+        }
+      },
+      "status": "fail",
+      "grade": "B",
+      "maturityLevel": "blocked",
+      "confidence": {
+        "level": "high",
+        "reason": "Required generated evidence is present, parseable, and within the freshness window.",
+        "freshGeneratedCount": 4,
+        "generatedSourceCount": 4,
+        "staleGeneratedCount": 0
+      },
+      "totalScore": 80,
+      "maxScore": 100,
+      "summary": {
+        "pass": 5,
+        "warn": 0,
+        "fail": 1,
+        "disqualifierCount": 2
+      },
+      "dimensions": [
+        {
+          "id": "gate-integrity",
+          "title": "Gate Integrity",
+          "maxScore": 20,
+          "description": "Full gates remain available, fast paths are additive, and deep-test explains which full gates remain required.",
+          "score": 20,
+          "findings": [],
+          "status": "pass"
+        },
+        {
+          "id": "evidence-completeness",
+          "title": "Evidence Completeness",
+          "maxScore": 20,
+          "description": "Machine-readable Workbench, deep-test, quality, decision, and trend evidence exist.",
+          "score": 20,
+          "findings": [],
+          "status": "pass"
+        },
+        {
+          "id": "coverage-breadth",
+          "title": "Coverage Breadth",
+          "maxScore": 20,
+          "description": "Agent Dev has scenario, unit, E2E, contract, i18n, and host-api boundary coverage.",
+          "score": 20,
+          "findings": [],
+          "status": "pass"
+        },
+        {
+          "id": "performance-discipline",
+          "title": "Performance Discipline",
+          "maxScore": 20,
+          "description": "Latest timing evidence stays within budgets and refuses to treat over-limit runs as passing design evidence.",
+          "score": 0,
+          "findings": [
+            {
+              "id": "latest-decision-blocked",
+              "severity": "fail",
+              "priority": "P0",
+              "message": "Latest deep-test decision is blocked: typecheck exceeded hard performance limits.",
+              "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence."
+            },
+            {
+              "id": "performance-limit:typecheck",
+              "severity": "fail",
+              "priority": "P0",
+              "message": "typecheck exceeded hard limit: 240129ms > 45000ms.",
+              "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+            },
+            {
+              "id": "performance-watch:e2e-build",
+              "severity": "warn",
+              "priority": "P1",
+              "message": "e2e-build exceeded target: 52229ms > 25000ms.",
+              "recommendation": "Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build."
+            },
+            {
+              "id": "performance-watch:playwright-agent-dev",
+              "severity": "warn",
+              "priority": "P1",
+              "message": "playwright-agent-dev exceeded target: 35651ms > 25000ms.",
+              "recommendation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding."
+            },
+            {
+              "id": "performance-watch:i18n",
+              "severity": "warn",
+              "priority": "P1",
+              "message": "i18n exceeded target: 1284ms > 1000ms.",
+              "recommendation": "Keep literal namespace scans bounded to source and locale directories."
+            },
+            {
+              "id": "performance-watch:contract",
+              "severity": "warn",
+              "priority": "P1",
+              "message": "contract exceeded target: 1112ms > 1000ms.",
+              "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources."
+            }
+          ],
+          "status": "fail"
+        },
+        {
+          "id": "docs-runbook",
+          "title": "Docs And Runbook",
+          "maxScore": 10,
+          "description": "Developer docs explain daily loops, full gates, release evidence, and failure interpretation.",
+          "score": 10,
+          "findings": [],
+          "status": "pass"
+        },
+        {
+          "id": "maintainability",
+          "title": "Maintainability",
+          "maxScore": 10,
+          "description": "The system avoids parallel registries, has focused unit protection, and keeps generated evidence bounded.",
+          "score": 10,
+          "findings": [],
+          "status": "pass"
+        }
+      ],
+      "scoreBreakdown": [
+        {
+          "id": "gate-integrity",
+          "title": "Gate Integrity",
+          "score": 20,
+          "maxScore": 20,
+          "deducted": 0,
+          "status": "pass",
+          "reason": "No findings deducted points for this dimension.",
+          "findings": []
+        },
+        {
+          "id": "evidence-completeness",
+          "title": "Evidence Completeness",
+          "score": 20,
+          "maxScore": 20,
+          "deducted": 0,
+          "status": "pass",
+          "reason": "No findings deducted points for this dimension.",
+          "findings": []
+        },
+        {
+          "id": "coverage-breadth",
+          "title": "Coverage Breadth",
+          "score": 20,
+          "maxScore": 20,
+          "deducted": 0,
+          "status": "pass",
+          "reason": "No findings deducted points for this dimension.",
+          "findings": []
+        },
+        {
+          "id": "performance-discipline",
+          "title": "Performance Discipline",
+          "score": 0,
+          "maxScore": 20,
+          "deducted": 20,
+          "status": "fail",
+          "reason": "6 finding(s) deducted 20 point(s).",
+          "findings": [
+            {
+              "id": "latest-decision-blocked",
+              "severity": "fail",
+              "estimatedPenalty": 8,
+              "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence."
+            },
+            {
+              "id": "performance-limit:typecheck",
+              "severity": "fail",
+              "estimatedPenalty": 8,
+              "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+            },
+            {
+              "id": "performance-watch:e2e-build",
+              "severity": "warn",
+              "estimatedPenalty": 3,
+              "recommendation": "Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build."
+            },
+            {
+              "id": "performance-watch:playwright-agent-dev",
+              "severity": "warn",
+              "estimatedPenalty": 3,
+              "recommendation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding."
+            },
+            {
+              "id": "performance-watch:i18n",
+              "severity": "warn",
+              "estimatedPenalty": 3,
+              "recommendation": "Keep literal namespace scans bounded to source and locale directories."
+            },
+            {
+              "id": "performance-watch:contract",
+              "severity": "warn",
+              "estimatedPenalty": 3,
+              "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources."
+            }
+          ]
+        },
+        {
+          "id": "docs-runbook",
+          "title": "Docs And Runbook",
+          "score": 10,
+          "maxScore": 10,
+          "deducted": 0,
+          "status": "pass",
+          "reason": "No findings deducted points for this dimension.",
+          "findings": []
+        },
+        {
+          "id": "maintainability",
+          "title": "Maintainability",
+          "score": 10,
+          "maxScore": 10,
+          "deducted": 0,
+          "status": "pass",
+          "reason": "No findings deducted points for this dimension.",
+          "findings": []
+        }
+      ],
+      "rubric": [
+        {
+          "id": "gate-integrity",
+          "title": "Gate Integrity",
+          "maxScore": 20,
+          "description": "Full gates remain available, fast paths are additive, and deep-test explains which full gates remain required."
+        },
+        {
+          "id": "evidence-completeness",
+          "title": "Evidence Completeness",
+          "maxScore": 20,
+          "description": "Machine-readable Workbench, deep-test, quality, decision, and trend evidence exist."
+        },
+        {
+          "id": "coverage-breadth",
+          "title": "Coverage Breadth",
+          "maxScore": 20,
+          "description": "Agent Dev has scenario, unit, E2E, contract, i18n, and host-api boundary coverage."
+        },
+        {
+          "id": "performance-discipline",
+          "title": "Performance Discipline",
+          "maxScore": 20,
+          "description": "Latest timing evidence stays within budgets and refuses to treat over-limit runs as passing design evidence."
+        },
+        {
+          "id": "docs-runbook",
+          "title": "Docs And Runbook",
+          "maxScore": 10,
+          "description": "Developer docs explain daily loops, full gates, release evidence, and failure interpretation."
+        },
+        {
+          "id": "maintainability",
+          "title": "Maintainability",
+          "maxScore": 10,
+          "description": "The system avoids parallel registries, has focused unit protection, and keeps generated evidence bounded."
+        }
+      ],
+      "evidenceInventory": [
+        {
+          "id": "workbench",
+          "path": "artifacts/agent-dev-workbench/evidence.json",
+          "required": true,
+          "generated": true,
+          "exists": true,
+          "parseable": true,
+          "mtime": "2026-11-07T14:39:01.886Z",
+          "generatedAt": "2026-11-07T14:39:01.883Z",
+          "ageHours": 0,
+          "newestRelevantSource": {
+            "path": "shared/host-api/contract.ts",
+            "mtime": "2026-11-05T09:39:46.000Z",
+            "mtimeMs": 1793871586000,
+            "timeSource": "git-commit"
+          },
+          "sourceFresh": true,
+          "fresh": true
+        },
+        {
+          "id": "deep-test",
+          "path": "artifacts/agent-dev-deep-test/report.json",
+          "required": true,
+          "generated": true,
+          "exists": true,
+          "parseable": true,
+          "mtime": "2026-11-07T14:39:01.921Z",
+          "generatedAt": "2026-11-07T14:39:01.916Z",
+          "ageHours": 0,
+          "newestRelevantSource": {
+            "path": "shared/host-api/contract.ts",
+            "mtime": "2026-11-05T09:39:46.000Z",
+            "mtimeMs": 1793871586000,
+            "timeSource": "git-commit"
+          },
+          "sourceFresh": true,
+          "fresh": true
+        },
+        {
+          "id": "deep-test-history",
+          "path": "artifacts/agent-dev-deep-test/history.json",
+          "required": true,
+          "generated": true,
+          "exists": true,
+          "parseable": true,
+          "mtime": "2026-11-07T14:39:01.919Z",
+          "generatedAt": "2026-11-07T14:39:01.916Z",
+          "ageHours": 0,
+          "newestRelevantSource": {
+            "path": "shared/host-api/contract.ts",
+            "mtime": "2026-11-05T09:39:46.000Z",
+            "mtimeMs": 1793871586000,
+            "timeSource": "git-commit"
+          },
+          "sourceFresh": true,
+          "fresh": true
+        },
+        {
+          "id": "quality",
+          "path": "artifacts/agent-dev-quality/report.json",
+          "required": true,
+          "generated": true,
+          "exists": true,
+          "parseable": true,
+          "mtime": "2026-11-07T14:39:01.397Z",
+          "generatedAt": "2026-11-07T14:39:01.390Z",
+          "ageHours": 0,
+          "newestRelevantSource": {
+            "path": "shared/host-api/contract.ts",
+            "mtime": "2026-11-05T09:39:46.000Z",
+            "mtimeMs": 1793871586000,
+            "timeSource": "git-commit"
+          },
+          "sourceFresh": true,
+          "fresh": true
+        },
+        {
+          "id": "package-scripts",
+          "path": "package.json",
+          "required": true,
+          "generated": false,
+          "exists": true,
+          "parseable": true,
+          "mtime": "2026-11-06T15:37:33.191Z",
+          "generatedAt": null,
+          "ageHours": 23.02,
+          "newestRelevantSource": null,
+          "sourceFresh": true,
+          "fresh": true
+        },
+        {
+          "id": "agent-dev-runbook",
+          "path": "docs/agent-dev-control-plane.md",
+          "required": true,
+          "generated": false,
+          "exists": true,
+          "parseable": true,
+          "mtime": "2026-11-06T15:37:19.109Z",
+          "generatedAt": null,
+          "ageHours": 23.03,
+          "newestRelevantSource": null,
+          "sourceFresh": true,
+          "fresh": true
+        },
+        {
+          "id": "agent-instructions",
+          "path": "AGENTS.md",
+          "required": true,
+          "generated": false,
+          "exists": true,
+          "parseable": true,
+          "mtime": "2026-11-06T15:37:18.020Z",
+          "generatedAt": null,
+          "ageHours": 23.03,
+          "newestRelevantSource": null,
+          "sourceFresh": true,
+          "fresh": true
+        },
+        {
+          "id": "scenario-registry",
+          "path": "shared/agent-dev/scenarios.ts",
+          "required": true,
+          "generated": false,
+          "exists": true,
+          "parseable": true,
+          "mtime": "2026-11-06T15:37:34.333Z",
+          "generatedAt": null,
+          "ageHours": 23.02,
+          "newestRelevantSource": null,
+          "sourceFresh": true,
+          "fresh": true
+        },
+        {
+          "id": "regularization-tests",
+          "path": "tests/unit/agent-dev-regularization.test.ts",
+          "required": true,
+          "generated": false,
+          "exists": true,
+          "parseable": true,
+          "mtime": "2026-11-06T15:37:35.276Z",
+          "generatedAt": null,
+          "ageHours": 23.02,
+          "newestRelevantSource": null,
+          "sourceFresh": true,
+          "fresh": true
+        }
+      ],
+      "prioritizedFindings": [
+        {
+          "dimension": "performance-discipline",
+          "id": "latest-decision-blocked",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "Latest deep-test decision is blocked: typecheck exceeded hard performance limits.",
+          "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence.",
+          "impact": "high",
+          "effort": "medium",
+          "validationCommands": [
+            "pnpm agent-dev:deep-test --reuse-build --fast-unit --fast-typecheck --smoke-e2e",
+            "pnpm agent-dev:audit:report"
+          ]
+        },
+        {
+          "dimension": "performance-discipline",
+          "id": "performance-limit:typecheck",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "typecheck exceeded hard limit: 240129ms > 45000ms.",
+          "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate.",
+          "impact": "high",
+          "effort": "medium",
+          "validationCommands": [
+            "pnpm agent-dev:deep-test --reuse-build --fast-unit --fast-typecheck --smoke-e2e",
+            "pnpm agent-dev:audit:report"
+          ]
+        },
+        {
+          "dimension": "performance-discipline",
+          "id": "performance-watch:contract",
+          "severity": "warn",
+          "priority": "P1",
+          "message": "contract exceeded target: 1112ms > 1000ms.",
+          "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources.",
+          "impact": "medium",
+          "effort": "low",
+          "validationCommands": [
+            "pnpm agent-dev:fast",
+            "pnpm agent-dev:audit:report"
+          ]
+        },
+        {
+          "dimension": "performance-discipline",
+          "id": "performance-watch:e2e-build",
+          "severity": "warn",
+          "priority": "P1",
+          "message": "e2e-build exceeded target: 52229ms > 25000ms.",
+          "recommendation": "Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build.",
+          "impact": "medium",
+          "effort": "low",
+          "validationCommands": [
+            "pnpm agent-dev:fast",
+            "pnpm agent-dev:audit:report"
+          ]
+        },
+        {
+          "dimension": "performance-discipline",
+          "id": "performance-watch:i18n",
+          "severity": "warn",
+          "priority": "P1",
+          "message": "i18n exceeded target: 1284ms > 1000ms.",
+          "recommendation": "Keep literal namespace scans bounded to source and locale directories.",
+          "impact": "medium",
+          "effort": "low",
+          "validationCommands": [
+            "pnpm agent-dev:fast",
+            "pnpm agent-dev:audit:report"
+          ]
+        },
+        {
+          "dimension": "performance-discipline",
+          "id": "performance-watch:playwright-agent-dev",
+          "severity": "warn",
+          "priority": "P1",
+          "message": "playwright-agent-dev exceeded target: 35651ms > 25000ms.",
+          "recommendation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding.",
+          "impact": "medium",
+          "effort": "low",
+          "validationCommands": [
+            "pnpm agent-dev:fast",
+            "pnpm agent-dev:audit:report"
+          ]
+        }
+      ],
+      "disqualifiers": [
+        {
+          "dimension": "performance-discipline",
+          "id": "latest-decision-blocked",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "Latest deep-test decision is blocked: typecheck exceeded hard performance limits.",
+          "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence."
+        },
+        {
+          "dimension": "performance-discipline",
+          "id": "performance-limit:typecheck",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "typecheck exceeded hard limit: 240129ms > 45000ms.",
+          "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+        }
+      ],
+      "recommendations": [
+        "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence.",
+        "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate.",
+        "Keep contract scanning text-based and bounded to host-api/service sources.",
+        "Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build.",
+        "Keep literal namespace scans bounded to source and locale directories.",
+        "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding."
+      ]
+    },
+    "deepDecision": {
+      "status": "blocked",
+      "reason": "typecheck exceeded hard performance limits.",
+      "dailyLoopReady": false,
+      "releaseReady": false,
+      "fullGateComplete": true,
+      "budgetStatus": "limit",
+      "fastPathModes": [],
+      "requiredFullGates": [],
+      "watchSteps": [
+        "e2e-build",
+        "playwright-agent-dev",
+        "i18n",
+        "contract"
+      ],
+      "limitSteps": [
+        "typecheck"
+      ]
+    }
+  },
+  "memoryProfile": {
+    "driven_by": "agent",
+    "actor": "codex-r1-compiler-memory-profile",
+    "candidate": {
+      "commit": "6e764445cf805b48eb86e5e39f48d05865c70ad6",
+      "tree": "5971f588bfbfdd82fa208d1e6acedc685f2f3c86",
+      "dirty": true
+    },
+    "records": [
+      {
+        "name": "typecheck",
+        "command": [
+          "C:/Program Files/nodejs/node.exe",
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "typecheck"
+        ],
+        "cwd": "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/clean-verify",
+        "pid": 47712,
+        "startedAt": "2026-11-07T14:44:19.410Z",
+        "endedAt": "2026-11-07T14:48:25.427Z",
+        "exitCode": 0,
+        "signal": null
+      }
+    ],
+    "success": true
+  },
+  "deliveryState": "R1 original owner-admission contract verified; full project CI blocked by typecheck performance (240129ms > 45000ms).",
+  "goalStatus": "active"
+}

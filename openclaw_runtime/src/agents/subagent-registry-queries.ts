@@ -374,7 +374,9 @@ export function countActiveRunsForSessionFromRuns(
 
   let count = 0;
   for (const entry of latestByChildSessionKey.values()) {
-    if (isLiveUnendedSubagentRun(entry)) {
+    // Display liveness may age out a row; quota needs the execution owner's
+    // terminal fact. A stale/unknown run still occupies its reserved capacity.
+    if (!hasSubagentRunEnded(entry) && entry.execution?.status !== 'queued') {
       count += 1;
       continue;
     }
@@ -463,7 +465,7 @@ function countPendingDescendantRunsInternal(
       const runEnded = hasSubagentRunEnded(entry);
       const cleanupCompleted = typeof entry.cleanupCompletedAt === "number";
       const runPending = liveOnly
-        ? !runEnded && isLiveUnendedSubagentRun(entry)
+        ? !runEnded && entry.execution?.status !== 'queued'
         : runEnded
           ? !cleanupCompleted
           : isLiveUnendedSubagentRun(entry);

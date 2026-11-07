@@ -1,0 +1,388 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r1-curated-evidence-reader",
+  "candidate": {
+    "commit": "6e764445cf805b48eb86e5e39f48d05865c70ad6",
+    "tree": "5971f588bfbfdd82fa208d1e6acedc685f2f3c86",
+    "dirty": false
+  },
+  "references": [
+    {
+      "file": "owners/unit/contention-8b360db2-b020-47a3-9241-484c39fe56e5.json",
+      "actor": "codex-r1-multiprocess-benchmark"
+    },
+    {
+      "file": "owners/unit/inconsistent-r1-spend-aAkSXQ/owner.json",
+      "actor": "codex-r1-inconsistent-usage-reader"
+    },
+    {
+      "file": "owners/unit/inconsistent-r1-spend-OBALjJ/owner.json",
+      "actor": "codex-r1-inconsistent-usage-reader"
+    },
+    {
+      "file": "owners/unit/native-owner-84067f61-9d5d-4b46-863f-ee721ecf2653.json",
+      "actor": "codex-r1-native-owner-test"
+    },
+    {
+      "file": "owners/unit/process-owner-1794060205703/process-owner-rebuild.json",
+      "actor": "codex-r1-process-owner-reader"
+    },
+    {
+      "file": "owners/unit/provider-http-22fbad98-a44a-43eb-a5c8-0d8360adfbf2.json",
+      "actor": "codex-r1-local-http"
+    },
+    {
+      "file": "owners/unit/registry-r1-registry-vrSD8O/owner.json",
+      "actor": "codex-r1-registry-native"
+    },
+    {
+      "file": "owners/unit/registry-r1-registry-x9zwEw/owner.json",
+      "actor": "codex-r1-registry-native"
+    },
+    {
+      "file": "owners/unit/spawn-918e40de-8147-42a6-8bb9-66fc872e7b29/owner.json",
+      "actor": "codex-r1-subagent-owner-test"
+    },
+    {
+      "file": "owners/unit/spend-native-r1-spend-4OuSv4/owner.json",
+      "actor": "codex-r1-spend-native"
+    },
+    {
+      "file": "owners/unit/spend-native-r1-spend-6Wuuj7/owner.json",
+      "actor": "codex-r1-spend-native"
+    },
+    {
+      "file": "owners/unit/spend-native-r1-spend-Allkqs/owner.json",
+      "actor": "codex-r1-spend-native"
+    },
+    {
+      "file": "owners/unit/spend-native-r1-spend-pwPVUy/owner.json",
+      "actor": "codex-r1-spend-native"
+    },
+    {
+      "file": "owners/unit/spend-native-r1-spend-VFFQie/owner.json",
+      "actor": "codex-r1-spend-native"
+    },
+    {
+      "file": "owners/unit/spend-native-r1-spend-VMuOzI/owner.json",
+      "actor": "codex-r1-spend-native"
+    },
+    {
+      "file": "owners/unit/spend-r1-spend-n8esat/owner.json",
+      "actor": "codex-r1-spend-test"
+    },
+    {
+      "file": "owners/unit/waves-d48057ba-dcd2-4b29-9419-6287a2724a26/owner.json",
+      "actor": "codex-r1-wave-test"
+    },
+    {
+      "file": "owners/unit/worktree-native-5c320a75-a9e0-4a66-9795-53505e288de6.json",
+      "actor": "codex-r1-worktree-native"
+    },
+    {
+      "file": "owners/native/handoff-off-results/autonomy-resource-admissio-006e0-run-terminates-handoff-off-/r1-native-stop.json",
+      "actor": "codex-r1-native-stop"
+    },
+    {
+      "file": "owners/native/handoff-off-results/autonomy-resource-admissio-006e0-run-terminates-handoff-off-/r1-waves-owner.json",
+      "actor": "codex-r1-electron-wave"
+    },
+    {
+      "file": "owners/native/handoff-on-results/autonomy-resource-admissio-92759--run-terminates-handoff-on-/r1-native-stop.json",
+      "actor": "codex-r1-native-stop"
+    },
+    {
+      "file": "owners/native/handoff-on-results/autonomy-resource-admissio-92759--run-terminates-handoff-on-/r1-waves-owner.json",
+      "actor": "codex-r1-electron-wave"
+    },
+    {
+      "file": "owners/native/owner-results/autonomy-owner-projection--6bdac-m-their-live-desktop-owners/owner-rebuild.json",
+      "actor": "codex-r1-desktop-owner-probe"
+    },
+    {
+      "file": "owners/native/token-results/autonomy-resource-admissio-8fabb-nciles-actual-usage-tokens-/r1-spend-owner.json",
+      "actor": "codex-r1-electron-spend"
+    },
+    {
+      "file": "owners/native/usd-results/autonomy-resource-admissio-532e3-econciles-actual-usage-USD-/r1-spend-owner.json",
+      "actor": "codex-r1-electron-spend"
+    }
+  ],
+  "databaseReferences": [
+    {
+      "owner": "owners/unit/inconsistent-r1-spend-aAkSXQ/owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\r1-spend-aAkSXQ\\state\\openclaw.sqlite",
+          "bytes": 1355776,
+          "sha256": "181f0c897ba3466ea57ba91a7d30cfd6d30cf20648d4dfcf91391177ac375401"
+        },
+        {
+          "source": "D:\\tmp\\r1-spend-aAkSXQ\\state\\openclaw.sqlite-wal",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "owner": "owners/unit/inconsistent-r1-spend-OBALjJ/owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\r1-spend-OBALjJ\\state\\openclaw.sqlite",
+          "bytes": 1355776,
+          "sha256": "0442ff16666b1eff7898f024788b9e31664f5931882df8d503bd73dc37434720"
+        },
+        {
+          "source": "D:\\tmp\\r1-spend-OBALjJ\\state\\openclaw.sqlite-wal",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "owner": "owners/unit/registry-r1-registry-vrSD8O/owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\r1-registry-vrSD8O\\state\\openclaw.sqlite",
+          "bytes": 1355776,
+          "sha256": "222db66e41185879082e7ee277c6c9372e132d4184d7dc06076a9e1b1b941886"
+        },
+        {
+          "source": "D:\\tmp\\r1-registry-vrSD8O\\state\\openclaw.sqlite-wal",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "owner": "owners/unit/registry-r1-registry-x9zwEw/owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\r1-registry-x9zwEw\\state\\openclaw.sqlite",
+          "bytes": 1355776,
+          "sha256": "a62441ef4ddca725e452fb889e22ba08f07ee4466a4312325c5e54fdea9abd1e"
+        },
+        {
+          "source": "D:\\tmp\\r1-registry-x9zwEw\\state\\openclaw.sqlite-wal",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "owner": "owners/unit/spend-native-r1-spend-4OuSv4/owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\r1-spend-4OuSv4\\state\\openclaw.sqlite",
+          "bytes": 1355776,
+          "sha256": "2bd834912291aa3434147251b83f361f4806a085e8041c66845021300a6311c8"
+        },
+        {
+          "source": "D:\\tmp\\r1-spend-4OuSv4\\state\\openclaw.sqlite-wal",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "owner": "owners/unit/spend-native-r1-spend-6Wuuj7/owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\r1-spend-6Wuuj7\\state\\openclaw.sqlite",
+          "bytes": 1355776,
+          "sha256": "47eaed25e44ddee55c6149191f19bf3a608641dc157cde120eb7996a3d09bd14"
+        },
+        {
+          "source": "D:\\tmp\\r1-spend-6Wuuj7\\state\\openclaw.sqlite-wal",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "owner": "owners/unit/spend-native-r1-spend-Allkqs/owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\r1-spend-Allkqs\\state\\openclaw.sqlite",
+          "bytes": 1355776,
+          "sha256": "bd596885beb23e28c0c36e3f6b054b340ad80d33cd590d6ab17137d090557ac0"
+        },
+        {
+          "source": "D:\\tmp\\r1-spend-Allkqs\\state\\openclaw.sqlite-wal",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "owner": "owners/unit/spend-native-r1-spend-pwPVUy/owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\r1-spend-pwPVUy\\state\\openclaw.sqlite",
+          "bytes": 1355776,
+          "sha256": "3253bee7ad5b1e4c34afdedce14e21f430e9a4a4f2c7e04833b95400cbe9fb68"
+        },
+        {
+          "source": "D:\\tmp\\r1-spend-pwPVUy\\state\\openclaw.sqlite-wal",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "owner": "owners/unit/spend-native-r1-spend-VFFQie/owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\r1-spend-VFFQie\\state\\openclaw.sqlite",
+          "bytes": 1355776,
+          "sha256": "d5ce22a784bef2659ed4f02acaf29a180d3d383e0f4238542631a6683001de37"
+        },
+        {
+          "source": "D:\\tmp\\r1-spend-VFFQie\\state\\openclaw.sqlite-wal",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "owner": "owners/unit/spend-native-r1-spend-VMuOzI/owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\r1-spend-VMuOzI\\state\\openclaw.sqlite",
+          "bytes": 1355776,
+          "sha256": "8e4efc9e4dc87f19185ee5acae1de77c1664867fc8d24885076f076aed142a5c"
+        },
+        {
+          "source": "D:\\tmp\\r1-spend-VMuOzI\\state\\openclaw.sqlite-wal",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "owner": "owners/unit/spend-r1-spend-n8esat/owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\r1-spend-n8esat\\state\\openclaw.sqlite",
+          "bytes": 1355776,
+          "sha256": "e800e8c14e479bbc76c3257f8808e556adad1d574f8c311585640c9804baaf92"
+        },
+        {
+          "source": "D:\\tmp\\r1-spend-n8esat\\state\\openclaw.sqlite-wal",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "owner": "owners/native/handoff-off-results/autonomy-resource-admissio-006e0-run-terminates-handoff-off-/r1-waves-owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-6e764445\\native\\handoff-off-results\\autonomy-resource-admissio-006e0-run-terminates-handoff-off-\\owner.sqlite",
+          "bytes": 1376256,
+          "sha256": "34c06e89a1b52bc5663216bb8d2557f5649194cc7008d25c9961ec01e496ea92"
+        },
+        {
+          "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-6e764445\\native\\handoff-off-results\\autonomy-resource-admissio-006e0-run-terminates-handoff-off-\\owner.sqlite-wal",
+          "bytes": 4136512,
+          "sha256": "551cd31d197ed04a6f0b718d19f1f6e5b654fff3f0a3a23bc0f35664cad78e0e"
+        }
+      ]
+    },
+    {
+      "owner": "owners/native/handoff-on-results/autonomy-resource-admissio-92759--run-terminates-handoff-on-/r1-waves-owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-6e764445\\native\\handoff-on-results\\autonomy-resource-admissio-92759--run-terminates-handoff-on-\\owner.sqlite",
+          "bytes": 1376256,
+          "sha256": "e1d4a8564730b776335f51c1112aab2b809ba8b4bc637c88ed5d4bc6cc8ee5c6"
+        },
+        {
+          "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-6e764445\\native\\handoff-on-results\\autonomy-resource-admissio-92759--run-terminates-handoff-on-\\owner.sqlite-wal",
+          "bytes": 4140632,
+          "sha256": "fe5591a4009df10d2fb4f3b752d9ca3ccc90b9aba27f5552899964aa809a54f2"
+        }
+      ]
+    },
+    {
+      "owner": "owners/native/token-results/autonomy-resource-admissio-8fabb-nciles-actual-usage-tokens-/r1-spend-owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-6e764445\\native\\token-results\\autonomy-resource-admissio-8fabb-nciles-actual-usage-tokens-\\spend.sqlite",
+          "bytes": 1478656,
+          "sha256": "c9fdddf7a1dbac9e2158469ac7dee36b694c113e2c8c57bbe3602520ecafec07"
+        },
+        {
+          "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-6e764445\\native\\token-results\\autonomy-resource-admissio-8fabb-nciles-actual-usage-tokens-\\spend.sqlite-wal",
+          "bytes": 4124152,
+          "sha256": "36faedcfea21d32b8f83af84d7daa98de0b8152c3319bd5b351ea493357d1ba0"
+        }
+      ]
+    },
+    {
+      "owner": "owners/native/usd-results/autonomy-resource-admissio-532e3-econciles-actual-usage-USD-/r1-spend-owner.json",
+      "sourceFiles": [
+        {
+          "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-6e764445\\native\\usd-results\\autonomy-resource-admissio-532e3-econciles-actual-usage-USD-\\spend.sqlite",
+          "bytes": 1474560,
+          "sha256": "2e24b226291c4c077822be5ac23dadeca115edad2c4a6301ab93b70fddae8b97"
+        },
+        {
+          "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-6e764445\\native\\usd-results\\autonomy-resource-admissio-532e3-econciles-actual-usage-USD-\\spend.sqlite-wal",
+          "bytes": 4124152,
+          "sha256": "98f10eaecd67cc60e11eff21165f1e13759502b53743b45121567dd145e98fe2"
+        }
+      ]
+    }
+  ],
+  "nativeStops": [
+    {
+      "file": "owners/native/handoff-off-results/autonomy-resource-admissio-006e0-run-terminates-handoff-off-/r1-native-stop.json",
+      "receipt": {
+        "driven_by": "agent",
+        "actor": "codex-r1-native-stop",
+        "mode": "normal",
+        "nativeBefore": {
+          "state": "running",
+          "port": 52202,
+          "reconnectAttempts": 0,
+          "gatewayReady": true,
+          "pid": 19004,
+          "connectedAt": 1794061075223,
+          "uptime": 1
+        },
+        "nativeAfter": {
+          "state": "stopped",
+          "port": 52202,
+          "reconnectAttempts": 0
+        },
+        "forcedAttempts": 0,
+        "kernelPidExited": true
+      }
+    },
+    {
+      "file": "owners/native/handoff-on-results/autonomy-resource-admissio-92759--run-terminates-handoff-on-/r1-native-stop.json",
+      "receipt": {
+        "driven_by": "agent",
+        "actor": "codex-r1-native-stop",
+        "mode": "taskkill-failure",
+        "nativeBefore": {
+          "state": "running",
+          "port": 55404,
+          "reconnectAttempts": 0,
+          "gatewayReady": true,
+          "pid": 28136,
+          "connectedAt": 1794061117024,
+          "uptime": 1
+        },
+        "nativeAfter": {
+          "state": "stopped",
+          "port": 55404,
+          "reconnectAttempts": 0
+        },
+        "forcedAttempts": 1,
+        "kernelPidExited": true
+      }
+    }
+  ]
+}
