@@ -1884,6 +1884,7 @@ export function createSessionsApi(ctx: {
   resolveCoordinator?: CompleteHostServiceRegistry['workspaces']['resolveCoordinator'];
   gatewayRpcForDelegation?: CompleteHostServiceRegistry['gateway']['rpc'];
   getActiveWorkspaceId?: () => Promise<string | null>;
+  resolveTaskScope?: (input: import('../../shared/session-task-scope').SessionTaskScopeInput) => import('../../shared/session-task-scope').SessionTaskScopeInput | Promise<import('../../shared/session-task-scope').SessionTaskScopeInput>;
   delegationStore?: {
     readAdmission: typeof readSessionDelegationAdmission;
     claimAdmission: typeof claimSessionDelegationAdmission;
@@ -1925,6 +1926,27 @@ export function createSessionsApi(ctx: {
         commitAdmission: delegationStore.commitAdmission,
         resolveCoordinator: ctx.resolveCoordinator,
         getActiveWorkspaceId: ctx.getActiveWorkspaceId ?? (async () => (await getActiveWorkspaceProfile())?.id ?? null),
+        resolveTaskScope: ctx.resolveTaskScope ?? (async (input) => {
+          const snapshot = await loadTaskLedgerSnapshot(input.workspaceId);
+          const task = snapshot.nodes.find((node) => node.id === input.taskRef);
+          return {
+            sessionKey: input.sessionKey,
+            workspaceId: input.workspaceId,
+            generation: input.sessionGeneration,
+            activeTaskNodeId: input.taskRef,
+            coordinatorSessionKey: input.sessionKey,
+            bindingRevision: input.bindingRevision,
+            bindingState: input.bindingState,
+            links: snapshot.sessionLinks,
+            task: task ? {
+              nodeId: task.id,
+              workspaceId: input.workspaceId,
+              nodeKind: task.kind,
+              status: task.status,
+              generation: input.sessionGeneration,
+            } : null,
+          };
+        }),
         gatewayRpc: ctx.gatewayRpcForDelegation,
         describeSessionGeneration: async (sessionKey) => {
           const described = await ctx.gatewayManager!.rpc<{

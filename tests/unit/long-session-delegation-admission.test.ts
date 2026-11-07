@@ -222,6 +222,17 @@ function dependencies(store = memoryStore(), overrides: Partial<SessionDelegatio
       throw new Error('unexpected gateway call');
     },
     describeSessionGeneration: async () => generation,
+    resolveTaskScope: async (input) => ({
+      sessionKey: input.sessionKey,
+      workspaceId: input.workspaceId,
+      generation: input.sessionGeneration,
+      activeTaskNodeId: input.taskRef,
+      coordinatorSessionKey: input.sessionKey,
+      bindingRevision: input.bindingRevision,
+      bindingState: input.bindingState,
+      links: [{ id: 'delegation-task-link', sessionKey: input.sessionKey, nodeId: input.taskRef, sessionGeneration: input.sessionGeneration }],
+      task: { nodeId: input.taskRef, workspaceId: input.workspaceId, nodeKind: 'task', status: 'doing', generation: input.sessionGeneration },
+    }),
     stopEpoch: () => 0,
     now: () => new Date('2026-10-24T00:00:00.000Z'),
     ...overrides,
@@ -240,6 +251,29 @@ function acceptedGatewayRpc(counter = vi.fn()) {
   });
   return rpc;
 }
+
+describe('A4 delegation task-scope gate', () => {
+  it('rejects before Gateway delegation when the explicit task scope is unavailable', async () => {
+    const rpc = acceptedGatewayRpc();
+    const result = await executeSessionDelegation(payload({ idempotencyKey: 'delegate-scope-missing' }), dependencies(memoryStore(), {
+      gatewayRpc: rpc,
+      resolveTaskScope: async (input) => ({
+        sessionKey: input.sessionKey,
+        workspaceId: input.workspaceId,
+        generation: input.sessionGeneration,
+        activeTaskNodeId: input.taskRef,
+        coordinatorSessionKey: input.sessionKey,
+        bindingRevision: input.bindingRevision,
+        bindingState: input.bindingState,
+        links: [],
+        task: null,
+      }),
+    }));
+    expect(result).toMatchObject({ success: false, status: 'rejected' });
+    expect(result.error).toContain('task-ref-missing');
+    expect(rpc).not.toHaveBeenCalled();
+  });
+});
 
 describe('long-session delegation admission', () => {
   it('binds accepted children to coordinator, task, backend, permissions, and actual shared isolation without claiming completion', async () => {
@@ -294,6 +328,13 @@ describe('long-session delegation admission', () => {
       getActiveWorkspaceId: async () => WORKSPACE_ID,
       gatewayRpcForDelegation: gateway,
       delegationStore: store,
+      resolveTaskScope: async (input) => ({
+        sessionKey: input.sessionKey, workspaceId: input.workspaceId, generation: input.sessionGeneration,
+        activeTaskNodeId: input.taskRef, coordinatorSessionKey: input.sessionKey,
+        bindingRevision: input.bindingRevision, bindingState: input.bindingState,
+        links: [{ id: 'scope-link', sessionKey: input.sessionKey, nodeId: input.taskRef, sessionGeneration: input.sessionGeneration }],
+        task: { nodeId: input.taskRef, workspaceId: input.workspaceId, nodeKind: 'task', status: 'doing', generation: input.sessionGeneration },
+      }),
     });
     const first = api.delegate(payload());
     const second = api.delegate(payload());
@@ -377,6 +418,13 @@ describe('long-session delegation admission', () => {
       getActiveWorkspaceId: async () => WORKSPACE_ID,
       gatewayRpcForDelegation: gateway,
       delegationStore: store,
+      resolveTaskScope: async (input) => ({
+        sessionKey: input.sessionKey, workspaceId: input.workspaceId, generation: input.sessionGeneration,
+        activeTaskNodeId: input.taskRef, coordinatorSessionKey: input.sessionKey,
+        bindingRevision: input.bindingRevision, bindingState: input.bindingState,
+        links: [{ id: 'scope-link', sessionKey: input.sessionKey, nodeId: input.taskRef, sessionGeneration: input.sessionGeneration }],
+        task: { nodeId: input.taskRef, workspaceId: input.workspaceId, nodeKind: 'task', status: 'doing', generation: input.sessionGeneration },
+      }),
     });
     const result = await api.delegate(payload({ idempotencyKey: 'delegate-stop-race' }));
     expect(result.status).toBe('outcome-unknown');
