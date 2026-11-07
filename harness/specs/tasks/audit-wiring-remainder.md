@@ -22,6 +22,7 @@ ownedPaths:
   - tests/unit/**
   - tests/e2e/session-activity-trajectory.spec.ts
   - tests/e2e/observability-trace-graph.spec.ts
+  - tests/e2e/fakecoding-inbox-navigation.spec.ts
   - package.json
   - pnpm-lock.yaml
   - scripts/repository-artifacts.json
@@ -44,6 +45,7 @@ touchedAreas:
   - tests/unit/**
   - tests/e2e/session-activity-trajectory.spec.ts
   - tests/e2e/observability-trace-graph.spec.ts
+  - tests/e2e/fakecoding-inbox-navigation.spec.ts
   - package.json
   - pnpm-lock.yaml
   - scripts/repository-artifacts.json

@@ -201,6 +201,7 @@ test.describe('FakeCoding Inbox navigation', () => {
 
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-general').click();
     const themeMode = page.getByTestId('settings-theme-mode');
     await themeMode.getByRole('button', { name: 'Dark' }).click();
     await page.getByTestId('settings-back-button').click();
