@@ -1,6 +1,7 @@
 import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { Page } from '@playwright/test';
+import { createServer } from 'node:http';
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
 
 async function invoke(page: Page, module: string, action: string, payload?: unknown) {
@@ -15,6 +16,11 @@ test('integrated main and browser windows retain visibility, observers and backg
   test.setTimeout(240_000);
   const app = await launchElectronApp({ skipSetup: true, visualMode: true });
   const page = await getStableWindow(app);
+  const server = createServer((_request, response) => { response.writeHead(200, { 'content-type': 'text/html' }); response.end('<!doctype html><title>Window lifecycle</title><h1>Agent-driven window lifecycle</h1>'); });
+  await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+  const address = server.address();
+  if (!address || typeof address === 'string') throw new Error('Window fixture did not bind');
+  const origin = `http://127.0.0.1:${address.port}`;
   const report: Record<string, unknown> = { driven_by: 'agent', actor: 'codex', gateway: 'idle transport fixture', windows: 'real Electron', services: ['sessionStorage', 'terminal', 'agentBrowser', 'efficiency', 'resourceTracker'] };
   const calls = async () => app.evaluate(() => {
     const rows = (globalThis as unknown as { __verseClawE2eHostCalls: Array<{ module: string; action: string }> }).__verseClawE2eHostCalls;
@@ -48,10 +54,16 @@ test('integrated main and browser windows retain visibility, observers and backg
     await expect.poll(size).toBeGreaterThan(0);
     await invoke(page, 'efficiency', 'setEnabled', { enabled: false });
     await invoke(page, 'efficiency', 'setEnabled', { enabled: true });
-    const shed = async () => Boolean(((await invoke(page, 'efficiency', 'getState')).shed as { shedding?: boolean } | null)?.shedding);
+    const shed = async () => Boolean(((await invoke(page, 'efficiency', 'getState')).shed as { activeReasons?: string[] } | null)?.activeReasons?.includes('window-hidden'));
+    report.networkApproval = await app.evaluate((_electron, input) => {
+      const modules = process.mainModule!.require('node:module')._cache;
+      const entry = Object.keys(modules).find(key => typeof modules[key].exports?.approveBrowserPrivateNetwork === 'function');
+      if (!entry) throw new Error('Main approval owner unavailable');
+      return modules[entry].exports.approveBrowserPrivateNetwork(input);
+    }, { sessionId: scope.sessionKey, origin });
     const mainId = await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].id);
     const openBrowser = async () => {
-      const opened = await invoke(page, 'agentBrowser', 'open', { ...scope, mode: 'visible', profile: 'window-lifecycle' });
+      const opened = await invoke(page, 'agentBrowser', 'open', { ...scope, url: origin, mode: 'visible', profile: 'window-lifecycle' });
       expect(opened.success).toBe(true);
       const browserId = await app.evaluate(({ BrowserWindow }, mainId) => BrowserWindow.getAllWindows().find(w => w.id !== mainId)?.id, mainId);
       expect(browserId).toBeTruthy();
@@ -93,5 +105,5 @@ test('integrated main and browser windows retain visibility, observers and backg
     await invoke(page, 'terminal', 'close', { sessionId: terminal.sessionId });
     report.cleanup = { terminalClosed: (await invoke(page, 'terminal', 'list', scope)).sessions, remainingWindows: await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows().length) };
     await writeFile(testInfo.outputPath('acceptance.json'), JSON.stringify(report, null, 2));
-  } finally { await closeElectronApp(app); }
+  } finally { server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); await closeElectronApp(app); }
 });

@@ -24,10 +24,10 @@ export function createPollScheduler(options: PollSchedulerOptions): () => void {
   const canRun = options.canRun ?? (() => true);
   const isShed = options.isShed ?? (() => false);
   const isInteractive = options.priority === 'interactive';
-  const tick = () => {
+  const tick = (restored = false) => {
     if (disposed || inFlight || !isVisible() || !canRun()) return;
     // Interactive work is never suppressed by resource pressure (I1).
-    if (!isInteractive && isShed()) return;
+    if (!restored && !isInteractive && isShed()) return;
     inFlight = true;
     try {
       void Promise.resolve(options.task()).then(
@@ -43,7 +43,8 @@ export function createPollScheduler(options: PollSchedulerOptions): () => void {
     timer = setInterval(tick, Math.max(100, Math.floor(options.intervalMs)));
   };
   start();
-  const onVisibility = () => { if (isVisible()) tick(); };
+  // Returning to a view is an explicit read; refresh once even while background work is shed.
+  const onVisibility = () => { if (isVisible()) tick(true); };
   if (typeof document !== 'undefined') document.addEventListener('visibilitychange', onVisibility);
   return () => {
     disposed = true;

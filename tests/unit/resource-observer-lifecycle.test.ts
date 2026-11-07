@@ -39,6 +39,7 @@ describe('resource observer lifetime', () => {
     const stop = createPollScheduler({ intervalMs: 100, task, isShed: mocks.shed });
     await vi.advanceTimersByTimeAsync(1000);
     expect(task).not.toHaveBeenCalled(); expect(mocks.shed).not.toHaveBeenCalled();
+    mocks.shed.mockReturnValueOnce(true);
     visibility.mockReturnValue('visible'); document.dispatchEvent(new Event('visibilitychange')); await flush();
     expect(task).toHaveBeenCalledOnce();
     stop(); document.dispatchEvent(new Event('visibilitychange')); await flush();
