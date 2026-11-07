@@ -5,7 +5,14 @@ import { StreamableHTTPServerTransport } from '../../../openclaw_runtime/node_mo
 import { CallToolRequestSchema, ListToolsRequestSchema, PingRequestSchema } from '../../../openclaw_runtime/node_modules/@modelcontextprotocol/sdk/dist/esm/types.js';
 
 /** Real SDK endpoint shared by management integration and Electron acceptance. */
-export async function startCodingMcpServer(options: { empty?: boolean; delayMs?: number; callDelayMs?: number; listHttpError?: boolean; notifyDuringCall?: boolean } = {}) {
+export async function startCodingMcpServer(options: {
+  empty?: boolean;
+  delayMs?: number;
+  callDelayMs?: number;
+  listHttpError?: boolean;
+  notifyDuringCall?: boolean;
+  onCall?: (args: Record<string, unknown> | undefined) => void | Promise<void>;
+} = {}) {
   const requests: Array<{ method: string; params?: unknown }> = [];
   const active = new Set<Server>();
   const stop = new AbortController();
@@ -22,10 +29,12 @@ export async function startCodingMcpServer(options: { empty?: boolean; delayMs?:
     rpc.setRequestHandler(CallToolRequestSchema, async (input, extra) => {
       if (options.callDelayMs) await delay(options.callDelayMs, undefined, { signal: stop.signal }).catch(() => undefined);
       if (options.notifyDuringCall) await rpc.notification({ method: 'notifications/tools/list_changed' }, { relatedRequestId: extra.requestId });
-      return {
+      const result = {
         content: [{ type: 'text' as const, text: input.params.name === 'fail' ? 'Fixture tool failure' : String(input.params.arguments?.message ?? '') }],
         isError: input.params.name === 'fail',
       };
+      await options.onCall?.(input.params.arguments);
+      return result;
     });
     rpc.setRequestHandler(PingRequestSchema, async () => ({}));
     const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: !options.notifyDuringCall });

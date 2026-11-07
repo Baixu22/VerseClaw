@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { ElectronApplication } from '@playwright/test';
 import type { McpCallToolResult, McpHeartbeatResult, McpListToolsResult } from '../../shared/types/mcp';
@@ -7,24 +7,49 @@ import { closeElectronApp, expect, getStableWindow, test } from './fixtures/elec
 import { buildMockProviderConfig, hostInvoke, startGateway, startScriptedLlm } from './fixtures/fp-p1-harness';
 import { startCodingMcpServer } from './fixtures/coding-mcp-server';
 
-test('closes the real Electron Main and its Windows launcher before returning', async ({ launchElectronApp }) => {
+test('closes the real Electron Main and its Windows launcher before returning', async ({ launchElectronApp }, testInfo) => {
   const app = await launchElectronApp({ skipSetup: true });
   const launcher = app.process();
-  const mainPid = await app.evaluate(() => process.pid);
-  expect(await closeElectronApp(app)).toEqual({ mainExited: true, launcherExited: true });
-  await expect.poll(() => {
-    try { process.kill(mainPid, 0); return false; }
-    catch (error) { return (error as NodeJS.ErrnoException).code === 'ESRCH'; }
-  }, { timeout: 5000 }).toBe(true);
+  const main = await app.evaluate(({ app: electronApp }) => {
+    const entry = electronApp.getAppMetrics().find(({ pid }) => pid === process.pid)!;
+    return { pid: entry.pid, creationTime: Math.floor(entry.creationTime) };
+  });
+  const closed = await closeElectronApp(app);
+  await writeFile(testInfo.outputPath('electron-close.json'), JSON.stringify({ main, closed,
+    launcherPid: launcher.pid, exitCode: launcher.exitCode, signalCode: launcher.signalCode }, null, 2));
+  expect(closed).toMatchObject({ mainExited: true, launcherExited: true });
+  if (process.platform === 'win32') {
+    expect(closed.processes).toContainEqual({ ...main, status: 'exited' });
+  }
   expect(launcher.exitCode !== null || launcher.signalCode !== null).toBe(true);
-  expect(await closeElectronApp(app)).toEqual({ mainExited: true, launcherExited: true });
+  expect(await closeElectronApp(app)).toMatchObject({ mainExited: true, launcherExited: true });
+});
+
+test('reclaims Electron when the app refuses graceful quit', async ({ launchElectronApp }, testInfo) => {
+  const app = await launchElectronApp({ skipSetup: true });
+  await app.evaluate(({ app: electronApp }) => {
+    electronApp.on('before-quit', (event) => event.preventDefault());
+  });
+  const closed = await closeElectronApp(app);
+  await writeFile(testInfo.outputPath('electron-forced-close.json'), JSON.stringify(closed, null, 2));
+  expect(closed).toMatchObject({ graceful: false, mainExited: true, launcherExited: true });
 });
 
 test('TF-0772 Main, model session and UI share the real MCP owner and reject stale or denied requests', async ({ homeDir, userDataDir, launchElectronApp }, testInfo) => {
   test.setTimeout(420_000);
   const workspace = join(userDataDir, 'workspace');
   await mkdir(workspace, { recursive: true });
-  const server = await startCodingMcpServer();
+  let app: ElectronApplication | undefined;
+  let runtimeConfigPath: string | undefined;
+  const rpc = <T,>(method: string, params: Record<string, unknown>) => hostInvoke<T>(app!, 'gateway', 'rpc', { method, params, timeoutMs: 90_000 });
+  const server = await startCodingMcpServer({ onCall: async (args) => {
+    if (args?.message !== 'after-effect-management' && args?.message !== 'after-effect-invoke') return;
+    await writeFile(join(workspace, `${args.message}.txt`), args.message);
+    if (!runtimeConfigPath) throw new Error('Runtime configuration path was not captured');
+    const current = JSON.parse(await readFile(runtimeConfigPath, 'utf8'));
+    current.agents.defaults.thinkingDefault = args.message === 'after-effect-management' ? 'medium' : 'high';
+    await writeFile(runtimeConfigPath, JSON.stringify(current));
+  } });
   const empty = await startCodingMcpServer({ empty: true });
   const slow = await startCodingMcpServer({ delayMs: 2500 });
   const delayed = await startCodingMcpServer({ callDelayMs: 6000 });
@@ -43,11 +68,8 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
   }
   const evidence: Record<string, unknown> = { schema: 'CodingMcpManagement/v1', driven_by: 'agent',
     actor: 'codex-coding-p2-01a1b07b', realHumanEvidence: false, runtime: 'source', provider: 'scripted-local', workspace };
-  let app: ElectronApplication | undefined;
-  let mainPid: number | undefined;
   try {
     app = await launchElectronApp({ skipSetup: true, env: { VERSE_CLAW_OPENCLAW_RUNTIME: 'source' } });
-    mainPid = await app.evaluate(() => process.pid);
     const page = await getStableWindow(app);
     const created = await hostInvoke<WorkspaceSnapshot>(app, 'workspaces', 'create', {
       name: 'P2 MCP workspace', rootPath: workspace, permissionMode: 'fullAccess',
@@ -58,8 +80,8 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
       await hostInvoke(app, 'mcp', 'createServer', { name, transport: 'http', url: endpoint.url, scope: 'global', networkPolicy: 'localOnly' });
     }
     await startGateway(app);
-    const rpc = <T,>(method: string, params: Record<string, unknown>) => hostInvoke<T>(app!, 'gateway', 'rpc', { method, params, timeoutMs: 90_000 });
     const runtimeConfig = await rpc<{ path?: string; config?: { mcp?: { servers?: Record<string, unknown> }; agents?: unknown } }>('config.get', {});
+    runtimeConfigPath = runtimeConfig.path;
     evidence.runtimeConfig = { path: runtimeConfig.path, mcpServerIds: Object.keys(runtimeConfig.config?.mcp?.servers ?? {}), agents: runtimeConfig.config?.agents };
     const parent = await rpc<{ key: string; entry: { sessionId: string } }>('sessions.create', { agentId: 'main', label: 'P2 bound session' });
     await hostInvoke(app, 'workspaces', 'update', { id: workspaceId, activeSessionKey: parent.key });
@@ -103,6 +125,30 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
     expect(server.requests.some((request) => request.method === 'tools/call'
       && (request.params as { arguments?: { message?: string } })?.arguments?.message === 'model-sdk-round-trip')).toBe(true);
     expect(server.requests.filter((request) => request.method === 'initialize')).toHaveLength(1);
+    // Verify completed effects before the independent policy-revocation sequence.
+    const configEffects: unknown[] = [];
+    evidence.configEffects = configEffects;
+    for (const [surface, message, thinkingDefault] of [
+      ['management', 'after-effect-management', 'medium'],
+      ['tools.invoke', 'after-effect-invoke', 'high'],
+    ] as const) {
+      const before = server.requests.filter((request) => request.method === 'tools/call').length;
+      const result = surface === 'management'
+        ? await call({ args: { message } })
+        : await rpc('tools.invoke', { name: 'fixture__echo', sessionKey: parent.key,
+          expectedSessionGeneration: parent.entry.sessionId, workspaceDir: workspace, args: { message } });
+      const effect: Record<string, unknown> = { surface, result };
+      configEffects.push(effect);
+      expect(result).toMatchObject(surface === 'management'
+        ? { success: true, result: { content: [{ type: 'text', text: message }] } }
+        : { ok: true, output: { content: [{ type: 'text', text: message }] } });
+      const applied = await readFile(join(workspace, `${message}.txt`), 'utf8');
+      const current = await rpc<{ config: { agents: { defaults: { thinkingDefault: string } } } }>('config.get', {});
+      Object.assign(effect, { applied, thinkingDefault: current.config.agents.defaults.thinkingDefault });
+      expect(applied).toBe(message);
+      expect(server.requests.filter((request) => request.method === 'tools/call')).toHaveLength(before + 1);
+      expect(current.config.agents.defaults.thinkingDefault).toBe(thinkingDefault);
+    }
     const callsBeforeDenials = server.requests.filter((request) => request.method === 'tools/call').length;
     const foreign = await rpc<{ key: string }>('sessions.create', { agentId: 'main', label: 'P2 unbound session' });
     const denials = [
@@ -182,27 +228,27 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
     evidence.providerAnomalies = llm.anomalies;
     if (app) {
       const child = app.process();
-      evidence.appPid = mainPid;
-      evidence.launcherPid = child.pid;
+      evidence.wrapperPid = child.pid;
       await hostInvoke(app, 'gateway', 'stop').catch((error) => { evidence.gatewayStopError = String(error); });
       evidence.gatewayAfterStop = await hostInvoke(app, 'gateway', 'status').catch(() => null);
-      const closed = await closeElectronApp(app).catch((error) => { evidence.appCloseError = String(error); return undefined; });
-      evidence.appClose = closed;
-      if (closed && (!closed.mainExited || !closed.launcherExited)) evidence.appCloseError = 'Electron cleanup did not confirm both Main and launcher exit';
-      evidence.launcherExitCode = child.exitCode;
-      evidence.launcherSignalCode = child.signalCode;
-      try { process.kill(mainPid!, 0); evidence.mainProcessAliveAfterClose = true; }
-      catch (error) { evidence.mainProcessAliveAfterClose = (error as NodeJS.ErrnoException).code !== 'ESRCH'; }
+      try {
+        const cleanup = await closeElectronApp(app);
+        evidence.appCleanup = cleanup;
+        if (!cleanup.mainExited || !cleanup.launcherExited) evidence.appCleanupError = 'Electron process exit was not confirmed';
+        evidence.repeatedAppCleanup = await closeElectronApp(app);
+      }
+      catch (error) { evidence.appCleanupError = String(error); }
+      evidence.wrapperExitCode = child.exitCode;
+      evidence.wrapperSignalCode = child.signalCode;
     }
     evidence.endpointCleanup = await Promise.all([server.close(), empty.close(), slow.close(), delayed.close()]);
     llm.server.closeAllConnections(); llm.server.closeIdleConnections();
     await new Promise<void>((resolve) => llm.server.close(() => resolve()));
-    if (evidence.mainProcessAliveAfterClose) evidence.gatewayStopError ??= 'Electron Main survived close';
-    if (evidence.gatewayStopError || evidence.appCloseError) {
+    if (evidence.gatewayStopError || evidence.appCleanupError) {
       evidence.status = 'failed';
-      evidence.failure ??= evidence.gatewayStopError ?? evidence.appCloseError;
+      evidence.failure ??= evidence.gatewayStopError ?? evidence.appCleanupError;
     }
     await writeFile(testInfo.outputPath('coding-mcp-management.json'), JSON.stringify(evidence, null, 2));
   }
-  if (evidence.gatewayStopError || evidence.appCloseError) throw new Error(String(evidence.gatewayStopError ?? evidence.appCloseError));
+  if (evidence.gatewayStopError || evidence.appCleanupError) throw new Error(String(evidence.gatewayStopError ?? evidence.appCleanupError));
 });

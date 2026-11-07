@@ -38,14 +38,15 @@ export async function terminateOwnedGatewayProcess(child: Electron.UtilityProces
       if (exited || forced) return;
       forced = true;
       clearTimeout(timeout);
-      // taskkill can stall when Windows process enumeration is unavailable.
-      // Terminate the still-owned pid directly if the helper or utility IPC stalls.
-      // Keep waiting for the exit event; signalling alone is not proof of exit.
+      // Preserve Electron's ownership/reaping path when taskkill stalls. Use the
+      // native PID only if the UtilityProcess handle cannot signal termination.
+      // Signalling alone is not proof of exit; retain the event and deadline.
       timeout = setTimeout(() => {
         child.removeListener('exit', onExit);
         reject(new Error(`Owned Gateway process did not exit (pid=${child.pid ?? 'unknown'})`));
       }, 5000);
       try {
+        if (process.platform === 'win32' && child.kill()) return;
         if (child.pid) process.kill(child.pid, 'SIGKILL');
         else child.kill();
       } catch (error) {

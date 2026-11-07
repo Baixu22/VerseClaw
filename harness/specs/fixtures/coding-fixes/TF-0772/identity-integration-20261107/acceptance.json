@@ -1,0 +1,17 @@
+{
+  "candidate": "4a90e22f600b0fc4d5f5b21f06ec3042d31aef8a",
+  "actor": "codex-01a1b4da",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "status": "accepted",
+  "e2e": {
+    "passed": 4,
+    "exitCode": 0,
+    "gracefulAndForcedClose": true,
+    "realMcp": true,
+    "workerAbortIsolation": true
+  },
+  "previousAcceptedSupplement": "../identity-cleanup-20261107/acceptance.json",
+  "productInputsUnchangedSince": "d60e5821f8a95c4d15a6620b05d1f8fcd1d7d35e",
+  "sourceMutationGuard": true
+}

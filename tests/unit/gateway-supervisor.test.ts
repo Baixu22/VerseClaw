@@ -128,6 +128,25 @@ describe('gateway supervisor process cleanup', () => {
     });
     expect(child.kill).not.toHaveBeenCalled();
   });
+
+  it('uses the owned UtilityProcess handle when Windows tree termination stalls', async () => {
+    setPlatform('win32');
+    const child = new MockUtilityChild(4321);
+    mockExecFile.mockImplementation(() => ({}));
+    const directKill = vi.spyOn(process, 'kill').mockReturnValue(true);
+    child.kill.mockImplementation(() => {
+      queueMicrotask(() => child.emit('exit', 0));
+      return true;
+    });
+    const { terminateOwnedGatewayProcess } = await import('@electron/gateway/supervisor');
+    vi.useFakeTimers();
+    const stopped = terminateOwnedGatewayProcess(child as unknown as Electron.UtilityProcess)
+      .then(() => 'exited', () => 'timeout');
+    await vi.advanceTimersByTimeAsync(10_001);
+    expect(await stopped).toBe('exited');
+    expect(child.kill).toHaveBeenCalledOnce();
+    expect(directKill).not.toHaveBeenCalled();
+  });
   it('waits for the owned exit event when the pid disappears before Electron delivers it', async () => {
     setPlatform('win32');
     const child = new MockUtilityChild(4321);
@@ -155,6 +174,24 @@ describe('gateway supervisor process cleanup', () => {
     await stopPromise;
 
     expect(child.kill).toHaveBeenCalledTimes(1);
+  });
+
+  it('still force-kills a POSIX gateway that ignores graceful termination', async () => {
+    setPlatform('linux');
+    const child = new MockUtilityChild(9876);
+    child.kill.mockReturnValue(true);
+    const kill = vi.spyOn(process, 'kill').mockImplementation(() => {
+      queueMicrotask(() => child.emit('exit', 1));
+      return true;
+    });
+    const { terminateOwnedGatewayProcess } = await import('@electron/gateway/supervisor');
+    vi.useFakeTimers();
+    const stopped = terminateOwnedGatewayProcess(child as unknown as Electron.UtilityProcess)
+      .then(() => 'exited', () => 'timeout');
+    await vi.advanceTimersByTimeAsync(10_001);
+    expect(await stopped).toBe('exited');
+    expect(kill).toHaveBeenCalledWith(9876, 'SIGKILL');
+    expect(child.kill).toHaveBeenCalledOnce();
   });
 
   it('uses the owned pid when Windows taskkill fails and waits for exit', async () => {

@@ -1,0 +1,11 @@
+{
+  "actor": "codex-01a1b4da",
+  "driven_by": "agent",
+  "candidate": "03585bd4208ef467cc8d50a26c5ca205bcab4d9e",
+  "e2eCandidate": "d60e5821f8a95c4d15a6620b05d1f8fcd1d7d35e",
+  "changedSinceE2e": [
+    "tests/unit/electron-process-identity.test.ts"
+  ],
+  "change": "Native identity unit fixture uses the existing writable E2E run-root policy. Product, Main/runtime bundles and both accepted E2E sources are unchanged.",
+  "e2eInputsMatch": true
+}

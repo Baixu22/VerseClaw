@@ -8,6 +8,7 @@ diffBase: 1fb12d4e1
 intent: 将Main的MCP目录、调用和心跳接入既有session MCP owner，显式区分空目录与失败并保持权限及代际一致。
 touchedAreas:
   - harness/specs/tasks/coding-mcp-management-runtime.md
+  - harness/specs/scenarios/gateway-backend-communication.md
   - electron/services/mcp-api.ts
   - electron/main/ipc-handlers.ts
   - electron/services/workspace-permissions.ts
@@ -41,6 +42,10 @@ touchedAreas:
   - tests/e2e/coding-mcp-management.spec.ts
   - tests/e2e/fixtures/coding-mcp-server.ts
   - tests/e2e/fixtures/electron.ts
+  - tests/e2e/fixtures/electron-process-cleanup.ts
+  - tests/e2e/fixtures/windows-process.ts
+  - tests/e2e/electron-worker-cleanup.spec.ts
+  - tests/unit/electron-process-identity.test.ts
   - harness/specs/fixtures/coding-fixes/TF-0772/**
   - docs/modules/workspace-and-coding.md
   - docs/modules/integrations-and-surfaces.md
@@ -57,6 +62,7 @@ requiredRules:
   - docs-sync
   - disk-temp-policy
 requiredTests:
+  - node node_modules/vitest/vitest.mjs run tests/unit/electron-process-identity.test.ts --maxWorkers=1
   - node node_modules/vitest/vitest.mjs run tests/unit/gateway-supervisor.test.ts --maxWorkers=1
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/gateway/server-methods/tools-invoke-mcp-fallback.test.ts --maxWorkers=1
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/agent-bundle-mcp-runtime.test.ts --maxWorkers=1
@@ -66,11 +72,13 @@ requiredTests:
   - pnpm run comms:replay
   - pnpm run comms:compare
   - node node_modules/@playwright/test/cli.js test tests/e2e/coding-mcp-management.spec.ts --workers=1
+  - node node_modules/@playwright/test/cli.js test tests/e2e/electron-worker-cleanup.spec.ts --workers=1
   - pnpm harness validate --spec harness/specs/tasks/coding-mcp-management-runtime.md
 acceptance:
   - 真实本地MCP server经Main/Gateway的list/call/heartbeat闭环，有实际请求与返回值读回。
   - 缺服务/未授权/网络拒绝/空目录/超时/旧session分开判定，失败不伪装为空目录成功。
   - 目录和调用复用当前session runtime、effective tool policy、schema校验与before-tool-call审批钩子；配置reload后旧目录不被继续执行。
+  - 工具已完成并返回已知成功结果后，合法配置变更保留本次效果及结果；执行前的配置、会话或审批变更继续拒绝未执行调用。
   - host-native Git仍为Main本地能力，不冒充MCP握手；外部MCP来自真实SDK。
   - clean候选、命令退出码、原始结果、进程清理、摘要及凭据扫描齐备，agent驱动如实标注。
 docs:
