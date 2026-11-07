@@ -10,6 +10,7 @@ expectedUserBehavior:
   - Concurrent workspaces share an effective host budget and queued tenants make progress at the same QoS.
   - Unknown running work retains its reservation; clearing projections cannot release execution capacity.
 touchedAreas:
+  - openclaw_runtime/src/agents/embedded-agent-runner/run.ts
   - packages/versebrowser/src/engine/supervised-task-executor.ts
   - packages/versebrowser/tests/agent-browser-supervised-task-executor.test.ts
   - tests/unit/session-storage-api.test.ts
