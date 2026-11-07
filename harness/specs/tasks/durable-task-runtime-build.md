@@ -19,11 +19,12 @@ touchedAreas:
   - openclaw_runtime/scripts/tsdown-build.mjs
   - openclaw_runtime/scripts/build-plugin-sdk-source-dts.mjs
   - openclaw_runtime/scripts/build-plugin-sdk-source-dts.test.mjs
+  - openclaw_runtime/scripts/tsdown-serial-build.test.mjs
   - tests/unit/durable-task-build.test.ts
   - docs/dev/durable-task-system/**
   - harness/specs/tasks/durable-task-runtime-build.md
 requiredTests:
-  - pnpm exec vitest run --config vitest.task-system.config.ts tests/unit/durable-task-build.test.ts
+  - node --test openclaw_runtime/scripts/tsdown-serial-build.test.mjs openclaw_runtime/scripts/build-plugin-sdk-source-dts.test.mjs
 acceptance:
   - 串行模式逐个运行全部配置，失败时保留原退出码与诊断，不继续后续配置。
   - 默认构建行为保持原配置；统一运行时图不被分割。
