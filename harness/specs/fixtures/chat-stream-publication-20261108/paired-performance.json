@@ -1,0 +1,409 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "order": "ABBA",
+  "runs": [
+    {
+      "name": "1-baseline",
+      "variant": "baseline",
+      "candidate": "fc68f571afa1bc287c8d3d94134939bcf44e1747",
+      "argv": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/chat-stream-publication.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=list,json",
+        "--output=D:/tmp/tf0833/paired/4-baseline/results"
+      ],
+      "cwd": "D:\\tmp\\tf0833\\baseline",
+      "exitCode": 0,
+      "durationMs": 157702.53199999998,
+      "report": "D:\\tmp\\tf0833\\paired\\4-baseline\\native.json",
+      "results": "D:\\tmp\\tf0833\\paired\\4-baseline\\results"
+    },
+    {
+      "name": "2-candidate",
+      "variant": "candidate",
+      "candidate": "f4a9502c561d9997bc7f34d4509e13601bf59e9d",
+      "argv": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/chat-stream-publication.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=list,json",
+        "--output=D:\\tmp\\tf0833\\paired-final\\2-candidate\\results"
+      ],
+      "cwd": "D:\\tmp\\tf0833\\candidate",
+      "exitCode": 0,
+      "durationMs": 65922,
+      "report": "D:\\tmp\\tf0833\\paired-final\\2-candidate\\native.json",
+      "results": "D:\\tmp\\tf0833\\paired-final\\2-candidate\\results"
+    },
+    {
+      "name": "3-candidate",
+      "variant": "candidate",
+      "candidate": "f4a9502c561d9997bc7f34d4509e13601bf59e9d",
+      "argv": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/chat-stream-publication.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=list,json",
+        "--output=D:\\tmp\\tf0833\\paired-final\\3-candidate\\results"
+      ],
+      "cwd": "D:\\tmp\\tf0833\\candidate",
+      "exitCode": 0,
+      "durationMs": 66875,
+      "report": "D:\\tmp\\tf0833\\paired-final\\3-candidate\\native.json",
+      "results": "D:\\tmp\\tf0833\\paired-final\\3-candidate\\results"
+    },
+    {
+      "name": "4-baseline",
+      "variant": "baseline",
+      "candidate": "fc68f571afa1bc287c8d3d94134939bcf44e1747",
+      "argv": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/chat-stream-publication.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=list,json",
+        "--output=D:\\tmp\\tf0833\\paired-final\\4-baseline\\results"
+      ],
+      "cwd": "D:\\tmp\\tf0833\\baseline",
+      "exitCode": 0,
+      "durationMs": 155687,
+      "report": "D:\\tmp\\tf0833\\paired-final\\4-baseline\\native.json",
+      "results": "D:\\tmp\\tf0833\\paired-final\\4-baseline\\results"
+    }
+  ],
+  "samples": [
+    {
+      "run": "1-baseline",
+      "variant": "baseline",
+      "candidate": "fc68f571afa1bc287c8d3d94134939bcf44e1747",
+      "language": "ja",
+      "file": "D:\\tmp\\tf0833\\paired\\4-baseline\\results\\chat-stream-publication-st-0329b-ins-input-and-scrolling-ja-\\measurement.json",
+      "sha256": "3081da4b275953f0df7bb5b7e689770cf54c5075fb2f385fb0b678317d646759",
+      "workloadSha256": "bb9a80f790e8dbde631ad93fb589c40a9599c33ecad169b2c86fc1b29ec2beaa",
+      "commits": 1525,
+      "longTaskCount": 247,
+      "longTaskTotalMs": 23237,
+      "inputMedianMs": 47.30000000074506,
+      "inputP95Ms": 65.30000000074506,
+      "inputSamples": 13
+    },
+    {
+      "run": "1-baseline",
+      "variant": "baseline",
+      "candidate": "fc68f571afa1bc287c8d3d94134939bcf44e1747",
+      "language": "en",
+      "file": "D:\\tmp\\tf0833\\paired\\4-baseline\\results\\chat-stream-publication-st-1039d-ins-input-and-scrolling-en-\\measurement.json",
+      "sha256": "73b0aeb4d88f7a751e81b1d2edbabae9dbd1a5731aab61f0ff6faabb14f5a2a4",
+      "workloadSha256": "bb9a80f790e8dbde631ad93fb589c40a9599c33ecad169b2c86fc1b29ec2beaa",
+      "commits": 1512,
+      "longTaskCount": 246,
+      "longTaskTotalMs": 25776,
+      "inputMedianMs": 37.90000000037253,
+      "inputP95Ms": 47.20000000111759,
+      "inputSamples": 13
+    },
+    {
+      "run": "1-baseline",
+      "variant": "baseline",
+      "candidate": "fc68f571afa1bc287c8d3d94134939bcf44e1747",
+      "language": "ru",
+      "file": "D:\\tmp\\tf0833\\paired\\4-baseline\\results\\chat-stream-publication-st-26fac-ins-input-and-scrolling-ru-\\measurement.json",
+      "sha256": "7bdecf1fa7f4cc01b3521de1ad32fa6a35c1cecfb0b38ca7b077fe17e443d727",
+      "workloadSha256": "bb9a80f790e8dbde631ad93fb589c40a9599c33ecad169b2c86fc1b29ec2beaa",
+      "commits": 1516,
+      "longTaskCount": 241,
+      "longTaskTotalMs": 19697,
+      "inputMedianMs": 39.59999999962747,
+      "inputP95Ms": 49.5,
+      "inputSamples": 13
+    },
+    {
+      "run": "1-baseline",
+      "variant": "baseline",
+      "candidate": "fc68f571afa1bc287c8d3d94134939bcf44e1747",
+      "language": "zh",
+      "file": "D:\\tmp\\tf0833\\paired\\4-baseline\\results\\chat-stream-publication-st-c0816-ins-input-and-scrolling-zh-\\measurement.json",
+      "sha256": "958295b7abf00127a991dabc27cf03bd4640df0889e965f0202fa9d98d1eb875",
+      "workloadSha256": "bb9a80f790e8dbde631ad93fb589c40a9599c33ecad169b2c86fc1b29ec2beaa",
+      "commits": 1517,
+      "longTaskCount": 241,
+      "longTaskTotalMs": 20528,
+      "inputMedianMs": 46.5,
+      "inputP95Ms": 47.40000000037253,
+      "inputSamples": 13
+    },
+    {
+      "run": "2-candidate",
+      "variant": "candidate",
+      "candidate": "f4a9502c561d9997bc7f34d4509e13601bf59e9d",
+      "language": "ja",
+      "file": "D:\\tmp\\tf0833\\paired-final\\2-candidate\\results\\chat-stream-publication-st-0329b-ins-input-and-scrolling-ja-\\measurement.json",
+      "sha256": "9b88ad634b857fa6920a3377dc7bd0bb1de7181de717bfea7a0336e155921973",
+      "workloadSha256": "bb9a80f790e8dbde631ad93fb589c40a9599c33ecad169b2c86fc1b29ec2beaa",
+      "commits": 1340,
+      "longTaskCount": 2,
+      "longTaskTotalMs": 136,
+      "inputMedianMs": 39.29999999888241,
+      "inputP95Ms": 52.09999999962747,
+      "inputSamples": 13
+    },
+    {
+      "run": "2-candidate",
+      "variant": "candidate",
+      "candidate": "f4a9502c561d9997bc7f34d4509e13601bf59e9d",
+      "language": "en",
+      "file": "D:\\tmp\\tf0833\\paired-final\\2-candidate\\results\\chat-stream-publication-st-1039d-ins-input-and-scrolling-en-\\measurement.json",
+      "sha256": "2bfb722a46e8c0d8b6b6e61d41b721fb47a4e1a915da58c8721d44fa0642a4e1",
+      "workloadSha256": "bb9a80f790e8dbde631ad93fb589c40a9599c33ecad169b2c86fc1b29ec2beaa",
+      "commits": 1332,
+      "longTaskCount": 0,
+      "longTaskTotalMs": 0,
+      "inputMedianMs": 37.600000001490116,
+      "inputP95Ms": 50.20000000111759,
+      "inputSamples": 13
+    },
+    {
+      "run": "2-candidate",
+      "variant": "candidate",
+      "candidate": "f4a9502c561d9997bc7f34d4509e13601bf59e9d",
+      "language": "ru",
+      "file": "D:\\tmp\\tf0833\\paired-final\\2-candidate\\results\\chat-stream-publication-st-26fac-ins-input-and-scrolling-ru-\\measurement.json",
+      "sha256": "d9a7cb7ab7a4ad2d4698b9f3d3f20d82efb73bfa39641bb49578cec6e4644907",
+      "workloadSha256": "bb9a80f790e8dbde631ad93fb589c40a9599c33ecad169b2c86fc1b29ec2beaa",
+      "commits": 1343,
+      "longTaskCount": 12,
+      "longTaskTotalMs": 664,
+      "inputMedianMs": 57.90000000037253,
+      "inputP95Ms": 62.5,
+      "inputSamples": 13
+    },
+    {
+      "run": "2-candidate",
+      "variant": "candidate",
+      "candidate": "f4a9502c561d9997bc7f34d4509e13601bf59e9d",
+      "language": "zh",
+      "file": "D:\\tmp\\tf0833\\paired-final\\2-candidate\\results\\chat-stream-publication-st-c0816-ins-input-and-scrolling-zh-\\measurement.json",
+      "sha256": "12c4a1e5fb7d329eaecdfa175f2d18f7c2140c628aea7a789b212a0157f0d3bc",
+      "workloadSha256": "bb9a80f790e8dbde631ad93fb589c40a9599c33ecad169b2c86fc1b29ec2beaa",
+      "commits": 1334,
+      "longTaskCount": 2,
+      "longTaskTotalMs": 105,
+      "inputMedianMs": 37.59999999962747,
+      "inputP95Ms": 39.69999999925494,
+      "inputSamples": 13
+    },
+    {
+      "run": "3-candidate",
+      "variant": "candidate",
+      "candidate": "f4a9502c561d9997bc7f34d4509e13601bf59e9d",
+      "language": "ja",
+      "file": "D:\\tmp\\tf0833\\paired-final\\3-candidate\\results\\chat-stream-publication-st-0329b-ins-input-and-scrolling-ja-\\measurement.json",
+      "sha256": "2d50a9f18cc6b1473b572b6a179d518fc72582c0a3e90f869b68cfb8c1293009",
+      "workloadSha256": "bb9a80f790e8dbde631ad93fb589c40a9599c33ecad169b2c86fc1b29ec2beaa",
+      "commits": 1349,
+      "longTaskCount": 10,
+      "longTaskTotalMs": 540,
+      "inputMedianMs": 52.09999999962747,
+      "inputP95Ms": 62.19999999925494,
+      "inputSamples": 13
+    },
+    {
+      "run": "3-candidate",
+      "variant": "candidate",
+      "candidate": "f4a9502c561d9997bc7f34d4509e13601bf59e9d",
+      "language": "en",
+      "file": "D:\\tmp\\tf0833\\paired-final\\3-candidate\\results\\chat-stream-publication-st-1039d-ins-input-and-scrolling-en-\\measurement.json",
+      "sha256": "8db1e85e5044c8f53d0bc8048095fb5ad78c17407b6787ae0b1b644ae85bdb14",
+      "workloadSha256": "bb9a80f790e8dbde631ad93fb589c40a9599c33ecad169b2c86fc1b29ec2beaa",
+      "commits": 1329,
+      "longTaskCount": 3,
+      "longTaskTotalMs": 178,
+      "inputMedianMs": 37.30000000074506,
+      "inputP95Ms": 41,
+      "inputSamples": 13
+    },
+    {
+      "run": "3-candidate",
+      "variant": "candidate",
+      "candidate": "f4a9502c561d9997bc7f34d4509e13601bf59e9d",
+      "language": "ru",
+      "file": "D:\\tmp\\tf0833\\paired-final\\3-candidate\\results\\chat-stream-publication-st-26fac-ins-input-and-scrolling-ru-\\measurement.json",
+      "sha256": "be8cecd7fb6f64287f632dde4d4dcde50e724267355bc6ff704427a5e1e8de67",
+      "workloadSha256": "bb9a80f790e8dbde631ad93fb589c40a9599c33ecad169b2c86fc1b29ec2beaa",
+      "commits": 1336,
+      "longTaskCount": 1,
+      "longTaskTotalMs": 52,
+      "inputMedianMs": 37.09999999962747,
+      "inputP95Ms": 42.40000000037253,
+      "inputSamples": 13
+    },
+    {
+      "run": "3-candidate",
+      "variant": "candidate",
+      "candidate": "f4a9502c561d9997bc7f34d4509e13601bf59e9d",
+      "language": "zh",
+      "file": "D:\\tmp\\tf0833\\paired-final\\3-candidate\\results\\chat-stream-publication-st-c0816-ins-input-and-scrolling-zh-\\measurement.json",
+      "sha256": "e1f921b364660f0375b80c401c84f751233191599ff2dee0aa203b266b59dbf2",
+      "workloadSha256": "bb9a80f790e8dbde631ad93fb589c40a9599c33ecad169b2c86fc1b29ec2beaa",
+      "commits": 1330,
+      "longTaskCount": 1,
+      "longTaskTotalMs": 52,
+      "inputMedianMs": 40.59999999962747,
+      "inputP95Ms": 46.19999999925494,
+      "inputSamples": 13
+    },
+    {
+      "run": "4-baseline",
+      "variant": "baseline",
+      "candidate": "fc68f571afa1bc287c8d3d94134939bcf44e1747",
+      "language": "ja",
+      "file": "D:\\tmp\\tf0833\\paired-final\\4-baseline\\results\\chat-stream-publication-st-0329b-ins-input-and-scrolling-ja-\\measurement.json",
+      "sha256": "a80fc98f01f73caef6fa4a233b1835ed7f9b47aa961da32efb80a4d1e0ae3b81",
+      "workloadSha256": "bb9a80f790e8dbde631ad93fb589c40a9599c33ecad169b2c86fc1b29ec2beaa",
+      "commits": 1520,
+      "longTaskCount": 244,
+      "longTaskTotalMs": 23371,
+      "inputMedianMs": 44.80000000074506,
+      "inputP95Ms": 54.899999998509884,
+      "inputSamples": 13
+    },
+    {
+      "run": "4-baseline",
+      "variant": "baseline",
+      "candidate": "fc68f571afa1bc287c8d3d94134939bcf44e1747",
+      "language": "en",
+      "file": "D:\\tmp\\tf0833\\paired-final\\4-baseline\\results\\chat-stream-publication-st-1039d-ins-input-and-scrolling-en-\\measurement.json",
+      "sha256": "135bcee9e15219fc4cdb3436ed170604c468ef333dee470e01e0d2ac66cccdea",
+      "workloadSha256": "bb9a80f790e8dbde631ad93fb589c40a9599c33ecad169b2c86fc1b29ec2beaa",
+      "commits": 1522,
+      "longTaskCount": 240,
+      "longTaskTotalMs": 19134,
+      "inputMedianMs": 39.5,
+      "inputP95Ms": 45.29999999888241,
+      "inputSamples": 13
+    },
+    {
+      "run": "4-baseline",
+      "variant": "baseline",
+      "candidate": "fc68f571afa1bc287c8d3d94134939bcf44e1747",
+      "language": "ru",
+      "file": "D:\\tmp\\tf0833\\paired-final\\4-baseline\\results\\chat-stream-publication-st-26fac-ins-input-and-scrolling-ru-\\measurement.json",
+      "sha256": "146840f44a288ab21f2f2501c9086b69ec9182dde19e06072d3ea2a2886bf1d2",
+      "workloadSha256": "bb9a80f790e8dbde631ad93fb589c40a9599c33ecad169b2c86fc1b29ec2beaa",
+      "commits": 1516,
+      "longTaskCount": 242,
+      "longTaskTotalMs": 20180,
+      "inputMedianMs": 46.5,
+      "inputP95Ms": 60.30000000074506,
+      "inputSamples": 13
+    },
+    {
+      "run": "4-baseline",
+      "variant": "baseline",
+      "candidate": "fc68f571afa1bc287c8d3d94134939bcf44e1747",
+      "language": "zh",
+      "file": "D:\\tmp\\tf0833\\paired-final\\4-baseline\\results\\chat-stream-publication-st-c0816-ins-input-and-scrolling-zh-\\measurement.json",
+      "sha256": "f35068f18e12c6c2be5e6651bc4233c556db44735defb0832c52bff521812220",
+      "workloadSha256": "bb9a80f790e8dbde631ad93fb589c40a9599c33ecad169b2c86fc1b29ec2beaa",
+      "commits": 1518,
+      "longTaskCount": 242,
+      "longTaskTotalMs": 20635,
+      "inputMedianMs": 42.19999999925494,
+      "inputP95Ms": 48.80000000074506,
+      "inputSamples": 13
+    }
+  ],
+  "summary": [
+    {
+      "language": "en",
+      "baseline": {
+        "commits": 1517.0,
+        "longTaskCount": 243.0,
+        "longTaskTotalMs": 22455.0,
+        "inputMedianMs": 38.700000000186265,
+        "inputP95Ms": 46.25
+      },
+      "candidate": {
+        "commits": 1330.5,
+        "longTaskCount": 1.5,
+        "longTaskTotalMs": 89.0,
+        "inputMedianMs": 37.45000000111759,
+        "inputP95Ms": 45.60000000055879
+      },
+      "commitReductionPercent": 12.294001318391567,
+      "longTaskReductionPercent": 99.60365174794032
+    },
+    {
+      "language": "zh",
+      "baseline": {
+        "commits": 1517.5,
+        "longTaskCount": 241.5,
+        "longTaskTotalMs": 20581.5,
+        "inputMedianMs": 44.34999999962747,
+        "inputP95Ms": 48.10000000055879
+      },
+      "candidate": {
+        "commits": 1332.0,
+        "longTaskCount": 1.5,
+        "longTaskTotalMs": 78.5,
+        "inputMedianMs": 39.09999999962747,
+        "inputP95Ms": 42.94999999925494
+      },
+      "commitReductionPercent": 12.22405271828666,
+      "longTaskReductionPercent": 99.61858950999685
+    },
+    {
+      "language": "ja",
+      "baseline": {
+        "commits": 1522.5,
+        "longTaskCount": 245.5,
+        "longTaskTotalMs": 23304.0,
+        "inputMedianMs": 46.05000000074506,
+        "inputP95Ms": 60.09999999962747
+      },
+      "candidate": {
+        "commits": 1344.5,
+        "longTaskCount": 6.0,
+        "longTaskTotalMs": 338.0,
+        "inputMedianMs": 45.69999999925494,
+        "inputP95Ms": 57.14999999944121
+      },
+      "commitReductionPercent": 11.691297208538586,
+      "longTaskReductionPercent": 98.54960521798833
+    },
+    {
+      "language": "ru",
+      "baseline": {
+        "commits": 1516.0,
+        "longTaskCount": 241.5,
+        "longTaskTotalMs": 19938.5,
+        "inputMedianMs": 43.049999999813735,
+        "inputP95Ms": 54.90000000037253
+      },
+      "candidate": {
+        "commits": 1339.5,
+        "longTaskCount": 6.5,
+        "longTaskTotalMs": 358.0,
+        "inputMedianMs": 47.5,
+        "inputP95Ms": 52.450000000186265
+      },
+      "commitReductionPercent": 11.642480211081796,
+      "longTaskReductionPercent": 98.20447877222459
+    }
+  ],
+  "decision": "accept",
+  "basis": "Per-language medians of two runs on each candidate; fixed 80-message history and 240 events at 4 ms, actual renderer commits and long-task entries; keyboard and scrolling assertions passed."
+}

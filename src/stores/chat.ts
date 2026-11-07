@@ -61,6 +61,7 @@ import {
 import type { ChatGet, ChatSet } from './chat/store-api';
 import { useWorkspacesStore } from './workspaces';
 import { applyRuntimeEventToRuns, extractToolCompletedFiles } from './chat/runtime-graph';
+import { createFramePublication } from './chat/frame-publication';
 import {
   enrichWithTeamOrchestrationToolResults,
   enrichWithToolCallAttachments,
@@ -1986,8 +1987,8 @@ async function fetchChatHistory(
   return useGatewayStore.getState().rpc<Record<string, unknown>>('chat.history', params, timeoutMs);
 }
 
-async function abortChatRunViaHostApi(sessionKey: string): Promise<void> {
-  await useGatewayStore.getState().rpc('chat.abort', { sessionKey });
+async function abortChatRunViaHostApi(sessionKey: string): Promise<{ aborted?: boolean; runIds?: string[] }> {
+  return useGatewayStore.getState().rpc('chat.abort', { sessionKey });
 }
 
 function normalizeAgentId(value: string | undefined | null): string {
@@ -2803,7 +2804,11 @@ async function ensureSessionLinkedToLedger(sessionKey: string): Promise<void> {
 
 // ── Store ────────────────────────────────────────────────────────
 
-export const useChatStore = create<ChatState>((set, get) => ({
+const streamPublication = createFramePublication<ChatState>();
+
+export const useChatStore = create<ChatState>((set, get, api) => {
+  streamPublication.attach(api);
+  return {
   messages: [],
   loading: false,
   historyRefreshing: false,
@@ -4615,21 +4620,36 @@ export const useChatStore = create<ChatState>((set, get) => ({
     clearHistoryPoll();
     clearErrorRecoveryTimer();
     clearTurnTimeoutTimer();
-    const { currentSessionKey, sending } = get();
+    const { currentSessionKey, sending, activeRunId } = get();
 
     // R0-3: abort the run FIRST. Only release UI state once the Main process
     // confirms the abort — a failed stop must not masquerade as stopped.
+    let receipt: { aborted?: boolean; runIds?: string[] } | undefined;
     try {
-      await abortChatRunViaHostApi(currentSessionKey);
+      receipt = await abortChatRunViaHostApi(currentSessionKey);
     } catch (err) {
       console.warn(`[abortRun] chat.abort failed: ${String(err)}`);
-      set({ error: String(err), sending });
+      if (get().currentSessionKey === currentSessionKey && get().activeRunId === activeRunId) set({ error: String(err), sending });
       toast.warning(i18n.t('chat:composer.abortFailed'));
       return;
     }
 
+    // Use the Gateway's acknowledged run identity; retain a result that arrived
+    // while the abort request was pending.
+    const confirmed = activeRunId && receipt?.aborted === true
+      && (!receipt.runIds || receipt.runIds.includes(activeRunId))
+      && get().runtimeRuns[activeRunId]?.status === 'running';
+    const runtimeRuns = confirmed ? applyRuntimeEventToRuns(get().runtimeRuns, {
+      type: 'run.ended', runId: activeRunId, sessionKey: currentSessionKey, status: 'aborted', endedAt: Date.now(),
+    }) : get().runtimeRuns;
+    if (get().currentSessionKey !== currentSessionKey || get().activeRunId !== activeRunId) {
+      if (runtimeRuns !== get().runtimeRuns) set({ runtimeRuns });
+      captureSessionRunState(currentSessionKey, DEFAULT_SESSION_RUN_STATE);
+      return;
+    }
     // Release all in-flight UI/run resources (P5-004 A3).
     set({
+      runtimeRuns,
       sending: false,
       activeRunId: null,
       streamingText: '',
@@ -4689,6 +4709,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
       }
     }
 
+    if (resolvedState === 'delta' && runId) {
+      const owner = get().runtimeRuns[runId];
+      if (owner && owner.status !== 'running') return;
+    }
+
     // Only pause the history poll when we receive actual streaming data.
     // The gateway sends "agent" events with { phase, startedAt } that carry
     // no message — these must NOT kill the poll, since the poll is our only
@@ -4728,7 +4753,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
           event.message,
           getBaselineRunKeyForMessages(currentSessionKey, get().messages),
         );
-        set((s) => ({
+        const publish = () => set((s) => ({
           streamingMessage: (() => {
             if (event.message && typeof event.message === 'object') {
               const msgRole = (event.message as RawMessage).role;
@@ -4738,6 +4763,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
           })(),
           streamingTools: updates.length > 0 ? upsertToolStatuses(s.streamingTools, updates) : s.streamingTools,
         }));
+        const message = event.message as RawMessage | undefined;
+        const ordinaryText = message?.role === 'assistant' && (typeof message.content === 'string'
+          || (Array.isArray(message.content) && message.content.every(block => block && typeof block === 'object'
+            && (block.type === 'text' || block.type === 'thinking'))));
+        if (ordinaryText && updates.length === 0) streamPublication.defer(publish);
+        else publish();
         break;
       }
       case 'final': {
@@ -5096,6 +5127,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     const matchesActiveRun = activeRunId != null && event.runId === activeRunId;
 
     const runtimeRuns = applyRuntimeEventToRuns(initialState.runtimeRuns, event);
+    if (runtimeRuns === initialState.runtimeRuns) return;
     const nextPatch: Partial<ChatState> = { runtimeRuns };
 
     // Always retain structured runtime events, even for inactive sessions.
@@ -5107,7 +5139,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
     // current composer/graph state.
     if (!matchesCurrentSession && !matchesActiveRun) {
       updateCachedSessionRunStateFromRuntimeEvent(event);
-      set(nextPatch);
+      if (event.type === 'assistant.delta' || event.type === 'thinking.delta') streamPublication.defer(() => set(nextPatch));
+      else set(nextPatch);
       return;
     }
 
@@ -5132,7 +5165,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         nextPatch.error = null;
         nextPatch.runError = null;
       }
-      set(nextPatch);
+      streamPublication.defer(() => set(nextPatch));
       return;
     }
 
@@ -5210,7 +5243,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
       set({ taskLedgerSnapshot: null, taskLedgerLoaded: true });
     }
   },
-}));
+  };
+});
 
 export function syncCachedSessionRunIdle(sessionKey: string): void {
   captureSessionRunState(sessionKey, DEFAULT_SESSION_RUN_STATE);

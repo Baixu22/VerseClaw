@@ -293,6 +293,24 @@ describe('Chat execution graph lifecycle', () => {
     expect(screen.queryByText('Checked X. Here is the summary.')).not.toBeInTheDocument();
   });
 
+  it('reads completed execution steps cached after the first page render', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+    const trigger = { id: 'cache-trigger', role: 'user' as const, content: 'Read the source' };
+    useChatStore.setState({ messages: [trigger], streamingMessage: null, streamingTools: [], pendingFinal: false,
+      runtimeRuns: { 'run-live': { runId: 'run-live', sessionKey: 'agent:main:main', status: 'running',
+        assistantText: '', thinkingText: '', events: [
+          { type: 'tool.started', runId: 'run-live', seq: 1, toolCallId: 'cached-read', name: 'read', args: { path: 'retained.ts' } },
+          { type: 'tool.completed', runId: 'run-live', seq: 2, toolCallId: 'cached-read', name: 'read', result: 'Retained contents' },
+        ] } } });
+    const { Chat } = await import('@/pages/Chat/index');
+    render(<Chat />);
+    await waitFor(() => expect(screen.getByTestId('chat-turn-summary-toggle')).toBeInTheDocument());
+    act(() => useChatStore.setState({ messages: [trigger, { role: 'assistant', content: 'Finished reading.' }],
+      runtimeRuns: {}, sending: false, activeRunId: null, pendingFinal: false }));
+    await waitFor(() => expect(screen.getByTestId('chat-turn-summary-toggle')).toBeInTheDocument());
+    expect(screen.getByTestId('mock-chat-input')).toHaveAttribute('data-sending', 'false');
+  });
+
   it('does not reopen an old handoff draft after changing away and back', async () => {
     const { useChatStore } = await import('@/stores/chat');
     const { hostApi } = await import('@/lib/host-api');

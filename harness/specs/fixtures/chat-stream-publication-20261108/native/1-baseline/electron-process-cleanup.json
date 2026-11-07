@@ -1,0 +1,73 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\tf0833\\paired\\4-baseline\\electron\\verse-claw-e2e-run-8VeSOh",
+  "ledgerEntries": 20,
+  "checks": [
+    {
+      "pid": 21124,
+      "creationTime": 1794076874234,
+      "status": "exited"
+    },
+    {
+      "pid": 2500,
+      "creationTime": 1794076880184,
+      "status": "exited"
+    },
+    {
+      "pid": 46448,
+      "creationTime": 1794076880608,
+      "status": "exited"
+    },
+    {
+      "pid": 27468,
+      "creationTime": 1794076917531,
+      "status": "exited"
+    },
+    {
+      "pid": 20452,
+      "creationTime": 1794076921674,
+      "status": "exited"
+    },
+    {
+      "pid": 22864,
+      "creationTime": 1794076921933,
+      "status": "exited"
+    },
+    {
+      "pid": 45960,
+      "creationTime": 1794076952539,
+      "status": "exited"
+    },
+    {
+      "pid": 1920,
+      "creationTime": 1794076958773,
+      "status": "exited"
+    },
+    {
+      "pid": 38608,
+      "creationTime": 1794076959160,
+      "status": "exited"
+    },
+    {
+      "pid": 5048,
+      "creationTime": 1794076994278,
+      "status": "exited"
+    },
+    {
+      "pid": 33832,
+      "creationTime": 1794076998765,
+      "status": "exited"
+    },
+    {
+      "pid": 26972,
+      "creationTime": 1794076999030,
+      "status": "exited"
+    }
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 0,
+  "status": "passed"
+}

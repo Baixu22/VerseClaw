@@ -474,6 +474,13 @@ function scopedRunForCard(input: {
   };
 }
 
+// Entries follow immutable history arrays, so discarded session history releases
+// its derived cards without a second retention policy.
+const completedProjectionCache = new WeakMap<RawMessage[], {
+  inputs: unknown[];
+  cards: Map<number, { card?: UserRunCard; folded: number[]; graph: GraphStepCacheEntry | undefined }>;
+}>();
+
 export function deriveUserRunProjection({
   messages,
   subagentCompletionInfos,
@@ -523,12 +530,35 @@ export function deriveUserRunProjection({
   let latestRunSegmentCompletion = { hasFinalReply: false, hasToolActivity: false };
   let latestPendingImageGeneration = false;
   let latestImageGenerationSettledInHistory = false;
+  const completedInputs = [subagentCompletionInfos, currentSessionKey, currentAgentId, agents,
+    sessionLabels, nextUserMessageIndexes, childTranscripts, workspaceId];
+  let completedCache = completedProjectionCache.get(messages);
+  const previousInputs = completedCache?.inputs;
+  if (!completedCache || completedInputs.some((value, index) => value !== previousInputs?.[index])) {
+    completedCache = { inputs: completedInputs, cards: new Map() };
+    completedProjectionCache.set(messages, completedCache);
+  }
 
   messages.forEach((message, idx) => {
     if (!isRealUserMessage(message) || subagentCompletionInfos[idx]) return;
 
     const runKey = createRunKey(currentSessionKey, idx, message);
     const nextUserIndex = nextUserMessageIndexes[idx];
+    const completed = nextUserIndex !== -1;
+    const cachedProjection = completedCache.cards.get(idx);
+    if (completed && cachedProjection && cachedProjection.graph === graphStepCache[runKey]) {
+      if (cachedProjection.card) cards.push(cachedProjection.card);
+      cachedProjection.folded.forEach(index => foldedNarrationIndices.add(index));
+      return;
+    }
+    // Store empty as well as visible completed segments, avoiding repeated parsing.
+    const completedProjection: { card?: UserRunCard; folded: number[]; graph: GraphStepCacheEntry | undefined }
+      = { folded: [], graph: graphStepCache[runKey] };
+    if (completed) completedCache.cards.set(idx, completedProjection);
+    const appendCard = (card: UserRunCard) => {
+      cards.push(card);
+      if (completed) completedProjection.card = card;
+    };
     const segmentEnd = nextUserIndex === -1 ? messages.length : nextUserIndex;
     const displaySegmentEnd = nextUserIndex === -1 ? messages.length - 1 : nextUserIndex - 1;
     const postTriggerMessages = getPostTriggerSegmentMessages(messages, idx, nextUserIndex);
@@ -711,7 +741,7 @@ export function deriveUserRunProjection({
           completionAuthority: card.completionAuthority,
           objective: typeof message.content === 'string' ? message.content : undefined,
         });
-        cards.push(card);
+        appendCard(card);
         return;
       }
       if (isLatestOpenRun && streamingReplyText == null) {
@@ -759,7 +789,7 @@ export function deriveUserRunProjection({
           completionAuthority: card.completionAuthority,
           objective: typeof message.content === 'string' ? message.content : undefined,
         });
-        cards.push(card);
+        appendCard(card);
         return;
       }
 
@@ -781,7 +811,7 @@ export function deriveUserRunProjection({
           triggerMessage: message,
           replyMessage: cachedReplyIndex == null ? undefined : messages[cachedReplyIndex],
           hasVisibleReply: cachedReplyIndex != null,
-          hasRunError: Boolean(runError),
+          hasRunError: isLatestRunSegment && Boolean(runError),
         }),
         agentLabel: cached.agentLabel,
         sessionLabel: cached.sessionLabel,
@@ -808,7 +838,7 @@ export function deriveUserRunProjection({
         completionAuthority: card.completionAuthority,
         objective: typeof message.content === 'string' ? message.content : undefined,
       });
-      cards.push(card);
+      appendCard(card);
       return;
     }
 
@@ -817,6 +847,7 @@ export function deriveUserRunProjection({
       if (offset === segmentReplyOffset) continue;
       if (shouldFoldNarrationMessage(postTriggerMessages[offset])) {
         foldedNarrationIndices.add(idx + 1 + offset);
+        if (completed) completedProjection.folded.push(idx + 1 + offset);
       }
     }
 
@@ -839,7 +870,7 @@ export function deriveUserRunProjection({
         triggerMessage: message,
         replyMessage: replyIndex == null ? undefined : messages[replyIndex],
         hasVisibleReply: streamingReplyText != null || replyIndex != null,
-        hasRunError: Boolean(runError),
+        hasRunError: isLatestRunSegment && Boolean(runError),
       }),
       agentLabel: segmentAgentLabel,
       sessionLabel: segmentSessionLabel,
@@ -867,7 +898,7 @@ export function deriveUserRunProjection({
       completionAuthority: card.completionAuthority,
       objective: typeof message.content === 'string' ? message.content : undefined,
     });
-    cards.push(card);
+    appendCard(card);
   });
 
   const hasActiveExecutionGraph = cards.some((card) => card.active);

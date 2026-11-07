@@ -1,0 +1,73 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\tf0833\\paired-final\\3-candidate\\electron\\verse-claw-e2e-run-RP38tw",
+  "ledgerEntries": 20,
+  "checks": [
+    {
+      "pid": 2484,
+      "creationTime": 1794077283975,
+      "status": "exited"
+    },
+    {
+      "pid": 38112,
+      "creationTime": 1794077288017,
+      "status": "exited"
+    },
+    {
+      "pid": 29684,
+      "creationTime": 1794077288277,
+      "status": "exited"
+    },
+    {
+      "pid": 1384,
+      "creationTime": 1794077298747,
+      "status": "exited"
+    },
+    {
+      "pid": 2116,
+      "creationTime": 1794077302848,
+      "status": "exited"
+    },
+    {
+      "pid": 14312,
+      "creationTime": 1794077303108,
+      "status": "exited"
+    },
+    {
+      "pid": 18580,
+      "creationTime": 1794077314422,
+      "status": "exited"
+    },
+    {
+      "pid": 39828,
+      "creationTime": 1794077318614,
+      "status": "exited"
+    },
+    {
+      "pid": 40772,
+      "creationTime": 1794077318898,
+      "status": "exited"
+    },
+    {
+      "pid": 22796,
+      "creationTime": 1794077331135,
+      "status": "exited"
+    },
+    {
+      "pid": 46856,
+      "creationTime": 1794077335882,
+      "status": "exited"
+    },
+    {
+      "pid": 20380,
+      "creationTime": 1794077336167,
+      "status": "exited"
+    }
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 0,
+  "status": "passed"
+}
