@@ -1,0 +1,35 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r1-worktree-native",
+  "liveOwner": {
+    "pid": 19384,
+    "locked": true
+  },
+  "liveLockRefused": true,
+  "ownerExit": 0,
+  "contenders": [
+    {
+      "pid": 47136,
+      "status": "created",
+      "record": {
+        "id": "shared-worker",
+        "generation": "ec2aa5b6-4bd9-4f16-8fc5-c8738fa47c2f",
+        "root": "D:\\tmp\\autonomy-worktree-native-Rscbie\\.openclaw\\worktrees\\shared-worker",
+        "baseRoot": "D:\\tmp\\autonomy-worktree-native-Rscbie",
+        "createdAtMs": 1794060276490,
+        "status": "active",
+        "backend": "inprocess"
+      }
+    },
+    {
+      "pid": 19952,
+      "status": "rejected",
+      "error": "Error: worktree_already_exists:shared-worker"
+    }
+  ],
+  "retained": "original-owner-effect",
+  "limits": [
+    "local filesystem with two Node processes",
+    "does not prove full run-lifetime or budget admission"
+  ]
+}

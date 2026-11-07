@@ -13,6 +13,9 @@ requiredProfiles:
   - fast
   - comms
 touchedAreas:
+  - .gitignore
+  - scripts/repository-artifacts.json
+  - docs/dev/architecture-skeleton/ADMISSION-CONVERGENCE.md
   - packages/versebrowser/src/engine/api.ts
   - packages/versebrowser/src/gateway/bridge.ts
   - packages/versebrowser/tests/agent-browser-service.test.ts

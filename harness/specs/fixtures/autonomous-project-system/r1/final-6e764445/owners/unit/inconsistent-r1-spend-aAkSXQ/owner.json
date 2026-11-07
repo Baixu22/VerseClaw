@@ -1,0 +1,73 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r1-inconsistent-usage-reader",
+  "usage": {
+    "input": 15,
+    "output": 0,
+    "totalTokens": 10,
+    "cacheRead": 0,
+    "cacheWrite": 0,
+    "cost": {
+      "input": 0.00001,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0,
+      "total": 0.00001
+    }
+  },
+  "snapshot": [
+    {
+      "scope": "host",
+      "scopeKey": "host",
+      "spentTokens": 0,
+      "spentCostMicros": 0,
+      "heldTokens": 100,
+      "heldCostMicros": 200,
+      "activeCalls": 0,
+      "unknownTokenCalls": 1,
+      "unknownCostCalls": 1
+    },
+    {
+      "scope": "project",
+      "scopeKey": "[\"project\",\"project-a\",\"project-a\"]",
+      "spentTokens": 0,
+      "spentCostMicros": 0,
+      "heldTokens": 100,
+      "heldCostMicros": 200,
+      "activeCalls": 0,
+      "unknownTokenCalls": 1,
+      "unknownCostCalls": 1
+    },
+    {
+      "scope": "session",
+      "scopeKey": "[\"session\",\"session-a\",\"generation-one\"]",
+      "spentTokens": 0,
+      "spentCostMicros": 0,
+      "heldTokens": 100,
+      "heldCostMicros": 200,
+      "activeCalls": 0,
+      "unknownTokenCalls": 1,
+      "unknownCostCalls": 1
+    }
+  ],
+  "rows": [
+    {
+      "call_id": "[\"project-a\",\"project-a\",\"session-a\",\"generation-one\",\"inconsistent-usage-15\",0,0]",
+      "owner_token": "e5151409-f41c-4b19-89f0-e9a35b1ebd86",
+      "request_digest": "6023aad58c12a073ef2d153d7b6e94ff693605db87e5d21495af37e32f18553e",
+      "run_id": "inconsistent-usage-15",
+      "provider": "fixture",
+      "model": "fixture",
+      "scope_json": "{\"workspaceId\":\"project-a\",\"projectId\":\"project-a\",\"sessionKey\":\"session-a\",\"sessionGeneration\":\"generation-one\"}",
+      "state": "unknown",
+      "reserved_tokens": 100,
+      "reserved_cost_micros": 200,
+      "actual_tokens": null,
+      "actual_cost_micros": null,
+      "created_at": 1794060225374,
+      "settled_at": 1794060225376,
+      "reconciliation_ref": "065516f168bb30defe8ddcbadda7f1cffde8a28b697f33cef91c994066d19d65"
+    }
+  ],
+  "databasePath": "D:\\tmp\\r1-spend-aAkSXQ\\state\\openclaw.sqlite"
+}

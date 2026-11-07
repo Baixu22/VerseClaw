@@ -1,0 +1,231 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r1-curated-evidence-reader",
+  "candidate": {
+    "commit": "6e764445cf805b48eb86e5e39f48d05865c70ad6",
+    "tree": "5971f588bfbfdd82fa208d1e6acedc685f2f3c86",
+    "dirty": false
+  },
+  "provenance": [
+    {
+      "driven_by": "agent",
+      "actor": "codex-r1-curated-evidence-reader",
+      "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\artifacts\\runs\\autonomy-resource-admission\\contention-8b360db2-b020-47a3-9241-484c39fe56e5.json",
+      "file": "owners/unit/contention-8b360db2-b020-47a3-9241-484c39fe56e5.json",
+      "bytes": 879,
+      "sha256": "cbd4d6062baec1021d88de41c713ef415ff4a0d5c516f4054d456ac19e63af2a"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-r1-curated-evidence-reader",
+      "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\artifacts\\runs\\autonomy-resource-admission\\inconsistent-r1-spend-aAkSXQ\\owner.json",
+      "file": "owners/unit/inconsistent-r1-spend-aAkSXQ/owner.json",
+      "bytes": 2110,
+      "sha256": "da0502dfc253de2ac6114c6a73ce167cb1d9a5ac6d1ababcb455ffa17649c40b"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-r1-curated-evidence-reader",
+      "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\artifacts\\runs\\autonomy-resource-admission\\inconsistent-r1-spend-OBALjJ\\owner.json",
+      "file": "owners/unit/inconsistent-r1-spend-OBALjJ/owner.json",
+      "bytes": 2107,
+      "sha256": "08c57928dee4d83c7fb4b24d489f258085b1e676dd123500986cada9cc17bc30"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-r1-curated-evidence-reader",
+      "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\artifacts\\runs\\autonomy-resource-admission\\native-owner-84067f61-9d5d-4b46-863f-ee721ecf2653.json",
+      "file": "owners/unit/native-owner-84067f61-9d5d-4b46-863f-ee721ecf2653.json",
+      "bytes": 2771,
+      "sha256": "a66ddc8c08a68cf8a174117cb743470d0e41dfe699621158f72790c2f55beea6"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-r1-curated-evidence-reader",
+      "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\artifacts\\runs\\autonomy-resource-admission\\process-owner-1794060205703\\process-owner-rebuild.json",
+      "file": "owners/unit/process-owner-1794060205703/process-owner-rebuild.json",
+      "bytes": 3564,
+      "sha256": "b443c8bb5e3a36f051824c2db49f9b732c626cd823001b82140e87e7a254ecd0"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-r1-curated-evidence-reader",
+      "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\artifacts\\runs\\autonomy-resource-admission\\provider-http-22fbad98-a44a-43eb-a5c8-0d8360adfbf2.json",
+      "file": "owners/unit/provider-http-22fbad98-a44a-43eb-a5c8-0d8360adfbf2.json",
+      "bytes": 823,
+      "sha256": "8a69f5dfac6bf824be0b2c24ccb35cc1203eacd03e32c3b120e318a25e439f20"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-r1-curated-evidence-reader",
+      "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\artifacts\\runs\\autonomy-resource-admission\\registry-r1-registry-vrSD8O\\owner.json",
+      "file": "owners/unit/registry-r1-registry-vrSD8O/owner.json",
+      "bytes": 1477,
+      "sha256": "ab9946c5c79b1a7bf65e0f2d61e404a2533c1ce35bb2e1ff059c365aa4420308"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-r1-curated-evidence-reader",
+      "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\artifacts\\runs\\autonomy-resource-admission\\registry-r1-registry-x9zwEw\\owner.json",
+      "file": "owners/unit/registry-r1-registry-x9zwEw/owner.json",
+      "bytes": 2954,
+      "sha256": "f95d771021b033c0471e324360e739eee15f793f74046d7e62e21084620cc50a"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-r1-curated-evidence-reader",
+      "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\artifacts\\runs\\autonomy-resource-admission\\spawn-918e40de-8147-42a6-8bb9-66fc872e7b29\\owner.json",
+      "file": "owners/unit/spawn-918e40de-8147-42a6-8bb9-66fc872e7b29/owner.json",
+      "bytes": 1505,
+      "sha256": "21b841a57ca9e924022b8e89ab87503b03c9c5fb2640249a4a3f9fc240f04ea2"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-r1-curated-evidence-reader",
+      "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\artifacts\\runs\\autonomy-resource-admission\\spend-native-r1-spend-4OuSv4\\owner.json",
+      "file": "owners/unit/spend-native-r1-spend-4OuSv4/owner.json",
+      "bytes": 2462,
+      "sha256": "2ef07a8caae12d7412afabdf263a3f8c929792026719b98452173c60391c3c29"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-r1-curated-evidence-reader",
+      "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\artifacts\\runs\\autonomy-resource-admission\\spend-native-r1-spend-6Wuuj7\\owner.json",
+      "file": "owners/unit/spend-native-r1-spend-6Wuuj7/owner.json",
+      "bytes": 2468,
+      "sha256": "4a3c1d24db1477675fa51c2108f239c0d4aae04ac34fbd9a3d7d5a5e67a3e558"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-r1-curated-evidence-reader",
+      "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\artifacts\\runs\\autonomy-resource-admission\\spend-native-r1-spend-Allkqs\\owner.json",
+      "file": "owners/unit/spend-native-r1-spend-Allkqs/owner.json",
+      "bytes": 2468,
+      "sha256": "520c457e151143b775320904860707ccbef01c76c86acdda75f3758dfe7a14b9"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-r1-curated-evidence-reader",
+      "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\artifacts\\runs\\autonomy-resource-admission\\spend-native-r1-spend-pwPVUy\\owner.json",
+      "file": "owners/unit/spend-native-r1-spend-pwPVUy/owner.json",
+      "bytes": 2468,
+      "sha256": "de4952b60b946e2b52ce311fe592bb5b2e6c767b8d2fc327632cd48e376af03a"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-r1-curated-evidence-reader",
+      "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\artifacts\\runs\\autonomy-resource-admission\\spend-native-r1-spend-VFFQie\\owner.json",
+      "file": "owners/unit/spend-native-r1-spend-VFFQie/owner.json",
+      "bytes": 2474,
+      "sha256": "55e8baa84f35c20c8083d32f49914245de60b692bea1058ba2c8c8c9e17d7b09"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-r1-curated-evidence-reader",
+      "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\artifacts\\runs\\autonomy-resource-admission\\spend-native-r1-spend-VMuOzI\\owner.json",
+      "file": "owners/unit/spend-native-r1-spend-VMuOzI/owner.json",
+      "bytes": 2474,
+      "sha256": "671e39600144dfb5e57011353bfec7061c9fc2c0ff39440e976ba3e625c8896f"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-r1-curated-evidence-reader",
+      "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\artifacts\\runs\\autonomy-resource-admission\\spend-r1-spend-n8esat\\owner.json",
+      "file": "owners/unit/spend-r1-spend-n8esat/owner.json",
+      "bytes": 1354,
+      "sha256": "a6f3f6a2829aa4837989ab221377390eee5bebce4c4ec61450df9c4a7c5be470"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-r1-curated-evidence-reader",
+      "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\artifacts\\runs\\autonomy-resource-admission\\waves-d48057ba-dcd2-4b29-9419-6287a2724a26\\owner.json",
+      "file": "owners/unit/waves-d48057ba-dcd2-4b29-9419-6287a2724a26/owner.json",
+      "bytes": 23678,
+      "sha256": "fc511eb291041f5363006bf07f235fe3a0c2a92f6f535a3887e283023dc2ec25"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-r1-curated-evidence-reader",
+      "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-verify\\artifacts\\runs\\autonomy-resource-admission\\worktree-native-5c320a75-a9e0-4a66-9795-53505e288de6.json",
+      "file": "owners/unit/worktree-native-5c320a75-a9e0-4a66-9795-53505e288de6.json",
+      "bytes": 917,
+      "sha256": "42589d84ab999ae67be31e0a318f41427ddf3136d6f94340dd04a2e8a08652a5"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-r1-curated-evidence-reader",
+      "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-6e764445\\native\\handoff-off-results\\autonomy-resource-admissio-006e0-run-terminates-handoff-off-\\r1-native-stop.json",
+      "file": "owners/native/handoff-off-results/autonomy-resource-admissio-006e0-run-terminates-handoff-off-/r1-native-stop.json",
+      "bytes": 415,
+      "sha256": "8f980e44b448cd344fc38532933045f481e159191e21dde2ccec7cae6a148a5a"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-r1-curated-evidence-reader",
+      "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-6e764445\\native\\handoff-off-results\\autonomy-resource-admissio-006e0-run-terminates-handoff-off-\\r1-waves-owner.json",
+      "file": "owners/native/handoff-off-results/autonomy-resource-admissio-006e0-run-terminates-handoff-off-/r1-waves-owner.json",
+      "bytes": 108135,
+      "sha256": "8bee324053b7e75d3953dc3e9d8537012d8bd6c78143d9c8cd67eeba95e69dd8"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-r1-curated-evidence-reader",
+      "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-6e764445\\native\\handoff-on-results\\autonomy-resource-admissio-92759--run-terminates-handoff-on-\\r1-native-stop.json",
+      "file": "owners/native/handoff-on-results/autonomy-resource-admissio-92759--run-terminates-handoff-on-/r1-native-stop.json",
+      "bytes": 425,
+      "sha256": "4e53b6195231fac680ba250aba79880c79c3e22e3f4af94fe22d7b31c9243d5f"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-r1-curated-evidence-reader",
+      "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-6e764445\\native\\handoff-on-results\\autonomy-resource-admissio-92759--run-terminates-handoff-on-\\r1-waves-owner.json",
+      "file": "owners/native/handoff-on-results/autonomy-resource-admissio-92759--run-terminates-handoff-on-/r1-waves-owner.json",
+      "bytes": 113405,
+      "sha256": "649910bedfc7086ec6bf7e11b2de2b63cc07b3b69c51cd7bc7affd3bed4cb729"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-r1-curated-evidence-reader",
+      "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-6e764445\\native\\owner-results\\autonomy-owner-projection--6bdac-m-their-live-desktop-owners\\owner-rebuild.json",
+      "file": "owners/native/owner-results/autonomy-owner-projection--6bdac-m-their-live-desktop-owners/owner-rebuild.json",
+      "bytes": 14919,
+      "sha256": "d57f976fcd47fc2249a398f31053d2f399fbf6a8ca9f7e2d1a8b28c174623823"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-r1-curated-evidence-reader",
+      "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-6e764445\\native\\token-results\\autonomy-resource-admissio-8fabb-nciles-actual-usage-tokens-\\r1-spend-owner.json",
+      "file": "owners/native/token-results/autonomy-resource-admissio-8fabb-nciles-actual-usage-tokens-/r1-spend-owner.json",
+      "bytes": 28019,
+      "sha256": "0ab9405b0e6ac43b34a45e9ebbb820a43311819282d49917c09927afad5d6aaa"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-r1-curated-evidence-reader",
+      "source": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-6e764445\\native\\usd-results\\autonomy-resource-admissio-532e3-econciles-actual-usage-USD-\\r1-spend-owner.json",
+      "file": "owners/native/usd-results/autonomy-resource-admissio-532e3-econciles-actual-usage-USD-/r1-spend-owner.json",
+      "bytes": 28094,
+      "sha256": "afd85f7aff159d50ae10122de75ba60b5f498410952e1d967697e27568d21d3a"
+    }
+  ],
+  "sourceRuns": [
+    "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/clean-6e764445/non-native",
+    "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/clean-6e764445/native"
+  ],
+  "originalFailures": [
+    "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/clean-9a0fb931/native/gates/electron-owner.json",
+    "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/browser-close-red/unit.json",
+    "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/clean-246512d0/native/electron-usd.json",
+    "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/clean-246512d0/failed-usd-owner/readback.json",
+    "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/usage-consistency-red/unit.json"
+  ],
+  "dependencies": "D:/tmp/autonomy-r1-handoff-20261106-01a1b018/browser-nav-framework-provenance.json",
+  "archive": {
+    "path": "D:\\tmp\\autonomy-r1-handoff-20261106-01a1b018\\clean-6e764445\\raw-evidence.zip",
+    "sha256": "7b9eea9223bd6f0f57caeecea21610d01f24403044dae99d36709ffac6877c60",
+    "bytes": 2703653,
+    "entries": 166,
+    "indexEntry": "INDEX.json",
+    "recovery": "Extract this private archive, verify INDEX.json entry hashes, then reopen the original owner databases with their WAL siblings."
+  }
+}

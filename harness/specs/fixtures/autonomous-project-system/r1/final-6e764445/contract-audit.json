@@ -1,0 +1,257 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r1-original-contract-auditor",
+  "candidate": {
+    "commit": "6e764445cf805b48eb86e5e39f48d05865c70ad6",
+    "tree": "5971f588bfbfdd82fa208d1e6acedc685f2f3c86",
+    "dirty": false
+  },
+  "requirements": [
+    {
+      "index": 1,
+      "requirement": "骨架层：L1 资源owner + L4 admission",
+      "status": "verified",
+      "finding": "L1实际owner与L4准入已接通",
+      "proofFiles": [
+        "source-inputs.json",
+        "gates.json",
+        "owner-store-readback.json"
+      ]
+    },
+    {
+      "index": 2,
+      "requirement": "受控写集/复用点：electron/services/resource-fabric.ts；electron/services/resource-tracker.ts；openclaw_runtime/src/agents/orchestration-resource-scheduler.ts；shared/types/session-delegation.ts",
+      "status": "verified",
+      "finding": "既有Fabric、Tracker、scheduler与delegation合同保持复用",
+      "proofFiles": [
+        "source-inputs.json",
+        "lease-ledger-refs.json"
+      ]
+    },
+    {
+      "index": 3,
+      "requirement": "资源清单为Git/Browser/Process/Provider owner投影；owner-issued lease/fence，不建第二资源事实库。",
+      "status": "verified",
+      "finding": "Git、Browser、Process、Provider清单从实际owner取得",
+      "proofFiles": [
+        "owner-projection.json",
+        "owner-store-readback.json",
+        "lease-ledger-refs.json"
+      ]
+    },
+    {
+      "index": 4,
+      "requirement": "复用已有Fabric/capacity/wave原语，以宿主/项目/会话分层预留和reconcile扩展缺口。",
+      "status": "verified",
+      "finding": "宿主、项目、会话三scope原子预留与核销",
+      "proofFiles": [
+        "effective-resource-limits.json",
+        "fairness-contention.json",
+        "owner-store-readback.json"
+      ]
+    },
+    {
+      "index": 5,
+      "requirement": "多资源固定顺序/失败补偿，排队公平和等待老化；控制/取消通道不被工作队列占满。",
+      "status": "verified",
+      "finding": "host/project/session固定事务顺序及budget→quota→wire路径；失败补偿、老化公平和独立控制路径",
+      "proofFiles": [
+        "fairness-contention.json",
+        "gates.json",
+        "source-inputs.json"
+      ]
+    }
+  ],
+  "criteria": [
+    {
+      "index": 1,
+      "criterion": "已有writeSet缺失推迟逻辑保留；隔离证明从实际worktree owner获得，不能只信调用者bool。",
+      "status": "verified",
+      "finding": "writeSet缺失继续推迟，caller bool与目录模拟不能替代Git owner证明",
+      "proofFiles": [
+        "gates.json",
+        "owners",
+        "source-inputs.json"
+      ]
+    },
+    {
+      "index": 2,
+      "criterion": "并发预算reserve无超额双花；unknown成本单列；资源等待可归因且无饥饿。",
+      "status": "verified",
+      "finding": "六组真实进程争用均为1笔调用/3条allocation；unknown token/USD保留原预留；老等待者与控制通道有通过的反例",
+      "proofFiles": [
+        "fairness-contention.json",
+        "effective-resource-limits.json",
+        "owner-store-readback.json"
+      ]
+    },
+    {
+      "index": 3,
+      "criterion": "lease过期先fence和确认旧执行隔离再重分配；可读占用和真实effective cap。",
+      "status": "verified",
+      "finding": "活跃原PID租约到期仍拒绝第二writer；原退出后才重分配并拒绝旧release",
+      "proofFiles": [
+        "lease-ledger-refs.json",
+        "owners",
+        "source-inputs.json"
+      ]
+    },
+    {
+      "index": 4,
+      "criterion": "负例：TTL过期即允许双writer；未测上限当无限安全；资源申请死锁",
+      "status": "verified",
+      "finding": "TTL、unmeasured cap、等待取消/拒绝与未发送补偿反例齐备",
+      "proofFiles": [
+        "fairness-contention.json",
+        "gates.json",
+        "source-inputs.json"
+      ]
+    },
+    {
+      "index": 5,
+      "criterion": "证据包含driven_by:agent、真实actor、source/candidate/输入配置版本、命令/exit/count、artifact hash、负例与未测范围；不以stdout或模型自述收口。",
+      "status": "verified",
+      "finding": "同干净候选、595+10通过、129源哈希一致及原件/命令/退出；hash与凭据扫描在封存阶段读回",
+      "proofFiles": [
+        "gates.json",
+        "source-inputs.json",
+        "raw-run-index.json",
+        "credential-scan.json",
+        "SHA256SUMS"
+      ]
+    },
+    {
+      "index": 6,
+      "criterion": "ControlAction/resource统一层仅有envelope、相关ID和可重建索引；清空其缓存后可从owner重建，不能凭中央缓存空闲或TTL过期释放真实资源。",
+      "status": "verified",
+      "finding": "清空统一层缓存后owner占用重建；关闭失败及关闭等待均不释放，原window/native exit后才释放",
+      "proofFiles": [
+        "owner-projection.json",
+        "owner-store-readback.json",
+        "lease-ledger-refs.json"
+      ]
+    }
+  ],
+  "assertionProofs": [
+    {
+      "selector": "/temporary boosts starve/",
+      "cases": [
+        {
+          "file": "tests/unit/autonomy-resource-admission.test.ts",
+          "title": "TF-0679 existing Fabric admission owners does not let repeated temporary boosts starve old work",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "selector": "/stop and control RPCs reachable/",
+      "cases": [
+        {
+          "file": "tests/unit/autonomy-resource-admission.test.ts",
+          "title": "TF-0679 existing Fabric admission owners keeps stop and control RPCs reachable while the history admission queue is occupied",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "selector": "/caller boolean claiming worktree isolation/",
+      "cases": [
+        {
+          "file": "tests/unit/orchestration-resource-scheduler.test.ts",
+          "title": "resource-aware orchestration scheduler ignores a caller boolean claiming worktree isolation",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "selector": "/directory simulation or missing owner records/",
+      "cases": [
+        {
+          "file": "tests/unit/autonomy-worktree-owner.test.ts",
+          "title": "autonomy worktree owner admission never promotes directory simulation or missing owner records to verified isolation",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "selector": "/unmeasured cap/",
+      "cases": [
+        {
+          "file": "tests/unit/orchestration-resource-scheduler.test.ts",
+          "title": "resource-aware orchestration scheduler never treats unmeasured cap undefined as infinite or a zero-sized wave",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/orchestration-resource-scheduler.test.ts",
+          "title": "resource-aware orchestration scheduler never treats unmeasured cap 0.5 as infinite or a zero-sized wave",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/orchestration-resource-scheduler.test.ts",
+          "title": "resource-aware orchestration scheduler never treats unmeasured cap NaN as infinite or a zero-sized wave",
+          "status": "passed"
+        },
+        {
+          "file": "tests/unit/orchestration-resource-scheduler.test.ts",
+          "title": "resource-aware orchestration scheduler never treats unmeasured cap Infinity as infinite or a zero-sized wave",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "selector": "/refuse a physical retry before a second send/",
+      "cases": [
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "title": "provider owner layered spend reservation the production stream resolver and guarded HTTP boundary refuse a physical retry before a second send",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "selector": "/transport confirms overloaded before wire dispatch/",
+      "cases": [
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "title": "provider owner layered spend reservation compensates the spend reservation when the transport confirms overloaded before wire dispatch",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "selector": "/transport confirms cancelled before wire dispatch/",
+      "cases": [
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "title": "provider owner layered spend reservation compensates the spend reservation when the transport confirms cancelled before wire dispatch",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "selector": "/reserves every scope atomically/",
+      "cases": [
+        {
+          "file": "tests/unit/autonomy-provider-spend.test.ts",
+          "title": "provider owner layered spend reservation reserves every scope atomically, denies overspend across sessions, and reconciles once",
+          "status": "passed"
+        }
+      ]
+    }
+  ],
+  "sourceAnchors": [
+    "electron/services/resource-fabric.ts",
+    "electron/services/resource-envelope.ts",
+    "electron/services/agent-browser-api.ts",
+    "electron/services/long-session-resource-reclamation.ts",
+    "openclaw_runtime/src/agents/provider-spend-budget.ts",
+    "openclaw_runtime/src/agents/provider-transport-fetch.ts",
+    "openclaw_runtime/src/agents/worktree-service.ts",
+    "openclaw_runtime/src/agents/orchestration-resource-scheduler.ts",
+    "openclaw_runtime/src/agents/subagent-registry.store.sqlite.ts",
+    "packages/versebrowser/src/engine/service.ts"
+  ],
+  "reviewedAt": "2026-11-07T14:29:51.116Z",
+  "closureEligible": true,
+  "fullProjectCI": "blocked-typecheck-performance"
+}

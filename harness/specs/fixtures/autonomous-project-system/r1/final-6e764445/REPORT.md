@@ -1,0 +1,13 @@
+TF-0679 原5项要求与6项验收已完成逐项审计。
+
+代码候选：6e764445cf805b48eb86e5e39f48d05865c70ad6；tree：5971f588bfbfdd82fa208d1e6acedc685f2f3c86。Windows，driven_by: agent；actor: codex-r1-original-contract-auditor。唯一开发树 D:/ClawX-work/autonomy-host-readiness，唯一 Task Forest D:/ClawX。
+
+467项根测试、32项VerseBrowser测试、96项Runtime测试全部通过；完整未缓存node/web/test类型与22项非原生门禁退出0。Runtime与Electron从独立源码重建后，owner、handoff off/on、token、USD及5项UI共10个原生场景全部通过，失败/skip/flaky均0。129份源码验证前后哈希一致。
+
+六组宿主/项目/会话token与USD竞争均由两个真实进程同时申请，每组仅一个获准；失败事务没有部分allocation。未知或矛盾usage保留预留并拒绝后续有限调用。有效分项和报告总量冲突时token与USD均保持unknown；仅总量有效而分项缺失时可单独核销token。USD原生夹具明确使用120输入、30输出和1/2报价，单笔核销180微美元。数据库原件共15份已重开并通过integrity_check。
+
+浏览器导航加载拒绝与同步异常清理同一等待及计时器，后续导航正常。关闭失败和关闭等待期间原owner继续计入占用；原窗口closed回执确认销毁后才释放。PTY、Gateway原PID与退出回执均有读回，taskkill故障反例仍等待原native退出。原生pending截图已检查。租约、writeSet缺失、实际Git隔离、未测上限串行、失败补偿、等待老化及控制通道的证据见contract-audit.json。
+
+完整CI的59项测试、生命周期、重复项、文档策略、catalogs及最终两项仓库检查通过。Agent Dev四份过期证据已自动刷新，完整功能诊断通过；严格audit保留性能阻断：完整typecheck 240129ms超过45000ms。4GiB内存配置实验退出0且耗时约246秒，未改善；性能预算保持45000ms。当前全项目CI退出1，项目发布状态未改变。
+
+原始166项记录保留在私有raw-evidence.zip，zip SHA256为7b9eea9223bd6f0f57caeecea21610d01f24403044dae99d36709ffac6877c60；INDEX.json逐项记录原件hash和恢复路径。原始加载、关闭、USD预期与usage冲突的失败记录独立保留。完整TF-0664目标继续active，原33节点、26实施合同和TF-0657–0662保留；下一个资源实施叶为R2。
