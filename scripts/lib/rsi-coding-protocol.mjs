@@ -17,8 +17,13 @@ export const STRUCTURED_CODING_COLLECTOR = Object.freeze({ ...CODING_COLLECTOR,
   loopbackTransport: 'direct-node-http', schemaEnforcement: 'local-strict-validation',
 });
 
+export const PUBLIC_CODING_COLLECTOR = Object.freeze({ ...STRUCTURED_CODING_COLLECTOR,
+  version: 'RsiCodingCollector/v3', publicInputProtocol: 'RsiCodingTaskInputs/v1',
+});
+
 export function codingCollectorConfig(version = CODING_COLLECTOR.version) {
   if (version === CODING_COLLECTOR.version) return CODING_COLLECTOR;
+  if (version === PUBLIC_CODING_COLLECTOR.version) return PUBLIC_CODING_COLLECTOR;
   assert.equal(version, STRUCTURED_CODING_COLLECTOR.version, 'unknown-coding-collector-version');
   return STRUCTURED_CODING_COLLECTOR;
 }

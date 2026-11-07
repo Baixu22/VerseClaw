@@ -2,6 +2,7 @@ import type { Tf0592Policy, Tf0592Summary } from '../rsi-tf0592-statistical-adju
 import type { PairedEffect } from './paired-ablation.mjs';
 import type { buildResponsesRequest } from './rsi-responses-provider.mjs';
 import type { ResponsesReply } from './rsi-responses-provider.mjs';
+import type { CodingSubjectInput, PublicInputSource } from './rsi-task-inputs.mjs';
 
 export type BenefitArm = 'sekb-off' | 'sekb-shadow' | 'sekb-confirmed';
 export type BenefitTask = {
@@ -12,6 +13,10 @@ export type BenefitTask = {
   oracleDigest: string;
   baselineSetup?: { kind: string; removePaths: Array<{ path: string; sha256: string }> } | null;
   contextFiles?: Array<{ path: string; content: string | null; missing?: boolean; truncated?: boolean }>;
+  publicInput?: CodingSubjectInput;
+  publicInputDigest?: string;
+  publicInputSources?: PublicInputSource[];
+  publicInputOmissions?: CodingSubjectInput['omittedContext'];
   oracleTestDigests?: Record<string, string>;
   oracle: { commands: string[]; testPaths: string[]; expectedSkips: number; inputDigests: Record<string, string> };
 };
@@ -25,7 +30,7 @@ export type BenefitPlan = {
   evidenceKind: 'synthetic-wiring-fixture' | 'live-provider';
   source: { commit: string; tree: string; bindings: Record<string, string>; boundary: string };
   provider: { endpoint: string; model: string; maxOutputTokens: number };
-  collector?: typeof import('./rsi-coding-protocol.mjs').CODING_COLLECTOR;
+  collector?: typeof import('./rsi-coding-protocol.mjs').CODING_COLLECTOR & { publicInputProtocol?: string };
   budget: { providerCallsAuthorized: number; maxTotalTokens: number | null; network: string; retries: 0 };
   design: { k: number; minimumCompleteCases: number; primaryComparison: string; order: string; unit: string; minimumImprovement: number; costIncreaseMaximum: number };
   arms: Record<BenefitArm, { enabled: boolean; shadowEvaluation: boolean; injection: boolean }>;

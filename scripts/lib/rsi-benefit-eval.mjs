@@ -11,6 +11,7 @@ import { buildResponsesRequest, parseResponsesReply } from './rsi-responses-prov
 import { assessTaskAdmission, finalizeLiveAdmission } from '../rsi-live-acceptance.mjs';
 import { CODING_BINDINGS_PATH, resolveHistoricalTask } from './rsi-live-grader.mjs';
 import { CODING_COLLECTOR, CODING_INSTRUCTIONS, codingCollectorConfig, parseCodingEdits } from './rsi-coding-protocol.mjs';
+import { buildPublicTaskInputs, TASK_INPUT_BINDINGS, PUBLIC_BEHAVIOR_SOURCE } from './rsi-task-inputs.mjs';
 
 export const BENEFIT_ARMS = Object.freeze(['sekb-off', 'sekb-shadow', 'sekb-confirmed']);
 const CORPUS = 'harness/specs/fixtures/rsi-evidence-loop/tf0604/task-corpus.v1.json';
@@ -23,6 +24,7 @@ const SOURCES = [CORPUS, TASKS, POLICY, 'scripts/lib/rsi-benefit-eval.mjs', 'scr
   'scripts/rsi-tf0592-statistical-adjudication.mjs', 'scripts/lib/agent-first-trials.mjs',
   'tests/unit/rsi-benefit-eval.test.ts', 'tests/unit/rsi-responses-provider.test.ts',
   'scripts/rsi-live-acceptance.mjs', 'scripts/rsi-live-acceptance.d.mts',
+  'scripts/lib/rsi-task-inputs.mjs', 'scripts/lib/rsi-task-inputs.d.mts',
   'scripts/lib/rsi-live-grader.mjs', 'scripts/lib/rsi-live-grader.d.mts',
   'tests/unit/rsi-live-grader.test.ts', 'harness/specs/tasks/rsi-benefit-eval.md'];
 const FLAGS = {
@@ -139,7 +141,7 @@ function codingContext(root, task) {
   codingContextCache.set(key, files);
   return files;
 }
-function taskSet(root, codingCollector = false) {
+function taskSet(root, codingCollector = false, collector = null) {
   const corpus = read(join(root, CORPUS));
   const historical = read(join(root, TASKS));
   const tasks = corpus.cases.map((entry) => {
@@ -159,6 +161,9 @@ function taskSet(root, codingCollector = false) {
     const recordPath = repoPath(task.referenceSolution?.sourceRecord, 'source-record-path');
     const recordDigest = sha256File(artifactPath(root, recordPath));
     assert.equal(recordDigest, task.referenceSolution.sourceRecordSha256, `source-record-digest-mismatch:${entry.id}`);
+    const publicInput = collector?.publicInputProtocol ? buildPublicTaskInputs(root, entry.id, {
+      maxContextChars: collector.maxContextChars, responseSchema: collector.responseSchema,
+    }) : null;
     const sourceRecord = read(artifactPath(root, recordPath));
     const base = sourceRecord.candidate?.base;
     const reference = sourceRecord.candidate?.commit;
@@ -170,7 +175,10 @@ function taskSet(root, codingCollector = false) {
       negativeExpectedOutcome: entry.negativeExpectedOutcome ?? 'fail',
       prompt: task.input.prompt, acceptanceCriteria, targetScope,
       source: { recordPath, recordDigest, base, reference },
-      ...(codingCollector ? { baselineSetup: task.baselineSetup ?? null, contextFiles: codingContext(root, task), oracleTestDigests: task.oracleTestDigests } : {}),
+      ...(codingCollector ? { baselineSetup: task.baselineSetup ?? null,
+        contextFiles: publicInput ? publicInput.input.baseFiles : codingContext(root, task), oracleTestDigests: task.oracleTestDigests } : {}),
+      ...(publicInput ? { publicInput: publicInput.input, publicInputDigest: publicInput.inputDigest,
+        publicInputSources: publicInput.sources, publicInputOmissions: publicInput.omitted } : {}),
       oracleDigest: benefitDigest(task.oracle),
       oracle: { commands: task.oracle.commandLines, testPaths: task.oracle.testPaths,
         expectedSkips: task.oracle.expectedSkips, inputDigests: task.oracle.inputDigests },
@@ -194,7 +202,7 @@ function taskSet(root, codingCollector = false) {
 export function createBenefitPlan(root, options = {}) {
   root = resolve(root);
   const collector = options.codingCollector ? codingCollectorConfig(options.collectorVersion) : null;
-  const tasks = taskSet(root, options.codingCollector), policy = read(join(root, POLICY));
+  const tasks = taskSet(root, options.codingCollector, collector), policy = read(join(root, POLICY));
   assert.equal(tasks.length, 24, 'existing-corpus-required');
   assert.equal(policy.taskSet.k, 3); assert.equal(policy.taskSet.minimumCompleteCases, 20);
   assert.equal(policy.promotion.thresholds.passKAbsoluteImprovement.minimum, 0.05);
@@ -233,6 +241,9 @@ export function createBenefitPlan(root, options = {}) {
     'scripts/lib/rsi-coding-protocol.mjs', 'scripts/lib/rsi-coding-protocol.d.mts', 'tests/unit/rsi-coding-collector.test.ts',
     'harness/specs/fixtures/rsi-coding-cohort/candidate.json', 'harness/specs/fixtures/rsi-coding-cohort/candidate-provenance.json'] : []),
     ...(collector?.version === 'RsiCodingCollector/v2' ? ['harness/specs/tasks/rsi-coding-full-completion.md'] : []),
+    ...(collector?.publicInputProtocol ? [TASK_INPUT_BINDINGS, PUBLIC_BEHAVIOR_SOURCE, 'scripts/rsi-task-inputs.mjs',
+      'harness/specs/rules/rsi-public-input-boundary.md', 'harness/specs/tasks/rsi-public-task-inputs.md',
+      'tests/unit/rsi-task-inputs.test.ts'] : []),
     ...tasks.flatMap((task) => [task.source.recordPath, ...Object.keys(task.oracle.inputDigests)])])].sort();
   // Source bindings use the repository's canonical text bytes across LF/CRLF
   // checkouts. Raw run receipts and their manifest remain byte-addressed.
@@ -295,8 +306,13 @@ export function buildBenefitRequest(plan, slot) {
   // subject inputs rather than hidden grading metadata.
   const instructions = 'Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.'
     + (plan.collector ? `\n${CODING_INSTRUCTIONS}` : '');
-  const input = JSON.stringify({ prompt: task.prompt, acceptanceCriteria: task.acceptanceCriteria, targetScope: task.targetScope,
-    ...(plan.collector ? { responseSchema: plan.collector.responseSchema, baseFiles: task.contextFiles } : {}) }, null, 2);
+  if (plan.collector?.publicInputProtocol) {
+    assert.equal(benefitDigest(task.publicInput), task.publicInputDigest, 'public-subject-input-drift');
+  }
+  const input = JSON.stringify(plan.collector?.publicInputProtocol ? task.publicInput
+    : { prompt: task.prompt, acceptanceCriteria: task.acceptanceCriteria, targetScope: task.targetScope,
+      ...(plan.collector ? { responseSchema: plan.collector.responseSchema, baseFiles: task.contextFiles } : {}) }, null, 2);
+  if (plan.collector?.publicInputProtocol) assert(input.length <= plan.collector.maxContextChars, 'public-input-over-budget');
   return buildResponsesRequest({ model: plan.provider.model, maxOutputTokens: plan.provider.maxOutputTokens,
     ...(plan.collector ? { reasoningEffort: plan.collector.reasoningEffort } : {}),
     ...(plan.collector?.responseFormat === 'strict-json-schema' ? { jsonSchema: plan.collector.responseSchema } : {}),
