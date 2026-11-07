@@ -1810,6 +1810,32 @@ describe('host services', () => {
     expect((await ledger.loadTaskLedgerSnapshot('generation-workspace')).sessionLinks).toHaveLength(1);
   });
 
+  it('drops generation-fenced task references when the source resets during fork', async () => {
+    const ledger = await import('@electron/services/task-ledger-service');
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const now = '2026-11-07T00:00:00.000Z';
+    await ledger.appendTaskLedgerEvents('reset-workspace', [{
+      type: 'node_created', actor: 'assistant',
+      payload: { node: { id: 'old-task', title: 'Old generation task', kind: 'task', status: 'doing', createdAt: now, updatedAt: now } },
+    }, {
+      type: 'session_linked', actor: 'assistant',
+      payload: { sessionLink: { id: 'old-link', nodeId: 'old-task', sessionKey: 'agent:main:source', sessionGeneration: 'before-reset', createdAt: now } },
+    }]);
+    let generation = 'before-reset';
+    const rpc = vi.fn(async (method: string) => {
+      if (method === 'sessions.describe') return { session: { sessionId: generation } };
+      generation = 'after-reset';
+      return { key: 'agent:main:fork', sourceKey: 'agent:main:source', sessionId: 'child-generation', forkedFromParent: true };
+    });
+    const result = await createSessionsApi({ gatewayManager: { rpc } as never }).fork({ sessionKey: 'agent:main:source', workspaceId: 'reset-workspace' });
+    expect(result.success).toBe(true);
+    const snapshot = await ledger.loadTaskLedgerSnapshot('reset-workspace');
+    const childLinks = snapshot.sessionLinks.filter((link) => link.sessionKey === result.sessionKey);
+    expect(childLinks).toHaveLength(1);
+    expect(childLinks[0].nodeId).toBeUndefined();
+    expect(snapshot.nodes[0].status).toBe('doing');
+  });
+
   it('records canonical fork lineage in Main without creating a handoff', async () => {
     const rpc = vi.fn().mockResolvedValue({
       key: 'agent:main:fork',

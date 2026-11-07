@@ -2959,7 +2959,7 @@ export function createSessionsApi(ctx: {
         };
       }
       const taskSnapshot = await loadTaskLedgerSnapshot(workspaceId);
-      const taskNodeIds = await readDerivationTaskIds(taskSnapshot, sessionKey, ctx.gatewayManager);
+      await readDerivationTaskIds(taskSnapshot, sessionKey, ctx.gatewayManager);
       const result = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.fork', {
         key: sessionKey,
         ...(agentId ? { agentId } : {}),
@@ -2980,8 +2980,10 @@ export function createSessionsApi(ctx: {
           forkedFromParent: result.forkedFromParent === true,
         };
       }
+      // Re-read the generation after cloning: a reset may race with sessions.fork.
+      const taskNodeIds = await readDerivationTaskIds(taskSnapshot, sourceSessionKey, ctx.gatewayManager);
       if (sourceSessionKey !== sessionKey) {
-        taskNodeIds.push(...await readDerivationTaskIds(taskSnapshot, sourceSessionKey, ctx.gatewayManager));
+        taskNodeIds.push(...await readDerivationTaskIds(taskSnapshot, sessionKey, ctx.gatewayManager));
       }
       const entry = isRecord(result.entry) ? result.entry : undefined;
       const generation = typeof result.sessionId === 'string' ? result.sessionId.trim()
