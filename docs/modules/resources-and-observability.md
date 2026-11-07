@@ -212,6 +212,8 @@ native关闭失败时保留终端占用，回收报告记录failed；部分成�
 Gateway的停止消费fork时绑定的native退出回执，并发停止共用同一终止操作。
 Windows树终止不可用时，对原PID施加SIGKILL并等待原exit事件；PID已消失而事件
 尚未到达时继续保留owner，超时报告终止失败。
+生命周期锁的进程身份来自native FILETIME。首选host探测超时时，由系统PowerShell
+读取同一出生标识；两个host均不可用时保持unknown并拒绝准入。
 
 实现：`electron/services/resource-tracker.ts`。
 

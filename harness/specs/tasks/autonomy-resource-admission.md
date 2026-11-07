@@ -13,6 +13,8 @@ requiredProfiles:
   - fast
   - comms
 touchedAreas:
+  - shared/task-ledger-process.ts
+  - tests/unit/task-ledger-process.test.ts
   - shared/resources/drf-share.ts
   - shared/dcs/component-disposition-catalog.ts
   - tests/unit/component-disposition-catalog.test.ts
@@ -161,6 +163,7 @@ requiredRules:
   - disk-temp-policy
   - docs-sync
 requiredTests:
+  - pnpm exec vitest run tests/unit/task-ledger-process.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/gateway-supervisor.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/r0-2-sessions-delete-fail.test.ts tests/unit/long-session-owner-reclamation-adapter.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/component-disposition-catalog.test.ts tests/unit/component-authority-manifest.test.ts --maxWorkers=1

@@ -50,6 +50,8 @@ Worktree owner 创建遇同名、规范化后重名或未登记的已有目录�
 租约journal初始化以已提交WAL或其初始化marker为依据；首个mutex等待创建的目录
 不证明journal已存在。已初始化journal丢失时继续拒绝新writer。
 生命周期互斥复用进程出生标识锁；遗留锁身份未知时拒绝，不能仅因超时执行临界区。
+Windows首选host探测超时时，经系统PowerShell读取同一native FILETIME；两个host均
+不可用时继续拒绝身份准入，保持原进程标识格式及活跃owner占用。
 记录的 generation 与实际 checkout HEAD、私有 Git 目录及其回指一起验证；对外快照的
 修改不能改写 owner。真实 Git 创建失败不能改用目录模拟宣称成功，默认 inprocess 保留。
 计划阶段尚无 checkout；调用者的 verifiedWorktreeIsolation 布尔值不是放行证据。
