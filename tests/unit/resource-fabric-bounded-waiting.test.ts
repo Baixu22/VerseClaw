@@ -146,6 +146,33 @@ describe('regression: old Fabric admission', () => {
 });
 
 describe('execution ownership and shared waits', () => {
+  it.each(['abort', 'deadline'] as const)('admits fresh history subscribers after %s without releasing abandoned work', async reason => {
+    const f = new ResourceFabric({ accounts: { chatHistory: { minLimit: 1, maxLimit: 1, initialLimit: 1 } } });
+    const oldGate = deferred(); const newGate = deferred(); const c = new AbortController();
+    const oldRunner = vi.fn(async () => { await oldGate.promise; return 'old'; });
+    const newRunner = vi.fn(async () => { await newGate.promise; return 'new'; });
+    const first = f.run('chat.history', { id: 'retry' }, 1000, oldRunner,
+      reason === 'abort' ? { signal: c.signal } : { deadline: Date.now() + 10 }).catch(e => e);
+    await flush();
+    if (reason === 'abort') c.abort(); else await vi.advanceTimersByTimeAsync(10);
+    expect(await first).toMatchObject(reason === 'abort' ? { name: 'AbortError' } : { code: 'RESOURCE_FABRIC_TIMEOUT' });
+    const retry = f.run('chat.history', { id: 'retry' }, 1000, newRunner).catch(e => e);
+    await flush();
+    expect(f.getDiagnostics().chatHistory).toMatchObject({ active: 1, queued: 1 });
+    expect(newRunner).not.toHaveBeenCalled();
+    oldGate.resolve(); await flush();
+    expect(newRunner).toHaveBeenCalledOnce();
+    const duplicate = vi.fn(async () => 'duplicate');
+    const follower = f.run('chat.history', { id: 'retry' }, 1000, duplicate).catch(e => e);
+    await flush();
+    expect(f.getDiagnostics().chatHistory).toMatchObject({ active: 1, queued: 0 });
+    newGate.resolve();
+    expect(await retry).toBe('new'); expect(await follower).toBe('new');
+    expect(duplicate).not.toHaveBeenCalled();
+    expect(f.getDiagnostics().chatHistory).toMatchObject({ active: 0, queued: 0 });
+    expect(getEventListeners(c.signal, 'abort')).toHaveLength(0); expect(vi.getTimerCount()).toBe(0);
+  });
+
   it('expires the actual host caller while another history subscriber keeps its own deadline', async () => {
     const f = new ResourceFabric(); const gate = deferred();
     const runner = vi.fn(async () => {

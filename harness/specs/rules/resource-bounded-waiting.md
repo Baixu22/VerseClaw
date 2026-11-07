@@ -17,6 +17,8 @@ Execution adapters consume the remaining deadline rather than restart a full tim
 Singleflight subscribers own their waits separately. One cancellation must not
 cancel work needed by another subscriber. With no subscribers left, pending work
 can be cancelled; running capacity remains owned until actual work settles.
+Fresh callers may replace an abandoned flight. Its eventual completion must not
+remove the replacement's registration or release the replacement's capacity.
 Cancellation alone is never evidence that a child or remote operation has exited.
 Once execution starts, its owner supplies the terminal result, including confirmed
 file-write readback. The waiting layer must not replace that receipt with an

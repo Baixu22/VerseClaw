@@ -15,11 +15,12 @@ export class Singleflight<K, V> {
   run(key: K, work: (signal: AbortSignal) => Promise<V>, options?: ResourceWaitOptions & { expired?: () => Error }): Promise<V> {
     try { checkResourceWait(options ?? {}, options?.expired); } catch (error) { return Promise.reject(error); }
     let flight = this.inFlight.get(key);
-    if (!flight) {
+    if (!flight || flight.controller.signal.aborted) {
       const controller = new AbortController();
       const subscribers = new Set<Subscriber<V>>();
       const finish = (result: PromiseSettledResult<V>) => {
-        this.inFlight.delete(key);
+        // Abandoned work may settle after a replacement flight has started.
+        if (this.inFlight.get(key) === flight) this.inFlight.delete(key);
         for (const subscriber of subscribers) subscriber.finish(result);
         subscribers.clear();
       };

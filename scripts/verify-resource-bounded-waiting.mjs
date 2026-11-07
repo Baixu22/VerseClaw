@@ -34,11 +34,11 @@ const tsgo = entry(runtimeDeps, '@typescript/native-preview', 'bin/tsgo.js');
 const eslint = entry(deps, 'eslint', 'bin/eslint.js');
 const env = { ...process.env, TEMP: 'D:\\tmp', TMP: 'D:\\tmp', GOMEMLIMIT: '1GiB', GOMAXPROCS: '2', RESOURCE_WAITING_REPORT_DIR: output, COMMS_OUTPUT_DIR: join(output, 'comms') };
 const commands = [];
-function run(id, args, cwd = root, required = true) {
+function run(id, args, cwd = root, required = true, executable = process.execPath) {
   const start = Date.now();
-  const r = spawnSync(process.execPath, args, { cwd, env, encoding: 'utf8', windowsHide: true, maxBuffer: 64 * 1024 * 1024 });
+  const r = spawnSync(executable, args, { cwd, env, encoding: 'utf8', windowsHide: true, maxBuffer: 64 * 1024 * 1024 });
   writeFileSync(join(output, `${id}.log`), (r.stdout ?? '') + (r.stderr ?? '') + (r.error?.message ?? ''));
-  commands.push({ id, argv: [process.execPath, ...args], cwd, exitCode: r.status, durationMs: Date.now() - start, required,
+  commands.push({ id, argv: [executable, ...args], cwd, exitCode: r.status, durationMs: Date.now() - start, required,
     environment: { TEMP: env.TEMP, TMP: env.TMP, GOMEMLIMIT: env.GOMEMLIMIT, GOMAXPROCS: env.GOMAXPROCS } });
 }
 run('harness-context', ['harness/src/cli.mjs', 'context', '--spec', spec]);
@@ -57,6 +57,7 @@ run('lint', [eslint, ...changed.filter(path => /\.(?:ts|mjs)$/u.test(path)), '--
 run('comms-replay', ['scripts/comms/replay.mjs']);
 run('comms-compare', ['scripts/comms/compare.mjs']);
 run('artifact-retention', ['scripts/check-repository-artifacts.mjs']);
+run('diff-check', ['diff', '--check', base, 'HEAD'], root, true, 'git');
 const extract = text => text.split(/\r?\n/u).filter(line => line.includes('error TS'));
 const baseline = readFileSync(values['baseline-types'], 'utf8').replace(/^\uFEFF/u, '');
 writeFileSync(join(output, 'baseline-runtime-types.log'), baseline);
@@ -89,7 +90,8 @@ const sourceHashes = changed.map(path => ({ path, sha256: hash(join(root, path))
 const cleanAfter = !git('status', '--porcelain');
 const runtimeExit = commands.find(c => c.id === 'runtime-types').exitCode;
 const verdict = commands.every(c => !c.required || c.exitCode === 0) && Object.values(tests).every(t => t.success && t.failed === 0 && t.suitesFailed === 0)
-  && pressurePass && negativeControls.failed === 3 && negativeControls.exitCode === 1 && introduced.length === 0 && extract(baseline).length > 0 && extract(current).length > 0 && runtimeExit === 2 && cleanAfter
+  && pressurePass && negativeControls.failed === 3 && negativeControls.exitCode === 1 && introduced.length === 0 && extract(baseline).length > 0
+  && (runtimeExit === 0 || (runtimeExit === 2 && extract(current).length > 0)) && cleanAfter
   ? 'pass-bounded-waiting' : 'fail';
 write('report.json', { schema: 'clawx.resource-bounded-waiting/v1', generatedAt: new Date().toISOString(), driven_by: 'agent', actor: 'codex', task: 'TF-0829', candidate, cleanAfter,
   spec, tests, pressures: pressures.map(({ kind, requests, counts, peak, final }) => ({ kind, requests, counts, peak, final })),
