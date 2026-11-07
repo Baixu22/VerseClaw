@@ -39,4 +39,3 @@ v4 的初始工具接口为 `read_file(path, startLine, maxLines)`、`replace_fi
 失败分支按原因处理：接口来源缺失或漂移时停止新协议准入；工具越界或预算用尽时保留终态；实验不足或负收益时不选择该候选。工程节点只有在其产物验收完成后关闭，有效改进目标还需完整收益证据。产品默认值、发布和代码自改权限继续由现有规则决定。
 
 基线与恢复入口：`harness/specs/fixtures/rsi-coding-cohort/full-closeout-20261107/REPORT.md`、`result.v1.json` 和 `raw-archive.v3.json`。修复从 main `5ad905b44c2822caf6037df9278a8a260a27d3f9` 开始；原测量 runId 为 `2bb4141c-a536-443a-8b89-0fbfd0082edf`，冻结 evaluator 为 `97747a8c833486b4d5c6014df5e7d25d71f8ceb2`。
-

@@ -50,4 +50,3 @@ readmeUpdates: not-required
 ---
 
 Implementation starts with `pnpm harness context --spec harness/specs/tasks/rsi-public-task-inputs.md`. Public declarations are evaluator-owned prospective inputs. They specify API shape while keeping the implementation and hidden oracle in the evaluator's historical workspace. The input checker reports exact missing, omitted and drifted items; it does not infer model success from declaration coverage.
-
