@@ -36,6 +36,8 @@ touchedAreas:
   - tests/unit/dcs-prod-flags-retirement.test.tsx
   - tests/e2e/coding-retired-controls.spec.ts
   - docs/modules/workspace-and-coding.md
+  - docs/generated/catalogs/prod-flags.md
+  - docs/generated/catalogs/tools.md
   - harness/specs/fixtures/coding-fixes/TF-0774/**
 expectedUserBehavior:
   - 旧 patchFlowExecution 请求与已退役 config/override 不会改变真实 worker 的提示词或工具权限。
