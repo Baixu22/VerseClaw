@@ -205,7 +205,9 @@ test.describe('FakeCoding Inbox navigation', () => {
     await page.getByTestId('sidebar-nav-settings').click();
     await page.getByTestId('settings-nav-general').click();
     const themeMode = page.getByTestId('settings-theme-mode');
-    await themeMode.getByRole('button', { name: 'Dark' }).click();
+    const darkMode = themeMode.getByRole('radio', { name: 'Dark', exact: true });
+    await darkMode.click();
+    await expect(darkMode).toHaveAttribute('aria-checked', 'true');
     await page.getByTestId('settings-back-button').click();
     await expect(page.getByTestId('inbox-page')).toBeVisible();
     const darkDesktop = testInfo.outputPath('inbox-1280-dark.png');
