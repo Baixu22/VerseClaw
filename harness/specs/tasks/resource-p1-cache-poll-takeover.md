@@ -19,7 +19,7 @@ touchedAreas:
   - src/lib/resource-shed.ts
   - src/lib/read-only-query-cache.ts
   - src/pages/Billing/index.tsx
-  - src/pages/Browser/index.tsx
+  - src/components/settings/BrowserSettingsPanel.tsx
   - src/pages/Cron/index.tsx
   - src/pages/Skills/index.tsx
   - src/stores/resource-tracker.ts

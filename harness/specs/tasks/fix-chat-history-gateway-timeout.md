@@ -26,7 +26,7 @@ touchedAreas:
   - tests/unit/chat-store-session-label-fetch.test.ts
   - tests/unit/gateway-rpc-backpressure.test.ts
   - tests/unit/history-startup-retry.test.ts
-  - tests/unit/session-label-fetch.test.ts
+  - tests/unit/chat-store-session-label-fetch.test.ts
   - tests/unit/host-services.test.ts
 expectedUserBehavior:
   - Foreground chat history loading is prioritized during gateway startup and restart.
@@ -48,7 +48,7 @@ requiredTests:
   - tests/unit/history-startup-retry.test.ts
   - tests/unit/chat-store-session-label-fetch.test.ts
   - tests/unit/gateway-rpc-backpressure.test.ts
-  - tests/unit/session-label-fetch.test.ts
+  - tests/unit/chat-store-session-label-fetch.test.ts
   - tests/unit/host-services.test.ts
 acceptance:
   - Renderer does not add direct IPC calls.

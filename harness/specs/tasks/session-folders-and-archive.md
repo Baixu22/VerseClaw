@@ -22,7 +22,7 @@ touchedAreas:
   - shared/i18n/locales/zh/chat.json
   - shared/i18n/locales/ja/chat.json
   - shared/i18n/locales/ru/chat.json
-  - tests/unit/chat-session-actions.test.ts
+  - tests/unit/chat-production-session-actions.test.ts
   - tests/unit/session-buckets-folders.test.ts
   - tests/e2e/sidebar-session-folders-archive.spec.ts
   - harness/specs/tasks/session-folders-and-archive.md
@@ -42,7 +42,7 @@ requiredProfiles:
   - fast
   - comms
 requiredTests:
-  - tests/unit/chat-session-actions.test.ts
+  - tests/unit/chat-production-session-actions.test.ts
   - tests/unit/session-buckets-folders.test.ts
   - tests/e2e/sidebar-session-folders-archive.spec.ts
 acceptance:

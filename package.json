@@ -310,7 +310,6 @@
     "node-machine-id": "^1.1.12",
     "pdfjs-dist": "^5.7.284",
     "posthog-node": "^5.28.0",
-    "react-virtuoso": "^4.18.7",
     "remark-parse": "^11.0.0",
     "tar": "^6.2.1",
     "thinking-orbs": "^0.2.0",

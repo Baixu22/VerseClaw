@@ -15,7 +15,7 @@ touchedAreas:
   - shared/host-api/contract.ts
   - shared/host-events/contract.ts
   - src/lib/host-api.ts
-  - src/pages/Browser/index.tsx
+  - src/components/settings/BrowserSettingsPanel.tsx
   - src/components/layout/Sidebar.tsx
   - src/pages/Cron/index.tsx
   - openclaw_runtime/src/agents/openclaw-tools.ts

@@ -30,7 +30,7 @@ touchedAreas:
   - shared/host-events/contract.ts
   - src/lib/host-api.ts
   - src/lib/host-api-client.ts
-  - src/pages/Browser/**
+  - src/components/settings/BrowserSettingsPanel.tsx
   - src/pages/Cron/**
   - src/components/agent-browser/**
   - shared/i18n/locales/**

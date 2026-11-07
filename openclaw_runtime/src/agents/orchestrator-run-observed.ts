@@ -685,6 +685,7 @@ export async function runOrchestrationWithRecorder(
                   leadRole: plan.leadRole,
                   originalTask: request.task,
                   verifierRole: plan.verifierRole,
+                  verifierNoSelfRepair: plan.verifierNoSelfRepair,
                   verifierModelRef: plan.verifierModelRef,
                   taskId: ledger.taskId,
                   roleInstanceId: ledger.roleInstanceId,

@@ -15,7 +15,7 @@ requiredProfiles:
   - fast
   - comms
 requiredTests:
-  - tests/unit/chat-history-actions.test.ts
+  - tests/unit/chat-store-history-retry.test.ts
 acceptance:
   - Renderer does not add direct IPC calls.
   - Renderer does not fetch Gateway HTTP directly.

@@ -12,7 +12,7 @@ touchedAreas:
   - src/stores/chat.ts
   - src/stores/chat/session-actions.ts
   - src/stores/chat/types.ts
-  - tests/unit/chat-session-actions.test.ts
+  - tests/unit/chat-production-session-actions.test.ts
 expectedUserBehavior:
   - If Gateway reports the current session has status done or hasActiveRun=false after the user's send timestamp, the chat composer and tool-processing indicator return to idle.
   - A fresh in-flight send is not prematurely cleared by stale sessions.list metadata from before the user message.
@@ -26,7 +26,7 @@ requiredRules:
   - backend-communication-boundary
   - api-client-transport-policy
 requiredTests:
-  - pnpm exec vitest run tests/unit/chat-session-actions.test.ts
+  - pnpm exec vitest run tests/unit/chat-production-session-actions.test.ts
   - pnpm run typecheck
 acceptance:
   - Renderer does not add direct IPC calls outside the existing api-client invocation path.

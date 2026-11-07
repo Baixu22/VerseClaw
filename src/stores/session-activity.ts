@@ -22,6 +22,9 @@ import { createEmptySessionActivitySnapshot } from '@shared/types/session-activi
 import { subagentLifecycleIdentityKey } from '@shared/subagent-lifecycle';
 import { hostApi } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
+import { trajectoryViewFeed, type TrajectoryView } from '@/lib/trajectory-view';
+import { TrajectoryAssembler, type TrajectoryEventV2, type TrajectoryViewNode } from '@/lib/trajectory-assembler';
+import { lifecycleDefinitions, type LifecycleData } from '@/lib/trajectory-view/lifecycle';
 
 type SessionActivityEvent =
   | { channel: 'runtime'; payload: ChatRuntimeEvent }
@@ -38,6 +41,8 @@ const snapshotScopes = new Map<string, string | null>();
 const latestLoadRequestBySession = new Map<string, number>();
 const eventUnsubscribers: Array<() => void> = [];
 const mockTimers = new Map<string, ReturnType<typeof setTimeout>[]>();
+const trajectorySubscriptions = new Map<string, () => void>();
+const trajectoryViews = new Map<string, TrajectoryView>();
 let initialized = false;
 let loadRequestSequence = 0;
 
@@ -181,33 +186,12 @@ export function reduceSessionActivity(snapshot: SessionActivitySnapshot, event: 
 
   if (event.channel === 'runtime') {
     const runtime = event.payload;
-    if (!shouldApply(updatedAt, snapshot.session.updatedAt)) return snapshot;
-    if (runtime.type === 'run.started') {
-      next.session = {
-        ...snapshot.session,
-        runId: runtime.runId,
-        status: 'running',
-        startedAt: runtime.startedAt ?? updatedAt,
-        endedAt: null,
-        error: null,
-        updatedAt,
-      };
-    } else if (runtime.type === 'run.ended') {
-      next.session = {
-        ...snapshot.session,
-        runId: runtime.runId,
-        status: runtime.status === 'completed' ? 'completed' : runtime.status === 'aborted' ? 'aborted' : 'failed',
-        endedAt: runtime.endedAt ?? updatedAt,
-        error: runtime.error ?? null,
-        updatedAt,
-      };
-    } else if ('phase' in runtime && typeof runtime.phase === 'string') {
-      next.session = { ...snapshot.session, phase: runtime.phase, updatedAt };
-    }
     if (runtime.type === 'approval.updated' && ['pending', 'requested', 'waiting'].includes(String(runtime.status))) {
-      next.session = { ...next.session, status: 'waiting_approval', phase: runtime.phase ?? 'approval', updatedAt };
+      next.continuity = { ...snapshot.continuity,
+        blockedReason: runtime.message ?? runtime.title ?? snapshot.continuity.blockedReason };
+      return next;
     }
-    return next;
+    return snapshot;
   }
 
   if (event.channel === 'queue') {
@@ -325,9 +309,28 @@ function mockScenario(): SessionActivityMockScenario {
   return scenarios.includes(value as SessionActivityMockScenario) ? value as SessionActivityMockScenario : 'idle-clean';
 }
 
+export function sessionFromTrajectory(view: TrajectoryView): SessionActivitySnapshot['session'] {
+  const run = view.nodes.filter((node) => node.data.role === 'run').at(-1)?.data;
+  if (!run) return createEmptySessionActivitySnapshot(view.sessionKey).session;
+  return { sessionKey: view.sessionKey, runId: run.runId, status: run.status,
+    startedAt: run.startedAt, endedAt: run.endedAt, error: run.error, updatedAt: run.updatedAt };
+}
+
+const MOCK_TIME = Date.parse('2026-11-07T00:00:00.000Z');
+function mockRunView(sessionKey: string, runId: string, status: 'running' | 'completed' | 'failed'): TrajectoryView {
+  const assembler = new TrajectoryAssembler(lifecycleDefinitions);
+  const start: TrajectoryEventV2 = { traceSchema: 'openclaw-trajectory', schemaVersion: 2, traceId: 'mock-trace',
+    source: 'runtime', ts: new Date(MOCK_TIME - 12_000).toISOString(), seq: 1, type: 'run/start', role: 'run', phase: 'start', runId, state: { status: 'running' } };
+  const events: TrajectoryEventV2[] = status === 'running' ? [start] : [start, { ...start,
+    seq: 2, ts: new Date(MOCK_TIME - 4_000).toISOString(), type: 'run/end', phase: 'end', state: { status } }];
+  assembler.replace(events);
+  return { sessionKey, nodes: assembler.getNodes() as readonly TrajectoryViewNode<LifecycleData>[],
+    lastSeq: events.length, legacyFallback: false, loading: false, error: false };
+}
+
 function mockSnapshot(sessionKey: string, scenario: SessionActivityMockScenario): SessionActivitySnapshot {
   const snapshot = createEmptySessionActivitySnapshot(sessionKey);
-  const now = Date.now();
+  const now = MOCK_TIME;
   if (scenario === 'git-dirty' || scenario === 'blocked-recovery') {
     snapshot.git = {
       isRepository: true, workspaceRoot: 'C:\\workspace', branch: 'feat/session-activity', ahead: 1, behind: 0,
@@ -337,7 +340,6 @@ function mockSnapshot(sessionKey: string, scenario: SessionActivityMockScenario)
     snapshot.availability.git = true;
   }
   if (scenario === 'running-task' || scenario === 'multi-subagent') {
-    snapshot.session = { ...snapshot.session, runId: 'mock-run', status: 'running', phase: 'execute', startedAt: now - 18_000, updatedAt: now };
     snapshot.tasks = [{ id: 'mock-mission', kind: 'mission', title: 'Workspace implementation', status: 'running', progress: 0.42, phase: 'execute', updatedAt: now, source: 'snapshot' }];
     snapshot.availability.tasks = true;
   }
@@ -361,21 +363,30 @@ function mockSnapshot(sessionKey: string, scenario: SessionActivityMockScenario)
     snapshot.availability.terminals = true;
   }
   if (scenario === 'blocked-recovery') {
-    snapshot.session = { ...snapshot.session, status: 'failed', phase: 'blocked', endedAt: now - 2_000, error: 'A checkpoint needs review before continuing.', updatedAt: now };
     snapshot.continuity = { queueCount: 2, contextPressure: 'high', checkpoint: true, blockedReason: 'Checkpoint review required' };
   }
   if (scenario === 'completed-recently') {
-    snapshot.session = { ...snapshot.session, runId: 'mock-completed', status: 'completed', phase: 'complete', startedAt: now - 30_000, endedAt: now - 4_000, updatedAt: now - 4_000 };
     snapshot.tasks = [{ id: 'mock-task', kind: 'taskLoop', title: 'Verified task loop', status: 'completed', progress: 1, phase: 'complete', updatedAt: now - 4_000, source: 'snapshot' }];
     snapshot.availability.tasks = true;
   }
+  if (scenario === 'running-task' || scenario === 'multi-subagent') snapshot.session = sessionFromTrajectory(mockRunView(sessionKey, 'mock-run', 'running'));
+  if (scenario === 'blocked-recovery') snapshot.session = sessionFromTrajectory(mockRunView(sessionKey, 'mock-recovery', 'failed'));
+  if (scenario === 'completed-recently') snapshot.session = sessionFromTrajectory(mockRunView(sessionKey, 'mock-completed', 'completed'));
+  snapshot.capturedAt = now;
   return snapshot;
 }
 
 function scheduleMock(sessionKey: string, scenario: SessionActivityMockScenario, apply: (event: SessionActivityEvent) => void): void {
   const timers: ReturnType<typeof setTimeout>[] = [];
   if (scenario === 'running-task' || scenario === 'multi-subagent') {
-    timers.push(setTimeout(() => apply({ channel: 'runtime', payload: { type: 'run.ended', runId: 'mock-run', sessionKey, status: 'completed', endedAt: Date.now() } }), 4_500));
+    timers.push(setTimeout(() => {
+      useSessionActivityStore.setState((state) => {
+        const current = state.snapshots[sessionKey];
+        if (!current) return state;
+        return { snapshots: { ...state.snapshots, [sessionKey]: { ...current,
+          session: sessionFromTrajectory(mockRunView(sessionKey, 'mock-run', 'completed')) } } };
+      });
+    }, 4_500));
   }
   if (scenario === 'multi-subagent') {
     // `taskNodeId` must equal the seeded row's id, or `subagentLifecycleIdentityKey`
@@ -396,22 +407,29 @@ export type SessionActivityState = {
 };
 
 export const useSessionActivityStore = create<SessionActivityState>((set, get) => {
+  const connectTrajectory = (key: string) => {
+    if (trajectorySubscriptions.has(key)) return;
+    trajectorySubscriptions.set(key, trajectoryViewFeed.connect(key, (view) => {
+      trajectoryViews.set(key, view);
+      const current = get().snapshots[key];
+      if (!current) return;
+      const next = { ...current, session: sessionFromTrajectory(view) };
+      sessionSnapshots.set(key, next);
+      set((state) => ({ snapshots: { ...state.snapshots, [key]: next } }));
+    }));
+  };
   const applyEvent = (event: SessionActivityEvent) => {
     const key = routingSessionKey(event);
     if (!key) return;
+    if (event.channel === 'runtime') { connectTrajectory(key); void trajectoryViewFeed.refresh(key); }
+    if (event.channel === 'runtime' && event.payload.type === 'approval.updated') {
+      void get().load({ workspaceId: snapshotScopes.get(key) ?? null, sessionKey: key });
+    }
     const current = get().snapshots[key] ?? createEmptySessionActivitySnapshot(key);
     const next = reduceSessionActivity(current, event);
     if (next !== current) {
       sessionSnapshots.set(key, next);
       set((state) => ({ snapshots: { ...state.snapshots, [key]: next } }));
-      /* Permission changes can alter runtime-effective grants and capability
-       * facts without changing the session key. Refresh through the canonical
-       * host seam so the policy never retains an authorization snapshot from
-       * before the event. */
-      if (event.channel === 'runtime' && event.payload.type === 'approval.updated') {
-        const workspaceId = snapshotScopes.get(key) ?? null;
-        void get().load({ workspaceId, sessionKey: key });
-      }
     }
   };
 
@@ -467,8 +485,11 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
         return initial;
       }
 
+      connectTrajectory(sessionKey);
+
       const [activityResult] = await Promise.allSettled([
         hostApi.sessionActivity.snapshot({ workspaceId: requestedWorkspaceId, sessionKey }),
+        trajectoryViewFeed.refresh(sessionKey),
       ]);
       if (
         latestLoadRequestBySession.get(sessionKey) !== requestId
@@ -511,6 +532,8 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
           backgroundRead: mergeBackgroundRead(current.backgroundRead, undefined),
         };
       }
+      snapshot = { ...snapshot, session: sessionFromTrajectory(trajectoryViews.get(sessionKey)
+        ?? { sessionKey, nodes: [], lastSeq: 0, legacyFallback: false, loading: false, error: false }) };
       sessionSnapshots.set(sessionKey, snapshot);
       set((state) => ({ snapshots: { ...state.snapshots, [sessionKey]: snapshot } }));
       return snapshot;
@@ -547,6 +570,9 @@ export function disposeSessionActivitySubscriptions(): void {
   while (eventUnsubscribers.length) eventUnsubscribers.pop()?.();
   for (const timers of mockTimers.values()) timers.forEach(clearTimeout);
   mockTimers.clear();
+  for (const unsubscribe of trajectorySubscriptions.values()) unsubscribe();
+  trajectorySubscriptions.clear();
+  trajectoryViews.clear();
   sessionSnapshots.clear();
   snapshotScopes.clear();
   latestLoadRequestBySession.clear();

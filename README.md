@@ -6,6 +6,8 @@ Review Center includes a collapsed, opt-in Change Context view for four comparis
 
 # Verse Claw
 
+Session lifecycle views replay raw v2 trajectory events through one assembler. Verifier completion reports route configured repair tasks to the lead for independent re-verification.
+
 Skill choices persist in the runtime configuration, and managed skills can be uninstalled from their details. Agent Dev reports collect normal chat and tool events and deduplicate token usage.
 
 **Chat, code, knowledge and agent execution in one desktop workspace.**

@@ -164,17 +164,17 @@ describe('agent dev api', () => {
     } };
     gateway.emit('chat:message', message);
     gateway.emit('chat:message', message);
-    expect(api.costReport().report.totals.totalTokens).toBe(150);
+    expect((await api.costReport()).report.totals.totalTokens).toBe(150);
     gateway.emit('chat:runtime-event', { type: 'tool.completed', runId: 'run-1', sessionKey: 'agent:main:test', seq: 1,
       toolCallId: 'tool-1', name: 'read', result: 'secret must not enter the trace', isError: false });
     gateway.emit('chat:runtime-event', { type: 'run.ended', runId: 'run-1', sessionKey: 'agent:main:test', seq: 2,
       status: 'completed', tokenUsage: { input: 100, output: 50, total: 150 } });
-    expect(api.traceTimeline({ requestId: 'req-1' }).events).toHaveLength(4);
-    expect(api.traceTimeline({ requestId: 'run-1' }).events).toHaveLength(4);
-    expect(api.costReport().report.totals.totalTokens).toBe(150);
-    expect(api.costReport().report.byAgent.main.totalTokens).toBe(150);
-    expect(api.skillSandboxReport().report.effects).toMatchObject([{ capability: 'filesystem', allowed: true }]);
-    expect(JSON.stringify(api.traceTimeline({}).events)).not.toContain('secret must not enter');
+    expect((await api.traceTimeline({ requestId: 'req-1' })).events).toHaveLength(4);
+    expect((await api.traceTimeline({ requestId: 'run-1' })).events).toHaveLength(4);
+    expect((await api.costReport()).report.totals.totalTokens).toBe(150);
+    expect((await api.costReport()).report.byAgent.main.totalTokens).toBe(150);
+    expect((await api.skillSandboxReport()).report.effects).toMatchObject([{ capability: 'filesystem', allowed: true }]);
+    expect(JSON.stringify((await api.traceTimeline({})).events)).not.toContain('secret must not enter');
   });
 
   it('retains distinct model messages and failed tool observations', async () => {
@@ -187,10 +187,10 @@ describe('agent dev api', () => {
       id, usage: { input: 10, output: 5, cost: { total: 0.01 } },
     } });
     gateway.emit('chat:runtime-event', { type: 'tool.completed', runId: 'run-2', seq: 1, toolCallId: 'web-1', name: 'web_fetch', isError: true });
-    expect(api.costReport().report.totals).toMatchObject({ inputTokens: 20, outputTokens: 10, totalTokens: 30, estimatedCost: 0.02 });
+    expect((await api.costReport()).report.totals).toMatchObject({ inputTokens: 20, outputTokens: 10, totalTokens: 30, estimatedCost: 0.02 });
     gateway.emit('chat:runtime-event', { type: 'run.ended', runId: 'run-2', seq: 2, status: 'completed', tokenUsage: { input: 20, output: 10, total: 30 } });
-    expect(api.costReport().report.totals).toMatchObject({ totalTokens: 30, estimatedCost: 0.02 });
-    expect(api.skillSandboxReport().report.effects).toMatchObject([{ capability: 'network', allowed: false }]);
+    expect((await api.costReport()).report.totals).toMatchObject({ totalTokens: 30, estimatedCost: 0.02 });
+    expect((await api.skillSandboxReport()).report.effects).toMatchObject([{ capability: 'network', allowed: false }]);
   });
 
   it('records redacted scenario artifacts with a human promotion checklist', async () => {
