@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "RsiRemediationPlanningReadback/v1",
+  "date": "2026-11-08",
+  "driven_by": "agent",
+  "actor": "codex/rsi-remediation-planner",
+  "candidate": {
+    "commit": "bd92c4d21068f7b088ffb3c3a92c9b8a9f841068",
+    "tree": "4f6cab575a65e6ccb711cf20bdcaeea5748f7782",
+    "dirty": false
+  },
+  "sourceDigests": {
+    "harness/specs/fixtures/rsi-remediation-plan/plan.v1.json": "36af346dce6af823957bd00df2a66384492d86691b513d4e78562c4ce374c477",
+    "harness/specs/guides/rsi-remediation-roadmap.md": "e8ec568a57ab19c959782cbf4ef8cde2127bfecc3b4ec5e4c65a813a2c40eec9",
+    "harness/specs/tasks/rsi-public-task-inputs.md": "fb19073808f32d3ba2fa116cec440e52ce72dcb2d11bc23c20fe34ffd98ab721"
+  },
+  "stageCount": 7,
+  "nodeReadback": [
+    {
+      "id": "TF-0851",
+      "title": "修复 RSI 验收输入并建立有效经验演进路径",
+      "status": "in_progress",
+      "parent": "TF-0597"
+    },
+    {
+      "id": "TF-0852",
+      "title": "固化 RSI 修复节点、版本与验收路线",
+      "status": "in_progress",
+      "parent": "TF-0851"
+    },
+    {
+      "id": "TF-0853",
+      "title": "补齐 RSI 公开接口与历史任务上下文",
+      "status": "proposed",
+      "parent": "TF-0851"
+    },
+    {
+      "id": "TF-0854",
+      "title": "实现有预算的 RSI 工具与修复循环",
+      "status": "proposed",
+      "parent": "TF-0851"
+    },
+    {
+      "id": "TF-0855",
+      "title": "接通经验采用身份与任务结果归因",
+      "status": "proposed",
+      "parent": "TF-0851"
+    },
+    {
+      "id": "TF-0856",
+      "title": "建立候选版本和受控多代经验演进",
+      "status": "proposed",
+      "parent": "TF-0851"
+    },
+    {
+      "id": "TF-0857",
+      "title": "执行新协议的完整配对收益测量",
+      "status": "proposed",
+      "parent": "TF-0851"
+    },
+    {
+      "id": "TF-0858",
+      "title": "完成独立收益裁决和行为回滚验收",
+      "status": "proposed",
+      "parent": "TF-0851"
+    }
+  ],
+  "validation": {
+    "exitCode": 0,
+    "output": "校验通过。"
+  },
+  "export": {
+    "rebuildBy": "task-forest proposal-apply",
+    "graphReadbackMatched": true,
+    "path": "D:\\ClawX\\.agent-workbench\\task-forest\\exports\\task-forest.graph.json"
+  },
+  "providerCallsAuthorized": 0,
+  "claims": {
+    "benefit": false,
+    "completeRsiImplementation": false,
+    "realHuman": false
+  }
+}
