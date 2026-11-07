@@ -19,7 +19,8 @@ import {
   recordPermissionAudit,
 } from './permissions-api';
 import { TerminalSessionManager } from './terminal-session-manager';
-import { isTerminalResourceLeaseTimeoutError, withWorkspaceExecLease } from './resource-fabric';
+import { isTerminalResourceLeaseTimeoutError, ResourceFabricTimeoutError, withWorkspaceExecLease } from './resource-fabric';
+import { getHostDeadline } from '../utils/host-deadline-context';
 import { findSessionDeleteGateBySession, tryWithSessionDeleteGateLock } from './session-delete-gate';
 import { getActiveWorkspaceProfile } from './workspaces-api';
 import { createWorkspacePermissionDecisionEvent } from './permission-decision-audit';
@@ -267,6 +268,7 @@ async function runViaOpenClawExec(input: {
   gatewayManager: GatewayManager;
   command: string;
   timeoutMs: number;
+  deadline: number;
   cwd: string;
   risk: WorkspaceCommandRisk;
 }): Promise<TerminalExecutionOutcome> {
@@ -275,8 +277,12 @@ async function runViaOpenClawExec(input: {
   const payload = buildOpenClawExecPayload(input.command, input.cwd);
 
   for (const method of OPENCLAW_TERMINAL_RPC_METHODS) {
+    const remaining = input.deadline - Date.now();
+    if (remaining <= 0) throw new ResourceFabricTimeoutError({
+      resource: 'workspaceExec', leaseKey: resolveWorkspaceLeaseKey(input.cwd), timeoutMs: input.timeoutMs,
+    });
     try {
-      const result = await input.gatewayManager.rpc(method, payload, input.timeoutMs);
+      const result = await input.gatewayManager.rpc(method, payload, remaining);
       return normalizeGatewayExecResult({
         result,
         command: input.command,
@@ -356,11 +362,20 @@ async function runViaOpenClawExecWithLease(input: {
   risk: WorkspaceCommandRisk;
 }): Promise<TerminalExecutionOutcome> {
   const leaseKey = resolveWorkspaceLeaseKey(input.cwd);
+  const deadline = Math.min(Date.now() + input.timeoutMs, getHostDeadline()?.deadlineAtMs ?? Infinity);
   try {
     return await withWorkspaceExecLease(leaseKey, input.timeoutMs, () =>
-      runViaOpenClawExec(input),
+      runViaOpenClawExec({ ...input, deadline }),
+      { deadline },
     );
   } catch (error) {
+    if (error instanceof Error && 'code' in error && error.code === 'RESOURCE_QUEUE_FULL') {
+      return {
+        result: { success: false, blocked: true, reason: error.message, cwd: input.cwd,
+          command: input.command, exitCode: null, stdout: '', stderr: '', durationMs: 0, risk: input.risk },
+        traceEvidence: { code: 'RUNTIME_ERROR', durationMs: 0 },
+      };
+    }
     if (!isTerminalResourceLeaseTimeoutError(error)) {
       throw error;
     }

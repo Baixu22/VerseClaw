@@ -520,7 +520,7 @@ export function createEditToolDefinition(
           }
           throw normalizedError;
         }
-      });
+      }, { signal });
     },
     renderCall(args, theme, context) {
       const component = getEditCallRenderComponent(context.state, context.lastComponent);

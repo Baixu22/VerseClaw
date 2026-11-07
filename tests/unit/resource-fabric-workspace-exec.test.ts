@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
+  ResourceFabric,
   TerminalResourceLeaseTimeoutError,
   isTerminalResourceLeaseTimeoutError,
   resetTerminalResourceLeasesForTest,
@@ -22,12 +23,15 @@ function deferred() {
 describe('workspace exec lease', () => {
   it('preserves FIFO, capacity and queuedMs for 200 queued requests', async () => {
     vi.useFakeTimers();
+    // Keep the 200-success FIFO workload within an explicitly sized queue;
+    // resource-fabric-bounded-waiting covers overflow at the production 64 cap.
+    const fabric = new ResourceFabric({ accounts: { workspaceExec: { queueLength: 200 } } });
     const started: number[] = [];
     const queuedMs: number[] = [];
     let active = 0;
     let peak = 0;
     const runs = Array.from({ length: 200 }, (_, id) =>
-      withWorkspaceExecLease('burst', 5_000, async (lease) => {
+      fabric.runResource('workspaceExec', 'burst', { timeoutMs: 5_000 }, async (lease) => {
         started.push(id);
         queuedMs.push(lease.queuedMs);
         peak = Math.max(peak, ++active);

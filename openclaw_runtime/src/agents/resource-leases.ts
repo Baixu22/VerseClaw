@@ -7,7 +7,7 @@
  * simultaneously, so this manager adds a workspace-keyed budget with one FIFO
  * queue per (kind, key).
  *
- * It mirrors the Main-process `electron/services/resource-leases.ts` FIFO +
+ * It mirrors the Main-process `electron/services/resource-fabric.ts` FIFO +
  * capacity + timeout structure that issue #162 wired into `terminal.run`, and
  * extends it to the workspace budget kinds from issue #167. Keys are opaque
  * strings: callers normalize them with `normalizeWorkspaceLeaseKey` so that
@@ -18,6 +18,7 @@
  */
 import { realpathSync } from "node:fs";
 import path from "node:path";
+import { checkResourceWait, watchResourceWait, resourceQueueFullError, type ResourceWaitOptions } from "../../../shared/resources/wait.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { getResourceEnvelopeLedger, type ResourceKind } from "../resources/resource-envelope.js";
 import { readProcessTreeSample } from "../process/process-tree-sampler.js";
@@ -34,12 +35,13 @@ export type ResourceLease = {
   leaseKind: ResourceLeaseKind;
   leaseKey: string;
   queuedMs: number;
+  deadline?: number;
   release: () => void;
 };
 
 type ResourceLeaseMode = "semaphore" | "path";
 
-export type ResourceLeaseOptions = {
+export type ResourceLeaseOptions = ResourceWaitOptions & {
   /** Maximum time to wait for the lease. `<= 0` waits indefinitely. */
   timeoutMs?: number;
 };
@@ -179,7 +181,9 @@ type PendingRequest = {
   timeoutMs: number;
   resolve: (lease: ResourceLease) => void;
   reject: (error: Error) => void;
-  timer: ReturnType<typeof setTimeout> | null;
+  deadline?: number;
+  signal?: AbortSignal;
+  cleanup: () => void;
 };
 
 type ActiveLease = {
@@ -207,15 +211,23 @@ export class ResourceLeaseManager {
   private readonly active = new Map<number, ActiveLease>();
   private readonly pending: PendingRequest[] = [];
   private readonly log = createSubsystemLogger("agents/resource-leases");
+  private readonly queueLength: number;
+
+  constructor(options: { queueLength?: number } = {}) {
+    this.queueLength = options.queueLength ?? 64;
+    if (!Number.isInteger(this.queueLength) || this.queueLength < 0) throw new RangeError("Invalid queueLength");
+  }
 
   acquire(
     kind: ResourceLeaseKind,
     key: string,
-    timeoutMs: number = DEFAULT_ACQUIRE_TIMEOUT_MS,
+    options: number | ResourceLeaseOptions = DEFAULT_ACQUIRE_TIMEOUT_MS,
   ): Promise<ResourceLease> {
-    const normalizedTimeout = normalizeTimeout(timeoutMs);
+    const opts = typeof options === "number" ? { timeoutMs: options } : options;
+    const normalizedTimeout = normalizeTimeout(opts.timeoutMs ?? DEFAULT_ACQUIRE_TIMEOUT_MS);
     const id = this.nextId++;
     const requestedAt = Date.now();
+    const waitDeadline = Math.min(normalizedTimeout > 0 ? requestedAt + normalizedTimeout : Infinity, opts.deadline ?? Infinity);
     return new Promise<ResourceLease>((resolve, reject) => {
       const request: PendingRequest = {
         id,
@@ -225,12 +237,23 @@ export class ResourceLeaseManager {
         timeoutMs: normalizedTimeout,
         resolve,
         reject,
-        timer: null,
+        deadline: waitDeadline === Infinity ? undefined : waitDeadline,
+        signal: opts.signal,
+        cleanup: () => {},
       };
-      if (normalizedTimeout > 0) {
-        request.timer = setTimeout(() => this.timeout(request), normalizedTimeout);
+      checkResourceWait(request, () => this.timeoutError(request));
+      if (this.canGrant(request) && !this.hasBlockingEarlierRequest(request)) {
+        this.pending.push(request);
+        this.grant(request);
+        return;
+      }
+      if (this.pending.length >= this.queueLength) {
+        reject(resourceQueueFullError());
+        return;
       }
       this.pending.push(request);
+      request.cleanup = watchResourceWait(request, error => this.reject(request, error), () => this.timeoutError(request));
+      if (!this.pending.includes(request)) request.cleanup();
       this.refreshResourceEnvelope(request.kind, request.key, 0);
       this.drain();
     });
@@ -241,6 +264,8 @@ export class ResourceLeaseManager {
       if (!this.pending.includes(request)) {
         continue;
       }
+      try { checkResourceWait(request, () => this.timeoutError(request)); }
+      catch (error) { this.reject(request, error as Error, false); continue; }
       if (this.hasBlockingEarlierRequest(request)) {
         continue;
       }
@@ -287,6 +312,8 @@ export class ResourceLeaseManager {
   }
 
   private grant(request: PendingRequest): void {
+    try { checkResourceWait(request, () => this.timeoutError(request)); }
+    catch (error) { this.reject(request, error as Error, false); return; }
     if (!this.removePending(request)) {
       return;
     }
@@ -304,6 +331,7 @@ export class ResourceLeaseManager {
       leaseKind: request.kind,
       leaseKey: request.key,
       queuedMs,
+      deadline: request.deadline,
       release: () => {
         if (released) {
           return;
@@ -349,28 +377,28 @@ export class ResourceLeaseManager {
     scheduleResourceEnvelopeSnapshotWrite();
   }
 
-  private timeout(request: PendingRequest): void {
+  private timeoutError(request: PendingRequest): ResourceLeaseTimeoutError {
+    return new ResourceLeaseTimeoutError({
+      leaseKind: request.kind, leaseKey: request.key,
+      queuedMs: Date.now() - request.requestedAt, timeoutMs: request.timeoutMs,
+    });
+  }
+
+  private reject(request: PendingRequest, error: Error, drain = true): void {
     if (!this.removePending(request)) {
       return;
     }
     const queuedMs = Date.now() - request.requestedAt;
     this.refreshResourceEnvelope(request.kind, request.key, queuedMs);
-    this.log.warn("[resource-lease] timeout", {
+    this.log.warn("[resource-lease] rejected", {
       id: request.id,
       leaseKind: request.kind,
       leaseKey: request.key,
       queuedMs,
       timeoutMs: request.timeoutMs,
     });
-    request.reject(
-      new ResourceLeaseTimeoutError({
-        leaseKind: request.kind,
-        leaseKey: request.key,
-        queuedMs,
-        timeoutMs: request.timeoutMs,
-      }),
-    );
-    this.drain();
+    request.reject(error);
+    if (drain) this.drain();
   }
 
   private removePending(request: PendingRequest): boolean {
@@ -379,20 +407,14 @@ export class ResourceLeaseManager {
       return false;
     }
     this.pending.splice(index, 1);
-    if (request.timer) {
-      clearTimeout(request.timer);
-      request.timer = null;
-    }
+    request.cleanup();
     return true;
   }
 
   /** Test-only: drop all active and pending leases. */
   resetForTest(): void {
-    for (const request of this.pending) {
-      if (request.timer) {
-        clearTimeout(request.timer);
-        request.timer = null;
-      }
+    for (const request of this.pending.slice()) {
+      this.reject(request, new DOMException("Resource owner reset", "AbortError"), false);
     }
     this.pending.length = 0;
     this.active.clear();
@@ -400,6 +422,10 @@ export class ResourceLeaseManager {
     for (const entry of ledger.list()) {
       if (entry.owner === "gateway") ledger.remove(entry.id);
     }
+  }
+
+  getDiagnostics(): { active: number; queued: number } {
+    return { active: this.active.size, queued: this.pending.length };
   }
 }
 
@@ -426,8 +452,12 @@ export async function withWorkspaceResourceLease<T>(
   fn: (lease: ResourceLease) => Promise<T>,
   options?: ResourceLeaseOptions,
 ): Promise<T> {
-  const lease = await resourceLeases.acquire(kind, key, options?.timeoutMs);
+  const lease = await resourceLeases.acquire(kind, key, options);
+  const expired = () => new ResourceLeaseTimeoutError({ leaseKind: kind, leaseKey: key,
+    queuedMs: lease.queuedMs, timeoutMs: options?.timeoutMs ?? DEFAULT_ACQUIRE_TIMEOUT_MS });
   try {
+    checkResourceWait({ signal: options?.signal, deadline: lease.deadline }, expired);
+    // Preserve owner-confirmed effects (including successful write readback).
     return await fn(lease);
   } finally {
     lease.release();

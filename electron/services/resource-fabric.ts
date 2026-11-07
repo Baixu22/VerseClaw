@@ -14,6 +14,10 @@ import {
 } from '../../shared/resources';
 import { getResourceEnvelopeLedger } from '../../openclaw_runtime/src/resources/resource-envelope';
 import type { ResourceKind, ResourceLimitEvent } from '../../shared/types/resources';
+import { checkResourceWait, watchResourceWait, resourceQueueFullError, type ResourceWaitOptions } from '../../shared/resources/wait';
+import { getHostDeadline, runWithHostDeadline } from '../utils/host-deadline-context';
+
+type FabricAcquireOptions = ResourceWaitOptions & { qos?: QosClass; timeoutMs?: number; tenant?: string };
 
 export type FabricResource = 'workspaceExec' | 'chatHistory';
 
@@ -29,6 +33,7 @@ export type FabricLease = {
   queuedMs: number;
   qos: QosClass;
   limit: number;
+  deadline: number;
   release: () => void;
 };
 
@@ -101,9 +106,11 @@ type Waiter = {
   qos: QosClass;
   requestedAt: number;
   timeoutMs: number;
+  deadline: number;
+  signal?: AbortSignal;
   resolve: (lease: FabricLease) => void;
   reject: (error: Error) => void;
-  timer: ReturnType<typeof setTimeout> | null;
+  cleanup: () => void;
   settled: boolean;
 };
 
@@ -184,11 +191,19 @@ class FabricAccount {
     this.syncEnvelope();
   }
 
-  acquire(options: { qos?: QosClass; timeoutMs?: number; tenant?: string } = {}): Promise<FabricLease> {
+  acquire(options: FabricAcquireOptions = {}): Promise<FabricLease> {
     const timeoutMs = Math.max(1, Math.floor(options.timeoutMs ?? this.config.defaultTimeoutMs));
     const qos = options.qos ?? 'interactive';
     const tenant = options.tenant?.trim() || this.accountKey;
     return new Promise<FabricLease>((resolve, reject) => {
+      const deadline = Math.min(this.now() + timeoutMs, options.deadline ?? Infinity);
+      const expired = () => new ResourceFabricTimeoutError({ resource: this.resource, leaseKey: this.accountKey, timeoutMs });
+      checkResourceWait({ signal: options.signal, deadline }, expired, this.now);
+      this.drain();
+      if ((this.active >= this.limit.limit || this.queue.size > 0) && this.queue.size >= this.config.queueLength) {
+        reject(resourceQueueFullError());
+        return;
+      }
       const waiter: Waiter = {
         id: this.nextWaiterId++,
         resource: this.resource,
@@ -197,24 +212,23 @@ class FabricAccount {
         qos,
         requestedAt: this.now(),
         timeoutMs,
+        deadline,
+        signal: options.signal,
         resolve,
         reject,
-        timer: null,
+        cleanup: () => {},
         settled: false,
       };
-      waiter.timer = setTimeout(() => {
-        if (!this.queue.remove((candidate) => candidate === waiter)) return;
-        waiter.settled = true;
-        waiter.timer = null;
-        this.syncEnvelope();
-        waiter.reject(new ResourceFabricTimeoutError({
-          resource: this.resource,
-          leaseKey: this.accountKey,
-          timeoutMs,
-        }));
-        this.drain();
-      }, timeoutMs);
+      if (this.queue.size === 0 && this.active < this.limit.limit) {
+        this.grant(waiter);
+        return;
+      }
       this.queue.push(waiter, qos);
+      waiter.cleanup = watchResourceWait(waiter, error => {
+        this.reject(waiter, error);
+        this.drain();
+      }, expired, this.now);
+      if (waiter.settled) waiter.cleanup();
       if (qos === 'interactive' && this.hasLowerQosActive()) {
         this.queue.boost(waiter, 1_000);
       }
@@ -253,9 +267,7 @@ class FabricAccount {
 
   resetForTest(): void {
     for (const waiter of this.queue.clear()) {
-      if (waiter.timer) clearTimeout(waiter.timer);
-      waiter.settled = true;
-      waiter.timer = null;
+      this.reject(waiter, new DOMException('Resource owner reset', 'AbortError'));
     }
     this.active = 0;
     for (const qos of Object.keys(this.activeQos) as QosClass[]) this.activeQos[qos] = 0;
@@ -272,13 +284,17 @@ class FabricAccount {
   }
 
   private grant(waiter: Waiter): void {
+    try {
+      checkResourceWait(waiter, () => new ResourceFabricTimeoutError({
+        resource: this.resource, leaseKey: this.accountKey, timeoutMs: waiter.timeoutMs,
+      }), this.now);
+    } catch (error) { this.reject(waiter, error as Error); return; }
     this.active += 1;
     this.activeQos[waiter.qos] += 1;
     this.drf.reserve(waiter.tenant, { concurrency: 1 });
     const queuedMs = Math.max(0, this.now() - waiter.requestedAt);
     waiter.settled = true;
-    if (waiter.timer) clearTimeout(waiter.timer);
-    waiter.timer = null;
+    waiter.cleanup();
     let released = false;
     const startedAt = this.now();
     waiter.resolve({
@@ -287,6 +303,7 @@ class FabricAccount {
       queuedMs,
       qos: waiter.qos,
       limit: this.limit.limit,
+      deadline: waiter.deadline,
       release: () => {
         if (released) return;
         released = true;
@@ -294,6 +311,15 @@ class FabricAccount {
       },
     });
     this.syncEnvelope(queuedMs, 'admitted');
+  }
+
+  private reject(waiter: Waiter, error: Error): void {
+    if (waiter.settled) return;
+    waiter.settled = true;
+    this.queue.remove(candidate => candidate === waiter);
+    waiter.cleanup();
+    waiter.reject(error);
+    this.syncEnvelope();
   }
 
   private release(waiter: Waiter, startedAt: number, queuedMs: number): void {
@@ -348,17 +374,20 @@ export class ResourceFabric {
   private historyFlights = new Singleflight<string, unknown>();
 
   constructor(options: ResourceFabricOptions = {}) {
-    this.now = options.now ?? Date.now;
+    this.now = options.now ?? (() => Date.now());
     this.accountConfigs = {
       workspaceExec: { ...DEFAULT_ACCOUNTS.workspaceExec, ...options.accounts?.workspaceExec },
       chatHistory: { ...DEFAULT_ACCOUNTS.chatHistory, ...options.accounts?.chatHistory },
     };
+    for (const config of Object.values(this.accountConfigs)) {
+      if (!Number.isInteger(config.queueLength) || config.queueLength < 0) throw new RangeError('Invalid queueLength');
+    }
   }
 
   acquire(
     resource: FabricResource,
     key: string,
-    options: { qos?: QosClass; timeoutMs?: number; tenant?: string } = {},
+    options: FabricAcquireOptions = {},
   ): Promise<FabricLease> {
     if (!key.trim()) throw new TypeError('resource key is required');
     return this.accountFor(resource, key).acquire(options);
@@ -367,11 +396,14 @@ export class ResourceFabric {
   async runResource<T>(
     resource: FabricResource,
     key: string,
-    options: { qos?: QosClass; timeoutMs?: number; tenant?: string } = {},
+    options: FabricAcquireOptions = {},
     work: (lease: FabricLease) => Promise<T>,
   ): Promise<T> {
     const lease = await this.acquire(resource, key, options);
+    const expired = () => new ResourceFabricTimeoutError({ resource, leaseKey: key, timeoutMs: options.timeoutMs ?? this.accountConfigs[resource].defaultTimeoutMs });
     try {
+      checkResourceWait({ signal: options.signal, deadline: lease.deadline }, expired, this.now);
+      // Once started, the execution owner decides completion and cancellation.
       return await work(lease);
     } finally {
       lease.release();
@@ -384,19 +416,37 @@ export class ResourceFabric {
     params: unknown,
     timeoutMs: number | undefined,
     runner: GatewayRpcRunner,
+    options: ResourceWaitOptions = {},
   ): Promise<unknown> {
     if (method !== 'chat.history') return runner(method, params, timeoutMs);
     const requestKey = `${method}:${stableStringify(params)}:${timeoutMs ?? 'default'}`;
-    return this.historyFlights.run(requestKey, () => this.runResource(
+    const budget = timeoutMs ?? this.accountConfigs.chatHistory.defaultTimeoutMs;
+    const deadline = this.now() + budget;
+    const callerDeadline = Math.min(options.deadline ?? Infinity, getHostDeadline()?.deadlineAtMs ?? Infinity);
+    // Shared execution owns its budget; a caller's ambient deadline belongs to
+    // that subscriber and must not shorten another subscriber's Gateway RPC.
+    return this.historyFlights.run(requestKey, signal => runWithHostDeadline(
+      { deadlineAtMs: deadline, timeoutMs: budget, stage: 'main' },
+      () => this.runResource(
       'chatHistory',
       requestKey,
       {
         qos: 'interactive',
         timeoutMs: this.accountConfigs.chatHistory.defaultTimeoutMs,
         tenant: asTenant(params, requestKey),
+        signal,
+        deadline,
       },
-      () => runner(method, params, timeoutMs),
-    ));
+      () => {
+        const remaining = deadline - this.now();
+        if (remaining <= 0) throw new ResourceFabricTimeoutError({ resource: 'chatHistory', leaseKey: requestKey, timeoutMs: timeoutMs ?? this.accountConfigs.chatHistory.defaultTimeoutMs });
+        return runner(method, params, remaining);
+      },
+    )), {
+      ...options,
+      deadline: callerDeadline === Infinity ? undefined : callerDeadline,
+      expired: () => new ResourceFabricTimeoutError({ resource: 'chatHistory', leaseKey: requestKey, timeoutMs: budget }),
+    });
   }
 
   observeLatency(resource: FabricResource, key: string, latencyMs: number, queueSize = 0): ResourceLimitEvent | null {
@@ -476,11 +526,12 @@ export async function withWorkspaceExecLease<T>(
   workspaceKey: string,
   timeoutMs: number,
   fn: (lease: TerminalResourceLease) => Promise<T>,
+  options: ResourceWaitOptions = {},
 ): Promise<T> {
   return resourceFabric.runResource(
     'workspaceExec',
     workspaceKey,
-    { qos: 'interactive', timeoutMs, tenant: workspaceKey },
+    { qos: 'interactive', timeoutMs, tenant: workspaceKey, ...options },
     async (lease) => fn(lease as TerminalResourceLease),
   );
 }
