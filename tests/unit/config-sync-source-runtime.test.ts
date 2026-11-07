@@ -21,6 +21,24 @@ describe('TF-0772 source runtime MCP config', () => {
     const mcp = { servers: { fixture: { command: 'node', networkPolicy: 'disabled', exposure: { agents: ['main'] } } } };
     expect(buildInitialSourceRuntimeIsolationConfig({ mcp }).mcp).toEqual(mcp);
   });
+  it('waits for the runtime config owner and merges MCP after its acknowledged edit', async () => {
+    const { syncSourceRuntimeMcpConfig } = await import('@electron/utils/channel-config');
+    const { createFileLockManager } = await import('../../openclaw_runtime/node_modules/@openclaw/fs-safe/dist/file-lock.js');
+    const directory = await mkdtemp(join(tmpdir(), 'source-mcp-config-lock-'));
+    const path = join(directory, 'openclaw.json');
+    await writeFile(path, JSON.stringify({ tools: { profile: 'minimal' } }));
+    const peer = createFileLockManager(`config-peer-${path}`);
+    const lock = await peer.acquire(path, { staleMs: 30_000, payload: () => ({ pid: process.pid, createdAt: new Date().toISOString() }) });
+    let finished = false;
+    const syncing = syncSourceRuntimeMcpConfig({ servers: {} }, path).then(() => { finished = true; });
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      expect(finished).toBe(false);
+      await writeFile(path, JSON.stringify({ tools: { profile: 'full' }, models: { mode: 'merge' } }));
+    } finally { await lock.release(); }
+    await syncing;
+    expect(JSON.parse(await readFile(path, 'utf8'))).toEqual({ tools: { profile: 'full' }, models: { mode: 'merge' }, mcp: { servers: {} } });
+  });
   it('propagates a changed or explicitly empty MCP namespace into the source snapshot', async () => {
     const { applySourceRuntimeIsolationUserConfig } = await import('@electron/gateway/config-sync');
     const original = { mcp: { servers: { old: { command: 'old' } } }, runtime: { coding: { worktree: { backend: 'git' } } } };

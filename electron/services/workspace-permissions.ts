@@ -4,6 +4,16 @@ import { DEFAULT_WORKSPACE_PERMISSION_MODE } from '@shared/types/workspace';
 
 export { DEFAULT_WORKSPACE_PERMISSION_MODE };
 
+/** Resolve the same persisted execution root used by chat's coordinator binding. */
+export function resolveWorkspaceSessionRoot(workspace: WorkspaceProfile, sessionKey: string, agentId: string, expectedSessionGeneration?: unknown): string | undefined {
+  const coordinator = workspace.coordinatorBindings?.[sessionKey];
+  if (!coordinator) return workspace.rootPath;
+  if (coordinator.workspaceId !== workspace.id || coordinator.sessionKey !== sessionKey
+    || coordinator.agentId !== agentId || coordinator.state !== 'active'
+    || (coordinator.sessionGeneration && expectedSessionGeneration !== undefined && expectedSessionGeneration !== coordinator.sessionGeneration)) return undefined;
+  return coordinator.environment.canonicalRoot;
+}
+
 export type WorkspaceCommandRisk = 'read' | 'write' | 'network' | 'destructive' | 'external-write';
 
 export type WorkspacePermissionDecision = {

@@ -5,12 +5,12 @@ import { StreamableHTTPServerTransport } from '../../../openclaw_runtime/node_mo
 import { CallToolRequestSchema, ListToolsRequestSchema, PingRequestSchema } from '../../../openclaw_runtime/node_modules/@modelcontextprotocol/sdk/dist/esm/types.js';
 
 /** Real SDK endpoint shared by management integration and Electron acceptance. */
-export async function startCodingMcpServer(options: { empty?: boolean; delayMs?: number; listHttpError?: boolean } = {}) {
+export async function startCodingMcpServer(options: { empty?: boolean; delayMs?: number; callDelayMs?: number; listHttpError?: boolean; notifyDuringCall?: boolean } = {}) {
   const requests: Array<{ method: string; params?: unknown }> = [];
   const active = new Set<Server>();
   const stop = new AbortController();
   const http = createServer(async (request, response) => {
-    const rpc = new Server({ name: 'coding-management-fixture', version: '1.0.0' }, { capabilities: { tools: {} } });
+    const rpc = new Server({ name: 'coding-management-fixture', version: '1.0.0' }, { capabilities: { tools: { listChanged: true } } });
     rpc.setRequestHandler(ListToolsRequestSchema, async () => {
       if (options.delayMs) await delay(options.delayMs, undefined, { signal: stop.signal }).catch(() => undefined);
       return { tools: options.empty ? [] : [
@@ -19,12 +19,16 @@ export async function startCodingMcpServer(options: { empty?: boolean; delayMs?:
         { name: 'fail', description: 'Return a tool failure', inputSchema: { type: 'object' as const, properties: {}, additionalProperties: false } },
       ] };
     });
-    rpc.setRequestHandler(CallToolRequestSchema, async (input) => ({
-      content: [{ type: 'text' as const, text: input.params.name === 'fail' ? 'Fixture tool failure' : String(input.params.arguments?.message ?? '') }],
-      isError: input.params.name === 'fail',
-    }));
+    rpc.setRequestHandler(CallToolRequestSchema, async (input, extra) => {
+      if (options.callDelayMs) await delay(options.callDelayMs, undefined, { signal: stop.signal }).catch(() => undefined);
+      if (options.notifyDuringCall) await rpc.notification({ method: 'notifications/tools/list_changed' }, { relatedRequestId: extra.requestId });
+      return {
+        content: [{ type: 'text' as const, text: input.params.name === 'fail' ? 'Fixture tool failure' : String(input.params.arguments?.message ?? '') }],
+        isError: input.params.name === 'fail',
+      };
+    });
     rpc.setRequestHandler(PingRequestSchema, async () => ({}));
-    const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
+    const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: !options.notifyDuringCall });
     active.add(rpc);
     response.once('close', () => { active.delete(rpc); void rpc.close(); });
     try {

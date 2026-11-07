@@ -651,8 +651,9 @@ export function createSessionMcpRuntime(params: {
     void disposeSession(session).catch(() => {});
   };
 
-  const getCatalog = async (): Promise<McpToolCatalog> => {
+  const getCatalog = async (options?: { refresh?: boolean }): Promise<McpToolCatalog> => {
     failIfDisposed();
+    if (options?.refresh && !catalogInFlight) invalidateCatalogMemo();
     if (catalog) {
       return catalog;
     }
@@ -744,13 +745,16 @@ export function createSessionMcpRuntime(params: {
               // session keeps the handlers installed the first time.
               const sdkOnClose = session.transport.onclose;
               const sdkOnError = session.transport.onerror;
+              const connectedSession = session;
               session.transport.onclose = () => {
                 sdkOnClose?.();
-                handleTransportLost(serverName, "close");
+                if (sessions.get(serverName) === connectedSession)
+                  handleTransportLost(serverName, "close");
               };
               session.transport.onerror = (error: Error) => {
                 sdkOnError?.(error);
-                handleTransportLost(serverName, "error");
+                if (sessions.get(serverName) === connectedSession)
+                  handleTransportLost(serverName, "error");
               };
             }
             failIfDisposed();

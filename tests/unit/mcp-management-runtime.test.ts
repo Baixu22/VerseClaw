@@ -1,15 +1,23 @@
 // @vitest-environment node
-import { mkdtemp, symlink } from 'node:fs/promises';
+import { mkdir, mkdtemp, symlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { OpenClawConfig } from '../../openclaw_runtime/src/config/types.openclaw';
 import { startCodingMcpServer } from '../e2e/fixtures/coding-mcp-server';
 import { mcpManagementHandlers } from '../../openclaw_runtime/src/gateway/server-methods/mcp-management';
 import { invokeGatewayTool } from '../../openclaw_runtime/src/gateway/tools-invoke-shared';
 
-const state = vi.hoisted(() => ({ cfg: {} as OpenClawConfig, root: '', generation: 'generation-1',
-  beforeTool: vi.fn(async (input: { params: unknown }) => ({ blocked: false as boolean, params: input.params })) }));
+const state = vi.hoisted(() => {
+  const previousStateDir = process.env.OPENCLAW_STATE_DIR;
+  process.env.OPENCLAW_STATE_DIR = `D:/tmp/coding-mcp-runtime-state-${process.pid}`;
+  return { previousStateDir, cfg: {} as OpenClawConfig, root: '', generation: 'generation-1',
+    beforeTool: vi.fn(async (input: { params: unknown }) => ({ blocked: false as boolean, params: input.params })) };
+});
+afterAll(() => {
+  if (state.previousStateDir === undefined) delete process.env.OPENCLAW_STATE_DIR;
+  else process.env.OPENCLAW_STATE_DIR = state.previousStateDir;
+});
 const sessionKey = 'agent:main:mcp-management';
 
 // The session fixture controls owner generations; MCP transport and SDK calls are real.
@@ -83,6 +91,25 @@ describe('TF-0772 session MCP management', () => {
     expect(await invoke('mcp.callTool', { toolName: 'echo', args: { message: 'healthy-peer' } })).toMatchObject({ success: true });
     expect(healthy.requests.filter((request) => request.method === 'tools/call')).toHaveLength(1);
   });
+  it.each(['management', 'tools.invoke'] as const)('preserves the completed %s effect when the server notifies a catalog change', async (surface) => {
+    const server = await endpoint({ notifyDuringCall: true });
+    await invoke('mcp.listTools');
+    const result = surface === 'management'
+      ? await invoke('mcp.callTool', { toolName: 'echo', args: { message: 'completed-effect' } })
+      : await invokeGatewayTool({ cfg: state.cfg, input: { name: 'fixture__echo', sessionKey, args: { message: 'completed-effect' } }, toolCallIdPrefix: 'p2-notification', approvalMode: 'report' });
+    expect(result).toMatchObject(surface === 'management' ? { success: true } : { ok: true });
+    expect(server.requests.filter((request) => request.method === 'tools/call')).toHaveLength(1);
+    expect(await invoke('mcp.listTools')).toMatchObject({ success: true });
+  });
+  it('retries a failed server on the next explicit management request after it recovers', async () => {
+    const options = { listHttpError: true };
+    const server = await endpoint(options);
+    expect(await invoke('mcp.listTools')).toMatchObject({ success: false });
+    options.listHttpError = false;
+    expect(await invoke('mcp.heartbeat')).toMatchObject({ success: true, status: 'connected' });
+    expect(server.requests.filter((request) => request.method === 'tools/list')).toHaveLength(2);
+    expect(await invoke('mcp.callTool', { toolName: 'echo', args: { message: 'recovered' } })).toMatchObject({ success: true });
+  });
   it('applies the active sandbox tool policy to management and warm tools.invoke', async () => {
     const server = await endpoint();
     state.cfg.agents!.defaults!.sandbox = { mode: 'all', workspaceAccess: 'rw' };
@@ -103,7 +130,8 @@ describe('TF-0772 session MCP management', () => {
     endpoints.push(failed);
     state.cfg.mcp!.servers!.slow = { url: failed.url, transport: 'streamable-http', networkPolicy: 'localOnly', requestTimeoutMs: 300 };
     expect(await invoke('mcp.listTools')).toMatchObject({ success: true, status: 'connected' });
-    expect(await invoke('mcp.callTool', { toolName: 'echo', args: { message: 'healthy-peer' } })).toMatchObject({ success: true });
+    const healthyCall = await invoke('mcp.callTool', { toolName: 'echo', args: { message: 'healthy-peer' } });
+    expect(healthyCall, JSON.stringify(healthyCall)).toMatchObject({ success: true });
     expect(healthy.requests.some((request) => request.method === 'tools/call')).toBe(true);
     expect(await invoke('mcp.listTools', { serverId: 'slow' })).toMatchObject({ success: false, errorCode: 'TIMEOUT' });
   });
@@ -193,6 +221,29 @@ describe('TF-0772 session MCP management', () => {
       workspaceDir: alias, workspaceId: alias, agentId: 'main', cfg: state.cfg });
     await runtime.getCatalog();
     expect(await invoke('mcp.listTools')).toMatchObject({ success: true, status: 'connected' });
+    expect(server.requests.filter((request) => request.method === 'initialize')).toHaveLength(1);
+  });
+  it.each(['ro', 'none'] as const)('reuses the session-owned %s sandbox directory while checking its host parent', async (access) => {
+    const server = await endpoint();
+    const { ensureSandboxWorkspaceForSession } = await import('../../openclaw_runtime/src/agents/sandbox/context');
+    const { getOrCreateSessionMcpRuntime } = await import('../../openclaw_runtime/src/agents/agent-bundle-mcp-runtime');
+    state.cfg.agents!.defaults!.sandbox = { mode: 'all', scope: 'session', workspaceAccess: access, workspaceRoot: await mkdtemp(join(tmpdir(), 'mcp-sandbox-root-')) };
+    state.cfg.tools = { profile: 'full', sandbox: { tools: { allow: ['*'], deny: [] } } };
+    const sandboxRoot = (await ensureSandboxWorkspaceForSession({ config: state.cfg, sessionKey, workspaceDir: state.root }))!.workspaceDir;
+    await mkdir(sandboxRoot, { recursive: true });
+    await getOrCreateSessionMcpRuntime({ sessionId: state.generation, sessionKey, workspaceDir: sandboxRoot, workspaceId: sandboxRoot, agentId: 'main', cfg: state.cfg });
+    expect(await invoke('mcp.listTools', { workspaceDir: state.root })).toMatchObject({ success: true });
+    expect(await invoke('mcp.callTool', { workspaceDir: state.root, toolName: 'echo', args: { message: 'sandbox-effect' } })).toMatchObject({ success: true });
+    expect(await invoke('mcp.callTool', { workspaceDir: sandboxRoot, toolName: 'echo', args: { message: 'wrong-parent' } })).toMatchObject({ success: false });
+    expect(server.requests.filter((request) => request.method === 'tools/call')).toHaveLength(1);
+  });
+  it('reuses a remote MCP runtime before the sandbox workspace is materialized', async () => {
+    const server = await endpoint();
+    state.cfg.agents!.defaults!.sandbox = { mode: 'all', scope: 'session', workspaceAccess: 'ro', workspaceRoot: join(await mkdtemp(join(tmpdir(), 'mcp-cold-sandbox-')), 'not-created') };
+    state.cfg.tools = { profile: 'full', sandbox: { tools: { allow: ['*'], deny: [] } } };
+    expect(await invoke('mcp.listTools')).toMatchObject({ success: true });
+    expect(await invoke('mcp.listTools')).toMatchObject({ success: true });
+    expect(await invoke('mcp.callTool', { toolName: 'echo', args: { message: 'remote-effect' } })).toMatchObject({ success: true });
     expect(server.requests.filter((request) => request.method === 'initialize')).toHaveLength(1);
   });
   it.each(['policy', 'schema', 'workspace'] as const)('tools.invoke preserves MCP %s admission after the catalog is warm', async (changed) => {

@@ -362,7 +362,7 @@ async function invokeWarmMcpTool(params: {
     admission.validateArgs(inputSchema, hookResult.params);
     admission.assertCurrent();
     const result = await tool.execute?.(toolCallId, hookResult.params);
-    admission.assertCurrent();
+    // Preserve the completed effect if the server publishes a new catalog during the call.
     return {
       ok: true,
       status: 200,

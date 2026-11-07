@@ -28,6 +28,7 @@ import { withConfigLock } from '../utils/config-mutex';
 import { getDataDir } from '../utils/paths';
 import { getActiveWorkspaceProfile, getWorkspaceRootPathById } from './workspaces-api';
 import { createGitApi } from './git-api';
+import { resolveWorkspaceSessionRoot } from './workspace-permissions';
 import type { RemoteForgeApi } from './remote-forge-api';
 import {
   createMcpToolCallRequestShadow,
@@ -1409,6 +1410,8 @@ async function resolveMcpManagementContext(ctx: McpApiContext, body: McpManageme
     throw Object.assign(new Error('MCP session is not bound to the active workspace'), { code: 'VALIDATION' });
   }
   const agentId = binding?.agentId ?? workspace.selectedAgentId ?? workspace.agentId;
+  const workspaceDir = resolveWorkspaceSessionRoot(workspace, sessionKey, agentId);
+  if (!workspaceDir) throw Object.assign(new Error('MCP coordinator binding is not active for this session'), { code: 'VALIDATION' });
   if ((body.workspaceId && body.workspaceId !== workspace.id) || (body.agentId && body.agentId !== agentId)) {
     throw Object.assign(new Error('MCP request differs from the active workspace or assistant'), { code: 'VALIDATION' });
   }
@@ -1432,7 +1435,7 @@ async function resolveMcpManagementContext(ctx: McpApiContext, body: McpManageme
     sessionKey,
     agentId,
     workspaceId: workspace.id,
-    workspaceDir: workspace.rootPath,
+    workspaceDir,
     expectedSessionGeneration: sessionGeneration,
     ...(body.catalogRevision ? { catalogRevision: body.catalogRevision } : {}),
   };
@@ -1446,7 +1449,8 @@ async function gatewayMcpRpc<T>(
 ): Promise<T> {
   if (ctx.gatewayManager?.getStatus().state !== 'running') throw new Error('MCP Gateway is unavailable');
   if (!ctx.gatewayRpc) throw new Error('MCP Gateway permission route is unavailable');
-  return await ctx.gatewayRpc({ method, params, timeoutMs: 5000, ...(approvalId ? { approvalId } : {}) }) as T;
+  // GatewayManager clamps this budget to the ambient Host deadline.
+  return await ctx.gatewayRpc({ method, params, timeoutMs: method === 'sessions.describe' ? 5000 : 60_000, ...(approvalId ? { approvalId } : {}) }) as T;
 }
 
 export function createMcpApi(): CompleteHostServiceRegistry['mcp'] {

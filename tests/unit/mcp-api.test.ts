@@ -228,10 +228,30 @@ describe('mcp api registry', () => {
     const api = createMcpApiWithContext({ gatewayManager: gatewayManager as never, gatewayRpc });
     expect((await api.listTools({ serverId: 'http-local' })).success).toBe(true);
     expect(gatewayRpc.mock.calls.find(([payload]) => (payload as { method: string }).method === 'mcp.listTools')?.[0])
-      .toMatchObject({ params: { sessionKey: 'agent:main:main', expectedSessionGeneration: 'generation-1', workspaceDir: 'D:/tmp/mcp-workspace-a' } });
+      .toMatchObject({ timeoutMs: 60_000, params: { sessionKey: 'agent:main:main', expectedSessionGeneration: 'generation-1', workspaceDir: 'D:/tmp/mcp-workspace-a' } });
     expect(await api.listTools({ serverId: 'http-local', expectedSessionGeneration: 'old' }))
       .toMatchObject({ success: false, errorCode: 'VALIDATION' });
     expect(gatewayManager.rpc).toHaveBeenCalledTimes(1);
+  });
+  it('uses the active coordinator worktree root and rejects paused bindings', async () => {
+    registerHttpFixture();
+    const { createMcpApiWithContext } = await import('@electron/services/mcp-api');
+    const { getActiveWorkspaceProfile } = await import('@electron/services/workspaces-api');
+    const original = await getActiveWorkspaceProfile();
+    const profile = { ...original!, coordinatorBindings: { 'agent:main:main': {
+      workspaceId: 'workspace-a', sessionKey: 'agent:main:main', agentId: 'main', state: 'active',
+      environment: { canonicalRoot: 'D:/tmp/managed-worktree' }, sessionGeneration: 'generation-1',
+    } } };
+    vi.mocked(getActiveWorkspaceProfile).mockResolvedValue(profile as never);
+    const gatewayRpc = vi.fn(gatewayRoute(async () => ({ success: true, serverId: 'http-local', tools: [], status: 'connected' })));
+    const api = createMcpApiWithContext({ gatewayManager: { getStatus: () => ({ state: 'running' }) } as never, gatewayRpc });
+    try {
+      expect(await api.listTools({ serverId: 'http-local' })).toMatchObject({ success: true });
+      expect(gatewayRpc.mock.calls.find(([payload]) => (payload as { method: string }).method === 'mcp.listTools')?.[0])
+        .toMatchObject({ params: { workspaceDir: 'D:/tmp/managed-worktree' } });
+      profile.coordinatorBindings['agent:main:main'].state = 'paused';
+      expect(await api.listTools({ serverId: 'http-local' })).toMatchObject({ success: false });
+    } finally { vi.mocked(getActiveWorkspaceProfile).mockResolvedValue(original); }
   });
 
   it.each(['listTools', 'heartbeat', 'callTool'] as const)('TF-0772 rejects a foreign successful %s response', async (operation) => {
