@@ -449,6 +449,16 @@ export function assertFrozenRecoveryContractManifest(
     }
   }
 
+  const frozen = buildRecoveryContractManifest(
+    typeof manifest.actor === 'string' ? manifest.actor : RECOVERY_CONTRACT_ACTOR,
+  );
+  if (stableJson(windows) !== stableJson(frozen.windows)) {
+    blockers.push('failure window matrix changed under the frozen epoch');
+  }
+  if (stableJson(pairs) !== stableJson(frozen.longSessionPairs)) {
+    blockers.push('long-session workload changed under the frozen epoch');
+  }
+
   if (stableJson(manifest.thresholds) !== stableJson(RECOVERY_CONTRACT_THRESHOLDS)) {
     blockers.push('quantified thresholds changed after freeze');
   }
@@ -616,6 +626,8 @@ type CoverageBuild = {
     pair: RecoveryLongSessionPair;
   }>;
   evidenceIssues: string[];
+  windowEvidenceValid: boolean;
+  longSessionEvidenceValid: boolean;
 };
 function emptyMetrics(): RecoveryContractEvalMetrics {
   return {
@@ -685,7 +697,8 @@ function buildCoverage(
   windowTrials: RecoveryWindowTrial[],
   longSessionMeasurements: RecoveryLongSessionMeasurement[],
 ): CoverageBuild {
-  const evidenceIssues: string[] = [];
+  const windowEvidenceIssues: string[] = [];
+  const longSessionEvidenceIssues: string[] = [];
   const windows = Array.isArray(manifest.windows) ? manifest.windows : [];
   const windowById = new Map(windows.map((window) => [window.id, window]));
   const completeByWindow = new Map<RecoveryFailureWindowId, CompleteWindowTrial[]>();
@@ -694,22 +707,25 @@ function buildCoverage(
   const seenTrialKeys = new Set<string>();
   for (const trial of windowTrials) {
     if (!RECOVERY_FAILURE_WINDOW_IDS.includes(trial.windowId)) {
-      evidenceIssues.push('unknown failure window trial: ' + String(trial.windowId));
+      windowEvidenceIssues.push('unknown failure window trial: ' + String(trial.windowId));
       continue;
     }
-    if (!isCompleteWindowTrial(trial)) continue;
+    if (!isCompleteWindowTrial(trial)) {
+      windowEvidenceIssues.push('incomplete failure window trial: ' + trial.windowId + '#' + String(trial.trialIndex));
+      continue;
+    }
     const definition = windowById.get(trial.windowId);
     if (!definition) {
-      evidenceIssues.push('trial references a window missing from the manifest: ' + trial.windowId);
+      windowEvidenceIssues.push('trial references a window missing from the manifest: ' + trial.windowId);
       continue;
     }
     if (trial.injectionPoint !== definition.annotation.injectionPoint) {
-      evidenceIssues.push('trial injection point does not match the frozen annotation: ' + trial.windowId + '#' + String(trial.trialIndex));
+      windowEvidenceIssues.push('trial injection point does not match the frozen annotation: ' + trial.windowId + '#' + String(trial.trialIndex));
       continue;
     }
     const key = trial.windowId + ':' + String(trial.trialIndex);
     if (seenTrialKeys.has(key)) {
-      evidenceIssues.push('duplicate window trial index: ' + key);
+      windowEvidenceIssues.push('duplicate window trial index: ' + key);
       continue;
     }
     seenTrialKeys.add(key);
@@ -727,7 +743,7 @@ function buildCoverage(
   });
   for (const coverage of windowCoverage) {
     if (coverage.completeRepeats > coverage.observedRepeats) {
-      evidenceIssues.push('window ' + coverage.windowId + ' complete repeats exceed observed repeats');
+      windowEvidenceIssues.push('window ' + coverage.windowId + ' complete repeats exceed observed repeats');
       coverage.completeRepeats = coverage.observedRepeats;
     }
   }
@@ -736,22 +752,25 @@ function buildCoverage(
   const pairById = new Map(pairs.map((pair) => [pair.id, pair]));
   const uniqueMeasurements = new Map<string, CompleteLongSessionMeasurement>();
   for (const measurement of longSessionMeasurements) {
-    if (!isCompleteLongSessionMeasurement(measurement)) continue;
+    if (!isCompleteLongSessionMeasurement(measurement)) {
+      longSessionEvidenceIssues.push('incomplete long-session measurement: ' + measurement.pairId);
+      continue;
+    }
     const pair = pairById.get(measurement.pairId);
     if (!pair) {
-      evidenceIssues.push('long-session measurement outside the frozen workload: ' + measurement.pairId);
+      longSessionEvidenceIssues.push('long-session measurement outside the frozen workload: ' + measurement.pairId);
       continue;
     }
     if (measurement.family !== pair.family) {
-      evidenceIssues.push('long-session measurement family mismatch: ' + measurement.pairId);
+      longSessionEvidenceIssues.push('long-session measurement family mismatch: ' + measurement.pairId);
       continue;
     }
     if (measurement.mustPreserveMatched > pair.mustPreserve.length) {
-      evidenceIssues.push('long-session measurement matched more facts than the pair defines: ' + measurement.pairId);
+      longSessionEvidenceIssues.push('long-session measurement matched more facts than the pair defines: ' + measurement.pairId);
       continue;
     }
     if (uniqueMeasurements.has(measurement.pairId)) {
-      evidenceIssues.push('duplicate long-session measurement: ' + measurement.pairId);
+      longSessionEvidenceIssues.push('duplicate long-session measurement: ' + measurement.pairId);
       continue;
     }
     uniqueMeasurements.set(measurement.pairId, measurement);
@@ -795,7 +814,9 @@ function buildCoverage(
       [...(completeByWindow.get(windowId) ?? [])].sort((left, right) => left.trialIndex - right.trialIndex)
     )),
     liveMeasurements,
-    evidenceIssues,
+    evidenceIssues: [...windowEvidenceIssues, ...longSessionEvidenceIssues],
+    windowEvidenceValid: windowEvidenceIssues.length === 0,
+    longSessionEvidenceValid: longSessionEvidenceIssues.length === 0,
   };
 }
 
@@ -952,12 +973,13 @@ export function evaluateRecoveryContractEval(
 
   const windowsComplete = coverage.windows.every(
     (window) => window.completeRepeats >= window.requiredRepeats,
-  );
+  ) && coverageBuild.windowEvidenceValid;
   const familiesComplete = RECOVERY_LONG_SESSION_FAMILIES.every(
     (family) => coverage.longSession.families[family] >= MIN_LONG_SESSION_PAIRS_PER_FAMILY,
   );
   const longSessionComplete = coverage.longSession.liveProviderPairs >= MIN_LONG_SESSION_PAIRS
-    && familiesComplete;
+    && familiesComplete
+    && coverageBuild.longSessionEvidenceValid;
 
   if (!windowsComplete) {
     for (const window of coverage.windows) {

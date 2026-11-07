@@ -39,6 +39,8 @@
 - 九个门槛中的任何一个被修改；
 - manifest hash 与内容不匹配。
 
+同一冻结 epoch 还会核对 canonical 窗口矩阵与长会话 workload。重新计算输入 hash 和 manifest hash 的变更也会被拒绝；当前 canonical manifest 的内容与门槛保持原值。
+
 ## 3. 故障窗口矩阵
 
 | 窗口 id | 注入点（injectionPoint） | 预期可观察状态（expectedObservableState） | 禁止重跑区（forbiddenRerunRegion） | 允许重跑区（allowedRerunRegion） | 所需磁盘证据（requiredDiskEvidence） |
@@ -90,6 +92,8 @@
 - live-provider 长会话少于 30 对或任一 family 少于 6 对 → 长会话域指标保持 `null`；
 - 两域都完整时才计算恢复延迟 P50/P95；
 - 任何不完整样本都会让 `status = EVIDENCE_INSUFFICIENT`，绝不会用 0 补齐后误判 PASS。
+
+达到完整重复或长会话配额后，追加的每条观测仍参加完整性检查。不完整观测保留在 observed 计数中，使所在证据域及共同延迟指标为 `null`，并写明具体窗口或 pair 的 blocker。
 
 ## 6. 冻结流程
 

@@ -14,6 +14,7 @@ import {
   buildRecoveryContractManifest,
   evaluateRecoveryContractEval,
   hashRecoveryContractManifest,
+  hashRecoveryLongSessionPairInput,
 } from '@shared/recovery-contract-eval';
 import type {
   RecoveryContractManifest,
@@ -130,8 +131,75 @@ describe('recovery contract eval — frozen matrix', () => {
     expect(thresholdCheck.ok).toBe(false);
     expect(thresholdCheck.blockers).toContain('quantified thresholds changed after freeze');
   });
+
+  it('rejects a rehashed window matrix under the same frozen epoch', () => {
+    const manifest = buildRecoveryContractManifest();
+    manifest.windows[0].annotation.allowedRerunRegion = 'edited after freeze';
+    manifest.manifestHash = hashRecoveryContractManifest(manifest);
+
+    const result = assertFrozenRecoveryContractManifest(manifest);
+    expect(result.ok).toBe(false);
+    expect(result.blockers).toContain('failure window matrix changed under the frozen epoch');
+  });
+
+  it('rejects a rehashed workload under the same frozen epoch', () => {
+    const manifest = buildRecoveryContractManifest();
+    manifest.longSessionPairs[0].prompt += '\nedited after freeze';
+    const { inputHash: _inputHash, ...pair } = manifest.longSessionPairs[0];
+    manifest.longSessionPairs[0].inputHash = hashRecoveryLongSessionPairInput(pair);
+    manifest.manifestHash = hashRecoveryContractManifest(manifest);
+
+    const result = assertFrozenRecoveryContractManifest(manifest);
+    expect(result.ok).toBe(false);
+    expect(result.blockers).toContain('long-session workload changed under the frozen epoch');
+  });
 });
 describe('recovery contract eval — evidence sufficiency', () => {
+  it('retains an incomplete failing window after the complete repeat quota is met', () => {
+    const input = completeInput();
+    input.windowTrials.push({
+      ...input.windowTrials[0], trialIndex: 3, duplicateEffects: 1, terminalCorrect: null,
+    });
+
+    const result = evaluateRecoveryContractEval(input);
+    expect(result.status).toBe('EVIDENCE_INSUFFICIENT');
+    expect(result.qualityClaimAllowed).toBe(false);
+    expect(result.coverage.windows[0]).toMatchObject({ observedRepeats: 4, completeRepeats: 3 });
+    expect(result.metrics.duplicateEffects).toBeNull();
+    expect(result.metrics.recoveryLatencyP95).toBeNull();
+    expect(result.blockers).toContain('incomplete failure window trial: intent-after-persist-kill#3');
+  });
+
+  it('retains an incomplete failing long-session row after the complete pair quota is met', () => {
+    const input = completeInput();
+    input.longSessionMeasurements.push({
+      ...input.longSessionMeasurements[0],
+      mustPreserveMatched: 0, falseCompletionClaim: true, recoveryLatencyMs: null,
+    });
+
+    const result = evaluateRecoveryContractEval(input);
+    expect(result.status).toBe('EVIDENCE_INSUFFICIENT');
+    expect(result.qualityClaimAllowed).toBe(false);
+    expect(result.coverage.longSession).toMatchObject({ observedPairs: 31, completePairs: 30 });
+    expect(result.metrics.mustPreserveFidelity).toBeNull();
+    expect(result.metrics.falseCompletionClaims).toBeNull();
+    expect(result.metrics.recoveryLatencyP95).toBeNull();
+    expect(result.blockers).toContain('incomplete long-session measurement: ' + input.longSessionMeasurements[0].pairId);
+  });
+
+  it('rejects an incomplete row outside the frozen workload', () => {
+    const input = completeInput();
+    input.longSessionMeasurements.push({
+      ...input.longSessionMeasurements[0], pairId: 'outside-frozen-workload', recoveryLatencyMs: null,
+    });
+
+    const result = evaluateRecoveryContractEval(input);
+    expect(result.status).toBe('EVIDENCE_INSUFFICIENT');
+    expect(result.qualityClaimAllowed).toBe(false);
+    expect(result.metrics.mustPreserveFidelity).toBeNull();
+    expect(result.blockers).toContain('incomplete long-session measurement: outside-frozen-workload');
+  });
+
   it('returns EVIDENCE_INSUFFICIENT with every metric null when no sample exists', () => {
     const manifest = buildRecoveryContractManifest();
     const result = evaluateRecoveryContractEval({
