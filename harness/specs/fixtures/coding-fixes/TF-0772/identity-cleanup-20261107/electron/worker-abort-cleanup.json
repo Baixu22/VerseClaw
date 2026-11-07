@@ -1,0 +1,26 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\ClawX\\.tmp\\coding-relay-01a1b4da\\verse-claw-e2e-run-Z1DrX9",
+  "ledgerEntries": 0,
+  "checks": [
+    {
+      "pid": 46652,
+      "creationTime": 1794055087097,
+      "status": "terminated"
+    }
+  ],
+  "owned": [
+    {
+      "pid": 46652,
+      "creationTime": 1794055087097,
+      "ProcessId": 46652,
+      "ParentProcessId": 33156,
+      "ParentAlive": false
+    }
+  ],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 1,
+  "status": "passed"
+}

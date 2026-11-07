@@ -1,0 +1,44 @@
+{
+  "schema": "CodingCleanupAcceptance/v1",
+  "taskId": "TF-0772",
+  "actor": "codex-01a1b4da",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "status": "accepted",
+  "candidate": "03585bd4208ef467cc8d50a26c5ca205bcab4d9e",
+  "e2eCandidate": "d60e5821f8a95c4d15a6620b05d1f8fcd1d7d35e",
+  "validationInputBinding": "validation-input-binding.json",
+  "tests": {
+    "focused": 136,
+    "runtime": 15,
+    "e2e": 2
+  },
+  "criteria": [
+    "PID reuse preserves unrelated processes; native identity and exact normalized user-data-dir select run-owned Electron processes.",
+    "A worker abort before launch registration is recovered through the run marker; a different run profile remains usable.",
+    "Main, launcher, Gateway and MCP endpoints exit; global cleanup and source mutation guard pass.",
+    "Management and tools.invoke each preserve one completed file effect and the observed configuration change.",
+    "Windows UtilityProcess fallback retains Electron reaping while POSIX still force-kills after the original grace period."
+  ],
+  "sourceSha256": {
+    "docs/modules/integrations-and-surfaces.md": "3dea7f2b76fdb6c1c8877fbb0eea0f4bfb4f76185cf581ec81b7a628f3bc3177",
+    "electron/gateway/supervisor.ts": "d25176dd5b0325643936c3e5bd0840c0cb43c5b9c2e5ebd7d840352e8cb94cea",
+    "harness/specs/scenarios/gateway-backend-communication.md": "31781d909818fb65a2b53d21b69040c5861e3a68259f109577fdd8ca19314d77",
+    "harness/specs/tasks/coding-mcp-management-runtime.md": "cd18e53557a28cc4c40812013970e65032af406309bb8cf6d0767f0b94001ccf",
+    "tests/e2e/coding-mcp-management.spec.ts": "c406f23ce69d9005fa4a9f8273a85cf4c48f4d8a7c6a7b758fa4313b921a059f",
+    "tests/e2e/fixtures/coding-mcp-server.ts": "37d07ef62e7a2e30c111d1d4e03e2468f0c3ef54cea23ea335741b681997fd8f",
+    "tests/e2e/fixtures/electron-process-cleanup.ts": "24ef4b912c99194f6f59779fbf0e712540512b530afd8be446435dc025dbd0d4",
+    "tests/e2e/fixtures/electron.ts": "f98176e072809d29646d821785a0feb23fde4d3816d8e82d6f2824ddd0e61715",
+    "tests/e2e/fixtures/windows-process.ts": "8f706c9ed693815357c36afbd1e3a434db4825427a6468202028038e636f32ba",
+    "tests/unit/electron-process-identity.test.ts": "8a52fd4e0d5305974e8a4eada5df75373a70b6a823eef488c10b42536890079b",
+    "tests/unit/gateway-supervisor.test.ts": "3df9a8f03729adaeef5a9defe2a8ec3a811a6bb425117439ea48eadedf3a728b",
+    "tests/unit/mcp-management-runtime.test.ts": "c28c5339a2861b45996e93ebae26efff90fcedf188725d06665e7a74c982c49d"
+  },
+  "uiInspection": {
+    "actor": "codex-01a1b4da",
+    "connected": "Connected state with echo/fail catalog and localOnly policy.",
+    "denied": "Saved disabled policy shows explicit error and no stale tools."
+  },
+  "dependencies": "Installed dependencies reused; pinned Electron40.8.4 extracted from existing cache with hashes.",
+  "history": "All original attempts remain in D:/tmp/coding-relay-01a1b4da. Selected failures retained under historical; accepted outcomes identify their exact inputs."
+}
