@@ -7,7 +7,7 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { createRequire } from 'node:module';
 import { expect, test, vi } from 'vitest';
-import { checkWindowsProcesses } from '../e2e/fixtures/windows-process';
+import { checkWindowsProcesses, discoverWindowsElectronProcesses } from '../e2e/fixtures/windows-process';
 import { cleanupElectronProcesses, ELECTRON_PID_LEDGER } from '../e2e/fixtures/electron-process-cleanup';
 
 test.skipIf(process.platform !== 'win32')('cleanup preserves a reused PID and terminates only its recorded process identity', async () => {
@@ -61,7 +61,7 @@ test.skipIf(process.platform !== 'win32')('Electron creation time matches the na
   const electronBinaryPath = createRequire(import.meta.url)('electron') as string;
   const env = { ...process.env };
   delete env.ELECTRON_RUN_AS_NODE;
-  const child = spawn(electronBinaryPath, ['--no-sandbox', entry], { stdio: 'ignore', windowsHide: true, env });
+  const child = spawn(electronBinaryPath, ['--no-sandbox', `--user-data-dir=${join(root, 'profile')}`, entry], { stdio: 'ignore', windowsHide: true, env });
   await once(child, 'spawn');
   const exited = once(child, 'exit');
   try {
@@ -70,6 +70,9 @@ test.skipIf(process.platform !== 'win32')('Electron creation time matches the na
       return { pid: metric.pid as number, creationTime: metric.creationTime as number };
     }, { timeout: 10_000, interval: 100 });
     expect(identity.pid).toBe(child.pid);
+    expect(await discoverWindowsElectronProcesses(root)).toEqual(expect.arrayContaining([
+      expect.objectContaining({ pid: identity.pid, creationTime: Math.floor(identity.creationTime), ParentAlive: true }),
+    ]));
     expect((await checkWindowsProcesses([identity]))[0]).toMatchObject({ pid: identity.pid, status: 'alive' });
     expect((await checkWindowsProcesses([identity], true))[0].status).toBe('terminated');
     await exited;

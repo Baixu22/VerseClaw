@@ -14,19 +14,41 @@ export async function discoverWindowsElectronProcesses(runRoot: string): Promise
     '-NoLogo', '-NoProfile', '-NonInteractive', '-Command', String.raw`
 $ErrorActionPreference = 'Stop'
 $root = [IO.Path]::GetFullPath($env:CLAWX_PROCESS_RUN_ROOT).TrimEnd('\') + '\'
-$matches = @(Get-CimInstance Win32_Process -Filter "Name = 'electron.exe'" -OperationTimeoutSec 3 | Where-Object {
-  $_.CommandLine -and $_.CommandLine.Contains('--user-data-dir') -and
-  $_.CommandLine.IndexOf($root, [StringComparison]::OrdinalIgnoreCase) -ge 0
-})
-$rows = @(foreach ($entry in $matches) {
-  $process = $null
+Add-Type -TypeDefinition @'
+using System;
+using System.Runtime.InteropServices;
+public static class ElectronProcessInfo {
+  [DllImport("ntdll.dll")] static extern int NtQueryInformationProcess(IntPtr handle, int kind, IntPtr data, int length, out int needed);
+  public static string CommandLine(IntPtr handle) {
+    int needed;
+    NtQueryInformationProcess(handle, 60, IntPtr.Zero, 0, out needed);
+    if (needed <= 0) throw new InvalidOperationException("Process command line is unavailable");
+    IntPtr data = Marshal.AllocHGlobal(needed);
+    try {
+      if (NtQueryInformationProcess(handle, 60, data, needed, out needed) < 0) throw new InvalidOperationException("Process command line query failed");
+      return Marshal.PtrToStringUni(Marshal.ReadIntPtr(data, IntPtr.Size), (ushort)Marshal.ReadInt16(data) / 2);
+    } finally { Marshal.FreeHGlobal(data); }
+  }
+  public static int Parent(IntPtr handle) {
+    IntPtr data = Marshal.AllocHGlobal(IntPtr.Size * 6);
+    try {
+      int needed;
+      if (NtQueryInformationProcess(handle, 0, data, IntPtr.Size * 6, out needed) < 0) throw new InvalidOperationException("Parent process query failed");
+      return Marshal.ReadIntPtr(data, IntPtr.Size * 5).ToInt32();
+    } finally { Marshal.FreeHGlobal(data); }
+  }
+}
+'@
+$rows = @(foreach ($process in [Diagnostics.Process]::GetProcessesByName('electron')) {
   try {
-    $process = [Diagnostics.Process]::GetProcessById([int]$entry.ProcessId)
-    $created = ([DateTimeOffset]$process.StartTime).ToUnixTimeMilliseconds()
-    if ($created -ne ([DateTimeOffset]$entry.CreationDate).ToUnixTimeMilliseconds()) { continue }
-    [pscustomobject]@{ pid = $entry.ProcessId; creationTime = $created; ProcessId = $entry.ProcessId;
-      ParentProcessId = $entry.ParentProcessId; ParentAlive = $null -ne (Get-Process -Id $entry.ParentProcessId -ErrorAction SilentlyContinue) }
-  } catch [ArgumentException] { } finally { if ($null -ne $process) { $process.Dispose() } }
+    $handle = $process.Handle
+    if ($process.HasExited) { continue }
+    $command = [ElectronProcessInfo]::CommandLine($handle)
+    if (-not $command.Contains('--user-data-dir') -or $command.IndexOf($root, [StringComparison]::OrdinalIgnoreCase) -lt 0) { continue }
+    $parent = [ElectronProcessInfo]::Parent($handle)
+    [pscustomobject]@{ pid = $process.Id; creationTime = ([DateTimeOffset]$process.StartTime).ToUnixTimeMilliseconds(); ProcessId = $process.Id;
+      ParentProcessId = $parent; ParentAlive = $null -ne (Get-Process -Id $parent -ErrorAction SilentlyContinue) }
+  } catch { if (-not $process.HasExited) { throw } } finally { $process.Dispose() }
 })
 ConvertTo-Json -InputObject $rows -Depth 3 -Compress
 `,
