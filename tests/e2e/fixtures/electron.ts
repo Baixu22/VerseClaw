@@ -156,7 +156,8 @@ async function getStableWindow(app: ElectronApplication): Promise<Page> {
 
     if (currentWindow && !currentWindow.isClosed()) {
       try {
-        await currentWindow.waitForLoadState('domcontentloaded', { timeout: 2_000 });
+        // Preserve Main's bootstrap navigation before scenario navigation starts.
+        await currentWindow.waitForURL((url) => url.href !== 'about:blank', { waitUntil: 'load', timeout: 2_000 });
         return currentWindow;
       } catch (error) {
         // A window that is not ready yet is expected while the app boots: this

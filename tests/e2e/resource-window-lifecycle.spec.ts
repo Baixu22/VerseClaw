@@ -28,6 +28,15 @@ test('integrated main and browser windows retain visibility, observers and backg
       stopControls: rows.filter(r => r.module === 'resourceTracker' && ['stop', 'stopAll'].includes(r.action)).length,
       efficiencyReads: rows.filter(r => r.module === 'efficiency' && r.action === 'getState').length };
   });
+  const devtools = await page.context().newCDPSession(page);
+  const observerListeners = async () => {
+    const result = await devtools.send('Runtime.evaluate', {
+      expression: '(getEventListeners(document).visibilitychange || []).length',
+      includeCommandLineAPI: true, returnByValue: true,
+    });
+    if (result.exceptionDetails || typeof result.result.value !== 'number') throw new Error('Visibility observer count unavailable');
+    return result.result.value as number;
+  };
   try {
     await installIpcMocks(app, { gatewayStatus: { state: 'running', gatewayReady: true },
       gatewayRpcByMethod: { 'sessions.list': { sessions: [] }, 'chat.history': { messages: [] }, '*': {} },
@@ -101,23 +110,27 @@ test('integrated main and browser windows retain visibility, observers and backg
     const reopened = await openBrowser(); await invoke(page, 'agentBrowser', 'close', { sessionId: reopened.sessionId });
     await page.screenshot({ path: testInfo.outputPath('main-after-browser-reopen.png') });
     const beforeLeave = await calls();
+    const observersBeforeLeave = await observerListeners();
     await page.evaluate(() => { window.location.hash = '#/settings'; });
     await expect(page.getByTestId('settings-page')).toBeVisible();
     await page.waitForTimeout(11_000);
     const afterLeave = await calls();
+    const observersAfterLeave = await observerListeners();
+    expect(observersAfterLeave).toBeLessThan(observersBeforeLeave);
     expect(afterLeave.resourcePolls).toBe(beforeLeave.resourcePolls);
     expect(afterLeave.stopControls).toBe(0);
     const terminalAfter = await invoke(page, 'terminal', 'list', scope);
     expect((terminalAfter.sessions as Array<{ sessionId: string }>).some(s => s.sessionId === terminal.sessionId)).toBe(true);
     const finalBeat = await size(); await page.waitForTimeout(900); expect(await size()).toBeGreaterThan(finalBeat);
     report.visibility = { oneHiddenKeepsVisible: true, allHiddenSheds: true, restoreRecovers: true, browserReopened: true };
-    report.observation = { hiddenBefore, hiddenAfter, beforeLeave, afterLeave, backgroundHeartbeat: await size() };
+    report.observation = { hiddenBefore, hiddenAfter, beforeLeave, afterLeave, observersBeforeLeave, observersAfterLeave, backgroundHeartbeat: await size() };
     const storage = await invoke(page, 'sessionStorage', 'snapshot');
     expect((storage.sessions as Array<{ sessionKey: string; terminals: number }>).some(s => s.sessionKey === scope.sessionKey && s.terminals === 1)).toBe(true);
     await invoke(page, 'terminal', 'close', { sessionId: terminal.sessionId });
     report.cleanup = { terminalClosed: (await invoke(page, 'terminal', 'list', scope)).sessions, remainingWindows: await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows().length) };
     await writeFile(testInfo.outputPath('acceptance.json'), JSON.stringify(report, null, 2));
   } finally {
+    await devtools.detach();
     const cleanup = await closeElectronApp(app);
     server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve()));
     await writeFile(testInfo.outputPath('owned-process-cleanup.json'), JSON.stringify(cleanup, null, 2));

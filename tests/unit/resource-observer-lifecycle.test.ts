@@ -10,6 +10,16 @@ beforeEach(() => { vi.useFakeTimers(); mocks.list.mockReset().mockResolvedValue(
 afterEach(() => { useResourceStore.getState().stop(); vi.restoreAllMocks(); vi.unstubAllGlobals(); vi.useRealTimers(); });
 
 describe('resource observer lifetime', () => {
+  it('recovers from synchronous and asynchronous polling failures without overlapping work', async () => {
+    let finish!: () => void;
+    const task = vi.fn().mockImplementationOnce(() => { throw new Error('sync'); })
+      .mockRejectedValueOnce(new Error('async')).mockImplementationOnce(() => new Promise<void>(resolve => { finish = resolve; }));
+    const stop = createPollScheduler({ intervalMs: 100, task, isVisible: () => true });
+    await vi.advanceTimersByTimeAsync(300); expect(task).toHaveBeenCalledTimes(3);
+    await vi.advanceTimersByTimeAsync(500); expect(task).toHaveBeenCalledTimes(3);
+    finish(); await flush(); await vi.advanceTimersByTimeAsync(100); expect(task).toHaveBeenCalledTimes(4);
+    stop(); expect(vi.getTimerCount()).toBe(0);
+  });
   it('uses native visibility over Chromium and ignores an older visibility response', async () => {
     let settle!: (visible: boolean) => void;
     let listener!: (visible: boolean) => void;
