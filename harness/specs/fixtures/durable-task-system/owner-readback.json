@@ -1,0 +1,47 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright",
+  "workspace": "D:\\tmp\\durable-task-system-20261107\\e2e-frozen\\verse-claw-e2e-run-GZuoWG\\verse-claw-e2e-home-v25Ekz\\task-project",
+  "readback": {
+    "id": "d1d9207c-c377-4fe3-9031-7e3bad7c73dc",
+    "ok": true,
+    "data": {
+      "success": true,
+      "tasks": [
+        {
+          "contract": {
+            "objective": "Keep the approved artifact across sessions",
+            "constraints": [],
+            "acceptance": [
+              {
+                "id": "artifact",
+                "description": "Artifact contains the approved output",
+                "verification": {
+                  "kind": "file-sha256",
+                  "path": "artifact.txt",
+                  "sha256": "c4c3dd027efe486b7d435025aa372da4649226c35c809c4cb6629fc139ff854a"
+                }
+              }
+            ],
+            "target": "artifact.txt",
+            "dependencies": [],
+            "origin": {
+              "source": "host-task-api",
+              "requestId": "02cce5e1-d58d-4897-b184-6ee2fe14240e"
+            },
+            "taskNodeId": "714138ee-8f59-4016-b967-4d2b74126e58",
+            "domain": "3e58e3d4180141af94b721d130c9bfa173133328310a3640b7b6417b2023797c",
+            "revision": 1,
+            "digest": "8422640711c7c475f21cb4a946403681f4314e475f2ab7f3a371b7b705eee875",
+            "state": "ready",
+            "createdAt": 1794069550261,
+            "updatedAt": 1794069550261
+          },
+          "claim": null,
+          "checkpoint": null,
+          "pendingOperations": 0
+        }
+      ]
+    }
+  }
+}

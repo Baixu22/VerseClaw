@@ -1,0 +1,54 @@
+[
+  {
+    "path": "D:/tmp/durable-task-system-20261107/unit-freeze.json",
+    "sha256": "2c51b01fb8afcc1d1358b71e8c944bfc80e7ad23fa8a0f3185026b95cef26428"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/regression-frozen.json",
+    "sha256": "5816cfe445a59a08cf4556d5d8bf1ec7b0ed6113fcb02d5d36e1f7b986b6bc52"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/runtime-regression-final.json",
+    "sha256": "167217ba9ab703106f57cd48bfa267ce5a4fd06a53ddab5f0228a1d4912cb147"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/runtime-build-bounded.result.json",
+    "sha256": "7d90945f5babc9fb99e4225fd90437ef64b02b9cd4c109affa90710929af7094"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/runtime-build-bounded.log",
+    "sha256": "f70f0096c11b28a60e11b94ab53c1d676b27006f2f76ac9f7774f216e9ee4537"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/e2e-layout.json",
+    "sha256": "076c4e0ac17ab9c421b05f12f5e0368d4c89538285bace7f192a2c0bfe05942b"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/e2e-frozen.json",
+    "sha256": "637ea58d83bc475cbf9ac63d3172266b98edba48e256fb642ab310f427a8059e"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/type-final-node.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/type-final-web.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/type-final-test.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/build-vite-layout.log",
+    "sha256": "735f293740e78de7963984f0e14986786b178ff43abf790b641d6a7a6f148a28"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/comms-replay.log",
+    "sha256": "f6596f6f6b2132efabd270180444899d70ac8906477868988d7fee8a3df0df5d"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/comms-compare.log",
+    "sha256": "934b048a5492d4ea0d813d5b516e366a19ccfafd12b18f06cac67417d0e1abc2"
+  }
+]
