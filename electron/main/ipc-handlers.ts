@@ -57,6 +57,7 @@ import { createTerminalApi } from '../services/terminal-api';
 import { createHostTraceDiagnosticsService } from '../services/host-trace-diagnostics';
 import { createSessionActivityApi } from '../services/session-activity-api';
 import { createGitApi } from '../services/git-api';
+import { createSessionStorageApi } from '../services/session-storage-api';
 import { createTerminalSessionManager, type TerminalSessionManager } from '../services/terminal-session-manager';
 import { createWebPreviewApi } from '../services/web-preview-api';
 import { createWebPreviewManager } from '../services/web-preview-manager';
@@ -166,6 +167,7 @@ function registerTypedHostHandlers(
     terminal: createTerminalApi({ gatewayManager, terminalManager, traceDiagnostics }),
     sessionActivity: createSessionActivityApi({ gatewayManager, terminalManager }),
     git: gitApi,
+    sessionStorage: createSessionStorageApi({ workspaces: workspacesApi, terminalManager }),
     permissions: createPermissionsApi(),
     runtimeApprovals: createRuntimeApprovalsApi(gatewayManager),
     orchestrationPresets: createOrchestrationPresetsApi(),

@@ -113,6 +113,7 @@ import { mergeProcessSurfaces, processFromTerminalSurface, projectGeneratedFileD
 import { promoteRunSurfaces } from './run-surface-promotion';
 import { useRunApprovals } from './use-run-approvals';
 import { WelcomeProjectPicker } from '@/components/chat/WelcomeProjectPicker';
+import { SessionWorkspacePicker } from '@/components/chat/SessionWorkspacePicker';
 import { WelcomeBranchPicker } from '@/components/chat/WelcomeBranchPicker';
 import { WorkspacePickerMenu } from '@/components/chat/WorkspacePickerMenu';
 import { GeneratedFilesPanel } from '@/components/file-preview/GeneratedFilesPanel';
@@ -1386,7 +1387,7 @@ export function Chat() {
   const handleSwitchWorktreeWorkspace = async (worktree: GitWorktree) => {
     await persistCurrentWorkspaceSessionState({ activeSessionKey: currentSessionKey, sessionKey: currentSessionKey });
     const existing = workspaceProfiles.find((profile) => normalizeComparablePath(profile.rootPath) === normalizeComparablePath(worktree.path));
-    const profile = existing ?? await createWorkspace({ rootPath: worktree.path, name: basenameFromPath(worktree.path), agentId: currentAgentId });
+    const profile = existing ?? await createWorkspace({ rootPath: worktree.path, name: worktree.branch || basenameFromPath(worktree.path), agentId: currentAgentId, activeSessionKey: createFreshWorkspaceSessionKey(currentAgentId) });
     if (profile) await handleSwitchWorkspace(profile.id);
   };
   useEffect(() => {
@@ -3979,6 +3980,7 @@ export function Chat() {
         <>
           <div className={cn('relative', sendingAnimation && 'codex-welcome-context--sending')}>
             <WelcomeScreen
+              onSelectWorktree={handleSwitchWorktreeWorkspace}
               onPickFolder={handlePickWorkspaceFolder}
               disabled={!isGatewayRunning}
             />
@@ -4425,7 +4427,7 @@ function WelcomeSuggestionScope({ children, suggestions }: Omit<WelcomeSuggestio
  * That leaves the context row as the only place the workspace can be switched
  * from, so the project token is the picker rather than a static label.
  */
-function WelcomeScreen({ disabled = false, onPickFolder }: Omit<WelcomeScreenProps, 'onSend'>) {
+function WelcomeScreen({ disabled = false, onPickFolder, onSelectWorktree }: Omit<WelcomeScreenProps, 'onSend'> & { onSelectWorktree?: (tree: GitWorktree) => Promise<void> }) {
   const activeWorkspace = useWorkspacesStore((s) => s.activeWorkspace);
   const hasWorkspace = Boolean(activeWorkspace);
   const [gitStatus, setGitStatus] = useState<
@@ -4482,6 +4484,7 @@ function WelcomeScreen({ disabled = false, onPickFolder }: Omit<WelcomeScreenPro
         <div className="codex-welcome-context" data-testid="chat-welcome-context">
           <div className="codex-welcome-context__group" data-testid="chat-welcome-environment-group">
             <WelcomeProjectPicker disabled={disabled} onPickFolder={onPickFolder} />
+            {onSelectWorktree && <SessionWorkspacePicker key={activeWorkspace?.id} disabled={disabled} onSelect={onSelectWorktree} onChanged={() => void refreshGitStatus()} />}
             {branch && (
               <WelcomeBranchPicker
                 branch={branch.branch}

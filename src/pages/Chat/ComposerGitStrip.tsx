@@ -103,7 +103,16 @@ export function ComposerGitStrip({ workspace, disabled = false, onOpenGitPanel, 
     return query ? branches.filter((branch) => branch.name.toLowerCase().includes(query)) : branches;
   }, [branchSearch, branches]);
 
-  if (!status?.isRepository) return null;
+  if (!status?.isRepository) return workspace && !loading ? (
+    <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground" disabled={disabled || Boolean(operationLoading)}
+      data-testid="composer-git-init" onClick={() => {
+        setOperationLoading('init');
+        void hostApi.git.init().then(async (result) => {
+          if (!result.success) toast.error(operationReason(result) || t('settings:storage.operationFailed'));
+          else await refresh();
+        }).catch((error) => toast.error(String(error))).finally(() => setOperationLoading(null));
+      }}><GitBranch className="mr-1.5 h-3.5 w-3.5" />{t('settings:storage.init')}</Button>
+  ) : null;
 
   const normalizedWorktreeBranch = worktreeBranch.trim();
   const selectedWorktreeBranch = normalizedWorktreeBranch

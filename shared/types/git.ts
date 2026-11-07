@@ -108,6 +108,7 @@ export type GitStashEntry = {
 
 export type GitOperationResult = {
   success: boolean;
+  worktree?: GitWorktree;
   blocked?: boolean;
   approvalRequired?: boolean;
   approval?: PermissionApprovalEvent;

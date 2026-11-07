@@ -1,0 +1,109 @@
+{
+  "schema": "SessionWorktreeStorageAcceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "createdAt": "2026-11-07T03:58:05.905815+00:00",
+  "head": "c7573ec11095b541f3a4a9c5470bf4e0727489bc",
+  "task": "TF-0821",
+  "featureAcceptance": "passed",
+  "unitTests": {
+    "backend": 58,
+    "chatAndWorkspace": 87,
+    "total": 145
+  },
+  "electron": {
+    "journeys": 1,
+    "result": "passed",
+    "realServices": [
+      "Git",
+      "Workspace",
+      "SessionStorage",
+      "Terminal"
+    ],
+    "mockedServices": [
+      "idle Gateway transport"
+    ],
+    "screenshots": [
+      "resource-release-confirm.png",
+      "storage-dark-1280.png",
+      "storage-light-760.png",
+      "storage-light.png",
+      "worktree-create-light.png",
+      "worktree-remove-confirm.png",
+      "worktrees-light.png"
+    ],
+    "sourceMutationGuard": "passed",
+    "survivingOwnedProcesses": 0,
+    "processCleanup": {
+      "ledger": "no surviving owned PIDs",
+      "optionalCimSweep": "unavailable in current run; prior verified run completed with no remaining instances"
+    }
+  },
+  "checks": {
+    "frontendTypes": "passed",
+    "backendTypes": "failed: existing sessions-api.ts:1929 SessionTaskScopeInput callback signature mismatch",
+    "eslint": "passed",
+    "hostContract": "passed",
+    "i18n": "passed",
+    "commsReplay": "passed",
+    "commsCompare": "passed",
+    "featureHarness": "passed",
+    "workspaceHarness": "failed: concurrent changes outside task ownership",
+    "electronBuild": "passed",
+    "runtimeBuild": "passed",
+    "harnessCi": "failed: audit-wiring-quick-fixes.md and audit-wiring-remainder.md lack lifecycleStatus; baseline tests 58 passed, 1 failed; later chained gates not run"
+  },
+  "cleanupPolicy": "Only clean, unlocked, unlinked, non-primary, non-active worktrees may be removed; branches remain. Linked workspace/session directories remain protected.",
+  "priorRuns": [
+    {
+      "state": "failed",
+      "reason": "Test initially called retired IPC invoke entry; corrected to typed hostInvoke."
+    },
+    {
+      "state": "failed",
+      "reason": "Initial fixture inherited an enclosing repository; isolated Git discovery."
+    },
+    {
+      "state": "failed",
+      "reason": "Electron child Git could not write to temp/sibling directories under host integrity permissions; final fixture uses the workspace scratch area with Git discovery ceiling."
+    },
+    {
+      "state": "blocked",
+      "reason": "Parallel runtime edits made dist stale; rebuilt runtime before acceptance."
+    },
+    {
+      "state": "visual-rejected",
+      "reason": "First removal dialog lacked surface styling; added existing modal tokens and recaptured."
+    },
+    {
+      "state": "failed-teardown",
+      "reason": "Prior final assertions passed but Windows worker cleanup exceeded 90s; final repeat passed with no survivors."
+    }
+  ],
+  "visualReview": {
+    "actor": "codex",
+    "reviewed": [
+      "resource-release-confirm.png",
+      "storage-dark-1280.png",
+      "storage-light-760.png",
+      "storage-light.png",
+      "worktree-create-light.png",
+      "worktree-remove-confirm.png",
+      "worktrees-light.png"
+    ],
+    "result": "passed",
+    "checks": [
+      "Existing menu and settings materials, typography and spacing retained",
+      "Light/dark text contrast readable after settled transitions",
+      "760x560 layout stays inside viewport with vertical scrolling",
+      "Confirmation dialogs centered on the existing modal surface"
+    ]
+  },
+  "taskForest": {
+    "id": "TF-0821",
+    "status": "done",
+    "progress": 100.0,
+    "validation": "passed",
+    "htmlExport": "updated by proposal-apply"
+  }
+}

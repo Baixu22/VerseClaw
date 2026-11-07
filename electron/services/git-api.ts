@@ -195,7 +195,7 @@ function execBinary(command: 'git' | 'gh', args: string[], cwd: string): Promise
   });
 }
 
-async function git(args: string[], cwd: string): Promise<ExecResult> {
+export async function git(args: string[], cwd: string): Promise<ExecResult> {
   return execBinary('git', args, cwd);
 }
 
@@ -697,7 +697,7 @@ export async function readCurrentGitStatus(): Promise<GitRepositoryStatus> {
   return entry.status;
 }
 
-async function enforcePermission(input: {
+export async function enforcePermission(input: {
   workspace: WorkspaceProfile;
   action: string;
   risk: GitRisk;
@@ -785,9 +785,9 @@ async function withGitOperation(
   action: string,
   risk: GitRisk,
   args: string[],
-  payload: { approvalId?: string; paths?: string[]; grading?: string[] } = {},
+  payload: { approvalId?: string; paths?: string[]; grading?: string[]; context?: RepoContext } = {},
 ): Promise<GitOperationResult> {
-  const ctx = await requireRepoContext();
+  const ctx = payload.context ?? await requireRepoContext();
   const blocked = await enforcePermission({
     workspace: ctx.workspace,
     action,
@@ -1121,7 +1121,7 @@ function parseStashes(output: string): GitStashEntry[] {
   });
 }
 
-function parseWorktrees(output: string): GitWorktree[] {
+export function parseWorktrees(output: string): GitWorktree[] {
   const entries: GitWorktree[] = [];
   let current: GitWorktree | null = null;
   for (const record of output.split('\0').filter(Boolean)) {
@@ -1359,6 +1359,16 @@ async function applyGitPatch(payload: GitApplyPatchPayload, journaled = false): 
 
 export function createGitApi(): CompleteHostServiceRegistry['git'] {
   return {
+    init: async () => {
+      const workspace = requireWorkspace(await getActiveWorkspaceProfile());
+      const blocked = await enforcePermission({ workspace, action: 'init', risk: 'write', command: 'git init', paths: [workspace.rootPath] });
+      if (blocked) return blocked;
+      const existing = await git(['rev-parse', '--show-toplevel'], workspace.rootPath);
+      if (existing.exitCode === 0) return { success: true, status: await readCurrentGitStatus() };
+      const result = await git(['init'], workspace.rootPath);
+      invalidateGitStatusCache(workspace.rootPath);
+      return { success: result.exitCode === 0, ...result, status: result.exitCode === 0 ? await readCurrentGitStatus() : undefined };
+    },
     capabilities: async () => {
       const workspace = requireWorkspace(await getActiveWorkspaceProfile());
       const gitVersion = await git(['--version'], workspace.rootPath);
@@ -1791,10 +1801,12 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
       } else {
         args.push(target, branch);
       }
-      return withGitOperation('worktreeAdd', customOutsideSafeArea ? 'dangerous' : 'write', args, {
+      const result = await withGitOperation('worktreeAdd', customOutsideSafeArea ? 'dangerous' : 'write', args, {
         approvalId: payload.approvalId,
         paths: [target],
+        context: ctx,
       });
+      return { ...result, ...(result.success ? { worktree: { path: target, branch } } : {}) };
     },
     worktreeRemove: async (payload: GitPathPayload) => {
       const ctx = await requireRepoContext();

@@ -1,0 +1,19 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-AwceQs",
+  "ledgerEntries": 1,
+  "reaped": [
+    {
+      "pid": 31856,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    }
+  ],
+  "survivors": [],
+  "sweep": {
+    "status": "unavailable",
+    "error": "Error: Command failed: powershell.exe -NoLogo -NoProfile -NonInteractive -Command "
+  }
+}

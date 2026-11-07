@@ -1,4 +1,5 @@
 import { knowledgeHostApi } from './host-api/knowledge';
+import type { SessionStorageScope, StorageRemovePayload } from '@shared/types/session-storage';
 import type {
   AgentCreatePayload,
   AgentBrowserClickPayload,
@@ -701,6 +702,11 @@ export type {
 } from '@shared/host-api/contract';
 
 export const hostApi = {
+  sessionStorage: {
+    snapshot: () => invokeHost('sessionStorage', 'snapshot'),
+    release: (input: SessionStorageScope) => invokeHost('sessionStorage', 'release', input),
+    removeWorktree: (input: StorageRemovePayload) => invokeHost('sessionStorage', 'removeWorktree', input),
+  },
   versegit: {
     status: (binding: VerseGitDiagnosticBinding): Promise<VerseGitDiagnosticStatus> => (
       invokeHost('versegit', 'status', binding)
@@ -865,6 +871,7 @@ export const hostApi = {
     snapshot: (input: SessionActivitySnapshotPayload) => invokeHost('sessionActivity', 'snapshot', input),
   },
   git: {
+    init: (): Promise<GitOperationResult> => invokeHost('git', 'init'),
     capabilities: (): Promise<GitCapabilitiesResult> => invokeHost('git', 'capabilities'),
     status: (): Promise<GitStatusResult> => invokeHost('git', 'status'),
     diff: (input?: { mode?: 'unstaged' | 'staged' }): Promise<GitDiffListResult> => invokeHost('git', 'diff', input),

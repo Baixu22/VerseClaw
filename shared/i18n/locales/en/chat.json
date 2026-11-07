@@ -1649,6 +1649,11 @@
           "label": "Copy last response",
           "description": "Copy the last assistant response as markdown.",
           "argumentHint": ""
+        },
+        "storage": {
+          "label": "Storage",
+          "description": "Manage conversation files, running processes and Git worktrees.",
+          "argumentHint": ""
         }
       },
       "prompts": {

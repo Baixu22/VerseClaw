@@ -5673,6 +5673,7 @@ export type VerseGitDiagnosticStatus = {
 };
 
 export type HostApiContract = {
+  sessionStorage: import('../types/session-storage').SessionStorageContract;
   app: {
     version: () => string;
     openClawDoctor: (payload: OpenClawDoctorPayload) => Omit<OpenClawDoctorResult, 'mode'>;
@@ -5801,6 +5802,7 @@ export type HostApiContract = {
     snapshot: (payload: SessionActivitySnapshotPayload) => SessionActivitySnapshotResult;
   };
   git: {
+    init: () => GitOperationResult;
     capabilities: () => GitCapabilitiesResult;
     status: () => GitStatusResult;
     diff: (payload?: { mode?: GitDiffMode }) => GitDiffListResult;

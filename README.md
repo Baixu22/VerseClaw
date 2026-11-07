@@ -6,6 +6,8 @@ Review Center includes a collapsed, opt-in Change Context view for four comparis
 
 # Verse Claw
 
+Conversations can initialize a Git repository, select an independent worktree, and restore its draft. `/storage` and **Settings → Storage** share a resource page for conversation files, process memory, and worktrees. [Usage and ownership](docs/dev/session-worktree-storage.md).
+
 **Chat, code, knowledge and agent execution in one desktop workspace.**
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja-JP.md) · [Русский](README.ru-RU.md)

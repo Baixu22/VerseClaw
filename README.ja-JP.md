@@ -6,6 +6,8 @@ Review Center の折りたたまれた Change Context は明示的に有効化�
 
 # Verse Claw
 
+会話から Git リポジトリを作成し、独立した worktree を選択して下書きを復元できます。`/storage` と **設定 → ストレージ** は、会話ファイル、プロセスメモリ、worktree の使用量を表示する同じページを開きます。[操作と所有権](docs/dev/session-worktree-storage.md)。
+
 **チャット、コード、知識、Agent 実行を 1 つのデスクトップ作業空間に。**
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja-JP.md) · [Русский](README.ru-RU.md)

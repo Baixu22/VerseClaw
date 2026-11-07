@@ -55,6 +55,10 @@
     "archived": {
       "title": "Archived",
       "description": "Restore or permanently delete conversations you have archived."
+    },
+    "storage": {
+      "title": "Storage",
+      "description": "Manage conversation files, running processes and Git worktrees."
     }
   },
   "recovery": {
@@ -949,6 +953,65 @@
       "failed": "Needs attention",
       "partial": "Partial",
       "off": "Off"
+    }
+  },
+  "storage": {
+    "title": "Storage",
+    "description": "Manage conversation files, running processes and Git worktrees.",
+    "environment": "Working directory",
+    "environmentHint": "Each directory keeps its own conversations, files and terminals.",
+    "local": "Local",
+    "worktree": "Worktree",
+    "init": "Create Git repository",
+    "initialized": "Git repository created",
+    "createWorktree": "New worktree",
+    "branchName": "New branch",
+    "baseBranch": "Start from",
+    "committedOnly": "Starts from committed files. Commit your changes first to include them.",
+    "createAndOpen": "Create and open",
+    "cancel": "Cancel",
+    "operationFailed": "The operation could not be completed.",
+    "loadFailed": "Could not load working directories.",
+    "search": "Search conversations or worktrees",
+    "refresh": "Refresh",
+    "loading": "Measuring storage and processes…",
+    "overview": "Usage",
+    "memoryHint": "Memory is measured from running processes. Session processes may be included in app memory; these values are not added together.",
+    "appMemory": "Application memory",
+    "sessionFiles": "Conversation files",
+    "sessionFilesHint": "Transcripts and adjacent execution records for workspace conversations.",
+    "workingFiles": "Working directory files",
+    "workingFilesHint": "Includes generated files. Shared Git objects and linked directories are excluded. ≥ marks a partial scan.",
+    "sessions": "Conversations",
+    "sessionsHint": "Release a conversation’s terminals, browser sessions and managed servers when you no longer need them.",
+    "empty": "No matching items",
+    "processMemory": "Processes {{value}}",
+    "resources": "{{terminals}} terminals · {{browsers}} browsers · {{servers}} servers",
+    "openSession": "Open conversation",
+    "release": "Release",
+    "released": "Released {{count}} resources",
+    "releasePartial": "{{count}} resources could not be released. Refresh to review.",
+    "worktrees": "Git worktrees",
+    "worktreesHint": "Worktrees share repository history and keep their working files in separate directories.",
+    "idle": "Available to remove",
+    "remove": "Remove",
+    "removed": "Worktree removed; branch retained",
+    "archived": "Archived conversations",
+    "archivedHint": "Restore conversations or permanently delete their saved files.",
+    "manage": "Manage",
+    "measuredAt": "Measured at {{time}}",
+    "releaseTitle": "Release conversation resources?",
+    "releaseHint": "This stops the selected conversation’s terminals, browsers and managed servers. Saved messages and project files are kept.",
+    "removeTitle": "Remove this worktree?",
+    "removeHint": "Removes the idle checkout from disk and retains its Git branch. Occupied or modified worktrees are kept.",
+    "protected": {
+      "primary": "Primary checkout",
+      "active": "Current workspace",
+      "locked": "Locked in Git",
+      "sessions": "Linked to a workspace",
+      "resources": "Processes are running",
+      "dirty": "Contains local files or changes",
+      "unavailable": "Directory unavailable"
     }
   }
 }

@@ -155,6 +155,34 @@
   width: 300px;
 }
 
+/* Adjacent composer controls use the same surface as the compact add menu.
+ * Presence owns the blur/slide so exit stays visible without accepting input. */
+.codex-composer-menu.codex-composer-popover {
+  --ccm-surface: color-mix(in oklab, var(--color-background-elevated-primary-opaque) 96%, transparent);
+  width: 312px;
+  min-width: 0;
+  max-width: calc(100vw - 16px);
+  padding: 6px;
+  border-radius: var(--radius-xl);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  animation: none;
+}
+
+.codex-composer-popover[data-state='closed'] { pointer-events: none; }
+
+.codex-composer-popover .codex-composer-menu__option {
+  min-height: 48px;
+  padding: 8px;
+  gap: 8px;
+}
+
+.codex-composer-popover .codex-composer-menu__option-text small {
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .codex-execution-settings {
   padding: 8px;
 }
