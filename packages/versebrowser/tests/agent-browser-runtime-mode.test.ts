@@ -53,6 +53,7 @@ class FakeDebugger extends EventEmitter {
 }
 
 class FakeWebContents extends EventEmitter {
+  setWebRTCIPHandlingPolicy() {}
   url = '';
   title = '';
   readonly debugger = new FakeDebugger();
@@ -91,6 +92,11 @@ class FakeWindow {
 
   close() {
     this.closed = true;
+  }
+
+  destroy() {
+    this.closed = true;
+    this.webContents.emit('destroyed');
   }
 
   isDestroyed() {

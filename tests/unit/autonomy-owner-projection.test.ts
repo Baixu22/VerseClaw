@@ -7,7 +7,10 @@ import { ResourceLeaseManager } from '../../openclaw_runtime/src/agents/resource
 const owners = vi.hoisted(() => ({ browsers: [{ id: 'browser-owned', workspaceId: 'workspace-one' }] }));
 vi.mock('../../electron/services/agent-browser-api', () => ({ getDefaultAgentBrowserService: () => ({ list: () => owners.browsers }) }));
 vi.mock('../../openclaw_runtime/src/process/process-tree-sampler', () => ({
-  readProcessTreeSample: async () => ({ status: 'ok', processCount: 1, treeRssBytes: 1024, treeCpuPercent: 0, rootPids: [process.pid], queueDepth: 0, queueWaitMs: 0 }),
+  ProcessTreeSampler: class {
+    async sample() { return { status: 'ok', sampledAt: Date.now(), processCount: 1, treeRssBytes: 1024, treeCpuPercent: 0, rootPids: [process.pid], queueDepth: 0, queueWaitMs: 0,
+      processes: [{ pid: process.pid, parentPid: process.ppid, creationToken: 'fixture', rssBytes: 1024, privateBytes: 512, cpuTimeMs: 0, cpuPercent: 0 }] }; }
+  },
 }));
 
 describe('resource envelopes rebuild from existing owners', () => {

@@ -189,6 +189,7 @@ class FabricAccount {
     this.queue = new PriorityQueue<Waiter>({
       agePromotionMs: config.agePromotionMs,
       now,
+      tieBreak: (left, right) => drf.share(left.tenant) - drf.share(right.tenant),
     });
     this.syncEnvelope();
   }
@@ -279,13 +280,22 @@ class FabricAccount {
     return this.queue.peek()?.requestedAt ?? Number.POSITIVE_INFINITY;
   }
 
-  drain(): void {
-    while (this.active < this.limit.limit) {
+  get waitingPriority(): number { return this.queue.peekPriority(); }
+  get waitingShare(): number {
+    const waiter = this.queue.peek();
+    return waiter ? this.drf.share(waiter.tenant) : Number.POSITIVE_INFINITY;
+  }
+
+  drain(maxGrants = Number.POSITIVE_INFINITY): number {
+    let processed = 0;
+    while (this.active < this.limit.limit && processed < maxGrants) {
       const waiter = this.queue.peek();
-      if (!waiter) return;
+      if (!waiter) break;
       if (waiter.settled) { this.queue.remove(candidate => candidate === waiter); continue; }
-      if (!this.grant(waiter)) return;
+      if (!this.grant(waiter)) break;
+      processed += 1;
     }
+    return processed;
   }
 
   private grant(waiter: Waiter): boolean {
@@ -514,8 +524,15 @@ export class ResourceFabric {
       this.drf,
       this.now,
       () => {
-        const waiting = [...this.accounts.values()].sort((a, b) => a.oldestWaiterAt - b.oldestWaiterAt);
-        for (const account of waiting) account.drain();
+        // Re-evaluate shares after each grant so one account cannot consume a
+        // whole release wave ahead of equally prioritized tenants.
+        for (;;) {
+          const waiting = [...this.accounts.values()].filter(account => Number.isFinite(account.oldestWaiterAt))
+            .sort((a, b) => a.waitingPriority - b.waitingPriority
+              || (a.waitingPriority < 0 ? 0 : a.waitingShare - b.waitingShare)
+              || a.oldestWaiterAt - b.oldestWaiterAt);
+          if (!waiting.some(account => account.drain(1) > 0)) break;
+        }
       },
     );
     this.accounts.set(accountKey, account);

@@ -72,8 +72,8 @@ test('R1 rebuilds browser and terminal envelopes from their live desktop owners'
     const browserWindowId = await app.evaluate(({ BrowserWindow }, origin) => {
       const window = BrowserWindow.getAllWindows().find(window => window.webContents.getURL().startsWith(origin));
       if (!window) throw new Error('Browser owner window is unavailable');
-      const close = window.close;
-      window.close = () => { window.close = close; throw new Error('R1 injected native close failure'); };
+      const destroy = window.destroy;
+      window.destroy = () => { window.destroy = destroy; throw new Error('R1 injected native close failure'); };
       return window.id;
     }, origin);
     await expect(hostInvoke(app, 'agentBrowser', 'close', { sessionId: browserId })).rejects.toThrow('R1 injected native close failure');
@@ -87,15 +87,15 @@ test('R1 rebuilds browser and terminal envelopes from their live desktop owners'
     await app.evaluate(({ BrowserWindow }, windowId) => {
       const window = BrowserWindow.fromId(windowId);
       if (!window) throw new Error('Retained browser owner is unavailable');
-      const close = window.close;
-      window.close = () => { window.close = close; (globalThis as Record<string, unknown>).__r1BrowserCloseRequested = true; };
+      const destroy = window.destroy;
+      window.destroy = () => { window.destroy = destroy; (globalThis as Record<string, unknown>).__r1BrowserCloseRequested = true; };
     }, browserWindowId);
     const closing = hostInvoke(app, 'agentBrowser', 'close', { sessionId: browserId });
     void closing.catch(() => undefined);
     await expect.poll(() => app.evaluate(() => (globalThis as Record<string, unknown>).__r1BrowserCloseRequested)).toBe(true);
     const retainedWhileClosing = await hostInvoke<Envelope>(app, 'resourceEnvelope', 'getState');
     expect(retainedWhileClosing.snapshot.entries).toContainEqual(expect.objectContaining({ id: 'main:browser-session:' + browserId, activeSlots: 1 }));
-    await app.evaluate(({ BrowserWindow }, windowId) => BrowserWindow.fromId(windowId)!.close(), browserWindowId);
+    await app.evaluate(({ BrowserWindow }, windowId) => BrowserWindow.fromId(windowId)!.destroy(), browserWindowId);
     await closing; browserId = undefined;
     const browserClosed = await app.evaluate(({ BrowserWindow }, windowId) => BrowserWindow.fromId(windowId) === null, browserWindowId);
     expect(browserClosed).toBe(true);

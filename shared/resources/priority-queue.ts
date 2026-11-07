@@ -14,10 +14,12 @@ export class PriorityQueue<T> {
   private readonly items: PriorityItem<T>[] = [];
   private readonly agePromotionMs: number;
   private readonly now: () => number;
+  private readonly tieBreak?: (left: T, right: T) => number;
 
-  constructor(options: { agePromotionMs?: number; now?: () => number } = {}) {
+  constructor(options: { agePromotionMs?: number; now?: () => number; tieBreak?: (left: T, right: T) => number } = {}) {
     this.agePromotionMs = options.agePromotionMs ?? 30_000;
     this.now = options.now ?? Date.now;
+    this.tieBreak = options.tieBreak;
   }
 
   push(value: T, qos: QosClass = 'background'): void {
@@ -58,14 +60,26 @@ export class PriorityQueue<T> {
     return [...this.items].sort((left, right) => this.compare(left, right, now))[0]?.value;
   }
 
+  peekPriority(): number {
+    const value = this.peek();
+    const item = this.items.find(entry => entry.value === value);
+    return item ? this.rank(item, this.now()) : Number.POSITIVE_INFINITY;
+  }
+
   get size(): number {
     return this.items.length;
   }
 
   private compare(left: PriorityItem<T>, right: PriorityItem<T>, now: number): number {
-    const leftRank = left.boostUntil && left.boostUntil > now ? -1 : this.ageRank(left, now);
-    const rightRank = right.boostUntil && right.boostUntil > now ? -1 : this.ageRank(right, now);
-    return leftRank - rightRank || left.enqueuedAt - right.enqueuedAt;
+    const leftRank = this.rank(left, now);
+    const rightRank = this.rank(right, now);
+    // Aged work has priority over share balancing, preserving eventual service.
+    return leftRank - rightRank || (leftRank < 0 ? 0 : this.tieBreak?.(left.value, right.value) ?? 0)
+      || left.enqueuedAt - right.enqueuedAt;
+  }
+
+  private rank(item: PriorityItem<T>, now: number): number {
+    return item.boostUntil && item.boostUntil > now ? -1 : this.ageRank(item, now);
   }
 
   private ageRank(item: PriorityItem<T>, now: number): number {

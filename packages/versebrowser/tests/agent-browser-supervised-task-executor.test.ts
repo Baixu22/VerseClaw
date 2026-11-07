@@ -121,6 +121,20 @@ describe('agent browser supervised task network policy', () => {
 });
 
 describe('agent browser supervised task executor', () => {
+  it('awaits one asynchronous owner cleanup before completing cancellation', async () => {
+    const service=createRuntime();const controller=new AbortController();
+    let releaseStep!:()=>void, releaseClose!:()=>void;
+    vi.mocked(service.waitForSelector).mockImplementationOnce(async ()=>{await new Promise<void>(resolve=>{releaseStep=resolve;});return {id:'session-1'} as never;});
+    vi.mocked(service.close).mockImplementationOnce(()=>new Promise<void>(resolve=>{releaseClose=resolve;}));
+    const execute=createAgentBrowserSupervisedTaskExecutor({service,assertSandboxAllowed:async()=>{},lookupAddresses:publicLookup});
+    let settled=false;
+    const run=execute(createRunningTask(),controller.signal,()=>{}).catch(error=>error).finally(()=>{settled=true;});
+    await vi.waitFor(()=>expect(service.waitForSelector).toHaveBeenCalledOnce());
+    controller.abort();releaseStep();
+    await vi.waitFor(()=>expect(service.close).toHaveBeenCalledOnce());
+    expect(settled).toBe(false);releaseClose();
+    expect(await run).toBeInstanceOf(Error);expect(service.close).toHaveBeenCalledOnce();
+  });
   it('executes ordered steps and verifies success with progress counters', async () => {
     const service = createRuntime();
     const reports: unknown[] = [];

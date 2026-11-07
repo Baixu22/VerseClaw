@@ -166,7 +166,7 @@ describe('agent browser service', () => {
       const window = new FakeWindow();
       const loadFailure = new Error('native load failed');
       vi.spyOn(window, 'loadURL').mockRejectedValueOnce(loadFailure);
-      if (cleanupFails) vi.spyOn(window, 'close').mockImplementationOnce(() => { throw new Error('native close failed'); });
+      if (cleanupFails) vi.spyOn(window, 'destroy').mockImplementationOnce(() => { throw new Error('native close failed'); });
       const service = new AgentBrowserService({ createWindow: () => window as never });
       const opening = service.open({ url: 'https://example.com' });
       if (cleanupFails) {
@@ -183,7 +183,7 @@ describe('agent browser service', () => {
 
   it('retains the owner until the original window closes and shares concurrent close requests', async () => {
     const window = new FakeWindow();
-    const close = vi.spyOn(window, 'close').mockImplementation(() => undefined);
+    const close = vi.spyOn(window, 'destroy').mockImplementation(() => undefined);
     const service = new AgentBrowserService({ createWindow: () => window as never });
     const opened = await service.open({ url: 'https://example.com' });
     const first = service.close(opened.session.id);
@@ -198,7 +198,7 @@ describe('agent browser service', () => {
 
   it('retains a browser owner after close failure and permits a later retry', async () => {
     const window = new FakeWindow();
-    vi.spyOn(window, 'close').mockImplementationOnce(() => { throw new Error('native close failed'); });
+    vi.spyOn(window, 'destroy').mockImplementationOnce(() => { throw new Error('native close failed'); });
     const service = new AgentBrowserService({ createWindow: () => window as never });
     const opened = await service.open({ url: 'https://example.com' });
     await expect(Promise.resolve().then(() => service.close(opened.session.id))).rejects.toThrow('native close failed');

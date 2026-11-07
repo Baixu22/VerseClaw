@@ -11,6 +11,7 @@ import crypto from "node:crypto";
 import { ErrorCodes, errorShape } from "../../../packages/gateway-protocol/src/index.js";
 import { GATEWAY_CLIENT_MODES } from '../../../packages/gateway-protocol/src/client-info.js';
 import { updateSessionStoreEntry } from '../../config/sessions/store.js';
+import { resolveGatewaySessionStoreTargetWithStore, resolveFreshestSessionStoreMatchFromStoreKeys } from '../session-utils.js';
 import { compileRoleContractToSoul } from "../../agents/role-contract.js";
 import { buildRoleRegistry, listRoleContracts, resolveRoleContract, roleOrigin } from "../../agents/role-registry.js";
 import { getTeamTemplateSnapshot, resolveTeamTemplate } from "../../agents/team-template.js";

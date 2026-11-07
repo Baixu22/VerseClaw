@@ -493,18 +493,18 @@ export class HostAgentBrowserService extends ModuleAgentBrowserService {
     } finally {
       // Retain network ownership if native cleanup is still unconfirmed.
       if (!super.list().some(session => session.id === sessionId)) {
-      const owner = this.networkSessions.get(sessionId);
-      this.networkSessions.delete(sessionId);
-      if (owner) {
-        const pending = this.networkProfiles.get(owner.profile);
-        const profileActive = [...this.networkSessions.values()].some(entry => entry.profile === owner.profile);
-        if (!profileActive) this.networkProfiles.delete(owner.profile);
-        void pending?.then(proxy => profileActive ? proxy.revokeConnections() : proxy.close()).catch(() => undefined);
-      }
-      removeResourceEnvelopeEntry(`main:browser-session:${sessionId}`);
-      for (const [key, approval] of privateNetworkApprovals) {
-        if (approval.sessionId === sessionId) privateNetworkApprovals.delete(key);
-      }
+        const owner = this.networkSessions.get(sessionId);
+        this.networkSessions.delete(sessionId);
+        if (owner) {
+          const pending = this.networkProfiles.get(owner.profile);
+          const profileActive = [...this.networkSessions.values()].some(entry => entry.profile === owner.profile);
+          if (!profileActive) this.networkProfiles.delete(owner.profile);
+          void pending?.then(proxy => profileActive ? proxy.revokeConnections() : proxy.close()).catch(() => undefined);
+        }
+        removeResourceEnvelopeEntry(`main:browser-session:${sessionId}`);
+        for (const [key, approval] of privateNetworkApprovals) {
+          if (approval.sessionId === sessionId) privateNetworkApprovals.delete(key);
+        }
       }
     }
   }

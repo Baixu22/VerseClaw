@@ -819,12 +819,8 @@ export class AgentBrowserService {
       });
       record.tabManager.registerMainWindow(window, url ?? '', '');
       if (url) {
-        try {
-          await this.navigate({ sessionId: session.id, url, waitUntil: 'load' });
-          if (requireCompleteNetwork) this.assertSupervisedRequestSafe(session.id);
-        } catch (error) {
-          throw error;
-        }
+        await this.navigate({ sessionId: session.id, url, waitUntil: 'load' });
+        if (requireCompleteNetwork) this.assertSupervisedRequestSafe(session.id);
       }
       return { session: this.snapshot(session.id), textSample: await this.textSample(session.id) };
     } catch (error) {
@@ -834,7 +830,7 @@ export class AgentBrowserService {
       catch (cleanupError) {
         // A not-yet-published record can be absent while the Host's close
         // finally still releases its setup. Retain actual cleanup failures.
-        if (this.sessions.has(session.id)) throw new AggregateError([error, cleanupError], 'Browser open and cleanup failed');
+        if (this.sessions.has(session.id)) throw new AggregateError([error, cleanupError], 'Browser open and cleanup failed', { cause: cleanupError });
       }
       throw error;
     }
@@ -1430,7 +1426,7 @@ export class AgentBrowserService {
       }
     }
     if (!record || (record.window?.isDestroyed() ?? false)) {
-      if (record) this.close(sessionId);
+      if (record) void this.close(sessionId).catch(() => {});
       throw new Error(`Agent browser session not found: ${sessionId}`);
     }
     return record;

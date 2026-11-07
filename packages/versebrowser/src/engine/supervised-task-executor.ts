@@ -226,14 +226,14 @@ export function createAgentBrowserSupervisedTaskExecutor(options: AgentBrowserSu
         throw new AgentBrowserSupervisedTaskError('RUNTIME_DISABLED', 'Browser control was disabled during task execution');
       }
     };
-    const closeOnAbort = () => {
-      if (!sessionId) return;
-      try {
-        options.service.close(sessionId);
-      } catch {
-        // The session may already be closed by a concurrent user action.
-      }
+    let closing: Promise<void> | undefined;
+    const closeOwnedSession = () => {
+      if (!sessionId) return Promise.resolve();
+      const id = sessionId;
+      closing ??= Promise.resolve().then(() => options.service.close(id));
+      return closing;
     };
+    const closeOnAbort = () => { void closeOwnedSession().catch(() => undefined); };
     signal.addEventListener('abort', closeOnAbort, { once: true });
 
     try {
@@ -390,8 +390,11 @@ export function createAgentBrowserSupervisedTaskExecutor(options: AgentBrowserSu
       };
     } finally {
       signal.removeEventListener('abort', closeOnAbort);
-      if ((!keepSession || signal.aborted) && sessionId) closeOnAbort();
-      if (!runtimeWasEnabled && options.service.isEnabled()) options.service.setEnabled(false);
+      try {
+        if ((!keepSession || signal.aborted) && sessionId) await closeOwnedSession();
+      } finally {
+        if (!runtimeWasEnabled && options.service.isEnabled()) options.service.setEnabled(false);
+      }
     }
   };
 }
