@@ -4,7 +4,7 @@ id: multi-window-resource-observers-20261107
 title: 多窗口可见性与资源观察者生命周期
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 5ad905b44c2822caf6037df9278a8a260a27d3f9
+diffBase: 7d0c332b0eb5bc2ba5bcc9fe3b95117408fdec57
 intent: 完成 TF-0832 / G17–G18，聚合窗口可见性并按观察者引用释放轮询，保留后台执行所有权。
 expectedUserBehavior:
   - Hiding one window does not put another visible window into background shedding.
