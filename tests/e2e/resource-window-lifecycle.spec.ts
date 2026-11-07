@@ -55,7 +55,7 @@ test('integrated main and browser windows retain visibility, observers and backg
     await invoke(page, 'efficiency', 'setEnabled', { enabled: false });
     await invoke(page, 'efficiency', 'setEnabled', { enabled: true });
     const shed = async () => Boolean(((await invoke(page, 'efficiency', 'getState')).shed as { activeReasons?: string[] } | null)?.activeReasons?.includes('window-hidden'));
-    report.networkApproval = await app.evaluate((_electron, input) => {
+    const approveBrowser = () => app.evaluate((_electron, input) => {
       const modules = process.mainModule!.require('node:module')._cache;
       const entry = Object.keys(modules).find(key => typeof modules[key].exports?.approveBrowserPrivateNetwork === 'function');
       if (!entry) throw new Error('Main approval owner unavailable');
@@ -63,6 +63,8 @@ test('integrated main and browser windows retain visibility, observers and backg
     }, { sessionId: scope.sessionKey, origin });
     const mainId = await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].id);
     const openBrowser = async () => {
+      // Closing a browser revokes its origin grant; every new session is approved separately.
+      report.networkApproval = await approveBrowser();
       const opened = await invoke(page, 'agentBrowser', 'open', { ...scope, url: origin, mode: 'visible', profile: 'window-lifecycle' });
       expect(opened.success).toBe(true);
       const browserId = await app.evaluate(({ BrowserWindow }, mainId) => BrowserWindow.getAllWindows().find(w => w.id !== mainId)?.id, mainId);
@@ -107,5 +109,10 @@ test('integrated main and browser windows retain visibility, observers and backg
     await invoke(page, 'terminal', 'close', { sessionId: terminal.sessionId });
     report.cleanup = { terminalClosed: (await invoke(page, 'terminal', 'list', scope)).sessions, remainingWindows: await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows().length) };
     await writeFile(testInfo.outputPath('acceptance.json'), JSON.stringify(report, null, 2));
-  } finally { server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); await closeElectronApp(app); }
+  } finally {
+    const cleanup = await closeElectronApp(app);
+    server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve()));
+    await writeFile(testInfo.outputPath('owned-process-cleanup.json'), JSON.stringify(cleanup, null, 2));
+    expect(cleanup.mainExited).toBe(true); expect(cleanup.launcherExited).toBe(true);
+  }
 });

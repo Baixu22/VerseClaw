@@ -28,6 +28,10 @@ touchedAreas:
   - tests/unit/runtime-efficiency-api.test.ts
   - tests/unit/resource-metrics-owner.test.ts
   - tests/e2e/resource-window-lifecycle.spec.ts
+  - tests/e2e/fixtures/electron.ts
+  - tests/e2e/fixtures/electron-process-cleanup.ts
+  - tests/e2e/fixtures/windows-process.ts
+  - tests/unit/electron-process-identity.test.ts
   - harness/specs/tasks/multi-window-resource-observers-20261107.md
   - harness/specs/rules/resource-observer-lifetime.md
   - harness/specs/fixtures/multi-window-resource-observers-20261107/**
