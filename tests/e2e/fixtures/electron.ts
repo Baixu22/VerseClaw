@@ -6,7 +6,7 @@ import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { recordElectronProcesses } from './electron-process-cleanup';
+import { completeElectronLaunch, recordElectronLaunch, recordElectronProcesses } from './electron-process-cleanup';
 import { checkWindowsProcesses, type WindowsProcessCheck, type WindowsProcessIdentity } from './windows-process';
 
 type LaunchElectronOptions = {
@@ -371,6 +371,7 @@ async function launchVerseClawElectron(
       DISPLAY: process.env.DISPLAY || ':1',
     }
     : {};
+  const pendingLaunch = await recordElectronLaunch(userDataDir);
   const app = await electron.launch({
     executablePath: options.executablePath ?? String(electronBinaryPath),
     args: [
@@ -423,6 +424,7 @@ async function launchVerseClawElectron(
         .map(({ pid, creationTime }) => ({ pid, creationTime }))), 5_000, 'Electron launch process snapshot');
       owned.identities = identities;
       await recordElectronProcesses(userDataDir, identities);
+      await completeElectronLaunch(pendingLaunch);
     }
     catch (error) { await closeElectronApp(app); throw error; }
   }

@@ -7,6 +7,33 @@ export type WindowsProcessCheck = WindowsProcessIdentity & {
   error?: string;
 };
 
+export async function discoverWindowsElectronProcesses(runRoot: string): Promise<Array<WindowsProcessIdentity & {
+  ProcessId: number; ParentProcessId: number; ParentAlive: boolean;
+}>> {
+  const { stdout } = await promisify(execFile)('powershell.exe', [
+    '-NoLogo', '-NoProfile', '-NonInteractive', '-Command', String.raw`
+$ErrorActionPreference = 'Stop'
+$root = [IO.Path]::GetFullPath($env:CLAWX_PROCESS_RUN_ROOT).TrimEnd('\') + '\'
+$matches = @(Get-CimInstance Win32_Process -Filter "Name = 'electron.exe'" -OperationTimeoutSec 3 | Where-Object {
+  $_.CommandLine -and $_.CommandLine.Contains('--user-data-dir') -and
+  $_.CommandLine.IndexOf($root, [StringComparison]::OrdinalIgnoreCase) -ge 0
+})
+$rows = @(foreach ($entry in $matches) {
+  $process = $null
+  try {
+    $process = [Diagnostics.Process]::GetProcessById([int]$entry.ProcessId)
+    $created = ([DateTimeOffset]$process.StartTime).ToUnixTimeMilliseconds()
+    if ($created -ne ([DateTimeOffset]$entry.CreationDate).ToUnixTimeMilliseconds()) { continue }
+    [pscustomobject]@{ pid = $entry.ProcessId; creationTime = $created; ProcessId = $entry.ProcessId;
+      ParentProcessId = $entry.ParentProcessId; ParentAlive = $null -ne (Get-Process -Id $entry.ParentProcessId -ErrorAction SilentlyContinue) }
+  } catch [ArgumentException] { } finally { if ($null -ne $process) { $process.Dispose() } }
+})
+ConvertTo-Json -InputObject $rows -Depth 3 -Compress
+`,
+  ], { windowsHide: true, timeout: 8_000, encoding: 'utf8', env: { ...process.env, CLAWX_PROCESS_RUN_ROOT: runRoot } });
+  return JSON.parse(stdout.trim());
+}
+
 // Keep the process handle open from identity comparison through termination.
 // A recycled PID must never select a different process for the kill operation.
 const script = String.raw`

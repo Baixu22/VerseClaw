@@ -44,6 +44,7 @@ touchedAreas:
   - tests/e2e/fixtures/electron.ts
   - tests/e2e/fixtures/electron-process-cleanup.ts
   - tests/e2e/fixtures/windows-process.ts
+  - tests/e2e/electron-worker-cleanup.spec.ts
   - tests/unit/electron-process-identity.test.ts
   - harness/specs/fixtures/coding-fixes/TF-0772/**
   - docs/modules/workspace-and-coding.md
@@ -71,6 +72,7 @@ requiredTests:
   - pnpm run comms:replay
   - pnpm run comms:compare
   - node node_modules/@playwright/test/cli.js test tests/e2e/coding-mcp-management.spec.ts --workers=1
+  - node node_modules/@playwright/test/cli.js test tests/e2e/electron-worker-cleanup.spec.ts --workers=1
   - pnpm harness validate --spec harness/specs/tasks/coding-mcp-management-runtime.md
 acceptance:
   - 真实本地MCP server经Main/Gateway的list/call/heartbeat闭环，有实际请求与返回值读回。

@@ -1,7 +1,8 @@
-import { appendFile, mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
+import { appendFile, mkdir, mkdtemp, readFile, readdir, unlink, writeFile } from 'node:fs/promises';
+import { randomUUID } from 'node:crypto';
 import { basename, isAbsolute, join, relative, resolve } from 'node:path';
 import type { FullConfig } from '@playwright/test';
-import { checkWindowsProcesses, type WindowsProcessIdentity, type WindowsProcessCheck } from './windows-process';
+import { checkWindowsProcesses, discoverWindowsElectronProcesses, type WindowsProcessIdentity, type WindowsProcessCheck } from './windows-process';
 import { assertTrackedSourceStateUnchanged, captureTrackedSourceState } from './source-mutation-guard';
 
 export const ELECTRON_PID_LEDGER = 'electron-pids.jsonl';
@@ -13,6 +14,19 @@ export const ELECTRON_PID_LEDGER = 'electron-pids.jsonl';
 const DEFAULT_E2E_RUN_ROOT_BASE = join(process.cwd(), '.tmp', 'e2e-runs');
 
 type LedgerEntry = WindowsProcessIdentity & { userDataDir: string; at: string };
+
+export async function recordElectronLaunch(userDataDir: string): Promise<string | undefined> {
+  if (process.platform !== 'win32') return;
+  const runRoot = process.env.CLAWX_E2E_RUN_ROOT;
+  if (!runRoot) throw new Error('Electron launch requires an active test run');
+  const marker = join(runRoot, `electron-launch-${randomUUID()}.json`);
+  await writeFile(marker, JSON.stringify({ userDataDir }));
+  return marker;
+}
+
+export async function completeElectronLaunch(marker: string | undefined): Promise<void> {
+  if (marker) await unlink(marker);
+}
 
 export async function recordElectronProcesses(userDataDir: string, identities: WindowsProcessIdentity[]): Promise<void> {
   if (process.platform !== 'win32') return;
@@ -31,6 +45,8 @@ export async function cleanupElectronProcesses(runRoot: string, outputDir: strin
   let checks: WindowsProcessCheck[] = [];
   let failure: unknown;
   let ledger: LedgerEntry[] = [];
+  let owned: Awaited<ReturnType<typeof discoverWindowsElectronProcesses>> = [];
+  let pending: string[] = [];
   try {
     let raw = '';
     try { raw = await readFile(join(runRoot, ELECTRON_PID_LEDGER), 'utf8'); }
@@ -42,15 +58,21 @@ export async function cleanupElectronProcesses(runRoot: string, outputDir: strin
         throw new Error('Electron process ledger entry is outside this test run');
       }
     }
-    const identities = [...new Map(ledger.map((entry) => [`${entry.pid}:${entry.creationTime}`, entry])).values()];
+    pending = (await readdir(runRoot)).filter((name) => /^electron-launch-[\da-f-]+\.json$/.test(name));
+    // The runner owns cleanup even when its worker aborts inside Electron spawn,
+    // before Playwright returns an app and before any native identity is recorded.
+    if (pending.length || !ledger.length) owned = await discoverWindowsElectronProcesses(runRoot);
+    const identities = [...new Map([...ledger, ...owned].map((entry) => [`${entry.pid}:${entry.creationTime}`, entry])).values()];
     checks = await checkWindowsProcesses(identities, true);
     if (checks.some(({ status }) => status === 'alive' || status === 'unavailable')) {
       throw new Error('Owned Electron processes survived cleanup or could not be checked');
     }
+    await Promise.all(pending.map((name) => unlink(join(runRoot, name))));
   } catch (error) { failure = error; }
   await writeFile(join(outputDir, 'electron-process-cleanup.json'), JSON.stringify({
     driven_by: 'agent', actor: 'playwright-runner', runRoot, ledgerEntries: ledger.length,
-    checks, survivors: checks.filter(({ status }) => status === 'alive'),
+    checks, owned, remaining: checks.filter(({ status }) => status === 'alive'),
+    survivors: checks.filter(({ status }) => status === 'alive'), pendingLaunches: pending.length,
     status: failure ? 'failed' : 'passed', ...(failure ? { error: String(failure) } : {}),
   }, null, 2));
   if (failure) throw failure;
