@@ -7,6 +7,19 @@ import { closeElectronApp, expect, getStableWindow, test } from './fixtures/elec
 import { buildMockProviderConfig, hostInvoke, startGateway, startScriptedLlm } from './fixtures/fp-p1-harness';
 import { startCodingMcpServer } from './fixtures/coding-mcp-server';
 
+test('closes the real Electron Main and its Windows launcher before returning', async ({ launchElectronApp }) => {
+  const app = await launchElectronApp({ skipSetup: true });
+  const launcher = app.process();
+  const mainPid = await app.evaluate(() => process.pid);
+  expect(await closeElectronApp(app)).toEqual({ mainExited: true, launcherExited: true });
+  await expect.poll(() => {
+    try { process.kill(mainPid, 0); return false; }
+    catch (error) { return (error as NodeJS.ErrnoException).code === 'ESRCH'; }
+  }, { timeout: 5000 }).toBe(true);
+  expect(launcher.exitCode !== null || launcher.signalCode !== null).toBe(true);
+  expect(await closeElectronApp(app)).toEqual({ mainExited: true, launcherExited: true });
+});
+
 test('TF-0772 Main, model session and UI share the real MCP owner and reject stale or denied requests', async ({ homeDir, userDataDir, launchElectronApp }, testInfo) => {
   test.setTimeout(420_000);
   const workspace = join(userDataDir, 'workspace');
@@ -31,8 +44,10 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
   const evidence: Record<string, unknown> = { schema: 'CodingMcpManagement/v1', driven_by: 'agent',
     actor: 'codex-coding-p2-01a1b07b', realHumanEvidence: false, runtime: 'source', provider: 'scripted-local', workspace };
   let app: ElectronApplication | undefined;
+  let mainPid: number | undefined;
   try {
     app = await launchElectronApp({ skipSetup: true, env: { VERSE_CLAW_OPENCLAW_RUNTIME: 'source' } });
+    mainPid = await app.evaluate(() => process.pid);
     const page = await getStableWindow(app);
     const created = await hostInvoke<WorkspaceSnapshot>(app, 'workspaces', 'create', {
       name: 'P2 MCP workspace', rootPath: workspace, permissionMode: 'fullAccess',
@@ -167,20 +182,27 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
     evidence.providerAnomalies = llm.anomalies;
     if (app) {
       const child = app.process();
-      evidence.appPid = child.pid;
+      evidence.appPid = mainPid;
+      evidence.launcherPid = child.pid;
       await hostInvoke(app, 'gateway', 'stop').catch((error) => { evidence.gatewayStopError = String(error); });
       evidence.gatewayAfterStop = await hostInvoke(app, 'gateway', 'status').catch(() => null);
-      await closeElectronApp(app);
-      evidence.appExitCode = child.exitCode;
+      const closed = await closeElectronApp(app).catch((error) => { evidence.appCloseError = String(error); return undefined; });
+      evidence.appClose = closed;
+      if (closed && (!closed.mainExited || !closed.launcherExited)) evidence.appCloseError = 'Electron cleanup did not confirm both Main and launcher exit';
+      evidence.launcherExitCode = child.exitCode;
+      evidence.launcherSignalCode = child.signalCode;
+      try { process.kill(mainPid!, 0); evidence.mainProcessAliveAfterClose = true; }
+      catch (error) { evidence.mainProcessAliveAfterClose = (error as NodeJS.ErrnoException).code !== 'ESRCH'; }
     }
     evidence.endpointCleanup = await Promise.all([server.close(), empty.close(), slow.close(), delayed.close()]);
     llm.server.closeAllConnections(); llm.server.closeIdleConnections();
     await new Promise<void>((resolve) => llm.server.close(() => resolve()));
-    if (evidence.gatewayStopError) {
+    if (evidence.mainProcessAliveAfterClose) evidence.gatewayStopError ??= 'Electron Main survived close';
+    if (evidence.gatewayStopError || evidence.appCloseError) {
       evidence.status = 'failed';
-      evidence.failure ??= evidence.gatewayStopError;
+      evidence.failure ??= evidence.gatewayStopError ?? evidence.appCloseError;
     }
     await writeFile(testInfo.outputPath('coding-mcp-management.json'), JSON.stringify(evidence, null, 2));
   }
-  if (evidence.gatewayStopError) throw new Error(String(evidence.gatewayStopError));
+  if (evidence.gatewayStopError || evidence.appCloseError) throw new Error(String(evidence.gatewayStopError ?? evidence.appCloseError));
 });

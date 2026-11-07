@@ -66,6 +66,9 @@ function envWithoutUndefined(env: Record<string, string | undefined>): Record<st
 const repoRoot = resolve(process.cwd());
 const electronEntry = join(repoRoot, 'dist-electron/main/index.js');
 const rendererEntryUrl = pathToFileURL(join(repoRoot, 'dist', 'index.html')).toString();
+const nativeElectronPids = new WeakMap<ElectronApplication, number>();
+const electronLaunchers = new WeakMap<ElectronApplication, ReturnType<ElectronApplication['process']>>();
+const closedElectronApps = new WeakSet<ElectronApplication>();
 
 // FP-P3-05: openclaw_runtime dist freshness guard.
 // E2E must test the current source build, not a stale dist/entry.js bundle.
@@ -277,7 +280,7 @@ async function killElectronProcessTree(app: ElectronApplication): Promise<void> 
   if (process.platform !== 'win32') return;
   let pid: number | undefined;
   try {
-    pid = app.process().pid;
+    pid = nativeElectronPids.get(app) ?? (electronLaunchers.get(app) ?? app.process()).pid;
   } catch {
     return;
   }
@@ -305,61 +308,54 @@ async function killElectronProcessTree(app: ElectronApplication): Promise<void> 
   });
 }
 
-async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000): Promise<void> {
-  let closed = false;
-
-  // Windows Electron can ignore app.quit() while a Gateway child still owns
-  // inherited stdio. Kill the owned process tree first, then use the bounded
-  // close races below as the Playwright cleanup path. Without this order the
-  // worker can sit behind a 90s teardown wait despite all tests passing.
-  if (process.platform === 'win32') {
-    await killElectronProcessTree(app);
-  }
-
-  await Promise.race([
-    (async () => {
-      const [closeResult] = await Promise.allSettled([
-        app.waitForEvent('close', { timeout: timeoutMs }),
-        app.evaluate(({ app: electronApp }) => {
-          electronApp.quit();
-        }),
-      ]);
-
-      if (closeResult.status === 'fulfilled') {
-        closed = true;
-      }
-    })(),
-    new Promise((resolve) => setTimeout(resolve, timeoutMs)),
-  ]);
-
-  if (closed) {
-    await killElectronProcessTree(app);
-    return;
-  }
-
-  // Bound `app.close()` too. It was awaited without a limit, so when a real
-  // gateway child refused to quit the fixture hung here until Playwright's
-  // 90-second worker-teardown timeout fired and blamed the test that had just
-  // finished -- runtime-launch-contract-fp-p0.spec.ts:271 passed every
-  // assertion (its [fp-p0-02-config-kill] line was logged) and was still
-  // reported as a 7.0m failure.
+async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000): Promise<{ mainExited: boolean; launcherExited: boolean }> {
+  if (closedElectronApps.has(app)) return { mainExited: true, launcherExited: true };
+  // Playwright drops the server-side Electron object on close; retain its launcher now.
+  const launcher = electronLaunchers.get(app) ?? app.process();
+  // app.close() also disconnects the Node inspector. Killing the Windows shell
+  // first can emit close while the real Electron process still waits for that debugger.
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const closing = app.close().then(() => true, () => false);
+  let closed: boolean;
   try {
-    const closedByPlaywright = await Promise.race([
-      app.close().then(() => true, () => false),
-      new Promise<boolean>((resolve) => setTimeout(() => resolve(false), timeoutMs)),
-    ]);
-    if (closedByPlaywright) return;
-  } catch {
-    // Fall through to process kill if Playwright cannot close the app cleanly.
+    closed = await Promise.race([closing, new Promise<boolean>((resolve) => {
+      timer = setTimeout(() => resolve(false), timeoutMs);
+    })]);
+  } finally {
+    clearTimeout(timer);
   }
-
-  try {
-    app.process().kill('SIGKILL');
-  } catch {
-    // Ignore process kill failures during e2e teardown.
+  if (!closed) {
+    await killElectronProcessTree(app);
+    if (process.platform !== 'win32') {
+      try { launcher.kill('SIGKILL'); } catch { /* Main already exited */ }
+    }
   }
-
-  await killElectronProcessTree(app);
+  const nativePid = nativeElectronPids.get(app);
+  let mainExited = !nativePid && closed;
+  const until = Date.now() + timeoutMs;
+  while (nativePid && Date.now() < until) {
+    try { process.kill(nativePid, 0); }
+    catch (error) {
+      mainExited = (error as NodeJS.ErrnoException).code === 'ESRCH';
+      break;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 25));
+  }
+  // Chromium context closure can precede the Windows shell's exit. Reap that
+  // separate launcher so its pipe handles cannot keep the test worker alive.
+  if (launcher.exitCode === null) {
+    await new Promise<void>((resolve) => {
+      const done = () => { clearTimeout(timer); launcher.removeListener('exit', done); resolve(); };
+      timer = setTimeout(done, timeoutMs);
+      launcher.once('exit', done);
+      try { launcher.kill('SIGKILL'); } catch { done(); }
+    });
+  }
+  const launcherExited = launcher.exitCode !== null || launcher.signalCode !== null;
+  // Existing callers perform additional cleanup after this best-effort helper.
+  // Return confirmation for callers that require a strict process-exit verdict.
+  if (mainExited && launcherExited) closedElectronApps.add(app);
+  return { mainExited, launcherExited };
 }
 
 async function seedE2eSettings(userDataDir: string, theme?: LaunchElectronOptions['theme']): Promise<void> {
@@ -452,7 +448,17 @@ async function launchVerseClawElectron(
     }),
     timeout: 90_000,
   });
+  // process() is the shell launcher on Windows; retain the actual Main owner too.
+  electronLaunchers.set(app, app.process());
   await recordElectronProcess(userDataDir, app.process().pid);
+  try {
+    const nativePid = await app.evaluate(() => process.pid);
+    nativeElectronPids.set(app, nativePid);
+    if (app.process().pid !== nativePid) await recordElectronProcess(userDataDir, nativePid);
+  } catch (error) {
+    await closeElectronApp(app);
+    throw error;
+  }
   /*
    * The app's own output is otherwise swallowed, which makes a stalled turn
    * unattributable from the test side: the composer just goes idle and the
