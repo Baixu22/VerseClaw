@@ -309,6 +309,12 @@ async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000) {
   let closeSettled = false;
   try { closeSettled = await bounded(closing, 2_000, 'Playwright close after launcher exit'); }
   catch (error) { errors.push(String(error)); }
+  if (owned && processes.some(({ status }) => status === 'alive')) {
+    // A signalled Main can finish after the launcher's pipes close. Read the
+    // same identities again before deciding whether this close left survivors.
+    try { processes = await checkWindowsProcesses(owned.identities); }
+    catch (error) { errors.push(String(error)); }
+  }
   const launcherExited = Boolean(launcher && (launcher.exitCode !== null || launcher.signalCode !== null));
   const mainExited = process.platform === 'win32'
     ? Boolean(owned?.identities.length && processes.length === owned.identities.length
