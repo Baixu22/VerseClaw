@@ -1,0 +1,21 @@
+{
+  "extends": "../../../../tsconfig.node.json",
+  "compilerOptions": {
+    "rootDir": "../../../..",
+    "composite": false,
+    "noEmit": true,
+    "typeRoots": ["../../../../node_modules/@types"]
+  },
+  "files": [
+    "../../../../electron/services/resource-envelope.ts",
+    "../../../../electron/services/efficiency-orchestrator.ts",
+    "../../../../openclaw_runtime/src/agents/resource-leases.ts",
+    "../../../../openclaw_runtime/src/gateway/server/event-loop-health.ts",
+    "../../../../tests/unit/process-tree-sampler.test.ts",
+    "../../../../tests/unit/resource-envelope.test.ts",
+    "../../../../tests/unit/resource-metrics-calibration.test.ts",
+    "../../../../tests/unit/resource-metrics-owner.test.ts"
+  ],
+  "include": [],
+  "exclude": []
+}

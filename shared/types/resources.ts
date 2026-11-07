@@ -13,6 +13,42 @@
  */
 
 export const RESOURCE_ENVELOPE_SCHEMA = "openclaw.resource-envelope/v1" as const;
+export const RESOURCE_METRICS_TTL_MS = 30_000;
+
+export type ResourceProcessObservation = {
+  pid: number;
+  parentPid: number;
+  creationToken: string;
+  rssBytes: number;
+  /** Private committed bytes; unavailable on platforms without this counter. */
+  privateBytes: number | null;
+  cpuTimeMs: number;
+  cpuPercent: number | null;
+};
+
+export type ResourceProcessMeasurement = {
+  status: "ok" | "empty" | "unknown";
+  sampledAt: number;
+  ownerEpoch: string;
+  rootPids: number[];
+  processes: ResourceProcessObservation[];
+};
+
+export type ResourceProcessTotals = {
+  processCount: number;
+  rssBytes: number | null;
+  privateBytes: number | null;
+  cpuPercent: number | null;
+};
+
+export type ResourceEventLoopPressure = {
+  sampledAt: number;
+  ownerEpoch: string;
+  degraded: boolean;
+  delayP99Ms: number;
+  delayMaxMs: number;
+  utilization: number;
+};
 
 export type ResourceKind =
   | "agent-turn"
@@ -63,6 +99,7 @@ export type ResourceEnvelopeEntry = {
   treeRssBytes: number;
   treeCpuPercent: number;
   pids?: number[];
+  processMeasurement?: ResourceProcessMeasurement;
   limits: ResourceLimits;
   limitHistory?: ResourceLimitEvent[];
   updatedAt: number;
@@ -98,15 +135,20 @@ export type ResourceEnvelopeSnapshot = {
   totals: ResourceEnvelopeTotals;
   exceeded: ResourceEnvelopeExceeded[];
   warnings: string[];
+  producer?: { pid: number; epoch: string; creationToken?: string };
+  processTotals?: ResourceProcessTotals;
+  machineMemory?: { sampledAt: number; availablePhysicalBytes: number; totalPhysicalBytes: number };
+  eventLoopPressure?: ResourceEventLoopPressure;
 };
 
 export type BackgroundWorkPriority = "foreground" | "background";
-export type BackgroundWorkDeferReason = "shed-signal" | "queue-depth" | "tree-rss" | "tree-cpu";
+export type BackgroundWorkDeferReason = "shed-signal" | "queue-depth" | "tree-rss" | "tree-cpu" | "event-loop";
 export type BackgroundWorkGateInput = {
   shedSignal?: boolean;
   queueDepth?: number;
   treeRssBytes?: number;
   treeCpuPercent?: number;
+  eventLoopDegraded?: boolean;
 };
 export type BackgroundWorkGateState = {
   deferring: boolean;

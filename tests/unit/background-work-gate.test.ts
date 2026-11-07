@@ -7,6 +7,14 @@ function clock(start = 1_000) {
 }
 
 describe("background work gate", () => {
+  it('requires recovery evidence for every original pressure cause', () => {
+    const time = clock();
+    const gate = new BackgroundWorkGate({ now: time.now, watermarks: { minDwellMs: 0 } });
+    gate.update({ treeRssBytes: 4 * 1024 ** 3, treeCpuPercent: 400, eventLoopDegraded: true });
+    expect(gate.update({ treeRssBytes: 0, treeCpuPercent: 150 }).deferring).toBe(true);
+    expect(gate.update({ treeRssBytes: 0, eventLoopDegraded: false }).deferring).toBe(true);
+    expect(gate.update({ treeRssBytes: 0, treeCpuPercent: 10, eventLoopDegraded: false }).deferring).toBe(false);
+  });
   it("defers background work and resumes after low watermark plus dwell", async () => {
     const time = clock();
     const gate = new BackgroundWorkGate({

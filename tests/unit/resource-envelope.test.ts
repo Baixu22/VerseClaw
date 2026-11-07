@@ -35,7 +35,7 @@ function snapshot(owner: string, activeSlots: number): ResourceEnvelopeSnapshot 
     treeRssBytes: 0,
     treeCpuPercent: 0,
   });
-  return ledger.snapshot(1_000);
+  return { ...ledger.snapshot(1_000), producer: { pid: owner === 'main' ? 10 : 20, epoch: owner } };
 }
 
 describe("resource envelope shadow ledger", () => {
@@ -99,5 +99,20 @@ describe("resource envelope shadow ledger", () => {
     expect(readMergedResourceEnvelopeSnapshot({ gatewayPath: file, now: 5_000 }).warnings).toEqual([
       "gateway resource-envelope snapshot unavailable",
     ]);
+  });
+
+  it('rejects malformed identity metrics and mismatched producer epochs', () => {
+    const root = mkdtempSync(join(tmpdir(), 'clawx-invalid-metrics-'));
+    roots.push(root);
+    const file = join(root, 'gateway.json');
+    const valid = snapshot('gateway', 1);
+    const original = valid.entries[0]!;
+    for (const measurement of [
+      { status: 'ok', sampledAt: 1000, ownerEpoch: 'wrong', rootPids: [20], processes: [] },
+      { status: 'ok', sampledAt: 1000, ownerEpoch: 'gateway', rootPids: [20], processes: [{ pid: 20, parentPid: 1, creationToken: '', rssBytes: -1, cpuTimeMs: 0, privateBytes: null, cpuPercent: null }] },
+    ]) {
+      writeFileSync(file, JSON.stringify({ ...valid, entries: [{ ...original, processMeasurement: measurement }] }));
+      expect(readResourceEnvelopeSnapshot(file)).toBeNull();
+    }
   });
 });

@@ -21,7 +21,7 @@ import path from "node:path";
 import { checkResourceWait, watchResourceWait, resourceQueueFullError, type ResourceWaitOptions } from "../../../shared/resources/wait.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { getResourceEnvelopeLedger, type ResourceKind } from "../resources/resource-envelope.js";
-import { readProcessTreeSample } from "../process/process-tree-sampler.js";
+import { ProcessTreeSampler } from "../process/process-tree-sampler.js";
 import { resourceEnvelopeSnapshotPath, writeResourceEnvelopeSnapshot } from "../resources/resource-envelope-snapshot-store.js";
 
 export type ResourceLeaseKind =
@@ -48,7 +48,9 @@ export type ResourceLeaseOptions = ResourceWaitOptions & {
 
 const DEFAULT_ACQUIRE_TIMEOUT_MS = 30_000;
 let snapshotWriteTimer: ReturnType<typeof setTimeout> | null = null;
+let snapshotWriteInFlight = false;
 let lastResourceEnvelopeSnapshotAt = 0;
+const processTreeSampler = new ProcessTreeSampler();
 
 function resourceKindForLease(kind: ResourceLeaseKind): ResourceKind {
   switch (kind) {
@@ -66,17 +68,17 @@ function resourceKindForLease(kind: ResourceLeaseKind): ResourceKind {
 }
 
 function scheduleResourceEnvelopeSnapshotWrite(): void {
-  if (process.env.OPENCLAW_RESOURCE_ENVELOPE_WRITE !== "1" || snapshotWriteTimer) return;
+  if (process.env.OPENCLAW_RESOURCE_ENVELOPE_WRITE !== "1" || snapshotWriteTimer || snapshotWriteInFlight) return;
   const delayMs = Math.max(0, 5_000 - (Date.now() - lastResourceEnvelopeSnapshotAt));
   snapshotWriteTimer = setTimeout(() => {
     snapshotWriteTimer = null;
+    snapshotWriteInFlight = true;
     lastResourceEnvelopeSnapshotAt = Date.now();
     void (async () => {
       try {
         const ledger = getResourceEnvelopeLedger();
-        const sample = await readProcessTreeSample({ rootPids: [process.pid] });
-        if (sample.status === "ok") {
-          ledger.update({
+        const sample = await processTreeSampler.sample({ rootPids: [process.pid] });
+        ledger.update({
             id: "gateway:process-tree",
             workspaceKey: process.cwd(),
             kind: "runtime-bash",
@@ -89,15 +91,17 @@ function scheduleResourceEnvelopeSnapshotWrite(): void {
             treeRssBytes: sample.treeRssBytes ?? 0,
             treeCpuPercent: sample.treeCpuPercent ?? 0,
             pids: sample.rootPids,
+            processMeasurement: { status: sample.status, sampledAt: sample.sampledAt, ownerEpoch: ledger.ownerEpoch, rootPids: sample.rootPids, processes: sample.processes ?? [] },
             reason: "gateway process tree sample",
           });
-        }
         writeResourceEnvelopeSnapshot(
           ledger.snapshot(),
           resourceEnvelopeSnapshotPath("gateway"),
         );
       } catch {
         // Shadow snapshots are best-effort and never affect lease admission.
+      } finally {
+        snapshotWriteInFlight = false;
       }
     })();
   }, delayMs);

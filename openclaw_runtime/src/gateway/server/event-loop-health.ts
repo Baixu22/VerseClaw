@@ -1,5 +1,7 @@
 // Event-loop health monitor samples delay, utilization, and CPU pressure for gateway readiness snapshots.
 import { monitorEventLoopDelay, performance } from "node:perf_hooks";
+import { getResourceEnvelopeLedger } from "../../resources/resource-envelope.js";
+import { writeResourceEnvelopeSnapshot } from "../../resources/resource-envelope-snapshot-store.js";
 
 const EVENT_LOOP_MONITOR_RESOLUTION_MS = 20;
 const EVENT_LOOP_DELAY_WARN_MS = 1_000;
@@ -162,10 +164,20 @@ export function createGatewayEventLoopHealthMonitor(
       lastCpuUsage = readCpuUsage();
       lastEventLoopUtilization = currentEventLoopUtilization;
       lastSnapshot = snapshot;
+      const ledger = getResourceEnvelopeLedger();
+      ledger.recordEventLoopPressure({
+        sampledAt: now, degraded: snapshot.degraded, delayP99Ms, delayMaxMs, utilization,
+      });
+      // Reuse the existing opt-in snapshot channel even when no lease changes.
+      if (process.env.OPENCLAW_RESOURCE_ENVELOPE_WRITE === "1") {
+        try { writeResourceEnvelopeSnapshot(ledger.snapshot(now)); }
+        catch { /* Diagnostics must not fail readiness. */ }
+      }
 
       return snapshot;
     },
     stop: () => {
+      getResourceEnvelopeLedger().recordEventLoopPressure(undefined);
       monitor?.disable();
       monitor = null;
       lastWallAt = 0;

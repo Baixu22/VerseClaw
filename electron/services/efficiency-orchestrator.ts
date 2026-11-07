@@ -53,7 +53,6 @@ function getOrCreate(): { sampler: EfficiencySampler; policy: EfficiencyPowerPol
  * because the cost is a single unref'd 5s timer and one cheap counter read.
  */
 function startBackgroundWorkGate(
-  activeSampler: EfficiencySampler,
   activePolicy: EfficiencyPowerPolicy,
 ): void {
   if (backgroundGateUnregister) return;
@@ -61,13 +60,14 @@ function startBackgroundWorkGate(
     if (backgroundGateInFlight) return;
     backgroundGateInFlight = true;
     try {
-      const summary = activeSampler.getSummary();
       const snapshot = await getAggregatedResourceEnvelopeSnapshot();
-      const latest = summary.latest;
+      const physical = snapshot.processTotals;
       getBackgroundWorkGate().update({
         shedSignal: activePolicy.shedding,
         queueDepth: snapshot.totals.queuedCount,
-        ...(latest ? { treeRssBytes: snapshot.totals.treeRssBytes, treeCpuPercent: latest.cpuPercent } : {}),
+        ...(physical?.rssBytes != null ? { treeRssBytes: physical.rssBytes } : {}),
+        ...(physical?.cpuPercent != null ? { treeCpuPercent: physical.cpuPercent } : {}),
+        ...(snapshot.eventLoopPressure ? { eventLoopDegraded: snapshot.eventLoopPressure.degraded } : {}),
       });
     } catch (error) {
       logger.warn('[efficiency] background work gate update failed', error);
@@ -89,7 +89,7 @@ export function startRuntimeEfficiency(): void {
 
   activeSampler.start();
   started = true;
-  startBackgroundWorkGate(activeSampler, activePolicy);
+  startBackgroundWorkGate(activePolicy);
   logger.info('[efficiency] runtime efficiency sampling started', {
     intervalMs: 5000,
     platform: process.platform,

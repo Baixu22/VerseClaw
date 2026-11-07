@@ -1,24 +1,29 @@
 import process from "node:process";
+import { freemem, totalmem } from 'node:os';
 import { getResourceEnvelopeLedger, type ResourceEnvelopeSnapshot } from '../../openclaw_runtime/src/resources/resource-envelope';
 import {
   readMergedResourceEnvelopeSnapshot,
   resourceEnvelopeSnapshotPath,
 } from '../../openclaw_runtime/src/resources/resource-envelope-snapshot-store';
-import { readProcessTreeSample } from '../../openclaw_runtime/src/process/process-tree-sampler';
+import { ProcessTreeSampler } from '../../openclaw_runtime/src/process/process-tree-sampler';
 import type { ProcessTreeSample } from '../../openclaw_runtime/src/process/process-tree-sampler';
 
 let cachedMainTreeSample: ProcessTreeSample | null = null;
 let cachedMainTreeSampleAt = 0;
+const mainTreeSampler = new ProcessTreeSampler();
+let mainTreeInFlight: Promise<ProcessTreeSample> | null = null;
 
 async function readMainProcessTreeSample(): Promise<ProcessTreeSample> {
   const now = Date.now();
-  if (cachedMainTreeSample && now - cachedMainTreeSampleAt < 30_000) {
+  if (cachedMainTreeSample && now >= cachedMainTreeSampleAt && now - cachedMainTreeSampleAt < 30_000) {
     return cachedMainTreeSample;
   }
-  const sample = await readProcessTreeSample({ rootPids: [process.pid] });
-  cachedMainTreeSample = sample;
-  cachedMainTreeSampleAt = now;
-  return sample;
+  mainTreeInFlight ??= mainTreeSampler.sample({ rootPids: [process.pid] }).then(sample => {
+    cachedMainTreeSample = sample;
+    cachedMainTreeSampleAt = sample.sampledAt;
+    return sample;
+  }).finally(() => { mainTreeInFlight = null; });
+  return mainTreeInFlight;
 }
 export function recordResourceEnvelopeEntry(
   entry: Parameters<ReturnType<typeof getResourceEnvelopeLedger>["update"]>[0],
@@ -38,8 +43,7 @@ export async function getMainResourceEnvelopeSnapshot(): Promise<ResourceEnvelop
   const warnings: string[] = [];
   try {
     const sample = await readMainProcessTreeSample();
-    if (sample.status === 'ok') {
-      ledger.update({
+    ledger.update({
         id: 'main:process-tree',
         workspaceKey: process.cwd(),
         kind: 'agent-turn',
@@ -52,15 +56,20 @@ export async function getMainResourceEnvelopeSnapshot(): Promise<ResourceEnvelop
         treeRssBytes: sample.treeRssBytes ?? 0,
         treeCpuPercent: sample.treeCpuPercent ?? 0,
         pids: sample.rootPids,
+        processMeasurement: { status: sample.status, sampledAt: sample.sampledAt, ownerEpoch: ledger.ownerEpoch, rootPids: sample.rootPids, processes: sample.processes ?? [] },
         reason: 'main process tree sample',
       });
-    } else {
+    if (sample.status !== 'ok') {
       warnings.push(`main process tree sample unavailable: ${sample.detail ?? sample.status}`);
     }
   } catch (error) {
+    const previous = ledger.get('main:process-tree');
+    if (previous?.processMeasurement) ledger.update({ ...previous, processMeasurement: { ...previous.processMeasurement, status: 'unknown' } });
     warnings.push(`main process tree sample failed: ${error instanceof Error ? error.message : String(error)}`);
   }
-  return ledger.snapshot(Date.now(), warnings);
+  const snapshot = ledger.snapshot(Date.now(), warnings);
+  snapshot.machineMemory = { sampledAt: Date.now(), availablePhysicalBytes: freemem(), totalPhysicalBytes: totalmem() };
+  return snapshot;
 }
 
 export async function getAggregatedResourceEnvelopeSnapshot(): Promise<ResourceEnvelopeSnapshot> {
