@@ -42,7 +42,8 @@ test('integrated main and browser windows retain visibility, observers and backg
     expect(terminal.success).toBe(true);
     const heartbeat = join(root, 'heartbeat.txt'); const script = join(root, 'heartbeat.cjs');
     await writeFile(script, `setInterval(() => require('node:fs').appendFileSync(${JSON.stringify(heartbeat)}, 'x'), 400);`);
-    await invoke(page, 'terminal', 'write', { sessionId: terminal.sessionId, data: `& '${process.execPath.replaceAll("'", "''")}' '${script.replaceAll("'", "''")}'\r` });
+    // TerminalSessionManager uses COMSPEC on Windows.
+    await invoke(page, 'terminal', 'write', { sessionId: terminal.sessionId, data: `"${process.execPath}" "${script}"\r` });
     const size = async () => (await readFile(heartbeat).catch(() => Buffer.alloc(0))).length;
     await expect.poll(size).toBeGreaterThan(0);
     await invoke(page, 'efficiency', 'setEnabled', { enabled: false });
