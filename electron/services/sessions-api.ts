@@ -6,7 +6,7 @@ import type { RawMessage } from '@shared/chat/types';
 import type { AgentReasoningEffort } from '@shared/types/agent';
 import type { GitRepositoryStatus } from '@shared/types/git';
 import type { ObservabilityTrace } from '@shared/types/observability';
-import type { TaskLedgerNode, TaskLedgerSnapshot } from '@shared/types/task-ledger';
+import type { TaskLedgerEventInput, TaskLedgerNode, TaskLedgerSessionLink, TaskLedgerSnapshot } from '@shared/types/task-ledger';
 import { getOpenClawConfigDir } from '../utils/paths';
 import { logger } from '../utils/logger';
 import { resolveHostOpenClawStateDir } from './knowledge-api';
@@ -112,6 +112,38 @@ async function readHandoffDecision(sessionKey: string, workspaceId: string | nul
   const snapshot = await loadTaskLedgerSnapshot(workspaceId);
   if (snapshot.warnings.length) throw new Error('Handoff ancestry unavailable: Task Ledger contains unreadable events');
   return evaluateHandoffDerivation({ links: snapshot.sessionLinks, sessionKey, ...resolveConfiguredHandoffPolicy() });
+}
+
+async function readDerivationTaskIds(
+  snapshot: TaskLedgerSnapshot,
+  sourceSessionKey: string,
+  gatewayManager?: GatewayManager,
+): Promise<string[]> {
+  if (snapshot.warnings.length) throw new Error('Task scope unavailable: Task Ledger contains unreadable events');
+  const taskIds = new Set(snapshot.nodes.filter((node) => node.kind === 'task').map((node) => node.id));
+  const links = snapshot.sessionLinks.filter((link) =>
+    link.sessionKey === sourceSessionKey && link.nodeId && taskIds.has(link.nodeId),
+  );
+  let generation: string | null = null;
+  if (links.some((link) => link.sessionGeneration)) {
+    if (!gatewayManager) throw new Error('Task scope unavailable: source generation cannot be verified');
+    const result = await gatewayManager.rpc<{ session?: { sessionId?: string } }>(
+      'sessions.describe', { key: sourceSessionKey }, 15_000,
+    );
+    generation = result.session?.sessionId?.trim() || null;
+    if (!generation) throw new Error('Task scope unavailable: source session generation is missing');
+  }
+  return [...new Set(links
+    .filter((link) => !link.sessionGeneration || link.sessionGeneration === generation)
+    .map((link) => link.nodeId!))];
+}
+
+function sessionDerivationEvents(link: TaskLedgerSessionLink, taskNodeIds: string[]): TaskLedgerEventInput[] {
+  return [link, ...taskNodeIds.map((nodeId) => ({ ...link, id: `${link.id}:task:${nodeId}`, nodeId }))]
+    .map((sessionLink) => ({
+      type: 'session_linked', actor: 'system', sessionId: link.sessionKey,
+      payload: { sessionLink },
+    }));
 }
 
 const SAFE_SESSION_SEGMENT = /^[A-Za-z0-9][A-Za-z0-9_-]*$/;
@@ -2865,6 +2897,9 @@ export function createSessionsApi(ctx: {
         if (typeof payload.draftInput !== 'string' || !payload.draftInput.trim()) throw new Error('Handoff draft cannot be empty');
         const decision = await readHandoffDecision(sourceSessionKey, workspaceId);
         if (!decision.allow) return { success: false, error: decision.error };
+        const taskNodeIds = await readDerivationTaskIds(
+          await loadTaskLedgerSnapshot(workspaceId), sourceSessionKey, ctx.gatewayManager,
+        );
         // The sidebar detects fresh sessions with /:session-\d/, so keep the
         // timestamp prefix and use a short UUID only as the collision-resistant suffix.
         const sessionKey = `agent:${agentId}:session-${Date.now()}-${randomUUID().slice(0, 8)}`;
@@ -2878,13 +2913,11 @@ export function createSessionsApi(ctx: {
         };
         // Persist lineage before activating the session. A failed workspace update can leave
         // an unused lineage record, but cannot activate an untracked session or reset depth.
-        await appendTaskLedgerEvents(workspaceId, [{
-          type: 'session_linked', actor: 'system', sessionId: sessionKey,
-          payload: { sessionLink: {
-            id, sessionKey, agentId, relation: 'handoff_from', sourceSessionKey,
-            ...lineage, createdAt: new Date().toISOString(),
-          } },
-        }], `handoff:${sourceSessionKey}:${sessionKey}`);
+        await appendTaskLedgerEvents(workspaceId, sessionDerivationEvents({
+          id, sessionKey, agentId, relation: 'handoff_from', sourceSessionKey,
+          sessionGeneration: null,
+          ...lineage, createdAt: new Date().toISOString(),
+        }, taskNodeIds), `handoff:${sourceSessionKey}:${sessionKey}`);
         if (workspaceId) {
           await createWorkspacesApi(ctx).update({
             id: workspaceId, agentId, activeSessionKey: sessionKey, sessionKey,
@@ -2925,6 +2958,8 @@ export function createSessionsApi(ctx: {
           warnings: ['gateway_unavailable'],
         };
       }
+      const taskSnapshot = await loadTaskLedgerSnapshot(workspaceId);
+      const taskNodeIds = await readDerivationTaskIds(taskSnapshot, sessionKey, ctx.gatewayManager);
       const result = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.fork', {
         key: sessionKey,
         ...(agentId ? { agentId } : {}),
@@ -2945,6 +2980,24 @@ export function createSessionsApi(ctx: {
           forkedFromParent: result.forkedFromParent === true,
         };
       }
+      if (sourceSessionKey !== sessionKey) {
+        taskNodeIds.push(...await readDerivationTaskIds(taskSnapshot, sourceSessionKey, ctx.gatewayManager));
+      }
+      const entry = isRecord(result.entry) ? result.entry : undefined;
+      const generation = typeof result.sessionId === 'string' ? result.sessionId.trim()
+        : typeof entry?.sessionId === 'string' ? entry.sessionId.trim() : null;
+      if (taskNodeIds.length && !generation) {
+        return {
+          success: false, sourceSessionKey, sessionKey: nextSessionKey, agentId, workspaceId,
+          error: 'Task scope unavailable: fork session generation is missing',
+          warnings: ['fork_task_scope_unavailable'],
+        };
+      }
+      await appendTaskLedgerEvents(workspaceId, sessionDerivationEvents({
+        id: randomUUID(), sessionKey: nextSessionKey, agentId,
+        relation: 'forked_from', sourceSessionKey, sessionGeneration: generation || null,
+        createdAt: new Date().toISOString(),
+      }, [...new Set(taskNodeIds)]), `session-fork:${sourceSessionKey}:${nextSessionKey}`);
       return {
         success: true,
         sourceSessionKey,

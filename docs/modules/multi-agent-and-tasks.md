@@ -294,6 +294,8 @@ Task Ledger 拥有用户可见任务事实、review flags、history 和 Task Loo
 没有显式 task link、link 属于旧 generation、task 跨 workspace 或 task 缺失时，执行准入 fail closed。
 `sessions.delegate` 在调用 Gateway 前通过 Main 默认解析器读取 Task Ledger，按 session、taskRef 和 generation 匹配链接；同会话的其他任务链接不会遮挡当前请求。
 Fork 只获得只读 task 引用，不继承父会话写 claim；Handoff 需要重新绑定当前 generation。
+Main 在 fork/handoff 时把同 workspace、同源会话的显式业务 task 链接写入派生会话；重复链接只保留一份，turn check、缺失任务和旧 generation 链接不继承，任务完成状态保持原值。
+Fork 链接记录 Gateway 返回的新 generation，协调器仍需单独准入；Handoff 尚未创建运行时会话时 generation 为空，由协调器 owner 在会话建立后解析。
 
 ## 12. Task Ledger Working Context
 
