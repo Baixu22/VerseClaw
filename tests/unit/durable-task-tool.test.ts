@@ -65,6 +65,10 @@ describe("agent-facing production task tool", () => {
           .state,
       ).toBe("done");
       const s = new TaskSystemStore(resolveTaskDomain(root));
+      expect(
+        ((await call({ action: "accept", candidate: "calculation-v1" })) as TaskView).contract
+          .state,
+      ).toBe("done");
       try {
         expect(s.get(claimed.contract.taskNodeId).contract.state).toBe("done");
       } finally {

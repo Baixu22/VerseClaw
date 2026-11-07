@@ -191,7 +191,17 @@ export async function taskSystemCommand(
           command.expectedSha256,
           command.candidate,
         );
-      if (command.action === "accept") return scoped.accept(credential, command.candidate);
+      if (command.action === "accept") {
+        if(!gateway)throw new Error('TASK_VERIFIER_OWNER_UNAVAILABLE');
+        const receipt=await gateway.rpc<{success:boolean;task?:TaskView}>('tasks.contract.accept',{workspaceDir:current.worktree,credential,candidate:command.candidate},30_000);
+        if(!receipt.success||!receipt.task)throw new Error('TASK_ACCEPTANCE_RECEIPT_MISSING');
+        return receipt.task;
+      }
+      if(command.action==='cancel'){
+        const cancelled=scoped.control(credential,'cancel');
+        if(cancelled.contract.state==='cancelling'&&gateway)await gateway.rpc('sessions.stop',{key:credential.sessionKey},20_000);
+        return scoped.get(credential.taskNodeId);
+      }
       return scoped.control(credential, command.action);
     } finally {
       scoped.close();

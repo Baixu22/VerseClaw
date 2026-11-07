@@ -51,7 +51,12 @@ export function normalizeTaskContract(input: TaskContractInput): TaskContractInp
       (!verification.path || !/^[a-f0-9]{64}$/.test(verification.sha256))
     )
       throw new Error("TASK_INVALID_FILE_CRITERION");
-    if (verification.kind === "owner-receipt") text(verification.owner, "VERIFICATION_OWNER", 200);
+    if (verification.kind === "owner-receipt") {
+      text(verification.owner, "VERIFICATION_OWNER", 200);
+      if (verification.requires !== undefined)
+        strings(verification.requires, "VERIFIER_REQUIREMENTS");
+      if (verification.files !== undefined) strings(verification.files, "VERIFIER_FILES");
+    }
     if (verification.kind === "tool-result") {
       if (verification.tool !== "exec" || !Number.isInteger(verification.exitCode))
         throw new Error("TASK_INVALID_TOOL_CRITERION");
@@ -281,6 +286,8 @@ export class TaskSystemStore {
         ) as { id: string } | undefined;
         if (row) {
           const existing = this.get(row.id);
+          if (existingNodeId && existingNodeId !== row.id)
+            throw new Error("TASK_ADOPTION_DUPLICATE_REQUIRES_LINK");
           if (key && existing.contract.digest !== fingerprint)
             throw new Error("TASK_BUSINESS_KEY_CONTRACT_CONFLICT");
           return { kind: "duplicate", task: existing };
@@ -435,12 +442,25 @@ export class TaskSystemStore {
         JSON.stringify(delegation),
       );
   }
-  worktreeTaskReferences(worktree:string):string[]{
-    const root=canonicalPath(worktree);
-    const rows=this.db.prepare("SELECT c.id,cl.json AS claim FROM task_contracts c LEFT JOIN task_claims cl ON cl.task_id=c.id WHERE c.state NOT IN ('done','cancelled')").all() as Array<{id:string;claim:string|null}>;
-    const ids=new Set(rows.filter(row=>row.claim&&(JSON.parse(row.claim) as TaskClaim).worktree===root).map(row=>row.id));
-    for(const row of this.db.prepare("SELECT d.json FROM task_writer_delegations d JOIN task_contracts c ON c.id=d.task_id WHERE c.state NOT IN ('done','cancelled')").all() as Row[]){
-      const d=JSON.parse(row.json) as TaskWriterDelegation;if(d.childWorktree===root||d.parentWorktree===root)ids.add(d.taskNodeId);
+  worktreeTaskReferences(worktree: string): string[] {
+    const root = canonicalPath(worktree);
+    const rows = this.db
+      .prepare(
+        "SELECT c.id,cl.json AS claim FROM task_contracts c LEFT JOIN task_claims cl ON cl.task_id=c.id WHERE c.state NOT IN ('done','cancelled')",
+      )
+      .all() as Array<{ id: string; claim: string | null }>;
+    const ids = new Set(
+      rows
+        .filter((row) => row.claim && (JSON.parse(row.claim) as TaskClaim).worktree === root)
+        .map((row) => row.id),
+    );
+    for (const row of this.db
+      .prepare(
+        "SELECT d.json FROM task_writer_delegations d JOIN task_contracts c ON c.id=d.task_id WHERE c.state NOT IN ('done','cancelled')",
+      )
+      .all() as Row[]) {
+      const d = JSON.parse(row.json) as TaskWriterDelegation;
+      if (d.childWorktree === root || d.parentWorktree === root) ids.add(d.taskNodeId);
     }
     return [...ids];
   }
@@ -483,7 +503,11 @@ export class TaskSystemStore {
         return prior;
       }
       const view = this.assertOwner(parent);
-      if (view.contract.state !== "doing") throw new Error("TASK_EXECUTION_NOT_RUNNING");
+      if (
+        view.contract.state !== "doing" &&
+        !(input.mode === "observer" && view.contract.state === "review")
+      )
+        throw new Error("TASK_EXECUTION_NOT_RUNNING");
       if (this.binding(input.childSessionKey)) throw new Error("TASK_SESSION_ALREADY_BOUND");
       const pending = this.db
         .prepare(
@@ -536,6 +560,8 @@ export class TaskSystemStore {
         mode: input.mode,
         phase: "prepared",
         dispatchOperationIds: input.mode === "writer" ? pending.map((op) => op.id) : [],
+        contractRevision: view.contract.revision,
+        candidateArtifacts: input.mode === "observer" ? this.candidateArtifacts(parent) : undefined,
       };
       if (input.mode === "writer") {
         for (const op of pending)
@@ -591,6 +617,13 @@ export class TaskSystemStore {
         throw new Error("TASK_DELEGATION_TERMINAL_MISMATCH");
       if (d.phase === "returned") return d;
       const view = this.get(d.taskNodeId);
+      if (view.contract.state === "cancelling" && !view.pendingOperations) {
+        this.settleCancellation(d.taskNodeId);
+        d.phase = "returned";
+        d.terminalReceipt = receipt;
+        this.saveWriterDelegation(d);
+        return d;
+      }
       const parentBinding = this.db
         .prepare("SELECT task_id FROM task_bindings WHERE session_key=?")
         .get(d.parent.sessionKey) as { task_id: string } | undefined;
@@ -648,6 +681,14 @@ export class TaskSystemStore {
   control(credential: TaskCredential, action: "renew" | "pause" | "release" | "cancel"): TaskView {
     return this.transaction(() => {
       const view = this.assertOwner(credential, action !== "renew");
+      if (action === "cancel" && view.pendingOperations) {
+        this.saveContract({ ...view.contract, state: "cancelling", updatedAt: this.now() });
+        this.event(credential.taskNodeId, "cancel_requested", {
+          epoch: credential.epoch,
+          pendingOperations: view.pendingOperations,
+        });
+        return this.get(credential.taskNodeId);
+      }
       if (action !== "renew" && view.pendingOperations) throw new Error("TASK_OPERATIONS_PENDING");
       const claim = view.claim!;
       if (action === "renew") this.saveClaim({ ...claim, expiresAt: this.now() + LEASE_MS });
@@ -919,7 +960,16 @@ export class TaskSystemStore {
         this.db
           .prepare("INSERT OR REPLACE INTO task_operation_handles VALUES(?,?,?)")
           .run(operationId, background.handle, JSON.stringify(background));
+      this.settleCancellation(credential.taskNodeId);
     });
+  }
+  private settleCancellation(taskNodeId: string): void {
+    const view = this.get(taskNodeId);
+    if (view.contract.state !== "cancelling" || view.pendingOperations || !view.claim) return;
+    this.saveContract({ ...view.contract, state: "cancelled", updatedAt: this.now() });
+    this.saveClaim({ ...view.claim, state: "released", epoch: view.claim.epoch + 1 });
+    this.db.prepare("DELETE FROM task_bindings WHERE task_id=?").run(taskNodeId);
+    this.event(taskNodeId, "cancelled", { reason: "owned-operations-settled" });
   }
   reconcileProcessResult(credential: TaskCredential, result: unknown): void {
     const details = (
@@ -957,7 +1007,9 @@ export class TaskSystemStore {
           exitCode: details.exitCode,
         });
       });
-      this.recordToolVerification(credential, "exec", handle.params, result, handle.inputs);
+      this.transaction(() => this.settleCancellation(credential.taskNodeId));
+      if (this.get(credential.taskNodeId).contract.state !== "cancelled")
+        this.recordToolVerification(credential, "exec", handle.params, result, handle.inputs);
     }
   }
   submit(credential: TaskCredential, candidate: string): TaskView {
@@ -1059,6 +1111,146 @@ export class TaskSystemStore {
         : [],
     );
   }
+  candidateArtifacts(credential: TaskCredential): Array<{ path: string; sha256: string }> {
+    const view = this.assertOwner(credential);
+    const paths = view.contract.acceptance.flatMap((c) =>
+      c.verification.kind === "file-sha256"
+        ? [c.verification.path]
+        : c.verification.kind === "tool-result"
+          ? c.verification.files
+          : (c.verification.files ?? []),
+    );
+    return [...new Set(paths)].sort().map((p) => this.hashWorkspaceFile(p));
+  }
+  getTaskEvidence(taskNodeId: string): TaskEvidence[] {
+    this.get(taskNodeId);
+    return (
+      this.db
+        .prepare("SELECT json FROM task_evidence WHERE task_id=? ORDER BY rowid")
+        .all(taskNodeId) as Row[]
+    ).map((row) => JSON.parse(row.json) as TaskEvidence);
+  }
+  replayCompletedTask(
+    taskNodeId: string,
+    sessionKey: string,
+    generation: string,
+    candidate: string,
+  ): TaskView {
+    const view = this.get(taskNodeId);
+    const claim = view.claim;
+    const submitted = this.db
+      .prepare("SELECT epoch FROM task_submissions WHERE task_id=?")
+      .get(taskNodeId) as { epoch: number } | undefined;
+    if (
+      view.contract.state !== "done" ||
+      !claim ||
+      !submitted ||
+      claim.sessionKey !== sessionKey ||
+      claim.generation !== generation
+    )
+      throw new Error("TASK_COMPLETION_REPLAY_MISMATCH");
+    return this.accept({ ...claim, epoch: submitted.epoch }, candidate);
+  }
+  validatedEvidence(
+    credential: TaskCredential,
+    candidate: string,
+    criterionIds?: string[],
+  ): TaskEvidence[] {
+    const view = this.assertOwner(credential);
+    const receipts = this.getTaskEvidence(credential.taskNodeId).toReversed();
+    return view.contract.acceptance
+      .filter((c) => !criterionIds || criterionIds.includes(c.id))
+      .map((criterion) => {
+        const receipt = receipts.find(
+          (r) =>
+            r.criterionId === criterion.id &&
+            r.revision === view.contract.revision &&
+            r.epoch === credential.epoch &&
+            (r.candidate === candidate ||
+              (criterion.verification.kind === "tool-result" &&
+                r.verifier === "runtime-tool-owner")),
+        );
+        if (!receipt)
+          throw new Error(
+            criterion.verification.kind === "owner-receipt"
+              ? "TASK_OWNER_VERIFIER_REQUIRED"
+              : `TASK_EVIDENCE_MISSING:${criterion.id}`,
+          );
+        if (
+          criterion.verification.kind === "owner-receipt" &&
+          (!receipt.ownerProof || receipt.verifier !== `owner:${criterion.verification.owner}`)
+        )
+          throw new Error("TASK_OWNER_VERIFIER_REQUIRED");
+        if (this.hashWorkspaceFile(receipt.path).sha256 !== receipt.sha256)
+          throw new Error("TASK_EVIDENCE_STALE");
+        for (const a of receipt.inputArtifacts ?? [])
+          if (this.hashWorkspaceFile(a.path).sha256 !== a.sha256)
+            throw new Error("TASK_EVIDENCE_STALE");
+        return receipt;
+      });
+  }
+  recordOwnerEvidence(
+    credential: TaskCredential,
+    criterionId: string,
+    candidate: string,
+    proof: {
+      owner: string;
+      verifierReceiptId: string;
+      effectReceiptId: string;
+      evidenceDigest: string;
+      proposalDigest?: string;
+      artifacts: Array<{ path: string; sha256: string }>;
+    },
+  ): TaskEvidence {
+    return this.transaction(() => {
+      const view = this.assertOwner(credential);
+      const criterion = view.contract.acceptance.find((c) => c.id === criterionId);
+      if (
+        criterion?.verification.kind !== "owner-receipt" ||
+        criterion.verification.owner !== proof.owner ||
+        !proof.artifacts.length
+      )
+        throw new Error("TASK_OWNER_EVIDENCE_SCOPE_MISMATCH");
+      for (const a of proof.artifacts)
+        if (this.hashWorkspaceFile(a.path).sha256 !== a.sha256)
+          throw new Error("TASK_EVIDENCE_STALE");
+      const receipt: TaskEvidence = {
+        receiptId: proof.verifierReceiptId,
+        taskNodeId: credential.taskNodeId,
+        revision: view.contract.revision,
+        epoch: credential.epoch,
+        candidate,
+        criterionId,
+        path: proof.artifacts[0].path,
+        sha256: proof.artifacts[0].sha256,
+        inputArtifacts: proof.artifacts,
+        verifier: `owner:${proof.owner}`,
+        ownerProof: {
+          verifierReceiptId: proof.verifierReceiptId,
+          effectReceiptId: proof.effectReceiptId,
+          evidenceDigest: proof.evidenceDigest,
+          proposalDigest: proof.proposalDigest,
+        },
+        createdAt: this.now(),
+      };
+      const old = this.read<TaskEvidence>(
+        "SELECT json FROM task_evidence WHERE id=?",
+        receipt.receiptId,
+      );
+      if (old) {
+        if (
+          JSON.stringify({ ...old, createdAt: 0 }) !== JSON.stringify({ ...receipt, createdAt: 0 })
+        )
+          throw new Error("TASK_OWNER_RECEIPT_CONFLICT");
+        return old;
+      }
+      this.db
+        .prepare("INSERT INTO task_evidence VALUES(?,?,?)")
+        .run(receipt.receiptId, receipt.taskNodeId, JSON.stringify(receipt));
+      this.event(receipt.taskNodeId, "owner_verified", receipt);
+      return receipt;
+    });
+  }
   verifyFile(
     credential: TaskCredential,
     criterionId: string,
@@ -1104,6 +1296,20 @@ export class TaskSystemStore {
   }
   accept(credential: TaskCredential, candidate: string): TaskView {
     return this.transaction(() => {
+      const completed = this.get(credential.taskNodeId);
+      if (completed.contract.state === "done") {
+        const submission = this.db
+          .prepare("SELECT candidate,epoch FROM task_submissions WHERE task_id=?")
+          .get(credential.taskNodeId) as { candidate: string; epoch: number } | undefined;
+        if (
+          submission?.candidate === candidate &&
+          submission.epoch === credential.epoch &&
+          completed.claim?.sessionKey === credential.sessionKey &&
+          completed.claim?.generation === credential.generation
+        )
+          return completed;
+        throw new Error("TASK_COMPLETION_REPLAY_MISMATCH");
+      }
       const view = this.assertOwner(credential);
       if (view.contract.state !== "review" || view.pendingOperations)
         throw new Error("TASK_NOT_READY_FOR_ACCEPTANCE");
@@ -1125,8 +1331,10 @@ export class TaskSystemStore {
           .all(credential.taskNodeId) as Row[]
       ).map((r) => JSON.parse(r.json) as TaskEvidence);
       for (const criterion of view.contract.acceptance) {
-        if (criterion.verification.kind === "owner-receipt")
-          throw new Error("TASK_OWNER_VERIFIER_REQUIRED");
+        if (criterion.verification.kind === "owner-receipt") {
+          this.validatedEvidence(credential, candidate, [criterion.id]);
+          continue;
+        }
         const receipt = receipts
           .toReversed()
           .find(

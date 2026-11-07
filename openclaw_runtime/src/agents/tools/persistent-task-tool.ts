@@ -43,6 +43,7 @@ export function createPersistentTaskTool(input: {
           "pause",
           "resume",
           "release",
+          "cancel",
           "submit",
           "verifyFile",
           "accept",
@@ -72,7 +73,7 @@ export function createPersistentTaskTool(input: {
                   files: Type.Array(Type.String()),
                   exitCode: Type.Integer(),
                 }),
-                Type.Object({ kind: Type.Literal("owner-receipt"), owner: Type.String() }),
+            Type.Object({ kind: Type.Literal("owner-receipt"), owner: Type.String(),requires:Type.Optional(Type.Array(Type.String())),files:Type.Optional(Type.Array(Type.String())) }),
               ]),
             }),
             { minItems: 1, maxItems: 20 },
@@ -106,6 +107,12 @@ export function createPersistentTaskTool(input: {
           return p[key] as string;
         };
         let result: unknown;
+        if(p.action==='accept'&&!current?.claim){
+          const id=typeof p.taskNodeId==='string'?p.taskNodeId:pinned?.taskNodeId;
+          if(!id)throw new Error('TASK_ID_REQUIRED_FOR_COMPLETION_REPLAY');
+          const task=store.replayCompletedTask(id,input.sessionKey,input.generation,str('candidate'));
+          return {content:[{type:'text',text:JSON.stringify(task)}],details:task};
+        }
         if (p.action === "list") result = store.list();
         else if (p.action === "current") result = current;
         else if (p.action === "create")
@@ -138,7 +145,7 @@ export function createPersistentTaskTool(input: {
           else if (p.action === "resume") {
             result = store.handoff(c, input.sessionKey, input.generation);
             pinned = (result as { claim: TaskCredential }).claim;
-          } else if (p.action === "pause" || p.action === "release") {
+          } else if (p.action === "pause" || p.action === "release" || p.action==='cancel') {
             result = store.control(c, p.action);
             pinned = (result as { claim: TaskCredential }).claim;
           } else if (p.action === "submit") result = store.submit(c, str("candidate"));
@@ -150,7 +157,10 @@ export function createPersistentTaskTool(input: {
               str("sha256"),
               str("candidate"),
             );
-          else if (p.action === "accept") result = store.accept(c, str("candidate"));
+          else if (p.action === "accept") {
+            const {acceptPersistentTask}=await import('../persistent-task-acceptance.js');
+            result=acceptPersistentTask(store,c,str('candidate'));
+          }
           else throw new Error("TASK_UNKNOWN_ACTION");
         }
         return { content: [{ type: "text", text: JSON.stringify(result) }], details: result };

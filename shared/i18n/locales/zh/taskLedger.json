@@ -110,7 +110,8 @@
       "paused": "已暂停",
       "review": "待验收",
       "done": "已验收",
-      "cancelled": "已取消"
+      "cancelled": "已取消",
+      "cancelling": "正在取消"
     },
     "claimStates": {
       "active": "有效",
@@ -123,6 +124,7 @@
     "verification": "验证方式",
     "commandCheck": "执行指定检查",
     "command": "验证命令",
-    "commandCheckExplanation": "Agent 通过现有工具权限执行命令。退出码为零且检查输入文件未变化时，该项检查通过；创建任务不会执行命令。"
+    "commandCheckExplanation": "Agent 通过现有工具权限执行命令。退出码为零且检查输入文件未变化时，该项检查通过；创建任务不会执行命令。",
+    "cancel": "取消任务"
   }
 }

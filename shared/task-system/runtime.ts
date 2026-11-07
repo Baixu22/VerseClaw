@@ -3,11 +3,17 @@ import { TaskSystemStore } from "./store.js";
 import { resolveTaskDomain } from "./identity.js";
 import type { TaskCredential } from "./types.js";
 
-export function assertTaskWorktreeReleasable(workspace:string):void{
-  if(!existsSync(workspace))return;
-  const domain=resolveTaskDomain(workspace);if(!existsSync(domain.database))return;
-  const store=new TaskSystemStore(domain);
-  try{if(store.worktreeTaskReferences(workspace).length)throw new Error('TASK_WORKTREE_HAS_UNFINISHED_TASKS');}finally{store.close();}
+export function assertTaskWorktreeReleasable(workspace: string): void {
+  if (!existsSync(workspace)) return;
+  const domain = resolveTaskDomain(workspace);
+  if (!existsSync(domain.database)) return;
+  const store = new TaskSystemStore(domain);
+  try {
+    if (store.worktreeTaskReferences(workspace).length)
+      throw new Error("TASK_WORKTREE_HAS_UNFINISHED_TASKS");
+  } finally {
+    store.close();
+  }
 }
 
 const activeRuns = new Map<
@@ -196,7 +202,8 @@ export async function executeTaskGuarded<T>(
   ]);
   if (!existsSync(guard.domain.database)) {
     if (guard.credential) throw new Error("TASK_STORE_UNAVAILABLE");
-    return execute();
+    if(readonlyTools.has(toolName))return execute();
+    throw new Error('TASK_CLAIM_REQUIRED: create or select the persistent task with task_control before executing side effects');
   }
   if (toolName === "task_control") return execute();
   if (!guard.credential && guard.generation) {
@@ -271,7 +278,11 @@ export async function executeTaskGuarded<T>(
       background ? "background operation requires owner reconciliation" : "tool returned",
       background && handle ? { handle, params, inputs: verificationInputs } : undefined,
     );
-    if (!background && store.binding(guard.sessionKey, guard.generation)?.referenceOnly !== true)
+    if (
+      !background &&
+      store.binding(guard.sessionKey, guard.generation)?.referenceOnly !== true &&
+      store.get(credential.taskNodeId).contract.state !== "cancelled"
+    )
       store.recordToolVerification(credential, toolName, params, result, verificationInputs);
     return result;
   } finally {

@@ -6,7 +6,7 @@ export type TaskCriterion = {
   verification:
     | { kind: "file-sha256"; path: string; sha256: string }
     | { kind: "tool-result"; tool: "exec"; command: string; files: string[]; exitCode: number }
-    | { kind: "owner-receipt"; owner: string };
+    | { kind: "owner-receipt"; owner: string; requires?: string[]; files?: string[] };
 };
 export type TaskContractInput = {
   objective: string;
@@ -23,7 +23,7 @@ export type TaskContract = TaskContractInput & {
   domain: string;
   revision: number;
   digest: string;
-  state: "ready" | "doing" | "paused" | "review" | "done" | "cancelled";
+  state: "ready" | "doing" | "paused" | "review" | "cancelling" | "done" | "cancelled";
   createdAt: number;
   updatedAt: number;
 };
@@ -57,6 +57,12 @@ export type TaskEvidence = {
   verifier: string;
   createdAt: number;
   inputArtifacts?: Array<{ path: string; sha256: string }>;
+  ownerProof?: {
+    verifierReceiptId: string;
+    effectReceiptId: string;
+    evidenceDigest: string;
+    proposalDigest?: string;
+  };
 };
 export type TaskView = {
   contract: TaskContract;
@@ -78,6 +84,8 @@ export type TaskWriterDelegation = {
   phase: "prepared" | "dispatched" | "unknown" | "returned" | "recovery_required";
   dispatchOperationIds: string[];
   terminalReceipt?: { runId: string; endedAt: number; outcome: string };
+  contractRevision?: number;
+  candidateArtifacts?: Array<{ path: string; sha256: string }>;
 };
 export type TaskResolution = { kind: "created" | "existing" | "duplicate"; task: TaskView };
 export type TaskSystemCommand =

@@ -110,7 +110,8 @@
       "paused": "一時停止",
       "review": "検証待ち",
       "done": "検証済み",
-      "cancelled": "キャンセル済み"
+      "cancelled": "キャンセル済み",
+      "cancelling": "キャンセル中"
     },
     "claimStates": {
       "active": "有効",
@@ -123,6 +124,7 @@
     "verification": "検証方法",
     "commandCheck": "指定の検証を実行",
     "command": "検証コマンド",
-    "commandCheckExplanation": "既存のツール権限で実行します。終了コードがゼロで入力ファイルが変わっていない場合に合格します。作成時には実行しません。"
+    "commandCheckExplanation": "既存のツール権限で実行します。終了コードがゼロで入力ファイルが変わっていない場合に合格します。作成時には実行しません。",
+    "cancel": "タスクをキャンセル"
   }
 }

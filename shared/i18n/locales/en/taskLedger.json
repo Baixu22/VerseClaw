@@ -110,7 +110,8 @@
       "paused": "Paused",
       "review": "Awaiting acceptance",
       "done": "Accepted",
-      "cancelled": "Cancelled"
+      "cancelled": "Cancelled",
+      "cancelling": "Cancelling"
     },
     "claimStates": {
       "active": "Active",
@@ -123,6 +124,7 @@
     "verification": "Verification method",
     "commandCheck": "Run the specified check",
     "command": "Verification command",
-    "commandCheckExplanation": "The agent runs this command through the existing tool permissions. A zero exit code and unchanged input files satisfy this check; no command runs when you create the task."
+    "commandCheckExplanation": "The agent runs this command through the existing tool permissions. A zero exit code and unchanged input files satisfy this check; no command runs when you create the task.",
+    "cancel": "Cancel task"
   }
 }

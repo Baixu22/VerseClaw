@@ -54,6 +54,7 @@ export function ManagedTasks({
       if (!result.success) throw new Error(result.error);
       await load();
     } catch (e) {
+      await load();
       setError(e instanceof Error ? e.message : String(e));
     } finally {
       setBusy(false);
@@ -224,6 +225,7 @@ export function ManagedTasks({
               </p>
             )}
             <div className="flex flex-wrap gap-2">
+              {mine&&claim&&claim.state!=='released'&&contract.state!=='cancelling'&&<Button size="sm" variant="outline" disabled={busy} onClick={()=>void command({action:'cancel',credential:claim})}>{t('managed.cancel')}</Button>}
               {contract.state === "ready" && (
                 <Button
                   size="sm"

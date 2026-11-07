@@ -316,7 +316,7 @@ export async function loadTaskLedgerSnapshot(workspaceId?: string | null): Promi
     const managed=await listManagedTasks(workspaceId);
     for(const view of managed){
       const {contract}=view;
-      const projected:TaskLedgerNode={id:contract.taskNodeId,title:contract.objective,description:contract.target,kind:'task',status:contract.state==='ready'?'todo':contract.state==='paused'?'blocked':contract.state==='cancelled'?'dropped':contract.state,createdAt:new Date(contract.createdAt).toISOString(),updatedAt:new Date(contract.updatedAt).toISOString(),metadata:{readonlyProjection:true,source:'task-ledger.execution-contract',contractRevision:contract.revision}};
+      const projected:TaskLedgerNode={id:contract.taskNodeId,title:contract.objective,description:contract.target,kind:'task',status:contract.state==='ready'?'todo':contract.state==='paused'||contract.state==='cancelling'?'blocked':contract.state==='cancelled'?'dropped':contract.state,createdAt:new Date(contract.createdAt).toISOString(),updatedAt:new Date(contract.updatedAt).toISOString(),metadata:{readonlyProjection:true,source:'task-ledger.execution-contract',contractRevision:contract.revision}};
       const index=snapshot.nodes.findIndex(node=>node.id===contract.taskNodeId);
       if(index<0){snapshot.nodes.push(projected);snapshot.rootNodeIds.push(projected.id);}else snapshot.nodes[index]={...snapshot.nodes[index],...projected};
     }
