@@ -1,0 +1,121 @@
+{
+  "specPath": "harness\\specs\\tasks\\session-task-scope-admission.md",
+  "scenario": "gateway-backend-communication",
+  "taskType": "runtime-bridge",
+  "startedAt": "2026-11-07T07:40:36.448Z",
+  "finishedAt": "2026-11-07T07:40:50.631Z",
+  "changedFiles": [
+    "docs/modules/multi-agent-and-tasks.md",
+    "electron/services/sessions-api.ts",
+    "harness/specs/tasks/session-task-scope-admission.md",
+    "shared/session-task-scope.ts",
+    "tests/unit/long-session-delegation-admission.test.ts",
+    "tests/unit/session-task-scope.test.ts"
+  ],
+  "residualPaths": [],
+  "ownership": {
+    "checked": true,
+    "covered": [
+      "docs/modules/multi-agent-and-tasks.md",
+      "electron/services/sessions-api.ts",
+      "harness/specs/tasks/session-task-scope-admission.md",
+      "shared/session-task-scope.ts",
+      "tests/unit/long-session-delegation-admission.test.ts",
+      "tests/unit/session-task-scope.test.ts"
+    ],
+    "residual": [],
+    "uncovered": []
+  },
+  "selectedProfiles": [
+    "fast",
+    "comms"
+  ],
+  "steps": [
+    {
+      "profile": "rules",
+      "name": "Backend communication boundary scan",
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 0
+    },
+    {
+      "profile": "fast",
+      "name": "Generate extension bridge",
+      "command": "pnpm",
+      "args": [
+        "-w",
+        "run",
+        "ext:bridge"
+      ],
+      "status": "skipped",
+      "exitCode": 0,
+      "durationMs": 0
+    },
+    {
+      "profile": "fast",
+      "name": "Lint without autofix",
+      "command": "pnpm",
+      "args": [
+        "-w",
+        "run",
+        "lint:check"
+      ],
+      "status": "skipped",
+      "exitCode": 0,
+      "durationMs": 0
+    },
+    {
+      "profile": "fast",
+      "name": "Typecheck",
+      "command": "pnpm",
+      "args": [
+        "-w",
+        "run",
+        "typecheck"
+      ],
+      "status": "skipped",
+      "exitCode": 0,
+      "durationMs": 0
+    },
+    {
+      "profile": "fast",
+      "name": "Unit tests",
+      "command": "pnpm",
+      "args": [
+        "-w",
+        "test"
+      ],
+      "status": "skipped",
+      "exitCode": 0,
+      "durationMs": 0
+    },
+    {
+      "profile": "comms",
+      "name": "Comms replay",
+      "command": "pnpm",
+      "args": [
+        "-w",
+        "run",
+        "comms:replay"
+      ],
+      "status": "skipped",
+      "exitCode": 0,
+      "durationMs": 0
+    },
+    {
+      "profile": "comms",
+      "name": "Comms compare",
+      "command": "pnpm",
+      "args": [
+        "-w",
+        "run",
+        "comms:compare"
+      ],
+      "status": "skipped",
+      "exitCode": 0,
+      "durationMs": 0
+    }
+  ],
+  "failures": [],
+  "result": "pass"
+}

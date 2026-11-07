@@ -1,0 +1,742 @@
+{
+  "before": {
+    "passed": 5,
+    "failed": 2,
+    "skipped": 25,
+    "files": 2,
+    "success": false,
+    "tests": [
+      {
+        "ancestorTitles": [
+          "A4 delegation task-scope gate"
+        ],
+        "fullName": "A4 delegation task-scope gate uses the Main default resolver for 'a current explicit task link'",
+        "status": "passed",
+        "title": "uses the Main default resolver for 'a current explicit task link'",
+        "duration": 57.68640000000596,
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 delegation task-scope gate"
+        ],
+        "fullName": "A4 delegation task-scope gate uses the Main default resolver for 'the requested task after an unrelated…'",
+        "status": "failed",
+        "title": "uses the Main default resolver for 'the requested task after an unrelated…'",
+        "duration": 63.21450000000186,
+        "failureMessages": [
+          "AssertionError: expected { success: false, …(2) } to match object { success: true, status: 'accepted' }\n(1 matching property omitted from actual)\n    at Proxy.<anonymous> (file:///D:/ClawX/node_modules/.pnpm/@vitest+expect@4.1.1/node_modules/@vitest/expect/dist/index.js:1282:10)\n    at Proxy.<anonymous> (file:///D:/ClawX/node_modules/.pnpm/@vitest+expect@4.1.1/node_modules/@vitest/expect/dist/index.js:1155:15)\n    at Proxy.methodWrapper (file:///D:/ClawX/node_modules/.pnpm/chai@6.2.2/node_modules/chai/index.js:1700:25)\n    at D:/ClawX/tests/unit/long-session-delegation-admission.test.ts:314:22\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:20"
+        ],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 delegation task-scope gate"
+        ],
+        "fullName": "A4 delegation task-scope gate uses the Main default resolver for 'a missing task'",
+        "status": "passed",
+        "title": "uses the Main default resolver for 'a missing task'",
+        "duration": 2.5433999999950174,
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 delegation task-scope gate"
+        ],
+        "fullName": "A4 delegation task-scope gate uses the Main default resolver for 'a missing link'",
+        "status": "passed",
+        "title": "uses the Main default resolver for 'a missing link'",
+        "duration": 1.6790000000037253,
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 delegation task-scope gate"
+        ],
+        "fullName": "A4 delegation task-scope gate uses the Main default resolver for 'another session link'",
+        "status": "passed",
+        "title": "uses the Main default resolver for 'another session link'",
+        "duration": 2.3966999999975087,
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 delegation task-scope gate"
+        ],
+        "fullName": "A4 delegation task-scope gate uses the Main default resolver for 'an old-generation link'",
+        "status": "passed",
+        "title": "uses the Main default resolver for 'an old-generation link'",
+        "duration": 0.6417999999976018,
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 delegation task-scope gate"
+        ],
+        "fullName": "A4 delegation task-scope gate rejects before Gateway delegation when the explicit task scope is unavailable",
+        "status": "skipped",
+        "title": "rejects before Gateway delegation when the explicit task scope is unavailable",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "long-session delegation admission"
+        ],
+        "fullName": "long-session delegation admission binds accepted children to coordinator, task, backend, permissions, and actual shared isolation without claiming completion",
+        "status": "skipped",
+        "title": "binds accepted children to coordinator, task, backend, permissions, and actual shared isolation without claiming completion",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "long-session delegation admission"
+        ],
+        "fullName": "long-session delegation admission replays a terminal receipt after owner restart without issuing another spawn",
+        "status": "skipped",
+        "title": "replays a terminal receipt after owner restart without issuing another spawn",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "long-session delegation admission"
+        ],
+        "fullName": "long-session delegation admission coalesces a concurrent duplicate submission into one Gateway admission",
+        "status": "skipped",
+        "title": "coalesces a concurrent duplicate submission into one Gateway admission",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "long-session delegation admission"
+        ],
+        "fullName": "long-session delegation admission turns an in-flight record left by a terminated owner into outcome-unknown without retrying",
+        "status": "skipped",
+        "title": "turns an in-flight record left by a terminated owner into outcome-unknown without retrying",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "long-session delegation admission"
+        ],
+        "fullName": "long-session delegation admission rejects a parent reset that crosses admission without reporting an accepted worker",
+        "status": "skipped",
+        "title": "rejects a parent reset that crosses admission without reporting an accepted worker",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "long-session delegation admission"
+        ],
+        "fullName": "long-session delegation admission rejects a concurrent stop and never upgrades the stale accepted evidence",
+        "status": "skipped",
+        "title": "rejects a concurrent stop and never upgrades the stale accepted evidence",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "long-session delegation admission"
+        ],
+        "fullName": "long-session delegation admission does not reuse an expired or revoked grant and allows retry only through a fresh owner-approved id",
+        "status": "skipped",
+        "title": "does not reuse an expired or revoked grant and allows retry only through a fresh owner-approved id",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "long-session delegation admission"
+        ],
+        "fullName": "long-session delegation admission clamps child tool authorization to the parent allowlist",
+        "status": "skipped",
+        "title": "clamps child tool authorization to the parent allowlist",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "long-session delegation admission"
+        ],
+        "fullName": "long-session delegation admission marks an accepted spawn without both child session and run identifiers as rejected",
+        "status": "skipped",
+        "title": "marks an accepted spawn without both child session and run identifiers as rejected",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "long-session delegation admission"
+        ],
+        "fullName": "long-session delegation admission records a refused spawn as rejected with no completion evidence",
+        "status": "skipped",
+        "title": "records a refused spawn as rejected with no completion evidence",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "long-session delegation admission"
+        ],
+        "fullName": "long-session delegation admission records a real Git worktree as verified checkout isolation",
+        "status": "skipped",
+        "title": "records a real Git worktree as verified checkout isolation",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 session task scope"
+        ],
+        "fullName": "A4 session task scope resolves a ready read-only binding only from an explicit task link",
+        "status": "skipped",
+        "title": "resolves a ready read-only binding only from an explicit task link",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 session task scope"
+        ],
+        "fullName": "A4 session task scope selects the requested task after another link from the same session",
+        "status": "failed",
+        "title": "selects the requested task after another link from the same session",
+        "duration": 6.073700000000144,
+        "failureMessages": [
+          "AssertionError: expected { status: 'unavailable', …(1) } to match object { status: 'ready', taskRef: 'task-1' }\n(1 matching property omitted from actual)\n    at Proxy.<anonymous> (file:///D:/ClawX/node_modules/.pnpm/@vitest+expect@4.1.1/node_modules/@vitest/expect/dist/index.js:1282:10)\n    at Proxy.<anonymous> (file:///D:/ClawX/node_modules/.pnpm/@vitest+expect@4.1.1/node_modules/@vitest/expect/dist/index.js:1155:15)\n    at Proxy.methodWrapper (file:///D:/ClawX/node_modules/.pnpm/chai@6.2.2/node_modules/chai/index.js:1700:25)\n    at D:/ClawX/tests/unit/session-task-scope.test.ts:35:44\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:26\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2316:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2313:10)\n    at file:///D:/ClawX/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:2295:20"
+        ],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 session task scope"
+        ],
+        "fullName": "A4 session task scope keeps discussion containers empty rather than inferring a task from a title or link",
+        "status": "skipped",
+        "title": "keeps discussion containers empty rather than inferring a task from a title or link",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 session task scope"
+        ],
+        "fullName": "A4 session task scope rejects coordinator-missing",
+        "status": "skipped",
+        "title": "rejects coordinator-missing",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 session task scope"
+        ],
+        "fullName": "A4 session task scope rejects binding-not-ready",
+        "status": "skipped",
+        "title": "rejects binding-not-ready",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 session task scope"
+        ],
+        "fullName": "A4 session task scope rejects task-ref-missing",
+        "status": "skipped",
+        "title": "rejects task-ref-missing",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 session task scope"
+        ],
+        "fullName": "A4 session task scope rejects task-not-found",
+        "status": "skipped",
+        "title": "rejects task-not-found",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 session task scope"
+        ],
+        "fullName": "A4 session task scope rejects task-workspace-mismatch",
+        "status": "skipped",
+        "title": "rejects task-workspace-mismatch",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 session task scope"
+        ],
+        "fullName": "A4 session task scope rejects task-generation-stale",
+        "status": "skipped",
+        "title": "rejects task-generation-stale",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 session task scope"
+        ],
+        "fullName": "A4 session task scope does not reuse a stale session link from an earlier generation",
+        "status": "skipped",
+        "title": "does not reuse a stale session link from an earlier generation",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 session task scope"
+        ],
+        "fullName": "A4 session task scope allows a fork to read the linked task but does not claim write inheritance",
+        "status": "skipped",
+        "title": "allows a fork to read the linked task but does not claim write inheritance",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 session task scope"
+        ],
+        "fullName": "A4 session task scope does not let an external execution reference become Task Ledger completion authority",
+        "status": "skipped",
+        "title": "does not let an external execution reference become Task Ledger completion authority",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 session task scope"
+        ],
+        "fullName": "A4 session task scope rejects a task link from another session instead of borrowing its task",
+        "status": "skipped",
+        "title": "rejects a task link from another session instead of borrowing its task",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 evidence boundary"
+        ],
+        "fullName": "A4 evidence boundary keeps the A4 evidence manifest and contract bound on disk",
+        "status": "skipped",
+        "title": "keeps the A4 evidence manifest and contract bound on disk",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      }
+    ]
+  },
+  "after": {
+    "passed": 7,
+    "failed": 0,
+    "skipped": 25,
+    "files": 2,
+    "success": true,
+    "tests": [
+      {
+        "ancestorTitles": [
+          "A4 delegation task-scope gate"
+        ],
+        "fullName": "A4 delegation task-scope gate uses the Main default resolver for 'a current explicit task link'",
+        "status": "passed",
+        "title": "uses the Main default resolver for 'a current explicit task link'",
+        "duration": 16.171199999998862,
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 delegation task-scope gate"
+        ],
+        "fullName": "A4 delegation task-scope gate uses the Main default resolver for 'the requested task after an unrelated…'",
+        "status": "passed",
+        "title": "uses the Main default resolver for 'the requested task after an unrelated…'",
+        "duration": 2.1507000000001426,
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 delegation task-scope gate"
+        ],
+        "fullName": "A4 delegation task-scope gate uses the Main default resolver for 'a missing task'",
+        "status": "passed",
+        "title": "uses the Main default resolver for 'a missing task'",
+        "duration": 3.0472000000008848,
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 delegation task-scope gate"
+        ],
+        "fullName": "A4 delegation task-scope gate uses the Main default resolver for 'a missing link'",
+        "status": "passed",
+        "title": "uses the Main default resolver for 'a missing link'",
+        "duration": 1.1799000000009983,
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 delegation task-scope gate"
+        ],
+        "fullName": "A4 delegation task-scope gate uses the Main default resolver for 'another session link'",
+        "status": "passed",
+        "title": "uses the Main default resolver for 'another session link'",
+        "duration": 1.5374999999985448,
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 delegation task-scope gate"
+        ],
+        "fullName": "A4 delegation task-scope gate uses the Main default resolver for 'an old-generation link'",
+        "status": "passed",
+        "title": "uses the Main default resolver for 'an old-generation link'",
+        "duration": 0.9936000000016065,
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 delegation task-scope gate"
+        ],
+        "fullName": "A4 delegation task-scope gate rejects before Gateway delegation when the explicit task scope is unavailable",
+        "status": "skipped",
+        "title": "rejects before Gateway delegation when the explicit task scope is unavailable",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "long-session delegation admission"
+        ],
+        "fullName": "long-session delegation admission binds accepted children to coordinator, task, backend, permissions, and actual shared isolation without claiming completion",
+        "status": "skipped",
+        "title": "binds accepted children to coordinator, task, backend, permissions, and actual shared isolation without claiming completion",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "long-session delegation admission"
+        ],
+        "fullName": "long-session delegation admission replays a terminal receipt after owner restart without issuing another spawn",
+        "status": "skipped",
+        "title": "replays a terminal receipt after owner restart without issuing another spawn",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "long-session delegation admission"
+        ],
+        "fullName": "long-session delegation admission coalesces a concurrent duplicate submission into one Gateway admission",
+        "status": "skipped",
+        "title": "coalesces a concurrent duplicate submission into one Gateway admission",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "long-session delegation admission"
+        ],
+        "fullName": "long-session delegation admission turns an in-flight record left by a terminated owner into outcome-unknown without retrying",
+        "status": "skipped",
+        "title": "turns an in-flight record left by a terminated owner into outcome-unknown without retrying",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "long-session delegation admission"
+        ],
+        "fullName": "long-session delegation admission rejects a parent reset that crosses admission without reporting an accepted worker",
+        "status": "skipped",
+        "title": "rejects a parent reset that crosses admission without reporting an accepted worker",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "long-session delegation admission"
+        ],
+        "fullName": "long-session delegation admission rejects a concurrent stop and never upgrades the stale accepted evidence",
+        "status": "skipped",
+        "title": "rejects a concurrent stop and never upgrades the stale accepted evidence",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "long-session delegation admission"
+        ],
+        "fullName": "long-session delegation admission does not reuse an expired or revoked grant and allows retry only through a fresh owner-approved id",
+        "status": "skipped",
+        "title": "does not reuse an expired or revoked grant and allows retry only through a fresh owner-approved id",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "long-session delegation admission"
+        ],
+        "fullName": "long-session delegation admission clamps child tool authorization to the parent allowlist",
+        "status": "skipped",
+        "title": "clamps child tool authorization to the parent allowlist",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "long-session delegation admission"
+        ],
+        "fullName": "long-session delegation admission marks an accepted spawn without both child session and run identifiers as rejected",
+        "status": "skipped",
+        "title": "marks an accepted spawn without both child session and run identifiers as rejected",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "long-session delegation admission"
+        ],
+        "fullName": "long-session delegation admission records a refused spawn as rejected with no completion evidence",
+        "status": "skipped",
+        "title": "records a refused spawn as rejected with no completion evidence",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "long-session delegation admission"
+        ],
+        "fullName": "long-session delegation admission records a real Git worktree as verified checkout isolation",
+        "status": "skipped",
+        "title": "records a real Git worktree as verified checkout isolation",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 session task scope"
+        ],
+        "fullName": "A4 session task scope resolves a ready read-only binding only from an explicit task link",
+        "status": "skipped",
+        "title": "resolves a ready read-only binding only from an explicit task link",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 session task scope"
+        ],
+        "fullName": "A4 session task scope selects the requested task after another link from the same session",
+        "status": "passed",
+        "title": "selects the requested task after another link from the same session",
+        "duration": 3.569300000000112,
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 session task scope"
+        ],
+        "fullName": "A4 session task scope keeps discussion containers empty rather than inferring a task from a title or link",
+        "status": "skipped",
+        "title": "keeps discussion containers empty rather than inferring a task from a title or link",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 session task scope"
+        ],
+        "fullName": "A4 session task scope rejects coordinator-missing",
+        "status": "skipped",
+        "title": "rejects coordinator-missing",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 session task scope"
+        ],
+        "fullName": "A4 session task scope rejects binding-not-ready",
+        "status": "skipped",
+        "title": "rejects binding-not-ready",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 session task scope"
+        ],
+        "fullName": "A4 session task scope rejects task-ref-missing",
+        "status": "skipped",
+        "title": "rejects task-ref-missing",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 session task scope"
+        ],
+        "fullName": "A4 session task scope rejects task-not-found",
+        "status": "skipped",
+        "title": "rejects task-not-found",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 session task scope"
+        ],
+        "fullName": "A4 session task scope rejects task-workspace-mismatch",
+        "status": "skipped",
+        "title": "rejects task-workspace-mismatch",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 session task scope"
+        ],
+        "fullName": "A4 session task scope rejects task-generation-stale",
+        "status": "skipped",
+        "title": "rejects task-generation-stale",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 session task scope"
+        ],
+        "fullName": "A4 session task scope does not reuse a stale session link from an earlier generation",
+        "status": "skipped",
+        "title": "does not reuse a stale session link from an earlier generation",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 session task scope"
+        ],
+        "fullName": "A4 session task scope allows a fork to read the linked task but does not claim write inheritance",
+        "status": "skipped",
+        "title": "allows a fork to read the linked task but does not claim write inheritance",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 session task scope"
+        ],
+        "fullName": "A4 session task scope does not let an external execution reference become Task Ledger completion authority",
+        "status": "skipped",
+        "title": "does not let an external execution reference become Task Ledger completion authority",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 session task scope"
+        ],
+        "fullName": "A4 session task scope rejects a task link from another session instead of borrowing its task",
+        "status": "skipped",
+        "title": "rejects a task link from another session instead of borrowing its task",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      },
+      {
+        "ancestorTitles": [
+          "A4 evidence boundary"
+        ],
+        "fullName": "A4 evidence boundary keeps the A4 evidence manifest and contract bound on disk",
+        "status": "skipped",
+        "title": "keeps the A4 evidence manifest and contract bound on disk",
+        "failureMessages": [],
+        "meta": {},
+        "tags": []
+      }
+    ]
+  }
+}

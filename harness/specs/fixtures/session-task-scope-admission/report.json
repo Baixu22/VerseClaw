@@ -1,0 +1,186 @@
+{
+  "schema": "clawx.session-task-scope-admission/v1",
+  "driven_by": "agent",
+  "actor": "codex-audit-relay-20261107",
+  "implementationActor": "codex-session-scope-admission",
+  "readbackAt": "2026-11-07T08:16:57.151Z",
+  "candidate": {
+    "commit": "5cad19cce572dc4266b9925c8caee2193954edf3",
+    "tree": "0009e9e0d87591bad45a7f012191a1b29bf2a6b9",
+    "dirty": false,
+    "observedAt": "2026-11-07T08:16:57.151Z",
+    "validationSource": "Original frozen-candidate artifacts; source hashes and clean checkout reverified during relay."
+  },
+  "prerequisite": "9627d3c093739adf53a6fda710efe63785581189",
+  "sharedSourceMatches": 7,
+  "result": "PASS",
+  "scope": "Main delegation task-scope admission and resolver contract",
+  "changes": [
+    "createSessionsApi reuses SessionDelegationDependencies.resolveTaskScope for its injected resolver.",
+    "Task scope selects the explicit session/task/generation link among all links.",
+    "Missing tasks and missing, foreign-session or old-generation links reject before Gateway delegation."
+  ],
+  "unit": {
+    "passed": 51,
+    "failed": 0,
+    "skipped": 0,
+    "files": 4,
+    "success": true
+  },
+  "negativeControls": {
+    "before": {
+      "passed": 5,
+      "failed": 2,
+      "skipped": 25,
+      "files": 2,
+      "success": false
+    },
+    "after": {
+      "passed": 7,
+      "failed": 0,
+      "skipped": 25,
+      "files": 2,
+      "success": true
+    }
+  },
+  "nodeTypes": {
+    "exitCode": 0,
+    "cache": false,
+    "singleThreaded": true,
+    "checkers": 1
+  },
+  "testTypes": {
+    "exitCode": 0,
+    "cache": false,
+    "singleThreaded": true,
+    "checkers": 1
+  },
+  "comms": {
+    "result": "PASS",
+    "failures": [],
+    "candidate": {
+      "commit": "5cad19cce572dc4266b9925c8caee2193954edf3",
+      "tree": "0009e9e0d87591bad45a7f012191a1b29bf2a6b9"
+    }
+  },
+  "harness": {
+    "mode": "diff-aware validate and dry-run",
+    "diffBase": "9627d3c093739adf53a6fda710efe63785581189",
+    "changedFiles": [
+      "docs/modules/multi-agent-and-tasks.md",
+      "electron/services/sessions-api.ts",
+      "harness/specs/tasks/session-task-scope-admission.md",
+      "shared/session-task-scope.ts",
+      "tests/unit/long-session-delegation-admission.test.ts",
+      "tests/unit/session-task-scope.test.ts"
+    ],
+    "uncovered": [],
+    "residualPaths": []
+  },
+  "dependencies": {
+    "rootInstall": "offline, frozen-lockfile, ignore-scripts; 1819 cached packages",
+    "runtimeInstall": "offline, frozen-lockfile, ignore-scripts",
+    "sharedDependenciesInitiallyDisappeared": true,
+    "packageManager": "pnpm@11.2.2+sha512.36e6621fad506178936455e70247b8808ef4ec25797a9f437a93281a020484e2607f6a469a22e982987c3dbb8866e3071514ab10a4a1749e06edcd1ec118436f"
+  },
+  "previousFailures": [
+    "Two focused negative controls failed before the source repair; five selected controls already passed.",
+    "Before-node-types also reported a missing generated extension bridge alongside the resolver signature error.",
+    "Earlier candidate checks failed when shared dependency entry points disappeared; dedicated offline installs restored the locked dependencies.",
+    "The first offline install used the wrong store root; the first contract invocation used a nonexistent script. Original logs remain indexed."
+  ],
+  "remainingParentAcceptance": [
+    "Discussion-to-execution automatic task creation and the ten-turn discussion journey.",
+    "Fork/handoff task linkage and write-claim generation journeys through production owners."
+  ],
+  "commands": [
+    {
+      "name": "unit",
+      "command": "\"D:\\\\software\\\\PowerShell\\\\pwsh-7.6.6\\\\pwsh.exe\" -NoProfile -Command '$env:TEMP='\"'D:/tmp'; \"'$env:TMP='\"'D:/tmp'; \"'$env:TMPDIR='\"'D:/tmp'; & 'C:/Program Files/nodejs/node.exe' node_modules/vitest/vitest.mjs run tests/unit/session-task-scope.test.ts tests/unit/long-session-delegation-admission.test.ts tests/unit/long-session-coordinator-binding.test.ts tests/unit/long-session-lifecycle-barrier.test.ts --maxWorkers=1 --no-file-parallelism --reporter=default --reporter=json --outputFile='D:/tmp/clawx-audit-next-20261107/candidate-final-unit-2.json' *> 'D:/tmp/clawx-audit-next-20261107/candidate-final-unit-2.log'; \"'$ec=$LASTEXITCODE; Get-Content -LiteralPath '\"'D:/tmp/clawx-audit-next-20261107/candidate-final-unit-2.log' -Tail 24; exit \"'$ec'",
+      "cwd": "D:\\tmp\\clawx-audit-next-20261107\\candidate",
+      "exitCode": 0,
+      "durationMs": 15587,
+      "sourceThreadId": "01a1b163-3acf-7ea3-995d-18bd6afc54d1",
+      "sourceToolItemId": "exec-f012cd77-06f5-4ddb-a335-25d772bbc010",
+      "log": "candidate-final-unit-2.log",
+      "logSha256": "d64d351a575cc742f311cc6f4efe825caaf7dc077e4d15004d2add81af8d9e07"
+    },
+    {
+      "name": "node-types",
+      "command": "\"D:\\\\software\\\\PowerShell\\\\pwsh-7.6.6\\\\pwsh.exe\" -NoProfile -Command '$env:TEMP='\"'D:/tmp'; \"'$env:TMP='\"'D:/tmp'; \"'$env:TMPDIR='\"'D:/tmp'; & 'C:/Program Files/nodejs/node.exe' node_modules/@typescript/native-preview/bin/tsgo.js --noEmit -p tsconfig.node.json --composite false --singleThreaded --checkers 1 *> 'D:/tmp/clawx-audit-next-20261107/node-types-final.log'; \"'$ec=$LASTEXITCODE; [pscustomobject]@{exitCode=$ec;project='\"'node';log='node-types-final.log'} | ConvertTo-Json | Set-Content -Encoding utf8 -LiteralPath 'D:/tmp/clawx-audit-next-20261107/node-types-final-result.json'; Get-Content -LiteralPath 'D:/tmp/clawx-audit-next-20261107/node-types-final.log' -Tail 15; exit \"'$ec'",
+      "cwd": "D:\\tmp\\clawx-audit-next-20261107\\candidate",
+      "exitCode": 0,
+      "durationMs": 455504,
+      "sourceThreadId": "01a1b163-3acf-7ea3-995d-18bd6afc54d1",
+      "sourceToolItemId": "exec-2e7f73f7-7b63-444d-85d1-e94e8aca4991",
+      "log": "node-types-final.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "test-types",
+      "command": "\"D:\\\\software\\\\PowerShell\\\\pwsh-7.6.6\\\\pwsh.exe\" -NoProfile -Command '$env:TEMP='\"'D:/tmp'; \"'$env:TMP='\"'D:/tmp'; \"'$env:TMPDIR='\"'D:/tmp'; & 'C:/Program Files/nodejs/node.exe' node_modules/@typescript/native-preview/bin/tsgo.js --noEmit -p tsconfig.test.json --composite false --singleThreaded --checkers 1 *> 'D:/tmp/clawx-audit-next-20261107/test-types-final.log'; \"'$ec=$LASTEXITCODE; [pscustomobject]@{exitCode=$ec;project='\"'test';log='test-types-final.log'} | ConvertTo-Json | Set-Content -Encoding utf8 -LiteralPath 'D:/tmp/clawx-audit-next-20261107/test-types-final-result.json'; Get-Content -LiteralPath 'D:/tmp/clawx-audit-next-20261107/test-types-final.log' -Tail 20; exit \"'$ec'",
+      "cwd": "D:\\tmp\\clawx-audit-next-20261107\\candidate",
+      "exitCode": 0,
+      "durationMs": 42630,
+      "sourceThreadId": "01a1b163-3acf-7ea3-995d-18bd6afc54d1",
+      "sourceToolItemId": "exec-8767622d-938f-40e8-976c-052849d1489a",
+      "log": "test-types-final.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "lint",
+      "command": "\"D:\\\\software\\\\PowerShell\\\\pwsh-7.6.6\\\\pwsh.exe\" -NoProfile -Command '$env:TEMP='\"'D:/tmp'; \"'$env:TMP='\"'D:/tmp'; & 'C:/Program Files/nodejs/node.exe' node_modules/eslint/bin/eslint.js electron/services/sessions-api.ts electron/services/session-delegation-admission.ts shared/session-task-scope.ts tests/unit/session-task-scope.test.ts tests/unit/long-session-delegation-admission.test.ts --max-warnings 0 *> 'D:/tmp/clawx-audit-next-20261107/lint-final.log'; \"'$ec=$LASTEXITCODE; Get-Content -LiteralPath '\"'D:/tmp/clawx-audit-next-20261107/lint-final.log' -Tail 25; exit \"'$ec'",
+      "cwd": "D:\\tmp\\clawx-audit-next-20261107\\candidate",
+      "exitCode": 0,
+      "durationMs": 10613,
+      "sourceThreadId": "01a1b163-3acf-7ea3-995d-18bd6afc54d1",
+      "sourceToolItemId": "exec-946b5a8f-f1fd-4b0a-b7f9-4432602ff4f7",
+      "log": "lint-final.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "contract",
+      "command": "\"D:\\\\software\\\\PowerShell\\\\pwsh-7.6.6\\\\pwsh.exe\" -NoProfile -Command '$env:TEMP='\"'D:/tmp'; \"'$env:TMP='\"'D:/tmp'; & 'C:/Program Files/nodejs/node.exe' scripts/contract-check.mjs *> 'D:/tmp/clawx-audit-next-20261107/contract-final.log'; \"'$ec=$LASTEXITCODE; Get-Content -LiteralPath '\"'D:/tmp/clawx-audit-next-20261107/contract-final.log' -Tail 12; exit \"'$ec'",
+      "cwd": "D:\\tmp\\clawx-audit-next-20261107\\candidate",
+      "exitCode": 0,
+      "durationMs": 2382,
+      "sourceThreadId": "01a1b163-3acf-7ea3-995d-18bd6afc54d1",
+      "sourceToolItemId": "exec-346e289c-14fb-496a-8aa6-2eb439b3e58c",
+      "log": "contract-final.log",
+      "logSha256": "934212edaaa4da875edce79057ad1a402c935b6da181e5e400ad9e96e0cabf10"
+    },
+    {
+      "name": "comms-replay-and-compare",
+      "command": "\"D:\\\\software\\\\PowerShell\\\\pwsh-7.6.6\\\\pwsh.exe\" -NoProfile -Command '$env:TEMP='\"'D:/tmp'; \"'$env:TMP='\"'D:/tmp'; & 'C:/Program Files/nodejs/node.exe' scripts/comms/replay.mjs *> 'D:/tmp/clawx-audit-next-20261107/comms-replay.log'; \"'$ec=$LASTEXITCODE; if($ec -ne 0){Get-Content -LiteralPath '\"'D:/tmp/clawx-audit-next-20261107/comms-replay.log' -Tail 20; exit \"'$ec}; & '\"'C:/Program Files/nodejs/node.exe' scripts/comms/compare.mjs *> 'D:/tmp/clawx-audit-next-20261107/comms-compare.log'; \"'$ec=$LASTEXITCODE; Get-Content -LiteralPath '\"'D:/tmp/clawx-audit-next-20261107/comms-compare.log' -Tail 10; exit \"'$ec'",
+      "cwd": "D:\\tmp\\clawx-audit-next-20261107\\candidate",
+      "exitCode": 0,
+      "durationMs": 2994,
+      "sourceThreadId": "01a1b163-3acf-7ea3-995d-18bd6afc54d1",
+      "sourceToolItemId": "exec-f6e79b6b-b5bf-4dcb-9fdd-d000d8545eca",
+      "log": "comms-compare.log",
+      "logSha256": "0eea12c2eff106a845edfa91a3c56a1e7dffc69e35c85ba36df65b95f8fa15e9"
+    },
+    {
+      "name": "harness-validate",
+      "command": "\"D:\\\\software\\\\PowerShell\\\\pwsh-7.6.6\\\\pwsh.exe\" -Command '$env:TEMP='\"'D:/tmp'; \"'$env:TMP='\"'D:/tmp'; & 'C:/Program Files/nodejs/node.exe' harness/src/cli.mjs validate --spec harness/specs/tasks/session-task-scope-admission.md *> 'D:/tmp/clawx-audit-next-20261107/harness-validate.log'; \"'$ec=$LASTEXITCODE; Get-Content -LiteralPath '\"'D:/tmp/clawx-audit-next-20261107/harness-validate.log' -Tail 45; exit \"'$ec'",
+      "cwd": "D:\\tmp\\clawx-audit-next-20261107\\candidate",
+      "exitCode": 0,
+      "durationMs": 3609,
+      "sourceThreadId": "01a1b163-3acf-7ea3-995d-18bd6afc54d1",
+      "sourceToolItemId": "exec-17ca2571-79e7-41ce-8b07-11e165c50827",
+      "log": "harness-validate.log",
+      "logSha256": "6fae85252188f0860092469731a81160b8dd59460369a30ba6689f120c01f87c"
+    },
+    {
+      "name": "harness-dry-run",
+      "command": "\"D:\\\\software\\\\PowerShell\\\\pwsh-7.6.6\\\\pwsh.exe\" -NoProfile -Command '$env:TEMP='\"'D:/tmp'; \"'$env:TMP='\"'D:/tmp'; & 'C:/Program Files/nodejs/node.exe' harness/src/cli.mjs run --spec harness/specs/tasks/session-task-scope-admission.md --dry-run *> 'D:/tmp/clawx-audit-next-20261107/harness-preview.log'; \"'$ec=$LASTEXITCODE; Get-Content -LiteralPath '\"'D:/tmp/clawx-audit-next-20261107/harness-preview.log' -Tail 20; exit \"'$ec'",
+      "cwd": "D:\\tmp\\clawx-audit-next-20261107\\candidate",
+      "exitCode": 0,
+      "durationMs": 31463,
+      "sourceThreadId": "01a1b163-3acf-7ea3-995d-18bd6afc54d1",
+      "sourceToolItemId": "exec-dcdd1037-73d8-4041-849c-147abb603ecc",
+      "log": "harness-preview.log",
+      "logSha256": "c774ffb1cffec075feb5fa6bb51098b53cebb739de756fb41bf22a4f3ba59a79"
+    }
+  ]
+}
