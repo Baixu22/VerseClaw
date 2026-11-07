@@ -115,6 +115,14 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
     evidence.staleCatalog = await call({ args: { message: 'stale-catalog' }, catalogRevision: oldRevision });
     expect(evidence.staleCatalog).toMatchObject({ success: false, errorCode: 'VALIDATION' });
     await hostInvoke(app, 'mcp', 'updateServer', { id: 'fixture', toolDenylist: [] });
+    const restoredCatalogs: McpListToolsResult[] = [];
+    evidence.restoredCatalogs = restoredCatalogs;
+    // Config writes are consumed by the runtime watcher; await its actual catalog.
+    await expect.poll(async () => {
+      const current = await hostInvoke<McpListToolsResult>(app!, 'mcp', 'listTools', { serverId: 'fixture' });
+      restoredCatalogs.push(current);
+      return current.success && current.tools.some((tool) => tool.name === 'echo');
+    }, { timeout: 60_000, intervals: [1000] }).toBe(true);
     await page.evaluate(() => { window.location.hash = '/settings/skills?tab=mcp'; });
     const card = page.locator('[role="button"]').filter({ has: page.getByText('Fixture', { exact: true }) }).first();
     await card.click();
@@ -153,6 +161,10 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
     evidence.endpointCleanup = await Promise.all([server.close(), empty.close(), slow.close()]);
     llm.server.closeAllConnections(); llm.server.closeIdleConnections();
     await new Promise<void>((resolve) => llm.server.close(() => resolve()));
+    if (evidence.gatewayStopError) {
+      evidence.status = 'failed';
+      evidence.failure ??= evidence.gatewayStopError;
+    }
     await writeFile(testInfo.outputPath('coding-mcp-management.json'), JSON.stringify(evidence, null, 2));
   }
   if (evidence.gatewayStopError) throw new Error(String(evidence.gatewayStopError));
