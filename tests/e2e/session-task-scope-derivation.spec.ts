@@ -119,6 +119,10 @@ test('Main preserves task references across fork and handoff without inheriting 
     await record('error', error instanceof Error ? error.message : String(error));
     throw error;
   } finally {
-    await closeElectronApp(app);
+    try {
+      await hostInvoke(app, 'gateway', 'stop');
+    } finally {
+      await closeElectronApp(app);
+    }
   }
 });
