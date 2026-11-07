@@ -50,6 +50,7 @@ import { createWorkspacesApi, getActiveWorkspaceProfile, type WorkspaceCoordinat
 import {
   executeSessionDelegation,
   hashDelegationRequest,
+  type SessionDelegationDependencies,
   validateSessionDelegationPayload,
 } from './session-delegation-admission';
 import {
@@ -1884,7 +1885,7 @@ export function createSessionsApi(ctx: {
   resolveCoordinator?: CompleteHostServiceRegistry['workspaces']['resolveCoordinator'];
   gatewayRpcForDelegation?: CompleteHostServiceRegistry['gateway']['rpc'];
   getActiveWorkspaceId?: () => Promise<string | null>;
-  resolveTaskScope?: (input: import('../../shared/session-task-scope').SessionTaskScopeInput) => import('../../shared/session-task-scope').SessionTaskScopeInput | Promise<import('../../shared/session-task-scope').SessionTaskScopeInput>;
+  resolveTaskScope?: SessionDelegationDependencies['resolveTaskScope'];
   delegationStore?: {
     readAdmission: typeof readSessionDelegationAdmission;
     claimAdmission: typeof claimSessionDelegationAdmission;

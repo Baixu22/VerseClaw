@@ -68,12 +68,13 @@ export function resolveSessionTaskScope(input: SessionTaskScopeInput): SessionTa
   }
   const ownLink = input.links.find((link) =>
     link.sessionKey === input.sessionKey
+    && link.nodeId === input.activeTaskNodeId
     && (!link.sessionGeneration || link.sessionGeneration === input.generation),
   );
   // A fork receives a task reference for reading, never a write claim. This
   // resolver is read-only, so a fork can still present its bound task; the
   // admission layer decides whether a write is allowed.
-  if (!ownLink || ownLink.nodeId !== input.activeTaskNodeId) {
+  if (!ownLink) {
     return { status: 'unavailable', reason: 'task-ref-missing' };
   }
   if (!input.task || input.task.nodeKind === 'external') {

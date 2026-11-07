@@ -15,6 +15,8 @@ import {
   type SessionDelegationReceipt,
 } from '@shared/types/session-delegation';
 import type { WorkspaceCoordinatorBinding } from '@shared/types/workspace';
+import type { TaskLedgerSnapshot } from '@shared/types/task-ledger';
+import * as taskLedgerService from '../../electron/services/task-ledger-service';
 import {
   executeSessionDelegation,
   hashDelegationRequest,
@@ -37,6 +39,7 @@ const ROOT = 'D:\\tmp\\clawx-long-session-checkout';
 const temporaryRoots: string[] = [];
 
 afterEach(async () => {
+  vi.restoreAllMocks();
   await Promise.all(temporaryRoots.splice(0).map((root) => rm(root, { recursive: true, force: true })));
 });
 
@@ -253,6 +256,67 @@ function acceptedGatewayRpc(counter = vi.fn()) {
 }
 
 describe('A4 delegation task-scope gate', () => {
+  const defaultScopeCases: Array<{
+    name: string;
+    change?: (snapshot: TaskLedgerSnapshot) => void;
+    reason?: string;
+  }> = [
+    { name: 'a current explicit task link' },
+    {
+      name: 'the requested task after an unrelated same-session link',
+      change: (snapshot) => { snapshot.sessionLinks.unshift({ ...snapshot.sessionLinks[0], id: 'other-link', nodeId: 'other-task' }); },
+    },
+    { name: 'a missing task', change: (snapshot) => { snapshot.nodes = []; }, reason: 'task-not-found' },
+    { name: 'a missing link', change: (snapshot) => { snapshot.sessionLinks = []; }, reason: 'task-ref-missing' },
+    {
+      name: 'another session link',
+      change: (snapshot) => { snapshot.sessionLinks[0].sessionKey = 'agent:main:other'; },
+      reason: 'task-ref-missing',
+    },
+    {
+      name: 'an old-generation link',
+      change: (snapshot) => { snapshot.sessionLinks[0].sessionGeneration = 'generation-old'; },
+      reason: 'task-ref-missing',
+    },
+  ];
+
+  it.each(defaultScopeCases)('uses the Main default resolver for $name', async ({ change, reason }) => {
+    const timestamp = '2026-11-07T00:00:00.000Z';
+    const snapshot = taskLedgerService.projectTaskLedgerSnapshot(WORKSPACE_ID, [
+      taskLedgerService.createTaskLedgerEvent(WORKSPACE_ID, {
+        type: 'node_created', actor: 'assistant',
+        payload: { node: { id: TASK_REF, kind: 'task', title: 'Admitted task', status: 'doing', createdAt: timestamp, updatedAt: timestamp } },
+      }),
+      taskLedgerService.createTaskLedgerEvent(WORKSPACE_ID, {
+        type: 'session_linked', actor: 'assistant',
+        payload: { sessionLink: { id: 'current-link', nodeId: TASK_REF, sessionKey: SESSION_KEY, sessionGeneration: SESSION_GENERATION, createdAt: timestamp } },
+      }),
+    ]);
+    change?.(snapshot);
+    const loadSnapshot = vi.spyOn(taskLedgerService, 'loadTaskLedgerSnapshot').mockResolvedValue(snapshot);
+    const rpc = acceptedGatewayRpc();
+    const store = memoryStore();
+    const api = createSessionsApi({
+      gatewayManager: { rpc: vi.fn(async () => ({ session: { sessionId: SESSION_GENERATION } })) } as never,
+      resolveCoordinator: async () => bindingResult(),
+      getActiveWorkspaceId: async () => WORKSPACE_ID,
+      gatewayRpcForDelegation: rpc,
+      delegationStore: store,
+    });
+    const result = await api.delegate(payload());
+    expect(loadSnapshot).toHaveBeenCalledExactlyOnceWith(WORKSPACE_ID);
+    if (reason) {
+      expect(result).toMatchObject({ success: false, status: 'rejected' });
+      expect(result.error).toContain(reason);
+      expect(rpc).not.toHaveBeenCalled();
+      expect(store.records.size).toBe(0);
+    } else {
+      expect(result).toMatchObject({ success: true, status: 'accepted' });
+      expect(result.receipt?.taskRef).toBe(TASK_REF);
+      expect(rpc).toHaveBeenCalledTimes(1);
+    }
+  });
+
   it('rejects before Gateway delegation when the explicit task scope is unavailable', async () => {
     const rpc = acceptedGatewayRpc();
     const result = await executeSessionDelegation(payload({ idempotencyKey: 'delegate-scope-missing' }), dependencies(memoryStore(), {
