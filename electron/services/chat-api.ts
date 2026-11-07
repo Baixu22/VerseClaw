@@ -24,6 +24,7 @@ import type { MemorySurfaceSnapshot } from '../../shared/types/memory';
 import type { SessionEffectivePolicy } from '../../shared/types/session-effective-policy';
 import { getSetting } from '../utils/store';
 import { getHostDeadline } from '../utils/host-deadline-context';
+import { persistentTaskChatContext } from './task-system-service';
 
 const VISION_MIME_TYPES = new Set([
   'image/png',
@@ -554,6 +555,10 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
           (LONG_TASK_INPUT_MODES as readonly string[]).includes(body.inputMode)
         ) {
           rpcParams.inputMode = body.inputMode;
+        }
+        if (workspaceId) {
+          const context=await persistentTaskChatContext(workspaceId,sessionKey,gatewayManager,typeof rpcParams.workspaceDir==='string'?rpcParams.workspaceDir:undefined);
+          if(context)rpcParams.message=`${context}\n\n${String(rpcParams.message ?? '')}`;
         }
         // KS-04: renderer refs are untrusted retrieval intent. Main forwards
         // typed refs only; runtime resolves them through DCS owner adapters.

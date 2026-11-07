@@ -1,0 +1,202 @@
+import { existsSync } from "node:fs";
+import { TaskSystemStore } from "../../shared/task-system/store";
+import { resolveTaskDomain } from "../../shared/task-system/identity";
+import type { TaskSystemCommand, TaskView } from "../../shared/task-system/types";
+import { getPersistedCoordinatorBinding, getWorkspaceRootPathById } from "./workspaces-api";
+import type { GatewayManager } from "../gateway/manager";
+
+export async function openTaskSystem(
+  workspaceId: string,
+  create = false,
+): Promise<TaskSystemStore | null> {
+  if (!workspaceId?.trim()) throw new Error("TASK_WORKSPACE_REQUIRED");
+  const root = await getWorkspaceRootPathById(workspaceId);
+  if (!root) {
+    if (create) throw new Error("TASK_WORKSPACE_NOT_FOUND");
+    return null;
+  }
+  if (!existsSync(root)) {
+    if (create) throw new Error("TASK_WORKSPACE_NOT_FOUND");
+    return null;
+  }
+  const domain = resolveTaskDomain(root);
+  if (!create && !existsSync(domain.database)) return null;
+  return new TaskSystemStore(domain);
+}
+
+export async function listManagedTasks(workspaceId?: string | null): Promise<TaskView[]> {
+  if (!workspaceId) return [];
+  const store = await openTaskSystem(workspaceId);
+  try {
+    return store?.list() ?? [];
+  } finally {
+    store?.close();
+  }
+}
+
+export async function assertManagedTaskAdmission(input: {
+  workspaceRoot: string;
+  taskRef: string;
+  sessionKey: string;
+  generation: string;
+  requestId: string;
+}): Promise<void> {
+  if (!existsSync(input.workspaceRoot)) return;
+  const domain = resolveTaskDomain(input.workspaceRoot);
+  if (!existsSync(domain.database)) return;
+  const store = new TaskSystemStore(domain);
+  try {
+    const task = store.get(input.taskRef);
+    if (
+      !task.claim ||
+      task.claim.sessionKey !== input.sessionKey ||
+      task.claim.generation !== input.generation
+    )
+      throw new Error("TASK_DELEGATION_OWNER_MISMATCH");
+    store.assertOwner(task.claim);
+    // One logical dispatch per task epoch. A repair or another writer needs a
+    // new task/attempt instead of another request key for the same work.
+    store.reserveDelegation(task.claim, input.requestId);
+  } finally {
+    store.close();
+  }
+}
+
+export async function persistentTaskChatContext(
+  workspaceId: string,
+  sessionKey: string,
+  gateway: GatewayManager,
+  workspaceRoot?: string,
+): Promise<string | null> {
+  if (!workspaceRoot || !existsSync(workspaceRoot)) return null;
+  const resolved = resolveTaskDomain(workspaceRoot);
+  if (!existsSync(resolved.database)) return null;
+  const store = new TaskSystemStore(resolved);
+  try {
+    const bound = store.binding(sessionKey);
+    if (!bound?.claim) return null;
+    const coordinator = await getPersistedCoordinatorBinding(workspaceId, sessionKey);
+    if (!coordinator || coordinator.state !== "active")
+      throw new Error("TASK_COORDINATOR_REQUIRED");
+    const domain = resolveTaskDomain(coordinator.environment.canonicalRoot);
+    if (domain.id !== store.domain.id) throw new Error("TASK_SESSION_DOMAIN_MISMATCH");
+    const described = await gateway.rpc<{ session?: { sessionId?: string } }>(
+      "sessions.describe",
+      { key: sessionKey },
+      10_000,
+    );
+    if (described?.session?.sessionId !== bound.claim.generation)
+      throw new Error("TASK_GENERATION_STALE");
+    const scoped = new TaskSystemStore(domain);
+    try {
+      if (bound.claim.state === "active") {
+        scoped.assertOwner(bound.claim);
+        scoped.control(bound.claim, "renew");
+      }
+      return scoped.context(sessionKey, bound.claim.generation);
+    } finally {
+      scoped.close();
+    }
+  } finally {
+    store.close();
+  }
+}
+
+export async function taskSystemCommand(
+  workspaceId: string,
+  command: TaskSystemCommand,
+  gateway?: GatewayManager,
+): Promise<unknown> {
+  const store = await openTaskSystem(workspaceId, true);
+  if (!store) throw new Error("TASK_STORE_UNAVAILABLE");
+  const generationFor = async (sessionKey: string) => {
+    if (!gateway) throw new Error("TASK_SESSION_OWNER_UNAVAILABLE");
+    const binding = await getPersistedCoordinatorBinding(workspaceId, sessionKey);
+    if (!binding || binding.state !== "active") throw new Error("TASK_COORDINATOR_REQUIRED");
+    const described = await gateway.rpc<{ session?: { sessionId?: string } }>(
+      "sessions.describe",
+      { key: sessionKey },
+      10_000,
+    );
+    if (!described?.session?.sessionId) throw new Error("TASK_SESSION_MISSING");
+    if (binding.sessionGeneration && binding.sessionGeneration !== described.session.sessionId)
+      throw new Error("TASK_GENERATION_STALE");
+    if (resolveTaskDomain(binding.environment.canonicalRoot).id !== store.domain.id)
+      throw new Error("TASK_SESSION_DOMAIN_MISMATCH");
+    return { generation: described.session.sessionId, worktree: binding.environment.canonicalRoot };
+  };
+  try {
+    if (command.action === "create")
+      return store.create(command.contract, command.requestId, undefined, {
+        source: "host-task-api",
+      });
+    if (command.action === "adopt") {
+      const { loadTaskLedgerSnapshot } = await import("./task-ledger-service");
+      const snapshot = await loadTaskLedgerSnapshot(workspaceId);
+      const existing = snapshot.nodes.find((node) => node.id === command.taskNodeId);
+      if (!existing || existing.kind !== "task" || ["done", "dropped"].includes(existing.status))
+        throw new Error("TASK_ADOPTION_INELIGIBLE");
+      return store.create(command.contract, command.requestId, command.taskNodeId, {
+        source: "legacy-adoption",
+      });
+    }
+    if (command.action === "revise")
+      return store.revise(command.taskNodeId, command.expectedRevision, command.contract);
+    if (command.action === "claim") {
+      const owner = await generationFor(command.sessionKey);
+      const scoped = new TaskSystemStore(resolveTaskDomain(owner.worktree));
+      try {
+        return scoped.claim(
+          command.taskNodeId,
+          command.sessionKey,
+          owner.generation,
+          command.requestId,
+        );
+      } finally {
+        scoped.close();
+      }
+    }
+    if (command.action === "recover") {
+      const next = await generationFor(command.targetSessionKey);
+      const view = store.get(command.taskNodeId);
+      if (!view.claim) throw new Error("TASK_CLAIM_REQUIRED");
+      const original = new TaskSystemStore(resolveTaskDomain(view.claim.worktree));
+      try {
+        return original.recover(
+          command.taskNodeId,
+          command.targetSessionKey,
+          next.generation,
+          next.worktree,
+        );
+      } finally {
+        original.close();
+      }
+    }
+    const credential = command.credential;
+    const current = await generationFor(credential.sessionKey);
+    if (current.generation !== credential.generation) throw new Error("TASK_GENERATION_STALE");
+    const scoped = new TaskSystemStore(resolveTaskDomain(current.worktree));
+    try {
+      if (command.action === "checkpoint") return scoped.checkpoint(credential, command.checkpoint);
+      if (command.action === "handoff") {
+        const next = await generationFor(command.targetSessionKey);
+        return scoped.handoff(credential, command.targetSessionKey, next.generation, next.worktree);
+      }
+      if (command.action === "submit") return scoped.submit(credential, command.candidate);
+      if (command.action === "verifyFile")
+        return scoped.verifyFile(
+          credential,
+          command.criterionId,
+          command.path,
+          command.expectedSha256,
+          command.candidate,
+        );
+      if (command.action === "accept") return scoped.accept(credential, command.candidate);
+      return scoped.control(credential, command.action);
+    } finally {
+      scoped.close();
+    }
+  } finally {
+    store.close();
+  }
+}

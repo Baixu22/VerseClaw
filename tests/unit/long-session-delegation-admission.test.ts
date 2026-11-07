@@ -242,6 +242,13 @@ function acceptedGatewayRpc(counter = vi.fn()) {
 }
 
 describe('long-session delegation admission', () => {
+  it('rejects task ownership before issuing a worker dispatch',async()=>{
+    const deps=dependencies(undefined,{assertTaskAdmission:async()=>{throw new Error('TASK_DELEGATION_OWNER_MISMATCH');}});
+    const dispatch=vi.spyOn(deps,'gatewayRpc');
+    const result=await executeSessionDelegation(payload(),deps);
+    expect(result).toMatchObject({success:false,status:'rejected',error:'TASK_DELEGATION_OWNER_MISMATCH'});
+    expect(dispatch).not.toHaveBeenCalled();
+  });
   it('binds accepted children to coordinator, task, backend, permissions, and actual shared isolation without claiming completion', async () => {
     const rpc = acceptedGatewayRpc();
     const store = memoryStore();

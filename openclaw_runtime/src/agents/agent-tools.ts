@@ -66,6 +66,7 @@ import {
 } from "./agent-tools.read.js";
 import { cleanToolSchemaForGemini, normalizeToolParameters } from "./agent-tools.schema.js";
 import type { AnyAgentTool } from "./agent-tools.types.js";
+import { createPersistentTaskTool } from './tools/persistent-task-tool.js';
 import { extractApplyPatchTargetPaths } from "./apply-patch-paths.js";
 import { createApplyPatchTool, parsePatchText } from "./apply-patch.js";
 import { createMemoryQueryTool } from "../runtime-core/memory-query-tool.js";
@@ -1351,6 +1352,7 @@ export function createOpenClawCodingTools(options?: {
     : [];
   const tools: AnyAgentTool[] = [
     ...base,
+    ...(options?.sessionKey && options?.sessionId && !sandbox ? [createPersistentTaskTool({ workspace: workspaceRoot,sessionKey:options.sessionKey,generation:options.sessionId })] : []),
     ...(includeShellTools && applyPatchTool ? [applyPatchTool as unknown as AnyAgentTool] : []),
     ...(execTool ? [execTool as unknown as AnyAgentTool] : []),
     ...(processTool ? [processTool as unknown as AnyAgentTool] : []),

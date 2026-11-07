@@ -2661,6 +2661,10 @@ openclaw_runtime/_tmp_*
 !/docs/dev/evidence/semantic-convergence-20261104/integration-closeout-20261106/runtime-tests.json
 !/docs/dev/evidence/semantic-convergence-20261104/integration-closeout-20261106/temporary-resources.json
 !/docs/dev/evidence/semantic-convergence-20261104/integration-closeout-20261106/types.json
+!/docs/dev/durable-task-system/PLAN.md
+!/docs/dev/durable-task-system/sources.json
+!/docs/dev/durable-task-system/DESIGN.md
+!/docs/dev/durable-task-system/STATUS.md
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.

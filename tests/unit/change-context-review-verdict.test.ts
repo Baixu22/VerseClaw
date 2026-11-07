@@ -11,7 +11,7 @@ import type { ChangeContextProjection, ChangeContextReviewVerdictDecision } from
 
 const fixture = vi.hoisted(() => ({ root: '', workspace: null as WorkspaceProfile | null }));
 vi.mock('@electron/utils/paths', async (original) => ({ ...await original<object>(), getOpenClawConfigDir: () => join(fixture.root, 'config') }));
-vi.mock('@electron/services/workspaces-api', () => ({ getActiveWorkspaceProfile: async () => fixture.workspace }));
+vi.mock('@electron/services/workspaces-api', () => ({ getActiveWorkspaceProfile: async () => fixture.workspace, getWorkspaceRootPathById: async () => fixture.workspace?.rootPath }));
 vi.mock('electron-store', () => { const stores = new Map<string, Record<string, unknown>>(); return { default: class {
   private data: Record<string, unknown>;
   constructor(options?: { name?: string; defaults?: Record<string, unknown> }) {
@@ -27,7 +27,7 @@ import { createChangeContextApi } from '@electron/services/change-context-api';
 import { createChangeContextReviewCommentStore, createInMemoryChangeContextReviewCommentBackend } from '@electron/services/change-context-review-store';
 import { createTaskLedgerApi } from '@electron/services/task-ledger-api';
 import { createPermissionsApi } from '@electron/services/permissions-api';
-import { getTaskLedgerEventsPath } from '@electron/services/task-ledger-service';
+import { readTaskLedgerEvents } from '@electron/services/task-ledger-service';
 
 const author = { id: 'agent:acceptance', kind: 'agent' as const, drivenBy: 'agent' as const };
 let api: ReturnType<typeof createChangeContextApi>;
@@ -68,15 +68,15 @@ describe('review verdict and existing mutation owners', () => {
     expect(first.verdict?.taskLedgerLink).toMatchObject({ direction: 'review-to-task-ledger', created: true });
     const repeat = await api.submitVerdict(verdict('request_changes'));
     expect(repeat.verdict?.taskLedgerLink).toMatchObject({ taskLedgerNodeId: first.verdict?.taskLedgerLink?.taskLedgerNodeId, created: false });
-    const before = await readFile(getTaskLedgerEventsPath(identity.workspaceId), 'utf8');
+    const before = (await readTaskLedgerEvents(identity.workspaceId)).events;
     for (const decision of ['approve', 'comment_only'] as const) {
       expect(await api.submitVerdict(verdict(decision))).toMatchObject({ success: true, verdict: { decision, taskLedgerEffect: 'none', authority: { completesTaskLedgerNode: false, grantsApproval: false, executesCode: false } } });
     }
-    expect(await readFile(getTaskLedgerEventsPath(identity.workspaceId), 'utf8')).toBe(before);
+    expect((await readTaskLedgerEvents(identity.workspaceId)).events).toEqual(before);
     const snapshot = await ledger.snapshot({ workspaceId: identity.workspaceId });
     expect(snapshot.snapshot.nodes).toHaveLength(1);
     expect(snapshot.snapshot.nodes[0]).toMatchObject({ status: 'todo', completedAt: null });
-    expect(JSON.parse(before.trim()).payload.node.metadata).toMatchObject({ driven_by: 'agent', actor: 'agent:acceptance' });
+    expect(before[0].payload.node?.metadata).toMatchObject({ driven_by: 'agent', actor: 'agent:acceptance' });
   });
   it('links a pre-existing node without changing it', async () => {
     await ledger.createNode({ workspaceId: identity.workspaceId, node: { title: 'Existing' } });

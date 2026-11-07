@@ -15,6 +15,7 @@ import {
 import {
   getTaskLedgerDir,
   getTaskLedgerEventsPath,
+  readTaskLedgerEvents,
 } from "../../electron/services/task-ledger-service";
 
 const roots: string[] = [];
@@ -53,13 +54,12 @@ function proposalEvents() {
 }
 
 describe("L01 working-context single source", () => {
-  it("persists through the JSONL ledger and reads back a consistent projection", async () => {
+  it("persists through the transactional ledger and reads back a consistent projection", async () => {
     await appendTaskLedgerWorkingContextEvents(workspaceId, proposalEvents());
     const projection = await readTaskLedgerWorkingContext(workspaceId);
     expect(projection.fields.Objective.pending.map((entry) => entry.proposalId)).toContain("p1");
-    // The projection is derived from the ledger file, not a second store.
-    expect(fs.existsSync(getTaskLedgerEventsPath(workspaceId))).toBe(true);
-    expect(fs.readFileSync(getTaskLedgerEventsPath(workspaceId), "utf8").trim().split("\n")).toHaveLength(1);
+    expect(fs.existsSync(path.join(getTaskLedgerDir(workspaceId),'events.sqlite3'))).toBe(true);
+    expect((await readTaskLedgerEvents(workspaceId)).events).toHaveLength(1);
   });
 
   it("is idempotent across a replayed batch (no duplicate events, identical projection)", async () => {
@@ -68,7 +68,7 @@ describe("L01 working-context single source", () => {
     await appendTaskLedgerWorkingContextEvents(workspaceId, proposalEvents(), "batch-1");
     const second = await readTaskLedgerWorkingContext(workspaceId);
     expect(second).toEqual(first);
-    expect(fs.readFileSync(getTaskLedgerEventsPath(workspaceId), "utf8").trim().split("\n")).toHaveLength(1);
+    expect((await readTaskLedgerEvents(workspaceId)).events).toHaveLength(1);
   });
 
   it("surfaces a write failure instead of reporting success", async () => {

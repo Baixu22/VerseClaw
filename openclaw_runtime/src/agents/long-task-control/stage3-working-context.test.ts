@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { readPersistentTaskEvents } from '../../../../shared/task-system/event-store.js';
 
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
@@ -160,9 +161,8 @@ describe("stage3 long-task Working Context runtime adapter", () => {
     const workspaceDir = fs.readdirSync(workspacesRoot).find((name) => name.startsWith("stage3-on-"));
     expect(workspaceDir).toBeDefined();
     const stateDirLedger = path.join(workspacesRoot, workspaceDir as string, "events.jsonl");
-    const lines = fs.readFileSync(stateDirLedger, "utf8").trim().split(/\r?\n/u);
-    expect(lines).toHaveLength(4);
-    const parsed = lines.map((line) => JSON.parse(line) as { type?: string; taskId?: string });
+    const parsed = readPersistentTaskEvents(stateDirLedger);
+    expect(parsed).toHaveLength(4);
     expect(parsed.filter((line) => line.type === "working_context_proposed")).toHaveLength(1);
     expect(parsed.filter((line) => line.type === "working_context_proposal_accepted")).toHaveLength(1);
     expect(parsed.every((line) => line.taskId === rootId)).toBe(true);

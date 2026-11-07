@@ -1759,6 +1759,8 @@ export const hostApi = {
     getContext: (input: { id: string; agentId?: string; workspacePath?: string }) => invokeHost('topics', 'getContext', input),
   },
   taskLedger: {
+    managedTasks: (input?: TaskLedgerWorkspacePayload): Promise<import('@shared/host-api/contract').TaskSystemListResult> => invokeHost('taskLedger', 'managedTasks', input),
+    command: (input: import('@shared/host-api/contract').TaskSystemCommandPayload): Promise<import('@shared/host-api/contract').TaskSystemCommandResult> => invokeHost('taskLedger', 'command', input),
     snapshot: (input?: TaskLedgerWorkspacePayload): Promise<TaskLedgerSnapshotResult> => invokeHost('taskLedger', 'snapshot', input),
     appendEvents: (input: TaskLedgerAppendEventsPayload): Promise<TaskLedgerSnapshotResult> => invokeHost('taskLedger', 'appendEvents', input),
     createNode: (input: TaskLedgerCreateNodePayload): Promise<TaskLedgerSnapshotResult> => invokeHost('taskLedger', 'createNode', input),

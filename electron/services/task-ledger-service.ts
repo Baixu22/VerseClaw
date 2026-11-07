@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from 'node:crypto';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import type {
   TaskLedgerEdge,
@@ -11,6 +11,8 @@ import type {
   TaskLedgerWarning,
 } from '../../shared/types/task-ledger';
 import { getOpenClawConfigDir } from '../utils/paths';
+import { writeJsonAtomic } from '../utils/atomic-write';
+import { appendPersistentTaskEvents, readPersistentTaskEvents } from '../../shared/task-system/event-store';
 
 const SCHEMA_VERSION = 1 as const;
 
@@ -118,13 +120,7 @@ export function createTaskLedgerEvent(
 
 export async function readTaskLedgerEvents(workspaceId?: string | null): Promise<TaskLedgerReadResult> {
   const eventsPath = getTaskLedgerEventsPathForKey(normalizeTaskLedgerWorkspaceId(workspaceId));
-  let raw;
-  try {
-    raw = await readFile(eventsPath, 'utf8');
-  } catch {
-    return { events: [], warnings: [] };
-  }
-  return parseTaskLedgerEventLog(raw);
+  return {events:readPersistentTaskEvents(eventsPath),warnings:[]};
 }
 
 export function parseTaskLedgerEventLog(raw: string): TaskLedgerReadResult {
@@ -308,13 +304,26 @@ export function projectTaskLedgerSnapshot(
 export async function writeTaskLedgerSnapshot(snapshot: TaskLedgerSnapshot): Promise<void> {
   const dir = getTaskLedgerDirForKey(snapshot.workspaceId);
   await mkdir(dir, { recursive: true });
-  await writeFile(getTaskLedgerSnapshotPathForKey(snapshot.workspaceId), JSON.stringify(snapshot, null, 2), 'utf8');
+  await writeJsonAtomic(getTaskLedgerSnapshotPathForKey(snapshot.workspaceId),snapshot);
 }
 
 export async function loadTaskLedgerSnapshot(workspaceId?: string | null): Promise<TaskLedgerSnapshot> {
   const normalizedWorkspaceId = normalizeTaskLedgerWorkspaceId(workspaceId);
   const { events, warnings } = await readTaskLedgerEvents(workspaceId);
   const snapshot = projectTaskLedgerSnapshot(normalizedWorkspaceId, events, warnings);
+  if(workspaceId){
+    const { listManagedTasks }=await import('./task-system-service');
+    const managed=await listManagedTasks(workspaceId);
+    for(const view of managed){
+      const {contract}=view;
+      const projected:TaskLedgerNode={id:contract.taskNodeId,title:contract.objective,description:contract.target,kind:'task',status:contract.state==='ready'?'todo':contract.state==='paused'?'blocked':contract.state==='cancelled'?'dropped':contract.state,createdAt:new Date(contract.createdAt).toISOString(),updatedAt:new Date(contract.updatedAt).toISOString(),metadata:{readonlyProjection:true,source:'task-ledger.execution-contract',contractRevision:contract.revision}};
+      const index=snapshot.nodes.findIndex(node=>node.id===contract.taskNodeId);
+      if(index<0){snapshot.nodes.push(projected);snapshot.rootNodeIds.push(projected.id);}else snapshot.nodes[index]={...snapshot.nodes[index],...projected};
+    }
+    snapshot.activeNodeIds=snapshot.nodes.filter(node=>node.status==='doing').map(node=>node.id);
+    snapshot.reviewNodeIds=snapshot.nodes.filter(node=>node.status==='review').map(node=>node.id);
+    snapshot.blockedNodeIds=snapshot.nodes.filter(node=>node.status==='blocked').map(node=>node.id);
+  }
   await writeTaskLedgerSnapshot(snapshot);
   return snapshot;
 }
@@ -328,21 +337,15 @@ export async function appendTaskLedgerEvents(
   const dir = getTaskLedgerDirForKey(normalizedWorkspaceId);
   await mkdir(dir, { recursive: true });
 
-  const { events } = await readTaskLedgerEvents(workspaceId);
-  const existingEventIds = new Set(events.map((event) => event.id));
-  const existingIdempotencyKeys = new Set(
-    events.map((event) => event.idempotencyKey).filter((key): key is string => typeof key === 'string' && key.length > 0),
-  );
-  if (batchIdempotencyKey && existingIdempotencyKeys.has(batchIdempotencyKey)) {
-    return loadTaskLedgerSnapshot(workspaceId);
+  if(workspaceId){
+    const { openTaskSystem }=await import('./task-system-service');
+    const managed=await openTaskSystem(workspaceId);
+    try{
+      if(inputs.some(input=>managed?.has(input.taskId??input.payload.nodeId??input.payload.node?.id??'') && input.type!=='session_linked'))throw new Error('TASK_MANAGED_TRANSITION_REQUIRED');
+    }finally{managed?.close();}
   }
 
-  const nextEvents = inputs
-    .map((input) => createTaskLedgerEvent(normalizedWorkspaceId, input, batchIdempotencyKey))
-    .filter((event) => !existingEventIds.has(event.id) && !(event.idempotencyKey && existingIdempotencyKeys.has(event.idempotencyKey)));
-  if (nextEvents.length > 0) {
-    const lines = nextEvents.map((event) => JSON.stringify(event)).join('\n');
-    await writeFile(getTaskLedgerEventsPathForKey(normalizedWorkspaceId), `${lines}\n`, { encoding: 'utf8', flag: 'a' });
-  }
+  const nextEvents=inputs.map(input=>createTaskLedgerEvent(normalizedWorkspaceId,input,batchIdempotencyKey));
+  appendPersistentTaskEvents(getTaskLedgerEventsPathForKey(normalizedWorkspaceId),nextEvents,batchIdempotencyKey);
   return loadTaskLedgerSnapshot(workspaceId);
 }

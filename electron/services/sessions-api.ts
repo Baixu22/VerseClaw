@@ -46,6 +46,7 @@ import type {
   SessionRecallOriginalResult,
 } from '../../shared/host-api/contract';
 import { appendTaskLedgerEvents, loadTaskLedgerSnapshot } from './task-ledger-service';
+import { assertManagedTaskAdmission } from './task-system-service';
 import { createWorkspacesApi, getActiveWorkspaceProfile, type WorkspaceCoordinatorLifecycleEvent } from './workspaces-api';
 import {
   executeSessionDelegation,
@@ -1933,6 +1934,7 @@ export function createSessionsApi(ctx: {
           const sessionId = described?.session?.sessionId;
           return typeof sessionId === 'string' && sessionId.trim() ? sessionId.trim() : null;
         },
+        assertTaskAdmission: assertManagedTaskAdmission,
         stopEpoch: (sessionKey) => delegationStopEpochs.get(sessionKey) ?? 0,
       }).finally(() => {
         delegationFlights.delete(flightKey);

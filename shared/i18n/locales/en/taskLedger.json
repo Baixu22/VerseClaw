@@ -83,5 +83,46 @@
     "created": "Task ledger node created",
     "sessionLinked": "Session linked",
     "exported": "Task ledger HTML exported"
+  },
+  "managed": {
+    "tab": "Persistent tasks",
+    "description": "Keep goals and acceptance criteria across sessions. Claim a task before implementation; other worktrees share the same ownership.",
+    "objective": "Objective",
+    "target": "Artifact path relative to the worktree",
+    "expectedHash": "Expected artifact SHA-256",
+    "fileCheckExplanation": "This creates an exact file-content check. Broader business requirements need their own registered verifier.",
+    "fileCheck": "Artifact matches the approved content hash",
+    "create": "Create persistent task",
+    "empty": "No persistent tasks in this repository.",
+    "owner": "Owner: {{owner}}",
+    "unassigned": "Unassigned",
+    "worktree": "Worktree: {{path}}",
+    "nextAction": "Next: {{action}}",
+    "pending": "Unresolved operations: {{count}}",
+    "claim": "Claim for this session",
+    "pause": "Pause",
+    "resume": "Resume",
+    "release": "Release",
+    "error": "Task operation failed: {{error}}",
+    "states": {
+      "ready": "Ready",
+      "doing": "In progress",
+      "paused": "Paused",
+      "review": "Awaiting acceptance",
+      "done": "Accepted",
+      "cancelled": "Cancelled"
+    },
+    "claimStates": {
+      "active": "Active",
+      "paused": "Paused",
+      "recovery_required": "Recovery required",
+      "released": "Released"
+    },
+    "acceptance": "Acceptance criterion",
+    "constraints": "Constraints (optional)",
+    "verification": "Verification method",
+    "commandCheck": "Run the specified check",
+    "command": "Verification command",
+    "commandCheckExplanation": "The agent runs this command through the existing tool permissions. A zero exit code and unchanged input files satisfy this check; no command runs when you create the task."
   }
 }

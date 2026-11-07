@@ -1,6 +1,8 @@
-import { randomUUID } from 'node:crypto';
+import { randomUUID, createHash } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import type { GatewayManager } from '../gateway/manager';
+import { listManagedTasks, taskSystemCommand } from './task-system-service';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type {
   TaskLedgerAddEdgePayload,
@@ -38,7 +40,7 @@ function normalizeNodeInput(payload: TaskLedgerCreateNodePayload): TaskLedgerNod
   const createdAt = nowIso();
   const input = payload.node;
   return {
-    id: randomUUID(),
+    id: payload.idempotencyKey ? createHash('sha256').update(`${payload.workspaceId??''}\0${payload.idempotencyKey}`).digest('hex') : randomUUID(),
     title: requireString(input.title, 'node.title'),
     kind: input.kind ?? 'task',
     parentId: input.parentId ?? null,
@@ -146,8 +148,13 @@ document.getElementById('search').addEventListener('input',e=>{query=e.target.va
 </html>`;
 }
 
-export function createTaskLedgerApi(): CompleteHostServiceRegistry['taskLedger'] {
+export function createTaskLedgerApi(gatewayManager?: GatewayManager): CompleteHostServiceRegistry['taskLedger'] {
   return {
+    managedTasks: async (payload) => ({ success: true, tasks: await listManagedTasks(payload?.workspaceId) }),
+    command: async (payload) => {
+      try { return { success: true, result: await taskSystemCommand(payload.workspaceId,payload.command,gatewayManager) }; }
+      catch (error) { return { success: false, error: error instanceof Error ? error.message : String(error) }; }
+    },
     snapshot: async (payload) => wrapSnapshot(await loadTaskLedgerSnapshot(payload?.workspaceId)),
 
     appendEvents: async (payload) => wrapSnapshot(

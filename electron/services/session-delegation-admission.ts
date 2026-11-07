@@ -43,6 +43,7 @@ export type SessionDelegationDependencies = {
   getActiveWorkspaceId: () => Promise<string | null>;
   gatewayRpc: (payload: GatewayRpcPayload) => unknown | Promise<unknown>;
   describeSessionGeneration: (sessionKey: string) => Promise<string | null>;
+  assertTaskAdmission?: (input: { workspaceRoot: string; taskRef: string; sessionKey: string; generation: string; requestId: string }) => Promise<void>;
   stopEpoch: (sessionKey: string) => number;
   now?: () => Date;
 };
@@ -330,6 +331,11 @@ export async function executeSessionDelegation(
   const generationBefore = await deps.describeSessionGeneration(payload.sessionKey);
   if (generationBefore !== payload.expectedSessionGeneration) {
     return { success: false, status: 'rejected', error: 'Parent session generation changed before admission' };
+  }
+  try {
+    await deps.assertTaskAdmission?.({workspaceRoot:binding.environment.canonicalRoot,taskRef:payload.taskRef,sessionKey:payload.sessionKey,generation:generationBefore,requestId:payload.idempotencyKey});
+  } catch(error) {
+    return {success:false,status:'rejected',error:error instanceof Error?error.message:String(error)};
   }
   const stopEpochBefore = deps.stopEpoch(payload.sessionKey);
   const inFlight = buildPendingReceipt({
