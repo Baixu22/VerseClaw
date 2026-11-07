@@ -1,0 +1,73 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\tf0833\\paired-final\\4-baseline\\electron\\verse-claw-e2e-run-IZk4D9",
+  "ledgerEntries": 20,
+  "checks": [
+    {
+      "pid": 44716,
+      "creationTime": 1794077350721,
+      "status": "exited"
+    },
+    {
+      "pid": 45288,
+      "creationTime": 1794077355144,
+      "status": "exited"
+    },
+    {
+      "pid": 27108,
+      "creationTime": 1794077355404,
+      "status": "exited"
+    },
+    {
+      "pid": 24936,
+      "creationTime": 1794077383445,
+      "status": "exited"
+    },
+    {
+      "pid": 19100,
+      "creationTime": 1794077388182,
+      "status": "exited"
+    },
+    {
+      "pid": 44940,
+      "creationTime": 1794077389425,
+      "status": "exited"
+    },
+    {
+      "pid": 25560,
+      "creationTime": 1794077419878,
+      "status": "exited"
+    },
+    {
+      "pid": 43448,
+      "creationTime": 1794077424778,
+      "status": "exited"
+    },
+    {
+      "pid": 41404,
+      "creationTime": 1794077425040,
+      "status": "exited"
+    },
+    {
+      "pid": 42948,
+      "creationTime": 1794077462649,
+      "status": "exited"
+    },
+    {
+      "pid": 27000,
+      "creationTime": 1794077471180,
+      "status": "exited"
+    },
+    {
+      "pid": 45528,
+      "creationTime": 1794077471698,
+      "status": "exited"
+    }
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 0,
+  "status": "passed"
+}

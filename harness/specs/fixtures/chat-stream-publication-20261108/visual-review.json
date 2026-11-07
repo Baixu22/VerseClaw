@@ -1,0 +1,17 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "passed",
+  "files": [
+    "stream-en.png",
+    "stream-zh.png",
+    "stream-ja.png",
+    "stream-ru.png"
+  ],
+  "checks": [
+    "Four locale navigation and composer labels remain readable",
+    "Typed next question is retained in every screenshot",
+    "History and final response wrap within the conversation column",
+    "Input and its action controls remain visible"
+  ]
+}

@@ -1,0 +1,819 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": {
+    "commit": "f4a9502c561d9997bc7f34d4509e13601bf59e9d",
+    "tree": "a93b07616f6ba8eba416fab395ca75b9adf238aa",
+    "dirty": false
+  },
+  "cleanAfter": true,
+  "commands": [
+    {
+      "id": "unit",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/chat-stream-publication.test.ts",
+        "tests/unit/chat-runtime-sequence.test.ts",
+        "tests/unit/chat-completed-projection.test.ts",
+        "tests/unit/execution-projection.test.ts",
+        "tests/unit/chat-event-dedupe.test.ts",
+        "tests/unit/chat-target-routing.test.ts",
+        "tests/unit/chat-pending-message-queue.test.ts",
+        "tests/unit/r0-3-chat-abort-checkstuck.test.ts",
+        "tests/unit/gateway-events.test.ts",
+        "tests/unit/task-visualization.test.ts",
+        "tests/unit/chat-history-reply-while-sending.test.tsx",
+        "tests/unit/chat-page-execution-graph.test.tsx",
+        "tests/unit/chat-tool-card-suppression.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\tf0833\\acceptance-final\\unit.json"
+      ],
+      "cwd": "D:\\tmp\\tf0833\\candidate",
+      "exitCode": 0,
+      "durationMs": 27609
+    },
+    {
+      "id": "web-types",
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\tf0833\\candidate",
+      "exitCode": 0,
+      "durationMs": 7204
+    },
+    {
+      "id": "node-types",
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\tf0833\\candidate",
+      "exitCode": 0,
+      "durationMs": 29640
+    },
+    {
+      "id": "lint",
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "src/pages/Chat/execution-projection.ts",
+        "src/pages/Chat/index.tsx",
+        "src/stores/chat.ts",
+        "src/stores/chat/frame-publication.ts",
+        "src/stores/chat/runtime-graph.ts",
+        "tests/e2e/chat-stream-publication.spec.ts",
+        "tests/unit/chat-completed-projection.test.ts",
+        "tests/unit/chat-page-execution-graph.test.tsx",
+        "tests/unit/chat-runtime-sequence.test.ts",
+        "tests/unit/chat-stream-publication.test.ts",
+        "--format=json",
+        "--output-file",
+        "D:\\tmp\\tf0833\\acceptance-final\\lint.json"
+      ],
+      "cwd": "D:\\tmp\\tf0833\\candidate",
+      "exitCode": 0,
+      "durationMs": 4453
+    },
+    {
+      "id": "contract",
+      "argv": [
+        "node",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0833\\candidate",
+      "exitCode": 0,
+      "durationMs": 2407
+    },
+    {
+      "id": "i18n",
+      "argv": [
+        "node",
+        "scripts/i18n-lint.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0833\\candidate",
+      "exitCode": 0,
+      "durationMs": 265
+    },
+    {
+      "id": "comms-replay",
+      "argv": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0833\\candidate",
+      "exitCode": 0,
+      "durationMs": 266
+    },
+    {
+      "id": "comms-compare",
+      "argv": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0833\\candidate",
+      "exitCode": 0,
+      "durationMs": 187
+    },
+    {
+      "id": "retention",
+      "argv": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0833\\candidate",
+      "exitCode": 0,
+      "durationMs": 3313
+    },
+    {
+      "id": "harness-validate",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/chat-stream-publication-20261108.md"
+      ],
+      "cwd": "D:\\tmp\\tf0833\\candidate",
+      "exitCode": 0,
+      "durationMs": 703
+    },
+    {
+      "id": "harness-run",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/chat-stream-publication-20261108.md",
+        "--dry-run"
+      ],
+      "cwd": "D:\\tmp\\tf0833\\candidate",
+      "exitCode": 0,
+      "durationMs": 656
+    },
+    {
+      "id": "diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "a846bbda3",
+        "HEAD"
+      ],
+      "cwd": "D:\\tmp\\tf0833\\candidate",
+      "exitCode": 0,
+      "durationMs": 78
+    }
+  ],
+  "tests": {
+    "numTotalTests": 105,
+    "numPassedTests": 105,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numFailedTestSuites": 0,
+    "success": true
+  },
+  "cases": [
+    {
+      "name": "completed history projections during streaming reuses the completed card and its steps when only the live text grows",
+      "status": "passed"
+    },
+    {
+      "name": "completed history projections during streaming invalidates a completed card when its label or history changes",
+      "status": "passed"
+    },
+    {
+      "name": "completed history projections during streaming keeps completed cards stable when another run cache or live error changes",
+      "status": "passed"
+    },
+    {
+      "name": "chat event dedupe keeps processing delta events without seq for the same run",
+      "status": "passed"
+    },
+    {
+      "name": "chat event dedupe still dedupes repeated delta events when seq matches",
+      "status": "passed"
+    },
+    {
+      "name": "Chat history reply while sending shows assistant reply from history even when sending is still true",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle collapses activity when the final reply starts streaming and shows only the reply suffix",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle reads completed execution steps cached after the first page render",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle does not reopen an old handoff draft after changing away and back",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle does not overwrite the new conversation status when old compression finishes",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle keeps completed long task work visible by default and remembers a manual collapse",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle uses the completed-run preference only as a default and allows it to be disabled",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle keeps short conversations as normal messages without a turn summary card",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle renders a team orchestration card for team_orchestrate task graph results",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle renders ordinary orchestration diagnostics without Task Loop repair wording",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle keeps runtime tool status inside the execution graph while a tool is running",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle renders the execution graph immediately for an active run before any stream content arrives",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle renders generated file cards with line stats for edit tools",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle shows a scroll-to-latest button when the chat is scrolled away from the bottom",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle stops showing trailing thinking and renders run error callout after terminal model error",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle keeps history final reply folded while matching streamed text is still active",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle stops trailing thinking when history already contains the final reply but sending is stuck",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle settles composer when generated image media arrives without transcript tool calls",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle stops trailing thinking when generated image media arrives but session wake is missed",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle shows trailing thinking together with a running tool status",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle keeps trailing thinking visible while waiting for final history after completed tool status",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle settles image generation runs after message tool delivers generated media",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle keeps image generation runs active after async task status narration",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle keeps the run active when narration landed in history before tools finished",
+      "status": "passed"
+    },
+    {
+      "name": "chat pending message queue queues a message sent while a run is active instead of dropping it",
+      "status": "passed"
+    },
+    {
+      "name": "chat pending message queue drains queued messages and sends them after the run ends",
+      "status": "passed"
+    },
+    {
+      "name": "chat pending message queue does not queue long-task interventions (inputMode passes through)",
+      "status": "passed"
+    },
+    {
+      "name": "runtime stream sequence and terminal boundaries ignores non-adjacent duplicate sequence events before appending text",
+      "status": "passed"
+    },
+    {
+      "name": "runtime stream sequence and terminal boundaries keeps the latest cumulative text when an older sequence arrives",
+      "status": "passed"
+    },
+    {
+      "name": "runtime stream sequence and terminal boundaries preserves repeated legitimate chunks without sequence identities",
+      "status": "passed"
+    },
+    {
+      "name": "runtime stream sequence and terminal boundaries keeps completed runs terminal when delayed starts or deltas arrive",
+      "status": "passed"
+    },
+    {
+      "name": "runtime stream sequence and terminal boundaries keeps error runs terminal when delayed starts or deltas arrive",
+      "status": "passed"
+    },
+    {
+      "name": "runtime stream sequence and terminal boundaries keeps aborted runs terminal when delayed starts or deltas arrive",
+      "status": "passed"
+    },
+    {
+      "name": "runtime stream sequence and terminal boundaries allows an explicit empty cumulative replacement",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication publishes a burst once per frame while reads see every delta immediately",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication coalesces legacy cumulative text without losing the latest snapshot",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication immediately publishes 'approval.updated' 'pending' with the pending text included",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication immediately publishes 'run.ended' 'completed' with the pending text included",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication immediately publishes 'run.ended' 'error' with the pending text included",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication immediately publishes 'run.ended' 'aborted' with the pending text included",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication publishes confirmed abort immediately and cancels a pending frame",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication does not revive a terminal owner through a delayed legacy delta",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication keeps a newly selected run intact while an earlier abort resolves",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication does not replace an owner result that arrives before the abort acknowledgement",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication retains running ownership when an abort request fails",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication publishes a session change immediately and retains foreign-run ownership",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication publishes within the fallback bound when animation frames are suspended",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication cancels pending publication when the final subscriber leaves",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication does not schedule unused publication work without subscribers",
+      "status": "passed"
+    },
+    {
+      "name": "chat target routing switches to the selected agent main session before sending text",
+      "status": "passed"
+    },
+    {
+      "name": "chat target routing uses the selected agent main session for attachment sends",
+      "status": "passed"
+    },
+    {
+      "name": "chat target routing passes the selected knowledge scope through host chat send",
+      "status": "passed"
+    },
+    {
+      "name": "chat target routing forwards turn-scoped modelRefOverride to host chat send (Area 2 §3.2)",
+      "status": "passed"
+    },
+    {
+      "name": "chat target routing omits modelRef when no turn override is set (default path parity, Area 2 §6)",
+      "status": "passed"
+    },
+    {
+      "name": "Chat tool card suppression does not render standalone tool cards for messages inside a user run segment",
+      "status": "passed"
+    },
+    {
+      "name": "execution projection promotes active runtime assistant text into the latest streaming reply",
+      "status": "passed"
+    },
+    {
+      "name": "execution projection keeps a new active runtime run visible when history already has a prior reply",
+      "status": "passed"
+    },
+    {
+      "name": "execution projection turns active runtime events into a running tool step",
+      "status": "passed"
+    },
+    {
+      "name": "execution projection uses history fallback to build a completed graph card",
+      "status": "passed"
+    },
+    {
+      "name": "execution projection suppresses trailing thinking when streaming text is folded into the graph",
+      "status": "passed"
+    },
+    {
+      "name": "execution projection shows cached graph steps after history reload drops transient graph messages",
+      "status": "passed"
+    },
+    {
+      "name": "execution projection scopes a runtime chat run only when the owning workspace is known",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring subscribes to typed host events on init",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring propagates gatewayReady field from status events",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring allows explicit intervention sends while preserving normal active-run double-submit guard",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring treats undefined gatewayReady as ready for backwards compatibility",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring does not clear chat sending state on non-terminal runtime events",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring does not let a stale send RPC re-arm a completed run after a newer send starts",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring preserves a running session lifecycle when creating a new chat and switching back",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring retains inactive-session runtime events for graph reconstruction after switching back",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring clears cached inactive-session run state when run.ended arrives while another session is selected",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring clears chat sending state on terminal run.ended runtime event",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring does not clear the active send when a stale run.ended arrives for the same session",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring ignores session-less runtime terminals that do not match the active run",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring tracks a current-session run.started even when the optimistic send is already active",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring forces a terminal history reload when the runtime emits run.ended",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring forwards normalized chat runtime events through the dedicated host event channel",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring passes progressive delta notifications without seq through to chat store",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring dedupes exact replayed delta notifications without seq",
+      "status": "passed"
+    },
+    {
+      "name": "R0-3 chat abort/checkStuck reclamation keeps the run state when chat.abort fails and warns the user",
+      "status": "passed"
+    },
+    {
+      "name": "R0-3 chat abort/checkStuck reclamation releases UI state only after a confirmed abort",
+      "status": "passed"
+    },
+    {
+      "name": "R0-3 chat abort/checkStuck reclamation keeps exactly one pending checkStuck chain across consecutive sends",
+      "status": "passed"
+    },
+    {
+      "name": "runtime graph state keeps distinct runtime tool updates for the same tool call",
+      "status": "passed"
+    },
+    {
+      "name": "runtime graph state does not drop full-text assistant deltas that do not extend the previous prefix",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps projects runtime tool events into active execution graph steps",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps projects the external-write risk onto a governed exec approval step",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps builds running steps from streaming tool status without exposing chain-of-thought",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps keeps completed tool steps visible while a later tool is still streaming",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps keeps historical tool results and final assistant reply locatable in the execution graph",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps upgrades a completed historical tool step when streaming status reports a later state",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps keeps all steps when the execution graph exceeds the previous max length",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps keeps recent completed tool steps from assistant history",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps does not expose streaming chain-of-thought in the execution graph",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps skips internal assistant turns and hides NO_REPLY from the execution graph",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps keeps earlier reply segments in the graph when the last streaming segment is rendered separately",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps folds earlier reply segments into the graph but leaves the final answer for the chat bubble",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps strips folded process narration from the final reply text",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps builds a branch for spawned subagents",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps parses internal subagent completion events from injected user messages",
+      "status": "passed"
+    },
+    {
+      "name": "run completion detection treats delivered image attachments as a final reply after image generation tools",
+      "status": "passed"
+    }
+  ],
+  "sources": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "8e30a8fce473103a8f4326be55a7235672ca018bd659df73ff756e326d9d19a9"
+    },
+    {
+      "path": "README.md",
+      "sha256": "c3fc06304f4a18e526fea3ae4ad650c37b24b9711e07c982711e73818019c9cb"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "a725b9d0d46a2ffeda54482a0a21c9e8d981f9e60d8db8e33252b68e7ee843a9"
+    },
+    {
+      "path": "docs/modules/resources-and-observability.md",
+      "sha256": "b845d975025f1dc4db0bdae3bff1054194799b45bee710806cdc700a8c6c9b01"
+    },
+    {
+      "path": "harness/specs/rules/chat-stream-publication.md",
+      "sha256": "471e3941f5779243ffe569286dc5d0da197421715d7a1d2cbf1a41bace6314a2"
+    },
+    {
+      "path": "harness/specs/tasks/chat-stream-publication-20261108.md",
+      "sha256": "9490990615f4e1de239154956e7b6baad38aaa1327ce8c3694986ab60eaf82b1"
+    },
+    {
+      "path": "src/pages/Chat/execution-projection.ts",
+      "sha256": "77457b3484c6ceb131b0363e2168656f9f0c921e809f11f48f10e7f651d37d70"
+    },
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "sha256": "4a4bcb47eb249ea631afc94c62b3199e39862b9246b3614d33ecb0db2c74754c"
+    },
+    {
+      "path": "src/stores/chat.ts",
+      "sha256": "863d18b86a07f6a9922faf2460951badba35f6df8b0582733662328dcddce897"
+    },
+    {
+      "path": "src/stores/chat/frame-publication.ts",
+      "sha256": "02dd1407485a1ab9f005ec6f18f33a9ce127972ab62103dbaad5a1f0b926ad77"
+    },
+    {
+      "path": "src/stores/chat/runtime-graph.ts",
+      "sha256": "9efcf3edb0a001cfc4d6cac63193c1d1f472a3644437e0dc8a1bb461add2fa3a"
+    },
+    {
+      "path": "tests/e2e/chat-stream-publication.spec.ts",
+      "sha256": "2fd9502611b967562b2cfcfd5819d246c46f4aced8bd0e2eff76e6b520addda0"
+    },
+    {
+      "path": "tests/unit/chat-completed-projection.test.ts",
+      "sha256": "48ae74c52ba200e92e37d48bcefce8469929dee65a3ded7041330558fd650444"
+    },
+    {
+      "path": "tests/unit/chat-page-execution-graph.test.tsx",
+      "sha256": "96611263168469e6d7e4f2fef39d668ffee854dc9101b109fd7a5ee8792b3fd9"
+    },
+    {
+      "path": "tests/unit/chat-runtime-sequence.test.ts",
+      "sha256": "1f89e50a0fc5da6265ade7f3002f587c899c28aa360ee7bc34c8d861c32ccfb0"
+    },
+    {
+      "path": "tests/unit/chat-stream-publication.test.ts",
+      "sha256": "9ada77630d83c529ead44a843e74795260ae5c398ae4056801040cdeec8a50ee"
+    }
+  ],
+  "verdict": "pass-chat-stream-publication",
+  "negativeControls": 17,
+  "native": {
+    "candidatePassed": 8,
+    "baselinePassed": 8,
+    "languages": [
+      "en",
+      "zh",
+      "ja",
+      "ru"
+    ],
+    "order": "ABBA",
+    "comparison": "paired-performance.json",
+    "survivors": 0
+  },
+  "performance": [
+    {
+      "language": "en",
+      "baseline": {
+        "commits": 1517.0,
+        "longTaskCount": 243.0,
+        "longTaskTotalMs": 22455.0,
+        "inputMedianMs": 38.700000000186265,
+        "inputP95Ms": 46.25
+      },
+      "candidate": {
+        "commits": 1330.5,
+        "longTaskCount": 1.5,
+        "longTaskTotalMs": 89.0,
+        "inputMedianMs": 37.45000000111759,
+        "inputP95Ms": 45.60000000055879
+      },
+      "commitReductionPercent": 12.294001318391567,
+      "longTaskReductionPercent": 99.60365174794032
+    },
+    {
+      "language": "zh",
+      "baseline": {
+        "commits": 1517.5,
+        "longTaskCount": 241.5,
+        "longTaskTotalMs": 20581.5,
+        "inputMedianMs": 44.34999999962747,
+        "inputP95Ms": 48.10000000055879
+      },
+      "candidate": {
+        "commits": 1332.0,
+        "longTaskCount": 1.5,
+        "longTaskTotalMs": 78.5,
+        "inputMedianMs": 39.09999999962747,
+        "inputP95Ms": 42.94999999925494
+      },
+      "commitReductionPercent": 12.22405271828666,
+      "longTaskReductionPercent": 99.61858950999685
+    },
+    {
+      "language": "ja",
+      "baseline": {
+        "commits": 1522.5,
+        "longTaskCount": 245.5,
+        "longTaskTotalMs": 23304.0,
+        "inputMedianMs": 46.05000000074506,
+        "inputP95Ms": 60.09999999962747
+      },
+      "candidate": {
+        "commits": 1344.5,
+        "longTaskCount": 6.0,
+        "longTaskTotalMs": 338.0,
+        "inputMedianMs": 45.69999999925494,
+        "inputP95Ms": 57.14999999944121
+      },
+      "commitReductionPercent": 11.691297208538586,
+      "longTaskReductionPercent": 98.54960521798833
+    },
+    {
+      "language": "ru",
+      "baseline": {
+        "commits": 1516.0,
+        "longTaskCount": 241.5,
+        "longTaskTotalMs": 19938.5,
+        "inputMedianMs": 43.049999999813735,
+        "inputP95Ms": 54.90000000037253
+      },
+      "candidate": {
+        "commits": 1339.5,
+        "longTaskCount": 6.5,
+        "longTaskTotalMs": 358.0,
+        "inputMedianMs": 47.5,
+        "inputP95Ms": 52.450000000186265
+      },
+      "commitReductionPercent": 11.642480211081796,
+      "longTaskReductionPercent": 98.20447877222459
+    }
+  ],
+  "lint": {
+    "errors": 0,
+    "warnings": 2
+  },
+  "build": {
+    "commands": [
+      {
+        "id": "capture",
+        "argv": [
+          "node",
+          "scripts/versebrowser-build-provenance.mjs",
+          "--capture"
+        ],
+        "exitCode": 0,
+        "durationMs": 328
+      },
+      {
+        "id": "vite-build",
+        "argv": [
+          "node",
+          "--max-old-space-size=6144",
+          "node_modules/vite/bin/vite.js",
+          "build"
+        ],
+        "exitCode": 0,
+        "durationMs": 40203
+      },
+      {
+        "id": "provenance",
+        "argv": [
+          "node",
+          "scripts/versebrowser-build-provenance.mjs"
+        ],
+        "exitCode": 0,
+        "durationMs": 969
+      }
+    ],
+    "runtimeSourceUnchangedFrom": "00656920f2b4470a1d5b075372508ac65790cc32",
+    "runtimeBuildReport": "D:/tmp/tf0833/candidate-build-commands.json"
+  },
+  "dependencies": {
+    "driven_by": "agent",
+    "actor": "codex",
+    "links": 153,
+    "view": "D:\\tmp\\tf0833\\dependency-view-candidate\\node_modules",
+    "versebrowser": "D:\\tmp\\tf0833\\candidate\\packages\\versebrowser",
+    "runtime": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\node_modules"
+  }
+}
