@@ -63,6 +63,21 @@ export type TaskView = {
   claim: TaskClaim | null;
   checkpoint: TaskCheckpoint | null;
   pendingOperations: number;
+  /** A linked coordinator/observer can read the task without owning execution. */
+  referenceOnly?: boolean;
+};
+export type TaskWriterDelegation = {
+  delegationId: string;
+  taskNodeId: TaskId;
+  parent: TaskCredential;
+  parentWorktree: string;
+  child: TaskCredential;
+  childWorktree: string;
+  childRunId: string;
+  mode: "writer" | "observer";
+  phase: "prepared" | "dispatched" | "unknown" | "returned" | "recovery_required";
+  dispatchOperationIds: string[];
+  terminalReceipt?: { runId: string; endedAt: number; outcome: string };
 };
 export type TaskResolution = { kind: "created" | "existing" | "duplicate"; task: TaskView };
 export type TaskSystemCommand =

@@ -20,7 +20,8 @@ export function createPersistentTaskTool(input: {
   if (existsSync(initialDomain.database) && input.sessionKey) {
     const initial = new TaskSystemStore(initialDomain);
     try {
-      pinned = initial.binding(input.sessionKey, input.generation)?.claim ?? null;
+      const view=initial.binding(input.sessionKey,input.generation);
+      pinned = view?.referenceOnly?null:view?.claim??null;
     } finally {
       initial.close();
     }
@@ -124,7 +125,7 @@ export function createPersistentTaskTool(input: {
             throw new Error("TASK_RESTART_RUN_AFTER_HANDOFF");
           pinned = claimed;
         } else {
-          if (!current?.claim) throw new Error("TASK_CLAIM_REQUIRED");
+          if (!current?.claim||current.referenceOnly) throw new Error("TASK_CLAIM_REQUIRED");
           if (
             pinned &&
             (pinned.epoch !== current.claim.epoch || pinned.taskNodeId !== current.claim.taskNodeId)

@@ -30,6 +30,7 @@ import {
 } from "../channels/thread-bindings-policy.js";
 import type { SessionEntry } from "../config/sessions/types.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { preparePersistentTaskDelegation, recordPersistentTaskDispatch, returnPersistentTaskWriter, type PreparedTaskDelegation } from './persistent-task-delegation.js';
 import type { SubagentSpawnPreparation } from "../context-engine/types.js";
 import { stringifyRouteThreadId } from "../plugin-sdk/channel-route.js";
 import { listRegisteredPluginAgentPromptGuidance } from "../plugins/command-registry-state.js";
@@ -1616,7 +1617,17 @@ export async function spawnSubagentDirect(
     },
     "subagent-spawn",
   );
+  let taskDelegation:PreparedTaskDelegation|null=null;
+  const returnTaskAfterConfirmedDelete=(deleted:unknown)=>{
+    if(!taskDelegation||!deleted||typeof deleted!=='object'||!('ok' in deleted)||deleted.ok!==true||!('deleted' in deleted)||deleted.deleted!==true)return;
+    const current=resolveStoreEntryByKeys(loadSessionStore(parentAdmissionTarget.storePath,{clone:false}),parentAdmissionTarget.storeKeys);
+    returnPersistentTaskWriter({workspace:taskDelegation.workspace,childSessionKey,runId:taskDelegation.record.childRunId,endedAt:Date.now(),outcome:'deleted-before-start',parentGeneration:current?.sessionId});
+  };
   try {
+    const childTarget=resolveGatewaySessionStoreTarget({cfg,key:childSessionKey});
+    const childStore=loadSessionStore(childTarget.storePath,{clone:false,skipCache:true});
+    const childEntry=resolveStoreEntryByKeys(childStore,childTarget.storeKeys);
+    taskDelegation=preparePersistentTaskDelegation({workspace:ctx.workspaceDir,childWorkspace:spawnedCwd??spawnedWorkspaceDir,parentSessionKey:requesterInternalKey,parentGeneration:parentAdmissionEntry?.sessionId,childSessionKey,childGeneration:childEntry?.sessionId,childRunId:childIdem,observer:params.orchestration?.isVerifier===true});
     const {
       spawnedBy: _spawnedBy,
       workspaceDir: _workspaceDir,
@@ -1657,7 +1668,9 @@ export async function spawnSubagentDirect(
     if (runId) {
       childRunId = runId;
     }
+    recordPersistentTaskDispatch(taskDelegation,'dispatched',childRunId);
   } catch (err) {
+    try{recordPersistentTaskDispatch(taskDelegation,'unknown',childIdem);}catch{/* Preserve owner recovery state if dispatch bookkeeping is unavailable. */}
     await rollbackPreparedContextEngine(contextEnginePreparation);
     if (attachmentAbsDir) {
       try {
@@ -1700,7 +1713,7 @@ export async function spawnSubagentDirect(
     // Always delete the provisional child session after a failed spawn attempt.
     // If we already emitted subagent_ended above, suppress a duplicate lifecycle hook.
     try {
-      await callSubagentGateway({
+      const deleted=await callSubagentGateway({
         method: "sessions.delete",
         params: {
           key: childSessionKey,
@@ -1710,6 +1723,7 @@ export async function spawnSubagentDirect(
         },
         timeoutMs: SUBAGENT_CONTROL_GATEWAY_TIMEOUT_MS,
       });
+      returnTaskAfterConfirmedDelete(deleted);
     } catch {
       // Best-effort only.
     }
@@ -1750,7 +1764,7 @@ export async function spawnSubagentDirect(
       label: label || undefined,
       model: resolvedModel,
       agentDir: targetAgentDir,
-      workspaceDir: spawnedMetadata.workspaceDir,
+      workspaceDir: spawnedCwd??spawnedMetadata.workspaceDir,
       runTimeoutSeconds,
       expectsCompletionMessage: shouldAnnounceCompletion,
       spawnMode,
@@ -1762,6 +1776,7 @@ export async function spawnSubagentDirect(
     releaseSubagentPermit();
   } catch (err) {
     releaseSubagentPermit();
+    try{recordPersistentTaskDispatch(taskDelegation,'unknown',childIdem);}catch{/* Retain the prepared record for owner reconciliation. */}
     await rollbackPreparedContextEngine(contextEnginePreparation);
     if (attachmentAbsDir) {
       try {
@@ -1771,7 +1786,7 @@ export async function spawnSubagentDirect(
       }
     }
     try {
-      await callSubagentGateway({
+      const deleted=await callSubagentGateway({
         method: "sessions.delete",
         params: {
           key: childSessionKey,
@@ -1781,6 +1796,7 @@ export async function spawnSubagentDirect(
         },
         timeoutMs: SUBAGENT_CONTROL_GATEWAY_TIMEOUT_MS,
       });
+      returnTaskAfterConfirmedDelete(deleted);
     } catch {
       // Best-effort cleanup only.
     }

@@ -3,6 +3,13 @@ import { TaskSystemStore } from "./store.js";
 import { resolveTaskDomain } from "./identity.js";
 import type { TaskCredential } from "./types.js";
 
+export function assertTaskWorktreeReleasable(workspace:string):void{
+  if(!existsSync(workspace))return;
+  const domain=resolveTaskDomain(workspace);if(!existsSync(domain.database))return;
+  const store=new TaskSystemStore(domain);
+  try{if(store.worktreeTaskReferences(workspace).length)throw new Error('TASK_WORKTREE_HAS_UNFINISHED_TASKS');}finally{store.close();}
+}
+
 const activeRuns = new Map<
   string,
   {
@@ -81,7 +88,7 @@ export function createTaskRuntimeGuard(
   const store = new TaskSystemStore(domain);
   try {
     const view = store.binding(sessionKey, generation);
-    if (!view)
+    if (!view || view.referenceOnly)
       return { domain, credential: null as TaskCredential | null, sessionKey, generation, runId };
     if (!generation || !view.claim) throw new Error("TASK_RUNTIME_GENERATION_REQUIRED");
     const credential: TaskCredential = {
@@ -103,10 +110,11 @@ export function readPersistentTaskContext(
   runId?: string,
 ): string | null {
   const guard = createTaskRuntimeGuard(workspace, sessionKey, generation, runId);
-  if (!guard?.credential) return null;
+  if (!guard || !existsSync(guard.domain.database)) return null;
   const store = new TaskSystemStore(guard.domain);
   try {
-    if (store.get(guard.credential.taskNodeId).claim?.state === "active") keepTaskRun(guard);
+    if (guard.credential && store.get(guard.credential.taskNodeId).claim?.state === "active")
+      keepTaskRun(guard);
     return store.context(sessionKey!, generation);
   } finally {
     store.close();
@@ -137,15 +145,18 @@ export function restoreTaskModelContext(
       }
       return index < 0 ? basePrompt : basePrompt.slice(0, index);
     }
-    if (!guard.credential)
+    if (!guard.credential && !view.referenceOnly)
       guard.credential = {
         taskNodeId: view.contract.taskNodeId,
         sessionKey: view.claim.sessionKey,
         generation: view.claim.generation,
         epoch: view.claim.epoch,
       };
-    store.assertOwner(guard.credential, true);
-    if (view.claim.state === "active") keepTaskRun(guard);
+    if (!view.referenceOnly) {
+      if (!guard.credential) throw new Error("TASK_CLAIM_REQUIRED");
+      store.assertOwner(guard.credential, true);
+      if (view.claim.state === "active") keepTaskRun(guard);
+    }
     const marker = "\n<PERSISTENT_TASK_CONTRACT>\n";
     const index = basePrompt.lastIndexOf(marker);
     const prefix = index < 0 ? basePrompt : basePrompt.slice(0, index);
@@ -177,6 +188,11 @@ export async function executeTaskGuarded<T>(
     "web_fetch",
     "session_status",
     "task_control",
+    "read_file",
+    "read_files",
+    "search_content",
+    "result_query",
+    "list_directory",
   ]);
   if (!existsSync(guard.domain.database)) {
     if (guard.credential) throw new Error("TASK_STORE_UNAVAILABLE");
@@ -187,7 +203,7 @@ export async function executeTaskGuarded<T>(
     const bindingStore = new TaskSystemStore(guard.domain);
     try {
       const bound = bindingStore.binding(guard.sessionKey, guard.generation);
-      if (bound?.claim)
+      if (bound?.claim && !bound.referenceOnly)
         guard.credential = {
           taskNodeId: bound.contract.taskNodeId,
           sessionKey: bound.claim.sessionKey,
@@ -206,6 +222,10 @@ export async function executeTaskGuarded<T>(
   const credential = guard.credential;
   let heartbeat: ReturnType<typeof setInterval> | undefined;
   try {
+    if (store.binding(guard.sessionKey, guard.generation)?.referenceOnly) {
+      if (readonlyTools.has(toolName)) return execute();
+      throw new Error("TASK_REFERENCE_READ_ONLY");
+    }
     if (
       toolName === "process" &&
       ["poll", "log", "list"].includes(String((params as { action?: unknown } | null)?.action))
@@ -251,7 +271,7 @@ export async function executeTaskGuarded<T>(
       background ? "background operation requires owner reconciliation" : "tool returned",
       background && handle ? { handle, params, inputs: verificationInputs } : undefined,
     );
-    if (!background)
+    if (!background && store.binding(guard.sessionKey, guard.generation)?.referenceOnly !== true)
       store.recordToolVerification(credential, toolName, params, result, verificationInputs);
     return result;
   } finally {

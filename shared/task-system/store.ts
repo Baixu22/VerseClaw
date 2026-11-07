@@ -13,6 +13,7 @@ import type {
   TaskEvidence,
   TaskResolution,
   TaskView,
+  TaskWriterDelegation,
 } from "./types.js";
 
 const MAX_CONTEXT = 12_000;
@@ -96,12 +97,12 @@ export class TaskSystemStore {
       const version = Number(
         (this.db.prepare("PRAGMA user_version").get() as { user_version: number }).user_version,
       );
-      if (version > 2) {
+      if (version > 3) {
         this.db.close();
         throw new Error("TASK_SCHEMA_NEWER_THAN_CLIENT");
       }
       this.db.exec("PRAGMA synchronous=FULL;");
-      if (version === 2) return;
+      if (version === 3) return;
       this.db.exec("PRAGMA journal_mode=WAL; BEGIN IMMEDIATE;");
       this.db.exec(`
       CREATE TABLE IF NOT EXISTS task_contracts(id TEXT PRIMARY KEY, fingerprint TEXT NOT NULL, business_key TEXT, state TEXT NOT NULL, revision INTEGER NOT NULL, json TEXT NOT NULL);
@@ -120,7 +121,9 @@ export class TaskSystemStore {
       CREATE TABLE IF NOT EXISTS task_active_runs(task_id TEXT PRIMARY KEY, epoch INTEGER NOT NULL, run_id TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS task_delegations(task_id TEXT NOT NULL,epoch INTEGER NOT NULL,request_id TEXT NOT NULL,PRIMARY KEY(task_id,epoch));
       CREATE TABLE IF NOT EXISTS task_operation_handles(id TEXT PRIMARY KEY,handle TEXT NOT NULL,json TEXT NOT NULL);
-      PRAGMA user_version=2;
+      CREATE TABLE IF NOT EXISTS task_references(session_key TEXT PRIMARY KEY,task_id TEXT NOT NULL,generation TEXT NOT NULL,role TEXT NOT NULL);
+      CREATE TABLE IF NOT EXISTS task_writer_delegations(id TEXT PRIMARY KEY,task_id TEXT NOT NULL,child_session TEXT NOT NULL UNIQUE,json TEXT NOT NULL);
+      PRAGMA user_version=3;
       COMMIT;
     `);
     } catch (error) {
@@ -408,12 +411,239 @@ export class TaskSystemStore {
     return view;
   }
   binding(sessionKey: string, generation?: string): TaskView | null {
-    const row = this.db
+    const writer = this.db
       .prepare("SELECT task_id,generation FROM task_bindings WHERE session_key=?")
       .get(sessionKey) as { task_id: string; generation: string } | undefined;
+    const row =
+      writer ??
+      (this.db
+        .prepare("SELECT task_id,generation FROM task_references WHERE session_key=?")
+        .get(sessionKey) as { task_id: string; generation: string } | undefined);
     if (!row) return null;
     if (generation && row.generation !== generation) throw new Error("TASK_GENERATION_STALE");
-    return this.get(row.task_id);
+    return { ...this.get(row.task_id), ...(!writer ? { referenceOnly: true } : {}) };
+  }
+  private saveWriterDelegation(delegation: TaskWriterDelegation): void {
+    this.db
+      .prepare(
+        "INSERT INTO task_writer_delegations VALUES(?,?,?,?) ON CONFLICT(id) DO UPDATE SET json=excluded.json",
+      )
+      .run(
+        delegation.delegationId,
+        delegation.taskNodeId,
+        delegation.child.sessionKey,
+        JSON.stringify(delegation),
+      );
+  }
+  worktreeTaskReferences(worktree:string):string[]{
+    const root=canonicalPath(worktree);
+    const rows=this.db.prepare("SELECT c.id,cl.json AS claim FROM task_contracts c LEFT JOIN task_claims cl ON cl.task_id=c.id WHERE c.state NOT IN ('done','cancelled')").all() as Array<{id:string;claim:string|null}>;
+    const ids=new Set(rows.filter(row=>row.claim&&(JSON.parse(row.claim) as TaskClaim).worktree===root).map(row=>row.id));
+    for(const row of this.db.prepare("SELECT d.json FROM task_writer_delegations d JOIN task_contracts c ON c.id=d.task_id WHERE c.state NOT IN ('done','cancelled')").all() as Row[]){
+      const d=JSON.parse(row.json) as TaskWriterDelegation;if(d.childWorktree===root||d.parentWorktree===root)ids.add(d.taskNodeId);
+    }
+    return [...ids];
+  }
+  delegationForChild(childSessionKey: string): TaskWriterDelegation | null {
+    return this.read<TaskWriterDelegation>(
+      "SELECT json FROM task_writer_delegations WHERE child_session=?",
+      childSessionKey,
+    );
+  }
+  prepareWriterDelegation(
+    parent: TaskCredential,
+    input: {
+      delegationId: string;
+      childSessionKey: string;
+      childGeneration: string;
+      childWorktree: string;
+      childRunId: string;
+      mode: "writer" | "observer";
+    },
+  ): TaskWriterDelegation {
+    text(input.childGeneration, "CHILD_GENERATION", 200);
+    text(input.childSessionKey, "CHILD_SESSION", 300);
+    text(input.childRunId, "CHILD_RUN", 300);
+    text(input.delegationId, "DELEGATION_ID", 300);
+    if (input.childSessionKey === parent.sessionKey) throw new Error("TASK_DELEGATION_SELF");
+    if (resolveTaskDomain(input.childWorktree).id !== this.domain.id)
+      throw new Error("TASK_DELEGATION_DOMAIN_MISMATCH");
+    return this.transaction(() => {
+      const prior = this.delegationForChild(input.childSessionKey);
+      if (prior) {
+        if (
+          prior.delegationId !== input.delegationId ||
+          prior.parent.epoch !== parent.epoch ||
+          prior.parent.sessionKey !== parent.sessionKey ||
+          prior.child.generation !== input.childGeneration ||
+          prior.childRunId !== input.childRunId ||
+          prior.mode !== input.mode
+        )
+          throw new Error("TASK_DELEGATION_IDENTITY_CONFLICT");
+        return prior;
+      }
+      const view = this.assertOwner(parent);
+      if (view.contract.state !== "doing") throw new Error("TASK_EXECUTION_NOT_RUNNING");
+      if (this.binding(input.childSessionKey)) throw new Error("TASK_SESSION_ALREADY_BOUND");
+      const pending = this.db
+        .prepare(
+          "SELECT id,kind,epoch,state FROM task_operations WHERE task_id=? AND state IN ('started','unknown')",
+        )
+        .all(parent.taskNodeId) as Array<{
+        id: string;
+        kind: string;
+        epoch: number;
+        state: string;
+      }>;
+      if (
+        input.mode === "writer" &&
+        pending.some(
+          (op) =>
+            op.epoch !== parent.epoch ||
+            op.state !== "started" ||
+            !["sessions_spawn", "team_orchestrate"].includes(op.kind),
+        )
+      )
+        throw new Error("TASK_OPERATIONS_PENDING");
+      const child: TaskClaim = {
+        ...view.claim!,
+        sessionKey: input.childSessionKey as SessionKey,
+        generation: input.childGeneration,
+        epoch: view.claim!.epoch + 1,
+        worktree: canonicalPath(input.childWorktree),
+        attemptId: randomUUID(),
+        expiresAt: this.now() + LEASE_MS,
+        state: "active",
+      };
+      const delegation: TaskWriterDelegation = {
+        delegationId: input.delegationId,
+        taskNodeId: parent.taskNodeId,
+        parent: {
+          taskNodeId: parent.taskNodeId,
+          sessionKey: parent.sessionKey,
+          generation: parent.generation,
+          epoch: parent.epoch,
+        },
+        parentWorktree: this.domain.worktree,
+        child: {
+          taskNodeId: child.taskNodeId,
+          sessionKey: child.sessionKey,
+          generation: child.generation,
+          epoch: child.epoch,
+        },
+        childWorktree: child.worktree,
+        childRunId: input.childRunId,
+        mode: input.mode,
+        phase: "prepared",
+        dispatchOperationIds: input.mode === "writer" ? pending.map((op) => op.id) : [],
+      };
+      if (input.mode === "writer") {
+        for (const op of pending)
+          this.db.prepare("UPDATE task_operations SET state='delegated' WHERE id=?").run(op.id);
+        this.saveClaim(child);
+        this.db.prepare("DELETE FROM task_bindings WHERE task_id=?").run(parent.taskNodeId);
+        this.db
+          .prepare("INSERT INTO task_bindings VALUES(?,?,?,?)")
+          .run(child.sessionKey, child.taskNodeId, child.generation, child.epoch);
+        this.db
+          .prepare("INSERT OR REPLACE INTO task_references VALUES(?,?,?,?)")
+          .run(parent.sessionKey, parent.taskNodeId, parent.generation, "coordinator");
+      } else
+        this.db
+          .prepare("INSERT INTO task_references VALUES(?,?,?,?)")
+          .run(child.sessionKey, child.taskNodeId, child.generation, "observer");
+      this.saveWriterDelegation(delegation);
+      this.event(parent.taskNodeId, "delegation_prepared", delegation);
+      return delegation;
+    });
+  }
+  recordDelegationDispatch(
+    childSessionKey: string,
+    runId: string,
+    phase: "dispatched" | "unknown",
+  ): void {
+    this.transaction(() => {
+      const d = this.delegationForChild(childSessionKey);
+      if (!d) throw new Error("TASK_DELEGATION_NOT_FOUND");
+      if (d.phase === "returned") return;
+      if (d.childRunId !== runId) throw new Error("TASK_DELEGATION_RUN_MISMATCH");
+      d.phase = phase;
+      this.saveWriterDelegation(d);
+      this.event(d.taskNodeId, "delegation_dispatch", {
+        delegationId: d.delegationId,
+        phase,
+        runId,
+      });
+    });
+  }
+  returnDelegatedWriter(
+    childSessionKey: string,
+    receipt: { runId: string; endedAt: number; outcome: string; parentGeneration: string },
+  ): TaskWriterDelegation | null {
+    return this.transaction(() => {
+      const d = this.delegationForChild(childSessionKey);
+      if (!d) return null;
+      if (
+        d.childRunId !== receipt.runId ||
+        !Number.isFinite(receipt.endedAt) ||
+        receipt.endedAt <= 0
+      )
+        throw new Error("TASK_DELEGATION_TERMINAL_MISMATCH");
+      if (d.phase === "returned") return d;
+      const view = this.get(d.taskNodeId);
+      const parentBinding = this.db
+        .prepare("SELECT task_id FROM task_bindings WHERE session_key=?")
+        .get(d.parent.sessionKey) as { task_id: string } | undefined;
+      if (
+        receipt.parentGeneration !== d.parent.generation ||
+        (d.mode === "writer" &&
+          (view.pendingOperations || (parentBinding && parentBinding.task_id !== d.taskNodeId)))
+      ) {
+        d.phase = "recovery_required";
+        d.terminalReceipt = receipt;
+        this.saveWriterDelegation(d);
+        this.event(d.taskNodeId, "delegation_recovery_required", {
+          delegationId: d.delegationId,
+          pending: view.pendingOperations,
+        });
+        return d;
+      }
+      if (d.mode === "writer" && !["done", "cancelled"].includes(view.contract.state)) {
+        const c = view.claim;
+        if (
+          !c ||
+          c.sessionKey !== d.child.sessionKey ||
+          c.generation !== d.child.generation ||
+          c.epoch !== d.child.epoch
+        )
+          throw new Error("TASK_DELEGATION_STALE_CHILD");
+        const parentWorktree = canonicalPath(d.parentWorktree);
+        const returned: TaskClaim = {
+          ...c,
+          sessionKey: d.parent.sessionKey,
+          generation: d.parent.generation,
+          worktree: parentWorktree,
+          epoch: c.epoch + 1,
+          expiresAt: this.now() + LEASE_MS,
+          state: "active",
+          attemptId: randomUUID(),
+        };
+        this.saveClaim(returned);
+        this.db.prepare("DELETE FROM task_bindings WHERE task_id=?").run(d.taskNodeId);
+        this.db
+          .prepare("INSERT INTO task_bindings VALUES(?,?,?,?)")
+          .run(returned.sessionKey, returned.taskNodeId, returned.generation, returned.epoch);
+        this.db.prepare("DELETE FROM task_references WHERE session_key=?").run(returned.sessionKey);
+        this.db
+          .prepare("INSERT OR REPLACE INTO task_references VALUES(?,?,?,?)")
+          .run(c.sessionKey, c.taskNodeId, c.generation, "observer");
+        this.event(d.taskNodeId, "writer_returned", { from: d.child, to: returned, receipt });
+      }
+      d.phase = "returned";
+      d.terminalReceipt = receipt;
+      this.saveWriterDelegation(d);
+      return d;
+    });
   }
   control(credential: TaskCredential, action: "renew" | "pause" | "release" | "cancel"): TaskView {
     return this.transaction(() => {
@@ -512,6 +742,7 @@ export class TaskSystemStore {
       constraints: contract.constraints,
       acceptance: contract.acceptance,
       state: contract.state,
+      executionRole: view.referenceOnly ? "observer" : "writer",
     });
     if (core.length > MAX_CONTEXT) throw new Error("TASK_GOAL_BUDGET_EXCEEDED");
     const next = view.checkpoint
@@ -646,6 +877,31 @@ export class TaskSystemStore {
   ): void {
     this.transaction(() => {
       // An operation may finish after lease expiry, but never after ownership changed.
+      const delegated = this.db
+        .prepare("SELECT json FROM task_writer_delegations WHERE task_id=?")
+        .all(credential.taskNodeId) as Row[];
+      const dispatch = delegated
+        .map((row) => JSON.parse(row.json) as TaskWriterDelegation)
+        .find(
+          (d) =>
+            d.parent.epoch === credential.epoch &&
+            d.parent.sessionKey === credential.sessionKey &&
+            d.parent.generation === credential.generation &&
+            d.dispatchOperationIds.includes(operationId),
+        );
+      if (dispatch) {
+        this.db
+          .prepare(
+            "UPDATE task_operations SET state=?,result=? WHERE id=? AND epoch=? AND state='delegated'",
+          )
+          .run(
+            state === "completed" ? "completed" : "delegation_unknown",
+            result.slice(0, 1000),
+            operationId,
+            credential.epoch,
+          );
+        return;
+      }
       this.assertOwner(credential, true);
       const changes = this.db
         .prepare(

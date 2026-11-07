@@ -89,7 +89,7 @@ export async function persistentTaskChatContext(
       throw new Error("TASK_GENERATION_STALE");
     const scoped = new TaskSystemStore(domain);
     try {
-      if (bound.claim.state === "active") {
+      if (!bound.referenceOnly&&bound.claim.state === "active") {
         scoped.assertOwner(bound.claim);
         scoped.control(bound.claim, "renew");
       }
