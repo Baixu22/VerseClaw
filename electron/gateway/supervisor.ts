@@ -26,7 +26,7 @@ export async function terminateOwnedGatewayProcess(child: Electron.UtilityProces
   const terminateWindowsProcessTree = async (pid: number): Promise<void> => {
     const cp = await import('child_process');
     await new Promise<void>((resolve, reject) => {
-      cp.exec(`taskkill /F /PID ${pid} /T`, { timeout: 5000, windowsHide: true }, (error) => error ? reject(error) : resolve());
+      cp.execFile('taskkill.exe', ['/F', '/PID', String(pid), '/T'], { timeout: 5000, windowsHide: true }, (error) => error ? reject(error) : resolve());
     });
   };
 
@@ -39,13 +39,14 @@ export async function terminateOwnedGatewayProcess(child: Electron.UtilityProces
       forced = true;
       clearTimeout(timeout);
       // taskkill can stall when Windows process enumeration is unavailable.
-      // Electron owns a native process handle; keep ownership until it exits.
+      // Terminate the still-owned pid directly if the helper or utility IPC stalls.
+      // Keep waiting for the exit event; signalling alone is not proof of exit.
       timeout = setTimeout(() => {
         child.removeListener('exit', onExit);
         reject(new Error(`Owned Gateway process did not exit (pid=${child.pid ?? 'unknown'})`));
       }, 5000);
       try {
-        if (process.platform !== 'win32' && child.pid) process.kill(child.pid, 'SIGKILL');
+        if (child.pid) process.kill(child.pid, 'SIGKILL');
         else child.kill();
       } catch (error) {
         clearTimeout(timeout);

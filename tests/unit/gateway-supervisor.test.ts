@@ -5,9 +5,11 @@ const originalPlatform = process.platform;
 
 const {
   mockExec,
+  mockExecFile,
   mockCreateServer,
 } = vi.hoisted(() => ({
   mockExec: vi.fn(),
+  mockExecFile: vi.fn(),
   mockCreateServer: vi.fn(),
 }));
 
@@ -21,10 +23,12 @@ vi.mock('electron', () => ({
 
 vi.mock('child_process', () => ({
   exec: mockExec,
+  execFile: mockExecFile,
   execSync: vi.fn(),
   spawn: vi.fn(),
   default: {
     exec: mockExec,
+    execFile: mockExecFile,
     execSync: vi.fn(),
     spawn: vi.fn(),
   },
@@ -57,6 +61,10 @@ describe('gateway supervisor process cleanup', () => {
       cb(null, '');
       return {} as never;
     });
+    mockExecFile.mockImplementation((_file: string, _args: string[], _opts: object, cb: (err: Error | null) => void) => {
+      cb(null);
+      return {} as never;
+    });
 
     mockCreateServer.mockImplementation(() => {
       const handlers = new Map<string, (...args: unknown[]) => void>();
@@ -77,7 +85,29 @@ describe('gateway supervisor process cleanup', () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
     Object.defineProperty(process, 'platform', { value: originalPlatform, writable: true });
+  });
+
+  it('force-kills the owned Windows pid when process enumeration and the utility kill path stall', async () => {
+    setPlatform('win32');
+    const child = new MockUtilityChild(4321);
+    // Neither the helper callback nor UtilityProcess.kill produces an exit.
+    mockExec.mockImplementation(() => ({}));
+    mockExecFile.mockImplementation(() => ({}));
+    const kill = vi.spyOn(process, 'kill').mockImplementation(() => {
+      queueMicrotask(() => child.emit('exit', 1));
+      return true;
+    });
+    const { terminateOwnedGatewayProcess } = await import('@electron/gateway/supervisor');
+    vi.useFakeTimers();
+    const stopped = terminateOwnedGatewayProcess(child as unknown as Electron.UtilityProcess)
+      .then(() => 'exited', () => 'timeout');
+    await vi.advanceTimersByTimeAsync(10_001);
+    expect(await stopped).toBe('exited');
+    expect(kill).toHaveBeenCalledWith(4321, 'SIGKILL');
+    expect(child.listenerCount('exit')).toBe(0);
   });
 
   it('uses taskkill tree strategy for owned process on Windows', async () => {
@@ -90,8 +120,8 @@ describe('gateway supervisor process cleanup', () => {
     await stopPromise;
 
     await vi.waitFor(() => {
-      expect(mockExec).toHaveBeenCalledWith(
-        'taskkill /F /PID 4321 /T',
+      expect(mockExecFile).toHaveBeenCalledWith(
+        'taskkill.exe', ['/F', '/PID', '4321', '/T'],
         expect.objectContaining({ timeout: 5000, windowsHide: true }),
         expect.any(Function),
       );
@@ -111,22 +141,23 @@ describe('gateway supervisor process cleanup', () => {
     expect(child.kill).toHaveBeenCalledTimes(1);
   });
 
-  it('uses the owned native handle when Windows taskkill fails and waits for exit', async () => {
+  it('uses the owned pid when Windows taskkill fails and waits for exit', async () => {
     setPlatform('win32');
     const child = new MockUtilityChild(4321);
-    mockExec.mockImplementation((_cmd: string, _opts: object, cb: (error: Error) => void) => {
+    const kill = vi.spyOn(process, 'kill').mockReturnValue(true);
+    mockExecFile.mockImplementation((_file: string, _args: string[], _opts: object, cb: (error: Error) => void) => {
       cb(new Error('process enumeration timed out'));
       return {} as never;
     });
     const { terminateOwnedGatewayProcess } = await import('@electron/gateway/supervisor');
     let resolved = false;
     const stopped = terminateOwnedGatewayProcess(child as unknown as Electron.UtilityProcess).then(() => { resolved = true; });
-    await vi.waitFor(() => expect(child.kill).toHaveBeenCalledOnce());
+    await vi.waitFor(() => expect(kill).toHaveBeenCalledWith(4321, 'SIGKILL'));
     expect(resolved).toBe(false);
     child.emit('exit', 0);
     await stopped;
     expect(resolved).toBe(true);
-    expect(mockExec).toHaveBeenCalledOnce();
+    expect(mockExecFile).toHaveBeenCalledOnce();
   });
 
   // #98: a port listener is an observation, not ownership. The supervisor must fail closed and

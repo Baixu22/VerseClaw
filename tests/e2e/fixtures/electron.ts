@@ -290,10 +290,15 @@ async function killElectronProcessTree(app: ElectronApplication): Promise<void> 
     try {
       const killer = spawn('taskkill', ['/F', '/T', '/PID', String(pid)], { stdio: 'ignore', windowsHide: true });
       let settled = false;
-      const done = () => { if (settled) return; settled = true; resolve(); };
+      const done = () => { if (settled) return; settled = true; clearTimeout(timer); resolve(); };
+      // A timed-out helper must exit too; its process handle otherwise pins the worker.
+      const timer = setTimeout(() => {
+        try { killer.kill('SIGKILL'); } catch { /* helper already exited */ }
+        done();
+      }, 2_000);
+      timer.unref();
       killer.on('close', done);
       killer.on('error', done);
-      setTimeout(done, 2_000).unref();
     } catch {
       resolve();
     }

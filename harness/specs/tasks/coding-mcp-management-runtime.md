@@ -13,6 +13,7 @@ touchedAreas:
   - electron/services/workspace-permissions.ts
   - electron/services/gateway-api.ts
   - electron/gateway/config-sync.ts
+  - electron/gateway/supervisor.ts
   - electron/utils/channel-config.ts
   - shared/types/mcp.ts
   - shared/host-api/contract.ts
@@ -35,9 +36,11 @@ touchedAreas:
   - tests/unit/workspace-permissions.test.ts
   - tests/unit/gateway-permissions-api.test.ts
   - tests/unit/config-sync-source-runtime.test.ts
+  - tests/unit/gateway-supervisor.test.ts
   - tests/unit/mcp-management-runtime.test.ts
   - tests/e2e/coding-mcp-management.spec.ts
   - tests/e2e/fixtures/coding-mcp-server.ts
+  - tests/e2e/fixtures/electron.ts
   - harness/specs/fixtures/coding-fixes/TF-0772/**
   - docs/modules/workspace-and-coding.md
   - docs/modules/integrations-and-surfaces.md
@@ -54,6 +57,7 @@ requiredRules:
   - docs-sync
   - disk-temp-policy
 requiredTests:
+  - node node_modules/vitest/vitest.mjs run tests/unit/gateway-supervisor.test.ts --maxWorkers=1
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/gateway/server-methods/tools-invoke-mcp-fallback.test.ts --maxWorkers=1
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/agent-bundle-mcp-runtime.test.ts --maxWorkers=1
   - node node_modules/vitest/vitest.mjs run tests/unit/mcp-api.test.ts tests/unit/mcp-p4-003-runtime-surface.test.ts tests/unit/rc08a-mcp-host-native-tool-convergence.test.ts tests/unit/tool-provider-registry.test.ts tests/unit/workspace-permissions.test.ts tests/unit/gateway-permissions-api.test.ts tests/unit/mcp-management-runtime.test.ts tests/unit/config-sync-source-runtime.test.ts --maxWorkers=1
