@@ -139,5 +139,16 @@
     "incomplete": 1,
     "unexecuted": 201,
     "expectedNegativeGate": "unexecuted-slots"
+  },
+  "rsiProfile": {
+    "exitCode": 0,
+    "steps": 7,
+    "sourceCommit": "95ebd762f1ced7b7ba51f40e4322917ac0c1f3c5"
+  },
+  "fullCi": {
+    "exitCode": 1,
+    "sourceCommit": "f43ba341787d87f307d4b57f774c07174f956d6a",
+    "failure": "strict Agent Dev audit: four unchanged performance limits",
+    "earlierGatesPassed": true
   }
 }
