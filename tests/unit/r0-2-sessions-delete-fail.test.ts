@@ -62,6 +62,7 @@ vi.mock('@electron/utils/paths', async (importOriginal) => {
   return {
     ...actual,
     getOpenClawConfigDir: () => state.configDir as string,
+    getDataDir: () => state.configDir as string,
   };
 });
 
@@ -158,10 +159,38 @@ describe('R0-2 sessions.delete partial failures', () => {
     const sessionsDir = join(state.configDir as string, 'agents', 'main', 'sessions');
 
     const { createSessionsApi } = await import('@electron/services/sessions-api');
-    const result = await createSessionsApi().delete({ sessionKey: 'agent:main:abc123' } as never);
+    const gatewayManager = { rpc: vi.fn(async (_method, params) => ({ ok: true, deleted: true,
+      sessionId: 'abc123', operationId: params.operationId, journalState: 'runtime_committed' })) };
+    const result = await createSessionsApi({ gatewayManager: gatewayManager as never }).delete({ sessionKey: 'agent:main:abc123' } as never);
 
-    expect(result.success).toBe(true);
+    expect(result.success, JSON.stringify(result)).toBe(true);
+    expect(gatewayManager.rpc).toHaveBeenCalledWith('sessions.delete', expect.objectContaining({ key: 'agent:main:abc123', deleteTranscript: true }));
     await expect(access(join(sessionsDir, 'sessions.json'))).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+
+  it('keeps an unverified missing local store as a failure', async () => {
+    const sessionsDir = await makeConfigDir();
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const result = await createSessionsApi().delete({ id: 'agent:main:abc123' });
+    expect(result).toMatchObject({ success: false, error: expect.stringContaining('Could not read sessions.json') });
+    await expect(access(join(sessionsDir, 'sessions.json'))).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+
+  it('retries the same runtime operation until its terminal owner confirms cleanup', async () => {
+    await makeConfigDir();
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const { findSessionDeleteGateBySession } = await import('@electron/services/session-delete-gate');
+    const gatewayManager = { rpc: vi.fn(async (_method, params) => ({ ok: true, deleted: true,
+      sessionId: 'abc123', operationId: params.operationId, journalState: 'runtime_committed' })) };
+    const terminalManager = { reclaimForSession: vi.fn(async () => ({ attempted: 1, reclaimed: 0, kept: 0, failed: 1 })) };
+    const api = createSessionsApi({ gatewayManager: gatewayManager as never, terminalManager: terminalManager as never });
+    expect(await api.delete({ id: 'agent:main:abc123' })).toMatchObject({ success: false, error: expect.stringContaining('terminal owner') });
+    expect((await findSessionDeleteGateBySession('agent:main:abc123'))?.terminalClosed).not.toBe(true);
+    const firstOperation = gatewayManager.rpc.mock.calls[0][1].operationId;
+    terminalManager.reclaimForSession.mockResolvedValue({ attempted: 1, reclaimed: 1, kept: 0, failed: 0 });
+    expect(await api.delete({ id: 'agent:main:abc123' })).toMatchObject({ success: true });
+    expect(gatewayManager.rpc.mock.calls[1][1].operationId).toBe(firstOperation);
+    expect(await findSessionDeleteGateBySession('agent:main:abc123')).toBeUndefined();
   });
 
   it('removes runtime .jsonl.deleted.<timestamp> transcripts during hard delete', async () => {

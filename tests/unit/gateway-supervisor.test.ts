@@ -6,9 +6,11 @@ const originalPlatform = process.platform;
 const {
   mockExec,
   mockCreateServer,
+  mockProcessKill,
 } = vi.hoisted(() => ({
   mockExec: vi.fn(),
   mockCreateServer: vi.fn(),
+  mockProcessKill: vi.fn(),
 }));
 
 vi.mock('electron', () => ({
@@ -49,9 +51,47 @@ function setPlatform(platform: string): void {
 }
 
 describe('gateway supervisor process cleanup', () => {
+  it('uses a native exit receipt emitted before stop was called', async () => {
+    setPlatform('win32');
+    const child = new MockUtilityChild(4321);
+    const { observeOwnedGatewayProcess, terminateOwnedGatewayProcess } = await import('@electron/gateway/supervisor');
+    observeOwnedGatewayProcess(child as unknown as Electron.UtilityProcess);
+    child.emit('exit', 0);
+    await terminateOwnedGatewayProcess(child as unknown as Electron.UtilityProcess);
+    expect(mockExec).not.toHaveBeenCalled();
+    expect(child.kill).not.toHaveBeenCalled();
+  });
+
+  it('shares one native termination request between concurrent stop callers', async () => {
+    setPlatform('linux');
+    const child = new MockUtilityChild(4321);
+    const { terminateOwnedGatewayProcess } = await import('@electron/gateway/supervisor');
+    const first = terminateOwnedGatewayProcess(child as unknown as Electron.UtilityProcess);
+    const second = terminateOwnedGatewayProcess(child as unknown as Electron.UtilityProcess);
+    try {
+      expect(child.kill).toHaveBeenCalledOnce();
+      expect(mockExec).not.toHaveBeenCalled();
+    } finally { child.emit('exit', 0); await Promise.allSettled([first, second]); }
+  });
+
+  it('keeps termination unconfirmed when the native owner emits no exit receipt', async () => {
+    setPlatform('win32');
+    const child = new MockUtilityChild(4321);
+    const { terminateOwnedGatewayProcess } = await import('@electron/gateway/supervisor');
+    vi.useFakeTimers();
+    try {
+      const stopped = terminateOwnedGatewayProcess(child as unknown as Electron.UtilityProcess);
+      void stopped.catch(() => undefined);
+      await vi.advanceTimersByTimeAsync(10000);
+      await expect(stopped).rejects.toThrow('did not exit');
+    } finally { vi.useRealTimers(); }
+  });
+
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
+    mockProcessKill.mockReturnValue(true);
+    vi.spyOn(process, 'kill').mockImplementation(mockProcessKill);
 
     mockExec.mockImplementation((_cmd: string, _opts: object, cb: (err: Error | null, stdout: string) => void) => {
       cb(null, '');
@@ -78,6 +118,7 @@ describe('gateway supervisor process cleanup', () => {
 
   afterEach(() => {
     Object.defineProperty(process, 'platform', { value: originalPlatform, writable: true });
+    vi.restoreAllMocks();
   });
 
   it('uses taskkill tree strategy for owned process on Windows', async () => {
@@ -111,7 +152,7 @@ describe('gateway supervisor process cleanup', () => {
     expect(child.kill).toHaveBeenCalledTimes(1);
   });
 
-  it('uses the owned native handle when Windows taskkill fails and waits for exit', async () => {
+  it('forces the owned PID when Windows taskkill fails and waits for native exit', async () => {
     setPlatform('win32');
     const child = new MockUtilityChild(4321);
     mockExec.mockImplementation((_cmd: string, _opts: object, cb: (error: Error) => void) => {
@@ -121,12 +162,31 @@ describe('gateway supervisor process cleanup', () => {
     const { terminateOwnedGatewayProcess } = await import('@electron/gateway/supervisor');
     let resolved = false;
     const stopped = terminateOwnedGatewayProcess(child as unknown as Electron.UtilityProcess).then(() => { resolved = true; });
-    await vi.waitFor(() => expect(child.kill).toHaveBeenCalledOnce());
-    expect(resolved).toBe(false);
-    child.emit('exit', 0);
-    await stopped;
+    try {
+      await vi.waitFor(() => expect(mockProcessKill).toHaveBeenCalledWith(4321, 'SIGKILL'));
+      expect(child.kill).not.toHaveBeenCalled();
+      expect(resolved).toBe(false);
+    } finally { child.emit('exit', 0); await stopped; }
     expect(resolved).toBe(true);
     expect(mockExec).toHaveBeenCalledOnce();
+  });
+
+  it('waits for the original exit receipt when the forced PID has already exited', async () => {
+    setPlatform('win32');
+    const child = new MockUtilityChild(4321);
+    mockExec.mockImplementation((_cmd: string, _opts: object, cb: (error: Error) => void) => {
+      cb(new Error('process enumeration timed out'));
+      return {} as never;
+    });
+    mockProcessKill.mockImplementation(() => { throw Object.assign(new Error('process exited'), { code: 'ESRCH' }); });
+    const { terminateOwnedGatewayProcess } = await import('@electron/gateway/supervisor');
+    let resolved = false;
+    const stopped = terminateOwnedGatewayProcess(child as unknown as Electron.UtilityProcess).then(() => { resolved = true; });
+    try {
+      await vi.waitFor(() => expect(mockProcessKill).toHaveBeenCalledWith(4321, 'SIGKILL'));
+      expect(resolved).toBe(false);
+    } finally { child.emit('exit', 0); await stopped; }
+    expect(resolved).toBe(true);
   });
 
   // #98: a port listener is an observation, not ownership. The supervisor must fail closed and

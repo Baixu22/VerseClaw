@@ -24,6 +24,9 @@ project或session token/USD上限，未配置时不启用。预算journal在原�
 同 generation 的 caller 不能改换 workspace。子调用继承会话 owner 的逻辑身份，
 不能把不同 checkout 目录当成新的项目余额。异步加载 wrapper 前即固定原 run 身份。
 workspaceId 属于会话核心字段，插件 extension slot 不得覆盖它。
+通用Gateway聊天和编排入口由Main转入已检查权限的workspaceId；caller给出的不同
+scope拒绝派发。编排首个子调用前从原session owner绑定generation内的workspace，
+启用项目预算时，非backend调用者不能为模型请求指定该身份。
 每个guarded物理尝试在发送前取得预算ticket；transport拒绝未发送请求后，逻辑调用
 结束时归还预留，已发送的失败尝试保持unknown。响应EOF或错误返回消费者之前，
 先完成原dispatcher与并发slot的释放。费用用该调用固定费率与完整usage字段核销；
@@ -32,8 +35,20 @@ workspaceId 属于会话核心字段，插件 extension slot 不得覆盖它。
 工作树隔离只消费既有 worktree owner 的实际 checkout/generation 证据；writeSet 缺失的
 推迟逻辑保留。租约 TTL 不能证明旧 writer 消失；先 fence，再由原执行 owner 证明隔离或结束。
 清空 ResourceEnvelope 等投影后必须能从原 owner 重建占用，不能因此释放尚活跃的资源。
+Main快照从HostAgentBrowserService和TerminalSessionManager重建会话条目；runtime
+快照从活动租约和等待队列重建占用，实际owner关闭后再移除相应条目。
+ConPTY尚未给出PID时保留null，就绪后从原PTY对象更新读取；不把0当成实际进程。
+native终止失败时保留终端owner及占用；部分回收的失败数进入原回执，不能输出全部释放。
+终端close与回收等待原PTY退出回调；kill请求已接受而尚无exit回执时保持占用，
+会话删除仅在其终端owner确认清理后提交terminalClosed。
+Gateway在fork时保存原native exit回执，同一进程的并发stop共用一个终止请求；
+已有回执可直接消费，没有回执不能凭网络关闭释放进程owner。
+Windows树终止不可用时，对原native PID施加SIGKILL并等待原exit事件；
+PID已消失而事件尚未到达时继续保留owner，超时仍报告终止失败。
 
 Worktree owner 创建遇同名、规范化后重名或未登记的已有目录必须拒绝，不先删除。
+租约journal初始化以已提交WAL或其初始化marker为依据；首个mutex等待创建的目录
+不证明journal已存在。已初始化journal丢失时继续拒绝新writer。
 生命周期互斥复用进程出生标识锁；遗留锁身份未知时拒绝，不能仅因超时执行临界区。
 记录的 generation 与实际 checkout HEAD、私有 Git 目录及其回指一起验证；对外快照的
 修改不能改写 owner。真实 Git 创建失败不能改用目录模拟宣称成功，默认 inprocess 保留。

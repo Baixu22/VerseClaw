@@ -22,7 +22,22 @@ export function warmupManagedPythonReadiness(): void {
   });
 }
 
-export async function terminateOwnedGatewayProcess(child: Electron.UtilityProcess): Promise<void> {
+const gatewayExitReceipts = new WeakSet<Electron.UtilityProcess>();
+const gatewayExitObservers = new WeakSet<Electron.UtilityProcess>();
+const gatewayTerminations = new WeakMap<Electron.UtilityProcess, Promise<void>>();
+
+/** Capture the original native exit event before the process can finish. */
+export function observeOwnedGatewayProcess(child: Electron.UtilityProcess): void {
+  if (gatewayExitObservers.has(child)) return;
+  gatewayExitObservers.add(child);
+  child.once('exit', () => { gatewayExitReceipts.add(child); });
+}
+
+export function terminateOwnedGatewayProcess(child: Electron.UtilityProcess): Promise<void> {
+  observeOwnedGatewayProcess(child);
+  if (gatewayExitReceipts.has(child)) return Promise.resolve();
+  const previous = gatewayTerminations.get(child);
+  if (previous) return previous;
   const terminateWindowsProcessTree = async (pid: number): Promise<void> => {
     const cp = await import('child_process');
     await new Promise<void>((resolve, reject) => {
@@ -30,24 +45,28 @@ export async function terminateOwnedGatewayProcess(child: Electron.UtilityProces
     });
   };
 
-  await new Promise<void>((resolve, reject) => {
+  const termination = new Promise<void>((resolve, reject) => {
     let exited = false;
     let forced = false;
     let timeout: ReturnType<typeof setTimeout>;
     const forceTerminate = () => {
+      if (gatewayExitReceipts.has(child)) { onExit(); return; }
       if (exited || forced) return;
       forced = true;
       clearTimeout(timeout);
-      // taskkill can stall when Windows process enumeration is unavailable.
-      // Electron owns a native process handle; keep ownership until it exits.
+      // Tree enumeration can stall. Force the original PID and wait for its
+      // native exit event; UtilityProcess.kill() requests graceful termination.
       timeout = setTimeout(() => {
+        if (gatewayExitReceipts.has(child)) { onExit(); return; }
         child.removeListener('exit', onExit);
         reject(new Error(`Owned Gateway process did not exit (pid=${child.pid ?? 'unknown'})`));
       }, 5000);
       try {
-        if (process.platform !== 'win32' && child.pid) process.kill(child.pid, 'SIGKILL');
+        if (child.pid) process.kill(child.pid, 'SIGKILL');
         else child.kill();
       } catch (error) {
+        // The PID may be gone before Electron delivers its original exit event.
+        if ((error as NodeJS.ErrnoException).code === 'ESRCH') return;
         clearTimeout(timeout);
         child.removeListener('exit', onExit);
         reject(error);
@@ -81,6 +100,11 @@ export async function terminateOwnedGatewayProcess(child: Electron.UtilityProces
     }
 
   });
+  gatewayTerminations.set(child, termination);
+  void termination.then(() => {}, () => {
+    if (gatewayTerminations.get(child) === termination) gatewayTerminations.delete(child);
+  });
+  return termination;
 }
 
 export async function unloadLaunchctlGatewayService(): Promise<void> {

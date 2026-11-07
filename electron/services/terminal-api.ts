@@ -724,7 +724,7 @@ export function createTerminalApi({
       return { success: true };
     },
     close: async (payload) => {
-      const snapshot = terminalManager.close(requireSessionId(payload));
+      const snapshot = await terminalManager.close(requireSessionId(payload));
       return buildSessionResult(snapshot);
     },
     status: async (payload) => {

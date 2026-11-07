@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { appendFileSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { withTaskLedgerJournalLockSync } from '../../../../shared/task-ledger-journal-lock.js';
 import { tmpdir } from "node:os";
 import path from "node:path";
 import {
@@ -244,5 +245,14 @@ describe("symbol-lease (C5-1 + C5-H)", () => {
     __resetSymbolLeases();
     expect(() => acquireSymbolLease({ workspaceRoot: root, holderId: "new", symbolName: "x", mode: "wal" }))
       .toThrow("symbol_lease_owner_journal_missing");
+  });
+
+  it('does not treat the first contended lock directory as an initialized lease journal', () => {
+    const wal = path.join(root, '.openclaw', 'leases', 'symbol-leases.wal.jsonl');
+    withTaskLedgerJournalLockSync(wal, () => {
+      expect(acquireSymbolLease({ workspaceRoot: root, holderId: 'waiter', symbolName: 'x', mode: 'wal' }))
+        .toMatchObject({ ok: false, reason: 'lock_busy' });
+    });
+    expect(acquireSymbolLease({ workspaceRoot: root, holderId: 'waiter', symbolName: 'x', mode: 'wal' }).ok).toBe(true);
   });
 });

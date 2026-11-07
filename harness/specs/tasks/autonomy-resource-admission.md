@@ -14,6 +14,9 @@ requiredProfiles:
   - comms
 touchedAreas:
   - shared/resources/drf-share.ts
+  - shared/dcs/component-disposition-catalog.ts
+  - tests/unit/component-disposition-catalog.test.ts
+  - tests/unit/component-authority-manifest.test.ts
   - shared/resources/priority-queue.ts
   - shared/types/resources.ts
   - shared/types/session-delegation.ts
@@ -21,7 +24,26 @@ touchedAreas:
   - electron/services/resource-fabric.ts
   - electron/services/resource-tracker.ts
   - electron/services/resource-envelope.ts
+  - electron/services/resource-envelope-api.ts
+  - electron/main/ipc-handlers.ts
+  - electron/gateway/supervisor.ts
+  - electron/gateway/process-launcher.ts
+  - tests/unit/gateway-supervisor.test.ts
+  - tests/unit/autonomy-owner-projection.test.ts
+  - tests/unit/long-session-runtime-resource-inventory.test.ts
+  - tests/e2e/autonomy-owner-projection.spec.ts
   - electron/services/terminal-api.ts
+  - electron/services/sessions-api.ts
+  - tests/unit/r0-3-terminal-session-reclaim.test.ts
+  - tests/unit/r0-2-sessions-delete-fail.test.ts
+  - tests/unit/long-session-owner-reclamation-adapter.test.ts
+  - electron/services/gateway-api.ts
+  - tests/unit/gateway-permissions-api.test.ts
+  - openclaw_runtime/src/gateway/server-methods/chat.ts
+  - openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts
+  - electron/services/terminal-session-manager.ts
+  - tests/unit/terminal-session-manager.test.ts
+  - tests/unit/long-session-resource-reclamation.test.ts
   - electron/services/session-delegation-admission.ts
   - electron/services/long-session-resource-reclamation.ts
   - openclaw_runtime/src/resources/resource-envelope.ts
@@ -117,6 +139,7 @@ touchedAreas:
   - tests/unit/orchestration-synthesizer.test.ts
   - tests/unit/roles-orchestration-panel.test.tsx
   - tests/e2e/fixtures/fp-p1-harness.ts
+  - tests/e2e/fixtures/electron.ts
   - harness/specs/tasks/autonomy-resource-admission.md
   - harness/specs/rules/autonomy-resource-owner-admission.md
   - harness/specs/scenarios/autonomy-resource-admission.md
@@ -138,6 +161,14 @@ requiredRules:
   - disk-temp-policy
   - docs-sync
 requiredTests:
+  - pnpm exec vitest run tests/unit/gateway-supervisor.test.ts --maxWorkers=1
+  - pnpm exec vitest run tests/unit/r0-2-sessions-delete-fail.test.ts tests/unit/long-session-owner-reclamation-adapter.test.ts --maxWorkers=1
+  - pnpm exec vitest run tests/unit/component-disposition-catalog.test.ts tests/unit/component-authority-manifest.test.ts --maxWorkers=1
+  - pnpm exec vitest run tests/unit/r0-3-terminal-session-reclaim.test.ts tests/unit/terminal-session-manager.test.ts tests/unit/long-session-resource-reclamation.test.ts --maxWorkers=1
+  - pnpm exec vitest run tests/unit/gateway-permissions-api.test.ts --maxWorkers=1
+  - pnpm exec vitest run tests/unit/terminal-session-manager.test.ts tests/unit/autonomy-owner-projection.test.ts --maxWorkers=1
+  - pnpm exec vitest run tests/unit/autonomy-owner-projection.test.ts tests/unit/long-session-runtime-resource-inventory.test.ts tests/unit/autonomy-resource-admission.test.ts tests/unit/autonomy-provider-spend.test.ts --maxWorkers=1
+  - pnpm test:e2e:run tests/e2e/autonomy-owner-projection.spec.ts --workers=1
   - pnpm exec vitest run tests/unit/handoff-artifacts.test.ts tests/unit/autonomy-orchestration-waves.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/autonomy-subagent-persistence.test.ts tests/unit/autonomy-subagent-admission.test.ts tests/unit/autonomy-orchestration-waves.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/autonomy-orchestration-waves.test.ts tests/unit/orchestration-resource-scheduler.test.ts tests/unit/orchestration-synthesizer.test.ts tests/unit/long-session-delegation-admission.test.ts tests/unit/roles-orchestration-panel.test.tsx --maxWorkers=1

@@ -195,9 +195,24 @@ USD限额时拒绝未知价格。计数从显式
 的 workspace 漂移拒绝发送。子代理通过原会话存储继承该逻辑身份，磁盘 checkout 不
 改变项目余额。缺失 owner 或逻辑 workspace 的调用在 project 限额下拒绝；跨工具和
 跨独立状态目录预算仍未验收。
+通用Gateway聊天与编排请求从Main使用已检查权限的workspaceId，调用方的不同
+坐标会被拒绝；无需给每次聊天手工填写项目身份。首次编排在子调用前绑定原session
+owner的workspace。
 
 
 ## 6. ResourceTracker 与端口/进程
+ResourceEnvelope读取时从Main浏览器与终端owner重建会话条目，runtime快照从活动
+租约和队列重建；清空投影后占用继续存在，关闭owner后相应条目移除。WAL初始化
+marker区分首次锁等待与已提交journal，已初始化journal丢失会拒绝新writer。
+ConPTY异步连接完成前PID为null；连接就绪后，终端状态与资源清单从同一PTY owner
+刷新实际PID。
+native关闭失败时保留终端占用，回收报告记录failed；部分成功不会覆盖其余失败。
+终端关闭等待原PTY的exit回执，再释放占用和完成回收。会话删除保留清理操作，
+终端清理失败后沿同一operationId重试。
+Gateway的停止消费fork时绑定的native退出回执，并发停止共用同一终止操作。
+Windows树终止不可用时，对原PID施加SIGKILL并等待原exit事件；PID已消失而事件
+尚未到达时继续保留owner，超时报告终止失败。
+
 实现：`electron/services/resource-tracker.ts`。
 
 策略：

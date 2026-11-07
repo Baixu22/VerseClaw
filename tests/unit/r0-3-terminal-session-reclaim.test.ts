@@ -36,13 +36,16 @@ function workspace(rootPath: string): WorkspaceProfile {
 beforeEach(() => {
   vi.resetModules();
   ptyMocks.spawn.mockReset();
-  ptyMocks.spawn.mockReturnValue({
+  ptyMocks.spawn.mockImplementation(() => {
+    let exit!: (event: { exitCode: number }) => void;
+    return {
     pid: 1234,
     onData: vi.fn(),
-    onExit: vi.fn(),
+    onExit: vi.fn(listener => { exit = listener; }),
     write: vi.fn(),
     resize: vi.fn(),
-    kill: vi.fn(),
+    kill: vi.fn(() => exit({ exitCode: 0 })),
+    };
   });
 });
 
@@ -64,7 +67,7 @@ describe('R0-3 terminal session reclamation', () => {
 
     for (let index = 0; index < 3; index += 1) {
       const snapshot = manager.open({ workspace: ws, sessionKey: 'agent:main:session-' + index });
-      manager.close(snapshot.sessionId as string, 'user-close');
+      await manager.close(snapshot.sessionId as string, 'user-close');
     }
 
     const probe = manager as unknown as SessionMapProbe;
@@ -109,7 +112,7 @@ describe('R0-3 terminal session reclamation', () => {
     } | undefined;
     (spawnValue?.onExit?.mock?.calls?.[0]?.[0] as ((event: { exitCode: number }) => void) | undefined)?.({ exitCode: 0 });
 
-    const closed = manager.close(snapshot.sessionId as string, 'user-close');
+    const closed = await manager.close(snapshot.sessionId as string, 'user-close');
     expect(closed.status).toBe('idle');
     expect(closed.sessionId).toBeNull();
   });
@@ -129,8 +132,10 @@ describe('R0-3 terminal session reclamation', () => {
     const probe = manager as unknown as SessionMapProbe;
     expect(probe.sessions.size).toBe(0);
     // mockReturnValue reuses one shared object across all spawn calls, so
-    // the pty mock exposes a single shared kill vi.fn for the three sessions.
-    const killMock = ptyMocks.spawn.mock.results[0]?.value as { kill: { mock: { calls: unknown[] } } } | undefined;
-    expect(killMock?.kill?.mock?.calls?.length).toBe(3);
+    const killed = ptyMocks.spawn.mock.results.reduce((count, result) => {
+      const owner = result.value as { kill: { mock: { calls: unknown[] } } };
+      return count + owner.kill.mock.calls.length;
+    }, 0);
+    expect(killed).toBe(3);
   });
 });

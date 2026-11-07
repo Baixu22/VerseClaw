@@ -1,6 +1,7 @@
 import { DatabaseSync } from 'node:sqlite';
 import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import type { GatewayStatus } from '../../shared/types/gateway';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 import { buildMockProviderConfig, hostInvoke, startGateway, startScriptedLlm } from './fixtures/fp-p1-harness';
 
@@ -102,7 +103,38 @@ test(`R1 real Host/Gateway queues conflicting waves until the prior provider run
     expect(JSON.parse(await readFile(file, 'utf8')).completed).toHaveLength(2);
     await testInfo.attach('r1-waves-owner', { path: file, contentType: 'application/json' });
     await page.screenshot({ path: testInfo.outputPath('r1-electron.png') });
+    const nativeBefore = await hostInvoke<GatewayStatus>(app, 'gateway', 'status');
+    if (!nativeBefore.pid) throw new Error('Gateway native owner PID is unavailable');
+    if (handoffMode === 'on') {
+      await app.evaluate(() => {
+        const cp = process.mainModule!.require('node:child_process') as { exec: (command: string, ...args: unknown[]) => unknown };
+        const original = cp.exec;
+        const fixture = { attempts: 0 };
+        (globalThis as Record<PropertyKey, unknown>)[Symbol.for('clawx.r1.taskkill-failure')] = fixture;
+        cp.exec = (command, ...args) => {
+          if (command.startsWith('taskkill /F /PID ')) {
+            fixture.attempts += 1;
+            const callback = args.find(value => typeof value === 'function') as (error: Error) => void;
+            queueMicrotask(() => callback(new Error('agent-driven taskkill failure')));
+            return;
+          }
+          return original(command, ...args);
+        };
+        process.mainModule!.require('node:module').syncBuiltinESMExports();
+      });
+    }
     await hostInvoke(app, 'gateway', 'stop');
+    await expect.poll(() => app.evaluate((_electron, pid) => {
+      try { process.kill(pid, 0); return true; }
+      catch (error) { if ((error as NodeJS.ErrnoException).code === 'ESRCH') return false; throw error; }
+    }, nativeBefore.pid!), { timeout: 15000 }).toBe(false);
+    const nativeAfter = await hostInvoke<GatewayStatus>(app, 'gateway', 'status');
+    const forcedAttempts = handoffMode === 'on' ? await app.evaluate(() => (
+      (globalThis as Record<PropertyKey, unknown>)[Symbol.for('clawx.r1.taskkill-failure')] as { attempts: number }
+    ).attempts) : 0;
+    if (handoffMode === 'on') expect(forcedAttempts).toBe(1);
+    await writeFile(testInfo.outputPath('r1-native-stop.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex-r1-native-stop',
+      mode: handoffMode === 'on' ? 'taskkill-failure' : 'normal', nativeBefore, nativeAfter, forcedAttempts, kernelPidExited: true }, null, 2));
     const sourceDb = join(sourceState, 'state/openclaw.sqlite');
     const retainedDb = testInfo.outputPath('owner.sqlite');
     await copyFile(sourceDb, retainedDb);
@@ -125,7 +157,8 @@ test(`R1 real Host/Gateway queues conflicting waves until the prior provider run
 });
 }
 
-test('R1 provider owner prevents concurrent host overspend and reconciles actual usage', async ({ launchElectronApp, homeDir, userDataDir }, testInfo) => {
+for (const spendMode of ['tokens', 'USD'] as const) {
+test(`R1 provider owner prevents concurrent host overspend and reconciles actual usage (${spendMode})`, async ({ launchElectronApp, homeDir, userDataDir }, testInfo) => {
   test.setTimeout(360_000);
   let release!: () => void;
   const gate = new Promise<void>(resolve => { release = resolve; });
@@ -140,10 +173,14 @@ test('R1 provider owner prevents concurrent host overspend and reconciles actual
   const workspace = join(homeDir, 'r1-budget-workspace');
   await mkdir(workspace, { recursive: true });
   const config = buildMockProviderConfig(llm.port, workspace);
-  (config.runtime as Record<string, unknown>).providerBudget = { host: { maxTokens: 200000 }, project: { maxTokens: 200000 }, session: { maxTokens: 200000 } };
+  const spendPolicy = spendMode === 'USD'
+    ? { host: { maxTokens: 500000, maxCostUsd: 0.3 }, project: { maxTokens: 500000, maxCostUsd: 1 }, session: { maxTokens: 500000, maxCostUsd: 0.5 } }
+    : { host: { maxTokens: 200000 }, project: { maxTokens: 200000 }, session: { maxTokens: 200000 } };
+  (config.runtime as Record<string, unknown>).providerBudget = spendPolicy;
   const budgetModel = (config.models as { providers: { openai: { models: Array<Record<string, unknown>> } } }).providers.openai.models[0];
   budgetModel.reasoning = true;
   budgetModel.compat = { supportsReasoningEffort: true, supportedReasoningEfforts: ['low', 'medium', 'high'] };
+  if (spendMode === 'USD') budgetModel.cost = { input: 1, output: 2, cacheRead: 1, cacheWrite: 1 };
   const sourceState = join(userDataDir, 'openclaw-source-state');
   await mkdir(sourceState, { recursive: true });
   await writeFile(join(homeDir, '.openclaw/openclaw.json'), JSON.stringify(config));
@@ -151,7 +188,7 @@ test('R1 provider owner prevents concurrent host overspend and reconciles actual
   const app = await launchElectronApp({ skipSetup: true, env: { TEMP: 'D:/tmp', TMP: 'D:/tmp' } });
   const readCalls = () => {
     const db = new DatabaseSync(join(sourceState, 'state/openclaw.sqlite'), { readOnly: true });
-    try { return db.prepare('SELECT call_id, run_id, scope_json, state, reserved_tokens, actual_tokens, actual_cost_micros FROM provider_spend_calls').all(); }
+    try { return db.prepare('SELECT call_id, run_id, scope_json, state, reserved_tokens, reserved_cost_micros, actual_tokens, actual_cost_micros FROM provider_spend_calls').all(); }
     finally { db.close(); }
   };
   try {
@@ -168,13 +205,16 @@ test('R1 provider owner prevents concurrent host overspend and reconciles actual
     };
     const first = await create('R1 first spend'), second = await create('R1 second spend');
     const send = (sessionKey: string, message: string) => hostInvoke<{ runId: string }>(app, 'gateway', 'rpc', {
-      method: 'chat.send', params: { sessionKey, workspaceId: active.activeWorkspace.id, message, idempotencyKey: message },
+      method: 'chat.send', params: { sessionKey, message, idempotencyKey: message },
     });
+    await expect(hostInvoke(app, 'gateway', 'rpc', { method: 'chat.send', params: { sessionKey: first.key,
+      workspaceId: 'forged-project-scope', message: 'SPEND-SCOPE-FORGERY', idempotencyKey: 'scope-forgery' } })).rejects.toThrow(/workspace.*scope|scope.*workspace/i);
     const acceptedFirst = await send(first.key, 'SPEND-FIRST');
     await expect.poll(() => calls.includes('first'), { timeout: 120_000 }).toBe(true);
     const held = readCalls();
     expect(held).toHaveLength(1);
     expect(Number(held[0].reserved_tokens)).toBeGreaterThan(100000);
+    if (spendMode === 'USD') expect(Number(held[0].reserved_cost_micros)).toBeGreaterThan(200000);
     const acceptedSecond = await send(second.key, 'SPEND-SECOND');
     const secondEnd = await hostInvoke<{ status: string }>(app, 'gateway', 'rpc', { method: 'agent.wait', timeoutMs: 120_000,
       params: { runId: acceptedSecond.runId, timeoutMs: 60_000 } });
@@ -195,11 +235,12 @@ test('R1 provider owner prevents concurrent host overspend and reconciles actual
     const childCalls = readCalls().filter(row => child.spawnedRunIds.includes(String(row.run_id)));
     expect(childCalls.every(row => JSON.parse(String(row.scope_json)).workspaceId === active.activeWorkspace.id)).toBe(true);
     expect(calls).toContain('child');
-    await expect.poll(() => readCalls().every(row => row.actual_tokens === 150 && row.state === 'unknown'), { timeout: 120_000 }).toBe(true);
+    const settledState = spendMode === 'USD' ? 'settled' : 'unknown';
+    await expect.poll(() => readCalls().every(row => row.actual_tokens === 150 && row.state === settledState), { timeout: 120_000 }).toBe(true);
     const settled = readCalls();
-    // Fixture pricing is intentionally zero/unknown: known token usage must not invent free USD.
-    expect(settled.every(row => row.actual_cost_micros === null && row.state === 'unknown')).toBe(true);
-    const record = { driven_by: 'agent', actor: 'codex-r1-electron-spend', held, settled, calls, acceptedFirst, acceptedSecond, secondEnd, after, child, childCalls,
+    if (spendMode === 'USD') expect(settled.every(row => Number(row.actual_cost_micros) === 200)).toBe(true);
+    else expect(settled.every(row => row.actual_cost_micros === null && row.state === 'unknown')).toBe(true);
+    const record = { driven_by: 'agent', actor: 'codex-r1-electron-spend', spendMode, spendPolicy, pricingSource: 'scripted-fixture model configuration', held, settled, calls, acceptedFirst, acceptedSecond, secondEnd, after, child, childCalls,
       limits: ['scripted provider, real Host/Gateway/provider owner', 'same-workspace three-scope allocation; multiple state directories not measured'] };
     await writeFile(testInfo.outputPath('r1-spend-owner.json'), JSON.stringify(record, null, 2));
     await hostInvoke(app, 'gateway', 'stop');
@@ -214,3 +255,4 @@ test('R1 provider owner prevents concurrent host overspend and reconciles actual
     finally { db.close(); }
   } finally { release(); await closeElectronApp(app); llm.server.closeAllConnections(); await new Promise<void>(resolve => llm.server.close(() => resolve())); }
 });
+}

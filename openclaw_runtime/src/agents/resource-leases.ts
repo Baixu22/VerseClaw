@@ -78,6 +78,7 @@ function scheduleResourceEnvelopeSnapshotWrite(): void {
     void (async () => {
       try {
         const ledger = getResourceEnvelopeLedger();
+        resourceLeases.rebuildResourceEnvelope();
         const sample = await processTreeSampler.sample({ rootPids: [process.pid] });
         ledger.update({
             id: "gateway:process-tree",
@@ -354,7 +355,7 @@ export class ResourceLeaseManager {
     this.drain();
   }
 
-  private refreshResourceEnvelope(kind: ResourceLeaseKind, key: string, queueWaitMs: number): void {
+  private refreshResourceEnvelope(kind: ResourceLeaseKind, key: string, queueWaitMs: number, scheduleWrite = true): void {
     const id = `gateway:${kind}:${key}`;
     const ledger = getResourceEnvelopeLedger();
     const activeSlots = [...this.active.values()].filter((lease) => lease.kind === kind && lease.key === key).length;
@@ -371,6 +372,7 @@ export class ResourceLeaseManager {
         owner: "gateway",
         activeSlots,
         queuedCount,
+        limits: { concurrencySlots: RESOURCE_LEASE_CAPACITY[kind] },
         queueWaitMs: Math.max(previous?.queueWaitMs ?? 0, Math.max(0, Math.floor(queueWaitMs))),
         processCount: previous?.processCount ?? 0,
         treeRssBytes: previous?.treeRssBytes ?? 0,
@@ -379,7 +381,14 @@ export class ResourceLeaseManager {
         reason: previous?.reason ?? "runtime workspace lease",
       });
     }
-    scheduleResourceEnvelopeSnapshotWrite();
+    if (scheduleWrite) scheduleResourceEnvelopeSnapshotWrite();
+  }
+
+  /** Reconstruct the derived view from the live lease and waiting owners. */
+  rebuildResourceEnvelope(): void {
+    const keys = new Map<string, { kind: ResourceLeaseKind; key: string }>();
+    for (const lease of [...this.active.values(), ...this.pending]) keys.set(JSON.stringify([lease.kind, lease.key]), lease);
+    for (const { kind, key } of keys.values()) this.refreshResourceEnvelope(kind, key, 0, false);
   }
 
   private timeoutError(request: PendingRequest): ResourceLeaseTimeoutError {

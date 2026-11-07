@@ -10,6 +10,7 @@ import {
   type OfficeCliPathOptions,
 } from '../utils/officecli-path';
 import { nextGatewayGeneration, stampGatewayGeneration } from './generation';
+import { observeOwnedGatewayProcess } from './supervisor';
 
 /** Flags that would carry a Gateway shared secret into a child process argv. */
 const GATEWAY_SECRET_ARGUMENT_FLAGS = new Set(['--token', '--password', '--gateway-token']);
@@ -264,6 +265,10 @@ export async function launchGatewayProcess(options: {
       execArgv,
       serviceName: 'OpenClaw Gateway',
     });
+    observeOwnedGatewayProcess(child);
+    // Only stderr is forwarded, but stdout is also piped. Drain it so a full
+    // Windows pipe cannot block Gateway requests behind routine log output.
+    child.stdout?.on('data', () => {});
 
     let settled = false;
     const resolveOnce = () => {

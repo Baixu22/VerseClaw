@@ -11,6 +11,9 @@ type: scenario
 隔离并发需要实际 worktree checkout 证据。模型或调用者自报隔离、未声明上限、
 过期租约但旧 writer 仍活跃、清空投影后的假空闲，均不能放行第二份危险工作。
 预算保留 unknown 成本和待核销占用，不把缺失使用量当0。
+Main给通用聊天与编排请求绑定当前已检查权限的工作区身份；不同caller坐标在
+provider派发前拒绝。首次编排也从原session generation绑定项目，子调用继续使用
+同一owner坐标。
 启用项目预算后，父会话完成首次 workspace 绑定，子代理即使在不同 checkout 执行，
 仍从原会话 owner 继承该项目身份。缺失或已换代的 owner、同 generation 的 workspace
 漂移在 provider 发送前拒绝；清空缓存与重新打开 SQLite 后绑定和消费都能回读。

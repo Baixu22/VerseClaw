@@ -174,7 +174,7 @@ function registerTypedHostHandlers(
     webPreview: createWebPreviewApi({ webPreviewManager }),
     settings: createSettingsApi(gatewayManager),
     efficiency: createEfficiencyApi(),
-    resourceEnvelope: createResourceEnvelopeApi(),
+    resourceEnvelope: createResourceEnvelopeApi({ terminalManager }),
     gateway: gatewayApi,
     localControlPlane: createLocalControlPlaneApi(gatewayManager),
     capabilities: createCapabilitiesApi({ gatewayManager }),

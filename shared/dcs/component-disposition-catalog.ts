@@ -259,8 +259,9 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
   entry({
     id: 'component.coding-execution-backend', label: 'Coding execution backend', disposition: 'default', owner: 'coding-execution-backend', implementationNodeId: 'TF-0510', currentMode: 'mixed', targetDefaultMode: 'baseline',
     ...user('model tool, shell and file execution'),
-    currentConsumers: ['agent tools', 'DCS coding loop', 'write/edit/exec'], evidenceRefs: [...EXECUTION_EVIDENCE, SETTINGS],
-    coverage: { authorityComponentIds: ['coding-execution-backend'] },
+    currentConsumers: ['agent tools', 'DCS coding loop', 'write/edit/exec', 'ProviderOutboundBudget model-call admission'],
+    evidenceRefs: [...EXECUTION_EVIDENCE, SETTINGS, 'harness/specs/tasks/autonomy-resource-admission.md', 'openclaw_runtime/src/agents/provider-spend-budget.ts'],
+    coverage: { authorityComponentIds: ['coding-execution-backend'], runtimeLeafPatterns: ['providerBudget.*'] },
   }),
   entry({
     id: 'component.verseshell-execution-adapter', label: 'VerseShell execution adapter', disposition: 'internal', owner: 'verseshell-execution-adapter', implementationNodeId: 'TF-0504', currentMode: 'opt-in', targetDefaultMode: 'internal',

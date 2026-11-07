@@ -49,6 +49,7 @@ type LeaseStore = {
   leases: Map<string, SymbolLease>;
   walPath?: string;
   lockPath?: string;
+  initializationPath?: string;
   mode: SymbolLeaseMode;
   initialized: boolean;
 };
@@ -78,7 +79,10 @@ function storeFor(workspaceRoot: string, mode: SymbolLeaseMode = "memory"): Leas
         const paths = ensureWalPaths(workspaceRoot);
         s.walPath = paths.walPath;
         s.lockPath = paths.lockPath;
-        s.initialized = existsSync(s.walPath) || existsSync(taskLedgerLockPath(s.walPath));
+        s.initializationPath = path.join(taskLedgerLockPath(s.walPath), 'journal-initialized');
+        // A waiting mutex creates its directory before the first WAL commit.
+        // The marker records a committed journal and survives cache resets.
+        s.initialized = existsSync(s.walPath) || existsSync(s.initializationPath);
       } catch (error) {
         if (mode === "wal") throw error;
       }
@@ -144,6 +148,11 @@ function appendWal(s: LeaseStore, row: unknown): void {
       writeFileSync(fd, line, "utf8");
       fsyncSync(fd);
       s.initialized = true;
+      if (s.mode === 'wal' && s.initializationPath && !existsSync(s.initializationPath)) {
+        const marker = openSync(s.initializationPath, 'wx');
+        try { writeFileSync(marker, 'symbol-lease-journal/v1\n'); fsyncSync(marker); }
+        finally { closeSync(marker); }
+      }
     } finally {
       closeSync(fd);
     }

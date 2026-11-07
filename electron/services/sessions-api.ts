@@ -1815,13 +1815,14 @@ async function deleteSessionViaRuntime(
     if (currentGate.terminalClosed !== true) {
       // Runtime cleanup already proved this exact generation. The Main pass
       // closes keep_on_leave terminals only for an explicit session delete.
-      terminalManager?.reclaimForSession({
+      const terminals = await terminalManager?.reclaimForSession({
         sessionKey,
         workspaceId: (await getActiveWorkspaceProfile())?.id,
         expectedSessionId: currentGate.expectedSessionId,
         honorKeepOnLeave: false,
         reason: 'session-delete',
       });
+      if (terminals?.failed) return { success: false, error: `${terminals.failed} terminal owner(s) remain after cleanup` };
       currentGate = await updateSessionDeleteGate(gate.operationId, {
         terminalClosed: true,
       }) ?? currentGate;
