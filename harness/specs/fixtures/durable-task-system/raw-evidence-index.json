@@ -50,5 +50,37 @@
   {
     "path": "D:/tmp/durable-task-system-20261107/comms-compare.log",
     "sha256": "934b048a5492d4ea0d813d5b516e366a19ccfafd12b18f06cac67417d0e1abc2"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/regression-ledger.json",
+    "sha256": "ab27b9f029f5711f251677e845466fc0d13980d25e649ffc8a8a2cb4b8c8ba88"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/regression-ledger-2.json",
+    "sha256": "5b97a22a38bd281218e3f89818e59307c9fc29da1c35cb91049b90df33e0d393"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/regression-expanded.json",
+    "sha256": "776ad18519c705857558fa5fdcc54ee3e78184b4047dbcea80c7fe4e3d85ae54"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/typecheck-full-3.log",
+    "sha256": "26ce3a916c11d81376e0e41921fbceb4a2e878c5a8258849d63116c54ebf80e6"
+  },
+  {
+    "path": "D:/ClawX-work/durable-task-system-20261107/artifacts/typecheck-cache/test-typecheck-errors.log",
+    "sha256": "e23c2c2b7cf7af380267a3407c6a12a5ee272323a0ae9a4a8ce4b3193186b442"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/tool-overhead-before.json",
+    "sha256": "7eb642d81712645f4d242817f19dd707a9e52723025f9b588c2b2d6a75dcf97a"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/tool-overhead-after.log",
+    "sha256": "f8f6312b056d0ca246449f8e5b1bfa85fbeb2274de87205d1620665ac21e9ab3"
+  },
+  {
+    "path": "D:/tmp/durable-task-system-20261107/main-dependencies-restore.log",
+    "sha256": "6c8f9b96fe83dd35ef572b42d747da2fd42e76a4ed25d35f864b3c022198b65e"
   }
 ]

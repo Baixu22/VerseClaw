@@ -1,0 +1,18 @@
+{
+  "driven_by": "agent",
+  "source": "recorded tool output observations",
+  "observations": [
+    {
+      "step": "first focused Vitest startup",
+      "exitCode": 1,
+      "message": "Cannot find module 'kysely' required by runtime package while loading vitest.config.ts",
+      "resolution": "Installed isolated runtime dependencies, subsequent focused and regression suites passed"
+    },
+    {
+      "step": "initial dependency setup",
+      "message": "pnpm verification automatically invoked install through a task-created dependency junction; ENOTDIR",
+      "resolution": "Preserved the junction under another name, installed dependencies in the new worktree, and restored main checkout dependencies from its frozen lockfile",
+      "restoreLog": "D:/tmp/durable-task-system-20261107/main-dependencies-restore.log"
+    }
+  ]
+}
