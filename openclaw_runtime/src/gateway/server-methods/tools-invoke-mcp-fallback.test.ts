@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { realpathSync } from "node:fs";
 import { invokeGatewayTool } from "../tools-invoke-shared.js";
 import {
   clearSecurityVerificationShadowRecords,
@@ -14,7 +15,10 @@ const mocks = vi.hoisted(() => ({
   getChannelAgentToolMeta: vi.fn(),
   isKnownCoreToolId: vi.fn(),
   prepareSessionMcpManagement: vi.fn(),
+  loadSessionEntry: vi.fn(),
 }));
+
+vi.mock("../session-utils.js", () => ({ loadSessionEntry: mocks.loadSessionEntry }));
 
 vi.mock("./mcp-management.js", () => ({
   prepareSessionMcpManagement: mocks.prepareSessionMcpManagement,
@@ -175,6 +179,51 @@ describe("invokeGatewayTool warm MCP fallback", () => {
     expect(execute).toHaveBeenCalledWith("test-core", { value: 1 });
     expect(getSecurityVerificationShadowRecords()).toHaveLength(0);
   });
+
+  it.each(["hook", "execution"])(
+    "checks policy changes before execution and preserves an effect from %s",
+    async (phase) => {
+      const workspaceDir = realpathSync(process.cwd());
+      const cfg = { agents: { defaults: { workspace: workspaceDir } } };
+      let currentConfig = cfg;
+      const changedConfig = {
+        agents: { defaults: { workspace: workspaceDir, thinkingDefault: "high" as const } },
+      };
+      mocks.loadSessionEntry.mockReturnValue({
+        entry: { sessionId: "generation-1", workspaceDir },
+      });
+      const execute = vi.fn(async () => {
+        currentConfig = changedConfig;
+        return { persisted: true };
+      });
+      mocks.resolveGatewayScopedTools.mockReturnValue({
+        agentId: "main",
+        workspaceDir,
+        sessionId: "generation-1",
+        tools: [{ name: "gateway", parameters: {}, execute }],
+      });
+      if (phase === "hook")
+        mocks.runBeforeToolCallHook.mockImplementationOnce(async ({ params }) => {
+          currentConfig = changedConfig;
+          return { blocked: false, params };
+        });
+      const outcome = await invokeGatewayTool({
+        cfg,
+        getRuntimeConfig: () => currentConfig,
+        input: {
+          name: "gateway",
+          sessionKey: "agent:main:test",
+          workspaceDir,
+          expectedSessionGeneration: "generation-1",
+          args: { action: "config.patch" },
+        },
+        toolCallIdPrefix: "config-effect",
+      });
+      expect(outcome.ok).toBe(phase === "execution");
+      expect(execute).toHaveBeenCalledTimes(phase === "execution" ? 1 : 0);
+      if (phase === "execution") expect(outcome).toMatchObject({ result: { persisted: true } });
+    },
+  );
 
   it("records a sanitized shadow result when the security verification flag is enabled", async () => {
     process.env.OPENCLAW_SECURITY_VERIFICATION_SHADOW = "1";

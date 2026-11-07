@@ -80,6 +80,7 @@ vi.mock('electron-store', () => {
 });
 
 vi.mock('@electron/utils/agent-config', () => ({
+  listConfiguredAgentIds: vi.fn(async () => ['main']),
   readAgentBootstrapTools: (...args: unknown[]) => readAgentBootstrapToolsMock(...args),
 }));
 
@@ -156,6 +157,56 @@ describe('mcp api registry', () => {
     });
   });
 
+  it.each(['agent', 'workspace'] as const)('revokes previous %s ownership when projecting runtime config', async (scope) => {
+    const { createMcpApi } = await import('@electron/services/mcp-api');
+    const { readOpenClawConfig, writeOpenClawConfig } = await import('@electron/utils/channel-config');
+    const { getWorkspaceRootPathById } = await import('@electron/services/workspaces-api');
+    let config = {};
+    vi.mocked(readOpenClawConfig).mockImplementation(async () => structuredClone(config));
+    vi.mocked(writeOpenClawConfig).mockImplementation(async (next) => { config = structuredClone(next); });
+    vi.mocked(getWorkspaceRootPathById).mockImplementation(async (id) => `D:/tmp/${id}`);
+    try {
+      const api = createMcpApi();
+      await api.createServer({ name: 'Scoped', transport: 'stdio', command: 'node', scope, ownerId: 'alice' });
+      await api.updateServer({ id: 'scoped', ownerId: 'bob' });
+      const entry = (config as { mcp: { servers: Record<string, { exposure: Record<string, string[]> }> } }).mcp.servers.scoped;
+      expect(entry.exposure[scope === 'agent' ? 'agents' : 'workspaces']).toEqual([scope === 'agent' ? 'bob' : 'D:/tmp/bob']);
+    } finally {
+      vi.mocked(readOpenClawConfig).mockResolvedValue({});
+      vi.mocked(writeOpenClawConfig).mockResolvedValue(undefined);
+      vi.mocked(getWorkspaceRootPathById).mockResolvedValue('D:/tmp/mcp-workspace-a');
+    }
+  });
+  it('rebuilds bootstrap grants and explicit exposure without retaining revoked scope grants', async () => {
+    const { createMcpApi, syncAgentMcpExposureToOpenClawConfig } = await import('@electron/services/mcp-api');
+    const { readOpenClawConfig, writeOpenClawConfig } = await import('@electron/utils/channel-config');
+    let config = {};
+    vi.mocked(readOpenClawConfig).mockImplementation(async () => structuredClone(config));
+    vi.mocked(writeOpenClawConfig).mockImplementation(async (next) => { config = structuredClone(next); });
+    const exposure = () => (config as { mcp: { servers: Record<string, { exposure?: { agents?: string[] } }> } }).mcp.servers.scoped.exposure;
+    try {
+      const api = createMcpApi();
+      await api.createServer({ name: 'Scoped', transport: 'stdio', command: 'node', scope: 'agent', ownerId: 'alice', exposure: { agents: ['reviewer'] } });
+      readAgentBootstrapToolsMock.mockResolvedValue({ defaultSkillIds: [], defaultMcpServerIds: ['scoped'] });
+      await syncAgentMcpExposureToOpenClawConfig('main', ['scoped']);
+      await api.updateServer({ id: 'scoped', ownerId: 'bob' });
+      expect(exposure()?.agents).toEqual(['bob', 'main', 'reviewer']);
+      readAgentBootstrapToolsMock.mockResolvedValue({ defaultSkillIds: [], defaultMcpServerIds: [] });
+      await syncAgentMcpExposureToOpenClawConfig('main', []);
+      expect(exposure()?.agents).toEqual(['bob', 'reviewer']);
+      expect((await api.resolveForContext({ agentId: 'reviewer' })).servers.map((server) => server.id)).toContain('scoped');
+      expect((await api.resolveForContext({ agentId: 'alice' })).servers.map((server) => server.id)).not.toContain('scoped');
+      await api.updateServer({ id: 'scoped', scope: 'global', exposure: { agents: [] } });
+      expect(exposure()?.agents).toEqual([]);
+      expect((await api.resolveForContext({ agentId: 'bob' })).servers.map((server) => server.id)).not.toContain('scoped');
+      await api.updateServer({ id: 'scoped', exposure: {} });
+      expect(exposure()).toBeUndefined();
+      expect((await api.resolveForContext({ agentId: 'bob' })).servers.map((server) => server.id)).toContain('scoped');
+    } finally {
+      vi.mocked(readOpenClawConfig).mockResolvedValue({});
+      vi.mocked(writeOpenClawConfig).mockResolvedValue(undefined);
+    }
+  });
   it('TF-0772 rejects a same-agent session that is not bound to the active workspace', async () => {
     registerHttpFixture();
     const { createMcpApiWithContext } = await import('@electron/services/mcp-api');
@@ -177,10 +228,30 @@ describe('mcp api registry', () => {
     const api = createMcpApiWithContext({ gatewayManager: gatewayManager as never, gatewayRpc });
     expect((await api.listTools({ serverId: 'http-local' })).success).toBe(true);
     expect(gatewayRpc.mock.calls.find(([payload]) => (payload as { method: string }).method === 'mcp.listTools')?.[0])
-      .toMatchObject({ params: { sessionKey: 'agent:main:main', expectedSessionGeneration: 'generation-1', workspaceDir: 'D:/tmp/mcp-workspace-a' } });
+      .toMatchObject({ timeoutMs: 60_000, params: { sessionKey: 'agent:main:main', expectedSessionGeneration: 'generation-1', workspaceDir: 'D:/tmp/mcp-workspace-a' } });
     expect(await api.listTools({ serverId: 'http-local', expectedSessionGeneration: 'old' }))
       .toMatchObject({ success: false, errorCode: 'VALIDATION' });
     expect(gatewayManager.rpc).toHaveBeenCalledTimes(1);
+  });
+  it('uses the active coordinator worktree root and rejects paused bindings', async () => {
+    registerHttpFixture();
+    const { createMcpApiWithContext } = await import('@electron/services/mcp-api');
+    const { getActiveWorkspaceProfile } = await import('@electron/services/workspaces-api');
+    const original = await getActiveWorkspaceProfile();
+    const profile = { ...original!, coordinatorBindings: { 'agent:main:main': {
+      workspaceId: 'workspace-a', sessionKey: 'agent:main:main', agentId: 'main', state: 'active',
+      environment: { canonicalRoot: 'D:/tmp/managed-worktree' }, sessionGeneration: 'generation-1',
+    } } };
+    vi.mocked(getActiveWorkspaceProfile).mockResolvedValue(profile as never);
+    const gatewayRpc = vi.fn(gatewayRoute(async () => ({ success: true, serverId: 'http-local', tools: [], status: 'connected' })));
+    const api = createMcpApiWithContext({ gatewayManager: { getStatus: () => ({ state: 'running' }) } as never, gatewayRpc });
+    try {
+      expect(await api.listTools({ serverId: 'http-local' })).toMatchObject({ success: true });
+      expect(gatewayRpc.mock.calls.find(([payload]) => (payload as { method: string }).method === 'mcp.listTools')?.[0])
+        .toMatchObject({ params: { workspaceDir: 'D:/tmp/managed-worktree' } });
+      profile.coordinatorBindings['agent:main:main'].state = 'paused';
+      expect(await api.listTools({ serverId: 'http-local' })).toMatchObject({ success: false });
+    } finally { vi.mocked(getActiveWorkspaceProfile).mockResolvedValue(original); }
   });
 
   it.each(['listTools', 'heartbeat', 'callTool'] as const)('TF-0772 rejects a foreign successful %s response', async (operation) => {

@@ -24,6 +24,7 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
   } });
   const empty = await startCodingMcpServer({ empty: true });
   const slow = await startCodingMcpServer({ delayMs: 2500 });
+  const delayed = await startCodingMcpServer({ callDelayMs: 6000 });
   const llm = await startScriptedLlm((text, results) => {
     if (!text.includes('P2-MODEL')) return { text: 'P2 observer complete' };
     if (Object.values(results).some((result) => result.includes('model-sdk-round-trip'))) return { text: 'P2-MODEL-DONE' };
@@ -47,7 +48,7 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
     });
     expect(created.activeWorkspace).toBeTruthy();
     const workspaceId = created.activeWorkspace!.id;
-    for (const [name, endpoint] of [['Fixture', server], ['Empty', empty], ['Slow', slow]] as const) {
+    for (const [name, endpoint] of [['Fixture', server], ['Empty', empty], ['Slow', slow], ['Delayed', delayed]] as const) {
       await hostInvoke(app, 'mcp', 'createServer', { name, transport: 'http', url: endpoint.url, scope: 'global', networkPolicy: 'localOnly' });
     }
     await startGateway(app);
@@ -73,6 +74,14 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
     expect(evidence.call).toMatchObject({ success: true, result: { content: [{ type: 'text', text: 'main-sdk-round-trip' }] } });
     evidence.heartbeat = await hostInvoke<McpHeartbeatResult>(app, 'mcp', 'heartbeat', { serverId: 'fixture' });
     expect(evidence.heartbeat).toMatchObject({ success: true, status: 'connected' });
+    const delayedStarted = Date.now();
+    evidence.delayedCall = await hostInvoke<McpCallToolResult>(app, 'mcp', 'callTool', {
+      serverId: 'delayed', toolName: 'echo', args: { message: 'six-second-effect' },
+    });
+    evidence.delayedCallMs = Date.now() - delayedStarted;
+    expect(evidence.delayedCall).toMatchObject({ success: true, result: { content: [{ type: 'text', text: 'six-second-effect' }] } });
+    expect(Number(evidence.delayedCallMs)).toBeGreaterThanOrEqual(6000);
+    expect(delayed.requests.filter((request) => request.method === 'tools/call')).toHaveLength(1);
     evidence.empty = await hostInvoke<McpListToolsResult>(app, 'mcp', 'listTools', { serverId: 'empty' });
     expect(evidence.empty).toMatchObject({ success: true, status: 'connected', tools: [] });
     evidence.timeout = await hostInvoke<McpListToolsResult>(app, 'mcp', 'listTools', { serverId: 'slow' });
@@ -139,8 +148,13 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
     await detail.getByRole('button', { name: 'Refresh', exact: true }).click();
     await expect(detail.getByText('echo', { exact: true })).toBeVisible({ timeout: 45_000 });
     await expect(detail.getByRole('paragraph').filter({ hasText: /^connected$/ })).toBeVisible();
-    await page.screenshot({ path: testInfo.outputPath('mcp-connected.png'), fullPage: true });
-    await hostInvoke(app, 'mcp', 'updateServer', { id: 'fixture', networkPolicy: 'disabled' });
+    await detail.getByText('echo', { exact: true }).scrollIntoViewIfNeeded();
+    await page.screenshot({ path: testInfo.outputPath('mcp-connected.png'), animations: 'disabled' });
+    const configInput = detail.getByRole('textbox');
+    const uiConfig = JSON.parse(await configInput.inputValue());
+    await configInput.fill(JSON.stringify({ ...uiConfig, networkPolicy: 'disabled' }, null, 2));
+    await detail.getByRole('button', { name: 'Save', exact: true }).click();
+    await expect(detail.getByText('network: disabled', { exact: true })).toBeVisible();
     const callsBeforeNetworkDenial = server.requests.filter((request) => request.method === 'tools/call').length;
     await detail.getByRole('button', { name: 'Refresh', exact: true }).click();
     await expect(detail.getByRole('alert')).toContainText('network policy is disabled');
@@ -149,7 +163,8 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
     evidence.networkDenied = await call({ args: { message: 'network-denied' } });
     expect(evidence.networkDenied).toMatchObject({ success: false });
     expect(server.requests.filter((request) => request.method === 'tools/call')).toHaveLength(callsBeforeNetworkDenial);
-    await page.screenshot({ path: testInfo.outputPath('mcp-error.png'), fullPage: true });
+    await detail.getByRole('alert').scrollIntoViewIfNeeded();
+    await page.screenshot({ path: testInfo.outputPath('mcp-error.png'), animations: 'disabled' });
     await hostInvoke(app, 'mcp', 'updateServer', { id: 'fixture', networkPolicy: 'localOnly' });
     await expect.poll(async () => (await hostInvoke<McpListToolsResult>(app!, 'mcp', 'listTools', { serverId: 'fixture' })).success,
       { timeout: 60_000, intervals: [1000] }).toBe(true);
@@ -180,7 +195,7 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
     evidence.failure = error instanceof Error ? error.message : String(error);
     throw error;
   } finally {
-    evidence.requests = { normal: server.requests, empty: empty.requests, slow: slow.requests };
+    evidence.requests = { normal: server.requests, empty: empty.requests, slow: slow.requests, delayed: delayed.requests };
     evidence.providerLog = llm.log;
     evidence.providerAnomalies = llm.anomalies;
     if (app) {
@@ -191,8 +206,9 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
       try { evidence.appCleanup = await closeElectronApp(app); }
       catch (error) { evidence.appCleanupError = String(error); }
       evidence.wrapperExitCode = child.exitCode;
+      evidence.wrapperSignalCode = child.signalCode;
     }
-    evidence.endpointCleanup = await Promise.all([server.close(), empty.close(), slow.close()]);
+    evidence.endpointCleanup = await Promise.all([server.close(), empty.close(), slow.close(), delayed.close()]);
     llm.server.closeAllConnections(); llm.server.closeIdleConnections();
     await new Promise<void>((resolve) => llm.server.close(() => resolve()));
     if (evidence.gatewayStopError || evidence.appCleanupError) {

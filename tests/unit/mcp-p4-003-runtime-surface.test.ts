@@ -47,6 +47,7 @@ vi.mock('electron-store', () => {
 });
 
 vi.mock('@electron/utils/agent-config', () => ({
+  listConfiguredAgentIds: vi.fn(async () => ['main']),
   readAgentBootstrapTools: vi.fn(async () => ({
     defaultSkillIds: [],
     defaultMcpServerIds: [],

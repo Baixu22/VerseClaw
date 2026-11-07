@@ -264,11 +264,11 @@ async function pinWindowContentSize(
   }, size);
 }
 
-async function bounded<T>(operation: Promise<T>, timeoutMs: number): Promise<T> {
+async function bounded<T>(operation: Promise<T>, timeoutMs: number, phase: string): Promise<T> {
   let timer: ReturnType<typeof setTimeout> | undefined;
   try {
     return await Promise.race([operation, new Promise<never>((_, reject) => {
-      timer = setTimeout(() => reject(new Error('Electron operation timed out')), timeoutMs);
+      timer = setTimeout(() => reject(new Error(`${phase} timed out after ${timeoutMs}ms`)), timeoutMs);
     })]);
   } finally { clearTimeout(timer); }
 }
@@ -280,7 +280,7 @@ async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000) {
   if (process.platform === 'win32' && owned) {
     try {
       const current = await bounded(app.evaluate(({ app: electronApp }) => electronApp.getAppMetrics()
-        .map(({ pid, creationTime }) => ({ pid, creationTime }))), 2_000);
+        .map(({ pid, creationTime }) => ({ pid, creationTime }))), 2_000, 'Electron process snapshot');
       owned.identities = [...new Map([...owned.identities, ...current]
         .map((entry) => [`${entry.pid}:${entry.creationTime}`, entry])).values()];
       await recordElectronProcesses(owned.userDataDir, current);
@@ -289,7 +289,7 @@ async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000) {
   // Playwright must close its inspector before the Windows launcher exits.
   const closing = app.close().then(() => true, () => false);
   let graceful = false;
-  try { graceful = await bounded(closing, timeoutMs); } catch { /* fall back to owned handles */ }
+  try { graceful = await bounded(closing, timeoutMs, 'Playwright close'); } catch { /* fall back to owned handles */ }
   let processes: WindowsProcessCheck[] = [];
   let processError: unknown;
   try {
@@ -299,9 +299,9 @@ async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000) {
     // ChildProcess.kill uses the launcher's existing native handle on Windows.
     const exited = new Promise<void>((resolve) => launcher.once('exit', () => resolve()));
     launcher.kill('SIGKILL');
-    await bounded(exited, 2_000);
+    await bounded(exited, 2_000, 'Electron launcher exit');
   }
-  await bounded(closing, 2_000);
+  await bounded(closing, 2_000, 'Playwright close after launcher exit');
   if (processError) throw processError;
   if (processes.some(({ status }) => status === 'alive' || status === 'unavailable')) {
     throw new Error(`Electron cleanup failed: ${JSON.stringify(processes)}`);
@@ -404,7 +404,7 @@ async function launchVerseClawElectron(
   if (process.platform === 'win32') {
     try {
       const identities = await bounded(app.evaluate(({ app: electronApp }) => electronApp.getAppMetrics()
-        .map(({ pid, creationTime }) => ({ pid, creationTime }))), 5_000);
+        .map(({ pid, creationTime }) => ({ pid, creationTime }))), 5_000, 'Electron launch process snapshot');
       owned.identities = identities;
       await recordElectronProcesses(userDataDir, identities);
     }

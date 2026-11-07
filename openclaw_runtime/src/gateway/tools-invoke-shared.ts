@@ -362,7 +362,7 @@ async function invokeWarmMcpTool(params: {
     admission.validateArgs(inputSchema, hookResult.params);
     admission.assertCurrent();
     const result = await tool.execute?.(toolCallId, hookResult.params);
-    // Preserve this completed call's result; new configuration applies to later admissions.
+    // Preserve the completed effect if the server publishes a new catalog during the call.
     return {
       ok: true,
       status: 200,
@@ -605,7 +605,8 @@ export async function invokeGatewayTool(params: {
     }
     assertScopeCurrent();
     const result = await gatewayTool.execute?.(toolCallId, hookResult.params);
-    assertScopeCurrent();
+    // Admission is checked before execution. A successful tool may itself change
+    // configuration or session state; preserve the returned effect instead of inviting replay.
     return recordAndReturn({
       ok: true,
       status: 200,

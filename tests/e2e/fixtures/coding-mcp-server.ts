@@ -8,13 +8,16 @@ import { CallToolRequestSchema, ListToolsRequestSchema, PingRequestSchema } from
 export async function startCodingMcpServer(options: {
   empty?: boolean;
   delayMs?: number;
+  callDelayMs?: number;
+  listHttpError?: boolean;
+  notifyDuringCall?: boolean;
   onCall?: (args: Record<string, unknown> | undefined) => void | Promise<void>;
 } = {}) {
   const requests: Array<{ method: string; params?: unknown }> = [];
   const active = new Set<Server>();
   const stop = new AbortController();
   const http = createServer(async (request, response) => {
-    const rpc = new Server({ name: 'coding-management-fixture', version: '1.0.0' }, { capabilities: { tools: {} } });
+    const rpc = new Server({ name: 'coding-management-fixture', version: '1.0.0' }, { capabilities: { tools: { listChanged: true } } });
     rpc.setRequestHandler(ListToolsRequestSchema, async () => {
       if (options.delayMs) await delay(options.delayMs, undefined, { signal: stop.signal }).catch(() => undefined);
       return { tools: options.empty ? [] : [
@@ -23,7 +26,9 @@ export async function startCodingMcpServer(options: {
         { name: 'fail', description: 'Return a tool failure', inputSchema: { type: 'object' as const, properties: {}, additionalProperties: false } },
       ] };
     });
-    rpc.setRequestHandler(CallToolRequestSchema, async (input) => {
+    rpc.setRequestHandler(CallToolRequestSchema, async (input, extra) => {
+      if (options.callDelayMs) await delay(options.callDelayMs, undefined, { signal: stop.signal }).catch(() => undefined);
+      if (options.notifyDuringCall) await rpc.notification({ method: 'notifications/tools/list_changed' }, { relatedRequestId: extra.requestId });
       const result = {
         content: [{ type: 'text' as const, text: input.params.name === 'fail' ? 'Fixture tool failure' : String(input.params.arguments?.message ?? '') }],
         isError: input.params.name === 'fail',
@@ -32,7 +37,7 @@ export async function startCodingMcpServer(options: {
       return result;
     });
     rpc.setRequestHandler(PingRequestSchema, async () => ({}));
-    const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
+    const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: !options.notifyDuringCall });
     active.add(rpc);
     response.once('close', () => { active.delete(rpc); void rpc.close(); });
     try {
@@ -40,6 +45,11 @@ export async function startCodingMcpServer(options: {
       for await (const chunk of request) body += String(chunk);
       const parsed = body ? JSON.parse(body) : undefined;
       if (parsed?.method) requests.push({ method: parsed.method, params: parsed.params });
+      if (options.listHttpError && parsed?.method === 'tools/list') {
+        response.writeHead(503, { 'content-type': 'text/plain' });
+        response.end('Fixture unavailable');
+        return;
+      }
       await rpc.connect(transport);
       await transport.handleRequest(request, response, parsed);
     } catch (error) {

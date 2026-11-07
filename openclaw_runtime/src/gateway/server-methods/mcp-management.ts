@@ -15,6 +15,8 @@ import {
 import { applyFinalEffectiveToolPolicy } from "../../agents/embedded-agent-runner/effective-tool-policy.js";
 import { runBeforeToolCallHook } from "../../agents/agent-tools.before-tool-call.js";
 import { resolveOrchestrationContext } from "../../agents/orchestration-workspace-context.js";
+import { resolveSandboxRuntimeStatus } from "../../agents/sandbox/runtime-status.js";
+import { ensureSandboxWorkspaceForSession } from "../../agents/sandbox/context.js";
 import { ToolInputError } from "../../agents/tools/common.js";
 import type { McpCatalogTool } from "../../agents/agent-bundle-mcp-types.js";
 import { resolveRuntimeConfigCacheKey } from "../../config/runtime-snapshot.js";
@@ -50,19 +52,32 @@ export async function prepareSessionMcpManagement(
     reject("VALIDATION", "MCP session generation changed");
   const cfg = context.getRuntimeConfig();
   const configRevision = resolveRuntimeConfigCacheKey(cfg);
+  const sandbox = resolveSandboxRuntimeStatus({ cfg, sessionKey: owner.sessionKey });
+  const sandboxWorkspace = sandbox.sandboxed
+    ? await ensureSandboxWorkspaceForSession({
+        config: cfg,
+        sessionKey: owner.sessionKey,
+        workspaceDir: parent.workspaceDir,
+      })
+    : null;
+  const executionWorkspace = sandboxWorkspace?.workspaceDir ?? parent.workspaceDir!;
+  parent.assertWorkspaceCurrent?.();
   const warm = peekSessionMcpRuntime({
     sessionId: owner.expectedSessionId,
     sessionKey: owner.sessionKey,
   });
-  if (warm && path.relative(realpathSync(warm.workspaceDir), parent.workspaceDir!) !== "") {
+  if (
+    warm &&
+    path.relative(realpathSync(warm.workspaceDir), realpathSync(executionWorkspace)) !== ""
+  ) {
     reject("VALIDATION", "MCP runtime workspace differs from the current parent workspace");
   }
   const runtimeParams = {
     sessionId: owner.expectedSessionId,
     sessionKey: owner.sessionKey,
-    workspaceDir: warm?.workspaceDir ?? parent.workspaceDir!,
+    workspaceDir: warm?.workspaceDir ?? executionWorkspace,
     agentId: owner.agentId,
-    workspaceId: warm?.workspaceDir ?? parent.workspaceDir!,
+    workspaceId: warm?.workspaceDir ?? executionWorkspace,
     cfg,
   };
   const summary = resolveSessionMcpConfigSummary(runtimeParams);
@@ -71,7 +86,11 @@ export async function prepareSessionMcpManagement(
   const runtime = await getOrCreateSessionMcpRuntime(runtimeParams);
   const release = runtime.acquireLease?.();
   try {
-    const catalog = await runtime.getCatalog();
+    // An explicit management retry must be able to recover a failed connection.
+    const failedPreviously = runtime
+      .peekCatalog()
+      ?.diagnostics?.some((entry) => entry.serverName === serverId);
+    const catalog = await runtime.getCatalog({ refresh: failedPreviously });
     const server = catalog.servers[serverId];
     if (!server?.health?.connected) {
       const diagnostic = catalog.diagnostics?.find((entry) => entry.serverName === serverId);
@@ -85,6 +104,7 @@ export async function prepareSessionMcpManagement(
     const tools = applyFinalEffectiveToolPolicy({
       bundledTools: buildBundleMcpToolsFromCatalog({ catalog }),
       config: cfg,
+      sandboxToolPolicy: sandbox.sandboxed ? sandbox.toolPolicy : undefined,
       sessionKey: owner.sessionKey,
       agentId: owner.agentId,
       modelProvider: model.provider,
@@ -258,7 +278,7 @@ async function handle(
     prepared.validateArgs(entry.inputSchema, hook.params);
     prepared.assertCurrent();
     const result = await prepared.runtime.callTool(serverId, toolName, hook.params);
-    // Preserve this completed call's result; new configuration applies to later admissions.
+    // The admitted effect has completed; a tool may legitimately invalidate its catalog.
     respond(true, {
       success: result.isError !== true,
       serverId,

@@ -40,7 +40,7 @@ import {
 import { getActiveWorkspaceProfile } from './workspaces-api';
 import { createWorkspacePermissionDecisionEvent } from './permission-decision-audit';
 import { createSandboxDenialDetails, type SandboxDenialDetails } from '@shared/sandbox/errors';
-import { decideGatewayRpc, isApprovalRisk } from './workspace-permissions';
+import { decideGatewayRpc, isApprovalRisk, resolveWorkspaceSessionRoot } from './workspace-permissions';
 import {
   classifyGatewayMethodForSandboxGate,
   composeWithSandboxHighRiskGate,
@@ -415,11 +415,14 @@ export function createGatewayApi(
         const sessionKey = typeof params.sessionKey === 'string' ? params.sessionKey : workspace.activeSessionKey;
         const binding = Object.values(workspace.agentBindings ?? {}).find((entry) => entry.sessionKey === sessionKey);
         const agentId = binding?.agentId ?? workspace.selectedAgentId ?? workspace.agentId;
-        if ((!binding && sessionKey !== workspace.activeSessionKey) || (params.agentId !== undefined && params.agentId !== agentId)
-          || (params.workspaceDir !== undefined && params.workspaceDir !== workspace.rootPath)) {
+        const expectedSessionGeneration = params.expectedSessionGeneration ?? workspace.coordinatorBindings?.[sessionKey]?.sessionGeneration;
+        const workspaceDir = resolveWorkspaceSessionRoot(workspace, sessionKey, agentId, expectedSessionGeneration);
+        if (!workspaceDir || (!binding && sessionKey !== workspace.activeSessionKey) || (params.agentId !== undefined && params.agentId !== agentId)
+          || (params.workspaceDir !== undefined && params.workspaceDir !== workspaceDir)) {
           return { success: false, blocked: true, errorCode: 'VALIDATION', error: 'Tool invocation differs from the active workspace binding' };
         }
-        body = { ...body, params: { ...params, sessionKey, agentId, workspaceDir: workspace.rootPath } };
+        body = { ...body, params: { ...params, sessionKey, agentId, workspaceDir,
+          ...(expectedSessionGeneration ? { expectedSessionGeneration } : {}) } };
       }
 
       if (method === 'mcp.listTools' || method === 'mcp.heartbeat' || method === 'mcp.callTool') {
@@ -427,9 +430,10 @@ export function createGatewayApi(
         const sessionKey = typeof params.sessionKey === 'string' ? params.sessionKey : '';
         const binding = Object.values(workspace?.agentBindings ?? {}).find((entry) => entry.sessionKey === sessionKey);
         const agentId = binding?.agentId ?? workspace?.selectedAgentId ?? workspace?.agentId;
+        const workspaceDir = workspace && agentId ? resolveWorkspaceSessionRoot(workspace, sessionKey, agentId, params.expectedSessionGeneration) : undefined;
         // Recheck the Main owner at the permission gate so a queued request cannot
         // borrow another workspace's permission after the UI context changes.
-        if (!workspace || params.workspaceId !== workspace.id || params.workspaceDir !== workspace.rootPath
+        if (!workspace || !workspaceDir || params.workspaceId !== workspace.id || params.workspaceDir !== workspaceDir
           || !sessionKey || (!binding && sessionKey !== workspace.activeSessionKey) || params.agentId !== agentId
           || typeof params.expectedSessionGeneration !== 'string' || !params.expectedSessionGeneration.trim()) {
           return { success: false, blocked: true, errorCode: 'VALIDATION', error: 'MCP request is not bound to the active workspace and assistant' };

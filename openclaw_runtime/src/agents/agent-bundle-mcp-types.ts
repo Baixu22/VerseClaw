@@ -89,7 +89,7 @@ export type SessionMcpRuntime = {
   activeLeases?: number;
   acquireLease?: () => () => void;
   /** Lists tools if needed and may connect MCP transports. */
-  getCatalog: () => Promise<McpToolCatalog>;
+  getCatalog: (options?: { refresh?: boolean }) => Promise<McpToolCatalog>;
   /** Returns the cached catalog only; must not start runtimes, connect transports, or issue tools/list. */
   peekCatalog: () => McpToolCatalog | null;
   markUsed: () => void;

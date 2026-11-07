@@ -83,11 +83,11 @@ Workspace 主要在 Chat 旁边的 workspace panel 中，而 `/browser` 与 `/co
 
 ## 4. 权限模式
 
-MCP 管理请求绑定到当前 Workspace 的 Assistant 会话。Main 从持久化绑定取得会话键和根目录，读取 Gateway 的当前 session generation，再把这三项交给会话 MCP runtime 核对。外部工作区会话、旧 generation 或已变更的根目录会在工具执行前被拒绝。
+MCP 管理请求绑定到当前 Workspace 的 Assistant 会话。Main 从持久化绑定取得会话键和执行根目录；coordinator 绑定受管工作树时使用该工作树的 canonicalRoot。Main 读取 Gateway 的当前 session generation，再把这三项交给会话 MCP runtime 核对。外部工作区会话、暂停的 coordinator、旧 generation 或已变更的根目录会在工具执行前被拒绝。
 
 MCP 管理方法与 `tools.invoke` 共用当前会话的准入检查，核对有效工具策略、输入 schema 和工具审批钩子。Main 将当前工作区根作为工具调用的断言，目录预热不改变调用权限。只读模式保留目录及 SDK 心跳查询，写调用受既有权限审批约束。配置更新会刷新会话目录，携带旧目录 revision 的调用须先重新读取目录。
 
-MCP 目录为空时显示已连接和 0 个工具；目录加载失败时显示错误及具体原因，工具数量显示为未知。心跳通过 SDK initialize 和 ping 返回连接结果。
+MCP 目录为空时显示已连接和 0 个工具；目录加载失败时显示错误及具体原因，工具数量显示为未知。下次管理查询会重试失败服务，心跳通过 SDK initialize 和 ping 返回连接结果。工具执行成功后发送的目录变更通知只影响后续目录读取，已完成的结果仍正常返回。管理 RPC 使用 60 秒预算，Gateway 再按 Host 请求剩余期限收紧。
 
 ### `readOnly`
 
@@ -333,6 +333,8 @@ Remote forge 有独立 Host API：
 CodingRun 的 `coding-run/v1` JSONL 由同一个合同解析：`run`/`loop` 的 `warning` 可省略，scope、runIds、completion 和事件字段逐层校验，事件的 codingRunId 必须与首行一致。错误版本、乱序和跨运行证据会使 `scripts/coding-run-summary.mjs` 非零退出。Task Loop 页面和导出共用完成状态映射；取消、错误、blocked 以及无 evidenceGate 的结果不会被提升为已完成任务，导出也不会更新 Task Ledger。
 
 ## 12. Workspace 与长会话资源
+
+MCP 管理入口按当前工作区的持久化会话和代际读取目录、调用工具及执行 SDK ping。作用域或所有者变更后重新投影当前授权，保留助手的显式默认选择，并撤销旧作用域授权；管理调用与模型运行使用相同的沙箱工具策略。单个服务的超时或 HTTP 错误会保留为该服务的诊断，健康服务仍可调用。
 
 Workspace coordinator 绑定会记录：
 
