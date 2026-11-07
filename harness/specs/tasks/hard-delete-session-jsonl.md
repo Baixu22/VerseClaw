@@ -9,7 +9,7 @@ touchedAreas:
   - electron/main/ipc-handlers.ts
   - electron/services/sessions-api.ts
   - electron/utils/session-files.ts
-  - src/stores/chat/session-actions.ts
+  - src/stores/chat.ts
   - src/stores/chat.ts
   - tests/unit/host-services.test.ts
   - harness/specs/tasks/hard-delete-session-jsonl.md

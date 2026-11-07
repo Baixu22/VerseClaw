@@ -14,9 +14,9 @@ touchedAreas:
   - src/pages/Chat/index.tsx
   - src/pages/Chat/message-utils.ts
   - src/stores/chat.ts
-  - src/stores/chat/history-actions.ts
+  - src/stores/chat.ts
   - src/stores/chat/history-startup-retry.ts
-  - src/stores/chat/session-actions.ts
+  - src/stores/chat.ts
   - src/stores/chat/session-label-hydration.ts
   - src/stores/chat/store-api.ts
   - src/stores/chat/types.ts

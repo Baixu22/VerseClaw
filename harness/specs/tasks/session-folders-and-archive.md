@@ -10,7 +10,7 @@ touchedAreas:
   - electron/services/sessions-api.ts
   - electron/utils/session-files.ts
   - src/lib/host-api.ts
-  - src/stores/chat/session-actions.ts
+  - src/stores/chat.ts
   - src/stores/chat.ts
   - src/stores/workspaces.ts
   - src/components/layout/session-buckets.ts
@@ -117,7 +117,7 @@ base id.
 
 ### Renderer surface
 
-  - `src/stores/chat/session-actions.ts` — `archiveSession`,
+  - `src/stores/chat.ts` — `archiveSession`,
     `restoreSession`, `permanentDeleteSession`, `loadArchivedSessions`.
   - `src/stores/workspaces.ts` — `createWorkspaceFolder`,
     `renameWorkspaceFolder`, `deleteWorkspaceFolder`,

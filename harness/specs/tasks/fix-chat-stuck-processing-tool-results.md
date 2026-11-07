@@ -10,7 +10,7 @@ touchedAreas:
   - package.json
   - pnpm-lock.yaml
   - src/stores/chat.ts
-  - src/stores/chat/session-actions.ts
+  - src/stores/chat.ts
   - src/stores/chat/types.ts
   - tests/unit/chat-production-session-actions.test.ts
 expectedUserBehavior:
