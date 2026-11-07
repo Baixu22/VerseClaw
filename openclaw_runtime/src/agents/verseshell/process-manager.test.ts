@@ -16,6 +16,7 @@ import {
   resolveDefaultVerseShellBinary,
   VerseShellProcessManager,
   type VerseShellProcessConfig,
+  type VerseShellProcessManagerOptions,
 } from "./process-manager.js";
 import { parseAciFrame } from "./normalizer.js";
 import {
@@ -154,7 +155,7 @@ function baseConfig(workspace = process.cwd()): VerseShellProcessConfig {
   };
 }
 
-function harness(handler?: FakeHandler) {
+function harness(handler?: FakeHandler, options: VerseShellProcessManagerOptions = {}) {
   const children: FakeChild[] = [];
   const invocations: Array<{
     command: string;
@@ -182,6 +183,7 @@ function harness(handler?: FakeHandler) {
     restartMaxDelayMs: 5,
     shutdownGraceMs: 5,
     idleTtlMs: 10_000,
+    ...options,
   });
   return {
     manager,
@@ -223,6 +225,199 @@ describe("typed ACI framing", () => {
 });
 
 describe("VerseShellProcessManager", () => {
+  function gate() {
+    let resolve!: () => void;
+    const promise = new Promise<void>((done) => { resolve = done; });
+    return { promise, resolve };
+  }
+
+  it("shares one pending resolver, spawn and handshake across concurrent callers", async () => {
+    const entered = gate();
+    const ready = gate();
+    const resolveBinary = vi.fn(async () => {
+      entered.resolve();
+      await ready.promise;
+      return { path: "fixture-ae", source: "test" as const, verified: true };
+    });
+    const h = harness(undefined, { resolveBinary, maxProcesses: 1 });
+    managers.push(h.manager);
+    const config = { ...baseConfig(), handshakeTimeoutMs: 2_000 };
+    const clients = Promise.all(Array.from({ length: 8 }, () => h.manager.getClient(config)));
+    await entered.promise;
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    ready.resolve();
+    const results = await clients;
+    expect(new Set(results.map((client) => client.processKey)).size).toBe(1);
+    expect(resolveBinary).toHaveBeenCalledOnce();
+    expect(h.invocations).toHaveLength(1);
+    await h.manager.shutdownAll();
+    expect(h.children.every((child) => child.exitCode === 0)).toBe(true);
+  });
+
+  it("counts pending binary resolution against the cap for distinct keys", async () => {
+    const entered = gate();
+    const ready = gate();
+    const h = harness(undefined, {
+      maxProcesses: 1,
+      resolveBinary: async () => {
+        entered.resolve();
+        await ready.promise;
+        return { path: "fixture-ae", source: "test", verified: true };
+      },
+    });
+    managers.push(h.manager);
+    const config = baseConfig();
+    const results = Promise.allSettled([
+      h.manager.getClient(config),
+      h.manager.getClient({ ...config, approvalToken: "apv_0123456789abcdef" }),
+    ]);
+    await entered.promise;
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    ready.resolve();
+    const settled = await results;
+    expect(settled.filter((result) => result.status === "fulfilled")).toHaveLength(1);
+    expect(settled.filter((result) => result.status === "rejected")).toMatchObject([
+      { reason: { code: "E_ACI_PROCESS_LIMIT" } },
+    ]);
+    expect(h.invocations).toHaveLength(1);
+  });
+
+  it("does not publish a second client before the shared handshake completes", async () => {
+    const requests: Array<{ request: Request; child: FakeChild }> = [];
+    const h = harness((request, child) => { requests.push({ request, child }); });
+    managers.push(h.manager);
+    const config = { ...baseConfig(), handshakeTimeoutMs: 2_000 };
+    const first = h.manager.getClient(config);
+    await vi.waitFor(() => expect(requests).toHaveLength(1));
+    let published = false;
+    const second = h.manager.getClient(config).then((client) => { published = true; return client; });
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(published).toBe(false);
+    const held = requests[0];
+    held.child.respond(held.request, { data: handshakeData(config) });
+    await Promise.all([first, second]);
+    expect(h.invocations).toHaveLength(1);
+  });
+
+  it("rejects all concurrent clients when the shared handshake fails", async () => {
+    const requests: Array<{ request: Request; child: FakeChild }> = [];
+    const h = harness((request, child) => { requests.push({ request, child }); });
+    managers.push(h.manager);
+    const config = { ...baseConfig(), handshakeTimeoutMs: 2_000 };
+    const first = h.manager.getClient(config).catch((error: unknown) => error);
+    await vi.waitFor(() => expect(requests).toHaveLength(1));
+    const second = h.manager.getClient(config).catch((error: unknown) => error);
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    requests[0].child.respond(requests[0].request, { data: { ...handshakeData(config), policy_mode: "permissive" } });
+    expect(await first).toMatchObject({ code: "E_ACI_PROTOCOL" });
+    expect(await second).toMatchObject({ code: "E_ACI_PROTOCOL" });
+    expect(h.invocations).toHaveLength(1);
+    expect(h.manager.list()).toEqual([]);
+  });
+
+  it("shares concurrent workspace shutdown and rejects new work until owned cleanup finishes", async () => {
+    let finishClose!: () => void;
+    let startedClose!: () => void;
+    const closing = new Promise<void>((resolve) => { startedClose = resolve; });
+    const h = harness(undefined, { shutdownGraceMs: 2_000 });
+    managers.push(h.manager);
+    const client = await h.manager.getClient(baseConfig());
+    const child = h.children[0];
+    child.stdin.write = vi.fn(() => {
+      finishClose = () => child.emit("close", 0, null);
+      startedClose();
+      return true;
+    }) as typeof child.stdin.write;
+    const first = h.manager.shutdownWorkspace(process.cwd());
+    await closing;
+    const second = h.manager.shutdownWorkspace(process.cwd());
+    await expect(h.manager.getClient(baseConfig())).rejects.toMatchObject({ code: "E_ACI_SHUTDOWN" });
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    finishClose();
+    expect(await first).toBe(1);
+    expect(await second).toBe(1);
+    expect(h.manager.health(client.processKey)).toBeUndefined();
+  });
+
+  it("rejects every waiter on a failed startup and permits a later retry", async () => {
+    const entered = gate();
+    const ready = gate();
+    let fail = true;
+    const h = harness(undefined, {
+      maxProcesses: 1,
+      resolveBinary: async () => {
+        entered.resolve();
+        await ready.promise;
+        if (fail) throw new Error("injected resolution failure");
+        return { path: "fixture-ae", source: "test", verified: true };
+      },
+    });
+    managers.push(h.manager);
+    const pending = Promise.allSettled(Array.from({ length: 4 }, () => h.manager.getClient(baseConfig())));
+    await entered.promise;
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    ready.resolve();
+    expect(await pending).toEqual(Array.from({ length: 4 }, () => ({
+      status: "rejected", reason: expect.objectContaining({ message: "injected resolution failure" }),
+    })));
+    expect(h.manager.list()).toEqual([]);
+    fail = false;
+    await h.manager.getClient(baseConfig());
+    expect(h.invocations).toHaveLength(1);
+  });
+
+  it.each(["all", "workspace", "kill-switch"] as const)(
+    "fences pending binary resolution during %s shutdown without a late spawn",
+    async (scope) => {
+      const entered = gate();
+      const ready = gate();
+      const h = harness(undefined, { resolveBinary: async () => {
+        entered.resolve();
+        await ready.promise;
+        return { path: "fixture-ae", source: "test", verified: true };
+      } });
+      managers.push(h.manager);
+      const pending = h.manager.getClient(baseConfig()).catch((error: unknown) => error);
+      await entered.promise;
+      if (scope === "all") await h.manager.shutdownAll();
+      else if (scope === "workspace") await h.manager.shutdownWorkspace(process.cwd());
+      else await h.manager.tripKillSwitch();
+      expect(await pending).toMatchObject({ code: scope === "kill-switch" ? "E_ACI_KILL_SWITCH" : "E_ACI_SHUTDOWN" });
+      ready.resolve();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      expect(h.invocations).toHaveLength(0);
+      expect(h.manager.list()).toEqual([]);
+      if (scope === "workspace") {
+        await h.manager.getClient(baseConfig());
+        expect(h.invocations).toHaveLength(1);
+      }
+    },
+  );
+
+  it("closes a process while its handshake is pending and rejects every waiter", async () => {
+    const h = harness(() => {});
+    managers.push(h.manager);
+    const config = { ...baseConfig(), handshakeTimeoutMs: 2_000 };
+    const first = h.manager.getClient(config).catch((error: unknown) => error);
+    await vi.waitFor(() => expect(h.manager.list()).toHaveLength(1));
+    const second = h.manager.getClient(config).catch((error: unknown) => error);
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(await h.manager.shutdownProcess(h.manager.list()[0].key)).toBe(true);
+    expect(await first).toMatchObject({ code: "E_ACI_SHUTDOWN" });
+    expect(await second).toMatchObject({ code: "E_ACI_SHUTDOWN" });
+    expect(h.children.every((child) => child.exitCode === 0)).toBe(true);
+    expect(h.manager.list()).toEqual([]);
+  });
+
+  it("fences shutdownAll before workspace canonicalization completes", async () => {
+    const h = harness();
+    managers.push(h.manager);
+    const pending = h.manager.getClient(baseConfig()).catch((error: unknown) => error);
+    await h.manager.shutdownAll();
+    expect(await pending).toMatchObject({ code: "E_ACI_SHUTDOWN" });
+    expect(h.invocations).toHaveLength(0);
+  });
+
   it("uses handshake data, JSON mode, non-permissive policy, and one comma-separated --cap", async () => {
     const h = harness();
     managers.push(h.manager);
@@ -416,7 +611,7 @@ describe("VerseShellProcessManager", () => {
   });
 
   it.each([
-    ["malformed", (request: Request, child: FakeChild) => child.raw("not-json\n")],
+    ["malformed", (_request: Request, child: FakeChild) => child.raw("not-json\n")],
     [
       "oversized",
       (_request: Request, child: FakeChild) => child.raw(`${"x".repeat(5_000)}\n`),

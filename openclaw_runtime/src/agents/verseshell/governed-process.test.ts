@@ -1,4 +1,5 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { configureManagedProcessCapacity, managedProcessCapacityStats, resetManagedProcessCapacity } from "./managed-process-capacity.js";
 import type { JsonObject, Observation } from "../../../../shared/verseshell/types.js";
 import { AciTransportError, type AciExecuteOptions } from "./aci-client.js";
 import {
@@ -121,6 +122,96 @@ function fakeManager(
   } as unknown as VerseShellProcessManager;
   return { manager, configs, getClient, shutdownProcess };
 }
+
+afterEach(() => resetManagedProcessCapacity());
+
+describe("VerseShell startup capacity rollback", () => {
+  it("returns a confirmed terminal reservation even when executor cleanup fails", async () => {
+    configureManagedProcessCapacity({ maxLiveProcesses: 1 });
+    const client = {
+      processKey: "terminal-before-cleanup-failure",
+      execute: vi.fn(async (op: string) => observation(op, snapshot({ state: "exited" }))),
+    };
+    const fake = fakeManager([client]);
+    fake.shutdownProcess.mockRejectedValueOnce(new Error("cleanup failed"));
+    const handle = await startGovernedVerseShellProcess(baseOptions(fake.manager));
+    await expect(handle.wait()).rejects.toThrow("cleanup failed");
+    expect(managedProcessCapacityStats()).toMatchObject({ live: 0, completed: 1, doubleRelease: 0 });
+  });
+
+  it("returns capacity when executor acquisition fails before dispatch and permits retry", async () => {
+    configureManagedProcessCapacity({ maxLiveProcesses: 1 });
+    const client = {
+      processKey: "retry-after-resolution-failure",
+      execute: vi.fn(async (op: string) => observation(op, snapshot({ state: "exited" }))),
+    };
+    const fake = fakeManager([client]);
+    fake.getClient.mockRejectedValueOnce(new Error("injected resolution failure"));
+    await expect(startGovernedVerseShellProcess(baseOptions(fake.manager))).rejects.toThrow("injected resolution failure");
+    expect(managedProcessCapacityStats()).toMatchObject({ live: 0, completed: 1, doubleRelease: 0 });
+    const handle = await startGovernedVerseShellProcess(baseOptions(fake.manager));
+    await handle.wait();
+    expect(managedProcessCapacityStats()).toMatchObject({ live: 0, admitted: 2, completed: 2, doubleRelease: 0 });
+  });
+
+  it("returns capacity when approval transport acquisition fails after a confirmed denial", async () => {
+    configureManagedProcessCapacity({ maxLiveProcesses: 1 });
+    const client = {
+      processKey: "denied-first-start",
+      execute: vi.fn(async (op: string) => observation(op, { approval_token: "apv_0123456789abcdef" }, {
+        ok: false, error: { code: "E_NEEDS_APPROVAL", message: "approval required", recoverable: true },
+      })),
+    };
+    const fake = fakeManager([client]);
+    fake.getClient.mockImplementationOnce(async () => client).mockRejectedValueOnce(new Error("approval executor unavailable"));
+    await expect(startGovernedVerseShellProcess(baseOptions(fake.manager))).rejects.toThrow("approval executor unavailable");
+    expect(client.execute).toHaveBeenCalledOnce();
+    expect(managedProcessCapacityStats()).toMatchObject({ live: 0, completed: 1, doubleRelease: 0 });
+  });
+
+  it("returns a rejected start reservation even if approval transport cleanup fails", async () => {
+    configureManagedProcessCapacity({ maxLiveProcesses: 1 });
+    const denied = {
+      processKey: "denied",
+      execute: vi.fn(async (op: string) => observation(op, { approval_token: "apv_0123456789abcdef" }, {
+        ok: false, error: { code: "E_NEEDS_APPROVAL", message: "approval required", recoverable: true },
+      })),
+    };
+    const refused = {
+      processKey: "refused",
+      execute: vi.fn(async (op: string) => observation(op, {}, {
+        ok: false, error: { code: "E_INVALID_ARGS", message: "start refused", recoverable: false },
+      })),
+    };
+    const fake = fakeManager([denied, refused]);
+    fake.shutdownProcess.mockRejectedValueOnce(new Error("cleanup failed"));
+    await expect(startGovernedVerseShellProcess(baseOptions(fake.manager))).rejects.toThrow("cleanup failed");
+    expect(managedProcessCapacityStats()).toMatchObject({ live: 0, completed: 1, doubleRelease: 0 });
+  });
+
+  it.each(["start", "poll", "malformed-start"] as const)(
+    "keeps the managed reservation when %s delivery or terminal state is unknown",
+    async (phase) => {
+      configureManagedProcessCapacity({ maxLiveProcesses: 1 });
+      const client = {
+        processKey: "unknown-delivery",
+        execute: vi.fn(async (op: string) => {
+          if (phase === "start" || op === "process.poll") throw new Error("unknown delivery");
+          return observation(op, phase === "malformed-start" ? {} : snapshot());
+        }),
+      };
+      const fake = fakeManager([client]);
+      if (phase === "poll") {
+        const handle = await startGovernedVerseShellProcess(baseOptions(fake.manager));
+        await expect(handle.wait()).rejects.toThrow("unknown delivery");
+      } else {
+        await expect(startGovernedVerseShellProcess(baseOptions(fake.manager))).rejects.toThrow();
+      }
+      expect(managedProcessCapacityStats()).toMatchObject({ live: 1, completed: 0 });
+      expect(client.execute.mock.calls.filter(([op]) => op === "process.start")).toHaveLength(1);
+    },
+  );
+});
 
 describe("VerseShell governed process lifecycle", () => {
   it("uses the pre-approval argv plan without reparsing the display command", async () => {
@@ -541,7 +632,7 @@ describe("VerseShell governed process lifecycle", () => {
         calls.push({ op, args });
         return observation(op, {}, {
           ok: false,
-          error: { code: 'E_INVALID_ARGS', message: 'max_processes is not supported' },
+          error: { code: 'E_INVALID_ARGS', message: 'max_processes is not supported', recoverable: false },
         });
       }),
     };
