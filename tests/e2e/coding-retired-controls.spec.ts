@@ -70,9 +70,13 @@ test('TF-0774 source Gateway keeps legacy-opt-in workers ordinary and renders re
       await page.reload();
       await expect(page.getByTestId('main-layout')).toBeVisible();
       await page.evaluate(() => { window.location.hash = '/settings/developer'; });
+      await expect(page.getByTestId('settings-developer-section')).toBeVisible({ timeout: 60_000 });
+      const developerMode = page.getByTestId('settings-dev-mode-switch');
+      await expect(developerMode).toBeVisible();
+      if (await developerMode.getAttribute('data-state') !== 'checked') await developerMode.click();
+      await expect(developerMode).toHaveAttribute('data-state', 'checked');
       const panel = page.getByTestId('settings-dcs-prod-flags');
-      if ((await panel.count()) === 0 && await page.getByTestId('settings-dev-mode-switch').count()) await page.getByTestId('settings-dev-mode-switch').click();
-      await expect(panel).toBeVisible();
+      await expect(panel).toBeVisible({ timeout: 60_000 });
       for (const id of ['patch-flow', 'symbol-lease', 'symbol-lease-mode']) {
         const row = page.getByTestId(`settings-dcs-prod-flag-${id}`);
         await row.click();
