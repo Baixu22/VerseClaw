@@ -7,6 +7,22 @@ import { closeElectronApp, expect, getStableWindow, test } from './fixtures/elec
 import { buildMockProviderConfig, hostInvoke, startGateway, startScriptedLlm } from './fixtures/fp-p1-harness';
 import { startCodingMcpServer } from './fixtures/coding-mcp-server';
 
+test('closes the real Electron Main and its Windows launcher before returning', async ({ launchElectronApp }) => {
+  const app = await launchElectronApp({ skipSetup: true });
+  const launcher = app.process();
+  const main = await app.evaluate(({ app: electronApp }) => {
+    const entry = electronApp.getAppMetrics().find(({ pid }) => pid === process.pid)!;
+    return { pid: entry.pid, creationTime: Math.floor(entry.creationTime) };
+  });
+  const closed = await closeElectronApp(app);
+  expect(closed).toMatchObject({ mainExited: true, launcherExited: true });
+  if (process.platform === 'win32') {
+    expect(closed.processes).toContainEqual({ ...main, status: 'exited' });
+  }
+  expect(launcher.exitCode !== null || launcher.signalCode !== null).toBe(true);
+  expect(await closeElectronApp(app)).toMatchObject({ mainExited: true, launcherExited: true });
+});
+
 test('TF-0772 Main, model session and UI share the real MCP owner and reject stale or denied requests', async ({ homeDir, userDataDir, launchElectronApp }, testInfo) => {
   test.setTimeout(420_000);
   const workspace = join(userDataDir, 'workspace');

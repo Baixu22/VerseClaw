@@ -1,0 +1,29 @@
+{
+  "findings": [
+    {
+      "body": "When Gateway has materialized generation B at the coordinator's root while the persisted coordinator remains pinned to generation A, a renderer can call gateway.rpc with mcp.callTool and expectedSessionGeneration=B. This gate accepts the coordinator root without comparing its persisted sessionGeneration; Gateway then validates B against its current session and executes. The normal mcp API rejects this mismatch. Enforce the coordinator generation at this generic RPC gate, including tools.invoke, before dispatch.",
+      "category": "security",
+      "code_location": {
+        "file_path": "electron/services/gateway-api.ts",
+        "line": 434
+      },
+      "confidence": 0.95,
+      "priority": "P2",
+      "title": "[P2] Enforce the coordinator generation at the generic RPC gate"
+    },
+    {
+      "body": "With sandbox.mode='all' and workspaceAccess='ro' or 'none', management can run before the session's sandbox directory has been created. The first HTTP MCP query can succeed and cache a runtime at that nonexistent directory: neither the new path resolver nor getOrCreateSessionMcpRuntime materializes it. The next list, call, or heartbeat reaches this realpathSync and fails with ENOENT. The added sandbox tests pre-create the directory, so they miss this sequence. Prepare the directory through the existing ensureSandboxWorkspaceForSession owner before caching or canonicalizing the runtime.",
+      "category": "bug",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/gateway/server-methods/mcp-management.ts",
+        "line": 70
+      },
+      "confidence": 0.99,
+      "priority": "P2",
+      "title": "[P2] Materialize the sandbox workspace before warming management"
+    }
+  ],
+  "overall_confidence": 0.97,
+  "overall_correctness": "patch is incorrect",
+  "overall_explanation": "Reviewed the supplied 203-insertion/39-deletion remediation snapshot on 2e2145edc; subsequent concurrent edits were excluded. The reported completed-effect, initial discovery retry, deadline, late-callback and configuration-lock fixes address their original cases, but the two defects above remain. Existing evidence records 22/22 and 101/102 passes, followed by a passing selected healthy-peer recheck. The six-second Main/Gateway E2E remains pending."
+}
