@@ -17,6 +17,7 @@ export type PollSchedulerOptions = {
 export function createPollScheduler(options: PollSchedulerOptions): () => void {
   let timer: ReturnType<typeof setInterval> | null = null;
   let inFlight = false;
+  let disposed = false;
   const isVisible = options.isVisible ?? (() => (
     typeof document === 'undefined' || document.visibilityState !== 'hidden'
   ));
@@ -24,19 +25,30 @@ export function createPollScheduler(options: PollSchedulerOptions): () => void {
   const isShed = options.isShed ?? (() => false);
   const isInteractive = options.priority === 'interactive';
   const tick = () => {
+    if (disposed || inFlight || !isVisible() || !canRun()) return;
     // Interactive work is never suppressed by resource pressure (I1).
     if (!isInteractive && isShed()) return;
-    if (inFlight || !isVisible() || !canRun()) return;
     inFlight = true;
-    Promise.resolve(options.task()).finally(() => { inFlight = false; });
+    try {
+      void Promise.resolve(options.task()).then(
+        () => { inFlight = false; },
+        () => { inFlight = false; },
+      );
+    } catch {
+      inFlight = false;
+    }
   };
   const start = () => {
     if (timer) return;
     timer = setInterval(tick, Math.max(100, Math.floor(options.intervalMs)));
   };
   start();
+  const onVisibility = () => { if (isVisible()) tick(); };
+  if (typeof document !== 'undefined') document.addEventListener('visibilitychange', onVisibility);
   return () => {
+    disposed = true;
     if (timer) clearInterval(timer);
     timer = null;
+    if (typeof document !== 'undefined') document.removeEventListener('visibilitychange', onVisibility);
   };
 }

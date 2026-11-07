@@ -23,6 +23,12 @@ export class BackgroundWorkGate {
   getState(): BackgroundWorkGateState { return { ...this.state, activeReasons: [...this.state.activeReasons], pendingCount: this.pending.length }; }
   shouldDefer(priority: BackgroundWorkPriority): boolean { if (priority === "foreground") { this.state = { ...this.state, foregroundChecks: this.state.foregroundChecks + 1 }; return false; } return this.state.deferring; }
   shouldResume(priority: BackgroundWorkPriority = "background"): boolean { return priority === "background" && !this.state.deferring; }
+  /** Disabling observation releases queued work without cancelling its execution owner. */
+  clearObservationPressure(): void {
+    if (!this.state.deferring) return;
+    this.state = { ...this.state, deferring: false, reason: null, activeReasons: [], resumeCount: this.state.resumeCount + 1, lastTransitionAt: this.now(), transitionCount: this.state.transitionCount + 1 };
+    void this.drain();
+  }
   update(input: BackgroundWorkGateInput): BackgroundWorkGateState {
     const reasons = this.highReasons(input);
     if (!this.state.deferring) {

@@ -19,7 +19,7 @@ const mocks = vi.hoisted(() => {
 
 vi.mock('electron', () => ({
   app: { on: vi.fn(), removeListener: vi.fn() },
-  powerMonitor: { on: vi.fn(), isOnBatteryPower: () => false },
+  powerMonitor: { on: vi.fn(), removeListener: vi.fn(), isOnBatteryPower: () => false },
   BrowserWindow: { getAllWindows: () => [] },
 }));
 

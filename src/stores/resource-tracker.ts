@@ -13,9 +13,10 @@ interface ResourceTrackerState {
   unreachableCount: number;
   idleTimeoutMinutes: number;
   isInitialized: boolean;
+  observerCount: number;
   lastError: string | null;
 
-  init: () => void;
+  init: () => () => void;
   refresh: () => Promise<void>;
   stopResource: (resourceId: string) => Promise<boolean>;
   stopAll: () => Promise<number>;
@@ -23,6 +24,8 @@ interface ResourceTrackerState {
 }
 
 let stopPolling: (() => void) | null = null;
+let generation = 0;
+let refreshInFlight: Promise<void> | null = null;
 
 export const useResourceStore = create<ResourceTrackerState>((set, get) => ({
   resources: [],
@@ -31,24 +34,40 @@ export const useResourceStore = create<ResourceTrackerState>((set, get) => ({
   unreachableCount: 0,
   idleTimeoutMinutes: 10,
   isInitialized: false,
+  observerCount: 0,
   lastError: null,
 
   init: () => {
-    if (get().isInitialized) return;
-    set({ isInitialized: true });
-    void get().refresh();
-    stopPolling?.();
-    stopPolling = createPollScheduler({
+    const first = get().observerCount === 0;
+    if (first) generation += 1;
+    const ownerGeneration = generation;
+    set({ isInitialized: true, observerCount: get().observerCount + 1 });
+    if (first) {
+      if (typeof document === 'undefined' || document.visibilityState !== 'hidden') void get().refresh();
+      stopPolling = createPollScheduler({
       intervalMs: POLL_INTERVAL_MS,
       priority: 'background',
       isShed: isResourceShed,
       task: () => get().refresh(),
-    });
+      });
+    }
+    let released = false;
+    return () => {
+      if (released || ownerGeneration !== generation) return;
+      released = true;
+      set({ observerCount: get().observerCount - 1 });
+      if (get().observerCount === 0) get().stop();
+    };
   },
 
-  refresh: async () => {
+  refresh: () => {
+    if (refreshInFlight) return refreshInFlight;
+    if (get().observerCount === 0) return Promise.resolve();
+    const ownerGeneration = generation;
+    const pending = (async () => {
     try {
       const snapshot = await hostApi.resourceTracker.list();
+      if (ownerGeneration !== generation) return;
       const resources = Array.isArray(snapshot?.resources) ? snapshot.resources : [];
       set({
         resources,
@@ -59,8 +78,12 @@ export const useResourceStore = create<ResourceTrackerState>((set, get) => ({
         lastError: null,
       });
     } catch (err) {
+      if (ownerGeneration !== generation) return;
       set({ lastError: err instanceof Error ? err.message : String(err) });
     }
+    })().finally(() => { if (refreshInFlight === pending) refreshInFlight = null; });
+    refreshInFlight = pending;
+    return pending;
   },
 
   stopResource: async (resourceId: string) => {
@@ -90,8 +113,10 @@ export const useResourceStore = create<ResourceTrackerState>((set, get) => ({
   },
 
   stop: () => {
+    generation += 1;
     stopPolling?.();
     stopPolling = null;
-    set({ isInitialized: false });
+    refreshInFlight = null;
+    set({ isInitialized: false, observerCount: 0 });
   },
 }));
