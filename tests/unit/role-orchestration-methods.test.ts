@@ -600,7 +600,7 @@ describe('runOrchestrationObserved (observed execution + tracing)', () => {
   it('carries canonical verifier discipline into accepted worker completion metadata', async () => {
     const spawn = vi.fn(async (_params: unknown) => ({ status: 'accepted', runId: 'discipline-worker', childSessionKey: 'child:discipline' }));
     const result = await runOrchestrationObserved({
-      task: 'Inspect module behavior', workers: [{ roleName: 'explorer', task: 'Inspect the module' }],
+      task: 'Verify module behavior', workers: [{ roleName: 'tester', task: 'Verify the module' }],
       cfg: { runtime: { coding: { verifier: { noSelfRepair: false } } } },
       orchestrationRunId: 'discipline-observed',
     }, baseCtx, { spawn: spawn as never });
