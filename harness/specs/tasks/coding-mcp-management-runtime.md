@@ -42,6 +42,9 @@ touchedAreas:
   - tests/e2e/coding-mcp-management.spec.ts
   - tests/e2e/fixtures/coding-mcp-server.ts
   - tests/e2e/fixtures/electron.ts
+  - tests/e2e/fixtures/electron-process-cleanup.ts
+  - tests/e2e/fixtures/windows-process.ts
+  - tests/unit/electron-process-identity.test.ts
   - harness/specs/fixtures/coding-fixes/TF-0772/**
   - docs/modules/workspace-and-coding.md
   - docs/modules/integrations-and-surfaces.md
@@ -58,6 +61,7 @@ requiredRules:
   - docs-sync
   - disk-temp-policy
 requiredTests:
+  - node node_modules/vitest/vitest.mjs run tests/unit/electron-process-identity.test.ts --maxWorkers=1
   - node node_modules/vitest/vitest.mjs run tests/unit/gateway-supervisor.test.ts --maxWorkers=1
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/gateway/server-methods/tools-invoke-mcp-fallback.test.ts --maxWorkers=1
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/agent-bundle-mcp-runtime.test.ts --maxWorkers=1

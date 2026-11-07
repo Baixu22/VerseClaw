@@ -12,13 +12,15 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
   const workspace = join(userDataDir, 'workspace');
   await mkdir(workspace, { recursive: true });
   let app: ElectronApplication | undefined;
+  let runtimeConfigPath: string | undefined;
   const rpc = <T,>(method: string, params: Record<string, unknown>) => hostInvoke<T>(app!, 'gateway', 'rpc', { method, params, timeoutMs: 90_000 });
   const server = await startCodingMcpServer({ onCall: async (args) => {
     if (args?.message !== 'after-effect-management' && args?.message !== 'after-effect-invoke') return;
     await writeFile(join(workspace, `${args.message}.txt`), args.message);
-    const snapshot = await rpc<{ hash: string }>('config.get', {});
-    await rpc('config.patch', { baseHash: snapshot.hash, restartDelayMs: 60_000,
-      raw: JSON.stringify({ agents: { defaults: { thinkingDefault: args.message === 'after-effect-management' ? 'medium' : 'high' } } }) });
+    if (!runtimeConfigPath) throw new Error('Runtime configuration path was not captured');
+    const current = JSON.parse(await readFile(runtimeConfigPath, 'utf8'));
+    current.agents.defaults.thinkingDefault = args.message === 'after-effect-management' ? 'medium' : 'high';
+    await writeFile(runtimeConfigPath, JSON.stringify(current));
   } });
   const empty = await startCodingMcpServer({ empty: true });
   const slow = await startCodingMcpServer({ delayMs: 2500 });
@@ -50,6 +52,7 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
     }
     await startGateway(app);
     const runtimeConfig = await rpc<{ path?: string; config?: { mcp?: { servers?: Record<string, unknown> }; agents?: unknown } }>('config.get', {});
+    runtimeConfigPath = runtimeConfig.path;
     evidence.runtimeConfig = { path: runtimeConfig.path, mcpServerIds: Object.keys(runtimeConfig.config?.mcp?.servers ?? {}), agents: runtimeConfig.config?.agents };
     const parent = await rpc<{ key: string; entry: { sessionId: string } }>('sessions.create', { agentId: 'main', label: 'P2 bound session' });
     await hostInvoke(app, 'workspaces', 'update', { id: workspaceId, activeSessionKey: parent.key });
@@ -182,20 +185,21 @@ test('TF-0772 Main, model session and UI share the real MCP owner and reject sta
     evidence.providerAnomalies = llm.anomalies;
     if (app) {
       const child = app.process();
-      evidence.appPid = child.pid;
+      evidence.wrapperPid = child.pid;
       await hostInvoke(app, 'gateway', 'stop').catch((error) => { evidence.gatewayStopError = String(error); });
       evidence.gatewayAfterStop = await hostInvoke(app, 'gateway', 'status').catch(() => null);
-      await closeElectronApp(app);
-      evidence.appExitCode = child.exitCode;
+      try { evidence.appCleanup = await closeElectronApp(app); }
+      catch (error) { evidence.appCleanupError = String(error); }
+      evidence.wrapperExitCode = child.exitCode;
     }
     evidence.endpointCleanup = await Promise.all([server.close(), empty.close(), slow.close()]);
     llm.server.closeAllConnections(); llm.server.closeIdleConnections();
     await new Promise<void>((resolve) => llm.server.close(() => resolve()));
-    if (evidence.gatewayStopError) {
+    if (evidence.gatewayStopError || evidence.appCleanupError) {
       evidence.status = 'failed';
-      evidence.failure ??= evidence.gatewayStopError;
+      evidence.failure ??= evidence.gatewayStopError ?? evidence.appCleanupError;
     }
     await writeFile(testInfo.outputPath('coding-mcp-management.json'), JSON.stringify(evidence, null, 2));
   }
-  if (evidence.gatewayStopError) throw new Error(String(evidence.gatewayStopError));
+  if (evidence.gatewayStopError || evidence.appCleanupError) throw new Error(String(evidence.gatewayStopError ?? evidence.appCleanupError));
 });
