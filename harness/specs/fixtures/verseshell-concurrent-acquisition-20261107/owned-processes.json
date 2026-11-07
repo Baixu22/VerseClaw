@@ -1,0 +1,27 @@
+{
+  "schema": "clawx.aci-acquisition-owned-processes/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "cycles": 3,
+  "callersPerCycle": 16,
+  "spawnCount": 3,
+  "fixture": "real-node-aci-protocol-child",
+  "observations": [
+    {
+      "pid": 31972,
+      "exitCode": 0,
+      "alive": false
+    },
+    {
+      "pid": 31820,
+      "exitCode": 0,
+      "alive": false
+    },
+    {
+      "pid": 7620,
+      "exitCode": 0,
+      "alive": false
+    }
+  ],
+  "ownedResidualPids": 0
+}

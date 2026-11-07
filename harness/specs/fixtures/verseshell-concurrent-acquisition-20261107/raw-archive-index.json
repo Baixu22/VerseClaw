@@ -1,0 +1,102 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "path": "D:\\tmp\\clawx-performance-acceptance-20261107",
+  "files": [
+    {
+      "path": "baseline-runtime-types.log",
+      "bytes": 29995,
+      "sha256": "9a8e8e313be4499e3446631e145830ea0f647fac6f4e4e20c2f1d64e49e0e296"
+    },
+    {
+      "path": "comms/compare-report.json",
+      "bytes": 3812,
+      "sha256": "d332ab6d666f35be459ed58a833fa1f550002dc12532ea23133c9fcd0a9cc542"
+    },
+    {
+      "path": "comms/compare-report.md",
+      "bytes": 3329,
+      "sha256": "ef4d46e02aadba815fd5332321c396585b8cd9b525048f6cbac8ca95023993c7"
+    },
+    {
+      "path": "comms/current-metrics.json",
+      "bytes": 3735,
+      "sha256": "9ef871b343528b4538948956dbfbc5dd349dff7c0c71342636151a5816fe51bf"
+    },
+    {
+      "path": "comms-compare.log",
+      "bytes": 3427,
+      "sha256": "e2ebbe242ba3285985adb6ec4058fb895f441d919ba7594d38fa3d2cdffa1a6d"
+    },
+    {
+      "path": "comms-replay.log",
+      "bytes": 102,
+      "sha256": "90162259e2dd332dea8bb676794c220c56660e9e1c7e8b46d91694bf055aa169"
+    },
+    {
+      "path": "credential-scan.json",
+      "bytes": 97,
+      "sha256": "fbe0bfb7ed3fff40ff961be9d4433a778b2519ba1c6a808891e02860318cb309"
+    },
+    {
+      "path": "focused-types.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "harness-context.log",
+      "bytes": 2930,
+      "sha256": "438baa476a708e53f96b614b0eadf43c375e819cbec6fd1d274b5ee9e28fd994"
+    },
+    {
+      "path": "harness-dry-run.log",
+      "bytes": 134,
+      "sha256": "02c9c0d186c4d568b0902a23cab14a36d0fdb53e84b0bc69c58ab479b1462576"
+    },
+    {
+      "path": "harness-validate.log",
+      "bytes": 81,
+      "sha256": "363e9043067f46c5efe3afeac24bbb7b7994dbc93a460175f4c168fffa29bc5d"
+    },
+    {
+      "path": "lint.json",
+      "bytes": 1902,
+      "sha256": "079054521fe4ed2bfe852a43a7393bd2ff87d656cbf6d0a21c16e6851176eb88"
+    },
+    {
+      "path": "lint.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "owned-processes.json",
+      "bytes": 481,
+      "sha256": "237cc6c376597491552c1f706da6cd83eb4d271f75570248aba1bc13fbd39042"
+    },
+    {
+      "path": "report.json",
+      "bytes": 8848,
+      "sha256": "fba82df8bee2f25b8cbf5d5949ffd94c19e2171da7e8cc55b749a559ab6dee16"
+    },
+    {
+      "path": "runtime-types.log",
+      "bytes": 29829,
+      "sha256": "f7e05255f6d6aa37dbe0d3b10a2f9ed5dec2c48c18a38491e491c4a97d7e5b09"
+    },
+    {
+      "path": "SHA256SUMS",
+      "bytes": 1518,
+      "sha256": "0fb35b103a987897534f6fb5b78f3cd4a1265dcf7f67c5c603e8b89b3be1ca67"
+    },
+    {
+      "path": "tests.json",
+      "bytes": 127416,
+      "sha256": "f295204b47686406c1ca1563ea035789ff67a91127c52dc97d2e794b0d9c0845"
+    },
+    {
+      "path": "tests.log",
+      "bytes": 79,
+      "sha256": "de806033df641337bb932a86d4902a188190921a3db00c999a18af119784e40c"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+Context for: harness\specs\tasks\verseshell-concurrent-acquisition-20261107.md
+Intent: 修复同 key 重复创建、创建中超额、shutdown 期间迟到创建和确定未启动的容量泄漏。
+
+Read order:
+- verseshell-concurrent-acquisition-20261107 (task): harness\specs\tasks\verseshell-concurrent-acquisition-20261107.md
+- gateway-backend-communication (runtime-bridge): harness\specs\scenarios\gateway-backend-communication.md
+- active-config-guards (ai-coding-rule): harness\specs\rules\active-config-guards.md
+- api-client-transport-policy (ai-coding-rule): harness\specs\rules\api-client-transport-policy.md
+- backend-communication-boundary (ai-coding-rule): harness\specs\rules\backend-communication-boundary.md
+- capability-owner-resolution (ai-coding-rule): harness\specs\rules\capability-owner-resolution.md
+- channel-plugin-migration-guards (ai-coding-rule): harness\specs\rules\channel-plugin-migration-guards.md
+- comms-regression (ai-coding-rule): harness\specs\rules\comms-regression.md
+- disk-temp-policy (ai-coding-rule): harness\specs\rules\disk-temp-policy.md
+- docs-sync (ai-coding-rule): harness\specs\rules\docs-sync.md
+- error-governance-boundary (ai-coding-rule): harness\specs\rules\error-governance-boundary.md
+- gateway-readiness-policy (ai-coding-rule): harness\specs\rules\gateway-readiness-policy.md
+- host-api-fallback-policy (ai-coding-rule): harness\specs\rules\host-api-fallback-policy.md
+- host-events-fallback-policy (ai-coding-rule): harness\specs\rules\host-events-fallback-policy.md
+- prompt-cache-observation-boundary (ai-coding-rule): harness\specs\rules\prompt-cache-observation-boundary.md
+- renderer-main-boundary (ai-coding-rule): harness\specs\rules\renderer-main-boundary.md
+- repository-artifact-retention (ai-coding-rule): harness\specs\rules\repository-artifact-retention.md
+- verseshell-process-lifecycle-boundary (ai-coding-rule): harness\specs\rules\verseshell-process-lifecycle-boundary.md
+- agent-first-acceptance (guide): harness\specs\guides\agent-first-acceptance.md
+- agent-harness-routing (guide): harness\specs\guides\agent-harness-routing.md
+- long-session-delegation-admission (guide): harness\specs\guides\long-session-delegation-admission.md
+- pretext-text-measurement-integration (guide): harness\specs\guides\pretext-text-measurement-integration.md
+- product-acceptance-strategy (guide): harness\specs\guides\product-acceptance-strategy.md
+- scoped-development-validation (guide): harness\specs\guides\scoped-development-validation.md
+- session-lifecycle-worktree-and-node-development (guide): harness\specs\guides\session-lifecycle-worktree-and-node-development.md
+- spec-update (guide): harness\specs\guides\spec-update.md
+- sustained-development-continuity (guide): harness\specs\guides\sustained-development-continuity.md
+- harness (layer-spec): harness\specs\layers\harness.md
+- openclaw-runtime (layer-spec): harness\specs\layers\openclaw-runtime.md

@@ -1,0 +1,253 @@
+{
+  "schema": "clawx.verseshell-concurrent-acquisition-acceptance/v1",
+  "generatedAt": "2026-11-07T04:51:59.836Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "task": "TF-0828",
+  "candidate": {
+    "commit": "5b0512b5fa474fa20accacc8acd97674696d920d",
+    "tree": "7ca6abab9cc963378aeb612be639e1e16b418fd4",
+    "dirty": false
+  },
+  "spec": "harness/specs/tasks/verseshell-concurrent-acquisition-20261107.md",
+  "tests": {
+    "total": 347,
+    "passed": 329,
+    "failed": 0,
+    "skipped": 18
+  },
+  "processes": {
+    "schema": "clawx.aci-acquisition-owned-processes/v1",
+    "driven_by": "agent",
+    "actor": "codex",
+    "cycles": 3,
+    "callersPerCycle": 16,
+    "spawnCount": 3,
+    "fixture": "real-node-aci-protocol-child",
+    "observations": [
+      {
+        "pid": 31972,
+        "exitCode": 0,
+        "alive": false
+      },
+      {
+        "pid": 31820,
+        "exitCode": 0,
+        "alive": false
+      },
+      {
+        "pid": 7620,
+        "exitCode": 0,
+        "alive": false
+      }
+    ],
+    "ownedResidualPids": 0
+  },
+  "types": {
+    "focused": true,
+    "runtimeFullPass": false,
+    "baselineCommit": "c7573ec11095b541f3a4a9c5470bf4e0727489bc",
+    "baselineDiagnostics": 119,
+    "candidateDiagnostics": 118,
+    "introduced": []
+  },
+  "dependencies": {
+    "mode": "reused installed dependencies via read-only junctions; no fresh-install claim",
+    "vitest": "D:\\ClawX\\openclaw_runtime\\node_modules\\.pnpm\\vitest@4.1.7_@opentelemetry_f5449208cde661befa315c6fea555e10\\node_modules\\vitest\\vitest.mjs",
+    "tsgo": "D:\\ClawX\\openclaw_runtime\\node_modules\\.pnpm\\@typescript+native-preview@7.0.0-dev.20260527.2\\node_modules\\@typescript\\native-preview\\bin\\tsgo.js",
+    "eslint": "D:\\ClawX\\node_modules\\.pnpm\\eslint@10.1.0_jiti@1.21.7\\node_modules\\eslint\\bin\\eslint.js",
+    "node": "v24.22.1"
+  },
+  "sourceHashes": [
+    {
+      "path": "openclaw_runtime/src/agents/verseshell/process-manager.ts",
+      "sha256": "bcd012397c628916bbdc873ec24f82d62bfbe6b2a2880dc325ce176712edc057"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/verseshell/process-manager.test.ts",
+      "sha256": "5ecf7266bfd0ad309298e4a770dd02af264bfcccc2e43bfa7bb2823f67566bcc"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/verseshell/governed-process.ts",
+      "sha256": "e6859309b51e3a7180bcb8cebf66c5b42ca3fea3f1887da66263c518928e0cca"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/verseshell/governed-process.test.ts",
+      "sha256": "39d046ed28f58bb4023392c7030e5d50e4ab2ada686c197579572af94d227ba5"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/verseshell/concurrent-acquisition.integration.test.ts",
+      "sha256": "e5ba7723b61dd6ec1734b3bab984ed981bcb1bc495cee0f1fc1198ec6509cd5a"
+    },
+    {
+      "path": "scripts/verify-verseshell-acquisition.mjs",
+      "sha256": "f9951a9549e3c6b1d5b13b0a4eab53ed622f532d9c2b797b0848b99a719e1281"
+    },
+    {
+      "path": "harness/specs/tasks/verseshell-concurrent-acquisition-20261107.md",
+      "sha256": "21267b62ad3eb4009e62e69d7be1fc3fed6078fcf0f720f465ebf4008f41a1d6"
+    },
+    {
+      "path": "harness/specs/tasks/performance-resource-governance-20261107.md",
+      "sha256": "c5cf33e9a709e72d3a37a9ab45a8f891a563e02058f783a6d0f0964018ad51f6"
+    },
+    {
+      "path": "harness/specs/rules/verseshell-process-lifecycle-boundary.md",
+      "sha256": "add65b906bac67a7ea1e25318e8ab32c357ae0c369fde10e18dac19950a7ab87"
+    },
+    {
+      "path": "openclaw_runtime/test/vitest/vitest.verseshell.config.ts",
+      "sha256": "eebdc8a76ac4fffe4f0e41c112c0a4b7e68f93f0cce270fa5b50475f13d41a74"
+    },
+    {
+      "path": "harness/specs/fixtures/verseshell-concurrent-acquisition-20261107/focused-tsconfig.json",
+      "sha256": "da0edda64ec9a9b81ec30f198670129fe5ba48f155bf488a9541064e0169b0eb"
+    }
+  ],
+  "commands": [
+    {
+      "id": "harness-context",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "context",
+        "--spec",
+        "harness/specs/tasks/verseshell-concurrent-acquisition-20261107.md"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\performance-resource-lifecycle\\ClawX",
+      "exitCode": 0,
+      "durationMs": 204,
+      "required": true
+    },
+    {
+      "id": "harness-validate",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/verseshell-concurrent-acquisition-20261107.md"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\performance-resource-lifecycle\\ClawX",
+      "exitCode": 0,
+      "durationMs": 1074,
+      "required": true
+    },
+    {
+      "id": "harness-dry-run",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/verseshell-concurrent-acquisition-20261107.md",
+        "--dry-run"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\performance-resource-lifecycle\\ClawX",
+      "exitCode": 0,
+      "durationMs": 692,
+      "required": true
+    },
+    {
+      "id": "tests",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\ClawX\\openclaw_runtime\\node_modules\\.pnpm\\vitest@4.1.7_@opentelemetry_f5449208cde661befa315c6fea555e10\\node_modules\\vitest\\vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.verseshell.config.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\clawx-performance-acceptance-20261107\\tests.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\performance-resource-lifecycle\\ClawX\\openclaw_runtime",
+      "exitCode": 0,
+      "durationMs": 32237,
+      "required": true
+    },
+    {
+      "id": "focused-types",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\ClawX\\openclaw_runtime\\node_modules\\.pnpm\\@typescript+native-preview@7.0.0-dev.20260527.2\\node_modules\\@typescript\\native-preview\\bin\\tsgo.js",
+        "--noEmit",
+        "-p",
+        "harness/specs/fixtures/verseshell-concurrent-acquisition-20261107/focused-tsconfig.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\performance-resource-lifecycle\\ClawX",
+      "exitCode": 0,
+      "durationMs": 549,
+      "required": true
+    },
+    {
+      "id": "runtime-types",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\ClawX\\openclaw_runtime\\node_modules\\.pnpm\\@typescript+native-preview@7.0.0-dev.20260527.2\\node_modules\\@typescript\\native-preview\\bin\\tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\performance-resource-lifecycle\\ClawX\\openclaw_runtime",
+      "exitCode": 2,
+      "durationMs": 42542,
+      "required": false
+    },
+    {
+      "id": "lint",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\ClawX\\node_modules\\.pnpm\\eslint@10.1.0_jiti@1.21.7\\node_modules\\eslint\\bin\\eslint.js",
+        "openclaw_runtime/src/agents/verseshell/process-manager.ts",
+        "openclaw_runtime/src/agents/verseshell/process-manager.test.ts",
+        "openclaw_runtime/src/agents/verseshell/governed-process.ts",
+        "openclaw_runtime/src/agents/verseshell/governed-process.test.ts",
+        "openclaw_runtime/src/agents/verseshell/concurrent-acquisition.integration.test.ts",
+        "scripts/verify-verseshell-acquisition.mjs",
+        "--format",
+        "json",
+        "--output-file",
+        "D:\\tmp\\clawx-performance-acceptance-20261107\\lint.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\performance-resource-lifecycle\\ClawX",
+      "exitCode": 0,
+      "durationMs": 5453,
+      "required": true
+    },
+    {
+      "id": "comms-replay",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\performance-resource-lifecycle\\ClawX",
+      "exitCode": 0,
+      "durationMs": 310,
+      "required": true
+    },
+    {
+      "id": "comms-compare",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\performance-resource-lifecycle\\ClawX",
+      "exitCode": 0,
+      "durationMs": 239,
+      "required": true
+    }
+  ],
+  "claims": {
+    "hostLifecycle": true,
+    "realNodeProtocolChildren": true,
+    "realVerseShellPayload": false,
+    "mixedWorkloadBenefit": false
+  },
+  "limitations": [
+    "The existing 18 opt-in binary/platform cases are recorded as skipped.",
+    "Full runtime typecheck retains the compared baseline diagnostics."
+  ],
+  "verdict": "pass-scoped-acquisition"
+}

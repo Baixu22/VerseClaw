@@ -1,0 +1,166 @@
+extensions/browser/src/browser/server.control-server.test-harness.ts(10,29): error TS2307: Cannot find module './test-port.js' or its corresponding type declarations.
+extensions/browser/src/cli/browser-cli.test-support.ts(5,41): error TS2307: Cannot find module '../../test-support.js' or its corresponding type declarations.
+extensions/browser/src/cli/browser-cli.test-support.ts(6,40): error TS2307: Cannot find module '../../test-support.js' or its corresponding type declarations.
+extensions/feishu/src/monitor.acp-init-failure.lifecycle.test-support.ts(18,8): error TS2307: Cannot find module './test-support/lifecycle-test-support.js' or its corresponding type declarations.
+extensions/feishu/src/monitor.bot-menu.lifecycle.test-support.ts(22,8): error TS2307: Cannot find module './test-support/lifecycle-test-support.js' or its corresponding type declarations.
+extensions/feishu/src/monitor.broadcast.reply-once.lifecycle.test-support.ts(20,8): error TS2307: Cannot find module './test-support/lifecycle-test-support.js' or its corresponding type declarations.
+extensions/feishu/src/monitor.broadcast.reply-once.lifecycle.test-support.ts(124,18): error TS7006: Parameter 'registered' implicitly has an 'any' type.
+extensions/feishu/src/monitor.broadcast.reply-once.lifecycle.test-support.ts(159,30): error TS7006: Parameter 'ctx' implicitly has an 'any' type.
+extensions/feishu/src/monitor.card-action.lifecycle.test-support.ts(23,8): error TS2307: Cannot find module './test-support/lifecycle-test-support.js' or its corresponding type declarations.
+extensions/msteams/src/monitor-handler/message-handler.test-support.ts(5,43): error TS2307: Cannot find module '../monitor-handler.test-helpers.js' or its corresponding type declarations.
+extensions/telegram/src/bot-message-context.named-account-dm.test-support.ts(7,8): error TS2307: Cannot find module './bot-message-context.route-test-support.js' or its corresponding type declarations.
+extensions/whatsapp/src/auto-reply.test-harness.ts(2,8): error TS2882: Cannot find module or type declarations for side-effect import of './test-helpers.js'.
+extensions/whatsapp/src/auto-reply.test-harness.ts(17,8): error TS2307: Cannot find module './test-helpers.js' or its corresponding type declarations.
+extensions/whatsapp/src/auto-reply.test-harness.ts(23,8): error TS2307: Cannot find module './test-helpers.js' or its corresponding type declarations.
+src/acp/translator.prompt-harness.test-support.ts(8,55): error TS2307: Cannot find module './translator.test-helpers.js' or its corresponding type declarations.
+src/agents/cli-runner.test-support.ts(43,3): error TS2322: Type '() => { spawn: (params: Parameters<SupervisorSpawnFn>[0]) => Promise<{ runId: string; pid?: number; startedAtMs: number; stdin?: ManagedRunStdin; cancel: (reason?: TerminationReason) => void; wait: () => Promise<...>; }>; cancel: Mock<...>; cancelScope: Mock<...>; reconcileOrphans: Mock<...>; getRecord: Mock<...>; }' is not assignable to type '() => ProcessSupervisor'.
+  Type '{ spawn: (params: Parameters<SupervisorSpawnFn>[0]) => Promise<{ runId: string; pid?: number; startedAtMs: number; stdin?: ManagedRunStdin; cancel: (reason?: TerminationReason) => void; wait: () => Promise<...>; }>; cancel: Mock<...>; cancelScope: Mock<...>; reconcileOrphans: Mock<...>; getRecord: Mock<...>; }' is missing the following properties from type 'ProcessSupervisor': attachRunManifest, snapshotRunsForLifecycle, snapshotRunsForSession, countActiveRunsForLifecycle, drainRunsForLifecycle
+src/agents/embedded-agent-runner/run/attempt.spawn-workspace.test-support.ts(104,3): error TS2741: Property 'getBrowserAutomationEvents' is missing in type '{ assistantTexts: string[]; toolMetas: Array<{ toolName: string; meta?: string; asyncStarted?: boolean; }>; runToolLifecycle: <T>(toolParams: { execute: () => Promise<T>; }) => Promise<...>; ... 22 more ...; isCompactionInFlight: () => false; }' but required in type '{ assistantTexts: string[]; toolMetas: { toolName?: string; meta?: string; asyncStarted?: boolean; asyncTaskRunId?: string; asyncTaskId?: string; }[]; getBrowserAutomationEvents: () => AgentBrowserAutomationEvent[]; ... 23 more ...; waitForCompactionRetry: () => Promise<...>; }'.
+src/agents/stale-write-guard.false-block.test.ts(36,44): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/agents/stale-write-guard.false-block.test.ts(50,44): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/agents/stream-failure.test.ts(5,35): error TS2307: Cannot find module '../runtime/index.js' or its corresponding type declarations.
+src/agents/subagent-registry.persistence.test-support.ts(11,8): error TS2307: Cannot find module '../config/sessions/test-helpers.js' or its corresponding type declarations.
+src/agents/tool-search-capability-v3.test.ts(14,7): error TS2741: Property 'auto' is missing in type '{ enabled: true; mode: "tools"; codeTimeoutMs: number; searchDefaultLimit: number; maxSearchLimit: number; }' but required in type 'ToolSearchConfig'.
+src/agents/tool-search-code-mode-v3.test.ts(18,7): error TS2741: Property 'auto' is missing in type '{ enabled: true; mode: "code"; codeTimeoutMs: number; searchDefaultLimit: number; maxSearchLimit: number; }' but required in type 'ToolSearchConfig'.
+src/agents/tool-search-code-mode-v3.test.ts(103,27): error TS2322: Type 'Promise<{ ok: true; payload: string; }>' is not assignable to type 'Promise<ContextArchiveVerifyResult>'.
+  Type '{ ok: true; payload: string; }' is not assignable to type 'ContextArchiveVerifyResult'.
+    Property 'handle' is missing in type '{ ok: true; payload: string; }' but required in type '{ ok: true; payload: unknown; handle: ArchiveHandle; }'.
+src/auto-reply/reply.directive.directive-behavior.e2e-harness.ts(23,8): error TS2307: Cannot find module './reply.directive.directive-behavior.e2e-mocks.js' or its corresponding type declarations.
+src/auto-reply/reply.directive.directive-behavior.e2e-harness.ts(107,72): error TS7031: Binding element 'config' implicitly has an 'any' type.
+src/auto-reply/reply.triggers.group-intro-prompts.cases.ts(3,25): error TS2307: Cannot find module '../../test/helpers/auto-reply/trigger-handling-test-harness.js' or its corresponding type declarations.
+src/auto-reply/reply.triggers.trigger-handling.filters-usage-summary-current-model-provider.cases.ts(11,8): error TS2307: Cannot find module '../../test/helpers/auto-reply/trigger-handling-test-harness.js' or its corresponding type declarations.
+src/auto-reply/reply.triggers.trigger-handling.filters-usage-summary-current-model-provider.cases.ts(59,33): error TS7006: Parameter 'home' implicitly has an 'any' type.
+src/auto-reply/reply.triggers.trigger-handling.filters-usage-summary-current-model-provider.cases.ts(85,33): error TS7006: Parameter 'home' implicitly has an 'any' type.
+src/auto-reply/reply/agent-runner.test-fixtures.ts(3,47): error TS2307: Cannot find module '../../config/sessions/test-helpers.js' or its corresponding type declarations.
+src/auto-reply/reply/dispatch-from-config.shared.test-harness.ts(17,30): error TS2307: Cannot find module './test-ctx.js' or its corresponding type declarations.
+src/capabilities/v3/provider-native-capability-v3.test.ts(37,7): error TS2741: Property 'auto' is missing in type '{ enabled: true; mode: "code"; codeTimeoutMs: number; searchDefaultLimit: number; maxSearchLimit: number; }' but required in type 'ToolSearchConfig'.
+src/capabilities/v3/provider-native-capability-v3.test.ts(83,27): error TS2322: Type 'Promise<{ ok: true; payload: string; }>' is not assignable to type 'Promise<ContextArchiveVerifyResult>'.
+  Type '{ ok: true; payload: string; }' is not assignable to type 'ContextArchiveVerifyResult'.
+    Property 'handle' is missing in type '{ ok: true; payload: string; }' but required in type '{ ok: true; payload: unknown; handle: ArchiveHandle; }'.
+src/capabilities/v3/result-pointer.test.ts(184,66): error TS2345: Argument of type '() => Promise<{ ok: true; payload: string; }>' is not assignable to parameter of type '(handle: ArchiveHandle) => Promise<ContextArchiveVerifyResult>'.
+  Type 'Promise<{ ok: true; payload: string; }>' is not assignable to type 'Promise<ContextArchiveVerifyResult>'.
+    Type '{ ok: true; payload: string; }' is not assignable to type 'ContextArchiveVerifyResult'.
+      Property 'handle' is missing in type '{ ok: true; payload: string; }' but required in type '{ ok: true; payload: unknown; handle: ArchiveHandle; }'.
+src/capabilities/v3/result-pointer.test.ts(238,66): error TS2345: Argument of type '() => Promise<{ ok: true; payload: string; }>' is not assignable to parameter of type '(handle: ArchiveHandle) => Promise<ContextArchiveVerifyResult>'.
+  Type 'Promise<{ ok: true; payload: string; }>' is not assignable to type 'Promise<ContextArchiveVerifyResult>'.
+    Type '{ ok: true; payload: string; }' is not assignable to type 'ContextArchiveVerifyResult'.
+      Property 'handle' is missing in type '{ ok: true; payload: string; }' but required in type '{ ok: true; payload: unknown; handle: ArchiveHandle; }'.
+src/capabilities/v3/result-pointer.test.ts(285,66): error TS2345: Argument of type '() => Promise<{ ok: true; payload: string; }>' is not assignable to parameter of type '(handle: ArchiveHandle) => Promise<ContextArchiveVerifyResult>'.
+  Type 'Promise<{ ok: true; payload: string; }>' is not assignable to type 'Promise<ContextArchiveVerifyResult>'.
+    Type '{ ok: true; payload: string; }' is not assignable to type 'ContextArchiveVerifyResult'.
+      Property 'handle' is missing in type '{ ok: true; payload: string; }' but required in type '{ ok: true; payload: unknown; handle: ArchiveHandle; }'.
+src/capabilities/v3/result-pointer.test.ts(367,66): error TS2345: Argument of type '() => Promise<{ ok: true; payload: string; }>' is not assignable to parameter of type '(handle: ArchiveHandle) => Promise<ContextArchiveVerifyResult>'.
+  Type 'Promise<{ ok: true; payload: string; }>' is not assignable to type 'Promise<ContextArchiveVerifyResult>'.
+    Type '{ ok: true; payload: string; }' is not assignable to type 'ContextArchiveVerifyResult'.
+      Property 'handle' is missing in type '{ ok: true; payload: string; }' but required in type '{ ok: true; payload: unknown; handle: ArchiveHandle; }'.
+src/channels/plugins/contracts/test-helpers/registry-backed-contract-shards.ts(154,37): error TS2345: Argument of type 'ChannelPlugin' is not assignable to parameter of type 'Pick<ChannelPlugin, "capabilities" | "config" | "id" | "meta">'.
+  The types of 'config.listAccountIds' are incompatible between these types.
+    Type '(cfg: import("C:/Users/27933/.codex/worktrees/performance-resource-lifecycle/ClawX/openclaw_runtime/src/config/types.openclaw").OpenClawConfig) => string[]' is not assignable to type '(cfg: import("D:/ClawX/node_modules/.pnpm/openclaw@2026.5.20_encoding@0.1.13/node_modules/openclaw/dist/plugin-sdk/src/config/types.openclaw").OpenClawConfig) => string[]'.
+      Types of parameters 'cfg' and 'cfg' are incompatible.
+        Type 'import("D:/ClawX/node_modules/.pnpm/openclaw@2026.5.20_encoding@0.1.13/node_modules/openclaw/dist/plugin-sdk/src/config/types.openclaw").OpenClawConfig' is not assignable to type 'import("C:/Users/27933/.codex/worktrees/performance-resource-lifecycle/ClawX/openclaw_runtime/src/config/types.openclaw").OpenClawConfig'.
+          Types of property 'models' are incompatible.
+            Type 'import("D:/ClawX/node_modules/.pnpm/openclaw@2026.5.20_encoding@0.1.13/node_modules/openclaw/dist/plugin-sdk/src/config/types.models").ModelsConfig | undefined' is not assignable to type 'import("C:/Users/27933/.codex/worktrees/performance-resource-lifecycle/ClawX/openclaw_runtime/src/config/types.models").ModelsConfig | undefined'.
+              Type 'import("D:/ClawX/node_modules/.pnpm/openclaw@2026.5.20_encoding@0.1.13/node_modules/openclaw/dist/plugin-sdk/src/config/types.models").ModelsConfig' is not assignable to type 'import("C:/Users/27933/.codex/worktrees/performance-resource-lifecycle/ClawX/openclaw_runtime/src/config/types.models").ModelsConfig'.
+                Types of property 'providers' are incompatible.
+                  Type 'Record<string, import("D:/ClawX/node_modules/.pnpm/openclaw@2026.5.20_encoding@0.1.13/node_modules/openclaw/dist/plugin-sdk/src/config/types.models").ModelProviderConfig> | undefined' is not assignable to type 'Record<string, import("C:/Users/27933/.codex/worktrees/performance-resource-lifecycle/ClawX/openclaw_runtime/src/config/types.models").ModelProviderConfig> | undefined'.
+                    Type 'Record<string, import("D:/ClawX/node_modules/.pnpm/openclaw@2026.5.20_encoding@0.1.13/node_modules/openclaw/dist/plugin-sdk/src/config/types.models").ModelProviderConfig>' is not assignable to type 'Record<string, import("C:/Users/27933/.codex/worktrees/performance-resource-lifecycle/ClawX/openclaw_runtime/src/config/types.models").ModelProviderConfig>'.
+                      'string' index signatures are incompatible.
+                        Type 'import("D:/ClawX/node_modules/.pnpm/openclaw@2026.5.20_encoding@0.1.13/node_modules/openclaw/dist/plugin-sdk/src/config/types.models").ModelProviderConfig' is not assignable to type 'import("C:/Users/27933/.codex/worktrees/performance-resource-lifecycle/ClawX/openclaw_runtime/src/config/types.models").ModelProviderConfig'.
+                          Types of property 'api' are incompatible.
+                            Type '"anthropic-messages" | "azure-openai-responses" | "bedrock-converse-stream" | "github-copilot" | "google-generative-ai" | "ollama" | "openai-codex-responses" | "openai-completions" | "openai-responses" | undefined' is not assignable to type '"anthropic-messages" | "azure-openai-responses" | "bedrock-converse-stream" | "github-copilot" | "google-generative-ai" | "google-vertex" | "ollama" | "openai-chatgpt-responses" | "openai-completions" | "openai-responses" | undefined'.
+                              Type '"openai-codex-responses"' is not assignable to type '"anthropic-messages" | "azure-openai-responses" | "bedrock-converse-stream" | "github-copilot" | "google-generative-ai" | "google-vertex" | "ollama" | "openai-chatgpt-responses" | "openai-completions" | "openai-responses" | undefined'. Did you mean '"openai-responses"'?
+src/config/runtime-context-block-compass.test.ts(10,7): error TS2344: Type '{ "working-memory"?: { enabled?: boolean | undefined; } | undefined; "tool-registry"?: { enabled?: boolean | undefined; } | undefined; compass?: { enabled?: boolean | undefined; } | undefined; ... 6 more ...; "context-understand"?: { ...; } | undefined; } | undefined' does not satisfy the constraint '"Expected: ..., Actual: never" | "Expected: undefined, Actual: never"'.
+  Type 'undefined' is not assignable to type '"Expected: ..., Actual: never" | "Expected: undefined, Actual: never"'.
+src/config/runtime-context-block-role-memory.test.ts(10,7): error TS2344: Type '{ "working-memory"?: { enabled?: boolean | undefined; } | undefined; "tool-registry"?: { enabled?: boolean | undefined; } | undefined; compass?: { enabled?: boolean | undefined; } | undefined; ... 6 more ...; "context-understand"?: { ...; } | undefined; } | undefined' does not satisfy the constraint '"Expected: ..., Actual: never" | "Expected: undefined, Actual: never"'.
+  Type 'undefined' is not assignable to type '"Expected: ..., Actual: never" | "Expected: undefined, Actual: never"'.
+src/config/runtime-context-block-sekb.test.ts(10,7): error TS2344: Type '{ "working-memory"?: { enabled?: boolean | undefined; } | undefined; "tool-registry"?: { enabled?: boolean | undefined; } | undefined; compass?: { enabled?: boolean | undefined; } | undefined; ... 6 more ...; "context-understand"?: { ...; } | undefined; } | undefined' does not satisfy the constraint '"Expected: ..., Actual: never" | "Expected: undefined, Actual: never"'.
+  Type 'undefined' is not assignable to type '"Expected: ..., Actual: never" | "Expected: undefined, Actual: never"'.
+src/config/runtime-context-block-tool-registry.test.ts(10,7): error TS2344: Type '{ "working-memory"?: { enabled?: boolean | undefined; } | undefined; "tool-registry"?: { enabled?: boolean | undefined; } | undefined; compass?: { enabled?: boolean | undefined; } | undefined; ... 6 more ...; "context-understand"?: { ...; } | undefined; } | undefined' does not satisfy the constraint '"Expected: ..., Actual: never" | "Expected: undefined, Actual: never"'.
+  Type 'undefined' is not assignable to type '"Expected: ..., Actual: never" | "Expected: undefined, Actual: never"'.
+src/config/runtime-context-block-working-memory.test.ts(10,7): error TS2344: Type '{ "working-memory"?: { enabled?: boolean | undefined; } | undefined; "tool-registry"?: { enabled?: boolean | undefined; } | undefined; compass?: { enabled?: boolean | undefined; } | undefined; ... 6 more ...; "context-understand"?: { ...; } | undefined; } | undefined' does not satisfy the constraint '"Expected: ..., Actual: never" | "Expected: undefined, Actual: never"'.
+  Type 'undefined' is not assignable to type '"Expected: ..., Actual: never" | "Expected: undefined, Actual: never"'.
+src/context-engine/context-health-monitor.test.ts(63,73): error TS2739: Type '{ turnId: string; total: number; charsApplied: number; charsRequested: number; charsDropped: number; charsTruncated: number; remaining: number; dropRatio: number; alert: boolean; killed: false; byChannel: {}; degradationOrder: never[]; }' is missing the following properties from type 'TurnInjectionAccounting': crossInjectionDuplicateChars, crossInjectionDuplicationRatio
+src/cron/isolated-agent.test-harness.ts(4,47): error TS2307: Cannot find module '../config/sessions/test-helpers.js' or its corresponding type declarations.
+src/gateway/http-endpoint-budget.test.ts(210,5): error TS2348: Value of type 'Mock<Constructable | Procedure>' is not callable. Did you mean to include 'new'?
+src/gateway/server-http.test-harness.ts(7,57): error TS2307: Cannot find module './hooks-test-helpers.js' or its corresponding type declarations.
+src/gateway/server-http.test-harness.ts(11,32): error TS2307: Cannot find module './test-temp-config.js' or its corresponding type declarations.
+src/gateway/server-methods/node-child-process.test-support.ts(5,39): error TS2307: Cannot find module '../../plugin-sdk/test-helpers/node-builtin-mocks.js' or its corresponding type declarations.
+src/gateway/server.auth.shared.ts(29,8): error TS2307: Cannot find module './test-helpers.js' or its corresponding type declarations.
+src/gateway/server.auth.shared.ts(78,30): error TS7006: Parameter 'o' implicitly has an 'any' type.
+src/gateway/server.e2e-ws-harness.ts(10,8): error TS2307: Cannot find module './test-helpers.js' or its corresponding type declarations.
+src/gateway/session-mutation-operation-journal.test.ts(28,5): error TS2322: Type '"session-archive" | "session-restore"' is not assignable to type '"session-archive"'.
+  Type '"session-restore"' is not assignable to type '"session-archive"'.
+src/plugin-sdk/plugin-test-runtime.ts(25,10): error TS2305: Module '"../plugins/hooks.test-helpers.js"' has no exported member 'addTestHook'.
+src/plugin-sdk/plugin-test-runtime.ts(26,36): error TS2307: Cannot find module '../plugins/status.test-helpers.js' or its corresponding type declarations.
+src/plugin-sdk/plugin-test-runtime.ts(71,71): error TS2307: Cannot find module '../infra/outbound/delivery-queue.test-helpers.js' or its corresponding type declarations.
+src/plugin-sdk/test-helpers/agents/openclaw-owned-tool-runtime-contract.ts(58,5): error TS2345: Argument of type 'Record<string, unknown>' is not assignable to parameter of type 'GlobalHookRunnerRegistry'.
+  Type 'Record<string, unknown>' is missing the following properties from type 'HookRunnerRegistry': hooks, typedHooks
+src/plugin-sdk/test-helpers/agents/openclaw-owned-tool-runtime-contract.ts(58,30): error TS2554: Expected 0 arguments, but got 1.
+src/plugin-sdk/test-helpers/provider-auth-contract.ts(51,5): error TS2322: Type '<T>(params: WizardMultiSelectParams<T>) => Promise<readonly T[]>' is not assignable to type '<T>(params: WizardPrompterMultiselectParams<T>) => Promise<T[]>'.
+  Type 'Promise<readonly T[]>' is not assignable to type 'Promise<T[]>'.
+    The type 'readonly T[]' is 'readonly' and cannot be assigned to the mutable type 'T[]'.
+src/plugin-sdk/test-helpers/provider-runtime-contract.ts(6,56): error TS2307: Cannot find module '../test-env.js' or its corresponding type declarations.
+src/plugin-sdk/test-helpers/provider-runtime-contract.ts(210,57): error TS7006: Parameter 'url' implicitly has an 'any' type.
+src/plugin-sdk/test-helpers/provider-runtime-contract.ts(385,57): error TS7006: Parameter 'url' implicitly has an 'any' type.
+src/plugin-sdk/test-helpers/provider-runtime-contract.ts(670,57): error TS7006: Parameter 'url' implicitly has an 'any' type.
+src/plugin-sdk/test-helpers/provider-runtime-contract.ts(815,57): error TS7006: Parameter 'url' implicitly has an 'any' type.
+src/plugin-sdk/testing.ts(61,10): error TS2305: Module '"../plugins/hooks.test-helpers.js"' has no exported member 'addTestHook'.
+src/plugin-sdk/testing.ts(66,36): error TS2307: Cannot find module '../plugins/status.test-helpers.js' or its corresponding type declarations.
+src/plugin-sdk/testing.ts(98,8): error TS2307: Cannot find module '../media-understanding/audio.test-helpers.ts' or its corresponding type declarations.
+src/plugin-sdk/testing.ts(105,42): error TS2307: Cannot find module '../agents/sandbox/test-fixtures.js' or its corresponding type declarations.
+src/plugin-sdk/testing.ts(106,28): error TS2307: Cannot find module '../skills/test-support/e2e-test-helpers.js' or its corresponding type declarations.
+src/plugin-sdk/testing.ts(124,46): error TS2307: Cannot find module '../runtime/adapter-contract.testkit.ts' or its corresponding type declarations.
+src/runtime-core/context-pressure-recovery.test.ts(5,60): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../../../shared/types/task-ledger.js'?
+src/runtime-core/context-pressure-recovery.test.ts(11,8): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../../../shared/task-ledger-working-context.js'?
+src/runtime-core/memory-effect-receipt.test.ts(107,18): error TS2339: Property 'ok' does not exist on type 'MemorySelfEditToolResult | Promise<MemorySelfEditToolResult>'.
+  Property 'ok' does not exist on type 'Promise<MemorySelfEditToolResult>'.
+src/runtime-core/memory-effect-receipt.test.ts(107,28): error TS2339: Property 'message' does not exist on type 'MemorySelfEditToolResult | Promise<MemorySelfEditToolResult>'.
+  Property 'message' does not exist on type 'Promise<MemorySelfEditToolResult>'.
+src/runtime-core/memory-effect-receipt.test.ts(117,19): error TS2339: Property 'ok' does not exist on type 'MemorySelfEditToolResult | Promise<MemorySelfEditToolResult>'.
+  Property 'ok' does not exist on type 'Promise<MemorySelfEditToolResult>'.
+src/runtime-core/memory-hybrid-retrieval.cjk.test.ts(14,8): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './memory-hybrid-retrieval.js'?
+src/runtime-core/memory-hybrid-retrieval.cjk.test.ts(15,50): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../memory/context-pack.js'?
+src/runtime-core/memory-hybrid-retrieval.cjk.test.ts(16,33): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../memory/types.js'?
+src/runtime-core/memory-hybrid-retrieval.cjk.test.ts(77,53): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/runtime-core/memory-hybrid-retrieval.cjk.test.ts(89,53): error TS7006: Parameter 'e' implicitly has an 'any' type.
+ui/vitest.config.ts(99,7): error TS2321: Excessive stack depth comparing types '{ enabled: true; provider: BrowserProviderOption<PlaywrightProviderOptions>; instances: { browser: string; name: string; }[]; headless: true; ui: false; }' and 'BrowserConfigOptions | undefined'.
+ui/vitest.config.ts(99,7): error TS2321: Excessive stack depth comparing types '{ resolve: { alias: ({ find: string; replacement: string; } | { find: RegExp; replacement: string; })[]; }; test: { isolate: false; pool: OpenClawVitestPool; name: string; include: string[]; exclude: ("src/ui/chat/chat-responsive.browser.test.ts" | ... 1 more ... | "src/ui/views/sessions.browser.test.ts")[]; setupFi...' and 'UserWorkspaceConfig'.
+ui/vitest.config.ts(111,13): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Excessive stack depth comparing types 'BrowserProviderOption<PlaywrightProviderOptions>' and 'BrowserProviderOption<object> | undefined'.
+../shared/long-session-continuity.ts(1,64): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './types/memory.js'?
+../shared/long-session-continuity.ts(7,8): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './types/task-ledger.js'?
+../shared/long-session-continuity.ts(298,56): error TS7006: Parameter 'node' implicitly has an 'any' type.
+../shared/long-session-continuity.ts(305,14): error TS2339: Property 'status' does not exist on type '{}'.
+../shared/long-session-continuity.ts(306,50): error TS2339: Property 'id' does not exist on type '{}'.
+../shared/long-session-continuity.ts(312,45): error TS2339: Property 'updatedAt' does not exist on type '{}'.
+../shared/long-session-continuity.ts(314,27): error TS2339: Property 'evidenceRefs' does not exist on type '{}'.
+../shared/long-session-continuity.ts(314,52): error TS7006: Parameter 'ref' implicitly has an 'any' type.
+../shared/long-session-continuity.ts(316,14): error TS2339: Property 'kind' does not exist on type '{}'.
+../shared/long-session-continuity.ts(319,31): error TS2339: Property 'id' does not exist on type '{}'.
+../shared/long-session-continuity.ts(322,23): error TS2339: Property 'status' does not exist on type '{}'.
+../shared/long-session-continuity.ts(322,90): error TS2339: Property 'description' does not exist on type '{}'.
+../shared/long-session-continuity.ts(322,110): error TS2339: Property 'title' does not exist on type '{}'.
+../shared/long-session-continuity.ts(323,26): error TS2339: Property 'updatedAt' does not exist on type '{}'.
+../shared/long-session-continuity.ts(326,14): error TS2339: Property 'status' does not exist on type '{}'.
+../shared/long-session-continuity.ts(326,43): error TS2339: Property 'status' does not exist on type '{}'.
+../shared/long-session-continuity.ts(329,31): error TS2339: Property 'id' does not exist on type '{}'.
+../shared/long-session-continuity.ts(332,23): error TS2339: Property 'status' does not exist on type '{}'.
+../shared/long-session-continuity.ts(332,39): error TS2339: Property 'title' does not exist on type '{}'.
+../shared/long-session-continuity.ts(335,36): error TS2339: Property 'metadata' does not exist on type '{}'.
+../shared/long-session-continuity.ts(335,77): error TS2339: Property 'metadata' does not exist on type '{}'.
+../shared/long-session-continuity.ts(339,31): error TS2339: Property 'id' does not exist on type '{}'.
+../shared/long-session-continuity.ts(356,56): error TS7006: Parameter 'node' implicitly has an 'any' type.
+../shared/long-session-continuity.ts(362,53): error TS2339: Property 'status' does not exist on type '{}'.
+../shared/long-session-continuity.ts(368,21): error TS2339: Property 'title' does not exist on type '{}'.
+../shared/long-session-continuity.ts(368,85): error TS2339: Property 'title' does not exist on type '{}'.
+../shared/long-session-continuity.ts(373,47): error TS2339: Property 'id' does not exist on type '{}'.
+../shared/long-session-continuity.ts(373,76): error TS2339: Property 'id' does not exist on type '{}'.
+../shared/types/session-activity.ts(1,42): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './git.js'?
+../shared/types/session-activity.ts(2,45): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './session-effective-policy.js'?
+../shared/types/session-activity.ts(3,45): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './session-stage.js'?
+../shared/types/session-activity.ts(4,40): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './session-derivation.js'?
+../shared/types/session-activity.ts(5,51): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../long-session-resource-reclamation.js'?
+../shared/types/session-delegation.ts(1,61): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './workspace.js'?
