@@ -22,8 +22,9 @@ let sampler: EfficiencySampler | null = null;
 let policy: EfficiencyPowerPolicy | null = null;
 let started = false;
 let unsubscribeWindowEvents: (() => void) | null = null;
+let unsubscribePowerEvents: (() => void) | null = null;
 let backgroundGateUnregister: (() => void) | null = null;
-let backgroundGateInFlight = false;
+let efficiencyGeneration = 0;
 
 function getOrCreate(): { sampler: EfficiencySampler; policy: EfficiencyPowerPolicy } {
   if (!sampler) {
@@ -56,11 +57,14 @@ function startBackgroundWorkGate(
   activePolicy: EfficiencyPowerPolicy,
 ): void {
   if (backgroundGateUnregister) return;
+  const generation = efficiencyGeneration;
+  let inFlight = false;
   const update = async (): Promise<void> => {
-    if (backgroundGateInFlight) return;
-    backgroundGateInFlight = true;
+    if (!started || generation !== efficiencyGeneration || inFlight) return;
+    inFlight = true;
     try {
       const snapshot = await getAggregatedResourceEnvelopeSnapshot();
+      if (!started || generation !== efficiencyGeneration) return;
       const physical = snapshot.processTotals;
       getBackgroundWorkGate().update({
         shedSignal: activePolicy.shedding,
@@ -72,7 +76,7 @@ function startBackgroundWorkGate(
     } catch (error) {
       logger.warn('[efficiency] background work gate update failed', error);
     } finally {
-      backgroundGateInFlight = false;
+      inFlight = false;
     }
   };
   void update();
@@ -88,6 +92,7 @@ export function startRuntimeEfficiency(): void {
   const { sampler: activeSampler, policy: activePolicy } = getOrCreate();
 
   activeSampler.start();
+  efficiencyGeneration += 1;
   started = true;
   startBackgroundWorkGate(activePolicy);
   logger.info('[efficiency] runtime efficiency sampling started', {
@@ -106,12 +111,19 @@ export function startRuntimeEfficiency(): void {
     const onSpeedLimit = (event: Electron.Event<{ limit: number }>): void => {
       activePolicy.update({ powerSaver: event.limit < 100 });
     };
+    const onResume = () => activePolicy.update({ powerSaver: powerMonitor.isOnBatteryPower() });
+    const onSuspend = () => activePolicy.update({ displaySleep: true });
+    const onUnlock = () => activePolicy.update({ displaySleep: false });
+    unsubscribePowerEvents = () => {
+      powerMonitor.removeListener('speed-limit-change', onSpeedLimit);
+      powerMonitor.removeListener('resume', onResume);
+      powerMonitor.removeListener('suspend', onSuspend);
+      powerMonitor.removeListener('unlock-screen', onUnlock);
+    };
     powerMonitor.on('speed-limit-change', onSpeedLimit);
-    powerMonitor.on('resume', () => {
-      activePolicy.update({ powerSaver: powerMonitor.isOnBatteryPower() });
-    });
-    powerMonitor.on('suspend', () => activePolicy.update({ displaySleep: true }));
-    powerMonitor.on('unlock-screen', () => activePolicy.update({ displaySleep: false }));
+    powerMonitor.on('resume', onResume);
+    powerMonitor.on('suspend', onSuspend);
+    powerMonitor.on('unlock-screen', onUnlock);
     // Prime the current state so starting under an existing cap is reflected.
     activePolicy.update({ powerSaver: powerMonitor.isOnBatteryPower() });
   } catch (error) {
@@ -132,29 +144,37 @@ export function startRuntimeEfficiency(): void {
  */
 export function attachWindowVisibility(): () => void {
   const { policy: activePolicy } = getOrCreate();
-  const detachers: Array<() => void> = [];
+  const detachers = new Map<BrowserWindow, () => void>();
+  const sync = () => activePolicy.update({
+    windowHidden: ![...detachers.keys()].some(win => !win.isDestroyed() && win.isVisible() && !win.isMinimized()),
+  });
 
   const register = (win: BrowserWindow) => {
-    const sync = () => activePolicy.update({ windowHidden: !win.isVisible() || win.isMinimized() });
+    if (win.isDestroyed() || detachers.has(win)) return;
+    const onClosed = () => { detachers.get(win)?.(); sync(); };
     win.on('hide', sync);
     win.on('show', sync);
     win.on('minimize', sync);
     win.on('restore', sync);
-    sync();
-    detachers.push(() => {
+    win.on('closed', onClosed);
+    detachers.set(win, () => {
       win.removeListener('hide', sync);
       win.removeListener('show', sync);
       win.removeListener('minimize', sync);
       win.removeListener('restore', sync);
+      win.removeListener('closed', onClosed);
+      detachers.delete(win);
     });
+    sync();
   };
 
   for (const win of BrowserWindow.getAllWindows()) register(win);
   const onWindowCreated = (_event: unknown, win: BrowserWindow) => register(win);
   app.on('browser-window-created', onWindowCreated);
+  sync();
 
   return () => {
-    for (const detach of detachers) detach();
+    for (const detach of [...detachers.values()]) detach();
     app.removeListener('browser-window-created', onWindowCreated);
   };
 }
@@ -162,6 +182,8 @@ export function attachWindowVisibility(): () => void {
 /** Stop sampling and detach listeners. Safe to call when not started. */
 export function stopRuntimeEfficiency(): void {
   if (!started) return;
+  started = false;
+  efficiencyGeneration += 1;
   if (backgroundGateUnregister) {
     backgroundGateUnregister();
     backgroundGateUnregister = null;
@@ -169,7 +191,10 @@ export function stopRuntimeEfficiency(): void {
   sampler?.stop();
   unsubscribeWindowEvents?.();
   unsubscribeWindowEvents = null;
-  started = false;
+  unsubscribePowerEvents?.();
+  unsubscribePowerEvents = null;
+  getTimerAligner().setShedding(false);
+  getBackgroundWorkGate().clearObservationPressure();
   logger.info('[efficiency] runtime efficiency sampling stopped');
 }
 
@@ -182,7 +207,7 @@ export function getEfficiencySamples(): ReturnType<EfficiencySampler['getSamples
 }
 
 export function getEfficiencyShedState(): EfficiencyShedState | null {
-  return policy?.getState() ?? null;
+  return started ? policy?.getState() ?? null : null;
 }
 
 export function getBackgroundWorkGateState(): BackgroundWorkGateState | null {
@@ -199,6 +224,5 @@ export function resetRuntimeEfficiencyForTests(): void {
   sampler = null;
   policy = null;
   started = false;
-  backgroundGateInFlight = false;
   resetBackgroundWorkGateForTest();
 }

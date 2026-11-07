@@ -1,0 +1,1248 @@
+{
+  "schema": "clawx.multi-window-resources/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "task": "TF-0832",
+  "candidate": {
+    "commit": "8271514d082af1aeb38be4cda4260870b6ac88fb",
+    "tree": "11dd2f36db3e3c55aba2bfcc672eb277981ce8bb",
+    "dirty": false
+  },
+  "cleanAfter": true,
+  "tests": {
+    "numTotalTests": 141,
+    "numPassedTests": 141,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "success": true
+  },
+  "cases": [
+    {
+      "name": "cleanup preserves a reused PID and terminates only its recorded process identity",
+      "status": "passed"
+    },
+    {
+      "name": "Electron creation time matches the native process identity",
+      "status": "passed"
+    },
+    {
+      "name": "git api coalesces concurrent status reads and reuses a fresh cached status",
+      "status": "passed"
+    },
+    {
+      "name": "git api invalidates the repo status cache after a successful write",
+      "status": "passed"
+    },
+    {
+      "name": "git api invalidates a cached status when a direct commit succeeds",
+      "status": "passed"
+    },
+    {
+      "name": "git api parses porcelain v2 status into branch and change buckets",
+      "status": "passed"
+    },
+    {
+      "name": "git api returns side-by-side content with staged file diffs",
+      "status": "passed"
+    },
+    {
+      "name": "git api fails closed when a file diff exceeds the local Git patch limit",
+      "status": "passed"
+    },
+    {
+      "name": "git api downgrades a parsed file patch when trusted Git status is missing",
+      "status": "passed"
+    },
+    {
+      "name": "git api blocks normal writes in read-only mode before git add",
+      "status": "passed"
+    },
+    {
+      "name": "git api requires approval for dangerous push and consumes approved requests",
+      "status": "passed"
+    },
+    {
+      "name": "git api explains why a dangerous git operation is graded that way in the approval reason",
+      "status": "passed"
+    },
+    {
+      "name": "git api states the refspec scope when no target branch can be determined",
+      "status": "passed"
+    },
+    {
+      "name": "git api distinguishes reset --hard from reset --soft in the approval reason",
+      "status": "passed"
+    },
+    {
+      "name": "git api requires approval before reverting a tracked file and restores index plus worktree after approval",
+      "status": "passed"
+    },
+    {
+      "name": "git api uses git clean for approved untracked file reverts",
+      "status": "passed"
+    },
+    {
+      "name": "git api lists stashes and creates a stash with message and untracked files",
+      "status": "passed"
+    },
+    {
+      "name": "git api requires dangerous approval for stash apply and pop",
+      "status": "passed"
+    },
+    {
+      "name": "git api only allows worktree remove for paths registered with the repository",
+      "status": "passed"
+    },
+    {
+      "name": "git api adds a worktree by creating a new branch with the correct argument order",
+      "status": "passed"
+    },
+    {
+      "name": "git api adds a worktree for an existing branch without -b",
+      "status": "passed"
+    },
+    {
+      "name": "git api defaults new worktree start point to HEAD when omitted",
+      "status": "passed"
+    },
+    {
+      "name": "git api blocks new worktree creation when the target branch already exists",
+      "status": "passed"
+    },
+    {
+      "name": "git api blocks existing-branch worktree creation when that branch is already checked out",
+      "status": "passed"
+    },
+    {
+      "name": "git api requires dangerous approval for custom worktree paths outside the workspace and repo sibling area",
+      "status": "passed"
+    },
+    {
+      "name": "git api treats a drive-root parent as unsafe: custom sibling paths still require approval",
+      "status": "passed"
+    },
+    {
+      "name": "git api creates GitHub PRs with explicit base/head/draft args after dangerous approval",
+      "status": "passed"
+    },
+    {
+      "name": "git api preflights missing base branch with actionable error before creating a PR",
+      "status": "passed"
+    },
+    {
+      "name": "git api reuses an existing open PR for the head branch instead of creating a duplicate",
+      "status": "passed"
+    },
+    {
+      "name": "git api hardens git exec: hooks disabled, no locks, no prompts, fsmonitor off, bounded timeout",
+      "status": "passed"
+    },
+    {
+      "name": "git api resolves merge-base between HEAD and a base branch",
+      "status": "passed"
+    },
+    {
+      "name": "git api returns reflog entries for the complete repository lifecycle",
+      "status": "passed"
+    },
+    {
+      "name": "git api routes merge, rebase, and reset through dangerous Git approval",
+      "status": "passed"
+    },
+    {
+      "name": "git api rejects unsafe or missing refs for merge-base",
+      "status": "passed"
+    },
+    {
+      "name": "git api applyPatch preflight reports conflicts without approval or writes",
+      "status": "passed"
+    },
+    {
+      "name": "git api applyPatch apply mode requires dangerous approval then writes",
+      "status": "passed"
+    },
+    {
+      "name": "git api applyPatch reports skipped and applied paths from real git output",
+      "status": "passed"
+    },
+    {
+      "name": "git api applyPatch counts a --reject partial apply as conflicted, not applied",
+      "status": "passed"
+    },
+    {
+      "name": "git api applyPatch fails closed on a conflicting patch without requesting approval",
+      "status": "passed"
+    },
+    {
+      "name": "git api applyPatch approval is bound to the patch content, not just the target files",
+      "status": "passed"
+    },
+    {
+      "name": "git api applyPatch rejects non-diff input before any git call",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase derives the upstream branch and reports how the base was resolved",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase falls back to origin/HEAD when the branch has no upstream",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase reports unavailable instead of guessing when no remote ancestor exists",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase prefers origin over a nearer non-origin ancestor",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase falls back to configured remote order when there is no origin",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase finds a base in a repo whose only remote is not named origin",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase ignores */HEAD pseudo-refs when scanning for a base",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase skips unsafe scanned refs and reports unavailable when none remain",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase reads line counts from one numstat call and skips per-file diffs",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase returns patches only when asked, and marks binary files",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase reports unavailable when base and HEAD share no common ancestor",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase rejects unsafe explicit base refs and reports a missing ref as unavailable",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase keeps the destination path for renames in name-status output",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase never writes: no approval is requested and no mutating git runs",
+      "status": "passed"
+    },
+    {
+      "name": "git api keeps the tail of oversized diff output",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade routes handoff creation through Main with the source session and edited draft",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade routes the typed session stop surface through the sessions module",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade calls settings.getAll through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade routes diagnostics.exportSupportBundle through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade throws response errors",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade calls settings.setMany and reset through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade routes project rules methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade routes agent browser methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade routes code review methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade routes Remote Forge reads through the typed host facade",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade routes openclaw, shell, dialog, window, and updates methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade routes uv installer setup through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade routes dcsProdFlags methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade routes vtoken methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade routes git methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade passes log file path and tail lines through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade calls channels.accounts through hostInvoke with options",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade passes channel credential validation payload through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade passes channel target lookup payload through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade calls agents.list through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade calls providers.list through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade passes provider validation payload through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade passes provider OAuth requests through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade calls chat.sendWithMedia through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade calls work provider APIs through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade calls knowledge APIs through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade calls sessions.summaries through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade calls session compaction methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade calls clawGraph methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade calls cron.list through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade calls skills.clawhubList through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade calls usage.recentTokenHistory through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade calls observability queryTraces through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade calls observability trajectorySessions and trajectoryHistory through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade calls observability reportTrace through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade keeps hostApi response types on facade methods instead of call-site generics",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade uses a function-shaped host API contract to type host invocations",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade keeps async handler flexibility out of the renderer-facing host API contract",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade keeps production main, preload, renderer, and shared imports on their side of the boundary",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade lets service handlers inherit payload types from the host API contract",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade does not keep hostApi-covered legacy direct IPC channels registered",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade does not keep uninvoked direct IPC channels registered",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade does not keep the legacy unified app:request client path",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade does not keep legacy IPC helper exports or production call sites",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade keeps hostApi response shapes imported from the facade instead of redeclared by consumers",
+      "status": "passed"
+    },
+    {
+      "name": "hostApi facade keeps diagnostics on the extension-contributed host API path",
+      "status": "passed"
+    },
+    {
+      "name": "hostEvents subscribes to gateway status over IPC",
+      "status": "passed"
+    },
+    {
+      "name": "hostEvents passes typed app navigation payloads from IPC callbacks",
+      "status": "passed"
+    },
+    {
+      "name": "hostEvents subscribes to chat runtime events over IPC",
+      "status": "passed"
+    },
+    {
+      "name": "hostEvents subscribes to subagent lifecycle events over IPC",
+      "status": "passed"
+    },
+    {
+      "name": "hostEvents subscribes to mission lifecycle events over IPC",
+      "status": "passed"
+    },
+    {
+      "name": "hostEvents subscribes to observability runtime events over IPC",
+      "status": "passed"
+    },
+    {
+      "name": "hostEvents subscribes to observability trajectory supply events over IPC",
+      "status": "passed"
+    },
+    {
+      "name": "hostEvents subscribes to Office Tools install events over IPC",
+      "status": "passed"
+    },
+    {
+      "name": "hostEvents subscribes to dynamic channel QR events",
+      "status": "passed"
+    },
+    {
+      "name": "hostEvents does not create EventSource fallback",
+      "status": "passed"
+    },
+    {
+      "name": "resource measurement owners holds background work for a busy Gateway while Main is idle and waits for measured recovery",
+      "status": "passed"
+    },
+    {
+      "name": "resource measurement owners projects the existing Gateway event-loop classification with an epoch and clears it on stop",
+      "status": "passed"
+    },
+    {
+      "name": "resource measurement owners feeds fresh event-loop pressure to the existing background gate",
+      "status": "passed"
+    },
+    {
+      "name": "resource observer lifetime recovers from synchronous and asynchronous polling failures without overlapping work",
+      "status": "passed"
+    },
+    {
+      "name": "resource observer lifetime uses native visibility over Chromium and ignores an older visibility response",
+      "status": "passed"
+    },
+    {
+      "name": "resource observer lifetime shares a single refresh and releases only the final observer",
+      "status": "passed"
+    },
+    {
+      "name": "resource observer lifetime ignores a stopped generation response and shares explicit refreshes",
+      "status": "passed"
+    },
+    {
+      "name": "resource observer lifetime does not issue shed requests while hidden and refreshes when visible",
+      "status": "passed"
+    },
+    {
+      "name": "read-only query cache coalesces concurrent loads and honors TTL without caching rejections",
+      "status": "passed"
+    },
+    {
+      "name": "read-only query cache invalidates a cache prefix explicitly",
+      "status": "passed"
+    },
+    {
+      "name": "poll scheduler priority does not run background polls while shed, but never suppresses interactive polls",
+      "status": "passed"
+    },
+    {
+      "name": "poll scheduler stops callbacks while hidden or blocked and never overlaps work",
+      "status": "passed"
+    },
+    {
+      "name": "window resource lifetimes publishes per-window native visibility and releases bridge listeners on close",
+      "status": "passed"
+    },
+    {
+      "name": "window resource lifetimes aggregates visibility and detaches a closed window before reopen",
+      "status": "passed"
+    },
+    {
+      "name": "window resource lifetimes releases power listeners on stop and creates one set on restart",
+      "status": "passed"
+    },
+    {
+      "name": "window resource lifetimes ignores a late pressure result after stopping and restarting its generation",
+      "status": "passed"
+    },
+    {
+      "name": "window resource lifetimes releases observation pressure on stop without dropping queued work",
+      "status": "passed"
+    },
+    {
+      "name": "runtime efficiency host api fails closed to not-sampled before any real sample",
+      "status": "passed"
+    },
+    {
+      "name": "runtime efficiency host api persists the toggle and starts or stops the sampler",
+      "status": "passed"
+    },
+    {
+      "name": "runtime efficiency host api rejects a non-boolean payload instead of guessing",
+      "status": "passed"
+    },
+    {
+      "name": "session storage with real Git and files measures files, marks bounded scans and never follows junctions",
+      "status": "passed"
+    },
+    {
+      "name": "session storage with real Git and files reports real worktrees and protects primary, dirty, locked and registered checkouts",
+      "status": "passed"
+    },
+    {
+      "name": "session storage with real Git and files retains the branch after approved idle removal and rejects stale cleanup of new changes",
+      "status": "passed"
+    },
+    {
+      "name": "session storage with real Git and files sizes session transcripts and releases only the exact workspace/session owners",
+      "status": "passed"
+    },
+    {
+      "name": "system notification boundary applies the sidebar traffic-light position through the registered window service",
+      "status": "passed"
+    },
+    {
+      "name": "system notification boundary fails closed when the preference is off",
+      "status": "passed"
+    },
+    {
+      "name": "system notification boundary rejects invalid copy and delivers normalized attention notifications",
+      "status": "passed"
+    },
+    {
+      "name": "system notification boundary only accepts in-app routes and ignores unsupported hosts",
+      "status": "passed"
+    },
+    {
+      "name": "system notification boundary focuses and navigates only through the validated internal route on click",
+      "status": "passed"
+    }
+  ],
+  "commands": [
+    {
+      "id": "harness-context",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "context",
+        "--spec",
+        "harness/specs/tasks/multi-window-resource-observers-20261107.md"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 360
+    },
+    {
+      "id": "harness-validate",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/multi-window-resource-observers-20261107.md"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 1531
+    },
+    {
+      "id": "harness-run",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/multi-window-resource-observers-20261107.md",
+        "--dry-run"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 1140
+    },
+    {
+      "id": "unit",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/resource-window-lifecycle.test.ts",
+        "tests/unit/resource-observer-lifecycle.test.ts",
+        "tests/unit/resource-p1-schedulers.test.ts",
+        "tests/unit/runtime-efficiency-api.test.ts",
+        "tests/unit/resource-metrics-owner.test.ts",
+        "tests/unit/session-storage-api.test.ts",
+        "tests/unit/git-api.test.ts",
+        "tests/unit/host-events.test.ts",
+        "tests/unit/system-notifications-api.test.ts",
+        "tests/unit/electron-process-identity.test.ts",
+        "tests/unit/host-api-facade.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\tf0832\\final\\unit.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 81188
+    },
+    {
+      "id": "node-types",
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 49140
+    },
+    {
+      "id": "web-types",
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 12609
+    },
+    {
+      "id": "test-types",
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "D:/tmp/tf0832/focused-tests.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 1422
+    },
+    {
+      "id": "lint",
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "electron/main/index.ts",
+        "electron/main/window-visibility.ts",
+        "electron/services/efficiency-orchestrator.ts",
+        "electron/services/system-notifications-api.ts",
+        "openclaw_runtime/src/resources/background-work-gate.ts",
+        "shared/host-api/contract.ts",
+        "shared/host-events/contract.ts",
+        "src/components/chat/ResourceChip.tsx",
+        "src/lib/host-api.ts",
+        "src/lib/host-events.ts",
+        "src/lib/poll-scheduler.ts",
+        "src/stores/resource-tracker.ts",
+        "tests/e2e/fixtures/electron-process-cleanup.ts",
+        "tests/e2e/fixtures/electron.ts",
+        "tests/e2e/fixtures/windows-process.ts",
+        "tests/e2e/resource-window-lifecycle.spec.ts",
+        "tests/unit/electron-process-identity.test.ts",
+        "tests/unit/resource-metrics-owner.test.ts",
+        "tests/unit/resource-observer-lifecycle.test.ts",
+        "tests/unit/resource-window-lifecycle.test.ts",
+        "tests/unit/runtime-efficiency-api.test.ts",
+        "--format=json",
+        "--output-file",
+        "D:\\tmp\\tf0832\\final\\lint.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 6094
+    },
+    {
+      "id": "contract",
+      "argv": [
+        "node",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 3812
+    },
+    {
+      "id": "i18n",
+      "argv": [
+        "node",
+        "scripts/i18n-lint.mjs"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 422
+    },
+    {
+      "id": "comms-replay",
+      "argv": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 281
+    },
+    {
+      "id": "comms-compare",
+      "argv": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 203
+    },
+    {
+      "id": "retention",
+      "argv": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 7906
+    },
+    {
+      "id": "diff",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "7d0c332b0eb5bc2ba5bcc9fe3b95117408fdec57",
+        "HEAD"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 157
+    }
+  ],
+  "sources": [
+    {
+      "path": "electron/main/index.ts",
+      "sha256": "4e6fe83d4403b9e654d7a7459f67992c7837fee99ccc7821427f077ee5336147"
+    },
+    {
+      "path": "electron/main/window-visibility.ts",
+      "sha256": "e96c2642483e606595cff9855fe2b7a2329b26b672f87a165648f666193e6475"
+    },
+    {
+      "path": "electron/services/efficiency-orchestrator.ts",
+      "sha256": "218fb0fdbd0b841afb5aab5268bfc5fd71f41061999e544032cca13cb36bd3e1"
+    },
+    {
+      "path": "electron/services/system-notifications-api.ts",
+      "sha256": "3716ec9e64bbfdbcefb978fb6d27b5c3cad0ca9a48e77efe7804a838f8c1db30"
+    },
+    {
+      "path": "harness/specs/rules/resource-observer-lifetime.md",
+      "sha256": "ebe622c3653f6b60dc0d250bd21a36de1fc26eae4998548e54ce23df98bce75f"
+    },
+    {
+      "path": "harness/specs/tasks/multi-window-resource-observers-20261107.md",
+      "sha256": "f70848679cdde2d8f26ae81df83427b7458c47cafb07301c7fde03d2a171feb9"
+    },
+    {
+      "path": "openclaw_runtime/src/resources/background-work-gate.ts",
+      "sha256": "d5dd54a337748aa17b496952071b295cae95ec093fbbf06d03f63d1fb883ef06"
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "sha256": "c4fef6641af497901e6d5016d09c8f7780e20af5cdd30247487579e850b81c92"
+    },
+    {
+      "path": "shared/host-events/contract.ts",
+      "sha256": "b8f4e32b4428cd53fee751302b4f0abb89058575c71e1a5542a11f931ad399df"
+    },
+    {
+      "path": "src/components/chat/ResourceChip.tsx",
+      "sha256": "910174dec6323fba7d535701c039eff3555e58cde2ef0dbd37b119821610eeed"
+    },
+    {
+      "path": "src/lib/host-api.ts",
+      "sha256": "0586dd6792bd56b19370d1cf0d032b1ffc6b3c5456ec38cbebd67527f87b14b8"
+    },
+    {
+      "path": "src/lib/host-events.ts",
+      "sha256": "a5670411192dd610800a3f42d9753c2e319a69fd824ec2865c5d5c9ef4b22916"
+    },
+    {
+      "path": "src/lib/poll-scheduler.ts",
+      "sha256": "3b179f08112457310dc8cf2a5d33e155e907ddd9fc7b183f810cc96bc1c361e9"
+    },
+    {
+      "path": "src/stores/resource-tracker.ts",
+      "sha256": "8565564a59a061badc021fc36d687baca446ca13f8a4e5547aa90294de9562b4"
+    },
+    {
+      "path": "tests/e2e/fixtures/electron-process-cleanup.ts",
+      "sha256": "24ef4b912c99194f6f59779fbf0e712540512b530afd8be446435dc025dbd0d4"
+    },
+    {
+      "path": "tests/e2e/fixtures/electron.ts",
+      "sha256": "5d2c7caa974e962a38398458135f8909e7d65cb8c24b6bfb84b60ce673c742d5"
+    },
+    {
+      "path": "tests/e2e/fixtures/windows-process.ts",
+      "sha256": "8f706c9ed693815357c36afbd1e3a434db4825427a6468202028038e636f32ba"
+    },
+    {
+      "path": "tests/e2e/resource-window-lifecycle.spec.ts",
+      "sha256": "868ebe2bbfa0c2c66cdb0f8c6c55c7370ab364f602c15094fd3f8c4565a90ae5"
+    },
+    {
+      "path": "tests/unit/electron-process-identity.test.ts",
+      "sha256": "dceffbda6de827d81f95043070e980c42b208feb7032cb291c559d1c09c1935d"
+    },
+    {
+      "path": "tests/unit/resource-metrics-owner.test.ts",
+      "sha256": "63cdd67190a06d078f5437bda1e76db959c9a0cd3aafcf92fd9b5b6c57ca07bb"
+    },
+    {
+      "path": "tests/unit/resource-observer-lifecycle.test.ts",
+      "sha256": "a97bb5fc8598054fd189dff82a1b2895251550f3ca2ae67bb2c0d57513216814"
+    },
+    {
+      "path": "tests/unit/resource-window-lifecycle.test.ts",
+      "sha256": "5ee985879bcba202bf403ec9ee40462eee4875b5df7e205963c3609cca781f87"
+    },
+    {
+      "path": "tests/unit/runtime-efficiency-api.test.ts",
+      "sha256": "37e5fab18d51bf81aa28d9b61f8f6a76f0eb1b9c4ca7069e55da972a58b8983b"
+    }
+  ],
+  "dependencies": {
+    "root": "D:\\tmp\\tf0832\\dependency-view\\node_modules",
+    "runtime": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\node_modules"
+  },
+  "verdict": "pass-multi-window-observers",
+  "e2e": {
+    "stats": {
+      "startTime": "2026-11-07T15:53:18.731Z",
+      "duration": 89191.821,
+      "expected": 2,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "command": "node node_modules/@playwright/test/cli.js test tests/e2e/resource-window-lifecycle.spec.ts tests/e2e/session-worktree-storage.spec.ts --workers=1 --reporter=list,json --output=D:/tmp/tf0832/e2e-results10",
+    "exitCode": 0,
+    "report": "D:\\tmp\\tf0832\\e2e10.json",
+    "sourceMutationGuard": true,
+    "survivors": 0,
+    "observations": {
+      "hiddenBefore": {
+        "resourcePolls": 3,
+        "stopControls": 0,
+        "efficiencyReads": 4
+      },
+      "hiddenAfter": {
+        "resourcePolls": 3,
+        "stopControls": 0,
+        "efficiencyReads": 4
+      },
+      "beforeLeave": {
+        "resourcePolls": 4,
+        "stopControls": 0,
+        "efficiencyReads": 8
+      },
+      "afterLeave": {
+        "resourcePolls": 4,
+        "stopControls": 0,
+        "efficiencyReads": 8
+      },
+      "observersBeforeLeave": 2,
+      "observersAfterLeave": 0,
+      "backgroundHeartbeat": 65
+    },
+    "buildSourceCommit": "3b7f88de2c0d9e912df9d071d3ee39a3a560c179",
+    "productSourcesIdenticalToCandidate": true
+  },
+  "negativeControls": {
+    "failedOnPriorSource": 7,
+    "runs": [
+      "window-negative.json",
+      "observer-negative.json",
+      "destroyed-window-negative.json"
+    ]
+  },
+  "storageIntegration": {
+    "commit": "7d0c332b0eb5bc2ba5bcc9fe3b95117408fdec57",
+    "currentCandidateE2e": "passed",
+    "historicalAcceptanceRetained": true
+  },
+  "integrationSources": [
+    {
+      "path": ".gitignore",
+      "sha256": "c7b40f4a45bdd8e97d5a4c89e7c7dc22deb817c7c40e3d30170b1dd4981d1200"
+    },
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "24adcd98c4681ef8d62d02f540eb78a1150266d1f8941d2f5ae804d45fc18c1b"
+    },
+    {
+      "path": "README.md",
+      "sha256": "274ba40d73bb48a7d706fc5bd9ef898783d5e26ae542c2e89baf165bc561a0f8"
+    },
+    {
+      "path": "README.ru-RU.md",
+      "sha256": "658a382c453523338569c7945bbdabfe2ef72b4fdc1772dc5d3b47a87ee49ca8"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "584c911c4cf5f9ea293d6bbc766dcad559d1e7cd773f7484360e70bbbe175a2b"
+    },
+    {
+      "path": "docs/dev/session-worktree-storage.md",
+      "sha256": "c0e5e462fec705350637a8d9e5cb0b670c2459d8250c951c7f9e0df79c47b99c"
+    },
+    {
+      "path": "electron/main/index.ts",
+      "sha256": "4e6fe83d4403b9e654d7a7459f67992c7837fee99ccc7821427f077ee5336147"
+    },
+    {
+      "path": "electron/main/ipc-handlers.ts",
+      "sha256": "5a0b6551b416ae23a854634fbfd856f7c6afbf8bde9ff641539a49adf6422d0f"
+    },
+    {
+      "path": "electron/main/window-visibility.ts",
+      "sha256": "e96c2642483e606595cff9855fe2b7a2329b26b672f87a165648f666193e6475"
+    },
+    {
+      "path": "electron/services/efficiency-orchestrator.ts",
+      "sha256": "218fb0fdbd0b841afb5aab5268bfc5fd71f41061999e544032cca13cb36bd3e1"
+    },
+    {
+      "path": "electron/services/git-api.ts",
+      "sha256": "991ed87fa9b781a99a932462847c0e1a560ea456adbc66813d1db104f7832ec4"
+    },
+    {
+      "path": "electron/services/session-storage-api.ts",
+      "sha256": "f907361ac49adf1d03c1bb5179d8ab408cad333543c825508523797fdcfc64b0"
+    },
+    {
+      "path": "electron/services/system-notifications-api.ts",
+      "sha256": "3716ec9e64bbfdbcefb978fb6d27b5c3cad0ca9a48e77efe7804a838f8c1db30"
+    },
+    {
+      "path": "harness/specs/fixtures/session-worktree-storage/20261107/README.md",
+      "sha256": "68b9e20af5cc23b6609a54e0f0341d1fb2ce58be8e5c1b736e498a0077842a69"
+    },
+    {
+      "path": "harness/specs/fixtures/session-worktree-storage/20261107/SHA256SUMS",
+      "sha256": "8a79a8c8879a6342edb29ac062e9d23fb9577a8241ea28bbeb240a4f4bb60978"
+    },
+    {
+      "path": "harness/specs/fixtures/session-worktree-storage/20261107/acceptance.json",
+      "sha256": "edf0e5194a64f86c54ff1fc7ee176c890e78e9c31fd62d45df4c033d876547cc"
+    },
+    {
+      "path": "harness/specs/fixtures/session-worktree-storage/20261107/electron-cleanup.json",
+      "sha256": "8552efb9a5c46a8568495e4d4e779357c6e1b699acadc9a0f0b4552a4dbc5eed"
+    },
+    {
+      "path": "harness/specs/fixtures/session-worktree-storage/20261107/harness-scoped.json",
+      "sha256": "007de72ea3639896b87b8d3fb488a587c970307955ab14f63ccbf71192346468"
+    },
+    {
+      "path": "harness/specs/fixtures/session-worktree-storage/20261107/raw-evidence-index.json",
+      "sha256": "182dbb7ea5353e2c8e7172e3c89715004407956ca7d6ff031e501218e7953892"
+    },
+    {
+      "path": "harness/specs/fixtures/session-worktree-storage/20261107/report.json",
+      "sha256": "4cf9cf7c9a10dbb179bc7c9a60f0e666dfae342355ca915c97a0f9b43931099c"
+    },
+    {
+      "path": "harness/specs/fixtures/session-worktree-storage/20261107/resource-release-confirm.png",
+      "sha256": "4a2475a95993d3943608d3a896b5c62c830f64876bb9db8b5d61fe2a418daa7b"
+    },
+    {
+      "path": "harness/specs/fixtures/session-worktree-storage/20261107/source-mutation-guard.json",
+      "sha256": "f445a0213fee0baa0fb06c31885bb7e998a36a51a581b450d733a9df95f9261f"
+    },
+    {
+      "path": "harness/specs/fixtures/session-worktree-storage/20261107/sources.json",
+      "sha256": "adde2872ad3c46138b762e76bf69d5901663a80cd56f1291b747e7ed5a6e4cf9"
+    },
+    {
+      "path": "harness/specs/fixtures/session-worktree-storage/20261107/storage-dark-1280.png",
+      "sha256": "71a65de808be8bbaf9eaa3148c1da284f9abb46105bb148d0a9938fc47205b2a"
+    },
+    {
+      "path": "harness/specs/fixtures/session-worktree-storage/20261107/storage-light-760.png",
+      "sha256": "3b43ad2d6f2c9be0ef45c860b68dce58554fa18c26421280ea1a8eea3487a396"
+    },
+    {
+      "path": "harness/specs/fixtures/session-worktree-storage/20261107/storage-light.png",
+      "sha256": "b33d24aaf3744c2573e2ca460611f9d8a259845718260e2c175e94844412cc6e"
+    },
+    {
+      "path": "harness/specs/fixtures/session-worktree-storage/20261107/worktree-create-light.png",
+      "sha256": "e46b84e6d737f2b74782e3758570bd17a78e65f51aea07bd7c13b33690c41e9f"
+    },
+    {
+      "path": "harness/specs/fixtures/session-worktree-storage/20261107/worktree-remove-confirm.png",
+      "sha256": "e3f43d4ae1c27af5d1a328443587edef1f5d2bfc2962c392081278ab9a2ccd30"
+    },
+    {
+      "path": "harness/specs/fixtures/session-worktree-storage/20261107/worktrees-light.png",
+      "sha256": "749dde72ef154ca43fd37a468bcbfb8ae99022f101e1f5bde28238dc5a8fb878"
+    },
+    {
+      "path": "harness/specs/rules/resource-observer-lifetime.md",
+      "sha256": "ebe622c3653f6b60dc0d250bd21a36de1fc26eae4998548e54ce23df98bce75f"
+    },
+    {
+      "path": "harness/specs/rules/session-storage-ownership.md",
+      "sha256": "b144ea278cf2ec2fdbd78b0c9abd9829c7cf2c787701eba1c88fb884641628c7"
+    },
+    {
+      "path": "harness/specs/tasks/multi-window-resource-observers-20261107.md",
+      "sha256": "f70848679cdde2d8f26ae81df83427b7458c47cafb07301c7fde03d2a171feb9"
+    },
+    {
+      "path": "harness/specs/tasks/session-worktree-storage.md",
+      "sha256": "79b91f323b53616c0b56bc56b0488dce31d036dba8e7be804a61b04dc7251b25"
+    },
+    {
+      "path": "openclaw_runtime/src/resources/background-work-gate.ts",
+      "sha256": "d5dd54a337748aa17b496952071b295cae95ec093fbbf06d03f63d1fb883ef06"
+    },
+    {
+      "path": "scripts/repository-artifacts.json",
+      "sha256": "33ac9d3482e29889e067203aaac915b6baff3535894a3bd6c57c3a9018dbba69"
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "sha256": "c4fef6641af497901e6d5016d09c8f7780e20af5cdd30247487579e850b81c92"
+    },
+    {
+      "path": "shared/host-events/contract.ts",
+      "sha256": "b8f4e32b4428cd53fee751302b4f0abb89058575c71e1a5542a11f931ad399df"
+    },
+    {
+      "path": "shared/i18n/locales/en/chat.json",
+      "sha256": "0c2bdfc6b1b5149e97ba93b8553e45b70966e99faa80b6a05b2bce99b80b3ff7"
+    },
+    {
+      "path": "shared/i18n/locales/en/settings.json",
+      "sha256": "c5c7902471b48341bd80720cb98de5c43a3b723447378f96f775473d3eca5fbf"
+    },
+    {
+      "path": "shared/i18n/locales/ja/chat.json",
+      "sha256": "b28350c139ee19939f8caed3304069da5ba82b80774d3098a29b7a51fa8fd416"
+    },
+    {
+      "path": "shared/i18n/locales/ja/settings.json",
+      "sha256": "176ab683cba891932b3201af502181e3820780a19721e268c9d096ecc87b93eb"
+    },
+    {
+      "path": "shared/i18n/locales/ru/chat.json",
+      "sha256": "36d5c759296a39d0bae212876a43947c8ab0233ecc66513fc1d67f6f87b8b508"
+    },
+    {
+      "path": "shared/i18n/locales/ru/settings.json",
+      "sha256": "fed74161e8c862fcef81535fd3d9645f81659171dfcec20defadae871105d7f7"
+    },
+    {
+      "path": "shared/i18n/locales/zh/chat.json",
+      "sha256": "5abe851d50f4dc6ccd6cf1fbf86a571172b3e56eb7490d7dccbd0c92acb53b36"
+    },
+    {
+      "path": "shared/i18n/locales/zh/settings.json",
+      "sha256": "0da87349541c2d4a6509a2600429290eda347692ae9a5cfa806f5794aeaf953e"
+    },
+    {
+      "path": "shared/types/git.ts",
+      "sha256": "5fcd62b19eeb3e46d459f062143ec0eb4a11c28bb4dace44ac8b5e60038d2784"
+    },
+    {
+      "path": "shared/types/session-storage.ts",
+      "sha256": "8d098ccfc037cdc9ea7bb08f0a4d264d4a1ca90ecc43b80b9f230d867e895b99"
+    },
+    {
+      "path": "src/components/chat/ComposerPopover.tsx",
+      "sha256": "1ecb7acd5bdf33329d9a97dc67e3703b1a8d517e222c5f7cb38d456377058b6e"
+    },
+    {
+      "path": "src/components/chat/ResourceChip.tsx",
+      "sha256": "910174dec6323fba7d535701c039eff3555e58cde2ef0dbd37b119821610eeed"
+    },
+    {
+      "path": "src/components/chat/SessionWorkspacePicker.tsx",
+      "sha256": "e69b29a97e6e2754584ee848789db6850768eaceba3c644ec9e90841390d34d7"
+    },
+    {
+      "path": "src/lib/host-api.ts",
+      "sha256": "0586dd6792bd56b19370d1cf0d032b1ffc6b3c5456ec38cbebd67527f87b14b8"
+    },
+    {
+      "path": "src/lib/host-events.ts",
+      "sha256": "a5670411192dd610800a3f42d9753c2e319a69fd824ec2865c5d5c9ef4b22916"
+    },
+    {
+      "path": "src/lib/poll-scheduler.ts",
+      "sha256": "3b179f08112457310dc8cf2a5d33e155e907ddd9fc7b183f810cc96bc1c361e9"
+    },
+    {
+      "path": "src/pages/Chat/ChatInput.tsx",
+      "sha256": "c2ec45df8ef60df7f54d5b752c703a713f1cb68e120e9c2623f11e3b0fc70243"
+    },
+    {
+      "path": "src/pages/Chat/ComposerGitStrip.tsx",
+      "sha256": "f5d253fc7207a59d5b850dc94c038fa64bfdee7ee2406cd563dbcf65ebd2692c"
+    },
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "sha256": "8ea575069466b4b1a1b1ed8378a002cef5df91ecaa88bc4bfb8179939ec4abe9"
+    },
+    {
+      "path": "src/pages/Settings/SettingsDrawerRoute.tsx",
+      "sha256": "dcaee563c0d1fd9b73840f972b6317e366f2d52a18782481b5d73abcd8b41f74"
+    },
+    {
+      "path": "src/pages/Settings/SettingsRoute.tsx",
+      "sha256": "73cdb43f2a277ba52f442cbcc0188fc1a4aa84eac7347152ca179978511967a9"
+    },
+    {
+      "path": "src/pages/Settings/SettingsSidebar.tsx",
+      "sha256": "1590f15852cd8f0d19d443b696a8a61e9fee45ba416c0f359b5832599c1842e0"
+    },
+    {
+      "path": "src/pages/Settings/index.tsx",
+      "sha256": "c15a89d03a6c496f789ff64eaa13533faf5109d4057dd889649bc87acd042e60"
+    },
+    {
+      "path": "src/pages/Settings/route-config.ts",
+      "sha256": "df2a0a8ac1086e5d324eb686b9ed20e08906a6392d6f84fdf324cc4d9969eb29"
+    },
+    {
+      "path": "src/pages/Settings/sections/StorageSection.tsx",
+      "sha256": "171bf6c5fd2bcb749604cf1c6132a6b87ac7a6a68907578f9136d975cee42bb0"
+    },
+    {
+      "path": "src/stores/resource-tracker.ts",
+      "sha256": "8565564a59a061badc021fc36d687baca446ca13f8a4e5547aa90294de9562b4"
+    },
+    {
+      "path": "src/styles/codex-composer-menu.css",
+      "sha256": "a152eaeb9b8439f23c09c9bb583ec810f8076314d7447dd69fd340b789cfc2fc"
+    },
+    {
+      "path": "tests/e2e/fixtures/electron-process-cleanup.ts",
+      "sha256": "24ef4b912c99194f6f59779fbf0e712540512b530afd8be446435dc025dbd0d4"
+    },
+    {
+      "path": "tests/e2e/fixtures/electron.ts",
+      "sha256": "5d2c7caa974e962a38398458135f8909e7d65cb8c24b6bfb84b60ce673c742d5"
+    },
+    {
+      "path": "tests/e2e/fixtures/windows-process.ts",
+      "sha256": "8f706c9ed693815357c36afbd1e3a434db4825427a6468202028038e636f32ba"
+    },
+    {
+      "path": "tests/e2e/resource-window-lifecycle.spec.ts",
+      "sha256": "868ebe2bbfa0c2c66cdb0f8c6c55c7370ab364f602c15094fd3f8c4565a90ae5"
+    },
+    {
+      "path": "tests/e2e/session-worktree-storage.spec.ts",
+      "sha256": "b534ff6e61645ac5a19f607febc2bf6c628fa9e5296e1389b18c9192939a7229"
+    },
+    {
+      "path": "tests/unit/electron-process-identity.test.ts",
+      "sha256": "dceffbda6de827d81f95043070e980c42b208feb7032cb291c559d1c09c1935d"
+    },
+    {
+      "path": "tests/unit/resource-metrics-owner.test.ts",
+      "sha256": "63cdd67190a06d078f5437bda1e76db959c9a0cd3aafcf92fd9b5b6c57ca07bb"
+    },
+    {
+      "path": "tests/unit/resource-observer-lifecycle.test.ts",
+      "sha256": "a97bb5fc8598054fd189dff82a1b2895251550f3ca2ae67bb2c0d57513216814"
+    },
+    {
+      "path": "tests/unit/resource-window-lifecycle.test.ts",
+      "sha256": "5ee985879bcba202bf403ec9ee40462eee4875b5df7e205963c3609cca781f87"
+    },
+    {
+      "path": "tests/unit/runtime-efficiency-api.test.ts",
+      "sha256": "37e5fab18d51bf81aa28d9b61f8f6a76f0eb1b9c4ca7069e55da972a58b8983b"
+    },
+    {
+      "path": "tests/unit/session-storage-api.test.ts",
+      "sha256": "4843e86373fa5c053a54bf20e4f5ef02fd49016f6e9a29527a013ee0434b5ad2"
+    }
+  ]
+}

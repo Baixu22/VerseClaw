@@ -13,6 +13,7 @@ import type { TrackedResource } from '@shared/types/resource-tracker';
 import type { WorkspaceCoordinatorBinding, WorkspaceCoordinatorRecovery } from '@shared/types/workspace';
 import type { RuntimeResourceEnvelopeState } from '@shared/host-api/contract';
 import { hostApi } from '@/lib/host-api';
+import { createPollScheduler } from '@/lib/poll-scheduler';
 import { getWorkspaceCoordinatorBinding } from '@/lib/workspace-session';
 import { useChatStore } from '@/stores/chat';
 import { useSessionActivityStore } from '@/stores/session-activity';
@@ -123,7 +124,7 @@ export function ResourceChip() {
   const [nowMs, setNowMs] = useState(() => Date.now());
 
   useEffect(() => {
-    init();
+    return init();
   }, [init]);
 
   useEffect(() => {
@@ -131,8 +132,7 @@ export function ResourceChip() {
   }, [loadCoordinator]);
 
   useEffect(() => {
-    const timer = setInterval(() => setNowMs(Date.now()), 60_000);
-    return () => clearInterval(timer);
+    return createPollScheduler({ intervalMs: 60_000, task: () => setNowMs(Date.now()) });
   }, []);
 
   const totalCount = resources.length;

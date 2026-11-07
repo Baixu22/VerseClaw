@@ -7,7 +7,8 @@ import { getBackgroundWorkGate } from '../../openclaw_runtime/src/resources/back
 const mocks = vi.hoisted(() => ({ snapshot: vi.fn(), publish: vi.fn(), refresh: null as null | (() => Promise<void>) }));
 vi.mock('electron', async () => {
   const { EventEmitter } = await import('node:events');
-  return { app: new EventEmitter(), powerMonitor: Object.assign(new EventEmitter(), { isOnBatteryPower: () => false }), BrowserWindow: { getAllWindows: () => [] } };
+  const win = Object.assign(new EventEmitter(), { isDestroyed: () => false, isVisible: () => true, isMinimized: () => false });
+  return { app: new EventEmitter(), powerMonitor: Object.assign(new EventEmitter(), { isOnBatteryPower: () => false }), BrowserWindow: { getAllWindows: () => [win] } };
 });
 vi.mock('../../electron/utils/logger', () => ({ logger: { info() {}, warn() {} } }));
 vi.mock('../../electron/services/resource-envelope', () => ({ getAggregatedResourceEnvelopeSnapshot: mocks.snapshot }));

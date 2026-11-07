@@ -4,6 +4,7 @@
  */
 import { markPerformance } from '../services/performance-metrics';
 import { app, BrowserWindow, dialog, nativeTheme, session } from 'electron';
+import { registerWindowVisibility } from './window-visibility';
 import { appendFileSync } from 'node:fs';
 import { join } from 'path';
 import { openExternalSafe } from '../utils/safe-open-external';
@@ -898,6 +899,7 @@ async function createWindow(): Promise<BrowserWindow> {
   traceStartup('create-window-browser-window-done');
   registerZoomShortcuts(win);
   markPerformance('window-created');
+  registerWindowVisibility(win);
   if (app.isPackaged) {
     win.webContents.closeDevTools();
     win.webContents.on('before-input-event', (event, input) => {

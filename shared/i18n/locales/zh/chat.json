@@ -1635,6 +1635,11 @@
           "label": "复制最后响应",
           "description": "将最后一条助手响应复制为 markdown。",
           "argumentHint": ""
+        },
+        "storage": {
+          "label": "存储空间",
+          "description": "管理会话文件、运行进程与 Git 工作树。",
+          "argumentHint": ""
         }
       },
       "prompts": {

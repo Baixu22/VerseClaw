@@ -1,5 +1,4 @@
 import electronBinaryPath from 'electron';
-import { spawn } from 'node:child_process';
 import { _electron as electron, expect, test as base, type ElectronApplication, type Locator, type Page } from '@playwright/test';
 import { access, mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { appendFileSync } from 'node:fs';
@@ -7,7 +6,8 @@ import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { recordElectronProcess } from './electron-process-cleanup';
+import { completeElectronLaunch, recordElectronLaunch, recordElectronProcesses } from './electron-process-cleanup';
+import { checkWindowsProcesses, type WindowsProcessCheck, type WindowsProcessIdentity } from './windows-process';
 
 type LaunchElectronOptions = {
   skipSetup?: boolean;
@@ -49,10 +49,6 @@ type ElectronFixtures = {
   launchElectronApp: (options?: LaunchElectronOptions) => Promise<ElectronApplication>;
 };
 
-// Playwright's Windows child handle may identify an exited cmd.exe wrapper.
-// Retain the actual Electron main PID while its inspector is still connected.
-const electronMainProcessIds = new WeakMap<ElectronApplication, number>();
-
 type AgentDevTestWindow = Window & {
   __CLAWX_TEST__?: {
     getSnapshot?: () => unknown;
@@ -68,6 +64,11 @@ function envWithoutUndefined(env: Record<string, string | undefined>): Record<st
 }
 
 const repoRoot = resolve(process.cwd());
+const electronProcesses = new WeakMap<ElectronApplication, {
+  userDataDir: string;
+  identities: WindowsProcessIdentity[];
+  launcher: ReturnType<ElectronApplication['process']>;
+}>();
 const electronEntry = join(repoRoot, 'dist-electron/main/index.js');
 const rendererEntryUrl = pathToFileURL(join(repoRoot, 'dist', 'index.html')).toString();
 
@@ -155,7 +156,7 @@ async function getStableWindow(app: ElectronApplication): Promise<Page> {
 
     if (currentWindow && !currentWindow.isClosed()) {
       try {
-        // Finish the bootstrap load before scenario navigation can replace it.
+        // Preserve Main's bootstrap navigation before scenario navigation starts.
         await currentWindow.waitForURL((url) => url.href !== 'about:blank', { waitUntil: 'load', timeout: 2_000 });
         return currentWindow;
       } catch (error) {
@@ -264,101 +265,65 @@ async function pinWindowContentSize(
   }, size);
 }
 
-/**
- * Kills the Electron process and every descendant it spawned.
- *
- * Closing only the Electron main process leaves its descendants alive -- in
- * particular the Gateway child, which inherits the stdio pipes Playwright created
- * for the app. Node keeps a handle open until every writer closes it, so one
- * surviving descendant stops the worker from ever exiting; Playwright then reports
- * "Worker teardown timeout of 90000ms exceeded ... 1 error was not a part of any
- * test" even though every test passed. Descendants also keep hundreds of MB
- * resident for the rest of the suite. This is separate from an unattributed
- * Node worker 0xC0000409; an Electron 0x80000003 dump does not explain that exit.
- *
- * Best-effort by design: teardown must never throw or hang.
- */
-async function killElectronProcessTree(app: ElectronApplication): Promise<void> {
-  if (process.platform !== 'win32') return;
-  let pid: number | undefined;
+async function bounded<T>(operation: Promise<T>, timeoutMs: number, phase: string): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
   try {
-    pid = electronMainProcessIds.get(app) ?? app.process().pid;
-  } catch {
-    return;
-  }
-  if (!pid) return;
-  // Windows tree enumeration requires the parent to remain alive. Give taskkill
-  // the real main PID first; killing that parent first can orphan its children.
-  await new Promise<void>((resolve) => {
-    try {
-      const killer = spawn('taskkill', ['/F', '/T', '/PID', String(pid)], { stdio: 'ignore', windowsHide: true });
-      let settled = false;
-      const done = () => { if (settled) return; settled = true; resolve(); };
-      killer.on('close', done);
-      killer.on('error', done);
-      setTimeout(() => { if (!settled) { killer.kill(); done(); } }, 5_000).unref();
-    } catch {
-      resolve();
-    }
-  });
-  try { process.kill(pid, 'SIGKILL'); } catch { /* tree already exited */ }
+    return await Promise.race([operation, new Promise<never>((_, reject) => {
+      timer = setTimeout(() => reject(new Error(`${phase} timed out after ${timeoutMs}ms`)), timeoutMs);
+    })]);
+  } finally { clearTimeout(timer); }
 }
 
-async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000): Promise<void> {
-  let closed = false;
-
-  // Windows Electron can ignore app.quit() while a Gateway child still owns
-  // inherited stdio. Kill the owned process tree first, then use the bounded
-  // close races below as the Playwright cleanup path. Without this order the
-  // worker can sit behind a 90s teardown wait despite all tests passing.
-  if (process.platform === 'win32') {
-    await killElectronProcessTree(app);
+async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000) {
+  const owned = electronProcesses.get(app);
+  const errors: string[] = [];
+  let launcher = owned?.launcher;
+  if (!launcher) {
+    try { launcher = app.process(); } catch (error) { errors.push(String(error)); }
   }
-
-  await Promise.race([
-    (async () => {
-      const [closeResult] = await Promise.allSettled([
-        app.waitForEvent('close', { timeout: timeoutMs }),
-        app.evaluate(({ app: electronApp }) => {
-          electronApp.quit();
-        }),
-      ]);
-
-      if (closeResult.status === 'fulfilled') {
-        closed = true;
-      }
-    })(),
-    new Promise((resolve) => setTimeout(resolve, timeoutMs)),
-  ]);
-
-  if (closed) {
-    await killElectronProcessTree(app);
-    return;
+  let snapshotError: string | undefined;
+  if (process.platform === 'win32' && owned) {
+    try {
+      const current = await bounded(app.evaluate(({ app: electronApp }) => electronApp.getAppMetrics()
+        .map(({ pid, creationTime }) => ({ pid, creationTime }))), 2_000, 'Electron process snapshot');
+      owned.identities = [...new Map([...owned.identities, ...current]
+        .map((entry) => [`${entry.pid}:${entry.creationTime}`, entry])).values()];
+      await recordElectronProcesses(owned.userDataDir, current);
+    } catch (error) { snapshotError = String(error); }
   }
-
-  // Bound `app.close()` too. It was awaited without a limit, so when a real
-  // gateway child refused to quit the fixture hung here until Playwright's
-  // 90-second worker-teardown timeout fired and blamed the test that had just
-  // finished -- runtime-launch-contract-fp-p0.spec.ts:271 passed every
-  // assertion (its [fp-p0-02-config-kill] line was logged) and was still
-  // reported as a 7.0m failure.
+  // Playwright must close its inspector before the Windows launcher exits.
+  const closing = app.close().then(() => true, (error: unknown) => { errors.push(String(error)); return false; });
+  let graceful = false;
+  try { graceful = await bounded(closing, timeoutMs, 'Playwright close'); } catch { /* fall back to owned handles */ }
+  let processes: WindowsProcessCheck[] = [];
   try {
-    const closedByPlaywright = await Promise.race([
-      app.close().then(() => true, () => false),
-      new Promise<boolean>((resolve) => setTimeout(() => resolve(false), timeoutMs)),
-    ]);
-    if (closedByPlaywright) return;
-  } catch {
-    // Fall through to process kill if Playwright cannot close the app cleanly.
+    if (process.platform === 'win32' && owned) processes = await checkWindowsProcesses(owned.identities, true);
+  } catch (error) { errors.push(String(error)); }
+  if (launcher && launcher.exitCode === null && launcher.signalCode === null) {
+    // ChildProcess.kill uses the launcher's existing native handle on Windows.
+    const exited = new Promise<void>((resolve) => launcher.once('exit', () => resolve()));
+    try {
+      launcher.kill('SIGKILL');
+      await bounded(exited, timeoutMs, 'Electron launcher exit');
+    } catch (error) { errors.push(String(error)); }
   }
-
-  try {
-    app.process().kill('SIGKILL');
-  } catch {
-    // Ignore process kill failures during e2e teardown.
+  let closeSettled = false;
+  try { closeSettled = await bounded(closing, 2_000, 'Playwright close after launcher exit'); }
+  catch (error) { errors.push(String(error)); }
+  if (owned && processes.some(({ status }) => status === 'alive')) {
+    // A signalled Main can finish after the launcher's pipes close. Read the
+    // same identities again before deciding whether this close left survivors.
+    try { processes = await checkWindowsProcesses(owned.identities); }
+    catch (error) { errors.push(String(error)); }
   }
-
-  await killElectronProcessTree(app);
+  const launcherExited = Boolean(launcher && (launcher.exitCode !== null || launcher.signalCode !== null));
+  const mainExited = process.platform === 'win32'
+    ? Boolean(owned?.identities.length && processes.length === owned.identities.length
+      && processes.every(({ status }) => status === 'exited' || status === 'replaced' || status === 'terminated'))
+    : launcherExited;
+  // Other E2E callers close sockets after this helper. Return exit confirmation
+  // so those cleanups run even when a process or inspector cannot be closed.
+  return { mainExited, launcherExited, graceful, closeSettled, processes, errors, ...(snapshotError ? { snapshotError } : {}) };
 }
 
 async function seedE2eSettings(userDataDir: string, theme?: LaunchElectronOptions['theme']): Promise<void> {
@@ -407,6 +372,7 @@ async function launchVerseClawElectron(
       DISPLAY: process.env.DISPLAY || ':1',
     }
     : {};
+  const pendingLaunch = await recordElectronLaunch(userDataDir);
   const app = await electron.launch({
     executablePath: options.executablePath ?? String(electronBinaryPath),
     args: [
@@ -451,9 +417,18 @@ async function launchVerseClawElectron(
     }),
     timeout: 90_000,
   });
-  const mainProcessId = await app.evaluate(() => process.pid);
-  electronMainProcessIds.set(app, mainProcessId);
-  await recordElectronProcess(profileDir, mainProcessId);
+  const owned = { userDataDir, identities: [] as WindowsProcessIdentity[], launcher: app.process() };
+  electronProcesses.set(app, owned);
+  if (process.platform === 'win32') {
+    try {
+      const identities = await bounded(app.evaluate(({ app: electronApp }) => electronApp.getAppMetrics()
+        .map(({ pid, creationTime }) => ({ pid, creationTime }))), 5_000, 'Electron launch process snapshot');
+      owned.identities = identities;
+      await recordElectronProcesses(userDataDir, identities);
+      await completeElectronLaunch(pendingLaunch);
+    }
+    catch (error) { await closeElectronApp(app); throw error; }
+  }
   /*
    * The app's own output is otherwise swallowed, which makes a stalled turn
    * unattributable from the test side: the composer just goes idle and the

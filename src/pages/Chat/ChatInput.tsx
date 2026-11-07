@@ -329,6 +329,7 @@ const SLASH_COMMANDS = [
   { id: 'pr-summary', group: 'coding', kind: 'prompt', aliases: ['pr'] },
   { id: 'goal', group: 'workflow', kind: 'mission', aliases: ['mission'] },
   { id: 'ledger', group: 'workflow', kind: 'ledger', aliases: ['task'] },
+  { id: 'storage', group: 'session', kind: 'storage' },
   { id: 'compact', group: 'session', kind: 'compact', aliases: ['compress'] },
   { id: 'fork', group: 'session', kind: 'fork' },
   { id: 'handoff', group: 'session', kind: 'handoff' },
@@ -2356,6 +2357,12 @@ export function ChatInput({
       ? t('composer.slashCommands.promptArgs', { args: trimmedArgs })
       : '';
 
+    if (command.kind === 'storage') {
+      clearComposer();
+      navigate('/settings/storage');
+      return;
+    }
+
     if (command.kind === 'wikiSearch') {
       clearComposer();
       setKnowledgeQuery(trimmedArgs);
@@ -2710,6 +2717,7 @@ export function ChatInput({
     onNewSession,
     onKnowledgeModeChange,
     onKnowledgeScopeChange,
+    navigate,
     runKnowledgeSearch,
     selectedKnowledgeRefs,
     sending,

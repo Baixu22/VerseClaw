@@ -1635,6 +1635,11 @@
           "label": "最後の応答をコピー",
           "description": "最後のアシスタント応答を markdown としてコピーします。",
           "argumentHint": ""
+        },
+        "storage": {
+          "label": "ストレージ",
+          "description": "会話ファイル、実行中のプロセス、Git ワークツリーを管理します。",
+          "argumentHint": ""
         }
       },
       "prompts": {

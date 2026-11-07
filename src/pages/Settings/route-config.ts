@@ -10,7 +10,8 @@ export type SettingsSectionId =
   | 'developer'
   | 'billing'
   | 'archived'
-  | 'recovery';
+  | 'recovery'
+  | 'storage';
 
 export const SETTINGS_SECTION_SEGMENTS: Record<Exclude<SettingsSectionId, 'overview'>, string> = {
   general: 'general',
@@ -24,6 +25,7 @@ export const SETTINGS_SECTION_SEGMENTS: Record<Exclude<SettingsSectionId, 'overv
   billing: 'billing',
   archived: 'archived',
   recovery: 'recovery',
+  storage: 'storage',
 };
 
 export function resolveSettingsSection(pathname: string): SettingsSectionId {

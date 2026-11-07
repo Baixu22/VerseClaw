@@ -150,6 +150,7 @@
     "team"
   ],
   "retainedFiles": [
+    "docs/dev/session-worktree-storage.md",
     "artifacts/admission-convergence-20261102/SHA256SUMS",
     "artifacts/admission-convergence-20261102/boundary-diff.json",
     "artifacts/admission-convergence-20261102/candidate.json",

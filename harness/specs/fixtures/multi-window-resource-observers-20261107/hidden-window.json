@@ -1,0 +1,14 @@
+[
+  {
+    "id": 2,
+    "visible": true,
+    "minimized": false,
+    "backgroundThrottling": true
+  },
+  {
+    "id": 1,
+    "visible": false,
+    "minimized": false,
+    "backgroundThrottling": true
+  }
+]
