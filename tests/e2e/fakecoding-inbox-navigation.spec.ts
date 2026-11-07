@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test';
-import { completeSetup, expect, installIpcMocks, test } from './fixtures/electron';
+import { completeSetup, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
 
 const approval = {
   id: 'approval-e2e',
@@ -178,9 +178,11 @@ test.describe('FakeCoding Inbox navigation', () => {
     await expect(page.getByTestId('inbox-source-filter')).toContainText('Remote Tasks');
   });
 
-  test('aggregates all sources, runs real decisions, and refreshes the pending count', async ({ electronApp, page }, testInfo) => {
+  test('aggregates all sources, runs real decisions, and refreshes the pending count', async ({ launchElectronApp }, testInfo) => {
+    const electronApp = await launchElectronApp({ skipSetup: true });
+    const page = await getStableWindow(electronApp);
     await installDynamicInboxMocks(electronApp);
-    await completeSetup(page);
+    await page.reload({ waitUntil: 'domcontentloaded' });
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.getByTestId('sidebar-nav-inbox').click();
 
