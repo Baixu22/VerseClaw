@@ -37,10 +37,14 @@ scope拒绝派发。编排首个子调用前从原session owner绑定generation�
 清空 ResourceEnvelope 等投影后必须能从原 owner 重建占用，不能因此释放尚活跃的资源。
 Main快照从HostAgentBrowserService和TerminalSessionManager重建会话条目；runtime
 快照从活动租约和等待队列重建占用，实际owner关闭后再移除相应条目。
+浏览器loadURL在未产生导航事件前拒绝时，同一导航等待立即清理；旧timer不能
+中断后续导航，失败Promise保持可被调用方观察。
 ConPTY尚未给出PID时保留null，就绪后从原PTY对象更新读取；不把0当成实际进程。
 native终止失败时保留终端owner及占用；部分回收的失败数进入原回执，不能输出全部释放。
 终端close与回收等待原PTY退出回调；kill请求已接受而尚无exit回执时保持占用，
 会话删除仅在其终端owner确认清理后提交terminalClosed。
+浏览器close、会话/工作区回收等待原窗口closed回执并确认窗口销毁；关闭失败或仍在等待
+时保留原会话和占用，同一owner的并发close共用原关闭操作。
 Gateway在fork时保存原native exit回执，同一进程的并发stop共用一个终止请求；
 已有回执可直接消费，没有回执不能凭网络关闭释放进程owner。
 Windows树终止不可用时，对原native PID施加SIGKILL并等待原exit事件；

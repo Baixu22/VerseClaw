@@ -26,6 +26,31 @@ test('R1 rebuilds browser and terminal envelopes from their live desktop owners'
     }, { sessionId: sessionKey, origin });
     const opened = await hostInvoke<{ success: boolean; session: { id: string } }>(app, 'agentBrowser', 'open', { url: origin, waitUntil: 'dom-ready', mode: 'headless', workspaceId, sessionKey });
     expect(opened.success).toBe(true); browserId = opened.session.id;
+    const navigationReadbacks = [];
+    for (const failureMode of ['reject', 'throw'] as const) {
+      const beforeFailure = await app.evaluate(({ BrowserWindow }, input) => {
+        const window = BrowserWindow.getAllWindows().find(window => window.webContents.getURL().startsWith(input.origin));
+        if (!window) throw new Error('Browser owner window is unavailable');
+        const listeners = Object.fromEntries(['did-finish-load', 'dom-ready', 'did-fail-load'].map(name => [name, window.webContents.listenerCount(name)]));
+        const loadURL = window.loadURL;
+        window.loadURL = () => {
+          window.loadURL = loadURL;
+          if (input.failureMode === 'throw') throw new Error('R1 injected loadURL failure');
+          return Promise.reject(new Error('R1 injected loadURL failure'));
+        };
+        return { windowId: window.id, listeners };
+      }, { origin, failureMode });
+      await expect(hostInvoke(app, 'agentBrowser', 'navigate', { sessionId: browserId, url: origin, workspaceId, sessionKey })).rejects.toThrow('R1 injected loadURL failure');
+      const afterFailure = await app.evaluate(({ BrowserWindow }, windowId) => {
+        const window = BrowserWindow.fromId(windowId);
+        if (!window) throw new Error('Browser owner disappeared after failed navigation');
+        return Object.fromEntries(['did-finish-load', 'dom-ready', 'did-fail-load'].map(name => [name, window.webContents.listenerCount(name)]));
+      }, beforeFailure.windowId);
+      expect(afterFailure).toEqual(beforeFailure.listeners);
+      const recovered = await hostInvoke<{ success: boolean; session: { title: string } }>(app, 'agentBrowser', 'navigate', { sessionId: browserId, url: origin, workspaceId, sessionKey });
+      expect(recovered.success).toBe(true); expect(recovered.session.title).toBe('R1 owner fixture');
+      navigationReadbacks.push({ failureMode, beforeFailure, afterFailure, recovered });
+    }
     const openedTerminal = await hostInvoke<{ success: boolean; sessionId: string; pid: number | null }>(app, 'terminal', 'open', { workspaceId, sessionKey, cwd: homeDir });
     expect(openedTerminal.success).toBe(true); terminalId = openedTerminal.sessionId;
     const terminalStatus = () => hostInvoke<{ success: boolean; sessionId: string; pid: number | null }>(app, 'terminal', 'status', { sessionId: terminalId });
@@ -44,16 +69,40 @@ test('R1 rebuilds browser and terminal envelopes from their live desktop owners'
       expect.objectContaining({ id: 'main:browser-session:' + browserId, workspaceKey: workspaceId, activeSlots: 1 }),
       expect.objectContaining({ id: 'main:pty-session:' + terminalId, workspaceKey: workspaceId, activeSlots: 1, pids: [terminal.pid] }),
     ]));
+    const browserWindowId = await app.evaluate(({ BrowserWindow }, origin) => {
+      const window = BrowserWindow.getAllWindows().find(window => window.webContents.getURL().startsWith(origin));
+      if (!window) throw new Error('Browser owner window is unavailable');
+      const close = window.close;
+      window.close = () => { window.close = close; throw new Error('R1 injected native close failure'); };
+      return window.id;
+    }, origin);
+    await expect(hostInvoke(app, 'agentBrowser', 'close', { sessionId: browserId })).rejects.toThrow('R1 injected native close failure');
+    const retainedAfterCloseFailure = await hostInvoke<Envelope>(app, 'resourceEnvelope', 'getState');
+    expect(retainedAfterCloseFailure.snapshot.entries).toContainEqual(expect.objectContaining({ id: 'main:browser-session:' + browserId, activeSlots: 1 }));
     await hostInvoke(app, 'terminal', 'close', { sessionId: terminalId }); terminalId = undefined;
     await expect.poll(async () => await app.evaluate((_electron, pid) => {
       try { process.kill(pid!, 0); return true; }
       catch (error) { if ((error as NodeJS.ErrnoException).code === 'ESRCH') return false; throw error; }
     }, terminal.pid), { timeout: 30000 }).toBe(false);
-    await hostInvoke(app, 'agentBrowser', 'close', { sessionId: browserId }); browserId = undefined;
+    await app.evaluate(({ BrowserWindow }, windowId) => {
+      const window = BrowserWindow.fromId(windowId);
+      if (!window) throw new Error('Retained browser owner is unavailable');
+      const close = window.close;
+      window.close = () => { window.close = close; (globalThis as Record<string, unknown>).__r1BrowserCloseRequested = true; };
+    }, browserWindowId);
+    const closing = hostInvoke(app, 'agentBrowser', 'close', { sessionId: browserId });
+    void closing.catch(() => undefined);
+    await expect.poll(() => app.evaluate(() => (globalThis as Record<string, unknown>).__r1BrowserCloseRequested)).toBe(true);
+    const retainedWhileClosing = await hostInvoke<Envelope>(app, 'resourceEnvelope', 'getState');
+    expect(retainedWhileClosing.snapshot.entries).toContainEqual(expect.objectContaining({ id: 'main:browser-session:' + browserId, activeSlots: 1 }));
+    await app.evaluate(({ BrowserWindow }, windowId) => BrowserWindow.fromId(windowId)!.close(), browserWindowId);
+    await closing; browserId = undefined;
+    const browserClosed = await app.evaluate(({ BrowserWindow }, windowId) => BrowserWindow.fromId(windowId) === null, browserWindowId);
+    expect(browserClosed).toBe(true);
     const released = await hostInvoke<Envelope>(app, 'resourceEnvelope', 'getState');
     expect(released.snapshot.entries.some(entry => entry.id.startsWith('main:browser-session:') || entry.id.startsWith('main:pty-session:'))).toBe(false);
     await writeFile(testInfo.outputPath('owner-rebuild.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex-r1-desktop-owner-probe',
-      workspaceId, opened, terminal, before, rebuilt, released }, null, 2));
+      workspaceId, opened, navigationReadbacks, browserWindowId, retainedAfterCloseFailure, retainedWhileClosing, browserClosed, terminal, before, rebuilt, released }, null, 2));
   } finally {
     if (terminalId) await hostInvoke(app, 'terminal', 'close', { sessionId: terminalId }).catch(() => undefined);
     if (browserId) await hostInvoke(app, 'agentBrowser', 'close', { sessionId: browserId }).catch(() => undefined);

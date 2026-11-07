@@ -13,6 +13,18 @@ requiredProfiles:
   - fast
   - comms
 touchedAreas:
+  - packages/versebrowser/src/engine/api.ts
+  - packages/versebrowser/src/gateway/bridge.ts
+  - packages/versebrowser/tests/agent-browser-service.test.ts
+  - packages/versebrowser/tests/agent-browser-runtime-mode.test.ts
+  - electron/services/agent-browser-api.ts
+  - electron/services/workspaces-api.ts
+  - electron/gateway/agent-browser-bridge.ts
+  - electron/main/index.ts
+  - tests/unit/browser-session-reap-tf0503.test.ts
+  - tests/unit/workspaces-api.test.ts
+  - packages/versebrowser/src/engine/service.ts
+  - packages/versebrowser/tests/r0-4-agent-browser-nav-timeout.test.ts
   - shared/task-ledger-process.ts
   - tests/unit/task-ledger-process.test.ts
   - shared/resources/drf-share.ts
@@ -163,6 +175,8 @@ requiredRules:
   - disk-temp-policy
   - docs-sync
 requiredTests:
+  - pnpm --dir packages/versebrowser exec vitest run tests/r0-4-agent-browser-nav-timeout.test.ts tests/agent-browser-service.test.ts tests/agent-browser-runtime-mode.test.ts --maxWorkers=1
+  - pnpm exec vitest run tests/unit/browser-session-reap-tf0503.test.ts tests/unit/workspaces-api.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/task-ledger-process.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/gateway-supervisor.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/r0-2-sessions-delete-fail.test.ts tests/unit/long-session-owner-reclamation-adapter.test.ts --maxWorkers=1

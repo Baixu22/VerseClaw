@@ -271,7 +271,7 @@ async function invokeAgentBrowser(
     case 'getConsoleMessages':
       return { success: true, ...(await service.getConsoleMessages(payload as never)) };
     case 'close':
-      service.close(String(payload.sessionId ?? ''));
+      await service.close(String(payload.sessionId ?? ''));
       return { success: true };
     default:
       throw new Error(`Unsupported agent browser action: ${request.action}`);

@@ -135,7 +135,7 @@ describe('agent browser runtime mode', () => {
     await expect(service.fillByUid({ sessionId, uid: '1_2', value: 'x' })).rejects.toThrow('runtime mode upgrade');
     await expect(service.pressKey({ sessionId, key: 'Enter' })).rejects.toThrow('runtime mode upgrade');
 
-    service.close(sessionId);
+    await service.close(sessionId);
   });
 
   it('requestModeUpgrade 升级到 controlled_enhanced 后动作可用', async () => {
@@ -160,7 +160,7 @@ describe('agent browser runtime mode', () => {
     // clickByUid 也应该可用
     await expect(service.clickByUid({ sessionId, uid: '1_2' })).resolves.toMatchObject({ id: sessionId });
 
-    service.close(sessionId);
+    await service.close(sessionId);
   });
 
   it('requestModeUpgrade 升级到 full_access 后动作可用', async () => {
@@ -178,7 +178,7 @@ describe('agent browser runtime mode', () => {
     const snap = await service.takeSnapshot({ sessionId });
     expect(snap.snapshot).toContain('uid=');
 
-    service.close(sessionId);
+    await service.close(sessionId);
   });
 
   it('requestModeUpgrade 带 expiresInMs 过期后自动回退 normal_restricted', async () => {
@@ -208,7 +208,7 @@ describe('agent browser runtime mode', () => {
       vi.useRealTimers();
     }
 
-    service.close(sessionId);
+    await service.close(sessionId);
   });
 
   it('降级回 normal_restricted 清理过期时间', async () => {
@@ -234,7 +234,7 @@ describe('agent browser runtime mode', () => {
     // 降级后动作再次被拒
     await expect(service.takeSnapshot({ sessionId })).rejects.toThrow('runtime mode upgrade');
 
-    service.close(sessionId);
+    await service.close(sessionId);
   });
 
   it('respondBoundaryChoice 对不存在会话返回 false', () => {
@@ -259,7 +259,7 @@ describe('agent browser runtime mode', () => {
 
     // 清理 notifier
     service.setBoundaryChoiceNotifier(undefined);
-    service.close(sessionId);
+    await service.close(sessionId);
   });
 
   it('open 时指定 runtimeMode=controlled_enhanced 生效', async () => {
@@ -277,7 +277,7 @@ describe('agent browser runtime mode', () => {
     const snap = await service.takeSnapshot({ sessionId: opened.session.id });
     expect(snap.snapshot).toContain('uid=');
 
-    service.close(opened.session.id);
+    await service.close(opened.session.id);
   });
 
   it('requestModeUpgrade without userApproval is rejected (approval gate)', async () => {
@@ -294,7 +294,7 @@ describe('agent browser runtime mode', () => {
       sessionId,
       targetMode: 'normal_restricted',
     })).resolves.toMatchObject({ runtimeMode: 'normal_restricted' });
-    service.close(sessionId);
+    await service.close(sessionId);
   });
 
 });
