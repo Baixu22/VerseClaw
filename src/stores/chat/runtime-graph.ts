@@ -75,10 +75,11 @@ function sameRuntimeEvent(left: ChatRuntimeEvent | undefined, right: ChatRuntime
       && right.message === left.message;
   }
   if (left.type === 'assistant.delta') {
-    return right.type === left.type && right.text === left.text && right.delta === left.delta;
+    return right.type === left.type && typeof right.text === 'string'
+      && right.text === left.text && right.replace === left.replace;
   }
   if (left.type === 'thinking.delta') {
-    return right.type === left.type && right.text === left.text && right.delta === left.delta;
+    return right.type === left.type && typeof right.text === 'string' && right.text === left.text;
   }
   if (left.type === 'run.started') return right.type === left.type;
   if (left.type === 'run.ended') return right.type === left.type && right.status === left.status && right.endedAt === left.endedAt;
@@ -90,12 +91,20 @@ export function applyRuntimeEventToRuns(
   event: ChatRuntimeEvent,
 ): Record<string, ChatRuntimeRunState> {
   const existing = currentRuns[event.runId] ?? cloneRunState(event.runId, event);
+  const last = existing.events.at(-1);
+  if (sameRuntimeEvent(last, event)) return currentRuns;
+  // Terminal ownership is monotonic: delayed streaming or start notifications
+  // cannot reopen a run whose owner already published its result.
+  if (currentRuns[event.runId]?.status !== undefined && existing.status !== 'running'
+    && (event.type === 'run.started' || event.type === 'assistant.delta' || event.type === 'thinking.delta')) return currentRuns;
+  if (typeof event.seq === 'number' && Number.isFinite(event.seq)) {
+    const previous = existing.events.findLast(item => typeof item.seq === 'number' && Number.isFinite(item.seq));
+    if (previous?.seq !== undefined && event.seq <= previous.seq) return currentRuns;
+  }
   const nextRun: ChatRuntimeRunState = {
     ...existing,
     sessionKey: event.sessionKey ?? existing.sessionKey,
-    events: sameRuntimeEvent(existing.events.at(-1), event)
-      ? existing.events
-      : [...existing.events, event],
+    events: [...existing.events, event],
   };
 
   switch (event.type) {
@@ -109,31 +118,13 @@ export function applyRuntimeEventToRuns(
       nextRun.endedAt = event.endedAt ?? event.ts ?? Date.now();
       break;
     case 'assistant.delta': {
-      const incoming = event.text ?? event.delta ?? '';
-      if (incoming) {
-        if (event.replace) {
-          nextRun.assistantText = incoming;
-        } else if (event.text) {
-          nextRun.assistantText = event.text.startsWith(nextRun.assistantText)
-            ? event.text
-            : event.text;
-        } else {
-          nextRun.assistantText = `${nextRun.assistantText}${event.delta ?? ''}`;
-        }
-      }
+      if (event.replace || typeof event.text === 'string') nextRun.assistantText = event.text ?? event.delta ?? '';
+      else nextRun.assistantText += event.delta ?? '';
       break;
     }
     case 'thinking.delta': {
-      const incoming = event.text ?? event.delta ?? '';
-      if (incoming) {
-        if (event.text) {
-          nextRun.thinkingText = event.text.startsWith(nextRun.thinkingText)
-            ? event.text
-            : event.text;
-        } else {
-          nextRun.thinkingText = `${nextRun.thinkingText}${event.delta ?? ''}`;
-        }
-      }
+      if (typeof event.text === 'string') nextRun.thinkingText = event.text;
+      else nextRun.thinkingText += event.delta ?? '';
       break;
     }
     default:

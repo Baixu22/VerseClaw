@@ -1397,7 +1397,10 @@ export function Chat() {
       lastObservedSessionKeyRef.current = currentSessionKey;
     }
   }, [currentSessionKey, persistCurrentWorkspaceSessionState]);
-  const graphStepCache: Record<string, GraphStepCacheEntry> = graphStepCacheStore.get(currentSessionKey) ?? {};
+  const graphStepCache = useMemo<Record<string, GraphStepCacheEntry>>(
+    () => graphStepCacheStore.get(currentSessionKey) ?? {},
+    [graphStepCacheStore, currentSessionKey],
+  );
 
   /**
    * Optimistic "a run is in flight" window for the transcript's scroll pin.
@@ -2385,6 +2388,13 @@ export function Chat() {
       });
     }
   }, [currentAgentId, currentSessionKey, isCurrentControlScope, loadHistory, loadSessions, t]);
+
+  const handleForkFromMessage = useCallback((messageId: string) => {
+    void handleForkSession({ fromLeafId: messageId });
+  }, [handleForkSession]);
+  const handleCompactMessageRange = useCallback((messageId: string, boundary: 'from' | 'to') => {
+    void handleCompactRange(messageId, boundary);
+  }, [handleCompactRange]);
 
   const handlePrepareHandoff = useCallback(async () => {
     if (handoffDisabled || handoffBusy || !isCurrentControlScope()) return;
@@ -3649,12 +3659,8 @@ export function Chat() {
                         onDraftInteractionResponse={handleAppendComposerDraft}
                         canResendUserMessage={isGatewayRunning && !inputRunActive}
                         onResendUserMessage={getResendUserMessageHandler(row.message.id, row.index)}
-                        onForkFromMessage={(messageId) =>
-                          void handleForkSession({ fromLeafId: messageId })
-                        }
-                        onCompactRange={(messageId, boundary) =>
-                          void handleCompactRange(messageId, boundary)
-                        }
+                        onForkFromMessage={handleForkFromMessage}
+                        onCompactRange={handleCompactMessageRange}
                       />
                       {row.runCards.map((card) => {
                         const runKey = card.runKey;

@@ -40,4 +40,13 @@ describe('completed history projections during streaming', () => {
     const changed = deriveUserRunProjection({ ...input, messages });
     expect(changed.cards[0]).not.toBe(first.cards[0]);
   });
+  it('keeps completed cards stable when another run cache or live error changes', () => {
+    const input = fixture(); const first = deriveUserRunProjection(input);
+    const other = { steps: [], agentLabel: 'Main', sessionLabel: 'live', segmentEnd: 5, replyIndex: null, triggerIndex: 4 };
+    const second = deriveUserRunProjection({ ...input, runError: 'current run failed', graphStepCache: { other } });
+    expect(second.cards[0]).toBe(first.cards[0]);
+    expect(second.cards[0].status).toBe(first.cards[0].status);
+    const changed = deriveUserRunProjection({ ...input, graphStepCache: { [first.cards[0].runKey]: other } });
+    expect(changed.cards[0]).not.toBe(first.cards[0]);
+  });
 });
