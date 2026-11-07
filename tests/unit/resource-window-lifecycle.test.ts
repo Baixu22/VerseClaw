@@ -32,11 +32,13 @@ afterEach(() => { resetRuntimeEfficiencyForTests(); app.removeAllListeners(); po
 
 describe('window resource lifetimes', () => {
   it('publishes per-window native visibility and releases bridge listeners on close', () => {
-    const win = new FakeWindow(); registerWindowVisibility(win as unknown as BrowserWindow);
+    const win = new FakeWindow(); const contents = win.webContents;
+    Object.defineProperty(win, 'webContents', { get: () => { if (win.destroyed) throw new Error('Object has been destroyed'); return contents; } });
+    registerWindowVisibility(win as unknown as BrowserWindow);
     win.webContents.emit('did-finish-load');
     expect(win.webContents.send).toHaveBeenLastCalledWith('window:visibility', true);
     win.hide(); expect(win.webContents.send).toHaveBeenLastCalledWith('window:visibility', false);
-    win.close(); expect(win.listenerCount('show')).toBe(0); expect(win.webContents.listenerCount('did-finish-load')).toBe(0);
+    win.close(); expect(win.listenerCount('show')).toBe(0); expect(contents.listenerCount('did-finish-load')).toBe(0);
   });
   it('aggregates visibility and detaches a closed window before reopen', async () => {
     const first = new FakeWindow(); const second = new FakeWindow(); mocks.windows = [first, second];

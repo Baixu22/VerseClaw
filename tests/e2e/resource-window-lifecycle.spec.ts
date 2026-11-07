@@ -54,14 +54,22 @@ test('integrated main and browser windows retain visibility, observers and backg
     await expect.poll(size).toBeGreaterThan(0);
     await invoke(page, 'efficiency', 'setEnabled', { enabled: false });
     await invoke(page, 'efficiency', 'setEnabled', { enabled: true });
-    const shed = async () => Boolean(((await invoke(page, 'efficiency', 'getState')).shed as { activeReasons?: string[] } | null)?.activeReasons?.includes('window-hidden'));
+    const mainId = await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].id);
+    // Hidden renderers may be suspended. Inspect the existing Main dispatcher with
+    // the actual window sender so policy assertions do not depend on renderer timers.
+    const shed = () => app.evaluate(async ({ BrowserWindow, ipcMain }, id) => {
+      const sender = BrowserWindow.fromId(id)!.webContents;
+      const handler = (ipcMain as unknown as { _invokeHandlers: Map<string, (event: unknown, request: unknown) => Promise<{ ok: boolean; data: { shed?: { activeReasons: string[] } } }>> })._invokeHandlers.get('host:invoke')!;
+      const response = await handler({ sender, senderFrame: sender.mainFrame }, { id: 'window-lifecycle-state', module: 'efficiency', action: 'getState' });
+      if (!response.ok) throw new Error('Main efficiency state unavailable');
+      return response.data.shed?.activeReasons.includes('window-hidden') ?? false;
+    }, mainId);
     const approveBrowser = () => app.evaluate((_electron, input) => {
       const modules = process.mainModule!.require('node:module')._cache;
       const entry = Object.keys(modules).find(key => typeof modules[key].exports?.approveBrowserPrivateNetwork === 'function');
       if (!entry) throw new Error('Main approval owner unavailable');
       return modules[entry].exports.approveBrowserPrivateNetwork(input);
     }, { sessionId: scope.sessionKey, origin });
-    const mainId = await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].id);
     const openBrowser = async () => {
       // Closing a browser revokes its origin grant; every new session is approved separately.
       report.networkApproval = await approveBrowser();
