@@ -1,0 +1,29 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "sourceCommit": "5c3124042236e8a9004d57a0d0e9b3948d80f0dd",
+  "testOverlay": "tests/unit/resource-fabric-bounded-waiting.test.ts",
+  "testSha256": "fb6ab55d083e9e693a0c1c5bcccc1332c87bddf164b87e084f0c2888a2126eec",
+  "command": "node node_modules/vitest/vitest.mjs run tests/unit/resource-fabric-bounded-waiting.test.ts -t \"admits fresh history subscribers\" --maxWorkers=1 --reporter=json --outputFile=D:/tmp/tf0829-recovery/singleflight-negative.json",
+  "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+  "exitCode": 1,
+  "passed": 0,
+  "failed": 2,
+  "skipped": 22,
+  "cases": [
+    {
+      "name": "execution ownership and shared waits admits fresh history subscribers after abort without releasing abandoned work",
+      "failure": "AssertionError: expected { active: 1, queued: +0, …(5) } to match object { active: 1, queued: 1 }\n(8 matching properties omitted from actual)",
+      "candidateStatus": "passed"
+    },
+    {
+      "name": "execution ownership and shared waits admits fresh history subscribers after deadline without releasing abandoned work",
+      "failure": "AssertionError: expected { active: 1, queued: +0, …(5) } to match object { active: 1, queued: 1 }\n(8 matching properties omitted from actual)",
+      "candidateStatus": "passed"
+    }
+  ],
+  "raw": {
+    "path": "D:\\tmp\\tf0829-recovery\\singleflight-negative.json",
+    "sha256": "287721d6c149618b51d0c667be29ffc4d9400bb554b264eacf16e2b96d584a69"
+  }
+}

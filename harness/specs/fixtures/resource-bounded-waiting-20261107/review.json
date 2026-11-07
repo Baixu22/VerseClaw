@@ -1,0 +1,47 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "method": "source-and-regression-review",
+  "candidate": {
+    "commit": "2fdc57e0dc730c1db56565c1a086f30810263974",
+    "tree": "6d88a19b6175edbd0b6af7d9e2a38991e07ba2af",
+    "dirty": false
+  },
+  "resolvedFindings": [
+    {
+      "title": "Abandoned Singleflight cancellation rejects fresh same-key subscribers",
+      "owner": "shared/resources/singleflight.ts",
+      "behavior": "Fresh subscribers create a replacement flight; late completion deletes only its own registration. The previous execution keeps its Fabric lease until settlement.",
+      "negativeEvidence": "singleflight-negative.json",
+      "candidateTests": [
+        "execution ownership and shared waits admits fresh history subscribers after abort without releasing abandoned work",
+        "execution ownership and shared waits admits fresh history subscribers after deadline without releasing abandoned work"
+      ]
+    }
+  ],
+  "reviewedSurfaces": [
+    "shared/resources/singleflight.ts",
+    "shared/resources/wait.ts",
+    "shared/resources/priority-queue.ts",
+    "electron/services/resource-fabric.ts",
+    "electron/services/terminal-api.ts",
+    "electron/services/git-api.ts",
+    "electron/services/gateway-api.ts",
+    "openclaw_runtime/src/agents/resource-leases.ts",
+    "openclaw_runtime/src/agents/sessions/tools/bash.ts",
+    "openclaw_runtime/src/agents/sessions/tools/find.ts",
+    "openclaw_runtime/src/agents/sessions/tools/grep.ts",
+    "openclaw_runtime/src/agents/sessions/tools/file-mutation-queue.ts",
+    "openclaw_runtime/src/agents/sessions/tools/write.ts",
+    "openclaw_runtime/src/agents/sessions/tools/edit.ts"
+  ],
+  "openFindings": [],
+  "runtimeTypes": {
+    "focused": true,
+    "runtimeFullPass": false,
+    "baselineCommit": "e6155185dbfc488080ee432f37e20929080a8b27",
+    "baselineDiagnostics": 118,
+    "candidateDiagnostics": 118,
+    "introduced": []
+  }
+}

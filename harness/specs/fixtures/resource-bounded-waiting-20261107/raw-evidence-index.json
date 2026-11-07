@@ -1,0 +1,140 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "directory": "D:\\tmp\\tf0829-recovery\\acceptance",
+  "files": [
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\acceptance\\artifact-retention.log",
+      "sha256": "cd0ce150426c3fc7d18e0e1e6ccd54da73d7c524144ebb7bf336e5faa284e303"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\acceptance\\baseline-runtime-types.log",
+      "sha256": "7434e601671e8f414effa4245f285f7260f38ab4bff9750548ee870bb263dddb"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\acceptance\\comms\\compare-report.json",
+      "sha256": "1bfc7a7a217f8109ab0cf7f3517232309bdad5e4df1d9f02485090f5abbde604"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\acceptance\\comms\\compare-report.md",
+      "sha256": "86111f585b788e619f998249e891639b2b459008148bac3f7e2dce833a85ed2f"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\acceptance\\comms\\current-metrics.json",
+      "sha256": "8c7651928767d272267c9e593fb9ac2ffb5bd3227af9cb0642d23274f028bd96"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\acceptance\\comms-compare.log",
+      "sha256": "0b73cf52bd79dc36172e9a1b52735d6b61931bb90ae121daa60aa5fdecfb6ba3"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\acceptance\\comms-replay.log",
+      "sha256": "3a108ba988629cad13cc834e2ee70510518ecc1c6be7578bca4ec83fea6d88db"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\acceptance\\credential-scan.json",
+      "sha256": "579f0216c576e9d26fa9de6da956c57e7d434795f14cf65705fd1e8cf2c14faf"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\acceptance\\diff-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\acceptance\\focused-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\acceptance\\harness-context.log",
+      "sha256": "849034c533ca80d117427346e9127824b0773350d0952190bb8c70fdbf6e73b2"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\acceptance\\harness-dry-run.log",
+      "sha256": "30974247ceed4b99b04b970d1cf28a879caafda964767f9ddf687567ac95713e"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\acceptance\\harness-validate.log",
+      "sha256": "4eb6f5f89ca732799558e3a88d3195453dd6d94d83eb18111750b595b6274071"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\acceptance\\lint.json",
+      "sha256": "663e28e5b2fe8dd425a4a1c29938beb716380680b5a5426050ef26cf68a79b51"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\acceptance\\lint.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\acceptance\\main-tests.json",
+      "sha256": "05f1edef681bcca69521284e84108f9285f5e8121e43adaec43eb0771270912d"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\acceptance\\main-tests.log",
+      "sha256": "ce3e2f0923b4e6b5219f73413822ab49cdac259377b64f67e51457ed5c781baa"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\acceptance\\negative-controls.json",
+      "sha256": "8974c4c4f0989a396f505e034b1aad11b4ef541d08127b5c2dce9f0becc40c2b"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\acceptance\\pressure-fabric.json",
+      "sha256": "72a8d9d5642096b8d3ec4f04db89c15ea09127be8397bd76ebe2304d13da31b0"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\acceptance\\pressure-runtime.json",
+      "sha256": "c5f1fe9ec51d33d12456756b075697889a2a217b9382a81f6a9ca1e50f8c8df1"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\acceptance\\report.json",
+      "sha256": "b1755aa4a2b8c0c3c1a2c4822ff6c5d9c5d4161bccd036b59109e26875a97d7c"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\acceptance\\runtime-tests.json",
+      "sha256": "f3cfb303758224bafc6b468c49112bfff9b3a87ad891aa1e0f1bb258a80ee898"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\acceptance\\runtime-tests.log",
+      "sha256": "daffc0a8b9263f30990d54bfac05f7a95284cf5f65f5c1b61c5dd3ec2292b45b"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\acceptance\\runtime-types.log",
+      "sha256": "56d5ce9d3580fd7380fbc8b853f837121402271ebeec497df5d1fc321a830fa2"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\acceptance\\SHA256SUMS",
+      "sha256": "949bfe402b4e022b7f16a5c2b9f4313e04cdca178a0a7609d57806c3659cc91c"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\singleflight-negative.json",
+      "sha256": "287721d6c149618b51d0c667be29ffc4d9400bb554b264eacf16e2b96d584a69"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\singleflight-negative.log",
+      "sha256": "267c68cb669111101cfb72befcd9c00b94bc4baf5a3ad7c2579f05f6fb83ead0"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\singleflight-negative.exit",
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\negative.json",
+      "sha256": "73a0b1532e918993b41f8f324be11553f518c58f6429a1faa8f67d5d6f774386"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\negative.log",
+      "sha256": "15844e1714b0a45e5590c1eef504d36e15519a7e8da75058f6e6d9a155dd65b1"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\negative.exit",
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\baseline-runtime-types.log",
+      "sha256": "7434e601671e8f414effa4245f285f7260f38ab4bff9750548ee870bb263dddb"
+    },
+    {
+      "path": "D:\\tmp\\tf0829-recovery\\baseline-runtime-types.exit",
+      "sha256": "df4e26a04a444901b95afef44e4a96cfae34690fff2ad2c66389c70079cdff2b"
+    }
+  ],
+  "retention": "Raw executions and interrupted historical runs remain in D:/tmp/tf0829 and D:/tmp/tf0829-recovery."
+}

@@ -1,0 +1,35 @@
+{
+  "baselineCommit": "e6155185dbfc488080ee432f37e20929080a8b27",
+  "exitCode": 1,
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\node_modules\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\vitest.mjs",
+    "run",
+    "tests/unit/resource-fabric-bounded-waiting.test.ts",
+    "-t",
+    "regression: old Fabric",
+    "--maxWorkers=1",
+    "--reporter=json",
+    "--outputFile=D:/tmp/tf0829-recovery/negative.json"
+  ],
+  "passed": 0,
+  "failed": 3,
+  "cases": [
+    {
+      "name": "regression: old Fabric admission rejects overflow before adding a timer or waiter",
+      "failure": "AssertionError: expected ResourceFabricTimeoutError: Timed out wai… { …(4) } to match object { code: 'RESOURCE_QUEUE_FULL' }\n(4 matching properties omitted from actual)"
+    },
+    {
+      "name": "regression: old Fabric admission never invokes work cancelled between grant and callback",
+      "failure": "AssertionError: expected \"vi.fn()\" to not be called at all, but actually been called 1 times\n\nReceived:\n\n  1st vi.fn() call:\n\n    Array [\n      Object {\n        \"leaseKey\": \"race\",\n        \"leaseKind\": \"workspaceExec\",\n        \"limit\": 2,\n        \"qos\": \"interactive\",\n        \"queuedMs\": 0,\n        \"release\": [Function release],\n      },\n    ]\n\n\nNumber of calls: 1\n"
+    },
+    {
+      "name": "regression: old Fabric admission does not grant an already expired deadline",
+      "failure": "AssertionError: expected { leaseKind: 'workspaceExec', …(5) } to match object { Object (code) }\n(6 matching properties omitted from actual)"
+    }
+  ],
+  "raw": {
+    "path": "D:\\tmp\\tf0829-recovery\\negative.json",
+    "sha256": "73a0b1532e918993b41f8f324be11553f518c58f6429a1faa8f67d5d6f774386"
+  }
+}

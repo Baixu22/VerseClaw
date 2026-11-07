@@ -1,0 +1,59 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "mode": "reuse-installed-junctions",
+  "packages": {
+    "vitest": {
+      "path": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX\\node_modules\\vitest\\package.json",
+      "realpath": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\node_modules\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\package.json",
+      "version": "4.1.1",
+      "sha256": "7b66d1ea82365d15c8b82be75f0e0abbb6399283cb2d8429b69aa5a54ceee8b0"
+    },
+    "@typescript/native-preview": {
+      "path": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX\\node_modules\\@typescript\\native-preview\\package.json",
+      "realpath": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\node_modules\\.pnpm\\@typescript+native-preview@7.0.0-dev.20260527.2\\node_modules\\@typescript\\native-preview\\package.json",
+      "version": "7.0.0-dev.20260527.2",
+      "sha256": "33e1a9f7e6effe19e6fe2b3b914ff96e276c37196b3e31fba05fa67d0e0961d9"
+    },
+    "typescript": {
+      "path": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX\\node_modules\\typescript\\package.json",
+      "realpath": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\node_modules\\.pnpm\\typescript@5.9.3\\node_modules\\typescript\\package.json",
+      "version": "5.9.3",
+      "sha256": "822ef7ca6452205657b6288b066481ecf508bfbf43455d715cf7d3ec457561e6"
+    },
+    "eslint": {
+      "path": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX\\node_modules\\eslint\\package.json",
+      "realpath": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\node_modules\\.pnpm\\eslint@10.1.0_jiti@1.21.7\\node_modules\\eslint\\package.json",
+      "version": "10.1.0",
+      "sha256": "eae6902da63dce6c40442765bcce104a012096055a1fbee748c0dc770fdce231"
+    },
+    "openclaw_runtime/vitest": {
+      "path": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX\\openclaw_runtime\\node_modules\\vitest\\package.json",
+      "realpath": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\node_modules\\.pnpm\\vitest@4.1.7_@opentelemetry_f5449208cde661befa315c6fea555e10\\node_modules\\vitest\\package.json",
+      "version": "4.1.7",
+      "sha256": "7cd821c11d3dcf6b9f2a53bf06d8ba645d7dd0f6be846764917ee694cf3eafee"
+    },
+    "openclaw_runtime/@typescript/native-preview": {
+      "path": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX\\openclaw_runtime\\node_modules\\@typescript\\native-preview\\package.json",
+      "realpath": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\node_modules\\.pnpm\\@typescript+native-preview@7.0.0-dev.20260527.2\\node_modules\\@typescript\\native-preview\\package.json",
+      "version": "7.0.0-dev.20260527.2",
+      "sha256": "33e1a9f7e6effe19e6fe2b3b914ff96e276c37196b3e31fba05fa67d0e0961d9"
+    },
+    "openclaw_runtime/typescript": {
+      "path": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX\\openclaw_runtime\\node_modules\\typescript\\package.json",
+      "realpath": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\node_modules\\.pnpm\\typescript@6.0.3\\node_modules\\typescript\\package.json",
+      "version": "6.0.3",
+      "sha256": "9332e97c30d3e53ed54910b89207ed657fb444066484df6e5b6965bf130865e9"
+    },
+    "openclaw_runtime/kysely": {
+      "path": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX\\openclaw_runtime\\node_modules\\kysely\\package.json",
+      "realpath": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\node_modules\\.pnpm\\kysely@0.29.2\\node_modules\\kysely\\package.json",
+      "version": "0.29.2",
+      "sha256": "6ee58b9bea192fbfd50d0758ce31be114a852126acd713dbc205bcd977fdc51f"
+    }
+  },
+  "lockfiles": {
+    "pnpm-lock.yaml": "6427882a1725aa5929da2db9d55d1397237dee1a354bb6db3dfb63bb61abb441",
+    "openclaw_runtime/pnpm-lock.yaml": "3ee305722a4f52a314f25871e0386f4d1cf214eb9ad7fc17f24b4908f5456013"
+  }
+}

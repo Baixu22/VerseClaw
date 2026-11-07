@@ -1,0 +1,1111 @@
+{
+  "schema": "clawx.resource-bounded-waiting/v1",
+  "generatedAt": "2026-11-07T08:48:47.276Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "task": "TF-0829",
+  "candidate": {
+    "commit": "2fdc57e0dc730c1db56565c1a086f30810263974",
+    "tree": "6d88a19b6175edbd0b6af7d9e2a38991e07ba2af",
+    "dirty": false
+  },
+  "cleanAfter": true,
+  "spec": "harness/specs/tasks/resource-bounded-waiting-20261107.md",
+  "tests": {
+    "main": {
+      "total": 122,
+      "passed": 122,
+      "failed": 0,
+      "skipped": 0,
+      "suitesFailed": 0,
+      "success": true,
+      "cases": [
+        {
+          "name": "git api coalesces concurrent status reads and reuses a fresh cached status",
+          "status": "passed"
+        },
+        {
+          "name": "git api invalidates the repo status cache after a successful write",
+          "status": "passed"
+        },
+        {
+          "name": "git api invalidates a cached status when a direct commit succeeds",
+          "status": "passed"
+        },
+        {
+          "name": "git api parses porcelain v2 status into branch and change buckets",
+          "status": "passed"
+        },
+        {
+          "name": "git api returns side-by-side content with staged file diffs",
+          "status": "passed"
+        },
+        {
+          "name": "git api fails closed when a file diff exceeds the local Git patch limit",
+          "status": "passed"
+        },
+        {
+          "name": "git api downgrades a parsed file patch when trusted Git status is missing",
+          "status": "passed"
+        },
+        {
+          "name": "git api blocks normal writes in read-only mode before git add",
+          "status": "passed"
+        },
+        {
+          "name": "git api requires approval for dangerous push and consumes approved requests",
+          "status": "passed"
+        },
+        {
+          "name": "git api explains why a dangerous git operation is graded that way in the approval reason",
+          "status": "passed"
+        },
+        {
+          "name": "git api states the refspec scope when no target branch can be determined",
+          "status": "passed"
+        },
+        {
+          "name": "git api distinguishes reset --hard from reset --soft in the approval reason",
+          "status": "passed"
+        },
+        {
+          "name": "git api requires approval before reverting a tracked file and restores index plus worktree after approval",
+          "status": "passed"
+        },
+        {
+          "name": "git api uses git clean for approved untracked file reverts",
+          "status": "passed"
+        },
+        {
+          "name": "git api lists stashes and creates a stash with message and untracked files",
+          "status": "passed"
+        },
+        {
+          "name": "git api requires dangerous approval for stash apply and pop",
+          "status": "passed"
+        },
+        {
+          "name": "git api only allows worktree remove for paths registered with the repository",
+          "status": "passed"
+        },
+        {
+          "name": "git api adds a worktree by creating a new branch with the correct argument order",
+          "status": "passed"
+        },
+        {
+          "name": "git api adds a worktree for an existing branch without -b",
+          "status": "passed"
+        },
+        {
+          "name": "git api defaults new worktree start point to HEAD when omitted",
+          "status": "passed"
+        },
+        {
+          "name": "git api blocks new worktree creation when the target branch already exists",
+          "status": "passed"
+        },
+        {
+          "name": "git api blocks existing-branch worktree creation when that branch is already checked out",
+          "status": "passed"
+        },
+        {
+          "name": "git api requires dangerous approval for custom worktree paths outside the workspace and repo sibling area",
+          "status": "passed"
+        },
+        {
+          "name": "git api treats a drive-root parent as unsafe: custom sibling paths still require approval",
+          "status": "passed"
+        },
+        {
+          "name": "git api creates GitHub PRs with explicit base/head/draft args after dangerous approval",
+          "status": "passed"
+        },
+        {
+          "name": "git api preflights missing base branch with actionable error before creating a PR",
+          "status": "passed"
+        },
+        {
+          "name": "git api reuses an existing open PR for the head branch instead of creating a duplicate",
+          "status": "passed"
+        },
+        {
+          "name": "git api hardens git exec: hooks disabled, no locks, no prompts, fsmonitor off, bounded timeout",
+          "status": "passed"
+        },
+        {
+          "name": "git api resolves merge-base between HEAD and a base branch",
+          "status": "passed"
+        },
+        {
+          "name": "git api returns reflog entries for the complete repository lifecycle",
+          "status": "passed"
+        },
+        {
+          "name": "git api routes merge, rebase, and reset through dangerous Git approval",
+          "status": "passed"
+        },
+        {
+          "name": "git api rejects unsafe or missing refs for merge-base",
+          "status": "passed"
+        },
+        {
+          "name": "git api applyPatch preflight reports conflicts without approval or writes",
+          "status": "passed"
+        },
+        {
+          "name": "git api applyPatch apply mode requires dangerous approval then writes",
+          "status": "passed"
+        },
+        {
+          "name": "git api applyPatch reports skipped and applied paths from real git output",
+          "status": "passed"
+        },
+        {
+          "name": "git api applyPatch counts a --reject partial apply as conflicted, not applied",
+          "status": "passed"
+        },
+        {
+          "name": "git api applyPatch fails closed on a conflicting patch without requesting approval",
+          "status": "passed"
+        },
+        {
+          "name": "git api applyPatch approval is bound to the patch content, not just the target files",
+          "status": "passed"
+        },
+        {
+          "name": "git api applyPatch rejects non-diff input before any git call",
+          "status": "passed"
+        },
+        {
+          "name": "git api diffToBase derives the upstream branch and reports how the base was resolved",
+          "status": "passed"
+        },
+        {
+          "name": "git api diffToBase falls back to origin/HEAD when the branch has no upstream",
+          "status": "passed"
+        },
+        {
+          "name": "git api diffToBase reports unavailable instead of guessing when no remote ancestor exists",
+          "status": "passed"
+        },
+        {
+          "name": "git api diffToBase prefers origin over a nearer non-origin ancestor",
+          "status": "passed"
+        },
+        {
+          "name": "git api diffToBase falls back to configured remote order when there is no origin",
+          "status": "passed"
+        },
+        {
+          "name": "git api diffToBase finds a base in a repo whose only remote is not named origin",
+          "status": "passed"
+        },
+        {
+          "name": "git api diffToBase ignores */HEAD pseudo-refs when scanning for a base",
+          "status": "passed"
+        },
+        {
+          "name": "git api diffToBase skips unsafe scanned refs and reports unavailable when none remain",
+          "status": "passed"
+        },
+        {
+          "name": "git api diffToBase reads line counts from one numstat call and skips per-file diffs",
+          "status": "passed"
+        },
+        {
+          "name": "git api diffToBase returns patches only when asked, and marks binary files",
+          "status": "passed"
+        },
+        {
+          "name": "git api diffToBase reports unavailable when base and HEAD share no common ancestor",
+          "status": "passed"
+        },
+        {
+          "name": "git api diffToBase rejects unsafe explicit base refs and reports a missing ref as unavailable",
+          "status": "passed"
+        },
+        {
+          "name": "git api diffToBase keeps the destination path for renames in name-status output",
+          "status": "passed"
+        },
+        {
+          "name": "git api diffToBase never writes: no approval is requested and no mutating git runs",
+          "status": "passed"
+        },
+        {
+          "name": "git api keeps the tail of oversized diff output",
+          "status": "passed"
+        },
+        {
+          "name": "fabric bounded waiting enforces the exact waiting boundary and readmits after release",
+          "status": "passed"
+        },
+        {
+          "name": "fabric bounded waiting allows immediate grants with zero waiting slots",
+          "status": "passed"
+        },
+        {
+          "name": "fabric bounded waiting cancels before enqueue and during waiting, removing timers and listeners",
+          "status": "passed"
+        },
+        {
+          "name": "fabric bounded waiting checks expired admission, waiting expiration and expiration at grant",
+          "status": "passed"
+        },
+        {
+          "name": "fabric bounded waiting classifies all 200 requests with bounded peaks and no residual resources",
+          "status": "passed"
+        },
+        {
+          "name": "runtime bounded waiting enforces the exact waiting boundary and readmits after release",
+          "status": "passed"
+        },
+        {
+          "name": "runtime bounded waiting allows immediate grants with zero waiting slots",
+          "status": "passed"
+        },
+        {
+          "name": "runtime bounded waiting cancels before enqueue and during waiting, removing timers and listeners",
+          "status": "passed"
+        },
+        {
+          "name": "runtime bounded waiting checks expired admission, waiting expiration and expiration at grant",
+          "status": "passed"
+        },
+        {
+          "name": "runtime bounded waiting classifies all 200 requests with bounded peaks and no residual resources",
+          "status": "passed"
+        },
+        {
+          "name": "regression: old Fabric admission rejects overflow before adding a timer or waiter",
+          "status": "passed"
+        },
+        {
+          "name": "regression: old Fabric admission never invokes work cancelled between grant and callback",
+          "status": "passed"
+        },
+        {
+          "name": "regression: old Fabric admission does not grant an already expired deadline",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits admits fresh history subscribers after abort without releasing abandoned work",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits admits fresh history subscribers after deadline without releasing abandoned work",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits expires the actual host caller while another history subscriber keeps its own deadline",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits removes a host-expired history waiter before it can start",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits fabric checks grant races and retains running capacity until work settles",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits runtime checks grant races and retains running capacity until work settles",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits isolates subscriber aborts and deadlines, including all leaving before work begins",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits passes only remaining history time and cancels abandoned queued flights",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits keeps a surviving subscriber when another deadline expires during shared work",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits preserves shared rejection including undefined",
+          "status": "passed"
+        },
+        {
+          "name": "execution ownership and shared waits preserves shared rejection including Error: failed",
+          "status": "passed"
+        },
+        {
+          "name": "ResourceFabric chat.history admission coalesces duplicate in-flight chat.history requests",
+          "status": "passed"
+        },
+        {
+          "name": "ResourceFabric chat.history admission releases the singleflight after a slow history request so a later retry runs again",
+          "status": "passed"
+        },
+        {
+          "name": "ResourceFabric chat.history admission limits distinct chat.history requests while allowing non-history RPCs through",
+          "status": "passed"
+        },
+        {
+          "name": "ResourceFabric invariants I1: interactive work is never rejected by the account limit",
+          "status": "passed"
+        },
+        {
+          "name": "ResourceFabric invariants I2: active usage never exceeds the current account limit",
+          "status": "passed"
+        },
+        {
+          "name": "ResourceFabric invariants I3: DRF-lite share stays within the two-times fairness bound",
+          "status": "passed"
+        },
+        {
+          "name": "ResourceFabric invariants writes each limit adjustment into the resource-envelope ledger",
+          "status": "passed"
+        },
+        {
+          "name": "ResourceFabric P2 pressure runs 20 exec plus 20 history with zero timeouts and a replayable limit trace",
+          "status": "passed"
+        },
+        {
+          "name": "resource fabric P0 primitives evicts LRU entries, expires by injected TTL, and invalidates by prefix",
+          "status": "passed"
+        },
+        {
+          "name": "resource fabric P0 primitives coalesces same-key work and does not cache rejected calls",
+          "status": "passed"
+        },
+        {
+          "name": "resource fabric P0 primitives adjusts adaptive limits with bounds and a dead zone",
+          "status": "passed"
+        },
+        {
+          "name": "resource fabric P0 primitives removes and clears queued priority items",
+          "status": "passed"
+        },
+        {
+          "name": "resource fabric P0 primitives enforces token-bucket bursts with injected time and rejects invalid input",
+          "status": "passed"
+        },
+        {
+          "name": "resource fabric P0 primitives orders QoS, boosts explicit work, and ages opportunistic work",
+          "status": "passed"
+        },
+        {
+          "name": "resource fabric P0 primitives enforces DRF-lite capacity and fairness bounds",
+          "status": "passed"
+        },
+        {
+          "name": "workspace exec lease preserves FIFO, capacity and queuedMs for 200 queued requests",
+          "status": "passed"
+        },
+        {
+          "name": "workspace exec lease removes timed-out work and admits the next waiter after release",
+          "status": "passed"
+        },
+        {
+          "name": "workspace exec lease releases a slot after synchronous throws and asynchronous rejections",
+          "status": "passed"
+        },
+        {
+          "name": "workspace exec lease does not let a stale double release over-admit while another lease is held",
+          "status": "passed"
+        },
+        {
+          "name": "workspace exec lease grants up to capacity 2 immediately and queues the third",
+          "status": "passed"
+        },
+        {
+          "name": "workspace exec lease does not block a different workspace key",
+          "status": "passed"
+        },
+        {
+          "name": "workspace exec lease records active and queued slots in the shadow resource envelope",
+          "status": "passed"
+        },
+        {
+          "name": "workspace exec lease rejects with a typed timeout error when the slot never frees",
+          "status": "passed"
+        },
+        {
+          "name": "terminal api workspace exec lease bounds concurrent terminal executions per workspace at capacity 2",
+          "status": "passed"
+        },
+        {
+          "name": "terminal api workspace exec lease lets different workspaces run in parallel",
+          "status": "passed"
+        },
+        {
+          "name": "terminal api workspace exec lease shares capacity across Windows case and slash variants and API instances",
+          "status": "passed"
+        },
+        {
+          "name": "terminal api workspace exec lease keeps RPC method fallback inside the lease and releases after a Gateway failure",
+          "status": "passed"
+        },
+        {
+          "name": "terminal api workspace exec lease subtracts queue and fallback time from the same terminal deadline",
+          "status": "passed"
+        },
+        {
+          "name": "terminal api workspace exec lease maps full waiting capacity to a blocked terminal result",
+          "status": "passed"
+        },
+        {
+          "name": "terminal api workspace exec lease queues approved work too and records admission timeout without executing it later",
+          "status": "passed"
+        },
+        {
+          "name": "terminal api workspace exec lease reports a stable blocked result when the lease cannot be acquired in time",
+          "status": "passed"
+        },
+        {
+          "name": "terminal api OpenClaw exec integration delegates allowed terminal commands to OpenClaw/Gateway instead of spawning a local shell",
+          "status": "passed"
+        },
+        {
+          "name": "terminal api OpenClaw exec integration tries compatible OpenClaw exec RPC names and never falls back to PowerShell",
+          "status": "passed"
+        },
+        {
+          "name": "terminal api OpenClaw exec integration returns an explicit unavailable result when OpenClaw exposes no direct terminal RPC",
+          "status": "passed"
+        },
+        {
+          "name": "terminal api OpenClaw exec integration requires approval for dangerous commands before delegating to OpenClaw",
+          "status": "passed"
+        },
+        {
+          "name": "terminal api OpenClaw exec integration records a bounded diagnostic for failed approved terminal commands",
+          "status": "passed"
+        },
+        {
+          "name": "terminal api OpenClaw exec integration maps safe Gateway failure metadata to { success: false, code: 'ENOENT', exitCode: 1 }",
+          "status": "passed"
+        },
+        {
+          "name": "terminal api OpenClaw exec integration maps safe Gateway failure metadata to { success: false, code: 'EACCES', exitCode: 1 }",
+          "status": "passed"
+        },
+        {
+          "name": "terminal api OpenClaw exec integration maps safe Gateway failure metadata to { success: false, timedOut: true, exitCode: null }",
+          "status": "passed"
+        },
+        {
+          "name": "terminal api OpenClaw exec integration maps safe Gateway failure metadata to { success: false, cancelled: true, exitCode: null }",
+          "status": "passed"
+        },
+        {
+          "name": "terminal api OpenClaw exec integration does not record successful approved terminal commands",
+          "status": "passed"
+        },
+        {
+          "name": "terminal api OpenClaw exec integration blocks mutating commands in read-only mode before reaching Gateway",
+          "status": "passed"
+        },
+        {
+          "name": "terminal api OpenClaw exec integration returns structured sandbox denial details when the sandbox gate fails closed",
+          "status": "passed"
+        },
+        {
+          "name": "terminal api OpenClaw exec integration keeps the tail of oversized terminal output",
+          "status": "passed"
+        }
+      ]
+    },
+    "runtime": {
+      "total": 43,
+      "passed": 43,
+      "failed": 0,
+      "skipped": 0,
+      "suitesFailed": 0,
+      "success": true,
+      "cases": [
+        {
+          "name": "workspace resource leases caps workspaceSearch at 2 and queues the third with queuedMs > 0",
+          "status": "passed"
+        },
+        {
+          "name": "workspace resource leases serializes overlapping fileMutation paths and runs disjoint paths in parallel",
+          "status": "passed"
+        },
+        {
+          "name": "workspace resource leases serializes overlapping subtreeMutation paths and runs disjoint subtrees in parallel",
+          "status": "passed"
+        },
+        {
+          "name": "workspace resource leases keeps different workspace keys independent",
+          "status": "passed"
+        },
+        {
+          "name": "workspace resource leases caps 8 concurrent workspaceExec acquisitions at the workspace budget",
+          "status": "passed"
+        },
+        {
+          "name": "workspace resource leases releases idempotently without over-admitting the next batch",
+          "status": "passed"
+        },
+        {
+          "name": "workspace resource leases records gateway leases in the shadow resource envelope",
+          "status": "passed"
+        },
+        {
+          "name": "workspace resource leases rejects with a typed timeout error and reclaims the slot after release",
+          "status": "passed"
+        },
+        {
+          "name": "bash workspaceExec admission queues behind the workspace budget before spawning the shell",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers preserves write owner-confirmed completion after cancellation",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers preserves edit owner-confirmed completion after cancellation",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers cancels bash while queued without starting the operation",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers cancels find while queued without starting the operation",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers cancels grep while queued without starting the operation",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers cancels write while queued without starting the operation",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers cancels edit while queued without starting the operation",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers uses remaining bash time and retains the lease until observed child close",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers keeps running find ownership through cancellation until close",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers keeps running grep ownership through cancellation until close",
+          "status": "passed"
+        },
+        {
+          "name": "direct resource wait consumers does not spawn grep after cancellation during asynchronous preparation",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: successful replacement applies a single unique replacement and returns diff/patch details",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: successful replacement applies multiple disjoint edits in one call",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: match failures appends the current file contents as a hint when the text is not found",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: match failures truncates the mismatch hint at 800 characters",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: match failures reports ambiguous matches with an occurrence count and NO contents hint",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: match failures rejects an empty oldText",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: match failures rejects an empty edits array before touching the filesystem",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: match failures reports a missing file with the Node error code only",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: line-ending round trips preserves CRLF endings and converts inserted LF newlines to CRLF",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: line-ending round trips preserves each existing ending in a mixed-endings file",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: line-ending round trips preserves lone-CR (classic Mac) line endings",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: BOM handling matches oldText ignoring the BOM and re-attaches the BOM on write",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: BOM handling preserves UTF-16LE encoding and BOM while editing decoded text",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: fuzzy matching boundaries keeps untouched punctuation and trailing whitespace during a fuzzy edit",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: prepareArguments legacy shapes converts top-level oldText/newText into an edits array",
+          "status": "passed"
+        },
+        {
+          "name": "edit tool: prepareArguments legacy shapes parses edits sent as a JSON string",
+          "status": "passed"
+        },
+        {
+          "name": "write tool: create and overwrite creates a new file and reports the byte count in the success message",
+          "status": "passed"
+        },
+        {
+          "name": "write tool: create and overwrite overwrites an existing file",
+          "status": "passed"
+        },
+        {
+          "name": "write tool: create and overwrite creates missing parent directories automatically",
+          "status": "passed"
+        },
+        {
+          "name": "write tool: create and overwrite writes empty content",
+          "status": "passed"
+        },
+        {
+          "name": "write tool: line endings and byte counting writes CRLF content verbatim without normalizing line endings",
+          "status": "passed"
+        },
+        {
+          "name": "write tool: line endings and byte counting reports the actual UTF-8 byte length in the success message",
+          "status": "passed"
+        },
+        {
+          "name": "write tool: line endings and byte counting reports an astral emoji using its UTF-8 byte length",
+          "status": "passed"
+        }
+      ]
+    }
+  },
+  "pressures": [
+    {
+      "kind": "fabric",
+      "requests": 200,
+      "counts": {
+        "success": 42,
+        "rejected": 134,
+        "cancelled": 8,
+        "timeout": 16,
+        "unexpected": 0
+      },
+      "peak": {
+        "active": 2,
+        "queued": 64
+      },
+      "final": {
+        "active": 0,
+        "queued": 0,
+        "timers": 0,
+        "listeners": 0
+      }
+    },
+    {
+      "kind": "runtime",
+      "requests": 200,
+      "counts": {
+        "success": 42,
+        "rejected": 134,
+        "cancelled": 8,
+        "timeout": 16,
+        "unexpected": 0
+      },
+      "peak": {
+        "active": 2,
+        "queued": 64
+      },
+      "final": {
+        "active": 0,
+        "queued": 0,
+        "timers": 0,
+        "listeners": 0
+      }
+    }
+  ],
+  "negativeControls": {
+    "failed": 3,
+    "baselineCommit": "e6155185dbfc488080ee432f37e20929080a8b27"
+  },
+  "types": {
+    "focused": true,
+    "runtimeFullPass": false,
+    "baselineCommit": "e6155185dbfc488080ee432f37e20929080a8b27",
+    "baselineDiagnostics": 118,
+    "candidateDiagnostics": 118,
+    "introduced": []
+  },
+  "dependencies": {
+    "mode": "reuse-installed-junctions",
+    "root": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\node_modules",
+    "runtime": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\node_modules",
+    "vitest": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\node_modules\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\vitest.mjs",
+    "runtimeVitest": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\node_modules\\.pnpm\\vitest@4.1.7_@opentelemetry_f5449208cde661befa315c6fea555e10\\node_modules\\vitest\\vitest.mjs",
+    "tsgo": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\node_modules\\.pnpm\\@typescript+native-preview@7.0.0-dev.20260527.2\\node_modules\\@typescript\\native-preview\\bin\\tsgo.js",
+    "eslint": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\node_modules\\.pnpm\\eslint@10.1.0_jiti@1.21.7\\node_modules\\eslint\\bin\\eslint.js",
+    "node": "v24.22.1"
+  },
+  "sourceHashes": [
+    {
+      "path": "electron/services/resource-fabric.ts",
+      "sha256": "cb347daf8de80ca5395352cdb4bc7d181d7cba0ae9e81f4d4dc5daa2af60273a"
+    },
+    {
+      "path": "electron/services/terminal-api.ts",
+      "sha256": "c05da2bbdcb88a86c41aed4040ea62e693a36fc811c62c2670cfb12f8255881e"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-bounded-waiting-20261107/focused-tsconfig.json",
+      "sha256": "f46c56b09df680304d0daf67eb0990d3a0243cfaff18ddd448e477658a552ce7"
+    },
+    {
+      "path": "harness/specs/rules/resource-bounded-waiting.md",
+      "sha256": "071209f97692a8ed9783c64998189de8e3298f74dae2828e5103ea63048afaa2"
+    },
+    {
+      "path": "harness/specs/tasks/resource-bounded-waiting-20261107.md",
+      "sha256": "936e9361db7961b4f36fd2d163e9b700537e801aefc912a4029adfae2e219ca3"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/resource-leases.ts",
+      "sha256": "073b095d7b6fb021fff9c54ee2f94dbef135e070b8308898a414f40cf4f45c05"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/sessions/tools/bash.ts",
+      "sha256": "805bf2c021b09f062fd750713688967671f919585918501cf08c65d3cc148280"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/sessions/tools/bounded-waiting-lease.test.ts",
+      "sha256": "923bacc7123d4197bb1a29ffc46a0b28163a57fab0a6aa56065d469eb928eb8c"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/sessions/tools/edit.ts",
+      "sha256": "2fede2a77ce202c1b713f2dd6cb12eec7bd5b8cdde9cf19106ee50f54a4194df"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/sessions/tools/file-mutation-queue.ts",
+      "sha256": "60f4ebb2c6063004122a6a6ab198b5b76d82a6dfddf8b8d368f0beb8dc760687"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/sessions/tools/find.ts",
+      "sha256": "367d017687ec18343997c95c664fcc96eb9f8629fb23c6a6f7246114f7e6ff69"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/sessions/tools/grep.ts",
+      "sha256": "14871a99212aba9eb4098f860dd26b9327581b91ac2514453ace2c7e676bc83f"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/sessions/tools/write.ts",
+      "sha256": "0334769e57f5c392860d93943ada4582a55f6ce363816f8036ace8ad6d670d26"
+    },
+    {
+      "path": "openclaw_runtime/test/vitest/vitest.resource-waiting.config.ts",
+      "sha256": "14d3d631fb804100076924a486d6c264cc19aad6c6998b4c942deed289ba6886"
+    },
+    {
+      "path": "scripts/verify-resource-bounded-waiting.mjs",
+      "sha256": "69c356a9fbd7e10c33ba51d7a77d438c4bfbbe7ecce91346266e6d13dcc46af0"
+    },
+    {
+      "path": "shared/resources/singleflight.ts",
+      "sha256": "b64ecaa252e1208ad02f245f6724ac5d9cba327af9f7810bffd4bc6629e2abd8"
+    },
+    {
+      "path": "shared/resources/wait.ts",
+      "sha256": "9d569be0fb2878e1f5f6b86b0404b9011dddfa96a5788098aae45f2f4e958f84"
+    },
+    {
+      "path": "tests/unit/resource-fabric-bounded-waiting.test.ts",
+      "sha256": "fb6ab55d083e9e693a0c1c5bcccc1332c87bddf164b87e084f0c2888a2126eec"
+    },
+    {
+      "path": "tests/unit/resource-fabric-workspace-exec.test.ts",
+      "sha256": "e8008ef146e9eb938e7effe6d1f9a9789da42fcf6a79d864fcaac4a6407f5d7b"
+    },
+    {
+      "path": "tests/unit/terminal-api.test.ts",
+      "sha256": "f575b51e75aafa5c69d57ddb89a8fbb00a0a922fc8da2a26990c616d07457db9"
+    }
+  ],
+  "commands": [
+    {
+      "id": "harness-context",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "context",
+        "--spec",
+        "harness/specs/tasks/resource-bounded-waiting-20261107.md"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 180,
+      "required": true,
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp",
+        "GOMEMLIMIT": "1GiB",
+        "GOMAXPROCS": "2"
+      }
+    },
+    {
+      "id": "harness-validate",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/resource-bounded-waiting-20261107.md"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 663,
+      "required": true,
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp",
+        "GOMEMLIMIT": "1GiB",
+        "GOMAXPROCS": "2"
+      }
+    },
+    {
+      "id": "harness-dry-run",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/resource-bounded-waiting-20261107.md",
+        "--dry-run"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 660,
+      "required": true,
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp",
+        "GOMEMLIMIT": "1GiB",
+        "GOMAXPROCS": "2"
+      }
+    },
+    {
+      "id": "main-tests",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\node_modules\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\vitest.mjs",
+        "run",
+        "tests/unit/resource-fabric-bounded-waiting.test.ts",
+        "tests/unit/resource-fabric-chat-history.test.ts",
+        "tests/unit/resource-fabric-workspace-exec.test.ts",
+        "tests/unit/resource-fabric-primitives.test.ts",
+        "tests/unit/resource-fabric-invariants.test.ts",
+        "tests/unit/resource-fabric-pressure.test.ts",
+        "tests/unit/terminal-api.test.ts",
+        "tests/unit/git-api.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\tf0829-recovery\\acceptance\\main-tests.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 14452,
+      "required": true,
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp",
+        "GOMEMLIMIT": "1GiB",
+        "GOMAXPROCS": "2"
+      }
+    },
+    {
+      "id": "runtime-tests",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\node_modules\\.pnpm\\vitest@4.1.7_@opentelemetry_f5449208cde661befa315c6fea555e10\\node_modules\\vitest\\vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.resource-waiting.config.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\tf0829-recovery\\acceptance\\runtime-tests.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX\\openclaw_runtime",
+      "exitCode": 0,
+      "durationMs": 6701,
+      "required": true,
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp",
+        "GOMEMLIMIT": "1GiB",
+        "GOMAXPROCS": "2"
+      }
+    },
+    {
+      "id": "focused-types",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\node_modules\\.pnpm\\@typescript+native-preview@7.0.0-dev.20260527.2\\node_modules\\@typescript\\native-preview\\bin\\tsgo.js",
+        "--noEmit",
+        "-p",
+        "harness/specs/fixtures/resource-bounded-waiting-20261107/focused-tsconfig.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 1363,
+      "required": true,
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp",
+        "GOMEMLIMIT": "1GiB",
+        "GOMAXPROCS": "2"
+      }
+    },
+    {
+      "id": "runtime-types",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\node_modules\\.pnpm\\@typescript+native-preview@7.0.0-dev.20260527.2\\node_modules\\@typescript\\native-preview\\bin\\tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX\\openclaw_runtime",
+      "exitCode": 2,
+      "durationMs": 872774,
+      "required": false,
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp",
+        "GOMEMLIMIT": "1GiB",
+        "GOMAXPROCS": "2"
+      }
+    },
+    {
+      "id": "lint",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\node_modules\\.pnpm\\eslint@10.1.0_jiti@1.21.7\\node_modules\\eslint\\bin\\eslint.js",
+        "electron/services/resource-fabric.ts",
+        "electron/services/terminal-api.ts",
+        "openclaw_runtime/src/agents/resource-leases.ts",
+        "openclaw_runtime/src/agents/sessions/tools/bash.ts",
+        "openclaw_runtime/src/agents/sessions/tools/bounded-waiting-lease.test.ts",
+        "openclaw_runtime/src/agents/sessions/tools/edit.ts",
+        "openclaw_runtime/src/agents/sessions/tools/file-mutation-queue.ts",
+        "openclaw_runtime/src/agents/sessions/tools/find.ts",
+        "openclaw_runtime/src/agents/sessions/tools/grep.ts",
+        "openclaw_runtime/src/agents/sessions/tools/write.ts",
+        "openclaw_runtime/test/vitest/vitest.resource-waiting.config.ts",
+        "scripts/verify-resource-bounded-waiting.mjs",
+        "shared/resources/singleflight.ts",
+        "shared/resources/wait.ts",
+        "tests/unit/resource-fabric-bounded-waiting.test.ts",
+        "tests/unit/resource-fabric-workspace-exec.test.ts",
+        "tests/unit/terminal-api.test.ts",
+        "--format",
+        "json",
+        "--output-file",
+        "D:\\tmp\\tf0829-recovery\\acceptance\\lint.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 19489,
+      "required": true,
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp",
+        "GOMEMLIMIT": "1GiB",
+        "GOMAXPROCS": "2"
+      }
+    },
+    {
+      "id": "comms-replay",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 359,
+      "required": true,
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp",
+        "GOMEMLIMIT": "1GiB",
+        "GOMAXPROCS": "2"
+      }
+    },
+    {
+      "id": "comms-compare",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 333,
+      "required": true,
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp",
+        "GOMEMLIMIT": "1GiB",
+        "GOMAXPROCS": "2"
+      }
+    },
+    {
+      "id": "artifact-retention",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 8911,
+      "required": true,
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp",
+        "GOMEMLIMIT": "1GiB",
+        "GOMAXPROCS": "2"
+      }
+    },
+    {
+      "id": "diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "e6155185dbfc488080ee432f37e20929080a8b27",
+        "HEAD"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 118,
+      "required": true,
+      "environment": {
+        "TEMP": "D:\\tmp",
+        "TMP": "D:\\tmp",
+        "GOMEMLIMIT": "1GiB",
+        "GOMAXPROCS": "2"
+      }
+    }
+  ],
+  "verdict": "pass-bounded-waiting"
+}
