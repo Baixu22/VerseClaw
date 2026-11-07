@@ -32,7 +32,8 @@
       "exitCode": 0,
       "seconds": 243.84614372253418,
       "startedAt": "2026-11-07T08:44:46.975563+00:00",
-      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-focused-units-attempt-1.log"
+      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-focused-units-attempt-1.log",
+      "retainedOutput": "focused-units.output.json"
     },
     {
       "name": "runtime-invoke",
@@ -50,7 +51,8 @@
       "exitCode": 0,
       "seconds": 55.884233713150024,
       "startedAt": "2026-11-07T08:48:51.245150+00:00",
-      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-runtime-invoke-attempt-1.log"
+      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-runtime-invoke-attempt-1.log",
+      "retainedOutput": "runtime-invoke.output.json"
     },
     {
       "name": "runtime-lifecycle",
@@ -68,7 +70,8 @@
       "exitCode": 0,
       "seconds": 40.37407660484314,
       "startedAt": "2026-11-07T08:49:47.705618+00:00",
-      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-runtime-lifecycle-attempt-1.log"
+      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-runtime-lifecycle-attempt-1.log",
+      "retainedOutput": "runtime-lifecycle.output.json"
     },
     {
       "name": "typecheck",
@@ -81,7 +84,8 @@
       "exitCode": 0,
       "seconds": 103.53661274909973,
       "startedAt": "2026-11-07T08:50:28.265839+00:00",
-      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-typecheck-attempt-1.log"
+      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-typecheck-attempt-1.log",
+      "retainedOutput": "typecheck.output.json"
     },
     {
       "name": "contract",
@@ -93,7 +97,8 @@
       "exitCode": 0,
       "seconds": 0.6217663288116455,
       "startedAt": "2026-11-07T08:52:12.163979+00:00",
-      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-contract-attempt-1.log"
+      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-contract-attempt-1.log",
+      "retainedOutput": "contract.output.json"
     },
     {
       "name": "comms-replay",
@@ -105,7 +110,8 @@
       "exitCode": 0,
       "seconds": 0.5398595333099365,
       "startedAt": "2026-11-07T08:52:13.027428+00:00",
-      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-comms-replay-attempt-1.log"
+      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-comms-replay-attempt-1.log",
+      "retainedOutput": "comms-replay.output.json"
     },
     {
       "name": "comms-compare",
@@ -117,7 +123,8 @@
       "exitCode": 0,
       "seconds": 0.6285886764526367,
       "startedAt": "2026-11-07T08:52:13.822220+00:00",
-      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-comms-compare-attempt-1.log"
+      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-comms-compare-attempt-1.log",
+      "retainedOutput": "comms-compare.output.json"
     },
     {
       "name": "harness",
@@ -132,7 +139,8 @@
       "exitCode": 0,
       "seconds": 1.0534753799438477,
       "startedAt": "2026-11-07T08:52:14.628250+00:00",
-      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-harness-attempt-1.log"
+      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-harness-attempt-1.log",
+      "retainedOutput": "harness.output.json"
     },
     {
       "name": "harness-dry-run",
@@ -148,7 +156,8 @@
       "exitCode": 0,
       "seconds": 0.9175717830657959,
       "startedAt": "2026-11-07T08:52:15.863830+00:00",
-      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-harness-dry-run-attempt-1.log"
+      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-harness-dry-run-attempt-1.log",
+      "retainedOutput": "harness-dry-run.output.json"
     },
     {
       "name": "artifact-policy",
@@ -160,7 +169,8 @@
       "exitCode": 0,
       "seconds": 46.271082639694214,
       "startedAt": "2026-11-07T08:52:16.906877+00:00",
-      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-artifact-policy-attempt-1.log"
+      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-artifact-policy-attempt-1.log",
+      "retainedOutput": "artifact-policy.output.json"
     },
     {
       "name": "lint",
@@ -195,7 +205,8 @@
       "exitCode": 0,
       "seconds": 10.828084230422974,
       "startedAt": "2026-11-07T09:16:37.776351+00:00",
-      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-lint.log"
+      "log": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-lint.log",
+      "retainedOutput": "lint.output.json"
     }
   ]
 }

@@ -1,0 +1,4 @@
+{
+  "output": "\n\n\n RUN  v4.1.7 D:/ClawX-work/coding-vg-sts-jj-20261104/openclaw_runtime\n\n[vitest] still running with no output for 30000ms (run --config vitest.config.ts D:/ClawX-work/coding-vg-sts-jj-20261104/openclaw_runtime/src/gateway/server-methods/tools-invoke-mcp-fallback.test.ts --maxWorkers=1 --reporter=default --reporter=json --outputFile.json=D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\candidate-invoke.json --passWithNoTests=false).\n ✓ |gateway-methods| ../../src/gateway/server-methods/tools-invoke-mcp-fallback.test.ts (9 tests) 65ms\n\n Test Files  1 passed (1)\n      Tests  9 passed (9)\n   Start at  16:49:15\n   Duration  31.79s (transform 8.47s, setup 1.06s, import 29.79s, tests 65ms, environment 0ms)\n\nJSON report written to D:/tmp/coding-relay-01a1ab23-20261107/TF-0772/candidate-invoke.json\n",
+  "rawSha256": "f2998912ddc37c7b20c882be1a8f216dd8485688329ea49014a02034b7921bf0"
+}
