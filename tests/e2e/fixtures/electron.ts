@@ -64,7 +64,11 @@ function envWithoutUndefined(env: Record<string, string | undefined>): Record<st
 }
 
 const repoRoot = resolve(process.cwd());
-const electronProcesses = new WeakMap<ElectronApplication, { userDataDir: string; identities: WindowsProcessIdentity[] }>();
+const electronProcesses = new WeakMap<ElectronApplication, {
+  userDataDir: string;
+  identities: WindowsProcessIdentity[];
+  launcher: ReturnType<ElectronApplication['process']>;
+}>();
 const electronEntry = join(repoRoot, 'dist-electron/main/index.js');
 const rendererEntryUrl = pathToFileURL(join(repoRoot, 'dist', 'index.html')).toString();
 
@@ -271,6 +275,7 @@ async function bounded<T>(operation: Promise<T>, timeoutMs: number): Promise<T> 
 
 async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000) {
   const owned = electronProcesses.get(app);
+  const launcher = owned?.launcher ?? app.process();
   let snapshotError: string | undefined;
   if (process.platform === 'win32' && owned) {
     try {
@@ -290,7 +295,6 @@ async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000) {
   try {
     if (process.platform === 'win32' && owned) processes = await checkWindowsProcesses(owned.identities, true);
   } catch (error) { processError = error; }
-  const launcher = app.process();
   if (launcher.exitCode === null && launcher.signalCode === null) {
     // ChildProcess.kill uses the launcher's existing native handle on Windows.
     const exited = new Promise<void>((resolve) => launcher.once('exit', () => resolve()));
@@ -395,11 +399,13 @@ async function launchVerseClawElectron(
     }),
     timeout: 90_000,
   });
+  const owned = { userDataDir, identities: [] as WindowsProcessIdentity[], launcher: app.process() };
+  electronProcesses.set(app, owned);
   if (process.platform === 'win32') {
     try {
       const identities = await bounded(app.evaluate(({ app: electronApp }) => electronApp.getAppMetrics()
         .map(({ pid, creationTime }) => ({ pid, creationTime }))), 5_000);
-      electronProcesses.set(app, { userDataDir, identities });
+      owned.identities = identities;
       await recordElectronProcesses(userDataDir, identities);
     }
     catch (error) { await closeElectronApp(app); throw error; }

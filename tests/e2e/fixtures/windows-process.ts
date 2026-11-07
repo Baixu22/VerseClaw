@@ -12,7 +12,8 @@ export type WindowsProcessCheck = WindowsProcessIdentity & {
 const script = String.raw`
 $ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
-$results = @(foreach ($entry in @($env:CLAWX_PROCESS_IDENTITIES | ConvertFrom-Json)) {
+$entries = $env:CLAWX_PROCESS_IDENTITIES | ConvertFrom-Json
+$results = @(foreach ($entry in $entries) {
   $result = [ordered]@{ pid = $entry.pid; creationTime = $entry.creationTime; status = 'unavailable' }
   $owned = $null
   try {

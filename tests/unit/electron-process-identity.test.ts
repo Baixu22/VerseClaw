@@ -20,6 +20,8 @@ test.skipIf(process.platform !== 'win32')('cleanup preserves a reused PID and te
     ], { windowsHide: true, timeout: 10_000, env: { ...process.env, CLAWX_TEST_PID: String(child.pid) } });
     const identity = { pid: child.pid!, creationTime: Number(stdout.trim()) };
     expect(await checkWindowsProcesses([identity])).toEqual([{ ...identity, status: 'alive' }]);
+    expect(await checkWindowsProcesses([identity, { ...identity, creationTime: identity.creationTime - 1000 }]))
+      .toEqual([{ ...identity, status: 'alive' }, { ...identity, creationTime: identity.creationTime - 1000, status: 'replaced' }]);
     expect(await checkWindowsProcesses([{ ...identity, creationTime: identity.creationTime - 1000 }], true))
       .toEqual([{ ...identity, creationTime: identity.creationTime - 1000, status: 'replaced' }]);
     expect(child.exitCode).toBeNull();
