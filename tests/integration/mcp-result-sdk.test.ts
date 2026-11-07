@@ -240,6 +240,7 @@ it.each(['notification', 'delete'] as const)('cancels queued HTTP batch calls th
     const response = await (await pending).json();
     expect(response[1].result).toMatchObject({ isError: true, _meta: { 'openclaw/resultStatus': 'cancelled' } });
     expect(env.events).not.toContain('start:text:batch-2');
+    await retain(`batch-${mode}`, { response, events: [...env.events], queuedEffectExecuted: false });
   } finally { await server.close(); }
 });
 
@@ -262,6 +263,7 @@ it('reconnects an expired MCP session without replaying the rejected call', asyn
     expect(env.events.some((event) => event.includes('expired-attempt'))).toBe(false);
     expect(await runtime.callTool('fixture', 'result_fixture', { kind: 'text', marker: 'fresh-call' }))
       .toMatchObject({ isError: false, content: [{ type: 'text', text: 'fresh-call' }] });
+    await retain('expired-session', { events: [...env.events], expiredAttemptExecuted: false, explicitRecoveryPassed: true });
   } finally { clock?.mockRestore(); await disposeSessionMcpRuntime(sessionId); await server.close(); }
 }, 90_000);
 
@@ -300,8 +302,10 @@ it('ignores a delayed 404 from a retired connection after its replacement is war
     await runtime.getCatalog();
     const late = runtime.callTool('fixture', 'result_fixture', { kind: 'text', marker: 'late-old' }).catch((error) => error);
     await expect.poll(() => lateStarted).toBe(true);
-    const first = runtime.callTool('fixture', 'result_fixture', { kind: 'text', marker: 'first-old' }).catch((error) => error);
+    let firstRejected = false;
+    const first = runtime.callTool('fixture', 'result_fixture', { kind: 'text', marker: 'first-old' }).catch((error) => { firstRejected = true; return error; });
     await expect.poll(() => Boolean(releaseRetirement)).toBe(true);
+    await expect.poll(() => firstRejected, { timeout: 1000 }).toBe(true);
     expect(await runtime.callTool('fixture', 'result_fixture', { kind: 'text', marker: 'replacement' })).toMatchObject({ isError: false });
     const currentCatalog = runtime.peekCatalog();
     rejectLate(new StreamableHTTPError(404, 'Delayed expired response'));
@@ -309,7 +313,15 @@ it('ignores a delayed 404 from a retired connection after its replacement is war
     await new Promise((resolve) => setTimeout(resolve, 20));
     expect(runtime.peekCatalog()).toBe(currentCatalog);
     expect(await runtime.callTool('fixture', 'result_fixture', { kind: 'text', marker: 'still-live' })).toMatchObject({ isError: false });
+    const preservedReplacement = runtime.peekCatalog() === currentCatalog;
+    let fullyDisposed = false;
+    const disposing = disposeSessionMcpRuntime(sessionId).then(() => { fullyDisposed = true; });
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(fullyDisposed).toBe(false);
     await releaseRetirement?.();
     await first;
+    await disposing;
+    await retain('expiry-race', { preservedReplacement, originalErrorReturnedBeforeCleanup: firstRejected, runtimeDisposalDrained: fullyDisposed,
+      faultInjection: 'controlled delayed SDK404 and retirement; real HTTP handshake and successful calls' });
   } finally { await releaseRetirement?.(); terminate.mockRestore(); send.mockRestore(); await disposeSessionMcpRuntime(sessionId); await server.close(); }
 }, 90_000);

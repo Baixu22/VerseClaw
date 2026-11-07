@@ -559,6 +559,12 @@ export function createSessionMcpRuntime(params: {
   let catalogInFlight: Promise<McpToolCatalog> | undefined;
   let catalogInvalidationGeneration = 0;
   const sessions = new Map<string, BundleMcpSession>();
+  const pendingDisposals = new Set<Promise<void>>();
+  const scheduleSessionDisposal = (session: BundleMcpSession) => {
+    const pending = disposeSession(session).catch(() => {});
+    pendingDisposals.add(pending);
+    void pending.then(() => pendingDisposals.delete(pending));
+  };
   const listingServers = new Set<string>();
   const serverBackoff = new Map<string, McpServerBackoffState>();
   const recordServerToolFailure = (serverName: string, nowMs: number) => {
@@ -588,7 +594,7 @@ export function createSessionMcpRuntime(params: {
       if (sessions.get(serverName) === session) serverBackoff.delete(serverName);
       return result;
     } catch (error) {
-      await retireRejectedHttpSession(serverName, session, error);
+      retireRejectedHttpSession(serverName, session, error);
       if (!signal?.aborted && sessions.get(serverName) === session) {
         recordServerToolFailure(serverName, nowMs);
       }
@@ -615,7 +621,7 @@ export function createSessionMcpRuntime(params: {
     catalog = null;
     catalogInFlight = undefined;
   };
-  const retireRejectedHttpSession = async (
+  const retireRejectedHttpSession = (
     serverName: string,
     session: BundleMcpSession,
     error: unknown,
@@ -632,7 +638,9 @@ export function createSessionMcpRuntime(params: {
     // only; late errors must not close its replacement or replay the tool effect.
     sessions.delete(serverName);
     invalidateCatalogMemo();
-    await disposeSession(session);
+    // Failure reaches the caller immediately; runtime disposal still owns and
+    // drains this connection's bounded asynchronous cleanup.
+    scheduleSessionDisposal(session);
   };
 
   /**
@@ -675,7 +683,7 @@ export function createSessionMcpRuntime(params: {
     sessions.delete(serverName);
     invalidateCatalogMemo();
     logWarn(`bundle-mcp: server "${serverName}" transport closed; dropped its cached tools.`);
-    void disposeSession(session).catch(() => {});
+    scheduleSessionDisposal(session);
   };
 
   const getCatalog = async (options?: { refresh?: boolean }): Promise<McpToolCatalog> => {
@@ -1045,7 +1053,10 @@ export function createSessionMcpRuntime(params: {
       catalogInFlight = undefined;
       const sessionsToClose = Array.from(sessions.values());
       sessions.clear();
-      await Promise.allSettled(sessionsToClose.map((session) => disposeSession(session)));
+      await Promise.allSettled([
+        ...sessionsToClose.map((session) => disposeSession(session)),
+        ...pendingDisposals,
+      ]);
     },
   };
 }
