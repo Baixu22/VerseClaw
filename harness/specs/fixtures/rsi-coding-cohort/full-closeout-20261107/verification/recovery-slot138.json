@@ -1,0 +1,14 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-saved-receipt-importer",
+  "slot": "tf-0280-s05-1-sekb-confirmed",
+  "position": 137,
+  "outcome": "fail",
+  "providerCallsDuringRecovery": 0,
+  "capturedProviderId": "01a1b19322df7950be145fdf7a87c28f",
+  "knownUsage": {
+    "inputTokens": 896,
+    "outputTokens": 3562,
+    "totalTokens": 4458
+  }
+}

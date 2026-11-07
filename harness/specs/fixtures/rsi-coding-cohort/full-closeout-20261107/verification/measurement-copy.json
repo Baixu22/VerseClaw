@@ -1,0 +1,10 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-final-retention-verifier",
+  "source": "D:/tmp/rsi-completion-control-20261106/measurement-v3",
+  "retained": "D:/tmp/rsi-final-verifier-20261106/harness/specs/fixtures/rsi-benefit-eval/coding-complete-20261106-v2/measurement",
+  "runId": "2bb4141c-a536-443a-8b89-0fbfd0082edf",
+  "files": 462,
+  "mismatches": [],
+  "manifestSha256": "72348696235555db6d86765e989afdfc573e0cb5375ae814addaa55e59cdd1b5"
+}

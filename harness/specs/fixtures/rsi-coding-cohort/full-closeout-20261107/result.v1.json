@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "RsiCodingCompletion/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-final-independent-verifier",
+  "date": "2026-11-07",
+  "task": "TF-0809",
+  "runId": "2bb4141c-a536-443a-8b89-0fbfd0082edf",
+  "source": {
+    "commit": "97747a8c833486b4d5c6014df5e7d25d71f8ceb2",
+    "tree": "d350a68f5e0e4ac4dd10aec5b9364a27ba1b83f6",
+    "dirty": false,
+    "bindings": 143,
+    "verifierScriptCommit": "48e0475d7b95c6e6772fe878e48d02345810a5c2"
+  },
+  "admission": {
+    "admitted": 24,
+    "total": 24,
+    "manifestFiles": 96,
+    "retainedPath": "harness/specs/fixtures/rsi-live-acceptance/complete-cohort-20261106-v8",
+    "reconstructedTasks": [
+      "tf-0278-s03",
+      "tf-0283-l01",
+      "tf-0285-l03"
+    ],
+    "supportPackage": "markdown-it@14.2.0"
+  },
+  "collection": {
+    "planned": 216,
+    "recorded": 216,
+    "unexecuted": 0,
+    "providerAttempts": 216,
+    "terminalResponses": 148,
+    "outcomes": {
+      "pass": 17,
+      "fail": 128,
+      "incomplete": 71,
+      "unexecuted": 0
+    },
+    "modelFailureCategories": {
+      "oracle": 113,
+      "format": 8,
+      "outputLimit": 7
+    },
+    "incompleteCategories": {
+      "providerUnknown": 68,
+      "oracleInfrastructure": 3
+    },
+    "knownTokens": 1624210,
+    "unknownUsage": 68,
+    "usageTotal": null,
+    "actualCostUsd": null,
+    "reservedTokens": 3439083,
+    "reservationIsUsage": false,
+    "maximumTokens": 12000000,
+    "providerRetries": 0
+  },
+  "decision": {
+    "status": "NO_GO",
+    "numericalStatus": "eliminate",
+    "completePairedCases": 11,
+    "minimumCompleteCases": 20,
+    "meanDiff": null,
+    "ci95": null,
+    "safetyAnchorViolations": [
+      {
+        "caseId": "tf-0290-g02",
+        "arm": "sekb-off"
+      },
+      {
+        "caseId": "tf-0290-g02",
+        "arm": "sekb-shadow"
+      },
+      {
+        "caseId": "tf-0290-g02",
+        "arm": "sekb-confirmed"
+      },
+      {
+        "caseId": "tf-0277-s02",
+        "arm": "sekb-off"
+      },
+      {
+        "caseId": "tf-0277-s02",
+        "arm": "sekb-shadow"
+      },
+      {
+        "caseId": "tf-0277-s02",
+        "arm": "sekb-confirmed"
+      },
+      {
+        "caseId": "tf-0278-s03",
+        "arm": "sekb-off"
+      },
+      {
+        "caseId": "tf-0278-s03",
+        "arm": "sekb-shadow"
+      },
+      {
+        "caseId": "tf-0278-s03",
+        "arm": "sekb-confirmed"
+      },
+      {
+        "caseId": "tf-0280-s05",
+        "arm": "sekb-confirmed"
+      }
+    ],
+    "basis": [
+      "Observed anchor violations",
+      "71 incomplete slots",
+      "68 attempts without terminal usage",
+      "Paired-case floor not met"
+    ]
+  },
+  "networkFailureSuffix": {
+    "count": 61,
+    "firstSlot": "tf-0282-s07-1-sekb-shadow",
+    "firstPosition": 155,
+    "startedAt": "2026-11-06T16:55:58.768Z",
+    "endedAt": "2026-11-06T16:57:51.915Z"
+  },
+  "artifactIntegrity": {
+    "measurementManifestFiles": 462,
+    "hashMismatches": 0,
+    "rawOutcomeProjectionChecked": true,
+    "measurementGatePassed": false,
+    "measurementGateErrors": [
+      "incomplete-slots\n\n71 !== 0\n"
+    ],
+    "rawArchiveFiles": 1431,
+    "rawArchiveHashMismatches": 0,
+    "rawArchiveCredentialHits": 0
+  },
+  "claims": {
+    "experimentCollectionCompleted": true,
+    "benefit": false,
+    "promotionReady": false,
+    "completeRsiImplementation": false,
+    "realHuman": false,
+    "productDefaultsChanged": false
+  }
+}

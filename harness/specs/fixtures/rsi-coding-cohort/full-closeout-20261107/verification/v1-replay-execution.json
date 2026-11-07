@@ -1,0 +1,8 @@
+{
+  "exitCode": 1,
+  "expectedMeasurementGate": "unexecuted-slots",
+  "sourceCandidate": "94ba328bfae9db50ddf3253f5cbd1b8ec8d4c8b8",
+  "driven_by": "agent",
+  "command": "node scripts/rsi-coding-independent-replay.mjs --root D:/tmp/rsi-relay-20261106/candidate --run-dir <retained v1 measurement> --out <new v1-independent-replay.json>",
+  "actor": "codex/rsi-independent-replay-verifier"
+}

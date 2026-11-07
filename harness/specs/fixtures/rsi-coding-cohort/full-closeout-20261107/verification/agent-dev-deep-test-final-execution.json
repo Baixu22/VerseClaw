@@ -1,0 +1,13 @@
+{
+  "startedAt": "2026-11-07T01:23:45.2480424+08:00",
+  "driven_by": "agent",
+  "e2eMode": "full",
+  "actor": "codex/rsi-final-baseline-verifier",
+  "endedAt": "2026-11-07T01:33:09.4209792+08:00",
+  "candidate": "c1f4907d755c617c844cf2c0b8fe938a912af95f",
+  "unitMode": "full",
+  "buildMode": "fresh",
+  "exitCode": 1,
+  "command": "node scripts/agent-dev-deep-test.mjs",
+  "typecheckMode": "uncached"
+}
