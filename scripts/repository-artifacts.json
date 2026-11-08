@@ -2077,6 +2077,7 @@
     "docs/dev/provider-error-retry-boundaries.md",
     "docs/dev/rareui-interactions.md",
     "docs/dev/repo-hygiene-20261017.md",
+    "docs/dev/recovery-contract/AUTHORITY-MAP.zh-CN.md",
     "docs/dev/recovery-contract/EXECUTION-PHASE.zh-CN.md",
     "docs/dev/repository-artifact-retention.md",
     "docs/dev/repository-cleanup-triage-2026-10-08.md",
@@ -2586,3 +2587,4 @@
   ],
   "artifactBatches": {}
 }
+
