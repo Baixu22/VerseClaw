@@ -1,0 +1,128 @@
+{
+  "sourceCandidate": "94825e3dff67e0b057a67e62b46ee7e9ba349dd4",
+  "testedCodeCandidate": "ea77a248c73bdd81c0e4d95f601443da60484df4",
+  "codeUnchangedAfterCatalogSync": true,
+  "baseCommit": "4e2cd7f6474a9026d9a3ae484bf87cc478d409ce",
+  "files": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "116daaf141de7c460939d45cbff5c06de97e6c0fb1e38cda729c8ceb2dddeef4",
+      "canonicalSha256": "116daaf141de7c460939d45cbff5c06de97e6c0fb1e38cda729c8ceb2dddeef4",
+      "commitBlobSha256": "116daaf141de7c460939d45cbff5c06de97e6c0fb1e38cda729c8ceb2dddeef4"
+    },
+    {
+      "path": "README.md",
+      "sha256": "3304a5fe1741c2e48c0439dc683f43d30f63a3f81c3493504db25a4f0109f9c1",
+      "canonicalSha256": "3304a5fe1741c2e48c0439dc683f43d30f63a3f81c3493504db25a4f0109f9c1",
+      "commitBlobSha256": "3304a5fe1741c2e48c0439dc683f43d30f63a3f81c3493504db25a4f0109f9c1"
+    },
+    {
+      "path": "README.ru-RU.md",
+      "sha256": "790abc2001cf4a4940ac645db392bbc2975288bbf2fa604fbefbd0700b765387",
+      "canonicalSha256": "790abc2001cf4a4940ac645db392bbc2975288bbf2fa604fbefbd0700b765387",
+      "commitBlobSha256": "790abc2001cf4a4940ac645db392bbc2975288bbf2fa604fbefbd0700b765387"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "8d111621cbf225dd4d2949383504f50786a8fa53e8dbf3102a3f63d1c53a35f5",
+      "canonicalSha256": "8d111621cbf225dd4d2949383504f50786a8fa53e8dbf3102a3f63d1c53a35f5",
+      "commitBlobSha256": "8d111621cbf225dd4d2949383504f50786a8fa53e8dbf3102a3f63d1c53a35f5"
+    },
+    {
+      "path": "docs/dev/rsi-capability-and-boundaries.md",
+      "sha256": "c2f4b38d15a1f9ad8d28d41c503b55732627e211845a5bbd569f89ea4ae1713b",
+      "canonicalSha256": "c2f4b38d15a1f9ad8d28d41c503b55732627e211845a5bbd569f89ea4ae1713b",
+      "commitBlobSha256": "c2f4b38d15a1f9ad8d28d41c503b55732627e211845a5bbd569f89ea4ae1713b"
+    },
+    {
+      "path": "docs/generated/catalogs/tools.md",
+      "sha256": "7c52ff66904dcae3af332c863159fb8fc0644cb36d20b0640643a23cd2ca9176",
+      "canonicalSha256": "7c52ff66904dcae3af332c863159fb8fc0644cb36d20b0640643a23cd2ca9176",
+      "commitBlobSha256": "7c52ff66904dcae3af332c863159fb8fc0644cb36d20b0640643a23cd2ca9176"
+    },
+    {
+      "path": "harness/specs/guides/rsi-remediation-roadmap.md",
+      "sha256": "7891dc0ab40a62d3257583ce7fe10164edb997da49afa5031a674836e70d7c31",
+      "canonicalSha256": "04147d4190d097d4cf3ef4053ecae7a5a3529ec7d31ca2723310dfda8c39c9ac",
+      "commitBlobSha256": "7891dc0ab40a62d3257583ce7fe10164edb997da49afa5031a674836e70d7c31"
+    },
+    {
+      "path": "harness/specs/rules/rsi-candidate-evolution-boundary.md",
+      "sha256": "a616019b4da9c42a18deadd9101adb2fdc89cac7044de9df8c9e1c094250d806",
+      "canonicalSha256": "a616019b4da9c42a18deadd9101adb2fdc89cac7044de9df8c9e1c094250d806",
+      "commitBlobSha256": "a616019b4da9c42a18deadd9101adb2fdc89cac7044de9df8c9e1c094250d806"
+    },
+    {
+      "path": "harness/specs/tasks/rsi-candidate-evolution.md",
+      "sha256": "48ba8d53e3cc2d0ea489aff99fae53b2c9cfaef85d808bb7d57d2e215102c780",
+      "canonicalSha256": "48ba8d53e3cc2d0ea489aff99fae53b2c9cfaef85d808bb7d57d2e215102c780",
+      "commitBlobSha256": "48ba8d53e3cc2d0ea489aff99fae53b2c9cfaef85d808bb7d57d2e215102c780"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/knowledge-store.ts",
+      "sha256": "4ca82b56d1e54f2492131a572a699293b1c9714641b55778e1b1cfbb88280028",
+      "canonicalSha256": "4ca82b56d1e54f2492131a572a699293b1c9714641b55778e1b1cfbb88280028",
+      "commitBlobSha256": "4ca82b56d1e54f2492131a572a699293b1c9714641b55778e1b1cfbb88280028"
+    },
+    {
+      "path": "scripts/lib/rsi-benefit-eval.d.mts",
+      "sha256": "d41e867937ea24ea73dddfb6e3a14995ca3b8d1490fd1aadb87e2661b200df7d",
+      "canonicalSha256": "d41e867937ea24ea73dddfb6e3a14995ca3b8d1490fd1aadb87e2661b200df7d",
+      "commitBlobSha256": "d41e867937ea24ea73dddfb6e3a14995ca3b8d1490fd1aadb87e2661b200df7d"
+    },
+    {
+      "path": "scripts/lib/rsi-benefit-eval.mjs",
+      "sha256": "835a73001e2f6950df65064edcc3a30f9a41c885c00fa30aa661cbbe49d25ddc",
+      "canonicalSha256": "835a73001e2f6950df65064edcc3a30f9a41c885c00fa30aa661cbbe49d25ddc",
+      "commitBlobSha256": "835a73001e2f6950df65064edcc3a30f9a41c885c00fa30aa661cbbe49d25ddc"
+    },
+    {
+      "path": "scripts/lib/rsi-candidate-evolution.d.mts",
+      "sha256": "69cab62e2a2617168ce2f06dab872f7d52d163bcc74a5b006964a9f0f483e116",
+      "canonicalSha256": "69cab62e2a2617168ce2f06dab872f7d52d163bcc74a5b006964a9f0f483e116",
+      "commitBlobSha256": "69cab62e2a2617168ce2f06dab872f7d52d163bcc74a5b006964a9f0f483e116"
+    },
+    {
+      "path": "scripts/lib/rsi-candidate-evolution.mjs",
+      "sha256": "6383e2ca66882b7258d39d878e5694c085153a77eae361c5f43871cb1105a216",
+      "canonicalSha256": "6383e2ca66882b7258d39d878e5694c085153a77eae361c5f43871cb1105a216",
+      "commitBlobSha256": "6383e2ca66882b7258d39d878e5694c085153a77eae361c5f43871cb1105a216"
+    },
+    {
+      "path": "scripts/rsi-benefit-eval.mjs",
+      "sha256": "413ce0455fa8de9b419630d9783c68478942237e1c8ce4201ea7ee3a0bc23baf",
+      "canonicalSha256": "413ce0455fa8de9b419630d9783c68478942237e1c8ce4201ea7ee3a0bc23baf",
+      "commitBlobSha256": "413ce0455fa8de9b419630d9783c68478942237e1c8ce4201ea7ee3a0bc23baf"
+    },
+    {
+      "path": "scripts/rsi-candidate-evolution-integration.mjs",
+      "sha256": "c93c347238f319346ed0623d42a0b3dd3f5fa3d7308ba312999225d8d7ad3a1e",
+      "canonicalSha256": "c93c347238f319346ed0623d42a0b3dd3f5fa3d7308ba312999225d8d7ad3a1e",
+      "commitBlobSha256": "c93c347238f319346ed0623d42a0b3dd3f5fa3d7308ba312999225d8d7ad3a1e"
+    },
+    {
+      "path": "scripts/rsi-candidate-evolution.d.mts",
+      "sha256": "8ab0721c8827846fe39df12b363b33cc68bb832e0dbb4009e65a4bfedb446dcf",
+      "canonicalSha256": "8ab0721c8827846fe39df12b363b33cc68bb832e0dbb4009e65a4bfedb446dcf",
+      "commitBlobSha256": "8ab0721c8827846fe39df12b363b33cc68bb832e0dbb4009e65a4bfedb446dcf"
+    },
+    {
+      "path": "scripts/rsi-candidate-evolution.mjs",
+      "sha256": "d95cb2a11d6d2ec2e6c732221b2c1f58ceaf4b4b9c08f9bc422eca5ddc3db9e4",
+      "canonicalSha256": "d95cb2a11d6d2ec2e6c732221b2c1f58ceaf4b4b9c08f9bc422eca5ddc3db9e4",
+      "commitBlobSha256": "d95cb2a11d6d2ec2e6c732221b2c1f58ceaf4b4b9c08f9bc422eca5ddc3db9e4"
+    },
+    {
+      "path": "tests/unit/rsi-candidate-evolution.test.ts",
+      "sha256": "ba93ca3743ac7353868d4e0455ae7047a4f9f0ad045d90fb81cb059279008b2e",
+      "canonicalSha256": "ba93ca3743ac7353868d4e0455ae7047a4f9f0ad045d90fb81cb059279008b2e",
+      "commitBlobSha256": "ba93ca3743ac7353868d4e0455ae7047a4f9f0ad045d90fb81cb059279008b2e"
+    },
+    {
+      "path": "vitest.rsi-adoption.config.ts",
+      "sha256": "dc4ed9a8a9f5499ec548d86913f32acbe92145acc6d4687f0ee8e1faa8eb4b29",
+      "canonicalSha256": "dc4ed9a8a9f5499ec548d86913f32acbe92145acc6d4687f0ee8e1faa8eb4b29",
+      "commitBlobSha256": "dc4ed9a8a9f5499ec548d86913f32acbe92145acc6d4687f0ee8e1faa8eb4b29"
+    }
+  ]
+}

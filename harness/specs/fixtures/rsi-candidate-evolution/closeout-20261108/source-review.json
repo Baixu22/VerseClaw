@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "RsiEvolutionSourceReview/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-source-review",
+  "independentReviewer": false,
+  "method": "current-agent source inspection, frozen-candidate regression and separate-process SQLite/plan readback",
+  "resolved": [
+    "immutable insert before generation",
+    "training-only projection with quarantine proofs",
+    "parent-linked prompt versions",
+    "first-result and unknown-budget preservation",
+    "explicit unbounded cost encoding",
+    "fixed first-qualified staging choice",
+    "strict boolean opt-in",
+    "separate v2 benefit-plan binding"
+  ],
+  "actionableFindingsRemaining": [],
+  "sourceCandidate": "94825e3dff67e0b057a67e62b46ee7e9ba349dd4",
+  "files": 20
+}
