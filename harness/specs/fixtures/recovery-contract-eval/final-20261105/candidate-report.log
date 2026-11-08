@@ -1,0 +1,29 @@
+wrote D:\tmp\recovery-final-evidence-20261105\candidate-report.json
+{
+ "status": "FAIL",
+ "decision": "contract-failed",
+ "qualityClaimAllowed": false,
+ "trialCountsByWindow": {
+  "child-created-before-parent-advance-kill": 3,
+  "effect-before-receipt-kill": 3,
+  "intent-after-persist-kill": 3,
+  "repeated-restart": 3,
+  "store-write-failure": 3
+ },
+ "metrics": {
+  "duplicateEffects": 0,
+  "lostTasks": 0,
+  "terminalCorrectness": 1,
+  "unknownClassifiableRate": 0,
+  "mustPreserveFidelity": 1,
+  "falseCompletionClaims": 0,
+  "nextActionAccuracy": 1,
+  "recoveryLatencyP50": 32007,
+  "recoveryLatencyP95": 86786.39999999992
+ },
+ "blockers": [
+  "recoveryLatencyP50 must be <= 5000ms (observed 32007)",
+  "recoveryLatencyP95 must be <= 15000ms (observed 86786.39999999992)"
+ ],
+ "unmeasured": []
+}

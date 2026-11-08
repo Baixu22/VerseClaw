@@ -787,6 +787,43 @@ function ensureAdditiveStateColumns(db: DatabaseSync): void {
   ensureColumn(db, "mission_runs", "active_tick_id TEXT");
   ensureColumn(db, "mission_runs", "last_wake_id TEXT");
   ensureColumn(db, "flow_runs", "delivery_state TEXT");
+  ensureColumn(db, "flow_runs", "execution_phase TEXT");
+  // One-time migration of the unreleased prototype ledger. The TaskFlow row
+  // owns status, phase, recovery metadata and the same revision from now on.
+  if (tableExists(db, "execution_phases")) {
+    runSqliteImmediateTransactionSync(db, () => {
+      db.exec(`
+      INSERT OR IGNORE INTO flow_runs (
+        flow_id, sync_mode, owner_key, controller_id, revision, status,
+        notify_policy, goal, current_step, state_json, execution_phase,
+        created_at, updated_at, ended_at
+      ) SELECT 'tool-execution:' || idempotency_key, 'managed', coalesce(session_key, 'unbound'),
+        'tool-execution', revision,
+        CASE phase WHEN 'terminal' THEN 'succeeded' WHEN 'failed' THEN 'failed'
+          WHEN 'aborted' THEN 'cancelled' ELSE 'running' END,
+        'done_only', tool_name, tool_name,
+        json_object('executionId',execution_id,'idempotencyKey',idempotency_key,
+          'sessionKey',session_key,'runId',run_id,'taskId',task_id,'toolName',tool_name,
+          'effectClass',effect_class,'intent',json(intent_json),'recovery',json(recovery_json)),
+        phase, created_at, updated_at,
+        CASE WHEN phase IN ('terminal','failed','aborted') THEN updated_at ELSE NULL END
+      FROM execution_phases;
+    `);
+      const remaining = db
+        .prepare(`SELECT count(*) AS count FROM execution_phases e
+      WHERE NOT EXISTS (SELECT 1 FROM flow_runs f WHERE f.flow_id = 'tool-execution:' || e.idempotency_key
+        AND f.controller_id = 'tool-execution' AND f.execution_phase = e.phase
+        AND f.revision = e.revision
+        AND json_extract(f.state_json, '$.executionId') = e.execution_id
+        AND json_extract(f.state_json, '$.sessionKey') IS e.session_key
+        AND json_extract(f.state_json, '$.toolName') = e.tool_name
+        AND json_extract(f.state_json, '$.intent') = json(e.intent_json)
+        AND json_extract(f.state_json, '$.recovery') = json(e.recovery_json))`)
+        .get() as { count: number };
+      if (remaining.count !== 0) throw new Error("execution phase migration incomplete");
+      db.exec("DROP TABLE execution_phases");
+    });
+  }
   ensureColumn(db, "runtime_receipts", "candidate_decisions_json TEXT");
   if (tableExists(db, "flow_runs")) {
     db.exec(`

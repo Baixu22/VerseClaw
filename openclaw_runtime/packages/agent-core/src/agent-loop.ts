@@ -444,10 +444,10 @@ async function streamAssistantResponse(
 /**
  * Execute tool calls from an assistant message.
  */
-async function executeToolCalls(
+export async function executeToolCalls(
   currentContext: AgentContext,
   assistantMessage: AssistantMessage,
-  config: AgentLoopConfig,
+  config: ToolCallExecutionConfig,
   signal: AbortSignal | undefined,
   emit: AgentEventSink,
 ): Promise<ExecutedToolCallBatch> {
@@ -480,11 +480,16 @@ type ExecutedToolCallBatch = {
   terminate: boolean;
 };
 
+export type ToolCallExecutionConfig = Pick<
+  AgentLoopConfig,
+  "toolExecution" | "beforeToolCall" | "afterToolCall"
+>;
+
 async function executeToolCallsSequential(
   currentContext: AgentContext,
   assistantMessage: AssistantMessage,
   toolCalls: AgentToolCall[],
-  config: AgentLoopConfig,
+  config: ToolCallExecutionConfig,
   signal: AbortSignal | undefined,
   emit: AgentEventSink,
 ): Promise<ExecutedToolCallBatch> {
@@ -546,7 +551,7 @@ async function executeToolCallsParallel(
   currentContext: AgentContext,
   assistantMessage: AssistantMessage,
   toolCalls: AgentToolCall[],
-  config: AgentLoopConfig,
+  config: ToolCallExecutionConfig,
   signal: AbortSignal | undefined,
   emit: AgentEventSink,
 ): Promise<ExecutedToolCallBatch> {
@@ -666,7 +671,7 @@ async function prepareToolCall(
   currentContext: AgentContext,
   assistantMessage: AssistantMessage,
   toolCall: AgentToolCall,
-  config: AgentLoopConfig,
+  config: ToolCallExecutionConfig,
   signal: AbortSignal | undefined,
 ): Promise<PreparedToolCall | ImmediateToolCallOutcome> {
   const tool = currentContext.tools?.find((t) => t.name === toolCall.name);
@@ -770,7 +775,7 @@ async function finalizeExecutedToolCall(
   assistantMessage: AssistantMessage,
   prepared: PreparedToolCall,
   executed: ExecutedToolCallOutcome,
-  config: AgentLoopConfig,
+  config: ToolCallExecutionConfig,
   signal: AbortSignal | undefined,
 ): Promise<FinalizedToolCallOutcome> {
   let result = executed.result;

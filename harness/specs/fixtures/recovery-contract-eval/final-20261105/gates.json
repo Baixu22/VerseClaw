@@ -1,0 +1,396 @@
+{
+  "schema": "RecoveryGateInventory/v1",
+  "rows": [
+    {
+      "name": "recovery-final-reader-tests",
+      "exitCode": 0,
+      "sourceCommit": "c0184e62e2ea7c3dcfddbe47258bd552ae8f0c1b",
+      "artifacts": [
+        {
+          "path": "D:/tmp/recovery-final-reader-tests.exit",
+          "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+        },
+        {
+          "path": "D:/tmp/recovery-final-reader-tests.log",
+          "sha256": "1dc6ecb90de966cf8705be24ce14e4d415d421770e177e8579ac0b33bfc8133d"
+        },
+        {
+          "path": "D:/tmp/recovery-final-reader-tests.json",
+          "sha256": "ad82b5e1d76f9f757b0ab21a768104050d3fa04828a64a623fb5306f2b3fabad"
+        }
+      ],
+      "tests": 30,
+      "passed": 30,
+      "failed": 0,
+      "success": true,
+      "sourceBinding": "The tested patch bytes were committed unchanged as the evaluator commit."
+    },
+    {
+      "name": "recovery-final-reader-eslint",
+      "exitCode": 0,
+      "sourceCommit": "c0184e62e2ea7c3dcfddbe47258bd552ae8f0c1b",
+      "artifacts": [
+        {
+          "path": "D:/tmp/recovery-final-reader-eslint.exit",
+          "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+        },
+        {
+          "path": "D:/tmp/recovery-final-reader-eslint.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "sourceBinding": "The tested patch bytes were committed unchanged as the evaluator commit."
+    },
+    {
+      "name": "recovery-final-reader-typecheck",
+      "exitCode": 0,
+      "sourceCommit": "c0184e62e2ea7c3dcfddbe47258bd552ae8f0c1b",
+      "artifacts": [
+        {
+          "path": "D:/tmp/recovery-final-reader-typecheck.exit",
+          "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+        },
+        {
+          "path": "D:/tmp/recovery-final-reader-typecheck.log",
+          "sha256": "d3d1fa1e880f14d028c73f22eb6b438fbcbcc3c775a9a0d33d08e69a5b7de5ae"
+        }
+      ],
+      "sourceBinding": "The tested patch bytes were committed unchanged as the evaluator commit."
+    },
+    {
+      "name": "recovery-final-reader-harness",
+      "exitCode": 0,
+      "sourceCommit": "c0184e62e2ea7c3dcfddbe47258bd552ae8f0c1b",
+      "artifacts": [
+        {
+          "path": "D:/tmp/recovery-final-reader-harness.exit",
+          "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+        },
+        {
+          "path": "D:/tmp/recovery-final-reader-harness.log",
+          "sha256": "b5c70fa2b17b807209ca0e931398e9776f639753fbb14eef311cae42456eced2"
+        }
+      ],
+      "sourceBinding": "The tested patch bytes were committed unchanged as the evaluator commit."
+    },
+    {
+      "name": "recovery-projection-contract-tests",
+      "exitCode": 0,
+      "sourceCommit": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+      "artifacts": [
+        {
+          "path": "D:/tmp/recovery-projection-contract-tests.exit",
+          "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+        },
+        {
+          "path": "D:/tmp/recovery-projection-contract-tests.log",
+          "sha256": "c38a28fa6633d6c9aff713c9e720a49b07b675d2b7f68a721f06216158514de5"
+        },
+        {
+          "path": "D:/tmp/recovery-projection-contract-tests.json",
+          "sha256": "79ae7606a1814f8d2cee6895925c487eddbf56c73847bf316b05e8cf9596ed7c"
+        }
+      ],
+      "tests": 41,
+      "passed": 41,
+      "failed": 0,
+      "success": true,
+      "sourceBinding": "Tracked-source projection recorded by this handoff; dependency junction reuse disclosed."
+    },
+    {
+      "name": "recovery-projection-runtime-unit-fast",
+      "exitCode": 0,
+      "sourceCommit": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+      "artifacts": [
+        {
+          "path": "D:/tmp/recovery-projection-runtime-unit-fast.exit",
+          "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+        },
+        {
+          "path": "D:/tmp/recovery-projection-runtime-unit-fast.log",
+          "sha256": "d47234933ba330455e4cd5086decc41c42042953302526d12d61938604e838ca"
+        },
+        {
+          "path": "D:/tmp/recovery-projection-runtime-unit-fast.json",
+          "sha256": "8fd2dfaca3e3590ec6b98d3aa5cb18cf2d3e16eb651816f38518daac71ce3bc8"
+        }
+      ],
+      "tests": 50,
+      "passed": 50,
+      "failed": 0,
+      "success": true,
+      "sourceBinding": "Tracked-source projection recorded by this handoff; dependency junction reuse disclosed."
+    },
+    {
+      "name": "recovery-relay-contract",
+      "exitCode": 0,
+      "sourceCommit": null,
+      "artifacts": [
+        {
+          "path": "D:/tmp/recovery-relay-contract.exit",
+          "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+        },
+        {
+          "path": "D:/tmp/recovery-relay-contract.log",
+          "sha256": "934212edaaa4da875edce79057ad1a402c935b6da181e5e400ad9e96e0cabf10"
+        }
+      ],
+      "runtimeSourceReference": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+      "sourceBinding": "The original gate log did not embed a Git commit. This is earlier evidence for the same runtime source lineage; exact command, exit and bytes are retained."
+    },
+    {
+      "name": "recovery-relay-type-node",
+      "exitCode": 0,
+      "sourceCommit": null,
+      "artifacts": [
+        {
+          "path": "D:/tmp/recovery-relay-type-node.exit",
+          "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+        },
+        {
+          "path": "D:/tmp/recovery-relay-type-node.log",
+          "sha256": "55c4b41912bad5023ad1fd31bdd9ad68189a252118225941b02016f464734f06"
+        }
+      ],
+      "runtimeSourceReference": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+      "sourceBinding": "The original gate log did not embed a Git commit. This is earlier evidence for the same runtime source lineage; exact command, exit and bytes are retained."
+    },
+    {
+      "name": "recovery-relay-type-web",
+      "exitCode": 0,
+      "sourceCommit": null,
+      "artifacts": [
+        {
+          "path": "D:/tmp/recovery-relay-type-web.exit",
+          "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+        },
+        {
+          "path": "D:/tmp/recovery-relay-type-web.log",
+          "sha256": "792ce7e1b094715d619d0aee6c12ce0ff1e474e4744c07ff87e1f45ee26a2fa4"
+        }
+      ],
+      "runtimeSourceReference": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+      "sourceBinding": "The original gate log did not embed a Git commit. This is earlier evidence for the same runtime source lineage; exact command, exit and bytes are retained."
+    },
+    {
+      "name": "recovery-relay-type-test",
+      "exitCode": 0,
+      "sourceCommit": null,
+      "artifacts": [
+        {
+          "path": "D:/tmp/recovery-relay-type-test.exit",
+          "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+        },
+        {
+          "path": "D:/tmp/recovery-relay-type-test.log",
+          "sha256": "d3d1fa1e880f14d028c73f22eb6b438fbcbcc3c775a9a0d33d08e69a5b7de5ae"
+        }
+      ],
+      "runtimeSourceReference": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+      "sourceBinding": "The original gate log did not embed a Git commit. This is earlier evidence for the same runtime source lineage; exact command, exit and bytes are retained."
+    },
+    {
+      "name": "recovery-relay-runtime-types",
+      "exitCode": 0,
+      "sourceCommit": null,
+      "artifacts": [
+        {
+          "path": "D:/tmp/recovery-relay-runtime-types.exit",
+          "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+        },
+        {
+          "path": "D:/tmp/recovery-relay-runtime-types.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "runtimeSourceReference": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+      "sourceBinding": "The original gate log did not embed a Git commit. This is earlier evidence for the same runtime source lineage; exact command, exit and bytes are retained."
+    },
+    {
+      "name": "recovery-relay-desktop-build",
+      "exitCode": 0,
+      "sourceCommit": null,
+      "artifacts": [
+        {
+          "path": "D:/tmp/recovery-relay-desktop-build.exit",
+          "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+        },
+        {
+          "path": "D:/tmp/recovery-relay-desktop-build.log",
+          "sha256": "0f4c0c5541911220ff79d9b514aa0f911dd6742de81756011d3e7025148fb2ae"
+        }
+      ],
+      "runtimeSourceReference": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+      "sourceBinding": "The original gate log did not embed a Git commit. This is earlier evidence for the same runtime source lineage; exact command, exit and bytes are retained."
+    },
+    {
+      "name": "recovery-relay-runtime-build",
+      "exitCode": 0,
+      "sourceCommit": null,
+      "artifacts": [
+        {
+          "path": "D:/tmp/recovery-relay-runtime-build.exit",
+          "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+        },
+        {
+          "path": "D:/tmp/recovery-relay-runtime-build.log",
+          "sha256": "18e609f799a7b1ef15e36f803715cfbd3ba8f8f394e2a91cec8659bed396e63f"
+        }
+      ],
+      "runtimeSourceReference": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+      "sourceBinding": "The original gate log did not embed a Git commit. This is earlier evidence for the same runtime source lineage; exact command, exit and bytes are retained."
+    },
+    {
+      "name": "recovery-relay-comms-replay",
+      "exitCode": 0,
+      "sourceCommit": null,
+      "artifacts": [
+        {
+          "path": "D:/tmp/recovery-relay-comms-replay.exit",
+          "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+        },
+        {
+          "path": "D:/tmp/recovery-relay-comms-replay.log",
+          "sha256": "accd104a97dc9d795625dfa901a77d0623ba089bff066443499434f7314c7e65"
+        }
+      ],
+      "runtimeSourceReference": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+      "sourceBinding": "The original gate log did not embed a Git commit. This is earlier evidence for the same runtime source lineage; exact command, exit and bytes are retained."
+    },
+    {
+      "name": "recovery-relay-comms-compare",
+      "exitCode": 0,
+      "sourceCommit": null,
+      "artifacts": [
+        {
+          "path": "D:/tmp/recovery-relay-comms-compare.exit",
+          "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+        },
+        {
+          "path": "D:/tmp/recovery-relay-comms-compare.log",
+          "sha256": "ea52358b40b3dbd9f3d71c022f48ba10892c434ac87a0f5ea8486022c6153cbd"
+        }
+      ],
+      "runtimeSourceReference": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+      "sourceBinding": "The original gate log did not embed a Git commit. This is earlier evidence for the same runtime source lineage; exact command, exit and bytes are retained."
+    },
+    {
+      "name": "recovery-relay-process-tests-fixed",
+      "exitCode": 0,
+      "sourceCommit": null,
+      "artifacts": [
+        {
+          "path": "D:/tmp/recovery-relay-process-tests-fixed.exit",
+          "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+        },
+        {
+          "path": "D:/tmp/recovery-relay-process-tests-fixed.log",
+          "sha256": "8b42bf470976e86972a7227642bb7f4562ffd5da9975ef672bb333cf06dc7176"
+        },
+        {
+          "path": "D:/tmp/recovery-relay-process-tests-fixed.json",
+          "sha256": "c0c6f5bff0b0c1ef18b4149c7580592c35ffbfaa5f9b872acc2b7b8e54bc4c2e"
+        }
+      ],
+      "tests": 5,
+      "passed": 5,
+      "failed": 0,
+      "success": true,
+      "runtimeSourceReference": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+      "sourceBinding": "The original gate log did not embed a Git commit. This is earlier evidence for the same runtime source lineage; exact command, exit and bytes are retained."
+    },
+    {
+      "name": "recovery-frozen-evidence-refs",
+      "exitCode": 0,
+      "sourceCommit": null,
+      "artifacts": [
+        {
+          "path": "D:/tmp/recovery-frozen-evidence-refs.exit",
+          "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+        },
+        {
+          "path": "D:/tmp/recovery-frozen-evidence-refs.log",
+          "sha256": "9c174981d68b1d29ffa18fc495b79f6e923823d7c9214aecb6e850329b8cb8ca"
+        }
+      ],
+      "runtimeSourceReference": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+      "sourceBinding": "The original gate log did not embed a Git commit. This is earlier evidence for the same runtime source lineage; exact command, exit and bytes are retained."
+    },
+    {
+      "name": "recovery-frozen-test-coverage",
+      "exitCode": 0,
+      "sourceCommit": null,
+      "artifacts": [
+        {
+          "path": "D:/tmp/recovery-frozen-test-coverage.exit",
+          "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+        },
+        {
+          "path": "D:/tmp/recovery-frozen-test-coverage.log",
+          "sha256": "d203fa3d6b7d6e7688e7297da236771d167677f78063f8eced9ac91e24c47cd4"
+        }
+      ],
+      "runtimeSourceReference": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+      "sourceBinding": "The original gate log did not embed a Git commit. This is earlier evidence for the same runtime source lineage; exact command, exit and bytes are retained."
+    },
+    {
+      "name": "recovery-frozen-error-governance",
+      "exitCode": 0,
+      "sourceCommit": null,
+      "artifacts": [
+        {
+          "path": "D:/tmp/recovery-frozen-error-governance.exit",
+          "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+        },
+        {
+          "path": "D:/tmp/recovery-frozen-error-governance.log",
+          "sha256": "fb2b14454a6911ecf6f573e5bc934b670a953008f99d11b2f39e2cc7b25de78d"
+        }
+      ],
+      "runtimeSourceReference": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+      "sourceBinding": "The original gate log did not embed a Git commit. This is earlier evidence for the same runtime source lineage; exact command, exit and bytes are retained."
+    },
+    {
+      "name": "recovery-frozen-harness-ci",
+      "exitCode": 1,
+      "sourceCommit": null,
+      "artifacts": [
+        {
+          "path": "D:/tmp/recovery-frozen-harness-ci.exit",
+          "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+        },
+        {
+          "path": "D:/tmp/recovery-frozen-harness-ci.log",
+          "sha256": "9e676a4e5d9b32daaa29b6ac6401c494e9f7deae6f84d78b204f2020a811d72c"
+        }
+      ],
+      "runtimeSourceReference": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+      "sourceBinding": "The original gate log did not embed a Git commit. This is earlier evidence for the same runtime source lineage; exact command, exit and bytes are retained."
+    }
+  ],
+  "processKillProofRef": "process-kill-proof.json",
+  "sourceProjection": {
+    "sourceCommit": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+    "archivePath": "D:/tmp/recovery-source-projection-8137cdb2e.tar",
+    "archiveSha256": "1c1e8fe71aaeb078c9da1fb5acf4a1ddf3ef706779aa9a4a27b758ffcb976919",
+    "archiveBytes": 311357440,
+    "dependencyMode": "root and runtime node_modules junction reuse; no dependency install",
+    "coverage": "41 contract tests and 50 focused runtime unit-fast tests, not the whole runtime suite"
+  },
+  "testTypecheckEnvironment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "GOMEMLIMIT": "750MiB",
+    "GOGC": "50"
+  },
+  "fullHarnessCI": {
+    "exitCode": 1,
+    "testsPassed": 59,
+    "cause": "four Agent Dev evidence reports stale at about 72h against a 24h requirement",
+    "claimAllowed": "No full CI or release green claim"
+  },
+  "rawArchiveSha256": "22e2a78c07d958e203753fc023e2a3e0d56d92b12faaeb34fae889e4a4064b20",
+  "driven_by": "agent",
+  "actor": "recovery-gate-auditor",
+  "realHumanEvidence": false
+}

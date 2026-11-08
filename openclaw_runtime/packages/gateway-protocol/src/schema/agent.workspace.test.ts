@@ -35,4 +35,28 @@ describe("AgentParamsSchema workspaceDir", () => {
       }),
     ).toBe(false);
   });
+
+  it("accepts only complete persisted recovery admission identities", () => {
+    const admission = {
+      idempotencyKey: "recovery-run",
+      ownerId: "original-run",
+      attempts: 1,
+      ownerEpoch: "epoch",
+    };
+    expect(Value.Check(AgentParamsSchema, { ...minimalValid, recoveryAdmission: admission })).toBe(
+      true,
+    );
+    expect(
+      Value.Check(AgentParamsSchema, {
+        ...minimalValid,
+        recoveryAdmission: { ...admission, attempts: 0 },
+      }),
+    ).toBe(false);
+    expect(
+      Value.Check(AgentParamsSchema, {
+        ...minimalValid,
+        recoveryAdmission: { ...admission, ownerEpoch: "" },
+      }),
+    ).toBe(false);
+  });
 });

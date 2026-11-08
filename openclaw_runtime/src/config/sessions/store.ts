@@ -15,6 +15,7 @@ import { getRuntimeConfig } from "../io.js";
 import { enforceSessionDiskBudget, type SessionDiskBudgetSweepResult } from "./disk-budget.js";
 import { deriveSessionMetaPatch } from "./metadata.js";
 import { resolveStorePath } from "./paths.js";
+import { hydrateSessionStoreSkillPromptRefs } from "./skill-prompt-blobs.js";
 import {
   cloneSessionStoreRecord,
   dropSessionStoreObjectCache,
@@ -25,18 +26,14 @@ import {
   invalidateSessionStoreCache,
   isSessionStoreCacheEnabled,
   setSerializedSessionStore,
-  takeMutableSessionStoreCache,
   writeSessionStoreCache,
 } from "./store-cache.js";
 import { resolveSessionStoreEntry } from "./store-entry.js";
 import { getSessionStoreFreshnessSnapshot } from "./store-freshness.js";
-import {
-  loadSessionStore,
-  normalizeSessionStore,
-  readSessionEntries,
-  readSessionEntry,
-} from "./store-load.js";
+import { normalizeSessionStore, readSessionEntries, readSessionEntry } from "./store-load.js";
 import { collectSessionMaintenancePreserveKeys } from "./store-maintenance-preserve.js";
+import { hasReservedSubagentRecovery } from "../../agents/subagent-recovery-state.js";
+import { applySessionStoreMigrations } from "./store-migrations.js";
 import { resolveMaintenanceConfig } from "./store-maintenance-runtime.js";
 import {
   capEntryCount,
@@ -49,6 +46,8 @@ import {
   type SessionMaintenanceWarning,
 } from "./store-maintenance.js";
 import {
+  loadSqliteSessionStore,
+  mutateSqliteSessionStoreAtomic,
   replaceSqliteSessionStore,
   type SessionDeleteOperationJournalRow,
 } from "./store-sqlite.js";
@@ -87,6 +86,10 @@ let trajectoryCleanupRuntimePromise: Promise<typeof import("../../trajectory/cle
 const writerStoreFileStats = new WeakMap<
   Record<string, SessionEntry>,
   ReturnType<typeof getSessionStoreFreshnessSnapshot> | null
+>();
+const writerStoreExpectedRows = new WeakMap<
+  Record<string, SessionEntry>,
+  Record<string, SessionEntry>
 >();
 
 function loadSessionArchiveRuntime() {
@@ -145,6 +148,7 @@ export {
 export type { ResolvedSessionMaintenanceConfig, SessionMaintenanceWarning };
 
 type SaveSessionStoreOptions = {
+  expectedStore?: Record<string, SessionEntry>;
   /** Skip pruning, capping, and rotation (e.g. during one-time migrations). */
   skipMaintenance?: boolean;
   /** Rows to write in the same SQLite immediate transaction as the store rewrite. */
@@ -288,20 +292,15 @@ function updateSessionStoreWriteCache(params: {
 }
 
 function loadMutableSessionStoreForWriter(storePath: string): Record<string, SessionEntry> {
-  const currentFileStat = getSessionStoreFreshnessSnapshot(storePath);
-  if (isSessionStoreCacheEnabled()) {
-    const cached = takeMutableSessionStoreCache({
-      storePath,
-      mtimeMs: currentFileStat?.mtimeMs,
-      sizeBytes: currentFileStat?.sizeBytes,
-    });
-    if (cached) {
-      writerStoreFileStats.set(cached, currentFileStat ?? null);
-      return cached;
-    }
-  }
-  const store = loadSessionStore(storePath, { skipCache: true, clone: false });
-  writerStoreFileStats.set(store, currentFileStat ?? null);
+  const fileStatBeforeRead = getSessionStoreFreshnessSnapshot(storePath);
+  const expected = loadSqliteSessionStore(storePath);
+  const store = cloneSessionStoreRecord(expected);
+  hydrateSessionStoreSkillPromptRefs({ storePath, store });
+  applySessionStoreMigrations(store);
+  normalizeSessionStore(store);
+  // Every metadata facade carries the SQLite rows observed before its mutator.
+  writerStoreExpectedRows.set(store, expected);
+  writerStoreFileStats.set(store, fileStatBeforeRead ?? null);
   return store;
 }
 
@@ -371,7 +370,17 @@ async function saveSessionStoreUnlocked(
         diskBudget,
       });
     } else {
-      const preserveSessionKeys = collectSessionMaintenancePreserveKeys([opts?.activeSessionKey]);
+      const ownedSessionKeys = Object.entries(store)
+        .filter(
+          ([, entry]) =>
+            (entry.abortedLastRun === true && entry.status === "running") ||
+            hasReservedSubagentRecovery(entry, entry.subagentRecovery?.authority?.ownerId ?? ""),
+        )
+        .map(([key]) => key);
+      const preserveSessionKeys = collectSessionMaintenancePreserveKeys([
+        opts?.activeSessionKey,
+        ...ownedSessionKeys,
+      ]);
       // Prune stale entries and cap total count before serializing.
       const removedSessionFiles = new Map<string, string | undefined>();
       const pruned = pruneStaleEntries(store, maintenance.pruneAfterMs, {
@@ -468,6 +477,7 @@ async function saveSessionStoreUnlocked(
   replaceSqliteSessionStore(storePath, store, {
     compact: maintenanceChangedStore,
     journalRows: opts?.sqliteJournalRows,
+    expectedStore: opts?.expectedStore ?? writerStoreExpectedRows.get(store),
   });
   updateSessionStoreWriteCache({
     storePath,
@@ -498,11 +508,30 @@ export async function updateSessionStore<T>(
       restoreUnchangedSessionStoreCache(storePath, store);
       return result;
     }
-    await saveSessionStoreUnlocked(storePath, store, {
-      ...opts,
-      singleEntryPersistence: opts?.resolveSingleEntryPersistence?.(result) ?? undefined,
-    });
+    try {
+      await saveSessionStoreUnlocked(storePath, store, {
+        ...opts,
+        singleEntryPersistence: opts?.resolveSingleEntryPersistence?.(result) ?? undefined,
+      });
+    } catch (error) {
+      invalidateSessionStoreCache(storePath);
+      throw error;
+    }
     return result;
+  });
+}
+
+/** Owner decisions are synchronous so their read/check/commit is one transaction. */
+export async function updateSessionStoreAtomic<T>(
+  storePath: string,
+  mutator: (store: Record<string, SessionEntry>) => T,
+): Promise<T> {
+  return await runExclusiveSessionStoreWrite(storePath, async () => {
+    try {
+      return mutateSqliteSessionStoreAtomic(storePath, mutator);
+    } finally {
+      invalidateSessionStoreCache(storePath);
+    }
   });
 }
 

@@ -1,8 +1,8 @@
-import type { GitRepositoryStatus } from './git';
-import type { SessionEffectivePolicy } from './session-effective-policy';
-import type { SessionStageProjection } from './session-stage';
-import type { SessionDerivation } from './session-derivation';
-import type { LongSessionResourceInventory } from '../long-session-resource-reclamation';
+import type { GitRepositoryStatus } from './git.js';
+import type { SessionEffectivePolicy } from './session-effective-policy.js';
+import type { SessionStageProjection } from './session-stage.js';
+import type { SessionDerivation } from './session-derivation.js';
+import type { LongSessionResourceInventory } from '../long-session-resource-reclamation.js';
 
 export type SessionActivityRunStatus = 'idle' | 'running' | 'waiting_approval' | 'completed' | 'failed' | 'aborted';
 export type SessionActivityTaskKind = 'mission' | 'taskLoop' | 'clawGraph' | 'taskLedger';

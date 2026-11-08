@@ -545,6 +545,7 @@ export interface FlowRuns {
   current_step: string | null;
   delivery_state: string | null;
   ended_at: number | null;
+  execution_phase: string | null;
   flow_id: string;
   goal: string;
   notify_policy: string;

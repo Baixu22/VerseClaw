@@ -2673,6 +2673,11 @@ openclaw_runtime/_tmp_*
 !/docs/dev/durable-task-system/sources.json
 !/docs/dev/durable-task-system/DESIGN.md
 !/docs/dev/durable-task-system/STATUS.md
+!/docs/dev/recovery-contract/INTEGRATION-NOTES.zh-CN.md
+!/docs/dev/recovery-contract/REDISPATCH-20261104.md
+!/docs/dev/recovery-contract/FINAL-20261105.zh-CN.md
+!/docs/dev/recovery-contract/FOLLOWUP-20261106.zh-CN.md
+!/docs/dev/recovery-contract/GA-READINESS-20261106.md
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.
@@ -2755,3 +2760,12 @@ openclaw_runtime/_tmp_*
 # Curated Skill/MCP audit receipts referenced by the retained SHA256SUMS.
 !harness/specs/fixtures/skill-mcp-handling-20261105/harness-validation.log
 !harness/specs/fixtures/skill-mcp-handling-20261105/verseshell-tests.log
+
+!/docs/dev/recovery-contract/EXECUTION-PHASE.zh-CN.md
+!/docs/dev/recovery-contract/INTEGRATION-NOTES.zh-CN.md
+
+!/docs/dev/recovery-contract/FINAL-20261105.zh-CN.md
+
+!/harness/specs/fixtures/recovery-contract-eval/final-20261105/candidate-report.log
+
+!/harness/specs/fixtures/recovery-contract-eval/final-20261105/legacy-report.log

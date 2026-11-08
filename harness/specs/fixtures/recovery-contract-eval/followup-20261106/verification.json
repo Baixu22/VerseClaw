@@ -1,0 +1,14 @@
+{
+  "schema": "RecoveryFollowupOfflineVerification/v1",
+  "rawFiles": 289,
+  "sources": 26,
+  "stages": 5,
+  "bundleSha256": "574dc6c766205279a5f36e963aa9c42d07e1c03dcf9d1b8e77aaa2809b4c1fd9",
+  "offlineReproductionPassed": true,
+  "tamperRejected": true,
+  "originalBundleUnchanged": true,
+  "acceptanceDecision": "NO-GO",
+  "driven_by": "agent",
+  "actor": "recovery-followup-verifier",
+  "realHumanEvidence": false
+}

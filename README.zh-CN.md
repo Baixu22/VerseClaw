@@ -287,3 +287,7 @@ Verse Claw 基于 [OpenClaw](https://github.com/openclaw/openclaw) 与 ValueCell
 任务列表支持搜索、状态筛选与加载后续页。Agent 可以查询相似任务，并将目标拆成有依赖的子任务，保留父目标和约束。取消计划时等待在途效果结清；验收和故障恢复读取现有运行 owner 的回执。
 
 任务由 agent 在会话中管理。定位后，顶部只保留一个任务头，显示真实步骤进度，支持隐藏和重开。对话画布保持纯净，文件实际发生变化后才在输入框下方显示小入口；真实分支和工作树操作放在详情中。
+
+恢复实现与证据：可选 execution writer 将工具生命周期相位存入 TaskFlow，在副作用前以 CAS 领取执行权，只恢复 owner 已授权的工作。生命周期与执行 writer 都必须显式选择 `taskflow`，默认仍为 `legacy`；未知副作用进入对账。后续修复已处理待投递答复的run归属和启动恢复排序，验证边界见[后续修复报告](docs/dev/recovery-contract/FOLLOWUP-20261106.zh-CN.md)。[2026-11-05实测](docs/dev/recovery-contract/FINAL-20261105.zh-CN.md)保留60个真实provider答案与30个主故障窗口；候选终态分类改善，但冻结时延门槛仍为FAIL/NO-GO。
+
+子代理恢复在 `OPENCLAW_RECOVERY_AUTHORITY_MODE=authority` 且两种 writer 都选择 `taskflow` 时，先提交决定和预算，再派发 RPC；未知结果保留为对账状态。恢复工具事件接入当前运行订阅，更新投递记录与完成状态。见[恢复准入指南](docs/dev/recovery-contract/GA-READINESS-20261106.md)。

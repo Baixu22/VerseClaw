@@ -1,0 +1,91 @@
+{
+  "schema": "RecoveryContractDefaultSwitchDecisions/v1",
+  "drivenBy": "agent",
+  "actor": "recovery-contract-eval-driver",
+  "realHumanEvidence": false,
+  "generatedAt": "2026-11-05T10:48:34.099Z",
+  "decisionOwner": "repository-owner",
+  "note": "Agent prepares evidence only. Flipping any default or product lock is an owner decision; nothing here changes a default.",
+  "switches": [
+    {
+      "id": "taskflow-lifecycle-writer",
+      "env": [
+        "OPENCLAW_CLAWGRAPH_LIFECYCLE_WRITER",
+        "OPENCLAW_MISSION_LIFECYCLE_WRITER",
+        "OPENCLAW_TASK_LOOP_LIFECYCLE_WRITER"
+      ],
+      "currentDefault": "legacy",
+      "candidate": "taskflow",
+      "whatItChanges": "TaskFlow CAS row becomes the single lifecycle truth for ClawGraph / Mission / Task Loop.",
+      "existingEvidence": "Execution phase/status/revision use the same TaskFlow CAS row. Candidate primary windows15/15 classified correctly; runtime sources8137cdb2e unchanged through evaluatorc0184e62e. See final-20261105/source-audit.json and comparison.json.",
+      "evidenceStillNeeded": [
+        "absolute frozen latency P50<=5000ms and P95<=15000ms currently fail",
+        "independent baseline repeat is14 complete+1 incomplete and12/15 structure matches",
+        "full relevant CI and any cross-domain cutover/rollback acceptance before changing a default"
+      ],
+      "risk": "medium-high: changes the lifecycle truth of three domains at once",
+      "rollback": "select legacy again; the TaskFlow writer freezes and no mode writes both authorities as truth",
+      "recommendation": "keep legacy: complete measurement returns FAIL/NO-GO"
+    },
+    {
+      "id": "recovery-authority-shadow",
+      "env": [
+        "OPENCLAW_RECOVERY_AUTHORITY_SHADOW"
+      ],
+      "currentDefault": "off",
+      "candidate": "on (shadow only)",
+      "whatItChanges": "runs the single-decision authority beside the legacy main-session recovery path and records drift; it does not change behaviour",
+      "existingEvidence": "35 observed primary main-session decisions have35 drift records with reasons; zero unpaired or undocumented records. One timed-out window without a decision is an explicit observation gap.10000-sample core aggregationP95=.0031ms excludes I/O.",
+      "evidenceStillNeeded": [
+        "phase/domain journal facts are not fully represented in the coarse shadow adapter",
+        "other four recovery owners do not query the authority",
+        "an authoritative cutover needs its own scoped acceptance; shadow logging alone does not authorize it"
+      ],
+      "risk": "low while shadow-only; the risk is the follow-up step where it starts to decide",
+      "rollback": "unset the env var",
+      "recommendation": "keep default off; explicit shadow measurement remains supported; do not treat it as decision authority"
+    },
+    {
+      "id": "execution-phase-writer",
+      "env": [
+        "OPENCLAW_EXECUTION_PHASE_WRITER"
+      ],
+      "currentDefault": "legacy",
+      "candidate": "taskflow",
+      "whatItChanges": "a committed execution phase becomes the judge of what already happened, and tool intent is recorded before the effect",
+      "existingEvidence": "Intent-before-effect,exclusive CAS,stable session/call/argument binding,existing executor recovery,fsync andphase-aware quarantine landed. Candidate fault-onlyP95=112635.7ms vslegacy179712.4ms; absolute frozen latency still fails.",
+      "evidenceStillNeeded": [
+        "clear the frozen absolute latency failures",
+        "resolve or characterize non-reproducible baseline observations without replacing negative trials",
+        "general external-effect reconciliation and cross-owner atomic visibility are not established"
+      ],
+      "risk": "high: an incorrect phase judgement can duplicate or drop an external effect",
+      "rollback": "select legacy; reconcile any pending row first; never dual-write",
+      "recommendation": "keep legacy; opt-in requiresboth TaskLoop lifecycle andexecution writer=taskflow"
+    },
+    {
+      "id": "event-log-replay",
+      "env": [
+        "runtime.eventLog.shadow",
+        "runtime.eventLog.persist",
+        "runtime.checkpointSerializer.shadow",
+        "runtime.resume.replayShadow"
+      ],
+      "currentDefault": "all false (built-but-unwired)",
+      "candidate": "not proposed",
+      "whatItChanges": "would allow event-level replay as a recovery basis",
+      "existingEvidence": "runtime-core/event-log.ts documents built-but-unwired; checkpoint-rollback-executor returns event_log_replay_not_implemented; no producer satisfies the event_log rollback target",
+      "evidenceStillNeeded": [
+        "crash/restore correctness evidence, not more shadow runs",
+        "the readiness veto gates (unsafe_side_effect_ambiguity etc.) clearing"
+      ],
+      "risk": "very high: replay can silently repeat external effects",
+      "rollback": "keep the flags false",
+      "recommendation": "do not enable; keep event-log as evidence only"
+    }
+  ],
+  "evaluationStatus": "FAIL",
+  "decision": "NO-GO",
+  "evidenceRoot": "final-20261105",
+  "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a"
+}

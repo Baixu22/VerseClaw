@@ -104,6 +104,7 @@ export function createSubscriptionMock(): SubscriptionMock {
   return {
     assistantTexts: [] as string[],
     toolMetas: [] as Array<{ toolName: string; meta?: string; asyncStarted?: boolean }>,
+    handleSessionEvent: () => {},
     runToolLifecycle: async <T>(toolParams: { execute: () => Promise<T> }) =>
       await toolParams.execute(),
     unsubscribe: () => {},
@@ -126,6 +127,7 @@ export function createSubscriptionMock(): SubscriptionMock {
     didSendViaMessagingTool: () => false,
     didSendDeterministicApprovalPrompt: () => false,
     getLastToolError: () => undefined,
+    getBrowserAutomationEvents: () => [],
     getUsageTotals: () => undefined,
     getCompactionCount: () => 0,
     getLastCompactionTokensAfter: () => undefined,
@@ -449,6 +451,7 @@ vi.mock("../../agent-settings.js", () => ({
 
 vi.mock("../extensions.js", () => ({
   buildEmbeddedExtensionFactories: () => [],
+  isContextBlockProjectionEnabled: () => false,
 }));
 
 vi.mock("../replay-history.js", () => ({
@@ -1039,12 +1042,6 @@ export function createDefaultEmbeddedSession(params?: {
     options?: { images?: unknown[]; preflightResult?: (submitted: boolean) => void },
   ) => Promise<void>;
 }): MutableSession {
-  let pendingPrompt:
-    | {
-        prompt: string;
-        options?: { images?: unknown[]; preflightResult?: (submitted: boolean) => void };
-      }
-    | undefined;
   const session: MutableSession = {
     sessionId: "embedded-session",
     messages: [...(params?.initialMessages ?? [])],
@@ -1052,24 +1049,20 @@ export function createDefaultEmbeddedSession(params?: {
     isStreaming: false,
     agent: {
       prompt: async (prompt, options) => {
-        pendingPrompt = {
-          prompt: String(prompt),
-          options: options as {
-            images?: unknown[];
-            preflightResult?: (submitted: boolean) => void;
-          },
-        };
+        if (params?.prompt) {
+          const promptOptions = options as
+            | {
+                images?: unknown[];
+                preflightResult?: (submitted: boolean) => void;
+              }
+            | undefined;
+          promptOptions?.preflightResult?.(true);
+          await params.prompt(session, String(prompt), promptOptions);
+          return;
+        }
         await session.agent.streamFn?.();
       },
-      streamFn: async () => {
-        if (params?.prompt && pendingPrompt) {
-          const currentPrompt = pendingPrompt;
-          pendingPrompt = undefined;
-          currentPrompt.options?.preflightResult?.(true);
-          await params.prompt(session, currentPrompt.prompt, currentPrompt.options);
-        }
-        return createCompletedAssistantStream();
-      },
+      streamFn: async () => createCompletedAssistantStream(),
       reset: () => {
         session.messages = [];
       },

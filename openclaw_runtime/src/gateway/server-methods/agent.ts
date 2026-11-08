@@ -32,6 +32,8 @@ import {
   parseExecApprovalFollowupApprovalId,
 } from "../../agents/bash-tools.exec-approval-followup-state.js";
 import { clearAllCliSessions } from "../../agents/cli-session.js";
+import { isCurrentRecoverySession } from "../../agents/recovery-authority/owner-admission.js";
+import type { RecoveryAdmissionIdentity } from "../../../../shared/recovery-authority/contract.js";
 import type { AgentCommandOpts } from "../../agents/command/types.js";
 import { isTimeoutError } from "../../agents/failover-error.js";
 import {
@@ -1068,6 +1070,7 @@ export const agentHandlers: GatewayRequestHandlers = {
       internalEvents?: AgentInternalEvent[];
       suppressPromptPersistence?: boolean;
       sessionEffects?: "visible" | "internal";
+      recoveryAdmission?: RecoveryAdmissionIdentity;
       idempotencyKey: string;
       sourceReplyDeliveryMode?: "automatic" | "message_tool_only";
       disableMessageTool?: boolean;
@@ -1097,7 +1100,9 @@ export const agentHandlers: GatewayRequestHandlers = {
       return;
     }
     if (
-      (requestedInternalSessionEffects || requestedPromptPersistenceSuppression) &&
+      (requestedInternalSessionEffects ||
+        requestedPromptPersistenceSuppression ||
+        request.recoveryAdmission) &&
       !canUseInternalRuntimeHandoff
     ) {
       respond(
@@ -1115,6 +1120,20 @@ export const agentHandlers: GatewayRequestHandlers = {
         false,
         undefined,
         errorShape(ErrorCodes.INVALID_REQUEST, "workspaceDir is reserved for backend callers."),
+      );
+      return;
+    }
+    if (
+      request.recoveryAdmission &&
+      (!request.sessionKey?.trim() || !request.sessionId?.trim() || requestedInternalSessionEffects)
+    ) {
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          "recovery admission requires sessionKey, sessionId and visible lifecycle effects.",
+        ),
       );
       return;
     }
@@ -1674,6 +1693,22 @@ export const agentHandlers: GatewayRequestHandlers = {
             ? (agentId ?? resolveDefaultAgentId(cfgLocal))
             : resolveAgentIdFromSessionKey(canonicalKey);
         const now = Date.now();
+        const checkRecoverySession = (candidate: SessionEntry | undefined) => {
+          if (!request.recoveryAdmission) return false;
+          if (
+            !isCurrentRecoverySession({
+              sessionId: candidate?.sessionId,
+              lifecycleRunId: candidate?.lifecycleRunId,
+              requestedSessionId,
+              runId,
+              admission: candidate?.subagentRecovery?.authority,
+              expected: request.recoveryAdmission,
+            })
+          )
+            throw new Error("recovery admission no longer owns the requested session");
+          return true;
+        };
+        const recoverySession = checkRecoverySession(entry);
         const resetPolicy = resolveSessionResetPolicy({
           sessionCfg: cfgLocal.session,
           resetType: resolveSessionResetType({ sessionKey: canonicalKey }),
@@ -1749,9 +1784,11 @@ export const agentHandlers: GatewayRequestHandlers = {
           : false;
         const canReuseSession =
           Boolean(entry?.sessionId) &&
-          (freshness?.fresh ?? false) &&
+          (recoverySession || (freshness?.fresh ?? false)) &&
           !failedSessionTranscriptMissing &&
           !terminalMainTranscriptNewerThanRegistry;
+        if (recoverySession && !canReuseSession)
+          throw new Error("recovery admission cannot replace its durable transcript");
         let usableRequestedSessionId =
           requestedSessionId && (!entry?.sessionId || canReuseSession)
             ? requestedSessionId
@@ -1902,9 +1939,11 @@ export const agentHandlers: GatewayRequestHandlers = {
             resolveFailedSessionTranscriptMissingForEntry(freshEntry);
           const freshCanReuseSession =
             Boolean(freshEntry?.sessionId) &&
-            (freshFreshness?.fresh ?? false) &&
+            (checkRecoverySession(freshEntry) || (freshFreshness?.fresh ?? false)) &&
             !freshFailedSessionTranscriptMissing &&
             !freshTerminalMainTranscriptNewerThanRegistry;
+          if (request.recoveryAdmission && !freshCanReuseSession)
+            throw new Error("recovery admission cannot replace its durable transcript");
           const freshUsableRequestedSessionId =
             requestedSessionId && (!freshEntry?.sessionId || freshCanReuseSession)
               ? requestedSessionId

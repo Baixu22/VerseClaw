@@ -1,0 +1,18 @@
+{
+  "schema": "RecoveryPreInjectionIncident/v1",
+  "classification": "pre-injection-invariant-failure",
+  "actualProcessKillPerformed": false,
+  "formalUse": false,
+  "receiptWritten": false,
+  "source": "D:/tmp/recovery-probe-Vy7vgw/hit-RECOVERY-repeated-restart-0-36576-1.json",
+  "sourceSha256": "0014d6ff513758a00350c696357ea653338f93d59c9a9eb916786769bd462647",
+  "base64": "eyJzY2hlbWEiOiJSZWNvdmVyeUZhdWx0Qm91bmRhcnkvdjEiLCJpZCI6IlJFQ09WRVJZLXJlcGVhdGVkLXJlc3RhcnQtMCIsInBvaW50IjoidXNlci1pbnRlbnQtZHVyYWJsZSIsImFjdGlvbiI6InBhdXNlIiwicGlkIjozNjU3Niwib2JzZXJ2ZWRBdCI6MTc5Mzg3MjAwMTM4MCwiZmFjdHMiOnsic2Vzc2lvbklkIjoiNmZlZDY5NzctZTUxMy00YTFiLTkyODQtMWYxMGZiMGRiNDY2Iiwic2Vzc2lvbkZpbGUiOiJEOlxcQ2xhd1gtd29ya1xccmVjb3ZlcnktaW50ZWdyYXRpb24tMjAyNjExMDNcXC50bXBcXGUyZS1ydW5zXFx2ZXJzZS1jbGF3LWUyZS1ydW4td1Zma25CXFx2ZXJzZS1jbGF3LWUyZS11c2VyLWRhdGEtUkJuWXlTXFxvcGVuY2xhdy1zb3VyY2Utc3RhdGVcXGFnZW50c1xcbWFpblxcc2Vzc2lvbnNcXDZmZWQ2OTc3LWU1MTMtNGExYi05Mjg0LTFmMTBmYjBkYjQ2Ni5qc29ubCIsImVudHJ5SWQiOiIzNjc0MTA5ZCIsIm1lc3NhZ2VUZXh0IjoiW09wZW5DbGF3IGhlYXJ0YmVhdCBwb2xsXSJ9LCJkcml2ZW5fYnkiOiJhZ2VudCIsImFjdG9yIjoicmVjb3ZlcnktZXZhbC1wcm9iZSIsInJlYWxIdW1hbkV2aWRlbmNlIjpmYWxzZX0=",
+  "runnerReport": "D:/tmp/recovery-baseline-repeat-1909dfd0c-20261105/completion/batch-8/matrix-run.json",
+  "probeMessage": "[OpenClaw heartbeat poll]",
+  "expectedTarget": "RECOVERY-repeated-restart-0 start",
+  "reason": "K5 lacked messageIncludes. A heartbeat paused at the hook; the exact target-intent-count assertion failed before crash snapshot and process kill. Preserve as a failed precondition, not as a valid crash trial or invented product measurement.",
+  "futureCorrection": "Apply the existing messageIncludes filter to both initial user-intent windows; keep the injection point and all valid samples unchanged.",
+  "driven_by": "agent",
+  "actor": "recovery-probe-auditor",
+  "realHumanEvidence": false
+}

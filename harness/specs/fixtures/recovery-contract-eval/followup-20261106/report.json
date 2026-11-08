@@ -1,0 +1,1324 @@
+{
+  "schema": "RecoveryFollowupEvidence/v1",
+  "baseCommit": "17b3bcbbb2cc45080438fe83002e52c3f066dab9",
+  "workingTreeDirty": true,
+  "resourceGates": [
+    {
+      "path": "D:\\tmp\\recovery-followup-17b3bcbbb-20261105\\identity-retry\\resource-gate.json",
+      "schema": "RecoveryPreSamplingResourceGate/v1",
+      "thresholdMB": 2500,
+      "observations": [
+        {
+          "at": "2026-11-05T15:49:17.290Z",
+          "freeMB": 429
+        },
+        {
+          "at": "2026-11-05T15:49:27.308Z",
+          "freeMB": 232
+        },
+        {
+          "at": "2026-11-05T15:49:37.323Z",
+          "freeMB": 318
+        },
+        {
+          "at": "2026-11-05T15:49:47.338Z",
+          "freeMB": 406
+        },
+        {
+          "at": "2026-11-05T15:49:57.352Z",
+          "freeMB": 251
+        },
+        {
+          "at": "2026-11-05T15:50:07.363Z",
+          "freeMB": 330
+        },
+        {
+          "at": "2026-11-05T15:50:17.401Z",
+          "freeMB": 49
+        },
+        {
+          "at": "2026-11-05T15:50:27.415Z",
+          "freeMB": 138
+        },
+        {
+          "at": "2026-11-05T15:50:37.427Z",
+          "freeMB": 205
+        },
+        {
+          "at": "2026-11-05T15:50:47.435Z",
+          "freeMB": 518
+        },
+        {
+          "at": "2026-11-05T15:50:57.475Z",
+          "freeMB": 302
+        },
+        {
+          "at": "2026-11-05T15:51:07.483Z",
+          "freeMB": 807
+        },
+        {
+          "at": "2026-11-05T15:51:17.491Z",
+          "freeMB": 697
+        },
+        {
+          "at": "2026-11-05T15:51:27.492Z",
+          "freeMB": 726
+        },
+        {
+          "at": "2026-11-05T15:51:37.500Z",
+          "freeMB": 911
+        },
+        {
+          "at": "2026-11-05T15:51:47.503Z",
+          "freeMB": 373
+        },
+        {
+          "at": "2026-11-05T15:51:57.505Z",
+          "freeMB": 245
+        },
+        {
+          "at": "2026-11-05T15:52:07.508Z",
+          "freeMB": 204
+        },
+        {
+          "at": "2026-11-05T15:52:17.511Z",
+          "freeMB": 300
+        },
+        {
+          "at": "2026-11-05T15:52:27.520Z",
+          "freeMB": 413
+        },
+        {
+          "at": "2026-11-05T15:52:37.531Z",
+          "freeMB": 314
+        },
+        {
+          "at": "2026-11-05T15:52:47.543Z",
+          "freeMB": 649
+        },
+        {
+          "at": "2026-11-05T15:52:57.556Z",
+          "freeMB": 307
+        },
+        {
+          "at": "2026-11-05T15:53:07.565Z",
+          "freeMB": 263
+        },
+        {
+          "at": "2026-11-05T15:53:17.579Z",
+          "freeMB": 669
+        },
+        {
+          "at": "2026-11-05T15:53:27.592Z",
+          "freeMB": 585
+        },
+        {
+          "at": "2026-11-05T15:53:37.604Z",
+          "freeMB": 586
+        },
+        {
+          "at": "2026-11-05T15:53:47.618Z",
+          "freeMB": 1493
+        },
+        {
+          "at": "2026-11-05T15:53:57.619Z",
+          "freeMB": 3178
+        },
+        {
+          "at": "2026-11-05T15:54:07.630Z",
+          "freeMB": 1180
+        }
+      ],
+      "admitted": false,
+      "doesNotChangeMeasuredTimeouts": true,
+      "driven_by": "agent",
+      "actor": "recovery-followup",
+      "realHumanEvidence": false
+    },
+    {
+      "path": "D:\\tmp\\recovery-followup-17b3bcbbb-20261105\\owner-final\\resource-gate.json",
+      "schema": "RecoveryPreSamplingResourceGate/v1",
+      "thresholdMB": 2500,
+      "observations": [
+        {
+          "at": "2026-11-06T03:03:37.018Z",
+          "freeMB": 2459
+        },
+        {
+          "at": "2026-11-06T03:03:47.023Z",
+          "freeMB": 2311
+        },
+        {
+          "at": "2026-11-06T03:03:57.028Z",
+          "freeMB": 2419
+        },
+        {
+          "at": "2026-11-06T03:04:07.033Z",
+          "freeMB": 2310
+        },
+        {
+          "at": "2026-11-06T03:04:17.038Z",
+          "freeMB": 2047
+        },
+        {
+          "at": "2026-11-06T03:04:27.046Z",
+          "freeMB": 1652
+        },
+        {
+          "at": "2026-11-06T03:04:37.060Z",
+          "freeMB": 1202
+        },
+        {
+          "at": "2026-11-06T03:04:47.075Z",
+          "freeMB": 1041
+        },
+        {
+          "at": "2026-11-06T03:04:57.086Z",
+          "freeMB": 1168
+        },
+        {
+          "at": "2026-11-06T03:05:07.101Z",
+          "freeMB": 971
+        },
+        {
+          "at": "2026-11-06T03:05:17.107Z",
+          "freeMB": 565
+        },
+        {
+          "at": "2026-11-06T03:05:27.109Z",
+          "freeMB": 1152
+        },
+        {
+          "at": "2026-11-06T03:05:37.119Z",
+          "freeMB": 1110
+        },
+        {
+          "at": "2026-11-06T03:05:47.127Z",
+          "freeMB": 1438
+        },
+        {
+          "at": "2026-11-06T03:05:57.140Z",
+          "freeMB": 781
+        },
+        {
+          "at": "2026-11-06T03:06:07.155Z",
+          "freeMB": 669
+        },
+        {
+          "at": "2026-11-06T03:06:17.160Z",
+          "freeMB": 2875
+        },
+        {
+          "at": "2026-11-06T03:06:27.161Z",
+          "freeMB": 653
+        },
+        {
+          "at": "2026-11-06T03:06:37.170Z",
+          "freeMB": 5140
+        },
+        {
+          "at": "2026-11-06T03:06:47.181Z",
+          "freeMB": 3046
+        }
+      ],
+      "admitted": true,
+      "doesNotChangeMeasuredTimeouts": true,
+      "driven_by": "agent",
+      "actor": "recovery-followup",
+      "realHumanEvidence": false
+    },
+    {
+      "path": "D:\\tmp\\recovery-followup-17b3bcbbb-20261105\\owner-fixed\\resource-gate.json",
+      "schema": "RecoveryPreSamplingResourceGate/v1",
+      "thresholdMB": 2500,
+      "observations": [
+        {
+          "at": "2026-11-06T02:45:44.236Z",
+          "freeMB": 3249
+        },
+        {
+          "at": "2026-11-06T02:45:54.242Z",
+          "freeMB": 2809
+        }
+      ],
+      "admitted": true,
+      "doesNotChangeMeasuredTimeouts": true,
+      "driven_by": "agent",
+      "actor": "recovery-followup",
+      "realHumanEvidence": false
+    },
+    {
+      "path": "D:\\tmp\\recovery-followup-17b3bcbbb-20261105\\prestart-fixed\\resource-gate.json",
+      "schema": "RecoveryPreSamplingResourceGate/v1",
+      "thresholdMB": 2500,
+      "observations": [
+        {
+          "at": "2026-11-06T07:10:43.073Z",
+          "freeMB": 736
+        },
+        {
+          "at": "2026-11-06T07:10:53.081Z",
+          "freeMB": 630
+        },
+        {
+          "at": "2026-11-06T07:11:03.088Z",
+          "freeMB": 433
+        },
+        {
+          "at": "2026-11-06T07:11:13.090Z",
+          "freeMB": 737
+        },
+        {
+          "at": "2026-11-06T07:11:23.104Z",
+          "freeMB": 564
+        },
+        {
+          "at": "2026-11-06T07:11:33.116Z",
+          "freeMB": 619
+        },
+        {
+          "at": "2026-11-06T07:11:43.129Z",
+          "freeMB": 546
+        },
+        {
+          "at": "2026-11-06T07:11:53.133Z",
+          "freeMB": 579
+        },
+        {
+          "at": "2026-11-06T07:12:03.153Z",
+          "freeMB": 360
+        },
+        {
+          "at": "2026-11-06T07:12:13.164Z",
+          "freeMB": 904
+        },
+        {
+          "at": "2026-11-06T07:12:23.181Z",
+          "freeMB": 520
+        },
+        {
+          "at": "2026-11-06T07:12:33.193Z",
+          "freeMB": 842
+        },
+        {
+          "at": "2026-11-06T07:12:43.206Z",
+          "freeMB": 761
+        },
+        {
+          "at": "2026-11-06T07:12:53.221Z",
+          "freeMB": 695
+        },
+        {
+          "at": "2026-11-06T07:13:03.247Z",
+          "freeMB": 73
+        },
+        {
+          "at": "2026-11-06T07:13:13.321Z",
+          "freeMB": 1
+        },
+        {
+          "at": "2026-11-06T07:13:23.441Z",
+          "freeMB": 14
+        },
+        {
+          "at": "2026-11-06T07:13:33.612Z",
+          "freeMB": 5
+        },
+        {
+          "at": "2026-11-06T07:13:43.651Z",
+          "freeMB": 9
+        },
+        {
+          "at": "2026-11-06T07:13:53.669Z",
+          "freeMB": 34
+        },
+        {
+          "at": "2026-11-06T07:14:03.778Z",
+          "freeMB": 29
+        },
+        {
+          "at": "2026-11-06T07:14:13.882Z",
+          "freeMB": 14
+        },
+        {
+          "at": "2026-11-06T07:14:24.023Z",
+          "freeMB": 5
+        },
+        {
+          "at": "2026-11-06T07:14:34.067Z",
+          "freeMB": 41
+        },
+        {
+          "at": "2026-11-06T07:14:44.101Z",
+          "freeMB": 28
+        },
+        {
+          "at": "2026-11-06T07:14:54.142Z",
+          "freeMB": 22
+        },
+        {
+          "at": "2026-11-06T07:15:04.225Z",
+          "freeMB": 224
+        },
+        {
+          "at": "2026-11-06T07:15:14.248Z",
+          "freeMB": 456
+        },
+        {
+          "at": "2026-11-06T07:15:24.251Z",
+          "freeMB": 318
+        },
+        {
+          "at": "2026-11-06T07:15:34.257Z",
+          "freeMB": 432
+        }
+      ],
+      "admitted": false,
+      "doesNotChangeMeasuredTimeouts": true,
+      "driven_by": "agent",
+      "actor": "recovery-followup",
+      "realHumanEvidence": false
+    }
+  ],
+  "stages": [
+    {
+      "stage": "matrix",
+      "runnerExit": {
+        "code": 1,
+        "signal": null
+      },
+      "trials": 12,
+      "receiptCount": 8,
+      "results": [
+        {
+          "arm": "legacy",
+          "windowId": "intent-after-persist-kill",
+          "index": 0,
+          "testStatus": "failed",
+          "measurement": null
+        },
+        {
+          "arm": "legacy",
+          "windowId": "intent-after-persist-kill",
+          "index": 1,
+          "testStatus": "passed",
+          "measurement": {
+            "lostTasks": 1,
+            "duplicateEffects": 0,
+            "terminalCorrect": false,
+            "recoveryLatencyMs": 167174
+          }
+        },
+        {
+          "arm": "legacy",
+          "windowId": "intent-after-persist-kill",
+          "index": 2,
+          "testStatus": "passed",
+          "measurement": {
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 44366
+          }
+        },
+        {
+          "arm": "legacy",
+          "windowId": "repeated-restart",
+          "index": 0,
+          "testStatus": "failed",
+          "measurement": {
+            "lostTasks": null,
+            "duplicateEffects": null,
+            "terminalCorrect": false,
+            "recoveryLatencyMs": 123968
+          }
+        },
+        {
+          "arm": "legacy",
+          "windowId": "repeated-restart",
+          "index": 1,
+          "testStatus": "passed",
+          "measurement": {
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 186938
+          }
+        },
+        {
+          "arm": "legacy",
+          "windowId": "repeated-restart",
+          "index": 2,
+          "testStatus": "passed",
+          "measurement": {
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 166246
+          }
+        },
+        {
+          "arm": "candidate",
+          "windowId": "intent-after-persist-kill",
+          "index": 0,
+          "testStatus": "passed",
+          "measurement": {
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 36991
+          }
+        },
+        {
+          "arm": "candidate",
+          "windowId": "intent-after-persist-kill",
+          "index": 1,
+          "testStatus": "passed",
+          "measurement": {
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 125907
+          }
+        },
+        {
+          "arm": "candidate",
+          "windowId": "intent-after-persist-kill",
+          "index": 2,
+          "testStatus": "failed",
+          "measurement": null
+        },
+        {
+          "arm": "candidate",
+          "windowId": "repeated-restart",
+          "index": 0,
+          "testStatus": "failed",
+          "measurement": null
+        },
+        {
+          "arm": "candidate",
+          "windowId": "repeated-restart",
+          "index": 1,
+          "testStatus": "timedOut",
+          "measurement": {
+            "lostTasks": null,
+            "duplicateEffects": null,
+            "terminalCorrect": false,
+            "recoveryLatencyMs": 257555
+          }
+        },
+        {
+          "arm": "candidate",
+          "windowId": "repeated-restart",
+          "index": 2,
+          "testStatus": "failed",
+          "measurement": null
+        }
+      ],
+      "receipts": [
+        {
+          "arm": "legacy",
+          "windowId": "intent-after-persist-kill",
+          "index": 1,
+          "schema": "RecoveryContractWindowTrialReceipt/v1",
+          "terminalCorrect": false,
+          "duplicateEffects": 0,
+          "lostTasks": 1,
+          "recoveryLatencyMs": 167174,
+          "crashes": 1,
+          "observationError": "Error: terminal/reconciliation disk state timed out: Error: database is locked",
+          "realResult": false,
+          "reconciliation": false,
+          "shadowRecords": 0,
+          "shadowDrift": 0
+        },
+        {
+          "arm": "legacy",
+          "windowId": "intent-after-persist-kill",
+          "index": 2,
+          "schema": "RecoveryContractWindowTrialReceipt/v1",
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "recoveryLatencyMs": 44366,
+          "crashes": 1,
+          "observationError": "",
+          "realResult": true,
+          "reconciliation": false,
+          "shadowRecords": 1,
+          "shadowDrift": 1
+        },
+        {
+          "arm": "legacy",
+          "windowId": "repeated-restart",
+          "index": 0,
+          "schema": "RecoveryContractIncompleteTrial/v1",
+          "terminalCorrect": false,
+          "duplicateEffects": null,
+          "lostTasks": null,
+          "recoveryLatencyMs": 123968,
+          "crashes": 1,
+          "observationError": "Error: durable fault boundary timed out: undefined"
+        },
+        {
+          "arm": "legacy",
+          "windowId": "repeated-restart",
+          "index": 1,
+          "schema": "RecoveryContractWindowTrialReceipt/v1",
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "recoveryLatencyMs": 186938,
+          "crashes": 3,
+          "observationError": "",
+          "realResult": true,
+          "reconciliation": false,
+          "shadowRecords": 3,
+          "shadowDrift": 3
+        },
+        {
+          "arm": "legacy",
+          "windowId": "repeated-restart",
+          "index": 2,
+          "schema": "RecoveryContractWindowTrialReceipt/v1",
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "recoveryLatencyMs": 166246,
+          "crashes": 3,
+          "observationError": "",
+          "realResult": true,
+          "reconciliation": false,
+          "shadowRecords": 3,
+          "shadowDrift": 3
+        },
+        {
+          "arm": "candidate",
+          "windowId": "intent-after-persist-kill",
+          "index": 0,
+          "schema": "RecoveryContractWindowTrialReceipt/v1",
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "recoveryLatencyMs": 36991,
+          "crashes": 1,
+          "observationError": "",
+          "realResult": true,
+          "reconciliation": false,
+          "shadowRecords": 1,
+          "shadowDrift": 1
+        },
+        {
+          "arm": "candidate",
+          "windowId": "intent-after-persist-kill",
+          "index": 1,
+          "schema": "RecoveryContractWindowTrialReceipt/v1",
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "recoveryLatencyMs": 125907,
+          "crashes": 1,
+          "observationError": "",
+          "realResult": true,
+          "reconciliation": false,
+          "shadowRecords": 1,
+          "shadowDrift": 1
+        },
+        {
+          "arm": "candidate",
+          "windowId": "repeated-restart",
+          "index": 1,
+          "schema": "RecoveryContractIncompleteTrial/v1",
+          "terminalCorrect": false,
+          "duplicateEffects": null,
+          "lostTasks": null,
+          "recoveryLatencyMs": 257555,
+          "crashes": 2,
+          "observationError": "Error: durable fault boundary timed out: undefined"
+        }
+      ]
+    },
+    {
+      "stage": "startup-fixed/matrix",
+      "runnerExit": {
+        "code": 1,
+        "signal": null
+      },
+      "trials": 2,
+      "receiptCount": 1,
+      "results": [
+        {
+          "arm": "legacy",
+          "windowId": "repeated-restart",
+          "index": 0,
+          "testStatus": "timedOut",
+          "measurement": null
+        },
+        {
+          "arm": "candidate",
+          "windowId": "repeated-restart",
+          "index": 0,
+          "testStatus": "passed",
+          "measurement": {
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 57753
+          }
+        }
+      ],
+      "receipts": [
+        {
+          "arm": "candidate",
+          "windowId": "repeated-restart",
+          "index": 0,
+          "schema": "RecoveryContractWindowTrialReceipt/v1",
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "recoveryLatencyMs": 57753,
+          "crashes": 3,
+          "observationError": "",
+          "realResult": true,
+          "reconciliation": false,
+          "shadowRecords": 3,
+          "shadowDrift": 3
+        }
+      ]
+    },
+    {
+      "stage": "identity-fixed/matrix",
+      "runnerExit": {
+        "code": 1,
+        "signal": null
+      },
+      "trials": 1,
+      "receiptCount": 0,
+      "results": [
+        {
+          "arm": "candidate",
+          "windowId": "repeated-restart",
+          "index": 0,
+          "testStatus": "failed",
+          "measurement": null
+        }
+      ],
+      "receipts": []
+    },
+    {
+      "stage": "owner-fixed/matrix",
+      "runnerExit": {
+        "code": 0,
+        "signal": null
+      },
+      "trials": 1,
+      "receiptCount": 1,
+      "results": [
+        {
+          "arm": "candidate",
+          "windowId": "repeated-restart",
+          "index": 0,
+          "testStatus": "passed",
+          "measurement": {
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 149679
+          }
+        }
+      ],
+      "receipts": [
+        {
+          "arm": "candidate",
+          "windowId": "repeated-restart",
+          "index": 0,
+          "schema": "RecoveryContractWindowTrialReceipt/v1",
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "recoveryLatencyMs": 149679,
+          "crashes": 3,
+          "observationError": "",
+          "realResult": true,
+          "reconciliation": false,
+          "shadowRecords": 3,
+          "shadowDrift": 3
+        }
+      ]
+    },
+    {
+      "stage": "owner-final/matrix",
+      "runnerExit": {
+        "code": 0,
+        "signal": null
+      },
+      "trials": 1,
+      "receiptCount": 1,
+      "results": [
+        {
+          "arm": "candidate",
+          "windowId": "repeated-restart",
+          "index": 1,
+          "testStatus": "passed",
+          "measurement": {
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 113287
+          }
+        }
+      ],
+      "receipts": [
+        {
+          "arm": "candidate",
+          "windowId": "repeated-restart",
+          "index": 1,
+          "schema": "RecoveryContractWindowTrialReceipt/v1",
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "recoveryLatencyMs": 113287,
+          "crashes": 3,
+          "observationError": "",
+          "realResult": true,
+          "reconciliation": false,
+          "shadowRecords": 3,
+          "shadowDrift": 3
+        }
+      ]
+    }
+  ],
+  "gates": [
+    {
+      "name": "recovery-followup-red",
+      "exitCode": 1,
+      "total": 9,
+      "passed": 7,
+      "failed": 2
+    },
+    {
+      "name": "recovery-followup-startup-red",
+      "exitCode": 1,
+      "total": 1,
+      "passed": 0,
+      "failed": 1
+    },
+    {
+      "name": "recovery-followup-lineage-red",
+      "exitCode": 1,
+      "total": 13,
+      "passed": 11,
+      "failed": 2
+    },
+    {
+      "name": "recovery-followup-green",
+      "exitCode": 1
+    },
+    {
+      "name": "recovery-followup-green-fast",
+      "exitCode": 0,
+      "total": 22,
+      "passed": 22,
+      "failed": 0
+    },
+    {
+      "name": "recovery-followup-final-tests",
+      "exitCode": 0,
+      "total": 24,
+      "passed": 24,
+      "failed": 0
+    },
+    {
+      "name": "recovery-followup-identity-final-tests",
+      "exitCode": 0,
+      "total": 28,
+      "passed": 28,
+      "failed": 0
+    },
+    {
+      "name": "recovery-followup-observer",
+      "exitCode": 0,
+      "total": 5,
+      "passed": 5,
+      "failed": 0
+    },
+    {
+      "name": "recovery-followup-lineage-root",
+      "exitCode": 0,
+      "total": 9,
+      "passed": 9,
+      "failed": 0
+    },
+    {
+      "name": "recovery-followup-identity-runtime-types",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-identity-test-types",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-identity-lint",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-identity-root-lint",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-identity-build",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-identity-comms-replay",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-identity-comms-compare",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-identity-harness",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-lifecycle-red",
+      "exitCode": 1,
+      "total": 9,
+      "passed": 5,
+      "failed": 4
+    },
+    {
+      "name": "recovery-followup-lifecycle-green",
+      "exitCode": 0,
+      "total": 14,
+      "passed": 14,
+      "failed": 0
+    },
+    {
+      "name": "recovery-followup-rpc-red",
+      "exitCode": 1,
+      "total": 17,
+      "passed": 15,
+      "failed": 2
+    },
+    {
+      "name": "recovery-followup-rpc-green",
+      "exitCode": 0,
+      "total": 30,
+      "passed": 30,
+      "failed": 0
+    },
+    {
+      "name": "recovery-followup-metadata-red",
+      "exitCode": 1,
+      "total": 11,
+      "passed": 9,
+      "failed": 2
+    },
+    {
+      "name": "recovery-followup-metadata-green",
+      "exitCode": 0,
+      "total": 16,
+      "passed": 16,
+      "failed": 0
+    },
+    {
+      "name": "recovery-followup-usage-red",
+      "exitCode": 1,
+      "total": 12,
+      "passed": 11,
+      "failed": 1
+    },
+    {
+      "name": "recovery-followup-owner-root",
+      "exitCode": 0,
+      "total": 17,
+      "passed": 17,
+      "failed": 0
+    },
+    {
+      "name": "recovery-followup-owner-complete",
+      "exitCode": 1,
+      "total": 19,
+      "passed": 17,
+      "failed": 2
+    },
+    {
+      "name": "recovery-followup-owner-siblings",
+      "exitCode": 0,
+      "total": 19,
+      "passed": 19,
+      "failed": 0
+    },
+    {
+      "name": "recovery-followup-complete-types",
+      "exitCode": 2
+    },
+    {
+      "name": "recovery-followup-complete-runtime-types",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-complete-runtime-lint",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-complete-root-lint",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-complete-build",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-verified-types",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-verified-comms-replay",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-verified-comms-compare",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-verified-harness",
+      "exitCode": 1
+    },
+    {
+      "name": "recovery-followup-verified-harness-clean",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-final-runtime-types",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-final-runtime-lint",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-final-siblings-types",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-final-siblings-lint",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-final-build",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-final-harness",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-final-staged-harness",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-harness-ci",
+      "exitCode": 1
+    },
+    {
+      "name": "recovery-followup-harness-ci-tests",
+      "exitCode": null,
+      "total": 59,
+      "passed": 59,
+      "failed": 0
+    },
+    {
+      "name": "recovery-followup-evidence-refs",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-prestart-red",
+      "exitCode": 1,
+      "total": 16,
+      "passed": 15,
+      "failed": 1
+    },
+    {
+      "name": "recovery-followup-prestart-green",
+      "exitCode": 0,
+      "total": 21,
+      "passed": 21,
+      "failed": 0
+    },
+    {
+      "name": "recovery-followup-prestart-runtime-lint",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-prestart-runtime-types",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-prestart-test-types",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-prestart-root-lint",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-prestart-build",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-prestart-harness",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-prestart-comms-replay",
+      "exitCode": 0
+    },
+    {
+      "name": "recovery-followup-prestart-comms-compare",
+      "exitCode": 0
+    }
+  ],
+  "reviews": [
+    {
+      "attempt": "-1",
+      "exitCode": 1,
+      "logSha256": "253cb35d7037f0474da0808eb3c0d12666683ffc19d86bcdc40e496b422ae53a",
+      "logPath": "D:/tmp/recovery-followup-autoreview.log",
+      "errors": [
+        "ERROR: exceeded retry limit, last status: 429 Too Many Requests",
+        "ERROR: exceeded retry limit, last status: 429 Too Many Requests"
+      ]
+    },
+    {
+      "attempt": "-2",
+      "exitCode": 1,
+      "logSha256": "2edd443cf8935c894994d12e99f2fcc6e4d1c625ddf51a00634b09c1312ae646",
+      "logPath": "D:/tmp/recovery-followup-autoreview-2.log",
+      "errors": [
+        "2026-11-05T13:51:09.187543Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (1/5 in 185ms)... turn_id=01a1abd6-ce37-7201-bcd7-8d5417d1448c retries=1 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-05T13:51:40.061841Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (2/5 in 427ms)... turn_id=01a1abd6-ce37-7201-bcd7-8d5417d1448c retries=2 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-05T13:52:13.939468Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (3/5 in 808ms)... turn_id=01a1abd6-ce37-7201-bcd7-8d5417d1448c retries=3 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-05T13:52:48.090371Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (4/5 in 1.744s)... turn_id=01a1abd6-ce37-7201-bcd7-8d5417d1448c retries=4 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-05T13:55:20.952652Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (1/5 in 202ms)... turn_id=01a1abd6-ce37-7201-bcd7-8d5417d1448c retries=1 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-05T14:02:24.274139Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (2/5 in 380ms)... turn_id=01a1abd6-ce37-7201-bcd7-8d5417d1448c retries=2 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-05T14:03:17.772737Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (3/5 in 833ms)... turn_id=01a1abd6-ce37-7201-bcd7-8d5417d1448c retries=3 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-05T14:03:49.524453Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (4/5 in 1.484s)... turn_id=01a1abd6-ce37-7201-bcd7-8d5417d1448c retries=4 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later"
+      ]
+    },
+    {
+      "attempt": "-3",
+      "exitCode": 1,
+      "logSha256": "f66ce4fb5b24f537121ab25315600f270809e52813a38ca2cbfa50dfb61bcab8",
+      "logPath": "D:/tmp/recovery-followup-autoreview-3.log",
+      "errors": [
+        "2026-11-05T14:29:53.674112Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (2/5 in 418ms)... turn_id=01a1ac18-e615-7d10-9e4d-77311c679403 retries=2 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-05T14:30:25.031867Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (3/5 in 793ms)... turn_id=01a1ac18-e615-7d10-9e4d-77311c679403 retries=3 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-05T14:30:56.269190Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (4/5 in 1.51s)... turn_id=01a1ac18-e615-7d10-9e4d-77311c679403 retries=4 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        " 429:     if (isStopped()) {",
+        "2026-11-05T14:37:40.321462Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (1/5 in 202ms)... turn_id=01a1ac18-e615-7d10-9e4d-77311c679403 retries=1 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for account, please retry later",
+        "2026-11-05T14:38:28.350368Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (2/5 in 361ms)... turn_id=01a1ac18-e615-7d10-9e4d-77311c679403 retries=2 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for account, please retry later",
+        "ERROR: exceeded retry limit, last status: 429 Too Many Requests",
+        "ERROR: exceeded retry limit, last status: 429 Too Many Requests"
+      ]
+    },
+    {
+      "attempt": "-4",
+      "exitCode": 1,
+      "logSha256": "fe6349a1a12a8795888a2d0e49d52ca580519cfb7d9f83e1f7085bab96cb97d6",
+      "logPath": "D:/tmp/recovery-followup-autoreview-4.log",
+      "errors": []
+    },
+    {
+      "attempt": "-5",
+      "exitCode": 1,
+      "logSha256": "cf819f8ab607e6ea23d561437c0de531edf62c88815f221316f1e203c49a523f",
+      "logPath": "D:/tmp/recovery-followup-autoreview-5.log",
+      "errors": [
+        "2026-11-06T01:52:02.258859Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (1/5 in 210ms)... turn_id=01a1ae6d-1f82-7d51-827e-82faabf4f2de retries=1 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-06T01:56:16.922318Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (3/5 in 838ms)... turn_id=01a1ae6d-1f82-7d51-827e-82faabf4f2de retries=3 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-06T01:59:36.095163Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (1/5 in 219ms)... turn_id=01a1ae6d-1f82-7d51-827e-82faabf4f2de retries=1 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-06T02:03:01.753782Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (1/5 in 216ms)... turn_id=01a1ae6d-1f82-7d51-827e-82faabf4f2de retries=1 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-06T02:03:47.641392Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (2/5 in 412ms)... turn_id=01a1ae6d-1f82-7d51-827e-82faabf4f2de retries=2 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-06T02:06:17.566631Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (4/5 in 1.51s)... turn_id=01a1ae6d-1f82-7d51-827e-82faabf4f2de retries=4 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-06T02:06:58.620397Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (5/5 in 3.192s)... turn_id=01a1ae6d-1f82-7d51-827e-82faabf4f2de retries=5 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-06T02:10:47.248601Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (1/5 in 205ms)... turn_id=01a1ae6d-1f82-7d51-827e-82faabf4f2de retries=1 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later"
+      ]
+    },
+    {
+      "attempt": "-6",
+      "exitCode": 1,
+      "logSha256": "265a249b7c6d2ad7633097701333eb3ad6b994ca74ef7f547c9c10d89f37c25e",
+      "logPath": "D:/tmp/recovery-followup-autoreview-6.log",
+      "errors": []
+    },
+    {
+      "attempt": "-7",
+      "exitCode": 1,
+      "logSha256": "2fa0dba0c7fa661dd19ab0f0894fe1bf3faa101e1f4afdfc529e6832cb8a9c30",
+      "logPath": "D:/tmp/recovery-followup-autoreview-7.log",
+      "errors": [
+        "2026-11-06T02:49:15.026973Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (1/5 in 198ms)... turn_id=01a1aebd-9271-7491-8bd4-08ce790e4b72 retries=1 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-06T02:58:32.094265Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (2/5 in 382ms)... turn_id=01a1aebd-9271-7491-8bd4-08ce790e4b72 retries=2 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-06T02:49:15.026973Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (1/5 in 198ms)... turn_id=01a1aebd-9271-7491-8bd4-08ce790e4b72 retries=1 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-06T02:58:32.094265Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (2/5 in 382ms)... turn_id=01a1aebd-9271-7491-8bd4-08ce790e4b72 retries=2 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later"
+      ]
+    },
+    {
+      "attempt": "-8",
+      "exitCode": 1,
+      "logSha256": "a9168584619f30eb0628b17ffc418308155a84b8d02925d3845f33e13131ecb1",
+      "logPath": "D:/tmp/recovery-followup-autoreview-8.log",
+      "errors": [
+        "2026-11-06T03:18:16.822663Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (1/5 in 212ms)... turn_id=01a1aedc-b984-7851-a928-a9d33e7436e3 retries=1 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-06T03:19:13.340654Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (2/5 in 406ms)... turn_id=01a1aedc-b984-7851-a928-a9d33e7436e3 retries=2 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-06T03:26:36.632018Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (1/5 in 207ms)... turn_id=01a1aedc-b984-7851-a928-a9d33e7436e3 retries=1 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-06T03:47:30.871291Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (1/5 in 204ms)... turn_id=01a1aedc-b984-7851-a928-a9d33e7436e3 retries=1 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-06T04:20:49.682050Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (1/5 in 209ms)... turn_id=01a1aedc-b984-7851-a928-a9d33e7436e3 retries=1 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-06T04:32:38.298377Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (1/5 in 214ms)... turn_id=01a1aedc-b984-7851-a928-a9d33e7436e3 retries=1 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later"
+      ]
+    },
+    {
+      "attempt": "-9",
+      "exitCode": 1,
+      "logSha256": "14b63fa6a9a5c775c132adade9176153462ac69f48c193cde28dcd690d327a92",
+      "logPath": "D:/tmp/recovery-followup-autoreview-9.log",
+      "errors": [
+        "2026-11-06T07:09:44.682080Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (1/5 in 211ms)... turn_id=01a1afb0-a5c1-7d31-86e2-84f397d0164c retries=1 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-06T07:10:20.943207Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (2/5 in 425ms)... turn_id=01a1afb0-a5c1-7d31-86e2-84f397d0164c retries=2 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-06T07:12:21.468157Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (1/5 in 183ms)... turn_id=01a1afb0-a5c1-7d31-86e2-84f397d0164c retries=1 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-06T07:12:54.195866Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (2/5 in 399ms)... turn_id=01a1afb0-a5c1-7d31-86e2-84f397d0164c retries=2 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-06T07:09:44.682080Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (1/5 in 211ms)... turn_id=01a1afb0-a5c1-7d31-86e2-84f397d0164c retries=1 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-06T07:10:20.943207Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (2/5 in 425ms)... turn_id=01a1afb0-a5c1-7d31-86e2-84f397d0164c retries=2 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-06T07:12:21.468157Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (1/5 in 183ms)... turn_id=01a1afb0-a5c1-7d31-86e2-84f397d0164c retries=1 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later",
+        "2026-11-06T07:12:54.195866Z  WARN codex_core::responses_retry: stream disconnected - retrying sampling request (2/5 in 399ms)... turn_id=01a1afb0-a5c1-7d31-86e2-84f397d0164c retries=2 max_retries=5 sampling_error=stream disconnected before completion: Concurrency limit exceeded for user, please retry later"
+      ]
+    },
+    {
+      "attempt": "-10",
+      "exitCode": 0,
+      "logSha256": "79f40b94400a82bfb0922179aa2f8baed49fef18c5a18177b0ad280dda879739",
+      "logPath": "D:/tmp/recovery-followup-autoreview-10.log",
+      "errors": []
+    }
+  ],
+  "sources": [
+    {
+      "path": ".gitignore",
+      "sha256": "ba48a715dd547e29bc5b15c40c4cd1e8b86fbd5c55babc1abb1c66514c0b41b1"
+    },
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "e086192d6eb201fe30825dcc198f0d653f3bb8bbbdb34ac35d270345958b0073"
+    },
+    {
+      "path": "README.md",
+      "sha256": "3ce6e270deb55a83d4611c757c2c89ea02230f941aa118980bb96f08bab8ec22"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "aeea3b9012bb3949998f13be25212060a3eca20fb28b8250554e036320a9d7c0"
+    },
+    {
+      "path": "docs/dev/recovery-contract/FOLLOWUP-20261106.zh-CN.md",
+      "sha256": "9f099d4425c8cad0bcebe745ac2f3c10352a1649c2c73b4b58934185c5ab2540"
+    },
+    {
+      "path": "harness/specs/tasks/recovery-tool-redispatch.md",
+      "sha256": "b0fc9da3cdeb176a7194fd0b494ec86a0d5fef65355002ee77e64764b8d95958"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-command.ts",
+      "sha256": "a425a9433a867de443d8ce1a197056e7451ca9986f9df4913f119a75e2b6aeb7"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/command/attempt-execution.shared.ts",
+      "sha256": "0ac6f126e8c07d7670b4a2284ed920bb25aa456270a2af2da693cd7be31eee55"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/command/session-store.ts",
+      "sha256": "2eb7b2555297c6078d7db11b2529fae0664995373b898b30f7b58c130d1b36d6"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/command/session.ts",
+      "sha256": "08cb62698e439296deea96333b32ba5c79b5982a0e6e7335416ea7e8e5855bf3"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/main-session-restart-recovery.flow.test.ts",
+      "sha256": "3e31edd0a3007902937549b9541d8d52d9a486c906f79a35c4a2c75aa72ebbe3"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/main-session-restart-recovery.ts",
+      "sha256": "7a2705a6d818f41999de728fe00198870eead301cd328eb770c87c1e0cc55c37"
+    },
+    {
+      "path": "openclaw_runtime/src/auto-reply/reply/agent-runner.ts",
+      "sha256": "eaa9ccd1d2eade854a6e8dc9a6c14f0a56898480873c6c83cc7567e5a8f733b3"
+    },
+    {
+      "path": "openclaw_runtime/src/auto-reply/reply/dispatch-from-config.ts",
+      "sha256": "e3957b34d17310cbbd82a59b45d138ffccea02de7987b78c28140218728f06a5"
+    },
+    {
+      "path": "openclaw_runtime/src/auto-reply/reply/get-reply.ts",
+      "sha256": "05fd9cd8e71e3b201499a3d7bd45a147fde15b0c16e4eb691f1a2f5d0b224512"
+    },
+    {
+      "path": "openclaw_runtime/src/config/sessions/store-load.ts",
+      "sha256": "425118d6178385b943bf9eb3285a58e63607b29e410f0104a414c489b4abb657"
+    },
+    {
+      "path": "openclaw_runtime/src/config/sessions/types.ts",
+      "sha256": "8fbbea8759593520bd9ead1ed2bc3567c3b9196e889ebed9230570ca719ad635"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-startup-post-attach.recovery-order.test.ts",
+      "sha256": "37bc4742c99229bc41b6f8dd2761497cc675bd6ea4d370ad451d7e01e44a3d20"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-startup-post-attach.ts",
+      "sha256": "05d62d02179c12820d6f21cc736b963c4859c6b7da2f69f8fbbda31e151343fd"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/session-lifecycle-state.ts",
+      "sha256": "2b0ca056cdec0f116ccf95c4cda14818f32fba24799b3f8a7645ab49b8dbeebd"
+    },
+    {
+      "path": "openclaw_runtime/src/plugins/session-entry-slot-keys.ts",
+      "sha256": "1ede2822d4f5fe3b25c4aeee483f3b22d3809500d20397838ce511b93995bc21"
+    },
+    {
+      "path": "scripts/repository-artifacts.json",
+      "sha256": "7818730acd098206fd9e9369699667d9b8df013de3eae14086fe82b0c0791058"
+    },
+    {
+      "path": "tests/e2e/fixtures/recovery-contract-probe.ts",
+      "sha256": "469219257605058e39f23c96f006b59dd7ab7063f6bd2827b3b8b53b26b94edd"
+    },
+    {
+      "path": "tests/e2e/recovery-contract-eval.spec.ts",
+      "sha256": "d247476eaeb27ac20787712a699201c264abd426c174635e8a79b564e53f61b6"
+    },
+    {
+      "path": "tests/unit/recovery-observation.test.ts",
+      "sha256": "e6430ca3c0639835f58fecff2a04c49dabaa2225bdccd4da1af2d35896d8667b"
+    },
+    {
+      "path": "tests/unit/session-lifecycle-generation-barrier.test.ts",
+      "sha256": "0f059623978f402fb3811bb101e3f8d33d1c7d77b8d6c54d49823583d8389e1d"
+    }
+  ],
+  "driven_by": "agent",
+  "actor": "recovery-followup",
+  "realHumanEvidence": false,
+  "rawFiles": 289,
+  "bundleSha256": "574dc6c766205279a5f36e963aa9c42d07e1c03dcf9d1b8e77aaa2809b4c1fd9",
+  "decision": "NO-GO",
+  "fullFrozenEvaluationRerun": false,
+  "reviewComplete": true,
+  "cleanReview": "D:/tmp/recovery-followup-review-10.json",
+  "defaultsChanged": false,
+  "oldFinalEvidenceUnchanged": true
+}

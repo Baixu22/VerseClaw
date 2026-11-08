@@ -63,6 +63,9 @@ export async function prepareSessionManagerForRun(params: {
   const hasAssistant = sm.fileEntries.some(
     (e) => e.type === "message" && (e as SessionMessageEntry).message?.role === "assistant",
   );
+  const hasUserIntent = sm.fileEntries.some(
+    (e) => e.type === "message" && (e as SessionMessageEntry).message?.role === "user",
+  );
 
   if (!params.hadSessionFile && header) {
     header.id = params.sessionId;
@@ -72,7 +75,7 @@ export async function prepareSessionManagerForRun(params: {
     return;
   }
 
-  if (params.hadSessionFile && header && !hasAssistant) {
+  if (params.hadSessionFile && header && !hasAssistant && !hasUserIntent) {
     if (sm.wasRecoveredFromCorruptHeader?.()) {
       header.id = params.sessionId;
       header.cwd = params.cwd;

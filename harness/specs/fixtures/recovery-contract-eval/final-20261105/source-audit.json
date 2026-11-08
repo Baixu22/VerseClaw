@@ -1,0 +1,141 @@
+{
+  "schema": "RecoverySourceAudit/v1",
+  "runtimeCommit": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+  "evaluatorCommit": "c0184e62e2ea7c3dcfddbe47258bd552ae8f0c1b",
+  "engineeringAgreement": {
+    "score": 8,
+    "outOf": 10,
+    "meaning": "Engineering judgment about TaskFlow state ownership plus one typed decision layer; not an evaluation metric or completion percentage"
+  },
+  "items": [
+    {
+      "id": "one-owner",
+      "file": "openclaw_runtime/src/agents/execution-phase/store.ts",
+      "line": 1,
+      "sha256": "a2f194f47863b9d4d7ab38fac0b65171eb31f0c22d8f59d4c3f0644582df35f3",
+      "status": "resolved",
+      "finding": "Execution phase is read and written as TaskFlow state; no second active ledger."
+    },
+    {
+      "id": "same-revision",
+      "file": "openclaw_runtime/src/tasks/task-flow-cas.ts",
+      "line": 250,
+      "sha256": "b25508e3a304312c7bbac0bc81ffec796240184aaca720dc21589cd1000e7875",
+      "status": "resolved",
+      "finding": "Status and phase validate and commit through the same expected-revision CAS."
+    },
+    {
+      "id": "migration",
+      "file": "openclaw_runtime/src/state/openclaw-state-db.ts",
+      "line": 824,
+      "sha256": "49458aed68fc98ab110a5555867c49038cb747e6a30e0c5fcb79dfb625d6f231",
+      "status": "resolved",
+      "finding": "Prototype migration verifies matching owner, phase, revision and payload before dropping the old table."
+    },
+    {
+      "id": "registry-protection",
+      "file": "openclaw_runtime/src/tasks/task-flow-registry.store.sqlite.ts",
+      "line": 205,
+      "sha256": "32326e12a77e1c4aa7e667994227a6f3cc044042880233c0707cd2ccc5742266",
+      "status": "resolved",
+      "finding": "Registry snapshots cannot overwrite phase-owned rows; deletes also filter execution_phase IS NULL."
+    },
+    {
+      "id": "transcript-durability",
+      "file": "openclaw_runtime/src/agents/sessions/session-manager.ts",
+      "line": 988,
+      "sha256": "666be37d6749b37851409bc3ecde7c9ad767efab9265644c912fc9625abb76ab",
+      "status": "resolved",
+      "finding": "User intent, assistant dispatch and real tool results flush before the next acknowledgement boundary."
+    },
+    {
+      "id": "writer-conjunction",
+      "file": "openclaw_runtime/src/agents/execution-phase/tool-boundary.ts",
+      "line": 19,
+      "sha256": "5472420a06bad19eac0ff434d1b5165318448f65fac63ff64da74195fbdd386f",
+      "status": "resolved",
+      "finding": "Both lifecycle and execution writers must select taskflow."
+    },
+    {
+      "id": "exclusive-effect-claim",
+      "file": "openclaw_runtime/src/agents/execution-phase/tool-boundary.ts",
+      "line": 120,
+      "sha256": "5472420a06bad19eac0ff434d1b5165318448f65fac63ff64da74195fbdd386f",
+      "status": "resolved",
+      "finding": "The pending-effect CAS precedes existing tool execution and rejects a duplicate claimant."
+    },
+    {
+      "id": "durable-budget",
+      "file": "openclaw_runtime/src/agents/main-session-restart-recovery.ts",
+      "line": 394,
+      "sha256": "048a8748336c8720b040b71e87522b2616d6ec7d896682519e1091bb1cc1857e",
+      "status": "resolved",
+      "finding": "Main-session recovery persists a stable run identity, boundary digest and finite attempt budget."
+    },
+    {
+      "id": "phase-aware-quarantine",
+      "file": "openclaw_runtime/src/agents/execution-phase/store.ts",
+      "line": 246,
+      "sha256": "a2f194f47863b9d4d7ab38fac0b65171eb31f0c22d8f59d4c3f0644582df35f3",
+      "status": "resolved",
+      "finding": "verified rows settle terminal; effect_pending/effect_committed rows retain the phase with reconciliation metadata and blocked status."
+    },
+    {
+      "id": "k4-reader",
+      "file": "scripts/recovery-contract-eval.mjs",
+      "line": 112,
+      "sha256": "2ffa90fe0bed49e8243e83f040299eee27dc467c044cf8a28f5de141069a11bb",
+      "status": "resolved",
+      "finding": "The reader validates the original hashed failure artifact and actual throw action."
+    },
+    {
+      "id": "k5-target-filter",
+      "file": "tests/e2e/recovery-contract-eval.spec.ts",
+      "line": 239,
+      "sha256": "6ebf565a4dae5bc460fc44e69874d0c0849cb99648d79697f6c128abe59ab3ed",
+      "status": "resolved",
+      "finding": "Initial user-intent probes exclude background heartbeat turns."
+    },
+    {
+      "id": "incomplete-observation",
+      "file": "tests/e2e/recovery-contract-eval.spec.ts",
+      "line": 435,
+      "sha256": "6ebf565a4dae5bc460fc44e69874d0c0849cb99648d79697f6c128abe59ab3ed",
+      "status": "resolved",
+      "finding": "Failures between repeated kill boundaries retain a failed observation and incomplete trial with unknown counters null."
+    },
+    {
+      "id": "authority-still-shadow",
+      "file": "openclaw_runtime/src/agents/main-session-restart-recovery.ts",
+      "line": 583,
+      "sha256": "048a8748336c8720b040b71e87522b2616d6ec7d896682519e1091bb1cc1857e",
+      "status": "partial",
+      "finding": "The typed authority only records observations. Production continuation still consults the phase recovery planner; decision authority is not fully unified."
+    },
+    {
+      "id": "coarse-authority-facts",
+      "file": "openclaw_runtime/src/agents/recovery-authority/main-session-adapter.ts",
+      "line": 77,
+      "sha256": "303d236b28f3eadeb524c73006b15526205ac83fa54d01b1498fb45a1f0cbd27",
+      "status": "partial",
+      "finding": "Shadow maps coarse transcript/delivery facts, not the complete committed execution-phase journal; the repeat observed a different deliver/reconcile choice."
+    },
+    {
+      "id": "other-owner-migration",
+      "file": "openclaw_runtime/src/agents/subagent-orphan-recovery.ts",
+      "line": 131,
+      "sha256": "45dd554bad2a3edd02222d9758d719b4c2dcf7e6562e246e8598373a6434f2a0",
+      "status": "outside-inherited-scope",
+      "finding": "Subagent/goal-wake/final-delivery/ACP do not query the shared authority. TF-0715 remains proposed."
+    }
+  ],
+  "unificationView": "TaskFlow owns lifecycle/phase/revision writes; existing domain journals own effect truth; RecoveryAuthority should yield one admitted decision; receipts and event-log correlate evidence. Current integration only covers main-session/tool paths, and the authority remains shadow.",
+  "residualLimits": [
+    "No general external-effect reconciliation executor or full atomic visibility across transcript/session/TaskFlow/domain effects.",
+    "The repeated baseline is incomplete and structurally variable; candidate absolute latency gates fail.",
+    "Full harness:ci exits 1 at stale unrelated Agent Dev evidence; focused green results do not establish GA."
+  ],
+  "driven_by": "agent",
+  "actor": "recovery-source-auditor",
+  "realHumanEvidence": false
+}

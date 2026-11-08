@@ -1,0 +1,118 @@
+{
+  "schema": "RecoveryCloseoutGateInventory/v1",
+  "sourceRuntimeStillEqual": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+  "patchState": "Evidence and documentation staged on top of committed evaluator c0184e62e; no runtime sources changed.",
+  "retention": {
+    "exitCode": 0,
+    "trackedPaths": 20464,
+    "initialExitCode": 1,
+    "initialFailure": "reviewed ignore rules were stale after adding exact retained files",
+    "repair": "regenerated reviewed ignore rules with the repository tool; same retention rules kept",
+    "rerunExitCode": 0,
+    "finalTrackedPaths": 20467,
+    "finalExitCode": 0
+  },
+  "harness": {
+    "validateExitCode": 0,
+    "dryRunExitCode": 0,
+    "dryRunIsTestExecution": false
+  },
+  "sealing": {
+    "exitCode": 0,
+    "rawSha256": "3fca0c2a2b37772b0d9b95e4a7c51f01bbd0867e2d98947f0d59239c99ecfc04"
+  },
+  "offlineVerification": {
+    "exitCode": 0,
+    "actualAcceptanceExits": [
+      1,
+      1
+    ],
+    "actualReproductionExits": [
+      0,
+      0
+    ],
+    "tamperExitCode": 1
+  },
+  "sourceArchive": {
+    "sha256": "1c1e8fe71aaeb078c9da1fb5acf4a1ddf3ef706779aa9a4a27b758ffcb976919",
+    "bytes": 311357440,
+    "sha256Reverified": true
+  },
+  "rawArchiveSha256": "19b12c8161f10ac986b6b322520a673ab3684b93e494e2ea95bdcd9eedfd77ba",
+  "driven_by": "agent",
+  "actor": "recovery-closeout-gate-auditor",
+  "realHumanEvidence": false,
+  "taskForest": {
+    "proposalId": "TFP-recovery-evidence-closeout-20261105",
+    "applyExitCode": 0,
+    "validateExitCode": 0,
+    "explicitExportExitCode": 0,
+    "statuses": [
+      {
+        "id": "TF-0710",
+        "status": "done"
+      },
+      {
+        "id": "TF-0711",
+        "status": "review_needed"
+      },
+      {
+        "id": "TF-0714",
+        "status": "done"
+      },
+      {
+        "id": "TF-0718",
+        "status": "done"
+      },
+      {
+        "id": "TF-0719",
+        "status": "done"
+      },
+      {
+        "id": "TF-0721",
+        "status": "done"
+      },
+      {
+        "id": "TF-0722",
+        "status": "done"
+      },
+      {
+        "id": "TF-0723",
+        "status": "done"
+      },
+      {
+        "id": "TF-0724",
+        "status": "done"
+      }
+    ],
+    "outsideScope": {
+      "id": "TF-0715",
+      "status": "proposed"
+    },
+    "exports": [
+      {
+        "name": "task-forest.graph.json",
+        "bytes": 4954909,
+        "mtime": "2026-11-05T11:32:43.555Z",
+        "sha256": "fa9db08754736d050eaf7c7f602335a1c57ca3782432e08205b82c3841aef9b6"
+      },
+      {
+        "name": "task-forest.html",
+        "bytes": 587468532,
+        "mtime": "2026-11-05T11:29:54.824Z",
+        "sha256": "34f7bd742a99b884e1d21fa241f27019817aff4fcd2b04b8b4bafd2b7b7dab65"
+      },
+      {
+        "name": "task-forest.timeline.json",
+        "bytes": 2776355251,
+        "mtime": "2026-11-05T11:25:40.322Z"
+      },
+      {
+        "name": "task-forest.todos.json",
+        "bytes": 130667,
+        "mtime": "2026-11-05T11:32:43.606Z"
+      }
+    ],
+    "canonicalHistoryCommitted": false
+  }
+}

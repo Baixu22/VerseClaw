@@ -2591,8 +2591,12 @@
     "docs/dev/durable-task-system/PLAN.md",
     "docs/dev/durable-task-system/sources.json",
     "docs/dev/durable-task-system/DESIGN.md",
-    "docs/dev/durable-task-system/STATUS.md"
+    "docs/dev/durable-task-system/STATUS.md",
+    "docs/dev/recovery-contract/INTEGRATION-NOTES.zh-CN.md",
+    "docs/dev/recovery-contract/REDISPATCH-20261104.md",
+    "docs/dev/recovery-contract/FINAL-20261105.zh-CN.md",
+    "docs/dev/recovery-contract/FOLLOWUP-20261106.zh-CN.md",
+    "docs/dev/recovery-contract/GA-READINESS-20261106.md"
   ],
   "artifactBatches": {}
 }
-

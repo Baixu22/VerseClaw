@@ -1492,6 +1492,7 @@ CREATE TABLE IF NOT EXISTS flow_runs (
   -- RC-06A: delivery projection persisted on the same row as the lifecycle
   -- transition so delivery/lifecycle can never split; owned by flow_runs.
   delivery_state TEXT,
+  execution_phase TEXT,
   cancel_requested_at INTEGER,
   created_at INTEGER NOT NULL,
   updated_at INTEGER NOT NULL,

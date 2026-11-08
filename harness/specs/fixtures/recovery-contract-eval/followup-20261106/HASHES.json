@@ -1,0 +1,37 @@
+{
+  "schema": "RecoveryRetainedFileHashes/v1",
+  "algorithm": "sha256",
+  "excludes": [
+    "HASHES.json"
+  ],
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 1524,
+      "sha256": "c4967f7f16a26ddba4d61fa6e7592b10219c758f29df807c22cb75904f176a2b"
+    },
+    {
+      "path": "credential-scan.json",
+      "bytes": 424,
+      "sha256": "7e2a7b01a96e43a95061629a2ea41708d869fdaae40619d774376a362d513209"
+    },
+    {
+      "path": "raw-evidence.json.gz",
+      "bytes": 3277957,
+      "sha256": "574dc6c766205279a5f36e963aa9c42d07e1c03dcf9d1b8e77aaa2809b4c1fd9"
+    },
+    {
+      "path": "report.json",
+      "bytes": 45924,
+      "sha256": "8f0b61e4e708c2fd46e47007e8971cfd4e1ea02156581a081f16516ba191136e"
+    },
+    {
+      "path": "verification.json",
+      "bytes": 420,
+      "sha256": "c5142c8895c858c3d8d8a377c4c7d88e3a031aa2052a442b99f1742390e9d31c"
+    }
+  ],
+  "driven_by": "agent",
+  "actor": "recovery-retained-file-sealer",
+  "realHumanEvidence": false
+}
