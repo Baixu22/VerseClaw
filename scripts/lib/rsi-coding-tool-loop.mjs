@@ -8,9 +8,10 @@ import { createResponsesProvider } from './rsi-responses-provider.mjs';
 import { prepareGradeWorkspace, resolveHistoricalTask, runLiveTaskOracles } from './rsi-live-grader.mjs';
 
 export async function collectToolCodingTrial({ root, plan, slot, apiKey, scratch, supportRoot,
-  provider, grade, prepare, remainingTokens, remainingProviderCalls }) {
+  provider, grade, prepare, remainingTokens, remainingProviderCalls, campaignLedger }) {
   assert.deepEqual(plan.collector, codingCollectorConfig(plan.collector?.version), 'collector-config-drift');
   assert.equal(plan.collector.version, TOOL_CODING_COLLECTOR.version, 'tool-collector-required');
+  assert(!plan.budget.campaign || campaignLedger?.campaignDigest === benefitDigest(plan.budget.campaign), 'campaign-ledger-required');
   const task = plan.tasks.find(task => task.id === slot.caseId);
   assert(task && plan.slots.some(item => benefitDigest(item) === benefitDigest(slot)), 'unknown-slot');
   const directory = resolve(scratch, slot.id), rel = relative(resolve('D:/tmp'), directory);
@@ -64,14 +65,18 @@ export async function collectToolCodingTrial({ root, plan, slot, apiKey, scratch
         apiKey, timeoutMs: Math.min(plan.collector.timeoutMs, deadline - Date.now()),
         maxOutputTokens: plan.provider.maxOutputTokens, reasoningEffort: plan.collector.reasoningEffort,
         jsonSchema: plan.collector.responseSchema, tools: plan.collector.tools });
+      const reservation = campaignLedger ? await campaignLedger.reserve(request, slot.id + '/' + (row.execution.providerCalls + 1)) : null;
       phase = 'provider';
       row.execution.providerCalls++;
       row.providerAttempts.push({ endpoint: plan.provider.endpoint, request, rawResponse: null, parsedResponse: null });
-      const response = await send({ instructions: request.instructions, input: request.input });
+      let response;
+      try {
+        response = await send({ instructions: request.instructions, input: request.input });
+        Object.assign(row.providerAttempts.at(-1), { rawResponse: response.rawResponse, parsedResponse: response.response });
+        row.rawResponse = response.rawResponse;
+        write('provider-response-' + row.execution.providerCalls + '.json', response);
+      } finally { if (reservation) campaignLedger.settle(reservation, response); }
       assert.deepEqual(response.request.body, request, 'dispatched-request-drift');
-      Object.assign(row.providerAttempts.at(-1), { rawResponse: response.rawResponse, parsedResponse: response.response });
-      row.rawResponse = response.rawResponse;
-      write('provider-response-' + row.execution.providerCalls + '.json', response);
       assert.equal(response.response.model, plan.provider.model, 'provider-model-drift');
       const parsed = response.response;
       phase = 'provider-usage';

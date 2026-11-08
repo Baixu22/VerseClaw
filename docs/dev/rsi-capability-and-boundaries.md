@@ -81,6 +81,22 @@ v4 tool protocol and freezes the same final task identities and prompt version.
 The new plan requires its own declared measurement budget. TF-0856 curated
 evidence is in `harness/specs/fixtures/rsi-candidate-evolution/closeout-20261108/`.
 
+`node scripts/rsi-paired-measurement.mjs` prepares, calibrates, runs and checks a
+fresh staged-prompt experiment. Its `prepare` command takes an owner-authorized
+budget file, the sealed evolution export and a read-only local quota database.
+`calibrate` executes the historical reference and unresolved baseline for each
+task. `run` reads the provider key from stdin and retains the preflight, all
+provider turns, tool effects and final historical oracle results. `check`
+recomputes the measurement and joins each provider receipt to its reservation.
+
+`RsiCampaignBudget/v1` adds one whole-campaign envelope to the v2 benefit plan.
+Preflight and continuations share its call, token and currency limits. Unknown
+usage keeps the request's upper reservation after interruption. The Free-quota
+path verifies WorkBuddy model ownership and all enabled account plans before
+each request; it uses existing credits and allows no purchase or paid fallback.
+The report retains the provider's credit multiplier, new-spending bound in CNY
+and any unavailable upstream invoice or credit debit as separate fields.
+
 Adoption feedback remains diagnostic. Role-memory feedback is recorded and reported;
 `openclaw_runtime/src/memory/context-pack.ts` and
 `openclaw_runtime/src/memory/memory-policy.ts` do not use it in retrieval or

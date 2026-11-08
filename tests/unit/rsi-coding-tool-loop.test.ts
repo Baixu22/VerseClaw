@@ -8,6 +8,7 @@ import { CODING_TOOLS, TOOL_CODING_COLLECTOR } from '../../scripts/lib/rsi-codin
 import { createResponsesProvider } from '../../scripts/lib/rsi-responses-provider.mjs';
 import { collectCodingTrial, reservedCodingTokens } from '../../scripts/rsi-coding-collector.mjs';
 import { codingToolEdits, createCodingToolState, executeCodingTool, verifyCodingToolJournal } from '../../scripts/lib/rsi-coding-tools.mjs';
+import { createCampaignLedger, type CampaignBudget } from '../../scripts/lib/rsi-campaign-budget.mjs';
 
 const root = process.cwd(), created: string[] = [];
 const plan = createBenefitPlan(root, { codingCollector: true, collectorVersion: TOOL_CODING_COLLECTOR.version });
@@ -46,6 +47,22 @@ const implementations = task.targetScope.map(path => {
   return { path, oldText: null, newText: content };
 });
 describe('bounded coding tool loop (scripted providers)', () => {
+  it('shares preflight authorization and stops an unreserved continuation before the provider call', async () => {
+    const campaign: CampaignBudget = { schemaVersion: 'RsiCampaignBudget/v1', driven_by: 'agent', actor: 'scripted-campaign',
+      endpoint: plan.provider.endpoint, model: plan.provider.model,
+      authorization: { approvedBy: 'owner', currency: 'CNY', maxCost: 300, maxProviderCalls: 2, maxTotalTokens: 12000000, source: 'scripted fixture' },
+      billing: { kind: 'token-tariff', currency: 'CNY', inputPerMillion: 5, outputPerMillion: 20, evidenceDigest: 'a'.repeat(64) } };
+    const ledger = createCampaignLedger({ directory: join(scratch(), 'ledger'), campaign });
+    ledger.settle(await ledger.reserve(buildBenefitRequest(plan, slot), 'provider-preflight'), null);
+    const scripted = sender([[call('edit', 'apply_edits', { edits: implementations }), call('public', 'check_public_contract', {})], finish]);
+    const measuredShape = { ...plan, budget: { ...plan.budget, campaign } };
+    const row = await collectCodingTrial({ root, plan: measuredShape, slot, apiKey: 'scripted-provider-key', scratch: scratch(),
+      supportRoot: root, provider: scripted.send, prepare, campaignLedger: ledger });
+    expect(row.execution).toMatchObject({ failureCategory: 'budget', providerCalls: 1, status: 'crash' });
+    expect(scripted.transport).toHaveBeenCalledTimes(1);
+    expect(ledger.snapshot()).toMatchObject({ providerCalls: 2, unknownUsageRequests: ['provider-preflight'] });
+    expect(row.providerAttempts).toHaveLength(1);
+  });
   it('freezes function tools and a final acknowledgement without changing the single-shot contract', () => {
     const request = buildBenefitRequest(plan, slot);
     expect(request.tools).toEqual(CODING_TOOLS);

@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { execFileSync } from 'node:child_process';
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
-import { createResponsesProvider } from './lib/rsi-responses-provider.mjs';
+import { buildResponsesRequest, createResponsesProvider } from './lib/rsi-responses-provider.mjs';
 import { artifactPath } from './lib/agent-first-trials.mjs';
 import { sha256File } from './rsi-tf0604-baseline.mjs';
 import { CODING_BINDINGS_PATH, resolveHistoricalTask } from './lib/rsi-live-grader.mjs';
@@ -67,7 +67,7 @@ export function inspectLiveCorpus(root = ROOT, { codingCohort = false } = {}) {
   });
 }
 
-export async function probeLiveResource({ directory, endpoint, model, apiKey }) {
+export async function probeLiveResource({ directory, endpoint, model, apiKey, campaignLedger }) {
   assert(!existsSync(join(directory, 'provider-preflight.json')), 'preflight-already-recorded');
   const start = Date.now();
   const marker = 'RSI_PROVIDER_READY';
@@ -75,7 +75,11 @@ export async function probeLiveResource({ directory, endpoint, model, apiKey }) 
   let result;
   try {
     const provider = createResponsesProvider({ endpoint, model, apiKey, maxOutputTokens: 512, timeoutMs: 45000, reasoningEffort: 'low' });
-    const receipt = await provider(request);
+    const reservation = campaignLedger ? await campaignLedger.reserve(buildResponsesRequest({ model, ...request,
+      maxOutputTokens: 512, reasoningEffort: 'low' }), 'provider-preflight') : null;
+    let receipt;
+    try { receipt = await provider(request); }
+    finally { if (reservation) campaignLedger.settle(reservation, receipt); }
     result = { driven_by: 'agent', actor: 'codex/rsi-live-preflight', scope: 'provider admission; not a task outcome',
       startedAt: new Date(start).toISOString(), durationMs: Date.now() - start,
       passed: receipt.response.status === 'completed' && receipt.response.text.trim() === marker && receipt.response.usage !== null,

@@ -8,8 +8,10 @@ export function collectCodingTrial(options: {
   grade?: (edits: Array<{path: string; content: string}>, workspace?: string) => Promise<Awaited<ReturnType<typeof runLiveTaskOracles>>>;
   prepare?: (workspace: string, task: BenefitTask) => Promise<void>;
   remainingTokens?: number; remainingProviderCalls?: number;
+  campaignLedger?: ReturnType<typeof import('./lib/rsi-campaign-budget.mjs').createCampaignLedger>;
 }): Promise<BenefitTrialReceipt>;
 export function runCodingCollector(options: {
   root?: string; directory: string; scratch: string; supportRoot: string; apiKey: string; limit?: number;
+  campaignLedger?: ReturnType<typeof import('./lib/rsi-campaign-budget.mjs').createCampaignLedger>;
 }): Promise<{ written: number; report: BenefitReport }>;
 export function reservedCodingTokens(plan: BenefitPlan, rows: Pick<BenefitTrialReceipt, 'providerAttempts'>[]): number;
