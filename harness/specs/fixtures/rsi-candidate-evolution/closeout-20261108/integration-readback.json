@@ -1,0 +1,31 @@
+{
+  "sourceCandidate": "94825e3dff67e0b057a67e62b46ee7e9ba349dd4",
+  "sourceFiles": 20,
+  "tests": {
+    "total": 26,
+    "passed": 26,
+    "failed": 0,
+    "pending": 0
+  },
+  "entries": 7,
+  "generations": 2,
+  "measurementCandidateId": "rsi-prompt-4fb74767a8b13b831edd60f3",
+  "trainingOriginalFailures": 2,
+  "trainingRepairs": 2,
+  "validationRuns": [
+    {
+      "baseline": 72,
+      "candidate": 72,
+      "status": "eliminate",
+      "eligible": false
+    },
+    {
+      "baseline": 72,
+      "candidate": 72,
+      "status": "hold",
+      "eligible": true
+    }
+  ],
+  "paidProviderCalls": 0,
+  "passed": true
+}

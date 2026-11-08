@@ -1,0 +1,79 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/evolution-training",
+  "evidenceKind": "agent-authored-training-fixture",
+  "records": [
+    {
+      "trajectoryId": "evolution-controls-20261108-training-0",
+      "caseId": "evolution-training-falsy-v1",
+      "steps": [
+        {
+          "action": "tool.result",
+          "timestamp": "2026-11-08T00:00:00.000Z",
+          "input": {
+            "stage": "initial",
+            "toolCallId": "evolution-controls-20261108-training-0-initial",
+            "source": "import assert from 'node:assert/strict';\nconst copy=x=>Object.fromEntries(Object.entries(x).filter(([,v])=>v));\nassert.deepEqual(copy({zero:0,no:false,empty:'',nothing:null}),{zero:0,no:false,empty:'',nothing:null});",
+            "sourceDigest": "91d1db98e4a7751edf8a5f582e224eaddb239cd14f9fbaa0eabffac915011200"
+          },
+          "output": {
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "node:internal/modules/run_main:107\r\n    triggerUncaughtException(\r\n    ^\r\n\r\nAssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\r\n+ actual - expected\r\n\r\n+ {}\r\n- {\r\n-   empty: '',\r\n-   no: false,\r\n-   nothing: null,\r\n-   zero: 0\r\n- }\r\n\r\n    at file:///D:/tmp/rsi-evolution-7q9tcJ/[eval1]:3:8\r\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\r\n    at async node:internal/modules/esm/loader:223:26\r\n    at async ModuleLoader.executeModuleJob (node:internal/modules/esm/loader:220:20)\r\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {\r\n  generatedMessage: true,\r\n  code: 'ERR_ASSERTION',\r\n  actual: {},\r\n  expected: { zero: 0, no: false, empty: '', nothing: null },\r\n  operator: 'deepStrictEqual',\r\n  diff: 'simple'\r\n}\r\n\r\nNode.js v24.22.1\r\n"
+          }
+        },
+        {
+          "action": "tool.result",
+          "timestamp": "2026-11-08T00:00:00.000Z",
+          "input": {
+            "stage": "repaired",
+            "toolCallId": "evolution-controls-20261108-training-0-repair",
+            "source": "import assert from 'node:assert/strict';\nconst copy=x=>structuredClone(x);\nassert.deepEqual(copy({zero:0,no:false,empty:'',nothing:null}),{zero:0,no:false,empty:'',nothing:null});",
+            "sourceDigest": "d3681cdf8a98d72f3c760dd9b1a14075a2f37090b6ac926dddee950c3d05aa95"
+          },
+          "output": {
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    {
+      "trajectoryId": "evolution-controls-20261108-training-1",
+      "caseId": "evolution-training-sort-v1",
+      "steps": [
+        {
+          "action": "tool.result",
+          "timestamp": "2026-11-08T00:00:00.000Z",
+          "input": {
+            "stage": "initial",
+            "toolCallId": "evolution-controls-20261108-training-1-initial",
+            "source": "import assert from 'node:assert/strict';\nconst sort=x=>x.sort((a,b)=>a-b);\nconst a=[7,2,2]; assert.deepEqual(sort(a),[2,2,7]); assert.deepEqual(a,[7,2,2]);",
+            "sourceDigest": "33d49a840a9dfda196e3e959e31a9d37c029d7fbfbc92acfa2e37eaa7efc929d"
+          },
+          "output": {
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "node:internal/modules/run_main:107\r\n    triggerUncaughtException(\r\n    ^\r\n\r\nAssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\r\n+ actual - expected\r\n\r\n  [\r\n-   7,\r\n    2,\r\n    2,\r\n+   7\r\n  ]\r\n\r\n    at file:///D:/tmp/rsi-evolution-7q9tcJ/[eval1]:3:60\r\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\r\n    at async node:internal/modules/esm/loader:223:26\r\n    at async ModuleLoader.executeModuleJob (node:internal/modules/esm/loader:220:20)\r\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {\r\n  generatedMessage: true,\r\n  code: 'ERR_ASSERTION',\r\n  actual: [ 2, 2, 7 ],\r\n  expected: [ 7, 2, 2 ],\r\n  operator: 'deepStrictEqual',\r\n  diff: 'simple'\r\n}\r\n\r\nNode.js v24.22.1\r\n"
+          }
+        },
+        {
+          "action": "tool.result",
+          "timestamp": "2026-11-08T00:00:00.000Z",
+          "input": {
+            "stage": "repaired",
+            "toolCallId": "evolution-controls-20261108-training-1-repair",
+            "source": "import assert from 'node:assert/strict';\nconst sort=x=>x.toSorted((a,b)=>a-b);\nconst a=[7,2,2]; assert.deepEqual(sort(a),[2,2,7]); assert.deepEqual(a,[7,2,2]);",
+            "sourceDigest": "4ba6e8928682fc0054f637bcf8f2046de064bcd457085165f38bd9550c0f6f62"
+          },
+          "output": {
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": ""
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-remediation",
+  "firstCiFailure": "tools catalog was missing the existing task_control source entry",
+  "correctedBy": "94825e3dff67e0b057a67e62b46ee7e9ba349dd4",
+  "generatedAt": "2026-11-08T11:13:56.681Z",
+  "functionalSourceChanged": false,
+  "generationPreflight": {
+    "pnpmVersion": "11.2.2",
+    "status": "already up to date",
+    "elapsedSeconds": 11.6,
+    "sourceOrLockfileChanges": false,
+    "sharedHooksPathChanged": false
+  },
+  "prodFlagsCatalogChanged": false
+}
