@@ -1,0 +1,11 @@
+{
+  "extends": "../../../../tsconfig.test.json",
+  "compilerOptions": { "allowJs": true, "checkJs": false, "incremental": false },
+  "include": [
+    "../../../../tests/e2e/resource-mixed-load.spec.ts",
+    "../../../../tests/unit/resource-mixed-measurement.test.ts",
+    "../../../../playwright.resource-governance.config.ts",
+    "../../../../src/types/electron.d.ts"
+  ],
+  "exclude": []
+}
