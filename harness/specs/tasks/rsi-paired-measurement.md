@@ -5,6 +5,8 @@ title: Measure the sealed evolved RSI prompt on the complete paired cohort
 intent: Run a fresh v4 experiment with the staged second-generation prompt, whole-campaign resource accounting, fresh reference-bound admission and replayable outcomes.
 diffBase: c0868c76f7a583b7d8c809dff905f3ad29a0784f
 touchedAreas:
+  - .gitignore
+  - scripts/repository-artifacts.json
   - scripts/rsi-paired-measurement.*
   - scripts/rsi-coding-collector.*
   - scripts/rsi-live-acceptance.*
