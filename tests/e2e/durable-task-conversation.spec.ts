@@ -51,10 +51,12 @@ test("normal conversation shows one task header and reveals file changes below t
     join(profile, "settings.json"),
     JSON.stringify({ language: "en", gatewayAutoStart: false, gatewayPort: port }),
   );
-  const app = await launchElectronApp({ skipSetup: true, profileDir: profile });
+  const app = await launchElectronApp({ skipSetup: true, profileDir: profile, theme: 'light' });
   try {
     const page = await getStableWindow(app);
     await page.emulateMedia({ reducedMotion: "reduce" });
+    await expect(page.getByTestId('chat-page')).toBeVisible();
+    await expect(page.locator('.codex-composer-shell')).toBeVisible();
     await expect(page.getByTestId("session-task-dock")).toHaveCount(0);
     await expect(page.getByTestId('chat-welcome-bg')).toHaveCount(0);
     await expect(page.getByTestId('chat-welcome-watermark')).toHaveCount(0);
@@ -90,6 +92,13 @@ test("normal conversation shows one task header and reveals file changes below t
       method: "sessions.describe",
       params: { key: session.key },
     });
+    // Workspace setup can create repository metadata files. Freeze that baseline
+    // before testing whether a later source edit reveals the changed-file chip.
+    execFileSync('git', ['add', '--all'], { cwd: root, windowsHide: true, stdio: 'pipe' });
+    execFileSync('git', ['-c', 'user.name=Agent UI Test', '-c', 'user.email=agent-ui@example.invalid',
+      'commit', '--allow-empty', '-m', 'Initialize isolated conversation fixture'],
+    { cwd: root, windowsHide: true, stdio: 'pipe' });
+    expect(execFileSync('git', ['status', '--porcelain'], { cwd: root, windowsHide: true, encoding: 'utf8' }).trim()).toBe('');
     await installIpcMocks(app, {
       gatewayRpcByMethod: {
         "chat.history": {
