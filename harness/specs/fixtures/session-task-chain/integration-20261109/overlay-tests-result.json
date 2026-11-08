@@ -1,0 +1,16 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "D:/ClawX/node_modules/vitest/vitest.mjs",
+    "run",
+    "--config",
+    "D:/tmp/unified-management-20261109/overlay-vitest.config.ts",
+    "--reporter=json",
+    "--outputFile=D:/tmp/unified-management-20261109/overlay-tests.json"
+  ],
+  "exit": 0,
+  "durationMs": 14013,
+  "mode": "virtual source overlay; repository files unchanged"
+}
