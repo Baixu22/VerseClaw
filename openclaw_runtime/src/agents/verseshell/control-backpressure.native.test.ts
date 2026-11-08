@@ -34,7 +34,12 @@ async function setup() {
   const env = { VERSESHELL_RUNTIME_VERSION: manifest.crate.version, VERSESHELL_SERVER_PROTOCOL: manifest.protocol.expected_server_protocol,
     VERSESHELL_OPERATION_CATALOG_DIGEST: manifest.protocol.operation_catalog_digest, VERSESHELL_OPERATION_CATALOG_COUNT: String(manifest.protocol.operation_catalog_count),
     VERSESHELL_AE_SHA256: hash, VERSESHELL_OS_SHELL: "powershell" };
-  const processEnv = Object.fromEntries(["PATH","SystemRoot","SystemDrive","ComSpec","PATHEXT","TEMP","TMP","APPDATA","windir"].flatMap(k => process.env[k] ? [[k,process.env[k]!]] : []));
+  // Python launches normalize Windows environment keys to uppercase; Vitest's
+  // worker environment may then be case-sensitive. Preserve OS inputs by name.
+  const hostEnv = new Map(Object.entries(process.env).map(([key,value]) => [key.toUpperCase(),value]));
+  const processEnv = Object.fromEntries(["PATH","SystemRoot","SystemDrive","ComSpec","PATHEXT","TEMP","TMP","APPDATA","LOCALAPPDATA","USERPROFILE","windir"]
+    .flatMap(key => { const value = hostEnv.get(key.toUpperCase()); return value ? [[key,value]] : []; }));
+  expect(processEnv.SystemRoot).toBeTruthy(); expect(processEnv.ComSpec).toBeTruthy();
   return { root, pids, manager, env, processEnv, hash, clients, timeline };
 }
 async function report(name: string, value: unknown) {
@@ -90,7 +95,7 @@ describe.runIf(live)("verified native process control", () => {
       const children = (await readFile(grandchildren,"utf8")).trim().split(/\s+/).map(Number); expect(children.every(pid=>!alive(pid))).toBe(true);
       expect(f.pids.every(pid=>!alive(pid))).toBe(true);
       await report("native-control", { binarySha256:f.hash, controls, pollRequests:16, output, result:{exitCode:result.exitCode,stdoutBytes:Buffer.byteLength(result.stdout),stderrBytes:Buffer.byteLength(result.stderr),artifacts,counts:result.observation.data?.output_bytes},artifactReads:reads,ownedPids:f.pids,grandchildren:children,remaining:0 });
-    } finally { await f.manager.shutdownAll(); await report("native-workspace",{root:f.root,pids:f.pids,timeline:f.timeline,output}); }
+    } finally { await f.manager.shutdownAll(); await report("native-workspace",{root:f.root,pids:f.pids,timeline:f.timeline,output,preservedEnvironmentKeys:Object.keys(f.processEnv)}); }
   },120000);
 
   it("compares CLI, batch, persistent server and native reads on the same file", async () => {
