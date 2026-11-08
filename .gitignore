@@ -2746,3 +2746,31 @@ openclaw_runtime/_tmp_*
 # Exact logs retained by the integrated RSI acceptance manifest.
 !/harness/specs/fixtures/rsi-candidate-evolution/closeout-20261108/harness-ci-stderr.log
 !/harness/specs/fixtures/rsi-candidate-evolution/closeout-20261108/harness-ci-stdout.log
+
+# Exact logs retained by integrated resource and execution registry evidence.
+!/harness/specs/fixtures/autonomous-project-system/r3/20261109/comms-compare.log
+!/harness/specs/fixtures/autonomous-project-system/r3/20261109/comms-replay.log
+!/harness/specs/fixtures/autonomous-project-system/r3/20261109/contract.log
+!/harness/specs/fixtures/autonomous-project-system/r3/20261109/core.log
+!/harness/specs/fixtures/autonomous-project-system/r3/20261109/desktop-build.log
+!/harness/specs/fixtures/autonomous-project-system/r3/20261109/electron.log
+!/harness/specs/fixtures/autonomous-project-system/r3/20261109/harness-dry-run.log
+!/harness/specs/fixtures/autonomous-project-system/r3/20261109/harness.log
+!/harness/specs/fixtures/autonomous-project-system/r3/20261109/lint.log
+!/harness/specs/fixtures/autonomous-project-system/r3/20261109/native.log
+!/harness/specs/fixtures/autonomous-project-system/r3/20261109/node-types.log
+!/harness/specs/fixtures/autonomous-project-system/r3/20261109/shared-directory.log
+!/harness/specs/fixtures/autonomous-project-system/r3/20261109/test-types.log
+!/harness/specs/fixtures/autonomous-project-system/r3/20261109/web-types.log
+!/harness/specs/fixtures/execution-domain-registry/20261108/comms-compare.log
+!/harness/specs/fixtures/execution-domain-registry/20261108/comms-replay.log
+!/harness/specs/fixtures/execution-domain-registry/20261108/contract.log
+!/harness/specs/fixtures/execution-domain-registry/20261108/core.log
+!/harness/specs/fixtures/execution-domain-registry/20261108/harness-dry-run.log
+!/harness/specs/fixtures/execution-domain-registry/20261108/harness.log
+!/harness/specs/fixtures/execution-domain-registry/20261108/lint.log
+!/harness/specs/fixtures/execution-domain-registry/20261108/owners.log
+!/harness/specs/fixtures/execution-domain-registry/20261108/schema.log
+!/harness/specs/fixtures/execution-domain-registry/20261108/types-node.log
+!/harness/specs/fixtures/execution-domain-registry/20261108/types-test.log
+!/harness/specs/fixtures/execution-domain-registry/20261108/types-web.log

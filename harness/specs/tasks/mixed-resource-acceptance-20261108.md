@@ -10,6 +10,7 @@ expectedUserBehavior:
   - Identical mixed work is measured at one and two windows with one, four and eight agent-driven workers.
   - Raw completion, input, scrolling, process and memory observations support paired throughput and tail-latency decisions.
 touchedAreas:
+  - .gitignore
   - shared/resources/adaptive-limit.ts
   - electron/services/resource-fabric.ts
   - electron/services/terminal-api.ts
