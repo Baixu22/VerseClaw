@@ -3,7 +3,7 @@ import { spawn, execFileSync } from "node:child_process";
 import { mkdtemp, readFile, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { VerseShellProcessManager } from "./process-manager.js";
 import { startGovernedVerseShellProcess, executeGovernedVerseShellProcessObserved } from "./governed-process.js";
 import { queryGovernedVerseShellResult, createReadonlyVerseShellProcessConfig } from "./governed-exec.js";
@@ -21,12 +21,21 @@ async function setup() {
   const manager = new VerseShellProcessManager({ resolveBinary: () => ({ path: binary!, source: "verified-bundled", verified: true }),
     spawnProcess: (bin, args, options) => { const child = spawn(bin, args, options); pids.push(child.pid!); return child as never; } });
   const clients = new Map<string, VerseShellAciClient>(); const getClient = manager.getClient.bind(manager);
-  manager.getClient = async config => { const client = await getClient(config); clients.set(client.processKey, client); return client; };
+  const timeline: Array<Record<string, unknown>> = [];
+  manager.getClient = async config => {
+    const client = await getClient(config); const execute = client.execute.bind(client);
+    client.execute = async (op,args,options) => {
+      const startedAt = Date.now();
+      try { const result = await execute(op,args,options); timeline.push({op,startedAt,endedAt:Date.now(),state:result.data?.state,error:result.error?.code,processId:result.data?.process_id,key:client.processKey}); return result; }
+      catch(error) {timeline.push({op,startedAt,endedAt:Date.now(),error:String(error),key:client.processKey});throw error;}
+    };
+    clients.set(client.processKey, client); return client;
+  };
   const env = { VERSESHELL_RUNTIME_VERSION: manifest.crate.version, VERSESHELL_SERVER_PROTOCOL: manifest.protocol.expected_server_protocol,
     VERSESHELL_OPERATION_CATALOG_DIGEST: manifest.protocol.operation_catalog_digest, VERSESHELL_OPERATION_CATALOG_COUNT: String(manifest.protocol.operation_catalog_count),
     VERSESHELL_AE_SHA256: hash, VERSESHELL_OS_SHELL: "powershell" };
   const processEnv = Object.fromEntries(["PATH","SystemRoot","SystemDrive","ComSpec","PATHEXT","TEMP","TMP","APPDATA","windir"].flatMap(k => process.env[k] ? [[k,process.env[k]!]] : []));
-  return { root, pids, manager, env, processEnv, hash, clients };
+  return { root, pids, manager, env, processEnv, hash, clients, timeline };
 }
 async function report(name: string, value: unknown) {
   if (process.env.PROCESS_CONTROL_REPORT_DIR) await writeFile(path.join(process.env.PROCESS_CONTROL_REPORT_DIR, name + ".json"), JSON.stringify({ driven_by: "agent", actor: "codex", value }, null, 2));
@@ -43,7 +52,8 @@ describe.runIf(live)("verified native process control", () => {
     try {
       const first = await startGovernedVerseShellProcess({ ...options, onStdout: chunk => { output += chunk; } });
       const second = await startGovernedVerseShellProcess({ ...options, onStdout: chunk => { output += chunk; } });
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await vi.waitFor(() => expect(output.match(/READY/g)).toHaveLength(2), { timeout: 5000 });
+      expect(alive(first.pid)).toBe(true); expect(alive(second.pid)).toBe(true);
       const pressure = async (handle: typeof first) => {
         const client = f.clients.get(handle.executorKey)!;
         const owner = { process_id: handle.processId, runtime_id: handle.runtimeId, agent_id: options.agentId, session_id: options.sessionId };
@@ -80,7 +90,7 @@ describe.runIf(live)("verified native process control", () => {
       const children = (await readFile(grandchildren,"utf8")).trim().split(/\s+/).map(Number); expect(children.every(pid=>!alive(pid))).toBe(true);
       expect(f.pids.every(pid=>!alive(pid))).toBe(true);
       await report("native-control", { binarySha256:f.hash, controls, pollRequests:16, output, result:{exitCode:result.exitCode,stdoutBytes:Buffer.byteLength(result.stdout),stderrBytes:Buffer.byteLength(result.stderr),artifacts,counts:result.observation.data?.output_bytes},artifactReads:reads,ownedPids:f.pids,grandchildren:children,remaining:0 });
-    } finally { await f.manager.shutdownAll(); await report("native-workspace",{root:f.root,pids:f.pids}); }
+    } finally { await f.manager.shutdownAll(); await report("native-workspace",{root:f.root,pids:f.pids,timeline:f.timeline,output}); }
   },120000);
 
   it("compares CLI, batch, persistent server and native reads on the same file", async () => {

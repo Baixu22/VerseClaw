@@ -27,6 +27,25 @@ import {
 const SCHEMA = "verseshell.observation/v1";
 
 describe("poll control capacity", () => {
+  it("keeps the sole queue position for controls at concurrency one", async () => {
+    const config = { ...baseConfig(), maxConcurrency: 1, maxQueueSize: 1, requestTimeoutMs: 5000 };
+    const h = harness((request, child) => {
+      if (request.op === "runtime.handshake") child.respond(request, { data: { ...handshakeData(config), max_concurrency: 1 } });
+      else if (request.op !== "process.poll") child.respond(request);
+    });
+    h.setConfig(config); const client = await h.manager.getClient(config);
+    const poll = client.execute("process.poll", { wait_ms: 1000 }).catch(error => error);
+    await Promise.resolve(); await Promise.resolve();
+    const queued = client.execute("process.poll", { wait_ms: 1000 }).catch(error => error);
+    const control = client.execute("process.write", { data: "stop" }); void control.catch(() => {});
+    try {
+      const request = h.children[0].requests.find(request => request.op === "process.poll")!;
+      expect(request.args.wait_ms).toBeLessThanOrEqual(1000);
+      h.children[0].respond(request); await poll;
+      await expect(queued).resolves.toMatchObject({ code: "E_ACI_QUEUE_FULL" });
+      await expect(control).resolves.toMatchObject({ ok: true });
+    } finally { await h.manager.shutdownAll(); await Promise.allSettled([poll, queued, control]); }
+  });
   it("leaves an executor slot for stdin while long polls are pending", async () => {
     const config = { ...baseConfig(), maxConcurrency: 2, requestTimeoutMs: 5000 };
     const h = harness((request, child) => {

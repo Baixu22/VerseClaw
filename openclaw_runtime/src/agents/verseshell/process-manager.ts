@@ -489,8 +489,12 @@ class ManagedAciProcess implements AciTransport {
         ),
       );
     }
-    const queueLimit = op === "process.poll" ? Math.max(1, this.config.maxQueueSize - 1) : this.config.maxQueueSize;
-    if (this.queue.length >= queueLimit) {
+    const queueLimit = op === "process.poll" ? Math.max(0, this.config.maxQueueSize - 1) : this.config.maxQueueSize;
+    const polls = [...this.pending.values()].filter(entry => entry.op === "process.poll").length;
+    const startsImmediately = this.state === "ready" && !this.writeBlocked && this.queue.length === 0
+      && this.active < this.config.maxConcurrency
+      && (op !== "process.poll" || polls < Math.max(1, this.config.maxConcurrency - 1));
+    if (this.queue.length >= queueLimit && !startsImmediately) {
       return Promise.reject(new AciTransportError("E_ACI_QUEUE_FULL", "VerseShell request queue is full"));
     }
 

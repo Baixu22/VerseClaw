@@ -644,9 +644,14 @@ export async function executeGovernedVerseShellProcessObserved(
   const manager = getGovernedVerseShellManager(options.manager);
   const startedAt = Date.now();
   const deadlineAt = options.deadlineAt ?? startedAt + (options.timeoutMs ?? 60_000);
-  const output = new ByteTail(Math.min(Math.max(1, options.maxOutputBytes), 64 * 1024 * 1024));
+  const executionPlan = options.executionPlan ?? resolveVerseShellCommandPlan({
+    command: options.command, argv: options.argv, cwd: options.cwd, env: options.processEnv,
+    allowExplicitShell: options.shellMode !== "argv",
+  });
+  const output = new ByteTail(Math.min(Math.max(1, options.maxOutputBytes), executionPlan.profileDefinition.maxOutputBytes));
   const handle = await startGovernedVerseShellProcess({
     ...options,
+    executionPlan,
     manager,
     onStdout: (chunk) => {
       output.append("stdout", chunk);
