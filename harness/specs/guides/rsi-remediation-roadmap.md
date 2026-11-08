@@ -32,6 +32,8 @@ v4 的工具接口为 `read_file(path, startLine, maxLines)`、`apply_edits(edit
 
 候选演进先限定在经验或 prompt。生成器读取训练数据，产出带摘要和父版本的候选；选择器仅使用训练/验证结果，最终 held-out 由独立角色封存和评估。每代保留被淘汰的候选、原失败和预算消耗。两代执行记录证明迭代路径，正收益仍由任务级配对测量判断。
 
+TF-0856 的入口是 `scripts/lib/rsi-candidate-evolution.mjs`。已有 SEKB 轨迹表保存冻结计划、生成预留、候选和裁决，insert-once 保留首次记录。生成器读取训练摘要、隔离载荷的证明摘要和 v1 采用归因；最终评估的 24 个任务在生成前封存，原有 public/held-out 标签继续保存在最终任务记录中。工程验证使用新编写的训练与验证控制，负结果淘汰，数值门通过的 scripted control 保持 hold。`RsiBenefitPlan/v2` 可绑定封存的 staged prompt，再按 TF-0857 独立测量；v4 工具预算与旧测量保持原版本。
+
 新测量的最低条件保持 k=3、至少 20 个完整独立 task case、5pp 绝对改善门槛、95% 配对区间下界大于零、成本增长不超过 10%，安全和负锚点零回归。20 个 case 是最低判定条件，实际样本量还需由先导数据的方差和目标功效规划。provider、基础设施、模型和 grader 失败分别保存；预算或终态用量未知时不生成成功或成本结论。
 
 资源在实际调用之前冻结：endpoint/model、whole-run tokens 和调用上限、单请求和单 oracle 时限、工具次数及价格依据。24 任务 × 3 臂 × 3 重复的 v4 全轮最多 864 次 provider 调用；建议 tokens 上限为 12000000，实际授权额度与价格依据在新测量前确定。已有 endpoint 与凭据可复用，凭据不进入产物。新的费用预算需要所有者的具体授权；节点实现、离线检查、agent 模拟与证据准备继续由 agent 完成。

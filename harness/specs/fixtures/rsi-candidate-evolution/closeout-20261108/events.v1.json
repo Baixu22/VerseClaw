@@ -1,0 +1,1031 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/evolution-integration",
+  "generatorInputs": [
+    {
+      "generation": 1,
+      "parent": {
+        "id": "principle-6a070a8e50248d9fbd7e8ec1",
+        "version": "d17fd84ffe6ea6fa2ba3c8cd062a6f6464144ea3c64af932d581018bff6f9d9d",
+        "context": "[Relevant SEKB principle 1] Preserve the caller contract when implementing a small change\nCondition: When implementing an API from a behavior contract and existing callers\nAction: Keep names, return shapes and caller-owned inputs stable. Preserve meaningful zero, false, empty and null values. Prefer standard-library operations with the required semantics. Check both ordinary and edge inputs before returning complete source files.\nReason: Independent JSON roundtrip and array sorting exercises failed when values were filtered or caller inputs were mutated; standard-library repairs passed the same assertions.\n---"
+      },
+      "sources": [
+        {
+          "trajectoryId": "evolution-controls-20261108-training-0",
+          "runId": "evolution-controls-20261108-training-0",
+          "caseId": "evolution-training-falsy-v1",
+          "inputDigest": "30ee0fb1388d5c1f8003db8e225a44006a0ad77db31893d25ff2c7ecf3292e01",
+          "graderDigest": "4e43107f9b56f82a5895027617d95547923c9c9df8bfb18a2ac10011636a9497",
+          "outcome": "success",
+          "summary": "Copy records with structuredClone to preserve false, zero, empty and null.",
+          "observations": [
+            {
+              "stage": "initial",
+              "toolCallId": "evolution-controls-20261108-training-0-initial",
+              "exitCode": 1,
+              "sourceDigest": "91d1db98e4a7751edf8a5f582e224eaddb239cd14f9fbaa0eabffac915011200",
+              "inputDigest": "f871da4e88907d5d56465ba9b19824a4b93561d5da17e4b2db3d2b07cf67ec54",
+              "outputDigest": "6798c17f9f48f2683e421025d39bcf5b24623a91c298a38e67ec2563b2c2fdc6",
+              "stdoutDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrDigest": "5241fd2b37d2862c6d66e97fb640a1f5b7cbf460142c280b0ec9985cac45fc25"
+            },
+            {
+              "stage": "repaired",
+              "toolCallId": "evolution-controls-20261108-training-0-repair",
+              "exitCode": 0,
+              "sourceDigest": "d3681cdf8a98d72f3c760dd9b1a14075a2f37090b6ac926dddee950c3d05aa95",
+              "inputDigest": "44244939f3f9b91e677f7c16c817f91104308af1d128b6426f208c96db9e7e82",
+              "outputDigest": "77680158933a39acfe6fc5873cf3b39ee1474f07a9928fd82e8c9fa052cc4a4d",
+              "stdoutDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "steps": [
+            {
+              "action": "tool.result",
+              "input": {
+                "__sekb_quarantine": true,
+                "classification": "unclassified",
+                "fingerprint": "f871da4e88907d5d",
+                "byteLength": 393,
+                "redacted": true,
+                "keys": [
+                  "stage",
+                  "toolCallId",
+                  "source",
+                  "sourceDigest"
+                ],
+                "note": "SEKB raw payload quarantined before persistence (P3-001 / F-DATA-001)."
+              },
+              "output": {
+                "raw": {
+                  "__sekb_quarantine": true,
+                  "classification": "unclassified",
+                  "fingerprint": "6798c17f9f48f268",
+                  "byteLength": 909,
+                  "redacted": true,
+                  "keys": [
+                    "exitCode",
+                    "stdout",
+                    "stderr"
+                  ],
+                  "note": "SEKB raw payload quarantined before persistence (P3-001 / F-DATA-001)."
+                }
+              },
+              "timestamp": "2026-11-08T00:00:00.000Z"
+            },
+            {
+              "action": "tool.result",
+              "input": {
+                "__sekb_quarantine": true,
+                "classification": "unclassified",
+                "fingerprint": "44244939f3f9b91e",
+                "byteLength": 356,
+                "redacted": true,
+                "keys": [
+                  "stage",
+                  "toolCallId",
+                  "source",
+                  "sourceDigest"
+                ],
+                "note": "SEKB raw payload quarantined before persistence (P3-001 / F-DATA-001)."
+              },
+              "output": {
+                "raw": {
+                  "__sekb_quarantine": true,
+                  "classification": "unclassified",
+                  "fingerprint": "77680158933a39ac",
+                  "byteLength": 38,
+                  "redacted": true,
+                  "keys": [
+                    "exitCode",
+                    "stdout",
+                    "stderr"
+                  ],
+                  "note": "SEKB raw payload quarantined before persistence (P3-001 / F-DATA-001)."
+                }
+              },
+              "timestamp": "2026-11-08T00:00:00.000Z"
+            }
+          ],
+          "cost": {
+            "tokens": 0,
+            "duration_seconds": 0.46,
+            "retries": 0
+          },
+          "attribution": [
+            {
+              "eventId": "3f7aba70223001e0de7a051ef50ef89c483c85604b147cdb39b8de2e7b56008f",
+              "principleId": "principle-6a070a8e50248d9fbd7e8ec1",
+              "evidence": {
+                "schemaVersion": "RsiExperienceAttribution/v1",
+                "principleVersion": "cfb89bb9fe26137fe275d795e7c8948e25c52ba9dcd6050284fe5b229abd5e3b",
+                "taskId": "evolution-training-falsy-v1",
+                "runId": "evolution-controls-20261108-training-0",
+                "sessionId": "evolution-controls-20261108",
+                "sessionKey": null,
+                "experimentId": "evolution-controls-20261108",
+                "arm": "training",
+                "repeat": 1,
+                "trajectoryId": "evolution-controls-20261108-training-0",
+                "trigger": "retrieved",
+                "source": "runtime",
+                "outcome": "unknown",
+                "outcomeKind": null,
+                "observationId": null,
+                "operation": null,
+                "actor": "codex/evolution-training",
+                "driven_by": "agent"
+              },
+              "status": "accepted",
+              "reason": null,
+              "recordedAt": "2026-11-08T10:28:15.579Z",
+              "duplicateCount": 0,
+              "conflictCount": 0,
+              "rejectionCount": 0,
+              "firstRejection": null,
+              "lastConflict": null
+            },
+            {
+              "eventId": "cde8f538053f1be35941809a12dfaf1ade7d1ecb3e81dd82b65c93c5239a1069",
+              "principleId": "principle-6a070a8e50248d9fbd7e8ec1",
+              "evidence": {
+                "schemaVersion": "RsiExperienceAttribution/v1",
+                "principleVersion": "cfb89bb9fe26137fe275d795e7c8948e25c52ba9dcd6050284fe5b229abd5e3b",
+                "taskId": "evolution-training-falsy-v1",
+                "runId": "evolution-controls-20261108-training-0",
+                "sessionId": "evolution-controls-20261108",
+                "sessionKey": null,
+                "experimentId": "evolution-controls-20261108",
+                "arm": "training",
+                "repeat": 1,
+                "trajectoryId": "evolution-controls-20261108-training-0",
+                "trigger": "operation",
+                "source": "runtime",
+                "outcome": "unknown",
+                "outcomeKind": null,
+                "observationId": null,
+                "operation": {
+                  "toolCallId": "evolution-controls-20261108-training-0-repair",
+                  "toolName": "node",
+                  "observed": true,
+                  "succeeded": true
+                },
+                "actor": "codex/evolution-training",
+                "driven_by": "agent"
+              },
+              "status": "accepted",
+              "reason": null,
+              "recordedAt": "2026-11-08T10:28:15.589Z",
+              "duplicateCount": 0,
+              "conflictCount": 0,
+              "rejectionCount": 0,
+              "firstRejection": null,
+              "lastConflict": null
+            },
+            {
+              "eventId": "6b66c08796254805705c514251482f2fdd2227ed18838adb54c42c983cac2706",
+              "principleId": "principle-6a070a8e50248d9fbd7e8ec1",
+              "evidence": {
+                "schemaVersion": "RsiExperienceAttribution/v1",
+                "principleVersion": "cfb89bb9fe26137fe275d795e7c8948e25c52ba9dcd6050284fe5b229abd5e3b",
+                "taskId": "evolution-training-falsy-v1",
+                "runId": "evolution-controls-20261108-training-0",
+                "sessionId": "evolution-controls-20261108",
+                "sessionKey": null,
+                "experimentId": "evolution-controls-20261108",
+                "arm": "training",
+                "repeat": 1,
+                "trajectoryId": "evolution-controls-20261108-training-0",
+                "trigger": "adopted",
+                "source": "agent",
+                "outcome": "unknown",
+                "outcomeKind": null,
+                "observationId": null,
+                "operation": {
+                  "toolCallId": "evolution-controls-20261108-training-0-repair",
+                  "toolName": "node",
+                  "observed": true,
+                  "succeeded": true
+                },
+                "actor": "codex/evolution-training",
+                "driven_by": "agent"
+              },
+              "status": "accepted",
+              "reason": null,
+              "recordedAt": "2026-11-08T10:28:15.595Z",
+              "duplicateCount": 0,
+              "conflictCount": 0,
+              "rejectionCount": 0,
+              "firstRejection": null,
+              "lastConflict": null
+            },
+            {
+              "eventId": "277483ebcf12e77060ee8c091bdd1ed71db951a55d6d978809cc50c4c2ce836a",
+              "principleId": "principle-6a070a8e50248d9fbd7e8ec1",
+              "evidence": {
+                "schemaVersion": "RsiExperienceAttribution/v1",
+                "principleVersion": "cfb89bb9fe26137fe275d795e7c8948e25c52ba9dcd6050284fe5b229abd5e3b",
+                "taskId": "evolution-training-falsy-v1",
+                "runId": "evolution-controls-20261108-training-0",
+                "sessionId": "evolution-controls-20261108",
+                "sessionKey": null,
+                "experimentId": "evolution-controls-20261108",
+                "arm": "training",
+                "repeat": 1,
+                "trajectoryId": "evolution-controls-20261108-training-0",
+                "trigger": "outcome",
+                "source": "grader",
+                "outcome": "success",
+                "outcomeKind": "task",
+                "observationId": "evolution-controls-20261108-training-0-grade",
+                "operation": null,
+                "actor": "codex/evolution-training",
+                "driven_by": "agent"
+              },
+              "status": "accepted",
+              "reason": null,
+              "recordedAt": "2026-11-08T10:28:15.600Z",
+              "duplicateCount": 0,
+              "conflictCount": 0,
+              "rejectionCount": 0,
+              "firstRejection": null,
+              "lastConflict": null
+            }
+          ],
+          "digest": "556ea6cdf6d2763f75406e5a422504adaccd5a63ccd0ff9347cd0a7d4ca8f7eb"
+        },
+        {
+          "trajectoryId": "evolution-controls-20261108-training-1",
+          "runId": "evolution-controls-20261108-training-1",
+          "caseId": "evolution-training-sort-v1",
+          "inputDigest": "ea6d84ba7839222b8cee8d8ec143f4fc7c08cab90ed8965e3776c7b90c9032e1",
+          "graderDigest": "8e171c2e9c82453fba45169cd3249e51c3daf69d543dd45a9d1b55ae16aa357a",
+          "outcome": "success",
+          "summary": "Sort with toSorted to keep the caller array and duplicate values.",
+          "observations": [
+            {
+              "stage": "initial",
+              "toolCallId": "evolution-controls-20261108-training-1-initial",
+              "exitCode": 1,
+              "sourceDigest": "33d49a840a9dfda196e3e959e31a9d37c029d7fbfbc92acfa2e37eaa7efc929d",
+              "inputDigest": "51a2044a76d51c54fb7daa318ba22f6af7dc6e48598c24a359279b5dac4eb6dd",
+              "outputDigest": "79751bc7e6f66b861a5a3958211f278d23a42480f07dc241e408a0b091bdb388",
+              "stdoutDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrDigest": "4aa50712a8cacc4bcf18c7579ae7a17a6476686666c625122ba124f0dd743be7"
+            },
+            {
+              "stage": "repaired",
+              "toolCallId": "evolution-controls-20261108-training-1-repair",
+              "exitCode": 0,
+              "sourceDigest": "4ba6e8928682fc0054f637bcf8f2046de064bcd457085165f38bd9550c0f6f62",
+              "inputDigest": "d80ed429be7095ec0e2606428a30d04306b9f6a87ac72b4a0b48cd8ba1629bc1",
+              "outputDigest": "77680158933a39acfe6fc5873cf3b39ee1474f07a9928fd82e8c9fa052cc4a4d",
+              "stdoutDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "steps": [
+            {
+              "action": "tool.result",
+              "input": {
+                "__sekb_quarantine": true,
+                "classification": "unclassified",
+                "fingerprint": "51a2044a76d51c54",
+                "byteLength": 332,
+                "redacted": true,
+                "keys": [
+                  "stage",
+                  "toolCallId",
+                  "source",
+                  "sourceDigest"
+                ],
+                "note": "SEKB raw payload quarantined before persistence (P3-001 / F-DATA-001)."
+              },
+              "output": {
+                "raw": {
+                  "__sekb_quarantine": true,
+                  "classification": "unclassified",
+                  "fingerprint": "79751bc7e6f66b86",
+                  "byteLength": 840,
+                  "redacted": true,
+                  "keys": [
+                    "exitCode",
+                    "stdout",
+                    "stderr"
+                  ],
+                  "note": "SEKB raw payload quarantined before persistence (P3-001 / F-DATA-001)."
+                }
+              },
+              "timestamp": "2026-11-08T00:00:00.000Z"
+            },
+            {
+              "action": "tool.result",
+              "input": {
+                "__sekb_quarantine": true,
+                "classification": "unclassified",
+                "fingerprint": "d80ed429be7095ec",
+                "byteLength": 336,
+                "redacted": true,
+                "keys": [
+                  "stage",
+                  "toolCallId",
+                  "source",
+                  "sourceDigest"
+                ],
+                "note": "SEKB raw payload quarantined before persistence (P3-001 / F-DATA-001)."
+              },
+              "output": {
+                "raw": {
+                  "__sekb_quarantine": true,
+                  "classification": "unclassified",
+                  "fingerprint": "77680158933a39ac",
+                  "byteLength": 38,
+                  "redacted": true,
+                  "keys": [
+                    "exitCode",
+                    "stdout",
+                    "stderr"
+                  ],
+                  "note": "SEKB raw payload quarantined before persistence (P3-001 / F-DATA-001)."
+                }
+              },
+              "timestamp": "2026-11-08T00:00:00.000Z"
+            }
+          ],
+          "cost": {
+            "tokens": 0,
+            "duration_seconds": 0.302,
+            "retries": 0
+          },
+          "attribution": [
+            {
+              "eventId": "038c2e221dc7d7714467ce5c762bfb84c6c77573c44386bfecb0bdc9406acc57",
+              "principleId": "principle-6a070a8e50248d9fbd7e8ec1",
+              "evidence": {
+                "schemaVersion": "RsiExperienceAttribution/v1",
+                "principleVersion": "cfb89bb9fe26137fe275d795e7c8948e25c52ba9dcd6050284fe5b229abd5e3b",
+                "taskId": "evolution-training-sort-v1",
+                "runId": "evolution-controls-20261108-training-1",
+                "sessionId": "evolution-controls-20261108",
+                "sessionKey": null,
+                "experimentId": "evolution-controls-20261108",
+                "arm": "training",
+                "repeat": 1,
+                "trajectoryId": "evolution-controls-20261108-training-1",
+                "trigger": "retrieved",
+                "source": "runtime",
+                "outcome": "unknown",
+                "outcomeKind": null,
+                "observationId": null,
+                "operation": null,
+                "actor": "codex/evolution-training",
+                "driven_by": "agent"
+              },
+              "status": "accepted",
+              "reason": null,
+              "recordedAt": "2026-11-08T10:28:15.910Z",
+              "duplicateCount": 0,
+              "conflictCount": 0,
+              "rejectionCount": 0,
+              "firstRejection": null,
+              "lastConflict": null
+            },
+            {
+              "eventId": "d8d7bcf97b12a3a4444333fef8b2938202f12bc0aad7ffd90b6fb9dd78d280d5",
+              "principleId": "principle-6a070a8e50248d9fbd7e8ec1",
+              "evidence": {
+                "schemaVersion": "RsiExperienceAttribution/v1",
+                "principleVersion": "cfb89bb9fe26137fe275d795e7c8948e25c52ba9dcd6050284fe5b229abd5e3b",
+                "taskId": "evolution-training-sort-v1",
+                "runId": "evolution-controls-20261108-training-1",
+                "sessionId": "evolution-controls-20261108",
+                "sessionKey": null,
+                "experimentId": "evolution-controls-20261108",
+                "arm": "training",
+                "repeat": 1,
+                "trajectoryId": "evolution-controls-20261108-training-1",
+                "trigger": "operation",
+                "source": "runtime",
+                "outcome": "unknown",
+                "outcomeKind": null,
+                "observationId": null,
+                "operation": {
+                  "toolCallId": "evolution-controls-20261108-training-1-repair",
+                  "toolName": "node",
+                  "observed": true,
+                  "succeeded": true
+                },
+                "actor": "codex/evolution-training",
+                "driven_by": "agent"
+              },
+              "status": "accepted",
+              "reason": null,
+              "recordedAt": "2026-11-08T10:28:15.913Z",
+              "duplicateCount": 0,
+              "conflictCount": 0,
+              "rejectionCount": 0,
+              "firstRejection": null,
+              "lastConflict": null
+            },
+            {
+              "eventId": "f60a9d14fb089d52e5bf2b26b2edb7250c3e24044ad559e308aa77ce848b782a",
+              "principleId": "principle-6a070a8e50248d9fbd7e8ec1",
+              "evidence": {
+                "schemaVersion": "RsiExperienceAttribution/v1",
+                "principleVersion": "cfb89bb9fe26137fe275d795e7c8948e25c52ba9dcd6050284fe5b229abd5e3b",
+                "taskId": "evolution-training-sort-v1",
+                "runId": "evolution-controls-20261108-training-1",
+                "sessionId": "evolution-controls-20261108",
+                "sessionKey": null,
+                "experimentId": "evolution-controls-20261108",
+                "arm": "training",
+                "repeat": 1,
+                "trajectoryId": "evolution-controls-20261108-training-1",
+                "trigger": "adopted",
+                "source": "agent",
+                "outcome": "unknown",
+                "outcomeKind": null,
+                "observationId": null,
+                "operation": {
+                  "toolCallId": "evolution-controls-20261108-training-1-repair",
+                  "toolName": "node",
+                  "observed": true,
+                  "succeeded": true
+                },
+                "actor": "codex/evolution-training",
+                "driven_by": "agent"
+              },
+              "status": "accepted",
+              "reason": null,
+              "recordedAt": "2026-11-08T10:28:15.916Z",
+              "duplicateCount": 0,
+              "conflictCount": 0,
+              "rejectionCount": 0,
+              "firstRejection": null,
+              "lastConflict": null
+            },
+            {
+              "eventId": "49a07681a8e29428c700b41bcba5d1c5554a97f27c37a53c5db74d3dfc6fdc3c",
+              "principleId": "principle-6a070a8e50248d9fbd7e8ec1",
+              "evidence": {
+                "schemaVersion": "RsiExperienceAttribution/v1",
+                "principleVersion": "cfb89bb9fe26137fe275d795e7c8948e25c52ba9dcd6050284fe5b229abd5e3b",
+                "taskId": "evolution-training-sort-v1",
+                "runId": "evolution-controls-20261108-training-1",
+                "sessionId": "evolution-controls-20261108",
+                "sessionKey": null,
+                "experimentId": "evolution-controls-20261108",
+                "arm": "training",
+                "repeat": 1,
+                "trajectoryId": "evolution-controls-20261108-training-1",
+                "trigger": "outcome",
+                "source": "grader",
+                "outcome": "success",
+                "outcomeKind": "task",
+                "observationId": "evolution-controls-20261108-training-1-grade",
+                "operation": null,
+                "actor": "codex/evolution-training",
+                "driven_by": "agent"
+              },
+              "status": "accepted",
+              "reason": null,
+              "recordedAt": "2026-11-08T10:28:15.918Z",
+              "duplicateCount": 0,
+              "conflictCount": 0,
+              "rejectionCount": 0,
+              "firstRejection": null,
+              "lastConflict": null
+            }
+          ],
+          "digest": "7e561453ffe9830d927fe9595e8cada64b8f9c7b19f382b7d15f67d33dc4d3bc"
+        }
+      ],
+      "budget": {
+        "providerCalls": 0,
+        "tokens": 0,
+        "costUsd": 0,
+        "wallClockMs": 10000
+      }
+    },
+    {
+      "generation": 2,
+      "parent": {
+        "id": "rsi-prompt-b019fed2489cacc6a0d19637",
+        "version": "04e842b2eb9400445fb25a3b2c548fcea1c580653108f487cf887daa9370966b",
+        "context": "[Relevant SEKB principle 1] Preserve the caller contract when implementing a small change\nCondition: When implementing an API from a behavior contract and existing callers\nAction: Keep names, return shapes and caller-owned inputs stable. Preserve meaningful zero, false, empty and null values. Prefer standard-library operations with the required semantics. Check both ordinary and edge inputs before returning complete source files.\nReason: Independent JSON roundtrip and array sorting exercises failed when values were filtered or caller inputs were mutated; standard-library repairs passed the same assertions.\n---\nTraining summaries: Copy records with structuredClone to preserve false, zero, empty and null. Sort with toSorted to keep the caller array and duplicate values."
+      },
+      "sources": [
+        {
+          "trajectoryId": "evolution-controls-20261108-training-0",
+          "runId": "evolution-controls-20261108-training-0",
+          "caseId": "evolution-training-falsy-v1",
+          "inputDigest": "30ee0fb1388d5c1f8003db8e225a44006a0ad77db31893d25ff2c7ecf3292e01",
+          "graderDigest": "4e43107f9b56f82a5895027617d95547923c9c9df8bfb18a2ac10011636a9497",
+          "outcome": "success",
+          "summary": "Copy records with structuredClone to preserve false, zero, empty and null.",
+          "observations": [
+            {
+              "stage": "initial",
+              "toolCallId": "evolution-controls-20261108-training-0-initial",
+              "exitCode": 1,
+              "sourceDigest": "91d1db98e4a7751edf8a5f582e224eaddb239cd14f9fbaa0eabffac915011200",
+              "inputDigest": "f871da4e88907d5d56465ba9b19824a4b93561d5da17e4b2db3d2b07cf67ec54",
+              "outputDigest": "6798c17f9f48f2683e421025d39bcf5b24623a91c298a38e67ec2563b2c2fdc6",
+              "stdoutDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrDigest": "5241fd2b37d2862c6d66e97fb640a1f5b7cbf460142c280b0ec9985cac45fc25"
+            },
+            {
+              "stage": "repaired",
+              "toolCallId": "evolution-controls-20261108-training-0-repair",
+              "exitCode": 0,
+              "sourceDigest": "d3681cdf8a98d72f3c760dd9b1a14075a2f37090b6ac926dddee950c3d05aa95",
+              "inputDigest": "44244939f3f9b91e677f7c16c817f91104308af1d128b6426f208c96db9e7e82",
+              "outputDigest": "77680158933a39acfe6fc5873cf3b39ee1474f07a9928fd82e8c9fa052cc4a4d",
+              "stdoutDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "steps": [
+            {
+              "action": "tool.result",
+              "input": {
+                "__sekb_quarantine": true,
+                "classification": "unclassified",
+                "fingerprint": "f871da4e88907d5d",
+                "byteLength": 393,
+                "redacted": true,
+                "keys": [
+                  "stage",
+                  "toolCallId",
+                  "source",
+                  "sourceDigest"
+                ],
+                "note": "SEKB raw payload quarantined before persistence (P3-001 / F-DATA-001)."
+              },
+              "output": {
+                "raw": {
+                  "__sekb_quarantine": true,
+                  "classification": "unclassified",
+                  "fingerprint": "6798c17f9f48f268",
+                  "byteLength": 909,
+                  "redacted": true,
+                  "keys": [
+                    "exitCode",
+                    "stdout",
+                    "stderr"
+                  ],
+                  "note": "SEKB raw payload quarantined before persistence (P3-001 / F-DATA-001)."
+                }
+              },
+              "timestamp": "2026-11-08T00:00:00.000Z"
+            },
+            {
+              "action": "tool.result",
+              "input": {
+                "__sekb_quarantine": true,
+                "classification": "unclassified",
+                "fingerprint": "44244939f3f9b91e",
+                "byteLength": 356,
+                "redacted": true,
+                "keys": [
+                  "stage",
+                  "toolCallId",
+                  "source",
+                  "sourceDigest"
+                ],
+                "note": "SEKB raw payload quarantined before persistence (P3-001 / F-DATA-001)."
+              },
+              "output": {
+                "raw": {
+                  "__sekb_quarantine": true,
+                  "classification": "unclassified",
+                  "fingerprint": "77680158933a39ac",
+                  "byteLength": 38,
+                  "redacted": true,
+                  "keys": [
+                    "exitCode",
+                    "stdout",
+                    "stderr"
+                  ],
+                  "note": "SEKB raw payload quarantined before persistence (P3-001 / F-DATA-001)."
+                }
+              },
+              "timestamp": "2026-11-08T00:00:00.000Z"
+            }
+          ],
+          "cost": {
+            "tokens": 0,
+            "duration_seconds": 0.46,
+            "retries": 0
+          },
+          "attribution": [
+            {
+              "eventId": "3f7aba70223001e0de7a051ef50ef89c483c85604b147cdb39b8de2e7b56008f",
+              "principleId": "principle-6a070a8e50248d9fbd7e8ec1",
+              "evidence": {
+                "schemaVersion": "RsiExperienceAttribution/v1",
+                "principleVersion": "cfb89bb9fe26137fe275d795e7c8948e25c52ba9dcd6050284fe5b229abd5e3b",
+                "taskId": "evolution-training-falsy-v1",
+                "runId": "evolution-controls-20261108-training-0",
+                "sessionId": "evolution-controls-20261108",
+                "sessionKey": null,
+                "experimentId": "evolution-controls-20261108",
+                "arm": "training",
+                "repeat": 1,
+                "trajectoryId": "evolution-controls-20261108-training-0",
+                "trigger": "retrieved",
+                "source": "runtime",
+                "outcome": "unknown",
+                "outcomeKind": null,
+                "observationId": null,
+                "operation": null,
+                "actor": "codex/evolution-training",
+                "driven_by": "agent"
+              },
+              "status": "accepted",
+              "reason": null,
+              "recordedAt": "2026-11-08T10:28:15.579Z",
+              "duplicateCount": 0,
+              "conflictCount": 0,
+              "rejectionCount": 0,
+              "firstRejection": null,
+              "lastConflict": null
+            },
+            {
+              "eventId": "cde8f538053f1be35941809a12dfaf1ade7d1ecb3e81dd82b65c93c5239a1069",
+              "principleId": "principle-6a070a8e50248d9fbd7e8ec1",
+              "evidence": {
+                "schemaVersion": "RsiExperienceAttribution/v1",
+                "principleVersion": "cfb89bb9fe26137fe275d795e7c8948e25c52ba9dcd6050284fe5b229abd5e3b",
+                "taskId": "evolution-training-falsy-v1",
+                "runId": "evolution-controls-20261108-training-0",
+                "sessionId": "evolution-controls-20261108",
+                "sessionKey": null,
+                "experimentId": "evolution-controls-20261108",
+                "arm": "training",
+                "repeat": 1,
+                "trajectoryId": "evolution-controls-20261108-training-0",
+                "trigger": "operation",
+                "source": "runtime",
+                "outcome": "unknown",
+                "outcomeKind": null,
+                "observationId": null,
+                "operation": {
+                  "toolCallId": "evolution-controls-20261108-training-0-repair",
+                  "toolName": "node",
+                  "observed": true,
+                  "succeeded": true
+                },
+                "actor": "codex/evolution-training",
+                "driven_by": "agent"
+              },
+              "status": "accepted",
+              "reason": null,
+              "recordedAt": "2026-11-08T10:28:15.589Z",
+              "duplicateCount": 0,
+              "conflictCount": 0,
+              "rejectionCount": 0,
+              "firstRejection": null,
+              "lastConflict": null
+            },
+            {
+              "eventId": "6b66c08796254805705c514251482f2fdd2227ed18838adb54c42c983cac2706",
+              "principleId": "principle-6a070a8e50248d9fbd7e8ec1",
+              "evidence": {
+                "schemaVersion": "RsiExperienceAttribution/v1",
+                "principleVersion": "cfb89bb9fe26137fe275d795e7c8948e25c52ba9dcd6050284fe5b229abd5e3b",
+                "taskId": "evolution-training-falsy-v1",
+                "runId": "evolution-controls-20261108-training-0",
+                "sessionId": "evolution-controls-20261108",
+                "sessionKey": null,
+                "experimentId": "evolution-controls-20261108",
+                "arm": "training",
+                "repeat": 1,
+                "trajectoryId": "evolution-controls-20261108-training-0",
+                "trigger": "adopted",
+                "source": "agent",
+                "outcome": "unknown",
+                "outcomeKind": null,
+                "observationId": null,
+                "operation": {
+                  "toolCallId": "evolution-controls-20261108-training-0-repair",
+                  "toolName": "node",
+                  "observed": true,
+                  "succeeded": true
+                },
+                "actor": "codex/evolution-training",
+                "driven_by": "agent"
+              },
+              "status": "accepted",
+              "reason": null,
+              "recordedAt": "2026-11-08T10:28:15.595Z",
+              "duplicateCount": 0,
+              "conflictCount": 0,
+              "rejectionCount": 0,
+              "firstRejection": null,
+              "lastConflict": null
+            },
+            {
+              "eventId": "277483ebcf12e77060ee8c091bdd1ed71db951a55d6d978809cc50c4c2ce836a",
+              "principleId": "principle-6a070a8e50248d9fbd7e8ec1",
+              "evidence": {
+                "schemaVersion": "RsiExperienceAttribution/v1",
+                "principleVersion": "cfb89bb9fe26137fe275d795e7c8948e25c52ba9dcd6050284fe5b229abd5e3b",
+                "taskId": "evolution-training-falsy-v1",
+                "runId": "evolution-controls-20261108-training-0",
+                "sessionId": "evolution-controls-20261108",
+                "sessionKey": null,
+                "experimentId": "evolution-controls-20261108",
+                "arm": "training",
+                "repeat": 1,
+                "trajectoryId": "evolution-controls-20261108-training-0",
+                "trigger": "outcome",
+                "source": "grader",
+                "outcome": "success",
+                "outcomeKind": "task",
+                "observationId": "evolution-controls-20261108-training-0-grade",
+                "operation": null,
+                "actor": "codex/evolution-training",
+                "driven_by": "agent"
+              },
+              "status": "accepted",
+              "reason": null,
+              "recordedAt": "2026-11-08T10:28:15.600Z",
+              "duplicateCount": 0,
+              "conflictCount": 0,
+              "rejectionCount": 0,
+              "firstRejection": null,
+              "lastConflict": null
+            }
+          ],
+          "digest": "556ea6cdf6d2763f75406e5a422504adaccd5a63ccd0ff9347cd0a7d4ca8f7eb"
+        },
+        {
+          "trajectoryId": "evolution-controls-20261108-training-1",
+          "runId": "evolution-controls-20261108-training-1",
+          "caseId": "evolution-training-sort-v1",
+          "inputDigest": "ea6d84ba7839222b8cee8d8ec143f4fc7c08cab90ed8965e3776c7b90c9032e1",
+          "graderDigest": "8e171c2e9c82453fba45169cd3249e51c3daf69d543dd45a9d1b55ae16aa357a",
+          "outcome": "success",
+          "summary": "Sort with toSorted to keep the caller array and duplicate values.",
+          "observations": [
+            {
+              "stage": "initial",
+              "toolCallId": "evolution-controls-20261108-training-1-initial",
+              "exitCode": 1,
+              "sourceDigest": "33d49a840a9dfda196e3e959e31a9d37c029d7fbfbc92acfa2e37eaa7efc929d",
+              "inputDigest": "51a2044a76d51c54fb7daa318ba22f6af7dc6e48598c24a359279b5dac4eb6dd",
+              "outputDigest": "79751bc7e6f66b861a5a3958211f278d23a42480f07dc241e408a0b091bdb388",
+              "stdoutDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrDigest": "4aa50712a8cacc4bcf18c7579ae7a17a6476686666c625122ba124f0dd743be7"
+            },
+            {
+              "stage": "repaired",
+              "toolCallId": "evolution-controls-20261108-training-1-repair",
+              "exitCode": 0,
+              "sourceDigest": "4ba6e8928682fc0054f637bcf8f2046de064bcd457085165f38bd9550c0f6f62",
+              "inputDigest": "d80ed429be7095ec0e2606428a30d04306b9f6a87ac72b4a0b48cd8ba1629bc1",
+              "outputDigest": "77680158933a39acfe6fc5873cf3b39ee1474f07a9928fd82e8c9fa052cc4a4d",
+              "stdoutDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "steps": [
+            {
+              "action": "tool.result",
+              "input": {
+                "__sekb_quarantine": true,
+                "classification": "unclassified",
+                "fingerprint": "51a2044a76d51c54",
+                "byteLength": 332,
+                "redacted": true,
+                "keys": [
+                  "stage",
+                  "toolCallId",
+                  "source",
+                  "sourceDigest"
+                ],
+                "note": "SEKB raw payload quarantined before persistence (P3-001 / F-DATA-001)."
+              },
+              "output": {
+                "raw": {
+                  "__sekb_quarantine": true,
+                  "classification": "unclassified",
+                  "fingerprint": "79751bc7e6f66b86",
+                  "byteLength": 840,
+                  "redacted": true,
+                  "keys": [
+                    "exitCode",
+                    "stdout",
+                    "stderr"
+                  ],
+                  "note": "SEKB raw payload quarantined before persistence (P3-001 / F-DATA-001)."
+                }
+              },
+              "timestamp": "2026-11-08T00:00:00.000Z"
+            },
+            {
+              "action": "tool.result",
+              "input": {
+                "__sekb_quarantine": true,
+                "classification": "unclassified",
+                "fingerprint": "d80ed429be7095ec",
+                "byteLength": 336,
+                "redacted": true,
+                "keys": [
+                  "stage",
+                  "toolCallId",
+                  "source",
+                  "sourceDigest"
+                ],
+                "note": "SEKB raw payload quarantined before persistence (P3-001 / F-DATA-001)."
+              },
+              "output": {
+                "raw": {
+                  "__sekb_quarantine": true,
+                  "classification": "unclassified",
+                  "fingerprint": "77680158933a39ac",
+                  "byteLength": 38,
+                  "redacted": true,
+                  "keys": [
+                    "exitCode",
+                    "stdout",
+                    "stderr"
+                  ],
+                  "note": "SEKB raw payload quarantined before persistence (P3-001 / F-DATA-001)."
+                }
+              },
+              "timestamp": "2026-11-08T00:00:00.000Z"
+            }
+          ],
+          "cost": {
+            "tokens": 0,
+            "duration_seconds": 0.302,
+            "retries": 0
+          },
+          "attribution": [
+            {
+              "eventId": "038c2e221dc7d7714467ce5c762bfb84c6c77573c44386bfecb0bdc9406acc57",
+              "principleId": "principle-6a070a8e50248d9fbd7e8ec1",
+              "evidence": {
+                "schemaVersion": "RsiExperienceAttribution/v1",
+                "principleVersion": "cfb89bb9fe26137fe275d795e7c8948e25c52ba9dcd6050284fe5b229abd5e3b",
+                "taskId": "evolution-training-sort-v1",
+                "runId": "evolution-controls-20261108-training-1",
+                "sessionId": "evolution-controls-20261108",
+                "sessionKey": null,
+                "experimentId": "evolution-controls-20261108",
+                "arm": "training",
+                "repeat": 1,
+                "trajectoryId": "evolution-controls-20261108-training-1",
+                "trigger": "retrieved",
+                "source": "runtime",
+                "outcome": "unknown",
+                "outcomeKind": null,
+                "observationId": null,
+                "operation": null,
+                "actor": "codex/evolution-training",
+                "driven_by": "agent"
+              },
+              "status": "accepted",
+              "reason": null,
+              "recordedAt": "2026-11-08T10:28:15.910Z",
+              "duplicateCount": 0,
+              "conflictCount": 0,
+              "rejectionCount": 0,
+              "firstRejection": null,
+              "lastConflict": null
+            },
+            {
+              "eventId": "d8d7bcf97b12a3a4444333fef8b2938202f12bc0aad7ffd90b6fb9dd78d280d5",
+              "principleId": "principle-6a070a8e50248d9fbd7e8ec1",
+              "evidence": {
+                "schemaVersion": "RsiExperienceAttribution/v1",
+                "principleVersion": "cfb89bb9fe26137fe275d795e7c8948e25c52ba9dcd6050284fe5b229abd5e3b",
+                "taskId": "evolution-training-sort-v1",
+                "runId": "evolution-controls-20261108-training-1",
+                "sessionId": "evolution-controls-20261108",
+                "sessionKey": null,
+                "experimentId": "evolution-controls-20261108",
+                "arm": "training",
+                "repeat": 1,
+                "trajectoryId": "evolution-controls-20261108-training-1",
+                "trigger": "operation",
+                "source": "runtime",
+                "outcome": "unknown",
+                "outcomeKind": null,
+                "observationId": null,
+                "operation": {
+                  "toolCallId": "evolution-controls-20261108-training-1-repair",
+                  "toolName": "node",
+                  "observed": true,
+                  "succeeded": true
+                },
+                "actor": "codex/evolution-training",
+                "driven_by": "agent"
+              },
+              "status": "accepted",
+              "reason": null,
+              "recordedAt": "2026-11-08T10:28:15.913Z",
+              "duplicateCount": 0,
+              "conflictCount": 0,
+              "rejectionCount": 0,
+              "firstRejection": null,
+              "lastConflict": null
+            },
+            {
+              "eventId": "f60a9d14fb089d52e5bf2b26b2edb7250c3e24044ad559e308aa77ce848b782a",
+              "principleId": "principle-6a070a8e50248d9fbd7e8ec1",
+              "evidence": {
+                "schemaVersion": "RsiExperienceAttribution/v1",
+                "principleVersion": "cfb89bb9fe26137fe275d795e7c8948e25c52ba9dcd6050284fe5b229abd5e3b",
+                "taskId": "evolution-training-sort-v1",
+                "runId": "evolution-controls-20261108-training-1",
+                "sessionId": "evolution-controls-20261108",
+                "sessionKey": null,
+                "experimentId": "evolution-controls-20261108",
+                "arm": "training",
+                "repeat": 1,
+                "trajectoryId": "evolution-controls-20261108-training-1",
+                "trigger": "adopted",
+                "source": "agent",
+                "outcome": "unknown",
+                "outcomeKind": null,
+                "observationId": null,
+                "operation": {
+                  "toolCallId": "evolution-controls-20261108-training-1-repair",
+                  "toolName": "node",
+                  "observed": true,
+                  "succeeded": true
+                },
+                "actor": "codex/evolution-training",
+                "driven_by": "agent"
+              },
+              "status": "accepted",
+              "reason": null,
+              "recordedAt": "2026-11-08T10:28:15.916Z",
+              "duplicateCount": 0,
+              "conflictCount": 0,
+              "rejectionCount": 0,
+              "firstRejection": null,
+              "lastConflict": null
+            },
+            {
+              "eventId": "49a07681a8e29428c700b41bcba5d1c5554a97f27c37a53c5db74d3dfc6fdc3c",
+              "principleId": "principle-6a070a8e50248d9fbd7e8ec1",
+              "evidence": {
+                "schemaVersion": "RsiExperienceAttribution/v1",
+                "principleVersion": "cfb89bb9fe26137fe275d795e7c8948e25c52ba9dcd6050284fe5b229abd5e3b",
+                "taskId": "evolution-training-sort-v1",
+                "runId": "evolution-controls-20261108-training-1",
+                "sessionId": "evolution-controls-20261108",
+                "sessionKey": null,
+                "experimentId": "evolution-controls-20261108",
+                "arm": "training",
+                "repeat": 1,
+                "trajectoryId": "evolution-controls-20261108-training-1",
+                "trigger": "outcome",
+                "source": "grader",
+                "outcome": "success",
+                "outcomeKind": "task",
+                "observationId": "evolution-controls-20261108-training-1-grade",
+                "operation": null,
+                "actor": "codex/evolution-training",
+                "driven_by": "agent"
+              },
+              "status": "accepted",
+              "reason": null,
+              "recordedAt": "2026-11-08T10:28:15.918Z",
+              "duplicateCount": 0,
+              "conflictCount": 0,
+              "rejectionCount": 0,
+              "firstRejection": null,
+              "lastConflict": null
+            }
+          ],
+          "digest": "7e561453ffe9830d927fe9595e8cada64b8f9c7b19f382b7d15f67d33dc4d3bc"
+        }
+      ],
+      "budget": {
+        "providerCalls": 0,
+        "tokens": 0,
+        "costUsd": 0,
+        "wallClockMs": 10000
+      }
+    }
+  ],
+  "rollback": {
+    "offBeforeDigest": "d17fd84ffe6ea6fa2ba3c8cd062a6f6464144ea3c64af932d581018bff6f9d9d",
+    "onDigest": "04e842b2eb9400445fb25a3b2c548fcea1c580653108f487cf887daa9370966b",
+    "offAfterDigest": "d17fd84ffe6ea6fa2ba3c8cd062a6f6464144ea3c64af932d581018bff6f9d9d"
+  },
+  "candidateIds": [
+    "rsi-prompt-b019fed2489cacc6a0d19637",
+    "rsi-prompt-4fb74767a8b13b831edd60f3"
+  ],
+  "verdicts": [
+    "eliminate",
+    "hold"
+  ]
+}

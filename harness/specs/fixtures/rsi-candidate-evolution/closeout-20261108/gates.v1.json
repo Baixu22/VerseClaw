@@ -1,0 +1,42 @@
+{
+  "sourceCandidate": "94825e3dff67e0b057a67e62b46ee7e9ba349dd4",
+  "driven_by": "agent",
+  "actor": "codex/rsi-remediation",
+  "focusedIntegration": {
+    "total": 26,
+    "passed": 26,
+    "failed": 0,
+    "pending": 0
+  },
+  "legacyRegression": {
+    "total": 44,
+    "passed": 44,
+    "failed": 0,
+    "pending": 0
+  },
+  "types": {
+    "passed": true,
+    "offScopeDiagnostics": 1
+  },
+  "lint": {
+    "passed": true,
+    "files": 8
+  },
+  "generatedSchema": {
+    "exitCode": 0
+  },
+  "comms": {
+    "replay": 0,
+    "compare": 0
+  },
+  "harness": {
+    "validate": 0,
+    "dryRun": 0,
+    "fullCiExit": 1
+  },
+  "diskReadback": {
+    "nativeSqlite": true,
+    "sourceHashes": true,
+    "planBinding": true
+  }
+}

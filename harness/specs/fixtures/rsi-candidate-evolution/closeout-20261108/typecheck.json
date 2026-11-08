@@ -1,0 +1,31 @@
+{
+  "checker": "typescript@5.9.3",
+  "scope": "changed files with runtime and repository compiler options",
+  "programs": [
+    {
+      "label": "runtime",
+      "config": "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\openclaw_runtime\\tsconfig.json",
+      "files": [
+        "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\openclaw_runtime\\src\\knowledge\\sekb\\knowledge-store.ts"
+      ],
+      "totalDiagnostics": 0,
+      "offScopeDiagnostics": 0,
+      "errors": []
+    },
+    {
+      "label": "repository",
+      "config": "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\tsconfig.test.json",
+      "files": [
+        "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\scripts\\lib\\rsi-benefit-eval.d.mts",
+        "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\vitest.rsi-adoption.config.ts",
+        "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\scripts\\lib\\rsi-candidate-evolution.d.mts",
+        "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\scripts\\rsi-candidate-evolution.d.mts",
+        "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\tests\\unit\\rsi-candidate-evolution.test.ts"
+      ],
+      "totalDiagnostics": 1,
+      "offScopeDiagnostics": 1,
+      "errors": []
+    }
+  ],
+  "passed": true
+}

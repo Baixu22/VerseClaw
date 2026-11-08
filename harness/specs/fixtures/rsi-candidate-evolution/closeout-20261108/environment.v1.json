@@ -1,0 +1,12 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-remediation",
+  "node": "v24.22.1",
+  "vitest": "4.1.1",
+  "typescript": "5.9.3",
+  "dependencySupport": "D:/tmp/rsi-private-runtime-20261108",
+  "installScope": "reused private dependency overlay; no fresh full-project install",
+  "temporaryDirectory": "D:/tmp",
+  "nativeDatabase": "node:sqlite through production KnowledgeStore and read-only export",
+  "paidProviderCalls": 0
+}

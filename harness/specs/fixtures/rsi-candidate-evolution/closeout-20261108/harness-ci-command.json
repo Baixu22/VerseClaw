@@ -1,0 +1,22 @@
+{
+  "gate": "harness-ci",
+  "sourceCandidate": "94825e3dff67e0b057a67e62b46ee7e9ba349dd4",
+  "command": [
+    "powershell.exe",
+    "-NoProfile",
+    "-Command",
+    "pnpm run harness:ci"
+  ],
+  "cwd": "D:/ClawX-work/rsi-remediation-20261107-01a1b651",
+  "startedAt": "2026-11-08T11:23:55.779Z",
+  "endedAt": "2026-11-08T11:24:39.397Z",
+  "elapsedMs": 43610,
+  "exitCode": 1,
+  "signal": null,
+  "error": null,
+  "driven_by": "agent",
+  "actor": "codex/rsi-evolution-gates",
+  "paidProviderCalls": 0,
+  "out": "D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\gate-harness-ci-GAKyLf",
+  "passed": false
+}

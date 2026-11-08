@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "RsiEvolutionRawArchive/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-remediation",
+  "directory": "D:/ClawX-acceptance/rsi-candidate-evolution-20261108-01a1b651",
+  "successfulIntegration": {
+    "tests": "D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\run-ThVQaZ\\tests.json",
+    "export": "D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\run-ThVQaZ\\export.v1.json",
+    "training": "D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\run-ThVQaZ\\training-execution.v1.json",
+    "events": "D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\run-ThVQaZ\\events.v1.json",
+    "database": "D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\run-ThVQaZ\\state.sqlite",
+    "result": "D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\run-ThVQaZ\\result.v1.json"
+  },
+  "databaseSha256": "bfac427fb09c58d2ff420870abd5b29fd96ccaef1336cb0e6ee3daf132fc0d79",
+  "firstCombinedRun": "D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\run-9hUtxI\\result.v1.json",
+  "firstCombinedRunStatus": "ETIMEDOUT after 245217ms; no test report",
+  "preservedDeveloperFailures": [
+    {
+      "path": "D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\developer-first-failures\\rsi-evolution-boundary-bounded-20261108.json",
+      "sha256": "160efebfbdd6310113e8682072fb366ccd4a1a99cb3d76b8a5287bcf871a02d0"
+    },
+    {
+      "path": "D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\developer-first-failures\\rsi-evolution-boundary-fixed-20261108.json",
+      "sha256": "2300c30b3f55daeeccceb62eb62c806a5cc45380dfb9a725f7a7c0b669b0811b"
+    },
+    {
+      "path": "D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\developer-first-failures\\rsi-evolution-boundary-isolated-20261108.json",
+      "sha256": "26b645eff44ccd789e6d4cc099c08934aeb4b4b491d73a23fd9ccde64cada4dc"
+    },
+    {
+      "path": "D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\developer-first-failures\\rsi-evolution-boundary-test-first-20261108.json",
+      "sha256": "092df9f402337beb365bb986003659e2e502cd1a2f57484d470fda1d6dff851a"
+    },
+    {
+      "path": "D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\developer-first-failures\\rsi-evolution-first-run-20261108.json",
+      "sha256": "cfeeb48cb772d75364bc66075ed7f06d2a44e0238a1b13c199b69bc98f7eebb4"
+    },
+    {
+      "path": "D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\developer-first-failures\\rsi-evolution-runtime-first-20261108.json",
+      "sha256": "32a5b6545ea8ba10c230bfd7ef0626cab42d4c1a8b00040908c1ec85476041d7"
+    },
+    {
+      "path": "D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\developer-first-failures\\rsi-evolution-second-20261108.json",
+      "sha256": "39f960129d20d45d53ad5f402ab69ac635c9df9c4bbf1e33c4bf711e76504a81"
+    },
+    {
+      "path": "D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\developer-first-failures\\rsi-evolution-staging-test-first-20261108.json",
+      "sha256": "defa661ebfd83b9c8542391195a38586a1c55375015a6767f12b8fef1a8ba2bb"
+    },
+    {
+      "path": "D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\developer-first-failures\\rsi-evolution-test-first-20261108.json",
+      "sha256": "cb23dcc7d66aa733a5d5c2857b67701440315082858cf71d56bb4b20fe3334f0"
+    },
+    {
+      "path": "D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\developer-first-failures\\rsi-evolution-third-20261108.json",
+      "sha256": "79cf14b3663cb9994491738f0710c106f9e90278d114588d2156a7f7bb99d85a"
+    }
+  ],
+  "preparationTiming": {
+    "originalTrace": "D:/tmp/rsi-evolution-unbounded-trace-20261108.jsonl",
+    "preparationMs": 93688,
+    "generationMs": 42,
+    "screeningMs": 33,
+    "exportMs": 20,
+    "fix": "prepare the frozen task set once before individual test deadlines"
+  },
+  "originalTypeOutput": {
+    "retainedAs": "observed tool output; the original JSON path was overwritten by the successful check",
+    "errors": [
+      "generator helper arity",
+      "nullable raw result",
+      "entry payload narrowing",
+      "invalid status used by a tamper test"
+    ]
+  }
+}

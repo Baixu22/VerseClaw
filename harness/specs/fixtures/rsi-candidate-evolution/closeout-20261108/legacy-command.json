@@ -1,0 +1,33 @@
+{
+  "gate": "legacy",
+  "sourceCandidate": "ea77a248c73bdd81c0e4d95f601443da60484df4",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--config",
+    "vitest.rsi.node.config.ts",
+    "tests/unit/rsi-benefit-eval.test.ts",
+    "--reporter=json",
+    "--reporter=verbose",
+    "--outputFile=D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\gate-legacy-NK7j88\\tests.json"
+  ],
+  "cwd": "D:/ClawX-work/rsi-remediation-20261107-01a1b651",
+  "startedAt": "2026-11-08T10:33:05.073Z",
+  "endedAt": "2026-11-08T10:35:28.523Z",
+  "elapsedMs": 143445,
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "driven_by": "agent",
+  "actor": "codex/rsi-evolution-gates",
+  "paidProviderCalls": 0,
+  "out": "D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\gate-legacy-NK7j88",
+  "passed": true,
+  "tests": {
+    "total": 44,
+    "passed": 44,
+    "failed": 0,
+    "pending": 0
+  }
+}
