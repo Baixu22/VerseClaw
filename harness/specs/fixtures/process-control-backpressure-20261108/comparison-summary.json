@@ -1,0 +1,106 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "modes": {
+    "cli": {
+      "runs": 4,
+      "readsPerRun": 8,
+      "medianMs": 1032.348250000001,
+      "spawnsPerRun": [
+        8,
+        8,
+        8,
+        8
+      ],
+      "rssSamples": [
+        54489088,
+        54464512,
+        54513664,
+        54423552
+      ],
+      "memoryScope": "child self-reported RSS",
+      "executorMemorySamples": []
+    },
+    "batch": {
+      "runs": 4,
+      "readsPerRun": 8,
+      "medianMs": 123.07385000000068,
+      "spawnsPerRun": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "rssSamples": [
+        54439936,
+        54530048,
+        54435840,
+        54513664
+      ],
+      "memoryScope": "child self-reported RSS",
+      "executorMemorySamples": []
+    },
+    "server": {
+      "runs": 4,
+      "readsPerRun": 8,
+      "medianMs": 9.430599999997867,
+      "spawnsPerRun": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "rssSamples": [
+        85065728,
+        85237760,
+        85311488,
+        85798912
+      ],
+      "memoryScope": "host process RSS",
+      "executorMemorySamples": [
+        {
+          "Id": 29880,
+          "WorkingSet64": 23339008,
+          "PrivateMemorySize64": 15089664
+        },
+        {
+          "Id": 29880,
+          "WorkingSet64": 23339008,
+          "PrivateMemorySize64": 15089664
+        },
+        {
+          "Id": 29880,
+          "WorkingSet64": 23339008,
+          "PrivateMemorySize64": 15089664
+        },
+        {
+          "Id": 29880,
+          "WorkingSet64": 23343104,
+          "PrivateMemorySize64": 15089664
+        }
+      ]
+    },
+    "native": {
+      "runs": 4,
+      "readsPerRun": 8,
+      "medianMs": 1.6623500000005151,
+      "spawnsPerRun": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "rssSamples": [
+        85237760,
+        85237760,
+        85311488,
+        85426176
+      ],
+      "memoryScope": "host process RSS",
+      "executorMemorySamples": []
+    }
+  },
+  "serverStartupMs": 1189.7619000000013,
+  "serverSpawns": 1,
+  "decision": "Use existing native file reads for local reads; retain the existing typed server for governed operations. Do not add a generic resident CLI proxy."
+}

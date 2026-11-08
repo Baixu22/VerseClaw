@@ -1,0 +1,14 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "fixture": "Node JSONL server with real child processes; serial poll waits",
+  "killMs": 655.7764000000001,
+  "stdinMs": 259.8635999999999,
+  "executorCount": 1,
+  "pids": [
+    23716,
+    34676,
+    24172
+  ],
+  "remaining": 0
+}

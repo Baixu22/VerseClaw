@@ -1,0 +1,41 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "runs": [
+    {
+      "file": "D:\\tmp\\tf0836\\native-baseline-probe.json",
+      "sha256": "3296fad2972825c022059816df7bf81c3faa0606432b9f17b14ba3480465a037",
+      "reason": "Original main also reproduces E_PROCESS_PERSIST at the original installed binary path."
+    },
+    {
+      "file": "D:\\tmp\\tf0836\\native-dev2.json",
+      "sha256": "44314d6eea65ec65a0d2df51a8a8476a5b4d87f7ace52cff40ca8d8c29f811f5",
+      "reason": "Original path persistence failure; file-read profile corrected to existing readonly contract."
+    },
+    {
+      "file": "D:\\tmp\\tf0836\\acceptance\\tests.json",
+      "sha256": "0c8e1e4e571d616185adef8265a5b5d0944df5f1180746e3b28ee9d49217d16b",
+      "reason": "Child Node exited134 during initialization; missing mixed-case Windows environment variables in Python-launched fixture."
+    },
+    {
+      "file": "D:\\tmp\\tf0836\\acceptance-final\\tests.json",
+      "sha256": "37a35156315b63ef9ad6616a226f482091855b4c9d405eb3ba071d35823e556b",
+      "reason": "Same environment-casing failure, now retained with owner output logs."
+    },
+    {
+      "file": "D:\\tmp\\tf0836\\acceptance-sealed\\tests.json",
+      "sha256": "a0e11698447cceff169efe65ddf92ec27fbabbc16d2d7317415b75febc1c86bc",
+      "reason": "Native handshake process exited before returning a frame; retained prior run."
+    },
+    {
+      "file": "D:\\tmp\\tf0836\\acceptance-process-isolated\\tests.json",
+      "sha256": "1e4577e66235762e3e50944c58aa4e85fd503ad387279deafccdeee52fe926b3",
+      "reason": "Native executor close callbacks delivered but immediate PID readback raced OS cleanup; final test waits close and bounded PID disappearance."
+    },
+    {
+      "file": "D:\\tmp\\tf0836\\acceptance-owned-close\\tests.json",
+      "sha256": "43c3c1320d69fff8c6f9d0e752bafaac1c4b8516e5a1359f2146015770537067",
+      "reason": "Original 10-second handshake timeout while preparing the flood stage; final candidate rerun retained the timeout unchanged."
+    }
+  ]
+}

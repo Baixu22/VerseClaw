@@ -1,0 +1,41 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "cases": [
+    {
+      "sourceCommit": "6df748756768ca74c6c009d9cb15f84ff88f5bea",
+      "report": "D:\\tmp\\tf0836\\negative.json",
+      "sha256": "7283272608c3400a83957fb9ad50761bf2f48c7e74af5dbec9df68923668516b",
+      "name": "VerseShell governed process lifecycle keeps a shared executor alive until both lifecycle references settle",
+      "message": "AssertionError: expected 1 to be +0 // Object.is equality"
+    },
+    {
+      "sourceCommit": "6df748756768ca74c6c009d9cb15f84ff88f5bea",
+      "report": "D:\\tmp\\tf0836\\negative.json",
+      "sha256": "7283272608c3400a83957fb9ad50761bf2f48c7e74af5dbec9df68923668516b",
+      "name": "VerseShell governed process lifecycle bounds accumulated UTF-8 output while keeping terminal artifact references",
+      "message": "AssertionError: expected 4800 to be less than or equal to 1024"
+    },
+    {
+      "sourceCommit": "6df748756768ca74c6c009d9cb15f84ff88f5bea",
+      "report": "D:\\tmp\\tf0836\\negative.json",
+      "sha256": "7283272608c3400a83957fb9ad50761bf2f48c7e74af5dbec9df68923668516b",
+      "name": "poll control capacity leaves an executor slot for stdin while long polls are pending",
+      "message": "Error: promise rejected \"AciTimeoutError: VerseShell process reset… { …(3) }\" instead of resolving"
+    },
+    {
+      "sourceCommit": "28954a65e4c994f94cd299843b3eb0f94ff36427",
+      "report": "D:\\tmp\\tf0836\\spill-error-negative.json",
+      "sha256": "0e6cd2242003c9e189b56d9d0205472ec8047d4f34726265ad68096b4e4114d7",
+      "name": "output byte backpressure reports spill failure even when cancellation arrives before the producer settles",
+      "message": "Error: promise resolved \"{ …(5) }\" instead of rejecting"
+    },
+    {
+      "sourceCommit": "601c2bc26e5085aa38f67267d853080e9511b32b",
+      "report": "D:\\tmp\\tf0836\\queue-reserve-negative.json",
+      "sha256": "301f04b0a5338110d8b294ee72a3ab3cb7692fe8408351d8cbba3e040e5893fc",
+      "name": "poll control capacity keeps the sole queue position for controls at concurrency one",
+      "message": "Error: expected AciTimeoutError: ACI request process.poll… { …(3) } to match object { code: 'E_ACI_QUEUE_FULL' }\n(10 matching properties omitted from actual)"
+    }
+  ]
+}

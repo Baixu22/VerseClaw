@@ -1,0 +1,34 @@
+{
+  "candidate": "0fc3dc067c242e1622968608d4276009b3ba5f97",
+  "commands": [
+    {
+      "id": "runtime-build",
+      "argv": [
+        "node",
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "exitCode": 0,
+      "durationMs": 54641
+    },
+    {
+      "id": "browser-build",
+      "argv": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "packages/versebrowser/tsconfig.build.json"
+      ],
+      "exitCode": 0,
+      "durationMs": 7187
+    },
+    {
+      "id": "bridge",
+      "argv": [
+        "node",
+        "scripts/generate-ext-bridge.mjs"
+      ],
+      "exitCode": 0,
+      "durationMs": 125
+    }
+  ]
+}

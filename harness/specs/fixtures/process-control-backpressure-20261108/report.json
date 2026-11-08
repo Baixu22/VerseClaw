@@ -1,0 +1,900 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": {
+    "commit": "228d717b476a10db578a9e01574af8edbcac81fa",
+    "tree": "5ee900f14befd32c66875d1818680a5719a375e8",
+    "dirty": false
+  },
+  "cleanAfter": true,
+  "commands": [
+    {
+      "id": "tests",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.process-control.config.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\tf0836\\acceptance-integrated\\tests.json"
+      ],
+      "cwd": "D:\\tmp\\tf0836\\candidate\\openclaw_runtime",
+      "exitCode": 0,
+      "durationMs": 34578
+    },
+    {
+      "id": "node-types",
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\tf0836\\candidate",
+      "exitCode": 0,
+      "durationMs": 40500
+    },
+    {
+      "id": "web-types",
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\tf0836\\candidate",
+      "exitCode": 0,
+      "durationMs": 10719
+    },
+    {
+      "id": "runtime-types",
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.core.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\tf0836\\candidate\\openclaw_runtime",
+      "exitCode": 2,
+      "durationMs": 42875
+    },
+    {
+      "id": "lint",
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "openclaw_runtime/src/agents/byte-tail.ts",
+        "openclaw_runtime/src/agents/sessions/bash-executor.backpressure.test.ts",
+        "openclaw_runtime/src/agents/sessions/bash-executor.ts",
+        "openclaw_runtime/src/agents/sessions/tools/private-temp-file.ts",
+        "openclaw_runtime/src/agents/verseshell/control-backpressure.integration.test.ts",
+        "openclaw_runtime/src/agents/verseshell/control-backpressure.native.test.ts",
+        "openclaw_runtime/src/agents/verseshell/governed-process.test.ts",
+        "openclaw_runtime/src/agents/verseshell/governed-process.ts",
+        "openclaw_runtime/src/agents/verseshell/process-manager.test.ts",
+        "openclaw_runtime/src/agents/verseshell/process-manager.ts",
+        "openclaw_runtime/test/vitest/vitest.process-control.config.ts",
+        "--format=json",
+        "--output-file",
+        "D:\\tmp\\tf0836\\acceptance-integrated\\lint.json"
+      ],
+      "cwd": "D:\\tmp\\tf0836\\candidate",
+      "exitCode": 0,
+      "durationMs": 5485
+    },
+    {
+      "id": "contract",
+      "argv": [
+        "node",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0836\\candidate",
+      "exitCode": 0,
+      "durationMs": 3765
+    },
+    {
+      "id": "i18n",
+      "argv": [
+        "node",
+        "scripts/i18n-lint.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0836\\candidate",
+      "exitCode": 0,
+      "durationMs": 610
+    },
+    {
+      "id": "comms-replay",
+      "argv": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0836\\candidate",
+      "exitCode": 0,
+      "durationMs": 328
+    },
+    {
+      "id": "comms-compare",
+      "argv": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0836\\candidate",
+      "exitCode": 0,
+      "durationMs": 234
+    },
+    {
+      "id": "retention",
+      "argv": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0836\\candidate",
+      "exitCode": 0,
+      "durationMs": 5719
+    },
+    {
+      "id": "harness-validate",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/process-control-backpressure-20261108.md"
+      ],
+      "cwd": "D:\\tmp\\tf0836\\candidate",
+      "exitCode": 0,
+      "durationMs": 1000
+    },
+    {
+      "id": "harness-run",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/process-control-backpressure-20261108.md",
+        "--dry-run"
+      ],
+      "cwd": "D:\\tmp\\tf0836\\candidate",
+      "exitCode": 0,
+      "durationMs": 1125
+    },
+    {
+      "id": "diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "20b394c73",
+        "HEAD"
+      ],
+      "cwd": "D:\\tmp\\tf0836\\candidate",
+      "exitCode": 0,
+      "durationMs": 140
+    }
+  ],
+  "runtimeTypes": {
+    "baseline": {
+      "commit": "20b394c734999b3162e73f74e652914d2f6df486",
+      "diagnostics": 38,
+      "run": {
+        "candidate": "20b394c734999b3162e73f74e652914d2f6df486",
+        "argv": [
+          "node",
+          "node_modules/@typescript/native-preview/bin/tsgo.js",
+          "--noEmit",
+          "-p",
+          "tsconfig.core.json",
+          "--composite",
+          "false"
+        ],
+        "exitCode": 2,
+        "durationMs": 41797
+      }
+    },
+    "candidateDiagnostics": 38,
+    "introduced": [],
+    "existing": [
+      "src/agents/cross-area/cross-area-facades.ts: error TS6133: 'lastPlan' is declared but its value is never read.",
+      "ui/vitest.config.ts: error TS2321: Excessive stack depth comparing types '{ enabled: true; provider: BrowserProviderOption<PlaywrightProviderOptions>; instances: { browser: string; name: string; }[]; headless: true; ui: false; }' and 'BrowserConfigOptions | undefined'.",
+      "ui/vitest.config.ts: error TS2321: Excessive stack depth comparing types '{ resolve: { alias: ({ find: string; replacement: string; } | { find: RegExp; replacement: string; })[]; }; test: { isolate: false; pool: OpenClawVitestPool; name: string; include: string[]; exclude: (\"src/ui/chat/chat-responsive.browser.test.ts\" | ... 1 more ... | \"src/ui/views/sessions.browser.test.ts\")[]; setupFi...' and 'UserWorkspaceConfig'.",
+      "ui/vitest.config.ts: error TS2769: No overload matches this call.",
+      "../shared/long-session-continuity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './types/memory.js'?",
+      "../shared/long-session-continuity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './types/task-ledger.js'?",
+      "../shared/long-session-continuity.ts: error TS7006: Parameter 'node' implicitly has an 'any' type.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'updatedAt' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'evidenceRefs' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS7006: Parameter 'ref' implicitly has an 'any' type.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'kind' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'description' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'title' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'updatedAt' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'title' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'metadata' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'metadata' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS7006: Parameter 'node' implicitly has an 'any' type.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'title' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'title' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/types/session-activity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './git.js'?",
+      "../shared/types/session-activity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './session-effective-policy.js'?",
+      "../shared/types/session-activity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './session-stage.js'?",
+      "../shared/types/session-activity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './session-derivation.js'?",
+      "../shared/types/session-activity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../long-session-resource-reclamation.js'?",
+      "../shared/types/session-delegation.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './workspace.js'?"
+    ]
+  },
+  "tests": {
+    "numTotalTests": 86,
+    "numPassedTests": 86,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numFailedTestSuites": 0,
+    "success": true
+  },
+  "cases": [
+    {
+      "name": "output byte backpressure caps a single huge Unicode chunk and preserves full cold output",
+      "status": "passed"
+    },
+    {
+      "name": "output byte backpressure streams many bounded chunks into one artifact with exact incremental readback",
+      "status": "passed"
+    },
+    {
+      "name": "output byte backpressure shares a byte cap across streams and never retains partial leading characters",
+      "status": "passed"
+    },
+    {
+      "name": "output byte backpressure reports spill failure even when cancellation arrives before the producer settles",
+      "status": "passed"
+    },
+    {
+      "name": "concurrent acquisition with real ACI protocol children reuses one owned Node child and leaves zero owned PIDs after repeated shutdown",
+      "status": "passed"
+    },
+    {
+      "name": "native protocol control isolation keeps a second real process alive when the first exits and controls it during poll pressure",
+      "status": "passed"
+    },
+    {
+      "name": "verified native process control controls two live processes during polls and reads bounded artifacts after exit",
+      "status": "passed"
+    },
+    {
+      "name": "verified native process control compares CLI, batch, persistent server and native reads on the same file",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed exec adaptation derives a stable policy digest from the repository-owned definition",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed exec adaptation does not consume an upstream token before OpenClaw host policy approval",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed exec adaptation retries once in an approval-scoped process and preserves bounded recovery metadata",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed exec adaptation keeps shell-string compatibility at the typed argv boundary",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed exec adaptation rejects invalid artifact handles and mode-specific arguments before transport",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed exec adaptation sends bounded result.query arguments through the verified process",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed exec adaptation reports a non-zero exit as a bounded failure without success",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed exec adaptation reports a runtime timeout as a bounded failure",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed exec adaptation rejects an oversized result.query response before returning it",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed exec adaptation rejects a result.query response without bounded data",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell startup capacity rollback returns a confirmed terminal reservation even when executor cleanup fails",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell startup capacity rollback returns capacity when executor acquisition fails before dispatch and permits retry",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell startup capacity rollback returns capacity when approval transport acquisition fails after a confirmed denial",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell startup capacity rollback returns a rejected start reservation even if approval transport cleanup fails",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell startup capacity rollback keeps the managed reservation when start delivery or terminal state is unknown",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell startup capacity rollback keeps the managed reservation when poll delivery or terminal state is unknown",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell startup capacity rollback keeps the managed reservation when malformed-start delivery or terminal state is unknown",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle drains terminal output through the final cursor before releasing its executor",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle keeps a shared executor alive until both lifecycle references settle",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle bounds accumulated UTF-8 output while keeping terminal artifact references",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle uses the pre-approval argv plan without reparsing the display command",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle retries effectful start exactly once in the approval-scoped transport",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle maps start, poll, stdin, EOF, and kill and cleans up after terminal state",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle fails closed on 'cursor rewind'",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle fails closed on 'owner drift'",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle retries only read-only poll after a transport restart and never replays start",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle returns an explicit EOF error instead of acknowledging a failed close",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle keeps a windows-cmd plan auditable without reparsing the display command",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle fails closed when a windows-cmd plan drifts from its script identity",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle clamps timeout and output above the profile bounds",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle clamps the timeout floor to 1ms and uses the profile default when unset",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle sends the requested Job limits and records how enforcement was established",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle does not claim enforcement when no limits were requested",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle fails closed when the executor refuses to start with the requested limits",
+      "status": "passed"
+    },
+    {
+      "name": "managed process capacity admits everything and allocates no counter until a capacity is declared",
+      "status": "passed"
+    },
+    {
+      "name": "managed process capacity bounds the instance-wide live count and refuses beyond it",
+      "status": "passed"
+    },
+    {
+      "name": "managed process capacity counts a double release without freeing a second slot",
+      "status": "passed"
+    },
+    {
+      "name": "managed process capacity reads the declared capacity and per-run defaults from the environment",
+      "status": "passed"
+    },
+    {
+      "name": "managed process capacity exposes the declared default limits to the process boundary",
+      "status": "passed"
+    },
+    {
+      "name": "poll control capacity keeps the sole queue position for controls at concurrency one",
+      "status": "passed"
+    },
+    {
+      "name": "poll control capacity leaves an executor slot for stdin while long polls are pending",
+      "status": "passed"
+    },
+    {
+      "name": "poll control capacity removes successful request abort listeners and keeps a retained idle executor",
+      "status": "passed"
+    },
+    {
+      "name": "poll control capacity stops dispatch under stdin backpressure and removes the drain listener on shutdown",
+      "status": "passed"
+    },
+    {
+      "name": "typed ACI framing decodes schema/op/data observations without the legacy value envelope",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager shares one pending resolver, spawn and handshake across concurrent callers",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager counts pending binary resolution against the cap for distinct keys",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager does not publish a second client before the shared handshake completes",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects all concurrent clients when the shared handshake fails",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager shares concurrent workspace shutdown and rejects new work until owned cleanup finishes",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects every waiter on a failed startup and permits a later retry",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager fences pending binary resolution during all shutdown without a late spawn",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager fences pending binary resolution during workspace shutdown without a late spawn",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager fences pending binary resolution during kill-switch shutdown without a late spawn",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager closes a process while its handshake is pending and rejects every waiter",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager fences shutdownAll before workspace canonicalization completes",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager uses handshake data, JSON mode, non-permissive policy, and one comma-separated --cap",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager isolates process keys by canonical workspace and action-bound approval token",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager removes inherited broad approvals and redacts action tokens from health",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager fails closed when the default binary identity was not Electron-verified",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects an unverified custom binary resolver",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects a handshake whose actual server state mismatches config",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects a handshake whose immutable policy profile binding mismatches config",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects a handshake with an incompatible capability mode",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects a handshake with an incompatible operation catalog schema",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects a handshake with an incompatible operation catalog count",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects malformed frames as transport protocol failures",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects oversized frames as transport protocol failures",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects request id mismatch frames as transport protocol failures",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager resolves operation ok=false separately from transport errors",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects pending requests on crash and never replays the effectful request",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects timed-out pending requests without native shell fallback",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager enforces per-process concurrency and drains its bounded queue",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager collects idle processes after the configured TTL",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager gracefully sends SHUTDOWN and removes all processes",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager binds timeout errors to host-owned request and trace metadata",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager retries one explicitly read-only request after a transport restart",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects retry opt-in for effectful and unknown operations",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager exposes handshaking health and fails closed on the operator kill switch",
+      "status": "passed"
+    }
+  ],
+  "sources": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "5a45d3f6606e5f179e180d730fc35987954e265b785cf4e78711ada81e384ee2"
+    },
+    {
+      "path": "README.md",
+      "sha256": "e8008a5221c2326b8776bfe7f185752671e1d811971cf30e5545a14db5c0b5c1"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "d80f41ddfbe0ca738d9683949eb5c053f3db72093e7b1ea1f1f16ceac20fa262"
+    },
+    {
+      "path": "docs/modules/resources-and-observability.md",
+      "sha256": "f97a4bd9da78e73744c6b7d49f34594e2ef498f85be06c7f18773162537cfffb"
+    },
+    {
+      "path": "harness/specs/rules/process-control-backpressure.md",
+      "sha256": "d74d45d6e4649cd4997b7b48aa2e35f966ff6484a8f0ff59c212fc708be1d109"
+    },
+    {
+      "path": "harness/specs/tasks/process-control-backpressure-20261108.md",
+      "sha256": "38788473f08b0eed239ba2a0c52c1c22db87fe8f262b7b9feb3e126a4f9a22e4"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/byte-tail.ts",
+      "sha256": "b1f52c19d0792060b51812ddc6b201eb3d7c23dc9578183595d77968e0506806"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/sessions/bash-executor.backpressure.test.ts",
+      "sha256": "70e1f75b66de7dfa5c2ff6a30e813ecd96bd7672123663b6edf16f0948c2d168"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/sessions/bash-executor.ts",
+      "sha256": "f5d5c2f5340ce4b7208e4ded50149194bc29979325179eeecce9ddf9217a5d2d"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/sessions/tools/private-temp-file.ts",
+      "sha256": "28859fade9ec52ced84122ee36ec9b126547601a54f478813c732be60dba8379"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/verseshell/control-backpressure.integration.test.ts",
+      "sha256": "0428f4f4e02085a7323f7710db474ce7d1d9cc0ac1ad066563bec6fad72e8aac"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/verseshell/control-backpressure.native.test.ts",
+      "sha256": "1f36813847951a0da96ddde5359626e65a3de03a3b7c5e33a7cc324da87a9bc2"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/verseshell/governed-process.test.ts",
+      "sha256": "6df6a905bf6c7169a3a2996b59800f7d0dea4144bca7eb2915c58cae0fe2ca46"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/verseshell/governed-process.ts",
+      "sha256": "36a735258eb8a08011c267bcf770d12c7169a685d767221d5d8afec14ccd91a0"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/verseshell/process-manager.test.ts",
+      "sha256": "695cf4b3d2bb454afedb8832b73e8f052fd13dc4639eb029a44e83cff05798fb"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/verseshell/process-manager.ts",
+      "sha256": "94b1c123458c5de611004fee2267c2bd09a95563538a3b7ef50c88bcd78a1a6d"
+    },
+    {
+      "path": "openclaw_runtime/test/vitest/vitest.process-control.config.ts",
+      "sha256": "dda9aaa63dbeafd3131f2a7c0f57402ebe2faa60949393cc41f101fac142a539"
+    }
+  ],
+  "verdict": "pass-process-control-with-baseline-types",
+  "testedCandidate": {
+    "commit": "0fc3dc067c242e1622968608d4276009b3ba5f97",
+    "tree": "8c123cfcf5e86a75f57f5968fa3eaaaae4710dfb",
+    "dirty": false
+  },
+  "productionEquivalence": {
+    "from": "0fc3dc067c242e1622968608d4276009b3ba5f97",
+    "to": "228d717b476a10db578a9e01574af8edbcac81fa",
+    "paths": [
+      "electron",
+      "shared",
+      "src",
+      "openclaw_runtime",
+      "packages",
+      "scripts",
+      "tests",
+      "package.json",
+      "pnpm-lock.yaml",
+      "vite.config.ts"
+    ],
+    "exitCode": 0,
+    "reason": "Merged main evidence files and updated task diffBase only; all product sources and tests identical."
+  },
+  "deliveryChecks": [
+    {
+      "id": "harness-validate",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/process-control-backpressure-20261108.md"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 1156
+    },
+    {
+      "id": "harness-run",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/process-control-backpressure-20261108.md",
+        "--dry-run"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 969
+    },
+    {
+      "id": "retention",
+      "argv": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 6047
+    },
+    {
+      "id": "diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "c84d7f0ff",
+        "HEAD"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX",
+      "exitCode": 0,
+      "durationMs": 219
+    }
+  ],
+  "native": {
+    "control": [
+      {
+        "kind": "stdin",
+        "ms": 779.5280000000002
+      },
+      {
+        "kind": "kill",
+        "ms": 3.3840999999993073
+      }
+    ],
+    "pollRequests": 16,
+    "retainedOutputBytes": 32768,
+    "ownedExitConfirmed": true
+  },
+  "protocol": {
+    "driven_by": "agent",
+    "actor": "codex",
+    "fixture": "Node JSONL server with real child processes; serial poll waits",
+    "killMs": 655.7764000000001,
+    "stdinMs": 259.8635999999999,
+    "executorCount": 1,
+    "pids": [
+      23716,
+      34676,
+      24172
+    ],
+    "remaining": 0
+  },
+  "binary": {
+    "driven_by": "agent",
+    "actor": "codex",
+    "source": "D:\\ClawX\\resources\\bin\\win32-x64\\ae.exe",
+    "copy": "D:\\tmp\\tf0836\\acceptance-bin\\ae.exe",
+    "sha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
+    "bytes": 15144448,
+    "manifestSha256": "b26c9edbbc620943af2c9080cee72de68f93e3fa8649aa33859a435a1650d1a7",
+    "purpose": "Isolated acceptance binary with exact product bytes; original path failure retained separately."
+  },
+  "negativeControls": 5,
+  "comparison": {
+    "cli": {
+      "runs": 4,
+      "readsPerRun": 8,
+      "medianMs": 1032.348250000001,
+      "spawnsPerRun": [
+        8,
+        8,
+        8,
+        8
+      ],
+      "rssSamples": [
+        54489088,
+        54464512,
+        54513664,
+        54423552
+      ],
+      "memoryScope": "child self-reported RSS",
+      "executorMemorySamples": []
+    },
+    "batch": {
+      "runs": 4,
+      "readsPerRun": 8,
+      "medianMs": 123.07385000000068,
+      "spawnsPerRun": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "rssSamples": [
+        54439936,
+        54530048,
+        54435840,
+        54513664
+      ],
+      "memoryScope": "child self-reported RSS",
+      "executorMemorySamples": []
+    },
+    "server": {
+      "runs": 4,
+      "readsPerRun": 8,
+      "medianMs": 9.430599999997867,
+      "spawnsPerRun": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "rssSamples": [
+        85065728,
+        85237760,
+        85311488,
+        85798912
+      ],
+      "memoryScope": "host process RSS",
+      "executorMemorySamples": [
+        {
+          "Id": 29880,
+          "WorkingSet64": 23339008,
+          "PrivateMemorySize64": 15089664
+        },
+        {
+          "Id": 29880,
+          "WorkingSet64": 23339008,
+          "PrivateMemorySize64": 15089664
+        },
+        {
+          "Id": 29880,
+          "WorkingSet64": 23339008,
+          "PrivateMemorySize64": 15089664
+        },
+        {
+          "Id": 29880,
+          "WorkingSet64": 23343104,
+          "PrivateMemorySize64": 15089664
+        }
+      ]
+    },
+    "native": {
+      "runs": 4,
+      "readsPerRun": 8,
+      "medianMs": 1.6623500000005151,
+      "spawnsPerRun": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "rssSamples": [
+        85237760,
+        85237760,
+        85311488,
+        85426176
+      ],
+      "memoryScope": "host process RSS",
+      "executorMemorySamples": []
+    }
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 0
+  },
+  "dependencies": {
+    "driven_by": "agent",
+    "actor": "codex",
+    "links": 153,
+    "view": "D:\\tmp\\tf0836\\dependency-view-candidate\\node_modules",
+    "versebrowser": "D:\\tmp\\tf0836\\candidate\\packages\\versebrowser",
+    "runtime": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\node_modules"
+  }
+}
