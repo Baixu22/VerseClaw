@@ -99,7 +99,7 @@ describe('autonomy worktree owner admission', () => {
     // A broken repository after owner construction must not become simulation.
     writeFileSync(path.join(root, '.git/HEAD'), 'invalid reference\n');
     expect(() => service.create('failed-git', { owner })).toThrow();
-    expect(service.list().some(candidate => candidate.id === 'failed-git')).toBe(false);
+    expect(service.inventory().find(candidate => candidate.id === 'failed-git')?.availability).not.toBe('ready');
   });
 
   it('never promotes directory simulation or missing owner records to verified isolation', () => {
@@ -107,6 +107,6 @@ describe('autonomy worktree owner admission', () => {
     const record = service.create('simulation');
     expect(service.inspectIsolation(record.id, record.generation)).toEqual({ status: 'unverified', reason: 'simulated-backend' });
     __resetWorktreeRegistry();
-    expect(service.inspectIsolation(record.id, record.generation)).toEqual({ status: 'unverified', reason: 'missing-worktree' });
+    expect(service.inspectIsolation(record.id, record.generation)).toEqual({ status: 'unverified', reason: 'simulated-backend' });
   });
 });

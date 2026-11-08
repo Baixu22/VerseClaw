@@ -1,0 +1,216 @@
+{
+  "schema": "unified-concurrent-development-research/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "date": "2026-11-08",
+  "researchStatus": "completed",
+  "implementationStatus": "planned",
+  "sources": [
+    {
+      "id": "codex-worktrees",
+      "title": "Worktrees | ChatGPT Learn",
+      "url": "https://developers.openai.com/codex/app/worktrees",
+      "retrievedDate": "2026-11-08",
+      "method": "VerseSearch / Exa Contents",
+      "status": {
+        "id": "https://developers.openai.com/codex/app/worktrees",
+        "status": "success",
+        "source": "cached"
+      },
+      "textSha256": "f0c106f6c1346a5dc515204ce9662140f02a4212025339ef8b2b8e32abaf361f",
+      "characters": 12027
+    },
+    {
+      "id": "codex-app-server",
+      "title": "Codex App Server | ChatGPT Learn",
+      "url": "https://developers.openai.com/codex/app-server",
+      "retrievedDate": "2026-11-08",
+      "method": "VerseSearch / Exa Contents",
+      "status": {
+        "id": "https://developers.openai.com/codex/app-server",
+        "status": "success",
+        "source": "cached"
+      },
+      "textSha256": "32ffc16c870ff65f80ef7772a9b4cca01e32e36e31ae92e26335150a4af88208",
+      "characters": 18000
+    },
+    {
+      "id": "claude-worktrees",
+      "title": "Run parallel sessions with worktrees",
+      "url": "https://code.claude.com/docs/en/worktrees",
+      "retrievedDate": "2026-11-08",
+      "method": "VerseSearch / Exa Contents",
+      "status": {
+        "id": "https://code.claude.com/docs/en/worktrees",
+        "status": "success",
+        "source": "cached"
+      },
+      "textSha256": "dbd8739a8a7d04561a4573e23bea9b2f8a478b02bf2e0633a28157643af5a549",
+      "characters": 18000
+    },
+    {
+      "id": "claude-teams",
+      "title": "Orchestrate teams of Claude Code sessions",
+      "url": "https://code.claude.com/docs/en/agent-teams",
+      "retrievedDate": "2026-11-08",
+      "method": "VerseSearch / Exa Contents",
+      "status": {
+        "id": "https://code.claude.com/docs/en/agent-teams",
+        "status": "success",
+        "source": "cached"
+      },
+      "textSha256": "e0008cd00afb5f564da1d5a882109f4425294c84e7b7f64050c57149a1f8bd92",
+      "characters": 18000
+    },
+    {
+      "id": "claude-agents",
+      "title": "Run agents in parallel",
+      "url": "https://code.claude.com/docs/en/agents",
+      "retrievedDate": "2026-11-08",
+      "method": "VerseSearch / Exa Contents",
+      "status": {
+        "id": "https://code.claude.com/docs/en/agents",
+        "status": "success",
+        "source": "cached"
+      },
+      "textSha256": "19b14aeeb86b2924a4a24c38942f325ea7044b9fbf8d2f7273cc939991986a0e",
+      "characters": 7054
+    },
+    {
+      "id": "chubby-paper",
+      "title": "OSDI '06 Paper",
+      "url": "https://www.usenix.org/legacy/event/osdi06/tech/full_papers/burrows/burrows_html/",
+      "retrievedDate": "2026-11-08",
+      "method": "VerseSearch / Exa Contents",
+      "status": {
+        "id": "https://www.usenix.org/legacy/event/osdi06/tech/full_papers/burrows/burrows_html/",
+        "status": "success",
+        "source": "cached"
+      },
+      "textSha256": "23f2e81dd5869d9b4629f037a8eed82c90347d024d0b78dc2d3c7f3f2f001ea3",
+      "characters": 18000
+    },
+    {
+      "id": "sagas-paper",
+      "title": "CS",
+      "url": "https://www.cs.princeton.edu/research/techreps/598",
+      "retrievedDate": "2026-11-08",
+      "method": "VerseSearch / Exa Contents",
+      "status": {
+        "id": "https://www.cs.princeton.edu/research/techreps/598",
+        "status": "success",
+        "source": "cached"
+      },
+      "textSha256": "7d2741784f7ee7dacd4cf65f6c7358dc2d18b69fa83c05b6ba426f4a44f3b204",
+      "characters": 1097
+    },
+    {
+      "id": "kanban-guide",
+      "title": "The Kanban Guide | May 2025 (latest) | Kanban Guides",
+      "url": "https://kanbanguides.org/the-kanban-guide/",
+      "retrievedDate": "2026-11-08",
+      "method": "VerseSearch / Exa Contents",
+      "status": {
+        "id": "https://kanbanguides.org/the-kanban-guide/",
+        "status": "success",
+        "source": "cached"
+      },
+      "textSha256": "2de1ef60ccfe8e3298eb844c2d6d8b106d3c9c6f89f242b24b65c7b7ad17b020",
+      "characters": 12415
+    },
+    {
+      "id": "hse-handover",
+      "title": "Shift handover - HSE",
+      "url": "https://www.hse.gov.uk/humanfactors/topics/shift-handover.htm",
+      "retrievedDate": "2026-11-08",
+      "method": "VerseSearch / Exa Contents",
+      "status": {
+        "id": "https://www.hse.gov.uk/humanfactors/topics/shift-handover.htm",
+        "status": "success",
+        "source": "cached"
+      },
+      "textSha256": "314a66b9e1dec02d52bee16fcda47666293b8e12113cab3d6186613bb5bb875a",
+      "characters": 3658
+    },
+    {
+      "id": "nasa-config",
+      "title": "6.5 Configuration Management - NASA",
+      "url": "https://www.nasa.gov/reference/6-5-configuration-management/",
+      "retrievedDate": "2026-11-08",
+      "method": "VerseSearch / Exa Contents",
+      "status": {
+        "id": "https://www.nasa.gov/reference/6-5-configuration-management/",
+        "status": "success",
+        "source": "cached"
+      },
+      "textSha256": "762eb6fcbb7aeb5883687c1b8f6bad7703d26d0261d05f5f860f1cc84474d9bd",
+      "characters": 16426
+    },
+    {
+      "id": "sre-overload",
+      "title": "Google SRE: Load Balancing with Client Side Throttling",
+      "url": "https://sre.google/sre-book/handling-overload/",
+      "retrievedDate": "2026-11-08",
+      "method": "VerseSearch / Exa Contents",
+      "status": {
+        "id": "https://sre.google/sre-book/handling-overload/",
+        "status": "success",
+        "source": "cached"
+      },
+      "textSha256": "69220654097264ce468c5655aec075cffd35ced31f86cf509a921ad1354f0746",
+      "characters": 18000
+    },
+    {
+      "id": "ux-disclosure",
+      "title": "Progressive Disclosure - NN/G",
+      "url": "https://www.nngroup.com/articles/progressive-disclosure/",
+      "retrievedDate": "2026-11-08",
+      "method": "VerseSearch / Exa Contents",
+      "status": {
+        "id": "https://www.nngroup.com/articles/progressive-disclosure/",
+        "status": "success",
+        "source": "cached"
+      },
+      "textSha256": "ca68050bdbefca90bffb1adaf2e739cc5a2890234253b311968f7cbca037f352",
+      "characters": 11568
+    }
+  ],
+  "priorResearch": "docs/dev/research/unified-execution-layer-20261108.zh-CN.md",
+  "probe": {
+    "source": "D:\\tmp\\unified-layer-research-20261108\\run-eSGQhv\\report.json",
+    "sha256": "d094e6402f53f879282714fca251c806a09318f9f668573b8378854e609c161a",
+    "sourceManifest": [
+      {
+        "path": "D:/ClawX/shared/task-system/store.ts",
+        "sha256": "c21c5bec78c08773ffb7fe9500c3830a0487673abb3f769f916a878e3120f367"
+      },
+      {
+        "path": "D:/ClawX/shared/task-system/identity.ts",
+        "sha256": "e6d16c51eb07c2155da850ffd43bda239eb71a20a94555095dffa52ab0ed58e4"
+      },
+      {
+        "path": "D:/ClawX/shared/task-system/recognition.ts",
+        "sha256": "69f9f810124e3d854184382fb99a7e61f3ed5622dcf867a26531aed8bf7ae2b5"
+      }
+    ],
+    "result": {
+      "cheapGitIdentityUnchangedDespiteContentChanges": true,
+      "sameTaskAccepted": 1,
+      "differentTaskSameCheckoutAccepted": 2
+    }
+  },
+  "auditAgents": [
+    {
+      "threadId": "01a1badb-af45-7612-83a5-e6364d045cda",
+      "requestedModel": "deepseek-v4.1-flash",
+      "route": "ccs-workbuddy/deepseek-v4.1-flash",
+      "scope": "ClawX task ownership and unfinished work"
+    },
+    {
+      "threadId": "01a1badc-451a-7841-aad3-ed70124ea7ed",
+      "requestedModel": "deepseek-v4.1-flash",
+      "route": "ccs-workbuddy/deepseek-v4.1-flash",
+      "scope": "VerseGit/JJ/STS reuse and active worktrees"
+    }
+  ]
+}

@@ -1,3 +1,19 @@
+-- WorktreeService owns registration and merge intent; filesystem effects remain owner operations.
+CREATE TABLE IF NOT EXISTS managed_worktree_scopes (
+  scope_key TEXT NOT NULL PRIMARY KEY,
+  revision INTEGER NOT NULL,
+  state_json TEXT NOT NULL,
+  updated_at INTEGER NOT NULL
+);
+
+-- Explicit local clone routing metadata; task facts remain in the selected TaskSystemStore.
+CREATE TABLE IF NOT EXISTS execution_domain_registrations (
+  domain_id TEXT NOT NULL PRIMARY KEY,
+  revision INTEGER NOT NULL,
+  registration_json TEXT NOT NULL,
+  updated_at INTEGER NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS auth_profile_stores (
   store_key TEXT NOT NULL PRIMARY KEY,
   store_json TEXT NOT NULL,

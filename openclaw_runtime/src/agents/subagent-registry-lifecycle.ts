@@ -821,13 +821,15 @@ export function createSubagentRegistryLifecycleController(params: {
             },
           });
         },
-        cleanupWorktree: (_authorization) => {
+        cleanupWorktree: (authorization) => {
           const worktreeId = entry.orchestration?.worktreeId;
           if (!worktreeId || !entry.workspaceDir) return;
           const service = createWorktreeService(entry.workspaceDir, {
             backend: entry.orchestration?.worktreeBackend,
           });
-          service.cleanup(worktreeId);
+          const generation = entry.orchestration?.worktreeGeneration;
+          if (!generation) throw new Error("worktree_generation_required");
+          service.cleanup(worktreeId, { expectedGeneration: generation, ...(authorization ? { authorization } : {}) });
         },
       },
     });

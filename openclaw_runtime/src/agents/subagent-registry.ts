@@ -540,6 +540,7 @@ async function processCompletedOrchestrationWorktrees(
       workers: mergeable.map((worker) => ({
         taskNodeId: worker.orchestration?.taskNodeId ?? worker.runId,
         worktreeId: worker.orchestration!.worktreeId!,
+        worktreeGeneration: worker.orchestration?.worktreeGeneration ?? "",
         declaredWriteSet: worker.orchestration?.worktreeWriteSet ?? [],
       })),
       conflictPolicy: "mark_conflict",

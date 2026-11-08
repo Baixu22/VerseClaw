@@ -9,6 +9,7 @@ import type { VerseGitCandidateResult } from "../../../shared/types/versegit.js"
 export type OrchestrationWorktreeMergeWorker = {
   taskNodeId: string;
   worktreeId: string;
+  worktreeGeneration: string;
   declaredWriteSet?: readonly string[];
 };
 
@@ -46,7 +47,8 @@ export function mergeOrchestrationWorktrees(params: {
   const service = createWorktreeService(params.baseRoot);
   const pending = params.workers.map((worker) => {
     const declaredWriteSet = normalizePaths(worker.declaredWriteSet);
-    const changed = service.listChangedFiles(worker.worktreeId);
+    if (!worker.worktreeGeneration) throw new Error("worktree_generation_required");
+    const changed = service.listChangedFiles(worker.worktreeId, worker.worktreeGeneration);
     const changedFiles = changed.files.length > 0 ? normalizePaths(changed.files) : declaredWriteSet;
     const writeSetMismatch = changed.source === "git-status"
       ? symmetricDifference(declaredWriteSet, changedFiles)
@@ -57,6 +59,7 @@ export function mergeOrchestrationWorktrees(params: {
     }
     service.enqueueMerge({
       worktreeId: worker.worktreeId,
+      worktreeGeneration: worker.worktreeGeneration,
       changedFiles,
       ...(reasonParts.length > 0 ? { reason: reasonParts.join(";") } : {}),
     });
@@ -98,6 +101,10 @@ export function freezeOrchestrationWorktreeCandidate(params: {
   const workers: CreateCandidateWorker[] = params.workers.map((worker, index) => {
     const record = records.get(worker.worktreeId);
     if (!record) throw new Error(`missing candidate worktree: ${worker.worktreeId}`);
+    if (!worker.worktreeGeneration || record.generation !== worker.worktreeGeneration) throw new Error("worktree_stale_generation");
+    if (service.inspectIsolation(record.id, worker.worktreeGeneration).status !== "verified") {
+      throw new Error(`unverified candidate worktree: ${worker.worktreeId}`);
+    }
     return {
       taskNodeId: worker.taskNodeId,
       worktreePath: record.root,
