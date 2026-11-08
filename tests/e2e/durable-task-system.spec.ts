@@ -1,6 +1,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { createHash } from "node:crypto";
+import { execFileSync } from "node:child_process";
 import { closeElectronApp, expect, getStableWindow, test } from "./fixtures/electron";
 
 test("persists a product goal through actual Main storage and page reload", async ({
@@ -9,6 +10,7 @@ test("persists a product goal through actual Main storage and page reload", asyn
 }, testInfo) => {
   const workspace = join(homeDir, "task-project");
   await mkdir(workspace, { recursive: true });
+  execFileSync("git", ["init"], { cwd: workspace, windowsHide: true, stdio: "pipe" });
   await writeFile(join(workspace, "artifact.txt"), "approved output");
   const hash = createHash("sha256").update("approved output").digest("hex");
   const app = await launchElectronApp({ skipSetup: true });

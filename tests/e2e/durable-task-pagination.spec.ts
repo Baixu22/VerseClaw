@@ -1,5 +1,6 @@
 import { mkdir, writeFile, readFile } from "node:fs/promises";
 import { join } from "node:path";
+import { execFileSync } from "node:child_process";
 import { test, expect, getStableWindow, closeElectronApp } from "./fixtures/electron";
 
 test("queries all task pages and filters without losing task identity", async ({
@@ -9,6 +10,7 @@ test("queries all task pages and filters without losing task identity", async ({
   test.setTimeout(180_000);
   const root = join(homeDir, "task-pages");
   await mkdir(root, { recursive: true });
+  execFileSync("git", ["init"], { cwd: root, windowsHide: true, stdio: "pipe" });
   const app = await launchElectronApp({ skipSetup: true });
   try {
     const page = await getStableWindow(app);
@@ -77,7 +79,7 @@ test("queries all task pages and filters without losing task identity", async ({
     await page.getByRole("option", { name: "All tasks", exact: true }).click();
     await expect(page.getByTestId("managed-task")).toHaveCount(1);
     await expect(page.getByTestId("managed-task")).toBeInViewport();
-    const database = join(root, ".verse-claw", "task-ledger.sqlite3");
+    const database = join(root, ".git", "verse-claw", "task-ledger.sqlite3");
     const saved = await readFile(database);
     try {
       await writeFile(database, "corrupt database fixture");
