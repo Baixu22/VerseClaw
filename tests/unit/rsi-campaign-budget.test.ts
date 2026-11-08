@@ -5,7 +5,7 @@ import { DatabaseSync } from 'node:sqlite';
 import { afterAll, describe, expect, it } from 'vitest';
 import { createCampaignLedger, validateCampaignBudget, type CampaignBudget } from '../../scripts/lib/rsi-campaign-budget.mjs';
 import { buildResponsesRequest, type ResponsesProviderResult } from '../../scripts/lib/rsi-responses-provider.mjs';
-import { inspectFreeQuota } from '../../scripts/rsi-paired-measurement.mjs';
+import { inspectCachedModel, inspectFreeQuota } from '../../scripts/rsi-paired-measurement.mjs';
 
 const directories: string[] = [];
 function directory() {
@@ -42,6 +42,13 @@ describe('whole-campaign provider resources', () => {
     expect(inspectFreeQuota(file, 'space-bunny')).toMatchObject({ plan: 'Free', enabledAccounts: 2, remainingQuota: 200,
       routeProviders: ['workbuddy', 'workbuddy-intl'] });
     const update = new DatabaseSync(file);
+    const catalog = { 'plugin:workbuddy': { fetchedAt: Date.now(), models: [{ id: 'space-bunny', credits: 'x0.08',
+      supportsToolCall: true, maxInputTokens: 1000000, maxOutputTokens: 128000 }] } };
+    update.prepare('INSERT INTO kv VALUES (?, ?)').run('modelCatalogCache', JSON.stringify(catalog));
+    expect(inspectCachedModel(file, 'space-bunny').model).toMatchObject({ id: 'space-bunny', supportsToolCall: true, credits: 'x0.08' });
+    catalog['plugin:workbuddy'].fetchedAt -= 25 * 3600000;
+    update.prepare('UPDATE kv SET value=? WHERE key=?').run(JSON.stringify(catalog), 'modelCatalogCache');
+    expect(() => inspectCachedModel(file, 'space-bunny')).toThrow('campaign-model-cache-stale-or-missing');
     update.prepare('UPDATE account_usage_records SET usage=? WHERE account_id=?').run(JSON.stringify({ subscription: { planName: 'Paid' } }), 'workbuddy-intl');
     update.close();
     expect(() => inspectFreeQuota(file, 'space-bunny')).toThrow('campaign-enabled-account-is-not-free');

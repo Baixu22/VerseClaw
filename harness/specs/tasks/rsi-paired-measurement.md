@@ -70,7 +70,7 @@ campaign. The sealed TF-0856 preparation remains a historical proposal with
 zero dispatch authorization; this experiment records the later authorization.
 
 The initial endpoint is `http://127.0.0.1:3065/v1/responses`, model `space-bunny`.
-Live model metadata identifies WorkBuddy ownership and a credit multiplier.
+Timestamped provider-owned model metadata identifies WorkBuddy and a credit multiplier.
 The local provider account metadata identifies existing Free quota. This basis
 permits using that quota with no new purchase; it does not provide a fiat token
 tariff. The campaign retains the credit metadata and prevents a paid route or

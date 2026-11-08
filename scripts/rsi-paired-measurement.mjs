@@ -16,8 +16,6 @@ import { calibrateLiveTask, finalizeLiveAdmission, probeLiveResource } from './r
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const read = path => JSON.parse(readFileSync(path, 'utf8'));
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
-const priceProjection = model => ({ id: model.id, provider: model.owned_by, credits: model.credits,
-  supportsToolCall: model.supports_tool_call, maxInputTokens: model.max_input_tokens, maxOutputTokens: model.max_output_tokens });
 function write(path, value) {
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, JSON.stringify(value, null, 2) + '\n', { flag: 'wx' });
@@ -49,25 +47,31 @@ export function inspectFreeQuota(database, model) {
   } finally { db.close(); }
 }
 
-async function inspectModel(endpoint, model) {
-  const url = new URL(endpoint);
-  assert(url.protocol === 'http:' && url.hostname === '127.0.0.1' && url.port === '3065'
-    && url.pathname === '/v1/responses' && !url.search && !url.hash && !url.username && !url.password,
-  'paired-measurement-endpoint');
-  const response = await fetch(new URL('/v1/models', url), { redirect: 'error', signal: AbortSignal.timeout(15000) });
-  assert(response.ok, 'campaign-model-metadata-unavailable');
-  const metadata = (await response.json()).data.find(entry => entry.id === model);
-  assert(metadata?.owned_by === 'workbuddy' && metadata.supports_tool_call === true, 'campaign-model-owner-or-tools');
-  return priceProjection(metadata);
+export function inspectCachedModel(database, model) {
+  const db = new DatabaseSync(database, { readOnly: true });
+  try {
+    const cache = JSON.parse(db.prepare('SELECT value FROM kv WHERE key=?').get('modelCatalogCache')?.value ?? '{}');
+    const candidates = ['plugin:workbuddy', 'workbuddy'].map(source => ({ source, ...cache[source] }))
+      .filter(entry => entry.models?.some(item => item.id === model)).sort((left, right) => right.fetchedAt - left.fetchedAt);
+    const latest = candidates[0], ageMs = Date.now() - latest?.fetchedAt;
+    assert(Number.isFinite(ageMs) && ageMs >= 0 && ageMs <= 86400000, 'campaign-model-cache-stale-or-missing');
+    const metadata = latest.models.find(entry => entry.id === model);
+    assert(metadata.supportsToolCall === true && Number.isSafeInteger(metadata.maxInputTokens)
+      && Number.isSafeInteger(metadata.maxOutputTokens), 'campaign-model-owner-or-tools');
+    return { source: latest.source, fetchedAt: latest.fetchedAt, ageMs,
+      model: { id: metadata.id, provider: 'workbuddy', credits: metadata.credits,
+        supportsToolCall: metadata.supportsToolCall, maxInputTokens: metadata.maxInputTokens, maxOutputTokens: metadata.maxOutputTokens } };
+  } finally { db.close(); }
 }
 
 export async function preparePairedMeasurement({ root = ROOT, base, authorization, quotaDatabase, evolutionFile }) {
   assert(!existsSync(base), 'new-campaign-directory-required');
   assert.equal(execFileSync('git', ['status', '--porcelain'], { cwd: root, windowsHide: true, encoding: 'utf8' }).trim(), '', 'campaign-clean-candidate-required');
   const endpoint = 'http://127.0.0.1:3065/v1/responses', model = 'space-bunny';
-  const metadata = await inspectModel(endpoint, model), quota = inspectFreeQuota(quotaDatabase, model);
+  const snapshot = inspectCachedModel(quotaDatabase, model), metadata = snapshot.model;
+  const quota = inspectFreeQuota(quotaDatabase, model);
   const priceEvidence = { schemaVersion: 'RsiCampaignPriceBasis/v1', driven_by: 'agent', actor: 'codex/rsi-price-verifier',
-    endpoint, model: metadata, quota, currency: 'CNY', newSpendingPerRequestUpperBoundCny: 0,
+    endpoint, model: metadata, modelSnapshot: snapshot, quota, currency: 'CNY', newSpendingPerRequestUpperBoundCny: 0,
     basis: 'Existing Free quota only; no quota purchase or paid fallback.',
     tokenTariff: null, upstreamCreditDebit: null, upstreamInvoice: null };
   const campaignBudget = { schemaVersion: 'RsiCampaignBudget/v1', driven_by: 'agent', actor: 'codex/rsi-campaign-budget',
@@ -184,10 +188,11 @@ if (isMainEntrypoint(import.meta.url)) {
           assert(typeof key === 'string' && key, 'stdin credential required');
           const campaignLedger = createCampaignLedger({ directory: join(values.scratch, 'campaign-ledger'), campaign: plan.budget.campaign,
             verifyPriceBasis: async () => {
-              assert.deepEqual(await inspectModel(plan.provider.endpoint, plan.provider.model), price.model, 'campaign-model-price-drift');
+              const modelSnapshot = inspectCachedModel(values['quota-db'], plan.provider.model);
+              assert.deepEqual(modelSnapshot.model, price.model, 'campaign-model-price-drift');
               const observation = inspectFreeQuota(values['quota-db'], plan.provider.model);
               assert.equal(observation.routesDigest, price.quota.routesDigest, 'campaign-provider-route-drift');
-              return observation;
+              return { ...observation, modelSnapshot };
             } });
           if (!existsSync(join(admission, 'provider-preflight.json'))) {
             // All local oracle admissions precede the first resource-consuming probe.
