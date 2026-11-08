@@ -1,3 +1,30 @@
+export const EVAL_RECALL_PAGE_MAX_CHARS = 5_500;
+
+export const RECALL_TOOL_DEF = {
+  type: "function" as const,
+  name: "context_archive_recall",
+  description: "Read one page from an archive_uri and checksum shown in the visible context. Explicitly set max_chars to 1..5500 on every call. If the exact value is absent and truncated is true, read the next page with offset equal to the returned offset plus content.length. As soon as the exact value is found, stop calling tools and return only {\"value\":\"exact value\"}. After at most 3 recalls without an exact value, return only {\"value\":null}.",
+  parameters: {
+    type: "object",
+    properties: {
+      archive_uri: { type: "string" },
+      checksum: { type: "string" },
+      byte_length: { type: "integer" },
+      offset: { type: "integer" },
+      max_chars: { type: "integer", minimum: 1, maximum: EVAL_RECALL_PAGE_MAX_CHARS },
+    },
+    required: ["archive_uri", "checksum", "max_chars"],
+    additionalProperties: false,
+  },
+};
+
+export function assertEvalRecallPage(arguments_: Record<string, unknown>): void {
+  const size = arguments_.max_chars;
+  if (typeof size !== "number" || !Number.isSafeInteger(size) || size < 1 || size > EVAL_RECALL_PAGE_MAX_CHARS) {
+    throw new Error("max_chars must be an explicit integer from 1 to 5500 for this evaluation");
+  }
+}
+
 type VisibleMessage = { role: string; content?: unknown; toolCallId?: string };
 
 export function contentText(message: VisibleMessage): string {

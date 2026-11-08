@@ -529,6 +529,8 @@ reference-visible 增长 38.62%。原始请求、逐次记录、复算与实验�
 
 2026-11-08 从封存请求、响应与归档重新复算，两轮 84 份证据清单和 1605 个归档均通过。收益判定为 NO-GO，TF-0749 保持 in_progress/80：B2/B4/B5/B6 未通过，第三轮证据任务的保留正向配对为 0。本轮新增 provider 调用为 0；完整复算与页适配实验设计见[收益证据复核](../../harness/specs/fixtures/context-inline-spill-benefit-closeout-20261108/REPORT.md)。
 
+[第四轮评测](../../harness/specs/tasks/inline-spill-real-benefit-eval-round4.md)要求每次回读显式提供 1–5500 的 `max_chars`，缺失或超界参数返回 `invalid_arguments`。工具说明引导模型用 `offset + content.length` 翻页，取得精确值后输出最终 JSON。页尺寸与 6000 字符生产投影预算共同校验，收益按原 96 次样本与 900 输出 token 预算实测。
+
 复算：
 
 ```powershell

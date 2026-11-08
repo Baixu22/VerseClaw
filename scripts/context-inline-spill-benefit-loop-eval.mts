@@ -31,7 +31,7 @@ import {
 } from "../openclaw_runtime/src/context-engine/registry/context-item-registry.js";
 import type { AgentMessage } from "../openclaw_runtime/src/agents/runtime/index.js";
 import { mcnemarExact, parseAnswer, wilson } from "./context-inline-spill-benefit-scoring.mjs";
-import { buildProjectedEvalInput, contentText, pairedSessionId, textOf } from "./context-inline-spill-benefit-input.mjs";
+import { assertEvalRecallPage, buildProjectedEvalInput, contentText, EVAL_RECALL_PAGE_MAX_CHARS, pairedSessionId, RECALL_TOOL_DEF, textOf } from "./context-inline-spill-benefit-input.mjs";
 
 const ROOT = process.cwd();
 const MODE = argValue("--mode") ?? "deterministic";
@@ -39,7 +39,7 @@ if (!["deterministic", "live"].includes(MODE)) throw new Error("mode must be det
 const RUN_ID = new Date().toISOString().replace(/[:.]/g, "-") + "-" + MODE;
 const runDir = resolve(argValue("--out") ?? "D:/tmp/context-inline-spill-benefit", RUN_ID);
 mkdirSync(runDir, { recursive: true });
-const ACTOR = "codex-inline-spill-benefit-r3";
+const ACTOR = "codex-inline-spill-benefit-r4-01a1b934";
 const API_KEY = process.env.CONTEXT_INLINE_SPILL_API_KEY;
 const BASE_URL = process.env.CONTEXT_INLINE_SPILL_BASE_URL ?? "http://127.0.0.1:3065/v1";
 const MODEL = process.env.CONTEXT_INLINE_SPILL_MODEL ?? "space-bunny";
@@ -48,7 +48,7 @@ const MAX_TURNS = Number(argValue("--max-turns") ?? 8);
 const CONTEXT_WINDOW_TOKENS = 32_000;
 const TOOL_MAX_CHARS = 6_000;
 const AGGREGATE_MAX_CHARS = 16_000;
-const RECALL_PAGE_CHARS = 5_500;
+const RECALL_PAGE_CHARS = EVAL_RECALL_PAGE_MAX_CHARS;
 process.env.OPENCLAW_CONTEXT_ARCHIVE_DIR = join(runDir, "archives");
 mkdirSync(join(runDir, "archives"), { recursive: true });
 
@@ -160,24 +160,6 @@ type ProviderTurn = {
   httpStatus?: number;
   failureClass?: string;
   raw?: string;
-};
-
-const RECALL_TOOL_DEF = {
-  type: "function" as const,
-  name: "context_archive_recall",
-  description: "Read a bounded excerpt from a masked tool-output archive. Use only an archive_uri that appears in the visible context.",
-  parameters: {
-    type: "object",
-    properties: {
-      archive_uri: { type: "string" },
-      checksum: { type: "string" },
-      byte_length: { type: "integer" },
-      offset: { type: "integer" },
-      max_chars: { type: "integer" },
-    },
-    required: ["archive_uri", "checksum"],
-    additionalProperties: false,
-  },
 };
 
 async function liveTurn(requestBody: string): Promise<ProviderTurn> {
@@ -339,14 +321,15 @@ for (const fixture of fixtures) {
           }
           recallHandledThisTurn = true;
           let executed: { content: Array<{ text?: string }>; details?: Record<string, unknown> };
-          if (!cfg.reference) {
-            executed = { content: [{ text: JSON.stringify({ ok: false, diagnostics: [{ code: "no_archive_reference" }] }) }], details: undefined };
-          } else {
-            try {
+          try {
+            assertEvalRecallPage(call.arguments);
+            if (!cfg.reference) {
+              executed = { content: [{ text: JSON.stringify({ ok: false, diagnostics: [{ code: "no_archive_reference" }] }) }], details: undefined };
+            } else {
               executed = (await recallTool.execute(call.callId, call.arguments as never)) as typeof executed;
-            } catch (error) {
-              executed = { content: [{ text: JSON.stringify({ ok: false, diagnostics: [{ code: "invalid_arguments", message: String(error) }] }) }], details: undefined };
             }
+          } catch (error) {
+            executed = { content: [{ text: JSON.stringify({ ok: false, diagnostics: [{ code: "invalid_arguments", message: String(error) }] }) }], details: undefined };
           }
           const resultText = executed.content.map((b) => b.text ?? "").join("\n");
           const details = executed.details;

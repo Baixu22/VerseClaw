@@ -45,6 +45,7 @@ Use this scenario when work defines or changes:
 - The staged harness task map for Context Family work.
 - Model-driven Inline/Spill evaluation with projection-only protocol outputs and identical initial inputs for retention pressure pairs.
 - Offline replay of sealed Inline/Spill results, with evidence-task and absent-evidence control pairs reported separately when interpreting retention benefit.
+- Evaluation-only archive pages require explicit 1–5500 character sizes, with invalid requests rejected before archive access and every returned page still passing through production projection.
 
 ## Scenario Boundaries
 
