@@ -61,7 +61,6 @@ test("normal conversation shows one task header and reveals file changes below t
     await expect(page.getByTestId('chat-welcome-bg')).toHaveCount(0);
     await expect(page.getByTestId('chat-welcome-watermark')).toHaveCount(0);
     await expect(page.getByTestId('composer-git-trigger')).toHaveCount(0);
-    await page.screenshot({ path: info.outputPath('conversation-empty.png'), animations: 'disabled' });
     await host(page, "gateway", "start");
     await expect
       .poll(
@@ -99,6 +98,12 @@ test("normal conversation shows one task header and reveals file changes below t
       'commit', '--allow-empty', '-m', 'Initialize isolated conversation fixture'],
     { cwd: root, windowsHide: true, stdio: 'pipe' });
     expect(execFileSync('git', ['status', '--porcelain'], { cwd: root, windowsHide: true, encoding: 'utf8' }).trim()).toBe('');
+    await page.reload();
+    await page.getByTestId(`sidebar-session-${session.key}`).click();
+    await expect(page.getByTestId('chat-welcome-context')).toBeVisible();
+    await expect(page.getByTestId('session-task-dock')).toHaveCount(0);
+    await expect(page.getByTestId('composer-git-trigger')).toHaveCount(0);
+    await page.screenshot({ path: info.outputPath('conversation-empty.png'), animations: 'disabled' });
     await installIpcMocks(app, {
       gatewayRpcByMethod: {
         "chat.history": {
@@ -238,7 +243,9 @@ test("normal conversation shows one task header and reveals file changes below t
       await page.getByRole('option',{name:({zh:'中文',ja:'日本語',ru:'Русский'} as Record<string,string>)[language],exact:true}).click();
       await expect(page.locator('html')).toHaveAttribute('lang',language);await page.getByTestId('settings-back-button').click();
       await expect(page.getByTestId('session-task-close')).toHaveAttribute('aria-label',labels.conversation.hide);
-      await expect(dock).toBeInViewport();await page.screenshot({path:info.outputPath(`conversation-task-${language}.png`)});
+      await expect(dock).toBeInViewport();
+      await expect(page.locator('[data-sonner-toast]')).toHaveCount(0);
+      await page.screenshot({path:info.outputPath(`conversation-task-${language}.png`)});
     }
     await writeFile(
       info.outputPath("task-ui-readback.json"),
