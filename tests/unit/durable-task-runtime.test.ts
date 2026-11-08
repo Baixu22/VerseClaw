@@ -143,6 +143,14 @@ describe("production task runtime guard", () => {
           restoreTaskModelContext(guard, restored).split("<PERSISTENT_TASK_CONTRACT>"),
         ).toHaveLength(2);
       }
+      const receipts = s.history(task.contract.taskNodeId).filter(event => event.kind === "context_rehydrated");
+      expect(receipts).toHaveLength(1);
+      const receipt = JSON.parse(receipts[0].json);
+      expect(receipt).toMatchObject({ taskNodeId:task.contract.taskNodeId,revision:1,epoch:1,runId:"run",source:"runtime-context-restoration" });
+      s.checkpoint(s.get(task.contract.taskNodeId).claim!,{nextAction:"Verify the final requirement",completed:[],unresolved:[],artifacts:[]});
+      restoreTaskModelContext(guard,"System rules.");
+      expect(s.history(task.contract.taskNodeId).filter(event=>event.kind==="context_rehydrated")).toHaveLength(2);
+      expect(()=>s.recordContextHydration({sessionKey:"a",generation:"g",runId:"stale",taskNodeId:task.contract.taskNodeId,revision:1,epoch:1,context:"obsolete task context"})).toThrow("CONTEXT_CHANGED_DURING_RESTORATION");
     } finally {
       finishPersistentTaskRun(root, "a", "run");
       s.close();

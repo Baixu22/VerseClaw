@@ -166,11 +166,15 @@ export function restoreTaskModelContext(
     const marker = "\n<PERSISTENT_TASK_CONTRACT>\n";
     const index = basePrompt.lastIndexOf(marker);
     const prefix = index < 0 ? basePrompt : basePrompt.slice(0, index);
-    const text = store
-      .context(guard.sessionKey, guard.generation)!
+    const taskContext = store.context(guard.sessionKey, guard.generation)!;
+    const text = taskContext
       .replaceAll("<", "\\u003c")
       .replaceAll(">", "\\u003e");
     if (text.length > maxTaskChars) throw new Error("TASK_MODEL_CONTEXT_BUDGET_EXCEEDED");
+    store.recordContextHydration({
+      sessionKey:guard.sessionKey,generation:guard.generation,runId:guard.runId,
+      taskNodeId:view.contract.taskNodeId,revision:view.contract.revision,epoch:view.claim.epoch,context:taskContext,
+    });
     return `${prefix}${marker}${text}\n</PERSISTENT_TASK_CONTRACT>`;
   } finally {
     store.close();

@@ -1100,6 +1100,38 @@ export class TaskSystemStore {
     }
     return prefix + JSON.stringify(progress);
   }
+  recordContextHydration(input: {
+    sessionKey: string;
+    generation?: string;
+    runId?: string;
+    taskNodeId: string;
+    revision: number;
+    epoch: number;
+    context: string;
+  }): { receiptId: string; contextDigest: string; revision: number; epoch: number } {
+    const binding = {
+      sessionKey: input.sessionKey,
+      generation: input.generation ?? null,
+      runId: input.runId ?? null,
+      taskNodeId: input.taskNodeId,
+      revision: input.revision,
+      epoch: input.epoch,
+      contextDigest: digest(input.context),
+      characters: input.context.length,
+    };
+    const receiptId = `context:${digest(binding)}`;
+    // Repeated model calls with unchanged task context reuse the receipt without writing.
+    const existing = this.db.prepare("SELECT result FROM task_requests WHERE id=?").get(receiptId) as {result:string}|undefined;
+    if (existing) return JSON.parse(existing.result);
+    return this.transaction(() => this.request(receiptId, binding, () => {
+      const current = this.binding(input.sessionKey, input.generation);
+      if (!current || current.contract.taskNodeId !== input.taskNodeId || current.contract.revision !== input.revision || current.claim?.epoch !== input.epoch || this.context(input.sessionKey, input.generation) !== input.context)
+        throw new Error("TASK_CONTEXT_CHANGED_DURING_RESTORATION");
+      const receipt = {receiptId, ...binding, at:this.now(), source:"runtime-context-restoration"};
+      this.event(input.taskNodeId, "context_rehydrated", receipt);
+      return receipt;
+    }));
+  }
   beginOperation(credential: TaskCredential, operationId: string, kind: string): void {
     this.transaction(() => {
       const view = this.assertOwner(credential);
