@@ -159,5 +159,22 @@
     }
   },
   "deployment": "Local same-repository coordination",
-  "historicalEvidence": "Parent directory retains the initial implementation slice and its failures unchanged"
+  "historicalEvidence": "Parent directory retains the initial implementation slice and its failures unchanged",
+  "mainIntegration": {
+    "commit": "82f6d665572de3bfbb9a44d466a46d847bca330d",
+    "changedFiles": 98,
+    "unrelatedPreserved": 2675,
+    "conflicts": 0,
+    "stagedPaths": 0,
+    "tests": {
+      "task-tests": {
+        "passed": 58,
+        "total": 58
+      },
+      "integration-tests": {
+        "passed": 31,
+        "total": 31
+      }
+    }
+  }
 }
