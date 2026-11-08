@@ -103,6 +103,16 @@ I/O 拥塞通过同类读操作的服务延迟反馈。诊断同时列出阈值�
 - Chat history 同 key 并发只打一次真实请求；
 - 资源事件写 shadow envelope，不自动升级为外部 metrics。
 
+混合负载验收使用 `tests/e2e/resource-mixed-load.spec.ts` 和冻结的
+`harness/specs/fixtures/resource-mixed-load-20261108/workload.json`。
+`scripts/verify-resource-mixed-load.mjs` 接受 `--before`、`--after` 两个已构建的源码目录、
+`--builds` 构建记录、`--artifacts` 构建文件哈希和 `--output` 独立输出目录，在每组单/双窗口与1/4/8模拟agent配置下按ABBA顺序执行。
+构建完成后使用 `scripts/capture-resource-builds.mjs` 绑定两侧源码、实际dist文件、Electron/Node/Git和编译器。
+两侧使用同一驱动，真实读取/检索/Git/日志/编译通过Main Fabric，远端等待使用本地HTTP固定延迟。
+统计器从任务回执和原始时序复算吞吐、排队/服务/总耗时P50/P95；输入与滚动只统计实际工作期间的样本。
+每轮保留进程身份、CPU/RSS/private/commit、Windows句柄、直接子进程及编译服务退出回执。
+失败尝试保留在原目录；恢复执行会核对源码、fixture和已通过报告的哈希。
+
 ## 3. BackgroundWorkGate
 
 实现：`openclaw_runtime/src/resources/background-work-gate.ts`。

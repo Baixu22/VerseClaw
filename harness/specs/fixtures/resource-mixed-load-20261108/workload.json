@@ -1,0 +1,21 @@
+{
+  "id": "resource-mixed-v1",
+  "driven_by": "agent",
+  "tasks": 48,
+  "phases": ["remote-wait", "retrieval", "git", "log", "build", "read"],
+  "workers": [1, 4, 8],
+  "windows": [1, 2],
+  "order": ["before", "after", "after", "before"],
+  "historyMessages": 200,
+  "streamEvents": 240,
+  "streamIntervalMs": 8,
+  "remoteDelayMs": 60,
+  "corpusLines": 4096,
+  "buildModules": 128,
+  "logBytes": 524288,
+  "retainedPressureBytes": 134217728,
+  "keyboardText": "next measured question",
+  "scrolls": 12,
+  "scrollIntervalMs": 50,
+  "scrollDelta": 320
+}
