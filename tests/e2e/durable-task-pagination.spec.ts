@@ -87,11 +87,27 @@ test("queries all task pages and filters without losing task identity", async ({
       await expect(page.getByTestId("managed-tasks").getByRole("status")).toContainText("last successful read");
       await expect(page.getByTestId("managed-task")).toContainText("Task page 02");
       await expect(page.getByRole("button", { name: "Claim for this session", exact: true })).toBeDisabled();
+      await page.screenshot({ path: info.outputPath("stale-task-store.png") });
     } finally { await writeFile(database, saved); }
     await page.getByTestId("managed-tasks").getByRole("button", { name: "Refresh", exact: true }).click();
     await expect(page.getByTestId("managed-tasks").getByRole("status")).toHaveCount(0);
     await expect(page.getByTestId("managed-task")).toContainText("Task page 02");
     await page.screenshot({ path: info.outputPath("filtered-task.png") });
+    for (const language of ["zh", "ja", "ru"]) {
+      const labels = JSON.parse(await readFile(join(process.cwd(), "shared/i18n/locales", language, "taskLedger.json"), "utf8"));
+      await page.evaluate(async language => {
+        const result = await window.verseClaw!.hostInvoke({ id: crypto.randomUUID(), module: "settings", action: "set", payload: { key: "language", value: language } });
+        if (!result.ok) throw new Error(result.error?.message);
+      }, language);
+      await page.reload();
+      await expect(page.locator("html")).toHaveAttribute("lang", language);
+      await page.getByRole("tab", { name: labels.managed.tab, exact: true }).click();
+      await page.getByLabel(labels.managed.search, { exact: true }).fill("Task page 02");
+      await expect(page.getByTestId("managed-task")).toHaveCount(1);
+      await expect(page.getByTestId("managed-task")).toBeInViewport();
+      await expect(page.getByTestId("managed-task")).toContainText(labels.managed.claim);
+      await page.screenshot({ path: info.outputPath(`filtered-task-${language}.png`) });
+    }
     await writeFile(
       info.outputPath("pagination-readback.json"),
       JSON.stringify(
@@ -102,6 +118,7 @@ test("queries all task pages and filters without losing task identity", async ({
           pages: [50, 55],
           filtered: "Task page 02",
           corruptDatabase: "retained marked stale view, refused mutations, recovered same task",
+          renderedLanguages: ["en", "zh", "ja", "ru"],
         },
         null,
         2,
