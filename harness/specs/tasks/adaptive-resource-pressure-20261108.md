@@ -4,7 +4,7 @@ id: adaptive-resource-pressure-20261108
 title: 按执行类别和有效压力调节并发
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: df229c0c3b001b984d4896c10c1e8408ecf678a0
+diffBase: c0868c76f7a583b7d8c809dff905f3ad29a0784f
 intent: 完成 TF-0837 / G30-G32，修复 backlog 正反馈，隔离延迟基线并接通新鲜压力与冷账户回收。
 expectedUserBehavior:
   - Rising execution latency contracts admission despite backlog, and stable demand recovers gradually.
