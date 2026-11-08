@@ -2742,3 +2742,7 @@ openclaw_runtime/_tmp_*
 !/harness/specs/fixtures/product-acceptance-closeout/b1-space-bunny/playwright.log
 
 !/docs/dev/runtime-memory-persistence-breakage-20261103.md
+
+# Exact logs retained by the integrated RSI acceptance manifest.
+!/harness/specs/fixtures/rsi-candidate-evolution/closeout-20261108/harness-ci-stderr.log
+!/harness/specs/fixtures/rsi-candidate-evolution/closeout-20261108/harness-ci-stdout.log

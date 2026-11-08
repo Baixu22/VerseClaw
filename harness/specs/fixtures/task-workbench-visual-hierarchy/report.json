@@ -1,0 +1,55 @@
+{
+  "schema": "TaskWorkbenchVisualHierarchy/v1",
+  "driven_by": "agent",
+  "sourceCandidate": "177d6b25bfb2a763e578958732d6a899277b3917",
+  "taskNode": "TF-0868",
+  "implementationWorktree": "D:/ClawX-work/durable-task-system-20261107",
+  "unit": {
+    "passed": 79,
+    "total": 79
+  },
+  "electron": {
+    "startTime": "2026-11-08T15:31:38.728Z",
+    "duration": 83953.391,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "runtimeBuild": {
+    "status": "finished",
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "durationMs": 511400,
+    "args": [
+      "scripts/build-all.mjs"
+    ]
+  },
+  "acceptance": "passed",
+  "firstFailures": [
+    {
+      "stage": "unit",
+      "reason": "Missing jsdom scrollTo caused assertion failures and uncaught errors; browser fixtures corrected"
+    },
+    {
+      "stage": "harness",
+      "reason": "Scenario profile and diff base corrected after main integration"
+    },
+    {
+      "stage": "runtime-build",
+      "exitCode": 124,
+      "reason": "First serial build reached the per-configuration timeout; bounded retry completed"
+    },
+    {
+      "stage": "electron",
+      "reason": "Workspace setup had created a file; isolated fixture now commits setup before testing changes"
+    }
+  ],
+  "scope": "Electron/Main/Gateway/SQLite with controlled chat history and runtime events; agent-driven interaction and screenshots",
+  "globalHarnessCI": {
+    "exitCode": 1,
+    "reason": "Agent Dev audit uses four stale reports dated 2026-11-06 and existing performance-limit failures",
+    "evidence": "global-harness-ci.json"
+  }
+}

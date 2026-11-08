@@ -1,0 +1,412 @@
+{
+  "driven_by": "agent",
+  "integratedCommit": "d0245efc0d2b3483d0bf78cb64d2647de20cca5d",
+  "verifiedChangedFiles": 63,
+  "unrelatedPreserved": 2810,
+  "unrelatedChanged": [],
+  "preservedOverlaps": [
+    "README.ja-JP.md",
+    "README.md",
+    "README.ru-RU.md",
+    "README.zh-CN.md",
+    "docs/modules/multi-agent-and-tasks.md",
+    "shared/i18n/locales/en/chat.json",
+    "shared/i18n/locales/ja/chat.json",
+    "shared/i18n/locales/ru/chat.json",
+    "shared/i18n/locales/zh/chat.json",
+    "src/pages/Chat/ComposerGitStrip.tsx",
+    "src/pages/Chat/index.tsx",
+    "src/styles/codex-composer-shell.css",
+    "tests/unit/chat-render-reachability.test.tsx",
+    "tests/unit/composer-git-strip.test.tsx"
+  ],
+  "adaptedConcurrentTests": [
+    "tests/unit/composer-git-strip.test.tsx"
+  ],
+  "adaptation": "Existing stale-workspace fixture now returns the new workspace root and checks the changed-file count after the old response settles",
+  "cases": {
+    "total": 121,
+    "passed": 121,
+    "firstRunPassed": 120,
+    "firstRunFailed": 1,
+    "retryPassed": 11
+  },
+  "checks": {
+    "candidate": "d0245efc0d2b3483d0bf78cb64d2647de20cca5d",
+    "records": [
+      {
+        "name": "unit",
+        "args": [
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "tests/unit/durable-task-acceptance.test.ts",
+          "tests/unit/durable-task-coordinator-context.test.ts",
+          "tests/unit/durable-task-delegation.test.ts",
+          "tests/unit/durable-task-event-store.test.ts",
+          "tests/unit/durable-task-faults.test.ts",
+          "tests/unit/durable-task-planning.test.ts",
+          "tests/unit/durable-task-runtime.test.ts",
+          "tests/unit/durable-task-start.test.ts",
+          "tests/unit/durable-task-system.test.ts",
+          "tests/unit/durable-task-tool.test.ts",
+          "tests/unit/session-task-dock.test.tsx",
+          "tests/unit/composer-git-strip.test.tsx",
+          "tests/unit/chat-session-status-rail.test.tsx",
+          "tests/unit/chat-artifact-panel-layout.test.tsx",
+          "tests/unit/chat-render-reachability.test.tsx",
+          "--maxWorkers=1",
+          "--reporter=default",
+          "--reporter=json",
+          "--outputFile=D:/tmp/task-workbench-hierarchy-20261108/main-unit.json"
+        ],
+        "pid": 35044,
+        "status": "finished",
+        "startedAt": "2026-11-08T15:38:17.336Z",
+        "exitCode": 1,
+        "signal": null,
+        "durationMs": 79252
+      },
+      {
+        "name": "types",
+        "args": [
+          "scripts/typecheck-agent-dev.mjs"
+        ],
+        "pid": 34428,
+        "status": "finished",
+        "startedAt": "2026-11-08T15:39:36.595Z",
+        "exitCode": 0,
+        "signal": null,
+        "durationMs": 75802
+      },
+      {
+        "name": "evidence",
+        "args": [
+          "harness/specs/fixtures/task-workbench-visual-hierarchy/verify.mjs"
+        ],
+        "pid": 29032,
+        "status": "finished",
+        "startedAt": "2026-11-08T15:40:52.411Z",
+        "exitCode": 0,
+        "signal": null,
+        "durationMs": 2584
+      }
+    ]
+  },
+  "source": [
+    {
+      "path": "README.ja-JP.md",
+      "installedSha256": "441bb2e9a099afa49da582cbd2a30d939562f8c3a002c959785fe861ff6372ec",
+      "currentSha256": "441bb2e9a099afa49da582cbd2a30d939562f8c3a002c959785fe861ff6372ec"
+    },
+    {
+      "path": "README.md",
+      "installedSha256": "7213b92ee10142912d6009e7d094b9157156e262ef78eb020748c54b6d320b38",
+      "currentSha256": "7213b92ee10142912d6009e7d094b9157156e262ef78eb020748c54b6d320b38"
+    },
+    {
+      "path": "README.ru-RU.md",
+      "installedSha256": "a9f761a0e0446c755bbf126f675bf813e47cb5f6fab41b1b95ff11488788f7e6",
+      "currentSha256": "a9f761a0e0446c755bbf126f675bf813e47cb5f6fab41b1b95ff11488788f7e6"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "installedSha256": "6c0c730c7c92197d372b037a8450d138563a83589babfc6810a8d0fc201b738d",
+      "currentSha256": "6c0c730c7c92197d372b037a8450d138563a83589babfc6810a8d0fc201b738d"
+    },
+    {
+      "path": "docs/dev/durable-task-system/DESIGN.md",
+      "installedSha256": "e9881323aabe86d476e2997439ccf1d5152a7ebd83945df3ea639df2ea37f42e",
+      "currentSha256": "e9881323aabe86d476e2997439ccf1d5152a7ebd83945df3ea639df2ea37f42e"
+    },
+    {
+      "path": "docs/modules/multi-agent-and-tasks.md",
+      "installedSha256": "800a47eae32b69d4b64d26f47d950ffc9b8263034ce1b62f3a425047f7b607b0",
+      "currentSha256": "800a47eae32b69d4b64d26f47d950ffc9b8263034ce1b62f3a425047f7b607b0"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/REPORT.md",
+      "installedSha256": "3091d3414505748f02c7bb70b82d7cffab11a7f242c5e2d979759066e6fa48ea",
+      "currentSha256": "3091d3414505748f02c7bb70b82d7cffab11a7f242c5e2d979759066e6fa48ea"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/SHA256SUMS",
+      "installedSha256": "b67bcf07c0d4b20c9ab9ec8ac7885360a8b8bc000c22493fb50af9b54b08446e",
+      "currentSha256": "b67bcf07c0d4b20c9ab9ec8ac7885360a8b8bc000c22493fb50af9b54b08446e"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/commands.json",
+      "installedSha256": "55124b44cf81cfc0e2c9e822b8679a15c0d2d5bf0c66cc60c1fefad57a84cff2",
+      "currentSha256": "55124b44cf81cfc0e2c9e822b8679a15c0d2d5bf0c66cc60c1fefad57a84cff2"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/comms-compare.txt",
+      "installedSha256": "291557752250ad0b513f0230a1bf780a2eee1bbf1786565b3dec21e8b21f9dfe",
+      "currentSha256": "291557752250ad0b513f0230a1bf780a2eee1bbf1786565b3dec21e8b21f9dfe"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/comms-replay.txt",
+      "installedSha256": "85d2aca34fb74bb98d32bd06da7dcec3cacc7d409910579b89d695026c109728",
+      "currentSha256": "85d2aca34fb74bb98d32bd06da7dcec3cacc7d409910579b89d695026c109728"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/contract.txt",
+      "installedSha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
+      "currentSha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/conversation-empty.png",
+      "installedSha256": "8bcde354b50340d70799bfea0773712747afc85fe7df8792f0c0b3bb7ad0c8ec",
+      "currentSha256": "8bcde354b50340d70799bfea0773712747afc85fe7df8792f0c0b3bb7ad0c8ec"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/conversation-task-expanded.png",
+      "installedSha256": "444941af63d3f84a14a6ba5a6de7532fb9c9737bfd569bc76f518c3f85a40da6",
+      "currentSha256": "444941af63d3f84a14a6ba5a6de7532fb9c9737bfd569bc76f518c3f85a40da6"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/conversation-task-hidden.png",
+      "installedSha256": "d654e64e65ccf1bfb275544800597dabe546765e564db2759ae133a6575227b8",
+      "currentSha256": "d654e64e65ccf1bfb275544800597dabe546765e564db2759ae133a6575227b8"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/conversation-task-ja.png",
+      "installedSha256": "503812d4b4a91eac2c9cd7ffcddb786c7ae745dea636ccd27ebe2ff61b457a2a",
+      "currentSha256": "503812d4b4a91eac2c9cd7ffcddb786c7ae745dea636ccd27ebe2ff61b457a2a"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/conversation-task-narrow.png",
+      "installedSha256": "bb5d364519df83838801a9c574dc515251523fbb1c4df1e3761bd40990840d40",
+      "currentSha256": "bb5d364519df83838801a9c574dc515251523fbb1c4df1e3761bd40990840d40"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/conversation-task-ru.png",
+      "installedSha256": "947173eaf58867e5ab407b7fe9948fbbf7b3e01c8a5cb250b4e03b63fad5e64f",
+      "currentSha256": "947173eaf58867e5ab407b7fe9948fbbf7b3e01c8a5cb250b4e03b63fad5e64f"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/conversation-task-zh.png",
+      "installedSha256": "a728e06e1b53f75d1ff8e398c1ef5eebf369e1b2d7cdc134ab449138ddad93cd",
+      "currentSha256": "a728e06e1b53f75d1ff8e398c1ef5eebf369e1b2d7cdc134ab449138ddad93cd"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/conversation-task.png",
+      "installedSha256": "5a44cbd920d42f858abec7591434e13d8434db49727c6483d9bc273fa779bbbf",
+      "currentSha256": "5a44cbd920d42f858abec7591434e13d8434db49727c6483d9bc273fa779bbbf"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/desktop.txt",
+      "installedSha256": "ddfedf6b8573fc18debd1a8ef6720f0574a48390236c416cbf12531011c95336",
+      "currentSha256": "ddfedf6b8573fc18debd1a8ef6720f0574a48390236c416cbf12531011c95336"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/electron-first-failure.json",
+      "installedSha256": "02d1fda480dd38a6f46d4b392cb6cb51f493e9c9170a9fa9d137e9928dde6097",
+      "currentSha256": "02d1fda480dd38a6f46d4b392cb6cb51f493e9c9170a9fa9d137e9928dde6097"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/electron.json",
+      "installedSha256": "0bd654c40a13431219dcb8337d7bc3ca24d8654683e7570dcad215fc18d7b884",
+      "currentSha256": "0bd654c40a13431219dcb8337d7bc3ca24d8654683e7570dcad215fc18d7b884"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/electron.txt",
+      "installedSha256": "8e8bd323c23b9eb57223ecde53b4a7fec4dfb015ea8d6ba231d302e5c110dc37",
+      "currentSha256": "8e8bd323c23b9eb57223ecde53b4a7fec4dfb015ea8d6ba231d302e5c110dc37"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/global-harness-ci.json",
+      "installedSha256": "f2979d99263c86decb759f62e8ccad4dac4d1288ccbec6d642cfab6788bd5349",
+      "currentSha256": "f2979d99263c86decb759f62e8ccad4dac4d1288ccbec6d642cfab6788bd5349"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/global-harness-ci.txt",
+      "installedSha256": "2ff64938b7e29e427d44c4371dad34ec91f6d35e5b08cd0c87d14234542c83bd",
+      "currentSha256": "2ff64938b7e29e427d44c4371dad34ec91f6d35e5b08cd0c87d14234542c83bd"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/harness-dry-run.txt",
+      "installedSha256": "c024aef08dfdadaaa29601c1d6abd8828150db09798f06ee86bbbe259973fbf1",
+      "currentSha256": "c024aef08dfdadaaa29601c1d6abd8828150db09798f06ee86bbbe259973fbf1"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/harness.txt",
+      "installedSha256": "423168ad564894a3421c939334d0e56f4828ce6baca4de13165830fffc50e23d",
+      "currentSha256": "423168ad564894a3421c939334d0e56f4828ce6baca4de13165830fffc50e23d"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/i18n.txt",
+      "installedSha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe",
+      "currentSha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/lint.json",
+      "installedSha256": "245fe349c6803266f82f9234b3dc7e9685331fbe3126a83efee52587b9bc225c",
+      "currentSha256": "245fe349c6803266f82f9234b3dc7e9685331fbe3126a83efee52587b9bc225c"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/report.json",
+      "installedSha256": "eda846c0f2716ca350d4ec1638c63ace0d63550750a155b9ca2ae9f8b462e5fb",
+      "currentSha256": "eda846c0f2716ca350d4ec1638c63ace0d63550750a155b9ca2ae9f8b462e5fb"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/runtime-build.json",
+      "installedSha256": "a4ec077ff9bf41987ad91268fe23fdb92a53df9f8e002d968fbc1486d8ccb7d9",
+      "currentSha256": "a4ec077ff9bf41987ad91268fe23fdb92a53df9f8e002d968fbc1486d8ccb7d9"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/runtime-build.txt",
+      "installedSha256": "5aee83114b8074f814bf7565d83611fcaf1ef80f27e63d8bbc25eef4237a6141",
+      "currentSha256": "5aee83114b8074f814bf7565d83611fcaf1ef80f27e63d8bbc25eef4237a6141"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/runtime-first-timeout.json",
+      "installedSha256": "7ac2fce3350b3a9b8a281f6987ab71ffa0b15eedc55a3dddc690ae3ae1caf35c",
+      "currentSha256": "7ac2fce3350b3a9b8a281f6987ab71ffa0b15eedc55a3dddc690ae3ae1caf35c"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/runtime-first-timeout.txt",
+      "installedSha256": "d4bba7081a3643b949a5c93cedd0a52b2a8286227526fc5366227bebe81578f2",
+      "currentSha256": "d4bba7081a3643b949a5c93cedd0a52b2a8286227526fc5366227bebe81578f2"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/source-equivalence.json",
+      "installedSha256": "59eb709b3056f43f2ad144465f135494d86369ff38f1085f03e0c00ea1be34ee",
+      "currentSha256": "59eb709b3056f43f2ad144465f135494d86369ff38f1085f03e0c00ea1be34ee"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/source-manifest.json",
+      "installedSha256": "57e5b3a6edc539a229a473e7266a8669b7f251e2408e835f87713aacb937c7d8",
+      "currentSha256": "57e5b3a6edc539a229a473e7266a8669b7f251e2408e835f87713aacb937c7d8"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/task-ui-readback.json",
+      "installedSha256": "9038069e6ecf0e6329ffbb94438a14f0bc27a8ec03d2e6a8647e4fb059232592",
+      "currentSha256": "9038069e6ecf0e6329ffbb94438a14f0bc27a8ec03d2e6a8647e4fb059232592"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/types.txt",
+      "installedSha256": "d33951feb969fd7c99c841d9663e978f8abbe37340c0e17e69317ddb8fce6d3e",
+      "currentSha256": "d33951feb969fd7c99c841d9663e978f8abbe37340c0e17e69317ddb8fce6d3e"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/unit-first-failure.json",
+      "installedSha256": "05d664ad1f126ddc362e44484cb9115a81f74f217ceae492a17f7f115c663fed",
+      "currentSha256": "05d664ad1f126ddc362e44484cb9115a81f74f217ceae492a17f7f115c663fed"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/unit.json",
+      "installedSha256": "33fa2888556dfe3617a4cd7473c96cf09a301c6fdd4bd0dbfea8571d96eab3ac",
+      "currentSha256": "33fa2888556dfe3617a4cd7473c96cf09a301c6fdd4bd0dbfea8571d96eab3ac"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/unit.txt",
+      "installedSha256": "b40c5649868b2548b73df959fe1c16a96ca75a4b0e1da744bbc034dbb1035211",
+      "currentSha256": "b40c5649868b2548b73df959fe1c16a96ca75a4b0e1da744bbc034dbb1035211"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/verify.mjs",
+      "installedSha256": "e8de3604d697ac6f9b69027c3f9121049ec4f4b133b3d76a7110931e19c5e87b",
+      "currentSha256": "e8de3604d697ac6f9b69027c3f9121049ec4f4b133b3d76a7110931e19c5e87b"
+    },
+    {
+      "path": "harness/specs/fixtures/task-workbench-visual-hierarchy/visual-review.json",
+      "installedSha256": "87b4bd2756fc8fe7a840009503e5b112c1dbba93a0db6f0a0dce41645cf8ae9d",
+      "currentSha256": "87b4bd2756fc8fe7a840009503e5b112c1dbba93a0db6f0a0dce41645cf8ae9d"
+    },
+    {
+      "path": "harness/specs/tasks/task-workbench-visual-hierarchy.md",
+      "installedSha256": "4cffe60366f349b15515ecec37d1a45bff00231f266414a50c9501888d937859",
+      "currentSha256": "4cffe60366f349b15515ecec37d1a45bff00231f266414a50c9501888d937859"
+    },
+    {
+      "path": "shared/i18n/locales/en/chat.json",
+      "installedSha256": "53d47696cbb250f2af0f753c8a7c5a5c96e6753b63629a04107de30bdee7b0e1",
+      "currentSha256": "53d47696cbb250f2af0f753c8a7c5a5c96e6753b63629a04107de30bdee7b0e1"
+    },
+    {
+      "path": "shared/i18n/locales/en/taskLedger.json",
+      "installedSha256": "f501f74a786c5a35d57ad87220f06cf9ae607ac0639f2031dc28ae954b421871",
+      "currentSha256": "f501f74a786c5a35d57ad87220f06cf9ae607ac0639f2031dc28ae954b421871"
+    },
+    {
+      "path": "shared/i18n/locales/ja/chat.json",
+      "installedSha256": "cdd38ab8ad1d02ff1e6974a2fc0bc94bad697985643b6ea6923fe7db5d58c0b4",
+      "currentSha256": "cdd38ab8ad1d02ff1e6974a2fc0bc94bad697985643b6ea6923fe7db5d58c0b4"
+    },
+    {
+      "path": "shared/i18n/locales/ja/taskLedger.json",
+      "installedSha256": "b3b904ccbbf1eff3a86a54e3c8cae6e2c729bda0a43ef730c85b97f8d7012813",
+      "currentSha256": "b3b904ccbbf1eff3a86a54e3c8cae6e2c729bda0a43ef730c85b97f8d7012813"
+    },
+    {
+      "path": "shared/i18n/locales/ru/chat.json",
+      "installedSha256": "c79bcda1dfb7938d0d29002e2c7814a34d66c5353009056dcb9db506ecbb4b88",
+      "currentSha256": "c79bcda1dfb7938d0d29002e2c7814a34d66c5353009056dcb9db506ecbb4b88"
+    },
+    {
+      "path": "shared/i18n/locales/ru/taskLedger.json",
+      "installedSha256": "0880fda98a6c4d2a0ae1989649894fe1377c8bf2f4ff55d4ee9831effb807cfd",
+      "currentSha256": "0880fda98a6c4d2a0ae1989649894fe1377c8bf2f4ff55d4ee9831effb807cfd"
+    },
+    {
+      "path": "shared/i18n/locales/zh/chat.json",
+      "installedSha256": "f752170838520aab4342dd357cca6ad706debb309fd0c3b675c5d0ba4536be09",
+      "currentSha256": "f752170838520aab4342dd357cca6ad706debb309fd0c3b675c5d0ba4536be09"
+    },
+    {
+      "path": "shared/i18n/locales/zh/taskLedger.json",
+      "installedSha256": "9042c8016788b4721d2b13870211d1cb98bc8ad01a7d4dfec6ce79135360cf5b",
+      "currentSha256": "9042c8016788b4721d2b13870211d1cb98bc8ad01a7d4dfec6ce79135360cf5b"
+    },
+    {
+      "path": "src/components/tool-ui/plan-view.tsx",
+      "installedSha256": "055c8bc9bd149fda116c62194f875c1b65ad8f3e87d58bee07631a309371490d",
+      "currentSha256": "055c8bc9bd149fda116c62194f875c1b65ad8f3e87d58bee07631a309371490d"
+    },
+    {
+      "path": "src/pages/Chat/ComposerGitStrip.tsx",
+      "installedSha256": "944f186139928b5fb0395221f00097f2fe2e0fd6b1629c7e6ab9486259b4bc9e",
+      "currentSha256": "944f186139928b5fb0395221f00097f2fe2e0fd6b1629c7e6ab9486259b4bc9e"
+    },
+    {
+      "path": "src/pages/Chat/SessionTaskDock.tsx",
+      "installedSha256": "3caf559d15d0c83fdee7b12132ae013958a1c2588f4d351e535c331c372d5dc1",
+      "currentSha256": "3caf559d15d0c83fdee7b12132ae013958a1c2588f4d351e535c331c372d5dc1"
+    },
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "installedSha256": "aee86b0f1b9f36a6b632a2967a83e22aa8c7cfd4eb48fc2d865fbdbeda259d16",
+      "currentSha256": "aee86b0f1b9f36a6b632a2967a83e22aa8c7cfd4eb48fc2d865fbdbeda259d16"
+    },
+    {
+      "path": "src/styles/codex-composer-shell.css",
+      "installedSha256": "05dedbb2259fbc18fec4bde26e3a7b326e0ef70d00169b9e14d6a10babc7c171",
+      "currentSha256": "05dedbb2259fbc18fec4bde26e3a7b326e0ef70d00169b9e14d6a10babc7c171"
+    },
+    {
+      "path": "tests/e2e/durable-task-conversation.spec.ts",
+      "installedSha256": "4beadccfe53ebcfa5c05b2efe3424d8a710ed062cbaccb29d86ef85c3e45f130",
+      "currentSha256": "4beadccfe53ebcfa5c05b2efe3424d8a710ed062cbaccb29d86ef85c3e45f130"
+    },
+    {
+      "path": "tests/unit/chat-artifact-panel-layout.test.tsx",
+      "installedSha256": "fd5cb0f764e710467bb584ac607b92de0426f64e6d861c410c00d84fe2be60f7",
+      "currentSha256": "fd5cb0f764e710467bb584ac607b92de0426f64e6d861c410c00d84fe2be60f7"
+    },
+    {
+      "path": "tests/unit/chat-render-reachability.test.tsx",
+      "installedSha256": "c5c54592819e13f6c099abe93b0b50a8a685df5e39b64f40927c79951818c2cc",
+      "currentSha256": "c5c54592819e13f6c099abe93b0b50a8a685df5e39b64f40927c79951818c2cc"
+    },
+    {
+      "path": "tests/unit/composer-git-strip.test.tsx",
+      "installedSha256": "5c2a0e7471dee28fa45a60bd1c2bdb031560e11369b6ce2a86aae8f777c00739",
+      "currentSha256": "1f49e1e61e62f50732a14a3fa55d054a3281b7099d3288103c121b4baf8794ff"
+    },
+    {
+      "path": "tests/unit/session-task-dock.test.tsx",
+      "installedSha256": "d5639c33c21c6694238ef3ed402de23af235892be86d8d20cfd07cef58e859d5",
+      "currentSha256": "d5639c33c21c6694238ef3ed402de23af235892be86d8d20cfd07cef58e859d5"
+    }
+  ]
+}

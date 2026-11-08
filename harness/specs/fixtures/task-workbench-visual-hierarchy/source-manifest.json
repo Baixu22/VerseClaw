@@ -1,0 +1,106 @@
+{
+  "candidate": "177d6b25bfb2a763e578958732d6a899277b3917",
+  "base": "431144c6f",
+  "files": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "290881896510ea0ed4ff0f0a8fbb8e1e4143bd3f0d982a2c0fb49dd7f3ff9abc"
+    },
+    {
+      "path": "README.md",
+      "sha256": "566b85e28be2f599e42d304266de5c32fb974bbb7dc9e2c66d287aae19028d2d"
+    },
+    {
+      "path": "README.ru-RU.md",
+      "sha256": "72efbdb40c7a37a4fc5c9e66a724c6abae5272567aef1b22840ae55437a39f77"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "62d796fd0cdd0c66df7e86246fc3a209b10f8ea154b39ebc8071162d74df8aec"
+    },
+    {
+      "path": "docs/dev/durable-task-system/DESIGN.md",
+      "sha256": "e9881323aabe86d476e2997439ccf1d5152a7ebd83945df3ea639df2ea37f42e"
+    },
+    {
+      "path": "docs/modules/multi-agent-and-tasks.md",
+      "sha256": "90f11bec34c9ad6f5c0415d03e8170fb2303d376b96a02044e89523323d6bfa7"
+    },
+    {
+      "path": "harness/specs/tasks/task-workbench-visual-hierarchy.md",
+      "sha256": "4cffe60366f349b15515ecec37d1a45bff00231f266414a50c9501888d937859"
+    },
+    {
+      "path": "shared/i18n/locales/en/chat.json",
+      "sha256": "c4800a830e0232b386ddcf3f00096c52dfc3f4e54cf414fb3d09b067ed496d5e"
+    },
+    {
+      "path": "shared/i18n/locales/en/taskLedger.json",
+      "sha256": "f501f74a786c5a35d57ad87220f06cf9ae607ac0639f2031dc28ae954b421871"
+    },
+    {
+      "path": "shared/i18n/locales/ja/chat.json",
+      "sha256": "f75e299f04a19268cadcf1c79521250f300c7127d176f5df3899e3b2ca6fd0bc"
+    },
+    {
+      "path": "shared/i18n/locales/ja/taskLedger.json",
+      "sha256": "b3b904ccbbf1eff3a86a54e3c8cae6e2c729bda0a43ef730c85b97f8d7012813"
+    },
+    {
+      "path": "shared/i18n/locales/ru/chat.json",
+      "sha256": "f425a6041d6046717f32573456f5f8079627ffebca521cec76ba4ddbf49ed92b"
+    },
+    {
+      "path": "shared/i18n/locales/ru/taskLedger.json",
+      "sha256": "0880fda98a6c4d2a0ae1989649894fe1377c8bf2f4ff55d4ee9831effb807cfd"
+    },
+    {
+      "path": "shared/i18n/locales/zh/chat.json",
+      "sha256": "a2ab2f033fbd02f8d4586d52d52dd8a8824d6e3bf6739d4c7bbcbbd20e42d23d"
+    },
+    {
+      "path": "shared/i18n/locales/zh/taskLedger.json",
+      "sha256": "9042c8016788b4721d2b13870211d1cb98bc8ad01a7d4dfec6ce79135360cf5b"
+    },
+    {
+      "path": "src/components/tool-ui/plan-view.tsx",
+      "sha256": "237f06a5378038dabf5258a3ae22d2b7951dd9d5a85771cce74d0a531e89a72c"
+    },
+    {
+      "path": "src/pages/Chat/ComposerGitStrip.tsx",
+      "sha256": "97e0c8a6f9b163c729a8c1df974c6a9bc8e9c9f0cef9bb5702c5c7042f4cc1e0"
+    },
+    {
+      "path": "src/pages/Chat/SessionTaskDock.tsx",
+      "sha256": "3caf559d15d0c83fdee7b12132ae013958a1c2588f4d351e535c331c372d5dc1"
+    },
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "sha256": "bd9330a3824e82e1cc274d9a038c14e598dc8f805af31694e93f0f95df225f04"
+    },
+    {
+      "path": "src/styles/codex-composer-shell.css",
+      "sha256": "dc96cd1c8b89c19649823928464270630095a463edc44120f965c5641a62b73f"
+    },
+    {
+      "path": "tests/e2e/durable-task-conversation.spec.ts",
+      "sha256": "4beadccfe53ebcfa5c05b2efe3424d8a710ed062cbaccb29d86ef85c3e45f130"
+    },
+    {
+      "path": "tests/unit/chat-artifact-panel-layout.test.tsx",
+      "sha256": "fd5cb0f764e710467bb584ac607b92de0426f64e6d861c410c00d84fe2be60f7"
+    },
+    {
+      "path": "tests/unit/chat-render-reachability.test.tsx",
+      "sha256": "a6c675df7e04e02eff1d8b4aeb68547ff2cdfbc7b0a238e34a5d9b67673de8e1"
+    },
+    {
+      "path": "tests/unit/composer-git-strip.test.tsx",
+      "sha256": "7e49e74172702e790a9e1c89e7b0339ae1b3e14c38bb10b0706e8dfa1d1802b7"
+    },
+    {
+      "path": "tests/unit/session-task-dock.test.tsx",
+      "sha256": "d5639c33c21c6694238ef3ed402de23af235892be86d8d20cfd07cef58e859d5"
+    }
+  ]
+}

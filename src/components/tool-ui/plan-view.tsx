@@ -92,6 +92,7 @@ export function ToolUiPlanView({
   testId = 'chat-tool-ui-plan',
   collapsed: controlledCollapsed,
   onCollapsedChange,
+  showProgress = true,
 }: {
   title: string;
   description?: string;
@@ -102,6 +103,7 @@ export function ToolUiPlanView({
   testId?: string;
   collapsed?: boolean;
   onCollapsedChange?: (collapsed: boolean) => void;
+  showProgress?: boolean;
 }) {
   const { t } = useTranslation('chat');
   const [localCollapsed, setLocalCollapsed] = useState(false);
@@ -136,11 +138,11 @@ export function ToolUiPlanView({
         <span className={cn('min-w-0 truncate font-medium text-foreground', compact ? 'text-xs' : 'text-sm')}>
           {headerLabel}
         </span>
-        <span className="ml-auto inline-flex shrink-0 items-baseline gap-0.5 font-mono text-xs tabular-nums text-muted-foreground/70">
+        {showProgress && <span className="ml-auto inline-flex shrink-0 items-baseline gap-0.5 font-mono text-xs tabular-nums text-muted-foreground/70">
           <NumberRoll value={completed} />
           <span>/</span>
           <span>{total}</span>
-        </span>
+        </span>}
         <svg
           viewBox="0 0 24 24"
           className={cn(

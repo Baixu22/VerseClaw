@@ -1343,7 +1343,8 @@
     "lineage": {
       "forkedFrom": "{{session}} から Fork",
       "forkedFromAt": "{{session}} から Fork · {{time}}"
-    }
+    },
+    "manage": "チャット設定"
   },
   "composer": {
     "attachFiles": "ファイルを添付",
@@ -2211,7 +2212,9 @@
       "newBranch": "新しいブランチ",
       "existingBranch": "既存のブランチ",
       "defaultPath": "既定のパス",
-      "defaultPathUnavailable": "ブランチ名を入力してパスを確認"
+      "defaultPathUnavailable": "ブランチ名を入力してパスを確認",
+      "filesChanged": "{{count}} ファイルを変更",
+      "filesChanged_one": "{{count}} ファイルを変更"
     },
     "modelSwitchSessionResetFailed": "既定のモデルは保存されましたが、このセッションをリセットできませんでした: {{error}}",
     "knowledgeRuntimeLessons": {
@@ -2782,5 +2785,8 @@
       "hint": "このリソースはここでは表示できません。",
       "copy": "詳細をコピー"
     }
+  },
+  "task": {
+    "steps": "実行手順"
   }
 }

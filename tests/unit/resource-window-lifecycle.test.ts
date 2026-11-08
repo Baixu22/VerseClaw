@@ -9,10 +9,11 @@ vi.mock('electron', async () => {
 vi.mock('../../electron/utils/logger', () => ({ logger: { info() {}, warn() {} } }));
 vi.mock('../../electron/services/resource-envelope', () => ({ getAggregatedResourceEnvelopeSnapshot: mocks.snapshot }));
 vi.mock('../../electron/services/efficiency-sampler', () => ({ EfficiencySampler: class { start() {} stop() {} } }));
-vi.mock('../../shared/resources', () => ({ getTimerAligner: () => ({ setShedding() {}, register: (task: { run: () => Promise<void> }) => { mocks.refresh = task.run; return () => { mocks.refresh = null; }; } }) }));
+vi.mock('../../shared/resources', async importOriginal => ({ ...await importOriginal<typeof import('../../shared/resources')>(), getTimerAligner: () => ({ setShedding() {}, register: (task: { run: () => Promise<void> }) => { mocks.refresh = task.run; return () => { mocks.refresh = null; }; } }) }));
 import { app, powerMonitor } from 'electron';
 import { getEfficiencyShedState, startRuntimeEfficiency, stopRuntimeEfficiency, resetRuntimeEfficiencyForTests } from '../../electron/services/efficiency-orchestrator';
 import { getBackgroundWorkGate } from '../../openclaw_runtime/src/resources/background-work-gate';
+import { getResourceFabric } from '../../electron/services/resource-fabric';
 import { registerWindowVisibility } from '../../electron/main/window-visibility';
 import type { BrowserWindow } from 'electron';
 
@@ -66,6 +67,7 @@ describe('window resource lifetimes', () => {
     resolve({ totals: { queuedCount: 100 }, processTotals: { cpuPercent: 400, rssBytes: 0 } }); await flush();
     expect(mocks.snapshot).toHaveBeenCalledTimes(2);
     expect(getBackgroundWorkGate().getState().deferring).toBe(false);
+    expect(getResourceFabric().getDiagnostics().pressure.reasons).toEqual([]);
   });
   it('releases observation pressure on stop without dropping queued work', async () => {
     startRuntimeEfficiency(); await flush();
@@ -77,5 +79,12 @@ describe('window resource lifetimes', () => {
     stopRuntimeEfficiency();
     expect(await pending).toBe('completed'); expect(work).toHaveBeenCalledOnce();
     expect(gate.getState().pendingCount).toBe(0);
+  });
+  it('feeds fresh memory pressure to admission and clears it when sampling stops', async () => {
+    mocks.snapshot.mockResolvedValue({ ...healthy, machineMemory: { sampledAt: Date.now(), availablePhysicalBytes: 5, totalPhysicalBytes: 100 } });
+    startRuntimeEfficiency(); await flush();
+    expect(getResourceFabric().getDiagnostics().pressure.reasons).toEqual(['physical-memory']);
+    stopRuntimeEfficiency();
+    expect(getResourceFabric().getDiagnostics().pressure.reasons).toEqual([]);
   });
 });

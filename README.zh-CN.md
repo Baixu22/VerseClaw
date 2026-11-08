@@ -43,7 +43,7 @@ Verse Claw 是基于嵌入式 OpenClaw Runtime 的 Electron 桌面应用。它�
 | 知识库 | Markdown/wiki-first Library、Inbox → Draft → Steward → Proposal → explicit apply、Source Set、OKF、Runtime Lessons/SEKB、provenance 与 governance | [知识库](docs/modules/knowledge-base.md) |
 | 多智能体与任务 | Agent/Persona/Role 分层、9 个内置角色、路由、团队模板、资源感知波次、subagent admission、Task Ledger、Task Loop、ClawGraph | [多智能体与任务](docs/modules/multi-agent-and-tasks.md) |
 | Verse 系列 | VerseGit 仓库/证据控制面、VerseShell 受控执行、VerseBrowser 驱动，以及已退役 VToken | [Verse 系列](docs/modules/verse-tools.md) |
-| 资源与可观测性 | 合作式 ResourceFabric、后台降载、进程/端口追踪、token/cost 上限、Trace、Issue、Problem、Session Activity 与恢复 | [资源与可观测性](docs/modules/resources-and-observability.md) |
+| 资源与可观测性 | ResourceFabric 分类执行反馈与内存/event-loop 压力控制、后台降载、进程追踪、token/cost 上限与恢复 | [资源与可观测性](docs/modules/resources-and-observability.md) |
 | 集成与其他表面 | 15 类渠道、Scheduled、Skills/MCP、Inbox、Remote Tasks、Code Review、VerseConf 文档、媒体、Billing 与 Agent Dev | [集成与页面](docs/modules/integrations-and-surfaces.md) |
 
 模块详解当前以简体中文维护；其中源码路径、API 名称和证据链接与语言无关。四个根 README 负责多语言入口。
@@ -280,4 +280,4 @@ Verse Claw 基于 [OpenClaw](https://github.com/openclaw/openclaw) 与 ValueCell
 
 任务列表支持搜索、状态筛选与加载后续页。Agent 可以查询相似任务，并将目标拆成有依赖的子任务，保留父目标和约束。取消计划时等待在途效果结清；验收和故障恢复读取现有运行 owner 的回执。
 
-任务由 agent 在会话中管理。定位执行任务后，输入框上方出现一行简洁状态，可展开查看进度，也可隐藏后重新打开；隐藏不会停止任务。任务账本保留为主动打开的详细管理入口。
+任务由 agent 在会话中管理。定位后，顶部只保留一个任务头，显示真实步骤进度，支持隐藏和重开。对话画布保持纯净，文件实际发生变化后才在输入框下方显示小入口；真实分支和工作树操作放在详情中。

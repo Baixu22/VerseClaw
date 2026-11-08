@@ -50,6 +50,8 @@ export type ResourceEventLoopPressure = {
   utilization: number;
 };
 
+export type ResourceMachineCommit = { sampledAt: number; committedBytes: number; commitLimitBytes: number };
+
 export type ResourceKind =
   | "agent-turn"
   | "terminal-exec"
@@ -138,6 +140,7 @@ export type ResourceEnvelopeSnapshot = {
   producer?: { pid: number; epoch: string; creationToken?: string };
   processTotals?: ResourceProcessTotals;
   machineMemory?: { sampledAt: number; availablePhysicalBytes: number; totalPhysicalBytes: number };
+  machineCommit?: ResourceMachineCommit;
   eventLoopPressure?: ResourceEventLoopPressure;
 };
 

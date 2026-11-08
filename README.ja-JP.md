@@ -43,7 +43,7 @@ Verse Claw は、組み込み OpenClaw Runtime 上に構築された Electron �
 | Knowledge | Markdown/wiki-first Library、Inbox → Draft → Steward → Proposal → explicit apply、Source Set、OKF、Runtime Lessons/SEKB、provenance、governance | [Knowledge（中国語）](docs/modules/knowledge-base.md) |
 | Multi-agent / tasks | Agent/Persona/Role、9 組み込み role、routing、team template、resource-aware wave、subagent admission、Task Ledger、Task Loop、ClawGraph | [Multi-agent と task（中国語）](docs/modules/multi-agent-and-tasks.md) |
 | Verse components | VerseGit repository/evidence control plane、VerseShell governed execution、VerseBrowser driver、退役 VToken | [Verse tools（中国語）](docs/modules/verse-tools.md) |
-| Resources / observability | cooperative ResourceFabric、background shedding、process/port tracking、token/cost limit、trace、issue、Problem、Session Activity、recovery | [Resources と observability（中国語）](docs/modules/resources-and-observability.md) |
+| Resources / observability | ResourceFabric の実行分類別フィードバックとメモリ/event-loop 圧力制御、バックグラウンド降載、プロセス追跡、token/cost 上限と回復 | [Resources と observability（中国語）](docs/modules/resources-and-observability.md) |
 | Integrations | 15 channel types、Scheduled、Skills/MCP、Inbox、Remote Task、Code Review、VerseConf、media、Billing、Agent Dev | [Integrations（中国語）](docs/modules/integrations-and-surfaces.md) |
 
 詳細 module document は現在 Simplified Chinese で保守されています。source path、API 名、evidence link は言語非依存です。4 つの root README が多言語入口です。
@@ -278,4 +278,4 @@ Task Ledger → 永続タスクは、会話履歴とは独立して目標・制�
 
 一覧は検索、状態フィルター、追加ページの読み込みに対応します。Agent は関連タスクを提案し、親の目標と制約を保ったまま依存関係のある子タスクへ分解できます。計画の取消は実行中の処理の確定を待ちます。受け入れと復旧は既存の runtime owner の記録を確認します。
 
-タスクは会話内で agent が管理します。作業が特定されると入力欄の上に小さな進捗行が表示され、詳細の展開、非表示、再表示ができます。非表示にしても実行は続きます。詳細管理にはタスク台帳を利用できます。
+タスクは agent が管理し、特定された作業を会話上部の一つのヘッダーに表示します。実際の手順に基づく進捗を確認でき、非表示と再表示が可能です。背景を簡素化し、ファイル変更時のみ入力欄の下に小さな入口を表示します。ブランチとワークツリーは詳細から操作できます。

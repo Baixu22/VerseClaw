@@ -2,7 +2,7 @@ import { execFile } from "node:child_process";
 import fs from "node:fs";
 import { promisify } from "node:util";
 import { randomUUID } from "node:crypto";
-import { RESOURCE_METRICS_TTL_MS, type ResourceProcessObservation } from "../../../shared/types/resources.js";
+import { RESOURCE_METRICS_TTL_MS, type ResourceProcessObservation, type ResourceMachineCommit } from "../../../shared/types/resources.js";
 
 const execFileAsync = promisify(execFile);
 const PROCESS_TREE_LIMIT = 512;
@@ -27,6 +27,7 @@ export type ProcessTreeSample = {
   detail?: string;
   ownerEpoch?: string;
   processes?: ResourceProcessObservation[];
+  machineCommit?: ResourceMachineCommit;
 };
 
 type ProcessRecord = {
@@ -39,7 +40,7 @@ type ProcessRecord = {
 };
 
 type ProcessTableResult =
-  | { ok: true; records: Map<number, ProcessRecord>; source: "windows-cim" | "linux-proc" }
+  | { ok: true; records: Map<number, ProcessRecord>; source: "windows-cim" | "linux-proc"; machineCommit?: ResourceMachineCommit }
   | { ok: false; detail: string };
 
 function parsePositiveInt(value: string): number | null {
@@ -65,13 +66,22 @@ async function readWindowsProcessTable(): Promise<ProcessTableResult> {
     "-NoProfile",
     "-NonInteractive",
     "-Command",
-    "$ErrorActionPreference = 'Stop'; Get-CimInstance -ClassName Win32_Process | Where-Object { $_.ProcessId -ne $PID } | ForEach-Object { \"{0}|{1}|{2}|{3}|{4}|{5}|{6}\" -f $_.ProcessId, $_.ParentProcessId, $_.WorkingSetSize, $_.KernelModeTime, $_.UserModeTime, $_.CreationDate.ToFileTimeUtc(), $_.PrivatePageCount }",
+    "$ErrorActionPreference = 'Stop'; Get-CimInstance -ClassName Win32_Process | Where-Object { $_.ProcessId -ne $PID } | ForEach-Object { \"{0}|{1}|{2}|{3}|{4}|{5}|{6}\" -f $_.ProcessId, $_.ParentProcessId, $_.WorkingSetSize, $_.KernelModeTime, $_.UserModeTime, $_.CreationDate.ToFileTimeUtc(), $_.PrivatePageCount }; try { $memory = Get-CimInstance -ClassName Win32_PerfFormattedData_PerfOS_Memory; \"commit|{0}|{1}\" -f $memory.CommittedBytes, $memory.CommitLimit } catch { }",
   ]);
   if (!probe.ok) {
     return { ok: false, detail: probe.detail };
   }
   const records = new Map<number, ProcessRecord>();
+  let machineCommit: ResourceMachineCommit | undefined;
   for (const line of probe.stdout.split(/\r?\n/).map((value) => value.trim()).filter(Boolean)) {
+    if (line.startsWith("commit|")) {
+      const [, used, limit] = line.split("|");
+      const committedBytes = Number(used), commitLimitBytes = Number(limit);
+      if (Number.isFinite(committedBytes) && committedBytes >= 0 && Number.isFinite(commitLimitBytes) && commitLimitBytes > 0) {
+        machineCommit = { sampledAt: Date.now(), committedBytes, commitLimitBytes };
+      }
+      continue;
+    }
     const [pidRaw, parentRaw, rssRaw, kernelRaw, userRaw, token, privateRaw] = line.split("|");
     const pid = parsePositiveInt(pidRaw ?? "");
     const parentPid = Number(parentRaw);
@@ -89,7 +99,7 @@ async function readWindowsProcessTable(): Promise<ProcessTableResult> {
     });
   }
   return records.size > 0
-    ? { ok: true, records, source: "windows-cim" }
+    ? { ok: true, records, source: "windows-cim", ...(machineCommit ? { machineCommit } : {}) }
     : { ok: false, detail: "Windows process probe returned an empty process table" };
 }
 
@@ -267,6 +277,7 @@ export async function readProcessTreeSample(params: {
     queueDepth,
     queueWaitMs,
     source: table.source,
+    ...(table.machineCommit ? { machineCommit: table.machineCommit } : {}),
   };
 }
 

@@ -366,7 +366,7 @@ async function runViaOpenClawExecWithLease(input: {
   try {
     return await withWorkspaceExecLease(leaseKey, input.timeoutMs, () =>
       runViaOpenClawExec({ ...input, deadline }),
-      { deadline },
+      { deadline, phase: input.risk === 'read' ? 'read' : input.risk === 'network' ? 'remote-wait' : 'execution' },
     );
   } catch (error) {
     if (error instanceof Error && 'code' in error && error.code === 'RESOURCE_QUEUE_FULL') {

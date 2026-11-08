@@ -11,13 +11,18 @@ import {
   PriorityQueue,
   Singleflight,
   type QosClass,
+  type AdaptivePhase,
 } from '../../shared/resources';
 import { getResourceEnvelopeLedger } from '../../openclaw_runtime/src/resources/resource-envelope';
-import type { ResourceKind, ResourceLimitEvent } from '../../shared/types/resources';
+import { RESOURCE_METRICS_TTL_MS, type ResourceKind, type ResourceLimitEvent, type ResourceEnvelopeSnapshot } from '../../shared/types/resources';
 import { checkResourceWait, watchResourceWait, resourceQueueFullError, type ResourceWaitOptions } from '../../shared/resources/wait';
 import { getHostDeadline, runWithHostDeadline } from '../utils/host-deadline-context';
 
-export type FabricAcquireOptions = ResourceWaitOptions & { qos?: QosClass; timeoutMs?: number; tenant?: string };
+export type FabricAcquireOptions = ResourceWaitOptions & { qos?: QosClass; timeoutMs?: number; tenant?: string; phase?: AdaptivePhase };
+
+const PRESSURE_POLICY = { lowAvailableRatio: 0.10, recoveredAvailableRatio: 0.15, highCommitRatio: 0.90, recoveredCommitRatio: 0.80, recoveryDwellMs: 10_000, idleAccountMs: 300_000 };
+type PressureReason = 'physical-memory' | 'system-commit' | 'event-loop';
+type PressureSignal = { sampledAt: number; observedAt: number; active: boolean; lowSince: number | null; available: boolean };
 
 export type FabricResource = 'workspaceExec' | 'chatHistory';
 
@@ -97,6 +102,7 @@ type FabricAccountDiagnostics = {
   queueLimit: number;
   activeByQos: Record<QosClass, number>;
   limitHistory: ResourceLimitEvent[];
+  feedback: ReturnType<AdaptiveLimit['getDiagnostics']>;
 };
 
 type Waiter = {
@@ -105,6 +111,7 @@ type Waiter = {
   key: string;
   tenant: string;
   qos: QosClass;
+  phase: AdaptivePhase;
   requestedAt: number;
   timeoutMs: number;
   deadline: number;
@@ -168,6 +175,7 @@ class FabricAccount {
   private readonly limitHistory: ResourceLimitEvent[] = [];
   private active = 0;
   private nextWaiterId = 1;
+  private lastActivityAt: number;
 
   constructor(
     private readonly resource: FabricResource,
@@ -179,6 +187,7 @@ class FabricAccount {
     private readonly now: () => number,
     private readonly wakeAccounts: () => void,
   ) {
+    this.lastActivityAt = now();
     this.limit = new AdaptiveLimit({
       initialLimit: config.initialLimit,
       minLimit: config.minLimit,
@@ -195,6 +204,7 @@ class FabricAccount {
   }
 
   acquire(options: FabricAcquireOptions = {}): Promise<FabricLease> {
+    this.lastActivityAt = this.now();
     const timeoutMs = Math.max(1, Math.floor(options.timeoutMs ?? this.config.defaultTimeoutMs));
     const qos = options.qos ?? 'interactive';
     const tenant = options.tenant?.trim() || this.accountKey;
@@ -209,6 +219,7 @@ class FabricAccount {
         key: this.accountKey,
         tenant,
         qos,
+        phase: options.phase ?? 'unknown',
         requestedAt: this.now(),
         timeoutMs,
         deadline,
@@ -237,15 +248,30 @@ class FabricAccount {
     });
   }
 
-  observeLatency(latencyMs: number, queueSize = 0): ResourceLimitEvent | null {
+  observeLatency(latencyMs: number, queueSize = 0, phase: AdaptivePhase = 'unknown'): ResourceLimitEvent | null {
     const previous = this.limit.limit;
-    const next = this.limit.sample(Math.max(1, latencyMs), Math.max(0, queueSize));
+    const next = this.limit.sample(Math.max(1, latencyMs), Math.max(0, queueSize), phase);
+    return this.recordLimit(previous, next, `${phase} latency feedback`);
+  }
+
+  setPressure(active: boolean): void {
+    const previous = this.limit.limit;
+    this.recordLimit(previous, this.limit.setPressure(active), 'fresh resource pressure');
+  }
+
+  reclaimIfIdle(): boolean {
+    if (this.active || this.queue.size || this.now() - this.lastActivityAt < PRESSURE_POLICY.idleAccountMs) return false;
+    getResourceEnvelopeLedger().remove(this.ledgerId);
+    return true;
+  }
+
+  private recordLimit(previous: number, next: number, reason: string): ResourceLimitEvent | null {
     if (next === previous) return null;
     const event: ResourceLimitEvent = {
       at: this.now(),
       from: previous,
       to: next,
-      reason: 'gradient2 latency sample',
+      reason,
     };
     this.limitHistory.push(event);
     if (this.limitHistory.length > 64) this.limitHistory.splice(0, this.limitHistory.length - 64);
@@ -264,6 +290,7 @@ class FabricAccount {
       queueLimit: this.config.queueLength,
       activeByQos: { ...this.activeQos },
       limitHistory: this.limitHistory.map((event) => ({ ...event })),
+      feedback: this.limit.getDiagnostics(),
     };
   }
 
@@ -334,6 +361,7 @@ class FabricAccount {
   private reject(waiter: Waiter, error: Error): void {
     if (waiter.settled) return;
     waiter.settled = true;
+    this.lastActivityAt = this.now();
     this.queue.remove(candidate => candidate === waiter);
     waiter.cleanup();
     waiter.reject(error);
@@ -341,10 +369,11 @@ class FabricAccount {
   }
 
   private release(waiter: Waiter, startedAt: number, queuedMs: number): void {
+    this.lastActivityAt = this.now();
     this.active = Math.max(0, this.active - 1);
     this.activeQos[waiter.qos] = Math.max(0, this.activeQos[waiter.qos] - 1);
     this.drf.release(waiter.tenant, { concurrency: 1 });
-    this.observeLatency(Math.max(1, this.now() - startedAt), this.queue.size);
+    this.observeLatency(Math.max(1, this.now() - startedAt), this.queue.size, waiter.phase);
     this.syncEnvelope(queuedMs, 'released');
     this.wakeAccounts();
   }
@@ -390,6 +419,7 @@ export class ResourceFabric {
   private readonly accounts = new Map<string, FabricAccount>();
   private drf = new DrfShare({ processes: 64, concurrency: 64 });
   private historyFlights = new Singleflight<string, unknown>();
+  private readonly pressureSignals = new Map<PressureReason, PressureSignal>();
 
   constructor(options: ResourceFabricOptions = {}) {
     this.now = options.now ?? (() => Date.now());
@@ -450,6 +480,7 @@ export class ResourceFabric {
       requestKey,
       {
         qos: 'interactive',
+        phase: 'read',
         timeoutMs: this.accountConfigs.chatHistory.defaultTimeoutMs,
         tenant: asTenant(params, requestKey),
         signal,
@@ -467,8 +498,55 @@ export class ResourceFabric {
     });
   }
 
-  observeLatency(resource: FabricResource, key: string, latencyMs: number, queueSize = 0): ResourceLimitEvent | null {
-    return this.accountFor(resource, key).observeLatency(latencyMs, queueSize);
+  observeLatency(resource: FabricResource, key: string, latencyMs: number, queueSize = 0, phase: AdaptivePhase = 'unknown'): ResourceLimitEvent | null {
+    return this.accountFor(resource, key).observeLatency(latencyMs, queueSize, phase);
+  }
+
+  observePressure(snapshot: Pick<ResourceEnvelopeSnapshot, 'machineMemory' | 'machineCommit' | 'eventLoopPressure'>): void {
+    const now = this.now();
+    const update = (reason: PressureReason, at: number | undefined, high: boolean, low: boolean, valid: boolean) => {
+      const state = this.pressureSignals.get(reason) ?? { sampledAt: -Infinity, observedAt: -Infinity, active: false, lowSince: null, available: false };
+      state.available = valid && at != null && Number.isFinite(at) && at >= state.sampledAt && at <= now && now - at <= RESOURCE_METRICS_TTL_MS;
+      this.pressureSignals.set(reason, state);
+      if (!state.available) { state.lowSince = null; return; }
+      // Cached observations keep continuity while fresh, but only a new sample
+      // can complete recovery. The process probe refreshes on a slower cadence.
+      if (now - state.observedAt > RESOURCE_METRICS_TTL_MS) state.lowSince = null;
+      state.observedAt = now;
+      if (at! <= state.sampledAt) return;
+      state.sampledAt = at!;
+      if (high) { state.active = true; state.lowSince = null; }
+      else if (low && state.active) {
+        state.lowSince ??= at!;
+        if (at! - state.lowSince >= PRESSURE_POLICY.recoveryDwellMs) { state.active = false; state.lowSince = null; }
+      } else state.lowSince = null;
+    };
+    const memory = snapshot.machineMemory;
+    const available = memory ? memory.availablePhysicalBytes / memory.totalPhysicalBytes : NaN;
+    update('physical-memory', memory?.sampledAt, available <= PRESSURE_POLICY.lowAvailableRatio, available >= PRESSURE_POLICY.recoveredAvailableRatio,
+      Number.isFinite(available) && available >= 0 && available <= 1 && Number.isFinite(memory?.totalPhysicalBytes) && memory!.totalPhysicalBytes > 0);
+    const commit = snapshot.machineCommit;
+    const committed = commit ? commit.committedBytes / commit.commitLimitBytes : NaN;
+    update('system-commit', commit?.sampledAt, committed >= PRESSURE_POLICY.highCommitRatio, committed <= PRESSURE_POLICY.recoveredCommitRatio,
+      Number.isFinite(committed) && committed >= 0 && Number.isFinite(commit?.commitLimitBytes) && commit!.commitLimitBytes > 0);
+    const loop = snapshot.eventLoopPressure;
+    update('event-loop', loop?.sampledAt, loop?.degraded === true, loop?.degraded === false,
+      !!loop?.ownerEpoch && typeof loop.degraded === 'boolean' && Number.isFinite(loop.delayP99Ms) && loop.delayP99Ms >= 0
+        && Number.isFinite(loop.utilization) && loop.utilization >= 0 && loop.utilization <= 1);
+    const active = [...this.pressureSignals.values()].some(signal => signal.active);
+    for (const account of this.accounts.values()) account.setPressure(active);
+    this.reclaimIdleAccounts();
+  }
+
+  clearObservationPressure(): void {
+    this.pressureSignals.clear();
+    for (const account of this.accounts.values()) account.setPressure(false);
+  }
+
+  reclaimIdleAccounts(): number {
+    let reclaimed = 0;
+    for (const [key, account] of this.accounts) if (account.reclaimIfIdle()) { this.accounts.delete(key); reclaimed += 1; }
+    return reclaimed;
   }
 
   isFair(maxRatio = 2): boolean {
@@ -486,6 +564,7 @@ export class ResourceFabric {
     chatHistory: FabricAccountDiagnostics | null;
     fair: boolean;
     limitEvents: ResourceLimitEvent[];
+    pressure: { reasons: PressureReason[]; signals: Partial<Record<PressureReason, PressureSignal>>; policy: typeof PRESSURE_POLICY; disabledSignals: string[] };
   } {
     const accounts: Record<string, FabricAccountDiagnostics> = {};
     for (const [key, account] of this.accounts) accounts[key] = account.diagnostics();
@@ -494,12 +573,20 @@ export class ResourceFabric {
       chatHistory: accounts.chatHistory ?? null,
       fair: this.drf.isFair(),
       limitEvents: this.getLimitEvents(),
+      pressure: {
+        reasons: [...this.pressureSignals].filter(([, signal]) => signal.active).map(([reason]) => reason),
+        signals: Object.fromEntries([...this.pressureSignals].map(([reason, signal]) => [reason, { ...signal, available: signal.available && this.now() - signal.sampledAt <= RESOURCE_METRICS_TTL_MS }])),
+        policy: { ...PRESSURE_POLICY },
+        disabledSignals: ['cpu-utilization-only', 'system-io-wait', ...(['physical-memory', 'system-commit', 'event-loop'] as const)
+          .filter(reason => { const signal = this.pressureSignals.get(reason); return !signal?.available || this.now() - signal.sampledAt > RESOURCE_METRICS_TTL_MS; })],
+      },
     };
   }
 
   resetForTest(): void {
     for (const account of this.accounts.values()) account.resetForTest();
     this.accounts.clear();
+    this.pressureSignals.clear();
     this.drf = new DrfShare({ processes: 64, concurrency: 64 });
     this.historyFlights = new Singleflight<string, unknown>();
     const ledger = getResourceEnvelopeLedger();
@@ -511,6 +598,7 @@ export class ResourceFabric {
   }
 
   private accountFor(resource: FabricResource, key: string): FabricAccount {
+    this.reclaimIdleAccounts();
     const accountKey = resource === 'chatHistory' ? 'chatHistory' : `workspaceExec:${key}`;
     const existing = this.accounts.get(accountKey);
     if (existing) return existing;
@@ -536,6 +624,7 @@ export class ResourceFabric {
       },
     );
     this.accounts.set(accountKey, account);
+    account.setPressure([...this.pressureSignals.values()].some(signal => signal.active));
     return account;
   }
 }
@@ -556,7 +645,7 @@ export async function withWorkspaceExecLease<T>(
   workspaceKey: string,
   timeoutMs: number,
   fn: (lease: TerminalResourceLease) => Promise<T>,
-  options: ResourceWaitOptions = {},
+  options: ResourceWaitOptions & { phase?: AdaptivePhase } = {},
 ): Promise<T> {
   return resourceFabric.runResource(
     'workspaceExec',

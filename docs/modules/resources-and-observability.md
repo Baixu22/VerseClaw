@@ -62,11 +62,8 @@ callback式 bash 输出溢出使用私有文件同步分段写入，为生产者
 | `workspaceExec` | terminal/workspace exec | 1 | 2 | 4 | 64 | 30 s |
 | `chatHistory` | chat history RPC | 1 | 2 | 4 | 64 | 30 s |
 
-这不是“全系统唯一调度器”，而是两个已经接入的并发资源账。
-
-表中的 queue 64 是原有 shadow 诊断阈值。默认交互请求继续排队；只有 owner 在
-account 配置中显式给出 `queueLength`，才启用队列满拒绝，`queueLimit: null`
-表示未声明硬队列上限。现有 DRF 容量由所有租户共同使用，不能按租户重复花费同一份额度；
+表中的 queue 64 是等待队列硬上限，活动许可另行计数；超界请求在入队前返回
+`RESOURCE_QUEUE_FULL`。现有 DRF 容量由所有租户共同使用；
 各 workspace account 释放后会唤醒其他等待 account。
 
 排队可取消，获得许可后、实际调用前仍重新检查取消。后台与 opportunistic 工作持续老化，
@@ -75,13 +72,30 @@ account 配置中显式给出 `queueLength`，才启用队列满拒绝，`queueL
 
 Fabric 组成：
 
-- `AdaptiveLimit`：Gradient2 风格自适应并发；
+- `AdaptiveLimit`：按执行类别隔离延迟反馈，积压只表示扩容需求；
 - `PriorityQueue`：interactive / background / opportunistic QoS；
 - `DrfShare`：进程槽与并发额的 DRF-lite；
 - `Singleflight`：同 key chat history 请求合并；
 - Resource envelope ledger：记录 limit history、排队、拒绝和 active slots。
 
 特征：
+
+history 使用 `read` 基线；terminal 按已有权限分类映射为 `read`、`execution` 或
+`remote-wait`。远端等待记录耗时，由原 provider owner 管理配额，不调整本地执行容量。
+同类连续两次延迟恶化且短期均值超过长期基线的 10%（至少 1 ms）时先收缩，
+隔离单次读取/启动抖动；健康且有积压连续三次才加一个槽位。
+拥塞期间冻结长期基线，恢复后经过三个健康样本再开始积累扩容条件。
+
+既有效率观察者接入物理可用内存、Windows 系统 commit 和 event-loop 压力。
+可用物理内存 ≤10%、commit 使用率 ≥90% 或 event-loop degraded 会收缩 admission；
+物理内存恢复到 ≥15%、commit 到 ≤80%、event-loop 恢复后，需要新鲜低压样本跨越
+至少 10 秒才解除压力。30 秒外、未来、重复或缺失观测不能推进恢复。
+Windows commit 随既有进程探针读取，其他平台或探针不可用时在 Fabric diagnostics 中
+显示该信号未启用。CPU 利用率不单独触发本地并发收缩；整机 I/O wait 未启用，
+I/O 拥塞通过同类读操作的服务延迟反馈。诊断同时列出阈值、压力原因和分类基线。
+
+收缩不终止已获许可的任务。账户在活动和队列均为零且空闲五分钟后回收，
+下次使用按原始 2 槽位和当前压力状态重建。
 
 - 有 min-change dead zone，避免 limit 抖动；
 - opportunistic 有过期/晋升策略，避免永久饥饿；
