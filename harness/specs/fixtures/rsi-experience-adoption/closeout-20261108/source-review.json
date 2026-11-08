@@ -1,0 +1,137 @@
+{
+  "schemaVersion": "RsiAdoptionSourceReview/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-source-review",
+  "method": "source owner and caller audit with automated regression, type, lint and Harness checks",
+  "independentReviewer": false,
+  "dedicatedAutoreviewToolAvailable": false,
+  "findingsResolved": [
+    "production caller missing",
+    "citation/outcome counted as adoption",
+    "unknown termination treated as success",
+    "twenty-row metadata lost replay identity",
+    "order-sensitive replay digest",
+    "premature attribution could not be retried",
+    "trajectory deletion left attribution receipts"
+  ],
+  "acceptedActionableFindings": [],
+  "files": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "c236bb42cde7b6efcfea38abc5f1beb6b94b0a443a61ef8571042558b259e51b"
+    },
+    {
+      "path": "README.md",
+      "sha256": "7b7505f894c153f87761742ff62cc88c025fdcac77db573114dd3cda79dd9281"
+    },
+    {
+      "path": "README.ru-RU.md",
+      "sha256": "30ddd1218eeb0f6473a19273f250b9f39b84df8e94ca35d7256a1376703da377"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "a835cbca51e68240b739b1112cc65090513afeec9e409a63d5ef913beabca933"
+    },
+    {
+      "path": "docs/dev/rsi-capability-and-boundaries.md",
+      "sha256": "9b37f81cd246d7769d44f53ef28d5cd123ffb9107ea6e87ca0e53c1b247d229f"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
+      "sha256": "469ef0a195ddf5f7330738f78aaf3fdc69734dc2552d16fc14425b3f2cfe69f6"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/sekb-runtime.ts",
+      "sha256": "2804a43a3410d3dbd97022b36644e73c03ad685d345e944619d69d124359ad95"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/batch-distillation-assistant.test.ts",
+      "sha256": "200b0151645ef70c25fbc73a2d20207f2918d54dc0d7f726fbe02e0d13ead64c"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/experience-closed-loop.test.ts",
+      "sha256": "bb7dc892c5b03d1ee79d89fab22d77ba793b763142d762715b905561e98fd1c3"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/harness-integration.ts",
+      "sha256": "f4d538fbf49fc57321864cf5eea4037a398bc30891fab81c8c46c9d77b8a17ac"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/knowledge-store.ts",
+      "sha256": "48c2879673684f8c2f0623e56b7b38191f6608f8c93835cc379588221e2d8125"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/retrieval-engine.ts",
+      "sha256": "ecf5680b1d82e2951ed9da23037da2e1b293e5ab695e446c6243fa828656cbea"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/sekb.test.ts",
+      "sha256": "7e4fd3d24caa4ebcae1574bc74b607e92afdc8a4019024d4bd2d9801864999e4"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/types.ts",
+      "sha256": "c508dcb36d12012a5d7cf65c8bbf30cc53faffb22f8f5c3c1003bf95de2e8c15"
+    },
+    {
+      "path": "openclaw_runtime/src/state/openclaw-state-db.generated.d.ts",
+      "sha256": "c3bd2d592a9b54a11ca965ca4e3332bf912dd1f003eef74affd572065225eafb"
+    },
+    {
+      "path": "openclaw_runtime/src/state/openclaw-state-schema.generated.ts",
+      "sha256": "381deafeebe0eed7231c3a9d8050f77543f9cc3eb5733b06a36334e26aa9c296"
+    },
+    {
+      "path": "openclaw_runtime/src/state/openclaw-state-schema.sql",
+      "sha256": "1752827ef078a21e049373e96fe295549524ffa87c37d7fc5a6289262a57a5e5"
+    },
+    {
+      "path": "harness/specs/rules/rsi-experience-attribution-boundary.md",
+      "sha256": "94fcfb3922b6b17eca74f007f75d45e359892884caf80b632c204fe7088292e2"
+    },
+    {
+      "path": "harness/specs/tasks/rsi-experience-adoption-attribution.md",
+      "sha256": "e732b0973979e721c315b475e5abc7649df5381e3bcace2ee2fdcb55475cba6d"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/attribution.test-helper.ts",
+      "sha256": "cd959b790d753728baac3b4312733ccf588cb358e2dee1de189b0a3642df5ee3"
+    },
+    {
+      "path": "scripts/rsi-adoption-export.d.mts",
+      "sha256": "27659b894d0d8e97661f3b7ece3e53ae4476529df8d3c3c44fb108810bc144f2"
+    },
+    {
+      "path": "scripts/rsi-adoption-export.mjs",
+      "sha256": "11c567ce9fc65916ae5ef0ff7038eac5932914c83f58c8408aed4af9a2d6538f"
+    },
+    {
+      "path": "scripts/rsi-adoption-integration.mjs",
+      "sha256": "c300c50d368345845b4da82a6caae9c2aaf0c0a90965fcc73e41fbf424ed0f48"
+    },
+    {
+      "path": "tests/unit/rsi-adoption-attribution.test.ts",
+      "sha256": "ab23e0c1f6308846b007726d60351f5a7b538fd3f82f823be4f74835be538a10"
+    },
+    {
+      "path": "tests/unit/rsi-adoption-export.test.ts",
+      "sha256": "a841220ef441e9e8d3d0a0bea6d14edba7cb889f766cd3603e0387d8ed42f5de"
+    },
+    {
+      "path": "tests/unit/rsi-adoption-native-test-support.ts",
+      "sha256": "5b3878d5322dff3bb9956370de1d390b005a8ae761ae3a2c762ead6c509bb0b8"
+    },
+    {
+      "path": "tests/unit/rsi-adoption-runtime.test.ts",
+      "sha256": "681c4aa35aaedce885c098b574b95bd9cbc9a48aed426f9cee1b5dcf1c5c03c0"
+    },
+    {
+      "path": "vitest.rsi-adoption.config.ts",
+      "sha256": "b927b5f76b47e49add171e78537c5c6df759666896c780c40a7eaf34470977dd"
+    }
+  ],
+  "evidence": {
+    "focusedTests": "D:/tmp/rsi-adoption-focused-20261108/tests.json",
+    "types": "D:/tmp/rsi-adoption-typecheck-20261108.json",
+    "lint": "D:/tmp/rsi-adoption-lint-final-20261108.json"
+  }
+}

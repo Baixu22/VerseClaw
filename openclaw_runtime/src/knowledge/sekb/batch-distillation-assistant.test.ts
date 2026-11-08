@@ -5,6 +5,7 @@ import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { closeOpenClawStateDatabaseForTest } from "../../state/openclaw-state-db.js";
 import { DistillationTool } from "./distillation-tool.js";
+import { recordFixtureAdoption } from "./attribution.test-helper.js";
 import {
   SekbBatchDistillationAssistant,
   type SekbBatchDistillationModelInput,
@@ -310,7 +311,7 @@ describe("SekbBatchDistillationAssistant", () => {
     const distiller = new DistillationTool({ store });
 
     const principleId = distiller.confirm_and_save(suggestion);
-    store.record_adoption(principleId, { trigger: "outcome", taskSucceeded: true, taskType: "config/db" });
+    recordFixtureAdoption(store, principleId, "batch-followup");
     distiller.reject_suggestion(suggestion, "operator free-form text must not be persisted with LLM output");
     const report = buildSekbOperatorReport(store, { batchDistillationAssistantEnabled: true });
 

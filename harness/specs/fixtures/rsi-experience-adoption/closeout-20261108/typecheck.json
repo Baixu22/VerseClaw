@@ -1,0 +1,43 @@
+{
+  "checker": "typescript@5.9.3",
+  "scope": "changed files with runtime and repository compiler options",
+  "programs": [
+    {
+      "label": "runtime",
+      "config": "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\openclaw_runtime\\tsconfig.json",
+      "files": [
+        "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\openclaw_runtime\\src\\agents\\embedded-agent-runner\\extensions.ts",
+        "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\openclaw_runtime\\src\\agents\\embedded-agent-runner\\sekb-runtime.ts",
+        "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\openclaw_runtime\\src\\knowledge\\sekb\\batch-distillation-assistant.test.ts",
+        "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\openclaw_runtime\\src\\knowledge\\sekb\\experience-closed-loop.test.ts",
+        "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\openclaw_runtime\\src\\knowledge\\sekb\\harness-integration.ts",
+        "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\openclaw_runtime\\src\\knowledge\\sekb\\knowledge-store.ts",
+        "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\openclaw_runtime\\src\\knowledge\\sekb\\retrieval-engine.ts",
+        "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\openclaw_runtime\\src\\knowledge\\sekb\\sekb.test.ts",
+        "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\openclaw_runtime\\src\\knowledge\\sekb\\types.ts",
+        "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\openclaw_runtime\\src\\state\\openclaw-state-db.generated.d.ts",
+        "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\openclaw_runtime\\src\\state\\openclaw-state-schema.generated.ts",
+        "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\openclaw_runtime\\src\\knowledge\\sekb\\attribution.test-helper.ts"
+      ],
+      "totalDiagnostics": 81,
+      "offScopeDiagnostics": 81,
+      "errors": []
+    },
+    {
+      "label": "repository",
+      "config": "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\tsconfig.test.json",
+      "files": [
+        "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\scripts\\rsi-adoption-export.d.mts",
+        "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\tests\\unit\\rsi-adoption-attribution.test.ts",
+        "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\tests\\unit\\rsi-adoption-export.test.ts",
+        "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\tests\\unit\\rsi-adoption-native-test-support.ts",
+        "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\tests\\unit\\rsi-adoption-runtime.test.ts",
+        "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\vitest.rsi-adoption.config.ts"
+      ],
+      "totalDiagnostics": 48,
+      "offScopeDiagnostics": 48,
+      "errors": []
+    }
+  ],
+  "passed": true
+}

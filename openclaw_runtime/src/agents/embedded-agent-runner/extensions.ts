@@ -51,6 +51,7 @@ import type { RuntimeMemoryQueryableFact } from "../../runtime-core/memory-conte
 import type { RuntimeLineage } from "../../runtime-core/lineage.js";
 import { createRuntimeMemoryRuntimeIntegration } from "../../runtime-core/memory-runtime-integration.js";
 import type { TrajectoryCapture } from "../../knowledge/sekb/trajectory-capture.js";
+import type { SekbRunIdentity } from "../../knowledge/sekb/types.js";
 import type { EmbeddedSekbRuntime, SekbInstallableAgent } from "./sekb-runtime.js";
 import { installEmbeddedSekbHarnessHooks } from "./sekb-runtime.js";
 import { isSubagentSessionKey } from "../../sessions/session-key-utils.js";
@@ -891,6 +892,7 @@ function buildSekbFactory(params: {
   runId?: string;
   sessionId?: string;
   sessionKey?: string;
+  sekbAttribution?: Pick<SekbRunIdentity, "taskId" | "experimentId" | "arm" | "repeat">;
 }): ExtensionFactory | undefined {
   // sekbRuntime is only supplied when resolveEmbeddedSekbRuntime saw enablement
   // (config and/or OPENCLAW_SEKB_ENABLED). Gate on the runtime object so env-only
@@ -907,7 +909,11 @@ function buildSekbFactory(params: {
             runId: params.runId,
             sessionId: params.sessionKey ?? params.sessionId,
           })?.lineage;
-    installEmbeddedSekbHarnessHooks(agent as unknown as SekbInstallableAgent, runtime, lineage);
+    installEmbeddedSekbHarnessHooks(agent as unknown as SekbInstallableAgent, runtime, lineage, {
+      runId: params.runId ?? null, sessionId: params.sessionId ?? null, sessionKey: params.sessionKey ?? null,
+      taskId: params.sekbAttribution?.taskId ?? null, experimentId: params.sekbAttribution?.experimentId ?? null,
+      arm: params.sekbAttribution?.arm ?? null, repeat: params.sekbAttribution?.repeat ?? null,
+    });
   };
 }
 
@@ -922,6 +928,7 @@ export function buildEmbeddedExtensionFactories(params: {
   sessionKey?: string;
   runId?: string;
   lineage?: RuntimeLineage;
+  sekbAttribution?: Pick<SekbRunIdentity, "taskId" | "experimentId" | "arm" | "repeat">;
   injectionTurnId?: string;
   attemptIndex?: number;
   contextBlockSink?: ContextBlockSink;

@@ -1,13 +1,13 @@
 # RSI capability and boundaries
 
-Updated 2026-11-07. `driven_by: agent`, `actor: codex/rsi-final-independent-verifier`.
+Updated 2026-11-08. `driven_by: agent`, `actor: codex/rsi-remediation`.
 
 **ClawX has no complete RSI implementation.** It has an explicitly confirmed,
 default-off experience loop, evaluation instruments, controlled research and a
 historical real-provider measurement that failed. None establishes a product
 that improves itself or authorizes a release.
 
-The current matrix is
+The 2026-11-07 baseline matrix is
 `harness/specs/fixtures/rsi-evidence-loop/capability-matrix.v1.json`.
 The prospective evaluator contract is
 `harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v2.json`; the original
@@ -20,13 +20,35 @@ for historical interpretation. The decisions and reversals are in
 
 | Layer | Current boundary | Evidence limit |
 | --- | --- | --- |
-| Experience loop / SEKB | Capture, suggest, explicitly confirm and retrieve; default off | Typed workflow and fixture-driven Electron evidence; no production-benefit measurement |
+| Experience loop / SEKB | Capture, suggest, explicitly confirm, retrieve and record versioned adoption; default off | Production extension events and a real edit exercised by an agent-driven test; no new benefit measurement |
 | Harness self-modification | No complete product generator, archive/search and promotion loop | Controlled branch research and evaluator artefacts do not constitute a shipped capability |
 | Code self-modification | No product source-generation-and-merge loop | Eligibility remains No-Go; no code candidate or product effect is claimed |
 
-SEKB adoption has a store method, tests and a counter, but no production
-`record_adoption` caller. The counter is diagnostic-only and no longer ranks
-handoff context. Role-memory feedback is recorded and reported;
+The enabled SEKB extension now calls `record_adoption` with
+`RsiExperienceAttribution/v1` receipts. It exposes the principle id and content
+digest with advice, records retrieval separately, and registers
+`record_sekb_adoption(principleId, principleVersion, trigger, operationToolCallId?)`.
+An agent can cite a retrieved principle or attribute a successful observed
+operation to it. The operation belongs to the same run; task, session and explicit
+experiment/arm/repeat coordinates come from the executor. Missing coordinates
+remain null.
+
+The shared SQLite ledger retains rejection reasons, duplicate counts, conflicting
+replays and unknown outcomes. Counters advance once per accepted principle
+version/run. Operational completion and independently graded task outcomes have
+separate sources; `post_adoption_success` advances only after an adopted version
+has a known successful task grade. The extension event containing only messages
+records an unknown operational outcome. Deleting a principle or its attributed
+trajectory removes the corresponding receipt data.
+
+`node scripts/rsi-adoption-integration.mjs` runs the focused regressions, verifies
+generated schemas and reads the real edit and SQLite events back into a fresh
+local evidence folder. `node scripts/rsi-adoption-export.mjs --db <state>/state/openclaw.sqlite`
+exports the ledger read-only; `--check --input <export.json>` recomputes receipt
+identities, digests and diagnostics. TF-0855 final evidence is in
+`harness/specs/fixtures/rsi-experience-adoption/closeout-20261108/`.
+
+Adoption feedback remains diagnostic. Role-memory feedback is recorded and reported;
 `openclaw_runtime/src/memory/context-pack.ts` and
 `openclaw_runtime/src/memory/memory-policy.ts` do not use it in retrieval or
 retention decisions. The UI states this in all four locales.
@@ -37,7 +59,7 @@ The SEKB default resolves to off in
 `openclaw_runtime/src/config/runtime-feature-leaves.ts` contains a compile-time
 type/schema parity sample; its true leaves are not runtime defaults.
 Retrieval remains advisory in the review surface, and explicit confirmation is
-the durable write path. No automatic writeback or permission change is added.
+the path for changing principle content.
 
 ## Evaluation inputs and distinct runs
 
