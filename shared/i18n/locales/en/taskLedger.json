@@ -154,6 +154,11 @@
       "cancelling": "Stopping",
       "done": "Completed",
       "cancelled": "Cancelled"
-    }
+    },
+    "steps": "Steps",
+    "stepsProgress": "{{completed}} of {{total}} steps",
+    "waitingForPlan": "Preparing the next steps.",
+    "accepted": "The task has been verified and completed.",
+    "viewChanges": "View changes"
   }
 }

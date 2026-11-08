@@ -1,0 +1,20 @@
+{
+  "driven_by": "agent",
+  "firstCleanCandidate": {
+    "report": "D:\\tmp\\unified-management-20261108\\candidate-validation\\report.json",
+    "sha256": "203770d79707e8006880335a1aa3523b500c0c6f361e330c84f1cc8e3ee42ea8",
+    "result": "failed",
+    "cause": "Windows .git pointer replacement fixture attempted write before unlink; 53 tests passed, one fixture failed with EPERM"
+  },
+  "repairCommit": "c066885f8bbf75fda2e9c24f19333f4307d35e61",
+  "earlierDevelopmentRuns": [
+    "D:/tmp/unified-management-20261108/registry-tests.json",
+    "D:/tmp/unified-management-20261108/registry-tests-2.json",
+    "D:/tmp/unified-management-20261108/registry-typecheck-node.log"
+  ],
+  "earlierEnvironmentFailures": [
+    "Vitest runtime alias configuration missing in initial isolated config",
+    "Node typecheck missing reused VerseBrowser dist and generated extension bridge",
+    "pnpm command attempted dependency reinstall and aborted before purge; used direct script equivalents"
+  ]
+}

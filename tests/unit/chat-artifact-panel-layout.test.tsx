@@ -114,6 +114,7 @@ vi.mock('@/pages/Chat/ChatToolbar', () => ({
 
 describe('Chat artifact panel layout', () => {
   beforeEach(() => {
+    Element.prototype.scrollTo = vi.fn();
     artifactPanelState.open = true;
   });
 
@@ -158,30 +159,23 @@ describe('Chat artifact panel layout', () => {
 
     const aside = (await screen.findByTestId('artifact-panel')).closest('aside');
 
-    // `bg-surface-modal` put the panel one material step above the conversation
-    // — visible in dark, where it resolved to 13% lightness against the canvas's
-    // 9.4% — so a panel that takes real layout width beside the chat still read
-    // as a raised slab parked next to it. The page canvas and its grid now carry
-    // straight through; the left hairline is the only thing marking the seam.
+    // The panel shares the conversation surface; the hairline marks the seam.
     expect(aside).not.toHaveClass('bg-surface-modal');
     expect(aside).toHaveClass('border-l');
   });
 
-  it('spans the background canvas across both columns', async () => {
+  it('keeps the conversation canvas plain without grid decoration', async () => {
     window.electron.platform = 'win32';
 
     render(<Chat />);
 
     const page = await screen.findByTestId('chat-page');
-    const canvas = await screen.findByTestId('chat-welcome-bg');
+    const canvas = screen.queryByTestId('chat-welcome-bg');
     const conversation = await screen.findByTestId('chat-conversation-column');
 
-    // The canvas is a child of the PAGE, not of the conversation column: the
-    // workspace panel is co-planar, so the grid has to cross the divider. It is
-    // also the first child, so every positioned sibling after it paints on top.
-    expect(canvas.parentElement).toBe(page);
-    expect(page.firstElementChild).toBe(canvas);
-    expect(conversation.contains(canvas)).toBe(false);
+    expect(canvas).toBeNull();
+    expect(page).toHaveClass('bg-background');
+    expect(conversation).toBeInTheDocument();
   });
 
   it('hides the chat assistive rail while the artifact panel is open', async () => {

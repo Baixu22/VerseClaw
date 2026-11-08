@@ -8,8 +8,8 @@ import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, type
 import { useShallow } from 'zustand/shallow';
 import { createChatContentCache } from '@/stores/chat/content-cache';
 import { useMessageViewport } from '@/hooks/use-message-viewport';
-import { AlertTriangle, ArrowDownToLine, Check, ChevronDown, Folder, GitBranch, GitBranchPlus, Loader2, Pencil, RefreshCw, Users, Workflow, X } from 'lucide-react';
-import { FileText, Laptop, ListChecks, Sparkles } from '@/components/icons/codex-icons';
+import { AlertTriangle, ArrowDownToLine, ArrowLeft, Check, ChevronDown, GitBranchPlus, Loader2, Pencil, RefreshCw, Users, Workflow, X } from 'lucide-react';
+import { FileText, ListChecks, Sparkles } from '@/components/icons/codex-icons';
 import {
   AssistantRuntimeProvider,
   AuiProvider,
@@ -116,8 +116,6 @@ import { mergeProcessSurfaces, processFromTerminalSurface, projectGeneratedFileD
 import { promoteRunSurfaces } from './run-surface-promotion';
 import { useRunApprovals } from './use-run-approvals';
 import { WelcomeProjectPicker } from '@/components/chat/WelcomeProjectPicker';
-import { SessionWorkspacePicker } from '@/components/chat/SessionWorkspacePicker';
-import { WelcomeBranchPicker } from '@/components/chat/WelcomeBranchPicker';
 import { WorkspacePickerMenu } from '@/components/chat/WorkspacePickerMenu';
 import { GeneratedFilesPanel } from '@/components/file-preview/GeneratedFilesPanel';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -365,13 +363,6 @@ function getContinuityErrorMessage(error: unknown, fallback: string): string {
 const HEADER_COMPLETED_STATUSES = new Set(['completed', 'success', 'done', 'finished']);
 const HEADER_ERROR_STATUSES = new Set(['failed', 'error', 'killed', 'timeout']);
 const HEADER_ABORTED_STATUSES = new Set(['aborted', 'cancelled', 'canceled']);
-const HEADER_SESSION_DOT_LABEL_KEYS: Partial<Record<OrbStatusState, string>> = {
-  streaming: 'sessionStatus.running',
-  waiting: 'sessionStatus.waiting',
-  success: 'sessionStatus.completed',
-  error: 'sessionStatus.error',
-  stopped: 'sessionStatus.aborted',
-};
 
 function getHeaderSessionDotState(input: {
   sessionKey: string;
@@ -462,7 +453,6 @@ function ProjectSessionHeader({
   const [editingSession, setEditingSession] = useState(false);
   const [sessionDraft, setSessionDraft] = useState('');
   const [renaming, setRenaming] = useState(false);
-  const [branch, setBranch] = useState<string | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
   const sessionName = getSessionDisplayName(currentSessionKey, sessions, sessionLabels);
   /**
@@ -476,39 +466,6 @@ function ProjectSessionHeader({
       || sessionLineage?.[session.key]?.sourceSessionKey === currentSessionKey),
   );
 
-  /* The empty state names the checkout under the composer (project · branch).
-   * Once a conversation starts that row is gone, and the header was carrying
-   * project / session only — so the branch you are about to have an agent
-   * write to stopped being visible at exactly the point it starts mattering.
-   * Same call the hero makes; the two are never mounted at once. */
-  useEffect(() => {
-    let cancelled = false;
-    void hostApi.git.status().then((result) => {
-      if (cancelled) return;
-      const status = result.status;
-      if (!status?.isRepository) {
-        setBranch(null);
-        return;
-      }
-      setBranch(status.detached ? 'detached' : status.branch || null);
-    }).catch(() => {
-      if (!cancelled) setBranch(null);
-    });
-    return () => { cancelled = true; };
-  }, [projectPath]);
-
-  const currentSessionDotState = getHeaderSessionDotState({
-    sessionKey: currentSessionKey,
-    currentSessionKey,
-    runtimeRuns,
-    activeRunId,
-    sending,
-    pendingFinal,
-    runError,
-  });
-  const currentSessionDotLabel = currentSessionDotState
-    ? t(HEADER_SESSION_DOT_LABEL_KEYS[currentSessionDotState] ?? 'sessionStatus.running')
-    : '';
   const recentSessions = useMemo(() => {
     return resolveWorkspaceHeaderSessions({ currentSessionKey, sessions, workspaceSessionKeys });
   }, [currentSessionKey, sessions, workspaceSessionKeys]);
@@ -550,11 +507,8 @@ function ProjectSessionHeader({
 
   return (
     <div ref={rootRef} className="chat-project-session-header flex min-w-0 items-center gap-1 text-sm" data-testid="chat-project-session-header">
-      <Laptop className="order-1 h-4 w-4 shrink-0 text-muted-foreground" />
-      <div className="chat-header-environment-project relative order-4 hidden min-w-0 md:block" data-testid="chat-header-environment-project">
-        {/* Project is the ancestor, not the subject — the session is what this
-          * pane is showing, so it takes the weight and the project steps back
-          * to breadcrumb strength. */}
+      <div className="chat-header-environment-project relative order-1 min-w-0" data-testid="chat-header-environment-project">
+        {/* Project selection stays secondary to the task header. */}
         <Tooltip>
           <TooltipTrigger asChild>
         <button
@@ -562,7 +516,7 @@ function ProjectSessionHeader({
           className="inline-flex max-w-[200px] items-center gap-1 rounded-md px-1.5 py-1 text-xs font-normal text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
           onClick={() => setOpen((current) => current === 'workspace' ? null : 'workspace')}
         >
-          <Folder className="h-3.5 w-3.5 shrink-0" />
+          <ArrowLeft className="h-3.5 w-3.5 shrink-0" />
           <span className="truncate">{projectName}</span>
           <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
         </button>
@@ -598,24 +552,6 @@ function ProjectSessionHeader({
           />
         )}
       </div>
-      {/* Branch reads as a label, not a control — checking out from here would
-        * be a destructive action one stray click away from the session menu.
-        * The composer's git strip stays the place that switches branches. */}
-      {branch && (
-        <Tooltip>
-          <TooltipTrigger asChild>
-        <span
-          className="chat-header-branch order-5 hidden min-w-0 shrink items-center gap-1 rounded-md px-1.5 py-1 text-xs text-muted-foreground lg:inline-flex"
-          data-testid="chat-header-branch"
-        >
-          <GitBranch className="h-3.5 w-3.5 shrink-0" />
-          <span className="max-w-[160px] truncate font-mono">{branch}</span>
-        </span>
-          </TooltipTrigger>
-          <TooltipContent side="bottom" collisionPadding={8} className="max-w-xs break-all text-xs">{branch}</TooltipContent>
-        </Tooltip>
-      )}
-      <span className="chat-header-separator order-3 hidden text-foreground/25 md:inline" aria-hidden="true">/</span>
       <div className="relative order-2 min-w-0">
         {editingSession ? (
           <div className="inline-flex max-w-[380px] items-center gap-1 rounded-md bg-black/5 px-1 py-0.5 dark:bg-white/10">
@@ -649,15 +585,7 @@ function ProjectSessionHeader({
             }}
             data-testid="chat-header-session-name"
           >
-            {currentSessionDotState && (
-              <OrbStatus
-                state={currentSessionDotState}
-                label={currentSessionDotLabel}
-                className="size-3.5 shrink-0"
-                data-testid="chat-current-session-status"
-              />
-            )}
-            <span className="chat-header-session-label truncate">{sessionName}</span>
+            <span className="chat-header-session-label text-xs font-normal text-muted-foreground">{t("session.manage")}</span>
             <ChevronDown className="chat-header-session-chevron h-3.5 w-3.5 shrink-0 text-muted-foreground" />
           </button>
             </TooltipTrigger>
@@ -2882,17 +2810,6 @@ export function Chat() {
       || (runActivityExpandedOverrides[turnDisclosureKey(currentSessionKey, card)] ?? defaultExpanded);
   }, [approvalsByRunKey, currentSessionKey, runActivityExpandedOverrides, runActivityKeepExpandedOnComplete]);
 
-  const sessionActivityPlanVisibleInTranscript = useMemo(() => {
-    // Newest turn first — the same card sessionActivityPlan fell back to.
-    for (let index = userRunCards.length - 1; index >= 0; index -= 1) {
-      const card = userRunCards[index];
-      if (!card.surfaces.plan || card.surfaces.plan.todos.length === 0) continue;
-      return isTurnSummaryExpanded(card);
-    }
-    // Plan sourced from a live runtime run: its card is the active one.
-    const activeCard = userRunCards.find((card) => card.active);
-    return activeCard ? isTurnSummaryExpanded(activeCard) : false;
-  }, [isTurnSummaryExpanded, userRunCards]);
 
   const visibleSessionActivitySnapshot = useMemo(() => {
     if (!sessionActivitySnapshot) return undefined;
@@ -3344,44 +3261,10 @@ export function Chat() {
       data-testid="chat-page"
       className={cn(
         'relative flex min-h-0 overflow-hidden transition-colors duration-180 motion-reduce:transition-none',
-        '-m-5 rounded-tl-xl bg-material-canvas shadow-[inset_1px_0_0_hsl(var(--border)/0.65)]',
+        '-m-5 rounded-tl-xl bg-background',
       )}
       style={{ height: 'calc(100% + 2.5rem)' }}
     >
-      {/* verse-style background: grid, glows, noise.
-        *
-        * It belongs to the SESSION, not to the empty state, and it is the page's
-        * canvas rather than the conversation's — both of which are corrections.
-        *
-        * It used to be mounted inside the message pane, `position: fixed`, and
-        * revealed only while `isEmpty`. Nothing in the ancestor chain establishes
-        * a containing block, so `fixed` resolved against the viewport: the
-        * hairlines ran across the sidebar too, for as long as the hero was up.
-        * Then the first message landed and the whole layer faded out, leaving the
-        * transcript on a flat canvas.
-        *
-        * Now it is an `absolute` layer on the page box, so it stops exactly where
-        * the page does (the sidebar keeps its own surface), it never leaves, and
-        * it spans BOTH columns — the workspace panel is co-planar with the
-        * conversation, so the grid has to cross the divider rather than stop at
-        * it. That is also why the panel's own surfaces are transparent in the
-        * side placement; see codex-workspace-panel.css.
-        *
-        * `data-phase` is what the hero-only flourishes hang off, and `z-index: 0`
-        * keeps it under every positioned sibling that follows — which is why the
-        * two columns, the transcript wrapper, the composer and the hero rows are
-        * all `relative`. */}
-      <div
-        className="codex-welcome-bg"
-        data-phase={isEmpty ? 'hero' : 'conversation'}
-        aria-hidden="true"
-        data-testid="chat-welcome-bg"
-      >
-        <div className="codex-welcome-bg__grid" />
-        <div className="codex-welcome-bg__glow codex-welcome-bg__glow--a" />
-        <div className="codex-welcome-bg__glow codex-welcome-bg__glow--b" />
-        <div className="codex-welcome-bg__noise" />
-      </div>
       {/* Left column: chat. `relative` is the status rail's anchor — it hangs
           off this column's own top-right corner, not the page's, so it can never
           drift over the artifact panel. */}
@@ -3481,7 +3364,7 @@ export function Chat() {
         >
           <SessionActivityPanel
             snapshot={visibleSessionActivitySnapshot}
-            plan={sessionActivityPlanVisibleInTranscript ? null : sessionActivityPlan}
+            plan={null}
             processes={sessionActivityProcesses}
             compact
             className="!w-full"
@@ -3498,21 +3381,10 @@ export function Chat() {
         </aside>
       )}
 
+      <SessionTaskDock workspaceId={activeWorkspaceId ?? null} sessionKey={currentSessionKey} hasConversation={!isEmpty} plan={sessionActivityPlan} />
+
       {/* Messages Area */}
       <div ref={messageAreaRef} className="relative min-h-0 flex-1 overflow-hidden px-4 py-3">
-        {isEmpty && (
-          <div
-            className={cn(
-              'codex-welcome-watermark',
-              !sendingAnimation && 'codex-welcome-watermark--visible',
-              sendingAnimation && 'codex-welcome-watermark--sending',
-            )}
-            aria-hidden="true"
-            data-testid="chat-welcome-watermark"
-          >
-            verse
-          </div>
-        )}
         <SelectionQuoteToolbar containerRef={messageAreaRef} onQuote={handleQuoteSelection} />
         {canShowChatSideRail && <MessageNavRail items={messageNavItems} scrollRef={scrollElementRef}
           onSelect={scrollToMessageIndex} firstVisibleIndex={messageViewport.firstVisibleIndex} />}
@@ -3537,8 +3409,7 @@ export function Chat() {
               ref={contentRef}
               className={cn(
                 "mx-auto space-y-4",
-                // Empty state fills the pane so the scroll area does not collapse
-                // around the status rail and let the watermark reflow.
+                // Preserve the centred input layout before the first message.
                 isEmpty ? "h-full w-full max-w-[820px]" : "max-w-[820px]",
               )}
             >
@@ -3692,8 +3563,8 @@ export function Chat() {
                               )}
                               {card.surfaces.plan && (
                                 <ToolUiPlanView
-                                  title={card.surfaces.plan.title ?? ''}
-                                  showTitle={Boolean(card.surfaces.plan.title)}
+                                  title={t('task.steps')}
+                                  showTitle
                                   description={card.surfaces.plan.description}
                                   todos={card.surfaces.plan.todos}
                                   compact
@@ -3890,12 +3761,6 @@ export function Chat() {
           </Button>
         </div>
       )}
-      {activeWorkspace && (
-        <div className="relative mx-auto w-full max-w-[768px] px-4">
-          <ComposerGitStrip workspace={activeWorkspace} disabled={inputRunActive} onOpenGitPanel={handleOpenEnvironment} onSwitchWorktreeWorkspace={handleSwitchWorktreeWorkspace} />
-        </div>
-      )}
-      <SessionTaskDock workspaceId={activeWorkspaceId ?? null} sessionKey={currentSessionKey} hasConversation={!isEmpty} plan={sessionActivityPlan} />
       <ChatInput
         onSend={handleSendMessage}
         disabled={!isGatewayRunning}
@@ -3931,11 +3796,14 @@ export function Chat() {
         onDrainQueuedFollowup={handleDrainQueuedFollowup}
         taskLoopUpgradeBusy={taskLoopUpgradeBusy}
         onConfirmTaskLoopUpgrade={handleConfirmTaskLoopUpgrade}
-        /* `relative` puts the composer in the same paint layer as the background
-         * sheet behind it, and later in tree order, so the grid stays under the
-         * card instead of over it. Same reason on the two hero rows below. */
+        /* The input is the only elevated surface in the conversation. */
         className={cn('relative', sendingAnimation && 'codex-composer-host--sending')}
       />
+      {activeWorkspace && !isEmpty && (
+        <div className="relative mx-auto w-full max-w-[768px] px-4">
+          <ComposerGitStrip key={activeWorkspace.id} workspace={activeWorkspace} active={!isEmpty} sessionKey={currentSessionKey} disabled={inputRunActive} onOpenGitPanel={handleOpenEnvironment} onSwitchWorktreeWorkspace={handleSwitchWorktreeWorkspace} />
+        </div>
+      )}
       {/* Reference stacking under the stage is composer → context → chips, then
         * a spacer that grows like the message area above it; the two spacers
         * together centre the group without the composer leaving its slot. */}
@@ -3943,7 +3811,6 @@ export function Chat() {
         <>
           <div className={cn('relative', sendingAnimation && 'codex-welcome-context--sending')}>
             <WelcomeScreen
-              onSelectWorktree={handleSwitchWorktreeWorkspace}
               onPickFolder={handlePickWorkspaceFolder}
               disabled={!isGatewayRunning}
             />
@@ -4378,89 +4245,11 @@ function WelcomeSuggestionScope({ children, suggestions }: Omit<WelcomeSuggestio
   return <AuiProvider value={aui}>{children}</AuiProvider>;
 }
 
-/**
- * Empty-state scaffolding: the project/branch context row under the composer.
- *
- * There is deliberately no heading here. The reference's empty state has one
- * piece of display type — the giant `verse` watermark behind the composer —
- * and adding a second ("what should we build in X?") gave the screen two
- * competing focal points and pushed the composer off centre. The watermark is
- * the heading; this row is the caption under it.
- *
- * That leaves the context row as the only place the workspace can be switched
- * from, so the project token is the picker rather than a static label.
- */
-function WelcomeScreen({ disabled = false, onPickFolder, onSelectWorktree }: Omit<WelcomeScreenProps, 'onSend'> & { onSelectWorktree?: (tree: GitWorktree) => Promise<void> }) {
-  const activeWorkspace = useWorkspacesStore((s) => s.activeWorkspace);
-  const hasWorkspace = Boolean(activeWorkspace);
-  const [gitStatus, setGitStatus] = useState<
-    { workspaceId: string; branch: string; detached: boolean } | null
-  >(null);
-
-  const refreshGitStatus = useCallback(async () => {
-    const workspaceId = activeWorkspace?.id;
-    if (!workspaceId) return;
-    try {
-      const result = await hostApi.git.status();
-      const status = result.status;
-      setGitStatus(status?.isRepository && status.branch
-        ? { workspaceId, branch: status.branch, detached: status.detached ?? false }
-        : null);
-    } catch {
-      setGitStatus(null);
-    }
-  }, [activeWorkspace?.id]);
-
-  useEffect(() => {
-    let cancelled = false;
-    const loadGitStatus = async () => {
-      const workspaceId = activeWorkspace?.id;
-      if (!workspaceId) return;
-      try {
-        const result = await hostApi.git.status();
-        const status = result.status;
-        if (!cancelled) {
-          setGitStatus(status?.isRepository && status.branch
-            ? { workspaceId, branch: status.branch, detached: status.detached ?? false }
-            : null);
-        }
-      } catch {
-        if (!cancelled) setGitStatus(null);
-      }
-    };
-    void loadGitStatus();
-    return () => {
-      cancelled = true;
-    };
-  }, [activeWorkspace?.id]);
-
-  /* A result from the workspace we just left is dropped here rather than
-   * cleared in the effect body: clearing it there is a synchronous setState
-   * inside an effect, which costs a second render pass on every workspace
-   * switch. Tagging the result with the workspace it was read from is enough
-   * to know it is stale. */
-  const branch = gitStatus?.workspaceId === activeWorkspace?.id ? gitStatus : null;
-
-  return (
-    <div className="codex-welcome-stage">
-      {hasWorkspace && (
-        <div className="codex-welcome-context" data-testid="chat-welcome-context">
-          <div className="codex-welcome-context__group" data-testid="chat-welcome-environment-group">
-            <WelcomeProjectPicker disabled={disabled} onPickFolder={onPickFolder} />
-            {onSelectWorktree && <SessionWorkspacePicker key={activeWorkspace?.id} disabled={disabled} onSelect={onSelectWorktree} onChanged={() => void refreshGitStatus()} />}
-            {branch && (
-              <WelcomeBranchPicker
-                branch={branch.branch}
-                detached={branch.detached}
-                disabled={disabled}
-                onChanged={refreshGitStatus}
-              />
-            )}
-          </div>
-        </div>
-      )}
-    </div>
-  );
+/** The empty conversation names its project without exposing Git configuration. */
+function WelcomeScreen({ disabled = false, onPickFolder }: Omit<WelcomeScreenProps, 'onSend'>) {
+  const activeWorkspace = useWorkspacesStore(state=>state.activeWorkspace);
+  if (!activeWorkspace) return null;
+  return <div className="codex-welcome-stage"><div className="codex-welcome-context" data-testid="chat-welcome-context"><WelcomeProjectPicker disabled={disabled} onPickFolder={onPickFolder}/></div></div>;
 }
 
 /**

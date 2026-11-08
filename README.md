@@ -16,6 +16,10 @@ Compatible filesystem subscriptions share native watchers while keeping independ
 
 Managed process lifecycles retain their shared executor until their own terminal result. Poll dispatch leaves room for stdin and cancellation, and captured output uses a shared byte limit with the existing artifact references.
 
+Terminal PTYs and governed processes share declared host capacity. Known server ports are reserved before launch, stale terminal generations reject control, and uncertain exits retain their reservations for recovery. See [terminal resource ownership](harness/specs/guides/terminal-resource-ownership.md).
+
+Runtime-managed worktree ownership, creation stages and merge intent persist in SQLite across restarts. Replaced paths, incomplete setup and unknown merge outcomes retain their resources and reject stale execution credentials. See the [registration and recovery contract](harness/specs/guides/execution-domain-registry.md).
+
 Conversations can initialize a Git repository, select an independent worktree, and restore its draft. `/storage` and **Settings → Storage** share a resource page for conversation files, process memory, and worktrees. [Usage and ownership](docs/dev/session-worktree-storage.md).
 
 **Chat, code, knowledge and agent execution in one desktop workspace.**
@@ -278,4 +282,4 @@ Task Ledger → Persistent tasks saves objectives, constraints and acceptance ch
 
 Search and filter the task list, then load further pages. Agents can suggest related tasks and decompose a goal into dependent tasks while retaining the parent goal and constraints. Cancelling a plan waits for in-flight effects to settle. Acceptance and recovery read receipts from the existing runtime owners.
 
-Conversation tasks are managed by the agent. After work is identified, a compact task row appears above the composer. Expand it for progress, or hide and reopen it without stopping the task. Task Ledger remains available for detailed management.
+Conversation tasks are managed by the agent. Identified work appears in one task header above the conversation, with verified step progress and a hide/reopen control. The plain canvas keeps the input clear; a small changed-file entry appears below the composer only when files change. Branches and worktree controls remain in its details.

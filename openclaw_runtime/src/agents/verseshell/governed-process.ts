@@ -1,4 +1,5 @@
 import { mkdirSync } from "node:fs";
+import { assertManagedPortsBindable, reconcileManagedProcessReservations } from "./managed-process-reservation.js";
 import { join } from "node:path";
 import { ByteTail } from "../byte-tail.js";
 import type { JsonObject, Observation } from "../../../../shared/verseshell/types.js";
@@ -142,6 +143,8 @@ export type GovernedProcessResourceReceipt = {
 };
 
 export type GovernedVerseShellProcessOptions = {
+  /** Host-declared local TCP ports, reserved before process.start. */
+  reservedPorts?: readonly number[];
   command: string;
   /** Host-owned argv produced before approval. */
   argv?: readonly string[];
@@ -393,7 +396,8 @@ export async function startGovernedVerseShellProcess(
   };
   // Instance-wide occupancy is admitted before the process starts so several sessions cannot
   // each assume they own the whole declared capacity. No declaration means no counter.
-  const capacityAdmission = admitManagedProcess();
+  await reconcileManagedProcessReservations();
+  const capacityAdmission = admitManagedProcess({ ports: options.reservedPorts, owner: `${options.agentId}:${options.sessionId}` });
   if (!capacityAdmission.ok) {
     throw new GovernedVerseShellError(
       "E_PROCESS_CAPACITY_LIMIT",
@@ -430,6 +434,7 @@ export async function startGovernedVerseShellProcess(
   let releaseExecutor: (() => Promise<void>) | undefined;
   const dispatchStart = async (target: VerseShellAciClient): Promise<Observation> => {
     // A transport rejection cannot prove that an effectful start was not delivered.
+    capacityLease.markDispatched();
     startMayHaveRun = true;
     const observation = await target.execute("process.start", startArgs, {
       timeoutMs: POLL_REQUEST_TIMEOUT_MS,
@@ -441,6 +446,7 @@ export async function startGovernedVerseShellProcess(
   };
 
   try {
+    await assertManagedPortsBindable(options.reservedPorts ?? []);
     prepareVerseShellLifecycleRoot(baseConfig.workspace);
     firstClient = await manager.getClient(baseConfig);
     client = firstClient;
@@ -486,6 +492,9 @@ export async function startGovernedVerseShellProcess(
       );
     }
     snapshot = parseSnapshot(startObservation, undefined, 0, options.onStdout, options.onStderr);
+    // Observation enriches recovery; inability to inspect the tree never grants
+    // a slot release. The native terminal receipt still owns that decision.
+    await capacityLease.observeProcess(snapshot.pid).catch(() => undefined);
   } catch (error) {
     if (!startMayHaveRun) {
       try {
@@ -493,6 +502,8 @@ export async function startGovernedVerseShellProcess(
       } finally {
         releaseCapacity();
       }
+    } else {
+      capacityLease.markUnknown("native-start-outcome-unconfirmed");
     }
     throw error;
   }
@@ -601,13 +612,22 @@ export async function startGovernedVerseShellProcess(
     } finally {
       settled = true;
       stdin.destroy();
+      if (snapshot.state === "running") capacityLease.markUnknown("native-terminal-outcome-unconfirmed");
       // Capacity is only returned once a terminal state was observed. If the wait ended in an
       // unknown state the slot stays occupied (and is visible as a leak) rather than being
       // released on an unverified exit.
+      let portReleaseConfirmed = false;
       try {
-        if (snapshot.state !== "running") await releaseExecutor?.();
+        if (snapshot.state !== "running") {
+          await assertManagedPortsBindable(options.reservedPorts ?? []);
+          portReleaseConfirmed = true;
+          await releaseExecutor?.();
+        }
       } finally {
-        if (snapshot.state !== "running") releaseCapacity();
+        if (snapshot.state !== "running" && portReleaseConfirmed) {
+          capacityLease.markTerminal();
+          releaseCapacity();
+        }
       }
     }
   })();

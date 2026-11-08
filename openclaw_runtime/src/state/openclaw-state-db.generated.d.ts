@@ -529,6 +529,13 @@ export interface ExecApprovalsConfig {
   updated_at_ms: number;
 }
 
+export interface ExecutionDomainRegistrations {
+  domain_id: string;
+  registration_json: string;
+  revision: number;
+  updated_at: number;
+}
+
 export interface FlowRuns {
   blocked_summary: string | null;
   blocked_task_id: string | null;
@@ -767,6 +774,13 @@ export interface ManagedOutgoingImageRecords {
   retention_class: string | null;
   session_key: string;
   updated_at: string | null;
+}
+
+export interface ManagedWorktreeScopes {
+  revision: number;
+  scope_key: string;
+  state_json: string;
+  updated_at: number;
 }
 
 export interface MediaBlobs {
@@ -1384,6 +1398,7 @@ export interface DB {
   diagnostic_stability_bundles: DiagnosticStabilityBundles;
   effect_receipts: EffectReceipts;
   exec_approvals_config: ExecApprovalsConfig;
+  execution_domain_registrations: ExecutionDomainRegistrations;
   flow_runs: FlowRuns;
   gateway_restart_handoff: GatewayRestartHandoff;
   gateway_restart_intent: GatewayRestartIntent;
@@ -1398,6 +1413,7 @@ export interface DB {
   long_task_user_queue: LongTaskUserQueue;
   macos_port_guardian_records: MacosPortGuardianRecords;
   managed_outgoing_image_records: ManagedOutgoingImageRecords;
+  managed_worktree_scopes: ManagedWorktreeScopes;
   media_blobs: MediaBlobs;
   migration_runs: MigrationRuns;
   migration_sources: MigrationSources;

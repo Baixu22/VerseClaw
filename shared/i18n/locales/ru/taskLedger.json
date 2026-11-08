@@ -154,6 +154,11 @@
       "cancelling": "Остановка",
       "done": "Завершена",
       "cancelled": "Отменена"
-    }
+    },
+    "steps": "Этапы",
+    "stepsProgress": "{{completed}} из {{total}} этапов",
+    "waitingForPlan": "Подготовка следующих шагов.",
+    "accepted": "Задача проверена и завершена.",
+    "viewChanges": "Просмотреть изменения"
   }
 }

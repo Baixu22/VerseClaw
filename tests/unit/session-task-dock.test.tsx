@@ -141,7 +141,7 @@ describe("quiet conversation task dock", () => {
     expect(screen.getByTestId('session-task-plan')).toHaveTextContent('Deliver a');
     fireEvent.click(screen.getByTestId('session-task-plan').querySelector('button')!);
     mocks.read.mockResolvedValue(result('a'));
-    fireEvent.click(screen.getByTestId('session-task-details').querySelector('button')!);
+    fireEvent.click(screen.getByRole('button',{name:'conversation.refresh'}));
     await waitFor(()=>expect(screen.getByTestId('session-task-status')).not.toHaveTextContent('conversation.stale'));
     expect(mocks.command).not.toHaveBeenCalled();
   });
@@ -151,5 +151,23 @@ describe("quiet conversation task dock", () => {
     mocks.read.mockResolvedValue(result('new-goal'));fireEvent(window,new Event('focus'));
     await waitFor(()=>expect(screen.getByTestId('session-task-panel')).toHaveTextContent('Deliver new-goal'));
     expect(screen.getByTestId('session-task-plan').querySelector('button')).toHaveAttribute('aria-expanded','false');
+  });
+  it('shows the goal once and uses checkpoint facts as steps without inventing a percentage',async()=>{
+    render(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation/>);
+    const title=await screen.findByTestId('session-task-title');expect(title).toHaveTextContent('Deliver a');
+    expect(screen.getAllByText('Deliver a')).toHaveLength(1);
+    expect(screen.queryByRole('progressbar')).toBeNull();
+    fireEvent.click(screen.getByTestId('session-task-plan').querySelector('button')!);
+    expect(screen.getByTestId('session-task-steps')).toHaveTextContent('Verify the result');
+    expect(screen.getAllByText('Deliver a')).toHaveLength(1);
+    expect(screen.getByTestId('session-task-dock')).toHaveAttribute('data-placement','header');
+  });
+  it('derives progress from known child tasks and retains the parent acceptance state',async()=>{
+    const first=task('first');first.contract.state='done';
+    const second=task('second');second.contract.state='doing';
+    mocks.read.mockResolvedValue({...result('parent'),children:[first,second]});
+    render(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation/>);
+    expect(await screen.findByRole('progressbar')).toHaveAttribute('aria-valuenow','50');
+    expect(screen.getByTestId('session-task-status')).toHaveTextContent('conversation.states.doing');
   });
 });

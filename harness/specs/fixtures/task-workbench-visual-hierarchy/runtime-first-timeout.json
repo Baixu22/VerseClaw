@@ -1,0 +1,10 @@
+{
+  "status": "finished",
+  "exitCode": 124,
+  "signal": null,
+  "timedOut": false,
+  "durationMs": 676884,
+  "args": [
+    "scripts/build-all.mjs"
+  ]
+}

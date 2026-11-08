@@ -1,0 +1,154 @@
+{
+  "candidate": "177d6b25bfb2a763e578958732d6a899277b3917",
+  "driven_by": "agent",
+  "records": [
+    {
+      "name": "unit",
+      "args": [
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/session-task-dock.test.tsx",
+        "tests/unit/composer-git-strip.test.tsx",
+        "tests/unit/chat-session-status-rail.test.tsx",
+        "tests/unit/chat-page-execution-graph.test.tsx",
+        "tests/unit/chat-artifact-panel-layout.test.tsx",
+        "tests/unit/chat-render-reachability.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:/tmp/task-workbench-hierarchy-20261108/unit-integrated.json"
+      ],
+      "log": "D:/tmp/task-workbench-hierarchy-20261108/unit-integrated.log",
+      "pid": 36620,
+      "status": "finished",
+      "startedAt": "2026-11-08T15:12:10.645Z",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 31779,
+      "sourceCandidate": "22fbd5c5678bc68bfa4e564150a8ee5276ba4e18"
+    },
+    {
+      "name": "types",
+      "args": [
+        "scripts/typecheck-agent-dev.mjs"
+      ],
+      "log": "D:/tmp/task-workbench-hierarchy-20261108/types-integrated.log",
+      "pid": 46044,
+      "status": "finished",
+      "startedAt": "2026-11-08T15:12:42.425Z",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 70120,
+      "sourceCandidate": "22fbd5c5678bc68bfa4e564150a8ee5276ba4e18"
+    },
+    {
+      "name": "contract",
+      "args": [
+        "scripts/contract-check.mjs"
+      ],
+      "log": "D:/tmp/task-workbench-hierarchy-20261108/contract-integrated.log",
+      "pid": 45716,
+      "status": "finished",
+      "startedAt": "2026-11-08T15:13:52.547Z",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 2148,
+      "sourceCandidate": "22fbd5c5678bc68bfa4e564150a8ee5276ba4e18"
+    },
+    {
+      "name": "i18n",
+      "args": [
+        "scripts/i18n-lint.mjs"
+      ],
+      "log": "D:/tmp/task-workbench-hierarchy-20261108/i18n-integrated.log",
+      "pid": 45160,
+      "status": "finished",
+      "startedAt": "2026-11-08T15:13:54.696Z",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 389,
+      "sourceCandidate": "22fbd5c5678bc68bfa4e564150a8ee5276ba4e18"
+    },
+    {
+      "name": "harness",
+      "args": [
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/task-workbench-visual-hierarchy.md"
+      ],
+      "log": "D:/tmp/task-workbench-hierarchy-20261108/harness-integrated.log",
+      "pid": 46776,
+      "status": "finished",
+      "startedAt": "2026-11-08T15:14:59.353Z",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 919,
+      "sourceCandidate": "4a535376b7775cdc8cbd1a84359291fd1d9c7a5b"
+    },
+    {
+      "name": "desktop",
+      "args": [
+        "/d",
+        "/s",
+        "/c",
+        "pnpm run build:vite"
+      ],
+      "log": "D:/tmp/task-workbench-hierarchy-20261108/desktop-integrated.log",
+      "pid": 46476,
+      "status": "finished",
+      "startedAt": "2026-11-08T15:15:00.272Z",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 70206,
+      "sourceCandidate": "4a535376b7775cdc8cbd1a84359291fd1d9c7a5b"
+    },
+    {
+      "name": "electron",
+      "args": [
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/durable-task-conversation.spec.ts",
+        "tests/e2e/durable-task-system.spec.ts",
+        "--workers=1",
+        "--reporter=list,json"
+      ],
+      "log": "D:/tmp/task-workbench-hierarchy-20261108/electron.log",
+      "pid": 13344,
+      "status": "finished",
+      "startedAt": "2026-11-08T15:31:37.020Z",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 85710,
+      "sourceCandidate": "177d6b25bfb2a763e578958732d6a899277b3917"
+    },
+    {
+      "name": "comms-replay",
+      "args": [
+        "scripts/comms/replay.mjs"
+      ],
+      "log": "D:/tmp/task-workbench-hierarchy-20261108/comms-replay.log",
+      "pid": 30924,
+      "status": "finished",
+      "startedAt": "2026-11-08T15:33:02.736Z",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 418,
+      "sourceCandidate": "177d6b25bfb2a763e578958732d6a899277b3917"
+    },
+    {
+      "name": "comms-compare",
+      "args": [
+        "scripts/comms/compare.mjs"
+      ],
+      "log": "D:/tmp/task-workbench-hierarchy-20261108/comms-compare.log",
+      "pid": 33160,
+      "status": "finished",
+      "startedAt": "2026-11-08T15:33:03.155Z",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 279,
+      "sourceCandidate": "177d6b25bfb2a763e578958732d6a899277b3917"
+    }
+  ]
+}
