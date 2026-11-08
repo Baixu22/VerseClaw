@@ -1,0 +1,9 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-skill-mcp-audit",
+  "runtimeUnrelated": [],
+  "rootChangedImporters": [
+    "packages/versebrowser",
+    "resources/verseshell-mcp"
+  ]
+}

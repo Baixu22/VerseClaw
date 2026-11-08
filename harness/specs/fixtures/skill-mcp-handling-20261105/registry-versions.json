@@ -1,0 +1,23 @@
+[
+  {
+    "name": "@modelcontextprotocol/sdk",
+    "url": "https://registry.npmjs.org/%40modelcontextprotocol%2Fsdk/latest",
+    "version": "1.32.2",
+    "integrity": "sha512-SWsVtH/0vULSQStoZ6xxH2K09Li8fXYTMC64ZeogCdpZ3XSi1eCPOByV1OpuJxuI3OcmHhosDWYyii07tpPsLw==",
+    "observedAt": "2026-11-05T16:07:28.346Z"
+  },
+  {
+    "name": "@modelcontextprotocol/client",
+    "url": "https://registry.npmjs.org/%40modelcontextprotocol%2Fclient/latest",
+    "version": "2.4.0",
+    "integrity": "sha512-LgrD2OphHuG12vfKFKz6SOnq7bKHQmhGJIAYdD+MZBn2npHEyry6uD8zvktodtl5CQM85MO0anUyD9JwmUmxww==",
+    "observedAt": "2026-11-05T16:07:24.050Z"
+  },
+  {
+    "name": "@modelcontextprotocol/server",
+    "url": "https://registry.npmjs.org/%40modelcontextprotocol%2Fserver/latest",
+    "version": "2.4.0",
+    "integrity": "sha512-rgR9yxSaAJ+bcsi/XroT/S2AfPiIWloXAnrdfYSCms9ivVju0ishu/wW0J21Ho6+ZOR1r7RyeRbjiRuF87ix5Q==",
+    "observedAt": "2026-11-05T16:07:24.848Z"
+  }
+]

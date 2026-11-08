@@ -233,6 +233,7 @@ Skill source 可来自：
 边界：
 
 - skill discovered ≠ exposed；
+- Skill 启停配置写入 runtime 所有的 `openclaw.json`，受管目录在 Gateway 启动前注册；
 - config saved ≠ runtime reloaded；
 - marketplace install ≠ executable trust；
 - skill contents 可以影响 prompt，但不是权限 grant。

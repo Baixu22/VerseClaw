@@ -2751,3 +2751,7 @@ openclaw_runtime/_tmp_*
 # Exact logs retained by the integrated RSI acceptance manifest.
 !/harness/specs/fixtures/rsi-candidate-evolution/closeout-20261108/harness-ci-stderr.log
 !/harness/specs/fixtures/rsi-candidate-evolution/closeout-20261108/harness-ci-stdout.log
+
+# Curated Skill/MCP audit receipts referenced by the retained SHA256SUMS.
+!harness/specs/fixtures/skill-mcp-handling-20261105/harness-validation.log
+!harness/specs/fixtures/skill-mcp-handling-20261105/verseshell-tests.log

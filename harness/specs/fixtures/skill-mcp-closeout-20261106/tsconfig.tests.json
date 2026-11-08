@@ -1,0 +1,14 @@
+{
+  "extends": "../../../../tsconfig.test.json",
+  "compilerOptions": {
+    "composite": false,
+    "noEmit": true
+  },
+  "include": [],
+  "files": [
+    "../../../../tests/unit/skill-config-runtime-sync.test.ts",
+    "../../../../tests/unit/skills-api-install-trust-gate.test.ts",
+    "../../../../tests/unit/config-sync-source-runtime.test.ts",
+    "../../../../tests/e2e/skills-runtime-config.spec.ts"
+  ]
+}

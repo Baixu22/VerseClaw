@@ -1,0 +1,19 @@
+✔ product profile is deny-by-default and exposes health only (3.7004ms)
+✔ explicit file and shell capabilities filter the catalog (0.4579ms)
+✔ eval and shell string compatibility are development-only (0.2964ms)
+✔ wildcard and unknown capabilities fail closed (0.5673ms)
+✔ effectful compatibility tools stay hidden until the governed write boundary (0.3783ms)
+✔ restricted argv never invokes a shell parser (0.4441ms)
+✔ identity is sourced from package and runtime manifest (0.3968ms)
+✔ capability names match the pinned runtime grant vocabulary (0.2301ms)
+✔ file.read grant reaches the pinned runtime without widening the tool boundary (2610.5998ms)
+✔ product startup smoke is usable without runtime capabilities (927.8853ms)
+✔ wildcard capability configuration fails before the server starts (316.9186ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2835.7353

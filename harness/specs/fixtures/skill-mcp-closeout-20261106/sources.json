@@ -1,0 +1,52 @@
+{
+  "schema": "SkillMcpCandidateSources/v1",
+  "candidate": "458a1570b7e3b7684699135b7cc4c28febd0ea7a",
+  "driven_by": "agent",
+  "actor": "codex-skill-mcp-closeout",
+  "files": [
+    {
+      "path": "electron/utils/skill-config.ts",
+      "sha256": "47e1e8db0afacff35f65adc668fe889f702879b2253eef25dc473249af4e4b2a"
+    },
+    {
+      "path": "electron/services/skills-api.ts",
+      "sha256": "dd476c6d2192e2b518b80f6c920168a1ab4ddbfb687577b89b4faae4bca60238"
+    },
+    {
+      "path": "electron/gateway/config-sync.ts",
+      "sha256": "204123c3f843c9ef1b679a0995a94b0724b5b59fe77ccab22444e688200fb69a"
+    },
+    {
+      "path": "tests/unit/skill-config-runtime-sync.test.ts",
+      "sha256": "2f3bb33e3516503ee94a5681e6477a1d0f5d95efea7ec4e4fb2fceccc1bb16d3"
+    },
+    {
+      "path": "tests/unit/skills-api-install-trust-gate.test.ts",
+      "sha256": "26f29f2f70488e2b10fbefe7b557cde889a3fb29d9cb6254a659f8b9c6ea2b82"
+    },
+    {
+      "path": "tests/e2e/skills-runtime-config.spec.ts",
+      "sha256": "c8f7c817a449559714bdb45340109c8443ed7719f42d66d8137b19bdfc0bb079"
+    },
+    {
+      "path": "openclaw_runtime/package.json",
+      "sha256": "f364675abf528ae3e4ad9e5b654f92d05f88e6eefc581e3f6e4cd6fb853b230b"
+    },
+    {
+      "path": "openclaw_runtime/pnpm-lock.yaml",
+      "sha256": "663afb8ca136834971505684403b8c98a0665e20b20d6ba9eec4a69abbfa9b0e"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "182e28e567094b7215d859feb063d8b593e4c230c9781e672d0783953a78764a"
+    },
+    {
+      "path": "packages/versebrowser/package.json",
+      "sha256": "67449ef9c5620430ceafe4c716924ab659ee6197768b9e969fe1b8f50136e8d7"
+    },
+    {
+      "path": "resources/verseshell-mcp/package.json",
+      "sha256": "a30980f01c03b416ed3b0e6a0d2ee16fe2ca991ade4d292e55a16d874ceebb03"
+    }
+  ]
+}
