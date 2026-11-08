@@ -1,0 +1,153 @@
+{
+  "successful": [
+    {
+      "file": "D:/tmp/durable-task-conversation-20261108/validation.json",
+      "sha256": "95742da3f21789447e7afb9792ace28bce7193146011646b94a69ff86e2ff1a2",
+      "retained": "first-commands.json"
+    },
+    {
+      "file": "D:/tmp/durable-task-conversation-20261108/verified-core.json",
+      "sha256": "82d24f0c9961d6b0af2fd669f01dff8f3c353de89c4d411912d358db1d2b0eb9",
+      "retained": "task-tests.json"
+    },
+    {
+      "file": "D:/tmp/durable-task-conversation-20261108/verified-ui.json",
+      "sha256": "2375343e2cc2397e1d61bac743358bf21bb5c98e87597a91e10c6e26c7b2a778",
+      "retained": "chat-tests.json"
+    },
+    {
+      "file": "D:/tmp/durable-task-conversation-20261108/e2e-verified.json",
+      "sha256": "5310319e8934ea8e2f8b5d42ad305ab16a6e31151515bf2c9a147a1cac53982c",
+      "retained": "electron.json"
+    },
+    {
+      "file": "D:/tmp/durable-task-conversation-20261108/e2e-visual.json",
+      "sha256": "e0d08316ffce35f5f3ef2f8dc82fdb5efc5d7c8e7f814bb811342e90ca7b4a44",
+      "retained": "electron-visual.json"
+    },
+    {
+      "file": "D:/tmp/durable-task-conversation-20261108/runtime-build.result.json",
+      "sha256": "a85002d90a4c98820055d68c85761459e25165c917ce6d011f565291db1036b8",
+      "retained": "runtime-build.json"
+    },
+    {
+      "file": "D:/tmp/durable-task-conversation-20261108/runtime-build.log",
+      "sha256": "0b115815d0a4241c514f86c63aa3e618f4a36c6ced706ae19186a695845fe2f8",
+      "retained": "runtime-build.txt"
+    },
+    {
+      "file": "D:/tmp/durable-task-conversation-20261108/verified-types.log",
+      "sha256": "ee6f7a2489220fd059674f34ee660db6c2b9c7a8605b7a0fc324fe13342455c9",
+      "retained": "types.txt"
+    },
+    {
+      "file": "D:/tmp/durable-task-conversation-20261108/final-test-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained": "final-test-types.txt"
+    },
+    {
+      "file": "D:/tmp/durable-task-conversation-20261108/verified-contract.log",
+      "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
+      "retained": "contract.txt"
+    },
+    {
+      "file": "D:/tmp/durable-task-conversation-20261108/verified-i18n.log",
+      "sha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe",
+      "retained": "i18n.txt"
+    },
+    {
+      "file": "D:/tmp/durable-task-conversation-20261108/verified-comms-replay.log",
+      "sha256": "85d2aca34fb74bb98d32bd06da7dcec3cacc7d409910579b89d695026c109728",
+      "retained": "comms-replay.txt"
+    },
+    {
+      "file": "D:/tmp/durable-task-conversation-20261108/verified-comms-compare.log",
+      "sha256": "ca42a0678b0ad42bdb57142c991d579a4ea836020442264389ae8974b6cf634e",
+      "retained": "comms-compare.txt"
+    },
+    {
+      "file": "D:/tmp/durable-task-conversation-20261108/verified-harness.log",
+      "sha256": "88147c58bc41f05032c65bbcd46f76a7eacddb826f8a18a414bc302a4375a6bc",
+      "retained": "harness.txt"
+    },
+    {
+      "file": "D:/tmp/durable-task-conversation-20261108/verified-desktop.log",
+      "sha256": "3ca06865a11e01f855a310471580aad67e8cefbc302954f77d4fc71a92d1941f",
+      "retained": "desktop-build.txt"
+    },
+    {
+      "file": "D:/ClawX-work/durable-task-system-20261107/test-results/durable-task-conversation--3f3a1-ble-task-above-the-composer/conversation-task.png",
+      "sha256": "5c22d1003b845ca0f301be6ec92f0d7c65bd6036a74880c3a57f51083de9da33",
+      "retained": "conversation-task.png"
+    },
+    {
+      "file": "D:/ClawX-work/durable-task-system-20261107/test-results/durable-task-conversation--3f3a1-ble-task-above-the-composer/conversation-task-expanded.png",
+      "sha256": "c3eb3734d8133792919fbb5e1e9149263a55a54aa12a39b5dbe07c011118d300",
+      "retained": "conversation-task-expanded.png"
+    },
+    {
+      "file": "D:/ClawX-work/durable-task-system-20261107/test-results/durable-task-conversation--3f3a1-ble-task-above-the-composer/conversation-task-hidden.png",
+      "sha256": "748f12299245fc5fe17b908038d939d81f11309a338d3722376cba240980ebb4",
+      "retained": "conversation-task-hidden.png"
+    },
+    {
+      "file": "D:/ClawX-work/durable-task-system-20261107/test-results/durable-task-conversation--3f3a1-ble-task-above-the-composer/conversation-task-narrow.png",
+      "sha256": "4f322b1f17208a7bd38a7f7eaa275b0ac04f1dd371322e364240f4012156077d",
+      "retained": "conversation-task-narrow.png"
+    },
+    {
+      "file": "D:/ClawX-work/durable-task-system-20261107/test-results/durable-task-conversation--3f3a1-ble-task-above-the-composer/conversation-task-zh.png",
+      "sha256": "4830bc42cd3d5bddb2c67f28b32aff59e965df5cc9dbf85765257783f86910a3",
+      "retained": "conversation-task-zh.png"
+    },
+    {
+      "file": "D:/ClawX-work/durable-task-system-20261107/test-results/durable-task-conversation--3f3a1-ble-task-above-the-composer/conversation-task-ja.png",
+      "sha256": "00142b7c9a299a4c3de916b04adb8e8b35bc0c4d4a578fd778487b47f47e0d17",
+      "retained": "conversation-task-ja.png"
+    },
+    {
+      "file": "D:/ClawX-work/durable-task-system-20261107/test-results/durable-task-conversation--3f3a1-ble-task-above-the-composer/conversation-task-ru.png",
+      "sha256": "d63195c1b0c5bbab52ba141f9976340e6dea635608bf05137c98201645724759",
+      "retained": "conversation-task-ru.png"
+    },
+    {
+      "file": "D:/ClawX-work/durable-task-system-20261107/test-results/durable-task-conversation--3f3a1-ble-task-above-the-composer/task-ui-readback.json",
+      "sha256": "b34e5b710412abfe61a6c60ae5825a8154f9fae3c9f917780f1c415fbede3698",
+      "retained": "task-ui-readback.json"
+    }
+  ],
+  "preservedFirstFailures": [
+    {
+      "path": "D:/tmp/durable-task-conversation-20261108/ui-unit.json",
+      "sha256": "a9a13fb4eb79c6717b97ecd3d74d6cd0458904a7021aabdc244094b86a826130"
+    },
+    {
+      "path": "D:/tmp/durable-task-conversation-20261108/ui-retry.json",
+      "sha256": "fbd74906c932176a10e32890211a48b295dc71bb2607773a8d587e1299bc0826"
+    },
+    {
+      "path": "D:/tmp/durable-task-conversation-20261108/types.log",
+      "sha256": "a2cf5aebafeff35c2d1c575c349655eda8345dfa48e50c8ce04c53b6e7ddc79e"
+    },
+    {
+      "path": "D:/tmp/durable-task-conversation-20261108/verified-e2e.json",
+      "sha256": "fce84ed752b10e78cb3ed1ce471101404d0eb61cac8f8d7bcdb8ff5ed24f5956"
+    },
+    {
+      "path": "D:/tmp/durable-task-conversation-20261108/e2e-retry.json",
+      "sha256": "5a27d59b66da05cba95902cf8386cc4209d028013ff278ee0a092535bcdf1336"
+    },
+    {
+      "path": "D:/tmp/durable-task-conversation-20261108/e2e-final.json",
+      "sha256": "711b1fd8b712a8fcf03c1ed1cef7d850adc0cd1ae76e09507517ed1bda99dfae"
+    },
+    {
+      "path": "D:/tmp/durable-task-conversation-20261108/environment-diagnostic.json",
+      "sha256": "38b0564b568ceff955237be0a5e43e16199ef26e1596223e310f58977959f9f4"
+    },
+    {
+      "path": "D:/tmp/durable-task-conversation-20261108/launch-diagnostic.json",
+      "sha256": "14fd00556623cfeb2d953660762aa5d3191becfe6a9f835137cdb2acd68d6dca"
+    }
+  ]
+}

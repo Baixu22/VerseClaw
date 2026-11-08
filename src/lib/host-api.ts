@@ -1769,6 +1769,7 @@ export const hostApi = {
   taskLedger: {
     managedTasks: (input?: TaskLedgerWorkspacePayload): Promise<import('@shared/host-api/contract').TaskSystemListResult> => invokeHost('taskLedger', 'managedTasks', input),
     queryTasks: (input?: import('@shared/host-api/contract').TaskSystemQueryPayload): Promise<import('@shared/host-api/contract').TaskSystemQueryResult> => invokeHost('taskLedger', 'queryTasks', input),
+    sessionTask: (input: import('@shared/host-api/contract').TaskSessionPayload): Promise<import('@shared/host-api/contract').TaskSessionResult> => invokeHost('taskLedger', 'sessionTask', input),
     command: (input: import('@shared/host-api/contract').TaskSystemCommandPayload): Promise<import('@shared/host-api/contract').TaskSystemCommandResult> => invokeHost('taskLedger', 'command', input),
     snapshot: (input?: TaskLedgerWorkspacePayload): Promise<TaskLedgerSnapshotResult> => invokeHost('taskLedger', 'snapshot', input),
     appendEvents: (input: TaskLedgerAppendEventsPayload): Promise<TaskLedgerSnapshotResult> => invokeHost('taskLedger', 'appendEvents', input),

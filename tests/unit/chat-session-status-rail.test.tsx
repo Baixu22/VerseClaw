@@ -226,20 +226,21 @@ function railElement() {
 
 describe('Chat session status rail', () => {
   beforeEach(() => {
+    Element.prototype.scrollTo = vi.fn();
     window.electron.platform = 'win32';
     planState.hasPlan = true;
     artifactPanelState.open = false;
     seedSnapshotWithGitRepo();
   });
 
-  it('opens itself in the inline layer once the run has a plan, and the transcript makes room', async () => {
+  it('keeps the sidebar closed when a plan arrives and leaves transcript width unchanged', async () => {
     render(<Chat />);
 
-    const rail = await screen.findByTestId('chat-session-status-rail');
-    expect(rail).toHaveAttribute('data-layer', 'inline');
-    expect(screen.getByTestId('chat-scroll-container')).toHaveAttribute('data-rail', 'expanded');
+    await screen.findByTestId('stub-activity-toggle');
+    expect(railElement()).not.toBeInTheDocument();
+    expect(screen.getByTestId('chat-scroll-container')).toHaveAttribute('data-rail', 'collapsed');
     // The toggle reflects the effective state, not just an override.
-    expect(screen.getByTestId('stub-activity-toggle')).toHaveAttribute('data-open', 'true');
+    expect(screen.getByTestId('stub-activity-toggle')).toHaveAttribute('data-open', 'false');
   });
 
   it('stays out of the way when the run has no plan, and opens as an overlay on demand', async () => {
@@ -259,10 +260,20 @@ describe('Chat session status rail', () => {
     expect(screen.getByTestId('chat-scroll-container')).toHaveAttribute('data-rail', 'collapsed');
   });
 
-  it('closes on the first click while passive instead of swapping layers under the cursor', async () => {
+  it('keeps changed environments quiet until the user opens status', async () => {
+    planState.hasPlan = false;
+    render(<Chat />);
+    await screen.findByTestId('stub-activity-toggle');
+    expect(railElement()).not.toBeInTheDocument();
+    expect(screen.getByTestId('chat-scroll-container')).toHaveAttribute('data-rail', 'collapsed');
+  });
+
+  it('opens and closes the requested overlay without creating a passive sidebar', async () => {
     render(<Chat />);
 
-    await screen.findByTestId('chat-session-status-rail');
+    await screen.findByTestId('stub-activity-toggle');
+    fireEvent.click(screen.getByTestId('stub-activity-toggle'));
+    expect(screen.getByTestId('chat-session-status-rail')).toHaveAttribute('data-layer', 'overlay');
     fireEvent.click(screen.getByTestId('stub-activity-toggle'));
     expect(railElement()).not.toBeInTheDocument();
     expect(screen.getByTestId('chat-scroll-container')).toHaveAttribute('data-rail', 'collapsed');
@@ -286,7 +297,7 @@ describe('Chat session status rail', () => {
   it('does not bring back the recovery-assist rail', async () => {
     render(<Chat />);
 
-    await screen.findByTestId('chat-session-status-rail');
+    await screen.findByTestId('stub-activity-toggle');
     expect(screen.queryByTestId('chat-assistive-rail')).not.toBeInTheDocument();
     expect(screen.queryByTestId('chat-rollback-plan')).not.toBeInTheDocument();
   });

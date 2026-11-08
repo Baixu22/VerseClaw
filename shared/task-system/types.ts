@@ -84,6 +84,7 @@ export type TaskQuery = {
   sessionKey?: string;
 };
 export type TaskPage = { tasks: TaskView[]; nextCursor?: string };
+export type TaskSessionSnapshot = { task: TaskView | null; children: TaskView[] };
 export type TaskPlanItem = { key: string; contract: TaskContractInput; dependsOn?: string[] };
 export type TaskWriterDelegation = {
   delegationId: string;

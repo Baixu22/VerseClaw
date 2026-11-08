@@ -70,7 +70,7 @@ export function createPersistentTaskTool(input: {
     label: "Task control",
     risk: "write",
     description:
-      "Persist an explicitly requested execution goal, identify existing tasks, claim before implementation, checkpoint progress, submit artifacts, and resume a paused task. Ordinary discussion does not create tasks. Use stable request IDs for retries. Task ownership does not grant tool permissions. Acceptance criteria must specify their verification kind; use owner-receipt for business checks. Never replace the goal with a status question.",
+      "Manage execution tasks quietly within ordinary conversation. Before implementation, read current and identify an existing task by ID or business key; use start with either taskNodeId or a complete contract to resolve and claim atomically. Derive the goal and concrete verification criteria from the user's request and repository; do not ask the user to fill a task form, provide internal IDs, or claim a task. Ordinary discussion creates no task. Report progress and genuine blockers in plain language, without narrating bookkeeping. The app displays the current task automatically. Use stable request IDs for retries; suggestions never grant identity. Checkpoint progress and submit candidate-bound evidence for acceptance. Task ownership does not grant tool permissions. Never replace the goal with a status question.",
     parameters: Type.Object({
       action: Type.Union(
         [
@@ -82,6 +82,7 @@ export function createPersistentTaskTool(input: {
           "acknowledge",
           "current",
           "create",
+          "start",
           "revise",
           "claim",
           "checkpoint",
@@ -180,7 +181,12 @@ export function createPersistentTaskTool(input: {
         else if (p.action === "current") result = current;
         else if (p.action === "decompose" && pinned)
           result = store.decompose(pinned, p.children as TaskPlanItem[], str("requestId"));
-        else if (p.action === "create")
+        else if (p.action === "start") {
+          result=store.start({taskNodeId:typeof p.taskNodeId==='string'?p.taskNodeId:undefined,contract:p.contract as TaskContractInput|undefined},input.sessionKey,input.generation,str('requestId'),pinned??undefined);
+          const claim=(result as {claim:TaskCredential}).claim;
+          store.assertOwner(claim);
+          pinned=claim;
+        } else if (p.action === "create")
           result = store.create(p.contract as TaskContractInput, str("requestId"), undefined, {
             source: "runtime-task-tool",
             sessionKey: input.sessionKey,

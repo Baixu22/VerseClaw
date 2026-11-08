@@ -557,8 +557,9 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
           rpcParams.inputMode = body.inputMode;
         }
         if (workspaceId) {
-          const context=await persistentTaskChatContext(workspaceId,sessionKey,gatewayManager,typeof rpcParams.workspaceDir==='string'?rpcParams.workspaceDir:undefined);
-          if(context)rpcParams.message=`${context}\n\n${String(rpcParams.message ?? '')}`;
+          // Validate ownership here; the runtime restores task context at the provider boundary.
+          // Keep the user's message byte-for-byte intact in the visible transcript.
+          await persistentTaskChatContext(workspaceId,sessionKey,gatewayManager,typeof rpcParams.workspaceDir==='string'?rpcParams.workspaceDir:undefined);
         }
         // KS-04: renderer refs are untrusted retrieval intent. Main forwards
         // typed refs only; runtime resolves them through DCS owner adapters.

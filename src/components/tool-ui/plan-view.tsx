@@ -90,6 +90,8 @@ export function ToolUiPlanView({
   compact = false,
   showTitle = true,
   testId = 'chat-tool-ui-plan',
+  collapsed: controlledCollapsed,
+  onCollapsedChange,
 }: {
   title: string;
   description?: string;
@@ -98,9 +100,12 @@ export function ToolUiPlanView({
   compact?: boolean;
   showTitle?: boolean;
   testId?: string;
+  collapsed?: boolean;
+  onCollapsedChange?: (collapsed: boolean) => void;
 }) {
   const { t } = useTranslation('chat');
-  const [collapsed, setCollapsed] = useState(false);
+  const [localCollapsed, setLocalCollapsed] = useState(false);
+  const collapsed = controlledCollapsed ?? localCollapsed;
   const [expandedList, setExpandedList] = useState(false);
 
   const completed = todos.filter((todo) => todo.status === 'completed').length;
@@ -122,7 +127,8 @@ export function ToolUiPlanView({
           'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
         )}
         aria-expanded={!collapsed}
-        onClick={() => setCollapsed((value) => !value)}
+        title={headerLabel}
+        onClick={() => { setLocalCollapsed(!collapsed); onCollapsedChange?.(!collapsed); }}
       >
         <span className="relative inline-flex h-4 w-4 shrink-0 items-center justify-center">
           <HeaderIcon allDone={allDone} running={running} progress={progress} />
@@ -148,6 +154,8 @@ export function ToolUiPlanView({
       </button>
 
       <div
+        inert={collapsed ? true : undefined}
+        aria-hidden={collapsed}
         className={cn(
           'grid transition-[grid-template-rows,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]',
           collapsed ? 'pointer-events-none grid-rows-[0fr] opacity-0' : 'grid-rows-[1fr] opacity-100',

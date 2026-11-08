@@ -135,5 +135,25 @@
     "parentGoal": "本任务保留父目标及其约束。",
     "coverage": "任务归属检查覆盖本仓库的受管 agent 工具。外部终端不参与此领取协议。",
     "stale": "当前显示上次成功读取的记录。任务库恢复可用前，任务操作暂停。"
+  },
+  "conversation": {
+    "task": "任务",
+    "reopen": "打开任务面板",
+    "hide": "隐藏任务面板",
+    "hideHint": "仅隐藏面板，任务继续执行",
+    "stale": "状态待同步",
+    "progress": "进行中",
+    "observing": "当前会话跟踪此任务，执行由已领取的会话继续。",
+    "settling": "正在确认已启动的操作。",
+    "refresh": "刷新状态",
+    "states": {
+      "ready": "待开始",
+      "doing": "进行中",
+      "paused": "已暂停",
+      "review": "正在核验",
+      "cancelling": "正在停止",
+      "done": "已完成",
+      "cancelled": "已取消"
+    }
   }
 }

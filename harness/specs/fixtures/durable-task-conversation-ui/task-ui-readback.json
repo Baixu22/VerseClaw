@@ -1,0 +1,66 @@
+{
+  "driven_by": "agent",
+  "source": "Production atomic start and Main read API; controlled chat history and runtime event delivery",
+  "task": {
+    "contract": {
+      "objective": "Fix and verify the export",
+      "constraints": [
+        "Preserve the existing format"
+      ],
+      "acceptance": [
+        {
+          "id": "test",
+          "description": "Export regression checks pass",
+          "verification": {
+            "kind": "tool-result",
+            "tool": "exec",
+            "command": "node test-export.cjs",
+            "files": [
+              "test-export.cjs"
+            ],
+            "exitCode": 0
+          }
+        }
+      ],
+      "target": "src/export.ts",
+      "dependencies": [],
+      "origin": {
+        "source": "runtime-task-tool",
+        "sessionKey": "agent:main:dashboard:03ad935f-3f89-46bb-92f3-ebf90a55bd46",
+        "requestId": "conversation-start:create"
+      },
+      "taskNodeId": "fb6d5038-f705-4a92-8712-ca4c7f9fedec",
+      "domain": "f8c0ed2a980dfc267507faf3eca523c0e052b73bbc46c2127240025ac5b11c88",
+      "revision": 1,
+      "digest": "9cf54487353e976eea7e06b8f6c839148a2be1c180ca6a55140a9c66bb521398",
+      "state": "doing",
+      "createdAt": 1794131389520,
+      "updatedAt": 1794131389538
+    },
+    "claim": {
+      "taskNodeId": "fb6d5038-f705-4a92-8712-ca4c7f9fedec",
+      "sessionKey": "agent:main:dashboard:03ad935f-3f89-46bb-92f3-ebf90a55bd46",
+      "generation": "56ea7aab-9397-4332-b506-0a4ed7e71375",
+      "epoch": 1,
+      "attemptId": "27bffb1c-b065-4ac7-8094-7775c58d32bb",
+      "worktree": "d:/clawx-work/durable-task-system-20261107/.tmp/e2e-runs/verse-claw-e2e-run-lbxave/verse-claw-e2e-home-zsr51k/conversation-task",
+      "contractRevision": 1,
+      "expiresAt": 1794131509537,
+      "state": "active"
+    },
+    "checkpoint": null,
+    "pendingOperations": 0,
+    "pendingOperationDetails": [],
+    "childTaskNodeIds": []
+  },
+  "default": "collapsed",
+  "hiddenPersists": true,
+  "hidePreservesClaim": true,
+  "languages": [
+    "en",
+    "zh",
+    "ja",
+    "ru"
+  ],
+  "keyboardToggle": true
+}
