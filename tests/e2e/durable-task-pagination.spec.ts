@@ -101,6 +101,7 @@ test("queries all task pages and filters without losing task identity", async ({
       await page.getByRole("option",{name:({zh:"中文",ja:"日本語",ru:"Русский"} as Record<string,string>)[language],exact:true}).click();
       await expect(page.locator("html")).toHaveAttribute("lang", language);
       await expect.poll(()=>page.evaluate(async()=>{const r=await window.verseClaw!.hostInvoke<{language:string}>({id:crypto.randomUUID(),module:"settings",action:"getAll"});return r.ok?r.data.language:null;})).toBe(language);
+      await page.getByTestId("settings-back-button").click();
       await page.getByTestId("sidebar-footer-menu-trigger").click();
       await page.getByTestId("sidebar-more-task-ledger").click();
       await page.getByRole("tab", { name: labels.managed.tab, exact: true }).click();
