@@ -114,7 +114,7 @@
       "path": "D:/tmp/durable-task-system-20261108/closure-build.log",
       "sha256": "950ea6d542c89213584c34f0bd4bc1d834244924c3f99f9588954f7943e09069",
       "bytes": 10289,
-      "retained": "runtime-build.log"
+      "retained": "runtime-build.txt"
     },
     {
       "path": "D:/tmp/durable-task-system-20261108/closure-e2e-retry.json",
@@ -126,7 +126,7 @@
       "path": "D:/tmp/durable-task-system-20261108/closure-final-test-types.log",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "bytes": 0,
-      "retained": "final-test-types.log"
+      "retained": "final-test-types.txt"
     },
     {
       "path": "D:/tmp/durable-task-system-20261108/completion-performance/report.json",
@@ -174,49 +174,49 @@
       "path": "D:/tmp/durable-task-system-20261108/closure-contract.log",
       "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
       "bytes": 23,
-      "retained": "contract.log"
+      "retained": "contract.txt"
     },
     {
       "path": "D:/tmp/durable-task-system-20261108/closure-i18n.log",
       "sha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe",
       "bytes": 18,
-      "retained": "i18n.log"
+      "retained": "i18n.txt"
     },
     {
       "path": "D:/tmp/durable-task-system-20261108/closure-comms-replay.log",
       "sha256": "85d2aca34fb74bb98d32bd06da7dcec3cacc7d409910579b89d695026c109728",
       "bytes": 110,
-      "retained": "comms-replay.log"
+      "retained": "comms-replay.txt"
     },
     {
       "path": "D:/tmp/durable-task-system-20261108/closure-comms-compare.log",
       "sha256": "110817d62134a698215d164b7e908cc04f9a1a876edc719379bc9b7fc9847b4b",
       "bytes": 3435,
-      "retained": "comms-compare.log"
+      "retained": "comms-compare.txt"
     },
     {
       "path": "D:/tmp/durable-task-system-20261108/closure-harness.log",
       "sha256": "145981ca083efa02637802df7cc5e60ebb09e020ff8f30ebf2f667faae1d7875",
       "bytes": 69,
-      "retained": "harness.log"
+      "retained": "harness.txt"
     },
     {
       "path": "D:/tmp/durable-task-system-20261108/closure-desktop-build.log",
       "sha256": "af2a220d9bed2d5c697f72e42fd262e0b27ac0ea861063b67bc412c15b163934",
       "bytes": 49983,
-      "retained": "desktop-build.log"
+      "retained": "desktop-build.txt"
     },
     {
       "path": "D:/tmp/durable-task-system-20261108/closure-smoke.log",
       "sha256": "ea5a018d4760c978e6372cee167f35c70d585e742611eaaf2365f33b4b4e65e8",
       "bytes": 50,
-      "retained": "smoke.log"
+      "retained": "smoke.txt"
     },
     {
       "path": "D:/tmp/durable-task-system-20261108/completion-build-tests.log",
       "sha256": "0a097e9b53ae8d1fbdc932cc024d4268640502000f2c3f5adf0021887e366c82",
       "bytes": 1851,
-      "retained": "build-tests.log"
+      "retained": "build-tests.txt"
     },
     {
       "path": "D:\\ClawX-work\\durable-task-system-20261107\\test-results\\durable-task-system-persis-41109-ain-storage-and-page-reload\\persistent-goal-restored.png",

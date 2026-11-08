@@ -19,8 +19,8 @@
 | 事件可以恢复消费 | 状态与事件同事务；消费序号 CAS；未确认事件重送；缓存按事件序号失效 | task-tests.json 的事件消费和投影缓存测试 |
 | 大任务列表可查询 | 冻结插入上界的游标分页；搜索、状态筛选；相似建议最多扫描 500 活跃任务 | pagination-readback.json；concurrency-performance.json |
 | 用户能识别归属和状态 | Main hostApi 提供任务页；显示目标、约束、验收、归属、工作树、下一步、取消/恢复；四语 | electron.json；visual-review.json；各语言截图 |
-| 保留现有 owner 和权限边界 | Renderer→hostApi→Main→Gateway；Task Ledger 管目标，runtime/effect owner 管执行与效果；task_control 不授予权限 | contract.log；comms-compare.log；owner-regressions.json；source-manifest.json |
-| 构建与静态契约完整 | 全部 17 项 Runtime 构建配置、插件/声明、桌面构建、node/web/test、四语、Harness | runtime-build.json；runtime-build.log；types.json；commands.json |
+| 保留现有 owner 和权限边界 | Renderer→hostApi→Main→Gateway；Task Ledger 管目标，runtime/effect owner 管执行与效果；task_control 不授予权限 | contract.txt；comms-compare.txt；owner-regressions.json；source-manifest.json |
+| 构建与静态契约完整 | 全部 17 项 Runtime 构建配置、插件/声明、桌面构建、node/web/test、四语、Harness | runtime-build.json；runtime-build.txt；types.json；commands.json |
 | 性能可复算 | 1k/10k 任务、16 进程、100 文件写入对、200 次目标恢复；新上下文与回执复用分别计量 | concurrency-performance.json；tool-overhead.json；hydration-performance.json |
 
 | 故障窗口 | 观察与恢复结果 |
