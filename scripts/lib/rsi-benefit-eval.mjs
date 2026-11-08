@@ -10,7 +10,10 @@ import { sha256File } from '../rsi-tf0604-baseline.mjs';
 import { buildResponsesRequest, parseResponsesReply } from './rsi-responses-provider.mjs';
 import { assessTaskAdmission, finalizeLiveAdmission } from '../rsi-live-acceptance.mjs';
 import { CODING_BINDINGS_PATH, resolveHistoricalTask } from './rsi-live-grader.mjs';
-import { CODING_COLLECTOR, CODING_INSTRUCTIONS, codingCollectorConfig, parseCodingEdits } from './rsi-coding-protocol.mjs';
+import { CODING_COLLECTOR, CODING_INSTRUCTIONS, codingCollectorConfig, parseCodingEdits,
+  parseCodingFinish, TOOL_CODING_COLLECTOR, TOOL_CODING_INSTRUCTIONS } from './rsi-coding-protocol.mjs';
+import { reserveProviderTokens } from './rsi-coding-protocol.mjs';
+import { hasPassingPublicCheck, verifyCodingToolJournal } from './rsi-coding-tools.mjs';
 import { buildPublicTaskInputs, TASK_INPUT_BINDINGS, PUBLIC_BEHAVIOR_SOURCE } from './rsi-task-inputs.mjs';
 
 export const BENEFIT_ARMS = Object.freeze(['sekb-off', 'sekb-shadow', 'sekb-confirmed']);
@@ -25,6 +28,7 @@ const SOURCES = [CORPUS, TASKS, POLICY, 'scripts/lib/rsi-benefit-eval.mjs', 'scr
   'tests/unit/rsi-benefit-eval.test.ts', 'tests/unit/rsi-responses-provider.test.ts',
   'scripts/rsi-live-acceptance.mjs', 'scripts/rsi-live-acceptance.d.mts',
   'scripts/lib/rsi-task-inputs.mjs', 'scripts/lib/rsi-task-inputs.d.mts',
+  'scripts/lib/rsi-coding-tools.mjs', 'scripts/lib/rsi-coding-tools.d.mts',
   'scripts/lib/rsi-live-grader.mjs', 'scripts/lib/rsi-live-grader.d.mts',
   'tests/unit/rsi-live-grader.test.ts', 'harness/specs/tasks/rsi-benefit-eval.md'];
 const FLAGS = {
@@ -244,6 +248,10 @@ export function createBenefitPlan(root, options = {}) {
     ...(collector?.publicInputProtocol ? [TASK_INPUT_BINDINGS, PUBLIC_BEHAVIOR_SOURCE, 'scripts/rsi-task-inputs.mjs',
       'harness/specs/rules/rsi-public-input-boundary.md', 'harness/specs/tasks/rsi-public-task-inputs.md',
       'tests/unit/rsi-task-inputs.test.ts'] : []),
+    ...(collector?.version === TOOL_CODING_COLLECTOR.version ? ['scripts/lib/rsi-coding-tool-loop.mjs',
+      'scripts/lib/rsi-coding-tool-loop.d.mts', 'scripts/rsi-coding-tool-integration.mjs',
+      'tests/unit/rsi-coding-tool-loop.test.ts',
+      'harness/specs/tasks/rsi-bounded-coding-loop.md'] : []),
     ...tasks.flatMap((task) => [task.source.recordPath, ...Object.keys(task.oracle.inputDigests)])])].sort();
   // Source bindings use the repository's canonical text bytes across LF/CRLF
   // checkouts. Raw run receipts and their manifest remain byte-addressed.
@@ -304,9 +312,10 @@ export function buildBenefitRequest(plan, slot) {
   // Only this projection reaches the subject. Oracle content, split membership and
   // reference solutions remain evaluator-only; task criteria and target scope are
   // subject inputs rather than hidden grading metadata.
-  const instructions = 'Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.'
+  let instructions = 'Perform the supplied task. Treat retrieved experience as advisory; preserve existing safety and authorization rules.'
     + (plan.collector ? `\n${CODING_INSTRUCTIONS}` : '');
   if (plan.collector?.publicInputProtocol) {
+    if (plan.collector.version === TOOL_CODING_COLLECTOR.version) instructions = TOOL_CODING_INSTRUCTIONS;
     assert.equal(benefitDigest(task.publicInput), task.publicInputDigest, 'public-subject-input-drift');
   }
   const input = JSON.stringify(plan.collector?.publicInputProtocol ? task.publicInput
@@ -316,6 +325,7 @@ export function buildBenefitRequest(plan, slot) {
   return buildResponsesRequest({ model: plan.provider.model, maxOutputTokens: plan.provider.maxOutputTokens,
     ...(plan.collector ? { reasoningEffort: plan.collector.reasoningEffort } : {}),
     ...(plan.collector?.responseFormat === 'strict-json-schema' ? { jsonSchema: plan.collector.responseSchema } : {}),
+    ...(plan.collector?.tools ? { tools: plan.collector.tools } : {}),
     instructions: slot.arm === 'sekb-confirmed' ? [instructions, plan.candidate.context].join("\n") : instructions,
     input });
 }
@@ -364,7 +374,7 @@ export function runOfflineBenefit(root, directory, options = {}) {
   try {
     for (const slot of plan.slots) {
       const path = artifactPath(directory, recordPath(slot));
-      if (existsSync(path)) { readTrial(plan, slot, directory); resumed++; continue; }
+      if (existsSync(path)) { readTrial(plan, slot, directory, undefined, root); resumed++; continue; }
       if (written >= limit) break;
       const journal = artifactPath(directory, startPath(slot));
       const interrupted = existsSync(journal);
@@ -382,7 +392,7 @@ export function runOfflineBenefit(root, directory, options = {}) {
   return { written, resumed, planned: plan.slots.length, providerCalls: 0 };
 }
 
-function readTrial(plan, slot, directory, supplied) {
+function readTrial(plan, slot, directory, supplied, root, priorRows) {
   const path = artifactPath(directory, recordPath(slot));
   if (supplied === undefined && !existsSync(path)) return null;
   const row = supplied ?? read(path), expected = trialReceipt(plan, slot);
@@ -402,6 +412,16 @@ function readTrial(plan, slot, directory, supplied) {
     && Array.isArray(execution.toolEvents) && Array.isArray(row.providerAttempts), 'invalid-cost-receipt');
   if (!measured) assert(execution.providerCalls === 0 && row.providerAttempts.length === 0 && row.grader === null, 'offline-provider-or-grader-claim');
   const attempts = measured ? readProviderAttempts(plan, row) : [];
+  const toolLoop = plan.collector?.version === TOOL_CODING_COLLECTOR.version;
+  if (toolLoop && measured) {
+    const prior = priorRows ?? plan.slots.slice(0, slot.position).map(item => read(artifactPath(directory, recordPath(item))));
+    assert.equal(execution.tokenBudgetAtStart, plan.budget.maxTotalTokens
+      - prior.reduce((sum, item) => sum + reserveProviderTokens(plan, item.providerAttempts), 0), 'tool-token-budget-start-drift');
+    assert.equal(execution.providerBudgetAtStart, Math.min(plan.collector.maxProviderCalls,
+      plan.budget.providerCallsAuthorized - prior.reduce((sum, item) => sum + item.execution.providerCalls, 0)),
+    'tool-provider-budget-start-drift');
+    verifyCodingToolJournal(root, task, execution.toolEvents, row.edits, execution.status !== 'completed');
+  }
   assert(Number.isFinite(execution.wallClockMs) && execution.wallClockMs >= 0, 'invalid-duration');
   assert.equal(execution.runPosition, slot.position, 'actual-execution-order-drift');
   assert(typeof execution.startedAt === 'string' && typeof execution.endedAt === 'string'
@@ -419,14 +439,28 @@ function readTrial(plan, slot, directory, supplied) {
   assert.equal(response.model, plan.provider.model, 'resolved-model-drift');
   if (!measured) assert.equal(response.id, `offline-${slot.id}`, 'response-identity-reused-or-drifted');
   else assert.deepEqual(row.rawResponse, row.providerAttempts.at(-1)?.rawResponse, 'terminal-provider-response-drift');
-  assert.equal(response.functionCalls.length, 0, 'unconsumed-terminal-tool-call');
+  const toolBudgetFailure = toolLoop && ['model-turn-limit', 'model-tool-limit'].includes(execution.failureCategory);
+  if (!toolBudgetFailure && response.status === 'completed') assert.equal(response.functionCalls.length, 0, 'unconsumed-terminal-tool-call');
   let success = false;
   if (response.status === 'completed') {
     if (measured) {
-      if (plan.collector && execution.failureCategory === 'model-format') {
+      if (toolBudgetFailure) {
+        assert.equal(row.grader, null, 'tool-budget-failure-cannot-claim-grade');
+        assert(response.functionCalls.length > 0, 'tool-budget-terminal-calls-required');
+        if (execution.failureCategory === 'model-turn-limit') {
+          assert.equal(row.providerAttempts.length, plan.collector.maxProviderCalls, 'provider-limit-failure-drift');
+        } else assert(execution.toolEvents.length + response.functionCalls.length > plan.collector.maxToolCalls,
+          'tool-limit-failure-drift');
+      } else if (toolLoop && execution.failureCategory === 'model-public-check') {
+        assert.equal(row.grader, null, 'public-check-failure-cannot-claim-grade');
+        assert(!hasPassingPublicCheck(execution.toolEvents), 'public-check-failure-drift');
+      } else if (plan.collector && execution.failureCategory === 'model-format') {
         assert.equal(row.grader, null, 'format-failure-cannot-claim-grade');
-        assert.deepEqual(row.edits, [], 'format-failure-cannot-claim-edits');
-        assert.throws(() => parseCodingEdits(response.text, task), undefined, 'valid-output-misclassified');
+        if (toolLoop) assert.throws(() => parseCodingFinish(response.text), undefined, 'valid-output-misclassified');
+        else {
+          assert.deepEqual(row.edits, [], 'format-failure-cannot-claim-edits');
+          assert.throws(() => parseCodingEdits(response.text, task), undefined, 'valid-output-misclassified');
+        }
       } else if (plan.collector?.incompleteOutcome === 'known-output-limit-is-failure'
         && execution.failureCategory === 'model-output-limit') {
         assert.equal(response.status, 'incomplete', 'output-limit-response-status');
@@ -442,12 +476,20 @@ function readTrial(plan, slot, directory, supplied) {
     && response.status === 'incomplete' && response.incompleteReason === 'max_output_tokens';
   if (outputLimitFailure) {
     assert(response.usage !== null && execution.failureCategory === 'model-output-limit', 'output-limit-evidence-required');
-    assert(row.grader === null && row.edits.length === 0, 'output-limit-cannot-claim-grade');
+    assert(row.grader === null && (toolLoop || row.edits.length === 0), 'output-limit-cannot-claim-grade');
   }
   const outcome = response.status === 'completed' ? success ? 'pass' : 'fail' : outputLimitFailure ? 'fail' : 'missing';
   return { row, outcome, failureClass: outcome === 'pass' ? null : 'agent',
     tokens: measured ? attempts.every((attempt) => attempt?.usage) ? attempts.reduce((n, attempt) => n + attempt.usage.totalTokens, 0) : null : response.usage?.totalTokens ?? null,
     turns: measured ? attempts.length : 1, toolCalls: execution.toolEvents.filter((event) => event.type === 'tool-call').length };
+}
+
+export function validateCollectedBenefitTrial(root, plan, receipt, priorRows = []) {
+  validateBenefitPlan(plan, root);
+  const slot = plan.slots.find(item => item.id === receipt?.slot?.id);
+  assert(slot && priorRows.length === slot.position
+    && priorRows.every((row, index) => row.slot.id === plan.slots[index].id), 'trial-prefix-required');
+  return readTrial(plan, slot, resolve(root), receipt, root, priorRows);
 }
 
 function readProviderAttempts(plan, row) {
@@ -459,7 +501,7 @@ function readProviderAttempts(plan, row) {
     assert.equal(attempt.request?.model, plan.provider.model, 'provider-model-drift');
     assert.equal(attempt.request?.instructions, row.request.instructions, 'provider-context-drift');
     assert.deepEqual(Object.keys(attempt.request).sort(), Object.keys(row.request).sort(), 'provider-request-fields');
-    for (const field of ['store', 'stream', 'truncation', 'max_output_tokens', 'reasoning', 'text']) assert.deepEqual(attempt.request[field], row.request[field], 'provider-request-policy');
+    for (const field of ['store', 'stream', 'truncation', 'max_output_tokens', 'reasoning', 'text', 'tools']) assert.deepEqual(attempt.request[field], row.request[field], 'provider-request-policy');
     if (index === 0) assert.deepEqual(attempt.request, row.request, 'initial-provider-request-drift');
     if (plan.collector && attempt.rawResponse === null) {
       assert(row.execution.status !== 'completed' && attempt.parsedResponse === null, 'invalid-provider-failure-attempt');
@@ -471,7 +513,8 @@ function readProviderAttempts(plan, row) {
     calls.push(...parsed.functionCalls);
     return parsed;
   });
-  if (plan.collector) assert(attempts.length <= 1, 'coding-provider-retry');
+  const toolLoop = plan.collector?.version === TOOL_CODING_COLLECTOR.version;
+  if (plan.collector) assert(attempts.length <= (toolLoop ? plan.collector.maxProviderCalls : 1), 'coding-provider-retry');
   for (let index = 0; index < attempts.length - 1; index++) {
     assert(attempts[index].status === 'completed' && attempts[index].functionCalls.length > 0, 'undeclared-provider-retry');
     const nextInput = row.providerAttempts[index + 1].request.input;
@@ -485,7 +528,16 @@ function readProviderAttempts(plan, row) {
     assert.deepEqual(nextInput, [...history, ...row.providerAttempts[index].rawResponse.output, ...toolOutputs], 'tool-continuation-context-drift');
   }
   assert(row.execution.toolEvents.every((event) => event?.type === 'tool-call' && text(event.callId)), 'invalid-tool-events');
-  assert.deepEqual(row.execution.toolEvents.map((event) => event.callId).sort(), calls.map((call) => call.callId).sort(), 'tool-call-coverage');
+  const consumed = row.execution.toolEvents.length;
+  if (toolLoop) {
+    assert(consumed <= plan.collector.maxToolCalls, 'executed-tool-budget-drift');
+    assert(consumed <= calls.length && consumed >= calls.length - (attempts.at(-1)?.functionCalls.length ?? 0), 'tool-call-prefix');
+    const unfinished = row.execution.status !== 'completed'
+      || ['model-turn-limit', 'model-tool-limit', 'model-output-limit'].includes(row.execution.failureCategory);
+    assert(unfinished || consumed === calls.length, 'tool-call-coverage');
+    assert.deepEqual(row.execution.toolEvents.map(event => event.callId), calls.slice(0, consumed).map(call => call.callId),
+      'tool-call-prefix-drift');
+  } else assert.deepEqual(row.execution.toolEvents.map((event) => event.callId).sort(), calls.map((call) => call.callId).sort(), 'tool-call-coverage');
   assert.equal(new Set(calls.map((call) => call.callId)).size, calls.length, 'repeated-tool-effect');
   if (row.execution.status === 'completed') assert(attempts.length > 0, 'missing-provider-receipt');
   return attempts;
@@ -500,7 +552,11 @@ function gradeMeasuredObservation(plan, slot, row) {
   assert.equal(grader.oracleDigest, task.oracleDigest, 'grader-oracle-drift');
   assert.equal(grader.editsDigest, benefitDigest(row.edits), 'grader-edits-drift');
   if (plan.collector) {
-    assert.deepEqual(parseCodingEdits(parseResponsesReply(row.rawResponse).text, task), row.edits, 'response-edits-drift');
+    if (plan.collector.version === TOOL_CODING_COLLECTOR.version) {
+      parseCodingFinish(parseResponsesReply(row.rawResponse).text);
+      assert(hasPassingPublicCheck(row.execution.toolEvents), 'public-check-required-before-grade');
+    }
+    else assert.deepEqual(parseCodingEdits(parseResponsesReply(row.rawResponse).text, task), row.edits, 'response-edits-drift');
     assert.deepEqual(grader.baselineSetup ?? null, task.baselineSetup, 'grader-baseline-setup-drift');
     assert.equal(grader.oracleRevision, task.source.reference, 'grader-reference-drift');
     assert.deepEqual(grader.oracleTestDigests, task.oracleTestDigests, 'grader-test-digest-drift');
@@ -565,10 +621,13 @@ export function recordMeasuredBenefitTrials(root, directory, receipts) {
       assert(slot, 'unknown-trial');
       const path = artifactPath(directory, recordPath(slot)), journal = artifactPath(directory, startPath(slot));
       assert(!existsSync(path) && !existsSync(journal), 'trial-already-recorded');
-      return { slot, path, journal, receipt, validated: readTrial(plan, slot, directory, receipt) };
+      const previousRows = plan.collector?.version === TOOL_CODING_COLLECTOR.version
+        ? plan.slots.slice(0, slot.position).map(item => receipts.find(incoming => incoming.slot?.id === item.id)
+          ?? read(artifactPath(directory, recordPath(item)))) : undefined;
+      return { slot, path, journal, receipt, validated: readTrial(plan, slot, directory, receipt, root, previousRows) };
     });
     assert(admitted.every(({ slot }, index) => slot.position === existing.length + index), 'import-schedule-drift');
-    const prior = existing.length ? readTrial(plan, existing.at(-1), directory).row : null;
+    const prior = existing.length ? readTrial(plan, existing.at(-1), directory, undefined, root).row : null;
     const ordered = [...(prior ? [prior] : []), ...admitted.map(({ receipt }) => receipt)];
     assert(ordered.every((row, index) => index === 0 || Date.parse(row.execution.startedAt) >= Date.parse(ordered[index - 1].execution.endedAt)), 'collector-order-or-overlap');
     for (const { slot, path, journal, receipt } of admitted) {
@@ -669,7 +728,7 @@ export function adoptLiveCalibration(root, directory, calibrationDir) {
   assert(!existsSync(join(directory, '.run.lock')), 'run-in-progress');
   const plan = loadPlan(root, directory);
   assert(text(actor) && actor !== plan.actor && actor !== `${plan.actor}/executor`, 'distinct-verifier-role-required');
-  const records = new Map(plan.slots.map((slot) => [slot.id, readTrial(plan, slot, directory)]));
+  const records = new Map(plan.slots.map((slot) => [slot.id, readTrial(plan, slot, directory, undefined, root)]));
   const actual = [...records.values()].filter(Boolean);
   if (plan.evidenceKind === 'live-provider' && actual.length > 0) {
     verifyTaskAdmissions(root, directory, plan, new Set(actual.map((record) => record.row.slot.caseId)));

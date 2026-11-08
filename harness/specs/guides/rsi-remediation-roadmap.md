@@ -26,7 +26,7 @@ RSI 修复路线（2026-11-07）
 
 工具循环先复用现有 Responses provider、编辑解析器、历史 workspace 准备、独立 grader 和配对统计。工具效果只发生在独立 task workspace；路径、编辑范围和预算由执行器检查。公开语法与接口检查和最终隐藏 oracle 分离。模型不能读取隐藏测试、修改 evaluator、改变权限或用测试结果反向训练最终 held-out。
 
-v4 的初始工具接口为 `read_file(path, startLine, maxLines)`、`replace_file(path, content)` 和 `check_public_contract()`。读取范围由公开输入来源清单固定，修改范围为 task targetScope，公开检查仅验证语法与公共声明约定；最终行为判分仍由历史 oracle 执行。每槽最多 4 次 provider 调用、12 次工具调用，每次工具输出最多 12000 字符，最多修改 32 个文件且总 UTF-8 编辑内容不超过 256000 字节；初始公开输入上限为 100000 字符。单请求上限 240 秒、单 oracle 上限 300 秒，每槽 provider 阶段上限 900 秒。无 provider 重试，工具续接和原始响应逐项计入预算与收据。
+v4 的工具接口为 `read_file(path, startLine, maxLines)`、`apply_edits(edits)` 和 `check_public_contract()`。批量编辑的每一项包含 path、oldText、newText；oldText=null 写完整文件，其余情况要求唯一的精确文本匹配。这样 20 个规范文件可在一次工具调用中修改。读取范围由公开输入来源清单固定，修改范围为 task targetScope，公开检查仅验证语法与公共声明约定；最终行为判分仍由历史 oracle 执行。每槽最多 4 次 provider 调用、12 次工具调用，每次工具输出最多 12000 字符，最多修改 32 个文件且总 UTF-8 编辑内容不超过 256000 字节；初始公开输入上限为 100000 字符。单请求上限 240 秒、单 oracle 上限 300 秒，每槽 provider 阶段上限 900 秒。无 provider 重试，工具续接和原始响应逐项计入预算与收据。版本化修订记录为 plan-amendment.v2.json。
 
 采用归因复用现有 SEKB 和角色记忆存储。一次检索只记录检索；实际采用记录来源、版本和具体 task/run，结果由执行观察或 grader 提供。反馈进入诊断和独立实验数据，经过预登记效果验证后才进入检索或保留策略。权重与策略由 evaluator 在独立变更中冻结，不依据最终 held-out 调整。
 

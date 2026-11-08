@@ -1,6 +1,7 @@
 export const TASK_INPUT_BINDINGS: string;
 export const PUBLIC_INPUT_PROTOCOL: 'RsiCodingTaskInputs/v1';
 export const PUBLIC_BEHAVIOR_SOURCE: string;
+export function assertPublicInputPath(value: string): string;
 export type PublicInputSource = { path: string; revision: string; sourceSha256: string | null };
 export type PublicTaskBinding = {
   identity: { id: string; base: string; reference: string; sourceRecord: string;

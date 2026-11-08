@@ -31,6 +31,7 @@ function inputPath(value) {
 function allowedPath(value) {
   try { return inputPath(value); } catch { return null; }
 }
+export function assertPublicInputPath(value) { return inputPath(value); }
 function blob(root, revision, path) {
   inputPath(path);
   assert(/^[a-f0-9]{40}$/u.test(revision), 'historical-input-revision-required');

@@ -56,13 +56,16 @@ export type BenefitTrialReceipt = {
     injectionDigest: string | null; isolationId: string; runtimeEffectMeasured: boolean };
   edits: Array<{ path: string; content: string }>;
   execution: { status: 'completed' | 'timeout' | 'crash'; failureClass: 'infrastructure' | null;
-    failureCategory?: 'provider' | 'infrastructure' | 'oracle' | 'model' | 'model-format' | 'model-output-limit' | null;
+    failureCategory?: 'provider' | 'infrastructure' | 'oracle' | 'model' | 'model-format' | 'model-output-limit'
+      | 'model-turn-limit' | 'model-tool-limit' | 'model-public-check' | 'budget' | 'provider-usage' | 'provider-status' | 'tool-infrastructure' | null;
     attempts: 1; providerCalls: number; wallClockMs: number; costUsd: number | null;
     toolEvents: Array<{ type: 'tool-call'; callId: string; name: string; arguments: string; output: string }>;
+    tokenBudgetAtStart?: number; providerBudgetAtStart?: number;
     runPosition: number; startedAt: string; endedAt: string; measurementBasis: string; note: string };
   rawResponse: unknown;
   providerAttempts: Array<{ endpoint: string; request: ReturnType<typeof buildResponsesRequest>; rawResponse: unknown; parsedResponse: ResponsesReply }>;
   grader: null | { schemaVersion: 'RsiBenefitGrader/v1'; driven_by: 'agent'; actor: string; workspaceRevision: string; oracleDigest: string; commands: string[]; responseDigest: string; editsDigest: string;
+    baselineSetup?: BenefitTask['baselineSetup']; oracleRevision?: string; oracleTestDigests?: Record<string, string>; oracleUnchanged?: boolean;
     isolation: { hiddenOracleVisible: false; unapprovedEgress: false; candidateChangedEvaluator: false };
     reports: Array<{ command: string; exitCode: number; report: { success: boolean; numTotalTests: number;
       numPassedTests: number; numFailedTests: number; numPendingTests: number; numSkippedTests?: number; numTodoTests?: number;
@@ -72,6 +75,9 @@ export const BENEFIT_ARMS: readonly BenefitArm[];
 export function benefitDigest(value: unknown): string;
 export function createBenefitPlan(root: string, options?: BenefitPlanOptions): BenefitPlan;
 export function validateBenefitPlan(plan: BenefitPlan, root: string): boolean;
+export function validateCollectedBenefitTrial(root: string, plan: BenefitPlan, receipt: BenefitTrialReceipt,
+  priorRows?: BenefitTrialReceipt[]): { row: BenefitTrialReceipt; outcome: string; failureClass: string | null;
+    tokens: number | null; turns: number | null; toolCalls: number };
 export function writeBenefitPlan(root: string, directory: string, options?: BenefitPlanOptions): BenefitPlan;
 export function buildBenefitRequest(plan: BenefitPlan, slot: BenefitSlot): ReturnType<typeof buildResponsesRequest>;
 export function runOfflineBenefit(root: string, directory: string, options?: { limit?: number }): { written: number; resumed: number; planned: number; providerCalls: number };
