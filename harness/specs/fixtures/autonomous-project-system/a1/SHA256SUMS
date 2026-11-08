@@ -1,0 +1,11 @@
+7067c21a18cd5233082b2b06ac3d780dc9ac7fc1902e2446d373738d60141d17  harness/specs/fixtures/autonomous-project-system/a1/acceptance.json
+f108e90d2f0c9767ecd343466bec299f66d09befd5e2a28201bef02643073eab  harness/specs/fixtures/autonomous-project-system/a1/contract-negatives.json
+28def4cb8028ee5b57205b6e6dfec3939e758705ff6a2a089b49b6bf599eadff  harness/specs/fixtures/autonomous-project-system/a1/credential-scan.json
+28129eb815fe5f1cc12779ac0e677506130de74d00857cf25db58123e5be124c  harness/specs/fixtures/autonomous-project-system/a1/gates.json
+2083df79fb849c385321acb829e0281e8b0cefe5c09e10c87f3fb1e5f2d71f9a  harness/specs/fixtures/autonomous-project-system/a1/object-owner-consumer-map.json
+840013a4f92e05dfa8646fc2079d10472f0ee1af1980c0db4233e4f3897e6dc7  harness/specs/fixtures/autonomous-project-system/a1/ontology-report.json
+ec750f085c840b57177a55858f54b101e42b3d60b7e225a2ff8d7af1264ef5a3  harness/specs/fixtures/autonomous-project-system/a1/raw-run-index.json
+2e25f26f4d147a63e4fa8215eeba6cef26f0df9278535f7b195c0ccfecebb7fa  harness/specs/fixtures/autonomous-project-system/a1/semantic-authority.json
+4e40d95b0e8e0fb623054de01dbc5291b2e25b8408de045d803ff431693d42a5  harness/specs/fixtures/autonomous-project-system/a1/source-inputs.json
+64b2ab195ff50dd445083a79405955c26a8cef080d2eec21401ac52dab0eac93  harness/specs/fixtures/autonomous-project-system/a1/tests-summary.json
+1c94f390f10fefa16d6a68f7090f34a9d9005d6a19e763c8df3085ae76ae030e  harness/specs/fixtures/autonomous-project-system/a1/typecheck.json

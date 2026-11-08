@@ -1,0 +1,92 @@
+{
+  "schema": "AutonomyObjectOwnerConsumerMap/v1",
+  "driven_by": "agent",
+  "actor": "codex/autonomous-project-system",
+  "scope": "TF-0670 contract adapters; runtime consumers remain with existing owners",
+  "objects": [
+    {
+      "object": "Project",
+      "owner": "workspaces",
+      "representation": "ProjectView and AutonomyProjectScope; explicit compatibility mapping",
+      "sourceAnchors": [{ "path": "shared/types/project.ts", "contains": "createProjectForWorkspace" }],
+      "consumers": [{ "path": "shared/types/identity-scope.ts", "contains": "normalizeAutonomySessionScope" }],
+      "nextConsumer": "TF-0657/U1 owner read projection; no new Project store"
+    },
+    {
+      "object": "Workspace",
+      "owner": "workspaces",
+      "representation": "WorkspaceProfile.id and WorkspaceId; permission context is Main-owned",
+      "sourceAnchors": [{ "path": "electron/services/workspaces-api.ts", "contains": "getActiveWorkspaceProfile" }],
+      "consumers": [{ "path": "electron/services/workspace-permissions.ts", "contains": "requireWorkspace" }],
+      "nextConsumer": "TF-0673/A4 task admission; does not infer workspace from Project or SessionKey"
+    },
+    {
+      "object": "SessionKey/generation",
+      "owner": "sessions",
+      "representation": "SessionKey plus owner-supplied opaque sessionGeneration",
+      "sourceAnchors": [{ "path": "electron/services/sessions-api.ts", "contains": "describeSessionGeneration" }],
+      "consumers": [{ "path": "electron/services/session-delegation-admission.ts", "contains": "generationBefore !== payload.expectedSessionGeneration" }],
+      "nextConsumer": "TF-0657/U1 freshness and TF-0673/A4 fenced task scope"
+    },
+    {
+      "object": "ScopedRunId",
+      "owner": "runtime",
+      "representation": "ScopedRunId; no SessionKey parsing or unscoped run ID lookup",
+      "sourceAnchors": [{ "path": "shared/types/identity-scope.ts", "contains": "export type ScopedRunId" }],
+      "consumers": [{ "path": "shared/types/coding-run.ts", "contains": "runIds: ScopedRunId[]" }],
+      "nextConsumer": "TF-0676/P2 worker receipts; run completion stays distinct from task acceptance"
+    },
+    {
+      "object": "TaskRef",
+      "owner": "task-ledger or task-forest, discriminated per reference",
+      "representation": "ScopedTaskReference and one-way TaskForestExecutionAnchor",
+      "sourceAnchors": [{ "path": "electron/services/task-ledger-service.ts", "contains": "appendTaskLedgerEvents" }, { "path": "shared/types/task-ledger-reference.ts", "contains": "normalizeTaskForestExecutionAnchor" }],
+      "consumers": [{ "path": "electron/services/workspaces-api.ts", "contains": "createTaskLedgerReference" }],
+      "nextConsumer": "TF-0672/A3 owner validation and TF-0673/A4 binding; Forest adapter never mirrors done"
+    },
+    {
+      "object": "Action",
+      "owner": "host-api, coding-execution-backend or browser-session-owner",
+      "representation": "Owner-scoped actionId; reference validation creates no grant",
+      "sourceAnchors": [{ "path": "shared/host-api/contract.ts", "contains": "export type HostApiContract" }],
+      "consumers": [{ "path": "electron/services/gateway-api.ts", "contains": "decideGatewayRpc(method, workspace.permissionMode" }],
+      "nextConsumer": "TF-0671/A2 trusted operation admission; actual Main/runtime service remains authoritative"
+    },
+    {
+      "object": "Effect",
+      "owner": "runtime, coding-execution-backend or browser-session-owner",
+      "representation": "Owner-scoped effectId linked to an explicit ScopedRunId",
+      "sourceAnchors": [{ "path": "openclaw_runtime/src/agents/agent-tools.ts", "contains": "wrapToolWithWriteJournal" }],
+      "consumers": [{ "path": "shared/component-authority-manifest.ts", "contains": "execution.tool-effect" }],
+      "nextConsumer": "TF-0672/A3 acceptance references real effect records; TF-0688/V1 trace"
+    },
+    {
+      "object": "Evidence",
+      "owner": "task-ledger, task-loop, coding-execution-backend or browser-session-owner",
+      "representation": "Owner-scoped TaskLedgerEvidenceRef.ref; pointer alone is not a passed verdict",
+      "sourceAnchors": [{ "path": "shared/types/task-ledger.ts", "contains": "export type TaskLedgerEvidenceRef" }],
+      "consumers": [{ "path": "openclaw_runtime/src/agents/task-loop-controller.ts", "contains": "evidenceGate" }],
+      "nextConsumer": "TF-0672/A3 source/candidate/decision verification; no independent decision store"
+    },
+    {
+      "object": "ResourceRef",
+      "owner": "resource-tracker, resource-fabric, coding-execution-backend or browser-session-owner",
+      "representation": "Owner-scoped TrackedResource.id or actual owner lease identifier; no copied leaseState",
+      "sourceAnchors": [{ "path": "electron/services/resource-tracker.ts", "contains": "export class ResourceTracker" }, { "path": "electron/services/resource-fabric.ts", "contains": "export class ResourceFabric" }],
+      "consumers": [{ "path": "electron/services/resource-tracker-api.ts", "contains": "getResourceTracker" }],
+      "nextConsumer": "TF-0679/R1 actual owner admission; cache cannot release a real resource"
+    }
+  ],
+  "roleIdentity": {
+    "assistant": "shared/types/agent.ts#AgentSummary",
+    "contract": "shared/types/agent.ts#RoleContract",
+    "runtimeOwner": "openclaw_runtime/src/agents/role-contract.ts",
+    "responsibilities": ["system", "project", "session"],
+    "authorization": "existing Main/runtime permission owner only"
+  },
+  "limitations": [
+    "Only contract parsing and rejection are measured in A1; autonomous dispatch, task completion and resource effects are subsequent leaves.",
+    "The nine objects retain existing source owners; this map is evidence, not a runtime registry or grant provider.",
+    "New project/task/role read adapters are not yet wired to a UI or an automatic writer."
+  ]
+}

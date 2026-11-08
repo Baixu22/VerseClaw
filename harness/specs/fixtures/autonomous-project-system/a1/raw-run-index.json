@@ -1,0 +1,135 @@
+{
+  "schema": "AutonomyA1RawRunIndex/v1",
+  "driven_by": "agent",
+  "actor": "codex/autonomous-project-system",
+  "candidate": {
+    "commit": "a7ce35fde61a87afd5a7d87ee73b8b74479fae4a",
+    "tree": "16377fc717671d22be6e5dbd2fff2966bf8743af",
+    "dirty": false
+  },
+  "archive": "D:/ClawX/.agent-workbench/acceptance-private/autonomous-project-system/a1/a7ce35fde",
+  "originalRun": "D:/tmp/autonomy-a1-final-a7ce35fde",
+  "files": [
+    {
+      "name": "comms-compare-report.md",
+      "bytes": 3329,
+      "sha256": "f9e8b497b7da14c840fb114b24a5399acdece5154b419bcbff710b624a7abfe9"
+    },
+    {
+      "name": "comms-compare.log",
+      "bytes": 3465,
+      "sha256": "b03e3bf440c0e03332e90dd01b1c3d8e6d9a34ee83e4bfdfdf9c0cccd02f522e"
+    },
+    {
+      "name": "comms-metrics.json",
+      "bytes": 3735,
+      "sha256": "bb66243ef5336a0a053a348d0842e1f7682440967a6a164e2de55c4eb09bb5a2"
+    },
+    {
+      "name": "comms-replay.log",
+      "bytes": 139,
+      "sha256": "94ca305f0e584e889a5c7c99aec61b3e06fcf6c0e9e8531a92291c653184e22a"
+    },
+    {
+      "name": "contract.log",
+      "bytes": 57,
+      "sha256": "c078443b7963d0e8abcf71a53f7f80b539711f7709f5e4ae1e54c17ce9d24e10"
+    },
+    {
+      "name": "diff-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "gate-driver.mjs",
+      "bytes": 4634,
+      "sha256": "9fa1993c3a68c4e2bb731feecb08e6c94a0556c192cdd8fa425fc904a22ddf65"
+    },
+    {
+      "name": "gates.json",
+      "bytes": 6455,
+      "sha256": "28129eb815fe5f1cc12779ac0e677506130de74d00857cf25db58123e5be124c"
+    },
+    {
+      "name": "harness-dry-run-report.md",
+      "bytes": 677,
+      "sha256": "22b3c305fe66612b24bb97cfe82bf601b8b194bab8d39447ad1b388d2f0b27c6"
+    },
+    {
+      "name": "harness-dry-run.log",
+      "bytes": 340,
+      "sha256": "8f4097057a6fb54f6432ae340a2ab6ad6c5cd0c68b9ef6d5cb01e4b96077d77b"
+    },
+    {
+      "name": "harness-validate.log",
+      "bytes": 290,
+      "sha256": "ccf160c6b1fc798c75b77882eb1d7dd693d74ab114dd7e695c9de698fa5b8f90"
+    },
+    {
+      "name": "lint.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "ontology-report.json",
+      "bytes": 5393,
+      "sha256": "840013a4f92e05dfa8646fc2079d10472f0ee1af1980c0db4233e4f3897e6dc7"
+    },
+    {
+      "name": "ontology-report.log",
+      "bytes": 137,
+      "sha256": "ace2168664343d165eefd191cc9ca8ab484c2791769cc065174e34fd048da0bc"
+    },
+    {
+      "name": "ontology-verify.log",
+      "bytes": 140,
+      "sha256": "1d6690b7894f91d9c007d4037b38d7d884e5ac84f39449fd2b9b4ecf8f1ab738"
+    },
+    {
+      "name": "retention.log",
+      "bytes": 106,
+      "sha256": "dde6bd6cf1630c9281133a262a31c3b858f992c6ce1b216047c89c76180d8a4b"
+    },
+    {
+      "name": "seal-driver.mjs",
+      "bytes": 10786,
+      "sha256": "7af413df460ea8888e49f5559b5bc613fbf7cae1838a678f178ed3238dbb30e6"
+    },
+    {
+      "name": "semantic-authority.json",
+      "bytes": 13857,
+      "sha256": "2e25f26f4d147a63e4fa8215eeba6cef26f0df9278535f7b195c0ccfecebb7fa"
+    },
+    {
+      "name": "semantic-authority.log",
+      "bytes": 278,
+      "sha256": "624d0704b23fd751e41074c4dbb077aaa49ad679dea6095cc548df6b5c1c180b"
+    },
+    {
+      "name": "spec-lifecycle.log",
+      "bytes": 93,
+      "sha256": "86d1010c1eee0f4e33295f3807bdd86d9bf2876c49bcbadf77a85443433468c8"
+    },
+    {
+      "name": "test-typecheck-errors.log",
+      "bytes": 56,
+      "sha256": "2965c30ed6c0458fe82c037cbd4fcb6ec7b20eb952bfab14bcb028ad81bbeb57"
+    },
+    {
+      "name": "tests.json",
+      "bytes": 70266,
+      "sha256": "1954b2adaeac8a8e4ccbb303cc1bb87d558aaebc5308d0eba1235615ee471e4e"
+    },
+    {
+      "name": "typecheck.log",
+      "bytes": 1633,
+      "sha256": "ca9fa1e9001dcf8fffbc2b518a12bec76b977f462f12d6ebca2457ca0acc6b07"
+    },
+    {
+      "name": "unit.log",
+      "bytes": 69,
+      "sha256": "c78ef09fcdfe3ae53a62eae9a0666145a661bec25fefd823886d6c3b48a83404"
+    }
+  ],
+  "recovery": "Read the local private archive by exact filename and digest, or rerun the recorded pnpm/node commands with TEMP/TMP on D: and verify-deps-before-run=false. No task-forest journal is required for source checks."
+}

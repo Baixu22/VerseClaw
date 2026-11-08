@@ -1,3 +1,7 @@
+import type { AgentSummary, RoleContract } from './agent.js';
+import type { TrackedResource } from './resource-tracker.js';
+import type { TaskLedgerEvidenceRef } from './task-ledger.js';
+
 /** Identity vocabulary only: no registry, storage, authorization or ID generation. */
 declare const identityKind: unique symbol;
 type Identity<Kind extends string> = string & { readonly [identityKind]: Kind };
@@ -16,6 +20,52 @@ export type RunScope = {
 
 /** Use the whole reference at new persistence/transport boundaries. */
 export type ScopedRunId = { runId: RunId; scope: RunScope };
+
+export type AutonomyProjectScope = Pick<RunScope, 'workspaceId' | 'projectId'>;
+/** Generation is the existing session owner's opaque token, never parsed from a key. */
+export type AutonomySessionScope = AutonomyProjectScope & {
+  sessionKey: SessionKey;
+  sessionGeneration: string;
+};
+
+/** Responsibilities reuse Assistant/RoleContract identity; none is a runtime principal. */
+export type AutonomyRoleScope = {
+  agentId: AgentSummary['id'];
+  roleContract: Pick<RoleContract, 'name' | 'version'>;
+} & (
+  | { responsibility: 'system' }
+  | { responsibility: 'project'; scope: AutonomyProjectScope }
+  | { responsibility: 'session'; scope: AutonomySessionScope }
+);
+
+// Closed reference shapes, not an authorization/capability registry.
+const AUTONOMY_REFERENCE_OWNERS = {
+  project: ['workspaces'],
+  workspace: ['workspaces'],
+  session: ['sessions'],
+  run: ['runtime'],
+  action: ['host-api', 'coding-execution-backend', 'browser-session-owner'],
+  effect: ['runtime', 'coding-execution-backend', 'browser-session-owner'],
+  evidence: ['task-ledger', 'task-loop', 'coding-execution-backend', 'browser-session-owner'],
+  resource: ['resource-tracker', 'resource-fabric', 'coding-execution-backend', 'browser-session-owner'],
+} as const;
+
+type AutonomyObject<Kind extends keyof typeof AUTONOMY_REFERENCE_OWNERS> = {
+  kind: Kind;
+  owner: (typeof AUTONOMY_REFERENCE_OWNERS)[Kind][number];
+  /** Scope of the observation/consumer, not a new object's lifetime or permission. */
+  scope: AutonomySessionScope;
+};
+
+export type AutonomyObjectReference =
+  | AutonomyObject<'project'>
+  | AutonomyObject<'workspace'>
+  | AutonomyObject<'session'>
+  | (AutonomyObject<'run'> & { run: ScopedRunId })
+  | (AutonomyObject<'action'> & { actionId: string })
+  | (AutonomyObject<'effect'> & { effectId: string; run: ScopedRunId })
+  | (AutonomyObject<'evidence'> & { evidenceRef: TaskLedgerEvidenceRef['ref'] })
+  | (AutonomyObject<'resource'> & { resourceId: TrackedResource['id'] });
 
 export type TaskIdentityReference =
   | { kind: 'ledger'; taskNodeId: TaskId }
@@ -37,6 +87,81 @@ function record(value: unknown, field: string): Record<string, unknown> {
     throw new TypeError(`Identity boundary requires ${field}`);
   }
   return value as Record<string, unknown>;
+}
+
+function closedRecord(value: unknown, field: string, keys: readonly string[]): Record<string, unknown> {
+  const input = record(value, field);
+  const prototype = Object.getPrototypeOf(input);
+  if (prototype !== Object.prototype && prototype !== null) {
+    throw new TypeError(`Autonomy boundary requires a plain ${field}`);
+  }
+  if (Object.keys(input).some((key) => !keys.includes(key))) {
+    throw new TypeError(`Autonomy boundary forbids mixed or authority fields in ${field}`);
+  }
+  return input;
+}
+
+function readAutonomySessionScope(value: unknown): AutonomySessionScope {
+  const scope = closedRecord(value, 'session scope', ['workspaceId', 'projectId', 'sessionKey', 'sessionGeneration']);
+  return {
+    workspaceId: requiredText(scope.workspaceId, 'workspaceId') as WorkspaceId,
+    projectId: requiredText(scope.projectId, 'projectId') as ProjectId,
+    sessionKey: requiredText(scope.sessionKey, 'sessionKey') as SessionKey,
+    sessionGeneration: requiredText(scope.sessionGeneration, 'sessionGeneration'),
+  };
+}
+
+/**
+ * ownerScope must be read from existing Workspace/Session owners, never from the request.
+ * Equality only validates a reference; the actual owner still checks existence and grants.
+ */
+export function normalizeAutonomySessionScope(
+  value: unknown,
+  ownerScope: AutonomySessionScope | null,
+): AutonomySessionScope {
+  if (!ownerScope) throw new TypeError('Autonomy session owner scope is unavailable');
+  const scope = readAutonomySessionScope(value);
+  const current = readAutonomySessionScope(ownerScope);
+  for (const field of ['workspaceId', 'projectId', 'sessionKey', 'sessionGeneration'] as const) {
+    if (scope[field] !== current[field]) {
+      throw new TypeError(`Autonomy ${field} mismatch with current owner scope`);
+    }
+  }
+  return scope;
+}
+
+function readAutonomyRun(value: unknown, scope: AutonomySessionScope): ScopedRunId {
+  const input = closedRecord(value, 'run reference', ['runId', 'scope']);
+  const runScope = closedRecord(input.scope, 'run scope', ['workspaceId', 'projectId', 'sessionKey']);
+  normalizeAutonomySessionScope({ ...runScope, sessionGeneration: scope.sessionGeneration }, scope);
+  return normalizeRunScope(input);
+}
+
+/** Parse pointers only: no execution, completion decision or resource state is copied. */
+export function normalizeAutonomyObjectReference(
+  value: unknown,
+  ownerScope: AutonomySessionScope | null,
+): AutonomyObjectReference {
+  const input = record(value, 'autonomy object reference');
+  if (typeof input.kind !== 'string' || !Object.hasOwn(AUTONOMY_REFERENCE_OWNERS, input.kind)) {
+    throw new TypeError('Autonomy reference requires a known object kind');
+  }
+  const kind = input.kind as AutonomyObjectReference['kind'];
+  if (!(AUTONOMY_REFERENCE_OWNERS[kind] as readonly unknown[]).includes(input.owner)) {
+    throw new TypeError(`Autonomy ${kind} reference requires its explicit owner`);
+  }
+  const fields = kind === 'run' ? ['run']
+    : kind === 'action' ? ['actionId']
+    : kind === 'effect' ? ['effectId', 'run']
+    : kind === 'evidence' ? ['evidenceRef']
+    : kind === 'resource' ? ['resourceId'] : [];
+  closedRecord(input, `${kind} reference`, ['kind', 'owner', 'scope', ...fields]);
+  const scope = normalizeAutonomySessionScope(input.scope, ownerScope);
+  const result: Record<string, unknown> = { kind, owner: input.owner, scope };
+  for (const field of fields) {
+    result[field] = field === 'run' ? readAutonomyRun(input.run, scope) : requiredText(input[field], field);
+  }
+  return result as AutonomyObjectReference;
 }
 
 /** Transitional projection only; equal bytes do not make the two identities aliases. */

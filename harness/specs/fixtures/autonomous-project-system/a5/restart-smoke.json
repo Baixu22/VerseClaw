@@ -1,0 +1,59 @@
+{
+  "schema": "AutonomyA5RestartSmoke/v1",
+  "driven_by": "agent",
+  "actor": "codex-a5",
+  "generatedAt": "2026-11-02T11:13:09.138Z",
+  "candidate": {
+    "dirty": false,
+    "tree": "4f46b4dbe314eea6479e64868e07305fae631445",
+    "commit": "9f0c5b07ecbe7f982b5ac111edf772e96158d46e"
+  },
+  "verdict": "incomplete",
+  "stats": {
+    "startTime": "2026-11-02T11:02:52.340Z",
+    "duration": 133400.147,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  },
+  "testCases": [
+    {
+      "title": "reads actual Gateway tool exposure and continues the same isolated session after runtime restart",
+      "file": "autonomy-runtime-readiness.spec.ts",
+      "status": "unexpected",
+      "results": [
+        {
+          "status": "failed",
+          "durationMs": 92842,
+          "errors": [
+            {
+              "message": "Error: {\"state\":\"missing\",\"runtimeGeneration\":null,\"capabilityProfileGeneration\":null,\"observedAt\":null,\"reason\":\"no-current-run-capability-profile\"}\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"effective\"\u001b[39m\nReceived: \u001b[31m\"missing\"\u001b[39m\n\n  88 |     await turn('A5-NODE-FIRST');\n  89 |     const first = await snapshot();\n> 90 |     expect(first.policy?.generation.state, JSON.stringify(first.policy?.generation)).toBe('effective');\n     |                                                                                      ^\n  91 |     expect(first.policy?.tools?.status).toBe('effective');\n  92 |     expect(first.policy?.tools?.value?.names.length).toBeGreaterThan(0);\n  93 |     const firstAck = await client!.request<{ gatewayGeneration: string; childPid: number }>('runtime.flags.ack', {});\n    at D:\\ClawX-work\\autonomy-host-readiness\\tests\\e2e\\autonomy-runtime-readiness.spec.ts:90:86"
+            }
+          ],
+          "attachments": [
+            {
+              "name": "gateway-runtime-log",
+              "path": "D:\\tmp\\autonomy-a5-acceptance-final\\results\\autonomy-runtime-readiness-4c3c4-ssion-after-runtime-restart\\attachments\\gateway-runtime-log-b2b3911b5526ca8e465539a5b080a277d8c3ae49.log",
+              "contentType": "text/plain"
+            },
+            {
+              "name": "error-context",
+              "path": "D:\\tmp\\autonomy-a5-acceptance-final\\results\\autonomy-runtime-readiness-4c3c4-ssion-after-runtime-restart\\error-context.md",
+              "contentType": "text/markdown"
+            },
+            {
+              "name": "trace",
+              "path": "D:\\tmp\\autonomy-a5-acceptance-final\\results\\autonomy-runtime-readiness-4c3c4-ssion-after-runtime-restart\\trace.zip",
+              "contentType": "application/zip"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actualRunReceipt": null,
+  "limitations": [
+    "No successful restart/continuation is inferred from source assertions, startup readiness, or accepted chat.send. Read the raw test outcome."
+  ]
+}
