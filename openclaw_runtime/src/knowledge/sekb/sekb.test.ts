@@ -15,6 +15,7 @@ import { buildSekbOperatorReport } from "./operator-report.js";
 import { RetrievalEngine, type ContextInjector } from "./retrieval-engine.js";
 import { TrajectoryCapture } from "./trajectory-capture.js";
 import type { Principle } from "./types.js";
+import { recordFixtureAdoption } from "./attribution.test-helper.js";
 
 const tempRoots: string[] = [];
 
@@ -71,7 +72,7 @@ describe("SEKB-MVP", () => {
     expect(approxTokens(index)).toBeLessThanOrEqual(2_000);
 
     store.increment_retrieval_count(principleId);
-    store.record_adoption(principleId, { trigger: "outcome", taskSucceeded: true, taskType: "config/db" });
+    recordFixtureAdoption(store, principleId, "store-success");
     const counted = store.get_principle(principleId);
     expect(counted.retrieval_count).toBe(1);
     expect(counted.adoption_count).toBe(1);

@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "RsiAdoptionCloseout/v1",
+  "taskId": "TF-0855",
+  "driven_by": "agent",
+  "actor": "codex/rsi-remediation",
+  "sourceCandidate": "2518aba4a71675a714450fb4d1d9a2fb094507d4",
+  "status": "passed",
+  "sourceFiles": 28,
+  "tests": {
+    "total": 52,
+    "passed": 52,
+    "failed": 0,
+    "pending": 0,
+    "success": true
+  },
+  "diagnostics": {
+    "missingTaskIdentity": 0,
+    "missingExperimentIdentity": 0,
+    "unknownOutcomes": 1,
+    "rejected": 1,
+    "duplicates": 1,
+    "conflicts": 0,
+    "rejections": 2
+  },
+  "operation": {
+    "implementation": "createEditTool",
+    "beforeSha256": "5d8f65d2774e206bc9f7a7a4ad39ca2dc563b5c31e46ab57ef4874961237ce29",
+    "afterSha256": "f4918c8ac9858f83b2c0307536179d6bd283bc7c20ba34b53074721f43611f4a"
+  },
+  "experimentEvidence": "agent-driven production extension and filesystem simulation",
+  "paidProviderCalls": 0,
+  "claims": {
+    "productionCaller": true,
+    "versionedIdentity": true,
+    "durableDeduplication": true,
+    "gradedOutcomeSourceSeparated": true,
+    "unknownPreserved": true,
+    "independentBenefitMeasurement": false,
+    "promotion": "unchanged-NO_GO"
+  },
+  "nextNode": "TF-0856",
+  "nextAction": "Implement parent-linked candidate versions and training/validation selection with held-out data sealed."
+}

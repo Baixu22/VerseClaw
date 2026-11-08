@@ -7,6 +7,7 @@ import { DistillationTool } from "./distillation-tool.js";
 import { KnowledgeStore } from "./knowledge-store.js";
 import { RetrievalEngine } from "./retrieval-engine.js";
 import { TrajectoryCapture } from "./trajectory-capture.js";
+import { fixtureAttribution, recordFixtureAdoption } from "./attribution.test-helper.js";
 
 const tempRoots: string[] = [];
 
@@ -108,36 +109,21 @@ describe("KS-05 SEKB experience closed loop", () => {
     expect(afterRecall.adoption_count).toBe(0);
     expect(afterRecall.post_adoption_success).toBe(0);
 
-    // Cited adoption evidence moves effectiveness.
-    store.record_adoption(confirmed, {
-      trigger: "cited",
-      taskSucceeded: true,
-      taskType: "config/db",
-      contextTags: ["postgresql"],
-      sessionKey: "session:ks05:fresh",
-      sourceRunId: "run:ks05:fresh",
-      citationText: "Check PostgreSQL access before retrying (KS-05)",
-    });
+    const freshEvidence = fixtureAttribution(store, confirmed, "run:ks05:fresh");
+    store.record_adoption(confirmed, freshEvidence);
+    store.record_adoption(confirmed, { ...freshEvidence, trigger: "cited", source: "agent" });
     const afterCited = store.get_principle(confirmed);
-    expect(afterCited.adoption_count).toBe(1);
-    expect(afterCited.post_adoption_success).toBe(1);
-    const evidence = afterCited.metadata.sekbAdoptionEvidence as Array<Record<string, unknown>>;
-    expect(evidence).toHaveLength(1);
-    expect(evidence[0]).toMatchObject({
+    expect(afterCited.adoption_count).toBe(0);
+    expect(afterCited.post_adoption_success).toBe(0);
+    recordFixtureAdoption(store, confirmed, "run:ks05:fresh");
+    const evidence = store.list_adoption_events({ principleId: confirmed });
+    expect(evidence.find((event) => event.evidence.trigger === "cited")?.evidence).toMatchObject({
       trigger: "cited",
-      taskSucceeded: true,
       sessionKey: "session:ks05:fresh",
-      sourceRunId: "run:ks05:fresh",
+      runId: "run:ks05:fresh",
     });
 
-    // Outcome evidence with a failed task keeps adoption_count moving but not success.
-    store.record_adoption(confirmed, {
-      trigger: "outcome",
-      taskSucceeded: false,
-      taskType: "config/db",
-      sessionKey: "session:ks05:fresh",
-      sourceRunId: "run:ks05:fresh:2",
-    });
+    recordFixtureAdoption(store, confirmed, "run:ks05:fresh:2", "failure");
     const afterOutcome = store.get_principle(confirmed);
     expect(afterOutcome.adoption_count).toBe(2);
     expect(afterOutcome.post_adoption_success).toBe(1);
@@ -179,14 +165,9 @@ describe("KS-05 SEKB experience closed loop", () => {
       confidence: 0.8,
     });
 
-    expect(() => store.record_adoption(principleId, {
-      trigger: "retrieval",
-      taskSucceeded: true,
-    } as never)).toThrow(/cited\/adopted\/outcome evidence/);
-    expect(() => store.record_adoption(principleId, {
-      trigger: "cited",
-      taskSucceeded: "yes",
-    } as never)).toThrow(/taskSucceeded boolean/);
+    const invalidEvidence = fixtureAttribution(store, principleId, "invalid-evidence");
+    expect(() => store.record_adoption(principleId, { ...invalidEvidence, trigger: "retrieval" } as never)).toThrow(/trigger/);
+    expect(() => store.record_adoption(principleId, { ...invalidEvidence, outcome: "yes" } as never)).toThrow(/outcome/);
 
     const before = store.get_principle(principleId);
     expect(before.adoption_count).toBe(0);

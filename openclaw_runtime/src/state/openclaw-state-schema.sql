@@ -1217,6 +1217,31 @@ CREATE TABLE IF NOT EXISTS sekb_principles (
 CREATE INDEX IF NOT EXISTS idx_sekb_principles_status
   ON sekb_principles(status, updated_at DESC, principle_id);
 
+CREATE TABLE IF NOT EXISTS sekb_attribution_events (
+  event_id TEXT NOT NULL PRIMARY KEY,
+  run_key TEXT NOT NULL,
+  run_id TEXT,
+  trajectory_id TEXT,
+  principle_id TEXT NOT NULL,
+  principle_version TEXT NOT NULL,
+  trigger TEXT NOT NULL,
+  payload_json TEXT NOT NULL,
+  payload_digest TEXT NOT NULL,
+  status TEXT NOT NULL CHECK (status IN ('accepted', 'rejected')),
+  reason TEXT,
+  recorded_at TEXT NOT NULL,
+  duplicate_count INTEGER NOT NULL DEFAULT 0,
+  conflict_count INTEGER NOT NULL DEFAULT 0,
+  rejection_count INTEGER NOT NULL DEFAULT 0,
+  first_rejection TEXT,
+  last_conflict_json TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_sekb_attribution_run
+  ON sekb_attribution_events(run_key, principle_id, principle_version);
+CREATE INDEX IF NOT EXISTS idx_sekb_attribution_run_id
+  ON sekb_attribution_events(run_id, recorded_at, event_id);
+
 CREATE TABLE IF NOT EXISTS sekb_error_signature_cache (
   raw_error_hash TEXT NOT NULL PRIMARY KEY,
   raw_error_sample TEXT NOT NULL,

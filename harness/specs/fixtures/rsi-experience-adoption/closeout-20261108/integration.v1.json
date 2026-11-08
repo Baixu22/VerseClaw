@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "RsiAdoptionIntegration/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-adoption-integration",
+  "paidProviderCalls": 0,
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--config",
+    "vitest.rsi-adoption.config.ts",
+    "--reporter=json",
+    "--outputFile=D:\\tmp\\rsi-adoption-final-2518aba4-20261108\\run-9FKuo9\\tests.json"
+  ],
+  "elapsedMs": 25752,
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "passed": true,
+  "paths": {
+    "tests": "D:\\tmp\\rsi-adoption-final-2518aba4-20261108\\run-9FKuo9\\tests.json",
+    "events": "D:\\tmp\\rsi-adoption-final-2518aba4-20261108\\run-9FKuo9\\runtime-events.json",
+    "database": "D:\\tmp\\rsi-adoption-final-2518aba4-20261108\\run-9FKuo9\\runtime-state.sqlite",
+    "export": "D:\\tmp\\rsi-adoption-final-2518aba4-20261108\\run-9FKuo9\\export.v1.json",
+    "result": "D:\\tmp\\rsi-adoption-final-2518aba4-20261108\\run-9FKuo9\\integration.v1.json"
+  },
+  "schema": {
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "scripts/generate-kysely-types.mjs",
+      "--verify"
+    ],
+    "cwd": "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\openclaw_runtime",
+    "exitCode": 0,
+    "error": null
+  },
+  "tests": {
+    "total": 52,
+    "passed": 52,
+    "failed": 0,
+    "pending": 0,
+    "success": true
+  },
+  "exportValidation": {
+    "passed": true,
+    "errors": []
+  },
+  "diagnostics": {
+    "missingTaskIdentity": 0,
+    "missingExperimentIdentity": 0,
+    "unknownOutcomes": 1,
+    "rejected": 1,
+    "duplicates": 1,
+    "conflicts": 0,
+    "rejections": 2
+  },
+  "operation": {
+    "implementation": "createEditTool",
+    "beforeSha256": "5d8f65d2774e206bc9f7a7a4ad39ca2dc563b5c31e46ab57ef4874961237ce29",
+    "afterSha256": "f4918c8ac9858f83b2c0307536179d6bd283bc7c20ba34b53074721f43611f4a"
+  }
+}
