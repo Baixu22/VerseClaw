@@ -85,15 +85,18 @@ export async function persistentTaskChatContext(
       { key: sessionKey },
       10_000,
     );
-    if (described?.session?.sessionId !== bound.claim.generation)
-      throw new Error("TASK_GENERATION_STALE");
+    const liveGeneration=described?.session?.sessionId;
+    if(!liveGeneration)throw new Error('TASK_GENERATION_STALE');
+    // The coordinator keeps its own generation while a child owns the writer.
+    // binding() checks either the writer binding or the read reference.
+    store.binding(sessionKey,liveGeneration);
     const scoped = new TaskSystemStore(domain);
     try {
       if (!bound.referenceOnly&&bound.claim.state === "active") {
         scoped.assertOwner(bound.claim);
         scoped.control(bound.claim, "renew");
       }
-      return scoped.context(sessionKey, bound.claim.generation);
+      return scoped.context(sessionKey, liveGeneration);
     } finally {
       scoped.close();
     }
