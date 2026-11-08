@@ -19,9 +19,11 @@ async function setup() {
   const root = await mkdtemp(path.join(process.env.PROCESS_CONTROL_NATIVE_ROOT ?? tmpdir(), "tf0836-native-"));
   const pids: number[] = [];
   const executorDiagnostics: Array<{ pid?: number; stderr: string; code?: number | null; signal?: string | null; environmentKeys: string[] }> = [];
+  const closed: Promise<void>[] = [];
   const manager = new VerseShellProcessManager({ resolveBinary: () => ({ path: binary!, source: "verified-bundled", verified: true }),
     spawnProcess: (bin, args, options) => {
       const child = spawn(bin, args, options); pids.push(child.pid!);
+      closed.push(new Promise(resolve => child.once("close", () => resolve())));
       const diagnostics: typeof executorDiagnostics[number] = { pid: child.pid, stderr: "", environmentKeys: Object.keys(options.env ?? {}).filter(k=>/^(systemroot|systemdrive|comspec|windir|path|pathext|appdata|localappdata|userprofile|temp|tmp)$/i.test(k)) };
       executorDiagnostics.push(diagnostics); child.stderr?.on("data", chunk => { diagnostics.stderr = (diagnostics.stderr + String(chunk)).slice(-4096); });
       child.once("exit", (code, signal) => { diagnostics.code=code; diagnostics.signal=signal; });
@@ -47,7 +49,7 @@ async function setup() {
   const processEnv = Object.fromEntries(["PATH","SystemRoot","SystemDrive","ComSpec","PATHEXT","TEMP","TMP","APPDATA","LOCALAPPDATA","USERPROFILE","windir"]
     .flatMap(key => { const value = hostEnv.get(key.toUpperCase()); return value ? [[key,value]] : []; }));
   expect(processEnv.SystemRoot).toBeTruthy(); expect(processEnv.ComSpec).toBeTruthy();
-  return { root, pids, manager, env, processEnv, hash, clients, timeline, executorDiagnostics };
+  return { root, pids, manager, env, processEnv, hash, clients, timeline, executorDiagnostics, closed };
 }
 async function report(name: string, value: unknown) {
   if (process.env.PROCESS_CONTROL_REPORT_DIR) await writeFile(path.join(process.env.PROCESS_CONTROL_REPORT_DIR, name + ".json"), JSON.stringify({ driven_by: "agent", actor: "codex", value }, null, 2));
@@ -99,8 +101,9 @@ describe.runIf(live)("verified native process control", () => {
       }
       expect(reads.every(row=>row.head.ok && row.slice.ok)).toBe(true);
       await f.manager.shutdownAll();
+      await Promise.all(f.closed);
       const children = (await readFile(grandchildren,"utf8")).trim().split(/\s+/).map(Number); expect(children.every(pid=>!alive(pid))).toBe(true);
-      expect(f.pids.every(pid=>!alive(pid))).toBe(true);
+      await vi.waitFor(() => expect(f.pids.every(pid=>!alive(pid))).toBe(true), { timeout: 5000 });
       await report("native-control", { binarySha256:f.hash, controls, pollRequests:16, output, result:{exitCode:result.exitCode,stdoutBytes:Buffer.byteLength(result.stdout),stderrBytes:Buffer.byteLength(result.stderr),artifacts,counts:result.observation.data?.output_bytes},artifactReads:reads,ownedPids:f.pids,grandchildren:children,remaining:0 });
     } finally { await f.manager.shutdownAll(); await report("native-workspace",{root:f.root,pids:f.pids,timeline:f.timeline,output,executorDiagnostics:f.executorDiagnostics,preservedEnvironmentKeys:Object.keys(f.processEnv)}); }
   },120000);
@@ -132,7 +135,8 @@ describe.runIf(live)("verified native process control", () => {
             memoryScope:mode==="cli"||mode==="batch"?"child self-reported RSS":"host process RSS",persistentExecutorPids:mode==="server"?[...f.pids]:[]});
         }
       }
-      await f.manager.shutdownAll();expect(f.pids.every(pid=>!alive(pid))).toBe(true);
+      await f.manager.shutdownAll();await Promise.all(f.closed);
+      await vi.waitFor(() => expect(f.pids.every(pid=>!alive(pid))).toBe(true), { timeout: 5000 });
       await report("read-comparison",{binarySha256:f.hash,serverStartupMs:startupMs,serverSpawns:f.pids.length,results,
         decision:"Use existing native file reads for local reads; retain the existing typed server for governed operations. Do not add a generic resident CLI proxy.",remaining:0});
     } finally {await f.manager.shutdownAll();await rm(f.root,{recursive:true,force:true});}
