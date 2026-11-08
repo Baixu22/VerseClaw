@@ -1,0 +1,21 @@
+{
+  "driven_by": "agent",
+  "images": [
+    "conversation-empty.png",
+    "conversation-task.png",
+    "conversation-task-expanded.png",
+    "conversation-task-hidden.png",
+    "conversation-task-narrow.png",
+    "conversation-task-zh.png",
+    "conversation-task-ja.png",
+    "conversation-task-ru.png"
+  ],
+  "checks": [
+    "Empty chat has no task header, file chip, watermark or conversation grid",
+    "One task goal appears above the transcript",
+    "Checkpoint steps have no inferred total or percentage",
+    "Changed-file chip is below the composer",
+    "Expanded, hidden and restored states remain usable",
+    "Narrow viewport and four locales remain visible"
+  ]
+}

@@ -1,0 +1,577 @@
+
+ RUN  v4.1.1 D:/ClawX-work/durable-task-system-20261107
+
+stdout | tests/unit/chat-page-execution-graph.test.tsx > Chat execution graph lifecycle > collapses activity when the final reply starts streaming and shows only the reply suffix
+🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+ ✓ tests/unit/chat-page-execution-graph.test.tsx (23 tests) 7099ms
+     ✓ collapses activity when the final reply starts streaming and shows only the reply suffix  3915ms
+     ✓ does not overwrite the new conversation status when old compression finishes  1124ms
+stdout | tests/unit/chat-render-reachability.test.tsx > Run-log replay provenance badge > renders the translated badge instead of the raw i18n key
+🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+stderr | tests/unit/chat-render-reachability.test.tsx > Run-log replay provenance badge > renders the translated badge instead of the raw i18n key
+Failed to load sessions: TypeError: __vite_ssr_import_2__.useGatewayStore.getState(...).rpc is not a function
+    at fetchChatSessionsList (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:1986:37)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2982:28
+    at Object.loadSessions (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:3175:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2911:19
+    at hydrateStartup (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2948:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/pages/Chat/index.tsx:1413:10
+    at Object.react_stack_bottom_frame (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11)
+An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-render-reachability.test.tsx > Tool UI cards emitted as tool calls inside a run segment > renders a card from a tool-only assistant turn
+Failed to load sessions: TypeError: __vite_ssr_import_2__.useGatewayStore.getState(...).rpc is not a function
+    at fetchChatSessionsList (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:1986:37)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2982:28
+    at Object.loadSessions (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:3175:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2911:19
+    at hydrateStartup (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2948:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/pages/Chat/index.tsx:1413:10
+    at Object.react_stack_bottom_frame (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11)
+An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-render-reachability.test.tsx > Tool UI cards emitted as tool calls inside a run segment > renders a card from a mixed text + tool_use turn whose text was folded into the graph
+Failed to load sessions: TypeError: __vite_ssr_import_2__.useGatewayStore.getState(...).rpc is not a function
+    at fetchChatSessionsList (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:1986:37)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2982:28
+    at Object.loadSessions (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:3175:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2911:19
+    at hydrateStartup (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2948:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/pages/Chat/index.tsx:1413:10
+    at Object.react_stack_bottom_frame (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11)
+An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-render-reachability.test.tsx > Tool UI cards emitted as tool calls inside a run segment > renders a question the run is blocked on, with no final reply yet
+Failed to load sessions: TypeError: __vite_ssr_import_2__.useGatewayStore.getState(...).rpc is not a function
+    at fetchChatSessionsList (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:1986:37)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2982:28
+    at Object.loadSessions (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:3175:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2911:19
+    at hydrateStartup (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2948:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/pages/Chat/index.tsx:1413:10
+    at Object.react_stack_bottom_frame (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11)
+An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-render-reachability.test.tsx > Tool UI cards emitted as tool calls inside a run segment > still hides a plain tool call that has no card renderer
+Failed to load sessions: TypeError: __vite_ssr_import_2__.useGatewayStore.getState(...).rpc is not a function
+    at fetchChatSessionsList (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:1986:37)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2982:28
+    at Object.loadSessions (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:3175:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2911:19
+    at hydrateStartup (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2948:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/pages/Chat/index.tsx:1413:10
+    at Object.react_stack_bottom_frame (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11)
+An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-render-reachability.test.tsx > Plan surface > replays an update_plan tool call from history into the turn summary
+Failed to load sessions: TypeError: __vite_ssr_import_2__.useGatewayStore.getState(...).rpc is not a function
+    at fetchChatSessionsList (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:1986:37)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2982:28
+    at Object.loadSessions (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:3175:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2911:19
+    at hydrateStartup (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2948:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/pages/Chat/index.tsx:1413:10
+    at Object.react_stack_bottom_frame (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11)
+An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-render-reachability.test.tsx > Plan surface > does not also render the plan as a message card
+Failed to load sessions: TypeError: __vite_ssr_import_2__.useGatewayStore.getState(...).rpc is not a function
+    at fetchChatSessionsList (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:1986:37)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2982:28
+    at Object.loadSessions (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:3175:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2911:19
+    at hydrateStartup (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2948:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/pages/Chat/index.tsx:1413:10
+    at Object.react_stack_bottom_frame (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11)
+An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-render-reachability.test.tsx > Plan surface > omits the execution graph entirely when every row was promoted
+Failed to load sessions: TypeError: __vite_ssr_import_2__.useGatewayStore.getState(...).rpc is not a function
+    at fetchChatSessionsList (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:1986:37)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2982:28
+    at Object.loadSessions (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:3175:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2911:19
+    at hydrateStartup (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2948:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/pages/Chat/index.tsx:1413:10
+    at Object.react_stack_bottom_frame (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11)
+An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+stderr | tests/unit/chat-render-reachability.test.tsx > Permission approvals > surfaces a pending host approval in the transcript
+Failed to load sessions: TypeError: __vite_ssr_import_2__.useGatewayStore.getState(...).rpc is not a function
+    at fetchChatSessionsList (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:1986:37)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2982:28
+    at Object.loadSessions (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:3175:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2911:19
+    at hydrateStartup (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2948:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/pages/Chat/index.tsx:1413:10
+    at Object.react_stack_bottom_frame (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11)
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+stderr | tests/unit/chat-render-reachability.test.tsx > Permission approvals > renders exactly one approval card when a tool call also parses as one
+Failed to load sessions: TypeError: __vite_ssr_import_2__.useGatewayStore.getState(...).rpc is not a function
+    at fetchChatSessionsList (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:1986:37)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2982:28
+    at Object.loadSessions (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:3175:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2911:19
+    at hydrateStartup (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2948:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/pages/Chat/index.tsx:1413:10
+    at Object.react_stack_bottom_frame (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11)
+
+stderr | tests/unit/chat-render-reachability.test.tsx > Permission approvals > surfaces a pending approval even when no turn produced an activity card
+Failed to load sessions: TypeError: __vite_ssr_import_2__.useGatewayStore.getState(...).rpc is not a function
+    at fetchChatSessionsList (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:1986:37)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2982:28
+    at Object.loadSessions (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:3175:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2911:19
+    at hydrateStartup (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2948:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/pages/Chat/index.tsx:1413:10
+    at Object.react_stack_bottom_frame (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11)
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+stderr | tests/unit/chat-render-reachability.test.tsx > Permission approvals > keeps an undecided approval visible after the next run starts
+Failed to load sessions: TypeError: __vite_ssr_import_2__.useGatewayStore.getState(...).rpc is not a function
+    at fetchChatSessionsList (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:1986:37)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2982:28
+    at Object.loadSessions (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:3175:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2911:19
+    at hydrateStartup (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2948:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/pages/Chat/index.tsx:1413:10
+    at Object.react_stack_bottom_frame (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11)
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+stderr | tests/unit/chat-render-reachability.test.tsx > Permission approvals > forces the turn summary open while an approval is pending
+Failed to load sessions: TypeError: __vite_ssr_import_2__.useGatewayStore.getState(...).rpc is not a function
+    at fetchChatSessionsList (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:1986:37)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2982:28
+    at Object.loadSessions (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:3175:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2911:19
+    at hydrateStartup (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2948:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/pages/Chat/index.tsx:1413:10
+    at Object.react_stack_bottom_frame (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11)
+
+stderr | tests/unit/chat-render-reachability.test.tsx > Thinking reasoning > shows reasoning from a message thinking block
+Failed to load sessions: TypeError: __vite_ssr_import_2__.useGatewayStore.getState(...).rpc is not a function
+    at fetchChatSessionsList (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:1986:37)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2982:28
+    at Object.loadSessions (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:3175:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2911:19
+    at hydrateStartup (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2948:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/pages/Chat/index.tsx:1413:10
+    at Object.react_stack_bottom_frame (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11)
+An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-render-reachability.test.tsx > Thinking reasoning > keeps reasoning on a turn whose narration text was folded away
+Failed to load sessions: TypeError: __vite_ssr_import_2__.useGatewayStore.getState(...).rpc is not a function
+    at fetchChatSessionsList (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:1986:37)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2982:28
+    at Object.loadSessions (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:3175:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2911:19
+    at hydrateStartup (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2948:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/pages/Chat/index.tsx:1413:10
+    at Object.react_stack_bottom_frame (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11)
+An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-render-reachability.test.tsx > Thinking reasoning > hides reasoning entirely while the process fold is shut
+Failed to load sessions: TypeError: __vite_ssr_import_2__.useGatewayStore.getState(...).rpc is not a function
+    at fetchChatSessionsList (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:1986:37)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2982:28
+    at Object.loadSessions (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:3175:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2911:19
+    at hydrateStartup (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2948:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/pages/Chat/index.tsx:1413:10
+    at Object.react_stack_bottom_frame (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11)
+An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-render-reachability.test.tsx > Thinking reasoning > counts adopted thoughts on the collapsed header
+Failed to load sessions: TypeError: __vite_ssr_import_2__.useGatewayStore.getState(...).rpc is not a function
+    at fetchChatSessionsList (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:1986:37)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2982:28
+    at Object.loadSessions (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:3175:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2911:19
+    at hydrateStartup (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2948:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/pages/Chat/index.tsx:1413:10
+    at Object.react_stack_bottom_frame (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11)
+An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-render-reachability.test.tsx > Thinking reasoning > merges reasoning from every message in the run segment into one panel
+Failed to load sessions: TypeError: __vite_ssr_import_2__.useGatewayStore.getState(...).rpc is not a function
+    at fetchChatSessionsList (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:1986:37)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2982:28
+    at Object.loadSessions (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:3175:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2911:19
+    at hydrateStartup (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2948:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/pages/Chat/index.tsx:1413:10
+    at Object.react_stack_bottom_frame (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11)
+An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-render-reachability.test.tsx > Thinking reasoning > drops a narration row whose only content failed to materialize
+Failed to load sessions: TypeError: __vite_ssr_import_2__.useGatewayStore.getState(...).rpc is not a function
+    at fetchChatSessionsList (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:1986:37)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2982:28
+    at Object.loadSessions (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:3175:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2911:19
+    at hydrateStartup (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2948:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/pages/Chat/index.tsx:1413:10
+    at Object.react_stack_bottom_frame (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11)
+An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+stderr | tests/unit/chat-render-reachability.test.tsx > Thinking reasoning > shows live reasoning from the runtime run while streaming
+Failed to load sessions: TypeError: __vite_ssr_import_2__.useGatewayStore.getState(...).rpc is not a function
+    at fetchChatSessionsList (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:1986:37)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2982:28
+    at Object.loadSessions (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:3175:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2911:19
+    at hydrateStartup (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2948:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/pages/Chat/index.tsx:1413:10
+    at Object.react_stack_bottom_frame (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11)
+
+stderr | tests/unit/chat-render-reachability.test.tsx > Generated file ownership > shows a diffable file as a diff only, never also as a chip
+Failed to load sessions: TypeError: __vite_ssr_import_2__.useGatewayStore.getState(...).rpc is not a function
+    at fetchChatSessionsList (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:1986:37)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2982:28
+    at Object.loadSessions (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:3175:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2911:19
+    at hydrateStartup (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2948:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/pages/Chat/index.tsx:1413:10
+    at Object.react_stack_bottom_frame (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11)
+An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-render-reachability.test.tsx > Generated file ownership > still chips a file the diff projection cannot render
+Failed to load sessions: TypeError: __vite_ssr_import_2__.useGatewayStore.getState(...).rpc is not a function
+    at fetchChatSessionsList (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:1986:37)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2982:28
+    at Object.loadSessions (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:3175:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2911:19
+    at hydrateStartup (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2948:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/pages/Chat/index.tsx:1413:10
+    at Object.react_stack_bottom_frame (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11)
+An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-render-reachability.test.tsx > Turn summary contents badges > labels contents while collapsed, then shows them when opened
+Failed to load sessions: TypeError: __vite_ssr_import_2__.useGatewayStore.getState(...).rpc is not a function
+    at fetchChatSessionsList (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:1986:37)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2982:28
+    at Object.loadSessions (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:3175:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2911:19
+    at hydrateStartup (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2948:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/pages/Chat/index.tsx:1413:10
+    at Object.react_stack_bottom_frame (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11)
+An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+stderr | tests/unit/chat-render-reachability.test.tsx > Turn summary contents badges > marks a pending approval in the badge row
+Failed to load sessions: TypeError: __vite_ssr_import_2__.useGatewayStore.getState(...).rpc is not a function
+    at fetchChatSessionsList (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:1986:37)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2982:28
+    at Object.loadSessions (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:3175:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2911:19
+    at hydrateStartup (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2948:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/pages/Chat/index.tsx:1413:10
+    at Object.react_stack_bottom_frame (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11)
+
+stderr | tests/unit/chat-render-reachability.test.tsx > Turn disclosure survives the optimistic→server id swap > keeps the turn open after the trigger message id changes
+Failed to load sessions: TypeError: __vite_ssr_import_2__.useGatewayStore.getState(...).rpc is not a function
+    at fetchChatSessionsList (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:1986:37)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2982:28
+    at Object.loadSessions (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:3175:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2911:19
+    at hydrateStartup (D:/ClawX-work/durable-task-system-20261107/src/stores/chat.ts:2948:5)
+    at D:/ClawX-work/durable-task-system-20261107/src/pages/Chat/index.tsx:1413:10
+    at Object.react_stack_bottom_frame (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (D:\ClawX-work\durable-task-system-20261107\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11)
+
+ ✓ tests/unit/chat-render-reachability.test.tsx (25 tests) 7639ms
+     ✓ renders the translated badge instead of the raw i18n key  3758ms
+     ✓ renders a card from a tool-only assistant turn  341ms
+     ✓ shows a diffable file as a diff only, never also as a chip  366ms
+stderr | tests/unit/session-task-dock.test.tsx > quiet conversation task dock > keeps a blank conversation free of task controls and performs no task lookup
+react-i18next:: useTranslation: You will need to pass in an i18next instance by using initReactI18next { code: 'NO_I18NEXT_INSTANCE' }
+
+ ✓ tests/unit/session-task-dock.test.tsx (8 tests) 819ms
+stdout | tests/unit/chat-session-status-rail.test.tsx
+🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/chat-session-status-rail.test.tsx (6 tests) 672ms
+ ✓ tests/unit/composer-git-strip.test.tsx (10 tests) 401ms
+stdout | tests/unit/chat-artifact-panel-layout.test.tsx
+🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/chat-artifact-panel-layout.test.tsx (7 tests) 367ms
+
+ Test Files  6 passed (6)
+      Tests  79 passed (79)
+   Start at  23:12:11
+   Duration  30.52s (transform 2.60s, setup 686ms, import 7.10s, tests 17.00s, environment 4.10s)
+
+JSON report written to D:/tmp/task-workbench-hierarchy-20261108/unit-integrated.json

@@ -1,0 +1,2 @@
+Harness report: D:\ClawX-work\durable-task-system-20261107\artifacts\harness\latest.md
+Harness result: pass

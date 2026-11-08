@@ -1,0 +1,220 @@
+{
+  "exitCode": 1,
+  "durationMs": 62545.1276,
+  "auditStatus": "fail",
+  "disqualifiers": [
+    {
+      "dimension": "evidence-completeness",
+      "id": "evidence-stale:workbench",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "artifacts/agent-dev-workbench/evidence.json is 51.45h old, beyond the 24h freshness window.",
+      "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+    },
+    {
+      "dimension": "evidence-completeness",
+      "id": "evidence-stale:deep-test",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "artifacts/agent-dev-deep-test/report.json is 51.45h old, beyond the 24h freshness window.",
+      "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+    },
+    {
+      "dimension": "evidence-completeness",
+      "id": "evidence-stale:deep-test-history",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "artifacts/agent-dev-deep-test/history.json is 51.45h old, beyond the 24h freshness window.",
+      "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+    },
+    {
+      "dimension": "evidence-completeness",
+      "id": "evidence-stale:quality",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "artifacts/agent-dev-quality/report.json is 51.45h old, beyond the 24h freshness window.",
+      "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "latest-decision-blocked",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "Latest deep-test decision is blocked: vitest-agent-dev, typecheck, contract exceeded hard performance limits.",
+      "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence."
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "performance-limit:vitest-agent-dev",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "vitest-agent-dev exceeded hard limit: 180444ms > 21000ms.",
+      "recommendation": "Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe."
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "performance-limit:typecheck",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "typecheck exceeded hard limit: 81259ms > 45000ms.",
+      "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "performance-limit:contract",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "contract exceeded hard limit: 3977ms > 3000ms.",
+      "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources."
+    }
+  ],
+  "evidenceInventory": [
+    {
+      "id": "workbench",
+      "path": "artifacts/agent-dev-workbench/evidence.json",
+      "required": true,
+      "generated": true,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-07T12:46:15.201Z",
+      "generatedAt": "2026-11-06T12:06:56.055Z",
+      "ageHours": 51.45,
+      "newestRelevantSource": {
+        "path": "shared/host-api/contract.ts",
+        "mtime": "2026-11-08T08:57:23.000Z",
+        "mtimeMs": 1794128243000,
+        "timeSource": "git-commit"
+      },
+      "sourceFresh": false,
+      "fresh": false
+    },
+    {
+      "id": "deep-test",
+      "path": "artifacts/agent-dev-deep-test/report.json",
+      "required": true,
+      "generated": true,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-07T12:46:15.199Z",
+      "generatedAt": "2026-11-06T12:06:56.096Z",
+      "ageHours": 51.45,
+      "newestRelevantSource": {
+        "path": "shared/host-api/contract.ts",
+        "mtime": "2026-11-08T08:57:23.000Z",
+        "mtimeMs": 1794128243000,
+        "timeSource": "git-commit"
+      },
+      "sourceFresh": false,
+      "fresh": false
+    },
+    {
+      "id": "deep-test-history",
+      "path": "artifacts/agent-dev-deep-test/history.json",
+      "required": true,
+      "generated": true,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-07T12:46:15.198Z",
+      "generatedAt": "2026-11-06T12:06:56.096Z",
+      "ageHours": 51.45,
+      "newestRelevantSource": {
+        "path": "shared/host-api/contract.ts",
+        "mtime": "2026-11-08T08:57:23.000Z",
+        "mtimeMs": 1794128243000,
+        "timeSource": "git-commit"
+      },
+      "sourceFresh": false,
+      "fresh": false
+    },
+    {
+      "id": "quality",
+      "path": "artifacts/agent-dev-quality/report.json",
+      "required": true,
+      "generated": true,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-07T12:46:15.201Z",
+      "generatedAt": "2026-11-06T12:06:55.501Z",
+      "ageHours": 51.45,
+      "newestRelevantSource": {
+        "path": "shared/host-api/contract.ts",
+        "mtime": "2026-11-08T08:57:23.000Z",
+        "mtimeMs": 1794128243000,
+        "timeSource": "git-commit"
+      },
+      "sourceFresh": false,
+      "fresh": false
+    },
+    {
+      "id": "package-scripts",
+      "path": "package.json",
+      "required": true,
+      "generated": false,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-07T12:46:30.368Z",
+      "generatedAt": null,
+      "ageHours": 26.79,
+      "newestRelevantSource": null,
+      "sourceFresh": true,
+      "fresh": true
+    },
+    {
+      "id": "agent-dev-runbook",
+      "path": "docs/agent-dev-control-plane.md",
+      "required": true,
+      "generated": false,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-07T12:46:15.730Z",
+      "generatedAt": null,
+      "ageHours": 26.79,
+      "newestRelevantSource": null,
+      "sourceFresh": true,
+      "fresh": true
+    },
+    {
+      "id": "agent-instructions",
+      "path": "AGENTS.md",
+      "required": true,
+      "generated": false,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-07T12:46:15.087Z",
+      "generatedAt": null,
+      "ageHours": 26.79,
+      "newestRelevantSource": null,
+      "sourceFresh": true,
+      "fresh": true
+    },
+    {
+      "id": "scenario-registry",
+      "path": "shared/agent-dev/scenarios.ts",
+      "required": true,
+      "generated": false,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-07T12:46:32.149Z",
+      "generatedAt": null,
+      "ageHours": 26.79,
+      "newestRelevantSource": null,
+      "sourceFresh": true,
+      "fresh": true
+    },
+    {
+      "id": "regularization-tests",
+      "path": "tests/unit/agent-dev-regularization.test.ts",
+      "required": true,
+      "generated": false,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-07T12:46:33.763Z",
+      "generatedAt": null,
+      "ageHours": 26.79,
+      "newestRelevantSource": null,
+      "sourceFresh": true,
+      "fresh": true
+    }
+  ],
+  "deepTestGeneratedAt": "2026-11-06T12:06:56.096Z"
+}

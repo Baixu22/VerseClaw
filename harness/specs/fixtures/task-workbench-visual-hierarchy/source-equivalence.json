@@ -1,0 +1,44 @@
+[
+  {
+    "from": "22fbd5c5678bc68bfa4e564150a8ee5276ba4e18",
+    "to": "177d6b25bfb2a763e578958732d6a899277b3917",
+    "paths": [
+      "src",
+      "shared",
+      "electron",
+      "openclaw_runtime",
+      "packages",
+      "scripts",
+      "tests/unit"
+    ],
+    "changed": []
+  },
+  {
+    "from": "4a535376b7775cdc8cbd1a84359291fd1d9c7a5b",
+    "to": "177d6b25bfb2a763e578958732d6a899277b3917",
+    "paths": [
+      "src",
+      "shared",
+      "electron",
+      "openclaw_runtime",
+      "packages",
+      "scripts",
+      "tests/unit"
+    ],
+    "changed": []
+  },
+  {
+    "from": "177d6b25bfb2a763e578958732d6a899277b3917",
+    "to": "177d6b25bfb2a763e578958732d6a899277b3917",
+    "paths": [
+      "src",
+      "shared",
+      "electron",
+      "openclaw_runtime",
+      "packages",
+      "scripts",
+      "tests/unit"
+    ],
+    "changed": []
+  }
+]
