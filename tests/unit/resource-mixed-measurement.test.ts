@@ -8,7 +8,7 @@ const run = () => ({ driven_by: 'agent', status: 'pass', fixtureId: 'test', work
   work: { events: [0, 1, 2].map(id => ({ id, kind: 'read', receipt: 'hash', status: 'success', receiptVerified: true, queuedMs: id, serviceMs: 10, totalMs: id + 10 })),
     active: 0, queued: 0, ownedChildren: 1, exitedChildren: 1, elapsedMs: 100, startedAt: 1000, endedAt: 1100, samples: [] },
   cleanup: { mainExited: true, launcherExited: true },
-  renderer: { inputRetained: true, finalTextCorrect: true, terminalCompleted: true, inputStartedAt: 1010, samples: { inputLatencies: [1, 2, 3], inputEvents: [1, 2, 3].map(durationMs => ({ at: 1010, durationMs })), longTasks: [], longTaskEvents: [] }, scrolls: [1, 2, 3].map(top => ({ at: 1020, top, durationMs: 5 })) },
+  renderer: { inputRetained: true, finalTextCorrect: true, terminalCompleted: true, inputStartedAt: 1010, samples: { inputLatencies: [1, 2, 3], inputEvents: [1, 2, 3].map(durationMs => ({ at: 1010, durationMs, target: 'chat-composer-input' })), longTasks: [], longTaskEvents: [] }, scrolls: [1, 2, 3].map(top => ({ at: 1020, top, durationMs: 5 })) },
   processBefore: {}, processAfter: {},
 });
 describe('mixed workload independent recomputation', () => {
@@ -43,7 +43,7 @@ describe('mixed workload independent recomputation', () => {
   });
   it('excludes late input, scrolling and memory observations from workload percentiles', () => {
     const measured = run();
-    measured.renderer.samples.inputEvents.push({ at: 1200, durationMs: 999 });
+    measured.renderer.samples.inputEvents.push({ at: 1200, durationMs: 999, target: 'chat-composer-input' });
     measured.renderer.scrolls[2] = { at: 1200, durationMs: 999, top: 3 };
     const result = summarizeMixedRun(measured, fixture);
     expect(result.inputMs.p95).toBe(3); expect(result.scrollMs.p95).toBe(5);
