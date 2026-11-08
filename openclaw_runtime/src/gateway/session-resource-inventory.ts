@@ -4,6 +4,7 @@ import {
 } from "../agents/goal-wake-durable-cleanup.js";
 import { resolveDurableHelperRoot } from "../agents/goal-wake-helper-protocol.js";
 import { createWorktreeService } from "../agents/worktree-service.js";
+import { observeWorktree } from "../agents/worktree-registry.js";
 import { captureProcessTrees } from "../process/os-containment.js";
 import { readProcessTreeSample } from "../process/process-tree-sampler.js";
 import { getProcessSupervisor } from "../process/supervisor/index.js";
@@ -138,6 +139,7 @@ export async function readRuntimeSessionResourceInventory(
       expectedSessionId: identity.expectedSessionId,
     })
     : null;
+  const worktreesKnown = worktrees?.every(record => observeWorktree(record) === "ready") === true;
 
   const owners: SessionOwnerInventory[] = [
     {
@@ -187,7 +189,7 @@ export async function readRuntimeSessionResourceInventory(
           owner: "WorktreeService",
           authority: "managed",
           generation,
-          state: "known",
+          state: worktreesKnown ? "known" : "unknown",
           count: worktrees.length,
           pids: null,
           processTreePids: null,
@@ -198,6 +200,7 @@ export async function readRuntimeSessionResourceInventory(
           helperRefs: null,
           worktreeIds: worktrees.map((record) => record.id),
           sessionIds: null,
+          ...(worktreesKnown ? {} : { detail: "managed checkout registration is incomplete, missing or replaced" }),
         },
   ];
 

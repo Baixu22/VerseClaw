@@ -3,7 +3,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { mergeOrchestrationWorktrees } from "../../openclaw_runtime/src/agents/orchestration-worktree-merge";
+import { freezeOrchestrationWorktreeCandidate, mergeOrchestrationWorktrees } from "../../openclaw_runtime/src/agents/orchestration-worktree-merge";
 import { createWorktreeService } from "../../openclaw_runtime/src/agents/worktree-service";
 
 const roots: string[] = [];
@@ -38,8 +38,8 @@ describe("orchestration worktree merge evidence", () => {
     const results = mergeOrchestrationWorktrees({
       baseRoot: root,
       workers: [
-        { taskNodeId: "node-a", worktreeId: "wt-a", declaredWriteSet: ["src/a.ts"] },
-        { taskNodeId: "node-b", worktreeId: "wt-b", declaredWriteSet: ["src/a.ts"] },
+        { taskNodeId: "node-a", worktreeId: "wt-a", worktreeGeneration: first.generation, declaredWriteSet: ["src/a.ts"] },
+        { taskNodeId: "node-b", worktreeId: "wt-b", worktreeGeneration: second.generation, declaredWriteSet: ["src/a.ts"] },
       ],
     });
 
@@ -69,6 +69,7 @@ describe("orchestration worktree merge evidence", () => {
         {
           taskNodeId: "node-mismatch",
           worktreeId: "wt-mismatch",
+          worktreeGeneration: worktree.generation,
           declaredWriteSet: ["src/declared.ts"],
         },
       ],
@@ -82,6 +83,19 @@ describe("orchestration worktree merge evidence", () => {
     rmSync(join(worktree.root, "src", "actual.ts"), { force: true });
     service.cleanup("wt-mismatch");
   });
+});
+it('rejects late merge, freeze and cleanup requests after the same id is recreated', () => {
+  const root = makeRoot();
+  const service = createWorktreeService(root);
+  const old = service.create('same');
+  service.cleanup(old.id);
+  const current = service.create('same');
+  writeFileSync(join(current.root, 'retained.txt'), 'new work');
+  const workers = [{ taskNodeId: 'old-task', worktreeId: old.id, worktreeGeneration: old.generation }];
+  expect(() => mergeOrchestrationWorktrees({ baseRoot: root, workers })).toThrow(/stale_generation/);
+  expect(() => freezeOrchestrationWorktreeCandidate({ baseRoot: root, workers })).toThrow(/stale_generation/);
+  expect(() => service.cleanup(old.id, { expectedGeneration: old.generation })).toThrow(/stale_generation/);
+  expect(readFileSync(join(current.root, 'retained.txt'), 'utf8')).toBe('new work');
 });
 describe("worktree long-session ownership", () => {
   const owner = {
