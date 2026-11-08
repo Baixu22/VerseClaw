@@ -1,0 +1,39 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-01a1b934",
+  "name": "candidate-live",
+  "cwd": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\candidate",
+  "command": [
+    "node",
+    "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+    "scripts/context-inline-spill-benefit-loop-eval.mts",
+    "--mode",
+    "live",
+    "--out",
+    "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\live",
+    "--repeats",
+    "3",
+    "--max-turns",
+    "8"
+  ],
+  "started_at": "2026-11-08T05:27:52.815627+00:00",
+  "duration_seconds": 6.812,
+  "exit_code": 0,
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": null
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\candidate-live.stdout.txt",
+      "bytes": 1461,
+      "sha256": "a9fa70a13902f9472daf20196d7f638d09e089afee925f3b77764c61b0eebe45"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\candidate-live.stderr.txt",
+      "bytes": 21540,
+      "sha256": "6fd1e2aa0f9716708148d217bb0dd3313cb9310ac95ff4f9f479a3cc40505ef3"
+    }
+  }
+}

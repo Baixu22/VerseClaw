@@ -1,0 +1,259 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-relay",
+  "mode": "live",
+  "records": 96,
+  "providerCalls": 367,
+  "protocolOutputs": 594,
+  "initialPairs": 24,
+  "allInitialPairsByteIdentical": true,
+  "actualInputCountsMatch": true,
+  "modelCallsAndRawUsageMatch": true,
+  "baselineOracleLeaks": 0,
+  "unprojectedHistoryFallbacks": 0,
+  "incompleteResponses": 56,
+  "providerFailures": 0,
+  "retentionOffFinalOracleAbsent": [
+    {
+      "fixtureId": "deploy-token",
+      "repetition": 0,
+      "success": false
+    },
+    {
+      "fixtureId": "deploy-token",
+      "repetition": 1,
+      "success": false
+    },
+    {
+      "fixtureId": "deploy-token",
+      "repetition": 2,
+      "success": false
+    },
+    {
+      "fixtureId": "db-passport",
+      "repetition": 0,
+      "success": false
+    },
+    {
+      "fixtureId": "db-passport",
+      "repetition": 1,
+      "success": false
+    },
+    {
+      "fixtureId": "db-passport",
+      "repetition": 2,
+      "success": false
+    },
+    {
+      "fixtureId": "cache-seed",
+      "repetition": 0,
+      "success": false
+    },
+    {
+      "fixtureId": "cache-seed",
+      "repetition": 1,
+      "success": false
+    },
+    {
+      "fixtureId": "cache-seed",
+      "repetition": 2,
+      "success": false
+    },
+    {
+      "fixtureId": "signing-key",
+      "repetition": 0,
+      "success": false
+    },
+    {
+      "fixtureId": "signing-key",
+      "repetition": 1,
+      "success": false
+    },
+    {
+      "fixtureId": "signing-key",
+      "repetition": 2,
+      "success": false
+    },
+    {
+      "fixtureId": "tenant-id",
+      "repetition": 0,
+      "success": false
+    },
+    {
+      "fixtureId": "tenant-id",
+      "repetition": 1,
+      "success": false
+    },
+    {
+      "fixtureId": "tenant-id",
+      "repetition": 2,
+      "success": false
+    },
+    {
+      "fixtureId": "migration-hash",
+      "repetition": 0,
+      "success": false
+    },
+    {
+      "fixtureId": "migration-hash",
+      "repetition": 1,
+      "success": false
+    },
+    {
+      "fixtureId": "migration-hash",
+      "repetition": 2,
+      "success": false
+    }
+  ],
+  "stats": {
+    "driven_by": "agent",
+    "actor": "codex-inline-spill-benefit-r4-relay",
+    "mode": "live",
+    "records": 96,
+    "allSummaryNumbersRecomputed": true,
+    "stats": {
+      "baseline-no-reference": {
+        "arm": "baseline-no-reference",
+        "runs": 24,
+        "pass": 6,
+        "successRate": 0.25,
+        "wilson95": [
+          0.11999366228595004,
+          0.44899444005154004
+        ],
+        "evidenceSuccessRate": 0,
+        "controlSuccessRate": 1,
+        "passAtK": 0,
+        "recallAttemptRate": 1,
+        "recallOkRate": 0,
+        "meanTurns": 4.25,
+        "meanMainContextChars": 2246.5416666666665,
+        "meanInputTokens": 3887.2083333333335,
+        "meanOutputTokens": 1152.9166666666667,
+        "meanTotalTokens": 5040.125,
+        "p50LatencyMs": 12054.566,
+        "p95LatencyMs": 24284.828,
+        "failureClasses": {
+          "answer_mismatch": 17,
+          "schema_invalid": 1,
+          "none": 6
+        }
+      },
+      "reference-visible": {
+        "arm": "reference-visible",
+        "runs": 24,
+        "pass": 6,
+        "successRate": 0.25,
+        "wilson95": [
+          0.11999366228595004,
+          0.44899444005154004
+        ],
+        "evidenceSuccessRate": 0.05555555555555555,
+        "controlSuccessRate": 0.8333333333333334,
+        "passAtK": 0,
+        "recallAttemptRate": 1,
+        "recallOkRate": 1,
+        "meanTurns": 4.125,
+        "meanMainContextChars": 18448.625,
+        "meanInputTokens": 13017.833333333334,
+        "meanOutputTokens": 1610.9166666666667,
+        "meanTotalTokens": 14628.75,
+        "p50LatencyMs": 14560.627,
+        "p95LatencyMs": 28812.857,
+        "failureClasses": {
+          "schema_invalid": 14,
+          "none": 6,
+          "recalled_text_evicted": 4
+        }
+      },
+      "recall-stable": {
+        "arm": "recall-stable",
+        "runs": 24,
+        "pass": 3,
+        "successRate": 0.125,
+        "wilson95": [
+          0.04344334080123444,
+          0.31003881270500067
+        ],
+        "evidenceSuccessRate": 0,
+        "controlSuccessRate": 0.5,
+        "passAtK": 0,
+        "recallAttemptRate": 0.9444444444444444,
+        "recallOkRate": 0.9444444444444444,
+        "meanTurns": 3.4583333333333335,
+        "meanMainContextChars": 46195.708333333336,
+        "meanInputTokens": 20501.958333333332,
+        "meanOutputTokens": 1669.125,
+        "meanTotalTokens": 22171.083333333332,
+        "p50LatencyMs": 15936.278,
+        "p95LatencyMs": 23986.508,
+        "failureClasses": {
+          "schema_invalid": 18,
+          "recalled_text_evicted": 3,
+          "none": 3
+        }
+      },
+      "retention-off": {
+        "arm": "retention-off",
+        "runs": 24,
+        "pass": 5,
+        "successRate": 0.20833333333333334,
+        "wilson95": [
+          0.09244825352851857,
+          0.40470453253188665
+        ],
+        "evidenceSuccessRate": 0,
+        "controlSuccessRate": 0.8333333333333334,
+        "passAtK": 0,
+        "recallAttemptRate": 1,
+        "recallOkRate": 1,
+        "meanTurns": 3.4583333333333335,
+        "meanMainContextChars": 46626.166666666664,
+        "meanInputTokens": 19702.75,
+        "meanOutputTokens": 1693.5416666666667,
+        "meanTotalTokens": 21396.291666666668,
+        "p50LatencyMs": 14725.312,
+        "p95LatencyMs": 30980.337,
+        "failureClasses": {
+          "schema_invalid": 17,
+          "recalled_text_evicted": 2,
+          "none": 5
+        }
+      }
+    },
+    "comparisons": {
+      "recall-stable_vs_baseline": {
+        "both": 3,
+        "onlyA": 0,
+        "onlyB": 3,
+        "neither": 18,
+        "p": 0.25
+      },
+      "recall-stable_vs_retention-off": {
+        "both": 2,
+        "onlyA": 1,
+        "onlyB": 3,
+        "neither": 18,
+        "p": 0.625
+      },
+      "recall-stable_vs_reference-visible": {
+        "both": 3,
+        "onlyA": 0,
+        "onlyB": 3,
+        "neither": 18,
+        "p": 0.25
+      }
+    },
+    "decisions": {
+      "b1_mechanism_and_autonomy": false,
+      "b2_task_benefit": false,
+      "b3_retention_benefit": false,
+      "b4_non_inferiority": false,
+      "b5_no_fabrication": false,
+      "b6_budget": false,
+      "contextGrowthChars": -430.4583333333285,
+      "tokenGrowthPct": 0.5155828989717736
+    },
+    "wire": null
+  }
+}

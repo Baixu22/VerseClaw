@@ -1,0 +1,10 @@
+[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed
+
+ RUN  v4.1.1 D:/tmp/inline-spill-benefit-r4-20261108-01a1b934/candidate
+
+
+ Test Files  4 passed (4)
+      Tests  50 passed (50)
+   Start at  13:03:36
+   Duration  57.68s (transform 12.52s, setup 1.91s, import 16.45s, tests 36.56s, environment 0ms)
+

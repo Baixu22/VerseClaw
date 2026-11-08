@@ -1,0 +1,409 @@
+{
+  "schema": "ContextInlineSpillRound4Summary/v1",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-relay",
+  "candidate": {
+    "commit": "8fa33a84ef8c9eeac3086d168264e77d4560e21d",
+    "tree": "541a95b34245cf442a4b9ebdd7ea8320b35e63aa",
+    "dirty": false
+  },
+  "verdict": "NO_GO",
+  "decision": {
+    "status": "no-benefit",
+    "b1_mechanism_and_autonomy": false,
+    "b2_task_benefit": false,
+    "b3_retention_benefit": false,
+    "b4_non_inferiority": false,
+    "b5_no_fabrication": false,
+    "b6_budget": false,
+    "contextGrowthChars": -430.4583333333285,
+    "tokenGrowthPct": 0.5155828989717736,
+    "engineeringAcceptedByAgent": false,
+    "releaseApproved": false,
+    "liveReady": false,
+    "defaultOn": false
+  },
+  "expectedParentStatus": {
+    "id": "TF-0749",
+    "status": "in_progress",
+    "progress": 80
+  },
+  "executionNode": {
+    "id": "TF-0859",
+    "requestedCloseout": "done/100 after evidence verification and Task Forest readback"
+  },
+  "counts": {
+    "runs": 96,
+    "providerCalls": 367,
+    "providerFailures": 0,
+    "initialPairs": 24,
+    "baselineOracleLeaks": 0,
+    "unprojectedHistoryFallbacks": 0,
+    "incompleteResponses": 56
+  },
+  "usage": {
+    "inputTokens": 1370634,
+    "outputTokens": 147036,
+    "totalTokens": 1517670
+  },
+  "cost": {
+    "status": "not-run",
+    "reason": "No provider rate or billing unit available."
+  },
+  "latency": {
+    "baseline-no-reference": {
+      "p50RunMs": 12054.566,
+      "p95RunMs": 24284.828,
+      "totalCallMs": 351792.76999999996
+    },
+    "reference-visible": {
+      "p50RunMs": 14560.627,
+      "p95RunMs": 28812.857,
+      "totalCallMs": 402947.94899999996
+    },
+    "recall-stable": {
+      "p50RunMs": 15936.278,
+      "p95RunMs": 23986.508,
+      "totalCallMs": 426245.85899999994
+    },
+    "retention-off": {
+      "p50RunMs": 14725.312,
+      "p95RunMs": 30980.337,
+      "totalCallMs": 437405.4579999999
+    }
+  },
+  "stats": {
+    "baseline-no-reference": {
+      "arm": "baseline-no-reference",
+      "runs": 24,
+      "pass": 6,
+      "successRate": 0.25,
+      "wilson95": [
+        0.11999366228595004,
+        0.44899444005154004
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 0,
+      "meanTurns": 4.25,
+      "meanMainContextChars": 2246.5416666666665,
+      "meanInputTokens": 3887.2083333333335,
+      "meanOutputTokens": 1152.9166666666667,
+      "meanTotalTokens": 5040.125,
+      "p50LatencyMs": 12054.566,
+      "p95LatencyMs": 24284.828,
+      "failureClasses": {
+        "answer_mismatch": 17,
+        "schema_invalid": 1,
+        "none": 6
+      }
+    },
+    "reference-visible": {
+      "arm": "reference-visible",
+      "runs": 24,
+      "pass": 6,
+      "successRate": 0.25,
+      "wilson95": [
+        0.11999366228595004,
+        0.44899444005154004
+      ],
+      "evidenceSuccessRate": 0.05555555555555555,
+      "controlSuccessRate": 0.8333333333333334,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 4.125,
+      "meanMainContextChars": 18448.625,
+      "meanInputTokens": 13017.833333333334,
+      "meanOutputTokens": 1610.9166666666667,
+      "meanTotalTokens": 14628.75,
+      "p50LatencyMs": 14560.627,
+      "p95LatencyMs": 28812.857,
+      "failureClasses": {
+        "schema_invalid": 14,
+        "none": 6,
+        "recalled_text_evicted": 4
+      }
+    },
+    "recall-stable": {
+      "arm": "recall-stable",
+      "runs": 24,
+      "pass": 3,
+      "successRate": 0.125,
+      "wilson95": [
+        0.04344334080123444,
+        0.31003881270500067
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 0.5,
+      "passAtK": 0,
+      "recallAttemptRate": 0.9444444444444444,
+      "recallOkRate": 0.9444444444444444,
+      "meanTurns": 3.4583333333333335,
+      "meanMainContextChars": 46195.708333333336,
+      "meanInputTokens": 20501.958333333332,
+      "meanOutputTokens": 1669.125,
+      "meanTotalTokens": 22171.083333333332,
+      "p50LatencyMs": 15936.278,
+      "p95LatencyMs": 23986.508,
+      "failureClasses": {
+        "schema_invalid": 18,
+        "recalled_text_evicted": 3,
+        "none": 3
+      }
+    },
+    "retention-off": {
+      "arm": "retention-off",
+      "runs": 24,
+      "pass": 5,
+      "successRate": 0.20833333333333334,
+      "wilson95": [
+        0.09244825352851857,
+        0.40470453253188665
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 0.8333333333333334,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 3.4583333333333335,
+      "meanMainContextChars": 46626.166666666664,
+      "meanInputTokens": 19702.75,
+      "meanOutputTokens": 1693.5416666666667,
+      "meanTotalTokens": 21396.291666666668,
+      "p50LatencyMs": 14725.312,
+      "p95LatencyMs": 30980.337,
+      "failureClasses": {
+        "schema_invalid": 17,
+        "recalled_text_evicted": 2,
+        "none": 5
+      }
+    }
+  },
+  "comparisons": {
+    "recall-stable_vs_baseline": {
+      "both": 3,
+      "onlyA": 0,
+      "onlyB": 3,
+      "neither": 18,
+      "p": 0.25
+    },
+    "recall-stable_vs_retention-off": {
+      "both": 2,
+      "onlyA": 1,
+      "onlyB": 3,
+      "neither": 18,
+      "p": 0.625
+    },
+    "recall-stable_vs_reference-visible": {
+      "both": 3,
+      "onlyA": 0,
+      "onlyB": 3,
+      "neither": 18,
+      "p": 0.25
+    }
+  },
+  "diagnostics": {
+    "driven_by": "agent",
+    "actor": "codex-inline-spill-benefit-r4-relay",
+    "pageArgumentCounts": {
+      "1200": 1,
+      "1400": 1,
+      "2500": 1,
+      "3000": 3,
+      "3031": 1,
+      "3899": 1,
+      "4500": 1,
+      "5000": 1,
+      "5500": 254,
+      "missing": 8
+    },
+    "responseStatuses": {
+      "completed": 311,
+      "incomplete": 56
+    },
+    "incompleteReasons": {
+      "max_output_tokens": 56
+    },
+    "returnedModels": {
+      "space-bunny": 367
+    },
+    "completedMessageTextIgnoredByAdapter": [],
+    "byArm": {
+      "baseline-no-reference": {
+        "rawOracleHits": 0,
+        "overProjectionBudgetCalls": 0,
+        "oracleDroppedBeforeNextRequest": 0,
+        "modelRecalls": 78
+      },
+      "reference-visible": {
+        "rawOracleHits": 1,
+        "overProjectionBudgetCalls": 0,
+        "oracleDroppedBeforeNextRequest": 0,
+        "modelRecalls": 76
+      },
+      "recall-stable": {
+        "rawOracleHits": 1,
+        "overProjectionBudgetCalls": 0,
+        "oracleDroppedBeforeNextRequest": 0,
+        "modelRecalls": 59
+      },
+      "retention-off": {
+        "rawOracleHits": 1,
+        "overProjectionBudgetCalls": 0,
+        "oracleDroppedBeforeNextRequest": 1,
+        "modelRecalls": 59
+      }
+    },
+    "retentionPairs": {
+      "evidence": {
+        "pairs": 18,
+        "both": 0,
+        "onlyStable": 0,
+        "onlyOff": 0,
+        "neither": 18
+      },
+      "control": {
+        "pairs": 6,
+        "both": 2,
+        "onlyStable": 1,
+        "onlyOff": 3,
+        "neither": 0
+      }
+    },
+    "pageContract": {
+      "allToolDefinitionsIdentical": true,
+      "validSizeCalls": 264,
+      "invalidSizeCalls": 8,
+      "invalidSizeDiagnostics": 8,
+      "maxSerializedResultChars": 5944
+    },
+    "note": "Observed request sizes and raw/projection differences; these diagnostics do not change scoring or frozen thresholds."
+  },
+  "sampleRationale": "Retain the original three repeats per fixture/arm to preserve round-three sample design.",
+  "power": {
+    "status": "insufficient-evidence",
+    "reason": "Six evidence tasks and three repeats preserve the frozen sample; no positive stable evidence-task outcome was observed."
+  },
+  "authenticationAttempt": {
+    "requests": 96,
+    "allStatus": 401,
+    "usageObserved": false,
+    "classification": "authentication-failed; model benefit not evaluated",
+    "originalSummaryRetained": true
+  },
+  "validation": {
+    "driven_by": "agent",
+    "actor": "codex-inline-spill-benefit-r4-relay",
+    "checks": {
+      "candidate-unit": {
+        "exit_code": 0,
+        "duration_seconds": 64.313,
+        "receipt_sha256": "63f12fa542bce4ca3e3667597d57042b016e0bf0d9657a628458ec4660211461",
+        "logs_match": true
+      },
+      "candidate-contract": {
+        "exit_code": 0,
+        "duration_seconds": 0.359,
+        "receipt_sha256": "a3d8a2171f6700f0b46d1c74a695f2f7ee9756a682ea3803e90c4eb24756d932",
+        "logs_match": true
+      },
+      "candidate-harness-validate": {
+        "exit_code": 0,
+        "duration_seconds": 3.015,
+        "receipt_sha256": "95be7f6b2815181b1a92eb6c3b6b78e12dcc570d72df4dd0ca9a08943093c0a2",
+        "logs_match": true
+      },
+      "candidate-harness-dry-run": {
+        "exit_code": 0,
+        "duration_seconds": 3.078,
+        "receipt_sha256": "402966569cd7bd66250e1b98aec158ee03d2ca92d5d6c25f1ec04834cf99903b",
+        "logs_match": true
+      },
+      "candidate-types-node-serial": {
+        "exit_code": 0,
+        "duration_seconds": 22.547,
+        "receipt_sha256": "b11a405197669448d8aac9976b21ec5a4f60f3cd0240b00a7dbd33315ebdbbe2",
+        "logs_match": true
+      },
+      "candidate-types-web-serial": {
+        "exit_code": 0,
+        "duration_seconds": 46.656,
+        "receipt_sha256": "e9ee30be3f716d6db394bf35220b68b2921f0687f3d9ae91bcc53f843384f027",
+        "logs_match": true
+      },
+      "candidate-types-test-serial": {
+        "exit_code": 0,
+        "duration_seconds": 96.547,
+        "receipt_sha256": "a55feb4207cefc61e6a8432b09d2efe1ddee308f6751021ad18408fb4aca5a18",
+        "logs_match": true
+      },
+      "candidate-retention": {
+        "exit_code": 0,
+        "duration_seconds": 6.297,
+        "receipt_sha256": "1dddac4334bfafbb95b3b02510d50020ac3d27b24cbaa2722e9eb171e23c2001",
+        "logs_match": true
+      }
+    },
+    "unitTests": 50,
+    "parallelTypecheck": {
+      "status": "environment-failed",
+      "reason": "Go runtime cannot allocate memory",
+      "receipt": "missing after interrupted tool process; no observed receipt exit code",
+      "logs": {
+        "stdout": {
+          "file": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\candidate-typecheck.stdout.txt",
+          "bytes": 474,
+          "sha256": "9a600733a9e77bd03047c08b696a21eb26dd75fe97fe020723c017184f0e2297"
+        },
+        "stderr": {
+          "file": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\candidate-typecheck.stderr.txt",
+          "bytes": 6524160,
+          "sha256": "bbd0641afd08db8a15b65d1a491f7a906a8ff6e9fe897379e8da8c77e275dc58"
+        }
+      }
+    },
+    "serialTypecheckEnvironment": {
+      "GOMAXPROCS": "2",
+      "GOMEMLIMIT": "2GiB",
+      "TEMP": "D:/tmp",
+      "TMP": "D:/tmp",
+      "cache": false
+    },
+    "dependencyCaveat": "Installed node_modules do not match the patchedDependencies setting; existing installations and verified package builds reused.",
+    "fullHarnessCI": {
+      "status": "failed",
+      "exit_code": 1,
+      "passedUnitTests": [
+        59
+      ],
+      "reason": "Four Agent Dev evidence files exceed the 24-hour freshness window.",
+      "skippedAfterFailure": [
+        "repo:evidence:check",
+        "repo:test-coverage:check"
+      ],
+      "receiptSha256": "3589b15cf587e3d2b7d98ca694e8fee8b4e1b8ec7b737208264b7bb6793dce5a",
+      "logs_match": true
+    }
+  },
+  "evidenceB7": {
+    "status": "pass",
+    "verifier": "verify-evidence.mjs",
+    "checks": "Full package manifest, archive byte/checksum/length integrity, exact-key and pattern scan, runs/usage/projection/statistical recomputation"
+  },
+  "workingTreeFinalHarness": {
+    "status": "failed",
+    "exit_code": 1,
+    "reason": "Four preserved historical untracked frozen inputs appear outside the fourth-round touchedAreas.",
+    "files": [
+      "scripts/inline-spill-benefit-eval.mts",
+      "scripts/inline-spill-benefit-scoring.ts",
+      "tests/unit/inline-spill-benefit-eval.test.ts",
+      "tests/unit/zz-probe5.test.ts"
+    ],
+    "validationReceipt": "validation/final-harness-validate.json",
+    "candidateHarnessPassed": true
+  }
+}

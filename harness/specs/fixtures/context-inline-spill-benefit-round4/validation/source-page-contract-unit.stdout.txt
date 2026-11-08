@@ -1,0 +1,11 @@
+
+ RUN  v4.1.1 C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX
+
+ ❯ tests/unit/context-inline-spill-benefit-input.test.ts (7 tests | 1 failed) 9353ms
+     × records missing and oversized pages as invalid_arguments before validating an archive 9347ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 10 passed (11)
+   Start at  12:41:05
+   Duration  11.15s (transform 82ms, setup 449ms, import 53ms, tests 9.36s, environment 0ms)
+

@@ -1,0 +1,145 @@
+{
+  "schema": "ContextInlineSpillRound4Freeze/v1",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-relay",
+  "frozenAt": "2026-11-08T05:27:52.609473+00:00",
+  "candidate": {
+    "commit": "8fa33a84ef8c9eeac3086d168264e77d4560e21d",
+    "tree": "541a95b34245cf442a4b9ebdd7ea8320b35e63aa",
+    "dirty": false
+  },
+  "candidateRoot": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\candidate",
+  "sourceSha256": {
+    "scripts/context-inline-spill-benefit-loop-eval.mts": "6f72f03acb5038c86823cd55973a805c93411698e1aa166af836264ab8d508d9",
+    "scripts/context-inline-spill-benefit-input.mts": "a6322b9f46306f6c586e2d984ee26416cd13b13ea599b2498a2486c18f570b2d",
+    "scripts/context-inline-spill-benefit-scoring.mts": "bcb3741271dfc5086f6c7ac675ee1720768eb307c457f147476b4982bc3ed276",
+    "tests/unit/context-inline-spill-benefit-input.test.ts": "41ce4537d82ef663890eafd7fbcf7d1111691159a74f72ced303ea4120e184ce",
+    "harness/specs/tasks/inline-spill-real-benefit-eval-round3.md": "f8dcf833bd5f343b9c7539fdf3cfba386010954171bb950330f974f1d69f06e4",
+    "harness/specs/rules/inline-spill-eval-projected-input.md": "87a3b47d04d69c7d4f400cf9adf29d93b4ed151ca9ed1b2fe4b8653ac50adcec",
+    "harness/specs/rules/inline-spill-benefit-quantification.md": "8d0ed528e2b0b5e287ee4411c4b2849d21caa17ce89bc9cb17a8f25636c3bd5f",
+    "openclaw_runtime/src/agents/tools/context-agent-tools.ts": "835c0f2e99d0879d792c1ec3171d8ab61133b44d438e89d435fc37c8db74f79c",
+    "openclaw_runtime/src/agents/archive-recall-retention.ts": "83683a7a03edcdcabbf1c85fc35c23154060122b98298871d93be0b055ccf4c7",
+    "openclaw_runtime/src/agents/agent-hooks/context-pruning/pruner.ts": "10ff98c53270eb1bcff2d066cc1e617901ebb4dbda3c0bd3632bb85c54a53e5c",
+    "openclaw_runtime/src/agents/agent-hooks/context-pruning/settings.ts": "a15ab581a6fb78ada15e183043c2e4bb15029b49acfbcdc4f91686fd7348b7cc",
+    "openclaw_runtime/src/agents/embedded-agent-runner/tool-result-truncation.ts": "09f8fd19439b7d44e79b098727998ac52167208891783c92d4cf6b18d6bb3646",
+    "openclaw_runtime/src/agents/embedded-agent-runner/context-truncation-notice.ts": "d2aed9e01c4dfe59628b5a190dfa4824449e5ada9b9e86285821c691b75eb3f6",
+    "openclaw_runtime/src/context-engine/registry/context-item-registry.ts": "3f3ecd9f228fad0dee773698d165ac8fef299cbdd64a998f1c1f27ccf4115164",
+    "harness/specs/tasks/inline-spill-real-benefit-eval-round4.md": "d308111d13b082f5df48dcc83111c5d41bdf98d5def8de8df3457695efa5c945"
+  },
+  "unchangedSectionsSha256": {
+    "corpus": "afe006f0ad486440d59397e4d2da0824a885800628bf4b778e91c165d7b07880",
+    "arms": "7c2e0afc7086752fe20ec789132fbec3504a4de6777ff85578aad2cdcdda0d7c",
+    "projection": "4fb9e5a996a97ff59a848fd08b3916442aea4639ec4380d82cf51b5174a774f3",
+    "pressure": "4a42671d18556409092519d3d7ed89e2cbbc62280e7ecce3dc31dff3cdca833b",
+    "input_assembly_body": "c0658927dc9944a5180d3a5fe339385ef771813d842b2a8dc54249d7dba12cbd"
+  },
+  "frozenInputsSha256": {
+    "scripts/inline-spill-benefit-eval.mts": "d5fd4cef5f0c6e9ea1f902a664992e9148bff3e331fb57412cd507330a7dcfcc",
+    "scripts/inline-spill-benefit-scoring.ts": "355c8bebc3de817d66c9b1e9371a1d51438ab63c30ab95a9df1f1e6dd3b099eb",
+    "tests/unit/inline-spill-benefit-eval.test.ts": "7edfec3c189b031b28c87ca00fd782aefd442e270378efcacfdb24e1a604dd5f",
+    "tests/unit/zz-probe5.test.ts": "d0c8e11e03a6fa394421116d12f668bdbb81fb97b80d305743ffca17b417ede8",
+    "scripts/context-inline-spill-benefit-scoring.mts": "bcb3741271dfc5086f6c7ac675ee1720768eb307c457f147476b4982bc3ed276",
+    "harness/specs/rules/inline-spill-benefit-quantification.md": "8d0ed528e2b0b5e287ee4411c4b2849d21caa17ce89bc9cb17a8f25636c3bd5f",
+    "harness/specs/fixtures/context-inline-spill-benefit/SHA256SUMS": "88542d63e053bf37d466d722c1dc8964b4930b86ff3a1fd292a6184ddbcd8bd0",
+    "harness/specs/fixtures/context-inline-spill/SHA256SUMS": "5f436c49c12197b2870ef0c00b3694a1cdfecdef25a83c406518000eef4227a2"
+  },
+  "corpus": {
+    "deploy-token": {
+      "checksum": "sha256:5e36b1597128f7efb9082422589f9940ae038d36e2362b9e19e2bbf3f39cccc8",
+      "byteLength": 41143
+    },
+    "db-passport": {
+      "checksum": "sha256:6806cbeba07d81558e25027e5585135a1f80ed15bb17c86194d4a0ada23ae527",
+      "byteLength": 42142
+    },
+    "cache-seed": {
+      "checksum": "sha256:a30a6780c00bceab64cc2be69b61b05c6a811a8860c41a971377d95249551fdb",
+      "byteLength": 43141
+    },
+    "signing-key": {
+      "checksum": "sha256:adce01dd6200b35bb67d644a983dda058d42edeab1a80e837ebfbc22c511452f",
+      "byteLength": 41142
+    },
+    "tenant-id": {
+      "checksum": "sha256:49751092506a1dc903e60be37548e78104148e23f1dbdad0151f66daf66d1f93",
+      "byteLength": 42140
+    },
+    "migration-hash": {
+      "checksum": "sha256:6c72c327950674d6bf0dcc59a271ffea3474c2d4d47265999137b58ad373c17c",
+      "byteLength": 43145
+    },
+    "control-absent-1": {
+      "checksum": "sha256:e8578ed4269f57b7dccc50afc62ff34045d62242e8cdf2acc0ad8345ecadb30a",
+      "byteLength": 45466
+    },
+    "control-absent-2": {
+      "checksum": "sha256:e8578ed4269f57b7dccc50afc62ff34045d62242e8cdf2acc0ad8345ecadb30a",
+      "byteLength": 45466
+    }
+  },
+  "provider": {
+    "endpoint_origin": "http://127.0.0.1:3065",
+    "path": "/v1/responses",
+    "requestedModel": "space-bunny",
+    "credentialSource": "existing enabled local Agent2API key; injected into child environment; no value persisted",
+    "cost": "not-run: rate and billing unit unavailable"
+  },
+  "design": {
+    "arms": {
+      "baseline-no-reference": {
+        "reference": false,
+        "retention": false,
+        "pressure": false
+      },
+      "reference-visible": {
+        "reference": true,
+        "retention": false,
+        "pressure": false
+      },
+      "recall-stable": {
+        "reference": true,
+        "retention": true,
+        "pressure": true
+      },
+      "retention-off": {
+        "reference": true,
+        "retention": false,
+        "pressure": true
+      }
+    },
+    "fixtureOrder": [
+      "deploy-token",
+      "db-passport",
+      "cache-seed",
+      "signing-key",
+      "tenant-id",
+      "migration-hash",
+      "control-absent-1",
+      "control-absent-2"
+    ],
+    "repeats": 3,
+    "runs": 96,
+    "maxTurns": 8,
+    "maxRequests": 768,
+    "temperature": 0,
+    "max_output_tokens": 900,
+    "contextWindowTokens": 32000,
+    "toolMaxChars": 6000,
+    "aggregateMaxChars": 16000,
+    "recallPageChars": 5500,
+    "repeatRationale": "Retain the original three repeats per fixture/arm to preserve round-three sample design."
+  },
+  "preliveChecks": {
+    "unitReceiptSha256": "63f12fa542bce4ca3e3667597d57042b016e0bf0d9657a628458ec4660211461",
+    "deterministicResultSha256": "d83c040ebe1111eb991cc5ca7a9fd2b2912c5b361f37c0a83055c90064628089",
+    "deterministicVerifySha256": "e64fb96b7d556d47b96a5115f5ea89a4c1405d85c7d2e1c8269ea2065360c47f",
+    "pageContract": {
+      "allToolDefinitionsIdentical": true,
+      "validSizeCalls": 48,
+      "invalidSizeCalls": 0,
+      "invalidSizeDiagnostics": 0,
+      "maxSerializedResultChars": 5868
+    }
+  },
+  "scoring": "Original B1–B7 rules and scoring bytes, no threshold changes. Incomplete at max_output_tokens remains a failure. Evidence/control retention pairs reported separately. No retry or extra sampling."
+}

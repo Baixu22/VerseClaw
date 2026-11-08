@@ -1354,3 +1354,9 @@ Use this packet before any handoff, fork, or context-pressure continuation.
 - 第三轮收益判定为 NO-GO：B2/B4/B5/B6 失败，B3 的唯一差异来自无证据控制；TF-0749 保持 in_progress/80，TF-0750–0755 的既有 done 状态保留。
 - 本轮新增 provider 调用为 0。复算结果、验证记录与下一轮页适配实验见 [封存收益证据复核](../../harness/specs/fixtures/context-inline-spill-benefit-closeout-20261108/REPORT.md)。
 - 续接收尾：48 项相关单测、node/web/tests 三套无缓存类型、契约与本任务 Harness 检查通过；完整 Harness CI 在 59 项前置测试通过后因四份 Agent Dev 证据过期退出 1。Task Forest validate/export 与图、HTML 当前投影及末帧读回通过，TF-0749 字段保持原值。
+
+## 2026-11-08 Inline/Spill 第四轮页预算适配
+
+- TF-0859 已完成显式 1–5500 字符页参数适配，以及 32 次 deterministic 和 96 次 live/367 次调用的评测。最大序列化结果 5944 字符、超页 0、24 对首轮请求相同、原始历史旁路与 baseline oracle 泄漏均为 0。
+- stable 证据正确 0/18、控制有效 null 3/6；B1–B6 全部失败，56 次响应耗尽 900 输出 token，token 增长 51.56%。TF-0749 保持 in_progress/80、NO-GO。
+- 50 项定向单测、三套串行无缓存类型、契约与定向 Harness 通过。完整 Harness CI 在 59 项测试通过后因四份 Agent Dev 历史证据过期退出 1。认证失败的首次 96 请求、测试夹具失败和类型内存失败均保留，详见[第四轮报告](../../harness/specs/fixtures/context-inline-spill-benefit-round4/REPORT.md)。

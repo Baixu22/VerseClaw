@@ -1,0 +1,54 @@
+{
+  "runDir": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\live\\2026-11-08T05-27-58-864Z-live",
+  "mode": "live",
+  "decision": {
+    "status": "no-benefit",
+    "b1_mechanism_and_autonomy": false,
+    "b2_task_benefit": false,
+    "b3_retention_benefit": false,
+    "b4_non_inferiority": true,
+    "b5_no_fabrication": false,
+    "b6_budget": true,
+    "contextGrowthChars": 0,
+    "tokenGrowthPct": 0,
+    "engineeringAcceptedByAgent": false,
+    "releaseApproved": false,
+    "liveReady": false,
+    "defaultOn": false
+  },
+  "stats": {
+    "baseline-no-reference": {
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 0,
+      "recallAttemptRate": 0,
+      "meanMainContextChars": 1091.25,
+      "meanTotalTokens": 0,
+      "p95LatencyMs": 2.381
+    },
+    "reference-visible": {
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 0,
+      "recallAttemptRate": 0,
+      "meanMainContextChars": 7027.25,
+      "meanTotalTokens": 0,
+      "p95LatencyMs": 2.075
+    },
+    "recall-stable": {
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 0,
+      "recallAttemptRate": 0,
+      "meanMainContextChars": 7027.25,
+      "meanTotalTokens": 0,
+      "p95LatencyMs": 1.898
+    },
+    "retention-off": {
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 0,
+      "recallAttemptRate": 0,
+      "meanMainContextChars": 7027.25,
+      "meanTotalTokens": 0,
+      "p95LatencyMs": 1.682
+    }
+  },
+  "credentialHits": 0
+}

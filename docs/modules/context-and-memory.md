@@ -531,6 +531,8 @@ reference-visible 增长 38.62%。原始请求、逐次记录、复算与实验�
 
 [第四轮评测](../../harness/specs/tasks/inline-spill-real-benefit-eval-round4.md)要求每次回读显式提供 1–5500 的 `max_chars`，缺失或超界参数返回 `invalid_arguments`。工具说明引导模型用 `offset + content.length` 翻页，取得精确值后输出最终 JSON。页尺寸与 6000 字符生产投影预算共同校验，收益按原 96 次样本与 900 输出 token 预算实测。
 
+第四轮 96 次实测、367 次模型调用已完成：最大序列化页 5944 字符，超页为 0；stable 证据正确率 0/18、控制有效 null 为 3/6，56 次响应耗尽 900 输出 token。B1–B6 均未通过，判定为 NO-GO，token 相对 reference-visible 增长 51.56%。[第四轮报告](../../harness/specs/fixtures/context-inline-spill-benefit-round4/REPORT.md)提供完整配对、原始请求/响应与复算命令。
+
 复算：
 
 ```powershell
