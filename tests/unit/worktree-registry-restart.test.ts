@@ -89,7 +89,7 @@ describe('durable managed checkout registration', () => {
     rmSync(next.root, { recursive: true });
     expect(service.inventory().find(row => row.id === 'one')?.availability).toBe('missing');
   });
-  it('rejects same operation with different input and blocks merge replay after unknown copy outcome', () => {
+  it('rejects same operation with different input and blocks merge replay after unknown copy outcome', async () => {
     const service = createWorktreeService(root);
     const one = service.create('one', { operationId: 'stable' });
     expect(() => service.create('one', { operationId: 'stable', writeSet: ['different'] })).toThrow(/operation_conflict/);
@@ -100,9 +100,9 @@ describe('durable managed checkout registration', () => {
       original(scope);
       if (scope.queue.some(item => item.reason === 'merge_outcome_unknown')) throw new Error('copy interrupted');
     });
-    expect(() => service.processMergeQueue()).toThrow('copy interrupted');
+    await expect(service.processMergeQueue()).rejects.toThrow('copy interrupted');
     fault.mockRestore(); closeOpenClawStateDatabaseForTest();
-    expect(service.processMergeQueue()[0]).toMatchObject({ status: 'conflict', reason: 'merge_outcome_unknown' });
+    expect((await service.processMergeQueue())[0]).toMatchObject({ status: 'conflict', reason: 'merge_outcome_unknown' });
     expect(() => service.enqueueMerge({ worktreeId: 'one', changedFiles: ['a.txt'] })).toThrow(/reconciliation_required/);
     expect(() => service.cleanup('one')).toThrow(/reconciliation_required/);
   });

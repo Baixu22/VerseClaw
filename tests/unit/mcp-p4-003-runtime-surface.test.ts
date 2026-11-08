@@ -47,6 +47,7 @@ vi.mock('electron-store', () => {
 });
 
 vi.mock('@electron/utils/agent-config', () => ({
+  listConfiguredAgentIds: vi.fn(async () => ['main']),
   readAgentBootstrapTools: vi.fn(async () => ({
     defaultSkillIds: [],
     defaultMcpServerIds: [],
@@ -62,6 +63,7 @@ vi.mock('@electron/services/git-api', () => ({
 vi.mock('@electron/utils/channel-config', () => ({
   readOpenClawConfig: vi.fn(async () => ({})),
   writeOpenClawConfig: vi.fn(async () => undefined),
+  syncSourceRuntimeMcpConfig: vi.fn(async () => undefined),
 }));
 
 vi.mock('@electron/utils/config-mutex', () => ({
@@ -220,7 +222,7 @@ describe('P4-003 MCP runtime projection / schema / reload / secret broker', () =
     expect(reload.hotReloaded).toBe(true);
     // Runtime consumption is via the openclaw.json config watcher, not an RPC.
     expect(gatewayManager.rpc).not.toHaveBeenCalled();
-    expect(gatewayManager.debouncedReload).toHaveBeenCalled();
+    expect(gatewayManager.debouncedReload).not.toHaveBeenCalled();
 
     const mirrored = (writeOpenClawConfig as ReturnType<typeof vi.fn>).mock.calls.at(-1)?.[0] as {
       mcp?: { servers?: Record<string, unknown> };

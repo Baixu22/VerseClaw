@@ -1,0 +1,11 @@
+{
+  "driven_by": "agent",
+  "actor": "mcp-sdk-runner",
+  "realHumanEvidence": false,
+  "evidence": {
+    "preservedReplacement": true,
+    "originalErrorReturnedBeforeCleanup": true,
+    "runtimeDisposalDrained": true,
+    "faultInjection": "controlled delayed SDK404 and retirement; real HTTP handshake and successful calls"
+  }
+}

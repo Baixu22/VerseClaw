@@ -1,0 +1,18 @@
+{
+  "findings": [
+    {
+      "body": "This looks up the current session instead of the session that issued the failed request. With concurrent requests, the first 404 removes the expired session and awaits its DELETE teardown. A concurrent getCatalog() can initialize a replacement during that wait; a delayed 404 from another old request then finds and disposes the replacement, sending DELETE for its valid session and aborting fresh work. Pass the captured BundleMcpSession into retirement and require sessions.get(serverName) === failedSession before removing it, as the existing transport callbacks already do.",
+      "category": "bug",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/agents/agent-bundle-mcp-runtime.ts",
+        "line": 616
+      },
+      "confidence": 0.95,
+      "priority": "P2",
+      "title": "Bind HTTP 404 retirement to the failed session"
+    }
+  ],
+  "overall_confidence": 0.94,
+  "overall_correctness": "patch is incorrect",
+  "overall_explanation": "The sequential expiry recovery matches the installed SDK contract and the saved passing regression, without automatically replaying the failed tool. However, a delayed failure can retire a replacement session during concurrent recovery. Review used read-only source and artifact inspection; no tests were run."
+}

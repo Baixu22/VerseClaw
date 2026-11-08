@@ -1,0 +1,102 @@
+{
+  "schema": "CodingEvaluationAcceptance/v1",
+  "taskId": "TF-0775",
+  "driven_by": "agent",
+  "actor": "codex-01a1b68a",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "e1361f6a0b79c079bd6f39f172ba2ef15015acb5",
+    "tree": "358d6b04bddc253520b9e9ed72b7d8ae2be29833",
+    "dirty": false
+  },
+  "status": "passed",
+  "tests": {
+    "units": 63,
+    "failed": 0,
+    "skipped": 0,
+    "electron": 4,
+    "modeCases": 16,
+    "nativeCharacterizationCases": 23
+  },
+  "effects": {
+    "bindings": {
+      "runId": "orch_c1_e2e",
+      "failures": 0,
+      "outcomes": 3,
+      "spawned": 3,
+      "bindings": 3
+    },
+    "delivery": {
+      "evidence_id": "vgf_c229d459ad9cd2f4a8fe991f",
+      "coverage": "direct",
+      "basis_digest": "sha256:8f26a8d9ee2f6ca035276656ff858c1409c635f48b17503098be62324ba51792",
+      "candidate_id": null,
+      "produced": true,
+      "host_delivered": true,
+      "transcript_confirmed": true,
+      "produced_count": 1,
+      "host_delivered_count": 1,
+      "transcript_confirmed_count": 1
+    },
+    "paired": {
+      "positive_trials": 3,
+      "negative_trials": 2,
+      "positive_off_fail_count": 3,
+      "positive_on_pass_count": 3,
+      "behavior_shift_count": 3,
+      "negative_false_positive_count": 0,
+      "stable_normalized_outcomes": true,
+      "passed": true
+    },
+    "candidateRejectsCombinedFailure": true,
+    "verificationBeforeWrite": true,
+    "toctouCases": 5,
+    "journalRestoresBase": true
+  },
+  "sourceHashes": {
+    "docs/modules/verse-tools.md": "cc2cb04653360404017d70a552a648df2a96f5fe8d1e03dccf0fb75894f34ac3",
+    "electron/services/versegit-fact-adapter.ts": "1598843c2a29e3ce86256140b20129a047c0705e18102e6710b3ecc752edbb12",
+    "harness/specs/tasks/coding-versegit-evaluation.md": "8b9c0c01dc676ae15100611975a4120e660dfac76e9718e9df7726498061a2b5",
+    "scripts/coding-evaluation/verify-versegit.d.mts": "c2c0b6888e39195aa27efa0ea3f5d605e0ffbab9b8faa6d0abeb4b66f7a54115",
+    "scripts/coding-evaluation/verify-versegit.mjs": "521556d96fd8cd9592d286eb8f3eeacd6de8499dc68a819beb9cef6aed4fd42d",
+    "scripts/coding-evaluation/versegit.mts": "d1712d34694e04c6b117e08adaf88612ce1c5a8a6a4d8740ae7c714e9cea09f7",
+    "scripts/versegit-runtime-bindings-probe.mts": "6b1bab80140fb10b33e08140117b1cecdf00e38c473eed50ff9efc501b303584",
+    "tests/unit/coding-versegit-evaluation.test.ts": "cfeec23587b2fd8edc8352ae360b680f3b2bfc1442f3746c79ab32128b5c2fd1",
+    "tests/unit/versegit-fact-adapter.test.ts": "3cae6d25a939ac7ad93f27be04f91915d15c9736d68506db0e060740fb4b2117",
+    "resources/versegit/manifest.json": "8c06fb3d0cbc52acb5079f8d8e8fdedf2e85e1480fd971c520887bc19b4ed2d2",
+    "resources/verseshell/manifest.json": "b26c9edbbc620943af2c9080cee72de68f93e3fa8649aa33859a435a1650d1a7",
+    "package.json": "9f7cd642d9258defd192c3148a2943676307bc7a4fa7d0d5f8c4b6209648ad93",
+    "pnpm-lock.yaml": "6427882a1725aa5929da2db9d55d1397237dee1a354bb6db3dfb63bb61abb441"
+  },
+  "providerBinary": {
+    "sha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea",
+    "version": "vg 0.1.0",
+    "capabilitiesSha256": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26"
+  },
+  "providerSource": "89af0c36216e64bb0f7430fc3fe21c39c485be7c",
+  "criteria": [
+    "固定二进制/source/capability身份一致，M0无效果、M1只读、M2/M3受限；M4与错owner/epoch/binary拒绝。",
+    "原生与宿主观测分别保留，跨文件风险、乱序/旧epoch/缺basis及未观测渠道的正反证据完成。",
+    "反馈产生、交付、transcript与三轮行为变化分别有当前候选读回。",
+    "候选合并失败被full验证拒绝；身份漂移、伪/旧回执与写入前检查成立，journal恢复实际文件。",
+    "当前候选测试、类型、通讯、审查与进程退出已核验，原始失败保留。"
+  ],
+  "evidenceMode": "agent驱动；真实VG二进制、Main桥接、原生工具/Git/VS效果；行为对照使用确定性模拟agent，原生verdict全绿输入为机制夹具。",
+  "baselineFailures": [
+    {
+      "gate": "harness:ci",
+      "reason": "既有Agent Dev证据超过24h窗口",
+      "record": "historical/harness-ci.output.json"
+    },
+    {
+      "gate": "retained-F5-replay",
+      "reason": "历史验收绑定fb57c050源版本，与当前来源不同；未改写旧结论",
+      "record": "historical/retained-f5-verifier.output.json"
+    }
+  ],
+  "historicalNotes": [
+    "malformed-before.json在修复后的模块上执行并通过，不能用作旧失败证据；旧分支问题见审查记录。",
+    "Windows不具写权限的D:/tmp桥接目录、传输/启动失败与cmd联接参数失败均保留；最后完整四场景以exit0结束。"
+  ],
+  "recordedAt": "2026-11-08T04:00:26.260294+00:00"
+}

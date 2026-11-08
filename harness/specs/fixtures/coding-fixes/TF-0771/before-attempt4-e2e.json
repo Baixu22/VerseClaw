@@ -1,0 +1,312 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/coding-vg-sts-jj-20261104/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/ClawX-work/coding-vg-sts-jj-20261104/.audit/TF-0771/final/e2e-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/coding-vg-sts-jj-20261104/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "task-loop-panel.spec.ts",
+      "file": "task-loop-panel.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Agent task loop panel",
+          "file": "task-loop-panel.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "starts a task loop through gateway RPC and exports evidence (gate=true)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 90006,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 90000ms exceeded while setting up \"electronApp\".\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 90000ms exceeded while setting up \"electronApp\".\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 90000ms exceeded while setting up \"electronApp\".\u001b[39m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launching> \"D:\\ClawX\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\electron.exe\" \"--inspect=0\" \"--remote-debugging-port=0\" \"--no-sandbox\" \"--user-data-dir=D:\\ClawX\\.tmp\\coding-p1-01a1ab23-final\\verse-claw-e2e-run-GrBMQG\\verse-claw-e2e-user-data-hT2z4L\" \"--lang=en-US\" \"--disable-gpu\" \"--disable-gpu-compositing\" \"--disable-software-rasterizer\" \"--in-process-gpu\" \"--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization\" \"D:\\ClawX-work\\coding-vg-sts-jj-20261104\\dist-electron\\main\\index.js\"  \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launched> pid=45544 \u001b[30m+4ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=45544][out]  \u001b[30m+122ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=45544][err] Debugger listening on ws://127.0.0.1:56288/ac3ca5cd-e695-4252-93c5-7094f5f10c61 \u001b[30m+34ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=45544][err] For help, see: https://nodejs.org/en/docs/inspector \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<ws connecting> ws://127.0.0.1:56288/ac3ca5cd-e695-4252-93c5-7094f5f10c61 \u001b[30m+1ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<ws connected> ws://127.0.0.1:56288/ac3ca5cd-e695-4252-93c5-7094f5f10c61 \u001b[30m+7ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=45544][err] Debugger attached. \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=45544][err] App threw an error during load \u001b[30m+630ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=45544][err] Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'ipaddr.js' imported from D:\\ClawX-work\\coding-vg-sts-jj-20261104\\packages\\versebrowser\\dist\\security\\net-policy\\ip.js \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=45544][err]     at Object.getPackageJSONURL (node:internal/modules/package_json_reader:301:9) \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=45544][err]     at packageResolve (node:internal/modules/esm/resolve:780:81) \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=45544][err]     at moduleResolve (node:internal/modules/esm/resolve:871:18) \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=45544][err]     at defaultResolve (node:internal/modules/esm/resolve:1003:11) \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=45544][err]     at #cachedDefaultResolve (node:internal/modules/esm/loader:719:20) \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=45544][err]     at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:736:38) \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=45544][err]     at ModuleLoader.resolveSync (node:internal/modules/esm/loader:765:52) \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=45544][err]     at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:618:27) \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=45544][err]     at ModuleJobSync.syncLink (node:internal/modules/esm/module_job:160:33) \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=45544][err]     at ModuleJobSync.link (node:internal/modules/esm/module_job:480:17) \u001b[30m+0ms\u001b[0m\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-11-06T03:23:15.144Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\e2e-results\\task-loop-panel-Agent-task-bb26a-exports-evidence-gate-true-\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\e2e-results\\task-loop-panel-Agent-task-bb26a-exports-evidence-gate-true-\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "1753f0f336a62ed869fe-41b868fcef0d110a4a8a",
+              "file": "task-loop-panel.spec.ts",
+              "line": 8,
+              "column": 7
+            },
+            {
+              "title": "starts a task loop through gateway RPC and exports evidence (gate=false)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 90007,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 90000ms exceeded while setting up \"electronApp\".\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 90000ms exceeded while setting up \"electronApp\".\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 90000ms exceeded while setting up \"electronApp\".\u001b[39m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launching> \"D:\\ClawX\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\electron.exe\" \"--inspect=0\" \"--remote-debugging-port=0\" \"--no-sandbox\" \"--user-data-dir=D:\\ClawX\\.tmp\\coding-p1-01a1ab23-final\\verse-claw-e2e-run-GrBMQG\\verse-claw-e2e-user-data-UbkVvg\" \"--lang=en-US\" \"--disable-gpu\" \"--disable-gpu-compositing\" \"--disable-software-rasterizer\" \"--in-process-gpu\" \"--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization\" \"D:\\ClawX-work\\coding-vg-sts-jj-20261104\\dist-electron\\main\\index.js\"  \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<launched> pid=43768 \u001b[30m+5ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=43768][out]  \u001b[30m+81ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=43768][err] Debugger listening on ws://127.0.0.1:51535/d23781ca-f3d7-4790-9065-37dc31037c57 \u001b[30m+14ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=43768][err] For help, see: https://nodejs.org/en/docs/inspector \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<ws connecting> ws://127.0.0.1:51535/d23781ca-f3d7-4790-9065-37dc31037c57 \u001b[30m+1ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m<ws connected> ws://127.0.0.1:51535/d23781ca-f3d7-4790-9065-37dc31037c57 \u001b[30m+6ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=43768][err] Debugger attached. \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=43768][err] App threw an error during load \u001b[30m+241ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=43768][err] Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'ipaddr.js' imported from D:\\ClawX-work\\coding-vg-sts-jj-20261104\\packages\\versebrowser\\dist\\security\\net-policy\\ip.js \u001b[30m+1ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=43768][err]     at Object.getPackageJSONURL (node:internal/modules/package_json_reader:301:9) \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=43768][err]     at packageResolve (node:internal/modules/esm/resolve:780:81) \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=43768][err]     at moduleResolve (node:internal/modules/esm/resolve:871:18) \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=43768][err]     at defaultResolve (node:internal/modules/esm/resolve:1003:11) \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=43768][err]     at #cachedDefaultResolve (node:internal/modules/esm/loader:719:20) \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=43768][err]     at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:736:38) \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=43768][err]     at ModuleLoader.resolveSync (node:internal/modules/esm/loader:765:52) \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=43768][err]     at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:618:27) \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=43768][err]     at ModuleJobSync.syncLink (node:internal/modules/esm/module_job:160:33) \u001b[30m+0ms\u001b[0m\n"
+                        },
+                        {
+                          "text": "  \u001b[30;1mpw:browser \u001b[0m[pid=43768][err]     at ModuleJobSync.link (node:internal/modules/esm/module_job:480:17) \u001b[30m+0ms\u001b[0m\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-11-06T03:24:46.051Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\e2e-results\\task-loop-panel-Agent-task-a8df0-xports-evidence-gate-false-\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\e2e-results\\task-loop-panel-Agent-task-a8df0-xports-evidence-gate-false-\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "1753f0f336a62ed869fe-508cb945c24eb23fef1a",
+              "file": "task-loop-panel.spec.ts",
+              "line": 8,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-06T03:23:14.346Z",
+    "duration": 184504.88999999998,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

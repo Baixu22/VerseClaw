@@ -10,6 +10,11 @@ appliesTo:
 
 ## Preflight Requirement
 
+- Native write/edit workspace authorization wraps every pre-image/diagnostic
+  read, including the write journal. A refused target must not be copied into
+  workspace-readable snapshots. Limited journal reads use the existing rooted
+  filesystem boundary after acquiring their path lease.
+
 - `apply_patch` must complete a preflight phase before any filesystem mutation.
 - Preflight parses every hunk, resolves every target path, pre-reads every file
   to be updated, and pre-computes every update result. A preflight failure
@@ -45,6 +50,10 @@ appliesTo:
 
 - The existing write journal (`write-journal.ts`) remains the single mutation
   evidence authority. UAS-04 adds no second journal.
+- Undo and checkpoint restoration must await rooted filesystem I/O. Both the
+  snapshot and confined destination are revalidated by the existing fs-safe
+  owner, and a refused alias leaves its journal entry intact. After asynchronous
+  I/O, consume only the selected entry, never a newer concurrent journal tail.
 - When rollback fails, the journal entries for the unrestored files are
   retained and the `recoveryRef` points to them.
 - Crash recovery can detect a prepared-but-uncommitted entry after a simulated

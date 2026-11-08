@@ -83,6 +83,12 @@ Workspace 主要在 Chat 旁边的 workspace panel 中，而 `/browser` 与 `/co
 
 ## 4. 权限模式
 
+MCP 管理请求绑定到当前 Workspace 的 Assistant 会话。Main 从持久化绑定取得会话键和执行根目录；coordinator 绑定受管工作树时使用该工作树的 canonicalRoot。Main 读取 Gateway 的当前 session generation，再把这三项交给会话 MCP runtime 核对。外部工作区会话、暂停的 coordinator、旧 generation 或已变更的根目录会在工具执行前被拒绝。
+
+MCP 管理方法与 `tools.invoke` 共用当前会话的准入检查，核对有效工具策略、输入 schema 和工具审批钩子。Main 将当前工作区根作为工具调用的断言，目录预热不改变调用权限。只读模式保留目录及 SDK 心跳查询，写调用受既有权限审批约束。配置更新会刷新会话目录，携带旧目录 revision 的调用须先重新读取目录。
+
+MCP 目录为空时显示已连接和 0 个工具；目录加载失败时显示错误及具体原因，工具数量显示为未知。下次管理查询会重试失败服务，心跳通过 SDK initialize 和 ping 返回连接结果。工具执行成功后发送的目录变更通知只影响后续目录读取，已完成的结果仍正常返回。管理 RPC 使用 60 秒预算，Gateway 再按 Host 请求剩余期限收紧。
+
 ### `readOnly`
 
 - 允许白名单读命令；
@@ -270,7 +276,20 @@ Remote forge 有独立 Host API：
 | Symbol lease | retired | 不作为当前写锁或客户端能力 |
 | Auto verify | default `auto` | 检测 runner 时执行；否则 skip；timeout 最大 90 秒 |
 
+Patch Flow 的旧 `patchFlowExecution` 请求、配置默认值与 override 均不启用执行；
+worker 保留普通工具和提示词。恢复中的旧标记也不会发起新的串行候选应用，
+已经记录的历史 applied 状态与效果保留。Developer 将 Patch Flow 与 Symbol Lease
+显示为退役条目；并发编码可显式选择工作树隔离，由现有 journal 与候选回流 owner 处理。
+
 ### Write journal
+
+限域 write/edit 在读取 journal 原文件快照前验证工作区边界；可信来源也不能绕过
+`workspaceOnly`。等待路径锁后通过现有 fs-safe 根读取快照，拒绝的外部文件内容不会
+先进入可读的工作区 journal。
+
+撤销和检查点恢复同样通过 fs-safe 重新验证目标与快照，等待实际 I/O 完成后才报告
+成功。目标被换成越界目录联接或硬链接时拒绝恢复并保留 journal；异步恢复期间的新
+写入不会被当作旧 journal 项消费。
 
 - 是 supported coding writes 的恢复权威；
 - 记录写操作与可撤销来源；
@@ -299,6 +318,14 @@ Remote forge 有独立 Host API：
 - “声明 worktree”不等于“已隔离”；
 - in-process shared 写只允许有 write-set proof 或串行化。
 
+编排请求的顶层 `isolation` 会被各 worker 继承，worker 显式 `shared`/`worktree` 可覆盖；未提供仍为 shared，未知值直接拒绝。Gateway 与 `team_orchestrate` 共用父会话解析器，从持久化目录及当前配置解析根目录与 session generation，客户端路径只作为待核对条件。工作树创建与每次 spawn 都受同一父会话身份约束；工具工作区与执行 cwd 一并指向实际 worker 根目录。原生 spawn 在异步准备完成后、下发子任务前再次校验；父会话被重置时回滚准备状态并清理临时子会话。
+
+资源调度只接受 WorktreeService 登记且目录身份仍有效的独立 Git checkout；布尔声明、伪造记录与 inprocess 目录都不能提供这一证明。回执记录实际 backend、根目录和 verifiedCheckout，显式 Git 后端不可用时拒绝执行。目录模拟仍称 inprocess-worktree，不宣称 Git 隔离。
+
+工作树回流以创建时的 parent/worker 文件摘要为基线，按实际内容变化识别新增、修改和删除；重命名保留旧路径删除与新路径新增。parent 已被并发修改、Git HEAD 已变化或目标目录身份不一致时返回 conflict，保留用户内容和 index。回流通过既有 Coding journal 和文件锁执行，返回前读回目标摘要；失败时恢复已写内容，若检测到不同的并发内容则保留恢复记录并报告 recoveryRequired。重复回流相同内容不重复写入或生成新 journal。完成回调通过工作树注册记录找到 parent 根，独立于 worker 执行 cwd。
+
+`apply_patch` 区分文件效果与 journal 终态持久化：文件已写入但元数据写入失败时返回 `recovery_required` 错误，携带 `effectApplied=true`、`journalStatePersisted=false` 和 recoveryRef，不得直接重放。journal 内存状态只在持久化成功后推进；Effect Receipt 对该结果记录 unknown。文件回滚成功但 journal 终态仍不可持久化时，也保留对账引用，而不声称完整收口。
+
 ## 11. CodingRun、Task Loop 与 Task Ledger
 
 `CodingRun` 是 association/projection view，不是第二任务状态机。
@@ -308,7 +335,11 @@ Remote forge 有独立 Host API：
 - CodingRun 关联 code review、runs、files、evidence，但不夺走任务权威；
 - 代码审查可读性成功不能自动把 Task Ledger node 改为 done。
 
+CodingRun 的 `coding-run/v1` JSONL 由同一个合同解析：`run`/`loop` 的 `warning` 可省略，scope、runIds、completion 和事件字段逐层校验，事件的 codingRunId 必须与首行一致。错误版本、乱序和跨运行证据会使 `scripts/coding-run-summary.mjs` 非零退出。Task Loop 页面和导出共用完成状态映射；取消、错误、blocked 以及无 evidenceGate 的结果不会被提升为已完成任务，导出也不会更新 Task Ledger。
+
 ## 12. Workspace 与长会话资源
+
+MCP 管理入口按当前工作区的持久化会话和代际读取目录、调用工具及执行 SDK ping。作用域或所有者变更后重新投影当前授权，保留助手的显式默认选择，并撤销旧作用域授权；管理调用与模型运行使用相同的沙箱工具策略。单个服务的超时或 HTTP 错误会保留为该服务的诊断，健康服务仍可调用。
 
 Workspace coordinator 绑定会记录：
 
@@ -343,6 +374,8 @@ Workspace 删除或 root 变化时：
 - Git API 存在完整操作集合，但并非所有危险操作都有默认自动执行许可。
 - Code review 不是自动 merge authority。
 - worktree isolation 是 advanced，不是普通路径默认。
+- managed worktree 创建拒绝保留名、名称碰撞和已有目录，不在创建过程中删除旧目录。
+  创建、锁和清理路径重新检查目录联接；锁等待超时会失败，不能无锁继续执行。
 - stale-write guard 是 advanced，不能写成默认保护。
 - patch flow 与 symbol lease 已退役。
 - auto verify 可能 skip；skip 不是 pass。

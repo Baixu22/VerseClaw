@@ -1,0 +1,10 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-01a1ab23",
+  "candidate": "d9bbffa8daaca596aa9fa027ba6065ae829f6af9",
+  "projection": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\projection-d9bbffa8d",
+  "archiveSha256": "2a025c750cd902686c693b069eac26952aeb2b507058fb87f604c61480a5271b",
+  "archiveFilesVerified": 20697,
+  "errors": [],
+  "dependencies": "Reused installed root, runtime and versebrowser dependencies via explicit directory junctions; not a fresh dependency installation."
+}

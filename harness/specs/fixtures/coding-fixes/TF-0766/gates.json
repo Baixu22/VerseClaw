@@ -1,0 +1,161 @@
+{
+  "candidate": {
+    "commit": "57632e8880550c6b1377b580a75f7db9341cbe30",
+    "tree": "95823638f9c0e289f976575eb69ca14f296e0cbd",
+    "dirty": false
+  },
+  "driven_by": "agent",
+  "actor": "codex-coding-s2",
+  "commands": [
+    {
+      "name": "units",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.agents.config.ts",
+        "src/agents/agent-tools.workspace-boundary.test.ts",
+        "src/agents/tools/write-journal.test.ts",
+        "src/agents/checkpoint-rollback-executor.test.ts",
+        "src/agents/apply-patch-preview-binding.test.ts",
+        "src/agents/parity-audit/parity-audit.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\tf0766\\final\\unit.json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime",
+      "exitCode": 0,
+      "seconds": 47.83940100669861
+    },
+    {
+      "name": "vg-host",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/versegit-host-apply.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\tf0766\\final\\vg-host-unit.json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 23.358859300613403
+    },
+    {
+      "name": "typecheck-node",
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 15.872976779937744
+    },
+    {
+      "name": "typecheck-web",
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 7.467677116394043
+    },
+    {
+      "name": "typecheck-test",
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 19.621245861053467
+    },
+    {
+      "name": "lint",
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "openclaw_runtime/src/agents/agent-tools.ts",
+        "openclaw_runtime/src/agents/tools/write-journal.ts",
+        "openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts",
+        "scripts/coding-baseline/verify.d.mts"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 9.91201400756836
+    },
+    {
+      "name": "contract",
+      "argv": [
+        "node",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 3.919614791870117
+    },
+    {
+      "name": "harness",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/coding-undo-path-boundary.md"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 2.8102200031280518
+    },
+    {
+      "name": "comms-replay",
+      "argv": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 0.5552816390991211
+    },
+    {
+      "name": "comms-compare",
+      "argv": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 0.2547268867492676
+    },
+    {
+      "name": "boundary-probe",
+      "argv": [
+        "node",
+        "--import",
+        "file:///D:/ClawX-work/coding-vg-sts-jj-20261104/openclaw_runtime/node_modules/tsx/dist/loader.mjs",
+        "scripts/coding-baseline/probes/boundaries.mts"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 13.423815965652466
+    }
+  ]
+}

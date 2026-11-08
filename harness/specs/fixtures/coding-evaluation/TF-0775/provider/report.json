@@ -1,0 +1,1680 @@
+{
+  "schema": "CodingVgEvaluation/v1",
+  "driven_by": "agent",
+  "actor": "codex-01a1b68a",
+  "realHumanEvidence": false,
+  "candidate": "e1361f6a0b79c079bd6f39f172ba2ef15015acb5",
+  "binary": {
+    "sha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea",
+    "version": "vg 0.1.0",
+    "capabilitiesSha256": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26"
+  },
+  "manifest": {
+    "binarySha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea",
+    "capabilitiesSha256": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26",
+    "sourceCommit": "89af0c36216e64bb0f7430fc3fe21c39c485be7c"
+  },
+  "cases": [
+    {
+      "id": "m0-inert",
+      "actual": {
+        "schema": "clawx.versegit.fact-result/v1",
+        "operation": "version",
+        "status": "not_applicable",
+        "reason": "not_applicable",
+        "issues": [
+          "adapter is disabled or opt-in trigger is absent"
+        ],
+        "observation": {
+          "schema": "clawx.versegit.fact-observation/v1",
+          "operation": "version",
+          "mode": "M0",
+          "authorizationId": "fixture-grant",
+          "ownerId": "agent:codex",
+          "epoch": 5,
+          "binary": {
+            "role": "provider-binary",
+            "sha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea"
+          },
+          "argv": [
+            "--version"
+          ],
+          "cwd_role": "provider-workspace",
+          "pid": null,
+          "process_started": false,
+          "exit_code": null,
+          "signal": null,
+          "deadline_ms": 30000,
+          "timed_out": false,
+          "cancelled": false,
+          "pid_alive_after": false,
+          "started_at": "2026-11-08T03:49:21.025Z",
+          "ended_at": "2026-11-08T03:49:21.027Z",
+          "effects": {
+            "process": false,
+            "fileRead": false,
+            "domainStateWrite": false,
+            "workspaceWrite": false,
+            "gitObjectWrite": false,
+            "execute": false,
+            "network": false
+          },
+          "stdout": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "truncated": false
+          },
+          "stderr": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "truncated": false
+          },
+          "host_verdict": "unchanged"
+        },
+        "host_verdict": "unchanged"
+      },
+      "passed": true
+    },
+    {
+      "id": "m1-capabilities",
+      "actual": {
+        "schema": "clawx.versegit.fact-result/v1",
+        "operation": "capabilities",
+        "status": "observed",
+        "document": {
+          "compat": {
+            "git_only": "preserved",
+            "next": "preserved",
+            "package_names": [
+              "smart-test-sorter",
+              "smart_sorter"
+            ],
+            "sts_protocols": [
+              "1.1",
+              "2.0"
+            ]
+          },
+          "mcp_tools": [
+            "vg_capabilities",
+            "verdict",
+            "integration_status",
+            "who_touches",
+            "explain_conflict",
+            "declare_intent",
+            "basis_status",
+            "basis_watermark"
+          ],
+          "read": [
+            "workspace.root",
+            "change.status",
+            "change.log",
+            "verify.status",
+            "conflicts",
+            "basis.status",
+            "report",
+            "verdict",
+            "doctor"
+          ],
+          "safety": {
+            "default_enable": false,
+            "evidence_land_present": true,
+            "managed_opt_in": true,
+            "strict_admission_present": true
+          },
+          "schema": "versegit.capabilities/v1",
+          "verdict": {
+            "dimensions": [
+              "candidate",
+              "execution",
+              "evidence",
+              "freshness",
+              "risk",
+              "trial"
+            ],
+            "note": "六维各自独立呈现；admitted 是它们的合取，selected 不覆盖全集",
+            "read_surface": {
+              "observed_channels": [
+                "read",
+                "grep",
+                "glob",
+                "write",
+                "edit"
+              ],
+              "unobserved_channels": [
+                "bash",
+                "other-mcp",
+                "network",
+                "direct-fs"
+              ]
+            },
+            "schema": "versegit.verdict/v1",
+            "single_green_light": false
+          },
+          "workflows": [
+            {
+              "entries": [
+                "workspace.init",
+                "workspace.root",
+                "doctor"
+              ],
+              "evidence": [
+                "crates/vg-cli/tests/jj_workspace_lifecycle.rs",
+                "crates/vg-cli/tests/jj_public_surface.rs"
+              ],
+              "id": "workspace",
+              "status": "verified"
+            },
+            {
+              "entries": [
+                "change.new",
+                "change.file",
+                "change.describe",
+                "change.snapshot",
+                "change.diffedit"
+              ],
+              "evidence": [
+                "crates/vg-cli/tests/jj_change_lifecycle.rs",
+                "crates/vg-cli/tests/jj_diffedit.rs"
+              ],
+              "id": "change.edit",
+              "status": "verified"
+            },
+            {
+              "entries": [
+                "change.log",
+                "op.restore",
+                "op.undo"
+              ],
+              "evidence": [
+                "crates/vg-cli/tests/jj_operation_restore.rs",
+                "crates/vg-cli/tests/jj_op_undo_redo.rs",
+                "crates/vg-cli/tests/jj_backup_restore.rs"
+              ],
+              "id": "history.recover",
+              "status": "verified"
+            },
+            {
+              "entries": [
+                "verify.status",
+                "verdict",
+                "basis.status"
+              ],
+              "evidence": [
+                "crates/vg-cli/tests/jj_managed_plan.rs",
+                "crates/vg-cli/tests/jj_evidence_land.rs",
+                "crates/vg-cli/tests/jj_verdict.rs"
+              ],
+              "id": "validation.admit",
+              "status": "verified"
+            },
+            {
+              "entries": [
+                "change.materialize",
+                "land",
+                "report"
+              ],
+              "evidence": [
+                "crates/vg-cli/tests/jj_managed_candidate.rs",
+                "crates/vg-cli/tests/jj_closed_loop.rs",
+                "crates/vg-cli/tests/land_concurrency.rs"
+              ],
+              "id": "candidate.land",
+              "status": "verified"
+            },
+            {
+              "entries": [
+                "git.fetch",
+                "git.push",
+                "gerrit.upload"
+              ],
+              "evidence": [
+                "crates/vg-cli/tests/jj_git_ref_sync.rs",
+                "crates/vg-cli/tests/jj_gerrit_upload.rs"
+              ],
+              "id": "external.publish",
+              "status": "controlled"
+            }
+          ],
+          "write": [
+            "workspace.init",
+            "change.new",
+            "change.file",
+            "change.describe",
+            "change.snapshot",
+            "change.diffedit",
+            "change.materialize",
+            "change.duplicate",
+            "change.abandon",
+            "change.rebase",
+            "change.squash",
+            "change.split",
+            "op.restore",
+            "op.undo",
+            "land",
+            "admit.check",
+            "git.fetch",
+            "git.push",
+            "gerrit.upload"
+          ]
+        },
+        "issues": [],
+        "observation": {
+          "schema": "clawx.versegit.fact-observation/v1",
+          "operation": "capabilities",
+          "mode": "M1",
+          "authorizationId": "fixture-grant",
+          "ownerId": "agent:codex",
+          "epoch": 5,
+          "binary": {
+            "role": "provider-binary",
+            "sha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea"
+          },
+          "argv": [
+            "capabilities",
+            "--json"
+          ],
+          "cwd_role": "provider-workspace",
+          "pid": 44976,
+          "process_started": true,
+          "exit_code": 0,
+          "signal": null,
+          "deadline_ms": 30000,
+          "timed_out": false,
+          "cancelled": false,
+          "pid_alive_after": false,
+          "started_at": "2026-11-08T03:49:21.059Z",
+          "ended_at": "2026-11-08T03:49:21.135Z",
+          "effects": {
+            "process": true,
+            "fileRead": true,
+            "domainStateWrite": false,
+            "workspaceWrite": false,
+            "gitObjectWrite": false,
+            "execute": false,
+            "network": false
+          },
+          "stdout": {
+            "sha256": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26",
+            "bytes": 3737,
+            "truncated": false
+          },
+          "stderr": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "truncated": false
+          },
+          "host_verdict": "unchanged"
+        },
+        "host_verdict": "unchanged"
+      },
+      "passed": true
+    },
+    {
+      "id": "m2-read",
+      "actual": {
+        "schema": "clawx.versegit.fact-result/v1",
+        "operation": "observeRead",
+        "status": "observed",
+        "document": {
+          "acknowledgement": "recorded",
+          "operation": "observeRead",
+          "vgSessionId": "25e4d1f0-d710-4adc-868e-6460c842b04b",
+          "path": "src/api.ts"
+        },
+        "issues": [],
+        "observation": {
+          "schema": "clawx.versegit.fact-observation/v1",
+          "operation": "observeRead",
+          "mode": "M2",
+          "authorizationId": "fixture-grant",
+          "ownerId": "agent:codex",
+          "epoch": 5,
+          "binary": {
+            "role": "provider-binary",
+            "sha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea"
+          },
+          "argv": [
+            "observe",
+            "read",
+            "--session",
+            "25e4d1f0-d710-4adc-868e-6460c842b04b",
+            "--path",
+            "src/api.ts",
+            "--actor",
+            "agent:codex",
+            "--line-start",
+            "1",
+            "--line-end",
+            "1",
+            "--json"
+          ],
+          "cwd_role": "provider-workspace",
+          "pid": 15272,
+          "process_started": true,
+          "exit_code": 0,
+          "signal": null,
+          "deadline_ms": 30000,
+          "timed_out": false,
+          "cancelled": false,
+          "pid_alive_after": false,
+          "started_at": "2026-11-08T03:49:21.166Z",
+          "ended_at": "2026-11-08T03:49:21.247Z",
+          "effects": {
+            "process": true,
+            "fileRead": false,
+            "domainStateWrite": true,
+            "workspaceWrite": false,
+            "gitObjectWrite": false,
+            "execute": false,
+            "network": false
+          },
+          "stdout": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "truncated": false
+          },
+          "stderr": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "truncated": false
+          },
+          "host_verdict": "unchanged"
+        },
+        "host_verdict": "unchanged"
+      },
+      "passed": true
+    },
+    {
+      "id": "m3-bounded-read",
+      "actual": {
+        "schema": "clawx.versegit.fact-result/v1",
+        "operation": "observeRead",
+        "status": "observed",
+        "document": {
+          "acknowledgement": "recorded",
+          "operation": "observeRead",
+          "vgSessionId": "25e4d1f0-d710-4adc-868e-6460c842b04b",
+          "path": "src/api.ts"
+        },
+        "issues": [],
+        "observation": {
+          "schema": "clawx.versegit.fact-observation/v1",
+          "operation": "observeRead",
+          "mode": "M3",
+          "authorizationId": "fixture-grant",
+          "ownerId": "agent:codex",
+          "epoch": 5,
+          "binary": {
+            "role": "provider-binary",
+            "sha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea"
+          },
+          "argv": [
+            "observe",
+            "read",
+            "--session",
+            "25e4d1f0-d710-4adc-868e-6460c842b04b",
+            "--path",
+            "src/api.ts",
+            "--actor",
+            "agent:codex",
+            "--line-start",
+            "1",
+            "--line-end",
+            "1",
+            "--json"
+          ],
+          "cwd_role": "provider-workspace",
+          "pid": 28416,
+          "process_started": true,
+          "exit_code": 0,
+          "signal": null,
+          "deadline_ms": 30000,
+          "timed_out": false,
+          "cancelled": false,
+          "pid_alive_after": false,
+          "started_at": "2026-11-08T03:49:21.285Z",
+          "ended_at": "2026-11-08T03:49:21.377Z",
+          "effects": {
+            "process": true,
+            "fileRead": false,
+            "domainStateWrite": true,
+            "workspaceWrite": false,
+            "gitObjectWrite": false,
+            "execute": false,
+            "network": false
+          },
+          "stdout": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "truncated": false
+          },
+          "stderr": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "truncated": false
+          },
+          "host_verdict": "unchanged"
+        },
+        "host_verdict": "unchanged"
+      },
+      "passed": true
+    },
+    {
+      "id": "owner-rejected",
+      "actual": {
+        "schema": "clawx.versegit.fact-result/v1",
+        "operation": "version",
+        "status": "rejected_by_policy",
+        "reason": "authority_rejected",
+        "issues": [
+          "grant owner does not match host identity"
+        ],
+        "observation": {
+          "schema": "clawx.versegit.fact-observation/v1",
+          "operation": "version",
+          "mode": "M1",
+          "authorizationId": "fixture-grant",
+          "ownerId": "foreign",
+          "epoch": 5,
+          "binary": {
+            "role": "provider-binary",
+            "sha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea"
+          },
+          "argv": [
+            "--version"
+          ],
+          "cwd_role": "provider-workspace",
+          "pid": null,
+          "process_started": false,
+          "exit_code": null,
+          "signal": null,
+          "deadline_ms": 30000,
+          "timed_out": false,
+          "cancelled": false,
+          "pid_alive_after": false,
+          "started_at": "2026-11-08T03:49:21.414Z",
+          "ended_at": "2026-11-08T03:49:21.414Z",
+          "effects": {
+            "process": false,
+            "fileRead": false,
+            "domainStateWrite": false,
+            "workspaceWrite": false,
+            "gitObjectWrite": false,
+            "execute": false,
+            "network": false
+          },
+          "stdout": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "truncated": false
+          },
+          "stderr": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "truncated": false
+          },
+          "host_verdict": "unchanged"
+        },
+        "host_verdict": "unchanged"
+      },
+      "passed": true
+    },
+    {
+      "id": "epoch-rejected",
+      "actual": {
+        "schema": "clawx.versegit.fact-result/v1",
+        "operation": "version",
+        "status": "rejected_by_policy",
+        "reason": "authority_rejected",
+        "issues": [
+          "grant epoch does not match host identity"
+        ],
+        "observation": {
+          "schema": "clawx.versegit.fact-observation/v1",
+          "operation": "version",
+          "mode": "M1",
+          "authorizationId": "fixture-grant",
+          "ownerId": "agent:codex",
+          "epoch": 4,
+          "binary": {
+            "role": "provider-binary",
+            "sha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea"
+          },
+          "argv": [
+            "--version"
+          ],
+          "cwd_role": "provider-workspace",
+          "pid": null,
+          "process_started": false,
+          "exit_code": null,
+          "signal": null,
+          "deadline_ms": 30000,
+          "timed_out": false,
+          "cancelled": false,
+          "pid_alive_after": false,
+          "started_at": "2026-11-08T03:49:21.452Z",
+          "ended_at": "2026-11-08T03:49:21.452Z",
+          "effects": {
+            "process": false,
+            "fileRead": false,
+            "domainStateWrite": false,
+            "workspaceWrite": false,
+            "gitObjectWrite": false,
+            "execute": false,
+            "network": false
+          },
+          "stdout": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "truncated": false
+          },
+          "stderr": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "truncated": false
+          },
+          "host_verdict": "unchanged"
+        },
+        "host_verdict": "unchanged"
+      },
+      "passed": true
+    },
+    {
+      "id": "binary-rejected",
+      "actual": {
+        "schema": "clawx.versegit.fact-result/v1",
+        "operation": "version",
+        "status": "rejected_by_policy",
+        "reason": "authority_rejected",
+        "issues": [
+          "provider binary digest differs from the frozen identity"
+        ],
+        "observation": {
+          "schema": "clawx.versegit.fact-observation/v1",
+          "operation": "version",
+          "mode": "M1",
+          "authorizationId": "fixture-grant",
+          "ownerId": "agent:codex",
+          "epoch": 5,
+          "binary": {
+            "role": "provider-binary",
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+          },
+          "argv": [
+            "--version"
+          ],
+          "cwd_role": "provider-workspace",
+          "pid": null,
+          "process_started": false,
+          "exit_code": null,
+          "signal": null,
+          "deadline_ms": 30000,
+          "timed_out": false,
+          "cancelled": false,
+          "pid_alive_after": false,
+          "started_at": "2026-11-08T03:49:21.487Z",
+          "ended_at": "2026-11-08T03:49:21.487Z",
+          "effects": {
+            "process": false,
+            "fileRead": false,
+            "domainStateWrite": false,
+            "workspaceWrite": false,
+            "gitObjectWrite": false,
+            "execute": false,
+            "network": false
+          },
+          "stdout": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "truncated": false
+          },
+          "stderr": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "truncated": false
+          },
+          "host_verdict": "unchanged"
+        },
+        "host_verdict": "unchanged"
+      },
+      "passed": true
+    },
+    {
+      "id": "m4-rejected",
+      "actual": {
+        "schema": "clawx.versegit.fact-result/v1",
+        "operation": "version",
+        "status": "rejected_by_policy",
+        "reason": "authority_rejected",
+        "issues": [
+          "mode is invalid"
+        ],
+        "observation": {
+          "schema": "clawx.versegit.fact-observation/v1",
+          "operation": "version",
+          "mode": "M4",
+          "authorizationId": "fixture-grant",
+          "ownerId": "agent:codex",
+          "epoch": 5,
+          "binary": {
+            "role": "provider-binary",
+            "sha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea"
+          },
+          "argv": [
+            "--version"
+          ],
+          "cwd_role": "provider-workspace",
+          "pid": null,
+          "process_started": false,
+          "exit_code": null,
+          "signal": null,
+          "deadline_ms": 30000,
+          "timed_out": false,
+          "cancelled": false,
+          "pid_alive_after": false,
+          "started_at": "2026-11-08T03:49:21.531Z",
+          "ended_at": "2026-11-08T03:49:21.531Z",
+          "effects": {
+            "process": false,
+            "fileRead": false,
+            "domainStateWrite": false,
+            "workspaceWrite": false,
+            "gitObjectWrite": false,
+            "execute": false,
+            "network": false
+          },
+          "stdout": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "truncated": false
+          },
+          "stderr": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "truncated": false
+          },
+          "host_verdict": "unchanged"
+        },
+        "host_verdict": "unchanged"
+      },
+      "passed": true
+    },
+    {
+      "id": "six-dimensions",
+      "actual": {
+        "admitted": true,
+        "advisory": [
+          "读面边界：hook 只观测 read/grep/glob/write/edit；经 bash/其他 MCP/网络/直接文件系统的读取按设计不可见，冲突/陈旧读取类结论仅在前者内成立"
+        ],
+        "dimensions": {
+          "candidate": {
+            "bound": true,
+            "current_identity": "fixture-candidate",
+            "identity": "fixture-candidate"
+          },
+          "evidence": {
+            "candidate_identity": "fixture-candidate",
+            "observed": true,
+            "source": "current"
+          },
+          "execution": {
+            "completeness": "complete",
+            "result": "passed",
+            "scope": "full",
+            "validity": "valid"
+          },
+          "freshness": {
+            "observed": true,
+            "state": "fresh"
+          },
+          "risk": {
+            "conflicts": 0,
+            "unresolved_risks": []
+          },
+          "trial": {
+            "advisory": true,
+            "approved": false,
+            "default_enabled": false,
+            "recommendation": "keep-selection-disabled"
+          }
+        },
+        "next_step": "可以进入发布流程（准入成立）",
+        "read_surface": {
+          "boundary_preserved": true,
+          "observed_channels": [
+            "read",
+            "grep",
+            "glob",
+            "write",
+            "edit"
+          ],
+          "unobserved_channels": [
+            "bash",
+            "other-mcp",
+            "network",
+            "direct-fs"
+          ],
+          "unobserved_reads_present": false
+        },
+        "reasons": [],
+        "schema": "versegit.verdict/v1",
+        "single_green_light": false
+      },
+      "passed": true
+    },
+    {
+      "id": "selected-rejected",
+      "actual": {
+        "admitted": false,
+        "advisory": [
+          "读面边界：hook 只观测 read/grep/glob/write/edit；经 bash/其他 MCP/网络/直接文件系统的读取按设计不可见，冲突/陈旧读取类结论仅在前者内成立"
+        ],
+        "dimensions": {
+          "candidate": {
+            "bound": true,
+            "current_identity": "fixture-candidate",
+            "identity": "fixture-candidate"
+          },
+          "evidence": {
+            "candidate_identity": "fixture-candidate",
+            "observed": true,
+            "source": "current"
+          },
+          "execution": {
+            "completeness": "complete",
+            "result": "passed",
+            "scope": "selected",
+            "validity": "valid"
+          },
+          "freshness": {
+            "observed": true,
+            "state": "fresh"
+          },
+          "risk": {
+            "conflicts": 0,
+            "unresolved_risks": []
+          },
+          "trial": {
+            "advisory": true,
+            "approved": false,
+            "default_enabled": false,
+            "recommendation": "keep-selection-disabled"
+          }
+        },
+        "next_step": "以 full 范围重跑验证；selected 通过只能作为附加证据",
+        "read_surface": {
+          "boundary_preserved": true,
+          "observed_channels": [
+            "read",
+            "grep",
+            "glob",
+            "write",
+            "edit"
+          ],
+          "unobserved_channels": [
+            "bash",
+            "other-mcp",
+            "network",
+            "direct-fs"
+          ],
+          "unobserved_reads_present": false
+        },
+        "reasons": [
+          "执行范围是 selected：selected 不覆盖全集，不能独立支撑准入"
+        ],
+        "schema": "versegit.verdict/v1",
+        "single_green_light": false
+      },
+      "passed": true
+    },
+    {
+      "id": "stale-rejected",
+      "actual": {
+        "admitted": false,
+        "advisory": [
+          "读面边界：hook 只观测 read/grep/glob/write/edit；经 bash/其他 MCP/网络/直接文件系统的读取按设计不可见，冲突/陈旧读取类结论仅在前者内成立"
+        ],
+        "dimensions": {
+          "candidate": {
+            "bound": true,
+            "current_identity": "fixture-candidate",
+            "identity": "fixture-candidate"
+          },
+          "evidence": {
+            "candidate_identity": "fixture-candidate",
+            "observed": true,
+            "source": "current"
+          },
+          "execution": {
+            "completeness": "complete",
+            "result": "passed",
+            "scope": "full",
+            "validity": "valid"
+          },
+          "freshness": {
+            "observed": true,
+            "state": "stale"
+          },
+          "risk": {
+            "conflicts": 0,
+            "unresolved_risks": []
+          },
+          "trial": {
+            "advisory": true,
+            "approved": false,
+            "default_enabled": false,
+            "recommendation": "keep-selection-disabled"
+          }
+        },
+        "next_step": "先刷新依据/freshness 再重验",
+        "read_surface": {
+          "boundary_preserved": true,
+          "observed_channels": [
+            "read",
+            "grep",
+            "glob",
+            "write",
+            "edit"
+          ],
+          "unobserved_channels": [
+            "bash",
+            "other-mcp",
+            "network",
+            "direct-fs"
+          ],
+          "unobserved_reads_present": false
+        },
+        "reasons": [
+          "freshness 状态是 stale"
+        ],
+        "schema": "versegit.verdict/v1",
+        "single_green_light": false
+      },
+      "passed": true
+    },
+    {
+      "id": "candidate-rejected",
+      "actual": {
+        "admitted": false,
+        "advisory": [
+          "读面边界：hook 只观测 read/grep/glob/write/edit；经 bash/其他 MCP/网络/直接文件系统的读取按设计不可见，冲突/陈旧读取类结论仅在前者内成立"
+        ],
+        "dimensions": {
+          "candidate": {
+            "bound": false,
+            "current_identity": "other",
+            "identity": "fixture-candidate"
+          },
+          "evidence": {
+            "candidate_identity": "fixture-candidate",
+            "observed": true,
+            "source": "current"
+          },
+          "execution": {
+            "completeness": "complete",
+            "result": "passed",
+            "scope": "full",
+            "validity": "valid"
+          },
+          "freshness": {
+            "observed": true,
+            "state": "fresh"
+          },
+          "risk": {
+            "conflicts": 0,
+            "unresolved_risks": []
+          },
+          "trial": {
+            "advisory": true,
+            "approved": false,
+            "default_enabled": false,
+            "recommendation": "keep-selection-disabled"
+          }
+        },
+        "next_step": "按上面的理由修复后重跑验证",
+        "read_surface": {
+          "boundary_preserved": true,
+          "observed_channels": [
+            "read",
+            "grep",
+            "glob",
+            "write",
+            "edit"
+          ],
+          "unobserved_channels": [
+            "bash",
+            "other-mcp",
+            "network",
+            "direct-fs"
+          ],
+          "unobserved_reads_present": false
+        },
+        "reasons": [
+          "证据绑定的候选不是当前候选",
+          "证据的候选身份与当前候选不一致"
+        ],
+        "schema": "versegit.verdict/v1",
+        "single_green_light": false
+      },
+      "passed": true
+    },
+    {
+      "id": "observed-write-risk",
+      "actual": [
+        {
+          "schema": "clawx.versegit.stale-read-finding/v1",
+          "findingId": "vgf_55db8fb7bfca48d888513866",
+          "kind": "api-drift",
+          "path": "src/api.ts",
+          "readEventId": "vge_0fcf2541c56c9824866e04d7",
+          "writeEventId": "vge_1872795a8765eb3a983fffe7",
+          "readerSessionId": "reader",
+          "writerSessionId": "writer",
+          "readRange": {
+            "lineStart": 1,
+            "lineEnd": 1
+          },
+          "writeRange": {
+            "lineStart": 1,
+            "lineEnd": 2
+          },
+          "readBasisSha256": "1ea7f71f192e60f28f2e67a5274165470bc38ca1047bb9e6b0ada14e6f4ca512",
+          "writeBeforeSha256": "1ea7f71f192e60f28f2e67a5274165470bc38ca1047bb9e6b0ada14e6f4ca512",
+          "writeAfterSha256": "2487d1208b6ca2b87626bf2f6f4e88ff654b5e6ebcefe268d004166d6e74c879",
+          "observedAt": "2026-11-08T03:49:21.885Z",
+          "host_verdict": "unchanged"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "missing-basis-partial",
+      "actual": {
+        "schema": "clawx.versegit.observation-result/v1",
+        "status": "partial",
+        "why": "tool observation emitted with declared basis gaps",
+        "event": {
+          "schema": "clawx.versegit.behavior-event/v1",
+          "eventId": "vge_a889ead747e13eb552fdddab",
+          "runId": "writer",
+          "traceId": "trace-writer",
+          "requestId": "request-writer",
+          "agentSessionId": "writer",
+          "vgSessionId": "writer",
+          "repoId": "83c8cddb76a0cbc036e6eb514d2bbad0c8df461052faea21cc7d6fa5d21fb341",
+          "worktreeId": "8c8e316d199afebea7b7faa83e39faedce4719a78a76b69f98ecb9022df3e4f2",
+          "ownerId": "agent:codex",
+          "actor": "agent:codex",
+          "epoch": 5,
+          "source": "tool-middleware",
+          "sourceEventType": "tool.result",
+          "surface": "file.write",
+          "operation": "write",
+          "effect": "write",
+          "status": "succeeded",
+          "coverage": "partial",
+          "evidence": {
+            "grade": "normalized-event",
+            "ref": null
+          },
+          "inputDigest": "sha256:f1d726833266afcf9f2b647a474c53625fef7be6bf4c6c4ce51fb3b46e01853a",
+          "outputDigest": "sha256:27c3a39500e71445eb80c5d3af164866f450d694553dc1dfa983c349920d4169",
+          "startedAt": "2026-11-08T03:49:21.885Z",
+          "endedAt": "2026-11-08T03:49:21.885Z",
+          "durationMs": 0,
+          "reason": "basis_missing",
+          "path": "src/api.ts"
+        },
+        "dedupeKey": "tool:missing-basis:sha256:f1d726833266afcf9f2b647a474c53625fef7be6bf4c6c4ce51fb3b46e01853a:sha256:27c3a39500e71445eb80c5d3af164866f450d694553dc1dfa983c349920d4169",
+        "issues": [
+          "basis_missing"
+        ],
+        "binding": {
+          "runId": "writer",
+          "repoId": "83c8cddb76a0cbc036e6eb514d2bbad0c8df461052faea21cc7d6fa5d21fb341",
+          "worktreeId": "8c8e316d199afebea7b7faa83e39faedce4719a78a76b69f98ecb9022df3e4f2",
+          "agentSessionId": "writer",
+          "epoch": 5
+        },
+        "host_verdict": "unchanged"
+      },
+      "passed": true
+    },
+    {
+      "id": "rename-unobserved",
+      "actual": {
+        "schema": "clawx.versegit.observation-coverage/v1",
+        "runId": "reader",
+        "repoId": "83c8cddb76a0cbc036e6eb514d2bbad0c8df461052faea21cc7d6fa5d21fb341",
+        "worktreeId": "8c8e316d199afebea7b7faa83e39faedce4719a78a76b69f98ecb9022df3e4f2",
+        "agentSessionId": "reader",
+        "vgSessionId": "reader",
+        "epoch": 5,
+        "values": {
+          "fileRead": "direct",
+          "fileWrite": "unobserved",
+          "search": "unobserved",
+          "shellRead": "unobserved",
+          "shellWrite": "unobserved",
+          "mcpRead": "unobserved",
+          "mcpWrite": "unobserved",
+          "network": "unobserved",
+          "browser": "unobserved",
+          "directFs": "unobserved"
+        },
+        "knownGaps": [
+          "shellRead is unobserved: a structured exec event cannot prove which files a process read",
+          "shellWrite is inferred from process events until VerseShell supplies a filesystem receipt",
+          "external MCP and browser/network effects are partially observable",
+          "direct filesystem access outside host tools remains unobserved"
+        ],
+        "eventCount": 1,
+        "duplicateCount": 0,
+        "staleCount": 0,
+        "rejectedCount": 0,
+        "surfaceCounts": {
+          "file.read": 1,
+          "file.write": 0,
+          "repo.search": 0,
+          "exec": 0,
+          "test": 0,
+          "mcp": 0,
+          "network": 0,
+          "browser": 0,
+          "control": 0
+        },
+        "toolEventCount": 1,
+        "droppedCount": 0
+      },
+      "passed": true
+    },
+    {
+      "id": "delete-unobserved",
+      "actual": {
+        "schema": "clawx.versegit.observation-coverage/v1",
+        "runId": "writer",
+        "repoId": "83c8cddb76a0cbc036e6eb514d2bbad0c8df461052faea21cc7d6fa5d21fb341",
+        "worktreeId": "8c8e316d199afebea7b7faa83e39faedce4719a78a76b69f98ecb9022df3e4f2",
+        "agentSessionId": "writer",
+        "vgSessionId": "writer",
+        "epoch": 5,
+        "values": {
+          "fileRead": "unobserved",
+          "fileWrite": "direct",
+          "search": "unobserved",
+          "shellRead": "unobserved",
+          "shellWrite": "unobserved",
+          "mcpRead": "unobserved",
+          "mcpWrite": "unobserved",
+          "network": "unobserved",
+          "browser": "unobserved",
+          "directFs": "unobserved"
+        },
+        "knownGaps": [
+          "shellRead is unobserved: a structured exec event cannot prove which files a process read",
+          "shellWrite is inferred from process events until VerseShell supplies a filesystem receipt",
+          "external MCP and browser/network effects are partially observable",
+          "direct filesystem access outside host tools remains unobserved"
+        ],
+        "eventCount": 2,
+        "duplicateCount": 0,
+        "staleCount": 0,
+        "rejectedCount": 0,
+        "surfaceCounts": {
+          "file.read": 0,
+          "file.write": 2,
+          "repo.search": 0,
+          "exec": 0,
+          "test": 0,
+          "mcp": 0,
+          "network": 0,
+          "browser": 0,
+          "control": 0
+        },
+        "toolEventCount": 2,
+        "droppedCount": 0
+      },
+      "passed": true
+    }
+  ],
+  "commands": [
+    {
+      "id": "git-init",
+      "argv": [
+        "git",
+        "init",
+        "--initial-branch=main"
+      ],
+      "cwd": "D:\\tmp\\coding-vg-evaluation-E6zCrq",
+      "exitCode": 0,
+      "stdout": "Initialized empty Git repository in D:/tmp/coding-vg-evaluation-E6zCrq/.git/\n",
+      "outputSha256": "0d61fbd3e63e96baead179b308f49372e197d3e87c3e5d048625b3a63929778c"
+    },
+    {
+      "id": "git-config",
+      "argv": [
+        "git",
+        "config",
+        "user.name",
+        "Coding evaluation"
+      ],
+      "cwd": "D:\\tmp\\coding-vg-evaluation-E6zCrq",
+      "exitCode": 0,
+      "stdout": "",
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "git-config",
+      "argv": [
+        "git",
+        "config",
+        "user.email",
+        "fixture@example.invalid"
+      ],
+      "cwd": "D:\\tmp\\coding-vg-evaluation-E6zCrq",
+      "exitCode": 0,
+      "stdout": "",
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "git-add",
+      "argv": [
+        "git",
+        "add",
+        "."
+      ],
+      "cwd": "D:\\tmp\\coding-vg-evaluation-E6zCrq",
+      "exitCode": 0,
+      "stdout": "",
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "git-commit",
+      "argv": [
+        "git",
+        "commit",
+        "-m",
+        "fixture"
+      ],
+      "cwd": "D:\\tmp\\coding-vg-evaluation-E6zCrq",
+      "exitCode": 0,
+      "stdout": "[main (root-commit) f647457] fixture\n 2 files changed, 2 insertions(+)\n create mode 100644 src/api.ts\n create mode 100644 src/consumer.ts\n",
+      "outputSha256": "f864a6f9d2f110e3ff0317e85215af84b99da6e2c67462d771fa3752beb4178b"
+    },
+    {
+      "id": "version",
+      "argv": [
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\resources\\bin\\win32-x64\\vg.exe",
+        "--version"
+      ],
+      "cwd": "D:\\tmp\\coding-vg-evaluation-E6zCrq",
+      "exitCode": 0,
+      "stdout": "vg 0.1.0\n",
+      "outputSha256": "af30364b18f41b88093cd7cfbb589c4438d9a3cc724343b87fe9c8d6b8cc490c"
+    },
+    {
+      "id": "capabilities",
+      "argv": [
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\resources\\bin\\win32-x64\\vg.exe",
+        "capabilities",
+        "--json"
+      ],
+      "cwd": "D:\\tmp\\coding-vg-evaluation-E6zCrq",
+      "exitCode": 0,
+      "stdout": "{\n  \"compat\": {\n    \"git_only\": \"preserved\",\n    \"next\": \"preserved\",\n    \"package_names\": [\n      \"smart-test-sorter\",\n      \"smart_sorter\"\n    ],\n    \"sts_protocols\": [\n      \"1.1\",\n      \"2.0\"\n    ]\n  },\n  \"mcp_tools\": [\n    \"vg_capabilities\",\n    \"verdict\",\n    \"integration_status\",\n    \"who_touches\",\n    \"explain_conflict\",\n    \"declare_intent\",\n    \"basis_status\",\n    \"basis_watermark\"\n  ],\n  \"read\": [\n    \"workspace.root\",\n    \"change.status\",\n    \"change.log\",\n    \"verify.status\",\n    \"conflicts\",\n    \"basis.status\",\n    \"report\",\n    \"verdict\",\n    \"doctor\"\n  ],\n  \"safety\": {\n    \"default_enable\": false,\n    \"evidence_land_present\": true,\n    \"managed_opt_in\": true,\n    \"strict_admission_present\": true\n  },\n  \"schema\": \"versegit.capabilities/v1\",\n  \"verdict\": {\n    \"dimensions\": [\n      \"candidate\",\n      \"execution\",\n      \"evidence\",\n      \"freshness\",\n      \"risk\",\n      \"trial\"\n    ],\n    \"note\": \"六维各自独立呈现；admitted 是它们的合取，selected 不覆盖全集\",\n    \"read_surface\": {\n      \"observed_channels\": [\n        \"read\",\n        \"grep\",\n        \"glob\",\n        \"write\",\n        \"edit\"\n      ],\n      \"unobserved_channels\": [\n        \"bash\",\n        \"other-mcp\",\n        \"network\",\n        \"direct-fs\"\n      ]\n    },\n    \"schema\": \"versegit.verdict/v1\",\n    \"single_green_light\": false\n  },\n  \"workflows\": [\n    {\n      \"entries\": [\n        \"workspace.init\",\n        \"workspace.root\",\n        \"doctor\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_workspace_lifecycle.rs\",\n        \"crates/vg-cli/tests/jj_public_surface.rs\"\n      ],\n      \"id\": \"workspace\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"change.new\",\n        \"change.file\",\n        \"change.describe\",\n        \"change.snapshot\",\n        \"change.diffedit\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_change_lifecycle.rs\",\n        \"crates/vg-cli/tests/jj_diffedit.rs\"\n      ],\n      \"id\": \"change.edit\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"change.log\",\n        \"op.restore\",\n        \"op.undo\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_operation_restore.rs\",\n        \"crates/vg-cli/tests/jj_op_undo_redo.rs\",\n        \"crates/vg-cli/tests/jj_backup_restore.rs\"\n      ],\n      \"id\": \"history.recover\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"verify.status\",\n        \"verdict\",\n        \"basis.status\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_managed_plan.rs\",\n        \"crates/vg-cli/tests/jj_evidence_land.rs\",\n        \"crates/vg-cli/tests/jj_verdict.rs\"\n      ],\n      \"id\": \"validation.admit\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"change.materialize\",\n        \"land\",\n        \"report\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_managed_candidate.rs\",\n        \"crates/vg-cli/tests/jj_closed_loop.rs\",\n        \"crates/vg-cli/tests/land_concurrency.rs\"\n      ],\n      \"id\": \"candidate.land\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"git.fetch\",\n        \"git.push\",\n        \"gerrit.upload\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_git_ref_sync.rs\",\n        \"crates/vg-cli/tests/jj_gerrit_upload.rs\"\n      ],\n      \"id\": \"external.publish\",\n      \"status\": \"controlled\"\n    }\n  ],\n  \"write\": [\n    \"workspace.init\",\n    \"change.new\",\n    \"change.file\",\n    \"change.describe\",\n    \"change.snapshot\",\n    \"change.diffedit\",\n    \"change.materialize\",\n    \"change.duplicate\",\n    \"change.abandon\",\n    \"change.rebase\",\n    \"change.squash\",\n    \"change.split\",\n    \"op.restore\",\n    \"op.undo\",\n    \"land\",\n    \"admit.check\",\n    \"git.fetch\",\n    \"git.push\",\n    \"gerrit.upload\"\n  ]\n}\n",
+      "outputSha256": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26"
+    },
+    {
+      "id": "workspace-init",
+      "argv": [
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\resources\\bin\\win32-x64\\vg.exe",
+        "init",
+        "--json"
+      ],
+      "cwd": "D:\\tmp\\coding-vg-evaluation-E6zCrq",
+      "exitCode": 0,
+      "stdout": "{\n  \"schema_version\": 1\n}\n",
+      "outputSha256": "cba2e027925c2a8c9b0ccbe58ab575a62b3651db29d639598ca1aeedd639ad8a"
+    },
+    {
+      "id": "session-start",
+      "argv": [
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\resources\\bin\\win32-x64\\vg.exe",
+        "session",
+        "start",
+        "--actor",
+        "agent:codex",
+        "--worktree",
+        "D:\\tmp\\coding-vg-evaluation-E6zCrq",
+        "--client",
+        "codex-cli",
+        "--json"
+      ],
+      "cwd": "D:\\tmp\\coding-vg-evaluation-E6zCrq",
+      "exitCode": 0,
+      "stdout": "{\"session_id\":\"25e4d1f0-d710-4adc-868e-6460c842b04b\"}\n",
+      "outputSha256": "e9b25b14f8f7f8cd43a5d75e6d6134711d30ec37cf881ca0a4d1d103c63b078d"
+    },
+    {
+      "id": "six-dimensions",
+      "argv": [
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\resources\\bin\\win32-x64\\vg.exe",
+        "verdict",
+        "--facts",
+        "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0775\\final-e1361f6a0\\provider\\six-dimensions-facts.json",
+        "--json"
+      ],
+      "cwd": "D:\\tmp\\coding-vg-evaluation-E6zCrq",
+      "exitCode": 0,
+      "stdout": "{\n  \"admitted\": true,\n  \"advisory\": [\n    \"读面边界：hook 只观测 read/grep/glob/write/edit；经 bash/其他 MCP/网络/直接文件系统的读取按设计不可见，冲突/陈旧读取类结论仅在前者内成立\"\n  ],\n  \"dimensions\": {\n    \"candidate\": {\n      \"bound\": true,\n      \"current_identity\": \"fixture-candidate\",\n      \"identity\": \"fixture-candidate\"\n    },\n    \"evidence\": {\n      \"candidate_identity\": \"fixture-candidate\",\n      \"observed\": true,\n      \"source\": \"current\"\n    },\n    \"execution\": {\n      \"completeness\": \"complete\",\n      \"result\": \"passed\",\n      \"scope\": \"full\",\n      \"validity\": \"valid\"\n    },\n    \"freshness\": {\n      \"observed\": true,\n      \"state\": \"fresh\"\n    },\n    \"risk\": {\n      \"conflicts\": 0,\n      \"unresolved_risks\": []\n    },\n    \"trial\": {\n      \"advisory\": true,\n      \"approved\": false,\n      \"default_enabled\": false,\n      \"recommendation\": \"keep-selection-disabled\"\n    }\n  },\n  \"next_step\": \"可以进入发布流程（准入成立）\",\n  \"read_surface\": {\n    \"boundary_preserved\": true,\n    \"observed_channels\": [\n      \"read\",\n      \"grep\",\n      \"glob\",\n      \"write\",\n      \"edit\"\n    ],\n    \"unobserved_channels\": [\n      \"bash\",\n      \"other-mcp\",\n      \"network\",\n      \"direct-fs\"\n    ],\n    \"unobserved_reads_present\": false\n  },\n  \"reasons\": [],\n  \"schema\": \"versegit.verdict/v1\",\n  \"single_green_light\": false\n}\n",
+      "outputSha256": "a6983c16906f65e01517d10ee820aeb837825873f780ae8e5d09f6fce2ad4285"
+    },
+    {
+      "id": "selected-rejected",
+      "argv": [
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\resources\\bin\\win32-x64\\vg.exe",
+        "verdict",
+        "--facts",
+        "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0775\\final-e1361f6a0\\provider\\selected-rejected-facts.json",
+        "--json"
+      ],
+      "cwd": "D:\\tmp\\coding-vg-evaluation-E6zCrq",
+      "exitCode": 0,
+      "stdout": "{\n  \"admitted\": false,\n  \"advisory\": [\n    \"读面边界：hook 只观测 read/grep/glob/write/edit；经 bash/其他 MCP/网络/直接文件系统的读取按设计不可见，冲突/陈旧读取类结论仅在前者内成立\"\n  ],\n  \"dimensions\": {\n    \"candidate\": {\n      \"bound\": true,\n      \"current_identity\": \"fixture-candidate\",\n      \"identity\": \"fixture-candidate\"\n    },\n    \"evidence\": {\n      \"candidate_identity\": \"fixture-candidate\",\n      \"observed\": true,\n      \"source\": \"current\"\n    },\n    \"execution\": {\n      \"completeness\": \"complete\",\n      \"result\": \"passed\",\n      \"scope\": \"selected\",\n      \"validity\": \"valid\"\n    },\n    \"freshness\": {\n      \"observed\": true,\n      \"state\": \"fresh\"\n    },\n    \"risk\": {\n      \"conflicts\": 0,\n      \"unresolved_risks\": []\n    },\n    \"trial\": {\n      \"advisory\": true,\n      \"approved\": false,\n      \"default_enabled\": false,\n      \"recommendation\": \"keep-selection-disabled\"\n    }\n  },\n  \"next_step\": \"以 full 范围重跑验证；selected 通过只能作为附加证据\",\n  \"read_surface\": {\n    \"boundary_preserved\": true,\n    \"observed_channels\": [\n      \"read\",\n      \"grep\",\n      \"glob\",\n      \"write\",\n      \"edit\"\n    ],\n    \"unobserved_channels\": [\n      \"bash\",\n      \"other-mcp\",\n      \"network\",\n      \"direct-fs\"\n    ],\n    \"unobserved_reads_present\": false\n  },\n  \"reasons\": [\n    \"执行范围是 selected：selected 不覆盖全集，不能独立支撑准入\"\n  ],\n  \"schema\": \"versegit.verdict/v1\",\n  \"single_green_light\": false\n}\n",
+      "outputSha256": "77ef2dd28dc73c84fbeaf0c2f5288b4f33371bc4ea8c741b1f41d0ee67a52ac9"
+    },
+    {
+      "id": "stale-rejected",
+      "argv": [
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\resources\\bin\\win32-x64\\vg.exe",
+        "verdict",
+        "--facts",
+        "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0775\\final-e1361f6a0\\provider\\stale-rejected-facts.json",
+        "--json"
+      ],
+      "cwd": "D:\\tmp\\coding-vg-evaluation-E6zCrq",
+      "exitCode": 0,
+      "stdout": "{\n  \"admitted\": false,\n  \"advisory\": [\n    \"读面边界：hook 只观测 read/grep/glob/write/edit；经 bash/其他 MCP/网络/直接文件系统的读取按设计不可见，冲突/陈旧读取类结论仅在前者内成立\"\n  ],\n  \"dimensions\": {\n    \"candidate\": {\n      \"bound\": true,\n      \"current_identity\": \"fixture-candidate\",\n      \"identity\": \"fixture-candidate\"\n    },\n    \"evidence\": {\n      \"candidate_identity\": \"fixture-candidate\",\n      \"observed\": true,\n      \"source\": \"current\"\n    },\n    \"execution\": {\n      \"completeness\": \"complete\",\n      \"result\": \"passed\",\n      \"scope\": \"full\",\n      \"validity\": \"valid\"\n    },\n    \"freshness\": {\n      \"observed\": true,\n      \"state\": \"stale\"\n    },\n    \"risk\": {\n      \"conflicts\": 0,\n      \"unresolved_risks\": []\n    },\n    \"trial\": {\n      \"advisory\": true,\n      \"approved\": false,\n      \"default_enabled\": false,\n      \"recommendation\": \"keep-selection-disabled\"\n    }\n  },\n  \"next_step\": \"先刷新依据/freshness 再重验\",\n  \"read_surface\": {\n    \"boundary_preserved\": true,\n    \"observed_channels\": [\n      \"read\",\n      \"grep\",\n      \"glob\",\n      \"write\",\n      \"edit\"\n    ],\n    \"unobserved_channels\": [\n      \"bash\",\n      \"other-mcp\",\n      \"network\",\n      \"direct-fs\"\n    ],\n    \"unobserved_reads_present\": false\n  },\n  \"reasons\": [\n    \"freshness 状态是 stale\"\n  ],\n  \"schema\": \"versegit.verdict/v1\",\n  \"single_green_light\": false\n}\n",
+      "outputSha256": "f775ff9dae6cdd0e1ed25cbec44cf0fb59a39d6d46fefe9a73a50e52a68d281c"
+    },
+    {
+      "id": "candidate-rejected",
+      "argv": [
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\resources\\bin\\win32-x64\\vg.exe",
+        "verdict",
+        "--facts",
+        "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0775\\final-e1361f6a0\\provider\\candidate-rejected-facts.json",
+        "--json"
+      ],
+      "cwd": "D:\\tmp\\coding-vg-evaluation-E6zCrq",
+      "exitCode": 0,
+      "stdout": "{\n  \"admitted\": false,\n  \"advisory\": [\n    \"读面边界：hook 只观测 read/grep/glob/write/edit；经 bash/其他 MCP/网络/直接文件系统的读取按设计不可见，冲突/陈旧读取类结论仅在前者内成立\"\n  ],\n  \"dimensions\": {\n    \"candidate\": {\n      \"bound\": false,\n      \"current_identity\": \"other\",\n      \"identity\": \"fixture-candidate\"\n    },\n    \"evidence\": {\n      \"candidate_identity\": \"fixture-candidate\",\n      \"observed\": true,\n      \"source\": \"current\"\n    },\n    \"execution\": {\n      \"completeness\": \"complete\",\n      \"result\": \"passed\",\n      \"scope\": \"full\",\n      \"validity\": \"valid\"\n    },\n    \"freshness\": {\n      \"observed\": true,\n      \"state\": \"fresh\"\n    },\n    \"risk\": {\n      \"conflicts\": 0,\n      \"unresolved_risks\": []\n    },\n    \"trial\": {\n      \"advisory\": true,\n      \"approved\": false,\n      \"default_enabled\": false,\n      \"recommendation\": \"keep-selection-disabled\"\n    }\n  },\n  \"next_step\": \"按上面的理由修复后重跑验证\",\n  \"read_surface\": {\n    \"boundary_preserved\": true,\n    \"observed_channels\": [\n      \"read\",\n      \"grep\",\n      \"glob\",\n      \"write\",\n      \"edit\"\n    ],\n    \"unobserved_channels\": [\n      \"bash\",\n      \"other-mcp\",\n      \"network\",\n      \"direct-fs\"\n    ],\n    \"unobserved_reads_present\": false\n  },\n  \"reasons\": [\n    \"证据绑定的候选不是当前候选\",\n    \"证据的候选身份与当前候选不一致\"\n  ],\n  \"schema\": \"versegit.verdict/v1\",\n  \"single_green_light\": false\n}\n",
+      "outputSha256": "b233ba2b755dd3dc2b1b6adc899661854d949b3acc39a21a9127e63b6a92a07b"
+    }
+  ],
+  "observations": [
+    {
+      "schema": "clawx.versegit.fact-observation/v1",
+      "operation": "version",
+      "mode": "M0",
+      "authorizationId": "fixture-grant",
+      "ownerId": "agent:codex",
+      "epoch": 5,
+      "binary": {
+        "role": "provider-binary",
+        "sha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea"
+      },
+      "argv": [
+        "--version"
+      ],
+      "cwd_role": "provider-workspace",
+      "pid": null,
+      "process_started": false,
+      "exit_code": null,
+      "signal": null,
+      "deadline_ms": 30000,
+      "timed_out": false,
+      "cancelled": false,
+      "pid_alive_after": false,
+      "started_at": "2026-11-08T03:49:21.025Z",
+      "ended_at": "2026-11-08T03:49:21.027Z",
+      "effects": {
+        "process": false,
+        "fileRead": false,
+        "domainStateWrite": false,
+        "workspaceWrite": false,
+        "gitObjectWrite": false,
+        "execute": false,
+        "network": false
+      },
+      "stdout": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "truncated": false
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "truncated": false
+      },
+      "host_verdict": "unchanged"
+    },
+    {
+      "schema": "clawx.versegit.fact-observation/v1",
+      "operation": "capabilities",
+      "mode": "M1",
+      "authorizationId": "fixture-grant",
+      "ownerId": "agent:codex",
+      "epoch": 5,
+      "binary": {
+        "role": "provider-binary",
+        "sha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea"
+      },
+      "argv": [
+        "capabilities",
+        "--json"
+      ],
+      "cwd_role": "provider-workspace",
+      "pid": 44976,
+      "process_started": true,
+      "exit_code": 0,
+      "signal": null,
+      "deadline_ms": 30000,
+      "timed_out": false,
+      "cancelled": false,
+      "pid_alive_after": false,
+      "started_at": "2026-11-08T03:49:21.059Z",
+      "ended_at": "2026-11-08T03:49:21.135Z",
+      "effects": {
+        "process": true,
+        "fileRead": true,
+        "domainStateWrite": false,
+        "workspaceWrite": false,
+        "gitObjectWrite": false,
+        "execute": false,
+        "network": false
+      },
+      "stdout": {
+        "sha256": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26",
+        "bytes": 3737,
+        "truncated": false
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "truncated": false
+      },
+      "host_verdict": "unchanged"
+    },
+    {
+      "schema": "clawx.versegit.fact-observation/v1",
+      "operation": "observeRead",
+      "mode": "M2",
+      "authorizationId": "fixture-grant",
+      "ownerId": "agent:codex",
+      "epoch": 5,
+      "binary": {
+        "role": "provider-binary",
+        "sha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea"
+      },
+      "argv": [
+        "observe",
+        "read",
+        "--session",
+        "25e4d1f0-d710-4adc-868e-6460c842b04b",
+        "--path",
+        "src/api.ts",
+        "--actor",
+        "agent:codex",
+        "--line-start",
+        "1",
+        "--line-end",
+        "1",
+        "--json"
+      ],
+      "cwd_role": "provider-workspace",
+      "pid": 15272,
+      "process_started": true,
+      "exit_code": 0,
+      "signal": null,
+      "deadline_ms": 30000,
+      "timed_out": false,
+      "cancelled": false,
+      "pid_alive_after": false,
+      "started_at": "2026-11-08T03:49:21.166Z",
+      "ended_at": "2026-11-08T03:49:21.247Z",
+      "effects": {
+        "process": true,
+        "fileRead": false,
+        "domainStateWrite": true,
+        "workspaceWrite": false,
+        "gitObjectWrite": false,
+        "execute": false,
+        "network": false
+      },
+      "stdout": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "truncated": false
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "truncated": false
+      },
+      "host_verdict": "unchanged"
+    },
+    {
+      "schema": "clawx.versegit.fact-observation/v1",
+      "operation": "observeRead",
+      "mode": "M3",
+      "authorizationId": "fixture-grant",
+      "ownerId": "agent:codex",
+      "epoch": 5,
+      "binary": {
+        "role": "provider-binary",
+        "sha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea"
+      },
+      "argv": [
+        "observe",
+        "read",
+        "--session",
+        "25e4d1f0-d710-4adc-868e-6460c842b04b",
+        "--path",
+        "src/api.ts",
+        "--actor",
+        "agent:codex",
+        "--line-start",
+        "1",
+        "--line-end",
+        "1",
+        "--json"
+      ],
+      "cwd_role": "provider-workspace",
+      "pid": 28416,
+      "process_started": true,
+      "exit_code": 0,
+      "signal": null,
+      "deadline_ms": 30000,
+      "timed_out": false,
+      "cancelled": false,
+      "pid_alive_after": false,
+      "started_at": "2026-11-08T03:49:21.285Z",
+      "ended_at": "2026-11-08T03:49:21.377Z",
+      "effects": {
+        "process": true,
+        "fileRead": false,
+        "domainStateWrite": true,
+        "workspaceWrite": false,
+        "gitObjectWrite": false,
+        "execute": false,
+        "network": false
+      },
+      "stdout": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "truncated": false
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "truncated": false
+      },
+      "host_verdict": "unchanged"
+    },
+    {
+      "schema": "clawx.versegit.fact-observation/v1",
+      "operation": "version",
+      "mode": "M1",
+      "authorizationId": "fixture-grant",
+      "ownerId": "foreign",
+      "epoch": 5,
+      "binary": {
+        "role": "provider-binary",
+        "sha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea"
+      },
+      "argv": [
+        "--version"
+      ],
+      "cwd_role": "provider-workspace",
+      "pid": null,
+      "process_started": false,
+      "exit_code": null,
+      "signal": null,
+      "deadline_ms": 30000,
+      "timed_out": false,
+      "cancelled": false,
+      "pid_alive_after": false,
+      "started_at": "2026-11-08T03:49:21.414Z",
+      "ended_at": "2026-11-08T03:49:21.414Z",
+      "effects": {
+        "process": false,
+        "fileRead": false,
+        "domainStateWrite": false,
+        "workspaceWrite": false,
+        "gitObjectWrite": false,
+        "execute": false,
+        "network": false
+      },
+      "stdout": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "truncated": false
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "truncated": false
+      },
+      "host_verdict": "unchanged"
+    },
+    {
+      "schema": "clawx.versegit.fact-observation/v1",
+      "operation": "version",
+      "mode": "M1",
+      "authorizationId": "fixture-grant",
+      "ownerId": "agent:codex",
+      "epoch": 4,
+      "binary": {
+        "role": "provider-binary",
+        "sha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea"
+      },
+      "argv": [
+        "--version"
+      ],
+      "cwd_role": "provider-workspace",
+      "pid": null,
+      "process_started": false,
+      "exit_code": null,
+      "signal": null,
+      "deadline_ms": 30000,
+      "timed_out": false,
+      "cancelled": false,
+      "pid_alive_after": false,
+      "started_at": "2026-11-08T03:49:21.452Z",
+      "ended_at": "2026-11-08T03:49:21.452Z",
+      "effects": {
+        "process": false,
+        "fileRead": false,
+        "domainStateWrite": false,
+        "workspaceWrite": false,
+        "gitObjectWrite": false,
+        "execute": false,
+        "network": false
+      },
+      "stdout": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "truncated": false
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "truncated": false
+      },
+      "host_verdict": "unchanged"
+    },
+    {
+      "schema": "clawx.versegit.fact-observation/v1",
+      "operation": "version",
+      "mode": "M4",
+      "authorizationId": "fixture-grant",
+      "ownerId": "agent:codex",
+      "epoch": 5,
+      "binary": {
+        "role": "provider-binary",
+        "sha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea"
+      },
+      "argv": [
+        "--version"
+      ],
+      "cwd_role": "provider-workspace",
+      "pid": null,
+      "process_started": false,
+      "exit_code": null,
+      "signal": null,
+      "deadline_ms": 30000,
+      "timed_out": false,
+      "cancelled": false,
+      "pid_alive_after": false,
+      "started_at": "2026-11-08T03:49:21.531Z",
+      "ended_at": "2026-11-08T03:49:21.531Z",
+      "effects": {
+        "process": false,
+        "fileRead": false,
+        "domainStateWrite": false,
+        "workspaceWrite": false,
+        "gitObjectWrite": false,
+        "execute": false,
+        "network": false
+      },
+      "stdout": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "truncated": false
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "truncated": false
+      },
+      "host_verdict": "unchanged"
+    }
+  ],
+  "workspace": "D:\\tmp\\coding-vg-evaluation-E6zCrq",
+  "scope": {
+    "verdictInputs": "deterministic six-dimension mechanism fixtures",
+    "unobserved": [
+      "bash",
+      "direct-fs",
+      "other-mcp",
+      "network"
+    ],
+    "hostVerdict": "unchanged",
+    "m4Authorized": false
+  },
+  "cleanup": {
+    "ownedProcessSurvivors": 0,
+    "hostWorktreesDeleted": 0
+  }
+}

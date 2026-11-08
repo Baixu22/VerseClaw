@@ -1,0 +1,64 @@
+{
+  "schema": "ClawXDirectTypecheck/v1",
+  "driven_by": "agent",
+  "actor": "codex-coding-TF-0770-relay",
+  "realHumanEvidence": false,
+  "success": true,
+  "results": [
+    {
+      "name": "bridge",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/generate-ext-bridge.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.08416380000000001,
+      "output": "[ext-bridge] No external extensions configured — empty stubs up to date.\n"
+    },
+    {
+      "name": "node",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "exitCode": 0,
+      "seconds": 6.740387000000001,
+      "output": ""
+    },
+    {
+      "name": "web",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "exitCode": 0,
+      "seconds": 3.2548028999999996,
+      "output": ""
+    },
+    {
+      "name": "test",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false"
+      ],
+      "exitCode": 0,
+      "seconds": 13.133494200000001,
+      "output": ""
+    }
+  ]
+}

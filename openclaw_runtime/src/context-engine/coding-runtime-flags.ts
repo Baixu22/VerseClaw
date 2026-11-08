@@ -26,7 +26,7 @@ export const DEFAULT_CODING_FEATURE_FLAGS = {
   /** C5-1: symbol lease on write tools. Default off (shared path unperturbed). */
   "runtime.coding.symbolLease.enabled": false,
   "runtime.coding.symbolLease.mode": "memory" as const,
-  /** C5-H: patch-flow remains recommend-only. */
+  /** TF-0510 retired Patch Flow; all execution entry points enforce retirement. */
   "runtime.coding.patchFlow.default": false,
   /** C7-H: experience shadow dual-write off until stable window. */
   "runtime.coding.sekb.experienceShadow": false,
@@ -39,7 +39,13 @@ export type CodingFeatureFlagName = keyof typeof DEFAULT_CODING_FEATURE_FLAGS;
 export type WorktreeBackend = "inprocess" | "git";
 export type SymbolLeaseMode = "memory" | "wal";
 
-type CodingFlagLeaf = { enabled?: boolean; backend?: string; mode?: string; default?: boolean; shadow?: boolean };
+type CodingFlagLeaf = {
+  enabled?: boolean;
+  backend?: string;
+  mode?: string;
+  default?: boolean;
+  shadow?: boolean;
+};
 
 export const DEFAULT_CODING_AUTO_VERIFY_TIMEOUT_SECONDS = 90;
 export const MAX_CODING_AUTO_VERIFY_TIMEOUT_SECONDS = 90;
@@ -149,9 +155,10 @@ export function resolveCodingAutoVerifyConfig(cfg?: OpenClawConfig): CodingAutoV
       ? leaf.timeoutSeconds
       : DEFAULT_CODING_AUTO_VERIFY_TIMEOUT_SECONDS;
   const command = typeof leaf?.command === "string" ? leaf.command.trim() : "";
-  const enabledValue = leaf?.enabled === undefined
-    ? DEFAULT_CODING_FEATURE_FLAGS["runtime.coding.autoVerify.enabled"]
-    : leaf.enabled;
+  const enabledValue =
+    leaf?.enabled === undefined
+      ? DEFAULT_CODING_FEATURE_FLAGS["runtime.coding.autoVerify.enabled"]
+      : leaf.enabled;
   return {
     enabled:
       enabledValue === "auto" || enabledValue === true || enabledValue === false
@@ -176,7 +183,6 @@ export function resolveWorktreeBackend(
   }
   return DEFAULT_CODING_FEATURE_FLAGS["runtime.coding.worktree.backend"];
 }
-
 
 /**
  * TF-0510: symbol lease is RETIRED.
@@ -238,9 +244,11 @@ export function isCodingSekbExperienceShadowEnabled(
   if (typeof overrides?.experienceShadow === "boolean") {
     return overrides.experienceShadow;
   }
-  const sekb = asRecord(codingConfigFrom(cfg)?.sekb) as CodingFlagLeaf & {
-    experienceShadow?: boolean;
-  } | undefined;
+  const sekb = asRecord(codingConfigFrom(cfg)?.sekb) as
+    | (CodingFlagLeaf & {
+        experienceShadow?: boolean;
+      })
+    | undefined;
   if (typeof sekb?.experienceShadow === "boolean") {
     return sekb.experienceShadow;
   }
@@ -258,9 +266,11 @@ export function isCodingRoutingMemoShadowEnabled(
   if (typeof overrides?.routingMemoShadow === "boolean") {
     return overrides.routingMemoShadow;
   }
-  const leaf = asRecord(codingConfigFrom(cfg)?.routingMemo) as CodingFlagLeaf & {
-    shadow?: boolean;
-  } | undefined;
+  const leaf = asRecord(codingConfigFrom(cfg)?.routingMemo) as
+    | (CodingFlagLeaf & {
+        shadow?: boolean;
+      })
+    | undefined;
   if (typeof leaf?.shadow === "boolean") {
     return leaf.shadow;
   }

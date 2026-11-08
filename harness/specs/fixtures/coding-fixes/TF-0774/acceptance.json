@@ -1,0 +1,100 @@
+{
+  "schema": "CodingFixAcceptance/v1",
+  "taskId": "TF-0774",
+  "finding": "A10",
+  "driven_by": "agent",
+  "actor": "codex-01a1b68a",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "3be783eac6a4e2aae35558dbee705f47cf3caeb1",
+    "tree": "4ee1b2b0b8e0cdff45c6b22882ab36a864cc7872",
+    "dirty": false
+  },
+  "status": "resolved",
+  "tests": {
+    "projection-units": {
+      "passed": 121,
+      "failed": 0,
+      "skipped": 0
+    },
+    "projection-runtime": {
+      "passed": 84,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "electron": {
+    "passed": 1,
+    "failed": 0,
+    "provider": "scripted-local",
+    "workers": 3,
+    "locales": [
+      "en",
+      "zh",
+      "ja",
+      "ru"
+    ],
+    "files": {
+      "ordinary-1.txt": "ordinary worker 1",
+      "ordinary-2.txt": "ordinary worker 2",
+      "ordinary-3.txt": "ordinary worker 3"
+    },
+    "ownedProcessExit": true
+  },
+  "sourceHashes": {
+    "docs/generated/catalogs/prod-flags.md": "b781908c479e29d4f44383ac339ed31a4cb35e1f3106ca7d7a86eaeef06b33a7",
+    "docs/generated/catalogs/tools.md": "148a60cfff5002d3e82e648e695bc5fd67300a9905b168fdb7be9d830af554a5",
+    "docs/modules/workspace-and-coding.md": "a6ceac47263e918055982a1987c4295d18505605a8c04b3630eb8d0a171db509",
+    "harness/specs/rules/active-config-guards.md": "bdd46a0bcf8661c66e2ecdff57ae60a070df5f1965340c0071e956c33f609e4a",
+    "harness/specs/scenarios/gateway-backend-communication.md": "5479fa1fe70ced25aac88d98aed4d417811a0446d3c8d03118e658300413ae9e",
+    "harness/specs/tasks/coding-retired-control-admission.md": "fefdeffc853d521d4039267602572ae15a43225efdb53c3f996c93a5b55f6d29",
+    "openclaw_runtime/src/agents/coding-control-dispositions.ts": "494cf6bfbf7ebb7886847177f579215059011211fac3a149e3c517c805ca0d28",
+    "openclaw_runtime/src/agents/isolation-mode-matrix.test.ts": "e13f4bc89d6e4f6db3626ed07e0e64148efe35824da1efa2014eda3cfec9c46a",
+    "openclaw_runtime/src/agents/isolation-mode-matrix.ts": "e050020efd8c4afd3bbd477f99d1d251d83e37de2ad9766248b4058647414ab5",
+    "openclaw_runtime/src/agents/orchestrator-run-observed.ts": "a6f5d68e55d7e926086d04f29ccd950ab34261b8e32ae514e105a0837f1ea2c1",
+    "openclaw_runtime/src/agents/orchestrator-write-set-plan.test.ts": "c0d5f9a29bcfe0afcb4b48d3d41beefb583abe276c902edd55294e7823eeb0c0",
+    "openclaw_runtime/src/agents/patch-flow-graduation.test.ts": "918a414242b2fdccb4991e9646b7cfe699ba43da1f1ca9f7aba943eed78ed6df",
+    "openclaw_runtime/src/agents/patch-flow-graduation.ts": "1dee590d201f5734b7b1bd3f034d6edb04daf079bba8d7a9aa983ed56a0c5a22",
+    "openclaw_runtime/src/agents/subagent-registry.ts": "1550ea060e6b1184b0f777d67c6fa3963c1b4e07b2080bb335d5c57caa623ad3",
+    "openclaw_runtime/src/agents/subagent-registry.types.ts": "f3b035591642052c1653e10a6c71d823801caa034ff6059cd9762ae891a6bbcb",
+    "openclaw_runtime/src/context-engine/coding-runtime-flags.ts": "75e29afa9b42ec255c75a2edce5d46ec14008880b11bc404a78a6a57108701e7",
+    "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts": "62baff62763c0289cd75ac7c3a41a9b0de2d7f2cea24ed848610fc7b54bb1894",
+    "shared/dcs/component-disposition-catalog.ts": "213db31fb60fb491b9e613c5b0904b3a915ce44cd91f48bd174fe686bfe62da2",
+    "shared/dcs/prod-flags-catalog.ts": "8dceb75af243a6dbcc7edaaef968db9f8fc202283b8b850a709c078cb0471b7b",
+    "shared/i18n/locales/en/settings.json": "932d876774606abbbb5b937ce8a370eef386ef5fadc5544026660ae2bfb02044",
+    "shared/i18n/locales/ja/settings.json": "cca9024e3d0958b51b1f7be48149192a5311f8fa1836b4c9525687e3d4fa5c8a",
+    "shared/i18n/locales/ru/settings.json": "5d7cff2dd1e8541f9608822a5b14717fa00b32665d374c8a9c50a984004352ba",
+    "shared/i18n/locales/zh/settings.json": "9055cfd13dd56f0e9ccb05e493268e3b00a19798600d4a485b04d15ae411a8bc",
+    "src/components/settings/DcsProdFlagsPanel.tsx": "c102c79a2f002419a6bffb58cf83d738fa2d70106622460b8dd95f5e279df433",
+    "tests/e2e/coding-retired-controls.spec.ts": "ad4e04930579c4ceb1db966f44d11a82d773f192fe005914ca0115e8158e5c9e",
+    "tests/unit/coding-controls-tf0510-patchflow-trigger.test.ts": "95213709d9fc254eae368d9d773147adf44504adc786fb6ed2b4e5a74cc93fae",
+    "tests/unit/coding-controls-tf0510.test.ts": "bb776ff494964063ef263060900483b2c40ac09331d211abc660677043e56b36",
+    "tests/unit/coding-retired-deferred-completion.test.ts": "c53fc6bda1d70e0919402c446b3e1a60caa67399e4acd4708cffa81c5af7d0e2",
+    "tests/unit/dcs-prod-flags-retirement.test.tsx": "bc9eea6674a6819677c777875c902917162c2d4fe3e0691a266373a4e20c3db6",
+    "tests/unit/role-orchestration-methods.test.ts": "3b44bdc384155a1690d8f005e274d466da45982a7d688023c25fa17716095453"
+  },
+  "buildHashes": {
+    "dist/index.html": "d4ca72dbe3e8cb4e31107e754672ba567ac2dbd439ac8977928530579faad475",
+    "dist-electron/main/index.js": "3c016743585730e941dd34ef10eeff8c41bcff6eb679483e36bd923241ef2661",
+    "openclaw_runtime/dist/entry.js": "9e6928a86e6c2368e1797fb14e82a7c4964b58b9d3540d4a894f89ff5ef19871"
+  },
+  "criteria": [
+    "旧 request/config/override 不改变真实 observed/Gateway 三 worker 的普通工具与提示词。",
+    "待处理的旧恢复标记不能发起新的 Patch Flow 效果，混合兄弟状态中的已应用记录和身份保持。",
+    "模型建议和 Developer 四语目录只声明当前支持的共享/工作树路径，退役条目不提供写开关。",
+    "普通共享/worktree、write journal 及运行时有效开关的正反例通过。",
+    "同候选源码投影、测试/类型、真实 Electron、编译输入/输出、通讯、审查和进程退出已读回。"
+  ],
+  "review": {
+    "actionableFindings": 0,
+    "record": "review.json"
+  },
+  "baselineFailure": {
+    "gate": "harness:ci",
+    "exitCode": 1,
+    "reason": "既有 Agent Dev 证据超过 24h 窗口；本次目录修复后检查通过，59项结构测试通过。",
+    "record": "historical/harness-ci-catalogs.json"
+  },
+  "evidenceMode": "Agent 驱动。实际 observed/Gateway 与完成入口；测试在 spawn/candidate effect 边界注入，Electron 使用真实源码 Gateway 和 scripted model。",
+  "recordedAt": "2026-11-08T02:02:24.068563+00:00"
+}

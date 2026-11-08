@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import {
@@ -71,6 +71,27 @@ describe("checkpoint-rollback-executor (A3)", () => {
     __resetWriteJournals();
     __resetBatchLocks();
     rmSync(repoRoot, { recursive: true, force: true });
+  });
+
+  it("confines checkpoint restore after the target parent is replaced by an outside junction", async () => {
+    const outside = mkdtempSync(path.join(tmpdir(), "rollback-outside-"));
+    try {
+      const parent = path.join(repoRoot, "sub");
+      mkdirSync(parent);
+      const file = path.join(parent, "a.txt");
+      writeFileSync(file, "before");
+      snapshotBeforeWrite({ workspaceRoot: repoRoot, sessionId: journalSessionId, filePath: file, toolName: "write" });
+      writeFileSync(file, "after");
+      writeFileSync(path.join(outside, "a.txt"), "outside");
+      renameSync(parent, path.join(repoRoot, "original-sub"));
+      symlinkSync(outside, parent, process.platform === "win32" ? "junction" : "dir");
+      const result = await applyCheckpointToJournal({ workspaceRoot: repoRoot, sessionId: journalSessionId,
+        checkpoint: makeCheckpointRecord({ id: "alias", sessionKey, createdAt: "2026-07-31T00:00:00Z", metadata: { journalSeq: 0 } }) });
+      expect(result.errors).toHaveLength(1);
+      expect(result.restored).toEqual([]);
+      expect(readFileSync(path.join(outside, "a.txt"), "utf8")).toBe("outside");
+      expect(getOrCreateWriteJournal(repoRoot, journalSessionId).entries).toHaveLength(1);
+    } finally { rmSync(outside, { recursive: true, force: true }); }
   });
 
   describe("validateCheckpointRecord", () => {
@@ -145,7 +166,7 @@ describe("checkpoint-rollback-executor (A3)", () => {
       writeFileSync(file, "v2\n", "utf8");
       expect(readFileSync(file, "utf8")).toBe("v2\n");
 
-      const outcome = applyCheckpointToJournal({
+      const outcome = await applyCheckpointToJournal({
         workspaceRoot: repoRoot,
         checkpoint: record,
         sessionId: journalSessionId,
@@ -155,7 +176,7 @@ describe("checkpoint-rollback-executor (A3)", () => {
       expect(readFileSync(file, "utf8")).toBe("v1\n");
     });
 
-    it("restores created files (hadPrior=false) by unlinking them", () => {
+    it("restores created files (hadPrior=false) by unlinking them", async () => {
       // Pre-checkpoint: file exists.
       const existing = path.join(repoRoot, "keep.ts");
       writeFileSync(existing, "keep\n", "utf8");
@@ -177,7 +198,7 @@ describe("checkpoint-rollback-executor (A3)", () => {
       writeFileSync(created, "new\n", "utf8");
       expect(readFileSync(created, "utf8")).toBe("new\n");
 
-      const outcome = applyCheckpointToJournal({
+      const outcome = await applyCheckpointToJournal({
         workspaceRoot: repoRoot,
         checkpoint: record,
         sessionId: journalSessionId,
@@ -205,7 +226,7 @@ describe("checkpoint-rollback-executor (A3)", () => {
         sessionKey,
         createdAt: new Date().toISOString(),
       });
-      const outcome = applyCheckpointToJournal({
+      const outcome = await applyCheckpointToJournal({
         workspaceRoot: repoRoot,
         checkpoint: record,
         sessionId: journalSessionId,
@@ -214,7 +235,7 @@ describe("checkpoint-rollback-executor (A3)", () => {
       expect(outcome.restored).toEqual([]);
     });
 
-    it("#176 fails closed when the journal id is the canonical key, not the session UUID", () => {
+    it("#176 fails closed when the journal id is the canonical key, not the session UUID", async () => {
       const file = path.join(repoRoot, "f.ts");
       writeFileSync(file, "v2\n", "utf8");
       const record = makeCheckpointRecord({
@@ -229,7 +250,7 @@ describe("checkpoint-rollback-executor (A3)", () => {
       // empty directory and returned `errors: []` (a "successful" restore that
       // restored nothing) — and then created that empty directory, which is
       // itself the wrong journal.
-      const outcome = applyCheckpointToJournal({
+      const outcome = await applyCheckpointToJournal({
         workspaceRoot: repoRoot,
         checkpoint: record,
         sessionId: sessionKey,
@@ -241,7 +262,7 @@ describe("checkpoint-rollback-executor (A3)", () => {
       expect(readFileSync(file, "utf8")).toBe("v2\n");
     });
 
-    it("#176 refuses to roll back when no journal session id is supplied", () => {
+    it("#176 refuses to roll back when no journal session id is supplied", async () => {
       const record = makeCheckpointRecord({
         id: "c1",
         sessionKey,
@@ -249,7 +270,7 @@ describe("checkpoint-rollback-executor (A3)", () => {
         filesTouched: ["f.ts"],
       });
 
-      const outcome = applyCheckpointToJournal({
+      const outcome = await applyCheckpointToJournal({
         workspaceRoot: repoRoot,
         checkpoint: record,
       });
@@ -299,7 +320,7 @@ describe("checkpoint-rollback-executor (A3)", () => {
       });
       writeFileSync(concurrent, "concurrent-work-that-must-survive\n", "utf8");
 
-      const outcome = undoCheckpointWrites({
+      const outcome = await undoCheckpointWrites({
         workspaceRoot: repoRoot,
         sessionId: journalSessionId,
         entries: selection,
@@ -348,7 +369,7 @@ describe("checkpoint-rollback-executor (A3)", () => {
       writeFileSync(file, "v2\n", "utf8");
       expect(readFileSync(file, "utf8")).toBe("v2\n");
 
-      const outcome = applyCheckpointToJournal({
+      const outcome = await applyCheckpointToJournal({
         workspaceRoot: repoRoot,
         checkpoint: record,
         sessionId: journalSessionId,
@@ -378,7 +399,7 @@ describe("checkpoint-rollback-executor (A3)", () => {
       });
       writeFileSync(file, "v1\n", "utf8");
 
-      const outcome = applyCheckpointToJournal({
+      const outcome = await applyCheckpointToJournal({
         workspaceRoot: repoRoot,
         checkpoint: record,
         sessionId: journalSessionId,
@@ -476,7 +497,7 @@ describe("checkpoint-rollback-executor (A3)", () => {
           validateCheckpoint: async (c) => validateCheckpointRecord(c),
           applyCheckpoint: async (c) => {
             const r = c as LongTaskCheckpointRecord;
-            const outcome = applyCheckpointToJournal({
+            const outcome = await applyCheckpointToJournal({
               workspaceRoot: repoRoot,
               checkpoint: r,
               sessionId: journalSessionId,

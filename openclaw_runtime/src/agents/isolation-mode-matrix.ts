@@ -1,10 +1,10 @@
 /**
  * C5-3: isolation mode recommendation matrix (recommend API only).
  * task duration x worker count x write density (+ optional writeSet overlap risk)
- * -> shared+L0 / worktree / patch-flow
+ * -> shared+L0 / worktree
  *
- * Does NOT auto-switch production isolation. C4 request surface remains shared|worktree
- * with default shared; patch-flow is a recommend-only third mode for long dense jobs.
+ * Recommendations leave the caller's shared|worktree choice intact. Stored
+ * diagnostics can carry the retired patch-flow value; new advice uses supported modes.
  */
 export type IsolationMode = "shared" | "worktree" | "patch-flow";
 
@@ -42,7 +42,7 @@ export function recommendIsolationMode(params: {
 
   if (duration >= 30 && workers >= 3 && (density >= 0.5 || overlap >= 0.5)) {
     return {
-      mode: "patch-flow",
+      mode: "worktree",
       reason: "long_goal_dense_multi_worker",
       score,
     };

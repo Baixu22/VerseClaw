@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: shared/dcs/prod-flags-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-11-06T10:40:39.985Z
+Generated at: 2026-11-08T16:38:33.823Z
 -->
 
 Machine-readable source of truth for defaults, risk, enable, and rollback.
@@ -116,7 +116,7 @@ This file is generated — edit the source of truth instead.
 - defaultDisplay: shared
 - risk: request-only
 - enable: Pass isolation: "worktree" on orchestrator request/plan (or worker) when multi-worker writes need isolation.
-- rollback: Omit isolation or set "shared". Unknown values normalize to shared.
+- rollback: Omit isolation or set "shared". Unsupported isolation values are rejected.
 - executor: wired — `openclaw_runtime/src/agents/orchestrator.ts:207`
 
 > normalizeIsolationMode defaults shared; C4-H landed but production default stays shared until product approval.
@@ -124,44 +124,44 @@ This file is generated — edit the source of truth instead.
 ## symbol-lease
 
 - wave: C5
-- kind: config
+- kind: info
 - key: `runtime.coding.symbolLease.enabled`
 - default: false
-- defaultDisplay: false
-- risk: opt-in
-- enable: runtime.coding.symbolLease.enabled=true; optional mode=memory|wal (default memory).
-- rollback: enabled=false. Shared write path is unperturbed when off.
+- defaultDisplay: retired
+- risk: read-only
+- enable: Retired by TF-0510; configuration and overrides cannot enable Symbol Lease.
+- rollback: Keep retirement in place; ordinary writes use the existing journal and explicit worktree isolation.
 - executor: wired — `openclaw_runtime/src/agents/agent-tools.ts:867`
 
-> C5-H multi-process WAL hardened (opt-in mode=wal). Prefer mode=memory default; keep enabled=false until product approval.
+> The retained WAL benchmark is historical evidence. Current coding execution has no Symbol Lease consumer.
 
 ## symbol-lease-mode
 
 - wave: C5
-- kind: config
+- kind: info
 - key: `runtime.coding.symbolLease.mode`
 - default: "memory"
-- defaultDisplay: memory
-- risk: opt-in
-- enable: runtime.coding.symbolLease.mode=wal only after multi-process WAL acceptance.
-- rollback: mode=memory.
+- defaultDisplay: retired
+- risk: read-only
+- enable: Retired with Symbol Lease; selecting a mode does not enable execution.
+- rollback: Keep the retired Symbol Lease boundary.
 - executor: wired — `openclaw_runtime/src/agents/agent-tools.ts:871`
 
-> wal multi-process hardened (C5-H); still opt-in; default mode remains memory.
+> The stored memory/WAL mode is inactive while Symbol Lease is retired.
 
 ## patch-flow
 
 - wave: C5
-- kind: api
+- kind: info
 - key: `applyPatchProposalsSerial() / recommendIsolationMode()`
 - default: false
-- defaultDisplay: advisory + explicit execution opt-in (patchFlow.default=false)
-- risk: api-only
-- enable: Pass patchFlowExecution=true with durationMinutes and overlapping worker writeSets through orchestrator.run or team_orchestrate. Workers emit fenced apply_patch proposals; deferred orchestration completion calls applyPatchProposalsSerial. Do NOT set runtime.coding.patchFlow.default=true without C5-H + approval.
-- rollback: Omit patchFlowExecution or set it false. The advisory remains display-only, workers keep their ordinary tool surface, and patchFlow.default stays false.
+- defaultDisplay: retired
+- risk: read-only
+- enable: Retired by TF-0510; old requests, configuration, overrides and restored execution markers cannot start Patch Flow.
+- rollback: Keep ordinary worker tools and the existing write journal; choose worktree isolation explicitly for concurrent writes.
 - executor: wired — `openclaw_runtime/src/agents/orchestrator.ts:547`, `openclaw_runtime/src/agents/orchestrator.ts:557`, `openclaw_runtime/src/agents/orchestrator-run-observed.ts:736`, `openclaw_runtime/src/agents/subagent-registry.ts:612`
 
-> TF-0459 wires advisory visibility in every production orchestrator plan; TF-0460 adds the explicit execution opt-in and proposal-only worker boundary. Neither switches isolation automatically, and serial-apply failure is recorded without blocking verifier startup.
+> Recorded historical apply outcomes remain intact. New execution uses ordinary coding and worktree candidate handling.
 
 ## context-ladder
 

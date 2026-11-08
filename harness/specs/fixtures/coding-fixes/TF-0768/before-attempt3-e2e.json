@@ -1,0 +1,257 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/coding-vg-sts-jj-20261104/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/ClawX-work/coding-vg-sts-jj-20261104/.audit/TF-0768/final/e2e-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/coding-vg-sts-jj-20261104/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "coding-orchestration-workspace-authority.spec.ts",
+      "file": "coding-orchestration-workspace-authority.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "TF-0768 real inprocess worker stays in the authorized checkout",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 56532,
+                  "error": {
+                    "message": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+                    "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts:468:15)\n    at D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts:534:21\n    at D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\coding-orchestration-workspace-authority.spec.ts:48:13",
+                    "location": {
+                      "file": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts",
+                      "column": 15,
+                      "line": 468
+                    },
+                    "snippet": "\u001b[90m   at \u001b[39mfixtures\\electron.ts:468\n\n  466 |   // its creation before pinning content size; responsive specs can resize it.\n  467 |   try {\n> 468 |     await app.firstWindow();\n      |               ^\n  469 |     await pinWindowContentSize(app, { width: 1280, height: 800 });\n  470 |   } catch (error) {\n  471 |     await closeElectronApp(app);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts",
+                        "column": 15,
+                        "line": 468
+                      },
+                      "message": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n\n   at fixtures\\electron.ts:468\n\n  466 |   // its creation before pinning content size; responsive specs can resize it.\n  467 |   try {\n> 468 |     await app.firstWindow();\n      |               ^\n  469 |     await pinWindowContentSize(app, { width: 1280, height: 800 });\n  470 |   } catch (error) {\n  471 |     await closeElectronApp(app);\n    at launchVerseClawElectron (D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts:468:15)\n    at D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts:534:21\n    at D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\coding-orchestration-workspace-authority.spec.ts:48:13"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[app:out] [2026-11-05T15:14:53.290Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":1}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T15:15:02.125Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T15:15:02.125Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T15:15:02.127Z] [INFO] [ResourceTracker] Stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T15:15:02.127Z] [INFO] [ResourceTracker] Shutdown complete\n[2026-11-05T15:15:02.127Z] [INFO] [efficiency-sampler] stopped\n[2026-11-05T15:15:02.127Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                    },
+                    {
+                      "text": "[app:err] Waiting for the debugger to disconnect...\r\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-05T15:14:10.679Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\e2e-results\\coding-orchestration-works-8f4b6--in-the-authorized-checkout\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\e2e-results\\coding-orchestration-works-8f4b6--in-the-authorized-checkout\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts",
+                    "column": 15,
+                    "line": 468
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "e06f8ee3e38f9cc2ab14-06d776cd85b9e60f517f",
+          "file": "coding-orchestration-workspace-authority.spec.ts",
+          "line": 12,
+          "column": 7
+        },
+        {
+          "title": "TF-0768 real git worker stays in the authorized checkout",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 40822,
+                  "error": {
+                    "message": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+                    "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts:468:15)\n    at D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts:534:21\n    at D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\coding-orchestration-workspace-authority.spec.ts:48:13",
+                    "location": {
+                      "file": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts",
+                      "column": 15,
+                      "line": 468
+                    },
+                    "snippet": "\u001b[90m   at \u001b[39mfixtures\\electron.ts:468\n\n  466 |   // its creation before pinning content size; responsive specs can resize it.\n  467 |   try {\n> 468 |     await app.firstWindow();\n      |               ^\n  469 |     await pinWindowContentSize(app, { width: 1280, height: 800 });\n  470 |   } catch (error) {\n  471 |     await closeElectronApp(app);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts",
+                        "column": 15,
+                        "line": 468
+                      },
+                      "message": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n\n   at fixtures\\electron.ts:468\n\n  466 |   // its creation before pinning content size; responsive specs can resize it.\n  467 |   try {\n> 468 |     await app.firstWindow();\n      |               ^\n  469 |     await pinWindowContentSize(app, { width: 1280, height: 800 });\n  470 |   } catch (error) {\n  471 |     await closeElectronApp(app);\n    at launchVerseClawElectron (D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts:468:15)\n    at D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts:534:21\n    at D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\coding-orchestration-workspace-authority.spec.ts:48:13"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[app:out] [2026-11-05T15:15:21.441Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":1}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T15:15:35.582Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T15:15:43.708Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T15:15:43.708Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T15:15:43.709Z] [INFO] [ResourceTracker] Stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T15:15:43.709Z] [INFO] [ResourceTracker] Shutdown complete\n[2026-11-05T15:15:43.709Z] [INFO] [efficiency-sampler] stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T15:15:43.709Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                    },
+                    {
+                      "text": "[app:err] Waiting for the debugger to disconnect...\r\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-05T15:15:07.926Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\e2e-results\\coding-orchestration-works-d489e--in-the-authorized-checkout\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\e2e-results\\coding-orchestration-works-d489e--in-the-authorized-checkout\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts",
+                    "column": 15,
+                    "line": 468
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "e06f8ee3e38f9cc2ab14-8b815a043d5a1675652b",
+          "file": "coding-orchestration-workspace-authority.spec.ts",
+          "line": 12,
+          "column": 7
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-05T15:14:09.536Z",
+    "duration": 101533.00799999999,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { runOrchestrationObserved } from '../openclaw_runtime/src/agents/orchestrator-run-observed';
@@ -8,17 +8,20 @@ import { createVerseGitRuntimeBindingPortFromEnv } from '../openclaw_runtime/src
 import { endVerseGitRuntimeBindingForRun } from '../openclaw_runtime/src/plugin-sdk/versegit-binding-registry';
 import { getRuntimeTraceBuffer } from '../openclaw_runtime/src/observability/trace-buffer';
 import { resolveVerseGitRepoIdentity } from '../electron/gateway/versegit-bridge';
+import type { OpenClawConfig } from '../openclaw_runtime/src/config/types.openclaw';
 
 const repoRoot = process.env.VERSEGIT_C1_REPO_ROOT!;
 const reportPath = process.env.VERSEGIT_C1_REPORT_PATH!;
 const runtime = createVerseGitRuntimeBindingPortFromEnv(process.env);
 if (!runtime) throw new Error('runtime binding port is unavailable');
 const spawnedCwds: string[] = [];
+const configured = { runtime: { coding: { worktree: { backend: 'git' } } } } as OpenClawConfig;
 const result = await runOrchestrationObserved(
-  { task: 'implement two isolated changes', templateId: 'quick-development', maxWorkers: 2, graphMode: 'auto', isolation: 'worktree', orchestrationRunId: 'orch_c1_e2e', verseGitBindingPort: runtime },
+  { task: 'implement two isolated changes', templateId: 'quick-development', maxWorkers: 2, graphMode: 'auto', isolation: 'worktree', orchestrationRunId: 'orch_c1_e2e', verseGitBindingPort: runtime, cfg: configured },
   { agentSessionKey: 'agent:main:c1', workspaceDir: repoRoot },
   { spawn: (async (params: { cwd?: string }) => {
     const cwd = String(params.cwd);
+    if (execFileSync('git', ['rev-parse', '--show-toplevel'], { cwd, encoding: 'utf8', windowsHide: true }).trim().replaceAll('\\','/').toLowerCase() !== cwd.replaceAll('\\','/').toLowerCase()) throw new Error('worker is not in its own Git checkout');
     const child = spawnSync(process.execPath, ['-e', 'process.stdout.write(process.cwd())'], { cwd, encoding: 'utf8', windowsHide: true, timeout: 10_000 });
     if (child.status !== 0) throw new Error(`worker process failed in ${cwd}`);
     spawnedCwds.push(cwd);
@@ -43,7 +46,7 @@ const unavailablePort = {
   end: async () => { throw new Error('binding bridge unavailable'); },
 };
 const degradedResult = await runOrchestrationObserved(
-  { task: 'confirm host fallback when VerseGit is unavailable', templateId: 'quick-development', maxWorkers: 2, graphMode: 'auto', isolation: 'worktree', orchestrationRunId: 'orch_c1_degraded', verseGitBindingPort: unavailablePort },
+  { task: 'confirm host fallback when VerseGit is unavailable', templateId: 'quick-development', maxWorkers: 2, graphMode: 'auto', isolation: 'worktree', orchestrationRunId: 'orch_c1_degraded', verseGitBindingPort: unavailablePort, cfg: configured },
   { agentSessionKey: 'agent:main:c1-degraded', workspaceDir: repoRoot },
   { spawn: (async (params: { cwd?: string }) => {
     const cwd = String(params.cwd);
@@ -96,7 +99,7 @@ const junctionPath = join(junctionRoot, 'repo-alias');
 let sameRepoAcrossJunction = false;
 try {
   if (process.platform === 'win32') {
-    execFileSync('cmd', ['/d', '/c', 'mklink', '/J', junctionPath, repoRoot], { cwd: junctionRoot, windowsHide: true });
+    symlinkSync(repoRoot, junctionPath, 'junction');
     sameRepoAcrossJunction = resolveVerseGitRepoIdentity(junctionPath).repoId === resolveVerseGitRepoIdentity(repoRoot).repoId;
   }
 } finally {

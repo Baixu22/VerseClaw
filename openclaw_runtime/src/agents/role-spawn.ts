@@ -37,6 +37,7 @@ import type { MemoryCard } from "../memory/types.js";
 import type { TeamOrchestrationMetadata } from "./subagent-registry.types.js";
 import type { PermissionDecisionEvent } from "../../../shared/product-semantics.js";
 import type { SessionDelegationToolAuthorization } from "../../../shared/types/session-delegation.js";
+import type { WorktreeLifecycleOwner } from "./worktree-service.js";
 import type {
   DelegationBackend,
   DelegationToolAuthorization,
@@ -71,6 +72,9 @@ export type RoleSpawnContext = {
   agentMemberRoleIds?: string[];
   requesterAgentIdOverride?: string;
   workspaceDir?: string;
+  /** Resolved by the parent session owner, never by model/request path parameters. */
+  workspaceOwner?: WorktreeLifecycleOwner;
+  assertWorkspaceCurrent?: () => void;
   inheritedToolAllowlist?: string[];
   inheritedToolDenylist?: string[];
   /** Parent role contract used to hard-clamp child privileges (P2-003). */
@@ -354,6 +358,7 @@ export async function spawnRoleSubagent(
   }
   const params = buildRoleSpawnParams(role, request, ctx);
   const rolePolicy = buildRoleSpawnPolicy(role, ctx);
+  ctx.assertWorkspaceCurrent?.();
   const result = await deps.spawn(params, rolePolicy.context);
   return {
     status: result.status,

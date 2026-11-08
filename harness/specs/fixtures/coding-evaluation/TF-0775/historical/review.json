@@ -1,0 +1,18 @@
+{
+  "findings": [
+    {
+      "body": "The verifier never checks `passed` for the required cases. A report with `m0-inert.passed = false` still passes as long as its `actual` fields satisfy the separate checks, despite the unit test and task contract requiring failed cases to be rejected. Validate `passed === true` for every required case before accepting the report.",
+      "category": "bug",
+      "code_location": {
+        "file_path": "scripts/coding-evaluation/verify-versegit.mjs",
+        "line": 15
+      },
+      "confidence": 0.99,
+      "priority": "P1",
+      "title": "Reject required cases marked failed"
+    }
+  ],
+  "overall_confidence": 0.99,
+  "overall_correctness": "patch is incorrect",
+  "overall_explanation": "The evaluation verifier accepts required cases explicitly marked as failed. This contradicts its regression test and allows an incomplete or failed evaluation report to be certified as valid."
+}

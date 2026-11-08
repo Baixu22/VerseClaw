@@ -1,0 +1,6 @@
+{
+  "reason": "Raw command text encoded losslessly in JSON to retain blank lines without Git whitespace errors",
+  "renames": {
+    "lint.txt": "lint.output.json"
+  }
+}

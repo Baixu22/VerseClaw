@@ -1,5 +1,7 @@
 // Gateway tool invocation engine.
 // Shared implementation behind HTTP and RPC tool invocation adapters.
+import { realpathSync } from "node:fs";
+import path from "node:path";
 import {
   normalizeOptionalLowercaseString,
   normalizeOptionalString,
@@ -10,7 +12,14 @@ import { runBeforeToolCallHook } from "../agents/agent-tools.before-tool-call.js
 import { resolveToolLoopDetectionConfig } from "../agents/agent-tools.js";
 import { getChannelAgentToolMeta } from "../agents/channel-tools.js";
 import { isKnownCoreToolId } from "../agents/tool-catalog.js";
-import { ToolInputError, type AnyAgentTool } from "../agents/tools/common.js";
+import {
+  ToolAuthorizationError,
+  ToolInputError,
+  type AnyAgentTool,
+} from "../agents/tools/common.js";
+import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../agents/agent-scope.js";
+import { resolveSessionWorkspaceDir } from "../agents/spawned-context.js";
+import { resolveRuntimeConfigCacheKey } from "../config/runtime-snapshot.js";
 import { resolveMainSessionKey } from "../config/sessions.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { logWarn } from "../logger.js";
@@ -30,6 +39,7 @@ import {
 } from "../security-verification-shadow/index.js";
 import { canonicalizeSessionKeyForAgent } from "./session-store-key.js";
 import { resolveGatewayScopedTools } from "./tool-resolution.js";
+import { loadSessionEntry } from "./session-utils.js";
 
 const MEMORY_TOOL_NAMES = new Set(["memory_search", "memory_get"]);
 
@@ -44,6 +54,8 @@ export type ToolsInvokeInput = {
   idempotencyKey?: unknown;
   runId?: unknown;
   dryRun?: unknown;
+  workspaceDir?: unknown;
+  expectedSessionGeneration?: unknown;
 };
 
 type ToolsInvokeErrorType = "invalid_request" | "not_found" | "tool_call_blocked" | "tool_error";
@@ -164,7 +176,8 @@ function toRuntimeCoreJsonValue(value: unknown): RuntimeCoreJsonValue {
   if (value === null || typeof value === "string" || typeof value === "boolean") return value;
   if (typeof value === "number") return Number.isFinite(value) ? value : null;
   if (Array.isArray(value)) return value.map(toRuntimeCoreJsonValue);
-  if (value && typeof value === "object") return toRuntimeCoreJsonObject(value as Record<string, unknown>);
+  if (value && typeof value === "object")
+    return toRuntimeCoreJsonObject(value as Record<string, unknown>);
   return null;
 }
 
@@ -253,6 +266,10 @@ async function invokeWarmMcpTool(params: {
   toolCallIdPrefix: string;
   idempotencyKey?: string;
   approvalMode?: "request" | "report";
+  requestedAgentId?: string;
+  workspaceDir?: unknown;
+  expectedSessionGeneration?: unknown;
+  getRuntimeConfig: () => OpenClawConfig;
 }): Promise<ToolsInvokeOutcome | null> {
   const runtime = peekSessionMcpRuntime({ sessionKey: params.sessionKey });
   const catalog = runtime?.peekCatalog();
@@ -260,12 +277,55 @@ async function invokeWarmMcpTool(params: {
     return null;
   }
 
-  const materialized = await materializeBundleMcpToolsForRun({ runtime });
+  let materialized = await materializeBundleMcpToolsForRun({ runtime });
+  let admission:
+    | Awaited<
+        ReturnType<
+          (typeof import("./server-methods/mcp-management.js"))["prepareSessionMcpManagement"]
+        >
+      >
+    | undefined;
   try {
-    const tool = materialized.tools.find((candidate) => candidate.name === params.toolName);
+    let tool = materialized.tools.find((candidate) => candidate.name === params.toolName);
     if (!tool) {
       return null;
     }
+    const meta = getPluginToolMeta(tool)?.mcp;
+    if (!meta) throw new ToolInputError("MCP tool metadata is missing");
+    const { prepareSessionMcpManagement } = await import("./server-methods/mcp-management.js");
+    admission = await prepareSessionMcpManagement(
+      {
+        serverId: meta.serverName,
+        sessionKey: params.sessionKey,
+        expectedSessionGeneration: params.expectedSessionGeneration ?? runtime.sessionId,
+        ...(params.requestedAgentId ? { agentId: params.requestedAgentId } : {}),
+        ...(params.workspaceDir !== undefined ? { workspaceDir: params.workspaceDir } : {}),
+      },
+      { getRuntimeConfig: params.getRuntimeConfig },
+    );
+    if (!admission.tools.some((candidate) => candidate.name === params.toolName)) {
+      return {
+        ok: false,
+        status: 403,
+        toolName: params.toolName,
+        error: {
+          type: "tool_call_blocked",
+          message: "MCP tool is denied by the current session policy",
+        },
+      };
+    }
+    if (admission.runtime !== runtime) {
+      await materialized.dispose();
+      materialized = await materializeBundleMcpToolsForRun({ runtime: admission.runtime });
+      tool = materialized.tools.find((candidate) => candidate.name === params.toolName);
+      if (!tool) throw new ToolInputError("MCP tool is no longer in the current catalog");
+    }
+    const entry = admission.catalog.tools.find(
+      (entry) => entry.serverName === meta.serverName && entry.toolName === meta.toolName,
+    );
+    if (meta.operation === "tool" && !entry) throw new ToolInputError("MCP tool schema is missing");
+    const inputSchema = entry?.inputSchema ?? tool.parameters;
+    admission.validateArgs(inputSchema, params.args);
     const toolCallId = params.idempotencyKey
       ? `${params.toolCallIdPrefix}-${params.idempotencyKey}`
       : `${params.toolCallIdPrefix}-${Date.now()}`;
@@ -274,10 +334,16 @@ async function invokeWarmMcpTool(params: {
       params: params.args,
       toolCallId,
       ctx: {
-        agentId: undefined,
-        config: params.cfg,
+        agentId: admission.owner.agentId,
+        config: admission.cfg,
         sessionKey: params.sessionKey,
-        loopDetection: resolveToolLoopDetectionConfig({ cfg: params.cfg }),
+        sessionId: admission.owner.expectedSessionId,
+        cwd: admission.runtime.workspaceDir,
+        workspaceDir: admission.runtime.workspaceDir,
+        loopDetection: resolveToolLoopDetectionConfig({
+          cfg: admission.cfg,
+          agentId: admission.owner.agentId,
+        }),
       },
       approvalMode: params.approvalMode,
     });
@@ -293,14 +359,32 @@ async function invokeWarmMcpTool(params: {
         },
       };
     }
+    admission.validateArgs(inputSchema, hookResult.params);
+    admission.assertCurrent();
+    const result = await tool.execute?.(toolCallId, hookResult.params);
+    // Preserve the completed effect if the server publishes a new catalog during the call.
     return {
       ok: true,
       status: 200,
       toolName: params.toolName,
       source: "mcp",
-      result: await tool.execute?.(toolCallId, hookResult.params),
+      result,
     };
   } catch (err) {
+    if (
+      typeof err === "object" &&
+      err !== null &&
+      "code" in err &&
+      err.code === "VALIDATION" &&
+      !(err instanceof ToolInputError)
+    ) {
+      return {
+        ok: false,
+        status: 403,
+        toolName: params.toolName,
+        error: { type: "tool_call_blocked", message: getErrorMessage(err) },
+      };
+    }
     const inputStatus = resolveToolInputErrorStatus(err);
     if (inputStatus !== null) {
       return {
@@ -322,6 +406,7 @@ async function invokeWarmMcpTool(params: {
     };
   } finally {
     await materialized.dispose();
+    admission?.release?.();
   }
 }
 
@@ -336,6 +421,7 @@ export async function invokeGatewayTool(params: {
   senderIsOwner?: boolean;
   toolCallIdPrefix: string;
   approvalMode?: "request" | "report";
+  getRuntimeConfig?: () => OpenClawConfig;
 }): Promise<ToolsInvokeOutcome> {
   const toolName = normalizeOptionalString(params.input.name ?? params.input.tool) ?? "";
   if (!toolName) {
@@ -398,6 +484,10 @@ export async function invokeGatewayTool(params: {
     toolCallIdPrefix: params.toolCallIdPrefix,
     idempotencyKey,
     approvalMode: params.approvalMode,
+    requestedAgentId: normalizeOptionalString(params.input.agentId),
+    workspaceDir: params.input.workspaceDir,
+    expectedSessionGeneration: params.input.expectedSessionGeneration,
+    getRuntimeConfig: params.getRuntimeConfig ?? (() => params.cfg),
   });
   if (mcpOutcome) {
     return recordAndReturn(mcpOutcome);
@@ -419,10 +509,11 @@ export async function invokeGatewayTool(params: {
       gatewayRequestedTools,
     });
 
-  let { agentId, tools } = resolveTools(knownCoreTool);
-  if (knownCoreTool && !tools.some((candidate) => candidate.name === toolName)) {
-    ({ agentId, tools } = resolveTools(false));
+  let scoped = resolveTools(knownCoreTool);
+  if (knownCoreTool && !scoped.tools.some((candidate) => candidate.name === toolName)) {
+    scoped = resolveTools(false);
   }
+  const { agentId, tools, workspaceDir, sessionId } = scoped;
   const requestedAgentId = normalizeOptionalString(params.input.agentId);
   if (requestedAgentId && agentId && requestedAgentId !== agentId) {
     return recordAndReturn({
@@ -446,6 +537,39 @@ export async function invokeGatewayTool(params: {
   }
 
   try {
+    const assertedRoot = normalizeOptionalString(params.input.workspaceDir);
+    const expectedGeneration = params.input.expectedSessionGeneration ?? sessionId;
+    const initialConfigRevision = assertedRoot
+      ? resolveRuntimeConfigCacheKey(params.cfg)
+      : undefined;
+    const assertScopeCurrent = () => {
+      if (!assertedRoot && params.input.expectedSessionGeneration === undefined) return;
+      const currentConfig = params.getRuntimeConfig?.() ?? params.cfg;
+      const current = loadSessionEntry(sessionKey).entry;
+      const currentRoot =
+        resolveSessionWorkspaceDir({
+          spawnedWorkspaceDir: current?.spawnedWorkspaceDir,
+          persistedWorkspaceDir: current?.workspaceDir,
+        }) ??
+        resolveAgentWorkspaceDir(currentConfig, agentId ?? resolveDefaultAgentId(currentConfig));
+      if (
+        assertedRoot &&
+        (path.relative(realpathSync(workspaceDir), realpathSync(assertedRoot)) !== "" ||
+          path.relative(realpathSync(currentRoot), realpathSync(assertedRoot)) !== "")
+      ) {
+        throw new ToolAuthorizationError(
+          "Tool workspace differs from the authorized Main workspace",
+        );
+      }
+      if (expectedGeneration !== undefined && current?.sessionId !== expectedGeneration)
+        throw new ToolAuthorizationError("Tool session generation changed");
+      if (
+        initialConfigRevision &&
+        resolveRuntimeConfigCacheKey(currentConfig) !== initialConfigRevision
+      )
+        throw new ToolAuthorizationError("Tool policy configuration changed");
+    };
+    assertScopeCurrent();
     const gatewayTool: AnyAgentTool = tool;
     const toolCallId = idempotencyKey
       ? `${params.toolCallIdPrefix}-${idempotencyKey}`
@@ -479,12 +603,16 @@ export async function invokeGatewayTool(params: {
         },
       });
     }
+    assertScopeCurrent();
+    const result = await gatewayTool.execute?.(toolCallId, hookResult.params);
+    // Admission is checked before execution. A successful tool may itself change
+    // configuration or session state; preserve the returned effect instead of inviting replay.
     return recordAndReturn({
       ok: true,
       status: 200,
       toolName,
       source: resolveToolSource(gatewayTool),
-      result: await gatewayTool.execute?.(toolCallId, hookResult.params),
+      result,
     });
   } catch (err) {
     const inputStatus = resolveToolInputErrorStatus(err);

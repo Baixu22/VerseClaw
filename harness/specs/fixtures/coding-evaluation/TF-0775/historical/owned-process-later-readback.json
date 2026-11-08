@@ -1,0 +1,58 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\ClawX\\.tmp\\coding-relay-01a1b68a-tf0775-writable-run\\verse-claw-e2e-run-qiRUGZ",
+  "ledgerEntries": 15,
+  "checks": [
+    {
+      "pid": 45716,
+      "creationTime": 1794107811377,
+      "status": "exited"
+    },
+    {
+      "pid": 45808,
+      "creationTime": 1794107824931,
+      "status": "exited"
+    },
+    {
+      "pid": 46064,
+      "creationTime": 1794107825617,
+      "status": "exited"
+    },
+    {
+      "pid": 42944,
+      "creationTime": 1794107885905,
+      "status": "exited"
+    },
+    {
+      "pid": 9364,
+      "creationTime": 1794107894316,
+      "status": "exited"
+    },
+    {
+      "pid": 36620,
+      "creationTime": 1794107894729,
+      "status": "exited"
+    },
+    {
+      "pid": 46680,
+      "creationTime": 1794107921927,
+      "status": "exited"
+    },
+    {
+      "pid": 45428,
+      "creationTime": 1794107932990,
+      "status": "exited"
+    },
+    {
+      "pid": 32668,
+      "creationTime": 1794107933474,
+      "status": "exited"
+    }
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 1,
+  "status": "passed"
+}

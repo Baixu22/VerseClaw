@@ -1,0 +1,56 @@
+[agents/resource-leases] [resource-lease] acquired
+[agents/resource-leases] [resource-lease] released
+{
+  "driven_by": "agent",
+  "actor": "codex-coding-audit",
+  "realHumanEvidence": false,
+  "candidate": "27bd9df474236a52da03fd6b63613b66d0cc6af4",
+  "area": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\c0-27bd9df47\\boundaries\\boundaries-d8ZjFg",
+  "rows": [
+    {
+      "id": "denied-write-journal-trusted",
+      "expected": "denied; no copied data",
+      "actual": {
+        "directReadDenied": true,
+        "refused": "Error: Path escapes sandbox root (D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\c0-27bd9df47\\boundaries\\boundaries-d8ZjFg\\workspace): D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\c0-27bd9df47\\boundaries\\boundaries-d8ZjFg\\outside\\marker.txt. Use a relative path under `.openclaw/tmp/` inside the workspace for scratch/temp/meta files that file tools need to read or write later.",
+        "outsideUnchanged": true,
+        "snapshots": [
+          "0001-marker.txt.pre"
+        ],
+        "copied": true,
+        "readableByReadTool": true
+      },
+      "reproduced": true
+    },
+    {
+      "id": "denied-write-journal-external",
+      "expected": "denied; no copied data",
+      "actual": {
+        "directReadDenied": true,
+        "refused": "Error: Workspace external write denied: external or unknown provenance cannot write outside the active workspace.",
+        "outsideUnchanged": true,
+        "snapshots": [],
+        "copied": false,
+        "readableByReadTool": false
+      },
+      "reproduced": false
+    },
+    {
+      "id": "undo-via-junction-workspaceOnly",
+      "expected": "reject; outside marker unchanged",
+      "actual": {
+        "outsideContents": "before-local-edit",
+        "undo": {
+          "ok": true,
+          "restored": [
+            "sub/marker.txt"
+          ],
+          "errors": [],
+          "journalDir": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\c0-27bd9df47\\boundaries\\boundaries-d8ZjFg\\workspace\\.openclaw\\journal\\undo-alias",
+          "remainingEntries": 0
+        }
+      },
+      "reproduced": true
+    }
+  ]
+}

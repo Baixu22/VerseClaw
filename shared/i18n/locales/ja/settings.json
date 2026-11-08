@@ -643,6 +643,11 @@
       "description": "working memory、context tools、関連フラグ向けの高度な opt-in DCS (BlockStore) control plane です。default は off/shared/shadow のままで、このパネル自体は release approval を意味しません。書き込み可能な switch は app settings と config flags の openclaw.json を保存し、実行中の Gateway を再起動します。",
       "modeOptIn": "状態: opt-in（オプトイン）",
       "defaultLabel": "デフォルト",
+      "retired": {
+        "label": "廃止済み",
+        "description": "この機能は廃止されています。設定、旧リクエストのパラメーター、復元された記録から有効にすることはできません。",
+        "alternative": "通常のコーディングツールと書き込みログを使用してください。同時に変更する場合は、ワークツリー分離を明示的に選択します。"
+      },
       "enableLabel": "有効化",
       "rollbackLabel": "ロールバック",
       "riskLabel": "リスク",

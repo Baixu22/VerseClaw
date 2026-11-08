@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import { formatErrorMessage } from "../infra/errors.js";
 import {
   discardWriteJournalEntries,
+  journalDirFor,
   setWriteJournalBatchState,
   snapshotPreparedWrite,
   writeJournalRecoveryRef,
@@ -67,6 +68,9 @@ export type ApplyPatchBatchResult = {
   recoveryRef?: string;
   modifiedFiles: string[];
   journal?: ApplyPatchJournalEvidence;
+  /** Known file effect is distinct from the journal's durable terminal state. */
+  effectApplied?: boolean;
+  journalStatePersisted?: boolean;
 };
 
 type PreparedHunk =
@@ -374,21 +378,44 @@ export async function applyPreparedBatch(
       recordSummary(summary, seen, "modified", writeTarget.displayPath);
     }
 
-    setWriteJournalBatchState(batch.journalEntries, "committed");
+    const journalRequested = options.journal && options.journal.enabled !== false;
+    const journalStatePersisted = (!journalRequested || batch.journalEntries.length === batch.originals.size)
+      && setWriteJournalBatchState(batch.journalEntries, "committed");
+    if (!journalStatePersisted) {
+      // The file effects already completed. Rolling them back or replaying them
+      // because metadata failed would create a second, unrecorded mutation.
+      const recoveryRef = writeJournalRecoveryRef(batch.journalEntries)
+        ?? `${journalDirFor(options.journal!.workspaceRoot, options.journal!.sessionId ?? "default")}#batch=${encodeURIComponent(batch.batchId)}`;
+      const incompleteEvidence = journalEvidence(batch, "recovery_required", preview);
+      await recordApplyPatchEffectReceipt({ journal: incompleteEvidence, summary, recoveryRef });
+      return {
+        summary,
+        text: `File writes completed, but journal terminal state was not persisted; recovery_required. Do not replay this patch. Reconcile using ${recoveryRef}.`,
+        batchState: "recovery_required",
+        effectApplied: true,
+        journalStatePersisted: false,
+        recoveryRef,
+        modifiedFiles: [...summary.added, ...summary.modified, ...summary.deleted],
+        ...(incompleteEvidence ? { journal: incompleteEvidence } : {}),
+      };
+    }
     const committedEvidence = journalEvidence(batch, "committed", preview);
     await recordApplyPatchEffectReceipt({ journal: committedEvidence, summary });
     return {
       summary,
       text: formatCommittedSummary(summary),
       batchState: "committed",
+      effectApplied: true,
+      journalStatePersisted: journalRequested ? true : undefined,
       modifiedFiles: [...summary.added, ...summary.modified, ...summary.deleted],
       ...(committedEvidence ? { journal: committedEvidence } : {}),
     };
   } catch (applyError) {
     const unrestored = await rollbackTouchedPaths(touchedKeys, batch.originals, fileOps);
-    const batchState: PatchBatchState =
+    let batchState: PatchBatchState =
       unrestored.length === 0 ? "rolled_back" : "recovery_required";
-    setWriteJournalBatchState(batch.journalEntries, batchState);
+    const journalStatePersisted = setWriteJournalBatchState(batch.journalEntries, batchState);
+    if (!journalStatePersisted) batchState = "recovery_required";
     if (batchState === "rolled_back") {
       discardWriteJournalEntries(batch.journalEntries);
     }
@@ -400,6 +427,8 @@ export async function applyPreparedBatch(
     const text =
       batchState === "rolled_back"
         ? `Patch failed and was rolled back: ${formatErrorMessage(applyError)}`
+        : unrestored.length === 0
+          ? `File effects were rolled back, but journal terminal state was not persisted; recovery_required. Do not replay. Recovery ref: ${recoveryRef}.`
         : `Patch failed and rollback was incomplete; recovery_required. Recovery ref: ${recoveryRef}. Error: ${formatErrorMessage(applyError)}`;
     const failedEvidence = journalEvidence(batch, batchState, preview);
     const failedSummary: ApplyPatchSummary = { added: [], modified: [], deleted: [] };
@@ -412,6 +441,8 @@ export async function applyPreparedBatch(
       summary: failedSummary,
       text,
       batchState,
+      effectApplied: unrestored.length === 0 ? false : undefined,
+      journalStatePersisted,
       ...(recoveryRef ? { recoveryRef } : {}),
       modifiedFiles,
       ...(failedEvidence ? { journal: failedEvidence } : {}),

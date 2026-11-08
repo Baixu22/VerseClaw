@@ -23,6 +23,9 @@ export type OrchestrationWorktreeMergeResult = {
   writeSetMismatch: string[];
   status: OrchestrationWorktreeMergeStatus;
   reason?: string;
+  journalRef?: string;
+  recoveryRequired?: boolean;
+  hashes?: Record<string, string | null>;
 };
 
 function normalizePaths(paths: readonly string[] | undefined): string[] {
@@ -38,42 +41,44 @@ function symmetricDifference(left: readonly string[], right: readonly string[]):
   ].filter((value) => !(a.has(value) && b.has(value))))].sort();
 }
 
-export function mergeOrchestrationWorktrees(params: {
+export async function mergeOrchestrationWorktrees(params: {
   baseRoot: string;
   workers: readonly OrchestrationWorktreeMergeWorker[];
   conflictPolicy?: MergeConflictPolicy;
-}): OrchestrationWorktreeMergeResult[] {
+  assertParentCurrent?: () => void;
+}): Promise<OrchestrationWorktreeMergeResult[]> {
   if (params.workers.length === 0) return [];
   const service = createWorktreeService(params.baseRoot);
   const pending = params.workers.map((worker) => {
     const declaredWriteSet = normalizePaths(worker.declaredWriteSet);
     if (!worker.worktreeGeneration) throw new Error("worktree_generation_required");
     const changed = service.listChangedFiles(worker.worktreeId, worker.worktreeGeneration);
-    const changedFiles = changed.files.length > 0 ? normalizePaths(changed.files) : declaredWriteSet;
-    const writeSetMismatch = changed.source === "git-status"
+    const changedFiles = normalizePaths(changed.files);
+    const writeSetMismatch = changed.source !== "unavailable"
       ? symmetricDifference(declaredWriteSet, changedFiles)
       : [];
     const reasonParts: string[] = [];
     if (writeSetMismatch.length > 0) {
       reasonParts.push(`writeSet_mismatch:${writeSetMismatch.join(",")}`);
     }
-    service.enqueueMerge({
+    const queued = service.enqueueMerge({
       worktreeId: worker.worktreeId,
       worktreeGeneration: worker.worktreeGeneration,
       changedFiles,
       ...(reasonParts.length > 0 ? { reason: reasonParts.join(";") } : {}),
     });
-    return { worker, declaredWriteSet, changed, changedFiles, writeSetMismatch };
+    return { worker, declaredWriteSet, changed, changedFiles, writeSetMismatch, queued };
   });
 
-  const processed = service.processMergeQueue(undefined, {
+  const processed = await service.processMergeQueue(undefined, {
     conflictPolicy: params.conflictPolicy ?? "mark_conflict",
     worktreeIds: pending.map((entry) => entry.worker.worktreeId),
+    assertParentCurrent: params.assertParentCurrent,
   });
   const processedByWorktree = new Map(processed.map((item) => [item.worktreeId, item]));
 
   return pending.map((entry) => {
-    const item = processedByWorktree.get(entry.worker.worktreeId);
+    const item = processedByWorktree.get(entry.worker.worktreeId) ?? entry.queued;
     const reasonParts: string[] = [];
     if (entry.writeSetMismatch.length > 0) {
       reasonParts.push(`writeSet_mismatch:${entry.writeSetMismatch.join(",")}`);
@@ -86,6 +91,9 @@ export function mergeOrchestrationWorktrees(params: {
       changedFilesSource: entry.changed.source,
       writeSetMismatch: entry.writeSetMismatch,
       status: item?.status === "pending" || !item ? "missing" : item.status,
+      journalRef: item?.journalRef,
+      recoveryRequired: item?.recoveryRequired,
+      hashes: item?.hashes,
       ...(reasonParts.length > 0 ? { reason: reasonParts.join(";") } : {}),
     };
   });

@@ -1,9 +1,12 @@
 /** Session-scoped MCP runtime manager, catalog loader, and transport lifecycle. */
 import crypto from "node:crypto";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+import {
+  StreamableHTTPClientTransport,
+  StreamableHTTPError,
+} from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
-import { ErrorCode, type CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import { ErrorCode, McpError, type CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { ServerCapabilities } from "@modelcontextprotocol/sdk/types.js";
 import { AjvJsonSchemaValidator } from "@modelcontextprotocol/sdk/validation/ajv-provider.js";
 import type {
@@ -195,7 +198,13 @@ function connectWithTimeout(
 ): Promise<void> {
   return new Promise<void>((resolve, reject) => {
     const timer = setTimeout(
-      () => reject(new Error(`MCP server connection timed out after ${timeoutMs}ms`)),
+      () =>
+        reject(
+          new McpError(
+            ErrorCode.RequestTimeout,
+            `MCP server connection timed out after ${timeoutMs}ms`,
+          ),
+        ),
       timeoutMs,
     );
     client.connect(transport).then(
@@ -550,6 +559,13 @@ export function createSessionMcpRuntime(params: {
   let catalogInFlight: Promise<McpToolCatalog> | undefined;
   let catalogInvalidationGeneration = 0;
   const sessions = new Map<string, BundleMcpSession>();
+  const pendingDisposals = new Set<Promise<void>>();
+  const scheduleSessionDisposal = (session: BundleMcpSession) => {
+    const pending = disposeSession(session).catch(() => {});
+    pendingDisposals.add(pending);
+    void pending.then(() => pendingDisposals.delete(pending));
+  };
+  const listingServers = new Set<string>();
   const serverBackoff = new Map<string, McpServerBackoffState>();
   const recordServerToolFailure = (serverName: string, nowMs: number) => {
     const previous = serverBackoff.get(serverName);
@@ -562,7 +578,9 @@ export function createSessionMcpRuntime(params: {
   };
   const runGuardedServerRequest = async <T>(
     serverName: string,
+    session: BundleMcpSession,
     request: () => Promise<T>,
+    signal?: AbortSignal,
   ): Promise<T> => {
     const nowMs = Date.now();
     const backoff = serverBackoff.get(serverName);
@@ -573,10 +591,13 @@ export function createSessionMcpRuntime(params: {
     }
     try {
       const result = await request();
-      serverBackoff.delete(serverName);
+      if (sessions.get(serverName) === session) serverBackoff.delete(serverName);
       return result;
     } catch (error) {
-      recordServerToolFailure(serverName, nowMs);
+      retireRejectedHttpSession(serverName, session, error);
+      if (!signal?.aborted && sessions.get(serverName) === session) {
+        recordServerToolFailure(serverName, nowMs);
+      }
       throw error;
     }
   };
@@ -599,6 +620,27 @@ export function createSessionMcpRuntime(params: {
     catalogInvalidationGeneration += 1;
     catalog = null;
     catalogInFlight = undefined;
+  };
+  const retireRejectedHttpSession = (
+    serverName: string,
+    session: BundleMcpSession,
+    error: unknown,
+  ) => {
+    if (
+      sessions.get(serverName) !== session ||
+      !(error instanceof StreamableHTTPError) ||
+      error.code !== 404 ||
+      !(session?.transport instanceof StreamableHTTPClientTransport) ||
+      !session.transport.sessionId
+    )
+      return;
+    // The SDK retains expired HTTP session IDs. Retire the requesting connection
+    // only; late errors must not close its replacement or replay the tool effect.
+    sessions.delete(serverName);
+    invalidateCatalogMemo();
+    // Failure reaches the caller immediately; runtime disposal still owns and
+    // drains this connection's bounded asynchronous cleanup.
+    scheduleSessionDisposal(session);
   };
 
   /**
@@ -626,6 +668,9 @@ export function createSessionMcpRuntime(params: {
       if (!sessions.has(serverName)) {
         return;
       }
+      // The in-flight tools/list already captures this server's error in diagnostics.
+      // Invalidating its enclosing discovery would discard healthy peer results too.
+      if (listingServers.has(serverName)) return;
       invalidateCatalogMemo();
       return;
     }
@@ -638,11 +683,12 @@ export function createSessionMcpRuntime(params: {
     sessions.delete(serverName);
     invalidateCatalogMemo();
     logWarn(`bundle-mcp: server "${serverName}" transport closed; dropped its cached tools.`);
-    void disposeSession(session).catch(() => {});
+    scheduleSessionDisposal(session);
   };
 
-  const getCatalog = async (): Promise<McpToolCatalog> => {
+  const getCatalog = async (options?: { refresh?: boolean }): Promise<McpToolCatalog> => {
     failIfDisposed();
+    if (options?.refresh && !catalogInFlight) invalidateCatalogMemo();
     if (catalog) {
       return catalog;
     }
@@ -734,26 +780,35 @@ export function createSessionMcpRuntime(params: {
               // session keeps the handlers installed the first time.
               const sdkOnClose = session.transport.onclose;
               const sdkOnError = session.transport.onerror;
+              const connectedSession = session;
               session.transport.onclose = () => {
                 sdkOnClose?.();
-                handleTransportLost(serverName, "close");
+                if (sessions.get(serverName) === connectedSession)
+                  handleTransportLost(serverName, "close");
               };
               session.transport.onerror = (error: Error) => {
                 sdkOnError?.(error);
-                handleTransportLost(serverName, "error");
+                if (sessions.get(serverName) === connectedSession)
+                  handleTransportLost(serverName, "error");
               };
             }
             failIfDisposed();
             const capabilities = summarizeServerCapabilities(
               session.client.getServerCapabilities(),
             );
-            const listedTools = await listAllToolsBestEffort({
-              client: session.client,
-              timeoutMs: getCatalogListTimeoutMs(rawServer, resolved.requestTimeoutMs),
-              suppressUnsupported: Boolean(
-                !capabilities.tools && (capabilities.resources || capabilities.prompts),
-              ),
-            });
+            listingServers.add(serverName);
+            let listedTools: ListedTool[];
+            try {
+              listedTools = await listAllToolsBestEffort({
+                client: session.client,
+                timeoutMs: getCatalogListTimeoutMs(rawServer, resolved.requestTimeoutMs),
+                suppressUnsupported: Boolean(
+                  !capabilities.tools && (capabilities.resources || capabilities.prompts),
+                ),
+              });
+            } finally {
+              listingServers.delete(serverName);
+            }
             failIfDisposed();
             const selection = getMcpToolSelection(rawServer);
             const exposedTools = listedTools.filter((tool) =>
@@ -813,6 +868,7 @@ export function createSessionMcpRuntime(params: {
               });
             }
           } catch (error) {
+            await retireRejectedHttpSession(serverName, session, error);
             const message = redactErrorUrls(error);
             if (!disposed) {
               const action = reusedSession ? "refresh" : "start";
@@ -825,10 +881,14 @@ export function createSessionMcpRuntime(params: {
               safeServerName,
               launchSummary: resolved.description,
               message,
+              ...(isMcpConfigRecord(error) && typeof error.code === "number"
+                ? { errorCode: error.code }
+                : {}),
             });
             if (!reusedSession) {
-              await disposeSession(session);
               sessions.delete(serverName);
+              // Intentional startup cleanup must not invalidate healthy peers via onclose.
+              await disposeSession(session);
             }
             failIfDisposed();
           }
@@ -898,15 +958,18 @@ export function createSessionMcpRuntime(params: {
     markUsed() {
       lastUsedAt = Date.now();
     },
-    async callTool(serverName, toolName, input) {
+    async callTool(serverName, toolName, input, signal) {
       failIfDisposed();
+      signal?.throwIfAborted();
       await getCatalog();
+      signal?.throwIfAborted();
       const session = sessions.get(serverName);
       if (!session) {
         throw new Error(`bundle-mcp server "${serverName}" is not connected`);
       }
       return await runGuardedServerRequest(
         serverName,
+        session,
         async () =>
           (await session.client.callTool(
             {
@@ -914,8 +977,18 @@ export function createSessionMcpRuntime(params: {
               arguments: isMcpConfigRecord(input) ? input : {},
             },
             undefined,
-            { timeout: session.requestTimeoutMs },
+            { timeout: session.requestTimeoutMs, signal },
           )) as CallToolResult,
+        signal,
+      );
+    },
+    async ping(serverName) {
+      failIfDisposed();
+      await getCatalog();
+      const session = sessions.get(serverName);
+      if (!session) throw new Error(`bundle-mcp server "${serverName}" is not connected`);
+      await runGuardedServerRequest(serverName, session, () =>
+        session.client.ping({ timeout: session.requestTimeoutMs }),
       );
     },
     async listResources(serverName) {
@@ -925,7 +998,7 @@ export function createSessionMcpRuntime(params: {
       if (!session) {
         throw new Error(`bundle-mcp server "${serverName}" is not connected`);
       }
-      return await runGuardedServerRequest(serverName, async () =>
+      return await runGuardedServerRequest(serverName, session, async () =>
         listAllResources(session.client, session.requestTimeoutMs),
       );
     },
@@ -938,6 +1011,7 @@ export function createSessionMcpRuntime(params: {
       }
       return await runGuardedServerRequest(
         serverName,
+        session,
         async () =>
           await session.client.readResource({ uri }, { timeout: session.requestTimeoutMs }),
       );
@@ -949,7 +1023,7 @@ export function createSessionMcpRuntime(params: {
       if (!session) {
         throw new Error(`bundle-mcp server "${serverName}" is not connected`);
       }
-      return await runGuardedServerRequest(serverName, async () =>
+      return await runGuardedServerRequest(serverName, session, async () =>
         listAllPrompts(session.client, session.requestTimeoutMs),
       );
     },
@@ -962,6 +1036,7 @@ export function createSessionMcpRuntime(params: {
       }
       return await runGuardedServerRequest(
         serverName,
+        session,
         async () =>
           await session.client.getPrompt(
             { name, ...(args ? { arguments: args } : {}) },
@@ -978,7 +1053,10 @@ export function createSessionMcpRuntime(params: {
       catalogInFlight = undefined;
       const sessionsToClose = Array.from(sessions.values());
       sessions.clear();
-      await Promise.allSettled(sessionsToClose.map((session) => disposeSession(session)));
+      await Promise.allSettled([
+        ...sessionsToClose.map((session) => disposeSession(session)),
+        ...pendingDisposals,
+      ]);
     },
   };
 }

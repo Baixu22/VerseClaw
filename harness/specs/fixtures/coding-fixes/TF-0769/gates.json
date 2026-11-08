@@ -1,0 +1,266 @@
+{
+  "candidate": {
+    "commit": "f51de63b27f9ee4fbbc9997e568787446e857b7e",
+    "tree": "9470fe3e56a9d0863d0479f4ce379b04e3e4ce06",
+    "dirty": false
+  },
+  "driven_by": "agent",
+  "actor": "codex-coding-TF-0769-relay",
+  "realHumanEvidence": false,
+  "commands": [
+    {
+      "name": "focused-units",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/orchestration-worktree-merge.test.ts",
+        "tests/unit/versegit-host-apply.test.ts",
+        "tests/unit/git-api.test.ts",
+        "tests/unit/role-orchestration-methods.test.ts",
+        "tests/unit/orchestration-resource-scheduler.test.ts",
+        "tests/unit/versegit-runtime-bindings.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0769\\final\\focused-unit.json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0769\\projection-f51de63b2",
+      "env": {},
+      "startedAt": "2026-11-05T17:19:57.916348+00:00",
+      "seconds": 125.52608633041382,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "runtime-units",
+      "argv": [
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "src/agents/worktree-service.test.ts",
+        "src/agents/worktree-pnpm-install.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0769\\final\\runtime-unit.json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime",
+      "env": {},
+      "startedAt": "2026-11-05T17:22:04.163952+00:00",
+      "seconds": 42.168981313705444,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "typecheck-direct",
+      "argv": [
+        "node",
+        ".audit/TF-0769/typecheck-direct.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T17:22:46.747052+00:00",
+      "seconds": 90.6792688369751,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "runtime-test-types",
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        ".audit/TF-0769/runtime-test-types.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T17:24:17.864082+00:00",
+      "seconds": 1.5528326034545898,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "lint",
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "openclaw_runtime/src/agents/orchestration-worktree-merge.ts",
+        "openclaw_runtime/src/agents/subagent-registry.ts",
+        "openclaw_runtime/src/agents/subagent-registry.types.ts",
+        "openclaw_runtime/src/agents/worktree-merge-files.ts",
+        "openclaw_runtime/src/agents/worktree-service.test.ts",
+        "openclaw_runtime/src/agents/worktree-service.ts",
+        "openclaw_runtime/src/plugin-sdk/journaled-git-apply.ts",
+        "scripts/coding-baseline/probes/worktrees.mts",
+        "tests/e2e/coding-worktree-merge-integrity.spec.ts",
+        "tests/unit/orchestration-worktree-merge.test.ts",
+        "tests/unit/versegit-host-apply.test.ts"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T17:24:19.572067+00:00",
+      "seconds": 6.777589559555054,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "contract",
+      "argv": [
+        "node",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T17:24:26.504475+00:00",
+      "seconds": 0.8329432010650635,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "harness",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/coding-worktree-merge-integrity.md"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T17:24:27.497647+00:00",
+      "seconds": 0.7660360336303711,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "harness-dry-run",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/coding-worktree-merge-integrity.md",
+        "--dry-run"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T17:24:28.433704+00:00",
+      "seconds": 1.501349925994873,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "comms-replay",
+      "argv": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T17:24:30.054050+00:00",
+      "seconds": 0.2598764896392822,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "comms-compare",
+      "argv": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T17:24:30.455752+00:00",
+      "seconds": 0.17511677742004395,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "runtime-build",
+      "argv": [
+        "node",
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T17:24:30.751147+00:00",
+      "seconds": 69.73026371002197,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "electron-build",
+      "argv": [
+        "node",
+        "--max-old-space-size=6144",
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T17:25:41.113069+00:00",
+      "seconds": 71.17041635513306,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "electron-e2e",
+      "argv": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/coding-worktree-merge-integrity.spec.ts",
+        "--workers=1",
+        "--reporter=json",
+        "--output=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0769\\final\\e2e-results"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {
+        "PLAYWRIGHT_JSON_OUTPUT_FILE": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0769\\final\\e2e.json",
+        "CLAWX_E2E_APP_LOGS": "1",
+        "CLAWX_E2E_KEEP_TEMP": "1",
+        "CLAWX_E2E_STARTUP_TRACE": "1",
+        "CLAWX_E2E_RUN_ROOT_BASE": "D:\\ClawX\\.tmp\\coding-s5-01a1ab23-final",
+        "TEMP": "D:\\ClawX\\.tmp\\coding-s5-01a1ab23-final\\tmp",
+        "TMP": "D:\\ClawX\\.tmp\\coding-s5-01a1ab23-final\\tmp"
+      },
+      "startedAt": "2026-11-05T17:26:52.875891+00:00",
+      "seconds": 238.167875289917,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "original-probes",
+      "argv": [
+        "node",
+        "--import",
+        "./openclaw_runtime/node_modules/tsx/dist/loader.mjs",
+        "scripts/coding-baseline/probes/worktrees.mts"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {
+        "TSX_TSCONFIG_PATH": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\tsconfig.json",
+        "CODING_BASELINE_OUTPUT": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0769\\final\\probes"
+      },
+      "startedAt": "2026-11-05T17:30:51.209980+00:00",
+      "seconds": 2.308321952819824,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "artifact-retention",
+      "argv": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T17:30:53.634720+00:00",
+      "seconds": 5.197735071182251,
+      "exitCode": 0,
+      "timedOut": false
+    }
+  ]
+}

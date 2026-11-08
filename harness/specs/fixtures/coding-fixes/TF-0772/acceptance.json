@@ -1,0 +1,86 @@
+{
+  "schema": "CodingFixAcceptance/v1",
+  "taskId": "TF-0772",
+  "finding": "A8",
+  "driven_by": "agent",
+  "actor": "codex-01a1ab23",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "d9bbffa8daaca596aa9fa027ba6065ae829f6af9",
+    "tree": "c8f1fa8973e7f4c66296d1482ad8e6b89b93c698",
+    "dirty": false
+  },
+  "status": "resolved",
+  "tests": {
+    "candidate-units": 130,
+    "candidate-invoke": 9,
+    "candidate-lifecycle": 6,
+    "projection-units": 130
+  },
+  "e2e": {
+    "passed": 2,
+    "failed": 0,
+    "scriptedModel": true,
+    "realElectronGatewaySdk": true,
+    "delayedCallMs": 7636,
+    "delayedEffects": 1,
+    "ownedSurvivors": []
+  },
+  "review": {
+    "actionableFindings": 0,
+    "reports": [
+      "autoreview-final.json",
+      "autoreview-playwright-confirmation.json"
+    ]
+  },
+  "sourceHashes": {
+    "docs/modules/integrations-and-surfaces.md": "c6725bc8c3724b1620d57fbb0b47c2f5cbd36b222be3d0402b9495c8dcd4c741",
+    "docs/modules/workspace-and-coding.md": "26018b338bec3610513326d4c89f8d40d86f4c8beeb2e55d12546c49ed847d5b",
+    "electron/gateway/config-sync.ts": "aec3c84f1f15387bf9e3d21740275dc493c2f6aecb536b81f2c4f0d2eaf9dd74",
+    "electron/gateway/supervisor.ts": "4081c51ae6345332ad540e5cdeacc5ebd6259fb3518ed8b4cc4c1d6fc3c8ccf6",
+    "electron/main/ipc-handlers.ts": "0d6966ed92d79d459e3fd46c6a6876e06ad844eb39244b79e3b5aa54f3a0cc56",
+    "electron/services/gateway-api.ts": "0298b9d6fc3ba4fe9ed50f9744d48fe44443e4b1e3b2216c8ca22ab70665a70a",
+    "electron/services/mcp-api.ts": "44ae4be327e6029d77408a434fa2d8238af5652415c7e5c0fbd793c61d9cd55a",
+    "electron/services/workspace-permissions.ts": "aebceedbfd990960eefbe55c7b6b284885b006c2ab0cdc4c55cbe49c7a605dcb",
+    "electron/utils/channel-config.ts": "065ff29157e0f8c49872365c2a08930a43da57b38d77c1167939960237f49f14",
+    "harness/specs/tasks/coding-mcp-management-runtime.md": "f8afd8650950adf9cf3fcba81dc7ea59406ef72e72d31e5145a0fc6275a85410",
+    "openclaw_runtime/packages/gateway-protocol/src/schema/agents-models-skills.ts": "190d2612aecdcfc2d0c6353b117c0a982d1466d4d29dbd7e3fdeff701f379a74",
+    "openclaw_runtime/src/agents/agent-bundle-mcp-runtime.ts": "68c7cfdba54dc93fb97e41375fe2dc4bea00fea1f24e9975241450c63b2c1e26",
+    "openclaw_runtime/src/agents/agent-bundle-mcp-types.ts": "652d253f00748342e19353a9ef45a834546651e245825df42e6f83b351df5ca9",
+    "openclaw_runtime/src/gateway/methods/core-descriptors.ts": "1b10d247a83b2c94b46584cde2338ddcc6f737a425f777ab6a6da0daa1fadb6a",
+    "openclaw_runtime/src/gateway/server-methods.ts": "8f508142c061b4dea1d5b790253dd9ea1e14402b11e92d2fc93448036779c23b",
+    "openclaw_runtime/src/gateway/server-methods/mcp-management.ts": "b8b3f996987b7eb17c39a917e20e92c6cf64e4dccfcca581fc9c1e6cdec2508a",
+    "openclaw_runtime/src/gateway/server-methods/tools-invoke-mcp-fallback.test.ts": "0fb4eb347c707fd4b3946a50405f83e36b5c06165d22f009ba1ff7e28e6197c5",
+    "openclaw_runtime/src/gateway/server-methods/tools-invoke.ts": "5af6849e26b3d0ad2e687e272889f6baa5ad48c6e9bb52230c9f1d3e1e540d73",
+    "openclaw_runtime/src/gateway/tool-resolution.ts": "4a6cd0b952748796cf22c8d06fa9a2329e75bc754f31e239be09a252b945c67f",
+    "openclaw_runtime/src/gateway/tools-invoke-http.ts": "39796992f33f7fa81ce5ddb23bf2db75d23783dbdddb6e520171a93fc066f3a5",
+    "openclaw_runtime/src/gateway/tools-invoke-shared.ts": "42ad8fb97a9829a42000e997e5ea477e1481e63c91e0e3e387dd327f8d22415a",
+    "shared/host-api/contract.ts": "41c49266c5ff14b4b3321969ae0fe3e28fa48256f697b294ac6a267f5eaf1d12",
+    "shared/types/mcp.ts": "d058afb719c41a5f43c02fa2bd72a76be2d0a94a1317bc612d99f779baca2b92",
+    "src/pages/Skills/index.tsx": "0f832a76bca56a1611b281cc51a45314291da78dd3cd5547dbd7735d319f881c",
+    "src/stores/mcp.ts": "d54c67c750fe6a307525402e4ed7072e56f7729423c677dba8dc15bdeda3a5a3",
+    "tests/e2e/coding-mcp-management.spec.ts": "018adc198719dec325d746c3823d1ee08f9e7e2ae49797ab474b0f59d1ed05b8",
+    "tests/e2e/fixtures/coding-mcp-server.ts": "32fb03cd720f06d34dfe8af586ce0a34b74b3463bcfe5b7cfc105a6494b401f1",
+    "tests/e2e/fixtures/electron.ts": "c11e653be7187dad2e15719563aaca455dfc0341fcff12aa55fd2f35f2f4a919",
+    "tests/unit/config-sync-source-runtime.test.ts": "e7fc5ab435c08acfc948ae2d6aa87bc9155c10d89f0a90992a84b91c84ee1d9c",
+    "tests/unit/gateway-permissions-api.test.ts": "52ff9eff082b13b99bdbb5d001b6b3d027e26f12b2dcdd7adda9db721e71d2ce",
+    "tests/unit/gateway-supervisor.test.ts": "ec8cbe4b61991cccf46a5c1eb2864120171eb8e39f633a06d1c2cd8144180e3c",
+    "tests/unit/mcp-api.test.ts": "9c7f768874b2c4c19dcf9e16ab36503bf8f6c327651104dc3b67170f9fc4fbfe",
+    "tests/unit/mcp-management-runtime.test.ts": "83867f01305c1b968e51193fd1c0321b459f71363eac8f939604f1bdb05501cb",
+    "tests/unit/mcp-p4-003-runtime-surface.test.ts": "fb9ecf3ca6215e077f158b64f793a94c72ab133f3a13b2a4bdec01ff965ba171",
+    "tests/unit/tool-provider-registry.test.ts": "8ee50ea031f11cde43e2a52c36b901bfa42159872fc6fe9d37a92f2ca8d15aa0"
+  },
+  "criteria": [
+    "Registered Main/Gateway list, call and SDK ping use the session runtime and retain connected-empty versus failed discovery.",
+    "Persisted session generation, coordinator root, sandbox owner, effective tool policy, schema and approvals govern management and tools.invoke; revoked scope grants are rebuilt from current owners.",
+    "Failed discovery can recover; failed peers and catalog notifications do not discard healthy/completed effects; six-second call completes once within the Host deadline.",
+    "UI shows real tools or explicit failure after network policy save; host-native Git remains registered without an MCP handshake.",
+    "Source-only projection, current gates, inspected screenshots, process/endpoint cleanup and hashes bind the candidate."
+  ],
+  "baselineFailure": {
+    "gate": "harness:ci",
+    "exitCode": 1,
+    "reason": "Agent Dev workbench/deep-test/history/quality evidence exceeded the existing 24h age window; structural checks and 59 harness tests passed. Historical artifacts were not rewritten."
+  },
+  "scope": "Windows source Electron with a scripted local model and real MCP SDK endpoints. Live model quality and packaged distribution remain later TF-0758 nodes."
+}

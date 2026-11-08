@@ -1,0 +1,27 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-coding-TF-0768-relay",
+  "realHumanEvidence": false,
+  "argv": [
+    "node",
+    "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+    "--dir",
+    "openclaw_runtime",
+    "install",
+    "--prefer-offline",
+    "--frozen-lockfile",
+    "--ignore-scripts",
+    "--reporter=append-only"
+  ],
+  "exitCode": 0,
+  "seconds": 433.6,
+  "resolved": 1098,
+  "reused": 1086,
+  "downloaded": 7,
+  "added": 1098,
+  "packageManager": "pnpm 11.2.2",
+  "rootDependencies": "reused D:/ClawX/node_modules",
+  "runtimeDependencies": "private lockfile install",
+  "scripts": "ignored",
+  "warning": "optional workspace bin openclaw.mjs.EXE could not be created"
+}

@@ -64,7 +64,8 @@ export type TeamOrchestrationMetadata = {
     | "no-verifier-role"
     | "spawn-failed"
     | "candidate-apply-host-missing"
-    | "candidate-apply-not-complete";
+    | "candidate-apply-not-complete"
+    | "retired-patch-flow";
   verifierStartedAt?: number;
   verifierSkippedAt?: number;
   /** Explicit structured verifier decision; free text alone cannot authorize pass (F-AUTH-005). */
@@ -92,6 +93,9 @@ export type TeamOrchestrationMetadata = {
   worktreeWriteSetMismatch?: string[];
   worktreeMergeReason?: string;
   worktreeMergeProcessedAt?: number;
+  worktreeMergeJournalRef?: string;
+  worktreeMergeHashes?: Record<string, string | null>;
+  worktreeMergeRecoveryRequired?: boolean;
   routeDiagnostics?: RouteDiagnostics;
   qualityPolicy?: OrchestrationQualityPolicy;
   repairPolicy?: OrchestrationRepairPolicy;
@@ -99,7 +103,7 @@ export type TeamOrchestrationMetadata = {
   handoffArtifactsMode?: "off" | "on";
   handoffArtifacts?: WorkerOutputHandoffArtifact[];
   allowFollowupPlanning?: boolean;
-  /** Explicit execution-side patch-flow opt-in; advisory output alone never sets this. */
+  /** Historical execution marker; retirement prevents it from starting new effects. */
   patchFlowExecution?: true;
   /** Worker write-set provenance carried with an extracted patch proposal. */
   patchFlowWriteSet?: string[];
@@ -129,7 +133,8 @@ export type TeamOrchestrationMetadata = {
     authorizationId: string;
     baseOid: string;
     refsDigest: string;
-  };};
+  };
+};
 
 /** Optional tag that makes a child completion a ContextFoldResult delivery. */
 export type ContextFoldRunMetadata = {

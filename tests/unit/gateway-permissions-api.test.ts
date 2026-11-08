@@ -158,6 +158,24 @@ describe('gateway permission approval flow', () => {
     activeWorkspace.profile = workspace();
   });
 
+  it.each([
+    { workspaceId: 'other-workspace' },
+    { workspaceDir: 'D:/tmp/other-workspace' },
+    { sessionKey: 'agent:main:foreign-workspace' },
+  ])('TF-0772 rejects MCP scope drift before the workspace permission gate: %j', async (changed) => {
+    activeWorkspace.profile = workspace('fullAccess');
+    const gatewayManager = { rpc: vi.fn(async () => ({ success: true })) };
+    const fabric = { run: vi.fn((method, params, timeoutMs, run) => run(method, params, timeoutMs)) };
+    const { createGatewayApi } = await import('@electron/services/gateway-api');
+    const api = createGatewayApi(gatewayManager as never, fabric as never);
+    expect(await api.rpc({ method: 'mcp.callTool', params: {
+      serverId: 'fixture', toolName: 'echo', workspaceId: activeWorkspace.profile.id,
+      workspaceDir: activeWorkspace.profile.rootPath, sessionKey: activeWorkspace.profile.activeSessionKey,
+      agentId: 'main', expectedSessionGeneration: 'generation-1', ...changed,
+    } })).toMatchObject({ success: false, blocked: true });
+    expect(gatewayManager.rpc).not.toHaveBeenCalled();
+  });
+
   it('requires approval for dangerous gateway RPC and consumes approval before replay', async () => {
     const gatewayManager = {
       getStatus: vi.fn(() => ({ state: 'running', port: 18789 })),
@@ -211,6 +229,24 @@ describe('gateway permission approval flow', () => {
       success: false,
       approvalRequired: true,
     });
+  });
+  it.each(['tools.invoke', 'mcp.callTool'])('uses the persisted coordinator root at the %s permission gate', async (method) => {
+    activeWorkspace.profile = workspace('fullAccess');
+    activeWorkspace.profile.coordinatorBindings = { 'agent:main:main': {
+      workspaceId: activeWorkspace.profile.id, sessionKey: 'agent:main:main', agentId: 'main', state: 'active',
+      environment: { canonicalRoot: 'D:/tmp/managed-worktree' }, sessionGeneration: 'generation-1',
+    } } as unknown as NonNullable<WorkspaceProfile['coordinatorBindings']>;
+    const gatewayManager = { rpc: vi.fn(async () => ({ success: true })) };
+    const fabric = { run: vi.fn((name, params, timeoutMs, run) => run(name, params, timeoutMs)) };
+    const { createGatewayApi } = await import('@electron/services/gateway-api');
+    const api = createGatewayApi(gatewayManager as never, fabric as never);
+    const params = { serverId: 'fixture', toolName: 'echo', name: 'fixture__echo', workspaceId: activeWorkspace.profile.id,
+      workspaceDir: 'D:/tmp/managed-worktree', sessionKey: 'agent:main:main', agentId: 'main', expectedSessionGeneration: 'generation-1' };
+    expect(await api.rpc({ method, params })).toMatchObject({ success: true });
+    expect(await api.rpc({ method, params: { ...params, expectedSessionGeneration: 'generation-2' } })).toMatchObject({ success: false, blocked: true });
+    activeWorkspace.profile.coordinatorBindings!['agent:main:main'].state = 'paused';
+    expect(await api.rpc({ method, params })).toMatchObject({ success: false, blocked: true });
+    expect(gatewayManager.rpc).toHaveBeenCalledTimes(1);
   });
 
   it('does not allow an approved gateway request to be reused for different params', async () => {

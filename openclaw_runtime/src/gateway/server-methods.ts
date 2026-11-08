@@ -205,6 +205,10 @@ const loadToolsInvokeHandlers = lazyHandlerModule(
   () => import("./server-methods/tools-invoke.js"),
   (module) => module.toolsInvokeHandlers,
 );
+const loadMcpManagementHandlers = lazyHandlerModule(
+  () => import("./server-methods/mcp-management.js"),
+  (module) => module.mcpManagementHandlers,
+);
 const loadSecurityVerificationShadowHandlers = lazyHandlerModule(
   () => import("./server-methods/security-verification-shadow.js"),
   (module) => module.securityVerificationShadowHandlers,
@@ -413,6 +417,10 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
   ...createLazyCoreHandlers({
     methods: ["tools.invoke"],
     loadHandlers: loadToolsInvokeHandlers,
+  }),
+  ...createLazyCoreHandlers({
+    methods: ["mcp.listTools", "mcp.heartbeat", "mcp.callTool"],
+    loadHandlers: loadMcpManagementHandlers,
   }),
   ...createLazyCoreHandlers({
     methods: [

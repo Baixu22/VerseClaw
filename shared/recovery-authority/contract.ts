@@ -235,6 +235,22 @@ export type RecoveryDecision = {
  * multiple independent recovery decisions; entry adapters supply facts, and the
  * authority returns one decision.
  */
+export type RecoveryOwnerAdmission = {
+  readonly idempotencyKey: string;
+  readonly ownerId: string;
+  readonly attempts: number;
+  readonly state: "pending" | "accepted" | "failed" | "reconcile" | "wedged" | "settled";
+  readonly decision: RecoveryDecision;
+  readonly updatedAt: number;
+  readonly processId: number;
+  readonly ownerEpoch: string;
+};
+
+export type RecoveryAdmissionIdentity = Pick<
+  RecoveryOwnerAdmission,
+  "idempotencyKey" | "ownerId" | "attempts" | "ownerEpoch"
+>;
+
 export interface RecoveryAuthority {
   readonly contractVersion: RecoveryAuthorityContractVersion;
   readonly id: RecoveryAuthorityId;

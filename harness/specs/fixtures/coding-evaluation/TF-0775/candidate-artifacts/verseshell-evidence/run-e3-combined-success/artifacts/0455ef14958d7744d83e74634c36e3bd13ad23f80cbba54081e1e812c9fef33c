@@ -1,0 +1,1 @@
+{"schema":"clawx.e3.required-tests/v1","mode":"full","ok":true,"checks":[{"id":"worker-a","passed":true},{"id":"worker-b","passed":true},{"id":"combined-b-v2","passed":true}]}

@@ -34,14 +34,12 @@ describe("createOrchestratorPlan writeSet fill (C3 live)", () => {
       task: "targeted edit",
       fileHints: ["src/hint.ts"],
       roles: BUILT_IN_ROLE_CONTRACTS,
-      workers: [
-        { roleName: "implementer", task: "edit explicit", writeSet: ["src/explicit.ts"] },
-      ],
+      workers: [{ roleName: "implementer", task: "edit explicit", writeSet: ["src/explicit.ts"] }],
     });
     expect(plan.taskGraph.nodes[0]?.writeSet).toEqual(["src/explicit.ts"]);
   });
 
-  it("records patch-flow as advisory-only without changing isolation", () => {
+  it("records supported worktree advice without changing requested isolation", () => {
     const plan = createOrchestratorPlan({
       task: "long dense overlapping implementation",
       roles: BUILT_IN_ROLE_CONTRACTS,
@@ -49,14 +47,18 @@ describe("createOrchestratorPlan writeSet fill (C3 live)", () => {
       workers: [
         { roleName: "implementer", task: "edit shared module", writeSet: ["src/shared.ts"] },
         { roleName: "implementer", task: "edit shared module again", writeSet: ["src/shared.ts"] },
-        { roleName: "implementer", task: "edit shared module once more", writeSet: ["src/shared.ts"] },
+        {
+          roleName: "implementer",
+          task: "edit shared module once more",
+          writeSet: ["src/shared.ts"],
+        },
       ],
     });
 
     expect(plan.routeDiagnostics.isolationAdvisory).toMatchObject({
       boundary: "advisory-only",
       applied: false,
-      recommendedMode: "patch-flow",
+      recommendedMode: "worktree",
       reason: "long_goal_dense_multi_worker",
       score: {
         duration: 45,

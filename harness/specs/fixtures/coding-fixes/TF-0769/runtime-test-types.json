@@ -1,0 +1,6 @@
+{
+  "extends": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tsconfig.test.json",
+  "include": [
+    "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\src\\agents\\worktree-service.test.ts"
+  ]
+}

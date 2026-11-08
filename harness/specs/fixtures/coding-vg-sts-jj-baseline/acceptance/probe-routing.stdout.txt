@@ -1,0 +1,180 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-coding-audit",
+  "realHumanEvidence": false,
+  "area": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\c0-27bd9df47\\routing\\routes-BjwRA4",
+  "candidate": "27bd9df474236a52da03fd6b63613b66d0cc6af4",
+  "rows": [
+    {
+      "id": "stock-gateway-methods",
+      "actual": {
+        "mcp.listTools": false,
+        "mcp.callTool": false,
+        "mcp.heartbeat": false,
+        "tools.catalog": true,
+        "tools.effective": true,
+        "tools.invoke": true,
+        "orchestrator.plan": true,
+        "orchestrator.run": true
+      }
+    },
+    {
+      "id": "mcp-image-real-hook-and-sdk",
+      "actual": {
+        "actual": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "result": {
+            "content": [
+              {
+                "type": "image",
+                "text": "{\"type\":\"image\",\"data\":\"AA==\",\"mimeType\":\"image/png\"}"
+              }
+            ],
+            "isError": false
+          }
+        },
+        "sdkAccepted": false
+      }
+    },
+    {
+      "id": "mcp-error-real-hook",
+      "actual": {
+        "actual": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "result": {
+            "content": [
+              {
+                "type": "text",
+                "text": "fixture failed"
+              }
+            ],
+            "isError": false
+          }
+        }
+      }
+    },
+    {
+      "id": "rpc-top-level-isolation",
+      "actual": {
+        "requested": "worktree",
+        "actual": {
+          "ok": true,
+          "planIsolation": "shared",
+          "workerIsolation": null
+        },
+        "workerOverride": {
+          "ok": true,
+          "planIsolation": "shared",
+          "workerIsolation": "worktree"
+        }
+      }
+    },
+    {
+      "id": "rpc-run-workspace-carrier",
+      "actual": {
+        "requestedRoot": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\c0-27bd9df47\\routing\\routes-BjwRA4",
+        "ctxHasRoot": false,
+        "spawnCalls": 0,
+        "failures": [
+          {
+            "roleName": "implementer",
+            "status": "error",
+            "error": "worktree isolation requires a workspaceDir"
+          }
+        ]
+      }
+    },
+    {
+      "id": "retired-patch-flow-explicit-false",
+      "actual": {
+        "recommendation": "patch-flow",
+        "spawnProbes": [
+          {
+            "deniedWrite": false,
+            "proposalPrompt": false
+          },
+          {
+            "deniedWrite": false,
+            "proposalPrompt": false
+          },
+          {
+            "deniedWrite": false,
+            "proposalPrompt": false
+          }
+        ],
+        "failures": [
+          {
+            "roleName": "implementer",
+            "status": "error",
+            "error": "fixture spawn sentinel"
+          },
+          {
+            "roleName": "implementer",
+            "status": "error",
+            "error": "fixture spawn sentinel"
+          },
+          {
+            "roleName": "implementer",
+            "status": "error",
+            "error": "fixture spawn sentinel"
+          }
+        ]
+      }
+    },
+    {
+      "id": "retired-patch-flow-explicit-true",
+      "actual": {
+        "recommendation": "patch-flow",
+        "spawnProbes": [
+          {
+            "deniedWrite": true,
+            "proposalPrompt": true
+          },
+          {
+            "deniedWrite": true,
+            "proposalPrompt": true
+          },
+          {
+            "deniedWrite": true,
+            "proposalPrompt": true
+          }
+        ],
+        "failures": [
+          {
+            "roleName": "implementer",
+            "status": "error",
+            "error": "fixture spawn sentinel"
+          },
+          {
+            "roleName": "implementer",
+            "status": "error",
+            "error": "fixture spawn sentinel"
+          },
+          {
+            "roleName": "implementer",
+            "status": "error",
+            "error": "fixture spawn sentinel"
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding-run-cli-optional",
+      "actual": {
+        "exit": 1,
+        "stdout": "",
+        "stderr": "{\"status\":\"error\",\"code\":\"MISSING_FIELD\",\"line\":2,\"message\":\"Missing loop.warning\",\"field\":\"warning\"}"
+      }
+    },
+    {
+      "id": "coding-run-cli-cross-run",
+      "actual": {
+        "exit": 0,
+        "stdout": "{\n  \"codingRunId\": \"run-A\",\n  \"records\": 2,\n  \"turns\": 0,\n  \"approvals\": 0,\n  \"files\": 0,\n  \"tests\": 0,\n  \"verification\": \"passed\",\n  \"finalStatus\": null\n}",
+        "stderr": ""
+      }
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "findings": [
+    {
+      "body": "An active agent run can hold a runtime lease while making no MCP requests for over ten minutes. Its next call then expires its own HTTP session and receives 404. The installed SDK retains the old session ID, while agent-bundle-mcp-runtime.ts only invalidates the catalog on transport errors and retains reused sessions after refresh failures. Subsequent calls therefore keep using the expired session instead of reconnecting, leaving the configured tools unusable until runtime disposal. Add recovery for unknown_mcp_session that recreates the transport and initializes a fresh session, as required after session-expiry responses. ",
+      "category": "regression",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/gateway/mcp-http.ts",
+        "line": 186
+      },
+      "confidence": 0.96,
+      "priority": "P2",
+      "title": "Recover bundled clients after HTTP session expiry"
+    }
+  ],
+  "overall_confidence": 0.95,
+  "overall_correctness": "patch is incorrect",
+  "overall_explanation": "The previous fixes are present, but idle session eviction exposes a persistent recovery failure in the bundled MCP client. Review was based on source and installed SDK inspection; no tests were run."
+}

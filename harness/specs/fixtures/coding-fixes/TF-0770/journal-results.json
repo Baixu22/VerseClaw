@@ -1,0 +1,44 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-coding-audit",
+  "realHumanEvidence": false,
+  "area": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0770\\final\\journal\\journal-Sg574P",
+  "candidate": "a4ab0635b0786c96788dd569f532d92a2fdacc0f",
+  "rows": [
+    {
+      "id": "patch-sidecar-normal",
+      "returned": "committed",
+      "journalInResult": "committed",
+      "undoable": true,
+      "effectApplied": true,
+      "journalStatePersisted": true,
+      "inMemory": "committed",
+      "persisted": "committed",
+      "rehydrated": "committed",
+      "receipt": {
+        "outcome": "applied",
+        "journal_ref": "write-journal:normal:1",
+        "recoverability": "undo_write"
+      },
+      "actualFile": "after\n"
+    },
+    {
+      "id": "patch-sidecar-locked",
+      "returned": "recovery_required",
+      "journalInResult": "recovery_required",
+      "undoable": true,
+      "effectApplied": true,
+      "journalStatePersisted": false,
+      "recoveryRef": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0770\\final\\journal\\journal-Sg574P\\workspace\\.openclaw\\journal\\locked#batch=request-locked&entries=write-journal%3Alocked%3A1",
+      "inMemory": "prepared",
+      "persisted": "prepared",
+      "rehydrated": "prepared",
+      "receipt": {
+        "outcome": "unknown",
+        "journal_ref": "write-journal:locked:1",
+        "recoverability": "recovery_required:D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0770\\final\\journal\\journal-Sg574P\\workspace\\.openclaw\\journal\\locked#batch=request-locked&entries=write-journal%3Alocked%3A1"
+      },
+      "actualFile": "after\n"
+    }
+  ]
+}

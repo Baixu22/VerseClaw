@@ -1,0 +1,62 @@
+{
+  "findings": [
+    {
+      "body": "Create an agent-scoped server owned by alice, then update its ownerId to bob without explicit exposure grants. This projection retains the existing agents=['alice'] and appends bob. The runtime exposure matcher accepts either agent, so alice's model and direct Gateway calls retain access after Main stops resolving the server for alice. The workspace branch similarly accumulates previous roots. Remove obsolete scope-derived grants when the owner changes.",
+      "category": "security",
+      "code_location": {
+        "file_path": "electron/services/mcp-api.ts",
+        "line": 909
+      },
+      "confidence": 0.99,
+      "priority": "P1",
+      "title": "[P1] Revoke the previous owner when projecting MCP scope changes"
+    },
+    {
+      "body": "For an active sandbox with workspaceAccess='rw', tools.profile='full' and tools.sandbox.tools.deny=['fixture__echo'], the model excludes echo because attempt.ts passes sandbox.tools into applyFinalEffectiveToolPolicy. This new call omits sandboxToolPolicy. The workspace still matches, so mcp.listTools exposes echo and mcp.callTool executes it; warm tools.invoke uses the same incomplete admission. Resolve and apply the session's active sandbox policy before exposing or executing these tools.",
+      "category": "security",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/gateway/server-methods/mcp-management.ts",
+        "line": 85
+      },
+      "confidence": 0.98,
+      "priority": "P1",
+      "title": "[P1] Include the active sandbox policy in MCP admission"
+    },
+    {
+      "body": "With a healthy server A and server B that initializes successfully but consistently returns HTTP 503 for tools/list, the installed SDK's streamableHttp.js invokes onerror before throwing. handleTransportLost invalidates the catalog during discovery, and getCatalog returns A's healthy catalog without memoizing it because the invalidation generation changed. Consequently, peekCatalog() is null and this assertion rejects management requests for A. Each retry reconnects B and repeats the failure. Obtain a stable catalog or suppress startup-error invalidation for the failed server before applying this identity check.",
+      "category": "bug",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/gateway/server-methods/mcp-management.ts",
+        "line": 133
+      },
+      "confidence": 0.99,
+      "priority": "P1",
+      "title": "[P1] Preserve healthy management requests after a peer's HTTP error"
+    },
+    {
+      "body": "When the gateway tool is explicitly allowed, an authorized tools.invoke call with workspaceDir can perform config.patch on a permitted field such as agents.defaults.thinkingDefault. The config write refreshes the runtime snapshot before the tool returns. This post-execution assertion then detects the changed configuration revision and returns a ToolAuthorizationError despite the successful persisted change. Main now supplies workspaceDir automatically, making this a regression for such calls. Preserve successful results for intentional configuration mutations while retaining admission checks before execution.",
+      "category": "regression",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/gateway/tools-invoke-shared.ts",
+        "line": 608
+      },
+      "confidence": 0.98,
+      "priority": "P2",
+      "title": "[P2] Preserve successful results from authorized config-mutating tools"
+    },
+    {
+      "body": "The supplied Electron run bound to 1d0f9f696 demonstrates this inconsistency: coding-mcp-management.json contains status='pass', gatewayStopError='Owned Gateway process did not exit' and appExitCode=1, while Playwright fails at line 158. The passing status is assigned before cleanup, and the teardown failure is thrown after this evidence file is written, outside the catch that records failure. Update the saved verdict and failure reason after cleanup so artifact consumers receive the actual test outcome.",
+      "category": "test_gap",
+      "code_location": {
+        "file_path": "tests/e2e/coding-mcp-management.spec.ts",
+        "line": 156
+      },
+      "confidence": 1,
+      "priority": "P2",
+      "title": "[P2] Include teardown failures in the saved E2E verdict"
+    }
+  ],
+  "overall_confidence": 0.98,
+  "overall_correctness": "patch is incorrect",
+  "overall_explanation": "Reviewed the supplied bundle from 1fb12d4e1 through 1d0f9f696. Scope reassignment retains revoked access, MCP admission omits sandbox restrictions, and peer HTTP errors can block healthy servers. The new post-execution guard also misreports successful configuration writes, and the supplied Electron evidence records a passing verdict despite teardown failure."
+}
