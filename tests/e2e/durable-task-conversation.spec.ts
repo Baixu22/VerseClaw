@@ -175,9 +175,11 @@ test("normal conversation quietly identifies work and keeps a dismissible task a
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
     await toggle.focus(); await page.keyboard.press('Enter');
     await expect(toggle).toHaveAttribute("aria-expanded", "true");
+    await page.screenshot({path:info.outputPath('conversation-task-expanded.png'),animations:'disabled'});
     await page.getByTestId("session-task-close").click();
     await expect(page.getByTestId("session-task-panel")).toHaveCount(0);
     await expect(page.getByTestId("session-task-reopen")).toBeVisible();
+    await page.screenshot({path:info.outputPath('conversation-task-hidden.png'),animations:'disabled'});
     const current = await host<{ task: { claim: { epoch: number }; contract: { state: string } } }>(
       page,
       "taskLedger",
