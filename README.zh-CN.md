@@ -22,6 +22,8 @@
 
 Runtime 管理的工作树归属、创建阶段和合并意图持久保存在 SQLite 中。重启后可恢复归属；路径被替换、创建未完成或合并结果未知时保留资源并拒绝继续使用旧资格。[注册与恢复契约](harness/specs/guides/execution-domain-registry.md)。
 
+WorktreeService 提供持久写入占用，并与合并、候选冻结和清理共用。尚未释放的写者或结果未知的操作会阻止这些维护动作。[写入占用契约](harness/specs/guides/checkout-writer-ownership.md)说明资源围栏及后续任务、工具联合准入的接线范围。
+
 **在一个桌面工作空间里完成对话、编码、知识与 Agent 执行。**
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja-JP.md) · [Русский](README.ru-RU.md)

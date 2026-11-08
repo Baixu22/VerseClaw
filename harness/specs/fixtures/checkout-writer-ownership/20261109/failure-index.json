@@ -1,0 +1,15 @@
+{
+  "driven_by": "agent",
+  "runs": [
+    {
+      "path": "D:/tmp/unified-management-20261109/writer-registry-regressions.json",
+      "result": "28 passed, 1 failed: metadata prepare error incorrectly left a maintenance operation unknown",
+      "fix": "separate metadata preparation from filesystem effect admission; original regression unchanged and passed"
+    },
+    {
+      "path": "D:/tmp/unified-management-20261109/checkout-writer-code-review.md",
+      "finding": "zero-operation maintenance reservation could survive holder death",
+      "fix": "only maintenance with no operations may retire after original process incarnation ends; real process exit 23 regression passed"
+    }
+  ]
+}

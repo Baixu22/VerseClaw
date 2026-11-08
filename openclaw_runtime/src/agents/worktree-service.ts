@@ -41,6 +41,12 @@ import type { FactStore } from "../context-engine/factstore/store.js";
 import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
 import { registerExecutionDomain, resolveExecutionDomain } from "./execution-domain.js";
 import {
+  beginCheckoutWrite, checkoutWriterSnapshot, claimCheckoutWriter, drainCheckoutWriter,
+  releaseCheckoutWriter, settleCheckoutWrite, withCheckoutMaintenance,
+  finishRemovedCheckoutCleanup,
+  type CheckoutWriteReceipt, type CheckoutWriterCredential, type CheckoutWriterIdentity, type CheckoutWriterBasis,
+} from "./worktree-writer.js";
+import {
   filesystemInstance, loadWorktreeRegistryScope, observeWorktree,
   saveWorktreeRegistryScope, worktreeNativeIdentity,
   type WorktreeAvailability, type WorktreeRegistration,
@@ -116,6 +122,13 @@ export type WorktreeService = {
   inventory(): Array<{ id: string; root: string; availability: WorktreeAvailability | "unowned"; record?: WorktreeRecord }>;
   taskAuthority(expectedProjectRevision?: number): ReturnType<typeof resolveExecutionDomain>;
   registerTaskAuthority(input: Omit<Parameters<typeof registerExecutionDomain>[0], "workspaceRoot">): ReturnType<typeof registerExecutionDomain>;
+  claimWriter(id: string, generation: string, owner: CheckoutWriterIdentity, requestId: string, expiresAt?: number | null): CheckoutWriterCredential;
+  beginWrite(credential: CheckoutWriterCredential, operationId: string, requestDigest: string): ReturnType<typeof beginCheckoutWrite>;
+  settleWrite(credential: CheckoutWriterCredential, operationId: string, receipt: CheckoutWriteReceipt | null): void;
+  drainWriter(credential: CheckoutWriterCredential): void;
+  releaseWriter(credential: CheckoutWriterCredential): void;
+  writer(id: string): ReturnType<typeof checkoutWriterSnapshot>;
+  withFrozenWorktrees<T>(workers: readonly { worktreeId: string; worktreeGeneration: string }[], freeze: () => T): T;
   inspectIsolation(id: string, generation: string): WorktreeIsolationInspection;
   listChangedFiles(id: string, expectedGeneration?: string): WorktreeChangedFiles;
   enqueueMerge(item: Omit<MergeQueueItem, "status"> & { status?: MergeQueueItem["status"] }): MergeQueueItem;
@@ -367,11 +380,45 @@ export function createWorktreeService(
   const backend = resolveBackend(resolved, requested);
   const defaultConflictPolicy: MergeConflictPolicy = options?.conflictPolicy ?? "mark_conflict";
   const rootDir = path.join(resolved, ".openclaw", "worktrees");
+  const findRecord = (id: string, generation?: string) => {
+    const record = scope(resolved).records.get(safeWorktreeId(id));
+    if (!record) throw new Error("worktree_missing");
+    if (generation !== undefined && record.generation !== generation) throw new Error("worktree_stale_generation");
+    return record;
+  };
+  const basisFor = (record: WorktreeRecord): CheckoutWriterBasis => {
+    assertCurrentWorktree(record);
+    return { root: record.root, incarnation: record.registration.rootIdentity!, generation: record.generation };
+  };
+  const baseBasis = (): CheckoutWriterBasis => ({ root: resolved, incarnation: filesystemInstance(resolved), generation: `base:${filesystemInstance(resolved)}` });
+  const checkWriterRecord = (credential: CheckoutWriterCredential, requireReady: boolean) => {
+    const record = [...scope(resolved).records.values()].find(row => row.generation === credential.generation);
+    if (!record || record.generation !== credential.generation || record.registration.rootIdentity !== credential.incarnation) throw new Error("worktree_stale_generation");
+    if (requireReady) assertCurrentWorktree(record);
+  };
 
   return {
     backend,
     taskAuthority: expectedProjectRevision => resolveExecutionDomain(resolved, expectedProjectRevision),
     registerTaskAuthority: input => registerExecutionDomain({ ...input, workspaceRoot: resolved }),
+    claimWriter: (id, generation, owner, requestId, expiresAt) => withWorktreeLock(resolved, () =>
+      claimCheckoutWriter(basisFor(findRecord(id, generation)), owner, requestId, expiresAt)),
+    beginWrite: (credential, operationId, requestDigest) => withWorktreeLock(resolved, () => {
+      checkWriterRecord(credential, true);
+      return beginCheckoutWrite(credential, operationId, requestDigest);
+    }),
+    settleWrite: (credential, operationId, receipt) => withWorktreeLock(resolved, () => {
+      checkWriterRecord(credential, false); settleCheckoutWrite(credential, operationId, receipt);
+    }),
+    drainWriter: credential => withWorktreeLock(resolved, () => {
+      checkWriterRecord(credential, false); drainCheckoutWriter(credential);
+    }),
+    releaseWriter: credential => withWorktreeLock(resolved, () => {
+      checkWriterRecord(credential, false); releaseCheckoutWriter(credential);
+    }),
+    writer: id => checkoutWriterSnapshot(findRecord(id).root),
+    withFrozenWorktrees: (workers, freeze) => withWorktreeLock(resolved, () =>
+      withCheckoutMaintenance([baseBasis(), ...workers.map(worker => basisFor(findRecord(worker.worktreeId, worker.worktreeGeneration)))], "freeze", freeze)),
     create(id, createOptions) {
       const owner = createOptions?.owner;
       const safeId = safeWorktreeId(id);
@@ -385,6 +432,9 @@ export function createWorktreeService(
       return withWorktreeLock(resolved, () => {
         const s = scope(resolved);
         const previous = s.records.get(safeId);
+        if (previous?.status === "cleaned" && !pathEntryExists(previous.root)) {
+          finishRemovedCheckoutCleanup({ root: previous.root, incarnation: previous.registration.rootIdentity!, generation: previous.generation });
+        }
         if (createOptions?.operationId && previous?.registration.operationId === createOptions.operationId) {
           if (previous.registration.requestDigest !== requestDigest) throw new Error("worktree_operation_conflict");
           if (previous.registration.phase === "registered" && observeWorktree(previous) === "incomplete") {
@@ -616,23 +666,25 @@ export function createWorktreeService(
               // fail-open review
             }
           }
-          // A crash after copying a subset must not silently replay a merge.
-          item.status = "conflict";
-          item.reason = "merge_outcome_unknown";
-          saveWorktreeRegistryScope(s);
-          for (const rel of item.changedFiles) {
-            const src = path.join(rec.root, ...rel.split("/"));
-            const dest = path.join(resolved, ...rel.split("/"));
-            if (existsSync(src)) {
-              mkdirSync(path.dirname(dest), { recursive: true });
-              cpSync(src, dest);
+          withCheckoutMaintenance([baseBasis(), basisFor(rec)], "merge", () => {
+            // A crash after copying a subset must not silently replay a merge.
+            item.status = "conflict";
+            item.reason = "merge_outcome_unknown";
+            saveWorktreeRegistryScope(s);
+            for (const rel of item.changedFiles) {
+              const src = path.join(rec.root, ...rel.split("/"));
+              const dest = path.join(resolved, ...rel.split("/"));
+              if (existsSync(src)) {
+                mkdirSync(path.dirname(dest), { recursive: true });
+                cpSync(src, dest);
+              }
             }
-          }
-          item.status = "merged";
-          delete item.reason;
-          rec.status = "merged";
-          codingObservability.recordMergeOutcome(false);
-          results.push(item);
+            item.status = "merged";
+            delete item.reason;
+            rec.status = "merged";
+            codingObservability.recordMergeOutcome(false);
+            results.push(item);
+          });
         }
         s.queue = s.queue.filter(item => item.reason === "merge_outcome_unknown" || !results.includes(item));
         saveWorktreeRegistryScope(s);
@@ -643,12 +695,17 @@ export function createWorktreeService(
       withWorktreeLock(resolved, () => {
         const s = scope(resolved);
         const rec = s.records.get(safeWorktreeId(id));
-        if (!rec || rec.status === "cleaned") return;
+        if (!rec) return;
         if (cleanupOptions?.expectedGeneration !== undefined && rec.generation !== cleanupOptions.expectedGeneration) throw new Error("worktree_stale_generation");
+        if (rec.status === "cleaned") {
+          if (!pathEntryExists(rec.root)) finishRemovedCheckoutCleanup({ root: rec.root, incarnation: rec.registration.rootIdentity!, generation: rec.generation });
+          return;
+        }
         if (s.queue.some(item => item.worktreeId === rec.id && (item.status === "pending" || item.reason === "merge_outcome_unknown"))) {
           throw new Error("worktree_merge_reconciliation_required");
         }
         if (rec.status === "cleaning" && observeWorktree(rec) === "missing") {
+          finishRemovedCheckoutCleanup({ root: rec.root, incarnation: rec.registration.rootIdentity!, generation: rec.generation });
           rec.status = "cleaned";
           saveWorktreeRegistryScope(s);
           return;
@@ -666,31 +723,36 @@ export function createWorktreeService(
             ? { files: listChangedFilesFromGit(rec.root), source: "git-status" }
             : { files: [...(rec.writeSet ?? [])], source: "declared-writeSet" },
         });
-        rec.status = "cleaning";
-        saveWorktreeRegistryScope(s);
-        if (rec.backend === "git") {
-          try {
-            git(["worktree", "remove", "--force", ownership.root], resolved);
-          } catch (error) {
+        withCheckoutMaintenance([{
+          root: rec.root, incarnation: rec.registration.rootIdentity!, generation: rec.generation,
+        }], "cleanup", () => {
+          if (rec.backend === "git") {
             try {
-              removePathWithRetries(ownership.root);
-            } catch {
-              throw error;
+              git(["worktree", "remove", "--force", ownership.root], resolved);
+            } catch (error) {
+              try {
+                removePathWithRetries(ownership.root);
+              } catch {
+                throw error;
+              }
+              try {
+                git(["worktree", "prune"], resolved);
+              } catch {
+                // ignore
+              }
             }
-            try {
-              git(["worktree", "prune"], resolved);
-            } catch {
-              // ignore
-            }
+          } else {
+            removePathWithRetries(ownership.root);
           }
-        } else {
-          removePathWithRetries(ownership.root);
-        }
-        if (existsSync(ownership.root)) {
-          throw new Error('worktree_cleanup_survivor');
-        }
-        rec.status = "cleaned";
-        saveWorktreeRegistryScope(s);
+          if (existsSync(ownership.root)) {
+            throw new Error('worktree_cleanup_survivor');
+          }
+          rec.status = "cleaned";
+          saveWorktreeRegistryScope(s);
+        }, () => {
+          rec.status = "cleaning";
+          saveWorktreeRegistryScope(s);
+        });
       });
     },
     listOwned(owner) {

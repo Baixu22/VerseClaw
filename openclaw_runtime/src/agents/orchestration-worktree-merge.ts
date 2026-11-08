@@ -113,10 +113,10 @@ export function freezeOrchestrationWorktreeCandidate(params: {
       parentOrder: index,
     };
   });
-  return freezeOrchestrationCandidate({
+  return service.withFrozenWorktrees(params.workers, () => freezeOrchestrationCandidate({
     baseRoot: params.baseRoot,
     workers,
     ...(params.expectedBaseOid ? { expectedBaseOid: params.expectedBaseOid } : {}),
     ...(params.allowedRuntimeIgnorePaths ? { allowedRuntimeIgnorePaths: params.allowedRuntimeIgnorePaths } : {}),
-  });
+  }));
 }
