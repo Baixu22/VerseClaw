@@ -229,7 +229,7 @@ function registerTypedHostHandlers(
     }),
   });
   registerHostInvokeHandler(hostApiRegistry, {
-    senderAuth: initializeHostWindowAuthorization(mainWindow),
+    senderAuth: initializeHostWindowAuthorization(mainWindow, join(__dirname, '../preload/index.js')),
   });
 }
 

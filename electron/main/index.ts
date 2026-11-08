@@ -1615,4 +1615,4 @@ if (gotTheLock) {
 // Export for testing
 export { mainWindow, gatewayManager };
 export { approveBrowserPrivateNetwork } from '../services/agent-browser-api';
-export { registerHostReadObserver } from './ipc/host-window-observers';
+export { createHostReadObserverWindow } from './ipc/host-window-observers';

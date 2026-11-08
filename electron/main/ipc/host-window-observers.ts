@@ -1,4 +1,4 @@
-import type { BrowserWindow, WebContents, WebPreferences } from 'electron';
+import { BrowserWindow } from 'electron';
 import { hostEntryUrl, type HostSenderAuthorization } from './host-invoke-security';
 
 const allowedWebContentsIds = new Set<number>();
@@ -6,15 +6,13 @@ const observerConstraints = new Map<number, { entry: string; actions: ReadonlySe
 const observers = new Map<number, () => void>();
 let primary: BrowserWindow | undefined;
 let detachPrimary: (() => void) | undefined;
-function preferencesFor(contents: WebContents): WebPreferences | undefined {
-  return (contents as WebContents & { getLastWebPreferences?: () => WebPreferences }).getLastWebPreferences?.();
-}
+let primaryPreload = '';
 
 /** The normal primary window retains its existing Host privileges. */
-export function initializeHostWindowAuthorization(window: BrowserWindow): HostSenderAuthorization {
+export function initializeHostWindowAuthorization(window: BrowserWindow, preload: string): HostSenderAuthorization {
   detachPrimary?.();
   for (const close of [...observers.values()]) close();
-  allowedWebContentsIds.clear(); primary = window;
+  allowedWebContentsIds.clear(); primary = window; primaryPreload = preload;
   allowedWebContentsIds.add(window.webContents.id);
   const destroyed = () => {
     if (primary !== window) return;
@@ -26,17 +24,17 @@ export function initializeHostWindowAuthorization(window: BrowserWindow): HostSe
   return { allowedWebContentsIds, observerConstraints };
 }
 
-/** Main explicitly owns observer windows; renderer code has no registration route. */
-export function registerHostReadObserver(window: BrowserWindow): () => void {
-  if (!primary || primary.isDestroyed() || window.isDestroyed() || window === primary) throw new Error('Host observer owner unavailable');
+/** Main creates the observer with owned parameters; renderer code has no factory route. */
+export async function createHostReadObserverWindow(): Promise<BrowserWindow> {
+  const owner = primary;
+  if (!owner || owner.isDestroyed() || !primaryPreload) throw new Error('Host observer owner unavailable');
+  const url = owner.webContents.getURL(); const entry = hostEntryUrl(url);
+  if (!entry) throw new Error('Host observer entry unavailable');
+  const window = new BrowserWindow({ show: false, width: 800, height: 600, webPreferences: {
+    preload: primaryPreload, session: owner.webContents.session, nodeIntegration: false, contextIsolation: true, sandbox: false,
+  } });
   const contents = window.webContents;
-  const entry = hostEntryUrl(primary.webContents.getURL());
-  const preferences = preferencesFor(contents);
-  if (!entry || hostEntryUrl(contents.getURL()) !== entry || contents.session !== primary.webContents.session
-    || !preferences?.preload || preferences.preload !== preferencesFor(primary.webContents)?.preload
-    || preferences.nodeIntegration || !preferences.contextIsolation) throw new Error('Host observer must use the owned app entry and preload');
-  const id = contents.id; const existing = observers.get(id);
-  if (existing) return existing;
+  const id = contents.id;
   observerConstraints.set(id, { entry, actions: new Set(['git.status', 'efficiency.getState']) });
   allowedWebContentsIds.add(id);
   const close = () => {
@@ -44,5 +42,10 @@ export function registerHostReadObserver(window: BrowserWindow): () => void {
     observers.delete(id); observerConstraints.delete(id); allowedWebContentsIds.delete(id);
     contents.removeListener('destroyed', close);
   };
-  observers.set(id, close); contents.once('destroyed', close); return close;
+  observers.set(id, close); contents.once('destroyed', close);
+  try {
+    await window.loadURL(url);
+    if (primary !== owner || window.isDestroyed()) throw new Error('Host observer owner changed during creation');
+    return window;
+  } catch (error) { close(); if (!window.isDestroyed()) window.destroy(); throw error; }
 }

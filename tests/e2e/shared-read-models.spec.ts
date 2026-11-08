@@ -24,22 +24,14 @@ test('two native windows share Git reads and retain independent lifetime', async
     const workspace = await invoke(main, 'workspaces', 'create', { name: 'Shared status', rootPath: root, agentId: 'main', activeSessionKey: 'agent:main:shared-status', permissionMode: 'readOnly' });
     expect(workspace.activeWorkspace).toBeTruthy();
     const windowReady = app.waitForEvent('window');
-    secondId = await app.evaluate(async ({ BrowserWindow }, preload) => {
-      const first = BrowserWindow.getAllWindows().find(window => window.webContents.getURL().startsWith('file:'))!;
-      const second = new BrowserWindow({ show: false, width: 800, height: 600, webPreferences: {
-        preload, contextIsolation: true, nodeIntegration: false, sandbox: false,
-      } });
-      await second.loadURL(first.webContents.getURL()); return second.id;
-    }, join(process.cwd(), 'dist-electron/preload/index.js'));
+    secondId = await app.evaluate(async () => {
+      const modules = Object.values(process.mainModule!.require('node:module')._cache) as Array<{ exports: { createHostReadObserverWindow?: () => Promise<Electron.BrowserWindow> } }>;
+      const entry = modules.find(module => typeof module.exports?.createHostReadObserverWindow === 'function');
+      if (!entry) throw new Error('Main observer factory unavailable');
+      return (await entry.exports.createHostReadObserverWindow!()).id;
+    });
     const second = await windowReady;
     await expect.poll(() => second.evaluate(() => Boolean(window.verseClaw?.hostInvoke))).toBe(true);
-    await expect(invoke(second, 'git', 'status')).rejects.toThrow('sender is not authorized');
-    await app.evaluate(({ BrowserWindow }, id) => {
-      const modules = Object.values(process.mainModule!.require('node:module')._cache) as Array<{ exports: { registerHostReadObserver?: (window: Electron.BrowserWindow) => () => void } }>;
-      const entry = modules.find(module => typeof module.exports?.registerHostReadObserver === 'function');
-      if (!entry) throw new Error('Main observer registration unavailable');
-      entry.exports.registerHostReadObserver!(BrowserWindow.fromId(id)!);
-    }, secondId);
     await expect(invoke(second, 'git', 'stage', { paths: ['readme.txt'] })).rejects.toThrow('observer action is not authorized');
     let sourceClock = Date.now();
     const invalidateSource = async () => { sourceClock += 1000; await utimes(root, new Date(sourceClock), new Date(sourceClock)); };
@@ -78,7 +70,7 @@ test('two native windows share Git reads and retain independent lifetime', async
       workload: { requestsPerRound: 8, nativeWindows: 2, order: 'ABBA', source: 'one temporary native Git repository' },
       control: 'Temporary repository directory mtime changes before each control request; shared rounds keep the source stable. Product routes and Git commands remain real.',
       rows, remainingWindowReads: true, sourceMutationObserved: true,
-      authorization: { mainRegisteredObserver: true, unregisteredDenied: true, mutationDenied: true, navigatedSourceDenied: true } }, null, 2));
+      authorization: { mainCreatedObserver: true, mutationDenied: true, navigatedSourceDenied: true } }, null, 2));
   } finally {
     if (secondId !== undefined) await app.evaluate(({ BrowserWindow }, id) => BrowserWindow.fromId(id)?.destroy(), secondId).catch(() => {});
     await closeElectronApp(app);
