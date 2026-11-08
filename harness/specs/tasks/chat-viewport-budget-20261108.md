@@ -22,6 +22,7 @@ touchedAreas:
   - tests/unit/chat-content-budget.test.ts
   - tests/unit/chat-viewport.test.tsx
   - tests/unit/chat-history-budget-reload.test.ts
+  - tests/unit/chat-page-execution-graph.test.tsx
   - tests/e2e/chat-viewport-budget.spec.ts
   - harness/specs/tasks/chat-viewport-budget-20261108.md
   - harness/specs/rules/chat-viewport-budget.md

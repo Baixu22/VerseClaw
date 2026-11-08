@@ -220,6 +220,10 @@ vi.mock('@/pages/Chat/ChatMessage', () => ({
 
 describe('Chat execution graph lifecycle', () => {
   beforeEach(async () => {
+    Object.defineProperty(HTMLElement.prototype, 'scrollTo', {
+      configurable: true,
+      value(this: HTMLElement, options: ScrollToOptions) { this.scrollTop = options.top ?? this.scrollTop; },
+    });
     vi.resetModules();
     hostApiFetchMock.mockReset();
     hostApiFetchMock.mockResolvedValue({ success: true, messages: [] });
