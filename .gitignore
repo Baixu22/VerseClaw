@@ -29,6 +29,8 @@ release/
 # Logs
 logs
 *.log
+!/harness/specs/fixtures/rsi-coding-tool-loop/closeout-20261108/oracle-01-stderr.log
+!/harness/specs/fixtures/rsi-coding-tool-loop/closeout-20261108/oracle-01-stdout.log
 # Existing retained RSI calibration inputs; keep ordinary run logs local.
 !/harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0274-e01/baseline/stderr-1.log
 !/harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0274-e01/baseline/stdout-1.log
