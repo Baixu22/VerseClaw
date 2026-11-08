@@ -21,6 +21,7 @@ async function host<T>(
     async (request) => {
       const r = await window.verseClaw!.hostInvoke({ ...request, id: crypto.randomUUID() });
       if (!r.ok) throw new Error(r.error?.message);
+      if (r.data && typeof r.data==='object' && 'success' in r.data && r.data.success===false) throw new Error(JSON.stringify(r.data));
       return r.data;
     },
     { module, action, payload },
@@ -63,16 +64,18 @@ test("normal conversation quietly identifies work and keeps a dismissible task a
         { timeout: 120_000 },
       )
       .toBe(true);
-    const session = await host<{ key: string; sessionId: string }>(page, "gateway", "rpc", {
-      method: "sessions.create",
-      params: { agentId: "main", label: "Quiet task" },
-    });
     const created = await host<{ activeWorkspaceId: string }>(page, "workspaces", "create", {
       name: "Quiet task project",
       rootPath: root,
       agentId: "main",
-      activeSessionKey: session.key,
+      activeSessionKey: 'agent:main:main',
     });
+    await host(page,'workspaces','update',{id:created.activeWorkspaceId,activeSessionKey:'agent:main:main',sessionKey:'agent:main:main',agentId:'main',permissionMode:'fullAccess'});
+    const session = await host<{ key: string; sessionId: string }>(page, "gateway", "rpc", {
+      method: "sessions.create",
+      params: { agentId: "main", label: "Quiet task" },
+    });
+    expect(session.key).toBeTruthy();
     await host(page, "workspaces", "update", {
       id: created.activeWorkspaceId,
       activeSessionKey: session.key,
