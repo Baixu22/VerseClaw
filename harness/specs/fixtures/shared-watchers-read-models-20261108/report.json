@@ -1,0 +1,789 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": {
+    "commit": "68533427ba832f574924ff526a8446a3b7635ca8",
+    "tree": "d0da2ba593891afbf1ec093c59fa3b568c0d7407",
+    "dirty": false
+  },
+  "cleanAfter": true,
+  "commands": [
+    {
+      "id": "unit",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/shared-watchers-read-models.test.ts",
+        "tests/unit/shared-watchers-native.test.ts",
+        "tests/unit/resource-timer-watcher.test.ts",
+        "tests/unit/resource-watcher-handle-pressure.test.ts",
+        "tests/unit/resource-p1-schedulers.test.ts",
+        "tests/unit/git-api.test.ts",
+        "tests/unit/knowledge-source-sync.test.ts",
+        "tests/unit/host-window-observers.test.ts",
+        "tests/unit/host-invoke.test.ts",
+        "tests/unit/host-invoke-security.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\tf0835\\acceptance-integrated\\unit.json"
+      ],
+      "cwd": "D:\\tmp\\tf0835\\candidate",
+      "exitCode": 0,
+      "durationMs": 13000
+    },
+    {
+      "id": "node-types",
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\tf0835\\candidate",
+      "exitCode": 0,
+      "durationMs": 34875
+    },
+    {
+      "id": "web-types",
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\tf0835\\candidate",
+      "exitCode": 0,
+      "durationMs": 8547
+    },
+    {
+      "id": "lint",
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "electron/main/index.ts",
+        "electron/main/ipc-handlers.ts",
+        "electron/main/ipc/host-invoke-security.ts",
+        "electron/main/ipc/host-invoke.ts",
+        "electron/main/ipc/host-window-observers.ts",
+        "electron/services/git-api.ts",
+        "electron/services/knowledge-source-sync.ts",
+        "shared/resources/watcher-hub.ts",
+        "src/lib/read-only-query-cache.ts",
+        "tests/e2e/shared-read-models.spec.ts",
+        "tests/unit/git-api.test.ts",
+        "tests/unit/host-window-observers.test.ts",
+        "tests/unit/knowledge-source-sync.test.ts",
+        "tests/unit/resource-timer-watcher.test.ts",
+        "tests/unit/shared-watchers-native.test.ts",
+        "tests/unit/shared-watchers-read-models.test.ts",
+        "--format=json",
+        "--output-file",
+        "D:\\tmp\\tf0835\\acceptance-integrated\\lint.json"
+      ],
+      "cwd": "D:\\tmp\\tf0835\\candidate",
+      "exitCode": 0,
+      "durationMs": 4203
+    },
+    {
+      "id": "contract",
+      "argv": [
+        "node",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0835\\candidate",
+      "exitCode": 0,
+      "durationMs": 2922
+    },
+    {
+      "id": "i18n",
+      "argv": [
+        "node",
+        "scripts/i18n-lint.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0835\\candidate",
+      "exitCode": 0,
+      "durationMs": 328
+    },
+    {
+      "id": "comms-replay",
+      "argv": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0835\\candidate",
+      "exitCode": 0,
+      "durationMs": 344
+    },
+    {
+      "id": "comms-compare",
+      "argv": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0835\\candidate",
+      "exitCode": 0,
+      "durationMs": 219
+    },
+    {
+      "id": "retention",
+      "argv": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0835\\candidate",
+      "exitCode": 0,
+      "durationMs": 5546
+    },
+    {
+      "id": "harness-validate",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/shared-watchers-read-models-20261108.md"
+      ],
+      "cwd": "D:\\tmp\\tf0835\\candidate",
+      "exitCode": 0,
+      "durationMs": 985
+    },
+    {
+      "id": "harness-run",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/shared-watchers-read-models-20261108.md",
+        "--dry-run"
+      ],
+      "cwd": "D:\\tmp\\tf0835\\candidate",
+      "exitCode": 0,
+      "durationMs": 890
+    },
+    {
+      "id": "diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "66ea80f23",
+        "HEAD"
+      ],
+      "cwd": "D:\\tmp\\tf0835\\candidate",
+      "exitCode": 0,
+      "durationMs": 110
+    }
+  ],
+  "tests": {
+    "numTotalTests": 107,
+    "numPassedTests": 107,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numFailedTestSuites": 0,
+    "success": true
+  },
+  "cases": [
+    {
+      "name": "git api coalesces concurrent status reads and reuses a fresh cached status",
+      "status": "passed"
+    },
+    {
+      "name": "git api fences a pending status when its repository is invalidated",
+      "status": "passed"
+    },
+    {
+      "name": "git api shares the same root status across workspace profiles without mixing roots",
+      "status": "passed"
+    },
+    {
+      "name": "git api rechecks source identity after directory deletion and Git metadata replacement",
+      "status": "passed"
+    },
+    {
+      "name": "git api invalidates the repo status cache after a successful write",
+      "status": "passed"
+    },
+    {
+      "name": "git api invalidates a cached status when a direct commit succeeds",
+      "status": "passed"
+    },
+    {
+      "name": "git api parses porcelain v2 status into branch and change buckets",
+      "status": "passed"
+    },
+    {
+      "name": "git api returns side-by-side content with staged file diffs",
+      "status": "passed"
+    },
+    {
+      "name": "git api fails closed when a file diff exceeds the local Git patch limit",
+      "status": "passed"
+    },
+    {
+      "name": "git api downgrades a parsed file patch when trusted Git status is missing",
+      "status": "passed"
+    },
+    {
+      "name": "git api blocks normal writes in read-only mode before git add",
+      "status": "passed"
+    },
+    {
+      "name": "git api requires approval for dangerous push and consumes approved requests",
+      "status": "passed"
+    },
+    {
+      "name": "git api explains why a dangerous git operation is graded that way in the approval reason",
+      "status": "passed"
+    },
+    {
+      "name": "git api states the refspec scope when no target branch can be determined",
+      "status": "passed"
+    },
+    {
+      "name": "git api distinguishes reset --hard from reset --soft in the approval reason",
+      "status": "passed"
+    },
+    {
+      "name": "git api requires approval before reverting a tracked file and restores index plus worktree after approval",
+      "status": "passed"
+    },
+    {
+      "name": "git api uses git clean for approved untracked file reverts",
+      "status": "passed"
+    },
+    {
+      "name": "git api lists stashes and creates a stash with message and untracked files",
+      "status": "passed"
+    },
+    {
+      "name": "git api requires dangerous approval for stash apply and pop",
+      "status": "passed"
+    },
+    {
+      "name": "git api only allows worktree remove for paths registered with the repository",
+      "status": "passed"
+    },
+    {
+      "name": "git api adds a worktree by creating a new branch with the correct argument order",
+      "status": "passed"
+    },
+    {
+      "name": "git api adds a worktree for an existing branch without -b",
+      "status": "passed"
+    },
+    {
+      "name": "git api defaults new worktree start point to HEAD when omitted",
+      "status": "passed"
+    },
+    {
+      "name": "git api blocks new worktree creation when the target branch already exists",
+      "status": "passed"
+    },
+    {
+      "name": "git api blocks existing-branch worktree creation when that branch is already checked out",
+      "status": "passed"
+    },
+    {
+      "name": "git api requires dangerous approval for custom worktree paths outside the workspace and repo sibling area",
+      "status": "passed"
+    },
+    {
+      "name": "git api treats a drive-root parent as unsafe: custom sibling paths still require approval",
+      "status": "passed"
+    },
+    {
+      "name": "git api creates GitHub PRs with explicit base/head/draft args after dangerous approval",
+      "status": "passed"
+    },
+    {
+      "name": "git api preflights missing base branch with actionable error before creating a PR",
+      "status": "passed"
+    },
+    {
+      "name": "git api reuses an existing open PR for the head branch instead of creating a duplicate",
+      "status": "passed"
+    },
+    {
+      "name": "git api hardens git exec: hooks disabled, no locks, no prompts, fsmonitor off, bounded timeout",
+      "status": "passed"
+    },
+    {
+      "name": "git api resolves merge-base between HEAD and a base branch",
+      "status": "passed"
+    },
+    {
+      "name": "git api returns reflog entries for the complete repository lifecycle",
+      "status": "passed"
+    },
+    {
+      "name": "git api routes merge, rebase, and reset through dangerous Git approval",
+      "status": "passed"
+    },
+    {
+      "name": "git api rejects unsafe or missing refs for merge-base",
+      "status": "passed"
+    },
+    {
+      "name": "git api applyPatch preflight reports conflicts without approval or writes",
+      "status": "passed"
+    },
+    {
+      "name": "git api applyPatch apply mode requires dangerous approval then writes",
+      "status": "passed"
+    },
+    {
+      "name": "git api applyPatch reports skipped and applied paths from real git output",
+      "status": "passed"
+    },
+    {
+      "name": "git api applyPatch counts a --reject partial apply as conflicted, not applied",
+      "status": "passed"
+    },
+    {
+      "name": "git api applyPatch fails closed on a conflicting patch without requesting approval",
+      "status": "passed"
+    },
+    {
+      "name": "git api applyPatch approval is bound to the patch content, not just the target files",
+      "status": "passed"
+    },
+    {
+      "name": "git api applyPatch rejects non-diff input before any git call",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase derives the upstream branch and reports how the base was resolved",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase falls back to origin/HEAD when the branch has no upstream",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase reports unavailable instead of guessing when no remote ancestor exists",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase prefers origin over a nearer non-origin ancestor",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase falls back to configured remote order when there is no origin",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase finds a base in a repo whose only remote is not named origin",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase ignores */HEAD pseudo-refs when scanning for a base",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase skips unsafe scanned refs and reports unavailable when none remain",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase reads line counts from one numstat call and skips per-file diffs",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase returns patches only when asked, and marks binary files",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase reports unavailable when base and HEAD share no common ancestor",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase rejects unsafe explicit base refs and reports a missing ref as unavailable",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase keeps the destination path for renames in name-status output",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase never writes: no approval is requested and no mutating git runs",
+      "status": "passed"
+    },
+    {
+      "name": "git api keeps the tail of oversized diff output",
+      "status": "passed"
+    },
+    {
+      "name": "host-invoke-security helpers rejects deep payloads",
+      "status": "passed"
+    },
+    {
+      "name": "host-invoke-security helpers allows authorized senders only",
+      "status": "passed"
+    },
+    {
+      "name": "host-invoke-security helpers redacts path/stack/secret fragments",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke dispatcher dispatches a typed request to the matching service action",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke dispatcher returns a validation error for malformed requests",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke dispatcher returns unsupported for unknown module/action pairs",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke dispatcher returns unsupported for inherited module and action names",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke dispatcher returns internal when a service action throws",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke dispatcher dispatches extension-contributed actions registered after dispatcher creation",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke dispatcher normalizes structured service errors into the existing envelope",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke dispatcher normalizes structured service errors into the existing envelope",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke dispatcher normalizes structured service errors into the existing envelope",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke dispatcher normalizes structured service errors into the existing envelope",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke dispatcher prevents extension actions from overriding existing host actions",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke security (P1-002) rejects missing and unauthorized senders when senderAuth is configured",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke security (P1-002) rejects payloads that exceed size limits",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke security (P1-002) rejects prototype-polluting payload keys",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke security (P1-002) sanitizes internal errors so renderer does not see stack/path/secret",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke security (P1-002) rejects unauthorized sender session URL prefixes when configured",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke security (P1-002) preserves sandbox denial diagnostics in host error details",
+      "status": "passed"
+    },
+    {
+      "name": "Main-owned read observer windows constructs the owned entry and preload with an explicit read-only action list",
+      "status": "passed"
+    },
+    {
+      "name": "Main-owned read observer windows checks the exact app entry on each request and revokes observers with their primary owner",
+      "status": "passed"
+    },
+    {
+      "name": "Main-owned read observer windows releases authorization and the window when navigation fails during creation",
+      "status": "passed"
+    },
+    {
+      "name": "continuous local knowledge synchronization shares recursive roots while preserving independent patterns and final release",
+      "status": "passed"
+    },
+    {
+      "name": "continuous local knowledge synchronization does not deduplicate later edit cycles or delete/recreate back to the same content",
+      "status": "passed"
+    },
+    {
+      "name": "continuous local knowledge synchronization reconciles twenty native rename/change event bursts, updates and withdrawals without duplicates",
+      "status": "passed"
+    },
+    {
+      "name": "continuous local knowledge synchronization startup repairs modifications, new documents and deletions missed while stopped",
+      "status": "passed"
+    },
+    {
+      "name": "continuous local knowledge synchronization failed candidate capture never commits a cursor and remains retryable",
+      "status": "passed"
+    },
+    {
+      "name": "continuous local knowledge synchronization rejects oversized/binary files and never follows a symlink outside the root",
+      "status": "passed"
+    },
+    {
+      "name": "continuous local knowledge synchronization does not infer deletions from a capped incomplete scan and stops pending work",
+      "status": "passed"
+    },
+    {
+      "name": "read-only query cache coalesces concurrent loads and honors TTL without caching rejections",
+      "status": "passed"
+    },
+    {
+      "name": "read-only query cache invalidates a cache prefix explicitly",
+      "status": "passed"
+    },
+    {
+      "name": "poll scheduler priority does not run background polls while shed, but never suppresses interactive polls",
+      "status": "passed"
+    },
+    {
+      "name": "poll scheduler stops callbacks while hidden or blocked and never overlaps work",
+      "status": "passed"
+    },
+    {
+      "name": "TimerAligner runs aligned tasks and stretches non-interactive work while shedding",
+      "status": "passed"
+    },
+    {
+      "name": "TimerAligner does not overlap async work and releases its interval when empty",
+      "status": "passed"
+    },
+    {
+      "name": "WatcherHub shares one directory watcher across subscribers and closes it with the last one",
+      "status": "passed"
+    },
+    {
+      "name": "WatcherHub shares one file watcher across subscribers and removes it on the last close",
+      "status": "passed"
+    },
+    {
+      "name": "resource watcher handle pressure reduces real fs watcher handles by at least 60% across shared roots",
+      "status": "passed"
+    },
+    {
+      "name": "native shared observation retains independent file listeners after the hub releases its last reference",
+      "status": "passed"
+    },
+    {
+      "name": "native shared observation recovers a recursive directory subscription after native deletion and recreation",
+      "status": "passed"
+    },
+    {
+      "name": "native shared observation records ABBA handle and memory samples for equal overlapping subscription work",
+      "status": "passed"
+    },
+    {
+      "name": "independent watcher ownership keeps two subscriptions with the same callback until both handles close",
+      "status": "passed"
+    },
+    {
+      "name": "independent watcher ownership does not let an old handle close a recreated subscription",
+      "status": "passed"
+    },
+    {
+      "name": "independent watcher ownership updates the shared file poll to the fastest active interval",
+      "status": "passed"
+    },
+    {
+      "name": "independent watcher ownership routes overlapping recursive and shallow subscriptions using their own roots and filters",
+      "status": "passed"
+    },
+    {
+      "name": "independent watcher ownership unregisters only its file callback and ignores late delivery from an old poll",
+      "status": "passed"
+    },
+    {
+      "name": "independent watcher ownership restores the original file poll when a faster backend cannot start",
+      "status": "passed"
+    },
+    {
+      "name": "read-only cache generation does not return or publish an invalidated pending result to new callers",
+      "status": "passed"
+    },
+    {
+      "name": "read-only cache generation clear separates pending loads and respects the requesting TTL",
+      "status": "passed"
+    }
+  ],
+  "sources": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "9185f1d09dafe5cbaca2f8e3f1e884e081144f9a89e8897e3c43fbe234100250"
+    },
+    {
+      "path": "README.md",
+      "sha256": "0f553dff5a10362aaf770d5e095a17797e0dcb7420ac962fdf4055d3256ea004"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "a1d33e324ad8eddf8afc9cb8c113cc68cee24844a30cbae3efca9cf1b51ab85b"
+    },
+    {
+      "path": "docs/modules/resources-and-observability.md",
+      "sha256": "f1d64c7db3efef0b35b4815e78e631d1a2ec2f57e5e8829792561009db52b687"
+    },
+    {
+      "path": "electron/main/index.ts",
+      "sha256": "05dd3d00722109bbe0b775c13af1d68283e7099c5db1184614fc5c6be1615a6b"
+    },
+    {
+      "path": "electron/main/ipc-handlers.ts",
+      "sha256": "1bd0b62307bbf7e36cba973d461f1ebecaf8d3ec5d9f2420082be8d5d453233b"
+    },
+    {
+      "path": "electron/main/ipc/host-invoke-security.ts",
+      "sha256": "387cdab96b8c7c7f4785fe05bd0ad6cfb6f8e042682f43459671cbc0b2328008"
+    },
+    {
+      "path": "electron/main/ipc/host-invoke.ts",
+      "sha256": "d66eda648f78d98f7ed1c28491843ba7f1d3c197b007aaa09c1ae81ea883cc0f"
+    },
+    {
+      "path": "electron/main/ipc/host-window-observers.ts",
+      "sha256": "e1737a77d9666dacd6a7a39aa6664a4de5396d4d23e3eadab8b52c2705028332"
+    },
+    {
+      "path": "electron/services/git-api.ts",
+      "sha256": "5c71d25e18481d8cfc40c6c982ed6db2f6249573d058e92eeb81473ea931f1f5"
+    },
+    {
+      "path": "electron/services/knowledge-source-sync.ts",
+      "sha256": "3f19954e8e37c748f75b33643ab9f8d9de36e8c28aa95f3f53a1f2fce15f188a"
+    },
+    {
+      "path": "harness/specs/rules/shared-watchers-read-models.md",
+      "sha256": "18d27aa06c4b5347b247cb2f1745f87694d554aea0afa10cf7f7e225a0c349c3"
+    },
+    {
+      "path": "harness/specs/tasks/shared-watchers-read-models-20261108.md",
+      "sha256": "149abcc10dba362da7b0664e0e8d2ec67f2abb7284836e31dc88f0b73e28459e"
+    },
+    {
+      "path": "shared/resources/watcher-hub.ts",
+      "sha256": "c257bc9be394abe44e631846c8e97af45eea3f4ee062653b1dc3935012eedc66"
+    },
+    {
+      "path": "src/lib/read-only-query-cache.ts",
+      "sha256": "009543c90fd784ae5eedaa48a1f6b17ba9e9232b432ba1be5a584aaa1a149b0b"
+    },
+    {
+      "path": "tests/e2e/shared-read-models.spec.ts",
+      "sha256": "8b5e4c98e080037c8c5a627a1aed7cd4a1e79dac4452838112cc63b944a88d4c"
+    },
+    {
+      "path": "tests/unit/git-api.test.ts",
+      "sha256": "68c7ce2731d438c40f4312eb23373c43d8d98421d1ecacb5d0e4950a29e3c63c"
+    },
+    {
+      "path": "tests/unit/host-window-observers.test.ts",
+      "sha256": "51e8090b769c9af6dd9eca33f322c01b98a49dcfca039e2fe01bee3a4fae9c30"
+    },
+    {
+      "path": "tests/unit/knowledge-source-sync.test.ts",
+      "sha256": "3cdaed5ca9a5e6026c5f99dbe6762f3f994b5cbe795079d1a69a306fda33e70a"
+    },
+    {
+      "path": "tests/unit/resource-timer-watcher.test.ts",
+      "sha256": "eefa88ac156c26633a0187e3f132f563be183e80ffca275afdb4b6e0f03b3505"
+    },
+    {
+      "path": "tests/unit/shared-watchers-native.test.ts",
+      "sha256": "d169ff1a56ba88626e1ac1251f0d318829b1e77cc5ea0cb2965e5e5c35950704"
+    },
+    {
+      "path": "tests/unit/shared-watchers-read-models.test.ts",
+      "sha256": "9f0df8e12bf4200049abc26219d59cebd36b246d2e5495a78d6f13ec4bb98f31"
+    }
+  ],
+  "verdict": "pass-shared-watchers-read-models",
+  "priorCandidate": {
+    "commit": "3468f2e7de3959ce71479f288ec45969c8cf888e",
+    "tree": "30fb982a3c109e2b6a80164506568581a8683a5e",
+    "dirty": false
+  },
+  "testReuse": {
+    "sourceCommit": "3468f2e7de3959ce71479f288ec45969c8cf888e",
+    "paths": [
+      "electron",
+      "shared",
+      "src",
+      "packages",
+      "openclaw_runtime",
+      "scripts",
+      "vite.config.ts",
+      "package.json",
+      "pnpm-lock.yaml",
+      "tests"
+    ],
+    "productAndTestsDiffExitCode": 0,
+    "reason": "Only task spec diffBase updated to actual merged main parent."
+  },
+  "native": {
+    "passed": 1,
+    "windows": 2,
+    "cleanupSurvivors": 0,
+    "command": "native-command.json"
+  },
+  "negativeControls": 8,
+  "performance": {
+    "gitSpawns": {
+      "control": [
+        34,
+        32
+      ],
+      "shared": [
+        4,
+        4
+      ],
+      "reductionPercent": 87.87878787878788
+    },
+    "referencedWatcherHandles": {
+      "separate": [
+        8,
+        8
+      ],
+      "shared": [
+        1,
+        1
+      ],
+      "rootRecoveryMonitorsPerSharedRoot": 1
+    },
+    "readLatencyMs": {
+      "uncached-control": {
+        "p50": 354.0,
+        "p95": 599
+      },
+      "shared": {
+        "p50": 8.5,
+        "p95": 481
+      }
+    }
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 1
+  },
+  "dependencies": {
+    "driven_by": "agent",
+    "actor": "codex",
+    "links": 153,
+    "view": "D:\\tmp\\tf0835\\dependency-view-candidate\\node_modules",
+    "versebrowser": "D:\\tmp\\tf0835\\candidate\\packages\\versebrowser",
+    "runtime": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\node_modules"
+  }
+}

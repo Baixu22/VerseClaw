@@ -1,0 +1,154 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "files": [
+    {
+      "path": "D:\\tmp\\tf0835\\acceptance-integrated\\commands.json",
+      "sha256": "5b566f25c047f668d461c8f67b888a31abc00ab7af589944bd42dae1786c179a"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\acceptance-integrated\\comms\\compare-report.json",
+      "sha256": "fd2bf90f7a107e1bf725e583e475665da2e1b3238fe190b25b8ebb3b56df4630"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\acceptance-integrated\\comms\\compare-report.md",
+      "sha256": "569f64b5d9403c0bf5f88bd62fd826099b142ed3d7b2c2760a1a17fdc3fddcdf"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\acceptance-integrated\\comms\\current-metrics.json",
+      "sha256": "cae2b9547085cc17a2178c17a9c61a65e1330c6d4b2457cdcb1c680b599b8b0c"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\acceptance-integrated\\comms-compare.log",
+      "sha256": "e2f65ecb29d48b3c1495005667b3bdec8a1fafa99150da07f8bfa0d2d20ec950"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\acceptance-integrated\\comms-replay.log",
+      "sha256": "26b239ca2ca6808644ec4aaf3fff1901460299c3653a03b38c61c224bd60fd2c"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\acceptance-integrated\\contract.log",
+      "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\acceptance-integrated\\diff-check-final.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\acceptance-integrated\\diff-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\acceptance-integrated\\harness-run-final.log",
+      "sha256": "bfdca0d4c5ec1eb02f9cebc1e08f409db2b8581c3840217a28ddd3ea7949fcd2"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\acceptance-integrated\\harness-run.log",
+      "sha256": "fa63a0a40cac6733de5ee7b4e64ca329f951be973ed402f2b8d97f16182002ee"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\acceptance-integrated\\harness-validate-final.log",
+      "sha256": "d4e36bcca60ecc8971bda8b8097cd05f9f43fd8c4743c746acd8efdd2dd2c8e6"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\acceptance-integrated\\harness-validate.log",
+      "sha256": "f73c75c38d4f02db752c175308fcf0095923d26f14468b0edc376528c52eee94"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\acceptance-integrated\\i18n.log",
+      "sha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\acceptance-integrated\\lint.json",
+      "sha256": "e0cc5b66ffbfd1318124e537aecf37803dc5fff947ec66b5252589206cb0cfc2"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\acceptance-integrated\\lint.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\acceptance-integrated\\node-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\acceptance-integrated\\report-final.json",
+      "sha256": "3690d629d51b292b0c6f142e31c3699b8e4f6fd3b6fc34b67367de144af77b8f"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\acceptance-integrated\\report.json",
+      "sha256": "b182890e5165f1bbfa0b047b572d5d5d1336fd62cdc5afb32031e7c9874f3f87"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\acceptance-integrated\\retention.log",
+      "sha256": "7a5b6d8f19a28590f6d55a0553297dc9363bf7a19e668c94f64db1ca0547a46c"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\acceptance-integrated\\unit.json",
+      "sha256": "68a140962ea91036b12c75450379d71b7dd06d115c8cbb11a39298401e9205e8"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\acceptance-integrated\\unit.log",
+      "sha256": "a594e75a1688078d550ac0fa1a0d57a002685e69167a1f339e57d53d354d12ae"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\acceptance-integrated\\watcher-pressure.json",
+      "sha256": "97014ddd872e0e6cda3799a3e0f0ed71e230e5f9619b6391d8bb14ffad524e7e"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\acceptance-integrated\\web-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\native-integrated\\command.json",
+      "sha256": "80b7911e5b0f818a87d225ad3cb71fd9e5c5235e57ca7332a27193547edbc213"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\native-integrated\\native.json",
+      "sha256": "6e2a467c4ef870a20c7ba7dbd3ac2df0cbdcae2259a2334c5eb2c0fa841a3b4c"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\native-integrated\\native.log",
+      "sha256": "8a7dda8506a75f80f7a8256f4fc9288fb0abe02191e501cce726dd7e5bcfb95e"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\native-integrated\\results\\.last-run.json",
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\native-integrated\\results\\electron-process-cleanup.json",
+      "sha256": "6f8df663cdc9970c44d5702aa577151904f1e1401aca738163901e25524e025a"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\native-integrated\\results\\electron-process-run.json",
+      "sha256": "d3790ea537ae876e6963d9501a27c26a3c71e19371a04dd3864f0cbc64dc8a78"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\native-integrated\\results\\shared-read-models-two-nat-217da-retain-independent-lifetime\\read-models.json",
+      "sha256": "93162fe57b27b645784609f251e87385e85041529a1c6fd0a767fabceba25322"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\native-integrated\\results\\source-mutation-guard.json",
+      "sha256": "92b9d8597ba8f75091e5d295005807a520dc03d50b9d017b626e19c903abb63b"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\native-integrated\\results\\source-state-after.json",
+      "sha256": "b06e8aa9ba92154441e0c0e7bc98cc2ed7dd984781b6b63242f4cb823e9834bf"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\native-integrated\\results\\source-state-before.json",
+      "sha256": "b06e8aa9ba92154441e0c0e7bc98cc2ed7dd984781b6b63242f4cb823e9834bf"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\observer-preferences-probe.log",
+      "sha256": "8fda4bf9d541a795379bf41860318916a81e15e75754550bd5c929fa99feeab9"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\run-native.py",
+      "sha256": "63e361b9d855a9f971b8aa1116d78c9a651b9ccac7ed39f27ac8eba288a19e65"
+    },
+    {
+      "path": "D:\\tmp\\tf0835\\verify-integrated.py",
+      "sha256": "a5d92c61338b69708db01d3b0f9c413d0b982b95e3cc08824884ad4504c39428"
+    }
+  ]
+}

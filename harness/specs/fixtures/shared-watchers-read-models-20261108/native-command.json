@@ -1,0 +1,18 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": "68533427ba832f574924ff526a8446a3b7635ca8",
+  "argv": [
+    "node",
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "tests/e2e/shared-read-models.spec.ts",
+    "--workers=1",
+    "--retries=0",
+    "--reporter=list,json",
+    "--output=D:\\tmp\\tf0835\\native-integrated\\results"
+  ],
+  "cwd": "D:\\tmp\\tf0835\\candidate",
+  "exitCode": 0,
+  "durationMs": 25344
+}

@@ -1,0 +1,324 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "order": "ABBA",
+  "samples": [
+    {
+      "mode": "separate",
+      "handlesDuring": 8,
+      "rootRecoveryMonitors": 0,
+      "handleCensusScope": "Node _getActiveHandles reports referenced FSWatcher/StatWatcher handles; non-persistent recovery monitors are listed separately.",
+      "memoryBefore": {
+        "rss": 78360576,
+        "heapTotal": 31051776,
+        "heapUsed": 15170712,
+        "external": 2734831,
+        "arrayBuffers": 269024
+      },
+      "memoryDuring": {
+        "rss": 78520320,
+        "heapTotal": 31051776,
+        "heapUsed": 15544576,
+        "external": 2735281,
+        "arrayBuffers": 269024
+      },
+      "usageBefore": {
+        "userCPUTime": 750000,
+        "systemCPUTime": 656000,
+        "maxRSS": 78576,
+        "sharedMemorySize": 0,
+        "unsharedDataSize": 0,
+        "unsharedStackSize": 0,
+        "minorPageFault": 0,
+        "majorPageFault": 24274,
+        "swappedOut": 0,
+        "fsRead": 624,
+        "fsWrite": 21,
+        "ipcSent": 0,
+        "ipcReceived": 0,
+        "signalsCount": 0,
+        "voluntaryContextSwitches": 0,
+        "involuntaryContextSwitches": 0
+      },
+      "usageAfter": {
+        "userCPUTime": 765000,
+        "systemCPUTime": 750000,
+        "maxRSS": 78576,
+        "sharedMemorySize": 0,
+        "unsharedDataSize": 0,
+        "unsharedStackSize": 0,
+        "minorPageFault": 0,
+        "majorPageFault": 24312,
+        "swappedOut": 0,
+        "fsRead": 627,
+        "fsWrite": 42,
+        "ipcSent": 0,
+        "ipcReceived": 0,
+        "signalsCount": 0,
+        "voluntaryContextSwitches": 0,
+        "involuntaryContextSwitches": 0
+      },
+      "callbacks": [
+        60,
+        60,
+        60,
+        60,
+        40,
+        40,
+        40,
+        40
+      ],
+      "workload": {
+        "subscriptions": 8,
+        "roots": 2,
+        "writes": 20
+      },
+      "diagnostics": {
+        "directoryWatchers": 0,
+        "fileWatchers": 0,
+        "rootRecoveryMonitors": 0,
+        "subscriptions": 0,
+        "keys": []
+      }
+    },
+    {
+      "mode": "shared",
+      "handlesDuring": 1,
+      "rootRecoveryMonitors": 1,
+      "handleCensusScope": "Node _getActiveHandles reports referenced FSWatcher/StatWatcher handles; non-persistent recovery monitors are listed separately.",
+      "memoryBefore": {
+        "rss": 78524416,
+        "heapTotal": 31051776,
+        "heapUsed": 15574168,
+        "external": 2735281,
+        "arrayBuffers": 269024
+      },
+      "memoryDuring": {
+        "rss": 78540800,
+        "heapTotal": 31051776,
+        "heapUsed": 16910584,
+        "external": 2735281,
+        "arrayBuffers": 269024
+      },
+      "usageBefore": {
+        "userCPUTime": 765000,
+        "systemCPUTime": 750000,
+        "maxRSS": 78576,
+        "sharedMemorySize": 0,
+        "unsharedDataSize": 0,
+        "unsharedStackSize": 0,
+        "minorPageFault": 0,
+        "majorPageFault": 24313,
+        "swappedOut": 0,
+        "fsRead": 627,
+        "fsWrite": 42,
+        "ipcSent": 0,
+        "ipcReceived": 0,
+        "signalsCount": 0,
+        "voluntaryContextSwitches": 0,
+        "involuntaryContextSwitches": 0
+      },
+      "usageAfter": {
+        "userCPUTime": 781000,
+        "systemCPUTime": 765000,
+        "maxRSS": 78576,
+        "sharedMemorySize": 0,
+        "unsharedDataSize": 0,
+        "unsharedStackSize": 0,
+        "minorPageFault": 0,
+        "majorPageFault": 24317,
+        "swappedOut": 0,
+        "fsRead": 627,
+        "fsWrite": 62,
+        "ipcSent": 0,
+        "ipcReceived": 0,
+        "signalsCount": 0,
+        "voluntaryContextSwitches": 0,
+        "involuntaryContextSwitches": 0
+      },
+      "callbacks": [
+        40,
+        40,
+        40,
+        40,
+        40,
+        40,
+        40,
+        40
+      ],
+      "workload": {
+        "subscriptions": 8,
+        "roots": 2,
+        "writes": 20
+      },
+      "diagnostics": {
+        "directoryWatchers": 1,
+        "fileWatchers": 0,
+        "rootRecoveryMonitors": 1,
+        "subscriptions": 8,
+        "keys": [
+          "d:\\tmp\\shared-pressure-tbshdd"
+        ]
+      }
+    },
+    {
+      "mode": "shared",
+      "handlesDuring": 1,
+      "rootRecoveryMonitors": 1,
+      "handleCensusScope": "Node _getActiveHandles reports referenced FSWatcher/StatWatcher handles; non-persistent recovery monitors are listed separately.",
+      "memoryBefore": {
+        "rss": 78544896,
+        "heapTotal": 31051776,
+        "heapUsed": 16934288,
+        "external": 2735281,
+        "arrayBuffers": 269024
+      },
+      "memoryDuring": {
+        "rss": 78524416,
+        "heapTotal": 31051776,
+        "heapUsed": 18293096,
+        "external": 2735281,
+        "arrayBuffers": 269024
+      },
+      "usageBefore": {
+        "userCPUTime": 781000,
+        "systemCPUTime": 765000,
+        "maxRSS": 78576,
+        "sharedMemorySize": 0,
+        "unsharedDataSize": 0,
+        "unsharedStackSize": 0,
+        "minorPageFault": 0,
+        "majorPageFault": 24318,
+        "swappedOut": 0,
+        "fsRead": 627,
+        "fsWrite": 62,
+        "ipcSent": 0,
+        "ipcReceived": 0,
+        "signalsCount": 0,
+        "voluntaryContextSwitches": 0,
+        "involuntaryContextSwitches": 0
+      },
+      "usageAfter": {
+        "userCPUTime": 781000,
+        "systemCPUTime": 781000,
+        "maxRSS": 78576,
+        "sharedMemorySize": 0,
+        "unsharedDataSize": 0,
+        "unsharedStackSize": 0,
+        "minorPageFault": 0,
+        "majorPageFault": 24488,
+        "swappedOut": 0,
+        "fsRead": 627,
+        "fsWrite": 82,
+        "ipcSent": 0,
+        "ipcReceived": 0,
+        "signalsCount": 0,
+        "voluntaryContextSwitches": 0,
+        "involuntaryContextSwitches": 0
+      },
+      "callbacks": [
+        40,
+        40,
+        40,
+        40,
+        40,
+        40,
+        40,
+        40
+      ],
+      "workload": {
+        "subscriptions": 8,
+        "roots": 2,
+        "writes": 20
+      },
+      "diagnostics": {
+        "directoryWatchers": 1,
+        "fileWatchers": 0,
+        "rootRecoveryMonitors": 1,
+        "subscriptions": 8,
+        "keys": [
+          "d:\\tmp\\shared-pressure-tbshdd"
+        ]
+      }
+    },
+    {
+      "mode": "separate",
+      "handlesDuring": 8,
+      "rootRecoveryMonitors": 0,
+      "handleCensusScope": "Node _getActiveHandles reports referenced FSWatcher/StatWatcher handles; non-persistent recovery monitors are listed separately.",
+      "memoryBefore": {
+        "rss": 78524416,
+        "heapTotal": 31051776,
+        "heapUsed": 18316208,
+        "external": 2735281,
+        "arrayBuffers": 269024
+      },
+      "memoryDuring": {
+        "rss": 78635008,
+        "heapTotal": 31051776,
+        "heapUsed": 18624160,
+        "external": 2735281,
+        "arrayBuffers": 269024
+      },
+      "usageBefore": {
+        "userCPUTime": 781000,
+        "systemCPUTime": 781000,
+        "maxRSS": 78576,
+        "sharedMemorySize": 0,
+        "unsharedDataSize": 0,
+        "unsharedStackSize": 0,
+        "minorPageFault": 0,
+        "majorPageFault": 24488,
+        "swappedOut": 0,
+        "fsRead": 627,
+        "fsWrite": 82,
+        "ipcSent": 0,
+        "ipcReceived": 0,
+        "signalsCount": 0,
+        "voluntaryContextSwitches": 0,
+        "involuntaryContextSwitches": 0
+      },
+      "usageAfter": {
+        "userCPUTime": 796000,
+        "systemCPUTime": 859000,
+        "maxRSS": 78576,
+        "sharedMemorySize": 0,
+        "unsharedDataSize": 0,
+        "unsharedStackSize": 0,
+        "minorPageFault": 0,
+        "majorPageFault": 24515,
+        "swappedOut": 0,
+        "fsRead": 627,
+        "fsWrite": 102,
+        "ipcSent": 0,
+        "ipcReceived": 0,
+        "signalsCount": 0,
+        "voluntaryContextSwitches": 0,
+        "involuntaryContextSwitches": 0
+      },
+      "callbacks": [
+        40,
+        40,
+        40,
+        40,
+        40,
+        40,
+        40,
+        40
+      ],
+      "workload": {
+        "subscriptions": 8,
+        "roots": 2,
+        "writes": 20
+      },
+      "diagnostics": {
+        "directoryWatchers": 0,
+        "fileWatchers": 0,
+        "rootRecoveryMonitors": 0,
+        "subscriptions": 0,
+        "keys": []
+      }
+    }
+  ],
+  "finalNativeWatchers": 0
+}

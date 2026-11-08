@@ -1,0 +1,39 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "summary": {
+    "gitSpawns": {
+      "control": [
+        34,
+        32
+      ],
+      "shared": [
+        4,
+        4
+      ],
+      "reductionPercent": 87.87878787878788
+    },
+    "referencedWatcherHandles": {
+      "separate": [
+        8,
+        8
+      ],
+      "shared": [
+        1,
+        1
+      ],
+      "rootRecoveryMonitorsPerSharedRoot": 1
+    },
+    "readLatencyMs": {
+      "uncached-control": {
+        "p50": 354.0,
+        "p95": 599
+      },
+      "shared": {
+        "p50": 8.5,
+        "p95": 481
+      }
+    }
+  },
+  "scope": "Native watcher handles and real Main Git read calls; root recovery monitors listed separately. RSS/heap and filesystem counters are descriptive samples; no RSS reduction claim."
+}

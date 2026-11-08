@@ -1,0 +1,2512 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "workload": {
+    "requestsPerRound": 8,
+    "nativeWindows": 2,
+    "order": "ABBA",
+    "source": "one temporary native Git repository"
+  },
+  "control": "Temporary repository directory mtime changes before each control request; shared rounds keep the source stable. Product routes and Git commands remain real.",
+  "rows": [
+    {
+      "mode": "uncached-control",
+      "before": {
+        "performance": {
+          "startedAt": 1794120001422,
+          "elapsedMs": 8560.7761,
+          "marks": [
+            {
+              "name": "app-ready",
+              "at": 1794120007744,
+              "fromStartMs": 6322.7626
+            },
+            {
+              "name": "window-created",
+              "at": 1794120008237,
+              "fromStartMs": 6815.6967
+            },
+            {
+              "name": "ready-to-show",
+              "at": 1794120008559,
+              "fromStartMs": 7137.7552
+            },
+            {
+              "name": "gateway-start",
+              "at": 1794120008609,
+              "fromStartMs": 7187.6528
+            }
+          ],
+          "counters": {
+            "spawnCount": 6,
+            "spawnByMethod": {
+              "spawn": 0,
+              "exec": 0,
+              "execFile": 6,
+              "fork": 0,
+              "spawnSync": 0,
+              "execSync": 0,
+              "execFileSync": 0
+            },
+            "recentSpawns": [
+              {
+                "method": "execFile",
+                "at": 1794120009176,
+                "fromStartMs": 7754.6152,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009294,
+                "fromStartMs": 7872.614299999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009367,
+                "fromStartMs": 7945.629999999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009582,
+                "fromStartMs": 8160.6394,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009601,
+                "fromStartMs": 8179.648499999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009634,
+                "fromStartMs": 8212.2547,
+                "command": "git"
+              }
+            ],
+            "activeIntervals": 2,
+            "activeWatchers": 0,
+            "unavailable": []
+          },
+          "rssBytes": 634785792
+        },
+        "memory": {
+          "rss": 634789888,
+          "heapTotal": 342986752,
+          "heapUsed": 117800028,
+          "external": 5933074,
+          "arrayBuffers": 0
+        }
+      },
+      "after": {
+        "performance": {
+          "startedAt": 1794120001422,
+          "elapsedMs": 11925.4854,
+          "marks": [
+            {
+              "name": "app-ready",
+              "at": 1794120007744,
+              "fromStartMs": 6322.7626
+            },
+            {
+              "name": "window-created",
+              "at": 1794120008237,
+              "fromStartMs": 6815.6967
+            },
+            {
+              "name": "ready-to-show",
+              "at": 1794120008559,
+              "fromStartMs": 7137.7552
+            },
+            {
+              "name": "gateway-start",
+              "at": 1794120008609,
+              "fromStartMs": 7187.6528
+            }
+          ],
+          "counters": {
+            "spawnCount": 40,
+            "spawnByMethod": {
+              "spawn": 0,
+              "exec": 0,
+              "execFile": 40,
+              "fork": 0,
+              "spawnSync": 0,
+              "execSync": 0,
+              "execFileSync": 0
+            },
+            "recentSpawns": [
+              {
+                "method": "execFile",
+                "at": 1794120009176,
+                "fromStartMs": 7754.6152,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009294,
+                "fromStartMs": 7872.614299999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009367,
+                "fromStartMs": 7945.629999999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009582,
+                "fromStartMs": 8160.6394,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009601,
+                "fromStartMs": 8179.648499999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009634,
+                "fromStartMs": 8212.2547,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010008,
+                "fromStartMs": 8585.9486,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010108,
+                "fromStartMs": 8686.3362,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010122,
+                "fromStartMs": 8700.851999999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010301,
+                "fromStartMs": 8878.9852,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010456,
+                "fromStartMs": 9034.6029,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010476,
+                "fromStartMs": 9054.3267,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010612,
+                "fromStartMs": 9190.89,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010706,
+                "fromStartMs": 9284.0047,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010852,
+                "fromStartMs": 9430.81,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010880,
+                "fromStartMs": 9458.7459,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011032,
+                "fromStartMs": 9610.5982,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011165,
+                "fromStartMs": 9743.3354,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011314,
+                "fromStartMs": 9891.9915,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011329,
+                "fromStartMs": 9906.9121,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011527,
+                "fromStartMs": 10105.886499999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011616,
+                "fromStartMs": 10194.3904,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011706,
+                "fromStartMs": 10283.9242,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011718,
+                "fromStartMs": 10295.9632,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011833,
+                "fromStartMs": 10411.2431,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011934,
+                "fromStartMs": 10512.8105,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012075,
+                "fromStartMs": 10653.7732,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012116,
+                "fromStartMs": 10694.7652,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012310,
+                "fromStartMs": 10888.5182,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012414,
+                "fromStartMs": 10992.3943,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012538,
+                "fromStartMs": 11116.074999999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012549,
+                "fromStartMs": 11127.837099999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012678,
+                "fromStartMs": 11256.8599,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012804,
+                "fromStartMs": 11382.8169,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012899,
+                "fromStartMs": 11477.2658,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012910,
+                "fromStartMs": 11488.433799999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013065,
+                "fromStartMs": 11643.346,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013154,
+                "fromStartMs": 11732.66,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013231,
+                "fromStartMs": 11809.4345,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013242,
+                "fromStartMs": 11820.1912,
+                "command": "git"
+              }
+            ],
+            "activeIntervals": 2,
+            "activeWatchers": 0,
+            "unavailable": []
+          },
+          "rssBytes": 628215808
+        },
+        "memory": {
+          "rss": 628219904,
+          "heapTotal": 343248896,
+          "heapUsed": 124782044,
+          "external": 5975077,
+          "arrayBuffers": 0
+        }
+      },
+      "durations": [
+        599,
+        418,
+        487,
+        299,
+        478,
+        365,
+        383,
+        284
+      ],
+      "gitSpawns": 34,
+      "requests": 8,
+      "windows": 2
+    },
+    {
+      "mode": "shared",
+      "before": {
+        "performance": {
+          "startedAt": 1794120001422,
+          "elapsedMs": 11943.6403,
+          "marks": [
+            {
+              "name": "app-ready",
+              "at": 1794120007744,
+              "fromStartMs": 6322.7626
+            },
+            {
+              "name": "window-created",
+              "at": 1794120008237,
+              "fromStartMs": 6815.6967
+            },
+            {
+              "name": "ready-to-show",
+              "at": 1794120008559,
+              "fromStartMs": 7137.7552
+            },
+            {
+              "name": "gateway-start",
+              "at": 1794120008609,
+              "fromStartMs": 7187.6528
+            }
+          ],
+          "counters": {
+            "spawnCount": 40,
+            "spawnByMethod": {
+              "spawn": 0,
+              "exec": 0,
+              "execFile": 40,
+              "fork": 0,
+              "spawnSync": 0,
+              "execSync": 0,
+              "execFileSync": 0
+            },
+            "recentSpawns": [
+              {
+                "method": "execFile",
+                "at": 1794120009176,
+                "fromStartMs": 7754.6152,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009294,
+                "fromStartMs": 7872.614299999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009367,
+                "fromStartMs": 7945.629999999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009582,
+                "fromStartMs": 8160.6394,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009601,
+                "fromStartMs": 8179.648499999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009634,
+                "fromStartMs": 8212.2547,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010008,
+                "fromStartMs": 8585.9486,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010108,
+                "fromStartMs": 8686.3362,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010122,
+                "fromStartMs": 8700.851999999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010301,
+                "fromStartMs": 8878.9852,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010456,
+                "fromStartMs": 9034.6029,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010476,
+                "fromStartMs": 9054.3267,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010612,
+                "fromStartMs": 9190.89,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010706,
+                "fromStartMs": 9284.0047,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010852,
+                "fromStartMs": 9430.81,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010880,
+                "fromStartMs": 9458.7459,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011032,
+                "fromStartMs": 9610.5982,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011165,
+                "fromStartMs": 9743.3354,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011314,
+                "fromStartMs": 9891.9915,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011329,
+                "fromStartMs": 9906.9121,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011527,
+                "fromStartMs": 10105.886499999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011616,
+                "fromStartMs": 10194.3904,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011706,
+                "fromStartMs": 10283.9242,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011718,
+                "fromStartMs": 10295.9632,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011833,
+                "fromStartMs": 10411.2431,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011934,
+                "fromStartMs": 10512.8105,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012075,
+                "fromStartMs": 10653.7732,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012116,
+                "fromStartMs": 10694.7652,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012310,
+                "fromStartMs": 10888.5182,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012414,
+                "fromStartMs": 10992.3943,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012538,
+                "fromStartMs": 11116.074999999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012549,
+                "fromStartMs": 11127.837099999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012678,
+                "fromStartMs": 11256.8599,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012804,
+                "fromStartMs": 11382.8169,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012899,
+                "fromStartMs": 11477.2658,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012910,
+                "fromStartMs": 11488.433799999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013065,
+                "fromStartMs": 11643.346,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013154,
+                "fromStartMs": 11732.66,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013231,
+                "fromStartMs": 11809.4345,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013242,
+                "fromStartMs": 11820.1912,
+                "command": "git"
+              }
+            ],
+            "activeIntervals": 2,
+            "activeWatchers": 0,
+            "unavailable": []
+          },
+          "rssBytes": 628228096
+        },
+        "memory": {
+          "rss": 628228096,
+          "heapTotal": 343248896,
+          "heapUsed": 124814448,
+          "external": 5975077,
+          "arrayBuffers": 0
+        }
+      },
+      "after": {
+        "performance": {
+          "startedAt": 1794120001422,
+          "elapsedMs": 12508.9272,
+          "marks": [
+            {
+              "name": "app-ready",
+              "at": 1794120007744,
+              "fromStartMs": 6322.7626
+            },
+            {
+              "name": "window-created",
+              "at": 1794120008237,
+              "fromStartMs": 6815.6967
+            },
+            {
+              "name": "ready-to-show",
+              "at": 1794120008559,
+              "fromStartMs": 7137.7552
+            },
+            {
+              "name": "gateway-start",
+              "at": 1794120008609,
+              "fromStartMs": 7187.6528
+            }
+          ],
+          "counters": {
+            "spawnCount": 44,
+            "spawnByMethod": {
+              "spawn": 0,
+              "exec": 0,
+              "execFile": 44,
+              "fork": 0,
+              "spawnSync": 0,
+              "execSync": 0,
+              "execFileSync": 0
+            },
+            "recentSpawns": [
+              {
+                "method": "execFile",
+                "at": 1794120009176,
+                "fromStartMs": 7754.6152,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009294,
+                "fromStartMs": 7872.614299999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009367,
+                "fromStartMs": 7945.629999999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009582,
+                "fromStartMs": 8160.6394,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009601,
+                "fromStartMs": 8179.648499999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009634,
+                "fromStartMs": 8212.2547,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010008,
+                "fromStartMs": 8585.9486,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010108,
+                "fromStartMs": 8686.3362,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010122,
+                "fromStartMs": 8700.851999999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010301,
+                "fromStartMs": 8878.9852,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010456,
+                "fromStartMs": 9034.6029,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010476,
+                "fromStartMs": 9054.3267,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010612,
+                "fromStartMs": 9190.89,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010706,
+                "fromStartMs": 9284.0047,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010852,
+                "fromStartMs": 9430.81,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010880,
+                "fromStartMs": 9458.7459,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011032,
+                "fromStartMs": 9610.5982,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011165,
+                "fromStartMs": 9743.3354,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011314,
+                "fromStartMs": 9891.9915,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011329,
+                "fromStartMs": 9906.9121,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011527,
+                "fromStartMs": 10105.886499999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011616,
+                "fromStartMs": 10194.3904,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011706,
+                "fromStartMs": 10283.9242,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011718,
+                "fromStartMs": 10295.9632,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011833,
+                "fromStartMs": 10411.2431,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011934,
+                "fromStartMs": 10512.8105,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012075,
+                "fromStartMs": 10653.7732,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012116,
+                "fromStartMs": 10694.7652,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012310,
+                "fromStartMs": 10888.5182,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012414,
+                "fromStartMs": 10992.3943,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012538,
+                "fromStartMs": 11116.074999999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012549,
+                "fromStartMs": 11127.837099999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012678,
+                "fromStartMs": 11256.8599,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012804,
+                "fromStartMs": 11382.8169,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012899,
+                "fromStartMs": 11477.2658,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012910,
+                "fromStartMs": 11488.433799999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013065,
+                "fromStartMs": 11643.346,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013154,
+                "fromStartMs": 11732.66,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013231,
+                "fromStartMs": 11809.4345,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013242,
+                "fromStartMs": 11820.1912,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013381,
+                "fromStartMs": 11959.3925,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013474,
+                "fromStartMs": 12052.626199999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013678,
+                "fromStartMs": 12256.6827,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013700,
+                "fromStartMs": 12278.5279,
+                "command": "git"
+              }
+            ],
+            "activeIntervals": 2,
+            "activeWatchers": 0,
+            "unavailable": []
+          },
+          "rssBytes": 629260288
+        },
+        "memory": {
+          "rss": 629272576,
+          "heapTotal": 343248896,
+          "heapUsed": 125839280,
+          "external": 5975884,
+          "arrayBuffers": 0
+        }
+      },
+      "durations": [
+        481,
+        6,
+        6,
+        5,
+        4,
+        13,
+        6,
+        10
+      ],
+      "gitSpawns": 4,
+      "requests": 8,
+      "windows": 2
+    },
+    {
+      "mode": "shared",
+      "before": {
+        "performance": {
+          "startedAt": 1794120001422,
+          "elapsedMs": 12543.1274,
+          "marks": [
+            {
+              "name": "app-ready",
+              "at": 1794120007744,
+              "fromStartMs": 6322.7626
+            },
+            {
+              "name": "window-created",
+              "at": 1794120008237,
+              "fromStartMs": 6815.6967
+            },
+            {
+              "name": "ready-to-show",
+              "at": 1794120008559,
+              "fromStartMs": 7137.7552
+            },
+            {
+              "name": "gateway-start",
+              "at": 1794120008609,
+              "fromStartMs": 7187.6528
+            }
+          ],
+          "counters": {
+            "spawnCount": 44,
+            "spawnByMethod": {
+              "spawn": 0,
+              "exec": 0,
+              "execFile": 44,
+              "fork": 0,
+              "spawnSync": 0,
+              "execSync": 0,
+              "execFileSync": 0
+            },
+            "recentSpawns": [
+              {
+                "method": "execFile",
+                "at": 1794120009176,
+                "fromStartMs": 7754.6152,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009294,
+                "fromStartMs": 7872.614299999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009367,
+                "fromStartMs": 7945.629999999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009582,
+                "fromStartMs": 8160.6394,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009601,
+                "fromStartMs": 8179.648499999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009634,
+                "fromStartMs": 8212.2547,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010008,
+                "fromStartMs": 8585.9486,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010108,
+                "fromStartMs": 8686.3362,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010122,
+                "fromStartMs": 8700.851999999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010301,
+                "fromStartMs": 8878.9852,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010456,
+                "fromStartMs": 9034.6029,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010476,
+                "fromStartMs": 9054.3267,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010612,
+                "fromStartMs": 9190.89,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010706,
+                "fromStartMs": 9284.0047,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010852,
+                "fromStartMs": 9430.81,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010880,
+                "fromStartMs": 9458.7459,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011032,
+                "fromStartMs": 9610.5982,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011165,
+                "fromStartMs": 9743.3354,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011314,
+                "fromStartMs": 9891.9915,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011329,
+                "fromStartMs": 9906.9121,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011527,
+                "fromStartMs": 10105.886499999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011616,
+                "fromStartMs": 10194.3904,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011706,
+                "fromStartMs": 10283.9242,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011718,
+                "fromStartMs": 10295.9632,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011833,
+                "fromStartMs": 10411.2431,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011934,
+                "fromStartMs": 10512.8105,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012075,
+                "fromStartMs": 10653.7732,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012116,
+                "fromStartMs": 10694.7652,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012310,
+                "fromStartMs": 10888.5182,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012414,
+                "fromStartMs": 10992.3943,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012538,
+                "fromStartMs": 11116.074999999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012549,
+                "fromStartMs": 11127.837099999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012678,
+                "fromStartMs": 11256.8599,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012804,
+                "fromStartMs": 11382.8169,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012899,
+                "fromStartMs": 11477.2658,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012910,
+                "fromStartMs": 11488.433799999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013065,
+                "fromStartMs": 11643.346,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013154,
+                "fromStartMs": 11732.66,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013231,
+                "fromStartMs": 11809.4345,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013242,
+                "fromStartMs": 11820.1912,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013381,
+                "fromStartMs": 11959.3925,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013474,
+                "fromStartMs": 12052.626199999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013678,
+                "fromStartMs": 12256.6827,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013700,
+                "fromStartMs": 12278.5279,
+                "command": "git"
+              }
+            ],
+            "activeIntervals": 2,
+            "activeWatchers": 0,
+            "unavailable": []
+          },
+          "rssBytes": 629276672
+        },
+        "memory": {
+          "rss": 629284864,
+          "heapTotal": 343248896,
+          "heapUsed": 125861892,
+          "external": 5975884,
+          "arrayBuffers": 0
+        }
+      },
+      "after": {
+        "performance": {
+          "startedAt": 1794120001422,
+          "elapsedMs": 13114.9013,
+          "marks": [
+            {
+              "name": "app-ready",
+              "at": 1794120007744,
+              "fromStartMs": 6322.7626
+            },
+            {
+              "name": "window-created",
+              "at": 1794120008237,
+              "fromStartMs": 6815.6967
+            },
+            {
+              "name": "ready-to-show",
+              "at": 1794120008559,
+              "fromStartMs": 7137.7552
+            },
+            {
+              "name": "gateway-start",
+              "at": 1794120008609,
+              "fromStartMs": 7187.6528
+            }
+          ],
+          "counters": {
+            "spawnCount": 48,
+            "spawnByMethod": {
+              "spawn": 0,
+              "exec": 0,
+              "execFile": 48,
+              "fork": 0,
+              "spawnSync": 0,
+              "execSync": 0,
+              "execFileSync": 0
+            },
+            "recentSpawns": [
+              {
+                "method": "execFile",
+                "at": 1794120009176,
+                "fromStartMs": 7754.6152,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009294,
+                "fromStartMs": 7872.614299999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009367,
+                "fromStartMs": 7945.629999999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009582,
+                "fromStartMs": 8160.6394,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009601,
+                "fromStartMs": 8179.648499999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009634,
+                "fromStartMs": 8212.2547,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010008,
+                "fromStartMs": 8585.9486,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010108,
+                "fromStartMs": 8686.3362,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010122,
+                "fromStartMs": 8700.851999999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010301,
+                "fromStartMs": 8878.9852,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010456,
+                "fromStartMs": 9034.6029,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010476,
+                "fromStartMs": 9054.3267,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010612,
+                "fromStartMs": 9190.89,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010706,
+                "fromStartMs": 9284.0047,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010852,
+                "fromStartMs": 9430.81,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010880,
+                "fromStartMs": 9458.7459,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011032,
+                "fromStartMs": 9610.5982,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011165,
+                "fromStartMs": 9743.3354,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011314,
+                "fromStartMs": 9891.9915,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011329,
+                "fromStartMs": 9906.9121,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011527,
+                "fromStartMs": 10105.886499999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011616,
+                "fromStartMs": 10194.3904,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011706,
+                "fromStartMs": 10283.9242,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011718,
+                "fromStartMs": 10295.9632,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011833,
+                "fromStartMs": 10411.2431,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011934,
+                "fromStartMs": 10512.8105,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012075,
+                "fromStartMs": 10653.7732,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012116,
+                "fromStartMs": 10694.7652,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012310,
+                "fromStartMs": 10888.5182,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012414,
+                "fromStartMs": 10992.3943,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012538,
+                "fromStartMs": 11116.074999999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012549,
+                "fromStartMs": 11127.837099999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012678,
+                "fromStartMs": 11256.8599,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012804,
+                "fromStartMs": 11382.8169,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012899,
+                "fromStartMs": 11477.2658,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012910,
+                "fromStartMs": 11488.433799999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013065,
+                "fromStartMs": 11643.346,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013154,
+                "fromStartMs": 11732.66,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013231,
+                "fromStartMs": 11809.4345,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013242,
+                "fromStartMs": 11820.1912,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013381,
+                "fromStartMs": 11959.3925,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013474,
+                "fromStartMs": 12052.626199999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013678,
+                "fromStartMs": 12256.6827,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013700,
+                "fromStartMs": 12278.5279,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013983,
+                "fromStartMs": 12561.171699999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120014114,
+                "fromStartMs": 12692.2736,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120014236,
+                "fromStartMs": 12814.583999999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120014261,
+                "fromStartMs": 12839.875699999999,
+                "command": "git"
+              }
+            ],
+            "activeIntervals": 2,
+            "activeWatchers": 0,
+            "unavailable": []
+          },
+          "rssBytes": 629145600
+        },
+        "memory": {
+          "rss": 629145600,
+          "heapTotal": 343248896,
+          "heapUsed": 126855360,
+          "external": 5976691,
+          "arrayBuffers": 0
+        }
+      },
+      "durations": [
+        426,
+        21,
+        7,
+        11,
+        4,
+        4,
+        37,
+        31
+      ],
+      "gitSpawns": 4,
+      "requests": 8,
+      "windows": 2
+    },
+    {
+      "mode": "uncached-control",
+      "before": {
+        "performance": {
+          "startedAt": 1794120001422,
+          "elapsedMs": 13155.1023,
+          "marks": [
+            {
+              "name": "app-ready",
+              "at": 1794120007744,
+              "fromStartMs": 6322.7626
+            },
+            {
+              "name": "window-created",
+              "at": 1794120008237,
+              "fromStartMs": 6815.6967
+            },
+            {
+              "name": "ready-to-show",
+              "at": 1794120008559,
+              "fromStartMs": 7137.7552
+            },
+            {
+              "name": "gateway-start",
+              "at": 1794120008609,
+              "fromStartMs": 7187.6528
+            }
+          ],
+          "counters": {
+            "spawnCount": 48,
+            "spawnByMethod": {
+              "spawn": 0,
+              "exec": 0,
+              "execFile": 48,
+              "fork": 0,
+              "spawnSync": 0,
+              "execSync": 0,
+              "execFileSync": 0
+            },
+            "recentSpawns": [
+              {
+                "method": "execFile",
+                "at": 1794120009176,
+                "fromStartMs": 7754.6152,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009294,
+                "fromStartMs": 7872.614299999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009367,
+                "fromStartMs": 7945.629999999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009582,
+                "fromStartMs": 8160.6394,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009601,
+                "fromStartMs": 8179.648499999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120009634,
+                "fromStartMs": 8212.2547,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010008,
+                "fromStartMs": 8585.9486,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010108,
+                "fromStartMs": 8686.3362,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010122,
+                "fromStartMs": 8700.851999999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010301,
+                "fromStartMs": 8878.9852,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010456,
+                "fromStartMs": 9034.6029,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010476,
+                "fromStartMs": 9054.3267,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010612,
+                "fromStartMs": 9190.89,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010706,
+                "fromStartMs": 9284.0047,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010852,
+                "fromStartMs": 9430.81,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120010880,
+                "fromStartMs": 9458.7459,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011032,
+                "fromStartMs": 9610.5982,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011165,
+                "fromStartMs": 9743.3354,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011314,
+                "fromStartMs": 9891.9915,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011329,
+                "fromStartMs": 9906.9121,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011527,
+                "fromStartMs": 10105.886499999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011616,
+                "fromStartMs": 10194.3904,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011706,
+                "fromStartMs": 10283.9242,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011718,
+                "fromStartMs": 10295.9632,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011833,
+                "fromStartMs": 10411.2431,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011934,
+                "fromStartMs": 10512.8105,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012075,
+                "fromStartMs": 10653.7732,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012116,
+                "fromStartMs": 10694.7652,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012310,
+                "fromStartMs": 10888.5182,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012414,
+                "fromStartMs": 10992.3943,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012538,
+                "fromStartMs": 11116.074999999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012549,
+                "fromStartMs": 11127.837099999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012678,
+                "fromStartMs": 11256.8599,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012804,
+                "fromStartMs": 11382.8169,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012899,
+                "fromStartMs": 11477.2658,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012910,
+                "fromStartMs": 11488.433799999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013065,
+                "fromStartMs": 11643.346,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013154,
+                "fromStartMs": 11732.66,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013231,
+                "fromStartMs": 11809.4345,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013242,
+                "fromStartMs": 11820.1912,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013381,
+                "fromStartMs": 11959.3925,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013474,
+                "fromStartMs": 12052.626199999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013678,
+                "fromStartMs": 12256.6827,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013700,
+                "fromStartMs": 12278.5279,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013983,
+                "fromStartMs": 12561.171699999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120014114,
+                "fromStartMs": 12692.2736,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120014236,
+                "fromStartMs": 12814.583999999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120014261,
+                "fromStartMs": 12839.875699999999,
+                "command": "git"
+              }
+            ],
+            "activeIntervals": 2,
+            "activeWatchers": 0,
+            "unavailable": []
+          },
+          "rssBytes": 629145600
+        },
+        "memory": {
+          "rss": 629145600,
+          "heapTotal": 343248896,
+          "heapUsed": 126885400,
+          "external": 5976691,
+          "arrayBuffers": 0
+        }
+      },
+      "after": {
+        "performance": {
+          "startedAt": 1794120001422,
+          "elapsedMs": 15719.062399999999,
+          "marks": [
+            {
+              "name": "app-ready",
+              "at": 1794120007744,
+              "fromStartMs": 6322.7626
+            },
+            {
+              "name": "window-created",
+              "at": 1794120008237,
+              "fromStartMs": 6815.6967
+            },
+            {
+              "name": "ready-to-show",
+              "at": 1794120008559,
+              "fromStartMs": 7137.7552
+            },
+            {
+              "name": "gateway-start",
+              "at": 1794120008609,
+              "fromStartMs": 7187.6528
+            }
+          ],
+          "counters": {
+            "spawnCount": 80,
+            "spawnByMethod": {
+              "spawn": 0,
+              "exec": 0,
+              "execFile": 80,
+              "fork": 0,
+              "spawnSync": 0,
+              "execSync": 0,
+              "execFileSync": 0
+            },
+            "recentSpawns": [
+              {
+                "method": "execFile",
+                "at": 1794120011032,
+                "fromStartMs": 9610.5982,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011165,
+                "fromStartMs": 9743.3354,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011314,
+                "fromStartMs": 9891.9915,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011329,
+                "fromStartMs": 9906.9121,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011527,
+                "fromStartMs": 10105.886499999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011616,
+                "fromStartMs": 10194.3904,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011706,
+                "fromStartMs": 10283.9242,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011718,
+                "fromStartMs": 10295.9632,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011833,
+                "fromStartMs": 10411.2431,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120011934,
+                "fromStartMs": 10512.8105,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012075,
+                "fromStartMs": 10653.7732,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012116,
+                "fromStartMs": 10694.7652,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012310,
+                "fromStartMs": 10888.5182,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012414,
+                "fromStartMs": 10992.3943,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012538,
+                "fromStartMs": 11116.074999999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012549,
+                "fromStartMs": 11127.837099999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012678,
+                "fromStartMs": 11256.8599,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012804,
+                "fromStartMs": 11382.8169,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012899,
+                "fromStartMs": 11477.2658,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120012910,
+                "fromStartMs": 11488.433799999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013065,
+                "fromStartMs": 11643.346,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013154,
+                "fromStartMs": 11732.66,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013231,
+                "fromStartMs": 11809.4345,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013242,
+                "fromStartMs": 11820.1912,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013381,
+                "fromStartMs": 11959.3925,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013474,
+                "fromStartMs": 12052.626199999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013678,
+                "fromStartMs": 12256.6827,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013700,
+                "fromStartMs": 12278.5279,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120013983,
+                "fromStartMs": 12561.171699999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120014114,
+                "fromStartMs": 12692.2736,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120014236,
+                "fromStartMs": 12814.583999999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120014261,
+                "fromStartMs": 12839.875699999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120014589,
+                "fromStartMs": 13167.4151,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120014687,
+                "fromStartMs": 13264.9411,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120014813,
+                "fromStartMs": 13391.052,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120014829,
+                "fromStartMs": 13407.275599999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120015036,
+                "fromStartMs": 13613.992,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120015149,
+                "fromStartMs": 13727.5771,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120015250,
+                "fromStartMs": 13827.9467,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120015270,
+                "fromStartMs": 13848.0859,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120015431,
+                "fromStartMs": 14009.799299999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120015550,
+                "fromStartMs": 14128.263799999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120015632,
+                "fromStartMs": 14210.27,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120015642,
+                "fromStartMs": 14220.2892,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120015746,
+                "fromStartMs": 14324.532,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120015817,
+                "fromStartMs": 14395.5353,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120015902,
+                "fromStartMs": 14480.6687,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120015912,
+                "fromStartMs": 14490.568599999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120016015,
+                "fromStartMs": 14593.1813,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120016100,
+                "fromStartMs": 14678.5447,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120016196,
+                "fromStartMs": 14773.9424,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120016205,
+                "fromStartMs": 14783.5275,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120016316,
+                "fromStartMs": 14894.8995,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120016391,
+                "fromStartMs": 14968.9139,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120016485,
+                "fromStartMs": 15063.5269,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120016495,
+                "fromStartMs": 15073.7504,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120016597,
+                "fromStartMs": 15175.766199999998,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120016689,
+                "fromStartMs": 15267.2519,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120016774,
+                "fromStartMs": 15352.001400000001,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120016786,
+                "fromStartMs": 15364.552899999999,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120016882,
+                "fromStartMs": 15460.194,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120016959,
+                "fromStartMs": 15537.4895,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120017035,
+                "fromStartMs": 15613.2048,
+                "command": "git"
+              },
+              {
+                "method": "execFile",
+                "at": 1794120017048,
+                "fromStartMs": 15626.096399999999,
+                "command": "git"
+              }
+            ],
+            "activeIntervals": 2,
+            "activeWatchers": 0,
+            "unavailable": []
+          },
+          "rssBytes": 604540928
+        },
+        "memory": {
+          "rss": 604557312,
+          "heapTotal": 343248896,
+          "heapUsed": 131664684,
+          "external": 5983147,
+          "arrayBuffers": 0
+        }
+      },
+      "durations": [
+        442,
+        364,
+        344,
+        265,
+        300,
+        279,
+        282,
+        259
+      ],
+      "gitSpawns": 32,
+      "requests": 8,
+      "windows": 2
+    }
+  ],
+  "remainingWindowReads": true,
+  "sourceMutationObserved": true,
+  "authorization": {
+    "mainCreatedObserver": true,
+    "mutationDenied": true,
+    "navigatedSourceDenied": true
+  }
+}
