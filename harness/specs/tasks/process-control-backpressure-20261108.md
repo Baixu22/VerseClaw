@@ -4,7 +4,7 @@ id: process-control-backpressure-20261108
 title: 保障共享进程控制响应与日志背压
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 4e2cd7f6474a9026d9a3ae484bf87cc478d409ce
+diffBase: 20b394c734999b3162e73f74e652914d2f6df486
 intent: 完成 TF-0836 / G26-G29，在既有VerseShell与日志owner上接通控制优先、引用释放和字节上限。
 expectedUserBehavior:
   - Poll traffic leaves bounded capacity for stdin and cancellation within existing control deadlines.
