@@ -34,6 +34,7 @@ import { resolveTaskDomain } from '@shared/task-system/identity';
 import { createTaskRuntimeGuard, executeTaskGuarded, finishPersistentTaskRun } from '@shared/task-system/runtime';
 import { createPersistentTaskTool } from '../../openclaw_runtime/src/agents/tools/persistent-task-tool';
 import { withSessionTaskScope, clearSessionTaskScopeRun } from '../../openclaw_runtime/src/agents/session-task-scope';
+import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
 
 const parent = 'agent:main:parent';
 const child = 'agent:main:child';
@@ -104,6 +105,7 @@ async function existingTask(sessionKeys = [parent], status: 'done' | 'todo' = 'd
 beforeEach(async () => {
   state.root = await mkdtemp(join(tmpdir(), 'hooke-task-scope-completion-'));
   state.store = join(state.root, 'workspaces.json');
+  vi.stubEnv('OPENCLAW_STATE_DIR', join(state.root, 'runtime-state'));
   await writeFile(state.store, JSON.stringify({ activeWorkspaceId: 'workspace-a', profiles: [profile()] }));
   await writeFile(join(state.root, 'owner-proof.json'), proof);
   tasks = new TaskSystemStore(resolveTaskDomain(state.root));
@@ -122,6 +124,7 @@ afterEach(async () => {
   clearSessionTaskScopeRun('run-parent'); clearSessionTaskScopeRun('run-child');
   finishPersistentTaskRun(state.root, parent, 'run-parent');
   finishPersistentTaskRun(state.root, child, 'run-child');
+  closeOpenClawStateDatabaseForTest();
   tasks?.close();
   vi.unstubAllEnvs(); state.invoke.mockReset();
   await rm(state.root, { recursive: true, force: true });
@@ -314,6 +317,21 @@ describe('first effect consumes the canonical execution contract', () => {
     expect((await binding())?.writerClaim?.id).toBe(task.claim!.attemptId);
     expect(await readFile(join(state.root, 'effect-result.txt'), 'utf8')).toBe(proof);
     expect(tasks.list()).toHaveLength(1);
+  });
+  it('captures checkout execution revision while allowing the admitted run through coordinator pause', async () => {
+    startTask();
+    const owner = api();
+    const first = await owner.admitTaskEffect({ ...request(), operationId: 'run-parent:write-1', checkoutAccess: 'write' });
+    expect(first.checkout?.credential.owner).toMatchObject({ kind: 'run', bindingRevision: first.claim.executionRevision,
+      task: { taskNodeId: first.claim.taskNodeId, epoch: first.claim.credential!.epoch } });
+    await owner.pauseCoordinator({ workspaceId: 'workspace-a', agentId: 'main', sessionKey: parent,
+      expectedRevision: first.bindingRevision });
+    const next = await owner.admitTaskEffect({ ...request(), operationId: 'run-parent:write-2', checkoutAccess: 'write',
+      expectedClaimId: first.claim.id, expectedExecutionRevision: first.claim.executionRevision });
+    expect(next.bindingRevision).toBeGreaterThan(first.bindingRevision);
+    expect(next.checkout?.credential).toEqual(first.checkout?.credential);
+    await expect(owner.admitTaskEffect({ ...request(), operationId: 'run-parent:stale', checkoutAccess: 'write',
+      expectedClaimId: first.claim.id, expectedExecutionRevision: first.claim.executionRevision! + 1 })).rejects.toThrow('TASK_SCOPE_BINDING_FENCED');
   });
   it('rejects effects on a completed canonical task, including after owner reconstruction', async () => {
     const original = await existingTask();

@@ -261,7 +261,11 @@ function normalizeWriterClaim(value: unknown, workspaceId: string, sessionKey: s
     || typeof credential.epoch !== 'number' || !Number.isSafeInteger(credential.epoch) || credential.epoch < 1)) {
     throw coordinatorError('TASK_SCOPE_CLAIM_INVALID', 'Stored execution credential does not match its owner.');
   }
+  if (value.executionRevision !== undefined && (!Number.isSafeInteger(value.executionRevision) || Number(value.executionRevision) < 1)) {
+    throw coordinatorError('TASK_SCOPE_CLAIM_INVALID', 'Invalid captured execution binding.');
+  }
   return { id: value.id, run, taskNodeId: task.taskNodeId, sessionGeneration: value.sessionGeneration, createdAt: value.createdAt,
+    ...(value.executionRevision !== undefined ? { executionRevision: value.executionRevision as number } : {}),
     ...(isRecord(credential) ? { credential: { taskNodeId: task.taskNodeId, sessionKey: run.scope.sessionKey,
       generation: value.sessionGeneration, epoch: credential.epoch as number } } : {}) };
 }
@@ -1242,6 +1246,8 @@ type TaskScopeRunState = {
   active: boolean;
   quiescent: boolean;
   inFlightEffects: number;
+  inFlightProcesses: number;
+  inFlightOperationIds?: string[];
   delegation?: { parentSessionKey: string; parentGeneration: string; workspaceDir: string | null; taskReference?: SessionTaskRequesterReference | null } | null;
   scheduled?: { jobId: string; workspaceDir: string; coordinator?: { workspaceId: string; sessionKey: string; generation: string; taskNodeId?: string } };
 };
@@ -1289,6 +1295,8 @@ async function admitSessionTaskEffect(ctx: WorkspacesApiContext, raw: SessionTas
   if (existing && existing.state !== 'active' && !admittedBeforePause) throw new Error('TASK_SCOPE_BINDING_NOT_READY');
   if (existing?.sessionGeneration && existing.sessionGeneration !== request.sessionGeneration) throw new Error('TASK_SCOPE_GENERATION_STALE');
   if (request.expectedClaimId && request.expectedClaimId !== existing?.writerClaim?.id) throw new Error('TASK_SCOPE_WRITER_FENCED');
+  if (request.expectedExecutionRevision !== undefined
+    && request.expectedExecutionRevision !== (existing?.writerClaim?.executionRevision ?? existing?.bindingRevision)) throw new Error('TASK_SCOPE_BINDING_FENCED');
   const taskOrigin = live.delegation?.taskReference;
   if (taskOrigin && (typeof taskOrigin.taskRef !== 'string' || !taskOrigin.taskRef.trim()
     || taskOrigin.coordinator.workspaceId !== profile.id || taskOrigin.coordinator.sessionKey !== live.delegation?.parentSessionKey
@@ -1350,7 +1358,8 @@ async function admitSessionTaskEffect(ctx: WorkspacesApiContext, raw: SessionTas
   if (!rechecked.active || rechecked.currentGeneration !== request.sessionGeneration) throw new Error('TASK_SCOPE_RUN_STALE');
   const confirmedTask = startManagedSessionEffect({ workspaceRoot: root, sessionKey: request.sessionKey,
     generation: request.sessionGeneration, taskNodeId, requestId: `session-effect:${request.sessionKey}:${request.sessionGeneration}:${request.runId}`,
-    expectedContract: { revision: managedTask.contract.revision, digest: managedTask.contract.digest } });
+    expectedContract: { revision: managedTask.contract.revision, digest: managedTask.contract.digest },
+    expectedAuthority: managedTask.authorityBasis });
   if (!confirmedTask.claim || confirmedTask.contract.taskNodeId !== taskNodeId) throw new Error('TASK_SCOPE_TASK_SWITCH_BLOCKED');
   if (request.expectedClaimId && request.expectedClaimId !== confirmedTask.claim.attemptId) throw new Error('TASK_SCOPE_CLAIM_STALE');
   for (const owner of otherWriters) {
@@ -1364,8 +1373,10 @@ async function admitSessionTaskEffect(ctx: WorkspacesApiContext, raw: SessionTas
     && existing.writerClaim.id === confirmedTask.claim.attemptId;
   const task = normalizeTaskReference({ kind: 'ledger', taskNodeId });
   if (task.kind !== 'ledger') throw new Error('TASK_SCOPE_TASK_NOT_FOUND');
-  const claim: SessionTaskWriterClaim = sameWriter ? existing!.writerClaim! : {
+  const claim: SessionTaskWriterClaim = sameWriter ? { ...existing!.writerClaim!,
+    executionRevision: existing!.writerClaim!.executionRevision ?? existing!.bindingRevision } : {
     id: confirmedTask.claim.attemptId, taskNodeId: task.taskNodeId, run, sessionGeneration: request.sessionGeneration, createdAt: now,
+    executionRevision: (existing?.bindingRevision ?? 0) + 1,
     credential: { taskNodeId: confirmedTask.claim.taskNodeId, sessionKey: confirmedTask.claim.sessionKey,
       generation: confirmedTask.claim.generation, epoch: confirmedTask.claim.epoch },
   };
@@ -1385,6 +1396,28 @@ async function admitSessionTaskEffect(ctx: WorkspacesApiContext, raw: SessionTas
     state: admittedBeforePause ? 'paused' : 'active', bindingRevision: sameWriter ? existing!.bindingRevision : (existing?.bindingRevision ?? 0) + 1,
     invalidationReason: admittedBeforePause ? 'user-paused' : null, createdAt: existing?.createdAt ?? now, updatedAt: now,
   }), !live.delegation && !live.scheduled);
+  if (request.checkoutAccess === 'write') {
+    const { admitExecutionCheckout } = await import('../../openclaw_runtime/src/agents/execution-checkout-admission');
+    const granted = await admitExecutionCheckout({ workspaceRoot: root, authority: managedTask.authorityBasis,
+      task: confirmedTask, claim, agentId, operationId: request.operationId!,
+      observeRun: owner => {
+        if (!owner.run.scope.sessionKey) throw new Error('TASK_CHECKOUT_EXECUTION_IDENTITY_REQUIRED');
+        return readTaskScopeRun(ctx, { runId: owner.run.runId, sessionKey: owner.run.scope.sessionKey,
+          sessionGeneration: owner.sessionGeneration });
+      },
+    });
+    try {
+      const current = await readTaskScopeRun(ctx, request);
+      if (!current.active || current.currentGeneration !== request.sessionGeneration) throw new Error('TASK_SCOPE_RUN_STALE');
+    } catch (error) {
+      if (granted.unused) {
+        const { createWorktreeService } = await import('../../openclaw_runtime/src/agents/worktree-service');
+        createWorktreeService(granted.checkout.baseRoot).releaseUnusedWriter(granted.checkout.credential);
+      }
+      throw error;
+    }
+    return { status: 'granted', claim, bindingRevision: binding.bindingRevision, checkout: { ...granted.checkout, unused: granted.unused } };
+  }
   return { status: 'granted', claim, bindingRevision: binding.bindingRevision };
 }
 

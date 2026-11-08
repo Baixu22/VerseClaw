@@ -4,6 +4,23 @@ import { basename, dirname, join, resolve } from "node:path";
 
 export type TaskDomain = { id: string; root: string; database: string; worktree: string };
 
+export type TaskAuthorityBasis = {
+  localDomainId: string;
+  authorityId: string;
+  authorityDatabase: string;
+  executionWorktree: string;
+  registrationRevision: number | null;
+  projectRevision: number | null;
+  identityDigest: string;
+  databaseIdentity?: string;
+};
+
+export type TaskAuthorityAccess = {
+  domain: TaskDomain;
+  assertCurrent(): void;
+  resolveRelated(workspaceRoot: string): TaskDomain;
+};
+
 export function canonicalPath(input: string): string {
   const full = realpathSync
     .native(resolve(input))

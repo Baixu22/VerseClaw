@@ -1,23 +1,23 @@
 import { existsSync } from "node:fs";
 import { TaskSystemStore } from "./store.js";
-import { resolveTaskDomain } from "./identity.js";
+import { resolveTaskDomain, type TaskAuthorityAccess } from "./identity.js";
 import type { TaskCredential } from "./types.js";
 
 /** Session lineage and generations come from the session owner; forks inherit no claim. */
-export function inheritPersistentTaskReference(workspace:string,sourceSessionKey:string,sourceGeneration:string,sessionKey:string,generation:string) {
+export function inheritPersistentTaskReference(workspace:string,sourceSessionKey:string,sourceGeneration:string,sessionKey:string,generation:string,access?:TaskAuthorityAccess) {
   if (!existsSync(workspace)) return null;
-  const domain=resolveTaskDomain(workspace);
+  const domain=access?.domain??resolveTaskDomain(workspace);
   if (!existsSync(domain.database)) return null;
-  const store=new TaskSystemStore(domain);
+  const store=new TaskSystemStore(domain,undefined,access);
   try {return store.inheritReference(sourceSessionKey,sourceGeneration,sessionKey,generation);}
   finally {store.close();}
 }
 
-export function assertTaskWorktreeReleasable(workspace: string): void {
+export function assertTaskWorktreeReleasable(workspace: string, access?: TaskAuthorityAccess): void {
   if (!existsSync(workspace)) return;
-  const domain = resolveTaskDomain(workspace);
+  const domain = access?.domain ?? resolveTaskDomain(workspace);
   if (!existsSync(domain.database)) return;
-  const store = new TaskSystemStore(domain);
+  const store = new TaskSystemStore(domain, undefined, access);
   try {
     if (store.worktreeTaskReferences(workspace).length)
       throw new Error("TASK_WORKTREE_HAS_UNFINISHED_TASKS");
@@ -41,7 +41,7 @@ function keepTaskRun(guard: NonNullable<ReturnType<typeof createTaskRuntimeGuard
     guard.runId,
     guard.credential.epoch,
   ]);
-  const store = new TaskSystemStore(guard.domain);
+  const store = new TaskSystemStore(guard.domain, undefined, guard.access);
   try {
     store.beginRun(guard.credential, guard.runId);
   } finally {
@@ -52,7 +52,7 @@ function keepTaskRun(guard: NonNullable<ReturnType<typeof createTaskRuntimeGuard
   const timer = setInterval(() => {
     let db: TaskSystemStore | undefined;
     try {
-      db = new TaskSystemStore(guard.domain);
+      db = new TaskSystemStore(guard.domain, undefined, guard.access);
       db.control(credential, "renew");
     } catch {
       clearInterval(timer);
@@ -80,7 +80,7 @@ export function finishPersistentTaskRun(
       continue;
     clearInterval(entry.timer);
     activeRuns.delete(key);
-    const store = new TaskSystemStore(entry.guard.domain);
+    const store = new TaskSystemStore(entry.guard.domain, undefined, entry.guard.access);
     try {
       if (entry.guard.credential) store.endRun(entry.guard.credential, runId);
     } finally {
@@ -95,17 +95,18 @@ export function createTaskRuntimeGuard(
   sessionKey: string | undefined,
   generation: string | undefined,
   runId?: string,
+  access?: TaskAuthorityAccess,
 ) {
   if (!workspace || !sessionKey) return null;
   if (!existsSync(workspace)) return null;
-  const domain = resolveTaskDomain(workspace);
+  const domain = access?.domain ?? resolveTaskDomain(workspace);
   if (!existsSync(domain.database))
-    return { domain, credential: null as TaskCredential | null, sessionKey, generation, runId };
-  const store = new TaskSystemStore(domain);
+    return { domain, access, credential: null as TaskCredential | null, sessionKey, generation, runId };
+  const store = new TaskSystemStore(domain, undefined, access);
   try {
     const view = store.binding(sessionKey, generation);
     if (!view || view.referenceOnly)
-      return { domain, credential: null as TaskCredential | null, sessionKey, generation, runId };
+      return { domain, access, credential: null as TaskCredential | null, sessionKey, generation, runId };
     if (!generation || !view.claim) throw new Error("TASK_RUNTIME_GENERATION_REQUIRED");
     const credential: TaskCredential = {
       taskNodeId: view.contract.taskNodeId,
@@ -113,7 +114,7 @@ export function createTaskRuntimeGuard(
       generation,
       epoch: view.claim.epoch,
     };
-    return { domain, credential, sessionKey, generation, runId };
+    return { domain, access, credential, sessionKey, generation, runId };
   } finally {
     store.close();
   }
@@ -124,10 +125,11 @@ export function readPersistentTaskContext(
   sessionKey: string | undefined,
   generation: string | undefined,
   runId?: string,
+  access?: TaskAuthorityAccess,
 ): string | null {
-  const guard = createTaskRuntimeGuard(workspace, sessionKey, generation, runId);
+  const guard = createTaskRuntimeGuard(workspace, sessionKey, generation, runId, access);
   if (!guard || !existsSync(guard.domain.database)) return null;
-  const store = new TaskSystemStore(guard.domain);
+  const store = new TaskSystemStore(guard.domain, undefined, guard.access);
   try {
     if (guard.credential && store.get(guard.credential.taskNodeId).claim?.state === "active")
       keepTaskRun(guard);
@@ -148,7 +150,7 @@ export function restoreTaskModelContext(
     if (guard.credential) throw new Error("TASK_STORE_UNAVAILABLE");
     return basePrompt;
   }
-  const store = new TaskSystemStore(guard.domain);
+  const store = new TaskSystemStore(guard.domain, undefined, guard.access);
   try {
     const view = store.binding(guard.sessionKey, guard.generation);
     if (!view?.claim) {
@@ -223,7 +225,7 @@ export async function executeTaskGuarded<T>(
   }
   if (toolName === "task_control") return execute();
   if (!guard.credential && guard.generation) {
-    const bindingStore = new TaskSystemStore(guard.domain);
+    const bindingStore = new TaskSystemStore(guard.domain, undefined, guard.access);
     try {
       const bound = bindingStore.binding(guard.sessionKey, guard.generation);
       if (bound?.claim && !bound.referenceOnly)
@@ -241,7 +243,7 @@ export async function executeTaskGuarded<T>(
     if (readonlyTools.has(toolName)) return execute();
     throw new Error("TASK_CLAIM_REQUIRED");
   }
-  const store = new TaskSystemStore(guard.domain);
+  const store = new TaskSystemStore(guard.domain, undefined, guard.access);
   const credential = guard.credential;
   let heartbeat: ReturnType<typeof setInterval> | undefined;
   try {
@@ -251,7 +253,7 @@ export async function executeTaskGuarded<T>(
     }
     if (
       toolName === "process" &&
-      ["poll", "log", "list"].includes(String((params as { action?: unknown } | null)?.action))
+      ["poll", "log", "list", "kill"].includes(String((params as { action?: unknown } | null)?.action))
     ) {
       store.assertOwner(credential, true);
       const result = await execute();

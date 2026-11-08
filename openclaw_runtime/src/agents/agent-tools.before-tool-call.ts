@@ -72,7 +72,7 @@ import {
 import type { SandboxFsBridge } from "./sandbox/fs-bridge.js";
 import { normalizeToolName } from "./tool-policy.js";
 import type { AnyAgentTool } from "./tools/common.js";
-import { createTaskRuntimeGuard, executeTaskGuarded } from "../../../shared/task-system/runtime.js";
+import { createExecutionTaskGuard } from "./execution-task-authority.js";
 import { callGatewayTool } from "./tools/gateway.js";
 import type { ToolLoopTerminationObserver } from "./tool-loop-termination.js";
 
@@ -1202,7 +1202,7 @@ export function wrapToolWithBeforeToolCallHook(
     return tool;
   }
   const toolName = tool.name || "tool";
-  const taskGuard = createTaskRuntimeGuard(ctx?.workspaceDir ?? ctx?.cwd, ctx?.sessionKey, ctx?.sessionId,ctx?.runId);
+  const taskGuard = createExecutionTaskGuard(ctx?.workspaceDir ?? ctx?.cwd, ctx?.sessionKey, ctx?.sessionId,ctx?.runId);
   const diagnosticIdentity = resolveToolDiagnosticIdentity(tool);
   const hookOptions: BeforeToolCallWrapperOptions = {
     ...(options.approvalMode ? { approvalMode: options.approvalMode } : {}),
@@ -1331,15 +1331,9 @@ export function wrapToolWithBeforeToolCallHook(
             }) as typeof onUpdate)
           : onUpdate;
       try {
-        const { withSessionTaskScope } = await import("./session-task-scope.js");
-        const result = await withSessionTaskScope(
-          ctx,
-          normalizedToolName,
-          executeParams,
-          signal,
-          () => executeTaskGuarded(taskGuard, `${ctx?.runId ?? 'run'}:${toolCallId}`, toolName,
-            () => execute(toolCallId, executeParams, signal, guardedOnUpdate), executeParams),
-        );
+        const { executeManagedTaskTool } = await import("./execution-checkout-tools.js");
+        const result = await executeManagedTaskTool(ctx, taskGuard, toolCallId, normalizedToolName, executeParams, signal,
+          () => execute(toolCallId, executeParams, signal, guardedOnUpdate));
         updatesOpen = false;
         signal?.throwIfAborted();
         const durationMs = Date.now() - startedAt;

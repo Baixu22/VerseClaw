@@ -4,11 +4,12 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { normalizeRunScope } from '../../shared/types/identity-scope';
-import { createWorktreeService } from '../../openclaw_runtime/src/agents/worktree-service';
+import { createWorktreeService, resolveExecutionCheckout } from '../../openclaw_runtime/src/agents/worktree-service';
 import { checkoutWriterSnapshot, releaseCheckoutWriter, settleCheckoutWrite, withCheckoutMaintenance } from '../../openclaw_runtime/src/agents/worktree-writer';
 import * as registry from '../../openclaw_runtime/src/agents/worktree-registry';
 import { filesystemInstance } from '../../openclaw_runtime/src/agents/worktree-registry';
 import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
+import { resolveExecutionStatePath } from '../../openclaw_runtime/src/state/execution-state-db';
 
 function owner(name='one') {
  return {kind:'run' as const,agentId:'test-agent',sessionGeneration:'session-v1',bindingRevision:1,
@@ -19,6 +20,71 @@ describe('checkout writer resource owner',()=>{
  beforeEach(()=>{root=mkdtempSync(path.join(tmpdir(),'checkout-writer-'));vi.stubEnv('OPENCLAW_STATE_DIR',path.join(root,'state'));});
  afterEach(()=>{vi.restoreAllMocks();vi.unstubAllEnvs();closeOpenClawStateDatabaseForTest();rmSync(root,{recursive:true,force:true});});
  function service(){return createWorktreeService(root);}
+ it('shares the same execution owner when the source runtime isolates its session state',()=>{
+  const hostPath=resolveExecutionStatePath();const s=service(),record=s.create('isolated-runtime');
+  const writer=s.claimWriter(record.id,record.generation,owner(),'host-claim');
+  vi.stubEnv('CLAWX_EXECUTION_STATE_PATH',hostPath);
+  vi.stubEnv('OPENCLAW_STATE_DIR',path.join(root,'isolated-source-config'));
+  closeOpenClawStateDatabaseForTest();
+  const runtime=resolveExecutionCheckout(record.root);
+  expect(runtime.service.writer(record.id)?.token).toBe(writer.token);
+  runtime.service.beginWrite(writer,'effect','digest');
+  runtime.service.settleWrite(writer,'effect',{outcome:'completed',ownerReceipt:'runtime-effect'});
+  runtime.service.releaseWriter(writer);
+  expect(s.writer(record.id)?.state).toBe('released');
+ });
+ it('uses the same base writer for ordinary effects and maintenance',()=>{
+  const {service:s,worktreeId,basis}=resolveExecutionCheckout(root);
+  expect(worktreeId).toBeNull();
+  const writer=s.claimWriter(worktreeId,basis.generation,owner(),'base-effect');
+  expect(()=>s.withFrozenWorktrees([],()=>undefined)).toThrow(/writer_busy/);
+  s.beginWrite(writer,'write','request-digest');
+  writeFileSync(path.join(root,'base-result.txt'),'base owner result');
+  s.settleWrite(writer,'write',{outcome:'completed',ownerReceipt:'task-effect:write'});
+  s.releaseWriter(writer);
+  expect(s.withFrozenWorktrees([],()=>readFileSync(path.join(root,'base-result.txt'),'utf8'))).toBe('base owner result');
+ });
+ it('resolves managed roots back to their persistent generation after restart',()=>{
+  const s=service(),record=s.create('managed');
+  closeOpenClawStateDatabaseForTest();
+  const resolved=resolveExecutionCheckout(record.root);
+  expect(resolved.worktreeId).toBe(record.id);
+  expect(resolved.basis.generation).toBe(record.generation);
+  const writer=resolved.service.claimWriter(resolved.worktreeId,resolved.basis.generation,owner(),'managed-effect');
+  expect(()=>s.claimWriter(record.id,record.generation,owner('other'),'other')).toThrow(/writer_busy/);
+  resolved.service.releaseWriter(writer);
+ });
+ it('does not reinterpret a failed managed registration as an independent checkout',()=>{
+  const s=service(),record=s.create('incomplete');
+  const state=registry.loadWorktreeRegistryScope(root);
+  state.records.get(record.id)!.registration.phase='allocated';
+  registry.saveWorktreeRegistryScope(state);
+  expect(()=>resolveExecutionCheckout(record.root)).toThrow(/worktree_incomplete/);
+ });
+ it('rotates a drained writer without exposing the checkout to a competing task',()=>{
+  const s=service(),record=s.create('transfer');
+  const first=s.claimWriter(record.id,record.generation,owner('parent'),'parent-claim');
+  expect(()=>s.transferWriter(first,owner('child'),'transfer')).toThrow(/requires_drain/);
+  s.beginWrite(first,'parent-write','digest');s.drainWriter(first);
+  expect(()=>s.transferWriter(first,owner('child'),'transfer')).toThrow(/operations_pending/);
+  expect(()=>s.claimWriter(record.id,record.generation,owner('intruder'),'intruder')).toThrow(/writer_busy/);
+  s.settleWrite(first,'parent-write',{outcome:'completed',ownerReceipt:'parent-tool-receipt'});
+  const child=s.transferWriter(first,owner('child'),'transfer');
+  expect(child.epoch).toBe(first.epoch+1);expect(child.token).not.toBe(first.token);
+  expect(s.transferWriter(first,owner('child'),'transfer')).toEqual(child);
+  expect(()=>s.beginWrite(first,'late','late')).toThrow(/stale_credential/);
+  expect(()=>s.transferWriter(first,owner('intruder'),'transfer')).toThrow(/request_conflict/);
+  expect(()=>s.claimWriter(record.id,record.generation,owner('intruder'),'intruder')).toThrow(/writer_busy/);
+  s.releaseWriter(child);
+ });
+ it('retains captured task association in the resource identity across reopen',()=>{
+  const s=service(),record=s.create('task');
+  const taskOwner={...owner(),task:{authorityId:'authority',taskNodeId:'task-a',epoch:3,contractRevision:2}};
+  const first=s.claimWriter(record.id,record.generation,taskOwner,'with-task');
+  closeOpenClawStateDatabaseForTest();
+  expect(s.writer(record.id)?.owner).toEqual(first.owner);
+  expect(()=>s.claimWriter(record.id,record.generation,{...taskOwner,task:{...taskOwner.task,epoch:4}},'with-task')).toThrow(/request_conflict/);
+ });
  function worker(input:{id:string;generation:string;owner:string;mode?:'crash'|'maintenance-prepare-crash'}) {
   const child=spawn(process.execPath,['--import','tsx',path.resolve('tests/unit/fixtures/checkout-writer-worker.mts'),Buffer.from(JSON.stringify({root,...input})).toString('base64')],
    {cwd:path.resolve('openclaw_runtime'),env:process.env,windowsHide:true,stdio:['pipe','pipe','pipe']});

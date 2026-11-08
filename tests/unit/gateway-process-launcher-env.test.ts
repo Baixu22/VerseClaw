@@ -17,10 +17,20 @@ function setPlatform(platform: NodeJS.Platform): void {
 }
 
 afterEach(() => {
+  vi.unstubAllEnvs();
   Object.defineProperty(process, 'platform', { value: originalPlatform, configurable: true });
 });
 
 describe('gateway process launcher env', () => {
+  it('pins execution resources to the host store while keeping source session isolation', async () => {
+    vi.stubEnv('OPENCLAW_STATE_DIR', 'D:/tmp/host-owner');
+    const { buildGatewayRuntimeEnv } = await import('@electron/gateway/process-launcher');
+    const { resolveExecutionStatePath } = await import('../../openclaw_runtime/src/state/execution-state-db');
+    const env = buildGatewayRuntimeEnv({ OPENCLAW_STATE_DIR: 'D:/tmp/source-sessions',
+      OPENCLAW_CONFIG_PATH: 'D:/tmp/source-sessions/openclaw.json' });
+    expect(env.OPENCLAW_STATE_DIR).toBe('D:/tmp/source-sessions');
+    expect(env.CLAWX_EXECUTION_STATE_PATH).toBe(resolveExecutionStatePath());
+  });
   it('adds the managed OfficeCLI install dir to the Gateway runtime env', async () => {
     setPlatform('win32');
     const officeDir = 'C:\\Users\\me\\AppData\\Local\\OfficeCLI';

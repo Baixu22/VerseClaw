@@ -1,7 +1,6 @@
 import { existsSync } from "node:fs";
 import { TaskSystemStore } from "../../shared/task-system/store";
-import { resolveTaskDomain } from "../../shared/task-system/identity";
-import { inheritPersistentTaskReference } from "../../shared/task-system/runtime";
+import { createExecutionTaskAccess, openExecutionTaskStore, inheritExecutionTaskReference, type ExecutionTaskAuthorityBasis } from "../../openclaw_runtime/src/agents/execution-task-authority";
 import type {
   TaskSystemCommand,
   TaskView,
@@ -26,9 +25,10 @@ export async function openTaskSystem(
     if (create) throw new Error("TASK_WORKSPACE_NOT_FOUND");
     return null;
   }
-  const domain = resolveTaskDomain(root);
+  const access = createExecutionTaskAccess(root);
+  const domain = access.domain;
   if (!create && !existsSync(domain.database)) return null;
-  return new TaskSystemStore(domain);
+  return new TaskSystemStore(domain, undefined, access);
 }
 
 export async function listManagedTasks(workspaceId?: string | null): Promise<TaskView[]> {
@@ -82,9 +82,10 @@ export async function assertManagedTaskAdmission(input: {
   requestId: string;
 }): Promise<void> {
   if (!existsSync(input.workspaceRoot)) return;
-  const domain = resolveTaskDomain(input.workspaceRoot);
+  const access = createExecutionTaskAccess(input.workspaceRoot);
+  const domain = access.domain;
   if (!existsSync(domain.database)) return;
-  const store = new TaskSystemStore(domain);
+  const store = new TaskSystemStore(domain, undefined, access);
   try {
     const task = store.get(input.taskRef);
     if (
@@ -121,21 +122,24 @@ function resolveManagedSessionEffectTask(store: TaskSystemStore, input: ManagedS
 }
 
 /** Resolve admission against the task owner without claiming a selected task. */
-export function readManagedSessionEffect(input: ManagedSessionEffectInput): TaskView {
-  const domain = resolveTaskDomain(input.workspaceRoot);
+export function readManagedSessionEffect(input: ManagedSessionEffectInput): TaskView & { authorityBasis: ExecutionTaskAuthorityBasis } {
+  const access = createExecutionTaskAccess(input.workspaceRoot);
+  const domain = access.domain;
   if (!existsSync(domain.database)) throw new Error('TASK_CLAIM_REQUIRED');
-  const store = new TaskSystemStore(domain);
-  try { return resolveManagedSessionEffectTask(store, input); }
+  const store = new TaskSystemStore(domain, undefined, access);
+  try { return { ...resolveManagedSessionEffectTask(store, input), authorityBasis: access.basis }; }
   finally { store.close(); }
 }
 
 /** Claim only after the session, environment and previous run have been checked. */
 export function startManagedSessionEffect(input: ManagedSessionEffectInput & {
   requestId: string; expectedContract?: Pick<TaskView['contract'], 'revision' | 'digest'>;
+  expectedAuthority?: ExecutionTaskAuthorityBasis;
 }): TaskView {
-  const domain = resolveTaskDomain(input.workspaceRoot);
+  const access = createExecutionTaskAccess(input.workspaceRoot, input.expectedAuthority);
+  const domain = access.domain;
   if (!existsSync(domain.database)) throw new Error('TASK_CLAIM_REQUIRED');
-  const store = new TaskSystemStore(domain);
+  const store = new TaskSystemStore(domain, undefined, access);
   try {
     const task = resolveManagedSessionEffectTask(store, input);
     const view = store.start({ taskNodeId: task.contract.taskNodeId, expectedContract: input.expectedContract },
@@ -150,9 +154,10 @@ export function startManagedSessionEffect(input: ManagedSessionEffectInput & {
 export function selectManagedSessionTask(input: {
   workspaceRoot: string; taskNodeId: string; sessionKey: string; generation: string; requestId: string;
 }): void {
-  const domain = resolveTaskDomain(input.workspaceRoot);
+  const access = createExecutionTaskAccess(input.workspaceRoot);
+  const domain = access.domain;
   if (!existsSync(domain.database)) return;
-  const store = new TaskSystemStore(domain);
+  const store = new TaskSystemStore(domain, undefined, access);
   try {
     if (!store.has(input.taskNodeId)) {
       if (store.binding(input.sessionKey, input.generation)) throw new Error('TASK_LEGACY_CONTRACT_REQUIRED');
@@ -169,9 +174,10 @@ export function handoffManagedSessionTask(input: {
   sessionKey: string;
   generation: string;
 }): TaskView | null {
-  const domain = resolveTaskDomain(input.workspaceRoot);
+  const access = createExecutionTaskAccess(input.workspaceRoot);
+  const domain = access.domain;
   if (!existsSync(domain.database)) return null;
-  const store = new TaskSystemStore(domain);
+  const store = new TaskSystemStore(domain, undefined, access);
   try {
     const source = store.binding(input.sourceSessionKey, input.sourceGeneration);
     if (!source?.claim || source.referenceOnly) return null;
@@ -188,9 +194,10 @@ export async function persistentTaskChatContext(
   workspaceRoot?: string,
 ): Promise<string | null> {
   if (!workspaceRoot || !existsSync(workspaceRoot)) return null;
-  const resolved = resolveTaskDomain(workspaceRoot);
+  const access = createExecutionTaskAccess(workspaceRoot);
+  const resolved = access.domain;
   if (!existsSync(resolved.database)) return null;
-  const store = new TaskSystemStore(resolved);
+  const store = new TaskSystemStore(resolved, undefined, access);
   try {
     let bound = store.binding(sessionKey);
     const described = await gateway.rpc<{ session?: { sessionId?: string;parentSessionKey?:string;forkedFromParent?:boolean } }>(
@@ -199,7 +206,7 @@ export async function persistentTaskChatContext(
     const liveGeneration = described?.session?.sessionId;
     if (!bound && described.session?.forkedFromParent && described.session.parentSessionKey && liveGeneration) {
       const parent=await gateway.rpc<{session?:{sessionId?:string}}>("sessions.describe",{key:described.session.parentSessionKey},10_000);
-      if(parent.session?.sessionId) bound=inheritPersistentTaskReference(workspaceRoot,described.session.parentSessionKey,parent.session.sessionId,sessionKey,liveGeneration);
+      if(parent.session?.sessionId) bound=inheritExecutionTaskReference(workspaceRoot,described.session.parentSessionKey,parent.session.sessionId,sessionKey,liveGeneration);
     }
     if (!bound?.claim) return null;
     if (!liveGeneration) throw new Error("TASK_GENERATION_STALE");
@@ -208,12 +215,12 @@ export async function persistentTaskChatContext(
     const coordinator = await getPersistedCoordinatorBinding(workspaceId, sessionKey);
     if (coordinator && coordinator.state !== "active")
       throw new Error("TASK_COORDINATOR_REQUIRED");
-    const domain = coordinator ? resolveTaskDomain(coordinator.environment.canonicalRoot) : resolved;
+    const domain = coordinator ? createExecutionTaskAccess(coordinator.environment.canonicalRoot).domain : resolved;
     if (domain.id !== store.domain.id) throw new Error("TASK_SESSION_DOMAIN_MISMATCH");
     // The coordinator keeps its own generation while a child owns the writer.
     // binding() checks either the writer binding or the read reference.
     store.binding(sessionKey, liveGeneration);
-    const scoped = new TaskSystemStore(domain);
+    const scoped = openExecutionTaskStore(domain.worktree);
     try {
       if (!bound.referenceOnly && bound.claim.state === "active") {
         scoped.assertOwner(bound.claim);
@@ -247,7 +254,7 @@ export async function taskSystemCommand(
     if (!described?.session?.sessionId) throw new Error("TASK_SESSION_MISSING");
     if (binding.sessionGeneration && binding.sessionGeneration !== described.session.sessionId)
       throw new Error("TASK_GENERATION_STALE");
-    if (resolveTaskDomain(binding.environment.canonicalRoot).id !== store.domain.id)
+    if (createExecutionTaskAccess(binding.environment.canonicalRoot).domain.id !== store.domain.id)
       throw new Error("TASK_SESSION_DOMAIN_MISMATCH");
     return { generation: described.session.sessionId, worktree: binding.environment.canonicalRoot };
   };
@@ -277,7 +284,7 @@ export async function taskSystemCommand(
       return store.revise(command.taskNodeId, command.expectedRevision, command.contract);
     if (command.action === "claim") {
       const owner = await generationFor(command.sessionKey);
-      const scoped = new TaskSystemStore(resolveTaskDomain(owner.worktree));
+      const scoped = openExecutionTaskStore(owner.worktree);
       try {
         return scoped.claim(
           command.taskNodeId,
@@ -293,7 +300,7 @@ export async function taskSystemCommand(
       const next = await generationFor(command.targetSessionKey);
       const view = store.get(command.taskNodeId);
       if (!view.claim) throw new Error("TASK_CLAIM_REQUIRED");
-      const original = new TaskSystemStore(resolveTaskDomain(view.claim.worktree));
+      const original = openExecutionTaskStore(view.claim.worktree);
       try {
         return original.recover(
           command.taskNodeId,
@@ -308,7 +315,7 @@ export async function taskSystemCommand(
     const credential = command.credential;
     const current = await generationFor(credential.sessionKey);
     if (current.generation !== credential.generation) throw new Error("TASK_GENERATION_STALE");
-    const scoped = new TaskSystemStore(resolveTaskDomain(current.worktree));
+    const scoped = openExecutionTaskStore(current.worktree);
     try {
       if (command.action === "decompose")
         return scoped.decompose(credential, command.children, command.requestId);

@@ -1,6 +1,7 @@
 import type { ScopedRunId, TaskId } from './types/identity-scope.js';
 import type { SessionDelegationCoordinator } from './types/session-delegation.js';
 import type { TaskCredential } from './task-system/types.js';
+import type { CheckoutWriterCredential } from './checkout-ownership.js';
 
 /** Read-only task origin captured at spawn, never a writer claim. */
 export type SessionTaskRequesterReference = {
@@ -50,6 +51,10 @@ export type SessionTaskEffectRequest = {
   projectWorkspaceDir?: string;
   toolName: string;
   expectedClaimId?: string;
+  /** Stable runtime tool identity; the transport requestId remains a separate correlation. */
+  operationId?: string;
+  checkoutAccess?: 'write' | 'control';
+  expectedExecutionRevision?: number;
 };
 
 export type SessionTaskWriterClaim = {
@@ -59,12 +64,15 @@ export type SessionTaskWriterClaim = {
   sessionGeneration: string;
   createdAt: string;
   credential?: TaskCredential;
+  /** Captured execution binding, retained across a coordinator-only pause. */
+  executionRevision?: number;
 };
 
 export type SessionTaskEffectAdmission = {
   status: 'granted';
   claim: SessionTaskWriterClaim;
   bindingRevision: number;
+  checkout?: { baseRoot: string; worktreeId: string | null; credential: CheckoutWriterCredential; unused?: boolean };
 };
 
 export function parseSessionTaskEffectRequest(value: unknown): SessionTaskEffectRequest {
@@ -82,7 +90,14 @@ export function parseSessionTaskEffectRequest(value: unknown): SessionTaskEffect
   if (record.projectWorkspaceDir !== undefined && (typeof record.projectWorkspaceDir !== 'string' || !record.projectWorkspaceDir.trim())) {
     throw new Error('TASK_SCOPE_REQUEST_INVALID: projectWorkspaceDir');
   }
-  return Object.fromEntries([...fields, 'expectedClaimId', 'projectWorkspaceDir'].filter((field) => record[field] !== undefined)
+  if (record.operationId !== undefined && (typeof record.operationId !== 'string' || !record.operationId.trim() || record.operationId.length > 2048))
+    throw new Error('TASK_SCOPE_REQUEST_INVALID: operationId');
+  if (record.checkoutAccess !== undefined && !['write', 'control'].includes(String(record.checkoutAccess)))
+    throw new Error('TASK_SCOPE_REQUEST_INVALID: checkoutAccess');
+  if (record.checkoutAccess && !record.operationId) throw new Error('TASK_SCOPE_REQUEST_INVALID: operationId');
+  if (record.expectedExecutionRevision !== undefined && (!Number.isSafeInteger(record.expectedExecutionRevision) || Number(record.expectedExecutionRevision) < 1))
+    throw new Error('TASK_SCOPE_REQUEST_INVALID: expectedExecutionRevision');
+  return Object.fromEntries([...fields, 'expectedClaimId', 'projectWorkspaceDir', 'operationId', 'checkoutAccess', 'expectedExecutionRevision'].filter((field) => record[field] !== undefined)
     .map((field) => [field, record[field]])) as SessionTaskEffectRequest;
 }
 

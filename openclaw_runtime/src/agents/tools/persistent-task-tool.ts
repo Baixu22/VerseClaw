@@ -1,7 +1,7 @@
 import { Type } from "typebox";
 import { existsSync } from "node:fs";
 import { TaskSystemStore } from "../../../../shared/task-system/store.js";
-import { resolveTaskDomain } from "../../../../shared/task-system/identity.js";
+import { createExecutionTaskAccess } from "../execution-task-authority.js";
 import type {
   TaskCheckpoint,
   TaskContractInput,
@@ -55,9 +55,10 @@ export function createPersistentTaskTool(input: {
   generation?: string;
 }): AnyAgentTool {
   let pinned: TaskCredential | null = null;
-  const initialDomain = resolveTaskDomain(input.workspace);
+  const access = createExecutionTaskAccess(input.workspace);
+  const initialDomain = access.domain;
   if (existsSync(initialDomain.database) && input.sessionKey) {
-    const initial = new TaskSystemStore(initialDomain);
+    const initial = new TaskSystemStore(initialDomain, undefined, access);
     try {
       const view = initial.binding(input.sessionKey, input.generation);
       pinned = view?.referenceOnly ? null : (view?.claim ?? null);
@@ -127,13 +128,14 @@ export function createPersistentTaskTool(input: {
     execute: async (_toolCallId, raw) => {
       if (!input.sessionKey || !input.generation) throw new Error("TASK_SESSION_IDENTITY_REQUIRED");
       const p = raw as Record<string, unknown>;
-      const domain = resolveTaskDomain(input.workspace);
+      access.assertCurrent();
+      const domain = access.domain;
       if (!existsSync(domain.database) && (p.action === "list" || p.action === "current"))
         return {
           content: [{ type: "text", text: p.action === "list" ? '{"tasks":[]}' : "null" }],
           details: p.action === "list" ? { tasks: [] } : null,
         };
-      const store = new TaskSystemStore(domain);
+      const store = new TaskSystemStore(domain, undefined, access);
       try {
         const current = store.binding(input.sessionKey, input.generation);
         const str = (key: string) => {

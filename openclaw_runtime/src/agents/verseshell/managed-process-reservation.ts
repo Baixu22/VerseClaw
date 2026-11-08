@@ -4,7 +4,7 @@ import {
   executeSqliteQuerySync, executeSqliteQueryTakeFirstSync, getNodeSqliteKysely,
 } from "../../infra/kysely-sync.js";
 import type { DB } from "../../state/openclaw-state-db.generated.js";
-import { openOpenClawStateDatabase, runOpenClawStateWriteTransaction } from "../../state/openclaw-state-db.js";
+import { openExecutionStateDatabase as openOpenClawStateDatabase, runExecutionStateWriteTransaction as runOpenClawStateWriteTransaction } from "../../state/execution-state-db.js";
 
 const SCOPE = "verseshell-process-capacity/v1";
 type CapacityDatabase = Pick<DB, "state_leases">;

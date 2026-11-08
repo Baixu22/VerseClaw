@@ -11,6 +11,7 @@ import {
 } from '../utils/officecli-path';
 import { nextGatewayGeneration, stampGatewayGeneration } from './generation';
 import { observeOwnedGatewayProcess } from './supervisor';
+import { resolveExecutionStatePath } from '../../openclaw_runtime/src/state/execution-state-db';
 
 /** Flags that would carry a Gateway shared secret into a child process argv. */
 const GATEWAY_SECRET_ARGUMENT_FLAGS = new Set(['--token', '--password', '--gateway-token']);
@@ -160,6 +161,7 @@ export function buildGatewayRuntimeEnv(
   runtimeEnv.OPENCLAW_DISABLE_BONJOUR = '1';
   runtimeEnv.CLAWX_AGENT_BROWSER_BRIDGE = '1';
   runtimeEnv.CLAWX_TASK_SCOPE_BRIDGE = '1';
+  runtimeEnv.CLAWX_EXECUTION_STATE_PATH = resolveExecutionStatePath(process.env);
   runtimeEnv.OPENCLAW_RESOURCE_ENVELOPE_WRITE = '1';
   // Model fallback skip cache: default ON for Verse Claw with a 60s TTL.
   //

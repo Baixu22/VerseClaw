@@ -409,7 +409,8 @@ import {
   shouldWarnEmbeddedRunStageSummary,
 } from "./attempt-stage-timing.js";
 import { buildAttemptSystemPrompt } from "./attempt-system-prompt.js";
-import { createTaskRuntimeGuard, restoreTaskModelContext, finishPersistentTaskRun } from "../../../../../shared/task-system/runtime.js";
+import { restoreTaskModelContext, finishPersistentTaskRun } from "../../../../../shared/task-system/runtime.js";
+import { createExecutionTaskGuard } from "../../execution-task-authority.js";
 import { flushEmbeddedAttemptTrajectoryRecorder } from "./attempt-trajectory-flush-cleanup.js";
 import {
   assembleAttemptContextEngine,
@@ -3322,7 +3323,7 @@ export async function runEmbeddedAttempt(
       }
       let diagnosticModelCallSeq = 0;
       if(!isRawModelRun){
-        const taskModelGuard=createTaskRuntimeGuard(effectiveWorkspace,params.sessionKey,params.sessionId,params.runId);
+        const taskModelGuard=createExecutionTaskGuard(effectiveWorkspace,params.sessionKey,params.sessionId,params.runId);
         const taskModelStream=activeSession.agent.streamFn;
         activeSession.agent.streamFn=(model,context,options)=>taskModelStream(model,{
           ...context,systemPrompt:restoreTaskModelContext(taskModelGuard,context.systemPrompt??'',Math.min(12_000,Math.floor((params.contextWindowInfo?.tokens??model.contextWindow??48_000)/4))),

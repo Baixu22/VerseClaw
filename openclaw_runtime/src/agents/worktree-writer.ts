@@ -3,27 +3,23 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import {
   normalizeRunScope,
-  type ScopedRunId,
 } from "../../../shared/types/identity-scope.js";
+import type { CheckoutWriterIdentity, CheckoutWriterBasis, CheckoutWriterCredential, CheckoutWriteReceipt, CheckoutWriterTerminalReceipt } from "../../../shared/checkout-ownership.js";
+export type { CheckoutWriterIdentity, CheckoutWriterBasis, CheckoutWriterCredential, CheckoutWriteReceipt } from "../../../shared/checkout-ownership.js";
 import { taskLedgerOwnIncarnation, taskLedgerOwnerWasReplaced } from "../../../shared/task-ledger-process.js";
 import { executeSqliteQuerySync, executeSqliteQueryTakeFirstSync, getNodeSqliteKysely } from "../infra/kysely-sync.js";
 import type { DB } from "../state/openclaw-state-db.generated.js";
-import { openOpenClawStateDatabase, runOpenClawStateWriteTransaction } from "../state/openclaw-state-db.js";
+import { openExecutionStateDatabase as openOpenClawStateDatabase, runExecutionStateWriteTransaction as runOpenClawStateWriteTransaction } from "../state/execution-state-db.js";
 import { canonicalWorktreePath, filesystemInstance } from "./worktree-registry.js";
 
 const SCOPE = "worktree-writer/v1";
 type WriterDatabase = Pick<DB, "state_leases">;
-export type CheckoutWriterIdentity =
-  | { kind: "run"; run: ScopedRunId; agentId: string; sessionGeneration: string; bindingRevision: number }
-  | { kind: "maintenance"; operation: "merge" | "freeze" | "cleanup"; operationId: string };
-export type CheckoutWriterBasis = { root: string; incarnation: string; generation: string };
-export type CheckoutWriterCredential = CheckoutWriterBasis & { epoch: number; token: string; owner: CheckoutWriterIdentity };
-export type CheckoutWriteReceipt = { outcome: "completed" | "not-applied"; ownerReceipt: string };
 type WriteOperation = { id: string; digest: string; state: "running" | "unknown" | "settled"; receipt?: CheckoutWriteReceipt };
 export type CheckoutWriterState = CheckoutWriterCredential & {
   schema: 1; requestId: string; requestDigest: string; state: "active" | "draining" | "released";
   acquiredAt: number; expiresAt: number | null; operations: WriteOperation[];
   holderPid: number; holderIncarnation: string;
+  terminalReceipt?: CheckoutWriterTerminalReceipt;
   requests: Array<{ id: string; digest: string; epoch: number }>;
 };
 const digest = (value: unknown) => createHash("sha256").update(JSON.stringify(value)).digest("hex");
@@ -35,7 +31,14 @@ function normalizeIdentity(owner: CheckoutWriterIdentity): CheckoutWriterIdentit
     const run = normalizeRunScope(owner.run);
     text(run.scope.sessionKey); text(owner.agentId); text(owner.sessionGeneration);
     if (!Number.isSafeInteger(owner.bindingRevision) || owner.bindingRevision < 1) throw new Error("checkout_writer_invalid_binding_revision");
-    return { kind: "run", run, agentId: owner.agentId, sessionGeneration: owner.sessionGeneration, bindingRevision: owner.bindingRevision };
+    if (owner.task) {
+      text(owner.task.authorityId); text(owner.task.taskNodeId);
+      if (!Number.isSafeInteger(owner.task.epoch) || owner.task.epoch < 1
+        || !Number.isSafeInteger(owner.task.contractRevision) || owner.task.contractRevision < 1) throw new Error("checkout_writer_invalid_task_identity");
+    }
+    return { kind: "run", run, agentId: owner.agentId, sessionGeneration: owner.sessionGeneration, bindingRevision: owner.bindingRevision,
+      ...(owner.task ? { task: { authorityId: owner.task.authorityId, taskNodeId: owner.task.taskNodeId,
+        epoch: owner.task.epoch, contractRevision: owner.task.contractRevision } } : {}) };
   }
   if (owner.kind !== "maintenance" || !["merge", "freeze", "cleanup"].includes(owner.operation)) throw new Error("checkout_writer_invalid_identity");
   text(owner.operationId);
@@ -61,6 +64,12 @@ function read(root: string): CheckoutWriterState | null {
   if (!value.requests.some(request => request.id === value.requestId && request.epoch === value.epoch && request.digest === value.requestDigest)) throw new Error("checkout_writer_store_invalid");
   normalizeIdentity(value.owner);
   text(value.token); text(value.incarnation); text(value.generation); text(value.requestId); text(value.requestDigest);
+  if (value.terminalReceipt) {
+    if (value.owner.kind !== 'run' || value.state === 'active' || value.terminalReceipt.runId !== value.owner.run.runId
+      || value.terminalReceipt.sessionGeneration !== value.owner.sessionGeneration || !Number.isFinite(value.terminalReceipt.endedAt)
+      || value.terminalReceipt.endedAt <= 0) throw new Error('checkout_writer_store_invalid');
+    text(value.terminalReceipt.ownerReceipt);
+  }
   return value;
 }
 function save(value: CheckoutWriterState): void {
@@ -137,6 +146,48 @@ export function checkoutWriterSnapshot(root: string): CheckoutWriterState | null
   return read(process.platform === "win32" ? normalized.toLowerCase() : normalized);
 }
 
+export function checkoutWritersForRun(runId: string, sessionKey: string, sessionGeneration: string): CheckoutWriterState[] {
+  const { db } = openOpenClawStateDatabase();
+  const query = getNodeSqliteKysely<WriterDatabase>(db);
+  const rows = executeSqliteQuerySync(db, query.selectFrom('state_leases').select('lease_key').where('scope', '=', SCOPE)).rows;
+  return rows.map(row => read(row.lease_key)).filter((row): row is CheckoutWriterState => Boolean(row
+    && row.state !== 'released' && row.owner.kind === 'run' && row.owner.run.runId === runId
+    && row.owner.run.scope.sessionKey === sessionKey && row.owner.sessionGeneration === sessionGeneration));
+}
+
+/** The composition owner proves task transfer and process drain; this transaction never exposes an unowned gap. */
+export function transferCheckoutWriter(input: CheckoutWriterCredential, owner: CheckoutWriterIdentity, requestId: string): CheckoutWriterCredential {
+  text(requestId);
+  const normalized = normalizeIdentity(owner);
+  if (input.owner.kind !== "run" || normalized.kind !== "run") throw new Error("checkout_writer_transfer_run_required");
+  const requestDigest = digest({ from: input, owner: normalized });
+  return runOpenClawStateWriteTransaction(() => {
+    const existing = read(input.root);
+    const prior = existing?.requests.find(request => request.id === requestId);
+    if (prior && existing) {
+      if (prior.digest !== requestDigest) throw new Error("checkout_writer_request_conflict");
+      if (prior.epoch !== existing.epoch) throw new Error("checkout_writer_request_retired");
+      assertAdmission(existing);
+      return credential(existing);
+    }
+    const row = current(input);
+    if (row.state !== "draining") throw new Error("checkout_writer_transfer_requires_drain");
+    if (row.operations.some(operation => operation.state !== "settled")) throw new Error("checkout_writer_operations_pending");
+    if (filesystemInstance(row.root) !== row.incarnation) throw new Error("checkout_writer_incarnation_changed");
+    if (Date.now() < row.acquiredAt || (row.expiresAt !== null && Date.now() >= row.expiresAt)) throw new Error("checkout_writer_recovery_required");
+    const epoch = row.epoch + 1;
+    if (!Number.isSafeInteger(epoch)) throw new Error("checkout_writer_epoch_exhausted");
+    const next: CheckoutWriterState = { ...row, epoch, token: randomUUID(), owner: normalized,
+      requestId, requestDigest, state: "active", acquiredAt: Date.now(), expiresAt: null, operations: [],
+      terminalReceipt: undefined,
+      holderPid: process.pid, holderIncarnation: taskLedgerOwnIncarnation(),
+      requests: [...row.requests, { id: requestId, digest: requestDigest, epoch }],
+    };
+    save(next);
+    return credential(next);
+  });
+}
+
 /** A persisted cleanup plus observed absence can finish its own receipt after a crash. */
 export function finishRemovedCheckoutCleanup(basis: CheckoutWriterBasis): void {
   if (existsSync(basis.root)) throw new Error("checkout_cleanup_still_present");
@@ -188,10 +239,35 @@ export function drainCheckoutWriter(input: CheckoutWriterCredential): void {
     row.state = "draining"; save(row);
   });
 }
+/** Only the originating run owner records this fact; timeouts and process lookup do not call it. */
+export function endCheckoutWriter(input: CheckoutWriterCredential, receipt: CheckoutWriterTerminalReceipt): void {
+  text(receipt.ownerReceipt);
+  if (input.owner.kind !== "run" || receipt.runId !== input.owner.run.runId
+    || receipt.sessionGeneration !== input.owner.sessionGeneration || !Number.isFinite(receipt.endedAt) || receipt.endedAt <= 0)
+    throw new Error("checkout_writer_terminal_mismatch");
+  runOpenClawStateWriteTransaction(() => {
+    const row = current(input);
+    if (row.terminalReceipt) {
+      if (digest(row.terminalReceipt) !== digest(receipt)) throw new Error("checkout_writer_terminal_conflict");
+      return;
+    }
+    row.terminalReceipt = { ...receipt };
+    if (row.state !== "released") row.state = "draining";
+    save(row);
+  });
+}
 export function releaseCheckoutWriter(input: CheckoutWriterCredential): void {
   runOpenClawStateWriteTransaction(() => {
     const row = current(input);
     if (row.operations.some(op => op.state !== "settled")) throw new Error("checkout_writer_operations_pending");
+    row.state = "released"; save(row);
+  });
+}
+/** Compensate a new reservation only while no effect has ever consumed it. */
+export function releaseUnusedCheckoutWriter(input: CheckoutWriterCredential): void {
+  runOpenClawStateWriteTransaction(() => {
+    const row = current(input);
+    if (row.operations.length) throw new Error("checkout_writer_already_used");
     row.state = "released"; save(row);
   });
 }

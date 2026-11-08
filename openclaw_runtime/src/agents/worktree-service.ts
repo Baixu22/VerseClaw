@@ -35,19 +35,19 @@ import { codingObservability } from '../context-engine/coding-observability.js';
 import { assertVerseGitCleanupDeletionAllowed, verseGitCleanupResourceId } from '../../../shared/versegit-cleanup-barrier.js';
 import type { VerseGitCleanupDeletionAuthorization } from '../../../shared/types/versegit.js';
 import type { WorktreeBackend } from "../context-engine/coding-runtime-flags.js";
-import { assertTaskWorktreeReleasable } from '../../../shared/task-system/runtime.js';
+import { assertExecutionTaskWorktreeReleasable } from "./execution-task-authority.js";
 import { reviewDiff } from "../context-engine/views/verify/review-diff-view.js";
 import type { FactStore } from "../context-engine/factstore/store.js";
 import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
 import { registerExecutionDomain, resolveExecutionDomain } from "./execution-domain.js";
 import {
   beginCheckoutWrite, checkoutWriterSnapshot, claimCheckoutWriter, drainCheckoutWriter,
-  releaseCheckoutWriter, settleCheckoutWrite, withCheckoutMaintenance,
-  finishRemovedCheckoutCleanup,
+  releaseCheckoutWriter, releaseUnusedCheckoutWriter, settleCheckoutWrite, withCheckoutMaintenance,
+  finishRemovedCheckoutCleanup, transferCheckoutWriter, endCheckoutWriter,
   type CheckoutWriteReceipt, type CheckoutWriterCredential, type CheckoutWriterIdentity, type CheckoutWriterBasis,
 } from "./worktree-writer.js";
 import {
-  filesystemInstance, loadWorktreeRegistryScope, observeWorktree,
+  canonicalWorktreePath, filesystemInstance, findManagedWorktreeByRoot, loadWorktreeRegistryScope, observeWorktree,
   saveWorktreeRegistryScope, worktreeNativeIdentity,
   type WorktreeAvailability, type WorktreeRegistration,
 } from "./worktree-registry.js";
@@ -122,12 +122,16 @@ export type WorktreeService = {
   inventory(): Array<{ id: string; root: string; availability: WorktreeAvailability | "unowned"; record?: WorktreeRecord }>;
   taskAuthority(expectedProjectRevision?: number): ReturnType<typeof resolveExecutionDomain>;
   registerTaskAuthority(input: Omit<Parameters<typeof registerExecutionDomain>[0], "workspaceRoot">): ReturnType<typeof registerExecutionDomain>;
-  claimWriter(id: string, generation: string, owner: CheckoutWriterIdentity, requestId: string, expiresAt?: number | null): CheckoutWriterCredential;
+  writerBasis(id: string | null): CheckoutWriterBasis;
+  claimWriter(id: string | null, generation: string, owner: CheckoutWriterIdentity, requestId: string, expiresAt?: number | null): CheckoutWriterCredential;
   beginWrite(credential: CheckoutWriterCredential, operationId: string, requestDigest: string): ReturnType<typeof beginCheckoutWrite>;
   settleWrite(credential: CheckoutWriterCredential, operationId: string, receipt: CheckoutWriteReceipt | null): void;
   drainWriter(credential: CheckoutWriterCredential): void;
+  endWriter(credential: CheckoutWriterCredential, receipt: Parameters<typeof endCheckoutWriter>[1]): void;
+  transferWriter(credential: CheckoutWriterCredential, owner: CheckoutWriterIdentity, requestId: string): CheckoutWriterCredential;
   releaseWriter(credential: CheckoutWriterCredential): void;
-  writer(id: string): ReturnType<typeof checkoutWriterSnapshot>;
+  releaseUnusedWriter(credential: CheckoutWriterCredential): void;
+  writer(id: string | null): ReturnType<typeof checkoutWriterSnapshot>;
   withFrozenWorktrees<T>(workers: readonly { worktreeId: string; worktreeGeneration: string }[], freeze: () => T): T;
   inspectIsolation(id: string, generation: string): WorktreeIsolationInspection;
   listChangedFiles(id: string, expectedGeneration?: string): WorktreeChangedFiles;
@@ -392,6 +396,11 @@ export function createWorktreeService(
   };
   const baseBasis = (): CheckoutWriterBasis => ({ root: resolved, incarnation: filesystemInstance(resolved), generation: `base:${filesystemInstance(resolved)}` });
   const checkWriterRecord = (credential: CheckoutWriterCredential, requireReady: boolean) => {
+    if (credential.root === canonicalWorktreePath(resolved)) {
+      const basis = baseBasis();
+      if (credential.generation !== basis.generation || credential.incarnation !== basis.incarnation) throw new Error("worktree_stale_generation");
+      return;
+    }
     const record = [...scope(resolved).records.values()].find(row => row.generation === credential.generation);
     if (!record || record.generation !== credential.generation || record.registration.rootIdentity !== credential.incarnation) throw new Error("worktree_stale_generation");
     if (requireReady) assertCurrentWorktree(record);
@@ -401,8 +410,12 @@ export function createWorktreeService(
     backend,
     taskAuthority: expectedProjectRevision => resolveExecutionDomain(resolved, expectedProjectRevision),
     registerTaskAuthority: input => registerExecutionDomain({ ...input, workspaceRoot: resolved }),
-    claimWriter: (id, generation, owner, requestId, expiresAt) => withWorktreeLock(resolved, () =>
-      claimCheckoutWriter(basisFor(findRecord(id, generation)), owner, requestId, expiresAt)),
+    writerBasis: id => id === null ? baseBasis() : basisFor(findRecord(id)),
+    claimWriter: (id, generation, owner, requestId, expiresAt) => withWorktreeLock(resolved, () => {
+      const basis = id === null ? baseBasis() : basisFor(findRecord(id, generation));
+      if (basis.generation !== generation) throw new Error("worktree_stale_generation");
+      return claimCheckoutWriter(basis, owner, requestId, expiresAt);
+    }),
     beginWrite: (credential, operationId, requestDigest) => withWorktreeLock(resolved, () => {
       checkWriterRecord(credential, true);
       return beginCheckoutWrite(credential, operationId, requestDigest);
@@ -413,10 +426,19 @@ export function createWorktreeService(
     drainWriter: credential => withWorktreeLock(resolved, () => {
       checkWriterRecord(credential, false); drainCheckoutWriter(credential);
     }),
+    endWriter: (credential, receipt) => withWorktreeLock(resolved, () => {
+      checkWriterRecord(credential, false); endCheckoutWriter(credential, receipt);
+    }),
+    transferWriter: (credential, owner, requestId) => withWorktreeLock(resolved, () => {
+      checkWriterRecord(credential, true); return transferCheckoutWriter(credential, owner, requestId);
+    }),
     releaseWriter: credential => withWorktreeLock(resolved, () => {
       checkWriterRecord(credential, false); releaseCheckoutWriter(credential);
     }),
-    writer: id => checkoutWriterSnapshot(findRecord(id).root),
+    releaseUnusedWriter: credential => withWorktreeLock(resolved, () => {
+      checkWriterRecord(credential, false); releaseUnusedCheckoutWriter(credential);
+    }),
+    writer: id => checkoutWriterSnapshot(id === null ? resolved : findRecord(id).root),
     withFrozenWorktrees: (workers, freeze) => withWorktreeLock(resolved, () =>
       withCheckoutMaintenance([baseBasis(), ...workers.map(worker => basisFor(findRecord(worker.worktreeId, worker.worktreeGeneration)))], "freeze", freeze)),
     create(id, createOptions) {
@@ -713,7 +735,7 @@ export function createWorktreeService(
         if (rec.status === "cleaning") {
           if (observeWorktree(rec) !== "incomplete") throw new Error("worktree_cleanup_identity_changed");
         } else assertCurrentWorktree(rec);
-        assertTaskWorktreeReleasable(rec.root);
+        assertExecutionTaskWorktreeReleasable(rec.root);
         const ownership = requireCleanupAuthorization({
           rootDir,
           baseRoot: resolved,
@@ -797,6 +819,19 @@ export function createWorktreeService(
       return [...scope(resolved).queue];
     },
   };
+}
+
+/** Use the recorded managed owner when present; a selected independent root uses the same writer namespace. */
+export function resolveExecutionCheckout(root: string): {
+  service: WorktreeService; baseRoot: string; worktreeId: string | null; basis: CheckoutWriterBasis;
+} {
+  const registered = findManagedWorktreeByRoot(root);
+  const baseRoot = registered?.baseRoot ?? root;
+  const service = createWorktreeService(baseRoot);
+  const worktreeId = registered?.record.id ?? null;
+  const basis = service.writerBasis(worktreeId);
+  if (canonicalWorktreePath(basis.root) !== canonicalWorktreePath(root)) throw new Error("worktree_execution_root_mismatch");
+  return { service, baseRoot, worktreeId, basis };
 }
 
 export function __resetWorktreeRegistry(): void {

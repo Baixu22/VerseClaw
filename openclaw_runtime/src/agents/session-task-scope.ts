@@ -11,8 +11,10 @@ import { requiresSessionTaskScope } from "./tool-mutation.js";
 // These are in-flight tool effects, not cached activity or task completion facts.
 const effectsByRun = new Map<string, number>();
 const claimsByRun = new Map<string, string>();
+const executionRevisionsByRun = new Map<string, number>();
 const closingRuns = new Set<string>();
 const effectRequests = new Map<string, Readonly<SessionTaskEffectRequest>>();
+const terminalIdentities = new Map<string, { sessionKey: string; sessionGeneration: string }>();
 
 export function getSessionTaskEffectRequest(
   requestId: string,
@@ -33,13 +35,24 @@ export function withSessionTaskRequesterReference<T>(
 }
 
 /** Called by the run owner on terminal cleanup, never by a cache TTL. */
-export function clearSessionTaskScopeRun(runId: string): void {
+export function clearSessionTaskScopeRun(runId: string, identity?: { sessionKey: string; sessionGeneration: string }): void {
+  if (identity) terminalIdentities.set(runId, identity);
   if (sessionTaskEffectsInFlight(runId)) closingRuns.add(runId);
-  else claimsByRun.delete(runId);
+  else {
+    claimsByRun.delete(runId); executionRevisionsByRun.delete(runId);
+    const terminalIdentity = terminalIdentities.get(runId); terminalIdentities.delete(runId);
+    void import('./execution-checkout-tools.js').then(owner => owner.finishExecutionCheckoutRun(runId, terminalIdentity))
+      .catch(error => console.warn('Checkout terminal reconciliation retained ownership', error));
+  }
 }
 
 export function sessionTaskEffectsInFlight(runId: string): number {
   return effectsByRun.get(runId) ?? 0;
+}
+
+export function sessionTaskOperationsInFlight(runId: string): string[] {
+  return [...effectRequests.values()].filter(request => request.runId === runId)
+    .map(request => request.operationId).filter((id): id is string => Boolean(id));
 }
 
 export async function withSessionTaskScope<T>(
@@ -57,7 +70,8 @@ export async function withSessionTaskScope<T>(
   toolName: string,
   args: unknown,
   signal: AbortSignal | undefined,
-  execute: () => Promise<T>,
+  execute: (admission?: SessionTaskEffectAdmission) => Promise<T>,
+  effect?: { operationId: string; checkoutAccess: 'write' | 'control' },
 ): Promise<T> {
   if (process.env.CLAWX_TASK_SCOPE_BRIDGE !== "1" || !requiresSessionTaskScope(toolName, args))
     return execute();
@@ -80,6 +94,8 @@ export async function withSessionTaskScope<T>(
       ? { projectWorkspaceDir: context.taskScopeProjectWorkspaceDir }
       : {}),
     ...(claimsByRun.has(runId) ? { expectedClaimId: claimsByRun.get(runId) } : {}),
+    ...(executionRevisionsByRun.has(runId) ? { expectedExecutionRevision: executionRevisionsByRun.get(runId) } : {}),
+    ...(effect ?? {}),
   };
   effectRequests.set(request.requestId, Object.freeze({ ...request }));
   try {
@@ -91,7 +107,6 @@ export async function withSessionTaskScope<T>(
       timeoutMs: 20_000,
       signal,
     });
-    signal?.throwIfAborted();
     const claim = admission?.claim;
     if (
       admission?.status !== "granted" ||
@@ -102,7 +117,15 @@ export async function withSessionTaskScope<T>(
     ) {
       throw new Error("TASK_SCOPE_ADMISSION_MISMATCH");
     }
+    if (signal?.aborted) {
+      if (admission.checkout?.unused) {
+        const { createWorktreeService } = await import('./worktree-service.js');
+        createWorktreeService(admission.checkout.baseRoot).releaseUnusedWriter(admission.checkout.credential);
+      }
+      signal.throwIfAborted();
+    }
     claimsByRun.set(runId, claim.id);
+    if (claim.executionRevision !== undefined) executionRevisionsByRun.set(runId, claim.executionRevision);
     return await withSessionTaskRequesterReference(
       {
         taskRef: claim.taskNodeId,
@@ -113,7 +136,7 @@ export async function withSessionTaskScope<T>(
           bindingRevision: admission.bindingRevision,
         },
       },
-      execute,
+      () => execute(admission),
     );
   } finally {
     effectRequests.delete(request.requestId);
@@ -121,7 +144,7 @@ export async function withSessionTaskScope<T>(
     if (remaining > 0) effectsByRun.set(runId, remaining);
     else {
       effectsByRun.delete(runId);
-      if (closingRuns.delete(runId)) claimsByRun.delete(runId);
+      if (closingRuns.delete(runId)) clearSessionTaskScopeRun(runId);
     }
   }
 }

@@ -16,6 +16,10 @@ import {
   type MissionControllerDeps,
 } from "../../agents/mission-control/controller.js";
 import type { MissionLifecycleEvent, MissionRunRequest, MissionTickInput } from "../../agents/mission-control/types.js";
+import {
+  isManagedMissionBridgeEnabled,
+  resolveMissionManagedTaskRuntime,
+} from "../../agents/mission-control/managed-task.js";
 import type { OrchestrationLifecycleEvent } from "../../agents/orchestrator-run-observed.js";
 import { spawnSubagentDirect } from "../../agents/subagent-spawn.js";
 import type { TaskLoopLifecycleEvent } from "../../agents/task-loop-controller.js";
@@ -97,6 +101,15 @@ function parseMissionRunRequest(
   };
 }
 
+function withGatewayManagedTask(request: MissionRunRequest): MissionRunRequest {
+  if (!isManagedMissionBridgeEnabled()) return request;
+  const managedTask = resolveMissionManagedTaskRuntime(request.sessionKey, {
+    required: true,
+  });
+  if (!managedTask) throw new Error("MISSION_MANAGED_TASK_RUNTIME_REQUIRED");
+  return { ...request, managedTask };
+}
+
 function parseTickInput(
   params: Record<string, unknown>,
   method: string,
@@ -157,11 +170,12 @@ function createMissionDeps(params: {
 
 export const missionControlHandlers: GatewayRequestHandlers = {
   "mission.create": async ({ params, respond, context, client }) => {
-    const request = parseMissionRunRequest(params, "mission.create", respond);
-    if (!request) return;
+    const parsed = parseMissionRunRequest(params, "mission.create", respond);
+    if (!parsed) return;
     const cfg = context.getRuntimeConfig();
     const actor = resolveControlPlaneActor(client ?? null);
     try {
+      const request = withGatewayManagedTask(parsed);
       const mission = createMission(request, cfg, createMissionDeps({ sessionKey: request.sessionKey, context }));
       context.logGateway.info(
         `[role-audit] mission.create ${formatControlPlaneActor(actor)} missionId=${mission.missionId} sessionKey=${mission.sessionKey}`,
@@ -176,11 +190,12 @@ export const missionControlHandlers: GatewayRequestHandlers = {
   },
 
   "mission.run": async ({ params, respond, context, client }) => {
-    const request = parseMissionRunRequest(params, "mission.run", respond);
-    if (!request) return;
+    const parsed = parseMissionRunRequest(params, "mission.run", respond);
+    if (!parsed) return;
     const cfg = context.getRuntimeConfig();
     const actor = resolveControlPlaneActor(client ?? null);
     try {
+      const request = withGatewayManagedTask(parsed);
       const mission = request.objective
         ? await runMission(request, cfg, createMissionDeps({ sessionKey: request.sessionKey, context }))
         : await tickMission({ missionId: request.missionId!, reason: "manual" }, cfg, createMissionDeps({ context }));

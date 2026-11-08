@@ -7,7 +7,7 @@ import {
   getNodeSqliteKysely,
 } from "../infra/kysely-sync.js";
 import type { DB } from "../state/openclaw-state-db.generated.js";
-import { openOpenClawStateDatabase, runOpenClawStateWriteTransaction } from "../state/openclaw-state-db.js";
+import { openExecutionStateDatabase as openOpenClawStateDatabase, runExecutionStateWriteTransaction as runOpenClawStateWriteTransaction } from "../state/execution-state-db.js";
 import type { MergeQueueItem, WorktreeRecord } from "./worktree-service.js";
 
 export type WorktreeRegistrationPhase = "intent" | "allocated" | "created" | "registered" | "ready";
@@ -96,6 +96,26 @@ export function loadWorktreeRegistryScope(baseRoot: string): WorktreeRegistrySco
   }
   if (data.baseIdentity !== baseIdentity) throw new Error("worktree_base_incarnation_changed");
   return { key, baseIdentity, revision: row.revision, records: new Map(data.records.map(record => [record.id, record])), queue: data.queue };
+}
+
+/** Resolve an execution root through existing registrations, including after restart. */
+export function findManagedWorktreeByRoot(root: string): { baseRoot: string; record: WorktreeRecord } | null {
+  const canonicalRoot = canonicalWorktreePath(root);
+  const { db } = openOpenClawStateDatabase();
+  const query = getNodeSqliteKysely<RegistryDatabase>(db);
+  const rows = executeSqliteQuerySync(db, query.selectFrom("managed_worktree_scopes").select(["scope_key", "state_json"])).rows;
+  let match: { baseRoot: string; record: WorktreeRecord } | null = null;
+  for (const row of rows) {
+    const data = JSON.parse(row.state_json) as { records?: WorktreeRecord[] };
+    if (!Array.isArray(data.records)) throw new Error("worktree_registry_invalid");
+    const candidate = data.records.find(record => typeof record.root === "string" && literalRoot(record.root) === canonicalRoot);
+    if (!candidate) continue;
+    const record = loadWorktreeRegistryScope(row.scope_key).records.get(candidate.id);
+    if (!record || literalRoot(record.root) !== canonicalRoot) throw new Error("worktree_registry_invalid");
+    if (match) throw new Error("worktree_execution_owner_ambiguous");
+    match = { baseRoot: row.scope_key, record };
+  }
+  return match;
 }
 
 /** Only short metadata transactions hold the shared database lock; Git runs outside it. */

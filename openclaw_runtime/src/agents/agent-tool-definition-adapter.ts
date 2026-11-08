@@ -27,6 +27,7 @@ import type { AgentTool, AgentToolResult, AgentToolUpdateCallback } from "./runt
 import type { ToolDefinition } from "./sessions/index.js";
 import { normalizeToolName } from "./tool-policy.js";
 import { jsonResult, payloadTextResult } from "./tools/common.js";
+import { createExecutionTaskGuard } from "./execution-task-authority.js";
 
 type AnyAgentTool = AgentTool;
 type BeforeToolCallPreparingTool = AnyAgentTool & {
@@ -369,6 +370,8 @@ export function toToolDefinitions(
     const name = tool.name || "tool";
     const normalizedName = normalizeToolName(name);
     const beforeHookWrapped = isToolWrappedWithBeforeToolCallHook(tool);
+    const taskGuard = beforeHookWrapped ? null : createExecutionTaskGuard(hookContext?.workspaceDir ?? hookContext?.cwd,
+      hookContext?.sessionKey, hookContext?.sessionId, hookContext?.runId);
     return {
       name,
       label: tool.label ?? name,
@@ -435,10 +438,10 @@ export function toToolDefinitions(
           }
           // Raw tools need the same terminal boundary as tools with the policy wrapper.
           signal?.throwIfAborted();
-          const { withSessionTaskScope } = await import("./session-task-scope.js");
+          const { executeManagedTaskTool } = await import("./execution-checkout-tools.js");
           const rawResult = beforeHookWrapped
             ? await tool.execute(toolCallId, executeParams, signal, guardedOnUpdate)
-            : await withSessionTaskScope(hookContext, normalizedName, executeParams, signal, () =>
+            : await executeManagedTaskTool(hookContext, taskGuard, toolCallId, normalizedName, executeParams, signal, () =>
                 tool.execute(toolCallId, executeParams, signal, guardedOnUpdate),
               );
           updatesOpen = false;

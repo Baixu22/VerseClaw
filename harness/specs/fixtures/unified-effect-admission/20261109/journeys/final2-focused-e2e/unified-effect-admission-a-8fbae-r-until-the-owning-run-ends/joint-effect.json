@@ -1,0 +1,164 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-joint-admission",
+  "provider": "local-scripted",
+  "status": "passed",
+  "project": {
+    "workspaceId": "joint-writers",
+    "rootPath": "D:\\tmp\\unified-management-20261109\\joint-validation\\final2-focused-e2e-results\\unified-effect-admission-a-8fbae-r-until-the-owning-run-ends\\workspace",
+    "sessionKey": "agent:main:session-1794178818633-jointwriters",
+    "generation": "2a7344b7-5459-4cab-b50d-1d514921a871"
+  },
+  "tasks": {
+    "a": "810fe2cb-5b7c-4ec4-afa2-ea3183ed740c",
+    "b": "80cca008-5825-42e2-9e83-f87236296a6b"
+  },
+  "during": [
+    {
+      "schema": 1,
+      "root": "d:\\tmp\\unified-management-20261109\\joint-validation\\final2-focused-e2e-results\\unified-effect-admission-a-8fbae-r-until-the-owning-run-ends\\workspace",
+      "incarnation": "3325120695:67835469393809538:1794178818205780900",
+      "generation": "base:3325120695:67835469393809538:1794178818205780900",
+      "epoch": 1,
+      "token": "1df3c838-5796-45c6-8a13-9f769d4b41c3",
+      "owner": {
+        "kind": "run",
+        "run": {
+          "runId": "WRITER-A",
+          "scope": {
+            "workspaceId": "joint-writers",
+            "projectId": "joint-writers",
+            "sessionKey": "agent:main:session-1794178818633-jointwriters"
+          }
+        },
+        "agentId": "main",
+        "sessionGeneration": "2a7344b7-5459-4cab-b50d-1d514921a871",
+        "bindingRevision": 2,
+        "task": {
+          "authorityId": "2d2e0ff5be00e78012503d5cfc97f23349ed4249385b11c9cda382032c8317fa",
+          "taskNodeId": "810fe2cb-5b7c-4ec4-afa2-ea3183ed740c",
+          "epoch": 1,
+          "contractRevision": 1
+        }
+      },
+      "requestId": "execution:62a49c67ef228e1013b530c7b0114f058d71661db807d8ee03b815a05a95f5e6",
+      "requestDigest": "82a8180d84441eca3159f8ebe57895e2fd5021daaeb434f82483d5711be40ac5",
+      "state": "active",
+      "acquiredAt": 1794178843045,
+      "expiresAt": null,
+      "operations": [
+        {
+          "id": "WRITER-A:writer-a",
+          "digest": "189f5079dad6d0be5395da15028138d9b19b7bfe991eb2066d234cc226fafa08",
+          "state": "settled",
+          "receipt": {
+            "outcome": "completed",
+            "ownerReceipt": "runtime-tool:WRITER-A:writer-a"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "id": "execution:62a49c67ef228e1013b530c7b0114f058d71661db807d8ee03b815a05a95f5e6",
+          "digest": "82a8180d84441eca3159f8ebe57895e2fd5021daaeb434f82483d5711be40ac5",
+          "epoch": 1
+        }
+      ],
+      "holderPid": 39748,
+      "holderIncarnation": "134386524127617363"
+    }
+  ],
+  "after": [
+    {
+      "schema": 1,
+      "root": "d:\\tmp\\unified-management-20261109\\joint-validation\\final2-focused-e2e-results\\unified-effect-admission-a-8fbae-r-until-the-owning-run-ends\\workspace",
+      "incarnation": "3325120695:67835469393809538:1794178818205780900",
+      "generation": "base:3325120695:67835469393809538:1794178818205780900",
+      "epoch": 2,
+      "token": "adc2f326-1e14-42ba-b206-8bd970882650",
+      "owner": {
+        "kind": "run",
+        "run": {
+          "runId": "WRITER-CONTINUE",
+          "scope": {
+            "workspaceId": "joint-writers",
+            "projectId": "joint-writers",
+            "sessionKey": "agent:main:dashboard:b16e792e-ea65-4a9a-90d2-5b588b1c18ee"
+          }
+        },
+        "agentId": "main",
+        "sessionGeneration": "f0a9594e-1472-4690-94d3-66bb50a8e2fc",
+        "bindingRevision": 3,
+        "task": {
+          "authorityId": "2d2e0ff5be00e78012503d5cfc97f23349ed4249385b11c9cda382032c8317fa",
+          "taskNodeId": "80cca008-5825-42e2-9e83-f87236296a6b",
+          "epoch": 1,
+          "contractRevision": 1
+        }
+      },
+      "requestId": "execution:f2502d0db36fe8216f8db45ec8f70a2eac405371afc3d27290baea0bec8ffe1f",
+      "requestDigest": "a56f55d6857e9bd5c109523588d19222207cba1fdf7c4f466c1f3ffa4f93c7f2",
+      "state": "active",
+      "acquiredAt": 1794178863959,
+      "expiresAt": null,
+      "operations": [
+        {
+          "id": "WRITER-CONTINUE:writer-b-next",
+          "digest": "de707127e1b778507e46f07db74f881b25e69658e6170deb641f597d1b6ff5e7",
+          "state": "settled",
+          "receipt": {
+            "outcome": "completed",
+            "ownerReceipt": "runtime-tool:WRITER-CONTINUE:writer-b-next"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "id": "execution:62a49c67ef228e1013b530c7b0114f058d71661db807d8ee03b815a05a95f5e6",
+          "digest": "82a8180d84441eca3159f8ebe57895e2fd5021daaeb434f82483d5711be40ac5",
+          "epoch": 1
+        },
+        {
+          "id": "execution:f2502d0db36fe8216f8db45ec8f70a2eac405371afc3d27290baea0bec8ffe1f",
+          "digest": "a56f55d6857e9bd5c109523588d19222207cba1fdf7c4f466c1f3ffa4f93c7f2",
+          "epoch": 2
+        }
+      ],
+      "holderPid": 39748,
+      "holderIncarnation": "134386524127617363"
+    }
+  ],
+  "providerLog": [
+    {
+      "turn": "[Mon 2026-11-09 07:00 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {},
+      "issued": "writer-a"
+    },
+    {
+      "turn": "[Mon 2026-11-09 07:00 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {},
+      "issued": "writer-b-blocked"
+    },
+    {
+      "turn": "[Mon 2026-11-09 07:00 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {
+        "writerbblocked": "{\n  \"status\": \"error\",\n  \"tool\": \"write\",\n  \"error\": \"checkout_writer_busy\"\n}"
+      },
+      "issued": "text:WRITER-B-OBSERVED"
+    },
+    {
+      "turn": "[Mon 2026-11-09 07:00 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {
+        "writera": "Successfully wrote 9 bytes to D:\\tmp\\unified-management-20261109\\joint-validation\\final2-focused-e2e-results\\unified-effect-admission-a-8fbae-r-until-the-owning-run-ends\\workspace\\result.txt\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+      },
+      "issued": "text:WRITER-A-ENDED"
+    },
+    {
+      "turn": "[Mon 2026-11-09 07:00 GMT+8] Continuity context (owner-deriv",
+      "toolResults": {
+        "writerbblocked": "{\n  \"status\": \"error\",\n  \"tool\": \"write\",\n  \"error\": \"checkout_writer_busy\"\n}"
+      },
+      "issued": "writer-b-next"
+    }
+  ]
+}

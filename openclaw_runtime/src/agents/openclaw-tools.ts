@@ -613,6 +613,11 @@ export function createOpenClawTools(
             agentSessionKey: options?.agentSessionKey,
             config: resolvedConfig,
             requesterAgentIdOverride: options?.requesterAgentIdOverride,
+            managedTask: {
+              workspaceRoot: spawnWorkspaceDir ?? workspaceDir,
+              sessionGeneration: options?.sessionId ?? '',
+              required: process.env.CLAWX_TASK_SCOPE_BRIDGE === '1',
+            },
             deps: {
               rollback:
                 resolvedConfig?.runtime?.mission?.rollback?.enabled === true

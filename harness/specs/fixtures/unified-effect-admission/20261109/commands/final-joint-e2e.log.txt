@@ -1,0 +1,45 @@
+
+Running 6 tests using 1 worker
+
+(node:41328) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:41328) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[fp-p1-harness] connection #1
+[fp-p1-harness] connection #2
+  ok 1 tests\e2e\session-task-scope-completion.spec.ts:14:5 › a real isolated schedule admits its first write without replacing the project coordinator (31.5s)
+[fp-p1-harness] connection #1
+[fp-p1-harness] connection #2
+[fp-p1-harness] connection #3
+[fp-p1-harness] connection #4
+[fp-p1-harness] connection #5
+[fp-p1-harness] connection #6
+[fp-p1-harness] connection #7
+[fp-p1-harness] connection #8
+[fp-p1-harness] connection #9
+[fp-p1-harness] connection #10
+[fp-p1-harness] connection #11
+[fp-p1-harness] connection #12
+[fp-p1-harness] connection #13
+[fp-p1-harness] connection #14
+  ok 2 tests\e2e\session-task-scope-completion.spec.ts:67:5 › real Gateway keeps discussion empty, admits one write, and restores the same handoff child after restart (3.0m)
+[fp-p1-harness] connection #1
+[fp-p1-harness] connection #2
+  ok 3 tests\e2e\session-task-scope-completion.spec.ts:201:5 › explicit UI task selection executes the newly selected canonical contract (47.5s)
+[fp-p1-harness] connection #1
+[fp-p1-harness] connection #2
+[fp-p1-harness] connection #3
+[fp-p1-harness] connection #4
+[fp-p1-harness] connection #5
+[fp-p1-harness] connection #6
+[fp-p1-harness] connection #7
+[fp-p1-harness] connection #8
+  ok 4 tests\e2e\session-worker-task-journey.spec.ts:12:5 › a real delegated worker receives its own task, reports separately and accepts a scoped follow-up (2.4m)
+[fp-p1-harness] connection #1
+[fp-p1-harness] connection #2
+  ok 5 tests\e2e\session-worker-task-journey.spec.ts:320:5 › a child writes under the canonical transfer while its parent turn remains active (36.3s)
+[fp-p1-harness] connection #1
+[fp-p1-harness] connection #2
+  ok 6 tests\e2e\unified-effect-admission.spec.ts:9:5 › actual task effects keep one checkout writer until the owning run ends (44.3s)
+
+  6 passed (8.1m)

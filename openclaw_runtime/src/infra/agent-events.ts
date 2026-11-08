@@ -231,9 +231,11 @@ export function getAgentRunContext(runId: string) {
 /** Clears context and sequence state for a run that has ended or been discarded. */
 export function clearAgentRunContext(runId: string) {
   const state = getAgentEventState();
+  const context = state.runContextById.get(runId);
   state.runContextById.delete(runId);
   state.seqByRun.delete(runId);
-  clearSessionTaskScopeRun(runId);
+  clearSessionTaskScopeRun(runId, context?.sessionKey && context.sessionId
+    ? { sessionKey: context.sessionKey, sessionGeneration: context.sessionId } : undefined);
 }
 
 /**

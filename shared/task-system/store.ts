@@ -3,7 +3,12 @@ import { mkdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, isAbsolute, relative, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import type { SessionKey, TaskId } from "../types/identity-scope.js";
-import { canonicalPath, resolveTaskDomain, type TaskDomain } from "./identity.js";
+import {
+  canonicalPath,
+  resolveTaskDomain,
+  type TaskAuthorityAccess,
+  type TaskDomain,
+} from "./identity.js";
 import type {
   TaskCheckpoint,
   TaskClaim,
@@ -19,6 +24,7 @@ import type {
   TaskPlanItem,
 } from "./types.js";
 import { taskSimilarity } from "./recognition.js";
+import { TASK_DELEGATION_DISPATCH_TOOLS } from './types.js';
 
 const MAX_CONTEXT = 12_000;
 const MAX_CHECKPOINT = 24_000;
@@ -102,7 +108,17 @@ export class TaskSystemStore {
   constructor(
     readonly domain: TaskDomain,
     readonly now: () => number = Date.now,
+    private readonly access?: TaskAuthorityAccess,
   ) {
+    if (
+      access &&
+      (access.domain.id !== domain.id ||
+        access.domain.root !== domain.root ||
+        access.domain.database !== domain.database ||
+        access.domain.worktree !== domain.worktree)
+    )
+      throw new Error("TASK_AUTHORITY_DOMAIN_MISMATCH");
+    this.assertAuthorityCurrent();
     mkdirSync(dirname(domain.database), { recursive: true });
     this.db = new DatabaseSync(domain.database);
     try {
@@ -152,10 +168,22 @@ export class TaskSystemStore {
       throw error;
     }
   }
+  private assertAuthorityCurrent(): void {
+    this.access?.assertCurrent();
+  }
+  private assertReadCurrent(): void {
+    if (this.transactionDepth === 0) this.assertAuthorityCurrent();
+  }
+  private relatedDomain(workspaceRoot: string): TaskDomain {
+    return this.access
+      ? this.access.resolveRelated(workspaceRoot)
+      : resolveTaskDomain(workspaceRoot);
+  }
   close() {
     this.db.close();
   }
   private transaction<T>(fn: () => T): T {
+    this.assertAuthorityCurrent();
     const depth = this.transactionDepth++;
     const name = `task_nested_${depth}`;
     try {
@@ -201,6 +229,10 @@ export class TaskSystemStore {
       );
   }
   get(taskNodeId: string): TaskView {
+    this.assertReadCurrent();
+    return this.view(taskNodeId);
+  }
+  private view(taskNodeId: string): TaskView {
     const contract = this.read<TaskContract>(
       "SELECT json FROM task_contracts WHERE id=?",
       taskNodeId,
@@ -239,15 +271,18 @@ export class TaskSystemStore {
     };
   }
   has(taskNodeId: string): boolean {
+    this.assertReadCurrent();
     return Boolean(this.db.prepare("SELECT 1 FROM task_contracts WHERE id=?").get(taskNodeId));
   }
   list(limit = 100): TaskView[] {
+    this.assertReadCurrent();
     const rows = this.db
       .prepare("SELECT id FROM task_contracts ORDER BY rowid DESC LIMIT ?")
       .all(Math.max(1, Math.min(500, limit))) as Array<{ id: string }>;
-    return rows.map((row) => this.get(row.id));
+    return rows.map((row) => this.view(row.id));
   }
   page(query: TaskQuery = {}): TaskPage {
+    this.assertReadCurrent();
     const limit = Math.max(1, Math.min(100, Number.isSafeInteger(query.limit) ? query.limit! : 50));
     const filter = {
       query: query.query?.trim().slice(0, 500) ?? "",
@@ -299,7 +334,7 @@ export class TaskSystemStore {
       ) as Array<{ id: string; sequence: number }>;
     const selected = rows.slice(0, limit);
     return {
-      tasks: selected.map((r) => this.get(r.id)),
+      tasks: selected.map((r) => this.view(r.id)),
       ...(rows.length > limit
         ? {
             nextCursor: Buffer.from(
@@ -324,6 +359,7 @@ export class TaskSystemStore {
     reason: "similar-objective" | "same-target";
     automaticIdentity: false;
   }> {
+    this.assertReadCurrent();
     text(query, "QUERY", 3000);
     // ponytail: bound suggestions to 500 active tasks; use FTS when larger active queues need recall.
     const candidates = this.db
@@ -345,7 +381,7 @@ export class TaskSystemStore {
       .sort((a, b) => b.score - a.score || a.id.localeCompare(b.id))
       .slice(0, Math.max(1, Math.min(20, limit)))
       .map((x) => ({
-        task: this.get(x.id),
+        task: this.view(x.id),
         score: x.score,
         reason: x.reason,
         automaticIdentity: false,
@@ -409,6 +445,7 @@ export class TaskSystemStore {
     afterSequence = 0,
     limit = 100,
   ): Array<{ seq: number; kind: string; at: number; json: string }> {
+    this.assertReadCurrent();
     return this.db
       .prepare(
         "SELECT seq,kind,at,json FROM task_events WHERE task_id=? AND seq>? ORDER BY seq LIMIT ?",
@@ -433,6 +470,7 @@ export class TaskSystemStore {
       payload: unknown;
     }>;
   } {
+    this.assertReadCurrent();
     text(consumer, "CONSUMER", 200);
     const sequence =
       (
@@ -691,9 +729,9 @@ export class TaskSystemStore {
     let task = this.binding(sessionKey,generation);
     if (!task) {
       const recent=this.db.prepare("SELECT c.task_id FROM task_claims c JOIN task_contracts t ON t.id=c.task_id WHERE c.session_key=? AND c.generation=? ORDER BY json_extract(t.json,'$.updatedAt') DESC,c.rowid DESC LIMIT 1").get(sessionKey,generation) as {task_id:string}|undefined;
-      if (recent) task=this.get(recent.task_id);
+      if (recent) task=this.view(recent.task_id);
     }
-    return {task,children:(task?.childTaskNodeIds??[]).map(id=>this.get(id))};
+    return {task,children:(task?.childTaskNodeIds??[]).map(id=>this.view(id))};
   }
   assertOwner(credential: TaskCredential, allowPaused = false): TaskView {
     const view = this.get(credential.taskNodeId);
@@ -715,6 +753,7 @@ export class TaskSystemStore {
     return view;
   }
   binding(sessionKey: string, generation?: string): TaskView | null {
+    this.assertReadCurrent();
     const writer = this.db
       .prepare("SELECT task_id,generation FROM task_bindings WHERE session_key=?")
       .get(sessionKey) as { task_id: string; generation: string } | undefined;
@@ -725,7 +764,7 @@ export class TaskSystemStore {
         .get(sessionKey) as { task_id: string; generation: string } | undefined);
     if (!row) return null;
     if (generation && row.generation !== generation) throw new Error("TASK_GENERATION_STALE");
-    return { ...this.get(row.task_id), ...(!writer ? { referenceOnly: true } : {}) };
+    return { ...this.view(row.task_id), ...(!writer ? { referenceOnly: true } : {}) };
   }
   inheritReference(sourceSessionKey: string, sourceGeneration: string, sessionKey: string, generation: string): TaskView | null {
     text(sessionKey, "SESSION", 300); text(generation, "GENERATION", 200);
@@ -744,6 +783,7 @@ export class TaskSystemStore {
     });
   }
   isSelectedReference(sessionKey: string, generation: string): boolean {
+    this.assertReadCurrent();
     return Boolean(this.db.prepare("SELECT 1 FROM task_references WHERE session_key=? AND generation=? AND role='selected'").get(sessionKey, generation));
   }
   selectReference(taskNodeId: string, sessionKey: string, generation: string, requestId: string): TaskView {
@@ -776,6 +816,7 @@ export class TaskSystemStore {
       );
   }
   worktreeTaskReferences(worktree: string): string[] {
+    this.assertReadCurrent();
     const root = canonicalPath(worktree);
     const rows = this.db
       .prepare(
@@ -798,10 +839,22 @@ export class TaskSystemStore {
     return [...ids];
   }
   delegationForChild(childSessionKey: string): TaskWriterDelegation | null {
+    this.assertReadCurrent();
     return this.read<TaskWriterDelegation>(
       "SELECT json FROM task_writer_delegations WHERE child_session=?",
       childSessionKey,
     );
+  }
+  markDelegationRecoveryRequired(childSessionKey: string, receipt: NonNullable<TaskWriterDelegation['terminalReceipt']>, reason: string): TaskWriterDelegation {
+    return this.transaction(() => {
+      const delegation = this.delegationForChild(childSessionKey);
+      if (!delegation || delegation.childRunId !== receipt.runId) throw new Error('TASK_DELEGATION_TERMINAL_MISMATCH');
+      if (delegation.phase === 'returned') return delegation;
+      delegation.phase = 'recovery_required'; delegation.terminalReceipt = receipt;
+      this.saveWriterDelegation(delegation);
+      this.event(delegation.taskNodeId, 'delegation_recovery_required', { delegationId: delegation.delegationId, reason });
+      return delegation;
+    });
   }
   prepareWriterDelegation(
     parent: TaskCredential,
@@ -812,6 +865,7 @@ export class TaskSystemStore {
       childWorktree: string;
       childRunId: string;
       mode: "writer" | "observer";
+      authorityBasis?: TaskWriterDelegation['authorityBasis'];
     },
   ): TaskWriterDelegation {
     text(input.childGeneration, "CHILD_GENERATION", 200);
@@ -819,7 +873,8 @@ export class TaskSystemStore {
     text(input.childRunId, "CHILD_RUN", 300);
     text(input.delegationId, "DELEGATION_ID", 300);
     if (input.childSessionKey === parent.sessionKey) throw new Error("TASK_DELEGATION_SELF");
-    if (resolveTaskDomain(input.childWorktree).id !== this.domain.id)
+    this.assertAuthorityCurrent();
+    if (this.relatedDomain(input.childWorktree).id !== this.domain.id)
       throw new Error("TASK_DELEGATION_DOMAIN_MISMATCH");
     return this.transaction(() => {
       const prior = this.delegationForChild(input.childSessionKey);
@@ -858,7 +913,7 @@ export class TaskSystemStore {
           (op) =>
             op.epoch !== parent.epoch ||
             op.state !== "started" ||
-            !["sessions_spawn", "team_orchestrate"].includes(op.kind),
+            !TASK_DELEGATION_DISPATCH_TOOLS.includes(op.kind),
         )
       )
         throw new Error("TASK_OPERATIONS_PENDING");
@@ -894,6 +949,7 @@ export class TaskSystemStore {
         phase: "prepared",
         dispatchOperationIds: input.mode === "writer" ? pending.map((op) => op.id) : [],
         contractRevision: view.contract.revision,
+        ...(input.authorityBasis ? { authorityBasis: input.authorityBasis } : {}),
         candidateArtifacts: input.mode === "observer" ? this.candidateArtifacts(parent) : undefined,
       };
       if (input.mode === "writer") {
@@ -1067,7 +1123,8 @@ export class TaskSystemStore {
   ): TaskView {
     text(sessionKey, "SESSION", 300);
     text(generation, "GENERATION", 200);
-    if (resolveTaskDomain(worktree).id !== this.domain.id)
+    this.assertAuthorityCurrent();
+    if (this.relatedDomain(worktree).id !== this.domain.id)
       throw new Error("TASK_HANDOFF_DOMAIN_MISMATCH");
     return this.transaction(() => {
       const view = this.assertOwner(credential, true);
@@ -1141,7 +1198,7 @@ export class TaskSystemStore {
     for (let parentId = view.parentTaskNodeId; parentId;) {
       if (seen.has(parentId) || ancestors.length >= 30) throw new Error("TASK_PLAN_ANCESTRY_INVALID");
       seen.add(parentId);
-      const parent = this.get(parentId), c = parent.contract;
+      const parent = this.view(parentId), c = parent.contract;
       ancestors.unshift({taskNodeId:c.taskNodeId,revision:c.revision,objective:c.objective,target:c.target,constraints:c.constraints,acceptance:c.acceptance,expectedOutcomes:c.expectedOutcomes});
       parentId = parent.parentTaskNodeId;
     }
@@ -1166,6 +1223,7 @@ export class TaskSystemStore {
     epoch: number;
     context: string;
   }): { receiptId: string; contextDigest: string; revision: number; epoch: number } {
+    this.assertAuthorityCurrent();
     const binding = {
       sessionKey: input.sessionKey,
       generation: input.generation ?? null,
@@ -1244,6 +1302,7 @@ export class TaskSystemStore {
     });
   }
   endRun(credential: TaskCredential, runId: string): void {
+    this.assertAuthorityCurrent();
     this.db
       .prepare("DELETE FROM task_active_runs WHERE task_id=? AND epoch=? AND run_id=?")
       .run(credential.taskNodeId, credential.epoch, runId);
@@ -1378,19 +1437,24 @@ export class TaskSystemStore {
   operation(
     credential: TaskCredential,
     operationId: string,
-  ): { id: string; kind: string; state: string; epoch: number; startedAt: number } {
+  ): { id: string; kind: string; state: string; epoch: number; startedAt: number;
+    receipt?: { id: string; outcome: "applied" | "not_applied"; owner: string } } {
+    const view = this.get(credential.taskNodeId), c = view.claim;
     const row = this.db
       .prepare(
-        "SELECT o.id,o.kind,o.state,o.epoch,p.started_at AS startedAt FROM task_operations o JOIN task_operation_owners p ON p.id=o.id WHERE o.id=? AND o.task_id=? AND o.epoch=?",
+        "SELECT o.id,o.kind,o.state,o.epoch,o.result,p.started_at AS startedAt FROM task_operations o JOIN task_operation_owners p ON p.id=o.id WHERE o.id=? AND o.task_id=? AND o.epoch=?",
       )
       .get(operationId, credential.taskNodeId, credential.epoch) as
-      | { id: string; kind: string; state: string; epoch: number; startedAt: number }
+      | { id: string; kind: string; state: string; epoch: number; startedAt: number; result: string | null }
       | undefined;
     if (!row) throw new Error("TASK_OPERATION_NOT_FOUND");
-    const view = this.get(credential.taskNodeId), c = view.claim;
-    const cancelledReplay = row.state === "reconciled" && view.contract.state === "cancelled" && c?.epoch === credential.epoch + 1 && c.sessionKey === credential.sessionKey && c.generation === credential.generation && c.worktree === this.domain.worktree;
+    const cancelledReplay = ["completed", "reconciled"].includes(row.state) && view.contract.state === "cancelled" && c?.epoch === credential.epoch + 1 && c.sessionKey === credential.sessionKey && c.generation === credential.generation && c.worktree === this.domain.worktree;
     if (!cancelledReplay) this.assertOwner(credential, true);
-    return row;
+    const { result, ...operation } = row;
+    if (row.state !== 'reconciled') return operation;
+    const receipt = JSON.parse(result ?? 'null') as { id: string; outcome: "applied" | "not_applied"; owner: string } | null;
+    if (!receipt?.id || !receipt.owner || !['applied','not_applied'].includes(receipt.outcome)) throw new Error('TASK_EFFECT_RECEIPT_INVALID');
+    return { ...operation, receipt };
   }
   reconcileOperation(
     credential: TaskCredential,
@@ -1416,13 +1480,15 @@ export class TaskSystemStore {
     });
   }
   reconcileProcessResult(credential: TaskCredential, result: unknown): void {
+    this.assertAuthorityCurrent();
     const details = (
-      result as { details?: { sessionId?: unknown; exitCode?: unknown; status?: unknown } } | null
+      result as { details?: { sessionId?: unknown; exitCode?: unknown; exitSignal?: unknown; status?: unknown } } | null
     )?.details;
     if (
       !details ||
       typeof details.sessionId !== "string" ||
-      typeof details.exitCode !== "number" ||
+      !(typeof details.exitCode === "number" && Number.isFinite(details.exitCode)
+        || typeof details.exitSignal === 'string' && /^SIG[A-Z0-9]+$/.test(details.exitSignal)) ||
       !["completed", "failed", "killed"].includes(String(details.status))
     )
       return;
@@ -1445,10 +1511,11 @@ export class TaskSystemStore {
           .prepare(
             "UPDATE task_operations SET state='completed',result=? WHERE id=? AND state='unknown'",
           )
-          .run(`process-owner exit=${details.exitCode}`, row.id);
+          .run(`process-owner exit=${details.exitCode ?? details.exitSignal}`, row.id);
         this.event(credential.taskNodeId, "process_reconciled", {
           operationId: row.id,
           exitCode: details.exitCode,
+          ...(details.exitSignal ? { exitSignal: details.exitSignal } : {}),
         });
       });
       this.transaction(() => this.settleCancellation(credential.taskNodeId));

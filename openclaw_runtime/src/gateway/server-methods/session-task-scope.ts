@@ -11,6 +11,7 @@ import {
 import {
   getSessionTaskEffectRequest,
   sessionTaskEffectsInFlight,
+  sessionTaskOperationsInFlight,
 } from "../../agents/session-task-scope.js";
 import {
   isEmbeddedRunAbandoned,
@@ -74,7 +75,10 @@ function assertLiveRun(context: GatewayRequestContext, request: SessionTaskEffec
       (key) => effect[key] === request[key],
     ) &&
     effect.projectWorkspaceDir === request.projectWorkspaceDir &&
-    effect.expectedClaimId === request.expectedClaimId;
+    effect.expectedClaimId === request.expectedClaimId &&
+    effect.operationId === request.operationId &&
+    effect.checkoutAccess === request.checkoutAccess &&
+    effect.expectedExecutionRevision === request.expectedExecutionRevision;
   const activeMatches = active
     ? !active.controller.signal.aborted &&
       active.sessionKey === request.sessionKey &&
@@ -200,6 +204,7 @@ export const sessionTaskScopeHandlers: GatewayRequestHandlers = {
         inFlightProcesses === 0 &&
         !abandoned,
       inFlightEffects,
+      inFlightOperationIds: sessionTaskOperationsInFlight(runId),
       inFlightProcesses,
       managedProcessReservations: {
         matching: matchingProcessReservations.length,
@@ -269,7 +274,8 @@ export const sessionTaskScopeHandlers: GatewayRequestHandlers = {
         claim.run.runId !== entry.request.runId ||
         claim.run.scope.sessionKey !== entry.request.sessionKey ||
         claim.sessionGeneration !== entry.request.sessionGeneration ||
-        (entry.request.expectedClaimId && claim.id !== entry.request.expectedClaimId)
+        (entry.request.expectedClaimId && claim.id !== entry.request.expectedClaimId) ||
+        (entry.request.expectedExecutionRevision !== undefined && claim.executionRevision !== entry.request.expectedExecutionRevision)
       ) {
         entry.reject(new Error("TASK_SCOPE_ADMISSION_MISMATCH"));
       } else entry.resolve(admission);

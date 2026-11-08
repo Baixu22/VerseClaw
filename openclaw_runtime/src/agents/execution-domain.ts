@@ -4,8 +4,10 @@ import { resolveTaskDomain, type TaskDomain } from "../../../shared/task-system/
 import { executeSqliteQuerySync, executeSqliteQueryTakeFirstSync, getNodeSqliteKysely } from "../infra/kysely-sync.js";
 import { requireNodeSqlite } from "../infra/node-sqlite.js";
 import type { DB } from "../state/openclaw-state-db.generated.js";
-import { openOpenClawStateDatabase, runOpenClawStateWriteTransaction } from "../state/openclaw-state-db.js";
+import { openExecutionStateDatabase as openOpenClawStateDatabase, runExecutionStateWriteTransaction as runOpenClawStateWriteTransaction } from "../state/execution-state-db.js";
 import { filesystemInstance } from "./worktree-registry.js";
+import { TaskSystemStore } from "../../../shared/task-system/store.js";
+import { checkoutWriterSnapshot } from "./worktree-writer.js";
 
 type DomainDatabase = Pick<DB, "execution_domain_registrations">;
 export type ExecutionDomainRegistration = {
@@ -104,6 +106,25 @@ export function registerExecutionDomain(input: {
       return old;
     }
     if ((old?.revision ?? 0) !== input.expectedRevision) throw new Error("execution_domain_revision_conflict");
+    if (existsSync(local.database)) {
+      const { DatabaseSync } = requireNodeSqlite();
+      const localDb = new DatabaseSync(local.database, { readOnly: true });
+      try {
+        const table = localDb.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='task_contracts'").get();
+        if (!table || Number((localDb.prepare("SELECT COUNT(*) AS count FROM task_contracts").get() as { count: number }).count) > 0)
+          throw new Error("execution_clone_has_local_tasks");
+      } finally { localDb.close(); }
+    }
+    const writer = checkoutWriterSnapshot(local.worktree);
+    if (writer && writer.state !== 'released') throw new Error('execution_clone_writer_active');
+    if (old) {
+      const current = resolveExecutionDomain(input.workspaceRoot);
+      if (current.state !== 'registered') throw new Error('execution_domain_registration_stale');
+      const store = new TaskSystemStore(current.authority);
+      try {
+        if (store.worktreeTaskReferences(local.worktree).length) throw new Error('execution_clone_has_task_references');
+      } finally { store.close(); }
+    }
     if (readRegistration(authority.id)) throw new Error("execution_task_authority_indirect");
     const query = getNodeSqliteKysely<DomainDatabase>(db);
     const references = executeSqliteQuerySync(db, query.selectFrom("execution_domain_registrations").select("registration_json")).rows;

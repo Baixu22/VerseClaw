@@ -23,7 +23,7 @@ import {
 import type { GatewayRequestHandlers } from "./types.js";
 import { existsSync } from "node:fs";
 import { TaskSystemStore } from "../../../../shared/task-system/store.js";
-import { resolveTaskDomain } from "../../../../shared/task-system/identity.js";
+import { createExecutionTaskAccess } from "../../agents/execution-task-authority.js";
 import type { TaskCredential } from "../../../../shared/task-system/types.js";
 import { loadSubagentSessionEntry } from "../../agents/subagent-session-reconciliation.js";
 
@@ -169,9 +169,10 @@ export const tasksHandlers: GatewayRequestHandlers = {
         cfg: context.getRuntimeConfig(),
       });
       if (session?.sessionId !== c.generation) throw new Error("TASK_GENERATION_STALE");
-      const domain = resolveTaskDomain(params.workspaceDir);
+      const access = createExecutionTaskAccess(params.workspaceDir);
+      const domain = access.domain;
       if (!existsSync(domain.database)) throw new Error("TASK_STORE_UNAVAILABLE");
-      const store = new TaskSystemStore(domain);
+      const store = new TaskSystemStore(domain, undefined, access);
       try {
         const { reconcilePersistentTaskEffect } =
           await import("../../agents/persistent-task-acceptance.js");
@@ -219,9 +220,10 @@ export const tasksHandlers: GatewayRequestHandlers = {
         typeof params.workspaceDir !== "string"
       )
         throw new Error("TASK_RECEIPT_INPUT_INVALID");
-      const domain = resolveTaskDomain(params.workspaceDir);
+      const access = createExecutionTaskAccess(params.workspaceDir);
+      const domain = access.domain;
       if (!existsSync(domain.database)) throw new Error("TASK_STORE_UNAVAILABLE");
-      const store = new TaskSystemStore(domain);
+      const store = new TaskSystemStore(domain, undefined, access);
       try {
         const owner = store.get(refs.taskId).claim;
         if (!owner) throw new Error("TASK_OWNER_MISSING");
@@ -266,9 +268,10 @@ export const tasksHandlers: GatewayRequestHandlers = {
         cfg: context.getRuntimeConfig(),
       });
       if (session?.sessionId !== credential.generation) throw new Error("TASK_GENERATION_STALE");
-      const domain = resolveTaskDomain(params.workspaceDir);
+      const access = createExecutionTaskAccess(params.workspaceDir);
+      const domain = access.domain;
       if (!existsSync(domain.database)) throw new Error("TASK_STORE_UNAVAILABLE");
-      const store = new TaskSystemStore(domain);
+      const store = new TaskSystemStore(domain, undefined, access);
       try {
         const { acceptPersistentTask } = await import("../../agents/persistent-task-acceptance.js");
         respond(

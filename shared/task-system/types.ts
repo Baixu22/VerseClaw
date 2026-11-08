@@ -1,4 +1,7 @@
 import type { TaskId, SessionKey } from "../types/identity-scope.js";
+import type { TaskAuthorityBasis } from './identity.js';
+
+export const TASK_DELEGATION_DISPATCH_TOOLS: readonly string[] = ['sessions_spawn', 'team_orchestrate', 'mission_loop', 'task_loop'];
 
 export type TaskCriterion = {
   id: string;
@@ -99,6 +102,7 @@ export type TaskWriterDelegation = {
   dispatchOperationIds: string[];
   terminalReceipt?: { runId: string; endedAt: number; outcome: string };
   contractRevision?: number;
+  authorityBasis?: TaskAuthorityBasis;
   candidateArtifacts?: Array<{ path: string; sha256: string }>;
 };
 export type TaskDelegationIntent = {
@@ -111,6 +115,7 @@ export type TaskDelegationIntent = {
   childRunId: string;
   observer: boolean;
   expectedParent: TaskCredential;
+  authorityBasis?: TaskAuthorityBasis;
 };
 export type TaskResolution = { kind: "created" | "existing" | "duplicate"; task: TaskView };
 export type TaskSystemCommand =

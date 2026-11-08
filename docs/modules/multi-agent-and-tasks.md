@@ -427,6 +427,8 @@ Agents 面板将派发准入、实际执行、报告回传、任务验收和父�
 
 资源清单逐项保留 owner 的已知与未知状态。工作树目录缺失或注册读取失败时，该项标为 unknown，会话代次、进程和准入占用仍按各自 owner 的结果显示；unknown 不作为资源空闲或可回收的依据。
 
+受管工具入口联合核对任务合同、会话代次、执行绑定和 checkout writer。writer 在工具之间保持占用，后台进程和未知效果须由原 owner 结清；规范任务委派通过持久父子凭据原子转移 checkout epoch。显式注册的 clone 通过原 TaskSystemStore 访问指定 authority，产物检查仍以实际检出目录为准；已有独立任务库不会被注册操作静默隐藏。受管 Mission 保存同一任务的合同版本、epoch、代次与 authority 引用，每次推进重新核验，业务完成依赖 Task owner 的验收回执。
+
 操作范围及恢复入口见[会话、任务与资源操作矩阵](../dev/session-lifecycle-control-matrix.md)。
 
 ## 17. 源码索引
