@@ -1037,6 +1037,7 @@ describe('Turn summary contents badges', () => {
 describe('Turn disclosure survives the optimistic→server id swap', () => {
   beforeEach(() => {
     vi.resetModules();
+    Element.prototype.scrollTo = vi.fn();
     approvalsMock.mockResolvedValue({ ok: true, approvals: [] });
   });
 

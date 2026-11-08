@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { Chat } from '@/pages/Chat';
 
 vi.mock('react-router-dom', () => ({
@@ -158,11 +158,7 @@ describe('Chat artifact panel layout', () => {
 
     const aside = (await screen.findByTestId('artifact-panel')).closest('aside');
 
-    // `bg-surface-modal` put the panel one material step above the conversation
-    // — visible in dark, where it resolved to 13% lightness against the canvas's
-    // 9.4% — so a panel that takes real layout width beside the chat still read
-    // as a raised slab parked next to it. The page canvas and its grid now carry
-    // straight through; the left hairline is the only thing marking the seam.
+    // The panel shares the conversation surface; the hairline marks the seam.
     expect(aside).not.toHaveClass('bg-surface-modal');
     expect(aside).toHaveClass('border-l');
   });
@@ -176,9 +172,6 @@ describe('Chat artifact panel layout', () => {
     const canvas = screen.queryByTestId('chat-welcome-bg');
     const conversation = await screen.findByTestId('chat-conversation-column');
 
-    // The canvas is a child of the PAGE, not of the conversation column: the
-    // workspace panel is co-planar, so the grid has to cross the divider. It is
-    // also the first child, so every positioned sibling after it paints on top.
     expect(canvas).toBeNull();
     expect(page).toHaveClass('bg-background');
     expect(conversation).toBeInTheDocument();
@@ -189,7 +182,7 @@ describe('Chat artifact panel layout', () => {
 
     render(<Chat />);
 
-    expect(await screen.findByTestId('artifact-panel')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByTestId('artifact-panel')).toBeInTheDocument());
     expect(screen.queryByTestId('chat-assistive-rail')).not.toBeInTheDocument();
     expect(screen.queryByTestId('work-mode-summary-panel')).not.toBeInTheDocument();
     expect(screen.queryByTestId('task-ledger-summary')).not.toBeInTheDocument();
