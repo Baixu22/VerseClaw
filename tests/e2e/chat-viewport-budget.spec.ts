@@ -80,9 +80,17 @@ test('paired retained history and scrolling workload', async ({ launchElectronAp
       const ipc = ipcMain as unknown as { _invokeHandlers: Map<string, (event: unknown, request: { id: string; module: string; action: string; payload?: Record<string, unknown> }) => unknown> };
       const original = ipc._invokeHandlers.get('host:invoke')!;
       const calls: string[] = []; (globalThis as Record<string, unknown>).__viewportHistoryCalls = calls;
+      const workspace = { id: 'viewport-workspace', name: 'Viewport cache', rootPath: data.rootPath,
+        agentId: 'main', selectedAgentId: 'main', activeSessionKey: 'agent:main:main', permissionMode: 'readOnly',
+        createdAt: 1, updatedAt: 1, lastOpenedAt: 1, state: {},
+        sessionStates: Object.fromEntries(data.sessions.map(session => [session.key, {}])) };
       ipcMain.removeHandler('host:invoke');
       ipcMain.handle('host:invoke', (event, request) => {
         const payload = request.payload ?? {};
+        if (request.module === 'workspaces' && ['list', 'getActive', 'saveState', 'update'].includes(request.action)) {
+          if (typeof payload.activeSessionKey === 'string') workspace.activeSessionKey = payload.activeSessionKey;
+          return { id: request.id, ok: true, data: { profiles: [workspace], activeWorkspaceId: workspace.id, activeWorkspace: workspace } };
+        }
         const key = String((payload.params as { sessionKey?: string } | undefined)?.sessionKey ?? payload.sessionKey ?? 'agent:main:main');
         if ((request.module === 'gateway' && request.action === 'rpc' && payload.method === 'chat.history')
           || (request.module === 'sessions' && request.action === 'history')) {
@@ -95,7 +103,7 @@ test('paired retained history and scrolling workload', async ({ launchElectronAp
         }
         return original(event, request);
       });
-    }, { messages: history(imagePath, 200) });
+    }, { messages: history(imagePath, 200), rootPath: homeDir, sessions });
     const page = await getStableWindow(app); await page.reload();
     await expect(page.getByText('Answer 99', { exact: false })).toBeAttached({ timeout: 30_000 });
     const cdp = await page.context().newCDPSession(page); await cdp.send('Performance.enable');
