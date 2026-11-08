@@ -16,6 +16,8 @@
 
 受管进程按生命周期持有共享 executor，确认终态后释放自身引用。poll 调度为 stdin 和取消保留空间，输出按合计字节限额保留，并继续提供原有 artifact 引用。
 
+终端 PTY 与受管进程共享已声明的宿主容量；已知服务端口在启动前预留，旧代次终端拒绝控制，退出结果不确定时保留占用供恢复核对。详见[终端资源归属](harness/specs/guides/terminal-resource-ownership.md)。
+
 会话支持建立 Git 仓库、选择独立工作树并恢复草稿。`/storage` 与**设置 → 存储空间**共用资源页，可查看会话文件、进程内存和工作树占用。[操作与归属规则](docs/dev/session-worktree-storage.md)。
 
 Runtime 管理的工作树归属、创建阶段和合并意图持久保存在 SQLite 中。重启后可恢复归属；路径被替换、创建未完成或合并结果未知时保留资源并拒绝继续使用旧资格。[注册与恢复契约](harness/specs/guides/execution-domain-registry.md)。

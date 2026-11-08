@@ -29,7 +29,7 @@ const runnableWorkspace = {
 
 test.describe('Workspace terminal panel', () => {
   test('renders compact terminal chrome and permission block state', async ({ launchElectronApp }) => {
-    const app = await launchElectronApp({ skipSetup: true });
+    const app = await launchElectronApp({ skipSetup: true, executablePath: process.env.R3_ELECTRON_BINARY });
 
     try {
       await installIpcMocks(app, {
@@ -127,7 +127,7 @@ test.describe('Workspace terminal panel', () => {
   });
 
   test('starts a live workspace terminal from the launcher', async ({ launchElectronApp }) => {
-    const app = await launchElectronApp({ skipSetup: true });
+    const app = await launchElectronApp({ skipSetup: true, executablePath: process.env.R3_ELECTRON_BINARY });
 
     try {
       await installIpcMocks(app, {
@@ -187,6 +187,7 @@ test.describe('Workspace terminal panel', () => {
             blocked: false,
             status: 'running',
             sessionId: 'terminal-1',
+            expectedSessionId: 'terminal-generation-1',
             cwd: '/workspace/demo',
             cols: 80,
             rows: 24,
@@ -227,6 +228,17 @@ test.describe('Workspace terminal panel', () => {
         return calls.some((call) => call.module === 'terminal' && call.action === 'open');
       })).toBe(true);
       await expect(sidePanel.getByText('Running').first()).toBeVisible();
+      await sidePanel.locator('.xterm-helper-textarea').focus();
+      await page.keyboard.type('scope-check');
+      await expect.poll(async () => app.evaluate(() => {
+        const calls = (globalThis as unknown as { __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: unknown }> }).__verseClawE2eHostCalls ?? [];
+        const writes = calls.filter(call => call.module === 'terminal' && call.action === 'write');
+        return writes.length > 0 && writes.every(call => {
+          const input = call.payload as { sessionId?: string; workspaceId?: string; sessionKey?: string; expectedSessionId?: string };
+          return input.sessionId === 'terminal-1' && input.workspaceId === 'workspace-1'
+            && input.sessionKey === 'agent:main:main' && input.expectedSessionId === 'terminal-generation-1';
+        });
+      })).toBe(true);
 
       const terminalOpenCalls = () => app.evaluate(() => (
         (globalThis as unknown as { __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: unknown }> }).__verseClawE2eHostCalls ?? []
