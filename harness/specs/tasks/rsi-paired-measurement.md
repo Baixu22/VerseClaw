@@ -46,7 +46,7 @@ acceptance:
   - Freeze endpoint/model, price basis, authorization, source candidate, selected prompt version and all 24 task identities before the first provider request.
   - Use 24 tasks, three arms, k=3 and 216 declared slots; preserve rotating arm order and unchanged v4 tools, evaluator, oracle and promotion thresholds.
   - One campaign envelope limits preflight and trials to 864 provider calls, 12000000 tokens and 300 CNY of new spending. Unknown usage retains its pre-dispatch upper reservation.
-  - A quota-only price basis requires the declared provider/model and existing Free quota to remain verified before each dispatch; route drift stops new requests. Credit usage and unavailable provider billing fields retain their actual units and unknown values.
+  - A quota-only price basis requires the declared provider/model, exact-target aliases and existing Free quota for every enabled route account to remain verified before each dispatch; route drift stops new requests. Credit usage and unavailable provider billing fields retain their actual units and unknown values.
   - Reserve before dispatch, retain first failures and incomplete requests, forbid provider retries, and reconcile every ledger reservation with a preflight or trial receipt on replay.
   - Fresh admission executes both reference and unresolved baseline for all tasks with reference-commit oracle bytes and exact support versions.
   - Final artifacts expose all slot outcomes, passK/passAtK, at least 20 complete paired cases when available, 95 percent paired intervals, power, safety, anchors, actual usage and observed spending. An incomplete or negative experiment keeps its actual verdict.

@@ -92,8 +92,9 @@ recomputes the measurement and joins each provider receipt to its reservation.
 `RsiCampaignBudget/v1` adds one whole-campaign envelope to the v2 benefit plan.
 Preflight and continuations share its call, token and currency limits. Unknown
 usage keeps the request's upper reservation after interruption. The Free-quota
-path verifies WorkBuddy model ownership and all enabled account plans before
-each request; it uses existing credits and allows no purchase or paid fallback.
+path verifies WorkBuddy model ownership, identity aliases and enabled accounts
+for the frozen route before each request; it uses existing credits and allows
+no purchase or paid fallback.
 The report retains the provider's credit multiplier, new-spending bound in CNY
 and any unavailable upstream invoice or credit debit as separate fields.
 

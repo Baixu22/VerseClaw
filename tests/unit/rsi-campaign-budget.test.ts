@@ -1,9 +1,11 @@
 // @vitest-environment node
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { DatabaseSync } from 'node:sqlite';
 import { afterAll, describe, expect, it } from 'vitest';
 import { createCampaignLedger, validateCampaignBudget, type CampaignBudget } from '../../scripts/lib/rsi-campaign-budget.mjs';
 import { buildResponsesRequest, type ResponsesProviderResult } from '../../scripts/lib/rsi-responses-provider.mjs';
+import { inspectFreeQuota } from '../../scripts/rsi-paired-measurement.mjs';
 
 const directories: string[] = [];
 function directory() {
@@ -24,6 +26,26 @@ afterAll(() => { for (const path of directories) {
 } });
 
 describe('whole-campaign provider resources', () => {
+  it('accepts exact-model domestic and international aliases and ignores an unrelated prefix alias', () => {
+    const file = join(directory(), 'quota.sqlite'), db = new DatabaseSync(file);
+    db.exec('CREATE TABLE kv (key TEXT, value TEXT); CREATE TABLE accounts (id TEXT, provider TEXT, enabled INTEGER); CREATE TABLE account_usage_records (account_id TEXT, usage TEXT, remaining REAL);');
+    db.prepare('INSERT INTO kv VALUES (?, ?)').run('modelRules', JSON.stringify({ custom: [], disabled: [], mappings: [
+      { alias: 'space-bunny-alpha', provider: 'cline-free', target: 'stealth/space-bunny-alpha' },
+      { alias: 'space-bunny', provider: 'workbuddy', target: 'space-bunny', reasoning: null },
+      { alias: 'space-bunny', provider: 'workbuddy-intl', target: 'space-bunny', reasoning: null },
+    ] }));
+    for (const provider of ['workbuddy', 'workbuddy-intl']) {
+      db.prepare('INSERT INTO accounts VALUES (?, ?, 1)').run(provider, provider);
+      db.prepare('INSERT INTO account_usage_records VALUES (?, ?, 100)').run(provider, JSON.stringify({ subscription: { planName: 'Free' } }));
+    }
+    db.close();
+    expect(inspectFreeQuota(file, 'space-bunny')).toMatchObject({ plan: 'Free', enabledAccounts: 2, remainingQuota: 200,
+      routeProviders: ['workbuddy', 'workbuddy-intl'] });
+    const update = new DatabaseSync(file);
+    update.prepare('UPDATE account_usage_records SET usage=? WHERE account_id=?').run(JSON.stringify({ subscription: { planName: 'Paid' } }), 'workbuddy-intl');
+    update.close();
+    expect(() => inspectFreeQuota(file, 'space-bunny')).toThrow('campaign-enabled-account-is-not-free');
+  });
   it('counts preflight and continuation together and refuses a fourth dispatch', async () => {
     const ledger = createCampaignLedger({ directory: directory(), campaign: budget() });
     for (const identity of ['provider-preflight', 'slot/1', 'slot/2']) ledger.settle(await ledger.reserve(request, identity), result());

@@ -27,14 +27,24 @@ export function inspectFreeQuota(database, model) {
   const db = new DatabaseSync(database, { readOnly: true });
   try {
     const rules = JSON.parse(db.prepare('SELECT value FROM kv WHERE key=?').get('modelRules')?.value ?? '{}');
-    assert(!JSON.stringify([rules.mappings, rules.custom, rules.disabled]).includes(model), 'campaign-local-model-route-drift');
-    const rows = db.prepare('SELECT u.usage, u.remaining FROM accounts a LEFT JOIN account_usage_records u ON a.id=u.account_id WHERE a.provider=? AND a.enabled=1').all('workbuddy');
+    assert([rules.mappings ?? [], rules.custom ?? [], rules.disabled ?? []].every(Array.isArray), 'campaign-local-route-schema');
+    assert(!(rules.disabled ?? []).includes(model)
+      && !(rules.custom ?? []).some(entry => entry.id === model || entry.alias === model || entry.model === model),
+    'campaign-local-model-route-drift');
+    const configured = (rules.mappings ?? []).filter(entry => entry.alias === model);
+    const routes = (configured.length ? configured : [{ alias: model, provider: 'workbuddy', target: model, reasoning: null }])
+      .map(entry => ({ alias: model, provider: entry.provider, target: entry.target, reasoning: entry.reasoning ?? null }))
+      .sort((left, right) => left.provider.localeCompare(right.provider));
+    assert(routes.every(entry => ['workbuddy', 'workbuddy-intl'].includes(entry.provider) && entry.target === model
+      && [null, 'low'].includes(entry.reasoning)), 'campaign-local-model-route-drift');
+    const routeProviders = [...new Set(routes.map(entry => entry.provider))];
+    const rows = db.prepare(`SELECT u.usage, u.remaining FROM accounts a LEFT JOIN account_usage_records u ON a.id=u.account_id WHERE a.provider IN (${routeProviders.map(() => '?').join(',')}) AND a.enabled=1`).all(...routeProviders);
     const plans = rows.map(row => JSON.parse(row.usage ?? 'null')?.subscription?.planName);
     assert(rows.length > 0 && plans.every(plan => plan === 'Free'), 'campaign-enabled-account-is-not-free');
     const remainingQuota = rows.reduce((sum, row) => sum + Math.max(0, row.remaining ?? 0), 0);
     assert(remainingQuota > 0, 'campaign-free-quota-exhausted');
     return { provider: 'workbuddy', model, plan: 'Free', newPurchaseAllowed: false,
-      enabledAccounts: rows.length, remainingQuota, unit: 'provider-credits',
+      enabledAccounts: rows.length, remainingQuota, unit: 'provider-credits', routes, routeProviders, routesDigest: benefitDigest(routes),
       source: 'read-only Agent2API account_usage_records and modelRules', observedAt: new Date().toISOString() };
   } finally { db.close(); }
 }
@@ -175,7 +185,9 @@ if (isMainEntrypoint(import.meta.url)) {
           const campaignLedger = createCampaignLedger({ directory: join(values.scratch, 'campaign-ledger'), campaign: plan.budget.campaign,
             verifyPriceBasis: async () => {
               assert.deepEqual(await inspectModel(plan.provider.endpoint, plan.provider.model), price.model, 'campaign-model-price-drift');
-              return inspectFreeQuota(values['quota-db'], plan.provider.model);
+              const observation = inspectFreeQuota(values['quota-db'], plan.provider.model);
+              assert.equal(observation.routesDigest, price.quota.routesDigest, 'campaign-provider-route-drift');
+              return observation;
             } });
           if (!existsSync(join(admission, 'provider-preflight.json'))) {
             // All local oracle admissions precede the first resource-consuming probe.
