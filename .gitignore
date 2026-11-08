@@ -2769,3 +2769,17 @@ openclaw_runtime/_tmp_*
 !/harness/specs/fixtures/recovery-contract-eval/final-20261105/candidate-report.log
 
 !/harness/specs/fixtures/recovery-contract-eval/final-20261105/legacy-report.log
+
+# Exact retained execution registry acceptance logs.
+!/harness/specs/fixtures/execution-domain-registry/20261108/comms-compare.log
+!/harness/specs/fixtures/execution-domain-registry/20261108/comms-replay.log
+!/harness/specs/fixtures/execution-domain-registry/20261108/contract.log
+!/harness/specs/fixtures/execution-domain-registry/20261108/core.log
+!/harness/specs/fixtures/execution-domain-registry/20261108/harness-dry-run.log
+!/harness/specs/fixtures/execution-domain-registry/20261108/harness.log
+!/harness/specs/fixtures/execution-domain-registry/20261108/lint.log
+!/harness/specs/fixtures/execution-domain-registry/20261108/owners.log
+!/harness/specs/fixtures/execution-domain-registry/20261108/schema.log
+!/harness/specs/fixtures/execution-domain-registry/20261108/types-node.log
+!/harness/specs/fixtures/execution-domain-registry/20261108/types-test.log
+!/harness/specs/fixtures/execution-domain-registry/20261108/types-web.log
