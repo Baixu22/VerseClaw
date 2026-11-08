@@ -1,0 +1,284 @@
+{
+  "schema": "checkout-writer-acceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "observedAt": "2026-11-08T18:21:00.435845+00:00",
+  "candidate": {
+    "commit": "e424f0b129f73725b82b8d6dd53dca56f8a32eea",
+    "tree": "bce32ac3a202574abc5049efc7dd706e299f3a8b",
+    "dirty": false
+  },
+  "sourceCleanAfter": true,
+  "commands": [
+    {
+      "name": "writers",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:/ClawX/node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "vitest.checkout-writer.config.ts",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\unified-management-20261109\\writer-candidate/writers.json"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 27.922,
+      "passed": 30,
+      "failed": 0,
+      "skipped": 0,
+      "total": 30
+    },
+    {
+      "name": "registry",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:/ClawX/node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "vitest.execution-domain.config.ts",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\unified-management-20261109\\writer-candidate/registry.json"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 23.015,
+      "passed": 29,
+      "failed": 0,
+      "skipped": 0,
+      "total": 29
+    },
+    {
+      "name": "node-types",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:/ClawX/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 12.969
+    },
+    {
+      "name": "web-types",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:/ClawX/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 4.844
+    },
+    {
+      "name": "test-types",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:/ClawX/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 17.234
+    },
+    {
+      "name": "lint",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:/ClawX/node_modules/eslint/bin/eslint.js",
+        "openclaw_runtime/src/agents/orchestration-worktree-merge.ts",
+        "openclaw_runtime/src/agents/worktree-service.ts",
+        "openclaw_runtime/src/agents/worktree-writer.ts",
+        "tests/unit/checkout-writer-ownership.test.ts",
+        "vitest.checkout-writer.config.ts"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 4.453
+    },
+    {
+      "name": "contract",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 4.859
+    },
+    {
+      "name": "comms-replay",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 0.375
+    },
+    {
+      "name": "comms-compare",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 0.266
+    },
+    {
+      "name": "harness",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/checkout-writer-ownership.md",
+        "--since",
+        "eeb4578ec"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 1.094
+    },
+    {
+      "name": "harness-dry-run",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/checkout-writer-ownership.md",
+        "--since",
+        "eeb4578ec",
+        "--dry-run"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 0.953
+    }
+  ],
+  "uniquePassedTests": 47,
+  "totalPassedExecutions": 59,
+  "sources": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "8037ee05e6d4b7385fdf47bdd0b6c0bea0b9f48837ecdfc6f43d75d2d66248a2",
+      "gitBlobSha256": "8037ee05e6d4b7385fdf47bdd0b6c0bea0b9f48837ecdfc6f43d75d2d66248a2"
+    },
+    {
+      "path": "README.md",
+      "sha256": "26f6353f63211e9319fbcf8de074730b1295b29b10fc07dec0962a81e72610b1",
+      "gitBlobSha256": "26f6353f63211e9319fbcf8de074730b1295b29b10fc07dec0962a81e72610b1"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "3375d8207b9babdb2044be8995f1ca92ad02b953697d662f70ef70fdd7beef0a",
+      "gitBlobSha256": "3375d8207b9babdb2044be8995f1ca92ad02b953697d662f70ef70fdd7beef0a"
+    },
+    {
+      "path": "harness/specs/guides/checkout-writer-ownership.md",
+      "sha256": "67d547be2a81377a6f3a24100ed01674ae9fd9f4a03a044d5c3be3530c2d6ece",
+      "gitBlobSha256": "67d547be2a81377a6f3a24100ed01674ae9fd9f4a03a044d5c3be3530c2d6ece"
+    },
+    {
+      "path": "harness/specs/tasks/checkout-writer-ownership.md",
+      "sha256": "b4bba3a9f5a14b5e8176eb6d191b16d0a4f1cce1d64e30bba386006186861fe1",
+      "gitBlobSha256": "b4bba3a9f5a14b5e8176eb6d191b16d0a4f1cce1d64e30bba386006186861fe1"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/orchestration-worktree-merge.ts",
+      "sha256": "d704fdab6833f69f3bef49306c8e24ce2f787f2c6de9438babfa8c3db3e0e708",
+      "gitBlobSha256": "d704fdab6833f69f3bef49306c8e24ce2f787f2c6de9438babfa8c3db3e0e708"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/worktree-service.ts",
+      "sha256": "fa3e0d447b40fcbdeb9a3791d5edd0d753eefb5dc25a5591ff60d775632afb98",
+      "gitBlobSha256": "fa3e0d447b40fcbdeb9a3791d5edd0d753eefb5dc25a5591ff60d775632afb98"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/worktree-writer.ts",
+      "sha256": "3d7e9718d7845fd614a006e74d123911a75493b694e05f9abc680ee94aa82403",
+      "gitBlobSha256": "3d7e9718d7845fd614a006e74d123911a75493b694e05f9abc680ee94aa82403"
+    },
+    {
+      "path": "tests/unit/checkout-writer-ownership.test.ts",
+      "sha256": "efa430b2e70b41b10e703206833c9a8e1d33afee27a41f2960c12826576c0607",
+      "gitBlobSha256": "efa430b2e70b41b10e703206833c9a8e1d33afee27a41f2960c12826576c0607"
+    },
+    {
+      "path": "tests/unit/fixtures/checkout-writer-worker.mts",
+      "sha256": "3ef96f5e522567b632644e80b747a069711acaef9004c25d884ae3185b298c4d",
+      "gitBlobSha256": "3ef96f5e522567b632644e80b747a069711acaef9004c25d884ae3185b298c4d"
+    },
+    {
+      "path": "vitest.checkout-writer.config.ts",
+      "sha256": "ac6fef7a75f3433a993ecda11e24fdf457ba16a1d82543cbaf5f8464a4c68db1",
+      "gitBlobSha256": "ac6fef7a75f3433a993ecda11e24fdf457ba16a1d82543cbaf5f8464a4c68db1"
+    }
+  ],
+  "status": "passed",
+  "scope": "WorktreeService resource owner, actual merge/freeze/cleanup consumers, native Git and independent process/SQLite fixtures. Parent task/session/binding/tool-entry joint admission remains incomplete.",
+  "dependencies": "Existing node_modules and VerseBrowser dist reused via junctions; no fresh-install or full Runtime build evidence.",
+  "review": {
+    "actor": "deepseek-v4.1-flash",
+    "route": "ccs-workbuddy/deepseek-v4.1-flash",
+    "kind": "static targeted follow-up",
+    "openP1": 0,
+    "openP2": 0
+  },
+  "acceptance": [
+    {
+      "criterion": "same checkout exclusion, independent roots, native aliases",
+      "evidence": [
+        "writers.json"
+      ],
+      "verdict": "passed"
+    },
+    {
+      "criterion": "restart, expiry, clock rollback, stale epoch/incarnation/request rejection",
+      "evidence": [
+        "writers.json",
+        "registry.json"
+      ],
+      "verdict": "passed"
+    },
+    {
+      "criterion": "pending/unknown effects prevent release and maintenance",
+      "evidence": [
+        "writers.json",
+        "registry.json"
+      ],
+      "verdict": "passed"
+    },
+    {
+      "criterion": "actual merge/freeze/cleanup use the writer owner and retain failed effects",
+      "evidence": [
+        "writers.json",
+        "registry.json"
+      ],
+      "verdict": "passed"
+    },
+    {
+      "criterion": "parent task/session/binding/Mission/tool-entry acceptance remains separate",
+      "evidence": [
+        "harness.log",
+        "review.md",
+        "harness/specs/guides/checkout-writer-ownership.md"
+      ],
+      "verdict": "resource-slice-only"
+    }
+  ]
+}

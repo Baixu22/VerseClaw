@@ -22,6 +22,8 @@ Review Center の折りたたまれた Change Context は明示的に有効化�
 
 Runtime が管理する worktree の所有権、作成段階、マージ意図は SQLite に保存され、再起動後も復元できます。パスの置換、作成未完了、マージ結果不明の場合はリソースを保持し、古い実行資格の使用を拒否します。[登録と復元の契約](harness/specs/guides/execution-domain-registry.md)。
 
+WorktreeService の永続的な書き込み予約は、マージ、候補の固定、クリーンアップでも共有されます。未解放の書き込み主体や結果不明の操作がある間は、それらの保守操作を拒否します。[書き込み契約](harness/specs/guides/checkout-writer-ownership.md)にリソースの保護と今後のタスク・ツール准入の接続範囲を記載しています。
+
 **チャット、コード、知識、Agent 実行を 1 つのデスクトップ作業空間に。**
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja-JP.md) · [Русский](README.ru-RU.md)

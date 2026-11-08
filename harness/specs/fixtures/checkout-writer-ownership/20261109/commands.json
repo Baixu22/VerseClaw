@@ -1,0 +1,161 @@
+[
+  {
+    "name": "writers",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "D:/ClawX/node_modules/vitest/vitest.mjs",
+      "run",
+      "--config",
+      "vitest.checkout-writer.config.ts",
+      "--reporter=json",
+      "--outputFile=D:\\tmp\\unified-management-20261109\\writer-candidate/writers.json"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 27.922,
+    "passed": 30,
+    "failed": 0,
+    "skipped": 0,
+    "total": 30
+  },
+  {
+    "name": "registry",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "D:/ClawX/node_modules/vitest/vitest.mjs",
+      "run",
+      "--config",
+      "vitest.execution-domain.config.ts",
+      "--reporter=json",
+      "--outputFile=D:\\tmp\\unified-management-20261109\\writer-candidate/registry.json"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 23.015,
+    "passed": 29,
+    "failed": 0,
+    "skipped": 0,
+    "total": 29
+  },
+  {
+    "name": "node-types",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "D:/ClawX/node_modules/@typescript/native-preview/bin/tsgo.js",
+      "--noEmit",
+      "-p",
+      "tsconfig.node.json",
+      "--composite",
+      "false"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 12.969
+  },
+  {
+    "name": "web-types",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "D:/ClawX/node_modules/@typescript/native-preview/bin/tsgo.js",
+      "--noEmit",
+      "-p",
+      "tsconfig.web.json",
+      "--composite",
+      "false"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 4.844
+  },
+  {
+    "name": "test-types",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "D:/ClawX/node_modules/@typescript/native-preview/bin/tsgo.js",
+      "--noEmit",
+      "-p",
+      "tsconfig.test.json",
+      "--composite",
+      "false"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 17.234
+  },
+  {
+    "name": "lint",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "D:/ClawX/node_modules/eslint/bin/eslint.js",
+      "openclaw_runtime/src/agents/orchestration-worktree-merge.ts",
+      "openclaw_runtime/src/agents/worktree-service.ts",
+      "openclaw_runtime/src/agents/worktree-writer.ts",
+      "tests/unit/checkout-writer-ownership.test.ts",
+      "vitest.checkout-writer.config.ts"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 4.453
+  },
+  {
+    "name": "contract",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "scripts/contract-check.mjs"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 4.859
+  },
+  {
+    "name": "comms-replay",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "scripts/comms/replay.mjs"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 0.375
+  },
+  {
+    "name": "comms-compare",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "scripts/comms/compare.mjs"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 0.266
+  },
+  {
+    "name": "harness",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "harness/src/cli.mjs",
+      "validate",
+      "--spec",
+      "harness/specs/tasks/checkout-writer-ownership.md",
+      "--since",
+      "eeb4578ec"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 1.094
+  },
+  {
+    "name": "harness-dry-run",
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "harness/src/cli.mjs",
+      "run",
+      "--spec",
+      "harness/specs/tasks/checkout-writer-ownership.md",
+      "--since",
+      "eeb4578ec",
+      "--dry-run"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0,
+    "seconds": 0.953
+  }
+]

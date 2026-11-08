@@ -1,0 +1,84 @@
+{
+  "files": [
+    {
+      "path": "commands.json",
+      "sha256": "92f4bba32e5a327bee388239f41d78965810abe2326f287e3a2f6569018f2b29"
+    },
+    {
+      "path": "comms-compare.log",
+      "sha256": "6c301675c427f4fae321090a0e04a7e6950257890a63405ca226491a6b1ac4ca"
+    },
+    {
+      "path": "comms-replay.log",
+      "sha256": "910f38033e9bf5296db639fb5e9e1de2dbbd571a1ae7dc0c08d84be695ae46cd"
+    },
+    {
+      "path": "contract.log",
+      "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+    },
+    {
+      "path": "credential-scan.json",
+      "sha256": "b3766d54ef0c3204a8023799943cbdb53cdc165a9d231a8a7f662c1cacfb3ec6"
+    },
+    {
+      "path": "failure-index.json",
+      "sha256": "b2628ca00c2613ee7d9e7a4c950381815b27ca532cb55e6edb1262dc1e75f2c2"
+    },
+    {
+      "path": "harness-dry-run.log",
+      "sha256": "b982e84f829acc00e0c8c4d3f25b311284b34b6942a6a555351348bd244bf943"
+    },
+    {
+      "path": "harness.log",
+      "sha256": "8127b7f878c189c31e1664d649e89528df09fd387a841aead926fe1c1c10c22a"
+    },
+    {
+      "path": "lint.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "node-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "registry.json",
+      "sha256": "a5e2427a35512b1bcf7db5e1178193dcb929b554c72b7de48b5fbd4d43d85107"
+    },
+    {
+      "path": "registry.log",
+      "sha256": "7e3932076498a69afa16cc8c10c059f7ac4b31998d24b999c94ffec1728f9d8c"
+    },
+    {
+      "path": "report.json",
+      "sha256": "9adb939db56cd56ac0fe901b1406fd4ecaeda09774664e91e7369c3f1d548654"
+    },
+    {
+      "path": "REPORT.md",
+      "sha256": "f9f1badad5cc2817bd8cca591d25347c3e6a9c12c5380b98401ea7a7708bd0f6"
+    },
+    {
+      "path": "review.md",
+      "sha256": "533d5b420cbb356c90dfe76d4ebf8bfe4f17d1b6ced4df563dffff93e48dc689"
+    },
+    {
+      "path": "test-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verify.py",
+      "sha256": "943c7788282927c3194a8079f7b352151a7ac1ee4c6cc9a032e0e4e48ac8a316"
+    },
+    {
+      "path": "web-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "writers.json",
+      "sha256": "16f92f2843fef626e5d66aa785224adca63a522fbcb4958d3b44cc9ab0752a23"
+    },
+    {
+      "path": "writers.log",
+      "sha256": "e272890713cf6b6d40d5e1763e09169af21549da69995f85c4491a3df2cc0abb"
+    }
+  ]
+}

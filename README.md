@@ -20,6 +20,8 @@ Terminal PTYs and governed processes share declared host capacity. Known server 
 
 Runtime-managed worktree ownership, creation stages and merge intent persist in SQLite across restarts. Replaced paths, incomplete setup and unknown merge outcomes retain their resources and reject stale execution credentials. See the [registration and recovery contract](harness/specs/guides/execution-domain-registry.md).
 
+WorktreeService provides durable writer reservations shared with merge, candidate freezing and cleanup. Outstanding writers or unknown effects block those maintenance operations. The [writer contract](harness/specs/guides/checkout-writer-ownership.md) describes resource fencing and the remaining task/tool admission integration.
+
 Conversations can initialize a Git repository, select an independent worktree, and restore its draft. `/storage` and **Settings → Storage** share a resource page for conversation files, process memory, and worktrees. [Usage and ownership](docs/dev/session-worktree-storage.md).
 
 **Chat, code, knowledge and agent execution in one desktop workspace.**
