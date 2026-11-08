@@ -1,0 +1,50 @@
+{
+  "sourceCandidate": "2518aba4a71675a714450fb4d1d9a2fb094507d4",
+  "driven_by": "agent",
+  "actor": "codex/rsi-remediation",
+  "gates": [
+    {
+      "id": "focused-and-runtime",
+      "exitCode": 0,
+      "total": 52,
+      "passed": 52,
+      "skipped": 0,
+      "evidence": "tests.json"
+    },
+    {
+      "id": "generated-schema",
+      "exitCode": 0,
+      "evidence": "integration.v1.json"
+    },
+    {
+      "id": "scoped-typecheck",
+      "exitCode": 0,
+      "evidence": "typecheck.json"
+    },
+    {
+      "id": "scoped-lint",
+      "exitCode": 0,
+      "evidence": "lint.json"
+    },
+    {
+      "id": "comms-replay",
+      "exitCode": 0,
+      "evidence": "comms-metrics.json"
+    },
+    {
+      "id": "comms-compare",
+      "exitCode": 0,
+      "evidence": "comms-compare.md"
+    },
+    {
+      "id": "harness-validate",
+      "exitCode": 0,
+      "spec": "harness/specs/tasks/rsi-experience-adoption-attribution.md"
+    },
+    {
+      "id": "harness-dry-run",
+      "exitCode": 0,
+      "evidence": "harness-dry-run.md"
+    }
+  ]
+}
