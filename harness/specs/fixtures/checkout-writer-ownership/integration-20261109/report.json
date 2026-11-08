@@ -1,0 +1,16 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "mainCommit": "62d5b734643e74edf7bb2d311e2d735c10f7385b",
+  "sourceCommit": "5f38441152d97c01672fd84db16cf6456cf53803",
+  "baseMain": "eeb4578ecab8dab1bca285907c652ba3287170a7",
+  "treeEquivalent": true,
+  "concurrentReadmeEditsPreserved": true,
+  "uniquePassedTests": 47,
+  "testExecutions": 59,
+  "gates": 11,
+  "validationSource": "harness/specs/fixtures/checkout-writer-ownership/20261109/report.json",
+  "receiptPath": "D:\\tmp\\unified-management-20261109\\writer-main-integration\\receipt.json",
+  "receiptSha256": "54b462746514652247aa41cdb3c78c5373ca4d651eb110ebb2132ca4983a3ef4",
+  "parentJointAdmission": "incomplete; current resource slice does not grant TaskSystemStore/session/binding/Mission/tool-entry authority"
+}
