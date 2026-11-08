@@ -395,7 +395,7 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
     loadHandlers: loadWizardHandlers,
   }),
   ...createLazyCoreHandlers({
-    methods: ["tasks.list", "tasks.get", "tasks.cancel", "tasks.contract.accept", "tasks.contract.receipt"],
+    methods: ["tasks.list", "tasks.get", "tasks.cancel", "tasks.contract.accept", "tasks.contract.receipt", "tasks.contract.reconcile"],
     loadHandlers: loadTasksHandlers,
   }),
   ...createLazyCoreHandlers({

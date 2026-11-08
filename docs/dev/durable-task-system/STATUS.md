@@ -1,19 +1,17 @@
-**当前工作树已经实现可运行的持久任务执行切片，完整产品系统继续由 TF-0843 跟踪。** 源码位于 `D:/ClawX-work/durable-task-system-20261107`，分支为 `codex/durable-task-system-20261107`。
+**本机持久任务系统的实现与验收已完成。** 源码验收候选为 5ffd2d5ef7d48f2969b8ac7e4f5776b0f463a390，实施目录为 D:/ClawX-work/durable-task-system-20261107，分支为 codex/durable-task-system-20261107。完整要求与证据映射见 [验收报告](../../../harness/specs/fixtures/durable-task-system/completion/REPORT.md)。
 
-已实现：任务契约与来源持久化、revision 修订、业务键和精确契约去重、Git 工作树共享任务域、事务领取、会话与 run 互斥、epoch 拒绝旧写者、检查点、每次模型调用的目标恢复、暂停与交接、后台进程终态回读、文件/命令检查回执、验收状态、旧 Task Ledger 事件导入及四语界面。后续实现已将实际子代理派发前的 writer 转移和 registry 终态后的归还接入，父会话保留只读目标，未完成任务引用的工作树受到清理保护。
+任务契约、来源与修订独立于聊天历史；相同仓库的本机 Git 工作树共享任务身份及事务领取。同任务只有一个有效 writer，同会话不同 run 也受互斥约束。每次模型调用恢复目标、祖先约束和检查点，按 revision、epoch、generation、run 与上下文摘要保存可复用的注入回执。分叉继承只读引用，子代理在实际派发前转移 writer，排队后重新核对资格，registry 终态和在途效果结清后归还。
 
-生产接线位于 Main Task Ledger/chat/delegation API、runtime before-tool-call、embedded model stream 和 `task_control` 工具。`tasks.contract.accept` 调用现有 verifier/effect owner，`tasks.contract.receipt` 回读收据供已有 Task Ledger 完成入口消费。Task Forest skill 没有进入运行依赖。
+task_control 支持显式目标修订、分页、相似候选、依赖分解、领取、检查点、提交验收与效果恢复。父项等待子项验收；取消计划禁止新副作用并等待后代操作结清。验收复用 EvidenceVerifier、EffectReceiptStore 和独立 verifier run；错误候选、陈旧文件、旧 generation、冲突回执以及未确定效果均保持拒绝。产品不依赖研发 Task Forest。
 
-完整系统还需要推进以下集成验收：
+验证结果：136 项功能回归通过，包括 58 项任务测试、6 项 Gateway 测试、2 项实际派发入口测试和 70 项关联回归；另有 10 项构建包装测试通过。完整 node/web/test 类型、contract、四语、通信 replay/compare、Harness、桌面构建和 Runtime smoke 均通过。三个 Electron 场景全部通过，实际验证跨工作树领取/交接/验收/取消、目标刷新恢复、55 条任务分页筛选、损坏数据库后的只读降级恢复，以及 en/zh/ja/ru 四语渲染。
 
-- 子代理 writer 协议已通过两棵真实工作树的持久状态测试，以及实际 spawn/registry 生命周期入口测试；继续补齐完整运行时构建和产品旅程验收。
-- 既有 EvidenceVerifier 与 EffectReceiptStore 已接入显式任务验收；独立子代理 verifier 需要匹配派发时冻结的文件集合。Gateway 接收验收请求并回读 owner 收据，完成回应丢失后可以重试。继续补齐完整产品旅程与故障评测。
-- 取消请求已持久化，并在在途操作结清后释放 writer。非进程类外部效果的 unknown 仍保留 pending，继续补齐对应效果 owner 的回读与资源回收。
-- 相似意图推荐、层级目标拆分、项目组合调度、分页/历史压缩与持久 outbox；现有精确身份与依赖能力可作为基础。
-- 完整 Runtime 构建及跨模型长会话配对评测。构建在 tsdown 阶段遇到 300 秒超时和 8 GiB V8 堆上限，退出 124；独立类型、相关回归和桌面 E2E 的结果单独保存。
+两棵真实 Git 工作树、16 个独立进程争抢同一任务，得到 1 个成功、15 个拒绝。写入进程以 23 退出后，接续保留部分文件并记录未确认效果。两模型、三个中英文合成摘要丢失场景中，6 个持久目标样本逐字段及格式全部保留；6 个摘要对照样本均未恢复原字段。实际 provider 读取与真实产品旅程分别保存证据。
 
-完整 Runtime 构建提供 `OPENCLAW_TSDOWN_SERIAL=1`，逐个进程运行全部 17 个配置，最后仍为单一统一运行时图。Windows 的 Plugin SDK 声明使用已有 TypeScript 编译器输出，原生 tsgo 的目录创建失败原件保留；`OPENCLAW_PLUGIN_SDK_DTS_COMPILER=tsgo` 可显式选择原编译器。该构建模式保留插件、声明、导出与启动检查。
+1 万任务下，领取 p95 为 5.55 ms、目标上下文点查 p95 为 0.317 ms、50 条分页 p95 为 4.61 ms。100 对真实文件写入的受管开销 p95 增量为 9.20 ms；200 次目标恢复中，新检查点首次恢复 p95 为 14.24 ms、复用回执 p95 为 10.56 ms，共产生 100 条回执。测量范围与原始样本保存在证据包，相关操作源码与最终候选逐声明比对一致。
 
-同机两棵真实 Git 工作树、16 个独立进程的领取实验得到 1 个成功、15 个拒绝。目标恢复测试覆盖连续十次历史压缩后的重建；测试工具通过真实子进程执行检查并消费 runtime 产生的终态。最终检查、命令退出码、性能数据和候选指纹保存在 `harness/specs/fixtures/durable-task-system/`，原始记录保存在 `D:/tmp/durable-task-system-20261107/`。
+最终完整 Runtime 构建退出 0，用时 592.202 秒，保留全部 17 个配置、插件、声明、导出与启动检查。使用 OPENCLAW_TSDOWN_SERIAL=1、OPENCLAW_TSDOWN_HEAP_MB=12288 和 Windows TypeScript 声明编译器；声明阶段命中内容缓存，已裁剪的历史 CLI 元数据步骤按既有规则跳过。首次内存不足、测试隔离和导航失败均与成功重跑分别保留。
 
-实现使用 SQLite WAL 与 FULL 同步。目标读取走索引点查；schema 只在初始化/迁移时创建；续租与工具操作登记合并为一个事务。性能结果按各次运行条件保留，不能将独立控制面微基准解释成完整模型执行收益。
+证据包固定 85 个源码文件的 SHA256，并提供 verify.mjs 校验提交对象与精选产物。原始记录保存在 D:/tmp/durable-task-system-20261108/；上级证据目录保留初始切片历史。
+
+部署范围为同机同仓库任务域。独立 clone 或不同机器需要单一协调服务；外部终端不参与受管工具领取协议。相似建议使用有界词项匹配，外部效果缺少 owner 终态时保留 pending。

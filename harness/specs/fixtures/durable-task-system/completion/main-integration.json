@@ -1,0 +1,399 @@
+{
+  "driven_by": "agent",
+  "main": "82f6d665572de3bfbb9a44d466a46d847bca330d",
+  "preservation": {
+    "driven_by": "agent",
+    "main": "82f6d665572de3bfbb9a44d466a46d847bca330d",
+    "installedFiles": 98,
+    "allInstalledMatch": true,
+    "unrelatedFiles": 2675,
+    "unchangedUnrelated": 2675,
+    "concurrentUnrelated": [],
+    "preservedMerges": [
+      "README.ja-JP.md",
+      "README.md",
+      "README.ru-RU.md",
+      "README.zh-CN.md",
+      "docs/modules/multi-agent-and-tasks.md",
+      "electron/services/sessions-api.ts"
+    ],
+    "stagedPaths": 0,
+    "unmergedPaths": 0
+  },
+  "tests": {
+    "task-tests": {
+      "passed": 58,
+      "total": 58,
+      "rawFile": "D:/tmp/durable-task-system-20261108/main-final-task-tests.json",
+      "sha256": "7ffd9777efa34f74616581c171bb53b9a809ea3d97af19671e4962d3fedc5468",
+      "tests": [
+        {
+          "title": "existing verifier and effect owners reconciles an unknown effect only from a matching terminal receipt owned by the runtime",
+          "status": "passed"
+        },
+        {
+          "title": "existing verifier and effect owners requires an independent verifier run bound to the unchanged input snapshot",
+          "status": "passed"
+        },
+        {
+          "title": "existing verifier and effect owners reads actual evidence, records an existing effect receipt, and accepts only the current candidate",
+          "status": "passed"
+        },
+        {
+          "title": "existing verifier and effect owners rejects artifacts changed after the requirement was checked",
+          "status": "passed"
+        },
+        {
+          "title": "existing verifier and effect owners does not accept caller-chosen unknown owners",
+          "status": "passed"
+        },
+        {
+          "title": "existing verifier and effect owners rejects new generations and unresolved operations before completing",
+          "status": "passed"
+        },
+        {
+          "title": "recovers a fork's read reference from owner lineage without copying its parent's writer",
+          "status": "passed"
+        },
+        {
+          "title": "rehydrates a coordinator read reference using the parent generation while a child owns the writer",
+          "status": "passed"
+        },
+        {
+          "title": "durable production delegation protocol does not transfer queued work until dispatch and rejects changed parent ownership",
+          "status": "passed"
+        },
+        {
+          "title": "durable production delegation protocol transfers before dispatch, preserves read-only parent context and returns from terminal owner evidence",
+          "status": "passed"
+        },
+        {
+          "title": "durable production delegation protocol retains ownership after lost dispatch acknowledgement and rejects a second writer",
+          "status": "passed"
+        },
+        {
+          "title": "durable production delegation protocol restores the delegation from disk and keeps unknown effects as a return barrier",
+          "status": "passed"
+        },
+        {
+          "title": "durable production delegation protocol gives a verifier a read reference without transferring writer or blocking the parent",
+          "status": "passed"
+        },
+        {
+          "title": "durable production delegation protocol does not return writing authority to a reset parent generation",
+          "status": "passed"
+        },
+        {
+          "title": "existing Task Ledger transactional migration reuses the current projection and invalidates it after an appended event",
+          "status": "passed"
+        },
+        {
+          "title": "existing Task Ledger transactional migration deduplicates event-level keys while preserving new logical requests",
+          "status": "passed"
+        },
+        {
+          "title": "existing Task Ledger transactional migration imports old IDs, leaves original bytes intact, and appends in one owner store",
+          "status": "passed"
+        },
+        {
+          "title": "existing Task Ledger transactional migration rejects corrupt legacy history instead of presenting an empty task graph",
+          "status": "passed"
+        },
+        {
+          "title": "task owner fault boundaries rejects a busy claim transaction then resumes the same request without a partial owner",
+          "status": "passed"
+        },
+        {
+          "title": "task owner fault boundaries blocks writes on a corrupt database while preserving its bytes for recovery",
+          "status": "passed"
+        },
+        {
+          "title": "task owner fault boundaries handles clock rollback conservatively without losing the task or admitting a second owner",
+          "status": "passed"
+        },
+        {
+          "title": "task discovery and goal decomposition replays committed changes after a missed acknowledgement and rejects a stale consumer cursor",
+          "status": "passed"
+        },
+        {
+          "title": "task discovery and goal decomposition paginates a frozen insertion window without hiding old tasks behind new arrivals",
+          "status": "passed"
+        },
+        {
+          "title": "task discovery and goal decomposition suggests overlapping goals without merging their identities",
+          "status": "passed"
+        },
+        {
+          "title": "task discovery and goal decomposition decomposes atomically, retains the original goal and gates the parent on accepted children",
+          "status": "passed"
+        },
+        {
+          "title": "task discovery and goal decomposition rolls back every child when the plan contains an invalid dependency",
+          "status": "passed"
+        },
+        {
+          "title": "task discovery and goal decomposition rehydrates the root goal through multiple decompositions and retains valid progress JSON",
+          "status": "passed"
+        },
+        {
+          "title": "task discovery and goal decomposition cancels a whole plan only after child effects settle and replays the final effect receipt",
+          "status": "passed"
+        },
+        {
+          "title": "task discovery and goal decomposition retires settled children explicitly before revising a parent plan",
+          "status": "passed"
+        },
+        {
+          "title": "task discovery and goal decomposition rejects cycles that cross a parent-child plan edge",
+          "status": "passed"
+        },
+        {
+          "title": "production task runtime guard requires a task before the first write even when no task database exists yet",
+          "status": "passed"
+        },
+        {
+          "title": "production task runtime guard records cancellation immediately and waits for the in-flight owner before releasing the task",
+          "status": "passed"
+        },
+        {
+          "title": "production task runtime guard blocks retries after a background effect until the real process owner reports completion",
+          "status": "passed"
+        },
+        {
+          "title": "production task runtime guard restores a goal created during the run after ten compacted contexts without duplicating it",
+          "status": "passed"
+        },
+        {
+          "title": "production task runtime guard does not grant a fork or unbound session write access in a managed repository",
+          "status": "passed"
+        },
+        {
+          "title": "production task runtime guard adopts only a new initial binding, then keeps its epoch pinned",
+          "status": "passed"
+        },
+        {
+          "title": "production task runtime guard captures the old epoch and refuses execution after handoff",
+          "status": "passed"
+        },
+        {
+          "title": "production task runtime guard binds a real tool result to unchanged verification inputs",
+          "status": "passed"
+        },
+        {
+          "title": "durable product task ownership migrates the prior task schema without changing task identity and rejects future schemas",
+          "status": "passed"
+        },
+        {
+          "title": "durable product task ownership prevents two runs in the same owning session from implementing one task concurrently",
+          "status": "passed"
+        },
+        {
+          "title": "durable product task ownership keeps identity across retries, detects exact duplicates, and separates different goals",
+          "status": "passed"
+        },
+        {
+          "title": "durable product task ownership refuses a changed contract for the same business key",
+          "status": "passed"
+        },
+        {
+          "title": "durable product task ownership persists the goal and checkpoint independently of chat compression and process connections",
+          "status": "passed"
+        },
+        {
+          "title": "durable product task ownership rejects a second owner and a stale revision",
+          "status": "passed"
+        },
+        {
+          "title": "durable product task ownership does not convert lease expiration into automatic reassignment",
+          "status": "passed"
+        },
+        {
+          "title": "durable product task ownership keeps in-flight and unknown operations as a handoff barrier",
+          "status": "passed"
+        },
+        {
+          "title": "durable product task ownership enforces dependencies and rejects cycles",
+          "status": "passed"
+        },
+        {
+          "title": "durable product task ownership accepts only the contract-bound artifact after submitting the same candidate",
+          "status": "passed"
+        },
+        {
+          "title": "durable product task ownership does not let a file hash satisfy a business verification requirement",
+          "status": "passed"
+        },
+        {
+          "title": "durable product task ownership uses one task domain for two real Git worktrees",
+          "status": "passed"
+        },
+        {
+          "title": "durable product task ownership rejects forged generation and same-session calls from another worktree",
+          "status": "passed"
+        },
+        {
+          "title": "durable product task ownership preserves the goal while paused, and fences the previous writer on resume",
+          "status": "passed"
+        },
+        {
+          "title": "durable product task ownership refuses recovery while an unknown external operation lacks its owner receipt",
+          "status": "passed"
+        },
+        {
+          "title": "durable product task ownership keeps a lost-response retry tied to the original attempt after ownership changes",
+          "status": "passed"
+        },
+        {
+          "title": "durable product task ownership refuses oversize goals and does not infer uniqueness from the title",
+          "status": "passed"
+        },
+        {
+          "title": "agent-facing production task tool creates, claims, executes a real check, and accepts its owner-produced receipt",
+          "status": "passed"
+        },
+        {
+          "title": "agent-facing production task tool does not let an old task tool take control of a newer epoch",
+          "status": "passed"
+        },
+        {
+          "title": "agent-facing production task tool revises an explicitly changed goal with optimistic versioning and fences the previous run",
+          "status": "passed"
+        }
+      ]
+    },
+    "integration-tests": {
+      "passed": 31,
+      "total": 31,
+      "rawFile": "D:/tmp/durable-task-system-20261108/main-final-integration-tests.json",
+      "sha256": "df392d9480f09c8c04f2b580e3b951afca3708c2ab52a498bfa89ed3847758a1",
+      "tests": [
+        {
+          "title": "classifyDerivation classifies a fork triple as fork and keeps the parent key",
+          "status": "passed"
+        },
+        {
+          "title": "classifyDerivation classifies a parent key without fork facts as handoff",
+          "status": "passed"
+        },
+        {
+          "title": "classifyDerivation classifies spawnedBy as spawn",
+          "status": "passed"
+        },
+        {
+          "title": "classifyDerivation returns unknown when the entry names no parent at all",
+          "status": "passed"
+        },
+        {
+          "title": "deriveSessionLineage returns no hops for a root session",
+          "status": "passed"
+        },
+        {
+          "title": "deriveSessionLineage walks fork then handoff hops with the fork point preserved",
+          "status": "passed"
+        },
+        {
+          "title": "deriveSessionLineage reports parent-missing instead of a fabricated root when the parent entry is absent",
+          "status": "passed"
+        },
+        {
+          "title": "deriveSessionLineage stops on a cycle instead of looping",
+          "status": "passed"
+        },
+        {
+          "title": "deriveSessionLineage stops at the depth bound and says so",
+          "status": "passed"
+        },
+        {
+          "title": "deriveSessionLineage is pure: repeated calls agree and inputs are not mutated",
+          "status": "passed"
+        },
+        {
+          "title": "deriveSessionLineage degrades to an empty derivation when the root entry is unreadable",
+          "status": "passed"
+        },
+        {
+          "title": "session fork fail-closed boundary (#148) rejects a branch that has no assistant tail instead of returning an unwritten path",
+          "status": "passed"
+        },
+        {
+          "title": "session storage with real Git and files measures files, marks bounded scans and never follows junctions",
+          "status": "passed"
+        },
+        {
+          "title": "session storage with real Git and files reports real worktrees and protects primary, dirty, locked and registered checkouts",
+          "status": "passed"
+        },
+        {
+          "title": "session storage with real Git and files retains the branch after approved idle removal and rejects stale cleanup of new changes",
+          "status": "passed"
+        },
+        {
+          "title": "session storage with real Git and files sizes session transcripts and releases only the exact workspace/session owners",
+          "status": "passed"
+        },
+        {
+          "title": "session storage with real Git and files waits for terminal owner exit and records a rejected cleanup as failed",
+          "status": "passed"
+        },
+        {
+          "title": "A4 session task scope resolves a ready read-only binding only from an explicit task link",
+          "status": "passed"
+        },
+        {
+          "title": "A4 session task scope selects the requested task after another link from the same session",
+          "status": "passed"
+        },
+        {
+          "title": "A4 session task scope keeps discussion containers empty rather than inferring a task from a title or link",
+          "status": "passed"
+        },
+        {
+          "title": "A4 session task scope rejects coordinator-missing",
+          "status": "passed"
+        },
+        {
+          "title": "A4 session task scope rejects binding-not-ready",
+          "status": "passed"
+        },
+        {
+          "title": "A4 session task scope rejects task-ref-missing",
+          "status": "passed"
+        },
+        {
+          "title": "A4 session task scope rejects task-not-found",
+          "status": "passed"
+        },
+        {
+          "title": "A4 session task scope rejects task-workspace-mismatch",
+          "status": "passed"
+        },
+        {
+          "title": "A4 session task scope rejects task-generation-stale",
+          "status": "passed"
+        },
+        {
+          "title": "A4 session task scope does not reuse a stale session link from an earlier generation",
+          "status": "passed"
+        },
+        {
+          "title": "A4 session task scope allows a fork to read the linked task but does not claim write inheritance",
+          "status": "passed"
+        },
+        {
+          "title": "A4 session task scope does not let an external execution reference become Task Ledger completion authority",
+          "status": "passed"
+        },
+        {
+          "title": "A4 session task scope rejects a task link from another session instead of borrowing its task",
+          "status": "passed"
+        },
+        {
+          "title": "A4 evidence boundary keeps the A4 evidence manifest and contract bound on disk",
+          "status": "passed"
+        }
+      ]
+    }
+  },
+  "evidenceVerificationExit": 0,
+  "scope": "Readback and targeted tests on the primary checkout after preserving concurrent edits; runtime build and full type/Electron checks are bound to the source candidate recorded in report.json"
+}

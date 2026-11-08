@@ -1,6 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { runSerialTsdownBuild } from './tsdown-build.mjs';
+import { runSerialTsdownBuild, resolveTsdownBuildInvocation } from './tsdown-build.mjs';
+
+test('explicit build heap retains hard container headroom and rejects invalid budgets',()=>{
+  const base={platform:'win32',fs:{readFileSync(){throw new Error('not Linux');}},env:{OPENCLAW_BUILD_ALL_NO_PNPM:'1'}};
+  assert.match(resolveTsdownBuildInvocation(base).options.env.NODE_OPTIONS,/8192/);
+  const env={...base.env,OPENCLAW_TSDOWN_HEAP_MB:'12288'};
+  assert.match(resolveTsdownBuildInvocation({...base,env}).options.env.NODE_OPTIONS,/12288/);
+  assert.match(resolveTsdownBuildInvocation({...base,env,cgroupMemoryLimitBytes:6*1024**3}).options.env.NODE_OPTIONS,/5376/);
+  assert.throws(()=>resolveTsdownBuildInvocation({...base,env:{...env,OPENCLAW_TSDOWN_HEAP_MB:'1024'}}),/2048/);
+});
 
 test('serial builds visit every configuration once without overlapping children',async()=>{
   const seen=[];let active=0;let peak=0;

@@ -1,0 +1,573 @@
+{
+  "schema": "DurableTaskContinuityPairs/v1",
+  "driven_by": "agent",
+  "actor": "codex-task-evaluation",
+  "scope": "Synthetic lost-summary cases using the production context restoration function and live configured provider; product Gateway journey is verified separately",
+  "models": [
+    "space-bunny",
+    "glm-5.3-flash"
+  ],
+  "inputs": [
+    {
+      "index": 0,
+      "expected": {
+        "objective": "Deliver the quarterly invoice export",
+        "target": "reports/invoices-742.csv",
+        "constraints": [
+          "Use UTC timestamps",
+          "Never change the tax calculation",
+          "Include the pending invoices"
+        ],
+        "nextAction": "Validate the exported row count"
+      },
+      "compactions": 10,
+      "restoredChars": 946,
+      "promptSha256": "eeb916d5551d8d60acb6c90dcace1ffadae30e10122e0b241b00a4c07e7d02ef"
+    },
+    {
+      "index": 1,
+      "expected": {
+        "objective": "修复订单重试重复扣款",
+        "target": "src/payments/retry-583.ts",
+        "constraints": [
+          "保留现有幂等键",
+          "不改变退款逻辑",
+          "增加重复回调测试"
+        ],
+        "nextAction": "运行重复回调回归测试"
+      },
+      "compactions": 10,
+      "restoredChars": 844,
+      "promptSha256": "b3f02141b32f5aaabdfc05085deaf193104720923e2918b6f2e4f079a8ff13c2"
+    },
+    {
+      "index": 2,
+      "expected": {
+        "objective": "Add the opt-in local preview command",
+        "target": "tools/preview-916.mjs",
+        "constraints": [
+          "Bind only to loopback",
+          "Preserve the existing command flags",
+          "Write no user credentials to logs"
+        ],
+        "nextAction": "Verify shutdown releases the owned port"
+      },
+      "compactions": 10,
+      "restoredChars": 962,
+      "promptSha256": "4d016c13931ffcd1847961550e6e81b8702aaf97253e87f36a388d7ed968ddb4"
+    }
+  ],
+  "results": {
+    "protected": {
+      "samples": 6,
+      "completed": 6,
+      "allFieldsPreserved": 5,
+      "incomplete": 0
+    },
+    "summaryOnly": {
+      "samples": 6,
+      "completed": 6,
+      "allFieldsPreserved": 0,
+      "incomplete": 0
+    }
+  },
+  "rows": [
+    {
+      "case": 0,
+      "model": "space-bunny",
+      "arm": "summary-only",
+      "compactions": 10,
+      "status": "completed",
+      "durationMs": 8847.0169,
+      "response": {
+        "id": "01a1b93c3c0970bb9eae2c970eb73739",
+        "model": "space-bunny",
+        "status": "completed",
+        "text": "{\"objective\":\"\",\"target\":\"\",\"constraints\":[],\"nextAction\":\"\"}",
+        "usage": {
+          "inputTokens": 222,
+          "outputTokens": 54,
+          "totalTokens": 276
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      },
+      "responseSha256": "9c57423d957f8ab29fd9d03b4a60baa7634f464192f9109de36d25c0a674611b",
+      "answer": {
+        "objective": "",
+        "target": "",
+        "constraints": [],
+        "nextAction": ""
+      },
+      "fields": {
+        "objective": false,
+        "target": false,
+        "constraints": false,
+        "nextAction": false
+      },
+      "allFieldsPreserved": false
+    },
+    {
+      "case": 0,
+      "model": "space-bunny",
+      "arm": "protected",
+      "compactions": 10,
+      "status": "completed",
+      "durationMs": 2791.2219000000005,
+      "response": {
+        "id": "01a1b93c4466731f99c869e76e88462b",
+        "model": "space-bunny",
+        "status": "completed",
+        "text": "{\"objective\":\"Deliver the quarterly invoice export\",\"target\":\"reports/invoices-742.csv\",\"constraints\":[\"Use UTC timestamps\",\"Never change the tax calculation\",\"Include the pending invoices\"],\"nextAction\":\"Validate the exported row count\"}",
+        "usage": {
+          "inputTokens": 411,
+          "outputTokens": 74,
+          "totalTokens": 485
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      },
+      "responseSha256": "fef6f9d418f87c56072bd4648bb7f6051143d0b89edd01d03db84a01296558d1",
+      "answer": {
+        "objective": "Deliver the quarterly invoice export",
+        "target": "reports/invoices-742.csv",
+        "constraints": [
+          "Use UTC timestamps",
+          "Never change the tax calculation",
+          "Include the pending invoices"
+        ],
+        "nextAction": "Validate the exported row count"
+      },
+      "fields": {
+        "objective": true,
+        "target": true,
+        "constraints": true,
+        "nextAction": true
+      },
+      "allFieldsPreserved": true
+    },
+    {
+      "case": 0,
+      "model": "glm-5.3-flash",
+      "arm": "protected",
+      "compactions": 10,
+      "status": "completed",
+      "durationMs": 8870.156400000002,
+      "response": {
+        "id": "resp_1e421d904d0d4c6d805dfaab3233d505",
+        "model": "glm-5.3-flash",
+        "status": "completed",
+        "text": "{\"taskNodeId\":\"490c3b20-24f0-4d18-9ee2-98d90165b9bb\",\"revision\":1,\"digest\":\"03eb201ad4597d303fb7fb763b8a51ad52563a197ad71b193c1752c4787bcbad\",\"objective\":\"Deliver the quarterly invoice export\",\"target\":\"reports/invoices-742.csv\",\"constraints\":[\"Use UTC timestamps\",\"Never change the tax calculation\",\"Include the pending invoices\"],\"acceptance\":[{\"id\":\"criteria\",\"description\":\"All original constraints retained\",\"verification\":{\"kind\":\"owner-receipt\",\"owner\":\"evaluation\"}}],\"expectedOutcomes\":[],\"state\":\"doing\",\"executionRole\":\"writer\",\"nextAction\":\"Validate the exported row count\",\"unresolved\":[]}",
+        "usage": {
+          "inputTokens": 4000,
+          "outputTokens": 171,
+          "totalTokens": 4171
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      },
+      "responseSha256": "ffc017c3bd90331ea0a8353ead036c5e6eb9f3c0af396b76cb64e972a749530f",
+      "answer": {
+        "taskNodeId": "490c3b20-24f0-4d18-9ee2-98d90165b9bb",
+        "revision": 1,
+        "digest": "03eb201ad4597d303fb7fb763b8a51ad52563a197ad71b193c1752c4787bcbad",
+        "objective": "Deliver the quarterly invoice export",
+        "target": "reports/invoices-742.csv",
+        "constraints": [
+          "Use UTC timestamps",
+          "Never change the tax calculation",
+          "Include the pending invoices"
+        ],
+        "acceptance": [
+          {
+            "id": "criteria",
+            "description": "All original constraints retained",
+            "verification": {
+              "kind": "owner-receipt",
+              "owner": "evaluation"
+            }
+          }
+        ],
+        "expectedOutcomes": [],
+        "state": "doing",
+        "executionRole": "writer",
+        "nextAction": "Validate the exported row count",
+        "unresolved": []
+      },
+      "fields": {
+        "objective": true,
+        "target": true,
+        "constraints": true,
+        "nextAction": true
+      },
+      "allFieldsPreserved": true
+    },
+    {
+      "case": 0,
+      "model": "glm-5.3-flash",
+      "arm": "summary-only",
+      "compactions": 10,
+      "status": "completed",
+      "durationMs": 3952.8106000000007,
+      "response": {
+        "id": "resp_2515b26e556b47c4a032489aefaa2bc5",
+        "model": "glm-5.3-flash",
+        "status": "completed",
+        "text": "```json\n{\n  \"taskObjective\": \"\",\n  \"target\": \"\",\n  \"constraints\": [],\n  \"nextAction\": \"\"\n}\n```",
+        "usage": {
+          "inputTokens": 3803,
+          "outputTokens": 62,
+          "totalTokens": 3865
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      },
+      "responseSha256": "25b6b170716a5c9890e98061dc151da50b9023261db418269fd2ca9506d312f3",
+      "answer": {
+        "taskObjective": "",
+        "target": "",
+        "constraints": [],
+        "nextAction": ""
+      },
+      "fields": {
+        "objective": false,
+        "target": false,
+        "constraints": false,
+        "nextAction": false
+      },
+      "allFieldsPreserved": false
+    },
+    {
+      "case": 1,
+      "model": "space-bunny",
+      "arm": "protected",
+      "compactions": 10,
+      "status": "completed",
+      "durationMs": 1902.3588000000018,
+      "response": {
+        "id": "01a1b93c81b976c1833345496ec611b4",
+        "model": "space-bunny",
+        "status": "completed",
+        "text": "{\"objective\":\"修复订单重试重复扣款\",\"target\":\"src/payments/retry-583.ts\",\"constraints\":[\"保留现有幂等键\",\"不改变退款逻辑\",\"增加重复回调测试\"],\"nextAction\":[\"运行重复回调回归测试\"]}",
+        "usage": {
+          "inputTokens": 422,
+          "outputTokens": 52,
+          "totalTokens": 474
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      },
+      "responseSha256": "32875f401fd49e5a58ae56642c01295234c11d1daac63e72e45398834c431df7",
+      "answer": {
+        "objective": "修复订单重试重复扣款",
+        "target": "src/payments/retry-583.ts",
+        "constraints": [
+          "保留现有幂等键",
+          "不改变退款逻辑",
+          "增加重复回调测试"
+        ],
+        "nextAction": [
+          "运行重复回调回归测试"
+        ]
+      },
+      "fields": {
+        "objective": true,
+        "target": true,
+        "constraints": true,
+        "nextAction": false
+      },
+      "allFieldsPreserved": false
+    },
+    {
+      "case": 1,
+      "model": "space-bunny",
+      "arm": "summary-only",
+      "compactions": 10,
+      "status": "completed",
+      "durationMs": 2536.4890000000014,
+      "response": {
+        "id": "01a1b93c8932777c8a70c3ec3470dccd",
+        "model": "space-bunny",
+        "status": "completed",
+        "text": "{\"objective\":\"\",\"target\":\"\",\"constraints\":[],\"nextAction\":\"\"}",
+        "usage": {
+          "inputTokens": 222,
+          "outputTokens": 54,
+          "totalTokens": 276
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      },
+      "responseSha256": "87f07c11bc3194b6b97aeb5908cdb1bb63070df557473f63d3200bc00a66408b",
+      "answer": {
+        "objective": "",
+        "target": "",
+        "constraints": [],
+        "nextAction": ""
+      },
+      "fields": {
+        "objective": false,
+        "target": false,
+        "constraints": false,
+        "nextAction": false
+      },
+      "allFieldsPreserved": false
+    },
+    {
+      "case": 1,
+      "model": "glm-5.3-flash",
+      "arm": "summary-only",
+      "compactions": 10,
+      "status": "completed",
+      "durationMs": 2797.9060000000027,
+      "response": {
+        "id": "resp_80784b11e2c74fd6a095c4522b116f16",
+        "model": "glm-5.3-flash",
+        "status": "completed",
+        "text": "```json\n{\n  \"taskObjective\": \"\",\n  \"target\": \"\",\n  \"constraints\": [],\n  \"nextAction\": \"\"\n}\n```",
+        "usage": {
+          "inputTokens": 3803,
+          "outputTokens": 30,
+          "totalTokens": 3833
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      },
+      "responseSha256": "6732d0bd45315aa4c3f155c2aebf8b23a56e20a0b58aa8e9640f7ac77d84d9a8",
+      "answer": {
+        "taskObjective": "",
+        "target": "",
+        "constraints": [],
+        "nextAction": ""
+      },
+      "fields": {
+        "objective": false,
+        "target": false,
+        "constraints": false,
+        "nextAction": false
+      },
+      "allFieldsPreserved": false
+    },
+    {
+      "case": 1,
+      "model": "glm-5.3-flash",
+      "arm": "protected",
+      "compactions": 10,
+      "status": "completed",
+      "durationMs": 7281.4797000000035,
+      "response": {
+        "id": "resp_50c6d79bc98c4b8cba7772dc1e3c6056",
+        "model": "glm-5.3-flash",
+        "status": "completed",
+        "text": "```json\n{\n  \"taskNodeId\": \"d9c83268-d6b9-4572-9903-25866f6a789d\",\n  \"revision\": 1,\n  \"digest\": \"ebd77addd6f3e333b5c28a6ed170914a9d3a37b6d2b0195a760cb39bfa2df466\",\n  \"objective\": \"修复订单重试重复扣款\",\n  \"target\": \"src/payments/retry-583.ts\",\n  \"constraints\": [\"保留现有幂等键\", \"不改变退款逻辑\", \"增加重复回调测试\"],\n  \"acceptance\": [{\"id\": \"criteria\", \"description\": \"All original constraints retained\", \"verification\": {\"kind\": \"owner-receipt\", \"owner\": \"evaluation\"}}],\n  \"expectedOutcomes\": [],\n  \"state\": \"doing\",\n  \"executionRole\": \"writer\",\n  \"nextAction\": \"运行重复回调回归测试\",\n  \"unresolved\": []\n}\n```",
+        "usage": {
+          "inputTokens": 4010,
+          "outputTokens": 234,
+          "totalTokens": 4244
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      },
+      "responseSha256": "982f8eb4f2bd9fb6fffcf0f803ff1b2301357e5d4d4bde7990b5a569d15046e1",
+      "answer": {
+        "taskNodeId": "d9c83268-d6b9-4572-9903-25866f6a789d",
+        "revision": 1,
+        "digest": "ebd77addd6f3e333b5c28a6ed170914a9d3a37b6d2b0195a760cb39bfa2df466",
+        "objective": "修复订单重试重复扣款",
+        "target": "src/payments/retry-583.ts",
+        "constraints": [
+          "保留现有幂等键",
+          "不改变退款逻辑",
+          "增加重复回调测试"
+        ],
+        "acceptance": [
+          {
+            "id": "criteria",
+            "description": "All original constraints retained",
+            "verification": {
+              "kind": "owner-receipt",
+              "owner": "evaluation"
+            }
+          }
+        ],
+        "expectedOutcomes": [],
+        "state": "doing",
+        "executionRole": "writer",
+        "nextAction": "运行重复回调回归测试",
+        "unresolved": []
+      },
+      "fields": {
+        "objective": true,
+        "target": true,
+        "constraints": true,
+        "nextAction": true
+      },
+      "allFieldsPreserved": true
+    },
+    {
+      "case": 2,
+      "model": "space-bunny",
+      "arm": "summary-only",
+      "compactions": 10,
+      "status": "completed",
+      "durationMs": 3679.7711999999956,
+      "response": {
+        "id": "01a1b93cbc177393bb56bfb93e8cd88a",
+        "model": "space-bunny",
+        "status": "completed",
+        "text": "{\"objective\":\"\",\"target\":\"\",\"constraints\":[],\"nextAction\":\"continue from the current task\"}",
+        "usage": {
+          "inputTokens": 222,
+          "outputTokens": 176,
+          "totalTokens": 398
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      },
+      "responseSha256": "d33ac3071ac0944be0714d5dd74d3b86f341acf0cc66d0429626ab6ceaee49e8",
+      "answer": {
+        "objective": "",
+        "target": "",
+        "constraints": [],
+        "nextAction": "continue from the current task"
+      },
+      "fields": {
+        "objective": false,
+        "target": false,
+        "constraints": false,
+        "nextAction": false
+      },
+      "allFieldsPreserved": false
+    },
+    {
+      "case": 2,
+      "model": "space-bunny",
+      "arm": "protected",
+      "compactions": 10,
+      "status": "completed",
+      "durationMs": 2657.255299999997,
+      "response": {
+        "id": "01a1b93cc9357511932af362cd88daa4",
+        "model": "space-bunny",
+        "status": "completed",
+        "text": "{\"objective\":\"Add the opt-in local preview command\",\"target\":\"tools/preview-916.mjs\",\"constraints\":[\"Bind only to loopback\",\"Preserve the existing command flags\",\"Write no user credentials to logs\"],\"nextAction\":\"Verify shutdown releases the owned port\"}",
+        "usage": {
+          "inputTokens": 420,
+          "outputTokens": 55,
+          "totalTokens": 475
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      },
+      "responseSha256": "8b6766874e020c6c8e42628f29f3ce079d37b75e96a29ac46de4dc41024f003f",
+      "answer": {
+        "objective": "Add the opt-in local preview command",
+        "target": "tools/preview-916.mjs",
+        "constraints": [
+          "Bind only to loopback",
+          "Preserve the existing command flags",
+          "Write no user credentials to logs"
+        ],
+        "nextAction": "Verify shutdown releases the owned port"
+      },
+      "fields": {
+        "objective": true,
+        "target": true,
+        "constraints": true,
+        "nextAction": true
+      },
+      "allFieldsPreserved": true
+    },
+    {
+      "case": 2,
+      "model": "glm-5.3-flash",
+      "arm": "protected",
+      "compactions": 10,
+      "status": "completed",
+      "durationMs": 6026.855500000005,
+      "response": {
+        "id": "resp_9fc8f378e57240f38845edf52abd8a4a",
+        "model": "glm-5.3-flash",
+        "status": "completed",
+        "text": "```json\n{\n  \"taskNodeId\": \"91268e9b-cef5-4cd1-9cf2-0f4a81582815\",\n  \"revision\": 1,\n  \"digest\": \"ff252d9e7a89fe045587a214650895091a73814fa9189ffa1ab2f029a0fb0bf8\",\n  \"objective\": \"Add the opt-in local preview command\",\n  \"target\": \"tools/preview-916.mjs\",\n  \"constraints\": [\n    \"Bind only to loopback\",\n    \"Preserve the existing command flags\",\n    \"Write no user credentials to logs\"\n  ],\n  \"acceptance\": [\n    {\n      \"id\": \"criteria\",\n      \"description\": \"All original constraints retained\",\n      \"verification\": {\n        \"kind\": \"owner-receipt\",\n        \"owner\": \"evaluation\"\n      }\n    }\n  ],\n  \"expectedOutcomes\": [],\n  \"state\": \"doing\",\n  \"executionRole\": \"writer\",\n  \"nextAction\": \"Verify shutdown releases the owned port\",\n  \"unresolved\": []\n}\n```",
+        "usage": {
+          "inputTokens": 4010,
+          "outputTokens": 250,
+          "totalTokens": 4260
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      },
+      "responseSha256": "c601bbfa8deb73724a4112ea5a2d2f7cf5e4260804e149ba37f338c2d6cc9bf2",
+      "answer": {
+        "taskNodeId": "91268e9b-cef5-4cd1-9cf2-0f4a81582815",
+        "revision": 1,
+        "digest": "ff252d9e7a89fe045587a214650895091a73814fa9189ffa1ab2f029a0fb0bf8",
+        "objective": "Add the opt-in local preview command",
+        "target": "tools/preview-916.mjs",
+        "constraints": [
+          "Bind only to loopback",
+          "Preserve the existing command flags",
+          "Write no user credentials to logs"
+        ],
+        "acceptance": [
+          {
+            "id": "criteria",
+            "description": "All original constraints retained",
+            "verification": {
+              "kind": "owner-receipt",
+              "owner": "evaluation"
+            }
+          }
+        ],
+        "expectedOutcomes": [],
+        "state": "doing",
+        "executionRole": "writer",
+        "nextAction": "Verify shutdown releases the owned port",
+        "unresolved": []
+      },
+      "fields": {
+        "objective": true,
+        "target": true,
+        "constraints": true,
+        "nextAction": true
+      },
+      "allFieldsPreserved": true
+    },
+    {
+      "case": 2,
+      "model": "glm-5.3-flash",
+      "arm": "summary-only",
+      "compactions": 10,
+      "status": "completed",
+      "durationMs": 3527.7416999999987,
+      "response": {
+        "id": "resp_a9d54f72ef2f4c3889b11fde26dfbc91",
+        "model": "glm-5.3-flash",
+        "status": "completed",
+        "text": "```json\n{\n  \"objective\": \"\",\n  \"target\": \"\",\n  \"constraints\": [],\n  \"nextAction\": \"\"\n}\n```",
+        "usage": {
+          "inputTokens": 3803,
+          "outputTokens": 53,
+          "totalTokens": 3856
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      },
+      "responseSha256": "66fb0bf1b5e9112ae0763ac6ec31965bde2497c4f16808ca8d97f0942def4564",
+      "answer": {
+        "objective": "",
+        "target": "",
+        "constraints": [],
+        "nextAction": ""
+      },
+      "fields": {
+        "objective": false,
+        "target": false,
+        "constraints": false,
+        "nextAction": false
+      },
+      "allFieldsPreserved": false
+    }
+  ]
+}

@@ -14,9 +14,21 @@ import {
 } from "../../shared/task-system/runtime";
 
 describe("production task runtime guard", () => {
-  it('requires a task before the first write even when no task database exists yet',async()=>{
-    const root=mkdtempSync(join(tmpdir(),'task-first-write-'));
-    try{const guard=createTaskRuntimeGuard(root,'a','g');let mutations=0;await expect(executeTaskGuarded(guard,'write','write',async()=>{mutations++;})).rejects.toThrow('TASK_CLAIM_REQUIRED');expect(mutations).toBe(0);expect(await executeTaskGuarded(guard,'read','read',async()=>1)).toBe(1);}finally{rmSync(root,{recursive:true,force:true});}
+  it("requires a task before the first write even when no task database exists yet", async () => {
+    const root = mkdtempSync(join(tmpdir(), "task-first-write-"));
+    try {
+      const guard = createTaskRuntimeGuard(root, "a", "g");
+      let mutations = 0;
+      await expect(
+        executeTaskGuarded(guard, "write", "write", async () => {
+          mutations++;
+        }),
+      ).rejects.toThrow("TASK_CLAIM_REQUIRED");
+      expect(mutations).toBe(0);
+      expect(await executeTaskGuarded(guard, "read", "read", async () => 1)).toBe(1);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
   it("records cancellation immediately and waits for the in-flight owner before releasing the task", async () => {
     const root = mkdtempSync(join(tmpdir(), "task-cancel-"));
@@ -131,6 +143,14 @@ describe("production task runtime guard", () => {
           restoreTaskModelContext(guard, restored).split("<PERSISTENT_TASK_CONTRACT>"),
         ).toHaveLength(2);
       }
+      const receipts = s.history(task.contract.taskNodeId).filter(event => event.kind === "context_rehydrated");
+      expect(receipts).toHaveLength(1);
+      const receipt = JSON.parse(receipts[0].json);
+      expect(receipt).toMatchObject({ taskNodeId:task.contract.taskNodeId,revision:1,epoch:1,runId:"run",source:"runtime-context-restoration" });
+      s.checkpoint(s.get(task.contract.taskNodeId).claim!,{nextAction:"Verify the final requirement",completed:[],unresolved:[],artifacts:[]});
+      restoreTaskModelContext(guard,"System rules.");
+      expect(s.history(task.contract.taskNodeId).filter(event=>event.kind==="context_rehydrated")).toHaveLength(2);
+      expect(()=>s.recordContextHydration({sessionKey:"a",generation:"g",runId:"stale",taskNodeId:task.contract.taskNodeId,revision:1,epoch:1,context:"obsolete task context"})).toThrow("CONTEXT_CHANGED_DURING_RESTORATION");
     } finally {
       finishPersistentTaskRun(root, "a", "run");
       s.close();

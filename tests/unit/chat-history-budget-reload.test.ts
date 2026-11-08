@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type { RawMessage } from '../../shared/chat/types';
 const { rpc, thumbnails, originals } = vi.hoisted(() => ({ rpc: vi.fn(), thumbnails: vi.fn(), originals: new Map<string, unknown[]>() }));
 vi.mock('@/stores/gateway', () => ({ useGatewayStore: { getState: () => ({ rpc, status: { state: 'running', gatewayReady: true } }) } }));
 vi.mock('@/stores/agents', () => ({ useAgentsStore: { getState: () => ({ agents: [] }) } }));
@@ -20,7 +21,7 @@ describe('chat history cold reads after shared budget eviction', () => {
     const { chatCacheDiagnostics } = await import('@/stores/chat/content-cache');
     const loadHistory = useChatStore.getState().loadHistory;
     const first = 'agent:main:budget-0';
-    const messages = [{ id: 'request', role: 'user', content: 'Read', timestamp: 1000 },
+    const messages: RawMessage[] = [{ id: 'request', role: 'user', content: 'Read', timestamp: 1000 },
       { id: 'original', role: 'assistant', content: 'x'.repeat(2 * 1024 * 1024), timestamp: 1001,
         _attachedFiles: [{ filePath: '/saved/image.png', fileName: 'image.png', mimeType: 'image/png', fileSize: 0, preview: null }] }];
     originals.set(first, messages);

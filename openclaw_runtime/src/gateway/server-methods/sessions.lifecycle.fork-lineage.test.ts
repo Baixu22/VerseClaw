@@ -5,6 +5,11 @@
  * renderer E2E proves they render, but the handler copy itself was not covered.
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { mkdtempSync, rmSync } from "node:fs";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
+import { TaskSystemStore } from "../../../../shared/task-system/store.js";
+import { resolveTaskDomain } from "../../../../shared/task-system/identity.js";
 
 const forkMocks = vi.hoisted(() => ({
   resolveParentForkDecision: vi.fn(),
@@ -139,5 +144,18 @@ describe("#180 sessions.fork lineage persistence", () => {
     expect(child).toMatchObject({ parentSessionKey: "agent:main:main", forkedFromParent: true });
     expect(child).not.toHaveProperty("forkedFromLeafId");
     expect(child).not.toHaveProperty("forkedFromTimestamp");
+  });
+  it("persists an observer task reference before replying to a successful fork",async()=>{
+    const root=mkdtempSync(join(tmpdir(),"task-fork-reference-"));const tasks=new TaskSystemStore(resolveTaskDomain(root));
+    try{
+      const task=tasks.create({objective:"Keep original goal in fork",target:".",constraints:[],acceptance:[{id:"v",description:"Verify",verification:{kind:"owner-receipt",owner:"fixture"}}]},"new").task;
+      const owner=tasks.claim(task.contract.taskNodeId,"agent:main:main","parent-sess","claim").claim!;
+      loadSessionEntryMock.mockReturnValue({entry:{sessionId:"parent-sess",workspaceDir:root},canonicalKey:"agent:main:main",storePath:join(root,"sessions.json")});
+      const {calls,respond}=makeRespond();
+      await sessionsLifecycleHandlers["sessions.fork"]!({params:{key:"agent:main:main"},respond,context:{getRuntimeConfig:()=>({}),emit:()=>undefined,getSessionEventSubscriberConnIds:()=>new Set()}} as never);
+      expect(calls[0]!.ok).toBe(true);
+      expect(tasks.binding("agent:main:dashboard-1","child-sess")).toMatchObject({referenceOnly:true,contract:{taskNodeId:task.contract.taskNodeId}});
+      expect(tasks.get(task.contract.taskNodeId).claim).toEqual(owner);
+    }finally{tasks.close();rmSync(root,{recursive:true,force:true});}
   });
 });

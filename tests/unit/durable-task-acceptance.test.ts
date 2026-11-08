@@ -6,7 +6,10 @@ import { createHash } from "node:crypto";
 import { beforeEach, afterEach, it, describe, expect, vi } from "vitest";
 import { TaskSystemStore } from "../../shared/task-system/store";
 import { resolveTaskDomain } from "../../shared/task-system/identity";
-import { acceptPersistentTask } from "../../openclaw_runtime/src/agents/persistent-task-acceptance";
+import {
+  acceptPersistentTask,
+  reconcilePersistentTaskEffect,
+} from "../../openclaw_runtime/src/agents/persistent-task-acceptance";
 import { EffectReceiptStore } from "../../openclaw_runtime/src/agents/effect-receipt";
 import { closeOpenClawStateDatabase } from "../../openclaw_runtime/src/state/openclaw-state-db";
 const registry = vi.hoisted(() => ({ run: null as unknown }));
@@ -59,6 +62,67 @@ function task() {
 }
 
 describe("existing verifier and effect owners", () => {
+  it("reconciles an unknown effect only from a matching terminal receipt owned by the runtime", () => {
+    const t = store.create(
+      {
+        objective: "One external effect",
+        target: ".",
+        constraints: [],
+        acceptance: [
+          {
+            id: "v",
+            description: "verify",
+            verification: { kind: "owner-receipt", owner: "fixture" },
+          },
+        ],
+      },
+      "external",
+    ).task;
+    const c = store.claim(t.contract.taskNodeId, "parent", "generation", "claim").claim!;
+    store.beginOperation(c, "run:call", "browser");
+    store.finishOperation(c, "run:call", "unknown", "connection lost");
+    const effects = new EffectReceiptStore();
+    const record = (id: string, outcome: "applied" | "unknown", sessionKey = "parent") =>
+      effects.record({
+        idempotencyKey: id,
+        proposal: { operation: "browser click" },
+        domainExecutor: "browser-owner",
+        outcome,
+        recoverability: "owner-readback",
+        stage1Context: {
+          actor: {
+            sessionKey,
+            runId: "run",
+            attemptIndex: 1,
+            modelCallIndex: 1,
+            actorKind: "principal",
+          },
+          effect: { toolCallId: "call", toolName: "browser", resource: "page", action: "click" },
+        },
+      });
+    const wrong = record("wrong", "applied", "other");
+    expect(wrong.ok).toBe(true);
+    expect(() =>
+      reconcilePersistentTaskEffect(store, c, "run:call", wrong.effectReceiptId),
+    ).toThrow("SCOPE_MISMATCH");
+    const unknown = record("unknown", "unknown");
+    expect(() =>
+      reconcilePersistentTaskEffect(store, c, "run:call", unknown.effectReceiptId),
+    ).toThrow("OUTCOME_UNKNOWN");
+    const terminal = record("terminal", "applied");
+    expect(
+      reconcilePersistentTaskEffect(store, c, "run:call", terminal.effectReceiptId)
+        .pendingOperations,
+    ).toBe(0);
+    const different = record("different", "applied");
+    expect(() =>
+      reconcilePersistentTaskEffect(store, c, "run:call", different.effectReceiptId),
+    ).toThrow("RECEIPT_CONFLICT");
+    expect(
+      reconcilePersistentTaskEffect(store, c, "run:call", terminal.effectReceiptId)
+        .pendingOperations,
+    ).toBe(0);
+  });
   it("requires an independent verifier run bound to the unchanged input snapshot", () => {
     const t = store.create(
       {

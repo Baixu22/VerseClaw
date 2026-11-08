@@ -125,6 +125,15 @@
     "commandCheck": "执行指定检查",
     "command": "验证命令",
     "commandCheckExplanation": "Agent 通过现有工具权限执行命令。退出码为零且检查输入文件未变化时，该项检查通过；创建任务不会执行命令。",
-    "cancel": "取消任务"
+    "cancel": "取消任务",
+    "search": "搜索持久任务",
+    "filter": "任务状态",
+    "all": "全部任务",
+    "loadMore": "加载更多任务",
+    "constraint": "约束：{{text}}",
+    "children": "计划包含 {{count}} 个子任务，验收子任务后才能完成此目标。",
+    "parentGoal": "本任务保留父目标及其约束。",
+    "coverage": "任务归属检查覆盖本仓库的受管 agent 工具。外部终端不参与此领取协议。",
+    "stale": "当前显示上次成功读取的记录。任务库恢复可用前，任务操作暂停。"
   }
 }

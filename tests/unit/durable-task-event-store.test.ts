@@ -6,6 +6,7 @@ import { tmpdir } from "node:os";
 import {
   appendPersistentTaskEvents,
   readPersistentTaskEvents,
+  readTaskEventProjection,
 } from "../../shared/task-system/event-store";
 import type { TaskLedgerEvent } from "../../shared/types/task-ledger";
 
@@ -29,6 +30,26 @@ function event(id: string): TaskLedgerEvent {
   };
 }
 describe("existing Task Ledger transactional migration", () => {
+  it("reuses the current projection and invalidates it after an appended event", () => {
+    const root = mkdtempSync(join(tmpdir(), "task-projection-"));
+    const file = join(root, "events.jsonl");
+    let calls = 0;
+    try {
+      const project = (events: TaskLedgerEvent[]) => {
+        calls++;
+        return { ids: events.map((x) => x.id) };
+      };
+      appendPersistentTaskEvents(file, [event("a")]);
+      expect(readTaskEventProjection(file, "view", project).ids).toEqual(["a"]);
+      expect(readTaskEventProjection(file, "view", project).ids).toEqual(["a"]);
+      expect(calls).toBe(1);
+      appendPersistentTaskEvents(file, [event("b")]);
+      expect(readTaskEventProjection(file, "view", project).ids).toEqual(["a", "b"]);
+      expect(calls).toBe(2);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
   it("deduplicates event-level keys while preserving new logical requests", () => {
     const root = mkdtempSync(join(tmpdir(), "task-event-keys-"));
     const file = join(root, "events.jsonl");

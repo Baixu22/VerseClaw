@@ -1,0 +1,203 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright",
+  "roots": [
+    "D:\\ClawX-work\\durable-task-system-20261107\\.tmp\\e2e-runs\\verse-claw-e2e-run-hMgEi1\\verse-claw-e2e-home-8pggLr\\task-repository",
+    "D:\\ClawX-work\\durable-task-system-20261107\\.tmp\\e2e-runs\\verse-claw-e2e-run-hMgEi1\\verse-claw-e2e-home-8pggLr\\task-worktree"
+  ],
+  "first": {
+    "success": true,
+    "tasks": [
+      {
+        "contract": {
+          "objective": "Persist and verify the same goal across worktrees",
+          "constraints": [
+            "Preserve existing content"
+          ],
+          "acceptance": [
+            {
+              "id": "file",
+              "description": "Artifact matches the agreed bytes",
+              "verification": {
+                "kind": "file-sha256",
+                "path": "artifact.txt",
+                "sha256": "5f7730eeb4cbfa3d0e84c8c98324072c1dc903c0b6c4d85e143389c86e9872f7"
+              }
+            },
+            {
+              "id": "owner",
+              "description": "Existing verifier accepts the evidence",
+              "verification": {
+                "kind": "owner-receipt",
+                "owner": "evidence-verifier",
+                "requires": [
+                  "file"
+                ]
+              }
+            }
+          ],
+          "target": "artifact.txt",
+          "dependencies": [],
+          "origin": {
+            "source": "host-task-api",
+            "requestId": "lifecycle-goal"
+          },
+          "taskNodeId": "57ac60e9-7180-4f6a-9f0f-95d9a6bbd601",
+          "domain": "785ddcbaa1cb1289d8f0a00d263d5979bc657e54a6436ef7b5cc6f4992dc500c",
+          "revision": 1,
+          "digest": "4ce6fad161aad6d0414ec16bd78cd6db9a966837d2efff358ac2b6e84beeabc8",
+          "state": "doing",
+          "createdAt": 1794118303120,
+          "updatedAt": 1794118305345
+        },
+        "claim": {
+          "taskNodeId": "57ac60e9-7180-4f6a-9f0f-95d9a6bbd601",
+          "sessionKey": "agent:main:dashboard:73d107ca-7d89-47d1-86f7-2fc930c9a63d",
+          "generation": "240b28af-39e3-4b47-8f5c-f4e92e6e449d",
+          "epoch": 1,
+          "attemptId": "e2b14353-6c15-450e-9164-8916ff3e812f",
+          "worktree": "d:/clawx-work/durable-task-system-20261107/.tmp/e2e-runs/verse-claw-e2e-run-hmgei1/verse-claw-e2e-home-8pgglr/task-repository",
+          "contractRevision": 1,
+          "expiresAt": 1794118425344,
+          "state": "active"
+        },
+        "checkpoint": null,
+        "pendingOperations": 0,
+        "pendingOperationDetails": [],
+        "childTaskNodeIds": []
+      }
+    ]
+  },
+  "duplicate": {
+    "success": false,
+    "error": "TASK_ALREADY_CLAIMED:agent:main:dashboard:73d107ca-7d89-47d1-86f7-2fc930c9a63d"
+  },
+  "transferred": {
+    "success": true,
+    "result": {
+      "contract": {
+        "objective": "Persist and verify the same goal across worktrees",
+        "constraints": [
+          "Preserve existing content"
+        ],
+        "acceptance": [
+          {
+            "id": "file",
+            "description": "Artifact matches the agreed bytes",
+            "verification": {
+              "kind": "file-sha256",
+              "path": "artifact.txt",
+              "sha256": "5f7730eeb4cbfa3d0e84c8c98324072c1dc903c0b6c4d85e143389c86e9872f7"
+            }
+          },
+          {
+            "id": "owner",
+            "description": "Existing verifier accepts the evidence",
+            "verification": {
+              "kind": "owner-receipt",
+              "owner": "evidence-verifier",
+              "requires": [
+                "file"
+              ]
+            }
+          }
+        ],
+        "target": "artifact.txt",
+        "dependencies": [],
+        "origin": {
+          "source": "host-task-api",
+          "requestId": "lifecycle-goal"
+        },
+        "taskNodeId": "57ac60e9-7180-4f6a-9f0f-95d9a6bbd601",
+        "domain": "785ddcbaa1cb1289d8f0a00d263d5979bc657e54a6436ef7b5cc6f4992dc500c",
+        "revision": 1,
+        "digest": "4ce6fad161aad6d0414ec16bd78cd6db9a966837d2efff358ac2b6e84beeabc8",
+        "state": "doing",
+        "createdAt": 1794118303120,
+        "updatedAt": 1794118305954
+      },
+      "claim": {
+        "taskNodeId": "57ac60e9-7180-4f6a-9f0f-95d9a6bbd601",
+        "sessionKey": "agent:main:dashboard:a34faa28-df0a-4abb-b2fb-5c6348d9ff02",
+        "generation": "ed4723f0-cb24-4103-a15f-77ac145bafe0",
+        "epoch": 2,
+        "attemptId": "702a3fc7-3bf7-4d3e-a923-e167086b7d40",
+        "worktree": "d:/clawx-work/durable-task-system-20261107/.tmp/e2e-runs/verse-claw-e2e-run-hmgei1/verse-claw-e2e-home-8pgglr/task-worktree",
+        "contractRevision": 1,
+        "expiresAt": 1794118425954,
+        "state": "active"
+      },
+      "checkpoint": null,
+      "pendingOperations": 0,
+      "pendingOperationDetails": [],
+      "childTaskNodeIds": []
+    }
+  },
+  "stale": {
+    "success": false,
+    "error": "TASK_STALE_OWNER"
+  },
+  "completed": {
+    "success": true,
+    "tasks": [
+      {
+        "contract": {
+          "objective": "Persist and verify the same goal across worktrees",
+          "constraints": [
+            "Preserve existing content"
+          ],
+          "acceptance": [
+            {
+              "id": "file",
+              "description": "Artifact matches the agreed bytes",
+              "verification": {
+                "kind": "file-sha256",
+                "path": "artifact.txt",
+                "sha256": "5f7730eeb4cbfa3d0e84c8c98324072c1dc903c0b6c4d85e143389c86e9872f7"
+              }
+            },
+            {
+              "id": "owner",
+              "description": "Existing verifier accepts the evidence",
+              "verification": {
+                "kind": "owner-receipt",
+                "owner": "evidence-verifier",
+                "requires": [
+                  "file"
+                ]
+              }
+            }
+          ],
+          "target": "artifact.txt",
+          "dependencies": [],
+          "origin": {
+            "source": "host-task-api",
+            "requestId": "lifecycle-goal"
+          },
+          "taskNodeId": "57ac60e9-7180-4f6a-9f0f-95d9a6bbd601",
+          "domain": "785ddcbaa1cb1289d8f0a00d263d5979bc657e54a6436ef7b5cc6f4992dc500c",
+          "revision": 1,
+          "digest": "4ce6fad161aad6d0414ec16bd78cd6db9a966837d2efff358ac2b6e84beeabc8",
+          "state": "done",
+          "createdAt": 1794118303120,
+          "updatedAt": 1794118307276
+        },
+        "claim": {
+          "taskNodeId": "57ac60e9-7180-4f6a-9f0f-95d9a6bbd601",
+          "sessionKey": "agent:main:dashboard:a34faa28-df0a-4abb-b2fb-5c6348d9ff02",
+          "generation": "ed4723f0-cb24-4103-a15f-77ac145bafe0",
+          "epoch": 5,
+          "attemptId": "9058bbed-fae3-4411-a962-72986ed0afe7",
+          "worktree": "d:/clawx-work/durable-task-system-20261107/.tmp/e2e-runs/verse-claw-e2e-run-hmgei1/verse-claw-e2e-home-8pgglr/task-worktree",
+          "contractRevision": 1,
+          "expiresAt": 1794118427076,
+          "state": "released"
+        },
+        "checkpoint": null,
+        "pendingOperations": 0,
+        "pendingOperationDetails": [],
+        "childTaskNodeIds": []
+      }
+    ]
+  }
+}

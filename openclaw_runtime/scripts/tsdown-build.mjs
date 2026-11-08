@@ -402,10 +402,12 @@ function readProcMemTotalBytes(params = {}) {
 }
 
 function resolveTsdownMaxOldSpaceMb(params = {}) {
-  const defaultMaxOldSpaceMb =
+  const requested = parsePositiveIntegerEnv((params.env ?? process.env).OPENCLAW_TSDOWN_HEAP_MB, "OPENCLAW_TSDOWN_HEAP_MB");
+  const defaultMaxOldSpaceMb = requested ?? (
     (params.platform ?? process.platform) === "win32"
       ? DEFAULT_WINDOWS_TSDOWN_MAX_OLD_SPACE_MB
-      : DEFAULT_TSDOWN_MAX_OLD_SPACE_MB;
+      : DEFAULT_TSDOWN_MAX_OLD_SPACE_MB);
+  if (defaultMaxOldSpaceMb < MIN_TSDOWN_MAX_OLD_SPACE_MB) throw new Error("OPENCLAW_TSDOWN_HEAP_MB must be at least 2048");
   const limitBytes = readCgroupMemoryLimitBytes(params) ?? readProcMemTotalBytes(params);
   if (limitBytes === null) {
     return defaultMaxOldSpaceMb;

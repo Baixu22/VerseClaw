@@ -1,0 +1,21 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "screenshots": [
+    "persistent-goal-restored.png",
+    "accepted-task.png",
+    "filtered-task.png",
+    "filtered-task-zh.png",
+    "filtered-task-ja.png",
+    "filtered-task-ru.png",
+    "stale-task-store.png"
+  ],
+  "checked": [
+    "objective and acceptance readable in viewport",
+    "claim button and current state visible",
+    "localized controls in en/zh/ja/ru",
+    "stale view marked and claim disabled",
+    "cross-worktree accepted artifact retained"
+  ],
+  "method": "Read rendered screenshots with image inspection plus Playwright viewport and text assertions"
+}

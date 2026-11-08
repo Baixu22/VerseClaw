@@ -1,0 +1,98 @@
+{
+  "driven_by": "agent",
+  "candidate": "5ffd2d5ef7d48f2969b8ac7e4f5776b0f463a390",
+  "requirements": [
+    {
+      "id": "research-and-architecture",
+      "status": "passed",
+      "evidence": [
+        "docs/dev/durable-task-system/PLAN.md",
+        "docs/dev/durable-task-system/DESIGN.md",
+        "docs/dev/durable-task-system/sources.json"
+      ]
+    },
+    {
+      "id": "task-goal-and-identity",
+      "status": "passed",
+      "evidence": [
+        "task-tests.json",
+        "source-manifest.json"
+      ]
+    },
+    {
+      "id": "same-and-cross-worktree-claims",
+      "status": "passed",
+      "evidence": [
+        "concurrency-performance.json",
+        "lifecycle-readback.json",
+        "runtime-delegation.json"
+      ]
+    },
+    {
+      "id": "compaction-and-hydration",
+      "status": "passed",
+      "evidence": [
+        "task-tests.json",
+        "live-continuity.json",
+        "hydration-performance.json"
+      ]
+    },
+    {
+      "id": "planning-and-dependencies",
+      "status": "passed",
+      "evidence": [
+        "task-tests.json",
+        "pagination-readback.json"
+      ]
+    },
+    {
+      "id": "acceptance-and-effects",
+      "status": "passed",
+      "evidence": [
+        "gateway-tests.json",
+        "task-tests.json",
+        "lifecycle-readback.json"
+      ]
+    },
+    {
+      "id": "degradation-and-recovery",
+      "status": "passed",
+      "evidence": [
+        "task-tests.json",
+        "pagination-readback.json",
+        "stale-task-store.png",
+        "concurrency-performance.json"
+      ]
+    },
+    {
+      "id": "product-and-locales",
+      "status": "passed",
+      "evidence": [
+        "electron.json",
+        "visual-review.json",
+        "owner-readback.json"
+      ]
+    },
+    {
+      "id": "build-types-and-compatibility",
+      "status": "passed",
+      "evidence": [
+        "runtime-build.json",
+        "types.json",
+        "owner-regressions.json",
+        "commands.json"
+      ]
+    },
+    {
+      "id": "performance",
+      "status": "passed",
+      "evidence": [
+        "concurrency-performance.json",
+        "tool-overhead.json",
+        "hydration-performance.json"
+      ]
+    }
+  ],
+  "deploymentBoundary": "Same machine, one canonical Git common directory or ordinary workspace root; different clones/machines require a coordinator deployment",
+  "externalEffects": "Unknown effects remain pending until their registered owner supplies an applied/not_applied receipt; managed tools enforce ownership, external terminals are outside the protocol"
+}

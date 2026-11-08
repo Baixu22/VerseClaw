@@ -14,7 +14,11 @@ import type {
   TaskResolution,
   TaskView,
   TaskWriterDelegation,
+  TaskQuery,
+  TaskPage,
+  TaskPlanItem,
 } from "./types.js";
+import { taskSimilarity } from "./recognition.js";
 
 const MAX_CONTEXT = 12_000;
 const MAX_CHECKPOINT = 24_000;
@@ -78,6 +82,9 @@ export function normalizeTaskContract(input: TaskContractInput): TaskContractInp
     acceptance,
     target: text(input.target, "TARGET", 1_000),
     dependencies: [...new Set(strings(input.dependencies ?? [], "DEPENDENCY"))].sort(),
+    ...(input.expectedOutcomes
+      ? { expectedOutcomes: strings(input.expectedOutcomes, "OUTCOME") }
+      : {}),
     ...(input.businessKey ? { businessKey: text(input.businessKey, "BUSINESS_KEY", 200) } : {}),
     ...(input.occurrenceKey
       ? { occurrenceKey: text(input.occurrenceKey, "OCCURRENCE_KEY", 200) }
@@ -91,6 +98,7 @@ export function normalizeTaskContract(input: TaskContractInput): TaskContractInp
 /** Durable execution contract extension of the product Task Ledger owner. */
 export class TaskSystemStore {
   readonly db: DatabaseSync;
+  private transactionDepth = 0;
   constructor(
     readonly domain: TaskDomain,
     readonly now: () => number = Date.now,
@@ -102,12 +110,12 @@ export class TaskSystemStore {
       const version = Number(
         (this.db.prepare("PRAGMA user_version").get() as { user_version: number }).user_version,
       );
-      if (version > 3) {
+      if (version > 5) {
         this.db.close();
         throw new Error("TASK_SCHEMA_NEWER_THAN_CLIENT");
       }
       this.db.exec("PRAGMA synchronous=FULL;");
-      if (version === 3) return;
+      if (version === 5) return;
       this.db.exec("PRAGMA journal_mode=WAL; BEGIN IMMEDIATE;");
       this.db.exec(`
       CREATE TABLE IF NOT EXISTS task_contracts(id TEXT PRIMARY KEY, fingerprint TEXT NOT NULL, business_key TEXT, state TEXT NOT NULL, revision INTEGER NOT NULL, json TEXT NOT NULL);
@@ -128,7 +136,10 @@ export class TaskSystemStore {
       CREATE TABLE IF NOT EXISTS task_operation_handles(id TEXT PRIMARY KEY,handle TEXT NOT NULL,json TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS task_references(session_key TEXT PRIMARY KEY,task_id TEXT NOT NULL,generation TEXT NOT NULL,role TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS task_writer_delegations(id TEXT PRIMARY KEY,task_id TEXT NOT NULL,child_session TEXT NOT NULL UNIQUE,json TEXT NOT NULL);
-      PRAGMA user_version=3;
+      CREATE TABLE IF NOT EXISTS task_plan_children(parent_id TEXT NOT NULL REFERENCES task_contracts(id),child_id TEXT NOT NULL UNIQUE REFERENCES task_contracts(id),ordinal INTEGER NOT NULL,PRIMARY KEY(parent_id,child_id));
+      CREATE INDEX IF NOT EXISTS task_event_page ON task_events(task_id,seq);
+      CREATE TABLE IF NOT EXISTS task_event_consumers(id TEXT PRIMARY KEY,sequence INTEGER NOT NULL);
+      PRAGMA user_version=5;
       COMMIT;
     `);
     } catch (error) {
@@ -144,14 +155,20 @@ export class TaskSystemStore {
     this.db.close();
   }
   private transaction<T>(fn: () => T): T {
-    this.db.exec("BEGIN IMMEDIATE");
+    const depth = this.transactionDepth++;
+    const name = `task_nested_${depth}`;
     try {
+      this.db.exec(depth === 0 ? "BEGIN IMMEDIATE" : `SAVEPOINT ${name}`);
       const result = fn();
-      this.db.exec("COMMIT");
+      this.db.exec(depth === 0 ? "COMMIT" : `RELEASE SAVEPOINT ${name}`);
       return result;
     } catch (error) {
-      this.db.exec("ROLLBACK");
+      if (depth === 0) {
+        if (this.db.isTransaction) this.db.exec("ROLLBACK");
+      } else this.db.exec(`ROLLBACK TO SAVEPOINT ${name}; RELEASE SAVEPOINT ${name};`);
       throw error;
+    } finally {
+      this.transactionDepth--;
     }
   }
   private event(taskNodeId: string, kind: string, value: unknown) {
@@ -207,6 +224,17 @@ export class TaskSystemStore {
         taskNodeId,
       ),
       pendingOperations: Number(pending.n),
+      pendingOperationDetails:(this.db.prepare("SELECT o.id AS operationId,o.kind AS tool,o.state,p.started_at AS startedAt FROM task_operations o JOIN task_operation_owners p ON p.id=o.id WHERE o.task_id=? AND o.state IN ('started','unknown') ORDER BY p.started_at LIMIT 20").all(taskNodeId) as Array<{operationId:string;tool:string;state:string;startedAt:number}>),
+      parentTaskNodeId: (
+        this.db
+          .prepare("SELECT parent_id FROM task_plan_children WHERE child_id=?")
+          .get(taskNodeId) as { parent_id: string } | undefined
+      )?.parent_id,
+      childTaskNodeIds: (
+        this.db
+          .prepare("SELECT child_id FROM task_plan_children WHERE parent_id=? ORDER BY ordinal")
+          .all(taskNodeId) as Array<{ child_id: string }>
+      ).map((row) => row.child_id),
     };
   }
   has(taskNodeId: string): boolean {
@@ -217,6 +245,163 @@ export class TaskSystemStore {
       .prepare("SELECT id FROM task_contracts ORDER BY rowid DESC LIMIT ?")
       .all(Math.max(1, Math.min(500, limit))) as Array<{ id: string }>;
     return rows.map((row) => this.get(row.id));
+  }
+  page(query: TaskQuery = {}): TaskPage {
+    const limit = Math.max(1, Math.min(100, Number.isSafeInteger(query.limit) ? query.limit! : 50));
+    const filter = {
+      query: query.query?.trim().slice(0, 500) ?? "",
+      state: query.state ?? "",
+      sessionKey: query.sessionKey ?? "",
+    };
+    const fingerprint = digest(filter);
+    let before = Number.MAX_SAFE_INTEGER;
+    let upper = Number(
+      (
+        this.db.prepare("SELECT coalesce(max(rowid),0) AS n FROM task_contracts").get() as {
+          n: number;
+        }
+      ).n,
+    );
+    if (query.cursor) {
+      if (query.cursor.length > 2048) throw new Error("TASK_CURSOR_INVALID");
+      let c: { domain: string; filter: string; before: number; upper: number };
+      try {
+        c = JSON.parse(Buffer.from(query.cursor, "base64url").toString("utf8"));
+      } catch {
+        throw new Error("TASK_CURSOR_INVALID");
+      }
+      if (
+        c.domain !== this.domain.id ||
+        c.filter !== fingerprint ||
+        ![c.before, c.upper].every((n) => Number.isSafeInteger(n) && n >= 0)
+      )
+        throw new Error("TASK_CURSOR_SCOPE_MISMATCH");
+      before = c.before;
+      upper = c.upper;
+    }
+    const rows = this.db
+      .prepare(`SELECT t.id,t.rowid AS sequence FROM task_contracts t LEFT JOIN task_claims c ON c.task_id=t.id
+      WHERE t.rowid<=? AND t.rowid<? AND (?='' OR t.state=?) AND (?='' OR c.session_key=?)
+      AND (?='' OR instr(lower(json_extract(t.json,'$.objective')),lower(?))>0 OR instr(lower(json_extract(t.json,'$.target')),lower(?))>0)
+      ORDER BY t.rowid DESC LIMIT ?`)
+      .all(
+        upper,
+        before,
+        filter.state,
+        filter.state,
+        filter.sessionKey,
+        filter.sessionKey,
+        filter.query,
+        filter.query,
+        filter.query,
+        limit + 1,
+      ) as Array<{ id: string; sequence: number }>;
+    const selected = rows.slice(0, limit);
+    return {
+      tasks: selected.map((r) => this.get(r.id)),
+      ...(rows.length > limit
+        ? {
+            nextCursor: Buffer.from(
+              JSON.stringify({
+                domain: this.domain.id,
+                filter: fingerprint,
+                before: selected.at(-1)!.sequence,
+                upper,
+              }),
+            ).toString("base64url"),
+          }
+        : {}),
+    };
+  }
+  suggest(
+    query: string,
+    target?: string,
+    limit = 5,
+  ): Array<{
+    task: TaskView;
+    score: number;
+    reason: "similar-objective" | "same-target";
+    automaticIdentity: false;
+  }> {
+    text(query, "QUERY", 3000);
+    // ponytail: bound suggestions to 500 active tasks; use FTS when larger active queues need recall.
+    const candidates = this.db
+      .prepare(
+        "SELECT id,json FROM task_contracts WHERE state NOT IN ('done','cancelled') ORDER BY rowid DESC LIMIT 500",
+      )
+      .all() as Array<Row & { id: string }>;
+    return candidates
+      .map((row) => {
+        const c = JSON.parse(row.json) as TaskContract;
+        const same = Boolean(target && target === c.target);
+        return {
+          id: row.id,
+          score: taskSimilarity(query, c.objective) + (same ? 0.15 : 0),
+          reason: same ? ("same-target" as const) : ("similar-objective" as const),
+        };
+      })
+      .filter((x) => x.score >= 0.2)
+      .sort((a, b) => b.score - a.score || a.id.localeCompare(b.id))
+      .slice(0, Math.max(1, Math.min(20, limit)))
+      .map((x) => ({
+        task: this.get(x.id),
+        score: x.score,
+        reason: x.reason,
+        automaticIdentity: false,
+      }));
+  }
+  decompose(credential: TaskCredential, items: TaskPlanItem[], requestId: string): TaskView[] {
+    if (!Array.isArray(items) || !items.length || items.length > 30)
+      throw new Error("TASK_PLAN_SIZE_INVALID");
+    const keys = items.map((i) => text(i.key, "PLAN_KEY", 80));
+    if (new Set(keys).size !== keys.length) throw new Error("TASK_PLAN_DUPLICATE_KEY");
+    return this.transaction(() =>
+      this.request(`plan:${requestId}`, { credential, items }, () => {
+        const parent = this.assertOwner(credential);
+        if (parent.pendingOperations || parent.childTaskNodeIds?.length)
+          throw new Error("TASK_PLAN_NOT_EDITABLE");
+        const ids = new Map<string, string>();
+        for (const [ordinal, item] of items.entries()) {
+          const child = this.create(
+            {
+              ...item.contract,
+              constraints: [
+                ...new Set([...parent.contract.constraints, ...item.contract.constraints]),
+              ],
+              businessKey: `parent:${credential.taskNodeId}:${keys[ordinal]}`,
+            },
+            `${requestId}:${keys[ordinal]}`,
+            undefined,
+            { source: "task-decomposition", sessionKey: credential.sessionKey },
+          ).task;
+          ids.set(keys[ordinal], child.contract.taskNodeId);
+          this.db
+            .prepare("INSERT INTO task_plan_children VALUES(?,?,?)")
+            .run(credential.taskNodeId, child.contract.taskNodeId, ordinal);
+        }
+        for (const [ordinal, item] of items.entries()) {
+          const deps = (item.dependsOn ?? []).map((key) => {
+            const id = ids.get(key);
+            if (!id) throw new Error("TASK_PLAN_DEPENDENCY_MISSING");
+            return id;
+          });
+          const id = ids.get(keys[ordinal])!,
+            child = this.get(id).contract;
+          this.revise(id, child.revision, {
+            ...child,
+            dependencies: [...new Set([...(child.dependencies ?? []), ...deps])],
+          });
+        }
+        this.saveClaim({ ...parent.claim!, epoch: parent.claim!.epoch + 1, state: "released" });
+        this.db.prepare("DELETE FROM task_bindings WHERE task_id=?").run(credential.taskNodeId);
+        this.db
+          .prepare("INSERT OR REPLACE INTO task_references VALUES(?,?,?,?)")
+          .run(credential.sessionKey, credential.taskNodeId, credential.generation, "coordinator");
+        this.saveContract({ ...parent.contract, state: "ready", updatedAt: this.now() });
+        this.event(credential.taskNodeId, "decomposed", { children: [...ids.values()] });
+        return [...ids.values()].map((id) => this.get(id));
+      }),
+    );
   }
   history(
     taskNodeId: string,
@@ -233,6 +418,72 @@ export class TaskSystemStore {
       at: number;
       json: string;
     }>;
+  }
+  changes(
+    consumer: string,
+    limit = 100,
+  ): {
+    sequence: number;
+    events: Array<{
+      sequence: number;
+      taskNodeId: string;
+      kind: string;
+      at: number;
+      payload: unknown;
+    }>;
+  } {
+    text(consumer, "CONSUMER", 200);
+    const sequence =
+      (
+        this.db.prepare("SELECT sequence FROM task_event_consumers WHERE id=?").get(consumer) as
+          | { sequence: number }
+          | undefined
+      )?.sequence ?? 0;
+    const rows = this.db
+      .prepare("SELECT seq,task_id,kind,at,json FROM task_events WHERE seq>? ORDER BY seq LIMIT ?")
+      .all(sequence, Math.max(1, Math.min(500, limit))) as Array<{
+      seq: number;
+      task_id: string;
+      kind: string;
+      at: number;
+      json: string;
+    }>;
+    return {
+      sequence,
+      events: rows.map((row) => ({
+        sequence: row.seq,
+        taskNodeId: row.task_id,
+        kind: row.kind,
+        at: row.at,
+        payload: JSON.parse(row.json),
+      })),
+    };
+  }
+  acknowledge(consumer: string, expectedSequence: number, throughSequence: number): void {
+    text(consumer, "CONSUMER", 200);
+    if (
+      ![expectedSequence, throughSequence].every((n) => Number.isSafeInteger(n) && n >= 0) ||
+      throughSequence < expectedSequence
+    )
+      throw new Error("TASK_EVENT_SEQUENCE_INVALID");
+    this.transaction(() => {
+      const current =
+        (
+          this.db.prepare("SELECT sequence FROM task_event_consumers WHERE id=?").get(consumer) as
+            | { sequence: number }
+            | undefined
+        )?.sequence ?? 0;
+      if (current === throughSequence) return;
+      if (current !== expectedSequence) throw new Error("TASK_EVENT_SEQUENCE_CONFLICT");
+      if (
+        throughSequence > 0 &&
+        !this.db.prepare("SELECT 1 FROM task_events WHERE seq=?").get(throughSequence)
+      )
+        throw new Error("TASK_EVENT_SEQUENCE_MISSING");
+      this.db
+        .prepare("INSERT OR REPLACE INTO task_event_consumers VALUES(?,?)")
+        .run(consumer, throughSequence);
+    });
   }
   private request<T>(id: string, payload: unknown, fn: () => T): T {
     text(id, "REQUEST_ID", 300);
@@ -254,7 +505,13 @@ export class TaskSystemStore {
     const visit = (id: string, seen: Set<string>) => {
       if (id === taskId || seen.has(id)) throw new Error("TASK_DEPENDENCY_CYCLE");
       const task = this.get(id).contract;
-      for (const dep of task.dependencies ?? []) visit(dep, new Set([...seen, id]));
+      const children = (
+        this.db
+          .prepare("SELECT child_id FROM task_plan_children WHERE parent_id=?")
+          .all(id) as Array<{ child_id: string }>
+      ).map((row) => row.child_id);
+      for (const dep of [...(task.dependencies ?? []), ...children])
+        visit(dep, new Set([...seen, id]));
     };
     for (const id of dependencies) {
       visit(id, new Set());
@@ -323,7 +580,18 @@ export class TaskSystemStore {
       if (view.contract.revision !== expectedRevision) throw new Error("TASK_REVISION_CONFLICT");
       if (["done", "cancelled"].includes(view.contract.state)) throw new Error("TASK_TERMINAL");
       if (view.pendingOperations) throw new Error("TASK_OPERATIONS_PENDING");
+      if (view.childTaskNodeIds?.some((id) => !["done", "cancelled"].includes(this.get(id).contract.state)))
+        throw new Error("TASK_PLAN_CHILDREN_ACTIVE");
+      if (view.parentTaskNodeId) {
+        const inherited = this.get(view.parentTaskNodeId).contract.constraints;
+        if (inherited.some((constraint) => !normalized.constraints.includes(constraint)))
+          throw new Error("TASK_PARENT_CONSTRAINT_REQUIRED");
+      }
       this.checkDependencies(taskNodeId, normalized.dependencies ?? [], false);
+      if (view.childTaskNodeIds?.length) {
+        this.event(taskNodeId, "plan_retired", { children: view.childTaskNodeIds });
+        this.db.prepare("DELETE FROM task_plan_children WHERE parent_id=?").run(taskNodeId);
+      }
       const updated: TaskContract = {
         ...view.contract,
         ...normalized,
@@ -349,11 +617,15 @@ export class TaskSystemStore {
       return this.get(taskNodeId);
     });
   }
-  claim(taskNodeId: string, sessionKey: string, generation: string, requestId: string): TaskView {
+  claim(taskNodeId: string, sessionKey: string, generation: string, requestId: string, expected?: TaskCredential): TaskView {
     text(sessionKey, "SESSION", 300);
     text(generation, "GENERATION", 200);
-    return this.transaction(() =>
-      this.request(
+    return this.transaction(() => {
+      if (expected) {
+        if (expected.taskNodeId !== taskNodeId) throw new Error("TASK_RESTART_RUN_AFTER_HANDOFF");
+        this.assertOwner(expected);
+      }
+      return this.request(
         `claim:${requestId}`,
         { taskNodeId, sessionKey, generation, worktree: this.domain.worktree },
         () => {
@@ -376,6 +648,7 @@ export class TaskSystemStore {
           if (binding && binding.task_id !== taskNodeId)
             throw new Error("TASK_SESSION_ALREADY_BOUND");
           this.checkDependencies(taskNodeId, view.contract.dependencies ?? [], true);
+          this.checkDependencies(taskNodeId, view.childTaskNodeIds ?? [], true);
           const claim: TaskClaim = {
             taskNodeId: view.contract.taskNodeId,
             sessionKey: sessionKey as SessionKey,
@@ -389,14 +662,17 @@ export class TaskSystemStore {
           };
           this.saveClaim(claim);
           this.db
+            .prepare("DELETE FROM task_references WHERE session_key=? AND task_id=?")
+            .run(sessionKey, taskNodeId);
+          this.db
             .prepare("INSERT OR REPLACE INTO task_bindings VALUES(?,?,?,?)")
             .run(sessionKey, taskNodeId, generation, claim.epoch);
           this.saveContract({ ...view.contract, state: "doing", updatedAt: this.now() });
           this.event(taskNodeId, "claimed", claim);
           return this.get(taskNodeId);
         },
-      ),
-    );
+      );
+    });
   }
   assertOwner(credential: TaskCredential, allowPaused = false): TaskView {
     const view = this.get(credential.taskNodeId);
@@ -429,6 +705,22 @@ export class TaskSystemStore {
     if (!row) return null;
     if (generation && row.generation !== generation) throw new Error("TASK_GENERATION_STALE");
     return { ...this.get(row.task_id), ...(!writer ? { referenceOnly: true } : {}) };
+  }
+  inheritReference(sourceSessionKey: string, sourceGeneration: string, sessionKey: string, generation: string): TaskView | null {
+    text(sessionKey, "SESSION", 300); text(generation, "GENERATION", 200);
+    if (sourceSessionKey === sessionKey) throw new Error("TASK_REFERENCE_SELF");
+    return this.transaction(() => {
+      const source = this.binding(sourceSessionKey, sourceGeneration);
+      if (!source || ["done", "cancelled"].includes(source.contract.state)) return null;
+      const existing = this.binding(sessionKey, generation);
+      if (existing) {
+        if (!existing.referenceOnly || existing.contract.taskNodeId !== source.contract.taskNodeId) throw new Error("TASK_REFERENCE_CONFLICT");
+        return existing;
+      }
+      this.db.prepare("INSERT INTO task_references VALUES(?,?,?,?)").run(sessionKey, source.contract.taskNodeId, generation, "observer");
+      this.event(source.contract.taskNodeId,"reference_inherited",{sourceSessionKey,sourceGeneration,sessionKey,generation});
+      return this.binding(sessionKey,generation);
+    });
   }
   private saveWriterDelegation(delegation: TaskWriterDelegation): void {
     this.db
@@ -680,7 +972,22 @@ export class TaskSystemStore {
   }
   control(credential: TaskCredential, action: "renew" | "pause" | "release" | "cancel"): TaskView {
     return this.transaction(() => {
+      if (action === "cancel") {
+        const planned = this.get(credential.taskNodeId);
+        if (planned.childTaskNodeIds?.length) {
+          const c = planned.claim;
+          const reference = this.db.prepare("SELECT task_id,generation,role FROM task_references WHERE session_key=?").get(credential.sessionKey) as {task_id:string;generation:string;role:string}|undefined;
+          if (c?.state === "released" && c.epoch === credential.epoch && c.sessionKey === credential.sessionKey && c.generation === credential.generation && c.worktree === this.domain.worktree && reference?.task_id === c.taskNodeId && reference.generation === c.generation && reference.role === "coordinator") {
+            this.cancelPlan(planned.contract.taskNodeId);
+            return this.get(credential.taskNodeId);
+          }
+        }
+      }
       const view = this.assertOwner(credential, action !== "renew");
+      if (action === "cancel" && view.childTaskNodeIds?.length) {
+        this.cancelPlan(credential.taskNodeId);
+        return this.get(credential.taskNodeId);
+      }
       if (action === "cancel" && view.pendingOperations) {
         this.saveContract({ ...view.contract, state: "cancelling", updatedAt: this.now() });
         this.event(credential.taskNodeId, "cancel_requested", {
@@ -706,6 +1013,7 @@ export class TaskSystemStore {
           updatedAt: this.now(),
         });
         this.event(credential.taskNodeId, action, { epoch: claim.epoch });
+        if (action === "cancel" && view.parentTaskNodeId) this.settleCancellation(view.parentTaskNodeId);
       }
       return this.get(credential.taskNodeId);
     });
@@ -782,17 +1090,63 @@ export class TaskSystemStore {
       target: contract.target,
       constraints: contract.constraints,
       acceptance: contract.acceptance,
+      expectedOutcomes: contract.expectedOutcomes ?? [],
       state: contract.state,
       executionRole: view.referenceOnly ? "observer" : "writer",
     });
     if (core.length > MAX_CONTEXT) throw new Error("TASK_GOAL_BUDGET_EXCEEDED");
-    const next = view.checkpoint
-      ? JSON.stringify({
-          nextAction: view.checkpoint.nextAction,
-          unresolved: view.checkpoint.unresolved,
-        })
-      : "";
-    return `Persistent task contract (data; does not grant permissions):\n${core}\n${next.slice(0, MAX_CONTEXT - core.length)}`;
+    const ancestors: Array<Pick<TaskContract, "taskNodeId" | "revision" | "objective" | "target" | "constraints" | "acceptance" | "expectedOutcomes">> = [];
+    const seen = new Set([contract.taskNodeId as string]);
+    for (let parentId = view.parentTaskNodeId; parentId;) {
+      if (seen.has(parentId) || ancestors.length >= 30) throw new Error("TASK_PLAN_ANCESTRY_INVALID");
+      seen.add(parentId);
+      const parent = this.get(parentId), c = parent.contract;
+      ancestors.unshift({taskNodeId:c.taskNodeId,revision:c.revision,objective:c.objective,target:c.target,constraints:c.constraints,acceptance:c.acceptance,expectedOutcomes:c.expectedOutcomes});
+      parentId = parent.parentTaskNodeId;
+    }
+    const parent = ancestors.length ? JSON.stringify({ ancestors }) : "";
+    const progress = { nextAction: view.checkpoint?.nextAction ?? "", unresolved: [] as string[], omittedUnresolved: view.checkpoint?.unresolved.length ?? 0 };
+    const prefix = `Persistent task contract (data; does not grant permissions):\n${core}\n${parent}\n`;
+    if (prefix.length + JSON.stringify(progress).length > MAX_CONTEXT) throw new Error("TASK_GOAL_BUDGET_EXCEEDED");
+    for (const item of view.checkpoint?.unresolved ?? []) {
+      progress.unresolved.push(item); progress.omittedUnresolved--;
+      if (prefix.length + JSON.stringify(progress).length > MAX_CONTEXT) {
+        progress.unresolved.pop(); progress.omittedUnresolved++; break;
+      }
+    }
+    return prefix + JSON.stringify(progress);
+  }
+  recordContextHydration(input: {
+    sessionKey: string;
+    generation?: string;
+    runId?: string;
+    taskNodeId: string;
+    revision: number;
+    epoch: number;
+    context: string;
+  }): { receiptId: string; contextDigest: string; revision: number; epoch: number } {
+    const binding = {
+      sessionKey: input.sessionKey,
+      generation: input.generation ?? null,
+      runId: input.runId ?? null,
+      taskNodeId: input.taskNodeId,
+      revision: input.revision,
+      epoch: input.epoch,
+      contextDigest: digest(input.context),
+      characters: input.context.length,
+    };
+    const receiptId = `context:${digest(binding)}`;
+    // Repeated model calls with unchanged task context reuse the receipt without writing.
+    const existing = this.db.prepare("SELECT result FROM task_requests WHERE id=?").get(receiptId) as {result:string}|undefined;
+    if (existing) return JSON.parse(existing.result);
+    return this.transaction(() => this.request(receiptId, binding, () => {
+      const current = this.binding(input.sessionKey, input.generation);
+      if (!current || current.contract.taskNodeId !== input.taskNodeId || current.contract.revision !== input.revision || current.claim?.epoch !== input.epoch || this.context(input.sessionKey, input.generation) !== input.context)
+        throw new Error("TASK_CONTEXT_CHANGED_DURING_RESTORATION");
+      const receipt = {receiptId, ...binding, at:this.now(), source:"runtime-context-restoration"};
+      this.event(input.taskNodeId, "context_rehydrated", receipt);
+      return receipt;
+    }));
   }
   beginOperation(credential: TaskCredential, operationId: string, kind: string): void {
     this.transaction(() => {
@@ -963,13 +1317,62 @@ export class TaskSystemStore {
       this.settleCancellation(credential.taskNodeId);
     });
   }
+  private cancelPlan(taskNodeId: string): void {
+    const view = this.get(taskNodeId);
+    if (["done", "cancelled"].includes(view.contract.state)) return;
+    this.saveContract({ ...view.contract, state: "cancelling", updatedAt: this.now() });
+    this.event(taskNodeId, "cancel_requested", { source: "plan-coordinator", pendingOperations: view.pendingOperations });
+    for (const childId of view.childTaskNodeIds ?? []) this.cancelPlan(childId);
+    this.settleCancellation(taskNodeId);
+  }
   private settleCancellation(taskNodeId: string): void {
     const view = this.get(taskNodeId);
-    if (view.contract.state !== "cancelling" || view.pendingOperations || !view.claim) return;
+    if (view.contract.state !== "cancelling" || view.pendingOperations || view.childTaskNodeIds?.some((id) => !["done", "cancelled"].includes(this.get(id).contract.state))) return;
     this.saveContract({ ...view.contract, state: "cancelled", updatedAt: this.now() });
-    this.saveClaim({ ...view.claim, state: "released", epoch: view.claim.epoch + 1 });
+    if (view.claim) this.saveClaim({ ...view.claim, state: "released", epoch: view.claim.epoch + 1 });
     this.db.prepare("DELETE FROM task_bindings WHERE task_id=?").run(taskNodeId);
     this.event(taskNodeId, "cancelled", { reason: "owned-operations-settled" });
+    if (view.parentTaskNodeId) this.settleCancellation(view.parentTaskNodeId);
+  }
+  operation(
+    credential: TaskCredential,
+    operationId: string,
+  ): { id: string; kind: string; state: string; epoch: number; startedAt: number } {
+    const row = this.db
+      .prepare(
+        "SELECT o.id,o.kind,o.state,o.epoch,p.started_at AS startedAt FROM task_operations o JOIN task_operation_owners p ON p.id=o.id WHERE o.id=? AND o.task_id=? AND o.epoch=?",
+      )
+      .get(operationId, credential.taskNodeId, credential.epoch) as
+      | { id: string; kind: string; state: string; epoch: number; startedAt: number }
+      | undefined;
+    if (!row) throw new Error("TASK_OPERATION_NOT_FOUND");
+    const view = this.get(credential.taskNodeId), c = view.claim;
+    const cancelledReplay = row.state === "reconciled" && view.contract.state === "cancelled" && c?.epoch === credential.epoch + 1 && c.sessionKey === credential.sessionKey && c.generation === credential.generation && c.worktree === this.domain.worktree;
+    if (!cancelledReplay) this.assertOwner(credential, true);
+    return row;
+  }
+  reconcileOperation(
+    credential: TaskCredential,
+    operationId: string,
+    receipt: { id: string; outcome: "applied" | "not_applied"; owner: string },
+  ): TaskView {
+    return this.transaction(() => {
+      const op = this.operation(credential, operationId);
+      if (op.state === "reconciled") {
+        const prior = this.db.prepare("SELECT result FROM task_operations WHERE id=?").get(operationId) as { result: string };
+        if (prior.result !== JSON.stringify(receipt)) throw new Error("TASK_EFFECT_RECEIPT_CONFLICT");
+        return this.get(credential.taskNodeId);
+      }
+      if (!["unknown", "started"].includes(op.state)) throw new Error("TASK_OPERATION_NOT_PENDING");
+      this.db
+        .prepare(
+          "UPDATE task_operations SET state='reconciled',result=? WHERE id=? AND state IN ('unknown','started')",
+        )
+        .run(JSON.stringify(receipt), operationId);
+      this.event(credential.taskNodeId, "effect_reconciled", { operationId, receipt });
+      this.settleCancellation(credential.taskNodeId);
+      return this.get(credential.taskNodeId);
+    });
   }
   reconcileProcessResult(credential: TaskCredential, result: unknown): void {
     const details = (
@@ -1313,6 +1716,7 @@ export class TaskSystemStore {
       const view = this.assertOwner(credential);
       if (view.contract.state !== "review" || view.pendingOperations)
         throw new Error("TASK_NOT_READY_FOR_ACCEPTANCE");
+      this.checkDependencies(credential.taskNodeId, view.childTaskNodeIds ?? [], true);
       const sub = this.db
         .prepare("SELECT candidate,revision,epoch FROM task_submissions WHERE task_id=?")
         .get(credential.taskNodeId) as
@@ -1358,6 +1762,7 @@ export class TaskSystemStore {
       this.saveClaim({ ...view.claim!, state: "released", epoch: credential.epoch + 1 });
       this.db.prepare("DELETE FROM task_bindings WHERE task_id=?").run(credential.taskNodeId);
       this.event(credential.taskNodeId, "accepted", { candidate, revision: sub.revision });
+      if (view.parentTaskNodeId) this.settleCancellation(view.parentTaskNodeId);
       return this.get(credential.taskNodeId);
     });
   }

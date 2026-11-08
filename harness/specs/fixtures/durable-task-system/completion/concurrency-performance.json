@@ -1,0 +1,176 @@
+{
+  "schema": "DurableTaskSystemMeasurement/v1",
+  "driven_by": "agent",
+  "actor": "codex-durable-task-system",
+  "node": "v24.22.1",
+  "platform": "win32",
+  "repository": "D:\\tmp\\durable-task-system-20261108\\completion-performance\\repository-e3Jmz9",
+  "worktrees": [
+    "D:\\tmp\\durable-task-system-20261108\\completion-performance\\repository-e3Jmz9",
+    "D:\\tmp\\durable-task-system-20261108\\completion-performance\\repository-e3Jmz9\\linked"
+  ],
+  "contenders": 16,
+  "granted": 1,
+  "denied": 15,
+  "outcomes": [
+    {
+      "granted": true,
+      "claim": {
+        "taskNodeId": "1c962fa4-80c8-4a7c-a3d2-1a97139fe819",
+        "sessionKey": "worker-0",
+        "generation": "generation",
+        "epoch": 1,
+        "attemptId": "d1aa9365-51ab-4538-955f-931b1f0d0eb2",
+        "worktree": "d:/tmp/durable-task-system-20261108/completion-performance/repository-e3jmz9",
+        "contractRevision": 1,
+        "expiresAt": 1794111071238,
+        "state": "active"
+      },
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-0",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-0",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-0",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-0",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-0",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-0",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-0",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-0",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-0",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-0",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-0",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-0",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-0",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-0",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-0",
+      "exitCode": 0
+    }
+  ],
+  "measurements": [
+    {
+      "tasks": 1000,
+      "seedMs": 3272.1741,
+      "read": {
+        "p50": 0.12579999999979918,
+        "p95": 0.2646000000004278
+      },
+      "claim": {
+        "p50": 2.466299999999137,
+        "p95": 5.097099999999955
+      },
+      "context": {
+        "p50": 0.14840000000003783,
+        "p95": 0.3140000000003056
+      },
+      "renew": {
+        "p50": 2.571499999999105,
+        "p95": 4.883299999999508
+      },
+      "page50": {
+        "p50": 3.643699999999626,
+        "p95": 4.638600000000224
+      },
+      "suggest500": {
+        "p50": 2.4470000000001164,
+        "p95": 5.448900000000322
+      },
+      "databaseBytes": 3293184
+    },
+    {
+      "tasks": 10000,
+      "seedMs": 56710.919,
+      "read": {
+        "p50": 0.12430000000313157,
+        "p95": 0.26269999999931315
+      },
+      "claim": {
+        "p50": 3.188000000001921,
+        "p95": 5.55000000000291
+      },
+      "context": {
+        "p50": 0.1471999999921536,
+        "p95": 0.31700000000273576
+      },
+      "renew": {
+        "p50": 3.121100000003935,
+        "p95": 6.091199999995297
+      },
+      "page50": {
+        "p50": 3.5632000000041444,
+        "p95": 4.605999999999767
+      },
+      "suggest500": {
+        "p50": 2.42439999999624,
+        "p95": 5.3012000000017
+      },
+      "databaseBytes": 28532736
+    }
+  ],
+  "crashRecovery": {
+    "exitCode": 23,
+    "pendingBefore": 1,
+    "pendingAfter": 0,
+    "partialArtifactPreserved": true,
+    "uncertainWriteRecorded": true
+  },
+  "scope": "Local Windows, two actual Git worktrees, production SQLite store; timings in milliseconds",
+  "passed": true
+}

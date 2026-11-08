@@ -3,6 +3,16 @@ import { TaskSystemStore } from "./store.js";
 import { resolveTaskDomain } from "./identity.js";
 import type { TaskCredential } from "./types.js";
 
+/** Session lineage and generations come from the session owner; forks inherit no claim. */
+export function inheritPersistentTaskReference(workspace:string,sourceSessionKey:string,sourceGeneration:string,sessionKey:string,generation:string) {
+  if (!existsSync(workspace)) return null;
+  const domain=resolveTaskDomain(workspace);
+  if (!existsSync(domain.database)) return null;
+  const store=new TaskSystemStore(domain);
+  try {return store.inheritReference(sourceSessionKey,sourceGeneration,sessionKey,generation);}
+  finally {store.close();}
+}
+
 export function assertTaskWorktreeReleasable(workspace: string): void {
   if (!existsSync(workspace)) return;
   const domain = resolveTaskDomain(workspace);
@@ -166,11 +176,15 @@ export function restoreTaskModelContext(
     const marker = "\n<PERSISTENT_TASK_CONTRACT>\n";
     const index = basePrompt.lastIndexOf(marker);
     const prefix = index < 0 ? basePrompt : basePrompt.slice(0, index);
-    const text = store
-      .context(guard.sessionKey, guard.generation)!
+    const taskContext = store.context(guard.sessionKey, guard.generation)!;
+    const text = taskContext
       .replaceAll("<", "\\u003c")
       .replaceAll(">", "\\u003e");
     if (text.length > maxTaskChars) throw new Error("TASK_MODEL_CONTEXT_BUDGET_EXCEEDED");
+    store.recordContextHydration({
+      sessionKey:guard.sessionKey,generation:guard.generation,runId:guard.runId,
+      taskNodeId:view.contract.taskNodeId,revision:view.contract.revision,epoch:view.claim.epoch,context:taskContext,
+    });
     return `${prefix}${marker}${text}\n</PERSISTENT_TASK_CONTRACT>`;
   } finally {
     store.close();
@@ -202,8 +216,10 @@ export async function executeTaskGuarded<T>(
   ]);
   if (!existsSync(guard.domain.database)) {
     if (guard.credential) throw new Error("TASK_STORE_UNAVAILABLE");
-    if(readonlyTools.has(toolName))return execute();
-    throw new Error('TASK_CLAIM_REQUIRED: create or select the persistent task with task_control before executing side effects');
+    if (readonlyTools.has(toolName)) return execute();
+    throw new Error(
+      "TASK_CLAIM_REQUIRED: create or select the persistent task with task_control before executing side effects",
+    );
   }
   if (toolName === "task_control") return execute();
   if (!guard.credential && guard.generation) {
