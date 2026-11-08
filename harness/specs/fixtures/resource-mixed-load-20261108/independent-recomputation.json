@@ -1,0 +1,494 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "implementation": "Python stdlib, nearest-rank percentiles and paired means recomputed from individual raw receipts",
+  "pass": true,
+  "trials": 24,
+  "tasks": 1152,
+  "directChildExits": 576,
+  "buildServiceExits": 192,
+  "rows": [
+    {
+      "id": "w1-a1-0-before",
+      "variant": "before",
+      "workers": 1,
+      "windows": 1,
+      "throughput": 9.806139767114399,
+      "p95Total": 280.4701000000023,
+      "p95Input": 201.90000000596046,
+      "p95Scroll": 539.7999999970198,
+      "inputSamples": 20,
+      "scrollSamples": 12,
+      "source": "D:\\tmp\\tf0838\\acceptance-v3\\w1-a1-0-before\\attempt-1-3d9f1c0a-c531-466c-b1c2-533690b1b59c\\results\\resource-mixed-load-frozen-23e61-tion-keyboard-and-scrolling\\measurement.json",
+      "sha256": "fba0798099b7829ad588de32de28d6da29fed47673587dd8f138b4746f305d51"
+    },
+    {
+      "id": "w1-a1-1-after",
+      "variant": "after",
+      "workers": 1,
+      "windows": 1,
+      "throughput": 9.818147655490773,
+      "p95Total": 272.7582000000002,
+      "p95Input": 65.10000000149012,
+      "p95Scroll": 350.6000000014901,
+      "inputSamples": 22,
+      "scrollSamples": 12,
+      "source": "D:\\tmp\\tf0838\\acceptance-v3\\w1-a1-1-after\\attempt-1-0823435f-c9b1-4d23-8df6-25c065c075d1\\results\\resource-mixed-load-frozen-23e61-tion-keyboard-and-scrolling\\measurement.json",
+      "sha256": "203ebf1e8dab9a2427255f67a25b502814eff51b6fc4bcc6b7202891c92457e9"
+    },
+    {
+      "id": "w1-a1-2-after",
+      "variant": "after",
+      "workers": 1,
+      "windows": 1,
+      "throughput": 8.362817346051202,
+      "p95Total": 346.96640000000116,
+      "p95Input": 95.79999999701977,
+      "p95Scroll": 387.70000000298023,
+      "inputSamples": 22,
+      "scrollSamples": 12,
+      "source": "D:\\tmp\\tf0838\\acceptance-v3\\w1-a1-2-after\\attempt-1-35183c14-fc3f-41bc-b292-e09e16e41c47\\results\\resource-mixed-load-frozen-23e61-tion-keyboard-and-scrolling\\measurement.json",
+      "sha256": "bebb3791b316bea9b93edaeb4faebc7a4fe811e29d13a3c363f61454026df756"
+    },
+    {
+      "id": "w1-a1-3-before",
+      "variant": "before",
+      "workers": 1,
+      "windows": 1,
+      "throughput": 10.106048025498236,
+      "p95Total": 272.9285000000018,
+      "p95Input": 202.59999999403954,
+      "p95Scroll": 405.79999999701977,
+      "inputSamples": 20,
+      "scrollSamples": 12,
+      "source": "D:\\tmp\\tf0838\\acceptance-v3\\w1-a1-3-before\\attempt-1-d8aab9a0-6f51-4a47-b4d4-bfbbd338bae8\\results\\resource-mixed-load-frozen-23e61-tion-keyboard-and-scrolling\\measurement.json",
+      "sha256": "3347ba562973a2193084be0cba12cb39136d52b9ebfa2ee01dc5e1e71df863a0"
+    },
+    {
+      "id": "w1-a4-0-before",
+      "variant": "before",
+      "workers": 4,
+      "windows": 1,
+      "throughput": 11.522112878971301,
+      "p95Total": 592.0397000000012,
+      "p95Input": 342.20000000298023,
+      "p95Scroll": 984.3999999985099,
+      "inputSamples": 10,
+      "scrollSamples": 8,
+      "source": "D:\\tmp\\tf0838\\acceptance-v3\\w1-a4-0-before\\attempt-1-e8aaf8a2-85a4-4ab9-bb85-bb53f34d9dd4\\results\\resource-mixed-load-frozen-23e61-tion-keyboard-and-scrolling\\measurement.json",
+      "sha256": "2ea43a41756f96f2340a4032ab8898319617e913583248ef5a965cbc96b4bddf"
+    },
+    {
+      "id": "w1-a4-1-after",
+      "variant": "after",
+      "workers": 4,
+      "windows": 1,
+      "throughput": 3.785194830247142,
+      "p95Total": 5186.053,
+      "p95Input": 137.10000000149012,
+      "p95Scroll": 639.2999999970198,
+      "inputSamples": 22,
+      "scrollSamples": 12,
+      "source": "D:\\tmp\\tf0838\\acceptance-v3\\w1-a4-1-after\\attempt-1-4b202dbc-fc72-40f9-a85d-268659fce644\\results\\resource-mixed-load-frozen-23e61-tion-keyboard-and-scrolling\\measurement.json",
+      "sha256": "95be99613051c751e54349b80e5ba5810962f6768649475f4575278dd4ae4599"
+    },
+    {
+      "id": "w1-a4-2-after",
+      "variant": "after",
+      "workers": 4,
+      "windows": 1,
+      "throughput": 16.540389408320287,
+      "p95Total": 463.6138000000028,
+      "p95Input": 163.30000000447035,
+      "p95Scroll": 393.6000000014901,
+      "inputSamples": 19,
+      "scrollSamples": 12,
+      "source": "D:\\tmp\\tf0838\\acceptance-v3\\w1-a4-2-after\\attempt-2-04299b16-b7de-4649-aa7a-ecd01be5d5d7\\results\\resource-mixed-load-frozen-23e61-tion-keyboard-and-scrolling\\measurement.json",
+      "sha256": "3f9d60383b62a5bbef09021214151afebde63fe53b5ce785753ae613ef579f50"
+    },
+    {
+      "id": "w1-a4-3-before",
+      "variant": "before",
+      "workers": 4,
+      "windows": 1,
+      "throughput": 15.314428670831063,
+      "p95Total": 411.5311999999976,
+      "p95Input": 205,
+      "p95Scroll": 412.1000000014901,
+      "inputSamples": 14,
+      "scrollSamples": 12,
+      "source": "D:\\tmp\\tf0838\\acceptance-v3\\w1-a4-3-before\\attempt-1-1e342190-f6d9-4977-935d-c3a4aec25023\\results\\resource-mixed-load-frozen-23e61-tion-keyboard-and-scrolling\\measurement.json",
+      "sha256": "1baa5508582a5fc67a3679ef69985c982bac14e8b8bd8adc25a5fb84b135b63f"
+    },
+    {
+      "id": "w1-a8-0-before",
+      "variant": "before",
+      "workers": 8,
+      "windows": 1,
+      "throughput": 25.295788130067358,
+      "p95Total": 436.2458999999999,
+      "p95Input": 260.70000000298023,
+      "p95Scroll": 703.6000000014901,
+      "inputSamples": 6,
+      "scrollSamples": 5,
+      "source": "D:\\tmp\\tf0838\\acceptance-v3\\w1-a8-0-before\\attempt-1-8a05d488-107f-4f38-9f29-bf7b97f0b2b4\\results\\resource-mixed-load-frozen-23e61-tion-keyboard-and-scrolling\\measurement.json",
+      "sha256": "ebe7dcde7d87d7ea2326010d04d7c0a47d3f2d9a869ca2cac4416ffb2c75940c"
+    },
+    {
+      "id": "w1-a8-1-after",
+      "variant": "after",
+      "workers": 8,
+      "windows": 1,
+      "throughput": 16.212592482707237,
+      "p95Total": 731.0594999999994,
+      "p95Input": 111.89999999850988,
+      "p95Scroll": 214.29999999701977,
+      "inputSamples": 22,
+      "scrollSamples": 12,
+      "source": "D:\\tmp\\tf0838\\acceptance-v3\\w1-a8-1-after\\attempt-1-360aa481-9b0d-4846-856b-fb871a050483\\results\\resource-mixed-load-frozen-23e61-tion-keyboard-and-scrolling\\measurement.json",
+      "sha256": "c7d7cd405e450f1cef8d40a62e587575c2cb1f9764bced6f7a1ce33fe79de265"
+    },
+    {
+      "id": "w1-a8-2-after",
+      "variant": "after",
+      "workers": 8,
+      "windows": 1,
+      "throughput": 22.88915060937119,
+      "p95Total": 562.0987999999998,
+      "p95Input": 67.60000000149012,
+      "p95Scroll": 318.8999999985099,
+      "inputSamples": 17,
+      "scrollSamples": 11,
+      "source": "D:\\tmp\\tf0838\\acceptance-v3\\w1-a8-2-after\\attempt-1-d13bd8b1-0e9f-4051-a6b4-73f83fd21fab\\results\\resource-mixed-load-frozen-23e61-tion-keyboard-and-scrolling\\measurement.json",
+      "sha256": "9fc214e03c82f34817b1facac17dc45f2066c2f591d8fa9fba35a199bd203902"
+    },
+    {
+      "id": "w1-a8-3-before",
+      "variant": "before",
+      "workers": 8,
+      "windows": 1,
+      "throughput": 28.593617559054614,
+      "p95Total": 428.1749,
+      "p95Input": 248.69999999552965,
+      "p95Scroll": 830.6999999955297,
+      "inputSamples": 6,
+      "scrollSamples": 5,
+      "source": "D:\\tmp\\tf0838\\acceptance-v3\\w1-a8-3-before\\attempt-1-85d71eec-ecee-4e37-a214-f581d550c3ea\\results\\resource-mixed-load-frozen-23e61-tion-keyboard-and-scrolling\\measurement.json",
+      "sha256": "6258a47c3e255f23e01df2c0873a9826e6c6ad97e92047202b340ebbe561efd4"
+    },
+    {
+      "id": "w2-a1-0-before",
+      "variant": "before",
+      "workers": 1,
+      "windows": 2,
+      "throughput": 6.09366395675083,
+      "p95Total": 401.6887000000024,
+      "p95Input": 298.8999999985099,
+      "p95Scroll": 702.6000000014901,
+      "inputSamples": 22,
+      "scrollSamples": 12,
+      "source": "D:\\tmp\\tf0838\\acceptance-v3\\w2-a1-0-before\\attempt-1-2f306e00-02df-4fd2-b4e2-a51046089540\\results\\resource-mixed-load-frozen-23e61-tion-keyboard-and-scrolling\\measurement.json",
+      "sha256": "c2edf87497eed4cefadb50cfd6f55530091743950b05f4af52f473cc8385819e"
+    },
+    {
+      "id": "w2-a1-1-after",
+      "variant": "after",
+      "workers": 1,
+      "windows": 2,
+      "throughput": 9.849695291468079,
+      "p95Total": 282.84430000000066,
+      "p95Input": 80,
+      "p95Scroll": 213.39999999850988,
+      "inputSamples": 22,
+      "scrollSamples": 12,
+      "source": "D:\\tmp\\tf0838\\acceptance-v3\\w2-a1-1-after\\attempt-1-10516bf9-59a4-4dac-9029-e45bd62a92ac\\results\\resource-mixed-load-frozen-23e61-tion-keyboard-and-scrolling\\measurement.json",
+      "sha256": "5a950eca70fb42ace6a3b61be5da42e6b69f5272ecc3da154e78bc0575f3933c"
+    },
+    {
+      "id": "w2-a1-2-after",
+      "variant": "after",
+      "workers": 1,
+      "windows": 2,
+      "throughput": 8.468754002809506,
+      "p95Total": 337.45960000000014,
+      "p95Input": 139.69999999552965,
+      "p95Scroll": 292.5,
+      "inputSamples": 22,
+      "scrollSamples": 12,
+      "source": "D:\\tmp\\tf0838\\acceptance-v3\\w2-a1-2-after\\attempt-1-83a87db2-173d-4123-9a14-18e3caea3553\\results\\resource-mixed-load-frozen-23e61-tion-keyboard-and-scrolling\\measurement.json",
+      "sha256": "36471aed073cb1c371b315571424377cc4dceca414129358616c1c7801be352f"
+    },
+    {
+      "id": "w2-a1-3-before",
+      "variant": "before",
+      "workers": 1,
+      "windows": 2,
+      "throughput": 9.897544740820008,
+      "p95Total": 256.21150000000125,
+      "p95Input": 185.5,
+      "p95Scroll": 502.79999999701977,
+      "inputSamples": 20,
+      "scrollSamples": 12,
+      "source": "D:\\tmp\\tf0838\\acceptance-v3\\w2-a1-3-before\\attempt-1-ccc3dfc3-ad3e-43e2-b395-0c5ae4c792ee\\results\\resource-mixed-load-frozen-23e61-tion-keyboard-and-scrolling\\measurement.json",
+      "sha256": "9c92014ee5394533b3f528edce418965a6e2d92b210f83b6762462b992452dd0"
+    },
+    {
+      "id": "w2-a4-0-before",
+      "variant": "before",
+      "workers": 4,
+      "windows": 2,
+      "throughput": 16.599488306940035,
+      "p95Total": 390.65869999999995,
+      "p95Input": 195.10000000149012,
+      "p95Scroll": 552.7999999970198,
+      "inputSamples": 11,
+      "scrollSamples": 10,
+      "source": "D:\\tmp\\tf0838\\acceptance-v3\\w2-a4-0-before\\attempt-1-4a7e6aed-6a44-4d55-8b4e-a6d36a6a8d8a\\results\\resource-mixed-load-frozen-23e61-tion-keyboard-and-scrolling\\measurement.json",
+      "sha256": "b0b34c6d326f85e9f3854528c3f7c949124f42e55de2bf70e290063fe429c04e"
+    },
+    {
+      "id": "w2-a4-1-after",
+      "variant": "after",
+      "workers": 4,
+      "windows": 2,
+      "throughput": 16.563901461350216,
+      "p95Total": 424.2312000000002,
+      "p95Input": 114.89999999850988,
+      "p95Scroll": 421.19999999552965,
+      "inputSamples": 20,
+      "scrollSamples": 12,
+      "source": "D:\\tmp\\tf0838\\acceptance-v3\\w2-a4-1-after\\attempt-1-3ac4583a-701e-444d-a6b8-d578e7b9142b\\results\\resource-mixed-load-frozen-23e61-tion-keyboard-and-scrolling\\measurement.json",
+      "sha256": "25c0f51bef1dec4a2308cef08457368986d27c628aaea2a0376eaf2487f29a33"
+    },
+    {
+      "id": "w2-a4-2-after",
+      "variant": "after",
+      "workers": 4,
+      "windows": 2,
+      "throughput": 18.070467141904885,
+      "p95Total": 447.2711999999992,
+      "p95Input": 154.90000000596046,
+      "p95Scroll": 314.8999999985099,
+      "inputSamples": 18,
+      "scrollSamples": 12,
+      "source": "D:\\tmp\\tf0838\\acceptance-v3\\w2-a4-2-after\\attempt-2-222e42ee-59d8-466d-93ab-9882c56b4861\\results\\resource-mixed-load-frozen-23e61-tion-keyboard-and-scrolling\\measurement.json",
+      "sha256": "2fa2078a9658de4f48bacd8895cd9439a1850779b019028cbd19ce1a435ebcc1"
+    },
+    {
+      "id": "w2-a4-3-before",
+      "variant": "before",
+      "workers": 4,
+      "windows": 2,
+      "throughput": 14.361403154565982,
+      "p95Total": 475.2016999999978,
+      "p95Input": 308.1000000014901,
+      "p95Scroll": 650.5,
+      "inputSamples": 11,
+      "scrollSamples": 9,
+      "source": "D:\\tmp\\tf0838\\acceptance-v3\\w2-a4-3-before\\attempt-1-2186fff6-be65-4fcb-a053-bbe50c14034f\\results\\resource-mixed-load-frozen-23e61-tion-keyboard-and-scrolling\\measurement.json",
+      "sha256": "8cd280fd62ff05f38f97953978c15831605416d50534fe977860dc8cf323e440"
+    },
+    {
+      "id": "w2-a8-0-before",
+      "variant": "before",
+      "workers": 8,
+      "windows": 2,
+      "throughput": 27.08124746606971,
+      "p95Total": 458.47329999999783,
+      "p95Input": 282.20000000298023,
+      "p95Scroll": 630.2999999970198,
+      "inputSamples": 5,
+      "scrollSamples": 4,
+      "source": "D:\\tmp\\tf0838\\acceptance-v3\\w2-a8-0-before\\attempt-1-a3f6985b-469a-44d4-b0c4-ec35b9f872bf\\results\\resource-mixed-load-frozen-23e61-tion-keyboard-and-scrolling\\measurement.json",
+      "sha256": "548b5d6094ddf53ba98636cb369b47ca58939e64e85e15a04ab18f2527d92cc6"
+    },
+    {
+      "id": "w2-a8-1-after",
+      "variant": "after",
+      "workers": 8,
+      "windows": 2,
+      "throughput": 26.61106285083984,
+      "p95Total": 403.696899999999,
+      "p95Input": 106.80000000447035,
+      "p95Scroll": 207,
+      "inputSamples": 16,
+      "scrollSamples": 10,
+      "source": "D:\\tmp\\tf0838\\acceptance-v3\\w2-a8-1-after\\attempt-1-97bcf140-e4be-4143-919f-5351d020efc9\\results\\resource-mixed-load-frozen-23e61-tion-keyboard-and-scrolling\\measurement.json",
+      "sha256": "fc0001eb6421ec814250cdf760a6b3918f0a88b7af9c4eeb14f366decad81fc5"
+    },
+    {
+      "id": "w2-a8-2-after",
+      "variant": "after",
+      "workers": 8,
+      "windows": 2,
+      "throughput": 11.524865521626458,
+      "p95Total": 1207.0311000000002,
+      "p95Input": 92.60000000149012,
+      "p95Scroll": 183.10000000149012,
+      "inputSamples": 22,
+      "scrollSamples": 12,
+      "source": "D:\\tmp\\tf0838\\acceptance-v3\\w2-a8-2-after\\attempt-1-c4478d76-adf7-4341-97f5-9b9602758d7e\\results\\resource-mixed-load-frozen-23e61-tion-keyboard-and-scrolling\\measurement.json",
+      "sha256": "02567a4013e909ac5b790f730120a5f0ea4d3fb3007aa7f19419f44d80f11607"
+    },
+    {
+      "id": "w2-a8-3-before",
+      "variant": "before",
+      "workers": 8,
+      "windows": 2,
+      "throughput": 11.535764221668654,
+      "p95Total": 1627.1199000000015,
+      "p95Input": 263.29999999701977,
+      "p95Scroll": 602.3000000044703,
+      "inputSamples": 14,
+      "scrollSamples": 11,
+      "source": "D:\\tmp\\tf0838\\acceptance-v3\\w2-a8-3-before\\attempt-1-3f37a334-72bd-4bdd-91a3-dd837ac01ee1\\results\\resource-mixed-load-frozen-23e61-tion-keyboard-and-scrolling\\measurement.json",
+      "sha256": "82113cdf8b0603738e21bac42e0a04404a0895e87939a59bf3211cffd3c36bf4"
+    }
+  ],
+  "comparisons": [
+    {
+      "workers": 1,
+      "windows": 1,
+      "throughput": {
+        "before": 9.956093896306317,
+        "after": 9.090482500770987,
+        "changePct": -8.69428718281242
+      },
+      "p95Total": {
+        "before": 276.69930000000204,
+        "after": 309.8623000000007,
+        "changePct": 11.985212828510372
+      },
+      "p95Input": {
+        "before": 202.25,
+        "after": 80.44999999925494,
+        "changePct": -60.22249691013353
+      },
+      "p95Scroll": {
+        "before": 472.79999999701977,
+        "after": 369.1500000022352,
+        "changePct": -21.922588831522404
+      }
+    },
+    {
+      "workers": 4,
+      "windows": 1,
+      "throughput": {
+        "before": 13.418270774901181,
+        "after": 10.162792119283715,
+        "changePct": -24.26153645450966
+      },
+      "p95Total": {
+        "before": 501.7854499999994,
+        "after": 2824.8334000000013,
+        "changePct": 462.9564189236664
+      },
+      "p95Input": {
+        "before": 273.6000000014901,
+        "after": 150.20000000298023,
+        "changePct": -45.10233918049627
+      },
+      "p95Scroll": {
+        "before": 698.25,
+        "after": 516.4499999992549,
+        "changePct": -26.036519871213038
+      }
+    },
+    {
+      "workers": 8,
+      "windows": 1,
+      "throughput": {
+        "before": 26.944702844560986,
+        "after": 19.55087154603921,
+        "changePct": -27.440760216119
+      },
+      "p95Total": {
+        "before": 432.21039999999994,
+        "after": 646.5791499999996,
+        "changePct": 49.59823965365009
+      },
+      "p95Input": {
+        "before": 254.69999999925494,
+        "after": 89.75,
+        "changePct": -64.7624656457548
+      },
+      "p95Scroll": {
+        "before": 767.1499999985099,
+        "after": 266.5999999977648,
+        "changePct": -65.24799582894055
+      }
+    },
+    {
+      "workers": 1,
+      "windows": 2,
+      "throughput": {
+        "before": 7.9956043487854185,
+        "after": 9.159224647138792,
+        "changePct": 14.553250105855152
+      },
+      "p95Total": {
+        "before": 328.95010000000184,
+        "after": 310.1519500000004,
+        "changePct": -5.71459014604383
+      },
+      "p95Input": {
+        "before": 242.19999999925494,
+        "after": 109.84999999776483,
+        "changePct": -54.64492155321934
+      },
+      "p95Scroll": {
+        "before": 602.6999999992549,
+        "after": 252.94999999925494,
+        "changePct": -58.03052928495642
+      }
+    },
+    {
+      "workers": 4,
+      "windows": 2,
+      "throughput": {
+        "before": 15.480445730753008,
+        "after": 17.31718430162755,
+        "changePct": 11.864894608465493
+      },
+      "p95Total": {
+        "before": 432.9301999999989,
+        "after": 435.7511999999997,
+        "changePct": 0.651606194255061
+      },
+      "p95Input": {
+        "before": 251.60000000149012,
+        "after": 134.90000000223517,
+        "changePct": -46.383147853165255
+      },
+      "p95Scroll": {
+        "before": 601.6499999985099,
+        "after": 368.04999999701977,
+        "changePct": -38.82656029287271
+      }
+    },
+    {
+      "workers": 8,
+      "windows": 2,
+      "throughput": {
+        "before": 19.30850584386918,
+        "after": 19.067964186233148,
+        "changePct": -1.2457807951639643
+      },
+      "p95Total": {
+        "before": 1042.7965999999997,
+        "after": 805.3639999999996,
+        "changePct": -22.768831428871184
+      },
+      "p95Input": {
+        "before": 272.75,
+        "after": 99.70000000298023,
+        "changePct": -63.44637946728498
+      },
+      "p95Scroll": {
+        "before": 616.3000000007451,
+        "after": 195.05000000074506,
+        "changePct": -68.35145221474781
+      }
+    }
+  ]
+}

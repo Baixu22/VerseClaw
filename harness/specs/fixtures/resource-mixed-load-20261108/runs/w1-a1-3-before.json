@@ -1,0 +1,4132 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "fixtureId": "resource-mixed-v1",
+  "fixtureSha256": "8e37c90dedcfb8f97c3a7e8a4f4b81915164a7553949e2a07577e270352aa357",
+  "workers": 1,
+  "windows": 1,
+  "variant": "before",
+  "sourceCommit": "c7573ec11095b541f3a4a9c5470bf4e0727489bc",
+  "status": "pass",
+  "expected": {
+    "build": "5e790d37697ba8f5b4868525328c08a77a90ec5bd6cb7ca2315592ec1b3f2b7d",
+    "corpus": "9d4c0beff29e12fcc8045e18b38c3367b12f2485ac752a361873e3469178ab68",
+    "retrieval": 241,
+    "logBytes": 524288
+  },
+  "semantics": "Scripted agent workers on the actual Main Fabric; real file/search/git/log/esbuild work; local HTTP wait; frozen chat history/stream; 128MiB controlled retained memory.",
+  "processBefore": {
+    "tree": {
+      "status": "ok",
+      "sampledAt": 1794160428553,
+      "rootPids": [
+        16556
+      ],
+      "processCount": 13,
+      "treeRssBytes": 1389137920,
+      "treeCpuTimeMs": 25015.625,
+      "treeCpuPercent": null,
+      "ownerEpoch": "889dd517-cbee-4966-87e1-9a10cc967065",
+      "processes": [
+        {
+          "pid": 16556,
+          "parentPid": 26820,
+          "creationToken": "134386340184591450",
+          "rssBytes": 630124544,
+          "privateBytes": 519331840,
+          "cpuTimeMs": 9234.375,
+          "cpuPercent": null
+        },
+        {
+          "pid": 43992,
+          "parentPid": 16556,
+          "creationToken": "134386340235555540",
+          "rssBytes": 59383808,
+          "privateBytes": 14536704,
+          "cpuTimeMs": 46.875,
+          "cpuPercent": null
+        },
+        {
+          "pid": 44772,
+          "parentPid": 16556,
+          "creationToken": "134386340238495450",
+          "rssBytes": 380407808,
+          "privateBytes": 261271552,
+          "cpuTimeMs": 6046.875,
+          "cpuPercent": null
+        },
+        {
+          "pid": 27736,
+          "parentPid": 16556,
+          "creationToken": "134386340248967010",
+          "rssBytes": 83283968,
+          "privateBytes": 59510784,
+          "cpuTimeMs": 3125,
+          "cpuPercent": null
+        },
+        {
+          "pid": 48072,
+          "parentPid": 16556,
+          "creationToken": "134386340259334940",
+          "rssBytes": 66473984,
+          "privateBytes": 47738880,
+          "cpuTimeMs": 2343.75,
+          "cpuPercent": null
+        },
+        {
+          "pid": 40220,
+          "parentPid": 16556,
+          "creationToken": "134386340263202800",
+          "rssBytes": 65409024,
+          "privateBytes": 37359616,
+          "cpuTimeMs": 2218.75,
+          "cpuPercent": null
+        },
+        {
+          "pid": 31064,
+          "parentPid": 16556,
+          "creationToken": "134386340267078270",
+          "rssBytes": 48427008,
+          "privateBytes": 27181056,
+          "cpuTimeMs": 1250,
+          "cpuPercent": null
+        },
+        {
+          "pid": 47108,
+          "parentPid": 16556,
+          "creationToken": "134386340271050630",
+          "rssBytes": 17969152,
+          "privateBytes": 11014144,
+          "cpuTimeMs": 656.25,
+          "cpuPercent": null
+        },
+        {
+          "pid": 26100,
+          "parentPid": 27736,
+          "creationToken": "134386340250002620",
+          "rssBytes": 7536640,
+          "privateBytes": 1310720,
+          "cpuTimeMs": 15.625,
+          "cpuPercent": null
+        },
+        {
+          "pid": 24800,
+          "parentPid": 48072,
+          "creationToken": "134386340260257740",
+          "rssBytes": 7532544,
+          "privateBytes": 1306624,
+          "cpuTimeMs": 15.625,
+          "cpuPercent": null
+        },
+        {
+          "pid": 39836,
+          "parentPid": 40220,
+          "creationToken": "134386340264176420",
+          "rssBytes": 7540736,
+          "privateBytes": 1306624,
+          "cpuTimeMs": 15.625,
+          "cpuPercent": null
+        },
+        {
+          "pid": 42028,
+          "parentPid": 31064,
+          "creationToken": "134386340267987750",
+          "rssBytes": 7532544,
+          "privateBytes": 1310720,
+          "cpuTimeMs": 15.625,
+          "cpuPercent": null
+        },
+        {
+          "pid": 26216,
+          "parentPid": 47108,
+          "creationToken": "134386340272034150",
+          "rssBytes": 7516160,
+          "privateBytes": 1327104,
+          "cpuTimeMs": 31.25,
+          "cpuPercent": null
+        }
+      ],
+      "queueDepth": 0,
+      "queueWaitMs": 0,
+      "source": "windows-cim",
+      "machineCommit": {
+        "sampledAt": 1794160428553,
+        "committedBytes": 33729753088,
+        "commitLimitBytes": 54946947072
+      }
+    },
+    "handles": {
+      "status": "partial",
+      "rows": [
+        {
+          "pid": 16556,
+          "token": "134386340184591450",
+          "handles": 1209
+        },
+        {
+          "pid": 43992,
+          "token": "134386340235555540",
+          "handles": 335
+        },
+        {
+          "pid": 44772,
+          "token": "134386340238495450",
+          "handles": 393
+        }
+      ],
+      "total": 1937
+    }
+  },
+  "focusBeforeTyping": {
+    "attached": true,
+    "focused": true,
+    "value": ""
+  },
+  "workStartedAt": 1794160431175,
+  "work": {
+    "events": [
+      {
+        "id": 0,
+        "worker": 0,
+        "kind": "remote-wait",
+        "phase": "remote-wait",
+        "queuedMs": 0,
+        "serviceMs": 84.21530000000166,
+        "totalMs": 85.55719999999928,
+        "receipt": "remote-receipt",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 1,
+        "worker": 0,
+        "kind": "retrieval",
+        "phase": "read",
+        "queuedMs": 1,
+        "serviceMs": 1.582300000000032,
+        "totalMs": 1.6597000000001572,
+        "receipt": 241,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 2,
+        "worker": 0,
+        "kind": "git",
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 83.48389999999927,
+        "totalMs": 83.54340000000047,
+        "receipt": "?? .verse-claw/harness/README.md\n?? .verse-claw/harness/specs/README.md\n?? .verse-claw/harness/specs/guides/README.md\n?? .verse-claw/harness/specs/layers/README.md\n?? .verse-claw/harness/specs/rules/README.md\n?? .verse-claw/harness/specs/scenarios/README.md\n?? .verse-claw/harness/specs/tasks/README.md\n?? .verse-claw/harness/specs/tasks/_template.md\n?? .verse-claw/harness/workspace/.gitignore\n?? .verse-claw/harness/workspace/README.md\n?? .verse-claw/harness/workspace/context-packs.md\n?? .verse-claw/harness/workspace/decisions.md\n?? .verse-claw/harness/workspace/risks.md\n?? .verse-claw/harness/workspace/schema.md\n?? .verse-claw/harness/workspace/task-index.md\n?? .verse-claw/harness/workspace/validation.md\n?? build.cjs\n?? corpus.txt\n?? m0.ts\n?? m1.ts\n?? m10.ts\n?? m100.ts\n?? m101.ts\n?? m102.ts\n?? m103.ts\n?? m104.ts\n?? m105.ts\n?? m106.ts\n?? m107.ts\n?? m108.ts\n?? m109.ts\n?? m11.ts\n?? m110.ts\n?? m111.ts\n?? m112.ts\n?? m113.ts\n?? m114.ts\n?? m115.ts\n?? m116.ts\n?? m117.ts\n?? m118.ts\n?? m119.ts\n?? m12.ts\n?? m120.ts\n?? m121.ts\n?? m122.ts\n?? m123.ts\n?? m124.ts\n?? m125.ts\n?? m126.ts\n?? m127.ts\n?? m13.ts\n?? m14.ts\n?? m15.ts\n?? m16.ts\n?? m17.ts\n?? m18.ts\n?? m19.ts\n?? m2.ts\n?? m20.ts\n?? m21.ts\n?? m22.ts\n?? m23.ts\n?? m24.ts\n?? m25.ts\n?? m26.ts\n?? m27.ts\n?? m28.ts\n?? m29.ts\n?? m3.ts\n?? m30.ts\n?? m31.ts\n?? m32.ts\n?? m33.ts\n?? m34.ts\n?? m35.ts\n?? m36.ts\n?? m37.ts\n?? m38.ts\n?? m39.ts\n?? m4.ts\n?? m40.ts\n?? m41.ts\n?? m42.ts\n?? m43.ts\n?? m44.ts\n?? m45.ts\n?? m46.ts\n?? m47.ts\n?? m48.ts\n?? m49.ts\n?? m5.ts\n?? m50.ts\n?? m51.ts\n?? m52.ts\n?? m53.ts\n?? m54.ts\n?? m55.ts\n?? m56.ts\n?? m57.ts\n?? m58.ts\n?? m59.ts\n?? m6.ts\n?? m60.ts\n?? m61.ts\n?? m62.ts\n?? m63.ts\n?? m64.ts\n?? m65.ts\n?? m66.ts\n?? m67.ts\n?? m68.ts\n?? m69.ts\n?? m7.ts\n?? m70.ts\n?? m71.ts\n?? m72.ts\n?? m73.ts\n?? m74.ts\n?? m75.ts\n?? m76.ts\n?? m77.ts\n?? m78.ts\n?? m79.ts\n?? m8.ts\n?? m80.ts\n?? m81.ts\n?? m82.ts\n?? m83.ts\n?? m84.ts\n?? m85.ts\n?? m86.ts\n?? m87.ts\n?? m88.ts\n?? m89.ts\n?? m9.ts\n?? m90.ts\n?? m91.ts\n?? m92.ts\n?? m93.ts\n?? m94.ts\n?? m95.ts\n?? m96.ts\n?? m97.ts\n?? m98.ts\n?? m99.ts\n?? main.ts\n",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 3,
+        "worker": 0,
+        "kind": "log",
+        "phase": "execution",
+        "queuedMs": 0,
+        "serviceMs": 146.59720000000016,
+        "totalMs": 146.72170000000006,
+        "receipt": 524288,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 4,
+        "worker": 0,
+        "kind": "build",
+        "phase": "execution",
+        "queuedMs": 0,
+        "serviceMs": 263.3150000000005,
+        "totalMs": 263.3822999999993,
+        "receipt": {
+          "digest": "5e790d37697ba8f5b4868525328c08a77a90ec5bd6cb7ca2315592ec1b3f2b7d",
+          "services": [
+            {
+              "pid": 45564,
+              "closed": true,
+              "code": null,
+              "signal": "SIGTERM"
+            }
+          ]
+        },
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 5,
+        "worker": 0,
+        "kind": "read",
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 3.0807999999997264,
+        "totalMs": 3.1723999999994703,
+        "receipt": "9d4c0beff29e12fcc8045e18b38c3367b12f2485ac752a361873e3469178ab68",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 6,
+        "worker": 0,
+        "kind": "remote-wait",
+        "phase": "remote-wait",
+        "queuedMs": 0,
+        "serviceMs": 73.41229999999996,
+        "totalMs": 73.4974000000002,
+        "receipt": "remote-receipt",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 7,
+        "worker": 0,
+        "kind": "retrieval",
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 1.6838999999999942,
+        "totalMs": 1.809900000000198,
+        "receipt": 241,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 8,
+        "worker": 0,
+        "kind": "git",
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 87.21260000000075,
+        "totalMs": 87.27599999999984,
+        "receipt": "?? .verse-claw/harness/README.md\n?? .verse-claw/harness/specs/README.md\n?? .verse-claw/harness/specs/guides/README.md\n?? .verse-claw/harness/specs/layers/README.md\n?? .verse-claw/harness/specs/rules/README.md\n?? .verse-claw/harness/specs/scenarios/README.md\n?? .verse-claw/harness/specs/tasks/README.md\n?? .verse-claw/harness/specs/tasks/_template.md\n?? .verse-claw/harness/workspace/.gitignore\n?? .verse-claw/harness/workspace/README.md\n?? .verse-claw/harness/workspace/context-packs.md\n?? .verse-claw/harness/workspace/decisions.md\n?? .verse-claw/harness/workspace/risks.md\n?? .verse-claw/harness/workspace/schema.md\n?? .verse-claw/harness/workspace/task-index.md\n?? .verse-claw/harness/workspace/validation.md\n?? build.cjs\n?? corpus.txt\n?? m0.ts\n?? m1.ts\n?? m10.ts\n?? m100.ts\n?? m101.ts\n?? m102.ts\n?? m103.ts\n?? m104.ts\n?? m105.ts\n?? m106.ts\n?? m107.ts\n?? m108.ts\n?? m109.ts\n?? m11.ts\n?? m110.ts\n?? m111.ts\n?? m112.ts\n?? m113.ts\n?? m114.ts\n?? m115.ts\n?? m116.ts\n?? m117.ts\n?? m118.ts\n?? m119.ts\n?? m12.ts\n?? m120.ts\n?? m121.ts\n?? m122.ts\n?? m123.ts\n?? m124.ts\n?? m125.ts\n?? m126.ts\n?? m127.ts\n?? m13.ts\n?? m14.ts\n?? m15.ts\n?? m16.ts\n?? m17.ts\n?? m18.ts\n?? m19.ts\n?? m2.ts\n?? m20.ts\n?? m21.ts\n?? m22.ts\n?? m23.ts\n?? m24.ts\n?? m25.ts\n?? m26.ts\n?? m27.ts\n?? m28.ts\n?? m29.ts\n?? m3.ts\n?? m30.ts\n?? m31.ts\n?? m32.ts\n?? m33.ts\n?? m34.ts\n?? m35.ts\n?? m36.ts\n?? m37.ts\n?? m38.ts\n?? m39.ts\n?? m4.ts\n?? m40.ts\n?? m41.ts\n?? m42.ts\n?? m43.ts\n?? m44.ts\n?? m45.ts\n?? m46.ts\n?? m47.ts\n?? m48.ts\n?? m49.ts\n?? m5.ts\n?? m50.ts\n?? m51.ts\n?? m52.ts\n?? m53.ts\n?? m54.ts\n?? m55.ts\n?? m56.ts\n?? m57.ts\n?? m58.ts\n?? m59.ts\n?? m6.ts\n?? m60.ts\n?? m61.ts\n?? m62.ts\n?? m63.ts\n?? m64.ts\n?? m65.ts\n?? m66.ts\n?? m67.ts\n?? m68.ts\n?? m69.ts\n?? m7.ts\n?? m70.ts\n?? m71.ts\n?? m72.ts\n?? m73.ts\n?? m74.ts\n?? m75.ts\n?? m76.ts\n?? m77.ts\n?? m78.ts\n?? m79.ts\n?? m8.ts\n?? m80.ts\n?? m81.ts\n?? m82.ts\n?? m83.ts\n?? m84.ts\n?? m85.ts\n?? m86.ts\n?? m87.ts\n?? m88.ts\n?? m89.ts\n?? m9.ts\n?? m90.ts\n?? m91.ts\n?? m92.ts\n?? m93.ts\n?? m94.ts\n?? m95.ts\n?? m96.ts\n?? m97.ts\n?? m98.ts\n?? m99.ts\n?? main.ts\n",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 9,
+        "worker": 0,
+        "kind": "log",
+        "phase": "execution",
+        "queuedMs": 0,
+        "serviceMs": 170.01150000000052,
+        "totalMs": 170.10230000000047,
+        "receipt": 524288,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 10,
+        "worker": 0,
+        "kind": "build",
+        "phase": "execution",
+        "queuedMs": 0,
+        "serviceMs": 284.4814000000006,
+        "totalMs": 284.5807999999997,
+        "receipt": {
+          "digest": "5e790d37697ba8f5b4868525328c08a77a90ec5bd6cb7ca2315592ec1b3f2b7d",
+          "services": [
+            {
+              "pid": 3952,
+              "closed": true,
+              "code": null,
+              "signal": "SIGTERM"
+            }
+          ]
+        },
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 11,
+        "worker": 0,
+        "kind": "read",
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 2.3057000000007974,
+        "totalMs": 2.345999999999549,
+        "receipt": "9d4c0beff29e12fcc8045e18b38c3367b12f2485ac752a361873e3469178ab68",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 12,
+        "worker": 0,
+        "kind": "remote-wait",
+        "phase": "remote-wait",
+        "queuedMs": 0,
+        "serviceMs": 68.64300000000003,
+        "totalMs": 68.6810000000005,
+        "receipt": "remote-receipt",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 13,
+        "worker": 0,
+        "kind": "retrieval",
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 1.6271000000015192,
+        "totalMs": 1.6754000000000815,
+        "receipt": 241,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 14,
+        "worker": 0,
+        "kind": "git",
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 91.98400000000038,
+        "totalMs": 92.07170000000042,
+        "receipt": "?? .verse-claw/harness/README.md\n?? .verse-claw/harness/specs/README.md\n?? .verse-claw/harness/specs/guides/README.md\n?? .verse-claw/harness/specs/layers/README.md\n?? .verse-claw/harness/specs/rules/README.md\n?? .verse-claw/harness/specs/scenarios/README.md\n?? .verse-claw/harness/specs/tasks/README.md\n?? .verse-claw/harness/specs/tasks/_template.md\n?? .verse-claw/harness/workspace/.gitignore\n?? .verse-claw/harness/workspace/README.md\n?? .verse-claw/harness/workspace/context-packs.md\n?? .verse-claw/harness/workspace/decisions.md\n?? .verse-claw/harness/workspace/risks.md\n?? .verse-claw/harness/workspace/schema.md\n?? .verse-claw/harness/workspace/task-index.md\n?? .verse-claw/harness/workspace/validation.md\n?? build.cjs\n?? corpus.txt\n?? m0.ts\n?? m1.ts\n?? m10.ts\n?? m100.ts\n?? m101.ts\n?? m102.ts\n?? m103.ts\n?? m104.ts\n?? m105.ts\n?? m106.ts\n?? m107.ts\n?? m108.ts\n?? m109.ts\n?? m11.ts\n?? m110.ts\n?? m111.ts\n?? m112.ts\n?? m113.ts\n?? m114.ts\n?? m115.ts\n?? m116.ts\n?? m117.ts\n?? m118.ts\n?? m119.ts\n?? m12.ts\n?? m120.ts\n?? m121.ts\n?? m122.ts\n?? m123.ts\n?? m124.ts\n?? m125.ts\n?? m126.ts\n?? m127.ts\n?? m13.ts\n?? m14.ts\n?? m15.ts\n?? m16.ts\n?? m17.ts\n?? m18.ts\n?? m19.ts\n?? m2.ts\n?? m20.ts\n?? m21.ts\n?? m22.ts\n?? m23.ts\n?? m24.ts\n?? m25.ts\n?? m26.ts\n?? m27.ts\n?? m28.ts\n?? m29.ts\n?? m3.ts\n?? m30.ts\n?? m31.ts\n?? m32.ts\n?? m33.ts\n?? m34.ts\n?? m35.ts\n?? m36.ts\n?? m37.ts\n?? m38.ts\n?? m39.ts\n?? m4.ts\n?? m40.ts\n?? m41.ts\n?? m42.ts\n?? m43.ts\n?? m44.ts\n?? m45.ts\n?? m46.ts\n?? m47.ts\n?? m48.ts\n?? m49.ts\n?? m5.ts\n?? m50.ts\n?? m51.ts\n?? m52.ts\n?? m53.ts\n?? m54.ts\n?? m55.ts\n?? m56.ts\n?? m57.ts\n?? m58.ts\n?? m59.ts\n?? m6.ts\n?? m60.ts\n?? m61.ts\n?? m62.ts\n?? m63.ts\n?? m64.ts\n?? m65.ts\n?? m66.ts\n?? m67.ts\n?? m68.ts\n?? m69.ts\n?? m7.ts\n?? m70.ts\n?? m71.ts\n?? m72.ts\n?? m73.ts\n?? m74.ts\n?? m75.ts\n?? m76.ts\n?? m77.ts\n?? m78.ts\n?? m79.ts\n?? m8.ts\n?? m80.ts\n?? m81.ts\n?? m82.ts\n?? m83.ts\n?? m84.ts\n?? m85.ts\n?? m86.ts\n?? m87.ts\n?? m88.ts\n?? m89.ts\n?? m9.ts\n?? m90.ts\n?? m91.ts\n?? m92.ts\n?? m93.ts\n?? m94.ts\n?? m95.ts\n?? m96.ts\n?? m97.ts\n?? m98.ts\n?? m99.ts\n?? main.ts\n",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 15,
+        "worker": 0,
+        "kind": "log",
+        "phase": "execution",
+        "queuedMs": 0,
+        "serviceMs": 164.8698000000004,
+        "totalMs": 164.92829999999958,
+        "receipt": 524288,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 16,
+        "worker": 0,
+        "kind": "build",
+        "phase": "execution",
+        "queuedMs": 0,
+        "serviceMs": 267.4866000000002,
+        "totalMs": 267.59530000000086,
+        "receipt": {
+          "digest": "5e790d37697ba8f5b4868525328c08a77a90ec5bd6cb7ca2315592ec1b3f2b7d",
+          "services": [
+            {
+              "pid": 18528,
+              "closed": true,
+              "code": null,
+              "signal": "SIGTERM"
+            }
+          ]
+        },
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 17,
+        "worker": 0,
+        "kind": "read",
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 1.381999999999607,
+        "totalMs": 1.4202000000004773,
+        "receipt": "9d4c0beff29e12fcc8045e18b38c3367b12f2485ac752a361873e3469178ab68",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 18,
+        "worker": 0,
+        "kind": "remote-wait",
+        "phase": "remote-wait",
+        "queuedMs": 0,
+        "serviceMs": 71.4984000000004,
+        "totalMs": 71.53570000000036,
+        "receipt": "remote-receipt",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 19,
+        "worker": 0,
+        "kind": "retrieval",
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 1.2576000000008207,
+        "totalMs": 1.2955000000001746,
+        "receipt": 241,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 20,
+        "worker": 0,
+        "kind": "git",
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 88.09660000000076,
+        "totalMs": 88.13060000000041,
+        "receipt": "?? .verse-claw/harness/README.md\n?? .verse-claw/harness/specs/README.md\n?? .verse-claw/harness/specs/guides/README.md\n?? .verse-claw/harness/specs/layers/README.md\n?? .verse-claw/harness/specs/rules/README.md\n?? .verse-claw/harness/specs/scenarios/README.md\n?? .verse-claw/harness/specs/tasks/README.md\n?? .verse-claw/harness/specs/tasks/_template.md\n?? .verse-claw/harness/workspace/.gitignore\n?? .verse-claw/harness/workspace/README.md\n?? .verse-claw/harness/workspace/context-packs.md\n?? .verse-claw/harness/workspace/decisions.md\n?? .verse-claw/harness/workspace/risks.md\n?? .verse-claw/harness/workspace/schema.md\n?? .verse-claw/harness/workspace/task-index.md\n?? .verse-claw/harness/workspace/validation.md\n?? build.cjs\n?? corpus.txt\n?? m0.ts\n?? m1.ts\n?? m10.ts\n?? m100.ts\n?? m101.ts\n?? m102.ts\n?? m103.ts\n?? m104.ts\n?? m105.ts\n?? m106.ts\n?? m107.ts\n?? m108.ts\n?? m109.ts\n?? m11.ts\n?? m110.ts\n?? m111.ts\n?? m112.ts\n?? m113.ts\n?? m114.ts\n?? m115.ts\n?? m116.ts\n?? m117.ts\n?? m118.ts\n?? m119.ts\n?? m12.ts\n?? m120.ts\n?? m121.ts\n?? m122.ts\n?? m123.ts\n?? m124.ts\n?? m125.ts\n?? m126.ts\n?? m127.ts\n?? m13.ts\n?? m14.ts\n?? m15.ts\n?? m16.ts\n?? m17.ts\n?? m18.ts\n?? m19.ts\n?? m2.ts\n?? m20.ts\n?? m21.ts\n?? m22.ts\n?? m23.ts\n?? m24.ts\n?? m25.ts\n?? m26.ts\n?? m27.ts\n?? m28.ts\n?? m29.ts\n?? m3.ts\n?? m30.ts\n?? m31.ts\n?? m32.ts\n?? m33.ts\n?? m34.ts\n?? m35.ts\n?? m36.ts\n?? m37.ts\n?? m38.ts\n?? m39.ts\n?? m4.ts\n?? m40.ts\n?? m41.ts\n?? m42.ts\n?? m43.ts\n?? m44.ts\n?? m45.ts\n?? m46.ts\n?? m47.ts\n?? m48.ts\n?? m49.ts\n?? m5.ts\n?? m50.ts\n?? m51.ts\n?? m52.ts\n?? m53.ts\n?? m54.ts\n?? m55.ts\n?? m56.ts\n?? m57.ts\n?? m58.ts\n?? m59.ts\n?? m6.ts\n?? m60.ts\n?? m61.ts\n?? m62.ts\n?? m63.ts\n?? m64.ts\n?? m65.ts\n?? m66.ts\n?? m67.ts\n?? m68.ts\n?? m69.ts\n?? m7.ts\n?? m70.ts\n?? m71.ts\n?? m72.ts\n?? m73.ts\n?? m74.ts\n?? m75.ts\n?? m76.ts\n?? m77.ts\n?? m78.ts\n?? m79.ts\n?? m8.ts\n?? m80.ts\n?? m81.ts\n?? m82.ts\n?? m83.ts\n?? m84.ts\n?? m85.ts\n?? m86.ts\n?? m87.ts\n?? m88.ts\n?? m89.ts\n?? m9.ts\n?? m90.ts\n?? m91.ts\n?? m92.ts\n?? m93.ts\n?? m94.ts\n?? m95.ts\n?? m96.ts\n?? m97.ts\n?? m98.ts\n?? m99.ts\n?? main.ts\n",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 21,
+        "worker": 0,
+        "kind": "log",
+        "phase": "execution",
+        "queuedMs": 0,
+        "serviceMs": 158.98959999999897,
+        "totalMs": 159.03449999999975,
+        "receipt": 524288,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 22,
+        "worker": 0,
+        "kind": "build",
+        "phase": "execution",
+        "queuedMs": 0,
+        "serviceMs": 286.6837999999989,
+        "totalMs": 286.8227999999999,
+        "receipt": {
+          "digest": "5e790d37697ba8f5b4868525328c08a77a90ec5bd6cb7ca2315592ec1b3f2b7d",
+          "services": [
+            {
+              "pid": 11532,
+              "closed": true,
+              "code": null,
+              "signal": "SIGTERM"
+            }
+          ]
+        },
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 23,
+        "worker": 0,
+        "kind": "read",
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 1.5189999999984138,
+        "totalMs": 1.5578000000004977,
+        "receipt": "9d4c0beff29e12fcc8045e18b38c3367b12f2485ac752a361873e3469178ab68",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 24,
+        "worker": 0,
+        "kind": "remote-wait",
+        "phase": "remote-wait",
+        "queuedMs": 0,
+        "serviceMs": 66.03809999999976,
+        "totalMs": 66.08320000000094,
+        "receipt": "remote-receipt",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 25,
+        "worker": 0,
+        "kind": "retrieval",
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 1.558100000000195,
+        "totalMs": 1.594600000000355,
+        "receipt": 241,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 26,
+        "worker": 0,
+        "kind": "git",
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 87.25500000000102,
+        "totalMs": 87.28839999999946,
+        "receipt": "?? .verse-claw/harness/README.md\n?? .verse-claw/harness/specs/README.md\n?? .verse-claw/harness/specs/guides/README.md\n?? .verse-claw/harness/specs/layers/README.md\n?? .verse-claw/harness/specs/rules/README.md\n?? .verse-claw/harness/specs/scenarios/README.md\n?? .verse-claw/harness/specs/tasks/README.md\n?? .verse-claw/harness/specs/tasks/_template.md\n?? .verse-claw/harness/workspace/.gitignore\n?? .verse-claw/harness/workspace/README.md\n?? .verse-claw/harness/workspace/context-packs.md\n?? .verse-claw/harness/workspace/decisions.md\n?? .verse-claw/harness/workspace/risks.md\n?? .verse-claw/harness/workspace/schema.md\n?? .verse-claw/harness/workspace/task-index.md\n?? .verse-claw/harness/workspace/validation.md\n?? build.cjs\n?? corpus.txt\n?? m0.ts\n?? m1.ts\n?? m10.ts\n?? m100.ts\n?? m101.ts\n?? m102.ts\n?? m103.ts\n?? m104.ts\n?? m105.ts\n?? m106.ts\n?? m107.ts\n?? m108.ts\n?? m109.ts\n?? m11.ts\n?? m110.ts\n?? m111.ts\n?? m112.ts\n?? m113.ts\n?? m114.ts\n?? m115.ts\n?? m116.ts\n?? m117.ts\n?? m118.ts\n?? m119.ts\n?? m12.ts\n?? m120.ts\n?? m121.ts\n?? m122.ts\n?? m123.ts\n?? m124.ts\n?? m125.ts\n?? m126.ts\n?? m127.ts\n?? m13.ts\n?? m14.ts\n?? m15.ts\n?? m16.ts\n?? m17.ts\n?? m18.ts\n?? m19.ts\n?? m2.ts\n?? m20.ts\n?? m21.ts\n?? m22.ts\n?? m23.ts\n?? m24.ts\n?? m25.ts\n?? m26.ts\n?? m27.ts\n?? m28.ts\n?? m29.ts\n?? m3.ts\n?? m30.ts\n?? m31.ts\n?? m32.ts\n?? m33.ts\n?? m34.ts\n?? m35.ts\n?? m36.ts\n?? m37.ts\n?? m38.ts\n?? m39.ts\n?? m4.ts\n?? m40.ts\n?? m41.ts\n?? m42.ts\n?? m43.ts\n?? m44.ts\n?? m45.ts\n?? m46.ts\n?? m47.ts\n?? m48.ts\n?? m49.ts\n?? m5.ts\n?? m50.ts\n?? m51.ts\n?? m52.ts\n?? m53.ts\n?? m54.ts\n?? m55.ts\n?? m56.ts\n?? m57.ts\n?? m58.ts\n?? m59.ts\n?? m6.ts\n?? m60.ts\n?? m61.ts\n?? m62.ts\n?? m63.ts\n?? m64.ts\n?? m65.ts\n?? m66.ts\n?? m67.ts\n?? m68.ts\n?? m69.ts\n?? m7.ts\n?? m70.ts\n?? m71.ts\n?? m72.ts\n?? m73.ts\n?? m74.ts\n?? m75.ts\n?? m76.ts\n?? m77.ts\n?? m78.ts\n?? m79.ts\n?? m8.ts\n?? m80.ts\n?? m81.ts\n?? m82.ts\n?? m83.ts\n?? m84.ts\n?? m85.ts\n?? m86.ts\n?? m87.ts\n?? m88.ts\n?? m89.ts\n?? m9.ts\n?? m90.ts\n?? m91.ts\n?? m92.ts\n?? m93.ts\n?? m94.ts\n?? m95.ts\n?? m96.ts\n?? m97.ts\n?? m98.ts\n?? m99.ts\n?? main.ts\n",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 27,
+        "worker": 0,
+        "kind": "log",
+        "phase": "execution",
+        "queuedMs": 0,
+        "serviceMs": 161.35219999999936,
+        "totalMs": 161.40079999999944,
+        "receipt": 524288,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 28,
+        "worker": 0,
+        "kind": "build",
+        "phase": "execution",
+        "queuedMs": 1,
+        "serviceMs": 261.5542999999998,
+        "totalMs": 261.59699999999975,
+        "receipt": {
+          "digest": "5e790d37697ba8f5b4868525328c08a77a90ec5bd6cb7ca2315592ec1b3f2b7d",
+          "services": [
+            {
+              "pid": 4600,
+              "closed": true,
+              "code": null,
+              "signal": "SIGTERM"
+            }
+          ]
+        },
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 29,
+        "worker": 0,
+        "kind": "read",
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 1.9250000000010914,
+        "totalMs": 2.004499999999098,
+        "receipt": "9d4c0beff29e12fcc8045e18b38c3367b12f2485ac752a361873e3469178ab68",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 30,
+        "worker": 0,
+        "kind": "remote-wait",
+        "phase": "remote-wait",
+        "queuedMs": 0,
+        "serviceMs": 77.69729999999981,
+        "totalMs": 77.7465000000011,
+        "receipt": "remote-receipt",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 31,
+        "worker": 0,
+        "kind": "retrieval",
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 0.9852000000009866,
+        "totalMs": 1.0168999999987136,
+        "receipt": 241,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 32,
+        "worker": 0,
+        "kind": "git",
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 83.15879999999925,
+        "totalMs": 83.20020000000113,
+        "receipt": "?? .verse-claw/harness/README.md\n?? .verse-claw/harness/specs/README.md\n?? .verse-claw/harness/specs/guides/README.md\n?? .verse-claw/harness/specs/layers/README.md\n?? .verse-claw/harness/specs/rules/README.md\n?? .verse-claw/harness/specs/scenarios/README.md\n?? .verse-claw/harness/specs/tasks/README.md\n?? .verse-claw/harness/specs/tasks/_template.md\n?? .verse-claw/harness/workspace/.gitignore\n?? .verse-claw/harness/workspace/README.md\n?? .verse-claw/harness/workspace/context-packs.md\n?? .verse-claw/harness/workspace/decisions.md\n?? .verse-claw/harness/workspace/risks.md\n?? .verse-claw/harness/workspace/schema.md\n?? .verse-claw/harness/workspace/task-index.md\n?? .verse-claw/harness/workspace/validation.md\n?? build.cjs\n?? corpus.txt\n?? m0.ts\n?? m1.ts\n?? m10.ts\n?? m100.ts\n?? m101.ts\n?? m102.ts\n?? m103.ts\n?? m104.ts\n?? m105.ts\n?? m106.ts\n?? m107.ts\n?? m108.ts\n?? m109.ts\n?? m11.ts\n?? m110.ts\n?? m111.ts\n?? m112.ts\n?? m113.ts\n?? m114.ts\n?? m115.ts\n?? m116.ts\n?? m117.ts\n?? m118.ts\n?? m119.ts\n?? m12.ts\n?? m120.ts\n?? m121.ts\n?? m122.ts\n?? m123.ts\n?? m124.ts\n?? m125.ts\n?? m126.ts\n?? m127.ts\n?? m13.ts\n?? m14.ts\n?? m15.ts\n?? m16.ts\n?? m17.ts\n?? m18.ts\n?? m19.ts\n?? m2.ts\n?? m20.ts\n?? m21.ts\n?? m22.ts\n?? m23.ts\n?? m24.ts\n?? m25.ts\n?? m26.ts\n?? m27.ts\n?? m28.ts\n?? m29.ts\n?? m3.ts\n?? m30.ts\n?? m31.ts\n?? m32.ts\n?? m33.ts\n?? m34.ts\n?? m35.ts\n?? m36.ts\n?? m37.ts\n?? m38.ts\n?? m39.ts\n?? m4.ts\n?? m40.ts\n?? m41.ts\n?? m42.ts\n?? m43.ts\n?? m44.ts\n?? m45.ts\n?? m46.ts\n?? m47.ts\n?? m48.ts\n?? m49.ts\n?? m5.ts\n?? m50.ts\n?? m51.ts\n?? m52.ts\n?? m53.ts\n?? m54.ts\n?? m55.ts\n?? m56.ts\n?? m57.ts\n?? m58.ts\n?? m59.ts\n?? m6.ts\n?? m60.ts\n?? m61.ts\n?? m62.ts\n?? m63.ts\n?? m64.ts\n?? m65.ts\n?? m66.ts\n?? m67.ts\n?? m68.ts\n?? m69.ts\n?? m7.ts\n?? m70.ts\n?? m71.ts\n?? m72.ts\n?? m73.ts\n?? m74.ts\n?? m75.ts\n?? m76.ts\n?? m77.ts\n?? m78.ts\n?? m79.ts\n?? m8.ts\n?? m80.ts\n?? m81.ts\n?? m82.ts\n?? m83.ts\n?? m84.ts\n?? m85.ts\n?? m86.ts\n?? m87.ts\n?? m88.ts\n?? m89.ts\n?? m9.ts\n?? m90.ts\n?? m91.ts\n?? m92.ts\n?? m93.ts\n?? m94.ts\n?? m95.ts\n?? m96.ts\n?? m97.ts\n?? m98.ts\n?? m99.ts\n?? main.ts\n",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 33,
+        "worker": 0,
+        "kind": "log",
+        "phase": "execution",
+        "queuedMs": 0,
+        "serviceMs": 151.3207999999995,
+        "totalMs": 151.35699999999997,
+        "receipt": 524288,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 34,
+        "worker": 0,
+        "kind": "build",
+        "phase": "execution",
+        "queuedMs": 0,
+        "serviceMs": 263.1425999999992,
+        "totalMs": 263.1952999999994,
+        "receipt": {
+          "digest": "5e790d37697ba8f5b4868525328c08a77a90ec5bd6cb7ca2315592ec1b3f2b7d",
+          "services": [
+            {
+              "pid": 36704,
+              "closed": true,
+              "code": null,
+              "signal": "SIGTERM"
+            }
+          ]
+        },
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 35,
+        "worker": 0,
+        "kind": "read",
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 1.9803000000010798,
+        "totalMs": 2.044399999998859,
+        "receipt": "9d4c0beff29e12fcc8045e18b38c3367b12f2485ac752a361873e3469178ab68",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 36,
+        "worker": 0,
+        "kind": "remote-wait",
+        "phase": "remote-wait",
+        "queuedMs": 0,
+        "serviceMs": 75.2541999999994,
+        "totalMs": 75.28900000000067,
+        "receipt": "remote-receipt",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 37,
+        "worker": 0,
+        "kind": "retrieval",
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 1.230199999999968,
+        "totalMs": 1.2754000000004453,
+        "receipt": 241,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 38,
+        "worker": 0,
+        "kind": "git",
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 88.77820000000065,
+        "totalMs": 88.8130999999994,
+        "receipt": "?? .verse-claw/harness/README.md\n?? .verse-claw/harness/specs/README.md\n?? .verse-claw/harness/specs/guides/README.md\n?? .verse-claw/harness/specs/layers/README.md\n?? .verse-claw/harness/specs/rules/README.md\n?? .verse-claw/harness/specs/scenarios/README.md\n?? .verse-claw/harness/specs/tasks/README.md\n?? .verse-claw/harness/specs/tasks/_template.md\n?? .verse-claw/harness/workspace/.gitignore\n?? .verse-claw/harness/workspace/README.md\n?? .verse-claw/harness/workspace/context-packs.md\n?? .verse-claw/harness/workspace/decisions.md\n?? .verse-claw/harness/workspace/risks.md\n?? .verse-claw/harness/workspace/schema.md\n?? .verse-claw/harness/workspace/task-index.md\n?? .verse-claw/harness/workspace/validation.md\n?? build.cjs\n?? corpus.txt\n?? m0.ts\n?? m1.ts\n?? m10.ts\n?? m100.ts\n?? m101.ts\n?? m102.ts\n?? m103.ts\n?? m104.ts\n?? m105.ts\n?? m106.ts\n?? m107.ts\n?? m108.ts\n?? m109.ts\n?? m11.ts\n?? m110.ts\n?? m111.ts\n?? m112.ts\n?? m113.ts\n?? m114.ts\n?? m115.ts\n?? m116.ts\n?? m117.ts\n?? m118.ts\n?? m119.ts\n?? m12.ts\n?? m120.ts\n?? m121.ts\n?? m122.ts\n?? m123.ts\n?? m124.ts\n?? m125.ts\n?? m126.ts\n?? m127.ts\n?? m13.ts\n?? m14.ts\n?? m15.ts\n?? m16.ts\n?? m17.ts\n?? m18.ts\n?? m19.ts\n?? m2.ts\n?? m20.ts\n?? m21.ts\n?? m22.ts\n?? m23.ts\n?? m24.ts\n?? m25.ts\n?? m26.ts\n?? m27.ts\n?? m28.ts\n?? m29.ts\n?? m3.ts\n?? m30.ts\n?? m31.ts\n?? m32.ts\n?? m33.ts\n?? m34.ts\n?? m35.ts\n?? m36.ts\n?? m37.ts\n?? m38.ts\n?? m39.ts\n?? m4.ts\n?? m40.ts\n?? m41.ts\n?? m42.ts\n?? m43.ts\n?? m44.ts\n?? m45.ts\n?? m46.ts\n?? m47.ts\n?? m48.ts\n?? m49.ts\n?? m5.ts\n?? m50.ts\n?? m51.ts\n?? m52.ts\n?? m53.ts\n?? m54.ts\n?? m55.ts\n?? m56.ts\n?? m57.ts\n?? m58.ts\n?? m59.ts\n?? m6.ts\n?? m60.ts\n?? m61.ts\n?? m62.ts\n?? m63.ts\n?? m64.ts\n?? m65.ts\n?? m66.ts\n?? m67.ts\n?? m68.ts\n?? m69.ts\n?? m7.ts\n?? m70.ts\n?? m71.ts\n?? m72.ts\n?? m73.ts\n?? m74.ts\n?? m75.ts\n?? m76.ts\n?? m77.ts\n?? m78.ts\n?? m79.ts\n?? m8.ts\n?? m80.ts\n?? m81.ts\n?? m82.ts\n?? m83.ts\n?? m84.ts\n?? m85.ts\n?? m86.ts\n?? m87.ts\n?? m88.ts\n?? m89.ts\n?? m9.ts\n?? m90.ts\n?? m91.ts\n?? m92.ts\n?? m93.ts\n?? m94.ts\n?? m95.ts\n?? m96.ts\n?? m97.ts\n?? m98.ts\n?? m99.ts\n?? main.ts\n",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 39,
+        "worker": 0,
+        "kind": "log",
+        "phase": "execution",
+        "queuedMs": 0,
+        "serviceMs": 149.42540000000008,
+        "totalMs": 149.47220000000016,
+        "receipt": 524288,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 40,
+        "worker": 0,
+        "kind": "build",
+        "phase": "execution",
+        "queuedMs": 0,
+        "serviceMs": 272.8676999999989,
+        "totalMs": 272.9285000000018,
+        "receipt": {
+          "digest": "5e790d37697ba8f5b4868525328c08a77a90ec5bd6cb7ca2315592ec1b3f2b7d",
+          "services": [
+            {
+              "pid": 33236,
+              "closed": true,
+              "code": null,
+              "signal": "SIGTERM"
+            }
+          ]
+        },
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 41,
+        "worker": 0,
+        "kind": "read",
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 1.4457000000002154,
+        "totalMs": 1.4834999999984575,
+        "receipt": "9d4c0beff29e12fcc8045e18b38c3367b12f2485ac752a361873e3469178ab68",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 42,
+        "worker": 0,
+        "kind": "remote-wait",
+        "phase": "remote-wait",
+        "queuedMs": 0,
+        "serviceMs": 66.84469999999783,
+        "totalMs": 66.87279999999737,
+        "receipt": "remote-receipt",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 43,
+        "worker": 0,
+        "kind": "retrieval",
+        "phase": "read",
+        "queuedMs": 1,
+        "serviceMs": 1.2800999999999476,
+        "totalMs": 1.3584000000009837,
+        "receipt": 241,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 44,
+        "worker": 0,
+        "kind": "git",
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 102.27000000000044,
+        "totalMs": 102.30320000000211,
+        "receipt": "?? .verse-claw/harness/README.md\n?? .verse-claw/harness/specs/README.md\n?? .verse-claw/harness/specs/guides/README.md\n?? .verse-claw/harness/specs/layers/README.md\n?? .verse-claw/harness/specs/rules/README.md\n?? .verse-claw/harness/specs/scenarios/README.md\n?? .verse-claw/harness/specs/tasks/README.md\n?? .verse-claw/harness/specs/tasks/_template.md\n?? .verse-claw/harness/workspace/.gitignore\n?? .verse-claw/harness/workspace/README.md\n?? .verse-claw/harness/workspace/context-packs.md\n?? .verse-claw/harness/workspace/decisions.md\n?? .verse-claw/harness/workspace/risks.md\n?? .verse-claw/harness/workspace/schema.md\n?? .verse-claw/harness/workspace/task-index.md\n?? .verse-claw/harness/workspace/validation.md\n?? build.cjs\n?? corpus.txt\n?? m0.ts\n?? m1.ts\n?? m10.ts\n?? m100.ts\n?? m101.ts\n?? m102.ts\n?? m103.ts\n?? m104.ts\n?? m105.ts\n?? m106.ts\n?? m107.ts\n?? m108.ts\n?? m109.ts\n?? m11.ts\n?? m110.ts\n?? m111.ts\n?? m112.ts\n?? m113.ts\n?? m114.ts\n?? m115.ts\n?? m116.ts\n?? m117.ts\n?? m118.ts\n?? m119.ts\n?? m12.ts\n?? m120.ts\n?? m121.ts\n?? m122.ts\n?? m123.ts\n?? m124.ts\n?? m125.ts\n?? m126.ts\n?? m127.ts\n?? m13.ts\n?? m14.ts\n?? m15.ts\n?? m16.ts\n?? m17.ts\n?? m18.ts\n?? m19.ts\n?? m2.ts\n?? m20.ts\n?? m21.ts\n?? m22.ts\n?? m23.ts\n?? m24.ts\n?? m25.ts\n?? m26.ts\n?? m27.ts\n?? m28.ts\n?? m29.ts\n?? m3.ts\n?? m30.ts\n?? m31.ts\n?? m32.ts\n?? m33.ts\n?? m34.ts\n?? m35.ts\n?? m36.ts\n?? m37.ts\n?? m38.ts\n?? m39.ts\n?? m4.ts\n?? m40.ts\n?? m41.ts\n?? m42.ts\n?? m43.ts\n?? m44.ts\n?? m45.ts\n?? m46.ts\n?? m47.ts\n?? m48.ts\n?? m49.ts\n?? m5.ts\n?? m50.ts\n?? m51.ts\n?? m52.ts\n?? m53.ts\n?? m54.ts\n?? m55.ts\n?? m56.ts\n?? m57.ts\n?? m58.ts\n?? m59.ts\n?? m6.ts\n?? m60.ts\n?? m61.ts\n?? m62.ts\n?? m63.ts\n?? m64.ts\n?? m65.ts\n?? m66.ts\n?? m67.ts\n?? m68.ts\n?? m69.ts\n?? m7.ts\n?? m70.ts\n?? m71.ts\n?? m72.ts\n?? m73.ts\n?? m74.ts\n?? m75.ts\n?? m76.ts\n?? m77.ts\n?? m78.ts\n?? m79.ts\n?? m8.ts\n?? m80.ts\n?? m81.ts\n?? m82.ts\n?? m83.ts\n?? m84.ts\n?? m85.ts\n?? m86.ts\n?? m87.ts\n?? m88.ts\n?? m89.ts\n?? m9.ts\n?? m90.ts\n?? m91.ts\n?? m92.ts\n?? m93.ts\n?? m94.ts\n?? m95.ts\n?? m96.ts\n?? m97.ts\n?? m98.ts\n?? m99.ts\n?? main.ts\n",
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 45,
+        "worker": 0,
+        "kind": "log",
+        "phase": "execution",
+        "queuedMs": 0,
+        "serviceMs": 145.68089999999938,
+        "totalMs": 145.75150000000212,
+        "receipt": 524288,
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 46,
+        "worker": 0,
+        "kind": "build",
+        "phase": "execution",
+        "queuedMs": 0,
+        "serviceMs": 269.97329999999783,
+        "totalMs": 270.02770000000237,
+        "receipt": {
+          "digest": "5e790d37697ba8f5b4868525328c08a77a90ec5bd6cb7ca2315592ec1b3f2b7d",
+          "services": [
+            {
+              "pid": 41240,
+              "closed": true,
+              "code": null,
+              "signal": "SIGTERM"
+            }
+          ]
+        },
+        "receiptVerified": true,
+        "status": "success"
+      },
+      {
+        "id": 47,
+        "worker": 0,
+        "kind": "read",
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 2.602100000000064,
+        "totalMs": 2.660700000000361,
+        "receipt": "9d4c0beff29e12fcc8045e18b38c3367b12f2485ac752a361873e3469178ab68",
+        "receiptVerified": true,
+        "status": "success"
+      }
+    ],
+    "samples": [
+      {
+        "at": 1794160431176,
+        "memory": {
+          "rss": 774705152,
+          "heapTotal": 191545344,
+          "heapUsed": 111408120,
+          "external": 144092808,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 10.40651,
+              "percentCPUUsage": 3.596005487651977,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 16556,
+            "type": "Browser",
+            "creationTime": 1794160418459.145,
+            "memory": {
+              "workingSetSize": 756548,
+              "peakWorkingSetSize": 756548,
+              "privateBytes": 641900
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.094127,
+              "percentCPUUsage": 0.03968644316745455,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 43992,
+            "type": "Utility",
+            "creationTime": 1794160423555.554,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 57996,
+              "peakWorkingSetSize": 57996,
+              "privateBytes": 14200
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 8.427675,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 44772,
+            "type": "Tab",
+            "creationTime": 1794160423849.545,
+            "memory": {
+              "workingSetSize": 475184,
+              "peakWorkingSetSize": 475532,
+              "privateBytes": 342588
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {},
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": []
+        }
+      },
+      {
+        "at": 1794160431426,
+        "memory": {
+          "rss": 742432768,
+          "heapTotal": 192528384,
+          "heapUsed": 113284116,
+          "external": 140858058,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 10.739605,
+              "percentCPUUsage": 8.312976923967687,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 16556,
+            "type": "Browser",
+            "creationTime": 1794160418459.145,
+            "memory": {
+              "workingSetSize": 725032,
+              "peakWorkingSetSize": 756552,
+              "privateBytes": 609928
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.094127,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 43992,
+            "type": "Utility",
+            "creationTime": 1794160423555.554,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 57996,
+              "peakWorkingSetSize": 57996,
+              "privateBytes": 14200
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 8.798466,
+              "percentCPUUsage": 9.253969220571264,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 44772,
+            "type": "Tab",
+            "creationTime": 1794160423849.545,
+            "memory": {
+              "workingSetSize": 492172,
+              "peakWorkingSetSize": 492172,
+              "privateBytes": 361328
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a1-3-before\\attempt-1-d8aab9a0-6f51-4a47-b4d4-bfbbd338bae8\\electron\\verse-claw-e2e-run-3t8yVU\\verse-claw-e2e-home-pK0lCy\\mixed-work": {
+              "active": 1,
+              "queued": 0,
+              "limit": 2,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 1,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": []
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": []
+        }
+      },
+      {
+        "at": 1794160431676,
+        "memory": {
+          "rss": 748793856,
+          "heapTotal": 192528384,
+          "heapUsed": 113431796,
+          "external": 142430922,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 11.043953,
+              "percentCPUUsage": 7.614913769636023,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 16556,
+            "type": "Browser",
+            "creationTime": 1794160418459.145,
+            "memory": {
+              "workingSetSize": 731244,
+              "peakWorkingSetSize": 756552,
+              "privateBytes": 614108
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.094127,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 43992,
+            "type": "Utility",
+            "creationTime": 1794160423555.554,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 57996,
+              "peakWorkingSetSize": 57996,
+              "privateBytes": 14200
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 9.187636,
+              "percentCPUUsage": 9.738638047077382,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 44772,
+            "type": "Tab",
+            "creationTime": 1794160423849.545,
+            "memory": {
+              "workingSetSize": 510004,
+              "peakWorkingSetSize": 510004,
+              "privateBytes": 378044
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a1-3-before\\attempt-1-d8aab9a0-6f51-4a47-b4d4-bfbbd338bae8\\electron\\verse-claw-e2e-run-3t8yVU\\verse-claw-e2e-home-pK0lCy\\mixed-work": {
+              "active": 1,
+              "queued": 0,
+              "limit": 1,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 1,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794160431495,
+                  "from": 2,
+                  "to": 1,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794160431495,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794160431962,
+        "memory": {
+          "rss": 751620096,
+          "heapTotal": 193249280,
+          "heapUsed": 114528628,
+          "external": 143881669,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 11.434959,
+              "percentCPUUsage": 8.541277108854832,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 16556,
+            "type": "Browser",
+            "creationTime": 1794160418459.145,
+            "memory": {
+              "workingSetSize": 734004,
+              "peakWorkingSetSize": 756552,
+              "privateBytes": 614700
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.094127,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 43992,
+            "type": "Utility",
+            "creationTime": 1794160423555.554,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 57996,
+              "peakWorkingSetSize": 57996,
+              "privateBytes": 14200
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 9.657934,
+              "percentCPUUsage": 10.273288549789072,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 44772,
+            "type": "Tab",
+            "creationTime": 1794160423849.545,
+            "memory": {
+              "workingSetSize": 535484,
+              "peakWorkingSetSize": 535484,
+              "privateBytes": 401996
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a1-3-before\\attempt-1-d8aab9a0-6f51-4a47-b4d4-bfbbd338bae8\\electron\\verse-claw-e2e-run-3t8yVU\\verse-claw-e2e-home-pK0lCy\\mixed-work": {
+              "active": 1,
+              "queued": 0,
+              "limit": 1,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 1,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794160431495,
+                  "from": 2,
+                  "to": 1,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794160431495,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794160432217,
+        "memory": {
+          "rss": 749527040,
+          "heapTotal": 193249280,
+          "heapUsed": 114665332,
+          "external": 145454533,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 11.744283,
+              "percentCPUUsage": 7.588463878476243,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 16556,
+            "type": "Browser",
+            "creationTime": 1794160418459.145,
+            "memory": {
+              "workingSetSize": 731960,
+              "peakWorkingSetSize": 756552,
+              "privateBytes": 612480
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.094127,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 43992,
+            "type": "Utility",
+            "creationTime": 1794160423555.554,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 57996,
+              "peakWorkingSetSize": 57996,
+              "privateBytes": 14200
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 9.998692,
+              "percentCPUUsage": 8.359714164592836,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 44772,
+            "type": "Tab",
+            "creationTime": 1794160423849.545,
+            "memory": {
+              "workingSetSize": 548724,
+              "peakWorkingSetSize": 548724,
+              "privateBytes": 414368
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a1-3-before\\attempt-1-d8aab9a0-6f51-4a47-b4d4-bfbbd338bae8\\electron\\verse-claw-e2e-run-3t8yVU\\verse-claw-e2e-home-pK0lCy\\mixed-work": {
+              "active": 1,
+              "queued": 0,
+              "limit": 1,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 1,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794160431495,
+                  "from": 2,
+                  "to": 1,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794160431495,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794160432478,
+        "memory": {
+          "rss": 753291264,
+          "heapTotal": 194232320,
+          "heapUsed": 115625288,
+          "external": 146895038,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 12.050704,
+              "percentCPUUsage": 7.312815260016725,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 16556,
+            "type": "Browser",
+            "creationTime": 1794160418459.145,
+            "memory": {
+              "workingSetSize": 735636,
+              "peakWorkingSetSize": 756552,
+              "privateBytes": 615404
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.094127,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 43992,
+            "type": "Utility",
+            "creationTime": 1794160423555.554,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 57996,
+              "peakWorkingSetSize": 57996,
+              "privateBytes": 14200
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 10.422084,
+              "percentCPUUsage": 10.104242239108023,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 44772,
+            "type": "Tab",
+            "creationTime": 1794160423849.545,
+            "memory": {
+              "workingSetSize": 571512,
+              "peakWorkingSetSize": 571512,
+              "privateBytes": 438004
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a1-3-before\\attempt-1-d8aab9a0-6f51-4a47-b4d4-bfbbd338bae8\\electron\\verse-claw-e2e-run-3t8yVU\\verse-claw-e2e-home-pK0lCy\\mixed-work": {
+              "active": 1,
+              "queued": 0,
+              "limit": 1,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 1,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794160431495,
+                  "from": 2,
+                  "to": 1,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794160431495,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794160432752,
+        "memory": {
+          "rss": 756887552,
+          "heapTotal": 194232320,
+          "heapUsed": 115886616,
+          "external": 148469951,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 12.409913,
+              "percentCPUUsage": 8.201148679995178,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 16556,
+            "type": "Browser",
+            "creationTime": 1794160418459.145,
+            "memory": {
+              "workingSetSize": 739148,
+              "peakWorkingSetSize": 756552,
+              "privateBytes": 616436
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.094127,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 43992,
+            "type": "Utility",
+            "creationTime": 1794160423555.554,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 57996,
+              "peakWorkingSetSize": 57996,
+              "privateBytes": 14200
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 11.072019,
+              "percentCPUUsage": 14.837397817177672,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 44772,
+            "type": "Tab",
+            "creationTime": 1794160423849.545,
+            "memory": {
+              "workingSetSize": 589260,
+              "peakWorkingSetSize": 589260,
+              "privateBytes": 454272
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a1-3-before\\attempt-1-d8aab9a0-6f51-4a47-b4d4-bfbbd338bae8\\electron\\verse-claw-e2e-run-3t8yVU\\verse-claw-e2e-home-pK0lCy\\mixed-work": {
+              "active": 1,
+              "queued": 0,
+              "limit": 1,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 1,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794160431495,
+                  "from": 2,
+                  "to": 1,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794160431495,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794160433003,
+        "memory": {
+          "rss": 762916864,
+          "heapTotal": 194232320,
+          "heapUsed": 115949868,
+          "external": 149190203,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 12.694143,
+              "percentCPUUsage": 7.083451295322325,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 16556,
+            "type": "Browser",
+            "creationTime": 1794160418459.145,
+            "memory": {
+              "workingSetSize": 745036,
+              "peakWorkingSetSize": 756552,
+              "privateBytes": 622552
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.094127,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 43992,
+            "type": "Utility",
+            "creationTime": 1794160423555.554,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 57996,
+              "peakWorkingSetSize": 57996,
+              "privateBytes": 14200
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 11.423892,
+              "percentCPUUsage": 8.770268626598659,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 44772,
+            "type": "Tab",
+            "creationTime": 1794160423849.545,
+            "memory": {
+              "workingSetSize": 521228,
+              "peakWorkingSetSize": 597796,
+              "privateBytes": 385556
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a1-3-before\\attempt-1-d8aab9a0-6f51-4a47-b4d4-bfbbd338bae8\\electron\\verse-claw-e2e-run-3t8yVU\\verse-claw-e2e-home-pK0lCy\\mixed-work": {
+              "active": 1,
+              "queued": 0,
+              "limit": 1,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 1,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794160431495,
+                  "from": 2,
+                  "to": 1,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794160431495,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794160433266,
+        "memory": {
+          "rss": 764764160,
+          "heapTotal": 194953216,
+          "heapUsed": 116958708,
+          "external": 149921098,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 13.012846,
+              "percentCPUUsage": 7.5682729207036745,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 16556,
+            "type": "Browser",
+            "creationTime": 1794160418459.145,
+            "memory": {
+              "workingSetSize": 746840,
+              "peakWorkingSetSize": 756552,
+              "privateBytes": 624348
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.094127,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 43992,
+            "type": "Utility",
+            "creationTime": 1794160423555.554,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 57996,
+              "peakWorkingSetSize": 57996,
+              "privateBytes": 14200
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 11.86047,
+              "percentCPUUsage": 10.36714754671388,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 44772,
+            "type": "Tab",
+            "creationTime": 1794160423849.545,
+            "memory": {
+              "workingSetSize": 467524,
+              "peakWorkingSetSize": 597796,
+              "privateBytes": 332464
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a1-3-before\\attempt-1-d8aab9a0-6f51-4a47-b4d4-bfbbd338bae8\\electron\\verse-claw-e2e-run-3t8yVU\\verse-claw-e2e-home-pK0lCy\\mixed-work": {
+              "active": 1,
+              "queued": 0,
+              "limit": 1,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 1,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794160431495,
+                  "from": 2,
+                  "to": 1,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794160431495,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794160433528,
+        "memory": {
+          "rss": 754257920,
+          "heapTotal": 192266240,
+          "heapUsed": 110676304,
+          "external": 151493962,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 13.566891,
+              "percentCPUUsage": 13.243107450722432,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 16556,
+            "type": "Browser",
+            "creationTime": 1794160418459.145,
+            "memory": {
+              "workingSetSize": 736580,
+              "peakWorkingSetSize": 756552,
+              "privateBytes": 616744
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.094127,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 43992,
+            "type": "Utility",
+            "creationTime": 1794160423555.554,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 57996,
+              "peakWorkingSetSize": 57996,
+              "privateBytes": 14200
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 12.248995,
+              "percentCPUUsage": 9.287426518115652,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 44772,
+            "type": "Tab",
+            "creationTime": 1794160423849.545,
+            "memory": {
+              "workingSetSize": 476540,
+              "peakWorkingSetSize": 597796,
+              "privateBytes": 338332
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a1-3-before\\attempt-1-d8aab9a0-6f51-4a47-b4d4-bfbbd338bae8\\electron\\verse-claw-e2e-run-3t8yVU\\verse-claw-e2e-home-pK0lCy\\mixed-work": {
+              "active": 1,
+              "queued": 0,
+              "limit": 1,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 1,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794160431495,
+                  "from": 2,
+                  "to": 1,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794160431495,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794160433779,
+        "memory": {
+          "rss": 756203520,
+          "heapTotal": 192987136,
+          "heapUsed": 111802872,
+          "external": 142631434,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 13.882477,
+              "percentCPUUsage": 7.8535863315654515,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 16556,
+            "type": "Browser",
+            "creationTime": 1794160418459.145,
+            "memory": {
+              "workingSetSize": 738480,
+              "peakWorkingSetSize": 756552,
+              "privateBytes": 616756
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.097418,
+              "percentCPUUsage": 0.08189924625816752,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 43992,
+            "type": "Utility",
+            "creationTime": 1794160423555.554,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 58012,
+              "peakWorkingSetSize": 58012,
+              "privateBytes": 14208
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 12.640905,
+              "percentCPUUsage": 9.752964387532451,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 44772,
+            "type": "Tab",
+            "creationTime": 1794160423849.545,
+            "memory": {
+              "workingSetSize": 487236,
+              "peakWorkingSetSize": 597796,
+              "privateBytes": 348992
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a1-3-before\\attempt-1-d8aab9a0-6f51-4a47-b4d4-bfbbd338bae8\\electron\\verse-claw-e2e-run-3t8yVU\\verse-claw-e2e-home-pK0lCy\\mixed-work": {
+              "active": 1,
+              "queued": 0,
+              "limit": 1,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 1,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794160431495,
+                  "from": 2,
+                  "to": 1,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794160431495,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794160434040,
+        "memory": {
+          "rss": 757927936,
+          "heapTotal": 192987136,
+          "heapUsed": 112109516,
+          "external": 144205698,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 14.208725,
+              "percentCPUUsage": 7.797275800357924,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 16556,
+            "type": "Browser",
+            "creationTime": 1794160418459.145,
+            "memory": {
+              "workingSetSize": 740164,
+              "peakWorkingSetSize": 756552,
+              "privateBytes": 618072
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.101052,
+              "percentCPUUsage": 0.08685003479737223,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 43992,
+            "type": "Utility",
+            "creationTime": 1794160423555.554,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 58012,
+              "peakWorkingSetSize": 58012,
+              "privateBytes": 14208
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 13.076063,
+              "percentCPUUsage": 10.399889490509185,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 44772,
+            "type": "Tab",
+            "creationTime": 1794160423849.545,
+            "memory": {
+              "workingSetSize": 501780,
+              "peakWorkingSetSize": 597796,
+              "privateBytes": 363508
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a1-3-before\\attempt-1-d8aab9a0-6f51-4a47-b4d4-bfbbd338bae8\\electron\\verse-claw-e2e-run-3t8yVU\\verse-claw-e2e-home-pK0lCy\\mixed-work": {
+              "active": 1,
+              "queued": 0,
+              "limit": 1,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 1,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794160431495,
+                  "from": 2,
+                  "to": 1,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794160431495,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794160434290,
+        "memory": {
+          "rss": 758636544,
+          "heapTotal": 193708032,
+          "heapUsed": 113051652,
+          "external": 145646203,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 14.498739,
+              "percentCPUUsage": 7.248059613162241,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 16556,
+            "type": "Browser",
+            "creationTime": 1794160418459.145,
+            "memory": {
+              "workingSetSize": 740856,
+              "peakWorkingSetSize": 756552,
+              "privateBytes": 618088
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.101052,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 43992,
+            "type": "Utility",
+            "creationTime": 1794160423555.554,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 58012,
+              "peakWorkingSetSize": 58012,
+              "privateBytes": 14208
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 13.446628,
+              "percentCPUUsage": 9.261309561893185,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 44772,
+            "type": "Tab",
+            "creationTime": 1794160423849.545,
+            "memory": {
+              "workingSetSize": 512088,
+              "peakWorkingSetSize": 597796,
+              "privateBytes": 373728
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a1-3-before\\attempt-1-d8aab9a0-6f51-4a47-b4d4-bfbbd338bae8\\electron\\verse-claw-e2e-run-3t8yVU\\verse-claw-e2e-home-pK0lCy\\mixed-work": {
+              "active": 1,
+              "queued": 0,
+              "limit": 1,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 1,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794160431495,
+                  "from": 2,
+                  "to": 1,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794160431495,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794160434541,
+        "memory": {
+          "rss": 760250368,
+          "heapTotal": 193708032,
+          "heapUsed": 113297568,
+          "external": 147221116,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 14.815254,
+              "percentCPUUsage": 7.903517235593058,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 16556,
+            "type": "Browser",
+            "creationTime": 1794160418459.145,
+            "memory": {
+              "workingSetSize": 742432,
+              "peakWorkingSetSize": 756552,
+              "privateBytes": 619168
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.101052,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 43992,
+            "type": "Utility",
+            "creationTime": 1794160423555.554,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 58012,
+              "peakWorkingSetSize": 58012,
+              "privateBytes": 14208
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 13.813184,
+              "percentCPUUsage": 9.153391906091807,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 44772,
+            "type": "Tab",
+            "creationTime": 1794160423849.545,
+            "memory": {
+              "workingSetSize": 525532,
+              "peakWorkingSetSize": 597796,
+              "privateBytes": 387296
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a1-3-before\\attempt-1-d8aab9a0-6f51-4a47-b4d4-bfbbd338bae8\\electron\\verse-claw-e2e-run-3t8yVU\\verse-claw-e2e-home-pK0lCy\\mixed-work": {
+              "active": 1,
+              "queued": 0,
+              "limit": 1,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 1,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794160431495,
+                  "from": 2,
+                  "to": 1,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794160431495,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794160434805,
+        "memory": {
+          "rss": 762302464,
+          "heapTotal": 193708032,
+          "heapUsed": 113375636,
+          "external": 147941368,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 15.10867,
+              "percentCPUUsage": 6.942010167810514,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 16556,
+            "type": "Browser",
+            "creationTime": 1794160418459.145,
+            "memory": {
+              "workingSetSize": 744460,
+              "peakWorkingSetSize": 756552,
+              "privateBytes": 622424
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.101052,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 43992,
+            "type": "Utility",
+            "creationTime": 1794160423555.554,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 58012,
+              "peakWorkingSetSize": 58012,
+              "privateBytes": 14208
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 14.232047,
+              "percentCPUUsage": 9.908270032133165,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 44772,
+            "type": "Tab",
+            "creationTime": 1794160423849.545,
+            "memory": {
+              "workingSetSize": 534832,
+              "peakWorkingSetSize": 597796,
+              "privateBytes": 396488
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a1-3-before\\attempt-1-d8aab9a0-6f51-4a47-b4d4-bfbbd338bae8\\electron\\verse-claw-e2e-run-3t8yVU\\verse-claw-e2e-home-pK0lCy\\mixed-work": {
+              "active": 1,
+              "queued": 0,
+              "limit": 1,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 1,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794160431495,
+                  "from": 2,
+                  "to": 1,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794160431495,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794160435100,
+        "memory": {
+          "rss": 763555840,
+          "heapTotal": 194428928,
+          "heapUsed": 114513360,
+          "external": 150244727,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 15.48216,
+              "percentCPUUsage": 7.901620393877233,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 16556,
+            "type": "Browser",
+            "creationTime": 1794160418459.145,
+            "memory": {
+              "workingSetSize": 745660,
+              "peakWorkingSetSize": 756552,
+              "privateBytes": 620212
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.101052,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 43992,
+            "type": "Utility",
+            "creationTime": 1794160423555.554,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 58012,
+              "peakWorkingSetSize": 58012,
+              "privateBytes": 14208
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 14.678103,
+              "percentCPUUsage": 9.436168736439855,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 44772,
+            "type": "Tab",
+            "creationTime": 1794160423849.545,
+            "memory": {
+              "workingSetSize": 549916,
+              "peakWorkingSetSize": 597796,
+              "privateBytes": 411520
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a1-3-before\\attempt-1-d8aab9a0-6f51-4a47-b4d4-bfbbd338bae8\\electron\\verse-claw-e2e-run-3t8yVU\\verse-claw-e2e-home-pK0lCy\\mixed-work": {
+              "active": 1,
+              "queued": 0,
+              "limit": 1,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 1,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794160431495,
+                  "from": 2,
+                  "to": 1,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794160431495,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794160435353,
+        "memory": {
+          "rss": 769179648,
+          "heapTotal": 194428928,
+          "heapUsed": 114556468,
+          "external": 150964979,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 15.748623,
+              "percentCPUUsage": 6.591963861621279,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 16556,
+            "type": "Browser",
+            "creationTime": 1794160418459.145,
+            "memory": {
+              "workingSetSize": 751152,
+              "peakWorkingSetSize": 756552,
+              "privateBytes": 625088
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.101052,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 43992,
+            "type": "Utility",
+            "creationTime": 1794160423555.554,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 58012,
+              "peakWorkingSetSize": 58012,
+              "privateBytes": 14208
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 15.081075,
+              "percentCPUUsage": 9.969776859405988,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 44772,
+            "type": "Tab",
+            "creationTime": 1794160423849.545,
+            "memory": {
+              "workingSetSize": 563532,
+              "peakWorkingSetSize": 597796,
+              "privateBytes": 424920
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a1-3-before\\attempt-1-d8aab9a0-6f51-4a47-b4d4-bfbbd338bae8\\electron\\verse-claw-e2e-run-3t8yVU\\verse-claw-e2e-home-pK0lCy\\mixed-work": {
+              "active": 1,
+              "queued": 0,
+              "limit": 1,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 1,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794160431495,
+                  "from": 2,
+                  "to": 1,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794160431495,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794160435603,
+        "memory": {
+          "rss": 765665280,
+          "heapTotal": 195149824,
+          "heapUsed": 115545988,
+          "external": 151695474,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 16.040509,
+              "percentCPUUsage": 7.298142547386445,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 16556,
+            "type": "Browser",
+            "creationTime": 1794160418459.145,
+            "memory": {
+              "workingSetSize": 747720,
+              "peakWorkingSetSize": 756552,
+              "privateBytes": 622016
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.101052,
+              "percentCPUUsage": 0,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 43992,
+            "type": "Utility",
+            "creationTime": 1794160423555.554,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 58012,
+              "peakWorkingSetSize": 58012,
+              "privateBytes": 14208
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 15.474065,
+              "percentCPUUsage": 9.827894926376441,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 44772,
+            "type": "Tab",
+            "creationTime": 1794160423849.545,
+            "memory": {
+              "workingSetSize": 579464,
+              "peakWorkingSetSize": 597796,
+              "privateBytes": 441964
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a1-3-before\\attempt-1-d8aab9a0-6f51-4a47-b4d4-bfbbd338bae8\\electron\\verse-claw-e2e-run-3t8yVU\\verse-claw-e2e-home-pK0lCy\\mixed-work": {
+              "active": 1,
+              "queued": 0,
+              "limit": 1,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 1,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794160431495,
+                  "from": 2,
+                  "to": 1,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794160431495,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      {
+        "at": 1794160435867,
+        "memory": {
+          "rss": 757870592,
+          "heapTotal": 191598592,
+          "heapUsed": 110399768,
+          "external": 153253962,
+          "arrayBuffers": 0
+        },
+        "metrics": [
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 16.585334,
+              "percentCPUUsage": 12.910251330775413,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 16556,
+            "type": "Browser",
+            "creationTime": 1794160418459.145,
+            "memory": {
+              "workingSetSize": 740556,
+              "peakWorkingSetSize": 756552,
+              "privateBytes": 615508
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 0.1011,
+              "percentCPUUsage": 0.0011373415777960595,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 43992,
+            "type": "Utility",
+            "creationTime": 1794160423555.554,
+            "serviceName": "network.mojom.NetworkService",
+            "name": "Network Service",
+            "memory": {
+              "workingSetSize": 58016,
+              "peakWorkingSetSize": 58016,
+              "privateBytes": 14212
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          },
+          {
+            "cpu": {
+              "cumulativeCPUUsage": 15.858042,
+              "percentCPUUsage": 9.09784273436878,
+              "idleWakeupsPerSecond": 0
+            },
+            "pid": 44772,
+            "type": "Tab",
+            "creationTime": 1794160423849.545,
+            "memory": {
+              "workingSetSize": 597284,
+              "peakWorkingSetSize": 597796,
+              "privateBytes": 459364
+            },
+            "integrityLevel": "medium",
+            "sandboxed": false
+          }
+        ],
+        "accounts": {
+          "accounts": {
+            "workspaceExec:D:\\tmp\\tf0838\\acceptance-v3\\w1-a1-3-before\\attempt-1-d8aab9a0-6f51-4a47-b4d4-bfbbd338bae8\\electron\\verse-claw-e2e-run-3t8yVU\\verse-claw-e2e-home-pK0lCy\\mixed-work": {
+              "active": 1,
+              "queued": 0,
+              "limit": 1,
+              "minLimit": 1,
+              "maxLimit": 4,
+              "activeByQos": {
+                "interactive": 1,
+                "background": 0,
+                "opportunistic": 0
+              },
+              "limitHistory": [
+                {
+                  "at": 1794160431495,
+                  "from": 2,
+                  "to": 1,
+                  "reason": "gradient2 latency sample"
+                }
+              ]
+            }
+          },
+          "chatHistory": null,
+          "fair": true,
+          "limitEvents": [
+            {
+              "at": 1794160431495,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      }
+    ],
+    "elapsedMs": 4749.631099999999,
+    "startedAt": 1794160431175,
+    "endedAt": 1794160435925,
+    "ownedChildren": 24,
+    "exitedChildren": 24,
+    "cpu": {
+      "user": 5219000,
+      "system": 844000
+    },
+    "active": 0,
+    "queued": 0,
+    "fair": true,
+    "pressureBytes": 134217728
+  },
+  "renderer": {
+    "inputRetained": true,
+    "finalTextCorrect": true,
+    "terminalCompleted": true,
+    "inputStartedAt": 1794160431188,
+    "samples": {
+      "recording": false,
+      "inputLatencies": [
+        184.19999999552965,
+        70.29999999701977,
+        86.89999999850988,
+        105.19999999552965,
+        215.20000000298023,
+        90.5,
+        129.90000000596046,
+        167.10000000149012,
+        85.20000000298023,
+        92.69999999552965,
+        78.80000000447035,
+        182.5,
+        89.19999999552965,
+        186.60000000149012,
+        77.89999999850988,
+        71,
+        202.59999999403954,
+        78,
+        75.40000000596046,
+        81.19999999552965,
+        67.29999999701977,
+        61
+      ],
+      "inputEvents": [
+        {
+          "at": 1794160431191.7002,
+          "durationMs": 184.19999999552965,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794160431447.5,
+          "durationMs": 70.29999999701977,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794160431663.6,
+          "durationMs": 86.89999999850988,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794160431892.1,
+          "durationMs": 105.19999999552965,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794160432006.5,
+          "durationMs": 215.20000000298023,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794160432398.2002,
+          "durationMs": 90.5,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794160432649.3,
+          "durationMs": 129.90000000596046,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794160432922.4001,
+          "durationMs": 167.10000000149012,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794160433230.8,
+          "durationMs": 85.20000000298023,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794160433481.6,
+          "durationMs": 92.69999999552965,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794160433705.4001,
+          "durationMs": 78.80000000447035,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794160433798.2002,
+          "durationMs": 182.5,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794160434128.7002,
+          "durationMs": 89.19999999552965,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794160434368.4001,
+          "durationMs": 186.60000000149012,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794160434691.2002,
+          "durationMs": 77.89999999850988,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794160434897.8,
+          "durationMs": 71,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794160435104.2002,
+          "durationMs": 202.59999999403954,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794160435428.9001,
+          "durationMs": 78,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794160435638.8,
+          "durationMs": 75.40000000596046,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794160435848.6,
+          "durationMs": 81.19999999552965,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794160436043.6,
+          "durationMs": 67.29999999701977,
+          "target": "chat-composer-input"
+        },
+        {
+          "at": 1794160436226.9001,
+          "durationMs": 61,
+          "target": "chat-composer-input"
+        }
+      ],
+      "scrollEvents": [
+        {
+          "at": 1794160431191.9001,
+          "durationMs": 327,
+          "top": 22139.333984375
+        },
+        {
+          "at": 1794160431532.7002,
+          "durationMs": 362.5,
+          "top": 21599.333984375
+        },
+        {
+          "at": 1794160431837,
+          "durationMs": 386,
+          "top": 21150.666015625
+        },
+        {
+          "at": 1794160432083.2002,
+          "durationMs": 405.79999999701977,
+          "top": 20520
+        },
+        {
+          "at": 1794160432487.6,
+          "durationMs": 291.8999999985099,
+          "top": 19851.333984375
+        },
+        {
+          "at": 1794160432758.2002,
+          "durationMs": 331.5,
+          "top": 19220.666015625
+        },
+        {
+          "at": 1794160433021.6,
+          "durationMs": 294.6000000014901,
+          "top": 18552
+        },
+        {
+          "at": 1794160433342.4001,
+          "durationMs": 232.20000000298023,
+          "top": 18561.333984375
+        },
+        {
+          "at": 1794160433561.9001,
+          "durationMs": 223.39999999850988,
+          "top": 18881.333984375
+        },
+        {
+          "at": 1794160433795,
+          "durationMs": 337.20000000298023,
+          "top": 19201.333984375
+        },
+        {
+          "at": 1794160434080.5,
+          "durationMs": 270.20000000298023,
+          "top": 19521.333984375
+        },
+        {
+          "at": 1794160434325.3,
+          "durationMs": 368,
+          "top": 19841.333984375
+        }
+      ],
+      "longTasks": [
+        130,
+        65,
+        63,
+        62,
+        137,
+        75,
+        130,
+        89,
+        146,
+        67,
+        166,
+        78,
+        151,
+        117,
+        134,
+        154,
+        133,
+        71,
+        151,
+        79,
+        122,
+        62,
+        121,
+        58,
+        133,
+        69,
+        122,
+        129,
+        66,
+        129,
+        66,
+        121,
+        62,
+        121,
+        131,
+        72,
+        116,
+        71,
+        122,
+        68,
+        127,
+        73,
+        107,
+        62,
+        110,
+        55,
+        116,
+        114,
+        116,
+        114,
+        102,
+        109,
+        111,
+        115,
+        113,
+        115,
+        116,
+        110,
+        108,
+        111,
+        111,
+        113,
+        115,
+        119,
+        113,
+        101,
+        117,
+        111,
+        118,
+        112,
+        119,
+        168,
+        112,
+        310,
+        118,
+        141,
+        130,
+        131,
+        130,
+        117,
+        123,
+        129,
+        134,
+        139,
+        134,
+        131,
+        119,
+        123,
+        123,
+        118,
+        120,
+        117,
+        107,
+        114,
+        116,
+        120,
+        111,
+        113,
+        106,
+        111,
+        108,
+        110,
+        115,
+        112,
+        111,
+        102,
+        109,
+        112,
+        110,
+        109,
+        111,
+        100,
+        113,
+        113,
+        119,
+        118,
+        111,
+        105,
+        112,
+        146,
+        141,
+        303,
+        125,
+        124,
+        117,
+        132,
+        112,
+        114,
+        116,
+        109,
+        117,
+        109,
+        114,
+        113,
+        111,
+        116,
+        114,
+        116,
+        108,
+        115,
+        117,
+        113,
+        113,
+        112,
+        110,
+        113,
+        115,
+        115,
+        110,
+        114,
+        103,
+        111,
+        114,
+        116,
+        112,
+        113,
+        107,
+        108,
+        112,
+        114,
+        107,
+        111,
+        105,
+        142,
+        105,
+        266,
+        105,
+        115,
+        104,
+        106,
+        108,
+        111,
+        113,
+        109,
+        114,
+        106,
+        115,
+        63,
+        117,
+        107,
+        113,
+        113,
+        113,
+        113,
+        111,
+        137,
+        113,
+        106,
+        111,
+        110,
+        108
+      ],
+      "longTaskEvents": [
+        {
+          "at": 1794160431177.9001,
+          "durationMs": 130
+        },
+        {
+          "at": 1794160431308.8,
+          "durationMs": 65
+        },
+        {
+          "at": 1794160431382.6,
+          "durationMs": 63
+        },
+        {
+          "at": 1794160431453.5,
+          "durationMs": 62
+        },
+        {
+          "at": 1794160431522.5,
+          "durationMs": 137
+        },
+        {
+          "at": 1794160431670.8,
+          "durationMs": 75
+        },
+        {
+          "at": 1794160431759.5,
+          "durationMs": 130
+        },
+        {
+          "at": 1794160431901.4001,
+          "durationMs": 89
+        },
+        {
+          "at": 1794160432005,
+          "durationMs": 146
+        },
+        {
+          "at": 1794160432151.7002,
+          "durationMs": 67
+        },
+        {
+          "at": 1794160432230.3,
+          "durationMs": 166
+        },
+        {
+          "at": 1794160432407,
+          "durationMs": 78
+        },
+        {
+          "at": 1794160432495.7002,
+          "durationMs": 151
+        },
+        {
+          "at": 1794160432658.6,
+          "durationMs": 117
+        },
+        {
+          "at": 1794160432786.2002,
+          "durationMs": 134
+        },
+        {
+          "at": 1794160432932.5,
+          "durationMs": 154
+        },
+        {
+          "at": 1794160433095.9001,
+          "durationMs": 133
+        },
+        {
+          "at": 1794160433241.2002,
+          "durationMs": 71
+        },
+        {
+          "at": 1794160433328.4001,
+          "durationMs": 151
+        },
+        {
+          "at": 1794160433491.2002,
+          "durationMs": 79
+        },
+        {
+          "at": 1794160433581.4001,
+          "durationMs": 122
+        },
+        {
+          "at": 1794160433718.1,
+          "durationMs": 62
+        },
+        {
+          "at": 1794160433797.3,
+          "durationMs": 121
+        },
+        {
+          "at": 1794160433918.7002,
+          "durationMs": 58
+        },
+        {
+          "at": 1794160433993.3,
+          "durationMs": 133
+        },
+        {
+          "at": 1794160434144.3,
+          "durationMs": 69
+        },
+        {
+          "at": 1794160434225.8,
+          "durationMs": 122
+        },
+        {
+          "at": 1794160434354.3,
+          "durationMs": 129
+        },
+        {
+          "at": 1794160434484.1,
+          "durationMs": 66
+        },
+        {
+          "at": 1794160434559.8,
+          "durationMs": 129
+        },
+        {
+          "at": 1794160434699.2002,
+          "durationMs": 66
+        },
+        {
+          "at": 1794160434773.5,
+          "durationMs": 121
+        },
+        {
+          "at": 1794160434905.2002,
+          "durationMs": 62
+        },
+        {
+          "at": 1794160434972.9001,
+          "durationMs": 121
+        },
+        {
+          "at": 1794160435101.4001,
+          "durationMs": 131
+        },
+        {
+          "at": 1794160435232.9001,
+          "durationMs": 72
+        },
+        {
+          "at": 1794160435310.8,
+          "durationMs": 116
+        },
+        {
+          "at": 1794160435433.2002,
+          "durationMs": 71
+        },
+        {
+          "at": 1794160435513.2002,
+          "durationMs": 122
+        },
+        {
+          "at": 1794160435643.3,
+          "durationMs": 68
+        },
+        {
+          "at": 1794160435719.3,
+          "durationMs": 127
+        },
+        {
+          "at": 1794160435854.4001,
+          "durationMs": 73
+        },
+        {
+          "at": 1794160435933.9001,
+          "durationMs": 107
+        },
+        {
+          "at": 1794160436047.4001,
+          "durationMs": 62
+        },
+        {
+          "at": 1794160436114.2002,
+          "durationMs": 110
+        },
+        {
+          "at": 1794160436230.9001,
+          "durationMs": 55
+        },
+        {
+          "at": 1794160436291.9001,
+          "durationMs": 116
+        },
+        {
+          "at": 1794160436416.1,
+          "durationMs": 114
+        },
+        {
+          "at": 1794160436535.6,
+          "durationMs": 116
+        },
+        {
+          "at": 1794160436656.7002,
+          "durationMs": 114
+        },
+        {
+          "at": 1794160436776.2002,
+          "durationMs": 102
+        },
+        {
+          "at": 1794160436885.3,
+          "durationMs": 109
+        },
+        {
+          "at": 1794160436999.9001,
+          "durationMs": 111
+        },
+        {
+          "at": 1794160437115.6,
+          "durationMs": 115
+        },
+        {
+          "at": 1794160437236.4001,
+          "durationMs": 113
+        },
+        {
+          "at": 1794160437355.7002,
+          "durationMs": 115
+        },
+        {
+          "at": 1794160437475.7002,
+          "durationMs": 116
+        },
+        {
+          "at": 1794160437597.2002,
+          "durationMs": 110
+        },
+        {
+          "at": 1794160437713.3,
+          "durationMs": 108
+        },
+        {
+          "at": 1794160437826.8,
+          "durationMs": 111
+        },
+        {
+          "at": 1794160437942.6,
+          "durationMs": 111
+        },
+        {
+          "at": 1794160438060.1,
+          "durationMs": 113
+        },
+        {
+          "at": 1794160438178.1,
+          "durationMs": 115
+        },
+        {
+          "at": 1794160438299.1,
+          "durationMs": 119
+        },
+        {
+          "at": 1794160438425.5,
+          "durationMs": 113
+        },
+        {
+          "at": 1794160438544.5,
+          "durationMs": 101
+        },
+        {
+          "at": 1794160438651.3,
+          "durationMs": 117
+        },
+        {
+          "at": 1794160438773.7002,
+          "durationMs": 111
+        },
+        {
+          "at": 1794160438890.4001,
+          "durationMs": 118
+        },
+        {
+          "at": 1794160439013.2002,
+          "durationMs": 112
+        },
+        {
+          "at": 1794160439131,
+          "durationMs": 119
+        },
+        {
+          "at": 1794160439255.6,
+          "durationMs": 168
+        },
+        {
+          "at": 1794160439430,
+          "durationMs": 112
+        },
+        {
+          "at": 1794160439548.4001,
+          "durationMs": 310
+        },
+        {
+          "at": 1794160439864.2002,
+          "durationMs": 118
+        },
+        {
+          "at": 1794160439987.9001,
+          "durationMs": 141
+        },
+        {
+          "at": 1794160440134.7002,
+          "durationMs": 130
+        },
+        {
+          "at": 1794160440271.3,
+          "durationMs": 131
+        },
+        {
+          "at": 1794160440409.6,
+          "durationMs": 130
+        },
+        {
+          "at": 1794160440546.8,
+          "durationMs": 117
+        },
+        {
+          "at": 1794160440669.7002,
+          "durationMs": 123
+        },
+        {
+          "at": 1794160440799.6,
+          "durationMs": 129
+        },
+        {
+          "at": 1794160440935.8,
+          "durationMs": 134
+        },
+        {
+          "at": 1794160441076.4001,
+          "durationMs": 139
+        },
+        {
+          "at": 1794160441221.1,
+          "durationMs": 134
+        },
+        {
+          "at": 1794160441363.4001,
+          "durationMs": 131
+        },
+        {
+          "at": 1794160441500.4001,
+          "durationMs": 119
+        },
+        {
+          "at": 1794160441624.8,
+          "durationMs": 123
+        },
+        {
+          "at": 1794160441753.3,
+          "durationMs": 123
+        },
+        {
+          "at": 1794160441883.1,
+          "durationMs": 118
+        },
+        {
+          "at": 1794160442008,
+          "durationMs": 120
+        },
+        {
+          "at": 1794160442134.3,
+          "durationMs": 117
+        },
+        {
+          "at": 1794160442258.1,
+          "durationMs": 107
+        },
+        {
+          "at": 1794160442371,
+          "durationMs": 114
+        },
+        {
+          "at": 1794160442491.2002,
+          "durationMs": 116
+        },
+        {
+          "at": 1794160442613.1,
+          "durationMs": 120
+        },
+        {
+          "at": 1794160442739.9001,
+          "durationMs": 111
+        },
+        {
+          "at": 1794160442856.8,
+          "durationMs": 113
+        },
+        {
+          "at": 1794160442977.1,
+          "durationMs": 106
+        },
+        {
+          "at": 1794160443090.2002,
+          "durationMs": 111
+        },
+        {
+          "at": 1794160443207.4001,
+          "durationMs": 108
+        },
+        {
+          "at": 1794160443321.2002,
+          "durationMs": 110
+        },
+        {
+          "at": 1794160443436.8,
+          "durationMs": 115
+        },
+        {
+          "at": 1794160443558.8,
+          "durationMs": 112
+        },
+        {
+          "at": 1794160443675.5,
+          "durationMs": 111
+        },
+        {
+          "at": 1794160443793.2002,
+          "durationMs": 102
+        },
+        {
+          "at": 1794160443901.3,
+          "durationMs": 109
+        },
+        {
+          "at": 1794160444015.8,
+          "durationMs": 112
+        },
+        {
+          "at": 1794160444133.8,
+          "durationMs": 110
+        },
+        {
+          "at": 1794160444249.4001,
+          "durationMs": 109
+        },
+        {
+          "at": 1794160444364.8,
+          "durationMs": 111
+        },
+        {
+          "at": 1794160444480.7002,
+          "durationMs": 100
+        },
+        {
+          "at": 1794160444588.1,
+          "durationMs": 113
+        },
+        {
+          "at": 1794160444707.6,
+          "durationMs": 113
+        },
+        {
+          "at": 1794160444826,
+          "durationMs": 119
+        },
+        {
+          "at": 1794160444951.9001,
+          "durationMs": 118
+        },
+        {
+          "at": 1794160445076.4001,
+          "durationMs": 111
+        },
+        {
+          "at": 1794160445194.3,
+          "durationMs": 105
+        },
+        {
+          "at": 1794160445305.8,
+          "durationMs": 112
+        },
+        {
+          "at": 1794160445423.9001,
+          "durationMs": 146
+        },
+        {
+          "at": 1794160445578.2002,
+          "durationMs": 141
+        },
+        {
+          "at": 1794160445725.3,
+          "durationMs": 303
+        },
+        {
+          "at": 1794160446036.1,
+          "durationMs": 125
+        },
+        {
+          "at": 1794160446166.2002,
+          "durationMs": 124
+        },
+        {
+          "at": 1794160446295.2002,
+          "durationMs": 117
+        },
+        {
+          "at": 1794160446417.9001,
+          "durationMs": 132
+        },
+        {
+          "at": 1794160446555.9001,
+          "durationMs": 112
+        },
+        {
+          "at": 1794160446674.8,
+          "durationMs": 114
+        },
+        {
+          "at": 1794160446795.6,
+          "durationMs": 116
+        },
+        {
+          "at": 1794160446916.9001,
+          "durationMs": 109
+        },
+        {
+          "at": 1794160447033.6,
+          "durationMs": 117
+        },
+        {
+          "at": 1794160447156.7002,
+          "durationMs": 109
+        },
+        {
+          "at": 1794160447271.2002,
+          "durationMs": 114
+        },
+        {
+          "at": 1794160447391.7002,
+          "durationMs": 113
+        },
+        {
+          "at": 1794160447511,
+          "durationMs": 111
+        },
+        {
+          "at": 1794160447628.1,
+          "durationMs": 116
+        },
+        {
+          "at": 1794160447751.6,
+          "durationMs": 114
+        },
+        {
+          "at": 1794160447871.1,
+          "durationMs": 116
+        },
+        {
+          "at": 1794160447991.9001,
+          "durationMs": 108
+        },
+        {
+          "at": 1794160448104.8,
+          "durationMs": 115
+        },
+        {
+          "at": 1794160448226,
+          "durationMs": 117
+        },
+        {
+          "at": 1794160448349,
+          "durationMs": 113
+        },
+        {
+          "at": 1794160448468,
+          "durationMs": 113
+        },
+        {
+          "at": 1794160448586,
+          "durationMs": 112
+        },
+        {
+          "at": 1794160448704.2002,
+          "durationMs": 110
+        },
+        {
+          "at": 1794160448820.1,
+          "durationMs": 113
+        },
+        {
+          "at": 1794160448938.1,
+          "durationMs": 115
+        },
+        {
+          "at": 1794160449058.6,
+          "durationMs": 115
+        },
+        {
+          "at": 1794160449179.7002,
+          "durationMs": 110
+        },
+        {
+          "at": 1794160449294.6,
+          "durationMs": 114
+        },
+        {
+          "at": 1794160449414.2002,
+          "durationMs": 103
+        },
+        {
+          "at": 1794160449522,
+          "durationMs": 111
+        },
+        {
+          "at": 1794160449638.4001,
+          "durationMs": 114
+        },
+        {
+          "at": 1794160449758.4001,
+          "durationMs": 116
+        },
+        {
+          "at": 1794160449878.9001,
+          "durationMs": 112
+        },
+        {
+          "at": 1794160449996.7002,
+          "durationMs": 113
+        },
+        {
+          "at": 1794160450114.5,
+          "durationMs": 107
+        },
+        {
+          "at": 1794160450227.9001,
+          "durationMs": 108
+        },
+        {
+          "at": 1794160450342.7002,
+          "durationMs": 112
+        },
+        {
+          "at": 1794160450461.8,
+          "durationMs": 114
+        },
+        {
+          "at": 1794160450581.9001,
+          "durationMs": 107
+        },
+        {
+          "at": 1794160450694.1,
+          "durationMs": 111
+        },
+        {
+          "at": 1794160450812.1,
+          "durationMs": 105
+        },
+        {
+          "at": 1794160450923.7002,
+          "durationMs": 142
+        },
+        {
+          "at": 1794160451071.8,
+          "durationMs": 105
+        },
+        {
+          "at": 1794160451183,
+          "durationMs": 266
+        },
+        {
+          "at": 1794160451454.7002,
+          "durationMs": 105
+        },
+        {
+          "at": 1794160451565.9001,
+          "durationMs": 115
+        },
+        {
+          "at": 1794160451686.5,
+          "durationMs": 104
+        },
+        {
+          "at": 1794160451802.7002,
+          "durationMs": 106
+        },
+        {
+          "at": 1794160451914.2002,
+          "durationMs": 108
+        },
+        {
+          "at": 1794160452028.2002,
+          "durationMs": 111
+        },
+        {
+          "at": 1794160452144.7002,
+          "durationMs": 113
+        },
+        {
+          "at": 1794160452262.9001,
+          "durationMs": 109
+        },
+        {
+          "at": 1794160452378.9001,
+          "durationMs": 114
+        },
+        {
+          "at": 1794160452499.8,
+          "durationMs": 106
+        },
+        {
+          "at": 1794160452612.5,
+          "durationMs": 115
+        },
+        {
+          "at": 1794160452733,
+          "durationMs": 63
+        },
+        {
+          "at": 1794160452796.3,
+          "durationMs": 117
+        },
+        {
+          "at": 1794160452920.7002,
+          "durationMs": 107
+        },
+        {
+          "at": 1794160453033.5,
+          "durationMs": 113
+        },
+        {
+          "at": 1794160453154.3,
+          "durationMs": 113
+        },
+        {
+          "at": 1794160453272.4001,
+          "durationMs": 113
+        },
+        {
+          "at": 1794160453391.8,
+          "durationMs": 113
+        },
+        {
+          "at": 1794160453511.9001,
+          "durationMs": 111
+        },
+        {
+          "at": 1794160453628.6,
+          "durationMs": 137
+        },
+        {
+          "at": 1794160453771.1,
+          "durationMs": 113
+        },
+        {
+          "at": 1794160453889.4001,
+          "durationMs": 106
+        },
+        {
+          "at": 1794160454001.2002,
+          "durationMs": 111
+        },
+        {
+          "at": 1794160454118,
+          "durationMs": 110
+        },
+        {
+          "at": 1794160454234.6,
+          "durationMs": 108
+        }
+      ]
+    },
+    "scrolls": [
+      {
+        "at": 1794160431191.9001,
+        "durationMs": 327,
+        "top": 22139.333984375
+      },
+      {
+        "at": 1794160431532.7002,
+        "durationMs": 362.5,
+        "top": 21599.333984375
+      },
+      {
+        "at": 1794160431837,
+        "durationMs": 386,
+        "top": 21150.666015625
+      },
+      {
+        "at": 1794160432083.2002,
+        "durationMs": 405.79999999701977,
+        "top": 20520
+      },
+      {
+        "at": 1794160432487.6,
+        "durationMs": 291.8999999985099,
+        "top": 19851.333984375
+      },
+      {
+        "at": 1794160432758.2002,
+        "durationMs": 331.5,
+        "top": 19220.666015625
+      },
+      {
+        "at": 1794160433021.6,
+        "durationMs": 294.6000000014901,
+        "top": 18552
+      },
+      {
+        "at": 1794160433342.4001,
+        "durationMs": 232.20000000298023,
+        "top": 18561.333984375
+      },
+      {
+        "at": 1794160433561.9001,
+        "durationMs": 223.39999999850988,
+        "top": 18881.333984375
+      },
+      {
+        "at": 1794160433795,
+        "durationMs": 337.20000000298023,
+        "top": 19201.333984375
+      },
+      {
+        "at": 1794160434080.5,
+        "durationMs": 270.20000000298023,
+        "top": 19521.333984375
+      },
+      {
+        "at": 1794160434325.3,
+        "durationMs": 368,
+        "top": 19841.333984375
+      }
+    ]
+  },
+  "processAfter": {
+    "tree": {
+      "status": "ok",
+      "sampledAt": 1794160470915,
+      "rootPids": [
+        16556
+      ],
+      "processCount": 15,
+      "treeRssBytes": 1818787840,
+      "treeCpuTimeMs": 134421.875,
+      "treeCpuPercent": null,
+      "ownerEpoch": "889dd517-cbee-4966-87e1-9a10cc967065",
+      "processes": [
+        {
+          "pid": 16556,
+          "parentPid": 26820,
+          "creationToken": "134386340184591450",
+          "rssBytes": 383774720,
+          "privateBytes": 261758976,
+          "cpuTimeMs": 52156.25,
+          "cpuPercent": 101.32
+        },
+        {
+          "pid": 43992,
+          "parentPid": 16556,
+          "creationToken": "134386340235555540",
+          "rssBytes": 59346944,
+          "privateBytes": 14479360,
+          "cpuTimeMs": 46.875,
+          "cpuPercent": 0
+        },
+        {
+          "pid": 44772,
+          "parentPid": 16556,
+          "creationToken": "134386340238495450",
+          "rssBytes": 713973760,
+          "privateBytes": 583458816,
+          "cpuTimeMs": 64390.625,
+          "cpuPercent": 137.73
+        },
+        {
+          "pid": 46896,
+          "parentPid": 16556,
+          "creationToken": "134386340649439820",
+          "rssBytes": 112861184,
+          "privateBytes": 87846912,
+          "cpuTimeMs": 4953.125,
+          "cpuPercent": null
+        },
+        {
+          "pid": 45600,
+          "parentPid": 16556,
+          "creationToken": "134386340660273490",
+          "rssBytes": 83804160,
+          "privateBytes": 60100608,
+          "cpuTimeMs": 4281.25,
+          "cpuPercent": null
+        },
+        {
+          "pid": 37368,
+          "parentPid": 16556,
+          "creationToken": "134386340665463620",
+          "rssBytes": 72683520,
+          "privateBytes": 51585024,
+          "cpuTimeMs": 3859.375,
+          "cpuPercent": null
+        },
+        {
+          "pid": 43288,
+          "parentPid": 16556,
+          "creationToken": "134386340670403370",
+          "rssBytes": 73416704,
+          "privateBytes": 47427584,
+          "cpuTimeMs": 2218.75,
+          "cpuPercent": null
+        },
+        {
+          "pid": 43724,
+          "parentPid": 16556,
+          "creationToken": "134386340677033650",
+          "rssBytes": 49418240,
+          "privateBytes": 27377664,
+          "cpuTimeMs": 1671.875,
+          "cpuPercent": null
+        },
+        {
+          "pid": 20620,
+          "parentPid": 16556,
+          "creationToken": "134386340682236410",
+          "rssBytes": 224329728,
+          "privateBytes": 216977408,
+          "cpuTimeMs": 703.125,
+          "cpuPercent": null
+        },
+        {
+          "pid": 42260,
+          "parentPid": 46896,
+          "creationToken": "134386340650372220",
+          "rssBytes": 7544832,
+          "privateBytes": 1306624,
+          "cpuTimeMs": 31.25,
+          "cpuPercent": null
+        },
+        {
+          "pid": 47008,
+          "parentPid": 45600,
+          "creationToken": "134386340661444830",
+          "rssBytes": 7540736,
+          "privateBytes": 1314816,
+          "cpuTimeMs": 31.25,
+          "cpuPercent": null
+        },
+        {
+          "pid": 31844,
+          "parentPid": 37368,
+          "creationToken": "134386340666601550",
+          "rssBytes": 7540736,
+          "privateBytes": 1331200,
+          "cpuTimeMs": 15.625,
+          "cpuPercent": null
+        },
+        {
+          "pid": 42352,
+          "parentPid": 43288,
+          "creationToken": "134386340671720060",
+          "rssBytes": 7540736,
+          "privateBytes": 1318912,
+          "cpuTimeMs": 15.625,
+          "cpuPercent": null
+        },
+        {
+          "pid": 41668,
+          "parentPid": 43724,
+          "creationToken": "134386340678189100",
+          "rssBytes": 7516160,
+          "privateBytes": 1318912,
+          "cpuTimeMs": 31.25,
+          "cpuPercent": null
+        },
+        {
+          "pid": 8668,
+          "parentPid": 20620,
+          "creationToken": "134386340687799370",
+          "rssBytes": 7495680,
+          "privateBytes": 1306624,
+          "cpuTimeMs": 15.625,
+          "cpuPercent": null
+        }
+      ],
+      "queueDepth": 0,
+      "queueWaitMs": 0,
+      "source": "windows-cim",
+      "machineCommit": {
+        "sampledAt": 1794160470915,
+        "committedBytes": 34433351680,
+        "commitLimitBytes": 54946947072
+      }
+    },
+    "handles": {
+      "status": "partial",
+      "rows": [
+        {
+          "pid": 16556,
+          "token": "134386340184591450",
+          "handles": 1224
+        },
+        {
+          "pid": 43992,
+          "token": "134386340235555540",
+          "handles": 332
+        },
+        {
+          "pid": 44772,
+          "token": "134386340238495450",
+          "handles": 396
+        }
+      ],
+      "total": 1952
+    }
+  },
+  "cleanup": {
+    "mainExited": true,
+    "launcherExited": true,
+    "graceful": true,
+    "closeSettled": true,
+    "processes": [
+      {
+        "pid": 16556,
+        "creationTime": 1794160418459,
+        "status": "exited"
+      },
+      {
+        "pid": 43992,
+        "creationTime": 1794160423555,
+        "status": "exited"
+      },
+      {
+        "pid": 44772,
+        "creationTime": 1794160423849,
+        "status": "exited"
+      }
+    ],
+    "errors": []
+  }
+}

@@ -1,0 +1,364 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": {
+    "commit": "acebb11e0fd7793a5f8de226dbe36bb979edadc7",
+    "tree": "96a7961f4137dfebf01800c917820a634e12924b",
+    "dirty": false
+  },
+  "commands": [
+    {
+      "id": "unit",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/resource-mixed-measurement.test.ts",
+        "tests/unit/resource-adaptive-pressure.test.ts",
+        "tests/unit/resource-fabric-primitives.test.ts",
+        "tests/unit/resource-fabric-invariants.test.ts",
+        "tests/unit/resource-fabric-bounded-waiting.test.ts",
+        "tests/unit/resource-fabric-workspace-exec.test.ts",
+        "tests/unit/resource-fabric-pressure.test.ts",
+        "tests/unit/resource-window-lifecycle.test.ts",
+        "tests/unit/resource-metrics-calibration.test.ts",
+        "tests/unit/process-tree-sampler.test.ts",
+        "tests/unit/terminal-api.test.ts",
+        "tests/unit/resource-fabric-chat-history.test.ts",
+        "tests/unit/resource-budget-integration.test.ts",
+        "tests/unit/runtime-efficiency-api.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\tf0838\\gates\\unit.json"
+      ],
+      "cwd": "D:\\tmp\\tf0838\\candidate",
+      "exitCode": 0,
+      "durationMs": 35078,
+      "candidate": "acebb11e0fd7793a5f8de226dbe36bb979edadc7"
+    },
+    {
+      "id": "focused-types",
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "-p",
+        "harness/specs/fixtures/resource-mixed-load-20261108/tsconfig.json"
+      ],
+      "cwd": "D:\\tmp\\tf0838\\candidate",
+      "exitCode": 0,
+      "durationMs": 828,
+      "candidate": "acebb11e0fd7793a5f8de226dbe36bb979edadc7"
+    },
+    {
+      "id": "node-types",
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\tf0838\\candidate",
+      "exitCode": 0,
+      "durationMs": 47687,
+      "candidate": "acebb11e0fd7793a5f8de226dbe36bb979edadc7"
+    },
+    {
+      "id": "web-types",
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\tf0838\\candidate",
+      "exitCode": 0,
+      "durationMs": 10860,
+      "candidate": "acebb11e0fd7793a5f8de226dbe36bb979edadc7"
+    },
+    {
+      "id": "lint",
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "electron/services/resource-fabric.ts",
+        "electron/services/terminal-api.ts",
+        "playwright.resource-governance.config.ts",
+        "scripts/capture-resource-builds.mjs",
+        "scripts/lib/resource-mixed-measurement.mjs",
+        "scripts/verify-resource-mixed-load.mjs",
+        "shared/resources/adaptive-limit.ts",
+        "tests/e2e/resource-mixed-load.spec.ts",
+        "tests/unit/resource-adaptive-pressure.test.ts",
+        "tests/unit/resource-mixed-measurement.test.ts",
+        "--format=json",
+        "--output-file",
+        "D:\\tmp\\tf0838\\gates\\lint.json"
+      ],
+      "cwd": "D:\\tmp\\tf0838\\candidate",
+      "exitCode": 0,
+      "durationMs": 4547,
+      "candidate": "acebb11e0fd7793a5f8de226dbe36bb979edadc7"
+    },
+    {
+      "id": "contract",
+      "argv": [
+        "node",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0838\\candidate",
+      "exitCode": 0,
+      "durationMs": 2812,
+      "candidate": "acebb11e0fd7793a5f8de226dbe36bb979edadc7"
+    },
+    {
+      "id": "i18n",
+      "argv": [
+        "node",
+        "scripts/i18n-lint.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0838\\candidate",
+      "exitCode": 0,
+      "durationMs": 344,
+      "candidate": "acebb11e0fd7793a5f8de226dbe36bb979edadc7"
+    },
+    {
+      "id": "comms-replay",
+      "argv": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0838\\candidate",
+      "exitCode": 0,
+      "durationMs": 312,
+      "candidate": "acebb11e0fd7793a5f8de226dbe36bb979edadc7"
+    },
+    {
+      "id": "comms-compare",
+      "argv": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0838\\candidate",
+      "exitCode": 0,
+      "durationMs": 219,
+      "candidate": "acebb11e0fd7793a5f8de226dbe36bb979edadc7"
+    },
+    {
+      "id": "retention",
+      "argv": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0838\\candidate",
+      "exitCode": 1,
+      "durationMs": 5859,
+      "candidate": "acebb11e0fd7793a5f8de226dbe36bb979edadc7",
+      "supersededBy": "retention-final"
+    },
+    {
+      "id": "harness-validate",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/mixed-resource-acceptance-20261108.md"
+      ],
+      "cwd": "D:\\tmp\\tf0838\\candidate",
+      "exitCode": 0,
+      "durationMs": 1719,
+      "candidate": "acebb11e0fd7793a5f8de226dbe36bb979edadc7"
+    },
+    {
+      "id": "harness-run",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/mixed-resource-acceptance-20261108.md",
+        "--dry-run"
+      ],
+      "cwd": "D:\\tmp\\tf0838\\candidate",
+      "exitCode": 0,
+      "durationMs": 797,
+      "candidate": "acebb11e0fd7793a5f8de226dbe36bb979edadc7"
+    },
+    {
+      "id": "diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "eeb4578ec",
+        "HEAD"
+      ],
+      "cwd": "D:\\tmp\\tf0838\\candidate",
+      "exitCode": 0,
+      "durationMs": 109,
+      "candidate": "acebb11e0fd7793a5f8de226dbe36bb979edadc7"
+    },
+    {
+      "id": "retention-final",
+      "argv": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "candidate": "0ada2b8fa87cab4eaa55f780c985a8dda33c7b7c",
+      "exitCode": 0,
+      "durationMs": 4000
+    },
+    {
+      "id": "harness-final",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/mixed-resource-acceptance-20261108.md"
+      ],
+      "candidate": "0ada2b8fa87cab4eaa55f780c985a8dda33c7b7c",
+      "exitCode": 0,
+      "durationMs": 844
+    },
+    {
+      "id": "diff-final",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "eeb4578ec",
+        "HEAD"
+      ],
+      "candidate": "0ada2b8fa87cab4eaa55f780c985a8dda33c7b7c",
+      "exitCode": 0,
+      "durationMs": 78
+    }
+  ],
+  "tests": {
+    "numTotalTests": 116,
+    "numPassedTests": 116,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "success": true
+  },
+  "nativeTrials": 24,
+  "nativeTasks": 1152,
+  "sources": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "8c6208c1cc47c6ef139917f70d17b5288c9bb5837afe8afd5841ae119d30242d",
+      "testedSha256": "8c6208c1cc47c6ef139917f70d17b5288c9bb5837afe8afd5841ae119d30242d"
+    },
+    {
+      "path": "README.md",
+      "sha256": "2efec30072854e54ffef016c742bc23b29349219466e2c95d5e0ad925e8137b4",
+      "testedSha256": "2efec30072854e54ffef016c742bc23b29349219466e2c95d5e0ad925e8137b4"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "6a4381e25845be7fa5541a904c51a2f5c26d08e9b451346d31dc416bac69fde3",
+      "testedSha256": "6a4381e25845be7fa5541a904c51a2f5c26d08e9b451346d31dc416bac69fde3"
+    },
+    {
+      "path": "docs/modules/resources-and-observability.md",
+      "sha256": "f36fc790c16141183fcad8f0c9bf58923b6bbc42b823c8547064f1b7c57cc80b",
+      "testedSha256": "f36fc790c16141183fcad8f0c9bf58923b6bbc42b823c8547064f1b7c57cc80b"
+    },
+    {
+      "path": "electron/services/resource-fabric.ts",
+      "sha256": "cd33ff82385811925b9358c7f88d4be7f3a2fa6ea9e7b4a50bcb386ae32db4e1",
+      "testedSha256": "cd33ff82385811925b9358c7f88d4be7f3a2fa6ea9e7b4a50bcb386ae32db4e1"
+    },
+    {
+      "path": "electron/services/terminal-api.ts",
+      "sha256": "a4377b01e9b2e212ea290e3f97f3ad10a7df6defa253474fad4eb111e5c3f25d",
+      "testedSha256": "a4377b01e9b2e212ea290e3f97f3ad10a7df6defa253474fad4eb111e5c3f25d"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-mixed-load-20261108/tsconfig.json",
+      "sha256": "3f5b7592dfa180c05d6e656c65663a596f26ebcd8c4de61413603604973d237a",
+      "testedSha256": "3f5b7592dfa180c05d6e656c65663a596f26ebcd8c4de61413603604973d237a"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-mixed-load-20261108/workload.json",
+      "sha256": "8e37c90dedcfb8f97c3a7e8a4f4b81915164a7553949e2a07577e270352aa357",
+      "testedSha256": "8e37c90dedcfb8f97c3a7e8a4f4b81915164a7553949e2a07577e270352aa357"
+    },
+    {
+      "path": "harness/specs/rules/resource-mixed-measurement.md",
+      "sha256": "95ffc39fbe34aacdfe07e076b87ea2a422f98b59a95614bcaeebf42788f06407",
+      "testedSha256": "95ffc39fbe34aacdfe07e076b87ea2a422f98b59a95614bcaeebf42788f06407"
+    },
+    {
+      "path": "harness/specs/tasks/mixed-resource-acceptance-20261108.md",
+      "sha256": "aefe1c9c77f13a36813977fd76f51e68474c1ecf10586875ee552616a301e1c7",
+      "testedSha256": "706dac14e2fdf635410beddf777d19e837321a8d6bac0ee2a1f2faaa86002375"
+    },
+    {
+      "path": "playwright.resource-governance.config.ts",
+      "sha256": "e317b27fc0526b3f5569425202ebfb7dcab5c8605ced1733a3ca47dfe1cffdb9",
+      "testedSha256": "e317b27fc0526b3f5569425202ebfb7dcab5c8605ced1733a3ca47dfe1cffdb9"
+    },
+    {
+      "path": "scripts/capture-resource-builds.mjs",
+      "sha256": "4a5e4a1f12493474e9a466ab6c0139486407d5821c83978c6dc6e0825b20836f",
+      "testedSha256": "4a5e4a1f12493474e9a466ab6c0139486407d5821c83978c6dc6e0825b20836f"
+    },
+    {
+      "path": "scripts/lib/resource-mixed-measurement.mjs",
+      "sha256": "8d08e489f5bf340f7a14501f5e26e75bc2dd0fbebdd76adf56218f43e9fbf2e3",
+      "testedSha256": "8d08e489f5bf340f7a14501f5e26e75bc2dd0fbebdd76adf56218f43e9fbf2e3"
+    },
+    {
+      "path": "scripts/verify-resource-mixed-load.mjs",
+      "sha256": "4fa2c22527c532c94fb6d6de920f9e07ad5d756193053cdf209f545163d7a8f8",
+      "testedSha256": "4fa2c22527c532c94fb6d6de920f9e07ad5d756193053cdf209f545163d7a8f8"
+    },
+    {
+      "path": "shared/resources/adaptive-limit.ts",
+      "sha256": "714b896296d76633881d8f9084dec8f6475b560eb799233da4dcd3e3435558cf",
+      "testedSha256": "714b896296d76633881d8f9084dec8f6475b560eb799233da4dcd3e3435558cf"
+    },
+    {
+      "path": "tests/e2e/resource-mixed-load.spec.ts",
+      "sha256": "7f9eee28f0a781cf028476484cacaaf6633aa49a58ff904bc93d3d757bf9e930",
+      "testedSha256": "7f9eee28f0a781cf028476484cacaaf6633aa49a58ff904bc93d3d757bf9e930"
+    },
+    {
+      "path": "tests/unit/resource-adaptive-pressure.test.ts",
+      "sha256": "eada0467d312f068c790c0b75e67d64b6e344377cee0d96e8396c66ac0cd3d46",
+      "testedSha256": "eada0467d312f068c790c0b75e67d64b6e344377cee0d96e8396c66ac0cd3d46"
+    },
+    {
+      "path": "tests/unit/resource-mixed-measurement.test.ts",
+      "sha256": "ee65f13297b02d5b79806516d19a3de9b0c1a76af331afe17d12db775e5a8d13",
+      "testedSha256": "ee65f13297b02d5b79806516d19a3de9b0c1a76af331afe17d12db775e5a8d13"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "0be27197d207e49134865640029b04e7f41c4eb98e5a310d0281ff334b02204b"
+    }
+  ],
+  "pass": true,
+  "deliveryCandidate": {
+    "commit": "0ada2b8fa87cab4eaa55f780c985a8dda33c7b7c",
+    "tree": "be8b573dab0137890e6511d72b84d6876b9894d5",
+    "dirty": false
+  },
+  "productionEquivalence": {
+    "tested": "acebb11e0fd7793a5f8de226dbe36bb979edadc7",
+    "delivery": "0ada2b8fa87cab4eaa55f780c985a8dda33c7b7c",
+    "productDiffExit": 0,
+    "changes": [
+      ".gitignore",
+      "harness/specs/tasks/mixed-resource-acceptance-20261108.md"
+    ]
+  }
+}

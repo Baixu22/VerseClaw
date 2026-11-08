@@ -1,0 +1,6 @@
+{
+  "findings": [],
+  "overall_confidence": 0.97,
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "The account-level recovery counter survives baseline eviction and resets on degradation, pressure, and recovery cooldown. Growth remains bounded to one-slot increments. The added 33-key churn regression targets the reported failure and checks the 32-entry storage bound. Read-only inspection found no actionable defects in this focused fix; tests were not run."
+}

@@ -1,0 +1,180 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "rows": [
+    {
+      "id": "w1-a1-0-before",
+      "reasons": [],
+      "cleanupGraceful": true,
+      "cleanupCloseSettled": true,
+      "cleanupErrors": []
+    },
+    {
+      "id": "w1-a1-1-after",
+      "reasons": [],
+      "cleanupGraceful": true,
+      "cleanupCloseSettled": true,
+      "cleanupErrors": []
+    },
+    {
+      "id": "w1-a1-2-after",
+      "reasons": [
+        "physical-memory"
+      ],
+      "cleanupGraceful": true,
+      "cleanupCloseSettled": true,
+      "cleanupErrors": []
+    },
+    {
+      "id": "w1-a1-3-before",
+      "reasons": [],
+      "cleanupGraceful": true,
+      "cleanupCloseSettled": true,
+      "cleanupErrors": []
+    },
+    {
+      "id": "w1-a4-0-before",
+      "reasons": [],
+      "cleanupGraceful": true,
+      "cleanupCloseSettled": true,
+      "cleanupErrors": []
+    },
+    {
+      "id": "w1-a4-1-after",
+      "reasons": [
+        "physical-memory"
+      ],
+      "cleanupGraceful": false,
+      "cleanupCloseSettled": true,
+      "cleanupErrors": []
+    },
+    {
+      "id": "w1-a4-2-after",
+      "reasons": [],
+      "cleanupGraceful": true,
+      "cleanupCloseSettled": true,
+      "cleanupErrors": []
+    },
+    {
+      "id": "w1-a4-3-before",
+      "reasons": [],
+      "cleanupGraceful": true,
+      "cleanupCloseSettled": true,
+      "cleanupErrors": []
+    },
+    {
+      "id": "w1-a8-0-before",
+      "reasons": [],
+      "cleanupGraceful": true,
+      "cleanupCloseSettled": true,
+      "cleanupErrors": []
+    },
+    {
+      "id": "w1-a8-1-after",
+      "reasons": [],
+      "cleanupGraceful": true,
+      "cleanupCloseSettled": true,
+      "cleanupErrors": []
+    },
+    {
+      "id": "w1-a8-2-after",
+      "reasons": [],
+      "cleanupGraceful": true,
+      "cleanupCloseSettled": true,
+      "cleanupErrors": []
+    },
+    {
+      "id": "w1-a8-3-before",
+      "reasons": [],
+      "cleanupGraceful": true,
+      "cleanupCloseSettled": true,
+      "cleanupErrors": []
+    },
+    {
+      "id": "w2-a1-0-before",
+      "reasons": [],
+      "cleanupGraceful": true,
+      "cleanupCloseSettled": true,
+      "cleanupErrors": []
+    },
+    {
+      "id": "w2-a1-1-after",
+      "reasons": [],
+      "cleanupGraceful": true,
+      "cleanupCloseSettled": true,
+      "cleanupErrors": []
+    },
+    {
+      "id": "w2-a1-2-after",
+      "reasons": [],
+      "cleanupGraceful": true,
+      "cleanupCloseSettled": true,
+      "cleanupErrors": []
+    },
+    {
+      "id": "w2-a1-3-before",
+      "reasons": [],
+      "cleanupGraceful": true,
+      "cleanupCloseSettled": true,
+      "cleanupErrors": []
+    },
+    {
+      "id": "w2-a4-0-before",
+      "reasons": [],
+      "cleanupGraceful": true,
+      "cleanupCloseSettled": true,
+      "cleanupErrors": []
+    },
+    {
+      "id": "w2-a4-1-after",
+      "reasons": [],
+      "cleanupGraceful": true,
+      "cleanupCloseSettled": true,
+      "cleanupErrors": []
+    },
+    {
+      "id": "w2-a4-2-after",
+      "reasons": [],
+      "cleanupGraceful": true,
+      "cleanupCloseSettled": true,
+      "cleanupErrors": []
+    },
+    {
+      "id": "w2-a4-3-before",
+      "reasons": [],
+      "cleanupGraceful": true,
+      "cleanupCloseSettled": true,
+      "cleanupErrors": []
+    },
+    {
+      "id": "w2-a8-0-before",
+      "reasons": [],
+      "cleanupGraceful": true,
+      "cleanupCloseSettled": true,
+      "cleanupErrors": []
+    },
+    {
+      "id": "w2-a8-1-after",
+      "reasons": [],
+      "cleanupGraceful": true,
+      "cleanupCloseSettled": true,
+      "cleanupErrors": []
+    },
+    {
+      "id": "w2-a8-2-after",
+      "reasons": [],
+      "cleanupGraceful": true,
+      "cleanupCloseSettled": true,
+      "cleanupErrors": []
+    },
+    {
+      "id": "w2-a8-3-before",
+      "reasons": [],
+      "cleanupGraceful": false,
+      "cleanupCloseSettled": false,
+      "cleanupErrors": [
+        "Error: Playwright close after launcher exit timed out after 2000ms"
+      ]
+    }
+  ]
+}

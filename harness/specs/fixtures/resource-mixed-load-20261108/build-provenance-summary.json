@@ -1,0 +1,218 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "manifest": {
+    "path": "D:\\tmp\\tf0838\\operation-build-artifacts.json",
+    "sha256": "701358b9ec63f8767c13b2c37d3a67db2ee4e868580bdef07ae63e2cf8ab1e62"
+  },
+  "products": {
+    "before": {
+      "source": "c7573ec11095b541f3a4a9c5470bf4e0727489bc",
+      "files": 7580,
+      "bytes": 124415729
+    },
+    "after": {
+      "source": "acebb11e0fd7793a5f8de226dbe36bb979edadc7",
+      "files": 7597,
+      "bytes": 124854071
+    }
+  },
+  "executables": [
+    {
+      "role": "node",
+      "path": "C:\\Users\\27933\\AppData\\Roaming\\nvm\\v24.22.1\\node.exe",
+      "bytes": 93915464,
+      "sha256": "d702daa815eabbff763c7d3808e235cf031cf2ca70211b56847bc72f51e240e5"
+    },
+    {
+      "role": "electron",
+      "path": "D:\\ClawX-work\\recovery-integration-20261103\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\electron.exe",
+      "bytes": 213919232,
+      "sha256": "fad08627e2f61846a9afc3ec3e0b6110e6f0c57a79e716cbf2268c5f352bce6e"
+    },
+    {
+      "role": "esbuildModule",
+      "path": "C:\\Users\\27933\\node_modules\\.pnpm\\esbuild@0.25.12\\node_modules\\esbuild\\lib\\main.js",
+      "bytes": 88706,
+      "sha256": "0d1241812c443111d39475dfc66836003e9ef8b87e54d990dd67df29d20010e1"
+    },
+    {
+      "role": "esbuildBinary",
+      "path": "C:\\Users\\27933\\node_modules\\.pnpm\\@esbuild+win32-x64@0.25.12\\node_modules\\@esbuild\\win32-x64\\esbuild.exe",
+      "bytes": 10617344,
+      "sha256": "cae1bbc86f4df800b01d99e28aea0a154b02243de6797e98f48a9b88a64a7be0"
+    },
+    {
+      "role": "git",
+      "path": "C:\\Program Files\\Git\\bin\\git.exe",
+      "bytes": 46480,
+      "sha256": "34a408843194be320d8a87a3c12cd5c7d2e08d03b24567a41db32e21d12569d2"
+    }
+  ],
+  "buildCommands": [
+    {
+      "variant": "baseline",
+      "commit": "c7573ec11095b541f3a4a9c5470bf4e0727489bc",
+      "id": "runtime",
+      "argv": [
+        "node",
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "exitCode": 0,
+      "durationMs": 48984
+    },
+    {
+      "variant": "baseline",
+      "commit": "c7573ec11095b541f3a4a9c5470bf4e0727489bc",
+      "id": "browser",
+      "argv": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "packages/versebrowser/tsconfig.build.json"
+      ],
+      "exitCode": 0,
+      "durationMs": 10391
+    },
+    {
+      "variant": "baseline",
+      "commit": "c7573ec11095b541f3a4a9c5470bf4e0727489bc",
+      "id": "bridge",
+      "argv": [
+        "node",
+        "scripts/generate-ext-bridge.mjs"
+      ],
+      "exitCode": 0,
+      "durationMs": 140
+    },
+    {
+      "variant": "baseline",
+      "commit": "c7573ec11095b541f3a4a9c5470bf4e0727489bc",
+      "id": "capture",
+      "argv": [
+        "node",
+        "scripts/versebrowser-build-provenance.mjs",
+        "--capture"
+      ],
+      "exitCode": 0,
+      "durationMs": 485
+    },
+    {
+      "variant": "baseline",
+      "commit": "c7573ec11095b541f3a4a9c5470bf4e0727489bc",
+      "id": "icons",
+      "argv": [
+        "node",
+        "scripts/sync-lobe-icons.mjs"
+      ],
+      "exitCode": 0,
+      "durationMs": 1969
+    },
+    {
+      "variant": "baseline",
+      "commit": "c7573ec11095b541f3a4a9c5470bf4e0727489bc",
+      "id": "vite",
+      "argv": [
+        "node",
+        "--max-old-space-size=6144",
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "exitCode": 0,
+      "durationMs": 79578
+    },
+    {
+      "variant": "baseline",
+      "commit": "c7573ec11095b541f3a4a9c5470bf4e0727489bc",
+      "id": "provenance",
+      "argv": [
+        "node",
+        "scripts/versebrowser-build-provenance.mjs"
+      ],
+      "exitCode": 0,
+      "durationMs": 1657
+    },
+    {
+      "variant": "candidate",
+      "commit": "acebb11e0fd7793a5f8de226dbe36bb979edadc7",
+      "id": "runtime",
+      "argv": [
+        "node",
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "exitCode": 0,
+      "durationMs": 52734
+    },
+    {
+      "variant": "candidate",
+      "commit": "acebb11e0fd7793a5f8de226dbe36bb979edadc7",
+      "id": "browser",
+      "argv": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "packages/versebrowser/tsconfig.build.json"
+      ],
+      "exitCode": 0,
+      "durationMs": 7047
+    },
+    {
+      "variant": "candidate",
+      "commit": "acebb11e0fd7793a5f8de226dbe36bb979edadc7",
+      "id": "bridge",
+      "argv": [
+        "node",
+        "scripts/generate-ext-bridge.mjs"
+      ],
+      "exitCode": 0,
+      "durationMs": 140
+    },
+    {
+      "variant": "candidate",
+      "commit": "acebb11e0fd7793a5f8de226dbe36bb979edadc7",
+      "id": "capture",
+      "argv": [
+        "node",
+        "scripts/versebrowser-build-provenance.mjs",
+        "--capture"
+      ],
+      "exitCode": 0,
+      "durationMs": 375
+    },
+    {
+      "variant": "candidate",
+      "commit": "acebb11e0fd7793a5f8de226dbe36bb979edadc7",
+      "id": "icons",
+      "argv": [
+        "node",
+        "scripts/sync-lobe-icons.mjs"
+      ],
+      "exitCode": 0,
+      "durationMs": 1516
+    },
+    {
+      "variant": "candidate",
+      "commit": "acebb11e0fd7793a5f8de226dbe36bb979edadc7",
+      "id": "vite",
+      "argv": [
+        "node",
+        "--max-old-space-size=6144",
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "exitCode": 0,
+      "durationMs": 40531
+    },
+    {
+      "variant": "candidate",
+      "commit": "acebb11e0fd7793a5f8de226dbe36bb979edadc7",
+      "id": "provenance",
+      "argv": [
+        "node",
+        "scripts/versebrowser-build-provenance.mjs"
+      ],
+      "exitCode": 0,
+      "durationMs": 828
+    }
+  ]
+}

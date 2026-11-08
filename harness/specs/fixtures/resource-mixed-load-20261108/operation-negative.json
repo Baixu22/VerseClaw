@@ -1,0 +1,14 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": "88df32003e04655cdd8e2d1967713c4209cfae04",
+  "failed": 1,
+  "cases": [
+    {
+      "name": "adaptive resource pressure isolates fast reads from Git and log output from builds within a phase",
+      "failure": "TypeError: Cannot read properties of undefined (reading 'long')"
+    }
+  ],
+  "source": "D:\\tmp\\tf0838\\operation-negative.json",
+  "sha256": "28ccab4706ae19e785d6ebd28afd4f443c382d64cd82c1389901ae2c46bf6701"
+}
