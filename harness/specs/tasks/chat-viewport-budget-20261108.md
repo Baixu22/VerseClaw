@@ -4,7 +4,7 @@ id: chat-viewport-budget-20261108
 title: 完善聊天动态视口与缓存字节预算
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: b3e52a1cb045cf18b21d062b5b76da2499219a8c
+diffBase: f533277c74dea675fc7ef9b89a306c898a2e9f75
 intent: 完成 TF-0834 / G21-G23，保持长会话定位与滚动锚点，并限制跨会话缓存总量。
 expectedUserBehavior:
   - Older loaded messages remain reachable with bounded mounted rows and measured variable heights.
