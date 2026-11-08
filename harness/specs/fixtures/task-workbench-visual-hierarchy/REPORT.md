@@ -9,3 +9,5 @@
 复核：`node harness/specs/fixtures/task-workbench-visual-hierarchy/verify.mjs`。
 
 全仓 `harness:ci` 在 Agent Dev 审计退出 1：四份 2026-11-06 生成的证据超过 24 小时有效期，旧 deep-test 报告中的 unit、typecheck、contract 耗时超过阈值。本轮任务检查均通过；全仓门禁仍需 Agent Dev 主线刷新这些证据。
+
+已合入 main（d0245efc0d2b3483d0bf78cb64d2647de20cca5d）。63 个交付文件回读通过，2810 个无关文件保持原字节内容。主检出的 121 个相关用例完成验证：首轮 120 通过，1 项既有跨工作区 fixture 按新显示合同适配后，所属 11 项全部复测通过。主检出全量类型检查和证据复核通过；并发修改继续留在原工作区。
