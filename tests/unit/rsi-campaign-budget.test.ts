@@ -5,7 +5,7 @@ import { DatabaseSync } from 'node:sqlite';
 import { afterAll, describe, expect, it } from 'vitest';
 import { createCampaignLedger, validateCampaignBudget, type CampaignBudget } from '../../scripts/lib/rsi-campaign-budget.mjs';
 import { buildResponsesRequest, type ResponsesProviderResult } from '../../scripts/lib/rsi-responses-provider.mjs';
-import { inspectCachedModel, inspectFreeQuota } from '../../scripts/rsi-paired-measurement.mjs';
+import { inspectCachedModel, inspectFreeQuota, preparePairedMeasurement } from '../../scripts/rsi-paired-measurement.mjs';
 
 const directories: string[] = [];
 function directory() {
@@ -26,6 +26,11 @@ afterAll(() => { for (const path of directories) {
 } });
 
 describe('whole-campaign provider resources', () => {
+  it('rejects an archive directory before creating a plan or contacting the provider', async () => {
+    await expect(preparePairedMeasurement({ base: 'D:/ClawX-acceptance/not-created-campaign-workspace',
+      authorization: budget().authorization, quotaDatabase: 'unused', evolutionFile: 'unused' }))
+      .rejects.toThrow('campaign-workspaces-must-be-under-D-tmp');
+  });
   it('accepts exact-model domestic and international aliases and ignores an unrelated prefix alias', () => {
     const file = join(directory(), 'quota.sqlite'), db = new DatabaseSync(file);
     db.exec('CREATE TABLE kv (key TEXT, value TEXT); CREATE TABLE accounts (id TEXT, provider TEXT, enabled INTEGER); CREATE TABLE account_usage_records (account_id TEXT, usage TEXT, remaining REAL);');

@@ -65,6 +65,9 @@ The held-out task commitment is
 `01b05ac42fa2fd57d61a6af6e88887220a65a58952dfd5f0aa0e5a241feff501`.
 The experiment uses RsiBenefitPlan/v2 and RsiCodingCollector/v4.
 
+Campaign workspaces stay under `D:/tmp`, as required by the existing grader.
+Retained raw archives and command logs may be copied to `D:/ClawX-acceptance`.
+
 The owner authorized 12M tokens, 864 calls and a maximum of 300 CNY for this
 campaign. The sealed TF-0856 preparation remains a historical proposal with
 zero dispatch authorization; this experiment records the later authorization.

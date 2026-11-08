@@ -82,7 +82,7 @@ The new plan requires its own declared measurement budget. TF-0856 curated
 evidence is in `harness/specs/fixtures/rsi-candidate-evolution/closeout-20261108/`.
 
 `node scripts/rsi-paired-measurement.mjs` prepares, calibrates, runs and checks a
-fresh staged-prompt experiment. Its `prepare` command takes an owner-authorized
+fresh staged-prompt experiment in a new directory under `D:/tmp`. Its `prepare` command takes an owner-authorized
 budget file, the sealed evolution export and a read-only local quota database.
 `calibrate` executes the historical reference and unresolved baseline for each
 task. `run` reads the provider key from stdin and retains the preflight, all
