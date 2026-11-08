@@ -10,6 +10,7 @@ expectedUserBehavior:
   - Rising execution latency contracts admission despite backlog, and stable demand recovers gradually.
   - Read, execution and remote-wait feedback remain separate while sharing the existing account and fairness budget.
 touchedAreas:
+  - .gitignore
   - shared/resources/adaptive-limit.ts
   - shared/resources/index.ts
   - shared/types/resources.ts
