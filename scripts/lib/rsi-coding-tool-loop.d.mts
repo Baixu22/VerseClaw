@@ -5,4 +5,5 @@ export function collectToolCodingTrial(options: { root: string; plan: BenefitPla
   provider?: (request: { instructions: string; input: unknown }) => Promise<ResponsesProviderResult>;
   grade?: (edits: BenefitTrialReceipt['edits'], workspace?: string) => Promise<any>;
   prepare?: (workspace: string, task: BenefitTask) => Promise<void>;
-  remainingTokens?: number; remainingProviderCalls?: number }): Promise<BenefitTrialReceipt>;
+  remainingTokens?: number; remainingProviderCalls?: number;
+  campaignLedger?: ReturnType<typeof import('./rsi-campaign-budget.mjs').createCampaignLedger> }): Promise<BenefitTrialReceipt>;

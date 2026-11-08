@@ -6,7 +6,8 @@ export type CalibrationStage = { passed: boolean; failureClass?: 'assertion' | '
 export function codingCohortFor(root: string, directory: string): boolean;
 export function inspectLiveCorpus(root?: string, options?: { codingCohort?: boolean }): LiveTaskIdentity[];
 export function assessTaskAdmission(input: { reference?: CalibrationStage; baseline?: CalibrationStage }): { passed: boolean; issues: string[]; warnings?: string[] };
-export function probeLiveResource(input: { directory: string; endpoint: string; model: string; apiKey: string }): Promise<{ passed: boolean; [key: string]: unknown }>;
+export function probeLiveResource(input: { directory: string; endpoint: string; model: string; apiKey: string;
+  campaignLedger?: ReturnType<typeof import('./lib/rsi-campaign-budget.mjs').createCampaignLedger> }): Promise<{ passed: boolean; [key: string]: unknown }>;
 export function calibrateLiveTask(root: string, directory: string, taskId: string, options?: { timeoutMs?: number; codingCohort?: boolean; supportRoot?: string }): Promise<{
   taskId: string; source: LiveTaskIdentity; stages: Record<string, CalibrationStage>; admission: { passed: boolean; issues: string[] };
 }>;
