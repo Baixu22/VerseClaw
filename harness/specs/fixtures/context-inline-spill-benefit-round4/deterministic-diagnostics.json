@@ -57,5 +57,35 @@
     "invalidSizeDiagnostics": 0,
     "maxSerializedResultChars": 5868
   },
+  "archiveSelection": {
+    "baseline-no-reference": {
+      "originalArchive": 0,
+      "otherArchive": 0,
+      "missingArchive": 0,
+      "successfulOriginal": 0,
+      "successfulOther": 0
+    },
+    "reference-visible": {
+      "originalArchive": 16,
+      "otherArchive": 0,
+      "missingArchive": 0,
+      "successfulOriginal": 16,
+      "successfulOther": 0
+    },
+    "recall-stable": {
+      "originalArchive": 16,
+      "otherArchive": 0,
+      "missingArchive": 0,
+      "successfulOriginal": 16,
+      "successfulOther": 0
+    },
+    "retention-off": {
+      "originalArchive": 16,
+      "otherArchive": 0,
+      "missingArchive": 0,
+      "successfulOriginal": 16,
+      "successfulOther": 0
+    }
+  },
   "note": "Observed request sizes and raw/projection differences; these diagnostics do not change scoring or frozen thresholds."
 }

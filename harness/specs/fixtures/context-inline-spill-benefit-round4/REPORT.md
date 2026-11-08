@@ -4,7 +4,7 @@ driven_by: agent
 
 actor: codex-inline-spill-benefit-r4-relay
 
-第四轮 96 次实测、367 次 Responses 调用已完成，结果为 **NO-GO / no-benefit**。B1–B6 全部未通过；B7 由全包 SHA256、凭证扫描与原始记录复算验证。评测执行节点 TF-0859 的工作已完成，TF-0749 保持 in_progress/80，收益缺口见下表。
+第四轮 96 次实测、367 次 Responses 调用已完成，结果为 **NO-GO / no-benefit**。B1–B6 全部未通过；B7 由全包 SHA256、凭证扫描与原始记录复算验证。评测执行节点 TF-0859 已收口为 done/100，TF-0749 保持 in_progress/80，收益缺口见下表。
 
 ## 实现与冻结
 
@@ -31,7 +31,7 @@ actor: codex-inline-spill-benefit-r4-relay
 | B4 非劣 | stable 0/18，reference-visible 1/18；差值 −5.56pp，超过 5pp 容限 | fail |
 | B5 无证据控制 | stable 3/6 输出有效 null，其余 3 次无有效最终 JSON | fail |
 | B6 预算 | 主上下文差值 −430.46 字符，total tokens 相对 reference-visible 增长 51.56%，上限 25% | fail |
-| B7 证据 | 全包文件摘要、归档校验、凭证扫描、逐调用输入/输出与统计复算 | 由 `verify-evidence.mjs` 与 `live-verify.json` 回执核对 |
+| B7 证据 | 全包文件摘要、归档校验、凭证扫描、逐调用输入/输出与统计复算 | pass，见 `verify-evidence.mjs` 与 `live-verify.json` 回执 |
 
 全部用量为 input=1,370,634、output=147,036、total=1,517,670 tokens；367 次调用墙钟合计 1,618.392 s。费用状态为 not-run，端点未提供费率或计费单位。逐臂 p50/p95/总计见 `summary.json`。
 
@@ -39,7 +39,7 @@ actor: codex-inline-spill-benefit-r4-relay
 
 32 次 deterministic 自测中，baseline 证据 0/6、reference-visible 与 stable 各 6/6、retention-off 2/6；控制全部通过。最大序列化页 5868 字符。
 
-实测 272 次模型 recall 中，264 次页参数有效，8 次缺参数均收到 `invalid_arguments`。最大序列化结果 5944 字符，超过 6000 的调用为 0；四臂工具定义相同。stable 原始回读命中 oracle 1 次，下一请求丢失 0 次；retention-off 命中 1 次并在下一请求丢失。该机制差异尚未转化为有效正确答案。
+实测 272 次模型 recall 中，264 次页参数有效，8 次缺参数均收到 `invalid_arguments`。最大序列化结果 5944 字符，超过 6000 的调用为 0；四臂工具定义相同。stable 原始回读命中 oracle 1 次，下一请求丢失 0 次；retention-off 命中 1 次并在下一请求丢失。该机制差异尚未转化为有效正确答案。stable 的 59 次 recall 中，34 次选择原始目标归档、24 次选择其他归档、1 次缺少归档；其他归档中 21 次读取成功。归档选择与页边界问题分别计数，见 `live-diagnostics.json.archiveSelection`。
 
 56 次响应因 `max_output_tokens` 处于 incomplete；其余 311 次为 completed，provider 失败为 0。模型返回的最终内容与评分器原口径保持一致。24 对 stable/off 首轮完整请求相同，baseline oracle 泄漏和原始历史旁路均为 0。
 
@@ -49,9 +49,9 @@ actor: codex-inline-spill-benefit-r4-relay
 
 50 项定向单测、node/web/tests 三套无缓存类型、契约、定向 Harness validate/run --dry-run、源码保留检查通过。三套类型按项目串行执行，GOMAXPROCS=2、GOMEMLIMIT=2GiB；原并行检查因 Go runtime 内存分配失败终止，原日志压缩保留。既有依赖与 661 份核对过源码的包构建文件复用；pnpm 报 patchedDependencies 与安装状态不同。
 
-完整 Harness CI 在 59 项前置测试通过后因四份 Agent Dev 历史证据超过 24 小时窗口退出 1，后续 repo:evidence:check 与 repo:test-coverage:check 未执行。首次测试夹具失败及修正后的通过记录均保留。原工作树的最终 Harness 校验因四份历史未跟踪冻结文件被算入 diff 而退出 1；这四份文件保持原样，本轮候选的定向 Harness 已通过，最终提交将从仅含已跟踪文件的独立检出复核。
+完整 Harness CI 在 59 项前置测试通过后因四份 Agent Dev 历史证据超过 24 小时窗口退出 1，后续 repo:evidence:check 与 repo:test-coverage:check 未执行。首次测试夹具失败及修正后的通过记录均保留。原工作树的最终 Harness 校验因四份历史未跟踪冻结文件被算入 diff 而退出 1；这四份文件保持原样，本轮候选的定向 Harness 已通过，证据提交 `eff9cb6a8` 已从仅含已跟踪文件的独立检出通过最终 Harness validate/run --dry-run 与全包复验，129 项证据的 Git blob 与清单逐项匹配。
 
-旧机制、第二轮、第三轮及封存复核包的 105+47+37+102=291 项摘要全部匹配，四份历史未跟踪文件保持原字节。`preservation-after.json` 记录来源与核对结果。Task Forest 当前图及末帧读回见 `validation/task-forest-before.json`；节点更新后的读回作为最终收尾记录追加。
+旧机制、第二轮、第三轮及封存复核包的 105+47+37+102=291 项摘要全部匹配，四份历史未跟踪文件保持原字节。`preservation-after.json` 记录来源与核对结果。Task Forest 当前图及末帧读回见 `validation/task-forest-before.json`；最终提案 `TFP-inline-spill-r4-closeout-20261108-01a1b97b` 已应用；校验、正式导出和锁内图/HTML 当前投影/历史末帧比较均通过，TF-0859 为 done/100，七个子节点全部 done，TF-0749 保持 in_progress/80。首次校验遇到 30 秒锁超时，首次末帧读回遇到 `nodeRefs` 格式差异；仓库既有 CLI 重新导出后完整读回通过，成功与失败回执一并保存于 `validation/`。最终读回见 `validation/task-forest-final.json`。
 
 本轮执行路径为评测循环驱动 Responses，再执行模型请求的生产 recall 和投影；产品收益状态由上述 B 门判定，发布和默认开关仍取原值。
 
@@ -68,4 +68,4 @@ node diagnose-run.mjs live D:/tmp/inline-spill-r4-live-diagnostics.json
 
 `runs.json` 包含每次请求、原始响应、用量、工具参数、原始结果与生产投影。`archives.jsonl.gz` 保存归档原字节和逐文件 SHA256，验证器同时校验 handle checksum 与 byteLength。
 
-下一项设计依据是 stable 0/18、56 次输出预算耗尽，以及页尺寸已落在 6000 以内。后续评测应先单独冻结输出预算/模型完成行为的适配方案，再运行新的完整对照；保留本轮记录和阈值作为比较基准。
+下一项设计依据是 stable 0/18、56 次输出预算耗尽，以及页尺寸已落在 6000 以内。后续评测应先单独冻结输出预算、模型完成行为及目标归档选择的适配方案，再运行新的完整对照；保留本轮记录和阈值作为比较基准。

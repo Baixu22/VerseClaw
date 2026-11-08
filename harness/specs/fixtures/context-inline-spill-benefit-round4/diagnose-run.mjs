@@ -27,5 +27,14 @@ const pageContract={allToolDefinitionsIdentical:new Set(calls.map(c=>JSON.string
  validSizeCalls:tools.filter(validSize).length,invalidSizeCalls:tools.filter(t=>!validSize(t)).length,
  invalidSizeDiagnostics:tools.filter(t=>!validSize(t)&&t.raw_result&&JSON.parse(t.raw_result).diagnostics?.[0]?.code==='invalid_arguments').length,
  maxSerializedResultChars:Math.max(0,...tools.map(t=>t.result_chars))};
-const diagnostics={driven_by:'agent',actor:'codex-inline-spill-benefit-r4-relay',pageArgumentCounts:pageSizes,responseStatuses:statuses,incompleteReasons,returnedModels,completedMessageTextIgnoredByAdapter:ignoredTexts,byArm,retentionPairs,pageContract,note:'Observed request sizes and raw/projection differences; these diagnostics do not change scoring or frozen thresholds.'};
+const archiveSelection=Object.fromEntries(Object.keys(result.design.arms).map(arm=>{
+ const counts={originalArchive:0,otherArchive:0,missingArchive:0,successfulOriginal:0,successfulOther:0};
+ for(const r of rows.filter(r=>r.arm===arm))for(const t of r.toolCalls){
+  const original=t.arguments?.archive_uri===r.archive.uri;
+  counts[original?'originalArchive':t.arguments?.archive_uri?'otherArchive':'missingArchive']++;
+  if(t.ok)counts[original?'successfulOriginal':'successfulOther']++;
+ }
+ return [arm,counts];
+}));
+const diagnostics={driven_by:'agent',actor:'codex-inline-spill-benefit-r4-relay',pageArgumentCounts:pageSizes,responseStatuses:statuses,incompleteReasons,returnedModels,completedMessageTextIgnoredByAdapter:ignoredTexts,byArm,retentionPairs,pageContract,archiveSelection,note:'Observed request sizes and raw/projection differences; these diagnostics do not change scoring or frozen thresholds.'};
 writeFileSync(out,JSON.stringify(diagnostics,null,2)+'\n');console.log(JSON.stringify(diagnostics));

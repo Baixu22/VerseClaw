@@ -30,7 +30,9 @@
   },
   "executionNode": {
     "id": "TF-0859",
-    "requestedCloseout": "done/100 after evidence verification and Task Forest readback"
+    "status": "done",
+    "progress": 100,
+    "proposalId": "TFP-inline-spill-r4-closeout-20261108-01a1b97b"
   },
   "counts": {
     "runs": 96,
@@ -280,6 +282,36 @@
       "invalidSizeDiagnostics": 8,
       "maxSerializedResultChars": 5944
     },
+    "archiveSelection": {
+      "baseline-no-reference": {
+        "originalArchive": 0,
+        "otherArchive": 66,
+        "missingArchive": 12,
+        "successfulOriginal": 0,
+        "successfulOther": 0
+      },
+      "reference-visible": {
+        "originalArchive": 66,
+        "otherArchive": 9,
+        "missingArchive": 1,
+        "successfulOriginal": 65,
+        "successfulOther": 6
+      },
+      "recall-stable": {
+        "originalArchive": 34,
+        "otherArchive": 24,
+        "missingArchive": 1,
+        "successfulOriginal": 34,
+        "successfulOther": 21
+      },
+      "retention-off": {
+        "originalArchive": 33,
+        "otherArchive": 26,
+        "missingArchive": 0,
+        "successfulOriginal": 33,
+        "successfulOther": 25
+      }
+    },
     "note": "Observed request sizes and raw/projection differences; these diagnostics do not change scoring or frozen thresholds."
   },
   "sampleRationale": "Retain the original three repeats per fixture/arm to preserve round-three sample design.",
@@ -405,5 +437,21 @@
     ],
     "validationReceipt": "validation/final-harness-validate.json",
     "candidateHarnessPassed": true
+  },
+  "finalIsolatedChecks": {
+    "commit": "eff9cb6a8c298723a99649bebc4fe91844d0e4e4",
+    "dirty": false,
+    "harnessValidate": "pass",
+    "harnessDryRun": "pass",
+    "packageVerification": "pass",
+    "gitBytesMatch": 129
+  },
+  "taskForestFinalReadback": {
+    "status": "pass",
+    "artifact": "validation/task-forest-final.json",
+    "parentStatus": "in_progress/80",
+    "childrenDone": 7,
+    "firstReadback": "failed on packed nodeRefs history frame; explicit repository CLI export and full projection comparison then passed",
+    "firstValidate": "30-second lock timeout; subsequent validation passed"
   }
 }

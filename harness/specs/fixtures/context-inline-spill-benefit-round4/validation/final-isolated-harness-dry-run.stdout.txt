@@ -1,0 +1,4 @@
+[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed
+[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed
+Harness report: D:\tmp\inline-spill-benefit-r4-20261108-01a1b934\final-candidate\artifacts\harness\latest.md
+Harness result: pass
