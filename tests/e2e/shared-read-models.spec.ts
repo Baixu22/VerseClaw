@@ -18,18 +18,20 @@ test('two native windows share Git reads and retain independent lifetime', async
   execFileSync('git', ['init', '-b', 'main'], { cwd: root, windowsHide: true });
   await writeFile(join(root, 'readme.txt'), 'initial');
   const app = await launchElectronApp({ skipSetup: true });
+  let secondId: number | undefined;
   try {
     const main = await getStableWindow(app);
     const workspace = await invoke(main, 'workspaces', 'create', { name: 'Shared status', rootPath: root, agentId: 'main', activeSessionKey: 'agent:main:shared-status', permissionMode: 'readOnly' });
     expect(workspace.activeWorkspace).toBeTruthy();
-    const secondId = await app.evaluate(async ({ BrowserWindow }) => {
-      const first = BrowserWindow.getAllWindows()[0]; const preferences = first.webContents.getLastWebPreferences();
+    const windowReady = app.waitForEvent('window');
+    secondId = await app.evaluate(async ({ BrowserWindow }, preload) => {
+      const first = BrowserWindow.getAllWindows().find(window => window.webContents.getURL().startsWith('file:'))!;
       const second = new BrowserWindow({ show: false, width: 800, height: 600, webPreferences: {
-        preload: preferences.preload, contextIsolation: true, nodeIntegration: false, sandbox: false,
+        preload, contextIsolation: true, nodeIntegration: false, sandbox: false,
       } });
       await second.loadURL(first.webContents.getURL()); return second.id;
-    });
-    const pages = app.windows(); const second = pages.find(page => page !== main)!;
+    }, join(process.cwd(), 'dist-electron/preload/index.js'));
+    const second = await windowReady;
     await expect.poll(() => second.evaluate(() => Boolean(window.verseClaw?.hostInvoke))).toBe(true);
     const reset = () => app.evaluate(() => {
       const modules = Object.values(process.mainModule!.require('node:module')._cache) as Array<{ exports: { clearGitStatusCacheForTest?: () => void } }>;
@@ -64,5 +66,8 @@ test('two native windows share Git reads and retain independent lifetime', async
       workload: { requestsPerRound: 8, nativeWindows: 2, order: 'ABBA', source: 'one temporary native Git repository' },
       control: 'Existing Main cache cleared before each control request; product routes and Git commands remain real.',
       rows, remainingWindowReads: true, sourceMutationObserved: true }, null, 2));
-  } finally { await closeElectronApp(app); }
+  } finally {
+    if (secondId !== undefined) await app.evaluate(({ BrowserWindow }, id) => BrowserWindow.fromId(id)?.destroy(), secondId).catch(() => {});
+    await closeElectronApp(app);
+  }
 });
