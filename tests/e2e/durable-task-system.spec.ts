@@ -32,6 +32,7 @@ test("persists a product goal through actual Main storage and page reload", asyn
     await page.getByTestId("sidebar-more-task-ledger").click();
     await page.getByRole("tab", { name: "Persistent tasks" }).click();
     await expect(page.getByTestId("managed-tasks")).toBeVisible();
+    await page.getByRole('button', { name: 'Create persistent task', exact: true }).click();
     await page
       .getByLabel("Objective", { exact: true })
       .fill("Keep the approved artifact across sessions");

@@ -4966,6 +4966,8 @@ export type TaskSystemCommandResult = HostSuccess & { result?: unknown; error?: 
 export type TaskSystemListResult = HostSuccess & { tasks: import('../task-system/types').TaskView[] };
 export type TaskSystemQueryPayload = TaskLedgerWorkspacePayload & import('../task-system/types').TaskQuery;
 export type TaskSystemQueryResult = HostSuccess & import('../task-system/types').TaskPage;
+export type TaskSessionPayload = { workspaceId: string; sessionKey: string };
+export type TaskSessionResult = HostSuccess & import('../task-system/types').TaskSessionSnapshot;
 export type TaskLedgerSnapshotResult = HostSuccess & { snapshot: TaskLedgerSnapshot };
 export type TaskLedgerAppendEventsPayload = TaskLedgerWorkspacePayload & {
   events: TaskLedgerEventInput[];
@@ -6251,6 +6253,7 @@ export type HostApiContract = {
   taskLedger: {
     managedTasks: (payload?: TaskLedgerWorkspacePayload) => TaskSystemListResult;
     queryTasks: (payload?: TaskSystemQueryPayload) => TaskSystemQueryResult;
+    sessionTask: (payload: TaskSessionPayload) => TaskSessionResult;
     command: (payload: TaskSystemCommandPayload) => TaskSystemCommandResult;
     snapshot: (payload?: TaskLedgerWorkspacePayload) => TaskLedgerSnapshotResult;
     appendEvents: (payload: TaskLedgerAppendEventsPayload) => TaskLedgerSnapshotResult;

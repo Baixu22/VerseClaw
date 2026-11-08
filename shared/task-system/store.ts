@@ -110,12 +110,12 @@ export class TaskSystemStore {
       const version = Number(
         (this.db.prepare("PRAGMA user_version").get() as { user_version: number }).user_version,
       );
-      if (version > 5) {
+      if (version > 6) {
         this.db.close();
         throw new Error("TASK_SCHEMA_NEWER_THAN_CLIENT");
       }
       this.db.exec("PRAGMA synchronous=FULL;");
-      if (version === 5) return;
+      if (version === 6) return;
       this.db.exec("PRAGMA journal_mode=WAL; BEGIN IMMEDIATE;");
       this.db.exec(`
       CREATE TABLE IF NOT EXISTS task_contracts(id TEXT PRIMARY KEY, fingerprint TEXT NOT NULL, business_key TEXT, state TEXT NOT NULL, revision INTEGER NOT NULL, json TEXT NOT NULL);
@@ -139,7 +139,8 @@ export class TaskSystemStore {
       CREATE TABLE IF NOT EXISTS task_plan_children(parent_id TEXT NOT NULL REFERENCES task_contracts(id),child_id TEXT NOT NULL UNIQUE REFERENCES task_contracts(id),ordinal INTEGER NOT NULL,PRIMARY KEY(parent_id,child_id));
       CREATE INDEX IF NOT EXISTS task_event_page ON task_events(task_id,seq);
       CREATE TABLE IF NOT EXISTS task_event_consumers(id TEXT PRIMARY KEY,sequence INTEGER NOT NULL);
-      PRAGMA user_version=5;
+      CREATE INDEX IF NOT EXISTS task_claim_session ON task_claims(session_key,generation);
+      PRAGMA user_version=6;
       COMMIT;
     `);
     } catch (error) {
@@ -673,6 +674,21 @@ export class TaskSystemStore {
         },
       );
     });
+  }
+  start(input: {taskNodeId?: string; contract?: TaskContractInput}, sessionKey: string, generation: string, requestId: string, expected?: TaskCredential): TaskView {
+    if (Boolean(input.taskNodeId) === Boolean(input.contract)) throw new Error("TASK_START_ONE_TARGET_REQUIRED");
+    return this.transaction(() => {
+      const resolved = input.taskNodeId ?? this.create(input.contract!, `${requestId}:create`, undefined, {source:"runtime-task-tool",sessionKey}).task.contract.taskNodeId;
+      return this.claim(resolved,sessionKey,generation,`${requestId}:claim`,expected);
+    });
+  }
+  sessionSnapshot(sessionKey: string, generation: string) {
+    let task = this.binding(sessionKey,generation);
+    if (!task) {
+      const recent=this.db.prepare("SELECT c.task_id FROM task_claims c JOIN task_contracts t ON t.id=c.task_id WHERE c.session_key=? AND c.generation=? ORDER BY json_extract(t.json,'$.updatedAt') DESC,c.rowid DESC LIMIT 1").get(sessionKey,generation) as {task_id:string}|undefined;
+      if (recent) task=this.get(recent.task_id);
+    }
+    return {task,children:(task?.childTaskNodeIds??[]).map(id=>this.get(id))};
   }
   assertOwner(credential: TaskCredential, allowPaused = false): TaskView {
     const view = this.get(credential.taskNodeId);

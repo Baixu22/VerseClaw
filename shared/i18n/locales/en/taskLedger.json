@@ -135,5 +135,25 @@
     "parentGoal": "This task retains the parent goal and constraints.",
     "coverage": "Ownership checks cover managed agent tools in this repository. External terminals do not participate in task ownership.",
     "stale": "Showing the last successful read. Task actions are disabled until the task store is available."
+  },
+  "conversation": {
+    "task": "Task",
+    "reopen": "Open task panel",
+    "hide": "Hide task panel",
+    "hideHint": "Hide the panel; the task keeps running",
+    "stale": "Status unavailable",
+    "progress": "In progress",
+    "observing": "This chat follows the task while its assigned session continues the work.",
+    "settling": "Confirming operations already started.",
+    "refresh": "Refresh status",
+    "states": {
+      "ready": "Ready",
+      "doing": "In progress",
+      "paused": "Paused",
+      "review": "Verifying",
+      "cancelling": "Stopping",
+      "done": "Completed",
+      "cancelled": "Cancelled"
+    }
   }
 }

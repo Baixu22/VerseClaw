@@ -7,6 +7,7 @@ import type {
   TaskView,
   TaskQuery,
   TaskPage,
+  TaskSessionSnapshot,
 } from "../../shared/task-system/types";
 import { getPersistedCoordinatorBinding, getWorkspaceRootPathById } from "./workspaces-api";
 import type { GatewayManager } from "../gateway/manager";
@@ -58,6 +59,19 @@ export async function pageManagedTasks(
   } finally {
     store?.close();
   }
+}
+
+export async function readSessionTask(workspaceId:string,sessionKey:string,gateway?:GatewayManager):Promise<TaskSessionSnapshot> {
+  if (!sessionKey?.trim()) throw new Error('TASK_SESSION_IDENTITY_REQUIRED');
+  const store=await openTaskSystem(workspaceId);
+  if (!store) return {task:null,children:[]};
+  try {
+    if (!gateway) throw new Error('TASK_SESSION_OWNER_UNAVAILABLE');
+    const described=await gateway.rpc<{session?:{sessionId?:string}}>('sessions.describe',{key:sessionKey},10_000);
+    const generation=described.session?.sessionId;
+    if (!generation) return {task:null,children:[]};
+    return store.sessionSnapshot(sessionKey,generation);
+  } finally {store.close();}
 }
 
 export async function assertManagedTaskAdmission(input: {
@@ -113,9 +127,9 @@ export async function persistentTaskChatContext(
     store.binding(sessionKey, liveGeneration);
     if (bound.referenceOnly) return store.context(sessionKey,liveGeneration);
     const coordinator = await getPersistedCoordinatorBinding(workspaceId, sessionKey);
-    if (!coordinator || coordinator.state !== "active")
+    if (coordinator && coordinator.state !== "active")
       throw new Error("TASK_COORDINATOR_REQUIRED");
-    const domain = resolveTaskDomain(coordinator.environment.canonicalRoot);
+    const domain = coordinator ? resolveTaskDomain(coordinator.environment.canonicalRoot) : resolved;
     if (domain.id !== store.domain.id) throw new Error("TASK_SESSION_DOMAIN_MISMATCH");
     // The coordinator keeps its own generation while a child owns the writer.
     // binding() checks either the writer binding or the read reference.

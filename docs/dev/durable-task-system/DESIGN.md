@@ -61,3 +61,5 @@
 - How to do distributed locking — Martin Kleppmann’s blog — https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html
 - latest | The Kanban Guide | Kanban Guides — https://kanbanguides.org/the-kanban-guide/
 - Shift handover - HSE — https://www.hse.gov.uk/humanfactors/topics/shift-handover.htm
+
+**会话优先交互。** 普通聊天不要求用户填写目标、选择内部 ID 或手动领取。agent 使用 start 将既有任务解析或新目标创建与领取放入同一事务；冲突时保留原 owner 并说明实际阻塞，不生成另一份重复任务。sessionTask 按当前会话与物理 generation 读取绑定及子任务，不扫描全仓库。任务到达后，输入框上方出现默认收起的进度入口，复用 ToolUiPlanView；侧栏只在用户要求时打开。关闭面板只保存界面偏好，后台继续保留目标和执行资格。偏好按工作区、会话和任务标识保存，上限 100 条；新任务重新显示一行。工具终态、run 边界和窗口聚焦触发合并刷新，无常驻轮询器；旧会话响应丢弃，读取失败保留陈旧状态并提供刷新。

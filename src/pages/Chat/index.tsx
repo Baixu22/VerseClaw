@@ -24,6 +24,7 @@ import {
 import type { KnowledgeErrorGuardAdvisory, KnowledgeErrorGuardSignal, SessionHandoffResult, SessionCompactionStatus, SessionCompressionArtifactResult } from '@shared/host-api/contract';
 import type { GitWorktree } from '@shared/types/git';
 import { ComposerGitStrip } from './ComposerGitStrip';
+import { SessionTaskDock } from './SessionTaskDock';
 const CheckpointsDialog = lazy(() => import('@/components/chat/CheckpointsDialog').then((m) => ({ default: m.CheckpointsDialog })));
 const CompactionArtifactViewer = lazy(() => import('./CompactionArtifactViewer').then((m) => ({ default: m.CompactionArtifactViewer })));
 import type { LongTaskControlStatus } from '@shared/types/long-task-control';
@@ -989,7 +990,6 @@ export function Chat() {
   const sessionActivitySnapshot = useSessionActivityStore((state) => state.snapshots[currentSessionKey]);
   const loadSessionActivity = useSessionActivityStore((state) => state.load);
   const sessionActivityPanelEnabled = useSettingsStore((state) => state.sessionActivityPanelEnabled);
-  const sessionActivityAutoExpand = useSettingsStore((state) => state.sessionActivityAutoExpand);
   const sessionActivityShowGit = useSettingsStore((state) => state.sessionActivityShowGit);
   const sessionActivityShowCommands = useSettingsStore((state) => state.sessionActivityShowCommands);
   const sessionActivityRetentionMinutes = useSettingsStore((state) => state.sessionActivityRetentionMinutes);
@@ -1044,7 +1044,6 @@ export function Chat() {
   const restoreArtifactPanelState = useArtifactPanel((s) => s.restoreSessionState);
   const splitContainerRef = useRef<HTMLDivElement | null>(null);
   const compactPanelLayoutRef = useRef(false);
-  const [compactToolbarLayout, setCompactToolbarLayout] = useState(false);
   const [terminalBottomHeight, setTerminalBottomHeight] = useState(280);
   const chatToolbarRef = useRef<HTMLDivElement | null>(null);
   const lastObservedSessionKeyRef = useRef(currentSessionKey);
@@ -1071,10 +1070,7 @@ export function Chat() {
 
     const updatePanelDensity = () => {
       const width = container.clientWidth;
-      const toolbarWidth = chatToolbarRef.current?.clientWidth ?? width;
       const compact = width > 0 && width < 900;
-      const toolbarCompact = toolbarWidth > 0 && toolbarWidth < 720;
-      setCompactToolbarLayout(toolbarCompact);
       const state = useArtifactPanel.getState();
       const activeTab = state.tabs.find((tab) => tab.id === state.activeTabId);
 
@@ -2941,47 +2937,15 @@ export function Chat() {
     && !isEmpty
     && sessionActivityHasContent;
 
-  /**
-   * The status rail's two layers.
-   *
-   * PASSIVE (`inline`) — the rail put itself there because the run has a plan.
-   * Task planning is the whole trigger: a run that is merely alive has nothing
-   * for a column to hold, so a session without a plan shows no rail at all and
-   * the toolbar toggle is the only way in. Because it appeared on its own, the
-   * transcript gives up the width for it (see `codex-conversation-inset`)
-   * instead of being covered by it.
-   *
-   * ACTIVE (`overlay`) — the user opened it from the toolbar. It becomes a
-   * dropdown off that control and is drawn OVER the transcript, which keeps its
-   * width: a panel the reader asked for must not reflow what they were reading.
-   *
-   * `sessionActivityAutoExpand` has existed in Settings ("auto expand: when
-   * active / when it needs attention / never") with nothing consuming it. It is
-   * the policy knob for the passive layer only — `never` does not disable the
-   * toggle, it just stops the rail from opening by itself.
-   */
-  const sessionActivityHasPlan = (sessionActivityPlan?.todos.length ?? 0) > 0;
-  const sessionActivityPassive = hasSessionActivityEntry
-    && !compactToolbarLayout
-    /* The workspace panel already claims the right-hand column; insetting the
-       transcript for a second one leaves the conversation a sliver. */
-    && !panelOpen
-    && sessionActivityHasPlan
-    && (sessionActivityAutoExpand === 'active'
-      || (sessionActivityAutoExpand === 'attention' && sessionActivityLevel === 'attention'));
+  // Task progress stays above the composer; the status sidebar opens on request.
+  const sessionActivityPassive = false;
   const sessionActivityOverride = sessionActivityOpenOverrides[currentSessionKey];
   const sessionActivityRailOpen = (sessionActivityOverride ?? sessionActivityPassive)
     && Boolean(visibleSessionActivitySnapshot)
     && sessionActivityPanelEnabled
     && !isEmpty;
   const sessionActivityRailLayer = sessionActivityOverride === true ? 'overlay' : 'inline';
-  /**
-   * Toggle against the EFFECTIVE state, not against the override.
-   *
-   * With a plan on screen the rail is already open with no override recorded;
-   * flipping `override ?? false` would have taken it from passive-inline to
-   * user-overlay instead of closing it — one click, two surfaces, nothing shut.
-   */
+  // Explicit status requests leave the transcript width unchanged.
   const handleToggleSessionActivity = useCallback(() => {
     const opening = !(sessionActivityOpenOverrides[currentSessionKey] ?? sessionActivityPassive);
     if (opening) {
@@ -3931,6 +3895,7 @@ export function Chat() {
           <ComposerGitStrip workspace={activeWorkspace} disabled={inputRunActive} onOpenGitPanel={handleOpenEnvironment} onSwitchWorktreeWorkspace={handleSwitchWorktreeWorkspace} />
         </div>
       )}
+      <SessionTaskDock workspaceId={activeWorkspaceId ?? null} sessionKey={currentSessionKey} hasConversation={!isEmpty} plan={sessionActivityPlan} />
       <ChatInput
         onSend={handleSendMessage}
         disabled={!isGatewayRunning}

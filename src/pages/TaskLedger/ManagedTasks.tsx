@@ -24,7 +24,7 @@ export function ManagedTasks({
   const [error, setError] = useState("");
   const [stale, setStale] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [showForm, setShowForm] = useState(true);
+  const [showForm, setShowForm] = useState(false);
   const [objective, setObjective] = useState("");
   const [target, setTarget] = useState("");
   const [expectedHash, setExpectedHash] = useState("");
