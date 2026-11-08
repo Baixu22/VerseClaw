@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, join, relative, resolve } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
@@ -65,6 +65,8 @@ export function inspectCachedModel(database, model) {
 }
 
 export async function preparePairedMeasurement({ root = ROOT, base, authorization, quotaDatabase, evolutionFile }) {
+  const baseRelative = relative(resolve('D:/tmp'), resolve(base));
+  assert(baseRelative && !baseRelative.startsWith('..') && !baseRelative.includes(':'), 'campaign-workspaces-must-be-under-D-tmp');
   assert(!existsSync(base), 'new-campaign-directory-required');
   assert.equal(execFileSync('git', ['status', '--porcelain'], { cwd: root, windowsHide: true, encoding: 'utf8' }).trim(), '', 'campaign-clean-candidate-required');
   const endpoint = 'http://127.0.0.1:3065/v1/responses', model = 'space-bunny';
@@ -178,7 +180,9 @@ if (isMainEntrypoint(import.meta.url)) {
             timeoutMs: plan.collector.oracleTimeoutMs, supportRoot: values['support-root'] });
           console.log(JSON.stringify({ taskId: task.id, passed: calibrated.admission.passed, issues: calibrated.admission.issues }));
         }
-        result = { calibrated: plan.tasks.length, providerCalls: 0 };
+        const outcomes = plan.tasks.map(task => read(join(admission, 'calibration', task.id, 'admission.json')).admission);
+        result = { calibrated: outcomes.length, admitted: outcomes.filter(item => item.passed).length,
+          rejected: outcomes.filter(item => !item.passed).length, providerCalls: 0, passed: outcomes.every(item => item.passed) };
       } else {
         assert(values.scratch, 'scratch required');
         if (positionals[0] === 'run') {
