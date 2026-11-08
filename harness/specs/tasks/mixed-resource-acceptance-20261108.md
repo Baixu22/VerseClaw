@@ -4,7 +4,7 @@ id: mixed-resource-acceptance-20261108
 title: 冻结并执行多窗口多智能体混合负载对照
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 431144c6fda4b74a623160453c0cf8279f72297f
+diffBase: eeb4578ecab8dab1bca285907c652ba3287170a7
 intent: 完成 TF-0838 / G33，固定旧基线和整合候选，在真实Electron中执行相同混合工作及输入滚动测量。
 expectedUserBehavior:
   - Identical mixed work is measured at one and two windows with one, four and eight agent-driven workers.
