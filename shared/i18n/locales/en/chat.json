@@ -1343,7 +1343,8 @@
     "lineage": {
       "forkedFrom": "Forked from {{session}}",
       "forkedFromAt": "Forked from {{session}} · {{time}}"
-    }
+    },
+    "manage": "Chat options"
   },
   "composer": {
     "attachFiles": "Attach files",
@@ -2211,7 +2212,9 @@
       "newBranch": "New branch",
       "existingBranch": "Existing branch",
       "defaultPath": "Default path",
-      "defaultPathUnavailable": "Enter a branch name to preview its path"
+      "defaultPathUnavailable": "Enter a branch name to preview its path",
+      "filesChanged": "{{count}} files changed",
+      "filesChanged_one": "{{count}} file changed"
     },
     "modelSwitchSessionResetFailed": "Default model saved, but this session could not be reset: {{error}}",
     "knowledgeRuntimeLessons": {
@@ -2782,5 +2785,8 @@
       "hint": "This resource cannot be displayed here.",
       "copy": "Copy details"
     }
+  },
+  "task": {
+    "steps": "Steps"
   }
 }

@@ -167,21 +167,21 @@ describe('Chat artifact panel layout', () => {
     expect(aside).toHaveClass('border-l');
   });
 
-  it('spans the background canvas across both columns', async () => {
+  it('keeps the conversation canvas plain without grid decoration', async () => {
     window.electron.platform = 'win32';
 
     render(<Chat />);
 
     const page = await screen.findByTestId('chat-page');
-    const canvas = await screen.findByTestId('chat-welcome-bg');
+    const canvas = screen.queryByTestId('chat-welcome-bg');
     const conversation = await screen.findByTestId('chat-conversation-column');
 
     // The canvas is a child of the PAGE, not of the conversation column: the
     // workspace panel is co-planar, so the grid has to cross the divider. It is
     // also the first child, so every positioned sibling after it paints on top.
-    expect(canvas.parentElement).toBe(page);
-    expect(page.firstElementChild).toBe(canvas);
-    expect(conversation.contains(canvas)).toBe(false);
+    expect(canvas).toBeNull();
+    expect(page).toHaveClass('bg-background');
+    expect(conversation).toBeInTheDocument();
   });
 
   it('hides the chat assistive rail while the artifact panel is open', async () => {

@@ -28,7 +28,7 @@ async function host<T>(
   ) as Promise<T>;
 }
 
-test("normal conversation quietly identifies work and keeps a dismissible task above the composer", async ({
+test("normal conversation shows one task header and reveals file changes below the input", async ({
   launchElectronApp,
   homeDir,
 }, info) => {
@@ -56,6 +56,8 @@ test("normal conversation quietly identifies work and keeps a dismissible task a
     const page = await getStableWindow(app);
     await page.emulateMedia({ reducedMotion: "reduce" });
     await expect(page.getByTestId("session-task-dock")).toHaveCount(0);
+    await expect(page.getByTestId('chat-welcome-bg')).toHaveCount(0);
+    await expect(page.getByTestId('chat-welcome-watermark')).toHaveCount(0);
     await host(page, "gateway", "start");
     await expect
       .poll(
@@ -109,6 +111,9 @@ test("normal conversation quietly identifies work and keeps a dismissible task a
     await page.reload();
     await page.getByTestId(`sidebar-session-${session.key}`).click();
     await expect(page.getByTestId("session-task-dock")).toHaveCount(0);
+    await expect(page.getByTestId('composer-git-strip')).toHaveCount(0);
+    await expect(page.getByTestId('chat-header-session-name')).toHaveText('Chat options');
+    await expect(page.getByTestId('chat-header-branch')).toHaveCount(0);
     const require = createRequire(join(process.cwd(), "package.json"));
     const { build } = createRequire(require.resolve("vite/package.json"))("esbuild");
     const bundle = join(homeDir, "task-store.cjs");
@@ -153,6 +158,7 @@ test("normal conversation quietly identifies work and keeps a dismissible task a
         described.session.sessionId,
         "conversation-start",
       );
+      owner.checkpoint(started.claim,{completed:['Inspect export'],nextAction:'Run checks',unresolved:[],artifacts:[]});
     } finally {
       owner.close();
     }
@@ -171,10 +177,22 @@ test("normal conversation quietly identifies work and keeps a dismissible task a
     const dock = page.getByTestId("session-task-dock");
     await expect(dock).toContainText("Fix and verify the export");
     await expect(dock).toBeInViewport();
+    await expect(dock).toHaveAttribute('data-placement','header');
+    const headerBox=await dock.boundingBox();const inputBox=await page.locator('.codex-composer-shell').boundingBox();
+    expect(headerBox!.y).toBeLessThan(180);expect(headerBox!.y+headerBox!.height).toBeLessThan(inputBox!.y);
+    await expect(page.getByText('Fix and verify the export',{exact:true})).toHaveCount(1);
+    await expect(dock.getByRole('progressbar')).toHaveCount(0);
+    await writeFile(join(root,'export.ts'),'export const verified = true;\n');await sendUpdate();
+    const fileChip=page.getByTestId('composer-git-trigger');await expect(fileChip).toContainText('1 file changed');
+    const fileBox=await fileChip.boundingBox();expect(fileBox!.y).toBeGreaterThan(inputBox!.y);
+    await expect(fileChip).not.toContainText('master');await expect(fileChip).not.toContainText('conversation-task');
     const toggle = page.getByTestId("session-task-plan").locator("button").first();
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
     await toggle.focus(); await page.keyboard.press('Enter');
     await expect(toggle).toHaveAttribute("aria-expanded", "true");
+    await expect(page.getByTestId('session-task-steps')).toContainText('Inspect export');
+    await expect(page.getByTestId('session-task-steps')).toContainText('Run checks');
+    await expect(page.getByText('Fix and verify the export',{exact:true})).toHaveCount(1);
     await page.screenshot({path:info.outputPath('conversation-task-expanded.png'),animations:'disabled'});
     await page.getByTestId("session-task-close").click();
     await expect(page.getByTestId("session-task-panel")).toHaveCount(0);
@@ -221,6 +239,7 @@ test("normal conversation quietly identifies work and keeps a dismissible task a
           hiddenPersists: true,
           hidePreservesClaim: true,
           languages:['en','zh','ja','ru'],keyboardToggle:true,
+          layout:'single task header above transcript; changed-file chip below composer; plain canvas',
         },
         null,
         2,

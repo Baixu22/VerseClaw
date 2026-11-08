@@ -277,4 +277,4 @@ Task Ledger → Persistent tasks saves objectives, constraints and acceptance ch
 
 Search and filter the task list, then load further pages. Agents can suggest related tasks and decompose a goal into dependent tasks while retaining the parent goal and constraints. Cancelling a plan waits for in-flight effects to settle. Acceptance and recovery read receipts from the existing runtime owners.
 
-Conversation tasks are managed by the agent. After work is identified, a compact task row appears above the composer. Expand it for progress, or hide and reopen it without stopping the task. Task Ledger remains available for detailed management.
+Conversation tasks are managed by the agent. Identified work appears in one task header above the conversation, with verified step progress and a hide/reopen control. The plain canvas keeps the input clear; a small changed-file entry appears below the composer only when files change. Branches and worktree controls remain in its details.

@@ -1343,7 +1343,8 @@
     "lineage": {
       "forkedFrom": "Fork 自 {{session}}",
       "forkedFromAt": "Fork 自 {{session}} · {{time}}"
-    }
+    },
+    "manage": "会话选项"
   },
   "composer": {
     "attachFiles": "添加文件",
@@ -2211,7 +2212,9 @@
       "newBranch": "新分支",
       "existingBranch": "已有分支",
       "defaultPath": "默认路径",
-      "defaultPathUnavailable": "输入分支名称以预览路径"
+      "defaultPathUnavailable": "输入分支名称以预览路径",
+      "filesChanged": "已修改 {{count}} 个文件",
+      "filesChanged_one": "已修改 {{count}} 个文件"
     },
     "modelSwitchSessionResetFailed": "默认模型已保存，但当前会话未能重置：{{error}}",
     "knowledgeRuntimeLessons": {
@@ -2782,5 +2785,8 @@
       "hint": "此处无法显示该资源。",
       "copy": "复制详情"
     }
+  },
+  "task": {
+    "steps": "执行步骤"
   }
 }

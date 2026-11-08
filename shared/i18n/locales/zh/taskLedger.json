@@ -154,6 +154,11 @@
       "cancelling": "正在停止",
       "done": "已完成",
       "cancelled": "已取消"
-    }
+    },
+    "steps": "执行步骤",
+    "stepsProgress": "{{completed}} / {{total}} 步",
+    "waitingForPlan": "正在整理下一步。",
+    "accepted": "任务已核验完成。",
+    "viewChanges": "查看改动"
   }
 }

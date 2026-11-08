@@ -154,6 +154,11 @@
       "cancelling": "停止中",
       "done": "完了",
       "cancelled": "取消済み"
-    }
+    },
+    "steps": "実行手順",
+    "stepsProgress": "{{completed}} / {{total}} ステップ",
+    "waitingForPlan": "次の手順を準備しています。",
+    "accepted": "タスクの検証が完了しました。",
+    "viewChanges": "変更を表示"
   }
 }

@@ -1343,7 +1343,8 @@
     "lineage": {
       "forkedFrom": "Fork от {{session}}",
       "forkedFromAt": "Fork от {{session}} · {{time}}"
-    }
+    },
+    "manage": "Параметры чата"
   },
   "composer": {
     "attachFiles": "Прикрепить файлы",
@@ -2211,7 +2212,9 @@
       "newBranch": "Новая ветка",
       "existingBranch": "Существующая ветка",
       "defaultPath": "Путь по умолчанию",
-      "defaultPathUnavailable": "Введите имя ветки для просмотра пути"
+      "defaultPathUnavailable": "Введите имя ветки для просмотра пути",
+      "filesChanged": "Изменено файлов: {{count}}",
+      "filesChanged_one": "Изменён {{count}} файл"
     },
     "modelSwitchSessionResetFailed": "Модель по умолчанию сохранена, но сбросить текущий сеанс не удалось: {{error}}",
     "knowledgeRuntimeLessons": {
@@ -2782,5 +2785,8 @@
       "hint": "Этот ресурс нельзя показать здесь.",
       "copy": "Копировать сведения"
     }
+  },
+  "task": {
+    "steps": "Этапы"
   }
 }
