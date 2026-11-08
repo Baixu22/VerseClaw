@@ -119,12 +119,21 @@ export function reconcileCampaign(base, { root = ROOT, scratch } = {}) {
   const observed = [];
   const measuredPreflight = join(base, 'measurement/provider-preflight.json');
   const preflightPath = existsSync(measuredPreflight) ? measuredPreflight : join(base, 'admission/provider-preflight.json');
-  if (existsSync(preflightPath)) {
-    const receipt = read(preflightPath);
-    if (receipt.request?.body) observed.push({ identity: 'provider-preflight', request: receipt.request.body,
+  const resourcePath = join(base, 'resource-preflights.v1.json');
+  const resources = existsSync(resourcePath) ? read(resourcePath).entries
+    : [{ identity: 'provider-preflight', path: preflightPath }];
+  const preflightIdentities = new Set();
+  for (const resource of resources) {
+    assert(typeof resource.identity === 'string' && resource.identity.startsWith('provider-preflight')
+      && !preflightIdentities.has(resource.identity), 'campaign-resource-identity');
+    preflightIdentities.add(resource.identity);
+    if (!existsSync(resource.path)) continue;
+    const receipt = read(resource.path);
+    if (resource.sha256) assert.equal(resource.sha256, sha(readFileSync(resource.path)), 'campaign-resource-receipt-drift');
+    if (receipt.request?.body) observed.push({ identity: resource.identity, request: receipt.request.body,
       response: receipt.rawResponse ?? null, usage: receipt.response?.usage ?? null });
-    else if (ledger.snapshot().rows.some(row => row.reservation.identity === 'provider-preflight')) {
-      observed.push({ identity: 'provider-preflight', response: null, usage: null });
+    else if (ledger.snapshot().rows.some(row => row.reservation.identity === resource.identity)) {
+      observed.push({ identity: resource.identity, response: null, usage: null });
     }
   }
   for (const slot of plan.slots) {
@@ -149,8 +158,8 @@ export function reconcileCampaign(base, { root = ROOT, scratch } = {}) {
     && state.spendingUpperBound <= auth.maxCost, 'campaign-resource-overrun');
   const { rows, ...summary } = state;
   return { schemaVersion: 'RsiCampaignAccounting/v1', driven_by: 'agent', actor: 'codex/rsi-campaign-replay',
-    ...summary, plannedAuthorization: auth, preflightCalls: observed.filter(row => row.identity === 'provider-preflight').length,
-    trialProviderCalls: observed.filter(row => row.identity !== 'provider-preflight').length,
+    ...summary, plannedAuthorization: auth, preflightCalls: observed.filter(row => preflightIdentities.has(row.identity)).length,
+    trialProviderCalls: observed.filter(row => !preflightIdentities.has(row.identity)).length,
     reservationCount: rows.length, receiptCount: observed.length, reconciled: true,
     spendingBasis: plan.budget.campaign.billing.kind, upstreamCreditDebit: null };
 }

@@ -67,7 +67,7 @@ export function inspectLiveCorpus(root = ROOT, { codingCohort = false } = {}) {
   });
 }
 
-export async function probeLiveResource({ directory, endpoint, model, apiKey, campaignLedger }) {
+export async function probeLiveResource({ directory, endpoint, model, apiKey, campaignLedger, reservationIdentity = 'provider-preflight' }) {
   assert(!existsSync(join(directory, 'provider-preflight.json')), 'preflight-already-recorded');
   const start = Date.now();
   const marker = 'RSI_PROVIDER_READY';
@@ -76,7 +76,7 @@ export async function probeLiveResource({ directory, endpoint, model, apiKey, ca
   try {
     const provider = createResponsesProvider({ endpoint, model, apiKey, maxOutputTokens: 512, timeoutMs: 45000, reasoningEffort: 'low' });
     const reservation = campaignLedger ? await campaignLedger.reserve(buildResponsesRequest({ model, ...request,
-      maxOutputTokens: 512, reasoningEffort: 'low' }), 'provider-preflight') : null;
+      maxOutputTokens: 512, reasoningEffort: 'low' }), reservationIdentity) : null;
     let receipt;
     try { receipt = await provider(request); }
     finally { if (reservation) campaignLedger.settle(reservation, receipt); }
