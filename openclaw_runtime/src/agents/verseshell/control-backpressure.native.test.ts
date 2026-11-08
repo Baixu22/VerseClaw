@@ -18,8 +18,15 @@ async function setup() {
   expect(hash).toBe(manifest.artifacts["win32-x64"].sha256);
   const root = await mkdtemp(path.join(process.env.PROCESS_CONTROL_NATIVE_ROOT ?? tmpdir(), "tf0836-native-"));
   const pids: number[] = [];
+  const executorDiagnostics: Array<{ pid?: number; stderr: string; code?: number | null; signal?: string | null; environmentKeys: string[] }> = [];
   const manager = new VerseShellProcessManager({ resolveBinary: () => ({ path: binary!, source: "verified-bundled", verified: true }),
-    spawnProcess: (bin, args, options) => { const child = spawn(bin, args, options); pids.push(child.pid!); return child as never; } });
+    spawnProcess: (bin, args, options) => {
+      const child = spawn(bin, args, options); pids.push(child.pid!);
+      const diagnostics: typeof executorDiagnostics[number] = { pid: child.pid, stderr: "", environmentKeys: Object.keys(options.env ?? {}).filter(k=>/^(systemroot|systemdrive|comspec|windir|path|pathext|appdata|localappdata|userprofile|temp|tmp)$/i.test(k)) };
+      executorDiagnostics.push(diagnostics); child.stderr?.on("data", chunk => { diagnostics.stderr = (diagnostics.stderr + String(chunk)).slice(-4096); });
+      child.once("exit", (code, signal) => { diagnostics.code=code; diagnostics.signal=signal; });
+      return child as never;
+    } });
   const clients = new Map<string, VerseShellAciClient>(); const getClient = manager.getClient.bind(manager);
   const timeline: Array<Record<string, unknown>> = [];
   manager.getClient = async config => {
@@ -40,7 +47,7 @@ async function setup() {
   const processEnv = Object.fromEntries(["PATH","SystemRoot","SystemDrive","ComSpec","PATHEXT","TEMP","TMP","APPDATA","LOCALAPPDATA","USERPROFILE","windir"]
     .flatMap(key => { const value = hostEnv.get(key.toUpperCase()); return value ? [[key,value]] : []; }));
   expect(processEnv.SystemRoot).toBeTruthy(); expect(processEnv.ComSpec).toBeTruthy();
-  return { root, pids, manager, env, processEnv, hash, clients, timeline };
+  return { root, pids, manager, env, processEnv, hash, clients, timeline, executorDiagnostics };
 }
 async function report(name: string, value: unknown) {
   if (process.env.PROCESS_CONTROL_REPORT_DIR) await writeFile(path.join(process.env.PROCESS_CONTROL_REPORT_DIR, name + ".json"), JSON.stringify({ driven_by: "agent", actor: "codex", value }, null, 2));
@@ -95,7 +102,7 @@ describe.runIf(live)("verified native process control", () => {
       const children = (await readFile(grandchildren,"utf8")).trim().split(/\s+/).map(Number); expect(children.every(pid=>!alive(pid))).toBe(true);
       expect(f.pids.every(pid=>!alive(pid))).toBe(true);
       await report("native-control", { binarySha256:f.hash, controls, pollRequests:16, output, result:{exitCode:result.exitCode,stdoutBytes:Buffer.byteLength(result.stdout),stderrBytes:Buffer.byteLength(result.stderr),artifacts,counts:result.observation.data?.output_bytes},artifactReads:reads,ownedPids:f.pids,grandchildren:children,remaining:0 });
-    } finally { await f.manager.shutdownAll(); await report("native-workspace",{root:f.root,pids:f.pids,timeline:f.timeline,output,preservedEnvironmentKeys:Object.keys(f.processEnv)}); }
+    } finally { await f.manager.shutdownAll(); await report("native-workspace",{root:f.root,pids:f.pids,timeline:f.timeline,output,executorDiagnostics:f.executorDiagnostics,preservedEnvironmentKeys:Object.keys(f.processEnv)}); }
   },120000);
 
   it("compares CLI, batch, persistent server and native reads on the same file", async () => {
