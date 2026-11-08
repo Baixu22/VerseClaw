@@ -69,6 +69,7 @@ export function summarizeMixedRun(run, fixture) {
   assert(Number.isFinite(run.work.elapsedMs) && run.work.elapsedMs > 0);
   const during = sample => sample.at >= run.work.startedAt && sample.at < run.work.endedAt;
   const inputDuring = run.renderer.samples.inputEvents.filter(during);
+  assert(inputDuring.every(sample => sample.target === 'chat-composer-input'), 'Keyboard events missed the composer');
   const scrollDuring = run.renderer.scrolls.filter(during);
   const resourcesDuring = run.work.samples.filter(during);
   const timing = values => ({ p50: percentile(values, 0.5), p95: percentile(values, 0.95) });

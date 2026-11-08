@@ -19,7 +19,7 @@ const fixture = JSON.parse(readFileSync(fixturePath, 'utf8')) as {
 const workers = Number(process.env.RESOURCE_MIXED_WORKERS ?? '1');
 const windows = Number(process.env.RESOURCE_MIXED_WINDOWS ?? '1');
 const sessionKey = 'agent:main:main';
-type RendererProbe = { recording: boolean; inputLatencies: number[]; inputEvents: Array<{ at: number; durationMs: number }>; scrollEvents: Array<{ at: number; durationMs: number; top: number }>; longTasks: number[]; longTaskEvents: Array<{ at: number; durationMs: number }> };
+type RendererProbe = { recording: boolean; inputLatencies: number[]; inputEvents: Array<{ at: number; durationMs: number; target: string | null }>; scrollEvents: Array<{ at: number; durationMs: number; top: number }>; longTasks: number[]; longTaskEvents: Array<{ at: number; durationMs: number }> };
 
 async function invoke(page: Page, module: string, action: string, payload?: unknown): Promise<Record<string, unknown>> {
   return page.evaluate(async request => {
@@ -107,7 +107,8 @@ test('frozen mixed work retains completion, keyboard and scrolling', async ({ la
       }).observe({ type: 'longtask', buffered: true });
       window.addEventListener('keydown', event => {
         if (!probe.recording) return; const start = event.timeStamp; const at = performance.timeOrigin + start;
-        requestAnimationFrame(() => { const durationMs = performance.now() - start; probe.inputLatencies.push(durationMs); probe.inputEvents.push({ at, durationMs }); });
+        const target = event.target instanceof Element ? event.target.getAttribute('data-testid') : null;
+        requestAnimationFrame(() => { const durationMs = performance.now() - start; probe.inputLatencies.push(durationMs); probe.inputEvents.push({ at, durationMs, target }); });
       }, true);
       document.addEventListener('wheel', event => {
         const target = event.target instanceof Element ? event.target.closest('[data-testid="chat-scroll-container"]') : null;
@@ -136,12 +137,19 @@ test('frozen mixed work retains completion, keyboard and scrolling', async ({ la
     report.processBefore = await processSnapshot(sampler, pid);
     await page.bringToFront();
     await input.fill('Start measured mixed work'); await page.getByTestId('chat-composer-send').click();
+    const measuredUser = { id: 'mixed-user', role: 'user', content: 'Start measured mixed work', timestamp: Date.now() };
+    // A history refresh must reflect the send already accepted by the simulated
+    // backend. Returning the pre-send transcript can replace the active view.
+    await installIpcMocks(app, { ...rpcFixture, gatewayRpcByMethod: { ...rpcFixture.gatewayRpcByMethod, 'chat.history': { messages: [...history, measuredUser] } } });
+    await expect(input).toHaveValue('');
     const scroll = page.getByTestId('chat-scroll-container');
     const bounds = await scroll.boundingBox(); if (!bounds) throw new Error('Missing scroller bounds');
     await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
     await input.focus();
+    await expect(input).toBeFocused();
+    report.focusBeforeTyping = await input.evaluate(element => ({ attached: true, focused: document.activeElement === element, value: (element as HTMLTextAreaElement).value }));
     await page.evaluate(() => { (window as unknown as { __mixedProbe: RendererProbe }).__mixedProbe.recording = true; });
-    const running = app.evaluate(async ({ app: electronApp, BrowserWindow }, data) => {
+    const admittedWork = await app.evaluate(async ({ app: electronApp, BrowserWindow }, data) => {
       const nodeRequire = process.mainModule!.require.bind(process.mainModule);
       const fs = nodeRequire('node:fs/promises') as typeof import('node:fs/promises');
       const { spawn } = nodeRequire('node:child_process') as typeof import('node:child_process');
@@ -177,7 +185,7 @@ test('frozen mixed work retains completion, keyboard and scrolling', async ({ la
           if (index === data.fixture.streamEvents) { clearInterval(interval); done(); }
         }, data.fixture.streamIntervalMs);
       });
-      try {
+      const runningWork = (async () => { try {
         await Promise.all(Array.from({ length: data.workers }, async (_, worker) => {
           for (let id = worker; id < data.fixture.tasks; id += data.workers) {
             const kind = data.fixture.phases[id % data.fixture.phases.length]; const requested = performance.now();
@@ -209,11 +217,17 @@ test('frozen mixed work retains completion, keyboard and scrolling', async ({ la
         const result = { events, samples, elapsedMs, startedAt, endedAt, ownedChildren, exitedChildren, cpu: cpuDelta, active: account.active, queued: account.queued, fair: diagnostics.fair, pressureBytes: pressure.length };
         (globalThis as Record<string, unknown>).__mixedWorkRaw = result;
         await stream; return result;
-      } finally { clearInterval(timer); await stream; }
+      } finally { clearInterval(timer); await stream; } })();
+      // Return only the start receipt; renderer interaction must not wait for
+      // either the workload result or a slow first stream render.
+      (globalThis as Record<string, unknown>).__mixedWorkPromise = runningWork;
+      void runningWork.catch(() => {});
+      return { startedAt };
     }, { fixture, workers, root, nodePath: process.execPath, corpusPath, expectedCorpus, expectedBuild, buildScript, origin, sessionKey, runId });
+    report.workStartedAt = admittedWork.startedAt;
+    const running = app.evaluate(async () => await (globalThis as Record<string, unknown>).__mixedWorkPromise as { events: Array<Record<string, unknown>>; endedAt: number });
     // Observe errors immediately while interacting with the renderer.
     const outcome = running.then(value => { report.work = value; return { value }; }, error => { report.workError = String(error); return { error: String(error) }; });
-    await expect(page.getByText('word001', { exact: false })).toBeAttached();
     const inputStartedAt = Date.now();
     // Wheel events do not steal the composer's focus; measure both native input
     // paths concurrently so short workloads still contain both interactions.
@@ -227,6 +241,7 @@ test('frozen mixed work retains completion, keyboard and scrolling', async ({ la
     const samples = await page.evaluate(() => { const probe = (window as unknown as { __mixedProbe: RendererProbe }).__mixedProbe; probe.recording = false; return probe; });
     const scrolls = samples.scrollEvents;
     report.renderer = { inputStartedAt, scrolls, samples };
+    expect(samples.inputEvents.every(event => event.target === 'chat-composer-input')).toBe(true);
     await expect(input).toHaveValue(fixture.keyboardText);
     expect(work.value.events.every(event => event.status === 'success')).toBe(true);
     expect(inputStartedAt).toBeLessThan(work.value.endedAt);
@@ -234,7 +249,7 @@ test('frozen mixed work retains completion, keyboard and scrolling', async ({ la
     await expect(page.getByText('word240', { exact: false })).toBeAttached();
     expect((await page.getByText('word240', { exact: false }).last().innerText()).trim()).toBe(finalText.trim());
     await installIpcMocks(app, { ...rpcFixture, gatewayRpcByMethod: { ...rpcFixture.gatewayRpcByMethod, 'chat.history': { messages: [...history,
-      { id: 'mixed-user', role: 'user', content: 'Start measured mixed work', timestamp: Date.now() },
+      measuredUser,
       { id: 'mixed-final', role: 'assistant', content: finalText, timestamp: Date.now() },
     ] } } });
     await app.evaluate(({ BrowserWindow }, data) => {
