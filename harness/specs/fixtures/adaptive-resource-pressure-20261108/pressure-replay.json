@@ -1,0 +1,928 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "kind": "fixed-input-not-host-exhaustion",
+  "pressure": [
+    {
+      "input": {
+        "at": 1000,
+        "free": 5,
+        "commit": 95,
+        "event": true
+      },
+      "diagnostics": {
+        "accounts": {
+          "workspaceExec:pressure": {
+            "active": 0,
+            "queued": 0,
+            "limit": 1,
+            "minLimit": 1,
+            "maxLimit": 4,
+            "queueLimit": 64,
+            "activeByQos": {
+              "interactive": 0,
+              "background": 0,
+              "opportunistic": 0
+            },
+            "limitHistory": [
+              {
+                "at": 1000,
+                "from": 2,
+                "to": 1,
+                "reason": "fresh resource pressure"
+              }
+            ],
+            "feedback": {
+              "pressured": true,
+              "phases": {
+                "read": {
+                  "short": 100,
+                  "long": 100,
+                  "healthy": 0,
+                  "slow": 0,
+                  "samples": 1
+                }
+              }
+            }
+          }
+        },
+        "chatHistory": null,
+        "fair": true,
+        "limitEvents": [
+          {
+            "at": 1000,
+            "from": 2,
+            "to": 1,
+            "reason": "fresh resource pressure"
+          }
+        ],
+        "pressure": {
+          "reasons": [
+            "physical-memory",
+            "system-commit",
+            "event-loop"
+          ],
+          "signals": {
+            "physical-memory": {
+              "sampledAt": 1000,
+              "observedAt": 1000,
+              "active": true,
+              "lowSince": null,
+              "available": true
+            },
+            "system-commit": {
+              "sampledAt": 1000,
+              "observedAt": 1000,
+              "active": true,
+              "lowSince": null,
+              "available": true
+            },
+            "event-loop": {
+              "sampledAt": 1000,
+              "observedAt": 1000,
+              "active": true,
+              "lowSince": null,
+              "available": true
+            }
+          },
+          "policy": {
+            "lowAvailableRatio": 0.1,
+            "recoveredAvailableRatio": 0.15,
+            "highCommitRatio": 0.9,
+            "recoveredCommitRatio": 0.8,
+            "recoveryDwellMs": 10000,
+            "idleAccountMs": 300000
+          },
+          "disabledSignals": [
+            "cpu-utilization-only",
+            "system-io-wait"
+          ]
+        }
+      }
+    },
+    {
+      "input": {
+        "at": 2000,
+        "free": 20,
+        "commit": 50,
+        "event": false
+      },
+      "diagnostics": {
+        "accounts": {
+          "workspaceExec:pressure": {
+            "active": 0,
+            "queued": 0,
+            "limit": 1,
+            "minLimit": 1,
+            "maxLimit": 4,
+            "queueLimit": 64,
+            "activeByQos": {
+              "interactive": 0,
+              "background": 0,
+              "opportunistic": 0
+            },
+            "limitHistory": [
+              {
+                "at": 1000,
+                "from": 2,
+                "to": 1,
+                "reason": "fresh resource pressure"
+              }
+            ],
+            "feedback": {
+              "pressured": true,
+              "phases": {
+                "read": {
+                  "short": 100,
+                  "long": 100,
+                  "healthy": 0,
+                  "slow": 0,
+                  "samples": 2
+                }
+              }
+            }
+          }
+        },
+        "chatHistory": null,
+        "fair": true,
+        "limitEvents": [
+          {
+            "at": 1000,
+            "from": 2,
+            "to": 1,
+            "reason": "fresh resource pressure"
+          }
+        ],
+        "pressure": {
+          "reasons": [
+            "physical-memory",
+            "system-commit",
+            "event-loop"
+          ],
+          "signals": {
+            "physical-memory": {
+              "sampledAt": 2000,
+              "observedAt": 2000,
+              "active": true,
+              "lowSince": 2000,
+              "available": true
+            },
+            "system-commit": {
+              "sampledAt": 2000,
+              "observedAt": 2000,
+              "active": true,
+              "lowSince": 2000,
+              "available": true
+            },
+            "event-loop": {
+              "sampledAt": 2000,
+              "observedAt": 2000,
+              "active": true,
+              "lowSince": 2000,
+              "available": true
+            }
+          },
+          "policy": {
+            "lowAvailableRatio": 0.1,
+            "recoveredAvailableRatio": 0.15,
+            "highCommitRatio": 0.9,
+            "recoveredCommitRatio": 0.8,
+            "recoveryDwellMs": 10000,
+            "idleAccountMs": 300000
+          },
+          "disabledSignals": [
+            "cpu-utilization-only",
+            "system-io-wait"
+          ]
+        }
+      }
+    },
+    {
+      "input": {
+        "at": 7000,
+        "free": 12,
+        "commit": 50,
+        "event": false
+      },
+      "diagnostics": {
+        "accounts": {
+          "workspaceExec:pressure": {
+            "active": 0,
+            "queued": 0,
+            "limit": 1,
+            "minLimit": 1,
+            "maxLimit": 4,
+            "queueLimit": 64,
+            "activeByQos": {
+              "interactive": 0,
+              "background": 0,
+              "opportunistic": 0
+            },
+            "limitHistory": [
+              {
+                "at": 1000,
+                "from": 2,
+                "to": 1,
+                "reason": "fresh resource pressure"
+              }
+            ],
+            "feedback": {
+              "pressured": true,
+              "phases": {
+                "read": {
+                  "short": 100,
+                  "long": 100,
+                  "healthy": 0,
+                  "slow": 0,
+                  "samples": 3
+                }
+              }
+            }
+          }
+        },
+        "chatHistory": null,
+        "fair": true,
+        "limitEvents": [
+          {
+            "at": 1000,
+            "from": 2,
+            "to": 1,
+            "reason": "fresh resource pressure"
+          }
+        ],
+        "pressure": {
+          "reasons": [
+            "physical-memory",
+            "system-commit",
+            "event-loop"
+          ],
+          "signals": {
+            "physical-memory": {
+              "sampledAt": 7000,
+              "observedAt": 7000,
+              "active": true,
+              "lowSince": null,
+              "available": true
+            },
+            "system-commit": {
+              "sampledAt": 7000,
+              "observedAt": 7000,
+              "active": true,
+              "lowSince": 2000,
+              "available": true
+            },
+            "event-loop": {
+              "sampledAt": 7000,
+              "observedAt": 7000,
+              "active": true,
+              "lowSince": 2000,
+              "available": true
+            }
+          },
+          "policy": {
+            "lowAvailableRatio": 0.1,
+            "recoveredAvailableRatio": 0.15,
+            "highCommitRatio": 0.9,
+            "recoveredCommitRatio": 0.8,
+            "recoveryDwellMs": 10000,
+            "idleAccountMs": 300000
+          },
+          "disabledSignals": [
+            "cpu-utilization-only",
+            "system-io-wait"
+          ]
+        }
+      }
+    },
+    {
+      "input": {
+        "at": 12000,
+        "free": 20,
+        "commit": 50,
+        "event": false
+      },
+      "diagnostics": {
+        "accounts": {
+          "workspaceExec:pressure": {
+            "active": 0,
+            "queued": 0,
+            "limit": 1,
+            "minLimit": 1,
+            "maxLimit": 4,
+            "queueLimit": 64,
+            "activeByQos": {
+              "interactive": 0,
+              "background": 0,
+              "opportunistic": 0
+            },
+            "limitHistory": [
+              {
+                "at": 1000,
+                "from": 2,
+                "to": 1,
+                "reason": "fresh resource pressure"
+              }
+            ],
+            "feedback": {
+              "pressured": true,
+              "phases": {
+                "read": {
+                  "short": 100,
+                  "long": 100,
+                  "healthy": 0,
+                  "slow": 0,
+                  "samples": 4
+                }
+              }
+            }
+          }
+        },
+        "chatHistory": null,
+        "fair": true,
+        "limitEvents": [
+          {
+            "at": 1000,
+            "from": 2,
+            "to": 1,
+            "reason": "fresh resource pressure"
+          }
+        ],
+        "pressure": {
+          "reasons": [
+            "physical-memory"
+          ],
+          "signals": {
+            "physical-memory": {
+              "sampledAt": 12000,
+              "observedAt": 12000,
+              "active": true,
+              "lowSince": 12000,
+              "available": true
+            },
+            "system-commit": {
+              "sampledAt": 12000,
+              "observedAt": 12000,
+              "active": false,
+              "lowSince": null,
+              "available": true
+            },
+            "event-loop": {
+              "sampledAt": 12000,
+              "observedAt": 12000,
+              "active": false,
+              "lowSince": null,
+              "available": true
+            }
+          },
+          "policy": {
+            "lowAvailableRatio": 0.1,
+            "recoveredAvailableRatio": 0.15,
+            "highCommitRatio": 0.9,
+            "recoveredCommitRatio": 0.8,
+            "recoveryDwellMs": 10000,
+            "idleAccountMs": 300000
+          },
+          "disabledSignals": [
+            "cpu-utilization-only",
+            "system-io-wait"
+          ]
+        }
+      }
+    },
+    {
+      "input": {
+        "at": 17000,
+        "free": 20,
+        "commit": 50,
+        "event": false
+      },
+      "diagnostics": {
+        "accounts": {
+          "workspaceExec:pressure": {
+            "active": 0,
+            "queued": 0,
+            "limit": 1,
+            "minLimit": 1,
+            "maxLimit": 4,
+            "queueLimit": 64,
+            "activeByQos": {
+              "interactive": 0,
+              "background": 0,
+              "opportunistic": 0
+            },
+            "limitHistory": [
+              {
+                "at": 1000,
+                "from": 2,
+                "to": 1,
+                "reason": "fresh resource pressure"
+              }
+            ],
+            "feedback": {
+              "pressured": true,
+              "phases": {
+                "read": {
+                  "short": 100,
+                  "long": 100,
+                  "healthy": 0,
+                  "slow": 0,
+                  "samples": 5
+                }
+              }
+            }
+          }
+        },
+        "chatHistory": null,
+        "fair": true,
+        "limitEvents": [
+          {
+            "at": 1000,
+            "from": 2,
+            "to": 1,
+            "reason": "fresh resource pressure"
+          }
+        ],
+        "pressure": {
+          "reasons": [
+            "physical-memory"
+          ],
+          "signals": {
+            "physical-memory": {
+              "sampledAt": 17000,
+              "observedAt": 17000,
+              "active": true,
+              "lowSince": 12000,
+              "available": true
+            },
+            "system-commit": {
+              "sampledAt": 17000,
+              "observedAt": 17000,
+              "active": false,
+              "lowSince": null,
+              "available": true
+            },
+            "event-loop": {
+              "sampledAt": 17000,
+              "observedAt": 17000,
+              "active": false,
+              "lowSince": null,
+              "available": true
+            }
+          },
+          "policy": {
+            "lowAvailableRatio": 0.1,
+            "recoveredAvailableRatio": 0.15,
+            "highCommitRatio": 0.9,
+            "recoveredCommitRatio": 0.8,
+            "recoveryDwellMs": 10000,
+            "idleAccountMs": 300000
+          },
+          "disabledSignals": [
+            "cpu-utilization-only",
+            "system-io-wait"
+          ]
+        }
+      }
+    },
+    {
+      "input": {
+        "at": 22000,
+        "free": 20,
+        "commit": 50,
+        "event": false
+      },
+      "diagnostics": {
+        "accounts": {
+          "workspaceExec:pressure": {
+            "active": 0,
+            "queued": 0,
+            "limit": 1,
+            "minLimit": 1,
+            "maxLimit": 4,
+            "queueLimit": 64,
+            "activeByQos": {
+              "interactive": 0,
+              "background": 0,
+              "opportunistic": 0
+            },
+            "limitHistory": [
+              {
+                "at": 1000,
+                "from": 2,
+                "to": 1,
+                "reason": "fresh resource pressure"
+              }
+            ],
+            "feedback": {
+              "pressured": false,
+              "phases": {
+                "read": {
+                  "short": 100,
+                  "long": 100,
+                  "healthy": 0,
+                  "slow": 0,
+                  "samples": 6
+                }
+              }
+            }
+          }
+        },
+        "chatHistory": null,
+        "fair": true,
+        "limitEvents": [
+          {
+            "at": 1000,
+            "from": 2,
+            "to": 1,
+            "reason": "fresh resource pressure"
+          }
+        ],
+        "pressure": {
+          "reasons": [],
+          "signals": {
+            "physical-memory": {
+              "sampledAt": 22000,
+              "observedAt": 22000,
+              "active": false,
+              "lowSince": null,
+              "available": true
+            },
+            "system-commit": {
+              "sampledAt": 22000,
+              "observedAt": 22000,
+              "active": false,
+              "lowSince": null,
+              "available": true
+            },
+            "event-loop": {
+              "sampledAt": 22000,
+              "observedAt": 22000,
+              "active": false,
+              "lowSince": null,
+              "available": true
+            }
+          },
+          "policy": {
+            "lowAvailableRatio": 0.1,
+            "recoveredAvailableRatio": 0.15,
+            "highCommitRatio": 0.9,
+            "recoveredCommitRatio": 0.8,
+            "recoveryDwellMs": 10000,
+            "idleAccountMs": 300000
+          },
+          "disabledSignals": [
+            "cpu-utilization-only",
+            "system-io-wait"
+          ]
+        }
+      }
+    }
+  ],
+  "latencyTrace": [
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 4
+    },
+    {
+      "latency": 1000,
+      "backlog": 64,
+      "limit": 4
+    },
+    {
+      "latency": 1000,
+      "backlog": 64,
+      "limit": 2
+    },
+    {
+      "latency": 1000,
+      "backlog": 64,
+      "limit": 1
+    },
+    {
+      "latency": 1000,
+      "backlog": 64,
+      "limit": 1
+    },
+    {
+      "latency": 1000,
+      "backlog": 64,
+      "limit": 1
+    },
+    {
+      "latency": 1000,
+      "backlog": 64,
+      "limit": 1
+    },
+    {
+      "latency": 1000,
+      "backlog": 64,
+      "limit": 1
+    },
+    {
+      "latency": 1000,
+      "backlog": 64,
+      "limit": 1
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 1
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 1
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 1
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 1
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 1
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 2
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 2
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 2
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 3
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 3
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 3
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 4
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 4
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 4
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 5
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 5
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 5
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 6
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 6
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 6
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 7
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 7
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 7
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    },
+    {
+      "latency": 100,
+      "backlog": 64,
+      "limit": 8
+    }
+  ]
+}

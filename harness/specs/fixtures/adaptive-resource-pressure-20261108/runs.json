@@ -1,0 +1,4608 @@
+[
+  {
+    "mode": "before",
+    "cap": 1,
+    "position": 0,
+    "elapsedMs": 1271.098,
+    "throughputPerSecond": 18.881313635927363,
+    "p50Ms": 719.6857,
+    "p95Ms": 1221.6677999999993,
+    "peak": 1,
+    "spawnCount": 6,
+    "eventLoopP99Ms": 35.160063,
+    "memory": {
+      "rss": 127606784,
+      "heapTotal": 63684608,
+      "heapUsed": 29152784,
+      "external": 13764411,
+      "arrayBuffers": 6495810
+    },
+    "diagnostics": {
+      "accounts": {
+        "workspaceExec:mixed": {
+          "active": 0,
+          "queued": 0,
+          "limit": 1,
+          "minLimit": 1,
+          "maxLimit": 1,
+          "queueLimit": 64,
+          "activeByQos": {
+            "interactive": 0,
+            "background": 0,
+            "opportunistic": 0
+          },
+          "limitHistory": []
+        }
+      },
+      "chatHistory": null,
+      "fair": true,
+      "limitEvents": []
+    },
+    "events": [
+      {
+        "id": 0,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 1.4266999999999825,
+        "totalMs": 3.7475999999987835,
+        "admittedLimit": 1
+      },
+      {
+        "id": 1,
+        "phase": "read",
+        "queuedMs": 3,
+        "serviceMs": 0.6960999999992055,
+        "totalMs": 3.8703000000004977,
+        "admittedLimit": 1
+      },
+      {
+        "id": 2,
+        "phase": "execution",
+        "queuedMs": 4,
+        "serviceMs": 260.8683000000001,
+        "totalMs": 264.6424999999999,
+        "admittedLimit": 1
+      },
+      {
+        "id": 3,
+        "phase": "remote-wait",
+        "queuedMs": 265,
+        "serviceMs": 110.57779999999912,
+        "totalMs": 375.4337999999989,
+        "admittedLimit": 1
+      },
+      {
+        "id": 4,
+        "phase": "read",
+        "queuedMs": 376,
+        "serviceMs": 1.7445000000006985,
+        "totalMs": 377.28089999999975,
+        "admittedLimit": 1
+      },
+      {
+        "id": 5,
+        "phase": "read",
+        "queuedMs": 378,
+        "serviceMs": 0.6059999999997672,
+        "totalMs": 377.9261000000006,
+        "admittedLimit": 1
+      },
+      {
+        "id": 6,
+        "phase": "execution",
+        "queuedMs": 378,
+        "serviceMs": 130.76670000000013,
+        "totalMs": 508.6959999999999,
+        "admittedLimit": 1
+      },
+      {
+        "id": 7,
+        "phase": "remote-wait",
+        "queuedMs": 508,
+        "serviceMs": 40.2482,
+        "totalMs": 549.0380000000005,
+        "admittedLimit": 1
+      },
+      {
+        "id": 8,
+        "phase": "read",
+        "queuedMs": 549,
+        "serviceMs": 0.8140999999995984,
+        "totalMs": 549.9130000000005,
+        "admittedLimit": 1
+      },
+      {
+        "id": 9,
+        "phase": "read",
+        "queuedMs": 550,
+        "serviceMs": 0.6986999999990076,
+        "totalMs": 550.6496000000006,
+        "admittedLimit": 1
+      },
+      {
+        "id": 10,
+        "phase": "execution",
+        "queuedMs": 550,
+        "serviceMs": 128.125,
+        "totalMs": 678.7778999999991,
+        "admittedLimit": 1
+      },
+      {
+        "id": 11,
+        "phase": "remote-wait",
+        "queuedMs": 679,
+        "serviceMs": 40.82639999999992,
+        "totalMs": 719.6857,
+        "admittedLimit": 1
+      },
+      {
+        "id": 12,
+        "phase": "read",
+        "queuedMs": 719,
+        "serviceMs": 0.9205999999994674,
+        "totalMs": 720.6628000000001,
+        "admittedLimit": 1
+      },
+      {
+        "id": 13,
+        "phase": "read",
+        "queuedMs": 720,
+        "serviceMs": 0.6574000000000524,
+        "totalMs": 721.3557000000001,
+        "admittedLimit": 1
+      },
+      {
+        "id": 14,
+        "phase": "execution",
+        "queuedMs": 721,
+        "serviceMs": 142.69870000000083,
+        "totalMs": 864.0774000000001,
+        "admittedLimit": 1
+      },
+      {
+        "id": 15,
+        "phase": "remote-wait",
+        "queuedMs": 864,
+        "serviceMs": 42.61529999999948,
+        "totalMs": 906.8552000000018,
+        "admittedLimit": 1
+      },
+      {
+        "id": 16,
+        "phase": "read",
+        "queuedMs": 907,
+        "serviceMs": 0.8062000000008993,
+        "totalMs": 907.7106000000003,
+        "admittedLimit": 1
+      },
+      {
+        "id": 17,
+        "phase": "read",
+        "queuedMs": 908,
+        "serviceMs": 1.0637000000006083,
+        "totalMs": 908.7911999999997,
+        "admittedLimit": 1
+      },
+      {
+        "id": 18,
+        "phase": "execution",
+        "queuedMs": 909,
+        "serviceMs": 132.61000000000058,
+        "totalMs": 1041.3673,
+        "admittedLimit": 1
+      },
+      {
+        "id": 19,
+        "phase": "remote-wait",
+        "queuedMs": 1041,
+        "serviceMs": 37.95639999999912,
+        "totalMs": 1079.3914000000004,
+        "admittedLimit": 1
+      },
+      {
+        "id": 20,
+        "phase": "read",
+        "queuedMs": 1079,
+        "serviceMs": 0.8509999999987485,
+        "totalMs": 1080.2771000000012,
+        "admittedLimit": 1
+      },
+      {
+        "id": 21,
+        "phase": "read",
+        "queuedMs": 1080,
+        "serviceMs": 0.6750000000010914,
+        "totalMs": 1080.9706999999999,
+        "admittedLimit": 1
+      },
+      {
+        "id": 22,
+        "phase": "execution",
+        "queuedMs": 1081,
+        "serviceMs": 140.72719999999936,
+        "totalMs": 1221.6677999999993,
+        "admittedLimit": 1
+      },
+      {
+        "id": 23,
+        "phase": "remote-wait",
+        "queuedMs": 1222,
+        "serviceMs": 47.062700000000405,
+        "totalMs": 1268.7420999999995,
+        "admittedLimit": 1
+      }
+    ]
+  },
+  {
+    "mode": "after",
+    "cap": 1,
+    "position": 1,
+    "elapsedMs": 1116.9380999999994,
+    "throughputPerSecond": 21.487314292528847,
+    "p50Ms": 559.7551000000003,
+    "p95Ms": 1073.6052999999993,
+    "peak": 1,
+    "spawnCount": 6,
+    "eventLoopP99Ms": 26.886143,
+    "memory": {
+      "rss": 126529536,
+      "heapTotal": 64208896,
+      "heapUsed": 29197160,
+      "external": 12190846,
+      "arrayBuffers": 4922205
+    },
+    "diagnostics": {
+      "accounts": {
+        "workspaceExec:mixed": {
+          "active": 0,
+          "queued": 0,
+          "limit": 1,
+          "minLimit": 1,
+          "maxLimit": 1,
+          "queueLimit": 64,
+          "activeByQos": {
+            "interactive": 0,
+            "background": 0,
+            "opportunistic": 0
+          },
+          "limitHistory": [],
+          "feedback": {
+            "pressured": false,
+            "phases": {
+              "read": {
+                "short": 1.2242274918400002,
+                "long": 2.3077889726915215,
+                "healthy": 0,
+                "slow": 0,
+                "samples": 12
+              },
+              "execution": {
+                "short": 137.4624,
+                "long": 138.81086668800003,
+                "healthy": 0,
+                "slow": 0,
+                "samples": 6
+              },
+              "remote-wait": {
+                "short": 43.593599999999995,
+                "long": 41,
+                "healthy": 0,
+                "slow": 0,
+                "samples": 6
+              }
+            }
+          }
+        }
+      },
+      "chatHistory": null,
+      "fair": true,
+      "limitEvents": [],
+      "pressure": {
+        "reasons": [],
+        "signals": {},
+        "policy": {
+          "lowAvailableRatio": 0.1,
+          "recoveredAvailableRatio": 0.15,
+          "highCommitRatio": 0.9,
+          "recoveredCommitRatio": 0.8,
+          "recoveryDwellMs": 10000,
+          "idleAccountMs": 300000
+        },
+        "disabledSignals": [
+          "cpu-utilization-only",
+          "system-io-wait",
+          "physical-memory",
+          "system-commit",
+          "event-loop"
+        ]
+      }
+    },
+    "events": [
+      {
+        "id": 0,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 0.8144000000011147,
+        "totalMs": 2.7357000000010885,
+        "admittedLimit": 1
+      },
+      {
+        "id": 1,
+        "phase": "read",
+        "queuedMs": 3,
+        "serviceMs": 0.711699999999837,
+        "totalMs": 3.0979999999999563,
+        "admittedLimit": 1
+      },
+      {
+        "id": 2,
+        "phase": "execution",
+        "queuedMs": 3,
+        "serviceMs": 139.21849999999904,
+        "totalMs": 142.23760000000038,
+        "admittedLimit": 1
+      },
+      {
+        "id": 3,
+        "phase": "remote-wait",
+        "queuedMs": 142,
+        "serviceMs": 41.13619999999901,
+        "totalMs": 183.5004000000008,
+        "admittedLimit": 1
+      },
+      {
+        "id": 4,
+        "phase": "read",
+        "queuedMs": 183,
+        "serviceMs": 0.8436000000001513,
+        "totalMs": 184.42619999999988,
+        "admittedLimit": 1
+      },
+      {
+        "id": 5,
+        "phase": "read",
+        "queuedMs": 184,
+        "serviceMs": 0.688799999999901,
+        "totalMs": 185.17009999999937,
+        "admittedLimit": 1
+      },
+      {
+        "id": 6,
+        "phase": "execution",
+        "queuedMs": 185,
+        "serviceMs": 134.32660000000033,
+        "totalMs": 319.5064999999995,
+        "admittedLimit": 1
+      },
+      {
+        "id": 7,
+        "phase": "remote-wait",
+        "queuedMs": 320,
+        "serviceMs": 51.67920000000049,
+        "totalMs": 371.3155999999999,
+        "admittedLimit": 1
+      },
+      {
+        "id": 8,
+        "phase": "read",
+        "queuedMs": 371,
+        "serviceMs": 0.8400000000001455,
+        "totalMs": 372.2688999999991,
+        "admittedLimit": 1
+      },
+      {
+        "id": 9,
+        "phase": "read",
+        "queuedMs": 372,
+        "serviceMs": 1.3409000000010565,
+        "totalMs": 373.6841999999997,
+        "admittedLimit": 1
+      },
+      {
+        "id": 10,
+        "phase": "execution",
+        "queuedMs": 374,
+        "serviceMs": 139.08870000000024,
+        "totalMs": 512.8114000000005,
+        "admittedLimit": 1
+      },
+      {
+        "id": 11,
+        "phase": "remote-wait",
+        "queuedMs": 513,
+        "serviceMs": 46.90090000000055,
+        "totalMs": 559.7551000000003,
+        "admittedLimit": 1
+      },
+      {
+        "id": 12,
+        "phase": "read",
+        "queuedMs": 560,
+        "serviceMs": 0.7651999999998225,
+        "totalMs": 560.5615999999991,
+        "admittedLimit": 1
+      },
+      {
+        "id": 13,
+        "phase": "read",
+        "queuedMs": 561,
+        "serviceMs": 0.589799999999741,
+        "totalMs": 561.1777000000002,
+        "admittedLimit": 1
+      },
+      {
+        "id": 14,
+        "phase": "execution",
+        "queuedMs": 561,
+        "serviceMs": 162.99739999999838,
+        "totalMs": 724.1866999999984,
+        "admittedLimit": 1
+      },
+      {
+        "id": 15,
+        "phase": "remote-wait",
+        "queuedMs": 725,
+        "serviceMs": 51.48869999999988,
+        "totalMs": 775.7788,
+        "admittedLimit": 1
+      },
+      {
+        "id": 16,
+        "phase": "read",
+        "queuedMs": 776,
+        "serviceMs": 0.776400000000649,
+        "totalMs": 776.6160999999993,
+        "admittedLimit": 1
+      },
+      {
+        "id": 17,
+        "phase": "read",
+        "queuedMs": 777,
+        "serviceMs": 0.6012000000009721,
+        "totalMs": 777.2327000000005,
+        "admittedLimit": 1
+      },
+      {
+        "id": 18,
+        "phase": "execution",
+        "queuedMs": 778,
+        "serviceMs": 129.2572,
+        "totalMs": 906.4488999999994,
+        "admittedLimit": 1
+      },
+      {
+        "id": 19,
+        "phase": "remote-wait",
+        "queuedMs": 907,
+        "serviceMs": 38.79440000000068,
+        "totalMs": 945.2942000000003,
+        "admittedLimit": 1
+      },
+      {
+        "id": 20,
+        "phase": "read",
+        "queuedMs": 945,
+        "serviceMs": 0.9032000000006519,
+        "totalMs": 946.2323000000015,
+        "admittedLimit": 1
+      },
+      {
+        "id": 21,
+        "phase": "read",
+        "queuedMs": 946,
+        "serviceMs": 0.7994999999991705,
+        "totalMs": 947.0012000000006,
+        "admittedLimit": 1
+      },
+      {
+        "id": 22,
+        "phase": "execution",
+        "queuedMs": 947,
+        "serviceMs": 126.68990000000122,
+        "totalMs": 1073.6052999999993,
+        "admittedLimit": 1
+      },
+      {
+        "id": 23,
+        "phase": "remote-wait",
+        "queuedMs": 1073,
+        "serviceMs": 41.371799999998984,
+        "totalMs": 1115.0297999999984,
+        "admittedLimit": 1
+      }
+    ]
+  },
+  {
+    "mode": "after",
+    "cap": 1,
+    "position": 2,
+    "elapsedMs": 1092.6019000000015,
+    "throughputPerSecond": 21.965914575107334,
+    "p50Ms": 545.9974000000002,
+    "p95Ms": 1050.3271000000004,
+    "peak": 1,
+    "spawnCount": 6,
+    "eventLoopP99Ms": 25.067519,
+    "memory": {
+      "rss": 123822080,
+      "heapTotal": 64471040,
+      "heapUsed": 28516000,
+      "external": 9567144,
+      "arrayBuffers": 2298503
+    },
+    "diagnostics": {
+      "accounts": {
+        "workspaceExec:mixed": {
+          "active": 0,
+          "queued": 0,
+          "limit": 1,
+          "minLimit": 1,
+          "maxLimit": 1,
+          "queueLimit": 64,
+          "activeByQos": {
+            "interactive": 0,
+            "background": 0,
+            "opportunistic": 0
+          },
+          "limitHistory": [],
+          "feedback": {
+            "pressured": false,
+            "phases": {
+              "read": {
+                "short": 1.16,
+                "long": 1.0384,
+                "healthy": 0,
+                "slow": 0,
+                "samples": 12
+              },
+              "execution": {
+                "short": 138.0736,
+                "long": 134.681387008,
+                "healthy": 0,
+                "slow": 0,
+                "samples": 6
+              },
+              "remote-wait": {
+                "short": 44.178239999999995,
+                "long": 50,
+                "healthy": 0,
+                "slow": 0,
+                "samples": 6
+              }
+            }
+          }
+        }
+      },
+      "chatHistory": null,
+      "fair": true,
+      "limitEvents": [],
+      "pressure": {
+        "reasons": [],
+        "signals": {},
+        "policy": {
+          "lowAvailableRatio": 0.1,
+          "recoveredAvailableRatio": 0.15,
+          "highCommitRatio": 0.9,
+          "recoveredCommitRatio": 0.8,
+          "recoveryDwellMs": 10000,
+          "idleAccountMs": 300000
+        },
+        "disabledSignals": [
+          "cpu-utilization-only",
+          "system-io-wait",
+          "physical-memory",
+          "system-commit",
+          "event-loop"
+        ]
+      }
+    },
+    "events": [
+      {
+        "id": 0,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 0.7649000000001251,
+        "totalMs": 1.3566000000009808,
+        "admittedLimit": 1
+      },
+      {
+        "id": 1,
+        "phase": "read",
+        "queuedMs": 1,
+        "serviceMs": 0.6333999999988009,
+        "totalMs": 1.9523999999983062,
+        "admittedLimit": 1
+      },
+      {
+        "id": 2,
+        "phase": "execution",
+        "queuedMs": 2,
+        "serviceMs": 133.9366000000009,
+        "totalMs": 135.91730000000098,
+        "admittedLimit": 1
+      },
+      {
+        "id": 3,
+        "phase": "remote-wait",
+        "queuedMs": 136,
+        "serviceMs": 49.98739999999998,
+        "totalMs": 186.00310000000172,
+        "admittedLimit": 1
+      },
+      {
+        "id": 4,
+        "phase": "read",
+        "queuedMs": 186,
+        "serviceMs": 0.9560999999994237,
+        "totalMs": 186.9976000000006,
+        "admittedLimit": 1
+      },
+      {
+        "id": 5,
+        "phase": "read",
+        "queuedMs": 187,
+        "serviceMs": 0.7317999999995664,
+        "totalMs": 187.8149999999987,
+        "admittedLimit": 1
+      },
+      {
+        "id": 6,
+        "phase": "execution",
+        "queuedMs": 188,
+        "serviceMs": 128.8747000000003,
+        "totalMs": 316.7333000000017,
+        "admittedLimit": 1
+      },
+      {
+        "id": 7,
+        "phase": "remote-wait",
+        "queuedMs": 317,
+        "serviceMs": 41.75870000000032,
+        "totalMs": 358.5737000000008,
+        "admittedLimit": 1
+      },
+      {
+        "id": 8,
+        "phase": "read",
+        "queuedMs": 359,
+        "serviceMs": 0.6561000000001513,
+        "totalMs": 359.29099999999926,
+        "admittedLimit": 1
+      },
+      {
+        "id": 9,
+        "phase": "read",
+        "queuedMs": 359,
+        "serviceMs": 0.5651999999990949,
+        "totalMs": 359.88710000000174,
+        "admittedLimit": 1
+      },
+      {
+        "id": 10,
+        "phase": "execution",
+        "queuedMs": 360,
+        "serviceMs": 137.10540000000037,
+        "totalMs": 497.009,
+        "admittedLimit": 1
+      },
+      {
+        "id": 11,
+        "phase": "remote-wait",
+        "queuedMs": 497,
+        "serviceMs": 48.900799999999435,
+        "totalMs": 545.9974000000002,
+        "admittedLimit": 1
+      },
+      {
+        "id": 12,
+        "phase": "read",
+        "queuedMs": 546,
+        "serviceMs": 0.8971999999994296,
+        "totalMs": 546.9459999999999,
+        "admittedLimit": 1
+      },
+      {
+        "id": 13,
+        "phase": "read",
+        "queuedMs": 547,
+        "serviceMs": 0.711699999999837,
+        "totalMs": 547.6990000000005,
+        "admittedLimit": 1
+      },
+      {
+        "id": 14,
+        "phase": "execution",
+        "queuedMs": 548,
+        "serviceMs": 126.32540000000154,
+        "totalMs": 674.0332999999991,
+        "admittedLimit": 1
+      },
+      {
+        "id": 15,
+        "phase": "remote-wait",
+        "queuedMs": 674,
+        "serviceMs": 41.63999999999942,
+        "totalMs": 715.7584999999999,
+        "admittedLimit": 1
+      },
+      {
+        "id": 16,
+        "phase": "read",
+        "queuedMs": 716,
+        "serviceMs": 0.8225000000002183,
+        "totalMs": 716.6458999999995,
+        "admittedLimit": 1
+      },
+      {
+        "id": 17,
+        "phase": "read",
+        "queuedMs": 717,
+        "serviceMs": 0.7084000000013475,
+        "totalMs": 717.3897000000015,
+        "admittedLimit": 1
+      },
+      {
+        "id": 18,
+        "phase": "execution",
+        "queuedMs": 718,
+        "serviceMs": 133.91330000000016,
+        "totalMs": 851.3151000000016,
+        "admittedLimit": 1
+      },
+      {
+        "id": 19,
+        "phase": "remote-wait",
+        "queuedMs": 852,
+        "serviceMs": 36.35040000000117,
+        "totalMs": 887.7852999999996,
+        "admittedLimit": 1
+      },
+      {
+        "id": 20,
+        "phase": "read",
+        "queuedMs": 888,
+        "serviceMs": 1.3273000000008324,
+        "totalMs": 889.1818000000003,
+        "admittedLimit": 1
+      },
+      {
+        "id": 21,
+        "phase": "read",
+        "queuedMs": 890,
+        "serviceMs": 1.0216999999993277,
+        "totalMs": 890.2504000000008,
+        "admittedLimit": 1
+      },
+      {
+        "id": 22,
+        "phase": "execution",
+        "queuedMs": 891,
+        "serviceMs": 160.03560000000107,
+        "totalMs": 1050.3271000000004,
+        "admittedLimit": 1
+      },
+      {
+        "id": 23,
+        "phase": "remote-wait",
+        "queuedMs": 1051,
+        "serviceMs": 41.599300000001676,
+        "totalMs": 1091.986499999999,
+        "admittedLimit": 1
+      }
+    ]
+  },
+  {
+    "mode": "before",
+    "cap": 1,
+    "position": 3,
+    "elapsedMs": 1136.8920000000016,
+    "throughputPerSecond": 21.11018460856437,
+    "p50Ms": 543.7691000000013,
+    "p95Ms": 1086.3137000000006,
+    "peak": 1,
+    "spawnCount": 6,
+    "eventLoopP99Ms": 25.542655,
+    "memory": {
+      "rss": 130613248,
+      "heapTotal": 64471040,
+      "heapUsed": 30307408,
+      "external": 15862344,
+      "arrayBuffers": 8593703
+    },
+    "diagnostics": {
+      "accounts": {
+        "workspaceExec:mixed": {
+          "active": 0,
+          "queued": 0,
+          "limit": 1,
+          "minLimit": 1,
+          "maxLimit": 1,
+          "queueLimit": 64,
+          "activeByQos": {
+            "interactive": 0,
+            "background": 0,
+            "opportunistic": 0
+          },
+          "limitHistory": []
+        }
+      },
+      "chatHistory": null,
+      "fair": true,
+      "limitEvents": []
+    },
+    "events": [
+      {
+        "id": 0,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 0.8416999999990367,
+        "totalMs": 1.4292999999997846,
+        "admittedLimit": 1
+      },
+      {
+        "id": 1,
+        "phase": "read",
+        "queuedMs": 1,
+        "serviceMs": 0.7567999999992026,
+        "totalMs": 2.1489999999994325,
+        "admittedLimit": 1
+      },
+      {
+        "id": 2,
+        "phase": "execution",
+        "queuedMs": 2,
+        "serviceMs": 138.13869999999952,
+        "totalMs": 140.32819999999992,
+        "admittedLimit": 1
+      },
+      {
+        "id": 3,
+        "phase": "remote-wait",
+        "queuedMs": 140,
+        "serviceMs": 44.4312000000009,
+        "totalMs": 184.94810000000143,
+        "admittedLimit": 1
+      },
+      {
+        "id": 4,
+        "phase": "read",
+        "queuedMs": 185,
+        "serviceMs": 0.8655999999991764,
+        "totalMs": 185.91309999999976,
+        "admittedLimit": 1
+      },
+      {
+        "id": 5,
+        "phase": "read",
+        "queuedMs": 186,
+        "serviceMs": 0.6975999999995111,
+        "totalMs": 186.66429999999855,
+        "admittedLimit": 1
+      },
+      {
+        "id": 6,
+        "phase": "execution",
+        "queuedMs": 186,
+        "serviceMs": 125.44070000000102,
+        "totalMs": 312.1409999999996,
+        "admittedLimit": 1
+      },
+      {
+        "id": 7,
+        "phase": "remote-wait",
+        "queuedMs": 312,
+        "serviceMs": 44.075699999999415,
+        "totalMs": 356.34039999999914,
+        "admittedLimit": 1
+      },
+      {
+        "id": 8,
+        "phase": "read",
+        "queuedMs": 356,
+        "serviceMs": 0.9400999999998021,
+        "totalMs": 357.41469999999936,
+        "admittedLimit": 1
+      },
+      {
+        "id": 9,
+        "phase": "read",
+        "queuedMs": 357,
+        "serviceMs": 0.6687000000001717,
+        "totalMs": 358.134,
+        "admittedLimit": 1
+      },
+      {
+        "id": 10,
+        "phase": "execution",
+        "queuedMs": 358,
+        "serviceMs": 140.22859999999855,
+        "totalMs": 498.40229999999974,
+        "admittedLimit": 1
+      },
+      {
+        "id": 11,
+        "phase": "remote-wait",
+        "queuedMs": 498,
+        "serviceMs": 45.292200000001685,
+        "totalMs": 543.7691000000013,
+        "admittedLimit": 1
+      },
+      {
+        "id": 12,
+        "phase": "read",
+        "queuedMs": 544,
+        "serviceMs": 0.769800000000032,
+        "totalMs": 544.6093000000001,
+        "admittedLimit": 1
+      },
+      {
+        "id": 13,
+        "phase": "read",
+        "queuedMs": 544,
+        "serviceMs": 1.2216000000007625,
+        "totalMs": 545.8678,
+        "admittedLimit": 1
+      },
+      {
+        "id": 14,
+        "phase": "execution",
+        "queuedMs": 546,
+        "serviceMs": 133.83549999999923,
+        "totalMs": 679.7319000000007,
+        "admittedLimit": 1
+      },
+      {
+        "id": 15,
+        "phase": "remote-wait",
+        "queuedMs": 680,
+        "serviceMs": 50.185600000000704,
+        "totalMs": 730.0198,
+        "admittedLimit": 1
+      },
+      {
+        "id": 16,
+        "phase": "read",
+        "queuedMs": 730,
+        "serviceMs": 0.7811000000001513,
+        "totalMs": 730.8534,
+        "admittedLimit": 1
+      },
+      {
+        "id": 17,
+        "phase": "read",
+        "queuedMs": 731,
+        "serviceMs": 0.6266999999988911,
+        "totalMs": 731.5025999999998,
+        "admittedLimit": 1
+      },
+      {
+        "id": 18,
+        "phase": "execution",
+        "queuedMs": 731,
+        "serviceMs": 169.67129999999997,
+        "totalMs": 901.1931000000004,
+        "admittedLimit": 1
+      },
+      {
+        "id": 19,
+        "phase": "remote-wait",
+        "queuedMs": 901,
+        "serviceMs": 48.125,
+        "totalMs": 949.402399999999,
+        "admittedLimit": 1
+      },
+      {
+        "id": 20,
+        "phase": "read",
+        "queuedMs": 949,
+        "serviceMs": 0.9521000000004278,
+        "totalMs": 950.4035999999996,
+        "admittedLimit": 1
+      },
+      {
+        "id": 21,
+        "phase": "read",
+        "queuedMs": 950,
+        "serviceMs": 0.8839000000007218,
+        "totalMs": 951.3165000000008,
+        "admittedLimit": 1
+      },
+      {
+        "id": 22,
+        "phase": "execution",
+        "queuedMs": 951,
+        "serviceMs": 134.96529999999984,
+        "totalMs": 1086.3137000000006,
+        "admittedLimit": 1
+      },
+      {
+        "id": 23,
+        "phase": "remote-wait",
+        "queuedMs": 1086,
+        "serviceMs": 49.96429999999964,
+        "totalMs": 1136.339,
+        "admittedLimit": 1
+      }
+    ]
+  },
+  {
+    "mode": "before",
+    "cap": 2,
+    "position": 0,
+    "elapsedMs": 652.5106999999989,
+    "throughputPerSecond": 36.78100604327261,
+    "p50Ms": 164.4390999999996,
+    "p95Ms": 615.8260000000009,
+    "peak": 2,
+    "spawnCount": 6,
+    "eventLoopP99Ms": 69.533695,
+    "memory": {
+      "rss": 112070656,
+      "heapTotal": 64471040,
+      "heapUsed": 27095312,
+      "external": 11665202,
+      "arrayBuffers": 4396561
+    },
+    "diagnostics": {
+      "accounts": {
+        "workspaceExec:mixed": {
+          "active": 0,
+          "queued": 0,
+          "limit": 1,
+          "minLimit": 1,
+          "maxLimit": 2,
+          "queueLimit": 64,
+          "activeByQos": {
+            "interactive": 0,
+            "background": 0,
+            "opportunistic": 0
+          },
+          "limitHistory": [
+            {
+              "at": 1794148621704,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      "chatHistory": null,
+      "fair": true,
+      "limitEvents": [
+        {
+          "at": 1794148621704,
+          "from": 2,
+          "to": 1,
+          "reason": "gradient2 latency sample"
+        }
+      ]
+    },
+    "events": [
+      {
+        "id": 1,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 0.8843999999990046,
+        "totalMs": 1.3309000000008382,
+        "admittedLimit": 2
+      },
+      {
+        "id": 0,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 23.752999999998792,
+        "totalMs": 24.23620000000119,
+        "admittedLimit": 2
+      },
+      {
+        "id": 3,
+        "phase": "remote-wait",
+        "queuedMs": 24,
+        "serviceMs": 36.55619999999908,
+        "totalMs": 60.80340000000069,
+        "admittedLimit": 2
+      },
+      {
+        "id": 4,
+        "phase": "read",
+        "queuedMs": 61,
+        "serviceMs": 0.8721000000005006,
+        "totalMs": 61.81880000000092,
+        "admittedLimit": 2
+      },
+      {
+        "id": 5,
+        "phase": "read",
+        "queuedMs": 61,
+        "serviceMs": 0.6681000000007771,
+        "totalMs": 62.530800000000454,
+        "admittedLimit": 2
+      },
+      {
+        "id": 7,
+        "phase": "remote-wait",
+        "queuedMs": 62,
+        "serviceMs": 45.88539999999921,
+        "totalMs": 108.48550000000068,
+        "admittedLimit": 2
+      },
+      {
+        "id": 8,
+        "phase": "read",
+        "queuedMs": 108,
+        "serviceMs": 0.8368000000009488,
+        "totalMs": 109.45719999999892,
+        "admittedLimit": 2
+      },
+      {
+        "id": 9,
+        "phase": "read",
+        "queuedMs": 109,
+        "serviceMs": 0.7510000000002037,
+        "totalMs": 110.28980000000047,
+        "admittedLimit": 2
+      },
+      {
+        "id": 11,
+        "phase": "remote-wait",
+        "queuedMs": 110,
+        "serviceMs": 43.11119999999937,
+        "totalMs": 153.46630000000005,
+        "admittedLimit": 2
+      },
+      {
+        "id": 12,
+        "phase": "read",
+        "queuedMs": 153,
+        "serviceMs": 1.8377000000000407,
+        "totalMs": 155.40309999999954,
+        "admittedLimit": 2
+      },
+      {
+        "id": 13,
+        "phase": "read",
+        "queuedMs": 155,
+        "serviceMs": 0.9604999999992287,
+        "totalMs": 156.45470000000023,
+        "admittedLimit": 2
+      },
+      {
+        "id": 2,
+        "phase": "execution",
+        "queuedMs": 1,
+        "serviceMs": 163.04229999999916,
+        "totalMs": 164.4390999999996,
+        "admittedLimit": 2
+      },
+      {
+        "id": 15,
+        "phase": "remote-wait",
+        "queuedMs": 156,
+        "serviceMs": 38.161199999998644,
+        "totalMs": 194.71370000000024,
+        "admittedLimit": 2
+      },
+      {
+        "id": 16,
+        "phase": "read",
+        "queuedMs": 195,
+        "serviceMs": 0.8716000000003987,
+        "totalMs": 195.65409999999974,
+        "admittedLimit": 2
+      },
+      {
+        "id": 17,
+        "phase": "read",
+        "queuedMs": 195,
+        "serviceMs": 1.2523999999993976,
+        "totalMs": 196.97379999999976,
+        "admittedLimit": 2
+      },
+      {
+        "id": 19,
+        "phase": "remote-wait",
+        "queuedMs": 197,
+        "serviceMs": 50.80499999999847,
+        "totalMs": 247.8166999999994,
+        "admittedLimit": 2
+      },
+      {
+        "id": 20,
+        "phase": "read",
+        "queuedMs": 248,
+        "serviceMs": 0.9377000000004045,
+        "totalMs": 248.83860000000095,
+        "admittedLimit": 2
+      },
+      {
+        "id": 21,
+        "phase": "read",
+        "queuedMs": 249,
+        "serviceMs": 1.16150000000016,
+        "totalMs": 250.08359999999993,
+        "admittedLimit": 2
+      },
+      {
+        "id": 23,
+        "phase": "remote-wait",
+        "queuedMs": 250,
+        "serviceMs": 41.2505000000001,
+        "totalMs": 291.3847000000005,
+        "admittedLimit": 2
+      },
+      {
+        "id": 6,
+        "phase": "execution",
+        "queuedMs": 164,
+        "serviceMs": 146.14639999999963,
+        "totalMs": 310.59219999999914,
+        "admittedLimit": 2
+      },
+      {
+        "id": 10,
+        "phase": "execution",
+        "queuedMs": 291,
+        "serviceMs": 141.9372999999996,
+        "totalMs": 433.5774000000001,
+        "admittedLimit": 2
+      },
+      {
+        "id": 14,
+        "phase": "execution",
+        "queuedMs": 310,
+        "serviceMs": 201.2341000000015,
+        "totalMs": 511.8180000000011,
+        "admittedLimit": 2
+      },
+      {
+        "id": 18,
+        "phase": "execution",
+        "queuedMs": 433,
+        "serviceMs": 182.1859000000004,
+        "totalMs": 615.8260000000009,
+        "admittedLimit": 2
+      },
+      {
+        "id": 22,
+        "phase": "execution",
+        "queuedMs": 512,
+        "serviceMs": 140.22079999999914,
+        "totalMs": 652.0159000000003,
+        "admittedLimit": 2
+      }
+    ]
+  },
+  {
+    "mode": "after",
+    "cap": 2,
+    "position": 1,
+    "elapsedMs": 908.4269999999997,
+    "throughputPerSecond": 26.419294010415815,
+    "p50Ms": 165.26200000000063,
+    "p95Ms": 751.151600000001,
+    "peak": 2,
+    "spawnCount": 6,
+    "eventLoopP99Ms": 91.160575,
+    "memory": {
+      "rss": 101273600,
+      "heapTotal": 63946752,
+      "heapUsed": 25514184,
+      "external": 8512475,
+      "arrayBuffers": 1249488
+    },
+    "diagnostics": {
+      "accounts": {
+        "workspaceExec:mixed": {
+          "active": 0,
+          "queued": 0,
+          "limit": 1,
+          "minLimit": 1,
+          "maxLimit": 2,
+          "queueLimit": 64,
+          "activeByQos": {
+            "interactive": 0,
+            "background": 0,
+            "opportunistic": 0
+          },
+          "limitHistory": [
+            {
+              "at": 1794148622288,
+              "from": 2,
+              "to": 1,
+              "reason": "execution latency feedback"
+            }
+          ],
+          "feedback": {
+            "pressured": false,
+            "phases": {
+              "read": {
+                "short": 1.6657199308800004,
+                "long": 1.6648326359915013,
+                "healthy": 1,
+                "slow": 0,
+                "samples": 12
+              },
+              "remote-wait": {
+                "short": 45.365120000000005,
+                "long": 50,
+                "healthy": 0,
+                "slow": 0,
+                "samples": 6
+              },
+              "execution": {
+                "short": 175.14368,
+                "long": 140,
+                "healthy": 0,
+                "slow": 5,
+                "samples": 6
+              }
+            }
+          }
+        }
+      },
+      "chatHistory": null,
+      "fair": true,
+      "limitEvents": [
+        {
+          "at": 1794148622288,
+          "from": 2,
+          "to": 1,
+          "reason": "execution latency feedback"
+        }
+      ],
+      "pressure": {
+        "reasons": [],
+        "signals": {},
+        "policy": {
+          "lowAvailableRatio": 0.1,
+          "recoveredAvailableRatio": 0.15,
+          "highCommitRatio": 0.9,
+          "recoveredCommitRatio": 0.8,
+          "recoveryDwellMs": 10000,
+          "idleAccountMs": 300000
+        },
+        "disabledSignals": [
+          "cpu-utilization-only",
+          "system-io-wait",
+          "physical-memory",
+          "system-commit",
+          "event-loop"
+        ]
+      }
+    },
+    "events": [
+      {
+        "id": 0,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 1.1239999999997963,
+        "totalMs": 1.6774999999997817,
+        "admittedLimit": 2
+      },
+      {
+        "id": 1,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 27.033399999998437,
+        "totalMs": 27.5012999999999,
+        "admittedLimit": 2
+      },
+      {
+        "id": 3,
+        "phase": "remote-wait",
+        "queuedMs": 28,
+        "serviceMs": 50.467099999999846,
+        "totalMs": 78.04490000000078,
+        "admittedLimit": 2
+      },
+      {
+        "id": 4,
+        "phase": "read",
+        "queuedMs": 78,
+        "serviceMs": 0.7885000000005675,
+        "totalMs": 78.94430000000102,
+        "admittedLimit": 2
+      },
+      {
+        "id": 5,
+        "phase": "read",
+        "queuedMs": 79,
+        "serviceMs": 0.7255999999997584,
+        "totalMs": 79.72469999999885,
+        "admittedLimit": 2
+      },
+      {
+        "id": 7,
+        "phase": "remote-wait",
+        "queuedMs": 80,
+        "serviceMs": 45.828599999998914,
+        "totalMs": 125.58770000000004,
+        "admittedLimit": 2
+      },
+      {
+        "id": 8,
+        "phase": "read",
+        "queuedMs": 126,
+        "serviceMs": 0.852100000000064,
+        "totalMs": 126.56760000000031,
+        "admittedLimit": 2
+      },
+      {
+        "id": 9,
+        "phase": "read",
+        "queuedMs": 127,
+        "serviceMs": 0.6504999999997381,
+        "totalMs": 127.26740000000063,
+        "admittedLimit": 2
+      },
+      {
+        "id": 2,
+        "phase": "execution",
+        "queuedMs": 2,
+        "serviceMs": 139.94540000000052,
+        "totalMs": 141.54839999999967,
+        "admittedLimit": 2
+      },
+      {
+        "id": 11,
+        "phase": "remote-wait",
+        "queuedMs": 127,
+        "serviceMs": 36.3700000000008,
+        "totalMs": 163.66419999999925,
+        "admittedLimit": 2
+      },
+      {
+        "id": 12,
+        "phase": "read",
+        "queuedMs": 164,
+        "serviceMs": 0.8088999999999942,
+        "totalMs": 164.5632000000005,
+        "admittedLimit": 2
+      },
+      {
+        "id": 13,
+        "phase": "read",
+        "queuedMs": 165,
+        "serviceMs": 0.6543000000001484,
+        "totalMs": 165.26200000000063,
+        "admittedLimit": 2
+      },
+      {
+        "id": 15,
+        "phase": "remote-wait",
+        "queuedMs": 166,
+        "serviceMs": 38.90819999999985,
+        "totalMs": 204.17040000000088,
+        "admittedLimit": 2
+      },
+      {
+        "id": 16,
+        "phase": "read",
+        "queuedMs": 205,
+        "serviceMs": 0.8378000000011525,
+        "totalMs": 205.07880000000114,
+        "admittedLimit": 2
+      },
+      {
+        "id": 17,
+        "phase": "read",
+        "queuedMs": 205,
+        "serviceMs": 0.744299999998475,
+        "totalMs": 205.8649000000005,
+        "admittedLimit": 2
+      },
+      {
+        "id": 19,
+        "phase": "remote-wait",
+        "queuedMs": 206,
+        "serviceMs": 46.08289999999943,
+        "totalMs": 251.96939999999995,
+        "admittedLimit": 2
+      },
+      {
+        "id": 20,
+        "phase": "read",
+        "queuedMs": 252,
+        "serviceMs": 0.7641999999996187,
+        "totalMs": 252.77800000000025,
+        "admittedLimit": 2
+      },
+      {
+        "id": 21,
+        "phase": "read",
+        "queuedMs": 253,
+        "serviceMs": 0.6553000000003522,
+        "totalMs": 253.46240000000034,
+        "admittedLimit": 2
+      },
+      {
+        "id": 23,
+        "phase": "remote-wait",
+        "queuedMs": 254,
+        "serviceMs": 46.25680000000102,
+        "totalMs": 299.72519999999895,
+        "admittedLimit": 2
+      },
+      {
+        "id": 6,
+        "phase": "execution",
+        "queuedMs": 142,
+        "serviceMs": 249.27590000000055,
+        "totalMs": 390.8904000000002,
+        "admittedLimit": 2
+      },
+      {
+        "id": 10,
+        "phase": "execution",
+        "queuedMs": 300,
+        "serviceMs": 245.67939999999908,
+        "totalMs": 545.7245999999996,
+        "admittedLimit": 2
+      },
+      {
+        "id": 14,
+        "phase": "execution",
+        "queuedMs": 391,
+        "serviceMs": 164.89689999999973,
+        "totalMs": 555.7610999999997,
+        "admittedLimit": 2
+      },
+      {
+        "id": 18,
+        "phase": "execution",
+        "queuedMs": 556,
+        "serviceMs": 195.39899999999943,
+        "totalMs": 751.151600000001,
+        "admittedLimit": 1
+      },
+      {
+        "id": 22,
+        "phase": "execution",
+        "queuedMs": 752,
+        "serviceMs": 156.61379999999917,
+        "totalMs": 907.7847999999994,
+        "admittedLimit": 1
+      }
+    ]
+  },
+  {
+    "mode": "after",
+    "cap": 2,
+    "position": 2,
+    "elapsedMs": 560.8617000000013,
+    "throughputPerSecond": 42.79129774773343,
+    "p50Ms": 159.43089999999938,
+    "p95Ms": 543.9184000000005,
+    "peak": 2,
+    "spawnCount": 6,
+    "eventLoopP99Ms": 25.346047,
+    "memory": {
+      "rss": 104759296,
+      "heapTotal": 63946752,
+      "heapUsed": 27465496,
+      "external": 14807675,
+      "arrayBuffers": 7544688
+    },
+    "diagnostics": {
+      "accounts": {
+        "workspaceExec:mixed": {
+          "active": 0,
+          "queued": 0,
+          "limit": 2,
+          "minLimit": 1,
+          "maxLimit": 2,
+          "queueLimit": 64,
+          "activeByQos": {
+            "interactive": 0,
+            "background": 0,
+            "opportunistic": 0
+          },
+          "limitHistory": [],
+          "feedback": {
+            "pressured": false,
+            "phases": {
+              "read": {
+                "short": 1.4509715660800002,
+                "long": 1,
+                "healthy": 1,
+                "slow": 0,
+                "samples": 12
+              },
+              "remote-wait": {
+                "short": 41.634879999999995,
+                "long": 40,
+                "healthy": 0,
+                "slow": 0,
+                "samples": 6
+              },
+              "execution": {
+                "short": 136.41984,
+                "long": 136.0248414208,
+                "healthy": 0,
+                "slow": 0,
+                "samples": 6
+              }
+            }
+          }
+        }
+      },
+      "chatHistory": null,
+      "fair": true,
+      "limitEvents": [],
+      "pressure": {
+        "reasons": [],
+        "signals": {},
+        "policy": {
+          "lowAvailableRatio": 0.1,
+          "recoveredAvailableRatio": 0.15,
+          "highCommitRatio": 0.9,
+          "recoveredCommitRatio": 0.8,
+          "recoveryDwellMs": 10000,
+          "idleAccountMs": 300000
+        },
+        "disabledSignals": [
+          "cpu-utilization-only",
+          "system-io-wait",
+          "physical-memory",
+          "system-commit",
+          "event-loop"
+        ]
+      }
+    },
+    "events": [
+      {
+        "id": 1,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 0.8039000000007945,
+        "totalMs": 1.195400000000518,
+        "admittedLimit": 2
+      },
+      {
+        "id": 0,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 21.12489999999889,
+        "totalMs": 21.600500000000466,
+        "admittedLimit": 2
+      },
+      {
+        "id": 3,
+        "phase": "remote-wait",
+        "queuedMs": 22,
+        "serviceMs": 40.296699999998964,
+        "totalMs": 61.83849999999984,
+        "admittedLimit": 2
+      },
+      {
+        "id": 4,
+        "phase": "read",
+        "queuedMs": 62,
+        "serviceMs": 0.6934000000001106,
+        "totalMs": 62.58709999999883,
+        "admittedLimit": 2
+      },
+      {
+        "id": 5,
+        "phase": "read",
+        "queuedMs": 63,
+        "serviceMs": 0.6555999999982305,
+        "totalMs": 63.34900000000016,
+        "admittedLimit": 2
+      },
+      {
+        "id": 7,
+        "phase": "remote-wait",
+        "queuedMs": 64,
+        "serviceMs": 44.5713999999989,
+        "totalMs": 107.96379999999954,
+        "admittedLimit": 2
+      },
+      {
+        "id": 8,
+        "phase": "read",
+        "queuedMs": 108,
+        "serviceMs": 0.9868999999998778,
+        "totalMs": 109.02750000000015,
+        "admittedLimit": 2
+      },
+      {
+        "id": 9,
+        "phase": "read",
+        "queuedMs": 109,
+        "serviceMs": 0.6658999999999651,
+        "totalMs": 109.76310000000012,
+        "admittedLimit": 2
+      },
+      {
+        "id": 2,
+        "phase": "execution",
+        "queuedMs": 1,
+        "serviceMs": 135.9979999999996,
+        "totalMs": 137.22459999999955,
+        "admittedLimit": 2
+      },
+      {
+        "id": 11,
+        "phase": "remote-wait",
+        "queuedMs": 110,
+        "serviceMs": 48.02169999999933,
+        "totalMs": 157.82330000000002,
+        "admittedLimit": 2
+      },
+      {
+        "id": 12,
+        "phase": "read",
+        "queuedMs": 158,
+        "serviceMs": 0.7881999999990512,
+        "totalMs": 158.6828999999998,
+        "admittedLimit": 2
+      },
+      {
+        "id": 13,
+        "phase": "read",
+        "queuedMs": 159,
+        "serviceMs": 0.6885000000002037,
+        "totalMs": 159.43089999999938,
+        "admittedLimit": 2
+      },
+      {
+        "id": 15,
+        "phase": "remote-wait",
+        "queuedMs": 160,
+        "serviceMs": 41.0653999999995,
+        "totalMs": 200.53490000000056,
+        "admittedLimit": 2
+      },
+      {
+        "id": 16,
+        "phase": "read",
+        "queuedMs": 201,
+        "serviceMs": 0.9110000000000582,
+        "totalMs": 201.5064000000002,
+        "admittedLimit": 2
+      },
+      {
+        "id": 17,
+        "phase": "read",
+        "queuedMs": 202,
+        "serviceMs": 0.6534000000010565,
+        "totalMs": 202.21309999999903,
+        "admittedLimit": 2
+      },
+      {
+        "id": 19,
+        "phase": "remote-wait",
+        "queuedMs": 203,
+        "serviceMs": 46.697799999999916,
+        "totalMs": 248.91809999999896,
+        "admittedLimit": 2
+      },
+      {
+        "id": 20,
+        "phase": "read",
+        "queuedMs": 249,
+        "serviceMs": 0.7538000000004104,
+        "totalMs": 249.76729999999952,
+        "admittedLimit": 2
+      },
+      {
+        "id": 21,
+        "phase": "read",
+        "queuedMs": 250,
+        "serviceMs": 0.600800000000163,
+        "totalMs": 250.39190000000053,
+        "admittedLimit": 2
+      },
+      {
+        "id": 6,
+        "phase": "execution",
+        "queuedMs": 137,
+        "serviceMs": 127.6260999999995,
+        "totalMs": 264.8665999999994,
+        "admittedLimit": 2
+      },
+      {
+        "id": 23,
+        "phase": "remote-wait",
+        "queuedMs": 251,
+        "serviceMs": 36.89600000000064,
+        "totalMs": 287.28510000000097,
+        "admittedLimit": 2
+      },
+      {
+        "id": 10,
+        "phase": "execution",
+        "queuedMs": 265,
+        "serviceMs": 138.78399999999965,
+        "totalMs": 403.70470000000023,
+        "admittedLimit": 2
+      },
+      {
+        "id": 14,
+        "phase": "execution",
+        "queuedMs": 288,
+        "serviceMs": 137.4322000000011,
+        "totalMs": 424.9508999999998,
+        "admittedLimit": 2
+      },
+      {
+        "id": 18,
+        "phase": "execution",
+        "queuedMs": 404,
+        "serviceMs": 140.20520000000033,
+        "totalMs": 543.9184000000005,
+        "admittedLimit": 2
+      },
+      {
+        "id": 22,
+        "phase": "execution",
+        "queuedMs": 425,
+        "serviceMs": 135.48889999999847,
+        "totalMs": 560.3797000000013,
+        "admittedLimit": 2
+      }
+    ]
+  },
+  {
+    "mode": "before",
+    "cap": 2,
+    "position": 3,
+    "elapsedMs": 585.7692999999999,
+    "throughputPerSecond": 40.97176140845893,
+    "p50Ms": 158.58199999999852,
+    "p95Ms": 585.2993000000006,
+    "peak": 2,
+    "spawnCount": 6,
+    "eventLoopP99Ms": 31.096831,
+    "memory": {
+      "rss": 101928960,
+      "heapTotal": 63422464,
+      "heapUsed": 26134160,
+      "external": 11659699,
+      "arrayBuffers": 4396712
+    },
+    "diagnostics": {
+      "accounts": {
+        "workspaceExec:mixed": {
+          "active": 0,
+          "queued": 0,
+          "limit": 1,
+          "minLimit": 1,
+          "maxLimit": 2,
+          "queueLimit": 64,
+          "activeByQos": {
+            "interactive": 0,
+            "background": 0,
+            "opportunistic": 0
+          },
+          "limitHistory": [
+            {
+              "at": 1794148623800,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      "chatHistory": null,
+      "fair": true,
+      "limitEvents": [
+        {
+          "at": 1794148623800,
+          "from": 2,
+          "to": 1,
+          "reason": "gradient2 latency sample"
+        }
+      ]
+    },
+    "events": [
+      {
+        "id": 1,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 0.7225999999991473,
+        "totalMs": 0.9709999999995489,
+        "admittedLimit": 2
+      },
+      {
+        "id": 0,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 25.167999999999665,
+        "totalMs": 25.506099999998696,
+        "admittedLimit": 2
+      },
+      {
+        "id": 3,
+        "phase": "remote-wait",
+        "queuedMs": 25,
+        "serviceMs": 46.530800000000454,
+        "totalMs": 71.98639999999978,
+        "admittedLimit": 2
+      },
+      {
+        "id": 4,
+        "phase": "read",
+        "queuedMs": 72,
+        "serviceMs": 0.8549999999995634,
+        "totalMs": 72.98509999999987,
+        "admittedLimit": 2
+      },
+      {
+        "id": 5,
+        "phase": "read",
+        "queuedMs": 73,
+        "serviceMs": 0.7201999999997497,
+        "totalMs": 73.7536,
+        "admittedLimit": 2
+      },
+      {
+        "id": 7,
+        "phase": "remote-wait",
+        "queuedMs": 74,
+        "serviceMs": 45.5687999999991,
+        "totalMs": 119.39709999999832,
+        "admittedLimit": 2
+      },
+      {
+        "id": 8,
+        "phase": "read",
+        "queuedMs": 119,
+        "serviceMs": 0.8070000000006985,
+        "totalMs": 120.28830000000016,
+        "admittedLimit": 2
+      },
+      {
+        "id": 9,
+        "phase": "read",
+        "queuedMs": 120,
+        "serviceMs": 0.5939999999991414,
+        "totalMs": 120.92889999999898,
+        "admittedLimit": 2
+      },
+      {
+        "id": 2,
+        "phase": "execution",
+        "queuedMs": 1,
+        "serviceMs": 132.4421000000002,
+        "totalMs": 133.51929999999993,
+        "admittedLimit": 2
+      },
+      {
+        "id": 11,
+        "phase": "remote-wait",
+        "queuedMs": 121,
+        "serviceMs": 35.58009999999922,
+        "totalMs": 156.54269999999997,
+        "admittedLimit": 2
+      },
+      {
+        "id": 12,
+        "phase": "read",
+        "queuedMs": 156,
+        "serviceMs": 0.9794999999994616,
+        "totalMs": 157.60579999999936,
+        "admittedLimit": 2
+      },
+      {
+        "id": 13,
+        "phase": "read",
+        "queuedMs": 158,
+        "serviceMs": 0.9009000000005472,
+        "totalMs": 158.58199999999852,
+        "admittedLimit": 2
+      },
+      {
+        "id": 15,
+        "phase": "remote-wait",
+        "queuedMs": 158,
+        "serviceMs": 53.25620000000163,
+        "totalMs": 211.89060000000063,
+        "admittedLimit": 2
+      },
+      {
+        "id": 16,
+        "phase": "read",
+        "queuedMs": 212,
+        "serviceMs": 0.8078000000004977,
+        "totalMs": 212.76879999999983,
+        "admittedLimit": 2
+      },
+      {
+        "id": 17,
+        "phase": "read",
+        "queuedMs": 213,
+        "serviceMs": 0.6026000000001659,
+        "totalMs": 213.41970000000038,
+        "admittedLimit": 2
+      },
+      {
+        "id": 19,
+        "phase": "remote-wait",
+        "queuedMs": 213,
+        "serviceMs": 42.521600000000035,
+        "totalMs": 255.96900000000096,
+        "admittedLimit": 2
+      },
+      {
+        "id": 20,
+        "phase": "read",
+        "queuedMs": 256,
+        "serviceMs": 0.7523000000001048,
+        "totalMs": 256.7907000000014,
+        "admittedLimit": 2
+      },
+      {
+        "id": 21,
+        "phase": "read",
+        "queuedMs": 257,
+        "serviceMs": 0.8636000000005879,
+        "totalMs": 257.71399999999994,
+        "admittedLimit": 2
+      },
+      {
+        "id": 6,
+        "phase": "execution",
+        "queuedMs": 133,
+        "serviceMs": 131.86479999999938,
+        "totalMs": 265.47799999999916,
+        "admittedLimit": 2
+      },
+      {
+        "id": 23,
+        "phase": "remote-wait",
+        "queuedMs": 258,
+        "serviceMs": 48.13869999999952,
+        "totalMs": 305.89450000000033,
+        "admittedLimit": 2
+      },
+      {
+        "id": 10,
+        "phase": "execution",
+        "queuedMs": 265,
+        "serviceMs": 131.28330000000096,
+        "totalMs": 396.84350000000086,
+        "admittedLimit": 2
+      },
+      {
+        "id": 14,
+        "phase": "execution",
+        "queuedMs": 306,
+        "serviceMs": 130.749600000001,
+        "totalMs": 436.7934000000005,
+        "admittedLimit": 2
+      },
+      {
+        "id": 22,
+        "phase": "execution",
+        "queuedMs": 437,
+        "serviceMs": 148.51029999999992,
+        "totalMs": 585.2993000000006,
+        "admittedLimit": 2
+      },
+      {
+        "id": 18,
+        "phase": "execution",
+        "queuedMs": 397,
+        "serviceMs": 188.60369999999966,
+        "totalMs": 585.4750999999997,
+        "admittedLimit": 2
+      }
+    ]
+  },
+  {
+    "mode": "before",
+    "cap": 4,
+    "position": 0,
+    "elapsedMs": 504.7624999999989,
+    "throughputPerSecond": 47.547113741611255,
+    "p50Ms": 54.82590000000164,
+    "p95Ms": 378.9565999999995,
+    "peak": 4,
+    "spawnCount": 6,
+    "eventLoopP99Ms": 71.958527,
+    "memory": {
+      "rss": 98369536,
+      "heapTotal": 63422464,
+      "heapUsed": 26344904,
+      "external": 8513079,
+      "arrayBuffers": 1251497
+    },
+    "diagnostics": {
+      "accounts": {
+        "workspaceExec:mixed": {
+          "active": 0,
+          "queued": 0,
+          "limit": 1,
+          "minLimit": 1,
+          "maxLimit": 4,
+          "queueLimit": 64,
+          "activeByQos": {
+            "interactive": 0,
+            "background": 0,
+            "opportunistic": 0
+          },
+          "limitHistory": [
+            {
+              "at": 1794148623804,
+              "from": 2,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794148624049,
+              "from": 4,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794148624104,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794148624182,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      "chatHistory": null,
+      "fair": true,
+      "limitEvents": [
+        {
+          "at": 1794148623804,
+          "from": 2,
+          "to": 4,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1794148624049,
+          "from": 4,
+          "to": 3,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1794148624104,
+          "from": 3,
+          "to": 2,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1794148624182,
+          "from": 2,
+          "to": 1,
+          "reason": "gradient2 latency sample"
+        }
+      ]
+    },
+    "events": [
+      {
+        "id": 1,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 0.7516999999988911,
+        "totalMs": 1.1342999999997119,
+        "admittedLimit": 2
+      },
+      {
+        "id": 0,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 25.30249999999978,
+        "totalMs": 25.763200000001234,
+        "admittedLimit": 2
+      },
+      {
+        "id": 5,
+        "phase": "read",
+        "queuedMs": 1,
+        "serviceMs": 1.677400000000489,
+        "totalMs": 26.595500000001266,
+        "admittedLimit": 4
+      },
+      {
+        "id": 4,
+        "phase": "read",
+        "queuedMs": 25,
+        "serviceMs": 1.325699999999415,
+        "totalMs": 27.04019999999946,
+        "admittedLimit": 4
+      },
+      {
+        "id": 9,
+        "phase": "read",
+        "queuedMs": 26,
+        "serviceMs": 1.1218000000008033,
+        "totalMs": 27.778599999999642,
+        "admittedLimit": 4
+      },
+      {
+        "id": 8,
+        "phase": "read",
+        "queuedMs": 27,
+        "serviceMs": 2.264599999998609,
+        "totalMs": 29.320699999998396,
+        "admittedLimit": 4
+      },
+      {
+        "id": 13,
+        "phase": "read",
+        "queuedMs": 28,
+        "serviceMs": 1.823099999999613,
+        "totalMs": 29.63969999999972,
+        "admittedLimit": 4
+      },
+      {
+        "id": 12,
+        "phase": "read",
+        "queuedMs": 29,
+        "serviceMs": 0.9362999999993917,
+        "totalMs": 30.265199999999822,
+        "admittedLimit": 4
+      },
+      {
+        "id": 17,
+        "phase": "read",
+        "queuedMs": 30,
+        "serviceMs": 0.9192000000002736,
+        "totalMs": 30.551499999999578,
+        "admittedLimit": 4
+      },
+      {
+        "id": 16,
+        "phase": "read",
+        "queuedMs": 30,
+        "serviceMs": 0.8873999999996158,
+        "totalMs": 31.14589999999953,
+        "admittedLimit": 4
+      },
+      {
+        "id": 21,
+        "phase": "read",
+        "queuedMs": 31,
+        "serviceMs": 0.9209000000009837,
+        "totalMs": 31.431399999999485,
+        "admittedLimit": 4
+      },
+      {
+        "id": 20,
+        "phase": "read",
+        "queuedMs": 31,
+        "serviceMs": 23.693999999999505,
+        "totalMs": 54.82590000000164,
+        "admittedLimit": 4
+      },
+      {
+        "id": 3,
+        "phase": "remote-wait",
+        "queuedMs": 1,
+        "serviceMs": 36.991799999999785,
+        "totalMs": 61.666300000000774,
+        "admittedLimit": 4
+      },
+      {
+        "id": 7,
+        "phase": "remote-wait",
+        "queuedMs": 55,
+        "serviceMs": 50.978800000000774,
+        "totalMs": 106.09340000000157,
+        "admittedLimit": 4
+      },
+      {
+        "id": 11,
+        "phase": "remote-wait",
+        "queuedMs": 62,
+        "serviceMs": 44.92819999999847,
+        "totalMs": 106.6164000000008,
+        "admittedLimit": 4
+      },
+      {
+        "id": 2,
+        "phase": "execution",
+        "queuedMs": 1,
+        "serviceMs": 142.70980000000054,
+        "totalMs": 143.99789999999848,
+        "admittedLimit": 4
+      },
+      {
+        "id": 15,
+        "phase": "remote-wait",
+        "queuedMs": 106,
+        "serviceMs": 61.845400000000154,
+        "totalMs": 167.90649999999914,
+        "admittedLimit": 4
+      },
+      {
+        "id": 19,
+        "phase": "remote-wait",
+        "queuedMs": 106,
+        "serviceMs": 61.790499999999156,
+        "totalMs": 168.323699999999,
+        "admittedLimit": 4
+      },
+      {
+        "id": 6,
+        "phase": "execution",
+        "queuedMs": 31,
+        "serviceMs": 163.28340000000026,
+        "totalMs": 194.9873000000007,
+        "admittedLimit": 4
+      },
+      {
+        "id": 23,
+        "phase": "remote-wait",
+        "queuedMs": 168,
+        "serviceMs": 78.34079999999994,
+        "totalMs": 246.18039999999928,
+        "admittedLimit": 4
+      },
+      {
+        "id": 10,
+        "phase": "execution",
+        "queuedMs": 144,
+        "serviceMs": 157.33150000000023,
+        "totalMs": 301.34569999999985,
+        "admittedLimit": 4
+      },
+      {
+        "id": 14,
+        "phase": "execution",
+        "queuedMs": 168,
+        "serviceMs": 148.90790000000015,
+        "totalMs": 317.34729999999945,
+        "admittedLimit": 4
+      },
+      {
+        "id": 18,
+        "phase": "execution",
+        "queuedMs": 195,
+        "serviceMs": 184.05669999999918,
+        "totalMs": 378.9565999999995,
+        "admittedLimit": 4
+      },
+      {
+        "id": 22,
+        "phase": "execution",
+        "queuedMs": 317,
+        "serviceMs": 186.95639999999912,
+        "totalMs": 504.2375000000011,
+        "admittedLimit": 2
+      }
+    ]
+  },
+  {
+    "mode": "after",
+    "cap": 4,
+    "position": 1,
+    "elapsedMs": 460.78309999999874,
+    "throughputPerSecond": 52.08524357772684,
+    "p50Ms": 117.03460000000086,
+    "p95Ms": 421.5815999999977,
+    "peak": 4,
+    "spawnCount": 6,
+    "eventLoopP99Ms": 43.909119,
+    "memory": {
+      "rss": 103317504,
+      "heapTotal": 63422464,
+      "heapUsed": 28102072,
+      "external": 14807211,
+      "arrayBuffers": 7545629
+    },
+    "diagnostics": {
+      "accounts": {
+        "workspaceExec:mixed": {
+          "active": 0,
+          "queued": 0,
+          "limit": 3,
+          "minLimit": 1,
+          "maxLimit": 4,
+          "queueLimit": 64,
+          "activeByQos": {
+            "interactive": 0,
+            "background": 0,
+            "opportunistic": 0
+          },
+          "limitHistory": [
+            {
+              "at": 1794148624423,
+              "from": 2,
+              "to": 3,
+              "reason": "read latency feedback"
+            },
+            {
+              "at": 1794148624426,
+              "from": 3,
+              "to": 4,
+              "reason": "read latency feedback"
+            },
+            {
+              "at": 1794148624731,
+              "from": 4,
+              "to": 3,
+              "reason": "execution latency feedback"
+            }
+          ],
+          "feedback": {
+            "pressured": false,
+            "phases": {
+              "read": {
+                "short": 5.95834574848,
+                "long": 1,
+                "healthy": 0,
+                "slow": 1,
+                "samples": 12
+              },
+              "remote-wait": {
+                "short": 48.23264,
+                "long": 38,
+                "healthy": 0,
+                "slow": 0,
+                "samples": 6
+              },
+              "execution": {
+                "short": 164.06016,
+                "long": 148.460032,
+                "healthy": 0,
+                "slow": 0,
+                "samples": 6
+              }
+            }
+          }
+        }
+      },
+      "chatHistory": null,
+      "fair": true,
+      "limitEvents": [
+        {
+          "at": 1794148624423,
+          "from": 2,
+          "to": 3,
+          "reason": "read latency feedback"
+        },
+        {
+          "at": 1794148624426,
+          "from": 3,
+          "to": 4,
+          "reason": "read latency feedback"
+        },
+        {
+          "at": 1794148624731,
+          "from": 4,
+          "to": 3,
+          "reason": "execution latency feedback"
+        }
+      ],
+      "pressure": {
+        "reasons": [],
+        "signals": {},
+        "policy": {
+          "lowAvailableRatio": 0.1,
+          "recoveredAvailableRatio": 0.15,
+          "highCommitRatio": 0.9,
+          "recoveredCommitRatio": 0.8,
+          "recoveryDwellMs": 10000,
+          "idleAccountMs": 300000
+        },
+        "disabledSignals": [
+          "cpu-utilization-only",
+          "system-io-wait",
+          "physical-memory",
+          "system-commit",
+          "event-loop"
+        ]
+      }
+    },
+    "events": [
+      {
+        "id": 1,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 0.8382999999994354,
+        "totalMs": 1.081900000001042,
+        "admittedLimit": 2
+      },
+      {
+        "id": 0,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 27.460699999999633,
+        "totalMs": 27.78570000000036,
+        "admittedLimit": 2
+      },
+      {
+        "id": 3,
+        "phase": "remote-wait",
+        "queuedMs": 27,
+        "serviceMs": 37.34650000000147,
+        "totalMs": 65.11779999999999,
+        "admittedLimit": 2
+      },
+      {
+        "id": 4,
+        "phase": "read",
+        "queuedMs": 65,
+        "serviceMs": 0.8438999999998487,
+        "totalMs": 66.0586000000003,
+        "admittedLimit": 2
+      },
+      {
+        "id": 5,
+        "phase": "read",
+        "queuedMs": 66,
+        "serviceMs": 0.7836000000006607,
+        "totalMs": 66.94850000000042,
+        "admittedLimit": 2
+      },
+      {
+        "id": 7,
+        "phase": "remote-wait",
+        "queuedMs": 67,
+        "serviceMs": 44.969999999999345,
+        "totalMs": 111.96630000000005,
+        "admittedLimit": 2
+      },
+      {
+        "id": 8,
+        "phase": "read",
+        "queuedMs": 112,
+        "serviceMs": 0.8576000000011845,
+        "totalMs": 112.96899999999914,
+        "admittedLimit": 2
+      },
+      {
+        "id": 9,
+        "phase": "read",
+        "queuedMs": 113,
+        "serviceMs": 1.5289000000011583,
+        "totalMs": 114.57870000000003,
+        "admittedLimit": 3
+      },
+      {
+        "id": 12,
+        "phase": "read",
+        "queuedMs": 114,
+        "serviceMs": 0.6067999999995664,
+        "totalMs": 115.22400000000016,
+        "admittedLimit": 3
+      },
+      {
+        "id": 13,
+        "phase": "read",
+        "queuedMs": 115,
+        "serviceMs": 0.5650000000005093,
+        "totalMs": 115.81130000000121,
+        "admittedLimit": 3
+      },
+      {
+        "id": 16,
+        "phase": "read",
+        "queuedMs": 116,
+        "serviceMs": 0.8465999999989435,
+        "totalMs": 116.693299999999,
+        "admittedLimit": 4
+      },
+      {
+        "id": 17,
+        "phase": "read",
+        "queuedMs": 116,
+        "serviceMs": 1.1802999999999884,
+        "totalMs": 117.03460000000086,
+        "admittedLimit": 4
+      },
+      {
+        "id": 20,
+        "phase": "read",
+        "queuedMs": 117,
+        "serviceMs": 0.8430000000007567,
+        "totalMs": 117.54449999999997,
+        "admittedLimit": 4
+      },
+      {
+        "id": 21,
+        "phase": "read",
+        "queuedMs": 117,
+        "serviceMs": 23.266999999999825,
+        "totalMs": 140.30529999999817,
+        "admittedLimit": 4
+      },
+      {
+        "id": 2,
+        "phase": "execution",
+        "queuedMs": 1,
+        "serviceMs": 144.89630000000034,
+        "totalMs": 146.03339999999844,
+        "admittedLimit": 2
+      },
+      {
+        "id": 11,
+        "phase": "remote-wait",
+        "queuedMs": 113,
+        "serviceMs": 56.678100000000995,
+        "totalMs": 169.73500000000058,
+        "admittedLimit": 3
+      },
+      {
+        "id": 15,
+        "phase": "remote-wait",
+        "queuedMs": 140,
+        "serviceMs": 49.597099999999045,
+        "totalMs": 190.02499999999782,
+        "admittedLimit": 4
+      },
+      {
+        "id": 19,
+        "phase": "remote-wait",
+        "queuedMs": 170,
+        "serviceMs": 51.032100000000355,
+        "totalMs": 220.75840000000062,
+        "admittedLimit": 4
+      },
+      {
+        "id": 23,
+        "phase": "remote-wait",
+        "queuedMs": 190,
+        "serviceMs": 59.38509999999951,
+        "totalMs": 249.42549999999937,
+        "admittedLimit": 4
+      },
+      {
+        "id": 6,
+        "phase": "execution",
+        "queuedMs": 117,
+        "serviceMs": 182.72640000000138,
+        "totalMs": 300.41059999999925,
+        "admittedLimit": 4
+      },
+      {
+        "id": 10,
+        "phase": "execution",
+        "queuedMs": 146,
+        "serviceMs": 183.53250000000116,
+        "totalMs": 329.58940000000075,
+        "admittedLimit": 4
+      },
+      {
+        "id": 14,
+        "phase": "execution",
+        "queuedMs": 221,
+        "serviceMs": 182.35680000000139,
+        "totalMs": 403.22600000000057,
+        "admittedLimit": 4
+      },
+      {
+        "id": 18,
+        "phase": "execution",
+        "queuedMs": 249,
+        "serviceMs": 172.03169999999955,
+        "totalMs": 421.5815999999977,
+        "admittedLimit": 4
+      },
+      {
+        "id": 22,
+        "phase": "execution",
+        "queuedMs": 300,
+        "serviceMs": 160.03380000000107,
+        "totalMs": 460.41530000000057,
+        "admittedLimit": 4
+      }
+    ]
+  },
+  {
+    "mode": "after",
+    "cap": 4,
+    "position": 2,
+    "elapsedMs": 468.122199999998,
+    "throughputPerSecond": 51.2686644641081,
+    "p50Ms": 123.28320000000167,
+    "p95Ms": 445.02950000000055,
+    "peak": 4,
+    "spawnCount": 6,
+    "eventLoopP99Ms": 38.731775,
+    "memory": {
+      "rss": 98017280,
+      "heapTotal": 63684608,
+      "heapUsed": 25650352,
+      "external": 8512317,
+      "arrayBuffers": 1250735
+    },
+    "diagnostics": {
+      "accounts": {
+        "workspaceExec:mixed": {
+          "active": 0,
+          "queued": 0,
+          "limit": 4,
+          "minLimit": 1,
+          "maxLimit": 4,
+          "queueLimit": 64,
+          "activeByQos": {
+            "interactive": 0,
+            "background": 0,
+            "opportunistic": 0
+          },
+          "limitHistory": [
+            {
+              "at": 1794148624891,
+              "from": 2,
+              "to": 3,
+              "reason": "read latency feedback"
+            },
+            {
+              "at": 1794148624894,
+              "from": 3,
+              "to": 4,
+              "reason": "read latency feedback"
+            }
+          ],
+          "feedback": {
+            "pressured": false,
+            "phases": {
+              "read": {
+                "short": 6.12487520256,
+                "long": 1.0326149079040001,
+                "healthy": 0,
+                "slow": 1,
+                "samples": 12
+              },
+              "remote-wait": {
+                "short": 51.84704000000001,
+                "long": 48,
+                "healthy": 0,
+                "slow": 0,
+                "samples": 6
+              },
+              "execution": {
+                "short": 162.69984,
+                "long": 151.5867706368,
+                "healthy": 0,
+                "slow": 0,
+                "samples": 6
+              }
+            }
+          }
+        }
+      },
+      "chatHistory": null,
+      "fair": true,
+      "limitEvents": [
+        {
+          "at": 1794148624891,
+          "from": 2,
+          "to": 3,
+          "reason": "read latency feedback"
+        },
+        {
+          "at": 1794148624894,
+          "from": 3,
+          "to": 4,
+          "reason": "read latency feedback"
+        }
+      ],
+      "pressure": {
+        "reasons": [],
+        "signals": {},
+        "policy": {
+          "lowAvailableRatio": 0.1,
+          "recoveredAvailableRatio": 0.15,
+          "highCommitRatio": 0.9,
+          "recoveredCommitRatio": 0.8,
+          "recoveryDwellMs": 10000,
+          "idleAccountMs": 300000
+        },
+        "disabledSignals": [
+          "cpu-utilization-only",
+          "system-io-wait",
+          "physical-memory",
+          "system-commit",
+          "event-loop"
+        ]
+      }
+    },
+    "events": [
+      {
+        "id": 0,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 0.8947000000007392,
+        "totalMs": 1.4863000000004831,
+        "admittedLimit": 2
+      },
+      {
+        "id": 1,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 23.080699999998615,
+        "totalMs": 23.586999999999534,
+        "admittedLimit": 2
+      },
+      {
+        "id": 3,
+        "phase": "remote-wait",
+        "queuedMs": 23,
+        "serviceMs": 47.61849999999686,
+        "totalMs": 71.29479999999967,
+        "admittedLimit": 2
+      },
+      {
+        "id": 4,
+        "phase": "read",
+        "queuedMs": 71,
+        "serviceMs": 0.8157999999966705,
+        "totalMs": 72.20539999999892,
+        "admittedLimit": 2
+      },
+      {
+        "id": 5,
+        "phase": "read",
+        "queuedMs": 72,
+        "serviceMs": 0.6893999999992957,
+        "totalMs": 72.954899999997,
+        "admittedLimit": 2
+      },
+      {
+        "id": 7,
+        "phase": "remote-wait",
+        "queuedMs": 73,
+        "serviceMs": 45.62279999999737,
+        "totalMs": 118.61709999999948,
+        "admittedLimit": 2
+      },
+      {
+        "id": 8,
+        "phase": "read",
+        "queuedMs": 118,
+        "serviceMs": 0.8915999999990163,
+        "totalMs": 119.59230000000025,
+        "admittedLimit": 2
+      },
+      {
+        "id": 9,
+        "phase": "read",
+        "queuedMs": 119,
+        "serviceMs": 1.0848999999980151,
+        "totalMs": 120.78029999999853,
+        "admittedLimit": 3
+      },
+      {
+        "id": 12,
+        "phase": "read",
+        "queuedMs": 121,
+        "serviceMs": 0.7097000000030675,
+        "totalMs": 121.45830000000205,
+        "admittedLimit": 3
+      },
+      {
+        "id": 13,
+        "phase": "read",
+        "queuedMs": 121,
+        "serviceMs": 0.5992999999980384,
+        "totalMs": 122.08620000000155,
+        "admittedLimit": 3
+      },
+      {
+        "id": 17,
+        "phase": "read",
+        "queuedMs": 122,
+        "serviceMs": 0.8627999999989697,
+        "totalMs": 122.93340000000171,
+        "admittedLimit": 4
+      },
+      {
+        "id": 16,
+        "phase": "read",
+        "queuedMs": 122,
+        "serviceMs": 1.2158000000017637,
+        "totalMs": 123.28320000000167,
+        "admittedLimit": 4
+      },
+      {
+        "id": 21,
+        "phase": "read",
+        "queuedMs": 123,
+        "serviceMs": 0.9955000000009022,
+        "totalMs": 123.91690000000017,
+        "admittedLimit": 4
+      },
+      {
+        "id": 20,
+        "phase": "read",
+        "queuedMs": 123,
+        "serviceMs": 23.818699999999808,
+        "totalMs": 147.06359999999768,
+        "admittedLimit": 4
+      },
+      {
+        "id": 2,
+        "phase": "execution",
+        "queuedMs": 1,
+        "serviceMs": 146.76450000000114,
+        "totalMs": 148.1815999999999,
+        "admittedLimit": 2
+      },
+      {
+        "id": 11,
+        "phase": "remote-wait",
+        "queuedMs": 120,
+        "serviceMs": 50.457800000000134,
+        "totalMs": 170.09670000000187,
+        "admittedLimit": 3
+      },
+      {
+        "id": 15,
+        "phase": "remote-wait",
+        "queuedMs": 147,
+        "serviceMs": 64.06999999999971,
+        "totalMs": 211.3089,
+        "admittedLimit": 4
+      },
+      {
+        "id": 19,
+        "phase": "remote-wait",
+        "queuedMs": 170,
+        "serviceMs": 41.79599999999846,
+        "totalMs": 211.79520000000048,
+        "admittedLimit": 4
+      },
+      {
+        "id": 23,
+        "phase": "remote-wait",
+        "queuedMs": 211,
+        "serviceMs": 61.183499999999185,
+        "totalMs": 272.4385000000002,
+        "admittedLimit": 4
+      },
+      {
+        "id": 6,
+        "phase": "execution",
+        "queuedMs": 124,
+        "serviceMs": 178.8822,
+        "totalMs": 303.15829999999914,
+        "admittedLimit": 4
+      },
+      {
+        "id": 10,
+        "phase": "execution",
+        "queuedMs": 148,
+        "serviceMs": 187.73619999999937,
+        "totalMs": 335.81159999999727,
+        "admittedLimit": 4
+      },
+      {
+        "id": 14,
+        "phase": "execution",
+        "queuedMs": 212,
+        "serviceMs": 157.09419999999955,
+        "totalMs": 369.0611000000026,
+        "admittedLimit": 4
+      },
+      {
+        "id": 18,
+        "phase": "execution",
+        "queuedMs": 273,
+        "serviceMs": 172.40239999999903,
+        "totalMs": 445.02950000000055,
+        "admittedLimit": 4
+      },
+      {
+        "id": 22,
+        "phase": "execution",
+        "queuedMs": 303,
+        "serviceMs": 164.53160000000207,
+        "totalMs": 467.4997999999978,
+        "admittedLimit": 4
+      }
+    ]
+  },
+  {
+    "mode": "before",
+    "cap": 4,
+    "position": 3,
+    "elapsedMs": 466.7930000000015,
+    "throughputPerSecond": 51.414652747577456,
+    "p50Ms": 60.10979999999836,
+    "p95Ms": 351.7924000000021,
+    "peak": 4,
+    "spawnCount": 6,
+    "eventLoopP99Ms": 49.446911,
+    "memory": {
+      "rss": 86888448,
+      "heapTotal": 63684608,
+      "heapUsed": 27650992,
+      "external": 14806449,
+      "arrayBuffers": 7544867
+    },
+    "diagnostics": {
+      "accounts": {
+        "workspaceExec:mixed": {
+          "active": 0,
+          "queued": 0,
+          "limit": 1,
+          "minLimit": 1,
+          "maxLimit": 4,
+          "queueLimit": 64,
+          "activeByQos": {
+            "interactive": 0,
+            "background": 0,
+            "opportunistic": 0
+          },
+          "limitHistory": [
+            {
+              "at": 1794148625243,
+              "from": 2,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794148625468,
+              "from": 4,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794148625547,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794148625594,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      "chatHistory": null,
+      "fair": true,
+      "limitEvents": [
+        {
+          "at": 1794148625243,
+          "from": 2,
+          "to": 4,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1794148625468,
+          "from": 4,
+          "to": 3,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1794148625547,
+          "from": 3,
+          "to": 2,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1794148625594,
+          "from": 2,
+          "to": 1,
+          "reason": "gradient2 latency sample"
+        }
+      ]
+    },
+    "events": [
+      {
+        "id": 0,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 1.0375999999996566,
+        "totalMs": 1.5565999999998894,
+        "admittedLimit": 2
+      },
+      {
+        "id": 1,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 29.440899999997782,
+        "totalMs": 29.87579999999798,
+        "admittedLimit": 2
+      },
+      {
+        "id": 4,
+        "phase": "read",
+        "queuedMs": 1,
+        "serviceMs": 1.9163000000007742,
+        "totalMs": 30.977300000002288,
+        "admittedLimit": 4
+      },
+      {
+        "id": 5,
+        "phase": "read",
+        "queuedMs": 30,
+        "serviceMs": 1.400099999998929,
+        "totalMs": 31.325000000000728,
+        "admittedLimit": 4
+      },
+      {
+        "id": 8,
+        "phase": "read",
+        "queuedMs": 31,
+        "serviceMs": 0.8703999999997905,
+        "totalMs": 31.881900000000314,
+        "admittedLimit": 4
+      },
+      {
+        "id": 9,
+        "phase": "read",
+        "queuedMs": 31,
+        "serviceMs": 0.9131999999990512,
+        "totalMs": 32.24339999999938,
+        "admittedLimit": 4
+      },
+      {
+        "id": 12,
+        "phase": "read",
+        "queuedMs": 32,
+        "serviceMs": 2.9228000000002794,
+        "totalMs": 34.8083000000006,
+        "admittedLimit": 4
+      },
+      {
+        "id": 13,
+        "phase": "read",
+        "queuedMs": 32,
+        "serviceMs": 2.8755999999993946,
+        "totalMs": 35.115200000000186,
+        "admittedLimit": 4
+      },
+      {
+        "id": 16,
+        "phase": "read",
+        "queuedMs": 35,
+        "serviceMs": 1.018499999998312,
+        "totalMs": 35.81330000000162,
+        "admittedLimit": 4
+      },
+      {
+        "id": 17,
+        "phase": "read",
+        "queuedMs": 35,
+        "serviceMs": 1.2138000000013562,
+        "totalMs": 36.33849999999802,
+        "admittedLimit": 4
+      },
+      {
+        "id": 20,
+        "phase": "read",
+        "queuedMs": 36,
+        "serviceMs": 1.0531000000009954,
+        "totalMs": 36.83770000000004,
+        "admittedLimit": 4
+      },
+      {
+        "id": 21,
+        "phase": "read",
+        "queuedMs": 36,
+        "serviceMs": 23.828199999999924,
+        "totalMs": 60.10979999999836,
+        "admittedLimit": 4
+      },
+      {
+        "id": 3,
+        "phase": "remote-wait",
+        "queuedMs": 1,
+        "serviceMs": 38.49780000000101,
+        "totalMs": 67.34760000000097,
+        "admittedLimit": 4
+      },
+      {
+        "id": 7,
+        "phase": "remote-wait",
+        "queuedMs": 60,
+        "serviceMs": 38.57619999999952,
+        "totalMs": 99.01559999999881,
+        "admittedLimit": 4
+      },
+      {
+        "id": 11,
+        "phase": "remote-wait",
+        "queuedMs": 67,
+        "serviceMs": 47.57880000000296,
+        "totalMs": 114.96650000000227,
+        "admittedLimit": 4
+      },
+      {
+        "id": 15,
+        "phase": "remote-wait",
+        "queuedMs": 99,
+        "serviceMs": 39.599600000001374,
+        "totalMs": 138.62760000000344,
+        "admittedLimit": 4
+      },
+      {
+        "id": 2,
+        "phase": "execution",
+        "queuedMs": 1,
+        "serviceMs": 147.45010000000184,
+        "totalMs": 149.04109999999855,
+        "admittedLimit": 4
+      },
+      {
+        "id": 19,
+        "phase": "remote-wait",
+        "queuedMs": 115,
+        "serviceMs": 61.791400000001886,
+        "totalMs": 176.72119999999995,
+        "admittedLimit": 4
+      },
+      {
+        "id": 23,
+        "phase": "remote-wait",
+        "queuedMs": 139,
+        "serviceMs": 62.257799999999406,
+        "totalMs": 200.75510000000213,
+        "admittedLimit": 4
+      },
+      {
+        "id": 6,
+        "phase": "execution",
+        "queuedMs": 37,
+        "serviceMs": 188.97130000000107,
+        "totalMs": 226.0643999999993,
+        "admittedLimit": 4
+      },
+      {
+        "id": 10,
+        "phase": "execution",
+        "queuedMs": 149,
+        "serviceMs": 155.85659999999916,
+        "totalMs": 304.90270000000237,
+        "admittedLimit": 4
+      },
+      {
+        "id": 14,
+        "phase": "execution",
+        "queuedMs": 177,
+        "serviceMs": 145.47190000000046,
+        "totalMs": 322.34349999999904,
+        "admittedLimit": 4
+      },
+      {
+        "id": 18,
+        "phase": "execution",
+        "queuedMs": 201,
+        "serviceMs": 150.80129999999917,
+        "totalMs": 351.7924000000021,
+        "admittedLimit": 4
+      },
+      {
+        "id": 22,
+        "phase": "execution",
+        "queuedMs": 322,
+        "serviceMs": 144.00940000000264,
+        "totalMs": 466.2678999999989,
+        "admittedLimit": 2
+      }
+    ]
+  },
+  {
+    "mode": "before",
+    "cap": 8,
+    "position": 0,
+    "elapsedMs": 379.41649999999936,
+    "throughputPerSecond": 63.2550244915549,
+    "p50Ms": 109.24409999999989,
+    "p95Ms": 327.6735000000008,
+    "peak": 8,
+    "spawnCount": 6,
+    "eventLoopP99Ms": 31.277055,
+    "memory": {
+      "rss": 81793024,
+      "heapTotal": 63946752,
+      "heapUsed": 26086080,
+      "external": 9560731,
+      "arrayBuffers": 2299149
+    },
+    "diagnostics": {
+      "accounts": {
+        "workspaceExec:mixed": {
+          "active": 0,
+          "queued": 0,
+          "limit": 1,
+          "minLimit": 1,
+          "maxLimit": 8,
+          "queueLimit": 64,
+          "activeByQos": {
+            "interactive": 0,
+            "background": 0,
+            "opportunistic": 0
+          },
+          "limitHistory": [
+            {
+              "at": 1794148625711,
+              "from": 2,
+              "to": 8,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794148625822,
+              "from": 8,
+              "to": 7,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794148625853,
+              "from": 7,
+              "to": 6,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794148625867,
+              "from": 6,
+              "to": 5,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794148625868,
+              "from": 5,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794148625915,
+              "from": 4,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794148625935,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794148626038,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      "chatHistory": null,
+      "fair": true,
+      "limitEvents": [
+        {
+          "at": 1794148625711,
+          "from": 2,
+          "to": 8,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1794148625822,
+          "from": 8,
+          "to": 7,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1794148625853,
+          "from": 7,
+          "to": 6,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1794148625867,
+          "from": 6,
+          "to": 5,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1794148625868,
+          "from": 5,
+          "to": 4,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1794148625915,
+          "from": 4,
+          "to": 3,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1794148625935,
+          "from": 3,
+          "to": 2,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1794148626038,
+          "from": 2,
+          "to": 1,
+          "reason": "gradient2 latency sample"
+        }
+      ]
+    },
+    "events": [
+      {
+        "id": 1,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 1.027299999997922,
+        "totalMs": 1.2785000000003492,
+        "admittedLimit": 2
+      },
+      {
+        "id": 0,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 46.394399999997404,
+        "totalMs": 46.675100000000384,
+        "admittedLimit": 2
+      },
+      {
+        "id": 4,
+        "phase": "read",
+        "queuedMs": 1,
+        "serviceMs": 24.32140000000072,
+        "totalMs": 47.79950000000099,
+        "admittedLimit": 8
+      },
+      {
+        "id": 5,
+        "phase": "read",
+        "queuedMs": 1,
+        "serviceMs": 24.799200000001292,
+        "totalMs": 48.22620000000097,
+        "admittedLimit": 8
+      },
+      {
+        "id": 9,
+        "phase": "read",
+        "queuedMs": 1,
+        "serviceMs": 2.989900000000489,
+        "totalMs": 48.54490000000078,
+        "admittedLimit": 8
+      },
+      {
+        "id": 8,
+        "phase": "read",
+        "queuedMs": 46,
+        "serviceMs": 2.2368999999998778,
+        "totalMs": 48.86739999999918,
+        "admittedLimit": 8
+      },
+      {
+        "id": 12,
+        "phase": "read",
+        "queuedMs": 48,
+        "serviceMs": 1.516700000000128,
+        "totalMs": 49.39430000000357,
+        "admittedLimit": 8
+      },
+      {
+        "id": 13,
+        "phase": "read",
+        "queuedMs": 48,
+        "serviceMs": 2.608200000002398,
+        "totalMs": 50.849600000001374,
+        "admittedLimit": 8
+      },
+      {
+        "id": 20,
+        "phase": "read",
+        "queuedMs": 49,
+        "serviceMs": 1.815999999998894,
+        "totalMs": 51.20939999999973,
+        "admittedLimit": 8
+      },
+      {
+        "id": 16,
+        "phase": "read",
+        "queuedMs": 49,
+        "serviceMs": 23.963999999999942,
+        "totalMs": 72.8282999999974,
+        "admittedLimit": 8
+      },
+      {
+        "id": 17,
+        "phase": "read",
+        "queuedMs": 48,
+        "serviceMs": 25.876499999998487,
+        "totalMs": 74.40799999999945,
+        "admittedLimit": 8
+      },
+      {
+        "id": 3,
+        "phase": "remote-wait",
+        "queuedMs": 1,
+        "serviceMs": 86.01209999999992,
+        "totalMs": 109.24409999999989,
+        "admittedLimit": 8
+      },
+      {
+        "id": 7,
+        "phase": "remote-wait",
+        "queuedMs": 1,
+        "serviceMs": 64.82610000000204,
+        "totalMs": 110.04239999999845,
+        "admittedLimit": 8
+      },
+      {
+        "id": 21,
+        "phase": "read",
+        "queuedMs": 51,
+        "serviceMs": 61.73809999999867,
+        "totalMs": 112.6265999999996,
+        "admittedLimit": 8
+      },
+      {
+        "id": 11,
+        "phase": "remote-wait",
+        "queuedMs": 73,
+        "serviceMs": 70.00019999999859,
+        "totalMs": 142.97599999999875,
+        "admittedLimit": 8
+      },
+      {
+        "id": 15,
+        "phase": "remote-wait",
+        "queuedMs": 109,
+        "serviceMs": 47.421000000002095,
+        "totalMs": 156.72479999999996,
+        "admittedLimit": 8
+      },
+      {
+        "id": 19,
+        "phase": "remote-wait",
+        "queuedMs": 110,
+        "serviceMs": 47.39020000000164,
+        "totalMs": 157.4565999999977,
+        "admittedLimit": 8
+      },
+      {
+        "id": 2,
+        "phase": "execution",
+        "queuedMs": 1,
+        "serviceMs": 157.13450000000012,
+        "totalMs": 158.58339999999953,
+        "admittedLimit": 8
+      },
+      {
+        "id": 6,
+        "phase": "execution",
+        "queuedMs": 1,
+        "serviceMs": 160.1208000000006,
+        "totalMs": 183.59759999999733,
+        "admittedLimit": 8
+      },
+      {
+        "id": 23,
+        "phase": "remote-wait",
+        "queuedMs": 157,
+        "serviceMs": 48.365200000000186,
+        "totalMs": 205.1482999999971,
+        "admittedLimit": 6
+      },
+      {
+        "id": 10,
+        "phase": "execution",
+        "queuedMs": 51,
+        "serviceMs": 173.98419999999896,
+        "totalMs": 225.30169999999998,
+        "admittedLimit": 8
+      },
+      {
+        "id": 14,
+        "phase": "execution",
+        "queuedMs": 74,
+        "serviceMs": 159.14630000000034,
+        "totalMs": 233.66179999999804,
+        "admittedLimit": 8
+      },
+      {
+        "id": 18,
+        "phase": "execution",
+        "queuedMs": 183,
+        "serviceMs": 144.0673999999999,
+        "totalMs": 327.6735000000008,
+        "admittedLimit": 4
+      },
+      {
+        "id": 22,
+        "phase": "execution",
+        "queuedMs": 234,
+        "serviceMs": 145.41579999999885,
+        "totalMs": 379.13430000000153,
+        "admittedLimit": 2
+      }
+    ]
+  },
+  {
+    "mode": "after",
+    "cap": 8,
+    "position": 1,
+    "elapsedMs": 472.33420000000115,
+    "throughputPerSecond": 50.8114805152791,
+    "p50Ms": 125.45360000000073,
+    "p95Ms": 452.8695999999982,
+    "peak": 5,
+    "spawnCount": 6,
+    "eventLoopP99Ms": 86.507519,
+    "memory": {
+      "rss": 80388096,
+      "heapTotal": 63946752,
+      "heapUsed": 28141984,
+      "external": 15855931,
+      "arrayBuffers": 8594349
+    },
+    "diagnostics": {
+      "accounts": {
+        "workspaceExec:mixed": {
+          "active": 0,
+          "queued": 0,
+          "limit": 5,
+          "minLimit": 1,
+          "maxLimit": 8,
+          "queueLimit": 64,
+          "activeByQos": {
+            "interactive": 0,
+            "background": 0,
+            "opportunistic": 0
+          },
+          "limitHistory": [
+            {
+              "at": 1794148626212,
+              "from": 2,
+              "to": 3,
+              "reason": "read latency feedback"
+            },
+            {
+              "at": 1794148626215,
+              "from": 3,
+              "to": 4,
+              "reason": "read latency feedback"
+            },
+            {
+              "at": 1794148626217,
+              "from": 4,
+              "to": 5,
+              "reason": "read latency feedback"
+            }
+          ],
+          "feedback": {
+            "pressured": false,
+            "phases": {
+              "read": {
+                "short": 14.546350039040002,
+                "long": 1.0326149079040001,
+                "healthy": 0,
+                "slow": 1,
+                "samples": 12
+              },
+              "remote-wait": {
+                "short": 73.0192,
+                "long": 50,
+                "healthy": 0,
+                "slow": 0,
+                "samples": 6
+              },
+              "execution": {
+                "short": 171.61312,
+                "long": 159.054784,
+                "healthy": 0,
+                "slow": 0,
+                "samples": 6
+              }
+            }
+          }
+        }
+      },
+      "chatHistory": null,
+      "fair": true,
+      "limitEvents": [
+        {
+          "at": 1794148626212,
+          "from": 2,
+          "to": 3,
+          "reason": "read latency feedback"
+        },
+        {
+          "at": 1794148626215,
+          "from": 3,
+          "to": 4,
+          "reason": "read latency feedback"
+        },
+        {
+          "at": 1794148626217,
+          "from": 4,
+          "to": 5,
+          "reason": "read latency feedback"
+        }
+      ],
+      "pressure": {
+        "reasons": [],
+        "signals": {},
+        "policy": {
+          "lowAvailableRatio": 0.1,
+          "recoveredAvailableRatio": 0.15,
+          "highCommitRatio": 0.9,
+          "recoveredCommitRatio": 0.8,
+          "recoveryDwellMs": 10000,
+          "idleAccountMs": 300000
+        },
+        "disabledSignals": [
+          "cpu-utilization-only",
+          "system-io-wait",
+          "physical-memory",
+          "system-commit",
+          "event-loop"
+        ]
+      }
+    },
+    "events": [
+      {
+        "id": 0,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 0.9071000000003551,
+        "totalMs": 1.3832000000002154,
+        "admittedLimit": 2
+      },
+      {
+        "id": 1,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 23.90729999999894,
+        "totalMs": 24.25970000000234,
+        "admittedLimit": 2
+      },
+      {
+        "id": 3,
+        "phase": "remote-wait",
+        "queuedMs": 24,
+        "serviceMs": 49.55519999999888,
+        "totalMs": 73.90399999999863,
+        "admittedLimit": 2
+      },
+      {
+        "id": 4,
+        "phase": "read",
+        "queuedMs": 74,
+        "serviceMs": 0.9078000000008615,
+        "totalMs": 74.89839999999822,
+        "admittedLimit": 2
+      },
+      {
+        "id": 5,
+        "phase": "read",
+        "queuedMs": 75,
+        "serviceMs": 0.6867999999994936,
+        "totalMs": 75.65269999999873,
+        "admittedLimit": 2
+      },
+      {
+        "id": 7,
+        "phase": "remote-wait",
+        "queuedMs": 75,
+        "serviceMs": 45.01940000000104,
+        "totalMs": 120.69620000000214,
+        "admittedLimit": 2
+      },
+      {
+        "id": 8,
+        "phase": "read",
+        "queuedMs": 121,
+        "serviceMs": 0.7393999999985681,
+        "totalMs": 121.56130000000121,
+        "admittedLimit": 2
+      },
+      {
+        "id": 9,
+        "phase": "read",
+        "queuedMs": 121,
+        "serviceMs": 1.1493999999984226,
+        "totalMs": 122.77889999999752,
+        "admittedLimit": 3
+      },
+      {
+        "id": 12,
+        "phase": "read",
+        "queuedMs": 123,
+        "serviceMs": 0.749100000000908,
+        "totalMs": 123.5489000000016,
+        "admittedLimit": 3
+      },
+      {
+        "id": 13,
+        "phase": "read",
+        "queuedMs": 123,
+        "serviceMs": 0.6888999999973748,
+        "totalMs": 124.30059999999867,
+        "admittedLimit": 3
+      },
+      {
+        "id": 16,
+        "phase": "read",
+        "queuedMs": 124,
+        "serviceMs": 0.7168999999994412,
+        "totalMs": 125.04729999999836,
+        "admittedLimit": 4
+      },
+      {
+        "id": 17,
+        "phase": "read",
+        "queuedMs": 124,
+        "serviceMs": 1.1166999999986729,
+        "totalMs": 125.45360000000073,
+        "admittedLimit": 4
+      },
+      {
+        "id": 20,
+        "phase": "read",
+        "queuedMs": 125,
+        "serviceMs": 0.9202000000004773,
+        "totalMs": 126.02730000000156,
+        "admittedLimit": 4
+      },
+      {
+        "id": 11,
+        "phase": "remote-wait",
+        "queuedMs": 121,
+        "serviceMs": 36.96639999999752,
+        "totalMs": 158.59509999999864,
+        "admittedLimit": 3
+      },
+      {
+        "id": 2,
+        "phase": "execution",
+        "queuedMs": 1,
+        "serviceMs": 157.95270000000164,
+        "totalMs": 159.27899999999863,
+        "admittedLimit": 2
+      },
+      {
+        "id": 21,
+        "phase": "read",
+        "queuedMs": 125,
+        "serviceMs": 65.85230000000229,
+        "totalMs": 191.2957000000024,
+        "admittedLimit": 4
+      },
+      {
+        "id": 15,
+        "phase": "remote-wait",
+        "queuedMs": 126,
+        "serviceMs": 59.24620000000141,
+        "totalMs": 216.38550000000032,
+        "admittedLimit": 5
+      },
+      {
+        "id": 19,
+        "phase": "remote-wait",
+        "queuedMs": 158,
+        "serviceMs": 103.48179999999775,
+        "totalMs": 262.0479000000014,
+        "admittedLimit": 5
+      },
+      {
+        "id": 23,
+        "phase": "remote-wait",
+        "queuedMs": 216,
+        "serviceMs": 104.57159999999931,
+        "totalMs": 320.9545999999973,
+        "admittedLimit": 5
+      },
+      {
+        "id": 10,
+        "phase": "execution",
+        "queuedMs": 159,
+        "serviceMs": 189.22200000000157,
+        "totalMs": 348.49329999999827,
+        "admittedLimit": 5
+      },
+      {
+        "id": 6,
+        "phase": "execution",
+        "queuedMs": 126,
+        "serviceMs": 222.36249999999927,
+        "totalMs": 348.59569999999803,
+        "admittedLimit": 5
+      },
+      {
+        "id": 14,
+        "phase": "execution",
+        "queuedMs": 191,
+        "serviceMs": 162.78439999999682,
+        "totalMs": 354.249200000002,
+        "admittedLimit": 5
+      },
+      {
+        "id": 18,
+        "phase": "execution",
+        "queuedMs": 262,
+        "serviceMs": 190.71979999999894,
+        "totalMs": 452.8695999999982,
+        "admittedLimit": 5
+      },
+      {
+        "id": 22,
+        "phase": "execution",
+        "queuedMs": 321,
+        "serviceMs": 150.76659999999902,
+        "totalMs": 471.8090000000011,
+        "admittedLimit": 5
+      }
+    ]
+  },
+  {
+    "mode": "after",
+    "cap": 8,
+    "position": 2,
+    "elapsedMs": 445.52240000000165,
+    "throughputPerSecond": 53.8693452899336,
+    "p50Ms": 120.48369999999704,
+    "p95Ms": 432.5500000000029,
+    "peak": 5,
+    "spawnCount": 6,
+    "eventLoopP99Ms": 52.199423,
+    "memory": {
+      "rss": 75800576,
+      "heapTotal": 63946752,
+      "heapUsed": 26663720,
+      "external": 12707316,
+      "arrayBuffers": 5445734
+    },
+    "diagnostics": {
+      "accounts": {
+        "workspaceExec:mixed": {
+          "active": 0,
+          "queued": 0,
+          "limit": 3,
+          "minLimit": 1,
+          "maxLimit": 8,
+          "queueLimit": 64,
+          "activeByQos": {
+            "interactive": 0,
+            "background": 0,
+            "opportunistic": 0
+          },
+          "limitHistory": [
+            {
+              "at": 1794148626682,
+              "from": 2,
+              "to": 3,
+              "reason": "read latency feedback"
+            },
+            {
+              "at": 1794148626684,
+              "from": 3,
+              "to": 4,
+              "reason": "read latency feedback"
+            },
+            {
+              "at": 1794148626686,
+              "from": 4,
+              "to": 5,
+              "reason": "read latency feedback"
+            },
+            {
+              "at": 1794148626998,
+              "from": 5,
+              "to": 4,
+              "reason": "execution latency feedback"
+            },
+            {
+              "at": 1794148627010,
+              "from": 4,
+              "to": 3,
+              "reason": "execution latency feedback"
+            }
+          ],
+          "feedback": {
+            "pressured": false,
+            "phases": {
+              "read": {
+                "short": 11.67244640256,
+                "long": 1,
+                "healthy": 0,
+                "slow": 1,
+                "samples": 12
+              },
+              "remote-wait": {
+                "short": 58.291520000000006,
+                "long": 45,
+                "healthy": 0,
+                "slow": 0,
+                "samples": 6
+              },
+              "execution": {
+                "short": 173.54464000000002,
+                "long": 148.7168,
+                "healthy": 0,
+                "slow": 3,
+                "samples": 6
+              }
+            }
+          }
+        }
+      },
+      "chatHistory": null,
+      "fair": true,
+      "limitEvents": [
+        {
+          "at": 1794148626682,
+          "from": 2,
+          "to": 3,
+          "reason": "read latency feedback"
+        },
+        {
+          "at": 1794148626684,
+          "from": 3,
+          "to": 4,
+          "reason": "read latency feedback"
+        },
+        {
+          "at": 1794148626686,
+          "from": 4,
+          "to": 5,
+          "reason": "read latency feedback"
+        },
+        {
+          "at": 1794148626998,
+          "from": 5,
+          "to": 4,
+          "reason": "execution latency feedback"
+        },
+        {
+          "at": 1794148627010,
+          "from": 4,
+          "to": 3,
+          "reason": "execution latency feedback"
+        }
+      ],
+      "pressure": {
+        "reasons": [],
+        "signals": {},
+        "policy": {
+          "lowAvailableRatio": 0.1,
+          "recoveredAvailableRatio": 0.15,
+          "highCommitRatio": 0.9,
+          "recoveredCommitRatio": 0.8,
+          "recoveryDwellMs": 10000,
+          "idleAccountMs": 300000
+        },
+        "disabledSignals": [
+          "cpu-utilization-only",
+          "system-io-wait",
+          "physical-memory",
+          "system-commit",
+          "event-loop"
+        ]
+      }
+    },
+    "events": [
+      {
+        "id": 0,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 0.8886999999995169,
+        "totalMs": 1.2895000000025902,
+        "admittedLimit": 2
+      },
+      {
+        "id": 1,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 22.6221000000005,
+        "totalMs": 22.99699999999939,
+        "admittedLimit": 2
+      },
+      {
+        "id": 3,
+        "phase": "remote-wait",
+        "queuedMs": 23,
+        "serviceMs": 45.10979999999836,
+        "totalMs": 68.16209999999774,
+        "admittedLimit": 2
+      },
+      {
+        "id": 4,
+        "phase": "read",
+        "queuedMs": 68,
+        "serviceMs": 0.7877999999982421,
+        "totalMs": 69.01260000000184,
+        "admittedLimit": 2
+      },
+      {
+        "id": 5,
+        "phase": "read",
+        "queuedMs": 69,
+        "serviceMs": 0.8145000000004075,
+        "totalMs": 69.90550000000076,
+        "admittedLimit": 2
+      },
+      {
+        "id": 7,
+        "phase": "remote-wait",
+        "queuedMs": 70,
+        "serviceMs": 45.840400000000955,
+        "totalMs": 115.77200000000084,
+        "admittedLimit": 2
+      },
+      {
+        "id": 8,
+        "phase": "read",
+        "queuedMs": 116,
+        "serviceMs": 0.846800000002986,
+        "totalMs": 116.72479999999996,
+        "admittedLimit": 2
+      },
+      {
+        "id": 9,
+        "phase": "read",
+        "queuedMs": 117,
+        "serviceMs": 1.1352000000006228,
+        "totalMs": 117.92290000000139,
+        "admittedLimit": 3
+      },
+      {
+        "id": 12,
+        "phase": "read",
+        "queuedMs": 118,
+        "serviceMs": 0.5861000000004424,
+        "totalMs": 118.5199999999968,
+        "admittedLimit": 3
+      },
+      {
+        "id": 13,
+        "phase": "read",
+        "queuedMs": 118,
+        "serviceMs": 0.5609999999978754,
+        "totalMs": 119.10729999999967,
+        "admittedLimit": 3
+      },
+      {
+        "id": 16,
+        "phase": "read",
+        "queuedMs": 119,
+        "serviceMs": 1.0239000000001397,
+        "totalMs": 120.16200000000026,
+        "admittedLimit": 4
+      },
+      {
+        "id": 17,
+        "phase": "read",
+        "queuedMs": 119,
+        "serviceMs": 1.3339999999989232,
+        "totalMs": 120.48369999999704,
+        "admittedLimit": 4
+      },
+      {
+        "id": 20,
+        "phase": "read",
+        "queuedMs": 120,
+        "serviceMs": 0.8281999999999243,
+        "totalMs": 120.97560000000158,
+        "admittedLimit": 4
+      },
+      {
+        "id": 2,
+        "phase": "execution",
+        "queuedMs": 1,
+        "serviceMs": 146.1023000000023,
+        "totalMs": 147.3833999999988,
+        "admittedLimit": 2
+      },
+      {
+        "id": 21,
+        "phase": "read",
+        "queuedMs": 120,
+        "serviceMs": 51.87130000000252,
+        "totalMs": 172.32849999999962,
+        "admittedLimit": 4
+      },
+      {
+        "id": 11,
+        "phase": "remote-wait",
+        "queuedMs": 117,
+        "serviceMs": 78.84040000000095,
+        "totalMs": 195.6369999999988,
+        "admittedLimit": 3
+      },
+      {
+        "id": 15,
+        "phase": "remote-wait",
+        "queuedMs": 121,
+        "serviceMs": 50.99569999999949,
+        "totalMs": 197.16400000000067,
+        "admittedLimit": 5
+      },
+      {
+        "id": 19,
+        "phase": "remote-wait",
+        "queuedMs": 196,
+        "serviceMs": 46.5041999999994,
+        "totalMs": 242.1185000000005,
+        "admittedLimit": 5
+      },
+      {
+        "id": 23,
+        "phase": "remote-wait",
+        "queuedMs": 197,
+        "serviceMs": 72.48349999999846,
+        "totalMs": 269.58190000000104,
+        "admittedLimit": 5
+      },
+      {
+        "id": 6,
+        "phase": "execution",
+        "queuedMs": 121,
+        "serviceMs": 172.93569999999818,
+        "totalMs": 294.10979999999836,
+        "admittedLimit": 5
+      },
+      {
+        "id": 10,
+        "phase": "execution",
+        "queuedMs": 147,
+        "serviceMs": 187.57890000000043,
+        "totalMs": 334.90799999999945,
+        "admittedLimit": 5
+      },
+      {
+        "id": 14,
+        "phase": "execution",
+        "queuedMs": 172,
+        "serviceMs": 209.46889999999985,
+        "totalMs": 381.96930000000066,
+        "admittedLimit": 5
+      },
+      {
+        "id": 18,
+        "phase": "execution",
+        "queuedMs": 242,
+        "serviceMs": 190.32670000000144,
+        "totalMs": 432.5500000000029,
+        "admittedLimit": 5
+      },
+      {
+        "id": 22,
+        "phase": "execution",
+        "queuedMs": 270,
+        "serviceMs": 175.35150000000067,
+        "totalMs": 445.03640000000087,
+        "admittedLimit": 5
+      }
+    ]
+  },
+  {
+    "mode": "before",
+    "cap": 8,
+    "position": 3,
+    "elapsedMs": 406.8220000000001,
+    "throughputPerSecond": 58.993859722433875,
+    "p50Ms": 99.6890999999996,
+    "p95Ms": 352.1774000000005,
+    "peak": 8,
+    "spawnCount": 6,
+    "eventLoopP99Ms": 35.225599,
+    "memory": {
+      "rss": 68669440,
+      "heapTotal": 63946752,
+      "heapUsed": 26187488,
+      "external": 9561943,
+      "arrayBuffers": 2300361
+    },
+    "diagnostics": {
+      "accounts": {
+        "workspaceExec:mixed": {
+          "active": 0,
+          "queued": 0,
+          "limit": 1,
+          "minLimit": 1,
+          "maxLimit": 8,
+          "queueLimit": 64,
+          "activeByQos": {
+            "interactive": 0,
+            "background": 0,
+            "opportunistic": 0
+          },
+          "limitHistory": [
+            {
+              "at": 1794148627014,
+              "from": 2,
+              "to": 8,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794148627119,
+              "from": 8,
+              "to": 7,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794148627135,
+              "from": 7,
+              "to": 6,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794148627165,
+              "from": 6,
+              "to": 5,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794148627174,
+              "from": 5,
+              "to": 4,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794148627233,
+              "from": 4,
+              "to": 3,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794148627234,
+              "from": 3,
+              "to": 2,
+              "reason": "gradient2 latency sample"
+            },
+            {
+              "at": 1794148627365,
+              "from": 2,
+              "to": 1,
+              "reason": "gradient2 latency sample"
+            }
+          ]
+        }
+      },
+      "chatHistory": null,
+      "fair": true,
+      "limitEvents": [
+        {
+          "at": 1794148627014,
+          "from": 2,
+          "to": 8,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1794148627119,
+          "from": 8,
+          "to": 7,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1794148627135,
+          "from": 7,
+          "to": 6,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1794148627165,
+          "from": 6,
+          "to": 5,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1794148627174,
+          "from": 5,
+          "to": 4,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1794148627233,
+          "from": 4,
+          "to": 3,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1794148627234,
+          "from": 3,
+          "to": 2,
+          "reason": "gradient2 latency sample"
+        },
+        {
+          "at": 1794148627365,
+          "from": 2,
+          "to": 1,
+          "reason": "gradient2 latency sample"
+        }
+      ]
+    },
+    "events": [
+      {
+        "id": 0,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 0.9762000000009721,
+        "totalMs": 1.4108000000014727,
+        "admittedLimit": 2
+      },
+      {
+        "id": 1,
+        "phase": "read",
+        "queuedMs": 0,
+        "serviceMs": 46.800999999999476,
+        "totalMs": 47.10449999999764,
+        "admittedLimit": 2
+      },
+      {
+        "id": 8,
+        "phase": "read",
+        "queuedMs": 1,
+        "serviceMs": 2.4429999999993015,
+        "totalMs": 48.18149999999878,
+        "admittedLimit": 8
+      },
+      {
+        "id": 4,
+        "phase": "read",
+        "queuedMs": 1,
+        "serviceMs": 26.04019999999946,
+        "totalMs": 48.5525000000016,
+        "admittedLimit": 8
+      },
+      {
+        "id": 9,
+        "phase": "read",
+        "queuedMs": 47,
+        "serviceMs": 2.136099999999715,
+        "totalMs": 49.25119999999879,
+        "admittedLimit": 8
+      },
+      {
+        "id": 5,
+        "phase": "read",
+        "queuedMs": 1,
+        "serviceMs": 27.2471000000005,
+        "totalMs": 49.79270000000179,
+        "admittedLimit": 8
+      },
+      {
+        "id": 16,
+        "phase": "read",
+        "queuedMs": 48,
+        "serviceMs": 3.1777000000001863,
+        "totalMs": 51.68839999999909,
+        "admittedLimit": 8
+      },
+      {
+        "id": 17,
+        "phase": "read",
+        "queuedMs": 50,
+        "serviceMs": 2.324799999998504,
+        "totalMs": 52.08110000000306,
+        "admittedLimit": 8
+      },
+      {
+        "id": 12,
+        "phase": "read",
+        "queuedMs": 48,
+        "serviceMs": 4.252200000002631,
+        "totalMs": 52.46679999999833,
+        "admittedLimit": 8
+      },
+      {
+        "id": 13,
+        "phase": "read",
+        "queuedMs": 49,
+        "serviceMs": 25.18829999999798,
+        "totalMs": 74.52669999999853,
+        "admittedLimit": 8
+      },
+      {
+        "id": 21,
+        "phase": "read",
+        "queuedMs": 52,
+        "serviceMs": 24.33050000000003,
+        "totalMs": 76.40369999999893,
+        "admittedLimit": 8
+      },
+      {
+        "id": 20,
+        "phase": "read",
+        "queuedMs": 52,
+        "serviceMs": 47.97279999999955,
+        "totalMs": 99.6890999999996,
+        "admittedLimit": 8
+      },
+      {
+        "id": 3,
+        "phase": "remote-wait",
+        "queuedMs": 1,
+        "serviceMs": 82.78620000000228,
+        "totalMs": 105.12479999999778,
+        "admittedLimit": 8
+      },
+      {
+        "id": 7,
+        "phase": "remote-wait",
+        "queuedMs": 1,
+        "serviceMs": 60.42489999999816,
+        "totalMs": 105.89750000000276,
+        "admittedLimit": 8
+      },
+      {
+        "id": 11,
+        "phase": "remote-wait",
+        "queuedMs": 74,
+        "serviceMs": 47.363399999998364,
+        "totalMs": 121.97969999999987,
+        "admittedLimit": 8
+      },
+      {
+        "id": 15,
+        "phase": "remote-wait",
+        "queuedMs": 100,
+        "serviceMs": 51.518199999998615,
+        "totalMs": 151.3816999999981,
+        "admittedLimit": 8
+      },
+      {
+        "id": 19,
+        "phase": "remote-wait",
+        "queuedMs": 105,
+        "serviceMs": 46.97609999999986,
+        "totalMs": 152.05549999999857,
+        "admittedLimit": 8
+      },
+      {
+        "id": 2,
+        "phase": "execution",
+        "queuedMs": 1,
+        "serviceMs": 159.66669999999795,
+        "totalMs": 161.10610000000088,
+        "admittedLimit": 8
+      },
+      {
+        "id": 6,
+        "phase": "execution",
+        "queuedMs": 1,
+        "serviceMs": 165.0010000000002,
+        "totalMs": 187.5483000000022,
+        "admittedLimit": 8
+      },
+      {
+        "id": 23,
+        "phase": "remote-wait",
+        "queuedMs": 151,
+        "serviceMs": 69.08009999999922,
+        "totalMs": 220.41760000000068,
+        "admittedLimit": 6
+      },
+      {
+        "id": 10,
+        "phase": "execution",
+        "queuedMs": 52,
+        "serviceMs": 168.27120000000286,
+        "totalMs": 220.78769999999713,
+        "admittedLimit": 8
+      },
+      {
+        "id": 14,
+        "phase": "execution",
+        "queuedMs": 76,
+        "serviceMs": 160.3122000000003,
+        "totalMs": 236.86610000000292,
+        "admittedLimit": 8
+      },
+      {
+        "id": 18,
+        "phase": "execution",
+        "queuedMs": 187,
+        "serviceMs": 164.6291999999994,
+        "totalMs": 352.1774000000005,
+        "admittedLimit": 4
+      },
+      {
+        "id": 22,
+        "phase": "execution",
+        "queuedMs": 237,
+        "serviceMs": 169.52390000000014,
+        "totalMs": 406.3797000000013,
+        "admittedLimit": 2
+      }
+    ]
+  }
+]

@@ -1,0 +1,950 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": {
+    "commit": "635670257a8c5ed8a51f64cf22df6a5da4cb70d6",
+    "tree": "a82c1a6ded751e23e7e759b21f783ee5fdcbcd49",
+    "dirty": false
+  },
+  "base": "df229c0c3b001b984d4896c10c1e8408ecf678a0",
+  "cleanAfter": true,
+  "commands": [
+    {
+      "id": "tests",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/resource-adaptive-pressure.test.ts",
+        "tests/unit/resource-fabric-primitives.test.ts",
+        "tests/unit/resource-fabric-invariants.test.ts",
+        "tests/unit/resource-fabric-bounded-waiting.test.ts",
+        "tests/unit/resource-fabric-workspace-exec.test.ts",
+        "tests/unit/resource-fabric-pressure.test.ts",
+        "tests/unit/resource-window-lifecycle.test.ts",
+        "tests/unit/resource-metrics-calibration.test.ts",
+        "tests/unit/process-tree-sampler.test.ts",
+        "tests/unit/terminal-api.test.ts",
+        "tests/unit/resource-fabric-chat-history.test.ts",
+        "tests/unit/resource-budget-integration.test.ts",
+        "tests/unit/runtime-efficiency-api.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\tf0837\\acceptance\\tests.json"
+      ],
+      "cwd": "D:\\tmp\\tf0837\\candidate",
+      "exitCode": 0,
+      "durationMs": 38984,
+      "required": true,
+      "candidate": "1a400245e58d8207dca4e719ff965e5cf5932b55"
+    },
+    {
+      "id": "measurement",
+      "argv": [
+        "node",
+        "scripts/verify-adaptive-resource-pressure.mjs",
+        "--base",
+        "df229c0c3b001b984d4896c10c1e8408ecf678a0",
+        "--output",
+        "D:\\tmp\\tf0837\\acceptance\\measurement"
+      ],
+      "cwd": "D:\\tmp\\tf0837\\candidate",
+      "exitCode": 0,
+      "durationMs": 23063,
+      "required": true,
+      "candidate": "1a400245e58d8207dca4e719ff965e5cf5932b55"
+    },
+    {
+      "id": "node-types",
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\tf0837\\candidate",
+      "exitCode": 0,
+      "durationMs": 49141,
+      "required": true,
+      "candidate": "1a400245e58d8207dca4e719ff965e5cf5932b55"
+    },
+    {
+      "id": "web-types",
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\tf0837\\candidate",
+      "exitCode": 0,
+      "durationMs": 11750,
+      "required": true,
+      "candidate": "1a400245e58d8207dca4e719ff965e5cf5932b55"
+    },
+    {
+      "id": "runtime-types",
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.core.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\tf0837\\candidate\\openclaw_runtime",
+      "exitCode": 2,
+      "durationMs": 57765,
+      "required": false,
+      "candidate": "1a400245e58d8207dca4e719ff965e5cf5932b55"
+    },
+    {
+      "id": "lint",
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "electron/services/efficiency-orchestrator.ts",
+        "electron/services/resource-envelope.ts",
+        "electron/services/resource-fabric.ts",
+        "electron/services/terminal-api.ts",
+        "openclaw_runtime/src/process/process-tree-sampler.ts",
+        "openclaw_runtime/src/resources/resource-envelope.ts",
+        "scripts/verify-adaptive-resource-pressure.mjs",
+        "shared/resources/adaptive-limit.ts",
+        "shared/resources/index.ts",
+        "shared/types/resources.ts",
+        "tests/unit/process-tree-sampler.test.ts",
+        "tests/unit/resource-adaptive-pressure.test.ts",
+        "tests/unit/resource-fabric-invariants.test.ts",
+        "tests/unit/resource-fabric-pressure.test.ts",
+        "tests/unit/resource-fabric-primitives.test.ts",
+        "tests/unit/resource-fabric-workspace-exec.test.ts",
+        "tests/unit/resource-window-lifecycle.test.ts",
+        "tests/unit/terminal-api.test.ts",
+        "--format=json",
+        "--output-file",
+        "D:\\tmp\\tf0837\\acceptance\\lint.json"
+      ],
+      "cwd": "D:\\tmp\\tf0837\\candidate",
+      "exitCode": 0,
+      "durationMs": 12234,
+      "required": true,
+      "candidate": "1a400245e58d8207dca4e719ff965e5cf5932b55"
+    },
+    {
+      "id": "contract",
+      "argv": [
+        "node",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0837\\candidate",
+      "exitCode": 0,
+      "durationMs": 5406,
+      "required": true,
+      "candidate": "1a400245e58d8207dca4e719ff965e5cf5932b55"
+    },
+    {
+      "id": "i18n",
+      "argv": [
+        "node",
+        "scripts/i18n-lint.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0837\\candidate",
+      "exitCode": 0,
+      "durationMs": 1469,
+      "required": true,
+      "candidate": "1a400245e58d8207dca4e719ff965e5cf5932b55"
+    },
+    {
+      "id": "comms-replay",
+      "argv": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0837\\candidate",
+      "exitCode": 0,
+      "durationMs": 562,
+      "required": true,
+      "candidate": "1a400245e58d8207dca4e719ff965e5cf5932b55"
+    },
+    {
+      "id": "comms-compare",
+      "argv": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0837\\candidate",
+      "exitCode": 0,
+      "durationMs": 250,
+      "required": true,
+      "candidate": "1a400245e58d8207dca4e719ff965e5cf5932b55"
+    },
+    {
+      "id": "retention",
+      "argv": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0837\\candidate",
+      "exitCode": 1,
+      "durationMs": 11750,
+      "required": false,
+      "candidate": "1a400245e58d8207dca4e719ff965e5cf5932b55",
+      "supersededBy": "retention-final"
+    },
+    {
+      "id": "harness-validate",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/adaptive-resource-pressure-20261108.md"
+      ],
+      "cwd": "D:\\tmp\\tf0837\\candidate",
+      "exitCode": 0,
+      "durationMs": 1515,
+      "required": true,
+      "candidate": "1a400245e58d8207dca4e719ff965e5cf5932b55"
+    },
+    {
+      "id": "harness-run",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/adaptive-resource-pressure-20261108.md",
+        "--dry-run"
+      ],
+      "cwd": "D:\\tmp\\tf0837\\candidate",
+      "exitCode": 0,
+      "durationMs": 1094,
+      "required": true,
+      "candidate": "1a400245e58d8207dca4e719ff965e5cf5932b55"
+    },
+    {
+      "id": "diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "df229c0c3b001b984d4896c10c1e8408ecf678a0",
+        "HEAD"
+      ],
+      "cwd": "D:\\tmp\\tf0837\\candidate",
+      "exitCode": 0,
+      "durationMs": 359,
+      "required": true,
+      "candidate": "1a400245e58d8207dca4e719ff965e5cf5932b55"
+    },
+    {
+      "id": "retention-final",
+      "argv": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0837\\candidate",
+      "exitCode": 0,
+      "durationMs": 4125,
+      "required": true,
+      "candidate": "635670257a8c5ed8a51f64cf22df6a5da4cb70d6"
+    },
+    {
+      "id": "harness-final",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/adaptive-resource-pressure-20261108.md"
+      ],
+      "cwd": "D:\\tmp\\tf0837\\candidate",
+      "exitCode": 0,
+      "durationMs": 719,
+      "required": true,
+      "candidate": "635670257a8c5ed8a51f64cf22df6a5da4cb70d6"
+    },
+    {
+      "id": "diff-final",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "c0868c76f",
+        "HEAD"
+      ],
+      "cwd": "D:\\tmp\\tf0837\\candidate",
+      "exitCode": 0,
+      "durationMs": 110,
+      "required": true,
+      "candidate": "635670257a8c5ed8a51f64cf22df6a5da4cb70d6"
+    }
+  ],
+  "tests": {
+    "numTotalTests": 105,
+    "numPassedTests": 105,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numFailedTestSuites": 0,
+    "success": true
+  },
+  "cases": [
+    {
+      "name": "process tree sampler measures a live busy child by its creation identity and observes its exit",
+      "status": "passed"
+    },
+    {
+      "name": "process tree sampler computes tree CPU percent from cumulative CPU-time deltas",
+      "status": "passed"
+    },
+    {
+      "name": "process tree sampler fails closed when process discovery is unavailable",
+      "status": "passed"
+    },
+    {
+      "name": "process tree sampler reports empty roots as empty rather than a healthy process tree",
+      "status": "passed"
+    },
+    {
+      "name": "process tree sampler reads a real process tree for the current process",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure contracts when latency worsens despite a full backlog",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure treats backlog as demand and grows gradually after healthy samples",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure reaches a configured large cap with sustained healthy one-slot growth",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure isolates read, long execution and remote service latency",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure does not turn an isolated read pause into sustained serial execution",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure requires sustained recovery after congestion instead of learning overload as healthy",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure retains active ownership while pressure contracts admission and blocks demand-driven growth",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure needs fresh low-pressure observations spanning dwell; missing, replayed and stale samples cannot recover",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure retains each independent commit and event-loop cause until that signal recovers",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure does not use infinite commit capacity or a long observation gap as recovery",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure recovers a cached commit signal on its next fresh probe without replay advancing dwell",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure reclaims cold empty accounts and reconstructs them without evicting active or queued owners",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure propagates real lease categories and history semantics to feedback",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure merges commit counters with their original timestamp and discards stale readings",
+      "status": "passed"
+    },
+    {
+      "name": "integrated host budget and bounded waiting classifies 200 cross-workspace requests within the host cap and releases every wait resource",
+      "status": "passed"
+    },
+    {
+      "name": "integrated host budget and bounded waiting prefers a less-used tenant at equal QoS when global capacity is released",
+      "status": "passed"
+    },
+    {
+      "name": "integrated host budget and bounded waiting refuses a zero-length queue when only the global owner is saturated",
+      "status": "passed"
+    },
+    {
+      "name": "integrated host budget and bounded waiting expires and cancels global waiters without reserving capacity and rebuilds the live cap",
+      "status": "passed"
+    },
+    {
+      "name": "fabric bounded waiting enforces the exact waiting boundary and readmits after release",
+      "status": "passed"
+    },
+    {
+      "name": "fabric bounded waiting allows immediate grants with zero waiting slots",
+      "status": "passed"
+    },
+    {
+      "name": "fabric bounded waiting cancels before enqueue and during waiting, removing timers and listeners",
+      "status": "passed"
+    },
+    {
+      "name": "fabric bounded waiting checks expired admission, waiting expiration and expiration at grant",
+      "status": "passed"
+    },
+    {
+      "name": "fabric bounded waiting classifies all 200 requests with bounded peaks and no residual resources",
+      "status": "passed"
+    },
+    {
+      "name": "runtime bounded waiting enforces the exact waiting boundary and readmits after release",
+      "status": "passed"
+    },
+    {
+      "name": "runtime bounded waiting allows immediate grants with zero waiting slots",
+      "status": "passed"
+    },
+    {
+      "name": "runtime bounded waiting cancels before enqueue and during waiting, removing timers and listeners",
+      "status": "passed"
+    },
+    {
+      "name": "runtime bounded waiting checks expired admission, waiting expiration and expiration at grant",
+      "status": "passed"
+    },
+    {
+      "name": "runtime bounded waiting classifies all 200 requests with bounded peaks and no residual resources",
+      "status": "passed"
+    },
+    {
+      "name": "regression: old Fabric admission rejects overflow before adding a timer or waiter",
+      "status": "passed"
+    },
+    {
+      "name": "regression: old Fabric admission never invokes work cancelled between grant and callback",
+      "status": "passed"
+    },
+    {
+      "name": "regression: old Fabric admission does not grant an already expired deadline",
+      "status": "passed"
+    },
+    {
+      "name": "execution ownership and shared waits admits fresh history subscribers after abort without releasing abandoned work",
+      "status": "passed"
+    },
+    {
+      "name": "execution ownership and shared waits admits fresh history subscribers after deadline without releasing abandoned work",
+      "status": "passed"
+    },
+    {
+      "name": "execution ownership and shared waits expires the actual host caller while another history subscriber keeps its own deadline",
+      "status": "passed"
+    },
+    {
+      "name": "execution ownership and shared waits removes a host-expired history waiter before it can start",
+      "status": "passed"
+    },
+    {
+      "name": "execution ownership and shared waits fabric checks grant races and retains running capacity until work settles",
+      "status": "passed"
+    },
+    {
+      "name": "execution ownership and shared waits runtime checks grant races and retains running capacity until work settles",
+      "status": "passed"
+    },
+    {
+      "name": "execution ownership and shared waits isolates subscriber aborts and deadlines, including all leaving before work begins",
+      "status": "passed"
+    },
+    {
+      "name": "execution ownership and shared waits passes only remaining history time and cancels abandoned queued flights",
+      "status": "passed"
+    },
+    {
+      "name": "execution ownership and shared waits keeps a surviving subscriber when another deadline expires during shared work",
+      "status": "passed"
+    },
+    {
+      "name": "execution ownership and shared waits preserves shared rejection including undefined",
+      "status": "passed"
+    },
+    {
+      "name": "execution ownership and shared waits preserves shared rejection including Error: failed",
+      "status": "passed"
+    },
+    {
+      "name": "ResourceFabric chat.history admission coalesces duplicate in-flight chat.history requests",
+      "status": "passed"
+    },
+    {
+      "name": "ResourceFabric chat.history admission releases the singleflight after a slow history request so a later retry runs again",
+      "status": "passed"
+    },
+    {
+      "name": "ResourceFabric chat.history admission limits distinct chat.history requests while allowing non-history RPCs through",
+      "status": "passed"
+    },
+    {
+      "name": "ResourceFabric invariants I1: interactive work is never rejected by the account limit",
+      "status": "passed"
+    },
+    {
+      "name": "ResourceFabric invariants I2: active usage never exceeds the current account limit",
+      "status": "passed"
+    },
+    {
+      "name": "ResourceFabric invariants I3: DRF-lite share stays within the two-times fairness bound",
+      "status": "passed"
+    },
+    {
+      "name": "ResourceFabric invariants writes each limit adjustment into the resource-envelope ledger",
+      "status": "passed"
+    },
+    {
+      "name": "ResourceFabric P2 pressure runs 20 exec plus 20 history with zero timeouts and a replayable limit trace",
+      "status": "passed"
+    },
+    {
+      "name": "resource fabric P0 primitives evicts LRU entries, expires by injected TTL, and invalidates by prefix",
+      "status": "passed"
+    },
+    {
+      "name": "resource fabric P0 primitives coalesces same-key work and does not cache rejected calls",
+      "status": "passed"
+    },
+    {
+      "name": "resource fabric P0 primitives adjusts adaptive limits with bounds and a dead zone",
+      "status": "passed"
+    },
+    {
+      "name": "resource fabric P0 primitives removes and clears queued priority items",
+      "status": "passed"
+    },
+    {
+      "name": "resource fabric P0 primitives enforces token-bucket bursts with injected time and rejects invalid input",
+      "status": "passed"
+    },
+    {
+      "name": "resource fabric P0 primitives orders QoS, boosts explicit work, and ages opportunistic work",
+      "status": "passed"
+    },
+    {
+      "name": "resource fabric P0 primitives enforces DRF-lite capacity and fairness bounds",
+      "status": "passed"
+    },
+    {
+      "name": "workspace exec lease preserves FIFO, capacity and queuedMs for 200 queued requests",
+      "status": "passed"
+    },
+    {
+      "name": "workspace exec lease removes timed-out work and admits the next waiter after release",
+      "status": "passed"
+    },
+    {
+      "name": "workspace exec lease releases a slot after synchronous throws and asynchronous rejections",
+      "status": "passed"
+    },
+    {
+      "name": "workspace exec lease does not let a stale double release over-admit while another lease is held",
+      "status": "passed"
+    },
+    {
+      "name": "workspace exec lease grants up to capacity 2 immediately and queues the third",
+      "status": "passed"
+    },
+    {
+      "name": "workspace exec lease does not block a different workspace key",
+      "status": "passed"
+    },
+    {
+      "name": "workspace exec lease records active and queued slots in the shadow resource envelope",
+      "status": "passed"
+    },
+    {
+      "name": "workspace exec lease rejects with a typed timeout error when the slot never frees",
+      "status": "passed"
+    },
+    {
+      "name": "process metrics calibration deduplicates overlapping Main/Gateway trees while preserving logical leases",
+      "status": "passed"
+    },
+    {
+      "name": "process metrics calibration uses the latest generation of a reused PID rather than adding both",
+      "status": "passed"
+    },
+    {
+      "name": "process metrics calibration rejects stale and future snapshots before their logical occupancy is added",
+      "status": "passed"
+    },
+    {
+      "name": "process metrics calibration selects the latest producer epoch and does not refresh a stale measurement on merge",
+      "status": "passed"
+    },
+    {
+      "name": "process metrics calibration starts a new CPU interval after PID reuse, discovery failure or an expired sample",
+      "status": "passed"
+    },
+    {
+      "name": "window resource lifetimes publishes per-window native visibility and releases bridge listeners on close",
+      "status": "passed"
+    },
+    {
+      "name": "window resource lifetimes aggregates visibility and detaches a closed window before reopen",
+      "status": "passed"
+    },
+    {
+      "name": "window resource lifetimes releases power listeners on stop and creates one set on restart",
+      "status": "passed"
+    },
+    {
+      "name": "window resource lifetimes ignores a late pressure result after stopping and restarting its generation",
+      "status": "passed"
+    },
+    {
+      "name": "window resource lifetimes releases observation pressure on stop without dropping queued work",
+      "status": "passed"
+    },
+    {
+      "name": "window resource lifetimes feeds fresh memory pressure to admission and clears it when sampling stops",
+      "status": "passed"
+    },
+    {
+      "name": "runtime efficiency host api fails closed to not-sampled before any real sample",
+      "status": "passed"
+    },
+    {
+      "name": "runtime efficiency host api persists the toggle and starts or stops the sampler",
+      "status": "passed"
+    },
+    {
+      "name": "runtime efficiency host api rejects a non-boolean payload instead of guessing",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api workspace exec lease bounds concurrent terminal executions per workspace at capacity 2",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api workspace exec lease lets different workspaces run in parallel",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api workspace exec lease shares capacity across Windows case and slash variants and API instances",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api workspace exec lease keeps RPC method fallback inside the lease and releases after a Gateway failure",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api workspace exec lease subtracts queue and fallback time from the same terminal deadline",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api workspace exec lease maps full waiting capacity to a blocked terminal result",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api workspace exec lease queues approved work too and records admission timeout without executing it later",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api workspace exec lease reports a stable blocked result when the lease cannot be acquired in time",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api OpenClaw exec integration delegates allowed terminal commands to OpenClaw/Gateway instead of spawning a local shell",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api OpenClaw exec integration tries compatible OpenClaw exec RPC names and never falls back to PowerShell",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api OpenClaw exec integration returns an explicit unavailable result when OpenClaw exposes no direct terminal RPC",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api OpenClaw exec integration requires approval for dangerous commands before delegating to OpenClaw",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api OpenClaw exec integration records a bounded diagnostic for failed approved terminal commands",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api OpenClaw exec integration maps safe Gateway failure metadata to { success: false, code: 'ENOENT', exitCode: 1 }",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api OpenClaw exec integration maps safe Gateway failure metadata to { success: false, code: 'EACCES', exitCode: 1 }",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api OpenClaw exec integration maps safe Gateway failure metadata to { success: false, timedOut: true, exitCode: null }",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api OpenClaw exec integration maps safe Gateway failure metadata to { success: false, cancelled: true, exitCode: null }",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api OpenClaw exec integration does not record successful approved terminal commands",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api OpenClaw exec integration blocks mutating commands in read-only mode before reaching Gateway",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api OpenClaw exec integration returns structured sandbox denial details when the sandbox gate fails closed",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api OpenClaw exec integration keeps the tail of oversized terminal output",
+      "status": "passed"
+    }
+  ],
+  "types": {
+    "baselineCommit": "df229c0c3b001b984d4896c10c1e8408ecf678a0",
+    "baselineCount": 38,
+    "currentCount": 38,
+    "introduced": [],
+    "resolved": [],
+    "baseline": [
+      "src/agents/cross-area/cross-area-facades.ts: error TS6133: 'lastPlan' is declared but its value is never read.",
+      "ui/vitest.config.ts: error TS2321: Excessive stack depth comparing types '{ enabled: true; provider: BrowserProviderOption<PlaywrightProviderOptions>; instances: { browser: string; name: string; }[]; headless: true; ui: false; }' and 'BrowserConfigOptions | undefined'.",
+      "ui/vitest.config.ts: error TS2321: Excessive stack depth comparing types '{ resolve: { alias: ({ find: string; replacement: string; } | { find: RegExp; replacement: string; })[]; }; test: { isolate: false; pool: OpenClawVitestPool; name: string; include: string[]; exclude: (\"src/ui/chat/chat-responsive.browser.test.ts\" | ... 1 more ... | \"src/ui/views/sessions.browser.test.ts\")[]; setupFi...' and 'UserWorkspaceConfig'.",
+      "ui/vitest.config.ts: error TS2769: No overload matches this call.",
+      "../shared/long-session-continuity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './types/memory.js'?",
+      "../shared/long-session-continuity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './types/task-ledger.js'?",
+      "../shared/long-session-continuity.ts: error TS7006: Parameter 'node' implicitly has an 'any' type.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'updatedAt' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'evidenceRefs' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS7006: Parameter 'ref' implicitly has an 'any' type.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'kind' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'description' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'title' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'updatedAt' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'title' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'metadata' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'metadata' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS7006: Parameter 'node' implicitly has an 'any' type.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'title' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'title' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/types/session-activity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './git.js'?",
+      "../shared/types/session-activity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './session-effective-policy.js'?",
+      "../shared/types/session-activity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './session-stage.js'?",
+      "../shared/types/session-activity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './session-derivation.js'?",
+      "../shared/types/session-activity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../long-session-resource-reclamation.js'?",
+      "../shared/types/session-delegation.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './workspace.js'?"
+    ],
+    "current": [
+      "src/agents/cross-area/cross-area-facades.ts: error TS6133: 'lastPlan' is declared but its value is never read.",
+      "ui/vitest.config.ts: error TS2321: Excessive stack depth comparing types '{ enabled: true; provider: BrowserProviderOption<PlaywrightProviderOptions>; instances: { browser: string; name: string; }[]; headless: true; ui: false; }' and 'BrowserConfigOptions | undefined'.",
+      "ui/vitest.config.ts: error TS2321: Excessive stack depth comparing types '{ resolve: { alias: ({ find: string; replacement: string; } | { find: RegExp; replacement: string; })[]; }; test: { isolate: false; pool: OpenClawVitestPool; name: string; include: string[]; exclude: (\"src/ui/chat/chat-responsive.browser.test.ts\" | ... 1 more ... | \"src/ui/views/sessions.browser.test.ts\")[]; setupFi...' and 'UserWorkspaceConfig'.",
+      "ui/vitest.config.ts: error TS2769: No overload matches this call.",
+      "../shared/long-session-continuity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './types/memory.js'?",
+      "../shared/long-session-continuity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './types/task-ledger.js'?",
+      "../shared/long-session-continuity.ts: error TS7006: Parameter 'node' implicitly has an 'any' type.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'updatedAt' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'evidenceRefs' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS7006: Parameter 'ref' implicitly has an 'any' type.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'kind' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'description' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'title' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'updatedAt' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'title' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'metadata' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'metadata' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS7006: Parameter 'node' implicitly has an 'any' type.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'title' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'title' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/types/session-activity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './git.js'?",
+      "../shared/types/session-activity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './session-effective-policy.js'?",
+      "../shared/types/session-activity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './session-stage.js'?",
+      "../shared/types/session-activity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './session-derivation.js'?",
+      "../shared/types/session-activity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../long-session-resource-reclamation.js'?",
+      "../shared/types/session-delegation.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './workspace.js'?"
+    ]
+  },
+  "sources": [
+    {
+      "path": ".gitignore",
+      "sha256": "6e2fa836274bed45bf33452f1776cba0f22ee1bca8d9982e766b0f5dbcbaaaa1",
+      "testedSha256": "394db83b2b7b2d80948c9e4e8a12f500470e2a74eceba3fa82ce92e1b0ba8184"
+    },
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "5372312127e1836095cb33def7ce454967182b69b298452053d5aa62423dd2f3",
+      "testedSha256": "5372312127e1836095cb33def7ce454967182b69b298452053d5aa62423dd2f3"
+    },
+    {
+      "path": "README.md",
+      "sha256": "962d2a93c97e2c8f915f999fc715ddfdd038f239e37fdbba60db134499c019cf",
+      "testedSha256": "962d2a93c97e2c8f915f999fc715ddfdd038f239e37fdbba60db134499c019cf"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "bcf9fdb170352690a1376d4f53d2a78e6d1ba40b527db7d5677dcf9ab708d286",
+      "testedSha256": "bcf9fdb170352690a1376d4f53d2a78e6d1ba40b527db7d5677dcf9ab708d286"
+    },
+    {
+      "path": "docs/modules/resources-and-observability.md",
+      "sha256": "3a567e48298f82760df6c21f214605e4d072a3c0003e6e4526d9b5f2c9ea9ab1",
+      "testedSha256": "3a567e48298f82760df6c21f214605e4d072a3c0003e6e4526d9b5f2c9ea9ab1"
+    },
+    {
+      "path": "electron/services/efficiency-orchestrator.ts",
+      "sha256": "66c19c2ceb96fd32d54aa92f3f96eacc814eba77e7c8e18b996267841c008a3a",
+      "testedSha256": "66c19c2ceb96fd32d54aa92f3f96eacc814eba77e7c8e18b996267841c008a3a"
+    },
+    {
+      "path": "electron/services/resource-envelope.ts",
+      "sha256": "cdce7e27cfbc72dffcc1aa9081116780574c1527d8d5f932da42e6e55c2746a6",
+      "testedSha256": "cdce7e27cfbc72dffcc1aa9081116780574c1527d8d5f932da42e6e55c2746a6"
+    },
+    {
+      "path": "electron/services/resource-fabric.ts",
+      "sha256": "35f1e89e8ec0c1a4952677e81813f27cb50f34e355dbcf247b378418ca5af5dd",
+      "testedSha256": "35f1e89e8ec0c1a4952677e81813f27cb50f34e355dbcf247b378418ca5af5dd"
+    },
+    {
+      "path": "electron/services/terminal-api.ts",
+      "sha256": "f08a503aa5db588241c143913ca78387c1b6c22245b0da25a837dfcf85d0f208",
+      "testedSha256": "f08a503aa5db588241c143913ca78387c1b6c22245b0da25a837dfcf85d0f208"
+    },
+    {
+      "path": "harness/specs/rules/adaptive-resource-pressure.md",
+      "sha256": "b7e69b2247bcca0414d4b2099d53bb735e2fcb90cdf5d2b88c28f28b5619fd76",
+      "testedSha256": "b7e69b2247bcca0414d4b2099d53bb735e2fcb90cdf5d2b88c28f28b5619fd76"
+    },
+    {
+      "path": "harness/specs/tasks/adaptive-resource-pressure-20261108.md",
+      "sha256": "8d7b5412f754f4e5b812f00d743542d485411480b35972c07e490906bdfc117f",
+      "testedSha256": "8d7b5412f754f4e5b812f00d743542d485411480b35972c07e490906bdfc117f"
+    },
+    {
+      "path": "openclaw_runtime/src/process/process-tree-sampler.ts",
+      "sha256": "1a3219d00c151d56315bd7a1df833d87ebbf8229c738a67975ac635822b4e529",
+      "testedSha256": "1a3219d00c151d56315bd7a1df833d87ebbf8229c738a67975ac635822b4e529"
+    },
+    {
+      "path": "openclaw_runtime/src/resources/resource-envelope.ts",
+      "sha256": "8e31b61b42fb156a0019c03f87b542981a1f4562f2288f1b09393d2c03969dbb",
+      "testedSha256": "8e31b61b42fb156a0019c03f87b542981a1f4562f2288f1b09393d2c03969dbb"
+    },
+    {
+      "path": "scripts/verify-adaptive-resource-pressure.mjs",
+      "sha256": "4faef0a6fd3574e86eeffc6ed7848bff4016172a9febee426733d88759f31193",
+      "testedSha256": "4faef0a6fd3574e86eeffc6ed7848bff4016172a9febee426733d88759f31193"
+    },
+    {
+      "path": "shared/resources/adaptive-limit.ts",
+      "sha256": "5db95f509780f011fa4749fe230da1808b365f3c24d1c178822d6b88f6c2a1e8",
+      "testedSha256": "5db95f509780f011fa4749fe230da1808b365f3c24d1c178822d6b88f6c2a1e8"
+    },
+    {
+      "path": "shared/resources/index.ts",
+      "sha256": "6cc3231a2cd43bd43937031bbe0d15c250ff98366d9488d3b8bc9c8d4b939f76",
+      "testedSha256": "6cc3231a2cd43bd43937031bbe0d15c250ff98366d9488d3b8bc9c8d4b939f76"
+    },
+    {
+      "path": "shared/types/resources.ts",
+      "sha256": "eaf7cbc7d2d66f1290ac077a9974d158964bee6d564f1742f9bc18086eb9d713",
+      "testedSha256": "eaf7cbc7d2d66f1290ac077a9974d158964bee6d564f1742f9bc18086eb9d713"
+    },
+    {
+      "path": "tests/unit/process-tree-sampler.test.ts",
+      "sha256": "1016cebd75e4a7583556f24aefbe2f29c649fe301210be1af5d2d2c60d8c4792",
+      "testedSha256": "1016cebd75e4a7583556f24aefbe2f29c649fe301210be1af5d2d2c60d8c4792"
+    },
+    {
+      "path": "tests/unit/resource-adaptive-pressure.test.ts",
+      "sha256": "f6daaeae06ae530a056e661f3ec23c8ede99283a39731e257e499ad9e365e20a",
+      "testedSha256": "f6daaeae06ae530a056e661f3ec23c8ede99283a39731e257e499ad9e365e20a"
+    },
+    {
+      "path": "tests/unit/resource-fabric-invariants.test.ts",
+      "sha256": "4e06e743c2f975e3ed9232d817f7c56852942d4f82ce650a3f15a72c981c1298",
+      "testedSha256": "4e06e743c2f975e3ed9232d817f7c56852942d4f82ce650a3f15a72c981c1298"
+    },
+    {
+      "path": "tests/unit/resource-fabric-pressure.test.ts",
+      "sha256": "22a0c54b5872fcce0ad06dcbc8f8c66c7d3cb7d692a78b891eca2a787731228b",
+      "testedSha256": "22a0c54b5872fcce0ad06dcbc8f8c66c7d3cb7d692a78b891eca2a787731228b"
+    },
+    {
+      "path": "tests/unit/resource-fabric-primitives.test.ts",
+      "sha256": "e248e45ed25d7e8b212fbc1b5a12e1326bf17b4ab8b9ba5df995adf00454a696",
+      "testedSha256": "e248e45ed25d7e8b212fbc1b5a12e1326bf17b4ab8b9ba5df995adf00454a696"
+    },
+    {
+      "path": "tests/unit/resource-fabric-workspace-exec.test.ts",
+      "sha256": "f6bd7982700c8cdc6fea46c3aac9993bf2136e225ecf0dac976cc9993dd463cf",
+      "testedSha256": "f6bd7982700c8cdc6fea46c3aac9993bf2136e225ecf0dac976cc9993dd463cf"
+    },
+    {
+      "path": "tests/unit/resource-window-lifecycle.test.ts",
+      "sha256": "58c62f0a62af7ea4eeb79b58b1a0c466972263fc7991749a5a8f54e10dc42f16",
+      "testedSha256": "58c62f0a62af7ea4eeb79b58b1a0c466972263fc7991749a5a8f54e10dc42f16"
+    },
+    {
+      "path": "tests/unit/terminal-api.test.ts",
+      "sha256": "798cbfb950b93354bab4f07a1809cdf25c0c69a8c904a21e3fc723bc2dedf623",
+      "testedSha256": "798cbfb950b93354bab4f07a1809cdf25c0c69a8c904a21e3fc723bc2dedf623"
+    }
+  ],
+  "verdict": "pass-adaptive-pressure-with-baseline-types",
+  "testedCandidate": {
+    "commit": "1a400245e58d8207dca4e719ff965e5cf5932b55",
+    "tree": "0f62cbd7327570dd13e3c75b41eab8eb2c6bbda3",
+    "dirty": false
+  },
+  "productionEquivalence": {
+    "tested": "1a400245e58d8207dca4e719ff965e5cf5932b55",
+    "delivery": "635670257a8c5ed8a51f64cf22df6a5da4cb70d6",
+    "changedPaths": [
+      ".gitignore"
+    ],
+    "productTestScriptDiffExit": 0,
+    "reason": "Exact tracked log exceptions moved outside generated ignore block; product, tests, scripts and configuration identical."
+  }
+}
