@@ -4,7 +4,7 @@ id: shared-watchers-read-models-20261108
 title: 复用文件监听与只读服务并验证失效
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 7bd784bd25a5cd76629f2eec17bf55162aea9e68
+diffBase: 82f6d665572de3bfbb9a44d466a46d847bca330d
 intent: 完成 TF-0835 / G24-G25，按监听语义共享根和只读结果，保留引用生命周期与失效边界。
 expectedUserBehavior:
   - Concurrent consumers share compatible file watchers and repository status reads.
