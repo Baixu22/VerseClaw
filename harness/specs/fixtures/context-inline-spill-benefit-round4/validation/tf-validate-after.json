@@ -1,0 +1,38 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-01a1b934",
+  "name": "tf-validate-after",
+  "cwd": "D:/ClawX",
+  "command": [
+    "py",
+    "-3",
+    "-X",
+    "utf8",
+    "D:/ClawX/.codex-tools/task-forest/hardened-recovery-20261103/scripts/task_forest.py",
+    "validate",
+    "--workspace",
+    "D:/ClawX",
+    "--lock-timeout",
+    "30"
+  ],
+  "started_at": "2026-11-08T06:25:54.338706+00:00",
+  "duration_seconds": 30.328,
+  "exit_code": 1,
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": null
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\tf-validate-after.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\tf-validate-after.stderr.txt",
+      "bytes": 115,
+      "sha256": "427124386af003662d041888202d980369e820501e8c0ba1baf74ad27a971f06"
+    }
+  }
+}

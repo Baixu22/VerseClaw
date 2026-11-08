@@ -1,0 +1,6 @@
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\scripts\context-inline-spill-eval.mts
+  0:0  warning  File ignored because no matching configuration was supplied
+
+✖ 1 problem (0 errors, 1 warning)
+

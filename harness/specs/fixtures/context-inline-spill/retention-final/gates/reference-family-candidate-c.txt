@@ -1,0 +1,14 @@
+
+ RUN  v4.1.1 C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX
+
+ ✓ tests/unit/context-item-registry.test.ts (12 tests) 55ms
+ ✓ tests/unit/context-inline-spill-truncation.test.ts (5 tests) 25ms
+ ✓ tests/unit/native-raw-output-archive-reuse.test.ts (1 test) 12ms
+ ✓ tests/unit/context-archive-recall.test.ts (2 tests) 13ms
+
+ Test Files  4 passed (4)
+      Tests  20 passed (20)
+   Start at  23:10:55
+   Duration  28.61s (transform 8.49s, setup 786ms, import 18.95s, tests 104ms, environment 7.40s)
+
+JSON report written to D:/tmp/context-inline-spill-closeout-20261103/reference-family-candidate-c-vitest.json

@@ -423,6 +423,7 @@ import {
 } from "./attempt.context-engine-helpers.js";
 import {
   installModelPromptTransform,
+  installProviderPromptHistoryTransform,
   installRuntimeContextMessageForPrompt,
   normalizeCurrentPromptTextForLlmBoundary,
   normalizeMessagesForCurrentPromptBoundary,
@@ -867,6 +868,10 @@ export async function runEmbeddedAttempt(
   params: EmbeddedRunAttemptParams,
 ): Promise<EmbeddedRunAttemptResult> {
   const resolvedWorkspace = resolveUserPath(params.workspaceDir);
+  const archiveRecallRetention = {
+    enabled: params.config?.runtime?.contextFamily?.archiveRecallRetention?.enabled === true,
+    sessionId: params.sessionId,
+  };
   const runAbortController = new AbortController();
   configureEmbeddedAttemptHttpRuntime({ timeoutMs: params.timeoutMs });
 
@@ -2835,6 +2840,7 @@ export async function runEmbeddedAttempt(
               contextTokenBudget: contextTokenBudgetForGuard,
               reserveTokens: () => settingsManager.getCompactionReserveTokens(),
               toolResultMaxChars: toolResultMaxCharsForGuard,
+              archiveRecallRetention,
               getSystemPrompt: () => systemPromptText,
               getPrePromptMessageCount: () => prePromptMessageCount,
               onMidTurnPrecheck,
@@ -4010,6 +4016,7 @@ export async function runEmbeddedAttempt(
             sessionManager: activeSessionManager,
             contextWindowTokens: contextTokenBudget,
             maxCharsOverride: toolResultMaxChars,
+            archiveRecallRetention: archiveRecallRetention.enabled,
             sessionFile: params.sessionFile,
             sessionId: params.sessionId,
             sessionKey: params.sessionKey,
@@ -4459,6 +4466,9 @@ export async function runEmbeddedAttempt(
             contextTokenBudget,
             promptToolResultMaxChars,
             promptToolResultMaxChars * PROMPT_TOOL_RESULT_AGGREGATE_CAP_MULTIPLIER,
+            archiveRecallRetention.enabled
+              ? { sessionId: params.sessionId, archiveRecallRetention: true }
+              : undefined,
           );
           if (promptToolResultTruncation.truncatedCount > 0) {
             promptHistoryMessages = promptToolResultTruncation.messages;
@@ -4520,6 +4530,7 @@ export async function runEmbeddedAttempt(
           const hookMessagesForCurrentPrompt = normalizeMessagesForCurrentPromptBoundary({
             messages: messagesForCurrentPrompt,
             prompt: promptForModel,
+            archiveRecallRetention,
             ...(boundaryTimezone ? { timezone: boundaryTimezone } : {}),
             ...(typeof preparedUserTurnMessage?.timestamp === "number"
               ? { currentUserTimestamp: preparedUserTurnMessage.timestamp }
@@ -4869,9 +4880,10 @@ ${preparedProjection.systemPromptAddition}`
               });
           }
 
-          const llmBoundaryOptionsForPrecheck = boundaryTimezone
-            ? { timezone: boundaryTimezone }
-            : undefined;
+          const llmBoundaryOptionsForPrecheck = {
+            ...(boundaryTimezone ? { timezone: boundaryTimezone } : {}),
+            archiveRecallRetention,
+          };
           const unwindowedLlmBoundaryMessagesForPrecheck =
             contextEnginePromptAuthority === "preassembly_may_overflow" &&
             unwindowedContextEngineMessagesForPrecheck
@@ -4923,6 +4935,7 @@ ${preparedProjection.systemPromptAddition}`
                 contextTokenBudget,
                 reserveTokens,
                 toolResultMaxChars: promptToolResultMaxChars,
+                archiveRecallRetention,
                 llmBoundaryTokenPressure: {
                   estimatedPromptTokens: llmBoundaryTokenPressure,
                   source: "llm_boundary_normalized_prompt",
@@ -4997,6 +5010,7 @@ ${preparedProjection.systemPromptAddition}`
               sessionManager,
               contextWindowTokens: contextTokenBudget,
               maxCharsOverride: toolResultMaxChars,
+              archiveRecallRetention: archiveRecallRetention.enabled,
               sessionFile: params.sessionFile,
               sessionId: params.sessionId,
               sessionKey: params.sessionKey,
@@ -5074,37 +5088,6 @@ ${preparedProjection.systemPromptAddition}`
             if (normalizedReplayMessages !== activeSession.messages) {
               activeSession.agent.state.messages = normalizedReplayMessages;
             }
-            const installProviderPromptHistoryTransform = (): (() => void) => {
-              const baseStreamFn = activeSession.agent.streamFn;
-              const providerPromptStreamFn = wrapStreamFnWithMessageTransform(
-                baseStreamFn,
-                (messages) => {
-                  if (
-                    preemptiveCompaction?.route === "observation_masking" &&
-                    observationMaskingProjection &&
-                    observationMaskingProjection.maskedCount > 0
-                  ) {
-                    return observationMaskingProjection.messages;
-                  }
-                  const providerPromptHistoryTruncation = truncateOversizedToolResultsInMessages(
-                    messages,
-                    contextTokenBudget,
-                    promptToolResultMaxChars,
-                    promptToolResultMaxChars * PROMPT_TOOL_RESULT_AGGREGATE_CAP_MULTIPLIER,
-                    { sessionId: params.sessionId },
-                  );
-                  return providerPromptHistoryTruncation.truncatedCount > 0
-                    ? providerPromptHistoryTruncation.messages
-                    : messages;
-                },
-              );
-              activeSession.agent.streamFn = providerPromptStreamFn;
-              return () => {
-                if (activeSession.agent.streamFn === providerPromptStreamFn) {
-                  activeSession.agent.streamFn = baseStreamFn;
-                }
-              };
-            };
             finalPromptText = promptForSession;
             trajectoryRecorder?.recordEvent("prompt.submitted", {
               prompt: promptForModel,
@@ -5132,7 +5115,18 @@ ${preparedProjection.systemPromptAddition}`
                 captureCurrentPromptForModel = true;
               }
             };
-            const cleanupProviderPromptHistoryTransform = installProviderPromptHistoryTransform();
+            const cleanupProviderPromptHistoryTransform = installProviderPromptHistoryTransform({
+              agent: activeSession.agent,
+              contextWindowTokens: contextTokenBudget,
+              maxChars: promptToolResultMaxChars,
+              aggregateMaxChars:
+                promptToolResultMaxChars * PROMPT_TOOL_RESULT_AGGREGATE_CAP_MULTIPLIER,
+              archiveRecallRetention,
+              ...(preemptiveCompaction?.route === "observation_masking" &&
+              observationMaskingProjection && observationMaskingProjection.maskedCount > 0
+                ? { observationMaskingMessages: observationMaskingProjection.messages }
+                : {}),
+            });
             try {
               if (promptSubmission.runtimeOnly) {
                 await promptActiveSession(promptForSession, {

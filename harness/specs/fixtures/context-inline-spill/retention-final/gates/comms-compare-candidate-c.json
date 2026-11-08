@@ -1,0 +1,32 @@
+{
+  "schema": "ContextInlineSpillGate/v2",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-retention",
+  "name": "comms-compare-candidate-c",
+  "command": "pnpm",
+  "args": [
+    "run",
+    "comms:compare"
+  ],
+  "workspace": "C:\\Users\\27933\\.codex\\worktrees\\context-inline-spill\\ClawX",
+  "started_at": "2026-11-03T15:13:21.2717678+00:00",
+  "finished_at": "2026-11-03T15:13:22.4114363+00:00",
+  "elapsed_ms": 938,
+  "exit_code": 0,
+  "command_exit_code": 0,
+  "candidate": {
+    "dirty": false,
+    "commit": "16da6fdf22b0bda023becffa4272373be610ab54",
+    "status": "",
+    "tree": "13e352f499403ec9c2a7c1fbe700a67fbce4e8bf"
+  },
+  "candidate_after": {
+    "dirty": false,
+    "commit": "16da6fdf22b0bda023becffa4272373be610ab54",
+    "status": "",
+    "tree": "13e352f499403ec9c2a7c1fbe700a67fbce4e8bf"
+  },
+  "source_status_unchanged": true,
+  "log_file": "D:\\tmp\\context-inline-spill-closeout-20261103\\gates\\comms-compare-candidate-c.log",
+  "log_sha256": "aca981aa2141407bd2532afb7b3f587924d6944c679ee10e7021aeb1e2b755c9"
+}

@@ -1,0 +1,36 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-01a1b934",
+  "name": "source-page-contract-unit",
+  "cwd": "C:\\Users\\27933\\.codex\\worktrees\\context-inline-spill\\ClawX",
+  "command": [
+    "node",
+    "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+    "exec",
+    "vitest",
+    "run",
+    "tests/unit/context-inline-spill-benefit-input.test.ts",
+    "tests/unit/context-inline-spill-benefit-scoring.test.ts",
+    "--maxWorkers=1"
+  ],
+  "started_at": "2026-11-08T04:41:02.927441+00:00",
+  "duration_seconds": 13.985,
+  "exit_code": 1,
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": "warn"
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\source-page-contract-unit.stdout.txt",
+      "bytes": 455,
+      "sha256": "eb70a3229b3a2d5ec0c1f1dbb11e9e40352214582f1785bbb7587362776eda82"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\source-page-contract-unit.stderr.txt",
+      "bytes": 920,
+      "sha256": "7dc7daebece34ce7401465fe8466275f7563cf9259b7e52f8b68a733688b8042"
+    }
+  }
+}

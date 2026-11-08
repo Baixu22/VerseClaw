@@ -16,7 +16,6 @@ import { tmpdir } from "node:os";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   buildRuntimeMemoryTemporalFactFixture,
-  findRuntimeMemoryFacts,
   type RuntimeMemoryQueryableFact,
 } from "../../openclaw_runtime/src/runtime-core/memory-context";
 import { createRuntimeMemoryPersistenceStore } from "../../openclaw_runtime/src/runtime-core/memory-persistence";

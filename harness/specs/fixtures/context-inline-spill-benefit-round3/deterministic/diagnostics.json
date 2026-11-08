@@ -1,0 +1,38 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r3",
+  "pageArgumentCounts": {
+    "5500": 48
+  },
+  "responseStatuses": {},
+  "incompleteReasons": {},
+  "returnedModels": {},
+  "completedMessageTextIgnoredByAdapter": [],
+  "byArm": {
+    "baseline-no-reference": {
+      "rawOracleHits": 0,
+      "overProjectionBudgetCalls": 0,
+      "oracleDroppedBeforeNextRequest": 0,
+      "modelRecalls": 0
+    },
+    "reference-visible": {
+      "rawOracleHits": 6,
+      "overProjectionBudgetCalls": 0,
+      "oracleDroppedBeforeNextRequest": 0,
+      "modelRecalls": 16
+    },
+    "recall-stable": {
+      "rawOracleHits": 6,
+      "overProjectionBudgetCalls": 0,
+      "oracleDroppedBeforeNextRequest": 0,
+      "modelRecalls": 16
+    },
+    "retention-off": {
+      "rawOracleHits": 6,
+      "overProjectionBudgetCalls": 0,
+      "oracleDroppedBeforeNextRequest": 4,
+      "modelRecalls": 16
+    }
+  },
+  "note": "Observed request sizes and raw/projection differences; these diagnostics do not change scoring or frozen thresholds."
+}

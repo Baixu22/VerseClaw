@@ -1,0 +1,32 @@
+{
+  "schema": "ContextInlineSpillGate/v2",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-retention",
+  "name": "artifact-replay-candidate-c",
+  "command": "node",
+  "args": [
+    "D:/tmp/context-inline-spill-closeout-20261103/curate-final.mjs",
+    "--validate-evals-only"
+  ],
+  "workspace": "C:\\Users\\27933\\.codex\\worktrees\\context-inline-spill\\ClawX",
+  "started_at": "2026-11-03T15:17:06.5697769+00:00",
+  "finished_at": "2026-11-03T15:17:07.1267428+00:00",
+  "elapsed_ms": 352,
+  "exit_code": 0,
+  "command_exit_code": 0,
+  "candidate": {
+    "tree": "13e352f499403ec9c2a7c1fbe700a67fbce4e8bf",
+    "dirty": false,
+    "commit": "16da6fdf22b0bda023becffa4272373be610ab54",
+    "status": ""
+  },
+  "candidate_after": {
+    "tree": "13e352f499403ec9c2a7c1fbe700a67fbce4e8bf",
+    "dirty": false,
+    "commit": "16da6fdf22b0bda023becffa4272373be610ab54",
+    "status": ""
+  },
+  "source_status_unchanged": true,
+  "log_file": "D:\\tmp\\context-inline-spill-closeout-20261103\\gates\\artifact-replay-candidate-c.log",
+  "log_sha256": "9ce265d874ecf59dc5ea043a233ec7ea660deacd2319e0e3fb5b4ffd6bc90577"
+}

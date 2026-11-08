@@ -3,6 +3,7 @@
  */
 import { createHash } from "node:crypto";
 import type { AgentMessage } from "../runtime/index.js";
+import { preserveArchiveRecallOriginAfterIdRewrite } from "../archive-recall-retention.js";
 
 type OpenAIThinkingBlock = {
   type?: unknown;
@@ -271,7 +272,10 @@ export function normalizeOpenAIResponsesToolCallIds(messages: AgentMessage[]): A
         continue;
       }
       changed = true;
-      rewrittenMessages.push({ ...toolResult, ...updates } as AgentMessage);
+      rewrittenMessages.push(preserveArchiveRecallOriginAfterIdRewrite(
+        toolResult,
+        { ...toolResult, ...updates },
+      ));
       continue;
     }
 
@@ -384,10 +388,10 @@ export function downgradeOpenAIFunctionCallReasoningPairs(
         continue;
       }
       changed = true;
-      rewrittenMessages.push({
+      rewrittenMessages.push(preserveArchiveRecallOriginAfterIdRewrite(toolResult, {
         ...toolResult,
         ...updates,
-      } as AgentMessage);
+      }));
       continue;
     }
 

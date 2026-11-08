@@ -1,0 +1,28 @@
+
+ RUN  v4.1.1 C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX
+
+ ✓ tests/unit/runtime-memory-read-hydration-limited-production-opt-in-implementation.test.ts (4 tests) 38ms
+ ✓ tests/unit/runtime-memory-read-hydration-controlled-internal-shadow-pilot.test.ts (3 tests) 28ms
+ ✓ tests/unit/runtime-memory-read-hydration-shadow.test.ts (5 tests) 27ms
+stdout | tests/unit/runtime-memory-locomo-benchmark.test.ts > L11: LoCoMo benchmark — fixture and infrastructure > loads fixture and verifies structure
+[LoCoMo] Conversations: 2
+[LoCoMo] Questions: 20
+[LoCoMo] Categories: [ 'single_hop', 'multi_hop', 'open_ended', 'adversarial' ]
+
+ ✓ tests/unit/runtime-memory-locomo-benchmark.test.ts (4 tests | 1 skipped) 9ms
+ ✓ tests/unit/runtime-memory-eval-temporal-evolution.test.ts (1 test) 8ms
+ ✓ tests/unit/runtime-memory-context-provider.test.ts (5 tests) 9ms
+ ✓ tests/unit/runtime-memory-eval-conflict-resolution.test.ts (3 tests) 12ms
+ ✓ tests/unit/runtime-memory-eval-topic-drift.test.ts (3 tests) 9ms
+ ✓ tests/unit/runtime-memory-read-hydration-controlled-real-db-evaluation.test.ts (2 tests) 7ms
+ ✓ tests/unit/runtime-memory-eval-budget-pressure.test.ts (3 tests) 9ms
+ ✓ tests/unit/runtime-memory-proposal-shadow.test.ts (6 tests) 7ms
+ ✓ tests/unit/runtime-memory-read-hydration-controlled-db-replay-regression.test.ts (2 tests) 6ms
+ ✓ tests/unit/runtime-memory-read-hydration-shadow-opt-in-evaluation.test.ts (1 test) 6ms
+
+ Test Files  13 passed (13)
+      Tests  41 passed | 1 skipped (42)
+   Start at  23:12:01
+   Duration  40.06s (transform 12.08s, setup 1.09s, import 31.08s, tests 175ms, environment 4.88s)
+
+JSON report written to D:/tmp/context-inline-spill-closeout-20261103/memory-cleanup-candidate-c-vitest.json

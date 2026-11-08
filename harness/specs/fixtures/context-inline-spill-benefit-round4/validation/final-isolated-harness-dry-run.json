@@ -1,0 +1,35 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-01a1b934",
+  "name": "final-isolated-harness-dry-run",
+  "cwd": "D:/tmp/inline-spill-benefit-r4-20261108-01a1b934/final-candidate",
+  "command": [
+    "node",
+    "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+    "harness",
+    "run",
+    "--spec",
+    "harness/specs/tasks/inline-spill-real-benefit-eval-round4.md",
+    "--dry-run"
+  ],
+  "started_at": "2026-11-08T06:12:44.147220+00:00",
+  "duration_seconds": 3.891,
+  "exit_code": 0,
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": "warn"
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\final-isolated-harness-dry-run.stdout.txt",
+      "bytes": 366,
+      "sha256": "14f3adbb77b4db07dea5ccd5563dcfb246c5db7a5b111c3c1d6f5cabfd1e7659"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\final-isolated-harness-dry-run.stderr.txt",
+      "bytes": 249,
+      "sha256": "4702d09b70366fe2df6fb0bea49dab1df371a752d3770bf4f0b0eb3e536025b7"
+    }
+  }
+}

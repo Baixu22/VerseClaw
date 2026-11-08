@@ -1,0 +1,38 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-01a1b934",
+  "name": "candidate-unit",
+  "cwd": "D:/tmp/inline-spill-benefit-r4-20261108-01a1b934/candidate",
+  "command": [
+    "node",
+    "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+    "exec",
+    "vitest",
+    "run",
+    "tests/unit/context-inline-spill-benefit-input.test.ts",
+    "tests/unit/context-inline-spill-benefit-scoring.test.ts",
+    "tests/unit/context-inline-spill-retention.test.ts",
+    "tests/unit/context-inline-spill-eval-provider.test.ts",
+    "--maxWorkers=1"
+  ],
+  "started_at": "2026-11-08T05:03:30.625947+00:00",
+  "duration_seconds": 64.313,
+  "exit_code": 0,
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": "warn"
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\candidate-unit.stdout.txt",
+      "bytes": 368,
+      "sha256": "df959c9c6b4165b037a9c30aca591eb890f138fcd70c0772ad48674d5ac13d10"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\candidate-unit.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

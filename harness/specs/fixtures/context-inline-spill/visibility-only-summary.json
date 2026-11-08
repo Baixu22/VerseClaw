@@ -1,0 +1,68 @@
+{
+  "schema": "ContextInlineSpillEvidence/v1",
+  "driven_by": "agent",
+  "actor": "codex-context-inline-spill",
+  "generated_at": "2026-11-03T07:32:51.5887385Z",
+  "source_run": "D:/tmp/context-inline-spill-eval/2026-11-03T07-32-19-594Z",
+  "deterministic": {
+    "passed": true,
+    "baseline_chars": 73,
+    "reference_visible_chars": 391,
+    "baseline_has_reference": false,
+    "reference_has_reference": true,
+    "reference_has_needle": true
+  },
+  "live_provider": {
+    "status": "paired-pass",
+    "provider": "openai-compatible-responses",
+    "model": "space-bunny",
+    "endpoint_origin": "http://127.0.0.1:3065",
+    "baseline_can_recover": false,
+    "reference_can_recover": true,
+    "baseline_answer": {
+      "can_recover": false,
+      "needle": null,
+      "reason": "The required value is not present in the visible context, and no recall evidence is available to recover it."
+    },
+    "reference_answer": {
+      "can_recover": true,
+      "needle": "ARCHIVE_RECOVERY_NEEDLE_7f31",
+      "reason": "The full archived output is available via the supplied archive_uri, checksum, and byte_length and can be recalled using context_archive_recall."
+    },
+    "baseline_usage": {
+      "input_tokens": 258,
+      "output_tokens": 57,
+      "output_tokens_details": {
+        "reasoning_tokens": 19
+      },
+      "total_tokens": 315
+    },
+    "reference_usage": {
+      "input_tokens": 4043,
+      "input_tokens_details": {
+        "cached_tokens": 140
+      },
+      "output_tokens": 131,
+      "output_tokens_details": {
+        "reasoning_tokens": 76
+      },
+      "total_tokens": 4174
+    },
+    "baseline_elapsed_ms": 2910,
+    "reference_elapsed_ms": 6023
+  },
+  "fixture": {
+    "payloadSha256": "c8567950aacb9a44212293773b828c7b91439f88e1f0ba2481ee56a0c3665424",
+    "payloadChars": 20648,
+    "archiveVerified": true,
+    "archiveUri": "context-archive://session-inline-spill-eval/context-inline-spill-eval-observation-c8567950aacb9a44.context-archive.json",
+    "archiveChecksum": "sha256:c8567950aacb9a44212293773b828c7b91439f88e1f0ba2481ee56a0c3665424",
+    "archiveByteLength": 20648
+  },
+  "boundaries": [
+    "deterministic eval does not prove full agent loop tool selection",
+    "live eval judges visibility/recovery from supplied context",
+    "releaseApproved=false",
+    "liveReady=false"
+  ]
+}

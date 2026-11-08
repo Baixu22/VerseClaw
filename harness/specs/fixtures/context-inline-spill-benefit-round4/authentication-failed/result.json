@@ -1,0 +1,383 @@
+{
+  "schema": "ContextInlineSpillBenefitLoopEval/v1",
+  "runId": "2026-11-08T05-27-58-864Z-live",
+  "mode": "live",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-01a1b934",
+  "loop_driver": "eval-harness (executes only the model-returned tool calls)",
+  "candidate": {
+    "commit": "8fa33a84ef8c9eeac3086d168264e77d4560e21d",
+    "tree": "541a95b34245cf442a4b9ebdd7ea8320b35e63aa",
+    "dirty": false
+  },
+  "provider": {
+    "kind": "openai-compatible-responses",
+    "endpoint_origin": "http://127.0.0.1:3065",
+    "model": "space-bunny",
+    "credential_persisted": false
+  },
+  "design": {
+    "repeats": 3,
+    "maxTurns": 8,
+    "evidenceTasks": [
+      "deploy-token",
+      "db-passport",
+      "cache-seed",
+      "signing-key",
+      "tenant-id",
+      "migration-hash"
+    ],
+    "controlTasks": [
+      "control-absent-1",
+      "control-absent-2"
+    ],
+    "arms": {
+      "baseline-no-reference": {
+        "reference": false,
+        "retention": false,
+        "pressure": false
+      },
+      "reference-visible": {
+        "reference": true,
+        "retention": false,
+        "pressure": false
+      },
+      "recall-stable": {
+        "reference": true,
+        "retention": true,
+        "pressure": true
+      },
+      "retention-off": {
+        "reference": true,
+        "retention": false,
+        "pressure": true
+      }
+    },
+    "contextWindowTokens": 32000,
+    "toolMaxChars": 6000,
+    "aggregateMaxChars": 16000,
+    "recallPageChars": 5500
+  },
+  "stats": {
+    "baseline-no-reference": {
+      "arm": "baseline-no-reference",
+      "runs": 24,
+      "pass": 0,
+      "successRate": 0,
+      "wilson95": [
+        1.3877787807814457e-17,
+        0.13797620467498017
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 0,
+      "passAtK": 0,
+      "recallAttemptRate": 0,
+      "recallOkRate": 0,
+      "meanTurns": 1,
+      "meanMainContextChars": 1091.25,
+      "meanInputTokens": 0,
+      "meanOutputTokens": 0,
+      "meanTotalTokens": 0,
+      "p50LatencyMs": 1.301,
+      "p95LatencyMs": 2.381,
+      "failureClasses": {
+        "provider_http_error": 24
+      }
+    },
+    "reference-visible": {
+      "arm": "reference-visible",
+      "runs": 24,
+      "pass": 0,
+      "successRate": 0,
+      "wilson95": [
+        1.3877787807814457e-17,
+        0.13797620467498017
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 0,
+      "passAtK": 0,
+      "recallAttemptRate": 0,
+      "recallOkRate": 0,
+      "meanTurns": 1,
+      "meanMainContextChars": 7027.25,
+      "meanInputTokens": 0,
+      "meanOutputTokens": 0,
+      "meanTotalTokens": 0,
+      "p50LatencyMs": 1.296,
+      "p95LatencyMs": 2.075,
+      "failureClasses": {
+        "provider_http_error": 24
+      }
+    },
+    "recall-stable": {
+      "arm": "recall-stable",
+      "runs": 24,
+      "pass": 0,
+      "successRate": 0,
+      "wilson95": [
+        1.3877787807814457e-17,
+        0.13797620467498017
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 0,
+      "passAtK": 0,
+      "recallAttemptRate": 0,
+      "recallOkRate": 0,
+      "meanTurns": 1,
+      "meanMainContextChars": 7027.25,
+      "meanInputTokens": 0,
+      "meanOutputTokens": 0,
+      "meanTotalTokens": 0,
+      "p50LatencyMs": 1.251,
+      "p95LatencyMs": 1.898,
+      "failureClasses": {
+        "provider_http_error": 24
+      }
+    },
+    "retention-off": {
+      "arm": "retention-off",
+      "runs": 24,
+      "pass": 0,
+      "successRate": 0,
+      "wilson95": [
+        1.3877787807814457e-17,
+        0.13797620467498017
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 0,
+      "passAtK": 0,
+      "recallAttemptRate": 0,
+      "recallOkRate": 0,
+      "meanTurns": 1,
+      "meanMainContextChars": 7027.25,
+      "meanInputTokens": 0,
+      "meanOutputTokens": 0,
+      "meanTotalTokens": 0,
+      "p50LatencyMs": 1.323,
+      "p95LatencyMs": 1.682,
+      "failureClasses": {
+        "provider_http_error": 24
+      }
+    }
+  },
+  "comparisons": {
+    "recall-stable_vs_baseline": {
+      "both": 0,
+      "onlyA": 0,
+      "onlyB": 0,
+      "neither": 24,
+      "p": 1
+    },
+    "recall-stable_vs_retention-off": {
+      "both": 0,
+      "onlyA": 0,
+      "onlyB": 0,
+      "neither": 24,
+      "p": 1
+    },
+    "recall-stable_vs_reference-visible": {
+      "both": 0,
+      "onlyA": 0,
+      "onlyB": 0,
+      "neither": 24,
+      "p": 1
+    }
+  },
+  "inputIntegrity": {
+    "assembly": "production-projection-only/function-protocol/v3",
+    "mainContextCharsSource": "JSON.stringify(actual request.input).length",
+    "initialPairs": [
+      {
+        "fixtureId": "deploy-token",
+        "repetition": 0,
+        "stableSha256": "ccb487aed8d943bcc3390c0606a77e2600233a12da513c1f8a81935729c9ffdd",
+        "offSha256": "ccb487aed8d943bcc3390c0606a77e2600233a12da513c1f8a81935729c9ffdd",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "deploy-token",
+        "repetition": 1,
+        "stableSha256": "8009d14c0ab149a63fbd7fab88a90a6e6a16b073c42933b966488914883b7379",
+        "offSha256": "8009d14c0ab149a63fbd7fab88a90a6e6a16b073c42933b966488914883b7379",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "deploy-token",
+        "repetition": 2,
+        "stableSha256": "5a299779a3bb5c3676c2fdcf642d5c0dffecdd6e8dbfb72c333a7db8b19ec390",
+        "offSha256": "5a299779a3bb5c3676c2fdcf642d5c0dffecdd6e8dbfb72c333a7db8b19ec390",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "db-passport",
+        "repetition": 0,
+        "stableSha256": "d7f17ceca324db0acb583a88b02b84bfba394c051631ea367707d24771a567fd",
+        "offSha256": "d7f17ceca324db0acb583a88b02b84bfba394c051631ea367707d24771a567fd",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "db-passport",
+        "repetition": 1,
+        "stableSha256": "5a203c0c98eab63ff66f7afcd25d38ec563218b57fcc27d8a7ad86de211aa90e",
+        "offSha256": "5a203c0c98eab63ff66f7afcd25d38ec563218b57fcc27d8a7ad86de211aa90e",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "db-passport",
+        "repetition": 2,
+        "stableSha256": "85f2ecc3c2c354954d0437fc1bc1fe4f545feb4e6335395ed09b4cd0ba471715",
+        "offSha256": "85f2ecc3c2c354954d0437fc1bc1fe4f545feb4e6335395ed09b4cd0ba471715",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "cache-seed",
+        "repetition": 0,
+        "stableSha256": "b27805134df2b4942400b4d6c2da1c9c70d3acc7f15f2b2be78f24f7c32aba11",
+        "offSha256": "b27805134df2b4942400b4d6c2da1c9c70d3acc7f15f2b2be78f24f7c32aba11",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "cache-seed",
+        "repetition": 1,
+        "stableSha256": "7d2573ddfaf3ed95acbd0857d59579112daebcd64066d142c4ba9f2c74eec202",
+        "offSha256": "7d2573ddfaf3ed95acbd0857d59579112daebcd64066d142c4ba9f2c74eec202",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "cache-seed",
+        "repetition": 2,
+        "stableSha256": "9d15ffac01ee6c8c7f2b1f2056c74e870333a9a9cf89041a0858d094b60d300b",
+        "offSha256": "9d15ffac01ee6c8c7f2b1f2056c74e870333a9a9cf89041a0858d094b60d300b",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "signing-key",
+        "repetition": 0,
+        "stableSha256": "124b2acfa4a7029e902baf3c1836af9967ca4fd310e20327a025984b1f352e3f",
+        "offSha256": "124b2acfa4a7029e902baf3c1836af9967ca4fd310e20327a025984b1f352e3f",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "signing-key",
+        "repetition": 1,
+        "stableSha256": "d8312cf045784231d2df1038c451d39d2a9b703dfc3e0e7fcf65d7c47a4e54bb",
+        "offSha256": "d8312cf045784231d2df1038c451d39d2a9b703dfc3e0e7fcf65d7c47a4e54bb",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "signing-key",
+        "repetition": 2,
+        "stableSha256": "d3a0d150aca77fc7229bb022a3a113b72312cf48dfcf5fec81d60e050563920a",
+        "offSha256": "d3a0d150aca77fc7229bb022a3a113b72312cf48dfcf5fec81d60e050563920a",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "tenant-id",
+        "repetition": 0,
+        "stableSha256": "bb3a9fc2d6275c63bf29e3bf2e7cf601b9126f77da3940bf9ce082570d4dc529",
+        "offSha256": "bb3a9fc2d6275c63bf29e3bf2e7cf601b9126f77da3940bf9ce082570d4dc529",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "tenant-id",
+        "repetition": 1,
+        "stableSha256": "e705740ee2f8faa3e11b01484e9cb3c3bbc64b5c8eabd6c10aa2dc36a461ad56",
+        "offSha256": "e705740ee2f8faa3e11b01484e9cb3c3bbc64b5c8eabd6c10aa2dc36a461ad56",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "tenant-id",
+        "repetition": 2,
+        "stableSha256": "74b00bc3ce2d612f902e968ed576f38e35b69955d0b9bb97301fac8f053cc76e",
+        "offSha256": "74b00bc3ce2d612f902e968ed576f38e35b69955d0b9bb97301fac8f053cc76e",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "migration-hash",
+        "repetition": 0,
+        "stableSha256": "975d3413793f96055ac9d0f843425189418974702805b127174bc7d1612f5fe1",
+        "offSha256": "975d3413793f96055ac9d0f843425189418974702805b127174bc7d1612f5fe1",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "migration-hash",
+        "repetition": 1,
+        "stableSha256": "209cdae8dc5d2c89f68c58c629525505eded72ec7565bef8af7009f644b73a58",
+        "offSha256": "209cdae8dc5d2c89f68c58c629525505eded72ec7565bef8af7009f644b73a58",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "migration-hash",
+        "repetition": 2,
+        "stableSha256": "5d2dbe4b8fb9f65c01220f59603709dcc44628e23b0a08cf9aa2acb5123d3c41",
+        "offSha256": "5d2dbe4b8fb9f65c01220f59603709dcc44628e23b0a08cf9aa2acb5123d3c41",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-1",
+        "repetition": 0,
+        "stableSha256": "be646d93d3cc611af6c3619840b9f47f086cdd308a39acde896fdadcc2295536",
+        "offSha256": "be646d93d3cc611af6c3619840b9f47f086cdd308a39acde896fdadcc2295536",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-1",
+        "repetition": 1,
+        "stableSha256": "d397444180a4027682e7c09d46454596d960a32dc290da2524d368233c7120a3",
+        "offSha256": "d397444180a4027682e7c09d46454596d960a32dc290da2524d368233c7120a3",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-1",
+        "repetition": 2,
+        "stableSha256": "ba17c71d8edb8c406c0854d005ea7f2d6864df069333815bd0971db49f7e9a72",
+        "offSha256": "ba17c71d8edb8c406c0854d005ea7f2d6864df069333815bd0971db49f7e9a72",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-2",
+        "repetition": 0,
+        "stableSha256": "aad3b64bdc250b2ba256e7822c41ab88214bda55341ac66fe9ee5ead30a7160b",
+        "offSha256": "aad3b64bdc250b2ba256e7822c41ab88214bda55341ac66fe9ee5ead30a7160b",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-2",
+        "repetition": 1,
+        "stableSha256": "ae91ab0a930dae058a54931642fc6c95c3fa3ef4d0b20cb344b7cf30fc193bae",
+        "offSha256": "ae91ab0a930dae058a54931642fc6c95c3fa3ef4d0b20cb344b7cf30fc193bae",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-2",
+        "repetition": 2,
+        "stableSha256": "9bb573f122e1e0927d73de4593f559c003244d20f4e9c3c6b55fd2c7b76c5218",
+        "offSha256": "9bb573f122e1e0927d73de4593f559c003244d20f4e9c3c6b55fd2c7b76c5218",
+        "byteIdentical": true
+      }
+    ],
+    "allInitialPairsByteIdentical": true,
+    "unprojectedOutputFallback": false
+  },
+  "decision": {
+    "status": "no-benefit",
+    "b1_mechanism_and_autonomy": false,
+    "b2_task_benefit": false,
+    "b3_retention_benefit": false,
+    "b4_non_inferiority": true,
+    "b5_no_fabrication": false,
+    "b6_budget": true,
+    "contextGrowthChars": 0,
+    "tokenGrowthPct": 0,
+    "engineeringAcceptedByAgent": false,
+    "releaseApproved": false,
+    "liveReady": false,
+    "defaultOn": false
+  },
+  "boundaries": [
+    "The loop driver is an eval harness: it executes only the tool calls the model returns, but it is not the Electron/Gateway product turn (no gateway approval, system prompt or bootstrap).",
+    "Deterministic mode uses a scripted policy and is harness self-test only, never evidence of model autonomy.",
+    "Cost is not-run unless the provider returns a billing unit; token usage is recorded per call.",
+    "Results cover this corpus and this model only; they do not establish product quality or GA."
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-relay",
+  "encryptedKeyEnvelope": true,
+  "keyPersisted": false,
+  "requestKind": "authentication-only empty input; no corpus, no tools",
+  "http_status": 400,
+  "error_code": "invalid_request_error",
+  "error_type": "invalid_request_error"
+}

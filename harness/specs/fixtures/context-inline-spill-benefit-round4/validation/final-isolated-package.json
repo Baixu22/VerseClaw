@@ -1,0 +1,30 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-01a1b934",
+  "name": "final-isolated-package",
+  "cwd": "D:/tmp/inline-spill-benefit-r4-20261108-01a1b934/final-candidate",
+  "command": [
+    "node",
+    "harness/specs/fixtures/context-inline-spill-benefit-round4/verify-evidence.mjs"
+  ],
+  "started_at": "2026-11-08T06:12:43.437108+00:00",
+  "duration_seconds": 0.531,
+  "exit_code": 0,
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": "warn"
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\final-isolated-package.stdout.txt",
+      "bytes": 158,
+      "sha256": "a3df165f1f75f482e47c3a0d106cd386cfbf73b6e622020401e49a42f2bcdb47"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\final-isolated-package.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

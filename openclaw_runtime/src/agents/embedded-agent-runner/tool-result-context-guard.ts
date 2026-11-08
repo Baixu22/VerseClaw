@@ -4,6 +4,7 @@
 import type { ContextEngine, ContextEngineRuntimeContext } from "../../context-engine/types.js";
 import type { RuntimeIntensityPolicy } from "../intensity-policy.js";
 import type { AgentMessage } from "../runtime/index.js";
+import type { ArchiveRecallRetentionOptions } from "../archive-recall-retention.js";
 import {
   CONTEXT_LIMIT_TRUNCATION_NOTICE,
   formatContextLimitTruncationNotice,
@@ -85,6 +86,7 @@ type MidTurnPrecheckOptions = {
   contextTokenBudget: number;
   reserveTokens: () => number;
   toolResultMaxChars?: number;
+  archiveRecallRetention?: ArchiveRecallRetentionOptions;
   getSystemPrompt?: () => string | undefined;
   getPrePromptMessageCount?: () => number;
   onMidTurnPrecheck?: (request: MidTurnPrecheckRequest) => void;
@@ -561,6 +563,7 @@ export function installToolResultContextGuard(params: {
           contextTokenBudget: params.midTurnPrecheck.contextTokenBudget,
           reserveTokens: params.midTurnPrecheck.reserveTokens(),
           toolResultMaxChars: params.midTurnPrecheck.toolResultMaxChars,
+          archiveRecallRetention: params.midTurnPrecheck.archiveRecallRetention,
         });
         const request = toMidTurnPrecheckRequest(precheck);
         log.debug(

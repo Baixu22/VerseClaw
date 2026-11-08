@@ -1,0 +1,32 @@
+{
+  "schema": "ContextInlineSpillGate/v2",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-retention",
+  "name": "typecheck-candidate-c",
+  "command": "pnpm",
+  "args": [
+    "run",
+    "typecheck"
+  ],
+  "workspace": "C:\\Users\\27933\\.codex\\worktrees\\context-inline-spill\\ClawX",
+  "started_at": "2026-11-03T15:12:41.9121257+00:00",
+  "finished_at": "2026-11-03T15:13:17.6498054+00:00",
+  "elapsed_ms": 35445,
+  "exit_code": 0,
+  "command_exit_code": 0,
+  "candidate": {
+    "dirty": false,
+    "commit": "16da6fdf22b0bda023becffa4272373be610ab54",
+    "status": "",
+    "tree": "13e352f499403ec9c2a7c1fbe700a67fbce4e8bf"
+  },
+  "candidate_after": {
+    "dirty": false,
+    "commit": "16da6fdf22b0bda023becffa4272373be610ab54",
+    "status": "",
+    "tree": "13e352f499403ec9c2a7c1fbe700a67fbce4e8bf"
+  },
+  "source_status_unchanged": true,
+  "log_file": "D:\\tmp\\context-inline-spill-closeout-20261103\\gates\\typecheck-candidate-c.log",
+  "log_sha256": "4163cc00708309c7236fdd4061d7d1954de451d0aeff252a093396d95a8447ed"
+}

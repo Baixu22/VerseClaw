@@ -1,0 +1,31 @@
+{
+  "schema": "ContextInlineSpillGate/v2",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-retention",
+  "name": "malformed-lineage-readback-candidate-c",
+  "command": "openclaw_runtime/node_modules/.bin/tsx.cmd",
+  "args": [
+    "D:/tmp/context-inline-spill-closeout-20261103/verify-malformed-lineage.mts"
+  ],
+  "workspace": "C:\\Users\\27933\\.codex\\worktrees\\context-inline-spill\\ClawX",
+  "started_at": "2026-11-03T15:17:05.4948095+00:00",
+  "finished_at": "2026-11-03T15:17:06.3161971+00:00",
+  "elapsed_ms": 578,
+  "exit_code": 0,
+  "command_exit_code": 0,
+  "candidate": {
+    "tree": "13e352f499403ec9c2a7c1fbe700a67fbce4e8bf",
+    "dirty": false,
+    "commit": "16da6fdf22b0bda023becffa4272373be610ab54",
+    "status": ""
+  },
+  "candidate_after": {
+    "tree": "13e352f499403ec9c2a7c1fbe700a67fbce4e8bf",
+    "dirty": false,
+    "commit": "16da6fdf22b0bda023becffa4272373be610ab54",
+    "status": ""
+  },
+  "source_status_unchanged": true,
+  "log_file": "D:\\tmp\\context-inline-spill-closeout-20261103\\gates\\malformed-lineage-readback-candidate-c.log",
+  "log_sha256": "6a298fd5fd350009a21007738024c31b36a2bd8aa6f18f0a1ea76ae132dcb8dd"
+}

@@ -1,0 +1,75 @@
+{
+  "schema": "InlineSpillRound4AcceptanceReadback/v1",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-relay",
+  "createdAt": "2026-11-08T06:14:13.597981+00:00",
+  "evidenceCommit": "eff9cb6a8c298723a99649bebc4fe91844d0e4e4",
+  "verifiedGitFiles": 129,
+  "candidate": {
+    "commit": "8fa33a84ef8c9eeac3086d168264e77d4560e21d",
+    "tree": "541a95b34245cf442a4b9ebdd7ea8320b35e63aa",
+    "dirty": false
+  },
+  "finalCandidate": {
+    "commit": "eff9cb6a8c298723a99649bebc4fe91844d0e4e4",
+    "dirty": false
+  },
+  "acceptance": [
+    {
+      "criterion": 1,
+      "passed": true,
+      "evidence": [
+        "validation/candidate-unit.stdout.txt",
+        "deterministic-verify.json",
+        "deterministic-diagnostics.json"
+      ]
+    },
+    {
+      "criterion": 2,
+      "passed": true,
+      "evidence": [
+        "freeze.json",
+        "freeze-auth-amendment.json",
+        "live-verify.json",
+        "live/result.json"
+      ]
+    },
+    {
+      "criterion": 3,
+      "passed": true,
+      "evidence": [
+        "live-diagnostics.json",
+        "summary.json"
+      ]
+    },
+    {
+      "criterion": 4,
+      "passed": true,
+      "evidence": [
+        "SHA256SUMS",
+        "credential-scan.json",
+        "preservation-after.json"
+      ]
+    },
+    {
+      "criterion": 5,
+      "passed": true,
+      "evidence": [
+        "validation-readback.json",
+        "validation/task-forest-before.json",
+        "final-isolated-harness-validate receipt",
+        "final-isolated-package receipt"
+      ]
+    }
+  ],
+  "canCloseExecutionNode": true,
+  "canCloseParent": false,
+  "parentStatus": "in_progress/80; NO_GO",
+  "finalExportReadback": {
+    "status": "pass",
+    "artifact": "validation/task-forest-final.json",
+    "TF-0749": "in_progress/80",
+    "TF-0859": "done/100",
+    "graphAndCurrentAndLastFrameMatch": true
+  }
+}

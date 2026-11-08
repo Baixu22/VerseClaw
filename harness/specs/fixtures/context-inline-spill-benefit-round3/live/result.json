@@ -1,0 +1,391 @@
+{
+  "schema": "ContextInlineSpillBenefitLoopEval/v1",
+  "runId": "2026-11-04T09-12-17-278Z-live",
+  "mode": "live",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r3",
+  "loop_driver": "eval-harness (executes only the model-returned tool calls)",
+  "candidate": {
+    "commit": "491a957ad93e0c9f81d580e693de147d4e2cd49d",
+    "tree": "ef66954e73faacc5277186f54f0ea2cc0eee04ef",
+    "dirty": false
+  },
+  "provider": {
+    "kind": "openai-compatible-responses",
+    "endpoint_origin": "http://127.0.0.1:3065",
+    "model": "space-bunny",
+    "credential_persisted": false
+  },
+  "design": {
+    "repeats": 3,
+    "maxTurns": 8,
+    "evidenceTasks": [
+      "deploy-token",
+      "db-passport",
+      "cache-seed",
+      "signing-key",
+      "tenant-id",
+      "migration-hash"
+    ],
+    "controlTasks": [
+      "control-absent-1",
+      "control-absent-2"
+    ],
+    "arms": {
+      "baseline-no-reference": {
+        "reference": false,
+        "retention": false,
+        "pressure": false
+      },
+      "reference-visible": {
+        "reference": true,
+        "retention": false,
+        "pressure": false
+      },
+      "recall-stable": {
+        "reference": true,
+        "retention": true,
+        "pressure": true
+      },
+      "retention-off": {
+        "reference": true,
+        "retention": false,
+        "pressure": true
+      }
+    },
+    "contextWindowTokens": 32000,
+    "toolMaxChars": 6000,
+    "aggregateMaxChars": 16000,
+    "recallPageChars": 5500
+  },
+  "stats": {
+    "baseline-no-reference": {
+      "arm": "baseline-no-reference",
+      "runs": 24,
+      "pass": 5,
+      "successRate": 0.20833333333333334,
+      "wilson95": [
+        0.09244825352851857,
+        0.40470453253188665
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 0.8333333333333334,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 0,
+      "meanTurns": 4.083333333333333,
+      "meanMainContextChars": 2163.9583333333335,
+      "meanInputTokens": 3293.0833333333335,
+      "meanOutputTokens": 1134.2916666666667,
+      "meanTotalTokens": 4427.375,
+      "p50LatencyMs": 17331.325,
+      "p95LatencyMs": 26755.375,
+      "failureClasses": {
+        "answer_mismatch": 15,
+        "schema_invalid": 4,
+        "none": 5
+      }
+    },
+    "reference-visible": {
+      "arm": "reference-visible",
+      "runs": 24,
+      "pass": 7,
+      "successRate": 0.2916666666666667,
+      "wilson95": [
+        0.14914648196960875,
+        0.49167693664496637
+      ],
+      "evidenceSuccessRate": 0.05555555555555555,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 3.9583333333333335,
+      "meanMainContextChars": 18386.75,
+      "meanInputTokens": 12136.666666666666,
+      "meanOutputTokens": 1426.3333333333333,
+      "meanTotalTokens": 13563,
+      "p50LatencyMs": 22138.403,
+      "p95LatencyMs": 31033.832,
+      "failureClasses": {
+        "recalled_text_evicted": 6,
+        "schema_invalid": 11,
+        "none": 7
+      }
+    },
+    "recall-stable": {
+      "arm": "recall-stable",
+      "runs": 24,
+      "pass": 5,
+      "successRate": 0.20833333333333334,
+      "wilson95": [
+        0.09244825352851857,
+        0.40470453253188665
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 0.8333333333333334,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 3.5833333333333335,
+      "meanMainContextChars": 48122.458333333336,
+      "meanInputTokens": 19906.041666666668,
+      "meanOutputTokens": 1742.375,
+      "meanTotalTokens": 21648.416666666668,
+      "p50LatencyMs": 24056.561,
+      "p95LatencyMs": 36808.552,
+      "failureClasses": {
+        "schema_invalid": 18,
+        "recalled_text_evicted": 1,
+        "none": 5
+      }
+    },
+    "retention-off": {
+      "arm": "retention-off",
+      "runs": 24,
+      "pass": 4,
+      "successRate": 0.16666666666666666,
+      "wilson95": [
+        0.06678676328632951,
+        0.3585307064969906
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 0.6666666666666666,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 3.375,
+      "meanMainContextChars": 45630.291666666664,
+      "meanInputTokens": 18316.208333333332,
+      "meanOutputTokens": 1587.9166666666667,
+      "meanTotalTokens": 19904.125,
+      "p50LatencyMs": 18658.105,
+      "p95LatencyMs": 32598.019,
+      "failureClasses": {
+        "schema_invalid": 19,
+        "recalled_text_evicted": 1,
+        "none": 4
+      }
+    }
+  },
+  "comparisons": {
+    "recall-stable_vs_baseline": {
+      "both": 4,
+      "onlyA": 1,
+      "onlyB": 1,
+      "neither": 18,
+      "p": 1
+    },
+    "recall-stable_vs_retention-off": {
+      "both": 4,
+      "onlyA": 1,
+      "onlyB": 0,
+      "neither": 19,
+      "p": 1
+    },
+    "recall-stable_vs_reference-visible": {
+      "both": 5,
+      "onlyA": 0,
+      "onlyB": 2,
+      "neither": 17,
+      "p": 0.5
+    }
+  },
+  "inputIntegrity": {
+    "assembly": "production-projection-only/function-protocol/v3",
+    "mainContextCharsSource": "JSON.stringify(actual request.input).length",
+    "initialPairs": [
+      {
+        "fixtureId": "deploy-token",
+        "repetition": 0,
+        "stableSha256": "1335d61039d4e7795308b784eb76b7bd3a2f24744fe27a632e5c4c30351989b8",
+        "offSha256": "1335d61039d4e7795308b784eb76b7bd3a2f24744fe27a632e5c4c30351989b8",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "deploy-token",
+        "repetition": 1,
+        "stableSha256": "8a128a2f23cba2c4474c6c321c2d943b9da1c304814273969df7e5cf350ecdb3",
+        "offSha256": "8a128a2f23cba2c4474c6c321c2d943b9da1c304814273969df7e5cf350ecdb3",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "deploy-token",
+        "repetition": 2,
+        "stableSha256": "a1fd61ca817c5c2c094a7bba4882cdfa5f524e040756e86b94729fff73dab4c8",
+        "offSha256": "a1fd61ca817c5c2c094a7bba4882cdfa5f524e040756e86b94729fff73dab4c8",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "db-passport",
+        "repetition": 0,
+        "stableSha256": "f1e20130f9c05361f7b6c68d3c2595438b2644373bea15b2f47b8b2b1edf400b",
+        "offSha256": "f1e20130f9c05361f7b6c68d3c2595438b2644373bea15b2f47b8b2b1edf400b",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "db-passport",
+        "repetition": 1,
+        "stableSha256": "1c63ccd790d2e3c04d480fcf947cb7736b1b686c3b2885e92e241354ce3f7bb3",
+        "offSha256": "1c63ccd790d2e3c04d480fcf947cb7736b1b686c3b2885e92e241354ce3f7bb3",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "db-passport",
+        "repetition": 2,
+        "stableSha256": "b8dc7b6cebe98085131c2e20e3eee434ce7910fb431d470f8195f89fb191b909",
+        "offSha256": "b8dc7b6cebe98085131c2e20e3eee434ce7910fb431d470f8195f89fb191b909",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "cache-seed",
+        "repetition": 0,
+        "stableSha256": "2ce2391d0fdb8543227d08aa02c9e409941c480db93d23e5cdc0e7725632b28d",
+        "offSha256": "2ce2391d0fdb8543227d08aa02c9e409941c480db93d23e5cdc0e7725632b28d",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "cache-seed",
+        "repetition": 1,
+        "stableSha256": "150f08c55ca367fd9b4a0f0eed1104447fd258c445615e975acdd15ddc129115",
+        "offSha256": "150f08c55ca367fd9b4a0f0eed1104447fd258c445615e975acdd15ddc129115",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "cache-seed",
+        "repetition": 2,
+        "stableSha256": "88632af32f9970a478ca75d761d361b3b6fbf4b44fda88b238162f1a87df1648",
+        "offSha256": "88632af32f9970a478ca75d761d361b3b6fbf4b44fda88b238162f1a87df1648",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "signing-key",
+        "repetition": 0,
+        "stableSha256": "8b5927d3c9c4e52769f0cf13f7efe4e0ad38391aa7558319c2f586cb703af54c",
+        "offSha256": "8b5927d3c9c4e52769f0cf13f7efe4e0ad38391aa7558319c2f586cb703af54c",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "signing-key",
+        "repetition": 1,
+        "stableSha256": "1cddbd7276974d9cae9a2ddb017f6acf84f5a3b3c59fab12facfa0b986a9b1a3",
+        "offSha256": "1cddbd7276974d9cae9a2ddb017f6acf84f5a3b3c59fab12facfa0b986a9b1a3",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "signing-key",
+        "repetition": 2,
+        "stableSha256": "98a0cc67de28a0064b86f6d1cc067a36182b904f138d69da48582140fae44ee8",
+        "offSha256": "98a0cc67de28a0064b86f6d1cc067a36182b904f138d69da48582140fae44ee8",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "tenant-id",
+        "repetition": 0,
+        "stableSha256": "3849be35a51517e182410f9a1b5e04e3fc4cf2db756b6e69011fcc633d02bf7c",
+        "offSha256": "3849be35a51517e182410f9a1b5e04e3fc4cf2db756b6e69011fcc633d02bf7c",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "tenant-id",
+        "repetition": 1,
+        "stableSha256": "aea6fd19764776da1abbd31c57a3bd3b136442bbc081c7f09643a24ca2fa97fb",
+        "offSha256": "aea6fd19764776da1abbd31c57a3bd3b136442bbc081c7f09643a24ca2fa97fb",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "tenant-id",
+        "repetition": 2,
+        "stableSha256": "8887b11d689ca0c8372feed1528ea5309c399c28496f652a659039238b4aa5bc",
+        "offSha256": "8887b11d689ca0c8372feed1528ea5309c399c28496f652a659039238b4aa5bc",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "migration-hash",
+        "repetition": 0,
+        "stableSha256": "17d42a0ac79162b360bfdee92af492c90c37a59631fd5257e39610270f152d20",
+        "offSha256": "17d42a0ac79162b360bfdee92af492c90c37a59631fd5257e39610270f152d20",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "migration-hash",
+        "repetition": 1,
+        "stableSha256": "1509544b2a767c1b7168df0d7b09e91e233beddb2caa3fd768c5d5a12a30cac0",
+        "offSha256": "1509544b2a767c1b7168df0d7b09e91e233beddb2caa3fd768c5d5a12a30cac0",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "migration-hash",
+        "repetition": 2,
+        "stableSha256": "4bc9bfa62662fb2616e2241ed7fb2d88e721a0de8d84190acf113a59358fc122",
+        "offSha256": "4bc9bfa62662fb2616e2241ed7fb2d88e721a0de8d84190acf113a59358fc122",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-1",
+        "repetition": 0,
+        "stableSha256": "567e8eafd1e0493d2cae8c2434cceb8c59e8716dce1e033528714389369d82ce",
+        "offSha256": "567e8eafd1e0493d2cae8c2434cceb8c59e8716dce1e033528714389369d82ce",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-1",
+        "repetition": 1,
+        "stableSha256": "1644a7db5e597f8ac0fea8e98e3fb96e58a5dc87b4d0fda75800ecc55e0280fc",
+        "offSha256": "1644a7db5e597f8ac0fea8e98e3fb96e58a5dc87b4d0fda75800ecc55e0280fc",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-1",
+        "repetition": 2,
+        "stableSha256": "b972b85f7d109a8426e5f67dd65a3d850b1e92a6273a073859381f2872ebad02",
+        "offSha256": "b972b85f7d109a8426e5f67dd65a3d850b1e92a6273a073859381f2872ebad02",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-2",
+        "repetition": 0,
+        "stableSha256": "9dee3f83cd1b6cd3c6a1bdb94e68ca958ef58a39dd960e8adcf3fb20b700ae71",
+        "offSha256": "9dee3f83cd1b6cd3c6a1bdb94e68ca958ef58a39dd960e8adcf3fb20b700ae71",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-2",
+        "repetition": 1,
+        "stableSha256": "eceec5e0ddbec9708d3ac6d8674580a1c655322612c2d4c403e4af284b937535",
+        "offSha256": "eceec5e0ddbec9708d3ac6d8674580a1c655322612c2d4c403e4af284b937535",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-2",
+        "repetition": 2,
+        "stableSha256": "c9d45f260a5f0c1d0beb85845efda699af3e90f10a41251830b9486f5191667f",
+        "offSha256": "c9d45f260a5f0c1d0beb85845efda699af3e90f10a41251830b9486f5191667f",
+        "byteIdentical": true
+      }
+    ],
+    "allInitialPairsByteIdentical": true,
+    "unprojectedOutputFallback": false
+  },
+  "decision": {
+    "status": "mechanism-only",
+    "b1_mechanism_and_autonomy": true,
+    "b2_task_benefit": false,
+    "b3_retention_benefit": true,
+    "b4_non_inferiority": false,
+    "b5_no_fabrication": false,
+    "b6_budget": false,
+    "contextGrowthChars": 2492.1666666666715,
+    "tokenGrowthPct": 0.5961377767947111,
+    "engineeringAcceptedByAgent": false,
+    "releaseApproved": false,
+    "liveReady": false,
+    "defaultOn": false
+  },
+  "boundaries": [
+    "The loop driver is an eval harness: it executes only the tool calls the model returns, but it is not the Electron/Gateway product turn (no gateway approval, system prompt or bootstrap).",
+    "Deterministic mode uses a scripted policy and is harness self-test only, never evidence of model autonomy.",
+    "Cost is not-run unless the provider returns a billing unit; token usage is recorded per call.",
+    "Results cover this corpus and this model only; they do not establish product quality or GA."
+  ]
+}

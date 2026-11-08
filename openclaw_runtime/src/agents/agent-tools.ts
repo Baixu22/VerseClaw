@@ -1118,6 +1118,8 @@ export function createOpenClawCodingTools(options?: {
   // attempt/compact supplied BlockStore (+ sink for write) and session id.
   const dcsContextTools = createDcsContextAgentTools({
     sessionId: options?.sessionId,
+    archiveRecallRetention:
+      options?.config?.runtime?.contextFamily?.archiveRecallRetention?.enabled === true,
     runSessionKey: options?.runSessionKey,
     agentSessionKey: options?.sessionKey,
     workspaceRoot: codingRoot,

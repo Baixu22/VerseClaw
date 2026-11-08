@@ -1,0 +1,39 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-01a1b934",
+  "name": "candidate-live-auth-fixed",
+  "cwd": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\candidate",
+  "command": [
+    "node",
+    "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+    "scripts/context-inline-spill-benefit-loop-eval.mts",
+    "--mode",
+    "live",
+    "--out",
+    "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\live-auth-fixed",
+    "--repeats",
+    "3",
+    "--max-turns",
+    "8"
+  ],
+  "started_at": "2026-11-08T05:34:03.263464+00:00",
+  "duration_seconds": 1646.375,
+  "exit_code": 0,
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": null
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\candidate-live-auth-fixed.stdout.txt",
+      "bytes": 1678,
+      "sha256": "b961879b15deeb9ac2d253932a58720a3269caa68da61c602a5724b4179ee164"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\candidate-live-auth-fixed.stderr.txt",
+      "bytes": 20802,
+      "sha256": "1d3eaf987f202eba3b0f6447c04dbd818c7e1d34d54adc5189aaaa6d6449893b"
+    }
+  }
+}

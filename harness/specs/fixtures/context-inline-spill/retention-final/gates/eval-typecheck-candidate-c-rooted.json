@@ -1,0 +1,37 @@
+{
+  "schema": "ContextInlineSpillGate/v2",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-retention",
+  "name": "eval-typecheck-candidate-c-rooted",
+  "command": "pnpm",
+  "args": [
+    "exec",
+    "tsgo",
+    "--noEmit",
+    "-p",
+    "D:/tmp/context-inline-spill-closeout-20261103/tsconfig-eval.json",
+    "--composite",
+    "false"
+  ],
+  "workspace": "C:\\Users\\27933\\.codex\\worktrees\\context-inline-spill\\ClawX",
+  "started_at": "2026-11-03T15:15:32.8917881+00:00",
+  "finished_at": "2026-11-03T15:15:40.5766551+00:00",
+  "elapsed_ms": 7427,
+  "exit_code": 0,
+  "command_exit_code": 0,
+  "candidate": {
+    "status": "",
+    "dirty": false,
+    "commit": "16da6fdf22b0bda023becffa4272373be610ab54",
+    "tree": "13e352f499403ec9c2a7c1fbe700a67fbce4e8bf"
+  },
+  "candidate_after": {
+    "status": "",
+    "dirty": false,
+    "commit": "16da6fdf22b0bda023becffa4272373be610ab54",
+    "tree": "13e352f499403ec9c2a7c1fbe700a67fbce4e8bf"
+  },
+  "source_status_unchanged": true,
+  "log_file": "D:\\tmp\\context-inline-spill-closeout-20261103\\gates\\eval-typecheck-candidate-c-rooted.log",
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

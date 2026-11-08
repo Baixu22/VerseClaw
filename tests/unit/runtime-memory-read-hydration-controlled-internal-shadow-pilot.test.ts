@@ -672,28 +672,6 @@ function evidenceRefs() {
   ];
 }
 
-function expectPilotThresholds(
-  report:
-    | TaskLoopRunResult["runtimeMemoryReadHydrationShadowOnlyDiagnostics"]
-    | undefined,
-): void {
-  expect(report?.metrics).toMatchObject({
-    guardedRecallAtK: 1,
-    guardedPrecision: 1,
-    staleInvalidSuppressionRate: 1,
-    candidateRejectedSuppressionRate: 1,
-    conflictSuppressionRate: 1,
-    rawLeakRate: 0,
-    promptInjectionReturnRate: 0,
-    taskLoopDecisionDeltaCount: 0,
-    toolCallDeltaCount: 0,
-    providerOrderingDeltaCount: 0,
-    promptContextModelMessageInjectionCount: 0,
-    durableMemoryWriteCount: 0,
-    thresholdViolations: [],
-  });
-}
-
 function assertNoPilotMaterial(payload: Record<string, unknown>): void {
   const text = JSON.stringify(payload);
   for (const item of FORBIDDEN_PILOT_MATERIAL) {

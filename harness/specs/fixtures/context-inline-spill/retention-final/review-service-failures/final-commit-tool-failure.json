@@ -1,0 +1,8 @@
+{
+  "schema": "ContextInlineSpillReviewInterruption/v1",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-retention",
+  "candidate": "16da6fdf22b0bda023becffa4272373be610ab54",
+  "reason": "Nested read-only exec tool repeatedly failed with orchestrator_helper_incomplete; retry will use complete supplied source and disable the failing shell feature.",
+  "clean_review_claimed": false
+}

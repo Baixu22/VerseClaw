@@ -1,0 +1,38 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-closeout-01a1b90a",
+  "name": "candidate-unit-reused",
+  "cwd": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\validation-candidate",
+  "command": [
+    "node",
+    "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+    "exec",
+    "vitest",
+    "run",
+    "tests/unit/context-inline-spill-benefit-input.test.ts",
+    "tests/unit/context-inline-spill-benefit-scoring.test.ts",
+    "tests/unit/context-inline-spill-retention.test.ts",
+    "tests/unit/context-inline-spill-eval-provider.test.ts",
+    "--maxWorkers=1"
+  ],
+  "started_at": "2026-11-08T03:08:53.849812+00:00",
+  "duration_seconds": 89.985,
+  "exit_code": 1,
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": "warn"
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\checks\\candidate-unit-reused.stdout.txt",
+      "bytes": 571,
+      "sha256": "cbbd283764f1a722de9750a77865ea84bfc6b60c16a1239d3c69d8450a8a51fa"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\checks\\candidate-unit-reused.stderr.txt",
+      "bytes": 1368,
+      "sha256": "beed94ebd6d4735561d26d4a10d0ea069d1c4775b8b7b2948ad0a531b418fab5"
+    }
+  }
+}

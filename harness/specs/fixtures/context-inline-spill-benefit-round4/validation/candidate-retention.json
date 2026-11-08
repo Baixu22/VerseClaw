@@ -1,0 +1,30 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-01a1b934",
+  "name": "candidate-retention",
+  "cwd": "D:/tmp/inline-spill-benefit-r4-20261108-01a1b934/candidate",
+  "command": [
+    "node",
+    "scripts/check-repository-artifacts.mjs"
+  ],
+  "started_at": "2026-11-08T05:58:21.296300+00:00",
+  "duration_seconds": 6.297,
+  "exit_code": 0,
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": null
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\candidate-retention.stdout.txt",
+      "bytes": 60,
+      "sha256": "3abe7cae48c8718693d8bd2060a2beef6b457d134237875e3bd39ebb8e41eafb"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\candidate-retention.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

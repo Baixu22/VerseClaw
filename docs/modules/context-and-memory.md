@@ -140,6 +140,33 @@ Workspace Context 是一个用户概念，覆盖两个内部 implementation flag
 
 用户入口在 `Settings → General`。Developer DCS 面板是诊断面，不是正常用户开关。
 
+## 4.5 默认 tool-result 截断的可回读引用
+
+默认的 oversized / aggregate tool-result 截断仍由原有阈值和 head+tail 预算决定，不会因为引用投影改变触发时机。变化仅在 replacement 已经获得可用 ArchiveHandle 时发生：模型可见提示会包含 archive_uri、checksum、byte_length 和 context_archive_recall 指令，而不是只写“more characters truncated”。
+
+约束：
+
+- archive 创建或校验失败时退回原来的 truncation notice，不伪造可回读性，也不阻断 turn；
+- 引用文本仍受单条 maxChars / aggregate 预算约束；
+- lifecycle metadata 继续保存 archiveHandle，prompt 投影不新增持久化 authority；
+- 该行为不等于启用 observation masking、Tool Search 或更改 compaction 默认值。
+
+回读保留开关为 `runtime.contextFamily.archiveRecallRetention.enabled`，默认关闭。显式启用后，只有已经通过 checksum 与当前 session 校验的 `context_archive_recall` 成功结果获得来源标记；标记必须带非空、非空白的 call-id 和非负安全整数分页 offset，缺失绑定不能通过 ID 重写获得保护。pruner 和 tool-result replacement 保护 `ageTurns < 4` 的结果，所有保护文本合计最多 16,000 字符。单条/aggregate 预算优先，容纳不了时沿原有裁剪路径；普通工具、用户文本、assistant reasoning 与未回读 archive 不获得额外保护。
+
+年龄从消息序列的后续 assistant 轮推导，重复投影不刷新窗口。相同 archive 页只保护最近一次回读，已经裁剪过的投影不凭残留 metadata 重新获得保护；实现不新增 timer、持久队列或重复注入。达到第四轮或关闭开关后恢复旧路径。完整摘要 compaction 与硬上下文溢出继续由已有 owner 决定，这不是无限保留或无损摘要承诺。
+
+内部 session replay 和 precheck 保留最小已校验来源，调用 ID 规范化同步携带该绑定；原本不匹配的来源不会因 ID 重写变成有效。转换前选择来源，`convertToLlm` 后按最终可见文本规划保留与截断，再移除仅用于规划的标记，provider 消息不包含 `details`。最新回读页无法满足预算或已被裁剪时，不转而保护同页的旧回读。
+
+开启保留时，回读原文仅放在模型可见 `content`，`details` 只保留分页诊断和小型来源标记，以通过现有 8 KiB transcript 元数据上限。评测实际执行 guarded write、磁盘重载和重放，并保留 JSONL。共享计划按实际截断结果核算预算，不为完整保留项预扣 notice；空间不足时从最旧项开始释放保护重新规划，直到恢复无保留的既有路径。
+
+单条上限按每个结果分别判断，多个回读共享 16,000 字符与 aggregate 剩余空间。转换器补入的可见提示也接受最终预算检查；已有 observation-masking 替换在开启保留时通过正常转换和标记移除，保持内部来源不进入 provider 消息。
+
+eval 入口：`openclaw_runtime/node_modules/.bin/tsx --expose-gc scripts/context-inline-spill-eval.mts --mode deterministic --out D:/tmp/context-inline-spill-eval`。四臂为 `baseline`、`reference-visible`、`recall-stable` 和 `retention-off`，最后一臂必须实际丢失回读证据；工具调用由 agent 驱动，不声称模型自主选择 recall。`--mode live` 按显式 endpoint/model 与进程环境凭据执行第三方模型对照，只提供模型可见文本，不把 oracle 答案或隐藏 details 放入请求。
+
+结果分别记录质量、主上下文字符/token 代理、真实 provider usage、各阶段延迟、成本或 not-run、scope/stale、refs resolution 和原始 transcript。5000 次重复投影的 GC 后 heap 增长门限为 2 MiB，只代表该投影路径的工程测量。当前可回读的 curated 证据与来源索引位于 `harness/specs/fixtures/context-inline-spill/`。
+
+评测经过真实 replay、pruner、precheck 和 provider projection helper，原始 transcript 保存各边界输入与输出。提供方答案不能解析时，失败结果继续保留脱敏原始响应、HTTP 状态和已返回 usage，避免把已消耗 token 错写成未知。
+
 ## 4.1 会话起始注入（`session_start` 通道）
 
 一次会话起始最多有四个来源：startup memory 文件、长会话 continuity pack、handoff 稿件、fork 继承上下文。今天它们各自带预算、各自出诊断，"这个会话为什么以这段文字开场"没有单一答案。
@@ -493,3 +520,53 @@ Context 相关诊断：
 - `docs/dev/vtoken-retirement-decision.md`
 
 延伸阅读：[Context Runtime Kit](../context-runtime-kit/README.md)、[产品语义](../clawx-product-semantics.md)、[上下文权威边界 ADR](../dev/adr/2026-08-16-context-authority-boundaries.md)。
+
+## 14. Inline/Spill 真实任务收益评测（agent 驱动外循环）
+
+机制证据（引用可见、回读可达、窗口内有界保留）不等于任务收益。为回答“真实收益是否存在”，
+`scripts/context-inline-spill-benefit-loop-eval.mts` 建立一个可复算的评测：
+
+- **模型自主决策**：harness 只执行模型返回的 function call，是否回读、何时回读、分页多少由模型决定；
+  脚本不替模型发起 recall。
+- **真实组件**：`truncateOversizedToolResultsInMessages`、`pruneContextMessages`、
+  `createContextArchiveRecallTool`、`ArchiveHandle` 校验与 archive 存储全部是生产实现。
+- **四臂对照**：`baseline-no-reference`、`reference-visible`、`recall-stable`、
+  `retention-off`（负对照）使用同一语料、oracle 与评分器。第二轮原始请求确认：两压力臂的
+  archive URI/session 不同，且原始工具历史独立附加，当前不能视为严格的单变量对照。
+- **冻结口径**：指标定义、B1–B7 判据、失败分类与判定输出以
+  [inline-spill-benefit-quantification](../../harness/specs/rules/inline-spill-benefit-quantification.md) 为准，
+  运行前不得改阈值。
+
+第二轮 live 覆盖 96 次运行（4 臂 × 8 任务 × 3 次）：`decision.status=mechanism-only`。
+recall-stable 证据任务 11/18，通过 B1/B2/B5；B3/B4/B6 未通过，token 相对
+reference-visible 增长 38.62%。原始请求、逐次记录、复算与实验限制见
+[收益评测交付记录](../../harness/specs/fixtures/context-inline-spill-benefit/DELIVERY.md)。
+
+第三轮按[输入修复任务](../../harness/specs/tasks/inline-spill-real-benefit-eval-round3.md)推进：协议工具输出只来自当轮生产投影，正文不重复列出回读结果；两压力臂使用同一 archive/session 身份，主上下文按实际发送的 input JSON 计量。第三轮结果单独封存，不重写第二轮数据；B1–B7 与语料、压力和输出预算保持冻结，任务收益仍以新实测判定。
+
+第三轮实测已完成：96次运行/360次provider调用，24对初始请求相同，原始历史回退和oracle泄漏均为0。`decision.status=mechanism-only`；recall-stable证据0/18，token相对reference-visible增长59.61%。原评分器B3=true仅来自一个控制任务差异，不表示证据还原收益。53次响应因900输出token预算返回incomplete，下一步需处理评测页预算与模型工具说明的适配，详见[第三轮交付记录](../../harness/specs/fixtures/context-inline-spill-benefit-round3/DELIVERY.md)。
+
+2026-11-08 从封存请求、响应与归档重新复算，两轮 84 份证据清单和 1605 个归档均通过。收益判定为 NO-GO，TF-0749 保持 in_progress/80：B2/B4/B5/B6 未通过，第三轮证据任务的保留正向配对为 0。本轮新增 provider 调用为 0；完整复算与页适配实验设计见[收益证据复核](../../harness/specs/fixtures/context-inline-spill-benefit-closeout-20261108/REPORT.md)。
+
+[第四轮评测](../../harness/specs/tasks/inline-spill-real-benefit-eval-round4.md)要求每次回读显式提供 1–5500 的 `max_chars`，缺失或超界参数返回 `invalid_arguments`。工具说明引导模型用 `offset + content.length` 翻页，取得精确值后输出最终 JSON。页尺寸与 6000 字符生产投影预算共同校验，收益按原 96 次样本与 900 输出 token 预算实测。
+
+第四轮 96 次实测、367 次模型调用已完成：最大序列化页 5944 字符，超页为 0；stable 证据正确率 0/18、控制有效 null 为 3/6，56 次响应耗尽 900 输出 token。B1–B6 均未通过，判定为 NO-GO，token 相对 reference-visible 增长 51.56%。[第四轮报告](../../harness/specs/fixtures/context-inline-spill-benefit-round4/REPORT.md)提供完整配对、原始请求/响应与复算命令。
+
+复算：
+
+```powershell
+$env:TEMP='D:\tmp'; $env:TMP='D:\tmp'
+openclaw_runtime/node_modules/.bin/tsx scripts/context-inline-spill-benefit-loop-eval.mts --mode deterministic --out D:/tmp/context-inline-spill-benefit
+$env:CONTEXT_INLINE_SPILL_API_KEY='<owner provided>'
+$env:CONTEXT_INLINE_SPILL_BASE_URL='http://127.0.0.1:3065/v1'
+$env:CONTEXT_INLINE_SPILL_MODEL='space-bunny'
+openclaw_runtime/node_modules/.bin/tsx scripts/context-inline-spill-benefit-loop-eval.mts --mode live --out D:/tmp/context-inline-spill-benefit
+```
+
+边界：
+
+- 这是 agent 驱动的评测器外循环，不是 Electron/Gateway 的完整产品回合；Gateway 审批、system prompt、
+  bootstrap 与多 agent 编排不在覆盖内。
+- deterministic 模式使用脚本策略，只能证明 harness 自身正确，不能当作模型自主性的证据。
+- 费用只有 provider 返回计费单位时才记录，否则 `not-run`；token 用量逐次记录。
+- 结论只覆盖该语料与该模型，不外推为产品质量、GA 或发布批准。

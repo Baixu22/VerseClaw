@@ -11,7 +11,6 @@ import { runTemporalEvolution } from "../../openclaw_runtime/src/agents/runtime-
 import {
   buildTemporalFactFromSpec,
   createTempDbPath,
-  RUNTIME_MEMORY_EVAL_CONFIG,
 } from "./helpers/runtime-memory-eval-helpers";
 
 const tempDirs: string[] = [];

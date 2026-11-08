@@ -1,0 +1,51 @@
+{
+  "schema": "ContextInlineSpillBenefitProvenance/v2",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r2",
+  "candidate": {
+    "commit": "ddd66ced9f3d389bd03a476fcbdccfc2de759f33",
+    "tree": "cbcd93f60b96d40bd2161a0481c8971f8485de29",
+    "dirty": true
+  },
+  "sources": {
+    "deterministic": "D:/tmp/context-inline-spill-benefit/2026-11-04T06-49-33-988Z-deterministic",
+    "live": "D:/tmp/context-inline-spill-benefit/2026-11-04T06-51-18-636Z-live"
+  },
+  "sourceSha256": {
+    "scripts/context-inline-spill-benefit-loop-eval.mts": "051209dea4f2a8065e5fa3421ce25f3e545667de7579d85e18bf7dbbcf1e5bbe",
+    "scripts/context-inline-spill-benefit-scoring.mts": "bcb3741271dfc5086f6c7ac675ee1720768eb307c457f147476b4982bc3ed276",
+    "tests/unit/context-inline-spill-benefit-scoring.test.ts": "e4ce05755953667522e58bd020a801d74f77346841d8f7c8a20777870e03a27c",
+    "harness/specs/tasks/inline-spill-real-benefit-eval.md": "a41c2d469eac76310ce1353c488b421057a6a1f7d32d3de894ece70cfcc15065",
+    "harness/specs/rules/inline-spill-benefit-quantification.md": "8d0ed528e2b0b5e287ee4411c4b2849d21caa17ce89bc9cb17a8f25636c3bd5f",
+    "docs/modules/context-and-memory.md": "88d0031989651a4b252f0eba256c7ecb52bc9141b719f5ab6dc44af524d166e6"
+  },
+  "archiveCounts": {
+    "deterministic": 160,
+    "live": 816
+  },
+  "rawWire": {
+    "file": "live/provider-wire.jsonl.gz",
+    "providerCalls": 358,
+    "headersCaptured": false
+  },
+  "previousRound": {
+    "localArchive": "D:\\tmp\\inline-spill-benefit-r2\\round1-evidence",
+    "sha256Manifest": "3e304757fbe8910f7696350b3c0017a134de3593fc7b6150b767eb441e894f9c"
+  },
+  "scope": {
+    "codeChanges": [
+      "default max-turns 4 to 8",
+      "one executed recall per turn with fail-closed parallel calls",
+      "explicit prompt stop conditions"
+    ],
+    "thresholdsArmsCorpusProjectionScoringUnchanged": true,
+    "documentation": "Corrected the prior byte-identical-input claim and added the measured round-2 verdict."
+  },
+  "provider": {
+    "kind": "openai-compatible-responses",
+    "endpoint_origin": "http://127.0.0.1:3065",
+    "model": "space-bunny",
+    "credential_persisted": false
+  },
+  "createdAt": "2026-11-04T07:28:51.699Z"
+}

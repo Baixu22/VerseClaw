@@ -782,7 +782,10 @@ export async function sanitizeSessionHistory(params: {
           erroredAssistantResultPolicy: "drop",
         })
       : sanitizedToolIds;
-  const sanitizedToolResults = stripToolResultDetails(repairedTools);
+  const sanitizedToolResults = stripToolResultDetails(repairedTools, {
+    enabled: params.config?.runtime?.contextFamily?.archiveRecallRetention?.enabled === true,
+    sessionId: params.sessionId,
+  });
   const sanitizedCompactionUsage = ensureAssistantUsageSnapshots(
     stripStaleAssistantUsageBeforeLatestCompaction(sanitizedToolResults),
   );

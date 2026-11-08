@@ -18,6 +18,7 @@ import {
 import { SAFETY_MARGIN } from "../../compaction.js";
 import { isRealConversationMessage } from "../../compaction-real-conversation.js";
 import type { AgentMessage } from "../../runtime/index.js";
+import type { ArchiveRecallRetentionOptions } from "../../archive-recall-retention.js";
 import { estimateToolResultReductionPotential } from "../tool-result-truncation.js";
 import type { PreemptiveCompactionRoute } from "./preemptive-compaction.types.js";
 
@@ -549,6 +550,7 @@ export function shouldPreemptivelyCompactBeforePrompt(params: {
   toolResultMaxChars?: number;
   llmBoundaryTokenPressure?: LlmBoundaryTokenPressure;
   observationMasking?: ObservationMaskingRouteInput;
+  archiveRecallRetention?: ArchiveRecallRetentionOptions;
 }): PreemptiveCompactionDecision {
   let messagesForPressure = params.messages;
   const conversationMessages = params.unwindowedMessages ?? params.messages;
@@ -595,6 +597,7 @@ export function shouldPreemptivelyCompactBeforePrompt(params: {
     messages: messagesForPressure,
     contextWindowTokens: params.contextTokenBudget,
     maxCharsOverride: params.toolResultMaxChars,
+    archiveRecallRetention: params.archiveRecallRetention,
   });
   const overflowChars = overflowTokens * ESTIMATED_CHARS_PER_TOKEN;
   const truncationBufferChars = TRUNCATION_ROUTE_BUFFER_TOKENS * ESTIMATED_CHARS_PER_TOKEN;
