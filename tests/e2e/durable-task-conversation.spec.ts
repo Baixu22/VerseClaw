@@ -107,10 +107,7 @@ test("normal conversation quietly identifies work and keeps a dismissible task a
       },
     });
     await page.reload();
-    await page
-      .getByTestId(`sidebar-session-drag-${session.key}`)
-      .getByText("Quiet task", { exact: true })
-      .click();
+    await page.getByTestId(`sidebar-session-${session.key}`).click();
     await expect(page.getByTestId("session-task-dock")).toHaveCount(0);
     const require = createRequire(join(process.cwd(), "package.json"));
     const { build } = createRequire(require.resolve("vite/package.json"))("esbuild");
@@ -192,10 +189,7 @@ test("normal conversation quietly identifies work and keeps a dismissible task a
     await sendUpdate();
     await expect(page.getByTestId("session-task-panel")).toHaveCount(0);
     await page.reload();
-    await page
-      .getByTestId(`sidebar-session-drag-${session.key}`)
-      .getByText("Quiet task", { exact: true })
-      .click();
+    await page.getByTestId(`sidebar-session-${session.key}`).click();
     await expect(page.getByTestId("session-task-reopen")).toBeVisible();
     await page.getByTestId("session-task-reopen").click();
     await expect(page.getByTestId("session-task-panel")).toBeVisible();
