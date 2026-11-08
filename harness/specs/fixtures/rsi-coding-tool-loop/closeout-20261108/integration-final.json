@@ -1,0 +1,739 @@
+{
+  "schemaVersion": "RsiCodingToolIntegration/v1",
+  "date": "2026-11-08",
+  "driven_by": "agent",
+  "actor": "codex/rsi-tool-integration-verifier",
+  "evidenceKind": "scripted-provider-real-filesystem-and-historical-oracle",
+  "candidate": {
+    "commit": "135a62864e738889349a41601bccecfe878bade9",
+    "dirty": false
+  },
+  "passed": true,
+  "durationMs": 28026,
+  "directory": "D:/tmp/rsi-tools-integration-3dIgUU",
+  "row": {
+    "schemaVersion": "RsiBenefitTrial/v1",
+    "driven_by": "agent",
+    "actor": "codex/rsi-benefit-eval/executor",
+    "planDigest": "720ff97acbc0b91662e54dbfc93906364c76a1789fc2ab7d9c140126db217b01",
+    "slot": {
+      "id": "tf-0291-g03-1-sekb-shadow",
+      "caseId": "tf-0291-g03",
+      "repeat": 1,
+      "arm": "sekb-shadow",
+      "caseDigest": "29897d15119bd3dc6c8080989508e04606333e94eadc26732b6ae5bf9604f9c3",
+      "pairSeed": 13,
+      "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+      "position": 36
+    },
+    "evidenceKind": "synthetic-wiring-fixture",
+    "request": {
+      "model": "space-bunny",
+      "instructions": "Implement the supplied task in the isolated workspace. Use read_file, apply_edits and check_public_contract within the frozen budgets. apply_edits can change several files in one call. Use only declared source paths and targetScope; preserve tests, evaluator, dependencies and permissions. After public checks, return only {\"finish\":true}. Do not repeat source files in the final response. Hidden tests run independently after completion; do not read tests at runtime or perform network or process effects in the implementation.",
+      "input": "{\n  \"prompt\": \"G03 提供一个显式触发的转换器：把选定的脱敏失败轨迹转成可复跑评测样例（before-fix=fail / after-fix=pass），样例绑定有界 reproducer 与 selector，并拒绝任何未脱敏（raw prompt / 密钥 / auth 头）的轨迹，防止泄漏。不做定时 automation / 后台 daemon。\",\n  \"acceptanceCriteria\": [\n    \"一条真实失败轨迹 → 一个可复跑样例：before-fix 期望 fail、after-fix 期望 pass；成功/拒绝/取消轨迹保持 pass（修复不得回归）。\",\n    \"样例绑定有界 reproducer（kind ∈ scenario|route|command-id，非 shell）与 selector（runId+attempt），含确定性 digest 供 replay 对比。\",\n    \"拒绝未脱敏轨迹：出现 raw prompt/messages/body/authorization/apiKey/headers 或 sk-/phc_/ghp_/AKIA/私钥 等即整条拒绝，不写入样例（防泄漏）。\",\n    \"显式触发批处理：仅转换调用方选定的轨迹（可对应最近 7 天 runIds），每个被拒轨迹单独留诊断；不新建定时 automation / daemon。\",\n    \"不改产品默认值/锁/approval；不删除原始证据。\",\n    \"干净候选定向测试、类型、scoped lint、harness validate/dry-run 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"scripts/lib/trace-to-eval-sample.mjs\",\n    \"scripts/lib/trace-to-eval-sample.d.mts\",\n    \"harness/specs/tasks/harness-gap-trace-to-eval-sample.md\",\n    \"docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"finish\"\n    ],\n    \"properties\": {\n      \"finish\": {\n        \"type\": \"boolean\",\n        \"const\": true\n      }\n    }\n  },\n  \"taskKind\": \"module-implementation\",\n  \"publicContract\": {\n    \"protocol\": \"RsiCodingTaskInputs/v1\",\n    \"declarations\": [\n      {\n        \"path\": \"scripts/lib/trace-to-eval-sample.d.mts\",\n        \"content\": \"export const TRACE_TO_EVAL_SCHEMA: \\\"clawx.trace-to-eval.v1\\\";\\nexport type TraceOutcome = \\\"failure\\\" | \\\"success\\\" | \\\"refusal\\\" | \\\"cancelled\\\";\\nexport type TraceReproducer = {\\n    kind: \\\"scenario\\\" | \\\"route\\\" | \\\"command-id\\\";\\n    ref: string;\\n};\\nexport type RedactedFailureTrace = {\\n    runId: string;\\n    createdAt: string;\\n    outcome: TraceOutcome;\\n    reproducer: TraceReproducer;\\n    signature: string;\\n    attempt?: number;\\n};\\nexport type EvalSample = {\\n    schema: typeof TRACE_TO_EVAL_SCHEMA;\\n    id: string;\\n    sourceRunId: string;\\n    createdAt: string;\\n    sourceOutcome: TraceOutcome;\\n    expected: {\\n        \\\"before-fix\\\": \\\"pass\\\" | \\\"fail\\\";\\n        \\\"after-fix\\\": \\\"pass\\\" | \\\"fail\\\";\\n    };\\n    reproducer: TraceReproducer;\\n    selector: {\\n        runId: string;\\n        attempt: number;\\n    };\\n    digest: string;\\n};\\nexport type EvalSampleDiagnostic = {\\n    code: string;\\n    message: string;\\n};\\nexport function traceToEvalSample(trace: unknown): {\\n    ok: true;\\n    sample: EvalSample;\\n    diagnostics: [\\n    ];\\n} | {\\n    ok: false;\\n    diagnostics: EvalSampleDiagnostic[];\\n};\\nexport function traceToEvalSamples(traces: readonly unknown[]): {\\n    schema: typeof TRACE_TO_EVAL_SCHEMA;\\n    samples: EvalSample[];\\n    rejected: Array<{\\n        runId: string | null;\\n        diagnostics: EvalSampleDiagnostic[];\\n    }>;\\n};\\n\"\n      }\n    ],\n    \"behavior\": \"- Export traceToEvalSample(trace) and traceToEvalSamples(traces).\\n- A valid trace has runId, createdAt, outcome, reproducer {kind, ref}, and signature.\\n- traceToEvalSample(trace) returns either {ok:true, sample:{sourceRunId, expected:{'before-fix': 'fail'|'pass', 'after-fix':'pass'}, reproducer, selector:{runId, attempt}, digest}} or {ok:false, diagnostics:[{code, message?}]}.\\n- sourceRunId equals runId. attempt is a positive integer derived from trace.attempt or defaults to 1. digest is exactly 16 lowercase hexadecimal characters and deterministic for the same trace.\\n- failure => before-fix fail, after-fix pass. success/refusal/cancelled => both expected values pass.\\n- Missing required field => first diagnostic code missing-field.\\n- Any raw prompt/messages/body/authorization/apiKey/headers field or secret-like content in the trace => code trace-not-redacted.\\n- Invalid reproducer kind or empty ref => code invalid-reproducer. Allowed kinds are scenario, route, command-id; shell is forbidden.\\n- traceToEvalSamples returns {samples, rejected}; preserve caller order; rejected entries carry runId and diagnostics.\\n- The module is pure, ESM, has no scheduler/daemon/network side effects, and does not delete source evidence.\",\n    \"document\": {\n      \"format\": \"repository-markdown-or-module-contract\",\n      \"taskSpecFields\": [\n        \"id\",\n        \"title\",\n        \"intent\",\n        \"requiredTests\",\n        \"requiredRules\",\n        \"lifecycleStatus\"\n      ],\n      \"lifecycleStates\": [\n        \"active\",\n        \"completed\",\n        \"archived\"\n      ],\n      \"sourceOfTruth\": \"historical-base-and-declared-task-criteria\"\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"scripts/lib/trace-to-eval-sample.mjs\",\n      \"content\": null,\n      \"missing\": true,\n      \"reconstructed\": false\n    },\n    {\n      \"path\": \"scripts/lib/trace-to-eval-sample.d.mts\",\n      \"content\": null,\n      \"missing\": true,\n      \"reconstructed\": false\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-trace-to-eval-sample.md\",\n      \"content\": null,\n      \"missing\": true,\n      \"reconstructed\": false\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\",\n      \"content\": null,\n      \"missing\": true,\n      \"reconstructed\": false\n    }\n  ],\n  \"omittedContext\": []\n}",
+      "store": false,
+      "stream": false,
+      "truncation": "disabled",
+      "max_output_tokens": 16000,
+      "tools": [
+        {
+          "type": "function",
+          "name": "read_file",
+          "description": "Read a bounded range of an allowed task source or public declaration.",
+          "strict": true,
+          "parameters": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "startLine",
+              "maxLines"
+            ],
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "startLine": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "maxLines": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 200
+              }
+            }
+          }
+        },
+        {
+          "type": "function",
+          "name": "apply_edits",
+          "description": "Apply a validated batch. A null oldText writes a complete file; otherwise replace one exact occurrence.",
+          "strict": true,
+          "parameters": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "edits"
+            ],
+            "properties": {
+              "edits": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 32,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "path",
+                    "oldText",
+                    "newText"
+                  ],
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    },
+                    "oldText": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "newText": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "function",
+          "name": "check_public_contract",
+          "description": "Check edited-source syntax, public exported names and task document fields without running hidden tests.",
+          "strict": true,
+          "parameters": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {},
+            "required": []
+          }
+        }
+      ],
+      "reasoning": {
+        "effort": "low"
+      },
+      "text": {
+        "format": {
+          "type": "json_schema",
+          "name": "rsi_coding_edits",
+          "strict": true,
+          "schema": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "finish"
+            ],
+            "properties": {
+              "finish": {
+                "type": "boolean",
+                "const": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "requestDigest": "95674878420021eeda611e2135240815eae5ff66c55d2ab337eec173f6fcb58c",
+    "runtime": {
+      "flags": {
+        "enabled": true,
+        "shadowEvaluation": true,
+        "injection": false
+      },
+      "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+      "candidateDigest": "420aa5b4f4eb5446725b4827ae0dcee54f1faa98b1e7e96cf7366256e66ea4af",
+      "injectionDigest": null,
+      "isolationId": "245c265f-134b-4502-8aa0-b01b19a624f9/tf-0291-g03-1-sekb-shadow",
+      "runtimeEffectMeasured": true
+    },
+    "edits": [
+      {
+        "path": "docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md",
+        "content": "# G03：脱敏失败轨迹 → 可复跑评测样例\n\n日期：2026-10-13（Asia/Shanghai）。包码：G03（TF-0291）。真实 provider 调用：无。\n\n## 链路\n\n`scripts/lib/trace-to-eval-sample.mjs`：\n\n- `traceToEvalSample(trace)`：把一条脱敏轨迹转成样例；`expected = { before-fix: fail|pass, after-fix: pass }`（failure 轨迹 before-fix=fail，其余保持 pass）。\n- `traceToEvalSamples(traces)`：显式触发批处理（仅调用方选定轨迹；可对应最近 7 天 runIds），逐条留 rejected 诊断。\n\n## 约束\n\n- **有界 reproducer**：`kind ∈ { scenario, route, command-id }`；不是 shell 指令。\n- **selector 可定位**：`{ runId, attempt }` 供 replay。\n- **确定性**：样例含 digest。\n- **脱敏闸门**：出现 `prompt/messages/body/authorization/apiKey/headers` 或 `sk-/phc_/ghp_/AKIA/私钥` 等即拒绝整条（`trace-not-redacted`），不写样例。\n- **显式触发**：不做定时 automation/daemon；不删原始证据。\n\n## 实测\n\n| 断言 | 结果 |\n|---|---|\n| failure 轨迹 → before-fix fail / after-fix pass；digest 确定 | ✅ |\n| success/refusal/cancelled → pass | ✅ |\n| raw prompt 或密钥 → 整条拒绝 | ✅ |\n| 非有界 reproducer（shell）→ 拒绝 | ✅ |\n| 批处理逐条留 rejected 诊断 | ✅ |\n| 缺字段 → 拒绝 | ✅ |\n\n## 残余（residual）\n\n- 本包提供转换器；把它接到具体 trace 存储/runner 属集成层。\n- 不新建 scenario registry/daemon/定时任务；不改默认值/锁/approval；非真人证据。\n"
+      },
+      {
+        "path": "harness/specs/tasks/harness-gap-trace-to-eval-sample.md",
+        "content": "---\nlifecycleStatus: completed\nid: harness-gap-trace-to-eval-sample\ntitle: 把脱敏失败轨迹转成可复跑评测样例（G03）\nscenario: agent-dev-composable-scenarios\ntaskType: evaluation-harness\nintent: G03 提供一个显式触发的转换器：把选定的脱敏失败轨迹转成可复跑评测样例（before-fix=fail / after-fix=pass），样例绑定有界 reproducer 与 selector，并拒绝任何未脱敏（raw prompt / 密钥 / auth 头）的轨迹，防止泄漏。不做定时 automation / 后台 daemon。\ntouchedAreas:\n  - scripts/lib/trace-to-eval-sample.mjs\n  - scripts/lib/trace-to-eval-sample.d.mts\n  - tests/unit/trace-to-eval-sample.test.ts\n  - harness/specs/tasks/harness-gap-trace-to-eval-sample.md\n  - docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\n  - docs/dev/harness-gap-closure/g03-acceptance.json\n  - docs/dev/harness-gap-closure/G03-SHA256SUMS\nownedPaths:\n  - scripts/lib/trace-to-eval-sample.mjs\n  - scripts/lib/trace-to-eval-sample.d.mts\n  - tests/unit/trace-to-eval-sample.test.ts\n  - harness/specs/tasks/harness-gap-trace-to-eval-sample.md\n  - docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\n  - docs/dev/harness-gap-closure/g03-acceptance.json\n  - docs/dev/harness-gap-closure/G03-SHA256SUMS\nrequiredProfiles:\n  - fast\nrequiredRules:\n  - docs-sync\n  - task-forest-autoclose-and-roles\n  - repository-artifact-retention\nhumanEvidence: not-required\nrequiredTests:\n  - tests/unit/trace-to-eval-sample.test.ts\nacceptance:\n  - 一条真实失败轨迹 → 一个可复跑样例：before-fix 期望 fail、after-fix 期望 pass；成功/拒绝/取消轨迹保持 pass（修复不得回归）。\n  - 样例绑定有界 reproducer（kind ∈ scenario|route|command-id，非 shell）与 selector（runId+attempt），含确定性 digest 供 replay 对比。\n  - 拒绝未脱敏轨迹：出现 raw prompt/messages/body/authorization/apiKey/headers 或 sk-/phc_/ghp_/AKIA/私钥 等即整条拒绝，不写入样例（防泄漏）。\n  - 显式触发批处理：仅转换调用方选定的轨迹（可对应最近 7 天 runIds），每个被拒轨迹单独留诊断；不新建定时 automation / daemon。\n  - 不改产品默认值/锁/approval；不删除原始证据。\n  - 干净候选定向测试、类型、scoped lint、harness validate/dry-run 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\nexpectedUserBehavior:\n  - 维护者能显式地把一条脱敏失败轨迹沉淀成可复跑评测样例（修复前 fail、修复后 pass），未脱敏轨迹被拒绝而非泄漏。\ndocs:\n  required: true\n  files:\n    - docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\n---\n\n# G03 冻结实施边界\n\nG03 只新增一个纯转换器 + 显式触发的批处理入口（`scripts/lib/trace-to-eval-sample.mjs`），把选定脱敏轨迹转成可复跑样例；不做定时 automation/daemon，不新建第二份 scenario registry（样例指向既有 agent-dev scenario/route/command-id）。未脱敏轨迹整条拒绝。\n"
+      },
+      {
+        "path": "scripts/lib/trace-to-eval-sample.d.mts",
+        "content": "export const TRACE_TO_EVAL_SCHEMA: \"clawx.trace-to-eval.v1\";\nexport type TraceOutcome = \"failure\" | \"success\" | \"refusal\" | \"cancelled\";\nexport type TraceReproducer = { kind: \"scenario\" | \"route\" | \"command-id\"; ref: string };\nexport type RedactedFailureTrace = {\n  runId: string;\n  createdAt: string;\n  outcome: TraceOutcome;\n  reproducer: TraceReproducer;\n  signature: string;\n  attempt?: number;\n};\nexport type EvalSample = {\n  schema: typeof TRACE_TO_EVAL_SCHEMA;\n  id: string;\n  sourceRunId: string;\n  createdAt: string;\n  sourceOutcome: TraceOutcome;\n  expected: { \"before-fix\": \"pass\" | \"fail\"; \"after-fix\": \"pass\" | \"fail\" };\n  reproducer: TraceReproducer;\n  selector: { runId: string; attempt: number };\n  digest: string;\n};\nexport type EvalSampleDiagnostic = { code: string; message: string };\nexport function traceToEvalSample(trace: unknown): { ok: true; sample: EvalSample; diagnostics: [] } | { ok: false; diagnostics: EvalSampleDiagnostic[] };\nexport function traceToEvalSamples(traces: readonly unknown[]): { schema: typeof TRACE_TO_EVAL_SCHEMA; samples: EvalSample[]; rejected: Array<{ runId: string | null; diagnostics: EvalSampleDiagnostic[] }> };"
+      },
+      {
+        "path": "scripts/lib/trace-to-eval-sample.mjs",
+        "content": "/**\n * G03: turn a redacted failure trace into a re-runnable eval sample.\n *\n * Explicit-trigger only: the caller passes the trace(s) it selected (for example\n * the most recent 7 days by run id) — this module never schedules or watches\n * anything. Each sample carries:\n * - an expected outcome (`before-fix: fail`, `after-fix: pass`);\n * - a bounded reproducer (a route/id, never a raw shell command);\n * - a digest for replay comparison;\n * and it refuses any trace that is not redacted (raw prompt / secret / auth\n * fields), so a promoted sample cannot leak the failure content.\n */\n\nconst SECRET_PATTERNS = [\n  /sk-[A-Za-z0-9]{16,}/,\n  /phc_[A-Za-z0-9]{16,}/,\n  /ghp_[A-Za-z0-9]{16,}/,\n  /AKIA[0-9A-Z]{16}/,\n  /-----BEGIN [A-Z ]*PRIVATE KEY-----/,\n];\nconst RAW_CONTENT_KEYS = [\"prompt\", \"rawPrompt\", \"messages\", \"body\", \"authorization\", \"apiKey\", \"headers\"];\n\nexport const TRACE_TO_EVAL_SCHEMA = \"clawx.trace-to-eval.v1\";\n\nfunction sha256(value) {\n  // Small dependency-free hash so the pure module has no node:crypto import.\n  let h1 = 0x811c9dc5;\n  let h2 = 0x01000193;\n  const text = String(value);\n  for (let i = 0; i < text.length; i += 1) {\n    const c = text.charCodeAt(i);\n    h1 = Math.imul(h1 ^ c, 16777619) >>> 0;\n    h2 = Math.imul(h2 ^ c, 2246822519) >>> 0;\n  }\n  return (h1.toString(16).padStart(8, \"0\") + h2.toString(16).padStart(8, \"0\"));\n}\n\nfunction isRedacted(trace) {\n  const text = JSON.stringify(trace);\n  for (const pattern of SECRET_PATTERNS) {\n    if (pattern.test(text)) return { redacted: false, reason: `secret-like value matched ${pattern}` };\n  }\n  const stack = [trace];\n  while (stack.length > 0) {\n    const value = stack.pop();\n    if (value && typeof value === \"object\") {\n      for (const [key, child] of Object.entries(value)) {\n        if (RAW_CONTENT_KEYS.includes(key)) return { redacted: false, reason: `raw content field present: ${key}` };\n        if (child && typeof child === \"object\") stack.push(child);\n      }\n    }\n  }\n  return { redacted: true };\n}\n\n/**\n * @param {{\n *   runId: string,\n *   createdAt: string,\n *   outcome: 'failure' | 'success' | 'refusal' | 'cancelled',\n *   reproducer: { kind: 'scenario' | 'route' | 'command-id', ref: string },\n *   signature: string,\n *   attempt?: number,\n * }} trace\n */\nexport function traceToEvalSample(trace) {\n  if (!trace || typeof trace !== \"object\") {\n    return { ok: false, diagnostics: [{ code: \"invalid-trace\", message: \"trace must be an object\" }] };\n  }\n  for (const field of [\"runId\", \"createdAt\", \"outcome\", \"reproducer\", \"signature\"]) {\n    if (trace[field] === undefined || trace[field] === null) {\n      return { ok: false, diagnostics: [{ code: \"missing-field\", message: `trace.${field} is required` }] };\n    }\n  }\n  const redaction = isRedacted(trace);\n  if (!redaction.redacted) {\n    return { ok: false, diagnostics: [{ code: \"trace-not-redacted\", message: redaction.reason }] };\n  }\n  if (trace.outcome !== \"failure\" && trace.outcome !== \"success\" && trace.outcome !== \"refusal\" && trace.outcome !== \"cancelled\") {\n    return { ok: false, diagnostics: [{ code: \"invalid-outcome\", message: `unknown outcome ${trace.outcome}` }] };\n  }\n  const allowedKinds = [\"scenario\", \"route\", \"command-id\"];\n  if (!trace.reproducer || !allowedKinds.includes(trace.reproducer.kind) || typeof trace.reproducer.ref !== \"string\" || !trace.reproducer.ref) {\n    return { ok: false, diagnostics: [{ code: \"invalid-reproducer\", message: \"reproducer must be { kind: scenario|route|command-id, ref: string }\" }] };\n  }\n\n  const id = `eval-${trace.outcome}-${trace.signature.replace(/[^a-zA-Z0-9]+/g, \"-\").slice(0, 48)}`;\n  const sample = {\n    schema: TRACE_TO_EVAL_SCHEMA,\n    id,\n    sourceRunId: trace.runId,\n    createdAt: trace.createdAt,\n    sourceOutcome: trace.outcome,\n    expected: {\n      // Before a fix the registered sample is expected to reproduce the failure.\n      \"before-fix\": trace.outcome === \"failure\" ? \"fail\" : \"pass\",\n      // After a fix the same reproducer must turn green (for a failure trace).\n      \"after-fix\": trace.outcome === \"failure\" ? \"pass\" : \"pass\",\n    },\n    reproducer: { kind: trace.reproducer.kind, ref: trace.reproducer.ref },\n    selector: { runId: trace.runId, attempt: trace.attempt ?? 0 },\n  };\n  const digest = sha256(JSON.stringify(sample));\n  return { ok: true, sample: { ...sample, digest }, diagnostics: [] };\n}\n\n/** Explicit-trigger batch: convert selected traces only (never a watcher/scheduler). */\nexport function traceToEvalSamples(traces) {\n  const samples = [];\n  const rejected = [];\n  for (const trace of traces ?? []) {\n    const result = traceToEvalSample(trace);\n    if (result.ok) samples.push(result.sample);\n    else rejected.push({ runId: trace?.runId ?? null, diagnostics: result.diagnostics });\n  }\n  return { schema: TRACE_TO_EVAL_SCHEMA, samples, rejected };\n}"
+      }
+    ],
+    "execution": {
+      "status": "completed",
+      "failureClass": null,
+      "failureCategory": null,
+      "attempts": 1,
+      "providerCalls": 2,
+      "wallClockMs": 27681,
+      "costUsd": null,
+      "toolEvents": [
+        {
+          "type": "tool-call",
+          "callId": "implement",
+          "name": "apply_edits",
+          "arguments": "{\"edits\":[{\"path\":\"scripts/lib/trace-to-eval-sample.mjs\",\"oldText\":null,\"newText\":\"/**\\n * G03: turn a redacted failure trace into a re-runnable eval sample.\\n *\\n * Explicit-trigger only: the caller passes the trace(s) it selected (for example\\n * the most recent 7 days by run id) — this module never schedules or watches\\n * anything. Each sample carries:\\n * - an expected outcome (`before-fix: fail`, `after-fix: pass`);\\n * - a bounded reproducer (a route/id, never a raw shell command);\\n * - a digest for replay comparison;\\n * and it refuses any trace that is not redacted (raw prompt / secret / auth\\n * fields), so a promoted sample cannot leak the failure content.\\n */\\n\\nconst SECRET_PATTERNS = [\\n  /sk-[A-Za-z0-9]{16,}/,\\n  /phc_[A-Za-z0-9]{16,}/,\\n  /ghp_[A-Za-z0-9]{16,}/,\\n  /AKIA[0-9A-Z]{16}/,\\n  /-----BEGIN [A-Z ]*PRIVATE KEY-----/,\\n];\\nconst RAW_CONTENT_KEYS = [\\\"prompt\\\", \\\"rawPrompt\\\", \\\"messages\\\", \\\"body\\\", \\\"authorization\\\", \\\"apiKey\\\", \\\"headers\\\"];\\n\\nexport const TRACE_TO_EVAL_SCHEMA = \\\"clawx.trace-to-eval.v1\\\";\\n\\nfunction sha256(value) {\\n  // Small dependency-free hash so the pure module has no node:crypto import.\\n  let h1 = 0x811c9dc5;\\n  let h2 = 0x01000193;\\n  const text = String(value);\\n  for (let i = 0; i < text.length; i += 1) {\\n    const c = text.charCodeAt(i);\\n    h1 = Math.imul(h1 ^ c, 16777619) >>> 0;\\n    h2 = Math.imul(h2 ^ c, 2246822519) >>> 0;\\n  }\\n  return (h1.toString(16).padStart(8, \\\"0\\\") + h2.toString(16).padStart(8, \\\"0\\\"));\\n}\\n\\nfunction isRedacted(trace) {\\n  const text = JSON.stringify(trace);\\n  for (const pattern of SECRET_PATTERNS) {\\n    if (pattern.test(text)) return { redacted: false, reason: `secret-like value matched ${pattern}` };\\n  }\\n  const stack = [trace];\\n  while (stack.length > 0) {\\n    const value = stack.pop();\\n    if (value && typeof value === \\\"object\\\") {\\n      for (const [key, child] of Object.entries(value)) {\\n        if (RAW_CONTENT_KEYS.includes(key)) return { redacted: false, reason: `raw content field present: ${key}` };\\n        if (child && typeof child === \\\"object\\\") stack.push(child);\\n      }\\n    }\\n  }\\n  return { redacted: true };\\n}\\n\\n/**\\n * @param {{\\n *   runId: string,\\n *   createdAt: string,\\n *   outcome: 'failure' | 'success' | 'refusal' | 'cancelled',\\n *   reproducer: { kind: 'scenario' | 'route' | 'command-id', ref: string },\\n *   signature: string,\\n *   attempt?: number,\\n * }} trace\\n */\\nexport function traceToEvalSample(trace) {\\n  if (!trace || typeof trace !== \\\"object\\\") {\\n    return { ok: false, diagnostics: [{ code: \\\"invalid-trace\\\", message: \\\"trace must be an object\\\" }] };\\n  }\\n  for (const field of [\\\"runId\\\", \\\"createdAt\\\", \\\"outcome\\\", \\\"reproducer\\\", \\\"signature\\\"]) {\\n    if (trace[field] === undefined || trace[field] === null) {\\n      return { ok: false, diagnostics: [{ code: \\\"missing-field\\\", message: `trace.${field} is required` }] };\\n    }\\n  }\\n  const redaction = isRedacted(trace);\\n  if (!redaction.redacted) {\\n    return { ok: false, diagnostics: [{ code: \\\"trace-not-redacted\\\", message: redaction.reason }] };\\n  }\\n  if (trace.outcome !== \\\"failure\\\" && trace.outcome !== \\\"success\\\" && trace.outcome !== \\\"refusal\\\" && trace.outcome !== \\\"cancelled\\\") {\\n    return { ok: false, diagnostics: [{ code: \\\"invalid-outcome\\\", message: `unknown outcome ${trace.outcome}` }] };\\n  }\\n  const allowedKinds = [\\\"scenario\\\", \\\"route\\\", \\\"command-id\\\"];\\n  if (!trace.reproducer || !allowedKinds.includes(trace.reproducer.kind) || typeof trace.reproducer.ref !== \\\"string\\\" || !trace.reproducer.ref) {\\n    return { ok: false, diagnostics: [{ code: \\\"invalid-reproducer\\\", message: \\\"reproducer must be { kind: scenario|route|command-id, ref: string }\\\" }] };\\n  }\\n\\n  const id = `eval-${trace.outcome}-${trace.signature.replace(/[^a-zA-Z0-9]+/g, \\\"-\\\").slice(0, 48)}`;\\n  const sample = {\\n    schema: TRACE_TO_EVAL_SCHEMA,\\n    id,\\n    sourceRunId: trace.runId,\\n    createdAt: trace.createdAt,\\n    sourceOutcome: trace.outcome,\\n    expected: {\\n      // Before a fix the registered sample is expected to reproduce the failure.\\n      \\\"before-fix\\\": trace.outcome === \\\"failure\\\" ? \\\"fail\\\" : \\\"pass\\\",\\n      // After a fix the same reproducer must turn green (for a failure trace).\\n      \\\"after-fix\\\": trace.outcome === \\\"failure\\\" ? \\\"pass\\\" : \\\"pass\\\",\\n    },\\n    reproducer: { kind: trace.reproducer.kind, ref: trace.reproducer.ref },\\n    selector: { runId: trace.runId, attempt: trace.attempt ?? 0 },\\n  };\\n  const digest = sha256(JSON.stringify(sample));\\n  return { ok: true, sample: { ...sample, digest }, diagnostics: [] };\\n}\\n\\n/** Explicit-trigger batch: convert selected traces only (never a watcher/scheduler). */\\nexport function traceToEvalSamples(traces) {\\n  const samples = [];\\n  const rejected = [];\\n  for (const trace of traces ?? []) {\\n    const result = traceToEvalSample(trace);\\n    if (result.ok) samples.push(result.sample);\\n    else rejected.push({ runId: trace?.runId ?? null, diagnostics: result.diagnostics });\\n  }\\n  return { schema: TRACE_TO_EVAL_SCHEMA, samples, rejected };\\n}\"},{\"path\":\"scripts/lib/trace-to-eval-sample.d.mts\",\"oldText\":null,\"newText\":\"export const TRACE_TO_EVAL_SCHEMA: \\\"clawx.trace-to-eval.v1\\\";\\nexport type TraceOutcome = \\\"failure\\\" | \\\"success\\\" | \\\"refusal\\\" | \\\"cancelled\\\";\\nexport type TraceReproducer = { kind: \\\"scenario\\\" | \\\"route\\\" | \\\"command-id\\\"; ref: string };\\nexport type RedactedFailureTrace = {\\n  runId: string;\\n  createdAt: string;\\n  outcome: TraceOutcome;\\n  reproducer: TraceReproducer;\\n  signature: string;\\n  attempt?: number;\\n};\\nexport type EvalSample = {\\n  schema: typeof TRACE_TO_EVAL_SCHEMA;\\n  id: string;\\n  sourceRunId: string;\\n  createdAt: string;\\n  sourceOutcome: TraceOutcome;\\n  expected: { \\\"before-fix\\\": \\\"pass\\\" | \\\"fail\\\"; \\\"after-fix\\\": \\\"pass\\\" | \\\"fail\\\" };\\n  reproducer: TraceReproducer;\\n  selector: { runId: string; attempt: number };\\n  digest: string;\\n};\\nexport type EvalSampleDiagnostic = { code: string; message: string };\\nexport function traceToEvalSample(trace: unknown): { ok: true; sample: EvalSample; diagnostics: [] } | { ok: false; diagnostics: EvalSampleDiagnostic[] };\\nexport function traceToEvalSamples(traces: readonly unknown[]): { schema: typeof TRACE_TO_EVAL_SCHEMA; samples: EvalSample[]; rejected: Array<{ runId: string | null; diagnostics: EvalSampleDiagnostic[] }> };\"},{\"path\":\"harness/specs/tasks/harness-gap-trace-to-eval-sample.md\",\"oldText\":null,\"newText\":\"---\\nlifecycleStatus: completed\\nid: harness-gap-trace-to-eval-sample\\ntitle: 把脱敏失败轨迹转成可复跑评测样例（G03）\\nscenario: agent-dev-composable-scenarios\\ntaskType: evaluation-harness\\nintent: G03 提供一个显式触发的转换器：把选定的脱敏失败轨迹转成可复跑评测样例（before-fix=fail / after-fix=pass），样例绑定有界 reproducer 与 selector，并拒绝任何未脱敏（raw prompt / 密钥 / auth 头）的轨迹，防止泄漏。不做定时 automation / 后台 daemon。\\ntouchedAreas:\\n  - scripts/lib/trace-to-eval-sample.mjs\\n  - scripts/lib/trace-to-eval-sample.d.mts\\n  - tests/unit/trace-to-eval-sample.test.ts\\n  - harness/specs/tasks/harness-gap-trace-to-eval-sample.md\\n  - docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\\n  - docs/dev/harness-gap-closure/g03-acceptance.json\\n  - docs/dev/harness-gap-closure/G03-SHA256SUMS\\nownedPaths:\\n  - scripts/lib/trace-to-eval-sample.mjs\\n  - scripts/lib/trace-to-eval-sample.d.mts\\n  - tests/unit/trace-to-eval-sample.test.ts\\n  - harness/specs/tasks/harness-gap-trace-to-eval-sample.md\\n  - docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\\n  - docs/dev/harness-gap-closure/g03-acceptance.json\\n  - docs/dev/harness-gap-closure/G03-SHA256SUMS\\nrequiredProfiles:\\n  - fast\\nrequiredRules:\\n  - docs-sync\\n  - task-forest-autoclose-and-roles\\n  - repository-artifact-retention\\nhumanEvidence: not-required\\nrequiredTests:\\n  - tests/unit/trace-to-eval-sample.test.ts\\nacceptance:\\n  - 一条真实失败轨迹 → 一个可复跑样例：before-fix 期望 fail、after-fix 期望 pass；成功/拒绝/取消轨迹保持 pass（修复不得回归）。\\n  - 样例绑定有界 reproducer（kind ∈ scenario|route|command-id，非 shell）与 selector（runId+attempt），含确定性 digest 供 replay 对比。\\n  - 拒绝未脱敏轨迹：出现 raw prompt/messages/body/authorization/apiKey/headers 或 sk-/phc_/ghp_/AKIA/私钥 等即整条拒绝，不写入样例（防泄漏）。\\n  - 显式触发批处理：仅转换调用方选定的轨迹（可对应最近 7 天 runIds），每个被拒轨迹单独留诊断；不新建定时 automation / daemon。\\n  - 不改产品默认值/锁/approval；不删除原始证据。\\n  - 干净候选定向测试、类型、scoped lint、harness validate/dry-run 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\\nexpectedUserBehavior:\\n  - 维护者能显式地把一条脱敏失败轨迹沉淀成可复跑评测样例（修复前 fail、修复后 pass），未脱敏轨迹被拒绝而非泄漏。\\ndocs:\\n  required: true\\n  files:\\n    - docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\\n---\\n\\n# G03 冻结实施边界\\n\\nG03 只新增一个纯转换器 + 显式触发的批处理入口（`scripts/lib/trace-to-eval-sample.mjs`），把选定脱敏轨迹转成可复跑样例；不做定时 automation/daemon，不新建第二份 scenario registry（样例指向既有 agent-dev scenario/route/command-id）。未脱敏轨迹整条拒绝。\\n\"},{\"path\":\"docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\",\"oldText\":null,\"newText\":\"# G03：脱敏失败轨迹 → 可复跑评测样例\\n\\n日期：2026-10-13（Asia/Shanghai）。包码：G03（TF-0291）。真实 provider 调用：无。\\n\\n## 链路\\n\\n`scripts/lib/trace-to-eval-sample.mjs`：\\n\\n- `traceToEvalSample(trace)`：把一条脱敏轨迹转成样例；`expected = { before-fix: fail|pass, after-fix: pass }`（failure 轨迹 before-fix=fail，其余保持 pass）。\\n- `traceToEvalSamples(traces)`：显式触发批处理（仅调用方选定轨迹；可对应最近 7 天 runIds），逐条留 rejected 诊断。\\n\\n## 约束\\n\\n- **有界 reproducer**：`kind ∈ { scenario, route, command-id }`；不是 shell 指令。\\n- **selector 可定位**：`{ runId, attempt }` 供 replay。\\n- **确定性**：样例含 digest。\\n- **脱敏闸门**：出现 `prompt/messages/body/authorization/apiKey/headers` 或 `sk-/phc_/ghp_/AKIA/私钥` 等即拒绝整条（`trace-not-redacted`），不写样例。\\n- **显式触发**：不做定时 automation/daemon；不删原始证据。\\n\\n## 实测\\n\\n| 断言 | 结果 |\\n|---|---|\\n| failure 轨迹 → before-fix fail / after-fix pass；digest 确定 | ✅ |\\n| success/refusal/cancelled → pass | ✅ |\\n| raw prompt 或密钥 → 整条拒绝 | ✅ |\\n| 非有界 reproducer（shell）→ 拒绝 | ✅ |\\n| 批处理逐条留 rejected 诊断 | ✅ |\\n| 缺字段 → 拒绝 | ✅ |\\n\\n## 残余（residual）\\n\\n- 本包提供转换器；把它接到具体 trace 存储/runner 属集成层。\\n- 不新建 scenario registry/daemon/定时任务；不改默认值/锁/approval；非真人证据。\\n\"}]}",
+          "output": "{\"ok\":true,\"effects\":[{\"path\":\"scripts/lib/trace-to-eval-sample.mjs\",\"beforeSha256\":null,\"afterSha256\":\"f67ed77b6202878d75bd5eb18661e8bf49fa791907edd1ed4889529b469ecc28\",\"bytes\":4835},{\"path\":\"scripts/lib/trace-to-eval-sample.d.mts\",\"beforeSha256\":null,\"afterSha256\":\"a74711233bbd97060d9a8e16723c3b37b45f263e9b2b8987b82f63b53f4865f8\",\"bytes\":1166},{\"path\":\"harness/specs/tasks/harness-gap-trace-to-eval-sample.md\",\"beforeSha256\":null,\"afterSha256\":\"f0d8e2b9991d932ce267a9e88671357687f22f6b34d26f73366271185879aab7\",\"bytes\":2987},{\"path\":\"docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\",\"beforeSha256\":null,\"afterSha256\":\"0fe5f1fe54dbf41bf6a83c65d366cb55f7872d8f10f5ccfb3ce967399f30d757\",\"bytes\":1546}]}"
+        },
+        {
+          "type": "tool-call",
+          "callId": "public-check",
+          "name": "check_public_contract",
+          "arguments": "{}",
+          "output": "{\"ok\":true,\"errorCount\":0,\"errors\":[],\"errorsTruncated\":false}"
+        }
+      ],
+      "runPosition": 36,
+      "startedAt": "2026-11-08T02:46:25.538Z",
+      "endedAt": "2026-11-08T02:46:53.221Z",
+      "measurementBasis": "scripted-provider",
+      "note": "Bounded public tool loop; independent reference-bound final-state grading.",
+      "tokenBudgetAtStart": 9007199254740991,
+      "providerBudgetAtStart": 4
+    },
+    "rawResponse": {
+      "id": "scripted-integration-1",
+      "model": "space-bunny",
+      "status": "completed",
+      "output": [
+        {
+          "type": "message",
+          "role": "assistant",
+          "content": [
+            {
+              "type": "output_text",
+              "text": "{\"finish\":true}"
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "input_tokens": 10,
+        "output_tokens": 10,
+        "total_tokens": 20
+      }
+    },
+    "providerAttempts": [
+      {
+        "endpoint": "http://127.0.0.1:3065/v1/responses",
+        "request": {
+          "model": "space-bunny",
+          "instructions": "Implement the supplied task in the isolated workspace. Use read_file, apply_edits and check_public_contract within the frozen budgets. apply_edits can change several files in one call. Use only declared source paths and targetScope; preserve tests, evaluator, dependencies and permissions. After public checks, return only {\"finish\":true}. Do not repeat source files in the final response. Hidden tests run independently after completion; do not read tests at runtime or perform network or process effects in the implementation.",
+          "input": "{\n  \"prompt\": \"G03 提供一个显式触发的转换器：把选定的脱敏失败轨迹转成可复跑评测样例（before-fix=fail / after-fix=pass），样例绑定有界 reproducer 与 selector，并拒绝任何未脱敏（raw prompt / 密钥 / auth 头）的轨迹，防止泄漏。不做定时 automation / 后台 daemon。\",\n  \"acceptanceCriteria\": [\n    \"一条真实失败轨迹 → 一个可复跑样例：before-fix 期望 fail、after-fix 期望 pass；成功/拒绝/取消轨迹保持 pass（修复不得回归）。\",\n    \"样例绑定有界 reproducer（kind ∈ scenario|route|command-id，非 shell）与 selector（runId+attempt），含确定性 digest 供 replay 对比。\",\n    \"拒绝未脱敏轨迹：出现 raw prompt/messages/body/authorization/apiKey/headers 或 sk-/phc_/ghp_/AKIA/私钥 等即整条拒绝，不写入样例（防泄漏）。\",\n    \"显式触发批处理：仅转换调用方选定的轨迹（可对应最近 7 天 runIds），每个被拒轨迹单独留诊断；不新建定时 automation / daemon。\",\n    \"不改产品默认值/锁/approval；不删除原始证据。\",\n    \"干净候选定向测试、类型、scoped lint、harness validate/dry-run 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"scripts/lib/trace-to-eval-sample.mjs\",\n    \"scripts/lib/trace-to-eval-sample.d.mts\",\n    \"harness/specs/tasks/harness-gap-trace-to-eval-sample.md\",\n    \"docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"finish\"\n    ],\n    \"properties\": {\n      \"finish\": {\n        \"type\": \"boolean\",\n        \"const\": true\n      }\n    }\n  },\n  \"taskKind\": \"module-implementation\",\n  \"publicContract\": {\n    \"protocol\": \"RsiCodingTaskInputs/v1\",\n    \"declarations\": [\n      {\n        \"path\": \"scripts/lib/trace-to-eval-sample.d.mts\",\n        \"content\": \"export const TRACE_TO_EVAL_SCHEMA: \\\"clawx.trace-to-eval.v1\\\";\\nexport type TraceOutcome = \\\"failure\\\" | \\\"success\\\" | \\\"refusal\\\" | \\\"cancelled\\\";\\nexport type TraceReproducer = {\\n    kind: \\\"scenario\\\" | \\\"route\\\" | \\\"command-id\\\";\\n    ref: string;\\n};\\nexport type RedactedFailureTrace = {\\n    runId: string;\\n    createdAt: string;\\n    outcome: TraceOutcome;\\n    reproducer: TraceReproducer;\\n    signature: string;\\n    attempt?: number;\\n};\\nexport type EvalSample = {\\n    schema: typeof TRACE_TO_EVAL_SCHEMA;\\n    id: string;\\n    sourceRunId: string;\\n    createdAt: string;\\n    sourceOutcome: TraceOutcome;\\n    expected: {\\n        \\\"before-fix\\\": \\\"pass\\\" | \\\"fail\\\";\\n        \\\"after-fix\\\": \\\"pass\\\" | \\\"fail\\\";\\n    };\\n    reproducer: TraceReproducer;\\n    selector: {\\n        runId: string;\\n        attempt: number;\\n    };\\n    digest: string;\\n};\\nexport type EvalSampleDiagnostic = {\\n    code: string;\\n    message: string;\\n};\\nexport function traceToEvalSample(trace: unknown): {\\n    ok: true;\\n    sample: EvalSample;\\n    diagnostics: [\\n    ];\\n} | {\\n    ok: false;\\n    diagnostics: EvalSampleDiagnostic[];\\n};\\nexport function traceToEvalSamples(traces: readonly unknown[]): {\\n    schema: typeof TRACE_TO_EVAL_SCHEMA;\\n    samples: EvalSample[];\\n    rejected: Array<{\\n        runId: string | null;\\n        diagnostics: EvalSampleDiagnostic[];\\n    }>;\\n};\\n\"\n      }\n    ],\n    \"behavior\": \"- Export traceToEvalSample(trace) and traceToEvalSamples(traces).\\n- A valid trace has runId, createdAt, outcome, reproducer {kind, ref}, and signature.\\n- traceToEvalSample(trace) returns either {ok:true, sample:{sourceRunId, expected:{'before-fix': 'fail'|'pass', 'after-fix':'pass'}, reproducer, selector:{runId, attempt}, digest}} or {ok:false, diagnostics:[{code, message?}]}.\\n- sourceRunId equals runId. attempt is a positive integer derived from trace.attempt or defaults to 1. digest is exactly 16 lowercase hexadecimal characters and deterministic for the same trace.\\n- failure => before-fix fail, after-fix pass. success/refusal/cancelled => both expected values pass.\\n- Missing required field => first diagnostic code missing-field.\\n- Any raw prompt/messages/body/authorization/apiKey/headers field or secret-like content in the trace => code trace-not-redacted.\\n- Invalid reproducer kind or empty ref => code invalid-reproducer. Allowed kinds are scenario, route, command-id; shell is forbidden.\\n- traceToEvalSamples returns {samples, rejected}; preserve caller order; rejected entries carry runId and diagnostics.\\n- The module is pure, ESM, has no scheduler/daemon/network side effects, and does not delete source evidence.\",\n    \"document\": {\n      \"format\": \"repository-markdown-or-module-contract\",\n      \"taskSpecFields\": [\n        \"id\",\n        \"title\",\n        \"intent\",\n        \"requiredTests\",\n        \"requiredRules\",\n        \"lifecycleStatus\"\n      ],\n      \"lifecycleStates\": [\n        \"active\",\n        \"completed\",\n        \"archived\"\n      ],\n      \"sourceOfTruth\": \"historical-base-and-declared-task-criteria\"\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"scripts/lib/trace-to-eval-sample.mjs\",\n      \"content\": null,\n      \"missing\": true,\n      \"reconstructed\": false\n    },\n    {\n      \"path\": \"scripts/lib/trace-to-eval-sample.d.mts\",\n      \"content\": null,\n      \"missing\": true,\n      \"reconstructed\": false\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-trace-to-eval-sample.md\",\n      \"content\": null,\n      \"missing\": true,\n      \"reconstructed\": false\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\",\n      \"content\": null,\n      \"missing\": true,\n      \"reconstructed\": false\n    }\n  ],\n  \"omittedContext\": []\n}",
+          "store": false,
+          "stream": false,
+          "truncation": "disabled",
+          "max_output_tokens": 16000,
+          "tools": [
+            {
+              "type": "function",
+              "name": "read_file",
+              "description": "Read a bounded range of an allowed task source or public declaration.",
+              "strict": true,
+              "parameters": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "startLine",
+                  "maxLines"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "startLine": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "maxLines": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 200
+                  }
+                }
+              }
+            },
+            {
+              "type": "function",
+              "name": "apply_edits",
+              "description": "Apply a validated batch. A null oldText writes a complete file; otherwise replace one exact occurrence.",
+              "strict": true,
+              "parameters": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "edits"
+                ],
+                "properties": {
+                  "edits": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 32,
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "path",
+                        "oldText",
+                        "newText"
+                      ],
+                      "properties": {
+                        "path": {
+                          "type": "string"
+                        },
+                        "oldText": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "newText": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "type": "function",
+              "name": "check_public_contract",
+              "description": "Check edited-source syntax, public exported names and task document fields without running hidden tests.",
+              "strict": true,
+              "parameters": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {},
+                "required": []
+              }
+            }
+          ],
+          "reasoning": {
+            "effort": "low"
+          },
+          "text": {
+            "format": {
+              "type": "json_schema",
+              "name": "rsi_coding_edits",
+              "strict": true,
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "finish"
+                ],
+                "properties": {
+                  "finish": {
+                    "type": "boolean",
+                    "const": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "rawResponse": {
+          "id": "scripted-integration-0",
+          "model": "space-bunny",
+          "status": "completed",
+          "output": [
+            {
+              "type": "function_call",
+              "call_id": "implement",
+              "name": "apply_edits",
+              "arguments": "{\"edits\":[{\"path\":\"scripts/lib/trace-to-eval-sample.mjs\",\"oldText\":null,\"newText\":\"/**\\n * G03: turn a redacted failure trace into a re-runnable eval sample.\\n *\\n * Explicit-trigger only: the caller passes the trace(s) it selected (for example\\n * the most recent 7 days by run id) — this module never schedules or watches\\n * anything. Each sample carries:\\n * - an expected outcome (`before-fix: fail`, `after-fix: pass`);\\n * - a bounded reproducer (a route/id, never a raw shell command);\\n * - a digest for replay comparison;\\n * and it refuses any trace that is not redacted (raw prompt / secret / auth\\n * fields), so a promoted sample cannot leak the failure content.\\n */\\n\\nconst SECRET_PATTERNS = [\\n  /sk-[A-Za-z0-9]{16,}/,\\n  /phc_[A-Za-z0-9]{16,}/,\\n  /ghp_[A-Za-z0-9]{16,}/,\\n  /AKIA[0-9A-Z]{16}/,\\n  /-----BEGIN [A-Z ]*PRIVATE KEY-----/,\\n];\\nconst RAW_CONTENT_KEYS = [\\\"prompt\\\", \\\"rawPrompt\\\", \\\"messages\\\", \\\"body\\\", \\\"authorization\\\", \\\"apiKey\\\", \\\"headers\\\"];\\n\\nexport const TRACE_TO_EVAL_SCHEMA = \\\"clawx.trace-to-eval.v1\\\";\\n\\nfunction sha256(value) {\\n  // Small dependency-free hash so the pure module has no node:crypto import.\\n  let h1 = 0x811c9dc5;\\n  let h2 = 0x01000193;\\n  const text = String(value);\\n  for (let i = 0; i < text.length; i += 1) {\\n    const c = text.charCodeAt(i);\\n    h1 = Math.imul(h1 ^ c, 16777619) >>> 0;\\n    h2 = Math.imul(h2 ^ c, 2246822519) >>> 0;\\n  }\\n  return (h1.toString(16).padStart(8, \\\"0\\\") + h2.toString(16).padStart(8, \\\"0\\\"));\\n}\\n\\nfunction isRedacted(trace) {\\n  const text = JSON.stringify(trace);\\n  for (const pattern of SECRET_PATTERNS) {\\n    if (pattern.test(text)) return { redacted: false, reason: `secret-like value matched ${pattern}` };\\n  }\\n  const stack = [trace];\\n  while (stack.length > 0) {\\n    const value = stack.pop();\\n    if (value && typeof value === \\\"object\\\") {\\n      for (const [key, child] of Object.entries(value)) {\\n        if (RAW_CONTENT_KEYS.includes(key)) return { redacted: false, reason: `raw content field present: ${key}` };\\n        if (child && typeof child === \\\"object\\\") stack.push(child);\\n      }\\n    }\\n  }\\n  return { redacted: true };\\n}\\n\\n/**\\n * @param {{\\n *   runId: string,\\n *   createdAt: string,\\n *   outcome: 'failure' | 'success' | 'refusal' | 'cancelled',\\n *   reproducer: { kind: 'scenario' | 'route' | 'command-id', ref: string },\\n *   signature: string,\\n *   attempt?: number,\\n * }} trace\\n */\\nexport function traceToEvalSample(trace) {\\n  if (!trace || typeof trace !== \\\"object\\\") {\\n    return { ok: false, diagnostics: [{ code: \\\"invalid-trace\\\", message: \\\"trace must be an object\\\" }] };\\n  }\\n  for (const field of [\\\"runId\\\", \\\"createdAt\\\", \\\"outcome\\\", \\\"reproducer\\\", \\\"signature\\\"]) {\\n    if (trace[field] === undefined || trace[field] === null) {\\n      return { ok: false, diagnostics: [{ code: \\\"missing-field\\\", message: `trace.${field} is required` }] };\\n    }\\n  }\\n  const redaction = isRedacted(trace);\\n  if (!redaction.redacted) {\\n    return { ok: false, diagnostics: [{ code: \\\"trace-not-redacted\\\", message: redaction.reason }] };\\n  }\\n  if (trace.outcome !== \\\"failure\\\" && trace.outcome !== \\\"success\\\" && trace.outcome !== \\\"refusal\\\" && trace.outcome !== \\\"cancelled\\\") {\\n    return { ok: false, diagnostics: [{ code: \\\"invalid-outcome\\\", message: `unknown outcome ${trace.outcome}` }] };\\n  }\\n  const allowedKinds = [\\\"scenario\\\", \\\"route\\\", \\\"command-id\\\"];\\n  if (!trace.reproducer || !allowedKinds.includes(trace.reproducer.kind) || typeof trace.reproducer.ref !== \\\"string\\\" || !trace.reproducer.ref) {\\n    return { ok: false, diagnostics: [{ code: \\\"invalid-reproducer\\\", message: \\\"reproducer must be { kind: scenario|route|command-id, ref: string }\\\" }] };\\n  }\\n\\n  const id = `eval-${trace.outcome}-${trace.signature.replace(/[^a-zA-Z0-9]+/g, \\\"-\\\").slice(0, 48)}`;\\n  const sample = {\\n    schema: TRACE_TO_EVAL_SCHEMA,\\n    id,\\n    sourceRunId: trace.runId,\\n    createdAt: trace.createdAt,\\n    sourceOutcome: trace.outcome,\\n    expected: {\\n      // Before a fix the registered sample is expected to reproduce the failure.\\n      \\\"before-fix\\\": trace.outcome === \\\"failure\\\" ? \\\"fail\\\" : \\\"pass\\\",\\n      // After a fix the same reproducer must turn green (for a failure trace).\\n      \\\"after-fix\\\": trace.outcome === \\\"failure\\\" ? \\\"pass\\\" : \\\"pass\\\",\\n    },\\n    reproducer: { kind: trace.reproducer.kind, ref: trace.reproducer.ref },\\n    selector: { runId: trace.runId, attempt: trace.attempt ?? 0 },\\n  };\\n  const digest = sha256(JSON.stringify(sample));\\n  return { ok: true, sample: { ...sample, digest }, diagnostics: [] };\\n}\\n\\n/** Explicit-trigger batch: convert selected traces only (never a watcher/scheduler). */\\nexport function traceToEvalSamples(traces) {\\n  const samples = [];\\n  const rejected = [];\\n  for (const trace of traces ?? []) {\\n    const result = traceToEvalSample(trace);\\n    if (result.ok) samples.push(result.sample);\\n    else rejected.push({ runId: trace?.runId ?? null, diagnostics: result.diagnostics });\\n  }\\n  return { schema: TRACE_TO_EVAL_SCHEMA, samples, rejected };\\n}\"},{\"path\":\"scripts/lib/trace-to-eval-sample.d.mts\",\"oldText\":null,\"newText\":\"export const TRACE_TO_EVAL_SCHEMA: \\\"clawx.trace-to-eval.v1\\\";\\nexport type TraceOutcome = \\\"failure\\\" | \\\"success\\\" | \\\"refusal\\\" | \\\"cancelled\\\";\\nexport type TraceReproducer = { kind: \\\"scenario\\\" | \\\"route\\\" | \\\"command-id\\\"; ref: string };\\nexport type RedactedFailureTrace = {\\n  runId: string;\\n  createdAt: string;\\n  outcome: TraceOutcome;\\n  reproducer: TraceReproducer;\\n  signature: string;\\n  attempt?: number;\\n};\\nexport type EvalSample = {\\n  schema: typeof TRACE_TO_EVAL_SCHEMA;\\n  id: string;\\n  sourceRunId: string;\\n  createdAt: string;\\n  sourceOutcome: TraceOutcome;\\n  expected: { \\\"before-fix\\\": \\\"pass\\\" | \\\"fail\\\"; \\\"after-fix\\\": \\\"pass\\\" | \\\"fail\\\" };\\n  reproducer: TraceReproducer;\\n  selector: { runId: string; attempt: number };\\n  digest: string;\\n};\\nexport type EvalSampleDiagnostic = { code: string; message: string };\\nexport function traceToEvalSample(trace: unknown): { ok: true; sample: EvalSample; diagnostics: [] } | { ok: false; diagnostics: EvalSampleDiagnostic[] };\\nexport function traceToEvalSamples(traces: readonly unknown[]): { schema: typeof TRACE_TO_EVAL_SCHEMA; samples: EvalSample[]; rejected: Array<{ runId: string | null; diagnostics: EvalSampleDiagnostic[] }> };\"},{\"path\":\"harness/specs/tasks/harness-gap-trace-to-eval-sample.md\",\"oldText\":null,\"newText\":\"---\\nlifecycleStatus: completed\\nid: harness-gap-trace-to-eval-sample\\ntitle: 把脱敏失败轨迹转成可复跑评测样例（G03）\\nscenario: agent-dev-composable-scenarios\\ntaskType: evaluation-harness\\nintent: G03 提供一个显式触发的转换器：把选定的脱敏失败轨迹转成可复跑评测样例（before-fix=fail / after-fix=pass），样例绑定有界 reproducer 与 selector，并拒绝任何未脱敏（raw prompt / 密钥 / auth 头）的轨迹，防止泄漏。不做定时 automation / 后台 daemon。\\ntouchedAreas:\\n  - scripts/lib/trace-to-eval-sample.mjs\\n  - scripts/lib/trace-to-eval-sample.d.mts\\n  - tests/unit/trace-to-eval-sample.test.ts\\n  - harness/specs/tasks/harness-gap-trace-to-eval-sample.md\\n  - docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\\n  - docs/dev/harness-gap-closure/g03-acceptance.json\\n  - docs/dev/harness-gap-closure/G03-SHA256SUMS\\nownedPaths:\\n  - scripts/lib/trace-to-eval-sample.mjs\\n  - scripts/lib/trace-to-eval-sample.d.mts\\n  - tests/unit/trace-to-eval-sample.test.ts\\n  - harness/specs/tasks/harness-gap-trace-to-eval-sample.md\\n  - docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\\n  - docs/dev/harness-gap-closure/g03-acceptance.json\\n  - docs/dev/harness-gap-closure/G03-SHA256SUMS\\nrequiredProfiles:\\n  - fast\\nrequiredRules:\\n  - docs-sync\\n  - task-forest-autoclose-and-roles\\n  - repository-artifact-retention\\nhumanEvidence: not-required\\nrequiredTests:\\n  - tests/unit/trace-to-eval-sample.test.ts\\nacceptance:\\n  - 一条真实失败轨迹 → 一个可复跑样例：before-fix 期望 fail、after-fix 期望 pass；成功/拒绝/取消轨迹保持 pass（修复不得回归）。\\n  - 样例绑定有界 reproducer（kind ∈ scenario|route|command-id，非 shell）与 selector（runId+attempt），含确定性 digest 供 replay 对比。\\n  - 拒绝未脱敏轨迹：出现 raw prompt/messages/body/authorization/apiKey/headers 或 sk-/phc_/ghp_/AKIA/私钥 等即整条拒绝，不写入样例（防泄漏）。\\n  - 显式触发批处理：仅转换调用方选定的轨迹（可对应最近 7 天 runIds），每个被拒轨迹单独留诊断；不新建定时 automation / daemon。\\n  - 不改产品默认值/锁/approval；不删除原始证据。\\n  - 干净候选定向测试、类型、scoped lint、harness validate/dry-run 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\\nexpectedUserBehavior:\\n  - 维护者能显式地把一条脱敏失败轨迹沉淀成可复跑评测样例（修复前 fail、修复后 pass），未脱敏轨迹被拒绝而非泄漏。\\ndocs:\\n  required: true\\n  files:\\n    - docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\\n---\\n\\n# G03 冻结实施边界\\n\\nG03 只新增一个纯转换器 + 显式触发的批处理入口（`scripts/lib/trace-to-eval-sample.mjs`），把选定脱敏轨迹转成可复跑样例；不做定时 automation/daemon，不新建第二份 scenario registry（样例指向既有 agent-dev scenario/route/command-id）。未脱敏轨迹整条拒绝。\\n\"},{\"path\":\"docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\",\"oldText\":null,\"newText\":\"# G03：脱敏失败轨迹 → 可复跑评测样例\\n\\n日期：2026-10-13（Asia/Shanghai）。包码：G03（TF-0291）。真实 provider 调用：无。\\n\\n## 链路\\n\\n`scripts/lib/trace-to-eval-sample.mjs`：\\n\\n- `traceToEvalSample(trace)`：把一条脱敏轨迹转成样例；`expected = { before-fix: fail|pass, after-fix: pass }`（failure 轨迹 before-fix=fail，其余保持 pass）。\\n- `traceToEvalSamples(traces)`：显式触发批处理（仅调用方选定轨迹；可对应最近 7 天 runIds），逐条留 rejected 诊断。\\n\\n## 约束\\n\\n- **有界 reproducer**：`kind ∈ { scenario, route, command-id }`；不是 shell 指令。\\n- **selector 可定位**：`{ runId, attempt }` 供 replay。\\n- **确定性**：样例含 digest。\\n- **脱敏闸门**：出现 `prompt/messages/body/authorization/apiKey/headers` 或 `sk-/phc_/ghp_/AKIA/私钥` 等即拒绝整条（`trace-not-redacted`），不写样例。\\n- **显式触发**：不做定时 automation/daemon；不删原始证据。\\n\\n## 实测\\n\\n| 断言 | 结果 |\\n|---|---|\\n| failure 轨迹 → before-fix fail / after-fix pass；digest 确定 | ✅ |\\n| success/refusal/cancelled → pass | ✅ |\\n| raw prompt 或密钥 → 整条拒绝 | ✅ |\\n| 非有界 reproducer（shell）→ 拒绝 | ✅ |\\n| 批处理逐条留 rejected 诊断 | ✅ |\\n| 缺字段 → 拒绝 | ✅ |\\n\\n## 残余（residual）\\n\\n- 本包提供转换器；把它接到具体 trace 存储/runner 属集成层。\\n- 不新建 scenario registry/daemon/定时任务；不改默认值/锁/approval；非真人证据。\\n\"}]}"
+            },
+            {
+              "type": "function_call",
+              "call_id": "public-check",
+              "name": "check_public_contract",
+              "arguments": "{}"
+            }
+          ],
+          "usage": {
+            "input_tokens": 10,
+            "output_tokens": 10,
+            "total_tokens": 20
+          }
+        },
+        "parsedResponse": {
+          "id": "scripted-integration-0",
+          "model": "space-bunny",
+          "status": "completed",
+          "text": "",
+          "usage": {
+            "inputTokens": 10,
+            "outputTokens": 10,
+            "totalTokens": 20
+          },
+          "functionCalls": [
+            {
+              "callId": "implement",
+              "name": "apply_edits",
+              "arguments": "{\"edits\":[{\"path\":\"scripts/lib/trace-to-eval-sample.mjs\",\"oldText\":null,\"newText\":\"/**\\n * G03: turn a redacted failure trace into a re-runnable eval sample.\\n *\\n * Explicit-trigger only: the caller passes the trace(s) it selected (for example\\n * the most recent 7 days by run id) — this module never schedules or watches\\n * anything. Each sample carries:\\n * - an expected outcome (`before-fix: fail`, `after-fix: pass`);\\n * - a bounded reproducer (a route/id, never a raw shell command);\\n * - a digest for replay comparison;\\n * and it refuses any trace that is not redacted (raw prompt / secret / auth\\n * fields), so a promoted sample cannot leak the failure content.\\n */\\n\\nconst SECRET_PATTERNS = [\\n  /sk-[A-Za-z0-9]{16,}/,\\n  /phc_[A-Za-z0-9]{16,}/,\\n  /ghp_[A-Za-z0-9]{16,}/,\\n  /AKIA[0-9A-Z]{16}/,\\n  /-----BEGIN [A-Z ]*PRIVATE KEY-----/,\\n];\\nconst RAW_CONTENT_KEYS = [\\\"prompt\\\", \\\"rawPrompt\\\", \\\"messages\\\", \\\"body\\\", \\\"authorization\\\", \\\"apiKey\\\", \\\"headers\\\"];\\n\\nexport const TRACE_TO_EVAL_SCHEMA = \\\"clawx.trace-to-eval.v1\\\";\\n\\nfunction sha256(value) {\\n  // Small dependency-free hash so the pure module has no node:crypto import.\\n  let h1 = 0x811c9dc5;\\n  let h2 = 0x01000193;\\n  const text = String(value);\\n  for (let i = 0; i < text.length; i += 1) {\\n    const c = text.charCodeAt(i);\\n    h1 = Math.imul(h1 ^ c, 16777619) >>> 0;\\n    h2 = Math.imul(h2 ^ c, 2246822519) >>> 0;\\n  }\\n  return (h1.toString(16).padStart(8, \\\"0\\\") + h2.toString(16).padStart(8, \\\"0\\\"));\\n}\\n\\nfunction isRedacted(trace) {\\n  const text = JSON.stringify(trace);\\n  for (const pattern of SECRET_PATTERNS) {\\n    if (pattern.test(text)) return { redacted: false, reason: `secret-like value matched ${pattern}` };\\n  }\\n  const stack = [trace];\\n  while (stack.length > 0) {\\n    const value = stack.pop();\\n    if (value && typeof value === \\\"object\\\") {\\n      for (const [key, child] of Object.entries(value)) {\\n        if (RAW_CONTENT_KEYS.includes(key)) return { redacted: false, reason: `raw content field present: ${key}` };\\n        if (child && typeof child === \\\"object\\\") stack.push(child);\\n      }\\n    }\\n  }\\n  return { redacted: true };\\n}\\n\\n/**\\n * @param {{\\n *   runId: string,\\n *   createdAt: string,\\n *   outcome: 'failure' | 'success' | 'refusal' | 'cancelled',\\n *   reproducer: { kind: 'scenario' | 'route' | 'command-id', ref: string },\\n *   signature: string,\\n *   attempt?: number,\\n * }} trace\\n */\\nexport function traceToEvalSample(trace) {\\n  if (!trace || typeof trace !== \\\"object\\\") {\\n    return { ok: false, diagnostics: [{ code: \\\"invalid-trace\\\", message: \\\"trace must be an object\\\" }] };\\n  }\\n  for (const field of [\\\"runId\\\", \\\"createdAt\\\", \\\"outcome\\\", \\\"reproducer\\\", \\\"signature\\\"]) {\\n    if (trace[field] === undefined || trace[field] === null) {\\n      return { ok: false, diagnostics: [{ code: \\\"missing-field\\\", message: `trace.${field} is required` }] };\\n    }\\n  }\\n  const redaction = isRedacted(trace);\\n  if (!redaction.redacted) {\\n    return { ok: false, diagnostics: [{ code: \\\"trace-not-redacted\\\", message: redaction.reason }] };\\n  }\\n  if (trace.outcome !== \\\"failure\\\" && trace.outcome !== \\\"success\\\" && trace.outcome !== \\\"refusal\\\" && trace.outcome !== \\\"cancelled\\\") {\\n    return { ok: false, diagnostics: [{ code: \\\"invalid-outcome\\\", message: `unknown outcome ${trace.outcome}` }] };\\n  }\\n  const allowedKinds = [\\\"scenario\\\", \\\"route\\\", \\\"command-id\\\"];\\n  if (!trace.reproducer || !allowedKinds.includes(trace.reproducer.kind) || typeof trace.reproducer.ref !== \\\"string\\\" || !trace.reproducer.ref) {\\n    return { ok: false, diagnostics: [{ code: \\\"invalid-reproducer\\\", message: \\\"reproducer must be { kind: scenario|route|command-id, ref: string }\\\" }] };\\n  }\\n\\n  const id = `eval-${trace.outcome}-${trace.signature.replace(/[^a-zA-Z0-9]+/g, \\\"-\\\").slice(0, 48)}`;\\n  const sample = {\\n    schema: TRACE_TO_EVAL_SCHEMA,\\n    id,\\n    sourceRunId: trace.runId,\\n    createdAt: trace.createdAt,\\n    sourceOutcome: trace.outcome,\\n    expected: {\\n      // Before a fix the registered sample is expected to reproduce the failure.\\n      \\\"before-fix\\\": trace.outcome === \\\"failure\\\" ? \\\"fail\\\" : \\\"pass\\\",\\n      // After a fix the same reproducer must turn green (for a failure trace).\\n      \\\"after-fix\\\": trace.outcome === \\\"failure\\\" ? \\\"pass\\\" : \\\"pass\\\",\\n    },\\n    reproducer: { kind: trace.reproducer.kind, ref: trace.reproducer.ref },\\n    selector: { runId: trace.runId, attempt: trace.attempt ?? 0 },\\n  };\\n  const digest = sha256(JSON.stringify(sample));\\n  return { ok: true, sample: { ...sample, digest }, diagnostics: [] };\\n}\\n\\n/** Explicit-trigger batch: convert selected traces only (never a watcher/scheduler). */\\nexport function traceToEvalSamples(traces) {\\n  const samples = [];\\n  const rejected = [];\\n  for (const trace of traces ?? []) {\\n    const result = traceToEvalSample(trace);\\n    if (result.ok) samples.push(result.sample);\\n    else rejected.push({ runId: trace?.runId ?? null, diagnostics: result.diagnostics });\\n  }\\n  return { schema: TRACE_TO_EVAL_SCHEMA, samples, rejected };\\n}\"},{\"path\":\"scripts/lib/trace-to-eval-sample.d.mts\",\"oldText\":null,\"newText\":\"export const TRACE_TO_EVAL_SCHEMA: \\\"clawx.trace-to-eval.v1\\\";\\nexport type TraceOutcome = \\\"failure\\\" | \\\"success\\\" | \\\"refusal\\\" | \\\"cancelled\\\";\\nexport type TraceReproducer = { kind: \\\"scenario\\\" | \\\"route\\\" | \\\"command-id\\\"; ref: string };\\nexport type RedactedFailureTrace = {\\n  runId: string;\\n  createdAt: string;\\n  outcome: TraceOutcome;\\n  reproducer: TraceReproducer;\\n  signature: string;\\n  attempt?: number;\\n};\\nexport type EvalSample = {\\n  schema: typeof TRACE_TO_EVAL_SCHEMA;\\n  id: string;\\n  sourceRunId: string;\\n  createdAt: string;\\n  sourceOutcome: TraceOutcome;\\n  expected: { \\\"before-fix\\\": \\\"pass\\\" | \\\"fail\\\"; \\\"after-fix\\\": \\\"pass\\\" | \\\"fail\\\" };\\n  reproducer: TraceReproducer;\\n  selector: { runId: string; attempt: number };\\n  digest: string;\\n};\\nexport type EvalSampleDiagnostic = { code: string; message: string };\\nexport function traceToEvalSample(trace: unknown): { ok: true; sample: EvalSample; diagnostics: [] } | { ok: false; diagnostics: EvalSampleDiagnostic[] };\\nexport function traceToEvalSamples(traces: readonly unknown[]): { schema: typeof TRACE_TO_EVAL_SCHEMA; samples: EvalSample[]; rejected: Array<{ runId: string | null; diagnostics: EvalSampleDiagnostic[] }> };\"},{\"path\":\"harness/specs/tasks/harness-gap-trace-to-eval-sample.md\",\"oldText\":null,\"newText\":\"---\\nlifecycleStatus: completed\\nid: harness-gap-trace-to-eval-sample\\ntitle: 把脱敏失败轨迹转成可复跑评测样例（G03）\\nscenario: agent-dev-composable-scenarios\\ntaskType: evaluation-harness\\nintent: G03 提供一个显式触发的转换器：把选定的脱敏失败轨迹转成可复跑评测样例（before-fix=fail / after-fix=pass），样例绑定有界 reproducer 与 selector，并拒绝任何未脱敏（raw prompt / 密钥 / auth 头）的轨迹，防止泄漏。不做定时 automation / 后台 daemon。\\ntouchedAreas:\\n  - scripts/lib/trace-to-eval-sample.mjs\\n  - scripts/lib/trace-to-eval-sample.d.mts\\n  - tests/unit/trace-to-eval-sample.test.ts\\n  - harness/specs/tasks/harness-gap-trace-to-eval-sample.md\\n  - docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\\n  - docs/dev/harness-gap-closure/g03-acceptance.json\\n  - docs/dev/harness-gap-closure/G03-SHA256SUMS\\nownedPaths:\\n  - scripts/lib/trace-to-eval-sample.mjs\\n  - scripts/lib/trace-to-eval-sample.d.mts\\n  - tests/unit/trace-to-eval-sample.test.ts\\n  - harness/specs/tasks/harness-gap-trace-to-eval-sample.md\\n  - docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\\n  - docs/dev/harness-gap-closure/g03-acceptance.json\\n  - docs/dev/harness-gap-closure/G03-SHA256SUMS\\nrequiredProfiles:\\n  - fast\\nrequiredRules:\\n  - docs-sync\\n  - task-forest-autoclose-and-roles\\n  - repository-artifact-retention\\nhumanEvidence: not-required\\nrequiredTests:\\n  - tests/unit/trace-to-eval-sample.test.ts\\nacceptance:\\n  - 一条真实失败轨迹 → 一个可复跑样例：before-fix 期望 fail、after-fix 期望 pass；成功/拒绝/取消轨迹保持 pass（修复不得回归）。\\n  - 样例绑定有界 reproducer（kind ∈ scenario|route|command-id，非 shell）与 selector（runId+attempt），含确定性 digest 供 replay 对比。\\n  - 拒绝未脱敏轨迹：出现 raw prompt/messages/body/authorization/apiKey/headers 或 sk-/phc_/ghp_/AKIA/私钥 等即整条拒绝，不写入样例（防泄漏）。\\n  - 显式触发批处理：仅转换调用方选定的轨迹（可对应最近 7 天 runIds），每个被拒轨迹单独留诊断；不新建定时 automation / daemon。\\n  - 不改产品默认值/锁/approval；不删除原始证据。\\n  - 干净候选定向测试、类型、scoped lint、harness validate/dry-run 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\\nexpectedUserBehavior:\\n  - 维护者能显式地把一条脱敏失败轨迹沉淀成可复跑评测样例（修复前 fail、修复后 pass），未脱敏轨迹被拒绝而非泄漏。\\ndocs:\\n  required: true\\n  files:\\n    - docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\\n---\\n\\n# G03 冻结实施边界\\n\\nG03 只新增一个纯转换器 + 显式触发的批处理入口（`scripts/lib/trace-to-eval-sample.mjs`），把选定脱敏轨迹转成可复跑样例；不做定时 automation/daemon，不新建第二份 scenario registry（样例指向既有 agent-dev scenario/route/command-id）。未脱敏轨迹整条拒绝。\\n\"},{\"path\":\"docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\",\"oldText\":null,\"newText\":\"# G03：脱敏失败轨迹 → 可复跑评测样例\\n\\n日期：2026-10-13（Asia/Shanghai）。包码：G03（TF-0291）。真实 provider 调用：无。\\n\\n## 链路\\n\\n`scripts/lib/trace-to-eval-sample.mjs`：\\n\\n- `traceToEvalSample(trace)`：把一条脱敏轨迹转成样例；`expected = { before-fix: fail|pass, after-fix: pass }`（failure 轨迹 before-fix=fail，其余保持 pass）。\\n- `traceToEvalSamples(traces)`：显式触发批处理（仅调用方选定轨迹；可对应最近 7 天 runIds），逐条留 rejected 诊断。\\n\\n## 约束\\n\\n- **有界 reproducer**：`kind ∈ { scenario, route, command-id }`；不是 shell 指令。\\n- **selector 可定位**：`{ runId, attempt }` 供 replay。\\n- **确定性**：样例含 digest。\\n- **脱敏闸门**：出现 `prompt/messages/body/authorization/apiKey/headers` 或 `sk-/phc_/ghp_/AKIA/私钥` 等即拒绝整条（`trace-not-redacted`），不写样例。\\n- **显式触发**：不做定时 automation/daemon；不删原始证据。\\n\\n## 实测\\n\\n| 断言 | 结果 |\\n|---|---|\\n| failure 轨迹 → before-fix fail / after-fix pass；digest 确定 | ✅ |\\n| success/refusal/cancelled → pass | ✅ |\\n| raw prompt 或密钥 → 整条拒绝 | ✅ |\\n| 非有界 reproducer（shell）→ 拒绝 | ✅ |\\n| 批处理逐条留 rejected 诊断 | ✅ |\\n| 缺字段 → 拒绝 | ✅ |\\n\\n## 残余（residual）\\n\\n- 本包提供转换器；把它接到具体 trace 存储/runner 属集成层。\\n- 不新建 scenario registry/daemon/定时任务；不改默认值/锁/approval；非真人证据。\\n\"}]}"
+            },
+            {
+              "callId": "public-check",
+              "name": "check_public_contract",
+              "arguments": "{}"
+            }
+          ],
+          "incompleteReason": null
+        }
+      },
+      {
+        "endpoint": "http://127.0.0.1:3065/v1/responses",
+        "request": {
+          "model": "space-bunny",
+          "instructions": "Implement the supplied task in the isolated workspace. Use read_file, apply_edits and check_public_contract within the frozen budgets. apply_edits can change several files in one call. Use only declared source paths and targetScope; preserve tests, evaluator, dependencies and permissions. After public checks, return only {\"finish\":true}. Do not repeat source files in the final response. Hidden tests run independently after completion; do not read tests at runtime or perform network or process effects in the implementation.",
+          "input": [
+            {
+              "role": "user",
+              "content": "{\n  \"prompt\": \"G03 提供一个显式触发的转换器：把选定的脱敏失败轨迹转成可复跑评测样例（before-fix=fail / after-fix=pass），样例绑定有界 reproducer 与 selector，并拒绝任何未脱敏（raw prompt / 密钥 / auth 头）的轨迹，防止泄漏。不做定时 automation / 后台 daemon。\",\n  \"acceptanceCriteria\": [\n    \"一条真实失败轨迹 → 一个可复跑样例：before-fix 期望 fail、after-fix 期望 pass；成功/拒绝/取消轨迹保持 pass（修复不得回归）。\",\n    \"样例绑定有界 reproducer（kind ∈ scenario|route|command-id，非 shell）与 selector（runId+attempt），含确定性 digest 供 replay 对比。\",\n    \"拒绝未脱敏轨迹：出现 raw prompt/messages/body/authorization/apiKey/headers 或 sk-/phc_/ghp_/AKIA/私钥 等即整条拒绝，不写入样例（防泄漏）。\",\n    \"显式触发批处理：仅转换调用方选定的轨迹（可对应最近 7 天 runIds），每个被拒轨迹单独留诊断；不新建定时 automation / daemon。\",\n    \"不改产品默认值/锁/approval；不删除原始证据。\",\n    \"干净候选定向测试、类型、scoped lint、harness validate/dry-run 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\"\n  ],\n  \"targetScope\": [\n    \"scripts/lib/trace-to-eval-sample.mjs\",\n    \"scripts/lib/trace-to-eval-sample.d.mts\",\n    \"harness/specs/tasks/harness-gap-trace-to-eval-sample.md\",\n    \"docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\"\n  ],\n  \"responseSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"finish\"\n    ],\n    \"properties\": {\n      \"finish\": {\n        \"type\": \"boolean\",\n        \"const\": true\n      }\n    }\n  },\n  \"taskKind\": \"module-implementation\",\n  \"publicContract\": {\n    \"protocol\": \"RsiCodingTaskInputs/v1\",\n    \"declarations\": [\n      {\n        \"path\": \"scripts/lib/trace-to-eval-sample.d.mts\",\n        \"content\": \"export const TRACE_TO_EVAL_SCHEMA: \\\"clawx.trace-to-eval.v1\\\";\\nexport type TraceOutcome = \\\"failure\\\" | \\\"success\\\" | \\\"refusal\\\" | \\\"cancelled\\\";\\nexport type TraceReproducer = {\\n    kind: \\\"scenario\\\" | \\\"route\\\" | \\\"command-id\\\";\\n    ref: string;\\n};\\nexport type RedactedFailureTrace = {\\n    runId: string;\\n    createdAt: string;\\n    outcome: TraceOutcome;\\n    reproducer: TraceReproducer;\\n    signature: string;\\n    attempt?: number;\\n};\\nexport type EvalSample = {\\n    schema: typeof TRACE_TO_EVAL_SCHEMA;\\n    id: string;\\n    sourceRunId: string;\\n    createdAt: string;\\n    sourceOutcome: TraceOutcome;\\n    expected: {\\n        \\\"before-fix\\\": \\\"pass\\\" | \\\"fail\\\";\\n        \\\"after-fix\\\": \\\"pass\\\" | \\\"fail\\\";\\n    };\\n    reproducer: TraceReproducer;\\n    selector: {\\n        runId: string;\\n        attempt: number;\\n    };\\n    digest: string;\\n};\\nexport type EvalSampleDiagnostic = {\\n    code: string;\\n    message: string;\\n};\\nexport function traceToEvalSample(trace: unknown): {\\n    ok: true;\\n    sample: EvalSample;\\n    diagnostics: [\\n    ];\\n} | {\\n    ok: false;\\n    diagnostics: EvalSampleDiagnostic[];\\n};\\nexport function traceToEvalSamples(traces: readonly unknown[]): {\\n    schema: typeof TRACE_TO_EVAL_SCHEMA;\\n    samples: EvalSample[];\\n    rejected: Array<{\\n        runId: string | null;\\n        diagnostics: EvalSampleDiagnostic[];\\n    }>;\\n};\\n\"\n      }\n    ],\n    \"behavior\": \"- Export traceToEvalSample(trace) and traceToEvalSamples(traces).\\n- A valid trace has runId, createdAt, outcome, reproducer {kind, ref}, and signature.\\n- traceToEvalSample(trace) returns either {ok:true, sample:{sourceRunId, expected:{'before-fix': 'fail'|'pass', 'after-fix':'pass'}, reproducer, selector:{runId, attempt}, digest}} or {ok:false, diagnostics:[{code, message?}]}.\\n- sourceRunId equals runId. attempt is a positive integer derived from trace.attempt or defaults to 1. digest is exactly 16 lowercase hexadecimal characters and deterministic for the same trace.\\n- failure => before-fix fail, after-fix pass. success/refusal/cancelled => both expected values pass.\\n- Missing required field => first diagnostic code missing-field.\\n- Any raw prompt/messages/body/authorization/apiKey/headers field or secret-like content in the trace => code trace-not-redacted.\\n- Invalid reproducer kind or empty ref => code invalid-reproducer. Allowed kinds are scenario, route, command-id; shell is forbidden.\\n- traceToEvalSamples returns {samples, rejected}; preserve caller order; rejected entries carry runId and diagnostics.\\n- The module is pure, ESM, has no scheduler/daemon/network side effects, and does not delete source evidence.\",\n    \"document\": {\n      \"format\": \"repository-markdown-or-module-contract\",\n      \"taskSpecFields\": [\n        \"id\",\n        \"title\",\n        \"intent\",\n        \"requiredTests\",\n        \"requiredRules\",\n        \"lifecycleStatus\"\n      ],\n      \"lifecycleStates\": [\n        \"active\",\n        \"completed\",\n        \"archived\"\n      ],\n      \"sourceOfTruth\": \"historical-base-and-declared-task-criteria\"\n    }\n  },\n  \"baseFiles\": [\n    {\n      \"path\": \"scripts/lib/trace-to-eval-sample.mjs\",\n      \"content\": null,\n      \"missing\": true,\n      \"reconstructed\": false\n    },\n    {\n      \"path\": \"scripts/lib/trace-to-eval-sample.d.mts\",\n      \"content\": null,\n      \"missing\": true,\n      \"reconstructed\": false\n    },\n    {\n      \"path\": \"harness/specs/tasks/harness-gap-trace-to-eval-sample.md\",\n      \"content\": null,\n      \"missing\": true,\n      \"reconstructed\": false\n    },\n    {\n      \"path\": \"docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\",\n      \"content\": null,\n      \"missing\": true,\n      \"reconstructed\": false\n    }\n  ],\n  \"omittedContext\": []\n}"
+            },
+            {
+              "type": "function_call",
+              "call_id": "implement",
+              "name": "apply_edits",
+              "arguments": "{\"edits\":[{\"path\":\"scripts/lib/trace-to-eval-sample.mjs\",\"oldText\":null,\"newText\":\"/**\\n * G03: turn a redacted failure trace into a re-runnable eval sample.\\n *\\n * Explicit-trigger only: the caller passes the trace(s) it selected (for example\\n * the most recent 7 days by run id) — this module never schedules or watches\\n * anything. Each sample carries:\\n * - an expected outcome (`before-fix: fail`, `after-fix: pass`);\\n * - a bounded reproducer (a route/id, never a raw shell command);\\n * - a digest for replay comparison;\\n * and it refuses any trace that is not redacted (raw prompt / secret / auth\\n * fields), so a promoted sample cannot leak the failure content.\\n */\\n\\nconst SECRET_PATTERNS = [\\n  /sk-[A-Za-z0-9]{16,}/,\\n  /phc_[A-Za-z0-9]{16,}/,\\n  /ghp_[A-Za-z0-9]{16,}/,\\n  /AKIA[0-9A-Z]{16}/,\\n  /-----BEGIN [A-Z ]*PRIVATE KEY-----/,\\n];\\nconst RAW_CONTENT_KEYS = [\\\"prompt\\\", \\\"rawPrompt\\\", \\\"messages\\\", \\\"body\\\", \\\"authorization\\\", \\\"apiKey\\\", \\\"headers\\\"];\\n\\nexport const TRACE_TO_EVAL_SCHEMA = \\\"clawx.trace-to-eval.v1\\\";\\n\\nfunction sha256(value) {\\n  // Small dependency-free hash so the pure module has no node:crypto import.\\n  let h1 = 0x811c9dc5;\\n  let h2 = 0x01000193;\\n  const text = String(value);\\n  for (let i = 0; i < text.length; i += 1) {\\n    const c = text.charCodeAt(i);\\n    h1 = Math.imul(h1 ^ c, 16777619) >>> 0;\\n    h2 = Math.imul(h2 ^ c, 2246822519) >>> 0;\\n  }\\n  return (h1.toString(16).padStart(8, \\\"0\\\") + h2.toString(16).padStart(8, \\\"0\\\"));\\n}\\n\\nfunction isRedacted(trace) {\\n  const text = JSON.stringify(trace);\\n  for (const pattern of SECRET_PATTERNS) {\\n    if (pattern.test(text)) return { redacted: false, reason: `secret-like value matched ${pattern}` };\\n  }\\n  const stack = [trace];\\n  while (stack.length > 0) {\\n    const value = stack.pop();\\n    if (value && typeof value === \\\"object\\\") {\\n      for (const [key, child] of Object.entries(value)) {\\n        if (RAW_CONTENT_KEYS.includes(key)) return { redacted: false, reason: `raw content field present: ${key}` };\\n        if (child && typeof child === \\\"object\\\") stack.push(child);\\n      }\\n    }\\n  }\\n  return { redacted: true };\\n}\\n\\n/**\\n * @param {{\\n *   runId: string,\\n *   createdAt: string,\\n *   outcome: 'failure' | 'success' | 'refusal' | 'cancelled',\\n *   reproducer: { kind: 'scenario' | 'route' | 'command-id', ref: string },\\n *   signature: string,\\n *   attempt?: number,\\n * }} trace\\n */\\nexport function traceToEvalSample(trace) {\\n  if (!trace || typeof trace !== \\\"object\\\") {\\n    return { ok: false, diagnostics: [{ code: \\\"invalid-trace\\\", message: \\\"trace must be an object\\\" }] };\\n  }\\n  for (const field of [\\\"runId\\\", \\\"createdAt\\\", \\\"outcome\\\", \\\"reproducer\\\", \\\"signature\\\"]) {\\n    if (trace[field] === undefined || trace[field] === null) {\\n      return { ok: false, diagnostics: [{ code: \\\"missing-field\\\", message: `trace.${field} is required` }] };\\n    }\\n  }\\n  const redaction = isRedacted(trace);\\n  if (!redaction.redacted) {\\n    return { ok: false, diagnostics: [{ code: \\\"trace-not-redacted\\\", message: redaction.reason }] };\\n  }\\n  if (trace.outcome !== \\\"failure\\\" && trace.outcome !== \\\"success\\\" && trace.outcome !== \\\"refusal\\\" && trace.outcome !== \\\"cancelled\\\") {\\n    return { ok: false, diagnostics: [{ code: \\\"invalid-outcome\\\", message: `unknown outcome ${trace.outcome}` }] };\\n  }\\n  const allowedKinds = [\\\"scenario\\\", \\\"route\\\", \\\"command-id\\\"];\\n  if (!trace.reproducer || !allowedKinds.includes(trace.reproducer.kind) || typeof trace.reproducer.ref !== \\\"string\\\" || !trace.reproducer.ref) {\\n    return { ok: false, diagnostics: [{ code: \\\"invalid-reproducer\\\", message: \\\"reproducer must be { kind: scenario|route|command-id, ref: string }\\\" }] };\\n  }\\n\\n  const id = `eval-${trace.outcome}-${trace.signature.replace(/[^a-zA-Z0-9]+/g, \\\"-\\\").slice(0, 48)}`;\\n  const sample = {\\n    schema: TRACE_TO_EVAL_SCHEMA,\\n    id,\\n    sourceRunId: trace.runId,\\n    createdAt: trace.createdAt,\\n    sourceOutcome: trace.outcome,\\n    expected: {\\n      // Before a fix the registered sample is expected to reproduce the failure.\\n      \\\"before-fix\\\": trace.outcome === \\\"failure\\\" ? \\\"fail\\\" : \\\"pass\\\",\\n      // After a fix the same reproducer must turn green (for a failure trace).\\n      \\\"after-fix\\\": trace.outcome === \\\"failure\\\" ? \\\"pass\\\" : \\\"pass\\\",\\n    },\\n    reproducer: { kind: trace.reproducer.kind, ref: trace.reproducer.ref },\\n    selector: { runId: trace.runId, attempt: trace.attempt ?? 0 },\\n  };\\n  const digest = sha256(JSON.stringify(sample));\\n  return { ok: true, sample: { ...sample, digest }, diagnostics: [] };\\n}\\n\\n/** Explicit-trigger batch: convert selected traces only (never a watcher/scheduler). */\\nexport function traceToEvalSamples(traces) {\\n  const samples = [];\\n  const rejected = [];\\n  for (const trace of traces ?? []) {\\n    const result = traceToEvalSample(trace);\\n    if (result.ok) samples.push(result.sample);\\n    else rejected.push({ runId: trace?.runId ?? null, diagnostics: result.diagnostics });\\n  }\\n  return { schema: TRACE_TO_EVAL_SCHEMA, samples, rejected };\\n}\"},{\"path\":\"scripts/lib/trace-to-eval-sample.d.mts\",\"oldText\":null,\"newText\":\"export const TRACE_TO_EVAL_SCHEMA: \\\"clawx.trace-to-eval.v1\\\";\\nexport type TraceOutcome = \\\"failure\\\" | \\\"success\\\" | \\\"refusal\\\" | \\\"cancelled\\\";\\nexport type TraceReproducer = { kind: \\\"scenario\\\" | \\\"route\\\" | \\\"command-id\\\"; ref: string };\\nexport type RedactedFailureTrace = {\\n  runId: string;\\n  createdAt: string;\\n  outcome: TraceOutcome;\\n  reproducer: TraceReproducer;\\n  signature: string;\\n  attempt?: number;\\n};\\nexport type EvalSample = {\\n  schema: typeof TRACE_TO_EVAL_SCHEMA;\\n  id: string;\\n  sourceRunId: string;\\n  createdAt: string;\\n  sourceOutcome: TraceOutcome;\\n  expected: { \\\"before-fix\\\": \\\"pass\\\" | \\\"fail\\\"; \\\"after-fix\\\": \\\"pass\\\" | \\\"fail\\\" };\\n  reproducer: TraceReproducer;\\n  selector: { runId: string; attempt: number };\\n  digest: string;\\n};\\nexport type EvalSampleDiagnostic = { code: string; message: string };\\nexport function traceToEvalSample(trace: unknown): { ok: true; sample: EvalSample; diagnostics: [] } | { ok: false; diagnostics: EvalSampleDiagnostic[] };\\nexport function traceToEvalSamples(traces: readonly unknown[]): { schema: typeof TRACE_TO_EVAL_SCHEMA; samples: EvalSample[]; rejected: Array<{ runId: string | null; diagnostics: EvalSampleDiagnostic[] }> };\"},{\"path\":\"harness/specs/tasks/harness-gap-trace-to-eval-sample.md\",\"oldText\":null,\"newText\":\"---\\nlifecycleStatus: completed\\nid: harness-gap-trace-to-eval-sample\\ntitle: 把脱敏失败轨迹转成可复跑评测样例（G03）\\nscenario: agent-dev-composable-scenarios\\ntaskType: evaluation-harness\\nintent: G03 提供一个显式触发的转换器：把选定的脱敏失败轨迹转成可复跑评测样例（before-fix=fail / after-fix=pass），样例绑定有界 reproducer 与 selector，并拒绝任何未脱敏（raw prompt / 密钥 / auth 头）的轨迹，防止泄漏。不做定时 automation / 后台 daemon。\\ntouchedAreas:\\n  - scripts/lib/trace-to-eval-sample.mjs\\n  - scripts/lib/trace-to-eval-sample.d.mts\\n  - tests/unit/trace-to-eval-sample.test.ts\\n  - harness/specs/tasks/harness-gap-trace-to-eval-sample.md\\n  - docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\\n  - docs/dev/harness-gap-closure/g03-acceptance.json\\n  - docs/dev/harness-gap-closure/G03-SHA256SUMS\\nownedPaths:\\n  - scripts/lib/trace-to-eval-sample.mjs\\n  - scripts/lib/trace-to-eval-sample.d.mts\\n  - tests/unit/trace-to-eval-sample.test.ts\\n  - harness/specs/tasks/harness-gap-trace-to-eval-sample.md\\n  - docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\\n  - docs/dev/harness-gap-closure/g03-acceptance.json\\n  - docs/dev/harness-gap-closure/G03-SHA256SUMS\\nrequiredProfiles:\\n  - fast\\nrequiredRules:\\n  - docs-sync\\n  - task-forest-autoclose-and-roles\\n  - repository-artifact-retention\\nhumanEvidence: not-required\\nrequiredTests:\\n  - tests/unit/trace-to-eval-sample.test.ts\\nacceptance:\\n  - 一条真实失败轨迹 → 一个可复跑样例：before-fix 期望 fail、after-fix 期望 pass；成功/拒绝/取消轨迹保持 pass（修复不得回归）。\\n  - 样例绑定有界 reproducer（kind ∈ scenario|route|command-id，非 shell）与 selector（runId+attempt），含确定性 digest 供 replay 对比。\\n  - 拒绝未脱敏轨迹：出现 raw prompt/messages/body/authorization/apiKey/headers 或 sk-/phc_/ghp_/AKIA/私钥 等即整条拒绝，不写入样例（防泄漏）。\\n  - 显式触发批处理：仅转换调用方选定的轨迹（可对应最近 7 天 runIds），每个被拒轨迹单独留诊断；不新建定时 automation / daemon。\\n  - 不改产品默认值/锁/approval；不删除原始证据。\\n  - 干净候选定向测试、类型、scoped lint、harness validate/dry-run 通过，凭据扫描 0 命中，SHA256SUMS 可回读。\\nexpectedUserBehavior:\\n  - 维护者能显式地把一条脱敏失败轨迹沉淀成可复跑评测样例（修复前 fail、修复后 pass），未脱敏轨迹被拒绝而非泄漏。\\ndocs:\\n  required: true\\n  files:\\n    - docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\\n---\\n\\n# G03 冻结实施边界\\n\\nG03 只新增一个纯转换器 + 显式触发的批处理入口（`scripts/lib/trace-to-eval-sample.mjs`），把选定脱敏轨迹转成可复跑样例；不做定时 automation/daemon，不新建第二份 scenario registry（样例指向既有 agent-dev scenario/route/command-id）。未脱敏轨迹整条拒绝。\\n\"},{\"path\":\"docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\",\"oldText\":null,\"newText\":\"# G03：脱敏失败轨迹 → 可复跑评测样例\\n\\n日期：2026-10-13（Asia/Shanghai）。包码：G03（TF-0291）。真实 provider 调用：无。\\n\\n## 链路\\n\\n`scripts/lib/trace-to-eval-sample.mjs`：\\n\\n- `traceToEvalSample(trace)`：把一条脱敏轨迹转成样例；`expected = { before-fix: fail|pass, after-fix: pass }`（failure 轨迹 before-fix=fail，其余保持 pass）。\\n- `traceToEvalSamples(traces)`：显式触发批处理（仅调用方选定轨迹；可对应最近 7 天 runIds），逐条留 rejected 诊断。\\n\\n## 约束\\n\\n- **有界 reproducer**：`kind ∈ { scenario, route, command-id }`；不是 shell 指令。\\n- **selector 可定位**：`{ runId, attempt }` 供 replay。\\n- **确定性**：样例含 digest。\\n- **脱敏闸门**：出现 `prompt/messages/body/authorization/apiKey/headers` 或 `sk-/phc_/ghp_/AKIA/私钥` 等即拒绝整条（`trace-not-redacted`），不写样例。\\n- **显式触发**：不做定时 automation/daemon；不删原始证据。\\n\\n## 实测\\n\\n| 断言 | 结果 |\\n|---|---|\\n| failure 轨迹 → before-fix fail / after-fix pass；digest 确定 | ✅ |\\n| success/refusal/cancelled → pass | ✅ |\\n| raw prompt 或密钥 → 整条拒绝 | ✅ |\\n| 非有界 reproducer（shell）→ 拒绝 | ✅ |\\n| 批处理逐条留 rejected 诊断 | ✅ |\\n| 缺字段 → 拒绝 | ✅ |\\n\\n## 残余（residual）\\n\\n- 本包提供转换器；把它接到具体 trace 存储/runner 属集成层。\\n- 不新建 scenario registry/daemon/定时任务；不改默认值/锁/approval；非真人证据。\\n\"}]}"
+            },
+            {
+              "type": "function_call",
+              "call_id": "public-check",
+              "name": "check_public_contract",
+              "arguments": "{}"
+            },
+            {
+              "type": "function_call_output",
+              "call_id": "implement",
+              "output": "{\"ok\":true,\"effects\":[{\"path\":\"scripts/lib/trace-to-eval-sample.mjs\",\"beforeSha256\":null,\"afterSha256\":\"f67ed77b6202878d75bd5eb18661e8bf49fa791907edd1ed4889529b469ecc28\",\"bytes\":4835},{\"path\":\"scripts/lib/trace-to-eval-sample.d.mts\",\"beforeSha256\":null,\"afterSha256\":\"a74711233bbd97060d9a8e16723c3b37b45f263e9b2b8987b82f63b53f4865f8\",\"bytes\":1166},{\"path\":\"harness/specs/tasks/harness-gap-trace-to-eval-sample.md\",\"beforeSha256\":null,\"afterSha256\":\"f0d8e2b9991d932ce267a9e88671357687f22f6b34d26f73366271185879aab7\",\"bytes\":2987},{\"path\":\"docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md\",\"beforeSha256\":null,\"afterSha256\":\"0fe5f1fe54dbf41bf6a83c65d366cb55f7872d8f10f5ccfb3ce967399f30d757\",\"bytes\":1546}]}"
+            },
+            {
+              "type": "function_call_output",
+              "call_id": "public-check",
+              "output": "{\"ok\":true,\"errorCount\":0,\"errors\":[],\"errorsTruncated\":false}"
+            }
+          ],
+          "store": false,
+          "stream": false,
+          "truncation": "disabled",
+          "max_output_tokens": 16000,
+          "tools": [
+            {
+              "type": "function",
+              "name": "read_file",
+              "description": "Read a bounded range of an allowed task source or public declaration.",
+              "strict": true,
+              "parameters": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "startLine",
+                  "maxLines"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "startLine": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "maxLines": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 200
+                  }
+                }
+              }
+            },
+            {
+              "type": "function",
+              "name": "apply_edits",
+              "description": "Apply a validated batch. A null oldText writes a complete file; otherwise replace one exact occurrence.",
+              "strict": true,
+              "parameters": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "edits"
+                ],
+                "properties": {
+                  "edits": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 32,
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "path",
+                        "oldText",
+                        "newText"
+                      ],
+                      "properties": {
+                        "path": {
+                          "type": "string"
+                        },
+                        "oldText": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "newText": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "type": "function",
+              "name": "check_public_contract",
+              "description": "Check edited-source syntax, public exported names and task document fields without running hidden tests.",
+              "strict": true,
+              "parameters": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {},
+                "required": []
+              }
+            }
+          ],
+          "reasoning": {
+            "effort": "low"
+          },
+          "text": {
+            "format": {
+              "type": "json_schema",
+              "name": "rsi_coding_edits",
+              "strict": true,
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "finish"
+                ],
+                "properties": {
+                  "finish": {
+                    "type": "boolean",
+                    "const": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "rawResponse": {
+          "id": "scripted-integration-1",
+          "model": "space-bunny",
+          "status": "completed",
+          "output": [
+            {
+              "type": "message",
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "output_text",
+                  "text": "{\"finish\":true}"
+                }
+              ]
+            }
+          ],
+          "usage": {
+            "input_tokens": 10,
+            "output_tokens": 10,
+            "total_tokens": 20
+          }
+        },
+        "parsedResponse": {
+          "id": "scripted-integration-1",
+          "model": "space-bunny",
+          "status": "completed",
+          "text": "{\"finish\":true}",
+          "usage": {
+            "inputTokens": 10,
+            "outputTokens": 10,
+            "totalTokens": 20
+          },
+          "functionCalls": [],
+          "incompleteReason": null
+        }
+      }
+    ],
+    "grader": {
+      "schemaVersion": "RsiBenefitGrader/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-independent-final-state-grader",
+      "workspaceRevision": "6df7bd8cbdd9456612b5524dae18ec618343152e",
+      "baselineSetup": null,
+      "oracleDigest": "5e2368cdb7d2e49317a8c4d2cc16cf15fda3d5791c2e598caa1e82f15b6d3170",
+      "oracleRevision": "854a9de948d0acf8c9ba11e7bce6ddd9e60c46b4",
+      "oracleTestDigests": {
+        "tests/unit/trace-to-eval-sample.test.ts": "9895c0c9296985a31e8c1beceac7d3a1d3c4918899f1d84a3ea3441ba38c4d70"
+      },
+      "oracleUnchanged": true,
+      "failureClass": null,
+      "diagnostics": [],
+      "commands": [
+        "pnpm exec vitest run tests/unit/trace-to-eval-sample.test.ts --maxWorkers=1"
+      ],
+      "responseDigest": "a3e1a93ae6a6b3bdfc997f860103af1b7ee9d2a455f8345ab5b753cdd09c6c24",
+      "editsDigest": "09388528ed02c8fdad1ace8780bd73aa9b2d72590017e192188b81d34d408b70",
+      "isolation": {
+        "hiddenOracleVisible": false,
+        "unapprovedEgress": false,
+        "candidateChangedEvaluator": false
+      },
+      "reports": [
+        {
+          "command": "pnpm exec vitest run tests/unit/trace-to-eval-sample.test.ts --maxWorkers=1",
+          "kind": "vitest",
+          "exitCode": 0,
+          "report": {
+            "numTotalTestSuites": 2,
+            "numPassedTestSuites": 2,
+            "numFailedTestSuites": 0,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 6,
+            "numPassedTests": 6,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "snapshot": {
+              "added": 0,
+              "failure": false,
+              "filesAdded": 0,
+              "filesRemoved": 0,
+              "filesRemovedList": [],
+              "filesUnmatched": 0,
+              "filesUpdated": 0,
+              "matched": 0,
+              "total": 0,
+              "unchecked": 0,
+              "uncheckedKeysByFile": [],
+              "unmatched": 0,
+              "updated": 0,
+              "didUpdate": false
+            },
+            "startTime": 1794106003750,
+            "success": true,
+            "testResults": [
+              {
+                "assertionResults": [
+                  {
+                    "ancestorTitles": [
+                      "G03 trace-to-eval sample"
+                    ],
+                    "fullName": "G03 trace-to-eval sample turns a failure trace into a sample expected to fail before the fix and pass after",
+                    "status": "passed",
+                    "title": "turns a failure trace into a sample expected to fail before the fix and pass after",
+                    "duration": 2.1737999999999715,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "G03 trace-to-eval sample"
+                    ],
+                    "fullName": "G03 trace-to-eval sample keeps success/refusal/cancelled traces as passing samples (a fix must not regress them)",
+                    "status": "passed",
+                    "title": "keeps success/refusal/cancelled traces as passing samples (a fix must not regress them)",
+                    "duration": 0.481899999999996,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "G03 trace-to-eval sample"
+                    ],
+                    "fullName": "G03 trace-to-eval sample refuses a trace that is not redacted (raw prompt or secret-like value)",
+                    "status": "passed",
+                    "title": "refuses a trace that is not redacted (raw prompt or secret-like value)",
+                    "duration": 0.46910000000002583,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "G03 trace-to-eval sample"
+                    ],
+                    "fullName": "G03 trace-to-eval sample rejects a reproducer that is not a bounded kind (no shell command)",
+                    "status": "passed",
+                    "title": "rejects a reproducer that is not a bounded kind (no shell command)",
+                    "duration": 0.24930000000000518,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "G03 trace-to-eval sample"
+                    ],
+                    "fullName": "G03 trace-to-eval sample is an explicit-trigger batch: selected traces only, with per-trace rejections",
+                    "status": "passed",
+                    "title": "is an explicit-trigger batch: selected traces only, with per-trace rejections",
+                    "duration": 0.32749999999998636,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  },
+                  {
+                    "ancestorTitles": [
+                      "G03 trace-to-eval sample"
+                    ],
+                    "fullName": "G03 trace-to-eval sample rejects a trace with a missing required field",
+                    "status": "passed",
+                    "title": "rejects a trace with a missing required field",
+                    "duration": 0.147199999999998,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                  }
+                ],
+                "startTime": 1794106004118,
+                "endTime": 1794106004122.3274,
+                "status": "passed",
+                "message": "",
+                "name": "D:/tmp/rsi-tools-integration-3dIgUU/tf-0291-g03-1-sekb-shadow/workspace/tests/unit/trace-to-eval-sample.test.ts"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "claims": {
+    "providerCalls": 0,
+    "scriptedProviderCalls": 2,
+    "benefit": false,
+    "promotionReady": false,
+    "realHuman": false
+  }
+}

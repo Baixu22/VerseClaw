@@ -14,6 +14,7 @@ export interface ResponsesRequest {
   stream: false;
   truncation: 'disabled';
   max_output_tokens: number;
+  tools?: ReadonlyArray<Record<string, unknown>>;
   reasoning?: { effort: 'low' };
   text?: { format: { type: 'json_schema'; name: 'rsi_coding_edits'; strict: true; schema: Record<string, unknown> } };
 }
@@ -69,6 +70,7 @@ export interface ResponsesProviderOptions {
   transport?: ResponsesTransport;
   reasoningEffort?: 'low';
   jsonSchema?: Record<string, unknown>;
+  tools?: ReadonlyArray<Record<string, unknown>>;
 }
 
 export function buildResponsesRequest(input: {
@@ -78,6 +80,7 @@ export function buildResponsesRequest(input: {
   maxOutputTokens: number;
   reasoningEffort?: 'low';
   jsonSchema?: Record<string, unknown>;
+  tools?: ReadonlyArray<Record<string, unknown>>;
 }): ResponsesRequest;
 
 export function parseResponsesReply(payload: unknown): ResponsesReply;
