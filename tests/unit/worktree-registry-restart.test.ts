@@ -1,5 +1,5 @@
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, symlinkSync, unlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { createRequire } from 'node:module';
@@ -131,6 +131,7 @@ describe('durable managed checkout registration', () => {
     expect(() => service.create('pending', { operationId: 'pending-op' })).toThrow('registered interruption');
     fault.mockRestore();
     const other = service.create('other');
+    unlinkSync(path.join(service.pathFor('pending'), '.git'));
     writeFileSync(path.join(service.pathFor('pending'), '.git'), readFileSync(path.join(other.root, '.git')));
     closeOpenClawStateDatabaseForTest();
     expect(() => service.create('pending', { operationId: 'pending-op' })).toThrow(/worktree_(unknown|replaced)/);
