@@ -309,6 +309,9 @@ export function mergeResourceEnvelopeSnapshots(
   const machine = accepted.map(snapshot => snapshot.machineMemory).filter(value => value && fresh(value.sampledAt, now))
     .sort((a, b) => b!.sampledAt - a!.sampledAt)[0];
   if (machine) result.machineMemory = machine;
+  const commit = accepted.map(snapshot => snapshot.machineCommit).filter(value => value && fresh(value.sampledAt, now))
+    .sort((a, b) => b!.sampledAt - a!.sampledAt)[0];
+  if (commit) result.machineCommit = { ...commit };
   if (eventLoopPressure) result.eventLoopPressure = { ...eventLoopPressure };
   return result;
 }

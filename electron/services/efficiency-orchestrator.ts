@@ -16,6 +16,7 @@ import { EfficiencySampler, type EfficiencySummary } from './efficiency-sampler'
 import { EfficiencyPowerPolicy, type EfficiencyShedState } from './efficiency-power-policy';
 import { getBackgroundWorkGate, resetBackgroundWorkGateForTest, type BackgroundWorkGateState } from '../../openclaw_runtime/src/resources/background-work-gate';
 import { getAggregatedResourceEnvelopeSnapshot } from './resource-envelope';
+import { getResourceFabric } from './resource-fabric';
 import { getTimerAligner } from '../../shared/resources';
 
 let sampler: EfficiencySampler | null = null;
@@ -65,6 +66,7 @@ function startBackgroundWorkGate(
     try {
       const snapshot = await getAggregatedResourceEnvelopeSnapshot();
       if (!started || generation !== efficiencyGeneration) return;
+      getResourceFabric().observePressure(snapshot);
       const physical = snapshot.processTotals;
       getBackgroundWorkGate().update({
         shedSignal: activePolicy.shedding,
@@ -74,6 +76,7 @@ function startBackgroundWorkGate(
         ...(snapshot.eventLoopPressure ? { eventLoopDegraded: snapshot.eventLoopPressure.degraded } : {}),
       });
     } catch (error) {
+      if (started && generation === efficiencyGeneration) getResourceFabric().observePressure({});
       logger.warn('[efficiency] background work gate update failed', error);
     } finally {
       inFlight = false;
@@ -195,6 +198,7 @@ export function stopRuntimeEfficiency(): void {
   unsubscribePowerEvents = null;
   getTimerAligner().setShedding(false);
   getBackgroundWorkGate().clearObservationPressure();
+  getResourceFabric().clearObservationPressure();
   logger.info('[efficiency] runtime efficiency sampling stopped');
 }
 

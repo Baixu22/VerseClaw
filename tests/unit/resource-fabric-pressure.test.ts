@@ -12,7 +12,11 @@ describe('ResourceFabric P2 pressure', () => {
     const fabric = new ResourceFabric();
     fabric.observeLatency('workspaceExec', 'pressure-ws-0', 200, 0);
     fabric.observeLatency('workspaceExec', 'pressure-ws-0', 5, 1);
+    fabric.observeLatency('workspaceExec', 'pressure-ws-0', 5, 1);
+    fabric.observeLatency('workspaceExec', 'pressure-ws-0', 5, 1);
     fabric.observeLatency('chatHistory', 'chatHistory', 200, 0);
+    fabric.observeLatency('chatHistory', 'chatHistory', 5, 1);
+    fabric.observeLatency('chatHistory', 'chatHistory', 5, 1);
     fabric.observeLatency('chatHistory', 'chatHistory', 5, 1);
 
     let execTimeouts = 0;
