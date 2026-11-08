@@ -1,0 +1,73 @@
+{
+  "source": [
+    {
+      "path": "electron/services/sessions-api.ts",
+      "sha256": "7a0e6de5f2dc888bf1f1083855c2fd352058e8fc66266aec0f925f1bc84c605d",
+      "sharedMatches": true
+    },
+    {
+      "path": "electron/services/session-delegation-admission.ts",
+      "sha256": "a47eebbc19a90997440d0e1345073be096b562879cc6264b9fb5e0ee98a9be01",
+      "sharedMatches": true
+    },
+    {
+      "path": "shared/session-task-scope.ts",
+      "sha256": "d3f6c3776e1f43c5d50a11af1e4790703e8e579bbfd0e28d5ef2387aef501ca2",
+      "sharedMatches": true
+    },
+    {
+      "path": "tests/unit/long-session-delegation-admission.test.ts",
+      "sha256": "7a0c0d0b2a8d8468c79c67b8b897d766010ad29e7e5d4e05a11b8313b321bf60",
+      "sharedMatches": true
+    },
+    {
+      "path": "tests/unit/session-task-scope.test.ts",
+      "sha256": "ed3fc1b8c7d871832ceeda4118d90e34dc54bd2e6dc5e71ee23e71af4641b575",
+      "sharedMatches": true
+    },
+    {
+      "path": "docs/modules/multi-agent-and-tasks.md",
+      "sha256": "d793a9bb8ca052a1b24ade6127052916580965aab0774477c249babd4a92309d",
+      "sharedMatches": true
+    },
+    {
+      "path": "harness/specs/tasks/session-task-scope-admission.md",
+      "sha256": "47409d1d594345bd91a7ae71067cb1b6edba987cb6f677a074a3c3f394dcad49",
+      "sharedMatches": true
+    }
+  ],
+  "configurationInputs": [
+    {
+      "path": "package.json",
+      "sha256": "f82adc8c38bb41c60521a3352582f5022775b1bef893ea9e5e3d244c978843fc"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "6427882a1725aa5929da2db9d55d1397237dee1a354bb6db3dfb63bb61abb441"
+    },
+    {
+      "path": "openclaw_runtime/package.json",
+      "sha256": "806db8be4f1a4df80f754abd09d3635cb4420c3c6bf7e1a367c07ad89a53ff1c"
+    },
+    {
+      "path": "openclaw_runtime/pnpm-lock.yaml",
+      "sha256": "3ee305722a4f52a314f25871e0386f4d1cf214eb9ad7fc17f24b4908f5456013"
+    },
+    {
+      "path": "vitest.config.ts",
+      "sha256": "fc7eff28afa43ff1020c17e894c08a2a375fbc72c25ed0df2c5fd123416f8e42"
+    },
+    {
+      "path": "tsconfig.node.json",
+      "sha256": "01b4363d8da06b72b30f19e05de7dd3d27d00a29fafdda48f963a043d7af7324"
+    },
+    {
+      "path": "tsconfig.test.json",
+      "sha256": "c4953d93389d317eb2746b3fe6334e7a99cb109142e4dcef63ee779f3fc6f97d"
+    },
+    {
+      "path": "electron/extensions/_ext-bridge.generated.ts",
+      "sha256": "c5ffef6499acfc89200a8e8d0d5f4e504cb9e75b2755eabb062fcf9af683bab8"
+    }
+  ]
+}

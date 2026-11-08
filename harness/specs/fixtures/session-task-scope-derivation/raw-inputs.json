@@ -1,0 +1,1314 @@
+{
+  "root": "D:/tmp/clawx-audit-next-20261107",
+  "files": [
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/build-1.log",
+      "bytes": 1625,
+      "sha256": "13d6ae35110440000efe52c86cf6ccc96bc9cef30486d6bb32aef98a249d2f24"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/build-1.json",
+      "bytes": 759,
+      "sha256": "67e5e317c5ca94fa12f7a1e98ecdd0a7cce1efdf9e416806379ba20384e244a9"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/build-2.log",
+      "bytes": 47570,
+      "sha256": "38811698b93b654b7c432175e262921e9210575bc70509406218d7f2a3051757"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/build-2.json",
+      "bytes": 761,
+      "sha256": "d88f5f1c8528296b8296c1cc6a123c99882001a0405ff041c403854e35b7cee0"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/build-3.log",
+      "bytes": 47570,
+      "sha256": "4eba64a49588c1b9c8bded812507f4d9cb34b6a6e9076a12cc9024a685555ec9"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/build-3.json",
+      "bytes": 761,
+      "sha256": "6c37123c0ac5db6a1069fc7cd9cf0adf24e99f381f067fb3c78eef7daf0b8f49"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/commsCompare-1.log",
+      "bytes": 3435,
+      "sha256": "b124613ed7f57a0657293b2924bfc2d48f3d557328686928c9db3184998921a1"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/commsCompare-1.json",
+      "bytes": 692,
+      "sha256": "b2f7c0bcafeeea098cdcf9e4d451fc56c0d7bcbb4b3cf70ef7fc800d472d0521"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/commsCompare-2.log",
+      "bytes": 3435,
+      "sha256": "5c6bd5d2e5778abe36d7001867da7f5f001c3700fb6ef2f5549ec62852ce9ad5"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/commsCompare-2.json",
+      "bytes": 692,
+      "sha256": "d7a6a4008fd5cf99257a96063f6218e58245288415b236cc7c6b7ba4962db50e"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/commsReplay-1.log",
+      "bytes": 110,
+      "sha256": "46f3aaee5dafa664337bccebc174f1b46400ef2251a073dbd103466feec716f7"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/commsReplay-1.json",
+      "bytes": 688,
+      "sha256": "73a1289e879ac54aec6c2a5a4a6c82b0eea7754563b393093773902e1b58499a"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/commsReplay-2.log",
+      "bytes": 110,
+      "sha256": "46f3aaee5dafa664337bccebc174f1b46400ef2251a073dbd103466feec716f7"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/commsReplay-2.json",
+      "bytes": 688,
+      "sha256": "8f00188b5a58116b0f303979c3b7ded7d3d6b1b01a8dca77473f019302c6a9fa"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/contract-1.log",
+      "bytes": 23,
+      "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/contract-1.json",
+      "bytes": 682,
+      "sha256": "7687bd12346aa1c10a99621f75afb6d4bbdca89907423cf6e52515f1bbb5fbc0"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/contract-2.log",
+      "bytes": 23,
+      "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/contract-2.json",
+      "bytes": 682,
+      "sha256": "77901c391ac531052a89eafc074395188299054835926a1fe2ceebdffea14722"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-1.log",
+      "bytes": 2366,
+      "sha256": "5c3fbb9d8d1fc1460b3058b90d6f3aebf8459ef0af6d3bb29d391c90ee20acf7"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-1.json",
+      "bytes": 897,
+      "sha256": "0ba5606db93b37bdf86ce25bbac7f64a3b2193444f641ceebdd97d47e9f5ee75"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-2.log",
+      "bytes": 851,
+      "sha256": "e2690574421754d4018ba4137fcfa3c1aa62040463678ce32693b137b89841c9"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-2.json",
+      "bytes": 897,
+      "sha256": "e03cd4feb3c4a8cfdcc84cdd0cf49321f999525caac540da52f1716bab312593"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-3.log",
+      "bytes": 546,
+      "sha256": "a52d716eacb4819bee7989630000ba8b6ad303de9413fcb073cae7bcec5da6af"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-3.json",
+      "bytes": 897,
+      "sha256": "ea9715fe5ad926ff9fd6f4b448e30ea0bc490b717e2c08b80ee1e15d95dd8163"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/harnessPreview-1.log",
+      "bytes": 108,
+      "sha256": "9b156c45a6608adb5af9b6b5264cf724c070a5f2730e7c21b4fc05cc5a3513d9"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/harnessPreview-1.json",
+      "bytes": 794,
+      "sha256": "204429ef14d9a775cb7c27b50984fa67754da85c2e6e4fcaa0fc9f4b4290acd1"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/harnessPreview-2.log",
+      "bytes": 108,
+      "sha256": "9b156c45a6608adb5af9b6b5264cf724c070a5f2730e7c21b4fc05cc5a3513d9"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/harnessPreview-2.json",
+      "bytes": 794,
+      "sha256": "f242093598b602201b384bb1ffb4df8b876e62cc2c9d225602058b2e3653ad6c"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/harnessValidate-1.log",
+      "bytes": 68,
+      "sha256": "abee1e78bdd5bb0bb7c3b6f92a456ee676ffe993856bbc2b13f633d0708f48d3"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/harnessValidate-1.json",
+      "bytes": 785,
+      "sha256": "10dd60ac34965f811f850f397c30e5ddba7b862bd1945982014e576e5180a468"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/harnessValidate-2.log",
+      "bytes": 68,
+      "sha256": "abee1e78bdd5bb0bb7c3b6f92a456ee676ffe993856bbc2b13f633d0708f48d3"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/harnessValidate-2.json",
+      "bytes": 785,
+      "sha256": "1fcd49973098576ff48144dc72bd647655255269142ada28ac2518f588b386d2"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/lint-1.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/lint-1.json",
+      "bytes": 924,
+      "sha256": "53a8a5a415542e3a573b6883ba0d0d4b8a207e7442cd9e67084f8e9437682fe9"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/lint-2.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/lint-2.json",
+      "bytes": 924,
+      "sha256": "3233657f522beca3d6f01f66e68ae405586fc87a21d2095e738a2e878d38b2a2"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/nodeTypes-1.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/nodeTypes-1.json",
+      "bytes": 846,
+      "sha256": "e691befb35bde092e2aef5f653fdfe900b5a4f3debdfd0ba2597f17d16a02ca1"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/nodeTypes-2.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/nodeTypes-2.json",
+      "bytes": 846,
+      "sha256": "bef47e21c85e256fae937e45b8d3f6e10faf06d4a6c28ab3e6819ab8b28f645d"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/retention-1.log",
+      "bytes": 60,
+      "sha256": "e0f69239b4b6a9a8d7f9c2fbf001c750b09d6158819792f865c68df4eeb7c87e"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/retention-1.json",
+      "bytes": 697,
+      "sha256": "a229f769312a76a96a7fc77b2e30250a2de9d3dd997b270ed6d5313aca86fdb7"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/retention-2.log",
+      "bytes": 60,
+      "sha256": "e0f69239b4b6a9a8d7f9c2fbf001c750b09d6158819792f865c68df4eeb7c87e"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/retention-2.json",
+      "bytes": 697,
+      "sha256": "27b9f43b5e217e288c043f4b1bb8ee15896658c68a1636c47693ceccd83f9ef7"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/runtimeBuild-1.log",
+      "bytes": 3786,
+      "sha256": "70dc40a4468175144720ebe9f050e47929361a62e9c9b1b1e557ed0f418e1456"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/runtimeBuild-1.json",
+      "bytes": 703,
+      "sha256": "d2cfef4274cf1a42806e4e7e4d7278d0c0637d52d21e47d30d468d806ccb5a2f"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/runtimeBuild-2.log",
+      "bytes": 3734,
+      "sha256": "6ec7962e8660669863946b74f2f87ff8692327a7d9b7cad00c52bb2060f4bf83"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/runtimeBuild-2.json",
+      "bytes": 703,
+      "sha256": "2083591035add6a39bbac9068fdcee92edee2ceb2e8f8f0d97abc946fd36b714"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/testTypes-1.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/testTypes-1.json",
+      "bytes": 847,
+      "sha256": "70c78f4aff00ca0c188a7e1e3cc379711504baa7863d895371aeb9fa9361c6dc"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/testTypes-2.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/testTypes-2.json",
+      "bytes": 846,
+      "sha256": "29066596a3ca8a756821f3ea682659a0ce752c6c335447408a59030a2b43ae0d"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/unit-1.log",
+      "bytes": 1463,
+      "sha256": "204ee1fd50ca5ecd27b0c6dec7f114388bb95044fd382f4521242f53dbfb836c"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/unit-1.json",
+      "bytes": 1119,
+      "sha256": "67237ebc2327dd6377050508bf9ec2aaba6890bbc7414bebc3991f0dc244d59c"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/unit-2.log",
+      "bytes": 1231,
+      "sha256": "a5ec8598ab6b060b8173423458bef4ef50ced37ce30c7ce2334557ce5e5c38c1"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/unit-2.json",
+      "bytes": 1127,
+      "sha256": "8e54437c2e99c44c2649ff2842ecfc8f1585683b42315f5f7aaf56760775184f"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/webTypes-1.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/webTypes-1.json",
+      "bytes": 842,
+      "sha256": "17365087ca13a624c991bcdad1faa57a6cbaf78829be90a8dd69f296f1e81898"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/webTypes-2.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/webTypes-2.json",
+      "bytes": 843,
+      "sha256": "d6d21354a8c650921f4a62ebd9741832ed9c15c3cc89ca7d12b7e40340551988"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/unit-2-tests.json",
+      "bytes": 30608,
+      "sha256": "7905063c3e295a181cfe87a26291e16615f5b1295b29f4462a166a906857ab02"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-before-unit.json",
+      "bytes": 13096,
+      "sha256": "dc6b40b2e909aa39d2cdfa2342397157f158ca5f3ca91d1e37b4df1d8d0cbfaf"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-before-unit.log",
+      "bytes": 5758,
+      "sha256": "74a2e8e0f25310a2ffc0d035970f3c15ec82e7d42cac59e797c082a81b4c22ec"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-context.log",
+      "bytes": 3181,
+      "sha256": "885dc3524193196f12bde71c6a13d066fb9d2f7f0b2d470fa5f6156646ff5fc8"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-electron-install-result.json",
+      "bytes": 86,
+      "sha256": "2fe0481e04d0140d7d1f708c704ada65a806a2052fc25d109bfdac1785086ba7"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-electron-install.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-package-install.log",
+      "bytes": 86,
+      "sha256": "e4937c4da60b88d7ed7f3cc41997de0080822b69b638bf234ef17c92508ba613"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-unit-final.json",
+      "bytes": 30259,
+      "sha256": "86191eeb0e75d06c287b1be5909134d0e19160bcab11d2359079d498465b1ae6"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-unit-final.log",
+      "bytes": 1661,
+      "sha256": "61112f5f92de8b8a7e90f78b5edb806de1443183862dfb70256f77c847d86f49"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-unit.json",
+      "bytes": 31001,
+      "sha256": "1377b370d65792b169508a4e2f2851ce787bbcac1d1f8f2bfa68592f12a11d86"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-unit.log",
+      "bytes": 5683,
+      "sha256": "f5470d804653f4a8a22bacb8b01c93a9b989482ba15ba90bd02bddaa3e893d22"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-1-report.json",
+      "bytes": 5833,
+      "sha256": "a63f948ee3496e42e75c6113994955e7e801d2ee5e3778b7966bfb390e0a6985"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-2-report.json",
+      "bytes": 3575,
+      "sha256": "27e38e307d45dcd2fbb775f8ecfb796c0d42b6b3a607f7c6a359edffae89201e"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-3-report.json",
+      "bytes": 2984,
+      "sha256": "fd824a6b3e3c21395124a0d0ac609ed29bff10422dd02a143bc8c321a817ff77"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-1-results/.last-run.json",
+      "bytes": 96,
+      "sha256": "49259aa0fbe0688caf3c5c6ddc08ed3aa067a260cb3818322b95d4f39d40010a"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-1-results/electron-process-cleanup.json",
+      "bytes": 540,
+      "sha256": "20404ff89648c6efdffcb4787a38c2b3511c8ad3ad2293fc7d121def55087d88"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-1-results/electron-process-run.json",
+      "bytes": 232,
+      "sha256": "40079699d3660b6b868df4734124356b099c534bdd76a31a792b817851927aa8"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-1-results/session-task-scope-derivat-45a37-iting-coordinator-authority/error-context.md",
+      "bytes": 9339,
+      "sha256": "226462f7f02a0018a2e0568d6d28f08a15555f43ae5acf18d3a95b895f9c3af7"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-1-results/session-task-scope-derivat-45a37-iting-coordinator-authority/task-scope-derivation.json",
+      "bytes": 400,
+      "sha256": "17489d02185a667e7ceff16c14b8e92efa34916f8fc097affeba749c2f69d402"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-1-results/session-task-scope-derivat-45a37-iting-coordinator-authority/trace.zip",
+      "bytes": 29896,
+      "sha256": "580a55f6a740171df8309478e170c39e111c941a466339fd0fa75a4346442f1b"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-1-results/source-mutation-guard.json",
+      "bytes": 585,
+      "sha256": "79c9f76ef1e7d24a21ed547c95d4728fec49346ed293dd88b53061097d2afb55"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-1-results/source-state-after.json",
+      "bytes": 194,
+      "sha256": "21ec2c1044a42d1cc49a15797399fea3b52e7cfa5447d534e8fc5849cd685d12"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-1-results/source-state-before.json",
+      "bytes": 194,
+      "sha256": "21ec2c1044a42d1cc49a15797399fea3b52e7cfa5447d534e8fc5849cd685d12"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-2-results/.last-run.json",
+      "bytes": 45,
+      "sha256": "e22df5d0991eb28c09093b1e678b3fa8cd1fab48185d38e67cf79fb6e63ad5ea"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-2-results/electron-process-cleanup.json",
+      "bytes": 489,
+      "sha256": "729d6439b8e9c3c031bb3cf193c3f9e6f4846cf029cbfddbcc5fba2a7dcaeadf"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-2-results/electron-process-run.json",
+      "bytes": 232,
+      "sha256": "160884a848313c802ca46ac11b7941eddf962f3985c6c720a4bc449565c5b1f3"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-2-results/session-task-scope-derivat-45a37-iting-coordinator-authority/task-scope-derivation.json",
+      "bytes": 9603,
+      "sha256": "c00eb3c5ba96e50514f8e0b754e86ac64625afaf8aba502494ff6571872cc9b3"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-2-results/session-task-scope-derivat-45a37-iting-coordinator-authority/task-scope-derived-session.png",
+      "bytes": 523154,
+      "sha256": "040f2f8b1cf9d1e5e6d073f5bba37c0f8bb5551ab3430ad97c3e6dcdd06092aa"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-2-results/source-mutation-guard.json",
+      "bytes": 585,
+      "sha256": "79c9f76ef1e7d24a21ed547c95d4728fec49346ed293dd88b53061097d2afb55"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-2-results/source-state-after.json",
+      "bytes": 194,
+      "sha256": "21ec2c1044a42d1cc49a15797399fea3b52e7cfa5447d534e8fc5849cd685d12"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-2-results/source-state-before.json",
+      "bytes": 194,
+      "sha256": "21ec2c1044a42d1cc49a15797399fea3b52e7cfa5447d534e8fc5849cd685d12"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-3-results/.last-run.json",
+      "bytes": 45,
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-3-results/electron-process-cleanup.json",
+      "bytes": 489,
+      "sha256": "c4fd6f60ab577ae43e11e4bcc32f6fe92c6c46473a3f839df494ce08b67dc60e"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-3-results/electron-process-run.json",
+      "bytes": 232,
+      "sha256": "6fdc9dbb5545f910719a0994faf418c306f2a91bb48db8485d7d76d32d835368"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-3-results/session-task-scope-derivat-45a37-iting-coordinator-authority/task-scope-derivation.json",
+      "bytes": 9603,
+      "sha256": "755c5076da9e94c1d602ab5c19a59294a474d8c17a3144e6576f43bb139b4d04"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-3-results/session-task-scope-derivat-45a37-iting-coordinator-authority/task-scope-derived-session.png",
+      "bytes": 553430,
+      "sha256": "226488ef722fc878d1478fc4416d4a526a7f3e0e0e72a049f184b4d1975794c3"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-3-results/source-mutation-guard.json",
+      "bytes": 585,
+      "sha256": "79c9f76ef1e7d24a21ed547c95d4728fec49346ed293dd88b53061097d2afb55"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-3-results/source-state-after.json",
+      "bytes": 194,
+      "sha256": "21ec2c1044a42d1cc49a15797399fea3b52e7cfa5447d534e8fc5849cd685d12"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-3-results/source-state-before.json",
+      "bytes": 194,
+      "sha256": "21ec2c1044a42d1cc49a15797399fea3b52e7cfa5447d534e8fc5849cd685d12"
+    }
+  ],
+  "attempts": [
+    {
+      "id": "build-1",
+      "name": "build",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "run",
+        "build:vite"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "9e9364ea78988232592347b5a9a53ecf75791142",
+        "tree": "abd7da822d2fb0a3193c06c6523fdc8fc93ae088",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T08:34:28.640Z",
+      "finishedAt": "2026-11-07T08:34:37.639Z",
+      "durationMs": 8992,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/build-1.log",
+      "exitCode": 1,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "build-2",
+      "name": "build",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "run",
+        "build:vite"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8cc63b87e7a2129e8870c56cee2e8b09131f307b",
+        "tree": "a7fd9f6bd7ef3c18b27ffd24ab375b67314e1dc7",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T08:44:32.207Z",
+      "finishedAt": "2026-11-07T08:48:41.572Z",
+      "durationMs": 249364,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/build-2.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "build-3",
+      "name": "build",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "run",
+        "build:vite"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:17:11.985Z",
+      "finishedAt": "2026-11-07T09:20:40.804Z",
+      "durationMs": 208818,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/build-3.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "commsCompare-1",
+      "name": "commsCompare",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8cc63b87e7a2129e8870c56cee2e8b09131f307b",
+        "tree": "a7fd9f6bd7ef3c18b27ffd24ab375b67314e1dc7",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T08:57:37.105Z",
+      "finishedAt": "2026-11-07T08:57:37.262Z",
+      "durationMs": 157,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/commsCompare-1.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "commsCompare-2",
+      "name": "commsCompare",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:28:01.341Z",
+      "finishedAt": "2026-11-07T09:28:01.513Z",
+      "durationMs": 172,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/commsCompare-2.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "commsReplay-1",
+      "name": "commsReplay",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8cc63b87e7a2129e8870c56cee2e8b09131f307b",
+        "tree": "a7fd9f6bd7ef3c18b27ffd24ab375b67314e1dc7",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T08:57:36.390Z",
+      "finishedAt": "2026-11-07T08:57:36.607Z",
+      "durationMs": 217,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/commsReplay-1.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "commsReplay-2",
+      "name": "commsReplay",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:28:00.617Z",
+      "finishedAt": "2026-11-07T09:28:00.897Z",
+      "durationMs": 280,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/commsReplay-2.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "contract-1",
+      "name": "contract",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8cc63b87e7a2129e8870c56cee2e8b09131f307b",
+        "tree": "a7fd9f6bd7ef3c18b27ffd24ab375b67314e1dc7",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T08:57:04.290Z",
+      "finishedAt": "2026-11-07T08:57:10.236Z",
+      "durationMs": 5946,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/contract-1.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "contract-2",
+      "name": "contract",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:27:32.733Z",
+      "finishedAt": "2026-11-07T09:27:34.813Z",
+      "durationMs": 2080,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/contract-2.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "e2e-1",
+      "name": "e2e",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/session-task-scope-derivation.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=list,json",
+        "--output=D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-1-results"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8cc63b87e7a2129e8870c56cee2e8b09131f307b",
+        "tree": "a7fd9f6bd7ef3c18b27ffd24ab375b67314e1dc7",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T08:58:51.583Z",
+      "finishedAt": "2026-11-07T09:03:36.297Z",
+      "durationMs": 284708,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-1.log",
+      "exitCode": 1,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "e2e-2",
+      "name": "e2e",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/session-task-scope-derivation.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=list,json",
+        "--output=D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-2-results"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8cc63b87e7a2129e8870c56cee2e8b09131f307b",
+        "tree": "a7fd9f6bd7ef3c18b27ffd24ab375b67314e1dc7",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:10:31.287Z",
+      "finishedAt": "2026-11-07T09:13:23.382Z",
+      "durationMs": 172094,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-2.log",
+      "exitCode": 1,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "e2e-3",
+      "name": "e2e",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/session-task-scope-derivation.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=list,json",
+        "--output=D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-3-results"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:28:11.146Z",
+      "finishedAt": "2026-11-07T09:30:04.880Z",
+      "durationMs": 113736,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-3.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "harnessPreview-1",
+      "name": "harnessPreview",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/session-task-scope-derivation.md",
+        "--dry-run"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8cc63b87e7a2129e8870c56cee2e8b09131f307b",
+        "tree": "a7fd9f6bd7ef3c18b27ffd24ab375b67314e1dc7",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T08:57:38.849Z",
+      "finishedAt": "2026-11-07T08:57:39.634Z",
+      "durationMs": 785,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/harnessPreview-1.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "harnessPreview-2",
+      "name": "harnessPreview",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/session-task-scope-derivation.md",
+        "--dry-run"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:28:03.344Z",
+      "finishedAt": "2026-11-07T09:28:04.128Z",
+      "durationMs": 784,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/harnessPreview-2.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "harnessValidate-1",
+      "name": "harnessValidate",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/session-task-scope-derivation.md"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8cc63b87e7a2129e8870c56cee2e8b09131f307b",
+        "tree": "a7fd9f6bd7ef3c18b27ffd24ab375b67314e1dc7",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T08:57:37.668Z",
+      "finishedAt": "2026-11-07T08:57:38.451Z",
+      "durationMs": 783,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/harnessValidate-1.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "harnessValidate-2",
+      "name": "harnessValidate",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/session-task-scope-derivation.md"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:28:01.903Z",
+      "finishedAt": "2026-11-07T09:28:02.826Z",
+      "durationMs": 923,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/harnessValidate-2.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "lint-1",
+      "name": "lint",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "electron/services/sessions-api.ts",
+        "src/lib/workspace-session.ts",
+        "tests/unit/host-services.test.ts",
+        "tests/unit/workspace-session.test.ts",
+        "tests/e2e/session-task-scope-derivation.spec.ts",
+        "--max-warnings",
+        "0"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8cc63b87e7a2129e8870c56cee2e8b09131f307b",
+        "tree": "a7fd9f6bd7ef3c18b27ffd24ab375b67314e1dc7",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T08:56:54.158Z",
+      "finishedAt": "2026-11-07T08:57:02.050Z",
+      "durationMs": 7892,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/lint-1.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "lint-2",
+      "name": "lint",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "electron/services/sessions-api.ts",
+        "src/lib/workspace-session.ts",
+        "tests/unit/host-services.test.ts",
+        "tests/unit/workspace-session.test.ts",
+        "tests/e2e/session-task-scope-derivation.spec.ts",
+        "--max-warnings",
+        "0"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:27:24.512Z",
+      "finishedAt": "2026-11-07T09:27:32.217Z",
+      "durationMs": 7705,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/lint-2.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "nodeTypes-1",
+      "name": "nodeTypes",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false",
+        "--singleThreaded",
+        "--checkers",
+        "1"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8cc63b87e7a2129e8870c56cee2e8b09131f307b",
+        "tree": "a7fd9f6bd7ef3c18b27ffd24ab375b67314e1dc7",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T08:48:42.938Z",
+      "finishedAt": "2026-11-07T08:49:40.412Z",
+      "durationMs": 57475,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/nodeTypes-1.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "nodeTypes-2",
+      "name": "nodeTypes",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false",
+        "--singleThreaded",
+        "--checkers",
+        "1"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:22:20.570Z",
+      "finishedAt": "2026-11-07T09:22:59.093Z",
+      "durationMs": 38523,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/nodeTypes-2.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "retention-1",
+      "name": "retention",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8cc63b87e7a2129e8870c56cee2e8b09131f307b",
+        "tree": "a7fd9f6bd7ef3c18b27ffd24ab375b67314e1dc7",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T08:57:40.235Z",
+      "finishedAt": "2026-11-07T08:57:45.378Z",
+      "durationMs": 5143,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/retention-1.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "retention-2",
+      "name": "retention",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:28:04.533Z",
+      "finishedAt": "2026-11-07T09:28:10.657Z",
+      "durationMs": 6124,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/retention-2.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "runtimeBuild-1",
+      "name": "runtimeBuild",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8cc63b87e7a2129e8870c56cee2e8b09131f307b",
+        "tree": "a7fd9f6bd7ef3c18b27ffd24ab375b67314e1dc7",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:08:21.054Z",
+      "finishedAt": "2026-11-07T09:09:16.219Z",
+      "durationMs": 55164,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/runtimeBuild-1.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "runtimeBuild-2",
+      "name": "runtimeBuild",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:20:41.591Z",
+      "finishedAt": "2026-11-07T09:22:19.873Z",
+      "durationMs": 98282,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/runtimeBuild-2.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "testTypes-1",
+      "name": "testTypes",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false",
+        "--singleThreaded",
+        "--checkers",
+        "1"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8cc63b87e7a2129e8870c56cee2e8b09131f307b",
+        "tree": "a7fd9f6bd7ef3c18b27ffd24ab375b67314e1dc7",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T08:49:57.429Z",
+      "finishedAt": "2026-11-07T08:56:52.761Z",
+      "durationMs": 415332,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/testTypes-1.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "testTypes-2",
+      "name": "testTypes",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false",
+        "--singleThreaded",
+        "--checkers",
+        "1"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:26:05.332Z",
+      "finishedAt": "2026-11-07T09:27:23.236Z",
+      "durationMs": 77905,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/testTypes-2.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "unit-1",
+      "name": "unit",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/host-services.test.ts",
+        "tests/unit/workspace-session.test.ts",
+        "tests/unit/session-task-scope.test.ts",
+        "tests/unit/long-session-delegation-admission.test.ts",
+        "tests/unit/long-session-coordinator-binding.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:/tmp/clawx-audit-next-20261107/derivation-validation/unit.json"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8cc63b87e7a2129e8870c56cee2e8b09131f307b",
+        "tree": "a7fd9f6bd7ef3c18b27ffd24ab375b67314e1dc7",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T08:57:12.998Z",
+      "finishedAt": "2026-11-07T08:57:35.968Z",
+      "durationMs": 22970,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/unit-1.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "unit-2",
+      "name": "unit",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/host-services.test.ts",
+        "tests/unit/workspace-session.test.ts",
+        "tests/unit/session-task-scope.test.ts",
+        "tests/unit/long-session-delegation-admission.test.ts",
+        "tests/unit/long-session-coordinator-binding.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:/tmp/clawx-audit-next-20261107/derivation-validation/unit-2-tests.json"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:27:35.288Z",
+      "finishedAt": "2026-11-07T09:28:00.127Z",
+      "durationMs": 24839,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/unit-2.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "webTypes-1",
+      "name": "webTypes",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false",
+        "--singleThreaded",
+        "--checkers",
+        "1"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8cc63b87e7a2129e8870c56cee2e8b09131f307b",
+        "tree": "a7fd9f6bd7ef3c18b27ffd24ab375b67314e1dc7",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T08:49:41.363Z",
+      "finishedAt": "2026-11-07T08:49:56.828Z",
+      "durationMs": 15465,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/webTypes-1.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    },
+    {
+      "id": "webTypes-2",
+      "name": "webTypes",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false",
+        "--singleThreaded",
+        "--checkers",
+        "1"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:22:59.785Z",
+      "finishedAt": "2026-11-07T09:26:04.296Z",
+      "durationMs": 184511,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/webTypes-2.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false
+    }
+  ]
+}

@@ -29,6 +29,12 @@ describe("A4 session task scope", () => {
     });
   });
 
+  it("selects the requested task after another link from the same session", () => {
+    const scope = input();
+    scope.links.unshift({ id: "other-task-link", sessionKey: scope.sessionKey, nodeId: "task-2" });
+    expect(resolveSessionTaskScope(scope)).toMatchObject({ status: "ready", taskRef: "task-1" });
+  });
+
   it("keeps discussion containers empty rather than inferring a task from a title or link", () => {
     expect(resolveSessionTaskScope(input({ activeTaskNodeId: null, task: null }))).toEqual({
       status: "empty",

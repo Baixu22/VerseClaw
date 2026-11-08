@@ -1017,7 +1017,7 @@ describe('host services', () => {
           fileName: 'image.png',
         }],
       },
-      120000,
+      15 * 60_000,
     );
   });
 
@@ -1730,7 +1730,113 @@ describe('host services', () => {
 
 
 
-  it('leaves sessions.fork on its existing Gateway contract, without handoff lineage', async () => {
+  it.each(['fork', 'handoff'] as const)('preserves current explicit business-task links during %s in Main', async (derivation) => {
+    const ledger = await import('@electron/services/task-ledger-service');
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const sourceSessionKey = 'agent:main:task-source';
+    const now = '2026-11-07T00:00:00.000Z';
+    const nodes = [
+      { id: 'active-task', kind: 'task' as const, status: 'doing' as const },
+      { id: 'done-task', kind: 'task' as const, status: 'done' as const },
+      { id: 'stale-task', kind: 'task' as const, status: 'todo' as const },
+      { id: 'foreign-task', kind: 'task' as const, status: 'todo' as const },
+      { id: 'turn-check', kind: 'check' as const, status: 'done' as const },
+    ];
+    await ledger.appendTaskLedgerEvents('task-workspace', nodes.map((node) => ({
+      type: 'node_created' as const, actor: 'assistant' as const,
+      payload: { node: { ...node, title: node.id, createdAt: now, updatedAt: now } },
+    })));
+    const links = [
+      { id: 'active', nodeId: 'active-task', sessionGeneration: 'source-generation' },
+      { id: 'duplicate', nodeId: 'active-task', sessionGeneration: 'source-generation' },
+      { id: 'done', nodeId: 'done-task' },
+      { id: 'stale', nodeId: 'stale-task', sessionGeneration: 'old-generation' },
+      { id: 'foreign', nodeId: 'foreign-task', sessionKey: 'agent:main:someone-else' },
+      { id: 'check', nodeId: 'turn-check' },
+      { id: 'missing', nodeId: 'missing-task' },
+    ];
+    await ledger.appendTaskLedgerEvents('task-workspace', links.map((link) => ({
+      type: 'session_linked' as const, actor: 'assistant' as const,
+      payload: { sessionLink: { sessionKey: sourceSessionKey, createdAt: now, ...link } },
+    })));
+    const before = await ledger.loadTaskLedgerSnapshot('task-workspace');
+    const rpc = vi.fn(async (method: string) => {
+      if (method === 'sessions.describe') return { session: { sessionId: 'source-generation' } };
+      if (method === 'sessions.fork') return {
+        key: 'agent:main:task-fork', sourceKey: sourceSessionKey,
+        sessionId: 'fork-generation', forkedFromParent: true,
+      };
+      throw new Error(`Unexpected RPC ${method}`);
+    });
+    const coordinatorLifecycle = vi.fn(async () => undefined);
+    const api = createSessionsApi({ gatewayManager: { rpc } as never, coordinatorLifecycle });
+    const result = derivation === 'fork'
+      ? await api.fork({ sessionKey: sourceSessionKey, workspaceId: 'task-workspace' })
+      : await api.createHandoff({ sessionKey: sourceSessionKey, workspaceId: 'task-workspace', draftInput: 'Continue the linked task.' });
+    expect(result.success).toBe(true);
+    const after = await ledger.loadTaskLedgerSnapshot('task-workspace');
+    const derivedLinks = after.sessionLinks.filter((link) => link.sessionKey === result.sessionKey);
+    expect(derivedLinks.filter((link) => link.nodeId).map((link) => link.nodeId).sort()).toEqual(['active-task', 'done-task']);
+    expect(derivedLinks).toHaveLength(3);
+    expect(derivedLinks.every((link) => link.sourceSessionKey === sourceSessionKey && link.relation === `${derivation === 'fork' ? 'forked' : 'handoff'}_from`)).toBe(true);
+    expect(derivedLinks.every((link) => link.sessionGeneration === (derivation === 'fork' ? 'fork-generation' : null))).toBe(true);
+    expect(after.nodes).toEqual(before.nodes);
+    if (derivation === 'fork') expect(coordinatorLifecycle).not.toHaveBeenCalled();
+    else expect(coordinatorLifecycle).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ type: 'handoff', sourceSessionKey }));
+  });
+
+  it.each(['source', 'fork'] as const)('rejects task inheritance when the %s generation is missing', async (missing) => {
+    const ledger = await import('@electron/services/task-ledger-service');
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const now = '2026-11-07T00:00:00.000Z';
+    await ledger.appendTaskLedgerEvents('generation-workspace', [{
+      type: 'node_created', actor: 'assistant',
+      payload: { node: { id: 'task', title: 'Explicit task', kind: 'task', status: 'doing', createdAt: now, updatedAt: now } },
+    }, {
+      type: 'session_linked', actor: 'assistant',
+      payload: { sessionLink: { id: 'source-link', nodeId: 'task', sessionKey: 'agent:main:source', sessionGeneration: 'source-generation', createdAt: now } },
+    }]);
+    const rpc = vi.fn(async (method: string) => method === 'sessions.describe'
+      ? { session: missing === 'source' ? {} : { sessionId: 'source-generation' } }
+      : { key: 'agent:main:fork', sourceKey: 'agent:main:source', forkedFromParent: true });
+    const api = createSessionsApi({ gatewayManager: { rpc } as never });
+    const result = api.fork({ sessionKey: 'agent:main:source', workspaceId: 'generation-workspace' });
+    if (missing === 'source') {
+      await expect(result).rejects.toThrow('source session generation is missing');
+      expect(rpc).not.toHaveBeenCalledWith('sessions.fork', expect.anything(), expect.anything());
+    } else {
+      await expect(result).resolves.toMatchObject({ success: false, error: 'Task scope unavailable: fork session generation is missing' });
+    }
+    expect((await ledger.loadTaskLedgerSnapshot('generation-workspace')).sessionLinks).toHaveLength(1);
+  });
+
+  it('drops generation-fenced task references when the source resets during fork', async () => {
+    const ledger = await import('@electron/services/task-ledger-service');
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const now = '2026-11-07T00:00:00.000Z';
+    await ledger.appendTaskLedgerEvents('reset-workspace', [{
+      type: 'node_created', actor: 'assistant',
+      payload: { node: { id: 'old-task', title: 'Old generation task', kind: 'task', status: 'doing', createdAt: now, updatedAt: now } },
+    }, {
+      type: 'session_linked', actor: 'assistant',
+      payload: { sessionLink: { id: 'old-link', nodeId: 'old-task', sessionKey: 'agent:main:source', sessionGeneration: 'before-reset', createdAt: now } },
+    }]);
+    let generation = 'before-reset';
+    const rpc = vi.fn(async (method: string) => {
+      if (method === 'sessions.describe') return { session: { sessionId: generation } };
+      generation = 'after-reset';
+      return { key: 'agent:main:fork', sourceKey: 'agent:main:source', sessionId: 'child-generation', forkedFromParent: true };
+    });
+    const result = await createSessionsApi({ gatewayManager: { rpc } as never }).fork({ sessionKey: 'agent:main:source', workspaceId: 'reset-workspace' });
+    expect(result.success).toBe(true);
+    const snapshot = await ledger.loadTaskLedgerSnapshot('reset-workspace');
+    const childLinks = snapshot.sessionLinks.filter((link) => link.sessionKey === result.sessionKey);
+    expect(childLinks).toHaveLength(1);
+    expect(childLinks[0].nodeId).toBeUndefined();
+    expect(snapshot.nodes[0].status).toBe('doing');
+  });
+
+  it('records canonical fork lineage in Main without creating a handoff', async () => {
     const rpc = vi.fn().mockResolvedValue({
       key: 'agent:main:fork',
       // The Gateway answers with the canonical source key, which may differ in
@@ -1749,6 +1855,10 @@ describe('host services', () => {
       sessionKey: 'agent:main:fork',
     });
     expect(rpc).toHaveBeenCalledWith('sessions.fork', expect.objectContaining({ key: 'agent:main:main' }), 30_000);
-    expect((await loadTaskLedgerSnapshot('a')).sessionLinks).toEqual([]);
+    expect((await loadTaskLedgerSnapshot('a')).sessionLinks).toEqual([
+      expect.objectContaining({
+        sessionKey: 'agent:main:fork', sourceSessionKey: 'agent:main:canonical-primary', relation: 'forked_from',
+      }),
+    ]);
   });
 });

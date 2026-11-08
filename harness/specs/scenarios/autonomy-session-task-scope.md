@@ -15,3 +15,5 @@ requiredRules:
 4. Fork 读取同一任务但不继承写 claim；Handoff 使用新 generation 重新绑定。
 5. 任务完成后写 claim 释放；观察者、验证者和协调者只读取各自获准的投影。
 6. 所有验证产物标 `driven_by: agent`，不声称真人证据或发布批准。
+7. Main 在 fork/handoff 中持久化源会话当前显式业务 task 链接；不复制 turn check、缺失任务、其他会话或陈旧 generation 的链接。Renderer 只调用该入口。
+8. Fork 的链接记录其独立运行时 generation；尚未建立运行时会话的 Handoff 链接使用空 generation。派生只创建引用，保留原任务状态，协调器和执行准入仍独立验证。

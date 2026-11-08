@@ -198,19 +198,6 @@ export async function createWorkspaceScopedForkSession(
   });
   await inheritSessionWorkgroup(workspace, sourceSessionKey, result.sessionKey);
   await useWorkspacesStore.getState().fetchWorkspaces();
-  try {
-    await hostApi.taskLedger.linkSession({
-      workspaceId: workspace.id,
-      sessionKey: result.sessionKey,
-      agentId: currentAgentId,
-      relation: 'forked_from',
-      sourceSessionKey,
-      summary: 'Forked conversation branch',
-      idempotencyKey: `session-fork:${sourceSessionKey}:${result.sessionKey}`,
-    });
-  } catch (error) {
-    console.warn('Failed to link forked session in Task Ledger:', error);
-  }
   chatState.resetSessionView(result.sessionKey);
   return result.sessionKey;
 }

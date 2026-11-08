@@ -1,0 +1,261 @@
+{
+  "schema": "clawx.session-task-scope-derivation-e2e/v1",
+  "driven_by": "agent",
+  "actor": "codex-session-task-scope-derivation-e2e",
+  "candidate": {
+    "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+    "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+    "dirty": false
+  },
+  "startedAt": "2026-11-07T09:28:14.593Z",
+  "status": "passed",
+  "source": {
+    "workspaceId": "default",
+    "sessionKey": "agent:main:dashboard:73100038-585d-492b-969d-544c14567efc",
+    "generation": "2db7af65-279d-4d0a-8e09-23753c2bed50",
+    "task": {
+      "id": "ee71e9ae-dd06-4151-a1da-67c7fcf1da6f",
+      "title": "Preserve this explicit task",
+      "kind": "task",
+      "parentId": null,
+      "status": "done",
+      "owner": "user",
+      "priority": "normal",
+      "tags": [],
+      "createdAt": "2026-11-07T09:29:46.631Z",
+      "updatedAt": "2026-11-07T09:29:46.631Z",
+      "completedAt": "2026-11-07T09:29:46.631Z"
+    },
+    "binding": {
+      "success": true,
+      "binding": {
+        "schemaVersion": 1,
+        "workspaceId": "default",
+        "agentId": "main",
+        "sessionKey": "agent:main:dashboard:73100038-585d-492b-969d-544c14567efc",
+        "sessionGeneration": "2db7af65-279d-4d0a-8e09-23753c2bed50",
+        "taskLedgerReferences": [
+          {
+            "direction": "workboard-to-task-ledger",
+            "taskLedgerNodeId": "ee71e9ae-dd06-4151-a1da-67c7fcf1da6f",
+            "source": "runtime"
+          }
+        ],
+        "environment": {
+          "kind": "local",
+          "canonicalRoot": "D:\\tmp\\clawx-audit-next-20261107\\derivation-validation\\e2e-3-profiles\\verse-claw-e2e-run-H7LTpe\\verse-claw-e2e-home-7aKdE3\\.openclaw\\workspace",
+          "backend": "local-workspace",
+          "branch": null,
+          "detachedHead": false,
+          "setupProfile": "default"
+        },
+        "archiveRestorePolicy": "restore",
+        "state": "active",
+        "bindingRevision": 1,
+        "invalidationReason": null,
+        "createdAt": "2026-11-07T09:29:47.095Z",
+        "updatedAt": "2026-11-07T09:29:47.095Z"
+      },
+      "recovery": {
+        "state": "ready",
+        "reason": null,
+        "bindingRevision": 1
+      }
+    }
+  },
+  "fork": {
+    "result": {
+      "success": true,
+      "sourceSessionKey": "agent:main:dashboard:73100038-585d-492b-969d-544c14567efc",
+      "sessionKey": "agent:main:dashboard:0ddad551-e5c3-4dc1-96e9-07a94e26c8a1",
+      "agentId": "main",
+      "workspaceId": "default",
+      "forkedFromParent": true,
+      "warnings": []
+    },
+    "generation": "6e71d7ce-02b8-4694-8901-541accf171aa",
+    "links": [
+      {
+        "id": "fdee86dd-4f2b-425b-9a57-dc7b082655ca",
+        "sessionKey": "agent:main:dashboard:0ddad551-e5c3-4dc1-96e9-07a94e26c8a1",
+        "agentId": "main",
+        "relation": "forked_from",
+        "sourceSessionKey": "agent:main:dashboard:73100038-585d-492b-969d-544c14567efc",
+        "sessionGeneration": "6e71d7ce-02b8-4694-8901-541accf171aa",
+        "createdAt": "2026-11-07T09:29:47.261Z"
+      },
+      {
+        "id": "fdee86dd-4f2b-425b-9a57-dc7b082655ca:task:ee71e9ae-dd06-4151-a1da-67c7fcf1da6f",
+        "sessionKey": "agent:main:dashboard:0ddad551-e5c3-4dc1-96e9-07a94e26c8a1",
+        "agentId": "main",
+        "relation": "forked_from",
+        "sourceSessionKey": "agent:main:dashboard:73100038-585d-492b-969d-544c14567efc",
+        "sessionGeneration": "6e71d7ce-02b8-4694-8901-541accf171aa",
+        "createdAt": "2026-11-07T09:29:47.261Z",
+        "nodeId": "ee71e9ae-dd06-4151-a1da-67c7fcf1da6f"
+      }
+    ],
+    "binding": {
+      "success": true,
+      "binding": null,
+      "recovery": {
+        "state": "missing",
+        "reason": "coordinator-binding-missing",
+        "bindingRevision": null
+      }
+    },
+    "admission": {
+      "success": false,
+      "status": "rejected",
+      "error": "Coordinator binding is missing: coordinator-binding-missing"
+    }
+  },
+  "handoff": {
+    "result": {
+      "success": true,
+      "sessionKey": "agent:main:session-1794043787512-d9a45bb3",
+      "handoffDepth": 1,
+      "handoffParentSessionKey": "agent:main:dashboard:73100038-585d-492b-969d-544c14567efc",
+      "handoffRootSessionKey": "agent:main:dashboard:73100038-585d-492b-969d-544c14567efc",
+      "rootHandoffId": "2bcb8885-b6b3-4a34-9066-ee5590c1f34d"
+    },
+    "links": [
+      {
+        "id": "2bcb8885-b6b3-4a34-9066-ee5590c1f34d",
+        "sessionKey": "agent:main:session-1794043787512-d9a45bb3",
+        "agentId": "main",
+        "relation": "handoff_from",
+        "sourceSessionKey": "agent:main:dashboard:73100038-585d-492b-969d-544c14567efc",
+        "sessionGeneration": null,
+        "handoffDepth": 1,
+        "handoffParentSessionKey": "agent:main:dashboard:73100038-585d-492b-969d-544c14567efc",
+        "handoffRootSessionKey": "agent:main:dashboard:73100038-585d-492b-969d-544c14567efc",
+        "rootHandoffId": "2bcb8885-b6b3-4a34-9066-ee5590c1f34d",
+        "createdAt": "2026-11-07T09:29:47.512Z"
+      },
+      {
+        "id": "2bcb8885-b6b3-4a34-9066-ee5590c1f34d:task:ee71e9ae-dd06-4151-a1da-67c7fcf1da6f",
+        "sessionKey": "agent:main:session-1794043787512-d9a45bb3",
+        "agentId": "main",
+        "relation": "handoff_from",
+        "sourceSessionKey": "agent:main:dashboard:73100038-585d-492b-969d-544c14567efc",
+        "sessionGeneration": null,
+        "handoffDepth": 1,
+        "handoffParentSessionKey": "agent:main:dashboard:73100038-585d-492b-969d-544c14567efc",
+        "handoffRootSessionKey": "agent:main:dashboard:73100038-585d-492b-969d-544c14567efc",
+        "rootHandoffId": "2bcb8885-b6b3-4a34-9066-ee5590c1f34d",
+        "createdAt": "2026-11-07T09:29:47.512Z",
+        "nodeId": "ee71e9ae-dd06-4151-a1da-67c7fcf1da6f"
+      }
+    ],
+    "sourceBinding": {
+      "success": true,
+      "binding": {
+        "schemaVersion": 1,
+        "workspaceId": "default",
+        "agentId": "main",
+        "sessionKey": "agent:main:dashboard:73100038-585d-492b-969d-544c14567efc",
+        "sessionGeneration": "2db7af65-279d-4d0a-8e09-23753c2bed50",
+        "taskLedgerReferences": [
+          {
+            "direction": "workboard-to-task-ledger",
+            "taskLedgerNodeId": "ee71e9ae-dd06-4151-a1da-67c7fcf1da6f",
+            "source": "runtime"
+          }
+        ],
+        "environment": {
+          "kind": "local",
+          "canonicalRoot": "D:\\tmp\\clawx-audit-next-20261107\\derivation-validation\\e2e-3-profiles\\verse-claw-e2e-run-H7LTpe\\verse-claw-e2e-home-7aKdE3\\.openclaw\\workspace",
+          "backend": "local-workspace",
+          "branch": null,
+          "detachedHead": false,
+          "setupProfile": "default"
+        },
+        "archiveRestorePolicy": "restore",
+        "state": "paused",
+        "bindingRevision": 2,
+        "invalidationReason": "handoff-to-new-session",
+        "createdAt": "2026-11-07T09:29:47.095Z",
+        "updatedAt": "2026-11-07T09:29:47.529Z"
+      },
+      "recovery": {
+        "state": "paused",
+        "reason": "handoff-to-new-session",
+        "bindingRevision": 2
+      }
+    },
+    "pending": {
+      "success": true,
+      "binding": {
+        "schemaVersion": 1,
+        "workspaceId": "default",
+        "agentId": "main",
+        "sessionKey": "agent:main:session-1794043787512-d9a45bb3",
+        "sessionGeneration": null,
+        "taskLedgerReferences": [
+          {
+            "direction": "workboard-to-task-ledger",
+            "taskLedgerNodeId": "ee71e9ae-dd06-4151-a1da-67c7fcf1da6f",
+            "source": "runtime"
+          }
+        ],
+        "environment": {
+          "kind": "local",
+          "canonicalRoot": "D:\\tmp\\clawx-audit-next-20261107\\derivation-validation\\e2e-3-profiles\\verse-claw-e2e-run-H7LTpe\\verse-claw-e2e-home-7aKdE3\\.openclaw\\workspace",
+          "backend": "local-workspace",
+          "branch": null,
+          "detachedHead": false,
+          "setupProfile": "default"
+        },
+        "archiveRestorePolicy": "restore",
+        "state": "active",
+        "bindingRevision": 2,
+        "invalidationReason": null,
+        "createdAt": "2026-11-07T09:29:47.529Z",
+        "updatedAt": "2026-11-07T09:29:47.529Z"
+      },
+      "recovery": {
+        "state": "session-pending",
+        "reason": "session-not-materialized",
+        "bindingRevision": 2
+      }
+    },
+    "active": {
+      "success": true,
+      "binding": {
+        "schemaVersion": 1,
+        "workspaceId": "default",
+        "agentId": "main",
+        "sessionKey": "agent:main:session-1794043787512-d9a45bb3",
+        "sessionGeneration": "937aa79a-f92f-474d-8e82-7439fc4c5948",
+        "taskLedgerReferences": [
+          {
+            "direction": "workboard-to-task-ledger",
+            "taskLedgerNodeId": "ee71e9ae-dd06-4151-a1da-67c7fcf1da6f",
+            "source": "runtime"
+          }
+        ],
+        "environment": {
+          "kind": "local",
+          "canonicalRoot": "D:\\tmp\\clawx-audit-next-20261107\\derivation-validation\\e2e-3-profiles\\verse-claw-e2e-run-H7LTpe\\verse-claw-e2e-home-7aKdE3\\.openclaw\\workspace",
+          "backend": "local-workspace",
+          "branch": null,
+          "detachedHead": false,
+          "setupProfile": "default"
+        },
+        "archiveRestorePolicy": "restore",
+        "state": "active",
+        "bindingRevision": 3,
+        "invalidationReason": null,
+        "createdAt": "2026-11-07T09:29:47.529Z",
+        "updatedAt": "2026-11-07T09:29:47.858Z"
+      },
+      "recovery": {
+        "state": "ready",
+        "reason": null,
+        "bindingRevision": 3
+      }
+    }
+  },
+  "finishedAt": "2026-11-07T09:29:52.654Z"
+}

@@ -266,10 +266,7 @@ describe('workspace session helpers', () => {
         recentFiles: ['src/main.ts'],
       },
     });
-    expect(hostApiMock.taskLedger.linkSession).toHaveBeenCalledWith(expect.objectContaining({
-      sessionKey: 'agent:reviewer:dashboard:fork',
-      relation: 'forked_from',
-    }));
+    expect(hostApiMock.taskLedger.linkSession).not.toHaveBeenCalled();
     expect(chatState.resetSessionView).toHaveBeenCalledWith('agent:reviewer:dashboard:fork');
     expect(hostApiMock.files.writeText).not.toHaveBeenCalled();
   });

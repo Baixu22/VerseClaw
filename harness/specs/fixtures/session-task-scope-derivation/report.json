@@ -1,0 +1,470 @@
+{
+  "schema": "clawx.session-task-scope-derivation/v1",
+  "driven_by": "agent",
+  "actor": "codex-audit-relay-20261107",
+  "verifiedAt": "2026-11-07T09:32:29.329Z",
+  "result": "PASS",
+  "candidate": {
+    "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+    "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+    "dirty": false
+  },
+  "sharedSourceMatches": 8,
+  "diffBase": "dab184890",
+  "changedFiles": [
+    "docs/modules/multi-agent-and-tasks.md",
+    "electron/services/sessions-api.ts",
+    "harness/specs/scenarios/autonomy-session-task-scope.md",
+    "harness/specs/tasks/session-task-scope-derivation.md",
+    "src/lib/workspace-session.ts",
+    "tests/e2e/session-task-scope-derivation.spec.ts",
+    "tests/unit/host-services.test.ts",
+    "tests/unit/workspace-session.test.ts"
+  ],
+  "unit": {
+    "passed": 93,
+    "failed": 0,
+    "skipped": 0,
+    "files": 5
+  },
+  "negativeControlsBefore": {
+    "passed": 0,
+    "failed": 3,
+    "skipped": 39,
+    "files": 1
+  },
+  "electron": {
+    "testCount": 1,
+    "skipped": 0,
+    "errors": 0,
+    "runId": "e2e-3",
+    "stats": {
+      "startTime": "2026-11-07T09:28:12.249Z",
+      "duration": 111912.292,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "actor": "codex-session-task-scope-derivation-e2e",
+    "input": "agent-injected transcript; real Main and compiled Gateway services",
+    "taskId": "ee71e9ae-dd06-4151-a1da-67c7fcf1da6f",
+    "forkGeneration": "6e71d7ce-02b8-4694-8901-541accf171aa",
+    "forkCoordinatorState": "missing",
+    "forkAdmissionStatus": "rejected",
+    "oldHandoffCoordinatorState": "paused",
+    "newHandoffCoordinatorState": "ready",
+    "taskStatus": "done"
+  },
+  "compiledOutputsVerified": 2292,
+  "runtimeEntry": {
+    "path": "openclaw_runtime/dist/entry.js",
+    "sha256": "f93c66b4682faacfa002d18468581ea15cbe3228772c7ae12f011f085a75257a"
+  },
+  "checks": [
+    {
+      "id": "build-3",
+      "name": "build",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "run",
+        "build:vite"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:17:11.985Z",
+      "finishedAt": "2026-11-07T09:20:40.804Z",
+      "durationMs": 208818,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/build-3.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false,
+      "logSha256": "4eba64a49588c1b9c8bded812507f4d9cb34b6a6e9076a12cc9024a685555ec9"
+    },
+    {
+      "id": "runtimeBuild-2",
+      "name": "runtimeBuild",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:20:41.591Z",
+      "finishedAt": "2026-11-07T09:22:19.873Z",
+      "durationMs": 98282,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/runtimeBuild-2.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false,
+      "logSha256": "6ec7962e8660669863946b74f2f87ff8692327a7d9b7cad00c52bb2060f4bf83"
+    },
+    {
+      "id": "nodeTypes-2",
+      "name": "nodeTypes",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false",
+        "--singleThreaded",
+        "--checkers",
+        "1"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:22:20.570Z",
+      "finishedAt": "2026-11-07T09:22:59.093Z",
+      "durationMs": 38523,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/nodeTypes-2.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "webTypes-2",
+      "name": "webTypes",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false",
+        "--singleThreaded",
+        "--checkers",
+        "1"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:22:59.785Z",
+      "finishedAt": "2026-11-07T09:26:04.296Z",
+      "durationMs": 184511,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/webTypes-2.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "testTypes-2",
+      "name": "testTypes",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false",
+        "--singleThreaded",
+        "--checkers",
+        "1"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:26:05.332Z",
+      "finishedAt": "2026-11-07T09:27:23.236Z",
+      "durationMs": 77905,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/testTypes-2.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "lint-2",
+      "name": "lint",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "electron/services/sessions-api.ts",
+        "src/lib/workspace-session.ts",
+        "tests/unit/host-services.test.ts",
+        "tests/unit/workspace-session.test.ts",
+        "tests/e2e/session-task-scope-derivation.spec.ts",
+        "--max-warnings",
+        "0"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:27:24.512Z",
+      "finishedAt": "2026-11-07T09:27:32.217Z",
+      "durationMs": 7705,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/lint-2.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "contract-2",
+      "name": "contract",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:27:32.733Z",
+      "finishedAt": "2026-11-07T09:27:34.813Z",
+      "durationMs": 2080,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/contract-2.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false,
+      "logSha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+    },
+    {
+      "id": "unit-2",
+      "name": "unit",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/host-services.test.ts",
+        "tests/unit/workspace-session.test.ts",
+        "tests/unit/session-task-scope.test.ts",
+        "tests/unit/long-session-delegation-admission.test.ts",
+        "tests/unit/long-session-coordinator-binding.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:/tmp/clawx-audit-next-20261107/derivation-validation/unit-2-tests.json"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:27:35.288Z",
+      "finishedAt": "2026-11-07T09:28:00.127Z",
+      "durationMs": 24839,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/unit-2.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false,
+      "logSha256": "a5ec8598ab6b060b8173423458bef4ef50ced37ce30c7ce2334557ce5e5c38c1"
+    },
+    {
+      "id": "commsReplay-2",
+      "name": "commsReplay",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:28:00.617Z",
+      "finishedAt": "2026-11-07T09:28:00.897Z",
+      "durationMs": 280,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/commsReplay-2.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false,
+      "logSha256": "46f3aaee5dafa664337bccebc174f1b46400ef2251a073dbd103466feec716f7"
+    },
+    {
+      "id": "commsCompare-2",
+      "name": "commsCompare",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:28:01.341Z",
+      "finishedAt": "2026-11-07T09:28:01.513Z",
+      "durationMs": 172,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/commsCompare-2.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false,
+      "logSha256": "5c6bd5d2e5778abe36d7001867da7f5f001c3700fb6ef2f5549ec62852ce9ad5"
+    },
+    {
+      "id": "harnessValidate-2",
+      "name": "harnessValidate",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/session-task-scope-derivation.md"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:28:01.903Z",
+      "finishedAt": "2026-11-07T09:28:02.826Z",
+      "durationMs": 923,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/harnessValidate-2.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false,
+      "logSha256": "abee1e78bdd5bb0bb7c3b6f92a456ee676ffe993856bbc2b13f633d0708f48d3"
+    },
+    {
+      "id": "harnessPreview-2",
+      "name": "harnessPreview",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/session-task-scope-derivation.md",
+        "--dry-run"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:28:03.344Z",
+      "finishedAt": "2026-11-07T09:28:04.128Z",
+      "durationMs": 784,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/harnessPreview-2.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false,
+      "logSha256": "9b156c45a6608adb5af9b6b5264cf724c070a5f2730e7c21b4fc05cc5a3513d9"
+    },
+    {
+      "id": "retention-2",
+      "name": "retention",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:28:04.533Z",
+      "finishedAt": "2026-11-07T09:28:10.657Z",
+      "durationMs": 6124,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/retention-2.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false,
+      "logSha256": "e0f69239b4b6a9a8d7f9c2fbf001c750b09d6158819792f865c68df4eeb7c87e"
+    },
+    {
+      "id": "e2e-3",
+      "name": "e2e",
+      "driven_by": "agent",
+      "actor": "codex-audit-relay-20261107",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/session-task-scope-derivation.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=list,json",
+        "--output=D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-3-results"
+      ],
+      "cwd": "D:/tmp/clawx-audit-next-20261107/candidate",
+      "candidate": {
+        "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+        "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+        "dirty": false
+      },
+      "startedAt": "2026-11-07T09:28:11.146Z",
+      "finishedAt": "2026-11-07T09:30:04.880Z",
+      "durationMs": 113736,
+      "log": "D:/tmp/clawx-audit-next-20261107/derivation-validation/e2e-3.log",
+      "exitCode": 0,
+      "signal": null,
+      "sourceDirtyAfter": false,
+      "logSha256": "a52d716eacb4819bee7989630000ba8b6ad303de9413fcb073cae7bcec5da6af"
+    }
+  ],
+  "previousFailures": [
+    "Three new Main task-reference controls failed before the implementation.",
+    "An existing media test still expected 120 seconds; it now asserts the existing 15-minute chat contract.",
+    "build-1 failed on a missing @playwright/mcp link; the isolated package dependencies were restored from the frozen offline lockfile.",
+    "e2e-1 did not enter the scenario: the uncompiled source runtime tsx UtilityProcess exited with 4294967295. The standard runtime build and smoke check completed before retry.",
+    "e2e-2 passed its scenario but exited 1 after a 90000ms worker teardown timeout. The final test stops its owned Gateway through the existing API before closing Electron."
+  ],
+  "remainingParentAcceptance": [
+    "Automatic business-task creation on explicit execution intent and the ten-turn discussion journey.",
+    "Full single-writer task claim, handoff-generation and invalidation admission journeys."
+  ]
+}
