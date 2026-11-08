@@ -23,6 +23,7 @@ touchedAreas:
   - harness/specs/guides/rsi-remediation-roadmap.md
   - harness/specs/fixtures/rsi-candidate-evolution/**
   - docs/dev/rsi-capability-and-boundaries.md
+  - docs/generated/catalogs/tools.md
   - README.md
   - README.zh-CN.md
   - README.ja-JP.md

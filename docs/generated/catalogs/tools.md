@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: openclaw_runtime/src/agents/tool-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-11-06T10:40:39.985Z
+Generated at: 2026-11-08T11:13:56.681Z
 -->
 
 Built-in core tool sections with their profiles. This file is generated —
@@ -56,6 +56,7 @@ edit the source of truth instead, then run pnpm catalogs:gen.
 
 ## Sessions (`sessions`)
 
+- `task_control` — Persist goals, claim tasks and resume durable task work — profiles: `coding`
 - `sessions_compact` — Compact the current session after this turn — profiles: `coding`, `messaging`
 - `sessions_list` — List visible sessions; filters/previews. — profiles: `coding`, `messaging`
 - `sessions_history` — Read sanitized session history. — profiles: `coding`, `messaging`
