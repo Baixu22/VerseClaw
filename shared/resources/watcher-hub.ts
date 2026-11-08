@@ -22,7 +22,7 @@ type DirectorySubscription = { path: string; listener: DirectoryListener; onErro
 type DirectoryEntry = { key: string; root: string; recursive: boolean; persistent: boolean; watcher: Pick<FSWatcher, 'close'>; subscribers: Map<symbol, DirectorySubscription> };
 type FileSubscription = { listener: FileListener; onError?: (error: Error) => void; intervalMs: number };
 type FileEntry = { path: string; intervalMs: number; subscribers: Map<symbol, FileSubscription>; dispatch: FileListener };
-export type WatcherHubDiagnostics = { directoryWatchers: number; fileWatchers: number; subscriptions: number; keys: string[] };
+export type WatcherHubDiagnostics = { directoryWatchers: number; fileWatchers: number; rootRecoveryMonitors: number; subscriptions: number; keys: string[] };
 
 function inside(root: string, path: string): boolean {
   const value = relative(root, path);
@@ -64,10 +64,12 @@ export class WatcherHub {
   private readonly watchDirectoryBackend: NonNullable<WatcherHubOptions['watchDirectory']>;
   private readonly watchFileBackend: NonNullable<WatcherHubOptions['watchFile']>;
   private readonly unwatchFileBackend: NonNullable<WatcherHubOptions['unwatchFile']>;
+  private readonly nativeDirectoryBackend: boolean;
 
   constructor(options: WatcherHubOptions = {}) {
     this.normalizeKey = options.normalizeKey ?? (path => process.platform === 'win32' ? resolve(path).toLowerCase() : resolve(path));
     this.watchDirectoryBackend = options.watchDirectory ?? defaultWatchDirectory;
+    this.nativeDirectoryBackend = options.watchDirectory === undefined;
     this.watchFileBackend = options.watchFile ?? ((path, interval, listener) => { watchFile(path, { interval }, listener); });
     this.unwatchFileBackend = options.unwatchFile ?? ((path, listener) => { if (listener) unwatchFile(path, listener); });
   }
@@ -159,6 +161,7 @@ export class WatcherHub {
 
   getDiagnostics(): WatcherHubDiagnostics {
     return { directoryWatchers: this.directoryEntries.size, fileWatchers: this.fileEntries.size,
+      rootRecoveryMonitors: this.nativeDirectoryBackend ? [...this.directoryEntries.values()].filter(entry => entry.recursive).length : 0,
       subscriptions: this.directoryOwners.size + [...this.fileEntries.values()].reduce((sum, entry) => sum + entry.subscribers.size, 0),
       keys: [...this.directoryEntries.values()].map(entry => entry.root).concat([...this.fileEntries.keys()]).sort() };
   }

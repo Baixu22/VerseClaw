@@ -47,9 +47,12 @@ describe('native shared observation', () => {
         for (let i = 0; i < 20; i++) await writeFile(join(child, `sample-${i}.txt`), mode);
         await vi.waitFor(() => expect(calls.every(value => value > 0)).toBe(true), { timeout: 5000 });
         const memoryDuring = process.memoryUsage();
-        samples.push({ mode, handlesDuring, memoryBefore, memoryDuring, usageBefore, usageAfter: process.resourceUsage(), callbacks: calls, workload: { subscriptions: 8, roots: 2, writes: 20 }, diagnostics: hub.getDiagnostics() });
+        const diagnostics = hub.getDiagnostics();
+        samples.push({ mode, handlesDuring, rootRecoveryMonitors: diagnostics.rootRecoveryMonitors,
+          handleCensusScope: 'Node _getActiveHandles reports referenced FSWatcher/StatWatcher handles; non-persistent recovery monitors are listed separately.',
+          memoryBefore, memoryDuring, usageBefore, usageAfter: process.resourceUsage(), callbacks: calls, workload: { subscriptions: 8, roots: 2, writes: 20 }, diagnostics });
       } finally { handles.forEach(handle => handle.close()); }
-      await settle(); expect(count()).toBeLessThanOrEqual(baseline);
+      await settle(); expect(count()).toBeLessThanOrEqual(baseline); expect(hub.getDiagnostics().rootRecoveryMonitors).toBe(0);
     }
     const before = samples.filter(row => row.mode === 'separate').map(row => row.handlesDuring as number);
     const after = samples.filter(row => row.mode === 'shared').map(row => row.handlesDuring as number);
