@@ -73,7 +73,10 @@ export type OrchestratorRequest = {
   /** Config carrier used to resolve config-defined team templates. */
   cfg?: {
     agents?: { teams?: unknown };
-    runtime?: { orchestration?: { handoffArtifacts?: "off" | "on" } };
+    runtime?: {
+      orchestration?: { handoffArtifacts?: "off" | "on" };
+      coding?: { verifier?: { noSelfRepair?: boolean } };
+    };
   };
   qualityPolicy?: OrchestrationQualityPolicy;
   qualityAuthority?: OrchestrationQualityAuthority | null;
@@ -302,6 +305,7 @@ function attachP2Metadata(
   const verifierNoSelfRepair =
     plan.verifierNoSelfRepair ??
     request?.verifierNoSelfRepair ??
+    request?.cfg?.runtime?.coding?.verifier?.noSelfRepair ??
     DEFAULT_VERIFIER_DISCIPLINE.verifierNoSelfRepair;
   return { ...plan, isolation, verifierNoSelfRepair, ...metadata };
 }

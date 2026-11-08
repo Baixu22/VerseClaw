@@ -20,6 +20,8 @@ Runtime-managed worktree ownership, creation stages and merge intent persist in 
 
 Conversations can initialize a Git repository, select an independent worktree, and restore its draft. `/storage` and **Settings → Storage** share a resource page for conversation files, process memory, and worktrees. [Usage and ownership](docs/dev/session-worktree-storage.md).
 
+Session lifecycle views replay raw v2 trajectory events through one assembler. Verifier completion reports route configured repair tasks to the lead for independent re-verification.
+
 Skill choices persist in the runtime configuration, and managed skills can be uninstalled from their details. Agent Dev reports collect normal chat and tool events and deduplicate token usage.
 
 **Chat, code, knowledge and agent execution in one desktop workspace.**

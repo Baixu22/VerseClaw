@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { hostApi } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
 import { describeUserError } from '@/lib/user-error';
+import { trajectoryViewFeed } from '@/lib/trajectory-view';
 import type {
   ObservabilityDashboardSnapshot,
   ObservabilityNodeDiagnostics,
@@ -121,24 +122,57 @@ export const useObservabilityStore = create<ObservabilityState>((set, get) => ({
   closeTrace: () => set({ selectedTraceId: null, selectedTrace: null, selectedGraph: null, selectedNodeDiagnostics: null, traceLoading: false, diagnosticsLoading: false }),
 
   subscribeRealtime: () => {
-    let timer: ReturnType<typeof setTimeout> | null = null;
-    const unsubscribe = hostEvents.onObservabilityRuntimeEvent(() => {
-      // Coalesce bursts of span events into a single trailing refresh.
-      if (timer) return;
-      timer = setTimeout(() => {
-        timer = null;
-        void get().fetchDashboard({ silent: true });
-        const id = get().selectedTraceId;
-        if (id) {
-          void hostApi.observability.traceGraph(id).then((graph) => {
-            if (get().selectedTraceId === id) set({ selectedTrace: graph?.trace ?? null, selectedGraph: graph });
-          });
+    let disposed = false;
+    let refreshing = false;
+    let pending = false;
+    const subscriptions = new Map<string, () => void>();
+    const signatures = new Map<string, string>();
+    const refresh = async () => {
+      pending = true;
+      if (refreshing) return;
+      refreshing = true;
+      try {
+        while (pending && !disposed) {
+          pending = false;
+          await get().fetchDashboard({ silent: true });
+          const id = get().selectedTraceId;
+          if (id) {
+            const graph = await hostApi.observability.traceGraph(id);
+            if (!disposed && get().selectedTraceId === id) set({ selectedTrace: graph?.trace ?? null, selectedGraph: graph });
+          }
         }
-      }, 150);
+      } catch {
+        // The explicit query path retains the normal error surface.
+      } finally { refreshing = false; }
+    };
+    const connect = (sessionKey: string | undefined) => {
+      if (!sessionKey || subscriptions.has(sessionKey)) return;
+      subscriptions.set(sessionKey, trajectoryViewFeed.connect(sessionKey, (view) => {
+        const signature = view.nodes.map((node) => `${node.data.role}:${node.data.id}:${node.data.status}`).join('|');
+        if (!signature || signatures.get(sessionKey) === signature) return;
+        signatures.set(sessionKey, signature);
+        void refresh();
+      }));
+    };
+    for (const trace of get().snapshot?.traces ?? []) connect(trace.sessionKey);
+    connect(get().selectedTrace?.sessionKey);
+    const unsubscribeState = useObservabilityStore.subscribe((state) => {
+      for (const trace of state.snapshot?.traces ?? []) connect(trace.sessionKey);
+      connect(state.selectedTrace?.sessionKey);
     });
+    const unsubscribe = hostEvents.onObservabilityRuntimeEvent((event) => {
+      const trace = 'trace' in event ? event.trace
+        : get().snapshot?.traces.find((row) => row.id === event.traceId);
+      connect(trace?.sessionKey);
+      if (trace?.sessionKey) void trajectoryViewFeed.refresh(trace.sessionKey);
+    });
+    const unsubscribeTrajectory = hostEvents.onObservabilityTrajectoryEvent?.((event) => connect(event.sessionKey));
     return () => {
-      if (timer) clearTimeout(timer);
+      disposed = true;
+      unsubscribeState();
       unsubscribe();
+      unsubscribeTrajectory?.();
+      for (const stop of subscriptions.values()) stop();
     };
   },
 }));

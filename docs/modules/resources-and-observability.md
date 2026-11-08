@@ -39,6 +39,8 @@ VerseShell host 调度优先发送 `process.write` / `process.kill`，poll 最�
 受管输出的 stdout/stderr 共用 UTF-8 字节尾部预算，并报告 raw/retained/omitted 字节及原artifact引用。
 callback式 bash 输出溢出使用私有文件同步分段写入，为生产者提供背压；内存尾部按字节截取，避免单个Unicode大块超限。
 
+会话生命周期使用 Main 提供的原始 v2 轨迹，通过同一拼装器处理历史分页、实时去重与缺口补拉。运行通知触发刷新；没有 v2 数据时保留明确的 idle 状态。Git、终端、队列、审批和子代理继续读取各自的权威来源。
+
 当前资源治理是**合作式**的：
 
 - 不引入 Job Object、cgroup、ACL、restricted token 等内核级沙箱；

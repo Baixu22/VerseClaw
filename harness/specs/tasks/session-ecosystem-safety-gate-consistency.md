@@ -32,7 +32,7 @@ touchedAreas:
   - electron/utils/atomic-write.ts
   - electron/utils/session-files.ts
   - src/stores/chat.ts
-  - src/stores/chat/session-actions.ts
+  - src/stores/chat.ts
   - tests/unit/runtime-lifecycle-governance.test.ts
   - tests/unit/session-delete-gate.test.ts
   - tests/unit/r0-2-sessions-delete-fail.test.ts

@@ -9,7 +9,7 @@ touchedAreas:
   - electron/main/ipc-handlers.ts
   - electron/services/sessions-api.ts
   - electron/utils/session-files.ts
-  - src/stores/chat/session-actions.ts
+  - src/stores/chat.ts
   - src/stores/chat.ts
   - tests/unit/host-services.test.ts
   - harness/specs/tasks/hard-delete-session-jsonl.md
@@ -27,7 +27,7 @@ requiredProfiles:
   - comms
 requiredTests:
   - tests/unit/host-services.test.ts
-  - tests/unit/chat-session-actions.test.ts
+  - tests/unit/chat-production-session-actions.test.ts
 acceptance:
   - Renderer continues to use src/lib/host-api.ts and src/lib/host-api-client.ts; no new direct ipcRenderer or Gateway HTTP calls.
   - Typed host session deletion and the legacy session:delete IPC handler unlink the same set of files for a given session id, sharing electron/utils/session-files.ts so the disk contract cannot drift.

@@ -35,6 +35,7 @@ import {
   type GateResult,
 } from "./orchestration-gates.js";
 import { buildVerifierReport } from "./orchestration-verifier-report.js";
+import { handleVerifierFailure } from "./verifier-discipline.js";
 import { MAX_SESSION_COMPLETION_BATCH_WORKERS } from "./completion-batch-receipt.js";
 import {
   buildWorkerOutputHandoffArtifact,
@@ -555,6 +556,7 @@ function buildCompletionBundleForTeam(params: {
     taskGraphId: meta?.taskGraph?.graphRunId ?? meta?.orchestrationRunId ?? "unknown",
     leadRole: meta?.leadRole ?? "unknown",
     selectedRoles: [...new Set(roleOutcomes.map((outcome) => outcome.roleName))],
+    attempt: Math.max(1, ...roleOutcomes.map((outcome) => outcome.attempt)),
     roleOutcomes,
     handoffArtifacts,
     evidenceRefs: roleOutcomes.flatMap((outcome) => outcome.evidenceRefs),
@@ -580,7 +582,19 @@ function buildCompletionBundleForTeam(params: {
   const schemaGate = runSchemaComplianceGate(bundle);
   const verifierGate = runVerifierGate(bundle);
   const repair = resolveMaxOneRepair({ bundle, schemaGate, verifierGate });
-  if (repair.action !== "none" || repair.attempted) {
+  if (verifierReport && verifierReport.decision !== "pass") {
+    const discipline = handleVerifierFailure({
+      reason: verifierReport.reasons.map((reason) => reason.code).join(", ") || "verifier-failed",
+      config: { verifierNoSelfRepair: meta?.verifierNoSelfRepair ?? true },
+    });
+    if (discipline.status === "failed") {
+      repair.allowed = repair.allowed && discipline.createFixTask && (meta?.repairPolicy?.maxRepairAttempts ?? 1) > 0;
+      repair.targetRoleName = meta?.leadRole ?? "lead";
+      repair.targetTaskId = `lead-fix-${meta?.orchestrationRunId ?? "unknown"}-1`;
+      repair.reason = discipline.fixTask ? `lead-fix-task:${discipline.fixTask.reason}` : "verifier-failed-no-followup";
+    }
+  }
+  if (repair.action !== "none" || repair.attempted || repair.reason.startsWith("lead-fix-task:")) {
     bundle.repair = repair;
     bundle.status = repair.allowed ? "repair_required" : bundle.status;
   }
@@ -659,7 +673,7 @@ function buildTeamResultBundleSection(items: readonly AgentSteeringQueueItem[]):
   });
   const repairNodes = buildRepairNodes({
     taskGraph: meta?.taskGraph,
-    attempts: attempts.map((attempt) => ({
+    attempts: attempts.filter((attempt) => attempt.phase !== "verifier").map((attempt) => ({
       roleName: attempt.roleName,
       taskId: attempt.taskId,
       childRunId: attempt.childRunId,
@@ -670,6 +684,17 @@ function buildTeamResultBundleSection(items: readonly AgentSteeringQueueItem[]):
     })),
     repairPolicy: meta?.repairPolicy,
   });
+  const leadRepair = structured.bundle.repair;
+  if (leadRepair?.reason.startsWith("lead-fix-task:")) {
+    repairNodes.push({
+      taskNodeId: leadRepair.targetTaskId!, roleName: leadRepair.targetRoleName!,
+      task: "Repair the verifier findings, then request a fresh independent verification.",
+      phase: "repair", dependsOn: verifier?.payload.orchestration?.taskId ? [verifier.payload.orchestration.taskId] : [],
+      scope: meta?.originalTask ?? "verification", requiredCapabilities: [],
+      attemptPolicy: { maxRepairAttempts: leadRepair.allowed ? 1 : 0, maxRedoAttempts: 0 }, status: leadRepair.allowed ? "planned" : "skipped",
+      repairOf: verifier?.payload.orchestration?.taskId, repairAction: "repair", reason: leadRepair.reason,
+    });
+  }
   const rerouteRecommendations = buildRerouteRecommendations({
     taskGraph: meta?.taskGraph,
     routeDiagnostics: meta?.routeDiagnostics,
@@ -804,7 +829,7 @@ function buildTeamResultBundleSection(items: readonly AgentSteeringQueueItem[]):
     repairNodes.length > 0
       ? repairNodes
           .map((node) =>
-            `- taskNodeId: ${promptLiteral(node.taskNodeId)}; roleName: ${promptLiteral(node.roleName)}; action: ${node.repairAction}; repairOf: ${promptLiteral(node.repairOf ?? "unknown")}; reason: ${promptLiteral(node.reason)}`,
+            `- taskNodeId: ${promptLiteral(node.taskNodeId)}; roleName: ${promptLiteral(node.roleName)}; action: ${node.repairAction}; repairOf: ${promptLiteral(node.repairOf ?? "unknown")}; reason: ${promptLiteral(node.reason)}; status: ${node.status}`,
           )
           .join("\n")
       : "none",

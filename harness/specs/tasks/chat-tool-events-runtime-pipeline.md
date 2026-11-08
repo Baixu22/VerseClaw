@@ -27,7 +27,7 @@ touchedAreas:
   - tests/e2e/chat-run-state-events.spec.ts
   - tests/e2e/chat-task-visualizer.spec.ts
   - tests/unit/chat-page-execution-graph.test.tsx
-  - tests/unit/chat-runtime-event-handlers.test.ts
+  - tests/unit/chat-event-dedupe.test.ts
   - tests/unit/chat-store-history-retry.test.ts
   - tests/unit/chat-store-session-label-fetch.test.ts
   - tests/unit/gateway-event-dispatch.test.ts
@@ -56,7 +56,7 @@ requiredTests:
   - pnpm run typecheck
   - pnpm run lint
   - tests/unit/gateway-event-dispatch.test.ts
-  - tests/unit/chat-runtime-event-handlers.test.ts
+  - tests/unit/chat-event-dedupe.test.ts
   - tests/e2e/chat-task-visualizer.spec.ts
   - pnpm run comms:replay
   - pnpm run comms:compare

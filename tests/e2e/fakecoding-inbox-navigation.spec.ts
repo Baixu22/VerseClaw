@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test';
-import { completeSetup, expect, installIpcMocks, test } from './fixtures/electron';
+import { completeSetup, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
 
 const approval = {
   id: 'approval-e2e',
@@ -178,9 +178,11 @@ test.describe('FakeCoding Inbox navigation', () => {
     await expect(page.getByTestId('inbox-source-filter')).toContainText('Remote Tasks');
   });
 
-  test('aggregates all sources, runs real decisions, and refreshes the pending count', async ({ electronApp, page }, testInfo) => {
+  test('aggregates all sources, runs real decisions, and refreshes the pending count', async ({ launchElectronApp }, testInfo) => {
+    const electronApp = await launchElectronApp({ skipSetup: true });
+    const page = await getStableWindow(electronApp);
     await installDynamicInboxMocks(electronApp);
-    await completeSetup(page);
+    await page.reload({ waitUntil: 'domcontentloaded' });
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.getByTestId('sidebar-nav-inbox').click();
 
@@ -202,7 +204,9 @@ test.describe('FakeCoding Inbox navigation', () => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.getByTestId('sidebar-nav-settings').click();
     const themeMode = page.getByTestId('settings-theme-mode');
-    await themeMode.getByRole('button', { name: 'Dark' }).click();
+    const darkMode = themeMode.getByRole('radio', { name: 'Dark', exact: true });
+    await darkMode.click();
+    await expect(darkMode).toHaveAttribute('aria-checked', 'true');
     await page.getByTestId('settings-back-button').click();
     await expect(page.getByTestId('inbox-page')).toBeVisible();
     const darkDesktop = testInfo.outputPath('inbox-1280-dark.png');
