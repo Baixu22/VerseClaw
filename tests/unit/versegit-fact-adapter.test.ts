@@ -1,6 +1,8 @@
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 import { describe, expect, it } from 'vitest';
 import { VerseGitFactAdapter, type VerseGitFactGrant, type VerseGitFactIdentity, type VerseGitFactTrigger } from '../../electron/services/versegit-fact-adapter';
 import { VerseGitModule, contractDigestOf } from '../../electron/services/versegit-module';
@@ -25,6 +27,30 @@ function adapter(options: { timeoutMs?: number; maxOutputBytes?: number; expecte
 }
 
 describe('B1 bounded VerseGit fact adapter', () => {
+  it('TF-0775 confirms a silent native observation and reads back its session basis', async () => {
+    const root = mkdtempSync(join(tmpdir(), 'vg-observe-ack-'));
+    const run = (args: string[]) => {
+      const result = spawnSync(binaryPath, args, { cwd: root, encoding: 'utf8', windowsHide: true });
+      expect(result.status).toBe(0);
+      return result.stdout;
+    };
+    try {
+      mkdirSync(join(root, 'src'));
+      writeFileSync(join(root, 'src/api.ts'), 'export const api = 1;\n');
+      run(['init','--json']);
+      const started = JSON.parse(run(['session','start','--actor','agent:codex','--worktree',root,'--client','codex-cli','--json']));
+      const boundIdentity = { ...identity, vgSessionId: started.session_id };
+      const facts = new VerseGitFactAdapter({ binaryPath, workspacePath: root, expectedBinarySha256: binaryDigest,
+        expectedVersion: version.stdout.trim(), expectedCapabilitiesDigest: capabilitiesDigest, contractDigest });
+      const observed = await facts.execute('observeRead', boundIdentity, grant({ mode: 'M2' }), trigger, { path: 'src/api.ts', lineStart: 1, lineEnd: 1 });
+      expect(observed).toMatchObject({ status: 'observed', document: { acknowledgement: 'recorded', operation: 'observeRead' },
+        observation: { exit_code: 0, stdout: { bytes: 0 }, effects: { fileRead: false, domainStateWrite: true } } });
+      const shown = await facts.execute('sessionShow', boundIdentity, grant({ mode: 'M2' }), trigger);
+      expect(shown.status).toBe('observed');
+      expect(JSON.stringify(shown.document)).toContain('src/api.ts');
+    } finally { rmSync(root, { recursive: true, force: true }); }
+  });
+
   it('matches the fixed binary through the production module for version and capabilities', async () => {
     const factAdapter = adapter();
     const module = new VerseGitModule({ binaryPath, contractDigest, expectedCapabilitiesDigest: capabilitiesDigest, factAdapter });

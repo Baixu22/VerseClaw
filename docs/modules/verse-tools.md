@@ -75,6 +75,10 @@ VG 不再只是“可选的 symbol verification plugin”，而是：
 
 ### 2.4 Go / No-Go 边界
 
+`observeRead` 记录已发生的读取，原生命令成功后不返回内容载荷。宿主返回该记录操作的
+确认，会话读集通过 `sessionShow` 读回；该命令的 `fileRead` 为 false，`domainStateWrite`
+为 true。实际文件内容读取仍由原工具或 basis 入口完成。
+
 **允许的 M1：**
 
 - 二进制、schema 可验证；
