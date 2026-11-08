@@ -201,7 +201,7 @@ function readOutput(output) {
   return { text: textParts.join(''), functionCalls };
 }
 
-export function buildResponsesRequest({ model, instructions, input, maxOutputTokens, reasoningEffort, jsonSchema }) {
+export function buildResponsesRequest({ model, instructions, input, maxOutputTokens, reasoningEffort, jsonSchema, tools }) {
   assertNonEmptyString(model, 'model');
   if (typeof instructions !== 'string') {
     throw new Error('instructions must be a string');
@@ -210,6 +210,10 @@ export function buildResponsesRequest({ model, instructions, input, maxOutputTok
   assertPositiveInteger(maxOutputTokens, 'maxOutputTokens');
   if (reasoningEffort !== undefined && reasoningEffort !== 'low') throw new Error('reasoningEffort must be low');
   if (jsonSchema !== undefined) assertRecord(jsonSchema, 'jsonSchema');
+  if (tools !== undefined && (!Array.isArray(tools) || tools.some(tool => !isRecord(tool)
+    || tool.type !== 'function' || typeof tool.name !== 'string' || !isRecord(tool.parameters)))) {
+    throw new Error('tools must be declared function schemas');
+  }
 
   return {
     model,
@@ -219,6 +223,7 @@ export function buildResponsesRequest({ model, instructions, input, maxOutputTok
     stream: false,
     truncation: 'disabled',
     max_output_tokens: maxOutputTokens,
+    ...(tools ? { tools: structuredClone(tools) } : {}),
     ...(reasoningEffort ? { reasoning: { effort: reasoningEffort } } : {}),
     ...(jsonSchema ? { text: { format: { type: 'json_schema', name: 'rsi_coding_edits', strict: true, schema: jsonSchema } } } : {}),
   };
@@ -253,6 +258,7 @@ export function createResponsesProvider({
   transport,
   reasoningEffort,
   jsonSchema,
+  tools,
 }) {
   const url = parseEndpoint(endpoint);
   assertNonEmptyString(model, 'model');
@@ -264,7 +270,7 @@ export function createResponsesProvider({
   if (typeof send !== 'function') throw new Error('transport must be a function');
 
   return async ({ instructions, input }) => {
-    const body = buildResponsesRequest({ model, instructions, input, maxOutputTokens, reasoningEffort, jsonSchema });
+    const body = buildResponsesRequest({ model, instructions, input, maxOutputTokens, reasoningEffort, jsonSchema, tools });
     const request = {
       url: url.href,
       method: 'POST',

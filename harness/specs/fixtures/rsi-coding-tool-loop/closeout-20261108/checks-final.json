@@ -1,0 +1,66 @@
+[
+  {
+    "argv": [
+      "node",
+      "scripts/rsi-coding-tool-integration.mjs"
+    ],
+    "exitCode": 0,
+    "durationMs": 84552,
+    "stdout": "{\"passed\":true,\"directory\":\"D:/tmp/rsi-tools-integration-3dIgUU\",\"tests\":6,\"claims\":{\"providerCalls\":0,\"scriptedProviderCalls\":2,\"benefit\":false,\"promotionReady\":false,\"realHuman\":false}}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "node",
+      "node_modules/typescript/bin/tsc",
+      "--noEmit",
+      "--project",
+      "D:/tmp/rsi-tools-typecheck-20261108.json"
+    ],
+    "exitCode": 0,
+    "durationMs": 1395,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "node",
+      "node_modules/eslint/bin/eslint.js",
+      "tests/unit/rsi-coding-tool-loop.test.ts",
+      "vitest.rsi.node.config.ts",
+      "--max-warnings",
+      "0"
+    ],
+    "exitCode": 0,
+    "durationMs": 2800,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "node",
+      "harness/src/cli.mjs",
+      "validate",
+      "--spec",
+      "harness/specs/tasks/rsi-bounded-coding-loop.md"
+    ],
+    "exitCode": 0,
+    "durationMs": 858,
+    "stdout": "Spec is valid: harness\\specs\\tasks\\rsi-bounded-coding-loop.md\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "node",
+      "harness/src/cli.mjs",
+      "run",
+      "--spec",
+      "harness/specs/tasks/rsi-bounded-coding-loop.md",
+      "--dry-run"
+    ],
+    "exitCode": 0,
+    "durationMs": 753,
+    "stdout": "Harness report: D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\artifacts\\harness\\latest.md\nHarness result: pass\n",
+    "stderr": ""
+  }
+]

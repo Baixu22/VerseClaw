@@ -1,0 +1,3979 @@
+{
+  "schemaVersion": "RsiCodingTaskInputBindings/v1",
+  "protocol": "RsiCodingTaskInputs/v1",
+  "compilerVersion": "5.9.3",
+  "driven_by": "agent",
+  "actor": "codex/rsi-public-task-inputs",
+  "tasks": [
+    {
+      "identity": {
+        "id": "tf-0274-e01",
+        "base": "874befaaa018bdb1160f8f064b17f053fcfe8512",
+        "reference": "42aaf5522499fbb940aa2dd1007967eb55adb0f3",
+        "sourceRecord": "docs/dev/harness-gap-closure/e01-acceptance.json",
+        "sourceRecordSha256": "b0f0214881444c68e9c7b339a528c80cc9d2894831191cd6ee16ed8825afdb94",
+        "targetScope": [
+          "scripts/agent-dev-benefit-eval.mjs",
+          "scripts/lib/reliability-aggregation.mjs",
+          "scripts/lib/reliability-aggregation.d.mts",
+          "shared/agent-dev/reliability-fixture.json",
+          "harness/specs/tasks/harness-gap-reliability-aggregation.md",
+          "harness/specs/rules/reliability-aggregation-boundary.md",
+          "docs/dev/harness-gap-closure/e01-reliability-aggregation.md"
+        ],
+        "oracleDigest": "0cbd453238c43b3a7df46810f5a49a2cfe707e6afb7eb604dff9bbbfec0ab074"
+      },
+      "kind": "module-implementation",
+      "publicSources": [
+        {
+          "path": "scripts/lib/reliability-aggregation.d.mts",
+          "revision": "42aaf5522499fbb940aa2dd1007967eb55adb0f3",
+          "sourceSha256": "0450c42fc5232611e7c8c37ebcbd508a39678414692601353092752549084e23",
+          "declaration": "export type ReliabilityTrialOutcome = 'pass' | 'fail' | 'missing' | 'timeout' | 'crash' | 'skip';\nexport type ReliabilityCase = {\n    id: string;\n    safetyRequired?: boolean;\n    anchor?: 'positive' | 'negative';\n    trials: ReliabilityTrialOutcome[];\n};\nexport type ReliabilityOptions = {\n    k?: number;\n    minCases?: number;\n    flakeThreshold?: number;\n};\nexport type ReliabilityIncompleteEntry = {\n    caseId: string;\n    trialIndex: number;\n    outcome: ReliabilityTrialOutcome;\n};\nexport type ReliabilityAggregation = {\n    k: number;\n    caseCount: number;\n    completeCaseCount: number;\n    incompleteCaseCount: number;\n    trialCount: number;\n    passCount: number;\n    failCount: number;\n    perTrialSuccessRate: number | null;\n    passK: number | null;\n    passAtK: number | null;\n    flakeRate: number | null;\n    flakeCaseIds: string[];\n    skippedCaseIds: string[];\n    incomplete: ReliabilityIncompleteEntry[];\n    safety: {\n        requiredCaseCount: number;\n        skippedCount: number;\n        flakeCount: number;\n        violated: boolean;\n    };\n    anchors: {\n        positiveCaseCount: number;\n        positivePassed: number;\n        negativeCaseCount: number;\n        negativeRejected: number;\n        violated: boolean;\n    };\n    gate: 'pass' | 'fail' | 'insufficient-sample';\n    reasons: string[];\n};\nexport const RELIABILITY_TRIAL_OUTCOMES: ReliabilityTrialOutcome[];\nexport function aggregateReliability(cases: ReliabilityCase[], options?: ReliabilityOptions): ReliabilityAggregation;\n",
+          "declarationSha256": "fcb532c12c67220d85519c23ee84747b30178eab8beab48658cd2926c51ba694"
+        }
+      ],
+      "baseSources": [
+        {
+          "path": "scripts/agent-dev-benefit-eval.mjs",
+          "revision": "874befaaa018bdb1160f8f064b17f053fcfe8512",
+          "sourceSha256": "6a8ef35b3627fd5ab01820292726aa2478a433efdabefbd4c62eb8a1157994fa",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "scripts/lib/reliability-aggregation.mjs",
+          "revision": "874befaaa018bdb1160f8f064b17f053fcfe8512",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "scripts/lib/reliability-aggregation.d.mts",
+          "revision": "874befaaa018bdb1160f8f064b17f053fcfe8512",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "shared/agent-dev/reliability-fixture.json",
+          "revision": "874befaaa018bdb1160f8f064b17f053fcfe8512",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-reliability-aggregation.md",
+          "revision": "874befaaa018bdb1160f8f064b17f053fcfe8512",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/rules/reliability-aggregation-boundary.md",
+          "revision": "874befaaa018bdb1160f8f064b17f053fcfe8512",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/e01-reliability-aggregation.md",
+          "revision": "874befaaa018bdb1160f8f064b17f053fcfe8512",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "shared/agent-dev/reliability-fixture.js",
+          "revision": "874befaaa018bdb1160f8f064b17f053fcfe8512",
+          "sourceSha256": null,
+          "missing": true,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "shared/agent-dev/scenarios.ts",
+          "revision": "874befaaa018bdb1160f8f064b17f053fcfe8512",
+          "sourceSha256": "565f10868f384cac0c71c9024278e3f15bbd3f05399360cd0916602354170492",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        }
+      ],
+      "locatorSources": [
+        {
+          "path": "scripts/agent-dev-benefit-eval.mjs",
+          "revision": "42aaf5522499fbb940aa2dd1007967eb55adb0f3",
+          "sourceSha256": "d86721708614564a4bab8db29d8a09773f57d216bd970ad0a7a7bab5a5b33651",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "scripts/lib/reliability-aggregation.mjs",
+          "revision": "42aaf5522499fbb940aa2dd1007967eb55adb0f3",
+          "sourceSha256": "608b281e056bca48a510a81e4e5d884ac838e3fff18b2ca8a6a80b79ddb640b9",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "scripts/lib/reliability-aggregation.d.mts",
+          "revision": "42aaf5522499fbb940aa2dd1007967eb55adb0f3",
+          "sourceSha256": "0450c42fc5232611e7c8c37ebcbd508a39678414692601353092752549084e23",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "shared/agent-dev/reliability-fixture.json",
+          "revision": "42aaf5522499fbb940aa2dd1007967eb55adb0f3",
+          "sourceSha256": "c0240069aaaeec7380bdef61055c2b064274bb95340a7758c08f6b0c21fa54f1",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-reliability-aggregation.md",
+          "revision": "42aaf5522499fbb940aa2dd1007967eb55adb0f3",
+          "sourceSha256": "7be6a25141eacf0633d99e3fa7cd8c5b8e3bdf28e96b581d8857fa007cbdb1e0",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/rules/reliability-aggregation-boundary.md",
+          "revision": "42aaf5522499fbb940aa2dd1007967eb55adb0f3",
+          "sourceSha256": "9286c8b4a0d07368336d1269fe90dd93f5be7712b47fb20bf6e582b6d9249192",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/e01-reliability-aggregation.md",
+          "revision": "42aaf5522499fbb940aa2dd1007967eb55adb0f3",
+          "sourceSha256": "7e91d923dc163923edeca9004371e72d491344fee242839c78aef7d4a852fba6",
+          "projection": "imports-and-path-locators-only"
+        }
+      ],
+      "behaviorContract": null,
+      "documentContract": {
+        "format": "repository-markdown-or-module-contract",
+        "taskSpecFields": [
+          "id",
+          "title",
+          "intent",
+          "requiredTests",
+          "requiredRules",
+          "lifecycleStatus"
+        ],
+        "lifecycleStates": [
+          "active",
+          "completed",
+          "archived"
+        ],
+        "sourceOfTruth": "historical-base-and-declared-task-criteria"
+      }
+    },
+    {
+      "identity": {
+        "id": "tf-0275-e02",
+        "base": "6b56992a2a55127c7175fda3a3b7c3206736b485",
+        "reference": "ab0ba14cbb3546158b3271f13719d2bba5a15686",
+        "sourceRecord": "docs/dev/harness-gap-closure/e02-acceptance.json",
+        "sourceRecordSha256": "67cda0e5a5ccd28e5386d9f64d02039ca0122bb753a536deb48167e143ac73fd",
+        "targetScope": [
+          "scripts/lib/paired-ablation.mjs",
+          "scripts/lib/paired-ablation.d.mts",
+          "shared/agent-dev/paired-ablation-fixture.json",
+          "harness/specs/tasks/harness-gap-paired-ablation.md",
+          "harness/specs/rules/paired-ablation-boundary.md",
+          "docs/dev/harness-gap-closure/e02-paired-ablation.md"
+        ],
+        "oracleDigest": "4b22363ce8ed9293370e4f6cb5f773600d0173eac0c4cc2f68a2005f2599b572"
+      },
+      "kind": "module-implementation",
+      "publicSources": [
+        {
+          "path": "scripts/lib/paired-ablation.d.mts",
+          "revision": "ab0ba14cbb3546158b3271f13719d2bba5a15686",
+          "sourceSha256": "dd264ae7a5879d040abc611b43a10ed82e6f30468bca0ace422cf765db210978",
+          "declaration": "export type AblationRun = {\n    caseId: string;\n    repeat: number;\n    success: boolean;\n    latencyMs?: number;\n    tokens?: number;\n    falseBlock?: boolean;\n    safetyViolation?: boolean;\n    [metric: string]: unknown;\n};\nexport type ConditionSummary = {\n    runCount: number;\n    caseCount: number;\n    successRate: number | null;\n    passK: number | null;\n    p50LatencyMs: number | null;\n    p95LatencyMs: number | null;\n    meanTokens: number | null;\n    falseBlocks: number;\n    safetyViolations: number;\n    incompleteCaseCount: number;\n};\nexport type PairedEffect = {\n    metric: string;\n    pairCount: number;\n    meanDiff: number | null;\n    sd: number | null;\n    standardError: number | null;\n    ci95: [\n        number | null,\n        number | null\n    ] | null;\n    cohensDz: number | null;\n};\nexport type PreRegisteredAblation = {\n    primaryMetric: string;\n    minCases?: number;\n    k?: number;\n    degradationBudget?: number;\n    safetyMustHold?: boolean;\n};\nexport function summarizeCondition(runs: AblationRun[], options?: {\n    k?: number;\n    minCases?: number;\n}): ConditionSummary;\nexport function pairedEffect(baselineRuns: AblationRun[], treatmentRuns: AblationRun[], options?: {\n    metric?: string;\n}): PairedEffect;\nexport function evaluateAblation(input: {\n    baselineRuns: AblationRun[];\n    treatmentRuns: AblationRun[];\n    preRegistered: PreRegisteredAblation;\n}): {\n    preRegistered: PreRegisteredAblation;\n    baseline: ConditionSummary;\n    treatment: ConditionSummary;\n    effect: PairedEffect;\n    verdict: 'component-helps' | 'no-effect' | 'hurts' | 'safety-regression' | 'insufficient-sample';\n    reasons: string[];\n};\n",
+          "declarationSha256": "fa84cdd99a3acd31438be61f53526e41b661cf22f1e018d5555c18ac4b4a0f14"
+        }
+      ],
+      "baseSources": [
+        {
+          "path": "scripts/lib/paired-ablation.mjs",
+          "revision": "6b56992a2a55127c7175fda3a3b7c3206736b485",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "scripts/lib/paired-ablation.d.mts",
+          "revision": "6b56992a2a55127c7175fda3a3b7c3206736b485",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "shared/agent-dev/paired-ablation-fixture.json",
+          "revision": "6b56992a2a55127c7175fda3a3b7c3206736b485",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-paired-ablation.md",
+          "revision": "6b56992a2a55127c7175fda3a3b7c3206736b485",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/rules/paired-ablation-boundary.md",
+          "revision": "6b56992a2a55127c7175fda3a3b7c3206736b485",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/e02-paired-ablation.md",
+          "revision": "6b56992a2a55127c7175fda3a3b7c3206736b485",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "scripts/lib/reliability-aggregation.mjs",
+          "revision": "6b56992a2a55127c7175fda3a3b7c3206736b485",
+          "sourceSha256": "608b281e056bca48a510a81e4e5d884ac838e3fff18b2ca8a6a80b79ddb640b9",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "shared/agent-dev/paired-ablation-fixture.js",
+          "revision": "6b56992a2a55127c7175fda3a3b7c3206736b485",
+          "sourceSha256": null,
+          "missing": true,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-store.ts",
+          "revision": "6b56992a2a55127c7175fda3a3b7c3206736b485",
+          "sourceSha256": "adec5d2ad67c02a0cfdc59f3ccccd2f9b14edaecb4fb7ead90cd2598d9060b7f",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        }
+      ],
+      "locatorSources": [
+        {
+          "path": "scripts/lib/paired-ablation.mjs",
+          "revision": "ab0ba14cbb3546158b3271f13719d2bba5a15686",
+          "sourceSha256": "e977332c0a7979322fb47280cc3aff98b078954dbed2e9d83781e761acdaa352",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "scripts/lib/paired-ablation.d.mts",
+          "revision": "ab0ba14cbb3546158b3271f13719d2bba5a15686",
+          "sourceSha256": "dd264ae7a5879d040abc611b43a10ed82e6f30468bca0ace422cf765db210978",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "shared/agent-dev/paired-ablation-fixture.json",
+          "revision": "ab0ba14cbb3546158b3271f13719d2bba5a15686",
+          "sourceSha256": "f106dac8e5ff30d30a3c24abd834d863a225d751bc77b78c884988adeeee8006",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-paired-ablation.md",
+          "revision": "ab0ba14cbb3546158b3271f13719d2bba5a15686",
+          "sourceSha256": "1c4ba2fcb78d7a42efdb1d365ea98d80788bef3e87e92de7b9a1a91307425be2",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/rules/paired-ablation-boundary.md",
+          "revision": "ab0ba14cbb3546158b3271f13719d2bba5a15686",
+          "sourceSha256": "0d9677ef4278a38d34cc710afe759a8e903db1300088358275fa93eab97faf03",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/e02-paired-ablation.md",
+          "revision": "ab0ba14cbb3546158b3271f13719d2bba5a15686",
+          "sourceSha256": "124f083d69c541f2a6e8b4d47eab487fb9465f28e3c1e07f7fde98286e403fb3",
+          "projection": "imports-and-path-locators-only"
+        }
+      ],
+      "behaviorContract": null,
+      "documentContract": {
+        "format": "repository-markdown-or-module-contract",
+        "taskSpecFields": [
+          "id",
+          "title",
+          "intent",
+          "requiredTests",
+          "requiredRules",
+          "lifecycleStatus"
+        ],
+        "lifecycleStates": [
+          "active",
+          "completed",
+          "archived"
+        ],
+        "sourceOfTruth": "historical-base-and-declared-task-criteria"
+      }
+    },
+    {
+      "identity": {
+        "id": "tf-0289-g01",
+        "base": "0d72e511c865f0ab494af19a74d0f27a3fe5a8ba",
+        "reference": "8972c4a76e7d4eca6e7cf62da1e2d37c80267b99",
+        "sourceRecord": "docs/dev/harness-gap-closure/g01-acceptance.json",
+        "sourceRecordSha256": "09390cf33cf15bb05097f38d8cb9cf845962bf17958d90befdde235218176407",
+        "targetScope": [
+          "src/lib/error-model.ts",
+          "harness/specs/tasks/harness-gap-error-recovery-next-action.md",
+          "docs/dev/harness-gap-closure/g01-error-recovery-next-action.md"
+        ],
+        "oracleDigest": "827fc79183d732e4b9d4685ad69fd56d07239528418264f4b44d7297469c7192"
+      },
+      "kind": "module-implementation",
+      "publicSources": [
+        {
+          "path": "src/lib/error-model.ts",
+          "revision": "8972c4a76e7d4eca6e7cf62da1e2d37c80267b99",
+          "sourceSha256": "b87bea48853935b4e72d3d17d088d1ad5742c0e5e1462d42a44deb9b9e6666e6",
+          "declaration": "export type AppErrorCode = 'AUTH_INVALID' | 'AUTH_PERMANENT' | 'TIMEOUT' | 'RATE_LIMIT' | 'PERMISSION' | 'CHANNEL_UNAVAILABLE' | 'CONVERSATION_STATE' | 'NETWORK' | 'CONFIG' | 'GATEWAY' | 'BILLING' | 'OVERLOADED' | 'MODEL_NOT_FOUND' | 'UNKNOWN';\nexport declare const APP_ERROR_CODES: readonly [\n    \"AUTH_INVALID\",\n    \"AUTH_PERMANENT\",\n    \"TIMEOUT\",\n    \"RATE_LIMIT\",\n    \"PERMISSION\",\n    \"CHANNEL_UNAVAILABLE\",\n    \"CONVERSATION_STATE\",\n    \"NETWORK\",\n    \"CONFIG\",\n    \"GATEWAY\",\n    \"BILLING\",\n    \"OVERLOADED\",\n    \"MODEL_NOT_FOUND\",\n    \"UNKNOWN\"\n];\nexport type ErrorRecoveryAction = {\n    kind: \"retry\" | \"reauthenticate\" | \"reconfigure\" | \"open-settings\" | \"contact-support\";\n    target?: string;\n};\nexport type ErrorRecoveryScope = \"self-retry\" | \"user-action-required\";\nexport declare const ERROR_RECOVERY_TABLE: Record<AppErrorCode, {\n    retryable: boolean;\n    scope: ErrorRecoveryScope;\n    action?: ErrorRecoveryAction;\n}>;\nexport declare function isRetryableAppErrorCode(code: AppErrorCode): boolean;\nexport declare function recoveryActionForAppErrorCode(code: AppErrorCode): ErrorRecoveryAction | undefined;\nexport declare class AppError extends Error {\n    code: AppErrorCode;\n    cause?: unknown;\n    details?: Record<string, unknown>;\n    requestId?: string;\n    retryable: boolean;\n    nextAction?: ErrorRecoveryAction;\n    constructor(code: AppErrorCode, message: string, cause?: unknown, details?: Record<string, unknown>, requestId?: string);\n}\nexport type ErrorSignals = {\n    code?: string;\n    status?: number;\n    reason?: string;\n};\nexport declare function mapBackendErrorCode(code?: string): AppErrorCode;\nexport declare function readErrorSignals(err: unknown, details?: Record<string, unknown>): ErrorSignals;\nexport declare function normalizeAppError(err: unknown, details?: Record<string, unknown>): AppError;\n",
+          "declarationSha256": "c1f37a952709a108628d29bbab0548da8b0b428c6351fa3bf4c51660788d938f"
+        }
+      ],
+      "baseSources": [
+        {
+          "path": "src/lib/error-model.ts",
+          "revision": "0d72e511c865f0ab494af19a74d0f27a3fe5a8ba",
+          "sourceSha256": "9f5a76e584e973c68b837aea7c9f687e734264f95942d773483b2f8511a75cca",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-error-recovery-next-action.md",
+          "revision": "0d72e511c865f0ab494af19a74d0f27a3fe5a8ba",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/g01-error-recovery-next-action.md",
+          "revision": "0d72e511c865f0ab494af19a74d0f27a3fe5a8ba",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "scripts/check-error-governance.mjs",
+          "revision": "0d72e511c865f0ab494af19a74d0f27a3fe5a8ba",
+          "sourceSha256": "8349ad58f56ecb23508792fb66c06d2ed991543e0e6c65665ce69c66c7b7df9d",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "src/lib/error-message.ts",
+          "revision": "0d72e511c865f0ab494af19a74d0f27a3fe5a8ba",
+          "sourceSha256": "5788eb4c0c8f25e56059294103c0384bb7d3914657da8523e9cc31c28ac9f928",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "src/lib/host-api-client.ts",
+          "revision": "0d72e511c865f0ab494af19a74d0f27a3fe5a8ba",
+          "sourceSha256": "6c74cc1165e9ce6fbca8e358b21aab415b8a11463cc980d48b118203f445e419",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "src/lib/user-error.ts",
+          "revision": "0d72e511c865f0ab494af19a74d0f27a3fe5a8ba",
+          "sourceSha256": "4d340d1b706a5f4372f253a8e3acae08839e52a7141056eee94ad24ef3be24ea",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        }
+      ],
+      "locatorSources": [
+        {
+          "path": "src/lib/error-model.ts",
+          "revision": "8972c4a76e7d4eca6e7cf62da1e2d37c80267b99",
+          "sourceSha256": "b87bea48853935b4e72d3d17d088d1ad5742c0e5e1462d42a44deb9b9e6666e6",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-error-recovery-next-action.md",
+          "revision": "8972c4a76e7d4eca6e7cf62da1e2d37c80267b99",
+          "sourceSha256": "7b2dea9437ebbb889edbc0876bd339a3c751932e809e693ca44781230f81c0dd",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/g01-error-recovery-next-action.md",
+          "revision": "8972c4a76e7d4eca6e7cf62da1e2d37c80267b99",
+          "sourceSha256": "8749031e476c7fb82a407c60e1bcbcb0e47d0dd590f8a4a7b89ec51c9f7ae2fd",
+          "projection": "imports-and-path-locators-only"
+        }
+      ],
+      "behaviorContract": null,
+      "documentContract": {
+        "format": "repository-markdown-or-module-contract",
+        "taskSpecFields": [
+          "id",
+          "title",
+          "intent",
+          "requiredTests",
+          "requiredRules",
+          "lifecycleStatus"
+        ],
+        "lifecycleStates": [
+          "active",
+          "completed",
+          "archived"
+        ],
+        "sourceOfTruth": "historical-base-and-declared-task-criteria"
+      }
+    },
+    {
+      "identity": {
+        "id": "tf-0290-g02",
+        "base": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+        "reference": "ef12077c63b264f2aa05f0eaa1e0e760ae57ca23",
+        "sourceRecord": "docs/dev/harness-gap-closure/g02-acceptance.json",
+        "sourceRecordSha256": "1bb54cbc25f437496ffdecb71f808562d633b123bd115901e91ef0c3d94aaea0",
+        "targetScope": [
+          "harness/specs/rules/spec-doc-gardening-boundary.md",
+          "harness/specs/tasks/harness-gap-spec-doc-gardening.md",
+          "docs/dev/harness-gap-closure/g02-spec-doc-gardening.md",
+          "harness/specs/tasks/harness-gap-browser-effect-boundary.md",
+          "harness/specs/tasks/harness-gap-checkpoint-attachment-binding.md",
+          "harness/specs/tasks/harness-gap-context-pressure-recovery.md",
+          "harness/specs/tasks/harness-gap-credential-use-boundary.md",
+          "harness/specs/tasks/harness-gap-envelope-reject.md",
+          "harness/specs/tasks/harness-gap-error-recovery-next-action.md",
+          "harness/specs/tasks/harness-gap-external-write-boundary.md",
+          "harness/specs/tasks/harness-gap-hot-file-write-owner.md",
+          "harness/specs/tasks/harness-gap-in-run-steering.md",
+          "harness/specs/tasks/harness-gap-memory-effect-receipt.md",
+          "harness/specs/tasks/harness-gap-paired-ablation.md",
+          "harness/specs/tasks/harness-gap-rate-circuit-breaker.md",
+          "harness/specs/tasks/harness-gap-reliability-aggregation.md",
+          "harness/specs/tasks/harness-gap-sink-ledger.md",
+          "harness/specs/tasks/harness-gap-trace-cost-sampling.md",
+          "harness/specs/tasks/harness-gap-verifier-completion-verdict.md",
+          "harness/specs/tasks/harness-gap-working-context-single-source.md"
+        ],
+        "oracleDigest": "de64a293e9c5c01aed7ec8d14c645e94fac0d655cac1d9d450812a11ae2f9153"
+      },
+      "kind": "specification-verification",
+      "publicSources": [],
+      "baseSources": [
+        {
+          "path": "harness/specs/rules/spec-doc-gardening-boundary.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-spec-doc-gardening.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/g02-spec-doc-gardening.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-browser-effect-boundary.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "e5643434df4ef084c760063b92896acb69fe2484cc6cc8cf5fb0756801d50a16",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-checkpoint-attachment-binding.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "a3ac5a59693ad1064ddb65b2811de1ab16363d7334cb0fe4f7c516a59e710d65",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-context-pressure-recovery.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "e998a275efa22a1ceaa09836ec57ad786f734021b586f5fadbd7a6a793cf3b74",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-credential-use-boundary.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "99fee907d650eda41d149e6f67348502eb3fdae0f8e748f1b4f66fe444dfa63a",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-envelope-reject.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "a7297dd2c0974c7d7f0cd2e78d32ad58333466287e50acb29f31ee4b8354fbb5",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-error-recovery-next-action.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "7b2dea9437ebbb889edbc0876bd339a3c751932e809e693ca44781230f81c0dd",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-external-write-boundary.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "92c7300ab38326a4b20b094a0a4440e3d8d77fd718901276aa9e2ac2d9736033",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-hot-file-write-owner.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "fe9b09f977a84ecd0756fad740c569a495b60ab9b16281843c878b0416647b79",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-in-run-steering.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "43d5c05c8d4b3f32cc2e33fd30b9a14c78521405d616426b02c51ec791cf2f11",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-memory-effect-receipt.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "7ea82537b90698f7e242185b3db0bba1f6e831ad269e784fb9094a8e4e89f4fb",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-paired-ablation.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "1c4ba2fcb78d7a42efdb1d365ea98d80788bef3e87e92de7b9a1a91307425be2",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-rate-circuit-breaker.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "8b01d13c5ab364d620d092154dea1f5a913e3380effea3b61bbec794691e5bd8",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-reliability-aggregation.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "7be6a25141eacf0633d99e3fa7cd8c5b8e3bdf28e96b581d8857fa007cbdb1e0",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-sink-ledger.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "6c70fb6edf44eff4785bfb2167f7fc50594d8043349424cbd5240ccb2be2088e",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-trace-cost-sampling.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "6580985c6f3efae00f1076629e5c30209af63b06ad5d97c60df605a153ae1b78",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-verifier-completion-verdict.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "3d74933529111be8cfa41ce24db15be0aa28311bd0dd409cca9a85ebddb3039e",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-working-context-single-source.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "a69c499b7864a03fc22e4e8dcfca58921d2b9de581d523cf2913f9763a786e25",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "scripts/check-spec-lifecycle.mjs",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "e9dc52dbf8a4cdd347910ad23676f00f4e260adb790d5f48ee58dd12fd2348fd",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "scripts/validate-policy-docs.mjs",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "7d000f182ff1421076c82a613cf291f4b80a809844273c8729804f96dd43f0e2",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "scripts/check-error-governance.mjs",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "8349ad58f56ecb23508792fb66c06d2ed991543e0e6c65665ce69c66c7b7df9d",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/s04-browser-effect-boundary.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "634b0d96bcd581ff8e4df39c4210b20771497ebbfd9b057217beed69f75b5c96",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/checkpoint-attachment-binding.ts",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "b295b2813967bdaa2d6c52631b668c7087f102203505244186784780ce4972b4",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/l04-checkpoint-attachment-binding.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "95680e57bcd89803fc2585155a4f06f801bda3dd53c93fa528753f3588f513cb",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/context-pressure-recovery.ts",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "854f7dbae1d06488fe2236566d6867ebd3dabc0b5b92a722f6b938efc471687b",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/l02-context-pressure-recovery.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "6dfbb30f9a1333ffb05276ed3efc404e9a317eefcf7839ac06a569cdc249635c",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/s05-credential-use-boundary.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "d065593495a9deaa5fb0eb09a129ca6d294b3363ac286c07616c2e301928ba80",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/shadow-census.ts",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "d123e538a65f167dbedd8677e4f91e03b29ad612ba65cbf9d1a4b80d9ddc276c",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/provider-transport-fetch.ts",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "2bdb34437bc6a5c3e031a9d79d4eaaa73f44070f662d2c3af9d0b7b536665fae",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/rules/provider-envelope-reject-boundary.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "08553c2db105c57f0a00abada2f886fef88ba6edd281e65c390198f7d0e62f43",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/s01-envelope-reject.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "ec843f768d3451cf0237fde5b0f1fa25d792b8a0630f67e4db63ff1a41d2acda",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "src/lib/error-model.ts",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "b87bea48853935b4e72d3d17d088d1ad5742c0e5e1462d42a44deb9b9e6666e6",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/g01-error-recovery-next-action.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "8749031e476c7fb82a407c60e1bcbcb0e47d0dd590f8a4a7b89ec51c9f7ae2fd",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/s03-external-write-boundary.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "0e701f02336772a9bd1bfca34aee316986ef1a3f818b5264c70f4543974af947",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "79124f66fb05890063f0ede7c10f7e1dbb7b67cabe840a1a433aabfb5de46212",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/hot-file-write-owner.ts",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "5009bace6b1ab7c3bafd7341f7cb8f71a61ded147fed165aaf3cbf3cd533f430",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/l06-hot-file-write-owner.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "30a8a119b6d54909b3fcc5ee4040412f4017c4d86d94e6d43926d1595d0a03b9",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/l03-in-run-steering.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "d9f9a657016f2ea141b331585a47dcb55ca2cbf9243eb1c5bef9749167dccc9f",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-effect-receipt.ts",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "867915b873d2f01f523260bac03ead008d617383d7311df70940a0b9888a4cb3",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "da3aed1f972b6522b843d8e95f20ce1bc713a5cab7ff92b9027d36e56e360555",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/s06-memory-effect-receipt.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "987f7728e7777b5340a901b4c59937e5095b0df4984d61978d46ec3688e3c0cc",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "scripts/lib/paired-ablation.mjs",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "e977332c0a7979322fb47280cc3aff98b078954dbed2e9d83781e761acdaa352",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "scripts/lib/paired-ablation.d.mts",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "dd264ae7a5879d040abc611b43a10ed82e6f30468bca0ace422cf765db210978",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "shared/agent-dev/paired-ablation-fixture.js",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": null,
+          "missing": true,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/rules/paired-ablation-boundary.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "0d9677ef4278a38d34cc710afe759a8e903db1300088358275fa93eab97faf03",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/e02-paired-ablation.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "124f083d69c541f2a6e8b4d47eab487fb9465f28e3c1e07f7fde98286e403fb3",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "scripts/lib/reliability-aggregation.mjs",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "608b281e056bca48a510a81e4e5d884ac838e3fff18b2ca8a6a80b79ddb640b9",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/rate-circuit-breaker.ts",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "c9fe9f1fdecb31bc9f2dee148fde45ff5f2f51e9132f1f4f16c13d157f517d29",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/l05-rate-circuit-breaker.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "060f9502e17e3b7869ad81220c608aa7f01a6940cd72d7a233eb5e46e5aa8eee",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "scripts/agent-dev-benefit-eval.mjs",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "d86721708614564a4bab8db29d8a09773f57d216bd970ad0a7a7bab5a5b33651",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "scripts/lib/reliability-aggregation.d.mts",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "0450c42fc5232611e7c8c37ebcbd508a39678414692601353092752549084e23",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "shared/agent-dev/reliability-fixture.js",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": null,
+          "missing": true,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/rules/reliability-aggregation-boundary.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "9286c8b4a0d07368336d1269fe90dd93f5be7712b47fb20bf6e582b6d9249192",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/e01-reliability-aggregation.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "7e91d923dc163923edeca9004371e72d491344fee242839c78aef7d4a852fba6",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "shared/agent-dev/scenarios.ts",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "565f10868f384cac0c71c9024278e3f15bbd3f05399360cd0916602354170492",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/s02-sink-ledger.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "093f6b6fef93bc52cec39446ba3b205e92eec7e0e6a9d669c87d92daebaeb1dd",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/rules/sensitive-sink-ledger-boundary.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "b18d9adec77575f675a98ebfb7e71bf89b239ae0ce6016442c1545fa728b614e",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "shared/security/content-provenance.ts",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "4e374ece79a7b73e62da393301d6d377d21e8f4a41b94cd6cb0b1dc3af69fe76",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "scripts/repository-artifacts.js",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": null,
+          "missing": true,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/infra/diagnostic-events.ts",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "c59dd0d8933ab507ab1c6bf5cd6e57531b10aa86c309bdbe2cf6a7c3b279958f",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "01f62d4f158814ff859b19a3cc357a4f2b94b7e4cf1afc935c37f1d64bdeadce",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.model-diagnostic-events.ts",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "a7c877545e33a7f3767cbac378f3cb70ba14c4cd0ed6b0b75ae33e09b7e1b673",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.model-call-usage.ts",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "6cb948e96e67cb57815092f5413a9d007c5e1a7ee602a6cc78a8d7cd96c9cd8d",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/extensions/diagnostics-otel/src/service.ts",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "c0003b80c6662dd93553e1fee48a35dc5bfbc2c0c04e2d80a81509a297e576c4",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/extensions/diagnostics-otel/src/cost-sampling.ts",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "747678ee2eb2435d19f82920ec7085b04a94a73d7e0fec18413c49816737d8f8",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/extensions/diagnostics-otel/api.ts",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "e159c55f1cc54bd52d78ff9434d1c95ab193ef77fcdf1a40ab0f27ef21fe92d7",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/rules/trace-cost-sampling-boundary.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "f2e5b6a6fe2ed9a94275cf05f3943f83e67b6ae00267e78dae00cc558a158823",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/scenarios/gateway-backend-communication.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "83803e0a8063243d318c4b6d15ec5ff2f2b054634bc5766aca14f4324078d04d",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/o02-trace-cost-sampling.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "66f6f7e9ab9f5ca5e18407872872871ba8daa1832c77ee4531486a6b058eae90",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "06e2c96e12dc1506761a6366fdaf3bcca432ce390a4e843cae538e9c8b40e5fa",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/s07-verifier-completion-verdict.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "9ccdcf6386deb551840e1c445a428bef66c6df418c67ae2ae5329484277c19b3",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/l01-working-context-single-source.md",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "e4414f4758a3a38703e720bb72e38d107a3d9937e0dac92891c7dd9a1423adca",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "electron/services/task-ledger-working-context.ts",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "645090a9637612f23cdd46387b476fbbcc2474b1bb829e0f643598a938bec2d7",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "shared/task-ledger-working-context.ts",
+          "revision": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+          "sourceSha256": "43eb5c0c6269ff088b8079608e76bb19afc46a8c8510997ae1388ca9eb68563d",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        }
+      ],
+      "locatorSources": [
+        {
+          "path": "harness/specs/rules/spec-doc-gardening-boundary.md",
+          "revision": "ef12077c63b264f2aa05f0eaa1e0e760ae57ca23",
+          "sourceSha256": "2a9a08b8c6d148535cf16d9837b1f44b8cce4708e316424f53bf777f07e56bb3",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-spec-doc-gardening.md",
+          "revision": "ef12077c63b264f2aa05f0eaa1e0e760ae57ca23",
+          "sourceSha256": "ec5004bce21e5ab4a017830c20fe0116fe77e0ea6cdc58711a89ec51ab218535",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/g02-spec-doc-gardening.md",
+          "revision": "ef12077c63b264f2aa05f0eaa1e0e760ae57ca23",
+          "sourceSha256": "57627648c0476add860e6dbca77f4507e01a9790e4a61ef1a6b8d985c072d52d",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-browser-effect-boundary.md",
+          "revision": "ef12077c63b264f2aa05f0eaa1e0e760ae57ca23",
+          "sourceSha256": "33af143e068b540096b7f81936f4bde96c502c4395df8022bea2357cc07894c2",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-checkpoint-attachment-binding.md",
+          "revision": "ef12077c63b264f2aa05f0eaa1e0e760ae57ca23",
+          "sourceSha256": "b1d72a04abb1dbb3ef50d7e208a5a673a89509d353eeeab13c83b418206de1b3",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-context-pressure-recovery.md",
+          "revision": "ef12077c63b264f2aa05f0eaa1e0e760ae57ca23",
+          "sourceSha256": "ad94d07e9ec12713538dbb9836dfc07d218f42afe682092a2bd3444a02d8a0cc",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-credential-use-boundary.md",
+          "revision": "ef12077c63b264f2aa05f0eaa1e0e760ae57ca23",
+          "sourceSha256": "7dd4b0679b6bc10ab5bea3a31336ce296db2c39f6538895f0ebfd2540e2a9d64",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-envelope-reject.md",
+          "revision": "ef12077c63b264f2aa05f0eaa1e0e760ae57ca23",
+          "sourceSha256": "d42d8423b651d0f9a4b452ff0a6d364655e86d3afe696fbb1db0c20f624c787c",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-error-recovery-next-action.md",
+          "revision": "ef12077c63b264f2aa05f0eaa1e0e760ae57ca23",
+          "sourceSha256": "a6784362a5425d594e5bbf893093bbb24cc4d6793541fa05ebf6a1c4f4c94435",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-external-write-boundary.md",
+          "revision": "ef12077c63b264f2aa05f0eaa1e0e760ae57ca23",
+          "sourceSha256": "730fb4d519844c6ae9df5d24e4ac0de8b8b92d6b392e1d8ef50e8934123bc2a7",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-hot-file-write-owner.md",
+          "revision": "ef12077c63b264f2aa05f0eaa1e0e760ae57ca23",
+          "sourceSha256": "ae28580153e0ef4234d46d0914d5331538193f73307f23bac1bb13ddad587729",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-in-run-steering.md",
+          "revision": "ef12077c63b264f2aa05f0eaa1e0e760ae57ca23",
+          "sourceSha256": "2cf3bc047237c3c878b38cc53f7afadc4b7db437430881a0170e82e49835ffe3",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-memory-effect-receipt.md",
+          "revision": "ef12077c63b264f2aa05f0eaa1e0e760ae57ca23",
+          "sourceSha256": "bea425fb9d99a62afc7f4ecd27d899f043d8a31869bd907a1d30f7855801eec4",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-paired-ablation.md",
+          "revision": "ef12077c63b264f2aa05f0eaa1e0e760ae57ca23",
+          "sourceSha256": "1dacdebf222ad3c2f04bfca4cc424851b1b42ba6c74c7420aa37f92f6b7169af",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-rate-circuit-breaker.md",
+          "revision": "ef12077c63b264f2aa05f0eaa1e0e760ae57ca23",
+          "sourceSha256": "1937ad9bb9e466727bf67a0a5a2dc4814881038de453cb37827806d6bca13721",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-reliability-aggregation.md",
+          "revision": "ef12077c63b264f2aa05f0eaa1e0e760ae57ca23",
+          "sourceSha256": "2351a1909b0130f4f518638644722f3413394ca3e1f6d673333e24c9340314f6",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-sink-ledger.md",
+          "revision": "ef12077c63b264f2aa05f0eaa1e0e760ae57ca23",
+          "sourceSha256": "c3a9989c8c97d30311da69944a5eccd216cd1a0b4f42fb1dab20bb03aa732907",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-trace-cost-sampling.md",
+          "revision": "ef12077c63b264f2aa05f0eaa1e0e760ae57ca23",
+          "sourceSha256": "3bfb8f774e96f8d5b0f25f0d562b09c09388df6dde103f6852555abdaba975c8",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-verifier-completion-verdict.md",
+          "revision": "ef12077c63b264f2aa05f0eaa1e0e760ae57ca23",
+          "sourceSha256": "aa86ff9ae1f449e89e3597f9acd639c36554c5b60e6038d73c829a30598043a9",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-working-context-single-source.md",
+          "revision": "ef12077c63b264f2aa05f0eaa1e0e760ae57ca23",
+          "sourceSha256": "bb977807573bb95d30f239c2656e2172be7f4ce93cb19baf6a8b1fe51f6f32a3",
+          "projection": "imports-and-path-locators-only"
+        }
+      ],
+      "behaviorContract": null,
+      "documentContract": {
+        "format": "repository-markdown-or-module-contract",
+        "taskSpecFields": [
+          "id",
+          "title",
+          "intent",
+          "requiredTests",
+          "requiredRules",
+          "lifecycleStatus"
+        ],
+        "lifecycleStates": [
+          "active",
+          "completed",
+          "archived"
+        ],
+        "sourceOfTruth": "historical-base-and-declared-task-criteria"
+      }
+    },
+    {
+      "identity": {
+        "id": "tf-0291-g03",
+        "base": "6df7bd8cbdd9456612b5524dae18ec618343152e",
+        "reference": "854a9de948d0acf8c9ba11e7bce6ddd9e60c46b4",
+        "sourceRecord": "docs/dev/harness-gap-closure/g03-acceptance.json",
+        "sourceRecordSha256": "b2936554a04cf2500ca099bb643a6345aadf451b0c77bcbe76428271c7452949",
+        "targetScope": [
+          "scripts/lib/trace-to-eval-sample.mjs",
+          "scripts/lib/trace-to-eval-sample.d.mts",
+          "harness/specs/tasks/harness-gap-trace-to-eval-sample.md",
+          "docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md"
+        ],
+        "oracleDigest": "5e2368cdb7d2e49317a8c4d2cc16cf15fda3d5791c2e598caa1e82f15b6d3170"
+      },
+      "kind": "module-implementation",
+      "publicSources": [
+        {
+          "path": "scripts/lib/trace-to-eval-sample.d.mts",
+          "revision": "854a9de948d0acf8c9ba11e7bce6ddd9e60c46b4",
+          "sourceSha256": "a74711233bbd97060d9a8e16723c3b37b45f263e9b2b8987b82f63b53f4865f8",
+          "declaration": "export const TRACE_TO_EVAL_SCHEMA: \"clawx.trace-to-eval.v1\";\nexport type TraceOutcome = \"failure\" | \"success\" | \"refusal\" | \"cancelled\";\nexport type TraceReproducer = {\n    kind: \"scenario\" | \"route\" | \"command-id\";\n    ref: string;\n};\nexport type RedactedFailureTrace = {\n    runId: string;\n    createdAt: string;\n    outcome: TraceOutcome;\n    reproducer: TraceReproducer;\n    signature: string;\n    attempt?: number;\n};\nexport type EvalSample = {\n    schema: typeof TRACE_TO_EVAL_SCHEMA;\n    id: string;\n    sourceRunId: string;\n    createdAt: string;\n    sourceOutcome: TraceOutcome;\n    expected: {\n        \"before-fix\": \"pass\" | \"fail\";\n        \"after-fix\": \"pass\" | \"fail\";\n    };\n    reproducer: TraceReproducer;\n    selector: {\n        runId: string;\n        attempt: number;\n    };\n    digest: string;\n};\nexport type EvalSampleDiagnostic = {\n    code: string;\n    message: string;\n};\nexport function traceToEvalSample(trace: unknown): {\n    ok: true;\n    sample: EvalSample;\n    diagnostics: [\n    ];\n} | {\n    ok: false;\n    diagnostics: EvalSampleDiagnostic[];\n};\nexport function traceToEvalSamples(traces: readonly unknown[]): {\n    schema: typeof TRACE_TO_EVAL_SCHEMA;\n    samples: EvalSample[];\n    rejected: Array<{\n        runId: string | null;\n        diagnostics: EvalSampleDiagnostic[];\n    }>;\n};\n",
+          "declarationSha256": "1c318c956400ec39511c98f642f1fc2d2a737b1b97a4a1ab55664ae754b54dd4"
+        }
+      ],
+      "baseSources": [
+        {
+          "path": "scripts/lib/trace-to-eval-sample.mjs",
+          "revision": "6df7bd8cbdd9456612b5524dae18ec618343152e",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "scripts/lib/trace-to-eval-sample.d.mts",
+          "revision": "6df7bd8cbdd9456612b5524dae18ec618343152e",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-trace-to-eval-sample.md",
+          "revision": "6df7bd8cbdd9456612b5524dae18ec618343152e",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md",
+          "revision": "6df7bd8cbdd9456612b5524dae18ec618343152e",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        }
+      ],
+      "locatorSources": [
+        {
+          "path": "scripts/lib/trace-to-eval-sample.mjs",
+          "revision": "854a9de948d0acf8c9ba11e7bce6ddd9e60c46b4",
+          "sourceSha256": "f67ed77b6202878d75bd5eb18661e8bf49fa791907edd1ed4889529b469ecc28",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "scripts/lib/trace-to-eval-sample.d.mts",
+          "revision": "854a9de948d0acf8c9ba11e7bce6ddd9e60c46b4",
+          "sourceSha256": "a74711233bbd97060d9a8e16723c3b37b45f263e9b2b8987b82f63b53f4865f8",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-trace-to-eval-sample.md",
+          "revision": "854a9de948d0acf8c9ba11e7bce6ddd9e60c46b4",
+          "sourceSha256": "f0d8e2b9991d932ce267a9e88671357687f22f6b34d26f73366271185879aab7",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md",
+          "revision": "854a9de948d0acf8c9ba11e7bce6ddd9e60c46b4",
+          "sourceSha256": "0fe5f1fe54dbf41bf6a83c65d366cb55f7872d8f10f5ccfb3ce967399f30d757",
+          "projection": "imports-and-path-locators-only"
+        }
+      ],
+      "behaviorContract": {
+        "content": "- Export traceToEvalSample(trace) and traceToEvalSamples(traces).\n- A valid trace has runId, createdAt, outcome, reproducer {kind, ref}, and signature.\n- traceToEvalSample(trace) returns either {ok:true, sample:{sourceRunId, expected:{'before-fix': 'fail'|'pass', 'after-fix':'pass'}, reproducer, selector:{runId, attempt}, digest}} or {ok:false, diagnostics:[{code, message?}]}.\n- sourceRunId equals runId. attempt is a positive integer derived from trace.attempt or defaults to 1. digest is exactly 16 lowercase hexadecimal characters and deterministic for the same trace.\n- failure => before-fix fail, after-fix pass. success/refusal/cancelled => both expected values pass.\n- Missing required field => first diagnostic code missing-field.\n- Any raw prompt/messages/body/authorization/apiKey/headers field or secret-like content in the trace => code trace-not-redacted.\n- Invalid reproducer kind or empty ref => code invalid-reproducer. Allowed kinds are scenario, route, command-id; shell is forbidden.\n- traceToEvalSamples returns {samples, rejected}; preserve caller order; rejected entries carry runId and diagnostics.\n- The module is pure, ESM, has no scheduler/daemon/network side effects, and does not delete source evidence.",
+        "source": {
+          "path": "harness/specs/fixtures/rsi-model-diagnostic/g03/request.json",
+          "revision": "5ad905b44c2822caf6037df9278a8a260a27d3f9",
+          "sourceSha256": "e00c53960b17a6834a297e7c9bdb57e1f736ac4b3a2b396f1bad3428c72887fd",
+          "projection": "published-interface-text-only"
+        }
+      },
+      "documentContract": {
+        "format": "repository-markdown-or-module-contract",
+        "taskSpecFields": [
+          "id",
+          "title",
+          "intent",
+          "requiredTests",
+          "requiredRules",
+          "lifecycleStatus"
+        ],
+        "lifecycleStates": [
+          "active",
+          "completed",
+          "archived"
+        ],
+        "sourceOfTruth": "historical-base-and-declared-task-criteria"
+      }
+    },
+    {
+      "identity": {
+        "id": "tf-0283-l01",
+        "base": "f8e8c4f011127d331393844d741a7d022bcbf8e3",
+        "reference": "f42bb417b862784ad37e3f488f844cc697dbea51",
+        "sourceRecord": "docs/dev/harness-gap-closure/l01-acceptance.json",
+        "sourceRecordSha256": "0e0a4139520eec9ce4940ee7ea1e61e7eb86fd14c2e92cf0a37ccc97d368e141",
+        "targetScope": [
+          "electron/services/task-ledger-working-context.ts",
+          "shared/task-ledger-working-context.ts"
+        ],
+        "oracleDigest": "b5337681d99cf86ddc4f078de80cb6c42ba1f30339b7be7adf97c844d257882a"
+      },
+      "kind": "module-implementation",
+      "publicSources": [
+        {
+          "path": "electron/services/task-ledger-working-context.ts",
+          "revision": "f42bb417b862784ad37e3f488f844cc697dbea51",
+          "sourceSha256": "645090a9637612f23cdd46387b476fbbcc2474b1bb829e0f643598a938bec2d7",
+          "declaration": "import type { TaskLedgerEventInput } from '../../shared/types/task-ledger';\nexport { createTaskLedgerWorkingContextDecision, createTaskLedgerWorkingContextProposal, emptyTaskLedgerWorkingContextSnapshot, mergeTaskLedgerWorkingContext, projectTaskLedgerWorkingContext, STAGE3_WORKING_CONTEXT_LIMITS, STAGE3_WORKING_CONTEXT_POLICY_DIGEST, STAGE3_WORKING_CONTEXT_RULE_ID, } from '../../shared/task-ledger-working-context';\nexport declare function appendTaskLedgerWorkingContextEvents(workspaceId: string | null | undefined, inputs: TaskLedgerEventInput[], batchIdempotencyKey?: string | null): Promise<any>;\nexport declare function readTaskLedgerWorkingContext(workspaceId: string | null | undefined): Promise<any>;\n",
+          "declarationSha256": "ec0ee8dbd79e1fc1029dfdad61c3f9f8592a78ae954e9911158cc658999e15e8"
+        },
+        {
+          "path": "shared/task-ledger-working-context.ts",
+          "revision": "f42bb417b862784ad37e3f488f844cc697dbea51",
+          "sourceSha256": "43eb5c0c6269ff088b8079608e76bb19afc46a8c8510997ae1388ca9eb68563d",
+          "declaration": "import type { TaskLedgerEvent, TaskLedgerEventInput, TaskLedgerEvidenceRef, TaskLedgerWorkingContextAcceptedRecord, TaskLedgerWorkingContextField, TaskLedgerWorkingContextFieldValue, TaskLedgerWorkingContextSensitivity, TaskLedgerWorkingContextSnapshot, TaskLedgerWorkingContextTrust } from './types/task-ledger.js';\nexport declare const STAGE3_WORKING_CONTEXT_RULE_ID: \"stage3-task-ledger-working-context:v1\";\nexport declare const STAGE3_WORKING_CONTEXT_POLICY_DIGEST: \"sha256:f100f8862c9979e6bc662376c98b80587cec4a026d2cbdbb239dbe3a9c009f19\";\nexport declare const STAGE3_WORKING_CONTEXT_LIMITS: {\n    readonly proposalIdMax: 128;\n    readonly scalarMax: 2000;\n    readonly stringItemMax: 500;\n    readonly stringArrayMax: 20;\n    readonly evidenceRefsMax: 20;\n    readonly evidenceRefMax: 512;\n    readonly evidenceLabelMax: 120;\n    readonly rejectionReasonMax: 500;\n    readonly defaultTtlMs: number;\n    readonly maxTtlMs: number;\n};\nexport type Stage3WorkingContextPolicy = 'stage3-task-ledger-working-context:v1';\nexport type TaskLedgerWorkingContextWarningWithReasons = {\n    ok: true;\n} | {\n    ok: false;\n    reason: string;\n};\nexport declare function emptyTaskLedgerWorkingContextSnapshot(): TaskLedgerWorkingContextSnapshot;\nexport type TaskLedgerWorkingContextProposalInput = {\n    proposalId: string;\n    field: TaskLedgerWorkingContextField;\n    value: TaskLedgerWorkingContextFieldValue;\n    version: number;\n    actor: 'user' | 'assistant';\n    taskId: string;\n    sessionId?: string | null;\n    evidenceRefs: TaskLedgerEvidenceRef[];\n    ttl?: {\n        issuedAt?: string;\n        expiresAt?: string;\n    };\n    sensitivity?: TaskLedgerWorkingContextSensitivity;\n    trust?: TaskLedgerWorkingContextTrust;\n    createdAt?: string;\n    idempotencyKey?: string;\n};\nexport type TaskLedgerWorkingContextDecisionInput = {\n    proposalId: string;\n    field: TaskLedgerWorkingContextField;\n    version: number;\n    decision: 'accepted' | 'rejected';\n    actor: 'user' | 'system';\n    taskId: string;\n    sessionId?: string | null;\n    policyDigest: string;\n    rejectionReason?: string;\n    createdAt?: string;\n    idempotencyKey?: string;\n};\nexport type WorkingContextEventResult = {\n    ok: true;\n    event: TaskLedgerEventInput;\n} | {\n    ok: false;\n    reason: string;\n};\nexport declare function createTaskLedgerWorkingContextProposal(input: TaskLedgerWorkingContextProposalInput): WorkingContextEventResult;\nexport declare function createTaskLedgerWorkingContextDecision(input: TaskLedgerWorkingContextDecisionInput): WorkingContextEventResult;\nexport type ProjectTaskLedgerWorkingContextOptions = {\n    asOf?: string;\n};\nexport declare function projectTaskLedgerWorkingContext(events: TaskLedgerEvent[], options?: ProjectTaskLedgerWorkingContextOptions): TaskLedgerWorkingContextSnapshot;\nexport type TaskLedgerWorkingContextMergeOptions = {\n    copyFields: TaskLedgerWorkingContextField[];\n    relation: 'forked_from' | 'handoff_from';\n};\nexport type TaskLedgerWorkingContextMergeConflict = {\n    field: TaskLedgerWorkingContextField;\n    parent?: TaskLedgerWorkingContextAcceptedRecord;\n    child?: TaskLedgerWorkingContextAcceptedRecord;\n};\nexport type TaskLedgerWorkingContextMergedField = {\n    current?: TaskLedgerWorkingContextAcceptedRecord & {\n        source: 'parent' | 'child';\n    };\n    conflicts: TaskLedgerWorkingContextMergeConflict[];\n};\nexport type TaskLedgerWorkingContextMergeResult = {\n    schemaVersion: 1;\n    relation: 'forked_from' | 'handoff_from';\n    copiedFields: TaskLedgerWorkingContextField[];\n    fields: Partial<Record<TaskLedgerWorkingContextField, TaskLedgerWorkingContextMergedField>>;\n};\nexport declare function mergeTaskLedgerWorkingContext(parent: TaskLedgerWorkingContextSnapshot, child: TaskLedgerWorkingContextSnapshot, options: TaskLedgerWorkingContextMergeOptions): TaskLedgerWorkingContextMergeResult;\n",
+          "declarationSha256": "4fbfce88dff2ab47fa79cf846a86709a81ffc9a961508fe980a1af5e0fb45be6"
+        }
+      ],
+      "baseSources": [
+        {
+          "path": "electron/services/task-ledger-working-context.ts",
+          "revision": "f8e8c4f011127d331393844d741a7d022bcbf8e3",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": true
+        },
+        {
+          "path": "shared/task-ledger-working-context.ts",
+          "revision": "f8e8c4f011127d331393844d741a7d022bcbf8e3",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": true
+        },
+        {
+          "path": "shared/types/task-ledger.ts",
+          "revision": "f8e8c4f011127d331393844d741a7d022bcbf8e3",
+          "sourceSha256": "2dd0d945502fc1cc55d3ede9b63e2aec26fbcdb5f995c788ff7b3f55a8fadbf0",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "electron/services/task-ledger-service.ts",
+          "revision": "f8e8c4f011127d331393844d741a7d022bcbf8e3",
+          "sourceSha256": "1ad366353800290fa9bf78591a25424763b1e5c52c7c06d4e6299730fff9bf57",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-working-context-single-source.md",
+          "revision": "f8e8c4f011127d331393844d741a7d022bcbf8e3",
+          "sourceSha256": null,
+          "missing": true,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/l01-working-context-single-source.md",
+          "revision": "f8e8c4f011127d331393844d741a7d022bcbf8e3",
+          "sourceSha256": null,
+          "missing": true,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/long-task-control/stage3-golden-run.ts",
+          "revision": "f8e8c4f011127d331393844d741a7d022bcbf8e3",
+          "sourceSha256": "48394f0e097da98e923ee8199391417c2db9bcd72bf577bd52f2f84444716d98",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/long-task-control/stage3-working-context.ts",
+          "revision": "f8e8c4f011127d331393844d741a7d022bcbf8e3",
+          "sourceSha256": "1407e8831abfa1b163d8fbc70e9e309dd2d941af7e08d8f3f41fb579e4ad0482",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        }
+      ],
+      "locatorSources": [
+        {
+          "path": "electron/services/task-ledger-working-context.ts",
+          "revision": "f42bb417b862784ad37e3f488f844cc697dbea51",
+          "sourceSha256": "645090a9637612f23cdd46387b476fbbcc2474b1bb829e0f643598a938bec2d7",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "shared/task-ledger-working-context.ts",
+          "revision": "f42bb417b862784ad37e3f488f844cc697dbea51",
+          "sourceSha256": "43eb5c0c6269ff088b8079608e76bb19afc46a8c8510997ae1388ca9eb68563d",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-working-context-single-source.md",
+          "revision": "f42bb417b862784ad37e3f488f844cc697dbea51",
+          "sourceSha256": "a69c499b7864a03fc22e4e8dcfca58921d2b9de581d523cf2913f9763a786e25",
+          "projection": "imports-and-path-locators-only"
+        }
+      ],
+      "behaviorContract": null,
+      "documentContract": {
+        "format": "repository-markdown-or-module-contract",
+        "taskSpecFields": [
+          "id",
+          "title",
+          "intent",
+          "requiredTests",
+          "requiredRules",
+          "lifecycleStatus"
+        ],
+        "lifecycleStates": [
+          "active",
+          "completed",
+          "archived"
+        ],
+        "sourceOfTruth": "historical-base-and-declared-task-criteria"
+      }
+    },
+    {
+      "identity": {
+        "id": "tf-0284-l02",
+        "base": "4845b94bf1a466013d12093f8f9a341d0b43c4f2",
+        "reference": "e355beea81075df4ca53b0434689adcdc508f5e6",
+        "sourceRecord": "docs/dev/harness-gap-closure/l02-acceptance.json",
+        "sourceRecordSha256": "27ba5b7c62e490e116af31e380292647c3c1ce177962dbe78515e6d19ff9bca1",
+        "targetScope": [
+          "openclaw_runtime/src/runtime-core/context-pressure-recovery.ts",
+          "harness/specs/tasks/harness-gap-context-pressure-recovery.md",
+          "docs/dev/harness-gap-closure/l02-context-pressure-recovery.md"
+        ],
+        "oracleDigest": "b690fd131a38750f18b357ccf2e039e3e747144acb3e91b75d2e39e79ef87dcd"
+      },
+      "kind": "module-implementation",
+      "publicSources": [
+        {
+          "path": "openclaw_runtime/src/runtime-core/context-pressure-recovery.ts",
+          "revision": "e355beea81075df4ca53b0434689adcdc508f5e6",
+          "sourceSha256": "854f7dbae1d06488fe2236566d6867ebd3dabc0b5b92a722f6b938efc471687b",
+          "declaration": "import type { TaskLedgerWorkingContextSnapshot } from \"../../../shared/types/task-ledger.js\";\nexport type ContextPressureRecoverySection = \"objective\" | \"unfinished\" | \"dependencies\" | \"recentEvidence\";\nexport type ContextPressureRecoveryStatus = \"recovered\" | \"unknown\" | \"depth-exceeded\";\nexport type ContextPressureRecoveryResult = {\n    status: ContextPressureRecoveryStatus;\n    digest: string;\n    budgetChars: number;\n    usedChars: number;\n    sections: Record<ContextPressureRecoverySection, string[]>;\n    dropped: Record<ContextPressureRecoverySection, number>;\n    truncated: boolean;\n    complete: false;\n    reason?: string;\n};\nexport declare function buildContextPressureRecovery(input: {\n    snapshot?: TaskLedgerWorkingContextSnapshot | null;\n    budgetChars: number;\n    depth?: number;\n    maxDepth?: number;\n}): ContextPressureRecoveryResult;\n",
+          "declarationSha256": "4482255c54d795b0abef8773e7c876d1992dae36212dd25e7b3b4d52790912ad"
+        }
+      ],
+      "baseSources": [
+        {
+          "path": "openclaw_runtime/src/runtime-core/context-pressure-recovery.ts",
+          "revision": "4845b94bf1a466013d12093f8f9a341d0b43c4f2",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-context-pressure-recovery.md",
+          "revision": "4845b94bf1a466013d12093f8f9a341d0b43c4f2",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/l02-context-pressure-recovery.md",
+          "revision": "4845b94bf1a466013d12093f8f9a341d0b43c4f2",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "shared/types/task-ledger.ts",
+          "revision": "4845b94bf1a466013d12093f8f9a341d0b43c4f2",
+          "sourceSha256": "2dd0d945502fc1cc55d3ede9b63e2aec26fbcdb5f995c788ff7b3f55a8fadbf0",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        }
+      ],
+      "locatorSources": [
+        {
+          "path": "openclaw_runtime/src/runtime-core/context-pressure-recovery.ts",
+          "revision": "e355beea81075df4ca53b0434689adcdc508f5e6",
+          "sourceSha256": "854f7dbae1d06488fe2236566d6867ebd3dabc0b5b92a722f6b938efc471687b",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-context-pressure-recovery.md",
+          "revision": "e355beea81075df4ca53b0434689adcdc508f5e6",
+          "sourceSha256": "e998a275efa22a1ceaa09836ec57ad786f734021b586f5fadbd7a6a793cf3b74",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/l02-context-pressure-recovery.md",
+          "revision": "e355beea81075df4ca53b0434689adcdc508f5e6",
+          "sourceSha256": "6dfbb30f9a1333ffb05276ed3efc404e9a317eefcf7839ac06a569cdc249635c",
+          "projection": "imports-and-path-locators-only"
+        }
+      ],
+      "behaviorContract": null,
+      "documentContract": {
+        "format": "repository-markdown-or-module-contract",
+        "taskSpecFields": [
+          "id",
+          "title",
+          "intent",
+          "requiredTests",
+          "requiredRules",
+          "lifecycleStatus"
+        ],
+        "lifecycleStates": [
+          "active",
+          "completed",
+          "archived"
+        ],
+        "sourceOfTruth": "historical-base-and-declared-task-criteria"
+      }
+    },
+    {
+      "identity": {
+        "id": "tf-0285-l03",
+        "base": "78f13c8f42e64c7f24561a06b795cd1a10253ccf",
+        "reference": "24c9bd91e3a1345c742f2fe88f39838184a3e575",
+        "sourceRecord": "docs/dev/harness-gap-closure/l03-acceptance.json",
+        "sourceRecordSha256": "8afb7462ed0290f2d0899a02ab619680d276b9038cfbec276d498c3d5e9104b8",
+        "targetScope": [
+          "openclaw_runtime/src/agents/agent-steering-queue.ts"
+        ],
+        "oracleDigest": "903474f8bc7dfd1a6733ed1244c9fdb39aaeacfb856a7e26841d19da294108fd"
+      },
+      "kind": "module-implementation",
+      "publicSources": [
+        {
+          "path": "openclaw_runtime/src/agents/agent-steering-queue.ts",
+          "revision": "24c9bd91e3a1345c742f2fe88f39838184a3e575",
+          "sourceSha256": "56b953bbebe4d01539659d2447d142973aa4a1a4bac9e3d953511199af2d6d76",
+          "declaration": "import type { PendingFinalDeliveryPayload, SubagentRunRecord } from \"./subagent-registry.types.js\";\nexport type AgentSteeringQueueItem = {\n    runId: string;\n    entry: SubagentRunRecord;\n    payload: PendingFinalDeliveryPayload;\n};\nexport type LeasedAgentSteeringBatch = {\n    runIds: string[];\n    prompt: string;\n};\nexport declare function listPendingAgentSteeringItemsFromSubagentRuns(params: {\n    runs: Map<string, SubagentRunRecord>;\n    requesterSessionKey: string;\n    now?: number;\n}): AgentSteeringQueueItem[];\nexport declare function buildMergedAgentSteeringPrompt(items: readonly AgentSteeringQueueItem[]): string | undefined;\nexport declare function leasePendingAgentSteeringItemsFromSubagentRuns(params: {\n    runs: Map<string, SubagentRunRecord>;\n    requesterSessionKey: string;\n    leaseId: string;\n    now?: number;\n}): LeasedAgentSteeringBatch | undefined;\nexport declare function ackLeasedAgentSteeringItemsFromSubagentRuns(params: {\n    runs: Map<string, SubagentRunRecord>;\n    runIds: readonly string[];\n    leaseId: string;\n    now?: number;\n}): number;\nexport declare function releaseLeasedAgentSteeringItemsFromSubagentRuns(params: {\n    runs: Map<string, SubagentRunRecord>;\n    runIds: readonly string[];\n    leaseId: string;\n    error?: string;\n}): number;\nexport declare function prependAgentSteeringPrompt(params: {\n    steeringPrompt: string;\n    prompt: string;\n}): string;\n",
+          "declarationSha256": "b66f5b76d3a09293644988acd71d69853993f48ce12645414d5f33cd7256afa3"
+        }
+      ],
+      "baseSources": [
+        {
+          "path": "openclaw_runtime/src/agents/agent-steering-queue.ts",
+          "revision": "78f13c8f42e64c7f24561a06b795cd1a10253ccf",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": true
+        },
+        {
+          "path": "openclaw_runtime/src/agents/sanitize-for-prompt.ts",
+          "revision": "78f13c8f42e64c7f24561a06b795cd1a10253ccf",
+          "sourceSha256": "2b954470589be49557db62460c81d68155ca84251dbee2d3bbc1f036b079bdcf",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/subagent-registry.types.ts",
+          "revision": "78f13c8f42e64c7f24561a06b795cd1a10253ccf",
+          "sourceSha256": "45a51c0d8f86a90a72d84d0c3696d88a862c656273ee2a16f62ca65b4322793e",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/orchestration-protocol.ts",
+          "revision": "78f13c8f42e64c7f24561a06b795cd1a10253ccf",
+          "sourceSha256": "1585fc5a37c96486d6a32bd69f267de599dbe4b300d055ab759cac3ba7ee7c98",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/orchestration-result-bundle.ts",
+          "revision": "78f13c8f42e64c7f24561a06b795cd1a10253ccf",
+          "sourceSha256": "d93045cac92ecae7e596a2b0c5da52a9ebf375dcea0b6633ae100ed44e8b2cb8",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/orchestration-gates.ts",
+          "revision": "78f13c8f42e64c7f24561a06b795cd1a10253ccf",
+          "sourceSha256": "fc360b872a25a6dc2c2ba5796bb97583f3219d40da7c426662eafbcd73760939",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/orchestration-verifier-report.ts",
+          "revision": "78f13c8f42e64c7f24561a06b795cd1a10253ccf",
+          "sourceSha256": "81699e6eee2d6a50c9f5345c6eac84b371902e1490783b2aded58ef65ee05bb4",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/handoff-artifacts.ts",
+          "revision": "78f13c8f42e64c7f24561a06b795cd1a10253ccf",
+          "sourceSha256": "55d747034b2a7e93bca903054a23f21761bc2a4d95f7779f3d9f515fc8519147",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-in-run-steering.md",
+          "revision": "78f13c8f42e64c7f24561a06b795cd1a10253ccf",
+          "sourceSha256": null,
+          "missing": true,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/l03-in-run-steering.md",
+          "revision": "78f13c8f42e64c7f24561a06b795cd1a10253ccf",
+          "sourceSha256": null,
+          "missing": true,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/subagent-registry.ts",
+          "revision": "78f13c8f42e64c7f24561a06b795cd1a10253ccf",
+          "sourceSha256": "dcb298b1ea78d010fb6165d752b65df6d3f4ce6948b4ed096f1477380397a90e",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        }
+      ],
+      "locatorSources": [
+        {
+          "path": "openclaw_runtime/src/agents/agent-steering-queue.ts",
+          "revision": "24c9bd91e3a1345c742f2fe88f39838184a3e575",
+          "sourceSha256": "56b953bbebe4d01539659d2447d142973aa4a1a4bac9e3d953511199af2d6d76",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-in-run-steering.md",
+          "revision": "24c9bd91e3a1345c742f2fe88f39838184a3e575",
+          "sourceSha256": "43d5c05c8d4b3f32cc2e33fd30b9a14c78521405d616426b02c51ec791cf2f11",
+          "projection": "imports-and-path-locators-only"
+        }
+      ],
+      "behaviorContract": null,
+      "documentContract": {
+        "format": "repository-markdown-or-module-contract",
+        "taskSpecFields": [
+          "id",
+          "title",
+          "intent",
+          "requiredTests",
+          "requiredRules",
+          "lifecycleStatus"
+        ],
+        "lifecycleStates": [
+          "active",
+          "completed",
+          "archived"
+        ],
+        "sourceOfTruth": "historical-base-and-declared-task-criteria"
+      }
+    },
+    {
+      "identity": {
+        "id": "tf-0286-l04",
+        "base": "2813bfcfc95d913c9a914bb082a709988480722e",
+        "reference": "7faef1e3d394cd761b3827ecde070b3dfcba0c27",
+        "sourceRecord": "docs/dev/harness-gap-closure/l04-acceptance.json",
+        "sourceRecordSha256": "e3e32b5f69a9d210cc57ccaa34b61e76c4f1dfb94984db776bdc8d5d4eb3f953",
+        "targetScope": [
+          "openclaw_runtime/src/runtime-core/checkpoint-attachment-binding.ts",
+          "harness/specs/tasks/harness-gap-checkpoint-attachment-binding.md",
+          "docs/dev/harness-gap-closure/l04-checkpoint-attachment-binding.md"
+        ],
+        "oracleDigest": "371f72370369b8fa2a9f840954662fb9b7477cf3980434fab15c81bcdb26e767"
+      },
+      "kind": "module-implementation",
+      "publicSources": [
+        {
+          "path": "openclaw_runtime/src/runtime-core/checkpoint-attachment-binding.ts",
+          "revision": "7faef1e3d394cd761b3827ecde070b3dfcba0c27",
+          "sourceSha256": "b295b2813967bdaa2d6c52631b668c7087f102203505244186784780ce4972b4",
+          "declaration": "export declare const CHECKPOINT_ATTACHMENT_KINDS: readonly [\n    \"task-attachment\",\n    \"recovery-instruction\",\n    \"context\",\n    \"external-artifact-ref\",\n    \"ledger-checkpoint\"\n];\nexport type CheckpointAttachmentKind = (typeof CHECKPOINT_ATTACHMENT_KINDS)[number];\nexport type CheckpointAttachmentBinding = {\n    attachmentRef: string;\n    kind: CheckpointAttachmentKind;\n    hash: string;\n    owner: string;\n    expiresAt: number;\n};\nexport type CheckpointAttachmentState = \"ok\" | \"missing-hash\" | \"invalid-hash\" | \"missing-owner\" | \"expired\" | \"conflict\";\nexport type CheckpointAttachmentDiagnostic = {\n    attachmentRef: string;\n    state: Exclude<CheckpointAttachmentState, \"ok\">;\n    message: string;\n};\nexport type CheckpointAttachmentRecoveryResult = {\n    recovered: CheckpointAttachmentBinding[];\n    states: Array<{\n        attachmentRef: string;\n        state: CheckpointAttachmentState;\n    }>;\n    diagnostics: CheckpointAttachmentDiagnostic[];\n    repaired: boolean;\n    digest: string;\n};\nexport declare function isCheckpointAttachmentHash(value: unknown): value is string;\nexport declare function recoverCheckpointAttachments(bindings: readonly CheckpointAttachmentBinding[], options: {\n    now: number;\n}): CheckpointAttachmentRecoveryResult;\n",
+          "declarationSha256": "e163b3d5c6ff00e7784d742a3f0a808c1ab253292b28515d4e9bca320eeef958"
+        }
+      ],
+      "baseSources": [
+        {
+          "path": "openclaw_runtime/src/runtime-core/checkpoint-attachment-binding.ts",
+          "revision": "2813bfcfc95d913c9a914bb082a709988480722e",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-checkpoint-attachment-binding.md",
+          "revision": "2813bfcfc95d913c9a914bb082a709988480722e",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/l04-checkpoint-attachment-binding.md",
+          "revision": "2813bfcfc95d913c9a914bb082a709988480722e",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        }
+      ],
+      "locatorSources": [
+        {
+          "path": "openclaw_runtime/src/runtime-core/checkpoint-attachment-binding.ts",
+          "revision": "7faef1e3d394cd761b3827ecde070b3dfcba0c27",
+          "sourceSha256": "b295b2813967bdaa2d6c52631b668c7087f102203505244186784780ce4972b4",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-checkpoint-attachment-binding.md",
+          "revision": "7faef1e3d394cd761b3827ecde070b3dfcba0c27",
+          "sourceSha256": "a3ac5a59693ad1064ddb65b2811de1ab16363d7334cb0fe4f7c516a59e710d65",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/l04-checkpoint-attachment-binding.md",
+          "revision": "7faef1e3d394cd761b3827ecde070b3dfcba0c27",
+          "sourceSha256": "95680e57bcd89803fc2585155a4f06f801bda3dd53c93fa528753f3588f513cb",
+          "projection": "imports-and-path-locators-only"
+        }
+      ],
+      "behaviorContract": null,
+      "documentContract": {
+        "format": "repository-markdown-or-module-contract",
+        "taskSpecFields": [
+          "id",
+          "title",
+          "intent",
+          "requiredTests",
+          "requiredRules",
+          "lifecycleStatus"
+        ],
+        "lifecycleStates": [
+          "active",
+          "completed",
+          "archived"
+        ],
+        "sourceOfTruth": "historical-base-and-declared-task-criteria"
+      }
+    },
+    {
+      "identity": {
+        "id": "tf-0287-l05",
+        "base": "679b7124972f25a68d8ab15032afe4aee44ef19b",
+        "reference": "617aee4e85636ad4217eeec6cec6e66aaa4e0058",
+        "sourceRecord": "docs/dev/harness-gap-closure/l05-acceptance.json",
+        "sourceRecordSha256": "985fd1b987c5b48dc7e69c512784465008cff242a06626c9ea27f24efb784e93",
+        "targetScope": [
+          "openclaw_runtime/src/agents/rate-circuit-breaker.ts",
+          "harness/specs/tasks/harness-gap-rate-circuit-breaker.md",
+          "docs/dev/harness-gap-closure/l05-rate-circuit-breaker.md"
+        ],
+        "oracleDigest": "c4470b9a91878a5d3d0f12d9ee30b39ce31564d2d96ab47128f07bea973b8cfb"
+      },
+      "kind": "module-implementation",
+      "publicSources": [
+        {
+          "path": "openclaw_runtime/src/agents/rate-circuit-breaker.ts",
+          "revision": "617aee4e85636ad4217eeec6cec6e66aaa4e0058",
+          "sourceSha256": "c9fe9f1fdecb31bc9f2dee148fde45ff5f2f51e9132f1f4f16c13d157f517d29",
+          "declaration": "export type RateBreakerState = \"closed\" | \"open\" | \"half-open\";\nexport type RateBreakerOptions = {\n    windowMs: number;\n    maxFailuresPerWindow: number;\n    cooldownMs: number;\n    now?: () => number;\n};\nexport type RateBreakerSnapshot = {\n    state: RateBreakerState;\n    failuresInWindow: number;\n    openedAt?: number;\n    halfOpenProbeInFlight: boolean;\n    trips: number;\n};\nexport declare class RateCircuitBreaker {\n    #private;\n    constructor(options: RateBreakerOptions);\n    allowsRequest(): boolean;\n    record(success: boolean): RateBreakerState;\n    getState(): RateBreakerState;\n    getSnapshot(): RateBreakerSnapshot;\n    digest(): string;\n}\n",
+          "declarationSha256": "e89a5ed82e1ae261f622dbf8d8cc8b33de47e0dd439146c4e3bf264db0dfbef4"
+        }
+      ],
+      "baseSources": [
+        {
+          "path": "openclaw_runtime/src/agents/rate-circuit-breaker.ts",
+          "revision": "679b7124972f25a68d8ab15032afe4aee44ef19b",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-rate-circuit-breaker.md",
+          "revision": "679b7124972f25a68d8ab15032afe4aee44ef19b",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/l05-rate-circuit-breaker.md",
+          "revision": "679b7124972f25a68d8ab15032afe4aee44ef19b",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        }
+      ],
+      "locatorSources": [
+        {
+          "path": "openclaw_runtime/src/agents/rate-circuit-breaker.ts",
+          "revision": "617aee4e85636ad4217eeec6cec6e66aaa4e0058",
+          "sourceSha256": "c9fe9f1fdecb31bc9f2dee148fde45ff5f2f51e9132f1f4f16c13d157f517d29",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-rate-circuit-breaker.md",
+          "revision": "617aee4e85636ad4217eeec6cec6e66aaa4e0058",
+          "sourceSha256": "8b01d13c5ab364d620d092154dea1f5a913e3380effea3b61bbec794691e5bd8",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/l05-rate-circuit-breaker.md",
+          "revision": "617aee4e85636ad4217eeec6cec6e66aaa4e0058",
+          "sourceSha256": "060f9502e17e3b7869ad81220c608aa7f01a6940cd72d7a233eb5e46e5aa8eee",
+          "projection": "imports-and-path-locators-only"
+        }
+      ],
+      "behaviorContract": null,
+      "documentContract": {
+        "format": "repository-markdown-or-module-contract",
+        "taskSpecFields": [
+          "id",
+          "title",
+          "intent",
+          "requiredTests",
+          "requiredRules",
+          "lifecycleStatus"
+        ],
+        "lifecycleStates": [
+          "active",
+          "completed",
+          "archived"
+        ],
+        "sourceOfTruth": "historical-base-and-declared-task-criteria"
+      }
+    },
+    {
+      "identity": {
+        "id": "tf-0288-l06",
+        "base": "4afa1e94a73f200a29713566b5759b92a115f70a",
+        "reference": "c50686ef7099e4e6eafbdbc9652c92d92992087e",
+        "sourceRecord": "docs/dev/harness-gap-closure/l06-acceptance.json",
+        "sourceRecordSha256": "17682ec3f46b3f3d0ac6d8469bcd9fc3a97f95c5e0eea7dbcf99ac4a16400272",
+        "targetScope": [
+          "openclaw_runtime/src/agents/hot-file-write-owner.ts",
+          "harness/specs/tasks/harness-gap-hot-file-write-owner.md",
+          "docs/dev/harness-gap-closure/l06-hot-file-write-owner.md"
+        ],
+        "oracleDigest": "5194fa18c060c5b05229d04ca9dcfe77126c4eecdab097692ac3a190e921c529"
+      },
+      "kind": "module-implementation",
+      "publicSources": [
+        {
+          "path": "openclaw_runtime/src/agents/hot-file-write-owner.ts",
+          "revision": "c50686ef7099e4e6eafbdbc9652c92d92992087e",
+          "sourceSha256": "5009bace6b1ab7c3bafd7341f7cb8f71a61ded147fed165aaf3cbf3cd533f430",
+          "declaration": "export type WriteOwnerClaim = {\n    ok: true;\n    token: string;\n    reentrant: boolean;\n} | {\n    ok: false;\n    reason: \"owned-by-another-owner\";\n    holder: string;\n};\nexport declare function claimWriteOwner(filePath: string, owner: string, now?: number): WriteOwnerClaim;\nexport declare function releaseWriteOwner(filePath: string, token: string): boolean;\nexport declare function getActiveWriteOwner(filePath: string): {\n    owner: string;\n    acquiredAt: number;\n} | undefined;\nexport declare function getWriteOwnerConflicts(filePath: string): number;\nexport declare function withVerifiedWriteOwner<T>(filePath: string, owner: string, fn: () => Promise<T>): Promise<T>;\nexport declare function resetHotFileWriteOwnersForTests(): void;\n",
+          "declarationSha256": "3cd50195ae89e26fea64b618ed5a6fc2d51b72be74c678c220db959d9eb2ef86"
+        }
+      ],
+      "baseSources": [
+        {
+          "path": "openclaw_runtime/src/agents/hot-file-write-owner.ts",
+          "revision": "4afa1e94a73f200a29713566b5759b92a115f70a",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-hot-file-write-owner.md",
+          "revision": "4afa1e94a73f200a29713566b5759b92a115f70a",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/l06-hot-file-write-owner.md",
+          "revision": "4afa1e94a73f200a29713566b5759b92a115f70a",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/sessions/tools/file-mutation-queue.ts",
+          "revision": "4afa1e94a73f200a29713566b5759b92a115f70a",
+          "sourceSha256": "cfb27ee9514d52303484353d0e6a4646008c161ede23c2634c4c7b7cb6b6bbfc",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        }
+      ],
+      "locatorSources": [
+        {
+          "path": "openclaw_runtime/src/agents/hot-file-write-owner.ts",
+          "revision": "c50686ef7099e4e6eafbdbc9652c92d92992087e",
+          "sourceSha256": "5009bace6b1ab7c3bafd7341f7cb8f71a61ded147fed165aaf3cbf3cd533f430",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-hot-file-write-owner.md",
+          "revision": "c50686ef7099e4e6eafbdbc9652c92d92992087e",
+          "sourceSha256": "fe9b09f977a84ecd0756fad740c569a495b60ab9b16281843c878b0416647b79",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/l06-hot-file-write-owner.md",
+          "revision": "c50686ef7099e4e6eafbdbc9652c92d92992087e",
+          "sourceSha256": "30a8a119b6d54909b3fcc5ee4040412f4017c4d86d94e6d43926d1595d0a03b9",
+          "projection": "imports-and-path-locators-only"
+        }
+      ],
+      "behaviorContract": null,
+      "documentContract": {
+        "format": "repository-markdown-or-module-contract",
+        "taskSpecFields": [
+          "id",
+          "title",
+          "intent",
+          "requiredTests",
+          "requiredRules",
+          "lifecycleStatus"
+        ],
+        "lifecycleStates": [
+          "active",
+          "completed",
+          "archived"
+        ],
+        "sourceOfTruth": "historical-base-and-declared-task-criteria"
+      }
+    },
+    {
+      "identity": {
+        "id": "tf-0276-s01",
+        "base": "ca24fb81ae83dde9907561b583b7990df6844b67",
+        "reference": "f064ff2c592580763a564c5635f554130a8fa992",
+        "sourceRecord": "docs/dev/harness-gap-closure/s01-acceptance.json",
+        "sourceRecordSha256": "91eccf66cb8f2b34a5289cd264ff90bf1319c0181c4bc0a4ef8ccd43bea5d276",
+        "targetScope": [
+          "openclaw_runtime/src/agents/shadow-census.ts",
+          "openclaw_runtime/src/agents/provider-transport-fetch.ts",
+          "harness/specs/tasks/harness-gap-envelope-reject.md",
+          "harness/specs/rules/provider-envelope-reject-boundary.md",
+          "docs/dev/harness-gap-closure/s01-envelope-reject.md"
+        ],
+        "oracleDigest": "c600c5092a08044ddf0363f9c04eab27eaefecf37e7c3465e12d0884cb59fff6"
+      },
+      "kind": "module-implementation",
+      "publicSources": [
+        {
+          "path": "openclaw_runtime/src/agents/shadow-census.ts",
+          "revision": "f064ff2c592580763a564c5635f554130a8fa992",
+          "sourceSha256": "d123e538a65f167dbedd8677e4f91e03b29ad612ba65cbf9d1a4b80d9ddc276c",
+          "declaration": "import { ReceiptStore, type PutReceiptResult, type RuntimeReceiptRuntimeMode } from './receipt-store.js';\nimport type { RegisteredTransform } from '../../../shared/types/context-control-plane/artifacts.js';\nexport declare const RC02_SHADOW_CENSUS_FLAG: \"rc02.shadowCensus\";\nexport declare const SHADOW_CONTEXT_RECEIPT_VERSION: \"0\";\nexport declare const SHADOW_WIRE_RECEIPT_VERSION: \"0\";\nexport declare const RC02_SHADOW_OPTIONS: unique symbol;\nexport type ShadowReceiptCallContext = {\n    sessionKey?: string;\n    runId?: string;\n    traceId?: string;\n    providerId?: string;\n    adapterId?: string;\n    transformIds?: string[];\n    modelId?: string;\n    attemptIndex?: number;\n    modelCallIndex?: number;\n    wireAttemptIndex?: number;\n};\nexport type Stage2PromptPlanCarrier = {\n    schema: 'PromptPlan/v1';\n    planId: string;\n    snapshotId: string;\n    planDigest: string;\n    sealed: boolean;\n    identity: {\n        sessionKey: string;\n        runId: string;\n        attemptIndex: number;\n        modelCallIndex: number;\n    };\n};\nexport type Stage2SnapshotCarrier = {\n    schema: 'CompilationSnapshot/v1';\n    snapshotId: string;\n    snapshotDigest: string;\n    policyDigest: string;\n    modelProfile: {\n        providerId: string;\n        modelId: string;\n        adapterId: string;\n    };\n    transformGraph: RegisteredTransform[];\n};\nexport type ShadowReceiptOptions = {\n    enabled?: boolean;\n    sourceRuntime?: boolean;\n    database?: {\n        env?: NodeJS.ProcessEnv;\n        path?: string;\n    };\n    receiptStore?: Pick<ReceiptStore, 'put'>;\n    sessionKey?: string;\n    runId?: string;\n    traceId?: string;\n    providerId?: string;\n    adapterId?: string;\n    transformIds?: string[];\n    modelId?: string;\n    attemptIndex?: number;\n    modelCallIndex?: number;\n    wireAttemptIndex?: number;\n    correlationDigest?: string;\n    logicalDigest?: string;\n    requestEnvelopeRef?: string;\n    rejectInvalidEnvelope?: boolean;\n    stage2PromptPlan?: Stage2PromptPlanCarrier;\n    stage2Snapshot?: Stage2SnapshotCarrier;\n    rc03Plan?: {\n        planId: string;\n        sessionKey?: string;\n        runId?: string;\n        providerId?: string;\n        adapterId?: string;\n        policyDigest: string;\n        preSealProducers: Array<{\n            producerId: string;\n            producerVersion: string;\n            applied: boolean;\n        }>;\n        postSealTransformIds: string[];\n        callIndex: {\n            attemptIndex: number;\n            planRevision: number;\n            modelCallIndex: number;\n            wireAttemptIndex: number;\n        };\n        planDigest: string;\n    };\n};\nexport type ShadowContextEmitResult = {\n    active: false;\n    receipt: null;\n    failed: false;\n    correlationDigest: null;\n    logicalDigest: null;\n} | {\n    active: true;\n    receipt: PutReceiptResult | null;\n    failed: boolean;\n    correlationDigest: string;\n    logicalDigest: string;\n};\nexport type ShadowWireEmitResult = {\n    receipt: PutReceiptResult | null;\n    failed: boolean;\n};\nexport type ShadowCensusEmitResult = {\n    contextReceipt: PutReceiptResult | null;\n    wireReceipt: PutReceiptResult | null;\n    failed: boolean;\n};\nexport type ShadowCallOptionsResult = {\n    active: boolean;\n    options: ShadowReceiptOptions;\n    receipt: ShadowContextEmitResult;\n};\nexport type ShadowCensusCapability = {\n    runtimeMode: RuntimeReceiptRuntimeMode;\n    degraded: boolean;\n    degradedReason: string | null;\n    receiptCoverage: 0 | 1;\n    readiness: boolean;\n};\nexport type WireOwnerCensus = {\n    fieldCount: number;\n    unknownCount: number;\n    duplicateCount: number;\n    proofRef: string;\n};\nexport type ShadowCensusFailureDiagnostic = {\n    phase: \"context-write\" | \"wire-capture\" | \"wire-owner\" | \"wire-write\";\n    code: \"receipt-store-write-failed\" | \"receipt-content-conflict\" | \"final-wire-body-unavailable\" | \"final-wire-body-invalid\" | \"wire-owner-incomplete\" | \"request-envelope-incomplete\" | \"prompt-plan-not-sealed\" | \"snapshot-plan-mismatch\" | \"unregistered-transform\" | \"unsealed-model-call\" | \"post-seal-semantic-mutation\";\n    count: number;\n};\nexport declare function wireBodyDigest(body: string | Uint8Array | Record<string, unknown>): string;\nexport declare function buildWireOwnerCensus(body: string | Uint8Array | Record<string, unknown>, adapterId: string | undefined): WireOwnerCensus;\nexport declare function resolveRc03WireCorrelationDigest(options: ShadowReceiptOptions, plan: {\n    runId?: string;\n    callIndex: {\n        modelCallIndex: number;\n    };\n}): string | undefined;\nexport declare function resolveEnvelopeRejectEnabled(options?: ShadowReceiptOptions): boolean;\nexport declare class ProviderEnvelopeRejectedError extends Error {\n    readonly reason: string;\n    readonly envelopeDigest: string | null;\n    constructor(reason: string, envelopeDigest?: string | null);\n}\nexport declare function resolveShadowCensusCapability(options?: ShadowReceiptOptions): ShadowCensusCapability;\nexport declare function recordShadowCensusFailure(phase: ShadowCensusFailureDiagnostic[\"phase\"], code: ShadowCensusFailureDiagnostic[\"code\"]): void;\nexport declare function getShadowCensusDiagnostics(): {\n    failedWrites: number;\n    acceptanceReady: boolean;\n    failures: ShadowCensusFailureDiagnostic[];\n};\nexport declare function resetShadowCensusDiagnosticsForTest(): void;\nexport declare function getShadowReceiptOptions(options: unknown): ShadowReceiptOptions | undefined;\nexport declare function beginShadowModelCall(logicalContext: unknown, input: ShadowReceiptCallContext, options: unknown): ShadowCallOptionsResult;\nexport declare function attachShadowReceiptOptions<T extends object>(options: T | undefined, shadow: ShadowReceiptOptions): T & {\n    [RC02_SHADOW_OPTIONS]: ShadowReceiptOptions;\n};\nexport declare function emitShadowContextReceipt(logicalContext: unknown, input: ShadowReceiptCallContext, options?: ShadowReceiptOptions): ShadowContextEmitResult;\nexport declare function emitShadowWireReceipt(body: string | Uint8Array | Record<string, unknown>, input: ShadowReceiptCallContext, options?: ShadowReceiptOptions): ShadowWireEmitResult;\nexport declare function emitShadowCensus(body: Record<string, unknown>, input: ShadowReceiptCallContext, options?: ShadowReceiptOptions): ShadowCensusEmitResult;\nexport declare function emitRc03WireReceipt(body: string | Uint8Array | Record<string, unknown>, options: ShadowReceiptOptions, input: {\n    providerId: string;\n    adapterId: string;\n    modelId?: string;\n    wireAttemptIndex: number;\n}): PutReceiptResult | null;\n",
+          "declarationSha256": "f67e50c0f1e50ed44e75180e29b2cdf68aed2797603ce3df8bb3cde6ba855a9d"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/provider-transport-fetch.ts",
+          "revision": "f064ff2c592580763a564c5635f554130a8fa992",
+          "sourceSha256": "2bdb34437bc6a5c3e031a9d79d4eaaa73f44070f662d2c3af9d0b7b536665fae",
+          "declaration": "import type { Model } from \"../llm/types.js\";\nimport { type ShadowReceiptOptions } from \"./shadow-census.js\";\nexport declare function resolveModelRequestTimeoutMs(model: Model, timeoutMs: number | undefined): number | undefined;\nexport declare function buildGuardedModelFetch(model: Model, timeoutMs?: number, options?: {\n    sanitizeSse?: boolean;\n}, shadow?: ShadowReceiptOptions): typeof fetch;\n",
+          "declarationSha256": "b752f5db423666c73e26e3a586ebef86bbf751d5db81a566290844dfe8a2ca75"
+        }
+      ],
+      "baseSources": [
+        {
+          "path": "openclaw_runtime/src/agents/shadow-census.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "384037713271d65bfdda67ff318aef6dec5966cadd2321aec685d995e868025b",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/provider-transport-fetch.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "63b60af47a5e0c796aa4544034f8a0c814cb05d978121e01acb85800fe0be03a",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-envelope-reject.md",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/rules/provider-envelope-reject-boundary.md",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/s01-envelope-reject.md",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/observability/correlation-ids.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "c505927d9380cc6a5919b75655e17daf5723d9525cb5e5de76f005dc4e07aa98",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/receipt-store.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "02ad944b19f31f6f7276c0cb60069cbeabe6991808524703704d52114276e703",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "shared/types/context-control-plane/artifacts.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "c4cca9a41783a34683ad27942cb1c01030fa5d15a0119a319e91871ff2d0181f",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/infra/net/fetch-guard.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "3dbe713bd74933b575f40f30d994cb26410d333b5017b9e7e47e1c35e8fe6163",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/infra/net/proxy-env.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "749062152faa1210c0277b9204033ab336c62f267e43b91be0aacb87eb0fc054",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/infra/net/ssrf.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "c3333f9d4d1e1b7f133d597971f2e7523a4d2a2f65b85c192e95877aa2899010",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/llm/types.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "9fb04e16716ab762c6157acc425cc3382b0b799fd93c8b29e9fc3230f3b7595b",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/logging/subsystem.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "4e38bb8cbfc931465381c4781fbd2a64532a0336c2b654c181c18380cec6320a",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/proxy-capture/env.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "a7263b1ea743796980202140652c17fe97c48957ad503264d865aa57220a21af",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/model-transport-debug.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "1496accffc024b95eecc41c3719c546afc479d23aabd74cfd23d62f8d41b9f63",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/model-transport-url.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "7fc722f26d5b5816555aa2c9b29050cc490945d6d1ed3465a2a0ab3f8adc1fdf",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/provider-http-errors.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "29bd84810a07777dfdf9fdb14692971c7f682bfaad22c23285256ffedb319d2e",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/provider-request-auth.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "c057a76183115fded9c9f62a5f7006daa32044df6babe92441b9f2b9a45a984d",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/provider-payload-trace.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "2756f927896305300d0cdd820c6d1ac924e553e5b30f2620e2eeab708ad3580f",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/provider-local-service.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "dd37344b604482ca4bcf7aa8682b249c760c9199e33fb29d7577d90024092bf1",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/provider-outbound-budget.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "2aef58efab105bb3cf0a7b58b6c0c16cf1c30f20834b0e9a7ef8a279853f9c09",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/provider-request-config.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "4bd4aff10096be4a3181b4e67752fba00ab58ca902a02c658cbf54d6a7311016",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/stage1-request-envelope.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "53af464a95afb84e7258082f7f46facd15cddfd1c69c3c33d68feee9ed482282",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/anthropic-transport-stream.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "e3da6ff6b39fd87116a01be3f37fb49cf5d9359130aa2caef245557256fda7a2",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/stream-resolution.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "b0774082ea6060fe7fe40ece21ecfbebeae4287815a9ba04f808e5f9df8a797d",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/openai-transport-stream.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "11efa248d605b4c01256773e00d266ca492234927dbfdffd5b6174a4d97fdfcc",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/stage1-golden-run.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "0cc30b4789ba390ee99383c126d534ffa2a91b981b07709655722f36f5b29e5c",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/stage2-golden-run.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "cfd5a1050a485f6fa179daaf22c33509ce1cc8b8a3d067675fc89a73ccaac4dc",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/rc03-seal-hook.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "5994cf097c1bdb56f3089d51cd0abf6e48943ab463f419180bb3ccb898f195c8",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/plugin-sdk/provider-transport-runtime.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "805700d18782227c8789c17877203fad1b0c1b6d1546a32c5077ee0d7759fcf6",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/google-prompt-cache.ts",
+          "revision": "ca24fb81ae83dde9907561b583b7990df6844b67",
+          "sourceSha256": "1e37e30746af368d9a7f0e2a07b371661c7082a9b782058acd269a6e237217ee",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        }
+      ],
+      "locatorSources": [
+        {
+          "path": "openclaw_runtime/src/agents/shadow-census.ts",
+          "revision": "f064ff2c592580763a564c5635f554130a8fa992",
+          "sourceSha256": "d123e538a65f167dbedd8677e4f91e03b29ad612ba65cbf9d1a4b80d9ddc276c",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/provider-transport-fetch.ts",
+          "revision": "f064ff2c592580763a564c5635f554130a8fa992",
+          "sourceSha256": "2bdb34437bc6a5c3e031a9d79d4eaaa73f44070f662d2c3af9d0b7b536665fae",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-envelope-reject.md",
+          "revision": "f064ff2c592580763a564c5635f554130a8fa992",
+          "sourceSha256": "a7297dd2c0974c7d7f0cd2e78d32ad58333466287e50acb29f31ee4b8354fbb5",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/rules/provider-envelope-reject-boundary.md",
+          "revision": "f064ff2c592580763a564c5635f554130a8fa992",
+          "sourceSha256": "08553c2db105c57f0a00abada2f886fef88ba6edd281e65c390198f7d0e62f43",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/s01-envelope-reject.md",
+          "revision": "f064ff2c592580763a564c5635f554130a8fa992",
+          "sourceSha256": "ec843f768d3451cf0237fde5b0f1fa25d792b8a0630f67e4db63ff1a41d2acda",
+          "projection": "imports-and-path-locators-only"
+        }
+      ],
+      "behaviorContract": null,
+      "documentContract": {
+        "format": "repository-markdown-or-module-contract",
+        "taskSpecFields": [
+          "id",
+          "title",
+          "intent",
+          "requiredTests",
+          "requiredRules",
+          "lifecycleStatus"
+        ],
+        "lifecycleStates": [
+          "active",
+          "completed",
+          "archived"
+        ],
+        "sourceOfTruth": "historical-base-and-declared-task-criteria"
+      }
+    },
+    {
+      "identity": {
+        "id": "tf-0277-s02",
+        "base": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
+        "reference": "c1cb17973fd8f4a06b9de88f7aa6bf8b6fbe5909",
+        "sourceRecord": "docs/dev/harness-gap-closure/s02-acceptance.json",
+        "sourceRecordSha256": "2d02761a45c25e9c96b3ba0cd9d8016355e1ced5fb9f69fd9b43f30467cb9e64",
+        "targetScope": [
+          "docs/dev/harness-gap-closure/s02-sink-ledger.md",
+          "harness/specs/tasks/harness-gap-sink-ledger.md",
+          "harness/specs/rules/sensitive-sink-ledger-boundary.md"
+        ],
+        "oracleDigest": "5b66b94b53b685c644d705b216cc91d0c24ed0278bcbe67d95817a3d3bf56fb5"
+      },
+      "kind": "specification-verification",
+      "publicSources": [],
+      "baseSources": [
+        {
+          "path": "docs/dev/harness-gap-closure/s02-sink-ledger.md",
+          "revision": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-sink-ledger.md",
+          "revision": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/rules/sensitive-sink-ledger-boundary.md",
+          "revision": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "shared/security/content-provenance.ts",
+          "revision": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
+          "sourceSha256": "4e374ece79a7b73e62da393301d6d377d21e8f4a41b94cd6cb0b1dc3af69fe76",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/message-secret-read-policy.ts",
+          "revision": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
+          "sourceSha256": "7c535c4e373a36e4a0029aae672e99d562a48346307178643a9a0b7375bbe4ff",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/message-tool.ts",
+          "revision": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
+          "sourceSha256": "a26503743f15b0c0be40aee0367e8ad08d1fb09f3d98a19d91471f0e919a65b4",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/infra/outbound/outbound-policy.ts",
+          "revision": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
+          "sourceSha256": "e8810cc101c42113dbece6d6069fe32c1319bac2fca00e858d5d85d6571f5e6e",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/infra/outbound/message-action-runner.ts",
+          "revision": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
+          "sourceSha256": "f49d8895c3d46985f256a92a3e7e95773ab5769caf342abdfa659186bd2f2a9f",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts",
+          "revision": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
+          "sourceSha256": "79124f66fb05890063f0ede7c10f7e1dbb7b67cabe840a1a433aabfb5de46212",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/agent-tools.ts",
+          "revision": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
+          "sourceSha256": "a2591744f2b8846e87a383de09fc43345a8c9af0974a5e0d4f037ce5404d60b7",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/exec-provenance-policy.ts",
+          "revision": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
+          "sourceSha256": "767e61f0cee2aba540b627011ca57355eab8035d9cda88e5a8cdbc61e6f139e4",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/bash-tools.exec.ts",
+          "revision": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
+          "sourceSha256": "4080689a86257927d2aef6d9549c191c057b70709a7e82b97b6817b755c009ed",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-external-access-policy.ts",
+          "revision": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
+          "sourceSha256": "2c6971526cee20e12c3e9fda54197936a808babda21c2ea9a4298d7d907fb15e",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "revision": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
+          "sourceSha256": "ea1b28b2d8bf93e1caa6a17f6713f3f2fe2c842bfdfbe41efd6ea8e7fa00203f",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/provider-credential-use-policy.ts",
+          "revision": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
+          "sourceSha256": "84369b8d09adad732da5e2c73ff5b3aba438762b0c2cea381aaba5ab620c26bf",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/image-generate-tool.ts",
+          "revision": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
+          "sourceSha256": "0b3267db7342363d762733095eb037ffb4daf0ada69a310fe08aadcff8bfdc9b",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/infra/outbound/outbound-send-service.ts",
+          "revision": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
+          "sourceSha256": "ae0f4e7d3e03f9da2b4d487e365616e42867d26f3ddfed1e37fd8e9afd9267f3",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/channels/plugins/message-action-dispatch.ts",
+          "revision": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
+          "sourceSha256": "2f125645033c4331c36889d1497fc44a5db32859abeb769a7311d9590c6ab187",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/gateway/cli-runtime/outbound-send-deps.ts",
+          "revision": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
+          "sourceSha256": "d22f7a4a1d42a1c1b27a43d3f972c010e39164ff921f43cf53b4f2594136a425",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/sessions/send-policy.ts",
+          "revision": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
+          "sourceSha256": "c50ffcaa4e663c720bfb57c3a72418b67c37f57f79db22aa16a1aff91c830e83",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/auto-reply/send-policy.ts",
+          "revision": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
+          "sourceSha256": "ee4f75162c9308685e205c5fbdab8c1f4f46c7c20e135bd399fcb4768eadc23f",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/gateway/server-broadcast.ts",
+          "revision": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
+          "sourceSha256": "9057b2c4ce1cb4247757371a354426616964c323b395d880c367d4763aa7afa9",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        }
+      ],
+      "locatorSources": [
+        {
+          "path": "docs/dev/harness-gap-closure/s02-sink-ledger.md",
+          "revision": "c1cb17973fd8f4a06b9de88f7aa6bf8b6fbe5909",
+          "sourceSha256": "093f6b6fef93bc52cec39446ba3b205e92eec7e0e6a9d669c87d92daebaeb1dd",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-sink-ledger.md",
+          "revision": "c1cb17973fd8f4a06b9de88f7aa6bf8b6fbe5909",
+          "sourceSha256": "6c70fb6edf44eff4785bfb2167f7fc50594d8043349424cbd5240ccb2be2088e",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/rules/sensitive-sink-ledger-boundary.md",
+          "revision": "c1cb17973fd8f4a06b9de88f7aa6bf8b6fbe5909",
+          "sourceSha256": "b18d9adec77575f675a98ebfb7e71bf89b239ae0ce6016442c1545fa728b614e",
+          "projection": "imports-and-path-locators-only"
+        }
+      ],
+      "behaviorContract": null,
+      "documentContract": {
+        "format": "repository-markdown-or-module-contract",
+        "taskSpecFields": [
+          "id",
+          "title",
+          "intent",
+          "requiredTests",
+          "requiredRules",
+          "lifecycleStatus"
+        ],
+        "lifecycleStates": [
+          "active",
+          "completed",
+          "archived"
+        ],
+        "sourceOfTruth": "historical-base-and-declared-task-criteria"
+      }
+    },
+    {
+      "identity": {
+        "id": "tf-0278-s03",
+        "base": "8bb11a7d83603611d3fcd99160334f85f2e6e3be",
+        "reference": "3f7060cb2bade7b693c407b70cfa71c698988444",
+        "sourceRecord": "docs/dev/harness-gap-closure/s03-acceptance.json",
+        "sourceRecordSha256": "6c67f99c023728eaed7c506ba24b95104de188d0ecd3eac31b27df40548d0b02",
+        "targetScope": [
+          "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts"
+        ],
+        "oracleDigest": "6430449c2f313bf907b570f9a39470e1fd4fde077324f224b55485c975bc944c"
+      },
+      "kind": "module-implementation",
+      "publicSources": [
+        {
+          "path": "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts",
+          "revision": "3f7060cb2bade7b693c407b70cfa71c698988444",
+          "sourceSha256": "79124f66fb05890063f0ede7c10f7e1dbb7b67cabe840a1a433aabfb5de46212",
+          "declaration": "import { type ContentProvenanceContext, type ProvenanceStatus } from \"../../../shared/security/content-provenance.js\";\nimport type { AnyAgentTool } from \"./agent-tools.types.js\";\nexport type WorkspaceExternalWriteAction = \"write\" | \"edit\" | \"apply_patch\";\nexport type WorkspaceExternalWriteTargetScope = {\n    workspaceRoot?: string;\n    targetPaths: readonly string[];\n    scopeKnown: boolean;\n};\nexport type WorkspaceExternalWritePolicyInput = {\n    action: WorkspaceExternalWriteAction;\n    provenanceContext?: ContentProvenanceContext;\n    workspaceRoot: string;\n    targetPaths: readonly string[];\n    scopeKnown: boolean;\n};\nexport type WorkspaceExternalWritePolicyResult = {\n    status: ProvenanceStatus;\n    allowed: boolean;\n    restricted: boolean;\n    externalTarget: boolean;\n    reason?: string;\n};\nexport declare function resolveWorkspaceExternalWritePolicy(input: WorkspaceExternalWritePolicyInput): WorkspaceExternalWritePolicyResult;\nexport type WorkspaceExternalWriteWrapperOptions = {\n    action: WorkspaceExternalWriteAction;\n    provenanceContext?: ContentProvenanceContext;\n    workspaceRoot: string;\n    resolveTargets: (params: unknown) => (WorkspaceExternalWriteTargetScope & {\n        check: boolean;\n    }) | Promise<WorkspaceExternalWriteTargetScope & {\n        check: boolean;\n    }>;\n};\nexport declare function resolveCanonicalWorkspaceWriteScope(input: {\n    workspaceRoot: string;\n    targetPaths: readonly string[];\n}): Promise<Pick<WorkspaceExternalWriteTargetScope, \"workspaceRoot\" | \"targetPaths\">>;\nexport declare function wrapToolWithWorkspaceExternalWriteProvenance(tool: AnyAgentTool, options: WorkspaceExternalWriteWrapperOptions): AnyAgentTool;\n",
+          "declarationSha256": "9f70ab96965cc89e913feccbd04dc1c42f57be4a392e16534ea36764ff64afb7"
+        }
+      ],
+      "baseSources": [
+        {
+          "path": "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts",
+          "revision": "8bb11a7d83603611d3fcd99160334f85f2e6e3be",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": true
+        },
+        {
+          "path": "shared/security/content-provenance.ts",
+          "revision": "8bb11a7d83603611d3fcd99160334f85f2e6e3be",
+          "sourceSha256": "4e374ece79a7b73e62da393301d6d377d21e8f4a41b94cd6cb0b1dc3af69fe76",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/infra/fs-safe.ts",
+          "revision": "8bb11a7d83603611d3fcd99160334f85f2e6e3be",
+          "sourceSha256": "8b29f7da0031d7c2371dee4a7a3b94f3cd4968837969eb3b7027bd3974f8ccbc",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/agent-tools.types.ts",
+          "revision": "8bb11a7d83603611d3fcd99160334f85f2e6e3be",
+          "sourceSha256": "1994a18d527b1db2ea6e06461c48f67c13d08dad20a84e38f4e1e7a27f59cd72",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/sandbox-paths.ts",
+          "revision": "8bb11a7d83603611d3fcd99160334f85f2e6e3be",
+          "sourceSha256": "62eaa4fe9ba0be61c1317f6812b1bcea209b1efc9fa16ae9646526f7781e067d",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-external-write-boundary.md",
+          "revision": "8bb11a7d83603611d3fcd99160334f85f2e6e3be",
+          "sourceSha256": null,
+          "missing": true,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/s03-external-write-boundary.md",
+          "revision": "8bb11a7d83603611d3fcd99160334f85f2e6e3be",
+          "sourceSha256": null,
+          "missing": true,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/agent-tools.ts",
+          "revision": "8bb11a7d83603611d3fcd99160334f85f2e6e3be",
+          "sourceSha256": "a2591744f2b8846e87a383de09fc43345a8c9af0974a5e0d4f037ce5404d60b7",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        }
+      ],
+      "locatorSources": [
+        {
+          "path": "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts",
+          "revision": "3f7060cb2bade7b693c407b70cfa71c698988444",
+          "sourceSha256": "79124f66fb05890063f0ede7c10f7e1dbb7b67cabe840a1a433aabfb5de46212",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-external-write-boundary.md",
+          "revision": "3f7060cb2bade7b693c407b70cfa71c698988444",
+          "sourceSha256": "92c7300ab38326a4b20b094a0a4440e3d8d77fd718901276aa9e2ac2d9736033",
+          "projection": "imports-and-path-locators-only"
+        }
+      ],
+      "behaviorContract": null,
+      "documentContract": {
+        "format": "repository-markdown-or-module-contract",
+        "taskSpecFields": [
+          "id",
+          "title",
+          "intent",
+          "requiredTests",
+          "requiredRules",
+          "lifecycleStatus"
+        ],
+        "lifecycleStates": [
+          "active",
+          "completed",
+          "archived"
+        ],
+        "sourceOfTruth": "historical-base-and-declared-task-criteria"
+      }
+    },
+    {
+      "identity": {
+        "id": "tf-0279-s04",
+        "base": "ca413cdc436c00f7eddb06584783fd98996939c9",
+        "reference": "ce7ebd94cdd5814470daade4a3c7fa67ab8e77a4",
+        "sourceRecord": "docs/dev/harness-gap-closure/s04-acceptance.json",
+        "sourceRecordSha256": "b35b8861b4e37a7f9117c40451783debd7e57d71c5298b95be18d0471208510e",
+        "targetScope": [
+          "docs/dev/harness-gap-closure/s04-browser-effect-boundary.md",
+          "harness/specs/tasks/harness-gap-browser-effect-boundary.md"
+        ],
+        "oracleDigest": "d33007607918a850a3f0d8feb500944f319ea7da9fb904e1dff2174dc4e00b6f"
+      },
+      "kind": "specification-verification",
+      "publicSources": [],
+      "baseSources": [
+        {
+          "path": "docs/dev/harness-gap-closure/s04-browser-effect-boundary.md",
+          "revision": "ca413cdc436c00f7eddb06584783fd98996939c9",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-browser-effect-boundary.md",
+          "revision": "ca413cdc436c00f7eddb06584783fd98996939c9",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "revision": "ca413cdc436c00f7eddb06584783fd98996939c9",
+          "sourceSha256": "ea1b28b2d8bf93e1caa6a17f6713f3f2fe2c842bfdfbe41efd6ea8e7fa00203f",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-external-access-policy.ts",
+          "revision": "ca413cdc436c00f7eddb06584783fd98996939c9",
+          "sourceSha256": "2c6971526cee20e12c3e9fda54197936a808babda21c2ea9a4298d7d907fb15e",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        }
+      ],
+      "locatorSources": [
+        {
+          "path": "docs/dev/harness-gap-closure/s04-browser-effect-boundary.md",
+          "revision": "ce7ebd94cdd5814470daade4a3c7fa67ab8e77a4",
+          "sourceSha256": "634b0d96bcd581ff8e4df39c4210b20771497ebbfd9b057217beed69f75b5c96",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-browser-effect-boundary.md",
+          "revision": "ce7ebd94cdd5814470daade4a3c7fa67ab8e77a4",
+          "sourceSha256": "e5643434df4ef084c760063b92896acb69fe2484cc6cc8cf5fb0756801d50a16",
+          "projection": "imports-and-path-locators-only"
+        }
+      ],
+      "behaviorContract": null,
+      "documentContract": {
+        "format": "repository-markdown-or-module-contract",
+        "taskSpecFields": [
+          "id",
+          "title",
+          "intent",
+          "requiredTests",
+          "requiredRules",
+          "lifecycleStatus"
+        ],
+        "lifecycleStates": [
+          "active",
+          "completed",
+          "archived"
+        ],
+        "sourceOfTruth": "historical-base-and-declared-task-criteria"
+      }
+    },
+    {
+      "identity": {
+        "id": "tf-0280-s05",
+        "base": "ae9ea9162c105f734566f5a696d55b5eae5071df",
+        "reference": "eda64ac3defe18e9c42de31d60e39722f40407e5",
+        "sourceRecord": "docs/dev/harness-gap-closure/s05-acceptance.json",
+        "sourceRecordSha256": "a8422e790efb7ccd9c3f3b9dbbf7c2115d56a37f2081b774d0232eceb9acc4be",
+        "targetScope": [
+          "docs/dev/harness-gap-closure/s05-credential-use-boundary.md",
+          "harness/specs/tasks/harness-gap-credential-use-boundary.md"
+        ],
+        "oracleDigest": "4f9e8acf25d909851d6512f6dee420dd02c1d927340466317e89c584c1d452a7"
+      },
+      "kind": "specification-verification",
+      "publicSources": [],
+      "baseSources": [
+        {
+          "path": "docs/dev/harness-gap-closure/s05-credential-use-boundary.md",
+          "revision": "ae9ea9162c105f734566f5a696d55b5eae5071df",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-credential-use-boundary.md",
+          "revision": "ae9ea9162c105f734566f5a696d55b5eae5071df",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/image-generate-tool.ts",
+          "revision": "ae9ea9162c105f734566f5a696d55b5eae5071df",
+          "sourceSha256": "0b3267db7342363d762733095eb037ffb4daf0ada69a310fe08aadcff8bfdc9b",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/provider-credential-use-policy.ts",
+          "revision": "ae9ea9162c105f734566f5a696d55b5eae5071df",
+          "sourceSha256": "84369b8d09adad732da5e2c73ff5b3aba438762b0c2cea381aaba5ab620c26bf",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        }
+      ],
+      "locatorSources": [
+        {
+          "path": "docs/dev/harness-gap-closure/s05-credential-use-boundary.md",
+          "revision": "eda64ac3defe18e9c42de31d60e39722f40407e5",
+          "sourceSha256": "d065593495a9deaa5fb0eb09a129ca6d294b3363ac286c07616c2e301928ba80",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-credential-use-boundary.md",
+          "revision": "eda64ac3defe18e9c42de31d60e39722f40407e5",
+          "sourceSha256": "99fee907d650eda41d149e6f67348502eb3fdae0f8e748f1b4f66fe444dfa63a",
+          "projection": "imports-and-path-locators-only"
+        }
+      ],
+      "behaviorContract": null,
+      "documentContract": {
+        "format": "repository-markdown-or-module-contract",
+        "taskSpecFields": [
+          "id",
+          "title",
+          "intent",
+          "requiredTests",
+          "requiredRules",
+          "lifecycleStatus"
+        ],
+        "lifecycleStates": [
+          "active",
+          "completed",
+          "archived"
+        ],
+        "sourceOfTruth": "historical-base-and-declared-task-criteria"
+      }
+    },
+    {
+      "identity": {
+        "id": "tf-0281-s06",
+        "base": "8c34f6ca3a4151bf60626447a250044bba8ac423",
+        "reference": "3a1e2d384710927bc13aa1e92962824a8b88b7de",
+        "sourceRecord": "docs/dev/harness-gap-closure/s06-acceptance.json",
+        "sourceRecordSha256": "a07f47b7576a95958f361fe54a6add343a4c54938ab8ce5db216cade59b98b2e",
+        "targetScope": [
+          "openclaw_runtime/src/runtime-core/memory-effect-receipt.ts",
+          "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts",
+          "harness/specs/tasks/harness-gap-memory-effect-receipt.md",
+          "docs/dev/harness-gap-closure/s06-memory-effect-receipt.md"
+        ],
+        "oracleDigest": "77d11bfafd67c722201b0dfa2ba446094f5c71fd93165776e91cf0a453127127"
+      },
+      "kind": "module-implementation",
+      "publicSources": [
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-effect-receipt.ts",
+          "revision": "3a1e2d384710927bc13aa1e92962824a8b88b7de",
+          "sourceSha256": "867915b873d2f01f523260bac03ead008d617383d7311df70940a0b9888a4cb3",
+          "declaration": "export type MemoryEffectOutcome = \"applied\" | \"not_applied\" | \"unknown\";\nexport type MemoryEffectActor = {\n    sessionKey: string;\n    runId: string;\n    attemptIndex: number;\n    modelCallIndex: number;\n    actorKind: \"principal\" | \"delegate\";\n};\nexport type MemoryEffectStage1Context = {\n    actor?: MemoryEffectActor;\n    effect?: {\n        toolCallId: string;\n        toolName: string;\n        resource: string;\n        action: string;\n    };\n};\nexport type MemoryEffectReceiptView = {\n    idempotencyKey: string;\n    proposal: Record<string, unknown>;\n    domainExecutor: string;\n    outcome: MemoryEffectOutcome;\n    recoverability: string;\n    stage1Context?: MemoryEffectStage1Context;\n};\nexport type MemoryEffectReceiptSink = {\n    record(input: MemoryEffectReceiptView): unknown;\n};\nexport declare const MEMORY_EFFECT_DOMAIN_EXECUTOR: \"clawx-runtime-memory\";\nexport type MemoryEffectReceiptInput = {\n    action: \"memory_update\" | \"memory_forget\" | \"memory_strengthen\";\n    factId: string;\n    outcome: MemoryEffectOutcome;\n    identity: {\n        sessionKey?: string;\n        runId?: string;\n        toolCallId?: string;\n        attemptIndex?: number;\n        modelCallIndex?: number;\n    };\n    newFactId?: string;\n    actorKind?: \"principal\" | \"delegate\";\n    recoverability?: string;\n};\nexport declare function memoryEffectIdempotencyKey(input: MemoryEffectReceiptInput): string;\nexport declare function buildMemoryEffectReceipt(input: MemoryEffectReceiptInput): MemoryEffectReceiptView;\nexport declare function recordMemoryEffect(context: {\n    effectReceiptStore?: MemoryEffectReceiptSink;\n}, input: MemoryEffectReceiptInput): boolean;\n",
+          "declarationSha256": "15da6c6797186826a1904b840d399dfb27e531b2e66a7e21d81466b916647369"
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts",
+          "revision": "3a1e2d384710927bc13aa1e92962824a8b88b7de",
+          "sourceSha256": "da3aed1f972b6522b843d8e95f20ce1bc713a5cab7ff92b9027d36e56e360555",
+          "declaration": "import type { RuntimeMemoryStore } from \"./memory-store.js\";\nimport type { RuntimeMemoryRuntimeIntegrationPort } from \"./memory-runtime-integration.js\";\nimport { type MemoryEffectReceiptSink } from \"./memory-effect-receipt.js\";\nexport type MemorySelfEditToolName = \"memory_recall\" | \"memory_update\" | \"memory_forget\" | \"memory_strengthen\" | \"memory_find_related\";\nexport type MemorySelfEditToolResult = {\n    ok: boolean;\n    tool: MemorySelfEditToolName;\n    message: string;\n    data?: unknown;\n};\nexport type MemorySelfEditToolContext = {\n    store: RuntimeMemoryStore;\n    now?: number;\n    taskId?: string;\n    persistence?: RuntimeMemoryRuntimeIntegrationPort;\n    effectReceiptStore?: MemoryEffectReceiptSink;\n    effectIdentity?: {\n        sessionKey?: string;\n        runId?: string;\n        toolCallId?: string;\n        attemptIndex?: number;\n        modelCallIndex?: number;\n    };\n};\nexport type MemorySelfEditToolHandler = (args: unknown, context: MemorySelfEditToolContext) => Promise<MemorySelfEditToolResult> | MemorySelfEditToolResult;\nexport type MemorySelfEditTool = {\n    name: MemorySelfEditToolName;\n    description: string;\n    parameters: Record<string, unknown>;\n    execute: MemorySelfEditToolHandler;\n};\nexport declare const memoryRecallTool: MemorySelfEditTool;\nexport declare const memoryUpdateTool: MemorySelfEditTool;\nexport declare const memoryForgetTool: MemorySelfEditTool;\nexport declare const memoryStrengthenTool: MemorySelfEditTool;\nexport declare const memoryFindRelatedTool: MemorySelfEditTool;\nexport declare const MEMORY_SELF_EDIT_TOOLS: readonly MemorySelfEditTool[];\nexport declare function getMemorySelfEditTool(name: MemorySelfEditToolName): MemorySelfEditTool | undefined;\nexport declare function executeMemorySelfEditTool(name: MemorySelfEditToolName, args: unknown, context: MemorySelfEditToolContext): Promise<MemorySelfEditToolResult> | MemorySelfEditToolResult;\n",
+          "declarationSha256": "1e0460a0c81a9099ce637a363b10b2edc03ee587c74c54a9f5a039ff9093bb3f"
+        }
+      ],
+      "baseSources": [
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-effect-receipt.ts",
+          "revision": "8c34f6ca3a4151bf60626447a250044bba8ac423",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts",
+          "revision": "8c34f6ca3a4151bf60626447a250044bba8ac423",
+          "sourceSha256": "2e043dcbd6909b8384089321ea3b2da7901eea74060b9d1e8cbbdb821dbf3ecc",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-memory-effect-receipt.md",
+          "revision": "8c34f6ca3a4151bf60626447a250044bba8ac423",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/s06-memory-effect-receipt.md",
+          "revision": "8c34f6ca3a4151bf60626447a250044bba8ac423",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/evidence.ts",
+          "revision": "8c34f6ca3a4151bf60626447a250044bba8ac423",
+          "sourceSha256": "4ffd11c9d2898f050308e234057ac60ddd75ffc80ee478ae25b4e2f88a44b0db",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-context.ts",
+          "revision": "8c34f6ca3a4151bf60626447a250044bba8ac423",
+          "sourceSha256": "3addc426252ed80c205af88512e8aab961c6bfa3053addf8384fa7bd65f2d05c",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-store.ts",
+          "revision": "8c34f6ca3a4151bf60626447a250044bba8ac423",
+          "sourceSha256": "adec5d2ad67c02a0cfdc59f3ccccd2f9b14edaecb4fb7ead90cd2598d9060b7f",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts",
+          "revision": "8c34f6ca3a4151bf60626447a250044bba8ac423",
+          "sourceSha256": "7ef8e14273e294d28ef151c4135f827b86436f8f0dda9b9bd767654e6d77a366",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/types.ts",
+          "revision": "8c34f6ca3a4151bf60626447a250044bba8ac423",
+          "sourceSha256": "8e9e2d5d510cb03274d342dc4bc079491ecaa1e7d7fd0110a1315e9f72e763f3",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/index.ts",
+          "revision": "8c34f6ca3a4151bf60626447a250044bba8ac423",
+          "sourceSha256": "493d8e95ef7cfbca1b000f128f04a0d5abd5f583a0bac18f6590903807f059f4",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-self-edit-adapter.ts",
+          "revision": "8c34f6ca3a4151bf60626447a250044bba8ac423",
+          "sourceSha256": "a956dcdc2afc220bfa3ef85e034408a226e26887ff31e021eb47d1ca8a0ce796",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        }
+      ],
+      "locatorSources": [
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-effect-receipt.ts",
+          "revision": "3a1e2d384710927bc13aa1e92962824a8b88b7de",
+          "sourceSha256": "867915b873d2f01f523260bac03ead008d617383d7311df70940a0b9888a4cb3",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts",
+          "revision": "3a1e2d384710927bc13aa1e92962824a8b88b7de",
+          "sourceSha256": "da3aed1f972b6522b843d8e95f20ce1bc713a5cab7ff92b9027d36e56e360555",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-memory-effect-receipt.md",
+          "revision": "3a1e2d384710927bc13aa1e92962824a8b88b7de",
+          "sourceSha256": "7ea82537b90698f7e242185b3db0bba1f6e831ad269e784fb9094a8e4e89f4fb",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/s06-memory-effect-receipt.md",
+          "revision": "3a1e2d384710927bc13aa1e92962824a8b88b7de",
+          "sourceSha256": "987f7728e7777b5340a901b4c59937e5095b0df4984d61978d46ec3688e3c0cc",
+          "projection": "imports-and-path-locators-only"
+        }
+      ],
+      "behaviorContract": null,
+      "documentContract": {
+        "format": "repository-markdown-or-module-contract",
+        "taskSpecFields": [
+          "id",
+          "title",
+          "intent",
+          "requiredTests",
+          "requiredRules",
+          "lifecycleStatus"
+        ],
+        "lifecycleStates": [
+          "active",
+          "completed",
+          "archived"
+        ],
+        "sourceOfTruth": "historical-base-and-declared-task-criteria"
+      }
+    },
+    {
+      "identity": {
+        "id": "tf-0282-s07",
+        "base": "5da98d1ab1563e924cc97bd43ff206072b1d4dd4",
+        "reference": "38170e1a369a13c4b4c793dc5ab48defa06bb940",
+        "sourceRecord": "docs/dev/harness-gap-closure/s07-acceptance.json",
+        "sourceRecordSha256": "e1bf507b61cd5df38514ff797f23b4bffe2c77f9370404a9fa7230c5c9d857fb",
+        "targetScope": [
+          "openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts",
+          "harness/specs/tasks/harness-gap-verifier-completion-verdict.md",
+          "docs/dev/harness-gap-closure/s07-verifier-completion-verdict.md"
+        ],
+        "oracleDigest": "444dc8f55714e7c44fff061d4453f3687eba0ef27c38f544388874c6870cc05d"
+      },
+      "kind": "module-implementation",
+      "publicSources": [
+        {
+          "path": "openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts",
+          "revision": "38170e1a369a13c4b4c793dc5ab48defa06bb940",
+          "sourceSha256": "06e2c96e12dc1506761a6366fdaf3bcca432ce390a4e843cae538e9c8b40e5fa",
+          "declaration": "import { type EvidenceVerifierInput, type EvidenceVerifierPolicy } from \"./evidence-verifier.js\";\nexport type VerifierCompletionVerdict = \"approved\" | \"rejected\" | \"insufficient-evidence\" | \"out-of-scope\";\nexport type VerifierCompletionScope = {\n    taskIds: readonly string[];\n};\nexport type VerifierCompletionRecord = {\n    taskId: string;\n    verdict: VerifierCompletionVerdict;\n    evidenceDigest: string;\n    findingCodes: string[];\n    priorStatus: string;\n    grantsPublish: false;\n    grantsProductLock: false;\n};\nexport type VerifierCompletionTransition = {\n    nodeId: string;\n    from: string;\n    to: \"done\";\n} | null;\nexport declare function resolveVerifierCompletionVerdict(params: {\n    input: EvidenceVerifierInput;\n    policy?: EvidenceVerifierPolicy;\n    scope: VerifierCompletionScope;\n    priorStatus: string;\n}): VerifierCompletionRecord;\nexport declare function verifierCompletionTransition(record: VerifierCompletionRecord): VerifierCompletionTransition;\nexport declare function revokeVerifierCompletionVerdict(record: VerifierCompletionRecord): {\n    nodeId: string;\n    from: \"done\";\n    to: string;\n} | null;\n",
+          "declarationSha256": "e7e2ed692f4fa3dce68300da46ea15a402af8c243da7989bd11e946aa76d0246"
+        }
+      ],
+      "baseSources": [
+        {
+          "path": "openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts",
+          "revision": "5da98d1ab1563e924cc97bd43ff206072b1d4dd4",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-verifier-completion-verdict.md",
+          "revision": "5da98d1ab1563e924cc97bd43ff206072b1d4dd4",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/s07-verifier-completion-verdict.md",
+          "revision": "5da98d1ab1563e924cc97bd43ff206072b1d4dd4",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/evidence-verifier.ts",
+          "revision": "5da98d1ab1563e924cc97bd43ff206072b1d4dd4",
+          "sourceSha256": "967656ba33aa4ab7aecb6ce84d275eed7e00d0f0b8a0f5583826e5b2b89e12cf",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        }
+      ],
+      "locatorSources": [
+        {
+          "path": "openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts",
+          "revision": "38170e1a369a13c4b4c793dc5ab48defa06bb940",
+          "sourceSha256": "06e2c96e12dc1506761a6366fdaf3bcca432ce390a4e843cae538e9c8b40e5fa",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-verifier-completion-verdict.md",
+          "revision": "38170e1a369a13c4b4c793dc5ab48defa06bb940",
+          "sourceSha256": "3d74933529111be8cfa41ce24db15be0aa28311bd0dd409cca9a85ebddb3039e",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/s07-verifier-completion-verdict.md",
+          "revision": "38170e1a369a13c4b4c793dc5ab48defa06bb940",
+          "sourceSha256": "9ccdcf6386deb551840e1c445a428bef66c6df418c67ae2ae5329484277c19b3",
+          "projection": "imports-and-path-locators-only"
+        }
+      ],
+      "behaviorContract": null,
+      "documentContract": {
+        "format": "repository-markdown-or-module-contract",
+        "taskSpecFields": [
+          "id",
+          "title",
+          "intent",
+          "requiredTests",
+          "requiredRules",
+          "lifecycleStatus"
+        ],
+        "lifecycleStates": [
+          "active",
+          "completed",
+          "archived"
+        ],
+        "sourceOfTruth": "historical-base-and-declared-task-criteria"
+      }
+    },
+    {
+      "identity": {
+        "id": "tf-0293-a01",
+        "base": "72ba3c32e31cf071aa98c3ed335f76d9b12ef1c1",
+        "reference": "46e553fd87d5fadf14d6f7aa7a7a85b614aef466",
+        "sourceRecord": "docs/dev/harness-gap-closure/a01-acceptance.json",
+        "sourceRecordSha256": "7f45be3ac002e36b10061dd201d6768763011ff2805c30dec4f9ba122efbe1ef",
+        "targetScope": [
+          "harness/specs/tasks/a1-layered-isolation-pilot.md",
+          "harness/specs/tasks/harness-gap-a01-isolation-pilot-reverify.md",
+          "docs/dev/harness-gap-closure/a01-a1-isolation-gate.md"
+        ],
+        "oracleDigest": "72945bb74101629828b360bac24db173152b5f64e1a97a4d1aad3a746a587b71"
+      },
+      "kind": "specification-verification",
+      "publicSources": [],
+      "baseSources": [
+        {
+          "path": "harness/specs/tasks/a1-layered-isolation-pilot.md",
+          "revision": "72ba3c32e31cf071aa98c3ed335f76d9b12ef1c1",
+          "sourceSha256": "aa311d34d54d7d31b00c74f19f0310706b891bfea8539a45ee1241ebac5a4757",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-a01-isolation-pilot-reverify.md",
+          "revision": "72ba3c32e31cf071aa98c3ed335f76d9b12ef1c1",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/a01-a1-isolation-gate.md",
+          "revision": "72ba3c32e31cf071aa98c3ed335f76d9b12ef1c1",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/observability/deprecation-counters.ts",
+          "revision": "72ba3c32e31cf071aa98c3ed335f76d9b12ef1c1",
+          "sourceSha256": "3afd32a9af56f94c88b9ae4b2765a2ac0370601601e9d5c7c434442ab8c8cfdf",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/sessions/extensions/policy-light-snapshotter.ts",
+          "revision": "72ba3c32e31cf071aa98c3ed335f76d9b12ef1c1",
+          "sourceSha256": "b3dc72a1c42f861508bf9861c79da68e85f284e4acd80a39d99290e75cea9a26",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/sessions/extensions/shadow-write-event-recorder.ts",
+          "revision": "72ba3c32e31cf071aa98c3ed335f76d9b12ef1c1",
+          "sourceSha256": "d8ca04882b519a5e7d913670823de3d2ec1813a03483686f8f2a0a2c41d92231",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/shared/tool-registration.ts",
+          "revision": "72ba3c32e31cf071aa98c3ed335f76d9b12ef1c1",
+          "sourceSha256": "7217cc1e43790d4435b42b4ea9483ad34d6ecab2ddae69253c38c2753e460602",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/observability/trace-recorder.ts",
+          "revision": "72ba3c32e31cf071aa98c3ed335f76d9b12ef1c1",
+          "sourceSha256": "78b6d08400ea55b9b605255be91bb5529335565e43e1d34eb3af631d9b3b0433",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/observability/namespace-governance.ts",
+          "revision": "72ba3c32e31cf071aa98c3ed335f76d9b12ef1c1",
+          "sourceSha256": "03546a3d21c3c0eef0fbd8ff082eddd5515a2ed19ac95b5280da84e9e75e5d99",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        }
+      ],
+      "locatorSources": [
+        {
+          "path": "harness/specs/tasks/a1-layered-isolation-pilot.md",
+          "revision": "46e553fd87d5fadf14d6f7aa7a7a85b614aef466",
+          "sourceSha256": "38d39bc1d372e51b8bf3ecec02f41053e8af85df8807bb2daa59daa473420fa0",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-a01-isolation-pilot-reverify.md",
+          "revision": "46e553fd87d5fadf14d6f7aa7a7a85b614aef466",
+          "sourceSha256": "fabb4c1356f01a16f1d1af2d2d9bcbdaa931556e8c9fa5626f2ab9c922805133",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/a01-a1-isolation-gate.md",
+          "revision": "46e553fd87d5fadf14d6f7aa7a7a85b614aef466",
+          "sourceSha256": "f6947dd0c9e95ee61c5202c610e531d3bfd880419654a12a9848e72a94d8d57f",
+          "projection": "imports-and-path-locators-only"
+        }
+      ],
+      "behaviorContract": null,
+      "documentContract": {
+        "format": "repository-markdown-or-module-contract",
+        "taskSpecFields": [
+          "id",
+          "title",
+          "intent",
+          "requiredTests",
+          "requiredRules",
+          "lifecycleStatus"
+        ],
+        "lifecycleStates": [
+          "active",
+          "completed",
+          "archived"
+        ],
+        "sourceOfTruth": "historical-base-and-declared-task-criteria"
+      }
+    },
+    {
+      "identity": {
+        "id": "tf-0294-a02",
+        "base": "4e942fbce0a2dbcb3437a1cef6de651e6cff9508",
+        "reference": "4359e684b795a4033592da4e7c270ce56f9c3711",
+        "sourceRecord": "docs/dev/harness-gap-closure/a02-acceptance.json",
+        "sourceRecordSha256": "99b89c7ab9a53518eaefba20210dd23ca9f624eab0705ca0ad87d572cd6234ed",
+        "targetScope": [
+          "harness/specs/tasks/a2-multi-agent-orchestration-pilot.md",
+          "harness/specs/tasks/harness-gap-a02-orchestration-pilot-reverify.md",
+          "docs/dev/harness-gap-closure/a02-a2-orchestration-gate.md"
+        ],
+        "oracleDigest": "80a94491fdd49cf378fd1d1b991221d8c9ae22e1790db1904c84924630357202"
+      },
+      "kind": "specification-verification",
+      "publicSources": [],
+      "baseSources": [
+        {
+          "path": "harness/specs/tasks/a2-multi-agent-orchestration-pilot.md",
+          "revision": "4e942fbce0a2dbcb3437a1cef6de651e6cff9508",
+          "sourceSha256": "4567ff210aff513bb095479654ce02fcb5cb6f3267463cd487c3076d180ccf73",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-a02-orchestration-pilot-reverify.md",
+          "revision": "4e942fbce0a2dbcb3437a1cef6de651e6cff9508",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/a02-a2-orchestration-gate.md",
+          "revision": "4e942fbce0a2dbcb3437a1cef6de651e6cff9508",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/resource-aware-wave-scheduler.ts",
+          "revision": "4e942fbce0a2dbcb3437a1cef6de651e6cff9508",
+          "sourceSha256": "9a86631a35437500f253d9be1d374171e8742cc600868fbe1d46ca742edde8d4",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/observability/deprecation-counters.ts",
+          "revision": "4e942fbce0a2dbcb3437a1cef6de651e6cff9508",
+          "sourceSha256": "3afd32a9af56f94c88b9ae4b2765a2ac0370601601e9d5c7c434442ab8c8cfdf",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/cross-area/cross-area-facades.ts",
+          "revision": "4e942fbce0a2dbcb3437a1cef6de651e6cff9508",
+          "sourceSha256": null,
+          "missing": true,
+          "required": false,
+          "reconstructed": false
+        }
+      ],
+      "locatorSources": [
+        {
+          "path": "harness/specs/tasks/a2-multi-agent-orchestration-pilot.md",
+          "revision": "4359e684b795a4033592da4e7c270ce56f9c3711",
+          "sourceSha256": "8180ad8739fe1b4d69aa45bc8b540e2f3bf4e77767ee1f11430aeb5274d8b6ee",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-a02-orchestration-pilot-reverify.md",
+          "revision": "4359e684b795a4033592da4e7c270ce56f9c3711",
+          "sourceSha256": "5e77f31913eaccffdf18b866a601c73d32183383ab3c7818444aae0df32aefa5",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/a02-a2-orchestration-gate.md",
+          "revision": "4359e684b795a4033592da4e7c270ce56f9c3711",
+          "sourceSha256": "638c3dd0cfd5a72b744f2dba5defef74b8c4363d430025db1610569d7383f670",
+          "projection": "imports-and-path-locators-only"
+        }
+      ],
+      "behaviorContract": null,
+      "documentContract": {
+        "format": "repository-markdown-or-module-contract",
+        "taskSpecFields": [
+          "id",
+          "title",
+          "intent",
+          "requiredTests",
+          "requiredRules",
+          "lifecycleStatus"
+        ],
+        "lifecycleStates": [
+          "active",
+          "completed",
+          "archived"
+        ],
+        "sourceOfTruth": "historical-base-and-declared-task-criteria"
+      }
+    },
+    {
+      "identity": {
+        "id": "tf-0295-a03",
+        "base": "3c5da37a5295fb0470b1b5035a2d67e797eb9c2b",
+        "reference": "fe392a70e9afbf76238a88d4e87c08b557898940",
+        "sourceRecord": "docs/dev/harness-gap-closure/a03-acceptance.json",
+        "sourceRecordSha256": "94560219120997217ba78b0d8d3378d1a96649850e702b12cd418ad9fbbc6fec",
+        "targetScope": [
+          "harness/specs/tasks/a3-runtime-resilience-pilot.md",
+          "harness/specs/tasks/harness-gap-a03-resilience-pilot-reverify.md",
+          "docs/dev/harness-gap-closure/a03-a3-resilience-gate.md"
+        ],
+        "oracleDigest": "b38ea91eadf7a3b8c3951d9f9066696c22fa631e5346c087c00492c20d5d16b4"
+      },
+      "kind": "specification-verification",
+      "publicSources": [],
+      "baseSources": [
+        {
+          "path": "harness/specs/tasks/a3-runtime-resilience-pilot.md",
+          "revision": "3c5da37a5295fb0470b1b5035a2d67e797eb9c2b",
+          "sourceSha256": "3c987bed461f2043f20882930c0226c911ee60293b5a073b39713040915fb23a",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-a03-resilience-pilot-reverify.md",
+          "revision": "3c5da37a5295fb0470b1b5035a2d67e797eb9c2b",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/a03-a3-resilience-gate.md",
+          "revision": "3c5da37a5295fb0470b1b5035a2d67e797eb9c2b",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/anomaly-classifier.ts",
+          "revision": "3c5da37a5295fb0470b1b5035a2d67e797eb9c2b",
+          "sourceSha256": "d6cebd47344ee7187395f4742ae4bf86ded8470fcf36c31f66fab12ab1bf572f",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/mission-control/controller.ts",
+          "revision": "3c5da37a5295fb0470b1b5035a2d67e797eb9c2b",
+          "sourceSha256": "1506a2e3b51cc8fe1317692c124ae21e4f53eaaa45541b9e3d9171e288b59a0b",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/observability/deprecation-counters.ts",
+          "revision": "3c5da37a5295fb0470b1b5035a2d67e797eb9c2b",
+          "sourceSha256": "3afd32a9af56f94c88b9ae4b2765a2ac0370601601e9d5c7c434442ab8c8cfdf",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/config/types.openclaw.ts",
+          "revision": "3c5da37a5295fb0470b1b5035a2d67e797eb9c2b",
+          "sourceSha256": "63b7d244643db7bc9b95f5f9fc482e2658f6a63fae83943cf46f3c29d62d9a9a",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        }
+      ],
+      "locatorSources": [
+        {
+          "path": "harness/specs/tasks/a3-runtime-resilience-pilot.md",
+          "revision": "fe392a70e9afbf76238a88d4e87c08b557898940",
+          "sourceSha256": "9abf4e9f6a91e6eeec1e51978f9d4d105dfc9c091c62530357eb65529d175bd3",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-a03-resilience-pilot-reverify.md",
+          "revision": "fe392a70e9afbf76238a88d4e87c08b557898940",
+          "sourceSha256": "33149f70f39b92742daf2564b879eedaadbebb342087ad96fe27a99bd9581189",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/a03-a3-resilience-gate.md",
+          "revision": "fe392a70e9afbf76238a88d4e87c08b557898940",
+          "sourceSha256": "b383d97ae6bb90893a253bc413376c3429bb5afceb59bd3b68e76b3ad84e016c",
+          "projection": "imports-and-path-locators-only"
+        }
+      ],
+      "behaviorContract": null,
+      "documentContract": {
+        "format": "repository-markdown-or-module-contract",
+        "taskSpecFields": [
+          "id",
+          "title",
+          "intent",
+          "requiredTests",
+          "requiredRules",
+          "lifecycleStatus"
+        ],
+        "lifecycleStates": [
+          "active",
+          "completed",
+          "archived"
+        ],
+        "sourceOfTruth": "historical-base-and-declared-task-criteria"
+      }
+    },
+    {
+      "identity": {
+        "id": "tf-0296-a04",
+        "base": "65ecf51657e25297b48bf002ac0af5344362487e",
+        "reference": "0f6d21f673ba491527fc3161dafc8430edb655d8",
+        "sourceRecord": "docs/dev/harness-gap-closure/a04-acceptance.json",
+        "sourceRecordSha256": "2df9f728a9c7867659b2ce03135e1754a26b7a57fe7f51be80d4ae64c6d18e0c",
+        "targetScope": [
+          "harness/specs/tasks/a4-decision-quality-pilot.md",
+          "harness/specs/tasks/harness-gap-a04-decision-quality-pilot-reverify.md",
+          "docs/dev/harness-gap-closure/a04-decision-quality-gate.md"
+        ],
+        "oracleDigest": "2adb051d6bfb269fc7f5e53495dc7b9e3fc8be7d57f4ae2468bf55426c486430"
+      },
+      "kind": "specification-verification",
+      "publicSources": [],
+      "baseSources": [
+        {
+          "path": "harness/specs/tasks/a4-decision-quality-pilot.md",
+          "revision": "65ecf51657e25297b48bf002ac0af5344362487e",
+          "sourceSha256": "800b3e70c731108db25125da26680fa46e766a4141e2fe3be8204a71d6c6e987",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-a04-decision-quality-pilot-reverify.md",
+          "revision": "65ecf51657e25297b48bf002ac0af5344362487e",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/a04-decision-quality-gate.md",
+          "revision": "65ecf51657e25297b48bf002ac0af5344362487e",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/observability/deprecation-counters.ts",
+          "revision": "65ecf51657e25297b48bf002ac0af5344362487e",
+          "sourceSha256": "3afd32a9af56f94c88b9ae4b2765a2ac0370601601e9d5c7c434442ab8c8cfdf",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/runtime-design/development-manual.md",
+          "revision": "65ecf51657e25297b48bf002ac0af5344362487e",
+          "sourceSha256": "8ae51b7daef57b30e8bedae632cbc4861338e239f32de9c3bf02147c55551288",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        }
+      ],
+      "locatorSources": [
+        {
+          "path": "harness/specs/tasks/a4-decision-quality-pilot.md",
+          "revision": "0f6d21f673ba491527fc3161dafc8430edb655d8",
+          "sourceSha256": "58e2d7238365eb551e3b02869deb94a67939e5175ec0d79fef913d5e8323af08",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-a04-decision-quality-pilot-reverify.md",
+          "revision": "0f6d21f673ba491527fc3161dafc8430edb655d8",
+          "sourceSha256": "7a676a292bee11846f60481b9239fdbd41cd994058d6cc10a122b755f60e1d02",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/a04-decision-quality-gate.md",
+          "revision": "0f6d21f673ba491527fc3161dafc8430edb655d8",
+          "sourceSha256": "70523dba803de52a819f3650602818aaede0d4d5c5780fb7a847e8cd45a07139",
+          "projection": "imports-and-path-locators-only"
+        }
+      ],
+      "behaviorContract": null,
+      "documentContract": {
+        "format": "repository-markdown-or-module-contract",
+        "taskSpecFields": [
+          "id",
+          "title",
+          "intent",
+          "requiredTests",
+          "requiredRules",
+          "lifecycleStatus"
+        ],
+        "lifecycleStates": [
+          "active",
+          "completed",
+          "archived"
+        ],
+        "sourceOfTruth": "historical-base-and-declared-task-criteria"
+      }
+    },
+    {
+      "identity": {
+        "id": "tf-0297-a05",
+        "base": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+        "reference": "47388bf320000a203b096992c9ddb8a3b2bca487",
+        "sourceRecord": "docs/dev/harness-gap-closure/a05-acceptance.json",
+        "sourceRecordSha256": "4cec9973dc952b2793b2d64da099e26a54752788505363922040f426ce2c9819",
+        "targetScope": [
+          "harness/specs/tasks/a5-adaptive-context-budget-pilot.md",
+          "harness/specs/tasks/harness-gap-a05-adaptive-context-budget-pilot-reverify.md",
+          "docs/dev/harness-gap-closure/a05-adaptive-context-budget-gate.md"
+        ],
+        "oracleDigest": "cab6afe7b9f65e99a5212c6a891b63b1c7c15682e3953142c9637b6aa0ead75e"
+      },
+      "kind": "specification-verification",
+      "publicSources": [],
+      "baseSources": [
+        {
+          "path": "harness/specs/tasks/a5-adaptive-context-budget-pilot.md",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "ea43923743fb2d9c80a02a532b663b5b1368fa064b092b95c54c0be5e9a99fd8",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-a05-adaptive-context-budget-pilot-reverify.md",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/a05-adaptive-context-budget-gate.md",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/resource-aware-wave-scheduler.ts",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "9a86631a35437500f253d9be1d374171e8742cc600868fbe1d46ca742edde8d4",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/task-loop-controller.ts",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "f03e9e0c91652df0ca72d97bae4a4e7a6c8c1f153e7a7f556f1f8aed1bda7ed7",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/observability/deprecation-counters.ts",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "3afd32a9af56f94c88b9ae4b2765a2ac0370601601e9d5c7c434442ab8c8cfdf",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/packages/agent-core/src/harness/compaction/compression-planner.ts",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "e50f7a3c95dbf866e4c5097bfb9c56019f4d78e62989efb63cffbf54ce31fb20",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/packages/agent-core/src/harness/compaction/compaction.ts",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "6944495404251247b3f1f1c3e1f91de981cccc30a6d96baf78badc3019310ae9",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/agent-hooks/compaction-safeguard.ts",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "3bb1a610919afc7ff920c232b3d244e4ad35fcea0f6be109df9ccaa898cd0176",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/agent-hooks/compaction-promotion.ts",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "df9211ccb08e88cc82c252917a2dc26ceae19bedf6997d0726f3e604fae18458",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/agent-hooks/compaction-safeguard-runtime.ts",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "561ac6b5ad18e3d59fe1c88f2f300aca09d352fd2ebcd27fd9898d9a4fd83030",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "9760a9bfe5f77b4f43190775b7c746e85f5f979fb2918756aa15b1f545ab31e6",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/config/types.agent-defaults.ts",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "86b4bcac2a41c38537ed8e5637919a13a703cc58ced98ac09c4bdd5c21941335",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/compact.ts",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "de5d7bd792914a11b08799433bb1f9a15e312295b2186cfd9f38cb81995adc42",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "757bc052d695ab960af64f3c50ca33ed65709ba4d7bd1d4a919b901a7f33122d",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "scripts/context-compression-production-summary-regenerator.ts",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "fbbd9acfa34cd19e3f6405c76bdfdd8a2174b300608fedd7bb0a67aae3c37509",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "scripts/context-compression-recovery-ledger.mjs",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "19b2918199e04388190c5cd13075f5f4edfd6671d99ca471a5907e58f5e4c2dc",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "scripts/context-compression-would-retry-canary.ts",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "cdd0d7797489223871480731e95aa609ad4f301eea8c7ab941d021d3b0f045ad",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/token-dense-recovery-compression-v1.md",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "be02cc30e98d1e2506bd731e06a3d21611e155a1a9619a70ba170d75afe81088",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/clawx-design-overview.md",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "e5e608e28d6688f2cb60010bf1e0fbd11c12e78c0d5fe31f1c63ff91b4e7a5c0",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "electron/services/sessions-api.ts",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "56bf011b77a5d6af874a19084ac9e40d7a741d1dc59c3cb6a1750adcc0895520",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact.ts",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "3df56c0d9d43cd6d8ac98b26a2c1fa7e22f983fd74f55aeb21761ce3b6d1bae7",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "ce9a13ac9359703d6252d1225d1a6552a02e12da58a7cdab578fb07c16c51e59",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/agent-hooks/compaction-addressability.ts",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "fb1bbc8fc253cb374bcd5fbee85e1cd7b211c8a11bb54555506390d203536f90",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/agent-hooks/compaction-safeguard-quality.ts",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "13d88d1c902654ca67276f2031c9d0bf77b5d673d52cb14847a34dc65318a46b",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/agent-hooks/compaction-validated-pipeline.ts",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "8df28710db401fc89aa9b5a351aa052b25ec1644191f491af320175792e38949",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "scripts/context-compression-eval-runner.mjs",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "d354fd4038b3c073be4ac603d074f262eca1d72f545f136532124bcba9b8160e",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "shared/host-api/contract.ts",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "c69815341c024df0f1a5b9c78333691986a9bbbbeda7adc323b65cc34ffbd32d",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": "8c174f18148917acf414984e0fbfa7a944bce8dd28c6912f4e88bdba93b841e8",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/cross-area/cross-area-facades.ts",
+          "revision": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+          "sourceSha256": null,
+          "missing": true,
+          "required": false,
+          "reconstructed": false
+        }
+      ],
+      "locatorSources": [
+        {
+          "path": "harness/specs/tasks/a5-adaptive-context-budget-pilot.md",
+          "revision": "47388bf320000a203b096992c9ddb8a3b2bca487",
+          "sourceSha256": "540fbbf5a491020ee2feef2cd5bf2896c271e2fffd8a3c235e87b761c23b1065",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-a05-adaptive-context-budget-pilot-reverify.md",
+          "revision": "47388bf320000a203b096992c9ddb8a3b2bca487",
+          "sourceSha256": "3804ed7c4d349d85dd8a1d41508e221bf97e1141b2bdc9a9edf4396b78f91b30",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/a05-adaptive-context-budget-gate.md",
+          "revision": "47388bf320000a203b096992c9ddb8a3b2bca487",
+          "sourceSha256": "e243c77d90ee337af8c053509f82836b7fdbe722b7cb926761bdd95b7d980b82",
+          "projection": "imports-and-path-locators-only"
+        }
+      ],
+      "behaviorContract": null,
+      "documentContract": {
+        "format": "repository-markdown-or-module-contract",
+        "taskSpecFields": [
+          "id",
+          "title",
+          "intent",
+          "requiredTests",
+          "requiredRules",
+          "lifecycleStatus"
+        ],
+        "lifecycleStates": [
+          "active",
+          "completed",
+          "archived"
+        ],
+        "sourceOfTruth": "historical-base-and-declared-task-criteria"
+      }
+    },
+    {
+      "identity": {
+        "id": "tf-0298-a06",
+        "base": "4317f7954a638af1dd3afba4f77fa9dfcfa94209",
+        "reference": "bd8dca0a342f75f19e021509e42c16f016f0d891",
+        "sourceRecord": "docs/dev/harness-gap-closure/a06-acceptance.json",
+        "sourceRecordSha256": "053a3892c62f918db7b61718eadc84e5c8419e6e9d138a261ffcc97d6f5105aa",
+        "targetScope": [
+          "harness/specs/tasks/a6-long-running-persistence-pilot.md",
+          "harness/specs/tasks/harness-gap-a06-long-running-persistence-pilot-reverify.md",
+          "docs/dev/harness-gap-closure/a06-long-running-persistence-gate.md"
+        ],
+        "oracleDigest": "536342edcb1777d02b7eed7a35a5131bfa291b80b06ab3a9fce1fc2a47ce9631"
+      },
+      "kind": "specification-verification",
+      "publicSources": [],
+      "baseSources": [
+        {
+          "path": "harness/specs/tasks/a6-long-running-persistence-pilot.md",
+          "revision": "4317f7954a638af1dd3afba4f77fa9dfcfa94209",
+          "sourceSha256": "1441d6de7802f4ba88d4764b30743d85ba0fe265bcf05f4343d6ee5bf6c9bd61",
+          "missing": false,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-a06-long-running-persistence-pilot-reverify.md",
+          "revision": "4317f7954a638af1dd3afba4f77fa9dfcfa94209",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/a06-long-running-persistence-gate.md",
+          "revision": "4317f7954a638af1dd3afba4f77fa9dfcfa94209",
+          "sourceSha256": null,
+          "missing": true,
+          "required": true,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/long-task-control/file-fingerprint.ts",
+          "revision": "4317f7954a638af1dd3afba4f77fa9dfcfa94209",
+          "sourceSha256": "79d6cf592675ce73f57460862c27388d55aca2d6367b1a7c871215385abb8cb4",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/long-task-control/persisted-resume-shadow.ts",
+          "revision": "4317f7954a638af1dd3afba4f77fa9dfcfa94209",
+          "sourceSha256": "21819639a72cc9a580f559be74be77f8e9fe20b44fcfbcce6a8702aa784a3710",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/resume-shadow.ts",
+          "revision": "4317f7954a638af1dd3afba4f77fa9dfcfa94209",
+          "sourceSha256": "2d0d78333bb2e9723a4f299e789a8a264c065ec0a02b42d6f793cc2bbcad88de",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/observability/deprecation-counters.ts",
+          "revision": "4317f7954a638af1dd3afba4f77fa9dfcfa94209",
+          "sourceSha256": "3afd32a9af56f94c88b9ae4b2765a2ac0370601601e9d5c7c434442ab8c8cfdf",
+          "missing": false,
+          "required": false,
+          "reconstructed": false
+        },
+        {
+          "path": "openclaw_runtime/src/agents/cross-area/cross-area-facades.ts",
+          "revision": "4317f7954a638af1dd3afba4f77fa9dfcfa94209",
+          "sourceSha256": null,
+          "missing": true,
+          "required": false,
+          "reconstructed": false
+        }
+      ],
+      "locatorSources": [
+        {
+          "path": "harness/specs/tasks/a6-long-running-persistence-pilot.md",
+          "revision": "bd8dca0a342f75f19e021509e42c16f016f0d891",
+          "sourceSha256": "36b101e7789d47e69fa9681d213bcd8e7af8a9155bcad26cb511b9cef9a09d28",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "harness/specs/tasks/harness-gap-a06-long-running-persistence-pilot-reverify.md",
+          "revision": "bd8dca0a342f75f19e021509e42c16f016f0d891",
+          "sourceSha256": "dc97c690fd847571403aca2211283d9bb38a3b57ea2cf50ad21f9a2037721116",
+          "projection": "imports-and-path-locators-only"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/a06-long-running-persistence-gate.md",
+          "revision": "bd8dca0a342f75f19e021509e42c16f016f0d891",
+          "sourceSha256": "a3f3b51d5ca1f3da0a75de255b430732fb2ebfb54dceaf2dd81e9256abb00595",
+          "projection": "imports-and-path-locators-only"
+        }
+      ],
+      "behaviorContract": null,
+      "documentContract": {
+        "format": "repository-markdown-or-module-contract",
+        "taskSpecFields": [
+          "id",
+          "title",
+          "intent",
+          "requiredTests",
+          "requiredRules",
+          "lifecycleStatus"
+        ],
+        "lifecycleStates": [
+          "active",
+          "completed",
+          "archived"
+        ],
+        "sourceOfTruth": "historical-base-and-declared-task-criteria"
+      }
+    }
+  ]
+}

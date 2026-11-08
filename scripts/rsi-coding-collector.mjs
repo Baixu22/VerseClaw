@@ -6,7 +6,8 @@ import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { benefitDigest, buildBenefitRequest, recordMeasuredBenefitTrials, sealBenefitRun, validateBenefitPlan, verifyCodingAdmission } from './lib/rsi-benefit-eval.mjs';
-import { codingCollectorConfig, parseCodingEdits } from './lib/rsi-coding-protocol.mjs';
+import { codingCollectorConfig, parseCodingEdits, reserveProviderTokens, TOOL_CODING_COLLECTOR } from './lib/rsi-coding-protocol.mjs';
+import { collectToolCodingTrial } from './lib/rsi-coding-tool-loop.mjs';
 import { createResponsesProvider } from './lib/rsi-responses-provider.mjs';
 import { prepareGradeWorkspace, resolveHistoricalTask, runLiveTaskOracles } from './lib/rsi-live-grader.mjs';
 
@@ -23,17 +24,14 @@ function scratchPath(path) {
 }
 
 export function reservedCodingTokens(plan, rows) {
-  return rows.reduce((total, row) => total + row.providerAttempts.reduce((sum, attempt) => {
-    const usage = attempt.parsedResponse?.usage;
-    if (usage) return sum + usage.totalTokens;
-    assert.equal(plan.collector.unknownUsagePolicy, 'reserve-request-upper-bound', 'unknown-usage-halts-campaign');
-    return sum + Buffer.byteLength(JSON.stringify(attempt.request)) + plan.provider.maxOutputTokens;
-  }, 0), 0);
+  return rows.reduce((total, row) => total + reserveProviderTokens(plan, row.providerAttempts), 0);
 }
 
 /** One immutable attempt. A retained dispatch marker is never a license to retry. */
-export async function collectCodingTrial({ root, plan, slot, apiKey, scratch, supportRoot, provider, grade }) {
+export async function collectCodingTrial(options) {
+  const { root, plan, slot, apiKey, scratch, supportRoot, provider, grade } = options;
   assert.deepEqual(plan.collector, codingCollectorConfig(plan.collector?.version), 'collector-config-drift');
+  if (plan.collector.version === TOOL_CODING_COLLECTOR.version) return collectToolCodingTrial(options);
   const task = plan.tasks.find(task => task.id === slot.caseId);
   assert(task && plan.slots.some(item => benefitDigest(item) === benefitDigest(slot)), 'unknown-slot');
   const directory = scratchPath(join(scratch, slot.id));
@@ -160,11 +158,14 @@ export async function runCodingCollector({ root = ROOT, directory, scratch, supp
         assert(!existsSync(join(scratch, slot.id, 'dispatch.json')), 'interrupted-attempt-preserved-no-retry');
         const prior = plan.slots.slice(0, slot.position).map(s => read(join(directory, 'trials', `${s.id}.json`)));
         const knownTokens = reservedCodingTokens(plan, prior);
-        assert(slot.position < plan.budget.providerCallsAuthorized, 'provider-call-budget-exhausted');
+        const priorCalls = prior.reduce((sum, row) => sum + row.execution.providerCalls, 0);
+        assert(priorCalls < plan.budget.providerCallsAuthorized, 'provider-call-budget-exhausted');
         const request = buildBenefitRequest(plan, slot);
         // UTF-8 bytes are a conservative input-token reserve; output is bounded by the provider.
         assert(knownTokens + Buffer.byteLength(JSON.stringify(request)) + plan.provider.maxOutputTokens <= plan.budget.maxTotalTokens, 'token-budget-exhausted');
-        row = await collectCodingTrial({ root, plan, slot, apiKey, scratch, supportRoot });
+        row = await collectCodingTrial({ root, plan, slot, apiKey, scratch, supportRoot,
+          remainingTokens: plan.budget.maxTotalTokens - knownTokens,
+          remainingProviderCalls: plan.budget.providerCallsAuthorized - priorCalls });
       }
       const [record] = recordMeasuredBenefitTrials(root, directory, [row]);
       written++;
