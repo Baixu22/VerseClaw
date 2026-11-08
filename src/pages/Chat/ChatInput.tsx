@@ -65,6 +65,7 @@ import { cn } from '@/lib/utils';
 import { useGatewayStore } from '@/stores/gateway';
 import { useAgentsStore } from '@/stores/agents';
 import { useChatStore } from '@/stores/chat';
+import { useWorkspacesStore } from '@/stores/workspaces';
 import { useArtifactPanel } from '@/stores/artifact-panel';
 import { TaskNodeSelector } from '@/components/task-ledger/TaskNodeSelector';
 import { buildPreviewTarget } from '@/components/file-preview/build-preview-target';
@@ -1026,17 +1027,31 @@ export function ChatInput({
   const [compactionInstructions, setCompactionInstructions] = useState('');
   const sessionGenerationRef = useRef(0);
   const cancelCacheConfirmationsRef = useRef(new Set<() => void>());
-  const [activeTaskNodeId, setActiveTaskNodeIdState] = useState<string | null>(null);
+  const selectingTaskRef = useRef(false);
+  const [taskSelectionBusy, setTaskSelectionBusy] = useState(false);
   const [pendingCapabilitySend, setPendingCapabilitySend] = useState<PendingCapabilitySend | null>(null);
   const [capabilityExecuting, setCapabilityExecuting] = useState(false);
   const pendingCapabilityAuditBlocked = useMemo(
     () => pendingCapabilitySend?.plan.some((action) => isCapabilityAuditBlocked(action.auditResult)) ?? false,
     [pendingCapabilitySend],
   );
-  const setActiveTaskNodeId = useCallback((nodeId: string | null) => {
-    setActiveTaskNodeIdState(nodeId);
-    useChatStore.setState({ activeTaskNodeId: nodeId });
-  }, []);
+  const setActiveTaskNodeId = useCallback(async (nodeId: string | null) => {
+    if (!nodeId || selectingTaskRef.current) return;
+    selectingTaskRef.current = true;
+    setTaskSelectionBusy(true);
+    const chat = useChatStore.getState();
+    const owner = useWorkspacesStore.getState().activeWorkspace;
+    try {
+      if (!owner) throw new Error('Workspace unavailable');
+      await hostApi.workspaces.selectSessionTask({ workspaceId: owner.id, sessionKey: chat.currentSessionKey, taskNodeId: nodeId,
+        expectedSessionGeneration: chat.sessions.find((session) => session.key === chat.currentSessionKey)?.sessionId,
+        expectedRevision: owner.coordinatorBindings?.[chat.currentSessionKey]?.bindingRevision,
+      });
+      await useWorkspacesStore.getState().fetchWorkspaces();
+      await useChatStore.getState().loadSessions({ force: true });
+    } catch { toast.error(t('taskLedger:summary.selectFailed')); }
+    finally { selectingTaskRef.current = false; setTaskSelectionBusy(false); }
+  }, [t]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const runStartTimerRef = useRef<number | null>(null);
   const runStartingRef = useRef(false);
@@ -1074,8 +1089,15 @@ export function ChatInput({
   const refreshProviderSnapshot = useProviderStore((s) => s.refreshProviderSnapshot);
   const currentAgentId = useChatStore((s) => s.currentAgentId);
   const currentSessionKey = useChatStore((s) => s.currentSessionKey);
+  const activeTaskNodeId = useWorkspacesStore((s) => s.activeWorkspace?.coordinatorBindings?.[currentSessionKey]?.activeTaskNodeId ?? null);
+  useEffect(() => {
+    if (useChatStore.getState().currentSessionKey === currentSessionKey) useChatStore.setState({ activeTaskNodeId });
+  }, [activeTaskNodeId, currentSessionKey]);
   const currentSession = useChatStore((s) => s.sessions.find((session) => session.key === s.currentSessionKey));
-  const pendingMessages = useChatStore((s) => s.pendingMessages);
+  const allPendingMessages = useChatStore((s) => s.pendingMessages);
+  const pendingWorkspaceId = useWorkspacesStore((s) => s.activeWorkspaceId);
+  const pendingMessages = useMemo(() => allPendingMessages.filter((item) => item.targetSessionKey === currentSessionKey
+    && (item.opts?.workspaceId ?? null) === pendingWorkspaceId), [allPendingMessages, currentSessionKey, pendingWorkspaceId]);
   const currentAgent = useMemo(
     () => (agents ?? []).find((agent) => agent.id === currentAgentId) ?? null,
     [agents, currentAgentId],
@@ -1767,6 +1789,8 @@ export function ChatInput({
     setCompactionInstructions('');
     const cancellations = cancelCacheConfirmationsRef.current;
     return () => {
+      // Advance the numeric epoch on leave to fence pending cache confirmations.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       sessionGenerationRef.current++;
       for (const cancel of cancellations) cancel();
       cancellations.clear();
@@ -2898,7 +2922,7 @@ export function ChatInput({
     setTargetAgentId(null);
     setPickerOpen(false);
     setKnowledgePickerOpen(false);
-  }, [input, attachments, canSend, captureHeroComposerPosition, onSend, pendingTurnModelRef, targetAgentId, updateInput, knowledgeMode, knowledgeScope, selectedKnowledgeRefs, t, recordKnowledgeReferences, handleUnsupportedCapabilityRequest, slashInput.active, activeTaskNodeId, routeKnowledgeForMessage, selectSlashItem, findExactSlashItem, selectedSlashItem, providerRuntimeReady, refreshProviderSnapshot]);
+  }, [input, attachments, canSend, allReady, capabilityExecuting, inputDisabled, sending, captureHeroComposerPosition, onSend, pendingTurnModelRef, targetAgentId, updateInput, knowledgeMode, knowledgeScope, selectedKnowledgeRefs, t, recordKnowledgeReferences, handleUnsupportedCapabilityRequest, slashInput.active, activeTaskNodeId, routeKnowledgeForMessage, selectSlashItem, findExactSlashItem, selectedSlashItem, providerRuntimeReady, refreshProviderSnapshot]);
 
   const handleCancelCapabilityActions = useCallback(() => {
     if (capabilityExecuting) return;
@@ -3601,6 +3625,7 @@ export function ChatInput({
                     )}
                     <TaskNodeSelector
                       selectedTaskNodeId={activeTaskNodeId}
+                      busy={taskSelectionBusy || sending}
                       onSelect={setActiveTaskNodeId}
                     />
                   </ComposerActionGroup>

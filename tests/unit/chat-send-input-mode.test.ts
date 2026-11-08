@@ -144,6 +144,25 @@ function callChatSend(
 }
 
 describe('chat.send inputMode gate', () => {
+  it('rejects a worker send for a changed requester generation before starting a run', async () => {
+    const { loadSessionEntry } = await import('../../openclaw_runtime/src/gateway/session-utils.js');
+    const load = vi.mocked(loadSessionEntry);
+    const previous = load.getMockImplementation()!;
+    const requester = 'agent:main:requester';
+    load.mockImplementation((key) => ({ cfg: {}, canonicalKey: key,
+      entry: key === requester ? { sessionId: 'parent-generation-2', updatedAt: 1 }
+        : { sessionId: 'child-generation', spawnedBy: requester, updatedAt: 1 }, storePath: '', store: {}, legacyKey: undefined }));
+    try {
+      const respond = vi.fn();
+      const context = makeContext();
+      await callChatSend(context, respond, { sessionKey: SESSION_KEY, message: 'Worker follow-up',
+        idempotencyKey: 'requester-fence', expectedSessionGeneration: 'child-generation',
+        requesterSessionKey: requester, expectedRequesterSessionId: 'parent-generation-1' });
+      expect(respond).toHaveBeenCalledWith(false, undefined, expect.objectContaining({ message: 'CHAT_SESSION_GENERATION_CHANGED' }));
+      expect(context.chatAbortControllers.size).toBe(0);
+    } finally { load.mockImplementation(previous); }
+  });
+
   it('rejects explicit inputMode without an active /loop Task Ledger root', async () => {
     const respond = vi.fn();
     const context = makeContext();

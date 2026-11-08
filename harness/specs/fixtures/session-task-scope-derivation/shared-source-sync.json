@@ -1,0 +1,57 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-audit-relay-20261107",
+  "syncedAt": "2026-11-07T09:25:47.235Z",
+  "candidate": "8881bb51af2e1291776799aab6d1f58aea87764b",
+  "mainHead": "d78ca54c835e54cfe86b2c8ad8cda7de05c5667f",
+  "records": [
+    {
+      "path": "docs/modules/multi-agent-and-tasks.md",
+      "action": "updated",
+      "beforeSha256": "d793a9bb8ca052a1b24ade6127052916580965aab0774477c249babd4a92309d",
+      "sha256": "85782baf9c5bece7bf6a5f0f85fd2d15c8bc717b2516a3060422ab36880d6ccd"
+    },
+    {
+      "path": "electron/services/sessions-api.ts",
+      "action": "updated",
+      "beforeSha256": "7a0e6de5f2dc888bf1f1083855c2fd352058e8fc66266aec0f925f1bc84c605d",
+      "sha256": "8ca74304371a1e4dee70573052c5f1a0b705b126e8f9ca0c3f0ddd0d9a685dca"
+    },
+    {
+      "path": "harness/specs/scenarios/autonomy-session-task-scope.md",
+      "action": "updated",
+      "beforeSha256": "f95d6fb73fb26d30492f65de7766fdfc03c07a1043e595cca6408179506d67b9",
+      "sha256": "f949917e290aca3599e0248348f5abfa1b867bb848c97a965da27d562a95b224"
+    },
+    {
+      "path": "harness/specs/tasks/session-task-scope-derivation.md",
+      "action": "added",
+      "beforeSha256": null,
+      "sha256": "b47fdacd0448233c156443a04f1150c10fb3d321c1b512381c1648deee1ebfdd"
+    },
+    {
+      "path": "src/lib/workspace-session.ts",
+      "action": "updated",
+      "beforeSha256": "cd2728c4048ed485ddcd0e50b962873fb56b013b659733526f367eda0d593731",
+      "sha256": "1897d74374be07a9097aef4f4d7a6119f53b82e0da97256b321c93898a1d25a7"
+    },
+    {
+      "path": "tests/e2e/session-task-scope-derivation.spec.ts",
+      "action": "added",
+      "beforeSha256": null,
+      "sha256": "abfb49914d3e8555ccfa58421e14ddc5ed9846aba28129f800274e9ab1159b88"
+    },
+    {
+      "path": "tests/unit/host-services.test.ts",
+      "action": "updated",
+      "beforeSha256": "9ad1e17490ff0c7566a2979bc9042b8005b7406004e47baf2b912adbea80a4fa",
+      "sha256": "9057f82a43bea6fdc2356f011d78a8b272aea783bbd2e4d6242d609f4dfa9f0b"
+    },
+    {
+      "path": "tests/unit/workspace-session.test.ts",
+      "action": "updated",
+      "beforeSha256": "11bb022720f6974eec6618df69c8fbcca2bf6a12e5f742ebddef3a9696398371",
+      "sha256": "b18cb45831e8c8006b780246b545fd2543188ebbd407f63ae05234519e051776"
+    }
+  ]
+}

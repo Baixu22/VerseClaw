@@ -18,6 +18,7 @@
 import {
   managedProcessReservations, normalizeManagedPorts, observeManagedProcessReservation,
   releaseManagedProcessReservation, reserveManagedProcess, updateManagedProcessReservation,
+  type ManagedProcessIdentity,
 } from "./managed-process-reservation.js";
 
 /** Default per-run Limits derived from the environment. */
@@ -150,15 +151,22 @@ export function managedProcessCapacityStats(): ManagedProcessCapacityStats {
  *
  * With no declared `maxLiveProcesses` this always admits and does not allocate a counter.
  */
-export function admitManagedProcess(options: { ports?: readonly number[]; owner?: string } = {}): ManagedProcessAdmission {
+export function admitManagedProcess(options: {
+  ports?: readonly number[];
+  owner?: string;
+  identity?: ManagedProcessIdentity;
+} = {}): ManagedProcessAdmission {
   const configured = activeConfig()?.maxLiveProcesses;
   const activeLimits = managedProcessReservations().map(record => record.limit).filter((value): value is number => value !== undefined);
   const declared = configured ?? (activeLimits.length ? Math.min(...activeLimits) : undefined);
   const ports = normalizeManagedPorts(options.ports);
-  if (declared === undefined && ports.length === 0) {
+  if (declared === undefined && ports.length === 0 && !options.identity) {
     return { ok: true, lease: noopLease(), live };
   }
-  const result = reserveManagedProcess({ limit: declared, ports, owner: options.owner });
+  const result = reserveManagedProcess({
+    limit: declared, ports, owner: options.owner,
+    ...(options.identity ? { identity: options.identity } : {}),
+  });
   if (!result.ok && result.reason === "port") throw new Error(`E_PROCESS_PORT_RESERVED:${result.port}:${result.owner}`);
   if (!result.ok) {
     counters.rejectedCapacity += 1;

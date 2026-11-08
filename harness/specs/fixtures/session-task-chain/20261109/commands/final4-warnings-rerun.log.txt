@@ -1,0 +1,10 @@
+
+Running 1 test using 1 worker
+
+(node:30544) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30544) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\e2e\session-chain-scope-faults.spec.ts:262:5 › project Ledger warnings stay unavailable in the task drawer and preserve the current draft (7.9s)
+
+  1 passed (11.0s)

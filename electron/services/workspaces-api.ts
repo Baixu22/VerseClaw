@@ -1,4 +1,5 @@
-import { access, stat } from 'node:fs/promises';
+import { access, realpath, stat } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { constants } from 'node:fs';
 import { basename, resolve } from 'node:path';
 import { homedir } from 'node:os';
@@ -27,6 +28,7 @@ import type {
   WorkspaceCoordinatorBindingResult,
   WorkspaceCoordinatorPausePayload,
   WorkspaceCoordinatorResolvePayload,
+  WorkspaceSessionTaskSelectPayload,
 } from '@shared/host-api/contract';
 import type { GitWorktree } from '@shared/types/git';
 import type { TaskLedgerSnapshot } from '@shared/types/task-ledger';
@@ -41,6 +43,15 @@ import {
 import { createPermissionDecisionEvent } from '@shared/product-semantics';
 import { recordPermissionDecisionEvent } from './permissions-api';
 import { normalizeTaskLedgerWorkspaceId } from './task-ledger-service';
+import { normalizeRunScope, normalizeTaskReference } from '@shared/types/identity-scope';
+import type { SessionHandoffOperation } from '@shared/types/session-handoff';
+import {
+  parseSessionTaskEffectRequest,
+  type SessionTaskEffectRequest,
+  type SessionTaskEffectAdmission,
+  type SessionTaskWriterClaim,
+  type SessionTaskRequesterReference,
+} from '@shared/session-task-scope';
 
 
 type WorkspaceStoreDocument = {
@@ -235,6 +246,26 @@ function createAgentBinding(
   };
 }
 
+function normalizeWriterClaim(value: unknown, workspaceId: string, sessionKey: string): SessionTaskWriterClaim {
+  if (!isRecord(value) || typeof value.id !== 'string' || !value.id
+    || typeof value.sessionGeneration !== 'string' || !value.sessionGeneration
+    || typeof value.createdAt !== 'string') throw coordinatorError('TASK_SCOPE_CLAIM_INVALID', 'Invalid stored writer.');
+  const run = normalizeRunScope(value.run);
+  const task = normalizeTaskReference({ kind: 'ledger', taskNodeId: value.taskNodeId });
+  if (run.scope.workspaceId !== workspaceId || run.scope.sessionKey !== sessionKey || task.kind !== 'ledger') {
+    throw coordinatorError('TASK_SCOPE_CLAIM_INVALID', 'Stored writer scope does not match its owner.');
+  }
+  const credential = value.credential;
+  if (credential !== undefined && (!isRecord(credential) || credential.taskNodeId !== task.taskNodeId
+    || credential.sessionKey !== sessionKey || credential.generation !== value.sessionGeneration
+    || typeof credential.epoch !== 'number' || !Number.isSafeInteger(credential.epoch) || credential.epoch < 1)) {
+    throw coordinatorError('TASK_SCOPE_CLAIM_INVALID', 'Stored execution credential does not match its owner.');
+  }
+  return { id: value.id, run, taskNodeId: task.taskNodeId, sessionGeneration: value.sessionGeneration, createdAt: value.createdAt,
+    ...(isRecord(credential) ? { credential: { taskNodeId: task.taskNodeId, sessionKey: run.scope.sessionKey,
+      generation: value.sessionGeneration, epoch: credential.epoch as number } } : {}) };
+}
+
 function normalizeCoordinatorBindings(
   value: unknown,
   workspaceId: string,
@@ -271,6 +302,8 @@ function normalizeCoordinatorBindings(
       sessionKey,
       sessionGeneration: typeof candidate.sessionGeneration === 'string' ? candidate.sessionGeneration : null,
       taskLedgerReferences: refs,
+      ...(typeof candidate.activeTaskNodeId === 'string' ? { activeTaskNodeId: candidate.activeTaskNodeId } : {}),
+      ...(candidate.writerClaim ? { writerClaim: normalizeWriterClaim(candidate.writerClaim, workspaceId, sessionKey) } : {}),
       environment: {
         kind: environment.kind,
         canonicalRoot: environment.canonicalRoot,
@@ -433,10 +466,30 @@ async function readDocument(): Promise<WorkspaceStoreDocument> {
   };
 }
 
-async function writeDocument(document: WorkspaceStoreDocument): Promise<void> {
+async function writeDocument(document: WorkspaceStoreDocument, coordinatorMutation = false,
+  handoffTransfer?: { workspaceId?: string | null; agentId: string; sourceSessionKey: string; sessionKey: string }): Promise<void> {
   const store = await getWorkspaceStore();
-  store.set('profiles', document.profiles);
-  store.set('activeWorkspaceId', document.activeWorkspaceId);
+  // A UI-state save may have read before a writer claim was issued. Only the
+  // serialized coordinator owner replaces its own fields.
+  const current = (store.get('profiles') ?? []) as WorkspaceProfile[];
+  const profiles = coordinatorMutation ? current.map((profile) => {
+    const updated = document.profiles.find((entry) => entry.id === profile.id);
+    if (!updated) return profile;
+    const priorAgent = handoffTransfer && (!handoffTransfer.workspaceId || handoffTransfer.workspaceId === profile.id)
+      ? profile.agentBindings?.[handoffTransfer.agentId] : undefined;
+    return { ...profile, coordinatorBindings: updated.coordinatorBindings, handoffOperations: updated.handoffOperations,
+      projectCoordinatorSessionKey: handoffTransfer && profile.projectCoordinatorSessionKey === handoffTransfer.sourceSessionKey
+        ? handoffTransfer.sessionKey : updated.projectCoordinatorSessionKey,
+      ...(handoffTransfer && priorAgent?.sessionKey === handoffTransfer.sourceSessionKey ? { agentBindings: {
+        ...profile.agentBindings, [handoffTransfer.agentId]: { ...priorAgent, sessionKey: handoffTransfer.sessionKey },
+      } } : {}), updatedAt: Math.max(profile.updatedAt, updated.updatedAt) };
+  }) : document.profiles.map((profile) => {
+    const latest = current.find((entry) => entry.id === profile.id);
+    return latest ? { ...profile, coordinatorBindings: latest.coordinatorBindings, handoffOperations: latest.handoffOperations,
+      projectCoordinatorSessionKey: latest.projectCoordinatorSessionKey } : profile;
+  });
+  store.set('profiles', profiles);
+  if (!coordinatorMutation) store.set('activeWorkspaceId', document.activeWorkspaceId);
 }
 
 function toSnapshot(document: WorkspaceStoreDocument): WorkspaceSnapshot {
@@ -597,6 +650,56 @@ export async function getPersistedCoordinatorBinding(
   return binding?.workspaceId === workspaceId && binding.sessionKey === sessionKey ? binding : null;
 }
 
+export async function readWorkspaceHandoffOperation(input: {
+  workspaceId: string; sessionKey: string; operationId?: string;
+}): Promise<SessionHandoffOperation | null> {
+  const document = await readDocument();
+  const profile = document.profiles.find((entry) => entry.id === input.workspaceId);
+  const operations = Object.values(profile?.handoffOperations ?? {}).filter((operation) =>
+    operation.workspaceId === input.workspaceId
+    && (operation.sourceSessionKey === input.sessionKey || operation.sessionKey === input.sessionKey)
+    && (!input.operationId || operation.id === input.operationId));
+  return operations.toSorted((left, right) => right.createdAt.localeCompare(left.createdAt))[0] ?? null;
+}
+
+export async function updateWorkspaceHandoffOperation(
+  workspaceId: string,
+  operationId: string,
+  update: (current: SessionHandoffOperation | null) => SessionHandoffOperation,
+): Promise<SessionHandoffOperation> {
+  return withCoordinatorMutationLock(async () => {
+    const document = await readDocument();
+    const profile = document.profiles.find((entry) => entry.id === workspaceId);
+    if (!profile) throw new Error('HANDOFF_WORKSPACE_MISSING');
+    const current = profile.handoffOperations?.[operationId] ?? null;
+    const next = update(current);
+    if (next.id !== operationId || next.workspaceId !== workspaceId
+      || (current && (current.sourceSessionKey !== next.sourceSessionKey || current.sourceGeneration !== next.sourceGeneration
+        || current.sessionKey !== next.sessionKey || current.firstSendIdempotencyKey !== next.firstSendIdempotencyKey))) {
+      throw new Error('HANDOFF_OPERATION_SCOPE_MISMATCH');
+    }
+    const updated = { ...next, updatedAt: new Date().toISOString() };
+    await writeDocument(updateWorkspaceProfile(document, workspaceId, (entry) => ({
+      ...entry, handoffOperations: { ...entry.handoffOperations, [operationId]: updated },
+    })), true);
+    return updated;
+  });
+}
+
+export async function beginWorkspaceHandoffSend(input: {
+  workspaceId: string; sessionKey: string; operationId: string; idempotencyKey: string; draftInput: string; requestDigest: string;
+}): Promise<SessionHandoffOperation> {
+  return updateWorkspaceHandoffOperation(input.workspaceId, input.operationId, (current) => {
+    if (!current || current.sessionKey !== input.sessionKey || current.firstSendIdempotencyKey !== input.idempotencyKey
+      || current.draftDigest !== createHash('sha256').update(input.draftInput).digest('hex')) throw new Error('HANDOFF_SEND_SCOPE_MISMATCH');
+    if (!/^[a-f0-9]{64}$/.test(input.requestDigest)
+      || (current.firstSendRequestDigest && current.firstSendRequestDigest !== input.requestDigest)) throw new Error('HANDOFF_SEND_PAYLOAD_CHANGED');
+    if ((current.phase === 'accepted' || current.phase === 'sent') && current.receipt) return current;
+    if (current.phase !== 'ready' && current.phase !== 'failed') throw new Error('HANDOFF_DELIVERY_REQUIRES_RECONCILIATION');
+    return { ...current, firstSendRequestDigest: input.requestDigest, phase: 'sending', error: null };
+  });
+}
+
 export async function materializeCoordinatorSessionGeneration(input: {
   workspaceId: string;
   sessionKey: string;
@@ -642,8 +745,10 @@ type WorkspacesApiContext = {
   gitApi?: {
     status: CompleteHostServiceRegistry['git']['status'];
     worktrees: CompleteHostServiceRegistry['git']['worktrees'];
+    statusForWorkspace?: (workspace: WorkspaceProfile) => ReturnType<CompleteHostServiceRegistry['git']['status']>;
+    worktreesForWorkspace?: (workspace: WorkspaceProfile) => ReturnType<CompleteHostServiceRegistry['git']['worktrees']>;
   };
-  taskLedgerApi?: Pick<CompleteHostServiceRegistry['taskLedger'], 'snapshot'>;
+  taskLedgerApi?: Pick<CompleteHostServiceRegistry['taskLedger'], 'snapshot'> & Partial<Pick<CompleteHostServiceRegistry['taskLedger'], 'appendEvents'>>;
 };
 
 async function syncWorkspacePermissionBestEffort(): Promise<void> {
@@ -780,15 +885,18 @@ async function resolveCoordinatorEnvironment(
     ? selection.setupProfile.trim().slice(0, 160)
     : null;
   if (selection.kind === 'local') {
-    if (!isSamePath(rootPath, profile.rootPath)) {
+    if (!isSamePath(await realpath(rootPath), await realpath(profile.rootPath))) {
       throw coordinatorError('COORDINATOR_ENVIRONMENT_SCOPE_MISMATCH', 'A local environment must be the bound workspace root.');
     }
     if (!ctx.gitApi) {
       throw coordinatorError('COORDINATOR_GIT_OWNER_UNAVAILABLE', 'Git owner is unavailable.');
     }
-    const status = await ctx.gitApi.status();
+    const status = await (ctx.gitApi.statusForWorkspace?.(profile) ?? ctx.gitApi.status());
     if (!status.success) {
       throw coordinatorError('COORDINATOR_ENVIRONMENT_UNAVAILABLE', status.error ?? 'Could not read local checkout status.');
+    }
+    if (!isSamePath(await realpath(status.status.workspaceRoot), await realpath(rootPath))) {
+      throw coordinatorError('COORDINATOR_ENVIRONMENT_SCOPE_MISMATCH', 'Git returned another workspace root.');
     }
     return {
       kind: 'local',
@@ -802,7 +910,7 @@ async function resolveCoordinatorEnvironment(
   if (!ctx.gitApi) {
     throw coordinatorError('COORDINATOR_GIT_OWNER_UNAVAILABLE', 'Git owner is unavailable.');
   }
-  const listed = await ctx.gitApi.worktrees();
+  const listed = await (ctx.gitApi.worktreesForWorkspace?.(profile) ?? ctx.gitApi.worktrees());
   if (!listed.success) {
     throw coordinatorError('COORDINATOR_ENVIRONMENT_UNAVAILABLE', listed.error ?? 'Could not list managed worktrees.');
   }
@@ -855,6 +963,7 @@ async function persistCoordinatorBinding(
   workspaceId: string,
   sessionKey: string,
   updater: (current: WorkspaceCoordinatorBinding | undefined, profile: WorkspaceProfile) => WorkspaceCoordinatorBinding,
+  projectEntry = false,
 ): Promise<WorkspaceCoordinatorBinding> {
   const document = await readDocument();
   let persisted: WorkspaceCoordinatorBinding | null = null;
@@ -863,6 +972,7 @@ async function persistCoordinatorBinding(
     persisted = updater(current, profile);
     return {
       ...profile,
+      ...(projectEntry && !profile.projectCoordinatorSessionKey ? { projectCoordinatorSessionKey: sessionKey } : {}),
       coordinatorBindings: {
         ...(profile.coordinatorBindings ?? {}),
         [sessionKey]: persisted,
@@ -870,7 +980,7 @@ async function persistCoordinatorBinding(
       updatedAt: Date.now(),
     };
   });
-  await writeDocument(nextDocument);
+  await writeDocument(nextDocument, true);
   return persisted!;
 }
 
@@ -1065,7 +1175,11 @@ async function applyCoordinatorLifecycle(
     const bindings = { ...(profile.coordinatorBindings ?? {}) };
     if (event.type === 'handoff') {
       const source = bindings[event.sourceSessionKey];
-      if (!source) return profile;
+      if (!source) {
+        if (profile.projectCoordinatorSessionKey === event.sourceSessionKey
+          || profile.agentBindings?.[event.agentId]?.sessionKey === event.sourceSessionKey) changed = true;
+        return profile;
+      }
       if (source.agentId !== event.agentId || sessionAgentId(event.sessionKey) !== event.agentId) {
         throw coordinatorError('COORDINATOR_HANDOFF_SCOPE_MISMATCH', 'Handoff source and child must share the bound agent.');
       }
@@ -1080,6 +1194,7 @@ async function applyCoordinatorLifecycle(
       bindings[event.sessionKey] = {
         ...source,
         sessionKey: event.sessionKey,
+        writerClaim: undefined,
         sessionGeneration: null,
         state: 'active',
         invalidationReason: null,
@@ -1089,7 +1204,11 @@ async function applyCoordinatorLifecycle(
         taskLedgerReferences: source.taskLedgerReferences.map((reference) => ({ ...reference })),
         environment: { ...source.environment },
       };
-      return { ...profile, coordinatorBindings: bindings, updatedAt: Date.now() };
+      const agentBinding = profile.agentBindings?.[event.agentId];
+      return { ...profile, coordinatorBindings: bindings,
+        ...(agentBinding?.sessionKey === event.sourceSessionKey ? { agentBindings: {
+          ...profile.agentBindings, [event.agentId]: { ...agentBinding, sessionKey: event.sessionKey },
+        } } : {}), updatedAt: Date.now() };
     }
     const binding = bindings[event.sessionKey];
     if (!binding) return profile;
@@ -1111,15 +1230,227 @@ async function applyCoordinatorLifecycle(
     };
     return { ...profile, coordinatorBindings: bindings, updatedAt: Date.now() };
   });
-  if (changed) await writeDocument({ ...document, profiles });
+  if (changed) await writeDocument({ ...document, profiles }, true, event.type === 'handoff' ? event : undefined);
+}
+
+type TaskScopeRunState = {
+  runId: string;
+  sessionKey: string;
+  sessionGeneration: string;
+  currentGeneration: string | null;
+  workspaceId: string | null;
+  active: boolean;
+  quiescent: boolean;
+  inFlightEffects: number;
+  delegation?: { parentSessionKey: string; parentGeneration: string; workspaceDir: string | null; taskReference?: SessionTaskRequesterReference | null } | null;
+  scheduled?: { jobId: string; workspaceDir: string; coordinator?: { workspaceId: string; sessionKey: string; generation: string; taskNodeId?: string } };
+};
+
+async function readTaskScopeRun(ctx: WorkspacesApiContext, input: {
+  runId: string; sessionKey: string; sessionGeneration: string; processScope?: 'session';
+}): Promise<TaskScopeRunState> {
+  if (!ctx.gatewayManager) throw new Error('TASK_SCOPE_GATEWAY_UNAVAILABLE');
+  const state = await ctx.gatewayManager.rpc<TaskScopeRunState>('taskScope.runState', input, 10_000);
+  if (state?.runId !== input.runId || state.sessionKey !== input.sessionKey
+    || state.sessionGeneration !== input.sessionGeneration) throw new Error('TASK_SCOPE_RUN_MISMATCH');
+  return state;
+}
+
+async function admitSessionTaskEffect(ctx: WorkspacesApiContext, raw: SessionTaskEffectRequest): Promise<SessionTaskEffectAdmission> {
+  const request = parseSessionTaskEffectRequest(raw);
+  const live = await readTaskScopeRun(ctx, request);
+  if (!live.active || live.currentGeneration !== request.sessionGeneration) throw new Error('TASK_SCOPE_RUN_STALE');
+  const document = await readDocument();
+  const candidates = document.profiles.filter((profile) => {
+    const parent = live.delegation ? profile.coordinatorBindings?.[live.delegation.parentSessionKey] : null;
+    const explicit = profile.activeSessionKey === request.sessionKey
+      || Object.hasOwn(profile.sessionStates ?? {}, request.sessionKey)
+      || Object.hasOwn(profile.coordinatorBindings ?? {}, request.sessionKey)
+      || Object.values(profile.agentBindings ?? {}).some((binding) => binding.sessionKey === request.sessionKey)
+      || Boolean(parent && parent.sessionGeneration === live.delegation?.parentGeneration)
+      || Boolean(live.scheduled && profile.agentId === sessionAgentId(request.sessionKey)
+        && isSamePath(profile.rootPath, live.scheduled.workspaceDir));
+    return explicit && (!live.workspaceId || profile.id === live.workspaceId);
+  });
+  if (candidates.length !== 1) throw new Error('TASK_SCOPE_WORKSPACE_UNAVAILABLE');
+  const profile = candidates[0];
+  if (live.scheduled?.coordinator) {
+    const scheduled = live.scheduled.coordinator;
+    const binding = profile.coordinatorBindings?.[scheduled.sessionKey];
+    if (!binding || binding.state !== 'active' || binding.workspaceId !== scheduled.workspaceId
+      || binding.sessionGeneration !== scheduled.generation) throw new Error('TASK_SCOPE_SCHEDULE_STALE');
+    const current = await ctx.gatewayManager!.rpc<CoordinatorSessionDescription>('sessions.describe', { key: scheduled.sessionKey }, 15_000);
+    if (current.session?.sessionId !== scheduled.generation) throw new Error('TASK_SCOPE_SCHEDULE_STALE');
+  }
+  if (profile.archivedSessionKeys?.includes(request.sessionKey)) throw new Error('TASK_SCOPE_SESSION_ARCHIVED');
+  const existing = profile.coordinatorBindings?.[request.sessionKey];
+  const admittedBeforePause = existing?.state === 'paused' && existing.invalidationReason === 'user-paused'
+    && existing.writerClaim?.run.runId === request.runId && existing.writerClaim.sessionGeneration === request.sessionGeneration;
+  if (existing && existing.state !== 'active' && !admittedBeforePause) throw new Error('TASK_SCOPE_BINDING_NOT_READY');
+  if (existing?.sessionGeneration && existing.sessionGeneration !== request.sessionGeneration) throw new Error('TASK_SCOPE_GENERATION_STALE');
+  if (request.expectedClaimId && request.expectedClaimId !== existing?.writerClaim?.id) throw new Error('TASK_SCOPE_WRITER_FENCED');
+  const taskOrigin = live.delegation?.taskReference;
+  if (taskOrigin && (typeof taskOrigin.taskRef !== 'string' || !taskOrigin.taskRef.trim()
+    || taskOrigin.coordinator.workspaceId !== profile.id || taskOrigin.coordinator.sessionKey !== live.delegation?.parentSessionKey
+    || taskOrigin.coordinator.sessionGeneration !== live.delegation?.parentGeneration)) throw new Error('TASK_SCOPE_PARENT_TASK_MISMATCH');
+  const delegatedParentTask = taskOrigin?.taskRef ?? live.scheduled?.coordinator?.taskNodeId;
+  const delegatedRoot = live.delegation?.workspaceDir;
+  const root = await realpath(existing?.environment.canonicalRoot ?? delegatedRoot ?? profile.rootPath);
+  if (!isSamePath(root, await realpath(request.projectWorkspaceDir ?? request.workspaceDir))) throw new Error('TASK_SCOPE_WORKSPACE_MISMATCH');
+  if (!ctx.taskLedgerApi?.appendEvents) throw new Error('TASK_SCOPE_LEDGER_UNAVAILABLE');
+  const result = await ctx.taskLedgerApi.snapshot({ workspaceId: profile.id });
+  if (!result.success || result.snapshot.workspaceId !== normalizeTaskLedgerWorkspaceId(profile.id)
+    || result.snapshot.warnings.length) throw new Error('TASK_SCOPE_LEDGER_UNAVAILABLE');
+  const snapshot = result.snapshot;
+  if (delegatedParentTask && !snapshot.nodes.some((node) => node.id === delegatedParentTask && node.kind === 'task')) throw new Error('TASK_SCOPE_PARENT_TASK_MISSING');
+  const parentSession = live.delegation?.parentSessionKey ?? live.scheduled?.coordinator?.sessionKey;
+  const parentGeneration = live.delegation?.parentGeneration ?? live.scheduled?.coordinator?.generation;
+  if (delegatedParentTask && !snapshot.sessionLinks.some((link) => link.sessionKey === parentSession
+    && link.nodeId === delegatedParentTask && (!link.sessionGeneration || link.sessionGeneration === parentGeneration))) throw new Error('TASK_SCOPE_PARENT_TASK_LINK_STALE');
+  const links = snapshot.sessionLinks.filter((link) => link.sessionKey === request.sessionKey && link.nodeId);
+  const currentLinks = links.filter((link) => !link.sessionGeneration || link.sessionGeneration === request.sessionGeneration);
+  const businessLinks = currentLinks.filter((link) => snapshot.nodes.some((node) => node.id === link.nodeId && node.kind === 'task'));
+  const { readManagedSessionEffect, startManagedSessionEffect } = await import('./task-system-service');
+  const managedTask = readManagedSessionEffect({ workspaceRoot: root, sessionKey: request.sessionKey,
+    generation: request.sessionGeneration, fallbackTaskNodeId: existing?.activeTaskNodeId });
+  const selectedIds = managedTask ? [managedTask.contract.taskNodeId] : existing?.activeTaskNodeId ? [existing.activeTaskNodeId]
+    : existing ? existing.taskLedgerReferences.map((ref) => ref.taskLedgerNodeId)
+      : [...new Set(businessLinks.map((link) => link.nodeId!))];
+  if (selectedIds.length > 1) throw new Error('TASK_SCOPE_TASK_SELECTION_REQUIRED');
+  const taskNodeId = selectedIds[0];
+  const agentId = sessionAgentId(request.sessionKey);
+  if (!agentId) throw new Error('TASK_SCOPE_AGENT_MISSING');
+  const now = new Date().toISOString();
+  const run = normalizeRunScope({ runId: request.runId, scope: { workspaceId: profile.id, sessionKey: request.sessionKey } });
+  if (taskNodeId) {
+    const node = snapshot.nodes.find((entry) => entry.id === taskNodeId);
+    if (!node || node.kind !== 'task') throw new Error('TASK_SCOPE_TASK_NOT_FOUND');
+    if (!currentLinks.some((link) => link.nodeId === taskNodeId)) throw new Error('TASK_SCOPE_TASK_LINK_STALE');
+  } else throw new Error('TASK_CLAIM_REQUIRED');
+  const otherWriters = Object.values(profile.coordinatorBindings ?? {}).filter((binding) => {
+    const claim = binding.writerClaim;
+    return claim?.taskNodeId === taskNodeId && (claim.run.runId !== request.runId
+      || claim.run.scope.sessionKey !== request.sessionKey || claim.sessionGeneration !== request.sessionGeneration);
+  });
+  for (const owner of otherWriters) {
+    const claim = owner.writerClaim!;
+    const credential = claim.credential;
+    if (credential && managedTask.claim && (credential.epoch !== managedTask.claim.epoch
+      || credential.sessionKey !== managedTask.claim.sessionKey || credential.generation !== managedTask.claim.generation)) continue;
+    const state = await readTaskScopeRun(ctx, { runId: claim.run.runId, sessionKey: owner.sessionKey, sessionGeneration: claim.sessionGeneration });
+    if (state.quiescent !== true) throw new Error('TASK_SCOPE_WRITER_BUSY');
+  }
+  const environment = existing?.environment ?? await resolveCoordinatorEnvironment(ctx, profile, {
+    kind: isSamePath(await realpath(profile.rootPath), root) ? 'local' : 'managed-worktree', rootPath: root,
+  });
+  if (existing && !(await validateStoredCoordinatorEnvironment(ctx, profile, existing)).ok) {
+    throw new Error('TASK_SCOPE_ENVIRONMENT_STALE');
+  }
+  const rechecked = await readTaskScopeRun(ctx, request);
+  if (!rechecked.active || rechecked.currentGeneration !== request.sessionGeneration) throw new Error('TASK_SCOPE_RUN_STALE');
+  const confirmedTask = startManagedSessionEffect({ workspaceRoot: root, sessionKey: request.sessionKey,
+    generation: request.sessionGeneration, taskNodeId, requestId: `session-effect:${request.sessionKey}:${request.sessionGeneration}:${request.runId}`,
+    expectedContract: { revision: managedTask.contract.revision, digest: managedTask.contract.digest } });
+  if (!confirmedTask.claim || confirmedTask.contract.taskNodeId !== taskNodeId) throw new Error('TASK_SCOPE_TASK_SWITCH_BLOCKED');
+  if (request.expectedClaimId && request.expectedClaimId !== confirmedTask.claim.attemptId) throw new Error('TASK_SCOPE_CLAIM_STALE');
+  for (const owner of otherWriters) {
+    if (owner.sessionKey === request.sessionKey) continue;
+    await persistCoordinatorBinding(profile.id, owner.sessionKey, (current) => ({
+      ...current!, writerClaim: undefined, bindingRevision: current!.bindingRevision + 1, updatedAt: now,
+    }));
+  }
+  const sameWriter = existing?.writerClaim?.run.runId === request.runId
+    && existing.writerClaim.sessionGeneration === request.sessionGeneration
+    && existing.writerClaim.id === confirmedTask.claim.attemptId;
+  const task = normalizeTaskReference({ kind: 'ledger', taskNodeId });
+  if (task.kind !== 'ledger') throw new Error('TASK_SCOPE_TASK_NOT_FOUND');
+  const claim: SessionTaskWriterClaim = sameWriter ? existing!.writerClaim! : {
+    id: confirmedTask.claim.attemptId, taskNodeId: task.taskNodeId, run, sessionGeneration: request.sessionGeneration, createdAt: now,
+    credential: { taskNodeId: confirmedTask.claim.taskNodeId, sessionKey: confirmedTask.claim.sessionKey,
+      generation: confirmedTask.claim.generation, epoch: confirmedTask.claim.epoch },
+  };
+  if (claim.taskNodeId !== taskNodeId) throw new Error('TASK_SCOPE_TASK_SWITCH_BLOCKED');
+  const linkId = createHash('sha256').update(JSON.stringify([taskNodeId, request.sessionKey, request.sessionGeneration])).digest('hex');
+  await ctx.taskLedgerApi.appendEvents({ workspaceId: profile.id, idempotencyKey: `execution-link:${linkId}`, events: [{
+    id: `execution-link:${linkId}`, type: 'session_linked', actor: 'system', taskId: taskNodeId, sessionId: request.sessionKey,
+    payload: { sessionLink: { id: `execution-link:${linkId}`, nodeId: taskNodeId, sessionKey: request.sessionKey,
+      sessionGeneration: request.sessionGeneration, agentId, relation: 'related',
+      createdAt: new Date(confirmedTask.contract.createdAt).toISOString() } },
+  }] });
+  const binding = await persistCoordinatorBinding(profile.id, request.sessionKey, () => ({
+    schemaVersion: 1, workspaceId: profile.id, agentId, sessionKey: request.sessionKey,
+    sessionGeneration: request.sessionGeneration, activeTaskNodeId: taskNodeId,
+    taskLedgerReferences: [createTaskLedgerReference({ taskLedgerNodeId: taskNodeId, source: 'runtime' })],
+    environment, writerClaim: claim, archiveRestorePolicy: existing?.archiveRestorePolicy ?? 'restore',
+    state: admittedBeforePause ? 'paused' : 'active', bindingRevision: sameWriter ? existing!.bindingRevision : (existing?.bindingRevision ?? 0) + 1,
+    invalidationReason: admittedBeforePause ? 'user-paused' : null, createdAt: existing?.createdAt ?? now, updatedAt: now,
+  }), !live.delegation && !live.scheduled);
+  return { status: 'granted', claim, bindingRevision: binding.bindingRevision };
 }
 
 export function createWorkspacesApi(
   ctx: WorkspacesApiContext = {},
 ): CompleteHostServiceRegistry['workspaces'] & {
   coordinatorLifecycle: WorkspaceCoordinatorLifecycleObserver;
+  admitTaskEffect: (request: SessionTaskEffectRequest) => Promise<SessionTaskEffectAdmission>;
 } {
   return {
+    selectSessionTask: (payload: WorkspaceSessionTaskSelectPayload) => withCoordinatorMutationLock(async () => {
+      const workspaceId = requireNonEmptyString(payload.workspaceId, 'workspaceId');
+      const sessionKey = requireNonEmptyString(payload.sessionKey, 'sessionKey');
+      const taskRef = normalizeTaskReference({ kind: 'ledger', taskNodeId: payload.taskNodeId });
+      if (taskRef.kind !== 'ledger') throw new Error('TASK_SCOPE_TASK_NOT_FOUND');
+      const document = await readDocument();
+      const profile = document.profiles.find((entry) => entry.id === workspaceId);
+      if (!profile || document.activeWorkspaceId !== workspaceId) throw new Error('TASK_SCOPE_WORKSPACE_UNAVAILABLE');
+      const associated = profile.activeSessionKey === sessionKey || Object.hasOwn(profile.sessionStates ?? {}, sessionKey)
+        || Object.hasOwn(profile.coordinatorBindings ?? {}, sessionKey)
+        || Object.values(profile.agentBindings ?? {}).some((binding) => binding.sessionKey === sessionKey);
+      if (!associated || !ctx.taskLedgerApi?.appendEvents || !ctx.gatewayManager) throw new Error('TASK_SCOPE_OWNER_UNAVAILABLE');
+      const existing = profile.coordinatorBindings?.[sessionKey];
+      if (payload.expectedRevision !== undefined && payload.expectedRevision !== (existing?.bindingRevision ?? 0)) throw new Error('COORDINATOR_REVISION_CONFLICT');
+      const read = await ctx.taskLedgerApi.snapshot({ workspaceId });
+      if (!read.success || read.snapshot.workspaceId !== normalizeTaskLedgerWorkspaceId(workspaceId)
+        || read.snapshot.warnings.length || !read.snapshot.nodes.some((node) => node.id === taskRef.taskNodeId && node.kind === 'task')) throw new Error('TASK_SCOPE_TASK_NOT_FOUND');
+      const agentId = sessionAgentId(sessionKey);
+      if (!agentId) throw new Error('TASK_SCOPE_AGENT_MISSING');
+      let described = await ctx.gatewayManager.rpc<CoordinatorSessionDescription>('sessions.describe', { key: sessionKey }, 15_000);
+      if (!described.session && !payload.expectedSessionGeneration) {
+        await ctx.gatewayManager.rpc('sessions.create', { key: sessionKey, agentId }, 30_000);
+        described = await ctx.gatewayManager.rpc('sessions.describe', { key: sessionKey }, 15_000);
+      }
+      const generation = described.session?.sessionId;
+      if (!generation || (payload.expectedSessionGeneration && payload.expectedSessionGeneration !== generation)) throw new Error('TASK_SCOPE_GENERATION_STALE');
+      if (described.session?.hasActiveRun || described.session?.status === 'running') throw new Error('TASK_SCOPE_TASK_SWITCH_BLOCKED');
+      const writer = await readTaskScopeRun(ctx, {
+        runId: existing?.writerClaim?.run.runId ?? `task-selection:${sessionKey}`,
+        sessionKey, sessionGeneration: existing?.writerClaim?.sessionGeneration ?? generation,
+        processScope: 'session',
+      });
+      if (!writer.quiescent) throw new Error('TASK_SCOPE_WRITER_BUSY');
+      if (existing && !(await validateStoredCoordinatorEnvironment(ctx, profile, existing)).ok) throw new Error('TASK_SCOPE_ENVIRONMENT_STALE');
+      const environment = existing?.environment ?? await resolveCoordinatorEnvironment(ctx, profile, { kind: 'local', rootPath: profile.rootPath });
+      const now = new Date().toISOString();
+      const linkId = createHash('sha256').update(JSON.stringify([workspaceId, sessionKey, generation, taskRef.taskNodeId])).digest('hex');
+      const rechecked = await ctx.gatewayManager.rpc<CoordinatorSessionDescription>('sessions.describe', { key: sessionKey }, 15_000);
+      if (rechecked.session?.sessionId !== generation || rechecked.session?.hasActiveRun) throw new Error('TASK_SCOPE_GENERATION_STALE');
+      const { selectManagedSessionTask } = await import('./task-system-service');
+      selectManagedSessionTask({ workspaceRoot: environment.canonicalRoot, taskNodeId: taskRef.taskNodeId,
+        sessionKey, generation, requestId: `task-selection:${linkId}` });
+      await ctx.taskLedgerApi.appendEvents({ workspaceId, idempotencyKey: `task-selection:${linkId}`, events: [{
+        id: `task-selection:${linkId}`, type: 'session_linked', actor: 'system', taskId: taskRef.taskNodeId, sessionId: sessionKey,
+        payload: { sessionLink: { id: `task-selection:${linkId}`, nodeId: taskRef.taskNodeId, sessionKey, sessionGeneration: generation, agentId, relation: 'related', createdAt: now } },
+      }] });
+      const binding = await persistCoordinatorBinding(workspaceId, sessionKey, () => ({
+        schemaVersion: 1, workspaceId, agentId, sessionKey, sessionGeneration: generation,
+        taskLedgerReferences: [createTaskLedgerReference({ taskLedgerNodeId: taskRef.taskNodeId, source: 'runtime' })],
+        activeTaskNodeId: taskRef.taskNodeId, environment, state: existing?.state === 'paused' ? 'paused' : 'active',
+        archiveRestorePolicy: existing?.archiveRestorePolicy ?? 'restore', bindingRevision: (existing?.bindingRevision ?? 0) + 1,
+        invalidationReason: existing?.state === 'paused' ? existing.invalidationReason : null,
+        createdAt: existing?.createdAt ?? now, updatedAt: now,
+      }));
+      return coordinatorResult(binding, coordinatorRecovery(binding.state === 'paused' ? 'paused' : 'ready', binding.invalidationReason, binding));
+    }),
     list: async () => {
       const document = await ensureDocumentWithDefault();
       return successSnapshot(document);
@@ -1157,6 +1488,7 @@ export function createWorkspacesApi(
         agentId,
         selectedAgentId: agentId,
         activeSessionKey,
+        ...(typeof body.activeSessionKey === 'string' && body.activeSessionKey.trim() ? { projectCoordinatorSessionKey: activeSessionKey } : {}),
         agentBindings: {
           [agentId]: createAgentBinding(id, agentId, activeSessionKey),
         },
@@ -1371,7 +1703,9 @@ export function createWorkspacesApi(
       const index = document.profiles.findIndex((profile) => profile.id === id);
       if (index === -1) throw new Error(`Workspace "${id}" not found`);
       const current = document.profiles[index];
-      const selectedAgentId = current.selectedAgentId || current.agentId;
+      const selectedAgentId = typeof body.activeSessionKey === 'string'
+        ? sessionAgentId(body.activeSessionKey) ?? current.selectedAgentId ?? current.agentId
+        : current.selectedAgentId || current.agentId;
       const activeSessionKey = body.activeSessionKey === undefined
         ? current.activeSessionKey
         : normalizeSessionKey(body.activeSessionKey, selectedAgentId);
@@ -1565,10 +1899,26 @@ export function createWorkspacesApi(
         || existing!.environment.branch !== environment.branch
         || existing!.environment.detachedHead !== environment.detachedHead
       );
-      if (environmentChanged && (session.hasActiveRun || session.status === 'running')) {
-        throw coordinatorError('COORDINATOR_BINDING_SWITCH_BLOCKED', 'A running session cannot switch to another environment.');
+      const tasksChanged = Boolean(existing) && JSON.stringify(existing!.taskLedgerReferences.map((ref) => ref.taskLedgerNodeId))
+        !== JSON.stringify(taskLedgerReferences.map((ref) => ref.taskLedgerNodeId));
+      if ((environmentChanged || tasksChanged) && (session.hasActiveRun || session.status === 'running')) {
+        throw coordinatorError('COORDINATOR_BINDING_SWITCH_BLOCKED', 'A running session cannot switch environment or task.');
+      }
+      if (environmentChanged || tasksChanged) {
+        const writer = await readTaskScopeRun(ctx, {
+          runId: existing?.writerClaim?.run.runId ?? `binding-selection:${input.sessionKey}`,
+          sessionKey: input.sessionKey, sessionGeneration: existing?.writerClaim?.sessionGeneration ?? session.sessionId,
+          processScope: 'session',
+        });
+        if (!writer.quiescent) throw new Error('TASK_SCOPE_TASK_SWITCH_BLOCKED');
       }
       const now = new Date().toISOString();
+      if (taskLedgerReferences.length === 1) {
+        const { selectManagedSessionTask } = await import('./task-system-service');
+        selectManagedSessionTask({ workspaceRoot: environment.canonicalRoot, sessionKey: input.sessionKey,
+          generation: session.sessionId, taskNodeId: taskLedgerReferences[0].taskLedgerNodeId,
+          requestId: `coordinator-selection:${input.sessionKey}:${session.sessionId}:${(existing?.bindingRevision ?? 0) + 1}` });
+      }
       const binding: WorkspaceCoordinatorBinding = {
         schemaVersion: 1,
         workspaceId: input.workspaceId,
@@ -1576,6 +1926,8 @@ export function createWorkspacesApi(
         sessionKey: input.sessionKey,
         sessionGeneration: session.sessionId,
         taskLedgerReferences,
+        ...(taskLedgerReferences.length === 1 ? { activeTaskNodeId: taskLedgerReferences[0].taskLedgerNodeId } : {}),
+        ...(!environmentChanged && !tasksChanged && existing?.writerClaim ? { writerClaim: existing.writerClaim } : {}),
         environment,
         archiveRestorePolicy: input.archiveRestorePolicy,
         state: 'active',
@@ -1586,13 +1938,14 @@ export function createWorkspacesApi(
       };
       const nextDocument = updateWorkspaceProfile(document, input.workspaceId, (current) => ({
         ...current,
+        projectCoordinatorSessionKey: current.projectCoordinatorSessionKey ?? input.sessionKey,
         coordinatorBindings: {
           ...(current.coordinatorBindings ?? {}),
           [input.sessionKey]: binding,
         },
         updatedAt: Date.now(),
       }));
-      await writeDocument(nextDocument);
+      await writeDocument(nextDocument, true);
       return coordinatorResult(binding, coordinatorRecovery('ready', null, binding));
     }),
     resolveCoordinator: (payload) => withCoordinatorMutationLock(() => resolveCoordinatorBinding(ctx, payload)),
@@ -1630,5 +1983,6 @@ export function createWorkspacesApi(
       return coordinatorResult(paused, coordinatorRecovery('paused', 'user-paused', paused));
     }),
     coordinatorLifecycle: (event) => withCoordinatorMutationLock(() => applyCoordinatorLifecycle(ctx, event)),
+    admitTaskEffect: (request) => withCoordinatorMutationLock(() => admitSessionTaskEffect(ctx, request)),
   };
 }

@@ -1,0 +1,168 @@
+{
+  "schema": "clawx.long-session.completion-continuation-e2e/v1",
+  "driven_by": "agent",
+  "actor": "clawx-e2e-agent",
+  "workspaceId": "default",
+  "rootPath": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-lrRonx\\verse-claw-e2e-home-nZa9RM\\.openclaw\\workspace",
+  "sessionKey": "agent:main:dashboard:38811104-96d2-4fc3-bb7e-10ead344ea1b",
+  "sessionGeneration": "39ec1b68-4c94-4252-8e37-008200bb80cd",
+  "taskRef": "699042fdff8c3a9bd699dbbd3dfa19af2aace9832ccfe4d58b59269eaf62c01e",
+  "taskLedgerStatusAfter": "todo",
+  "idempotencyKey": "delegation-admission-1794170859418",
+  "first": {
+    "status": "accepted",
+    "admissionId": "ac447ffa-7611-4518-8208-cf276f3eedf8",
+    "orchestrationRunId": "orch_864418a3-3dcb-4d43-a2d2-e54cc3884ac9",
+    "bindingRevision": 1,
+    "parentEnvironmentRevision": 1,
+    "budget": {
+      "status": "observed",
+      "reason": null,
+      "maxWorkers": 5,
+      "process": {
+        "maxChildrenPerAgent": 5,
+        "maxSpawnDepth": 1,
+        "source": "agents.defaults.subagents"
+      },
+      "backgroundTerminal": {
+        "lane": "subagent",
+        "maxConcurrent": 8,
+        "activeCount": 0,
+        "queuedCount": 0,
+        "source": "process.command-queue.subagent"
+      }
+    },
+    "children": [
+      {
+        "roleName": "architect",
+        "taskNodeId": "architect-1",
+        "roleInstanceId": "orch_864418a3-3dcb-4d43-a2d2-e54cc3884ac9:architect-1:architect:attempt-1",
+        "admissionStatus": "accepted",
+        "runState": "accepted-not-completed",
+        "completionObserved": false,
+        "backend": "subagent",
+        "childSessionKey": "agent:main:subagent:84766672-8235-4c39-90d7-759685d33eb3",
+        "childRunId": "9fbc8ccc-aaaf-494e-8227-6b2845137854",
+        "toolAuthorization": {
+          "status": "effective",
+          "source": "role-contract+parent-clamp",
+          "roleName": "architect",
+          "effectiveRoleName": "architect",
+          "parentRoleName": null,
+          "allowlist": [
+            "read",
+            "glob",
+            "grep"
+          ],
+          "denylist": [
+            "write",
+            "edit",
+            "apply_patch",
+            "undo_write",
+            "team_orchestrate",
+            "task_loop",
+            "mission_loop",
+            "exec",
+            "bash",
+            "__role_capability:mcp_write",
+            "web_search",
+            "web_fetch",
+            "x_search",
+            "code_execution",
+            "browser",
+            "__role_capability:mcp_network"
+          ],
+          "permissionDecisionCount": 16
+        },
+        "isolation": {
+          "mode": "shared",
+          "backend": "shared-inprocess",
+          "canonicalRoot": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-lrRonx\\verse-claw-e2e-home-nZa9RM\\.openclaw\\workspace",
+          "branch": null,
+          "detachedHead": false,
+          "verifiedCheckout": false
+        },
+        "schedulerWave": 1,
+        "error": null
+      }
+    ],
+    "completionObserved": false
+  },
+  "duplicate": {
+    "status": "accepted",
+    "replayed": true,
+    "orchestrationRunId": "orch_864418a3-3dcb-4d43-a2d2-e54cc3884ac9"
+  },
+  "restartRetry": {
+    "status": "accepted",
+    "replayed": true,
+    "orchestrationRunId": "orch_864418a3-3dcb-4d43-a2d2-e54cc3884ac9"
+  },
+  "staleGeneration": {
+    "status": "rejected",
+    "error": "Coordinator binding is generation-mismatch: session-generation-mismatch"
+  },
+  "unsupportedBackend": {
+    "status": "rejected",
+    "error": "Unsupported delegation backend: native-shell"
+  },
+  "unknownWorker": {
+    "status": "rejected",
+    "phantomChildCreated": false
+  },
+  "terminalBatch": {
+    "batchId": "orch_864418a3-3dcb-4d43-a2d2-e54cc3884ac9:agent:main:dashboard:38811104-96d2-4fc3-bb7e-10ead344ea1b:39ec1b68-4c94-4252-8e37-008200bb80cd",
+    "status": "terminal",
+    "outcome": "failed",
+    "generationState": "matching",
+    "consolidatedReceiptId": "orch_864418a3-3dcb-4d43-a2d2-e54cc3884ac9:agent:main:dashboard:38811104-96d2-4fc3-bb7e-10ead344ea1b:39ec1b68-4c94-4252-8e37-008200bb80cd:consolidated:v1",
+    "counts": {
+      "expected": 1,
+      "settled": 1,
+      "completed": 0,
+      "failed": 1,
+      "cancelled": 0,
+      "unknown": 0
+    },
+    "delivery": {
+      "state": "pending",
+      "delivered": 0,
+      "pending": 1,
+      "suspended": 0,
+      "failed": 0,
+      "discarded": 0,
+      "waitingForRequesterTurn": false
+    },
+    "members": [
+      {
+        "runId": "9fbc8ccc-aaaf-494e-8227-6b2845137854",
+        "childSessionKey": "agent:main:subagent:84766672-8235-4c39-90d7-759685d33eb3",
+        "roleName": "architect",
+        "status": "failed",
+        "deliveryStatus": "pending"
+      }
+    ]
+  },
+  "restartReplay": {
+    "batchId": "orch_864418a3-3dcb-4d43-a2d2-e54cc3884ac9:agent:main:dashboard:38811104-96d2-4fc3-bb7e-10ead344ea1b:39ec1b68-4c94-4252-8e37-008200bb80cd",
+    "status": "terminal",
+    "consolidatedReceiptId": "orch_864418a3-3dcb-4d43-a2d2-e54cc3884ac9:agent:main:dashboard:38811104-96d2-4fc3-bb7e-10ead344ea1b:39ec1b68-4c94-4252-8e37-008200bb80cd:consolidated:v1",
+    "members": [
+      {
+        "runId": "9fbc8ccc-aaaf-494e-8227-6b2845137854",
+        "childSessionKey": "agent:main:subagent:84766672-8235-4c39-90d7-759685d33eb3",
+        "roleName": "architect",
+        "status": "failed",
+        "deliveryStatus": "pending"
+      }
+    ]
+  },
+  "resetFence": {
+    "batchId": "orch_864418a3-3dcb-4d43-a2d2-e54cc3884ac9:agent:main:dashboard:38811104-96d2-4fc3-bb7e-10ead344ea1b:39ec1b68-4c94-4252-8e37-008200bb80cd",
+    "status": "fenced",
+    "outcome": "fenced",
+    "generationState": "mismatch",
+    "consolidatedReceiptId": null
+  },
+  "transport": "built Electron session.activitySnapshot -> persisted subagent registry batches -> existing generation-pinned delivery owner"
+}

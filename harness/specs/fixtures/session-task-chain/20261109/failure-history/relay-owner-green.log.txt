@@ -1,0 +1,106 @@
+
+ RUN  v4.1.1 D:/ClawX-work/session-task-unified-relay-20261109
+
+ ❯ tests/unit/session-task-scope-completion.test.ts (31 tests | 4 failed) 210168ms
+     × admits an owned child while the fenced parent run remains active 76517ms
+     × rejects missing and incomplete contracts without creating a Legacy business task 59770ms
+     ✓ starts a complete canonical contract through task_control without requiring a session bridge  21899ms
+     ✓ associates a live isolated scheduled run with its canonical contract without replacing the project coordinator  8227ms
+     ✓ uses a decomposed scheduled child contract under the recorded parent TaskRef  2566ms
+     ✓ rejects a missing scheduled coordinator before claiming another task  429ms
+     ✓ rejects a stale scheduled coordinator before claiming another task  379ms
+     ✓ rejects a paused scheduled coordinator before claiming another task 287ms
+     ✓ rejects an isolated schedule from another workspace or agent before creating a task 227ms
+     ✓ consumes a canonical business contract after a failed turn left a diagnostic deviation link  1140ms
+     ✓ selects an existing completed task and preserves its status and historical links  993ms
+     × uses the captured worker parent TaskRef with a real child contract despite a later parent selection 30117ms
+     ✓ pauses new dispatch while retaining the already admitted writer and workgroup ownership  408ms
+     ✓ keeps ten discussion/read turns empty, then reuses one canonical contract at the guarded effect boundary  743ms
+     ✓ rejects effects on a completed canonical task, including after owner reconstruction  561ms
+     ✓ rejects a Legacy done node without creating a canonical replacement or changing it to doing  393ms
+     ✓ keeps a Fork reference read-only until an explicit fresh canonical claim, then fences the old token  555ms
+     × does not release a live canonical claim because a new API instance or response settled 524ms
+     ✓ rejects an old claim after canonical epoch rotation even when the Workspace cache still has it  413ms
+     ✓ preserves writer fields across UI saves and transfers Handoff through the canonical epoch interface  998ms
+     ✓ rejects unknown session before writing a task 141ms
+     ✓ rejects wrong root before writing a task 173ms
+     ✓ rejects stale generation before writing a task 143ms
+     ✓ rejects forged claim before writing a task 129ms
+     ✓ rejects foreign workspace identity and a changed session generation without manufacturing a replacement 296ms
+     ✓ fences a generation change while admission is awaiting its final live owner read 184ms
+     ✓ leaves a selected task unclaimed when the final run check fails  301ms
+     ✓ requires explicit canonical selection for multiple links and rejects an external reference as a task  692ms
+     ✓ does not silently switch a running canonical task through coordinator rebinding  421ms
+     ✓ requires admission for unknown MCP effects and checks cancellation before execution 57ms
+     ✓ cancels an effect after Main admission without releasing or upgrading its canonical claim  478ms
+ ✓ tests/unit/sidebar-session-buckets.test.ts (11 tests) 18ms
+ ✓ tests/unit/durable-task-session-scope.test.ts (13 tests) 4793ms
+     ✓ retains task identity and writer exclusivity when runtime bootstrap initializes Git  2589ms
+     ✓ rejects conflicting stores after repository initialization  856ms
+     ✓ rejects a conflicting explicit task instead of reverting the selection  470ms
+ ✓ tests/unit/workspaces-store.test.ts (14 tests) 151ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/session-task-scope-completion.test.ts > first effect consumes the canonical execution contract > admits an owned child while the fenced parent run remains active
+Error: Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/unit/session-task-scope-completion.test.ts:130:3
+    128|
+    129| describe('first effect consumes the canonical execution contract', () …
+    130|   it('admits an owned child while the fenced parent run remains active…
+       |   ^
+    131|     const task = startTask();
+    132|     const parentClaim = await api().admitTaskEffect(request());
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/unit/session-task-scope-completion.test.ts > first effect consumes the canonical execution contract > rejects missing and incomplete contracts without creating a Legacy business task
+Error: Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/unit/session-task-scope-completion.test.ts:144:3
+    142|     expect(runs.get('run-parent')!.active).toBe(true);
+    143|   });
+    144|   it('rejects missing and incomplete contracts without creating a Lega…
+       |   ^
+    145|     const effect = vi.fn(async () => 'written');
+    146|     const context = { sessionKey: parent, sessionId: 'generation-paren…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/unit/session-task-scope-completion.test.ts > first effect consumes the canonical execution contract > uses the captured worker parent TaskRef with a real child contract despite a later parent selection
+Error: Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/unit/session-task-scope-completion.test.ts:253:3
+    251|     expect(tasks.get(task.id).contract.state).toBe('done');
+    252|   });
+    253|   it('uses the captured worker parent TaskRef with a real child contra…
+       |   ^
+    254|     const owner = api();
+    255|     const parentTask = startTask();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  tests/unit/session-task-scope-completion.test.ts > first effect consumes the canonical execution contract > does not release a live canonical claim because a new API instance or response settled
+AssertionError: expected [Function] to throw error including 'TASK_ALREADY_CLAIMED' but got 'TASK_SCOPE_WRITER_BUSY'
+
+Expected: "TASK_ALREADY_CLAIMED"
+Received: "TASK_SCOPE_WRITER_BUSY"
+
+ ❯ tests/unit/session-task-scope-completion.test.ts:378:47
+    376|     runs.set('run-child', { active: true, quiescent: false, generation…
+    377|     const second = request(child, 'run-child', 'generation-child');
+    378|     await expect(api().admitTaskEffect(second)).rejects.toThrow('TASK_…
+       |                                               ^
+    379|     await expect(api().admitTaskEffect(second)).rejects.toThrow('TASK_…
+    380|     expect(tasks.get(task.contract.taskNodeId).claim?.attemptId).toBe(…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  4 failed | 65 passed (69)
+   Start at  03:04:47
+   Duration  244.74s (transform 10.05s, setup 1.96s, import 14.20s, tests 215.13s, environment 8.22s)
+
+JSON report written to D:/tmp/unified-management-20261109/session-task-validation/relay-owner-green.tests.json

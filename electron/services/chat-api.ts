@@ -1,5 +1,8 @@
 import { access } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import type { GatewayManager } from '../gateway/manager';
+import { GatewayRpcError } from '../gateway/protocol';
+import { normalizeRunScope } from '@shared/types/identity-scope';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { logger } from '../utils/logger';
 import { handleMockChatSend } from './mock-provider';
@@ -12,7 +15,8 @@ import { evaluateTurnBudget } from '../../shared/agent-resource-limits';
 import { LONG_TASK_INPUT_MODES } from '../../shared/types/long-task-control';
 import { getSessionTokenUsageSummary } from '../utils/token-usage';
 import { computeWorkspaceFingerprint } from '@shared/workspace-fingerprint';
-import { getPersistedCoordinatorBinding, getWorkspaceRootPathById, materializeCoordinatorSessionGeneration } from './workspaces-api';
+import { getPersistedCoordinatorBinding, getWorkspaceRootPathById, materializeCoordinatorSessionGeneration,
+  beginWorkspaceHandoffSend, readWorkspaceHandoffOperation, updateWorkspaceHandoffOperation } from './workspaces-api';
 import type { WorkspaceCoordinatorBinding } from '@shared/types/workspace';
 import {
   buildLongSessionContinuityContext,
@@ -45,6 +49,8 @@ type ChatSendWithMediaPayload = {
   message?: unknown;
   deliver?: unknown;
   idempotencyKey?: unknown;
+  handoffOperationId?: unknown;
+  expectedSessionGeneration?: unknown;
   media?: unknown;
   inputMode?: unknown;
   knowledgeScope?: unknown;
@@ -373,7 +379,10 @@ function normalizeRuntimeIntensity(value: unknown): string | undefined {
   return typeof value === 'string' && RUNTIME_INTENSITY_VALUES.has(value) ? value : undefined;
 }
 
-export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManager }): CompleteHostServiceRegistry['chat'] {
+export function createChatApi({ gatewayManager, selectSessionTask }: {
+  gatewayManager: GatewayManager;
+  selectSessionTask?: CompleteHostServiceRegistry['workspaces']['selectSessionTask'];
+}): CompleteHostServiceRegistry['chat'] {
   return {
     continuityPreview: async (payload) => {
       const read = await readLongSessionContinuityContext({
@@ -414,6 +423,23 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
       }
 
       try {
+        if (typeof body.activeTaskNodeId === 'string' && body.activeTaskNodeId.trim()) {
+          const workspaceId = typeof body.workspaceId === 'string' ? body.workspaceId.trim() : '';
+          if (!workspaceId) throw new Error('TASK_SCOPE_WORKSPACE_UNAVAILABLE');
+          const binding = await getPersistedCoordinatorBinding(workspaceId, sessionKey);
+          const selected = binding?.activeTaskNodeId ?? (binding?.taskLedgerReferences.length === 1 ? binding.taskLedgerReferences[0].taskLedgerNodeId : null);
+          if (selected !== body.activeTaskNodeId) {
+            if (!selectSessionTask) throw new Error('TASK_SCOPE_SELECTION_OWNER_UNAVAILABLE');
+            await selectSessionTask({ workspaceId, sessionKey, taskNodeId: body.activeTaskNodeId,
+              expectedSessionGeneration: typeof body.expectedSessionGeneration === 'string' ? body.expectedSessionGeneration : undefined,
+              expectedRevision: binding?.bindingRevision ?? 0,
+            });
+          }
+        }
+        if (typeof body.expectedSessionGeneration === 'string') {
+          const current = await gatewayManager.rpc<{ session?: { sessionId?: string } }>('sessions.describe', { key: sessionKey }, 15_000);
+          if (current.session?.sessionId !== body.expectedSessionGeneration) return { success: false, error: 'CHAT_SESSION_GENERATION_CHANGED' };
+        }
         const usage = await getSessionTokenUsageSummary(sessionKey);
         const budget = evaluateTurnBudget({
           totalTokens: usage.totalTokens,
@@ -434,7 +460,7 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
           };
         }
 
-        const earlyMockResult = handleMockChatSend({
+        const earlyMockResult = body.handoffOperationId ? null : handleMockChatSend({
           sessionKey,
           message: typeof body.message === 'string' ? body.message : '',
           deliver: body.deliver ?? false,
@@ -496,6 +522,7 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
           message,
           deliver: body.deliver ?? false,
           idempotencyKey,
+          ...(typeof body.expectedSessionGeneration === 'string' ? { expectedSessionGeneration: body.expectedSessionGeneration } : {}),
         };
         // D3 closeout: forward `workspaceId` and a trusted `workspaceFingerprint`
         // produced from the workspace's normalized rootPath. Gateway uses the
@@ -602,7 +629,37 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
         // The host action carries a bounded logical deadline (15 minutes for a
         // real chat turn); use that same budget here instead of a second fixed
         // 120s ceiling that would cancel a valid multi-tool turn early.
-        const result = await gatewayManager.rpc('chat.send', rpcParams, 15 * 60_000);
+        const handoffOperationId = typeof body.handoffOperationId === 'string' ? body.handoffOperationId : undefined;
+        if (handoffOperationId) {
+          const operation = await readWorkspaceHandoffOperation({ workspaceId, sessionKey, operationId: handoffOperationId });
+          const described = await gatewayManager.rpc<{ session?: { sessionId?: string } }>('sessions.describe', { key: sessionKey }, 15_000);
+          if (!operation?.sessionGeneration || operation.sessionGeneration !== described.session?.sessionId) throw new Error('HANDOFF_CHILD_GENERATION_CHANGED');
+          rpcParams.expectedSessionGeneration = operation.sessionGeneration;
+          const admitted = await beginWorkspaceHandoffSend({ workspaceId, sessionKey, operationId: handoffOperationId,
+            idempotencyKey, draftInput: typeof body.message === 'string' ? body.message : '',
+            requestDigest: createHash('sha256').update(JSON.stringify({ ...rpcParams, deadlineAtMs: undefined })).digest('hex') });
+          if (admitted.receipt && ['accepted', 'sent'].includes(admitted.phase)) {
+            return { success: true, result: { runId: admitted.receipt.run.runId } };
+          }
+        }
+        let result: unknown;
+        try {
+          result = await gatewayManager.rpc('chat.send', rpcParams, 15 * 60_000);
+          if (handoffOperationId) {
+            if (!isRecord(result) || result.runId !== idempotencyKey) throw new Error('HANDOFF_SEND_IDENTITY_UNCONFIRMED');
+            await updateWorkspaceHandoffOperation(workspaceId, handoffOperationId, (current) => ({
+              ...current!, phase: current!.phase === 'sent' ? 'sent' : 'accepted', error: null,
+              receipt: { source: 'gateway-ack', run: normalizeRunScope({ runId: idempotencyKey, scope: { workspaceId, sessionKey } }) },
+            }));
+          }
+        } catch (error) {
+          if (handoffOperationId) await updateWorkspaceHandoffOperation(workspaceId, handoffOperationId, (current) => ({
+            ...current!, phase: current!.phase === 'sent' ? 'sent'
+              : error instanceof GatewayRpcError && ['INVALID_REQUEST', '-32600', '-32602'].includes(String(error.payload.code)) ? 'failed' : 'unknown',
+            error: String(error),
+          }));
+          throw error;
+        }
         if (pendingCoordinatorBinding && workspaceId) {
           try {
             const described = await gatewayManager.rpc<{ session?: { sessionId?: string } | null }>(

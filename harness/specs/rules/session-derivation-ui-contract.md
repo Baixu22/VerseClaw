@@ -39,7 +39,7 @@ requiredTests:
 - 会话来源只从现有 session store 字段和只读 `SessionDerivation` 投影读取，包括 `parentSessionKey`、`spawnedBy`、fork 来源字段及逐跳状态。
 - Renderer 可建立用于渲染的索引，但不得增加 lineage store、关系表、第二个 writer，也不得用 Task Ledger 的 `sessionLinks` 推断会话父子关系。
 - 共享分类按有效 fork 事实、`spawnedBy`、仅有 `parentSessionKey` 的顺序区分 Fork/Spawn/Handoff；worker 同时有 parent/spawnedBy 不得误标 Handoff。矛盾字段保留诊断，修正共享 classifier 和相关 stage 消费者，禁止页面私有修补。
-- Handoff 当前缺少 runtime parent 的路径必须由既有 runtime owner 接齐，确认 child 持久来源后才激活/发送。Task Ledger 继续负责任务/深度记录；旧 Ledger-only 来源显示未接齐，不直接写成 root，不增加 UI 旁路树或隐式批量迁移。
+- Handoff 由既有 runtime owner 写入 parent，确认 child 持久来源后才激活/发送。Task Ledger 继续负责任务/深度记录；旧 Ledger-only 来源显示未接齐，不直接写成 root，不增加 UI 旁路树或隐式批量迁移。
 - `parent-missing`、`cycle` 和 `bound-exceeded` 必须如实显示为来源缺失、循环或已截断；不得把异常链伪装成根会话。
 - 运行状态继续来自现有 session activity/status 投影。父会话的聚合计数不得覆盖父会话自己的状态。
 

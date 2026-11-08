@@ -336,7 +336,7 @@
   "messageActions": {
     "summarizeUpToHere": "摘要到此为止",
     "summarizeFromHere": "从这里开始摘要",
-    "forkFromHere": "从此处分叉",
+    "forkFromHere": "在新会话中提问",
     "copy": "复制消息",
     "copied": "已复制",
     "edit": "编辑",
@@ -1972,9 +1972,9 @@
       "tooltip": "在新会话中准备继续工作的草稿",
       "disabledActiveRun": "当前运行结束后可用",
       "dialogTitle": "接力到新对话",
-      "dialogDescription": "创建新会话前可先检查和编辑这份接力草稿。它只会放入输入框，不会自动发送。",
+      "dialogDescription": "先检查并编辑接力草稿。“创建并发送”会打开新会话，并将草稿作为首条消息提交。若发送结果未确认，系统会保留草稿供核实和恢复。",
       "draftLabel": "接力草稿",
-      "create": "创建接力会话",
+      "create": "创建并发送",
       "cancel": "取消",
       "toastPrepareFailed": "接力准备失败",
       "toastCreateFailed": "创建接力会话失败",
@@ -2345,7 +2345,8 @@
     "archiveAction": "归档",
     "emptyAll": "清空归档",
     "emptyAllConfirm": "再次点击以永久删除所有已归档对话",
-    "viewLabel": "归档视图"
+    "viewLabel": "归档视图",
+    "permanentDeleteMessage": "永久删除“{{label}}”及其对话历史？"
   },
   "questionDirectory": {
     "title": "问题目录",
@@ -2788,5 +2789,88 @@
   },
   "task": {
     "steps": "执行步骤"
+  },
+  "sessionFamily": {
+    "toggle": "展开或收起 {{count}} 个派生会话",
+    "navigation": "会话家族",
+    "kind": {
+      "fork": "分支",
+      "handoff": "续接",
+      "spawn": "子代理",
+      "unknown": "来源不可用"
+    },
+    "children": "派生会话（{{count}}）",
+    "missing": "来源不可用",
+    "unloaded": "加载来源会话",
+    "conflict": "来源字段存在冲突",
+    "cycle": "来源链存在循环",
+    "bound-exceeded": "来源链已截断",
+    "relations": "关系详情"
+  },
+  "projectEntry": {
+    "toggle": "展开或收起 {{name}}",
+    "loading": "正在打开项目负责人…",
+    "unavailable": "项目负责人关联暂不可用。",
+    "coordinator": "{{name}} · 项目负责人"
+  },
+  "questionFork": {
+    "title": "在新会话中提问",
+    "description": "保留此问题之前的上下文，新问题作为可编辑草稿进入子会话。",
+    "question": "新问题",
+    "create": "创建并保留草稿",
+    "noAncestor": "当前可用上下文中没有此问题之前的助手回复，无法分支。",
+    "sourceChanged": "来源会话已变化，请重新打开预览。"
+  },
+  "handoffRecovery": {
+    "resume": "按已保存草稿恢复",
+    "check": "核实首发状态",
+    "openChild": "打开子会话",
+    "phase": {
+      "creating": "续接创建待核实",
+      "ready": "子会话已创建，首轮尚未发送",
+      "sending": "正在提交首轮消息",
+      "accepted": "首轮已接收，等待 transcript 确认",
+      "sent": "首轮消息已记录",
+      "failed": "首轮被拒绝，草稿已保留",
+      "unknown": "首发结果未知，请先核实再重试"
+    }
+  },
+  "delegationStages": {
+    "label": {
+      "admission": "派发准入",
+      "execution": "实际执行",
+      "report": "报告回传",
+      "acceptance": "任务验收",
+      "continuation": "父会话续行"
+    },
+    "taskRequired": "派发前需要选择已有业务任务并绑定协调器。",
+    "model": "实际运行模型：{{model}}",
+    "status": {
+      "unavailable": "不可用",
+      "in-flight": "准入处理中",
+      "approval-pending": "等待权限处理",
+      "accepted": "已接收",
+      "partial": "部分接收",
+      "rejected": "已拒绝",
+      "outcome-unknown": "结果未知",
+      "started": "启动事件已记录",
+      "yielded": "等待中",
+      "completed": "运行已完成",
+      "error": "运行失败",
+      "aborted": "运行已停止",
+      "verified": "核验结果已记录",
+      "not_required": "无需回传",
+      "pending": "等待回传",
+      "in_progress": "正在回传",
+      "delivered": "已送达",
+      "failed": "失败",
+      "suspended": "已暂停",
+      "discarded": "已丢弃",
+      "fenced": "执行代际已变化",
+      "waiting": "等待父会话下一轮",
+      "unknown": "交付结果未知",
+      "queued": "已排队",
+      "steered": "引导已接收"
+    }
   }
 }

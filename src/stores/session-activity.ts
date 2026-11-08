@@ -87,6 +87,7 @@ function policyMatchesScope(
   workspaceId: string | null,
   sessionKey: string,
 ): boolean {
+  if (snapshot.session.sessionKey !== sessionKey) return false;
   const policy = snapshot.policy;
   if (!policy) return true;
   if (policy.scope.sessionKey !== sessionKey) return false;
@@ -388,6 +389,7 @@ function scheduleMock(sessionKey: string, scenario: SessionActivityMockScenario,
 
 export type SessionActivityState = {
   snapshots: Record<string, SessionActivitySnapshot>;
+  scopedSnapshots: Record<string, SessionActivitySnapshot>;
   initialized: boolean;
   init: () => void;
   load: (input: { workspaceId?: string | null; sessionKey: string }) => Promise<SessionActivitySnapshot>;
@@ -395,15 +397,30 @@ export type SessionActivityState = {
   refreshGit: (workspaceId?: string | null, sessionKey?: string) => Promise<void>;
 };
 
+export function sessionActivityScopeKey(workspaceId: string | null | undefined, sessionKey: string): string {
+  return JSON.stringify([normalizeWorkspaceScope(workspaceId), sessionKey]);
+}
+
+export function selectSessionActivitySnapshot(state: SessionActivityState, workspaceId: string | null | undefined,
+  sessionKey: string, generation?: string): SessionActivitySnapshot | undefined {
+  const snapshot = state.scopedSnapshots[sessionActivityScopeKey(workspaceId, sessionKey)];
+  if (generation && snapshot?.session.sessionId && snapshot.session.sessionId !== generation) return undefined;
+  return snapshot;
+}
+
 export const useSessionActivityStore = create<SessionActivityState>((set, get) => {
   const applyEvent = (event: SessionActivityEvent) => {
     const key = routingSessionKey(event);
     if (!key) return;
     const current = get().snapshots[key] ?? createEmptySessionActivitySnapshot(key);
+    const generation = (event.channel === 'runtime' || event.channel === 'command') && 'sessionId' in event.payload
+      ? event.payload.sessionId : undefined;
+    if (generation && current.session.sessionId && generation !== current.session.sessionId) return;
     const next = reduceSessionActivity(current, event);
     if (next !== current) {
       sessionSnapshots.set(key, next);
-      set((state) => ({ snapshots: { ...state.snapshots, [key]: next } }));
+      set((state) => ({ snapshots: { ...state.snapshots, [key]: next },
+        scopedSnapshots: { ...state.scopedSnapshots, [sessionActivityScopeKey(snapshotScopes.get(key), key)]: next } }));
       /* Permission changes can alter runtime-effective grants and capability
        * facts without changing the session key. Refresh through the canonical
        * host seam so the policy never retains an authorization snapshot from
@@ -417,6 +434,7 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
 
   return {
     snapshots: {},
+    scopedSnapshots: {},
     initialized: false,
     init: () => {
       if (initialized) return;
@@ -446,13 +464,15 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
        */
       const previousScope = snapshotScopes.get(sessionKey);
       const sameScope = previousScope === undefined || previousScope === requestedWorkspaceId;
-      const previous = sameScope ? get().snapshots[sessionKey] : undefined;
+      const scopedKey = sessionActivityScopeKey(requestedWorkspaceId, sessionKey);
+      const previous = get().scopedSnapshots[scopedKey] ?? (sameScope ? get().snapshots[sessionKey] : undefined);
       snapshotScopes.set(sessionKey, requestedWorkspaceId);
       const initial = isMockMode
         ? mockSnapshot(sessionKey, mockScenario())
         : markPolicyRefreshPending(previous ?? createEmptySessionActivitySnapshot(sessionKey));
       sessionSnapshots.set(sessionKey, initial);
-      set((state) => ({ snapshots: { ...state.snapshots, [sessionKey]: initial } }));
+      set((state) => ({ snapshots: { ...state.snapshots, [sessionKey]: initial },
+        scopedSnapshots: { ...state.scopedSnapshots, [scopedKey]: initial } }));
       if (isMockMode
         && (initial.session.status !== 'idle' || initial.git || initial.tasks.length || initial.terminals.length)) {
         scheduleMock(sessionKey, mockScenario(), applyEvent);
@@ -487,11 +507,12 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
         : null;
       let snapshot = current;
       if (hydrated) {
-        const mergeItems = <T extends { id: string; updatedAt: number }>(base: T[], incoming: T[]) => incoming.reduce(upsert, base);
+        const generationChanged = Boolean(current.session.sessionId && hydrated.session.sessionId && current.session.sessionId !== hydrated.session.sessionId);
+        const mergeItems = <T extends { id: string; updatedAt: number }>(base: T[], incoming: T[]) => incoming.reduce(upsert, generationChanged ? [] : base);
         snapshot = {
           ...current,
           ...hydrated,
-          session: hydrated.session && hydrated.session.updatedAt >= current.session.updatedAt
+          session: hydrated.session && (generationChanged || hydrated.session.updatedAt >= current.session.updatedAt)
             ? { ...current.session, ...hydrated.session, sessionKey }
             : current.session,
           tasks: mergeItems(current.tasks, hydrated.tasks),
@@ -512,7 +533,8 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
         };
       }
       sessionSnapshots.set(sessionKey, snapshot);
-      set((state) => ({ snapshots: { ...state.snapshots, [sessionKey]: snapshot } }));
+      set((state) => ({ snapshots: { ...state.snapshots, [sessionKey]: snapshot },
+        scopedSnapshots: { ...state.scopedSnapshots, [scopedKey]: snapshot } }));
       return snapshot;
     },
     apply: applyEvent,
@@ -535,7 +557,8 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
         const current = get().snapshots[sessionKey] ?? createEmptySessionActivitySnapshot(sessionKey);
         const next = { ...current, git: result.status, availability: { ...current.availability, git: true }, capturedAt: Date.now() };
         sessionSnapshots.set(sessionKey, next);
-        set((state) => ({ snapshots: { ...state.snapshots, [sessionKey]: next } }));
+        set((state) => ({ snapshots: { ...state.snapshots, [sessionKey]: next },
+          scopedSnapshots: { ...state.scopedSnapshots, [sessionActivityScopeKey(requestedWorkspaceId, sessionKey)]: next } }));
       } catch {
         // Git is an optional source; the rest of the panel remains available.
       }

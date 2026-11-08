@@ -188,6 +188,34 @@ describe('sidebar session activity resolution', () => {
     ]);
   });
 
+  it.each(['agent', 'coordinator'] as const)('keeps explicitly associated coordinators visible through a %s binding', (bindingKind) => {
+    const main = 'agent:main:project';
+    const reviewer = 'agent:reviewer:project';
+    const unrelated = 'agent:reviewer:unrelated';
+    const groups = buildSidebarWorkspaceSessionGroups({
+      currentSessionKey: main,
+      sessionLastActivity: {},
+      sessions: [{ key: main }, { key: reviewer }, { key: unrelated }],
+      workspaces: [workspace({
+        id: 'workspace-a', activeSessionKey: main,
+        agentBindings: {
+          main: { workspaceId: 'workspace-a', agentId: 'main', sessionKey: main },
+          ...(bindingKind === 'agent' ? { reviewer: { workspaceId: 'workspace-a', agentId: 'reviewer', sessionKey: reviewer } } : {}),
+        },
+        ...(bindingKind === 'coordinator' ? { coordinatorBindings: { [reviewer]: {
+          schemaVersion: 1, workspaceId: 'workspace-a', agentId: 'reviewer', sessionKey: reviewer,
+          sessionGeneration: 'reviewer-generation', taskLedgerReferences: [], state: 'active',
+          environment: { kind: 'local', backend: 'local-workspace', canonicalRoot: 'C:/a', branch: null,
+            detachedHead: false, setupProfile: null },
+          archiveRestorePolicy: 'restore', bindingRevision: 1, invalidationReason: null,
+          createdAt: '2026-11-09T00:00:00Z', updatedAt: '2026-11-09T00:00:00Z',
+        } } } : {}),
+      })],
+    });
+    expect(groups).toHaveLength(1);
+    expect(new Set(groups[0].sessions.map((entry) => entry.session.key))).toEqual(new Set([main, reviewer]));
+  });
+
   it('builds the time view as one activity-sorted list across projects', () => {
     const entries = buildSidebarTimeSessions({
       currentSessionKey: 'agent:main:a-new',

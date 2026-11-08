@@ -650,12 +650,28 @@ export function createSubagentRunManager(params: {
     const runTimeoutSeconds = registerParams.runTimeoutSeconds ?? 0;
     const waitTimeoutMs = params.resolveSubagentWaitTimeoutMs(cfg, runTimeoutSeconds);
     const requesterOrigin = normalizeDeliveryContext(registerParams.requesterOrigin);
+    const taskOrigin = currentSessionTaskRequesterReference();
+    const matchingTaskOrigin =
+      taskOrigin?.coordinator.sessionKey === requesterSessionKey &&
+      (!registerParams.requesterSessionId ||
+        taskOrigin.coordinator.sessionGeneration === registerParams.requesterSessionId)
+        ? taskOrigin
+        : undefined;
     const entry: SubagentRunRecord = normalizeSubagentRunState({
       runId,
       childSessionKey,
       controllerSessionKey,
       requesterSessionKey,
-      requesterSessionId: registerParams.requesterSessionId,
+      requesterSessionId:
+        registerParams.requesterSessionId ?? matchingTaskOrigin?.coordinator.sessionGeneration,
+      ...(matchingTaskOrigin
+        ? {
+            requesterTaskReference: {
+              taskRef: matchingTaskOrigin.taskRef,
+              coordinator: { ...matchingTaskOrigin.coordinator },
+            },
+          }
+        : {}),
       requesterOrigin,
       requesterDisplayKey: registerParams.requesterDisplayKey,
       task: registerParams.task,
@@ -890,3 +906,4 @@ export function createSubagentRunManager(params: {
     waitForSubagentCompletion,
   };
 }
+import { currentSessionTaskRequesterReference } from "./session-task-scope.js";

@@ -2,7 +2,7 @@
  * ResourceChip shows running resource count in the chat toolbar.
  * Click opens a popover with the full resource list and stop controls.
  */
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AlertTriangle, ExternalLink, Loader2, Pause, Play, Server, StopCircle, Trash2, Users, X } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -16,7 +16,7 @@ import { hostApi } from '@/lib/host-api';
 import { createPollScheduler } from '@/lib/poll-scheduler';
 import { getWorkspaceCoordinatorBinding } from '@/lib/workspace-session';
 import { useChatStore } from '@/stores/chat';
-import { useSessionActivityStore } from '@/stores/session-activity';
+import { useSessionActivityStore, selectSessionActivitySnapshot } from '@/stores/session-activity';
 import { useWorkspacesStore } from '@/stores/workspaces';
 
 export function ResourceChip() {
@@ -39,7 +39,10 @@ export function ResourceChip() {
   const switchSession = useChatStore((state) => state.switchSession);
   const activeTaskNodeId = useChatStore((state) => state.activeTaskNodeId);
   const activeWorkspace = useWorkspacesStore((state) => state.activeWorkspace);
-  const activitySnapshot = useSessionActivityStore((state) => state.snapshots[currentSessionKey]);
+  const generation = useChatStore((state) => state.sessions.find((session) => session.key === currentSessionKey)?.sessionId);
+  const activitySnapshot = useSessionActivityStore((state) => selectSessionActivitySnapshot(state, activeWorkspace?.id, currentSessionKey, generation));
+  const scope = useMemo(() => ({ workspaceId: activeWorkspace?.id, rootPath: activeWorkspace?.rootPath, sessionKey: currentSessionKey, generation }), [activeWorkspace?.id, activeWorkspace?.rootPath, currentSessionKey, generation]);
+  const scopeRef = useRef(scope); scopeRef.current = scope;
   const [coordinatorBinding, setCoordinatorBinding] = useState<WorkspaceCoordinatorBinding | null>(null);
   const [coordinatorRecovery, setCoordinatorRecovery] = useState<WorkspaceCoordinatorRecovery | null>(null);
   const [resourceEnvelope, setResourceEnvelope] = useState<RuntimeResourceEnvelopeState | null>(null);
@@ -52,14 +55,16 @@ export function ResourceChip() {
   const completionBatches = activitySnapshot?.completionBatches ?? [];
   const activeBackgroundTerminalCount = activitySnapshot?.terminals.filter((terminal) => ['starting', 'running', 'idle', 'blocked'].includes(terminal.status)).length ?? 0;
   const loadCoordinator = useCallback(async () => {
-    if (!activeWorkspace || !agentId || !currentSessionKey) {
+    setCoordinatorBinding(null); setCoordinatorRecovery(null); setCoordinatorError(null);
+    if (!scope.workspaceId || !agentId || !currentSessionKey) {
       setCoordinatorBinding(null);
       return;
     }
     const [resolved, envelope] = await Promise.allSettled([
-      hostApi.workspaces.resolveCoordinator({ workspaceId: activeWorkspace.id, agentId, sessionKey: currentSessionKey }),
+      hostApi.workspaces.resolveCoordinator({ workspaceId: scope.workspaceId, agentId, sessionKey: currentSessionKey }),
       hostApi.resourceEnvelope.getState(),
     ]);
+    if (scopeRef.current !== scope) return;
     if (resolved.status === 'fulfilled') {
       setCoordinatorBinding(resolved.value.binding ?? null);
       setCoordinatorRecovery(resolved.value.recovery);
@@ -67,8 +72,9 @@ export function ResourceChip() {
       setCoordinatorBinding(cachedBinding);
     }
     if (envelope.status === 'fulfilled') setResourceEnvelope(envelope.value);
-  }, [activeWorkspace, agentId, cachedBinding, currentSessionKey]);
-  const binding = coordinatorBinding ?? cachedBinding;
+  }, [agentId, cachedBinding, currentSessionKey, scope]);
+  const binding = coordinatorBinding?.workspaceId === activeWorkspace?.id && coordinatorBinding?.sessionKey === currentSessionKey
+    ? coordinatorBinding : cachedBinding;
   const runCoordinatorAction = async (action: 'bind' | 'pause' | 'resume') => {
     if (!activeWorkspace || !agentId || !currentSessionKey) return;
     setCoordinatorBusy(true);
@@ -81,6 +87,7 @@ export function ResourceChip() {
           sessionKey: currentSessionKey,
           expectedRevision: binding.bindingRevision,
         });
+        if (scopeRef.current !== scope) return;
         setCoordinatorBinding(result.binding);
         return;
       }
@@ -113,12 +120,13 @@ export function ResourceChip() {
         environment,
         archiveRestorePolicy: binding?.archiveRestorePolicy ?? 'restore',
       });
+      if (scopeRef.current !== scope) return;
       setCoordinatorBinding(result.binding);
       if (!result.success) setCoordinatorError(result.error ?? result.recovery.reason ?? null);
     } catch (error) {
-      setCoordinatorError(error instanceof Error ? error.message : String(error));
+      if (scopeRef.current === scope) setCoordinatorError(error instanceof Error ? error.message : String(error));
     } finally {
-      setCoordinatorBusy(false);
+      if (scopeRef.current === scope) setCoordinatorBusy(false);
     }
   };
   const [nowMs, setNowMs] = useState(() => Date.now());
@@ -128,8 +136,9 @@ export function ResourceChip() {
   }, [init]);
 
   useEffect(() => {
-    void loadCoordinator();
-  }, [loadCoordinator]);
+    if (popoverOpen) void loadCoordinator();
+  }, [loadCoordinator, popoverOpen]);
+  useEffect(() => { setCoordinatorBusy(false); }, [scope]);
 
   useEffect(() => {
     return createPollScheduler({ intervalMs: 60_000, task: () => setNowMs(Date.now()) });

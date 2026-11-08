@@ -1,0 +1,93 @@
+{
+  "schema": "clawx.long-session.real-lifecycle/v1",
+  "driven_by": "agent",
+  "actor": "clawx-e2e-agent",
+  "sessionKey": "agent:main:dashboard:fc5070c8-42e2-4956-acaa-332e316cefd8",
+  "previousSessionId": "1c3f93c3-9d34-45c2-a411-008b84271f82",
+  "restoredSessionId": "2d2c6b34-2959-4864-b0be-f8088565914c",
+  "archived": {
+    "success": true,
+    "sessionId": "1c3f93c3-9d34-45c2-a411-008b84271f82",
+    "resourceReclamation": {
+      "schema": "LongSessionResourceReclamation/v1",
+      "action": "session-archive",
+      "scope": {
+        "workspaceId": "workspace-e2e",
+        "sessionKey": "agent:main:dashboard:fc5070c8-42e2-4956-acaa-332e316cefd8",
+        "expectedSessionId": "1c3f93c3-9d34-45c2-a411-008b84271f82"
+      },
+      "generatedAt": "2026-11-08T20:50:50.441Z",
+      "owners": [
+        {
+          "kind": "terminal",
+          "owner": "TerminalSessionManager",
+          "outcome": "not-owned",
+          "authority": "managed",
+          "generation": "1c3f93c3-9d34-45c2-a411-008b84271f82",
+          "attempted": 0,
+          "reclaimed": 0,
+          "kept": 0,
+          "detail": "action does not close terminals; keep_on_leave preserved"
+        },
+        {
+          "kind": "browser",
+          "owner": "HostAgentBrowserService",
+          "outcome": "not-owned",
+          "authority": "observed",
+          "generation": "1c3f93c3-9d34-45c2-a411-008b84271f82",
+          "attempted": 0,
+          "reclaimed": 0,
+          "kept": 0,
+          "detail": "action does not close browser sessions"
+        },
+        {
+          "kind": "background-port",
+          "owner": "ResourceTracker",
+          "outcome": "not-owned",
+          "authority": "observed",
+          "generation": "1c3f93c3-9d34-45c2-a411-008b84271f82",
+          "attempted": 0,
+          "reclaimed": 0,
+          "kept": 0,
+          "detail": "action does not stop managed ports"
+        },
+        {
+          "kind": "worktree",
+          "owner": "WorktreeService",
+          "outcome": "not-owned",
+          "authority": "observed",
+          "generation": "1c3f93c3-9d34-45c2-a411-008b84271f82",
+          "attempted": 0,
+          "reclaimed": 0,
+          "kept": 0,
+          "detail": "action preserves worktrees"
+        },
+        {
+          "kind": "admission-permit",
+          "owner": "SessionAdmissionRegistry",
+          "outcome": "not-owned",
+          "authority": "managed",
+          "generation": "1c3f93c3-9d34-45c2-a411-008b84271f82",
+          "attempted": 0,
+          "reclaimed": 0,
+          "kept": 0,
+          "detail": "runtime canonical finalizer completed the admission fence/drain for this generation"
+        }
+      ],
+      "activeResidue": 0,
+      "keptOnLeave": 0,
+      "recoveryRequired": false,
+      "recoveryId": null,
+      "retryable": false
+    }
+  },
+  "restored": {
+    "success": true
+  },
+  "archivePath": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-iWPMPv\\verse-claw-e2e-user-data-AMk6Uh\\openclaw-source-state\\agents\\main\\sessions\\1c3f93c3-9d34-45c2-a411-008b84271f82.archived.jsonl",
+  "archivedTranscriptSha256": "d8cc08b7cc2298c14b72dc6b363a36289b3182e0404624b54129c5cced20e411",
+  "inputSha256": "9b251996907ff0306b4e4840006aacb25dfc014b6d262c9ed089f3759a0cdcbf",
+  "historyRetained": true,
+  "archiveIndexRemoved": true,
+  "transport": "built Electron host:invoke -> actual Gateway runtime"
+}

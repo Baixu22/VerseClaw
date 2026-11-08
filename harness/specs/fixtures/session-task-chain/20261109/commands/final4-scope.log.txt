@@ -1,0 +1,84 @@
+
+Running 11 tests using 1 worker
+
+(node:18604) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:18604) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 tests\e2e\project-agent-entry.spec.ts:7:5 › project entry keeps its coordinator, task scope and session drafts while disclosure only folds the list (49.7s)
+  x   2 tests\e2e\session-chain-scope-faults.spec.ts:262:5 › project Ledger warnings stay unavailable in the task drawer and preserve the current draft (2.8m)
+(node:16772) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:16772) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  3 tests\e2e\session-chain-scope-faults.spec.ts:281:5 › Ledger transcript navigation rejects a replaced session generation (29.4s)
+  ok  4 tests\e2e\session-chain-scope-faults.spec.ts:301:7 › leaving Task Ledger cancels a pending artifact navigation after a delayed Main save reply (14.1s)
+  ok  5 tests\e2e\session-chain-scope-faults.spec.ts:301:7 › leaving Task Ledger cancels a pending return-session navigation after a delayed Main save reply (9.0s)
+  ok  6 tests\e2e\session-chain-scope-faults.spec.ts:338:5 › automatic Handoff reconciliation ignores an old generation reply after refreshing the same session key (12.0s)
+  ok  7 tests\e2e\session-chain-scope-faults.spec.ts:370:5 › manual Handoff verification keeps Project B and its input when Project A replies late (8.4s)
+  ok  8 tests\e2e\session-family-lifecycle.spec.ts:7:5 › archiving, restoring and deleting a parent preserves child navigation, tasks and produced files (32.7s)
+[fp-p1-harness] connection #1
+[fp-p1-harness] connection #2
+  ok  9 tests\e2e\session-task-scope-completion.spec.ts:14:5 › a real isolated schedule admits its first write without replacing the project coordinator (30.2s)
+[fp-p1-harness] connection #1
+[fp-p1-harness] connection #2
+[fp-p1-harness] connection #3
+[fp-p1-harness] connection #4
+[fp-p1-harness] connection #5
+[fp-p1-harness] connection #6
+[fp-p1-harness] connection #7
+[fp-p1-harness] connection #8
+[fp-p1-harness] connection #9
+[fp-p1-harness] connection #10
+[fp-p1-harness] connection #11
+[fp-p1-harness] connection #12
+[fp-p1-harness] connection #13
+  ok 10 tests\e2e\session-task-scope-completion.spec.ts:67:5 › real Gateway keeps discussion empty, admits one write, and restores the same handoff child after restart (2.7m)
+[fp-p1-harness] connection #1
+[fp-p1-harness] connection #2
+  ok 11 tests\e2e\session-task-scope-completion.spec.ts:201:5 › explicit UI task selection executes the newly selected canonical contract (47.1s)
+
+
+  1) tests\e2e\session-chain-scope-faults.spec.ts:262:5 › project Ledger warnings stay unavailable in the task drawer and preserve the current draft 
+
+    [31mTest timeout of 120000ms exceeded.[39m
+
+    TimeoutError: electron.launch: Timeout 90000ms exceeded.
+    Call log:
+    [2m  - <launching> "D:\tmp\clawx-audit-next-20261107\candidate\node_modules\.pnpm\electron@40.8.4\node_modules\electron\dist\electron.exe" "--inspect=0" "--remote-debugging-port=0" "--no-sandbox" "--user-data-dir=D:\ClawX-work\session-task-unified-relay-20261109\.tmp\e2e-runs\verse-claw-e2e-run-qzB38E\verse-claw-e2e-user-data-Vssjw2" "--lang=en-US" "--disable-gpu" "--disable-gpu-compositing" "--disable-software-rasterizer" "--in-process-gpu" "--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization" "--force-device-scale-factor=1" "D:\ClawX-work\session-task-unified-relay-20261109\dist-electron\main\index.js"[22m
+    [2m  - <launched> pid=47436[22m
+    [2m  - [pid=47436][out][22m
+    [2m  - [pid=47436][err] Debugger listening on ws://127.0.0.1:57875/8af60772-ab4f-4093-bf5a-c616ee5d270f[22m
+    [2m  - [pid=47436][err] For help, see: https://nodejs.org/en/docs/inspector[22m
+    [2m  - <ws connecting> ws://127.0.0.1:57875/8af60772-ab4f-4093-bf5a-c616ee5d270f[22m
+    [2m  - <ws connected> ws://127.0.0.1:57875/8af60772-ab4f-4093-bf5a-c616ee5d270f[22m
+    [2m  - [pid=47436][err] Debugger attached.[22m
+
+
+       at fixtures\electron.ts:377
+
+      375 |     : {};
+      376 |   const pendingLaunch = await recordElectronLaunch(userDataDir);
+    > 377 |   const app = await electron.launch({
+          |               ^
+      378 |     executablePath: options.executablePath ?? String(electronBinaryPath),
+      379 |     args: [
+      380 |       // Windows runners cannot use the Chromium sandbox in this isolated E2E user-data context.
+        at launchVerseClawElectron (D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\fixtures\electron.ts:377:15)
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\fixtures\electron.ts:517:21
+        at withScopeFixture (D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\session-chain-scope-faults.spec.ts:238:15)
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\session-chain-scope-faults.spec.ts:263:3
+
+    Error Context: ..\..\tmp\unified-management-20261109\session-task-validation\final4-scope-results\session-chain-scope-faults-f1420--preserve-the-current-draft\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\session-task-validation\final4-scope-results\session-chain-scope-faults-f1420--preserve-the-current-draft\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\tmp\unified-management-20261109\session-task-validation\final4-scope-results\session-chain-scope-faults-f1420--preserve-the-current-draft\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\e2e\session-chain-scope-faults.spec.ts:262:5 › project Ledger warnings stay unavailable in the task drawer and preserve the current draft 
+  10 passed (10.1m)

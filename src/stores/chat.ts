@@ -4,6 +4,8 @@
  * Communicates with OpenClaw Gateway through the Main-owned host API.
  */
 import { create } from 'zustand';
+import { readSessionDerivationFacts } from '@shared/types/session-derivation';
+import { readSessionListPages } from '@/lib/session-read-model';
 import { hostApi, type ChatSendWithMediaResult, type SessionLabelSummary } from '@/lib/host-api';
 import { useGatewayStore } from './gateway';
 import { useAgentsStore } from './agents';
@@ -1983,10 +1985,7 @@ async function loadCronFallbackMessages(sessionKey: string, limit = 200): Promis
 }
 
 async function fetchChatSessionsList(): Promise<Record<string, unknown>> {
-  return useGatewayStore.getState().rpc<Record<string, unknown>>('sessions.list', {
-    includeDerivedTitles: true,
-    includeLastMessage: true,
-  });
+  return readSessionListPages((params) => useGatewayStore.getState().rpc<Record<string, unknown>>('sessions.list', params));
 }
 
 async function fetchChatHistory(
@@ -2003,8 +2002,8 @@ async function fetchChatHistory(
   return useGatewayStore.getState().rpc<Record<string, unknown>>('chat.history', params, timeoutMs);
 }
 
-async function abortChatRunViaHostApi(sessionKey: string): Promise<{ aborted?: boolean; runIds?: string[] }> {
-  return useGatewayStore.getState().rpc('chat.abort', { sessionKey });
+async function abortChatRunViaHostApi(sessionKey: string, runId?: string | null): Promise<{ aborted?: boolean; runIds?: string[] }> {
+  return useGatewayStore.getState().rpc('chat.abort', { sessionKey, ...(runId ? { runId } : {}) });
 }
 
 function normalizeAgentId(value: string | undefined | null): string {
@@ -2044,6 +2043,7 @@ function buildSessionSwitchPatch(
   state: Pick<
     ChatState,
     | 'currentSessionKey'
+    | 'viewRevision'
     | 'messages'
     | 'sessions'
     | 'sessionLabels'
@@ -2081,6 +2081,7 @@ function buildSessionSwitchPatch(
   // the current messages before loadHistory runs, creating a race condition that
   // could cause sessions with real history to be incorrectly removed from the sidebar.
   const leavingEmpty = !state.currentSessionKey.endsWith(':main')
+    && !state.sessions.find((session) => session.key === state.currentSessionKey)?.sessionId
     && state.messages.length === 0
     && !state.sessionLastActivity[state.currentSessionKey]
     && !state.sessionLabels[state.currentSessionKey];
@@ -2097,6 +2098,7 @@ function buildSessionSwitchPatch(
 
   return {
     currentSessionKey: nextSessionKey,
+    viewRevision: (state.viewRevision ?? 0) + 1,
     currentAgentId: getAgentIdFromSessionKey(nextSessionKey),
     sessions: options?.deferSessionEntry
       ? nextSessions
@@ -2967,13 +2969,13 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     }
   },
 
-  loadSessions: async () => {
+  loadSessions: async (options) => {
     const now = Date.now();
     if (_loadSessionsInFlight) {
       await _loadSessionsInFlight;
-      return;
+      if (!options?.force) return;
     }
-    if (now - _lastLoadSessionsAt < SESSION_LOAD_MIN_INTERVAL_MS) {
+    if (!options?.force && now - _lastLoadSessionsAt < SESSION_LOAD_MIN_INTERVAL_MS) {
       return;
     }
 
@@ -2997,14 +2999,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
             messageCount: typeof s.messageCount === 'number' && Number.isFinite(s.messageCount)
               ? Math.max(0, Math.floor(s.messageCount))
               : undefined,
-            // Fork/handoff lineage — the sidebar's workstream view threads
-            // descendants beneath their origin session from these two fields.
-            parentSessionKey: s.parentSessionKey ? String(s.parentSessionKey) : undefined,
-            forkedFromParent: typeof s.forkedFromParent === 'boolean' ? s.forkedFromParent : undefined,
-            forkedFromLeafId: s.forkedFromLeafId ? String(s.forkedFromLeafId) : undefined,
-            forkedFromTimestamp: typeof s.forkedFromTimestamp === 'number' && Number.isFinite(s.forkedFromTimestamp)
-              ? s.forkedFromTimestamp
-              : undefined,
+            ...readSessionDerivationFacts(s),
           })).filter((s: ChatSession) => s.key);
 
           const canonicalBySuffix = new Map<string, string>();
@@ -3191,7 +3186,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     clearHistoryPoll();
     clearBaselines();
     set((s) => buildSessionSwitchPatch(s, key));
-    void get().loadHistory();
+    void get().loadHistory().then(() => get().drainPendingMessages());
     void get().refreshTaskLedger();
     void ensureSessionLinkedToLedger(key);
   },
@@ -3460,6 +3455,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     // Also check sessionLastActivity and sessionLabels comprehensively to prevent
     // falsely treating sessions with history as empty due to switchSession clearing messages early.
     const isEmptyNonMain = !currentSessionKey.endsWith(':main')
+        && !get().sessions.find((session) => session.key === currentSessionKey)?.sessionId
       && messages.length === 0
       && !sessionLastActivity[currentSessionKey]
       && !sessionLabels[currentSessionKey];
@@ -4232,13 +4228,18 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     const trimmed = text.trim();
     if (!trimmed && (!opts?.attachments || opts.attachments.length === 0)) return;
     const targetSessionKey =
-      resolveMainSessionKeyForAgent(opts?.targetAgentId ?? null) ?? get().currentSessionKey;
+      opts?.targetSessionKey ?? resolveMainSessionKeyForAgent(opts?.targetAgentId ?? null) ?? get().currentSessionKey;
     const pending: PendingMessage = {
       id: crypto.randomUUID(),
       text: trimmed,
       targetAgentId: opts?.targetAgentId ?? null,
       targetSessionKey,
       opts: {
+        workspaceId: opts?.workspaceId ?? useWorkspacesStore.getState().activeWorkspaceId,
+        targetSessionKey,
+        expectedSessionGeneration: opts?.expectedSessionGeneration ?? get().sessions.find((session) => session.key === targetSessionKey)?.sessionId,
+        idempotencyKey: opts?.idempotencyKey ?? crypto.randomUUID(),
+        handoffOperationId: opts?.handoffOperationId,
         attachments: opts?.attachments,
         targetAgentId: opts?.targetAgentId,
         knowledgeScope: opts?.knowledgeScope,
@@ -4255,14 +4256,22 @@ export const useChatStore = create<ChatState>((set, get, api) => {
   },
 
   drainPendingMessages: () => {
-    const queued = get().pendingMessages;
+    const eligible = (item: PendingMessage) => item.targetSessionKey === get().currentSessionKey
+      && (item.opts?.workspaceId ?? null) === useWorkspacesStore.getState().activeWorkspaceId;
+    const queued = get().pendingMessages.filter(eligible);
     if (queued.length === 0) return;
     if (get().sending) return; // a queued send just started another run; wait
-    set({ pendingMessages: [] });
+    const ids = new Set(queued.map((item) => item.id));
+    set((state) => ({ pendingMessages: state.pendingMessages.filter((item) => !ids.has(item.id)) }));
     // Dispatch sequentially so each send observes a settled run state. Keep
     // failures isolated: a rejected send must not block the rest of the queue.
     void (async () => {
-      for (const item of queued) {
+      for (let index = 0; index < queued.length; index++) {
+        const item = queued[index];
+        if (!eligible(item)) {
+          set((state) => ({ pendingMessages: [...queued.slice(index), ...state.pendingMessages] }));
+          break;
+        }
         try {
           await useChatStore.getState().sendMessage(item.text, item.opts);
         } catch {
@@ -4277,6 +4286,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     text: string,
     opts?: SendOptions,
   ) => {
+    const originWorkspaceId = opts?.workspaceId ?? useWorkspacesStore.getState().activeWorkspaceId;
     const attachments = opts?.attachments;
     const targetAgentId = opts?.targetAgentId;
     const knowledgeScope = opts?.knowledgeScope;
@@ -4290,7 +4300,9 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     const trimmed = text.trim();
     if (!trimmed && (!attachments || attachments.length === 0)) return;
 
-    const targetSessionKey = resolveMainSessionKeyForAgent(targetAgentId) ?? get().currentSessionKey;
+    const targetSessionKey = opts?.targetSessionKey ?? resolveMainSessionKeyForAgent(targetAgentId) ?? get().currentSessionKey;
+    const expectedSessionGeneration = opts?.expectedSessionGeneration
+      ?? (targetSessionKey === get().currentSessionKey ? get().sessions.find((session) => session.key === targetSessionKey)?.sessionId : undefined);
 
     // Guard against double-submit before React re-renders with sending=true.
     // P0-2: instead of silently dropping the second message while a run is
@@ -4298,7 +4310,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     // interventions (inputMode) are NOT queued — they have their own
     // guide/interrupt/queue path in the gateway.
     if (get().sending && targetSessionKey === get().currentSessionKey && !inputMode) {
-      get().queuePendingMessage(text, opts);
+      get().queuePendingMessage(text, { ...opts, workspaceId: originWorkspaceId, expectedSessionGeneration, targetSessionKey });
       return;
     }
 
@@ -4469,9 +4481,9 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     };
 
     try {
-      const idempotencyKey = crypto.randomUUID();
+      const idempotencyKey = opts?.idempotencyKey ?? crypto.randomUUID();
       const hasMedia = attachments && attachments.length > 0;
-      const workspaceId = useWorkspacesStore.getState().activeWorkspaceId;
+      const workspaceId = originWorkspaceId;
       if (hasMedia) {
         console.log('[sendMessage] Media paths:', attachments!.map(a => a.stagedPath));
       }
@@ -4500,6 +4512,8 @@ export const useChatStore = create<ChatState>((set, get, api) => {
           message: trimmed || 'Process the attached file(s).',
           deliver: false,
           idempotencyKey,
+          ...(expectedSessionGeneration ? { expectedSessionGeneration } : {}),
+          ...(opts?.handoffOperationId ? { handoffOperationId: opts.handoffOperationId } : {}),
           knowledgeScope,
           knowledgeMode,
           ...(knowledgeReferences && knowledgeReferences.length > 0 ? { knowledgeReferences } : {}),
@@ -4521,6 +4535,8 @@ export const useChatStore = create<ChatState>((set, get, api) => {
           message: trimmed,
           deliver: false,
           idempotencyKey,
+          ...(expectedSessionGeneration ? { expectedSessionGeneration } : {}),
+          ...(opts?.handoffOperationId ? { handoffOperationId: opts.handoffOperationId } : {}),
           knowledgeScope,
           knowledgeMode,
           ...(knowledgeReferences && knowledgeReferences.length > 0 ? { knowledgeReferences } : {}),
@@ -4636,31 +4652,35 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     clearHistoryPoll();
     clearErrorRecoveryTimer();
     clearTurnTimeoutTimer();
-    const { currentSessionKey, sending, activeRunId } = get();
+    const { currentSessionKey, sending, activeRunId, sessions } = get();
+    const generation = sessions.find((session) => session.key === currentSessionKey)?.sessionId;
+    const isCurrentAbortTarget = () => get().currentSessionKey === currentSessionKey && get().activeRunId === activeRunId
+      && get().sessions.find((session) => session.key === currentSessionKey)?.sessionId === generation;
 
     // R0-3: abort the run FIRST. Only release UI state once the Main process
     // confirms the abort — a failed stop must not masquerade as stopped.
     let receipt: { aborted?: boolean; runIds?: string[] } | undefined;
     try {
-      receipt = await abortChatRunViaHostApi(currentSessionKey);
+      receipt = await abortChatRunViaHostApi(currentSessionKey, activeRunId);
     } catch (err) {
       console.warn(`[abortRun] chat.abort failed: ${String(err)}`);
-      if (get().currentSessionKey === currentSessionKey && get().activeRunId === activeRunId) set({ error: String(err), sending });
+      if (isCurrentAbortTarget()) set({ error: String(err), sending });
       toast.warning(i18n.t('chat:composer.abortFailed'));
       return;
     }
 
     // Use the Gateway's acknowledged run identity; retain a result that arrived
     // while the abort request was pending.
-    const confirmed = activeRunId && receipt?.aborted === true
+    const generationUnchanged = get().sessions.find((session) => session.key === currentSessionKey)?.sessionId === generation;
+    const confirmed = generationUnchanged && activeRunId && receipt?.aborted === true
       && (!receipt.runIds || receipt.runIds.includes(activeRunId))
       && get().runtimeRuns[activeRunId]?.status === 'running';
     const runtimeRuns = confirmed ? applyRuntimeEventToRuns(get().runtimeRuns, {
       type: 'run.ended', runId: activeRunId, sessionKey: currentSessionKey, status: 'aborted', endedAt: Date.now(),
     }) : get().runtimeRuns;
-    if (get().currentSessionKey !== currentSessionKey || get().activeRunId !== activeRunId) {
+    if (!isCurrentAbortTarget()) {
       if (runtimeRuns !== get().runtimeRuns) set({ runtimeRuns });
-      captureSessionRunState(currentSessionKey, DEFAULT_SESSION_RUN_STATE);
+      if (generationUnchanged) captureSessionRunState(currentSessionKey, DEFAULT_SESSION_RUN_STATE);
       return;
     }
     // Release all in-flight UI/run resources (P5-004 A3).

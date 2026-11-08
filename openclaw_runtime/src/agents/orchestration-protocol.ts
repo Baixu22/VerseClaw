@@ -493,7 +493,7 @@ export function normalizeWriteSetPaths(
 
 /**
  * C3 live writeSet policy (conservative — no path invention from free text):
- * 1) explicit worker writeSet wins when non-empty
+ * 1) explicit worker writeSet wins; [] preserves observer-only delegation
  * 2) else writer-like roles inherit normalized fileHints when present
  * 3) planner/reviewer/tester/skeptic/etc. stay unset
  */
@@ -502,6 +502,7 @@ export function resolveWorkerWriteSet(params: {
   explicit?: readonly string[];
   fileHints?: readonly string[];
 }): string[] | undefined {
+  if (params.explicit?.length === 0) return [];
   const explicit = normalizeWriteSetPaths(params.explicit);
   if (explicit) return explicit;
   if (!isWriterLikeRole(params.roleName)) return undefined;

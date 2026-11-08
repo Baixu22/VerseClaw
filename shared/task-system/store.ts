@@ -675,10 +675,15 @@ export class TaskSystemStore {
       );
     });
   }
-  start(input: {taskNodeId?: string; contract?: TaskContractInput}, sessionKey: string, generation: string, requestId: string, expected?: TaskCredential): TaskView {
+  start(input: {taskNodeId?: string; contract?: TaskContractInput; expectedContract?: Pick<TaskContract, "revision" | "digest">}, sessionKey: string, generation: string, requestId: string, expected?: TaskCredential): TaskView {
     if (Boolean(input.taskNodeId) === Boolean(input.contract)) throw new Error("TASK_START_ONE_TARGET_REQUIRED");
     return this.transaction(() => {
       const resolved = input.taskNodeId ?? this.create(input.contract!, `${requestId}:create`, undefined, {source:"runtime-task-tool",sessionKey}).task.contract.taskNodeId;
+      if (input.expectedContract) {
+        const current = this.get(resolved).contract;
+        if (current.revision !== input.expectedContract.revision || current.digest !== input.expectedContract.digest)
+          throw new Error("TASK_CONTRACT_STALE");
+      }
       return this.claim(resolved,sessionKey,generation,`${requestId}:claim`,expected);
     });
   }
@@ -737,6 +742,26 @@ export class TaskSystemStore {
       this.event(source.contract.taskNodeId,"reference_inherited",{sourceSessionKey,sourceGeneration,sessionKey,generation});
       return this.binding(sessionKey,generation);
     });
+  }
+  isSelectedReference(sessionKey: string, generation: string): boolean {
+    return Boolean(this.db.prepare("SELECT 1 FROM task_references WHERE session_key=? AND generation=? AND role='selected'").get(sessionKey, generation));
+  }
+  selectReference(taskNodeId: string, sessionKey: string, generation: string, requestId: string): TaskView {
+    text(sessionKey, "SESSION", 300); text(generation, "GENERATION", 200);
+    this.transaction(() => this.request(`select:${requestId}`, {taskNodeId,sessionKey,generation}, () => {
+      this.get(taskNodeId);
+      const current = this.binding(sessionKey, generation);
+      if (current?.contract.taskNodeId === taskNodeId && (!current.referenceOnly || this.isSelectedReference(sessionKey, generation))) return current;
+      if (current?.claim && !current.referenceOnly) {
+        if (this.db.prepare("SELECT 1 FROM task_active_runs WHERE task_id=? AND epoch=?").get(current.claim.taskNodeId, current.claim.epoch))
+          throw new Error("TASK_RUN_ALREADY_ACTIVE");
+        this.control(current.claim, "release");
+      }
+      this.db.prepare("INSERT OR REPLACE INTO task_references VALUES(?,?,?,?)").run(sessionKey, taskNodeId, generation, "selected");
+      this.event(taskNodeId, "selected", {sessionKey,generation});
+      return this.binding(sessionKey, generation)!;
+    }));
+    return this.binding(sessionKey, generation)!;
   }
   private saveWriterDelegation(delegation: TaskWriterDelegation): void {
     this.db

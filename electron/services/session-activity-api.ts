@@ -103,6 +103,8 @@ function mergeRuntimeSnapshot(
     goals: Array.isArray(runtime.goals) ? runtime.goals : snapshot.goals,
     processes: Array.isArray(runtime.processes) ? runtime.processes : snapshot.processes,
     lineage: Array.isArray(runtime.lineage) ? runtime.lineage : snapshot.lineage,
+    ...(runtime.stage ? { stage: runtime.stage } : {}),
+    ...(runtime.derivation ? { derivation: runtime.derivation } : {}),
     ...(runtime.policy ? { policy: runtime.policy } : {}),
     ...(runtime.resources ? { resources: runtime.resources } : {}),
     continuity: { ...snapshot.continuity, ...(runtime.continuity ?? {}) },

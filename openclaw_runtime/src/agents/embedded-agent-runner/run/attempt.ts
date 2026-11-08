@@ -1470,7 +1470,7 @@ export async function runEmbeddedAttempt(
               const registered = registerManualCompactionRequest(manualCompactionRequest, request);
               manualCompactionRequest = registered.pending;
               return registered.status;
-            },            // TF-0645: the tool archives what the session file holds right now.
+            }, // TF-0645: the tool archives what the session file holds right now.
             readCheckpointTranscript: () => {
               try {
                 return fsSync.readFileSync(params.sessionFile, "utf8");
@@ -2719,7 +2719,7 @@ export async function runEmbeddedAttempt(
       const setActiveSessionSystemPrompt = createTrackedSystemPromptSetter({
         turnId: injectionTurnId,
         basePrompt: attemptSystemPrompt.baseSystemPrompt,
-        apply: nextSystemPrompt => {
+        apply: (nextSystemPrompt) => {
           systemPromptText = nextSystemPrompt;
           applySystemPromptToSession(activeSession, nextSystemPrompt);
         },
@@ -3863,6 +3863,8 @@ export async function runEmbeddedAttempt(
         cancel: (reason?: "user_abort" | "restart" | "superseded") => void;
       } = {
         kind: "embedded",
+        runId: params.runId,
+        abortSignal: runAbortController.signal,
         queueMessage: async (text: string, options) => {
           if (options?.steeringMode) {
             activeSession.agent.steeringMode = options.steeringMode;
@@ -4544,9 +4546,7 @@ export async function runEmbeddedAttempt(
                 sessionId: params.sessionId,
                 runId: params.runId,
                 backendId:
-                  params.agentHarnessRuntimeOverride ??
-                  params.agentHarnessId ??
-                  "openclaw",
+                  params.agentHarnessRuntimeOverride ?? params.agentHarnessId ?? "openclaw",
                 provider: params.provider,
                 model: params.modelId,
                 effort: params.thinkLevel ?? params.requestedReasoningEffort ?? null,

@@ -244,6 +244,13 @@ const MAIN_CASES: MainCase[] = [
 ];
 
 describe('session activity background read (Main service)', () => {
+  it('retains the runtime lineage and missing-parent diagnostic through Main', async () => {
+    const derivation: SessionActivitySnapshot['derivation'] = { schema: 'SessionDerivation/v1', rootSessionKey: SESSION_KEY,
+      hops: [{ childSessionKey: SESSION_KEY, parentSessionKey: 'removed-parent', kind: 'handoff', status: 'parent-missing', parentFound: false }],
+      chain: [{ sessionKey: SESSION_KEY, kind: 'handoff' }], truncated: false };
+    const result = await apiWithRpc(async () => ({ snapshot: runtimeSnapshot({ derivation }) })).snapshot({ sessionKey: SESSION_KEY });
+    expect(result.snapshot.derivation).toEqual(derivation);
+  });
   it.each(MAIN_CASES)('$name', async (testCase) => {
     const result = await apiWithRpc(testCase.rpc).snapshot({ sessionKey: SESSION_KEY });
 

@@ -336,7 +336,7 @@
   "messageActions": {
     "summarizeUpToHere": "ここまでを要約",
     "summarizeFromHere": "ここから要約",
-    "forkFromHere": "ここから分岐",
+    "forkFromHere": "新しいセッションで質問",
     "copy": "メッセージをコピー",
     "copied": "コピーしました",
     "edit": "編集",
@@ -1972,9 +1972,9 @@
       "tooltip": "新しいセッションに引き継ぎ草稿を準備します",
       "disabledActiveRun": "現在の実行が完了すると利用できます",
       "dialogTitle": "新しい会話へ Handoff",
-      "dialogDescription": "新しいセッションを作成する前に、この引き継ぎ草稿を確認・編集できます。草稿はコンポーザーに入り、自動送信されません。",
+      "dialogDescription": "引き継ぎ草稿を確認・編集してください。「作成して送信」で新しいセッションを開き、草稿を最初のメッセージとして送信します。送信結果が未確認の場合は、照合と復旧のために草稿を保持します。",
       "draftLabel": "Handoff 草稿",
-      "create": "Handoff セッションを作成",
+      "create": "作成して送信",
       "cancel": "キャンセル",
       "toastPrepareFailed": "Handoff の準備に失敗しました",
       "toastCreateFailed": "Handoff セッションの作成に失敗しました",
@@ -2345,7 +2345,8 @@
     "archiveAction": "アーカイブ",
     "emptyAll": "アーカイブを空にする",
     "emptyAllConfirm": "もう一度クリックしてアーカイブされたすべての会話を完全に削除",
-    "viewLabel": "アーカイブ表示"
+    "viewLabel": "アーカイブ表示",
+    "permanentDeleteMessage": "「{{label}}」と会話履歴を完全に削除しますか？"
   },
   "questionDirectory": {
     "title": "質問目次",
@@ -2788,5 +2789,88 @@
   },
   "task": {
     "steps": "実行手順"
+  },
+  "sessionFamily": {
+    "toggle": "{{count}} 件の派生セッションを開閉",
+    "navigation": "セッションの関係",
+    "kind": {
+      "fork": "分岐",
+      "handoff": "引き継ぎ",
+      "spawn": "ワーカー",
+      "unknown": "参照元を利用できません"
+    },
+    "children": "派生セッション（{{count}}）",
+    "missing": "参照元を利用できません",
+    "unloaded": "参照元を読み込む",
+    "conflict": "参照元の情報が競合しています",
+    "cycle": "参照元に循環があります",
+    "bound-exceeded": "参照元の連鎖を省略しました",
+    "relations": "関係の詳細"
+  },
+  "projectEntry": {
+    "toggle": "{{name}} を開閉",
+    "loading": "プロジェクト担当を開いています…",
+    "unavailable": "プロジェクト担当の関連付けを利用できません。",
+    "coordinator": "{{name}} · プロジェクト担当"
+  },
+  "questionFork": {
+    "title": "新しいセッションで質問",
+    "description": "この質問より前のコンテキストを保持します。新しい質問は編集可能な下書きになります。",
+    "question": "新しい質問",
+    "create": "下書き付きで作成",
+    "noAncestor": "分岐に必要な直前のアシスタント応答がありません。",
+    "sourceChanged": "参照元が変更されました。プレビューを開き直してください。"
+  },
+  "handoffRecovery": {
+    "resume": "保存済みの下書きで再開",
+    "check": "送信状況を確認",
+    "openChild": "子セッションを開く",
+    "phase": {
+      "creating": "引き継ぎの作成を確認してください",
+      "ready": "子セッション作成済み · 初回送信前",
+      "sending": "初回メッセージを送信中",
+      "accepted": "初回送信を受付済み · 記録は未確認",
+      "sent": "初回メッセージ記録済み",
+      "failed": "初回送信は拒否されました · 下書き保持済み",
+      "unknown": "初回送信の結果が不明です · 再試行前に確認してください"
+    }
+  },
+  "delegationStages": {
+    "label": {
+      "admission": "実行受付",
+      "execution": "実行状態",
+      "report": "結果の送達",
+      "acceptance": "タスク検証",
+      "continuation": "親セッションの継続"
+    },
+    "taskRequired": "既存の業務タスクを選び、担当セッションを関連付けてください。",
+    "model": "実行モデル：{{model}}",
+    "status": {
+      "unavailable": "利用不可",
+      "in-flight": "受付処理中",
+      "approval-pending": "権限待ち",
+      "accepted": "受付済み",
+      "partial": "一部受付済み",
+      "rejected": "拒否",
+      "outcome-unknown": "結果不明",
+      "started": "開始イベント記録済み",
+      "yielded": "待機中",
+      "completed": "実行完了",
+      "error": "実行失敗",
+      "aborted": "実行停止",
+      "verified": "検証結果記録済み",
+      "not_required": "不要",
+      "pending": "送達待ち",
+      "in_progress": "送達中",
+      "delivered": "送達済み",
+      "failed": "失敗",
+      "suspended": "一時停止",
+      "discarded": "破棄",
+      "fenced": "実行世代が変更されました",
+      "waiting": "親の次のターン待ち",
+      "unknown": "送達結果不明",
+      "queued": "キューに追加済み",
+      "steered": "指示を受信済み"
+    }
   }
 }

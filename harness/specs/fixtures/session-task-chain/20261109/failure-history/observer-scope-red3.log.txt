@@ -1,0 +1,62 @@
+
+ RUN  v4.1.7 D:/ClawX-work/session-task-unified-relay-20261109/openclaw_runtime
+
+ ❯ |unit-fast| src/agents/orchestrator-write-set-plan.test.ts (8 tests | 2 failed) 14ms
+     ✓ fills implementer writeSet from fileHints and leaves reviewers empty 4ms
+     ✓ keeps explicit worker writeSet over fileHints 1ms
+     × preserves explicit read-only scope for implementer through the graph and dispatch plan 4ms
+     × preserves explicit read-only scope for reviewer through the graph and dispatch plan 1ms
+     ✓ records patch-flow as advisory-only without changing isolation 1ms
+     ✓ attaches the advisory to automatic routed plans 2ms
+     ✓ records a conservative shared advisory when duration and write sets are absent 0ms
+     ✓ leaves writeSet empty when no hints (coverage 0 for empty graph workers) 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit-fast| src/agents/orchestrator-write-set-plan.test.ts:44:38 > createOrchestratorPlan writeSet fill (C3 live) > preserves explicit read-only scope for implementer through the graph and dispatch plan
+AssertionError: expected [ 'src/result.ts' ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "src/result.ts",
++ ]
+
+ ❯ src/agents/orchestrator-write-set-plan.test.ts:51:77
+     49|       workers: [{ roleName, task: "Read and report", writeSet: [] }],
+     50|     });
+     51|     expect(plan.taskGraph.nodes.find((node) => !node.isVerifier)?.writ…
+       |                                                                             ^
+     52|     expect(plan.workers[0]?.writeSet).toEqual([]);
+     53|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  |unit-fast| src/agents/orchestrator-write-set-plan.test.ts:44:38 > createOrchestratorPlan writeSet fill (C3 live) > preserves explicit read-only scope for reviewer through the graph and dispatch plan
+AssertionError: expected undefined to deeply equal []
+
+- Expected:
+[]
+
++ Received:
+undefined
+
+ ❯ src/agents/orchestrator-write-set-plan.test.ts:51:77
+     49|       workers: [{ roleName, task: "Read and report", writeSet: [] }],
+     50|     });
+     51|     expect(plan.taskGraph.nodes.find((node) => !node.isVerifier)?.writ…
+       |                                                                             ^
+     52|     expect(plan.workers[0]?.writeSet).toEqual([]);
+     53|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 6 passed (8)
+   Start at  02:50:50
+   Duration  570ms (transform 144ms, setup 0ms, import 234ms, tests 14ms, environment 0ms)
+
+JSON report written to D:/tmp/unified-management-20261109/session-task-validation/observer-scope-red3.tests.json

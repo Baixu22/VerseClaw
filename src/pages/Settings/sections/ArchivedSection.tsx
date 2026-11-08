@@ -17,6 +17,7 @@ import { useShallow } from 'zustand/shallow';
 import { useTranslation } from 'react-i18next';
 import { Archive, Loader2, RotateCcw, Search, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { useChatStore } from '@/stores/chat';
 import { useWorkspacesStore } from '@/stores/workspaces';
 import type { SessionArchiveEntry } from '@shared/types/workspace';
@@ -41,6 +42,7 @@ export function ArchivedSection() {
   const workspaces = useWorkspacesStore((s) => s.profiles);
 
   const [query, setQuery] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState<SessionArchiveEntry | null>(null);
   // CDP bodyText: "所有任务 所有项目" — view toggle beside the search box.
   const [view, setView] = useState<ArchivedView>('allWorkspaces');
   const [pendingKey, setPendingKey] = useState<string | null>(null);
@@ -143,7 +145,7 @@ export function ArchivedSection() {
           size="sm"
           className="h-7 gap-1 px-2 text-xs text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
           disabled={pendingKey === entry.sessionKey}
-          onClick={() => void handlePermanentDelete(entry.sessionKey)}
+          onClick={() => setDeleteTarget(entry)}
         >
           <Trash2 className="h-3 w-3" />
           {t('chat:archive.deletePermanently')}
@@ -154,6 +156,13 @@ export function ArchivedSection() {
 
   return (
     <div data-testid="settings-archived-section">
+      <ConfirmDialog open={deleteTarget !== null} title={t('chat:archive.deleteTitle')}
+        message={t('chat:archive.permanentDeleteMessage', { label: deleteTarget?.label || deleteTarget?.sessionKey })}
+        confirmLabel={t('chat:archive.deletePermanently')} cancelLabel={t('common:actions.cancel')} variant="destructive"
+        onCancel={() => setDeleteTarget(null)} onConfirm={async () => {
+          if (!deleteTarget) return;
+          await handlePermanentDelete(deleteTarget.sessionKey); setDeleteTarget(null);
+        }} />
       {sorted.length > 0 && (
         <div className="sp-archived-title-row justify-end">
           <Button

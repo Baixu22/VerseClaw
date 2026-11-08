@@ -368,21 +368,21 @@ test.describe('Verse Claw chat session fork', () => {
           if (request.module === 'workspaces' && request.action === 'list') {
             return respond(request.id, {
               success: true,
-              profiles: calls.workspaceUpdate.length > 0 ? [buildWorkspace()] : [params.sourceWorkspace],
+              profiles: calls.workspaceSaveState.some((value) => (value as { sessionKey?: string }).sessionKey === params.forkSessionKey) ? [buildWorkspace()] : [params.sourceWorkspace],
               activeWorkspaceId: 'workspace-a',
-              activeWorkspace: calls.workspaceUpdate.length > 0 ? buildWorkspace() : params.sourceWorkspace,
+              activeWorkspace: calls.workspaceSaveState.some((value) => (value as { sessionKey?: string }).sessionKey === params.forkSessionKey) ? buildWorkspace() : params.sourceWorkspace,
             });
           }
           if (request.module === 'workspaces' && request.action === 'getActive') {
             return respond(request.id, {
               success: true,
               activeWorkspaceId: 'workspace-a',
-              activeWorkspace: calls.workspaceUpdate.length > 0 ? buildWorkspace() : params.sourceWorkspace,
+              activeWorkspace: calls.workspaceSaveState.some((value) => (value as { sessionKey?: string }).sessionKey === params.forkSessionKey) ? buildWorkspace() : params.sourceWorkspace,
             });
           }
           if (request.module === 'gateway' && request.action === 'rpc') {
             const payload = request.payload ?? {};
-            if (payload.method === 'sessions.list' && calls.workspaceUpdate.length > 0) {
+            if (payload.method === 'sessions.list' && calls.workspaceSaveState.some((value) => (value as { sessionKey?: string }).sessionKey === params.forkSessionKey)) {
               return respond(request.id, {
                 sessions: [
                   { key: params.sourceSessionKey, displayName: 'main' },
@@ -409,6 +409,10 @@ test.describe('Verse Claw chat session fork', () => {
           if (request.module === 'chat' && request.action === 'sendWithMedia') {
             calls.chatSend += 1;
             return respond(request.id, { success: true, result: { runId: 'unexpected' } });
+          }
+          if (request.module === 'sessions' && request.action === 'fork') {
+            return respond(request.id, { success: true, sourceSessionKey: params.sourceSessionKey,
+              sessionKey: params.forkSessionKey, forkedFromParent: true });
           }
           return originalHostInvoke?.(event, request) ?? respond(request.id, {});
         });
@@ -440,14 +444,14 @@ test.describe('Verse Claw chat session fork', () => {
 
       await expect.poll(async () => app.evaluate(() => {
         const calls = (globalThis as typeof globalThis & {
-          __forkCalls?: { workspaceUpdate: unknown[]; forkHistoryLoads: number };
+          __forkCalls?: { workspaceSaveState: Array<{ activeSessionKey?: string }>; forkHistoryLoads: number };
         }).__forkCalls;
         return {
-          workspaceUpdateCount: calls?.workspaceUpdate.length ?? 0,
+          workspaceActivationCount: calls?.workspaceSaveState.filter((value) => value.activeSessionKey === "agent:main:fork-1711111111111").length ?? 0,
           forkHistoryLoads: calls?.forkHistoryLoads ?? 0,
         };
       }), { timeout: 30_000 }).toEqual({
-        workspaceUpdateCount: 1,
+        workspaceActivationCount: 1,
         forkHistoryLoads: expect.any(Number),
       });
       await expect.poll(async () => app.evaluate(() => (
@@ -492,9 +496,8 @@ test.describe('Verse Claw chat session fork', () => {
           draftInput: SOURCE_DRAFT,
         }),
       }));
-      expect(calls?.workspaceUpdate).toContainEqual(expect.objectContaining({
+      expect(calls?.workspaceSaveState).toContainEqual(expect.objectContaining({
         id: 'workspace-a',
-        activeSessionKey: FORK_SESSION_KEY,
         sessionKey: FORK_SESSION_KEY,
         state: expect.objectContaining({
           draftInput: SOURCE_DRAFT,
@@ -576,6 +579,10 @@ test.describe('Verse Claw chat session fork', () => {
           action?: string;
           payload?: Record<string, unknown>;
         }) => {
+          if (request.module === 'sessions' && request.action === 'fork') return respond(request.id, {
+            success: false, sessionKey: null, error: 'Parent context is too large to fork',
+          });
+          if (request.module === 'workspaces' && request.action === 'saveState') return respond(request.id, { success: true });
           if (request.module === 'workspaces' && request.action === 'update') {
             calls.workspaceUpdate.push(request.payload);
           }

@@ -6,7 +6,7 @@ type: guide
 
 # 会话家族与生命周期交互设计
 
-2026-11-02 · 规划合同，尚未实现或验收 UI。主任务为 `tasks/session-derivation-ui.md`，硬约束为 `rules/session-derivation-ui-contract.md`。此处描述交互，不另立状态或任务真源。
+2026-11-02 设计合同，2026-11-08 实现入口更新。主任务为 `tasks/session-derivation-ui.md`，硬约束为 `rules/session-derivation-ui-contract.md`。聚合验证见 `tasks/session-task-chain-acceptance.md`，操作 owner 见 `docs/dev/session-lifecycle-control-matrix.md`。以下“已核实的起点”保留设计时事实，当前结果以候选绑定的验收报告为准。
 
 ## 已核实的起点
 

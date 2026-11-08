@@ -1,5 +1,6 @@
 /** Executes isolated cron prompts with model fallbacks and interim-ack retries. */
 import { createHash } from "node:crypto";
+import { clearAgentRunContext } from "../../infra/agent-events.js";
 import type { BootstrapContextMode } from "../../agents/bootstrap-files.js";
 import { resolveCliRuntimeExecutionProvider } from "../../agents/model-runtime-aliases.js";
 import type { ThinkLevel, VerboseLevel } from "../../auto-reply/thinking.js";
@@ -279,66 +280,89 @@ export function createCronPromptExecutor(params: {
         });
         // Embedded runs receive both the explicit route and the current-channel
         // id so message-tool policy can target the same chat as fallback delivery.
-        const result = await runEmbeddedAgent({
-          sessionId: params.cronSession.sessionEntry.sessionId,
+        registerAgentRunContext(params.runExecutionId, {
           sessionKey: params.runSessionKey,
-          promptCacheKey,
-          agentId: params.agentId,
-          trigger: "cron",
-          jobId: params.job.id,
-          cleanupBundleMcpOnRunEnd: params.job.sessionTarget === "isolated",
-          allowGatewaySubagentBinding: true,
-          messageChannel,
-          agentAccountId: params.resolvedDelivery.accountId,
-          messageTo: params.resolvedDelivery.to,
-          messageThreadId: params.resolvedDelivery.threadId,
-          currentChannelId,
-          sessionFile,
-          agentDir: params.agentDir,
-          workspaceDir: params.workspaceDir,
-          config: params.cfgWithAgentDefaults,
-          skillsSnapshot: params.skillsSnapshot,
-          prompt: promptText,
-          lane: resolveCronAgentLane(params.lane),
-          provider: providerOverride,
-          model: modelOverride,
-          modelFallbacksOverride: cronFallbacksOverride,
-          authProfileId: params.liveSelection.authProfileId,
-          authProfileIdSource: params.liveSelection.authProfileId
-            ? params.liveSelection.authProfileIdSource
-            : undefined,
-          thinkLevel: params.thinkLevel,
-          fastMode: resolveFastModeState({
-            cfg: params.cfgWithAgentDefaults,
+          sessionId: params.cronSession.sessionEntry.sessionId,
+          cronTaskScope: {
+            jobId: params.job.id,
+            workspaceDir: params.workspaceDir,
+            ...(params.job.coordinator
+              ? {
+                  coordinator: {
+                    workspaceId: params.job.coordinator.workspaceId,
+                    sessionKey: params.job.coordinator.coordinatorSessionKey,
+                    generation: params.job.coordinator.expectedSessionId,
+                    taskNodeId: params.job.coordinator.taskRef?.nodeId,
+                  },
+                }
+              : {}),
+          },
+        });
+        let result: Awaited<ReturnType<typeof runEmbeddedAgent>>;
+        try {
+          result = await runEmbeddedAgent({
+            sessionId: params.cronSession.sessionEntry.sessionId,
+            sessionKey: params.runSessionKey,
+            promptCacheKey,
+            agentId: params.agentId,
+            trigger: "cron",
+            jobId: params.job.id,
+            cleanupBundleMcpOnRunEnd: params.job.sessionTarget === "isolated",
+            allowGatewaySubagentBinding: true,
+            messageChannel,
+            agentAccountId: params.resolvedDelivery.accountId,
+            messageTo: params.resolvedDelivery.to,
+            messageThreadId: params.resolvedDelivery.threadId,
+            currentChannelId,
+            sessionFile,
+            agentDir: params.agentDir,
+            workspaceDir: params.workspaceDir,
+            config: params.cfgWithAgentDefaults,
+            skillsSnapshot: params.skillsSnapshot,
+            prompt: promptText,
+            lane: resolveCronAgentLane(params.lane),
             provider: providerOverride,
             model: modelOverride,
-            agentId: params.agentId,
-            sessionEntry: params.cronSession.sessionEntry,
-          }).enabled,
-          verboseLevel: params.resolvedVerboseLevel,
-          timeoutMs: params.timeoutMs,
-          runTimeoutOverrideMs: params.runTimeoutOverrideMs,
-          bootstrapContextMode,
-          bootstrapContextRunKind: "cron",
-          toolsAllow: params.agentPayload?.toolsAllow,
-          execOverrides: params.suppressExecNotifyOnExit
-            ? {
-                notifyOnExit: false,
-                notifyOnExitEmptySuccess: false,
-              }
-            : undefined,
-          sourceReplyDeliveryMode,
-          runId: params.runExecutionId,
-          requireExplicitMessageTarget: params.sourceDelivery.messageTool.requireExplicitTarget,
-          disableMessageTool: !params.sourceDelivery.messageTool.enabled,
-          forceMessageTool: params.sourceDelivery.messageTool.force,
-          allowTransientCooldownProbe: runOptions?.allowTransientCooldownProbe,
-          abortSignal: params.abortSignal,
-          onExecutionStarted: params.onExecutionStarted,
-          onExecutionPhase: params.onExecutionPhase,
-          bootstrapPromptWarningSignaturesSeen,
-          bootstrapPromptWarningSignature,
-        });
+            modelFallbacksOverride: cronFallbacksOverride,
+            authProfileId: params.liveSelection.authProfileId,
+            authProfileIdSource: params.liveSelection.authProfileId
+              ? params.liveSelection.authProfileIdSource
+              : undefined,
+            thinkLevel: params.thinkLevel,
+            fastMode: resolveFastModeState({
+              cfg: params.cfgWithAgentDefaults,
+              provider: providerOverride,
+              model: modelOverride,
+              agentId: params.agentId,
+              sessionEntry: params.cronSession.sessionEntry,
+            }).enabled,
+            verboseLevel: params.resolvedVerboseLevel,
+            timeoutMs: params.timeoutMs,
+            runTimeoutOverrideMs: params.runTimeoutOverrideMs,
+            bootstrapContextMode,
+            bootstrapContextRunKind: "cron",
+            toolsAllow: params.agentPayload?.toolsAllow,
+            execOverrides: params.suppressExecNotifyOnExit
+              ? {
+                  notifyOnExit: false,
+                  notifyOnExitEmptySuccess: false,
+                }
+              : undefined,
+            sourceReplyDeliveryMode,
+            runId: params.runExecutionId,
+            requireExplicitMessageTarget: params.sourceDelivery.messageTool.requireExplicitTarget,
+            disableMessageTool: !params.sourceDelivery.messageTool.enabled,
+            forceMessageTool: params.sourceDelivery.messageTool.force,
+            allowTransientCooldownProbe: runOptions?.allowTransientCooldownProbe,
+            abortSignal: params.abortSignal,
+            onExecutionStarted: params.onExecutionStarted,
+            onExecutionPhase: params.onExecutionPhase,
+            bootstrapPromptWarningSignaturesSeen,
+            bootstrapPromptWarningSignature,
+          });
+        } finally {
+          clearAgentRunContext(params.runExecutionId);
+        }
         bootstrapPromptWarningSignaturesSeen = resolveBootstrapWarningSignaturesSeen(
           result.meta?.systemPromptReport,
         );

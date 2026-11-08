@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { existsSync, realpathSync, readFileSync, statSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 
 export type TaskDomain = { id: string; root: string; database: string; worktree: string };
 
@@ -44,10 +44,22 @@ export function resolveTaskDomain(workspaceRoot: string): TaskDomain {
         : privateDir;
     }
   }
+  let database = join(root, gitFound ? "verse-claw" : ".verse-claw", "task-ledger.sqlite3");
+  // Runtime bootstrap can initialize Git after a local task already exists.
+  // Keep that task domain, including for later linked worktrees.
+  if (gitFound && basename(root) === ".git") {
+    const anchor = canonicalPath(dirname(root));
+    const legacyDatabase = join(anchor, ".verse-claw", "task-ledger.sqlite3");
+    if (existsSync(legacyDatabase)) {
+      if (existsSync(database)) throw new Error("TASK_DOMAIN_STORES_CONFLICT");
+      root = anchor;
+      database = legacyDatabase;
+    }
+  }
   return {
     id: createHash("sha256").update(root).digest("hex"),
     root,
     worktree,
-    database: join(root, gitFound ? "verse-claw" : ".verse-claw", "task-ledger.sqlite3"),
+    database,
   };
 }

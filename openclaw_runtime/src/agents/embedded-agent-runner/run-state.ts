@@ -17,6 +17,8 @@ import { resolveGlobalSingleton } from "../../shared/global-singleton.js";
  */
 export type EmbeddedAgentQueueHandle = {
   kind?: "embedded";
+  runId?: string;
+  abortSignal?: AbortSignal;
   queueMessage: (text: string, options?: EmbeddedAgentQueueMessageOptions) => Promise<void>;
   isStreaming: () => boolean;
   isCompacting: () => boolean;

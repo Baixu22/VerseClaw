@@ -1,5 +1,7 @@
 import type { TaskLedgerReference } from './task-ledger-reference.js';
 import type { WorkModeId } from './work-mode.js';
+import type { SessionTaskWriterClaim } from '../session-task-scope.js';
+import type { SessionHandoffOperation } from './session-handoff.js';
 
 export type WorkspacePermissionMode = 'readOnly' | 'acceptEdits' | 'plan' | 'fullAccess';
 
@@ -166,6 +168,10 @@ export interface WorkspaceCoordinatorBinding {
   sessionKey: string;
   sessionGeneration: string | null;
   taskLedgerReferences: TaskLedgerReference[];
+  /** Explicit task selection; completion remains in Task Ledger. */
+  activeTaskNodeId?: string;
+  /** A run-scoped writer fence. Fork/handoff never copy it to the child. */
+  writerClaim?: SessionTaskWriterClaim;
   environment: WorkspaceCoordinatorEnvironmentBinding;
   archiveRestorePolicy: WorkspaceCoordinatorArchiveRestorePolicy;
   state: WorkspaceCoordinatorBindingState;
@@ -237,6 +243,7 @@ export interface WorkspaceArtifactPanelState {
 
 export interface WorkspaceUiState {
   draftInput?: string;
+  readingPosition?: { generation?: string; scrollTop: number };
   /** A deliberate stop is remembered so the composer can render its resume state. */
   composerRunState?: 'idle' | 'paused';
   selectedModelRef?: string | null;
@@ -289,6 +296,9 @@ export interface WorkspaceProfile {
   archivedSessionKeys?: string[];
   /** Explicit long-collaboration metadata, keyed by stable SessionKey. */
   coordinatorBindings?: Record<string, WorkspaceCoordinatorBinding>;
+  /** Stable project entry, owned by coordinator binding/handoff rather than chat selection. */
+  projectCoordinatorSessionKey?: string;
+  handoffOperations?: Record<string, SessionHandoffOperation>;
 }
 
 export interface SessionArchiveEntry {

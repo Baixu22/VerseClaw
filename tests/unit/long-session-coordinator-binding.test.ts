@@ -103,6 +103,7 @@ async function apiWith(options: {
   hasActiveRun?: boolean;
   worktrees?: Array<{ path: string; branch?: string; detached?: boolean; bare?: boolean; prunable?: boolean }>;
   taskNodes?: string[];
+  worktreesForWorkspace?: (workspace: WorkspaceProfile) => Promise<unknown>;
 } = { workspaceRoot: '' }) {
   const { createWorkspacesApi } = await import('@electron/services/workspaces-api');
   const generation = options.generation ?? 'generation-1';
@@ -115,6 +116,7 @@ async function apiWith(options: {
       }),
     } as never,
     gitApi: {
+      ...(options.worktreesForWorkspace ? { worktreesForWorkspace: options.worktreesForWorkspace } : {}),
       status: vi.fn(async () => ({ success: true, status: repositoryStatus(options.workspaceRoot) })),
       worktrees: vi.fn(async () => ({
         success: true,
@@ -337,6 +339,7 @@ describe('long-session coordinator binding', () => {
       agentId: 'main',
     });
     const bindings = (state.profiles[0] as WorkspaceProfile).coordinatorBindings;
+    expect((state.profiles[0] as WorkspaceProfile).projectCoordinatorSessionKey).toBe('agent:main:session-child');
     expect(bindings?.['agent:main:main'].state).toBe('paused');
     expect(bindings?.['agent:main:session-child']).toMatchObject({
       state: 'active',
@@ -359,5 +362,33 @@ describe('long-session coordinator binding', () => {
     });
     expect(paused.recovery.state).toBe('paused');
     expect(paused.binding?.bindingRevision).toBe(2);
+  });
+  it('updates the target agent only when a session in another agent is selected', async () => {
+    const workspace = state.profiles[0] as WorkspaceProfile;
+    workspace.selectedAgentId = 'reviewer';
+    workspace.activeSessionKey = 'agent:reviewer:review';
+    workspace.agentBindings!.reviewer = { workspaceId: workspace.id, agentId: 'reviewer', sessionKey: 'agent:reviewer:review' };
+    const api = await apiWith({ workspaceRoot: workspace.rootPath });
+    await api.saveState({ id: workspace.id, activeSessionKey: 'agent:main:main' });
+    const saved = state.profiles[0] as WorkspaceProfile;
+    expect(saved.selectedAgentId).toBe('main');
+    expect(saved.agentBindings?.reviewer.sessionKey).toBe('agent:reviewer:review');
+    expect(saved.agentBindings?.main.sessionKey).toBe('agent:main:main');
+  });
+  it('revalidates a managed worktree against its owning project after another project becomes active', async () => {
+    const workspace = state.profiles[0] as WorkspaceProfile;
+    const worktree = join(workspace.rootPath, 'managed-worktree');
+    await mkdir(worktree, { recursive: true });
+    const scopedWorktrees = vi.fn(async (owner: WorkspaceProfile) => {
+      expect(owner.id).toBe('workspace-a');
+      return { success: true, worktrees: [{ path: worktree, branch: 'worker' }] };
+    });
+    const api = await apiWith({ workspaceRoot: workspace.rootPath, worktrees: [], worktreesForWorkspace: scopedWorktrees });
+    await bindLocal(api, { environment: { kind: 'managed-worktree', rootPath: worktree } });
+    state.profiles.push({ ...profile(workspace.rootPath), id: 'workspace-b', coordinatorBindings: {} });
+    state.activeWorkspaceId = 'workspace-b';
+    const resolved = await api.resolveCoordinator({ workspaceId: 'workspace-a', sessionKey: 'agent:main:main', agentId: 'main' });
+    expect(resolved.recovery.state).toBe('ready');
+    expect(scopedWorktrees).toHaveBeenCalledTimes(2);
   });
 });

@@ -1,6 +1,6 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { mkdir } from 'node:fs/promises';
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
 import type {
   TaskLedgerEdge,
   TaskLedgerEvent,
@@ -11,7 +11,8 @@ import type {
   TaskLedgerWarning,
 } from '../../shared/types/task-ledger';
 import { getOpenClawConfigDir } from '../utils/paths';
-import { writeJsonAtomic } from '../utils/atomic-write';
+import { withFileLock, writeJsonAtomic } from '../utils/atomic-write';
+import { logger } from '../utils/logger';
 import { appendPersistentTaskEvents, readPersistentTaskEvents, readTaskEventProjection } from '../../shared/task-system/event-store';
 
 const SCHEMA_VERSION = 1 as const;
@@ -302,14 +303,14 @@ export function projectTaskLedgerSnapshot(
 }
 
 export async function writeTaskLedgerSnapshot(snapshot: TaskLedgerSnapshot): Promise<void> {
-  const dir = getTaskLedgerDirForKey(snapshot.workspaceId);
-  await mkdir(dir, { recursive: true });
-  await writeJsonAtomic(getTaskLedgerSnapshotPathForKey(snapshot.workspaceId),snapshot);
+  const path = getTaskLedgerSnapshotPathForKey(snapshot.workspaceId);
+  await withFileLock(path, () => writeJsonAtomic(path, snapshot));
 }
 
 export async function loadTaskLedgerSnapshot(workspaceId?: string | null): Promise<TaskLedgerSnapshot> {
   const normalizedWorkspaceId = normalizeTaskLedgerWorkspaceId(workspaceId);
   const snapshot = readTaskEventProjection(getTaskLedgerEventsPathForKey(normalizedWorkspaceId), 'task-ledger-snapshot/v1', events => projectTaskLedgerSnapshot(normalizedWorkspaceId, events, []));
+  snapshot.sourceWorkspaceId = workspaceId?.trim() || 'default';
   snapshot.generatedAt = nowIso();
   if(workspaceId){
     const { listManagedTasks }=await import('./task-system-service');
@@ -317,14 +318,34 @@ export async function loadTaskLedgerSnapshot(workspaceId?: string | null): Promi
     for(const view of managed){
       const {contract}=view;
       const projected:TaskLedgerNode={id:contract.taskNodeId,title:contract.objective,description:contract.target,kind:'task',status:contract.state==='ready'?'todo':contract.state==='paused'||contract.state==='cancelling'?'blocked':contract.state==='cancelled'?'dropped':contract.state,createdAt:new Date(contract.createdAt).toISOString(),updatedAt:new Date(contract.updatedAt).toISOString(),metadata:{readonlyProjection:true,source:'task-ledger.execution-contract',contractRevision:contract.revision}};
+      projected.parentId = view.parentTaskNodeId ?? null;
+      projected.evidenceRefs = view.checkpoint?.artifacts.map(artifact => ({ type: 'file', ref: artifact.path,
+        label: basename(artifact.path), metadata: { sha256: artifact.sha256, source: 'task-contract-checkpoint' } })) ?? [];
       const index=snapshot.nodes.findIndex(node=>node.id===contract.taskNodeId);
       if(index<0){snapshot.nodes.push(projected);snapshot.rootNodeIds.push(projected.id);}else snapshot.nodes[index]={...snapshot.nodes[index],...projected};
+      if (view.claim && view.claim.state !== 'released') {
+        const { sessionKey, generation } = view.claim;
+        if (!snapshot.sessionLinks.some(link => link.nodeId === contract.taskNodeId && link.sessionKey === sessionKey && link.sessionGeneration === generation)) {
+          snapshot.sessionLinks.push({ id: `contract:${contract.taskNodeId}:${sessionKey}:${generation}`,
+            nodeId: contract.taskNodeId, sessionKey, sessionGeneration: generation,
+            relation: 'related', createdAt: new Date(contract.createdAt).toISOString() });
+        }
+      }
     }
     snapshot.activeNodeIds=snapshot.nodes.filter(node=>node.status==='doing').map(node=>node.id);
     snapshot.reviewNodeIds=snapshot.nodes.filter(node=>node.status==='review').map(node=>node.id);
     snapshot.blockedNodeIds=snapshot.nodes.filter(node=>node.status==='blocked').map(node=>node.id);
+    snapshot.rootNodeIds=snapshot.nodes.filter(node=>!node.parentId).map(node=>node.id);
   }
-  await writeTaskLedgerSnapshot(snapshot);
+  // The JSON file is a derived cache; owner reads above must still fail closed.
+  try {
+    await writeTaskLedgerSnapshot(snapshot);
+  } catch (error) {
+    logger.warn('[task-ledger] snapshot cache write failed', {
+      workspaceId: snapshot.sourceWorkspaceId,
+      error: String(error),
+    });
+  }
   return snapshot;
 }
 

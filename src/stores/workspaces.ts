@@ -8,6 +8,8 @@ import type {
   SessionFolder,
 } from '@shared/types/workspace';
 
+const workspaceStateSaves = new Map<string, Promise<void>>();
+
 type WorkspaceCreateInput = {
   name?: string;
   rootPath: string;
@@ -88,6 +90,7 @@ function stripLegacySessionStates(
 function workspaceClaimsSession(profile: WorkspaceProfile, sessionKey: string): boolean {
   return profile.activeSessionKey === sessionKey
     || Boolean(profile.sessionStates?.[sessionKey])
+    || Object.hasOwn(profile.coordinatorBindings ?? {}, sessionKey)
     || Object.values(profile.agentBindings ?? {}).some((binding) => binding.sessionKey === sessionKey);
 }
 
@@ -216,43 +219,69 @@ export const useWorkspacesStore = create<WorkspaceState>((set, get) => ({
     }
   },
 
-  saveWorkspaceState: async (input) => {
-    set({ error: null });
-    try {
-      await hostApi.workspaces.saveState(input);
-      set((state) => {
-        const nextProfiles = state.profiles.map((profile) => {
-          if (profile.id !== input.id) return profile;
-          const targetSessionKey = input.sessionKey ?? input.activeSessionKey ?? profile.activeSessionKey;
-          const nextActiveSessionKey = input.activeSessionKey ?? profile.activeSessionKey;
-          const baseSessionStates = stripLegacySessionStates(profile.sessionStates);
-          const nextSessionStates = input.state
-            ? {
-              ...(baseSessionStates ?? {}),
-              [targetSessionKey]: mergeWorkspaceUiState(
-                baseSessionStates?.[targetSessionKey],
-                input.state,
-              ),
-            }
-            : baseSessionStates;
-          return {
-            ...profile,
-            activeSessionKey: nextActiveSessionKey,
-            state: nextSessionStates
-              ? nextSessionStates[nextActiveSessionKey] ?? {}
-              : input.state && targetSessionKey === nextActiveSessionKey
-                ? mergeWorkspaceUiState(profile.state, input.state)
-                : stripLegacyWorkspaceUiState(profile.state),
-            sessionStates: nextSessionStates,
-            updatedAt: Date.now(),
-          };
+  saveWorkspaceState: (input) => {
+    const save = (workspaceStateSaves.get(input.id) ?? Promise.resolve()).catch(() => undefined).then(async () => {
+      const profile = get().profiles.find((entry) => entry.id === input.id);
+      const hasLegacyWorkMode = profile && (Object.hasOwn(profile.state ?? {}, 'workMode')
+        || Object.values(profile.sessionStates ?? {}).some((state) => Object.hasOwn(state, 'workMode')));
+      const targetAgent = input.activeSessionKey?.startsWith('agent:') ? input.activeSessionKey.split(':')[1] : undefined;
+      const selectedAgent = targetAgent || profile?.selectedAgentId || profile?.agentId;
+      const selectionConsistent = !input.activeSessionKey || !selectedAgent
+        || (profile?.agentBindings?.[selectedAgent]?.sessionKey === input.activeSessionKey && (profile?.selectedAgentId || profile?.agentId) === selectedAgent);
+      if (profile && !hasLegacyWorkMode && selectionConsistent && (!input.activeSessionKey || input.activeSessionKey === profile.activeSessionKey)) {
+        const target = input.sessionKey ?? input.activeSessionKey ?? profile.activeSessionKey;
+        const previous = profile.sessionStates?.[target];
+        if (!input.state || (previous && JSON.stringify(mergeWorkspaceUiState(previous, input.state)) === JSON.stringify(stripLegacyWorkspaceUiState(previous)))) return;
+      }
+      set({ error: null });
+      try {
+        await hostApi.workspaces.saveState(input);
+        set((state) => {
+          const nextProfiles = state.profiles.map((profile) => {
+            if (profile.id !== input.id) return profile;
+            const targetSessionKey = input.sessionKey ?? input.activeSessionKey ?? profile.activeSessionKey;
+            const nextActiveSessionKey = input.activeSessionKey ?? profile.activeSessionKey;
+            const nextAgentId = targetAgent || profile.selectedAgentId || profile.agentId;
+            const baseSessionStates = stripLegacySessionStates(profile.sessionStates);
+            const nextSessionStates = input.state
+              ? {
+                ...(baseSessionStates ?? {}),
+                [targetSessionKey]: mergeWorkspaceUiState(
+                  baseSessionStates?.[targetSessionKey],
+                  input.state,
+                ),
+              }
+              : baseSessionStates;
+            return {
+              ...profile,
+              activeSessionKey: nextActiveSessionKey,
+              ...(input.activeSessionKey ? { selectedAgentId: nextAgentId, agentId: nextAgentId, agentBindings: { ...profile.agentBindings,
+                [nextAgentId]: {
+                  ...profile.agentBindings?.[nextAgentId], workspaceId: profile.id,
+                  agentId: nextAgentId, sessionKey: nextActiveSessionKey,
+                },
+              } } : {}),
+              state: nextSessionStates
+                ? nextSessionStates[nextActiveSessionKey] ?? {}
+                : input.state && targetSessionKey === nextActiveSessionKey
+                  ? mergeWorkspaceUiState(profile.state, input.state)
+                  : stripLegacyWorkspaceUiState(profile.state),
+              sessionStates: nextSessionStates,
+              updatedAt: Date.now(),
+            };
+          });
+          const activeWorkspace = nextProfiles.find((profile) => profile.id === state.activeWorkspaceId) ?? null;
+          return { profiles: nextProfiles, activeWorkspace };
         });
-        const activeWorkspace = nextProfiles.find((profile) => profile.id === state.activeWorkspaceId) ?? null;
-        return { profiles: nextProfiles, activeWorkspace };
-      });
-    } catch (error) {
-      set({ error: String(error) });
-    }
+      } catch (error) {
+        set({ error: String(error) });
+        throw error;
+      }
+    });
+    workspaceStateSaves.set(input.id, save);
+    const clear = () => { if (workspaceStateSaves.get(input.id) === save) workspaceStateSaves.delete(input.id); };
+    void save.then(clear, clear);
+    return save;
   },
 
   createFolder: async (workspaceId, name, _parentId = null, kind = 'workgroup') => {

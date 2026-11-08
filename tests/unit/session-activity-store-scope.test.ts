@@ -39,6 +39,7 @@ vi.mock('@/lib/host-events', () => {
 import {
   disposeSessionActivitySubscriptions,
   useSessionActivityStore,
+  selectSessionActivitySnapshot,
 } from '@/stores/session-activity';
 
 const SESSION_KEY = 'agent:main:shared';
@@ -113,7 +114,7 @@ function deferred<T>() {
 describe('session activity request and workspace scope', () => {
   beforeEach(() => {
     disposeSessionActivitySubscriptions();
-    useSessionActivityStore.setState({ snapshots: {}, initialized: false });
+    useSessionActivityStore.setState({ snapshots: {}, scopedSnapshots: {}, initialized: false });
     mocks.snapshot.mockReset();
     mocks.runtimeHandler = null;
   });
@@ -148,6 +149,8 @@ describe('session activity request and workspace scope', () => {
     next.resolve(success(snapshotWithPolicy('workspace-b')));
     await nextLoad;
     expect(useSessionActivityStore.getState().snapshots[SESSION_KEY].policy?.scope.workspaceId).toBe('workspace-b');
+    expect(selectSessionActivitySnapshot(useSessionActivityStore.getState(), 'workspace-a', SESSION_KEY)?.policy?.scope.workspaceId).toBe('workspace-a');
+    expect(selectSessionActivitySnapshot(useSessionActivityStore.getState(), 'workspace-b', SESSION_KEY)?.policy?.scope.workspaceId).toBe('workspace-b');
   });
 
   it('rejects a response carrying another workspace policy', async () => {
@@ -157,6 +160,18 @@ describe('session activity request and workspace scope', () => {
 
     expect(result.policy).toBeUndefined();
     expect(result.backgroundRead.failedAt).not.toBeNull();
+  });
+  it('keeps the PTY identity separate from the current chat generation', async () => {
+    const initial = snapshotWithPolicy('workspace-a');
+    initial.session.sessionId = 'chat-generation';
+    mocks.snapshot.mockResolvedValueOnce(success(initial));
+    await useSessionActivityStore.getState().load({ workspaceId: 'workspace-a', sessionKey: SESSION_KEY });
+    useSessionActivityStore.getState().apply({ channel: 'terminal', payload: { workspaceId: 'workspace-a', sessionKey: SESSION_KEY,
+      sessionId: 'pty-process', status: 'running', ts: 100 } });
+    expect(useSessionActivityStore.getState().snapshots[SESSION_KEY].terminals).toEqual(expect.arrayContaining([expect.objectContaining({ id: 'pty-process', status: 'running' })]));
+    useSessionActivityStore.getState().apply({ channel: 'terminal', payload: { workspaceId: 'workspace-a', sessionKey: SESSION_KEY,
+      sessionId: 'pty-process', status: 'exited', exitCode: 0, ts: 110 } });
+    expect(useSessionActivityStore.getState().snapshots[SESSION_KEY].terminals[0].status).toBe('completed');
   });
 
   it('refreshes policy after an approval or authorization event', async () => {

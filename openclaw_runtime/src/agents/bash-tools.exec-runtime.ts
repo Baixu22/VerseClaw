@@ -786,6 +786,8 @@ export async function runExecProcess(opts: {
   /** Lifecycle identity additions. scopeKey is NOT identity. */
   agentId?: string;
   expectedSessionId?: string;
+  /** Exact agent run owning this process lifecycle. */
+  runId?: string;
   /** `session.store` template from the runtime config; snapshotted onto the
    *  ProcessSession alongside `mainKey` so the exit-time generation guard can
    *  resolve the key's current sessionId without an ambient config load. */
@@ -1086,6 +1088,13 @@ export async function runExecProcess(opts: {
           usePty: opts.usePty,
           agentId: opts.scopeKey?.trim() || "openclaw",
           sessionId: opts.sessionKey?.trim() || sessionId,
+          ...(opts.runId?.trim()
+            ? { identity: {
+                sessionKey: lifecycleCanonicalSessionKey,
+                sessionGeneration: lifecycleExpectedSessionId,
+                runId: opts.runId.trim(),
+              } }
+            : {}),
           traceId: opts.traceId,
           hostPolicyApproved: opts.hostPolicyApproved === true,
           onStdout: handleStdout,

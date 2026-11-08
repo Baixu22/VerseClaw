@@ -24,6 +24,22 @@ function makeGatewayJob(overrides: Record<string, unknown> = {}) {
 }
 
 describe('createCronApi browser automation tasks', () => {
+  it.each([undefined, null])('creates an ordinary schedule without a coordinator scope: %s', async (coordinator) => {
+    const rpc = vi.fn(async () => makeGatewayJob());
+    const api = createCronApi({ gatewayManager: { rpc } as never });
+    await api.create({ name: 'Ordinary schedule', message: 'Read the current status', schedule: '0 9 * * *', coordinator });
+    expect(rpc).toHaveBeenCalledWith('cron.add', expect.not.objectContaining({ coordinator: expect.anything() }));
+  });
+  it('preserves an explicit coordinator clear and rejects malformed scopes', async () => {
+    const rpc = vi.fn(async () => makeGatewayJob());
+    const api = createCronApi({ gatewayManager: { rpc } as never });
+    await api.update({ id: 'cron-browser-1', input: { coordinator: null } });
+    expect(rpc).toHaveBeenCalledWith('cron.update', { id: 'cron-browser-1', patch: { coordinator: null } });
+    rpc.mockClear();
+    await expect(api.create({ name: 'Invalid scope', message: 'Do not run', schedule: '0 9 * * *', coordinator: {} as never }))
+      .rejects.toThrow('Coordinator follow-up requires');
+    expect(rpc).not.toHaveBeenCalled();
+  });
   it('creates browser automation cron jobs as isolated agent turns with agent_browser allowlist', async () => {
     const rpc = vi.fn(async (method: string, params: Record<string, unknown>) => {
       expect(method).toBe('cron.add');

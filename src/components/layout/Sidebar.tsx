@@ -76,8 +76,9 @@ import { BrandLogo } from '@/components/brand/BrandLogo';
 import { useNewChatAction } from './use-new-chat-action';
 import { CalendarDays, FileText, Inbox as CodexInbox, Laptop, ListChecks, PenLine } from '@/components/icons/codex-icons';
 import { toast } from 'sonner';
+import i18n from 'i18next';
 import { useSessionIntentStore } from '@/stores/session-intent';
-import { createFreshWorkspaceSessionKey, createWorkspaceScopedForkSession } from '@/lib/workspace-session';
+import { activateWorkspaceScopedSession, createFreshWorkspaceSessionKey, createWorkspaceScopedForkSession } from '@/lib/workspace-session';
 
 interface NavItemProps {
   to: string;
@@ -133,7 +134,7 @@ interface SessionRowProps {
   onRenameSubmit: () => Promise<void>;
   onRenameCancel: () => void;
   onRenameKeyDown: (e: React.KeyboardEvent) => void;
-  onSwitch: (key: string) => void;
+  onSwitch: (key: string) => Promise<boolean>;
   onLoadHistory: (force: boolean) => Promise<void>;
   navigate: (to: string) => void;
   onDismissSessionStatus: (key: string, signature: string) => void;
@@ -417,13 +418,11 @@ const SessionRowMemo = memo(function SessionRow({
         <button
         type="button"
         data-testid={`sidebar-session-${s.key}`}
-        onClick={() => {
+        onClick={async () => {
           onMarkRead(s.key);
           if (currentSessionKey === s.key) {
             void onLoadHistory(false);
-          } else {
-            onSwitch(s.key);
-          }
+          } else if (!await onSwitch(s.key)) return;
           navigate('/');
         }}
         onDoubleClick={() => onStartRename(s.key, sessionLabel)}
@@ -632,6 +631,7 @@ export function Sidebar() {
     // from a gateway refresh, so keep that implementation detail out of the
     // sidebar while preserving real history-backed session rows.
     const isFreshCurrent = session.key === currentSessionKey
+        && !session.sessionId
       && /:session-\d/.test(session.key)
       && messages.length === 0;
     return !isFreshCurrent;
@@ -667,7 +667,7 @@ export function Sidebar() {
    * stays bounded while every session remains reachable.
    */
   const [sessionRenderLimit, setSessionRenderLimit] = useState(SIDEBAR_SESSION_RENDER_CHUNK);
-  const sessionRenderResetKey = `${sessionView}:${sessions.length}:${currentSessionKey}`;
+  const sessionRenderResetKey = `${sessionView}:${activeWorkspaceId ?? ''}:${sessions.length}:${currentSessionKey}`;
   useEffect(() => {
     setSessionRenderLimit(SIDEBAR_SESSION_RENDER_CHUNK);
   }, [sessionRenderResetKey]);
@@ -829,9 +829,22 @@ export function Sidebar() {
     workspaceProfiles.find((profile) => (
       profile.activeSessionKey === sessionKey
       || Boolean(profile.sessionStates?.[sessionKey])
+      || Object.hasOwn(profile.coordinatorBindings ?? {}, sessionKey)
       || Object.values(profile.agentBindings ?? {}).some((binding) => binding.sessionKey === sessionKey)
     )) ?? null
   ), [workspaceProfiles]);
+
+  const selectSidebarSession = useCallback(async (sessionKey: string) => {
+    const workspace = findWorkspaceForSession(sessionKey);
+    try {
+      if (workspace) return await activateWorkspaceScopedSession(workspace.id, sessionKey);
+      switchSession(sessionKey);
+      return true;
+    } catch {
+      toast.error(i18n.t('chat:projectEntry.unavailable'));
+      return false;
+    }
+  }, [findWorkspaceForSession, switchSession]);
 
   const updateSessionListState = useCallback((sessionKey: string, patch: WorkspaceSessionListState) => {
     const workspace = findWorkspaceForSession(sessionKey);
@@ -1204,7 +1217,7 @@ export function Sidebar() {
       onRenameSubmit={handleRenameSubmit}
       onRenameCancel={handleRenameCancel}
       onRenameKeyDown={handleRenameKeyDown}
-      onSwitch={switchSession}
+      onSwitch={selectSidebarSession}
       onLoadHistory={loadHistory}
       navigate={navigate}
       onDismissSessionStatus={handleDismissSessionStatus}
@@ -1215,7 +1228,7 @@ export function Sidebar() {
     />;
   }, [
     agentNameById, editingSessionKey, editingLabel, sessionLabels, sessionStatuses,
-    currentSessionKey, isOnChat, switchSession, loadHistory, navigate,
+    currentSessionKey, isOnChat, selectSidebarSession, loadHistory, navigate,
     handleStartRename, handleRenameSubmit, handleRenameCancel, handleRenameKeyDown,
     handleDismissSessionStatus, findWorkspaceForSession,
     markSessionRead, openSessionContextMenu, closeSessionContextMenu, toggleSessionPinned,
@@ -1411,8 +1424,8 @@ export function Sidebar() {
                 No `content-visibility: auto` here: skipping/restoring the whole
                 list's layout is what made the scroll height jump when a project
                 folded, and it also disables `position: sticky` for the project
-                headers inside. Row count in this list is bounded by the session
-                list itself, so there is nothing to virtualize away. */}
+                headers inside. Each workspace shares a mount budget across its
+                workgroups and grows it on scroll-to-bottom. */}
             <div className={cn('section-list-outer', sessionSectionOpen && 'open')} aria-hidden={!sessionSectionOpen}>
             <HookSidebar className="task-collection-list" activeKey={currentSessionKey}>
               {sidebarSessionEntries
@@ -1476,23 +1489,23 @@ export function Sidebar() {
                           </>
                         )}
                       >
-                        <button
-                          type="button"
-                          data-testid={`sidebar-session-project-toggle-${group.workspace.id}`}
-                          aria-expanded={!collapsed}
-                          onClick={() => toggleWorkspaceGroup(group.workspace.id)}
-                          className="project-row"
-                        >
+                        <div className="project-row">
+                          <button type="button" data-testid={`sidebar-session-project-toggle-${group.workspace.id}`}
+                            aria-expanded={!collapsed} aria-label={t('chat:projectEntry.toggle', { name: group.workspace.name })}
+                            onClick={() => toggleWorkspaceGroup(group.workspace.id)} className="project-disclosure">
                           {collapsed
                             ? <OfficialFolderClosedIcon size={19} />
                             : <OfficialFolderOpenIcon size={19} />}
-                          <span>{group.workspace.name}</span>
-                        </button>
+                          </button>
+                          <button type="button" className="project-name" data-testid={`sidebar-project-open-${group.workspace.id}`}
+                            onClick={() => navigate(`/projects/${encodeURIComponent(group.workspace.id)}`)}>{group.workspace.name}</button>
+                        </div>
                       </SidebarRow>
                       )}
                       <div
                         className={cn('project-tasks-outer', !workspaceCollapsed && 'open')}
                         aria-hidden={workspaceCollapsed}
+                        inert={workspaceCollapsed}
                       >
                         {/* `flat` drops the indent the workspace row's icon
                             column reserved, so group labels can sit on the
@@ -1500,7 +1513,9 @@ export function Sidebar() {
                         <div className="project-tasks" data-flat={showWorkspaceRow ? undefined : 'true'}>
                           <SessionFolderTree
                             workspace={group.workspace}
-                            sessions={sessionRenderLimit >= sessions.length ? group.sessions : group.sessions.slice(0, sessionRenderLimit)}
+                            currentSessionKey={currentSessionKey}
+                            sessions={group.sessions}
+                            renderLimit={workspaceCollapsed ? 0 : Math.min(sessionRenderLimit, group.sessions.length)}
                             collapsedFolders={collapsedFolderIds}
                             sessionStatusKinds={sessionStatusKinds}
                             sessionSort={sessionSort}
@@ -1896,9 +1911,9 @@ export function Sidebar() {
         workspaces={workspaceProfiles}
         agentNameById={agentNameById}
         onSwitch={(key) => {
-          void switchSession(key);
-          void loadHistory(false);
-          if (!isOnChat) navigate('/');
+          void selectSidebarSession(key).then((selected) => {
+            if (selected && !isOnChat) navigate('/');
+          });
         }}
       />
     </aside>

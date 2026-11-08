@@ -1,0 +1,80 @@
+---
+lifecycleStatus: active
+id: session-delegation-status
+title: Show delegation, execution, reporting and continuation as separate facts
+scenario: gateway-backend-communication
+taskType: runtime-bridge
+diffBase: 95b876f27
+intent: Complete the existing session/task UI contract through owner-backed, generation-scoped results.
+ownedPaths:
+  - shared/types/session-delegation.ts
+  - shared/host-api/contract.ts
+  - electron/services/sessions-api.ts
+  - src/lib/host-api.ts
+  - src/components/file-preview/WorkspaceAgentsPanel.tsx
+  - src/components/file-preview/WorkspaceSubagentPanel.tsx
+  - src/pages/Chat/SessionActivityPanel.tsx
+  - src/stores/session-activity.ts
+  - src/components/chat/SessionDelegationStatus.tsx
+  - tests/unit/session-delegation-status.test.tsx
+  - tests/unit/session-handoff-recovery.test.ts
+  - tests/e2e/session-derivation-ui.spec.ts
+  - harness/specs/tasks/session-delegation-status.md
+  - shared/i18n/locales/**/chat.json
+  - docs/modules/multi-agent-and-tasks.md
+touchedAreas:
+  - shared/types/session-delegation.ts
+  - shared/host-api/contract.ts
+  - electron/services/sessions-api.ts
+  - src/lib/host-api.ts
+  - src/components/file-preview/WorkspaceAgentsPanel.tsx
+  - src/components/file-preview/WorkspaceSubagentPanel.tsx
+  - src/pages/Chat/SessionActivityPanel.tsx
+  - src/stores/session-activity.ts
+  - src/components/chat/SessionDelegationStatus.tsx
+  - tests/unit/session-delegation-status.test.tsx
+  - tests/unit/session-handoff-recovery.test.ts
+  - tests/e2e/session-derivation-ui.spec.ts
+  - harness/specs/tasks/session-delegation-status.md
+  - shared/i18n/locales/**/chat.json
+  - docs/modules/multi-agent-and-tasks.md
+requiredRules:
+  - identity-scope-boundary
+  - renderer-main-boundary
+  - backend-communication-boundary
+  - session-derivation-ui-contract
+  - i18n-locale-coverage
+  - comms-regression
+  - docs-sync
+  - disk-temp-policy
+requiredProfiles:
+  - fast
+  - comms
+  - e2e
+expectedUserBehavior:
+  - Admission, actual execution, report delivery, task acceptance and parent continuation remain distinct.
+  - Current session/workspace/generation scopes reject stale results and unavailable owner actions.
+  - Read failures stay visible and preserve draft, transcript and evidence references.
+acceptance:
+  - Apply the complete U4 or U5 contract from session-derivation-ui-design and its Task Forest node.
+  - Use canonical host actions and current owner receipts; do not infer task acceptance from text or a finished run.
+  - Stop, pause, archive, delete and context restore retain their distinct scopes and recovery behavior.
+  - Existing child sessions remain reachable after source archive/delete; no implicit subtree action is added.
+  - Four-locale Electron journeys and focused negative tests identify the same candidate and agent actor.
+requiredTests:
+  - pnpm run typecheck
+  - pnpm run contract:check
+  - pnpm run i18n:lint
+  - pnpm run comms:replay
+  - pnpm run comms:compare
+  - pnpm exec playwright test tests/e2e/session-derivation-ui.spec.ts --workers=1
+  - pnpm harness validate --spec harness/specs/tasks/session-delegation-status.md
+  - pnpm harness run --spec harness/specs/tasks/session-delegation-status.md --dry-run
+docs:
+  required: true
+  files:
+    - docs/modules/multi-agent-and-tasks.md
+---
+
+The original session UI contract remains the acceptance source. Its required cases
+are retained in the aggregate journey inventory; this spec only narrows ownership.

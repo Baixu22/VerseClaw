@@ -37,6 +37,7 @@ const Inbox = lazy(() => import('./pages/Inbox').then((m) => ({ default: m.Inbox
 const ImageGenerationPage = lazy(() => import('./pages/ImageGeneration').then((m) => ({ default: m.ImageGenerationPage })));
 const ObservabilityDashboard = lazy(() => import('./pages/Observability').then((m) => ({ default: m.ObservabilityDashboard })));
 const TaskLedgerPage = lazy(() => import('./pages/TaskLedger'));
+const ProjectPage = lazy(() => import('./pages/Projects'));
 const ClawGraphPage = lazy(() => import('./pages/ClawGraph'));
 const Knowledge = lazy(() => import('./pages/Knowledge').then((m) => ({ default: m.Knowledge })));
 const MemoryPage = lazy(() => import('./pages/Memory').then((m) => ({ default: m.MemoryPage })));
@@ -114,6 +115,7 @@ const BackgroundRoutes = memo(function BackgroundRoutes({
         <Route path="/cron" element={<Cron />} />
         <Route path="/remote-tasks" element={<Navigate to="/inbox?source=remote-task" replace />} />
         <Route path="/task-ledger" element={<TaskLedgerPage />} />
+        <Route path="/projects/:workspaceId" element={<ProjectPage />} />
         <Route path="/clawgraph" element={<ClawGraphPage />} />
         <Route
           path="/code-review"

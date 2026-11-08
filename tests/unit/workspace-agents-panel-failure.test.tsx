@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { WorkspaceAgentsPanel } from '@/components/file-preview/WorkspaceAgentsPanel';
 import { DEFAULT_SESSION_KEY } from '@shared/chat/types';
 import type { SessionActivitySubagent } from '@shared/types/session-activity';
+import { createEmptySessionActivitySnapshot } from '@shared/types/session-activity';
 
 const historyMock = vi.fn();
 
@@ -31,10 +32,12 @@ const SUBAGENT: SessionActivitySubagent = {
 /* One stable state object: the real store hands out the same array reference
  * until it updates, and a fresh literal per render would make the panel look
  * like it refetches on every event. */
-const ACTIVITY_STATE = { snapshots: { [DEFAULT_SESSION_KEY]: { subagents: [SUBAGENT] } } };
+const SNAPSHOT = { ...createEmptySessionActivitySnapshot(DEFAULT_SESSION_KEY), subagents: [SUBAGENT] };
+const ACTIVITY_STATE = { snapshots: { [DEFAULT_SESSION_KEY]: SNAPSHOT } };
 
 vi.mock('@/stores/session-activity', () => ({
   useSessionActivityStore: (selector: (state: unknown) => unknown) => selector(ACTIVITY_STATE),
+  selectSessionActivitySnapshot: (_state: unknown, _workspaceId: unknown, sessionKey: string) => sessionKey === DEFAULT_SESSION_KEY ? SNAPSHOT : undefined,
 }));
 
 const LABELS: Record<string, string> = {

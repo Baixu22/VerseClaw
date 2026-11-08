@@ -1,4 +1,6 @@
 import type { RawMessage } from '../chat/types';
+import type { SessionHandoffOperation } from '../types/session-handoff';
+import type { ScopedRunId } from '../types/identity-scope';
 import type { InstructionLayerKind, InstructionResolution, InstructionTrust } from '../instruction-precedence';
 import type { BackgroundWorkGateState, ResourceEnvelopeSnapshot } from '../types/resources';
 import type {
@@ -1105,6 +1107,7 @@ export type GatewayRpcPayload = {
   params?: unknown;
   timeoutMs?: number;
   approvalId?: string;
+  expectedWorkspaceId?: string;
 };
 
 export type LocalControlPlaneReportKind =
@@ -2595,6 +2598,7 @@ export type ProviderConfig = {
   baseUrl?: string;
   apiProtocol?: ProviderProtocol;
   headers?: Record<string, string>;
+  modelProfile?: { contextWindow?: number; maxTokens?: number; supportsVision?: boolean; supportsReasoning?: boolean };
   model?: string;
   fallbackModels?: string[];
   fallbackProviderIds?: string[];
@@ -2981,10 +2985,27 @@ export type SessionHistoryPayload = {
   agentId?: string;
   sessionId?: string;
   limit?: number;
+  expectedSessionGeneration?: string;
+  expectedParentSessionKey?: string;
+  workerSendIdempotencyKey?: string;
 };
 export type SessionHistoryResult = OptionalHostSuccess & {
   messages?: RawMessage[];
+  sessionGeneration?: string;
+  model?: string;
+  workerSendReceipt?: { phase: 'queued' | 'steered'; idempotencyKey: string; source: 'runtime-intervention'; queueItemId?: string };
 };
+export type SessionSendWorkerPayload = {
+  workspaceId: string;
+  parentSessionKey: string;
+  expectedParentGeneration: string;
+  childSessionKey: string;
+  expectedChildGeneration: string;
+  message: string;
+  idempotencyKey: string;
+  mode: 'send' | 'steer';
+};
+export type SessionSendWorkerResult = HostSuccess & { phase: 'accepted' | 'queued' | 'steered' | 'rejected' | 'unknown'; run?: ScopedRunId; receipt?: { idempotencyKey: string; source: 'runtime-ack' | 'runtime-intervention'; queueItemId?: string } };
 export type SessionSummariesPayload = { sessionKeys?: string[]; limit?: number };
 export type SessionLabelSummary = {
   sessionKey: string;
@@ -3302,8 +3323,18 @@ export type SessionHandoffSource = {
   summary?: string;
   warning?: string;
 };
-export type SessionCreateHandoffPayload = SessionHandoffPayload & { draftInput: string };
+export type SessionCreateHandoffPayload = SessionHandoffPayload & { draftInput: string; operationId?: string };
+export type SessionHandoffOperationPayload = SessionHandoffPayload & { operationId?: string; reconcile?: boolean };
+export type SessionHandoffOperationResult = HostSuccess & { operation: SessionHandoffOperation | null };
+export type WorkspaceSessionTaskSelectPayload = {
+  workspaceId: string;
+  sessionKey: string;
+  taskNodeId: string;
+  expectedSessionGeneration?: string;
+  expectedRevision?: number;
+};
 export type SessionCreateHandoffResult = HostSuccess & {
+  operation?: SessionHandoffOperation;
   sessionKey?: string;
   handoffDepth?: number;
   handoffParentSessionKey?: string;
@@ -3328,6 +3359,8 @@ export type SessionHandoffResult = HostSuccess & {
 export type SessionStopPayload = {
   sessionKey: string;
   agentId?: string;
+  workspaceId?: string;
+  expectedSessionId?: string;
 };
 export type SessionStopResult = HostSuccess & {
   key?: string;
@@ -3560,6 +3593,8 @@ export type ChatSendWithMediaPayload = {
   message?: string;
   deliver?: boolean;
   idempotencyKey: string;
+  handoffOperationId?: string;
+  expectedSessionGeneration?: string;
   media?: ChatMediaItem[];
   inputMode?: ChatInputMode;
   knowledgeScope?: WorkspaceKnowledgeScope;
@@ -5785,6 +5820,7 @@ export type HostApiContract = {
     deleteFolder: (payload: WorkspaceFolderDeletePayload) => WorkspaceSnapshotResult;
     moveSessionToFolder: (payload: WorkspaceFolderMoveSessionPayload) => WorkspaceSnapshotResult;
     bindCoordinator: (payload: WorkspaceCoordinatorBindPayload) => WorkspaceCoordinatorBindingResult;
+    selectSessionTask: (payload: WorkspaceSessionTaskSelectPayload) => WorkspaceCoordinatorBindingResult;
     resolveCoordinator: (payload: WorkspaceCoordinatorResolvePayload) => WorkspaceCoordinatorBindingResult;
     pauseCoordinator: (payload: WorkspaceCoordinatorPausePayload) => WorkspaceCoordinatorBindingResult;
   };
@@ -6146,6 +6182,7 @@ export type HostApiContract = {
     rename: (payload: SessionRenamePayload) => HostSuccess;
     summaries: (payload?: SessionSummariesPayload) => SessionSummariesResult;
     history: (payload: SessionHistoryPayload) => SessionHistoryResult;
+    sendWorker: (payload: SessionSendWorkerPayload) => SessionSendWorkerResult;
     patchThinking: (payload: SessionPatchThinkingPayload) => HostSuccess & { result?: unknown };
     patchRuntimeModel: (payload: SessionPatchRuntimeModelPayload) => HostSuccess & { result?: unknown };
     compactionStatus: (payload: SessionCompactionPayload) => SessionCompactionStatusResult;
@@ -6165,6 +6202,7 @@ export type HostApiContract = {
     compactRange: (payload: SessionCompactRangePayload) => SessionCompactionResult;
     prepareHandoff: (payload: SessionHandoffPayload) => SessionHandoffResult;
     createHandoff: (payload: SessionCreateHandoffPayload) => SessionCreateHandoffResult;
+    handoffOperation: (payload: SessionHandoffOperationPayload) => SessionHandoffOperationResult;
     fork: (payload: SessionForkPayload) => SessionForkResult;
     truncate: (payload: SessionTruncatePayload) => SessionTruncateResult;
     archive: (payload: SessionArchivePayload) => SessionArchiveResult;

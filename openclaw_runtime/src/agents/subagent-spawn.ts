@@ -1301,7 +1301,7 @@ export async function spawnSubagentDirect(
   const spawnedWorkspaceDir = resolveSpawnedWorkspaceInheritance({
     config: cfg,
     targetAgentId,
-    explicitWorkspaceDir: inheritedWorkspaceDir,
+    explicitWorkspaceDir: spawnedCwd ?? inheritedWorkspaceDir,
   });
   const requesterOrigin = normalizeDeliveryContext({
     channel: ctx.agentChannel,
@@ -1769,7 +1769,7 @@ export async function spawnSubagentDirect(
     };
     const childTarget = resolveGatewaySessionStoreTarget({cfg, key: childSessionKey});
     const childEntry = resolveStoreEntryByKeys(loadSessionStore(childTarget.storePath, {skipCache:true,clone:false}), childTarget.storeKeys);
-    const taskIntent = capturePersistentTaskDelegationIntent({workspace:ctx.workspaceDir,childWorkspace:spawnedCwd??spawnedWorkspaceDir,parentSessionKey:requesterInternalKey,parentGeneration:parentAdmissionEntry?.sessionId,childSessionKey,childGeneration:childEntry?.sessionId,childRunId:childIdem,observer:params.orchestration?.isVerifier===true});
+    const taskIntent = capturePersistentTaskDelegationIntent({workspace:ctx.workspaceDir,childWorkspace:spawnedCwd??spawnedWorkspaceDir,parentSessionKey:requesterInternalKey,parentGeneration:parentAdmissionEntry?.sessionId,childSessionKey,childGeneration:childEntry?.sessionId,childRunId:childIdem,observer:params.orchestration?.isVerifier===true || params.writeSet?.length === 0});
     if (queuedOrchestration) {
       if (!parentAdmissionEntry?.sessionId) throw new Error('orchestration controller generation unavailable');
       enqueueSubagentRun({ ...reservedRun, cleanup: 'keep', queuedDispatch: {

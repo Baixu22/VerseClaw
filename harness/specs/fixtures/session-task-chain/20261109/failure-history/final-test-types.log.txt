@@ -1,0 +1,1 @@
+tests/unit/resource-mixed-measurement.test.ts(2,112): error TS7016: Could not find a declaration file for module '../../scripts/lib/resource-mixed-measurement.mjs'. 'D:/ClawX-work/session-task-unified-relay-20261109/scripts/lib/resource-mixed-measurement.mjs' implicitly has an 'any' type.

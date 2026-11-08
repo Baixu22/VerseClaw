@@ -341,6 +341,10 @@ import type {
   SessionStopResult,
   SessionCreateHandoffPayload,
   SessionCreateHandoffResult,
+  SessionHandoffOperationPayload,
+  SessionHandoffOperationResult,
+  SessionHistoryPayload,
+  SessionSendWorkerPayload,
   SessionDelegationPayload,
   SessionDelegationResult,
   SessionHandoffPayload,
@@ -387,6 +391,7 @@ import type {
   WorkProviderValidateArtifactPayload,
   WorkProviderValidateArtifactResult,
   WorkspaceCoordinatorBindPayload,
+  WorkspaceSessionTaskSelectPayload,
   WorkspaceCoordinatorBindingResult,
   WorkspaceCoordinatorPausePayload,
   WorkspaceCoordinatorResolvePayload,
@@ -845,6 +850,9 @@ export const hostApi = {
     ),
     bindCoordinator: (input: WorkspaceCoordinatorBindPayload): Promise<WorkspaceCoordinatorBindingResult> => (
       invokeHost('workspaces', 'bindCoordinator', input)
+    ),
+    selectSessionTask: (input: WorkspaceSessionTaskSelectPayload): Promise<WorkspaceCoordinatorBindingResult> => (
+      invokeHost('workspaces', 'selectSessionTask', input)
     ),
     resolveCoordinator: (input: WorkspaceCoordinatorResolvePayload): Promise<WorkspaceCoordinatorBindingResult> => (
       invokeHost('workspaces', 'resolveCoordinator', input)
@@ -1490,9 +1498,10 @@ export const hostApi = {
       invokeHost('sessions', 'rename', { id, title })
     ),
     summaries: (input?: { sessionKeys?: string[]; limit?: number }) => invokeHost('sessions', 'summaries', input),
-    history: (input: { sessionKey?: string; agentId?: string; sessionId?: string; limit?: number }) => (
+    history: (input: SessionHistoryPayload) => (
       invokeHost('sessions', 'history', input)
     ),
+    sendWorker: (input: SessionSendWorkerPayload) => invokeHost('sessions', 'sendWorker', input),
     patchThinking: (input: SessionPatchThinkingPayload) => invokeHost('sessions', 'patchThinking', input),
     patchRuntimeModel: (input: SessionPatchRuntimeModelPayload) => invokeHost('sessions', 'patchRuntimeModel', input),
     compactionStatus: (input: SessionCompactionPayload): Promise<SessionCompactionStatusResult> => (
@@ -1556,6 +1565,9 @@ export const hostApi = {
     ),
     createHandoff: (input: SessionCreateHandoffPayload): Promise<SessionCreateHandoffResult> => (
       invokeHost('sessions', 'createHandoff', input)
+    ),
+    handoffOperation: (input: SessionHandoffOperationPayload): Promise<SessionHandoffOperationResult> => (
+      invokeHost('sessions', 'handoffOperation', input)
     ),
     prepareHandoff: (input: SessionHandoffPayload): Promise<SessionHandoffResult> => (
       invokeHost('sessions', 'prepareHandoff', input)

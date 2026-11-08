@@ -8,6 +8,32 @@ import { hostApi } from '@/lib/host-api';
 import { useChatStore } from '@/stores/chat';
 import { useWorkspacesStore } from '@/stores/workspaces';
 
+let navigationTail: Promise<unknown> = Promise.resolve();
+let navigationIntent = 0;
+
+/** Select an explicitly associated session; serialize project switches and ignore older intents. */
+export function activateWorkspaceScopedSession(workspaceId: string, sessionKey: string, isCurrentIntent: () => boolean = () => true): Promise<boolean> {
+  const intent = ++navigationIntent;
+  const operation = navigationTail.catch(() => undefined).then(async () => {
+    if (intent !== navigationIntent || !isCurrentIntent()) return false;
+    const state = useWorkspacesStore.getState();
+    const workspace = state.profiles.find((profile) => profile.id === workspaceId);
+    const associated = workspace && (workspace.activeSessionKey === sessionKey
+      || Object.hasOwn(workspace.sessionStates ?? {}, sessionKey)
+      || Object.hasOwn(workspace.coordinatorBindings ?? {}, sessionKey)
+      || Object.values(workspace.agentBindings ?? {}).some((binding) => binding.sessionKey === sessionKey));
+    if (!workspace || !associated) throw new Error('SESSION_WORKSPACE_ASSOCIATION_MISSING');
+    if (state.activeWorkspaceId !== workspaceId) await state.switchWorkspace(workspaceId);
+    if (intent !== navigationIntent || !isCurrentIntent()) return false;
+    await useWorkspacesStore.getState().saveWorkspaceState({ id: workspaceId, activeSessionKey: sessionKey, sessionKey });
+    if (intent !== navigationIntent || !isCurrentIntent()) return false;
+    useChatStore.getState().switchSession(sessionKey);
+    return true;
+  });
+  navigationTail = operation;
+  return operation;
+}
+
 export function getAgentIdFromSessionKey(sessionKey: string): string {
   if (!sessionKey.startsWith('agent:')) return 'main';
   const [, agentId] = sessionKey.split(':');
@@ -131,14 +157,17 @@ export async function createWorkspaceScopedNewSession(): Promise<string> {
   return sessionKey;
 }
 
-export async function createWorkspaceScopedHandoffSession(draftInput: string): Promise<string> {
+export async function createWorkspaceScopedHandoffSession(draftInput: string, options: { operationId?: string; sourceSessionKey?: string } = {}): Promise<string> {
   const chatState = useChatStore.getState();
+  const startingSessionKey = chatState.currentSessionKey;
+  const startingViewRevision = chatState.viewRevision;
   const currentAgentId = chatState.currentAgentId || getAgentIdFromSessionKey(chatState.currentSessionKey);
-  const sourceSessionKey = chatState.currentSessionKey;
+  const sourceSessionKey = options.sourceSessionKey ?? chatState.currentSessionKey;
   const workspace = await ensureActiveWorkspaceForSession();
 
   const result = await hostApi.sessions.createHandoff({
     sessionKey: sourceSessionKey, agentId: currentAgentId, workspaceId: workspace?.id ?? null, draftInput,
+    ...(options.operationId ? { operationId: options.operationId } : {}),
   });
   if (!result.success || !result.sessionKey) throw new Error(result.error || 'Failed to create handoff session');
   const sessionKey = result.sessionKey;
@@ -149,7 +178,11 @@ export async function createWorkspaceScopedHandoffSession(draftInput: string): P
   await inheritSessionWorkgroup(workspace, sourceSessionKey, sessionKey);
   await useWorkspacesStore.getState().fetchWorkspaces();
   await clearWorkspaceActiveTopicMarker(workspace.rootPath);
-  chatState.resetSessionView(sessionKey);
+  await chatState.loadSessions({ force: true });
+  const isCurrent = () => useChatStore.getState().currentSessionKey === startingSessionKey
+    && useChatStore.getState().viewRevision === startingViewRevision && useWorkspacesStore.getState().activeWorkspaceId === workspace.id;
+  if (!isCurrent()) return sessionKey;
+  await activateWorkspaceScopedSession(workspace.id, sessionKey, isCurrent);
   return sessionKey;
 }
 
@@ -166,9 +199,11 @@ function cloneForkableWorkspaceState(state: WorkspaceUiState | undefined): Works
 
 export async function createWorkspaceScopedForkSession(
   sourceSessionKey: string,
-  options: { fromLeafId?: string } = {},
+  options: { fromLeafId?: string; draftInput?: string } = {},
 ): Promise<string> {
   const chatState = useChatStore.getState();
+  const startingSessionKey = chatState.currentSessionKey;
+  const startingViewRevision = chatState.viewRevision;
   const currentAgentId = chatState.currentAgentId || getAgentIdFromSessionKey(sourceSessionKey || chatState.currentSessionKey);
   const workspace = await ensureActiveWorkspaceForSession();
   const result = await hostApi.sessions.fork({
@@ -190,27 +225,17 @@ export async function createWorkspaceScopedForkSession(
   }
 
   const sourceState = workspace.sessionStates?.[sourceSessionKey] ?? workspace.state;
-  await hostApi.workspaces.update(workspace.id, {
-    agentId: currentAgentId,
-    activeSessionKey: result.sessionKey,
+  await hostApi.workspaces.saveState({
+    id: workspace.id,
     sessionKey: result.sessionKey,
-    state: cloneForkableWorkspaceState(sourceState),
+    state: { ...cloneForkableWorkspaceState(sourceState), ...(options.draftInput !== undefined ? { draftInput: options.draftInput } : {}) },
   });
   await inheritSessionWorkgroup(workspace, sourceSessionKey, result.sessionKey);
   await useWorkspacesStore.getState().fetchWorkspaces();
-  try {
-    await hostApi.taskLedger.linkSession({
-      workspaceId: workspace.id,
-      sessionKey: result.sessionKey,
-      agentId: currentAgentId,
-      relation: 'forked_from',
-      sourceSessionKey,
-      summary: 'Forked conversation branch',
-      idempotencyKey: `session-fork:${sourceSessionKey}:${result.sessionKey}`,
-    });
-  } catch (error) {
-    console.warn('Failed to link forked session in Task Ledger:', error);
-  }
-  chatState.resetSessionView(result.sessionKey);
+  await chatState.loadSessions({ force: true });
+  const isCurrent = () => useChatStore.getState().currentSessionKey === startingSessionKey
+    && useChatStore.getState().viewRevision === startingViewRevision && useWorkspacesStore.getState().activeWorkspaceId === workspace.id;
+  if (!isCurrent()) return result.sessionKey;
+  await activateWorkspaceScopedSession(workspace.id, result.sessionKey, isCurrent);
   return result.sessionKey;
 }

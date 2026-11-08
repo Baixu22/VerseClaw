@@ -3,11 +3,18 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const chatState = vi.hoisted(() => ({
   currentAgentId: 'reviewer',
   currentSessionKey: 'agent:reviewer:old',
+  viewRevision: 1,
   newSession: vi.fn(),
   resetSessionView: vi.fn(),
+  switchSession: vi.fn(),
+  loadSessions: vi.fn(),
 }));
 
 const workspaceState = vi.hoisted(() => ({
+  activeWorkspaceId: 'workspace-a',
+  profiles: [] as unknown[],
+  saveWorkspaceState: vi.fn(),
+  switchWorkspace: vi.fn(),
   activeWorkspace: {
     id: 'workspace-a',
     name: 'A',
@@ -38,6 +45,7 @@ const hostApiMock = vi.hoisted(() => ({
   },
   workspaces: {
     update: vi.fn(),
+    saveState: vi.fn(),
     getActive: vi.fn(),
     moveSessionToFolder: vi.fn(),
   },
@@ -97,13 +105,36 @@ describe('workspace session helpers', () => {
     vi.resetAllMocks();
     chatState.currentAgentId = 'reviewer';
     chatState.currentSessionKey = 'agent:reviewer:old';
+    chatState.viewRevision = 1;
     workspaceState.activeWorkspace = {
       ...baseWorkspace,
       id: 'workspace-a',
       selectedAgentId: 'reviewer',
       activeSessionKey: 'agent:reviewer:old',
     };
-    workspaceState.fetchWorkspaces.mockResolvedValue(undefined);
+    workspaceState.activeWorkspaceId = 'workspace-a';
+    workspaceState.profiles = [workspaceState.activeWorkspace];
+    chatState.switchSession.mockImplementation((key: string) => { chatState.currentSessionKey = key; chatState.viewRevision += 1; });
+    hostApiMock.workspaces.saveState.mockImplementation(async (payload: { sessionKey?: string; state?: Record<string, unknown> }) => {
+      if (payload.sessionKey && payload.state) workspaceState.activeWorkspace.sessionStates = {
+        ...workspaceState.activeWorkspace.sessionStates, [payload.sessionKey]: payload.state,
+      };
+      return { success: true };
+    });
+    workspaceState.saveWorkspaceState.mockImplementation(async (payload: { activeSessionKey?: string; sessionKey?: string; state?: Record<string, unknown> }) => {
+      await hostApiMock.workspaces.saveState(payload);
+      if (payload.activeSessionKey) workspaceState.activeWorkspace.activeSessionKey = payload.activeSessionKey;
+    });
+    workspaceState.fetchWorkspaces.mockImplementation(async () => {
+      const pending = hostApiMock.sessions.createHandoff.mock.results.at(-1)?.value;
+      if (pending && workspaceState.activeWorkspace) {
+        const result = await pending;
+        if (result?.sessionKey) workspaceState.activeWorkspace.sessionStates = {
+          ...workspaceState.activeWorkspace.sessionStates, [result.sessionKey]: {},
+        };
+      }
+      workspaceState.profiles = workspaceState.activeWorkspace ? [workspaceState.activeWorkspace] : [];
+    });
     hostApiMock.files.writeText.mockResolvedValue({ success: true });
     hostApiMock.workspaces.update.mockResolvedValue({ success: true });
     hostApiMock.workspaces.moveSessionToFolder.mockResolvedValue({ success: true });
@@ -150,6 +181,38 @@ describe('workspace session helpers', () => {
     expect(chatState.newSession).not.toHaveBeenCalled();
   });
 
+  it.each(['fork', 'handoff'] as const)('does not activate a late %s after leaving and returning to the same source', async (kind) => {
+    let finish!: (result: unknown) => void;
+    const pending = new Promise((resolve) => { finish = resolve; });
+    if (kind === 'fork') hostApiMock.sessions.fork.mockReturnValue(pending);
+    else hostApiMock.sessions.createHandoff.mockReturnValue(pending);
+    const helpers = await import('@/lib/workspace-session');
+    const operation = kind === 'fork' ? helpers.createWorkspaceScopedForkSession(chatState.currentSessionKey)
+      : helpers.createWorkspaceScopedHandoffSession('saved draft');
+    await Promise.resolve();
+    chatState.currentSessionKey = 'agent:reviewer:other'; chatState.viewRevision++;
+    chatState.currentSessionKey = 'agent:reviewer:old'; chatState.viewRevision++;
+    finish({ success: true, sessionKey: 'agent:reviewer:late-child' });
+    expect(await operation).toBe('agent:reviewer:late-child');
+    expect(chatState.switchSession).not.toHaveBeenCalled();
+    expect(chatState.currentSessionKey).toBe('agent:reviewer:old');
+  });
+
+  it('does not activate a project after its route is disposed during the workspace switch', async () => {
+    let finish!: () => void;
+    const target = { ...baseWorkspace, id: 'workspace-b', activeSessionKey: 'agent:reviewer:target' };
+    workspaceState.profiles = [workspaceState.activeWorkspace, target];
+    workspaceState.switchWorkspace.mockImplementation(() => new Promise<void>((resolve) => { finish = resolve; }));
+    const { activateWorkspaceScopedSession } = await import('@/lib/workspace-session');
+    let current = true;
+    const pending = activateWorkspaceScopedSession(target.id, target.activeSessionKey, () => current);
+    await vi.waitFor(() => expect(workspaceState.switchWorkspace).toHaveBeenCalled());
+    current = false; finish();
+    expect(await pending).toBe(false);
+    expect(chatState.switchSession).not.toHaveBeenCalled();
+    expect(workspaceState.saveWorkspaceState).not.toHaveBeenCalled();
+  });
+
   it('restores the default workspace before creating a workspace-scoped new session', async () => {
     vi.spyOn(Date, 'now').mockReturnValue(1711111111111);
     vi.spyOn(Math, 'random').mockReturnValue(0.123456);
@@ -187,7 +250,7 @@ describe('workspace session helpers', () => {
     });
     expect(hostApiMock.workspaces.update).not.toHaveBeenCalled();
     expect(workspaceState.fetchWorkspaces).toHaveBeenCalledTimes(1);
-    expect(chatState.resetSessionView).toHaveBeenCalledWith('agent:reviewer:session-1711111111111-4fzyo8');
+    expect(chatState.switchSession).toHaveBeenCalledWith('agent:reviewer:session-1711111111111-4fzyo8');
     expect(chatState.newSession).not.toHaveBeenCalled();
   });
 
@@ -253,9 +316,8 @@ describe('workspace session helpers', () => {
       agentId: 'reviewer',
       workspaceId: 'workspace-a',
     });
-    expect(hostApiMock.workspaces.update).toHaveBeenCalledWith('workspace-a', {
-      agentId: 'reviewer',
-      activeSessionKey: 'agent:reviewer:dashboard:fork',
+    expect(hostApiMock.workspaces.saveState).toHaveBeenCalledWith({
+      id: 'workspace-a',
       sessionKey: 'agent:reviewer:dashboard:fork',
       state: {
         draftInput: 'session draft',
@@ -266,11 +328,8 @@ describe('workspace session helpers', () => {
         recentFiles: ['src/main.ts'],
       },
     });
-    expect(hostApiMock.taskLedger.linkSession).toHaveBeenCalledWith(expect.objectContaining({
-      sessionKey: 'agent:reviewer:dashboard:fork',
-      relation: 'forked_from',
-    }));
-    expect(chatState.resetSessionView).toHaveBeenCalledWith('agent:reviewer:dashboard:fork');
+    expect(hostApiMock.taskLedger.linkSession).not.toHaveBeenCalled();
+    expect(chatState.switchSession).toHaveBeenCalledWith('agent:reviewer:dashboard:fork');
     expect(hostApiMock.files.writeText).not.toHaveBeenCalled();
   });
 

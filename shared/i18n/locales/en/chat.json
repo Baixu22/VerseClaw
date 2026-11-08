@@ -336,7 +336,7 @@
   "messageActions": {
     "summarizeUpToHere": "Summarize up to here",
     "summarizeFromHere": "Summarize from here",
-    "forkFromHere": "Fork from here",
+    "forkFromHere": "Ask in a new session",
     "copy": "Copy message",
     "copied": "Copied",
     "edit": "Edit",
@@ -1986,9 +1986,9 @@
       "tooltip": "Prepare a continuation draft in a new session",
       "disabledActiveRun": "Available after the current run finishes",
       "dialogTitle": "Handoff to New Conversation",
-      "dialogDescription": "Review and edit this continuation draft before creating a fresh session. It will be placed in the composer and will not be sent automatically.",
+      "dialogDescription": "Review and edit this continuation draft. Create and send opens a new session and submits the draft as its first message. If delivery is unconfirmed, the saved draft remains available for verification and recovery.",
       "draftLabel": "Handoff draft",
-      "create": "Create handoff session",
+      "create": "Create and send",
       "cancel": "Cancel",
       "toastPrepareFailed": "Failed to prepare handoff",
       "toastCreateFailed": "Failed to create handoff session",
@@ -2345,7 +2345,8 @@
     "archiveAction": "Archive",
     "emptyAll": "Empty archive",
     "emptyAllConfirm": "Click again to permanently delete all archived conversations",
-    "viewLabel": "Archived view"
+    "viewLabel": "Archived view",
+    "permanentDeleteMessage": "Permanently delete \"{{label}}\" and its conversation history?"
   },
   "questionDirectory": {
     "title": "Question directory",
@@ -2788,5 +2789,88 @@
   },
   "task": {
     "steps": "Steps"
+  },
+  "sessionFamily": {
+    "toggle": "Show or hide {{count}} descendants",
+    "navigation": "Session family",
+    "kind": {
+      "fork": "Fork",
+      "handoff": "Handoff",
+      "spawn": "Worker",
+      "unknown": "Source unavailable"
+    },
+    "children": "Derived sessions ({{count}})",
+    "missing": "Source unavailable",
+    "unloaded": "Load source session",
+    "conflict": "Conflicting source fields",
+    "cycle": "Source cycle",
+    "bound-exceeded": "Source chain truncated",
+    "relations": "Relations"
+  },
+  "projectEntry": {
+    "toggle": "Expand or collapse {{name}}",
+    "loading": "Opening project coordinator…",
+    "unavailable": "The project coordinator association is unavailable.",
+    "coordinator": "{{name}} · Project coordinator"
+  },
+  "questionFork": {
+    "title": "Ask in a new session",
+    "description": "Keep the context before this question. The new question stays as an editable draft.",
+    "question": "New question",
+    "create": "Create with draft",
+    "noAncestor": "There is no preceding assistant turn available for this fork.",
+    "sourceChanged": "The source session changed. Open the preview again."
+  },
+  "handoffRecovery": {
+    "resume": "Resume with the saved draft",
+    "check": "Check delivery",
+    "openChild": "Open child session",
+    "phase": {
+      "creating": "Handoff creation needs reconciliation",
+      "ready": "Child created · first turn not sent",
+      "sending": "First turn is being submitted",
+      "accepted": "First turn accepted · transcript not confirmed",
+      "sent": "First turn recorded",
+      "failed": "First turn rejected · draft retained",
+      "unknown": "First-turn delivery unknown · check before retrying"
+    }
+  },
+  "delegationStages": {
+    "label": {
+      "admission": "Admission",
+      "execution": "Execution",
+      "report": "Report delivery",
+      "acceptance": "Task acceptance",
+      "continuation": "Parent continuation"
+    },
+    "taskRequired": "Select an existing business task and bind its coordinator before dispatching.",
+    "model": "Runtime model: {{model}}",
+    "status": {
+      "unavailable": "Unavailable",
+      "in-flight": "Admission pending",
+      "approval-pending": "Awaiting permission",
+      "accepted": "Accepted",
+      "partial": "Partially accepted",
+      "rejected": "Rejected",
+      "outcome-unknown": "Outcome unknown",
+      "started": "Start recorded",
+      "yielded": "Waiting",
+      "completed": "Run completed",
+      "error": "Run failed",
+      "aborted": "Run stopped",
+      "verified": "Verifier result recorded",
+      "not_required": "Not required",
+      "pending": "Pending",
+      "in_progress": "Delivering",
+      "delivered": "Delivered",
+      "failed": "Failed",
+      "suspended": "Suspended",
+      "discarded": "Discarded",
+      "fenced": "Generation changed",
+      "waiting": "Waiting for the parent turn",
+      "unknown": "Delivery unknown",
+      "queued": "Queued",
+      "steered": "Guidance accepted"
+    }
   }
 }

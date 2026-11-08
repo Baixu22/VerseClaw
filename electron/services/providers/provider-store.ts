@@ -30,6 +30,8 @@ export function providerConfigToAccount(
       ? 'openai-completions'
       : getProviderDefinition(config.type)?.providerConfig?.api),
     headers: config.headers,
+    requestAuth: config.requestAuth,
+    modelProfile: config.modelProfile ? { ...config.modelProfile } : undefined,
     model: config.model,
     fallbackModels: config.fallbackModels,
     fallbackAccountIds: config.fallbackProviderIds,
@@ -48,6 +50,8 @@ export function providerAccountToConfig(account: ProviderAccount): ProviderConfi
     baseUrl: account.baseUrl,
     apiProtocol: account.apiProtocol,
     headers: account.headers,
+    requestAuth: account.requestAuth,
+    modelProfile: account.modelProfile ? { ...account.modelProfile } : undefined,
     model: account.model,
     fallbackModels: account.fallbackModels,
     fallbackProviderIds: account.fallbackAccountIds,

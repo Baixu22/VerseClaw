@@ -65,6 +65,10 @@ const loadAgentBrowserHandlers = lazyHandlerModule(
   () => import("./server-methods/agent-browser.js"),
   (module) => module.agentBrowserHandlers,
 );
+const loadSessionTaskScopeHandlers = lazyHandlerModule(
+  () => import("./server-methods/session-task-scope.js"),
+  (module) => module.sessionTaskScopeHandlers,
+);
 const loadAgentsHandlers = lazyHandlerModule(
   () => import("./server-methods/agents.js"),
   (module) => module.agentsHandlers,
@@ -271,7 +275,11 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
     loadHandlers: loadLogsHandlers,
   }),
   ...createLazyCoreHandlers({
-    methods: ["localControlPlane.status", "localControlPlane.reports", "localControlPlane.correlations"],
+    methods: [
+      "localControlPlane.status",
+      "localControlPlane.reports",
+      "localControlPlane.correlations",
+    ],
     loadHandlers: loadLocalControlPlaneHandlers,
   }),
   ...createLazyCoreHandlers({
@@ -309,12 +317,7 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
     loadHandlers: loadCronHandlers,
   }),
   ...createLazyCoreHandlers({
-    methods: [
-      "channels.status",
-      "channels.start",
-      "channels.stop",
-      "channels.logout",
-    ],
+    methods: ["channels.status", "channels.start", "channels.stop", "channels.logout"],
     loadHandlers: loadChannelsHandlers,
   }),
   ...createLazyCoreHandlers({
@@ -431,6 +434,10 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
   ...createLazyCoreHandlers({
     methods: ["agentBrowser.invoke", "agentBrowser.invoke.result"],
     loadHandlers: loadAgentBrowserHandlers,
+  }),
+  ...createLazyCoreHandlers({
+    methods: ["taskScope.admit", "taskScope.admit.result", "taskScope.runState"],
+    loadHandlers: loadSessionTaskScopeHandlers,
   }),
   ...createLazyCoreHandlers({
     methods: [

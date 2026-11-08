@@ -1632,6 +1632,16 @@ function upsertOpenClawProviderEntry(
     : [];
   const runtimeModels = (options.modelEntries ?? (options.modelIds ?? []).map((id) => ({ id, name: id }))) as Array<Record<string, unknown>>;
   let mergedModels = mergeProviderModels(registryModels, existingModels, runtimeModels);
+  if (options.modelEntries) {
+    mergedModels = mergedModels.map((model) => {
+      const declared = Object.fromEntries(Object.entries(options.modelEntries!.find((entry) => entry.id === model.id) ?? {})
+        .filter(([, value]) => value !== undefined));
+      const previous = Array.isArray(existingProvider.models)
+        ? (existingProvider.models as Array<Record<string, unknown>>).find((entry) => entry.id === model.id)
+        : undefined;
+      return { ...model, ...declared, ...(previous?.cost !== undefined ? { cost: previous.cost } : {}) };
+    });
+  }
   if (options.api === 'anthropic-messages') {
     mergedModels = mergedModels.map((model) => ensureAnthropicMessagesModelEntry(model, provider, existingProvider));
   }
@@ -1992,6 +2002,9 @@ export async function setOpenClawDefaultModelWithOverride(
         headers: override.headers,
         authHeader: override.authHeader,
         modelIds: [modelId, ...fallbackModelIds],
+        modelEntries: override.modelEntries ? [modelId, ...fallbackModelIds].map((id) =>
+          override.modelEntries!.find((entry) => entry.id === id) ?? { id, name: id }) : undefined,
+        mergeExistingModels: true,
       });
     }
 
@@ -2544,7 +2557,7 @@ async function updateModelsJsonProviderEntriesForAgents(
 
       const mergedModels = (entry.models ?? []).map((m) => {
         const prev = existingModels.find((e) => e.id === m.id);
-        const base = prev ? { ...prev, id: m.id, name: m.name } : { ...m };
+        const base = prev ? { ...prev, ...m, cost: prev.cost ?? m.cost } : { ...m };
         return {
           ...base,
           cost: normalizePiAiModelCost((base as { cost?: unknown }).cost),

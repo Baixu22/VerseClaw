@@ -63,7 +63,8 @@
     "nodePlaceholder": "Session target",
     "noNode": "No node",
     "link": "Session link",
-    "linkedFromChat": "Linked from the current chat session"
+    "linkedFromChat": "Linked from the current chat session",
+    "open": "Open conversation"
   },
   "summary": {
     "title": "Task Ledger",
@@ -77,7 +78,23 @@
     "blockers": "Blockers",
     "needsReview": "Needs review",
     "decisions": "Recent decisions",
-    "open": "Open ledger"
+    "open": "Open ledger",
+    "projectTasks": "Project tasks",
+    "sessionTasks": "Session tasks",
+    "refresh": "Refresh task scope",
+    "recordedStatus": "Recorded: {{status}}",
+    "returnSession": "Return to session",
+    "scope": {
+      "ready": "Business tasks linked",
+      "empty": "Discussion · no business task yet",
+      "unavailable": "Task owner unavailable",
+      "stale": "Task scope changed · refresh required"
+    },
+    "select": "Use task",
+    "selected": "Selected",
+    "useTask": "Use task: {{title}}",
+    "selectBusy": "Finish or stop the active run and its resources before switching tasks.",
+    "selectFailed": "Task selection failed. Refresh the task scope and try again."
   },
   "toast": {
     "created": "Task ledger node created",

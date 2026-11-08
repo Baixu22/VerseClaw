@@ -1169,6 +1169,7 @@ export function createOpenClawCodingTools(options?: {
         scopeKey,
         sessionKey: options?.sessionKey,
         sessionId: options?.sessionId,
+        runId: options?.runId,
         sessionStore: options?.config?.session?.store,
         mainKey: options?.config?.session?.mainKey,
         sessionScope: options?.config?.session?.scope,
@@ -1534,6 +1535,9 @@ export function createOpenClawCodingTools(options?: {
         ...(options?.config ? { config: options.config } : {}),
         cwd: codingRoot,
         workspaceDir: workspaceRoot,
+        ...(options?.sandbox?.enabled
+          ? { taskScopeProjectWorkspaceDir: options.sandbox.agentWorkspaceDir }
+          : {}),
         ...(options?.skillsSnapshot ? { skillsSnapshot: options.skillsSnapshot } : {}),
         ...(sandboxRoot && allowWorkspaceWrites
           ? { sandbox: { root: sandboxRoot, bridge: sandboxFsBridge! } }

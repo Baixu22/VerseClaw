@@ -60,6 +60,8 @@ export type ExecToolDefaults = {
    *  on `/new` and `/reset`, so it pins exec-approval followups to the original
    *  session instance and lets stale followups drop after a session rebind. */
   sessionId?: string;
+  /** Exact agent run that owns managed-process resources created by this tool. */
+  runId?: string;
   /** `session.store` template from the runtime config. Lets the direct/denied
    *  exec approval followup path resolve the session key's current sessionId and
    *  drop the followup when the key was rebound by `/new` or `/reset`. */

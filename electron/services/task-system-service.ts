@@ -102,6 +102,85 @@ export async function assertManagedTaskAdmission(input: {
   }
 }
 
+type ManagedSessionEffectInput = {
+  workspaceRoot: string;
+  sessionKey: string;
+  generation: string;
+  taskNodeId?: string;
+  fallbackTaskNodeId?: string;
+};
+
+function resolveManagedSessionEffectTask(store: TaskSystemStore, input: ManagedSessionEffectInput): TaskView {
+  const bound = store.binding(input.sessionKey, input.generation);
+  if (bound && input.taskNodeId && bound.contract.taskNodeId !== input.taskNodeId) throw new Error('TASK_SCOPE_TASK_SELECTION_CONFLICT');
+  if (bound?.referenceOnly && !store.isSelectedReference(input.sessionKey, input.generation)) throw new Error('TASK_REFERENCE_READ_ONLY');
+  const taskNodeId = bound?.contract.taskNodeId ?? input.taskNodeId ?? input.fallbackTaskNodeId;
+  if (!taskNodeId) throw new Error('TASK_CLAIM_REQUIRED');
+  if (!store.has(taskNodeId)) throw new Error('TASK_LEGACY_CONTRACT_REQUIRED');
+  return store.get(taskNodeId);
+}
+
+/** Resolve admission against the task owner without claiming a selected task. */
+export function readManagedSessionEffect(input: ManagedSessionEffectInput): TaskView {
+  const domain = resolveTaskDomain(input.workspaceRoot);
+  if (!existsSync(domain.database)) throw new Error('TASK_CLAIM_REQUIRED');
+  const store = new TaskSystemStore(domain);
+  try { return resolveManagedSessionEffectTask(store, input); }
+  finally { store.close(); }
+}
+
+/** Claim only after the session, environment and previous run have been checked. */
+export function startManagedSessionEffect(input: ManagedSessionEffectInput & {
+  requestId: string; expectedContract?: Pick<TaskView['contract'], 'revision' | 'digest'>;
+}): TaskView {
+  const domain = resolveTaskDomain(input.workspaceRoot);
+  if (!existsSync(domain.database)) throw new Error('TASK_CLAIM_REQUIRED');
+  const store = new TaskSystemStore(domain);
+  try {
+    const task = resolveManagedSessionEffectTask(store, input);
+    const view = store.start({ taskNodeId: task.contract.taskNodeId, expectedContract: input.expectedContract },
+      input.sessionKey, input.generation, input.requestId);
+    if (!view.claim) throw new Error('TASK_CLAIM_REQUIRED');
+    return store.assertOwner(view.claim);
+  } finally {
+    store.close();
+  }
+}
+
+export function selectManagedSessionTask(input: {
+  workspaceRoot: string; taskNodeId: string; sessionKey: string; generation: string; requestId: string;
+}): void {
+  const domain = resolveTaskDomain(input.workspaceRoot);
+  if (!existsSync(domain.database)) return;
+  const store = new TaskSystemStore(domain);
+  try {
+    if (!store.has(input.taskNodeId)) {
+      if (store.binding(input.sessionKey, input.generation)) throw new Error('TASK_LEGACY_CONTRACT_REQUIRED');
+      return;
+    }
+    store.selectReference(input.taskNodeId, input.sessionKey, input.generation, input.requestId);
+  } finally { store.close(); }
+}
+
+export function handoffManagedSessionTask(input: {
+  workspaceRoot: string;
+  sourceSessionKey: string;
+  sourceGeneration: string;
+  sessionKey: string;
+  generation: string;
+}): TaskView | null {
+  const domain = resolveTaskDomain(input.workspaceRoot);
+  if (!existsSync(domain.database)) return null;
+  const store = new TaskSystemStore(domain);
+  try {
+    const source = store.binding(input.sourceSessionKey, input.sourceGeneration);
+    if (!source?.claim || source.referenceOnly) return null;
+    return store.handoff(source.claim, input.sessionKey, input.generation);
+  } finally {
+    store.close();
+  }
+}
+
 export async function persistentTaskChatContext(
   workspaceId: string,
   sessionKey: string,

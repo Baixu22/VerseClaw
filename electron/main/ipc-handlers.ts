@@ -6,6 +6,7 @@ import { BrowserWindow, app } from 'electron';
 import { join } from 'node:path';
 import { GatewayManager } from '../gateway/manager';
 import { registerAgentBrowserGatewayBridge } from '../gateway/agent-browser-bridge';
+import { registerSessionTaskScopeBridge } from '../gateway/session-task-scope-bridge';
 import { ClawHubService } from '../gateway/clawhub';
 import { logger } from '../utils/logger';
 import { startCronAgentRepair } from '../services/cron-maintenance';
@@ -57,7 +58,7 @@ import { createOrchestrationPresetsApi } from '../services/orchestration-presets
 import { createTerminalApi } from '../services/terminal-api';
 import { createHostTraceDiagnosticsService } from '../services/host-trace-diagnostics';
 import { createSessionActivityApi } from '../services/session-activity-api';
-import { createGitApi } from '../services/git-api';
+import { createGitApi, readCurrentGitStatus, readWorkspaceGitWorktrees } from '../services/git-api';
 import { createSessionStorageApi } from '../services/session-storage-api';
 import { createTerminalSessionManager, type TerminalSessionManager } from '../services/terminal-session-manager';
 import { createWebPreviewApi } from '../services/web-preview-api';
@@ -135,9 +136,13 @@ function registerTypedHostHandlers(
     gatewayManager,
     terminalManager,
     webPreviewManager,
-    gitApi,
+    gitApi: { ...gitApi,
+      statusForWorkspace: async (workspace) => ({ success: true, status: await readCurrentGitStatus(workspace) }),
+      worktreesForWorkspace: readWorkspaceGitWorktrees,
+    },
     taskLedgerApi,
   });
+  registerSessionTaskScopeBridge(gatewayManager, workspacesApi.admitTaskEffect);
   const traceDiagnostics = createHostTraceDiagnosticsService({
     onSummary: recordObservabilityHostDiagnostic,
   });
@@ -193,7 +198,7 @@ function registerTypedHostHandlers(
     files: createFilesApi(),
     media: createMediaApi(),
     sessions: sessionsApi,
-    chat: createChatApi({ gatewayManager }),
+    chat: createChatApi({ gatewayManager, selectSessionTask: workspacesApi.selectSessionTask }),
     codeReview: createCodeReviewApi({ gatewayManager }),
     changeContext: createChangeContextApi({
       gatewayManager,

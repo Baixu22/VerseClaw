@@ -1,0 +1,1345 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex-unified-session-relay-01a1babd",
+  "name": "resource-read-green",
+  "cwd": "D:\\ClawX-work\\session-task-unified-relay-20261109",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "tests/unit/long-session-runtime-resource-inventory.test.ts",
+    "tests/unit/long-session-resource-reclamation.test.ts",
+    "tests/unit/session-activity-background-read.test.ts",
+    "--maxWorkers=1",
+    "--no-file-parallelism",
+    "--reporter=json",
+    "--outputFile=D:/tmp/unified-management-20261109/session-task-validation/resource-read-green.tests.json"
+  ],
+  "startedAt": "2026-11-08T20:41:52.856Z",
+  "finishedAt": "2026-11-08T20:42:15.144Z",
+  "durationMs": 22286,
+  "exitCode": 0,
+  "signal": null,
+  "sourceUnchanged": true,
+  "before": {
+    "commit": "fb00956ed041531b14dad5601ace0e78cf63c50e",
+    "tree": "d3d4ca2cbb17cb339f111daf415617dae77b72de",
+    "dirty": "M harness/specs/tasks/session-task-chain-acceptance.md\n M openclaw_runtime/src/gateway/session-resource-inventory.ts\n M tests/unit/long-session-runtime-resource-inventory.test.ts",
+    "files": [
+      {
+        "file": "electron/gateway/process-launcher.ts",
+        "sha256": "a4c99840f7fe2e87c74788773c388c5eb50f5d453853687d226353d0b352803e"
+      },
+      {
+        "file": "electron/gateway/session-task-scope-bridge.ts",
+        "sha256": "49ace0ff0f3b3e906dd164354ccc2784c3de3a1c2057063300d351fef32d87f0"
+      },
+      {
+        "file": "electron/gateway/ws-client.ts",
+        "sha256": "58bc4e96436de1053322571f258452525f16a768f7cb31477067ef40fb660650"
+      },
+      {
+        "file": "electron/main/ipc-handlers.ts",
+        "sha256": "4ba94e0e7c03db5a69c063aaf7ddd273f11da7bb7a12e0c807190ef94c7be296"
+      },
+      {
+        "file": "electron/services/chat-api.ts",
+        "sha256": "6004e57f9a45752a684f1f0ed07892b727a1da6ed098f5ded19037cf68ff6de3"
+      },
+      {
+        "file": "electron/services/cron-api.ts",
+        "sha256": "31626266bd6157dbe23b17f64903723cb040878a04d6c76313f72581939f3569"
+      },
+      {
+        "file": "electron/services/gateway-api.ts",
+        "sha256": "3849b7a998b310854d2b3454ae38049da8c3f4804df197eb5ed758a675acb2d4"
+      },
+      {
+        "file": "electron/services/git-api.ts",
+        "sha256": "5b477150d31eced3dc28ef1629b3e58516bc46689a0f08ebba183a0ef7a401ee"
+      },
+      {
+        "file": "electron/services/providers/provider-runtime-sync.ts",
+        "sha256": "e218930e2fd349b81d0dc168ca895d53ce2b2ecba6f390651fa2219abb674a6e"
+      },
+      {
+        "file": "electron/services/providers/provider-store.ts",
+        "sha256": "65465a86a691431cbcbfb417d4e197513123c1b4237842ecc8d94618012ca744"
+      },
+      {
+        "file": "electron/services/resource-fabric.ts",
+        "sha256": "cd33ff82385811925b9358c7f88d4be7f3a2fa6ea9e7b4a50bcb386ae32db4e1"
+      },
+      {
+        "file": "electron/services/session-activity-api.ts",
+        "sha256": "bdc278563194e58e8ce8097f8ca48990277ab4bdcb7ae9513569d7453d087133"
+      },
+      {
+        "file": "electron/services/session-delegation-admission.ts",
+        "sha256": "5f74ee1b29a0b40da96805e7dd018c18c17292d06d1833fe0e1166ca4f523685"
+      },
+      {
+        "file": "electron/services/sessions-api.ts",
+        "sha256": "78826a5c6f86d79bb88ed1ce98443f3cc952f0f96f6b3b59b90ca7ffdad26875"
+      },
+      {
+        "file": "electron/services/task-ledger-service.ts",
+        "sha256": "55f81ded472843e205fdfa0dfc5817d2354a0ef7d15a707c4aaea01546b598d0"
+      },
+      {
+        "file": "electron/services/task-system-service.ts",
+        "sha256": "67993928c71f6231e9cbee9e357770dc094a77d2993fb65001fc7499badb6f89"
+      },
+      {
+        "file": "electron/services/terminal-api.ts",
+        "sha256": "a4377b01e9b2e212ea290e3f97f3ad10a7df6defa253474fad4eb111e5c3f25d"
+      },
+      {
+        "file": "electron/services/workspaces-api.ts",
+        "sha256": "191c6914d7f5fe4e60e3c09c49440970f7779461fc70868669f5f97abf67e222"
+      },
+      {
+        "file": "electron/utils/openclaw-auth.ts",
+        "sha256": "f8e69a02c9b1be8d9faab7bf50891f40db495e2d9581de4a22361d581761b2d5"
+      },
+      {
+        "file": "harness/specs/fixtures/resource-mixed-load-20261108/tsconfig.json",
+        "sha256": "3f5b7592dfa180c05d6e656c65663a596f26ebcd8c4de61413603604973d237a"
+      },
+      {
+        "file": "openclaw_runtime/packages/gateway-protocol/src/client-info.ts",
+        "sha256": "0e9183afe69d40233f2dd5dd5dbcbb3fe9a97e6b8c2e7adb11cb75f1f9d2a1b3"
+      },
+      {
+        "file": "openclaw_runtime/packages/gateway-protocol/src/schema/logs-chat.ts",
+        "sha256": "a571e64c39c5c8f47ef62446603a4a8f1b025bee57879645328c9255356cdc5d"
+      },
+      {
+        "file": "openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts",
+        "sha256": "4b7675b87ecd1fada8c49cfb09b9ce84d91850acaf7abfdc469be93a0361df46"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/agent-tool-definition-adapter.ts",
+        "sha256": "1016d07f8472c848f4f0cc319aa9c56d1fb27a5b7dfde6f9c3cb0e39b6a1c976"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/agent-tools.before-tool-call.ts",
+        "sha256": "6a4af2a6c21ad0d91d39b2ae00cc736b898c1d191137ccbe9d8dcbf4dbe24330"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/agent-tools.ts",
+        "sha256": "326be28b42cbe4f694c67f2dbd3a13fd639eee1dad17ad1b40e9c424f1b10cc7"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/bash-tools.exec-host-gateway.ts",
+        "sha256": "6b99f61df6b9d2909965b19d90f412ba5d5b43c359f454782a82dd7a8711fc40"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/bash-tools.exec-runtime.ts",
+        "sha256": "f65ef2cd427ffe8a58006460ee5b5ab698e554f7d9793ee88f30067f63d13f64"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/bash-tools.exec-types.ts",
+        "sha256": "c6aaf8ed9400cf42e414d6213380d58b793fa3cfcc88d1c6628ed951d51e716b"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/bash-tools.exec.ts",
+        "sha256": "81a2d610210461cdbe09e9b2337ddadbe8c1af5ea4e1511d8ea0d6e7043c1c8b"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/embedded-agent-runner/run-state.ts",
+        "sha256": "c947e8833dfb411f89858075787df7b86fa1468c43237110df7c2a6bb57ceb3e"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+        "sha256": "6c595d5808ce9ee00d40a98b2492eece5994f631c8e6a64842b154a96dc69199"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/embedded-agent-runner/runs.task-scope.test.ts",
+        "sha256": "79daed6094b175b265000342a1200456c54bca5ca26d4c1e7ae69e403b99e899"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/embedded-agent-runner/runs.ts",
+        "sha256": "01fd9fb9daf8ec14ae03cb4a2537dd046d9aa0291f3c968f4531be4946d16b9a"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/orchestration-protocol.ts",
+        "sha256": "0c076f18c0d6b1634413bd601e1b4af63da59f390823a9189693ceef3f1c0100"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/orchestrator-write-set-plan.test.ts",
+        "sha256": "84c406b2fcc34b9d984a408ba32a3bbdecbfe3e20315121b5ec3b22af5dd648d"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/session-task-scope.ts",
+        "sha256": "e76800112d04e72e165230a8ba5ff21131bfcc7c87fc4f53cc990bd3b4414d45"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/subagent-registry-run-manager.ts",
+        "sha256": "0d665d401d89d2f05719c43532f73bc3cef8cde0bc98c9ac48d5381c439f29c8"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/subagent-registry.types.ts",
+        "sha256": "1d7cfb6723771402e47b85f0efb0ee730d306d5ec02d66e722fafc97627eccd4"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/subagent-spawn.ts",
+        "sha256": "2da0adc1efa5c093039a86eba9f719a220f0303efffaccbf19dc5a59d516e397"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/tool-mutation.test.ts",
+        "sha256": "b8af99826ec305e4dcdea4219eadb6fd75a32c425d59907236729042f3d2f3b5"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/tool-mutation.ts",
+        "sha256": "709006b6c866beb6b0222a5283d0f71c9d668e6bde8e1fb7b3e0a4a3ef7e9b97"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/verseshell/governed-process.test.ts",
+        "sha256": "749dd62e841fe432afb3495c9c91295dd0121c475662a554f315c739239a7bdc"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/verseshell/governed-process.ts",
+        "sha256": "cad0347964c76bb5687023075e411b39faa3e26da80cf3b47e1c457da324d940"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/verseshell/managed-process-capacity.test.ts",
+        "sha256": "69991da1c5ab958d71f45aa2de936230953fb7f6582a1c58a10f2860b9e2f7b0"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/verseshell/managed-process-capacity.ts",
+        "sha256": "09e3c6b8a9a8c72baf96378bbbe313fc6cc1e6ccb3a75421fe6253da75d45d94"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/verseshell/managed-process-reservation.ts",
+        "sha256": "aaf6c81bc38a5f6cba1b1a8338eaa55a98712e5a9700877f5071bc35ccb9088c"
+      },
+      {
+        "file": "openclaw_runtime/src/auto-reply/reply/agent-runner-memory.ts",
+        "sha256": "55d0ffacf4d8f389edc57e3b7a2c05a5ecbaa6ed1ba6bb35a1cec2fac2790760"
+      },
+      {
+        "file": "openclaw_runtime/src/auto-reply/reply/reply-run-registry.ts",
+        "sha256": "b1b7fb7fa7ca8445620628b4078edd3c34944dbeebbad3e134330ccff676054a"
+      },
+      {
+        "file": "openclaw_runtime/src/cron/isolated-agent/run-executor.ts",
+        "sha256": "e737531f5af329a9c57fc3dcbd18d32ac32a341f4a76fc21471ec290d50ac2e2"
+      },
+      {
+        "file": "openclaw_runtime/src/cron/isolated-agent/run-runid-canonical.test.ts",
+        "sha256": "cae10ae24b54d245466524d2bfeb8cad4737dbfa33a2291779ed0f3fdfd3abfe"
+      },
+      {
+        "file": "openclaw_runtime/src/cron/isolated-agent/run.test-harness.ts",
+        "sha256": "b5ec200b971c8b88ed9dcdd1965f9436f958b75d36afe7fe6a491bd90a06958f"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/methods/core-descriptors.ts",
+        "sha256": "c5dc3e60e794440d95c0032c37d981a972a086b20e13e880a9f0f4c36bcb4a27"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-broadcast.ts",
+        "sha256": "212720f7b710292a6723924a9315b9edb128805d1984d3ea753cb32889041119"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods.ts",
+        "sha256": "a89a777ca775a4f7a5d8477707aa1f79a7564117e775027fd3d9229a301b416e"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/chat.ts",
+        "sha256": "f68b435916d2d04d4dce02792e42aa180a568e25db1d1d05a954f7733f0341e1"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts",
+        "sha256": "1f6f9f8fbc6c130f68b3d07828f8f7b016e2df911077ca6fb75d62165440eb2c"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/session-activity.test.ts",
+        "sha256": "c464d853b5054116696f71e917ed2f5d175b1ea5c3333f974e3e96c0d60340a7"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/session-activity.ts",
+        "sha256": "6b95a9cd5446f2bed53abb37e9fdd8848d91385faa48aa8e951de6baf6ba229d"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/session-task-scope.ts",
+        "sha256": "031f4729d209563728b1b0ab96dfbfd88270bf4587d7470e5634943eb209295b"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/sessions.read.ts",
+        "sha256": "64c10b498b2ea84bfdc67706f3833f8c8b26231df54e237429d9c9fb08f43473"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/sessions.run-control.ts",
+        "sha256": "94033e1309f0428270b30b5835a2518f1c3ce5b7ce80f0891be76ccf6b019b2b"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/sessions.send-permit-lifetime.test.ts",
+        "sha256": "c21b20abe9cc819aa25922bbd93d04b57f7fe6b9f505a9874b086073b0764f18"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/session-activity-handler.test.ts",
+        "sha256": "d48d22b17f6c719cb14261698fe183c6ab09d02be0fc04f35762446cab2cd7ce"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/session-resource-inventory.ts",
+        "sha256": "b8b0f5d4616171de8eff53751787de80161fa0b9a32d196c7a068510f6ee46f8"
+      },
+      {
+        "file": "openclaw_runtime/src/infra/agent-events.ts",
+        "sha256": "8b0b221a1ef225ea4e65f9d32be363fafb06e2756beeaf78a0012cbb9e35c7a0"
+      },
+      {
+        "file": "playwright.resource-governance.config.ts",
+        "sha256": "e317b27fc0526b3f5569425202ebfb7dcab5c8605ced1733a3ca47dfe1cffdb9"
+      },
+      {
+        "file": "scripts/capture-resource-builds.mjs",
+        "sha256": "4a5e4a1f12493474e9a466ab6c0139486407d5821c83978c6dc6e0825b20836f"
+      },
+      {
+        "file": "scripts/lib/resource-mixed-measurement.d.mts",
+        "sha256": "9c55b716e705b439fbbf29cf3b82f72e404de908a36ba767df9e4d06d23c7a1d"
+      },
+      {
+        "file": "scripts/lib/resource-mixed-measurement.mjs",
+        "sha256": "8d08e489f5bf340f7a14501f5e26e75bc2dd0fbebdd76adf56218f43e9fbf2e3"
+      },
+      {
+        "file": "scripts/repository-artifacts.json",
+        "sha256": "c46267974a68279c8b9233c636a465c2889b905c7bee43ea77b87ba687957826"
+      },
+      {
+        "file": "scripts/verify-resource-mixed-load.mjs",
+        "sha256": "4fa2c22527c532c94fb6d6de920f9e07ad5d756193053cdf209f545163d7a8f8"
+      },
+      {
+        "file": "shared/chat/types.ts",
+        "sha256": "32694529010b8253eff8cb86ed128b5a1c4a09c9fda30ec1716e64f2061af6aa"
+      },
+      {
+        "file": "shared/host-api/contract.ts",
+        "sha256": "3150626ffbb1f24e899f7808336408d750057cf82fc4cb40c2d0a454706300df"
+      },
+      {
+        "file": "shared/i18n/locales/en/chat.json",
+        "sha256": "ae4dd7276fd0caca54884e08e09a9f45eddb2d0075859f1cf689fe4bbdaca725"
+      },
+      {
+        "file": "shared/i18n/locales/en/taskLedger.json",
+        "sha256": "229d88ddfbb5a434403fd4a396dc090de48abfb406fa6ae17178bf2dfd670985"
+      },
+      {
+        "file": "shared/i18n/locales/ja/chat.json",
+        "sha256": "b187b6fd73b93bc24ff057a9bb675b0acc4a03b521cdefe1b8a4c380cd843b2b"
+      },
+      {
+        "file": "shared/i18n/locales/ja/taskLedger.json",
+        "sha256": "aa987ef5c6e5134d785394beed8cae46b243786eeb1668bd78c75df33731f05a"
+      },
+      {
+        "file": "shared/i18n/locales/ru/chat.json",
+        "sha256": "618e7a7dee2f3645ee1613b7e16da0bec72152ec1bfcbfdec8ed18e3f428be1e"
+      },
+      {
+        "file": "shared/i18n/locales/ru/taskLedger.json",
+        "sha256": "2ab430e9d8c31d0719092a99de94f084ecf5b638fe82400af2a3c0109b99dbbd"
+      },
+      {
+        "file": "shared/i18n/locales/zh/chat.json",
+        "sha256": "aeae4cbca6908afbea088d14877dd7e16ae0eee0269c8f667580feb065fc4825"
+      },
+      {
+        "file": "shared/i18n/locales/zh/taskLedger.json",
+        "sha256": "211b25fd9c0ea8da3af039a71864fd299712b1468e0123e798ced3eaf5b85ebb"
+      },
+      {
+        "file": "shared/resources/adaptive-limit.ts",
+        "sha256": "714b896296d76633881d8f9084dec8f6475b560eb799233da4dcd3e3435558cf"
+      },
+      {
+        "file": "shared/session-task-scope.ts",
+        "sha256": "62163af6e98006ea1e409ca9d88784c98478ccc6d63d63f52de38d94814f1007"
+      },
+      {
+        "file": "shared/task-system/identity.ts",
+        "sha256": "b18fddf63c62baf881a8d0e9a39eb8726a75ab1b0c6abdd0ee933704c9432d31"
+      },
+      {
+        "file": "shared/task-system/store.ts",
+        "sha256": "c9a70949e8780b11ca126086150c2c89764e5d225c9b74178dc9c55bac5fb6a0"
+      },
+      {
+        "file": "shared/types/session-derivation.ts",
+        "sha256": "d4dbb29a538041fe1806a156a447200609117143255f5d5c48588e5dbe47f997"
+      },
+      {
+        "file": "shared/types/session-handoff.ts",
+        "sha256": "063fbadffb7e8d9404b5d8e2db88bcbb14ecb9b8064337c28c60b44923ebf42c"
+      },
+      {
+        "file": "shared/types/session-stage.ts",
+        "sha256": "1cb9621b9ff1e81a09ece0fc205801ac2ec880e0238261f1e5c91d1fa3770b40"
+      },
+      {
+        "file": "shared/types/task-ledger.ts",
+        "sha256": "75d3fb3d7f79ef5836f2981c8d551fcb8f227c227159bbc777ff31309ae90413"
+      },
+      {
+        "file": "shared/types/workspace.ts",
+        "sha256": "36a8fa86f8820beca0fad119eb85f55c74e675420e7f87da00656ae27ab97c93"
+      },
+      {
+        "file": "src/App.tsx",
+        "sha256": "d631021cd666160a08b4712711b2feeca409f392f4f1329961fc6879e7c44c2b"
+      },
+      {
+        "file": "src/components/chat/ResourceChip.tsx",
+        "sha256": "35589f29758e456e2a442e84f7c792311a2460dc8cc499ab4389c1aeccd9255d"
+      },
+      {
+        "file": "src/components/chat/SessionDelegationStatus.tsx",
+        "sha256": "1d727901f5664477b573cb249542fa88a7aeb2c526bc6bd5c297464df9e88bfa"
+      },
+      {
+        "file": "src/components/chat/SessionFamilyNavigation.tsx",
+        "sha256": "6ab879a8270c2e82ccd5ffdde43e19a3432bf77d1dd8763b1f5b3ac75788d267"
+      },
+      {
+        "file": "src/components/file-preview/WorkspaceAgentsPanel.tsx",
+        "sha256": "3ac4ebb8874ecf430d7384903081a96babac98e90fc2da14ea79c176deea00b8"
+      },
+      {
+        "file": "src/components/file-preview/WorkspaceSubagentPanel.tsx",
+        "sha256": "147f171974ae99d91eca9daf74dee549605d53109110b1c901fcb940bd7dd20c"
+      },
+      {
+        "file": "src/components/layout/MainLayout.tsx",
+        "sha256": "28cc9836161750e938f51ac07888b5672de4382502f1704d872f68ed96315d21"
+      },
+      {
+        "file": "src/components/layout/SessionFolderTree.tsx",
+        "sha256": "4b16e10baddcaf6cf14f61df2d0248116f92cdb88cd77f13e4b7d0daf512783e"
+      },
+      {
+        "file": "src/components/layout/Sidebar.tsx",
+        "sha256": "0ffbcd54f72c758e733e78603f1c1c40babc0e5a4212758752c2dae909a77545"
+      },
+      {
+        "file": "src/components/layout/session-buckets.ts",
+        "sha256": "9da36d4f51ecff9e6434fc64116a93c71f7c2ba53f858f5dd2dd04eb11231314"
+      },
+      {
+        "file": "src/components/task-ledger/TaskLedgerSummaryPanel.tsx",
+        "sha256": "bfcb7b0897510f5442fc5934a921bcaf271655fd744b81572f1279d2bd9b0e07"
+      },
+      {
+        "file": "src/components/task-ledger/TaskNodeSelector.tsx",
+        "sha256": "cf25bf98181a453daedd5eab64442b7162650223da5338429d0541426dc02d52"
+      },
+      {
+        "file": "src/lib/host-api.ts",
+        "sha256": "8e2bcfe21aef9b581952866a1d643c00c96057644329692105f5e02c730061b4"
+      },
+      {
+        "file": "src/lib/session-read-model.ts",
+        "sha256": "b0030d796f44714ac46995869f07b7b83c1f98160d9665b7f7a5a9ba467c8623"
+      },
+      {
+        "file": "src/lib/workspace-session.ts",
+        "sha256": "0e4a20cf3268cfbf07994d49d6f34e53a15cc4d7bffb63a6aad2bf38c2959ef9"
+      },
+      {
+        "file": "src/pages/Chat/ChatInput.tsx",
+        "sha256": "4d7265a39dc1c7c1826e52b67c76cd95895f0f5b9fe69261c25718e6cf269410"
+      },
+      {
+        "file": "src/pages/Chat/ChatMessage.tsx",
+        "sha256": "1289b1c7bb3f7bef44a1182e625dddc1ae8cfb491d3f9e6b11df160bbd8e48a1"
+      },
+      {
+        "file": "src/pages/Chat/index.tsx",
+        "sha256": "fb68a5783ec235cf7963d63003ce20a4d9ab22a1f3db903ae92f479a20f3f2b1"
+      },
+      {
+        "file": "src/pages/Chat/use-session-reading-position.ts",
+        "sha256": "43cc590eb865db112611117ce629ade2efcf2bfd0edf27e97a1185d0bdf8b67b"
+      },
+      {
+        "file": "src/pages/Projects/index.tsx",
+        "sha256": "3ab5cdd083054d00b8082880f77c9d8281f06aedf53466d7a63d4817e45fadb9"
+      },
+      {
+        "file": "src/pages/Settings/sections/ArchivedSection.tsx",
+        "sha256": "f40526b13d5b1b2409f86f92d536815532d8e41f46c4a60d0483b97cb58f665f"
+      },
+      {
+        "file": "src/pages/TaskLedger/index.tsx",
+        "sha256": "0cb03d3640400549a1074e183da7a14a1f04bdadf5906e873591cf19bf724210"
+      },
+      {
+        "file": "src/stores/chat.ts",
+        "sha256": "61188d31e994a18d8948ba764b757ef62a97867d582c44d6cd1fa9b1de770bc2"
+      },
+      {
+        "file": "src/stores/session-activity.ts",
+        "sha256": "122f8ea7262b6c4420d36b7f79031482f818102790fa0086aafab296a223bfe8"
+      },
+      {
+        "file": "src/stores/workspaces.ts",
+        "sha256": "40bee7adef9fe40d81e6615dda01cf09e58a356177aa63eb4d69330d022bd017"
+      },
+      {
+        "file": "src/styles/codex-sidebar.css",
+        "sha256": "897f068e2246b28076070ddd907a2adfd9b53e3d7921546326f17036ae8bceb0"
+      },
+      {
+        "file": "tests/e2e/chat-session-fork.spec.ts",
+        "sha256": "be2db48b2054a7456af058e215988a2d388c3a558ab65b0895a301d56102c64a"
+      },
+      {
+        "file": "tests/e2e/chat-session-handoff.spec.ts",
+        "sha256": "8a829119903a5a2cb920a3738127e1b4c74d580781272dc7b632a637999bec48"
+      },
+      {
+        "file": "tests/e2e/fixtures/electron.ts",
+        "sha256": "7db2b01248292002a82ed18fc0198428c07799f71dbf6f8ebced388fbf4dbdce"
+      },
+      {
+        "file": "tests/e2e/fixtures/session-task-chain.ts",
+        "sha256": "eaa29bff7761bea46ab62d7e0ce5bcdaa5d3acf430d456a9decc7673e0e10527"
+      },
+      {
+        "file": "tests/e2e/project-agent-entry.spec.ts",
+        "sha256": "b540a16b7d9e11a71c34100c5b812cbe502378650f54564c5938f8e2439648aa"
+      },
+      {
+        "file": "tests/e2e/resource-mixed-load.spec.ts",
+        "sha256": "7f9eee28f0a781cf028476484cacaaf6633aa49a58ff904bc93d3d757bf9e930"
+      },
+      {
+        "file": "tests/e2e/session-chain-scope-faults.spec.ts",
+        "sha256": "e9973857cf40666caf5a54aa312309924262e50ce7841171800a14fa4ccb4454"
+      },
+      {
+        "file": "tests/e2e/session-derivation-ui.spec.ts",
+        "sha256": "3b0bc2297cd5e40f880910afeaa56a38dac960f72ddf5ba8039164838c967275"
+      },
+      {
+        "file": "tests/e2e/session-family-lifecycle.spec.ts",
+        "sha256": "b534cf9e7a5bac219f216a4ec686358dacfa8b481300d9a6d51d3edab84e173c"
+      },
+      {
+        "file": "tests/e2e/session-task-locales.spec.ts",
+        "sha256": "457f811034bd3ca51cba89c05cc8b1f9198b2c6d7edf1546473a7c12af915134"
+      },
+      {
+        "file": "tests/e2e/session-task-scope-completion.spec.ts",
+        "sha256": "7b587f5875c189b3bf4143641acbc262019c9f8ab0e7a1e17dbcca75bb82b02d"
+      },
+      {
+        "file": "tests/e2e/session-task-scope-derivation.spec.ts",
+        "sha256": "abfb49914d3e8555ccfa58421e14ddc5ed9846aba28129f800274e9ab1159b88"
+      },
+      {
+        "file": "tests/e2e/session-worker-task-journey.spec.ts",
+        "sha256": "670b3dc6153ca9c2687119dfa9904efafc8092ace39bad7d10d12b15eb3bfe0b"
+      },
+      {
+        "file": "tests/e2e/sidebar-session-folders-archive.spec.ts",
+        "sha256": "71bd82e96b91818c6aed191367e559a47aaffd7858b6f13f450fc95192f6c4fa"
+      },
+      {
+        "file": "tests/unit/chat-send-input-mode.test.ts",
+        "sha256": "c5eac13a3f3c8c3191141c835c54613455e41a5d30ac99ad6785d6f236300269"
+      },
+      {
+        "file": "tests/unit/cron-api-browser-automation.test.ts",
+        "sha256": "33a0adc205f077a4e210ddc43e5471bc05f637fa28d53fcfa9bcafd565d6cbd6"
+      },
+      {
+        "file": "tests/unit/durable-task-session-scope.test.ts",
+        "sha256": "b3fd43317342232684ace104ba3a82a5bff02a10a227bfdff8a90a0173ae2054"
+      },
+      {
+        "file": "tests/unit/host-services.test.ts",
+        "sha256": "ff07b32fb8143e207281959c1c23c96ad1a31c141a23c5fb2bd283dc068b7a09"
+      },
+      {
+        "file": "tests/unit/long-session-continuity-context.test.ts",
+        "sha256": "8746934e36e9c107237113049c4242b146eb21996a78056d8e77d5f517382d41"
+      },
+      {
+        "file": "tests/unit/long-session-coordinator-binding.test.ts",
+        "sha256": "b55471d816f28d8e7cd16e37206b5b13def06e0d95393bb4bc86c31375f0c67e"
+      },
+      {
+        "file": "tests/unit/long-session-delegation-admission.test.ts",
+        "sha256": "27310ee767b7ebfad826c9ced26280af3c613236d45eddb840a50dac78d42cf7"
+      },
+      {
+        "file": "tests/unit/long-session-runtime-resource-inventory.test.ts",
+        "sha256": "47e4121d063b1fe860ba676967a0b62766e233de7ef24ce7c6c39d4b6cd930f6"
+      },
+      {
+        "file": "tests/unit/provider-capability-store-roundtrip.test.ts",
+        "sha256": "66e987d0b6d37fe972acddd5da06c277fa7d7ad82d54e13cc49a623b5809bd9e"
+      },
+      {
+        "file": "tests/unit/provider-runtime-sync-r4-file.test.ts",
+        "sha256": "8be570ad6bde46ec36a8158d6bbfa90ee6d971a47555309d6d4c34f21d1f4a0b"
+      },
+      {
+        "file": "tests/unit/resource-adaptive-pressure.test.ts",
+        "sha256": "eada0467d312f068c790c0b75e67d64b6e344377cee0d96e8396c66ac0cd3d46"
+      },
+      {
+        "file": "tests/unit/resource-mixed-measurement.test.ts",
+        "sha256": "ee65f13297b02d5b79806516d19a3de9b0c1a76af331afe17d12db775e5a8d13"
+      },
+      {
+        "file": "tests/unit/session-activity-background-read.test.ts",
+        "sha256": "40e57359afebd659a4f2b41fbe7674db7d68907d25db29fb1e82df2d3716e1ae"
+      },
+      {
+        "file": "tests/unit/session-activity-store-scope.test.ts",
+        "sha256": "3b33c39693dfa4a8f1a856a909f39d8bbdadccff8c19c8489cf6ed284be39037"
+      },
+      {
+        "file": "tests/unit/session-chain-panels.test.tsx",
+        "sha256": "0ef78f93d675dd0c17b46009f58126aa711a73c240a12fc7127464736e24d925"
+      },
+      {
+        "file": "tests/unit/session-delegation-status.test.tsx",
+        "sha256": "15a6a4ac04cfae2ebe57bf6c682bc188f84cf26a3b1e979fef8f3b32fe277233"
+      },
+      {
+        "file": "tests/unit/session-family-navigation.test.tsx",
+        "sha256": "baac4e93ddb44c7442564f7689618479c4883abc3bb7ae01b2b7b7c6468a70fe"
+      },
+      {
+        "file": "tests/unit/session-family-read-model.test.ts",
+        "sha256": "0384bf6f7d04d67e71938aa06c4533bf1f366e60615daaa57f6ac82270e91d47"
+      },
+      {
+        "file": "tests/unit/session-handoff-recovery.test.ts",
+        "sha256": "46d8a53a0244da643a3dee8cfa34457a35c0a4d1e925c898af35bd66fa1ac925"
+      },
+      {
+        "file": "tests/unit/session-lifecycle-control-scope.test.ts",
+        "sha256": "e0ed275cfeac6aa994b93fc3f57d13e2528d694ee4782ffd94f1d6ebd752a42a"
+      },
+      {
+        "file": "tests/unit/session-task-scope-bridge.test.ts",
+        "sha256": "79120ac68dbd422ba8aec0557ff53a91927fbdd892884df43eaf910115498745"
+      },
+      {
+        "file": "tests/unit/session-task-scope-completion.test.ts",
+        "sha256": "90455b7a0cf8ddfb79cb3db1f4afe6809961d880ee4b3a340460f3fc1743a649"
+      },
+      {
+        "file": "tests/unit/session-task-scope.test.ts",
+        "sha256": "ed3fc1b8c7d871832ceeda4118d90e34dc54bd2e6dc5e71ee23e71af4641b575"
+      },
+      {
+        "file": "tests/unit/sidebar-render-containment.test.tsx",
+        "sha256": "05cbe187f40ca3fc5cc452ca21498571720ace9fac27444da1d930f117cc9a01"
+      },
+      {
+        "file": "tests/unit/sidebar-session-buckets.test.ts",
+        "sha256": "96cae214330308b55a9b60100b3df67518d611f593bbac56b209a62c874bd549"
+      },
+      {
+        "file": "tests/unit/task-ledger-snapshot-cache.test.ts",
+        "sha256": "69c30cb156f244cb67b109035e57a1e54889a29b2cdd580e6c37e014890c27ad"
+      },
+      {
+        "file": "tests/unit/user-message-queue.test.ts",
+        "sha256": "7baf21c9f3b8a6d73a099dc87d959de54848b9f61073284ee31b1a84a17e20f8"
+      },
+      {
+        "file": "tests/unit/workspace-agents-panel-failure.test.tsx",
+        "sha256": "0d14d8c9c3a6d52d87cf1b09734c4a97b6eebca221951f520445085aa9bccf66"
+      },
+      {
+        "file": "tests/unit/workspace-session.test.ts",
+        "sha256": "43bf92790c6f4c18bb60b503031cfef9c1bea28553d44855b9c14c56922f3711"
+      },
+      {
+        "file": "tests/unit/workspaces-store.test.ts",
+        "sha256": "33c6eab1d177ad026574d91177a5d935f72b47015eb08df2cedda206985edb4e"
+      },
+      {
+        "file": "vite.config.ts",
+        "sha256": "b63815744830a6d8ce05abd8af7ed4ce88c34970703e8a96e485ebfa2e95e04e"
+      }
+    ]
+  },
+  "after": {
+    "commit": "fb00956ed041531b14dad5601ace0e78cf63c50e",
+    "tree": "d3d4ca2cbb17cb339f111daf415617dae77b72de",
+    "dirty": "M harness/specs/tasks/session-task-chain-acceptance.md\n M openclaw_runtime/src/gateway/session-resource-inventory.ts\n M tests/unit/long-session-runtime-resource-inventory.test.ts",
+    "files": [
+      {
+        "file": "electron/gateway/process-launcher.ts",
+        "sha256": "a4c99840f7fe2e87c74788773c388c5eb50f5d453853687d226353d0b352803e"
+      },
+      {
+        "file": "electron/gateway/session-task-scope-bridge.ts",
+        "sha256": "49ace0ff0f3b3e906dd164354ccc2784c3de3a1c2057063300d351fef32d87f0"
+      },
+      {
+        "file": "electron/gateway/ws-client.ts",
+        "sha256": "58bc4e96436de1053322571f258452525f16a768f7cb31477067ef40fb660650"
+      },
+      {
+        "file": "electron/main/ipc-handlers.ts",
+        "sha256": "4ba94e0e7c03db5a69c063aaf7ddd273f11da7bb7a12e0c807190ef94c7be296"
+      },
+      {
+        "file": "electron/services/chat-api.ts",
+        "sha256": "6004e57f9a45752a684f1f0ed07892b727a1da6ed098f5ded19037cf68ff6de3"
+      },
+      {
+        "file": "electron/services/cron-api.ts",
+        "sha256": "31626266bd6157dbe23b17f64903723cb040878a04d6c76313f72581939f3569"
+      },
+      {
+        "file": "electron/services/gateway-api.ts",
+        "sha256": "3849b7a998b310854d2b3454ae38049da8c3f4804df197eb5ed758a675acb2d4"
+      },
+      {
+        "file": "electron/services/git-api.ts",
+        "sha256": "5b477150d31eced3dc28ef1629b3e58516bc46689a0f08ebba183a0ef7a401ee"
+      },
+      {
+        "file": "electron/services/providers/provider-runtime-sync.ts",
+        "sha256": "e218930e2fd349b81d0dc168ca895d53ce2b2ecba6f390651fa2219abb674a6e"
+      },
+      {
+        "file": "electron/services/providers/provider-store.ts",
+        "sha256": "65465a86a691431cbcbfb417d4e197513123c1b4237842ecc8d94618012ca744"
+      },
+      {
+        "file": "electron/services/resource-fabric.ts",
+        "sha256": "cd33ff82385811925b9358c7f88d4be7f3a2fa6ea9e7b4a50bcb386ae32db4e1"
+      },
+      {
+        "file": "electron/services/session-activity-api.ts",
+        "sha256": "bdc278563194e58e8ce8097f8ca48990277ab4bdcb7ae9513569d7453d087133"
+      },
+      {
+        "file": "electron/services/session-delegation-admission.ts",
+        "sha256": "5f74ee1b29a0b40da96805e7dd018c18c17292d06d1833fe0e1166ca4f523685"
+      },
+      {
+        "file": "electron/services/sessions-api.ts",
+        "sha256": "78826a5c6f86d79bb88ed1ce98443f3cc952f0f96f6b3b59b90ca7ffdad26875"
+      },
+      {
+        "file": "electron/services/task-ledger-service.ts",
+        "sha256": "55f81ded472843e205fdfa0dfc5817d2354a0ef7d15a707c4aaea01546b598d0"
+      },
+      {
+        "file": "electron/services/task-system-service.ts",
+        "sha256": "67993928c71f6231e9cbee9e357770dc094a77d2993fb65001fc7499badb6f89"
+      },
+      {
+        "file": "electron/services/terminal-api.ts",
+        "sha256": "a4377b01e9b2e212ea290e3f97f3ad10a7df6defa253474fad4eb111e5c3f25d"
+      },
+      {
+        "file": "electron/services/workspaces-api.ts",
+        "sha256": "191c6914d7f5fe4e60e3c09c49440970f7779461fc70868669f5f97abf67e222"
+      },
+      {
+        "file": "electron/utils/openclaw-auth.ts",
+        "sha256": "f8e69a02c9b1be8d9faab7bf50891f40db495e2d9581de4a22361d581761b2d5"
+      },
+      {
+        "file": "harness/specs/fixtures/resource-mixed-load-20261108/tsconfig.json",
+        "sha256": "3f5b7592dfa180c05d6e656c65663a596f26ebcd8c4de61413603604973d237a"
+      },
+      {
+        "file": "openclaw_runtime/packages/gateway-protocol/src/client-info.ts",
+        "sha256": "0e9183afe69d40233f2dd5dd5dbcbb3fe9a97e6b8c2e7adb11cb75f1f9d2a1b3"
+      },
+      {
+        "file": "openclaw_runtime/packages/gateway-protocol/src/schema/logs-chat.ts",
+        "sha256": "a571e64c39c5c8f47ef62446603a4a8f1b025bee57879645328c9255356cdc5d"
+      },
+      {
+        "file": "openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts",
+        "sha256": "4b7675b87ecd1fada8c49cfb09b9ce84d91850acaf7abfdc469be93a0361df46"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/agent-tool-definition-adapter.ts",
+        "sha256": "1016d07f8472c848f4f0cc319aa9c56d1fb27a5b7dfde6f9c3cb0e39b6a1c976"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/agent-tools.before-tool-call.ts",
+        "sha256": "6a4af2a6c21ad0d91d39b2ae00cc736b898c1d191137ccbe9d8dcbf4dbe24330"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/agent-tools.ts",
+        "sha256": "326be28b42cbe4f694c67f2dbd3a13fd639eee1dad17ad1b40e9c424f1b10cc7"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/bash-tools.exec-host-gateway.ts",
+        "sha256": "6b99f61df6b9d2909965b19d90f412ba5d5b43c359f454782a82dd7a8711fc40"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/bash-tools.exec-runtime.ts",
+        "sha256": "f65ef2cd427ffe8a58006460ee5b5ab698e554f7d9793ee88f30067f63d13f64"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/bash-tools.exec-types.ts",
+        "sha256": "c6aaf8ed9400cf42e414d6213380d58b793fa3cfcc88d1c6628ed951d51e716b"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/bash-tools.exec.ts",
+        "sha256": "81a2d610210461cdbe09e9b2337ddadbe8c1af5ea4e1511d8ea0d6e7043c1c8b"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/embedded-agent-runner/run-state.ts",
+        "sha256": "c947e8833dfb411f89858075787df7b86fa1468c43237110df7c2a6bb57ceb3e"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+        "sha256": "6c595d5808ce9ee00d40a98b2492eece5994f631c8e6a64842b154a96dc69199"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/embedded-agent-runner/runs.task-scope.test.ts",
+        "sha256": "79daed6094b175b265000342a1200456c54bca5ca26d4c1e7ae69e403b99e899"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/embedded-agent-runner/runs.ts",
+        "sha256": "01fd9fb9daf8ec14ae03cb4a2537dd046d9aa0291f3c968f4531be4946d16b9a"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/orchestration-protocol.ts",
+        "sha256": "0c076f18c0d6b1634413bd601e1b4af63da59f390823a9189693ceef3f1c0100"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/orchestrator-write-set-plan.test.ts",
+        "sha256": "84c406b2fcc34b9d984a408ba32a3bbdecbfe3e20315121b5ec3b22af5dd648d"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/session-task-scope.ts",
+        "sha256": "e76800112d04e72e165230a8ba5ff21131bfcc7c87fc4f53cc990bd3b4414d45"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/subagent-registry-run-manager.ts",
+        "sha256": "0d665d401d89d2f05719c43532f73bc3cef8cde0bc98c9ac48d5381c439f29c8"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/subagent-registry.types.ts",
+        "sha256": "1d7cfb6723771402e47b85f0efb0ee730d306d5ec02d66e722fafc97627eccd4"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/subagent-spawn.ts",
+        "sha256": "2da0adc1efa5c093039a86eba9f719a220f0303efffaccbf19dc5a59d516e397"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/tool-mutation.test.ts",
+        "sha256": "b8af99826ec305e4dcdea4219eadb6fd75a32c425d59907236729042f3d2f3b5"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/tool-mutation.ts",
+        "sha256": "709006b6c866beb6b0222a5283d0f71c9d668e6bde8e1fb7b3e0a4a3ef7e9b97"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/verseshell/governed-process.test.ts",
+        "sha256": "749dd62e841fe432afb3495c9c91295dd0121c475662a554f315c739239a7bdc"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/verseshell/governed-process.ts",
+        "sha256": "cad0347964c76bb5687023075e411b39faa3e26da80cf3b47e1c457da324d940"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/verseshell/managed-process-capacity.test.ts",
+        "sha256": "69991da1c5ab958d71f45aa2de936230953fb7f6582a1c58a10f2860b9e2f7b0"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/verseshell/managed-process-capacity.ts",
+        "sha256": "09e3c6b8a9a8c72baf96378bbbe313fc6cc1e6ccb3a75421fe6253da75d45d94"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/verseshell/managed-process-reservation.ts",
+        "sha256": "aaf6c81bc38a5f6cba1b1a8338eaa55a98712e5a9700877f5071bc35ccb9088c"
+      },
+      {
+        "file": "openclaw_runtime/src/auto-reply/reply/agent-runner-memory.ts",
+        "sha256": "55d0ffacf4d8f389edc57e3b7a2c05a5ecbaa6ed1ba6bb35a1cec2fac2790760"
+      },
+      {
+        "file": "openclaw_runtime/src/auto-reply/reply/reply-run-registry.ts",
+        "sha256": "b1b7fb7fa7ca8445620628b4078edd3c34944dbeebbad3e134330ccff676054a"
+      },
+      {
+        "file": "openclaw_runtime/src/cron/isolated-agent/run-executor.ts",
+        "sha256": "e737531f5af329a9c57fc3dcbd18d32ac32a341f4a76fc21471ec290d50ac2e2"
+      },
+      {
+        "file": "openclaw_runtime/src/cron/isolated-agent/run-runid-canonical.test.ts",
+        "sha256": "cae10ae24b54d245466524d2bfeb8cad4737dbfa33a2291779ed0f3fdfd3abfe"
+      },
+      {
+        "file": "openclaw_runtime/src/cron/isolated-agent/run.test-harness.ts",
+        "sha256": "b5ec200b971c8b88ed9dcdd1965f9436f958b75d36afe7fe6a491bd90a06958f"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/methods/core-descriptors.ts",
+        "sha256": "c5dc3e60e794440d95c0032c37d981a972a086b20e13e880a9f0f4c36bcb4a27"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-broadcast.ts",
+        "sha256": "212720f7b710292a6723924a9315b9edb128805d1984d3ea753cb32889041119"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods.ts",
+        "sha256": "a89a777ca775a4f7a5d8477707aa1f79a7564117e775027fd3d9229a301b416e"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/chat.ts",
+        "sha256": "f68b435916d2d04d4dce02792e42aa180a568e25db1d1d05a954f7733f0341e1"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts",
+        "sha256": "1f6f9f8fbc6c130f68b3d07828f8f7b016e2df911077ca6fb75d62165440eb2c"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/session-activity.test.ts",
+        "sha256": "c464d853b5054116696f71e917ed2f5d175b1ea5c3333f974e3e96c0d60340a7"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/session-activity.ts",
+        "sha256": "6b95a9cd5446f2bed53abb37e9fdd8848d91385faa48aa8e951de6baf6ba229d"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/session-task-scope.ts",
+        "sha256": "031f4729d209563728b1b0ab96dfbfd88270bf4587d7470e5634943eb209295b"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/sessions.read.ts",
+        "sha256": "64c10b498b2ea84bfdc67706f3833f8c8b26231df54e237429d9c9fb08f43473"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/sessions.run-control.ts",
+        "sha256": "94033e1309f0428270b30b5835a2518f1c3ce5b7ce80f0891be76ccf6b019b2b"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/sessions.send-permit-lifetime.test.ts",
+        "sha256": "c21b20abe9cc819aa25922bbd93d04b57f7fe6b9f505a9874b086073b0764f18"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/session-activity-handler.test.ts",
+        "sha256": "d48d22b17f6c719cb14261698fe183c6ab09d02be0fc04f35762446cab2cd7ce"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/session-resource-inventory.ts",
+        "sha256": "b8b0f5d4616171de8eff53751787de80161fa0b9a32d196c7a068510f6ee46f8"
+      },
+      {
+        "file": "openclaw_runtime/src/infra/agent-events.ts",
+        "sha256": "8b0b221a1ef225ea4e65f9d32be363fafb06e2756beeaf78a0012cbb9e35c7a0"
+      },
+      {
+        "file": "playwright.resource-governance.config.ts",
+        "sha256": "e317b27fc0526b3f5569425202ebfb7dcab5c8605ced1733a3ca47dfe1cffdb9"
+      },
+      {
+        "file": "scripts/capture-resource-builds.mjs",
+        "sha256": "4a5e4a1f12493474e9a466ab6c0139486407d5821c83978c6dc6e0825b20836f"
+      },
+      {
+        "file": "scripts/lib/resource-mixed-measurement.d.mts",
+        "sha256": "9c55b716e705b439fbbf29cf3b82f72e404de908a36ba767df9e4d06d23c7a1d"
+      },
+      {
+        "file": "scripts/lib/resource-mixed-measurement.mjs",
+        "sha256": "8d08e489f5bf340f7a14501f5e26e75bc2dd0fbebdd76adf56218f43e9fbf2e3"
+      },
+      {
+        "file": "scripts/repository-artifacts.json",
+        "sha256": "c46267974a68279c8b9233c636a465c2889b905c7bee43ea77b87ba687957826"
+      },
+      {
+        "file": "scripts/verify-resource-mixed-load.mjs",
+        "sha256": "4fa2c22527c532c94fb6d6de920f9e07ad5d756193053cdf209f545163d7a8f8"
+      },
+      {
+        "file": "shared/chat/types.ts",
+        "sha256": "32694529010b8253eff8cb86ed128b5a1c4a09c9fda30ec1716e64f2061af6aa"
+      },
+      {
+        "file": "shared/host-api/contract.ts",
+        "sha256": "3150626ffbb1f24e899f7808336408d750057cf82fc4cb40c2d0a454706300df"
+      },
+      {
+        "file": "shared/i18n/locales/en/chat.json",
+        "sha256": "ae4dd7276fd0caca54884e08e09a9f45eddb2d0075859f1cf689fe4bbdaca725"
+      },
+      {
+        "file": "shared/i18n/locales/en/taskLedger.json",
+        "sha256": "229d88ddfbb5a434403fd4a396dc090de48abfb406fa6ae17178bf2dfd670985"
+      },
+      {
+        "file": "shared/i18n/locales/ja/chat.json",
+        "sha256": "b187b6fd73b93bc24ff057a9bb675b0acc4a03b521cdefe1b8a4c380cd843b2b"
+      },
+      {
+        "file": "shared/i18n/locales/ja/taskLedger.json",
+        "sha256": "aa987ef5c6e5134d785394beed8cae46b243786eeb1668bd78c75df33731f05a"
+      },
+      {
+        "file": "shared/i18n/locales/ru/chat.json",
+        "sha256": "618e7a7dee2f3645ee1613b7e16da0bec72152ec1bfcbfdec8ed18e3f428be1e"
+      },
+      {
+        "file": "shared/i18n/locales/ru/taskLedger.json",
+        "sha256": "2ab430e9d8c31d0719092a99de94f084ecf5b638fe82400af2a3c0109b99dbbd"
+      },
+      {
+        "file": "shared/i18n/locales/zh/chat.json",
+        "sha256": "aeae4cbca6908afbea088d14877dd7e16ae0eee0269c8f667580feb065fc4825"
+      },
+      {
+        "file": "shared/i18n/locales/zh/taskLedger.json",
+        "sha256": "211b25fd9c0ea8da3af039a71864fd299712b1468e0123e798ced3eaf5b85ebb"
+      },
+      {
+        "file": "shared/resources/adaptive-limit.ts",
+        "sha256": "714b896296d76633881d8f9084dec8f6475b560eb799233da4dcd3e3435558cf"
+      },
+      {
+        "file": "shared/session-task-scope.ts",
+        "sha256": "62163af6e98006ea1e409ca9d88784c98478ccc6d63d63f52de38d94814f1007"
+      },
+      {
+        "file": "shared/task-system/identity.ts",
+        "sha256": "b18fddf63c62baf881a8d0e9a39eb8726a75ab1b0c6abdd0ee933704c9432d31"
+      },
+      {
+        "file": "shared/task-system/store.ts",
+        "sha256": "c9a70949e8780b11ca126086150c2c89764e5d225c9b74178dc9c55bac5fb6a0"
+      },
+      {
+        "file": "shared/types/session-derivation.ts",
+        "sha256": "d4dbb29a538041fe1806a156a447200609117143255f5d5c48588e5dbe47f997"
+      },
+      {
+        "file": "shared/types/session-handoff.ts",
+        "sha256": "063fbadffb7e8d9404b5d8e2db88bcbb14ecb9b8064337c28c60b44923ebf42c"
+      },
+      {
+        "file": "shared/types/session-stage.ts",
+        "sha256": "1cb9621b9ff1e81a09ece0fc205801ac2ec880e0238261f1e5c91d1fa3770b40"
+      },
+      {
+        "file": "shared/types/task-ledger.ts",
+        "sha256": "75d3fb3d7f79ef5836f2981c8d551fcb8f227c227159bbc777ff31309ae90413"
+      },
+      {
+        "file": "shared/types/workspace.ts",
+        "sha256": "36a8fa86f8820beca0fad119eb85f55c74e675420e7f87da00656ae27ab97c93"
+      },
+      {
+        "file": "src/App.tsx",
+        "sha256": "d631021cd666160a08b4712711b2feeca409f392f4f1329961fc6879e7c44c2b"
+      },
+      {
+        "file": "src/components/chat/ResourceChip.tsx",
+        "sha256": "35589f29758e456e2a442e84f7c792311a2460dc8cc499ab4389c1aeccd9255d"
+      },
+      {
+        "file": "src/components/chat/SessionDelegationStatus.tsx",
+        "sha256": "1d727901f5664477b573cb249542fa88a7aeb2c526bc6bd5c297464df9e88bfa"
+      },
+      {
+        "file": "src/components/chat/SessionFamilyNavigation.tsx",
+        "sha256": "6ab879a8270c2e82ccd5ffdde43e19a3432bf77d1dd8763b1f5b3ac75788d267"
+      },
+      {
+        "file": "src/components/file-preview/WorkspaceAgentsPanel.tsx",
+        "sha256": "3ac4ebb8874ecf430d7384903081a96babac98e90fc2da14ea79c176deea00b8"
+      },
+      {
+        "file": "src/components/file-preview/WorkspaceSubagentPanel.tsx",
+        "sha256": "147f171974ae99d91eca9daf74dee549605d53109110b1c901fcb940bd7dd20c"
+      },
+      {
+        "file": "src/components/layout/MainLayout.tsx",
+        "sha256": "28cc9836161750e938f51ac07888b5672de4382502f1704d872f68ed96315d21"
+      },
+      {
+        "file": "src/components/layout/SessionFolderTree.tsx",
+        "sha256": "4b16e10baddcaf6cf14f61df2d0248116f92cdb88cd77f13e4b7d0daf512783e"
+      },
+      {
+        "file": "src/components/layout/Sidebar.tsx",
+        "sha256": "0ffbcd54f72c758e733e78603f1c1c40babc0e5a4212758752c2dae909a77545"
+      },
+      {
+        "file": "src/components/layout/session-buckets.ts",
+        "sha256": "9da36d4f51ecff9e6434fc64116a93c71f7c2ba53f858f5dd2dd04eb11231314"
+      },
+      {
+        "file": "src/components/task-ledger/TaskLedgerSummaryPanel.tsx",
+        "sha256": "bfcb7b0897510f5442fc5934a921bcaf271655fd744b81572f1279d2bd9b0e07"
+      },
+      {
+        "file": "src/components/task-ledger/TaskNodeSelector.tsx",
+        "sha256": "cf25bf98181a453daedd5eab64442b7162650223da5338429d0541426dc02d52"
+      },
+      {
+        "file": "src/lib/host-api.ts",
+        "sha256": "8e2bcfe21aef9b581952866a1d643c00c96057644329692105f5e02c730061b4"
+      },
+      {
+        "file": "src/lib/session-read-model.ts",
+        "sha256": "b0030d796f44714ac46995869f07b7b83c1f98160d9665b7f7a5a9ba467c8623"
+      },
+      {
+        "file": "src/lib/workspace-session.ts",
+        "sha256": "0e4a20cf3268cfbf07994d49d6f34e53a15cc4d7bffb63a6aad2bf38c2959ef9"
+      },
+      {
+        "file": "src/pages/Chat/ChatInput.tsx",
+        "sha256": "4d7265a39dc1c7c1826e52b67c76cd95895f0f5b9fe69261c25718e6cf269410"
+      },
+      {
+        "file": "src/pages/Chat/ChatMessage.tsx",
+        "sha256": "1289b1c7bb3f7bef44a1182e625dddc1ae8cfb491d3f9e6b11df160bbd8e48a1"
+      },
+      {
+        "file": "src/pages/Chat/index.tsx",
+        "sha256": "fb68a5783ec235cf7963d63003ce20a4d9ab22a1f3db903ae92f479a20f3f2b1"
+      },
+      {
+        "file": "src/pages/Chat/use-session-reading-position.ts",
+        "sha256": "43cc590eb865db112611117ce629ade2efcf2bfd0edf27e97a1185d0bdf8b67b"
+      },
+      {
+        "file": "src/pages/Projects/index.tsx",
+        "sha256": "3ab5cdd083054d00b8082880f77c9d8281f06aedf53466d7a63d4817e45fadb9"
+      },
+      {
+        "file": "src/pages/Settings/sections/ArchivedSection.tsx",
+        "sha256": "f40526b13d5b1b2409f86f92d536815532d8e41f46c4a60d0483b97cb58f665f"
+      },
+      {
+        "file": "src/pages/TaskLedger/index.tsx",
+        "sha256": "0cb03d3640400549a1074e183da7a14a1f04bdadf5906e873591cf19bf724210"
+      },
+      {
+        "file": "src/stores/chat.ts",
+        "sha256": "61188d31e994a18d8948ba764b757ef62a97867d582c44d6cd1fa9b1de770bc2"
+      },
+      {
+        "file": "src/stores/session-activity.ts",
+        "sha256": "122f8ea7262b6c4420d36b7f79031482f818102790fa0086aafab296a223bfe8"
+      },
+      {
+        "file": "src/stores/workspaces.ts",
+        "sha256": "40bee7adef9fe40d81e6615dda01cf09e58a356177aa63eb4d69330d022bd017"
+      },
+      {
+        "file": "src/styles/codex-sidebar.css",
+        "sha256": "897f068e2246b28076070ddd907a2adfd9b53e3d7921546326f17036ae8bceb0"
+      },
+      {
+        "file": "tests/e2e/chat-session-fork.spec.ts",
+        "sha256": "be2db48b2054a7456af058e215988a2d388c3a558ab65b0895a301d56102c64a"
+      },
+      {
+        "file": "tests/e2e/chat-session-handoff.spec.ts",
+        "sha256": "8a829119903a5a2cb920a3738127e1b4c74d580781272dc7b632a637999bec48"
+      },
+      {
+        "file": "tests/e2e/fixtures/electron.ts",
+        "sha256": "7db2b01248292002a82ed18fc0198428c07799f71dbf6f8ebced388fbf4dbdce"
+      },
+      {
+        "file": "tests/e2e/fixtures/session-task-chain.ts",
+        "sha256": "eaa29bff7761bea46ab62d7e0ce5bcdaa5d3acf430d456a9decc7673e0e10527"
+      },
+      {
+        "file": "tests/e2e/project-agent-entry.spec.ts",
+        "sha256": "b540a16b7d9e11a71c34100c5b812cbe502378650f54564c5938f8e2439648aa"
+      },
+      {
+        "file": "tests/e2e/resource-mixed-load.spec.ts",
+        "sha256": "7f9eee28f0a781cf028476484cacaaf6633aa49a58ff904bc93d3d757bf9e930"
+      },
+      {
+        "file": "tests/e2e/session-chain-scope-faults.spec.ts",
+        "sha256": "e9973857cf40666caf5a54aa312309924262e50ce7841171800a14fa4ccb4454"
+      },
+      {
+        "file": "tests/e2e/session-derivation-ui.spec.ts",
+        "sha256": "3b0bc2297cd5e40f880910afeaa56a38dac960f72ddf5ba8039164838c967275"
+      },
+      {
+        "file": "tests/e2e/session-family-lifecycle.spec.ts",
+        "sha256": "b534cf9e7a5bac219f216a4ec686358dacfa8b481300d9a6d51d3edab84e173c"
+      },
+      {
+        "file": "tests/e2e/session-task-locales.spec.ts",
+        "sha256": "457f811034bd3ca51cba89c05cc8b1f9198b2c6d7edf1546473a7c12af915134"
+      },
+      {
+        "file": "tests/e2e/session-task-scope-completion.spec.ts",
+        "sha256": "7b587f5875c189b3bf4143641acbc262019c9f8ab0e7a1e17dbcca75bb82b02d"
+      },
+      {
+        "file": "tests/e2e/session-task-scope-derivation.spec.ts",
+        "sha256": "abfb49914d3e8555ccfa58421e14ddc5ed9846aba28129f800274e9ab1159b88"
+      },
+      {
+        "file": "tests/e2e/session-worker-task-journey.spec.ts",
+        "sha256": "670b3dc6153ca9c2687119dfa9904efafc8092ace39bad7d10d12b15eb3bfe0b"
+      },
+      {
+        "file": "tests/e2e/sidebar-session-folders-archive.spec.ts",
+        "sha256": "71bd82e96b91818c6aed191367e559a47aaffd7858b6f13f450fc95192f6c4fa"
+      },
+      {
+        "file": "tests/unit/chat-send-input-mode.test.ts",
+        "sha256": "c5eac13a3f3c8c3191141c835c54613455e41a5d30ac99ad6785d6f236300269"
+      },
+      {
+        "file": "tests/unit/cron-api-browser-automation.test.ts",
+        "sha256": "33a0adc205f077a4e210ddc43e5471bc05f637fa28d53fcfa9bcafd565d6cbd6"
+      },
+      {
+        "file": "tests/unit/durable-task-session-scope.test.ts",
+        "sha256": "b3fd43317342232684ace104ba3a82a5bff02a10a227bfdff8a90a0173ae2054"
+      },
+      {
+        "file": "tests/unit/host-services.test.ts",
+        "sha256": "ff07b32fb8143e207281959c1c23c96ad1a31c141a23c5fb2bd283dc068b7a09"
+      },
+      {
+        "file": "tests/unit/long-session-continuity-context.test.ts",
+        "sha256": "8746934e36e9c107237113049c4242b146eb21996a78056d8e77d5f517382d41"
+      },
+      {
+        "file": "tests/unit/long-session-coordinator-binding.test.ts",
+        "sha256": "b55471d816f28d8e7cd16e37206b5b13def06e0d95393bb4bc86c31375f0c67e"
+      },
+      {
+        "file": "tests/unit/long-session-delegation-admission.test.ts",
+        "sha256": "27310ee767b7ebfad826c9ced26280af3c613236d45eddb840a50dac78d42cf7"
+      },
+      {
+        "file": "tests/unit/long-session-runtime-resource-inventory.test.ts",
+        "sha256": "47e4121d063b1fe860ba676967a0b62766e233de7ef24ce7c6c39d4b6cd930f6"
+      },
+      {
+        "file": "tests/unit/provider-capability-store-roundtrip.test.ts",
+        "sha256": "66e987d0b6d37fe972acddd5da06c277fa7d7ad82d54e13cc49a623b5809bd9e"
+      },
+      {
+        "file": "tests/unit/provider-runtime-sync-r4-file.test.ts",
+        "sha256": "8be570ad6bde46ec36a8158d6bbfa90ee6d971a47555309d6d4c34f21d1f4a0b"
+      },
+      {
+        "file": "tests/unit/resource-adaptive-pressure.test.ts",
+        "sha256": "eada0467d312f068c790c0b75e67d64b6e344377cee0d96e8396c66ac0cd3d46"
+      },
+      {
+        "file": "tests/unit/resource-mixed-measurement.test.ts",
+        "sha256": "ee65f13297b02d5b79806516d19a3de9b0c1a76af331afe17d12db775e5a8d13"
+      },
+      {
+        "file": "tests/unit/session-activity-background-read.test.ts",
+        "sha256": "40e57359afebd659a4f2b41fbe7674db7d68907d25db29fb1e82df2d3716e1ae"
+      },
+      {
+        "file": "tests/unit/session-activity-store-scope.test.ts",
+        "sha256": "3b33c39693dfa4a8f1a856a909f39d8bbdadccff8c19c8489cf6ed284be39037"
+      },
+      {
+        "file": "tests/unit/session-chain-panels.test.tsx",
+        "sha256": "0ef78f93d675dd0c17b46009f58126aa711a73c240a12fc7127464736e24d925"
+      },
+      {
+        "file": "tests/unit/session-delegation-status.test.tsx",
+        "sha256": "15a6a4ac04cfae2ebe57bf6c682bc188f84cf26a3b1e979fef8f3b32fe277233"
+      },
+      {
+        "file": "tests/unit/session-family-navigation.test.tsx",
+        "sha256": "baac4e93ddb44c7442564f7689618479c4883abc3bb7ae01b2b7b7c6468a70fe"
+      },
+      {
+        "file": "tests/unit/session-family-read-model.test.ts",
+        "sha256": "0384bf6f7d04d67e71938aa06c4533bf1f366e60615daaa57f6ac82270e91d47"
+      },
+      {
+        "file": "tests/unit/session-handoff-recovery.test.ts",
+        "sha256": "46d8a53a0244da643a3dee8cfa34457a35c0a4d1e925c898af35bd66fa1ac925"
+      },
+      {
+        "file": "tests/unit/session-lifecycle-control-scope.test.ts",
+        "sha256": "e0ed275cfeac6aa994b93fc3f57d13e2528d694ee4782ffd94f1d6ebd752a42a"
+      },
+      {
+        "file": "tests/unit/session-task-scope-bridge.test.ts",
+        "sha256": "79120ac68dbd422ba8aec0557ff53a91927fbdd892884df43eaf910115498745"
+      },
+      {
+        "file": "tests/unit/session-task-scope-completion.test.ts",
+        "sha256": "90455b7a0cf8ddfb79cb3db1f4afe6809961d880ee4b3a340460f3fc1743a649"
+      },
+      {
+        "file": "tests/unit/session-task-scope.test.ts",
+        "sha256": "ed3fc1b8c7d871832ceeda4118d90e34dc54bd2e6dc5e71ee23e71af4641b575"
+      },
+      {
+        "file": "tests/unit/sidebar-render-containment.test.tsx",
+        "sha256": "05cbe187f40ca3fc5cc452ca21498571720ace9fac27444da1d930f117cc9a01"
+      },
+      {
+        "file": "tests/unit/sidebar-session-buckets.test.ts",
+        "sha256": "96cae214330308b55a9b60100b3df67518d611f593bbac56b209a62c874bd549"
+      },
+      {
+        "file": "tests/unit/task-ledger-snapshot-cache.test.ts",
+        "sha256": "69c30cb156f244cb67b109035e57a1e54889a29b2cdd580e6c37e014890c27ad"
+      },
+      {
+        "file": "tests/unit/user-message-queue.test.ts",
+        "sha256": "7baf21c9f3b8a6d73a099dc87d959de54848b9f61073284ee31b1a84a17e20f8"
+      },
+      {
+        "file": "tests/unit/workspace-agents-panel-failure.test.tsx",
+        "sha256": "0d14d8c9c3a6d52d87cf1b09734c4a97b6eebca221951f520445085aa9bccf66"
+      },
+      {
+        "file": "tests/unit/workspace-session.test.ts",
+        "sha256": "43bf92790c6f4c18bb60b503031cfef9c1bea28553d44855b9c14c56922f3711"
+      },
+      {
+        "file": "tests/unit/workspaces-store.test.ts",
+        "sha256": "33c6eab1d177ad026574d91177a5d935f72b47015eb08df2cedda206985edb4e"
+      },
+      {
+        "file": "vite.config.ts",
+        "sha256": "b63815744830a6d8ce05abd8af7ed4ce88c34970703e8a96e485ebfa2e95e04e"
+      }
+    ]
+  },
+  "tests": {
+    "total": 33,
+    "passed": 33,
+    "failed": 0,
+    "pending": 0
+  },
+  "log": {
+    "path": "D:\\tmp\\unified-management-20261109\\session-task-validation\\resource-read-green.log",
+    "sha256": "e1ebebcb3c6e261b5810d6ae0b0866c5659a9bb7dc18eb56f80a3f1a11a0ab85"
+  }
+}

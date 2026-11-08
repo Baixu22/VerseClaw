@@ -1,0 +1,22 @@
+file:///D:/ClawX-work/session-task-unified-relay-20261109/openclaw_runtime/scripts/explicit-test-targets.mjs:15
+    throw new Error(`[vitest] requested test file(s) not selected:\n${missing.join("\n")}`);
+          ^
+
+Error: [vitest] requested test file(s) not selected:
+D:/ClawX-work/session-task-unified-relay-20261109/openclaw_runtime/src/agents/orchestrator-write-set-plan.test.ts
+    at assertExplicitTargetsSelected (file:///D:/ClawX-work/session-task-unified-relay-20261109/openclaw_runtime/scripts/explicit-test-targets.mjs:15:11)
+    at validateExplicitTestTargets (file:///D:/ClawX-work/session-task-unified-relay-20261109/openclaw_runtime/scripts/explicit-test-targets.mjs:38:7)
+    at file:///D:/ClawX-work/session-task-unified-relay-20261109/openclaw_runtime/scripts/explicit-test-targets.mjs:46:3
+
+Node.js v24.22.1
+file:///D:/ClawX-work/session-task-unified-relay-20261109/openclaw_runtime/scripts/run-vitest.mjs:1025
+        if (code !== 0 || signal) reject(new Error(`Test selection failed (${signal ?? code})`));
+                                         ^
+
+Error: Test selection failed (1)
+    at ChildProcess.<anonymous> (file:///D:/ClawX-work/session-task-unified-relay-20261109/openclaw_runtime/scripts/run-vitest.mjs:1025:42)
+    at ChildProcess.wrapper (node:events:639:12)
+    at ChildProcess.emit (node:events:514:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:324:12)
+
+Node.js v24.22.1

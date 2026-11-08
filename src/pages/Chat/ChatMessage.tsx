@@ -13,6 +13,7 @@ import { ActionBarPrimitive, MessageProvider, type ThreadMessage } from '@assist
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+import { getTranscriptEntryId } from '@/lib/session-read-model';
 import { useTickingNow } from '@/hooks/use-ticking-now';
 import { statFile } from '@/lib/file-preview-client';
 import { hostApi } from '@/lib/host-api';
@@ -236,6 +237,7 @@ export const ChatMessage = memo(function ChatMessage({
   liveUsage,
 }: ChatMessageProps) {
   const { t } = useTranslation('chat');
+  const transcriptEntryId = getTranscriptEntryId(message);
   const isUser = message.role === 'user';
   const role = typeof message.role === 'string' ? message.role.toLowerCase() : '';
   const isToolResult = role === 'toolresult' || role === 'tool_result';
@@ -644,16 +646,16 @@ export const ChatMessage = memo(function ChatMessage({
             timestamp={message.timestamp}
             canEdit={Boolean(onResendUserMessage) && canResendUserMessage}
             onEdit={handleStartUserMessageEdit}
-            canFork={Boolean(message.id) && Boolean(onForkFromMessage)}
+            canFork={Boolean(transcriptEntryId) && Boolean(onForkFromMessage)}
             onFork={() => {
-              if (message.id) onForkFromMessage?.(message.id);
+              if (transcriptEntryId) onForkFromMessage?.(transcriptEntryId);
             }}
-            canCompact={Boolean(message.id) && Boolean(onCompactRange)}
+            canCompact={Boolean(transcriptEntryId) && Boolean(onCompactRange)}
             onCompactFrom={() => {
-              if (message.id) onCompactRange?.(message.id, 'from');
+              if (transcriptEntryId) onCompactRange?.(transcriptEntryId, 'from');
             }}
             onCompactTo={() => {
-              if (message.id) onCompactRange?.(message.id, 'to');
+              if (transcriptEntryId) onCompactRange?.(transcriptEntryId, 'to');
             }}
           />
         )}

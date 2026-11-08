@@ -2668,6 +2668,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/durable-task-system/sources.json
 !/docs/dev/durable-task-system/DESIGN.md
 !/docs/dev/durable-task-system/STATUS.md
+!/docs/dev/session-lifecycle-control-matrix.md
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.

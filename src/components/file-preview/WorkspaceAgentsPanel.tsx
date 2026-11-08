@@ -4,7 +4,7 @@
  * Two halves: the roster of sub-agents this session has spawned, and the
  * selected one's transcript. Everything is live host state — the roster comes
  * from the shared session-activity store, transcripts from `sessions.history`,
- * and dispatch from the `orchestrator.run` RPC. There is no fixture path; a
+ * and dispatch through Main's task-bound delegation admission. A
  * session that has spawned nothing shows the empty arm.
  *
  * The roster is READ from `useSessionActivityStore`, not folded here from
@@ -37,6 +37,10 @@ import { useAgentsStore } from '@/stores/agents';
 import { useChatStore } from '@/stores/chat';
 import { useArtifactPanel } from '@/stores/artifact-panel';
 import { useSessionActivityStore } from '@/stores/session-activity';
+import { selectSessionActivitySnapshot } from '@/stores/session-activity';
+import { useWorkspacesStore } from '@/stores/workspaces';
+import { SessionDelegationStatus } from '@/components/chat/SessionDelegationStatus';
+import type { SessionDelegationReceipt } from '@shared/types/session-delegation';
 import type { RawMessage } from '@shared/chat/types';
 import type { SessionActivitySubagent, SessionActivitySubagentStatus } from '@shared/types/session-activity';
 
@@ -88,10 +92,20 @@ export function WorkspaceAgentsPanel() {
   const focusedSessionKey = useArtifactPanel((s) => s.agentsSessionKey);
   const setAgentsSessionKey = useArtifactPanel((s) => s.setAgentsSessionKey);
   const openWorkspacePanel = useArtifactPanel((s) => s.openWorkspacePanel);
-  const subagents = useSessionActivityStore((s) => s.snapshots[sessionKey]?.subagents);
+  const workspace = useWorkspacesStore((s) => s.activeWorkspace);
+  const snapshot = useSessionActivityStore((s) => selectSessionActivitySnapshot(s, workspace?.id, sessionKey));
+  const subagents = snapshot?.subagents;
+  const parentGeneration = snapshot?.session.sessionId;
+  const scopeKey = JSON.stringify([workspace?.id, sessionKey, parentGeneration]);
+  const viewScope = useMemo(() => ({ key: scopeKey }), [scopeKey]);
+  const scopeRef = useRef(viewScope); scopeRef.current = viewScope;
+  const transcriptVersion = useRef(0);
+  const dispatchIntent = useRef<{ fingerprint: string; key: string } | null>(null);
+  const [dispatchReceipt, setDispatchReceipt] = useState<SessionDelegationReceipt | null>(null);
+  const [childModel, setChildModel] = useState<string | null>(null);
 
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
-  const [transcript, setTranscript] = useState<{ key: string; messages: RawMessage[] } | null>(null);
+  const [transcript, setTranscript] = useState<{ key: string; scope: object; messages: RawMessage[] } | null>(null);
   const [transcriptError, setTranscriptError] = useState<SurfaceErrorState | null>(null);
   const [transcriptLoading, setTranscriptLoading] = useState(false);
   const [dispatchTask, setDispatchTask] = useState('');
@@ -102,7 +116,12 @@ export function WorkspaceAgentsPanel() {
     setSelectedKey(null);
     setTranscript(null);
     setTranscriptError(null);
-  }, [sessionKey]);
+    setDispatchReceipt(null);
+    setChildModel(null);
+    setDispatching(false);
+    setTranscriptLoading(false);
+    transcriptVersion.current += 1;
+  }, [scopeKey]);
 
   const entries = useMemo(
     () => (subagents ?? []).map(rosterEntry).sort((left, right) => {
@@ -144,6 +163,8 @@ export function WorkspaceAgentsPanel() {
     childSessionKey: string | undefined,
     childAgentIdHint: string | undefined,
   ) => {
+    const version = ++transcriptVersion.current;
+    setChildModel(null);
     if (!rosterKey || !childSessionKey) {
       setTranscript(null);
       setTranscriptError(null);
@@ -155,21 +176,26 @@ export function WorkspaceAgentsPanel() {
       const result = await hostApi.sessions.history({
         sessionKey: childSessionKey,
         agentId: childAgentId,
+        expectedParentSessionKey: sessionKey,
       });
-      setTranscript({ key: rosterKey, messages: result.messages ?? [] });
+      if (version !== transcriptVersion.current || scopeRef.current !== viewScope) return;
+      if (!result.success || !result.sessionGeneration) throw new Error(result.error ?? 'Transcript generation unavailable');
+      setTranscript({ key: rosterKey, scope: viewScope, messages: result.messages ?? [] });
+      setChildModel(result.model ?? null);
       setTranscriptError(null);
     } catch (error) {
+      if (version !== transcriptVersion.current || scopeRef.current !== viewScope) return;
       // R2: a failed history query is NOT an empty transcript — surface it.
-      setTranscript({ key: rosterKey, messages: [] });
+      setTranscript({ key: rosterKey, scope: viewScope, messages: [] });
       setTranscriptError({
         messageKey: 'agentsPanel.transcriptFailed',
         errorId: describeUserError(error).errorId,
         retry: () => void loadTranscript(rosterKey, childSessionKey, childAgentIdHint),
       });
     } finally {
-      setTranscriptLoading(false);
+      if (version === transcriptVersion.current && scopeRef.current === viewScope) setTranscriptLoading(false);
     }
-  }, [anchorAgentId]);
+  }, [anchorAgentId, viewScope, sessionKey]);
 
   useEffect(() => {
     void loadTranscript(selected?.key ?? null, selected?.childSessionKey, selected?.agentId);
@@ -186,34 +212,38 @@ export function WorkspaceAgentsPanel() {
     const roleName = selected?.roleName || 'planner';
     setDispatching(true);
     try {
-      const response = await hostApi.gateway.rpc('orchestrator.run', {
-        task,
-        sessionKey,
-        agentId: anchorAgentId,
-        workers: [{ roleName, task }],
-        includeVerifier: false,
-        workerCommunication: 'none',
-      });
-      const rejected = response && typeof response === 'object' && (response as { success?: boolean }).success === false;
-      if (rejected) {
-        const message = (response as { error?: unknown }).error;
-        throw new Error(typeof message === 'string' ? message : t('agentsPanel.dispatchFailed'));
-      }
+      if (!workspace?.id) throw new Error(t('delegationStages.taskRequired'));
+      const resolved = await hostApi.workspaces.resolveCoordinator({ workspaceId: workspace.id, sessionKey, agentId: anchorAgentId });
+      const binding = resolved.binding;
+      const taskRef = binding?.activeTaskNodeId ?? (binding?.taskLedgerReferences.length === 1 ? binding.taskLedgerReferences[0].taskLedgerNodeId : undefined);
+      if (resolved.recovery.state !== 'ready' || !binding?.sessionGeneration || !taskRef) throw new Error(t('delegationStages.taskRequired'));
+      const fingerprint = JSON.stringify([scopeKey, taskRef, roleName, task]);
+      if (dispatchIntent.current?.fingerprint !== fingerprint) dispatchIntent.current = { fingerprint, key: crypto.randomUUID() };
+      const response = await hostApi.sessions.delegate({ task, taskRef, sessionKey, workspaceId: workspace.id,
+        agentId: anchorAgentId, expectedBindingRevision: binding.bindingRevision, expectedSessionGeneration: binding.sessionGeneration,
+        idempotencyKey: dispatchIntent.current.key, backend: 'subagent', worker: { roleName, task }, includeVerifier: false });
+      if (scopeRef.current !== viewScope) return;
+      setDispatchReceipt(response.receipt ?? null);
+      if (!response.success) throw new Error(response.error ?? t(`delegationStages.status.${response.status}`));
+      dispatchIntent.current = null;
       setDispatchTask('');
-      toast.success(t('agentsPanel.dispatchStarted', { role: roleName }));
+      toast.success(t('delegationStages.status.accepted'));
     } catch (error) {
-      toastUserError(error, { fallback: t('agentsPanel.dispatchFailed') });
+      if (scopeRef.current === viewScope) toastUserError(error, { fallback: t('agentsPanel.dispatchFailed') });
     } finally {
-      setDispatching(false);
+      if (scopeRef.current === viewScope) setDispatching(false);
     }
-  }, [anchorAgentId, dispatchTask, dispatching, selected?.roleName, sessionKey, t]);
+  }, [anchorAgentId, dispatchTask, dispatching, selected?.roleName, sessionKey, t, workspace?.id, scopeKey, viewScope]);
 
   // null-safe: with an empty roster both sides are null and `?.` equality
   // would still evaluate to true, crashing on the property read (R2).
-  const selectedTranscript = transcript && transcript.key === selected?.key ? transcript.messages : [];
+  const selectedTranscript = transcript && transcript.key === selected?.key && transcript.scope === viewScope ? transcript.messages : [];
 
   return (
     <div className="flex h-full min-h-0 flex-col p-3" data-testid="workspace-agents-panel">
+      <SessionDelegationStatus workspaceId={workspace?.id} sessionKey={sessionKey} generation={parentGeneration}
+        receipt={dispatchReceipt} snapshot={snapshot} worker={subagents?.find((entry) => entry.id === selectedKey)} />
+      {selected?.childSessionKey && <p className="my-1 text-2xs text-muted-foreground">{t('delegationStages.model', { model: childModel ?? t('delegationStages.status.unavailable') })}</p>}
       <div className="mb-3 flex items-center justify-between gap-2">
         <div className="min-w-0">
           <p className="text-sm font-semibold text-foreground">{t('agentsPanel.title')}</p>

@@ -1,12 +1,12 @@
 import { existsSync, openSync, closeSync, fstatSync, readFileSync, readSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { RawMessage } from '@shared/chat/types';
 import type { AgentReasoningEffort } from '@shared/types/agent';
 import type { GitRepositoryStatus } from '@shared/types/git';
 import type { ObservabilityTrace } from '@shared/types/observability';
-import type { TaskLedgerNode, TaskLedgerSnapshot } from '@shared/types/task-ledger';
+import type { TaskLedgerEventInput, TaskLedgerNode, TaskLedgerSessionLink, TaskLedgerSnapshot } from '@shared/types/task-ledger';
 import { getOpenClawConfigDir } from '../utils/paths';
 import { logger } from '../utils/logger';
 import { resolveHostOpenClawStateDir } from './knowledge-api';
@@ -47,10 +47,15 @@ import type {
 } from '../../shared/host-api/contract';
 import { appendTaskLedgerEvents, loadTaskLedgerSnapshot } from './task-ledger-service';
 import { assertManagedTaskAdmission, persistentTaskChatContext } from './task-system-service';
-import { createWorkspacesApi, getActiveWorkspaceProfile, getWorkspaceRootPathById, type WorkspaceCoordinatorLifecycleEvent } from './workspaces-api';
+import { createWorkspacesApi, getActiveWorkspaceProfile, readWorkspaceHandoffOperation, updateWorkspaceHandoffOperation,
+  getWorkspaceRootPathById, getPersistedCoordinatorBinding, materializeCoordinatorSessionGeneration, type WorkspaceCoordinatorLifecycleEvent } from './workspaces-api';
+import { handoffFirstSendKey, type SessionHandoffOperation } from '@shared/types/session-handoff';
+import { normalizeRunScope } from '@shared/types/identity-scope';
+import { classifyDerivation } from '@shared/types/session-derivation';
 import {
   executeSessionDelegation,
   hashDelegationRequest,
+  type SessionDelegationDependencies,
   validateSessionDelegationPayload,
 } from './session-delegation-admission';
 import {
@@ -112,6 +117,38 @@ async function readHandoffDecision(sessionKey: string, workspaceId: string | nul
   const snapshot = await loadTaskLedgerSnapshot(workspaceId);
   if (snapshot.warnings.length) throw new Error('Handoff ancestry unavailable: Task Ledger contains unreadable events');
   return evaluateHandoffDerivation({ links: snapshot.sessionLinks, sessionKey, ...resolveConfiguredHandoffPolicy() });
+}
+
+async function readDerivationTaskIds(
+  snapshot: TaskLedgerSnapshot,
+  sourceSessionKey: string,
+  gatewayManager?: GatewayManager,
+): Promise<string[]> {
+  if (snapshot.warnings.length) throw new Error('Task scope unavailable: Task Ledger contains unreadable events');
+  const taskIds = new Set(snapshot.nodes.filter((node) => node.kind === 'task').map((node) => node.id));
+  const links = snapshot.sessionLinks.filter((link) =>
+    link.sessionKey === sourceSessionKey && link.nodeId && taskIds.has(link.nodeId),
+  );
+  let generation: string | null = null;
+  if (links.some((link) => link.sessionGeneration)) {
+    if (!gatewayManager) throw new Error('Task scope unavailable: source generation cannot be verified');
+    const result = await gatewayManager.rpc<{ session?: { sessionId?: string } }>(
+      'sessions.describe', { key: sourceSessionKey }, 15_000,
+    );
+    generation = result.session?.sessionId?.trim() || null;
+    if (!generation) throw new Error('Task scope unavailable: source session generation is missing');
+  }
+  return [...new Set(links
+    .filter((link) => !link.sessionGeneration || link.sessionGeneration === generation)
+    .map((link) => link.nodeId!))];
+}
+
+function sessionDerivationEvents(link: TaskLedgerSessionLink, taskNodeIds: string[]): TaskLedgerEventInput[] {
+  return [link, ...taskNodeIds.map((nodeId) => ({ ...link, id: `${link.id}:task:${nodeId}`, nodeId }))]
+    .map((sessionLink) => ({
+      type: 'session_linked', actor: 'system', sessionId: link.sessionKey,
+      payload: { sessionLink },
+    }));
 }
 
 const SAFE_SESSION_SEGMENT = /^[A-Za-z0-9][A-Za-z0-9_-]*$/;
@@ -1886,6 +1923,7 @@ export function createSessionsApi(ctx: {
   resolveCoordinator?: CompleteHostServiceRegistry['workspaces']['resolveCoordinator'];
   gatewayRpcForDelegation?: CompleteHostServiceRegistry['gateway']['rpc'];
   getActiveWorkspaceId?: () => Promise<string | null>;
+  resolveTaskScope?: SessionDelegationDependencies['resolveTaskScope'];
   delegationStore?: {
     readAdmission: typeof readSessionDelegationAdmission;
     claimAdmission: typeof claimSessionDelegationAdmission;
@@ -1927,6 +1965,27 @@ export function createSessionsApi(ctx: {
         commitAdmission: delegationStore.commitAdmission,
         resolveCoordinator: ctx.resolveCoordinator,
         getActiveWorkspaceId: ctx.getActiveWorkspaceId ?? (async () => (await getActiveWorkspaceProfile())?.id ?? null),
+        resolveTaskScope: ctx.resolveTaskScope ?? (async (input) => {
+          const snapshot = await loadTaskLedgerSnapshot(input.workspaceId);
+          const task = snapshot.nodes.find((node) => node.id === input.taskRef);
+          return {
+            sessionKey: input.sessionKey,
+            workspaceId: input.workspaceId,
+            generation: input.sessionGeneration,
+            activeTaskNodeId: input.taskRef,
+            coordinatorSessionKey: input.sessionKey,
+            bindingRevision: input.bindingRevision,
+            bindingState: input.bindingState,
+            links: snapshot.sessionLinks,
+            task: task ? {
+              nodeId: task.id,
+              workspaceId: input.workspaceId,
+              nodeKind: task.kind,
+              status: task.status,
+              generation: input.sessionGeneration,
+            } : null,
+          };
+        }),
         gatewayRpc: ctx.gatewayRpcForDelegation,
         describeSessionGeneration: async (sessionKey) => {
           const described = await ctx.gatewayManager!.rpc<{
@@ -2030,9 +2089,42 @@ export function createSessionsApi(ctx: {
       const limit = getLimit(payload);
 
       if (typeof body.sessionKey === 'string' && body.sessionKey.trim()) {
+        type Description = { session?: { sessionId?: string; model?: string; parentSessionKey?: string; spawnedBy?: string } | null };
+        const needsFence = Boolean(payload.expectedSessionGeneration || payload.expectedParentSessionKey);
+        let described: Description | null = null;
+        if (needsFence) {
+          if (!ctx.gatewayManager) return { success: false, error: 'Transcript generation unavailable' };
+          described = await ctx.gatewayManager.rpc<Description>('sessions.describe', { key: body.sessionKey.trim() }, 15_000);
+          if (!described.session?.sessionId || (payload.expectedSessionGeneration && described.session.sessionId !== payload.expectedSessionGeneration)
+            || (payload.expectedParentSessionKey && classifyDerivation(described.session).parentSessionKey !== payload.expectedParentSessionKey)) {
+            return { success: false, error: 'Transcript scope or generation changed' };
+          }
+        }
         const messages = await loadSessionTranscriptByKey(body.sessionKey.trim(), limit, ctx.gatewayManager);
         if (!messages) return { success: false, error: 'Transcript not found' };
-        return { success: true, messages };
+        if (needsFence) {
+          const after = await ctx.gatewayManager!.rpc<Description>('sessions.describe', { key: body.sessionKey.trim() }, 15_000);
+          if (after.session?.sessionId !== described?.session?.sessionId) return { success: false, error: 'Transcript generation changed during read' };
+        }
+        const executed = messages.findLast((message) => message.role === 'assistant'
+          && typeof (message as RawMessage & { model?: string }).model === 'string') as (RawMessage & { model?: string; provider?: string }) | undefined;
+        const model = executed?.model ? [executed.provider, executed.model].filter(Boolean).join('/') : undefined;
+        let workerSendReceipt: { phase: 'queued' | 'steered'; idempotencyKey: string; source: 'runtime-intervention'; queueItemId?: string } | undefined;
+        if (payload.workerSendIdempotencyKey && described?.session?.sessionId && ctx.gatewayManager) {
+          const key = payload.workerSendIdempotencyKey;
+          const history = await ctx.gatewayManager.rpc<{ events?: Array<{ idempotencyKey?: string; status?: string; payload?: { queueItemId?: string } }> }>(
+            'sessions.longTaskControlHistory', { key: body.sessionKey.trim(), limit: 200 }, 10_000);
+          const event = history.events?.find((entry) => entry.idempotencyKey === `chat:${key}:queue:event`
+            || entry.idempotencyKey === `chat:${key}:guide:event`);
+          if (event && (event.status === 'queued' || event.status === 'steered')) workerSendReceipt = {
+            phase: event.status, idempotencyKey: key, source: 'runtime-intervention',
+            ...(event.payload?.queueItemId ? { queueItemId: event.payload.queueItemId } : {}),
+          };
+          const current = await ctx.gatewayManager.rpc<Description>('sessions.describe', { key: body.sessionKey.trim() }, 15_000);
+          if (current.session?.sessionId !== described.session.sessionId) return { success: false, error: 'Transcript generation changed during delivery read' };
+        }
+        return { success: true, messages, ...(described?.session?.sessionId ? { sessionGeneration: described.session.sessionId } : {}), ...(model ? { model } : {}),
+          ...(workerSendReceipt ? { workerSendReceipt } : {}) };
       }
 
       const agentId = typeof body.agentId === 'string' ? body.agentId.trim() : '';
@@ -2053,6 +2145,48 @@ export function createSessionsApi(ctx: {
         }
         return { success: false, error: 'Failed to load transcript' };
       }
+    },
+    sendWorker: async (payload) => {
+      if (!ctx.gatewayManager || !ctx.gatewayRpcForDelegation || !payload.message.trim() || !payload.idempotencyKey) {
+        return { success: false, phase: 'rejected', error: 'Worker communication is unavailable' };
+      }
+      const active = await getActiveWorkspaceProfile();
+      if (active?.id !== payload.workspaceId) return { success: false, phase: 'rejected', error: 'Worker workspace changed' };
+      const described = await Promise.all([payload.parentSessionKey, payload.childSessionKey].map((key) =>
+        ctx.gatewayManager!.rpc<{ session?: { sessionId?: string; parentSessionKey?: string; spawnedBy?: string } }>('sessions.describe', { key }, 15_000)));
+      const [parent, child] = described.map((entry) => entry.session);
+      if (parent?.sessionId !== payload.expectedParentGeneration || child?.sessionId !== payload.expectedChildGeneration
+        || !child || classifyDerivation(child).parentSessionKey !== payload.parentSessionKey) {
+        return { success: false, phase: 'rejected', error: 'Worker source or generation changed' };
+      }
+      try {
+        const binding = await getPersistedCoordinatorBinding(payload.workspaceId, payload.childSessionKey);
+        if (binding && (binding.state !== 'active' || binding.sessionGeneration !== payload.expectedChildGeneration)) {
+          return { success: false, phase: 'rejected', error: 'Worker task binding is not current' };
+        }
+        const origin = await ctx.gatewayManager.rpc<{ delegation?: { parentSessionKey: string; parentGeneration: string; workspaceDir: string | null } | null }>(
+          'taskScope.runState', { sessionKey: payload.childSessionKey, sessionGeneration: payload.expectedChildGeneration, runId: payload.idempotencyKey }, 10_000,
+        );
+        if (origin.delegation?.parentSessionKey !== payload.parentSessionKey || origin.delegation.parentGeneration !== payload.expectedParentGeneration) {
+          return { success: false, phase: 'rejected', error: 'Worker delegation origin is unavailable' };
+        }
+        const result = await ctx.gatewayRpcForDelegation({ method: payload.mode === 'steer' ? 'sessions.steer' : 'sessions.send',
+          expectedWorkspaceId: payload.workspaceId,
+          params: { key: payload.childSessionKey, expectedSessionId: payload.expectedChildGeneration,
+            workspaceId: payload.workspaceId, workspaceDir: binding?.environment.canonicalRoot ?? origin.delegation.workspaceDir ?? active.rootPath,
+            requesterSessionKey: payload.parentSessionKey, expectedRequesterSessionId: payload.expectedParentGeneration,
+            message: payload.message, idempotencyKey: payload.idempotencyKey }, timeoutMs: 30_000 });
+        if (isRecord(result) && (result.success === false || result.ok === false)) return { success: false, phase: 'rejected', error: String(result.error ?? 'Worker send rejected') };
+        if (isRecord(result) && (result.queued === true || result.steered === true)) return {
+          success: true, phase: result.steered === true ? 'steered' : 'queued',
+          receipt: { idempotencyKey: payload.idempotencyKey, source: 'runtime-ack' },
+        };
+        if (!isRecord(result) || typeof result.runId !== 'string') return { success: false, phase: 'unknown', error: 'Worker delivery is unconfirmed' };
+        return { success: true, phase: 'accepted', run: normalizeRunScope({ runId: result.runId,
+          scope: { workspaceId: payload.workspaceId, sessionKey: payload.childSessionKey } }) };
+      } catch (error) { return { success: false,
+        phase: error instanceof GatewayRpcError && ['INVALID_REQUEST', '-32600', '-32602'].includes(String(error.payload.code)) ? 'rejected' : 'unknown',
+        error: error instanceof Error ? error.message : String(error) }; }
     },
     patchThinking: async (payload) => {
       const sessionKey = getSessionKey(payload);
@@ -2390,6 +2524,7 @@ export function createSessionsApi(ctx: {
       const result = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.stop', {
         key: sessionKey,
         ...(agentId ? { agentId } : {}),
+        ...(payload.expectedSessionId ? { expectedSessionId: payload.expectedSessionId } : {}),
       }, 30_000);
       const expectedSessionId = typeof result.sessionId === 'string' && result.sessionId.trim()
         ? result.sessionId.trim()
@@ -2843,33 +2978,87 @@ export function createSessionsApi(ctx: {
         const workspaceId = getOptionalWorkspaceId(payload);
         const agentId = getOptionalAgentId(payload) ?? parseSessionKey(sourceSessionKey)?.agentId ?? 'main';
         if (typeof payload.draftInput !== 'string' || !payload.draftInput.trim()) throw new Error('Handoff draft cannot be empty');
+        if (!workspaceId || !ctx.gatewayManager) throw new Error('HANDOFF_OWNER_UNAVAILABLE');
+        const described = await ctx.gatewayManager.rpc<{ session?: { sessionId?: string; hasActiveRun?: boolean } }>('sessions.describe', { key: sourceSessionKey }, 15_000);
+        const sourceGeneration = described.session?.sessionId;
+        if (!sourceGeneration) throw new Error('HANDOFF_SOURCE_UNAVAILABLE');
+        if (described.session?.hasActiveRun) throw new Error('HANDOFF_SOURCE_ACTIVE');
+        const draftDigest = createHash('sha256').update(payload.draftInput).digest('hex');
+        const prior = await readWorkspaceHandoffOperation({ workspaceId, sessionKey: sourceSessionKey, operationId: payload.operationId });
+        let operation = prior && prior.sourceSessionKey === sourceSessionKey
+          && (payload.operationId || !['sent', 'accepted'].includes(prior.phase)) ? prior : null;
+        if (payload.operationId && prior && prior.sourceSessionKey !== sourceSessionKey) throw new Error('HANDOFF_OPERATION_SCOPE_MISMATCH');
+        if (operation && (operation.sourceGeneration !== sourceGeneration || operation.draftDigest !== draftDigest)) {
+          throw new Error('HANDOFF_SOURCE_OR_DRAFT_CHANGED');
+        }
         const decision = await readHandoffDecision(sourceSessionKey, workspaceId);
         if (!decision.allow) return { success: false, error: decision.error };
-        // The sidebar detects fresh sessions with /:session-\d/, so keep the
-        // timestamp prefix and use a short UUID only as the collision-resistant suffix.
-        const sessionKey = `agent:${agentId}:session-${Date.now()}-${randomUUID().slice(0, 8)}`;
-        const id = randomUUID();
+        const taskNodeIds = await readDerivationTaskIds(
+          await loadTaskLedgerSnapshot(workspaceId), sourceSessionKey, ctx.gatewayManager,
+        );
+        if (!operation) {
+          const id = payload.operationId ?? randomUUID();
+          if (!/^[a-zA-Z0-9_-]{8,128}$/.test(id)) throw new Error('HANDOFF_OPERATION_ID_INVALID');
+          const now = new Date().toISOString();
+          const intent: SessionHandoffOperation = {
+            id, workspaceId, agentId, sourceSessionKey, sourceGeneration,
+            sessionKey: `agent:${agentId}:session-${Date.now()}-${id.slice(0, 12)}`, sessionGeneration: null,
+            draftInput: payload.draftInput, draftDigest, firstSendIdempotencyKey: handoffFirstSendKey(id),
+            phase: 'creating', handoffDepth: decision.depth, handoffRootSessionKey: decision.rootSessionKey,
+            parentHandoffId: decision.parentHandoffId, rootHandoffId: decision.rootHandoffId ?? id,
+            createdAt: now, updatedAt: now,
+          };
+          operation = await updateWorkspaceHandoffOperation(workspaceId, id, (current) => {
+            if (current) throw new Error('HANDOFF_OPERATION_ID_CONFLICT');
+            return intent;
+          });
+        }
+        const { sessionKey, id } = operation;
+        let child = await ctx.gatewayManager.rpc<{ session?: { sessionId?: string; parentSessionKey?: string } | null }>('sessions.describe', { key: sessionKey }, 15_000);
+        if (!child.session) {
+          await ctx.gatewayManager.rpc('sessions.create', { key: sessionKey, agentId, parentSessionKey: sourceSessionKey }, 30_000);
+          child = await ctx.gatewayManager.rpc('sessions.describe', { key: sessionKey }, 15_000);
+        }
+        if (!child.session?.sessionId || child.session.parentSessionKey !== sourceSessionKey) throw new Error('HANDOFF_RUNTIME_SOURCE_MISMATCH');
+        if (operation.sessionGeneration && operation.sessionGeneration !== child.session.sessionId) throw new Error('HANDOFF_CHILD_GENERATION_CHANGED');
+        const after = await ctx.gatewayManager.rpc<{ session?: { sessionId?: string; hasActiveRun?: boolean; status?: string } }>('sessions.describe', { key: sourceSessionKey }, 15_000);
+        if (after.session?.sessionId !== sourceGeneration) throw new Error('HANDOFF_SOURCE_GENERATION_CHANGED');
+        if (after.session.hasActiveRun || after.session.status === 'running') throw new Error('HANDOFF_SOURCE_ACTIVE');
         const lineage = {
-          handoffDepth: decision.depth,
+          handoffDepth: operation.handoffDepth,
           handoffParentSessionKey: sourceSessionKey,
-          handoffRootSessionKey: decision.rootSessionKey,
-          parentHandoffId: decision.parentHandoffId,
-          rootHandoffId: decision.rootHandoffId ?? id,
+          handoffRootSessionKey: operation.handoffRootSessionKey,
+          parentHandoffId: operation.parentHandoffId,
+          rootHandoffId: operation.rootHandoffId,
         };
         // Persist lineage before activating the session. A failed workspace update can leave
         // an unused lineage record, but cannot activate an untracked session or reset depth.
-        await appendTaskLedgerEvents(workspaceId, [{
-          type: 'session_linked', actor: 'system', sessionId: sessionKey,
-          payload: { sessionLink: {
-            id, sessionKey, agentId, relation: 'handoff_from', sourceSessionKey,
-            ...lineage, createdAt: new Date().toISOString(),
-          } },
-        }], `handoff:${sourceSessionKey}:${sessionKey}`);
-        if (workspaceId) {
-          await createWorkspacesApi(ctx).update({
-            id: workspaceId, agentId, activeSessionKey: sessionKey, sessionKey,
+        await appendTaskLedgerEvents(workspaceId, sessionDerivationEvents({
+          id, sessionKey, agentId, relation: 'handoff_from', sourceSessionKey,
+          sessionGeneration: child.session.sessionId,
+          ...lineage, createdAt: new Date().toISOString(),
+        }, taskNodeIds), `handoff:${sourceSessionKey}:${sessionKey}`);
+        if (operation.phase === 'creating') {
+          const ready = await ctx.gatewayManager.rpc<{ session?: { sessionId?: string; hasActiveRun?: boolean; status?: string } }>(
+            'sessions.describe', { key: sourceSessionKey }, 15_000,
+          );
+          if (ready.session?.sessionId !== sourceGeneration) throw new Error('HANDOFF_SOURCE_GENERATION_CHANGED');
+          if (ready.session.hasActiveRun || ready.session.status === 'running') throw new Error('HANDOFF_SOURCE_ACTIVE');
+          const sourceBinding = await getPersistedCoordinatorBinding(workspaceId, sourceSessionKey);
+          const claim = sourceBinding?.writerClaim;
+          const writer = await ctx.gatewayManager.rpc<{ quiescent?: boolean }>('taskScope.runState', {
+            sessionKey: sourceSessionKey, sessionGeneration: claim?.sessionGeneration ?? sourceGeneration,
+            runId: claim?.run.runId ?? `handoff:${id}`, processScope: 'session',
+          }, 10_000);
+          if (writer.quiescent !== true) throw new Error('HANDOFF_SOURCE_WRITER_BUSY');
+          await createWorkspacesApi(ctx).saveState({
+            id: workspaceId, sessionKey,
             state: { activeTopicId: null, draftInput: payload.draftInput },
           });
+          const { handoffManagedSessionTask } = await import('./task-system-service');
+          const workspaceRoot = sourceBinding?.environment.canonicalRoot ?? await getWorkspaceRootPathById(workspaceId);
+          if (workspaceRoot) handoffManagedSessionTask({ workspaceRoot, sourceSessionKey, sourceGeneration,
+            sessionKey, generation: child.session.sessionId });
           await observeCoordinatorLifecycle({
             type: 'handoff',
             workspaceId,
@@ -2877,11 +3066,44 @@ export function createSessionsApi(ctx: {
             sessionKey,
             agentId,
           });
+          await materializeCoordinatorSessionGeneration({ workspaceId, sessionKey, sessionId: child.session.sessionId });
         }
-        return { success: true, sessionKey, ...lineage };
+        operation = await updateWorkspaceHandoffOperation(workspaceId, id, (current) => ({
+          ...current!, sessionGeneration: child.session!.sessionId!,
+          phase: current!.phase === 'creating' ? 'ready' : current!.phase,
+        }));
+        return { success: true, sessionKey, operation, ...lineage };
       });
       handoffCreationTail = creation.catch(() => undefined);
       return creation;
+    },
+    handoffOperation: async (payload) => {
+      const sessionKey = getSessionKey(payload);
+      const workspaceId = getOptionalWorkspaceId(payload);
+      if (!workspaceId) return { success: false, operation: null, error: 'HANDOFF_WORKSPACE_MISSING' };
+      let operation = await readWorkspaceHandoffOperation({ workspaceId, sessionKey, operationId: payload.operationId });
+      if (operation && payload.reconcile && ['sending', 'accepted', 'unknown'].includes(operation.phase)) {
+        const current = operation;
+        try {
+          if (!ctx.gatewayManager) throw new Error('Gateway unavailable');
+          const child = await ctx.gatewayManager.rpc<{ session?: { sessionId?: string } }>('sessions.describe', { key: current.sessionKey }, 15_000);
+          if (child.session?.sessionId !== current.sessionGeneration) throw new Error('Handoff child generation changed');
+          const messages = await loadSessionTranscriptByKey(current.sessionKey, 1000, ctx.gatewayManager);
+          const delivered = messages?.some((message) => message.role === 'user'
+            && (message as RawMessage & { idempotencyKey?: string }).idempotencyKey === `${current.firstSendIdempotencyKey}:user`);
+          operation = await updateWorkspaceHandoffOperation(workspaceId, current.id, (latest) => ({
+            ...latest!, phase: delivered ? 'sent' : latest!.phase === 'accepted' || latest!.phase === 'sent' ? latest!.phase : 'unknown',
+            ...(delivered ? { error: null, receipt: { source: 'transcript', run: normalizeRunScope({
+              runId: current.firstSendIdempotencyKey, scope: { workspaceId, sessionKey: current.sessionKey },
+            }) } } : {}),
+          }));
+        } catch (error) {
+          operation = await updateWorkspaceHandoffOperation(workspaceId, current.id, (latest) => ({
+            ...latest!, phase: latest!.phase === 'sent' ? 'sent' : 'unknown', error: String(error),
+          }));
+        }
+      }
+      return { success: true, operation };
     },
     fork: async (payload) => {
       const sessionKey = getSessionKey(payload);
@@ -2905,6 +3127,8 @@ export function createSessionsApi(ctx: {
           warnings: ['gateway_unavailable'],
         };
       }
+      const taskSnapshot = await loadTaskLedgerSnapshot(workspaceId);
+      await readDerivationTaskIds(taskSnapshot, sessionKey, ctx.gatewayManager);
       const result = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.fork', {
         key: sessionKey,
         ...(agentId ? { agentId } : {}),
@@ -2925,6 +3149,26 @@ export function createSessionsApi(ctx: {
           forkedFromParent: result.forkedFromParent === true,
         };
       }
+      // Re-read the generation after cloning: a reset may race with sessions.fork.
+      const taskNodeIds = await readDerivationTaskIds(taskSnapshot, sourceSessionKey, ctx.gatewayManager);
+      if (sourceSessionKey !== sessionKey) {
+        taskNodeIds.push(...await readDerivationTaskIds(taskSnapshot, sessionKey, ctx.gatewayManager));
+      }
+      const entry = isRecord(result.entry) ? result.entry : undefined;
+      const generation = typeof result.sessionId === 'string' ? result.sessionId.trim()
+        : typeof entry?.sessionId === 'string' ? entry.sessionId.trim() : null;
+      if (taskNodeIds.length && !generation) {
+        return {
+          success: false, sourceSessionKey, sessionKey: nextSessionKey, agentId, workspaceId,
+          error: 'Task scope unavailable: fork session generation is missing',
+          warnings: ['fork_task_scope_unavailable'],
+        };
+      }
+      await appendTaskLedgerEvents(workspaceId, sessionDerivationEvents({
+        id: randomUUID(), sessionKey: nextSessionKey, agentId,
+        relation: 'forked_from', sourceSessionKey, sessionGeneration: generation || null,
+        createdAt: new Date().toISOString(),
+      }, [...new Set(taskNodeIds)]), `session-fork:${sourceSessionKey}:${nextSessionKey}`);
       if (workspaceId) await persistentTaskChatContext(workspaceId,nextSessionKey,ctx.gatewayManager,(await getWorkspaceRootPathById(workspaceId))??undefined);
       return {
         success: true,

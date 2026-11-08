@@ -375,6 +375,12 @@ export function createReplyOperation(params: {
         phase = "completed";
       }
       clearState();
+      if (result.kind === "completed") {
+        // The handle can finish before its reply owner; retry queued input after the owner is idle.
+        void import("../../agents/user-message-queue.js").then(({ triggerQueueDrain }) => {
+          triggerQueueDrain(sessionKey);
+        });
+      }
     },
     completeThen(afterClear) {
       operation.complete();

@@ -62,6 +62,7 @@ type RpcPayload = {
   params?: unknown;
   timeoutMs?: unknown;
   approvalId?: unknown;
+  expectedWorkspaceId?: unknown;
 };
 
 type GatewayApiOptions = {
@@ -439,9 +440,22 @@ export function createGatewayApi(
       if (!method) {
         throw new Error('Invalid gateway RPC method');
       }
+      if (method.startsWith('taskScope.')) {
+        return { success: false, rejectedBeforeDispatch: true, error: 'Task scope bridge methods are backend-owned' };
+      }
       const timeoutMs = parseTimeoutMs(body.timeoutMs);
       const approvalId = normalizeApprovalId(body.approvalId);
       const workspace = await getActiveWorkspaceProfile();
+      const expectedWorkspaceId = typeof body.expectedWorkspaceId === 'string' ? body.expectedWorkspaceId : undefined;
+      if (expectedWorkspaceId && workspace?.id !== expectedWorkspaceId) {
+        return { success: false, rejectedBeforeDispatch: true, error: 'Gateway workspace scope changed' };
+      }
+      const runScopedRpc = async () => {
+        if (expectedWorkspaceId && (await getActiveWorkspaceProfile())?.id !== expectedWorkspaceId) {
+          return { success: false, rejectedBeforeDispatch: true, error: 'Gateway workspace scope changed before dispatch' };
+        }
+        return runRpcAndCaptureKnowledge(method, body.params, timeoutMs, workspace);
+      };
 
       if (workspace) {
         let decision = decideGatewayRpc(method, workspace.permissionMode, body.params);
@@ -507,7 +521,7 @@ export function createGatewayApi(
                       paramsPreview: buildParamsPreview(body.params),
                       reason: `approved by preset ${matchResult.preset.label} (${matchResult.preset.id})`,
                     });
-                    return runRpcAndCaptureKnowledge(method, body.params, timeoutMs, workspace);
+                    return runScopedRpc();
                   }
                 }
               } catch {
@@ -525,7 +539,7 @@ export function createGatewayApi(
                 requestHash,
               });
               if (approved) {
-                return runRpcAndCaptureKnowledge(method, body.params, timeoutMs, workspace);
+                return runScopedRpc();
               }
             }
 
@@ -577,7 +591,7 @@ export function createGatewayApi(
         if (mockResult) return mockResult;
       }
 
-      return runRpcAndCaptureKnowledge(method, body.params, timeoutMs, workspace);
+      return runScopedRpc();
     },
   };
 }

@@ -364,7 +364,10 @@ export const sessionsReadHandlers: GatewayRequestHandlers = {
       includeLastMessage: p.includeLastMessage,
       transcriptUsageMaxBytes: 64 * 1024,
     });
-    respond(true, { session: row }, undefined);
+    const hasActiveRun = [...context.chatAbortControllers.values()].some(
+      (run) => run.sessionKey === target.canonicalKey && !run.controller.signal.aborted,
+    );
+    respond(true, { session: { ...row, hasActiveRun } }, undefined);
   },
   "sessions.resolve": async ({ params, respond, context }) => {
     if (!assertValidParams(params, validateSessionsResolveParams, "sessions.resolve", respond)) {

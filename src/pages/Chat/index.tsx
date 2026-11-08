@@ -8,6 +8,13 @@ import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, type
 import { useShallow } from 'zustand/shallow';
 import { createChatContentCache } from '@/stores/chat/content-cache';
 import { useMessageViewport } from '@/hooks/use-message-viewport';
+import { classifyDerivation } from '@shared/types/session-derivation';
+import { SessionFamilyNavigation } from '@/components/chat/SessionFamilyNavigation';
+import { TaskLedgerSummaryPanel } from '@/components/task-ledger/TaskLedgerSummaryPanel';
+import { activateWorkspaceScopedSession } from '@/lib/workspace-session';
+import { useSessionReadingPosition } from './use-session-reading-position';
+import { getTranscriptEntryId } from '@/lib/session-read-model';
+import { handoffFirstSendKey, type SessionHandoffOperation } from '@shared/types/session-handoff';
 import { AlertTriangle, ArrowDownToLine, ArrowLeft, Check, ChevronDown, GitBranchPlus, Loader2, Pencil, RefreshCw, Users, Workflow, X } from 'lucide-react';
 import { FileText, ListChecks, Sparkles } from '@/components/icons/codex-icons';
 import {
@@ -61,7 +68,7 @@ import { HookSidebar } from '@/components/rareui/HookSidebar';
 import { buildCompletionActivity } from '@/components/rareui/completion-activity';
 import { useCompletionActivityStore } from '@/components/rareui/completion-activity-store';
 import { SessionActivityPanel } from './SessionActivityPanel';
-import { useSessionActivityStore } from '@/stores/session-activity';
+import { useSessionActivityStore, selectSessionActivitySnapshot } from '@/stores/session-activity';
 import {
   classifySessionContinuityError,
   resolveSessionContinuityPreflight,
@@ -208,12 +215,6 @@ function formatTokenCountForToast(value: number): string {
   const compact = value / 1_000_000;
   return `${compact >= 10 ? compact.toFixed(0) : compact.toFixed(1)}m`;
 }
-
-type SessionLineageOverride = {
-  relation: 'forked_from';
-  sourceSessionKey: string;
-  forkedFromTimestamp?: number;
-};
 
 const EMPTY_REASONING_ITEMS: AssistantReasoning[] = [];
 
@@ -412,7 +413,6 @@ function ProjectSessionHeader({
   handoffDisabled,
   handoffBusy,
   continuityRecommendation,
-  sessionLineage,
   runtimeRuns,
   activeRunId,
   sending,
@@ -441,7 +441,6 @@ function ProjectSessionHeader({
   handoffDisabled?: boolean;
   handoffBusy?: boolean;
   continuityRecommendation?: SessionContinuityRecommendation;
-  sessionLineage?: Record<string, SessionLineageOverride>;
   runtimeRuns?: Record<string, ChatRuntimeRunState>;
   activeRunId?: string | null;
   sending?: boolean;
@@ -462,8 +461,7 @@ function ProjectSessionHeader({
    */
   const derivedSessions = sessions.filter((session) =>
     session.key !== currentSessionKey
-    && (session.parentSessionKey === currentSessionKey
-      || sessionLineage?.[session.key]?.sourceSessionKey === currentSessionKey),
+    && classifyDerivation(session).parentSessionKey === currentSessionKey,
   );
 
   const recentSessions = useMemo(() => {
@@ -661,11 +659,8 @@ function ProjectSessionHeader({
             <hr className="codex-header-menu__sep" />
             <HookSidebar activeKey={currentSessionKey}>
             {recentSessions.map((session) => {
-              const forkSourceSessionKey = session.forkedFromParent && session.parentSessionKey
-                ? session.parentSessionKey
-                : sessionLineage?.[session.key]?.relation === 'forked_from'
-                  ? sessionLineage[session.key].sourceSessionKey
-                  : null;
+              const relation = classifyDerivation(session);
+              const forkSourceSessionKey = relation.kind === 'fork' ? relation.parentSessionKey : null;
               const dotState = getHeaderSessionDotState({
                 sessionKey: session.key,
                 currentSessionKey,
@@ -702,10 +697,7 @@ function ProjectSessionHeader({
                         data-testid="chat-session-lineage"
                       >
                         {(() => {
-                          const override = sessionLineage?.[session.key]?.forkedFromTimestamp;
-                          const forkTimestamp = typeof session.forkedFromTimestamp === 'number'
-                            ? session.forkedFromTimestamp
-                            : override;
+                          const forkTimestamp = session.forkedFromTimestamp;
                           return typeof forkTimestamp === 'number'
                             ? t('session.lineage.forkedFromAt', {
                                 session: getSessionDisplayName(forkSourceSessionKey, sessions, sessionLabels),
@@ -847,7 +839,7 @@ function KnowledgeErrorAdvisoryCard({
   );
 }
 
-export function Chat() {
+export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {}) {
   const { t } = useTranslation(['chat', 'common']);
   const navigate = useNavigate();
   const location = useLocation();
@@ -876,7 +868,6 @@ export function Chat() {
     runtimeRuns: s.runtimeRuns ?? {},
     lastUserMessageAt: s.lastUserMessageAt,
   })));
-  const switchSession = useChatStore((s) => s.switchSession);
   const resetSessionView = useChatStore((s) => s.resetSessionView);
   const renameSession = useChatStore((s) => s.renameSession);
   const loadMoreHistory = useChatStore((s) => s.loadMoreHistory);
@@ -898,6 +889,9 @@ export function Chat() {
   const workspaceProfiles = useWorkspacesStore((s) => s.profiles);
   const activeWorkspace = useWorkspacesStore((s) => s.activeWorkspace);
   const activeWorkspaceId = activeWorkspace?.id;
+  useEffect(() => {
+    if (!sending && activeWorkspaceId) void useWorkspacesStore.getState().fetchWorkspaces();
+  }, [sending, currentSessionKey, activeWorkspaceId]);
   const switchWorkspace = useWorkspacesStore((s) => s.switchWorkspace);
   const createWorkspace = useWorkspacesStore((s) => s.createWorkspace);
   const saveWorkspaceState = useWorkspacesStore((s) => s.saveWorkspaceState);
@@ -915,7 +909,8 @@ export function Chat() {
   const [knowledgeErrorAdvisory, setKnowledgeErrorAdvisory] = useState<KnowledgeErrorGuardAdvisory | null>(null);
   const [knowledgeErrorAdvisoryBusy, setKnowledgeErrorAdvisoryBusy] = useState(false);
   const [dismissedKnowledgeAdvisoryKeys, setDismissedKnowledgeAdvisoryKeys] = useState<Set<string>>(() => new Set());
-  const sessionActivitySnapshot = useSessionActivityStore((state) => state.snapshots[currentSessionKey]);
+  const sessionActivityGeneration = sessions.find((session) => session.key === currentSessionKey)?.sessionId;
+  const sessionActivitySnapshot = useSessionActivityStore((state) => selectSessionActivitySnapshot(state, activeWorkspaceId, currentSessionKey, sessionActivityGeneration));
   const loadSessionActivity = useSessionActivityStore((state) => state.load);
   const sessionActivityPanelEnabled = useSettingsStore((state) => state.sessionActivityPanelEnabled);
   const sessionActivityShowGit = useSettingsStore((state) => state.sessionActivityShowGit);
@@ -983,6 +978,7 @@ export function Chat() {
   });
   const skipNextWorkspaceStateSaveRef = useRef(false);
   const draftSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingWorkspaceSaveRef = useRef<{ id: string; sessionKey: string; state: WorkspaceUiState } | null>(null);
   const lastKnowledgeAdvisorySignalKeyRef = useRef<string | null>(null);
   const knowledgeAdvisorySourceRef = useRef<KnowledgeAdvisorySource | null>(null);
   const [childTranscripts, setChildTranscripts] = useState<Record<string, RawMessage[]>>({});
@@ -1055,12 +1051,27 @@ export function Chat() {
   const [handoffDialogOpen, setHandoffDialogOpen] = useState(false);
   const [handoffResult, setHandoffResult] = useState<SessionHandoffResult | null>(null);
   const [handoffDraft, setHandoffDraft] = useState('');
+  const [handoffOperation, setHandoffOperation] = useState<SessionHandoffOperation | null>(null);
+  const handoffIntentIdRef = useRef<string | null>(null);
+  const handoffCreatingRef = useRef(false);
+  const forkCreatingRef = useRef(false);
+  const [questionFork, setQuestionFork] = useState<{ sourceSessionKey: string; generation?: string; messageId: string; draft: string } | null>(null);
   // A new visit to the same key is a new scope too: A -> B -> A must not
   // revive a response from the first visit to A.
-  const controlScope = useMemo(() => ({ sessionKey: currentSessionKey, agentId: currentAgentId, workspaceId: activeWorkspace?.id }), [currentSessionKey, currentAgentId, activeWorkspace?.id]);
+  const controlGeneration = sessions.find((session) => session.key === currentSessionKey)?.sessionId;
+  const controlScope = useMemo(() => ({ sessionKey: currentSessionKey, agentId: currentAgentId, workspaceId: activeWorkspace?.id, generation: controlGeneration }), [currentSessionKey, currentAgentId, activeWorkspace?.id, controlGeneration]);
   const controlScopeRef = useRef<object | null>(controlScope);
   controlScopeRef.current = controlScope;
   const isCurrentControlScope = useCallback(() => controlScopeRef.current === controlScope, [controlScope]);
+  useEffect(() => {
+    let cancelled = false;
+    setHandoffOperation(null);
+    if (activeWorkspace?.id) void hostApi.sessions.handoffOperation({ workspaceId: activeWorkspace.id,
+      sessionKey: currentSessionKey, reconcile: true }).then((result) => {
+      if (!cancelled && isCurrentControlScope()) setHandoffOperation(result.operation ?? null);
+    }).catch(() => undefined);
+    return () => { cancelled = true; };
+  }, [activeWorkspace?.id, currentSessionKey, isCurrentControlScope]);
   useEffect(() => {
     controlScopeRef.current = controlScope;
     setCompactionStatus(null);
@@ -1077,8 +1088,8 @@ export function Chat() {
     setHandoffBusy(false);
     return () => { if (controlScopeRef.current === controlScope) controlScopeRef.current = null; };
   }, [controlScope]);
-  const [sessionLineage, setSessionLineage] = useState<Record<string, SessionLineageOverride>>({});
   const [composerDraft, setComposerDraft] = useState('');
+  const composerDraftRevision = useRef(0);
   const [composerPaused, setComposerPaused] = useState(false);
   const messageAreaRef = useRef<HTMLDivElement | null>(null);
   const [runActivityExpandedOverrides, setRunActivityExpandedOverrides] = useState<Record<string, boolean>>({});
@@ -1121,6 +1132,25 @@ export function Chat() {
       state: captureCurrentWorkspaceSessionState(options?.draft),
     });
   }, [activeWorkspace?.id, captureCurrentWorkspaceSessionState, currentSessionKey, saveWorkspaceState]);
+
+  const openFamilySession = useCallback(async (sessionKey: string) => {
+    const target = sessions.find((session) => session.key === sessionKey);
+    if (target && classifyDerivation(target).kind === 'spawn') {
+      if (classifyDerivation(target).parentSessionKey === currentSessionKey) {
+        setSessionActivityOpenOverrides((current) => ({ ...current, [currentSessionKey]: false }));
+        openWorkspacePanel({ panel: 'subagent', sessionKey });
+        return;
+      }
+    }
+    const owners = workspaceProfiles.filter((profile) => profile.activeSessionKey === sessionKey
+      || Object.hasOwn(profile.sessionStates ?? {}, sessionKey) || Object.hasOwn(profile.coordinatorBindings ?? {}, sessionKey)
+      || Object.values(profile.agentBindings ?? {}).some((binding) => binding.sessionKey === sessionKey));
+    if (owners.length !== 1) { toast.error(t('projectEntry.unavailable')); return; }
+    try {
+      await persistCurrentWorkspaceSessionState();
+      if (await activateWorkspaceScopedSession(owners[0].id, sessionKey)) navigate('/');
+    } catch { toast.error(t('projectEntry.unavailable')); }
+  }, [sessions, currentSessionKey, openWorkspacePanel, workspaceProfiles, persistCurrentWorkspaceSessionState, navigate, t]);
 
   const handleSwitchWorkspace = useCallback(async (workspaceId: string) => {
     await persistCurrentWorkspaceSessionState({
@@ -1315,10 +1345,12 @@ export function Chat() {
   useEffect(() => {
     const previousSessionKey = lastObservedSessionKeyRef.current;
     if (previousSessionKey !== currentSessionKey) {
-      void persistCurrentWorkspaceSessionState({ sessionKey: previousSessionKey });
+      const pending = pendingWorkspaceSaveRef.current;
+      if (pending) { pendingWorkspaceSaveRef.current = null; void saveWorkspaceState(pending); }
+      if (draftSaveTimerRef.current) clearTimeout(draftSaveTimerRef.current);
       lastObservedSessionKeyRef.current = currentSessionKey;
     }
-  }, [currentSessionKey, persistCurrentWorkspaceSessionState]);
+  }, [currentSessionKey, persistCurrentWorkspaceSessionState, saveWorkspaceState]);
   const graphStepCache = graphStepCacheStore.get(currentSessionKey) ?? EMPTY_GRAPH_STEP_CACHE;
 
   /**
@@ -1360,6 +1392,9 @@ export function Chat() {
    * every render, thrashing the library's own scroll listeners.
    */
   const scrollElementRef = useRef<HTMLElement | null>(null);
+  const currentSession = sessions.find((session) => session.key === currentSessionKey) ?? { key: currentSessionKey };
+  useSessionReadingPosition({ workspaceId: activeWorkspace?.id, sessionKey: currentSessionKey,
+    generation: currentSession.sessionId, loading, element: scrollElementRef });
   const attachScrollElement = useCallback((element: HTMLDivElement | null) => {
     scrollElementRef.current = element;
     if (typeof scrollRef === 'function') scrollRef(element);
@@ -1477,15 +1512,15 @@ export function Chat() {
   }, [activeWorkspace?.id, activeWorkspace?.activeSessionKey, currentSessionKey, saveWorkspaceState]);
 
   const handleComposerDraftChange = useCallback((value: string) => {
+    composerDraftRevision.current += 1;
     setComposerDraft(value);
     if (!activeWorkspace?.id) return;
     if (draftSaveTimerRef.current) clearTimeout(draftSaveTimerRef.current);
+    const pending = { id: activeWorkspace.id, sessionKey: currentSessionKey, state: captureCurrentWorkspaceSessionState(value) };
+    pendingWorkspaceSaveRef.current = pending;
     draftSaveTimerRef.current = setTimeout(() => {
-      void saveWorkspaceState({
-        id: activeWorkspace.id,
-        sessionKey: currentSessionKey,
-        state: captureCurrentWorkspaceSessionState(value),
-      });
+      if (pendingWorkspaceSaveRef.current === pending) pendingWorkspaceSaveRef.current = null;
+      void saveWorkspaceState(pending);
     }, 250);
   }, [activeWorkspace?.id, captureCurrentWorkspaceSessionState, currentSessionKey, saveWorkspaceState]);
 
@@ -1881,6 +1916,8 @@ export function Chat() {
 
   useEffect(() => () => {
     if (draftSaveTimerRef.current) clearTimeout(draftSaveTimerRef.current);
+    const pending = pendingWorkspaceSaveRef.current;
+    if (pending) { pendingWorkspaceSaveRef.current = null; void useWorkspacesStore.getState().saveWorkspaceState(pending); }
   }, []);
 
   const contextRangeRef = useRef(contextRange);
@@ -2216,36 +2253,34 @@ export function Chat() {
     toast.error(t(`composer.continuity.failure.${action}.${kind}.title`, { defaultValue: fallbackTitle }), toastOptions);
   }, [t]);
 
-  const handleForkSession = useCallback(async (options?: { fromLeafId?: string }) => {
-    if (forkDisabled || forkBusy) return;
+  const handleForkSession = useCallback(async (options?: { fromLeafId?: string; questionDraft?: string }) => {
+    if (forkDisabled || forkBusy || forkCreatingRef.current) return;
     const sourceSessionKey = currentSessionKey;
+    forkCreatingRef.current = true;
     setForkBusy(true);
     try {
       await persistCurrentContinuitySourceSession();
-      const nextSessionKey = await createWorkspaceScopedForkSession(sourceSessionKey, options);
+      const nextSessionKey = await createWorkspaceScopedForkSession(sourceSessionKey, {
+        fromLeafId: options?.fromLeafId, draftInput: options?.questionDraft,
+      });
+      if (useChatStore.getState().currentSessionKey !== nextSessionKey) return;
       workspaceSessionRestoreTargetRef.current = activeWorkspace?.id
         ? { workspaceId: activeWorkspace.id, sessionKey: nextSessionKey }
         : null;
-      const lastMessageTimestamp = messages.at(-1)?.timestamp;
-      setSessionLineage((current) => ({
-        ...current,
-        [nextSessionKey]: {
-          relation: 'forked_from',
-          sourceSessionKey,
-          ...(typeof lastMessageTimestamp === 'number' && Number.isFinite(lastMessageTimestamp)
-            ? { forkedFromTimestamp: lastMessageTimestamp < 1_000_000_000_000 ? lastMessageTimestamp * 1000 : lastMessageTimestamp }
-            : {}),
-        },
-      }));
       lastRestoredWorkspaceIdRef.current = activeWorkspace?.id ?? null;
       lastObservedSessionKeyRef.current = nextSessionKey;
       workspaceStateRestoreRef.current = { workspaceId: null, sessionKey: null };
-      resetSessionView(nextSessionKey);
       setContextRange(null);
       setLiveUsage(null);
       setCompactionStatus(null);
-      await loadSessions();
-      await loadHistory();
+      if (options?.questionDraft !== undefined) {
+        setQuestionFork(null);
+        const revision = useChatStore.getState().viewRevision;
+        requestAnimationFrame(() => {
+          if (controlScopeRef.current && useChatStore.getState().currentSessionKey === nextSessionKey
+            && useChatStore.getState().viewRevision === revision) document.querySelector<HTMLTextAreaElement>('[data-testid="chat-composer-input"]')?.focus();
+        });
+      }
       toast.success(t('composer.fork.toastCreated'));
     } catch (error) {
       const kind = classifySessionContinuityError(error);
@@ -2262,6 +2297,7 @@ export function Chat() {
           : undefined,
       });
     } finally {
+      forkCreatingRef.current = false;
       setForkBusy(false);
     }
   }, [
@@ -2269,11 +2305,7 @@ export function Chat() {
     currentSessionKey,
     forkBusy,
     forkDisabled,
-    loadHistory,
-    loadSessions,
-    messages,
     persistCurrentContinuitySourceSession,
-    resetSessionView,
     showContinuityFailureToast,
     t,
   ]);
@@ -2292,6 +2324,7 @@ export function Chat() {
         ...(currentAgentId ? { agentId: currentAgentId } : {}),
         ...(boundary === 'from' ? { fromLeafId: messageId } : { toLeafId: messageId }),
       });
+      if (!isCurrentControlScope()) return;
       if (!result.success || result.compacted !== true) {
         toast.error(t('composer.compactRange.toastFailed'), {
           description: result.reason || t('composer.compactRange.toastFailedDescription'),
@@ -2309,8 +2342,12 @@ export function Chat() {
   }, [currentAgentId, currentSessionKey, isCurrentControlScope, loadHistory, loadSessions, t]);
 
   const handleForkFromMessage = useCallback((messageId: string) => {
-    void handleForkSession({ fromLeafId: messageId });
-  }, [handleForkSession]);
+    const index = messages.findIndex((message) => getTranscriptEntryId(message) === messageId);
+    const ancestor = messages.slice(0, index).findLast((message) => normalizeMessageRole(message.role) === 'assistant' && getTranscriptEntryId(message));
+    if (index < 0 || !ancestor) { toast.error(t('questionFork.noAncestor')); return; }
+    setQuestionFork({ sourceSessionKey: currentSessionKey, generation: currentSession.sessionId,
+      messageId, draft: extractText(messages[index]) });
+  }, [messages, currentSessionKey, currentSession.sessionId, t]);
   const handleCompactMessageRange = useCallback((messageId: string, boundary: 'from' | 'to') => {
     void handleCompactRange(messageId, boundary);
   }, [handleCompactRange]);
@@ -2342,6 +2379,7 @@ export function Chat() {
       }
       setHandoffResult(result);
       setHandoffDraft(result.draft);
+      handoffIntentIdRef.current = crypto.randomUUID();
       setHandoffDialogOpen(true);
     } catch (error) {
       if (!isCurrentControlScope()) return;
@@ -2397,19 +2435,33 @@ export function Chat() {
 
   const handleCreateHandoffSession = useCallback(async () => {
     const draft = handoffDraft.trim();
-    if (!draft || handoffCreating) return;
+    if (!draft || handoffCreating || handoffCreatingRef.current) return;
+    handoffCreatingRef.current = true;
+    const operationId = handoffIntentIdRef.current ?? crypto.randomUUID();
+    handoffIntentIdRef.current = operationId;
     setHandoffCreating(true);
     try {
       await persistCurrentContinuitySourceSession();
-      const nextSessionKey = await createWorkspaceScopedHandoffSession(draft);
+      const nextSessionKey = await createWorkspaceScopedHandoffSession(draft, {
+        operationId,
+        ...(handoffOperation?.id === operationId ? { sourceSessionKey: handoffOperation.sourceSessionKey } : {}),
+      });
+      if (useChatStore.getState().currentSessionKey !== nextSessionKey) return;
       workspaceSessionRestoreTargetRef.current = activeWorkspace?.id
         ? { workspaceId: activeWorkspace.id, sessionKey: nextSessionKey }
         : null;
       lastRestoredWorkspaceIdRef.current = activeWorkspace?.id ?? null;
       lastObservedSessionKeyRef.current = nextSessionKey;
       workspaceStateRestoreRef.current = { workspaceId: null, sessionKey: null };
-      resetSessionView(nextSessionKey);
-      setComposerDraft('');
+      setComposerDraft(draft);
+      const revision = useChatStore.getState().viewRevision;
+      const draftRevision = composerDraftRevision.current;
+      const targetGeneration = useChatStore.getState().sessions.find((session) => session.key === nextSessionKey)?.sessionId;
+      const ownsView = () => controlScopeRef.current != null
+        && useWorkspacesStore.getState().activeWorkspaceId === activeWorkspace?.id
+        && useChatStore.getState().currentSessionKey === nextSessionKey
+        && useChatStore.getState().viewRevision === revision
+        && useChatStore.getState().sessions.find((session) => session.key === nextSessionKey)?.sessionId === targetGeneration;
       setRunActivityExpandedOverrides({});
       setRunActivityStepDetailsExpanded({});
       setContextRange(null);
@@ -2419,21 +2471,30 @@ export function Chat() {
       // A handoff is only useful if the new session actually receives the
       // working context. Send the reviewed draft as the first user turn so it
       // enters the real transcript instead of waiting for a manual paste.
-      await sendMessage(draft);
-      toast.success(t('composer.handoff.toastCreated'));
+      await sendMessage(draft, { idempotencyKey: handoffFirstSendKey(operationId), handoffOperationId: operationId });
+      if (activeWorkspace?.id) {
+        const checked = await hostApi.sessions.handoffOperation({ workspaceId: activeWorkspace.id, sessionKey: nextSessionKey, operationId, reconcile: true });
+        if (!ownsView()) return;
+        setHandoffOperation(checked.operation);
+        if (checked.operation && ['accepted', 'sent'].includes(checked.operation.phase)) {
+          if (composerDraftRevision.current === draftRevision) setComposerDraft('');
+          toast.success(t('composer.handoff.toastCreated'));
+        }
+      }
     } catch (error) {
       const kind = classifySessionContinuityError(error);
       showContinuityFailureToast({ action: 'handoff', kind, message: getContinuityErrorMessage(error, t('composer.handoff.toastCreateFailed')) });
     } finally {
+      handoffCreatingRef.current = false;
       setHandoffCreating(false);
     }
   }, [
     activeWorkspace?.id,
     handoffCreating,
     handoffDraft,
+    handoffOperation,
     showContinuityFailureToast,
     persistCurrentContinuitySourceSession,
-    resetSessionView,
     sendMessage,
     t,
   ]);
@@ -3259,6 +3320,7 @@ export function Chat() {
     <div
       ref={splitContainerRef}
       data-testid="chat-page"
+      data-project-workspace={projectWorkspaceId}
       className={cn(
         'relative flex min-h-0 overflow-hidden transition-colors duration-180 motion-reduce:transition-none',
         '-m-5 rounded-tl-xl bg-background',
@@ -3299,7 +3361,7 @@ export function Chat() {
                 currentSessionKey={currentSessionKey}
                 sessionLabels={sessionLabels}
                 workspaceSessionKeys={Object.keys(activeWorkspace?.sessionStates ?? {})}
-                switchSession={switchSession}
+                switchSession={(key) => { void openFamilySession(key); }}
                 renameSession={renameSession}
                 onForkSession={handleForkSession}
                 onCheckpoints={() => setCheckpointsOpen(true)}
@@ -3309,7 +3371,6 @@ export function Chat() {
                 handoffDisabled={handoffDisabled}
                 handoffBusy={handoffBusy}
                 continuityRecommendation={continuityRecommendation}
-                sessionLineage={sessionLineage}
                 runtimeRuns={runtimeRuns}
                 activeRunId={activeRunId}
                 sending={sending}
@@ -3345,6 +3406,33 @@ export function Chat() {
           />
         </div>
       </div>
+
+      {projectWorkspaceId && <div data-testid="project-coordinator-entry" className="relative px-4 pt-1 text-xs text-muted-foreground">
+        {t('projectEntry.coordinator', { name: activeWorkspace?.name ?? '' })}
+      </div>}
+      <SessionFamilyNavigation session={currentSession} sessions={sessions} derivation={sessionActivitySnapshot?.derivation}
+        onNavigate={(key) => { void openFamilySession(key); }} onRefresh={() => { void loadSessions(); }} />
+      {handoffOperation && handoffOperation.phase !== 'sent' && <section data-testid="handoff-recovery" data-phase={handoffOperation.phase}
+        className="relative flex min-w-0 flex-wrap items-center gap-2 border-b border-border/40 px-4 py-1 text-xs">
+        <span role="status">{t(`handoffRecovery.phase.${handoffOperation.phase}`)}</span>
+        {['creating', 'ready', 'failed'].includes(handoffOperation.phase) && <button type="button" data-testid="handoff-recovery-resume" className="underline"
+          onClick={() => { handoffIntentIdRef.current = handoffOperation.id; setHandoffDraft(handoffOperation.draftInput); setHandoffDialogOpen(true); }}>
+          {t('handoffRecovery.resume')}
+        </button>}
+        <button type="button" data-testid="handoff-recovery-check" className="underline" onClick={() => {
+          const visit = useChatStore.getState().viewRevision;
+          if (activeWorkspace?.id) void hostApi.sessions.handoffOperation({ workspaceId: activeWorkspace.id, sessionKey: currentSessionKey,
+            operationId: handoffOperation.id, reconcile: true }).then((result) => {
+              if (isCurrentControlScope() && useChatStore.getState().viewRevision === visit) setHandoffOperation(result.operation);
+            });
+        }}>{t('handoffRecovery.check')}</button>
+        {handoffOperation.sessionKey !== currentSessionKey && handoffOperation.sessionGeneration && <button type="button" className="underline"
+          onClick={() => { void openFamilySession(handoffOperation.sessionKey); }}>{t('handoffRecovery.openChild')}</button>}
+      </section>}
+      <TaskLedgerSummaryPanel workspaceId={activeWorkspace?.id} session={currentSession}
+        binding={activeWorkspace?.coordinatorBindings?.[currentSessionKey]} mode="bar" projectWide={Boolean(projectWorkspaceId)}
+        onTaskSelected={async () => { await fetchWorkspaces(); await loadSessions({ force: true }); }}
+        refreshKey={`${activeRunId ?? ''}:${sending}:${pendingFinal}`} />
 
       {/*
         * Session status rail — the surface the recovery panel used to occupy.
@@ -3836,6 +3924,23 @@ export function Chat() {
           prepareRecoveryBusy={handoffBusy} forkBusy={forkBusy}
         />}
       </Suspense>
+      <Dialog open={questionFork !== null} onOpenChange={(open) => { if (!open) setQuestionFork(null); }}>
+        <DialogContent data-testid="question-fork-dialog" className="max-w-xl bg-surface-modal">
+          <DialogTitle>{t('questionFork.title')}</DialogTitle>
+          <DialogDescription>{t('questionFork.description')}</DialogDescription>
+          <Textarea data-testid="question-fork-draft" aria-label={t('questionFork.question')} value={questionFork?.draft ?? ''}
+            onChange={(event) => setQuestionFork((value) => value ? { ...value, draft: event.target.value } : null)} className="min-h-32 bg-surface-input" />
+          <div className="flex justify-end gap-2">
+            <Button variant="ghost" onClick={() => setQuestionFork(null)}>{t('common:actions.cancel')}</Button>
+            <Button data-testid="question-fork-create" disabled={forkBusy || !questionFork?.draft.trim()} onClick={() => {
+              if (!questionFork || questionFork.sourceSessionKey !== currentSessionKey || questionFork.generation !== currentSession.sessionId) {
+                toast.error(t('questionFork.sourceChanged')); return;
+              }
+              void handleForkSession({ fromLeafId: questionFork.messageId, questionDraft: questionFork.draft });
+            }}>{t('questionFork.create')}</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
       <Dialog open={handoffDialogOpen} onOpenChange={setHandoffDialogOpen}>
         <DialogContent
           className="max-w-3xl rounded-lg border border-black/10 bg-surface-modal p-5 shadow-xl dark:border-white/10"
@@ -3892,6 +3997,7 @@ export function Chat() {
             id="chat-handoff-draft"
             data-testid="chat-handoff-draft"
             value={handoffDraft}
+            readOnly={handoffOperation?.id === handoffIntentIdRef.current && handoffOperation.phase !== 'creating'}
             onChange={(event) => setHandoffDraft(event.target.value)}
             className="mt-2 min-h-[340px] resize-y bg-surface-input font-mono text-xs"
           />

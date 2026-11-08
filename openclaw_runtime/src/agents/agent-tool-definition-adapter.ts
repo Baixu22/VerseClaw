@@ -402,6 +402,7 @@ export function toToolDefinitions(
               params: preparedParams,
             });
             const hookOutcome = await runBeforeToolCallHook({
+              taskScopeHandled: true,
               toolName: name,
               params: hookParams,
               ...hookMetadata,
@@ -434,7 +435,12 @@ export function toToolDefinitions(
           }
           // Raw tools need the same terminal boundary as tools with the policy wrapper.
           signal?.throwIfAborted();
-          const rawResult = await tool.execute(toolCallId, executeParams, signal, guardedOnUpdate);
+          const { withSessionTaskScope } = await import("./session-task-scope.js");
+          const rawResult = beforeHookWrapped
+            ? await tool.execute(toolCallId, executeParams, signal, guardedOnUpdate)
+            : await withSessionTaskScope(hookContext, normalizedName, executeParams, signal, () =>
+                tool.execute(toolCallId, executeParams, signal, guardedOnUpdate),
+              );
           updatesOpen = false;
           signal?.throwIfAborted();
           const result = normalizeToolExecutionResult({

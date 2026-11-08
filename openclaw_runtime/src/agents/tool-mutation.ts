@@ -355,6 +355,11 @@ function isPlainReadOnlyShellCommand(command: string | undefined): boolean {
     return false;
   }
   const executable = normalizeLowercaseStringOrEmpty(tokens[0]);
+  if (
+    executable === "file" &&
+    tokens.slice(1).some((token) => token.startsWith("--co") || /^-[^-]*C/.test(token))
+  )
+    return false;
   if (executable === "rg" && hasUnsafeRipgrepFlag(tokens)) {
     return false;
   }
@@ -463,6 +468,35 @@ export function isMutatingToolCall(toolName: string, args: unknown): boolean {
       return false;
     }
   }
+}
+
+/** Admission is conservative: recovery's "not known to mutate" is not a read guarantee. */
+export function requiresSessionTaskScope(toolName: string, args: unknown): boolean {
+  const name = normalizeLowercaseStringOrEmpty(toolName);
+  const record = asRecord(args);
+  if (
+    [
+      "read",
+      "web_search",
+      "web_fetch",
+      "memory_search",
+      "memory_get",
+      "sessions_list",
+      "sessions_history",
+      "get_goal",
+      "task_control",
+    ].includes(name)
+  ) {
+    return false;
+  }
+  if (name === "session_status") return record?.model !== undefined;
+  if (name === "exec" || name === "bash")
+    return !isPlainReadOnlyShellCommand(readShellCommand(record));
+  if (name === "process")
+    return !["list", "poll", "log"].includes(normalizeActionName(record?.action) ?? "");
+  if (name === "subagents")
+    return !["list", "info"].includes(normalizeActionName(record?.action) ?? "");
+  return true;
 }
 
 export function buildToolActionFingerprint(

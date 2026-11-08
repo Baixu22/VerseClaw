@@ -1,5 +1,6 @@
 import type { ChatRuntimeRunState, ChatSession } from '@/stores/chat';
 import type { SessionFolder, WorkspaceProfile } from '@shared/types/workspace';
+import { classifyDerivation, deriveSessionLineage, type SessionDerivation } from '@shared/types/session-derivation';
 
 function getAgentIdFromSessionKey(sessionKey: string): string {
   if (!sessionKey.startsWith('agent:')) return 'main';
@@ -127,6 +128,7 @@ function getWorkspaceActivityMs(workspace: WorkspaceProfile, sessions: SidebarSe
 function getProfileSessionKeys(workspace: WorkspaceProfile): Set<string> {
   return new Set<string>([
     ...Object.keys(workspace.sessionStates ?? {}),
+    ...Object.keys(workspace.coordinatorBindings ?? {}),
     workspace.activeSessionKey,
     ...Object.values(workspace.agentBindings ?? {}).map((binding) => binding.sessionKey),
   ].filter((key): key is string => Boolean(key)));
@@ -136,7 +138,7 @@ export function getWorkspaceSessionKeys(workspaces: WorkspaceProfile[]): Set<str
   if (workspaces.length === 0) return null;
   const keys = new Set<string>();
   for (const workspace of workspaces) {
-    for (const sessionKey of Object.keys(workspace.sessionStates ?? {})) {
+    for (const sessionKey of [...Object.keys(workspace.sessionStates ?? {}), ...Object.keys(workspace.coordinatorBindings ?? {})]) {
       keys.add(sessionKey);
     }
     if (workspace.activeSessionKey) {
@@ -174,7 +176,6 @@ export function buildSidebarWorkspaceSessionGroups(params: {
   workspaces: WorkspaceProfile[];
   includeSyntheticCurrent?: boolean;
 }): SidebarWorkspaceSessionGroup[] {
-  const currentAgentId = getAgentIdFromSessionKey(params.currentSessionKey);
   const sessionsByKey = new Map(params.sessions.map((session) => [session.key, session]));
   /* A malformed/legacy profile can claim the same transcript in more than one
      project. Pick one owner before rendering so project-local grouping cannot
@@ -204,7 +205,6 @@ export function buildSidebarWorkspaceSessionGroups(params: {
           : null
         ))
         .filter((session): session is ChatSession => Boolean(session))
-        .filter((session) => getAgentIdFromSessionKey(session.key) === currentAgentId)
         .map((session) => ({
           session,
           activityMs: getSessionActivityMs(session, params.sessionLastActivity),
@@ -350,6 +350,8 @@ export type LineageRow = {
   lineageDepth: 0 | 1;
   /** Set on depth-1 rows: the session key of the origin row it attaches to. */
   originKey?: string;
+  relation?: ReturnType<typeof classifyDerivation>;
+  sourceStatus?: 'root' | 'resolved' | 'outside-group' | 'parent-unloaded' | 'parent-missing' | 'cycle' | 'bound-exceeded' | 'source-unavailable';
 };
 
 /**
@@ -360,25 +362,31 @@ export type LineageRow = {
  * rows keep the incoming (activity) order, descendants keep it within their
  * origin's block.
  */
-export function threadSessionsByLineage(entries: SidebarSessionEntry[]): LineageRow[] {
+export function threadSessionsByLineage(entries: SidebarSessionEntry[], options: {
+  knownSessions?: readonly ChatSession[];
+  derivations?: ReadonlyMap<string, SessionDerivation>;
+  maxDepth?: number;
+} = {}): LineageRow[] {
   const byKey = new Map(entries.map((entry) => [entry.session.key, entry]));
-
-  const resolveOrigin = (entry: SidebarSessionEntry): string | undefined => {
-    const seen = new Set<string>([entry.session.key]);
-    let cursor = entry.session.parentSessionKey;
-    let origin: string | undefined;
-    while (cursor && byKey.has(cursor) && !seen.has(cursor)) {
-      origin = cursor;
-      seen.add(cursor);
-      cursor = byKey.get(cursor)?.session.parentSessionKey;
-    }
-    return origin;
-  };
-
+  const known = new Set((options.knownSessions ?? entries.map((entry) => entry.session)).map((session) => session.key));
+  const projections = new Map<string, Omit<LineageRow, 'entry' | 'lineageDepth'>>();
   const childrenByOrigin = new Map<string, SidebarSessionEntry[]>();
   const topLevel: SidebarSessionEntry[] = [];
   for (const entry of entries) {
-    const origin = resolveOrigin(entry);
+    const relation = classifyDerivation(entry.session);
+    const lineage = deriveSessionLineage({ rootSessionKey: entry.session.key, maxDepth: options.maxDepth ?? 32,
+      readEntry: (key) => byKey.get(key)?.session ?? null });
+    const owner = options.derivations?.get(entry.session.key);
+    const failedHop = lineage.hops.find((hop) => hop.status !== 'resolved');
+    const ownerFailure = owner?.hops.find((hop) => hop.status !== 'resolved');
+    let sourceStatus: LineageRow['sourceStatus'] = relation.parentSessionKey ? 'resolved'
+      : relation.kind === 'unknown' && !relation.diagnostics?.length ? 'root' : 'source-unavailable';
+    if (failedHop?.status === 'cycle' || failedHop?.status === 'bound-exceeded') sourceStatus = failedHop.status;
+    else if (failedHop?.status === 'parent-missing') sourceStatus = known.has(failedHop.parentSessionKey!) ? 'outside-group' : 'parent-unloaded';
+    if (ownerFailure) sourceStatus = ownerFailure.status;
+    const last = lineage.chain.at(-1)?.sessionKey;
+    const origin = sourceStatus !== 'cycle' && sourceStatus !== 'bound-exceeded' && last !== entry.session.key ? last : undefined;
+    projections.set(entry.session.key, { relation, sourceStatus, ...(origin ? { originKey: origin } : {}) });
     if (origin) {
       const list = childrenByOrigin.get(origin) ?? [];
       list.push(entry);
@@ -391,10 +399,10 @@ export function threadSessionsByLineage(entries: SidebarSessionEntry[]): Lineage
   const rows: LineageRow[] = [];
   const emitted = new Set<string>();
   for (const entry of topLevel) {
-    rows.push({ entry, lineageDepth: 0 });
+    rows.push({ entry, lineageDepth: 0, ...projections.get(entry.session.key) });
     emitted.add(entry.session.key);
     for (const child of childrenByOrigin.get(entry.session.key) ?? []) {
-      rows.push({ entry: child, lineageDepth: 1, originKey: entry.session.key });
+      rows.push({ entry: child, lineageDepth: 1, ...projections.get(child.session.key), originKey: entry.session.key });
       emitted.add(child.session.key);
     }
   }
@@ -403,7 +411,7 @@ export function threadSessionsByLineage(entries: SidebarSessionEntry[]): Lineage
   // as plain rows in incoming order.
   for (const entry of entries) {
     if (!emitted.has(entry.session.key)) {
-      rows.push({ entry, lineageDepth: 0 });
+      rows.push({ entry, lineageDepth: 0, ...projections.get(entry.session.key) });
       emitted.add(entry.session.key);
     }
   }

@@ -99,10 +99,13 @@ type ChatSendOptions = {
   respond: (ok: boolean, payload?: unknown, error?: unknown, meta?: { cached?: boolean }) => void;
 };
 
-async function invokeSend(method: "sessions.send" | "sessions.steer") {
+async function invokeSend(
+  method: "sessions.send" | "sessions.steer",
+  extra: Record<string, unknown> = {},
+) {
   const { calls, respond } = makeRespond();
   await sessionsRunControlHandlers[method]!({
-    params: { key: CANONICAL_KEY, message: "hello" },
+    params: { key: CANONICAL_KEY, message: "hello", ...extra },
     respond,
     context,
   } as never);
@@ -145,6 +148,35 @@ describe("sessions.send/steer admission permit lifetime", () => {
     expect(activePermits()).toBe(0);
     expect(calls[0]?.ok).toBe(true);
     expect(calls[0]?.payload).toMatchObject({ runId: "run-1", messageSeq: 1 });
+  });
+
+  it("forwards the requester fence through the real chat start boundary", async () => {
+    const requesterSessionKey = "agent:agent-a:parent";
+    sendMocks.loadSessionEntry.mockImplementation((key: string) => ({
+      entry:
+        key === requesterSessionKey
+          ? { sessionId: "parent-generation" }
+          : { sessionId: CURRENT_SESSION_ID, spawnedBy: requesterSessionKey },
+      canonicalKey: key,
+      storePath: "/tmp/sessions.json",
+    }));
+    sendMocks.chatSend.mockImplementation(async (options: ChatSendOptions) => {
+      options.respond(true, { runId: "fenced-worker", status: "started" });
+    });
+    await invokeSend("sessions.send", {
+      expectedSessionId: CURRENT_SESSION_ID,
+      requesterSessionKey,
+      expectedRequesterSessionId: "parent-generation",
+    });
+    expect(sendMocks.chatSend).toHaveBeenCalledWith(
+      expect.objectContaining({
+        params: expect.objectContaining({
+          expectedSessionGeneration: CURRENT_SESSION_ID,
+          requesterSessionKey,
+          expectedRequesterSessionId: "parent-generation",
+        }),
+      }),
+    );
   });
 
   it("blocks a mid-send reset fence until the run-start window closes", async () => {

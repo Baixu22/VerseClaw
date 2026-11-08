@@ -1,0 +1,49 @@
+
+Running 2 tests using 1 worker
+
+(node:25880) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25880) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+  x  1 tests\e2e\long-session-coordination.spec.ts:183:5 › opens the long-session coordinator from Chat and verifies receipts, navigation, keyboard, window lifecycle, locales, and screenshots (40.8s)
+(node:45880) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:45880) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 2 tests\e2e\long-session-lifecycle-faults.spec.ts:173:5 › real Host and Gateway owner receipts reclaim a generation-scoped terminal and preserve archive (35.6s)
+
+
+  1) tests\e2e\long-session-coordination.spec.ts:183:5 › opens the long-session coordinator from Chat and verifies receipts, navigation, keyboard, window lifecycle, locales, and screenshots 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m0[39m
+    Received: [31m1[39m
+
+      399 |     const quietAfter = await workerRows.count();
+      400 |     const bellUnreadAfter = await page.getByTestId('chat-completion-unread-dot').count();
+    > 401 |     expect(quietAfter).toBe(quietBefore);
+          |                        ^
+      402 |     const observedWorkerManagedStopControls = await coordinator.locator('[data-testid^="resource-row-stop-"]').count();
+      403 |     expect(observedWorkerManagedStopControls).toBe(0);
+      404 |
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\long-session-coordination.spec.ts:401:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\session-task-validation\final7-coordination-results\long-session-coordination--a1f27-cle-locales-and-screenshots\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\tmp\unified-management-20261109\session-task-validation\final7-coordination-results\long-session-coordination--a1f27-cle-locales-and-screenshots\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\session-task-validation\final7-coordination-results\long-session-coordination--a1f27-cle-locales-and-screenshots\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\tmp\unified-management-20261109\session-task-validation\final7-coordination-results\long-session-coordination--a1f27-cle-locales-and-screenshots\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\e2e\long-session-coordination.spec.ts:183:5 › opens the long-session coordinator from Chat and verifies receipts, navigation, keyboard, window lifecycle, locales, and screenshots 
+  1 passed (1.3m)

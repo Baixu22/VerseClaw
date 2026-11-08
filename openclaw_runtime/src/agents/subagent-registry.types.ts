@@ -4,6 +4,7 @@
  * Defines execution, completion, delivery, pending-delivery, and attachment state stored for child runs.
  */
 import type { DeliveryContext } from "../utils/delivery-context.types.js";
+import type { SessionTaskRequesterReference } from "../../../shared/session-task-scope.js";
 import type { SubagentRunOutcome } from "./subagent-announce-output.js";
 import type { SubagentLifecycleEndedReason } from "./subagent-lifecycle-events.js";
 import type { SpawnSubagentMode } from "./subagent-spawn.types.js";
@@ -128,7 +129,8 @@ export type TeamOrchestrationMetadata = {
     authorizationId: string;
     baseOid: string;
     refsDigest: string;
-  };};
+  };
+};
 
 /** Optional tag that makes a child completion a ContextFoldResult delivery. */
 export type ContextFoldRunMetadata = {
@@ -244,6 +246,7 @@ export type SubagentRunRecord = {
    * reset/forked to a new generation must never steer the new generation.
    */
   requesterSessionId?: string;
+  requesterTaskReference?: SessionTaskRequesterReference;
   requesterOrigin?: DeliveryContext;
   requesterDisplayKey: string;
   task: string;

@@ -755,6 +755,7 @@ export async function syncDefaultProviderToRuntime(
         api: provider.apiProtocol || 'openai-completions',
         apiKeyEnv: providerKey ? buildMultiInstanceProviderApiKeySecretRef(ock) : undefined,
         headers: provider.headers,
+        modelEntries: provider.model ? [buildRuntimeModelProfileEntry(provider, provider.model)] : undefined,
       }, fallbackModels);
     } else if (shouldUseExplicitDefaultOverride(provider, ock)) {
       await setOpenClawDefaultModelWithOverride(ock, modelOverride, {
@@ -766,6 +767,7 @@ export async function syncDefaultProviderToRuntime(
         api: provider.apiProtocol || getProviderConfig(provider.type)?.api,
         apiKeyEnv: getProviderConfig(provider.type)?.apiKeyEnv,
         headers: provider.headers ?? getProviderConfig(provider.type)?.headers,
+        modelEntries: provider.model ? [buildRuntimeModelProfileEntry(provider, provider.model)] : undefined,
       }, fallbackModels);
     } else {
       await setOpenClawDefaultModel(ock, modelOverride, fallbackModels);

@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import type { ElectronApplication, Page } from '@playwright/test';
 import { closeElectronApp, expect, getStableWindow, pinWindowContentSize, test } from './fixtures/electron';
@@ -195,6 +196,12 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
     const workspace = active.activeWorkspace ?? active;
     if (!workspace.id || !workspace.rootPath) throw new Error('Active workspace unavailable');
     await mkdir(workspace.rootPath, { recursive: true });
+    // This owned test directory is nested below the source checkout. Give it
+    // an explicit repository before binding so Runtime bootstrap cannot move
+    // the environment from the parent checkout to a newly initialized child.
+    execFileSync('git', ['init', '-b', 'coordination-fixture'], { cwd: workspace.rootPath, windowsHide: true });
+    execFileSync('git', ['-c', 'user.name=Agent fixture', '-c', 'user.email=agent@example.invalid',
+      'commit', '--allow-empty', '-m', 'Initialize coordinator fixture'], { cwd: workspace.rootPath, windowsHide: true });
     await hostInvoke(app, 'workspaces', 'update', { id: workspace.id, permissionMode: 'fullAccess', agentId: 'main' });
 
     const label = `Coordination ${Date.now()}`;
@@ -297,7 +304,8 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
     await reloadChat(app, page, sessionKey);
     let coordinator = await openCoordinator(page);
     await expect(coordinator).toContainText(task.id);
-    await expect(coordinator).toContainText('local-workspace');
+    expect(bound.binding?.environment.backend).toBe('git');
+    await expect(coordinator).toContainText('git / local');
     await expect(coordinator.getByTestId('coordinator-recovery')).toContainText('ready');
     await expect(coordinator).toContainText('CPU');
     await expect(coordinator).toContainText(`${activeBackgroundTerminalCount} background terminals`);
@@ -385,6 +393,7 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
     await reloadChat(app, page, sessionKey);
     coordinator = await openCoordinator(page);
     const workerRows = coordinator.locator('[data-testid^="coordinator-worker-"]');
+    await expect(coordinator.getByTestId(`coordinator-worker-${batch.batchId}`)).toContainText(worker.roleName);
     const quietBefore = await workerRows.count();
     const bellUnreadBefore = await page.getByTestId('chat-completion-unread-dot').count();
     await page.waitForTimeout(2_500);

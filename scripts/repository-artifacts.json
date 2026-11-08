@@ -2579,7 +2579,8 @@
     "docs/dev/durable-task-system/PLAN.md",
     "docs/dev/durable-task-system/sources.json",
     "docs/dev/durable-task-system/DESIGN.md",
-    "docs/dev/durable-task-system/STATUS.md"
+    "docs/dev/durable-task-system/STATUS.md",
+    "docs/dev/session-lifecycle-control-matrix.md"
   ],
   "artifactBatches": {}
 }

@@ -1,0 +1,60 @@
+{
+  "schema": "clawx.long-session.coordination-ui-screenshots/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "capturedAt": "2026-11-08T20:55:39.545Z",
+  "locale": "ru",
+  "screenshots": [
+    {
+      "id": "wide",
+      "path": "coordination-wide.png",
+      "requestedViewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "contentSize": {
+        "width": 1281,
+        "height": 801
+      },
+      "browserViewport": {
+        "innerWidth": 1281,
+        "innerHeight": 801,
+        "devicePixelRatio": 1.5
+      },
+      "pixels": {
+        "width": 1922,
+        "height": 1202
+      },
+      "bytes": 131218,
+      "sha256": "1099909a6b275bd63555395431e15ee284431364e728c23453e5cebdeeedb2b9"
+    },
+    {
+      "id": "narrow",
+      "path": "coordination-narrow.png",
+      "requestedViewport": {
+        "width": 680,
+        "height": 760
+      },
+      "contentSize": {
+        "width": 961,
+        "height": 761
+      },
+      "browserViewport": {
+        "innerWidth": 961,
+        "innerHeight": 761,
+        "devicePixelRatio": 1.5
+      },
+      "pixels": {
+        "width": 1442,
+        "height": 1142
+      },
+      "bytes": 104181,
+      "sha256": "3cefc2f0aa4d02e18af163315bdf9676cb986938d9dc9259ac5751b6020d454b"
+    }
+  ],
+  "notes": [
+    "contentSize is Electron getContentSize after pinning.",
+    "pixels is read from each PNG IHDR.",
+    "sha256 is computed from the complete PNG file."
+  ]
+}

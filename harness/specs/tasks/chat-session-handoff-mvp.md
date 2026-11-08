@@ -19,7 +19,7 @@ touchedAreas:
 expectedUserBehavior:
   - Users can open a handoff preview from Chat session controls or the composer context controls.
   - The preview shows an editable deterministic draft built from recent transcript, Task Ledger, git status, and recent run/trace/error context when available.
-  - Creating the handoff opens a fresh workspace-scoped session with the edited handoff text prefilled in the composer and does not auto-send.
+  - Creating the handoff confirms the runtime child and source, then submits the reviewed draft with a persistent first-send identity; failures retain the draft and unknown results are reconciled before retry.
   - Preparing a handoff is read-only; Task Ledger is linked only after the user confirms creation.
   - Handoff creation is disabled while the active session is running or streaming.
 requiredProfiles:
@@ -50,4 +50,4 @@ docs:
     - README.ja-JP.md
 ---
 
-Handoff MVP creates a user-reviewed continuation prompt for session rotation. It does not implement runtime-backed Fork and does not auto-send the generated draft.
+Handoff creates a reviewed continuation prompt, confirms the runtime child and deliberately sends the first turn. Operation and delivery recovery follow `session-handoff-recovery.md`.

@@ -1,0 +1,23 @@
+
+Running 2 tests using 1 worker
+
+(node:36252) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36252) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[fp-p1-harness] connection #1
+[fp-p1-harness] connection #2
+[fp-p1-harness] connection #3
+[fp-p1-harness] connection #4
+[fp-p1-harness] connection #5
+[fp-p1-harness] connection #6
+[fp-p1-harness] connection #7
+[fp-p1-harness] connection #8
+[fp-p1-harness] connection #9
+[fp-p1-harness] connection #10
+  ok 1 tests\e2e\session-worker-task-journey.spec.ts:12:5 › a real delegated worker receives its own task, reports separately and accepts a scoped follow-up (3.4m)
+[fp-p1-harness] connection #1
+[fp-p1-harness] connection #2
+  ok 2 tests\e2e\session-worker-task-journey.spec.ts:320:5 › a child writes under the canonical transfer while its parent turn remains active (42.3s)
+
+  2 passed (4.1m)

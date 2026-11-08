@@ -14,6 +14,7 @@ type LaunchElectronOptions = {
   skipSeed?: boolean;
   flags?: string[];
   visualMode?: boolean;
+  deviceScaleFactor?: number;
   devScenario?: string;
   bootHoldMs?: number;
   settingsSectionDelayMs?: number;
@@ -385,6 +386,7 @@ async function launchVerseClawElectron(
       '--disable-software-rasterizer',
       '--in-process-gpu',
       '--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization',
+      ...(options.deviceScaleFactor ? [`--force-device-scale-factor=${options.deviceScaleFactor}`] : []),
       ...(options.packaged ? [] : [electronEntry]),
     ],
     env: envWithoutUndefined({

@@ -690,8 +690,8 @@ export async function resolveGitCommitAtOrBefore(isoTimestamp: string): Promise<
   const commit = result.stdout.trim();
   return commit || null;
 }
-export async function readCurrentGitStatus(): Promise<GitRepositoryStatus> {
-  const workspace = requireWorkspace(await getActiveWorkspaceProfile());
+export async function readCurrentGitStatus(ownerWorkspace?: WorkspaceProfile): Promise<GitRepositoryStatus> {
+  const workspace = ownerWorkspace ?? requireWorkspace(await getActiveWorkspaceProfile());
   const key = gitStatusCacheKey(workspace);
   const source = await gitStatusSource(workspace);
   const cached = gitStatusCache.get(key);
@@ -712,6 +712,12 @@ export async function readCurrentGitStatus(): Promise<GitRepositoryStatus> {
   // `git init`; only real repositories enter the bounded cache.
   if (!entry.repoRoot) return entry.status;
   return entry.status;
+}
+
+export async function readWorkspaceGitWorktrees(ownerWorkspace?: WorkspaceProfile) {
+  const ctx = ownerWorkspace ? await requireRepoContextForWorkspace(ownerWorkspace) : await requireRepoContext();
+  const result = await git(['worktree', 'list', '--porcelain', '-z'], ctx.workspaceRoot);
+  return { success: result.exitCode === 0, worktrees: parseWorktrees(result.stdout), error: result.exitCode === 0 ? undefined : result.stderr };
 }
 
 export async function enforcePermission(input: {
@@ -1768,11 +1774,7 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
       if (!selector) throw new Error('selector is required');
       return withGitOperation('stashPop', 'dangerous', ['stash', 'pop', selector], { approvalId: payload.approvalId });
     },
-    worktrees: async () => {
-      const ctx = await requireRepoContext();
-      const result = await git(['worktree', 'list', '--porcelain', '-z'], ctx.workspaceRoot);
-      return { success: result.exitCode === 0, worktrees: parseWorktrees(result.stdout), error: result.exitCode === 0 ? undefined : result.stderr };
-    },
+    worktrees: () => readWorkspaceGitWorktrees(),
     worktreeAdd: async (payload: GitWorktreeAddPayload) => {
       const ctx = await requireRepoContext();
       const branch = normalizeString(payload.branch);

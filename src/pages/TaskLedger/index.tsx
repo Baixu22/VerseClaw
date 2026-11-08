@@ -1,10 +1,10 @@
 import { ManagedTasks } from './ManagedTasks';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Download, GitBranch, GitMerge, History, Link2, ListTree, Plus, RefreshCw, Search, ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { QuietLoadingSurface } from '@/components/loading/StructuralLoadingOverlay';
 import { QuietListSkeleton } from '@/components/loading/PageLoadingSkeletons';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { hostApi } from '@/lib/host-api';
 import { isReadOnlyTaskLedgerProjection } from '@/lib/task-ledger-plan-projection';
 import { cn } from '@/lib/utils';
+import { activateWorkspaceScopedSession } from '@/lib/workspace-session';
 import { useChatStore } from '@/stores/chat';
 import { useWorkspacesStore } from '@/stores/workspaces';
 import type { TaskLedgerNode, TaskLedgerNodeKind, TaskLedgerNodeStatus, TaskLedgerSnapshot } from '@shared/types/task-ledger';
@@ -43,10 +44,11 @@ type NodeCardProps = {
   getChildren: (nodeId: string) => TaskLedgerNode[];
   onStatus: (node: TaskLedgerNode, status: TaskLedgerNodeStatus) => void;
   onReviewClear: (node: TaskLedgerNode) => void;
+  onOpenEvidence: (ref: string, type: string) => void;
   t: ReturnType<typeof useTranslation<'taskLedger'>>['t'];
 };
 
-function NodeCard({ node, getChildren, onStatus, onReviewClear, t }: NodeCardProps) {
+function NodeCard({ node, getChildren, onStatus, onReviewClear, onOpenEvidence, t }: NodeCardProps) {
   const childrenNodes = getChildren(node.id);
   const readOnlyProjection = isReadOnlyTaskLedgerProjection(node);
   return (
@@ -80,6 +82,12 @@ function NodeCard({ node, getChildren, onStatus, onReviewClear, t }: NodeCardPro
           </SelectContent>
         </Select>
       </div>
+      {(node.evidenceRefs ?? []).length > 0 && <div className="mt-2 flex flex-wrap gap-2" data-testid={`task-ledger-evidence-${node.id}`}>
+        {node.evidenceRefs!.map((evidence) => <button key={`${evidence.type}:${evidence.ref}`} type="button"
+          className="max-w-full truncate text-xs underline underline-offset-2" onClick={() => onOpenEvidence(evidence.ref, evidence.type)}>
+          {evidence.label || evidence.ref}
+        </button>)}
+      </div>}
       {node.status === 'review' && !readOnlyProjection && (
         <Button type="button" variant="outline" size="sm" className="mt-3 h-8 text-xs" onClick={() => onReviewClear(node)}>
           <ShieldCheck className="mr-1.5 h-3.5 w-3.5" />
@@ -89,7 +97,7 @@ function NodeCard({ node, getChildren, onStatus, onReviewClear, t }: NodeCardPro
       {childrenNodes.length > 0 && (
         <div className="mt-3 space-y-2 border-l border-border/70 pl-3">
           {childrenNodes.map((child) => (
-            <NodeCard key={child.id} node={child} getChildren={getChildren} onStatus={onStatus} onReviewClear={onReviewClear} t={t} />
+            <NodeCard key={child.id} node={child} getChildren={getChildren} onStatus={onStatus} onReviewClear={onReviewClear} onOpenEvidence={onOpenEvidence} t={t} />
           ))}
         </div>
       )}
@@ -100,8 +108,10 @@ function NodeCard({ node, getChildren, onStatus, onReviewClear, t }: NodeCardPro
 export default function TaskLedgerPage() {
   const { t } = useTranslation('taskLedger');
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const activeWorkspace = useWorkspacesStore((state) => state.activeWorkspace);
-  const currentSessionKey = useChatStore((state) => state.currentSessionKey);
+  const profiles = useWorkspacesStore((state) => state.profiles);
+  const selectedSessionKey = useChatStore((state) => state.currentSessionKey);
   const [snapshot, setSnapshot] = useState<TaskLedgerSnapshot | null>(null);
   const [loading, setLoading] = useState(false);
   const [activeTab,setActiveTab]=useState('tree');
@@ -112,21 +122,34 @@ export default function TaskLedgerPage() {
   const [parentId, setParentId] = useState<string>('none');
   const [linkNodeId, setLinkNodeId] = useState<string>('none');
 
-  const workspaceId = activeWorkspace?.id ?? null;
+  const workspaceId = searchParams.get('workspaceId') ?? activeWorkspace?.id ?? null;
+  const scopedWorkspace = profiles.find((profile) => profile.id === workspaceId);
+  const hasScopedWorkspace = Boolean(scopedWorkspace);
+  const currentSessionKey = searchParams.get('sessionKey') ?? (workspaceId === activeWorkspace?.id ? selectedSessionKey : null);
+  const navigationVersion = useRef(0);
+  useEffect(() => () => { navigationVersion.current += 1; }, [workspaceId, currentSessionKey]);
+  const loadVersion = useRef(0);
   const focusedNodeId = searchParams.get('nodeId');
 
   const load = useCallback(async () => {
+    const version = ++loadVersion.current;
+    setSnapshot(null);
+    if (!workspaceId || !hasScopedWorkspace) return;
     setLoading(true);
     try {
       const result = await hostApi.taskLedger.snapshot({ workspaceId });
-      setSnapshot(result.snapshot);
+      if (result.snapshot.sourceWorkspaceId !== workspaceId) throw new Error('Task Ledger owner scope mismatch');
+      if (version === loadVersion.current) setSnapshot(result.snapshot);
+    } catch {
+      if (version === loadVersion.current) toast.error(t('summary.scope.unavailable'));
     } finally {
-      setLoading(false);
+      if (version === loadVersion.current) setLoading(false);
     }
-  }, [workspaceId]);
+  }, [workspaceId, hasScopedWorkspace, t]);
 
   useEffect(() => {
     void load();
+    return () => { loadVersion.current += 1; };
   }, [load]);
 
   useEffect(() => {
@@ -213,6 +236,22 @@ export default function TaskLedgerPage() {
     toast.success(t('toast.exported'));
     if (result.path) await hostApi.shell.showItemInFolder(result.path);
   };
+  const openEvidence = async (ref: string, type: string, expectedGeneration?: string | null) => {
+    if (!workspaceId) return;
+    const sessionKey = type === 'session' ? ref.replace(/^session:/, '') : currentSessionKey;
+    if (!sessionKey || !['session', 'file', 'trace'].includes(type)) return;
+    const version = ++navigationVersion.current;
+    const isCurrent = () => version === navigationVersion.current;
+    try {
+      if (type === 'session' && expectedGeneration) {
+        const owner = await hostApi.gateway.rpc<{ session?: { sessionId?: string } }>('sessions.describe', { key: sessionKey });
+        if (!isCurrent()) return;
+        if (owner.session?.sessionId !== expectedGeneration) { toast.error(t('summary.scope.stale')); return; }
+      }
+      if (await activateWorkspaceScopedSession(workspaceId, sessionKey, isCurrent) && isCurrent()) navigate('/', type === 'session' ? undefined
+        : { state: { workspacePanelIntent: { panel: 'files', filePath: ref } } });
+    } catch { if (isCurrent()) toast.error(t('summary.scope.unavailable')); }
+  };
 
   return (
     <div data-testid="task-ledger-page" className="mx-auto flex h-full min-h-0 w-full max-w-7xl flex-col gap-4">
@@ -222,6 +261,10 @@ export default function TaskLedgerPage() {
           <p className="mt-1 text-sm text-muted-foreground">{t('subtitle')}</p>
         </div>
         <div className="flex items-center gap-2">
+          {workspaceId && currentSessionKey && <Button type="button" variant="outline" size="sm" data-testid="task-ledger-return-session"
+            onClick={() => { void openEvidence(currentSessionKey, 'session'); }}>
+            {t('summary.returnSession')}
+          </Button>}
           <Button type="button" variant="outline" size="sm" onClick={() => void load()} disabled={loading}>
             <RefreshCw className={cn('mr-1.5 h-4 w-4', loading && 'animate-spin')} />
             {t('actions.refresh')}
@@ -280,7 +323,8 @@ export default function TaskLedgerPage() {
           <TabsTrigger value="review"><ShieldCheck className="mr-1.5 h-4 w-4" />{t('tabs.review')}</TabsTrigger>
         </TabsList>
         <TabsContent value="managed" className="h-[calc(100%-3rem)] overflow-y-auto">
-          <ManagedTasks workspaceId={workspaceId} sessionKey={currentSessionKey} />
+          {workspaceId && currentSessionKey ? <ManagedTasks workspaceId={workspaceId} sessionKey={currentSessionKey} />
+            : <p className="text-sm text-muted-foreground">{t('summary.scope.unavailable')}</p>}
         </TabsContent>
 
         <TabsContent value="tree" className="h-[calc(100%-3rem)] overflow-y-auto">
@@ -301,6 +345,7 @@ export default function TaskLedgerPage() {
                   getChildren={getChildren}
                   onStatus={updateStatus}
                   onReviewClear={clearReview}
+                  onOpenEvidence={(ref, type) => { void openEvidence(ref, type); }}
                   t={t}
                 />
               ))
@@ -341,6 +386,10 @@ export default function TaskLedgerPage() {
               <article key={link.id} className="rounded-md border border-border/70 bg-background p-3">
                 <p className="text-sm font-medium text-foreground">{link.summary || t('session.link')}</p>
                 <p className="mt-1 text-xs text-muted-foreground">{link.sessionKey} · {formatTime(link.createdAt)}</p>
+                <Button variant="outline" size="sm" className="mt-2" data-testid={`task-ledger-open-session-${link.id}`}
+                  onClick={() => { void openEvidence(link.sessionKey, 'session', link.sessionGeneration); }}>
+                  {t('session.open')}
+                </Button>
               </article>
             ))}
             {(snapshot?.warnings ?? []).map((warning, index) => (
@@ -357,7 +406,7 @@ export default function TaskLedgerPage() {
             {reviewNodes.length === 0 ? (
               <div className="rounded-md border border-dashed border-border p-8 text-center text-sm text-muted-foreground">{t('review.empty')}</div>
             ) : reviewNodes.map((node) => (
-              <NodeCard key={node.id} node={node} getChildren={getChildren} onStatus={updateStatus} onReviewClear={clearReview} t={t} />
+              <NodeCard key={node.id} node={node} getChildren={getChildren} onStatus={updateStatus} onReviewClear={clearReview} onOpenEvidence={(ref, type) => { void openEvidence(ref, type); }} t={t} />
             ))}
           </div>
         </TabsContent>

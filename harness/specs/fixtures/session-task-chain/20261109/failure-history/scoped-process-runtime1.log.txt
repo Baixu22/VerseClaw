@@ -1,0 +1,58 @@
+
+ RUN  v4.1.7 D:/ClawX-work/session-task-unified-relay-20261109/openclaw_runtime
+
+ ✓ src/agents/verseshell/governed-process.test.ts (24 tests) 511ms
+ ❯ src/agents/verseshell/managed-process-capacity.test.ts (6 tests | 1 failed) 84ms
+     ✓ admits everything and allocates no counter until a capacity is declared 54ms
+     ✓ bounds the instance-wide live count and refuses beyond it 14ms
+     × persists identity-only ownership without inventing a capacity limit 7ms
+     ✓ counts a double release without freeing a second slot 7ms
+     ✓ reads the declared capacity and per-run defaults from the environment 0ms
+     ✓ exposes the declared default limits to the process boundary 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/agents/verseshell/managed-process-capacity.test.ts:61:3 > managed process capacity > persists identity-only ownership without inventing a capacity limit
+AssertionError: expected [ { …(9) } ] to deep equally contain ObjectContaining{…}
+
+- Expected:
+ObjectContaining {
+  "id": "55774f23-18a9-4f9c-924c-7382f6b0ebb8",
+  "limit": undefined,
+  "runId": "run-1",
+  "sessionGeneration": "generation-1",
+  "sessionKey": "agent:main:run-scope",
+}
+
++ Received:
+[
+  {
+    "createdAt": 1794165654897,
+    "id": "55774f23-18a9-4f9c-924c-7382f6b0ebb8",
+    "owner": "agent-1:agent:main:run-scope",
+    "ownerPid": 48036,
+    "phase": "reserved",
+    "ports": [],
+    "runId": "run-1",
+    "sessionGeneration": "generation-1",
+    "sessionKey": "agent:main:run-scope",
+  },
+]
+
+ ❯ src/agents/verseshell/managed-process-capacity.test.ts:69:42
+     67|     const reservationId = admission.ok ? admission.lease.reservationId…
+     68|     expect(reservationId).toBeTruthy();
+     69|     expect(managedProcessReservations()).toContainEqual(expect.objectC…
+       |                                          ^
+     70|       id: reservationId, sessionKey: "agent:main:run-scope", sessionGe…
+     71|       runId: "run-1", limit: undefined,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 29 passed (30)
+   Start at  03:20:52
+   Duration  2.58s (transform 818ms, setup 0ms, import 1.32s, tests 595ms, environment 0ms)
+
+JSON report written to D:/tmp/unified-management-20261109/session-task-validation/scoped-process-runtime1.tests.json

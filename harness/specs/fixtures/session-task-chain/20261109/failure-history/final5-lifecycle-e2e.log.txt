@@ -1,0 +1,191 @@
+
+Running 22 tests using 1 worker
+
+(node:12432) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:12432) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 tests\e2e\chat-checkpoints.spec.ts:134:5 › checkpoints dialog lists and restores a session checkpoint (12.8s)
+  ok  2 tests\e2e\chat-session-compact-range.spec.ts:155:7 › Verse Claw located (range) compaction › summarizes from a chosen message through the host-api, keeping the newer side (8.5s)
+  ok  3 tests\e2e\chat-session-compact-range.spec.ts:198:7 › Verse Claw located (range) compaction › summarizes up to a chosen message, folding it into the summary (7.7s)
+  ok  4 tests\e2e\chat-session-fork.spec.ts:275:7 › Verse Claw chat session fork › creates and selects a forked session with inherited history and copied draft without auto-send (8.7s)
+  ok  5 tests\e2e\chat-session-fork.spec.ts:515:7 › Verse Claw chat session fork › offers handoff preparation when fork fails because the parent is too large (9.6s)
+  ok  6 tests\e2e\chat-session-fork.spec.ts:613:7 › Verse Claw chat session fork › disables fork entry points while a run is active (8.4s)
+  x   7 tests\e2e\chat-session-handoff.spec.ts:227:7 › Verse Claw chat session handoff › keeps the current handoff draft when an old conversation responds late (23.8s)
+(node:38468) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38468) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  8 tests\e2e\chat-session-handoff.spec.ts:291:7 › Verse Claw chat session handoff › previews, edits, creates and sends the reviewed handoff with a recoverable child draft (17.1s)
+  ok  9 tests\e2e\chat-session-handoff.spec.ts:463:7 › Verse Claw chat session handoff › disables handoff entry points while a run is active (9.4s)
+  ok 10 tests\e2e\chat-session-handoff.spec.ts:532:7 › Verse Claw chat session handoff › refuses a relay once the handoff depth limit is reached (#179) (7.9s)
+  ok 11 tests\e2e\chat-session-handoff.spec.ts:577:7 › Verse Claw chat session handoff › keeps the editable draft and session when creation rejects changed ancestry (7.9s)
+  ok 12 tests\e2e\chat-slash-session-lifecycle.spec.ts:95:5 › slash /rename renames the current session through the host API (7.4s)
+  ok 13 tests\e2e\chat-slash-session-lifecycle.spec.ts:125:5 › slash /clear resets the local message view (7.2s)
+  x  14 tests\e2e\long-session-completion-continuation.spec.ts:154:5 › consolidates deferred worker completion into one generation-fenced batch after restart (24.6s)
+(node:42672) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:42672) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  15 tests\e2e\long-session-coordination.spec.ts:182:5 › opens the long-session coordinator from Chat and verifies receipts, navigation, keyboard, window lifecycle, locales, and screenshots (20.4s)
+(node:31688) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31688) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  16 tests\e2e\long-session-delegation-admission.spec.ts:123:5 › delegates through the real Host, Gateway, scheduler, and role-spawn owners with durable admission receipts (23.7s)
+(node:13628) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:13628) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 17 tests\e2e\sidebar-session-folders-archive.spec.ts:331:7 › Sidebar session workgroups and archive › pins the project header instead of repeating it per row, and supports pinned, unread, priority, and active sorting (9.5s)
+  ok 18 tests\e2e\sidebar-session-folders-archive.spec.ts:392:7 › Sidebar session workgroups and archive › keeps workgroups inside the project and renders time sorting as a direct list (8.2s)
+  ok 19 tests\e2e\sidebar-session-folders-archive.spec.ts:418:7 › Sidebar session workgroups and archive › creates a workgroup, moves a running session into it, searches it, then deletes the workgroup (9.1s)
+  ok 20 tests\e2e\sidebar-session-folders-archive.spec.ts:515:7 › Sidebar session workgroups and archive › delete dialog offers archive and permanent delete; archive modal restores sessions (9.6s)
+  ok 21 tests\e2e\sidebar-session-folders-archive.spec.ts:561:7 › Sidebar session workgroups and archive › drags a conversation after another to auto-group, rename, and remove the group (8.7s)
+  ok 22 tests\e2e\sidebar-session-folders-archive.spec.ts:643:7 › Sidebar session workgroups and archive › permanent delete from the archived settings page removes the entry (9.0s)
+Error: Owned Electron processes survived cleanup or could not be checked
+
+   at fixtures\electron-process-cleanup.ts:71
+
+  69 |     checks = await checkWindowsProcesses(identities, true);
+  70 |     if (checks.some(({ status }) => status === 'alive' || status === 'unavailable')) {
+> 71 |       throw new Error('Owned Electron processes survived cleanup or could not be checked');
+     |             ^
+  72 |     }
+  73 |     if (!failure) await Promise.all(pending.map((name) => unlink(join(runRoot, name))));
+  74 |   } catch (error) { failure = error; }
+    at cleanupElectronProcesses (D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\fixtures\electron-process-cleanup.ts:71:13)
+    at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\fixtures\electron-process-cleanup.ts:100:11
+
+
+  1) tests\e2e\chat-session-handoff.spec.ts:227:7 › Verse Claw chat session handoff › keeps the current handoff draft when an old conversation responds late 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveClass[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: getByTestId('sidebar-session-agent:main:session-isolation-b').locator('xpath=ancestor::div[contains(@class, "sidebar-row")][1]')
+    Expected pattern: [32m/\bselected\b/[39m
+    Received string:  [31m"sidebar-row task-row"[39m
+    Timeout: 15000ms
+
+    Call log:
+    [2m  - Expect "toHaveClass" with timeout 15000ms[22m
+    [2m  - waiting for getByTestId('sidebar-session-agent:main:session-isolation-b').locator('xpath=ancestor::div[contains(@class, "sidebar-row")][1]')[22m
+    [2m    18 × locator resolved to <div class="sidebar-row task-row" data-hook-key="agent:main:session-isolation-b">…</div>[22m
+    [2m       - unexpected value "sidebar-row task-row"[22m
+
+
+      272 |       await expect.poll(() => app.evaluate(() => (globalThis as typeof globalThis & { __handoffIsolation?: { requested: boolean } }).__handoffIsolation?.requested)).toBe(true);
+      273 |       await page.getByTestId(`sidebar-session-${otherKey}`).click();
+    > 274 |       await expect(page.getByTestId(`sidebar-session-${otherKey}`).locator('xpath=ancestor::div[contains(@class, "sidebar-row")][1]')).toHaveClass(/\bselected\b/);
+          |                                                                                                                                        ^
+      275 |       await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      276 |       await expect(page.getByTestId('chat-session-handoff')).toBeEnabled();
+      277 |       await page.getByTestId('chat-session-handoff').click();
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\chat-session-handoff.spec.ts:274:136
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\session-task-validation\final5-lifecycle-e2e-results\chat-session-handoff-Verse-7b0f1--conversation-responds-late\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\tmp\unified-management-20261109\session-task-validation\final5-lifecycle-e2e-results\chat-session-handoff-Verse-7b0f1--conversation-responds-late\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\session-task-validation\final5-lifecycle-e2e-results\chat-session-handoff-Verse-7b0f1--conversation-responds-late\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\tmp\unified-management-20261109\session-task-validation\final5-lifecycle-e2e-results\chat-session-handoff-Verse-7b0f1--conversation-responds-late\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests\e2e\long-session-completion-continuation.spec.ts:154:5 › consolidates deferred worker completion into one generation-fenced batch after restart 
+
+    Error: [INTERNAL] Error: ENOENT: no such file or directory, realpath '[redacted-path]': code=ENOENT
+
+      101 |     return await handler(event, { id: `delegation-${Date.now()}-${Math.random()}`, ...request });
+      102 |   }, { module, action, payload }) as HostResponse<T>;
+    > 103 |   if (!response.ok) throw new Error(`[${response.error?.code ?? 'HOST'}] ${response.error?.message ?? 'host invoke failed'}`);
+          |                           ^
+      104 |   return response.data as T;
+      105 | }
+      106 |
+        at hostInvoke (D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\long-session-completion-continuation.spec.ts:103:27)
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\long-session-completion-continuation.spec.ts:288:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\session-task-validation\final5-lifecycle-e2e-results\long-session-completion-co-12137--fenced-batch-after-restart\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\tmp\unified-management-20261109\session-task-validation\final5-lifecycle-e2e-results\long-session-completion-co-12137--fenced-batch-after-restart\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\session-task-validation\final5-lifecycle-e2e-results\long-session-completion-co-12137--fenced-batch-after-restart\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\tmp\unified-management-20261109\session-task-validation\final5-lifecycle-e2e-results\long-session-completion-co-12137--fenced-batch-after-restart\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) tests\e2e\long-session-coordination.spec.ts:182:5 › opens the long-session coordinator from Chat and verifies receipts, navigation, keyboard, window lifecycle, locales, and screenshots 
+
+    Error: Error: ENOENT: no such file or directory, realpath '[redacted-path]': code=ENOENT
+
+      91 |     );
+      92 |   }, { module, action, payload }) as HostResponse<T>;
+    > 93 |   if (!response.ok) throw new Error(response.error?.message ?? 'host invoke failed');
+         |                           ^
+      94 |   return response.data as T;
+      95 | }
+      96 |
+        at hostInvoke (D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\long-session-coordination.spec.ts:93:27)
+        at waitForTerminalBatch (D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\long-session-coordination.spec.ts:145:22)
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\long-session-coordination.spec.ts:278:19
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\session-task-validation\final5-lifecycle-e2e-results\long-session-coordination--a1f27-cle-locales-and-screenshots\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\tmp\unified-management-20261109\session-task-validation\final5-lifecycle-e2e-results\long-session-coordination--a1f27-cle-locales-and-screenshots\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\session-task-validation\final5-lifecycle-e2e-results\long-session-coordination--a1f27-cle-locales-and-screenshots\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\tmp\unified-management-20261109\session-task-validation\final5-lifecycle-e2e-results\long-session-coordination--a1f27-cle-locales-and-screenshots\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) tests\e2e\long-session-delegation-admission.spec.ts:123:5 › delegates through the real Host, Gateway, scheduler, and role-spawn owners with durable admission receipts 
+
+    Error: [INTERNAL] Error: ENOENT: no such file or directory, realpath '[redacted-path]': code=ENOENT
+
+      89 |     return await handler(event, { id: `delegation-${Date.now()}-${Math.random()}`, ...request });
+      90 |   }, { module, action, payload }) as HostResponse<T>;
+    > 91 |   if (!response.ok) throw new Error(`[${response.error?.code ?? 'HOST'}] ${response.error?.message ?? 'host invoke failed'}`);
+         |                           ^
+      92 |   return response.data as T;
+      93 | }
+      94 |
+        at hostInvoke (D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\long-session-delegation-admission.spec.ts:91:27)
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\long-session-delegation-admission.spec.ts:253:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\session-task-validation\final5-lifecycle-e2e-results\long-session-delegation-ad-f5568--durable-admission-receipts\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\tmp\unified-management-20261109\session-task-validation\final5-lifecycle-e2e-results\long-session-delegation-ad-f5568--durable-admission-receipts\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\session-task-validation\final5-lifecycle-e2e-results\long-session-delegation-ad-f5568--durable-admission-receipts\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\tmp\unified-management-20261109\session-task-validation\final5-lifecycle-e2e-results\long-session-delegation-ad-f5568--durable-admission-receipts\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4 failed
+    tests\e2e\chat-session-handoff.spec.ts:227:7 › Verse Claw chat session handoff › keeps the current handoff draft when an old conversation responds late 
+    tests\e2e\long-session-completion-continuation.spec.ts:154:5 › consolidates deferred worker completion into one generation-fenced batch after restart 
+    tests\e2e\long-session-coordination.spec.ts:182:5 › opens the long-session coordinator from Chat and verifies receipts, navigation, keyboard, window lifecycle, locales, and screenshots 
+    tests\e2e\long-session-delegation-admission.spec.ts:123:5 › delegates through the real Host, Gateway, scheduler, and role-spawn owners with durable admission receipts 
+  18 passed (4.4m)
+  1 error was not a part of any test, see above for details

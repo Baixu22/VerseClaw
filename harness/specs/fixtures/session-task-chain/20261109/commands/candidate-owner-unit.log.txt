@@ -1,0 +1,349 @@
+
+ RUN  v4.1.1 D:/ClawX-work/session-task-unified-relay-20261109
+
+ ✓ tests/unit/sidebar-session-buckets.test.ts (12 tests) 8ms
+stdout | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > does not re-render session rows as streamed runtime events arrive
+🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > does not re-render session rows as streamed runtime events arrive
+Failed to load sessions: TypeError: __vite_ssr_import_4__.useGatewayStore.getState(...).rpc is not a function
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:1988:70
+    at readSessionListPages (D:/ClawX-work/session-task-unified-relay-20261109/src/lib/session-read-model.ts:13:23)
+    at fetchChatSessionsList (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:1988:10)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2984:28
+    at Object.loadSessions (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:3170:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2913:19
+    at hydrateStartup (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2950:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/components/layout/Sidebar.tsx:611:10
+    at Object.react_stack_bottom_frame (D:\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > does not re-render session rows as streamed runtime events arrive
+[chat.history] transcript fallback failed: TypeError: Cannot read properties of undefined (reading 'history')
+    at loadSessionTranscriptFallback (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat/history-transcript-fallback.ts:9:45)
+    at loadLocalHistoryFallback (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:463:7)
+    at applyLocalFallbackMessages (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:3897:40)
+    at loadGatewayHistory (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4033:21)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4081:7
+    at Object.loadHistory (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4086:7)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2931:9
+    at hydrateStartup (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2953:7)
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > does not re-render session rows as streamed runtime events arrive
+Failed to load sessions: TypeError: __vite_ssr_import_4__.useGatewayStore.getState(...).rpc is not a function
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:1988:70
+    at readSessionListPages (D:/ClawX-work/session-task-unified-relay-20261109/src/lib/session-read-model.ts:13:23)
+    at fetchChatSessionsList (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:1988:10)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2984:28
+    at Object.loadSessions (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:3170:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2913:19
+    at hydrateStartup (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2950:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/components/layout/Sidebar.tsx:611:10
+    at Object.react_stack_bottom_frame (D:\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > does not re-render session rows as streamed runtime events arrive
+[chat.history] transcript fallback failed: TypeError: Cannot read properties of undefined (reading 'history')
+    at loadSessionTranscriptFallback (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat/history-transcript-fallback.ts:9:45)
+    at loadLocalHistoryFallback (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:463:7)
+    at applyLocalFallbackMessages (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:3897:40)
+    at loadGatewayHistory (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4033:21)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4081:7
+    at Object.loadHistory (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4086:7)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2931:9
+    at hydrateStartup (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2953:7)
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > still re-renders rows when a session status actually changes
+Failed to load sessions: TypeError: __vite_ssr_import_4__.useGatewayStore.getState(...).rpc is not a function
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:1988:70
+    at readSessionListPages (D:/ClawX-work/session-task-unified-relay-20261109/src/lib/session-read-model.ts:13:23)
+    at fetchChatSessionsList (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:1988:10)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2984:28
+    at Object.loadSessions (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:3170:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2913:19
+    at hydrateStartup (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2950:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/components/layout/Sidebar.tsx:611:10
+    at Object.react_stack_bottom_frame (D:\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > still re-renders rows when a session status actually changes
+[chat.history] transcript fallback failed: TypeError: Cannot read properties of undefined (reading 'history')
+    at loadSessionTranscriptFallback (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat/history-transcript-fallback.ts:9:45)
+    at loadLocalHistoryFallback (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:463:7)
+    at applyLocalFallbackMessages (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:3897:40)
+    at loadGatewayHistory (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4033:21)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4081:7
+    at Object.loadHistory (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4086:7)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2931:9
+    at hydrateStartup (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2953:7)
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > mounts session rows incrementally instead of all at once
+Failed to load sessions: TypeError: __vite_ssr_import_4__.useGatewayStore.getState(...).rpc is not a function
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:1988:70
+    at readSessionListPages (D:/ClawX-work/session-task-unified-relay-20261109/src/lib/session-read-model.ts:13:23)
+    at fetchChatSessionsList (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:1988:10)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2984:28
+    at Object.loadSessions (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:3170:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2913:19
+    at hydrateStartup (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2950:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/components/layout/Sidebar.tsx:611:10
+    at Object.react_stack_bottom_frame (D:\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > mounts session rows incrementally instead of all at once
+[chat.history] transcript fallback failed: TypeError: Cannot read properties of undefined (reading 'history')
+    at loadSessionTranscriptFallback (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat/history-transcript-fallback.ts:9:45)
+    at loadLocalHistoryFallback (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:463:7)
+    at applyLocalFallbackMessages (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:3897:40)
+    at loadGatewayHistory (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4033:21)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4081:7
+    at Object.loadHistory (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4086:7)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2931:9
+    at hydrateStartup (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2953:7)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > shares 80 initial slots across two 80-row workgroups and ungrouped sessions
+Failed to load sessions: TypeError: __vite_ssr_import_4__.useGatewayStore.getState(...).rpc is not a function
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:1988:70
+    at readSessionListPages (D:/ClawX-work/session-task-unified-relay-20261109/src/lib/session-read-model.ts:13:23)
+    at fetchChatSessionsList (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:1988:10)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2984:28
+    at Object.loadSessions (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:3170:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2913:19
+    at hydrateStartup (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2950:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/components/layout/Sidebar.tsx:611:10
+    at Object.react_stack_bottom_frame (D:\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > shares 80 initial slots across two 80-row workgroups and ungrouped sessions
+[chat.history] transcript fallback failed: TypeError: Cannot read properties of undefined (reading 'history')
+    at loadSessionTranscriptFallback (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat/history-transcript-fallback.ts:9:45)
+    at loadLocalHistoryFallback (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:463:7)
+    at applyLocalFallbackMessages (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:3897:40)
+    at loadGatewayHistory (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4033:21)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4081:7
+    at Object.loadHistory (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4086:7)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2931:9
+    at hydrateStartup (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2953:7)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > unmounts collapsed workgroups without consuming their slots or losing their full count
+Failed to load sessions: TypeError: __vite_ssr_import_4__.useGatewayStore.getState(...).rpc is not a function
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:1988:70
+    at readSessionListPages (D:/ClawX-work/session-task-unified-relay-20261109/src/lib/session-read-model.ts:13:23)
+    at fetchChatSessionsList (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:1988:10)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2984:28
+    at Object.loadSessions (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:3170:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2913:19
+    at hydrateStartup (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2950:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/components/layout/Sidebar.tsx:611:10
+    at Object.react_stack_bottom_frame (D:\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > unmounts collapsed workgroups without consuming their slots or losing their full count
+[chat.history] transcript fallback failed: TypeError: Cannot read properties of undefined (reading 'history')
+    at loadSessionTranscriptFallback (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat/history-transcript-fallback.ts:9:45)
+    at loadLocalHistoryFallback (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:463:7)
+    at applyLocalFallbackMessages (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:3897:40)
+    at loadGatewayHistory (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4033:21)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4081:7
+    at Object.loadHistory (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4086:7)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2931:9
+    at hydrateStartup (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2953:7)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > preserves all 2 child keys and the selected family entry inside the shared budget
+Failed to load sessions: TypeError: __vite_ssr_import_4__.useGatewayStore.getState(...).rpc is not a function
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:1988:70
+    at readSessionListPages (D:/ClawX-work/session-task-unified-relay-20261109/src/lib/session-read-model.ts:13:23)
+    at fetchChatSessionsList (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:1988:10)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2984:28
+    at Object.loadSessions (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:3170:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2913:19
+    at hydrateStartup (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2950:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/components/layout/Sidebar.tsx:611:10
+    at Object.react_stack_bottom_frame (D:\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > preserves all 2 child keys and the selected family entry inside the shared budget
+[chat.history] transcript fallback failed: TypeError: Cannot read properties of undefined (reading 'history')
+    at loadSessionTranscriptFallback (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat/history-transcript-fallback.ts:9:45)
+    at loadLocalHistoryFallback (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:463:7)
+    at applyLocalFallbackMessages (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:3897:40)
+    at loadGatewayHistory (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4033:21)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4081:7
+    at Object.loadHistory (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4086:7)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2931:9
+    at hydrateStartup (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2953:7)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > preserves all 20 child keys and the selected family entry inside the shared budget
+Failed to load sessions: TypeError: __vite_ssr_import_4__.useGatewayStore.getState(...).rpc is not a function
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:1988:70
+    at readSessionListPages (D:/ClawX-work/session-task-unified-relay-20261109/src/lib/session-read-model.ts:13:23)
+    at fetchChatSessionsList (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:1988:10)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2984:28
+    at Object.loadSessions (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:3170:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2913:19
+    at hydrateStartup (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2950:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/components/layout/Sidebar.tsx:611:10
+    at Object.react_stack_bottom_frame (D:\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > preserves all 20 child keys and the selected family entry inside the shared budget
+[chat.history] transcript fallback failed: TypeError: Cannot read properties of undefined (reading 'history')
+    at loadSessionTranscriptFallback (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat/history-transcript-fallback.ts:9:45)
+    at loadLocalHistoryFallback (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:463:7)
+    at applyLocalFallbackMessages (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:3897:40)
+    at loadGatewayHistory (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4033:21)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4081:7
+    at Object.loadHistory (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4086:7)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2931:9
+    at hydrateStartup (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2953:7)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > preserves all 100 child keys and the selected family entry inside the shared budget
+Failed to load sessions: TypeError: __vite_ssr_import_4__.useGatewayStore.getState(...).rpc is not a function
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:1988:70
+    at readSessionListPages (D:/ClawX-work/session-task-unified-relay-20261109/src/lib/session-read-model.ts:13:23)
+    at fetchChatSessionsList (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:1988:10)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2984:28
+    at Object.loadSessions (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:3170:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2913:19
+    at hydrateStartup (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2950:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/components/layout/Sidebar.tsx:611:10
+    at Object.react_stack_bottom_frame (D:\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > preserves all 100 child keys and the selected family entry inside the shared budget
+[chat.history] transcript fallback failed: TypeError: Cannot read properties of undefined (reading 'history')
+    at loadSessionTranscriptFallback (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat/history-transcript-fallback.ts:9:45)
+    at loadLocalHistoryFallback (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:463:7)
+    at applyLocalFallbackMessages (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:3897:40)
+    at loadGatewayHistory (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4033:21)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4081:7
+    at Object.loadHistory (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4086:7)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2931:9
+    at hydrateStartup (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2953:7)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > reserves the selected session and its visible ancestors without adding slots
+Failed to load sessions: TypeError: __vite_ssr_import_4__.useGatewayStore.getState(...).rpc is not a function
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:1988:70
+    at readSessionListPages (D:/ClawX-work/session-task-unified-relay-20261109/src/lib/session-read-model.ts:13:23)
+    at fetchChatSessionsList (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:1988:10)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2984:28
+    at Object.loadSessions (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:3170:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2913:19
+    at hydrateStartup (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2950:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/components/layout/Sidebar.tsx:611:10
+    at Object.react_stack_bottom_frame (D:\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (D:\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > reserves the selected session and its visible ancestors without adding slots
+[chat.history] transcript fallback failed: TypeError: Cannot read properties of undefined (reading 'history')
+    at loadSessionTranscriptFallback (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat/history-transcript-fallback.ts:9:45)
+    at loadLocalHistoryFallback (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:463:7)
+    at applyLocalFallbackMessages (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:3897:40)
+    at loadGatewayHistory (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4033:21)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4081:7
+    at Object.loadHistory (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:4086:7)
+    at D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2931:9
+    at hydrateStartup (D:/ClawX-work/session-task-unified-relay-20261109/src/stores/chat.ts:2953:7)
+
+ ✓ tests/unit/sidebar-render-containment.test.tsx (9 tests) 5585ms
+     ✓ does not re-render session rows as streamed runtime events arrive  2386ms
+     ✓ mounts session rows incrementally instead of all at once  503ms
+     ✓ shares 80 initial slots across two 80-row workgroups and ungrouped sessions  587ms
+     ✓ unmounts collapsed workgroups without consuming their slots or losing their full count  615ms
+     ✓ preserves all 100 child keys and the selected family entry inside the shared budget  408ms
+     ✓ reserves the selected session and its visible ancestors without adding slots  527ms
+ ✓ tests/unit/session-task-scope-completion.test.ts (33 tests) 7068ms
+     ✓ uses a decomposed scheduled child contract under the recorded parent TaskRef  349ms
+     ✓ selects an existing completed task and preserves its status and historical links  343ms
+     ✓ keeps ten discussion/read turns empty, then reuses one canonical contract at the guarded effect boundary  341ms
+     ✓ preserves writer fields across UI saves and transfers Handoff through the canonical epoch interface  317ms
+     ✓ rejects wrong root before writing a task  423ms
+     ✓ requires explicit canonical selection for multiple links and rejects an external reference as a task  544ms
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > binds the task selected in the existing composer before dispatching chat effects
+[2026-11-08T19:23:58.450Z] [INFO] [chat:sendWithMedia] Sending: message="Continuity context (owner-derived, bounded metadata; verify work with tools):
+schema=ContinuityConte", attachments=0, fileRefs=0
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > binds the task selected in the existing composer before dispatching chat effects
+[2026-11-08T19:23:58.452Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"selected-task-send"}
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > records acknowledgement separately and confirms the exact persisted first-turn identity
+[2026-11-08T19:23:59.257Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > records acknowledgement separately and confirms the exact persisted first-turn identity
+[2026-11-08T19:23:59.261Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"handoff-first:operation-unique-1"}
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > records acknowledgement separately and confirms the exact persisted first-turn identity
+[2026-11-08T19:23:59.265Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > reconciles a lost send reply from the exact runtime transcript after restart
+[2026-11-08T19:23:59.492Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stderr | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > reconciles a lost send reply from the exact runtime transcript after restart
+[2026-11-08T19:23:59.495Z] [ERROR] [chat:sendWithMedia] Error: Error: send response lost
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > retains an unknown delivery and prevents silent resends even when the text matches
+[2026-11-08T19:23:59.616Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stderr | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > retains an unknown delivery and prevents silent resends even when the text matches
+[2026-11-08T19:23:59.619Z] [ERROR] [chat:sendWithMedia] Error: Error: request outcome unknown
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > retains an unknown delivery and prevents silent resends even when the text matches
+[2026-11-08T19:23:59.623Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stderr | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > retains an unknown delivery and prevents silent resends even when the text matches
+[2026-11-08T19:23:59.624Z] [ERROR] [chat:sendWithMedia] Error: Error: HANDOFF_DELIVERY_REQUIRES_RECONCILIATION
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > allows an explicitly retried pre-effect rejection with the same child and send key
+[2026-11-08T19:23:59.753Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stderr | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > allows an explicitly retried pre-effect rejection with the same child and send key
+[2026-11-08T19:23:59.755Z] [ERROR] [chat:sendWithMedia] Error: GatewayRpcError: rejected before effects
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > allows an explicitly retried pre-effect rejection with the same child and send key
+[2026-11-08T19:23:59.758Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > allows an explicitly retried pre-effect rejection with the same child and send key
+[2026-11-08T19:23:59.760Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"handoff-first:operation-unique-1"}
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > does not reuse a first-send key with a different compiled payload
+[2026-11-08T19:23:59.882Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stderr | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > does not reuse a first-send key with a different compiled payload
+[2026-11-08T19:23:59.885Z] [ERROR] [chat:sendWithMedia] Error: GatewayRpcError: rejected before effects
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > does not reuse a first-send key with a different compiled payload
+[2026-11-08T19:23:59.888Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stderr | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > does not reuse a first-send key with a different compiled payload
+[2026-11-08T19:23:59.889Z] [ERROR] [chat:sendWithMedia] Error: Error: HANDOFF_SEND_PAYLOAD_CHANGED
+
+ ✓ tests/unit/session-handoff-recovery.test.ts (20 tests) 2007ms
+ ✓ tests/unit/durable-task-session-scope.test.ts (13 tests) 1086ms
+     ✓ retains task identity and writer exclusivity when runtime bootstrap initializes Git  512ms
+ ✓ tests/unit/session-task-scope-bridge.test.ts (17 tests) 318ms
+ ✓ tests/unit/long-session-coordinator-binding.test.ts (11 tests) 59ms
+
+ Test Files  7 passed (7)
+      Tests  115 passed (115)
+   Start at  03:23:40
+   Duration  30.08s (transform 7.82s, setup 728ms, import 9.93s, tests 16.13s, environment 1.46s)
+
+JSON report written to D:/tmp/unified-management-20261109/session-task-validation/candidate-owner-unit.tests.json

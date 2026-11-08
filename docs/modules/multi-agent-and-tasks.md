@@ -297,7 +297,10 @@ Task Ledger 拥有用户可见任务事实、review flags、history 和 Task Loo
 
 会话的任务作用域来自同一 workspace 的 coordinator binding 与显式的 Task Ledger `sessionLink`。普通讨论可以为空；
 没有显式 task link、link 属于旧 generation、task 跨 workspace 或 task 缺失时，执行准入 fail closed。
+`sessions.delegate` 在调用 Gateway 前通过 Main 默认解析器读取 Task Ledger，按 session、taskRef 和 generation 匹配链接；同会话的其他任务链接不会遮挡当前请求。
 Fork 只获得只读 task 引用，不继承父会话写 claim；Handoff 需要重新绑定当前 generation。
+Main 在 fork/handoff 时把同 workspace、同源会话的显式业务 task 链接写入派生会话；重复链接只保留一份，turn check、缺失任务和旧 generation 链接不继承，任务完成状态保持原值。
+Fork 链接记录 Gateway 返回的新 generation，协调器仍需单独准入；Handoff 尚未创建运行时会话时 generation 为空，由协调器 owner 在会话建立后解析。
 
 ## 12. Task Ledger Working Context
 
@@ -401,6 +404,30 @@ Runtime 还包含：
 - Subagent accepted ≠ completed；text answer ≠ delivery/completion evidence。
 - ClawGraph/Task Loop 不能替代 Task Ledger 验收。
 - 多 agent 高并发 workspace 自动修改仍属于 NO-GO/受控边界。
+
+## 会话与任务链路
+
+项目名称打开 Workspace 持久关联的负责人会话，旁边的折叠控件只整理侧栏。会话家族沿 runtime 的 fork、spawn、parent 字段展示；工作组保持原有归属。关系详情逐跳显示实际父会话，来源未加载、缺失、冲突、循环和深度截断分别显示。Task Ledger 的 sessionLinks 只关联任务。
+
+会话列表按 runtime 提供的游标读取分页，只有首页读取 transcript 摘要；后续分页读取元数据。侧栏保留原有渐进渲染预算，较老的父会话也能成为家族入口。相同的草稿和面板状态不会重复提交保存。
+
+在任务清单点击“使用任务”可为当前会话选择已有业务任务，记录状态保持不变。运行或资源仍被原 writer 占用时，Main 拒绝切换任务；选择完成后按新 generation 重新读取任务范围。
+
+每个会话都有任务容器。普通讨论与已知纯读操作不创建业务任务；明确执行时，agent 通过 `task_control.start` 整理目标、约束和验收条件，原子建立或选择任务并领取执行凭据。首次工具效果先只读解析合同，核对运行代次、环境和旧 writer；通过最终运行校验后才领取所选任务。任务引用与执行回执写入同一账本。派发的 worker 根据 runtime 保存的 requester generation 取得对应执行任务；显式空写集 `[]` 保留只读职责，父任务 writer 不转移。Fork 只带只读引用，Handoff 在原 writer 静止后通过任务 owner 提升 epoch。权限由现有权限 owner 决定。
+
+任务账本的历史页可以打开关联会话，打开前核对记录的会话 generation；任务检查点中的产物沿用文件预览入口。执行结束和检查点保持为各自的记录，任务验收仍消费绑定合同版本与候选的验证回执。
+
+“在新会话中提问”保留所选问题之前的上下文，把编辑后的问题放入子会话草稿。Handoff 的按钮为“创建并发送”：Workspace 保存 source generation、操作标识、child 和首发 key；runtime 确认来源后完成创建。重启或响应丢失后先核对同一个 child。网关接收与 transcript 中的首轮记录是两个状态；结果未知时保留草稿并提供核实入口。恢复已创建的续接沿用已保存的草稿，新的问题可以在子会话中另行提交。
+
+Agents 面板将派发准入、实际执行、报告回传、任务验收和父会话续行分列。活动快照保存 worker 的实际 child key；选择 worker 后读取其 transcript 和实际模型，并在实际发送边界核验 parent 与 child generation。任务清单展示账本记录状态；完成 owner 尚未提供可核对的验收回执时，自动验收显示不可用。
+
+领取事务同时核对首次读取的合同 revision 与 digest；准入期间修订合同会拒绝此次领取。受管进程把 session、generation 和 run 身份保存到既有资源 reservation，未设置数量限额时也保留归属记录。任务切换、环境切换和 Handoff 查询同会话的全部未结清进程，包括旧 generation；旧记录身份不全时保持占用，等待进程 owner 核实。普通执行检查仍按具体 run 核对持久资源。
+
+任务摘要从事件记录和任务合同重建。派生 JSON 缓存按文件锁串行写入；缓存写失败只记录诊断，已成功读取的任务仍可展示。权威事件或合同读取失败会显示 owner 不可用。
+
+资源清单逐项保留 owner 的已知与未知状态。工作树目录缺失或注册读取失败时，该项标为 unknown，会话代次、进程和准入占用仍按各自 owner 的结果显示；unknown 不作为资源空闲或可回收的依据。
+
+操作范围及恢复入口见[会话、任务与资源操作矩阵](../dev/session-lifecycle-control-matrix.md)。
 
 ## 17. 源码索引
 

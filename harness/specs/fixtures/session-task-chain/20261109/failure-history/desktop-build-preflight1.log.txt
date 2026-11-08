@@ -1,0 +1,37 @@
+vite v7.3.1 building client environment for production...
+<script src="./boot-theme.js"> in "/index.html" can't be bundled without type="module" attribute
+transforming...
+Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+
+warn - The class `duration-[280ms]` is ambiguous and matches multiple utilities.
+warn - If this is content and not a class, replace it with `duration-&lsqb;280ms&rsqb;` to silence this warning.
+
+warn - The class `ease-[cubic-bezier(0.22,1,0.36,1)]` is ambiguous and matches multiple utilities.
+warn - If this is content and not a class, replace it with `ease-&lsqb;cubic-bezier(0.22,1,0.36,1)&rsqb;` to silence this warning.
+
+<--- Last few GCs --->
+
+[28304:000002317A308000]    51314 ms: Mark-Compact 1523.2 (1540.6) -> 1514.8 (1541.4) MB, pooled: 0 MB, 561.91 / 0.00 ms  (average mu = 0.243, current mu = 0.165) allocation failure; scavenge might not succeed
+[28304:000002317A308000]    51786 ms: Mark-Compact 1519.2 (1541.9) -> 1515.4 (1537.9) MB, pooled: 8 MB, 461.22 / 0.00 ms  (average mu = 0.147, current mu = 0.023) allocation failure; scavenge might not succeed
+
+FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+ 1: 00007FF605D66536 node::SetAbortHandler+54
+ 2: 00007FF605D66A74 node::OnFatalError+1284
+ 3: 00007FF604952387 v8::Function::NewInstance+423
+ 4: 00007FF604752BC7 v8::HeapStatistics::used_global_handles_size+54423
+ 5: 00007FF6047568D4 v8::HeapStatistics::used_global_handles_size+70052
+ 6: 00007FF60476583C v8::internal::StrongRootAllocatorBase::deallocate_impl+16604
+ 7: 00007FF60476507B v8::internal::StrongRootAllocatorBase::deallocate_impl+14619
+ 8: 00007FF60609922D node::AsyncResource::CallbackScope::CallbackScope+2124493
+ 9: 00007FF604750690 v8::HeapStatistics::used_global_handles_size+44896
+10: 00007FF60476AEEA X509_STORE_set_cleanup+5098
+11: 00007FF604777386 uv_timer_set_repeat+20694
+12: 00007FF604349247 v8::CodeEvent::GetFunctionName+131959
+13: 00007FF605F4A2BA node::AsyncResource::CallbackScope::CallbackScope+752474
+14: 00007FF605F29B1F node::AsyncResource::CallbackScope::CallbackScope+619455
+15: 00007FF605E9D546 node::AsyncResource::CallbackScope::CallbackScope+44518
+16: 00000231181E306D 

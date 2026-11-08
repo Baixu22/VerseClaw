@@ -89,7 +89,7 @@ function rendererManualChunks(id: string): string | undefined {
   if (packageName === 'lucide-react') return 'lucide-icons';
   // assistant-ui registers resources against symbols initialized by its core.
   // Keep registrations and core in one chunk when Markdown gains a second host.
-  if (packageName.startsWith('@assistant-ui/') || packageName === 'assistant-stream') return 'assistant-ui-runtime';
+  if (packageName.startsWith('@assistant-ui/') || packageName === 'assistant-stream' || packageName === 'assistant-cloud') return 'assistant-ui-runtime';
   // Identifier factories are used during runtime module initialization. Keep
   // them out of lazy Markdown hosts that import the runtime in turn.
   if (packageName === 'nanoid') return 'id-runtime';

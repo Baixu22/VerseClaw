@@ -1,0 +1,6 @@
+
+
+
+
+[vitest] still running with no output for 30000ms (run --config vitest.config.ts D:/ClawX-work/session-task-unified-relay-20261109/openclaw_runtime/src/agents/tool-mutation.test.ts D:/ClawX-work/session-task-unified-relay-20261109/openclaw_runtime/src/agents/embedded-agent-runner/runs.task-scope.test.ts D:/ClawX-work/session-task-unified-relay-20261109/openclaw_runtime/src/cron/isolated-agent/run-runid-canonical.test.ts --maxWorkers=1 --no-file-parallelism --reporter=json --outputFile=D:/tmp/unified-management-20261109/session-task-validation/final-runtime-guards.tests.json --passWithNoTests=false).
+JSON report written to D:/tmp/unified-management-20261109/session-task-validation/final-runtime-guards.tests.json

@@ -1,0 +1,105 @@
+{
+  "candidate": {
+    "commit": "8881bb51af2e1291776799aab6d1f58aea87764b",
+    "tree": "9543f8742a94194ba532cc117838efd3fd3cc246",
+    "dirty": false
+  },
+  "files": [
+    {
+      "path": "docs/modules/multi-agent-and-tasks.md",
+      "sha256": "85782baf9c5bece7bf6a5f0f85fd2d15c8bc717b2516a3060422ab36880d6ccd"
+    },
+    {
+      "path": "electron/services/sessions-api.ts",
+      "sha256": "8ca74304371a1e4dee70573052c5f1a0b705b126e8f9ca0c3f0ddd0d9a685dca"
+    },
+    {
+      "path": "harness/specs/scenarios/autonomy-session-task-scope.md",
+      "sha256": "f949917e290aca3599e0248348f5abfa1b867bb848c97a965da27d562a95b224"
+    },
+    {
+      "path": "harness/specs/tasks/session-task-scope-derivation.md",
+      "sha256": "b47fdacd0448233c156443a04f1150c10fb3d321c1b512381c1648deee1ebfdd"
+    },
+    {
+      "path": "src/lib/workspace-session.ts",
+      "sha256": "1897d74374be07a9097aef4f4d7a6119f53b82e0da97256b321c93898a1d25a7"
+    },
+    {
+      "path": "tests/e2e/session-task-scope-derivation.spec.ts",
+      "sha256": "abfb49914d3e8555ccfa58421e14ddc5ed9846aba28129f800274e9ab1159b88"
+    },
+    {
+      "path": "tests/unit/host-services.test.ts",
+      "sha256": "9057f82a43bea6fdc2356f011d78a8b272aea783bbd2e4d6242d609f4dfa9f0b"
+    },
+    {
+      "path": "tests/unit/workspace-session.test.ts",
+      "sha256": "b18cb45831e8c8006b780246b545fd2543188ebbd407f63ae05234519e051776"
+    },
+    {
+      "path": "electron/services/session-delegation-admission.ts",
+      "sha256": "a47eebbc19a90997440d0e1345073be096b562879cc6264b9fb5e0ee98a9be01"
+    },
+    {
+      "path": "shared/session-task-scope.ts",
+      "sha256": "d3f6c3776e1f43c5d50a11af1e4790703e8e579bbfd0e28d5ef2387aef501ca2"
+    },
+    {
+      "path": "tests/unit/session-task-scope.test.ts",
+      "sha256": "ed3fc1b8c7d871832ceeda4118d90e34dc54bd2e6dc5e71ee23e71af4641b575"
+    },
+    {
+      "path": "tests/unit/long-session-delegation-admission.test.ts",
+      "sha256": "7a0c0d0b2a8d8468c79c67b8b897d766010ad29e7e5d4e05a11b8313b321bf60"
+    },
+    {
+      "path": "tests/unit/long-session-coordinator-binding.test.ts",
+      "sha256": "5fe53de2fcd248da7270e044025d61519e47d0afe171084a6012e45a306c33f1"
+    },
+    {
+      "path": "tests/e2e/fixtures/electron.ts",
+      "sha256": "bb2a444c9b5efea618570ba237eb072e17073f8189a5b5ac3b2360b808ceeb63"
+    },
+    {
+      "path": "tests/e2e/fixtures/electron-process-cleanup.ts",
+      "sha256": "d2afd5f29e6db3cf8dabb5d5cb2867ebb98136b46ec7d449d55a0636ff8df6da"
+    },
+    {
+      "path": "tests/e2e/fixtures/fp-p1-harness.ts",
+      "sha256": "5882bd14fddef513f142ca2258d47f5a655cbe940ecef4ddbc93f7e8d9fd316c"
+    },
+    {
+      "path": "package.json",
+      "sha256": "f82adc8c38bb41c60521a3352582f5022775b1bef893ea9e5e3d244c978843fc"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "6427882a1725aa5929da2db9d55d1397237dee1a354bb6db3dfb63bb61abb441"
+    },
+    {
+      "path": "openclaw_runtime/package.json",
+      "sha256": "806db8be4f1a4df80f754abd09d3635cb4420c3c6bf7e1a367c07ad89a53ff1c"
+    },
+    {
+      "path": "openclaw_runtime/pnpm-lock.yaml",
+      "sha256": "3ee305722a4f52a314f25871e0386f4d1cf214eb9ad7fc17f24b4908f5456013"
+    },
+    {
+      "path": "tsconfig.node.json",
+      "sha256": "01b4363d8da06b72b30f19e05de7dd3d27d00a29fafdda48f963a043d7af7324"
+    },
+    {
+      "path": "tsconfig.web.json",
+      "sha256": "6f7f149dcc5f75bea4955a81a49c38a949825403e37be5fdb7917fe9cca15bbd"
+    },
+    {
+      "path": "tsconfig.test.json",
+      "sha256": "c4953d93389d317eb2746b3fe6334e7a99cb109142e4dcef63ee779f3fc6f97d"
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "ae29e70cca19833ad684d64a45e345b2d1deea5db88ade0258d96c1f1730f98d"
+    }
+  ]
+}

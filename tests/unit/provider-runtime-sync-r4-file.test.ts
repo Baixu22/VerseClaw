@@ -3,7 +3,7 @@
 // must survive the real sync functions and land in a real temporary
 // openclaw.json and per-agent models.json — not just inside save mocks.
 import { mkdtempSync, rmSync } from 'node:fs';
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
@@ -16,6 +16,8 @@ const mocks = vi.hoisted(() => ({
   getProviderSecret: vi.fn(),
   getAllProviders: vi.fn(),
   getApiKey: vi.fn(),
+  getProvider: vi.fn(),
+  getDefaultProvider: vi.fn(),
   getProviderConfig: vi.fn(),
   listAgentsSnapshot: vi.fn(),
 }));
@@ -32,8 +34,8 @@ vi.mock('@electron/services/secrets/secret-store', () => ({
 vi.mock('@electron/utils/secure-storage', () => ({
   getAllProviders: mocks.getAllProviders,
   getApiKey: mocks.getApiKey,
-  getDefaultProvider: vi.fn(),
-  getProvider: vi.fn(),
+  getDefaultProvider: mocks.getDefaultProvider,
+  getProvider: mocks.getProvider,
 }));
 
 vi.mock('@electron/utils/provider-registry', () => ({
@@ -77,6 +79,53 @@ afterAll(() => {
 });
 
 describe('R4 provider sync file-level E2E', () => {
+  it.each([true, false])('preserves declared reasoning=%s when selecting and updating the default provider', async (reasoning) => {
+    const provider = {
+      id: `${reasoning ? 'reasoning' : 'plain'}-profile`,
+      name: 'Default profile',
+      type: 'custom' as const,
+      baseUrl: 'https://example.com/v1',
+      apiProtocol: 'openai-completions' as const,
+      model: 'profile-model',
+      enabled: true,
+      createdAt: '2026-11-08T00:00:00.000Z',
+      updatedAt: '2026-11-08T00:00:00.000Z',
+      requestAuth: { mode: 'custom-header' as const, headerName: 'X-API-Key' },
+      modelProfile: { contextWindow: 128000, maxTokens: 4096, supportsVision: reasoning, supportsReasoning: reasoning },
+    };
+    mocks.getProvider.mockResolvedValue(provider);
+    mocks.getDefaultProvider.mockResolvedValue(provider.id);
+    mocks.getAllProviders.mockResolvedValue([provider]);
+    await syncModule.syncSavedProviderToRuntime(provider, 'sk-file-test');
+    const runtimeKey = syncModule.getOpenClawProviderKey(provider.type, provider.id);
+    const cost = { input: 2, output: 8, cacheRead: 1, cacheWrite: 3 };
+    for (const configFile of ['openclaw.json', 'agents/main/agent/models.json']) {
+      const filename = path.join(testConfigDir, configFile);
+      const config = JSON.parse(await readFile(filename, 'utf8'));
+      (config.models?.providers ?? config.providers)[runtimeKey].models[0].cost = cost;
+      await writeFile(filename, JSON.stringify(config));
+    }
+    const updated = { ...provider, modelProfile: { ...provider.modelProfile, supportsVision: !reasoning, supportsReasoning: !reasoning } };
+    for (const [expectedReasoning, action] of [
+      [reasoning, () => syncModule.syncDefaultProviderToRuntime(provider.id)],
+      [!reasoning, () => syncModule.syncDefaultProviderToRuntime(provider.id)],
+      [!reasoning, () => syncModule.syncUpdatedProviderToRuntime(updated, 'sk-file-test')],
+    ] as const) {
+      mocks.getProvider.mockResolvedValue(expectedReasoning === reasoning ? provider : updated);
+      mocks.getAllProviders.mockResolvedValue([expectedReasoning === reasoning ? provider : updated]);
+      await action();
+      for (const configFile of ['openclaw.json', 'agents/main/agent/models.json']) {
+        const config = JSON.parse(await readFile(path.join(testConfigDir, configFile), 'utf8'));
+        const entry = (config.models?.providers ?? config.providers)[runtimeKey];
+        expect(entry.models.find((model: { id: string }) => model.id === provider.model), configFile).toMatchObject({
+          reasoning: expectedReasoning, contextWindow: 128000, maxTokens: 4096, input: expectedReasoning ? ['text', 'image'] : ['text'], cost,
+        });
+        expect(entry.request?.auth).toMatchObject({ mode: 'header', headerName: 'X-API-Key' });
+      }
+    }
+    mocks.getAllProviders.mockResolvedValue([]);
+  });
+
   it('writes UI request.auth and modelProfile through real openclaw.json and models.json files', async () => {
     const provider = {
       id: 'custom-file-e2e',

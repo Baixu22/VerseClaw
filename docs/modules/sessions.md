@@ -167,7 +167,8 @@ Compaction 的目标是减小后续 prompt，而不是改写原始 transcript。
 
 - 先验证 handoff ancestry；
 - 验证并持久化 Task Ledger lineage；
-- 创建新的目标会话；
+- runtime 创建并确认带直接父会话的新目标，保存 operationId、源代次、child 与首发 key；
+- “创建并发送”提交已审阅草稿作为首条消息；未知结果先核实既有回执，恢复时复用同一 child 和首发 key；
 - 源 session、源任务和源 goal 不因 handoff 自动消失；
 - 循环或不可读 lineage 被拒绝；
 - 写入被串行化，避免并发 handoff 竞争。
@@ -324,7 +325,7 @@ Chat activity panel 只把与当前 workspace/run/gateway generation 匹配的�
 | hop.kind | 证明它的字段 |
 |---|---|
 | `fork` | `forkedFromParent`，或 `forkedFromLeafId` + `parentSessionKey` |
-| `handoff` | `parentSessionKey` 且无 fork 事实 |
+| `handoff` | `parentSessionKey`，且无 fork 事实与 `spawnedBy` |
 | `spawn` | `spawnedBy` |
 | `unknown` | 该 entry 没有声明任何父会话（这是根，不是缺口） |
 

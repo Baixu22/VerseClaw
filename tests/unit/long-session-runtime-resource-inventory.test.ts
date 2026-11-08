@@ -30,6 +30,25 @@ afterEach(() => {
 });
 
 describe('runtime long-session resource inventory', () => {
+  it('retains known session owners when the worktree root cannot be read', async () => {
+    const missingRoot = path.join(makeRoot(), 'not-created');
+    const release = sessionAdmissionRegistry.acquirePermit({
+      agentId: OWNER.agentId, canonicalSessionKey: OWNER.sessionKey, expectedSessionId: OWNER.expectedSessionId,
+    }, 'exec-spawn');
+    try {
+      const inventory = await readRuntimeSessionResourceInventory({ ...OWNER, workspaceId: 'workspace-e2', rootPath: missingRoot });
+      expect(inventory.scope.expectedSessionId).toBe(OWNER.expectedSessionId);
+      expect(inventory.owners.find(owner => owner.kind === 'admission-permit')).toMatchObject({
+        generation: OWNER.expectedSessionId, authority: 'managed', state: 'known', activePermits: 1,
+      });
+      expect(inventory.owners.find(owner => owner.kind === 'process')).toMatchObject({
+        generation: OWNER.expectedSessionId, authority: 'managed', state: 'known', count: 0,
+      });
+      expect(inventory.owners.find(owner => owner.kind === 'worktree')).toMatchObject({
+        state: 'unknown', count: null, worktreeIds: null,
+      });
+    } finally { release(); }
+  });
   it('reads admission permits and generation-bound worktrees without inventing measurements', async () => {
     const root = makeRoot();
     const release = sessionAdmissionRegistry.acquirePermit({

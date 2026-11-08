@@ -1,12 +1,17 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AlertTriangle, CheckSquare, GitBranch, RefreshCw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { hostApi } from '@/lib/host-api';
 import { cn } from '@/lib/utils';
 import type { TaskLedgerNode, TaskLedgerSnapshot } from '@shared/types/task-ledger';
+import type { ChatSession } from '@shared/chat/types';
+import type { WorkspaceCoordinatorBinding } from '@shared/types/workspace';
+import { readSessionTaskContainer } from '@/lib/session-read-model';
+import { toast } from 'sonner';
 
 type Props = {
   workspaceId?: string | null;
@@ -14,6 +19,12 @@ type Props = {
   hideWhenEmpty?: boolean;
   className?: string;
   onVisibilityChange?: (visible: boolean) => void;
+  session?: ChatSession;
+  binding?: WorkspaceCoordinatorBinding | null;
+  mode?: 'panel' | 'bar';
+  projectWide?: boolean;
+  refreshKey?: string;
+  onTaskSelected?: () => void | Promise<void>;
 };
 
 function nodeTone(node: TaskLedgerNode): string {
@@ -42,26 +53,51 @@ export function TaskLedgerSummaryPanel({
   hideWhenEmpty = false,
   className,
   onVisibilityChange,
+  session,
+  binding,
+  mode = 'panel',
+  projectWide = false,
+  refreshKey,
+  onTaskSelected,
 }: Props) {
   const { t } = useTranslation('taskLedger');
-  const [snapshot, setSnapshot] = useState<TaskLedgerSnapshot | null>(null);
+  const [loaded, setLoaded] = useState<{ key: string; snapshot: TaskLedgerSnapshot | null; error?: string } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [narrow, setNarrow] = useState(() => window.matchMedia('(max-width: 960px)').matches);
+  useEffect(() => {
+    const query = window.matchMedia('(max-width: 960px)');
+    const update = () => setNarrow(query.matches);
+    update(); query.addEventListener('change', update);
+    return () => query.removeEventListener('change', update);
+  }, []);
+  const [selection, setSelection] = useState<{ scope: object; task: string } | null>(null);
+  const selectingTaskRef = useRef<object | null>(null);
+  const requestVersion = useRef(0);
+  const scopeKey = JSON.stringify([workspaceId, session?.key, session?.sessionId]);
+  const viewScope = useMemo(() => ({ key: scopeKey }), [scopeKey]);
+  const scopeRef = useRef(viewScope); scopeRef.current = viewScope;
+  const selectingTask = selection?.scope === viewScope ? selection.task : null;
+  const snapshot = loaded?.key === scopeKey ? loaded.snapshot : null;
 
   const load = useCallback(async () => {
+    const version = ++requestVersion.current;
     setLoading(true);
     try {
       const result = await hostApi.taskLedger.snapshot(workspaceId ? { workspaceId } : undefined);
-      setSnapshot(result.snapshot);
+      if (workspaceId && result.snapshot.sourceWorkspaceId !== workspaceId) throw new Error('Task Ledger owner scope mismatch');
+      if (version === requestVersion.current) setLoaded({ key: scopeKey, snapshot: result.snapshot });
     } catch {
-      setSnapshot(null);
+      if (version === requestVersion.current) setLoaded({ key: scopeKey, snapshot: null, error: 'owner-unavailable' });
     } finally {
-      setLoading(false);
+      if (version === requestVersion.current) setLoading(false);
     }
-  }, [workspaceId]);
+  }, [workspaceId, scopeKey]);
 
   useEffect(() => {
     void load();
-  }, [load]);
+    return () => { requestVersion.current += 1; };
+  }, [load, refreshKey]);
 
   const groups = useMemo(() => {
     const nodesById = new Map((snapshot?.nodes ?? []).map((node) => [node.id, node]));
@@ -78,6 +114,69 @@ export function TaskLedgerSummaryPanel({
     onVisibilityChange?.(visible);
   }, [onVisibilityChange, visible]);
   if (!visible) return null;
+
+  const query = new URLSearchParams({ ...(workspaceId ? { workspaceId } : {}), ...(session ? { sessionKey: session.key } : {}) });
+  const ledgerPath = `/task-ledger?${query}`;
+  if (mode === 'bar' && workspaceId && session) {
+    const container = readSessionTaskContainer({ workspaceId, session, binding,
+      read: loaded?.key === scopeKey ? { workspaceId, sessionKey: session.key, generation: session.sessionId, snapshot, error: loaded.error } : null });
+    const projectReadable = projectWide && ['ready', 'empty'].includes(container.status);
+    const nodes = projectReadable ? (snapshot?.nodes ?? []).filter((node) => node.kind === 'task') : container.nodes;
+    const status = projectReadable ? nodes.length ? 'ready' : 'empty' : container.status;
+    const toggle = <button type="button" data-testid="session-tasks-toggle" aria-expanded={expanded}
+      onClick={narrow ? undefined : () => setExpanded((value) => !value)}
+      className="flex min-w-0 items-center gap-1.5 rounded px-1 py-1 hover:bg-black/5 dark:hover:bg-white/10">
+      <CheckSquare className="size-3.5 shrink-0" />
+      <span>{t(projectWide ? 'summary.projectTasks' : 'summary.sessionTasks')}</span><span>{nodes.length}</span>
+    </button>;
+    const list = <ul className={cn('space-y-1 overflow-y-auto py-1', narrow ? 'max-h-[70vh]' : 'max-h-36')} data-testid="session-task-list">
+      {nodes.map((node) => <li key={node.id} className="flex min-w-0 items-center gap-2 rounded bg-surface-input px-2 py-1.5">
+        <Link to={`${ledgerPath}&nodeId=${encodeURIComponent(node.id)}`} className="min-w-0 flex-1 truncate">{node.title}</Link>
+        <span className={cn('shrink-0 text-2xs', nodeTone(node))}>{t('summary.recordedStatus', { status: t(`status.${node.status}`) })}</span>
+        <button type="button" className="shrink-0 rounded px-1.5 py-1 hover:bg-black/5 disabled:opacity-50 dark:hover:bg-white/10"
+          data-testid={`session-task-select-${node.id}`} aria-label={t('summary.useTask', { title: node.title })}
+          disabled={status !== 'ready' || Boolean(selectingTask) || session.hasActiveRun === true || binding?.activeTaskNodeId === node.id}
+          onClick={() => {
+            if (selectingTaskRef.current === viewScope) return;
+            selectingTaskRef.current = viewScope; setSelection({ scope: viewScope, task: node.id });
+            void hostApi.workspaces.selectSessionTask({ workspaceId, sessionKey: session.key, taskNodeId: node.id,
+              expectedSessionGeneration: session.sessionId, expectedRevision: binding?.bindingRevision,
+            }).then(async () => {
+              if (scopeRef.current !== viewScope) return;
+              await onTaskSelected?.(); await load();
+            }).catch((error) => {
+              if (scopeRef.current === viewScope) toast.error(t(String(error).includes('BUSY') || String(error).includes('SWITCH_BLOCKED') ? 'summary.selectBusy' : 'summary.selectFailed'));
+            }).finally(() => {
+              if (selectingTaskRef.current === viewScope) selectingTaskRef.current = null;
+              setSelection((value) => value?.scope === viewScope ? null : value);
+            });
+          }}>{t(binding?.activeTaskNodeId === node.id ? 'summary.selected' : 'summary.select')}</button>
+      </li>)}
+      {!nodes.length && <li className="px-1 py-2 text-muted-foreground">{t(`summary.scope.${status}`)}</li>}
+    </ul>;
+    return (
+      <section data-testid="session-task-container" data-state={loading && !snapshot ? 'loading' : status}
+        className={cn('relative shrink-0 border-b border-border/50 bg-material-panel px-4 py-1 text-xs', className)}>
+        <div className="flex min-w-0 items-center gap-2">
+          {narrow ? <Sheet open={expanded} onOpenChange={setExpanded}>
+            <SheetTrigger asChild>{toggle}</SheetTrigger>
+            <SheetContent side="bottom" aria-describedby={undefined} data-testid="session-task-drawer">
+              <SheetTitle>{t(projectWide ? 'summary.projectTasks' : 'summary.sessionTasks')}</SheetTitle>
+              {list}
+            </SheetContent>
+          </Sheet> : toggle}
+          <span className="min-w-0 flex-1 truncate text-muted-foreground" role="status">
+            {loading && !snapshot ? t('summary.loading') : t(`summary.scope.${status}`)}
+          </span>
+          <button type="button" aria-label={t('summary.refresh')} onClick={() => void load()} disabled={loading} className="rounded p-1">
+            <RefreshCw className={cn('size-3.5', loading && 'animate-spin motion-reduce:animate-none')} />
+          </button>
+          <Link data-testid="session-task-ledger-open" to={ledgerPath} className="shrink-0 underline underline-offset-2">{t('summary.open')}</Link>
+        </div>
+        {expanded && !narrow && list}
+      </section>
+    );
+  }
 
   return (
     <aside
@@ -156,7 +255,7 @@ export function TaskLedgerSummaryPanel({
         )}
 
         <Button asChild variant="outline" size="sm" className="mt-3 h-8 w-full gap-1.5 text-xs">
-          <Link to={groups.currentGoal ? `/task-ledger?nodeId=${encodeURIComponent(groups.currentGoal.id)}` : '/task-ledger'}>
+          <Link to={groups.currentGoal ? `${ledgerPath}&nodeId=${encodeURIComponent(groups.currentGoal.id)}` : ledgerPath}>
             <GitBranch className="h-3.5 w-3.5" />
             {t('summary.open')}
           </Link>

@@ -1,0 +1,15 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "observedAt": "2026-11-08T20:42:19.001Z",
+  "originalStatus": "failed",
+  "action": "read-only recheck; no processes terminated",
+  "checks": [
+    {
+      "pid": 31516,
+      "creationTime": 1794170022288,
+      "status": "exited"
+    }
+  ],
+  "resolved": true
+}

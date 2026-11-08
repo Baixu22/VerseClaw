@@ -8,6 +8,12 @@ import { openOpenClawStateDatabase, runOpenClawStateWriteTransaction } from "../
 
 const SCOPE = "verseshell-process-capacity/v1";
 type CapacityDatabase = Pick<DB, "state_leases">;
+export type ManagedProcessIdentity = {
+  sessionKey: string;
+  sessionGeneration: string;
+  runId: string;
+};
+
 export type ManagedProcessReservation = {
   id: string;
   ownerPid: number;
@@ -18,6 +24,10 @@ export type ManagedProcessReservation = {
   failure?: string;
   rootPids?: number[];
   createdAt: number;
+  /** Optional so reservations created before task-scope integration remain readable. */
+  sessionKey?: string;
+  sessionGeneration?: string;
+  runId?: string;
 };
 
 export function normalizeManagedPorts(ports: readonly number[] = []): number[] {
@@ -49,11 +59,24 @@ export function managedProcessReservations(): ManagedProcessReservation[] {
   return executeSqliteQuerySync(db, query.selectFrom("state_leases").select("payload_json").where("scope", "=", SCOPE)).rows.map(row => decode(row.payload_json));
 }
 
-export function reserveManagedProcess(input: { limit?: number; ports?: readonly number[]; owner?: string }):
+function normalizeManagedProcessIdentity(identity: ManagedProcessIdentity): ManagedProcessIdentity {
+  const values = [identity.sessionKey, identity.sessionGeneration, identity.runId];
+  if (values.some(value => typeof value !== "string" || !value.trim() || value.length > 2048))
+    throw new Error("E_PROCESS_RESERVATION_IDENTITY_INVALID");
+  return { sessionKey: identity.sessionKey, sessionGeneration: identity.sessionGeneration, runId: identity.runId };
+}
+
+export function reserveManagedProcess(input: {
+  limit?: number;
+  ports?: readonly number[];
+  owner?: string;
+  identity?: ManagedProcessIdentity;
+}):
   | { ok: true; reservation: ManagedProcessReservation; live: number; limit?: number }
   | { ok: false; live: number; limit: number; reason: "capacity" }
   | { ok: false; reason: "port"; port: number; owner: string } {
   const ports = normalizeManagedPorts(input.ports);
+  const identity = input.identity ? normalizeManagedProcessIdentity(input.identity) : undefined;
   return runOpenClawStateWriteTransaction(({ db }) => {
     const existing = managedProcessReservations();
     const limits = [input.limit, ...existing.map(row => row.limit)].filter((value): value is number => value !== undefined);
@@ -66,6 +89,7 @@ export function reserveManagedProcess(input: { limit?: number; ports?: readonly 
     const reservation: ManagedProcessReservation = {
       id: randomUUID(), ownerPid: process.pid, owner: input.owner ?? `runtime:${process.pid}`,
       ...(limit !== undefined ? { limit } : {}), ports, phase: "reserved", createdAt: now,
+      ...(identity ?? {}),
     };
     const query = getNodeSqliteKysely<CapacityDatabase>(db);
     executeSqliteQuerySync(db, query.insertInto("state_leases").values({

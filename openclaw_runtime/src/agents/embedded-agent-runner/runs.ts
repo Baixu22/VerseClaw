@@ -522,6 +522,21 @@ export function isEmbeddedAgentRunHandleActive(sessionId: string): boolean {
   return active;
 }
 
+/** Match the execution handle, not a prior run's retained event metadata. */
+export function isEmbeddedAgentExecutionActive(input: {
+  runId: string;
+  sessionKey: string;
+  sessionId: string;
+}): boolean {
+  const handle = ACTIVE_EMBEDDED_RUNS.get(input.sessionId);
+  return Boolean(
+    handle &&
+    handle.runId === input.runId &&
+    !handle.abortSignal?.aborted &&
+    ACTIVE_EMBEDDED_RUN_SESSION_IDS_BY_KEY.get(input.sessionKey) === input.sessionId,
+  );
+}
+
 export function isEmbeddedAgentRunAbortableForCompaction(sessionId: string): boolean {
   const active = ACTIVE_EMBEDDED_RUNS.has(sessionId) || isReplyRunAbortableForCompaction(sessionId);
   if (active) {

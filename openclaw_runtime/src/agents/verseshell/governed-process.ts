@@ -16,6 +16,7 @@ import {
   resolveManagedProcessDefaultLimits,
   type ManagedProcessLease,
 } from "./managed-process-capacity.js";
+import type { ManagedProcessIdentity } from "./managed-process-reservation.js";
 import {
   resolveVerseShellCommandPlan,
   type VerseShellCommandPlan,
@@ -161,6 +162,8 @@ export type GovernedVerseShellProcessOptions = {
   usePty: boolean;
   agentId: string;
   sessionId: string;
+  /** Optional task-scope identity; omitted by legacy/direct callers and treated as unknown. */
+  identity?: ManagedProcessIdentity;
   /** Host-owned parent trace for the complete lifecycle, never taken from operation args. */
   traceId?: string;
   hostPolicyApproved: boolean;
@@ -397,7 +400,11 @@ export async function startGovernedVerseShellProcess(
   // Instance-wide occupancy is admitted before the process starts so several sessions cannot
   // each assume they own the whole declared capacity. No declaration means no counter.
   await reconcileManagedProcessReservations();
-  const capacityAdmission = admitManagedProcess({ ports: options.reservedPorts, owner: `${options.agentId}:${options.sessionId}` });
+  const capacityAdmission = admitManagedProcess({
+    ports: options.reservedPorts,
+    owner: `${options.agentId}:${options.sessionId}`,
+    ...(options.identity ? { identity: options.identity } : {}),
+  });
   if (!capacityAdmission.ok) {
     throw new GovernedVerseShellError(
       "E_PROCESS_CAPACITY_LIMIT",

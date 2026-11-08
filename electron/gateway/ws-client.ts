@@ -192,7 +192,7 @@ export function buildGatewayConnectFrame(options: {
           mode: clientMode,
         },
         auth: options.deviceToken ? { deviceToken: options.deviceToken } : { token: options.token },
-        caps: ['tool-events', 'agent-browser-bridge'],
+        caps: ['tool-events', 'agent-browser-bridge', 'session-task-scope-bridge'],
         role,
         scopes,
         device,

@@ -1,0 +1,160 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-scheduled-task-scope",
+  "provider": "local-scripted",
+  "status": "passed",
+  "project": {
+    "workspaceId": "scheduled-project",
+    "rootPath": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final4-scope-results\\session-task-scope-complet-4a108-ing-the-project-coordinator\\scheduled-workspace",
+    "sessionKey": "agent:main:session-1794169570076-scheduledproject",
+    "generation": "4ad643d1-b8ad-4f00-8c9a-c0693028b218"
+  },
+  "job": {
+    "id": "8231972c-dd93-41dc-b1d1-cf9c641e9830",
+    "name": "Agent schedule acceptance",
+    "message": "A4-SCHEDULED-EFFECT: write the assigned result.",
+    "taskKind": "agentTurn",
+    "schedule": {
+      "kind": "cron",
+      "expr": "0 0 1 1 *"
+    },
+    "source": "gateway",
+    "runtime": {
+      "source": "gateway",
+      "sessionTarget": "isolated",
+      "wakeMode": "next-heartbeat",
+      "payloadKind": "agentTurn"
+    },
+    "delivery": {
+      "mode": "none"
+    },
+    "enabled": false,
+    "createdAt": "2026-11-08T20:26:20.943Z",
+    "updatedAt": "2026-11-08T20:26:20.943Z",
+    "agentId": "main"
+  },
+  "trigger": {
+    "ok": true,
+    "enqueued": true,
+    "runId": "manual:8231972c-dd93-41dc-b1d1-cf9c641e9830:1794169580958:1"
+  },
+  "binding": {
+    "schemaVersion": 1,
+    "workspaceId": "scheduled-project",
+    "agentId": "main",
+    "sessionKey": "agent:main:cron:8231972c-dd93-41dc-b1d1-cf9c641e9830:run:bb58968f-6044-4e0e-b6df-eb0679315a64",
+    "sessionGeneration": "bb58968f-6044-4e0e-b6df-eb0679315a64",
+    "taskLedgerReferences": [
+      {
+        "direction": "workboard-to-task-ledger",
+        "taskLedgerNodeId": "0b1bddc8-b456-43a5-b0f3-75a310671306",
+        "source": "runtime"
+      }
+    ],
+    "activeTaskNodeId": "0b1bddc8-b456-43a5-b0f3-75a310671306",
+    "writerClaim": {
+      "id": "03cc09e4-fb5a-4f4a-9263-a3536d51adc6",
+      "run": {
+        "runId": "cron:8231972c-dd93-41dc-b1d1-cf9c641e9830:1794169588300",
+        "scope": {
+          "workspaceId": "scheduled-project",
+          "projectId": "scheduled-project",
+          "sessionKey": "agent:main:cron:8231972c-dd93-41dc-b1d1-cf9c641e9830:run:bb58968f-6044-4e0e-b6df-eb0679315a64"
+        }
+      },
+      "taskNodeId": "0b1bddc8-b456-43a5-b0f3-75a310671306",
+      "sessionGeneration": "bb58968f-6044-4e0e-b6df-eb0679315a64",
+      "createdAt": "2026-11-08T20:26:30.736Z",
+      "credential": {
+        "taskNodeId": "0b1bddc8-b456-43a5-b0f3-75a310671306",
+        "sessionKey": "agent:main:cron:8231972c-dd93-41dc-b1d1-cf9c641e9830:run:bb58968f-6044-4e0e-b6df-eb0679315a64",
+        "generation": "bb58968f-6044-4e0e-b6df-eb0679315a64",
+        "epoch": 1
+      }
+    },
+    "environment": {
+      "kind": "local",
+      "canonicalRoot": "D:\\tmp\\unified-management-20261109\\session-task-validation\\final4-scope-results\\session-task-scope-complet-4a108-ing-the-project-coordinator\\scheduled-workspace",
+      "backend": "git",
+      "branch": "master",
+      "detachedHead": false,
+      "setupProfile": null
+    },
+    "archiveRestorePolicy": "restore",
+    "state": "active",
+    "bindingRevision": 1,
+    "invalidationReason": null,
+    "createdAt": "2026-11-08T20:26:30.736Z",
+    "updatedAt": "2026-11-08T20:26:30.736Z"
+  },
+  "snapshot": {
+    "schemaVersion": 1,
+    "workspaceId": "scheduled-project-308ec9b47d",
+    "generatedAt": "2026-11-08T20:26:31.965Z",
+    "nodes": [
+      {
+        "id": "0b1bddc8-b456-43a5-b0f3-75a310671306",
+        "title": "Write the scheduled result",
+        "description": "scheduled.txt",
+        "kind": "task",
+        "status": "doing",
+        "createdAt": "2026-11-08T20:26:30.228Z",
+        "updatedAt": "2026-11-08T20:26:30.228Z",
+        "metadata": {
+          "readonlyProjection": true,
+          "source": "task-ledger.execution-contract",
+          "contractRevision": 1
+        },
+        "parentId": null,
+        "evidenceRefs": []
+      }
+    ],
+    "edges": [],
+    "sessionLinks": [
+      {
+        "id": "execution-link:7dec21ad2fd810e4db373271edfd7717312323266a8b0607ac9301f23119b307",
+        "nodeId": "0b1bddc8-b456-43a5-b0f3-75a310671306",
+        "sessionKey": "agent:main:cron:8231972c-dd93-41dc-b1d1-cf9c641e9830:run:bb58968f-6044-4e0e-b6df-eb0679315a64",
+        "sessionGeneration": "bb58968f-6044-4e0e-b6df-eb0679315a64",
+        "agentId": "main",
+        "relation": "related",
+        "createdAt": "2026-11-08T20:26:30.228Z"
+      }
+    ],
+    "rootNodeIds": [
+      "0b1bddc8-b456-43a5-b0f3-75a310671306"
+    ],
+    "reviewNodeIds": [],
+    "activeNodeIds": [
+      "0b1bddc8-b456-43a5-b0f3-75a310671306"
+    ],
+    "blockedNodeIds": [],
+    "currentGoalId": null,
+    "recentDecisions": [],
+    "eventsCount": 1,
+    "warnings": [],
+    "sourceWorkspaceId": "scheduled-project"
+  },
+  "providerLog": [
+    {
+      "turn": "[cron:8231972c-dd93-41dc-b1d1-cf9c641e9830 Agent schedule ac",
+      "toolResults": {},
+      "issued": "scheduled-task-start"
+    },
+    {
+      "turn": "[cron:8231972c-dd93-41dc-b1d1-cf9c641e9830 Agent schedule ac",
+      "toolResults": {
+        "scheduledtaskstart": "{\"contract\":{\"objective\":\"Write the scheduled result\",\"constraints\":[\"Keep the project coordinator\"],\"acceptance\":[{\"id\":\"scheduled-artifact\",\"description\":\"Exact scheduled output\",\"verification\":{\"kind\":\"file-sha256\",\"path\":\"scheduled.txt\",\"sha256\":\"24fb0a826a2cf14cb50845e15adf58eb0f736537519abe6044bd116cb3a058c9\"}}],\"target\":\"scheduled.txt\",\"dependencies\":[],\"origin\":{\"source\":\"runtime-task-tool\",\"sessionKey\":\"agent:main:cron:8231972c-dd93-41dc-b1d1-cf9c641e9830:run:bb58968f-6044-4e0e-b6df-eb0679315a64\",\"requestId\":\"scheduled-task-start:create\"},\"taskNodeId\":\"0b1bddc8-b456-43a5-b0f3-75a310671306\",\"domain\":\"f9e12df9a95b410705ddd8692622db770c651b865406175d7e324c57b6458895\",\"revision\":1,\"digest\":\"1147809756274b1e2b1f13d3b7c8b281dae1b52f005eb66e7644cfcdcd29d320\",\"state\":\"doing\",\"createdAt\":1794169590228,\"updatedAt\":1794169590228},\"claim\":{\"taskNodeId\":\"0b1bddc8-b456-43a5-b0f3-75a310671306\",\"sessionKey\":\"agent:main:cron:8231972c-dd93-41dc-b1d1-cf9c641e9830:run:bb58968f-6044-4e0e-b6df-eb0679315a64\",\"generation\":\"bb58968f-6044-4e0e-b6df-eb0679315a64\",\"epoch\":1,\"attemptId\":\"03cc09e4-fb5a-4f4a-9263-a3536d51adc6\",\"worktree\":\"d:/tmp/unified-management-20261109/session-task-validation/final4-scope-results/session-task-scope-complet-4a108-ing-the-project-coordinator/scheduled-workspace\",\"contractRevision\":1,\"expiresAt\":1794169710228,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}"
+      },
+      "issued": "scheduled-write"
+    },
+    {
+      "turn": "[cron:8231972c-dd93-41dc-b1d1-cf9c641e9830 Agent schedule ac",
+      "toolResults": {
+        "scheduledtaskstart": "{\"contract\":{\"objective\":\"Write the scheduled result\",\"constraints\":[\"Keep the project coordinator\"],\"acceptance\":[{\"id\":\"scheduled-artifact\",\"description\":\"Exact scheduled output\",\"verification\":{\"kind\":\"file-sha256\",\"path\":\"scheduled.txt\",\"sha256\":\"24fb0a826a2cf14cb50845e15adf58eb0f736537519abe6044bd116cb3a058c9\"}}],\"target\":\"scheduled.txt\",\"dependencies\":[],\"origin\":{\"source\":\"runtime-task-tool\",\"sessionKey\":\"agent:main:cron:8231972c-dd93-41dc-b1d1-cf9c641e9830:run:bb58968f-6044-4e0e-b6df-eb0679315a64\",\"requestId\":\"scheduled-task-start:create\"},\"taskNodeId\":\"0b1bddc8-b456-43a5-b0f3-75a310671306\",\"domain\":\"f9e12df9a95b410705ddd8692622db770c651b865406175d7e324c57b6458895\",\"revision\":1,\"digest\":\"1147809756274b1e2b1f13d3b7c8b281dae1b52f005eb66e7644cfcdcd29d320\",\"state\":\"doing\",\"createdAt\":1794169590228,\"updatedAt\":1794169590228},\"claim\":{\"taskNodeId\":\"0b1bddc8-b456-43a5-b0f3-75a310671306\",\"sessionKey\":\"agent:main:cron:8231972c-dd93-41dc-b1d1-cf9c641e9830:run:bb58968f-6044-4e0e-b6df-eb0679315a64\",\"generation\":\"bb58968f-6044-4e0e-b6df-eb0679315a64\",\"epoch\":1,\"attemptId\":\"03cc09e4-fb5a-4f4a-9263-a3536d51adc6\",\"worktree\":\"d:/tmp/unified-management-20261109/session-task-validation/final4-scope-results/session-task-scope-complet-4a108-ing-the-project-coordinator/scheduled-workspace\",\"contractRevision\":1,\"expiresAt\":1794169710228,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}",
+        "scheduledwrite": "Successfully wrote 30 bytes to D:\\tmp\\unified-management-20261109\\session-task-validation\\final4-scope-results\\session-task-scope-complet-4a108-ing-the-project-coordinator\\scheduled-workspace\\scheduled.txt\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+      },
+      "issued": "text:Scheduled effect finished."
+    }
+  ]
+}

@@ -273,6 +273,8 @@ export type TaskLedgerWarning = {
 };
 
 export type TaskLedgerSnapshot = {
+  /** Raw Workspace owner identity alongside the existing normalized storage key. */
+  sourceWorkspaceId?: string;
   schemaVersion: 1;
   workspaceId: string;
   generatedAt: string;

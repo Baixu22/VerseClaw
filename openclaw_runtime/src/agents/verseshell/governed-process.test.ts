@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { configureManagedProcessCapacity, managedProcessCapacityStats, resetManagedProcessCapacity } from "./managed-process-capacity.js";
+import { managedProcessReservations } from "./managed-process-reservation.js";
 import type { JsonObject, Observation } from "../../../../shared/verseshell/types.js";
 import { AciTransportError, type AciExecuteOptions } from "./aci-client.js";
 import {
@@ -95,6 +96,7 @@ function baseOptions(
     usePty: false,
     agentId: OWNER.agent_id,
     sessionId: OWNER.session_id,
+    identity: { sessionKey: "agent:main:managed-process", sessionGeneration: "generation-1", runId: "run-1" },
     hostPolicyApproved: true,
     runtimeEnv: CONTRACT_ENV,
     manager,
@@ -145,6 +147,9 @@ describe("VerseShell startup capacity rollback", () => {
     const fake = fakeManager([client]);
     fake.shutdownProcess.mockRejectedValueOnce(new Error("cleanup failed"));
     const handle = await startGovernedVerseShellProcess(baseOptions(fake.manager));
+    expect(managedProcessReservations()).toContainEqual(expect.objectContaining({
+      sessionKey: "agent:main:managed-process", sessionGeneration: "generation-1", runId: "run-1",
+    }));
     await expect(handle.wait()).rejects.toThrow("cleanup failed");
     expect(managedProcessCapacityStats()).toMatchObject({ live: 0, completed: 1, doubleRelease: 0 });
   });

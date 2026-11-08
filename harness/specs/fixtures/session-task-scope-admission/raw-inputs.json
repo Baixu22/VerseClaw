@@ -1,0 +1,221 @@
+{
+  "root": "D:/tmp/clawx-audit-next-20261107",
+  "sourceThreadId": "01a1b163-3acf-7ea3-995d-18bd6afc54d1",
+  "files": [
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/after-unit.json",
+      "bytes": 10322,
+      "sha256": "919fb181a785c9de460655ae94cbd145f296c3a8ae14b6090e1f85afe38e50f2"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/after-unit.log",
+      "bytes": 451,
+      "sha256": "a946b83486170f460c93a17e817dd2f1e2e68bcff7d0898a6280d8fa080ac890"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/before-manifest.json",
+      "bytes": 914,
+      "sha256": "4b79a8dd027d6042e3aa0acd5b5403ad045fe1fdbdbe7cc93d4da66c2354a8d0"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/before-node-types-result.json",
+      "bytes": 451,
+      "sha256": "5a572025824559bb3d7088bc391e164d178723becd99d019c03218a8ac17ec2b"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/before-node-types.log",
+      "bytes": 1239,
+      "sha256": "a7758d6e96c57a4cefe825b5c07a47afc30c5bb6e313a5ea0acca340f98bf3fe"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/before-unit.json",
+      "bytes": 12400,
+      "sha256": "fb4ab3b7fcfd1ec98e86961995380331a38ce759e79387a9fa6501ce93d7c84c"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/before-unit.log",
+      "bytes": 4725,
+      "sha256": "431c5a797a04927158ec784d2e9de35bc7f161df52ad8fed9eda00f4c2059630"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/before.patch",
+      "bytes": 8978,
+      "sha256": "4990899251b1f40b076f5106980821ed9f728c5a50e043d2cd2abf2a35d082e8"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/candidate-final-unit-2.json",
+      "bytes": 18181,
+      "sha256": "d92c1c0dc47c5123352efade1c038b2871a6a4a8c2986b5413e4b897454084ee"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/candidate-final-unit-2.log",
+      "bytes": 6532,
+      "sha256": "d64d351a575cc742f311cc6f4efe825caaf7dc077e4d15004d2add81af8d9e07"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/candidate-final-unit.log",
+      "bytes": 1302,
+      "sha256": "09e9fe0b4fbb6bbe5ec7f29a4895e465bc248e4527174ca44efd93da595de897"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/candidate-unit-node-result.json",
+      "bytes": 737,
+      "sha256": "b779daa9c605237cf1b552092e2f045587c6e78107fa47878b4a6f8583a6afc1"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/candidate-unit-node.log",
+      "bytes": 806,
+      "sha256": "dd0794b80ab6207606ef275fe87b263cd9ab225df6c19cb6a098468da3c48403"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/candidate-unit-result.json",
+      "bytes": 697,
+      "sha256": "db38d0d3714b0a0a767df1f370493872cc54c9dd65e0ddf04719eaa8cbe022a5"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/candidate-unit.json",
+      "bytes": 4545,
+      "sha256": "092a72f421cafccc7cd828e6330b721e2832773e2a8cf5452a9d8394234df9ee"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/candidate-unit.log",
+      "bytes": 15340,
+      "sha256": "69a61557a775610abac3be267274fc9b6bfd78afb3089d9bdac5132fb4f6d122"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/code-candidate.json",
+      "bytes": 484,
+      "sha256": "2626251e36d9b5cf17421cdc2fe20393088f0340117cb2fcb5e88923fb5d7327"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/comms-compare.log",
+      "bytes": 3490,
+      "sha256": "0eea12c2eff106a845edfa91a3c56a1e7dffc69e35c85ba36df65b95f8fa15e9"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/comms-replay.log",
+      "bytes": 111,
+      "sha256": "4a70b67f27c06f2631cb44003d9a85b02b168de6f9ecd5885e0240044e083029"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/context.log",
+      "bytes": 3050,
+      "sha256": "bb48b77a710fff591eaed6b4760ec7c327b8627f0cef7cd6d920764e307e8dd8"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/contract-final.log",
+      "bytes": 24,
+      "sha256": "934212edaaa4da875edce79057ad1a402c935b6da181e5e400ad9e96e0cabf10"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/contract.log",
+      "bytes": 811,
+      "sha256": "3ce5a61398a0118084822ada65e13ee9ba8fe5fc68671a6eee3cf74bb4816aee"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/ext-bridge-result.json",
+      "bytes": 288,
+      "sha256": "7f5b42baea6604611b0482f819f94515a2a40e810bba62720192ccaa350fbf65"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/ext-bridge.log",
+      "bytes": 74,
+      "sha256": "f01521bac4f42f37a0daeca717c0f0e68c6aef0b468265b3b5f3fef2b7176f0d"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/harness-preview.log",
+      "bytes": 110,
+      "sha256": "c774ffb1cffec075feb5fa6bb51098b53cebb739de756fb41bf22a4f3ba59a79"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/harness-validate.log",
+      "bytes": 68,
+      "sha256": "6fae85252188f0860092469731a81160b8dd59460369a30ba6689f120c01f87c"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/install-offline-corrected.log",
+      "bytes": 16656,
+      "sha256": "711332cce7125b38689ffd43f011ed04a9753e7605251d28e6aa41325b0a4a5a"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/install-offline.log",
+      "bytes": 515,
+      "sha256": "5dc39c60775a628d25c79251e3a345746db5941d03ec152241b431ff651899b3"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/install-runtime-offline.log",
+      "bytes": 10460,
+      "sha256": "0544acde88aef8f31d9889b722f88ffe341d99b7e05ead4ec40558f84113ada5"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/lint-final.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/lint-result.json",
+      "bytes": 553,
+      "sha256": "00a7bc375a57e0bb51d2f8923c9e68b4a2e9466d2770e204c303085326b4a07b"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/lint.log",
+      "bytes": 809,
+      "sha256": "1b9eed27760d6c86a248550f6cf283af54302eacb75e6d6ef6c7236af43eb7aa"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/main-unit.json",
+      "bytes": 18039,
+      "sha256": "9c470f843d19576eb0c6be9819c95f591444fe8cfa48b18ddd125f2b09c60e9b"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/main-unit.log",
+      "bytes": 6481,
+      "sha256": "f66b0ea96db603c28a49674cd19d868ead3ac7a250eec77a0f7b53a097e0fb8e"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/node-types-final-result.json",
+      "bytes": 79,
+      "sha256": "c230d287aff7237f1a0a5e1b483899f27496ec04d088229cb15290183788ab49"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/node-types-final.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/node-types-result.json",
+      "bytes": 444,
+      "sha256": "2e829a712a203f351ea06129f2067f118eb6a488c0c1c08e1e4c9beb98275064"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/node-types.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/prerequisite.json",
+      "bytes": 374,
+      "sha256": "a3854f7fcac51d3d67f9c0cc8437bb8e298d95316a4e4a71fdc2e4017501cd0b"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/test-types-final-result.json",
+      "bytes": 79,
+      "sha256": "b4e14fd39b8ab111c7aeaaa487e2e7793c1390fc1f810ef4748447edabc0ace4"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/test-types-final.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/test-types-result.json",
+      "bytes": 442,
+      "sha256": "7a5117a74cabfa3229b7eb32d3aadbfcd7c1a2c0c23a3edf781bcbcc9a55e70d"
+    },
+    {
+      "path": "D:/tmp/clawx-audit-next-20261107/test-types.log",
+      "bytes": 827,
+      "sha256": "f99cc8abe28f793ec1a33f7df713aead95bc7db682343f0cc0e7845836b2a055"
+    }
+  ]
+}

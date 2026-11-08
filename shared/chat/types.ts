@@ -46,6 +46,8 @@ export interface RawMessage {
   content: unknown; // string | ContentBlock[]
   timestamp?: number;
   id?: string;
+  /** Transcript-owner entry identity, distinct from provider or optimistic IDs. */
+  __openclaw?: { id?: string; seq?: number; [key: string]: unknown };
   toolCallId?: string;
   toolName?: string;
   details?: unknown;
@@ -139,6 +141,8 @@ export interface ContentBlock {
 /** Session from sessions.list */
 export interface ChatSession {
   key: string;
+  /** Physical generation returned by the runtime session owner. */
+  sessionId?: string;
   label?: string;
   displayName?: string;
   derivedTitle?: string;
@@ -152,6 +156,7 @@ export interface ChatSession {
   status?: string;
   hasActiveRun?: boolean;
   parentSessionKey?: string;
+  spawnedBy?: string;
   forkedFromParent?: boolean;
   /** #180: parent transcript entry id the child was branched at. */
   forkedFromLeafId?: string;
@@ -192,6 +197,11 @@ export type ChatResendUserMessageInput = {
  * the prior 8-positional-arg signature; callers pass only the fields they need.
  */
 export type SendOptions = {
+  workspaceId?: string | null;
+  targetSessionKey?: string;
+  expectedSessionGeneration?: string;
+  idempotencyKey?: string;
+  handoffOperationId?: string;
   attachments?: Array<{
     fileName: string;
     mimeType: string;
@@ -271,6 +281,8 @@ export interface ChatState {
   // Sessions
   sessions: ChatSession[];
   currentSessionKey: string;
+  /** Renderer visit identity, including same-key view resets. */
+  viewRevision?: number;
   currentAgentId: string;
   /** First user message text per session key, used as display label */
   sessionLabels: Record<string, string>;
@@ -291,7 +303,7 @@ export interface ChatState {
 
   // Actions
   hydrateStartup: () => Promise<void>;
-  loadSessions: () => Promise<void>;
+  loadSessions: (options?: { force?: boolean }) => Promise<void>;
   switchSession: (key: string) => void;
   resetSessionView: (key?: string, options?: { deferSessionEntry?: boolean }) => void;
   clearSessionView: () => void;

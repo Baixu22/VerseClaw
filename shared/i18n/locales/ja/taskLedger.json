@@ -63,7 +63,8 @@
     "nodePlaceholder": "セッション対象",
     "noNode": "ノードなし",
     "link": "セッションリンク",
-    "linkedFromChat": "現在のチャットセッションからリンク"
+    "linkedFromChat": "現在のチャットセッションからリンク",
+    "open": "会話を開く"
   },
   "summary": {
     "title": "タスク台帳",
@@ -77,7 +78,23 @@
     "blockers": "ブロック項目",
     "needsReview": "要レビュー",
     "decisions": "最近の決定",
-    "open": "台帳を開く"
+    "open": "台帳を開く",
+    "projectTasks": "プロジェクトのタスク",
+    "sessionTasks": "セッションのタスク",
+    "refresh": "タスク範囲を更新",
+    "recordedStatus": "記録：{{status}}",
+    "returnSession": "セッションに戻る",
+    "scope": {
+      "ready": "業務タスクが関連付けられています",
+      "empty": "相談中 · 業務タスクはまだありません",
+      "unavailable": "タスクサービスを利用できません",
+      "stale": "タスク範囲が変更されました · 更新してください"
+    },
+    "select": "このタスクを使用",
+    "selected": "選択済み",
+    "useTask": "タスクを使用：{{title}}",
+    "selectBusy": "タスクを切り替える前に現在の実行とリソースを完了または停止してください。",
+    "selectFailed": "タスクを選択できませんでした。範囲を更新して再試行してください。"
   },
   "toast": {
     "created": "タスク台帳ノードを作成しました",

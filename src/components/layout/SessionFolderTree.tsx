@@ -3,8 +3,7 @@
  *
  * Design: docs/dev/session-workstreams-design.md. Workgroups are scoped to the
  * current project and rendered as one flat level. Unfiled sessions remain a
- * simple activity-sorted list; parentSessionKey never creates a second visual
- * tree inside a workgroup.
+ * activity-sorted family list; family disclosure never changes filing.
  *
  * Filing a session into a workstream is NOT this tree's job any more: every
  * session row carries the same ⋯ menu (SessionContextMenu), whose move page
@@ -12,7 +11,7 @@
  * means one place to manage a session, at every depth. The tree keeps the
  * drag-to-group gesture, which is spatial and has no menu equivalent.
  */
-import { memo, useCallback, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   FolderPlus,
@@ -20,6 +19,11 @@ import {
   Trash2,
   Check,
   X,
+  ChevronRight,
+  ChevronDown,
+  GitFork,
+  CornerDownRight,
+  Bot,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
@@ -27,8 +31,10 @@ import { SidebarRow } from './SidebarRow';
 import type { SessionFolder, WorkspaceProfile } from '@shared/types/workspace';
 import {
   buildSidebarWorkspaceFolderGroups,
+  threadSessionsByLineage,
   workstreamAccent,
   type FlatWorkstream,
+  type LineageRow,
   type SidebarSessionEntry,
   type SidebarSessionSort,
 } from './session-buckets';
@@ -210,11 +216,8 @@ function WorkstreamSection({
           </SidebarRow>
         </div>
       )}
-      {rows.length > 0 && (
-        /* Members stay mounted and fold via grid-rows so the collapse can
-           animate; `aria-hidden` keeps a collapsed stream out of the
-           accessibility tree the way the workspace group does. */
-        <div className={cn('ws-members-outer', !collapsed && 'open')} aria-hidden={collapsed}>
+      {!collapsed && rows.length > 0 && (
+        <div className={cn('ws-members-outer', !collapsed && 'open')} aria-hidden={collapsed} inert={collapsed}>
           <div className="ws-members">
             {rows.map((row) => row.rendered)}
           </div>
@@ -226,6 +229,8 @@ function WorkstreamSection({
 
 interface SessionFolderTreeMemoProps {
   workspace: WorkspaceProfile;
+  currentSessionKey?: string;
+  renderLimit?: number;
   sessions: SidebarSessionEntry[];
   collapsedFolders: Record<string, boolean>;
   sessionStatusKinds: Record<string, SidebarSessionStatusKind | undefined>;
@@ -243,6 +248,8 @@ interface SessionFolderTreeMemoProps {
 
 function SessionFolderTreeInner({
   workspace,
+  currentSessionKey,
+  renderLimit = Number.POSITIVE_INFINITY,
   sessions,
   collapsedFolders,
   sessionStatusKinds,
@@ -259,6 +266,8 @@ function SessionFolderTreeInner({
   const [newFolderName, setNewFolderName] = useState('');
   const [draggedSessionKey, setDraggedSessionKey] = useState<string | null>(null);
   const [dropTargetKey, setDropTargetKey] = useState<string | null>(null);
+  const [expandedFamilies, setExpandedFamilies] = useState<Record<string, boolean>>({});
+  const revealedSelection = useRef<string | undefined>(undefined);
   /**
    * `dragOver` can fire in the same native gesture before React has committed
    * the drag-start state update. The ref keeps the active drag key available
@@ -278,6 +287,46 @@ function SessionFolderTreeInner({
     node,
     pathPrefix: [],
   })), [groups.folders]);
+  const rowGroups = useMemo(() => {
+    const knownSessions = sessions.map((entry) => entry.session);
+    return [
+      ...streams.map((stream) => ({ folderId: stream.node.folder.id,
+        rows: threadSessionsByLineage(stream.node.sessions, { knownSessions }) })),
+      { folderId: null, rows: threadSessionsByLineage(groups.rootSessions, { knownSessions }) },
+    ];
+  }, [streams, groups.rootSessions, sessions]);
+  const visibleKeys = useMemo(() => {
+    const available = rowGroups.flatMap(({ folderId, rows }) => folderId && collapsedFolders[folderId] ? [] : rows)
+      .filter((row) => !row.originKey || expandedFamilies[row.originKey] === true);
+    const availableKeys = new Set(available.map((row) => row.entry.session.key));
+    const byKey = new Map(rowGroups.flatMap(({ rows }) => rows).map((row) => [row.entry.session.key, row]));
+    const priorityKeys = new Set<string>();
+    const visited = new Set<string>();
+    let ancestor = currentSessionKey ? byKey.get(currentSessionKey) : undefined;
+    if (currentSessionKey) priorityKeys.add(currentSessionKey);
+    if (ancestor?.originKey) priorityKeys.add(ancestor.originKey);
+    while (ancestor && !visited.has(ancestor.entry.session.key)) {
+      const key = ancestor.entry.session.key;
+      visited.add(key); priorityKeys.add(key);
+      ancestor = ancestor.relation?.parentSessionKey ? byKey.get(ancestor.relation.parentSessionKey) : undefined;
+    }
+    // Selection and visible ancestors take slots from the same workspace budget.
+    const visible = new Set([...priorityKeys].filter((key) => availableKeys.has(key)).slice(0, renderLimit));
+    for (const row of available) {
+      if (visible.size >= renderLimit) break;
+      visible.add(row.entry.session.key);
+    }
+    return visible;
+  }, [rowGroups, collapsedFolders, expandedFamilies, currentSessionKey, renderLimit]);
+  useEffect(() => {
+    if (!currentSessionKey || revealedSelection.current === currentSessionKey) return;
+    const group = [groups.rootSessions, ...groups.folders.map((folder) => folder.sessions)]
+      .find((entries) => entries.some((entry) => entry.session.key === currentSessionKey));
+    if (!group) return;
+    revealedSelection.current = currentSessionKey;
+    const row = threadSessionsByLineage(group).find((entry) => entry.entry.session.key === currentSessionKey);
+    if (row?.originKey) setExpandedFamilies((current) => ({ ...current, [row.originKey!]: true }));
+  }, [currentSessionKey, groups]);
 
   const sessionNameByKey = useMemo(() => new Map(
     sessions.map((entry) => [
@@ -422,12 +471,35 @@ function SessionFolderTreeInner({
     workspace.id,
   ]);
 
-  const toRenderedRows = useCallback((entries: SidebarSessionEntry[]): RenderedSessionRow[] => (
-    entries.map((entry) => ({
-      entry,
-      rendered: renderDraggableSession(entry),
-    }))
-  ), [renderDraggableSession]);
+  const toRenderedRows = useCallback((rows: LineageRow[]): RenderedSessionRow[] => {
+    const counts = new Map<string, number>();
+    for (const row of rows) if (row.originKey) counts.set(row.originKey, (counts.get(row.originKey) ?? 0) + 1);
+    return rows.map((row) => {
+      const { entry, relation } = row;
+      const key = entry.session.key;
+      const count = counts.get(key) ?? 0;
+      const expanded = expandedFamilies[key] === true;
+      const visible = visibleKeys.has(key);
+      const Icon = relation?.kind === 'fork' ? GitFork : relation?.kind === 'spawn' ? Bot : CornerDownRight;
+      const toggle = (open = !expanded) => setExpandedFamilies((current) => ({ ...current, [key]: open }));
+      return { entry, rendered: visible ? (
+        <div key={key} className="ws-family-row" data-lineage-depth={row.lineageDepth} data-source-status={row.sourceStatus}>
+          {count > 0 ? (
+            <button type="button" className="ws-family-toggle" data-testid={`session-family-toggle-${key}`}
+              aria-expanded={expanded} aria-label={t('chat:sessionFamily.toggle', { count })}
+              onClick={() => toggle()} onKeyDown={(event) => {
+                if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); toggle(event.key === 'ArrowRight'); }
+              }}>
+              {expanded ? <ChevronDown /> : <ChevronRight />}<span>{count}</span>
+            </button>
+          ) : relation?.kind !== 'unknown' || row.sourceStatus === 'source-unavailable' ? (
+            <span className="ws-family-kind" title={t(`chat:sessionFamily.kind.${relation?.kind ?? 'unknown'}`)}><Icon /></span>
+          ) : null}
+          {renderDraggableSession(entry)}
+        </div>
+      ) : null };
+    });
+  }, [expandedFamilies, renderDraggableSession, visibleKeys, t]);
 
   return (
     /* Not `space-y-0.5`: the base sidebar rule neutralizes that utility by
@@ -435,11 +507,11 @@ function SessionFolderTreeInner({
        ate the whitespace rhythm that now carries grouping. Spacing is owned by
        `.ws-stream` / `.ws-time-slice` in codex-sidebar.css instead. */
     <div className="ws-tree" data-has-groups={streams.length > 0 ? 'true' : undefined}>
-      {streams.map((stream) => (
+      {streams.map((stream, index) => (
         <WorkstreamSection
           key={stream.node.folder.id}
           stream={stream}
-          rows={toRenderedRows(stream.node.sessions)}
+          rows={toRenderedRows(rowGroups[index].rows)}
           collapsed={collapsedFolders[stream.node.folder.id] ?? false}
           sessionStatusKinds={sessionStatusKinds}
           onToggleFolder={onToggleFolder}
@@ -460,9 +532,7 @@ function SessionFolderTreeInner({
           <span>{t('chat:workgroups.ungrouped')}</span>
         </div>
       )}
-      {/* Root sessions already arrive activity-sorted from the bucket helper.
-          Keep them as direct rows: no date headings and no second-level lineage. */}
-      {groups.rootSessions.map((entry) => renderDraggableSession(entry))}
+      {toRenderedRows(rowGroups[rowGroups.length - 1].rows).map((row) => row.rendered)}
       {creatingFolder ? (
         <div className="flex items-center gap-1 px-1.5 py-1">
           <FolderPlus className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />

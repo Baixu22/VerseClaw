@@ -11,6 +11,8 @@
  * be proven from the recorded facts is `unknown` — never guessed from a title,
  * label, model name, or message text.
  */
+import { classifyDerivation, type SessionDerivationKind } from './session-derivation.js';
+
 export const SESSION_STAGE_SCHEMA = 'SessionStage/v1' as const;
 
 export type SessionStage =
@@ -91,6 +93,8 @@ export type SessionStageProjection = {
     usedFacts: string[];
     /** Facts that were missing and would have made the answer stronger. */
     missingFacts: string[];
+    /** The exact relation within the coarser continuity-stage vocabulary. */
+    derivationKind?: SessionDerivationKind;
   };
   /** Identity the projection was computed for; never `scopeKey`. */
   identity: {
@@ -118,6 +122,7 @@ export function deriveSessionStage(facts: SessionStageFacts): SessionStageProjec
   const reasons: SessionStageReason[] = [];
   const usedFacts: string[] = [];
   const missingFacts: string[] = [];
+  const derivation = classifyDerivation(facts);
 
   const identity = {
     ...(nonEmpty(facts.sessionKey) ? { sessionKey: facts.sessionKey.trim() } : {}),
@@ -127,7 +132,8 @@ export function deriveSessionStage(facts: SessionStageFacts): SessionStageProjec
   const build = (stage: SessionStage): SessionStageProjection => ({
     schema: SESSION_STAGE_SCHEMA,
     stage,
-    stageEvidence: { reasons, usedFacts, missingFacts },
+    stageEvidence: { reasons, usedFacts, missingFacts,
+      ...(derivation.kind !== 'unknown' ? { derivationKind: derivation.kind } : {}) },
     identity,
   });
 
@@ -143,7 +149,7 @@ export function deriveSessionStage(facts: SessionStageFacts): SessionStageProjec
   const forkLeaf = nonEmpty(facts.forkedFromLeafId);
   const forkStamp = finitePositive(facts.forkedFromTimestamp);
   const parentKey = nonEmpty(facts.parentSessionKey);
-  const spawnedBy = nonEmpty(facts.spawnedBy);
+  if (derivation.diagnostics?.length) reasons.push('contradictory-stage-facts');
 
   // A fork triple that disagrees with itself is contradictory, not a fork:
   // a leaf id with no parent key names no branch to have come from.
@@ -154,7 +160,7 @@ export function deriveSessionStage(facts: SessionStageFacts): SessionStageProjec
     return build('unknown');
   }
 
-  if (facts.forkedFromParent === true || (forkLeaf && parentKey)) {
+  if (derivation.kind === 'fork') {
     reasons.push(forkLeaf || forkStamp ? 'fork-triple' : 'fork-flag');
     usedFacts.push('forkedFromParent');
     if (forkLeaf) usedFacts.push('forkedFromLeafId');
@@ -163,15 +169,16 @@ export function deriveSessionStage(facts: SessionStageFacts): SessionStageProjec
     return build('forked');
   }
 
-  if (parentKey) {
-    reasons.push('handoff-parent-key');
-    usedFacts.push('parentSessionKey');
+  if (derivation.kind === 'spawn') {
+    reasons.push('spawn-parent-key');
+    usedFacts.push('spawnedBy');
+    if (parentKey) usedFacts.push('parentSessionKey');
     return build('handedOff');
   }
 
-  if (spawnedBy) {
-    reasons.push('spawn-parent-key');
-    usedFacts.push('spawnedBy');
+  if (derivation.kind === 'handoff') {
+    reasons.push('handoff-parent-key');
+    usedFacts.push('parentSessionKey');
     return build('handedOff');
   }
 

@@ -652,7 +652,7 @@ describe('long-session continuity context', () => {
     expect(chatPayload.message).not.toContain('unverified prose');
     expect(chatPayload.message.endsWith('Continue the task')).toBe(true);
 
-    getPersistedCoordinatorBindingMock.mockResolvedValueOnce({
+    getPersistedCoordinatorBindingMock.mockResolvedValue({
       schemaVersion: 1, workspaceId: WORKSPACE_ID, agentId: 'architect', sessionKey: SESSION_KEY,
       sessionGeneration: 'session-generation-1', taskLedgerReferences: [{ direction: 'workboard-to-task-ledger', taskLedgerNodeId: 'task-1', source: 'runtime' }],
       environment: { kind: 'local', canonicalRoot: ROOT, backend: 'local-workspace', branch: 'main', detachedHead: false, setupProfile: null },
@@ -660,16 +660,14 @@ describe('long-session continuity context', () => {
       createdAt: '2026-10-23T04:00:00.000Z', updatedAt: '2026-10-23T05:40:00.000Z',
     });
     gatewayManager.rpc.mockClear();
-    await api.sendWithMedia({
+    const invalidated = await api.sendWithMedia({
       sessionKey: SESSION_KEY,
       workspaceId: WORKSPACE_ID,
       message: 'After reset',
       idempotencyKey: 'idem-d1-invalidated',
-      activeTaskNodeId: 'task-1',
     });
-    const fallbackPayload = gatewayManager.rpc.mock.calls.find((call) => call[0] === 'chat.send')?.[1] as { message: string };
-    expect(fallbackPayload.message).not.toContain('Continuity context (owner-derived');
-    expect(fallbackPayload.message).toContain('Task Ledger context (untrusted metadata)');
+    expect(invalidated).toMatchObject({ success: false, error: expect.stringContaining('COORDINATOR_BINDING_INVALID') });
+    expect(gatewayManager.rpc.mock.calls.every((call) => call[0] !== 'chat.send')).toBe(true);
     expect(gatewayManager.rpc.mock.calls.every((call) => call[0] !== 'memory.surface' && call[0] !== 'sessions.compressionArtifact')).toBe(true);
   });
 });

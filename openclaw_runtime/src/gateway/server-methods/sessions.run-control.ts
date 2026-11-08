@@ -22,16 +22,11 @@ import {
 import { renderRecoveryContextProjection } from "../../../packages/agent-core/src/harness/compaction/compression-artifact.js";
 import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../../agents/agent-scope.js";
 import { createCheckpointRollbackDeps } from "../../agents/checkpoint-rollback-executor.js";
-import {
-  executeReplayRollback,
-} from "../../agents/replay-rollback-authority.js";
+import { executeReplayRollback } from "../../agents/replay-rollback-authority.js";
 import { getLongTaskCheckpointById } from "../../agents/long-task-control/store.js";
 import { checkpointContentDiff } from "../../agents/checkpoint-diff.js";
 import { type SessionEntry } from "../../config/sessions.js";
-import {
-  normalizeAgentId,
-  parseAgentSessionKey,
-} from "../../routing/session-key.js";
+import { normalizeAgentId, parseAgentSessionKey } from "../../routing/session-key.js";
 import { resolveSessionKeyForRun } from "../server-session-key.js";
 import { resolveSessionStoreAgentId } from "../session-store-key.js";
 import { listSessionCompactionCheckpoints } from "../session-compaction-checkpoints.js";
@@ -194,6 +189,29 @@ async function handleSessionSend(params: {
   const requestedAgentId = requestedAgent.agentId;
   const loaded = loadSessionEntry(key, { agentId: requestedAgentId });
   let { entry, canonicalKey, storePath } = loaded;
+  if (typeof p.expectedSessionId === "string" && entry?.sessionId !== p.expectedSessionId) {
+    params.respond(
+      false,
+      undefined,
+      errorShape(ErrorCodes.INVALID_REQUEST, "Worker session generation changed"),
+    );
+    return;
+  }
+  if (p.requesterSessionKey || p.expectedRequesterSessionId) {
+    if (
+      typeof p.requesterSessionKey !== "string" ||
+      typeof p.expectedRequesterSessionId !== "string" ||
+      loadSessionEntry(p.requesterSessionKey).entry?.sessionId !== p.expectedRequesterSessionId ||
+      (entry?.spawnedBy ?? entry?.parentSessionKey) !== p.requesterSessionKey
+    ) {
+      params.respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, "Worker requester generation changed"),
+      );
+      return;
+    }
+  }
   // Reject sends/steers targeting sessions whose owning agent was deleted (#65524).
   const deletedAgentId = resolveDeletedAgentIdFromSessionKey(cfg, canonicalKey);
   if (deletedAgentId !== null) {
@@ -290,6 +308,17 @@ async function handleSessionSend(params: {
         sessionKey: canonicalKey,
         ...(canonicalKey === "global" && requestedAgentId ? { agentId: requestedAgentId } : {}),
         message: (p as { message: string }).message,
+        ...(typeof p.expectedSessionId === "string"
+          ? { expectedSessionGeneration: p.expectedSessionId }
+          : {}),
+        ...(typeof p.requesterSessionKey === "string"
+          ? { requesterSessionKey: p.requesterSessionKey }
+          : {}),
+        ...(typeof p.expectedRequesterSessionId === "string"
+          ? { expectedRequesterSessionId: p.expectedRequesterSessionId }
+          : {}),
+        ...(typeof p.workspaceId === "string" ? { workspaceId: p.workspaceId } : {}),
+        ...(typeof p.workspaceDir === "string" ? { workspaceDir: p.workspaceDir } : {}),
         thinking: (p as { thinking?: string }).thinking,
         attachments: (p as { attachments?: unknown[] }).attachments,
         timeoutMs: (p as { timeoutMs?: number }).timeoutMs,
@@ -408,7 +437,7 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
         : 1400;
     const projection = artifact
       ? renderRecoveryContextProjection(artifact, budgetTokens)
-      : checkpoint.summary ?? "";
+      : (checkpoint.summary ?? "");
     if (!artifact) {
       warnings.push("legacy_summary_fallback");
     }
@@ -573,11 +602,17 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
       respond(
         false,
         undefined,
-        errorShape(ErrorCodes.NOT_FOUND, `checkpoint "${p.checkpointId}" not found for session ${canonicalKey}`),
+        errorShape(
+          ErrorCodes.NOT_FOUND,
+          `checkpoint "${p.checkpointId}" not found for session ${canonicalKey}`,
+        ),
       );
       return;
     }
-    const workspaceRoot = resolveAgentWorkspaceDir(cfg, resolveSessionStoreAgentId(cfg, canonicalKey));
+    const workspaceRoot = resolveAgentWorkspaceDir(
+      cfg,
+      resolveSessionStoreAgentId(cfg, canonicalKey),
+    );
     // #176: prefer the journal identity stamped on the checkpoint itself; older
     // checkpoints predate that stamp and fall back to the session store's
     // transcript UUID. The canonical session key addresses a *different*
@@ -614,7 +649,10 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
       respond(
         false,
         undefined,
-        errorShape(ErrorCodes.UNAVAILABLE, `checkpoint restore failed: ${result.reason} (${result.detail})`),
+        errorShape(
+          ErrorCodes.UNAVAILABLE,
+          `checkpoint restore failed: ${result.reason} (${result.detail})`,
+        ),
       );
       return;
     }
@@ -663,11 +701,17 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
       respond(
         false,
         undefined,
-        errorShape(ErrorCodes.NOT_FOUND, `checkpoint "${p.checkpointId}" not found for session ${canonicalKey}`),
+        errorShape(
+          ErrorCodes.NOT_FOUND,
+          `checkpoint "${p.checkpointId}" not found for session ${canonicalKey}`,
+        ),
       );
       return;
     }
-    const workspaceRoot = resolveAgentWorkspaceDir(cfg, resolveSessionStoreAgentId(cfg, canonicalKey));
+    const workspaceRoot = resolveAgentWorkspaceDir(
+      cfg,
+      resolveSessionStoreAgentId(cfg, canonicalKey),
+    );
     const journalSessionId = resolveCheckpointJournalSessionId(checkpoint, loaded.entry?.sessionId);
     if (!journalSessionId) {
       respond(
@@ -700,12 +744,7 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
 
   "sessions.queueDrain": async ({ params, respond, context }) => {
     if (
-      !assertValidParams(
-        params,
-        validateSessionsQueueDrainParams,
-        "sessions.queueDrain",
-        respond,
-      )
+      !assertValidParams(params, validateSessionsQueueDrainParams, "sessions.queueDrain", respond)
     ) {
       return;
     }
@@ -1168,6 +1207,18 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
       agentId: requestedAgent.agentId,
     });
     const { stopSessionRuntime } = await loadSessionsRuntimeModule();
+    if (
+      params.expectedSessionId &&
+      loadSessionEntry(key, { agentId: requestedAgent.agentId }).entry?.sessionId !==
+        params.expectedSessionId
+    ) {
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, "Session generation changed before stop"),
+      );
+      return;
+    }
     const result = await stopSessionRuntime({
       cfg,
       key,

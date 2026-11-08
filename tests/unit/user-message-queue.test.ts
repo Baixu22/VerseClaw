@@ -1,7 +1,7 @@
 import { existsSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   completeDrainedUserMessages,
@@ -9,7 +9,10 @@ import {
   enqueueUserMessage,
   peekUserMessageCount,
   restoreDrainingUserMessages,
+  setQueueDrainCallback,
+  triggerQueueDrain,
 } from '../../openclaw_runtime/src/agents/user-message-queue';
+import { replyRunRegistry } from '../../openclaw_runtime/src/auto-reply/reply/reply-run-registry';
 import {
   listLongTaskCheckpoints,
   listLongTaskInterventions,
@@ -43,6 +46,26 @@ afterEach(() => {
 });
 
 describe('persistent user message queue', () => {
+  it('retries persisted input after the logical reply owner finishes following its embedded handle', async () => {
+    const sessionKey = 'agent:main:reply-owner-queue';
+    const operation = replyRunRegistry.begin({ sessionKey, sessionId: 'queue-generation', resetTriggered: false });
+    enqueueUserMessage(sessionKey, { text: 'Queued follow-up', idempotencyKey: 'reply-owner-queued' });
+    const drain = vi.fn(async () => {
+      if (replyRunRegistry.isActive(sessionKey)) return;
+      completeDrainedUserMessages(drainUserMessages(sessionKey));
+    });
+    setQueueDrainCallback(drain);
+    try {
+      triggerQueueDrain(sessionKey);
+      expect(peekUserMessageCount(sessionKey)).toBe(1);
+      operation.complete();
+      await vi.waitFor(() => expect(peekUserMessageCount(sessionKey)).toBe(0));
+      expect(drain).toHaveBeenCalledTimes(2);
+    } finally {
+      operation.complete();
+      setQueueDrainCallback(async () => {});
+    }
+  });
   it('deduplicates queued messages by idempotency key', () => {
     const sessionKey = 'agent:main:queue-idempotent';
 

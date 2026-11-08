@@ -29,10 +29,13 @@ import { describeUserError, toastUserError } from '@/lib/user-error';
 import type { SurfaceErrorState } from '@/lib/async-surface-state';
 import { extractText, normalizeMessageRole } from '@/pages/Chat/message-utils';
 import { useChatStore } from '@/stores/chat';
-import { useSessionActivityStore } from '@/stores/session-activity';
+import { useSessionActivityStore, selectSessionActivitySnapshot } from '@/stores/session-activity';
+import { useWorkspacesStore } from '@/stores/workspaces';
+import { SessionDelegationStatus } from '@/components/chat/SessionDelegationStatus';
 import { subagentIdentity } from '@shared/subagent-identity';
 import type { RawMessage } from '@shared/chat/types';
 import type { SessionActivitySubagentStatus } from '@shared/types/session-activity';
+const EMPTY_TRANSCRIPT: RawMessage[] = [];
 
 /** `agent:<id>:<session>` — the child's own agent id, for the history call. */
 function agentIdFromSessionKey(sessionKey: string): string | null {
@@ -50,9 +53,20 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
   const { t } = useTranslation('chat');
   const parentSessionKey = useChatStore((s) => s.currentSessionKey);
   const anchorAgentId = useChatStore((s) => s.currentAgentId);
-  const subagents = useSessionActivityStore((s) => s.snapshots[parentSessionKey]?.subagents);
+  const workspace = useWorkspacesStore((s) => s.activeWorkspace);
+  const snapshot = useSessionActivityStore((s) => selectSessionActivitySnapshot(s, workspace?.id, parentSessionKey));
+  const subagents = snapshot?.subagents;
+  const scopeKey = JSON.stringify([workspace?.id, parentSessionKey, childSessionKey, snapshot?.session.sessionId]);
+  const viewScope = useMemo(() => ({ key: scopeKey }), [scopeKey]);
+  const scopeRef = useRef(viewScope); scopeRef.current = viewScope;
+  const loadVersion = useRef(0);
+  const [childGeneration, setChildGeneration] = useState<string | null>(null);
+  const [sendPhase, setSendPhase] = useState<'accepted' | 'queued' | 'steered' | 'rejected' | 'unknown' | null>(null);
+  const sendIntent = useRef<{ text: string; scope: string; id: string; generation: string } | null>(null);
+  useEffect(() => { setSendPhase(null); setDispatching(false); }, [scopeKey]);
 
-  const [transcript, setTranscript] = useState<RawMessage[]>([]);
+  const [loadedTranscript, setLoadedTranscript] = useState<{ scope: object; messages: RawMessage[]; model?: string } | null>(null);
+  const transcript = loadedTranscript?.scope === viewScope ? loadedTranscript.messages : EMPTY_TRANSCRIPT;
   const [transcriptError, setTranscriptError] = useState<SurfaceErrorState | null>(null);
   const [loading, setLoading] = useState(false);
   const [dispatchTask, setDispatchTask] = useState('');
@@ -69,26 +83,46 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
   const identity = useMemo(() => subagentIdentity(childSessionKey), [childSessionKey]);
 
   const load = useCallback(async () => {
+    const version = ++loadVersion.current;
     setLoading(true);
+    setLoadedTranscript(null);
+    setChildGeneration(null);
     try {
       const result = await hostApi.sessions.history({
         sessionKey: childSessionKey,
         agentId: agentIdFromSessionKey(childSessionKey) ?? anchorAgentId,
+        expectedParentSessionKey: parentSessionKey,
+        ...(sendIntent.current?.scope === scopeKey ? { expectedSessionGeneration: sendIntent.current.generation,
+          workerSendIdempotencyKey: sendIntent.current.id } : {}),
       });
-      setTranscript(result.messages ?? []);
+      if (scopeRef.current !== viewScope || version !== loadVersion.current) return;
+      if (!result.success || !result.sessionGeneration) throw new Error(result.error ?? 'Worker transcript unavailable');
+      setLoadedTranscript({ scope: viewScope, messages: result.messages ?? [], model: result.model });
+      setChildGeneration(result.sessionGeneration);
+      const intent = sendIntent.current;
+      const receiptPhase = intent?.scope === scopeKey
+        ? result.workerSendReceipt?.idempotencyKey === intent.id ? result.workerSendReceipt.phase
+          : result.messages?.some((message) => (message as RawMessage & { idempotencyKey?: string }).idempotencyKey === `${intent.id}:user`) ? 'accepted' : null
+        : null;
+      if (receiptPhase && intent) {
+        setSendPhase(receiptPhase);
+        setDispatchTask((current) => current === intent.text ? '' : current);
+        sendIntent.current = null;
+      }
       setTranscriptError(null);
     } catch (error) {
+      if (scopeRef.current !== viewScope || version !== loadVersion.current) return;
       // R2: a failed history query is NOT an empty transcript — surface it.
-      setTranscript([]);
+      setLoadedTranscript(null);
       setTranscriptError({
         messageKey: 'agentsPanel.transcriptFailed',
         errorId: describeUserError(error).errorId,
         retry: () => void load(),
       });
     } finally {
-      setLoading(false);
+      if (scopeRef.current === viewScope && version === loadVersion.current) setLoading(false);
     }
-  }, [anchorAgentId, childSessionKey]);
+  }, [anchorAgentId, childSessionKey, parentSessionKey, scopeKey, viewScope]);
 
   useEffect(() => {
     void load();
@@ -102,31 +136,26 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
   const handleDispatch = useCallback(async () => {
     const task = dispatchTask.trim();
     if (!task || dispatching) return;
-    const roleName = entry?.role || 'planner';
     setDispatching(true);
     try {
-      const response = await hostApi.gateway.rpc('orchestrator.run', {
-        task,
-        sessionKey: parentSessionKey,
-        agentId: anchorAgentId,
-        workers: [{ roleName, task }],
-        includeVerifier: false,
-        workerCommunication: 'none',
-      });
-      const rejected = response && typeof response === 'object'
-        && (response as { success?: boolean }).success === false;
-      if (rejected) {
-        const message = (response as { error?: unknown }).error;
-        throw new Error(typeof message === 'string' ? message : t('agentsPanel.dispatchFailed'));
-      }
-      setDispatchTask('');
-      toast.success(t('agentsPanel.dispatchStarted', { role: identity.name }));
+      if (!workspace?.id || !snapshot?.session.sessionId || !childGeneration) throw new Error(t('agentsPanel.transcriptUnavailable'));
+      if (sendIntent.current?.text !== task || sendIntent.current.scope !== scopeKey) sendIntent.current = { text: task, scope: scopeKey, id: crypto.randomUUID(), generation: childGeneration };
+      const response = await hostApi.sessions.sendWorker({ workspaceId: workspace.id, parentSessionKey,
+        expectedParentGeneration: snapshot.session.sessionId, childSessionKey, expectedChildGeneration: childGeneration,
+        message: task, mode: 'send', idempotencyKey: sendIntent.current.id });
+      if (scopeRef.current !== viewScope) return;
+      setSendPhase(response.phase);
+      if (response.phase === 'rejected') sendIntent.current = null;
+      if (!response.success) throw new Error(response.error ?? t('agentsPanel.dispatchFailed'));
+      sendIntent.current = null;
+      setDispatchTask((current) => current === task ? '' : current);
+      toast.success(t(`delegationStages.status.${response.phase}`));
     } catch (error) {
-      toastUserError(error, { fallback: t('agentsPanel.dispatchFailed') });
+      if (scopeRef.current === viewScope) toastUserError(error, { fallback: t('agentsPanel.dispatchFailed') });
     } finally {
-      setDispatching(false);
+      if (scopeRef.current === viewScope) setDispatching(false);
     }
-  }, [anchorAgentId, dispatchTask, dispatching, entry?.role, identity.name, parentSessionKey, t]);
+  }, [dispatchTask, dispatching, parentSessionKey, t, childGeneration, childSessionKey, snapshot?.session.sessionId, workspace?.id, scopeKey, viewScope]);
 
   const statusLabel = entry
     ? t(`sessionActivity.subagentStatus.${entry.status}`, { defaultValue: entry.status })
@@ -134,6 +163,9 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
 
   return (
     <div className="flex h-full min-h-0 flex-col p-3" data-testid="workspace-subagent-panel">
+      <SessionDelegationStatus workspaceId={workspace?.id} sessionKey={parentSessionKey}
+        generation={snapshot?.session.sessionId} snapshot={snapshot} worker={entry ?? undefined} />
+      {sendPhase && <p role="status" data-testid="worker-send-phase">{t(`delegationStages.status.${sendPhase}`)}</p>}
       <div className="mb-3 flex items-start gap-2.5">
         <span className="relative inline-flex shrink-0">
           <AgentAvatar
@@ -161,6 +193,10 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
           {entry?.task && (
             <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">{entry.task}</p>
           )}
+          <p data-testid="workspace-subagent-model" className="mt-0.5 break-words text-2xs text-muted-foreground">
+            {t('delegationStages.model', { model: loadedTranscript?.scope === viewScope && loadedTranscript.model
+              ? loadedTranscript.model : t('delegationStages.status.unavailable') })}
+          </p>
           {entry?.error && (
             <p className="mt-0.5 text-xs text-destructive">{entry.error}</p>
           )}
@@ -252,7 +288,8 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
           type="button"
           size="sm"
           className="h-8 shrink-0"
-          disabled={!dispatchTask.trim() || dispatching}
+          disabled={!dispatchTask.trim() || dispatching || !childGeneration || sendPhase === 'unknown'}
+          aria-label={t('composer.send')}
           onClick={() => void handleDispatch()}
           data-testid="workspace-subagent-dispatch"
         >

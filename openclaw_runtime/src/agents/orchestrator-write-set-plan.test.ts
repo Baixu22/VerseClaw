@@ -41,6 +41,17 @@ describe("createOrchestratorPlan writeSet fill (C3 live)", () => {
     expect(plan.taskGraph.nodes[0]?.writeSet).toEqual(["src/explicit.ts"]);
   });
 
+  it.each(["implementer", "reviewer"])("preserves explicit read-only scope for %s through the graph and dispatch plan", (roleName) => {
+    const plan = createOrchestratorPlan({
+      task: "Observe the existing result without editing files",
+      fileHints: ["src/result.ts"],
+      roles: BUILT_IN_ROLE_CONTRACTS,
+      workers: [{ roleName, task: "Read and report", writeSet: [] }],
+    });
+    expect(plan.taskGraph.nodes.find((node) => !node.isVerifier)?.writeSet).toEqual([]);
+    expect(plan.workers[0]?.writeSet).toEqual([]);
+  });
+
   it("records patch-flow as advisory-only without changing isolation", () => {
     const plan = createOrchestratorPlan({
       task: "long dense overlapping implementation",

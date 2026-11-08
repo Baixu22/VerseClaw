@@ -435,6 +435,21 @@
   mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 16px), transparent 100%);
 }
 
+.codex-sidebar .project-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; height: 100%; }
+.codex-sidebar .project-disclosure { display: grid; place-items: center; height: 100%; }
+.codex-sidebar .project-name:focus-visible,
+.codex-sidebar .project-disclosure:focus-visible,
+.codex-sidebar .ws-family-toggle:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: -2px; border-radius: 4px; }
+.codex-sidebar .ws-family-row { position: relative; min-width: 0; }
+.codex-sidebar .ws-family-toggle,
+.codex-sidebar .ws-family-kind { position: absolute; z-index: 4; left: 9px; top: 3px; height: 24px; display: flex; align-items: center; gap: 1px; color: var(--cdx-text-3); }
+.codex-sidebar .ws-family-toggle { width: 26px; font-size: 9px; }
+.codex-sidebar .ws-family-toggle svg { width: 11px; height: 11px; flex-shrink: 0; }
+.codex-sidebar .ws-family-kind { width: 16px; pointer-events: none; }
+.codex-sidebar .ws-family-kind svg { width: 13px; height: 13px; }
+.codex-sidebar .ws-family-row[data-lineage-depth='1'] .task-select { --task-indent: 50px; }
+.codex-sidebar .ws-family-row[data-lineage-depth='1'] .ws-family-kind { left: 30px; }
+
 /* Session title: three boxes, one job each.
  *
  *   .task-title        layout box. Starts exactly at the row's indent, so the

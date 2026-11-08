@@ -132,14 +132,21 @@ export async function readRuntimeSessionResourceInventory(
   ]);
   const processKnown = sample.status !== "unknown" && helperPids !== null && treeCapture.status !== "unknown";
   const admission = sessionAdmissionRegistry.snapshot(identity);
-  const worktrees = worktreeRoot
-    ? createWorktreeService(worktreeRoot).listOwned({
-      agentId: identity.agentId,
-      sessionKey: identity.canonicalSessionKey,
-      expectedSessionId: identity.expectedSessionId,
-    })
-    : null;
-  const worktreesKnown = worktrees?.every(record => observeWorktree(record) === "ready") === true;
+  let worktrees: ReturnType<ReturnType<typeof createWorktreeService>["listOwned"]> | null = null;
+  let worktreesKnown = false;
+  let worktreeReadError: string | undefined;
+  try {
+    if (worktreeRoot) {
+      worktrees = createWorktreeService(worktreeRoot).listOwned({
+        agentId: identity.agentId, sessionKey: identity.canonicalSessionKey,
+        expectedSessionId: identity.expectedSessionId,
+      });
+      worktreesKnown = worktrees.every(record => observeWorktree(record) === "ready");
+    }
+  } catch (error) {
+    worktrees = null;
+    worktreeReadError = `workspace root ownership read failed: ${(error as NodeJS.ErrnoException).code ?? 'unavailable'}`;
+  }
 
   const owners: SessionOwnerInventory[] = [
     {
@@ -182,7 +189,7 @@ export async function readRuntimeSessionResourceInventory(
           kind: "worktree",
           owner: "WorktreeService",
           generation,
-          detail: "workspace root was not available; worktree occupancy is unknown",
+          detail: worktreeReadError ?? "workspace root was not available; worktree occupancy is unknown",
         })
       : {
           kind: "worktree",
