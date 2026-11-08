@@ -1,0 +1,18 @@
+{
+  "findings": [
+    {
+      "body": "A malformed retained report with `commands: [null]` makes this loop dereference `command.exitCode` and throw instead of returning `{ ok: false, issues }`. Validate each command entry and its `stdout` before accessing or hashing it so missing or malformed data is rejected cleanly.",
+      "category": "bug",
+      "code_location": {
+        "file_path": "scripts/coding-evaluation/verify-versegit.mjs",
+        "line": 32
+      },
+      "confidence": 0.98,
+      "priority": "P2",
+      "title": "Reject malformed command entries without throwing"
+    }
+  ],
+  "overall_confidence": 0.97,
+  "overall_correctness": "patch is incorrect",
+  "overall_explanation": "The verifier handles missing top-level data but throws on malformed entries in the commands array, so malformed retained evaluation data can terminate verification instead of producing a rejection result."
+}

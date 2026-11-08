@@ -1,0 +1,12 @@
+{
+  "classification": "current-release-reference",
+  "reference": {
+    "source": {
+      "head": "89af0c36216e64bb0f7430fc3fe21c39c485be7c"
+    },
+    "binary": {
+      "sha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea"
+    }
+  },
+  "manifestPath": "resources/versegit/manifest.json"
+}
