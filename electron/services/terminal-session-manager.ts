@@ -13,8 +13,12 @@ import {
 } from '@shared/long-session-resource-reclamation';
 import { prependOfficeCliPathToEnv } from '../utils/officecli-path';
 import { isPathInsideWorkspace } from './workspace-permissions';
+import { admitManagedProcess, type ManagedProcessLease } from '../../openclaw_runtime/src/agents/verseshell/managed-process-capacity';
+import { logger } from '../utils/logger';
+import { assertManagedPortsBindable, normalizeManagedPorts } from '../../openclaw_runtime/src/agents/verseshell/managed-process-reservation';
 
 export type TerminalSessionKind = 'interactive' | 'webPreviewDevServer';
+type TerminalOwnerScope = { workspaceId?: string; sessionKey?: string; expectedSessionId?: string };
 export type TerminalSessionStatus = 'idle' | 'starting' | 'running' | 'exited' | 'blocked';
 export type TerminalCloseReason = 'user-close' | 'session-end' | 'session-reset' | 'session-delete' | 'workspace-switch' | 'workspace-delete' | 'permission-change' | 'process-exit' | 'replaced' | 'app-shutdown';
 
@@ -74,6 +78,9 @@ export function classifyTerminalIdle(input: {
 type PtyProcess = ReturnType<typeof pty.spawn>;
 
 type TerminalSessionRecord = {
+  capacityLease: ManagedProcessLease;
+  reservedPorts: readonly number[];
+  exitError: Error | null;
   id: string;
   workspaceId: string;
   sessionKey: string;
@@ -124,6 +131,7 @@ type TerminalManagerContext = {
 };
 
 type OpenTerminalInput = {
+  reservedPorts?: readonly number[];
   workspace: WorkspaceProfile;
   sessionKey?: string;
   expectedSessionId?: string;
@@ -215,7 +223,13 @@ export class TerminalSessionManager {
     const activeKey = sessionKeyFor(input.workspace.id, sessionKey, kind);
     const existingId = this.activeByWorkspaceSession.get(activeKey);
     const existing = existingId ? this.sessions.get(existingId) : null;
-    if (existing?.status === 'running') return this.toSnapshot(existing, true);
+    if (existing?.status === 'running') {
+      if (existing.expectedSessionId && !input.expectedSessionId) throw new Error('Terminal session generation is required for reuse');
+      if (input.expectedSessionId && existing.expectedSessionId !== input.expectedSessionId) throw new Error('Terminal session generation changed');
+      if (existing.closeReason) throw new Error('Terminal cleanup is still in progress');
+      if (input.reservedPorts !== undefined && JSON.stringify(normalizeManagedPorts(input.reservedPorts)) !== JSON.stringify(existing.reservedPorts)) throw new Error('Terminal port reservation changed');
+      return this.toSnapshot(existing, true);
+    }
 
     if (existing) this.closeSession(existing, 'replaced');
 
@@ -243,16 +257,30 @@ export class TerminalSessionManager {
     const rows = clampDimension(input.rows, DEFAULT_ROWS);
     const shell = resolveShell();
     const id = randomUUID();
-    const ptyProcess = pty.spawn(shell, [], {
+    const admitted = admitManagedProcess({ ports: input.reservedPorts, owner: `terminal:${input.workspace.id}:${sessionKey}` });
+    if (!admitted.ok) throw new Error(`E_PROCESS_CAPACITY_LIMIT: live=${admitted.live} limit=${admitted.limit}`);
+    const capacityLease = admitted.lease;
+    try { capacityLease.markDispatched(); }
+    catch (error) { capacityLease.release(); throw error; }
+    let ptyProcess: PtyProcess;
+    try { ptyProcess = pty.spawn(shell, [], {
       name: 'xterm-256color',
       cols,
       rows,
       cwd,
       env: buildEnvironment(),
-    });
+    }); } catch (error) {
+      // The synchronous native spawn contract did not return a handle. Keep
+      // unknown delivery durable and expose the reservation in the failure.
+      capacityLease.markUnknown('native-pty-start-did-not-return-owner-handle');
+      throw new Error(`Terminal native start requires recovery (reservation=${capacityLease.reservationId ?? 'none'})`, { cause: error });
+    }
     let resolveExit!: () => void;
     const exited = new Promise<void>(resolve => { resolveExit = resolve; });
     const session: TerminalSessionRecord = {
+      capacityLease,
+      reservedPorts: normalizeManagedPorts(input.reservedPorts),
+      exitError: null,
       id,
       workspaceId: input.workspace.id,
       sessionKey,
@@ -279,6 +307,7 @@ export class TerminalSessionManager {
     this.activeByWorkspaceSession.set(activeKey, id);
     ptyProcess.onData((data) => this.handleData(session.id, data));
     ptyProcess.onExit((event) => this.handleExit(session.id, event.exitCode ?? null));
+    if (ptyProcess.pid > 0) void capacityLease.observeProcess(ptyProcess.pid).catch(error => logger.warn(`Terminal process identity observation unavailable: ${String(error)}`));
     this.emit(HOST_EVENT_CHANNELS.terminal.registered, this.toEvent(session));
     this.emit(HOST_EVENT_CHANNELS.terminal.statusChanged, this.toEvent(session));
 
@@ -289,14 +318,16 @@ export class TerminalSessionManager {
     return this.toSnapshot(session, true);
   }
 
-  write(input: { sessionId: string; data: string }): void {
+  write(input: { sessionId: string; data: string; workspaceId?: string; sessionKey?: string; expectedSessionId?: string }): void {
     const session = this.requireRunningSession(input.sessionId);
+    this.assertScope(session, input);
     session.lastInteractionAtMs = this.now();
     session.ptyProcess?.write(input.data);
   }
 
-  resize(input: { sessionId: string; cols: number; rows: number }): TerminalSessionSnapshot {
+  resize(input: { sessionId: string; cols: number; rows: number } & TerminalOwnerScope): TerminalSessionSnapshot {
     const session = this.requireSession(input.sessionId);
+    this.assertScope(session, input);
     session.cols = clampDimension(input.cols, session.cols);
     session.rows = clampDimension(input.rows, session.rows);
     if (session.status === 'running') {
@@ -306,20 +337,28 @@ export class TerminalSessionManager {
     return this.toSnapshot(session, false);
   }
 
-  interrupt(sessionId: string): void {
+  interrupt(sessionId: string, scope: TerminalOwnerScope = {}): void {
     const session = this.requireRunningSession(sessionId);
+    this.assertScope(session, scope);
     session.lastInteractionAtMs = this.now();
     session.ptyProcess?.write('\x03');
   }
 
-  async close(sessionId: string, reason: TerminalCloseReason = 'user-close'): Promise<TerminalSessionSnapshot> {
+  async close(sessionId: string, reason: TerminalCloseReason = 'user-close', scope: TerminalOwnerScope = {}): Promise<TerminalSessionSnapshot> {
     const session = this.sessions.get(sessionId);
     // R0-3: records are reclaimed on exit — closing an already-reclaimed (or
     // unknown) session is an idempotent no-op, mirroring status()'s idle
     // semantics, so a renderer "End" click after exit cannot throw.
     if (!session) return this.idleSnapshot();
+    this.assertScope(session, scope);
+    if (session.exitError && !session.ptyProcess) {
+      await assertManagedPortsBindable(session.reservedPorts);
+      session.exitError = null;
+      this.finalizeExit(session, session.exitCode);
+    }
     this.closeSession(session, reason);
     await session.exited;
+    if (session.exitError) throw session.exitError;
     return this.toSnapshot(session, true);
   }
 
@@ -482,9 +521,37 @@ export class TerminalSessionManager {
   private handleExit(sessionId: string, exitCode: number | null): void {
     const session = this.sessions.get(sessionId);
     if (!session) return;
+    session.exitCode = exitCode;
+    if (session.reservedPorts.length) {
+      void assertManagedPortsBindable(session.reservedPorts).then(
+        () => this.finalizeExit(session, exitCode),
+        error => {
+          session.status = 'blocked';
+          session.ptyProcess = null;
+          session.exitError = new Error('Terminal port release requires recovery', { cause: error });
+          this.emit(HOST_EVENT_CHANNELS.terminal.statusChanged, this.toEvent(session));
+          session.resolveExit();
+        },
+      );
+      return;
+    }
+    this.finalizeExit(session, exitCode);
+  }
+
+  private finalizeExit(session: TerminalSessionRecord, exitCode: number | null): void {
     this.readProcessId(session);
     session.exitCode = exitCode;
     session.status = 'exited';
+    try { session.capacityLease.markTerminal(); session.capacityLease.release(); }
+    catch (error) {
+      session.exitError = new Error('Terminal capacity release requires recovery', { cause: error });
+      logger.warn(String(session.exitError));
+      session.status = 'blocked';
+      session.ptyProcess = null;
+      this.emit(HOST_EVENT_CHANNELS.terminal.statusChanged, this.toEvent(session));
+      session.resolveExit();
+      return;
+    }
     session.ptyProcess = null;
     this.deleteActiveKey(session);
     const reason = session.closeReason ?? 'process-exit';
@@ -507,6 +574,14 @@ export class TerminalSessionManager {
     const session = this.sessions.get(sessionId);
     if (!session) throw new Error('Terminal session not found');
     return session;
+  }
+
+  private assertScope(session: TerminalSessionRecord, scope: { workspaceId?: string; sessionKey?: string; expectedSessionId?: string }): void {
+    if ((scope.workspaceId !== undefined && scope.workspaceId !== session.workspaceId)
+      || (scope.sessionKey !== undefined && scope.sessionKey !== session.sessionKey)
+      || (scope.expectedSessionId !== undefined && scope.expectedSessionId !== session.expectedSessionId)) {
+      throw new Error('Terminal owner scope mismatch');
+    }
   }
 
   private requireRunningSession(sessionId: string): TerminalSessionRecord {
@@ -578,7 +653,10 @@ export class TerminalSessionManager {
 
   private readProcessId(session: TerminalSessionRecord): number | null {
     const pid = session.ptyProcess?.pid;
-    if (typeof pid === 'number' && Number.isSafeInteger(pid) && pid > 0) session.pid = pid;
+    if (typeof pid === 'number' && Number.isSafeInteger(pid) && pid > 0 && session.pid !== pid) {
+      session.pid = pid;
+      void session.capacityLease.observeProcess(pid).catch(error => logger.warn(`Terminal process identity observation unavailable: ${String(error)}`));
+    }
     return session.pid;
   }
 

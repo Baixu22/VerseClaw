@@ -733,6 +733,8 @@ export type WorkspaceTerminalRunResult = HostSuccess & {
   risk?: 'read' | 'write' | 'network' | 'destructive' | 'external-write' | 'none' | 'dangerous';
 };
 export type WorkspaceTerminalOpenPayload = {
+  /** Known managed server ports; reserved before launch. */
+  reservedPorts?: number[];
   workspaceId?: string;
   sessionKey?: string;
   /** Optional caller-provided physical generation; Main verifies it with Gateway when supplied. */
@@ -748,6 +750,9 @@ export type WorkspaceTerminalOpenPayload = {
 };
 export type WorkspaceTerminalSessionPayload = {
   sessionId: string;
+  workspaceId?: string;
+  sessionKey?: string;
+  expectedSessionId?: string;
 };
 export type WorkspaceTerminalWritePayload = WorkspaceTerminalSessionPayload & {
   data: string;
@@ -784,6 +789,10 @@ export type WorkspaceTerminalSessionResult = HostSuccess & {
   scrollback?: string;
 };
 export type WorkspaceTerminalListResult = HostSuccess & {
+  processReservations?: Array<{
+    reservationId: string; owner: string; phase: 'reserved' | 'dispatched' | 'observed' | 'terminal' | 'unknown';
+    ports: number[]; rootPids: number[]; limit: number | null; reason?: string;
+  }>;
   sessions: Array<Omit<WorkspaceTerminalSessionResult, 'success'>>;
 };
 export type SessionActivitySnapshotPayload = {

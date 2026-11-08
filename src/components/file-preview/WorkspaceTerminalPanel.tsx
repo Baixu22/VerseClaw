@@ -71,6 +71,9 @@ export function WorkspaceTerminalPanel() {
   const terminalRef = useRef<Terminal | null>(null);
   const fitAddonRef = useRef<FitAddon | null>(null);
   const sessionIdRef = useRef<string | null>(null);
+  const ownerRef = useRef<{ workspaceId?: string; sessionKey?: string; expectedSessionId?: string }>({});
+  ownerRef.current.workspaceId = workspaceId;
+  ownerRef.current.sessionKey = currentSessionKey;
   const [status, setStatus] = useState<TerminalStatus>('idle');
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [pendingApproval, setPendingApproval] = useState<PermissionApprovalEvent | null>(null);
@@ -111,7 +114,7 @@ export function WorkspaceTerminalPanel() {
     const dataDisposable = terminal.onData((data) => {
       const id = sessionIdRef.current;
       if (!id) return;
-      void hostApi.terminal.write({ sessionId: id, data }).catch((error) => {
+      void hostApi.terminal.write({ sessionId: id, data, ...ownerRef.current }).catch((error) => {
         toastUserError(error);
       });
     });
@@ -121,7 +124,7 @@ export function WorkspaceTerminalPanel() {
       if (!id) return;
       const dims = fitAddon.proposeDimensions();
       if (!dims) return;
-      void hostApi.terminal.resize({ sessionId: id, cols: dims.cols, rows: dims.rows }).catch(() => {});
+      void hostApi.terminal.resize({ sessionId: id, cols: dims.cols, rows: dims.rows, ...ownerRef.current }).catch(() => {});
       persistTerminalState({ cols: dims.cols, rows: dims.rows });
     });
     resizeObserver.observe(containerRef.current);
@@ -156,6 +159,7 @@ export function WorkspaceTerminalPanel() {
     });
     const unsubStatus = hostEvents.onTerminalStatusChanged((event) => {
       if (event.workspaceId !== workspaceId || event.sessionKey !== currentSessionKey) return;
+      ownerRef.current.expectedSessionId = event.expectedSessionId ?? undefined;
       setStatus(event.status ?? 'idle');
       setSessionId(event.sessionId);
       persistTerminalState({ sessionId: event.sessionId, status: event.status, cwd: event.cwd ?? workspaceRootPath, activeProcessId: event.pid ? String(event.pid) : null });
@@ -177,6 +181,8 @@ export function WorkspaceTerminalPanel() {
     if (!workspaceId) return;
     try {
       const result = await hostApi.terminal.status({ workspaceId, sessionKey: currentSessionKey });
+      if (ownerRef.current.workspaceId !== workspaceId || ownerRef.current.sessionKey !== currentSessionKey) return;
+      ownerRef.current.expectedSessionId = result.expectedSessionId ?? undefined;
       setStatus(result.status ?? 'idle');
       setSessionId(result.sessionId ?? null);
       if (result.scrollback) terminalRef.current?.write(result.scrollback);
@@ -212,6 +218,7 @@ export function WorkspaceTerminalPanel() {
       const result = await hostApi.terminal.open({
         workspaceId,
         sessionKey: currentSessionKey,
+        expectedSessionId: ownerRef.current.expectedSessionId,
         cols: dims?.cols,
         rows: dims?.rows,
         approvalId,
@@ -228,6 +235,8 @@ export function WorkspaceTerminalPanel() {
         return;
       }
       setPendingApproval(null);
+      if (ownerRef.current.workspaceId !== workspaceId || ownerRef.current.sessionKey !== currentSessionKey) return;
+      ownerRef.current.expectedSessionId = result.expectedSessionId ?? undefined;
       setSessionId(result.sessionId ?? null);
       setStatus(result.status ?? 'running');
       terminalRef.current?.focus();
@@ -258,7 +267,7 @@ export function WorkspaceTerminalPanel() {
     if (!sessionId || status !== 'running') return;
     setBusy(true);
     try {
-      const result = await hostApi.terminal.interrupt({ sessionId });
+      const result = await hostApi.terminal.interrupt({ sessionId, ...ownerRef.current });
       if (!result.success) {
         throw new Error(result.error || t('workspace.terminal.toast.interruptFailed', 'Could not interrupt terminal'));
       }
@@ -274,7 +283,7 @@ export function WorkspaceTerminalPanel() {
     if (!sessionId) return;
     setBusy(true);
     try {
-      const result = await hostApi.terminal.close({ sessionId });
+      const result = await hostApi.terminal.close({ sessionId, ...ownerRef.current });
       if (!result.success) {
         throw new Error(result.error || t('workspace.terminal.toast.closeFailed', 'Could not end terminal'));
       }

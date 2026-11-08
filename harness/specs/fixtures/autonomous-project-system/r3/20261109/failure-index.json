@@ -1,0 +1,25 @@
+{
+  "driven_by": "agent",
+  "runs": [
+    {
+      "path": "D:/tmp/unified-management-20261108/r3-tests-initial.json",
+      "result": "65 tests passed; superseded by final candidate"
+    },
+    {
+      "path": "D:/tmp/unified-management-20261108/r3-verseshell-native-2.json",
+      "result": "40 passed / 3 native start failures E_PROCESS_PERSIST at installed path; exact manifest bytes passed from isolated path"
+    },
+    {
+      "path": "D:/tmp/unified-management-20261108/r3-electron.json",
+      "result": "2 startup failures at installed Electron path; exact executable hash at independent dependency path opens successfully; final UI run separate"
+    },
+    {
+      "path": "D:/tmp/unified-management-20261108/r3-types-node.log",
+      "result": "scope typing error repaired before final candidate"
+    },
+    {
+      "path": "D:/tmp/unified-management-20261108/r3-review-final-test.log",
+      "result": "WebPreview gate argument shape fixed before final candidate"
+    }
+  ]
+}

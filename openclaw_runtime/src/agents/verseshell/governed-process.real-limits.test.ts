@@ -29,7 +29,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { startGovernedVerseShellProcess } from "./governed-process.js";
 import { VerseShellProcessManager } from "./process-manager.js";
 
-const binaryPath = fileURLToPath(
+const binaryPath = process.env.VERSESHELL_CONTROL_BINARY ?? fileURLToPath(
   new URL("../../../../resources/bin/win32-x64/ae.exe", import.meta.url),
 );
 /**
@@ -64,6 +64,8 @@ function childEnv(): Record<string, string> {
 
 async function contractEnv(): Promise<Record<string, string>> {
   const sha256 = createHash("sha256").update(await readFile(binaryPath)).digest("hex");
+  const manifest = JSON.parse(await readFile(new URL('../../../../resources/verseshell/manifest.json', import.meta.url), 'utf8'));
+  expect(sha256).toBe(manifest.artifacts['win32-x64'].sha256);
   return {
     VERSESHELL_RUNTIME_VERSION: "1.0.0",
     VERSESHELL_SERVER_PROTOCOL: "verseshell.jsonl/v1",
@@ -79,10 +81,12 @@ async function runScenario(params: {
   /** Node script body written into the workspace and run as the root process. */
   script: string;
   resourceLimits?: { maxMemoryBytes?: number; maxProcesses?: number; requireEnforcement?: boolean };
+  timeoutMs?: number;
 }): Promise<{
   state: string;
   exitCode: number | null;
   stdout: string;
+  timedOut: boolean;
   receipt: Record<string, unknown>;
 }> {
   const workspace = await mkdtemp(path.join(tmpdir(), "clawx-verseshell-limits-"));
@@ -100,7 +104,7 @@ async function runScenario(params: {
     argv,
     cwd: workspace,
     processEnv: childEnv(),
-    timeoutMs: 30_000,
+    timeoutMs: params.timeoutMs ?? 30_000,
     maxOutputBytes: 256 * 1024,
     usePty: false,
     agentId: "agent-limits-probe",
@@ -118,6 +122,7 @@ async function runScenario(params: {
     state: exit.state,
     exitCode: exit.exitCode,
     stdout,
+    timedOut: exit.timedOut,
     receipt: handle.resourceReceipt as unknown as Record<string, unknown>,
   };
 }
@@ -133,6 +138,31 @@ const MEMORY_ALLOCATION_SCRIPT =
   "const b = Buffer.alloc(268435456); b[0] = 1; b[268435455] = 1; console.log('alloc-ok');";
 
 describe.runIf(runRealBinary)("VerseShell real Job Object limits", () => {
+  it('enforces a real process deadline and observes the native terminal receipt', async () => {
+    const result = await runScenario({ script: "console.log('deadline-started');setInterval(()=>{},1000);", timeoutMs: 800 });
+    expect(result.stdout).toContain('deadline-started');
+    expect(result.state).toBe('killed');
+    expect(result.timedOut).toBe(true);
+  },30_000);
+
+  it('terminates owned work on executor shutdown and starts a fresh runtime without replay', async () => {
+    const workspace = await mkdtemp(path.join(tmpdir(), 'r3-owner-restart-')); workspaces.push(workspace);
+    const script = path.join(workspace,'running.cjs');
+    await writeFile(script,"console.log('one-start');setInterval(()=>{},1000);");
+    const manager = new VerseShellProcessManager({ resolveBinary: () => ({path:binaryPath,source:'verified-bundled',verified:true}) });
+    managers.push(manager);
+    const options = {command:'owned-restart',argv:[process.execPath,script],cwd:workspace,processEnv:childEnv(),timeoutMs:10_000,
+      maxOutputBytes:4096,usePty:false,agentId:'r3-owner',sessionId:'r3-session',hostPolicyApproved:true,runtimeEnv:await contractEnv(),manager};
+    const first = await startGovernedVerseShellProcess(options);
+    const firstEnd=first.wait().catch(error=>({error:String(error)}));
+    await manager.shutdownProcess(first.executorKey);
+    await firstEnd;
+    let oldAlive=true;try{process.kill(first.pid,0);}catch(error){oldAlive=(error as NodeJS.ErrnoException).code!=='ESRCH';}
+    expect(oldAlive).toBe(false);
+    const second = await startGovernedVerseShellProcess({...options,sessionId:'r3-session-new'});
+    expect(second.runtimeId).not.toBe(first.runtimeId);expect(second.pid).not.toBe(first.pid);
+    await second.kill('agent_abort');await second.wait();
+  },45_000);
   it(
     "runs a child process without a cap and refuses it at maxProcesses 1",
     async () => {
