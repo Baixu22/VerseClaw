@@ -260,6 +260,14 @@ describe('Chat session status rail', () => {
     expect(screen.getByTestId('chat-scroll-container')).toHaveAttribute('data-rail', 'collapsed');
   });
 
+  it('keeps changed environments quiet until the user opens status', async () => {
+    planState.hasPlan = false;
+    render(<Chat />);
+    await screen.findByTestId('stub-activity-toggle');
+    expect(railElement()).not.toBeInTheDocument();
+    expect(screen.getByTestId('chat-scroll-container')).toHaveAttribute('data-rail', 'collapsed');
+  });
+
   it('opens and closes the requested overlay without creating a passive sidebar', async () => {
     render(<Chat />);
 
