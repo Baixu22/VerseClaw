@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, writeFile, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { test, expect, getStableWindow, closeElectronApp } from "./fixtures/electron";
 
@@ -77,6 +77,18 @@ test("queries all task pages and filters without losing task identity", async ({
     await page.getByRole("option", { name: "All tasks", exact: true }).click();
     await expect(page.getByTestId("managed-task")).toHaveCount(1);
     await expect(page.getByTestId("managed-task")).toBeInViewport();
+    const database = join(root, ".verse-claw", "task-ledger.sqlite3");
+    const saved = await readFile(database);
+    try {
+      await writeFile(database, "corrupt database fixture");
+      await page.getByTestId("managed-tasks").getByRole("button", { name: "Refresh", exact: true }).click();
+      await expect(page.getByTestId("managed-tasks").getByRole("status")).toContainText("last successful read");
+      await expect(page.getByTestId("managed-task")).toContainText("Task page 02");
+      await expect(page.getByRole("button", { name: "Claim for this session", exact: true })).toBeDisabled();
+    } finally { await writeFile(database, saved); }
+    await page.getByTestId("managed-tasks").getByRole("button", { name: "Refresh", exact: true }).click();
+    await expect(page.getByTestId("managed-tasks").getByRole("status")).toHaveCount(0);
+    await expect(page.getByTestId("managed-task")).toContainText("Task page 02");
     await page.screenshot({ path: info.outputPath("filtered-task.png") });
     await writeFile(
       info.outputPath("pagination-readback.json"),
@@ -87,6 +99,7 @@ test("queries all task pages and filters without losing task identity", async ({
           createdIds: ids,
           pages: [50, 55],
           filtered: "Task page 02",
+          corruptDatabase: "retained marked stale view, refused mutations, recovered same task",
         },
         null,
         2,

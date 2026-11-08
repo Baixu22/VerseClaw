@@ -132,6 +132,8 @@
     "loadMore": "Load more tasks",
     "constraint": "Constraint: {{text}}",
     "children": "Plan contains {{count}} tasks; accept them before completing this goal.",
-    "parentGoal": "This task retains the parent goal and constraints."
+    "parentGoal": "This task retains the parent goal and constraints.",
+    "coverage": "Ownership checks cover managed agent tools in this repository. External terminals do not participate in task ownership.",
+    "stale": "Showing the last successful read. Task actions are disabled until the task store is available."
   }
 }

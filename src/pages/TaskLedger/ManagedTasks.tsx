@@ -22,6 +22,7 @@ export function ManagedTasks({
   const { t } = useTranslation("taskLedger");
   const [tasks, setTasks] = useState<TaskView[]>([]);
   const [error, setError] = useState("");
+  const [stale, setStale] = useState(false);
   const [busy, setBusy] = useState(false);
   const [showForm, setShowForm] = useState(true);
   const [objective, setObjective] = useState("");
@@ -54,11 +55,18 @@ export function ManagedTasks({
       setNextCursor(result.nextCursor);
       if (result.tasks.length > 0) setShowForm(false);
       setError("");
+      setStale(false);
     } catch (e) {
       if (version !== requestVersion.current) return;
       setError(String(e));
+      setStale(true);
     }
   }, [workspaceId, query, stateFilter]);
+  useEffect(() => {
+    setTasks([]);
+    setNextCursor(undefined);
+    setStale(false);
+  }, [workspaceId]);
   useEffect(() => {
     const timer = setTimeout(() => void load(), 180);
     return () => {
@@ -111,6 +119,7 @@ export function ManagedTasks({
   return (
     <section className="space-y-4" data-testid="managed-tasks">
       <p className="text-sm text-muted-foreground">{t("managed.description")}</p>
+      <p className="text-xs text-muted-foreground">{t("managed.coverage")}</p>
       <div className="flex gap-2">
         <Input
           aria-label={t("managed.search")}
@@ -133,6 +142,7 @@ export function ManagedTasks({
             ))}
           </SelectContent>
         </Select>
+        <Button variant="outline" disabled={busy} onClick={() => void load()}>{t("actions.refresh")}</Button>
       </div>
       {!showForm && (
         <Button variant="outline" onClick={() => setShowForm(true)}>
@@ -202,7 +212,7 @@ export function ManagedTasks({
           <div className="flex gap-2">
             <Button
               disabled={
-                busy ||
+                busy || stale ||
                 !workspaceId ||
                 !objective.trim() ||
                 !target.trim() ||
@@ -245,9 +255,6 @@ export function ManagedTasks({
             >
               {t("managed.create")}
             </Button>
-            <Button variant="outline" disabled={busy} onClick={() => void load()}>
-              {t("actions.refresh")}
-            </Button>
           </div>
         </div>
       )}
@@ -256,6 +263,7 @@ export function ManagedTasks({
           {t("managed.error", { error })}
         </p>
       )}
+      {stale && tasks.length > 0 && <p role="status" className="text-sm text-amber-700 dark:text-amber-400">{t("managed.stale")}</p>}
       {tasks.length === 0 && <p className="text-sm text-muted-foreground">{t("managed.empty")}</p>}
       {tasks.map((view) => {
         const { contract, claim } = view;
@@ -316,7 +324,7 @@ export function ManagedTasks({
                   <Button
                     size="sm"
                     variant="outline"
-                    disabled={busy}
+                    disabled={busy || stale}
                     onClick={() => void command({ action: "cancel", credential: claim })}
                   >
                     {t("managed.cancel")}
@@ -325,7 +333,7 @@ export function ManagedTasks({
               {contract.state === "ready" && (
                 <Button
                   size="sm"
-                  disabled={busy || !sessionKey}
+                  disabled={busy || stale || !sessionKey}
                   onClick={() =>
                     void command({
                       action: "claim",
@@ -342,7 +350,7 @@ export function ManagedTasks({
                 <Button
                   size="sm"
                   variant="outline"
-                  disabled={busy}
+                  disabled={busy || stale}
                   onClick={() => void command({ action: "pause", credential: claim })}
                 >
                   {t("managed.pause")}
@@ -352,7 +360,7 @@ export function ManagedTasks({
                 <Button
                   size="sm"
                   variant="outline"
-                  disabled={busy || !sessionKey}
+                  disabled={busy || stale || !sessionKey}
                   onClick={() =>
                     void command({
                       action: "recover",
@@ -368,7 +376,7 @@ export function ManagedTasks({
                 <Button
                   size="sm"
                   variant="outline"
-                  disabled={busy || view.pendingOperations > 0}
+                  disabled={busy || stale || view.pendingOperations > 0}
                   onClick={() => void command({ action: "release", credential: claim })}
                 >
                   {t("managed.release")}
