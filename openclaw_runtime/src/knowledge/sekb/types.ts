@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+
 export type JsonObject = Record<string, unknown>;
 
 export type TrajectoryOutcome = "success" | "failure" | "partial";
@@ -78,18 +80,53 @@ export type PrincipleQuery = {
   task_types?: string[] | null;
 };
 
-export type SekbAdoptionTrigger = "cited" | "adopted" | "outcome";
-
-export type SekbAdoptionEvidence = {
-  trigger: SekbAdoptionTrigger;
-  taskSucceeded: boolean;
-  taskType?: string;
-  contextTags?: string[];
-  sessionKey?: string;
-  sourceRunId?: string;
-  citationText?: string;
-  at?: string;
+export const SEKB_ATTRIBUTION_SCHEMA = "RsiExperienceAttribution/v1" as const;
+export type SekbAdoptionTrigger = "retrieved" | "operation" | "cited" | "adopted" | "outcome";
+export type SekbRunIdentity = {
+  taskId: string | null;
+  runId: string | null;
+  sessionId: string | null;
+  sessionKey: string | null;
+  experimentId: string | null;
+  arm: string | null;
+  repeat: number | null;
 };
+
+export type SekbAdoptionEvidence = SekbRunIdentity & {
+  schemaVersion: typeof SEKB_ATTRIBUTION_SCHEMA;
+  principleVersion: string;
+  trajectoryId: string | null;
+  trigger: SekbAdoptionTrigger;
+  source: "runtime" | "agent" | "grader";
+  outcome: "success" | "failure" | "unknown";
+  outcomeKind: "operational" | "task" | null;
+  observationId: string | null;
+  operation: { toolCallId: string; toolName: string | null; observed: boolean; succeeded: boolean | null } | null;
+  actor: string;
+  driven_by: "agent";
+};
+
+export type SekbAttributionReceipt = {
+  eventId: string;
+  principleId: string;
+  evidence: SekbAdoptionEvidence;
+  status: "accepted" | "rejected";
+  reason: string | null;
+  recordedAt: string;
+  duplicateCount: number;
+  conflictCount: number;
+  rejectionCount: number;
+  firstRejection: string | null;
+  lastConflict: SekbAdoptionEvidence | null;
+};
+
+/** Stable identity of public advice; counters and diagnostics do not create new versions. */
+export function getPrincipleVersion(principle: Principle): string {
+  return createHash("sha256").update(JSON.stringify([
+    principle.title, principle.condition, principle.action, principle.reason,
+    principle.full_content, normalizeTags(principle.task_types), normalizeTags(principle.context_tags),
+  ])).digest("hex");
+}
 
 export type DistillationSuggestion = {
   cluster_summary: string;

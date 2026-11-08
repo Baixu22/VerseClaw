@@ -58,6 +58,7 @@ Verse Claw — Electron-приложение на встроенном OpenClaw 
 
 - Workspace Context и read-only DCS context tools включены при заявленных health/permission gates.
 - Runtime Memory injection, SEKB automatic writeback и Browser private network не default-on.
+- SEKB записывает явное применение принципа с его версией и запуском, отдельно сохраняя результат выполнения и независимую оценку задачи. Обратная связь используется для диагностики и не меняет поиск или сохранение памяти. См. [RSI evidence and boundaries](docs/dev/rsi-capability-and-boundaries.md).
 - VToken retired; старые env/config имена не могут снова включить production assembly или sidecar.
 - VerseGit — default-off и landed-unwired. VerseShell — default-off controlled foundation. VerseBrowser рекламирует действия из live driver snapshot, а не из полного контракта.
 - Dreams retired. Image Generation ограничен developer/test surface и не является обычной продуктовой навигацией.

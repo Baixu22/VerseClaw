@@ -6,7 +6,8 @@
  * can install harness hooks and supply trajectoryCapture to task-state handler
  * config. Durable principle confirmation stays host-side (knowledge-api
  * sekbConfirmPrinciple -> confirm_and_save with a BlockStore sink); the runtime
- * never auto-confirms or writes back (default-off, human-review queue only).
+ * records versioned attribution diagnostics. Principle content is changed only
+ * through explicit host-side confirmation.
  */
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { DistillationTool } from "../../knowledge/sekb/distillation-tool.js";
@@ -23,6 +24,7 @@ import {
 import {
   installSekbHarnessHooks,
   type SekbHarnessHookTarget,
+  type InstallSekbHarnessHooksOptions,
 } from "../../knowledge/sekb/harness-integration.js";
 import { KnowledgeStore } from "../../knowledge/sekb/knowledge-store.js";
 import { RetrievalEngine, type ContextInjector } from "../../knowledge/sekb/retrieval-engine.js";
@@ -110,8 +112,9 @@ export function resolveEmbeddedSekbRuntime(params: {
 
 export type SekbInstallableAgent = {
   // Loosely typed so ExtensionAPI overloads and recorder stubs both assign.
-  on: (type: string, handler: (...args: any[]) => any) => any;
-  subscribe?: (listener: (...args: any[]) => any) => () => void;
+  on: (type: string, handler: (event: unknown, context?: unknown) => unknown) => unknown;
+  subscribe?: (listener: (event: unknown) => unknown) => () => void;
+  registerTool?: SekbHarnessHookTarget["registerTool"];
 };
 
 /**
@@ -125,6 +128,7 @@ export function asSekbHarnessHookTarget(agent: SekbInstallableAgent): SekbHarnes
       return () => {};
     },
     ...(agent.subscribe ? { subscribe: agent.subscribe.bind(agent) } : {}),
+    ...(agent.registerTool ? { registerTool: agent.registerTool.bind(agent) } : {}),
   };
 }
 
@@ -136,6 +140,7 @@ export function installEmbeddedSekbHarnessHooks(
   target: SekbInstallableAgent,
   runtime: EmbeddedSekbRuntime | undefined,
   lineage?: RuntimeLineage | (() => RuntimeLineage | undefined),
+  identity?: InstallSekbHarnessHooksOptions["identity"],
 ): () => void {
   if (!runtime) {
     return () => {};
@@ -144,6 +149,8 @@ export function installEmbeddedSekbHarnessHooks(
     enabled: true,
     capture: runtime.capture,
     injector: runtime.injector,
+    store: runtime.store,
+    ...(identity ? { identity } : {}),
     ...(lineage ? { lineage } : {}),
     onError: (error) => {
       log.warn(`sekb harness hook failed: ${String(error)}`);

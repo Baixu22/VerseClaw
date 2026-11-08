@@ -1065,6 +1065,26 @@ export interface SchemaMeta {
   updated_at: number;
 }
 
+export interface SekbAttributionEvents {
+  conflict_count: Generated<number>;
+  duplicate_count: Generated<number>;
+  event_id: string;
+  first_rejection: string | null;
+  last_conflict_json: string | null;
+  payload_digest: string;
+  payload_json: string;
+  principle_id: string;
+  principle_version: string;
+  reason: string | null;
+  recorded_at: string;
+  rejection_count: Generated<number>;
+  run_id: string | null;
+  run_key: string;
+  status: string;
+  trajectory_id: string | null;
+  trigger: string;
+}
+
 export interface SekbBatchDistillationEvents {
   attempts: Generated<number>;
   attributed_suggestion_count: Generated<number>;
@@ -1398,6 +1418,7 @@ export interface DB {
   runtime_task_event_log_records: RuntimeTaskEventLogRecords;
   sandbox_registry_entries: SandboxRegistryEntries;
   schema_meta: SchemaMeta;
+  sekb_attribution_events: SekbAttributionEvents;
   sekb_batch_distillation_events: SekbBatchDistillationEvents;
   sekb_distillation_rejections: SekbDistillationRejections;
   sekb_error_signature_cache: SekbErrorSignatureCache;
