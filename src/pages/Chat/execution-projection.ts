@@ -1,4 +1,5 @@
 import type { ChatRuntimeRunState, RawMessage, ToolStatus } from '@/stores/chat';
+import { createChatContentCache } from '@/stores/chat/content-cache';
 import type { PermissionApprovalEvent } from '@shared/types/workspace';
 import {
   createCodingRunView,
@@ -474,12 +475,12 @@ function scopedRunForCard(input: {
   };
 }
 
-// Entries follow immutable history arrays, so discarded session history releases
-// its derived cards without a second retention policy.
-const completedProjectionCache = new WeakMap<RawMessage[], {
+const historyProjectionIds = new WeakMap<RawMessage[], number>();
+let nextHistoryProjectionId = 0;
+const completedProjectionCache = createChatContentCache<{
   inputs: unknown[];
   cards: Map<number, { card?: UserRunCard; folded: number[]; graph: GraphStepCacheEntry | undefined }>;
-}>();
+}>('history-projection', 20);
 
 export function deriveUserRunProjection({
   messages,
@@ -532,11 +533,15 @@ export function deriveUserRunProjection({
   let latestImageGenerationSettledInHistory = false;
   const completedInputs = [subagentCompletionInfos, currentSessionKey, currentAgentId, agents,
     sessionLabels, nextUserMessageIndexes, childTranscripts, workspaceId];
-  let completedCache = completedProjectionCache.get(messages);
+  let projectionId = historyProjectionIds.get(messages);
+  if (projectionId === undefined) { projectionId = ++nextHistoryProjectionId; historyProjectionIds.set(messages, projectionId); }
+  const projectionKey = String(projectionId);
+  let completedCache = completedProjectionCache.get(projectionKey);
+  let completedCacheChanged = false;
   const previousInputs = completedCache?.inputs;
   if (!completedCache || completedInputs.some((value, index) => value !== previousInputs?.[index])) {
     completedCache = { inputs: completedInputs, cards: new Map() };
-    completedProjectionCache.set(messages, completedCache);
+    completedCacheChanged = true;
   }
 
   messages.forEach((message, idx) => {
@@ -554,7 +559,7 @@ export function deriveUserRunProjection({
     // Store empty as well as visible completed segments, avoiding repeated parsing.
     const completedProjection: { card?: UserRunCard; folded: number[]; graph: GraphStepCacheEntry | undefined }
       = { folded: [], graph: graphStepCache[runKey] };
-    if (completed) completedCache.cards.set(idx, completedProjection);
+    if (completed) { completedCache.cards.set(idx, completedProjection); completedCacheChanged = true; }
     const appendCard = (card: UserRunCard) => {
       cards.push(card);
       if (completed) completedProjection.card = card;
@@ -901,6 +906,7 @@ export function deriveUserRunProjection({
     appendCard(card);
   });
 
+  if (completedCacheChanged) completedProjectionCache.set(projectionKey, completedCache);
   const hasActiveExecutionGraph = cards.some((card) => card.active);
   const hasAssistiveWorkContext = cards.some((card) =>
     card.active

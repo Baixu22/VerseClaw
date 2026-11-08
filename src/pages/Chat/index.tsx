@@ -6,6 +6,8 @@
  */
 import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useShallow } from 'zustand/shallow';
+import { createChatContentCache } from '@/stores/chat/content-cache';
+import { useMessageViewport } from '@/hooks/use-message-viewport';
 import { AlertTriangle, ArrowDownToLine, Check, ChevronDown, Folder, GitBranch, GitBranchPlus, Loader2, Pencil, RefreshCw, Users, Workflow, X } from 'lucide-react';
 import { FileText, Laptop, ListChecks, Sparkles } from '@/components/icons/codex-icons';
 import {
@@ -43,7 +45,7 @@ import {
 } from '@/stores/artifact-panel';
 import { hostApi } from '@/lib/host-api';
 import { errorMessageFrom, toastUserError } from '@/lib/user-error';
-import { getAgentResourceLimits, selectMessageRenderWindow } from '../../../shared/agent-resource-limits';
+import { getAgentResourceLimits } from '../../../shared/agent-resource-limits';
 import { hostEvents } from '@/lib/host-events';
 import { VerseRouteBrand } from '@/components/loading/RouteLoadingShell';
 import { SketchBlock } from '@/components/loading/StructuralSketch';
@@ -256,14 +258,9 @@ function generatedFileToTarget(file: GeneratedFile): FilePreviewTarget {
 // React state so `loadHistory` refreshes can still fall back to the previous
 // steps without tripping React's set-state-in-effect lint rule.
 const _GRAPH_STEP_CACHE_MAX = 50;
-const graphStepCacheStore = new Map<string, Record<string, GraphStepCacheEntry>>();
+const graphStepCacheStore = createChatContentCache<Record<string, GraphStepCacheEntry>>('execution-steps', _GRAPH_STEP_CACHE_MAX);
 const EMPTY_GRAPH_STEP_CACHE: Record<string, GraphStepCacheEntry> = {};
 
-function gcGraphStepCache(): void {
-  if (graphStepCacheStore.size <= _GRAPH_STEP_CACHE_MAX) return;
-  const keys = Array.from(graphStepCacheStore.keys()).slice(0, graphStepCacheStore.size - _GRAPH_STEP_CACHE_MAX);
-  for (const key of keys) graphStepCacheStore.delete(key);
-}
 const streamingTimestampStore = new Map<string, number>();
 
 function getWorkspaceSessionState(
@@ -3118,13 +3115,12 @@ export function Chat() {
     runSegmentMessageIndices,
     userRunCardsByTriggerIndex,
   ]);
-  const windowedMessageRenderRows = useMemo(() => {
-    const maxDom = getAgentResourceLimits().maxDomRenderMessages;
-    const { start, end, windowed } = selectMessageRenderWindow(messageRenderRows.length, { maxDomNodes: maxDom });
-    return { rows: messageRenderRows.slice(start, end), start, windowed, total: messageRenderRows.length };
-  }, [messageRenderRows]);
+  const visibleMessageRows = useMemo(() => messageRenderRows.filter(row => !row.hidden), [messageRenderRows]);
+  const getMessageScrollElement = useCallback(() => scrollElementRef.current, []);
+  const messageViewport = useMessageViewport(visibleMessageRows, getMessageScrollElement, currentSessionKey, getAgentResourceLimits().maxDomRenderMessages);
+  const scrollToMessageIndex = messageViewport.scrollToIndex;
   const messageNavItems = useMemo<MessageNavRailItem[]>(() => {
-    const rows = windowedMessageRenderRows.rows;
+    const rows = visibleMessageRows;
     const users = rows.filter((row) => !row.hidden && isRealUserMessage(row.message));
     return users.map((row, ordinal) => {
       const end = users[ordinal + 1]?.index ?? messages.length;
@@ -3132,7 +3128,7 @@ export function Chat() {
       const preview = (text: string, limit: number) => text.replace(/```[\s\S]*?```/g, '').replace(/<[^>]*>/g, '').replace(/[*#`]/g, '').replace(/\s+/g, ' ').trim().slice(0, limit);
       return { index: row.index, ordinal: ordinal + 1, title: preview(extractText(row.message), 110) || t('messageNav.jumpTo', { ordinal: ordinal + 1 }), response: reply ? preview(projectMessageRender(reply.message, { isUser: false, suppressAssistantText: reply.suppressAssistantText, suppressToolCards: reply.suppressToolCards, suppressReasoning: reply.suppressReasoning, textOverride: reply.textOverride }).displayText, 180) : undefined, completedAt: reply?.message.timestamp };
     });
-  }, [windowedMessageRenderRows, messages.length, t]);
+  }, [visibleMessageRows, messages.length, t]);
   const completedActivity = useMemo(() => buildCompletionActivity(
     currentSessionKey,
     userRunCards,
@@ -3219,16 +3215,9 @@ export function Chat() {
   useEffect(() => {
     if (!pendingCompletionActivity || pendingCompletionActivity.sessionKey !== currentSessionKey || loading) return;
     const index = pendingCompletionActivity.index ?? userRunCards.find((card) => card.runId === pendingCompletionActivity.runId)?.triggerIndex;
-    const scroller = scrollElementRef.current;
-    const anchor = index == null ? null : scroller?.querySelector<HTMLElement>(`#chat-message-${index}`);
-    if (scroller && anchor) {
-      scroller.scrollTo({
-        top: anchor.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop - 20,
-        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
-      });
-    }
+    if (index != null) scrollToMessageIndex(index);
     clearCompletionNavigation();
-  }, [clearCompletionNavigation, currentSessionKey, loading, pendingCompletionActivity, userRunCards]);
+  }, [clearCompletionNavigation, currentSessionKey, loading, pendingCompletionActivity, userRunCards, scrollToMessageIndex]);
 
   const streamingToolsForMessage = useMemo(
     () => (streamingReplyText != null || hasActiveExecutionGraph ? [] : streamingTools),
@@ -3381,7 +3370,6 @@ export function Chat() {
     const { cache: next, changed } = mergeGraphStepCacheEntries(current, userRunCards);
     if (changed) {
       graphStepCacheStore.set(currentSessionKey, next);
-      gcGraphStepCache();
     }
   }, [userRunCards, currentSessionKey]);
 
@@ -3562,7 +3550,8 @@ export function Chat() {
           </div>
         )}
         <SelectionQuoteToolbar containerRef={messageAreaRef} onQuote={handleQuoteSelection} />
-        {canShowChatSideRail && <MessageNavRail items={messageNavItems} scrollRef={scrollElementRef} />}
+        {canShowChatSideRail && <MessageNavRail items={messageNavItems} scrollRef={scrollElementRef}
+          onSelect={scrollToMessageIndex} firstVisibleIndex={messageViewport.firstVisibleIndex} />}
         {/* One measure, always. The layout used to widen to `max-w-7xl` and turn
             into a row when the recovery rail appeared, so the transcript was
             re-centred AND re-wrapped in the same frame. The status rail is
@@ -3622,13 +3611,17 @@ export function Chat() {
                       </button>
                     </div>
                   )}
-                  {windowedMessageRenderRows.rows.map((row) => {
+                  <div ref={messageViewport.attachList} data-testid="chat-virtual-history" className="relative"
+                    style={{ height: messageViewport.total, overflowAnchor: 'none' }}>
+                  {messageViewport.rows.map((row, position) => {
                     if (row.hidden) return null;
                     return (
                     <div
                       key={row.key}
+                      ref={messageViewport.measure}
+                      data-viewport-key={row.key}
                       className="space-y-3"
-                      style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 200px' }}
+                      style={{ position: 'absolute', top: messageViewport.offsets[messageViewport.start + position], width: '100%' }}
                       id={`chat-message-${row.index}`}
                       data-testid={`chat-message-${row.index}`}
                     >
@@ -3804,6 +3797,7 @@ export function Chat() {
                     );
                   })}
 
+                  </div>
                   {/* A pending approval must NEVER be invisible — it is the only
                       control that can unblock the agent. Attribution to a turn
                       is best-effort: a turn whose whole output was "I need

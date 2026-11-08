@@ -29,7 +29,7 @@ afterEach(() => { observers.length = 0; vi.clearAllTimers(); vi.useRealTimers();
 function View({ rows = items }: { rows?: typeof items }) {
   const [scroller, setScroller] = useState<HTMLDivElement | null>(null);
   const getScroller = useCallback(() => scroller, [scroller]);
-  const viewport = useMessageViewport(rows, getScroller, 'session', 30);
+  const { rows: mountedRows, offsets, total, start, attachList, measure, scrollToIndex } = useMessageViewport(rows, getScroller, 'session', 30);
   const attach = useCallback((node: HTMLDivElement | null) => {
       if (node) {
         Object.defineProperty(node, 'clientHeight', { configurable: true, value: 600 });
@@ -37,11 +37,11 @@ function View({ rows = items }: { rows?: typeof items }) {
       }
       setScroller(node);
   }, []);
-  return <><button onClick={() => viewport.scrollToIndex(250)}>jump</button>
+  return <><button onClick={() => scrollToIndex(250)}>jump</button>
     <div data-testid="scroll" ref={attach}>
-      <div ref={viewport.listRef} style={{ height: viewport.total }}>
-        {viewport.rows.map((row, position) => <div key={row.key} ref={viewport.measure} data-viewport-key={row.key}
-          data-testid={'row-' + row.index} style={{ position: 'absolute', top: viewport.offsets[viewport.start + position] }}>{row.index}</div>)}
+      <div ref={attachList} style={{ height: total }}>
+        {mountedRows.map((row, position) => <div key={row.key} ref={measure} data-viewport-key={row.key}
+          data-testid={'row-' + row.index} style={{ position: 'absolute', top: offsets[start + position] }}>{row.index}</div>)}
       </div>
     </div></>;
 }

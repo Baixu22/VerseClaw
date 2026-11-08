@@ -62,6 +62,7 @@ import type { ChatGet, ChatSet } from './chat/store-api';
 import { useWorkspacesStore } from './workspaces';
 import { applyRuntimeEventToRuns, extractToolCompletedFiles } from './chat/runtime-graph';
 import { createFramePublication } from './chat/frame-publication';
+import { createChatContentCache } from './chat/content-cache';
 import {
   enrichWithTeamOrchestrationToolResults,
   enrichWithToolCallAttachments,
@@ -201,7 +202,7 @@ const _lastHistoryLoadAtBySession = new Map<string, number>();
 const _forceNextHistoryLoadBySession = new Set<string>();
 const _foregroundHistoryLoadSeen = new Set<string>();
 const _SESSION_CACHE_MAX = 20;
-const _sessionHistoryCache = new LruMap<string, { messages: RawMessage[]; thinkingLevel: string | null }>(_SESSION_CACHE_MAX);
+const _sessionHistoryCache = createChatContentCache<{ messages: RawMessage[]; thinkingLevel: string | null }>('history', _SESSION_CACHE_MAX);
 
 type SessionRunState = Pick<
   ChatState,
@@ -226,7 +227,21 @@ const DEFAULT_SESSION_RUN_STATE: SessionRunState = {
   pendingToolImages: [],
 };
 
-const _sessionRunStateCache = new LruMap<string, SessionRunState>(_SESSION_CACHE_MAX);
+type SessionRunIdentity = Pick<SessionRunState, 'sending' | 'activeRunId' | 'pendingFinal' | 'lastUserMessageAt'>;
+const _sessionRunIdentities = new LruMap<string, SessionRunIdentity>(_SESSION_CACHE_MAX);
+const _sessionRunContents = createChatContentCache<SessionRunState>('run', _SESSION_CACHE_MAX);
+const _sessionRunStateCache = {
+  get(key: string): SessionRunState | undefined {
+    const identity = _sessionRunIdentities.get(key);
+    return identity ? { ...DEFAULT_SESSION_RUN_STATE, ..._sessionRunContents.get(key), ...identity } : undefined;
+  },
+  set(key: string, state: SessionRunState): void {
+    const { sending, activeRunId, pendingFinal, lastUserMessageAt } = state;
+    _sessionRunIdentities.set(key, { sending, activeRunId, pendingFinal, lastUserMessageAt });
+    _sessionRunContents.set(key, state);
+  },
+  delete(key: string): void { _sessionRunIdentities.delete(key); _sessionRunContents.delete(key); },
+};
 let _sendGenerationCounter = 0;
 const _activeSendGenerationBySession = new Map<string, number>();
 const SESSION_LOAD_MIN_INTERVAL_MS = 1_200;
@@ -688,25 +703,26 @@ function isDuplicateChatEvent(eventState: string, event: Record<string, unknown>
 const IMAGE_CACHE_KEY = 'verse-claw:image-cache';
 const IMAGE_CACHE_MAX = 100; // max entries to prevent unbounded growth
 
-function loadImageCache(): Map<string, AttachedFileMeta> {
+function loadImageCache() {
+  const cache = createChatContentCache<AttachedFileMeta>('image', IMAGE_CACHE_MAX);
   try {
     const raw = localStorage.getItem(IMAGE_CACHE_KEY);
     if (raw) {
       const entries = JSON.parse(raw) as Array<[string, AttachedFileMeta]>;
-      return new Map(entries);
+      for (const [key, value] of entries) cache.set(key, value);
     }
   } catch { /* ignore parse errors */ }
-  return new Map();
+  return cache;
 }
 
-function saveImageCache(cache: Map<string, AttachedFileMeta>): void {
+function saveImageCache(cache: ReturnType<typeof loadImageCache>): void {
   try {
-    // Evict oldest entries if over limit
-    const entries = Array.from(cache.entries());
-    const trimmed = entries.length > IMAGE_CACHE_MAX
-      ? entries.slice(entries.length - IMAGE_CACHE_MAX)
-      : entries;
-    localStorage.setItem(IMAGE_CACHE_KEY, JSON.stringify(trimmed));
+    // Durable paths remain useful after a preview is evicted; do not duplicate
+    // large data URLs in storage. Existing thumbnail owners reload them on demand.
+    const entries = cache.entries().map(([key, value]) => [key, {
+      ...value, preview: value.filePath || value.gatewayUrl ? null : value.preview,
+    }]);
+    localStorage.setItem(IMAGE_CACHE_KEY, JSON.stringify(entries));
   } catch { /* ignore quota errors */ }
 }
 
