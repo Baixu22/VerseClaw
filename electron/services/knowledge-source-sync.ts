@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { watch, type FSWatcher } from 'node:fs';
+import { getWatcherHub, type WatcherHubHandle } from '../../shared/resources/watcher-hub';
 import { lstat, open, readdir, realpath } from 'node:fs/promises';
 import { isAbsolute, join, matchesGlob, relative, resolve } from 'node:path';
 import { readJsonAtomic, writeJsonAtomic } from '../utils/atomic-write';
@@ -38,7 +38,7 @@ export function createKnowledgeSourceSync(input: {
   maxBytesPerFile?: number;
 }) {
   let stopped = false;
-  let watcher: FSWatcher | undefined;
+  let watcher: WatcherHubHandle | undefined;
   let timer: ReturnType<typeof setTimeout> | undefined;
   let interval: ReturnType<typeof setInterval> | undefined;
   let serial = Promise.resolve();
@@ -145,9 +145,7 @@ export function createKnowledgeSourceSync(input: {
   async function start() {
     if (stopped) throw new Error('Stopped source synchronizer cannot restart');
     if (watcher) return;
-    watcher = watch(root, { recursive: true }, schedule);
-    watcher.on('error', input.onError);
-    watcher.unref();
+    watcher = getWatcherHub().subscribeDirectory(root, schedule, input.onError, { recursive: true, persistent: false });
     interval = setInterval(schedule, input.scanIntervalMs ?? 60_000);
     interval.unref();
     await scan();

@@ -622,25 +622,37 @@ async function enrichStatusWithDiffStats(ctx: RepoContext, status: GitRepository
   return { ...status, changes };
 }
 
-type GitStatusCacheEntry = { status: GitRepositoryStatus; repoRoot: string | null };
+type GitStatusCacheEntry = { status: GitRepositoryStatus; repoRoot: string | null; source: string };
 const GIT_STATUS_CACHE_TTL_MS = 5_000;
 const gitStatusCache = new BoundedCache<string, GitStatusCacheEntry>({
   maxEntries: 16,
   ttlMs: GIT_STATUS_CACHE_TTL_MS,
 });
 const gitStatusFlight = new Singleflight<string, GitStatusCacheEntry>();
+let gitStatusGeneration = 0;
 
 function gitStatusCacheKey(workspace: WorkspaceProfile): string {
-  return `git-workspace:${workspace.id}:${resolve(workspace.rootPath)}`;
+  const root = resolve(workspace.rootPath);
+  return `git-workspace:${process.platform === 'win32' ? root.toLowerCase() : root}`;
+}
+
+async function gitStatusSource(workspace: WorkspaceProfile): Promise<string> {
+  const paths = [resolve(workspace.rootPath), join(resolve(workspace.rootPath), '.git')];
+  return JSON.stringify(await Promise.all(paths.map(async path => {
+    try { const value = await stat(path); return [value.dev, value.ino, value.birthtimeMs, value.mtimeMs, value.size]; }
+    catch (error) { if ((error as NodeJS.ErrnoException).code === 'ENOENT') return null; throw error; }
+  })));
 }
 
 /** Read-through cache for the read-only status surface; mutations invalidate its repo prefix. */
 export function invalidateGitStatusCache(repoRoot: string): number {
+  gitStatusGeneration++;
   const target = resolve(repoRoot);
   return gitStatusCache.invalidate((_key, entry) => entry.repoRoot === target);
 }
 
 export function clearGitStatusCacheForTest(): void {
+  gitStatusGeneration++;
   gitStatusCache.clear();
 }
 
@@ -681,19 +693,24 @@ export async function resolveGitCommitAtOrBefore(isoTimestamp: string): Promise<
 export async function readCurrentGitStatus(): Promise<GitRepositoryStatus> {
   const workspace = requireWorkspace(await getActiveWorkspaceProfile());
   const key = gitStatusCacheKey(workspace);
+  const source = await gitStatusSource(workspace);
   const cached = gitStatusCache.get(key);
-  if (cached) return cached.status;
-  const entry = await gitStatusFlight.run(key, async () => {
+  if (cached?.source === source) return cached.status;
+  if (cached) gitStatusCache.delete(key);
+  const generation = gitStatusGeneration;
+  const entry = await gitStatusFlight.run(`${generation}:${key}:${source}`, async () => {
     const ctx = await getRepoContextOrNull(workspace);
-    return {
+    const loaded = {
       status: await readUncachedGitStatus(workspace, ctx),
       repoRoot: ctx ? resolve(ctx.repoRoot) : null,
+      source,
     };
+    if (loaded.repoRoot && generation === gitStatusGeneration && source === await gitStatusSource(workspace)) gitStatusCache.set(key, loaded);
+    return loaded;
   });
   // Non-repository workspaces are cheap to re-check and must not hide a later
   // `git init`; only real repositories enter the bounded cache.
   if (!entry.repoRoot) return entry.status;
-  gitStatusCache.set(key, entry);
   return entry.status;
 }
 

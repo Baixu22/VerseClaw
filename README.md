@@ -12,6 +12,8 @@ Chat groups ordinary streamed text updates by animation frame. Approvals, cancel
 
 Long conversations use measured message heights to keep earlier loaded turns reachable within the DOM limit. History, preview and projection caches share a 32 MiB payload budget; evicted content reloads from the existing session and media owners.
 
+Compatible filesystem subscriptions share native watchers while keeping independent filters and release handles. Knowledge sources resume after root recreation, and Main Git status reads share fresh results across windows.
+
 Conversations can initialize a Git repository, select an independent worktree, and restore its draft. `/storage` and **Settings → Storage** share a resource page for conversation files, process memory, and worktrees. [Usage and ownership](docs/dev/session-worktree-storage.md).
 
 **Chat, code, knowledge and agent execution in one desktop workspace.**

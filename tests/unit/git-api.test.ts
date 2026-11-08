@@ -1,4 +1,6 @@
-import { basename, resolve } from 'node:path';
+import { basename, resolve, join } from 'node:path';
+import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { WorkspaceProfile } from '@shared/types/workspace';
 
@@ -108,6 +110,56 @@ describe('git api', () => {
     await api.status();
     expect(statusCalls).toBe(1);
     expect(repoProbeCalls).toBe(1);
+  });
+
+  it('fences a pending status when its repository is invalidated', async () => {
+    const { readCurrentGitStatus, invalidateGitStatusCache, clearGitStatusCacheForTest } = await import('@electron/services/git-api');
+    clearGitStatusCacheForTest();
+    let finish!: (...args: unknown[]) => void; let statusCalls = 0;
+    execFileMock.mockImplementation((_command, args, _options, callback) => {
+      if (isRepoRootProbe(args)) callback(null, process.cwd() + '\n', '');
+      else if (args[0] === 'status' && ++statusCalls === 1) finish = callback;
+      else callback(null, args[0] === 'status' ? '# branch.head new\0' : '', '');
+      return { stdin: { destroy: vi.fn() } };
+    });
+    const old = readCurrentGitStatus(); await vi.waitFor(() => expect(finish).toBeTypeOf('function'));
+    invalidateGitStatusCache(process.cwd()); const current = readCurrentGitStatus();
+    finish(null, '# branch.head old\0', '');
+    expect((await old).branch).toBe('old'); expect((await current).branch).toBe('new');
+    expect((await readCurrentGitStatus()).branch).toBe('new'); expect(statusCalls).toBe(2);
+  });
+
+  it('shares the same root status across workspace profiles without mixing roots', async () => {
+    let statuses = 0;
+    mockExec((_command, args) => {
+      if (isRepoRootProbe(args)) return { stdout: process.cwd() + '\n' };
+      if (args[0] === 'status') { statuses++; return { stdout: '# branch.head main\0' }; }
+      return { stdout: '' };
+    });
+    const { readCurrentGitStatus, clearGitStatusCacheForTest } = await import('@electron/services/git-api');
+    clearGitStatusCacheForTest(); await readCurrentGitStatus();
+    activeWorkspace.profile = { ...workspace(), id: 'other-window-profile' };
+    await readCurrentGitStatus(); expect(statuses).toBe(1);
+  });
+
+  it('rechecks source identity after directory deletion and Git metadata replacement', async () => {
+    const base = await mkdtemp(join(tmpdir(), 'git-cache-owner-')); const root = join(base, 'repo'); await mkdir(root);
+    let version = 'first'; let calls = 0;
+    activeWorkspace.profile = { ...workspace(), rootPath: root };
+    mockExec((_command, args) => {
+      if (isRepoRootProbe(args)) return { stdout: root + '\n' };
+      if (args[0] === 'status') { calls++; return { stdout: '# branch.head ' + version + '\0' }; }
+      return { stdout: '' };
+    });
+    const { readCurrentGitStatus, clearGitStatusCacheForTest } = await import('@electron/services/git-api');
+    clearGitStatusCacheForTest();
+    try {
+      await writeFile(join(root, '.git'), 'gitdir: first-owner'); expect((await readCurrentGitStatus()).branch).toBe('first');
+      await rm(root, { recursive: true }); await mkdir(root); await writeFile(join(root, '.git'), 'gitdir: replacement-owner'); version = 'second';
+      expect((await readCurrentGitStatus()).branch).toBe('second');
+      await writeFile(join(root, '.git'), 'gitdir: a-different-owner-longer'); version = 'third';
+      expect((await readCurrentGitStatus()).branch).toBe('third'); expect(calls).toBe(3);
+    } finally { clearGitStatusCacheForTest(); await rm(base, { recursive: true, force: true }); }
   });
 
   it('invalidates the repo status cache after a successful write', async () => {

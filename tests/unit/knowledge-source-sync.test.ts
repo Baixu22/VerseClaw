@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createKnowledgeSourceSync, type KnowledgeSourceTransition } from '@electron/services/knowledge-source-sync';
+import { getWatcherHub } from '../../shared/resources/watcher-hub';
 
 const roots: string[] = [];
 const active: Array<ReturnType<typeof createKnowledgeSourceSync>> = [];
@@ -20,6 +21,19 @@ afterEach(async () => {
   for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true });
 });
 describe('continuous local knowledge synchronization', () => {
+  it('shares recursive roots while preserving independent patterns and final release', async () => {
+    const f = await fixture(); const other: KnowledgeSourceTransition[] = [];
+    const second = createKnowledgeSourceSync({ ...f.config, id: 'text-source', patterns: ['**/*.txt'], cursorPath: join(f.base, 'text-cursor.json'), capture: async value => { other.push(value); } }); active.push(second);
+    const before = getWatcherHub().getDiagnostics();
+    await f.sync.start(); await second.start();
+    expect(getWatcherHub().getDiagnostics().directoryWatchers).toBe(before.directoryWatchers + 1);
+    await writeFile(join(f.root, 'a.md'), 'markdown'); await writeFile(join(f.root, 'b.txt'), 'plain');
+    await vi.waitFor(() => { expect(f.received).toHaveLength(1); expect(other).toHaveLength(1); }, { timeout: 7000 });
+    expect(f.received[0].relativePath).toBe('a.md'); expect(other[0].relativePath).toBe('b.txt');
+    f.sync.stop(); await writeFile(join(f.root, 'b.txt'), 'updated');
+    await vi.waitFor(() => expect(other).toHaveLength(2), { timeout: 7000 });
+    second.stop(); expect(getWatcherHub().getDiagnostics().directoryWatchers).toBe(before.directoryWatchers);
+  });
   it('does not deduplicate later edit cycles or delete/recreate back to the same content', async () => {
     const f = await fixture(); const path = join(f.root, 'cycle.md');
     for (const body of ['A', 'B', 'A', 'B']) { await writeFile(path, body); await f.sync.scan(); }
