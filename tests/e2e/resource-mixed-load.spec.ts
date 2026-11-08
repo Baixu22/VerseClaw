@@ -190,7 +190,7 @@ test('frozen mixed work retains completion, keyboard and scrolling', async ({ la
           for (let id = worker; id < data.fixture.tasks; id += data.workers) {
             const kind = data.fixture.phases[id % data.fixture.phases.length]; const requested = performance.now();
             const phase = kind === 'remote-wait' ? 'remote-wait' : ['read', 'retrieval', 'git'].includes(kind) ? 'read' : 'execution';
-            await fabric.runResource('workspaceExec', data.root, { phase, tenant: `agent-${worker}`, qos: 'interactive', timeoutMs: 60_000 }, async lease => {
+            await fabric.runResource('workspaceExec', data.root, { phase, operationKey: kind, tenant: `agent-${worker}`, qos: 'interactive', timeoutMs: 60_000 }, async lease => {
               const admitted = performance.now(); let receipt: unknown;
               if (kind === 'remote-wait') { receipt = await (await fetch(data.origin + '/wait')).text(); if (receipt !== 'remote-receipt') throw new Error('Wait receipt mismatch'); }
               else if (kind === 'read' || kind === 'retrieval') {

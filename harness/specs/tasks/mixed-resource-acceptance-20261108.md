@@ -10,6 +10,14 @@ expectedUserBehavior:
   - Identical mixed work is measured at one and two windows with one, four and eight agent-driven workers.
   - Raw completion, input, scrolling, process and memory observations support paired throughput and tail-latency decisions.
 touchedAreas:
+  - shared/resources/adaptive-limit.ts
+  - electron/services/resource-fabric.ts
+  - electron/services/terminal-api.ts
+  - tests/unit/resource-adaptive-pressure.test.ts
+  - tests/unit/terminal-api.test.ts
+  - README.md
+  - README.zh-CN.md
+  - README.ja-JP.md
   - tests/e2e/resource-mixed-load.spec.ts
   - tests/unit/resource-mixed-measurement.test.ts
   - scripts/verify-resource-mixed-load.mjs
@@ -26,6 +34,7 @@ requiredProfiles:
 requiredRules:
   - backend-communication-boundary
   - resource-mixed-measurement
+  - adaptive-resource-pressure
   - disk-temp-policy
   - repository-artifact-retention
   - task-forest-autoclose-and-roles
@@ -38,6 +47,7 @@ requiredTests:
   - node scripts/comms/compare.mjs
   - git diff --check
 acceptance:
+  - Preserve the first paired regression and repair demonstrated cross-operation baseline contamination inside existing owners with bounded operation identities; keep configured quotas and deadlines unchanged.
   - Freeze baseline c7573ec11095b541f3a4a9c5470bf4e0727489bc and the integrated source candidate, shared test driver and fixture hashes; record installed dependency reuse, machine resources, command order and build provenance.
   - Run ABBA at each combination of one/two actual Electron windows and one/four/eight scripted workers on the existing Fabric owner. Complete identical remote-wait, retrieval, Git, log-output and heavy execution work with receipt checks.
   - Measure native renderer keyboard-to-frame latency, scrolling and long tasks during the mixed workload; preserve draft, visible result and screenshot evidence.

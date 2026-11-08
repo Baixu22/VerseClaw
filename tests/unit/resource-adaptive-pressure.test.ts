@@ -41,6 +41,42 @@ describe('adaptive resource pressure', () => {
     expect(limit.sample(100, 64, 'read')).toBe(4);
     expect(limit.sample(100, 64, 'read')).toBeLessThan(4);
   });
+  it('isolates fast reads from Git and log output from builds within a phase', async () => {
+    let now = 1000;
+    const fabric = new ResourceFabric({ now: () => now });
+    for (let i = 0; i < 8; i++) {
+      for (const [phase, operationKey, duration] of [['read', 'read', 2], ['read', 'git', 180], ['execution', 'log', 100], ['execution', 'build', 600]] as const) {
+        await fabric.runResource('workspaceExec', 'mixed', { phase, operationKey }, async () => { now += duration; });
+        expect(fabric.getDiagnostics().accounts['workspaceExec:mixed'].limit).toBe(2);
+      }
+    }
+    const feedback = fabric.getDiagnostics().accounts['workspaceExec:mixed'].feedback;
+    expect(feedback.phases['read:read'].long).toBe(2);
+    expect(feedback.phases['read:git'].long).toBe(180);
+    expect(feedback.phases['execution:log'].long).toBe(100);
+    expect(feedback.phases['execution:build'].long).toBe(600);
+    fabric.observeLatency('workspaceExec', 'mixed', 100, 64, 'read', 'read');
+    fabric.observeLatency('workspaceExec', 'mixed', 100, 64, 'read', 'read');
+    expect(fabric.getDiagnostics().accounts['workspaceExec:mixed'].limit).toBe(1);
+  });
+  it('bounds operation baselines and rejects unbounded identities before admission', async () => {
+    const limit = new AdaptiveLimit({ initialLimit: 2, minLimit: 1, maxLimit: 4 });
+    for (let i = 0; i < 100; i++) limit.sample(i + 1, 0, 'read', String(i));
+    expect(Object.keys(limit.getDiagnostics().phases)).toHaveLength(32);
+    expect(limit.getDiagnostics().phases['read:0']).toBeUndefined();
+    expect(limit.getDiagnostics().phases['read:99'].long).toBe(100);
+    const fabric = new ResourceFabric();
+    await expect(fabric.acquire('workspaceExec', 'invalid', { operationKey: 'x'.repeat(65) })).rejects.toThrow('operation key');
+    expect(fabric.getDiagnostics().accounts['workspaceExec:invalid']).toMatchObject({ active: 0, queued: 0 });
+  });
+  it('recovers concurrency after pressure while operation identities exceed the LRU', () => {
+    const limit = new AdaptiveLimit({ initialLimit: 2, minLimit: 1, maxLimit: 4 });
+    expect(limit.setPressure(true)).toBe(1);
+    limit.setPressure(false);
+    for (let i = 0; i < 132; i++) limit.sample(10, 64, 'read', `command-${i % 33}`);
+    expect(limit.limit).toBe(4);
+    expect(Object.keys(limit.getDiagnostics().phases)).toHaveLength(32);
+  });
   it('does not turn an isolated read pause into sustained serial execution', () => {
     const limit = new AdaptiveLimit({ initialLimit: 2, minLimit: 1, maxLimit: 4 });
     limit.sample(2, 0, 'read');

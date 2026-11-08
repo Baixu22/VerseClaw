@@ -1,4 +1,5 @@
 import { existsSync, realpathSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
 import type {
   WorkspaceTerminalOpenPayload,
@@ -366,7 +367,8 @@ async function runViaOpenClawExecWithLease(input: {
   try {
     return await withWorkspaceExecLease(leaseKey, input.timeoutMs, () =>
       runViaOpenClawExec({ ...input, deadline }),
-      { deadline, phase: input.risk === 'read' ? 'read' : input.risk === 'network' ? 'remote-wait' : 'execution' },
+      { deadline, phase: input.risk === 'read' ? 'read' : input.risk === 'network' ? 'remote-wait' : 'execution',
+        operationKey: createHash('sha256').update(input.command).digest('hex') },
     );
   } catch (error) {
     if (error instanceof Error && 'code' in error && error.code === 'RESOURCE_QUEUE_FULL') {

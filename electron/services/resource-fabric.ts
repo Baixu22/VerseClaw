@@ -18,7 +18,7 @@ import { RESOURCE_METRICS_TTL_MS, type ResourceKind, type ResourceLimitEvent, ty
 import { checkResourceWait, watchResourceWait, resourceQueueFullError, type ResourceWaitOptions } from '../../shared/resources/wait';
 import { getHostDeadline, runWithHostDeadline } from '../utils/host-deadline-context';
 
-export type FabricAcquireOptions = ResourceWaitOptions & { qos?: QosClass; timeoutMs?: number; tenant?: string; phase?: AdaptivePhase };
+export type FabricAcquireOptions = ResourceWaitOptions & { qos?: QosClass; timeoutMs?: number; tenant?: string; phase?: AdaptivePhase; operationKey?: string };
 
 const PRESSURE_POLICY = { lowAvailableRatio: 0.10, recoveredAvailableRatio: 0.15, highCommitRatio: 0.90, recoveredCommitRatio: 0.80, recoveryDwellMs: 10_000, idleAccountMs: 300_000 };
 type PressureReason = 'physical-memory' | 'system-commit' | 'event-loop';
@@ -112,6 +112,7 @@ type Waiter = {
   tenant: string;
   qos: QosClass;
   phase: AdaptivePhase;
+  operationKey?: string;
   requestedAt: number;
   timeoutMs: number;
   deadline: number;
@@ -209,6 +210,7 @@ class FabricAccount {
     const qos = options.qos ?? 'interactive';
     const tenant = options.tenant?.trim() || this.accountKey;
     return new Promise<FabricLease>((resolve, reject) => {
+      if (options.operationKey !== undefined && (typeof options.operationKey !== 'string' || options.operationKey.length < 1 || options.operationKey.length > 64)) throw new RangeError('invalid operation key');
       const deadline = Math.min(this.now() + timeoutMs, options.deadline ?? Infinity);
       const expired = () => new ResourceFabricTimeoutError({ resource: this.resource, leaseKey: this.accountKey, timeoutMs });
       checkResourceWait({ signal: options.signal, deadline }, expired, this.now);
@@ -220,6 +222,7 @@ class FabricAccount {
         tenant,
         qos,
         phase: options.phase ?? 'unknown',
+        operationKey: options.operationKey,
         requestedAt: this.now(),
         timeoutMs,
         deadline,
@@ -248,10 +251,10 @@ class FabricAccount {
     });
   }
 
-  observeLatency(latencyMs: number, queueSize = 0, phase: AdaptivePhase = 'unknown'): ResourceLimitEvent | null {
+  observeLatency(latencyMs: number, queueSize = 0, phase: AdaptivePhase = 'unknown', operationKey?: string): ResourceLimitEvent | null {
     const previous = this.limit.limit;
-    const next = this.limit.sample(Math.max(1, latencyMs), Math.max(0, queueSize), phase);
-    return this.recordLimit(previous, next, `${phase} latency feedback`);
+    const next = this.limit.sample(Math.max(1, latencyMs), Math.max(0, queueSize), phase, operationKey);
+    return this.recordLimit(previous, next, `${phase}${operationKey ? ':' + operationKey : ''} latency feedback`);
   }
 
   setPressure(active: boolean): void {
@@ -373,7 +376,7 @@ class FabricAccount {
     this.active = Math.max(0, this.active - 1);
     this.activeQos[waiter.qos] = Math.max(0, this.activeQos[waiter.qos] - 1);
     this.drf.release(waiter.tenant, { concurrency: 1 });
-    this.observeLatency(Math.max(1, this.now() - startedAt), this.queue.size, waiter.phase);
+    this.observeLatency(Math.max(1, this.now() - startedAt), this.queue.size, waiter.phase, waiter.operationKey);
     this.syncEnvelope(queuedMs, 'released');
     this.wakeAccounts();
   }
@@ -498,8 +501,8 @@ export class ResourceFabric {
     });
   }
 
-  observeLatency(resource: FabricResource, key: string, latencyMs: number, queueSize = 0, phase: AdaptivePhase = 'unknown'): ResourceLimitEvent | null {
-    return this.accountFor(resource, key).observeLatency(latencyMs, queueSize, phase);
+  observeLatency(resource: FabricResource, key: string, latencyMs: number, queueSize = 0, phase: AdaptivePhase = 'unknown', operationKey?: string): ResourceLimitEvent | null {
+    return this.accountFor(resource, key).observeLatency(latencyMs, queueSize, phase, operationKey);
   }
 
   observePressure(snapshot: Pick<ResourceEnvelopeSnapshot, 'machineMemory' | 'machineCommit' | 'eventLoopPressure'>): void {
@@ -645,7 +648,7 @@ export async function withWorkspaceExecLease<T>(
   workspaceKey: string,
   timeoutMs: number,
   fn: (lease: TerminalResourceLease) => Promise<T>,
-  options: ResourceWaitOptions & { phase?: AdaptivePhase } = {},
+  options: ResourceWaitOptions & { phase?: AdaptivePhase; operationKey?: string } = {},
 ): Promise<T> {
   return resourceFabric.runResource(
     'workspaceExec',

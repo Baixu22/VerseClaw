@@ -12,14 +12,16 @@ export type AdaptiveLimitOptions = {
 };
 
 export type AdaptivePhase = 'unknown' | 'read' | 'execution' | 'remote-wait';
-type PhaseSample = { short: number; long: number; healthy: number; slow: number; samples: number };
+type PhaseSample = { short: number; long: number; slow: number; samples: number };
+const MAX_OPERATION_BASELINES = 32;
 
 export class AdaptiveLimit {
   private readonly options: Required<AdaptiveLimitOptions>;
   private current: number;
-  private readonly phases = new Map<AdaptivePhase, PhaseSample>();
+  private readonly phases = new Map<string, PhaseSample>();
   private pressured = false;
   private recoverySamples = 0;
+  private healthyDemand = 0;
 
   constructor(options: AdaptiveLimitOptions) {
     const smooth = options.smoothing ?? 0.2;
@@ -49,15 +51,21 @@ export class AdaptiveLimit {
     this.current = options.initialLimit;
   }
 
-  sample(latencyMs: number, queueSize = 0, phase: AdaptivePhase = 'unknown'): number {
+  sample(latencyMs: number, queueSize = 0, phase: AdaptivePhase = 'unknown', operationKey?: string): number {
     if (!Number.isFinite(latencyMs) || latencyMs <= 0 || !Number.isFinite(queueSize) || queueSize < 0) {
       throw new RangeError('latencyMs and queueSize must be finite and non-negative');
     }
     if (!['unknown', 'read', 'execution', 'remote-wait'].includes(phase)) throw new RangeError('invalid execution phase');
-    const sample = this.phases.get(phase) ?? { short: latencyMs, long: latencyMs, healthy: 0, slow: 0, samples: 0 };
+    if (operationKey !== undefined && (typeof operationKey !== 'string' || operationKey.length < 1 || operationKey.length > 64)) throw new RangeError('invalid operation key');
+    const key = operationKey === undefined ? phase : `${phase}:${operationKey}`;
+    const sample = this.phases.get(key) ?? { short: latencyMs, long: latencyMs, slow: 0, samples: 0 };
     sample.short += this.options.smoothing * (latencyMs - sample.short);
     sample.samples += 1;
-    this.phases.set(phase, sample);
+    // Retain a bounded LRU of caller-defined operations. Eviction resets only
+    // that latency baseline, never the account's active leases or shared limit.
+    this.phases.delete(key);
+    if (this.phases.size >= MAX_OPERATION_BASELINES) this.phases.delete(this.phases.keys().next().value!);
+    this.phases.set(key, sample);
     // Remote service time is recorded but does not tune local execution capacity.
     if (phase === 'remote-wait') return this.current;
     const threshold = sample.long + Math.max(1, sample.long * this.options.tolerance);
@@ -65,7 +73,7 @@ export class AdaptiveLimit {
     // healthy account. Require two consecutive slow completions of this phase.
     const degraded = sample.short > threshold && latencyMs > threshold;
     if (degraded) {
-      sample.healthy = 0;
+      this.healthyDemand = 0;
       sample.slow += 1;
       if (sample.slow < 2) return this.current;
       this.recoverySamples = 3;
@@ -75,15 +83,17 @@ export class AdaptiveLimit {
     sample.slow = 0;
     // Do not teach the baseline to accept an overloaded service time.
     sample.long += (this.options.smoothing / 5) * (latencyMs - sample.long);
-    if (this.pressured) { sample.healthy = 0; return this.current; }
+    if (this.pressured) { this.healthyDemand = 0; return this.current; }
     if (this.recoverySamples > 0) {
       this.recoverySamples -= 1;
-      sample.healthy = 0;
+      this.healthyDemand = 0;
       return this.current;
     }
-    sample.healthy = queueSize > 0 ? sample.healthy + 1 : 0;
-    if (sample.healthy >= 3) {
-      sample.healthy = 0;
+    // Recovery belongs to the account, so rotating commands cannot erase it
+    // when their bounded latency baselines are evicted.
+    this.healthyDemand = queueSize > 0 ? this.healthyDemand + 1 : 0;
+    if (this.healthyDemand >= 3) {
+      this.healthyDemand = 0;
       return this.change(this.current + 1);
     }
     return this.current;
@@ -93,7 +103,7 @@ export class AdaptiveLimit {
     if (active === this.pressured) return this.current;
     this.pressured = active;
     this.recoverySamples = 3;
-    for (const sample of this.phases.values()) sample.healthy = 0;
+    this.healthyDemand = 0;
     return active ? this.change(Math.floor(this.current / 2)) : this.current;
   }
 
@@ -105,8 +115,8 @@ export class AdaptiveLimit {
     return this.current;
   }
 
-  getDiagnostics(): { pressured: boolean; phases: Partial<Record<AdaptivePhase, PhaseSample>> } {
-    return { pressured: this.pressured, phases: Object.fromEntries([...this.phases].map(([phase, sample]) => [phase, { ...sample }])) };
+  getDiagnostics(): { pressured: boolean; maxBaselines: number; healthyDemand: number; phases: Record<string, PhaseSample> } {
+    return { pressured: this.pressured, maxBaselines: MAX_OPERATION_BASELINES, healthyDemand: this.healthyDemand, phases: Object.fromEntries([...this.phases].map(([phase, sample]) => [phase, { ...sample }])) };
   }
 
   get limit(): number {
