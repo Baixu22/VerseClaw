@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { createHash, randomUUID } from 'node:crypto';
-import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, unlinkSync, writeFileSync } from 'node:fs';
+import { closeSync, existsSync, fsyncSync, mkdirSync, openSync, readFileSync, readdirSync, renameSync, unlinkSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
 const digest = value => createHash('sha256').update(JSON.stringify(value)).digest('hex');
@@ -8,7 +8,11 @@ const read = path => JSON.parse(readFileSync(path, 'utf8'));
 const integer = value => Number.isSafeInteger(value) && value >= 0;
 function write(path, value) {
   const temporary = path + '.' + randomUUID() + '.tmp';
-  writeFileSync(temporary, JSON.stringify(value, null, 2) + '\n', { flag: 'wx' });
+  const handle = openSync(temporary, 'wx');
+  try {
+    writeFileSync(handle, JSON.stringify(value, null, 2) + '\n');
+    fsyncSync(handle);
+  } finally { closeSync(handle); }
   renameSync(temporary, path);
 }
 
