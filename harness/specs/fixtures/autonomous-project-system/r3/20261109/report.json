@@ -1,0 +1,450 @@
+{
+  "schema": "terminal-resource-ownership-acceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "observedAt": "2026-11-08T17:16:25.433470+00:00",
+  "candidate": {
+    "commit": "2dc73c19e8c8aab605a5e992f7d1c1ad5be0d315",
+    "tree": "a4bef0f1852a5da1843958494cc5138bf376dabe",
+    "dirty": false
+  },
+  "sourceCleanAfter": true,
+  "commands": [
+    {
+      "name": "core",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:/ClawX/node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "vitest.terminal-resources.config.ts",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\unified-management-20261108\\r3-final-candidate/core.json"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 25.25,
+      "passed": 77,
+      "failed": 0,
+      "skipped": 0,
+      "total": 77
+    },
+    {
+      "name": "native",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:/ClawX/node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "../vitest.terminal-resources.native.config.ts",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\unified-management-20261108\\r3-final-candidate/native.json"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108\\openclaw_runtime",
+      "exitCode": 0,
+      "seconds": 43.906,
+      "passed": 45,
+      "failed": 0,
+      "skipped": 0,
+      "total": 45
+    },
+    {
+      "name": "node-types",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:/ClawX/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 8.016
+    },
+    {
+      "name": "web-types",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:/ClawX/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 4.172
+    },
+    {
+      "name": "test-types",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:/ClawX/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 12.031
+    },
+    {
+      "name": "lint",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:/ClawX/node_modules/eslint/bin/eslint.js",
+        "electron/main/ipc-handlers.ts",
+        "electron/services/terminal-api.ts",
+        "electron/services/terminal-session-manager.ts",
+        "electron/services/web-preview-api.ts",
+        "electron/services/web-preview-manager.ts",
+        "openclaw_runtime/src/agents/verseshell/governed-process.real-limits.test.ts",
+        "openclaw_runtime/src/agents/verseshell/governed-process.ts",
+        "openclaw_runtime/src/agents/verseshell/managed-process-capacity.ts",
+        "openclaw_runtime/src/agents/verseshell/managed-process-reservation.ts",
+        "shared/host-api/contract.ts",
+        "shared/host-events/contract.ts",
+        "src/components/file-preview/WorkspaceTerminalPanel.tsx",
+        "tests/e2e/workspace-terminal-panel.spec.ts",
+        "tests/unit/terminal-resource-native.test.ts",
+        "tests/unit/terminal-resource-ownership.test.ts",
+        "tests/unit/terminal-session-manager.test.ts",
+        "tests/unit/web-preview-owner-api.test.ts",
+        "tests/unit/web-preview-startup-recovery.test.ts",
+        "vitest.terminal-resources.config.ts",
+        "vitest.terminal-resources.native.config.ts"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 4.797
+    },
+    {
+      "name": "contract",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 3.391
+    },
+    {
+      "name": "comms-replay",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 0.328
+    },
+    {
+      "name": "comms-compare",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 0.203
+    },
+    {
+      "name": "harness",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/autonomy-terminal-resource-ownership.md",
+        "--since",
+        "dee28c8a2"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 1.0
+    },
+    {
+      "name": "harness-dry-run",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/autonomy-terminal-resource-ownership.md",
+        "--since",
+        "dee28c8a2",
+        "--dry-run"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 0.828
+    },
+    {
+      "name": "desktop-build",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=6144",
+        "D:/ClawX/node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 50.781
+    },
+    {
+      "name": "electron",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:/ClawX/node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/workspace-terminal-panel.spec.ts",
+        "--workers=1",
+        "--reporter=line,json"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 44.453,
+      "stats": {
+        "startTime": "2026-11-08T17:15:40.881Z",
+        "duration": 42475.717000000004,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    }
+  ],
+  "sources": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "da884cacc0de10d241a6a12f258f580126ad5eeb14464a7111294b99719c4601",
+      "gitBlobSha256": "da884cacc0de10d241a6a12f258f580126ad5eeb14464a7111294b99719c4601"
+    },
+    {
+      "path": "README.md",
+      "sha256": "58e5561ae726b13ead3e28fa38377bdf092843bfd2cebb95c26fa5f05fee5f0a",
+      "gitBlobSha256": "58e5561ae726b13ead3e28fa38377bdf092843bfd2cebb95c26fa5f05fee5f0a"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "629e02d558ae9f1b2f3bade761e0dd2c210cd8fb99aeba37a29383d118a536d5",
+      "gitBlobSha256": "629e02d558ae9f1b2f3bade761e0dd2c210cd8fb99aeba37a29383d118a536d5"
+    },
+    {
+      "path": "electron/main/ipc-handlers.ts",
+      "sha256": "1569467b65fb0fb21e92fbf24d537e23c60838f9a8f097f8df6d3c19983937f5",
+      "gitBlobSha256": "1569467b65fb0fb21e92fbf24d537e23c60838f9a8f097f8df6d3c19983937f5"
+    },
+    {
+      "path": "electron/services/terminal-api.ts",
+      "sha256": "b846cd5d09c7299e79e220b916a2b51d47592feb8d1797b5e95c72b9d1fd9e35",
+      "gitBlobSha256": "b846cd5d09c7299e79e220b916a2b51d47592feb8d1797b5e95c72b9d1fd9e35"
+    },
+    {
+      "path": "electron/services/terminal-session-manager.ts",
+      "sha256": "6a272e57fd94ef4591d3973c8366097d5c12cdc7ad4a57230883db7bca4a54bd",
+      "gitBlobSha256": "6a272e57fd94ef4591d3973c8366097d5c12cdc7ad4a57230883db7bca4a54bd"
+    },
+    {
+      "path": "electron/services/web-preview-api.ts",
+      "sha256": "620037f7afb43ea31f5c1136d4a5a4e26627358521808c75e09de06ab23f4cb9",
+      "gitBlobSha256": "620037f7afb43ea31f5c1136d4a5a4e26627358521808c75e09de06ab23f4cb9"
+    },
+    {
+      "path": "electron/services/web-preview-manager.ts",
+      "sha256": "eeeccf65932398a1392f21d92e07dce0953a86c15524cb8f75eb249c0b94e6a2",
+      "gitBlobSha256": "eeeccf65932398a1392f21d92e07dce0953a86c15524cb8f75eb249c0b94e6a2"
+    },
+    {
+      "path": "harness/specs/guides/terminal-resource-ownership.md",
+      "sha256": "920ae5cbae24ebc2650959c7cab4e22e4d5e6d7cf4dbb512a14ebbce399d28cd",
+      "gitBlobSha256": "920ae5cbae24ebc2650959c7cab4e22e4d5e6d7cf4dbb512a14ebbce399d28cd"
+    },
+    {
+      "path": "harness/specs/tasks/autonomy-terminal-resource-ownership.md",
+      "sha256": "e5f4ca498405ab46817075d62bf1d7a74de6249b512b91860de1d2c2aec77268",
+      "gitBlobSha256": "e5f4ca498405ab46817075d62bf1d7a74de6249b512b91860de1d2c2aec77268"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/verseshell/governed-process.real-limits.test.ts",
+      "sha256": "6b0186d13d2d229aace136c2c3bd605c2388bcf628f956752cba546348e8b585",
+      "gitBlobSha256": "6b0186d13d2d229aace136c2c3bd605c2388bcf628f956752cba546348e8b585"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/verseshell/governed-process.ts",
+      "sha256": "47854b00cdc121c005a672455271f686e8fef14000ecfe256500319c3967afeb",
+      "gitBlobSha256": "47854b00cdc121c005a672455271f686e8fef14000ecfe256500319c3967afeb"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/verseshell/managed-process-capacity.ts",
+      "sha256": "1b3d70ad1e54c8d48c684099e31cfbe58a4d66c4f7bfeb567197a78c2f57ea63",
+      "gitBlobSha256": "1b3d70ad1e54c8d48c684099e31cfbe58a4d66c4f7bfeb567197a78c2f57ea63"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/verseshell/managed-process-reservation.ts",
+      "sha256": "96208329d17ff4324b5e6d6d09ec93f3b2908b2bef77e620265ad283109f2fd2",
+      "gitBlobSha256": "96208329d17ff4324b5e6d6d09ec93f3b2908b2bef77e620265ad283109f2fd2"
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "sha256": "2f7d2a64e02f8a9c65331b21cc17d4061e4d9c23b71ff34d379643284bf43449",
+      "gitBlobSha256": "2f7d2a64e02f8a9c65331b21cc17d4061e4d9c23b71ff34d379643284bf43449"
+    },
+    {
+      "path": "shared/host-events/contract.ts",
+      "sha256": "5ef5938bde780a3b3d5c49cfc4186a0e393a76f666f8e568a0a10bfef1fca814",
+      "gitBlobSha256": "5ef5938bde780a3b3d5c49cfc4186a0e393a76f666f8e568a0a10bfef1fca814"
+    },
+    {
+      "path": "src/components/file-preview/WorkspaceTerminalPanel.tsx",
+      "sha256": "e3d495004cc40b5d3939305c531660ab9a87a30e91167cbe3d348bc6ead36134",
+      "gitBlobSha256": "e3d495004cc40b5d3939305c531660ab9a87a30e91167cbe3d348bc6ead36134"
+    },
+    {
+      "path": "tests/e2e/workspace-terminal-panel.spec.ts",
+      "sha256": "8f54afd51d1a53ac46fbab44c60748645a296a875fabd3b26e44e7afa582e36a",
+      "gitBlobSha256": "8f54afd51d1a53ac46fbab44c60748645a296a875fabd3b26e44e7afa582e36a"
+    },
+    {
+      "path": "tests/unit/fixtures/terminal-resource-worker.mts",
+      "sha256": "fdf3d6c33fc08a2d153eb4103cb181f53e2c0692b5f9473d91c98f4f315df490",
+      "gitBlobSha256": "fdf3d6c33fc08a2d153eb4103cb181f53e2c0692b5f9473d91c98f4f315df490"
+    },
+    {
+      "path": "tests/unit/terminal-resource-native.test.ts",
+      "sha256": "f382b0e6da5c4bf95d353a4bb8212384410163ded6e8d8a86c30a4678d4d944f",
+      "gitBlobSha256": "f382b0e6da5c4bf95d353a4bb8212384410163ded6e8d8a86c30a4678d4d944f"
+    },
+    {
+      "path": "tests/unit/terminal-resource-ownership.test.ts",
+      "sha256": "e9f2d831af0d7f813744d98360bad9d9c332c3bbfd5c83e40ede13680f8f3ce6",
+      "gitBlobSha256": "e9f2d831af0d7f813744d98360bad9d9c332c3bbfd5c83e40ede13680f8f3ce6"
+    },
+    {
+      "path": "tests/unit/terminal-session-manager.test.ts",
+      "sha256": "a094f5acde90fed6aa5df31e44153bfd21f695c915a9165500291f95a0f0a873",
+      "gitBlobSha256": "a094f5acde90fed6aa5df31e44153bfd21f695c915a9165500291f95a0f0a873"
+    },
+    {
+      "path": "tests/unit/web-preview-owner-api.test.ts",
+      "sha256": "86248b9f899e6f735533118ee833694ffcbc626e7eb2fb2a0b78eb3b51af7128",
+      "gitBlobSha256": "86248b9f899e6f735533118ee833694ffcbc626e7eb2fb2a0b78eb3b51af7128"
+    },
+    {
+      "path": "tests/unit/web-preview-startup-recovery.test.ts",
+      "sha256": "f867965258eb160e369d30624202469f5aef2ac4c960fbd7c94260cf29d0a76d",
+      "gitBlobSha256": "f867965258eb160e369d30624202469f5aef2ac4c960fbd7c94260cf29d0a76d"
+    },
+    {
+      "path": "vitest.terminal-resources.config.ts",
+      "sha256": "4e96cc81ebf086509a6cd64bea278220f48413061bdf222272ebe902c2daa307",
+      "gitBlobSha256": "4e96cc81ebf086509a6cd64bea278220f48413061bdf222272ebe902c2daa307"
+    },
+    {
+      "path": "vitest.terminal-resources.native.config.ts",
+      "sha256": "15ca48b186ba6ec5c208403547111df46869f954e300c0afd7e4ed365ef7566a",
+      "gitBlobSha256": "15ca48b186ba6ec5c208403547111df46869f954e300c0afd7e4ed365ef7566a"
+    }
+  ],
+  "status": "passed",
+  "binaries": [
+    {
+      "path": "D:/tmp/unified-management-20261108/verified-bin/ae.exe",
+      "sha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2"
+    },
+    {
+      "path": "D:/ClawX/resources/bin/win32-x64/ae.exe",
+      "sha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2"
+    },
+    {
+      "path": "D:/ClawX-work/recovery-integration-20261103/node_modules/.pnpm/electron@40.8.4/node_modules/electron/dist/electron.exe",
+      "sha256": "fad08627e2f61846a9afc3ec3e0b6110e6f0c57a79e716cbf2268c5f352bce6e"
+    },
+    {
+      "path": "D:/ClawX/node_modules/.pnpm/electron@40.8.4/node_modules/electron/dist/electron.exe",
+      "sha256": "fad08627e2f61846a9afc3ec3e0b6110e6f0c57a79e716cbf2268c5f352bce6e"
+    }
+  ],
+  "dependencies": "Existing node_modules and VerseBrowser dist reused; extension bridge generated locally. Isolated test binary paths preserve exact executable hashes; original path failures retained separately.",
+  "scope": "Host-shared local-state process reservations, known-port claims, PTY scope and lifecycle, real Windows subprocess/PTY/VerseShell effects and typed-mock Electron interaction.",
+  "sharedDirectoryChecks": {
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0,
+    "source": "openclaw_runtime/src/agents/resource-leases.test.ts",
+    "driver": "shared-directory-config.txt",
+    "argv": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "--config",
+      ".audit/r3-resource.config.ts"
+    ],
+    "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+    "exitCode": 0
+  },
+  "verificationCounts": {
+    "core": 77,
+    "verseShellNativeAndManager": 45,
+    "sharedDirectory": 11,
+    "electronTypedMock": 2,
+    "total": 135
+  },
+  "acceptance": [
+    {
+      "requirement": "Host cap across workspaces and runtime processes; port and directory conflicts",
+      "evidence": [
+        "core.json",
+        "shared-directory.json"
+      ],
+      "verdict": "passed"
+    },
+    {
+      "requirement": "Native Windows cancellation, deadline, executor restart and owner exit receipts",
+      "evidence": [
+        "core.json",
+        "native.json",
+        "native-control.json",
+        "native-workspace.json"
+      ],
+      "verdict": "passed"
+    },
+    {
+      "requirement": "Windows environment, D temp and bounded output/artifact lookup",
+      "evidence": [
+        "core.json",
+        "native.json",
+        "native-control.json"
+      ],
+      "verdict": "passed"
+    },
+    {
+      "requirement": "PTY scope/generation, unknown retention and cleanup failure recovery",
+      "evidence": [
+        "core.json",
+        "electron.json"
+      ],
+      "verdict": "passed"
+    },
+    {
+      "requirement": "Current candidate, source hashes, documentation, checks and independent review",
+      "evidence": [
+        "commands.json",
+        "review.md"
+      ],
+      "verdict": "passed"
+    }
+  ],
+  "review": {
+    "actor": "deepseek-v4.1-flash",
+    "route": "ccs-workbuddy/deepseek-v4.1-flash",
+    "kind": "static targeted follow-up review",
+    "remainingP1": 0,
+    "remainingP2": 0
+  }
+}

@@ -1,0 +1,162 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "value": {
+    "binarySha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
+    "controls": [
+      {
+        "kind": "stdin",
+        "ms": 792.6787000000004
+      },
+      {
+        "kind": "kill",
+        "ms": 24.6234000000004
+      }
+    ],
+    "pollRequests": 16,
+    "output": "READY\nREADY\nINPUT:ping\n\n",
+    "result": {
+      "exitCode": 0,
+      "stdoutBytes": 32758,
+      "stderrBytes": 10,
+      "artifacts": [
+        "result://sha256/ccb4716c7c15abb200b8c0f723faee5ebffde74dbc3ac192f69704f88261c9e5",
+        "result://sha256/1a3602c79feaf98a3203993bdc20754eff7934a84562dd8552b415ea826f0e8c"
+      ],
+      "counts": {
+        "raw": 684444,
+        "retained": 32768,
+        "omitted": 651676
+      }
+    },
+    "artifactReads": [
+      {
+        "head": {
+          "schema": "verseshell.observation/v1",
+          "id": "aci-2",
+          "op": "result.query",
+          "ok": true,
+          "status": "ok",
+          "meta": {
+            "elapsed_ms": 0,
+            "profile": "result",
+            "token_estimate": 212,
+            "effects": [
+              "artifact.read"
+            ],
+            "capabilities_used": [
+              "shell.exec"
+            ]
+          },
+          "data": {
+            "decoding_lossy": false,
+            "encoding": "utf-8",
+            "handle": "result://sha256/ccb4716c7c15abb200b8c0f723faee5ebffde74dbc3ac192f69704f88261c9e5",
+            "lines": 10,
+            "mode": "head",
+            "text": "ine-19090:xxxxxxxxxxxxxxxxxxxxxxxx\nline-19091:xxxxxxxxxxxxxxxxxxxxxxxx\nline-19092:xxxxxxxxxxxxxxxxxxxxxxxx\nline-19093:xxxxxxxxxxxxxxxxxxxxxxxx\nline-19094:xxxxxxxxxxxxxxxxxxxxxxxx\nline-19095:xxxxxxxxxxxxxxxxxxxxxxxx\nline-19096:xxxxxxxxxxxxxxxxxxxxxxxx\nline-19097:xxxxxxxxxxxxxxxxxxxxxxxx\nline-19098:xxxxxxxxxxxxxxxxxxxxxxxx\nline-19099:xxxxxxxxxxxxxxxxxxxxxxxx",
+            "truncated": true
+          }
+        },
+        "slice": {
+          "schema": "verseshell.observation/v1",
+          "id": "aci-3",
+          "op": "result.query",
+          "ok": true,
+          "status": "ok",
+          "meta": {
+            "elapsed_ms": 0,
+            "profile": "result",
+            "token_estimate": 118,
+            "effects": [
+              "artifact.read"
+            ],
+            "capabilities_used": [
+              "shell.exec"
+            ]
+          },
+          "data": {
+            "decoding_lossy": false,
+            "encoding": "utf-8",
+            "end_line": 3,
+            "handle": "result://sha256/ccb4716c7c15abb200b8c0f723faee5ebffde74dbc3ac192f69704f88261c9e5",
+            "mode": "slice",
+            "start_line": 2,
+            "text": "line-19091:xxxxxxxxxxxxxxxxxxxxxxxx\nline-19092:xxxxxxxxxxxxxxxxxxxxxxxx",
+            "truncated": false
+          }
+        }
+      },
+      {
+        "head": {
+          "schema": "verseshell.observation/v1",
+          "id": "aci-4",
+          "op": "result.query",
+          "ok": true,
+          "status": "ok",
+          "meta": {
+            "elapsed_ms": 0,
+            "profile": "result",
+            "token_estimate": 89,
+            "effects": [
+              "artifact.read"
+            ],
+            "capabilities_used": [
+              "shell.exec"
+            ]
+          },
+          "data": {
+            "decoding_lossy": false,
+            "encoding": "utf-8",
+            "handle": "result://sha256/1a3602c79feaf98a3203993bdc20754eff7934a84562dd8552b415ea826f0e8c",
+            "lines": 1,
+            "mode": "head",
+            "text": "end-marker",
+            "truncated": false
+          }
+        },
+        "slice": {
+          "schema": "verseshell.observation/v1",
+          "id": "aci-5",
+          "op": "result.query",
+          "ok": true,
+          "status": "ok",
+          "meta": {
+            "elapsed_ms": 0,
+            "profile": "result",
+            "token_estimate": 94,
+            "effects": [
+              "artifact.read"
+            ],
+            "capabilities_used": [
+              "shell.exec"
+            ]
+          },
+          "data": {
+            "decoding_lossy": false,
+            "encoding": "utf-8",
+            "end_line": 3,
+            "handle": "result://sha256/1a3602c79feaf98a3203993bdc20754eff7934a84562dd8552b415ea826f0e8c",
+            "mode": "slice",
+            "start_line": 2,
+            "text": "",
+            "truncated": false
+          }
+        }
+      }
+    ],
+    "ownedPids": [
+      29808,
+      30936,
+      40520,
+      31784,
+      43396,
+      42272
+    ],
+    "grandchildren": [
+      46072,
+      45068
+    ],
+    "remaining": 0
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "files": [
+    {
+      "path": "commands.json",
+      "sha256": "07ed01c5ad51f33fcadea2cc661c00120141d92a9e484942f1d70d7d594ce066"
+    },
+    {
+      "path": "comms-compare.log",
+      "sha256": "0c725cca0349fa399cd67ec32931205a5337c7343c5c2d7af14b8b4998d0ca2d"
+    },
+    {
+      "path": "comms-replay.log",
+      "sha256": "910f38033e9bf5296db639fb5e9e1de2dbbd571a1ae7dc0c08d84be695ae46cd"
+    },
+    {
+      "path": "contract.log",
+      "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+    },
+    {
+      "path": "core.json",
+      "sha256": "a1284c17bf1d592b35ec5e5dea4acf07798b9b4d27cd9ec15df4b78cbc7435be"
+    },
+    {
+      "path": "core.log",
+      "sha256": "cc4a2b65e0d89a4685b8ab74c342724ac7beda3fd07de61b84fd1cbdf944d79b"
+    },
+    {
+      "path": "credential-scan.json",
+      "sha256": "b183884dde8ad8cd5b15141628168b4dc5a5d71e572812440c540ace8d242b60"
+    },
+    {
+      "path": "desktop-build.log",
+      "sha256": "9420d5d92cb2ce66fd781f5dd44fc0ff01b26bd70dfab6516bfb8e9470906f32"
+    },
+    {
+      "path": "electron.json",
+      "sha256": "a0ae6201ed51413c8252d79ad2b23a2a0bb1548d1488b0099de59aba41e8dc3b"
+    },
+    {
+      "path": "electron.log",
+      "sha256": "515c90d5b7c9122e83d06c0961ef12d902a1c9c679c7dca45a6634e83f297af3"
+    },
+    {
+      "path": "failure-index.json",
+      "sha256": "92090a3f34a2008701e628f78be743300c5a7ca196c2a6866fbf7d277e95868a"
+    },
+    {
+      "path": "harness-dry-run.log",
+      "sha256": "b982e84f829acc00e0c8c4d3f25b311284b34b6942a6a555351348bd244bf943"
+    },
+    {
+      "path": "harness.log",
+      "sha256": "23ca735b096964220cf9d9fa5b7a33344d01353ccf6d901c94fd5e8eb06c2f9a"
+    },
+    {
+      "path": "lint.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "native-control.json",
+      "sha256": "1a0d1afce6afae61f1cd392cf44480699e46d3880c4fdb9d0b9ecd3bc0f87f1d"
+    },
+    {
+      "path": "native-workspace.json",
+      "sha256": "65bbd66e0272ffb40c299059da99cb1c088c289d7e5d580a03a11fed74f8f940"
+    },
+    {
+      "path": "native.json",
+      "sha256": "a04760445f90ff9fb75f6d488ff9036be6426bdfae7fe67ff3e45eba79983013"
+    },
+    {
+      "path": "native.log",
+      "sha256": "5aea1f3997adfbb18c87498dbfd2411a01849fc78a072feb7c9c4a5091d8030e"
+    },
+    {
+      "path": "node-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "read-comparison.json",
+      "sha256": "2030d3297038b79ffc2f460404ee929c7c7a59a327481d752d0a0cd8e95eff27"
+    },
+    {
+      "path": "report.json",
+      "sha256": "cc9797c3dac97c30daddb519ce7dd0195876e9e4018fe428ca3d283b41bb111e"
+    },
+    {
+      "path": "REPORT.md",
+      "sha256": "6982d7c98150800da21839609ba1f41d812ac809c1daeb11354b049a00917beb"
+    },
+    {
+      "path": "review.md",
+      "sha256": "3d8457c20e694fa3308430db9e0c52d44c8b39bfcbcca9fd4cc9940c9ecf48fd"
+    },
+    {
+      "path": "shared-directory-config.txt",
+      "sha256": "c31a1e2aeeeaeb402d031ffbbeb63834a0af755be1df7337fd71206ef746d9bd"
+    },
+    {
+      "path": "shared-directory.json",
+      "sha256": "83920bfc368f1e3150ea8f01eac78dee32dd557942e2202544ac1d8b081465b6"
+    },
+    {
+      "path": "shared-directory.log",
+      "sha256": "ab789ed8dc753c10b9ce9cbe737328aae8406fd7faebdf90340414d04958edc5"
+    },
+    {
+      "path": "test-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "verify.py",
+      "sha256": "272d77f5c6cff50a1ac26f04645b7f6fe95ae8d76de5ceb16b2a16bcdac89974"
+    },
+    {
+      "path": "web-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}
