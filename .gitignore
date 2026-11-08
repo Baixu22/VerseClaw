@@ -2774,3 +2774,16 @@ openclaw_runtime/_tmp_*
 !/harness/specs/fixtures/execution-domain-registry/20261108/types-node.log
 !/harness/specs/fixtures/execution-domain-registry/20261108/types-test.log
 !/harness/specs/fixtures/execution-domain-registry/20261108/types-web.log
+
+# Exact logs retained by integrated checkout writer evidence.
+!/harness/specs/fixtures/checkout-writer-ownership/20261109/comms-compare.log
+!/harness/specs/fixtures/checkout-writer-ownership/20261109/comms-replay.log
+!/harness/specs/fixtures/checkout-writer-ownership/20261109/contract.log
+!/harness/specs/fixtures/checkout-writer-ownership/20261109/harness-dry-run.log
+!/harness/specs/fixtures/checkout-writer-ownership/20261109/harness.log
+!/harness/specs/fixtures/checkout-writer-ownership/20261109/lint.log
+!/harness/specs/fixtures/checkout-writer-ownership/20261109/node-types.log
+!/harness/specs/fixtures/checkout-writer-ownership/20261109/registry.log
+!/harness/specs/fixtures/checkout-writer-ownership/20261109/test-types.log
+!/harness/specs/fixtures/checkout-writer-ownership/20261109/web-types.log
+!/harness/specs/fixtures/checkout-writer-ownership/20261109/writers.log
