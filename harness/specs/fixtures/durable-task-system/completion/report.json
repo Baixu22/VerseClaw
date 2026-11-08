@@ -1,0 +1,163 @@
+{
+  "schema": "DurableTaskSystemCompletion/v1",
+  "driven_by": "agent",
+  "actor": "codex-durable-task-system",
+  "sourceCandidate": "5ffd2d5ef7d48f2969b8ac7e4f5776b0f463a390",
+  "implementationWorktree": "D:/ClawX-work/durable-task-system-20261107",
+  "productDependsOnDevelopmentTaskForest": false,
+  "implementationAccepted": true,
+  "developmentNodeClosure": "Recorded by the canonical development Task Forest after main integration",
+  "testCounts": {
+    "task-tests": {
+      "passed": 58,
+      "total": 58
+    },
+    "gateway-tests": {
+      "passed": 6,
+      "total": 6
+    },
+    "runtime-delegation": {
+      "passed": 2,
+      "total": 2
+    },
+    "owner-regressions": {
+      "passed": 70,
+      "total": 70
+    }
+  },
+  "totalTests": 136,
+  "electron": {
+    "startTime": "2026-11-08T06:11:13.717Z",
+    "duration": 74985,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "fullRuntimeBuild": {
+    "status": "finished",
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "durationMs": 592202,
+    "args": [
+      "scripts/build-all.mjs"
+    ]
+  },
+  "liveContinuity": {
+    "protected": {
+      "samples": 6,
+      "completed": 6,
+      "allFieldsPreserved": 6,
+      "schemaConformant": 6,
+      "incomplete": 0
+    },
+    "summaryOnly": {
+      "samples": 6,
+      "completed": 6,
+      "allFieldsPreserved": 0,
+      "schemaConformant": 6,
+      "incomplete": 0
+    }
+  },
+  "concurrency": {
+    "processes": 16,
+    "granted": 1,
+    "denied": 15,
+    "worktrees": 2
+  },
+  "crashRecovery": {
+    "exitCode": 23,
+    "pendingBefore": 1,
+    "pendingAfter": 0,
+    "partialArtifactPreserved": true,
+    "uncertainWriteRecorded": true
+  },
+  "performance": {
+    "measurements": [
+      {
+        "tasks": 1000,
+        "seedMs": 3272.1741,
+        "read": {
+          "p50": 0.12579999999979918,
+          "p95": 0.2646000000004278
+        },
+        "claim": {
+          "p50": 2.466299999999137,
+          "p95": 5.097099999999955
+        },
+        "context": {
+          "p50": 0.14840000000003783,
+          "p95": 0.3140000000003056
+        },
+        "renew": {
+          "p50": 2.571499999999105,
+          "p95": 4.883299999999508
+        },
+        "page50": {
+          "p50": 3.643699999999626,
+          "p95": 4.638600000000224
+        },
+        "suggest500": {
+          "p50": 2.4470000000001164,
+          "p95": 5.448900000000322
+        },
+        "databaseBytes": 3293184
+      },
+      {
+        "tasks": 10000,
+        "seedMs": 56710.919,
+        "read": {
+          "p50": 0.12430000000313157,
+          "p95": 0.26269999999931315
+        },
+        "claim": {
+          "p50": 3.188000000001921,
+          "p95": 5.55000000000291
+        },
+        "context": {
+          "p50": 0.1471999999921536,
+          "p95": 0.31700000000273576
+        },
+        "renew": {
+          "p50": 3.121100000003935,
+          "p95": 6.091199999995297
+        },
+        "page50": {
+          "p50": 3.5632000000041444,
+          "p95": 4.605999999999767
+        },
+        "suggest500": {
+          "p50": 2.42439999999624,
+          "p95": 5.3012000000017
+        },
+        "databaseBytes": 28532736
+      }
+    ],
+    "toolWrite": {
+      "baseline": {
+        "p50": 0.34149999999999636,
+        "p95": 0.6557000000000244
+      },
+      "managed": {
+        "p50": 6.908999999999992,
+        "p95": 9.853899999999953
+      },
+      "p95AddedMs": 9.198199999999929
+    },
+    "contextHydration": {
+      "fresh": {
+        "p50": 9.467200000000048,
+        "p95": 14.244799999999998
+      },
+      "reused": {
+        "p50": 4.447800000000029,
+        "p95": 10.56009999999992
+      },
+      "modelCalls": 200,
+      "receipts": 100
+    }
+  },
+  "deployment": "Local same-repository coordination",
+  "historicalEvidence": "Parent directory retains the initial implementation slice and its failures unchanged"
+}

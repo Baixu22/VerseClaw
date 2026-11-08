@@ -1,0 +1,521 @@
+{
+  "schema": "DurableTaskContinuityPairs/v1",
+  "driven_by": "agent",
+  "actor": "codex-task-evaluation",
+  "scope": "Synthetic lost-summary cases using the production context restoration function and live configured provider; product Gateway journey is verified separately",
+  "models": [
+    "space-bunny",
+    "glm-5.3-flash"
+  ],
+  "inputs": [
+    {
+      "index": 0,
+      "expected": {
+        "objective": "Deliver the quarterly invoice export",
+        "target": "reports/invoices-742.csv",
+        "constraints": [
+          "Use UTC timestamps",
+          "Never change the tax calculation",
+          "Include the pending invoices"
+        ],
+        "nextAction": "Validate the exported row count"
+      },
+      "compactions": 10,
+      "restoredChars": 1078,
+      "promptSha256": "92017d514c707dcb629925692def7e3dbef78d1649dc00812d8fa0e5369a58bb"
+    },
+    {
+      "index": 1,
+      "expected": {
+        "objective": "修复订单重试重复扣款",
+        "target": "src/payments/retry-583.ts",
+        "constraints": [
+          "保留现有幂等键",
+          "不改变退款逻辑",
+          "增加重复回调测试"
+        ],
+        "nextAction": "运行重复回调回归测试"
+      },
+      "compactions": 10,
+      "restoredChars": 976,
+      "promptSha256": "5b092714df27a37899157958c3e9456c26b64d2acf9554406ca9d72c81f70610"
+    },
+    {
+      "index": 2,
+      "expected": {
+        "objective": "Add the opt-in local preview command",
+        "target": "tools/preview-916.mjs",
+        "constraints": [
+          "Bind only to loopback",
+          "Preserve the existing command flags",
+          "Write no user credentials to logs"
+        ],
+        "nextAction": "Verify shutdown releases the owned port"
+      },
+      "compactions": 10,
+      "restoredChars": 1094,
+      "promptSha256": "0b2f9eab13ad87e8b26dd519eaef2cde9c7cae1c8e69d0e4e87e5c460c86454a"
+    }
+  ],
+  "results": {
+    "protected": {
+      "samples": 6,
+      "completed": 6,
+      "allFieldsPreserved": 6,
+      "schemaConformant": 6,
+      "incomplete": 0
+    },
+    "summaryOnly": {
+      "samples": 6,
+      "completed": 5,
+      "allFieldsPreserved": 0,
+      "schemaConformant": 5,
+      "incomplete": 1
+    }
+  },
+  "rows": [
+    {
+      "case": 0,
+      "model": "space-bunny",
+      "arm": "summary-only",
+      "compactions": 10,
+      "status": "incomplete",
+      "durationMs": 26540.1693,
+      "response": {
+        "id": "01a1b949200f7e05a1034f43f0247f4a",
+        "model": "space-bunny",
+        "status": "incomplete",
+        "text": "",
+        "usage": {
+          "inputTokens": 261,
+          "outputTokens": 488,
+          "totalTokens": 749
+        },
+        "functionCalls": [],
+        "incompleteReason": "max_output_tokens"
+      },
+      "responseSha256": "e86ee810fce0159fbfbc604d8afd2c663582f1512e8d489b80ca6a887c031e84",
+      "error": "SyntaxError: Unexpected end of JSON input"
+    },
+    {
+      "case": 0,
+      "model": "space-bunny",
+      "arm": "protected",
+      "compactions": 10,
+      "status": "completed",
+      "durationMs": 11473.579299999998,
+      "response": {
+        "id": "01a1b94949ea76b2956cfc64a475ac01",
+        "model": "space-bunny",
+        "status": "completed",
+        "text": "{\"objective\":\"Deliver the quarterly invoice export\",\"target\":\"reports/invoices-742.csv\",\"constraints\":[\"Use UTC timestamps\",\"Never change the tax calculation\",\"Include the pending invoices\"],\"nextAction\":\"Validate the exported row count\"}",
+        "usage": {
+          "inputTokens": 440,
+          "outputTokens": 68,
+          "totalTokens": 508
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      },
+      "responseSha256": "b1b04ae1f67a26d03946da12225f667309a0f505c37e0d0b6dd4dd0044d70472",
+      "answer": {
+        "objective": "Deliver the quarterly invoice export",
+        "target": "reports/invoices-742.csv",
+        "constraints": [
+          "Use UTC timestamps",
+          "Never change the tax calculation",
+          "Include the pending invoices"
+        ],
+        "nextAction": "Validate the exported row count"
+      },
+      "fields": {
+        "objective": true,
+        "target": true,
+        "constraints": true,
+        "nextAction": true
+      },
+      "allFieldsPreserved": true,
+      "schemaConformant": true
+    },
+    {
+      "case": 0,
+      "model": "glm-5.3-flash",
+      "arm": "protected",
+      "compactions": 10,
+      "status": "completed",
+      "durationMs": 12604.814499999993,
+      "response": {
+        "id": "resp_6c272e82908740a19c461d8a93466e25",
+        "model": "glm-5.3-flash",
+        "status": "completed",
+        "text": "{\"objective\":\"Deliver the quarterly invoice export\",\"target\":\"reports/invoices-742.csv\",\"constraints\":[\"Use UTC timestamps\",\"Never change the tax calculation\",\"Include the pending invoices\"],\"nextAction\":\"Validate the exported row count\"}",
+        "usage": {
+          "inputTokens": 4026,
+          "outputTokens": 48,
+          "totalTokens": 4074
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      },
+      "responseSha256": "fd42b96b7bf6090ae34818e0e8b240ba9fda3f6e0bf1b0fdedd9d96b0f21b353",
+      "answer": {
+        "objective": "Deliver the quarterly invoice export",
+        "target": "reports/invoices-742.csv",
+        "constraints": [
+          "Use UTC timestamps",
+          "Never change the tax calculation",
+          "Include the pending invoices"
+        ],
+        "nextAction": "Validate the exported row count"
+      },
+      "fields": {
+        "objective": true,
+        "target": true,
+        "constraints": true,
+        "nextAction": true
+      },
+      "allFieldsPreserved": true,
+      "schemaConformant": true
+    },
+    {
+      "case": 0,
+      "model": "glm-5.3-flash",
+      "arm": "summary-only",
+      "compactions": 10,
+      "status": "completed",
+      "durationMs": 43534.6358,
+      "response": {
+        "id": "resp_2e8e1b1f60e945d5aa4bb1356db83eac",
+        "model": "glm-5.3-flash",
+        "status": "completed",
+        "text": "```json\n{\n  \"objective\": \"\",\n  \"target\": \"\",\n  \"constraints\": [],\n  \"nextAction\": \"\"\n}\n```",
+        "usage": {
+          "inputTokens": 3825,
+          "outputTokens": 41,
+          "totalTokens": 3866
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      },
+      "responseSha256": "5895795e349dd0b63b323587ae40c48f8d699c4d456f55efe68a4997a6bbbadb",
+      "answer": {
+        "objective": "",
+        "target": "",
+        "constraints": [],
+        "nextAction": ""
+      },
+      "fields": {
+        "objective": false,
+        "target": false,
+        "constraints": false,
+        "nextAction": false
+      },
+      "allFieldsPreserved": false,
+      "schemaConformant": true
+    },
+    {
+      "case": 1,
+      "model": "space-bunny",
+      "arm": "protected",
+      "compactions": 10,
+      "status": "completed",
+      "durationMs": 44009.42189999999,
+      "response": {
+        "id": "01a1b94a533e781284256a77294b1e25",
+        "model": "space-bunny",
+        "status": "completed",
+        "text": "{\"objective\":\"修复订单重试重复扣款\",\"target\":\"src/payments/retry-583.ts\",\"constraints\":[\"保留现有幂等键\",\"不改变退款逻辑\",\"增加重复回调测试\"],\"nextAction\":\"运行重复回调回归测试\"}",
+        "usage": {
+          "inputTokens": 451,
+          "outputTokens": 51,
+          "totalTokens": 502
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      },
+      "responseSha256": "1c2913e16e25a74e215d456026eb008c97076f4e0c95be4398c4cd43321c5fd0",
+      "answer": {
+        "objective": "修复订单重试重复扣款",
+        "target": "src/payments/retry-583.ts",
+        "constraints": [
+          "保留现有幂等键",
+          "不改变退款逻辑",
+          "增加重复回调测试"
+        ],
+        "nextAction": "运行重复回调回归测试"
+      },
+      "fields": {
+        "objective": true,
+        "target": true,
+        "constraints": true,
+        "nextAction": true
+      },
+      "allFieldsPreserved": true,
+      "schemaConformant": true
+    },
+    {
+      "case": 1,
+      "model": "space-bunny",
+      "arm": "summary-only",
+      "compactions": 10,
+      "status": "completed",
+      "durationMs": 94381.84520000001,
+      "response": {
+        "id": "01a1b94c5cde727397d43d4ecef8b948",
+        "model": "space-bunny",
+        "status": "completed",
+        "text": "{\"objective\":\"\",\"target\":\"\",\"constraints\":[],\"nextAction\":\"\"}",
+        "usage": {
+          "inputTokens": 245,
+          "outputTokens": 83,
+          "totalTokens": 328
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      },
+      "responseSha256": "1bc78e0338ebd6d4548ffa371debd2c10ada8874c69c78468f8b996c1eeb29cb",
+      "answer": {
+        "objective": "",
+        "target": "",
+        "constraints": [],
+        "nextAction": ""
+      },
+      "fields": {
+        "objective": false,
+        "target": false,
+        "constraints": false,
+        "nextAction": false
+      },
+      "allFieldsPreserved": false,
+      "schemaConformant": true
+    },
+    {
+      "case": 1,
+      "model": "glm-5.3-flash",
+      "arm": "summary-only",
+      "compactions": 10,
+      "status": "completed",
+      "durationMs": 3403.8295999999973,
+      "response": {
+        "id": "resp_f28587cbfc4d4f988402e65e415de451",
+        "model": "glm-5.3-flash",
+        "status": "completed",
+        "text": "```json\n{\n  \"objective\": \"\",\n  \"target\": \"\",\n  \"constraints\": [],\n  \"nextAction\": \"\"\n}\n```",
+        "usage": {
+          "inputTokens": 3825,
+          "outputTokens": 54,
+          "totalTokens": 3879
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      },
+      "responseSha256": "304ed51b955c1406886c6f97a202d05f7a839a53e4fe87a5e76d2891cd3dd227",
+      "answer": {
+        "objective": "",
+        "target": "",
+        "constraints": [],
+        "nextAction": ""
+      },
+      "fields": {
+        "objective": false,
+        "target": false,
+        "constraints": false,
+        "nextAction": false
+      },
+      "allFieldsPreserved": false,
+      "schemaConformant": true
+    },
+    {
+      "case": 1,
+      "model": "glm-5.3-flash",
+      "arm": "protected",
+      "compactions": 10,
+      "status": "completed",
+      "durationMs": 3142.4937999999966,
+      "response": {
+        "id": "resp_29267c325fcd4949ab466d70c92e9419",
+        "model": "glm-5.3-flash",
+        "status": "completed",
+        "text": "```json\n{\n  \"objective\": \"修复订单重试重复扣款\",\n  \"target\": \"src/payments/retry-583.ts\",\n  \"constraints\": [\"保留现有幂等键\", \"不改变退款逻辑\", \"增加重复回调测试\"],\n  \"nextAction\": \"运行重复回调回归测试\"\n}\n```",
+        "usage": {
+          "inputTokens": 4036,
+          "outputTokens": 71,
+          "totalTokens": 4107
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      },
+      "responseSha256": "0d53a747e442041189cefa0fb8c2ef4d71d5ca12c4ab411dff8b59887f3ceeb2",
+      "answer": {
+        "objective": "修复订单重试重复扣款",
+        "target": "src/payments/retry-583.ts",
+        "constraints": [
+          "保留现有幂等键",
+          "不改变退款逻辑",
+          "增加重复回调测试"
+        ],
+        "nextAction": "运行重复回调回归测试"
+      },
+      "fields": {
+        "objective": true,
+        "target": true,
+        "constraints": true,
+        "nextAction": true
+      },
+      "allFieldsPreserved": true,
+      "schemaConformant": true
+    },
+    {
+      "case": 2,
+      "model": "space-bunny",
+      "arm": "summary-only",
+      "compactions": 10,
+      "status": "completed",
+      "durationMs": 4202.709600000002,
+      "response": {
+        "id": "01a1b94c89f47e09a136a188bc05cc9a",
+        "model": "space-bunny",
+        "status": "completed",
+        "text": "{\"objective\":\"\",\"target\":\"\",\"constraints\":[],\"nextAction\":\"\"}",
+        "usage": {
+          "inputTokens": 245,
+          "outputTokens": 56,
+          "totalTokens": 301
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      },
+      "responseSha256": "1df6e3164178b7e60b5532f3e38cd95bcc5dac2a817e950917338ea126f2ed6e",
+      "answer": {
+        "objective": "",
+        "target": "",
+        "constraints": [],
+        "nextAction": ""
+      },
+      "fields": {
+        "objective": false,
+        "target": false,
+        "constraints": false,
+        "nextAction": false
+      },
+      "allFieldsPreserved": false,
+      "schemaConformant": true
+    },
+    {
+      "case": 2,
+      "model": "space-bunny",
+      "arm": "protected",
+      "compactions": 10,
+      "status": "completed",
+      "durationMs": 3097.731599999999,
+      "response": {
+        "id": "01a1b94c9a5e7098a5b03e3a57431db9",
+        "model": "space-bunny",
+        "status": "completed",
+        "text": "{\"objective\":\"Add the opt-in local preview command\",\"target\":\"tools/preview-916.mjs\",\"constraints\":[\"Bind only to loopback\",\"Preserve the existing command flags\",\"Write no user credentials to logs\"],\"nextAction\":\"Verify shutdown releases the owned port\"}",
+        "usage": {
+          "inputTokens": 446,
+          "outputTokens": 55,
+          "totalTokens": 501
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      },
+      "responseSha256": "f998fafb31a8fef5d27e1dd5455cbf4c1f063bb44b663fbe287142bc113bc2ad",
+      "answer": {
+        "objective": "Add the opt-in local preview command",
+        "target": "tools/preview-916.mjs",
+        "constraints": [
+          "Bind only to loopback",
+          "Preserve the existing command flags",
+          "Write no user credentials to logs"
+        ],
+        "nextAction": "Verify shutdown releases the owned port"
+      },
+      "fields": {
+        "objective": true,
+        "target": true,
+        "constraints": true,
+        "nextAction": true
+      },
+      "allFieldsPreserved": true,
+      "schemaConformant": true
+    },
+    {
+      "case": 2,
+      "model": "glm-5.3-flash",
+      "arm": "protected",
+      "compactions": 10,
+      "status": "completed",
+      "durationMs": 3555.6873000000196,
+      "response": {
+        "id": "resp_19879e5ceb5b44a9bfb9719858fbe317",
+        "model": "glm-5.3-flash",
+        "status": "completed",
+        "text": "{\"objective\":\"Add the opt-in local preview command\",\"target\":\"tools/preview-916.mjs\",\"constraints\":[\"Bind only to loopback\",\"Preserve the existing command flags\",\"Write no user credentials to logs\"],\"nextAction\":\"Verify shutdown releases the owned port\"}",
+        "usage": {
+          "inputTokens": 4035,
+          "outputTokens": 59,
+          "totalTokens": 4094
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      },
+      "responseSha256": "38a28e146ac5fdd36653eb35c3efc2a5aabd3d9e9e22085486e8a5a0929214b6",
+      "answer": {
+        "objective": "Add the opt-in local preview command",
+        "target": "tools/preview-916.mjs",
+        "constraints": [
+          "Bind only to loopback",
+          "Preserve the existing command flags",
+          "Write no user credentials to logs"
+        ],
+        "nextAction": "Verify shutdown releases the owned port"
+      },
+      "fields": {
+        "objective": true,
+        "target": true,
+        "constraints": true,
+        "nextAction": true
+      },
+      "allFieldsPreserved": true,
+      "schemaConformant": true
+    },
+    {
+      "case": 2,
+      "model": "glm-5.3-flash",
+      "arm": "summary-only",
+      "compactions": 10,
+      "status": "completed",
+      "durationMs": 3639.218599999993,
+      "response": {
+        "id": "resp_1643e346758f44a6904a45d8d8decb83",
+        "model": "glm-5.3-flash",
+        "status": "completed",
+        "text": "```json\n{\n  \"objective\": \"\",\n  \"target\": \"\",\n  \"constraints\": [],\n  \"nextAction\": \"\"\n}\n```",
+        "usage": {
+          "inputTokens": 3825,
+          "outputTokens": 44,
+          "totalTokens": 3869
+        },
+        "functionCalls": [],
+        "incompleteReason": null
+      },
+      "responseSha256": "4a4c92b14316fe55507b0380eda8882152bd2cf02d2f899da7733505f64ac58a",
+      "answer": {
+        "objective": "",
+        "target": "",
+        "constraints": [],
+        "nextAction": ""
+      },
+      "fields": {
+        "objective": false,
+        "target": false,
+        "constraints": false,
+        "nextAction": false
+      },
+      "allFieldsPreserved": false,
+      "schemaConformant": true
+    }
+  ]
+}

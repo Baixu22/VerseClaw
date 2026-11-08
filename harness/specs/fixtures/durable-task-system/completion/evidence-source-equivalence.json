@@ -1,0 +1,95 @@
+{
+  "sourceCandidate": "0e36bfbf5fe443c7d75c90e7d6792e36fbc85e21",
+  "targetCandidate": "5ffd2d5ef7d48f2969b8ac7e4f5776b0f463a390",
+  "method": "Exact AST declaration source bytes and whole-file SHA256, no semantic approximation",
+  "scope": "Live model restoration and measured task operations; fork/revision entrypoints are covered by the final candidate tests",
+  "records": [
+    {
+      "file": "shared/task-system/runtime.ts",
+      "symbol": "restoreTaskModelContext",
+      "sha256": "f56ba9bf66e4bacd85c65c530e984b1b6fd3ca9c880b095bb56d47113b5ca06e",
+      "identical": true
+    },
+    {
+      "file": "shared/task-system/runtime.ts",
+      "symbol": "createTaskRuntimeGuard",
+      "sha256": "f7413a78e7c3d3933cd2ee1749a603a29bc1beff48b41113ada92055f4c616de",
+      "identical": true
+    },
+    {
+      "file": "shared/task-system/runtime.ts",
+      "symbol": "executeTaskGuarded",
+      "sha256": "4a217de02cbf4779a2b099126cb29e03d53a4408c31fc2dcb668440fa8114bc2",
+      "identical": true
+    },
+    {
+      "file": "shared/task-system/runtime.ts",
+      "symbol": "keepTaskRun",
+      "sha256": "7ed1e74345b218e0cce06d4e07a3d1347ad1ba604a4528bdf93b0b63649f681b",
+      "identical": true
+    },
+    {
+      "file": "shared/task-system/store.ts",
+      "symbol": "context",
+      "sha256": "a92f0ffd1442e54927d3b5fed6d5c83f17d4e4ac9aef2854a172f0777b4ab2cd",
+      "identical": true
+    },
+    {
+      "file": "shared/task-system/store.ts",
+      "symbol": "recordContextHydration",
+      "sha256": "5fa4afe18d4c73f49e4a507670ca88d5c68c9c3eb9bcff29e3a24a368374928d",
+      "identical": true
+    },
+    {
+      "file": "shared/task-system/store.ts",
+      "symbol": "create",
+      "sha256": "6b1035d6e64258df965bf0f278c869e0590479da1283438d18d5b9f4f4972845",
+      "identical": true
+    },
+    {
+      "file": "shared/task-system/store.ts",
+      "symbol": "claim",
+      "sha256": "a3cfbabe70af4b08ce31aa5f08b433b6892fa7f629f33ce1eb12390f38f3c0a3",
+      "identical": true
+    },
+    {
+      "file": "shared/task-system/store.ts",
+      "symbol": "get",
+      "sha256": "71a88cf550a5e869e0af0602a09fb68b78a4935f7b54ebde88b17209dd56003d",
+      "identical": true
+    },
+    {
+      "file": "shared/task-system/store.ts",
+      "symbol": "page",
+      "sha256": "c07673708e77ba4a7cdc680c3a0c2bbc2ccaaa002d1c689d696857c97e6baac2",
+      "identical": true
+    },
+    {
+      "file": "shared/task-system/store.ts",
+      "symbol": "suggest",
+      "sha256": "ae34f8d5dbf32e98667175e92a6e55b7b6bd943a5225fdb5bfe9195767f601a2",
+      "identical": true
+    },
+    {
+      "file": "shared/task-system/store.ts",
+      "symbol": "control",
+      "sha256": "6318f1d2c5a4805ef8a81f53d79cf4249d5edf319d877ea65df1fcddc0051d7d",
+      "identical": true
+    },
+    {
+      "file": "shared/task-system/identity.ts",
+      "sha256": "e6d16c51eb07c2155da850ffd43bda239eb71a20a94555095dffa52ab0ed58e4",
+      "identical": true
+    },
+    {
+      "file": "scripts/evaluate-durable-task-continuity.mjs",
+      "sha256": "b3aaa67f7f8e8d4facf16be3b91f9232e0993b2dc0a5626204584fd1c03c88dc",
+      "identical": true
+    },
+    {
+      "file": "scripts/verify-durable-task-system.mjs",
+      "sha256": "42266f3e6e68435c3132057eadc2da8b42923d62b6d493860e1dd0e651f9d69e",
+      "identical": true
+    }
+  ]
+}
