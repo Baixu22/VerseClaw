@@ -4,7 +4,7 @@ id: process-control-backpressure-20261108
 title: 保障共享进程控制响应与日志背压
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 6df748756768ca74c6c009d9cb15f84ff88f5bea
+diffBase: 4e2cd7f6474a9026d9a3ae484bf87cc478d409ce
 intent: 完成 TF-0836 / G26-G29，在既有VerseShell与日志owner上接通控制优先、引用释放和字节上限。
 expectedUserBehavior:
   - Poll traffic leaves bounded capacity for stdin and cancellation within existing control deadlines.
@@ -68,3 +68,6 @@ docs:
 保持原有4并发/64队列、process控制5秒和native binary冻结合同。
 调度在原host manager内保留控制空间；长poll在单额度配置下使用有界server等待片段。
 复用managed capacity、executor进程身份、原artifact store与私有临时文件，不新建进程服务。
+
+原生验收使用独立目录中与发布manifest完全同哈希的ae.exe副本；记录原路径的
+E_PROCESS_PERSIST失败与独立副本成功。诊断编译产物只用于定位，不参与正式通过判定。
