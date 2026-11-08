@@ -33,6 +33,14 @@ test('two native windows share Git reads and retain independent lifetime', async
     }, join(process.cwd(), 'dist-electron/preload/index.js'));
     const second = await windowReady;
     await expect.poll(() => second.evaluate(() => Boolean(window.verseClaw?.hostInvoke))).toBe(true);
+    await expect(invoke(second, 'git', 'status')).rejects.toThrow('sender is not authorized');
+    await app.evaluate(({ BrowserWindow }, id) => {
+      const modules = Object.values(process.mainModule!.require('node:module')._cache) as Array<{ exports: { registerHostReadObserver?: (window: Electron.BrowserWindow) => () => void } }>;
+      const entry = modules.find(module => typeof module.exports?.registerHostReadObserver === 'function');
+      if (!entry) throw new Error('Main observer registration unavailable');
+      entry.exports.registerHostReadObserver!(BrowserWindow.fromId(id)!);
+    }, secondId);
+    await expect(invoke(second, 'git', 'stage', { paths: ['readme.txt'] })).rejects.toThrow('observer action is not authorized');
     let sourceClock = Date.now();
     const invalidateSource = async () => { sourceClock += 1000; await utimes(root, new Date(sourceClock), new Date(sourceClock)); };
     const measure = async () => {
@@ -55,6 +63,13 @@ test('two native windows share Git reads and retain independent lifetime', async
     const controls = rows.filter(row => row.mode === 'uncached-control').map(row => row.gitSpawns as number);
     const shared = rows.filter(row => row.mode === 'shared').map(row => row.gitSpawns as number);
     expect(Math.max(...shared)).toBeLessThan(Math.min(...controls) / 2);
+    await second.goto('about:blank');
+    await app.evaluate(async ({ BrowserWindow, ipcMain }, id) => {
+      const sender = BrowserWindow.fromId(id)!.webContents;
+      const handler = (ipcMain as unknown as { _invokeHandlers: Map<string, (event: unknown, request: unknown) => Promise<{ ok: boolean }>> })._invokeHandlers.get('host:invoke')!;
+      const result = await handler({ sender, senderFrame: sender.mainFrame }, { id: 'navigated-observer', module: 'git', action: 'status' });
+      if (result.ok) throw new Error('Navigated observer retained authorization');
+    }, secondId);
     await app.evaluate(({ BrowserWindow }, id) => BrowserWindow.fromId(id)!.destroy(), secondId);
     await writeFile(join(root, 'after-close.txt'), 'remaining window');
     const status = await invoke(main, 'git', 'status');
@@ -62,7 +77,8 @@ test('two native windows share Git reads and retain independent lifetime', async
     await writeFile(testInfo.outputPath('read-models.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex',
       workload: { requestsPerRound: 8, nativeWindows: 2, order: 'ABBA', source: 'one temporary native Git repository' },
       control: 'Temporary repository directory mtime changes before each control request; shared rounds keep the source stable. Product routes and Git commands remain real.',
-      rows, remainingWindowReads: true, sourceMutationObserved: true }, null, 2));
+      rows, remainingWindowReads: true, sourceMutationObserved: true,
+      authorization: { mainRegisteredObserver: true, unregisteredDenied: true, mutationDenied: true, navigatedSourceDenied: true } }, null, 2));
   } finally {
     if (secondId !== undefined) await app.evaluate(({ BrowserWindow }, id) => BrowserWindow.fromId(id)?.destroy(), secondId).catch(() => {});
     await closeElectronApp(app);

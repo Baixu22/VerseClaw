@@ -10,6 +10,12 @@ expectedUserBehavior:
   - Concurrent consumers share compatible file watchers and repository status reads.
   - Closing one consumer preserves the others; invalidation and path recreation produce fresh results.
 touchedAreas:
+  - electron/main/index.ts
+  - electron/main/ipc-handlers.ts
+  - electron/main/ipc/host-invoke.ts
+  - electron/main/ipc/host-invoke-security.ts
+  - electron/main/ipc/host-window-observers.ts
+  - tests/unit/host-window-observers.test.ts
   - shared/resources/watcher-hub.ts
   - src/lib/read-only-query-cache.ts
   - electron/services/git-api.ts

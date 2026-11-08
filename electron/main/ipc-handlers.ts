@@ -12,6 +12,7 @@ import { startCronAgentRepair } from '../services/cron-maintenance';
 import { whatsAppLoginManager } from '../utils/whatsapp-login';
 import { resourceFabric } from '../services/resource-fabric';
 import { HostApiRegistry, registerHostInvokeHandler } from './ipc/host-invoke';
+import { initializeHostWindowAuthorization } from './ipc/host-window-observers';
 import { createAppApi } from '../services/app-api';
 import { createVerseGitApi } from '../services/versegit-api';
 import { ensureVerseGitBindingBridge } from '../gateway/versegit-bridge';
@@ -228,9 +229,7 @@ function registerTypedHostHandlers(
     }),
   });
   registerHostInvokeHandler(hostApiRegistry, {
-    senderAuth: {
-      allowedWebContentsIds: new Set([mainWindow.webContents.id]),
-    },
+    senderAuth: initializeHostWindowAuthorization(mainWindow),
   });
 }
 

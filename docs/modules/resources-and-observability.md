@@ -27,6 +27,10 @@ persistence 策略的子根，每个订阅仍使用自己的相对路径、深�
 Main Git 状态按工作区根共享 5 秒缓存，目录身份或 `.git` 元数据改变后重新读取；
 失效代次隔离正在执行的旧请求，旧结果不能回填新缓存。同进程多个窗口共享服务，跨进程监听各自由本地 owner 管理。
 
+Main 可显式登记同一应用入口、preload 和 session 的只读观察窗。该窗口仅能调用 `git.status`
+与 `efficiency.getState`；主窗保留原有权限，未登记窗口、导航到其他页面的窗口及写操作均拒绝。
+观察窗销毁或主窗 owner 结束时释放登记，renderer 没有自行登记的接口。
+
 当前资源治理是**合作式**的：
 
 - 不引入 Job Object、cgroup、ACL、restricted token 等内核级沙箱；
