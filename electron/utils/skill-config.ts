@@ -1,13 +1,13 @@
 /**
  * Skill Config Utilities
- * Direct read/write access to Verse Claw-owned skill configuration.
+ * Runtime-owned skill configuration, with one-time migration of the old local store.
  * This bypasses the Gateway RPC for faster and more reliable config updates.
  *
  * All file I/O uses async fs/promises to avoid blocking the main thread.
  */
 import { readFile, writeFile, mkdir, readdir, rm } from 'fs/promises';
 import { existsSync } from 'fs';
-import { join } from 'path';
+import { join, resolve } from 'path';
 import { getDataDir, getOpenClawDir, getOpenClawResolvedDir, getOpenClawSkillsDir, getResourcesDir } from './paths';
 import { logger } from './logger';
 import { cpAsyncSafe } from './plugin-install';
@@ -21,10 +21,11 @@ export interface SkillConfigUpdates {
     env?: Record<string, string>;
 }
 
-type SkillEntry = SkillConfigUpdates;
+type SkillEntry = SkillConfigUpdates & Record<string, unknown>;
 
 interface SkillStoreDocument {
     entries?: Record<string, SkillEntry>;
+    runtimeMigrated?: boolean;
 }
 
 interface PreinstalledSkillSpec {
@@ -77,33 +78,72 @@ async function getSkillStore() {
     return skillStoreInstance;
 }
 
-async function readSkillEntries(): Promise<Record<string, SkillEntry>> {
-    try {
-        const store = await getSkillStore();
-        return { ...(store.get('entries') || {}) };
-    } catch (err) {
-        console.error('Failed to read Verse Claw skill config:', err);
-        return {};
+function configRecord(value: unknown, label: string): Record<string, unknown> {
+    if (value === undefined) return {};
+    if (!value || typeof value !== 'object' || Array.isArray(value)) {
+        throw new Error(label + ' must be an object');
     }
+    return value as Record<string, unknown>;
 }
 
-async function writeSkillEntries(entries: Record<string, SkillEntry>): Promise<void> {
-    const store = await getSkillStore();
-    store.set('entries', entries);
+/** One config lock covers migration and every Skill read/modify/write. */
+async function accessSkillEntries<T>(action: (entries: Record<string, SkillEntry>) => T): Promise<T> {
+    return withConfigLock(async () => {
+        const { readOpenClawConfig, writeOpenClawConfig } = await import('./channel-config');
+        const config = await readOpenClawConfig();
+        const before = JSON.stringify(config);
+        const skills = { ...configRecord(config.skills, 'skills') };
+        const entries = { ...configRecord(skills.entries, 'skills.entries') } as Record<string, SkillEntry>;
+        const store = await getSkillStore();
+        const migrate = store.get('runtimeMigrated') !== true;
+        if (migrate) {
+            const legacy = configRecord(store.get('entries'), 'legacy skill entries');
+            for (const [key, value] of Object.entries(legacy)) {
+                // Existing runtime fields win; migration must not undo explicit runtime choices.
+                entries[key] = {
+                    ...configRecord(value, 'legacy skill entry'),
+                    ...configRecord(entries[key], 'runtime skill entry'),
+                };
+            }
+        }
+        const result = action(entries);
+        const managedRoot = getOpenClawSkillsDir();
+        if (existsSync(managedRoot)) {
+            const load = { ...configRecord(skills.load, 'skills.load') };
+            if (load.extraDirs !== undefined && (!Array.isArray(load.extraDirs)
+                || load.extraDirs.some((item) => typeof item !== 'string'))) {
+                throw new Error('skills.load.extraDirs must be a string array');
+            }
+            const dirs = (load.extraDirs ?? []) as string[];
+            const samePath = (value: string) => process.platform === 'win32'
+                ? resolve(value).toLowerCase() : resolve(value);
+            if (!dirs.some((dir) => samePath(dir) === samePath(managedRoot))) {
+                load.extraDirs = [...dirs, managedRoot];
+                skills.load = load;
+            }
+        }
+        if (Object.keys(entries).length > 0 || skills.entries !== undefined) skills.entries = entries;
+        if (Object.keys(skills).length > 0) config.skills = skills;
+        if (JSON.stringify(config) !== before) await writeOpenClawConfig(config);
+        // Mark only after durable runtime persistence; retained legacy bytes are rollback data.
+        if (migrate) store.set('runtimeMigrated', true);
+        return result;
+    });
+}
+
+async function readSkillEntries(): Promise<Record<string, SkillEntry>> {
+    return accessSkillEntries((entries) => entries);
+}
+
+/** Also called before Gateway launch, so existing installs are discoverable without opening Settings. */
+export async function syncSkillsToRuntimeConfig(): Promise<void> {
+    await readSkillEntries();
 }
 
 async function setSkillsEnabled(skillKeys: string[], enabled: boolean): Promise<void> {
-    if (skillKeys.length === 0) {
-        return;
-    }
-    return withConfigLock(async () => {
-        const entries = await readSkillEntries();
-        for (const skillKey of skillKeys) {
-            const entry = entries[skillKey] || {};
-            entry.enabled = enabled;
-            entries[skillKey] = entry;
-        }
-        await writeSkillEntries(entries);
+    if (skillKeys.length === 0) return;
+    await accessSkillEntries((entries) => {
+        applySkillConfigUpdates(entries, skillKeys.map((skillKey) => ({ skillKey, enabled })));
     });
 }
 
@@ -118,18 +158,10 @@ export async function getSkillConfig(skillKey: string): Promise<SkillEntry | und
 /**
  * Update skill config (apiKey and env)
  */
-function isEmptySkillEntry(entry: SkillEntry | undefined): boolean {
-    if (!entry) return true;
-    const hasEnabled = typeof entry.enabled === 'boolean';
-    const hasApiKey = typeof entry.apiKey === 'string' && entry.apiKey.trim().length > 0;
-    const hasEnv = !!entry.env && Object.keys(entry.env).length > 0;
-    return !hasEnabled && !hasApiKey && !hasEnv;
-}
-
-async function applySkillConfigUpdates(
+function applySkillConfigUpdates(
     entries: Record<string, SkillEntry>,
     updates: Array<{ skillKey: string; remove?: boolean } & SkillConfigUpdates>,
-): Promise<void> {
+): void {
     for (const update of updates) {
         const skillKey = update.skillKey.trim();
         if (!skillKey) continue;
@@ -139,7 +171,7 @@ async function applySkillConfigUpdates(
             continue;
         }
 
-        const entry = entries[skillKey] || {};
+        const entry = { ...configRecord(entries[skillKey], 'runtime skill entry') } as SkillEntry;
 
         if (update.enabled !== undefined) {
             entry.enabled = update.enabled;
@@ -174,7 +206,7 @@ async function applySkillConfigUpdates(
             }
         }
 
-        if (isEmptySkillEntry(entry)) {
+        if (Object.keys(entry).length === 0) {
             delete entries[skillKey];
         } else {
             entries[skillKey] = entry;
@@ -193,10 +225,8 @@ export async function updateSkillConfigs(
     updates: Array<{ skillKey: string } & SkillConfigUpdates>,
 ): Promise<{ success: boolean; error?: string }> {
     try {
-        return await withConfigLock(async () => {
-            const entries = await readSkillEntries();
-            await applySkillConfigUpdates(entries, updates);
-            await writeSkillEntries(entries);
+        return await accessSkillEntries((entries) => {
+            applySkillConfigUpdates(entries, updates);
             return { success: true };
         });
     } catch (err) {
@@ -211,22 +241,10 @@ export async function removeSkillConfig(skillKey: string): Promise<{ success: bo
 
 export async function removeSkillConfigs(skillKeys: string[]): Promise<{ success: boolean; removed: number; error?: string }> {
     try {
-        return await withConfigLock(async () => {
-            const entries = await readSkillEntries();
-            const normalizedSkillKeys = skillKeys
-                .map((skillKey) => skillKey.trim())
-                .filter(Boolean);
-            const removed = normalizedSkillKeys.filter((skillKey) => Object.prototype.hasOwnProperty.call(entries, skillKey)).length;
-
-            if (removed === 0) {
-                return { success: true, removed: 0 };
-            }
-
-            await applySkillConfigUpdates(
-                entries,
-                normalizedSkillKeys.map((skillKey) => ({ skillKey, remove: true })),
-            );
-            await writeSkillEntries(entries);
+        return await accessSkillEntries((entries) => {
+            const keys = [...new Set(skillKeys.map((key) => key.trim()).filter(Boolean))];
+            const removed = keys.filter((key) => Object.prototype.hasOwnProperty.call(entries, key)).length;
+            applySkillConfigUpdates(entries, keys.map((skillKey) => ({ skillKey, remove: true })));
             return { success: true, removed };
         });
     } catch (err) {

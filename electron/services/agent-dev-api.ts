@@ -40,6 +40,7 @@ import {
 } from '@shared/agent-dev/scenarios';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { GatewayManager } from '../gateway/manager';
+import type { ChatRuntimeEvent } from '@shared/chat-runtime-events';
 import { getAllSettings, setSetting } from '../utils/store';
 import { logger } from '../utils/logger';
 import { buildSandboxStatus } from './sandbox-api';
@@ -231,13 +232,48 @@ function numberFromMetadata(metadata: JsonRecord | undefined, key: keyof AgentDe
   return typeof value === 'number' && Number.isFinite(value) ? value : 0;
 }
 
+function usageMetadata(value: unknown): JsonRecord {
+  const usage = safeJsonRecord(value);
+  const count = (...keys: string[]) => {
+    for (const key of keys) {
+      const value = usage[key];
+      if (typeof value === 'number' && Number.isFinite(value) && value >= 0) return value;
+    }
+    return 0;
+  };
+  return {
+    inputTokens: count('inputTokens', 'input'),
+    outputTokens: count('outputTokens', 'output'),
+    cacheTokens: count('cacheTokens') || count('cacheRead') + count('cacheWrite'),
+    totalTokens: count('totalTokens', 'total'),
+    estimatedCost: count('estimatedCost') || (() => {
+      const total = safeJsonRecord(usage.cost).total;
+      return typeof total === 'number' && Number.isFinite(total) && total >= 0 ? total : 0;
+    })(),
+  };
+}
+
 function buildCostReport(): AgentDevCostReport {
   const totals = createEmptyCostUsage();
   const byAgent: AgentDevCostReport['byAgent'] = {};
   const bySkill: AgentDevCostReport['bySkill'] = {};
   const hotPath: AgentDevCostReport['hotPath'] = [];
 
+  const unique = new Map<string, AgentDevTransportTraceEvent>();
   for (const event of transportTraceEvents) {
+    const key = typeof event.metadata?.usageKey === 'string' ? event.metadata.usageKey : event.id;
+    unique.set(key, event);
+  }
+  const runSummaries = new Set([...unique.values()]
+    .filter((event) => event.metadata?.usageScope === 'run')
+    .map((event) => event.metadata?.runId));
+  const messageCosts = new Map<unknown, number>();
+  for (const event of unique.values()) {
+    if (event.metadata?.usageScope === 'message') messageCosts.set(event.metadata.runId,
+      (messageCosts.get(event.metadata.runId) ?? 0) + numberFromMetadata(event.metadata, 'estimatedCost'));
+  }
+  for (const event of unique.values()) {
+    if (event.metadata?.usageScope === 'message' && runSummaries.has(event.metadata?.runId)) continue;
     const usage = {
       inputTokens: numberFromMetadata(event.metadata, 'inputTokens'),
       outputTokens: numberFromMetadata(event.metadata, 'outputTokens'),
@@ -245,6 +281,9 @@ function buildCostReport(): AgentDevCostReport {
       totalTokens: numberFromMetadata(event.metadata, 'totalTokens'),
       estimatedCost: numberFromMetadata(event.metadata, 'estimatedCost'),
     };
+    if (event.metadata?.usageScope === 'run' && usage.estimatedCost === 0) {
+      usage.estimatedCost = messageCosts.get(event.metadata.runId) ?? 0;
+    }
     if (usage.totalTokens === 0) {
       usage.totalTokens = usage.inputTokens + usage.outputTokens + usage.cacheTokens;
     }
@@ -295,14 +334,14 @@ function buildSkillSandboxReport(): AgentDevSkillSandboxReport {
       memoryMbLimit: 256,
     },
     effects: transportTraceEvents
-      .filter((event) => event.layer === 'tool' || event.layer === 'runtime')
+      .filter((event) => event.label === 'tool.completed' && event.metadata?.capability)
       .slice(-50)
       .map((event) => ({
         id: event.id,
         at: event.at,
-        capability: event.layer === 'tool' ? 'filesystem' : 'model-call',
+        capability: event.metadata?.capability as 'filesystem' | 'network',
         label: event.label,
-        allowed: false,
+        allowed: event.metadata?.isError !== true,
         metadata: event.metadata,
       })),
   };
@@ -463,6 +502,61 @@ export function createAgentDevApi(ctx: AgentDevApiContext): CompleteHostServiceR
     });
   });
 
+  ctx.gatewayManager.on('chat:runtime-event', (event: ChatRuntimeEvent) => {
+    const frame = event as ChatRuntimeEvent & { requestId?: string };
+    rememberTransportEvent({
+      id: `runtime:${event.runId}:${event.seq ?? transportTraceEvents.length}:${event.type}`,
+      requestId: frame.requestId ?? event.runId,
+      at: event.ts ?? Date.now(),
+      layer: event.type.startsWith('tool.') ? 'tool' : 'runtime',
+      direction: 'in',
+      label: event.type,
+      metadata: {
+        runId: event.runId,
+        sessionKey: event.sessionKey,
+        agentId: event.sessionKey?.split(':')[1] ?? 'unknown',
+        ...('name' in event ? { toolName: event.name } : {}),
+        ...('name' in event && typeof event.name === 'string' ? {
+          capability: ['read', 'write', 'edit', 'apply_patch', 'file.read', 'file.write', 'file.edit'].includes(event.name)
+            ? 'filesystem' : ['web_fetch', 'web_search'].includes(event.name) ? 'network' : undefined,
+        } : {}),
+        observation: true,
+        ...('isError' in event ? { isError: event.isError } : {}),
+        ...(event.type === 'run.ended' && event.tokenUsage ? {
+          ...usageMetadata(event.tokenUsage), usageKey: `run:${event.runId}`, usageScope: 'run',
+        } : {}),
+      },
+    });
+  });
+  ctx.gatewayManager.on('chat:message', (payload) => {
+    const frame = safeJsonRecord(payload);
+    const envelope = safeJsonRecord(frame.message);
+    const message = envelope.message ? safeJsonRecord(envelope.message) : envelope;
+    const runId = typeof frame.runId === 'string' ? frame.runId
+      : typeof envelope.runId === 'string' ? envelope.runId : undefined;
+    const requestId = [frame.requestId, envelope.requestId, message.requestId, runId]
+      .find((value): value is string => typeof value === 'string');
+    const sessionKey = typeof frame.sessionKey === 'string' ? frame.sessionKey : envelope.sessionKey;
+    const messageId = message.id ?? message.timestamp ?? envelope.seq ?? frame.seq;
+    rememberTransportEvent({
+      id: `chat:${runId ?? requestId ?? 'unknown'}:${messageId ?? transportTraceEvents.length}`,
+      requestId,
+      at: Date.now(),
+      layer: 'model',
+      direction: 'in',
+      label: 'chat:message',
+      metadata: {
+        runId, sessionKey,
+        agentId: typeof sessionKey === 'string' ? sessionKey.split(':')[1] : 'unknown',
+        ...(message.usage && (messageId !== undefined || frame.state === 'final' || envelope.state === 'final') ? {
+          ...usageMetadata(message.usage),
+          usageKey: `message:${runId ?? requestId ?? sessionKey ?? 'unknown'}:${messageId ?? 'final'}`,
+          usageScope: 'message',
+        } : {}),
+      },
+    });
+  });
+
   return {
     status: () => ({
       success: true,
@@ -615,8 +709,11 @@ export function createAgentDevApi(ctx: AgentDevApiContext): CompleteHostServiceR
       const limit = typeof payload?.limit === 'number'
         ? Math.max(1, Math.min(Math.floor(payload.limit), MAX_TRANSPORT_EVENTS))
         : 100;
+      const relatedRuns = new Set(transportTraceEvents
+        .filter((event) => event.requestId === payload?.requestId && typeof event.metadata?.runId === 'string')
+        .map((event) => event.metadata?.runId));
       const events = payload?.requestId
-        ? transportTraceEvents.filter((event) => event.requestId === payload.requestId)
+        ? transportTraceEvents.filter((event) => event.requestId === payload.requestId || relatedRuns.has(event.metadata?.runId))
         : transportTraceEvents;
       return { success: true, events: events.slice(-limit) };
     },
