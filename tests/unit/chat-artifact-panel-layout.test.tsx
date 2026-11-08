@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Chat } from '@/pages/Chat';
 
 vi.mock('react-router-dom', () => ({
@@ -114,6 +114,7 @@ vi.mock('@/pages/Chat/ChatToolbar', () => ({
 
 describe('Chat artifact panel layout', () => {
   beforeEach(() => {
+    Element.prototype.scrollTo = vi.fn();
     artifactPanelState.open = true;
   });
 
@@ -182,7 +183,7 @@ describe('Chat artifact panel layout', () => {
 
     render(<Chat />);
 
-    await waitFor(() => expect(screen.getByTestId('artifact-panel')).toBeInTheDocument());
+    expect(await screen.findByTestId('artifact-panel')).toBeInTheDocument();
     expect(screen.queryByTestId('chat-assistive-rail')).not.toBeInTheDocument();
     expect(screen.queryByTestId('work-mode-summary-panel')).not.toBeInTheDocument();
     expect(screen.queryByTestId('task-ledger-summary')).not.toBeInTheDocument();
