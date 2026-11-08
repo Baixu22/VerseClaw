@@ -125,6 +125,13 @@
     "commandCheck": "Run the specified check",
     "command": "Verification command",
     "commandCheckExplanation": "The agent runs this command through the existing tool permissions. A zero exit code and unchanged input files satisfy this check; no command runs when you create the task.",
-    "cancel": "Cancel task"
+    "cancel": "Cancel task",
+    "search": "Search persistent tasks",
+    "filter": "Task status",
+    "all": "All tasks",
+    "loadMore": "Load more tasks",
+    "constraint": "Constraint: {{text}}",
+    "children": "Plan contains {{count}} tasks; accept them before completing this goal.",
+    "parentGoal": "This task retains the parent goal and constraints."
   }
 }

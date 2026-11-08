@@ -92,6 +92,46 @@ export function readPersistentTaskEvents(path: string): TaskLedgerEvent[] {
   );
 }
 
+/** Disposable projection cache; the event sequence remains the authority. */
+export function readTaskEventProjection<T>(
+  path: string,
+  key: string,
+  project: (events: TaskLedgerEvent[]) => T,
+): T {
+  return withTaskEvents(path, (db) => {
+    db.exec(
+      "CREATE TABLE IF NOT EXISTS projections(key TEXT PRIMARY KEY,sequence INTEGER NOT NULL,json TEXT NOT NULL)",
+    );
+    const sequence = Number(
+      (
+        db.prepare("SELECT coalesce(max(seq),0) AS sequence FROM events").get() as {
+          sequence: number;
+        }
+      ).sequence,
+    );
+    const cached = db.prepare("SELECT sequence,json FROM projections WHERE key=?").get(key) as
+      | { sequence: number; json: string }
+      | undefined;
+    if (cached?.sequence === sequence) {
+      try {
+        return JSON.parse(cached.json) as T;
+      } catch {
+        /* Rebuild only the disposable projection. */
+      }
+    }
+    const events = (
+      db.prepare("SELECT json FROM events ORDER BY seq").all() as Array<{ json: string }>
+    ).map((row) => JSON.parse(row.json) as TaskLedgerEvent);
+    const result = project(events);
+    db.prepare("INSERT OR REPLACE INTO projections VALUES(?,?,?)").run(
+      key,
+      sequence,
+      JSON.stringify(result),
+    );
+    return result;
+  });
+}
+
 export function appendPersistentTaskEvents(
   path: string,
   events: TaskLedgerEvent[],

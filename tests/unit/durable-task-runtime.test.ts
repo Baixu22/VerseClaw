@@ -14,9 +14,21 @@ import {
 } from "../../shared/task-system/runtime";
 
 describe("production task runtime guard", () => {
-  it('requires a task before the first write even when no task database exists yet',async()=>{
-    const root=mkdtempSync(join(tmpdir(),'task-first-write-'));
-    try{const guard=createTaskRuntimeGuard(root,'a','g');let mutations=0;await expect(executeTaskGuarded(guard,'write','write',async()=>{mutations++;})).rejects.toThrow('TASK_CLAIM_REQUIRED');expect(mutations).toBe(0);expect(await executeTaskGuarded(guard,'read','read',async()=>1)).toBe(1);}finally{rmSync(root,{recursive:true,force:true});}
+  it("requires a task before the first write even when no task database exists yet", async () => {
+    const root = mkdtempSync(join(tmpdir(), "task-first-write-"));
+    try {
+      const guard = createTaskRuntimeGuard(root, "a", "g");
+      let mutations = 0;
+      await expect(
+        executeTaskGuarded(guard, "write", "write", async () => {
+          mutations++;
+        }),
+      ).rejects.toThrow("TASK_CLAIM_REQUIRED");
+      expect(mutations).toBe(0);
+      expect(await executeTaskGuarded(guard, "read", "read", async () => 1)).toBe(1);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
   it("records cancellation immediately and waits for the in-flight owner before releasing the task", async () => {
     const root = mkdtempSync(join(tmpdir(), "task-cancel-"));

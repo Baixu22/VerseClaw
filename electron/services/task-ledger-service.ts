@@ -12,7 +12,7 @@ import type {
 } from '../../shared/types/task-ledger';
 import { getOpenClawConfigDir } from '../utils/paths';
 import { writeJsonAtomic } from '../utils/atomic-write';
-import { appendPersistentTaskEvents, readPersistentTaskEvents } from '../../shared/task-system/event-store';
+import { appendPersistentTaskEvents, readPersistentTaskEvents, readTaskEventProjection } from '../../shared/task-system/event-store';
 
 const SCHEMA_VERSION = 1 as const;
 
@@ -309,8 +309,8 @@ export async function writeTaskLedgerSnapshot(snapshot: TaskLedgerSnapshot): Pro
 
 export async function loadTaskLedgerSnapshot(workspaceId?: string | null): Promise<TaskLedgerSnapshot> {
   const normalizedWorkspaceId = normalizeTaskLedgerWorkspaceId(workspaceId);
-  const { events, warnings } = await readTaskLedgerEvents(workspaceId);
-  const snapshot = projectTaskLedgerSnapshot(normalizedWorkspaceId, events, warnings);
+  const snapshot = readTaskEventProjection(getTaskLedgerEventsPathForKey(normalizedWorkspaceId), 'task-ledger-snapshot/v1', events => projectTaskLedgerSnapshot(normalizedWorkspaceId, events, []));
+  snapshot.generatedAt = nowIso();
   if(workspaceId){
     const { listManagedTasks }=await import('./task-system-service');
     const managed=await listManagedTasks(workspaceId);

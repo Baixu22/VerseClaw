@@ -51,7 +51,7 @@ describe("durable product task ownership", () => {
       expect(migrated.get(c.taskNodeId).claim!.epoch).toBe(c.epoch);
       expect(
         (migrated.db.prepare("PRAGMA user_version").get() as { user_version: number }).user_version,
-      ).toBe(3);
+      ).toBe(5);
     } finally {
       migrated.close();
     }

@@ -6,8 +6,47 @@ import type {
   TaskCheckpoint,
   TaskContractInput,
   TaskCredential,
+  TaskPlanItem,
+  TaskQuery,
 } from "../../../../shared/task-system/types.js";
 import type { AnyAgentTool } from "./common.js";
+
+const taskContractSchema = Type.Object({
+  objective: Type.String({ maxLength: 3000 }),
+  target: Type.String(),
+  constraints: Type.Array(Type.String(), { maxItems: 30 }),
+  expectedOutcomes: Type.Optional(Type.Array(Type.String(), { maxItems: 30 })),
+  acceptance: Type.Array(
+    Type.Object({
+      id: Type.String(),
+      description: Type.String(),
+      verification: Type.Union([
+        Type.Object({
+          kind: Type.Literal("file-sha256"),
+          path: Type.String(),
+          sha256: Type.String(),
+        }),
+        Type.Object({
+          kind: Type.Literal("tool-result"),
+          tool: Type.Literal("exec"),
+          command: Type.String(),
+          files: Type.Array(Type.String()),
+          exitCode: Type.Integer(),
+        }),
+        Type.Object({
+          kind: Type.Literal("owner-receipt"),
+          owner: Type.String(),
+          requires: Type.Optional(Type.Array(Type.String())),
+          files: Type.Optional(Type.Array(Type.String())),
+        }),
+      ]),
+    }),
+    { minItems: 1, maxItems: 20 },
+  ),
+  businessKey: Type.Optional(Type.String()),
+  occurrenceKey: Type.Optional(Type.String()),
+  dependencies: Type.Optional(Type.Array(Type.String())),
+});
 
 /** Session identity comes from the runtime, never from model-authored arguments. */
 export function createPersistentTaskTool(input: {
@@ -20,8 +59,8 @@ export function createPersistentTaskTool(input: {
   if (existsSync(initialDomain.database) && input.sessionKey) {
     const initial = new TaskSystemStore(initialDomain);
     try {
-      const view=initial.binding(input.sessionKey,input.generation);
-      pinned = view?.referenceOnly?null:view?.claim??null;
+      const view = initial.binding(input.sessionKey, input.generation);
+      pinned = view?.referenceOnly ? null : (view?.claim ?? null);
     } finally {
       initial.close();
     }
@@ -36,6 +75,11 @@ export function createPersistentTaskTool(input: {
       action: Type.Union(
         [
           "list",
+          "suggest",
+          "decompose",
+          "reconcile",
+          "changes",
+          "acknowledge",
           "current",
           "create",
           "claim",
@@ -50,39 +94,27 @@ export function createPersistentTaskTool(input: {
         ].map((x) => Type.Literal(x)),
       ),
       taskNodeId: Type.Optional(Type.String()),
-      requestId: Type.Optional(Type.String()),
-      contract: Type.Optional(
-        Type.Object({
-          objective: Type.String({ maxLength: 3000 }),
-          target: Type.String(),
-          constraints: Type.Array(Type.String(), { maxItems: 30 }),
-          acceptance: Type.Array(
-            Type.Object({
-              id: Type.String(),
-              description: Type.String(),
-              verification: Type.Union([
-                Type.Object({
-                  kind: Type.Literal("file-sha256"),
-                  path: Type.String(),
-                  sha256: Type.String(),
-                }),
-                Type.Object({
-                  kind: Type.Literal("tool-result"),
-                  tool: Type.Literal("exec"),
-                  command: Type.String(),
-                  files: Type.Array(Type.String()),
-                  exitCode: Type.Integer(),
-                }),
-            Type.Object({ kind: Type.Literal("owner-receipt"), owner: Type.String(),requires:Type.Optional(Type.Array(Type.String())),files:Type.Optional(Type.Array(Type.String())) }),
-              ]),
-            }),
-            { minItems: 1, maxItems: 20 },
-          ),
-          businessKey: Type.Optional(Type.String()),
-          occurrenceKey: Type.Optional(Type.String()),
-          dependencies: Type.Optional(Type.Array(Type.String())),
-        }),
+      query: Type.Optional(Type.String()),
+      target: Type.Optional(Type.String()),
+      limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 100 })),
+      cursor: Type.Optional(Type.String()),
+      state: Type.Optional(Type.String()),
+      children: Type.Optional(
+        Type.Array(
+          Type.Object({
+            key: Type.String({ maxLength: 80 }),
+            contract: taskContractSchema,
+            dependsOn: Type.Optional(Type.Array(Type.String(), { maxItems: 30 })),
+          }),
+          { minItems: 1, maxItems: 30 },
+        ),
       ),
+      operationId: Type.Optional(Type.String()),
+      effectReceiptId: Type.Optional(Type.String()),
+      expectedSequence: Type.Optional(Type.Integer({ minimum: 0 })),
+      throughSequence: Type.Optional(Type.Integer({ minimum: 0 })),
+      requestId: Type.Optional(Type.String()),
+      contract: Type.Optional(taskContractSchema),
       checkpoint: Type.Optional(Type.Unknown()),
       candidate: Type.Optional(Type.String()),
       criterionId: Type.Optional(Type.String()),
@@ -95,8 +127,8 @@ export function createPersistentTaskTool(input: {
       const domain = resolveTaskDomain(input.workspace);
       if (!existsSync(domain.database) && (p.action === "list" || p.action === "current"))
         return {
-          content: [{ type: "text", text: p.action === "list" ? "[]" : "null" }],
-          details: null,
+          content: [{ type: "text", text: p.action === "list" ? '{"tasks":[]}' : "null" }],
+          details: p.action === "list" ? { tasks: [] } : null,
         };
       const store = new TaskSystemStore(domain);
       try {
@@ -107,14 +139,45 @@ export function createPersistentTaskTool(input: {
           return p[key] as string;
         };
         let result: unknown;
-        if(p.action==='accept'&&!current?.claim){
-          const id=typeof p.taskNodeId==='string'?p.taskNodeId:pinned?.taskNodeId;
-          if(!id)throw new Error('TASK_ID_REQUIRED_FOR_COMPLETION_REPLAY');
-          const task=store.replayCompletedTask(id,input.sessionKey,input.generation,str('candidate'));
-          return {content:[{type:'text',text:JSON.stringify(task)}],details:task};
+        if (p.action === "accept" && !current?.claim) {
+          const id = typeof p.taskNodeId === "string" ? p.taskNodeId : pinned?.taskNodeId;
+          if (!id) throw new Error("TASK_ID_REQUIRED_FOR_COMPLETION_REPLAY");
+          const task = store.replayCompletedTask(
+            id,
+            input.sessionKey,
+            input.generation,
+            str("candidate"),
+          );
+          return { content: [{ type: "text", text: JSON.stringify(task) }], details: task };
         }
-        if (p.action === "list") result = store.list();
+        if (p.action === "changes")
+          result = store.changes(
+            input.sessionKey,
+            typeof p.limit === "number" ? p.limit : undefined,
+          );
+        else if (p.action === "acknowledge") {
+          store.acknowledge(
+            input.sessionKey,
+            Number(p.expectedSequence),
+            Number(p.throughSequence),
+          );
+          result = { acknowledged: true };
+        } else if (p.action === "list")
+          result = store.page({
+            query: typeof p.query === "string" ? p.query : undefined,
+            cursor: typeof p.cursor === "string" ? p.cursor : undefined,
+            limit: typeof p.limit === "number" ? p.limit : undefined,
+            state: p.state as TaskQuery["state"],
+          });
+        else if (p.action === "suggest")
+          result = store.suggest(
+            str("query"),
+            typeof p.target === "string" ? p.target : undefined,
+            typeof p.limit === "number" ? p.limit : undefined,
+          );
         else if (p.action === "current") result = current;
+        else if (p.action === "decompose" && pinned)
+          result = store.decompose(pinned, p.children as TaskPlanItem[], str("requestId"));
         else if (p.action === "create")
           result = store.create(p.contract as TaskContractInput, str("requestId"), undefined, {
             source: "runtime-task-tool",
@@ -126,13 +189,25 @@ export function createPersistentTaskTool(input: {
             input.sessionKey,
             input.generation,
             str("requestId"),
+            pinned ?? undefined,
           );
           const claimed = (result as { claim: TaskCredential }).claim;
-          if (pinned && pinned.epoch !== claimed.epoch)
+          if (
+            pinned &&
+            (pinned.epoch !== claimed.epoch || pinned.taskNodeId !== claimed.taskNodeId)
+          )
             throw new Error("TASK_RESTART_RUN_AFTER_HANDOFF");
           pinned = claimed;
+        } else if (
+          p.action === "cancel" &&
+          current?.referenceOnly &&
+          current.claim?.sessionKey === input.sessionKey &&
+          current.claim.generation === input.generation
+        ) {
+          if (pinned && (pinned.taskNodeId !== current.claim.taskNodeId || ![pinned.epoch, pinned.epoch + 1].includes(current.claim.epoch))) throw new Error("TASK_STALE_OWNER");
+          result = store.control(current.claim, "cancel");
         } else {
-          if (!current?.claim||current.referenceOnly) throw new Error("TASK_CLAIM_REQUIRED");
+          if (!current?.claim || current.referenceOnly) throw new Error("TASK_CLAIM_REQUIRED");
           if (
             pinned &&
             (pinned.epoch !== current.claim.epoch || pinned.taskNodeId !== current.claim.taskNodeId)
@@ -140,12 +215,23 @@ export function createPersistentTaskTool(input: {
             throw new Error("TASK_STALE_OWNER");
           const c = pinned ?? current.claim;
           pinned = c;
-          if (p.action === "checkpoint")
+          if (p.action === "decompose")
+            result = store.decompose(c, p.children as TaskPlanItem[], str("requestId"));
+          else if (p.action === "reconcile") {
+            const { reconcilePersistentTaskEffect } =
+              await import("../persistent-task-acceptance.js");
+            result = reconcilePersistentTaskEffect(
+              store,
+              c,
+              str("operationId"),
+              str("effectReceiptId"),
+            );
+          } else if (p.action === "checkpoint")
             result = store.checkpoint(c, p.checkpoint as TaskCheckpoint);
           else if (p.action === "resume") {
             result = store.handoff(c, input.sessionKey, input.generation);
             pinned = (result as { claim: TaskCredential }).claim;
-          } else if (p.action === "pause" || p.action === "release" || p.action==='cancel') {
+          } else if (p.action === "pause" || p.action === "release" || p.action === "cancel") {
             result = store.control(c, p.action);
             pinned = (result as { claim: TaskCredential }).claim;
           } else if (p.action === "submit") result = store.submit(c, str("candidate"));
@@ -158,10 +244,9 @@ export function createPersistentTaskTool(input: {
               str("candidate"),
             );
           else if (p.action === "accept") {
-            const {acceptPersistentTask}=await import('../persistent-task-acceptance.js');
-            result=acceptPersistentTask(store,c,str('candidate'));
-          }
-          else throw new Error("TASK_UNKNOWN_ACTION");
+            const { acceptPersistentTask } = await import("../persistent-task-acceptance.js");
+            result = acceptPersistentTask(store, c, str("candidate"));
+          } else throw new Error("TASK_UNKNOWN_ACTION");
         }
         return { content: [{ type: "text", text: JSON.stringify(result) }], details: result };
       } finally {

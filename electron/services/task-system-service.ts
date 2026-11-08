@@ -1,7 +1,12 @@
 import { existsSync } from "node:fs";
 import { TaskSystemStore } from "../../shared/task-system/store";
 import { resolveTaskDomain } from "../../shared/task-system/identity";
-import type { TaskSystemCommand, TaskView } from "../../shared/task-system/types";
+import type {
+  TaskSystemCommand,
+  TaskView,
+  TaskQuery,
+  TaskPage,
+} from "../../shared/task-system/types";
 import { getPersistedCoordinatorBinding, getWorkspaceRootPathById } from "./workspaces-api";
 import type { GatewayManager } from "../gateway/manager";
 
@@ -28,7 +33,27 @@ export async function listManagedTasks(workspaceId?: string | null): Promise<Tas
   if (!workspaceId) return [];
   const store = await openTaskSystem(workspaceId);
   try {
-    return store?.list() ?? [];
+    if (!store) return [];
+    const tasks: TaskView[] = [];
+    let cursor: string | undefined;
+    do {
+      const page = store.page({ limit: 100, cursor });
+      tasks.push(...page.tasks);
+      cursor = page.nextCursor;
+    } while (cursor);
+    return tasks;
+  } finally {
+    store?.close();
+  }
+}
+export async function pageManagedTasks(
+  workspaceId: string | null | undefined,
+  query: TaskQuery = {},
+): Promise<TaskPage> {
+  if (!workspaceId) return { tasks: [] };
+  const store = await openTaskSystem(workspaceId);
+  try {
+    return store?.page(query) ?? { tasks: [] };
   } finally {
     store?.close();
   }
@@ -85,14 +110,14 @@ export async function persistentTaskChatContext(
       { key: sessionKey },
       10_000,
     );
-    const liveGeneration=described?.session?.sessionId;
-    if(!liveGeneration)throw new Error('TASK_GENERATION_STALE');
+    const liveGeneration = described?.session?.sessionId;
+    if (!liveGeneration) throw new Error("TASK_GENERATION_STALE");
     // The coordinator keeps its own generation while a child owns the writer.
     // binding() checks either the writer binding or the read reference.
-    store.binding(sessionKey,liveGeneration);
+    store.binding(sessionKey, liveGeneration);
     const scoped = new TaskSystemStore(domain);
     try {
-      if (!bound.referenceOnly&&bound.claim.state === "active") {
+      if (!bound.referenceOnly && bound.claim.state === "active") {
         scoped.assertOwner(bound.claim);
         scoped.control(bound.claim, "renew");
       }
@@ -112,7 +137,7 @@ export async function taskSystemCommand(
 ): Promise<unknown> {
   const store = await openTaskSystem(workspaceId, true);
   if (!store) throw new Error("TASK_STORE_UNAVAILABLE");
-  const generationFor = async (sessionKey: string, bindingWorkspaceId=workspaceId) => {
+  const generationFor = async (sessionKey: string, bindingWorkspaceId = workspaceId) => {
     if (!gateway) throw new Error("TASK_SESSION_OWNER_UNAVAILABLE");
     const binding = await getPersistedCoordinatorBinding(bindingWorkspaceId, sessionKey);
     if (!binding || binding.state !== "active") throw new Error("TASK_COORDINATOR_REQUIRED");
@@ -129,6 +154,13 @@ export async function taskSystemCommand(
     return { generation: described.session.sessionId, worktree: binding.environment.canonicalRoot };
   };
   try {
+    if (command.action === "changes") return store.changes(command.consumer, command.limit);
+    if (command.action === "acknowledge") {
+      store.acknowledge(command.consumer, command.expectedSequence, command.throughSequence);
+      return { acknowledged: true };
+    }
+    if (command.action === "suggest")
+      return store.suggest(command.query, command.target, command.limit);
     if (command.action === "create")
       return store.create(command.contract, command.requestId, undefined, {
         source: "host-task-api",
@@ -180,9 +212,27 @@ export async function taskSystemCommand(
     if (current.generation !== credential.generation) throw new Error("TASK_GENERATION_STALE");
     const scoped = new TaskSystemStore(resolveTaskDomain(current.worktree));
     try {
+      if (command.action === "decompose")
+        return scoped.decompose(credential, command.children, command.requestId);
+      if (command.action === "reconcile") {
+        if (!gateway) throw new Error("TASK_EFFECT_OWNER_UNAVAILABLE");
+        return gateway.rpc(
+          "tasks.contract.reconcile",
+          {
+            workspaceDir: current.worktree,
+            credential,
+            operationId: command.operationId,
+            effectReceiptId: command.effectReceiptId,
+          },
+          15_000,
+        );
+      }
       if (command.action === "checkpoint") return scoped.checkpoint(credential, command.checkpoint);
       if (command.action === "handoff") {
-        const next = await generationFor(command.targetSessionKey,command.targetWorkspaceId??workspaceId);
+        const next = await generationFor(
+          command.targetSessionKey,
+          command.targetWorkspaceId ?? workspaceId,
+        );
         return scoped.handoff(credential, command.targetSessionKey, next.generation, next.worktree);
       }
       if (command.action === "submit") return scoped.submit(credential, command.candidate);
@@ -195,14 +245,19 @@ export async function taskSystemCommand(
           command.candidate,
         );
       if (command.action === "accept") {
-        if(!gateway)throw new Error('TASK_VERIFIER_OWNER_UNAVAILABLE');
-        const receipt=await gateway.rpc<{success:boolean;task?:TaskView}>('tasks.contract.accept',{workspaceDir:current.worktree,credential,candidate:command.candidate},30_000);
-        if(!receipt.success||!receipt.task)throw new Error('TASK_ACCEPTANCE_RECEIPT_MISSING');
+        if (!gateway) throw new Error("TASK_VERIFIER_OWNER_UNAVAILABLE");
+        const receipt = await gateway.rpc<{ success: boolean; task?: TaskView }>(
+          "tasks.contract.accept",
+          { workspaceDir: current.worktree, credential, candidate: command.candidate },
+          30_000,
+        );
+        if (!receipt.success || !receipt.task) throw new Error("TASK_ACCEPTANCE_RECEIPT_MISSING");
         return receipt.task;
       }
-      if(command.action==='cancel'){
-        const cancelled=scoped.control(credential,'cancel');
-        if(cancelled.contract.state==='cancelling'&&gateway)await gateway.rpc('sessions.stop',{key:credential.sessionKey},20_000);
+      if (command.action === "cancel") {
+        const cancelled = scoped.control(credential, "cancel");
+        if (cancelled.contract.state === "cancelling" && gateway)
+          await gateway.rpc("sessions.stop", { key: credential.sessionKey }, 20_000);
         return scoped.get(credential.taskNodeId);
       }
       return scoped.control(credential, command.action);

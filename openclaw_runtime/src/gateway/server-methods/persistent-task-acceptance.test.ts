@@ -9,6 +9,7 @@ import { resolveTaskDomain } from "../../../../shared/task-system/identity.js";
 import { updateSessionStore } from "../../config/sessions.js";
 import { closeSqliteSessionStoreDatabase } from "../../config/sessions/store-sqlite.js";
 import { closeOpenClawStateDatabase } from "../../state/openclaw-state-db.js";
+import { EffectReceiptStore } from "../../agents/effect-receipt.js";
 
 it("accepts owner evidence through the registered Gateway method and rejects a stale session", async () => {
   const root = mkdtempSync(join(tmpdir(), "task-gateway-accept-"));
@@ -48,6 +49,45 @@ it("accepts owner evidence through the registered Gateway method and rejects a s
     await updateSessionStore(sessionPath, (rows) => {
       rows["agent:main:main"] = { sessionId: "generation", updatedAt: Date.now() };
     });
+    store.beginOperation(claim, "gateway-run:click", "browser");
+    const effect = new EffectReceiptStore().record({
+      idempotencyKey: "gateway-effect",
+      proposal: { operation: "browser click" },
+      domainExecutor: "browser-owner",
+      outcome: "applied",
+      recoverability: "owner-readback",
+      stage1Context: {
+        actor: {
+          sessionKey: claim.sessionKey,
+          runId: "gateway-run",
+          attemptIndex: 1,
+          modelCallIndex: 1,
+          actorKind: "principal",
+        },
+        effect: { toolCallId: "click", toolName: "browser", resource: "page", action: "click" },
+      },
+    });
+    const reconcile = async (generation: string) => {
+      let response: unknown[] = [];
+      await tasksHandlers["tasks.contract.reconcile"]({
+        params: {
+          workspaceDir: root,
+          credential: { ...claim, generation },
+          operationId: "gateway-run:click",
+          effectReceiptId: effect.effectReceiptId,
+        },
+        context: { getRuntimeConfig: () => ({ session: { store: sessionPath } }) },
+        respond: (...args: unknown[]) => {
+          response = args;
+        },
+      } as never);
+      return response;
+    };
+    expect((await reconcile("stale"))[0]).toBe(false);
+    expect(store.get(claim.taskNodeId).pendingOperations).toBe(1);
+    expect((await reconcile("generation"))[0]).toBe(true);
+    expect((await reconcile("generation"))[0]).toBe(true);
+    expect(store.get(claim.taskNodeId).pendingOperations).toBe(0);
     store.verifyFile(claim, "file", "result.txt", hash, "candidate");
     store.submit(claim, "candidate");
     const invoke = async (credential: typeof claim) => {

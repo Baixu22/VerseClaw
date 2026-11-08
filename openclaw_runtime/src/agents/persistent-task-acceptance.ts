@@ -245,3 +245,42 @@ export function readPersistentTaskCompletionReceipt(
     priorStatus: view.contract.state,
   };
 }
+
+/** The model supplies only a receipt ID; effect identity and outcome come from the existing owner. */
+export function reconcilePersistentTaskEffect(
+  store: TaskSystemStore,
+  credential: TaskCredential,
+  operationId: string,
+  effectReceiptId: string,
+): TaskView {
+  const operation = store.operation(credential, operationId);
+  const receipt = new EffectReceiptStore().getById(effectReceiptId);
+  if (!receipt) throw new Error("TASK_EFFECT_RECEIPT_UNAVAILABLE");
+  let context: {
+    actor?: { sessionKey?: string; runId?: string };
+    effect?: { toolCallId?: string; toolName?: string };
+  };
+  try {
+    context = JSON.parse(receipt.effect_context_json);
+  } catch {
+    throw new Error("TASK_EFFECT_RECEIPT_IDENTITY_INVALID");
+  }
+  const actor = context.actor,
+    effect = context.effect;
+  if (
+    !actor?.runId ||
+    !effect?.toolCallId ||
+    actor.sessionKey !== credential.sessionKey ||
+    effect.toolName !== operation.kind ||
+    `${actor.runId}:${effect.toolCallId}` !== operationId ||
+    Number(receipt.created_at) < operation.startedAt
+  )
+    throw new Error("TASK_EFFECT_RECEIPT_SCOPE_MISMATCH");
+  if (receipt.outcome !== "applied" && receipt.outcome !== "not_applied")
+    throw new Error("TASK_EFFECT_OUTCOME_UNKNOWN");
+  return store.reconcileOperation(credential, operationId, {
+    id: effectReceiptId,
+    outcome: receipt.outcome,
+    owner: receipt.domain_executor,
+  });
+}

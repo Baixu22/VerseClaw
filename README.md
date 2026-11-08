@@ -270,3 +270,5 @@ Verse Claw builds on [OpenClaw](https://github.com/openclaw/openclaw) and the Cl
 ### Persistent task execution
 
 Task Ledger → Persistent tasks saves objectives, constraints and acceptance checks independently of chat history. Sessions claim tasks in a repository shared by its local Git worktrees. Task execution checks ownership before managed tool calls and restores the current goal before model requests. Configure either an exact file-content check or a command check with declared input files; commands use the existing tool permissions. See [task-system architecture](docs/dev/durable-task-system/PLAN.md).
+
+Search and filter the task list, then load further pages. Agents can suggest related tasks and decompose a goal into dependent tasks while retaining the parent goal and constraints. Cancelling a plan waits for in-flight effects to settle. Acceptance and recovery read receipts from the existing runtime owners.

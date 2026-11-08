@@ -16,6 +16,7 @@ export type TaskContractInput = {
   businessKey?: string;
   occurrenceKey?: string;
   dependencies?: string[];
+  expectedOutcomes?: string[];
 };
 export type TaskContract = TaskContractInput & {
   origin: { source: string; requestId: string; sessionKey?: string };
@@ -69,9 +70,21 @@ export type TaskView = {
   claim: TaskClaim | null;
   checkpoint: TaskCheckpoint | null;
   pendingOperations: number;
+  pendingOperationDetails?:Array<{operationId:string;tool:string;state:string;startedAt:number}>;
   /** A linked coordinator/observer can read the task without owning execution. */
   referenceOnly?: boolean;
+  parentTaskNodeId?: string;
+  childTaskNodeIds?: string[];
 };
+export type TaskQuery = {
+  limit?: number;
+  cursor?: string;
+  query?: string;
+  state?: TaskContract["state"];
+  sessionKey?: string;
+};
+export type TaskPage = { tasks: TaskView[]; nextCursor?: string };
+export type TaskPlanItem = { key: string; contract: TaskContractInput; dependsOn?: string[] };
 export type TaskWriterDelegation = {
   delegationId: string;
   taskNodeId: TaskId;
@@ -87,19 +100,41 @@ export type TaskWriterDelegation = {
   contractRevision?: number;
   candidateArtifacts?: Array<{ path: string; sha256: string }>;
 };
-export type TaskDelegationIntent={
-  workspace:string;childWorkspace:string;parentSessionKey:string;parentGeneration:string;
-  childSessionKey:string;childGeneration:string;childRunId:string;observer:boolean;expectedParent:TaskCredential;
+export type TaskDelegationIntent = {
+  workspace: string;
+  childWorkspace: string;
+  parentSessionKey: string;
+  parentGeneration: string;
+  childSessionKey: string;
+  childGeneration: string;
+  childRunId: string;
+  observer: boolean;
+  expectedParent: TaskCredential;
 };
 export type TaskResolution = { kind: "created" | "existing" | "duplicate"; task: TaskView };
 export type TaskSystemCommand =
+  | { action: "changes"; consumer: string; limit?: number }
+  | { action: "acknowledge"; consumer: string; expectedSequence: number; throughSequence: number }
+  | { action: "suggest"; query: string; target?: string; limit?: number }
+  | { action: "decompose"; credential: TaskCredential; requestId: string; children: TaskPlanItem[] }
+  | {
+      action: "reconcile";
+      credential: TaskCredential;
+      operationId: string;
+      effectReceiptId: string;
+    }
   | { action: "create"; requestId: string; contract: TaskContractInput }
   | { action: "adopt"; taskNodeId: string; requestId: string; contract: TaskContractInput }
   | { action: "revise"; taskNodeId: string; expectedRevision: number; contract: TaskContractInput }
   | { action: "claim"; taskNodeId: string; sessionKey: string; requestId: string }
   | { action: "checkpoint"; credential: TaskCredential; checkpoint: TaskCheckpoint }
   | { action: "pause" | "release" | "cancel" | "renew"; credential: TaskCredential }
-  | { action: "handoff"; credential: TaskCredential; targetSessionKey: string; targetWorkspaceId?:string }
+  | {
+      action: "handoff";
+      credential: TaskCredential;
+      targetSessionKey: string;
+      targetWorkspaceId?: string;
+    }
   | { action: "recover"; taskNodeId: string; targetSessionKey: string }
   | { action: "submit"; credential: TaskCredential; candidate: string }
   | {

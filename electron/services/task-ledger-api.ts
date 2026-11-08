@@ -2,7 +2,7 @@ import { randomUUID, createHash } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { GatewayManager } from '../gateway/manager';
-import { listManagedTasks, taskSystemCommand, openTaskSystem } from './task-system-service';
+import { listManagedTasks, pageManagedTasks, taskSystemCommand, openTaskSystem } from './task-system-service';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type {
   TaskLedgerAddEdgePayload,
@@ -157,6 +157,7 @@ document.getElementById('search').addEventListener('input',e=>{query=e.target.va
 export function createTaskLedgerApi(gatewayManager?: GatewayManager): CompleteHostServiceRegistry['taskLedger'] {
   return {
     managedTasks: async (payload) => ({ success: true, tasks: await listManagedTasks(payload?.workspaceId) }),
+    queryTasks: async (payload) => ({ success: true, ...await pageManagedTasks(payload?.workspaceId, payload) }),
     command: async (payload) => {
       try { return { success: true, result: await taskSystemCommand(payload.workspaceId,payload.command,gatewayManager) }; }
       catch (error) { return { success: false, error: error instanceof Error ? error.message : String(error) }; }

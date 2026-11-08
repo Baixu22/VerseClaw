@@ -21,6 +21,8 @@ describe("agent-facing production task tool", () => {
       );
       const tool = createPersistentTaskTool({ workspace: root, sessionKey: "a", generation: "g" });
       const call = async (p: unknown) => (await tool.execute(String(++n), p)).details;
+      expect(await call({ action: "list" })).toEqual({ tasks: [] });
+      expect(JSON.stringify(tool.parameters)).toContain("expectedOutcomes");
       for (let i = 0; i < 10; i++) expect(await call({ action: "current" })).toBeNull();
       const created = (await call({
         action: "create",
@@ -97,6 +99,15 @@ describe("agent-facing production task tool", () => {
       const stale = createPersistentTaskTool({ workspace: root, sessionKey: "a", generation: "g" });
       s.handoff(c, "a", "g");
       await expect(stale.execute("late", { action: "release" })).rejects.toThrow("STALE_OWNER");
+      const newer = s.get(c.taskNodeId).claim!;
+      await expect(
+        stale.execute("reclaim", {
+          action: "claim",
+          taskNodeId: c.taskNodeId,
+          requestId: "reclaim",
+        }),
+      ).rejects.toThrow("STALE_OWNER");
+      expect(s.get(c.taskNodeId).claim).toEqual(newer);
     } finally {
       s.close();
       rmSync(root, { recursive: true, force: true });

@@ -81,8 +81,16 @@ function fixture() {
 }
 
 describe("durable production delegation protocol", () => {
-  it('does not transfer queued work until dispatch and rejects changed parent ownership',()=>{
-    const f=fixture();try{const intent=capturePersistentTaskDelegationIntent(f.input)!;expect(f.store.get(f.claim.taskNodeId).claim?.sessionKey).toBe('parent');f.store.handoff(f.claim,'parent','parent-generation');expect(()=>preparePersistentTaskDelegation(intent)).toThrow('PARENT_CHANGED_WHILE_QUEUED');}finally{f.close();}
+  it("does not transfer queued work until dispatch and rejects changed parent ownership", () => {
+    const f = fixture();
+    try {
+      const intent = capturePersistentTaskDelegationIntent(f.input)!;
+      expect(f.store.get(f.claim.taskNodeId).claim?.sessionKey).toBe("parent");
+      f.store.handoff(f.claim, "parent", "parent-generation");
+      expect(() => preparePersistentTaskDelegation(intent)).toThrow("PARENT_CHANGED_WHILE_QUEUED");
+    } finally {
+      f.close();
+    }
   });
   it("transfers before dispatch, preserves read-only parent context and returns from terminal owner evidence", async () => {
     const f = fixture();
@@ -120,7 +128,7 @@ describe("durable production delegation protocol", () => {
         parentGeneration: "parent-generation",
       });
       expect(returned?.phase).toBe("returned");
-      expect(()=>assertTaskWorktreeReleasable(f.childRoot)).toThrow('UNFINISHED_TASKS');
+      expect(() => assertTaskWorktreeReleasable(f.childRoot)).toThrow("UNFINISHED_TASKS");
       expect(f.store.get(f.claim.taskNodeId).claim?.sessionKey).toBe("parent");
       expect(f.store.get(f.claim.taskNodeId).contract.state).toBe("doing");
       await expect(

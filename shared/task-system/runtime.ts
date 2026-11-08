@@ -202,8 +202,10 @@ export async function executeTaskGuarded<T>(
   ]);
   if (!existsSync(guard.domain.database)) {
     if (guard.credential) throw new Error("TASK_STORE_UNAVAILABLE");
-    if(readonlyTools.has(toolName))return execute();
-    throw new Error('TASK_CLAIM_REQUIRED: create or select the persistent task with task_control before executing side effects');
+    if (readonlyTools.has(toolName)) return execute();
+    throw new Error(
+      "TASK_CLAIM_REQUIRED: create or select the persistent task with task_control before executing side effects",
+    );
   }
   if (toolName === "task_control") return execute();
   if (!guard.credential && guard.generation) {
