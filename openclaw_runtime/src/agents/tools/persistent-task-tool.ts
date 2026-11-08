@@ -82,6 +82,7 @@ export function createPersistentTaskTool(input: {
           "acknowledge",
           "current",
           "create",
+          "revise",
           "claim",
           "checkpoint",
           "pause",
@@ -114,6 +115,7 @@ export function createPersistentTaskTool(input: {
       expectedSequence: Type.Optional(Type.Integer({ minimum: 0 })),
       throughSequence: Type.Optional(Type.Integer({ minimum: 0 })),
       requestId: Type.Optional(Type.String()),
+      expectedRevision: Type.Optional(Type.Integer({minimum:1})),
       contract: Type.Optional(taskContractSchema),
       checkpoint: Type.Optional(Type.Unknown()),
       candidate: Type.Optional(Type.String()),
@@ -215,7 +217,10 @@ export function createPersistentTaskTool(input: {
             throw new Error("TASK_STALE_OWNER");
           const c = pinned ?? current.claim;
           pinned = c;
-          if (p.action === "decompose")
+          if (p.action === "revise") {
+            store.assertOwner(c);
+            result = store.revise(c.taskNodeId, Number(p.expectedRevision), p.contract as TaskContractInput);
+          } else if (p.action === "decompose")
             result = store.decompose(c, p.children as TaskPlanItem[], str("requestId"));
           else if (p.action === "reconcile") {
             const { reconcilePersistentTaskEffect } =

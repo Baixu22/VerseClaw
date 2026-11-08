@@ -23,6 +23,8 @@
 
 每次恢复以任务 ID、revision、epoch、session generation、run 和上下文摘要标识注入回执，记录在原有事件 journal。同一 run 中内容不变时复用已有回执；目标或检查点变化产生新回执。回执写入前在事务中核对最新 binding 与上下文，`changes` 可查询记录；模型请求始终重新读取持久目标。
 
+分叉会话由 session owner 的 parentSessionKey、generation 和 workspace 信息继承只读任务引用，原 writer 保持不变。桌面 chat 入口可根据持久会话 lineage 补建遗漏引用。`task_control.revise` 按 expectedRevision 保存显式目标修订，旧 run 的资格立即失效；接续 run 重新领取新版本。
+
 **完成绑定可复算证据。** 当前实现精确文件哈希检查，以及 runtime exec 返回的真实终态/退出码与检查输入文件的前后哈希。文件在检查后变化就使回执失效；宽泛业务要求使用 owner-receipt 类型，在其 owner 尚未接线时返回拒绝。命令成功只满足该命令对应的 criterion，不升级成任意业务正确。副作用 owner、测试运行 owner、业务评审的结果仍分别保留。
 
 **降级策略。**

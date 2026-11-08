@@ -24,6 +24,7 @@ touchedAreas:
   - shared/task-system/**
   - shared/host-api/contract.ts
   - electron/services/task-system-service.ts
+  - electron/services/sessions-api.ts
   - electron/services/task-ledger-service.ts
   - electron/services/task-ledger-api.ts
   - src/lib/host-api.ts
@@ -32,6 +33,8 @@ touchedAreas:
   - openclaw_runtime/src/agents/persistent-task-acceptance.ts
   - openclaw_runtime/src/agents/tools/persistent-task-tool.ts
   - openclaw_runtime/src/gateway/server-methods/tasks.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.lifecycle.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.lifecycle.fork-lineage.test.ts
   - openclaw_runtime/src/gateway/server-methods.ts
   - openclaw_runtime/src/gateway/methods/core-descriptors.ts
   - tests/unit/durable-task-*.test.ts

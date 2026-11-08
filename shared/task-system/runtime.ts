@@ -3,6 +3,16 @@ import { TaskSystemStore } from "./store.js";
 import { resolveTaskDomain } from "./identity.js";
 import type { TaskCredential } from "./types.js";
 
+/** Session lineage and generations come from the session owner; forks inherit no claim. */
+export function inheritPersistentTaskReference(workspace:string,sourceSessionKey:string,sourceGeneration:string,sessionKey:string,generation:string) {
+  if (!existsSync(workspace)) return null;
+  const domain=resolveTaskDomain(workspace);
+  if (!existsSync(domain.database)) return null;
+  const store=new TaskSystemStore(domain);
+  try {return store.inheritReference(sourceSessionKey,sourceGeneration,sessionKey,generation);}
+  finally {store.close();}
+}
+
 export function assertTaskWorktreeReleasable(workspace: string): void {
   if (!existsSync(workspace)) return;
   const domain = resolveTaskDomain(workspace);

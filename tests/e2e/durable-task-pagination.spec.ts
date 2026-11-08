@@ -95,12 +95,14 @@ test("queries all task pages and filters without losing task identity", async ({
     await page.screenshot({ path: info.outputPath("filtered-task.png") });
     for (const language of ["zh", "ja", "ru"]) {
       const labels = JSON.parse(await readFile(join(process.cwd(), "shared/i18n/locales", language, "taskLedger.json"), "utf8"));
-      await page.evaluate(async language => {
-        const result = await window.verseClaw!.hostInvoke({ id: crypto.randomUUID(), module: "settings", action: "set", payload: { key: "language", value: language } });
-        if (!result.ok) throw new Error(result.error?.message);
-      }, language);
-      await page.reload();
+      await page.getByTestId("sidebar-nav-settings").click();
+      await page.getByTestId("settings-nav-general").click();
+      await page.getByTestId("settings-language-select").click();
+      await page.getByRole("option",{name:({zh:"中文",ja:"日本語",ru:"Русский"} as Record<string,string>)[language],exact:true}).click();
       await expect(page.locator("html")).toHaveAttribute("lang", language);
+      await expect.poll(()=>page.evaluate(async()=>{const r=await window.verseClaw!.hostInvoke<{language:string}>({id:crypto.randomUUID(),module:"settings",action:"getAll"});return r.ok?r.data.language:null;})).toBe(language);
+      await page.getByTestId("sidebar-footer-menu-trigger").click();
+      await page.getByTestId("sidebar-more-task-ledger").click();
       await page.getByRole("tab", { name: labels.managed.tab, exact: true }).click();
       await page.getByLabel(labels.managed.search, { exact: true }).fill("Task page 02");
       await expect(page.getByTestId("managed-task")).toHaveCount(1);

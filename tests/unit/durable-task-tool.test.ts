@@ -113,4 +113,16 @@ describe("agent-facing production task tool", () => {
       rmSync(root, { recursive: true, force: true });
     }
   });
+  it("revises an explicitly changed goal with optimistic versioning and fences the previous run",async()=>{
+    const root=mkdtempSync(join(tmpdir(),"task-revise-tool-"));const s=new TaskSystemStore(resolveTaskDomain(root));
+    try{
+      const contract={objective:"Original goal",target:".",constraints:[],acceptance:[{id:"v",description:"Verify",verification:{kind:"owner-receipt" as const,owner:"fixture"}}]};
+      const task=s.create(contract,"new").task;s.claim(task.contract.taskNodeId,"a","g","claim");const tool=createPersistentTaskTool({workspace:root,sessionKey:"a",generation:"g"});
+      await expect(tool.execute("bad",{action:"revise",expectedRevision:2,contract:{...contract,objective:"Updated goal"}})).rejects.toThrow("REVISION_CONFLICT");
+      const revised=await tool.execute("amend",{action:"revise",expectedRevision:1,contract:{...contract,objective:"Updated goal"}});
+      expect((revised.details as TaskView).contract).toMatchObject({revision:2,objective:"Updated goal"});
+      await expect(tool.execute("old",{action:"claim",taskNodeId:task.contract.taskNodeId,requestId:"reclaim"})).rejects.toThrow("STALE_OWNER");
+      expect(s.history(task.contract.taskNodeId).find(e=>e.kind==="created")?.json).toContain("Original goal");
+    }finally{s.close();rmSync(root,{recursive:true,force:true});}
+  });
 });

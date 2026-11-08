@@ -1,6 +1,7 @@
 import { existsSync } from "node:fs";
 import { TaskSystemStore } from "../../shared/task-system/store";
 import { resolveTaskDomain } from "../../shared/task-system/identity";
+import { inheritPersistentTaskReference } from "../../shared/task-system/runtime";
 import type {
   TaskSystemCommand,
   TaskView,
@@ -98,20 +99,24 @@ export async function persistentTaskChatContext(
   if (!existsSync(resolved.database)) return null;
   const store = new TaskSystemStore(resolved);
   try {
-    const bound = store.binding(sessionKey);
+    let bound = store.binding(sessionKey);
+    const described = await gateway.rpc<{ session?: { sessionId?: string;parentSessionKey?:string;forkedFromParent?:boolean } }>(
+      "sessions.describe", { key: sessionKey }, 10_000,
+    );
+    const liveGeneration = described?.session?.sessionId;
+    if (!bound && described.session?.forkedFromParent && described.session.parentSessionKey && liveGeneration) {
+      const parent=await gateway.rpc<{session?:{sessionId?:string}}>("sessions.describe",{key:described.session.parentSessionKey},10_000);
+      if(parent.session?.sessionId) bound=inheritPersistentTaskReference(workspaceRoot,described.session.parentSessionKey,parent.session.sessionId,sessionKey,liveGeneration);
+    }
     if (!bound?.claim) return null;
+    if (!liveGeneration) throw new Error("TASK_GENERATION_STALE");
+    store.binding(sessionKey, liveGeneration);
+    if (bound.referenceOnly) return store.context(sessionKey,liveGeneration);
     const coordinator = await getPersistedCoordinatorBinding(workspaceId, sessionKey);
     if (!coordinator || coordinator.state !== "active")
       throw new Error("TASK_COORDINATOR_REQUIRED");
     const domain = resolveTaskDomain(coordinator.environment.canonicalRoot);
     if (domain.id !== store.domain.id) throw new Error("TASK_SESSION_DOMAIN_MISMATCH");
-    const described = await gateway.rpc<{ session?: { sessionId?: string } }>(
-      "sessions.describe",
-      { key: sessionKey },
-      10_000,
-    );
-    const liveGeneration = described?.session?.sessionId;
-    if (!liveGeneration) throw new Error("TASK_GENERATION_STALE");
     // The coordinator keeps its own generation while a child owns the writer.
     // binding() checks either the writer binding or the read reference.
     store.binding(sessionKey, liveGeneration);

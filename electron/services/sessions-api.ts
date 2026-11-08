@@ -46,8 +46,8 @@ import type {
   SessionRecallOriginalResult,
 } from '../../shared/host-api/contract';
 import { appendTaskLedgerEvents, loadTaskLedgerSnapshot } from './task-ledger-service';
-import { assertManagedTaskAdmission } from './task-system-service';
-import { createWorkspacesApi, getActiveWorkspaceProfile, type WorkspaceCoordinatorLifecycleEvent } from './workspaces-api';
+import { assertManagedTaskAdmission, persistentTaskChatContext } from './task-system-service';
+import { createWorkspacesApi, getActiveWorkspaceProfile, getWorkspaceRootPathById, type WorkspaceCoordinatorLifecycleEvent } from './workspaces-api';
 import {
   executeSessionDelegation,
   hashDelegationRequest,
@@ -2925,6 +2925,7 @@ export function createSessionsApi(ctx: {
           forkedFromParent: result.forkedFromParent === true,
         };
       }
+      if (workspaceId) await persistentTaskChatContext(workspaceId,nextSessionKey,ctx.gatewayManager,(await getWorkspaceRootPathById(workspaceId))??undefined);
       return {
         success: true,
         sourceSessionKey,

@@ -706,6 +706,22 @@ export class TaskSystemStore {
     if (generation && row.generation !== generation) throw new Error("TASK_GENERATION_STALE");
     return { ...this.get(row.task_id), ...(!writer ? { referenceOnly: true } : {}) };
   }
+  inheritReference(sourceSessionKey: string, sourceGeneration: string, sessionKey: string, generation: string): TaskView | null {
+    text(sessionKey, "SESSION", 300); text(generation, "GENERATION", 200);
+    if (sourceSessionKey === sessionKey) throw new Error("TASK_REFERENCE_SELF");
+    return this.transaction(() => {
+      const source = this.binding(sourceSessionKey, sourceGeneration);
+      if (!source || ["done", "cancelled"].includes(source.contract.state)) return null;
+      const existing = this.binding(sessionKey, generation);
+      if (existing) {
+        if (!existing.referenceOnly || existing.contract.taskNodeId !== source.contract.taskNodeId) throw new Error("TASK_REFERENCE_CONFLICT");
+        return existing;
+      }
+      this.db.prepare("INSERT INTO task_references VALUES(?,?,?,?)").run(sessionKey, source.contract.taskNodeId, generation, "observer");
+      this.event(source.contract.taskNodeId,"reference_inherited",{sourceSessionKey,sourceGeneration,sessionKey,generation});
+      return this.binding(sessionKey,generation);
+    });
+  }
   private saveWriterDelegation(delegation: TaskWriterDelegation): void {
     this.db
       .prepare(
