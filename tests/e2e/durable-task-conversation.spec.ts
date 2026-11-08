@@ -58,6 +58,8 @@ test("normal conversation shows one task header and reveals file changes below t
     await expect(page.getByTestId("session-task-dock")).toHaveCount(0);
     await expect(page.getByTestId('chat-welcome-bg')).toHaveCount(0);
     await expect(page.getByTestId('chat-welcome-watermark')).toHaveCount(0);
+    await expect(page.getByTestId('composer-git-trigger')).toHaveCount(0);
+    await page.screenshot({ path: info.outputPath('conversation-empty.png'), animations: 'disabled' });
     await host(page, "gateway", "start");
     await expect
       .poll(
@@ -184,7 +186,9 @@ test("normal conversation shows one task header and reveals file changes below t
     await expect(dock.getByRole('progressbar')).toHaveCount(0);
     await writeFile(join(root,'export.ts'),'export const verified = true;\n');await sendUpdate();
     const fileChip=page.getByTestId('composer-git-trigger');await expect(fileChip).toContainText('1 file changed');
-    const fileBox=await fileChip.boundingBox();expect(fileBox!.y).toBeGreaterThan(inputBox!.y);
+    const fileBox=await fileChip.boundingBox();
+    const composerBox=await page.locator('.codex-composer-shell').boundingBox();
+    expect(fileBox!.y).toBeGreaterThanOrEqual(composerBox!.y+composerBox!.height);
     await expect(fileChip).not.toContainText('master');await expect(fileChip).not.toContainText('conversation-task');
     const toggle = page.getByTestId("session-task-plan").locator("button").first();
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
