@@ -58,6 +58,8 @@ for (const language of ['en', 'zh', 'ja', 'ru']) {
       await expect(image).toBeAttached();
       await expect.poll(() => image.evaluate((element: HTMLImageElement) => element.complete && element.naturalWidth > 0)).toBe(true);
       await scroller.evaluate(element => { element.scrollTop = element.scrollHeight; });
+      await expect.poll(() => scroller.evaluate(element => element.scrollHeight - element.scrollTop - element.clientHeight)).toBeLessThanOrEqual(8);
+      await expect(image).toBeInViewport();
       await page.screenshot({ path: testInfo.outputPath('long-history-' + language + '.png') });
       const finalCount = await page.locator('[data-viewport-key]').count(); expect(finalCount).toBeLessThanOrEqual(120);
       await writeFile(testInfo.outputPath('navigation.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex', language,
