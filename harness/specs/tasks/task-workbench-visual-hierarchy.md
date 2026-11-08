@@ -3,8 +3,8 @@ id: task-workbench-visual-hierarchy
 title: 统一任务工作台的信息层级与显示时机
 lifecycleStatus: active
 scenario: gateway-backend-communication
-taskType: frontend-ui
-diffBase: df229c0c3
+taskType: runtime-bridge
+diffBase: 431144c6f
 intent: 以唯一顶部任务头、清晰执行步骤和底部输入区组织会话，按真实任务和文件变更动态显示状态，减少重复标题与技术信息。
 requiredRules:
   - backend-communication-boundary
@@ -13,6 +13,7 @@ requiredRules:
   - disk-temp-policy
 requiredProfiles:
   - fast
+  - comms
 expectedUserBehavior:
   - 未定位任务时不显示任务头，定位后目标只在顶部状态面显示一次。
   - 步骤和进度来自运行或任务 owner，未知进度不编造百分比。
