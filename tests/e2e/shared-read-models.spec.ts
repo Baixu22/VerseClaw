@@ -1,4 +1,4 @@
-import { mkdtemp, writeFile } from 'node:fs/promises';
+import { mkdtemp, writeFile, utimes } from 'node:fs/promises';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import type { Page } from '@playwright/test';
@@ -33,21 +33,18 @@ test('two native windows share Git reads and retain independent lifetime', async
     }, join(process.cwd(), 'dist-electron/preload/index.js'));
     const second = await windowReady;
     await expect.poll(() => second.evaluate(() => Boolean(window.verseClaw?.hostInvoke))).toBe(true);
-    const reset = () => app.evaluate(() => {
-      const modules = Object.values(process.mainModule!.require('node:module')._cache) as Array<{ exports: { clearGitStatusCacheForTest?: () => void } }>;
-      const owner = modules.find(module => typeof module.exports?.clearGitStatusCacheForTest === 'function');
-      if (!owner) throw new Error('Main Git cache owner unavailable'); owner.exports.clearGitStatusCacheForTest!();
-    });
-    const measure = () => app.evaluate(() => {
-      const modules = Object.values(process.mainModule!.require('node:module')._cache) as Array<{ exports: { getMainPerformanceSnapshot?: () => { counters: { recentSpawns: Array<{ command: string; at: number }> }; rssBytes: number } } }>;
-      const owner = modules.find(module => typeof module.exports?.getMainPerformanceSnapshot === 'function');
-      if (!owner) throw new Error('Main performance owner unavailable'); return { performance: owner.exports.getMainPerformanceSnapshot!(), memory: process.memoryUsage() };
-    });
+    let sourceClock = Date.now();
+    const invalidateSource = async () => { sourceClock += 1000; await utimes(root, new Date(sourceClock), new Date(sourceClock)); };
+    const measure = async () => {
+      const state = await invoke(main, 'efficiency', 'getState');
+      return { performance: state.performance as { counters: { recentSpawns: Array<{ command: string; at: number }> }; rssBytes: number },
+        memory: await app.evaluate(() => process.memoryUsage()) };
+    };
     const rows: Array<Record<string, unknown>> = [];
     for (const mode of ['uncached-control', 'shared', 'shared', 'uncached-control']) {
-      await reset(); const before = await measure(); const at = Date.now(); const durations: number[] = [];
+      await invalidateSource(); const before = await measure(); const at = Date.now(); const durations: number[] = [];
       for (let index = 0; index < 8; index++) {
-        if (mode === 'uncached-control') await reset();
+        if (mode === 'uncached-control') await invalidateSource();
         const started = Date.now(); const result = await invoke(index % 2 ? second : main, 'git', 'status'); durations.push(Date.now() - started);
         expect(result.success).toBe(true); expect((result.status as { repoRoot: string }).repoRoot.toLowerCase()).toBe(root.toLowerCase());
       }
@@ -64,7 +61,7 @@ test('two native windows share Git reads and retain independent lifetime', async
     expect((status.status as { changes: Array<{ path: string }> }).changes.some(file => file.path === 'after-close.txt')).toBe(true);
     await writeFile(testInfo.outputPath('read-models.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex',
       workload: { requestsPerRound: 8, nativeWindows: 2, order: 'ABBA', source: 'one temporary native Git repository' },
-      control: 'Existing Main cache cleared before each control request; product routes and Git commands remain real.',
+      control: 'Temporary repository directory mtime changes before each control request; shared rounds keep the source stable. Product routes and Git commands remain real.',
       rows, remainingWindowReads: true, sourceMutationObserved: true }, null, 2));
   } finally {
     if (secondId !== undefined) await app.evaluate(({ BrowserWindow }, id) => BrowserWindow.fromId(id)?.destroy(), secondId).catch(() => {});
