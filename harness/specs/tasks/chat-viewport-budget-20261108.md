@@ -10,6 +10,7 @@ expectedUserBehavior:
   - Older loaded messages remain reachable with bounded mounted rows and measured variable heights.
   - Cached history and previews can be evicted and read again from existing session and media owners.
 touchedAreas:
+  - vite.config.ts
   - shared/resources/bounded-cache.ts
   - src/stores/chat.ts
   - src/stores/chat/content-cache.ts
