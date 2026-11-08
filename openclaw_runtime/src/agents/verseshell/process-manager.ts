@@ -426,6 +426,7 @@ class ManagedAciProcess implements AciTransport {
   }
   references = 0;
   private writeBlocked = false;
+  private removeDrainListener: (() => void) | undefined;
 
   health(): VerseShellProcessHealth {
     return {
@@ -816,10 +817,13 @@ class ManagedAciProcess implements AciTransport {
       const child = this.child;
       if (!child.stdin.write(`${request}\n`, "utf8")) {
         this.writeBlocked = true;
-        child.stdin.once("drain", () => {
+        const drained = () => {
           if (this.child !== child) return;
+          this.removeDrainListener = undefined;
           this.writeBlocked = false; this.drainQueue();
-        });
+        };
+        child.stdin.once("drain", drained);
+        this.removeDrainListener = () => child.stdin.removeListener("drain", drained);
       }
     } catch (error) {
       this.pending.delete(entry.id);
@@ -936,6 +940,7 @@ class ManagedAciProcess implements AciTransport {
   }
 
   private handleProcessClose(code: number | null, signal: NodeJS.Signals | null): void {
+    this.removeDrainListener?.(); this.removeDrainListener = undefined;
     const killSwitchTripped = this.killSwitchTripped || this.options.isKillSwitchTripped();
     const wasIntentional = this.intentionallyStopping || this.disposed || killSwitchTripped;
     this.child = null;
@@ -1095,6 +1100,7 @@ class ManagedAciProcess implements AciTransport {
   }
 
   private async stop(): Promise<void> {
+    this.removeDrainListener?.(); this.removeDrainListener = undefined;
     this.disposed = true;
     this.intentionallyStopping = true;
     if (this.restartTimer) clearTimeout(this.restartTimer);

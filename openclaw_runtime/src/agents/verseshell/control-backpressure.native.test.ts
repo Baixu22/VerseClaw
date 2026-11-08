@@ -7,6 +7,7 @@ import { describe, expect, it } from "vitest";
 import { VerseShellProcessManager } from "./process-manager.js";
 import { startGovernedVerseShellProcess, executeGovernedVerseShellProcessObserved } from "./governed-process.js";
 import { queryGovernedVerseShellResult, createReadonlyVerseShellProcessConfig } from "./governed-exec.js";
+import type { VerseShellAciClient } from "./aci-client.js";
 
 const binary = process.env.VERSESHELL_CONTROL_BINARY;
 const live = process.platform === "win32" && Boolean(binary);
@@ -16,18 +17,16 @@ async function setup() {
   const hash = createHash("sha256").update(await readFile(binary!)).digest("hex");
   expect(hash).toBe(manifest.artifacts["win32-x64"].sha256);
   const root = await mkdtemp(path.join(process.env.PROCESS_CONTROL_NATIVE_ROOT ?? tmpdir(), "tf0836-native-"));
-  const user = execFileSync("whoami", [], { encoding: "utf8", windowsHide: true }).trim();
-  // The executor inherits a restricted token: the isolated fixture grants its
-  // actual user Modify explicitly, matching the existing native-limit harness.
-  execFileSync("icacls", [root, "/grant", `${user}:(OI)(CI)M`], { windowsHide: true });
   const pids: number[] = [];
   const manager = new VerseShellProcessManager({ resolveBinary: () => ({ path: binary!, source: "verified-bundled", verified: true }),
     spawnProcess: (bin, args, options) => { const child = spawn(bin, args, options); pids.push(child.pid!); return child as never; } });
+  const clients = new Map<string, VerseShellAciClient>(); const getClient = manager.getClient.bind(manager);
+  manager.getClient = async config => { const client = await getClient(config); clients.set(client.processKey, client); return client; };
   const env = { VERSESHELL_RUNTIME_VERSION: manifest.crate.version, VERSESHELL_SERVER_PROTOCOL: manifest.protocol.expected_server_protocol,
     VERSESHELL_OPERATION_CATALOG_DIGEST: manifest.protocol.operation_catalog_digest, VERSESHELL_OPERATION_CATALOG_COUNT: String(manifest.protocol.operation_catalog_count),
     VERSESHELL_AE_SHA256: hash, VERSESHELL_OS_SHELL: "powershell" };
   const processEnv = Object.fromEntries(["PATH","SystemRoot","SystemDrive","ComSpec","PATHEXT","TEMP","TMP","APPDATA","windir"].flatMap(k => process.env[k] ? [[k,process.env[k]!]] : []));
-  return { root, pids, manager, env, processEnv, hash, fixtureAclUser: user };
+  return { root, pids, manager, env, processEnv, hash, clients };
 }
 async function report(name: string, value: unknown) {
   if (process.env.PROCESS_CONTROL_REPORT_DIR) await writeFile(path.join(process.env.PROCESS_CONTROL_REPORT_DIR, name + ".json"), JSON.stringify({ driven_by: "agent", actor: "codex", value }, null, 2));
@@ -36,7 +35,7 @@ async function report(name: string, value: unknown) {
 describe.runIf(live)("verified native process control", () => {
   it("controls two live processes during polls and reads bounded artifacts after exit", async () => {
     const f = await setup(); const script = path.join(f.root, "child.cjs"); const grandchildren = path.join(f.root, "grandchildren.txt");
-    await writeFile(script, `const fs=require('node:fs');const {spawn}=require('node:child_process');const child=spawn(process.execPath,['-e','setInterval(()=>{},1000)'],{windowsHide:true});fs.appendFileSync(${JSON.stringify(grandchildren)},child.pid+'\n');console.log('READY');process.stdin.on('data',b=>{if(b.toString().includes('exit')){child.kill();process.exit(0)}else console.log('INPUT:'+b)});setInterval(()=>{},1000);`);
+    await writeFile(script, `const fs=require('node:fs');const {spawn}=require('node:child_process');const child=spawn(process.execPath,['-e','setInterval(()=>{},1000)'],{windowsHide:true});fs.appendFileSync(${JSON.stringify(grandchildren)},child.pid+String.fromCharCode(10));console.log('READY');process.stdin.on('data',b=>{if(b.toString().includes('exit')){child.kill();process.exit(0)}else console.log('INPUT:'+b)});setInterval(()=>{},1000);`);
     const options = { command: "native-control", argv: [process.execPath, script], cwd: f.root, processEnv: f.processEnv,
       timeoutMs: 20000, maxOutputBytes: 16384, usePty: false, agentId: "control-agent", sessionId: "control-session",
       hostPolicyApproved: true, runtimeEnv: f.env, manager: f.manager };
@@ -45,24 +44,42 @@ describe.runIf(live)("verified native process control", () => {
       const first = await startGovernedVerseShellProcess({ ...options, onStdout: chunk => { output += chunk; } });
       const second = await startGovernedVerseShellProcess({ ...options, onStdout: chunk => { output += chunk; } });
       await new Promise(resolve => setTimeout(resolve, 500));
+      const pressure = async (handle: typeof first) => {
+        const client = f.clients.get(handle.executorKey)!;
+        const owner = { process_id: handle.processId, runtime_id: handle.runtimeId, agent_id: options.agentId, session_id: options.sessionId };
+        const current = await client.execute("process.poll", { ...owner, cursor: 0, max_bytes: 65536, wait_ms: 0 });
+        const cursor = (current.data?.output as { next_cursor: number }).next_cursor;
+        const release = f.manager.retainProcess(handle.executorKey);
+        return { release, requests: Array.from({ length: 8 }, () => client.execute("process.poll", { ...owner, cursor, max_bytes: 65536, wait_ms: 1000 }, { timeoutMs: 5000 })) };
+      };
+      const firstPressure = await pressure(first), secondPressure = await pressure(second);
       const writeAt = performance.now(); await new Promise<void>((resolve,reject) => second.stdin.write("ping\n", error => error ? reject(error) : resolve()));
       controls.push({ kind: "stdin", ms: performance.now()-writeAt });
       const killAt = performance.now(); await first.kill("agent_abort"); controls.push({ kind:"kill", ms:performance.now()-killAt });
       await first.wait(); expect(alive(second.pid)).toBe(true);
+      expect((await Promise.all(firstPressure.requests)).every(row => row.ok)).toBe(true); await firstPressure.release();
+      expect((await Promise.all(secondPressure.requests)).every(row => row.ok)).toBe(true); await secondPressure.release();
       await new Promise<void>((resolve,reject) => second.stdin.write("exit\n", error => error ? reject(error) : resolve())); await second.wait();
       expect(controls.every(c=>c.ms<5000)).toBe(true); expect(output).toContain("INPUT:ping");
-      const flood = path.join(f.root, "flood.cjs"); await writeFile(flood, `process.stdout.write('汉'.repeat(200000));process.stderr.write('end-marker');`);
+      const flood = path.join(f.root, "flood.cjs"); await writeFile(flood, `process.stdout.write(Array.from({length:20000},(_,i)=>'line-'+i+':'+ 'x'.repeat(24)).join(String.fromCharCode(10)),()=>setTimeout(()=>process.stderr.write('end-marker'),100));`);
       const result = await executeGovernedVerseShellProcessObserved({ ...options, argv:[process.execPath,flood], maxOutputBytes:32768 });
       expect(Buffer.byteLength(result.stdout)+Buffer.byteLength(result.stderr)).toBeLessThanOrEqual(32768);
+      expect(result.stderr).toContain("end-marker");
       const artifacts = result.observation.data?.artifacts as string[]; expect(artifacts.length).toBeGreaterThan(0);
       const reads = [];
-      for (const handle of artifacts) reads.push(await queryGovernedVerseShellResult({ cwd:f.root, agentId:options.agentId, env:f.env,
-        manager:f.manager, handle, mode:"head", lines:2 }));
-      expect(reads.every(row=>row.ok)).toBe(true);
+      for (const handle of artifacts) {
+        const query = { cwd:f.root, agentId:options.agentId, env:f.env, manager:f.manager, handle };
+        const head = await queryGovernedVerseShellResult({ ...query, mode:"head", lines:10 });
+        const slice = await queryGovernedVerseShellResult({ ...query, mode:"slice", startLine:2, endLine:3 });
+        const lines = String(head.data?.text ?? "").split("\n");
+        if (lines.length >= 3) expect(String(slice.data?.text)).toContain(lines[1]);
+        reads.push({ head, slice });
+      }
+      expect(reads.every(row=>row.head.ok && row.slice.ok)).toBe(true);
       await f.manager.shutdownAll();
       const children = (await readFile(grandchildren,"utf8")).trim().split(/\s+/).map(Number); expect(children.every(pid=>!alive(pid))).toBe(true);
       expect(f.pids.every(pid=>!alive(pid))).toBe(true);
-      await report("native-control", { binarySha256:f.hash, controls, output, result:{exitCode:result.exitCode,stdoutBytes:Buffer.byteLength(result.stdout),stderrBytes:Buffer.byteLength(result.stderr),artifacts,counts:result.observation.data?.output_bytes},artifactReads:reads,ownedPids:f.pids,grandchildren:children,remaining:0 });
+      await report("native-control", { binarySha256:f.hash, controls, pollRequests:16, output, result:{exitCode:result.exitCode,stdoutBytes:Buffer.byteLength(result.stdout),stderrBytes:Buffer.byteLength(result.stderr),artifacts,counts:result.observation.data?.output_bytes},artifactReads:reads,ownedPids:f.pids,grandchildren:children,remaining:0 });
     } finally { await f.manager.shutdownAll(); await report("native-workspace",{root:f.root,pids:f.pids}); }
   },120000);
 
@@ -72,7 +89,9 @@ describe.runIf(live)("verified native process control", () => {
     const results:Array<Record<string,unknown>>=[];
     try {
       const config=createReadonlyVerseShellProcessConfig({cwd:f.root,agentId:"read-agent",env:f.env,timeoutMs:5000});
+      const startupAt = performance.now();
       const client=await f.manager.getClient(config);
+      const startupMs = performance.now() - startupAt;
       for (const order of [["cli","batch","server","native"],["native","server","batch","cli"],["native","server","batch","cli"],["cli","batch","server","native"]]) {
         for (const mode of order) {
           const start=performance.now();let spawned=0;let rss=process.memoryUsage().rss;let text="";
@@ -82,12 +101,18 @@ describe.runIf(live)("verified native process control", () => {
           } else if(mode==="server") {
             for(let i=0;i<8;i++){ const row=await client.execute("file.view",{path:"fixture.txt"});expect(row.ok).toBe(true);text=JSON.stringify(row.data); }
           } else for(let i=0;i<8;i++)text=await readFile(target,"utf8");
-          expect(text).toContain("same-work");results.push({mode,reads:8,durationMs:performance.now()-start,spawned,rssBytes:rss,
+          const durationMs = performance.now()-start;
+          expect(text).toContain("same-work");
+          const executorMemory = mode === "server" ? JSON.parse(execFileSync("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command",
+            `Get-Process -Id ${f.pids.join(",")} | Select-Object Id,WorkingSet64,PrivateMemorySize64 | ConvertTo-Json -Compress`],
+            { encoding: "utf8", windowsHide: true, timeout: 10000 })) : undefined;
+          results.push({mode,reads:8,durationMs,spawned,rssBytes:rss,executorMemory,
             memoryScope:mode==="cli"||mode==="batch"?"child self-reported RSS":"host process RSS",persistentExecutorPids:mode==="server"?[...f.pids]:[]});
         }
       }
       await f.manager.shutdownAll();expect(f.pids.every(pid=>!alive(pid))).toBe(true);
-      await report("read-comparison",{binarySha256:f.hash,results,decision:"Retain existing typed executor and native filesystem paths; no new generic resident CLI proxy",remaining:0});
+      await report("read-comparison",{binarySha256:f.hash,serverStartupMs:startupMs,serverSpawns:f.pids.length,results,
+        decision:"Use existing native file reads for local reads; retain the existing typed server for governed operations. Do not add a generic resident CLI proxy.",remaining:0});
     } finally {await f.manager.shutdownAll();await rm(f.root,{recursive:true,force:true});}
   },120000);
 });

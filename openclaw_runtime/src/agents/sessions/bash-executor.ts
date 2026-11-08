@@ -135,6 +135,7 @@ export async function executeBashWithOperations(
         ensureTempFile();
       }
       await closeTempFile();
+      if (writeError) throw writeError;
       return {
         output: truncationResult.truncated ? truncationResult.content : fullOutput,
         exitCode: undefined,

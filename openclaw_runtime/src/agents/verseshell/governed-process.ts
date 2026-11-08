@@ -63,6 +63,7 @@ type LifecycleSnapshot = LifecycleIdentity & {
   timedOut: boolean;
   terminationReason?: string;
   cursor: number;
+  nextCursor: number;
   artifacts: string[];
 };
 
@@ -85,6 +86,7 @@ export type GovernedVerseShellProcessExit = {
 };
 
 export type GovernedVerseShellProcessHandle = {
+  executorKey: string;
   processId: string;
   runtimeId: string;
   pid: number;
@@ -235,6 +237,10 @@ function parseSnapshot(
 
   const output = asRecord(data.output, "$observation.data.output");
   const cursor = integer(output.cursor, "$observation.data.output.cursor");
+  const nextCursor = output.next_cursor === undefined ? cursor : integer(output.next_cursor, "$observation.data.output.next_cursor");
+  if (nextCursor < cursor || (nextCursor > cursor && cursor === priorCursor && state !== "running")) {
+    throw new GovernedVerseShellError("E_VERSESHELL_LIFECYCLE_CURSOR", "Terminal output cursor cannot make progress");
+  }
   if (cursor < priorCursor) {
     throw new GovernedVerseShellError(
       "E_VERSESHELL_LIFECYCLE_CURSOR",
@@ -283,6 +289,7 @@ function parseSnapshot(
       ? data.termination_reason
       : undefined,
     cursor,
+    nextCursor,
     artifacts,
   };
 }
@@ -556,7 +563,7 @@ export async function startGovernedVerseShellProcess(
   const waitPromise = (async (): Promise<GovernedVerseShellProcessExit> => {
     let retries = 0;
     try {
-      while (snapshot.state === "running") {
+      while (snapshot.state === "running" || snapshot.cursor < snapshot.nextCursor) {
         let observation: Observation;
         try {
           observation = await activeClient.execute(
@@ -565,7 +572,7 @@ export async function startGovernedVerseShellProcess(
               ...ownerArgs(identity),
               cursor: snapshot.cursor,
               max_bytes: 64 * 1024,
-              wait_ms: POLL_WAIT_MS,
+              wait_ms: snapshot.state === "running" ? POLL_WAIT_MS : 0,
             },
             { timeoutMs: POLL_REQUEST_TIMEOUT_MS, traceId },
           );
@@ -606,6 +613,7 @@ export async function startGovernedVerseShellProcess(
   })();
 
   return {
+    executorKey: activeClient.processKey,
     processId: identity.process_id,
     runtimeId: identity.runtime_id,
     pid: snapshot.pid,
@@ -615,7 +623,7 @@ export async function startGovernedVerseShellProcess(
     wait: async () => await waitPromise,
     resourceReceipt,
     kill: async (reason = "manual-cancel") => {
-      if (settled) return;
+      if (settled && snapshot.state !== "running") return;
       const observation = await activeClient.execute(
         "process.kill",
         { ...ownerArgs(identity), reason, wait_ms: 0 },
@@ -649,9 +657,8 @@ export async function executeGovernedVerseShellProcessObserved(
       options.onStderr?.(chunk);
     },
   });
-  const health = manager.list().find((entry) => entry.pid === handle.pid);
-  const processKey = health?.key ?? `process-pid-${handle.pid}`;
-  const managerKey = health?.key ?? processKey;
+  const processKey = handle.executorKey;
+  const managerKey = handle.executorKey;
   const exit = await handle.wait();
   const stdout = output.text("stdout"), stderr = output.text("stderr");
   const success = exit.state === "exited" && exit.exitCode === 0 && !exit.timedOut;

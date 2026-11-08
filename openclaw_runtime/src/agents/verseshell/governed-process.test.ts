@@ -224,6 +224,20 @@ describe("VerseShell startup capacity rollback", () => {
 });
 
 describe("VerseShell governed process lifecycle", () => {
+  it("drains terminal output through the final cursor before releasing its executor", async () => {
+    let polls = 0; const client = { processKey: "terminal-pages", execute: vi.fn(async (op: string) => {
+      if (op === "process.start") return observation(op, snapshot());
+      polls++;
+      const data = snapshot({ state: "exited", text: polls === 1 ? "first" : "last", cursor: polls === 1 ? 5 : 9 });
+      (data.output as JsonObject).next_cursor = 9;
+      return observation(op, data);
+    }) };
+    const fake = fakeManager([client]); const chunks: string[] = [];
+    const handle = await startGovernedVerseShellProcess(baseOptions(fake.manager, { onStdout: text => chunks.push(text) }));
+    await handle.wait(); expect(chunks).toEqual(["first", "last"]); expect(polls).toBe(2);
+    expect(client.execute.mock.calls.filter(([op]) => op === "process.poll")).toHaveLength(2);
+    expect(fake.shutdownProcess).toHaveBeenCalledOnce();
+  });
   it("keeps a shared executor alive until both lifecycle references settle", async () => {
     let starts = 0; const ends = new Map<string, (value: Observation) => void>();
     const client = { processKey: "shared-lifecycle", execute: vi.fn(async (op: string, args: JsonObject) => {

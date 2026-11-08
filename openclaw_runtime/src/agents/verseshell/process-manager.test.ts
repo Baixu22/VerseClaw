@@ -51,6 +51,16 @@ describe("poll control capacity", () => {
     await release(); await release(); expect(h.manager.list()).toHaveLength(0);
     await h.manager.shutdownAll();
   });
+  it("stops dispatch under stdin backpressure and removes the drain listener on shutdown", async () => {
+    const h = harness(); const client = await h.manager.getClient(baseConfig()); const child = h.children[0];
+    const write = child.stdin.write.bind(child.stdin);
+    vi.spyOn(child.stdin, "write").mockImplementation(((...args: Parameters<typeof child.stdin.write>) => { write(...args); return false; }) as typeof child.stdin.write);
+    await client.execute("file.view", {});
+    expect(child.stdin.listenerCount("drain")).toBe(1);
+    const pending = client.execute("file.view", {}).catch(error => error);
+    await Promise.resolve(); expect(child.requests.filter(request => request.op === "file.view")).toHaveLength(1);
+    await h.manager.shutdownAll(); await pending; expect(child.stdin.listenerCount("drain")).toBe(0);
+  });
 });
 
 type Request = {
