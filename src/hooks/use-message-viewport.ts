@@ -30,7 +30,7 @@ export function useMessageViewport<T extends Item>(items: T[], getScrollElement:
   const layout = useMemo(() => measureMessageWindow(items, measurements.sessionKey === sessionKey ? measurements.heights : EMPTY_HEIGHTS, view.top, view.height, maxRows),
     [items, view, maxRows, measurements, sessionKey]);
   const current = useRef({ items, layout, sessionKey });
-  const anchor = useRef<{ sessionKey: string; key?: string; offset: number; pinned: boolean } | undefined>(undefined);
+  const anchor = useRef<{ sessionKey: string; key?: string; offset: number; pinned: boolean; scrollTop: number } | undefined>(undefined);
   const restore = useRef<typeof anchor.current>(undefined);
   const pendingJump = useRef<string | undefined>(undefined);
   const observer = useRef<ResizeObserver | null>(null);
@@ -40,17 +40,23 @@ export function useMessageViewport<T extends Item>(items: T[], getScrollElement:
     const container = getScrollElement();
     return container && listRef.current ? listRef.current.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop : 0;
   }, [getScrollElement]);
-  const sync = useCallback(() => {
+  const captureAnchor = useCallback(() => {
     const container = getScrollElement();
-    if (!container) return;
+    if (!container) return undefined;
     const top = Math.max(0, container.scrollTop - origin());
     const { items: rows, layout: latest, sessionKey: session } = current.current;
     let first = 0;
     while (first + 1 < rows.length && latest.offsets[first + 1] <= top) first++;
     anchor.current = { sessionKey: session, key: rows[first]?.key, offset: top - (latest.offsets[first] ?? 0),
-      pinned: container.scrollHeight - container.scrollTop - container.clientHeight <= 8 };
-    setView(previous => previous.top === top && previous.height === container.clientHeight ? previous : { top, height: container.clientHeight });
+      scrollTop: container.scrollTop, pinned: container.scrollHeight - container.scrollTop - container.clientHeight <= 8 };
+    return { top, height: container.clientHeight };
   }, [getScrollElement, origin]);
+  const sync = useCallback(() => {
+    const next = captureAnchor();
+    if (!next) return;
+    const { top, height } = next;
+    setView(previous => previous.top === top && previous.height === height ? previous : next);
+  }, [captureAnchor]);
   const schedule = useCallback(() => {
     if (frame.current !== undefined) return;
     frame.current = requestAnimationFrame(() => { frame.current = undefined; sync(); });
@@ -68,6 +74,9 @@ export function useMessageViewport<T extends Item>(items: T[], getScrollElement:
     if (!container || !listRef.current) return;
     const resize = new ResizeObserver(entries => {
       const width = listRef.current?.clientWidth ?? 0;
+      // A scroll may arrive after a measurement but before the next publication
+      // frame. Capture its new reading position before restoring any old anchor.
+      if (anchor.current && Math.abs(container.scrollTop - anchor.current.scrollTop) > 1) captureAnchor();
       restore.current = anchor.current;
       setMeasurements(data => {
         const reset = sessionKey !== data.sessionKey || (width > 0 && width !== data.width);
@@ -89,19 +98,23 @@ export function useMessageViewport<T extends Item>(items: T[], getScrollElement:
     observer.current = resize;
     resize.observe(container); resize.observe(listRef.current);
     elements.current.forEach(node => resize.observe(node));
-    container.addEventListener('scroll', schedule, { passive: true });
+    const onScroll = () => { captureAnchor(); restore.current = undefined; schedule(); };
+    container.addEventListener('scroll', onScroll, { passive: true });
     schedule();
     return () => {
       resize.disconnect(); observer.current = null;
-      container.removeEventListener('scroll', schedule);
+      container.removeEventListener('scroll', onScroll);
       if (frame.current !== undefined) cancelAnimationFrame(frame.current);
       frame.current = undefined;
     };
-  }, [getScrollElement, sessionKey, sync, schedule, listElement]);
+  }, [getScrollElement, sessionKey, captureAnchor, schedule, listElement]);
 
   useLayoutEffect(() => {
     const prior = current.current;
     const container = getScrollElement();
+    if (container && anchor.current && Math.abs(container.scrollTop - anchor.current.scrollTop) > 1) {
+      captureAnchor(); restore.current = undefined;
+    }
     const saved = restore.current ?? (prior.items !== items ? anchor.current : undefined);
     current.current = { items, layout, sessionKey };
     restore.current = undefined;
@@ -120,7 +133,7 @@ export function useMessageViewport<T extends Item>(items: T[], getScrollElement:
       else if (index >= 0) container.scrollTo({ top: origin() + layout.offsets[index] + saved.offset, behavior: 'instant' });
     }
     schedule();
-  }, [items, layout, sessionKey, getScrollElement, origin, schedule]);
+  }, [items, layout, sessionKey, getScrollElement, origin, captureAnchor, schedule]);
 
   const scrollToIndex = useCallback((messageIndex: number) => {
     const container = getScrollElement(); const latest = current.current;

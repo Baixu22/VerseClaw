@@ -80,4 +80,17 @@ describe('measured message viewport', () => {
     expect(scroll.scrollTop).toBe(before + 200 + 432);
     view.unmount();
   });
+  it('keeps a newly requested bottom position when a resize lands before the next frame', async () => {
+    const view = render(<View />); fireEvent.click(screen.getByText('jump'));
+    await act(async () => { await vi.advanceTimersByTimeAsync(32); });
+    const scroll = screen.getByTestId('scroll');
+    scroll.scrollTop = 64200; fireEvent.scroll(scroll);
+    const row = screen.getByTestId('row-248');
+    act(() => observers.forEach(observer => {
+      if (observer.nodes.has(row)) observer.callback([{ target: row, borderBoxSize: [{ blockSize: 400 }] } as unknown as ResizeObserverEntry], {} as ResizeObserver);
+    }));
+    await act(async () => { await vi.advanceTimersByTimeAsync(32); });
+    expect(scroll.scrollTop).toBeGreaterThanOrEqual(64200);
+    view.unmount();
+  });
 });
