@@ -231,6 +231,7 @@ export type SubagentRunRecord = {
     timeoutMs: number;
     controllerSessionId: string;
     maxChildren: number;
+    persistentTask?:import('../../../shared/task-system/types.js').TaskDelegationIntent;
   };
   /** Persisted pre-dispatch reservation. Unknown dispatch never releases it by age. */
   dispatchPending?: true;

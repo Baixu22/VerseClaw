@@ -115,7 +115,7 @@ describe('session storage with real Git and files', () => {
     terminals.mockReturnValue([{sessionId:'terminal',workspaceId:'project',sessionKey,pid:null}]);
     let finish!:()=>void; close.mockImplementationOnce(()=>new Promise<void>(resolve=>{finish=resolve;}));
     let settled=false;
-    const release=api().release({workspaceId:'project',sessionKey}).finally(()=>{settled=true;});
+    const release=Promise.resolve(api().release({workspaceId:'project',sessionKey})).finally(()=>{settled=true;});
     await vi.waitFor(()=>expect(close).toHaveBeenCalledOnce());
     expect(settled).toBe(false);finish();
     expect(await release).toEqual({success:true,released:1,failed:0});

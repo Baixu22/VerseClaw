@@ -1,0 +1,17 @@
+[
+  {
+    "name": "node",
+    "exitCode": 0,
+    "durationMs": 22541
+  },
+  {
+    "name": "web",
+    "exitCode": 0,
+    "durationMs": 8287
+  },
+  {
+    "name": "test",
+    "exitCode": 0,
+    "durationMs": 32142
+  }
+]

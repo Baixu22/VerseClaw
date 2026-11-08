@@ -6,7 +6,7 @@ function fixture() {
   const messages: RawMessage[] = [
     { id: 'old-user', role: 'user', content: 'Read file' },
     { id: 'old-tool', role: 'assistant', content: [{ type: 'tool_use', id: 'read', name: 'read', input: { path: 'test.ts' } }] },
-    { id: 'old-result', role: 'toolResult', toolCallId: 'read', content: 'file contents' },
+    { id: 'old-result', role: 'toolresult', toolCallId: 'read', content: 'file contents' },
     { id: 'old-answer', role: 'assistant', content: 'Completed answer' },
     { id: 'new-user', role: 'user', content: 'Continue' },
   ];

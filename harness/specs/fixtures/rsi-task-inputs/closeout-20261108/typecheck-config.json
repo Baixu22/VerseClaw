@@ -1,0 +1,22 @@
+{
+  "extends": "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\tsconfig.test.json",
+  "compilerOptions": {
+    "composite": false,
+    "incremental": false,
+    "noEmit": true,
+    "typeRoots": [
+      "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\node_modules\\@types",
+      "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\node_modules"
+    ]
+  },
+  "files": [
+    "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\tests\\unit\\rsi-task-inputs.test.ts",
+    "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\tests\\unit\\rsi-coding-collector.test.ts",
+    "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\tests\\unit\\rsi-benefit-eval.test.ts",
+    "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\scripts\\lib\\rsi-task-inputs.d.mts",
+    "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\scripts\\lib\\rsi-benefit-eval.d.mts",
+    "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\scripts\\lib\\rsi-coding-protocol.d.mts"
+  ],
+  "include": [],
+  "exclude": []
+}

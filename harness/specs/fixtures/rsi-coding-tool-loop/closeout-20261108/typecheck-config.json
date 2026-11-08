@@ -1,0 +1,26 @@
+{
+  "extends": "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\tsconfig.test.json",
+  "compilerOptions": {
+    "composite": false,
+    "incremental": false,
+    "noEmit": true,
+    "types": [
+      "node",
+      "vitest/globals"
+    ],
+    "typeRoots": [
+      "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\node_modules\\@types",
+      "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\node_modules"
+    ]
+  },
+  "files": [
+    "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\tests\\unit\\rsi-coding-tool-loop.test.ts",
+    "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\tests\\unit\\rsi-coding-collector.test.ts",
+    "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\tests\\unit\\rsi-benefit-eval.test.ts",
+    "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\tests\\unit\\rsi-responses-provider.test.ts",
+    "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\tests\\unit\\rsi-task-inputs.test.ts",
+    "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\vitest.rsi.node.config.ts"
+  ],
+  "include": [],
+  "exclude": []
+}

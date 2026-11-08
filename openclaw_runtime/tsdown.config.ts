@@ -673,7 +673,7 @@ function buildUnifiedDistEntries(): Record<string, string> {
   };
 }
 
-export default defineConfig([
+const configurations = [
   nodeBuildConfig({
     clean: true,
     dts: RUN_NODE_SKIP_DTS_BUILD ? false : undefined,
@@ -808,4 +808,12 @@ export default defineConfig([
       neverBundle: shouldNeverBundleDependency,
     },
   }),
-]);
+];
+
+// The wrapper sets this only for one isolated build process in serial mode.
+// The unified runtime entry remains one configuration and one module graph.
+const selectedConfig = process.env.OPENCLAW_TSDOWN_CONFIG_INDEX;
+if (selectedConfig !== undefined && (!/^\d+$/.test(selectedConfig) || Number(selectedConfig) >= configurations.length)) {
+  throw new Error("OPENCLAW_TSDOWN_CONFIG_INDEX does not identify a build configuration");
+}
+export default defineConfig(selectedConfig === undefined ? configurations : [configurations[Number(selectedConfig)]!]);

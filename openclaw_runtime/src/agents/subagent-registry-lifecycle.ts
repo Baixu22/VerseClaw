@@ -64,6 +64,7 @@ import { deleteSubagentSessionForCleanup } from "./subagent-session-cleanup.js";
 import { createWorktreeService } from './worktree-service.js';
 import { runSubagentVerseGitCleanup } from './subagent-versegit-cleanup.js';
 import { loadSubagentSessionEntry } from './subagent-session-reconciliation.js';
+import { returnPersistentTaskWriter } from './persistent-task-delegation.js';
 
 type CaptureSubagentCompletionReply =
   (typeof import("./subagent-announce.js"))["captureSubagentCompletionReply"];
@@ -1298,6 +1299,12 @@ export function createSubagentRegistryLifecycleController(params: {
 
     if (mutated) {
       params.persist();
+    }
+    if(entry.workspaceDir){
+      try{
+        const parent=loadSubagentSessionEntry({childSessionKey:entry.requesterSessionKey});
+        returnPersistentTaskWriter({workspace:entry.workspaceDir,childSessionKey:entry.childSessionKey,runId:entry.runId,endedAt:entry.endedAt,outcome:outcome.status,parentGeneration:parent?.sessionId});
+      }catch(error){params.warn('persistent task writer return requires recovery',{runId:entry.runId,error:String(error)});}
     }
     safeFinalizeSubagentTaskRun({
       entry,

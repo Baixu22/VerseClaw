@@ -251,3 +251,7 @@ Historical plans и acceptance snapshots имеют собственные да�
 Сохраняйте узкий scope и предоставляйте релевантную validation. При изменении поведения синхронизируйте четыре root README и соответствующий документ в `docs/modules/`. При изменении interface, defaults, security boundary или user entry также проверьте product semantics, default matrix и Harness spec.
 
 Verse Claw основан на [OpenClaw](https://github.com/openclaw/openclaw) и работе ClawX команды ValueCell. Репозиторий использует [MIT License](LICENSE). Bundled components сохраняют собственные licenses/source obligations, включая [VerseShell notices](resources/verseshell/SOURCE.md). Часть взаимодействий conversation/workspace, включая карточки источников веб-поиска, адаптирована из [Rare UI](https://rareui.com) Swami Malode; attribution сохранена в `src/components/rareui`.
+
+### Постоянные задачи
+
+Task Ledger → Постоянные задачи сохраняет цели, ограничения и критерии независимо от истории чата. Локальные Git worktree одного репозитория используют общее назначение задач. Перед управляемыми вызовами инструментов проверяется владелец, а перед запросом модели восстанавливается цель. Доступны проверки точного содержимого файла и команды с указанными входными файлами; действуют обычные разрешения инструментов. См. [архитектуру](docs/dev/durable-task-system/PLAN.md).

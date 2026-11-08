@@ -35,6 +35,7 @@ import { codingObservability } from '../context-engine/coding-observability.js';
 import { assertVerseGitCleanupDeletionAllowed, verseGitCleanupResourceId } from '../../../shared/versegit-cleanup-barrier.js';
 import type { VerseGitCleanupDeletionAuthorization } from '../../../shared/types/versegit.js';
 import type { WorktreeBackend } from "../context-engine/coding-runtime-flags.js";
+import { assertTaskWorktreeReleasable } from '../../../shared/task-system/runtime.js';
 import { reviewDiff } from "../context-engine/views/verify/review-diff-view.js";
 import type { FactStore } from "../context-engine/factstore/store.js";
 import {
@@ -588,6 +589,7 @@ export function createWorktreeService(
       const s = scope(resolved);
       const rec = s.records.get(id);
       if (!rec) return;
+      assertTaskWorktreeReleasable(rec.root);
       withWorktreeLock(resolved, () => {
         const ownership = requireCleanupAuthorization({
           rootDir,

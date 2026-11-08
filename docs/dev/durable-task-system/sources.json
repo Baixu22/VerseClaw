@@ -1,0 +1,116 @@
+{
+  "researchedOn": "2026-11-07",
+  "provider": "versesearch -> Exa Search",
+  "sources": [
+    {
+      "topic": "coordination",
+      "title": "How the controller-runtime Cache Actually Works, and Why Your Controller Does Not Crash the API Server | Kubernetes",
+      "url": "https://kubernetes.io/blog/2026/07/29/controller-runtime-cache-explained/"
+    },
+    {
+      "topic": "coordination",
+      "title": "Controllers | Kubernetes",
+      "url": "https://kubernetes.io/docs/concepts/architecture/controller/"
+    },
+    {
+      "topic": "coordination",
+      "title": "Coordinated Leader Election | Kubernetes",
+      "url": "https://kubernetes.io/docs/concepts/cluster-administration/coordinated-leader-election/"
+    },
+    {
+      "topic": "coordination",
+      "title": "ObjectMeta | Kubernetes",
+      "url": "https://kubernetes.io/docs/reference/kubernetes-api/definitions/object-meta-v1-meta/"
+    },
+    {
+      "topic": "durable",
+      "title": "Temporal Workflow Definition",
+      "url": "https://docs.temporal.io/workflow-definition"
+    },
+    {
+      "topic": "durable",
+      "title": "Temporal Workflow Execution overview",
+      "url": "https://docs.temporal.io/workflow-execution"
+    },
+    {
+      "topic": "durable",
+      "title": "Workflow Id and Run Id",
+      "url": "https://docs.temporal.io/workflow-execution/workflowid-runid"
+    },
+    {
+      "topic": "durable",
+      "title": "Temporal Design Patterns",
+      "url": "https://docs.temporal.io/design-patterns"
+    },
+    {
+      "topic": "effects",
+      "title": "Transactional outbox pattern - AWS Prescriptive Guidance",
+      "url": "https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/transactional-outbox.html"
+    },
+    {
+      "topic": "effects",
+      "title": "Amazon SQS visibility timeout - Amazon Simple Queue Service",
+      "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html"
+    },
+    {
+      "topic": "effects",
+      "title": "Timeouts, retries and backoff with jitter",
+      "url": "https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/"
+    },
+    {
+      "topic": "effects",
+      "title": "Handling Lambda functions idempotency with AWS Lambda Powertools | AWS Compute Blog",
+      "url": "https://aws.amazon.com/blogs/compute/handling-lambda-functions-idempotency-with-aws-lambda-powertools/"
+    },
+    {
+      "topic": "fencing",
+      "title": "How to do distributed locking — Martin Kleppmann’s blog",
+      "url": "https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html"
+    },
+    {
+      "topic": "fencing",
+      "title": "Is Redlock safe? - <antirez>",
+      "url": "https://antirez.com/news/101"
+    },
+    {
+      "topic": "handover",
+      "title": "Common topic 3: Safety critical communications",
+      "url": "https://www.hse.gov.uk/humanfactors/assets/docs/common3.pdf"
+    },
+    {
+      "topic": "handover",
+      "title": "Shift handover - HSE",
+      "url": "https://www.hse.gov.uk/humanfactors/topics/shift-handover.htm"
+    },
+    {
+      "topic": "kanban",
+      "title": "latest | The Kanban Guide | Kanban Guides",
+      "url": "https://kanbanguides.org/the-kanban-guide/"
+    },
+    {
+      "topic": "kanban",
+      "title": "December 2020 | The Kanban Guide | Kanban Guides",
+      "url": "https://kanbanguides.org/the-kanban-guide/2020.12/"
+    },
+    {
+      "topic": "tasks",
+      "title": "User task lifecycle | Camunda 8 Docs",
+      "url": "https://docs.camunda.io/docs/apis-tools/frontend-development/task-applications/user-task-lifecycle/"
+    },
+    {
+      "topic": "tasks",
+      "title": "User tasks | Camunda 8 Docs",
+      "url": "https://docs.camunda.io/docs/components/modeler/bpmn/user-tasks/"
+    },
+    {
+      "topic": "tasks",
+      "title": "Understanding human task management | Camunda 8 Docs",
+      "url": "https://docs.camunda.io/docs/components/best-practices/architecture/understanding-human-tasks-management/"
+    },
+    {
+      "topic": "tasks",
+      "title": "Assign user task | Camunda 8 Docs",
+      "url": "https://docs.camunda.io/docs/apis-tools/orchestration-cluster-api-rest/specifications/assign-user-task/"
+    }
+  ]
+}

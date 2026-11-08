@@ -1,3 +1,4 @@
+import { ManagedTasks } from './ManagedTasks';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Download, GitBranch, GitMerge, History, Link2, ListTree, Plus, RefreshCw, Search, ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -103,6 +104,7 @@ export default function TaskLedgerPage() {
   const currentSessionKey = useChatStore((state) => state.currentSessionKey);
   const [snapshot, setSnapshot] = useState<TaskLedgerSnapshot | null>(null);
   const [loading, setLoading] = useState(false);
+  const [activeTab,setActiveTab]=useState('tree');
   const [query, setQuery] = useState('');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -231,7 +233,7 @@ export default function TaskLedgerPage() {
         </div>
       </header>
 
-      <section className="grid shrink-0 gap-3 rounded-md border border-border/70 bg-background p-3 md:grid-cols-[1.2fr_0.8fr_auto_auto]">
+      {activeTab!=='managed'&&<section className="grid shrink-0 gap-3 rounded-md border border-border/70 bg-background p-3 md:grid-cols-[1.2fr_0.8fr_auto_auto]">
         <Input value={title} onChange={(event) => setTitle(event.target.value)} placeholder={t('form.titlePlaceholder')} className="h-9" />
         <Input value={description} onChange={(event) => setDescription(event.target.value)} placeholder={t('form.descriptionPlaceholder')} className="h-9" />
         <Select value={kind} onValueChange={(value) => setKind(value as TaskLedgerNodeKind)}>
@@ -262,20 +264,24 @@ export default function TaskLedgerPage() {
           <Link2 className="mr-1.5 h-4 w-4" />
           {t('actions.linkSession')}
         </Button>
-      </section>
+      </section>}
 
-      <div className="relative shrink-0">
+      {activeTab!=='managed'&&<div className="relative shrink-0">
         <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t('search')} className="h-9 pl-9" />
-      </div>
+      </div>}
 
-      <Tabs defaultValue="tree" className="min-h-0 flex-1 overflow-hidden">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="min-h-0 flex-1 overflow-hidden">
         <TabsList className="shrink-0">
+          <TabsTrigger value="managed">{t('managed.tab')}</TabsTrigger>
           <TabsTrigger value="tree"><ListTree className="mr-1.5 h-4 w-4" />{t('tabs.tree')}</TabsTrigger>
           <TabsTrigger value="dag"><GitBranch className="mr-1.5 h-4 w-4" />{t('tabs.dag')}</TabsTrigger>
           <TabsTrigger value="history"><History className="mr-1.5 h-4 w-4" />{t('tabs.history')}</TabsTrigger>
           <TabsTrigger value="review"><ShieldCheck className="mr-1.5 h-4 w-4" />{t('tabs.review')}</TabsTrigger>
         </TabsList>
+        <TabsContent value="managed" className="h-[calc(100%-3rem)] overflow-y-auto">
+          <ManagedTasks workspaceId={workspaceId} sessionKey={currentSessionKey} />
+        </TabsContent>
 
         <TabsContent value="tree" className="h-[calc(100%-3rem)] overflow-y-auto">
           <QuietLoadingSurface

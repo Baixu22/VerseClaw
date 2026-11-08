@@ -1,0 +1,147 @@
+{
+  "schema": "DurableTaskEngineeringSlice/v1",
+  "driven_by": "agent",
+  "actor": "codex-durable-task-system",
+  "sourceCandidate": "6117f2c093f864686246f325052624ccff48c933",
+  "implementationWorktree": "D:/ClawX-work/durable-task-system-20261107",
+  "branch": "codex/durable-task-system-20261107",
+  "productDependsOnDevelopmentTaskForest": false,
+  "taskSystemComplete": false,
+  "focusedTests": {
+    "core": {
+      "passed": 28,
+      "total": 28
+    },
+    "mainRegression": {
+      "passed": 56,
+      "total": 56
+    },
+    "runtimeRegression": {
+      "passed": 7,
+      "total": 7
+    },
+    "totalPassed": 91
+  },
+  "electron": {
+    "exitCode": 0,
+    "stats": {
+      "startTime": "2026-11-07T16:38:55.119Z",
+      "duration": 19845.861,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "errors": [],
+    "scope": "Actual Renderer -> Main -> SQLite goal creation, reload and viewport visibility; no live provider trial"
+  },
+  "types": [
+    {
+      "name": "node",
+      "exitCode": 0,
+      "durationMs": 22541
+    },
+    {
+      "name": "web",
+      "exitCode": 0,
+      "durationMs": 8287
+    },
+    {
+      "name": "test",
+      "exitCode": 0,
+      "durationMs": 32142
+    }
+  ],
+  "desktopBuild": {
+    "exitCode": 0
+  },
+  "gates": {
+    "contract": 0,
+    "i18n": 0,
+    "commsReplay": 0,
+    "commsCompare": 0,
+    "retention": 0,
+    "harness": 0
+  },
+  "concurrency": {
+    "processes": 16,
+    "granted": 1,
+    "denied": 15,
+    "actualWorktrees": 2
+  },
+  "performance": {
+    "measurements": [
+      {
+        "tasks": 1000,
+        "seedMs": 4723.1858999999995,
+        "read": {
+          "p50": 0.11930000000029395,
+          "p95": 0.22119999999995343
+        },
+        "claim": {
+          "p50": 2.7272000000002663,
+          "p95": 5.757200000000012
+        },
+        "context": {
+          "p50": 0.16229999999995925,
+          "p95": 0.329000000000633
+        }
+      },
+      {
+        "tasks": 10000,
+        "seedMs": 32912.7307,
+        "read": {
+          "p50": 0.10610000000451691,
+          "p95": 0.17470000000321306
+        },
+        "claim": {
+          "p50": 2.07220000000234,
+          "p95": 4.647900000003574
+        },
+        "context": {
+          "p50": 0.13839999999618158,
+          "p95": 0.29439999999885913
+        }
+      }
+    ],
+    "toolWriteOverhead": {
+      "baseline": {
+        "p50": 0.2933999999999628,
+        "p95": 0.6003999999999792
+      },
+      "managed": {
+        "p50": 5.552799999999991,
+        "p95": 9.725500000000011
+      },
+      "p95AddedMs": 9.125100000000032
+    },
+    "scope": "Local Windows descriptive control-plane measurements, not model-task benefit"
+  },
+  "fullRuntimeBuild": {
+    "status": "finished",
+    "exitCode": 124,
+    "signal": null,
+    "timedOut": false,
+    "durationMs": 489951,
+    "args": [
+      "scripts/build-all.mjs"
+    ],
+    "phase": "tsdown",
+    "observedFailure": "300000 ms internal timeout; V8 heap out of memory at 8 GiB",
+    "passed": false
+  },
+  "preservedFailures": [
+    "initial root Vitest startup missing runtime dependencies",
+    "native tsgo Windows crash before bounded serial retry",
+    "initial event-store and chat regression failures, repaired",
+    "Electron layout assertions passed but source staging changed guard inputs; exit 1, later frozen retry exit 0",
+    "full runtime tsdown timeout and heap exhaustion"
+  ],
+  "remaining": [
+    "delegated child writer transfer and return",
+    "generic verifier/effect owner receipt adapters",
+    "external-effect reconciliation beyond process terminal receipts",
+    "semantic task duplicate suggestions and project-level planning/scheduling",
+    "cross-machine coordinator and long-session live-provider evaluation"
+  ]
+}

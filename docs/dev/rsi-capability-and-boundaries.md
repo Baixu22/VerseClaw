@@ -61,6 +61,29 @@ agent, and its local grader is not an operating-system sandbox. Trial evidence a
 benefit conclusions require the separate frozen run report; calibration alone does
 not establish benefit.
 
+The prospective `RsiCodingCollector/v3` adds `RsiCodingTaskInputs/v1`: 14 module
+tasks receive declaration-only public APIs, and 10 specification tasks receive
+document contracts and historical source context. Required inputs fail on truncation;
+optional source omissions remain explicit. Historical implementation bodies,
+hidden tests, generated reports and acceptance records remain evaluator-owned.
+G03 also binds the previously published interface text from its diagnostic request,
+including the digest shape and stable diagnostic codes; the rest of that request
+and its response stay outside the subject projection.
+`node scripts/rsi-task-inputs.mjs --check --json` checks the committed input pack.
+The remediation sequence and execution budgets are in
+`harness/specs/guides/rsi-remediation-roadmap.md`. V1/v2 request projections retain
+their original semantics, and the retained measurement below uses its frozen evaluator.
+
+`RsiCodingCollector/v4` adds declared source reads, batched exact edits and public
+syntax/export checks. It freezes four provider calls, twelve executed tool calls,
+12000 characters per tool output and 256000 UTF-8 edit bytes per slot. A final
+`{"finish":true}` acknowledges the files already written, so the model does not
+repeat full file contents. Provider continuations, tool arguments/results, file
+digests and budget starts are checked against the frozen source projection;
+historical oracles run after public checks. The standalone
+`node scripts/rsi-coding-tool-integration.mjs` exercises this path with a scripted
+provider and real historical oracle bytes.
+
 The original v1 run on 2026-11-06 stopped at the hard completion gate: 16 dispatches,
 15 final provider responses (10 oracle failures, 4 format failures, 1 incomplete
 at the 16000-token output limit), 1 in-flight result unknown and 200 slots not

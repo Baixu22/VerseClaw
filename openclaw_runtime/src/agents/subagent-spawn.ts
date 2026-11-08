@@ -30,6 +30,7 @@ import {
 } from "../channels/thread-bindings-policy.js";
 import type { SessionEntry } from "../config/sessions/types.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { capturePersistentTaskDelegationIntent, preparePersistentTaskDelegation, recordPersistentTaskDispatch, returnPersistentTaskWriter, type PreparedTaskDelegation } from "./persistent-task-delegation.js";
 import type { SubagentSpawnPreparation } from "../context-engine/types.js";
 import { stringifyRouteThreadId } from "../plugin-sdk/channel-route.js";
 import { listRegisteredPluginAgentPromptGuidance } from "../plugins/command-registry-state.js";
@@ -322,6 +323,7 @@ export async function dispatchQueuedSubagentRun(entry: import('./subagent-regist
     return { status: 'rejected', error: 'queued dispatch identity mismatch' };
   }
   let release: () => void;
+  let taskDelegation: PreparedTaskDelegation | null = null;
   try {
     const cfg = loadSubagentConfig();
     const controller = entry.controllerSessionKey ?? entry.requesterSessionKey;
@@ -337,14 +339,23 @@ export async function dispatchQueuedSubagentRun(entry: import('./subagent-regist
         return { status: 'rejected', error: 'worktree isolation expired before queued dispatch' };
       }
     }
+    if (queued.persistentTask) {
+      const childTarget = resolveGatewaySessionStoreTarget({ cfg, key: entry.childSessionKey });
+      const child = resolveStoreEntryByKeys(loadSessionStore(childTarget.storePath, { skipCache: true, clone: false }), childTarget.storeKeys);
+      if (child?.sessionId !== queued.persistentTask.childGeneration) return { status: 'rejected', error: 'queued task child generation changed' };
+    }
     release = acquireSessionAdmissionPermit({ agentId: normalizeAgentId(parseAgentSessionKey(controller)?.agentId),
       canonicalSessionKey: target.canonicalKey ?? controller, expectedSessionId: queued.controllerSessionId }, 'subagent-spawn');
   } catch (error) { return { status: "rejected", error: summarizeError(error) }; }
   try {
+    try { taskDelegation = queued.persistentTask ? preparePersistentTaskDelegation(queued.persistentTask) : null; }
+    catch (error) { return { status: 'rejected', error: summarizeError(error) }; }
     const response = await callSubagentGateway({ method: 'agent', params: queued.params, timeoutMs: queued.timeoutMs });
     const runId = readGatewayRunId(response);
+    recordPersistentTaskDispatch(taskDelegation, runId === entry.runId ? 'dispatched' : 'unknown', entry.runId);
     return runId === entry.runId ? { status: 'accepted', runId } : { status: 'unknown', error: 'queued agent returned a missing or mismatched run identity' };
   } catch (error) {
+    try { recordPersistentTaskDispatch(taskDelegation, 'unknown', entry.runId); } catch { /* Retain prepared ownership for reconciliation. */ }
     return { status: 'unknown', error: summarizeError(error) };
   } finally { release(); }
 }
@@ -1703,6 +1714,12 @@ export async function spawnSubagentDirect(
     orchestration: params.orchestration,
   };
   let dispatchReserved = false;
+  let taskDelegation: PreparedTaskDelegation | null = null;
+  const returnTaskAfterConfirmedDelete = (deleted: unknown) => {
+    if (!taskDelegation || !isConfirmedSubagentDeletion(deleted)) return;
+    const parent = resolveStoreEntryByKeys(loadSessionStore(parentAdmissionTarget.storePath, { skipCache: true, clone: false }), parentAdmissionTarget.storeKeys);
+    returnPersistentTaskWriter({ workspace: taskDelegation.workspace, childSessionKey, runId: taskDelegation.record.childRunId, endedAt: Date.now(), outcome: 'deleted-before-start', parentGeneration: parent?.sessionId });
+  };
   const releaseSubagentPermit = acquireSessionAdmissionPermit(
     {
       agentId: requesterAgentId,
@@ -1750,11 +1767,15 @@ export async function spawnSubagentDirect(
       },
       timeoutMs: resolveSubagentAgentGatewayTimeoutMs(runTimeoutSeconds),
     };
+    const childTarget = resolveGatewaySessionStoreTarget({cfg, key: childSessionKey});
+    const childEntry = resolveStoreEntryByKeys(loadSessionStore(childTarget.storePath, {skipCache:true,clone:false}), childTarget.storeKeys);
+    const taskIntent = capturePersistentTaskDelegationIntent({workspace:ctx.workspaceDir,childWorkspace:spawnedCwd??spawnedWorkspaceDir,parentSessionKey:requesterInternalKey,parentGeneration:parentAdmissionEntry?.sessionId,childSessionKey,childGeneration:childEntry?.sessionId,childRunId:childIdem,observer:params.orchestration?.isVerifier===true});
     if (queuedOrchestration) {
       if (!parentAdmissionEntry?.sessionId) throw new Error('orchestration controller generation unavailable');
       enqueueSubagentRun({ ...reservedRun, cleanup: 'keep', queuedDispatch: {
         params: dispatchRequest.params, timeoutMs: dispatchRequest.timeoutMs,
         controllerSessionId: parentAdmissionEntry.sessionId, maxChildren,
+        ...(taskIntent ? {persistentTask: taskIntent} : {}),
       } });
       releaseSubagentPermit();
     } else {
@@ -1766,12 +1787,15 @@ export async function spawnSubagentDirect(
           emitLifecycleHooks: threadBindingReady, deleteTranscript: true });
         return { status: "forbidden", error: `sessions_spawn has reached max active children for this session (${maxChildren}/${maxChildren})`, childSessionKey };
       }
+      taskDelegation = taskIntent ? preparePersistentTaskDelegation(taskIntent) : null;
       const response = await callSubagentGateway(dispatchRequest);
       const runId = readGatewayRunId(response);
       if (!runId) throw new Error('subagent dispatch returned no run identity');
       childRunId = runId;
+      recordPersistentTaskDispatch(taskDelegation, "dispatched", childRunId);
     }
   } catch (err) {
+    try { recordPersistentTaskDispatch(taskDelegation, "unknown", childIdem); } catch { /* Keep the prepared claim. */ }
     await rollbackPreparedContextEngine(contextEnginePreparation);
     if (attachmentAbsDir) {
       try {
@@ -1825,6 +1849,7 @@ export async function spawnSubagentDirect(
         timeoutMs: SUBAGENT_CONTROL_GATEWAY_TIMEOUT_MS,
       });
       if (dispatchReserved && isConfirmedSubagentDeletion(deletion)) releaseCancelledSpawnRun(childIdem, childSessionKey);
+      returnTaskAfterConfirmedDelete(deletion);
     } catch {
       // Keep the persisted reservation: dispatch/cancellation is still unknown.
     }
@@ -1842,6 +1867,7 @@ export async function spawnSubagentDirect(
     releaseSubagentPermit();
   } catch (err) {
     releaseSubagentPermit();
+    try { recordPersistentTaskDispatch(taskDelegation, "unknown", childIdem); } catch { /* Keep the claim until the owner confirms cleanup. */ }
     await rollbackPreparedContextEngine(contextEnginePreparation);
     if (attachmentAbsDir) {
       try {
@@ -1865,6 +1891,7 @@ export async function spawnSubagentDirect(
         releaseCancelledSpawnRun(childIdem, childSessionKey);
         if (childRunId !== childIdem) releaseCancelledSpawnRun(childRunId, childSessionKey);
       }
+      returnTaskAfterConfirmedDelete(deletion);
     } catch {
       // Keep the persisted reservation until the execution owner proves it ended.
     }

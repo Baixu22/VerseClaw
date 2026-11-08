@@ -22,6 +22,12 @@ export function buildPluginSdkDtsRootFiles({ includePrivateQa }) {
   return [...new Set(entries.map((entry) => `../src/plugin-sdk/${entry}.ts`))].sort();
 }
 
+export function resolveDeclarationCompiler({runtimeRoot,platform=process.platform,compiler=process.env.OPENCLAW_PLUGIN_SDK_DTS_COMPILER}={}){
+  const selected=compiler??(platform==='win32'?'typescript':'tsgo');
+  if(selected!=='typescript'&&selected!=='tsgo')throw new Error('Unknown plugin SDK declaration compiler');
+  return selected==='typescript'?path.join(runtimeRoot,'node_modules','typescript','bin','tsc'):path.join(runtimeRoot,'scripts','run-tsgo.mjs');
+}
+
 function writeGeneratedTsconfig({ includePrivateQa, runtimeRoot }) {
   const configPath = path.join(runtimeRoot, ".artifacts", "plugin-sdk-source-dts.tsconfig.json");
   const files = buildPluginSdkDtsRootFiles({ includePrivateQa });
@@ -151,6 +157,8 @@ export function buildPluginSdkSourceDeclarations({
   runtimeRoot = defaultRuntimeRoot,
 } = {}) {
   fs.rmSync(emittedRoot, { recursive: true, force: true });
+  // Pre-create the shared output root before parallel declaration writers start.
+  fs.mkdirSync(emittedRoot, { recursive: true });
   const configPath = writeGeneratedTsconfig({
     includePrivateQa: process.env.OPENCLAW_BUILD_PRIVATE_QA === "1",
     runtimeRoot,
@@ -159,7 +167,7 @@ export function buildPluginSdkSourceDeclarations({
   const result = spawnSync(
     process.execPath,
     [
-      path.join(runtimeRoot, "scripts", "run-tsgo.mjs"),
+      resolveDeclarationCompiler({runtimeRoot}),
       "-p",
       configPath,
       "--declaration",

@@ -4961,6 +4961,9 @@ export type GithubPrViewResult = HostSuccess & { pullRequest: GithubPrSummary | 
 export type GithubPrCreateResult = GitOperationResult & { pullRequest?: GithubPrSummary; reused?: boolean };
 
 export type TaskLedgerWorkspacePayload = { workspaceId?: string | null };
+export type TaskSystemCommandPayload = { workspaceId: string; command: import('../task-system/types').TaskSystemCommand };
+export type TaskSystemCommandResult = HostSuccess & { result?: unknown; error?: string };
+export type TaskSystemListResult = HostSuccess & { tasks: import('../task-system/types').TaskView[] };
 export type TaskLedgerSnapshotResult = HostSuccess & { snapshot: TaskLedgerSnapshot };
 export type TaskLedgerAppendEventsPayload = TaskLedgerWorkspacePayload & {
   events: TaskLedgerEventInput[];
@@ -6244,6 +6247,8 @@ export type HostApiContract = {
     deliveryTargets: () => DeliveryTargetsResult;
   };
   taskLedger: {
+    managedTasks: (payload?: TaskLedgerWorkspacePayload) => TaskSystemListResult;
+    command: (payload: TaskSystemCommandPayload) => TaskSystemCommandResult;
     snapshot: (payload?: TaskLedgerWorkspacePayload) => TaskLedgerSnapshotResult;
     appendEvents: (payload: TaskLedgerAppendEventsPayload) => TaskLedgerSnapshotResult;
     createNode: (payload: TaskLedgerCreateNodePayload) => TaskLedgerSnapshotResult;

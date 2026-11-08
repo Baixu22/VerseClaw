@@ -77,6 +77,8 @@ export const CORE_GATEWAY_METHOD_SPECS: readonly CoreGatewayMethodSpec[] = [
   { name: "tasks.list", scope: "operator.read" },
   { name: "tasks.get", scope: "operator.read" },
   { name: "tasks.cancel", scope: "operator.write" },
+  { name: "tasks.contract.accept", scope: "operator.write" },
+  { name: "tasks.contract.receipt", scope: "operator.read" },
   { name: "agents.list", scope: "operator.read" },
   { name: "agents.create", scope: "operator.admin" },
   { name: "agents.update", scope: "operator.admin" },

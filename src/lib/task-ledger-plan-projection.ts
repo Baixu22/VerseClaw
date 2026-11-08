@@ -142,7 +142,7 @@ function buildProjectionMetadata(input: OrchestrationPlanLedgerInput, node?: Orc
 export function isReadOnlyTaskLedgerProjection(node: Pick<TaskLedgerNode, 'metadata'>): boolean {
   const metadata = node.metadata;
   if (!metadata || typeof metadata !== 'object') return false;
-  if (metadata.readonlyProjection === true && metadata.source === 'orchestrator.plan') return true;
+  if (metadata.readonlyProjection === true && (metadata.source === 'orchestrator.plan' || metadata.source === 'task-ledger.execution-contract')) return true;
   const projection = metadata.projection;
   return Boolean(
     projection

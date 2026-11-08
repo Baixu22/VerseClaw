@@ -596,6 +596,19 @@ export function resolveTsdownBuildInvocation(params = {}) {
   };
 }
 
+/** Builds each complete config in an isolated process so TypeScript graphs are released. */
+export async function runSerialTsdownBuild({ count, args = [], env = process.env, run = runTsdownBuildInvocation, resolveInvocation = resolveTsdownBuildInvocation } = {}) {
+  if (!Number.isSafeInteger(count) || count < 1) throw new Error("Serial build requires a positive configuration count");
+  let aggregate;
+  for (let index = 0; index < count; index += 1) {
+    process.stderr.write(`[tsdown-build] serial configuration ${index + 1}/${count}\n`);
+    const result = await run(resolveInvocation({args,env:{...env,OPENCLAW_BUILD_ALL_NO_PNPM:"1",OPENCLAW_TSDOWN_CONFIG_INDEX:String(index)}}));
+    aggregate={...result,hasIneffectiveDynamicImport:Boolean(aggregate?.hasIneffectiveDynamicImport||result.hasIneffectiveDynamicImport),fatalUnresolvedImport:aggregate?.fatalUnresolvedImport??result.fatalUnresolvedImport};
+    if(result.status!==0||result.timedOut||aggregate.hasIneffectiveDynamicImport||aggregate.fatalUnresolvedImport)return aggregate;
+  }
+  return aggregate;
+}
+
 export async function runTsdownBuildInvocation(invocation, params = {}) {
   const stdout = params.stdout ?? process.stdout;
   const stderr = params.stderr ?? process.stderr;
@@ -711,8 +724,15 @@ if (isMainModule()) {
   pruneUntrackedGeneratedSourceDeclarations();
   pruneStaleRuntimeSymlinks();
   cleanTsdownOutputRoots();
-  const invocation = resolveTsdownBuildInvocation({ args: args.forwardedArgs });
-  const result = await runTsdownBuildInvocation(invocation);
+  let result;
+  if(process.env.OPENCLAW_TSDOWN_SERIAL==="1") {
+    if(process.env.OPENCLAW_TSDOWN_CONFIG_INDEX!==undefined)throw new Error("The serial wrapper owns OPENCLAW_TSDOWN_CONFIG_INDEX");
+    const configuration=(await import(pathToFileURL(path.resolve("tsdown.config.ts")).href)).default;
+    result=await runSerialTsdownBuild({count:configuration.length,args:args.forwardedArgs});
+  }else{
+    const invocation = resolveTsdownBuildInvocation({ args: args.forwardedArgs });
+    result = await runTsdownBuildInvocation(invocation);
+  }
 
   if (result.status === 0 && result.hasIneffectiveDynamicImport) {
     console.error(

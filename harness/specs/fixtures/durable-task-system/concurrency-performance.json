@@ -1,0 +1,143 @@
+{
+  "schema": "DurableTaskSystemMeasurement/v1",
+  "driven_by": "agent",
+  "actor": "codex-durable-task-system",
+  "node": "v24.22.1",
+  "platform": "win32",
+  "repository": "D:\\tmp\\durable-task-system-20261107\\performance-wal\\repository-tCwsLB",
+  "worktrees": [
+    "D:\\tmp\\durable-task-system-20261107\\performance-wal\\repository-tCwsLB",
+    "D:\\tmp\\durable-task-system-20261107\\performance-wal\\repository-tCwsLB\\linked"
+  ],
+  "contenders": 16,
+  "granted": 1,
+  "denied": 15,
+  "outcomes": [
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-1",
+      "exitCode": 0
+    },
+    {
+      "granted": true,
+      "claim": {
+        "taskNodeId": "19456ddf-ff5f-4004-b6d3-7737c57cfdc6",
+        "sessionKey": "worker-1",
+        "generation": "generation",
+        "epoch": 1,
+        "attemptId": "651f4259-147a-478d-8bea-f892a876ce70",
+        "worktree": "d:/tmp/durable-task-system-20261107/performance-wal/repository-tcwslb/linked",
+        "contractRevision": 1,
+        "expiresAt": 1794068807891,
+        "state": "active"
+      },
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-1",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-1",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-1",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-1",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-1",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-1",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-1",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-1",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-1",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-1",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-1",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-1",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-1",
+      "exitCode": 0
+    },
+    {
+      "granted": false,
+      "error": "TASK_ALREADY_CLAIMED:worker-1",
+      "exitCode": 0
+    }
+  ],
+  "measurements": [
+    {
+      "tasks": 1000,
+      "seedMs": 4723.1858999999995,
+      "read": {
+        "p50": 0.11930000000029395,
+        "p95": 0.22119999999995343
+      },
+      "claim": {
+        "p50": 2.7272000000002663,
+        "p95": 5.757200000000012
+      },
+      "context": {
+        "p50": 0.16229999999995925,
+        "p95": 0.329000000000633
+      }
+    },
+    {
+      "tasks": 10000,
+      "seedMs": 32912.7307,
+      "read": {
+        "p50": 0.10610000000451691,
+        "p95": 0.17470000000321306
+      },
+      "claim": {
+        "p50": 2.07220000000234,
+        "p95": 4.647900000003574
+      },
+      "context": {
+        "p50": 0.13839999999618158,
+        "p95": 0.29439999999885913
+      }
+    }
+  ],
+  "scope": "Local Windows, two actual Git worktrees, production SQLite store; timings in milliseconds",
+  "passed": true
+}

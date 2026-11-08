@@ -1,0 +1,132 @@
+{
+  "schemaVersion": "RsiCodingToolsCloseout/v1",
+  "date": "2026-11-08",
+  "driven_by": "agent",
+  "actor": "codex/rsi-coding-tool-verifier",
+  "candidate": {
+    "commit": "135a62864e738889349a41601bccecfe878bade9",
+    "tree": "9f1332bbae36e5962e27905affe9811f5d176fb9",
+    "dirty": false
+  },
+  "tests": {
+    "total": 98,
+    "passed": 98,
+    "skipped": 0
+  },
+  "historicalOracle": {
+    "task": "tf-0291-g03",
+    "passedTests": 6,
+    "failedTests": 0,
+    "scriptedProviderCalls": 2,
+    "realProviderCalls": 0
+  },
+  "protocol": "RsiCodingCollector/v4",
+  "limits": {
+    "providerCallsPerSlot": 4,
+    "executedToolCallsPerSlot": 12,
+    "toolOutputChars": 12000,
+    "editedFiles": 32,
+    "editBytes": 256000
+  },
+  "checks": [
+    {
+      "argv": [
+        "node",
+        "scripts/rsi-coding-tool-integration.mjs"
+      ],
+      "exitCode": 0,
+      "durationMs": 84552,
+      "stdout": "{\"passed\":true,\"directory\":\"D:/tmp/rsi-tools-integration-3dIgUU\",\"tests\":6,\"claims\":{\"providerCalls\":0,\"scriptedProviderCalls\":2,\"benefit\":false,\"promotionReady\":false,\"realHuman\":false}}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--project",
+        "D:/tmp/rsi-tools-typecheck-20261108.json"
+      ],
+      "exitCode": 0,
+      "durationMs": 1395,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "tests/unit/rsi-coding-tool-loop.test.ts",
+        "vitest.rsi.node.config.ts",
+        "--max-warnings",
+        "0"
+      ],
+      "exitCode": 0,
+      "durationMs": 2800,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/rsi-bounded-coding-loop.md"
+      ],
+      "exitCode": 0,
+      "durationMs": 858,
+      "stdout": "Spec is valid: harness\\specs\\tasks\\rsi-bounded-coding-loop.md\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/rsi-bounded-coding-loop.md",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "durationMs": 753,
+      "stdout": "Harness report: D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\artifacts\\harness\\latest.md\nHarness result: pass\n",
+      "stderr": ""
+    }
+  ],
+  "dependencySupport": {
+    "mode": "private-pinned-support-install",
+    "root": "D:/tmp/rsi-private-runtime-20261108",
+    "versions": {
+      "vitest": "4.1.1",
+      "vite": "7.3.1",
+      "typescript": "5.9.3",
+      "kysely": "0.29.2",
+      "tslog": "4.10.2",
+      "markdown-it": "14.2.0"
+    },
+    "lockSha256": "cc133ba4dc679692f37d03deeb6b35cfb25c1ce70c576151817ee5f161666b87",
+    "freshFullProjectInstall": false
+  },
+  "priorFailures": {
+    "integrationUnit": "infrastructure",
+    "integrationDebug": "30000ms timeout",
+    "remediation": "moved the same historical assertions to the standalone bounded integration driver"
+  },
+  "retainedMeasurement": {
+    "runId": "2bb4141c-a536-443a-8b89-0fbfd0082edf",
+    "status": "NO_GO",
+    "outcomes": {
+      "pass": 17,
+      "fail": 128,
+      "incomplete": 71
+    }
+  },
+  "claims": {
+    "toolLoopImplemented": true,
+    "benefit": false,
+    "promotionReady": false,
+    "providerCalls": 0,
+    "realHuman": false
+  }
+}

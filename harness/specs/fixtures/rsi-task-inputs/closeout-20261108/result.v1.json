@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "RsiPublicInputsCloseout/v1",
+  "date": "2026-11-08",
+  "driven_by": "agent",
+  "actor": "codex/rsi-public-task-inputs",
+  "candidate": {
+    "commit": "bd92c4d21068f7b088ffb3c3a92c9b8a9f841068",
+    "tree": "4f6cab575a65e6ccb711cf20bdcaeea5748f7782",
+    "dirty": false
+  },
+  "tests": {
+    "total": 67,
+    "passed": 67,
+    "skipped": 0
+  },
+  "inputs": {
+    "total": 24,
+    "moduleImplementation": 14,
+    "specificationVerification": 10
+  },
+  "executions": [
+    {
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "--project",
+        "D:/tmp/rsi-inputs-typecheck-20261108.json"
+      ],
+      "exitCode": 0,
+      "durationMs": 5531,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "scripts/lib/rsi-task-inputs.mjs",
+        "scripts/rsi-task-inputs.mjs",
+        "scripts/lib/rsi-benefit-eval.mjs",
+        "scripts/lib/rsi-coding-protocol.mjs",
+        "tests/unit/rsi-task-inputs.test.ts",
+        "--max-warnings",
+        "0"
+      ],
+      "exitCode": 0,
+      "durationMs": 31378,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/rsi-public-task-inputs.md"
+      ],
+      "exitCode": 0,
+      "durationMs": 2068,
+      "stdout": "Spec is valid: harness\\specs\\tasks\\rsi-public-task-inputs.md\n",
+      "stderr": ""
+    }
+  ],
+  "dependencySupport": {
+    "mode": "existing-cache-projection",
+    "kysely": "0.29.2",
+    "tslog": "4.10.2",
+    "typescript": "5.9.3",
+    "freshFullInstall": false
+  },
+  "priorFailure": {
+    "kind": "private-source-error-classification",
+    "total": 67,
+    "passed": 66,
+    "failed": 1
+  },
+  "retainedMeasurement": {
+    "runId": "2bb4141c-a536-443a-8b89-0fbfd0082edf",
+    "status": "NO_GO",
+    "outcomes": {
+      "pass": 17,
+      "fail": 128,
+      "incomplete": 71
+    }
+  },
+  "claims": {
+    "publicInputsImplemented": true,
+    "benefit": false,
+    "promotionReady": false,
+    "providerCalls": 0,
+    "realHuman": false
+  }
+}

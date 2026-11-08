@@ -83,5 +83,48 @@
     "created": "已创建任务账本节点",
     "sessionLinked": "已关联会话",
     "exported": "任务账本 HTML 已导出"
+  },
+  "managed": {
+    "tab": "持久任务",
+    "description": "跨会话保存目标与验收条件。实施前领取任务，同仓库的工作树共享任务归属。",
+    "objective": "目标",
+    "target": "相对工作树的产物路径",
+    "expectedHash": "预期产物 SHA-256",
+    "fileCheckExplanation": "这里创建精确文件内容检查。业务要求需要配置对应的验证器。",
+    "fileCheck": "产物与约定的内容哈希一致",
+    "create": "创建持久任务",
+    "empty": "当前仓库还没有持久任务。",
+    "owner": "负责人：{{owner}}",
+    "unassigned": "未领取",
+    "worktree": "工作树：{{path}}",
+    "nextAction": "下一步：{{action}}",
+    "pending": "结果未定的操作：{{count}}",
+    "claim": "由当前会话领取",
+    "pause": "暂停",
+    "resume": "继续",
+    "release": "释放",
+    "error": "任务操作失败：{{error}}",
+    "states": {
+      "ready": "待领取",
+      "doing": "执行中",
+      "paused": "已暂停",
+      "review": "待验收",
+      "done": "已验收",
+      "cancelled": "已取消",
+      "cancelling": "正在取消"
+    },
+    "claimStates": {
+      "active": "有效",
+      "paused": "已暂停",
+      "recovery_required": "需要恢复",
+      "released": "已释放"
+    },
+    "acceptance": "验收条件",
+    "constraints": "约束条件（可选）",
+    "verification": "验证方式",
+    "commandCheck": "执行指定检查",
+    "command": "验证命令",
+    "commandCheckExplanation": "Agent 通过现有工具权限执行命令。退出码为零且检查输入文件未变化时，该项检查通过；创建任务不会执行命令。",
+    "cancel": "取消任务"
   }
 }
