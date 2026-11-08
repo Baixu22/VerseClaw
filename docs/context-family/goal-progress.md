@@ -1347,3 +1347,9 @@ Use this packet before any handoff, fork, or context-pressure continuation.
   those refreshed artifacts and completing the spec-declared gates.
 - Autonomous model recall selection, full-loop continuation, lossless full
   summarization, product/default graduation, and GA are not claimed.
+
+## 2026-11-08 Inline/Spill 封存收益复核
+
+- 第二轮 47 份、第三轮 37 份证据哈希及 1605 个归档回读通过，原始评分与逐次 usage 复算一致；候选未跟踪材料已复制归档并记录 SHA256。
+- 第三轮收益判定为 NO-GO：B2/B4/B5/B6 失败，B3 的唯一差异来自无证据控制；TF-0749 保持 in_progress/80，TF-0750–0755 的既有 done 状态保留。
+- 本轮新增 provider 调用为 0。复算结果、验证记录与下一轮页适配实验见 [封存收益证据复核](../../harness/specs/fixtures/context-inline-spill-benefit-closeout-20261108/REPORT.md)。

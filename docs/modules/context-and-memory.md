@@ -527,6 +527,8 @@ reference-visible 增长 38.62%。原始请求、逐次记录、复算与实验�
 
 第三轮实测已完成：96次运行/360次provider调用，24对初始请求相同，原始历史回退和oracle泄漏均为0。`decision.status=mechanism-only`；recall-stable证据0/18，token相对reference-visible增长59.61%。原评分器B3=true仅来自一个控制任务差异，不表示证据还原收益。53次响应因900输出token预算返回incomplete，下一步需处理评测页预算与模型工具说明的适配，详见[第三轮交付记录](../../harness/specs/fixtures/context-inline-spill-benefit-round3/DELIVERY.md)。
 
+2026-11-08 从封存请求、响应与归档重新复算，两轮 84 份证据清单和 1605 个归档均通过。收益判定为 NO-GO，TF-0749 保持 in_progress/80：B2/B4/B5/B6 未通过，第三轮证据任务的保留正向配对为 0。本轮新增 provider 调用为 0；完整复算与页适配实验设计见[收益证据复核](../../harness/specs/fixtures/context-inline-spill-benefit-closeout-20261108/REPORT.md)。
+
 复算：
 
 ```powershell

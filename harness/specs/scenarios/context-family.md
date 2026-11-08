@@ -15,8 +15,10 @@ ownedPaths:
   - harness/specs/tasks/context-readonly-recall-surface.md
   - harness/specs/tasks/context-inline-spill-default-path.md
   - harness/specs/tasks/inline-spill-real-benefit-eval-round3.md
+  - harness/specs/tasks/inline-spill-real-benefit-closeout.md
   - harness/specs/rules/inline-spill-eval-projected-input.md
   - harness/specs/fixtures/context-inline-spill-benefit-round3/**
+  - harness/specs/fixtures/context-inline-spill-benefit-closeout-20261108/**
   - harness/specs/fixtures/context-inline-spill/**
 requiredRules:
   - context-family-boundary
@@ -42,6 +44,7 @@ Use this scenario when work defines or changes:
   retention of verified archive recall result projections.
 - The staged harness task map for Context Family work.
 - Model-driven Inline/Spill evaluation with projection-only protocol outputs and identical initial inputs for retention pressure pairs.
+- Offline replay of sealed Inline/Spill results, with evidence-task and absent-evidence control pairs reported separately when interpreting retention benefit.
 
 ## Scenario Boundaries
 
