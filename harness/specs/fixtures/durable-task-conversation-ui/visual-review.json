@@ -1,0 +1,20 @@
+{
+  "driven_by": "agent",
+  "images": [
+    "conversation-task.png",
+    "conversation-task-expanded.png",
+    "conversation-task-hidden.png",
+    "conversation-task-narrow.png",
+    "conversation-task-zh.png",
+    "conversation-task-ja.png",
+    "conversation-task-ru.png"
+  ],
+  "checks": [
+    "Task is absent before a conversation has work",
+    "Collapsed task row fits above the composer",
+    "Expanded, hidden and reopened states remain keyboard accessible",
+    "Hiding preserves the task claim and refresh restores display preference",
+    "920x720 narrow view and en/zh/ja/ru labels render visibly"
+  ],
+  "scope": "Production Electron/Main/SQLite with controlled chat history and runtime event delivery; atomic task tool behavior is independently tested"
+}
