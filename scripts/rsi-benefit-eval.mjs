@@ -16,6 +16,7 @@ if (isMainEntrypoint(import.meta.url)) {
       'max-total-tokens': { type: 'string' }, receipt: { type: 'string' }, 'calibration-dir': { type: 'string' },
       'coding-collector': { type: 'boolean' },
       'collector-version': { type: 'string' },
+      'candidate-evolution': { type: 'string' }, 'candidate-generation': { type: 'string' },
     } });
     const command = positionals[0];
     if (!values['run-dir'] || positionals.length !== 1 || !['plan', 'offline', 'calibrate', 'record', 'report', 'check'].includes(command)) {
@@ -28,7 +29,9 @@ if (isMainEntrypoint(import.meta.url)) {
         mode: values.mode, candidate: values['candidate-file'] ? JSON.parse(readFileSync(values['candidate-file'], 'utf8')) : undefined,
         maxProviderCalls: values['max-provider-calls'] ? Number(values['max-provider-calls']) : undefined,
         maxTotalTokens: values['max-total-tokens'] ? Number(values['max-total-tokens']) : undefined,
-        codingCollector: values['coding-collector'], collectorVersion: values['collector-version'] });
+        codingCollector: values['coding-collector'], collectorVersion: values['collector-version'],
+        candidateEvolution: values['candidate-evolution'] ? JSON.parse(readFileSync(values['candidate-evolution'], 'utf8')) : undefined,
+        candidateGeneration: values['candidate-generation'] ? Number(values['candidate-generation']) : undefined });
       result = { passed: true, runId: plan.runId, trials: plan.slots.length, provider: plan.provider, budget: plan.budget };
     } else if (command === 'offline') {
       const execution = runOfflineBenefit(ROOT, directory, { limit: values.limit === undefined ? undefined : Number(values.limit) });

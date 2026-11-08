@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "RsiMeasurementPreparation/v1",
+  "taskId": "TF-0857",
+  "driven_by": "agent",
+  "actor": "codex/rsi-remediation",
+  "sourceCandidate": "94825e3dff67e0b057a67e62b46ee7e9ba349dd4",
+  "selectedPromptId": "rsi-prompt-4fb74767a8b13b831edd60f3",
+  "selectedPromptVersion": "da9adbb1b5faab2778fb048b832ea1254bc77358875e33b8e54f0330663818f9",
+  "heldOutDigest": "01b05ac42fa2fd57d61a6af6e88887220a65a58952dfd5f0aa0e5a241feff501",
+  "protocol": "RsiCodingCollector/v4",
+  "tasks": 24,
+  "arms": 3,
+  "repeats": 3,
+  "slots": 216,
+  "proposedEnvelope": {
+    "model": "space-bunny",
+    "endpoint": "http://127.0.0.1:3065/v1/responses",
+    "maxProviderCalls": 864,
+    "maxTotalTokens": 12000000
+  },
+  "resourceReservation": {
+    "providerCallsAuthorized": 0,
+    "maxTotalTokens": null,
+    "costBudget": null,
+    "priceBasis": null
+  },
+  "dispatchAllowed": false,
+  "requiredBeforeDispatch": [
+    "explicit whole-run resource authorization",
+    "provider price basis",
+    "fresh independent experiment and admission binding"
+  ]
+}

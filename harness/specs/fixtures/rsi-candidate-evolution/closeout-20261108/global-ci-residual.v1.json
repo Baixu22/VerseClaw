@@ -1,0 +1,32 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-remediation",
+  "sourceCandidate": "94825e3dff67e0b057a67e62b46ee7e9ba349dd4",
+  "fullCiExitCode": 1,
+  "passedHarnessBaselineTests": 59,
+  "catalogCheck": "passed after normal regeneration",
+  "stoppedAt": "agent-dev:audit",
+  "existingEvidenceIssues": [
+    "four Agent Dev reports beyond the freshness window",
+    "latest deep-test decision blocked by existing hard performance limits"
+  ],
+  "limits": [
+    {
+      "gate": "vitest-agent-dev",
+      "recordedMs": 180444,
+      "maximumMs": 21000
+    },
+    {
+      "gate": "typecheck",
+      "recordedMs": 81259,
+      "maximumMs": 45000
+    },
+    {
+      "gate": "contract",
+      "recordedMs": 3977,
+      "maximumMs": 3000
+    }
+  ],
+  "source": "D:\\ClawX-acceptance\\rsi-candidate-evolution-20261108-01a1b651\\gate-harness-ci-GAKyLf\\stdout.log",
+  "scope": "existing Agent Dev evidence; RSI engineering acceptance is recorded separately"
+}

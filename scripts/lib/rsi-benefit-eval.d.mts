@@ -24,13 +24,14 @@ export type BenefitSlot = {
   id: string; caseId: string; repeat: number; arm: BenefitArm; caseDigest: string;
   pairSeed: number; flagsDigest: string; position: number;
 };
-export type BenefitCandidate = { id: string; kind: 'synthetic-control' | 'confirmed-sekb'; context: string; sourceCaseIds: string[] };
+export type BenefitCandidate = { id: string; kind: 'synthetic-control' | 'confirmed-sekb' | 'evolved-prompt'; context: string; sourceCaseIds: string[] };
 export type BenefitPlan = {
-  schemaVersion: 'RsiBenefitPlan/v1'; driven_by: 'agent'; actor: string; runId: string;
+  schemaVersion: 'RsiBenefitPlan/v1' | 'RsiBenefitPlan/v2'; driven_by: 'agent'; actor: string; runId: string;
   evidenceKind: 'synthetic-wiring-fixture' | 'live-provider';
   source: { commit: string; tree: string; bindings: Record<string, string>; boundary: string };
   provider: { endpoint: string; model: string; maxOutputTokens: number };
   collector?: typeof import('./rsi-coding-protocol.mjs').CODING_COLLECTOR & { publicInputProtocol?: string };
+  evolution?: import('./rsi-candidate-evolution.mjs').EvolutionBenefitBinding;
   budget: { providerCallsAuthorized: number; maxTotalTokens: number | null; network: string; retries: 0 };
   design: { k: number; minimumCompleteCases: number; primaryComparison: string; order: string; unit: string; minimumImprovement: number; costIncreaseMaximum: number };
   arms: Record<BenefitArm, { enabled: boolean; shadowEvaluation: boolean; injection: boolean }>;
@@ -47,7 +48,8 @@ export type BenefitReport = {
   cost: { measurementBasis: string; providerCalls: number; totalTokens: number | null; actualCostUsd: number | null; missingUsageTrials: number };
   claims: { benefit: boolean; promotionReady: false; liveProvider: boolean; realHuman: false; productLocksChanged: false };
 };
-export type BenefitPlanOptions = { endpoint?: string; model?: string; actor?: string; runId?: string; candidate?: BenefitCandidate; mode?: 'offline' | 'measured'; maxProviderCalls?: number; maxTotalTokens?: number; codingCollector?: boolean; collectorVersion?: string };
+export type BenefitPlanOptions = { endpoint?: string; model?: string; actor?: string; runId?: string; candidate?: BenefitCandidate; mode?: 'offline' | 'measured'; maxProviderCalls?: number; maxTotalTokens?: number; codingCollector?: boolean; collectorVersion?: string;
+  candidateEvolution?: import('./rsi-candidate-evolution.mjs').EvolutionExport; candidateGeneration?: number };
 export type BenefitTrialReceipt = {
   schemaVersion: 'RsiBenefitTrial/v1'; driven_by: 'agent'; actor: string; planDigest: string;
   slot: BenefitSlot; evidenceKind: BenefitPlan['evidenceKind'];

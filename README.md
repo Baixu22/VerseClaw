@@ -41,7 +41,7 @@ This repository is more than a renderer wrapper. It contains the React UI, Elect
 | Knowledge | Markdown/wiki-first library, Inbox → Draft → Steward → Proposal → explicit apply, Source Sets, OKF, Runtime Lessons/SEKB, provenance and governance | [Knowledge base](docs/modules/knowledge-base.md) |
 | Multi-agent and tasks | Agent/Persona/Role separation, nine built-in roles, routing, team templates, resource-aware waves, subagent admission, Task Ledger, Task Loop and ClawGraph | [Multi-agent and tasks](docs/modules/multi-agent-and-tasks.md) |
 | Verse components | VerseGit repository/evidence control plane, VerseShell governed execution, VerseBrowser drivers, and retired VToken | [Verse tools](docs/modules/verse-tools.md) |
-| Resources and observability | Cooperative ResourceFabric, background shedding, process/port tracking, token/cost limits, traces, issues, Problems, session activity and recovery | [Resources and observability](docs/modules/resources-and-observability.md) |
+| Resources and observability | ResourceFabric with separate execution feedback and memory/event-loop pressure control, background shedding, process tracking, token/cost limits and recovery | [Resources and observability](docs/modules/resources-and-observability.md) |
 | Integrations and other surfaces | 15 channel types, schedules, Skills/MCP, Inbox, remote tasks, Code Review, VerseConf documents, media, Billing and Agent Dev | [Integrations and surfaces](docs/modules/integrations-and-surfaces.md) |
 
 The detailed module documentation is currently maintained in Simplified Chinese; code paths, API names and linked evidence are language-neutral. The root READMEs remain the multilingual entry points.
@@ -69,6 +69,7 @@ Important current defaults:
 - Workspace Context and read-only DCS context tools are on under their declared health and permission gates.
 - Runtime Memory injection, SEKB automatic writeback and browser private-network access are not default-on.
 - SEKB records explicit use of a principle by its version and run, with operational and independently graded outcomes kept separate. Memory feedback remains diagnostic and does not affect retrieval ranking or retention. See [RSI evidence and boundaries](docs/dev/rsi-capability-and-boundaries.md).
+- Controlled RSI prompt research records parent versions, training attribution and frozen validation decisions. Staged candidates bind to a separately sealed evaluation plan.
 - VToken is retired; its old environment/config names cannot re-enable production assembly or the sidecar.
 - VerseGit and VerseShell remain default-off; their host integrations retain the boundaries described below.
 - Dreams is retired. Image Generation is developer/test-gated rather than normal product navigation.

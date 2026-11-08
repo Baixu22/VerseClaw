@@ -45,7 +45,11 @@ describe("process tree sampler", () => {
       expect(second.status, second.detail).toBe('ok'); expect(second.treeCpuPercent).toBeGreaterThan(0);
       expect(second.processes?.[0]?.creationToken).toBe(first.processes?.[0]?.creationToken);
       expect(second.treeRssBytes).toBeGreaterThan(0);
-      if (process.platform === 'win32') expect(second.processes?.[0]?.privateBytes).toBeGreaterThan(0);
+      if (process.platform === 'win32') {
+        expect(second.processes?.[0]?.privateBytes).toBeGreaterThan(0);
+        expect(second.machineCommit?.committedBytes).toBeGreaterThan(0);
+        expect(second.machineCommit?.commitLimitBytes).toBeGreaterThanOrEqual(second.machineCommit!.committedBytes);
+      }
       child.send('stop'); await closed;
       if (process.env.RESOURCE_METRICS_REPORT_DIR) writeFileSync(join(process.env.RESOURCE_METRICS_REPORT_DIR, 'live-child.json'), JSON.stringify({
         driven_by: 'agent', actor: 'codex', first, second, exitCode: child.exitCode, observedExit: true,

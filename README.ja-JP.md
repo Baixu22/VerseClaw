@@ -41,7 +41,7 @@ Verse Claw は、組み込み OpenClaw Runtime 上に構築された Electron �
 | Knowledge | Markdown/wiki-first Library、Inbox → Draft → Steward → Proposal → explicit apply、Source Set、OKF、Runtime Lessons/SEKB、provenance、governance | [Knowledge（中国語）](docs/modules/knowledge-base.md) |
 | Multi-agent / tasks | Agent/Persona/Role、9 組み込み role、routing、team template、resource-aware wave、subagent admission、Task Ledger、Task Loop、ClawGraph | [Multi-agent と task（中国語）](docs/modules/multi-agent-and-tasks.md) |
 | Verse components | VerseGit repository/evidence control plane、VerseShell governed execution、VerseBrowser driver、退役 VToken | [Verse tools（中国語）](docs/modules/verse-tools.md) |
-| Resources / observability | cooperative ResourceFabric、background shedding、process/port tracking、token/cost limit、trace、issue、Problem、Session Activity、recovery | [Resources と observability（中国語）](docs/modules/resources-and-observability.md) |
+| Resources / observability | ResourceFabric の実行分類別フィードバックとメモリ/event-loop 圧力制御、バックグラウンド降載、プロセス追跡、token/cost 上限と回復 | [Resources と observability（中国語）](docs/modules/resources-and-observability.md) |
 | Integrations | 15 channel types、Scheduled、Skills/MCP、Inbox、Remote Task、Code Review、VerseConf、media、Billing、Agent Dev | [Integrations（中国語）](docs/modules/integrations-and-surfaces.md) |
 
 詳細 module document は現在 Simplified Chinese で保守されています。source path、API 名、evidence link は言語非依存です。4 つの root README が多言語入口です。
@@ -69,6 +69,7 @@ Verse Claw は、組み込み OpenClaw Runtime 上に構築された Electron �
 - Workspace Context と read-only DCS context tools は宣言された health / permission gate 下で有効です。
 - Runtime Memory injection、SEKB automatic writeback、Browser private network は default-on ではありません。
 - SEKB は原則のバージョンと実行に紐づく明示的な採用を記録し、実行結果と独立したタスク評価を分けて保存します。メモリのフィードバックは診断に使用し、検索順位や保持判断には影響しません。[RSI の証拠と境界](docs/dev/rsi-capability-and-boundaries.md) を参照してください。
+- 制御された RSI prompt 研究では親バージョン、学習証拠の帰属、固定した検証の判断を記録します。候補は独立して封印した評価計画に紐づけます。
 - VToken は retired。旧 env/config では production assembly / sidecar を再有効化できません。
 - VerseGit と VerseShell は既定で無効です。ホスト統合は以下の責務と権限の境界を維持します。
 - Dreams は retired。Image Generation は developer/test gate で、通常の製品 navigation ではありません。

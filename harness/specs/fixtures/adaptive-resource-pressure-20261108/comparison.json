@@ -1,0 +1,169 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": {
+    "commit": "1a400245e58d8207dca4e719ff965e5cf5932b55",
+    "tree": "0f62cbd7327570dd13e3c75b41eab8eb2c6bbda3",
+    "dirty": false
+  },
+  "base": "df229c0c3b001b984d4896c10c1e8408ecf678a0",
+  "sources": [
+    {
+      "path": "shared/resources/adaptive-limit.ts",
+      "before": "53f943e3f7acefb4963a41b170798842c9c5ddbbfd4d1e487d6655cc5d156ae5",
+      "after": "5db95f509780f011fa4749fe230da1808b365f3c24d1c178822d6b88f6c2a1e8"
+    },
+    {
+      "path": "electron/services/resource-fabric.ts",
+      "before": "59687bff5d7eebb14f7ba0e79dc641d1960099fe3deed4a39cee2b672dfe060c",
+      "after": "35f1e89e8ec0c1a4952677e81813f27cb50f34e355dbcf247b378418ca5af5dd"
+    }
+  ],
+  "workload": {
+    "order": "ABBA at each cap",
+    "tasksPerRun": 24,
+    "runs": 16,
+    "phases": "12 actual file reads, 6 child gzip builds, 6 local HTTP delayed responses",
+    "payloadSha256": "68cfe8a5536bffeccac300eeac0ec116f98c2a39cdc9e685f5640f9af6c4e61a",
+    "pressure": "fixed input replay; no system memory exhaustion",
+    "remote": "local HTTP surrogate, no provider benefit claim"
+  },
+  "comparisons": [
+    {
+      "cap": 1,
+      "before": {
+        "throughputPerSecond": 19.99574912224587,
+        "p95Ms": 1153.99075
+      },
+      "after": {
+        "throughputPerSecond": 21.726614433818092,
+        "p95Ms": 1061.9661999999998
+      },
+      "throughputChangePct": 8.656166373114704,
+      "p95ChangePct": -7.974461667045429
+    },
+    {
+      "cap": 2,
+      "before": {
+        "throughputPerSecond": 38.87638372586577,
+        "p95Ms": 600.5626500000008
+      },
+      "after": {
+        "throughputPerSecond": 34.605295879074625,
+        "p95Ms": 647.5350000000008
+      },
+      "throughputChangePct": -10.986330099292251,
+      "p95ChangePct": 7.821390491067004
+    },
+    {
+      "cap": 4,
+      "before": {
+        "throughputPerSecond": 49.48088324459435,
+        "p95Ms": 365.3745000000008
+      },
+      "after": {
+        "throughputPerSecond": 51.67695402091747,
+        "p95Ms": 433.30554999999913
+      },
+      "throughputChangePct": 4.438220646683844,
+      "p95ChangePct": 18.59217049903541
+    },
+    {
+      "cap": 8,
+      "before": {
+        "throughputPerSecond": 61.12444210699439,
+        "p95Ms": 339.92545000000064
+      },
+      "after": {
+        "throughputPerSecond": 52.340412902606346,
+        "p95Ms": 442.70980000000054
+      },
+      "throughputChangePct": -14.370731088248078,
+      "p95ChangePct": 30.237321153799957
+    }
+  ],
+  "physical": {
+    "before": {
+      "status": "ok",
+      "sampledAt": 1794148616455,
+      "rootPids": [
+        12760
+      ],
+      "processCount": 2,
+      "treeRssBytes": 136667136,
+      "treeCpuTimeMs": 1484.375,
+      "treeCpuPercent": null,
+      "ownerEpoch": "266c4b4b-a636-4035-9868-34fbd0874cec",
+      "processes": [
+        {
+          "pid": 12760,
+          "parentPid": 45064,
+          "creationToken": "134386222079877160",
+          "rssBytes": 119832576,
+          "privateBytes": 172044288,
+          "cpuTimeMs": 1468.75,
+          "cpuPercent": null
+        },
+        {
+          "pid": 42936,
+          "parentPid": 12760,
+          "creationToken": "134386222129125040",
+          "rssBytes": 16834560,
+          "privateBytes": 20770816,
+          "cpuTimeMs": 15.625,
+          "cpuPercent": null
+        }
+      ],
+      "queueDepth": 0,
+      "queueWaitMs": 0,
+      "source": "windows-cim",
+      "machineCommit": {
+        "sampledAt": 1794148616455,
+        "committedBytes": 51102121984,
+        "commitLimitBytes": 52466171904
+      }
+    },
+    "after": {
+      "status": "ok",
+      "sampledAt": 1794148630367,
+      "rootPids": [
+        12760
+      ],
+      "processCount": 2,
+      "treeRssBytes": 67387392,
+      "treeCpuTimeMs": 4250,
+      "treeCpuPercent": 19.88,
+      "ownerEpoch": "266c4b4b-a636-4035-9868-34fbd0874cec",
+      "processes": [
+        {
+          "pid": 12760,
+          "parentPid": 45064,
+          "creationToken": "134386222079877160",
+          "rssBytes": 65576960,
+          "privateBytes": 175292416,
+          "cpuTimeMs": 4234.375,
+          "cpuPercent": 19.88
+        },
+        {
+          "pid": 42936,
+          "parentPid": 12760,
+          "creationToken": "134386222129125040",
+          "rssBytes": 1810432,
+          "privateBytes": 20770816,
+          "cpuTimeMs": 15.625,
+          "cpuPercent": 0
+        }
+      ],
+      "queueDepth": 0,
+      "queueWaitMs": 0,
+      "source": "windows-cim",
+      "machineCommit": {
+        "sampledAt": 1794148630367,
+        "committedBytes": 51185172480,
+        "commitLimitBytes": 52466171904
+      }
+    }
+  },
+  "passed": true,
+  "decision": "Retain default max=4. Curves characterize this bounded local workload; high-capacity tuning requires the mixed-window package."
+}

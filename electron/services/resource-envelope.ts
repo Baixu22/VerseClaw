@@ -93,6 +93,7 @@ export async function getMainResourceEnvelopeSnapshot(owners: MainEnvelopeOwners
   }
   const snapshot = ledger.snapshot(Date.now(), warnings);
   snapshot.machineMemory = { sampledAt: Date.now(), availablePhysicalBytes: freemem(), totalPhysicalBytes: totalmem() };
+  if (cachedMainTreeSample?.machineCommit) snapshot.machineCommit = { ...cachedMainTreeSample.machineCommit };
   return snapshot;
 }
 

@@ -15,6 +15,7 @@ import { CODING_COLLECTOR, CODING_INSTRUCTIONS, codingCollectorConfig, parseCodi
 import { reserveProviderTokens } from './rsi-coding-protocol.mjs';
 import { hasPassingPublicCheck, verifyCodingToolJournal } from './rsi-coding-tools.mjs';
 import { buildPublicTaskInputs, TASK_INPUT_BINDINGS, PUBLIC_BEHAVIOR_SOURCE } from './rsi-task-inputs.mjs';
+import { bindEvolutionCandidate } from './rsi-candidate-evolution.mjs';
 
 export const BENEFIT_ARMS = Object.freeze(['sekb-off', 'sekb-shadow', 'sekb-confirmed']);
 const CORPUS = 'harness/specs/fixtures/rsi-evidence-loop/tf0604/task-corpus.v1.json';
@@ -30,6 +31,7 @@ const SOURCES = [CORPUS, TASKS, POLICY, 'scripts/lib/rsi-benefit-eval.mjs', 'scr
   'scripts/lib/rsi-task-inputs.mjs', 'scripts/lib/rsi-task-inputs.d.mts',
   'scripts/lib/rsi-coding-tools.mjs', 'scripts/lib/rsi-coding-tools.d.mts',
   'scripts/lib/rsi-live-grader.mjs', 'scripts/lib/rsi-live-grader.d.mts',
+  'scripts/lib/rsi-candidate-evolution.mjs', 'scripts/lib/rsi-candidate-evolution.d.mts',
   'tests/unit/rsi-live-grader.test.ts', 'harness/specs/tasks/rsi-benefit-eval.md'];
 const FLAGS = {
   'sekb-off': { enabled: false, shadowEvaluation: false, injection: false },
@@ -99,10 +101,10 @@ function acquireRunLock(directory, planDigest) {
     } catch (error) {
       if (error?.code !== 'EEXIST') throw error;
       let existing;
-      try { existing = read(path); } catch { throw new Error('run-lock-invalid'); }
+      try { existing = read(path); } catch (parseError) { throw new Error('run-lock-invalid', { cause: parseError }); }
       assert.equal(existing.schemaVersion, 'RsiRunLock/v1', 'run-lock-invalid');
       assert(Number.isInteger(existing.pid) && existing.pid > 0, 'run-lock-invalid');
-      if (processAlive(existing.pid)) throw new Error('run-in-progress');
+      if (processAlive(existing.pid)) throw new Error('run-in-progress', { cause: error });
       unlinkSync(path);
     }
   }
@@ -219,15 +221,20 @@ export function createBenefitPlan(root, options = {}) {
   const mode = options.mode ?? 'offline';
   assert(['offline', 'measured'].includes(mode), 'invalid-evaluation-mode');
   assert(text(model) && text(options.actor ?? 'codex/rsi-benefit-eval'), 'actor-and-model-required');
-  const candidate = options.candidate ?? {
+  const evolutionBinding = options.candidateEvolution
+    ? bindEvolutionCandidate(options.candidateEvolution, options.candidateGeneration, tasks) : null;
+  if (evolutionBinding) assert(mode === 'measured' && collector?.version === TOOL_CODING_COLLECTOR.version, 'evolution-requires-v4-measured-plan');
+  const candidate = options.candidate ?? evolutionBinding?.candidate ?? {
     id: 'offline-context-control', kind: 'synthetic-control', sourceCaseIds: ['offline-training-control'],
     context: 'Offline SEKB context marker. This control does not contain a solution to any evaluation task.',
   };
-  assert(text(candidate.id) && candidate.kind === (mode === 'offline' ? 'synthetic-control' : 'confirmed-sekb') && text(candidate.context), 'candidate-kind-mismatch');
+  const candidateKind = evolutionBinding ? 'evolved-prompt' : mode === 'offline' ? 'synthetic-control' : 'confirmed-sekb';
+  assert(text(candidate.id) && candidate.kind === candidateKind && text(candidate.context), 'candidate-kind-mismatch');
+  if (evolutionBinding) assert.deepEqual(candidate, evolutionBinding.candidate, 'evolution-candidate-drift');
   assert.deepEqual(Object.keys(candidate).sort(), ['context', 'id', 'kind', 'sourceCaseIds'], 'undeclared-candidate-fields');
   assert(Array.isArray(candidate.sourceCaseIds) && candidate.sourceCaseIds.length > 0, 'candidate-provenance-required');
   assert(candidate.sourceCaseIds.every((id) => text(id) && !tasks.some((task) => task.id === id)), 'training-evaluation-overlap');
-  if (options.codingCollector && mode === 'measured') {
+  if (options.codingCollector && mode === 'measured' && !evolutionBinding) {
     const frozen = read(join(root, 'harness/specs/fixtures/rsi-coding-cohort/candidate.json'));
     const provenance = read(join(root, 'harness/specs/fixtures/rsi-coding-cohort/candidate-provenance.json'));
     assert.deepEqual(candidate, frozen, 'coding-candidate-drift');
@@ -252,18 +259,24 @@ export function createBenefitPlan(root, options = {}) {
       'scripts/lib/rsi-coding-tool-loop.d.mts', 'scripts/rsi-coding-tool-integration.mjs',
       'tests/unit/rsi-coding-tool-loop.test.ts',
       'harness/specs/tasks/rsi-bounded-coding-loop.md'] : []),
+    ...(evolutionBinding ? ['scripts/rsi-candidate-evolution.mjs', 'scripts/rsi-candidate-evolution.d.mts',
+      'scripts/rsi-candidate-evolution-integration.mjs', 'tests/unit/rsi-candidate-evolution.test.ts',
+      'vitest.rsi-adoption.config.ts', 'openclaw_runtime/src/knowledge/sekb/knowledge-store.ts',
+      'openclaw_runtime/src/knowledge/sekb/trajectory-redaction.ts', 'openclaw_runtime/src/knowledge/sekb/types.ts',
+      'harness/specs/tasks/rsi-candidate-evolution.md', 'harness/specs/rules/rsi-candidate-evolution-boundary.md'] : []),
     ...tasks.flatMap((task) => [task.source.recordPath, ...Object.keys(task.oracle.inputDigests)])])].sort();
   // Source bindings use the repository's canonical text bytes across LF/CRLF
   // checkouts. Raw run receipts and their manifest remain byte-addressed.
   const bindings = Object.fromEntries(paths.map((path) => [path, sha256File(artifactPath(root, path))]));
   const commit = git(root, ['rev-parse', 'HEAD']);
   return {
-    schemaVersion: 'RsiBenefitPlan/v1', driven_by: 'agent', actor: options.actor ?? 'codex/rsi-benefit-eval',
+    schemaVersion: evolutionBinding ? 'RsiBenefitPlan/v2' : 'RsiBenefitPlan/v1', driven_by: 'agent', actor: options.actor ?? 'codex/rsi-benefit-eval',
     runId: options.runId ?? randomUUID(), evidenceKind: mode === 'offline' ? 'synthetic-wiring-fixture' : 'live-provider',
     source: { commit, tree: git(root, ['rev-parse', 'HEAD^{tree}']), bindings,
       boundary: 'Bindings pin working bytes; measured receipts also require a clean committed evaluator at final check.' },
     provider: { endpoint, model, maxOutputTokens: collector ? collector.maxOutputTokens : 2048 },
     ...(collector ? { collector: structuredClone(collector) } : {}),
+    ...(evolutionBinding ? { evolution: evolutionBinding.evolution } : {}),
     budget: { providerCallsAuthorized: maxProviderCalls, maxTotalTokens, network: mode === 'offline' ? 'none' : 'declared-provider-only', retries: 0 },
     design: { k: 3, minimumCompleteCases: 20, primaryComparison: 'sekb-confirmed-vs-off', order: 'rotating-three-arm',
       unit: 'caseId', minimumImprovement: 0.05, costIncreaseMaximum: 0.1 },
@@ -273,14 +286,17 @@ export function createBenefitPlan(root, options = {}) {
 }
 
 export function validateBenefitPlan(plan, root) {
-  assert.equal(plan?.schemaVersion, 'RsiBenefitPlan/v1');
+  assert(['RsiBenefitPlan/v1', 'RsiBenefitPlan/v2'].includes(plan?.schemaVersion), 'benefit-plan-version');
   assert(text(plan.runId) && plan.driven_by === 'agent' && text(plan.actor), 'plan-identity');
   assert(['synthetic-wiring-fixture', 'live-provider'].includes(plan.evidenceKind), 'invalid-evidence-kind');
   const expected = createBenefitPlan(root, { endpoint: plan.provider?.endpoint, model: plan.provider?.model,
     actor: plan.actor, runId: plan.runId, candidate: plan.candidate,
     mode: plan.evidenceKind === 'live-provider' ? 'measured' : 'offline',
     maxProviderCalls: plan.budget?.providerCallsAuthorized, maxTotalTokens: plan.budget?.maxTotalTokens,
-    codingCollector: Boolean(plan.collector), collectorVersion: plan.collector?.version });
+    codingCollector: Boolean(plan.collector), collectorVersion: plan.collector?.version,
+    candidateEvolution: plan.evolution?.export, candidateGeneration: plan.evolution?.generation });
+  assert.equal(plan.schemaVersion, expected.schemaVersion, 'benefit-plan-version-drift');
+  assert.deepEqual(plan.evolution, expected.evolution, 'frozen-evolution-drift');
   assert.deepEqual(plan.collector, expected.collector, 'frozen-collector-drift');
   for (const field of ['provider', 'budget', 'design', 'arms', 'candidate', 'candidateDigest', 'tasks', 'policy', 'slots', 'claims']) {
     assert.deepEqual(plan[field], expected[field], `frozen-${field}-drift`);

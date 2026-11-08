@@ -48,6 +48,39 @@ exports the ledger read-only; `--check --input <export.json>` recomputes receipt
 identities, digests and diagnostics. TF-0855 final evidence is in
 `harness/specs/fixtures/rsi-experience-adoption/closeout-20261108/`.
 
+Controlled prompt evolution is explicitly invoked through
+`scripts/lib/rsi-candidate-evolution.mjs`. It freezes disjoint training,
+validation and final-evaluation identities before generation, then records
+parent-linked prompt versions, source digests, versioned adoption, reservations
+and screening decisions in the existing SEKB trajectory table. Training tool
+payloads retain the existing quarantine policy; the generator receives curated
+summaries and observation digests. Original training executions are retained in
+the engineering evidence pack.
+
+Generation reserves its complete envelope before the callback runs. Duplicate
+attempts keep the first record; timeouts, invalid output and unknown usage retain
+their reservation. The validation selector uses the frozen policy v2 paired
+instrument, including both token and tool-call costs. An unbounded increase from
+a zero baseline is recorded explicitly. A frozen rule selects the first qualifying
+generation as the candidate for final measurement; product adoption remains a
+separate decision. The evaluation switch defaults to off
+and returns the previous prompt bytes before inspecting a candidate.
+
+`node scripts/rsi-candidate-evolution-integration.mjs` executes two generations
+and reads the SQLite records back. The first scripted validation is eliminated;
+the second clears the numerical control gate, is selected for final measurement
+and remains `hold` for product adoption. These records
+are agent-driven and contain zero third-party provider calls. Final task results
+remain outside generation and screening. `node scripts/rsi-candidate-evolution.mjs
+export --db <state.sqlite> --run-id <id> --out <new.json>` reads the records without
+writing the database; `check --input <export.json>` recomputes their bindings.
+
+A screened staged version can be bound to `RsiBenefitPlan/v2` with
+`--candidate-evolution <export.json> --candidate-generation 2`. This keeps the
+v4 tool protocol and freezes the same final task identities and prompt version.
+The new plan requires its own declared measurement budget. TF-0856 curated
+evidence is in `harness/specs/fixtures/rsi-candidate-evolution/closeout-20261108/`.
+
 Adoption feedback remains diagnostic. Role-memory feedback is recorded and reported;
 `openclaw_runtime/src/memory/context-pack.ts` and
 `openclaw_runtime/src/memory/memory-policy.ts` do not use it in retrieval or
@@ -277,8 +310,9 @@ set, evidence generator, approval semantics, permissions, product locks or
 defaults. This repair is evaluator-owned and prospective. Applying v2 to old
 trials is labelled diagnostic reanalysis and cannot retrospectively promote them.
 
-Future candidates remain default-off behind one reversible flag and must show
-off-state rollback before promotion. Feedback weighting remains an independent
+Prompt research candidates use one explicit evaluation switch and retain exact
+off-state rollback. Product candidates remain default-off and require the separate
+promotion decision. Feedback weighting remains an independent
 proposed study requiring a frozen protocol, budget and rollback; this change
 introduces no weights or product flag.
 

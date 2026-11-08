@@ -5,6 +5,7 @@ import {
   isTerminalResourceLeaseTimeoutError,
   resetTerminalResourceLeasesForTest,
   withWorkspaceExecLease,
+  resourceFabric,
 } from '../../electron/services/resource-fabric';
 import { getResourceEnvelopeLedger, resetResourceEnvelopeLedgerForTest } from '../../openclaw_runtime/src/resources/resource-envelope';
 
@@ -98,7 +99,7 @@ describe('workspace exec lease', () => {
     firstLease!.release();
     firstLease!.release();
     await Promise.resolve();
-    expect(started).toEqual([0, 1, 2, 3]);
+    expect(started).toEqual([0, 1, 2]);
     gates.forEach((gate) => gate.resolve());
     await Promise.all(runs);
     expect(started).toEqual([0, 1, 2, 3]);
@@ -153,8 +154,8 @@ describe('workspace exec lease', () => {
     gate.resolve();
     await Promise.all(runs);
     const idle = getResourceEnvelopeLedger().get('main:terminal-exec:envelope-ws');
-    expect(idle).toMatchObject({ activeSlots: 0, queuedCount: 0, limits: { concurrencySlots: 3 } });
-    expect(idle?.limitHistory).toHaveLength(1);
+    expect(idle).toBeUndefined();
+    expect(resourceFabric.getDiagnostics().accounts['workspaceExec:envelope-ws']).toMatchObject({ active: 0, queued: 0, limit: 2 });
   });
   it('rejects with a typed timeout error when the slot never frees', async () => {
     const gate = deferred();

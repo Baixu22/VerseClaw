@@ -1,0 +1,53 @@
+{
+  "passed": true,
+  "files": [
+    {
+      "file": "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\openclaw_runtime\\src\\knowledge\\sekb\\knowledge-store.ts",
+      "errorCount": 0,
+      "warningCount": 0,
+      "messages": []
+    },
+    {
+      "file": "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\scripts\\lib\\rsi-benefit-eval.mjs",
+      "errorCount": 0,
+      "warningCount": 0,
+      "messages": []
+    },
+    {
+      "file": "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\scripts\\rsi-benefit-eval.mjs",
+      "errorCount": 0,
+      "warningCount": 0,
+      "messages": []
+    },
+    {
+      "file": "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\vitest.rsi-adoption.config.ts",
+      "errorCount": 0,
+      "warningCount": 0,
+      "messages": []
+    },
+    {
+      "file": "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\scripts\\lib\\rsi-candidate-evolution.mjs",
+      "errorCount": 0,
+      "warningCount": 0,
+      "messages": []
+    },
+    {
+      "file": "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\scripts\\rsi-candidate-evolution-integration.mjs",
+      "errorCount": 0,
+      "warningCount": 0,
+      "messages": []
+    },
+    {
+      "file": "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\scripts\\rsi-candidate-evolution.mjs",
+      "errorCount": 0,
+      "warningCount": 0,
+      "messages": []
+    },
+    {
+      "file": "D:\\ClawX-work\\rsi-remediation-20261107-01a1b651\\tests\\unit\\rsi-candidate-evolution.test.ts",
+      "errorCount": 0,
+      "warningCount": 0,
+      "messages": []
+    }
+  ]
+}
