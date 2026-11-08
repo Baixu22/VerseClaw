@@ -102,6 +102,7 @@ export type ChannelSuccessEvent = {
 export type ChannelErrorEvent = string | { message?: string };
 
 export type TerminalSessionEvent = {
+  expectedSessionId?: string | null;
   workspaceId: string;
   sessionKey: string;
   sessionId: string;

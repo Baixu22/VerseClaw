@@ -13,9 +13,12 @@ import {
 import { WebPreviewManager } from './web-preview-manager';
 import { getActiveWorkspaceProfile } from './workspaces-api';
 import { decideWorkspaceCommand, isApprovalRisk, requireWorkspace } from './workspace-permissions';
+import type { GatewayManager } from '../gateway/manager';
+import { tryWithSessionDeleteGateLock, findSessionDeleteGateBySession } from './session-delete-gate';
 
 type WebPreviewApiContext = {
   webPreviewManager?: WebPreviewManager;
+  gatewayManager?: GatewayManager;
 };
 
 function normalizeStartPayload(payload: unknown): WorkspaceWebPreviewStartPayload {
@@ -47,6 +50,18 @@ export function createWebPreviewApi(ctx: WebPreviewApiContext = {}): CompleteHos
     const mode = body.mode ?? body.launchConfig?.mode ?? 'static';
 
     if (mode === 'devServer') {
+      const startOwnedPreview = async (launchConfig: WorkspaceWebPreviewStartPayload['launchConfig']) => {
+        const described = await ctx.gatewayManager?.rpc<{ session?: { sessionId?: string } }>('sessions.describe', { key: workspace.activeSessionKey }, 10_000);
+        const generation = described?.session?.sessionId;
+        if (!generation) return { success: false, blocked: true, status: 'error' as const, error: 'Preview session generation is unavailable' };
+        const admitted = tryWithSessionDeleteGateLock(workspace.activeSessionKey, async () => {
+          if (await findSessionDeleteGateBySession(workspace.activeSessionKey)) {
+            return { success: false, blocked: true, status: 'error' as const, error: 'Preview session lifecycle is fenced' };
+          }
+          return manager.start({ ...body, workspace, mode, launchConfig, expectedSessionId: generation });
+        });
+        return admitted ?? { success: false, blocked: true, status: 'error' as const, error: 'Preview session lifecycle is fenced' };
+      };
       const detected = body.launchConfig ?? (await manager.detect(workspace, body.targetPath)).preferred;
       const command = detected?.command;
       if (!command) {
@@ -67,7 +82,7 @@ export function createWebPreviewApi(ctx: WebPreviewApiContext = {}): CompleteHos
               requestHash,
             });
             if (approved) {
-              return await manager.start({ workspace, ...body, mode, launchConfig: detected });
+              return await startOwnedPreview(detected);
             }
           }
           const approval = await createPermissionApproval({
@@ -106,10 +121,10 @@ export function createWebPreviewApi(ctx: WebPreviewApiContext = {}): CompleteHos
           reason: '完全访问模式下启动 Web 预览开发服务器',
         });
       }
-      return await manager.start({ workspace, ...body, mode, launchConfig: detected });
+      return await startOwnedPreview(detected);
     }
 
-    return await manager.start({ workspace, ...body, mode });
+    return await manager.start({ ...body, workspace, mode });
   };
 
   return {

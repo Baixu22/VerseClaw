@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { createServer } from 'node:net';
 import type { WorkspaceProfile } from '@shared/types/workspace';
 
 const ptyMocks = vi.hoisted(() => ({
@@ -62,6 +63,94 @@ afterEach(() => {
 });
 
 describe('TerminalSessionManager', () => {
+  it('retains a native terminal receipt when persistence fails and retries through the owner', async () => {
+    const { configureManagedProcessCapacity, resetManagedProcessCapacity, managedProcessCapacityStats } = await import('../../openclaw_runtime/src/agents/verseshell/managed-process-capacity');
+    const reservations = await import('../../openclaw_runtime/src/agents/verseshell/managed-process-reservation');
+    const { TerminalSessionManager } = await import('@electron/services/terminal-session-manager');
+    configureManagedProcessCapacity({ maxLiveProcesses: 1 });
+    const manager = new TerminalSessionManager();
+    const terminal = manager.open({ workspace: workspace(process.cwd()) });
+    const original = reservations.updateManagedProcessReservation;
+    const fail = vi.spyOn(reservations, 'updateManagedProcessReservation').mockImplementation((id, update) => {
+      if (update.phase === 'terminal') throw new Error('store unavailable');
+      return original(id, update);
+    });
+    try {
+      await expect(manager.close(terminal.sessionId!)).rejects.toThrow(/release requires recovery/);
+      expect(manager.status({sessionId:terminal.sessionId!}).status).toBe('blocked');
+      expect(managedProcessCapacityStats().live).toBe(1);
+      fail.mockRestore();
+      await manager.close(terminal.sessionId!);
+      expect(managedProcessCapacityStats().live).toBe(0);
+      expect(manager.listAll()).toHaveLength(0);
+    } finally { fail.mockRestore(); resetManagedProcessCapacity(); }
+  });
+  it('retains a port reservation when native exit still leaves a listener and confirms a later cleanup', async () => {
+    const server = createServer();
+    await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+    const port = (server.address() as { port: number }).port;
+    const { TerminalSessionManager } = await import('@electron/services/terminal-session-manager');
+    const { resetManagedProcessCapacity } = await import('../../openclaw_runtime/src/agents/verseshell/managed-process-capacity');
+    const { managedProcessReservations } = await import('../../openclaw_runtime/src/agents/verseshell/managed-process-reservation');
+    const manager = new TerminalSessionManager();
+    const terminal = manager.open({ workspace: workspace(process.cwd()), reservedPorts: [port] });
+    try {
+      await expect(manager.close(terminal.sessionId!)).rejects.toThrow(/port release/);
+      expect(managedProcessReservations().some(row => row.ports.includes(port))).toBe(true);
+      await new Promise<void>(resolve => server.close(() => resolve()));
+      await manager.close(terminal.sessionId!);
+      expect(managedProcessReservations().some(row => row.ports.includes(port))).toBe(false);
+    } finally {
+      if (server.listening) await new Promise<void>(resolve => server.close(() => resolve()));
+      resetManagedProcessCapacity();
+    }
+  });
+  it('shares declared process capacity with governed work and retains a slot until native exit', async () => {
+    const { configureManagedProcessCapacity, admitManagedProcess, managedProcessCapacityStats, resetManagedProcessCapacity } = await import('../../openclaw_runtime/src/agents/verseshell/managed-process-capacity');
+    const { TerminalSessionManager } = await import('@electron/services/terminal-session-manager');
+    configureManagedProcessCapacity({ maxLiveProcesses: 1 });
+    const manager = new TerminalSessionManager();
+    const governed = admitManagedProcess();
+    try {
+      expect(() => manager.open({ workspace: workspace(process.cwd()) })).toThrow('E_PROCESS_CAPACITY_LIMIT');
+      expect(ptyMocks.spawn).not.toHaveBeenCalled();
+      if (governed.ok) governed.lease.release();
+      const terminal = manager.open({ workspace: workspace(process.cwd()), expectedSessionId: 'one' });
+      expect(admitManagedProcess().ok).toBe(false);
+      await manager.close(terminal.sessionId!);
+      expect(managedProcessCapacityStats().live).toBe(0);
+    } finally { resetManagedProcessCapacity(); }
+  });
+  it('rejects another generation or task before reusing a terminal or sending input', async () => {
+    const { TerminalSessionManager } = await import('@electron/services/terminal-session-manager');
+    const manager = new TerminalSessionManager();
+    const terminal = manager.open({ workspace: workspace(process.cwd()), expectedSessionId: 'generation-one' });
+    try {
+      expect(() => manager.open({ workspace: workspace(process.cwd()), expectedSessionId: 'generation-two' })).toThrow(/generation/);
+      expect(() => manager.write({ sessionId: terminal.sessionId!, data: 'wrong', sessionKey: 'agent:other:task' })).toThrow(/scope mismatch/);
+      expect(() => manager.write({ sessionId: terminal.sessionId!, data: 'wrong', expectedSessionId: 'generation-two' })).toThrow(/scope mismatch/);
+      expect(() => manager.resize({ sessionId: terminal.sessionId!, cols: 100, rows: 30, expectedSessionId: 'generation-two' })).toThrow(/scope mismatch/);
+      expect(() => manager.interrupt(terminal.sessionId!, { sessionKey: 'agent:wrong:task' })).toThrow(/scope mismatch/);
+      await expect(manager.close(terminal.sessionId!, 'user-close', { expectedSessionId: 'generation-two' })).rejects.toThrow(/scope mismatch/);
+      expect(() => manager.open({ workspace: workspace(process.cwd()) })).toThrow(/generation.*required/);
+      manager.write({ sessionId: terminal.sessionId!, data: 'right', workspaceId: 'workspace-1', sessionKey: 'agent:main:main', expectedSessionId: 'generation-one' });
+      expect(ptyMocks.spawn.mock.results[0].value.write).toHaveBeenCalledTimes(1);
+      expect(ptyMocks.spawn.mock.results[0].value.write).toHaveBeenCalledWith('right');
+    } finally { await manager.close(terminal.sessionId!); }
+  });
+  it('records a native spawn with unknown outcome as a recoverable reservation', async () => {
+    const { configureManagedProcessCapacity, resetManagedProcessCapacity } = await import('../../openclaw_runtime/src/agents/verseshell/managed-process-capacity');
+    const { managedProcessReservations, reconcileManagedProcessReservations } = await import('../../openclaw_runtime/src/agents/verseshell/managed-process-reservation');
+    const { TerminalSessionManager } = await import('@electron/services/terminal-session-manager');
+    configureManagedProcessCapacity({ maxLiveProcesses: 1 });
+    ptyMocks.spawn.mockImplementation(() => { throw new Error('native handle delivery unknown'); });
+    try {
+      const manager = new TerminalSessionManager();
+      expect(() => manager.open({ workspace: workspace(process.cwd()) })).toThrow(/reservation=/);
+      expect(managedProcessReservations()).toMatchObject([{ phase: 'unknown', failure: 'native-pty-start-did-not-return-owner-handle' }]);
+      expect((await reconcileManagedProcessReservations())[0].outcome).toBe('retained');
+    } finally { resetManagedProcessCapacity(); }
+  });
   it('holds a terminal close receipt until the native owner reports exit', async () => {
     let exit!: (event: { exitCode: number }) => void;
     const native = { pid: 1234, onData: vi.fn(), onExit: vi.fn(listener => { exit = listener; }), write: vi.fn(), resize: vi.fn(), kill: vi.fn() };

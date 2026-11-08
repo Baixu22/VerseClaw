@@ -1,19 +1,24 @@
 /**
- * Instance-wide capacity for VerseShell-managed tool processes (issue #155).
+ * Host-shared capacity for VerseShell-managed tool processes and terminal PTYs.
  *
  * The Job Object limits one process tree; this module bounds how many managed trees this runtime
- * instance keeps alive at once, so several sessions, lanes or background callers cannot each
+ * state directory keeps alive at once, so sessions, workspaces and runtime processes cannot each
  * believe they own the whole budget. Nothing is limited until an operator declares a capacity:
- * with no declaration the admission is a no-op and no counter is allocated.
+ * with no declaration and no existing host reservation, admission allocates no slot.
  *
  * Environment surface (all optional):
- * - `OPENCLAW_VERSESHELL_MAX_LIVE_PROCESSES` - instance-wide live managed process cap
+ * - `OPENCLAW_VERSESHELL_MAX_LIVE_PROCESSES` - host-shared live managed process cap
  * - `OPENCLAW_VERSESHELL_MAX_PROCESSES`     - default Job active-process cap per run
  * - `OPENCLAW_VERSESHELL_MAX_MEMORY_MB`     - default Job per-process commit cap per run
  *
  * The managed-process counter only counts processes whose owner this runtime created and whose
  * exit it verified; it never scans for, adopts or kills unknown PIDs (see #98/#99/#103).
  */
+
+import {
+  managedProcessReservations, normalizeManagedPorts, observeManagedProcessReservation,
+  releaseManagedProcessReservation, reserveManagedProcess, updateManagedProcessReservation,
+} from "./managed-process-reservation.js";
 
 /** Default per-run Limits derived from the environment. */
 export type ManagedProcessDefaultLimits = {
@@ -37,6 +42,11 @@ export type ManagedProcessLease = {
   /** Releases the instance slot once; returns false when already released. */
   release(): boolean;
   readonly released: boolean;
+  readonly reservationId?: string;
+  markDispatched(): void;
+  markTerminal(): void;
+  markUnknown(reason: string): void;
+  observeProcess(pid: number): Promise<void>;
 };
 
 /** Counters for diagnostics and tests. */
@@ -53,6 +63,7 @@ export type ManagedProcessCapacityStats = {
 let config: ManagedProcessCapacityConfig | undefined;
 let envLoaded = false;
 let live = 0;
+const heldReservations = new Set<string>();
 const counters = {
   peakLive: 0,
   admitted: 0,
@@ -102,6 +113,8 @@ export function configureManagedProcessCapacity(next: ManagedProcessCapacityConf
 
 /** Drops the declaration, restores environment derivation and zeroes the counters (test helper). */
 export function resetManagedProcessCapacity(): void {
+  for (const id of heldReservations) releaseManagedProcessReservation(id);
+  heldReservations.clear();
   config = undefined;
   envLoaded = false;
   live = 0;
@@ -128,6 +141,7 @@ export function resolveManagedProcessDefaultLimits(): ManagedProcessDefaultLimit
 /** Current live count and declared limit. */
 export function managedProcessCapacityStats(): ManagedProcessCapacityStats {
   const limit = activeConfig()?.maxLiveProcesses;
+  if (limit !== undefined) live = managedProcessReservations().length;
   return { live, ...counters, ...(limit === undefined ? {} : { limit }) };
 }
 
@@ -136,26 +150,36 @@ export function managedProcessCapacityStats(): ManagedProcessCapacityStats {
  *
  * With no declared `maxLiveProcesses` this always admits and does not allocate a counter.
  */
-export function admitManagedProcess(): ManagedProcessAdmission {
-  const declared = activeConfig()?.maxLiveProcesses;
-  if (declared === undefined) {
+export function admitManagedProcess(options: { ports?: readonly number[]; owner?: string } = {}): ManagedProcessAdmission {
+  const configured = activeConfig()?.maxLiveProcesses;
+  const activeLimits = managedProcessReservations().map(record => record.limit).filter((value): value is number => value !== undefined);
+  const declared = configured ?? (activeLimits.length ? Math.min(...activeLimits) : undefined);
+  const ports = normalizeManagedPorts(options.ports);
+  if (declared === undefined && ports.length === 0) {
     return { ok: true, lease: noopLease(), live };
   }
-  if (live >= declared) {
+  const result = reserveManagedProcess({ limit: declared, ports, owner: options.owner });
+  if (!result.ok && result.reason === "port") throw new Error(`E_PROCESS_PORT_RESERVED:${result.port}:${result.owner}`);
+  if (!result.ok) {
     counters.rejectedCapacity += 1;
-    return { ok: false, reason: "capacity", live, limit: declared };
+    return result;
   }
-  live += 1;
+  heldReservations.add(result.reservation.id);
+  live = result.live;
   counters.admitted += 1;
   if (live > counters.peakLive) {
     counters.peakLive = live;
   }
-  return { ok: true, lease: createLease(), live, limit: declared };
+  return { ok: true, lease: createLease(result.reservation.id), live, limit: result.limit };
 }
 
 function noopLease(): ManagedProcessLease {
   let released = false;
   return {
+    markDispatched() {},
+    markTerminal() {},
+    markUnknown(_reason: string) {},
+    async observeProcess(_pid: number) {},
     get released() {
       return released;
     },
@@ -170,9 +194,14 @@ function noopLease(): ManagedProcessLease {
   };
 }
 
-function createLease(): ManagedProcessLease {
+function createLease(id: string): ManagedProcessLease {
   let released = false;
   return {
+    reservationId: id,
+    markDispatched() { updateManagedProcessReservation(id, { phase: "dispatched" }); },
+    markTerminal() { updateManagedProcessReservation(id, { phase: "terminal" }); },
+    markUnknown(reason: string) { updateManagedProcessReservation(id, { phase: "unknown", failure: reason }); },
+    async observeProcess(pid: number) { if (!released) await observeManagedProcessReservation(id, pid); },
     get released() {
       return released;
     },
@@ -181,7 +210,9 @@ function createLease(): ManagedProcessLease {
         counters.doubleRelease += 1;
         return false;
       }
+      releaseManagedProcessReservation(id);
       released = true;
+      heldReservations.delete(id);
       live = Math.max(0, live - 1);
       counters.completed += 1;
       return true;

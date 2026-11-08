@@ -172,7 +172,7 @@ function registerTypedHostHandlers(
     permissions: createPermissionsApi(),
     runtimeApprovals: createRuntimeApprovalsApi(gatewayManager),
     orchestrationPresets: createOrchestrationPresetsApi(),
-    webPreview: createWebPreviewApi({ webPreviewManager }),
+    webPreview: createWebPreviewApi({ webPreviewManager, gatewayManager }),
     settings: createSettingsApi(gatewayManager),
     efficiency: createEfficiencyApi(),
     resourceEnvelope: createResourceEnvelopeApi({ terminalManager }),
