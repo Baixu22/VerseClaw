@@ -18,6 +18,7 @@ touchedAreas:
   - harness/specs/**
   - openclaw_runtime/**
   - playwright.resource-governance.config.ts
+  - vitest.terminal-resources*.config.ts
   - scripts/**
   - shared/**
   - src/**
