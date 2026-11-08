@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { runOrchestrationObserved } from '../openclaw_runtime/src/agents/orchestrator-run-observed';
@@ -99,7 +99,7 @@ const junctionPath = join(junctionRoot, 'repo-alias');
 let sameRepoAcrossJunction = false;
 try {
   if (process.platform === 'win32') {
-    execFileSync('cmd', ['/d', '/c', 'mklink', '/J', junctionPath, repoRoot], { cwd: junctionRoot, windowsHide: true });
+    symlinkSync(repoRoot, junctionPath, 'junction');
     sameRepoAcrossJunction = resolveVerseGitRepoIdentity(junctionPath).repoId === resolveVerseGitRepoIdentity(repoRoot).repoId;
   }
 } finally {
