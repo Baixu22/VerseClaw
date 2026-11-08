@@ -1,0 +1,31 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-closeout-01a1b90a",
+  "name": "candidate-retention-check",
+  "cwd": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\validation-candidate",
+  "command": [
+    "node",
+    "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+    "repo:artifacts:check"
+  ],
+  "started_at": "2026-11-08T03:08:53.848670+00:00",
+  "duration_seconds": 14.906,
+  "exit_code": 0,
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": "warn"
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\checks\\candidate-retention-check.stdout.txt",
+      "bytes": 178,
+      "sha256": "30902d7c30fa49cad35c422f0f2aa2c3c904ad6972c49977a7f286d045798973"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\checks\\candidate-retention-check.stderr.txt",
+      "bytes": 46,
+      "sha256": "f62d1dbbb5220d55c5deff1fc44b06476881b770066fcf3c9d0ecb2c407bb252"
+    }
+  }
+}

@@ -4,6 +4,8 @@ driven_by: agent
 
 actor: codex-inline-spill-closeout-01a1b90a
 
+continuation_actor: codex-inline-spill-closeout-01a1b934
+
 本轮收口判定为 **NO-GO**。第三轮原始 `decision.status=mechanism-only`，B2/B4/B5/B6 失败；B3 的原始 true 来自一个无证据控制任务，18 个证据任务配对没有保留收益。TF-0749 保持 `in_progress/80`。
 
 本轮新增 provider 调用 **0**。第二轮、第三轮的原始运行与评分全部保留；本目录保存 2026-11-08 从磁盘重放得到的结果和源码绑定。
@@ -80,4 +82,25 @@ node "$r3/verify-run.mjs" "$r3/live" "$out/round3-live.json"
 node "$r3/diagnose-run.mjs" "$r3/live" "$out/round3-diagnostics.json"
 ```
 
-下一轮最小实验见 [NEXT-EXPERIMENT.md](NEXT-EXPERIMENT.md)。本轮完成原始证据复算和候选归档；相关单测、类型及 Harness 门禁将在本次冻结候选中执行并在交付前写入本报告。
+下一轮最小实验见 [NEXT-EXPERIMENT.md](NEXT-EXPERIMENT.md)。
+
+## 验证结果
+
+验证候选为 `d9d595536ee3a8ec18011f56c41e87c2a834fb9a`，tree 为 `263184f51452ed8b08d2d997dc5e3ca1d89e8705`，执行前为干净检出。候选复用已有的 `node_modules` 和经逐文件摘要核对的 Runtime/VerseBrowser 构建产物，临时目录为 `D:/tmp`。pnpm 报告 `patchedDependencies` 与复用依赖的安装记录不同；本次检查的依赖来源和文件摘要保存在 `validation/candidate-provision.json`。
+
+| 检查 | 磁盘结果 |
+|---|---|
+| Inline/Spill 输入、评分、保留、provider 回归 | 4 个文件、48 项通过 |
+| 无缓存类型检查 | node、web、tests 三套均退出 0；cache disabled |
+| 契约检查 | 退出 0 |
+| 本任务 Harness validate / run --dry-run | 均退出 0 |
+| 产物保留检查 | 退出 0，核对 20498 个跟踪路径 |
+| 完整 `pnpm run harness:ci` | 前置 59 项测试通过；Agent Dev audit 因四份历史证据超过 24 小时窗口退出 1 |
+
+完整 CI 的四个失败项是 Workbench、deep-test、deep-test history、quality 的证据新鲜度，运行时记录约 143.87 小时。该退出发生在后续 `repo:evidence:check` 和 `repo:test-coverage:check` 之前。原始 CI 日志和审计结果保存在 `validation/`。
+
+首次 pnpm 检查因非交互重装保护退出；首次复用依赖单测为 47 项通过、1 项 provider 子进程超时，串行复验为 48 项通过。首次类型检查缺少 VerseBrowser 构建声明，核对候选与来源的跟踪源码后复用声明，三套类型通过。各次失败和最终通过的原始日志、回执均保留，逐文件摘要已重新回读。
+
+Task Forest validate/export 均退出 0；锁内读回确认图、HTML 当前投影与历史末帧一致，TF-0749 全部字段与续接前相同，状态为 in_progress/80，六个子节点为 done/100。验证回执与导出摘要见 `validation/task-forest-readback.json`；本地任务图、完整历史和交接继续保存在原目录。
+
+收益标准的缺项仍为 B2/B4/B5/B6，以及 B3 缺少证据任务的正向保留配对。下一步先冻结评测页预算适配，再按 `NEXT-EXPERIMENT.md` 的原模型、900 输出预算和 96 次样本设计执行。

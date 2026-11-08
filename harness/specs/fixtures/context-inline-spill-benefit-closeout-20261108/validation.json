@@ -1,0 +1,222 @@
+{
+  "schema": "ContextInlineSpillCloseoutValidation/v1",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-closeout-01a1b934",
+  "created_at": "2026-11-08T03:40:07.383445+00:00",
+  "candidate": {
+    "commit": "d9d595536ee3a8ec18011f56c41e87c2a834fb9a",
+    "tree": "263184f51452ed8b08d2d997dc5e3ca1d89e8705",
+    "dirty_at_provision": false,
+    "current_dirty": false,
+    "reused_dependency_and_build_hashes_match": true
+  },
+  "checks": [
+    {
+      "name": "candidate-contract-reused",
+      "actor": "codex-inline-spill-closeout-01a1b90a",
+      "exit_code": 0,
+      "receipt": "validation/candidate-contract-reused.json",
+      "retained_logs": {
+        "stdout": "validation/candidate-contract-reused.stdout.txt",
+        "stderr": "validation/candidate-contract-reused.stderr.txt"
+      },
+      "source_logs_hash_match": true
+    },
+    {
+      "name": "candidate-contract",
+      "actor": "codex-inline-spill-closeout-01a1b90a",
+      "exit_code": 1,
+      "receipt": "validation/candidate-contract.json",
+      "retained_logs": {
+        "stdout": "validation/candidate-contract.stdout.txt",
+        "stderr": "validation/candidate-contract.stderr.txt"
+      },
+      "source_logs_hash_match": true
+    },
+    {
+      "name": "candidate-harness-dry-run-reused",
+      "actor": "codex-inline-spill-closeout-01a1b90a",
+      "exit_code": 0,
+      "receipt": "validation/candidate-harness-dry-run-reused.json",
+      "retained_logs": {
+        "stdout": "validation/candidate-harness-dry-run-reused.stdout.txt",
+        "stderr": "validation/candidate-harness-dry-run-reused.stderr.txt"
+      },
+      "source_logs_hash_match": true
+    },
+    {
+      "name": "candidate-harness-dry-run",
+      "actor": "codex-inline-spill-closeout-01a1b90a",
+      "exit_code": 1,
+      "receipt": "validation/candidate-harness-dry-run.json",
+      "retained_logs": {
+        "stdout": "validation/candidate-harness-dry-run.stdout.txt",
+        "stderr": "validation/candidate-harness-dry-run.stderr.txt"
+      },
+      "source_logs_hash_match": true
+    },
+    {
+      "name": "candidate-harness-validate-reused",
+      "actor": "codex-inline-spill-closeout-01a1b90a",
+      "exit_code": 0,
+      "receipt": "validation/candidate-harness-validate-reused.json",
+      "retained_logs": {
+        "stdout": "validation/candidate-harness-validate-reused.stdout.txt",
+        "stderr": "validation/candidate-harness-validate-reused.stderr.txt"
+      },
+      "source_logs_hash_match": true
+    },
+    {
+      "name": "candidate-harness-validate",
+      "actor": "codex-inline-spill-closeout-01a1b90a",
+      "exit_code": 1,
+      "receipt": "validation/candidate-harness-validate.json",
+      "retained_logs": {
+        "stdout": "validation/candidate-harness-validate.stdout.txt",
+        "stderr": "validation/candidate-harness-validate.stderr.txt"
+      },
+      "source_logs_hash_match": true
+    },
+    {
+      "name": "candidate-retention-check",
+      "actor": "codex-inline-spill-closeout-01a1b90a",
+      "exit_code": 0,
+      "receipt": "validation/candidate-retention-check.json",
+      "retained_logs": {
+        "stdout": "validation/candidate-retention-check.stdout.txt",
+        "stderr": "validation/candidate-retention-check.stderr.txt"
+      },
+      "source_logs_hash_match": true
+    },
+    {
+      "name": "candidate-typecheck-reused",
+      "actor": "codex-inline-spill-closeout-01a1b90a",
+      "exit_code": 1,
+      "receipt": "validation/candidate-typecheck-reused.json",
+      "retained_logs": {
+        "stdout": "validation/candidate-typecheck-reused.stdout.txt",
+        "stderr": "validation/candidate-typecheck-reused.stderr.txt"
+      },
+      "source_logs_hash_match": true
+    },
+    {
+      "name": "candidate-typecheck-sdk",
+      "actor": "codex-inline-spill-closeout-01a1b90a",
+      "exit_code": 0,
+      "receipt": "validation/candidate-typecheck-sdk.json",
+      "retained_logs": {
+        "stdout": "validation/candidate-typecheck-sdk.stdout.txt",
+        "stderr": "validation/candidate-typecheck-sdk.stderr.txt"
+      },
+      "source_logs_hash_match": true
+    },
+    {
+      "name": "candidate-typecheck",
+      "actor": "codex-inline-spill-closeout-01a1b90a",
+      "exit_code": 1,
+      "receipt": "validation/candidate-typecheck.json",
+      "retained_logs": {
+        "stdout": "validation/candidate-typecheck.stdout.txt",
+        "stderr": "validation/candidate-typecheck.stderr.txt"
+      },
+      "source_logs_hash_match": true
+    },
+    {
+      "name": "candidate-unit-reused",
+      "actor": "codex-inline-spill-closeout-01a1b90a",
+      "exit_code": 1,
+      "receipt": "validation/candidate-unit-reused.json",
+      "retained_logs": {
+        "stdout": "validation/candidate-unit-reused.stdout.txt",
+        "stderr": "validation/candidate-unit-reused.stderr.txt"
+      },
+      "source_logs_hash_match": true
+    },
+    {
+      "name": "candidate-unit-serial",
+      "actor": "codex-inline-spill-closeout-01a1b90a",
+      "exit_code": 0,
+      "receipt": "validation/candidate-unit-serial.json",
+      "retained_logs": {
+        "stdout": "validation/candidate-unit-serial.stdout.txt",
+        "stderr": "validation/candidate-unit-serial.stderr.txt"
+      },
+      "source_logs_hash_match": true
+    },
+    {
+      "name": "candidate-unit",
+      "actor": "codex-inline-spill-closeout-01a1b90a",
+      "exit_code": 1,
+      "receipt": "validation/candidate-unit.json",
+      "retained_logs": {
+        "stdout": "validation/candidate-unit.stdout.txt",
+        "stderr": "validation/candidate-unit.stderr.txt"
+      },
+      "source_logs_hash_match": true
+    },
+    {
+      "name": "worktree-harness-validate",
+      "actor": "codex-inline-spill-closeout-01a1b90a",
+      "exit_code": 1,
+      "receipt": "validation/worktree-harness-validate.json",
+      "retained_logs": {
+        "stdout": "validation/worktree-harness-validate.stdout.txt",
+        "stderr": "validation/worktree-harness-validate.stderr.txt"
+      },
+      "source_logs_hash_match": true
+    },
+    {
+      "name": "tf-final-validate",
+      "actor": "codex-inline-spill-closeout-01a1b90a",
+      "exit_code": 1,
+      "receipt": "validation/tf-final-validate.json",
+      "retained_logs": {
+        "stdout": "validation/tf-final-validate.stdout.txt",
+        "stderr": "validation/tf-final-validate.stderr.txt"
+      },
+      "source_logs_hash_match": true
+    },
+    {
+      "name": "candidate-harness-ci",
+      "actor": "codex-inline-spill-closeout-01a1b934",
+      "exit_code": 1,
+      "receipt": "validation/candidate-harness-ci.json",
+      "retained_logs": {
+        "stdout": "validation/candidate-harness-ci.stdout.txt",
+        "stderr": "validation/candidate-harness-ci.stderr.txt"
+      },
+      "source_logs_hash_match": true
+    }
+  ],
+  "focused_unit_passed": 48,
+  "uncached_typecheck_projects": [
+    "node",
+    "web",
+    "tests"
+  ],
+  "full_harness_ci": {
+    "exit_code": 1,
+    "pre_audit_tests_passed": 59,
+    "failed_stage": "agent-dev:audit",
+    "failed_evidence_freshness_items": 4
+  },
+  "new_provider_calls": 0,
+  "original_manifest_readback": {
+    "path": "validation/original-manifest-readback.json"
+  },
+  "source_archive_readback": {
+    "path": "validation/source-archive-readback.json",
+    "total_files": 95
+  },
+  "task_forest": {
+    "validate_exit_code": 0,
+    "export_exit_code": 0,
+    "readback_exit_code": 0,
+    "status": "in_progress",
+    "progress": 80,
+    "all_fields_unchanged": true,
+    "children_done": 6,
+    "graph_and_html_current_and_last_frame_match": true,
+    "readback": "validation/task-forest-readback.json"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-closeout-01a1b934",
+  "archives": [
+    {
+      "name": "worktree",
+      "archive_sha256_matches": true,
+      "archive_and_source_files_match": 4
+    },
+    {
+      "name": "round3-candidate",
+      "archive_sha256_matches": true,
+      "archive_and_source_files_match": 38
+    },
+    {
+      "name": "round2-candidate",
+      "archive_sha256_matches": true,
+      "archive_and_source_files_match": 53
+    }
+  ],
+  "total_untracked_files": 95
+}

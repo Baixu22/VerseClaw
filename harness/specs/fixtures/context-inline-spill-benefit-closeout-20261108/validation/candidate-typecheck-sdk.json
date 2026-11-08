@@ -1,0 +1,32 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-closeout-01a1b90a",
+  "name": "candidate-typecheck-sdk",
+  "cwd": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\validation-candidate",
+  "command": [
+    "node",
+    "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+    "run",
+    "typecheck"
+  ],
+  "started_at": "2026-11-08T03:18:34.057250+00:00",
+  "duration_seconds": 68.125,
+  "exit_code": 0,
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": "warn"
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\checks\\candidate-typecheck-sdk.stdout.txt",
+      "bytes": 1924,
+      "sha256": "dc0159d1ab3db54949b38cd5f87ff5701075633c1a5b9099997f6836af337339"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\checks\\candidate-typecheck-sdk.stderr.txt",
+      "bytes": 150,
+      "sha256": "1c03bb7b84acf5976682a98849c968453916f0c93004f0b512e3766d0de6c5b8"
+    }
+  }
+}
