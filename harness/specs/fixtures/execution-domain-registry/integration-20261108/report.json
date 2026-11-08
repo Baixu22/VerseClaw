@@ -1,0 +1,200 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "sourceCandidate": {
+    "commit": "76ecb3b244b3b949392e423b8d54b2374fb294ff",
+    "tree": "cb0f4e074a94a328a85f52154d351f0787107afd",
+    "dirty": false
+  },
+  "mainCommit": "ee67af1b4985fd912c4eb28c73f7da4cacb42fd1",
+  "treeEquivalent": true,
+  "concurrentReadmeEditsPreserved": true,
+  "commands": [
+    {
+      "name": "core",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:/ClawX/node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "vitest.execution-domain.config.ts",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\unified-management-20261108\\registry-main-integration/core.json"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 34.343,
+      "passed": 29,
+      "failed": 0,
+      "pending": 0,
+      "total": 29,
+      "success": true
+    },
+    {
+      "name": "owners",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:/ClawX/node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/orchestration-worktree-merge.test.ts",
+        "tests/unit/long-session-runtime-resource-inventory.test.ts",
+        "tests/unit/long-session-resource-reclamation.test.ts",
+        "tests/unit/long-session-owner-reclamation-adapter.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\unified-management-20261108\\registry-main-integration/owners.json"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 54.297,
+      "passed": 25,
+      "failed": 0,
+      "pending": 0,
+      "total": 25,
+      "success": true
+    },
+    {
+      "name": "types-node",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:/ClawX/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 9.203
+    },
+    {
+      "name": "types-web",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:/ClawX/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 4.86
+    },
+    {
+      "name": "types-test",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:/ClawX/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 20.812
+    },
+    {
+      "name": "schema",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/generate-kysely-types.mjs",
+        "--verify"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108\\openclaw_runtime",
+      "exitCode": 0,
+      "seconds": 0.235
+    },
+    {
+      "name": "contract",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 5.484
+    },
+    {
+      "name": "comms-replay",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 0.422
+    },
+    {
+      "name": "comms-compare",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 0.297
+    },
+    {
+      "name": "harness",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/execution-domain-registry.md",
+        "--since",
+        "2cee3d0537003c80f08172c121a1c0cc60f35484"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 1.375
+    },
+    {
+      "name": "harness-dry-run",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/execution-domain-registry.md",
+        "--dry-run",
+        "--since",
+        "2cee3d0537003c80f08172c121a1c0cc60f35484"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 1.0
+    },
+    {
+      "name": "lint",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:/ClawX/node_modules/eslint/bin/eslint.js",
+        "openclaw_runtime/src/agents/worktree-service.ts",
+        "openclaw_runtime/src/agents/worktree-registry.ts",
+        "openclaw_runtime/src/agents/execution-domain.ts",
+        "openclaw_runtime/src/agents/orchestration-worktree-merge.ts",
+        "openclaw_runtime/src/agents/subagent-registry.ts",
+        "openclaw_runtime/src/agents/subagent-registry-lifecycle.ts",
+        "openclaw_runtime/src/gateway/session-resource-inventory.ts",
+        "tests/unit/worktree-registry-restart.test.ts",
+        "tests/unit/execution-domain-registry.test.ts",
+        "tests/unit/orchestration-worktree-merge.test.ts",
+        "tests/fixtures/worktree-registry-process.ts",
+        "vitest.execution-domain.config.ts"
+      ],
+      "cwd": "D:\\ClawX-work\\unified-execution-registry-20261108",
+      "exitCode": 0,
+      "seconds": 5.156
+    }
+  ],
+  "status": "passed",
+  "initialHarnessFailure": "Original task diffBase predates unrelated merged main changes; diff-aware validation rerun against the integration base, without no-diff.",
+  "rawEvidence": "D:/tmp/unified-management-20261108/registry-main-integration",
+  "mainIntegrationReceipt": "D:/tmp/unified-management-20261108/main-integration/receipt.json"
+}
