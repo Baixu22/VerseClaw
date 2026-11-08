@@ -4,6 +4,7 @@ import type { JsonObject, Observation } from "../../../../shared/verseshell/type
 import { AciTransportError, type AciExecuteOptions } from "./aci-client.js";
 import {
   startGovernedVerseShellProcess,
+  executeGovernedVerseShellProcessObserved,
   type GovernedVerseShellProcessOptions,
 } from "./governed-process.js";
 import type { VerseShellProcessConfig, VerseShellProcessManager } from "./process-manager.js";
@@ -108,7 +109,15 @@ function fakeManager(
   }>,
 ) {
   const configs: VerseShellProcessConfig[] = [];
-  const shutdownProcess = vi.fn(async () => true);
+  const shutdownProcess = vi.fn(async (_key: string) => true);
+  const references = new Map<string, number>();
+  const retainProcess = (key: string) => {
+    references.set(key, (references.get(key) ?? 0) + 1); let released = false;
+    return async () => { if (released) return; released = true;
+      const remaining = references.get(key)! - 1; references.set(key, remaining);
+      if (remaining === 0) await shutdownProcess(key);
+    };
+  };
   let index = 0;
   const getClient = vi.fn(async (config: VerseShellProcessConfig) => {
     configs.push(config);
@@ -119,6 +128,7 @@ function fakeManager(
   const manager = {
     getClient,
     shutdownProcess,
+    retainProcess,
   } as unknown as VerseShellProcessManager;
   return { manager, configs, getClient, shutdownProcess };
 }
@@ -214,6 +224,35 @@ describe("VerseShell startup capacity rollback", () => {
 });
 
 describe("VerseShell governed process lifecycle", () => {
+  it("keeps a shared executor alive until both lifecycle references settle", async () => {
+    let starts = 0; const ends = new Map<string, (value: Observation) => void>();
+    const client = { processKey: "shared-lifecycle", execute: vi.fn(async (op: string, args: JsonObject) => {
+      if (op === "process.start") return observation(op, snapshot({ owner: { process_id: `proc-${++starts}` } }));
+      if (op === "process.poll") return new Promise<Observation>(resolve => { ends.set(String(args.process_id), resolve); });
+      return observation(op, {});
+    }) };
+    const fake = fakeManager([client, client]);
+    const first = await startGovernedVerseShellProcess(baseOptions(fake.manager));
+    const second = await startGovernedVerseShellProcess(baseOptions(fake.manager));
+    ends.get("proc-1")!(observation("process.poll", snapshot({ state: "exited", owner: { process_id: "proc-1" } })));
+    await first.wait();
+    const closedEarly = fake.shutdownProcess.mock.calls.length;
+    ends.get("proc-2")!(observation("process.poll", snapshot({ state: "exited", owner: { process_id: "proc-2" } })));
+    await second.wait();
+    expect(closedEarly).toBe(0); expect(fake.shutdownProcess).toHaveBeenCalledOnce();
+  });
+  it("bounds accumulated UTF-8 output while keeping terminal artifact references", async () => {
+    let polls = 0; const text = "汉".repeat(400);
+    const client = { processKey: "bounded-output", execute: vi.fn(async (op: string) => {
+      if (op === "process.start") return observation(op, snapshot());
+      polls++;
+      return observation(op, snapshot({ text, cursor: polls * 1200, state: polls === 4 ? "exited" : "running" }));
+    }) };
+    const fake = fakeManager([client]); Object.assign(fake.manager, { list: () => [{ pid: 4321, key: client.processKey }] });
+    const result = await executeGovernedVerseShellProcessObserved(baseOptions(fake.manager, { maxOutputBytes: 1024 }));
+    expect(Buffer.byteLength(result.stdout) + Buffer.byteLength(result.stderr)).toBeLessThanOrEqual(1024);
+    expect(result.observation.data?.artifacts).toEqual([`result://sha256/${"b".repeat(64)}`]);
+  });
   it("uses the pre-approval argv plan without reparsing the display command", async () => {
     const calls: ExecuteCall[] = [];
     const client = {
@@ -287,8 +326,8 @@ describe("VerseShell governed process lifecycle", () => {
       undefined,
       "apv_0123456789abcdef",
     ]);
-    expect(fake.shutdownProcess).toHaveBeenCalledOnce();
-    expect(fake.shutdownProcess).toHaveBeenCalledWith("approved");
+    expect(fake.shutdownProcess).toHaveBeenCalledTimes(2);
+    expect(fake.shutdownProcess).toHaveBeenLastCalledWith("approved");
   });
 
   it("maps start, poll, stdin, EOF, and kill and cleans up after terminal state", async () => {
@@ -387,7 +426,7 @@ describe("VerseShell governed process lifecycle", () => {
     const fake = fakeManager([client]);
     const handle = await startGovernedVerseShellProcess(baseOptions(fake.manager));
     await expect(handle.wait()).rejects.toMatchObject({ code });
-    expect(fake.shutdownProcess).toHaveBeenCalledWith("drift");
+    expect(fake.shutdownProcess).not.toHaveBeenCalled();
   });
 
   it("retries only read-only poll after a transport restart and never replays start", async () => {

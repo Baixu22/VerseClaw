@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import type { SpawnOptions } from "node:child_process";
 import { realpathSync } from "node:fs";
-import { EventEmitter } from "node:events";
+import { EventEmitter, getEventListeners } from "node:events";
 import path from "node:path";
 import { PassThrough, Writable } from "node:stream";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -25,6 +25,33 @@ import {
 } from "./policy-profile.js";
 
 const SCHEMA = "verseshell.observation/v1";
+
+describe("poll control capacity", () => {
+  it("leaves an executor slot for stdin while long polls are pending", async () => {
+    const config = { ...baseConfig(), maxConcurrency: 2, requestTimeoutMs: 5000 };
+    const h = harness((request, child) => {
+      if (request.op === "runtime.handshake") child.respond(request, { data: { ...handshakeData(config), max_concurrency: 2 } });
+      else if (request.op !== "process.poll") child.respond(request);
+    });
+    h.setConfig(config);
+    const client = await h.manager.getClient(config);
+    const polls = Array.from({ length: 4 }, () => client.execute("process.poll", { wait_ms: 1000 }).catch(error => error));
+    const input = client.execute("process.write", { data: "control" });
+    try {
+      await expect(input).resolves.toMatchObject({ ok: true });
+      expect(h.children[0].requests.filter(request => request.op === "process.poll")).toHaveLength(1);
+    } finally { await h.manager.shutdownAll(); await Promise.all(polls); }
+  });
+  it("removes successful request abort listeners and keeps a retained idle executor", async () => {
+    const h = harness(undefined, { idleTtlMs: 1 }); const client = await h.manager.getClient(baseConfig());
+    const release = h.manager.retainProcess(client.processKey); const controller = new AbortController();
+    for (let i = 0; i < 20; i++) await client.execute("file.view", {}, { signal: controller.signal });
+    expect(getEventListeners(controller.signal, "abort")).toHaveLength(0);
+    await new Promise(resolve => setTimeout(resolve, 5)); expect(await h.manager.collectIdle()).toBe(0);
+    await release(); await release(); expect(h.manager.list()).toHaveLength(0);
+    await h.manager.shutdownAll();
+  });
+});
 
 type Request = {
   id: string;

@@ -31,6 +31,14 @@ Main 可显式登记同一应用入口、preload 和 session 的只读观察窗�
 与 `efficiency.getState`；主窗保留原有权限，未登记窗口、导航到其他页面的窗口及写操作均拒绝。
 观察窗销毁或主窗 owner 结束时释放登记，renderer 没有自行登记的接口。
 
+VerseShell host 调度优先发送 `process.write` / `process.kill`，poll 最多使用并发上限减一的额度；
+单并发场景仍使用一个槽位。原生 JSONL server 顺序处理单请求，host 将每次 poll 等待限制到
+`1000 / maxConcurrency` ms 内，避免已发送的 poll 堵住控制请求。请求总并发、队列和控制5秒期限保持原值。
+受管生命周期持有 executor 引用，确认终态后释放；共享引用或活动请求仍存在时不关闭进程，unknown占用继续保留。
+
+受管输出的 stdout/stderr 共用 UTF-8 字节尾部预算，并报告 raw/retained/omitted 字节及原artifact引用。
+callback式 bash 输出溢出使用私有文件同步分段写入，为生产者提供背压；内存尾部按字节截取，避免单个Unicode大块超限。
+
 当前资源治理是**合作式**的：
 
 - 不引入 Job Object、cgroup、ACL、restricted token 等内核级沙箱；

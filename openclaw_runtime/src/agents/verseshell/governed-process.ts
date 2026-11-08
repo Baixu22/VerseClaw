@@ -1,5 +1,6 @@
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
+import { ByteTail } from "../byte-tail.js";
 import type { JsonObject, Observation } from "../../../../shared/verseshell/types.js";
 import type { TerminationReason } from "../../process/supervisor/types.js";
 import {
@@ -419,6 +420,7 @@ export async function startGovernedVerseShellProcess(
   let approvalRequired: boolean;
   let snapshot: LifecycleSnapshot;
   let startMayHaveRun = false;
+  let releaseExecutor: (() => Promise<void>) | undefined;
   const dispatchStart = async (target: VerseShellAciClient): Promise<Observation> => {
     // A transport rejection cannot prove that an effectful start was not delivered.
     startMayHaveRun = true;
@@ -435,6 +437,7 @@ export async function startGovernedVerseShellProcess(
     prepareVerseShellLifecycleRoot(baseConfig.workspace);
     firstClient = await manager.getClient(baseConfig);
     client = firstClient;
+    releaseExecutor = manager.retainProcess(client.processKey);
     const first = await dispatchStart(firstClient);
     approvalRequired = first.error?.code === "E_NEEDS_APPROVAL";
     let startObservation = first;
@@ -448,6 +451,9 @@ export async function startGovernedVerseShellProcess(
         );
       }
       client = await manager.getClient({ ...baseConfig, approvalToken: token });
+      const approvedRelease = manager.retainProcess(client.processKey);
+      const deniedRelease = releaseExecutor; releaseExecutor = approvedRelease;
+      await deniedRelease();
       startObservation = await dispatchStart(client);
     }
     if (!startObservation.ok) throw observationError(startObservation);
@@ -476,7 +482,7 @@ export async function startGovernedVerseShellProcess(
   } catch (error) {
     if (!startMayHaveRun) {
       try {
-        if (client && client !== firstClient) await manager.shutdownProcess(client.processKey);
+        await releaseExecutor?.();
       } finally {
         releaseCapacity();
       }
@@ -592,7 +598,7 @@ export async function startGovernedVerseShellProcess(
       // unknown state the slot stays occupied (and is visible as a leak) rather than being
       // released on an unverified exit.
       try {
-        await manager.shutdownProcess(activeClient.processKey);
+        if (snapshot.state !== "running") await releaseExecutor?.();
       } finally {
         if (snapshot.state !== "running") releaseCapacity();
       }
@@ -630,17 +636,16 @@ export async function executeGovernedVerseShellProcessObserved(
   const manager = getGovernedVerseShellManager(options.manager);
   const startedAt = Date.now();
   const deadlineAt = options.deadlineAt ?? startedAt + (options.timeoutMs ?? 60_000);
-  let stdout = "";
-  let stderr = "";
+  const output = new ByteTail(Math.min(Math.max(1, options.maxOutputBytes), 64 * 1024 * 1024));
   const handle = await startGovernedVerseShellProcess({
     ...options,
     manager,
     onStdout: (chunk) => {
-      stdout += chunk;
+      output.append("stdout", chunk);
       options.onStdout?.(chunk);
     },
     onStderr: (chunk) => {
-      stderr += chunk;
+      output.append("stderr", chunk);
       options.onStderr?.(chunk);
     },
   });
@@ -648,6 +653,7 @@ export async function executeGovernedVerseShellProcessObserved(
   const processKey = health?.key ?? `process-pid-${handle.pid}`;
   const managerKey = health?.key ?? processKey;
   const exit = await handle.wait();
+  const stdout = output.text("stdout"), stderr = output.text("stderr");
   const success = exit.state === "exited" && exit.exitCode === 0 && !exit.timedOut;
   const observation: Observation = {
     schema: "verseshell.observation/v1",
@@ -663,6 +669,7 @@ export async function executeGovernedVerseShellProcessObserved(
       stderr: { text: stderr },
       ...(exit.terminationReason ? { termination_reason: exit.terminationReason } : {}),
       artifacts: exit.artifacts,
+      output_bytes: { raw: output.rawBytes, retained: output.bytes, omitted: output.omittedBytes },
     },
     meta: {
       elapsed_ms: Date.now() - startedAt,

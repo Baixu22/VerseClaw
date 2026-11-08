@@ -6,11 +6,11 @@
  * - Direct calls from modes that need bash execution
  */
 
-import type { WriteStream } from "node:fs";
 import { sanitizeBinaryOutput } from "../shell-utils.js";
 import { stripAnsi } from "../utils/ansi.js";
 import type { BashOperations } from "./tools/bash-operations.js";
-import { createPrivateTempWriteStream } from "./tools/private-temp-file.js";
+import { createPrivateTempWriter } from "./tools/private-temp-file.js";
+import { ByteTail } from "../byte-tail.js";
 import { DEFAULT_MAX_BYTES, truncateTail } from "./tools/truncate.js";
 
 // ============================================================================
@@ -51,24 +51,22 @@ export async function executeBashWithOperations(
   operations: BashOperations,
   options?: BashExecutorOptions,
 ): Promise<BashResult> {
-  const outputChunks: string[] = [];
-  let outputBytes = 0;
   const maxOutputBytes = DEFAULT_MAX_BYTES * 2;
+  const output = new ByteTail(maxOutputBytes);
 
   let tempFilePath: string | undefined;
-  let tempFileStream: WriteStream | undefined;
+  let tempFileStream: ReturnType<typeof createPrivateTempWriter> | undefined;
+  let writeError: unknown;
   let totalBytes = 0;
 
   const ensureTempFile = () => {
     if (tempFilePath) {
       return;
     }
-    const tempFile = createPrivateTempWriteStream("openclaw-bash");
+    const tempFile = createPrivateTempWriter("openclaw-bash");
     tempFilePath = tempFile.path;
-    tempFileStream = tempFile.stream;
-    for (const chunk of outputChunks) {
-      tempFileStream.write(chunk);
-    }
+    tempFileStream = tempFile;
+    tempFileStream.write(output.text());
   };
 
   const closeTempFile = async () => {
@@ -77,19 +75,7 @@ export async function executeBashWithOperations(
     }
     const stream = tempFileStream;
     tempFileStream = undefined;
-    await new Promise<void>((resolve, reject) => {
-      const onError = (error: Error) => {
-        stream.off("finish", onFinish);
-        reject(error);
-      };
-      const onFinish = () => {
-        stream.off("error", onError);
-        resolve();
-      };
-      stream.once("error", onError);
-      stream.once("finish", onFinish);
-      stream.end();
-    });
+    stream.close();
   };
 
   const decoder = new TextDecoder();
@@ -104,21 +90,13 @@ export async function executeBashWithOperations(
     );
 
     // Start writing to temp file if exceeds threshold
-    if (totalBytes > DEFAULT_MAX_BYTES) {
-      ensureTempFile();
-    }
-
-    if (tempFileStream) {
-      tempFileStream.write(text);
-    }
+    try {
+      if (!writeError && totalBytes > DEFAULT_MAX_BYTES) ensureTempFile();
+      if (!writeError) tempFileStream?.write(text);
+    } catch (error) { writeError = error; }
 
     // Keep rolling buffer
-    outputChunks.push(text);
-    outputBytes += text.length;
-    while (outputBytes > maxOutputBytes && outputChunks.length > 1) {
-      const removed = outputChunks.shift()!;
-      outputBytes -= removed.length;
-    }
+    output.append("combined", text);
 
     // Stream to callback
     if (options?.onChunk) {
@@ -132,25 +110,26 @@ export async function executeBashWithOperations(
       signal: options?.signal,
     });
 
-    const fullOutput = outputChunks.join("");
+    const fullOutput = output.text();
     const truncationResult = truncateTail(fullOutput);
     if (truncationResult.truncated) {
       ensureTempFile();
     }
     await closeTempFile();
+    if (writeError) throw writeError;
     const cancelled = options?.signal?.aborted ?? false;
 
     return {
       output: truncationResult.truncated ? truncationResult.content : fullOutput,
       exitCode: cancelled ? undefined : (result.exitCode ?? undefined),
       cancelled,
-      truncated: truncationResult.truncated,
+      truncated: truncationResult.truncated || output.omittedBytes > 0,
       fullOutputPath: tempFilePath,
     };
   } catch (err) {
     // Check if it was an abort
     if (options?.signal?.aborted) {
-      const fullOutput = outputChunks.join("");
+      const fullOutput = output.text();
       const truncationResult = truncateTail(fullOutput);
       if (truncationResult.truncated) {
         ensureTempFile();
@@ -160,7 +139,7 @@ export async function executeBashWithOperations(
         output: truncationResult.truncated ? truncationResult.content : fullOutput,
         exitCode: undefined,
         cancelled: true,
-        truncated: truncationResult.truncated,
+        truncated: truncationResult.truncated || output.omittedBytes > 0,
         fullOutputPath: tempFilePath,
       };
     }

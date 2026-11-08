@@ -155,6 +155,7 @@ type RequestEntry = {
   sent: boolean;
   retryable: boolean;
   retryCount: number;
+  removeAbortListener?: () => void;
 };
 
 type ManagedAciProcessOptions = Required<
@@ -185,6 +186,7 @@ const APPROVAL_TOKEN = /^apv_[a-f0-9]{16}$/;
 const APPROVAL_TOKEN_IN_TEXT = /apv_[a-f0-9]{16}/giu;
 const TRACE_ID = /^[A-Za-z0-9._:-]{1,128}$/u;
 const MAX_READ_ONLY_RETRIES = 1;
+const PROCESS_CONTROL_OPS = new Set(["process.write", "process.kill"]);
 const READ_ONLY_IDEMPOTENT_OPS = new Set([
   "file.view",
   "file.read_range",
@@ -422,6 +424,8 @@ class ManagedAciProcess implements AciTransport {
   get idle(): boolean {
     return this.active === 0 && this.queue.length === 0 && this.pending.size === 0;
   }
+  references = 0;
+  private writeBlocked = false;
 
   health(): VerseShellProcessHealth {
     return {
@@ -484,7 +488,8 @@ class ManagedAciProcess implements AciTransport {
         ),
       );
     }
-    if (this.queue.length >= this.config.maxQueueSize) {
+    const queueLimit = op === "process.poll" ? Math.max(1, this.config.maxQueueSize - 1) : this.config.maxQueueSize;
+    if (this.queue.length >= queueLimit) {
       return Promise.reject(new AciTransportError("E_ACI_QUEUE_FULL", "VerseShell request queue is full"));
     }
 
@@ -535,11 +540,9 @@ class ManagedAciProcess implements AciTransport {
       };
       this.queue.push(entry);
       if (opts.signal) {
-        opts.signal.addEventListener(
-          "abort",
-          () => this.abortRequest(id),
-          { once: true },
-        );
+        const abort = () => this.abortRequest(id);
+        opts.signal.addEventListener("abort", abort, { once: true });
+        entry.removeAbortListener = () => opts.signal?.removeEventListener("abort", abort);
       }
       void this.ensureStarted()
         .then(() => this.drainQueue())
@@ -762,6 +765,7 @@ class ManagedAciProcess implements AciTransport {
       }
       this.pending.delete(entry.id);
       clearTimeout(entry.timer);
+      entry.removeAbortListener?.();
       if (!entry.op.startsWith("runtime.handshake")) this.active--;
       this._lastUsedAt = this.options.now();
       entry.resolve(frame.observation);
@@ -771,8 +775,13 @@ class ManagedAciProcess implements AciTransport {
 
   private drainQueue(): void {
     if (this.state !== "ready" || !this.child) return;
-    while (this.active < this.config.maxConcurrency && this.queue.length > 0) {
-      const entry = this.queue.shift()!;
+    while (!this.writeBlocked && this.active < this.config.maxConcurrency && this.queue.length > 0) {
+      const control = this.queue.findIndex(entry => PROCESS_CONTROL_OPS.has(entry.op));
+      const polls = [...this.pending.values()].filter(entry => entry.op === "process.poll").length;
+      const index = control >= 0 ? control : this.queue.findIndex(entry => entry.op !== "process.poll"
+        || polls < Math.max(1, this.config.maxConcurrency - 1));
+      if (index < 0) break;
+      const [entry] = this.queue.splice(index, 1);
       if (entry.sent) continue;
       entry.sent = true;
       this.active++;
@@ -794,13 +803,24 @@ class ManagedAciProcess implements AciTransport {
     const request = JSON.stringify({
       id: entry.id,
       op: entry.op,
-      args: entry.args,
+      // The pinned server consumes single JSONL requests serially. Bound each
+      // native wait so already-sent polls cannot exhaust a control's deadline.
+      args: entry.op === "process.poll"
+        ? { ...entry.args, wait_ms: Math.min(typeof entry.args.wait_ms === "number" ? entry.args.wait_ms : 0, Math.max(1, Math.floor(1000 / this.config.maxConcurrency))) }
+        : entry.args,
       agent: this.config.agentId,
       timeout_ms: Math.max(1, Math.min(entry.timeoutMs, remainingMs)),
       budget: { max_tokens: 4_000 },
     });
     try {
-      this.child.stdin.write(`${request}\n`, "utf8");
+      const child = this.child;
+      if (!child.stdin.write(`${request}\n`, "utf8")) {
+        this.writeBlocked = true;
+        child.stdin.once("drain", () => {
+          if (this.child !== child) return;
+          this.writeBlocked = false; this.drainQueue();
+        });
+      }
     } catch (error) {
       this.pending.delete(entry.id);
       if (entry.sent && entry.op !== "runtime.handshake") this.active--;
@@ -885,6 +905,7 @@ class ManagedAciProcess implements AciTransport {
 
   private rejectEntry(entry: RequestEntry, error: Error): void {
     clearTimeout(entry.timer);
+    entry.removeAbortListener?.();
     if (error instanceof AciTransportError) {
       const metadata = lifecycleMetadata(this.key, this.state, entry, {
         ...error.metadata,
@@ -918,6 +939,7 @@ class ManagedAciProcess implements AciTransport {
     const killSwitchTripped = this.killSwitchTripped || this.options.isKillSwitchTripped();
     const wasIntentional = this.intentionallyStopping || this.disposed || killSwitchTripped;
     this.child = null;
+    this.writeBlocked = false;
     this.stdoutBuffer = Buffer.alloc(0);
     if (killSwitchTripped) {
       this.state = "failed";
@@ -1336,7 +1358,7 @@ export class VerseShellProcessManager {
   async collectIdle(): Promise<number> {
     const cutoff = this.options.now() - this.options.idleTtlMs;
     const expired = Array.from(this.processes.entries()).filter(
-      ([key, managed]) => !this.startups.has(key) && managed.idle && managed.lastUsedAt <= cutoff,
+      ([key, managed]) => !this.startups.has(key) && managed.references === 0 && managed.idle && managed.lastUsedAt <= cutoff,
     );
     await Promise.all(
       expired.map(([key, managed]) => this.shutdownManaged(key, managed)),
@@ -1392,6 +1414,22 @@ export class VerseShellProcessManager {
       ...(managed ? [this.shutdownManaged(key, managed)] : []),
     ]);
     return true;
+  }
+
+  /** A running lifecycle pins its existing executor; explicit shutdown remains owner authority. */
+  retainProcess(key: string): () => Promise<void> {
+    const managed = this.processes.get(key);
+    if (!managed) throw new AciTransportError("E_ACI_NOT_RUNNING", "Executor owner is unavailable");
+    managed.references++;
+    let released = false;
+    return async () => {
+      if (released) return;
+      released = true; managed.references--;
+      // A concurrent unscoped read or acquisition retains the executor until the
+      // existing idle collector can close it after that work finishes.
+      if (managed.references === 0 && managed.idle && this.processes.get(key) === managed
+        && ![...this.acquisitions].some(acquisition => acquisition.key === key)) await this.shutdownManaged(key, managed);
+    };
   }
 
   shutdownAll(): Promise<void> {
