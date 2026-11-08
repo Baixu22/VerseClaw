@@ -1,0 +1,166 @@
+[
+  {
+    "variant": "baseline",
+    "candidate": "cd464727ca46cb24358bd703d8b664eb39541ea3",
+    "id": "runtime",
+    "argv": [
+      "node",
+      "scripts/build-openclaw-runtime.mjs"
+    ],
+    "exitCode": 0,
+    "durationMs": 58406
+  },
+  {
+    "variant": "baseline",
+    "candidate": "cd464727ca46cb24358bd703d8b664eb39541ea3",
+    "id": "capture",
+    "argv": [
+      "node",
+      "scripts/versebrowser-build-provenance.mjs",
+      "--capture"
+    ],
+    "exitCode": 0,
+    "durationMs": 578
+  },
+  {
+    "variant": "baseline",
+    "candidate": "cd464727ca46cb24358bd703d8b664eb39541ea3",
+    "id": "browser",
+    "argv": [
+      "node",
+      "node_modules/typescript/bin/tsc",
+      "-p",
+      "packages/versebrowser/tsconfig.build.json"
+    ],
+    "exitCode": 0,
+    "durationMs": 8969
+  },
+  {
+    "variant": "baseline",
+    "candidate": "cd464727ca46cb24358bd703d8b664eb39541ea3",
+    "id": "bridge",
+    "argv": [
+      "node",
+      "scripts/generate-ext-bridge.mjs"
+    ],
+    "exitCode": 0,
+    "durationMs": 219
+  },
+  {
+    "variant": "baseline",
+    "candidate": "cd464727ca46cb24358bd703d8b664eb39541ea3",
+    "id": "icons",
+    "argv": [
+      "node",
+      "scripts/sync-lobe-icons.mjs"
+    ],
+    "exitCode": 0,
+    "durationMs": 2515
+  },
+  {
+    "variant": "baseline",
+    "candidate": "cd464727ca46cb24358bd703d8b664eb39541ea3",
+    "id": "vite",
+    "argv": [
+      "node",
+      "--max-old-space-size=6144",
+      "node_modules/vite/bin/vite.js",
+      "build"
+    ],
+    "exitCode": 0,
+    "durationMs": 114063
+  },
+  {
+    "variant": "baseline",
+    "candidate": "cd464727ca46cb24358bd703d8b664eb39541ea3",
+    "id": "provenance",
+    "argv": [
+      "node",
+      "scripts/versebrowser-build-provenance.mjs"
+    ],
+    "exitCode": 0,
+    "durationMs": 1515
+  },
+  {
+    "variant": "candidate",
+    "candidate": "a1b7b38a7444debd3d8ceef431b7e4226e4836ff",
+    "id": "runtime",
+    "argv": [
+      "node",
+      "scripts/build-openclaw-runtime.mjs"
+    ],
+    "exitCode": 0,
+    "durationMs": 94625
+  },
+  {
+    "variant": "candidate",
+    "candidate": "a1b7b38a7444debd3d8ceef431b7e4226e4836ff",
+    "id": "capture",
+    "argv": [
+      "node",
+      "scripts/versebrowser-build-provenance.mjs",
+      "--capture"
+    ],
+    "exitCode": 0,
+    "durationMs": 406
+  },
+  {
+    "variant": "candidate",
+    "candidate": "a1b7b38a7444debd3d8ceef431b7e4226e4836ff",
+    "id": "browser",
+    "argv": [
+      "node",
+      "node_modules/typescript/bin/tsc",
+      "-p",
+      "packages/versebrowser/tsconfig.build.json"
+    ],
+    "exitCode": 0,
+    "durationMs": 7078
+  },
+  {
+    "variant": "candidate",
+    "candidate": "a1b7b38a7444debd3d8ceef431b7e4226e4836ff",
+    "id": "bridge",
+    "argv": [
+      "node",
+      "scripts/generate-ext-bridge.mjs"
+    ],
+    "exitCode": 0,
+    "durationMs": 125
+  },
+  {
+    "variant": "candidate",
+    "candidate": "a1b7b38a7444debd3d8ceef431b7e4226e4836ff",
+    "id": "icons",
+    "argv": [
+      "node",
+      "scripts/sync-lobe-icons.mjs"
+    ],
+    "exitCode": 0,
+    "durationMs": 1719
+  },
+  {
+    "variant": "candidate",
+    "candidate": "a1b7b38a7444debd3d8ceef431b7e4226e4836ff",
+    "id": "vite",
+    "argv": [
+      "node",
+      "--max-old-space-size=6144",
+      "node_modules/vite/bin/vite.js",
+      "build"
+    ],
+    "exitCode": 0,
+    "durationMs": 81203
+  },
+  {
+    "variant": "candidate",
+    "candidate": "a1b7b38a7444debd3d8ceef431b7e4226e4836ff",
+    "id": "provenance",
+    "argv": [
+      "node",
+      "scripts/versebrowser-build-provenance.mjs"
+    ],
+    "exitCode": 0,
+    "durationMs": 1657
+  }
+]

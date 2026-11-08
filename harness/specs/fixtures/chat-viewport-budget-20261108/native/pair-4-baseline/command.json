@@ -1,0 +1,21 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "variant": "baseline",
+  "candidate": "cd464727ca46cb24358bd703d8b664eb39541ea3",
+  "argv": [
+    "node",
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "tests/e2e/chat-viewport-budget.spec.ts",
+    "--grep",
+    "paired",
+    "--workers=1",
+    "--retries=0",
+    "--reporter=list,json",
+    "--output=D:\\tmp\\tf0834\\pair-4-baseline\\results"
+  ],
+  "cwd": "D:\\tmp\\tf0834\\baseline",
+  "exitCode": 0,
+  "durationMs": 55531
+}

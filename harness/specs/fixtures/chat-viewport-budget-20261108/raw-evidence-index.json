@@ -1,0 +1,346 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "files": [
+    {
+      "path": "D:\\tmp\\tf0834\\acceptance-integrated\\commands.json",
+      "sha256": "8bb59013fa8c5df7c2a7442c24ce311a067e6222d8855cf3bdf2d0e461bd3075"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\acceptance-integrated\\comms\\compare-report.json",
+      "sha256": "4ed78f4a4e4aff4970e6a70920b549396598f01de01328daec77b7dcdf4a819b"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\acceptance-integrated\\comms\\compare-report.md",
+      "sha256": "8cd2fd8ca886c0063ac6e103dd5421b2ad6bcff19587670a82a9069727e15325"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\acceptance-integrated\\comms\\current-metrics.json",
+      "sha256": "e31cf7e61773ac9265a1bed248110aff1b5d3841e8f7b633ba639a8eec48773d"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\acceptance-integrated\\comms-compare.log",
+      "sha256": "774287dd7e8da56fe5f13699697f8046b8b31ba28dab98b2319e1d00f081fc9b"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\acceptance-integrated\\comms-replay.log",
+      "sha256": "70c352a7468862000ec4f09eccbf6b1a8b4fae38ba3001cfa58d7d24f4097503"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\acceptance-integrated\\contract.log",
+      "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\acceptance-integrated\\diff-check-final.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\acceptance-integrated\\diff-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\acceptance-integrated\\harness-run.log",
+      "sha256": "6854b2e81567cdefa6294eebcd832dbcb23b78da4da46ed162be8acbb5be200d"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\acceptance-integrated\\harness-validate-final.log",
+      "sha256": "63aad67976da423a328b939a9d1f40edd2299a02a851fe9666e1071e76139d5d"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\acceptance-integrated\\harness-validate.log",
+      "sha256": "ffae1d3c61a8661ce6f05dd9d999c1ca3c5680232a32d5992cad7c2bdb6b3f84"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\acceptance-integrated\\i18n.log",
+      "sha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\acceptance-integrated\\lint.json",
+      "sha256": "afe081408bfb0188b24e90001f280062d1991bf5a0e64fe47db31dad1c1c3617"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\acceptance-integrated\\lint.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\acceptance-integrated\\node-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\acceptance-integrated\\report-final.json",
+      "sha256": "1c8d7fdcd84d38e8bad782ce8854e1e5465f5dea18055daa2a708dac19dbc695"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\acceptance-integrated\\report.json",
+      "sha256": "a035d50d89cd175ec405ee7069e035d95f2d620bfd51c3024074b2932be05047"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\acceptance-integrated\\retention-final.log",
+      "sha256": "2b509d68433a706bf442acb2ce74a860a9f014c714cf951554e27f0d74e060a5"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\acceptance-integrated\\retention.log",
+      "sha256": "93e4a39012fcd7d16fa98aae50aaa659c957386c2b78e8edee4519c7cf15785e"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\acceptance-integrated\\unit.json",
+      "sha256": "03b6e29556afd19afa436e974b38ebbdb665cb820d847f69c8bf04d4e19ef4c7"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\acceptance-integrated\\unit.log",
+      "sha256": "938c0c1edec5bc50386ba1f4d3c86d40979160108dbcc15ace119e76f97511d4"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\acceptance-integrated\\web-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\build-integrated.py",
+      "sha256": "5733a19be3315e8fbef46d706bc4c1d27dcf1287013e89bc161469dd965f64bd"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\compare-pairs.py",
+      "sha256": "7369271b6a94c3e7e5c26c59f0aae0c32c3b8dacfc8ffb9955b5f411cba62cca"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\native-integrated\\command.json",
+      "sha256": "f24576d099bfdd7130a54a218d81fde5b505883effca900283d9f9f2d30df2e7"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\native-integrated\\native.json",
+      "sha256": "242de4aea37eaa5163c50a69c611a07d715aba07b5b5d439982f41d764c0ea7f"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\native-integrated\\native.log",
+      "sha256": "8c947f76aacdb298b2a2b42b3ffd772ad3e2c8f6e68b747d8c6ab9bd2eefe720"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\native-integrated\\results\\.last-run.json",
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\native-integrated\\results\\chat-viewport-budget-long--c6c92-on-expansion-and-reload-ru-\\long-history-ru.png",
+      "sha256": "a86e40921ece0121189b7584cc8270bfae0baba7aef0612aaf32abcf8037cf37"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\native-integrated\\results\\chat-viewport-budget-long--c6c92-on-expansion-and-reload-ru-\\navigation.json",
+      "sha256": "a71d7ac49a5920f2f5d1ca485bda817177c01fb89fefcc579235841f844141d0"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\native-integrated\\results\\chat-viewport-budget-long--ceaf7-on-expansion-and-reload-en-\\long-history-en.png",
+      "sha256": "d15f1984df458bcd55286ae2f2e42cc6b2df2e980d37b5683977cacdc6c97b1f"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\native-integrated\\results\\chat-viewport-budget-long--ceaf7-on-expansion-and-reload-en-\\navigation.json",
+      "sha256": "41e185c63e6d55af5e4fbac39761f4d9ed89d5310244bbcd3eb897f97b870b64"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\native-integrated\\results\\chat-viewport-budget-long--d1183-on-expansion-and-reload-zh-\\long-history-zh.png",
+      "sha256": "3d8ad4393d3b02b714b888adc9d42c472666f65d69b637e0077128dfada8cedc"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\native-integrated\\results\\chat-viewport-budget-long--d1183-on-expansion-and-reload-zh-\\navigation.json",
+      "sha256": "9caf3ef0bf3c4e067f98c47700f37ffaa69c245e904d2901950cdcd8b0055a60"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\native-integrated\\results\\chat-viewport-budget-long--dbf35-on-expansion-and-reload-ja-\\long-history-ja.png",
+      "sha256": "f98a439fe5acb8f45b573571b2b0a4e21cb071850e73b16d3c403ec3eee9005f"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\native-integrated\\results\\chat-viewport-budget-long--dbf35-on-expansion-and-reload-ja-\\navigation.json",
+      "sha256": "ed4a637a224150cd77ac301e1bcf5793b3d2bbbc8347e7a2c21e18f469c246d8"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\native-integrated\\results\\electron-process-cleanup.json",
+      "sha256": "9fcab46b541dedf137125731a45debf0dcdf989ec220692f40dc3836273d05cf"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\native-integrated\\results\\electron-process-run.json",
+      "sha256": "8dc98e19647d2fcf8ad562b22044d84ec58488c16a8cd14848f46cfa31d7d680"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\native-integrated\\results\\source-mutation-guard.json",
+      "sha256": "c5c4e8d66afe3b8c9036a4742c710ff26842837829c251ae457ae93b082bf8fd"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\native-integrated\\results\\source-state-after.json",
+      "sha256": "4aa0d89ae39cf7b3aa86fb5fecff3c48ed4b68dacab9ad34f65d46098a23fd83"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\native-integrated\\results\\source-state-before.json",
+      "sha256": "4aa0d89ae39cf7b3aa86fb5fecff3c48ed4b68dacab9ad34f65d46098a23fd83"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-1-baseline\\command.json",
+      "sha256": "f1c94a43b96dbebec622bea1430ed5860d7be22cdff68db77a645e0069d9170f"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-1-baseline\\native.json",
+      "sha256": "af6de33ef533da98fe1ff63a6bc9281c8fe51bf4400d7ba9d9c4f33c7f1d7cab"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-1-baseline\\native.log",
+      "sha256": "efc112d75cc24801d8cc63096f86a62f81706489ec2b0db2962c0d94e77f0ce1"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-1-baseline\\results\\.last-run.json",
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-1-baseline\\results\\chat-viewport-budget-paire-5f1e2-tory-and-scrolling-workload\\measurement.json",
+      "sha256": "9e54f09f21ddf585c4394243ae86459c4493d050e8c0ff02cd30bab54f71cdf5"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-1-baseline\\results\\electron-process-cleanup.json",
+      "sha256": "b369daa262a4c4304b6483a98c19424bddad41d0a0f8012f33745f59885da6ef"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-1-baseline\\results\\electron-process-run.json",
+      "sha256": "0093ad89233476bbcee34cd91fbcbc1e0d15d98005af83d1a4c50e9e636782d1"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-1-baseline\\results\\source-mutation-guard.json",
+      "sha256": "48cad6017e7f383107684aa6abf447ea1a150fefbd04de16985e12aa8157af54"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-1-baseline\\results\\source-state-after.json",
+      "sha256": "5d79421fbde39fd42b3fb53ef353e0be877ea911c82fd8392ce99afc3c63190f"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-1-baseline\\results\\source-state-before.json",
+      "sha256": "5d79421fbde39fd42b3fb53ef353e0be877ea911c82fd8392ce99afc3c63190f"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-2-candidate\\command.json",
+      "sha256": "042a4990bce5613eee80ae252593bf0e45deb5bbbb5085de65b23f340e878cdc"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-2-candidate\\native.json",
+      "sha256": "61da9e9fb017c8764b4218d075d0aa2e837f9ed7e9d4d506ccddccd3611beeef"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-2-candidate\\native.log",
+      "sha256": "72d8f5ff55f1b3b1f7ea1e2ea43c6d4a31af4f8fbdd95d805b2b6d76967d5bc9"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-2-candidate\\results\\.last-run.json",
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-2-candidate\\results\\chat-viewport-budget-paire-5f1e2-tory-and-scrolling-workload\\measurement.json",
+      "sha256": "fbd409b5f311472da04cfed9203538a3d3d7b5772f5ccc3adc6b1fbdcef70d08"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-2-candidate\\results\\electron-process-cleanup.json",
+      "sha256": "4a4ba4d03c46ba474c602b69f9fc03ea6a9cd1622a2cb062fe466c2bac6fffdb"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-2-candidate\\results\\electron-process-run.json",
+      "sha256": "26aee150200376de6486cb2efe9ee26e7a979a1dfb73341892db3551221abe70"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-2-candidate\\results\\source-mutation-guard.json",
+      "sha256": "c5c4e8d66afe3b8c9036a4742c710ff26842837829c251ae457ae93b082bf8fd"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-2-candidate\\results\\source-state-after.json",
+      "sha256": "4aa0d89ae39cf7b3aa86fb5fecff3c48ed4b68dacab9ad34f65d46098a23fd83"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-2-candidate\\results\\source-state-before.json",
+      "sha256": "4aa0d89ae39cf7b3aa86fb5fecff3c48ed4b68dacab9ad34f65d46098a23fd83"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-3-candidate\\command.json",
+      "sha256": "f956850575b31f9de51af1ce76aaea4dbfeb53db83b40e8deb8ae693610aa329"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-3-candidate\\native.json",
+      "sha256": "a467da4da3320dcb575d05227825634f865cfb70d96d014158bf288dda195480"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-3-candidate\\native.log",
+      "sha256": "9e38730a0b8fbfbc2e6ffbf4dc6191e8800b7f0ae31533f2b9ee2b636d7d53cd"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-3-candidate\\results\\.last-run.json",
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-3-candidate\\results\\chat-viewport-budget-paire-5f1e2-tory-and-scrolling-workload\\measurement.json",
+      "sha256": "368b35d1ebe661e047589279303aa32a18ec3fddeff3e98bbba91d96cbab0b61"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-3-candidate\\results\\electron-process-cleanup.json",
+      "sha256": "239aa8ff3fff0e1e97adda28afb2c6e3b52e4c81236236a8570e2d2d11b95373"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-3-candidate\\results\\electron-process-run.json",
+      "sha256": "94860cbcbb22bb0bd292c0ac8fa4cf0718ea2ccd1b127af3b06b5fb663dd5cb3"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-3-candidate\\results\\source-mutation-guard.json",
+      "sha256": "c5c4e8d66afe3b8c9036a4742c710ff26842837829c251ae457ae93b082bf8fd"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-3-candidate\\results\\source-state-after.json",
+      "sha256": "4aa0d89ae39cf7b3aa86fb5fecff3c48ed4b68dacab9ad34f65d46098a23fd83"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-3-candidate\\results\\source-state-before.json",
+      "sha256": "4aa0d89ae39cf7b3aa86fb5fecff3c48ed4b68dacab9ad34f65d46098a23fd83"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-4-baseline\\command.json",
+      "sha256": "fd45dfc9131e80d8cbb47539c260aa8e2bad56e55ebfcf3ce7377d2cc6561564"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-4-baseline\\native.json",
+      "sha256": "52f170d82fc363ef022de58ce5ad2026cd9494365bbba7f28db673e04d29b642"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-4-baseline\\native.log",
+      "sha256": "976d0a59c11c7ad5d91bd6512fab44bb271df59030c4bd4882eadbecf9ed1782"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-4-baseline\\results\\.last-run.json",
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-4-baseline\\results\\chat-viewport-budget-paire-5f1e2-tory-and-scrolling-workload\\measurement.json",
+      "sha256": "81ab3cd96508b422546b64484b787b8bc4677e6a830e5914f117b9abf932737a"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-4-baseline\\results\\electron-process-cleanup.json",
+      "sha256": "f3122d05021934728f8834f32bf02ee0696d336f420567474aaaed7c2e158e20"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-4-baseline\\results\\electron-process-run.json",
+      "sha256": "84cad3e5619c2b7893990db451fdb8514b35c29c2d1b391d17207e802bb7c5c6"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-4-baseline\\results\\source-mutation-guard.json",
+      "sha256": "48cad6017e7f383107684aa6abf447ea1a150fefbd04de16985e12aa8157af54"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-4-baseline\\results\\source-state-after.json",
+      "sha256": "5d79421fbde39fd42b3fb53ef353e0be877ea911c82fd8392ce99afc3c63190f"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\pair-4-baseline\\results\\source-state-before.json",
+      "sha256": "5d79421fbde39fd42b3fb53ef353e0be877ea911c82fd8392ce99afc3c63190f"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\renderer-probe2.log",
+      "sha256": "fa65a666b85bde5bf02d1dca8f795f110ec6664e69c7238fc9ccaac8bd6e4b49"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\run-native.py",
+      "sha256": "9b78fc722b8cc0c0a43e7d1ee7ace765e8d6f64f6a049dca1aae2b08ab10ff8a"
+    },
+    {
+      "path": "D:\\tmp\\tf0834\\verify-integrated.py",
+      "sha256": "0f5b7bf4362e14452954abcb386303e6ad5d1c4e685e887e786013a3c6b8e800"
+    }
+  ]
+}

@@ -1,0 +1,825 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": {
+    "commit": "b36b52487513cb2a170b02521963ee8a2d80dad4",
+    "tree": "fa868faa2435ff302204e2e7cd163ac9e37606c3",
+    "dirty": false
+  },
+  "cleanAfter": true,
+  "commands": [
+    {
+      "id": "unit",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/chat-content-budget.test.ts",
+        "tests/unit/chat-viewport.test.tsx",
+        "tests/unit/chat-history-budget-reload.test.ts",
+        "tests/unit/chat-stream-publication.test.ts",
+        "tests/unit/chat-runtime-sequence.test.ts",
+        "tests/unit/chat-completed-projection.test.ts",
+        "tests/unit/execution-projection.test.ts",
+        "tests/unit/chat-page-execution-graph.test.tsx",
+        "tests/unit/chat-event-dedupe.test.ts",
+        "tests/unit/agent-resource-limits-p5-004.test.ts",
+        "tests/unit/resource-fabric-primitives.test.ts",
+        "tests/unit/chat-question-directory.test.tsx",
+        "tests/unit/chat-store-history-retry.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\tf0834\\acceptance-integrated\\unit.json"
+      ],
+      "cwd": "D:\\tmp\\tf0834\\candidate",
+      "exitCode": 0,
+      "durationMs": 34359
+    },
+    {
+      "id": "web-types",
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\tf0834\\candidate",
+      "exitCode": 0,
+      "durationMs": 10766
+    },
+    {
+      "id": "node-types",
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\tf0834\\candidate",
+      "exitCode": 0,
+      "durationMs": 45312
+    },
+    {
+      "id": "lint",
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "shared/resources/bounded-cache.ts",
+        "src/hooks/use-message-viewport.ts",
+        "src/pages/Chat/MessageNavRail.tsx",
+        "src/pages/Chat/execution-projection.ts",
+        "src/pages/Chat/index.tsx",
+        "src/pages/Chat/message-render-projection.ts",
+        "src/stores/chat.ts",
+        "src/stores/chat/content-cache.ts",
+        "tests/e2e/chat-viewport-budget.spec.ts",
+        "tests/unit/chat-content-budget.test.ts",
+        "tests/unit/chat-history-budget-reload.test.ts",
+        "tests/unit/chat-page-execution-graph.test.tsx",
+        "tests/unit/chat-viewport.test.tsx",
+        "vite.config.ts",
+        "--format=json",
+        "--output-file",
+        "D:\\tmp\\tf0834\\acceptance-integrated\\lint.json"
+      ],
+      "cwd": "D:\\tmp\\tf0834\\candidate",
+      "exitCode": 0,
+      "durationMs": 7922
+    },
+    {
+      "id": "contract",
+      "argv": [
+        "node",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0834\\candidate",
+      "exitCode": 0,
+      "durationMs": 3640
+    },
+    {
+      "id": "i18n",
+      "argv": [
+        "node",
+        "scripts/i18n-lint.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0834\\candidate",
+      "exitCode": 0,
+      "durationMs": 563
+    },
+    {
+      "id": "comms-replay",
+      "argv": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0834\\candidate",
+      "exitCode": 0,
+      "durationMs": 312
+    },
+    {
+      "id": "comms-compare",
+      "argv": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0834\\candidate",
+      "exitCode": 0,
+      "durationMs": 188
+    },
+    {
+      "id": "harness-run",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/chat-viewport-budget-20261108.md",
+        "--dry-run"
+      ],
+      "cwd": "D:\\tmp\\tf0834\\candidate",
+      "exitCode": 0,
+      "durationMs": 1000
+    },
+    {
+      "id": "retention",
+      "argv": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0834\\candidate",
+      "exitCode": 0,
+      "durationMs": 5953
+    },
+    {
+      "id": "harness-validate",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/chat-viewport-budget-20261108.md"
+      ],
+      "cwd": "D:\\tmp\\tf0834\\candidate",
+      "exitCode": 0,
+      "durationMs": 844
+    },
+    {
+      "id": "diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "f533277c7",
+        "HEAD"
+      ],
+      "cwd": "D:\\tmp\\tf0834\\candidate",
+      "exitCode": 0,
+      "durationMs": 109
+    }
+  ],
+  "tests": {
+    "numTotalTests": 115,
+    "numPassedTests": 115,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numFailedTestSuites": 0,
+    "success": true
+  },
+  "cases": [
+    {
+      "name": "P5-004 token/cost budget (A1) allows turns under budget",
+      "status": "passed"
+    },
+    {
+      "name": "P5-004 token/cost budget (A1) visibly rejects when token budget exceeded",
+      "status": "passed"
+    },
+    {
+      "name": "P5-004 token/cost budget (A1) visibly rejects when cost budget exceeded",
+      "status": "passed"
+    },
+    {
+      "name": "P5-004 token/cost budget (A1) null budgets mean unlimited",
+      "status": "passed"
+    },
+    {
+      "name": "P5-004 history memory ceiling (A2) caps large history to a stable max (drops oldest)",
+      "status": "passed"
+    },
+    {
+      "name": "P5-004 history memory ceiling (A2) large history load keeps memory under ceiling for any input size",
+      "status": "passed"
+    },
+    {
+      "name": "P5-004 history memory ceiling (A2) DOM render window bounds mounted rows",
+      "status": "passed"
+    },
+    {
+      "name": "P5-004 tool result flood + timeout (A3) truncates tool result floods",
+      "status": "passed"
+    },
+    {
+      "name": "P5-004 tool result flood + timeout (A3) keeps both the head and the error tail when truncating large results",
+      "status": "passed"
+    },
+    {
+      "name": "P5-004 tool result flood + timeout (A3) detects turn timeout for abort/release path",
+      "status": "passed"
+    },
+    {
+      "name": "completed history projections during streaming reuses the completed card and its steps when only the live text grows",
+      "status": "passed"
+    },
+    {
+      "name": "completed history projections during streaming invalidates a completed card when its label or history changes",
+      "status": "passed"
+    },
+    {
+      "name": "completed history projections during streaming keeps completed cards stable when another run cache or live error changes",
+      "status": "passed"
+    },
+    {
+      "name": "bounded payload cache evicts least recently used payloads before their combined bytes exceed capacity",
+      "status": "passed"
+    },
+    {
+      "name": "bounded payload cache does not retain a single oversized value",
+      "status": "passed"
+    },
+    {
+      "name": "bounded payload cache reclaims overwritten, deleted and expired payload accounting",
+      "status": "passed"
+    },
+    {
+      "name": "shared chat cache budget charges history, previews and projections to one limit and retains each namespace count",
+      "status": "passed"
+    },
+    {
+      "name": "shared chat cache budget counts cycles, aliases and binary buffers without traversing them twice",
+      "status": "passed"
+    },
+    {
+      "name": "shared chat cache budget does not retain an oversized body and can load it again through its cold key",
+      "status": "passed"
+    },
+    {
+      "name": "chat event dedupe keeps processing delta events without seq for the same run",
+      "status": "passed"
+    },
+    {
+      "name": "chat event dedupe still dedupes repeated delta events when seq matches",
+      "status": "passed"
+    },
+    {
+      "name": "chat history cold reads after shared budget eviction reloads an evicted session and image from their original owner references",
+      "status": "passed"
+    },
+    {
+      "name": "chat history cold reads after shared budget eviction keeps active run identity after its large streaming snapshot is evicted",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle collapses activity when the final reply starts streaming and shows only the reply suffix",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle reads completed execution steps cached after the first page render",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle does not reopen an old handoff draft after changing away and back",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle does not overwrite the new conversation status when old compression finishes",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle keeps completed long task work visible by default and remembers a manual collapse",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle uses the completed-run preference only as a default and allows it to be disabled",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle keeps short conversations as normal messages without a turn summary card",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle renders a team orchestration card for team_orchestrate task graph results",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle renders ordinary orchestration diagnostics without Task Loop repair wording",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle keeps runtime tool status inside the execution graph while a tool is running",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle renders the execution graph immediately for an active run before any stream content arrives",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle renders generated file cards with line stats for edit tools",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle shows a scroll-to-latest button when the chat is scrolled away from the bottom",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle stops showing trailing thinking and renders run error callout after terminal model error",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle keeps history final reply folded while matching streamed text is still active",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle stops trailing thinking when history already contains the final reply but sending is stuck",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle settles composer when generated image media arrives without transcript tool calls",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle stops trailing thinking when generated image media arrives but session wake is missed",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle shows trailing thinking together with a running tool status",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle keeps trailing thinking visible while waiting for final history after completed tool status",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle settles image generation runs after message tool delivers generated media",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle keeps image generation runs active after async task status narration",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle keeps the run active when narration landed in history before tools finished",
+      "status": "passed"
+    },
+    {
+      "name": "Chat question directory stays removed and keeps real repeated questions as separate transcript entries",
+      "status": "passed"
+    },
+    {
+      "name": "runtime stream sequence and terminal boundaries ignores non-adjacent duplicate sequence events before appending text",
+      "status": "passed"
+    },
+    {
+      "name": "runtime stream sequence and terminal boundaries keeps the latest cumulative text when an older sequence arrives",
+      "status": "passed"
+    },
+    {
+      "name": "runtime stream sequence and terminal boundaries preserves repeated legitimate chunks without sequence identities",
+      "status": "passed"
+    },
+    {
+      "name": "runtime stream sequence and terminal boundaries keeps completed runs terminal when delayed starts or deltas arrive",
+      "status": "passed"
+    },
+    {
+      "name": "runtime stream sequence and terminal boundaries keeps error runs terminal when delayed starts or deltas arrive",
+      "status": "passed"
+    },
+    {
+      "name": "runtime stream sequence and terminal boundaries keeps aborted runs terminal when delayed starts or deltas arrive",
+      "status": "passed"
+    },
+    {
+      "name": "runtime stream sequence and terminal boundaries allows an explicit empty cumulative replacement",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry uses the longer timeout only for the initial foreground history load",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry renders local transcript fallback while the initial gateway history request is still pending",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry keeps startup retry active after rendering local transcript fallback",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry keeps local transcript fallback when gateway returns empty history",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry forces the internal final-message reload through the quiet history cooldown",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry keeps non-startup foreground loading safety timeout at 15 seconds",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry keeps cached session messages visible without foreground loading overlay during refresh",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry switchSession restores cached session messages immediately while refreshing in background",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry does not re-arm Thinking state for stale main-session heartbeat tool history",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry switchSession preserves unsynced optimistic user messages when switching back",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry switchSession restores trusted tool results from the session history cache",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry switchSession restores in-flight run state so Thinking indicator survives navigation",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry treats the same session as a fresh foreground load after gateway runtime changes",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry does not burn the first-load retry path when the first attempt becomes stale",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry stops retrying once the user switches sessions mid-load",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry keeps the optimistic user message when completion refresh wins the transcript write race",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry does not restore a pending optimistic message after deleting the session",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry keeps the run open across intermediate [thinking, toolCall] history snapshots",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry keeps the run open for mixed [thinking, text, toolCall] turns with stopReason=toolUse",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry closes the run when a final assistant reply (text, stopReason=endTurn) appears",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry unsticks sending when history has a final reply after tools without pendingFinal",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry keeps the run open for Anthropic-native [thinking, tool_use] (snake_case stop_reason)",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry keeps the run open for OpenAI ChatCompletions message with tool_calls array",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry closes the run for OpenAI ChatCompletions plain-text final reply",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry clears a stale no-response error when history poll shows tool progress",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry does not emit a false no-response error when history poll shows tool progress",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry surfaces an idle-timeout hint when a role-only stream placeholder stalls the run",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry does not treat prior-turn assistant history as progress for a new send",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication publishes a burst once per frame while reads see every delta immediately",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication coalesces legacy cumulative text without losing the latest snapshot",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication immediately publishes 'approval.updated' 'pending' with the pending text included",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication immediately publishes 'run.ended' 'completed' with the pending text included",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication immediately publishes 'run.ended' 'error' with the pending text included",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication immediately publishes 'run.ended' 'aborted' with the pending text included",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication publishes confirmed abort immediately and cancels a pending frame",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication does not revive a terminal owner through a delayed legacy delta",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication keeps a newly selected run intact while an earlier abort resolves",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication does not replace an owner result that arrives before the abort acknowledgement",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication retains running ownership when an abort request fails",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication publishes a session change immediately and retains foreign-run ownership",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication publishes within the fallback bound when animation frames are suspended",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication cancels pending publication when the final subscriber leaves",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication does not schedule unused publication work without subscribers",
+      "status": "passed"
+    },
+    {
+      "name": "measured message viewport selects the actual offset of a tall row and never exceeds the existing row cap",
+      "status": "passed"
+    },
+    {
+      "name": "measured message viewport mounts the requested old or new row and disconnects every observer on unmount",
+      "status": "passed"
+    },
+    {
+      "name": "measured message viewport preserves the reading anchor after earlier rows grow or history is prepended",
+      "status": "passed"
+    },
+    {
+      "name": "measured message viewport keeps a newly requested bottom position when a resize lands before the next frame",
+      "status": "passed"
+    },
+    {
+      "name": "execution projection promotes active runtime assistant text into the latest streaming reply",
+      "status": "passed"
+    },
+    {
+      "name": "execution projection keeps a new active runtime run visible when history already has a prior reply",
+      "status": "passed"
+    },
+    {
+      "name": "execution projection turns active runtime events into a running tool step",
+      "status": "passed"
+    },
+    {
+      "name": "execution projection uses history fallback to build a completed graph card",
+      "status": "passed"
+    },
+    {
+      "name": "execution projection suppresses trailing thinking when streaming text is folded into the graph",
+      "status": "passed"
+    },
+    {
+      "name": "execution projection shows cached graph steps after history reload drops transient graph messages",
+      "status": "passed"
+    },
+    {
+      "name": "execution projection scopes a runtime chat run only when the owning workspace is known",
+      "status": "passed"
+    },
+    {
+      "name": "resource fabric P0 primitives evicts LRU entries, expires by injected TTL, and invalidates by prefix",
+      "status": "passed"
+    },
+    {
+      "name": "resource fabric P0 primitives coalesces same-key work and does not cache rejected calls",
+      "status": "passed"
+    },
+    {
+      "name": "resource fabric P0 primitives adjusts adaptive limits with bounds and a dead zone",
+      "status": "passed"
+    },
+    {
+      "name": "resource fabric P0 primitives removes and clears queued priority items",
+      "status": "passed"
+    },
+    {
+      "name": "resource fabric P0 primitives enforces token-bucket bursts with injected time and rejects invalid input",
+      "status": "passed"
+    },
+    {
+      "name": "resource fabric P0 primitives orders QoS, boosts explicit work, and ages opportunistic work",
+      "status": "passed"
+    },
+    {
+      "name": "resource fabric P0 primitives enforces DRF-lite capacity and fairness bounds",
+      "status": "passed"
+    }
+  ],
+  "sources": [
+    {
+      "path": ".gitignore",
+      "sha256": "28dce76a2586771c7b81f65205b642ec13b795b5968bc6c91188286262b34634"
+    },
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "57c926a277cc46ef3c26e0270ae43d94423bb52171d95409fb268cfefbabb5c1"
+    },
+    {
+      "path": "README.md",
+      "sha256": "301900c6564150958a2db84cc817a2d7c022153b7dd486d50b483b4d593e7239"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "73d5529e28e755b8f1bf698dc4db0f8167e938345a51bce2cd0c8f98fce45188"
+    },
+    {
+      "path": "docs/modules/resources-and-observability.md",
+      "sha256": "b413371d2e8d0652d466f3fa0b093362667dd7e34c61893016c85addf8e4e329"
+    },
+    {
+      "path": "harness/specs/rules/chat-viewport-budget.md",
+      "sha256": "858a66e71fbdc0e23116a5f36b53f7888e422b01b65c879fac07d7bfe84b4b72"
+    },
+    {
+      "path": "harness/specs/tasks/chat-viewport-budget-20261108.md",
+      "sha256": "257dab2792f1692ded84dde1b3cebde739c5ce796cf8d550e6a4f74c4e3c375d"
+    },
+    {
+      "path": "shared/resources/bounded-cache.ts",
+      "sha256": "c86fc2a7e65c9bf2b30e43101680b79b92456ef74be7c4e9413dca323f5c9149"
+    },
+    {
+      "path": "src/hooks/use-message-viewport.ts",
+      "sha256": "40e4d68102d2c138d2402b8f97d24ae56ca49e72915d3bf08be2586677db9c4c"
+    },
+    {
+      "path": "src/pages/Chat/MessageNavRail.tsx",
+      "sha256": "c6cbf3992980b2ca725825daeff477c06c43cea7611707260150fd65fbd2b222"
+    },
+    {
+      "path": "src/pages/Chat/execution-projection.ts",
+      "sha256": "933aa3521c90cc2497f9b0ab23293f63cf7603b17e5b932d5af3f9bd334b6097"
+    },
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "sha256": "85986581d49e11b609c0d5211541e9208302e206b10827ae47460e343acbb5e2"
+    },
+    {
+      "path": "src/pages/Chat/message-render-projection.ts",
+      "sha256": "b444ec04893f08341adc9902c9d675730cd9a99c9b78af3c7117f62fe82884b5"
+    },
+    {
+      "path": "src/stores/chat.ts",
+      "sha256": "a4786431ea93d394fdc6da92328db703af4b113c556fbf187d097df255ce5755"
+    },
+    {
+      "path": "src/stores/chat/content-cache.ts",
+      "sha256": "72b6a4b4d0853c02d998a95ac61383e7d2fd2b5b0167f42d9002ea9b8088fe78"
+    },
+    {
+      "path": "tests/e2e/chat-viewport-budget.spec.ts",
+      "sha256": "c3566a5febaa43d0e6b0641314309ce4e2410816d6996a172bf2548f9f0aee0e"
+    },
+    {
+      "path": "tests/unit/chat-content-budget.test.ts",
+      "sha256": "18f8102cd876038ead43c9d81825a21015140993bf498540caaea8a375383b03"
+    },
+    {
+      "path": "tests/unit/chat-history-budget-reload.test.ts",
+      "sha256": "2cbdc2997b9c4d52bb967613436e97d92fb51cf892598fff281ec7af8c76a718"
+    },
+    {
+      "path": "tests/unit/chat-page-execution-graph.test.tsx",
+      "sha256": "70af9808df2d8b5b975d578e83790c9fd6b32dc49b8a3dc69951304a6ed0799e"
+    },
+    {
+      "path": "tests/unit/chat-viewport.test.tsx",
+      "sha256": "9fc6d87eca043a84e80df17a512c91965c3e081cf0139bcfbbda0c47345d630f"
+    },
+    {
+      "path": "vite.config.ts",
+      "sha256": "4248e8560e689cb279a1452ec5f9e5a9d8591d47613d72e2ccea68be517a4a80"
+    }
+  ],
+  "verdict": "pass-chat-viewport-budget",
+  "priorCandidate": {
+    "commit": "a1b7b38a7444debd3d8ceef431b7e4226e4836ff",
+    "tree": "0d87248887ef95602acf1ba039b0c906609456e8",
+    "dirty": false
+  },
+  "priorFailedCommands": [
+    {
+      "id": "retention",
+      "argv": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0834\\candidate",
+      "exitCode": 1,
+      "durationMs": 5844
+    }
+  ],
+  "testReuse": {
+    "sourceCommit": "a1b7b38a7444debd3d8ceef431b7e4226e4836ff",
+    "paths": [
+      "electron",
+      "shared",
+      "src",
+      "packages/versebrowser",
+      "openclaw_runtime",
+      "vite.config.ts",
+      "package.json",
+      "pnpm-lock.yaml",
+      "scripts",
+      "tests"
+    ],
+    "diffExitCode": 0,
+    "reason": "Only .gitignore and task-spec metadata changed."
+  },
+  "nativeNavigation": {
+    "passed": 4,
+    "languages": [
+      "en",
+      "zh",
+      "ja",
+      "ru"
+    ],
+    "mountedRowLimit": 120,
+    "loadedMessages": 300
+  },
+  "pairedNative": {
+    "candidatePassed": 2,
+    "baselinePassed": 2,
+    "order": "ABBA",
+    "report": "paired-performance.json"
+  },
+  "retainedCacheMaxBytes": 33554432,
+  "negativeControls": 4,
+  "performance": {
+    "baseline": {
+      "retainedHeap": 75196984.0,
+      "heapGrowth": 33547686.0,
+      "finalHeap": 77762486.0,
+      "scrollP50Ms": 176.25,
+      "scrollP95Ms": 530.0
+    },
+    "candidate": {
+      "retainedHeap": 59013502.0,
+      "heapGrowth": 31403012.0,
+      "finalHeap": 63470494.0,
+      "scrollP50Ms": 92.0,
+      "scrollP95Ms": 428.0
+    }
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 2
+  },
+  "dependencies": {
+    "driven_by": "agent",
+    "actor": "codex",
+    "links": 153,
+    "view": "D:\\tmp\\tf0834\\dependency-view-candidate\\node_modules",
+    "versebrowser": "D:\\tmp\\tf0834\\candidate\\packages\\versebrowser",
+    "runtime": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\node_modules"
+  },
+  "processSurvivors": 0
+}

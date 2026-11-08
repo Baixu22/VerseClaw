@@ -1,0 +1,192 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "order": "ABBA",
+  "commands": [
+    {
+      "driven_by": "agent",
+      "actor": "codex",
+      "variant": "baseline",
+      "candidate": "cd464727ca46cb24358bd703d8b664eb39541ea3",
+      "argv": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/chat-viewport-budget.spec.ts",
+        "--grep",
+        "paired",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=list,json",
+        "--output=D:\\tmp\\tf0834\\pair-1-baseline\\results"
+      ],
+      "cwd": "D:\\tmp\\tf0834\\baseline",
+      "exitCode": 0,
+      "durationMs": 141094
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex",
+      "variant": "candidate",
+      "candidate": "b36b52487513cb2a170b02521963ee8a2d80dad4",
+      "argv": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/chat-viewport-budget.spec.ts",
+        "--grep",
+        "paired",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=list,json",
+        "--output=D:\\tmp\\tf0834\\pair-2-candidate\\results"
+      ],
+      "cwd": "D:\\tmp\\tf0834\\candidate",
+      "exitCode": 0,
+      "durationMs": 35031
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex",
+      "variant": "candidate",
+      "candidate": "b36b52487513cb2a170b02521963ee8a2d80dad4",
+      "argv": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/chat-viewport-budget.spec.ts",
+        "--grep",
+        "paired",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=list,json",
+        "--output=D:\\tmp\\tf0834\\pair-3-candidate\\results"
+      ],
+      "cwd": "D:\\tmp\\tf0834\\candidate",
+      "exitCode": 0,
+      "durationMs": 35563
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex",
+      "variant": "baseline",
+      "candidate": "cd464727ca46cb24358bd703d8b664eb39541ea3",
+      "argv": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/chat-viewport-budget.spec.ts",
+        "--grep",
+        "paired",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=list,json",
+        "--output=D:\\tmp\\tf0834\\pair-4-baseline\\results"
+      ],
+      "cwd": "D:\\tmp\\tf0834\\baseline",
+      "exitCode": 0,
+      "durationMs": 55531
+    }
+  ],
+  "samples": [
+    {
+      "run": "pair-1-baseline",
+      "variant": "baseline",
+      "candidate": "cd464727ca46cb24358bd703d8b664eb39541ea3",
+      "file": "D:\\tmp\\tf0834\\pair-1-baseline\\results\\chat-viewport-budget-paire-5f1e2-tory-and-scrolling-workload\\measurement.json",
+      "sha256": "9e54f09f21ddf585c4394243ae86459c4493d050e8c0ff02cd30bab54f71cdf5",
+      "workload": {
+        "sessions": 12,
+        "messagesPerSession": 200,
+        "toolMetadataLines": 32768,
+        "scrolls": 12,
+        "scrollDelta": 320
+      },
+      "retainedHeap": 74143400,
+      "heapGrowth": 32483700,
+      "finalHeap": 78009508,
+      "scrollP50Ms": 154.0,
+      "scrollP95Ms": 586,
+      "historyCalls": 13
+    },
+    {
+      "run": "pair-2-candidate",
+      "variant": "candidate",
+      "candidate": "b36b52487513cb2a170b02521963ee8a2d80dad4",
+      "file": "D:\\tmp\\tf0834\\pair-2-candidate\\results\\chat-viewport-budget-paire-5f1e2-tory-and-scrolling-workload\\measurement.json",
+      "sha256": "fbd409b5f311472da04cfed9203538a3d3d7b5772f5ccc3adc6b1fbdcef70d08",
+      "workload": {
+        "sessions": 12,
+        "messagesPerSession": 200,
+        "toolMetadataLines": 32768,
+        "scrolls": 12,
+        "scrollDelta": 320
+      },
+      "retainedHeap": 59128928,
+      "heapGrowth": 31645444,
+      "finalHeap": 62814796,
+      "scrollP50Ms": 64.0,
+      "scrollP95Ms": 661,
+      "historyCalls": 13
+    },
+    {
+      "run": "pair-3-candidate",
+      "variant": "candidate",
+      "candidate": "b36b52487513cb2a170b02521963ee8a2d80dad4",
+      "file": "D:\\tmp\\tf0834\\pair-3-candidate\\results\\chat-viewport-budget-paire-5f1e2-tory-and-scrolling-workload\\measurement.json",
+      "sha256": "368b35d1ebe661e047589279303aa32a18ec3fddeff3e98bbba91d96cbab0b61",
+      "workload": {
+        "sessions": 12,
+        "messagesPerSession": 200,
+        "toolMetadataLines": 32768,
+        "scrolls": 12,
+        "scrollDelta": 320
+      },
+      "retainedHeap": 58898076,
+      "heapGrowth": 31160580,
+      "finalHeap": 64126192,
+      "scrollP50Ms": 120.0,
+      "scrollP95Ms": 195,
+      "historyCalls": 13
+    },
+    {
+      "run": "pair-4-baseline",
+      "variant": "baseline",
+      "candidate": "cd464727ca46cb24358bd703d8b664eb39541ea3",
+      "file": "D:\\tmp\\tf0834\\pair-4-baseline\\results\\chat-viewport-budget-paire-5f1e2-tory-and-scrolling-workload\\measurement.json",
+      "sha256": "81ab3cd96508b422546b64484b787b8bc4677e6a830e5914f117b9abf932737a",
+      "workload": {
+        "sessions": 12,
+        "messagesPerSession": 200,
+        "toolMetadataLines": 32768,
+        "scrolls": 12,
+        "scrollDelta": 320
+      },
+      "retainedHeap": 76250568,
+      "heapGrowth": 34611672,
+      "finalHeap": 77515464,
+      "scrollP50Ms": 198.5,
+      "scrollP95Ms": 474,
+      "historyCalls": 13
+    }
+  ],
+  "medians": {
+    "baseline": {
+      "retainedHeap": 75196984.0,
+      "heapGrowth": 33547686.0,
+      "finalHeap": 77762486.0,
+      "scrollP50Ms": 176.25,
+      "scrollP95Ms": 530.0
+    },
+    "candidate": {
+      "retainedHeap": 59013502.0,
+      "heapGrowth": 31403012.0,
+      "finalHeap": 63470494.0,
+      "scrollP50Ms": 92.0,
+      "scrollP95Ms": 428.0
+    }
+  },
+  "retainedHeapReductionPercent": 21.521450913510044,
+  "decision": "accept",
+  "basis": "Identical 12-session history load with retained large metadata; measured renderer JS heap after GC and 12 wheel/RAF samples. Navigation and eviction correctness are separate gates."
+}

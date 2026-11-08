@@ -1,0 +1,16 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "language": "zh",
+  "loadedMessages": 300,
+  "firstMessageVisible": true,
+  "middleMessageVisible": true,
+  "expandedHeight": 236.66668701171875,
+  "closedHeight": 115.33334350585938,
+  "imageLoaded": true,
+  "fullLargeText": true,
+  "mounted": {
+    "first": 9,
+    "final": 5
+  }
+}

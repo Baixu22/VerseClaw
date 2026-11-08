@@ -1,0 +1,81 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "workload": {
+    "sessions": 12,
+    "messagesPerSession": 200,
+    "toolMetadataLines": 32768,
+    "scrolls": 12,
+    "scrollDelta": 320
+  },
+  "beforeHeap": 41638896,
+  "retainedHeap": 76250568,
+  "heapGrowth": 34611672,
+  "finalHeap": 77515464,
+  "calls": [
+    "agent:main:main",
+    "agent:main:cache-1",
+    "agent:main:cache-2",
+    "agent:main:cache-3",
+    "agent:main:cache-4",
+    "agent:main:cache-5",
+    "agent:main:cache-6",
+    "agent:main:cache-7",
+    "agent:main:cache-8",
+    "agent:main:cache-9",
+    "agent:main:cache-10",
+    "agent:main:cache-11",
+    "agent:main:main"
+  ],
+  "samples": [
+    {
+      "durationMs": 474,
+      "top": 25042
+    },
+    {
+      "durationMs": 334,
+      "top": 24750
+    },
+    {
+      "durationMs": 18,
+      "top": 24386.666015625
+    },
+    {
+      "durationMs": 279,
+      "top": 24026
+    },
+    {
+      "durationMs": 259,
+      "top": 23742.666015625
+    },
+    {
+      "durationMs": 13,
+      "top": 23347.333984375
+    },
+    {
+      "durationMs": 337,
+      "top": 23667.333984375
+    },
+    {
+      "durationMs": 58,
+      "top": 23987.333984375
+    },
+    {
+      "durationMs": 391,
+      "top": 24307.333984375
+    },
+    {
+      "durationMs": 15,
+      "top": 24627.333984375
+    },
+    {
+      "durationMs": 19,
+      "top": 24947.333984375
+    },
+    {
+      "durationMs": 138,
+      "top": 25267.333984375
+    }
+  ],
+  "limits": "Controlled Host API history fixtures with retained large tool metadata; actual Electron renderer heap after GC and mouse scrolling."
+}

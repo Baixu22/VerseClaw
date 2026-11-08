@@ -1,0 +1,21 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "variant": "candidate",
+  "candidate": "b36b52487513cb2a170b02521963ee8a2d80dad4",
+  "argv": [
+    "node",
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "tests/e2e/chat-viewport-budget.spec.ts",
+    "--grep",
+    "paired",
+    "--workers=1",
+    "--retries=0",
+    "--reporter=list,json",
+    "--output=D:\\tmp\\tf0834\\pair-2-candidate\\results"
+  ],
+  "cwd": "D:\\tmp\\tf0834\\candidate",
+  "exitCode": 0,
+  "durationMs": 35031
+}

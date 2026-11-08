@@ -1,0 +1,34 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "cases": [
+    {
+      "sourceCommit": "b3e52a1cb045cf18b21d062b5b76da2499219a8c",
+      "report": "D:\\tmp\\tf0834\\byte-negative.json",
+      "sha256": "2275b91cd561c989bd7ef5797db815b334aa807005e09ef484fe0b9265671ef2",
+      "name": "bounded payload cache evicts least recently used payloads before their combined bytes exceed capacity",
+      "message": "AssertionError: expected 'def' to be undefined"
+    },
+    {
+      "sourceCommit": "b3e52a1cb045cf18b21d062b5b76da2499219a8c",
+      "report": "D:\\tmp\\tf0834\\byte-negative.json",
+      "sha256": "2275b91cd561c989bd7ef5797db815b334aa807005e09ef484fe0b9265671ef2",
+      "name": "bounded payload cache does not retain a single oversized value",
+      "message": "AssertionError: expected 'xxxxxxxxxxxxxxxxxxxx' to be undefined"
+    },
+    {
+      "sourceCommit": "9b700f30d95e6b7564ae9e32b9520c97d6b40913",
+      "report": "D:\\tmp\\tf0834\\anchor-negative.json",
+      "sha256": "e029db604c2c2b4b8cadf15be7db64f872962a8339e05f78a34e32083c39c403",
+      "name": "measured message viewport keeps a newly requested bottom position when a resize lands before the next frame",
+      "message": "AssertionError: expected 54180 to be greater than or equal to 64200"
+    },
+    {
+      "sourceCommit": "a820467e5405405f795872addc4318fa1ab5a14f",
+      "report": "D:\\tmp\\tf0834\\baseline-probe.json",
+      "sha256": "543d526abee0787fbc9b3af934b10889b9cb9b5e3af15fd25238a813c2135021",
+      "name": "long history navigation, expansion and reload (en)",
+      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeAttached\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('chat-message-nav-rail-item-0')\nExpected: attached\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeAttached\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('chat-message-nav-rail-item-0')\u001b[22m\n"
+    }
+  ]
+}

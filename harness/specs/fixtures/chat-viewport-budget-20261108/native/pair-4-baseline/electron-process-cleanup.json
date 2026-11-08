@@ -1,0 +1,28 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\tf0834\\pair-4-baseline\\electron\\verse-claw-e2e-run-wmQpcl",
+  "ledgerEntries": 5,
+  "checks": [
+    {
+      "pid": 26832,
+      "creationTime": 1794109594821,
+      "status": "exited"
+    },
+    {
+      "pid": 46500,
+      "creationTime": 1794109602641,
+      "status": "exited"
+    },
+    {
+      "pid": 40980,
+      "creationTime": 1794109603012,
+      "status": "exited"
+    }
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 0,
+  "status": "passed"
+}
