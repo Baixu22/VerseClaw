@@ -3,7 +3,7 @@ import { spawnSync } from 'node:child_process';
 import { projectTaskLoopCodingRun, serializeCodingRunJsonl } from '../../shared/types/coding-run';
 import os from 'node:os';
 import path from 'node:path';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   clearTaskLoopRunsForTests,
   getTaskLoopRun,
@@ -321,11 +321,16 @@ function createTaskLoopRuntimeMemoryDbPath(): string {
   return path.join(dir, 'openclaw-state.sqlite');
 }
 
+beforeEach(() => {
+  vi.stubEnv('OPENCLAW_STATE_DIR', path.dirname(createTaskLoopRuntimeMemoryDbPath()));
+});
+
 afterEach(() => {
   clearTaskLoopRunsForTests();
   clearTaskStateHandlerConfig();
   resetAllGuardianCircuitBreakersForTests();
   closeOpenClawStateDatabaseForTest();
+  vi.unstubAllEnvs();
   for (const dir of taskLoopRuntimeMemoryTempDirs.splice(0)) {
     rmSync(dir, { recursive: true, force: true });
   }

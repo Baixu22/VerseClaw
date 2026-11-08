@@ -111,7 +111,9 @@ function readRuntimeConfigForContextFolding(): unknown {
 }
 
 async function readHandoffDecision(sessionKey: string, workspaceId: string | null) {
-  const snapshot = await loadTaskLedgerSnapshot(workspaceId);
+  const snapshot = await loadTaskLedgerSnapshot(workspaceId).catch((cause: unknown) => {
+    throw new Error('Handoff ancestry unavailable: Task Ledger cannot be read', { cause });
+  });
   if (snapshot.warnings.length) throw new Error('Handoff ancestry unavailable: Task Ledger contains unreadable events');
   return evaluateHandoffDerivation({ links: snapshot.sessionLinks, sessionKey, ...resolveConfiguredHandoffPolicy() });
 }
@@ -2999,11 +3001,12 @@ export function createSessionsApi(ctx: {
           warnings: ['fork_task_scope_unavailable'],
         };
       }
+      const derivationId = `session-fork:${sourceSessionKey}:${nextSessionKey}:${generation ?? ''}`;
       await appendTaskLedgerEvents(workspaceId, sessionDerivationEvents({
-        id: randomUUID(), sessionKey: nextSessionKey, agentId,
+        id: derivationId, sessionKey: nextSessionKey, agentId,
         relation: 'forked_from', sourceSessionKey, sessionGeneration: generation || null,
         createdAt: new Date().toISOString(),
-      }, [...new Set(taskNodeIds)]), `session-fork:${sourceSessionKey}:${nextSessionKey}`);
+      }, [...new Set(taskNodeIds)].sort()), derivationId);
       if (workspaceId) await persistentTaskChatContext(workspaceId,nextSessionKey,ctx.gatewayManager,(await getWorkspaceRootPathById(workspaceId))??undefined);
       return {
         success: true,

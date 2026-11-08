@@ -223,7 +223,7 @@ describe('TF-0768 authorized workspace execution', () => {
     expect(createWorktreeService(f.root).list()).toHaveLength(1);
   });
 
-  it('rejects a Git create failure without spawning or creating a simulated worker directory', async () => {
+  it('retains failed Git setup as incomplete without spawning a simulated worker', async () => {
     const f = fixture('git');
     const git = (...args: string[]) => execFileSync('git', args, { cwd: f.root, windowsHide: true, stdio: 'pipe' });
     git('init');
@@ -234,8 +234,12 @@ describe('TF-0768 authorized workspace execution', () => {
     }, f.cfg);
     expect(result?.ok).toBe(false);
     expect(spawnSubagentDirect).not.toHaveBeenCalled();
-    expect(existsSync(join(f.root, '.openclaw', 'worktrees', 'failed-checkout'))).toBe(false);
-    expect(createWorktreeService(f.root).list()).toHaveLength(0);
+    const inventory = createWorktreeService(f.root).inventory();
+    expect(inventory).toHaveLength(1);
+    expect(inventory[0]).toMatchObject({ availability: 'incomplete', record: {
+      backend: 'git', status: 'creating', registration: { phase: 'allocated' },
+    } });
+    expect(existsSync(join(f.root, '.openclaw', 'worktrees', 'failed-checkout', '.git'))).toBe(false);
   });
 
   it('stops the next worker after a parent generation change', async () => {

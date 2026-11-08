@@ -221,6 +221,7 @@ vi.mock('@electron/utils/agent-config', () => ({
 vi.mock('@electron/services/workspaces-api', () => ({
   createWorkspacesApi: () => ({ update: handoffWorkspaceUpdateMock }),
   getActiveWorkspaceProfile: vi.fn().mockResolvedValue(null),
+  getWorkspaceRootPathById: vi.fn().mockResolvedValue(null),
 }));
 
 vi.mock('@electron/services/sandbox-api', () => ({
@@ -1370,6 +1371,9 @@ describe('host services', () => {
     await sessionsApi.fork({ sessionKey: 'agent:main:main', workspaceId: 'workspace-a' });
     const lastPayload = rpc.mock.calls.at(-1)?.[1] as Record<string, unknown>;
     expect(lastPayload).not.toHaveProperty('fromLeafId');
+      const { loadTaskLedgerSnapshot } = await import('@electron/services/task-ledger-service');
+      const snapshot = await loadTaskLedgerSnapshot('workspace-a');
+      expect(snapshot.sessionLinks.filter(link => link.sessionKey === 'agent:main:dashboard:fork')).toHaveLength(1);
   });
 
   it('does not fork locally when Gateway is unavailable', async () => {

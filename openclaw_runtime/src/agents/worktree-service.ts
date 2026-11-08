@@ -358,6 +358,13 @@ function removePathWithRetries(target: string, attempts = 5): void {
   throw lastError instanceof Error ? lastError : new Error(String(lastError ?? 'worktree_remove_failed'));
 }
 
+function listDirectoryFiles(root: string, prefix = ""): string[] {
+  return readdirSync(path.join(root, prefix), { withFileTypes: true }).flatMap(entry => {
+    const relative = prefix ? `${prefix}/${entry.name}` : entry.name;
+    return entry.isDirectory() && !entry.isSymbolicLink() ? listDirectoryFiles(root, relative) : [relative];
+  });
+}
+
 function requireCleanupAuthorization(input: {
   rootDir: string;
   baseRoot: string;
@@ -373,8 +380,18 @@ function requireCleanupAuthorization(input: {
     throw new Error('worktree_cleanup_target_not_disposable');
   }
   if (input.record.status === 'cleaned') return { root };
+  assertNoSymlinkParentsSync({ rootDir: baseRoot, targetPath: root, requireDirectories: true, messagePrefix: "worktree boundary" });
+  if (input.record.owner?.retention === 'keep') throw new Error('worktree_cleanup_retention_keep');
+  if (input.record.backend === 'git') {
+    const common = (cwd: string) => canonicalPath(git(['rev-parse', '--path-format=absolute', '--git-common-dir'], cwd).trim());
+    if (common(root) !== common(baseRoot)) throw new Error('worktree_cleanup_repository_changed');
+    if (!input.record.baseOid || git(['rev-list', '--count', 'HEAD', `^${input.record.baseOid}`], root).trim() !== '0') {
+      throw new Error('worktree_cleanup_unpreserved_commits');
+    }
+  }
   const allowed = new Set((input.record.writeSet ?? []).map((value) => normalizeWorktreeRelPath(value)));
-  const unexpected = input.changed.files.filter((value) => !allowed.has(normalizeWorktreeRelPath(value)));
+  const files = input.record.backend === 'inprocess' ? listDirectoryFiles(root) : input.changed.files;
+  const unexpected = files.filter((value) => !allowed.has(normalizeWorktreeRelPath(value)));
   if (unexpected.length > 0) {
     throw new Error('worktree_cleanup_user_content_present:' + unexpected.slice(0, 8).join(','));
   }

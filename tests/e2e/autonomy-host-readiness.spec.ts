@@ -6,7 +6,7 @@ import { createHash } from 'node:crypto';
 import type { SessionActivitySnapshot } from '@shared/types/session-activity';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 import { allocatePort, buildMockProviderConfig, hostInvoke, startGateway, startScriptedLlm } from './fixtures/fp-p1-harness';
-import { recordElectronProcess } from './fixtures/electron-process-cleanup';
+import { recordElectronProcesses } from './fixtures/electron-process-cleanup';
 
 test('TF-0674 actual host probes, production close-to-tray continuation and restart recovery', async ({ homeDir, userDataDir }, testInfo) => {
   test.setTimeout(900_000);
@@ -38,7 +38,8 @@ test('TF-0674 actual host probes, production close-to-tray continuation and rest
       VITE_DEV_SERVER_URL: undefined,
     }).filter((entry): entry is [string, string] => entry[1] !== undefined));
     const app = await electron.launch({ executablePath: String(electronBinaryPath), args: ['--no-sandbox', `--user-data-dir=${userDataDir}`, '--disable-gpu', '--in-process-gpu', resolve('dist-electron/main/index.js')], env, timeout: 90_000 });
-    await recordElectronProcess(userDataDir, app.process().pid);
+    await recordElectronProcesses(userDataDir, await app.evaluate(({ app: electronApp }) =>
+      electronApp.getAppMetrics().map(({ pid, creationTime }) => ({ pid, creationTime }))));
     await getStableWindow(app);
     await startGateway(app);
     return app;

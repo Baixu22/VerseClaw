@@ -23,6 +23,7 @@ it("retains raw HTTP response and usage when a provider answer is not JSON", () 
       process.execPath,
       [
         resolve("openclaw_runtime/node_modules/tsx/dist/cli.mjs"),
+        "--tsconfig", resolve("openclaw_runtime/tsconfig.json"),
         "--expose-gc",
         "--import",
         pathToFileURL(preload).href,

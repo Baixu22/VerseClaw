@@ -108,7 +108,7 @@ describe("worktree-service (C4 interface)", () => {
     const file = path.join(dir, ".merge.lock");
     const contents = `${process.pid}\n${Date.now() - 60000}\n`;
     writeFileSync(file, contents);
-    expect(() => createWorktreeService(root).create("locked")).toThrow(/lock.*timeout/);
+    expect(() => createWorktreeService(root).create("locked")).toThrow("worktree_legacy_lock_unavailable");
     expect(existsSync(path.join(dir, "locked"))).toBe(false);
     expect(readFileSync(file, "utf8")).toBe(contents);
   }, 15000);
@@ -120,7 +120,7 @@ describe("worktree-service (C4 interface)", () => {
     expect(() => svc.cleanup(rec.id)).toThrow(/user_content/);
     renameSync(rec.root, rec.root + "-old");
     mkdirSync(rec.root);
-    expect(() => svc.cleanup(rec.id)).toThrow(/identity_changed/);
+    expect(() => svc.cleanup(rec.id)).toThrow(/worktree_replaced/);
     expect(readFileSync(path.join(rec.root + "-old", "user.txt"), "utf8")).toBe("keep");
   });
 
@@ -203,8 +203,10 @@ describe("worktree-service (C4 interface)", () => {
     const svc = createWorktreeService(root, { backend: "git" });
     expect(svc.backend).toBe("git");
     expect(() => svc.create("failed-checkout")).toThrow();
-    expect(existsSync(path.join(root, ".openclaw", "worktrees", "failed-checkout"))).toBe(false);
-    expect(svc.list()).toHaveLength(0);
+    expect(svc.inventory()).toMatchObject([{ availability: "incomplete", record: {
+      backend: "git", status: "creating", registration: { phase: "allocated" },
+    } }]);
+    expect(existsSync(path.join(root, ".openclaw", "worktrees", "failed-checkout", ".git"))).toBe(false);
   });
 
   it("resolveWorktreeBackend defaults to inprocess", () => {

@@ -72,6 +72,16 @@ describe('durable managed checkout registration', () => {
     expect(() => service.cleanup('replace')).toThrow(/worktree_replaced/);
     expect(readFileSync(path.join(record.root, 'user.txt'), 'utf8')).toBe('keep');
   });
+  it('uses the persisted file baseline to journal a merge after SQLite reopen', async () => {
+    writeFileSync(path.join(root, 'tracked.txt'), 'base');
+    const record = createWorktreeService(root).create('restart-merge', { seedFiles: ['tracked.txt'] });
+    writeFileSync(path.join(record.root, 'tracked.txt'), 'worker change');
+    closeOpenClawStateDatabaseForTest();
+    const restarted = createWorktreeService(root);
+    restarted.enqueueMerge({ worktreeId: record.id, worktreeGeneration: record.generation, changedFiles: ['tracked.txt'] });
+    expect((await restarted.processMergeQueue())[0]).toMatchObject({ status: 'merged', journalRef: expect.any(String) });
+    expect(readFileSync(path.join(root, 'tracked.txt'), 'utf8')).toBe('worker change');
+  });
   it('canonicalizes path aliases and keeps unowned directories visible', () => {
     const alias = path.join(fixture, 'alias'); symlinkSync(root, alias, process.platform === 'win32' ? 'junction' : 'dir');
     const record = createWorktreeService(root).create('one', { owner });

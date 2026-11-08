@@ -78,7 +78,7 @@ globalThis.fetch = async (_url, init) => {
 `);
     const output = join(root, "evals");
     const child = spawnSync(process.execPath, [
-      resolve("openclaw_runtime/node_modules/tsx/dist/cli.mjs"), "--import", pathToFileURL(preload).href,
+      resolve("openclaw_runtime/node_modules/tsx/dist/cli.mjs"), "--tsconfig", resolve("openclaw_runtime/tsconfig.json"), "--import", pathToFileURL(preload).href,
       "scripts/context-inline-spill-benefit-loop-eval.mts", "--mode", "live", "--out", output,
       "--repeats", "1", "--max-turns", "2",
     ], { cwd: process.cwd(), env: { ...process.env, CONTEXT_INLINE_SPILL_API_KEY: "agent-test-credential",
