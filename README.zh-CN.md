@@ -67,6 +67,7 @@ Verse Claw 是基于嵌入式 OpenClaw Runtime 的 Electron 桌面应用。它�
 - Workspace Context 与只读 DCS context tools 在声明的健康/权限门槛下开启。
 - Runtime Memory injection、SEKB automatic writeback、Browser private network 不默认开启。
 - SEKB 按经验版本和运行记录显式采用，分别保存执行结果与独立任务判分。记忆反馈用于诊断，不参与检索排序或保留决策。详见 [RSI 证据与边界](docs/dev/rsi-capability-and-boundaries.md)。
+- 受控 RSI prompt 研究记录父版本、训练归因和冻结验证裁决，待测候选绑定独立封存的评估计划。
 - VToken 已退役；旧环境变量/配置不能重新启用生产 assembly 或 sidecar。
 - VerseGit 与 VerseShell 仍默认关闭；宿主接入保留下述职责与权限边界。
 - Dreams 已退役；Image Generation 是开发者/测试门槛，不是正常产品导航。

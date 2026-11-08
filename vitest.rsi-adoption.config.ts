@@ -18,6 +18,7 @@ export default defineConfig({
     environment: 'node',
     include: [
       'tests/unit/rsi-adoption-*.test.ts',
+      'tests/unit/rsi-candidate-evolution*.test.ts',
       'openclaw_runtime/src/knowledge/sekb/sekb.test.ts',
       'openclaw_runtime/src/knowledge/sekb/experience-closed-loop.test.ts',
       'openclaw_runtime/src/knowledge/sekb/batch-distillation-assistant.test.ts',

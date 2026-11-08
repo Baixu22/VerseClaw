@@ -182,6 +182,18 @@ export class KnowledgeStore {
     this.#now = options.now ?? (() => new Date());
   }
 
+  /** Insert an immutable trajectory record; a competing or repeated insert keeps the first bytes. */
+  create_trajectory(trajectory: Trajectory): boolean {
+    const row = rowFromTrajectory(trajectory, this.#now().getTime());
+    return runOpenClawStateWriteTransaction((database) => {
+      const query = getNodeSqliteKysely<SekbDatabase>(database.db);
+      const result = executeSqliteQuerySync(database.db, query.insertInto("sekb_trajectories")
+        .values(row).onConflict((conflict) => conflict.column("trajectory_id").doNothing())
+        .returning("trajectory_id"));
+      return result.rows.length === 1;
+    }, this.#database);
+  }
+
   save_trajectory(trajectory: Trajectory): void {
     const row = rowFromTrajectory(trajectory, this.#now().getTime());
     runOpenClawStateWriteTransaction((database) => {
