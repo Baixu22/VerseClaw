@@ -2839,6 +2839,11 @@
     }
   },
   "delegationStages": {
+    "verification": {
+      "unavailable": "利用不可",
+      "pending": "検証記録を待機中",
+      "recorded": "検証記録：{{count}} / {{total}}"
+    },
     "capacity": {
       "planTitle": "派遣時の計画と理由",
       "planDescription": "派遣時の受領記録です。現在のキューではありません。",
@@ -2859,6 +2864,7 @@
     },
     "label": {
       "admission": "実行受付",
+      "verification": "検証記録",
       "execution": "実行状態",
       "report": "結果の送達",
       "acceptance": "タスク検証",

@@ -18,6 +18,7 @@ import { activateWorkspaceScopedSession } from '@/lib/workspace-session';
 import { useChatStore } from '@/stores/chat';
 import { useWorkspacesStore } from '@/stores/workspaces';
 import type { TaskLedgerNode, TaskLedgerNodeKind, TaskLedgerNodeStatus, TaskLedgerSnapshot } from '@shared/types/task-ledger';
+import { classifyDerivation } from '@shared/types/session-derivation';
 
 const NODE_KINDS: TaskLedgerNodeKind[] = ['goal', 'milestone', 'task', 'check', 'decision', 'risk', 'deviation', 'review'];
 const NODE_STATUSES: TaskLedgerNodeStatus[] = ['todo', 'doing', 'blocked', 'review', 'done', 'dropped'];
@@ -243,10 +244,16 @@ export default function TaskLedgerPage() {
     const version = ++navigationVersion.current;
     const isCurrent = () => version === navigationVersion.current;
     try {
-      if (type === 'session' && expectedGeneration) {
-        const owner = await hostApi.gateway.rpc<{ session?: { sessionId?: string } }>('sessions.describe', { key: sessionKey });
+      if (type === 'session') {
+        const owner = await hostApi.gateway.rpc<{ session?: Parameters<typeof classifyDerivation>[0] & { sessionId?: string } }>('sessions.describe', { key: sessionKey });
         if (!isCurrent()) return;
-        if (owner.session?.sessionId !== expectedGeneration) { toast.error(t('summary.scope.stale')); return; }
+        if (expectedGeneration && owner.session?.sessionId !== expectedGeneration) { toast.error(t('summary.scope.stale')); return; }
+        const origin = owner.session ? classifyDerivation(owner.session) : null;
+        if (origin?.kind === 'spawn' && origin.parentSessionKey) {
+          if (await activateWorkspaceScopedSession(workspaceId, origin.parentSessionKey, isCurrent) && isCurrent())
+            navigate('/', { state: { workspacePanelIntent: { panel: 'subagent', sessionKey } } });
+          return;
+        }
       }
       if (await activateWorkspaceScopedSession(workspaceId, sessionKey, isCurrent) && isCurrent()) navigate('/', type === 'session' ? undefined
         : { state: { workspacePanelIntent: { panel: 'files', filePath: ref } } });

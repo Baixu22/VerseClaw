@@ -287,7 +287,7 @@ Verse Claw 基于 [OpenClaw](https://github.com/openclaw/openclaw) 与 ValueCell
 
 ### 持久任务执行
 
-子代理详情按当前会话读取任务 owner 的验收状态，核验后可刷新查看已验收结果。
+子代理详情按当前会话读取任务 owner 的验收状态，核验后可刷新查看已验收结果。 验证回执与任务 owner 验收分别显示；账本中的 worker 链接打开对应 transcript 面板。
 
 “任务账本 → 持久任务”保存独立于聊天历史的目标、约束与验收检查。同一仓库的本地 Git 工作树共享任务领取；执行前核对会话归属，模型请求前恢复当前目标。验收可使用精确文件内容检查，或带输入文件清单的命令检查；命令仍通过现有工具权限执行。详见[任务系统架构](docs/dev/durable-task-system/PLAN.md)。
 

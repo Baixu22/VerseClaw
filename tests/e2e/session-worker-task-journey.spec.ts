@@ -144,6 +144,7 @@ test('a real delegated worker receives its own task, reports separately and acce
     await expect(page.getByTestId('workspace-subagent-panel')).toBeVisible();
     await expect(page.getByTestId('workspace-subagent-panel')).toContainText('WORKER-RUN-FINISHED');
     await expect(page.getByTestId('workspace-subagent-panel').locator('[data-stage="acceptance"]')).toHaveAttribute('data-status', 'pending');
+      await expect(page.getByTestId('workspace-subagent-panel').locator('[data-stage="verification"]')).toHaveAttribute('data-status', 'pending');
     await expect(page.getByTestId('workspace-subagent-model')).toContainText((history as { model: string }).model);
     await page.getByTestId('workspace-subagent-dispatch-input').fill('WORKER-FOLLOWUP-UI');
     await page.getByTestId('workspace-subagent-dispatch').click();
@@ -409,6 +410,8 @@ for (const language of ['en', 'zh', 'ja', 'ru'] as const) {
       expect(receipts.at(-1)!.result.result!.contract.state).toBe('done');
       await page.getByTestId('workspace-subagent-refresh').click();
       await expect(stage).toHaveAttribute('data-status', 'accepted');
+      await expect(page.getByTestId('workspace-subagent-panel').locator('[data-stage="verification"]')).toHaveAttribute('data-status', 'recorded');
+      await expect(page.getByTestId('workspace-subagent-panel').locator('[data-stage="verification"]')).toHaveAttribute('data-recorded-criteria', '1');
       await expect(stage).toHaveText(/Accepted|已验收/);
       const readback = await hostInvoke<{ snapshot: TaskLedgerSnapshot }>(app, 'taskLedger', 'snapshot', { workspaceId: project.workspaceId });
       expect(readback.snapshot.nodes.find(node => node.id === task.contract.taskNodeId)?.status).toBe('done');

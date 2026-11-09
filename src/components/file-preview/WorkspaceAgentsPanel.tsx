@@ -44,7 +44,7 @@ import { SessionDelegationStatus } from '@/components/chat/SessionDelegationStat
 import type { SessionDelegationReceipt } from '@shared/types/session-delegation';
 import type { RawMessage } from '@shared/chat/types';
 import type { SessionActivitySubagent, SessionActivitySubagentStatus } from '@shared/types/session-activity';
-import type { TaskView } from '@shared/task-system/types';
+import type { TaskEvidence, TaskView } from '@shared/task-system/types';
 
 type RosterEntry = {
   key: string;
@@ -108,7 +108,7 @@ export function WorkspaceAgentsPanel() {
   const [childModel, setChildModel] = useState<string | null>(null);
 
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
-  const [transcript, setTranscript] = useState<{ key: string; scope: object; messages: RawMessage[]; costUsd?: number | null; task?: TaskView | null } | null>(null);
+  const [transcript, setTranscript] = useState<{ key: string; scope: object; messages: RawMessage[]; costUsd?: number | null; task?: TaskView | null; verificationReceipts?: TaskEvidence[] } | null>(null);
   const [transcriptError, setTranscriptError] = useState<SurfaceErrorState | null>(null);
   const [transcriptLoading, setTranscriptLoading] = useState(false);
   const [dispatchTask, setDispatchTask] = useState('');
@@ -191,7 +191,7 @@ export function WorkspaceAgentsPanel() {
           expectedSessionGeneration: result.sessionGeneration }).catch(() => null);
         if (version !== transcriptVersion.current || scopeRef.current !== viewScope) return;
         setTranscript(current => current?.key === rosterKey && current.scope === viewScope
-          ? { ...current, task: owner?.success ? owner.task : null } : current);
+          ? { ...current, task: owner?.success ? owner.task : null, verificationReceipts: owner?.success ? owner.verificationReceipts : undefined } : current);
       }
     } catch (error) {
       if (version !== transcriptVersion.current || scopeRef.current !== viewScope) return;
@@ -254,6 +254,7 @@ export function WorkspaceAgentsPanel() {
       <SessionDelegationStatus workspaceId={workspace?.id} sessionKey={sessionKey} generation={parentGeneration}
         receipt={dispatchReceipt} snapshot={snapshot} worker={subagents?.find((entry) => entry.id === selected?.key)}
         task={transcript?.key === selected?.key && transcript?.scope === viewScope ? transcript.task : null}
+        verificationReceipts={transcript?.key === selected?.key && transcript?.scope === viewScope ? transcript.verificationReceipts : undefined}
         onOpenResources={workspace?.id ? () => navigate('/settings/storage?' + new URLSearchParams({
           workspaceId: workspace.id, sessionKey,
         }).toString()) : undefined} />

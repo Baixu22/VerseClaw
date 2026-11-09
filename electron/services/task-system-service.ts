@@ -72,11 +72,12 @@ export async function readSessionTask(workspaceId:string,sessionKey:string,gatew
     if (expectedGeneration && generation !== expectedGeneration) throw new Error('TASK_GENERATION_STALE');
     if (!generation) return {task:null,children:[]};
     const snapshot=store.sessionSnapshot(sessionKey,generation);
+    const verificationReceipts=snapshot.task?store.getTaskEvidence(snapshot.task.contract.taskNodeId):[];
     if (expectedGeneration) {
       const after=await gateway.rpc<{session?:{sessionId?:string}}>('sessions.describe',{key:sessionKey},10_000);
       if (after.session?.sessionId !== generation) throw new Error('TASK_GENERATION_STALE');
     }
-    return snapshot;
+    return {...snapshot,verificationReceipts};
   } finally {store.close();}
 }
 

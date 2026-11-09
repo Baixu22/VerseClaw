@@ -12,6 +12,7 @@ ownedPaths:
   - README.ja-JP.md
   - README.ru-RU.md
   - shared/types/session-delegation.ts
+  - shared/task-system/types.ts
   - shared/host-api/contract.ts
   - electron/services/sessions-api.ts
   - openclaw_runtime/src/gateway/server-methods/session-task-scope.ts
@@ -21,6 +22,7 @@ ownedPaths:
   - electron/services/task-system-service.ts
   - electron/services/workspaces-api.ts
   - src/lib/host-api.ts
+  - src/pages/TaskLedger/index.tsx
   - src/components/file-preview/WorkspaceAgentsPanel.tsx
   - src/components/file-preview/WorkspaceSubagentPanel.tsx
   - src/pages/Chat/SessionActivityPanel.tsx
@@ -87,14 +89,14 @@ expectedUserBehavior:
   - Current session/workspace/generation scopes reject stale results and unavailable owner actions.
   - Read failures stay visible and preserve draft, transcript and evidence references.
 acceptance:
-  - Apply the complete U4 or U5 contract from session-derivation-ui-design and its Task Forest node.
+  - Apply the complete U4 contract from session-derivation-ui-design and TF-0660, retaining all nine original criteria.
   - Use canonical host actions and current owner receipts; do not infer task acceptance from text or a finished run.
   - Worker details read the canonical task for the displayed child generation; pending, accepted and cancelled remain separate from run completion. Task read failures preserve the transcript and show unavailable acceptance.
   - Delegated effects accept a generation-matching canonical parent reference when its navigation link has not yet been written; task identity, generation and writer fencing remain required.
   - File verification, submission and the existing verifier owner produce a real accepted task before either worker surface displays acceptance. Four locales use task-specific labels.
   - Recorded cost comes from structured usage in the loaded transcript; absent or null costs display unknown, while a supplied zero remains zero.
-  - Stop, pause, archive, delete and context restore retain their distinct scopes and recovery behavior.
-  - Existing child sessions remain reachable after source archive/delete; no implicit subtree action is added.
+  - Worker admission uses its own child receipt; its canonical task comes from the generation-fenced owner read. Verification records retain task revision, epoch and candidate separately from task acceptance.
+  - Task Ledger worker links use runtime source facts to open the existing transcript surface under the correct coordinator.
   - Four-locale Electron journeys and focused negative tests identify the same candidate and agent actor.
 requiredTests:
   - pnpm run typecheck
@@ -104,7 +106,7 @@ requiredTests:
   - pnpm run comms:replay
   - pnpm run comms:compare
   - pnpm exec playwright test tests/e2e/session-derivation-ui.spec.ts --workers=1
-  - pnpm exec vitest run tests/unit/session-delegation-status.test.tsx tests/unit/session-chain-panels.test.tsx tests/unit/workspace-agents-panel-failure.test.tsx tests/unit/durable-task-session-scope.test.ts tests/unit/session-task-scope-completion.test.ts --maxWorkers=1 --no-file-parallelism
+  - pnpm exec vitest run tests/unit/session-delegation-status.test.tsx tests/unit/session-chain-panels.test.tsx tests/unit/workspace-agents-panel-failure.test.tsx tests/unit/durable-task-session-scope.test.ts tests/unit/session-task-scope-completion.test.ts tests/unit/session-task-scope-bridge.test.ts tests/unit/host-deadline.test.ts --maxWorkers=1 --no-file-parallelism
   - pnpm exec playwright test tests/e2e/session-worker-task-journey.spec.ts --workers=1
   - pnpm harness validate --spec harness/specs/tasks/session-delegation-status.md
   - pnpm harness run --spec harness/specs/tasks/session-delegation-status.md --dry-run

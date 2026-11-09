@@ -425,7 +425,7 @@ Runtime 还包含：
 
 “在新会话中提问”保留所选问题之前的上下文，把编辑后的问题放入子会话草稿。Handoff 的按钮为“创建并发送”：Workspace 保存 source generation、操作标识、child 和首发 key；runtime 确认来源后完成创建。重启或响应丢失后先核对同一个 child。网关接收与 transcript 中的首轮记录是两个状态；结果未知时保留草稿并提供核实入口。恢复已创建的续接沿用已保存的草稿，新的问题可以在子会话中另行提交。
 
-Agents 面板将派发准入、实际执行、报告回传、任务验收和父会话续行分列。活动快照保存 worker 的实际 child key；选择 worker 后读取其 transcript 和实际模型，并在实际发送边界核验 parent 与 child generation。任务清单展示账本记录状态；完成 owner 尚未提供可核对的验收回执时，自动验收显示不可用。
+Agents 面板将派发准入、实际执行、报告回传、验证回执、任务验收和父会话续行分列。单个 worker 的准入取自身回执；验证记录按任务版本、执行 epoch 和候选归组，任务验收由 Task owner 单独决定。活动快照保存 worker 的实际 child key；选择 worker 后读取其 transcript 和实际模型，并在实际发送边界核验 parent 与 child generation。任务清单展示账本记录状态；完成 owner 尚未提供可核对的验收回执时，自动验收显示不可用。
 
 领取事务同时核对首次读取的合同 revision 与 digest；准入期间修订合同会拒绝此次领取。受管进程把 session、generation 和 run 身份保存到既有资源 reservation，未设置数量限额时也保留归属记录。任务切换、环境切换和 Handoff 查询同会话的全部未结清进程，包括旧 generation；旧记录身份不全时保持占用，等待进程 owner 核实。普通执行检查仍按具体 run 核对持久资源。
 
@@ -439,7 +439,7 @@ Agents 面板将派发准入、实际执行、报告回传、任务验收和父�
 
 操作范围及恢复入口见[会话、任务与资源操作矩阵](../dev/session-lifecycle-control-matrix.md)。
 
-子代理详情和名单面板按当前 child 会话代次读取任务 owner 的验收状态，分别显示等待验收、已验收和已取消；刷新可回读核验后的状态。验收读取失败时保留已读取的 transcript，任务验收显示不可用。
+子代理详情和名单面板按当前 child 会话代次读取任务 owner 的验证回执和验收状态，分别显示等待验收、已验收和已取消；刷新可回读核验后的状态。账本中的 worker 会话链接打开原有 transcript 面板，并保持正确负责人范围。验收读取失败时保留已读取的 transcript，任务验收显示不可用。
 
 费用读取当前 transcript 中的结构化 usage 记录；完整费用记录可汇总，缺失费用显示“未知”。
 

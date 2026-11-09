@@ -36,7 +36,7 @@ import { SessionDelegationStatus } from '@/components/chat/SessionDelegationStat
 import { subagentIdentity } from '@shared/subagent-identity';
 import type { RawMessage } from '@shared/chat/types';
 import type { SessionActivitySubagentStatus } from '@shared/types/session-activity';
-import type { TaskView } from '@shared/task-system/types';
+import type { TaskEvidence, TaskView } from '@shared/task-system/types';
 const EMPTY_TRANSCRIPT: RawMessage[] = [];
 
 /** `agent:<id>:<session>` — the child's own agent id, for the history call. */
@@ -68,7 +68,7 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
   const sendIntent = useRef<{ text: string; scope: string; id: string; generation: string } | null>(null);
   useEffect(() => { setSendPhase(null); setDispatching(false); }, [scopeKey]);
 
-  const [loadedTranscript, setLoadedTranscript] = useState<{ scope: object; messages: RawMessage[]; model?: string; costUsd?: number | null; task?: TaskView | null } | null>(null);
+  const [loadedTranscript, setLoadedTranscript] = useState<{ scope: object; messages: RawMessage[]; model?: string; costUsd?: number | null; task?: TaskView | null; verificationReceipts?: TaskEvidence[] } | null>(null);
   const transcript = loadedTranscript?.scope === viewScope ? loadedTranscript.messages : EMPTY_TRANSCRIPT;
   const [transcriptError, setTranscriptError] = useState<SurfaceErrorState | null>(null);
   const [loading, setLoading] = useState(false);
@@ -117,7 +117,8 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
         const owner = await hostApi.taskLedger.sessionTask({ workspaceId: workspace.id, sessionKey: childSessionKey,
           expectedSessionGeneration: result.sessionGeneration }).catch(() => null);
         if (scopeRef.current !== viewScope || version !== loadVersion.current) return;
-        setLoadedTranscript(current => current?.scope === viewScope ? { ...current, task: owner?.success ? owner.task : null } : current);
+        setLoadedTranscript(current => current?.scope === viewScope ? { ...current, task: owner?.success ? owner.task : null,
+          verificationReceipts: owner?.success ? owner.verificationReceipts : undefined } : current);
       }
     } catch (error) {
       if (scopeRef.current !== viewScope || version !== loadVersion.current) return;
@@ -177,6 +178,7 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
         generation={snapshot?.session.sessionId} snapshot={snapshot} worker={entry ?? undefined}
         childSessionKey={childSessionKey}
         task={loadedTranscript?.scope === viewScope ? loadedTranscript.task : null}
+        verificationReceipts={loadedTranscript?.scope === viewScope ? loadedTranscript.verificationReceipts : undefined}
         onOpenResources={workspace?.id ? () => navigate('/settings/storage?' + new URLSearchParams({
           workspaceId: workspace.id, sessionKey: parentSessionKey,
         }).toString()) : undefined} />

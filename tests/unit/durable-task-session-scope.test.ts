@@ -31,6 +31,16 @@ beforeEach(() => { root = mkdtempSync(join(tmpdir(), 'session-contract-')); });
 afterEach(() => { store?.close(); store = undefined; rmSync(root, { recursive: true, force: true }); });
 
 describe('session bridge consumes the persistent task owner', () => {
+  it('reads actual verifier receipts without promoting a doing task to accepted', async () => {
+    const task = owner();
+    writeFileSync(join(root, 'result.txt'), bytes);
+    const receipt = store!.verifyFile(task.claim!, 'result', 'result.txt', sha);
+    vi.mocked(getWorkspaceRootPathById).mockResolvedValue(root);
+    const gateway = { rpc: vi.fn().mockResolvedValue({ session: { sessionId: 'generation-source' } }) } as unknown as GatewayManager;
+    const snapshot = await readSessionTask('workspace', 'source', gateway, 'generation-source');
+    expect(snapshot.verificationReceipts).toEqual([receipt]);
+    expect(snapshot.task?.contract.state).toBe('doing');
+  });
   it('fences worker acceptance reads before and after a session generation changes', async () => {
     const task = owner();
     vi.mocked(getWorkspaceRootPathById).mockResolvedValue(root);

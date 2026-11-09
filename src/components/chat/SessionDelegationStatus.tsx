@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import type { SessionDelegationReceipt } from '@shared/types/session-delegation';
 import type { SessionActivitySnapshot, SessionActivitySubagent } from '@shared/types/session-activity';
-import type { TaskView } from '@shared/task-system/types';
+import type { TaskEvidence, TaskView } from '@shared/task-system/types';
 
 const reasonKeys: Record<string, string> = {
   'concurrency-cap': 'concurrencyCap',
@@ -10,7 +10,7 @@ const reasonKeys: Record<string, string> = {
   'tool-contention': 'toolContention',
 };
 
-export function SessionDelegationStatus({ workspaceId, sessionKey, generation, receipt, snapshot, worker, task, childSessionKey, onOpenResources }: {
+export function SessionDelegationStatus({ workspaceId, sessionKey, generation, receipt, snapshot, worker, task, verificationReceipts, childSessionKey, onOpenResources }: {
   workspaceId?: string;
   sessionKey: string;
   generation?: string | null;
@@ -18,11 +18,13 @@ export function SessionDelegationStatus({ workspaceId, sessionKey, generation, r
   snapshot?: SessionActivitySnapshot;
   worker?: SessionActivitySubagent;
   task?: TaskView | null;
+  verificationReceipts?: TaskEvidence[];
   childSessionKey?: string;
   onOpenResources?: () => void;
 }) {
   const { t } = useTranslation('chat');
   const childKey = childSessionKey ?? worker?.childSessionKey;
+  const childView = Boolean(worker || childSessionKey);
   const currentReceipt = workspaceId && generation && receipt && receipt.coordinator.workspaceId === workspaceId && receipt.coordinator.sessionKey === sessionKey
     && receipt.coordinator.sessionGeneration === generation
     && ((!worker && !childSessionKey) || Boolean(childKey && receipt.children.some((child) => child.childSessionKey === childKey))) ? receipt : null;
@@ -40,11 +42,20 @@ export function SessionDelegationStatus({ workspaceId, sessionKey, generation, r
     && ((!worker && !childSessionKey) || Boolean(childKey && entry.members.some((member) => member.childSessionKey === childKey))))
     .toSorted((left, right) => right.acceptedAt - left.acceptedAt)[0];
   const matchingBatch = batch && batch.requesterSessionGeneration === generation && batch.generationState === 'matching' ? batch : null;
-  const currentTask = task && (!currentReceipt || currentReceipt.taskRef === task.contract.taskNodeId) ? task : null;
+  const currentChild = currentReceipt?.children.find(child => child.childSessionKey === childKey);
+  const currentTask = task && (childView || !currentReceipt || currentReceipt.taskRef === task.contract.taskNodeId) ? task : null;
+  const criteria = currentTask?.contract.acceptance ?? [];
+  const eligibleReceipts = (verificationReceipts ?? []).filter(entry => currentTask
+    && entry.taskNodeId === currentTask.contract.taskNodeId && entry.revision === currentTask.contract.revision
+    && criteria.some(criterion => criterion.id === entry.criterionId));
+  const latestReceipt = eligibleReceipts.reduce<TaskEvidence | null>((latest, entry) => !latest || entry.createdAt >= latest.createdAt ? entry : latest, null);
+  const recordedCriteria = new Set(eligibleReceipts.filter(entry => entry.epoch === latestReceipt?.epoch
+    && entry.candidate === latestReceipt?.candidate).map(entry => entry.criterionId));
   const stages = {
-    admission: currentReceipt?.status ?? 'unavailable',
+    admission: (childView ? currentChild?.admissionStatus : currentReceipt?.status) ?? 'unavailable',
     execution: worker?.status ?? 'unavailable',
     report: matchingBatch?.delivery.state ?? (batch ? 'fenced' : 'unavailable'),
+    verification: !currentTask || !verificationReceipts ? 'unavailable' : latestReceipt ? 'recorded' : 'pending',
     acceptance: currentTask?.contract.state === 'done' ? 'accepted' : currentTask?.contract.state === 'cancelled' ? 'cancelled' : currentTask ? 'pending' : 'unavailable',
     continuation: matchingBatch?.delivery.waitingForRequesterTurn ? 'waiting' : batch?.generationState === 'mismatch' ? 'fenced' : 'unavailable',
   };
@@ -53,7 +64,9 @@ export function SessionDelegationStatus({ workspaceId, sessionKey, generation, r
     <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-1">
     {Object.entries(stages).map(([stage, status]) => <div key={stage} className="contents">
       <dt className="text-muted-foreground">{t(`delegationStages.label.${stage}`)}</dt>
-      <dd data-stage={stage} data-status={status} className="min-w-0 break-words">{t(`delegationStages.${stage === 'acceptance' && currentTask ? 'taskAcceptance' : 'status'}.${status}`)}</dd>
+      <dd data-stage={stage} data-status={status} data-recorded-criteria={stage === 'verification' ? recordedCriteria.size : undefined}
+        data-candidate={stage === 'verification' ? latestReceipt?.candidate : undefined} className="min-w-0 break-words">{t(`delegationStages.${stage === 'verification' ? 'verification' : stage === 'acceptance' && currentTask ? 'taskAcceptance' : 'status'}.${status}`,
+        { count: recordedCriteria.size, total: criteria.length })}</dd>
     </div>)}
     </dl>
     {waves.length > 0 && <section data-testid="delegation-receipt-plan" data-plan-time="receipt">
