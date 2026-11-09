@@ -626,7 +626,7 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
         }
         // Restore requires the checkpoint to exist; replay-rollback authority is
         // invoked with the legacy checkpoint target (event-log replay is not
-        // implemented). The journal root is the agent workspace.
+        // implemented). The journal follows this session generation's execution directory.
         const checkpoint = getLongTaskCheckpointById(p.checkpointId);
         if (!checkpoint || checkpoint.sessionKey !== canonicalKey || (checkpoint.agentId && checkpoint.agentId !== agentId)) {
           respond(
@@ -639,7 +639,7 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
           );
           return;
         }
-        const workspaceRoot = resolveAgentWorkspaceDir(cfg, agentId);
+        const workspaceRoot = current.workspaceDir?.trim() || current.spawnedWorkspaceDir?.trim() || resolveAgentWorkspaceDir(cfg, agentId);
         // Restore must use the journal identity stamped by the checkpoint owner.
         const journalSessionId = resolveCheckpointJournalSessionId(checkpoint, undefined);
         if (!journalSessionId || journalSessionId !== sessionId) {
@@ -733,9 +733,8 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
       );
       return;
     }
-    const workspaceRoot = resolveAgentWorkspaceDir(
-      cfg,
-      resolveSessionStoreAgentId(cfg, canonicalKey),
+    const workspaceRoot = loaded.entry?.workspaceDir?.trim() || loaded.entry?.spawnedWorkspaceDir?.trim() || resolveAgentWorkspaceDir(
+      cfg, requestedAgent.agentId ?? resolveSessionStoreAgentId(cfg, canonicalKey),
     );
     const journalSessionId = resolveCheckpointJournalSessionId(checkpoint, loaded.entry?.sessionId);
     if (!journalSessionId) {

@@ -81,6 +81,7 @@ ownedPaths:
   - src/pages/Chat/ChatMessage.tsx
   - tests/unit/chat-message.test.tsx
   - tests/unit/chat-input.test.tsx
+  - tests/e2e/chat-context-pressure.spec.ts
 touchedAreas:
   - docs/dev/session-worktree-storage.md
   - src/lib/host-api.ts
@@ -156,6 +157,7 @@ touchedAreas:
   - src/pages/Chat/ChatMessage.tsx
   - tests/unit/chat-message.test.tsx
   - tests/unit/chat-input.test.tsx
+  - tests/e2e/chat-context-pressure.spec.ts
 requiredRules:
   - identity-scope-boundary
   - renderer-main-boundary

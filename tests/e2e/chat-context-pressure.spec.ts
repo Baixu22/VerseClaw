@@ -39,7 +39,7 @@ test.describe('Verse Claw chat context pressure', () => {
               ok: true,
               json: {
                 success: true,
-                result: { sessions: [{ key: MAIN_SESSION_KEY, displayName: 'main' }] },
+                result: { sessions: [{ key: MAIN_SESSION_KEY, sessionId: 'context-pressure-generation', displayName: 'main' }] },
               },
             },
           },
@@ -177,7 +177,7 @@ test.describe('Verse Claw chat context pressure', () => {
             data: {
               status: 200,
               ok: true,
-              json: { success: true, result: { sessions: [{ key: MAIN_SESSION_KEY, displayName: 'main' }] } },
+              json: { success: true, result: { sessions: [{ key: MAIN_SESSION_KEY, sessionId: 'context-pressure-generation', displayName: 'main' }] } },
             },
           },
           [stableStringify(['/api/chat/history', 'POST'])]: {

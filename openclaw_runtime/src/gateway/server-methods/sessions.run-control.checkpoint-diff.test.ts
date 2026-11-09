@@ -220,6 +220,30 @@ describe("sessions.checkpointDiff gateway integration", () => {
     return id;
   }
 
+  it.each(['workspaceDir', 'spawnedWorkspaceDir'] as const)('uses the session %s after the agent default moves', async (field) => {
+    const checkpointId = await recordRestoreFixture();
+    const otherRoot = path.join(stateDir, 'other-project');
+    const { mkdirSync } = await import('node:fs'); mkdirSync(otherRoot);
+    writeFileSync(path.join(otherRoot, 'f.ts'), 'unrelated project\n');
+    await updateSessionStore(storePath, store => { store[sessionKey]![field] = workspaceRoot; });
+    const context = makeContext(otherRoot); setRuntimeConfigSnapshot(context.getRuntimeConfig());
+    const diff = makeRespond();
+    await sessionsRunControlHandlers['sessions.checkpointDiff']({
+      params: { key: sessionKey, checkpointId, expectedSessionId: journalSessionId }, respond: diff.respond, context: context as never,
+    } as never);
+    expect(diff.calls).toHaveLength(1); expect(diff.calls[0]!.ok).toBe(true);
+    const files = (diff.calls[0]!.payload as { files: Array<{ unifiedDiff: string }> }).files;
+    expect(files).toHaveLength(1); expect(files[0]!.unifiedDiff).toContain('-v1'); expect(files[0]!.unifiedDiff).toContain('+v2');
+    const restored = makeRespond();
+    await sessionsRunControlHandlers['sessions.restoreCheckpoint']({
+      params: { key: sessionKey, checkpointId, expectedSessionId: journalSessionId }, respond: restored.respond, context: context as never,
+    } as never);
+    expect(restored.calls).toMatchObject([{ ok: true }]);
+    expect(readFileSync(path.join(workspaceRoot, 'f.ts'), 'utf8')).toBe('v1\n');
+    expect(readFileSync(path.join(otherRoot, 'f.ts'), 'utf8')).toBe('unrelated project\n');
+    expect(sessionAdmissionRegistry.isFenced(identity)).toBe(false);
+  });
+
   function diskState() {
     const journalDir = journalDirFor(workspaceRoot, journalSessionId);
     return {

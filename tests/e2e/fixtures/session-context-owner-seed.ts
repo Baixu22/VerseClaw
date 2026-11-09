@@ -34,8 +34,6 @@ export async function ensureContextOwnerCheckpoint(app: ElectronApplication, inp
   const stateDir = join(input.userDataDir, 'openclaw-source-state');
   const config = JSON.parse(await readFile(join(stateDir, 'openclaw.json'), 'utf8'));
   const workspace = config.agents?.list?.find((agent: { id: string }) => agent.id === 'main')?.workspace ?? config.agents?.defaults?.workspace;
-  if (typeof workspace !== 'string' || resolve(workspace).toLowerCase() !== resolve(input.workspaceRoot).toLowerCase())
-    throw new Error('Source Runtime workspace differs from the journal workspace; checkpoint seed refused');
   const oldState = process.env.OPENCLAW_STATE_DIR;
   process.env.OPENCLAW_STATE_DIR = stateDir;
   let closeState: (() => void) | undefined, closeSession: (() => void) | undefined;
@@ -47,6 +45,9 @@ export async function ensureContextOwnerCheckpoint(app: ElectronApplication, inp
     closeSession = () => { closeSqliteSessionStoreDatabase(storePath); };
     const session = getSessionEntry({ storePath, sessionKey: input.sessionKey });
     if (session?.sessionId !== input.generation) throw new Error('Source Runtime session UUID mismatch; seed refused');
+    const executionRoot = session.workspaceDir?.trim() || session.spawnedWorkspaceDir?.trim() || workspace;
+    if (typeof executionRoot !== 'string' || resolve(executionRoot).toLowerCase() !== resolve(input.workspaceRoot).toLowerCase())
+      throw new Error('Source session execution directory differs from the real journal workspace; seed refused');
     const { recordLongTaskCheckpoint, buildRuntimeResumeCheckpoint, getLongTaskCheckpointById } = await import('../../../openclaw_runtime/src/agents/long-task-control/store');
     const id = `u5-commit:${input.generation}:v1`;
     const record = recordLongTaskCheckpoint({ id, idempotencyKey: id, sessionKey: input.sessionKey, agentId: 'main',
