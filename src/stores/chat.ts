@@ -3236,10 +3236,8 @@ export const useChatStore = create<ChatState>((set, get, api) => {
   // sweep and only releases its gate after a committed runtime receipt.
 
   deleteSession: async (key: string) => {
-    clearCachedSessionHistory(key);
-    clearCachedSessionRunState(key);
-    clearSessionLabelHydrationTracking(key);
-    clearPendingOptimisticUserMessages(key);
+    const generation = get().sessions.find(session => session.key === key)?.sessionId;
+    const visit = get().viewRevision;
     // Main reconciles the local transcript/index mirror after runtime commit.
     try {
       const result = await hostApi.sessions.delete(key);
@@ -3252,9 +3250,18 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     }
 
     const { currentSessionKey, sessions } = get();
+    const current = sessions.find(session => session.key === key);
+    if ((current && current.sessionId !== generation) || (currentSessionKey === key && get().viewRevision !== visit)) {
+      void get().loadSessions();
+      return;
+    }
+    clearCachedSessionHistory(key);
+    clearCachedSessionRunState(key);
+    clearSessionLabelHydrationTracking(key);
+    clearPendingOptimisticUserMessages(key);
     const remaining = sessions.filter((s) => s.key !== key);
 
-    if (currentSessionKey === key) {
+    if (currentSessionKey === key && get().viewRevision === visit) {
       // Switched away from deleted session — pick the first remaining or create new
       const next = remaining[0];
       set((s) => ({
@@ -3356,10 +3363,8 @@ export const useChatStore = create<ChatState>((set, get, api) => {
   // ── Cleanup empty session on navigate away ──
 
   archiveSession: async (key, options) => {
-    clearCachedSessionHistory(key);
-    clearCachedSessionRunState(key);
-    clearSessionLabelHydrationTracking(key);
-    clearPendingOptimisticUserMessages(key);
+    const generation = get().sessions.find(session => session.key === key)?.sessionId;
+    const visit = get().viewRevision;
     try {
       const result = await hostApi.sessions.archive({
         id: key,
@@ -3375,6 +3380,15 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     }
 
     const { currentSessionKey, sessions } = get();
+    const current = sessions.find(session => session.key === key);
+    if ((current && current.sessionId !== generation) || (currentSessionKey === key && get().viewRevision !== visit)) {
+      void get().loadSessions();
+      return;
+    }
+    clearCachedSessionHistory(key);
+    clearCachedSessionRunState(key);
+    clearSessionLabelHydrationTracking(key);
+    clearPendingOptimisticUserMessages(key);
     const remaining = sessions.filter((s) => s.key !== key);
     const dropSessionState = (state: ChatState) => ({
       sessions: remaining,
@@ -3382,7 +3396,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
       sessionLastActivity: Object.fromEntries(Object.entries(state.sessionLastActivity).filter(([k]) => k !== key)),
     });
 
-    if (currentSessionKey === key) {
+    if (currentSessionKey === key && get().viewRevision === visit) {
       const next = remaining[0];
       set((s) => ({
         ...dropSessionState(s),
@@ -3444,18 +3458,20 @@ export const useChatStore = create<ChatState>((set, get, api) => {
   },
 
   loadArchivedSessions: async (agentId) => {
+    const scopeAgent = agentId || get().currentAgentId || 'main';
+    if (scopeAgent !== (get().currentAgentId || 'main')) return;
     const revision = ++archivedReadRevision;
     set({ archivedSessionsLoading: true });
     try {
-      const result = await hostApi.sessions.listArchived({ agentId: agentId || get().currentAgentId || 'main' });
-      if (revision !== archivedReadRevision) return;
+      const result = await hostApi.sessions.listArchived({ agentId: scopeAgent });
+      if (revision !== archivedReadRevision || scopeAgent !== (get().currentAgentId || 'main')) return;
       if (!result.success) throw new Error(result.error || 'Archive state unavailable');
       set({ archivedSessions: result.entries ?? [], pendingSessionMutations: result.pendingMutations ?? [] });
     } catch (err) {
       console.warn('[loadArchivedSessions] IPC call failed:', err);
-      if (revision === archivedReadRevision) toast.warning(i18n.t('chat:archive.mutationUnconfirmed'));
+      if (revision === archivedReadRevision && scopeAgent === (get().currentAgentId || 'main')) toast.warning(i18n.t('chat:archive.mutationUnconfirmed'));
     } finally {
-      if (revision === archivedReadRevision) set({ archivedSessionsLoading: false });
+      if (revision === archivedReadRevision && scopeAgent === (get().currentAgentId || 'main')) set({ archivedSessionsLoading: false });
     }
   },
 
@@ -4675,15 +4691,18 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     // R0-3: abort the run FIRST. Only release UI state once the Main process
     // confirms the abort — a failed stop must not masquerade as stopped.
     let receipt: { aborted?: boolean; runIds?: string[] } | undefined;
+    let stopConfirmed = false;
     try {
       receipt = await abortChatRunViaHostApi(currentSessionKey, activeRunId);
       const acknowledged = receipt?.aborted === true && (!activeRunId || !receipt.runIds || receipt.runIds.includes(activeRunId));
+      stopConfirmed = acknowledged;
       if (!acknowledged && isCurrentAbortTarget()) {
         const read = await useGatewayStore.getState().rpc<{ session?: { sessionId?: string; hasActiveRun?: boolean } }>(
           'sessions.describe', { key: currentSessionKey });
         if (read.session?.hasActiveRun !== false || (generation && read.session?.sessionId !== generation)) {
           throw new Error(i18n.t('chat:composer.abortFailed'));
         }
+        stopConfirmed = true;
       }
     } catch (err) {
       console.warn(`[abortRun] chat.abort failed: ${String(err)}`);
@@ -4693,6 +4712,8 @@ export const useChatStore = create<ChatState>((set, get, api) => {
       }
       return;
     }
+
+    if (!stopConfirmed) return;
 
     // Use the Gateway's acknowledged run identity; retain a result that arrived
     // while the abort request was pending.

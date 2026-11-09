@@ -61,8 +61,8 @@ export function ArchivedSection() {
 
   // newest first
   const sorted = useMemo(
-    () => [...archivedSessions].sort((a, b) => b.archivedAt - a.archivedAt),
-    [archivedSessions],
+    () => archivedSessions.filter(entry => entry.agentId === (agentId || 'main')).sort((a, b) => b.archivedAt - a.archivedAt),
+    [archivedSessions, agentId],
   );
 
   const q = query.trim().toLowerCase();
@@ -98,9 +98,9 @@ export function ArchivedSection() {
         ? await hostApi.sessions.delete(entry.sessionKey, entry.operationId)
         : await hostApi.sessions[entry.operationKind]({ id: entry.sessionKey, resumeOperationId: entry.operationId });
       if (!result.success) throw new Error(result.error || t('chat:archive.mutationUnconfirmed'));
-    } catch (error) { toastUserError(error); }
+    } catch (error) { if (useChatStore.getState().currentAgentId === agentId) toastUserError(error); }
     finally {
-      await Promise.all([loadArchivedSessions(agentId), useChatStore.getState().loadSessions()]);
+      await Promise.all([loadArchivedSessions(), useChatStore.getState().loadSessions()]);
       setPendingKey(null);
     }
   };
@@ -232,11 +232,11 @@ export function ArchivedSection() {
         </div>
       </div>
 
-      {pendingSessionMutations.length > 0 && (
+      {pendingSessionMutations.some(entry => entry.agentId === (agentId || 'main')) && (
         <section data-testid="settings-pending-mutations" className="mb-4 space-y-2 rounded-lg border border-border p-3">
           <h3 className="text-sm font-medium">{t('chat:archive.pendingTitle')}</h3>
           <p className="text-xs text-muted-foreground">{t('chat:archive.pendingDescription')}</p>
-          {pendingSessionMutations.map((entry) => (
+          {pendingSessionMutations.filter(entry => entry.agentId === (agentId || 'main')).map((entry) => (
             <div key={entry.operationId} className="flex items-center justify-between gap-3">
               <div className="min-w-0 text-xs">
                 <div className="truncate">{sessionLabels[entry.sessionKey] || archivedSessions.find(row => row.sessionKey === entry.sessionKey)?.label || entry.sessionKey}</div>
