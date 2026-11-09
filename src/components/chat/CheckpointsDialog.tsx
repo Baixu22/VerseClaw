@@ -137,13 +137,14 @@ export function CheckpointsDialog({ open, onOpenChange, sessionKey, agentId, gen
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent data-testid="chat-checkpoints-dialog" aria-busy={loading || restoringId !== null} className="max-h-[70vh] overflow-y-auto sm:max-w-lg">
-        <div className="flex items-center gap-2">
-          <DialogTitle className="flex items-center gap-2">
-            <History className="h-4 w-4" />
+      <DialogContent data-testid="chat-checkpoints-dialog" aria-busy={loading || restoringId !== null}
+        className="max-h-[70vh] w-[calc(100%-2rem)] max-w-lg overflow-y-auto rounded-lg border border-black/10 bg-surface-modal p-5 text-foreground shadow-xl dark:border-white/10">
+        <div className="flex flex-col gap-2">
+          <DialogTitle data-testid="chat-checkpoints-title" className="flex items-center gap-2 font-serif text-xl font-normal tracking-tight">
+            <History className="h-4 w-4 shrink-0" />
             {t('filePreview.checkpoints.title')}
           </DialogTitle>
-          <DialogDescription>{t('filePreview.checkpoints.description')}</DialogDescription>
+          <DialogDescription data-testid="chat-checkpoints-description" className="text-sm leading-relaxed text-muted-foreground">{t('filePreview.checkpoints.description')}</DialogDescription>
         </div>
         <div className="flex flex-col gap-2 py-2">
           {loading && (

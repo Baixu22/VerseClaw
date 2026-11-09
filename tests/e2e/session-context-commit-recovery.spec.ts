@@ -317,6 +317,16 @@ test('U5 real journal checkpoint restore changes v2 to v1 despite reply loss and
       await expect(page.getByTestId(`chat-checkpoint-restore-${seed.record.id}`)).toBeEnabled();
       await page.getByTestId(`chat-checkpoint-diff-${seed.record.id}`).click();
       await expect(page.getByTestId(`chat-checkpoint-diff-panel-${seed.record.id}`)).toContainText(messages.diffEmpty);
+      const dialog = page.getByTestId('chat-checkpoints-dialog');
+      const layout = await dialog.evaluate(element => {
+        const box = element.getBoundingClientRect();
+        const title = element.querySelector('[data-testid="chat-checkpoints-title"]')!.getBoundingClientRect();
+        const description = element.querySelector('[data-testid="chat-checkpoints-description"]')!.getBoundingClientRect();
+        return { width: box.width, background: getComputedStyle(element).backgroundColor,
+          titleBottom: title.bottom, descriptionTop: description.top, overflow: element.scrollWidth > element.clientWidth };
+      });
+      expect(layout.background).not.toBe('rgba(0, 0, 0, 0)'); expect(layout.width).toBeLessThanOrEqual(512);
+      expect(layout.descriptionTop).toBeGreaterThanOrEqual(layout.titleBottom); expect(layout.overflow).toBe(false);
       translations.push({ language, title: messages.title, emptyDiff: messages.diffEmpty });
       await writeFile(info.outputPath('context-commit.json'), JSON.stringify(evidence, null, 2));
       await page.screenshot({ path: info.outputPath(`checkpoint-restored-${language}.png`) });
