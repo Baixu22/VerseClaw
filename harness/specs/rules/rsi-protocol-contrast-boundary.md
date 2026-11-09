@@ -28,3 +28,9 @@ response, edits, execution record, report and usage; a separately bound recovery
 envelope records missing/grader. The strict frozen validator keeps rejecting the
 original report. Recovery cannot convert a passing or assertion-bearing result,
 redispatch a request identity, change model input, or alter the authorization.
+
+An ENOSPC workspace failure before any provider reservation is recoverable in
+a separate post-campaign first-attempt record. Keep the original slot bytes and
+environment failure; prefix its new request identity, use a separate scratch
+path and original slot order, and count every new call in the original ledger.
+No dispatched request is eligible for this path.

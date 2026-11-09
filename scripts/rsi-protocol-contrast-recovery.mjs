@@ -22,6 +22,11 @@ function emptyOracle(row) {
     && row.execution.failureClass === null && row.grader?.reports.some(entry => entry.kind === 'vitest' && entry.exitCode !== 0
       && entry.report?.success === false && entry.report.numTotalTests === 0 && entry.report.testResults?.length === 0);
 }
+export function isUndispatchedSpaceFailure(row) {
+  return row.execution?.failureClass === 'infrastructure' && row.execution?.providerCalls === 0
+    && row.providerAttempts?.length === 0 && row.rawResponse === null && row.grader === null
+    && /git archive extraction failed/u.test(row.execution.note ?? '') && /No space left on device|ENOSPC/u.test(row.execution.note ?? '');
+}
 /** The projection is validation data. The original response and executed receipt stay immutable. */
 export function projectEmptyOracleReceipt(row) {
   assert(emptyOracle(row), 'recovery-empty-unsuccessful-oracle-required');
@@ -140,7 +145,9 @@ function readRun(ctx, scratch, ledger) {
     records.push({ ...validated, scheduledSlot: scheduled, envelope });
   }
   const next = ctx.plan.slots[records.length];
-  assert(state.rows.slice(consumed).every(entry => next && entry.reservation.identity.startsWith(next.variantId + '/' + next.benefitSlotId + '/')), 'recovery-orphan-request');
+  assert(state.rows.slice(consumed).every(entry => records.length === 216
+    ? entry.reservation.identity.startsWith('undispatched-recovery/')
+    : next && entry.reservation.identity.startsWith(next.variantId + '/' + next.benefitSlotId + '/')), 'recovery-orphan-request');
   return { records, accounting: state, unimportedReservations: state.rows.length - consumed };
 }
 function createLedger(ctx, scratch, quotaDatabase) {
@@ -150,6 +157,87 @@ function createLedger(ctx, scratch, quotaDatabase) {
     assert.equal(quota.routesDigest, ctx.price.quota.routesDigest, 'recovery-free-route-drift'); return { ...quota, modelSnapshot: model };
   } });
 }
+async function undispatchedAttempts(ctx, scratch, ledger, state, run, supportRoot, apiKey) {
+  const selected = state.records.filter(record => isUndispatchedSpaceFailure(record.row)).sort((a, b) => a.scheduledSlot.position - b.scheduledSlot.position);
+  const fullLedger = ledger.snapshot();
+  const consumed = state.records.reduce((sum, record) => sum + record.row.execution.providerCalls, 1);
+  let cursor = consumed, previous = state.records.at(-1)?.row.execution.endedAt;
+  const replacements = new Map(), recoveries = [];
+  for (const original of selected) {
+    const scheduled = original.scheduledSlot, variant = ctx.plan.variants.find(variant => variant.id === scheduled.variantId);
+    const slot = variant.plan.slots.find(slot => slot.id === scheduled.benefitSlotId);
+    const baseDirectory = join(ctx.base, 'undispatched-attempts', scheduled.id), startPath = join(baseDirectory, 'start.json');
+    const resultPath = join(baseDirectory, 'attempt.json');
+    const scratchBase = join(scratch, 'undispatched-attempts', variant.id);
+    const directory = join(scratchBase, slot.id), rowPath = join(directory, 'receipt.json');
+    assert(!fullLedger.rows.some(entry => entry.reservation.identity.startsWith(variant.id + '/' + slot.id + '/')),
+      'undispatched-recovery-original-provider-call-exists');
+    if (!existsSync(resultPath) && !run) continue;
+    let envelope;
+    if (existsSync(resultPath)) envelope = read(resultPath);
+    else {
+      const snapshot = ledger.snapshot(), budget = budgetAtStart(ctx.plan, snapshot.rows);
+      assert(snapshot.providerCalls === cursor, 'undispatched-recovery-order');
+      const request = ctx.benefit.buildBenefitRequest(variant.plan, slot);
+      assert(budget.remainingProviderCalls > 0 && budget.remainingTokens >= Buffer.byteLength(JSON.stringify(request)) + 16000,
+        'undispatched-recovery-budget');
+      const start = { schemaVersion: 'RsiUndispatchedAttemptStart/v1', driven_by: 'agent', actor: 'codex/rsi-no-dispatch-space-recovery',
+        studyDigest: digest(ctx.plan), scheduledSlot: scheduled, originalReceiptDigest: digest(original.row),
+        ledgerPrefixCount: cursor, budgetAtStart: budget, attemptScratchBase: scratchBase };
+      if (existsSync(startPath)) assert.deepEqual(read(startPath), start, 'undispatched-existing-start-drift'); else write(startPath, start);
+      let row;
+      if (existsSync(rowPath)) row = read(rowPath);
+      else {
+        assert(!existsSync(join(directory, 'dispatch.json')), 'undispatched-recovery-interrupted-no-retry');
+        const prefixed = { ...ledger, reserve: (request, identity) => ledger.reserve(request, 'undispatched-recovery/' + variant.id + '/' + identity) };
+        row = await ctx.collector.collectCodingTrial({ root: ctx.root, plan: variant.plan, slot, apiKey, scratch: scratchBase, supportRoot,
+          remainingTokens: budget.remainingTokens, remainingProviderCalls: budget.remainingProviderCalls, campaignLedger: prefixed });
+      }
+      envelope = { ...start, schemaVersion: 'RsiUndispatchedSpaceAttempt/v1', receiptDigest: digest(row), receipt: row, originalSpaceFailurePreserved: true,
+        order: 'post-campaign-original-slot-order', operatorSource: git(OPERATOR_ROOT, ['rev-parse', 'HEAD']) };
+      write(resultPath, envelope);
+      console.log(JSON.stringify({ undispatchedRecovery: scheduled.id, calls: row.execution.providerCalls,
+        failureCategory: row.execution.failureCategory, originalProviderCalls: original.row.execution.providerCalls }));
+    }
+    assert(envelope.schemaVersion === 'RsiUndispatchedSpaceAttempt/v1' && envelope.driven_by === 'agent'
+      && envelope.originalSpaceFailurePreserved === true, 'undispatched-attempt-authority');
+    assert.equal(envelope.originalReceiptDigest, digest(original.row), 'undispatched-original-receipt-drift');
+    assert.deepEqual(envelope.scheduledSlot, scheduled, 'undispatched-slot-drift');
+    assert.equal(envelope.studyDigest, digest(ctx.plan), 'undispatched-study-drift');
+    assert.equal(envelope.ledgerPrefixCount, cursor, 'undispatched-prefix-drift');
+    const rows = ledger.snapshot().rows;
+    assert.deepEqual(envelope.budgetAtStart, budgetAtStart(ctx.plan, rows.slice(0, cursor)), 'undispatched-budget-drift');
+    assert.equal(envelope.receiptDigest, digest(envelope.receipt), 'undispatched-receipt-digest');
+    assert.deepEqual(read(rowPath), envelope.receipt, 'undispatched-private-receipt-drift');
+    assert.equal(read(join(directory, 'receipt-digest.json')).sha256, digest(envelope.receipt), 'undispatched-private-seal-drift');
+    const row = envelope.receipt, validated = ctx.benefit.validateProtocolContrastTrial(ctx.root, variant.plan, row, envelope.budgetAtStart);
+    assert(!previous || Date.parse(row.execution.startedAt) >= Date.parse(previous), 'undispatched-attempt-overlap'); previous = row.execution.endedAt;
+    const responseIds = new Set(state.records.flatMap(record => record.row.providerAttempts.map(attempt => attempt.parsedResponse?.id).filter(Boolean)));
+    for (const [index, attempt] of row.providerAttempts.entries()) {
+      const entry = rows[cursor++]; assert.equal(entry?.reservation.identity, 'undispatched-recovery/' + variant.id + '/' + slot.id + '/' + (index + 1), 'undispatched-ledger-identity');
+      assert.deepEqual(entry.reservation.request, attempt.request, 'undispatched-ledger-request');
+      const parsed = attempt.rawResponse ? ctx.provider.parseResponsesReply(attempt.rawResponse) : null;
+      assert.deepEqual(parsed, attempt.parsedResponse, 'undispatched-parsed-response');
+      assert.deepEqual(entry.settlement?.usage ?? null, parsed?.usage ?? null, 'undispatched-real-usage');
+      assert.equal(entry.settlement?.responseDigest ?? null, attempt.rawResponse ? digest(attempt.rawResponse) : null, 'undispatched-raw-response');
+      if (parsed) { assert(!responseIds.has(parsed.id), 'undispatched-reused-provider-response'); responseIds.add(parsed.id); }
+      if (attempt.rawResponse) {
+        const saved = read(join(directory, 'provider-response-' + (index + 1) + '.json'));
+        assert.deepEqual(saved.rawResponse, attempt.rawResponse, 'undispatched-provider-file');
+      }
+    }
+    rawOracle(directory, row);
+    for (const [index, event] of row.execution.toolEvents.entries()) assert.deepEqual(read(join(directory, 'tool-event-' + (index + 1) + '.json')), event, 'undispatched-tool-file');
+    replacements.set(scheduled.id, { ...validated, scheduledSlot: scheduled, envelope });
+    recoveries.push({ slot: scheduled.id, originalOutcome: original.outcome, originalReceiptDigest: digest(original.row),
+      recoveredOutcome: validated.outcome, receiptDigest: digest(row), providerCalls: row.execution.providerCalls,
+      order: envelope.order });
+  }
+  assert(ledger.snapshot().rows.slice(cursor).every(entry => entry.reservation.identity.startsWith('undispatched-recovery/')),
+    'undispatched-orphan-ledger');
+  return { ...state, originalRecords: state.records, records: state.records.map(record => replacements.get(record.scheduledSlot.id) ?? record),
+    accounting: ledger.snapshot(), undispatchedRecoveries: recoveries };
+}
 function report(ctx, state) {
   return { schemaVersion: 'RsiProtocolContrastRecoveredReport/v1', driven_by: 'agent', actor: 'codex/rsi-protocol-recovery-verifier',
     runId: ctx.plan.runId, source: ctx.plan.source.commit, planDigest: digest(ctx.plan), operatorSource: git(OPERATOR_ROOT, ['rev-parse', 'HEAD']),
@@ -157,10 +245,13 @@ function report(ctx, state) {
     outcomeCounts: Object.fromEntries(['pass', 'fail', 'crash', 'timeout', 'missing'].map(outcome => [outcome, state.records.filter(record => record.outcome === outcome).length])),
     comparisons: ctx.protocol.summarizeProtocolContrast(ctx.plan, state.records), accounting: { ...state.accounting, rows: undefined },
     unimportedReservations: state.unimportedReservations, recoveries: state.records.filter(record => record.envelope.recovery).map(record => record.envelope.recovery),
+    undispatchedRecoveries: state.undispatchedRecoveries ?? [],
+    originalCampaignOutcomeCounts: state.originalRecords ? Object.fromEntries(['pass', 'fail', 'crash', 'timeout', 'missing']
+      .map(outcome => [outcome, state.originalRecords.filter(record => record.outcome === outcome).length])) : null,
     decision: { status: 'NO_GO', productAdoption: 'hold', retainedExperienceCampaign: 'NO_GO/eliminate' },
     claims: { realHuman: false, experienceBenefit: false, promotionReady: false, productDefaultsChanged: false } };
 }
-export async function recoverProtocolContrast({ root, base, scratch, quotaDatabase, supportRoot, apiKey, run = false, out, limit = 216 }) {
+export async function recoverProtocolContrast({ root, base, scratch, quotaDatabase, supportRoot, apiKey, run = false, out, limit = 216, recoverUndispatched = false }) {
   const ctx = await context(root, base), ledger = createLedger(ctx, scratch, run ? quotaDatabase : null);
   assert(Number.isSafeInteger(limit) && limit > 0 && limit <= 216, 'recovery-slot-limit');
   if (run) {
@@ -201,8 +292,16 @@ export async function recoverProtocolContrast({ root, base, scratch, quotaDataba
         tokens: validated.tokens, accountedTokens: ledger.snapshot().accountedTokens, retainedRecovery: Boolean(recovery) }));
       if (row.execution.failureCategory === 'budget' || row.execution.failureCategory === 'oracle') break;
     }
+    if (recoverUndispatched) {
+      assert(state.records.length === 216, 'undispatched-recovery-requires-complete-campaign');
+      state = await undispatchedAttempts(ctx, scratch, ledger, state, run, supportRoot, apiKey);
+    }
   } catch (caught) { error = caught; }
-  finally { try { state = readRun(ctx, scratch, ledger); write(join(base, 'recovery-report.json'), report(ctx, state), false); }
+  finally { try {
+      const originalState = readRun(ctx, scratch, ledger);
+      state = recoverUndispatched ? await undispatchedAttempts(ctx, scratch, ledger, originalState, false, supportRoot) : originalState;
+      write(join(base, recoverUndispatched ? 'undispatched-recovery-report.json' : 'recovery-report.json'), report(ctx, state), false);
+    }
     catch (caught) { if (error instanceof Error) error.cause ??= caught; else error = caught; }
     finally { if (run) unlinkSync(lock); } }
   if (error) throw error;
@@ -218,17 +317,19 @@ export async function recoverProtocolContrast({ root, base, scratch, quotaDataba
     result.independentReplay = { statistics, providerCallsDuringReplay: 0, passed: true }; if (out) write(out, result);
   }
   return { written, recordedSlots: result.recordedSlots, outcomeCounts: result.outcomeCounts, accounting: result.accounting,
-    recoveries: result.recoveries.length, independentReplay: result.independentReplay?.passed ?? null };
+      recoveries: result.recoveries.length, undispatchedRecoveries: result.undispatchedRecoveries.length,
+      independentReplay: result.independentReplay?.passed ?? null };
 }
 if (isMainEntrypoint(import.meta.url)) {
   try {
     const { positionals, values } = parseArgs({ allowPositionals: true, options: { root: { type: 'string' }, 'base-dir': { type: 'string' },
-      scratch: { type: 'string' }, 'quota-db': { type: 'string' }, 'support-root': { type: 'string' }, out: { type: 'string' }, limit: { type: 'string' } } });
+      scratch: { type: 'string' }, 'quota-db': { type: 'string' }, 'support-root': { type: 'string' }, out: { type: 'string' }, limit: { type: 'string' },
+      'recover-undispatched': { type: 'boolean' } } });
     assert(['run', 'check'].includes(positionals[0]) && values.root && values['base-dir'] && values.scratch, 'recovery-paths-required');
     const run = positionals[0] === 'run'; let apiKey;
     if (run) { let input = ''; for await (const bytes of process.stdin) input += bytes; apiKey = JSON.parse(input).key; input = ''; assert(apiKey, 'stdin-key-required'); }
     console.log(JSON.stringify(await recoverProtocolContrast({ root: values.root, base: values['base-dir'], scratch: values.scratch,
       quotaDatabase: values['quota-db'], supportRoot: values['support-root'], apiKey, run, out: values.out,
-      limit: values.limit ? Number(values.limit) : 216 }), null, 2));
+      limit: values.limit ? Number(values.limit) : 216, recoverUndispatched: values['recover-undispatched'] === true }), null, 2));
   } catch (error) { console.error(error.message); process.exitCode = 1; }
 }

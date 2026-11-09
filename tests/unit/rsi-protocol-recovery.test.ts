@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
-import { projectEmptyOracleReceipt } from '../../scripts/rsi-protocol-contrast-recovery.mjs';
+import { isUndispatchedSpaceFailure, projectEmptyOracleReceipt } from '../../scripts/rsi-protocol-contrast-recovery.mjs';
 import type { BenefitTrialReceipt } from '../../scripts/lib/rsi-benefit-eval.mjs';
 const original = { execution: { status: 'completed', failureCategory: 'model', failureClass: null, providerCalls: 1 },
   rawResponse: { id: 'retained-original-response' }, providerAttempts: [{ rawResponse: { id: 'retained-original-response' } }],
@@ -19,5 +19,14 @@ describe('empty-oracle recovery projections', () => {
       const candidate = structuredClone(original); candidate.grader!.reports[0].report = report as never;
       expect(() => projectEmptyOracleReceipt(candidate)).toThrow('empty-unsuccessful-oracle-required');
     }
+  });
+  it('admits only a no-call workspace space failure for a separately retained first provider attempt', () => {
+    const failed = { execution: { failureClass: 'infrastructure', providerCalls: 0,
+      note: 'git archive extraction failed: No space left on device' }, providerAttempts: [], rawResponse: null, grader: null } as unknown as BenefitTrialReceipt;
+    expect(isUndispatchedSpaceFailure(failed)).toBe(true);
+    expect(isUndispatchedSpaceFailure({ ...failed, execution: { ...failed.execution, providerCalls: 1 } })).toBe(false);
+    expect(isUndispatchedSpaceFailure({ ...failed, providerAttempts: original.providerAttempts })).toBe(false);
+    expect(isUndispatchedSpaceFailure({ ...failed, execution: { ...failed.execution, note: 'timed out after a network call' } })).toBe(false);
+    expect(isUndispatchedSpaceFailure(original)).toBe(false);
   });
 });

@@ -386,6 +386,11 @@ to that checkout. Recovery uses the same ledger, and retained responses import
 without another provider request. Its `check` command recomputes the recovered
 report and paired statistics.
 
+`--recover-undispatched` admits only an ENOSPC workspace failure with zero
+provider calls and no provider attempt. It writes a separate first-attempt
+receipt after the campaign in original slot order, preserves the original
+environment failure, and counts its requests in the same authorization.
+
 A measured candidate cannot edit its evaluator, graders, held-out split, task
 set, evidence generator, approval semantics, permissions, product locks or
 defaults. This repair is evaluator-owned and prospective. Applying v2 to old
