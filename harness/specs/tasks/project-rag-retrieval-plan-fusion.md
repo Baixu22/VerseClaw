@@ -7,7 +7,7 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-07
 intent: 统一精确、词法、语义候选，避免分数和权限混为一谈。
-diffBase: c5896951eaaf2e567072ff4430e2a23f8bf30e46
+diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
 touchedAreas:
   - "openclaw_runtime/src/knowledge/retrieval/**"
   - "openclaw_runtime/src/context-engine/source-set.ts"

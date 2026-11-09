@@ -7,7 +7,7 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-05
 intent: 使语义召回可离线工作，并能安全切换获授权的模型服务。
-diffBase: c5896951eaaf2e567072ff4430e2a23f8bf30e46
+diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
 touchedAreas:
   - "openclaw_runtime/src/plugin-sdk/embedding-providers.ts"
   - "openclaw_runtime/src/embeddings/**"

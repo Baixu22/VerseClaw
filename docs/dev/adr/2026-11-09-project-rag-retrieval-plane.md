@@ -5,7 +5,7 @@
 | 状态 | **accepted：长期架构与完整实现范围已确定；分阶段开发，不以早期阶段代替最终完成。** |
 | 目标 | 可维护、可验证、按需使用的项目知识检索系统，覆盖持久混合检索、重排、多来源、Research、交互、生命周期与任务效果 |
 | 架构选择 | B 为主平面：SQLite 元数据/FTS/可移植向量；LanceDB Embedded 为规模化 ANN 实现；所有投影仍依赖 owner 和 DCS |
-| 开发基线 | 最新本地 `main@5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976`；首轮源码裁决已保存为 `c5896951e` |
+| 开发基线 | 已整合本地 `main@806855309fb9d0ab4ffcf9f897f42fb0117e4f40`；研究起点为 `5ffcdfe89`，首轮裁决保存于 `c5896951e` |
 | 范围 | 本次 Project RAG 修改与本地已提交主线；开发执行位置与节点绑定保存在本地 Task Forest |
 | 实施合同 | [长期工作包](../project-rag/WORK-PACKAGES.md) · [机器可读工作包](../project-rag/program.v2.json) |
 | 外部依据 | [资料探索与取舍](../project-rag/RESEARCH-20261109.zh-CN.md) |

@@ -7,7 +7,7 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-10
 intent: 让用户能区分有证据的事实、推断和未解决的问题。
-diffBase: c5896951eaaf2e567072ff4430e2a23f8bf30e46
+diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
 touchedAreas:
   - "electron/services/knowledge-evidence-qa.ts"
   - "electron/services/knowledge-source-set-answer.ts"

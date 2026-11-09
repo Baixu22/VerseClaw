@@ -35,7 +35,7 @@
 | RAG-18 | [完成跨平台安装、离线运行与升级回滚](../../../harness/specs/tasks/project-rag-packaging-portability.md) | RAG-06、RAG-08、RAG-12 | packaging / provider lifecycle / platform validation |
 | RAG-19 | [验收长期版本的完整能力、稳定性与任务收益](../../../harness/specs/tasks/project-rag-long-term-acceptance.md) | RAG-02、RAG-17、RAG-18 | independent evaluation / integration |
 
-所有实现与验收默认在绑定的同一个专用工作树串行推进，避免多叶同时改写共享契约。分支基于最新本地 main@5ffcdfe89；远端分叉不纳入本次整合范围。
+所有实现与验收默认在绑定的同一个专用工作树串行推进，避免多叶同时改写共享契约。分支已整合本地 main@806855309（研究起点为5ffcdfe89）；远端分叉不纳入本次整合范围。
 
 ## 每叶执行流程
 

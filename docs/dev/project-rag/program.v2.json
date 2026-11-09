@@ -2,7 +2,7 @@
   "schema": "ProjectRagProgram/v2",
   "revision": "2026-11-09-long-term",
   "purpose": "交付可维护、可验证的项目知识检索系统，具备持久混合检索、重排、多来源、Research、完整交互、生命周期和效果评测。",
-  "baseline": "5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976",
+  "baseline": "806855309fb9d0ab4ffcf9f897f42fb0117e4f40",
   "phases": [
     {
       "key": "P0",
@@ -866,5 +866,6 @@
       "rollback": "保持前一已验证profile与所有者服务，记录未达标项，修复后新版本重测。",
       "minutes": 960
     }
-  ]
+  ],
+  "initialBaseline": "5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976"
 }

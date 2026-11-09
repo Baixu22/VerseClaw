@@ -7,7 +7,7 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-06
 intent: 用统一契约覆盖普通项目与大语料，并明确平台能力。
-diffBase: c5896951eaaf2e567072ff4430e2a23f8bf30e46
+diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
 touchedAreas:
   - "openclaw_runtime/src/knowledge/retrieval/**"
   - "openclaw_runtime/src/state/openclaw-state-*"

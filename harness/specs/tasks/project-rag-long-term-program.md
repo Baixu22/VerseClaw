@@ -7,7 +7,7 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-00
 intent: 把完整目标、实现顺序、验证和工作树归属变成可执行合同。
-diffBase: c5896951eaaf2e567072ff4430e2a23f8bf30e46
+diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
 touchedAreas:
   - "docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md"
   - "docs/dev/project-rag/**"

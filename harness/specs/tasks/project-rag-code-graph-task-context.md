@@ -7,7 +7,7 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-15
 intent: 支持跨文件关系与任务相关证据发现，避免创建通用图权威。
-diffBase: c5896951eaaf2e567072ff4430e2a23f8bf30e46
+diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
 touchedAreas:
   - "openclaw_runtime/src/context-engine/views/retrieval/**"
   - "openclaw_runtime/src/context-engine/factstore/**"

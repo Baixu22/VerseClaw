@@ -7,7 +7,7 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-18
 intent: 让目标系统在实际发布平台可安装、可恢复、可持续维护。
-diffBase: c5896951eaaf2e567072ff4430e2a23f8bf30e46
+diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
 touchedAreas:
   - "electron-builder.yml"
   - "openclaw_runtime/package.json"

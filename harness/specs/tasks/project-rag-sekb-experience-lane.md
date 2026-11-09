@@ -7,7 +7,7 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-14
 intent: 让历史经验帮助实际执行，并知道是否被采用及是否有效。
-diffBase: c5896951eaaf2e567072ff4430e2a23f8bf30e46
+diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
 touchedAreas:
   - "electron/services/knowledge-api.ts"
   - "openclaw_runtime/src/knowledge/sekb/**"

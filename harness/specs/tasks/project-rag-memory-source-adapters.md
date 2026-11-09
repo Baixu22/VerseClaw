@@ -7,7 +7,7 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-13
 intent: 综合可用记忆，同时保持各存储域和作用域的边界。
-diffBase: c5896951eaaf2e567072ff4430e2a23f8bf30e46
+diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
 touchedAreas:
   - "openclaw_runtime/src/memory/**"
   - "openclaw_runtime/extensions/memory-core/runtime-api.ts"

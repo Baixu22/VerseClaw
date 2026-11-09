@@ -7,7 +7,7 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-02
 intent: 在调参前固定怎样证明完整检索系统有效。
-diffBase: c5896951eaaf2e567072ff4430e2a23f8bf30e46
+diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
 touchedAreas:
   - "scripts/knowledge-*.ts"
   - "scripts/lib/paired-ablation.mjs"

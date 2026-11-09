@@ -7,7 +7,7 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-19
 intent: 证明长期目标已经交付，并结束临时并行实现。
-diffBase: c5896951eaaf2e567072ff4430e2a23f8bf30e46
+diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
 touchedAreas:
   - "scripts/knowledge-*.ts"
   - "harness/specs/fixtures/project-rag/**"
