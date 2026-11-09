@@ -146,7 +146,9 @@ export async function replayPairedMeasurement({ root, base, scratch, out }) {
     assert.deepEqual(comparison.power.requiredCasesApprox, computed.power.requiredCasesApprox, 'replay-sample-planning');
     for (const [currentArm, original] of [['sekb-off', comparison], [arm, comparison.treatment]]) {
       const computedArm = statistics.arms[currentArm];
-      assert.equal(original.completeCaseCount, computedArm.completeCaseCount, 'replay-complete-case-count');
+      assert.equal(currentArm === 'sekb-off' ? comparison.run.completeCaseCount : original.completeCaseCount,
+        computedArm.completeCaseCount, 'replay-complete-case-count');
+      assert.equal(original.perTask.filter(task => task.complete).length, computedArm.completeCaseCount, 'replay-complete-case-projection');
       for (const field of ['passK', 'passAtK', 'flakeRate', 'confidenceInterval95', 'passAtKConfidenceInterval95']) {
         assert.deepEqual(original.aggregate[field], computedArm[field], 'replay-arm-' + field);
       }
