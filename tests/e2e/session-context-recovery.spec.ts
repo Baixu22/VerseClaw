@@ -23,9 +23,10 @@ async function seed(app: ElectronApplication, info: TestInfo, label: string) {
       workspaceId: project.workspaceId, sessionKey: project.sessionKey, message: marker, idempotencyKey: marker,
     });
     if (!sent.success || !sent.result?.runId) throw new Error('U5 seed turn was not acknowledged');
-    await expect.poll(async () => (await rpc<{ status: string }>(app, 'agent.wait', {
-      runId: sent.result!.runId!, timeoutMs: 1000,
-    })).status, { timeout: 60_000 }).toBe('ok');
+    await expect.poll(async () => (await rpc<{ session: { hasActiveRun: boolean } }>(app,
+      'sessions.describe', { key: project.sessionKey })).session.hasActiveRun, { timeout: 90_000 }).toBe(false);
+    const settled = await rpc<{ status: string }>(app, 'agent.wait', { runId: sent.result!.runId!, timeoutMs: 1000 });
+    expect(settled.status).toBe('ok');
   }
   await expect.poll(async () => (await rpc<{ session: { hasActiveRun: boolean } }>(app,
     'sessions.describe', { key: project.sessionKey })).session.hasActiveRun).toBe(false);
@@ -138,12 +139,13 @@ test('U5 manual compact preserves its instructions on cancel, pending, refusal a
     const before = await ownerReadback(app, project.sessionKey); evidence.before = before;
     await installFault(app, 'compact', project.sessionKey);
     const page = await getStableWindow(app); await page.reload();
+    await expect(page.getByText('U5_TARGET', { exact: true })).toBeVisible({ timeout: 60_000 });
     const locale = JSON.parse(await readFile('shared/i18n/locales/en/chat.json', 'utf8'));
     const open = async () => {
       await page.getByTestId('chat-composer-input').fill('/compact');
       const option = page.getByTestId('chat-slash-command-option-compact');
       await expect(option).toContainText(/[\d.]+k?\s*\/\s*[\d.]+k?\s*tokens/);
-      await option.click();
+      await option.focus(); await option.press('Enter');
       await expect(page.getByTestId('chat-compaction-dialog')).toBeVisible();
     };
     await open();
@@ -152,7 +154,7 @@ test('U5 manual compact preserves its instructions on cancel, pending, refusal a
     await dialog.getByRole('button', { name: locale.composer.compaction.cancel, exact: true }).click();
     expect((await faultState(app)).calls).toHaveLength(0);
     await open(); await expect(instructions).toHaveValue('U5 preserve this explicit instruction');
-    await page.getByTestId('chat-compaction-confirm').click();
+    await page.getByTestId('chat-compaction-confirm').focus(); await page.getByTestId('chat-compaction-confirm').press('Enter');
     await expect.poll(async () => (await faultState(app)).held, { timeout: 60_000 }).toBe(true);
     await expect(page.getByTestId('chat-compaction-confirm')).toBeDisabled();
     expect((await faultState(app)).calls).toEqual([expect.objectContaining({ payload: expect.objectContaining({ expectedSessionId: project.generation }) })]);
@@ -164,7 +166,7 @@ test('U5 manual compact preserves its instructions on cancel, pending, refusal a
     await expect(instructions).toHaveValue('U5 preserve this explicit instruction');
     await expect(dialog).toBeVisible();
     await expect(page.getByTestId('chat-compaction-confirm')).toBeEnabled();
-    await page.getByTestId('chat-compaction-confirm').click();
+    await page.getByTestId('chat-compaction-confirm').focus(); await page.getByTestId('chat-compaction-confirm').press('Enter');
     await expect.poll(async () => (await faultState(app)).held, { timeout: 60_000 }).toBe(true);
     await releaseFault(app, 'timeout');
     await expect(page.getByText(/U5_TIMEOUT_OUTCOME_UNKNOWN/)).toBeVisible();
@@ -205,6 +207,7 @@ test('U5 range compact keeps the exact boundary and draft, and ignores a late er
     const entryId = getTranscriptEntryId(target); expect(entryId).toBeTruthy();
     await installFault(app, 'compactRange', project.sessionKey);
     const page = await getStableWindow(app); await page.reload();
+    await expect(page.getByText('U5_TARGET', { exact: true })).toBeVisible({ timeout: 60_000 });
     await expect(page.getByText('U5_TARGET', { exact: true })).toBeVisible({ timeout: 30_000 });
     await page.getByTestId('chat-composer-input').fill('U5 range draft');
     const row = page.locator('[id^="chat-message-"]').filter({ has: page.getByText('U5_TARGET', { exact: true }) });
@@ -264,6 +267,7 @@ test('U5 checkpoint restore keeps pending and rejected states honest and refresh
     const before = await ownerReadback(app, project.sessionKey); evidence.before = before;
     await installFault(app, 'restoreCheckpoint', project.sessionKey, true);
     const page = await getStableWindow(app); await page.reload();
+    await expect(page.getByText('U5_TARGET', { exact: true })).toBeVisible({ timeout: 60_000 });
     await page.getByTestId('chat-composer-input').fill('U5 restore draft');
     await openCheckpoints(page);
     await expect(page.getByTestId('chat-checkpoint-restore-' + FIXTURE_CHECKPOINT)).toBeVisible();

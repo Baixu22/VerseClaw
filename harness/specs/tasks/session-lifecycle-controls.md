@@ -68,6 +68,8 @@ ownedPaths:
   - tests/unit/long-session-lifecycle-barrier.test.ts
   - tests/unit/r0-2-sessions-delete-fail.test.ts
   - electron/services/long-session-resource-reclamation.ts
+  - tests/e2e/session-context-commit-recovery.spec.ts
+  - tests/e2e/fixtures/session-context-owner-seed.ts
 touchedAreas:
   - src/lib/host-api.ts
   - shared/host-api/contract.ts
@@ -130,6 +132,8 @@ touchedAreas:
   - tests/unit/long-session-lifecycle-barrier.test.ts
   - tests/unit/r0-2-sessions-delete-fail.test.ts
   - electron/services/long-session-resource-reclamation.ts
+  - tests/e2e/session-context-commit-recovery.spec.ts
+  - tests/e2e/fixtures/session-context-owner-seed.ts
 requiredRules:
   - identity-scope-boundary
   - renderer-main-boundary
@@ -154,6 +158,7 @@ acceptance:
   - Existing child sessions remain reachable after source archive/delete; no implicit subtree action is added.
   - Four-locale Electron journeys and focused negative tests identify the same candidate and agent actor.
 requiredTests:
+  - pnpm exec playwright test tests/e2e/session-context-commit-recovery.spec.ts --workers=1
   - pnpm exec vitest run tests/unit/session-lifecycle-control-scope.test.ts tests/unit/session-delete-gate.test.ts tests/unit/checkout-writer-ownership.test.ts --maxWorkers=1
   - pnpm exec playwright test tests/e2e/session-context-recovery.spec.ts tests/e2e/session-lifecycle-recovery.spec.ts tests/e2e/session-worktree-storage.spec.ts --workers=1
   - pnpm run typecheck

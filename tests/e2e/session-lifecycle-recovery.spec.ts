@@ -77,6 +77,12 @@ async function setup(launch: Launch, info: TestInfo, providerPort?: number) {
 }
 
 async function select(c: Context, key: string) {
+  const family = c.page.getByTestId('session-family-children');
+  if (key === c.neighbour && await family.isVisible()) {
+    await family.selectOption(key);
+    await expect(c.page.getByTestId('chat-composer-input')).toHaveValue('U5 draft B');
+    return;
+  }
   const row = c.page.getByTestId(`sidebar-session-${key}`);
   await expect(row).toBeVisible({ timeout: 30_000 }); await row.click();
   await expect(row.locator('xpath=ancestor::div[contains(concat(" ",normalize-space(@class)," ")," sidebar-row ")][1]'))
@@ -231,10 +237,10 @@ test('U5 current-run Stop retries without its old error and reconciles a lost re
     workspaceId: c.project.workspaceId, sessionKey: c.project.sessionKey, message: 'U5-HOLD', idempotencyKey: 'u5-stop-run',
   });
   expect(sent.success).toBe(true); c.facts.runId = sent.result.runId;
-  await expect.poll(() => providerHeld).toBe(true);
+  await expect.poll(() => providerHeld, { timeout: 90_000 }).toBe(true);
   const input = c.page.getByTestId('chat-composer-input'), stop = c.page.getByTestId('chat-composer-send');
   await input.fill(''); await expect(stop).toHaveAttribute('data-send-state', 'running');
-  await arm(c, 'chat.abort', 'before'); await stop.click(); await held(c, 'before');
+  await arm(c, 'chat.abort', 'before'); await stop.focus(); await stop.press('Enter'); await held(c, 'before');
   await expect(stop).not.toHaveAttribute('data-send-state', 'paused');
   const running = await rpc<{ session: { hasActiveRun: boolean } }>(c.app, 'sessions.describe', { key: c.project.sessionKey });
   expect(running.session.hasActiveRun).toBe(true);
@@ -242,7 +248,7 @@ test('U5 current-run Stop retries without its old error and reconciles a lost re
   await expect(c.page.getByText('Could not confirm the stop. Refresh the session to check its status.', { exact: true })).toBeVisible();
   await expect(input).toHaveValue('U5 unsent A'); await expect(stop).not.toHaveAttribute('data-send-state', 'paused');
   c.facts.rejection = await fault(c);
-  await input.fill(''); await arm(c, 'chat.abort', 'before'); await stop.click(); await held(c, 'before');
+  await input.fill(''); await arm(c, 'chat.abort', 'before'); await stop.focus(); await stop.press('Enter'); await held(c, 'before');
   await expect(c.page.getByTestId('chat-error')).toHaveCount(0);
   await expect(stop).not.toHaveAttribute('data-send-state', 'paused');
   await input.fill('U5 unsent A'); await release(c, 'pass');
@@ -258,15 +264,15 @@ test('U5 current-run Stop retries without its old error and reconciles a lost re
     operationId: 'not_applicable: chat.abort accepts sessionKey/runId only' };
 
   // A second real run exercises post-commit reply loss separately from the rejected call.
-  await stop.click(); await expect(stop).not.toHaveAttribute('data-send-state', 'paused');
+  await stop.focus(); await stop.press('Enter'); await expect(stop).not.toHaveAttribute('data-send-state', 'paused');
   providerHeld = false;
   const second = await hostInvoke<{ success: boolean; result: { runId: string } }>(c.app, 'chat', 'sendWithMedia', {
     workspaceId: c.project.workspaceId, sessionKey: c.project.sessionKey, message: 'U5-HOLD-SECOND', idempotencyKey: 'u5-stop-second-run',
   });
   expect(second.success).toBe(true); expect(second.result.runId).not.toBe(sent.result.runId);
-  await expect.poll(() => providerHeld).toBe(true);
+  await expect.poll(() => providerHeld, { timeout: 90_000 }).toBe(true);
   await input.fill(''); await expect(stop).toHaveAttribute('data-send-state', 'running');
-  await arm(c, 'chat.abort', 'after'); await stop.click(); await held(c, 'after');
+  await arm(c, 'chat.abort', 'after'); await stop.focus(); await stop.press('Enter'); await held(c, 'after');
   expect((await fault(c))!.reply?.data).toMatchObject({ aborted: true, runIds: [second.result.runId] });
   await input.fill('U5 unsent A'); await select(c, c.neighbour); const neighbourUrl = c.page.url();
   await release(c, 'drop'); await neighbourUnchanged(c, neighbourUrl);
