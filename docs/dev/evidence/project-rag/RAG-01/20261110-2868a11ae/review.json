@@ -1,0 +1,18 @@
+{
+  "schema": "ProjectRagReview/v1",
+  "actor": "Laplace",
+  "driven_by": "agent",
+  "model": "ccs-workbuddy/deepseek-v4.1-flash",
+  "candidate": "4b56d8eb4e72a89f942648dab4e0f1d6f43e5c65",
+  "status": "pass",
+  "reviewedPaths": [
+    "scripts/contract-check.mjs",
+    "tests/unit/contract-check.test.ts",
+    "scripts/agent-dev-deep-test.mjs",
+    "scripts/agent-dev-audit.mjs"
+  ],
+  "findings": [],
+  "scope": "Fixture cache isolation, full negative-case diagnostics, virtual paths, unchanged normal CLI semantics, pnpm argument forwarding and dirty-source freshness",
+  "testExecution": "none",
+  "recordedAt": "2026-11-09T19:31:26.072Z"
+}

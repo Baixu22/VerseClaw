@@ -1,0 +1,29 @@
+{
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "node": "v24.22.1",
+  "rootNodeModules": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\node_modules",
+  "runtimeNodeModules": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\node_modules",
+  "rootVirtualStore": "D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm",
+  "runtimeVirtualStore": "D:\\tmp\\project-rag-longterm-20261109-deps\\runtime\\.pnpm",
+  "storeDir": "D:\\pnpm-store\\v11",
+  "packages": [
+    {
+      "path": "D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\package.json",
+      "version": "4.1.1"
+    },
+    {
+      "path": "D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\electron@40.8.4\\node_modules\\electron\\package.json",
+      "version": "40.8.4"
+    },
+    {
+      "path": "D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\react@19.2.4\\node_modules\\react\\package.json",
+      "version": "19.2.4"
+    },
+    {
+      "path": "D:\\tmp\\project-rag-longterm-20261109-deps\\runtime\\.pnpm\\vitest@4.1.7_@opentelemetry_f5449208cde661befa315c6fea555e10\\node_modules\\vitest\\package.json",
+      "version": "4.1.7"
+    }
+  ],
+  "mainNodeModulesReused": false
+}

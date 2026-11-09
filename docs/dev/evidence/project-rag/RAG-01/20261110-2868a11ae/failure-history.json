@@ -1,0 +1,83 @@
+{
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "runs": [
+    {
+      "run": "formal-0ef788962-01",
+      "status": "failed",
+      "stats": {
+        "startTime": "2026-11-09T16:11:05.629Z",
+        "duration": 150430.706,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "evidence": "historical/formal-0ef788962-01.json"
+    },
+    {
+      "run": "formal-7625be876-02",
+      "status": "failed",
+      "stats": {
+        "startTime": "2026-11-09T16:27:58.444Z",
+        "duration": 130902.537,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "evidence": "historical/formal-7625be876-02.json"
+    },
+    {
+      "run": "formal-126d1851f-03",
+      "status": "failed",
+      "stats": {
+        "startTime": "2026-11-09T17:12:37.749Z",
+        "duration": 126019.295,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "evidence": "historical/formal-126d1851f-03.json"
+    },
+    {
+      "run": "formal-6c67e22ef-04",
+      "status": "failed",
+      "stats": {
+        "startTime": "2026-11-09T17:23:45.951Z",
+        "duration": 146306.849,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "evidence": "historical/formal-6c67e22ef-04.json"
+    },
+    {
+      "run": "formal-273f9a912-05",
+      "status": "failed",
+      "stats": {
+        "startTime": "2026-11-09T18:12:55.021Z",
+        "duration": 127511.424,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "evidence": "historical/formal-273f9a912-05.json"
+    },
+    {
+      "run": "formal-44cd8f7c2-09",
+      "status": "incomplete",
+      "reason": "Old shell chain returned zero after six stages; the remaining stages did not execute.",
+      "evidence": "historical/ci-chain-incomplete.log"
+    },
+    {
+      "run": "formal-493704561-10/harness-ci",
+      "status": "interrupted",
+      "reason": "The CI fixture recursively invoked the same pnpm entry in a nested Windows environment. The verified owned process tree was stopped; fixture isolation and recursive-entry rejection were subsequently verified.",
+      "evidence": "historical/ci-recursive-incomplete.json"
+    }
+  ]
+}

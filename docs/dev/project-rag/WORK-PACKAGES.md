@@ -1,6 +1,6 @@
 # Project RAG 长期实现工作包
 
-本计划的终点是完整长期版本。RAG-01 至 RAG-19 为必交付；当前只完成 RAG-00 的研究、架构、规格和工作树规划。阶段交付可以单独验收，不能代替长期目标完成。
+本计划的终点是完整长期版本。RAG-01 至 RAG-19 为必交付；实际进度由本地 Task Forest 与每叶精选证据记录。阶段交付按各自规格验收，长期目标在全部实现与验收节点完成后收口。
 
 依据：[最终 ADR](../adr/2026-11-09-project-rag-retrieval-plane.md) · [外部资料](RESEARCH-20261109.zh-CN.md) · [结构化合同](program.v2.json)。运行进度与实际 TF ID 由本地 Task Forest 管理；工作树的 WORKTREE.md 提供当前绑定。
 

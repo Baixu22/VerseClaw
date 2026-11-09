@@ -1,0 +1,23 @@
+{
+  "schema": "ProjectRagCandidate/v1",
+  "branch": "codex/project-rag-longterm-20261109",
+  "driven_by": "agent",
+  "applicationSourceChanged": false,
+  "dirty": false,
+  "runtimeBuildReuseFrom": "4b56d8eb4e72a89f942648dab4e0f1d6f43e5c65",
+  "candidate": "2868a11ae39aa1b4a920800995b64f98d69ce6b9",
+  "tree": "a00265c97e05ad6d2b9093889d35b7d6c6ab763c",
+  "mode": "serial-gates",
+  "actor": "codex/project-rag",
+  "recordedAt": "2026-11-09T20:51:22.0792979+00:00",
+  "changedPaths": [
+    "docs/agent-dev-control-plane.md",
+    "harness/specs/tasks/project-rag-owner-read-contract.md",
+    "scripts/harness-ci.mjs",
+    "tests/e2e/agent-dev-quality.spec.ts",
+    "tests/unit/harness-ci-runner.test.ts"
+  ],
+  "worktree": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX",
+  "buildReuseFrom": "4937045618e45d7af5e9d27ab6cf8ffe0b02180d",
+  "reusedOwnerVerificationFrom": "4937045618e45d7af5e9d27ab6cf8ffe0b02180d"
+}

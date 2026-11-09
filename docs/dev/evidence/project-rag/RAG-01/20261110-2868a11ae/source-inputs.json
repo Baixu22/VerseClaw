@@ -1,0 +1,1617 @@
+{
+  "schema": "ProjectRagSourceInputs/v1",
+  "candidate": "2868a11ae39aa1b4a920800995b64f98d69ce6b9",
+  "base": "ca1ba25b27ccd3783d199d2416d8a81bcf799c2e",
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "files": [
+    {
+      "path": ".gitignore",
+      "sha256": "1fd9b0a21aea740b9ed289e01b042837bb4d53d9c92e85a9e1fa73808595d6a6",
+      "bytes": 176162,
+      "gitBlob": "c277750c89d8471fa7d24b48a1763cad94c9e332"
+    },
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "d7a7e95eeb93a15125ccd12f419a8c5899f9a3f38601bae25f5654de65a190e0",
+      "bytes": 30013,
+      "gitBlob": "12034943c449526d0dac735452b89236936a8fed"
+    },
+    {
+      "path": "README.md",
+      "sha256": "11fa8301208d7a9027e660694d53c2540162ba8177cf4b9a12f654a5a9cca4ca",
+      "bytes": 26866,
+      "gitBlob": "c8ede4babff1b8e2945f3138a2b2efa3165e324c"
+    },
+    {
+      "path": "README.ru-RU.md",
+      "sha256": "0dce8bdba436f4d61b9c30263301c2e8ca1ab3799ec99a23e6236ab6cfa1d54e",
+      "bytes": 30463,
+      "gitBlob": "9bac1328cce04074b34a2bb1d592d158cc88480f"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "349d9934d146e34368d55893e7cc88d0c3fa7aca4e72e3c2239bc946c953c666",
+      "bytes": 24324,
+      "gitBlob": "fca81061510216f87cce366764b80b913148852e"
+    },
+    {
+      "path": "docs/agent-dev-control-plane.md",
+      "sha256": "b68ec8cc75b2a37ffa2c22f23997bc2fe520d34d0dbde40a174909e018d65e70",
+      "bytes": 16635,
+      "gitBlob": "aad82a55bb4d4a0cde86588a623ec01d07820319"
+    },
+    {
+      "path": "docs/dev/project-rag/OWNER-READ-CONTRACT.md",
+      "sha256": "ef4083d25229e26310da2486e35666d1009b2e9f734074969ed52d95449ea721",
+      "bytes": 2126,
+      "gitBlob": "087cd55913882b1c3842a26f84c36e5f957a64fc"
+    },
+    {
+      "path": "docs/dev/project-rag/WORK-PACKAGES.md",
+      "sha256": "b1827e1d48ea0a41b741ee305e0db4d6d63c84da492cf9274c5b3d0ae6779083",
+      "bytes": 35496,
+      "gitBlob": "310948e713ab427d2972a8f143d04bf5dfcff189"
+    },
+    {
+      "path": "docs/modules/multi-agent-and-tasks.md",
+      "sha256": "f95833bbc4344ff760380ad245b6c16e7c5fac2075fcd0cf2eda862a3180252a",
+      "bytes": 23732,
+      "gitBlob": "84f32eb78246ab54a1e8be051d3845f56d6ea0e9"
+    },
+    {
+      "path": "docs/modules/resources-and-observability.md",
+      "sha256": "6ac78f4bf8c478f11a2776dbf671a8ccf2f1b18b382e52e6799c60d5a1917c39",
+      "bytes": 27164,
+      "gitBlob": "da580fcb633196b1a2b549aa769e2a3d7b07b6b4"
+    },
+    {
+      "path": "electron/services/chat-api.ts",
+      "sha256": "e3bafb89235e8891cb0e73871c97d8f3a148cc5379913aba125a17573f6575f5",
+      "bytes": 34521,
+      "gitBlob": "1b83c8b6279112cc132f35a4fc6acfbe7d1dbaa0"
+    },
+    {
+      "path": "electron/services/gateway-api.ts",
+      "sha256": "8cf0591b4e9862546ae83b96133c152198e1fdafaf2bcb98a7df33ff05eed300",
+      "bytes": 27996,
+      "gitBlob": "6ba3b167df8c22fc4d5f22be09a7de99e81f28b7"
+    },
+    {
+      "path": "electron/services/knowledge-api.ts",
+      "sha256": "779a9801fd7bedd7aa7a50872d0760500c724f181962d9ea5d79e555331f6d7c",
+      "bytes": 257790,
+      "gitBlob": "14dd49a4f189be3cd5c2ca89b58506c35e49cec5"
+    },
+    {
+      "path": "electron/services/knowledge-read-scope.ts",
+      "sha256": "b00b8cf9dcf914b596099696830298e2d6a964fd67dd653daaed3ca89d7c0d20",
+      "bytes": 4398,
+      "gitBlob": "1405938144e885d650959ddb552cb59cd9428cea"
+    },
+    {
+      "path": "electron/services/knowledge-source-set-answer.ts",
+      "sha256": "2d277d64bf3a05da78bd040ff4341efae6a800df8474bc505e7751eb9b0e1b05",
+      "bytes": 18428,
+      "gitBlob": "ede9ac05218cd50985c69b9319b9a7f28c76abe7"
+    },
+    {
+      "path": "electron/services/sessions-api.ts",
+      "sha256": "aec622c683351f4406b5dbb974e3ef834421f43f5f81eb9d5d91b95e9c058cdf",
+      "bytes": 146284,
+      "gitBlob": "902718dac2cf736124b191f78f6db337255528eb"
+    },
+    {
+      "path": "electron/services/terminal-session-manager.ts",
+      "sha256": "652f1ce8f5accb1b71d8f6aa460302a87fe6cd28ceb05d77f3a86e22cc847ca5",
+      "bytes": 28169,
+      "gitBlob": "60f9472d51f85af7a929cab2712ca1855c43c3a4"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/REPORT.md",
+      "sha256": "b05d11517844528ea98bbd43942e71f3f6617718a15c248943197a30fc273895",
+      "bytes": 5282,
+      "gitBlob": "835d948ccc2d32ce466997fe65c82255eabbf3d1"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/SHA256SUMS",
+      "sha256": "6d31d92b0f8587d3a6654793a75caca780502a887c0599236185a0d21ef7bd77",
+      "bytes": 3957,
+      "gitBlob": "5afef952a032b433db4c2a0d5460a4e8be2e23a2"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/browser-owners-cases.json",
+      "sha256": "355ff2a9ff56041872dbcca857c3238c34540ef0a603447f1936bbb05b1cc11d",
+      "bytes": 7119,
+      "gitBlob": "07310b32c46ce60867aba9e9c74968b4947b3401"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/cleanup-observation-regression.json",
+      "sha256": "cfff58880785bc85ef5d46b247b0e0f0ac99d38bb87dae266e7df20c69382aa7",
+      "bytes": 2306,
+      "gitBlob": "82f3ecadabf3a2e4aa1c3d5ff2882d4bd90252d5"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/contract-audit.json",
+      "sha256": "d9b57d82c65da9cab83373f894501465ace5eb7c0af696ed859fb44d234acf39",
+      "bytes": 11908,
+      "gitBlob": "a756f1b63752b25f4425d759c0f07ee979f48fe6"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/credential-scan.json",
+      "sha256": "0fdd98ba4858bc6e261a82e398576951fa5c713c4ce45f85950b4c72dd89a606",
+      "bytes": 104,
+      "gitBlob": "e438d253e52bb249dbff5bc1a18dd871cd31fda0"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/cross-workspace-pressure.json",
+      "sha256": "1c2dadad9b779970893e6e65e3ba7e3f495cedae0a7d128bffef12544eefba06",
+      "bytes": 11475,
+      "gitBlob": "5cfac1d9cf3640e920e86b996e54dd6ff8dc3afd"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/decision.json",
+      "sha256": "05b8a3b4b6ac4433fb9a02a509fb7491ba93953720437c0cfb56a831d0b297bb",
+      "bytes": 1758,
+      "gitBlob": "c7b0708a5d991da36cf2c2b78fcbeb47b7d8f861"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/electron-summary.json",
+      "sha256": "3b10cbe6ed6bddb17f3359841e5e18256a986b15c213e36d0f0f533c802cbe51",
+      "bytes": 2262,
+      "gitBlob": "18a3db2931b38456ca640dcfd3bc1514972ab6b7"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/gates.json",
+      "sha256": "5d50a90317ed44f1f2f57feed3a231344fcea1b9eb89ef6e9d65a1875595594e",
+      "bytes": 28919,
+      "gitBlob": "d13a9a750de4e8a19a241ec44def165c12aad87c"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/historical-contract-audit.json",
+      "sha256": "9946ded1aa39f027ac5c290deeabfef63afbe0f414df29cb769acd194d4eec5f",
+      "bytes": 11832,
+      "gitBlob": "782beb57806320ad3466318f0000a647b359a162"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/lifecycle-manifest.json",
+      "sha256": "988522bf0ad4533abdc9d4bae2e0d8c9548bb72dbc71a9ca2a8913c105370811",
+      "bytes": 4272,
+      "gitBlob": "aec566f156ea43d604e251cc4371f71968671eb1"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/lifecycle-trends.pdf",
+      "sha256": "6c3e607ee5bf83b7d83dcae2d089edac3fa31ba6e3498c4003e74b4d9508ec8a",
+      "bytes": 27229,
+      "gitBlob": "7b27f801007716f93a6c2a306d9aa64a4fd824d6"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/lifecycle-trends.png",
+      "sha256": "842f3d337d85dd86ad309fe90d39942fa4572b3e882012d18e291c9a183e9036",
+      "bytes": 218672,
+      "gitBlob": "d09432723cab52daacfa6b7848e696a90999f467"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/lifecycle-verification.json",
+      "sha256": "bdb22195142f1f7953be7b954fef0a8e17298ed7a1dd94fff9fc01d85a936497",
+      "bytes": 54765,
+      "gitBlob": "135d364175749c5d6894ca8e1a33b53530fde636"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/lifecycle.json",
+      "sha256": "7e558fe3eb6a8e9befee69ac2befc3e7f123a4fed0c974d90134d408a14defbf",
+      "bytes": 669859,
+      "gitBlob": "e4c11f49c7da4d9c9b6c0be5679d5eb2c51d6dc3"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/mixed-comparison.pdf",
+      "sha256": "63cdd26fb80fee0cd55d0a0e6a1186852f03d5a9386518db01746b739bc17a24",
+      "bytes": 18212,
+      "gitBlob": "d97c31bc6e42ab6ac527165981293d1b4c8b1446"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/mixed-comparison.png",
+      "sha256": "f42bac122aeb3727d57e6a85d8ca896c0c06bd8e79ba8c4d9d0101e26d484dc3",
+      "bytes": 76311,
+      "gitBlob": "96c7b0e043d70d0dd6e1b8fa48702d41fd73629d"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/mixed-independent.json",
+      "sha256": "fe55b2af7fe65224c8695fa6edaa61136dbad492cbce8e518aba4e7f029703f3",
+      "bytes": 18932,
+      "gitBlob": "3bed3e86179d0bb09d0301e233da503f7d1d5fa7"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/native-control.json",
+      "sha256": "5922d66f35fde36f1cce3afd38bcfede84ae49c1674fd003b91de5998a933e91",
+      "bytes": 4654,
+      "gitBlob": "79ecf7f29e0e62d3fecb1d0c5e4a9bbb3009e68c"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/native-workspace.json",
+      "sha256": "4c5813493f6de3651d2438ce1fff75f6aa6899a3898dae57d80f76fefec34ea5",
+      "bytes": 37182,
+      "gitBlob": "a232aa9ca6351192ddfd6d7ac5c5514544ebf5c5"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/observation-equivalence.json",
+      "sha256": "3ef574a3dde4053faa432f6dd77d75a00432808c68333fe83e425afec5e060c0",
+      "bytes": 4518,
+      "gitBlob": "43dcc81e3dbcef49278aa2b3561a2a37ef203bea"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/observation-validation.json",
+      "sha256": "7cf6c5ea1a5e195610e9eb8901282e3c9c25fbc49a5a4b16f7b467be8430ecde",
+      "bytes": 4113,
+      "gitBlob": "d5243a00283b0db7cd830cc7753b7ea4ab748187"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/pty-handles-dispose-input.json",
+      "sha256": "988b37177b25fe75788530ac764b4ab374e20ec6b8a4402cb407d7adbb6b8bb0",
+      "bytes": 3338,
+      "gitBlob": "e19a4fa737c1c7428dd415fb1b53059a1aa85d78"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/pty-handles-native-default.json",
+      "sha256": "11ff87f9ca0464b2849a25cf34f74d09094e3fac52f9496eb9f26cc7d3dce176",
+      "bytes": 4428,
+      "gitBlob": "fd122a91e23d8a6a1292c067cf9dcc2566259dd0"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/pty-pipe-negative.json",
+      "sha256": "36de015e13f8752cbd56e3312332fc85aa9d6b04e4c3e987e43a3dadd6b3e1d1",
+      "bytes": 472,
+      "gitBlob": "a05bb4c4a255c2aa535e081cb87c7086b756a80c"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/pty-pipes-current.json",
+      "sha256": "688c7d232065b9c9510c5dbc73705b62ec93b79233c9451b570138164cd3eeab",
+      "bytes": 1534,
+      "gitBlob": "a0456cf045c5700ecad882ddcb0c165c5f86bf17"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/raw-evidence-index.json",
+      "sha256": "a965baacb46e50f7266c2cc6959e58f0c5c0ec305b798a15b4ee40202b0c5108",
+      "bytes": 239116,
+      "gitBlob": "fe55cf6000d6d33d3663cb82ece0b8dbbb86ab7e"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/read-comparison.json",
+      "sha256": "a2796a75605442ee5b8c044cf2be1bc785ca516e06a2367a09d0f59f422c8726",
+      "bytes": 4909,
+      "gitBlob": "1850f3aeeb89363de7d0dbe94939b41c32b36b32"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/repeated-observers.json",
+      "sha256": "0ffa793e190e983b1458af8bd498c09f165b31cb8260595dadfe29a0f717485e",
+      "bytes": 10246,
+      "gitBlob": "2e2e66180802ba56fad5f903119d6d5508a181eb"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/report.json",
+      "sha256": "a0855b31954d55f22340dc3dd95c813322de3fbd46e1ac6d3091a79958bb5d5d",
+      "bytes": 17300,
+      "gitBlob": "91a154f3ea8b7c6444959863a1e4ddbcf86b732c"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/review-cleanup-observations.json",
+      "sha256": "a0fbfa4a75f10d2ff757233d31c7e0b971c768311363927d911699f42fd7f023",
+      "bytes": 133,
+      "gitBlob": "056f8dffad982b9c369875a14a5de2988417902c"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/review-exit-probe-default.json",
+      "sha256": "860c636472e75b5802b773b4a5bf4376f35f91e17044c5ecd59696751216816f",
+      "bytes": 428,
+      "gitBlob": "28b5f8ae50eaa2e2b33b6549f3d9ccd216a3fd84"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/review-integration.json",
+      "sha256": "2e9ee14903dc01a808df2d54be76dbd2cf8c96fbbfab9669d46e2c3c5532edde",
+      "bytes": 411,
+      "gitBlob": "64779c72a5b036d39f2f2c43b367a3335dfb92d1"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/review-launcher3.json",
+      "sha256": "4280eea6c2211c203fe13b9d4a2db9ddbc3c67b9f5c6d8102e6a2e53ce1b3c4e",
+      "bytes": 374,
+      "gitBlob": "686f0519cc71af54e25fba1e6500e741176ceca1"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/review-probes-final.json",
+      "sha256": "483e05d33b47bd2e7b4774ca4e427a98302b003fdb7b2cb235f1c0d0d873e796",
+      "bytes": 1662,
+      "gitBlob": "45a2b9ee572873621c2d8c217331a60477343f56"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/review-pty.json",
+      "sha256": "c77d978498f12ada4891886c42b692bb54f093c2bcea9316e76d06c6191716fd",
+      "bytes": 501,
+      "gitBlob": "1b5612b20a7b4d4d885e782d5ece3fd9502daa37"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/review-read.json",
+      "sha256": "5defaed306d10ccec50537a294a60d0d535bbe32e2dcd0a59dc028779d4da579",
+      "bytes": 414,
+      "gitBlob": "54544ae35667ea15b397cbc60dc45dd20decacf4"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/review3.json",
+      "sha256": "2b3aca1208248aa82f678f481726a689fd7e28832c6a243014ef8421965763ef",
+      "bytes": 466,
+      "gitBlob": "4220109099c9997cf70470214bf414330f906c56"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/root-unit-cases.json",
+      "sha256": "d85b2866928461acf30e659c27e606c5dcaf48805a2e03e9376ef459dda866c0",
+      "bytes": 141422,
+      "gitBlob": "1361420e21dfea1b47dfff169b17954b30dd13b1"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/runtime-budget-cases.json",
+      "sha256": "529ee901fb75852f44776889c7e458a18979ea9de0bcdb6b0d251ce40d64a934",
+      "bytes": 18044,
+      "gitBlob": "3bc939cf5edbd16cfbe8adf7f411c92a6255fd31"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/runtime-control-cases.json",
+      "sha256": "a4c09467173974e385681a7fb2c2e6941a30785e39922fb144b695375514f5dd",
+      "bytes": 13983,
+      "gitBlob": "f5c565a9a699889b3b0ab782e3f7dd07ba040d67"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/runtime-type-comparison.json",
+      "sha256": "62b0be336c8fc81b86ad05a5e8964bf65f67c06d42e8e2d0650c7d9012304d93",
+      "bytes": 11232,
+      "gitBlob": "0c0be1339acde8dfb08952536ddc95ffac3f762c"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/terminal-native-cases.json",
+      "sha256": "e3ab49a08080ebee0e3a5da69f385a7a84b489b61c8d8e26da0470603357a0fe",
+      "bytes": 513,
+      "gitBlob": "b7013a24e5fe06291e06b7c012893ecc800b86bd"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/tsconfig.json",
+      "sha256": "6566f100848dc5a9d0e3daa2d56ebf6d7d3480b040b3e0da43e515d3bfa6fcc0",
+      "bytes": 375,
+      "gitBlob": "1aad53fb187f3cd8e693d14c4c49fdde253252d2"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/REPORT.md",
+      "sha256": "987df2498aaa3ddf424933dae5a259783ef5f1e8c67a5ce30b542261cfa4e011",
+      "bytes": 1566,
+      "gitBlob": "aa1b5113a3fb581b3f459825b844b8714ed8f094"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-artifacts.log.txt",
+      "sha256": "1115200c3f996c703b31d7db1fa30af086512ac838d783b4d609e80d7ee4a3f6",
+      "bytes": 60,
+      "gitBlob": "39d606c57524ed4fbf2d34e9c3a13c3be60cd431"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-artifacts.result.json",
+      "sha256": "7137f24fa257cbc709d10a27bda014f55a6af45c376af8a57b826ae75c77a99b",
+      "bytes": 4442,
+      "gitBlob": "fae3dd9b25e9a7f4353ec37426468c7550781671"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-comms-compare.log.txt",
+      "sha256": "eba2d6ceafc4013a9b20994fb691282295a4b49e8e6bccd2e83d8a6aab57678e",
+      "bytes": 3435,
+      "gitBlob": "4ac592a4b711ce13399e34f6692727281f09bda5"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-comms-compare.result.json",
+      "sha256": "e82b464daabe0121c21fadfb6ae3e7e014479fb55fd52cf6e026b216df769c2b",
+      "bytes": 4099,
+      "gitBlob": "b3d3982f30a2f4adb5f061b2baf5433a86430961"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-comms-replay.log.txt",
+      "sha256": "ec2fdd7e914d1ce4c5b82fd3c4360b39bfb21b50b8f5d17da6d84ffbe4a6ef9f",
+      "bytes": 110,
+      "gitBlob": "dd64c383ec916b923c7830193c6bd749a1acf72a"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-comms-replay.result.json",
+      "sha256": "2bec6ec752cbc57df0d251137c9e5f01d51051cd9e2d124153168ed0b91101a8",
+      "bytes": 4096,
+      "gitBlob": "2154f51c2bf431cde281e544b3aa57ee44f108ca"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-contract.log.txt",
+      "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
+      "bytes": 23,
+      "gitBlob": "e9d4f810f79865b575f7e8c16189aaca367d6812"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-contract.result.json",
+      "sha256": "7c629ee444b8e4fbdaa229591ca3c61fac7e4df694577fd07d76ec60fb27e61b",
+      "bytes": 4090,
+      "gitBlob": "98c752a34ac7150216ca5f8757a296741d9fa26e"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-derivation-current.log.txt",
+      "sha256": "0968b30410dd3acfa9c0100c3f8545bc48102374085e20ad02c345c3afc76bee",
+      "bytes": 9633,
+      "gitBlob": "5f6fb3d25289688bd7ba7fb20088344ed2c9152e"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-derivation-current.result.json",
+      "sha256": "aba4da936af23c6a36dd78bcff7f0da084c8740b6d1297f2c75a1abaa97dd3aa",
+      "bytes": 4835,
+      "gitBlob": "ec48c73c85b463b8983cbbb8b96f7bbe132f0143"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-derivation-current.tests.json",
+      "sha256": "b1fcbc6ba1cba8435ad1122ce994a0bfd8829457dc13bdee1bcb63188f7e036c",
+      "bytes": 17183,
+      "gitBlob": "f3e3a68eea205381a786c91ef072f1ea823ce3dc"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-desktop-build2.log.txt",
+      "sha256": "04107108a12535f04e06efbff892dd17d8e40b9679d7193a1cea67e398152c81",
+      "bytes": 54667,
+      "gitBlob": "bec80f714ddf66bc0b6196898cd3062bd996afe0"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-desktop-build2.result.json",
+      "sha256": "038467cf80142d38b1bdaebe487b98ac21656c6c3cc504661b30ebc672fc62d5",
+      "bytes": 4152,
+      "gitBlob": "b4115cdf0e6c375a05452e6069c233c09ce1b2b8"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-final-harness-preview.log.txt",
+      "sha256": "407dd8a3a825e2dc5edc528b8ce69b3717205fa079b081794c7d9f4ffb9111ec",
+      "bytes": 115,
+      "gitBlob": "07c085eee5836381a33bd7a5021fb450e7aee136"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-final-harness-preview.result.json",
+      "sha256": "35764b3fbd0805371d66d73a2dbaf34d6f0d8273cedc87de4046de94df1b566b",
+      "bytes": 4862,
+      "gitBlob": "6bc18d9ec86356875506f979294fecf155baa82f"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-final-harness.log.txt",
+      "sha256": "652f42d0c3c7d6609024ec58c1b4a7c3a9485469a62410d1503d56e6c06c1f5a",
+      "bytes": 63,
+      "gitBlob": "1c990111612c841a9623422d436f0d415db8fd54"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-final-harness.result.json",
+      "sha256": "84ade455d097a17763ce1da13ff797b8c3736f38f22a99ba78a2b4dcd693e6a7",
+      "bytes": 4834,
+      "gitBlob": "fc3a90dbfdf89c0a8c158249809f69ddad862479"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-final-test-types.log.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-final-test-types.result.json",
+      "sha256": "87acd0d02ad61cf5241535e9cf556922be60726f1c50c7c47f16110fb72653a7",
+      "bytes": 4873,
+      "gitBlob": "46d2ffbc305e882147042f84c92a04655534d311"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-handoff-scopes.log.txt",
+      "sha256": "9df30aeb26912804c0ad5ceca132dff2252453786cdfaa61b673faa9a9cf268e",
+      "bytes": 9270,
+      "gitBlob": "5d0d6edee7f08522393c62e756ddc5231e075856"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-handoff-scopes.result.json",
+      "sha256": "a9d20ec6a4be37565f8bd4b49d2478fa9267a3ade340faadb16413115252b39a",
+      "bytes": 4858,
+      "gitBlob": "7eba8b1fb2845a7553498be26d743ac9f90f6845"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-handoff-scopes.tests.json",
+      "sha256": "aad7f23bd6881b87b077fe9b82b711bb2068cead121a5328dc3e4f88b165c69f",
+      "bytes": 17147,
+      "gitBlob": "36359523027a2f8175210970b161980f6520b72c"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-harness-preview.log.txt",
+      "sha256": "407dd8a3a825e2dc5edc528b8ce69b3717205fa079b081794c7d9f4ffb9111ec",
+      "bytes": 115,
+      "gitBlob": "07c085eee5836381a33bd7a5021fb450e7aee136"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-harness-preview.result.json",
+      "sha256": "3fd857a0b579611d9d7d26d9f282168501dc90722104f4cfcf41bcbaf88039c5",
+      "bytes": 4532,
+      "gitBlob": "1d9edceeb0cfe9eeb24ff61783c962993810015e"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-harness.log.txt",
+      "sha256": "652f42d0c3c7d6609024ec58c1b4a7c3a9485469a62410d1503d56e6c06c1f5a",
+      "bytes": 63,
+      "gitBlob": "1c990111612c841a9623422d436f0d415db8fd54"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-harness.result.json",
+      "sha256": "fd6a1a19247ee4643c6185503a686dffe0c9e17106e6aa0adce3fdfde6ca5565",
+      "bytes": 4166,
+      "gitBlob": "6d0cad643160bbc8cd65f22be1c38dad760e6783"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-i18n.log.txt",
+      "sha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe",
+      "bytes": 18,
+      "gitBlob": "18177c985159b567bfa278e6df06b9cc41823f1f"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-i18n.result.json",
+      "sha256": "6ea728d6ccbe3fb69560132ceefc19c0ae5b5430edacd34fb466dea49c841d62",
+      "bytes": 4077,
+      "gitBlob": "58862ec2dc85ace4f70e014e2545172c75236f0f"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-intent-e2e.log.txt",
+      "sha256": "595f353220b9adef79de2c1076e6f2a45c6b14afdf79cd711ac29ff8eb9b7185",
+      "bytes": 46652,
+      "gitBlob": "fab92c665f0cd5b0de442f3d7a3a384fdfa5aa18"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-intent-e2e.result.json",
+      "sha256": "480485de6b6cca736e3827aba63892aac8c7c16cc9240ec09843f1355add9f97",
+      "bytes": 4465,
+      "gitBlob": "c414e4488873f9049b364d3b2d40670a02f16708"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-intent-e2e.tests.json",
+      "sha256": "46c617019795cbbaaf20f395314d62f2b8b885ef38cc9223d9334c8c14dbb7dc",
+      "bytes": 72460,
+      "gitBlob": "e8298ce606b9049c011b05fc755f57c80786cf98"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-node-types.log.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-node-types.result.json",
+      "sha256": "57cda88b2e36f7308bcd29bae93da4cc1e3dafc097f62024ef8089597c6ab5f4",
+      "bytes": 4204,
+      "gitBlob": "bdee995d5b67850e3dd4797ff2b1b4b54e20ec6a"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-owner-restart2.log.txt",
+      "sha256": "c994afae6a514f0a02a6cc45711706fa7c6305896f059a3e361a171597d61598",
+      "bytes": 63544,
+      "gitBlob": "efaef1904a9f338d5b38bf30142ed5b69b41a804"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-owner-restart2.result.json",
+      "sha256": "73e9dd891f0d19fd06e7642afb9ea76ba6de7d1fabe4e7ae5dd8a76df4786e2d",
+      "bytes": 4859,
+      "gitBlob": "415c1a3e3587c5dbca9a2aa3413c4f7921f55880"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-owner-restart2.tests.json",
+      "sha256": "411cd1ace131b27bafc56441e498f9055eb1ccd9bd6ad96d94d2ccf386204871",
+      "bytes": 100324,
+      "gitBlob": "bb069ef3eb1434c8a7551eeb36d69bf3388b2318"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-process-cleanup.log.txt",
+      "sha256": "5881931dfc96479309ff5a8f424576f129a300db8b4416f616e8b518d20d1d4a",
+      "bytes": 106,
+      "gitBlob": "3be227efaf857c8609756f13108106d0825a4fd4"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-process-cleanup.result.json",
+      "sha256": "a24e11b80ab21a281d6a8459e97b9fbac92ce2c0cf3e67cd2010ab619466bbc2",
+      "bytes": 5090,
+      "gitBlob": "6a54de6ee02252454ae57bd8dedb575593799893"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-process-cleanup.tests.json",
+      "sha256": "e63fc1d70bfa44d478d54b27037f3b8ab264127669ff961943209b1fc2b0850a",
+      "bytes": 1224,
+      "gitBlob": "e8f5eed53849c5d58bf22d9b3798a58e824effdc"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-question-preview4.log.txt",
+      "sha256": "1e8ea84044e787e054539119ba8b894ed585881b248964ab6287126d5a0bc51d",
+      "bytes": 24911,
+      "gitBlob": "818a12ab2c06a3a032753e2fa1a9b2fcfaff3837"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-question-preview4.result.json",
+      "sha256": "fe8929eb08afc41c5921ae97f3ae969ae8a9b507103c412484f2456b42ae120d",
+      "bytes": 5178,
+      "gitBlob": "6f0599e0a8aa2e82c53bbc65a133d697f46e1806"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-question-preview4.tests.json",
+      "sha256": "aa741ad103682c89e73849df66fc4bb3421476748f44d261112a96294aee3aa5",
+      "bytes": 40320,
+      "gitBlob": "47f925662be7d538213cbb0aeb4d4d68ad6260f5"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-regression-e2e.log.txt",
+      "sha256": "43565510098b02f323f629c80bbb62e669ed9cabecd440de911d071a1b548598",
+      "bytes": 42447,
+      "gitBlob": "7b9cff9752cbf08a61fe568804c969822099307d"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-regression-e2e.result.json",
+      "sha256": "874574011fa769fd6710a75a1203b9de5230c2e0d00cb291da548e2d421b676b",
+      "bytes": 4584,
+      "gitBlob": "51b9c086a0efe64ee3c40aa8e4548a3275c32465"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-regression-e2e.tests.json",
+      "sha256": "76affd94e1d2461810746da301973ed5a2190ccad3bfa930a27bbbc3197cfe50",
+      "bytes": 74970,
+      "gitBlob": "9b30d9263b27c96d7bed5a680f953bc79bbfdbd6"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-test-types.log.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-test-types.result.json",
+      "sha256": "b671775e4c31f299006c18354f3a0c3a2bfbd5a93fd816127093b41732422ede",
+      "bytes": 4204,
+      "gitBlob": "c737ef92dce6534e8b9702c768721f0f7bf31395"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-units2.log.txt",
+      "sha256": "e0848e7c9caa60fc8c591b722fb3c02800b4884ef27f92a9d964158d85a3508d",
+      "bytes": 688,
+      "gitBlob": "77c6c2a1431c01947867579bcc899bb3710047a7"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-units2.result.json",
+      "sha256": "489e5e47820b8dfb4344922513a062b7c21a95f53e9fe7c6eec75058e249f64f",
+      "bytes": 4534,
+      "gitBlob": "e332ce92b61adeaf57676d69170111bd46c7ebd7"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-units2.tests.json",
+      "sha256": "26dbced1cb251ecc63fc602192c48e071e2da9057a3a1b66afef9854eb27c1b3",
+      "bytes": 37114,
+      "gitBlob": "41add924c5cd3b4ea2813e1e8a762c2ae7d32369"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-web-types.log.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/commands/u3-web-types.result.json",
+      "sha256": "9b449f57dcd44c4fa20ea703a45b3b9e3e4ff39195dc02ad91f56200edc4e701",
+      "bytes": 4201,
+      "gitBlob": "89a2eae977ee26e1cead982b61efe452677f6f88"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/diagnostics/handle-diagnostics.cjs",
+      "sha256": "3a302a329d8a98821a69e070b3cfd42d84c7bde8695b615d8de51aeff7d5e165",
+      "bytes": 805,
+      "gitBlob": "608dec3cbed5aed00ee75e3ac04f12ea8fb41b72"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/diagnostics/handles-11556.jsonl",
+      "sha256": "592d9464b9a5e6f3959ca651fd2d65b2b393572d26ea80c48faf052866bb4241",
+      "bytes": 29716,
+      "gitBlob": "d85c55451b5f39eaf852a195a306120eec82157d"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/diagnostics/handles-36252.jsonl",
+      "sha256": "391cf62400828b6074ae841a830dd68db9fe6374f219432a536f74c487902f83",
+      "bytes": 52880,
+      "gitBlob": "76bf1dcd025eabff6a9b8332fbd2fe30d138ef9b"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/failures/u3-host-fixture-fix.log.txt",
+      "sha256": "7001430f33f19630f51c5bb7f4011b379cc5b70fe1955a5751543229a9b5128f",
+      "bytes": 107,
+      "gitBlob": "4a3fb15592617a9d8d5445e56ca48f1e5e55e37e"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/failures/u3-host-fixture-fix.result.json",
+      "sha256": "43abe1888f868cf5adf382cd39d084e5fe5ef7ad2200aec5dece05f32097df8b",
+      "bytes": 4185,
+      "gitBlob": "635340bfd824ed9224202bbce016eb62a978c2d8"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/failures/u3-host-fixture-fix.tests.json",
+      "sha256": "b16f4deeaf78fdce4c122c5b754adaaed3d66573121a008affd6e2afb521f869",
+      "bytes": 16415,
+      "gitBlob": "5e6e2a8a85fffec26562d997cbee9e955f883abd"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/failures/u3-owner-restart.log.txt",
+      "sha256": "86ae5b289357e27058cc1de6ae901d5d5a047986c62d9e97b4f5311a454fa342",
+      "bytes": 60622,
+      "gitBlob": "7d79889a2fe2812877101658c1c4a809113aac26"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/failures/u3-owner-restart.result.json",
+      "sha256": "7146e878434902d73d0f52f62515029456b263e62334d36a6a1e5948b06504db",
+      "bytes": 4856,
+      "gitBlob": "42ad5d6b64ff5bb323a33abbc23bf03b3a7de817"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/failures/u3-owner-restart.tests.json",
+      "sha256": "d1a322b30c948fb0064cc238c456e81a125e571fc515dc3002a4024939a7560c",
+      "bytes": 89876,
+      "gitBlob": "ec9b54b0cbe8cf938f26b918116bc46653e78dfd"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/failures/u3-question-preview.log.txt",
+      "sha256": "5d09ea74a06bf26a1e4e3b546a62340e124dd07e2bce02dbcbd0d8886e11228a",
+      "bytes": 18012,
+      "gitBlob": "db224416ff79b1c72711d0301dbaa2f9a0b26a90"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/failures/u3-question-preview.result.json",
+      "sha256": "9bea9463e5f886829c94a95075a344810c13a12ae88431299782927725461300",
+      "bytes": 4858,
+      "gitBlob": "6fdb79f16007dbdc0fd4b4f459e50f5ba5d39049"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/failures/u3-question-preview.tests.json",
+      "sha256": "2f7a71a0594690f6b56c5611a824c1c74f66892f7a5fe19b37818baec1192c1d",
+      "bytes": 30019,
+      "gitBlob": "9de322102849c48b7251eb773df424949fe29995"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/failures/u3-question-preview2.log.txt",
+      "sha256": "1620bb91ad2ab9b406faa5b4a189cd6986b66d0568df0560450a2beeb9880ff4",
+      "bytes": 25099,
+      "gitBlob": "11aeea8f620476c154d9218509290b86dc593b5d"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/failures/u3-question-preview2.result.json",
+      "sha256": "88ed3af927ad79b9723706779e29841c7732d09bb23e714100a14b5d7c7fa197",
+      "bytes": 4861,
+      "gitBlob": "0f5282c645f344b531c18f7ae9d4b596ba0c63ec"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/failures/u3-question-preview2.tests.json",
+      "sha256": "e0d39d0546d2bbf64a43efedb7298796bf971f80bfd993348bda2e7f6bbaf2ad",
+      "bytes": 40504,
+      "gitBlob": "89e4288f2d76679234f06219198d28f55b34ce0a"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/failures/u3-question-preview3.log.txt",
+      "sha256": "3534563d8ad3e6d2102a03902631537d10baaf5dc531c0c41d12c60b90df8deb",
+      "bytes": 25016,
+      "gitBlob": "82a23aaf8acb4acdf82d711628b0a242548b9375"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/failures/u3-question-preview3.result.json",
+      "sha256": "28f7447eff8565f7beed3350270527b160848afcc54bbd93e4ba1d545d562ab4",
+      "bytes": 4861,
+      "gitBlob": "df86df28f66ef90aa66cbf0fe920c32b73cb8af3"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/failures/u3-question-preview3.tests.json",
+      "sha256": "7a261fe62c421897e7c066ee26e19d855611c8a843b568245fe8ae0ddf42816f",
+      "bytes": 41763,
+      "gitBlob": "33e6a259163377953b4f54fdc443441ff0c2ca67"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/failures/u3-regression-e2e.log.txt",
+      "sha256": "43565510098b02f323f629c80bbb62e669ed9cabecd440de911d071a1b548598",
+      "bytes": 42447,
+      "gitBlob": "7b9cff9752cbf08a61fe568804c969822099307d"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/failures/u3-regression-e2e.result.json",
+      "sha256": "874574011fa769fd6710a75a1203b9de5230c2e0d00cb291da548e2d421b676b",
+      "bytes": 4584,
+      "gitBlob": "51b9c086a0efe64ee3c40aa8e4548a3275c32465"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/failures/u3-regression-e2e.tests.json",
+      "sha256": "76affd94e1d2461810746da301973ed5a2190ccad3bfa930a27bbbc3197cfe50",
+      "bytes": 74970,
+      "gitBlob": "9b30d9263b27c96d7bed5a680f953bc79bbfdbd6"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/failures/u3-units.log.txt",
+      "sha256": "3d2c865d4ea3a86bb917cbfefa79de4284f812024895c29696c3993121afa0be",
+      "bytes": 687,
+      "gitBlob": "bdfee87eb7a0e8c1ea6d32dc4fd9c3ff246e2963"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/failures/u3-units.result.json",
+      "sha256": "1c2bbce4bef59d706e85d4660e16aead7bab3b693ba10a7f19668605bc06e07a",
+      "bytes": 3913,
+      "gitBlob": "cd094ee8c200cf8a16ca897e99d4aacf7744ed53"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/failures/u3-units.tests.json",
+      "sha256": "2e8afa43092bc619f206cac756a65511176b3998ffd12c8bc17dcc2ff1bedd39",
+      "bytes": 54931,
+      "gitBlob": "187025ddd77a5493665982c5fa980b171d1ae014"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-derivation-current/electron-process-cleanup.json",
+      "sha256": "c83a3ea36ac409c161f620727324c8250b44dce105114d0c21b7f31bd4da94cb",
+      "bytes": 593,
+      "gitBlob": "03e9d78ae3545f70ce895cd5ceebe14bdb5b245b"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-derivation-current/electron-process-run.json",
+      "sha256": "fe56b6f35a7b6f3e1aaeff1f1d0b17bc0263fef16deb00d728c8dca4c96116d4",
+      "bytes": 220,
+      "gitBlob": "564d1b0a1df4090f90641d99b1fabe2c9bf1a35b"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-derivation-current/session-task-scope-derivat-45a37-iting-coordinator-authority/task-scope-derivation.json",
+      "sha256": "ed2ef2caa51cf4f4ca578b4a22293112f7162227c9a78dd89d89a4cdd588a255",
+      "bytes": 11254,
+      "gitBlob": "ca48806883890f2123e051355e02e2248ccfb11b"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-derivation-current/session-task-scope-derivat-45a37-iting-coordinator-authority/task-scope-derived-session.png",
+      "sha256": "db564b6e5daf0a94bf93d82a0b5bec11be8215019473513f89bc07c8ff8fffba",
+      "bytes": 83156,
+      "gitBlob": "705af6aec9a2282f7fa253aebf18bc785a2d8541"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-handoff-scopes/electron-process-cleanup.json",
+      "sha256": "162617ed9151850cebed65b46e4c486296a356e0876c9fb1c445ef4fd4f05ebe",
+      "bytes": 879,
+      "gitBlob": "84ed42c6ccee5cb59762832e88ef03b19c02c0b1"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-handoff-scopes/electron-process-run.json",
+      "sha256": "1da66eef0956d4f283be50336348e21e74b9100ab1a0574b45652043f76eb587",
+      "bytes": 220,
+      "gitBlob": "18957cdad31540670f0d8358d3643efc21989b11"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-intent-e2e/electron-process-cleanup.json",
+      "sha256": "89b43f0a6261e833ed404590d92afab850c5c6fb9d58dd2a4a5676ab7f27d324",
+      "bytes": 878,
+      "gitBlob": "1b033f2a87575bb78060c7aa2ecfc3feab8ff807"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-intent-e2e/electron-process-run.json",
+      "sha256": "86174b7950868417f6afb40b71ce0ba2417254f29f980a0b00548c0442b597a2",
+      "bytes": 220,
+      "gitBlob": "12fa5dc70deddbf6c2509c77ec82f3a9bf539343"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-intent-e2e/session-fork-intent-U3-pla-32849-ncellation-creates-no-child/u3-explicit-handoff-preview.png",
+      "sha256": "c512fd6f5f5679e956988e91331e884a909d7bbcb90bc0b8421aa279d96e05df",
+      "bytes": 184668,
+      "gitBlob": "f4b6aa73a2d338c25c909d620ed7a18237adb250"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-intent-e2e/session-fork-intent-U3-pla-32849-ncellation-creates-no-child/u3-prose-no-hidden-child.png",
+      "sha256": "ca9a72a85ad1470734d6a4cbacb2563628ecf2b355fe9045679d9dba71a7e315",
+      "bytes": 96378,
+      "gitBlob": "2b033a17750e988ffd44d679f0ee343025c492c9"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-intent-e2e/session-fork-intent-U3-pla-32849-ncellation-creates-no-child/u3-text-intent.json",
+      "sha256": "efa7198e86793b1c97508b56dd9c22f7d3b5972ba3d748e241e4c1387e476cf2",
+      "bytes": 15364,
+      "gitBlob": "dcfcf18d5bb6b7be112476a3883d34dfe3512663"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-intent-e2e/session-fork-intent-U3-pla-32849-ncellation-creates-no-child/ui-diagnostic-0.png",
+      "sha256": "d1cb8f8af18058171d337e8dc713c17e9d98a95a5e835fc55c727c9be445903b",
+      "bytes": 96372,
+      "gitBlob": "843e5108b3c930fa049fc484d29c0d4ccb6f49c8"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-intent-e2e/session-fork-intent-U3-pla-32849-ncellation-creates-no-child/ui-diagnostics.json",
+      "sha256": "a1a993ee2048e4b431529b3d9cb7e5f41f233aacc8c76fdb1f641f9b273bf962",
+      "bytes": 727,
+      "gitBlob": "7892c2e7c03c8100e318b4813a14cc8ab9bcda20"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-intent-e2e/session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections/u3-fork-boundaries.json",
+      "sha256": "db4b0074c5a87649fde73a2459ec31ee5ebcb75f841c362c764dde0df53d5f26",
+      "bytes": 2797,
+      "gitBlob": "a3312c8ca07b8cd2c2b7d8a878f6ff7d63035155"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-intent-e2e/session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections/u3-missing-entry-en.png",
+      "sha256": "e3cca0802f2dfa78cff175f8e2e0a179c9338644d7f5497d440464cdc8df430f",
+      "bytes": 112173,
+      "gitBlob": "4db9d02dd24f79ea4c4aeecea56a386372b2532a"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-intent-e2e/session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections/u3-missing-entry-ja.png",
+      "sha256": "2395cb15f385f07e2bcb1d5af228511b568439459802568c1965db54c41146c9",
+      "bytes": 105236,
+      "gitBlob": "c26c99ec9ce37103c27f5515795aaf75802c1dd7"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-intent-e2e/session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections/u3-missing-entry-ru.png",
+      "sha256": "1d6213fbb7e3bb6b5405315dbd86992c797acadc6a2b2f2523cd3c5a216948bb",
+      "bytes": 114484,
+      "gitBlob": "3d851ebce762c164b56e535312e01f855a557297"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-intent-e2e/session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections/u3-missing-entry-zh.png",
+      "sha256": "86718c724db49f5abc256a32f698c041006e08681fb31402679e11e8670f53ee",
+      "bytes": 99886,
+      "gitBlob": "512adf7f0fb9ab5499f0aa8b4d3ba62ab2dd96f6"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-intent-e2e/session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections/u3-no-assistant-ancestor.png",
+      "sha256": "1e7e582fea419d1eabe1797c63818f8f3f204eca50abaf767ca95c88ed0c9849",
+      "bytes": 95609,
+      "gitBlob": "dcca64e3cf74ba6bc8e211eb934f8af576e77927"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-intent-e2e/session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections/ui-diagnostic-0.png",
+      "sha256": "ac6251899632c3b1edfbc62f57cfbd75ba9b21cadc71b546caced88aff8e1112",
+      "bytes": 114445,
+      "gitBlob": "430e21c267b4711712a19a9aede84fa342000b1b"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-intent-e2e/session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections/ui-diagnostics.json",
+      "sha256": "9e3c4c0310034f5e11ed5378fdda14720291c83e0c84a8fafb874bd2fc75bbc3",
+      "bytes": 1209,
+      "gitBlob": "afa6dc3a6ea9ad9de32d5ff08f802586fa11d7ee"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-owner-restart2/electron-process-cleanup.json",
+      "sha256": "255bc41d67789bff4de1724c9f15aed321ae85f73329b7bb8cc6ec9f2b5403a2",
+      "bytes": 1163,
+      "gitBlob": "391a92f851dd499bc039a05f1bf0c035fd2dcdbd"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-owner-restart2/electron-process-run.json",
+      "sha256": "80e6a7a49ed143e22b1333437d5151572889d15a71fabebc8fd35939c2aa8061",
+      "bytes": 219,
+      "gitBlob": "bc51a5167e66b956bb633caf16cb608fd1b600cf"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-owner-restart2/session-task-scope-complet-b4f76-handoff-child-after-restart/session-task-runtime.json",
+      "sha256": "098f40b8ed9e6c0df2f35d9fc1e331fcc7a5a2e559e86f1d8e322ff9c84ca01b",
+      "bytes": 21373,
+      "gitBlob": "e1d67e0f0156b0cdcde5301c327b0a93610a4743"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-question-preview4/electron-process-cleanup.json",
+      "sha256": "87501caa553762ceb6d56178f97ad0e8a95fc8aa24b49b9a253001efca077436",
+      "bytes": 592,
+      "gitBlob": "bc50083e51f151cb9febdba2e0da894beecd86ac"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-question-preview4/electron-process-run.json",
+      "sha256": "b1606cb70fcb6b8ce1e5bfe75f7e10ef55a9ddc4b9b8e7a109433316951c5ba3",
+      "bytes": 220,
+      "gitBlob": "e04dbd8cfc3726f609c65dbfcd8a326fd3932983"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-question-preview4/session-derivation-ui-ques-49722-its-one-reviewed-first-turn/question-fork-draft.png",
+      "sha256": "a041f48b24acfa390ee459ba4386d06eec9d9a25c48b4e3efe2768df89c7e4a8",
+      "bytes": 95535,
+      "gitBlob": "3d0cfa4de6a74e4948437027e62a93c4fb273df8"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-question-preview4/session-derivation-ui-ques-49722-its-one-reviewed-first-turn/question-handoff-journey.json",
+      "sha256": "f2701212577a8bc0c1d02305a664dd2881e089044015eab3b391f7a03bddaddb",
+      "bytes": 12456,
+      "gitBlob": "7849990ea0788af884137bbd65f7ff6ccace67b2"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-question-preview4/session-derivation-ui-ques-49722-its-one-reviewed-first-turn/ui-diagnostic-0.png",
+      "sha256": "98883af6eaaa06d1acdad0b10bbb5333730ec4ffc401ec194b4a18d29991b1dc",
+      "bytes": 110698,
+      "gitBlob": "8f31ca3893e9b8729e70d1e5a22719452c29e3bd"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-question-preview4/session-derivation-ui-ques-49722-its-one-reviewed-first-turn/ui-diagnostics.json",
+      "sha256": "ce216604f745c66e96a0a3f50e6c381f4dcf70dd4336f98115eefc7d09ee35f5",
+      "bytes": 804,
+      "gitBlob": "e8c1318d978694731333393ddbed067c81794cd5"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-regression-e2e/chat-session-handoff-Verse-7b0f1--conversation-responds-late/handoff-isolation-ready.png",
+      "sha256": "254f2af7899405c5a35f78b05c913bd6f75a421c9da8eae44130dadeadca6fa6",
+      "bytes": 81955,
+      "gitBlob": "92260b3804838336041708772be4f7e7176698ca"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-regression-e2e/electron-process-cleanup.json",
+      "sha256": "a9677321e9e8340ddf8fd9f1eda946f4b0127b06098307e457bc710b2e4caddb",
+      "bytes": 2873,
+      "gitBlob": "8e99dafcee384d8c5d6bb7ed3f9f74edb178ec55"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-regression-e2e/electron-process-run.json",
+      "sha256": "b0a8eafa1aa036a528b574e8335f92e895c78c00ad4d3b0b089ed2b65cc78d60",
+      "bytes": 220,
+      "gitBlob": "f40a51251e267e22afe93e23c48ed551d8e130eb"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-regression-e2e/session-task-scope-derivat-45a37-iting-coordinator-authority/task-scope-derivation.json",
+      "sha256": "21e477d41ab304e97b12a69552ad4efb1f6d04bf3284616b9fbe0474dfd4a058",
+      "bytes": 4415,
+      "gitBlob": "20c0e9a19d07f59807b15c39ce3b90e1b523cf77"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/journeys/u3-regression-e2e/session-task-scope-derivat-45a37-iting-coordinator-authority/test-failed-1.png",
+      "sha256": "dda4bd1ab1f5a122a6dfc5d1fd3aea7823e04e208ff2cb0e90365f151f8e6474",
+      "bytes": 88104,
+      "gitBlob": "3f6ce8986f95ef3c55840a0bbf0840316e4b30d8"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/manifest.json",
+      "sha256": "92f3167867768771f35be71cbdb35d0eb910490d74bba4abdbfc520bb8bc0450",
+      "bytes": 19029,
+      "gitBlob": "13f88db81c253a31258407a40a16655ae2b35a32"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/report.json",
+      "sha256": "cd58e39fb7fa734075a7572589008784c6cf0f1eb2f40ab6d76cec50c72fca12",
+      "bytes": 81508,
+      "gitBlob": "d84316b810ab91b4b098e6df1c33a1a6267639c0"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/review/original-criteria.json",
+      "sha256": "d1c07a20bc4a9b369cba6149c9e7e1d93f3ce7ad6f0ec5167c4b8e5fc18166d2",
+      "bytes": 2263,
+      "gitBlob": "b3e01edc76902535cd1cad15b0c9c0844f1ab4f8"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/20261109/verify.py",
+      "sha256": "9e148a4300875e0741d9c36307d16c2d5dcb898d2055cdd637ae7ef4cb7b18e2",
+      "bytes": 941,
+      "gitBlob": "308bc57bd61a450755730efb8911462f5cefef7f"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/integration-20261109/REPORT.md",
+      "sha256": "a0e3882e041dd051a41347e5dcb3aaad79ec3a47c621f200be4ffdf961d0cd0c",
+      "bytes": 641,
+      "gitBlob": "51d15f4039855482d750368ec9a0b05379c45812"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/integration-20261109/manifest.json",
+      "sha256": "eb9f6a0222aca664a17b0a3752ac1d8338eb18042818d1c7af2f90490ec8d924",
+      "bytes": 280,
+      "gitBlob": "e5c9987755e8d710a37b67f191c233104004b1b6"
+    },
+    {
+      "path": "harness/specs/fixtures/session-intent-recovery/integration-20261109/report.json",
+      "sha256": "6bf2e76b80012abd9135a5a4294afc7198bfe2ce768e320150f30692ea39509a",
+      "bytes": 105430,
+      "gitBlob": "010706ef36e0b75c2cbaeaa4c66fb4d21febf75c"
+    },
+    {
+      "path": "harness/specs/rules/resource-lifecycle-soak.md",
+      "sha256": "7e7810e27a41d065bd2ebbb86db5ba8fa3a0bc28235cf6711328156bff775f3d",
+      "bytes": 971,
+      "gitBlob": "0e9b1a8c5bceda93f3c17ba292db81e5adfad5b6"
+    },
+    {
+      "path": "harness/specs/tasks/project-rag-owner-read-contract.md",
+      "sha256": "8e0c72e49633e719379049a2bca4bd4299191fa248ab1e0f09f7575ffc70eb79",
+      "bytes": 8112,
+      "gitBlob": "a4ec5cf828d19763f6199bb700da3e36007a4ee8"
+    },
+    {
+      "path": "harness/specs/tasks/resource-lifecycle-soak-20261109.md",
+      "sha256": "62a7c333f4448cc1d627b61e0f2c17ac79b020ad60198a139176db40e71e5731",
+      "bytes": 3993,
+      "gitBlob": "8a9fa00e8f3ff057a673cbd56228520a97540d03"
+    },
+    {
+      "path": "harness/specs/tasks/session-handoff-recovery.md",
+      "sha256": "8594e8fd4a513a4538df7db887e5b9701872c960c8d60c313f90ee3d7d72c596",
+      "bytes": 4271,
+      "gitBlob": "31db75f00b94942322d607b1f762671bb7b85271"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/runtime-api.ts",
+      "sha256": "fd471712ad9493a63598e7324aab2006b4f21e6cf04c98783a6ab0369368e500",
+      "bytes": 397,
+      "gitBlob": "90defad0314c1bdade354b8a7329871d4a93aef4"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/gateway.ts",
+      "sha256": "760749f8faade7f40462d7584594f5f23808b33311a07fdc588075de07fff6e3",
+      "bytes": 14151,
+      "gitBlob": "b75e812cc7908ccbf3bdd8b051685a33d1f65ff6"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/markdown.ts",
+      "sha256": "558fdef5a574ccf5adb2dfb216191b05a33093bde70ac9a70521da5f07ddce90",
+      "bytes": 17600,
+      "gitBlob": "86f354a41102c73f8f88c139f124382336711565"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/owner-read.ts",
+      "sha256": "0149c6bcf71182ff05d2ba893a6997b8ed5d64151fcbd1e2fa21591829b17ad2",
+      "bytes": 9717,
+      "gitBlob": "fdf34be26a66d779fa84b45131183298a97e917e"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/query.ts",
+      "sha256": "b2b4fd31f9b59b5165543a8e325bb8a3da227d5027018fb1456da0f44a2490a5",
+      "bytes": 54466,
+      "gitBlob": "18ff9264bb3e870ccaae81e9ddf299a6de6ea67c"
+    },
+    {
+      "path": "openclaw_runtime/package.json",
+      "sha256": "4010ab4053230f2de5b3ab83375c2c43f9fd490091253085bcea86e6939ca7ec",
+      "bytes": 107140,
+      "gitBlob": "bc48f6bc8ac3c2bb5133b87976f8f460a9c37bcb"
+    },
+    {
+      "path": "openclaw_runtime/packages/gateway-protocol/src/schema/logs-chat.ts",
+      "sha256": "6c43e9427eb601dfd0a53d926e25abffd30566ff07f4234a4730df69d9802d0b",
+      "bytes": 10913,
+      "gitBlob": "f0e5c1867b3777b18a7bb58568e16009c3023ec3"
+    },
+    {
+      "path": "openclaw_runtime/scripts/lib/plugin-sdk-entrypoints.json",
+      "sha256": "280db646164ae17bbb7f85af72081fe0c943c42a6a6565a41b951329d52ee48f",
+      "bytes": 8053,
+      "gitBlob": "794333121ed36cbce63c9de54409c1890aeaf1c7"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
+      "sha256": "108edef3b05a923b561b7cad5ea8c78d06d29fa94d3cc06352dfd3f03a44272b",
+      "bytes": 45443,
+      "gitBlob": "991aa4687eff7e808f3403e5f8c5dc2f087e2e4c"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run.ts",
+      "sha256": "c15949f7fe58bc529bd1d09db34c5a8fc35818f0c99a6889c23a26088fe4b2a2",
+      "bytes": 175623,
+      "gitBlob": "24091f9418e36c7a5a9ebb4b6a93c929879fbd70"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+      "sha256": "cb68dd44db68bdf8b5ceb9d833a6017b593aebc6b482fe552f27a8b0bac1bc2d",
+      "bytes": 265364,
+      "gitBlob": "14dc2d93ac7d0e0f4983aa7b7a016c682b6bc624"
+    },
+    {
+      "path": "openclaw_runtime/src/auto-reply/reply/agent-runner-run-params.ts",
+      "sha256": "cc52a6d054ec4e3c8f9ccdbb073e64dc0cb54a34ae597ed0e185930c062ac7b6",
+      "bytes": 4707,
+      "gitBlob": "b932a237ecb310f71475a4a852b20fd88fbe7d36"
+    },
+    {
+      "path": "openclaw_runtime/src/auto-reply/reply/queue/types.ts",
+      "sha256": "a8550fa01b7dc45cfadc494331eece40605617763ff198a54ca6e3b2525b87e1",
+      "bytes": 8416,
+      "gitBlob": "80b17994634f45e895fee5754e31bad8221e6549"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/chat-knowledge-intent.ts",
+      "sha256": "c903aeca688b72a2bc9d8bf832dc7b4811f55073c91b9ee555e39d5c8aa18a9c",
+      "bytes": 15324,
+      "gitBlob": "5e6595611774efa14f73325e921fd88649941e3f"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/chat-knowledge-source-adapters.ts",
+      "sha256": "0d0cc5438e41894827d8130f5291e0cec8601ffe8fcf754194fc87e3962a0ee6",
+      "bytes": 13830,
+      "gitBlob": "1e739e3507a259adabfb7d3acccbce11f5eaabf2"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts",
+      "sha256": "e5d29a15db8765ea2edf29692f05ee0fd3861c57a9d0acac35655dfe322b8aec",
+      "bytes": 15237,
+      "gitBlob": "6ea17a32f5451dd702a1e49a3887a7ae5ff83f5c"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/source-set.ts",
+      "sha256": "0f7fc2147f7c08a2f9282aeb9c4011797835526c815581bec187effda7299579",
+      "bytes": 36984,
+      "gitBlob": "49eaa218bb3688de18030aabeb1905e534cbd521"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/chat.ts",
+      "sha256": "4d246f0627610d43992bc6732c55b178343ea81ed8b3179a801d24c7e55e8b47",
+      "bytes": 205796,
+      "gitBlob": "d799921a76398c8adc54b6c52ce817d27ff53ab7"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/knowledge-store.ts",
+      "sha256": "b302db8fcbe618f7b44731d2d6cd58db5a3eaf62bf60f25d78d30c4dd889c215",
+      "bytes": 43463,
+      "gitBlob": "06552522211d9401f5a673fcb23007ee6c113db6"
+    },
+    {
+      "path": "openclaw_runtime/src/memory/memory-store.ts",
+      "sha256": "9263b43075fead3d5449c7bd5bfee3ea86d947a045d83c226ab9ad00ff4ff513",
+      "bytes": 94899,
+      "gitBlob": "dc1f17cb3c4b1c1adfca437e86ccbfc0aded100b"
+    },
+    {
+      "path": "openclaw_runtime/src/plugin-sdk/memory-host-core.ts",
+      "sha256": "d5040624e8576f2353bd0bab3de4721334dc98b4ddaaea1840b67b24670e32a5",
+      "bytes": 4251,
+      "gitBlob": "d723090dcc3fabddaaa0be2992dc629ee6ef0072"
+    },
+    {
+      "path": "openclaw_runtime/src/plugin-sdk/memory-owner-read-types.ts",
+      "sha256": "31dd9b3f366ceadacf022ca366d896f3962aae487e9b3daedf1214ab7669a691",
+      "bytes": 313,
+      "gitBlob": "b39d2e30dd04a33fa03f1b60d1692ce48844ab1e"
+    },
+    {
+      "path": "openclaw_runtime/src/runtime-core/knowledge-owner-read.ts",
+      "sha256": "ec29e3828d7f1fb43842aef78cf8cb2c15d717db30a00510165b1374c49135c7",
+      "bytes": 14271,
+      "gitBlob": "cb4187e72f7027fcc4c3e2af3583af6d38a3117a"
+    },
+    {
+      "path": "package.json",
+      "sha256": "73a09d93c993fb14107da350837e3d0d1e8cef8d8ba8b4a2a54953eff77fb56d",
+      "bytes": 40784,
+      "gitBlob": "71ee9ad59e6ca4b995fede025774b68a64730d67"
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "2cd607585ca31082af882c3a55f4edb11842c4a81e275f391dc7773c949ee804",
+      "bytes": 1383,
+      "gitBlob": "f2067243aa805b501f08f1ec073662cead094297"
+    },
+    {
+      "path": "playwright.resource-lifecycle.config.ts",
+      "sha256": "c914454177e763a57c85971b5e849ea3d49e0cbdce27be123747af89335b7360",
+      "bytes": 533,
+      "gitBlob": "1e1bddc503b2d32b7699f067f293a5a4bf86429b"
+    },
+    {
+      "path": "scripts/agent-dev-audit.mjs",
+      "sha256": "7ee3951d19b5d6a25cc395657c89f25ec216796887c9bca55b4e24d3a167503e",
+      "bytes": 35485,
+      "gitBlob": "5e73ab261cc309a9d81f13f5b327c806e9e1aeb2"
+    },
+    {
+      "path": "scripts/agent-dev-deep-test.mjs",
+      "sha256": "46cd09d15201150c389cc4ccf296796319ddc592ad879fc2048b233bbf7ea748",
+      "bytes": 41679,
+      "gitBlob": "bff82b60e3ac6f184b7a4d13f055697e4c0f6c05"
+    },
+    {
+      "path": "scripts/contract-check.mjs",
+      "sha256": "224aa4ca0a92ba9b7222bdb030fdd55161c889e58f5422cf306210c0277eaae7",
+      "bytes": 41588,
+      "gitBlob": "f21661158ffc5012c09c0b086745172a902bf6fc"
+    },
+    {
+      "path": "scripts/harness-ci.mjs",
+      "sha256": "19ab9f1e15e60c944290b1293dbd975c162656f94e9314614c44755e589b8a37",
+      "bytes": 2479,
+      "gitBlob": "45c266d4d1ab19ce915490049a7554d5d1226949"
+    },
+    {
+      "path": "scripts/lib/resource-lifecycle-report.d.mts",
+      "sha256": "d684ced20f632ba99c9f848dcfc5106df4677c23797d3f3e7299f96ff20dea1b",
+      "bytes": 524,
+      "gitBlob": "e6dc59229629712dfc3ae6d624cfba5e6d2cbac6"
+    },
+    {
+      "path": "scripts/lib/resource-lifecycle-report.mjs",
+      "sha256": "ed6d699ec3770080c12ec933d96720e35b68ccd44c316dfb3d761e386adf7396",
+      "bytes": 7151,
+      "gitBlob": "7d5916f09298499c4dd4eb3aabb14f217d9bf569"
+    },
+    {
+      "path": "scripts/repository-artifacts.json",
+      "sha256": "160ef38d1f43bc8b06f6ff727c50e435a70723559fb7656e1229485de73e788a",
+      "bytes": 181054,
+      "gitBlob": "55ba7336117fd8b98c26b29066a3c226c7bd346c"
+    },
+    {
+      "path": "scripts/verify-resource-lifecycle-soak.mjs",
+      "sha256": "7c0e0891b75be0cc1daf902287152bc7253d08a0a36a0e8095d6b9a00a7b79c7",
+      "bytes": 7453,
+      "gitBlob": "4674b922515887b00af4225df312c754839bac49"
+    },
+    {
+      "path": "shared/dcs/component-disposition-catalog.ts",
+      "sha256": "b1ed4540e07f01d762df855b889daf8939fea7a95494b604dab327eeee1f9bd5",
+      "bytes": 48454,
+      "gitBlob": "de955aba0740124268f988a638f55da37386486a"
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "sha256": "999110334314a115f7e7f1af048761b959083d5c9a9505cdeb9ff36e8a8d932f",
+      "bytes": 226462,
+      "gitBlob": "0da99247a0e69f1f96a2b91bc0bf2c5fc242bacc"
+    },
+    {
+      "path": "shared/i18n/locales/en/chat.json",
+      "sha256": "a9ccbd289f5aa0725906f55d24123289d98972fd64a91241e4ac0f05f8c4245c",
+      "bytes": 112072,
+      "gitBlob": "56045882d224d9361a678356d0793072e994c230"
+    },
+    {
+      "path": "shared/i18n/locales/en/knowledge.json",
+      "sha256": "028aac468c256232e07d7d79303e8af5494765e10aafc16a6d78dc6bb3a6b360",
+      "bytes": 27524,
+      "gitBlob": "69bf75ca9f519c9f8815b2b0648542760da3e3e5"
+    },
+    {
+      "path": "shared/i18n/locales/ja/chat.json",
+      "sha256": "6490d5271f8cbe5dd2f270355598aa9291147d09163ff41f547ac121315b7d91",
+      "bytes": 133710,
+      "gitBlob": "532f962a828374b2aeec9840723360c631bc81bf"
+    },
+    {
+      "path": "shared/i18n/locales/ja/knowledge.json",
+      "sha256": "fa5cc62eaf3084b99132065c1e7470d771ca3787a43c8f44683a0cb425e4f308",
+      "bytes": 31402,
+      "gitBlob": "b43b486b721cae882ff72a6aa8ec5aba2e2cd0f6"
+    },
+    {
+      "path": "shared/i18n/locales/ru/chat.json",
+      "sha256": "093ecd598124b2f5aac9ea3af62f22bcb9708944df793fe11ffd69a03be7928f",
+      "bytes": 157207,
+      "gitBlob": "bfc44a83b75e0c26e271f6ba0ca8bddfe4d9811c"
+    },
+    {
+      "path": "shared/i18n/locales/ru/knowledge.json",
+      "sha256": "68726882ecf70be33aa7a392a571a95998b9a3affb3d5c2e8618d6afa9b848a1",
+      "bytes": 38822,
+      "gitBlob": "128db83dc2d5e79e19ec4c6b09f83e5173675511"
+    },
+    {
+      "path": "shared/i18n/locales/zh/chat.json",
+      "sha256": "d2fea0da498d1d3c556ffddb16f66c373dfa2b469ec5ea4d0f63bfda04310821",
+      "bytes": 109129,
+      "gitBlob": "d180aa375bf7c8ec1ed9f5aa13639180e2ddd89a"
+    },
+    {
+      "path": "shared/i18n/locales/zh/knowledge.json",
+      "sha256": "e619b1205451eaca4c1a171eb48acd6f9fd263d2145d3c6ccceebaaf6a38485c",
+      "bytes": 26758,
+      "gitBlob": "a8fe617e3f1097df6033021f07c7257815aa01c8"
+    },
+    {
+      "path": "shared/knowledge/owner-read-contract.ts",
+      "sha256": "314fa83aec385bb7188d9e70a0b690c53e45906be120db6e3fd440edbc7ab65f",
+      "bytes": 197,
+      "gitBlob": "11e7c08f9177022fe35617f41ab37966862916ec"
+    },
+    {
+      "path": "src/components/file-preview/MonacoViewer.tsx",
+      "sha256": "d6fc4e84a88086d0fdcb78957914984b955fe5279ea64671c8dc1c83c1cf0eb0",
+      "bytes": 2376,
+      "gitBlob": "954c072c7a1300ef09fa752f04be9eb5613a7ae3"
+    },
+    {
+      "path": "src/components/layout/Sidebar.tsx",
+      "sha256": "d651180ce2d978bf01ad1d3c43c4063c45564da3f44c15bbdd60697f0ba8b8c7",
+      "bytes": 83982,
+      "gitBlob": "de14a1c66270fef542cbd27535054d220d0816cf"
+    },
+    {
+      "path": "src/lib/knowledge-librarian.ts",
+      "sha256": "d78fbc87265c7ee520eacc49fec37162c4e6bd31ba5c75f169182e43253f5f42",
+      "bytes": 9009,
+      "gitBlob": "45ca9f353b9f5a8c7bdeac255672b7b4528f1377"
+    },
+    {
+      "path": "src/pages/Chat/ChatInput.tsx",
+      "sha256": "4921ea251e1fa41bb597e80d9fa77a4f0ddfa9812e6967d3966893f3e445985f",
+      "bytes": 212463,
+      "gitBlob": "64c127cdaff1496efbea06e712d8d6ab7df27d8d"
+    },
+    {
+      "path": "src/pages/Chat/ChatMessage.tsx",
+      "sha256": "d3fc1dc031d4314d59b1d2dde7708a20f762ae1fc08bd4259bc040539aea1ea6",
+      "bytes": 50711,
+      "gitBlob": "44de8a2d566f5295264179eea5fb6aaaefb30b1d"
+    },
+    {
+      "path": "src/pages/Knowledge/KnowledgeAssistant.tsx",
+      "sha256": "93f80e96a1d6b5a458872a365d7233730f6999cc3a0b1e3c4f9d1cfa6c9c7441",
+      "bytes": 16167,
+      "gitBlob": "5b673ed858db4c69e8bff973e91753d67a28db0a"
+    },
+    {
+      "path": "src/pages/Knowledge/index.tsx",
+      "sha256": "1476b3774dec832da71b5d930b0fb65713143b8c1de42131c54fd1337b367a9f",
+      "bytes": 197137,
+      "gitBlob": "0091a7a5976fc31e07693c73a6ef1313d3d57c0d"
+    },
+    {
+      "path": "src/pages/Knowledge/knowledge-view-utils.ts",
+      "sha256": "23951d8a0f8c065800053187bb312e784239389683ba05470a119c5e1e510a92",
+      "bytes": 5192,
+      "gitBlob": "647f2d0f545e909e355e4cd15635f3feb79e88e4"
+    },
+    {
+      "path": "src/stores/chat.ts",
+      "sha256": "ac84ec680100112f6d96d72252c503c774011ee24141603ed9afd3dabc8c1b0b",
+      "bytes": 212587,
+      "gitBlob": "4ca99777b03e5f0b6453e5815b696c996d1eb914"
+    },
+    {
+      "path": "tests/e2e/agent-dev-quality.spec.ts",
+      "sha256": "db383e514a146d9109c7a430b669340abc31ab6a89aef0b208649f93559d2d21",
+      "bytes": 4787,
+      "gitBlob": "d5d47912d6e3b0801c3d62527f0fe730a58bb4d8"
+    },
+    {
+      "path": "tests/e2e/fixtures/electron.ts",
+      "sha256": "1074824d07d971c4d0179f2f2d604ab973c42fa2f5ba65c375e24c7c08605645",
+      "bytes": 40740,
+      "gitBlob": "9edd6f6fb96529f4259507e33a648c824f14497d"
+    },
+    {
+      "path": "tests/e2e/fixtures/fp-p1-harness.ts",
+      "sha256": "890fc58f07bf446fa4dbe1db502b71cfabe644d95b735d6f3a43464b9aa61f4c",
+      "bytes": 13973,
+      "gitBlob": "c494cddbe9d9a581550034ad3e836cb5864d3038"
+    },
+    {
+      "path": "tests/e2e/fixtures/windows-process.ts",
+      "sha256": "27c7af68a5e580fc108018705711ef71994474a3bf40a7b838e764bdb0862dd9",
+      "bytes": 8040,
+      "gitBlob": "405e718bd76de639a2795195f71fd7677fe11ebd"
+    },
+    {
+      "path": "tests/e2e/project-rag-owner-read.spec.ts",
+      "sha256": "387c02e677170f62b6588aa2aac1f6398db5a1004341cff8bb36296604048b01",
+      "bytes": 13290,
+      "gitBlob": "87647d11a237792b3a64285125e20e42fdfea320"
+    },
+    {
+      "path": "tests/e2e/resource-lifecycle-soak.spec.ts",
+      "sha256": "eca6fced0e407bb2be44cd5dfcc11d9e387f91de2ddc20a4e54becf69abd71d8",
+      "bytes": 15597,
+      "gitBlob": "c393108a70b38d76b80f4f5b829031865de16ec1"
+    },
+    {
+      "path": "tests/e2e/resource-window-lifecycle.spec.ts",
+      "sha256": "4e7abb47b20945fe17d4c8fd4365df1094775e5ba5e1f86641210f59ec685107",
+      "bytes": 11188,
+      "gitBlob": "411ada85b9fd210ef30988f30e54a8b94bd5734f"
+    },
+    {
+      "path": "tests/e2e/session-fork-intent.spec.ts",
+      "sha256": "edc5eb90520628a0ccb961c0b560846128a034d1b53be204b1a50e5920a33bf2",
+      "bytes": 19085,
+      "gitBlob": "62ebef6436b2b2c664e21f3628fd6ae5647561a2"
+    },
+    {
+      "path": "tests/e2e/session-task-scope-derivation.spec.ts",
+      "sha256": "a06d4f0b81005a753c1ae085803a96d69a275ccee1b22ae76846ced1e23e773c",
+      "bytes": 8602,
+      "gitBlob": "4e8f796f044223d78f37680fd978c91a10b67bf5"
+    },
+    {
+      "path": "tests/unit/agent-dev-regularization.test.ts",
+      "sha256": "26b06cd137a46ef12e51b95ba74ef17324b353e6e41ffc4ea68c3ae0464ad036",
+      "bytes": 38371,
+      "gitBlob": "869e4a1ae0256514555448c8665443b552b1293b"
+    },
+    {
+      "path": "tests/unit/chat-message.test.tsx",
+      "sha256": "b886d495f1a8d916a89cd31a8a6fe7f39698eff81b4df94b30784a2b42459189",
+      "bytes": 28447,
+      "gitBlob": "ab2b26bb3acf492072bc9de1f33b1faf8b3d5701"
+    },
+    {
+      "path": "tests/unit/chat-page-execution-graph.test.tsx",
+      "sha256": "053adea0a99cd0947abf75fc0dfad2295baabb00f1948fb52cccd50e593fa77f",
+      "bytes": 53494,
+      "gitBlob": "763d0f69f7232d863dcaf52508001a81cb1b2612"
+    },
+    {
+      "path": "tests/unit/chat-question-directory.test.tsx",
+      "sha256": "5ae548116b0d92a7136b33955fab5e05af4283870a82c389101ce26c9cde7423",
+      "bytes": 5382,
+      "gitBlob": "10bc78377b092eaf57b246ba7728063865759826"
+    },
+    {
+      "path": "tests/unit/chat-stream-publication.test.ts",
+      "sha256": "97f82518913d84d05f5fa7805ceba6b0b7160cfb490a965da02f4f2281d029c7",
+      "bytes": 8044,
+      "gitBlob": "b844dbe38343f4b93d7d557dd0132a5efddeb7e6"
+    },
+    {
+      "path": "tests/unit/contract-check.test.ts",
+      "sha256": "d3c005ad6fefbff8602b78aabef65c2c407d75b78da329d71816dcb8004f1d5a",
+      "bytes": 25792,
+      "gitBlob": "157136843db9c8d7f95c27a2480c39f310b0f6da"
+    },
+    {
+      "path": "tests/unit/harness-ci-runner.test.ts",
+      "sha256": "b7fcc3e48c702dcfa875772bbbec37868d8079d34218e7ad8d8acf93c5c9d12c",
+      "bytes": 3085,
+      "gitBlob": "a3c81448a457e080834ad65b00281fc8651b2fc5"
+    },
+    {
+      "path": "tests/unit/host-services.test.ts",
+      "sha256": "3e8ac3d03b550090ddbe916e0250fc0c21d70118825f662e304bf11f5b2640db",
+      "bytes": 78231,
+      "gitBlob": "b96e87386833eb38cc4d939678ace593f0429532"
+    },
+    {
+      "path": "tests/unit/knowledge-api.test.ts",
+      "sha256": "45f57f033df36977f01b78a0108a57799be286d2499e48b8cf738da6073461f7",
+      "bytes": 95237,
+      "gitBlob": "f5fb1e650a3cbdc9fcf33e9afd1e9b19a92b0176"
+    },
+    {
+      "path": "tests/unit/knowledge-source-set-answer.test.ts",
+      "sha256": "95c19985fc8cf42e2b844f98be55d5b3128ecc15129a121a00da4a3df71931ab",
+      "bytes": 10636,
+      "gitBlob": "444e3f28712e2ef6a0026e965401f6a4e14904b4"
+    },
+    {
+      "path": "tests/unit/project-rag-owner-read.test.ts",
+      "sha256": "22279d6e1302c6bad362781e510e6b5d6a470fb577f9bade3ffbfcd86d26ff24",
+      "bytes": 12885,
+      "gitBlob": "219fc4291f5e35a806c7bef5b56d3d1631c7b6a8"
+    },
+    {
+      "path": "tests/unit/r0-3-chat-abort-checkstuck.test.ts",
+      "sha256": "4ec22d9f22d1dcbd67aec500d14fba7ca50fea0a58e828055a0ce7332d603a3c",
+      "bytes": 6297,
+      "gitBlob": "7a860b2bec55a95f191ebe0abd1006cc32b54ac6"
+    },
+    {
+      "path": "tests/unit/resource-lifecycle-report.test.ts",
+      "sha256": "14526405bfe4acdc20168bd60ea34cb95c0d9f68327659ca4607b8fd1445e428",
+      "bytes": 6835,
+      "gitBlob": "a250636039743a1e2e0603e425c76b0b0d626e99"
+    },
+    {
+      "path": "tests/unit/resource-metrics-owner.test.ts",
+      "sha256": "e95c90c325db93554e6bfe72d2ae4fa92e3a4074355004f3a6a7281cb09efdb3",
+      "bytes": 5205,
+      "gitBlob": "f693a99fe4bcbaa2f1707f13e7fc920ba3f45e6a"
+    },
+    {
+      "path": "tests/unit/resource-repeated-observers.test.ts",
+      "sha256": "506198bc59a92529d5003a37a4340599c89c4b942e76de06152deff1a422c011",
+      "bytes": 3311,
+      "gitBlob": "3721a32a471f564b50cd741fb5e7f869e87dbc90"
+    },
+    {
+      "path": "tests/unit/session-handoff-recovery.test.ts",
+      "sha256": "6c97b9266cda489ef021a051e63a01bc4d998e363f4a41b034645347ad641171",
+      "bytes": 23632,
+      "gitBlob": "afd5936ee6262f6838516cefb234ee57449b38f3"
+    },
+    {
+      "path": "tests/unit/terminal-resource-native.test.ts",
+      "sha256": "02edef8831745377407390e0471bee1cc063ea1fc01a12877815580fb34a5c43",
+      "bytes": 5188,
+      "gitBlob": "14d29f96e9308084df1dc0200f491c92db5a8a9e"
+    },
+    {
+      "path": "tests/unit/terminal-session-manager.test.ts",
+      "sha256": "a2fbbfe562106a2e0ae33c5c9ac40ceb6c1f73c32d76dcfd5a535ff78ee47d88",
+      "bytes": 20916,
+      "gitBlob": "7c9a3d128b212b15cd63daf0ab038359fa6d39e7"
+    },
+    {
+      "path": "tsconfig.web.json",
+      "sha256": "622239ce10362c35f9bc90fdbed8c09c06415a9f1911716f54219000a46be251",
+      "bytes": 2048,
+      "gitBlob": "9cbf99eff612724a8a056b943ab2a2c0d2ecf577"
+    },
+    {
+      "path": "vitest.agent-dev.node.config.ts",
+      "sha256": "89cea603aaa5f854ac4a2bb4ff8e447c352e62a54bd22fc273a7dd2c4dcae301",
+      "bytes": 714,
+      "gitBlob": "8dd3266fa9a0cafffcf049a3ebc7311cb6a1eec1"
+    }
+  ]
+}

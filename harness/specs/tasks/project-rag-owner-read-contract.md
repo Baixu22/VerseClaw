@@ -1,6 +1,6 @@
 ---
 lifecycleStatus: active
-implementationStatus: partial
+implementationStatus: implemented
 id: project-rag-owner-read-contract
 title: 统一来源读取的身份、权限与版本
 scenario: gateway-backend-communication
@@ -164,7 +164,7 @@ docs:
 
 契约：ReadAdmissionContext/v1、SourceRef/v2、OwnerReadSnapshot/v1。
 
-本文件冻结实现合同。当前规划不代表产品实现已通过；执行该叶前复核绑定的工作树、前置证据与实际 HEAD，刷新 diffBase。新增测试必须实现并加入 requiredTests；plannedE2E 指定的是必须补齐的产品旅程。
+实现与新增测试已进入 requiredTests；[RAG-01 验收记录](../../../docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/report.json) 绑定源码候选、完整类型检查、权限与版本负例、Electron 引用旅程及十二项 Harness CI。继续开发时按实际工作树和前置证据刷新本叶 diffBase。
 
 所有检索来源和模型调用接受 owner 准入，DCS 保留最终上下文决定权；验证结果标记 driven_by: agent。
 

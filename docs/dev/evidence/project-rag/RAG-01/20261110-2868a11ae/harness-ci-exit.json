@@ -1,0 +1,12 @@
+{
+  "durationMs": 43558,
+  "name": "harness-ci",
+  "args": [
+    "--config.verify-deps-before-run=false",
+    "run",
+    "harness:ci"
+  ],
+  "exitCode": 0,
+  "candidate": "2868a11ae39aa1b4a920800995b64f98d69ce6b9",
+  "finishedAt": "2026-11-09T20:58:45.2216083+00:00"
+}

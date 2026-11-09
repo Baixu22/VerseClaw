@@ -1,0 +1,25 @@
+{
+  "exitCode": 0,
+  "candidate": "4937045618e45d7af5e9d27ab6cf8ffe0b02180d",
+  "args": [
+    "--config.verify-deps-before-run=false",
+    "--dir",
+    "openclaw_runtime",
+    "exec",
+    "vitest",
+    "run",
+    "--config",
+    "test/vitest/vitest.unit.config.ts",
+    "src/context-engine/project-rag-owner-adapters.test.ts",
+    "src/context-engine/chat-knowledge-intent.test.ts",
+    "src/context-engine/source-set.test.ts",
+    "--maxWorkers=1",
+    "--reporter=json",
+    "--outputFile",
+    "D:\\tmp\\project-rag-TF-0878\\formal-493704561-10\\runtime-unit.json",
+    "--passWithNoTests=false"
+  ],
+  "name": "runtime-unit",
+  "durationMs": 29010,
+  "finishedAt": "2026-11-09T20:18:55.6642307+00:00"
+}

@@ -1,0 +1,18 @@
+{
+  "exitCode": 0,
+  "candidate": "4937045618e45d7af5e9d27ab6cf8ffe0b02180d",
+  "args": [
+    "--config.verify-deps-before-run=false",
+    "exec",
+    "playwright",
+    "test",
+    "tests/e2e/project-rag-owner-read.spec.ts",
+    "--workers=1",
+    "--reporter=json",
+    "--output",
+    "D:\\tmp\\project-rag-TF-0878\\formal-493704561-10\\owner-e2e-results"
+  ],
+  "name": "owner-e2e",
+  "durationMs": 85047,
+  "finishedAt": "2026-11-09T20:20:21.0782947+00:00"
+}

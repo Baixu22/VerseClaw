@@ -1,0 +1,375 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\playwright.config.ts",
+    "rootDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/project-rag-TF-0878/formal-493704561-10/owner-e2e-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "project-rag-owner-read.spec.ts",
+      "file": "project-rag-owner-read.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG owner identity, exact citations and denial cross real Electron Host/Gateway/runtime",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 79180,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[app:err] [2026-11-09T20:19:16.881Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:19:16.881Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-09T20:19:16.881Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-09T20:19:16.882Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:16.958Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:16.959Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                    },
+                    {
+                      "text": "[app:err] [41396:1110/041917.092:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[41396:1110/041917.092:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:17.419Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n[2026-11-09T20:19:17.425Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:19:17.426Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T20:19:17.427Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T20:19:17.427Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-09T20:19:17.427Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:18.141Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\tmp\\project-rag-TF-0878\\electron-runs\\verse-claw-e2e-run-ZF8NNc\\verse-claw-e2e-home-jS17ni\\rag-workspace\\.verse-claw\\harness\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:18.991Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:18.993Z] [INFO] Gateway start requested (port=49897)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:19.015Z] [DEBUG] Device identity loaded (deviceId=f3170b730d8be0c3d53012083556bca64777e338c9ed22b72ad125116591501a)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:19.015Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:19.522Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:err] (node:41396) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:20.063Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:20.139Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:19:20.215Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:20.221Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":0,\"defaultProviderRuntimeSyncMs\":1,\"providerEnvMs\":13,\"channelStartupPolicyMs\":7,\"uvEnvMs\":41,\"mcpEnvMs\":41,\"runtimeConfigReadMs\":1,\"verseShellBundleMs\":0,\"totalMs\":144,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:20.222Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=49897, entry=\"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 49897 --allow-unconfigured\", execArgv=\"\", cwd=\"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\", bundledBin=no, providerKeys=0, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:20.396Z] [INFO] Gateway process started (pid=27668)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:20.397Z] [DEBUG] Gateway manager now owns process pid=27668\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:19:20.856Z] [WARN] [Gateway stderr] (node:27668) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:19:20.857Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:22.538Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:24.688Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:24.774Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:26.860Z] [DEBUG] Still waiting for Gateway... (attempt 31/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:28.962Z] [DEBUG] Still waiting for Gateway... (attempt 41/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:31.078Z] [DEBUG] Still waiting for Gateway... (attempt 51/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:33.236Z] [DEBUG] Still waiting for Gateway... (attempt 61/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:35.329Z] [DEBUG] [Gateway stderr] (node:27668) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:19:35.330Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:35.330Z] [DEBUG] [Gateway stderr] (node:27668) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:35.382Z] [DEBUG] Still waiting for Gateway... (attempt 71/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:42.268Z] [DEBUG] Gateway ready after 77 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:42.268Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:49897/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:19:42.316Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=e616253e-5a89-420c-a650-887d5fac465b peer=127.0.0.1:61726->127.0.0.1:49897 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:49897 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:19:42.319Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=db35958e-de37-41ae-bf3c-394d7bf21f50 peer=127.0.0.1:54040->127.0.0.1:49897 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:49897 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:19:42.321Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=3cfd4c5d-435c-49ad-9b1b-dd4dee954b93 peer=127.0.0.1:54031->127.0.0.1:49897 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:49897 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:42.339Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:42.339Z] [DEBUG] Received connect.challenge, sending handshake\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:42.340Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:19:42.344Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=7fc95242-4862-4b68-8d56-1b57cd29f82b peer=127.0.0.1:61731->127.0.0.1:49897 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:49897 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:42.429Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:49897/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:19:42.432Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:48.129Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:48.130Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-09T20:19:48.130Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:49.331Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:49.332Z] [DEBUG] Gateway state changed: starting -> running\n[2026-11-09T20:19:49.333Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n[2026-11-09T20:19:49.335Z] [INFO] [metric] gateway.startup {\"configSyncMs\":876,\"spawnToReadyMs\":21871,\"readyToConnectMs\":7067,\"totalMs\":29814}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:19:55.302Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-TF-0878\\electron-runs\\verse-claw-e2e-run-ZF8NNc\\verse-claw-e2e-user-data-jwT6E8\\openclaw-source-state\\plugin-skills\\browser-automation\" → \"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\browser\\skills\\browser-automation\": Error: EPERM: operation not permitted, symlink 'C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\browser\\skills\\browser-automation' -> 'D:\\tmp\\project-rag-TF-0878\\electron-runs\\verse-claw-e2e-run-ZF8NNc\\verse-claw-e2e-user-data-jwT6E8\\openclaw-source-state\\plugin-skills\\browser-automation'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:19:55.400Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-TF-0878\\electron-runs\\verse-claw-e2e-run-ZF8NNc\\verse-claw-e2e-user-data-jwT6E8\\openclaw-source-state\\plugin-skills\\obsidian-vault-maintainer\" → \"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\obsidian-vault-maintainer\": Error: EPERM: operation not permitted, symlink 'C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\obsidian-vault-maintainer' -> 'D:\\tmp\\project-rag-TF-0878\\electron-runs\\verse-claw-e2e-run-ZF8NNc\\verse-claw-e2e-user-data-jwT6E8\\openclaw-source-state\\plugin-skills\\obsidian-vault-maintainer'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:19:55.511Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-TF-0878\\electron-runs\\verse-claw-e2e-run-ZF8NNc\\verse-claw-e2e-user-data-jwT6E8\\openclaw-source-state\\plugin-skills\\wiki-maintainer\" → \"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\wiki-maintainer\": Error: EPERM: operation not permitted, symlink 'C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\wiki-maintainer' -> 'D:\\tmp\\project-rag-TF-0878\\electron-runs\\verse-claw-e2e-run-ZF8NNc\\verse-claw-e2e-user-data-jwT6E8\\openclaw-source-state\\plugin-skills\\wiki-maintainer'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:19:55.523Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-TF-0878\\electron-runs\\verse-claw-e2e-run-ZF8NNc\\verse-claw-e2e-user-data-jwT6E8\\openclaw-source-state\\plugin-skills\\agent-reach-login-handoff\" → \"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\reach-readers\\skills\\agent-reach-login-handoff\": Error: EPERM: operation not permitted, symlink 'C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\reach-readers\\skills\\agent-reach-login-handoff' -> 'D:\\tmp\\project-rag-TF-0878\\electron-runs\\verse-claw-e2e-run-ZF8NNc\\verse-claw-e2e-user-data-jwT6E8\\openclaw-source-state\\plugin-skills\\agent-reach-login-handoff'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #1\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:59.515Z] [INFO] [chat:sendWithMedia] Sending: message=\"Inspect this selected owner reference.\", attachments=0, fileRefs=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:59.525Z] [INFO] [gateway-rpc] chat.send serialized id=9889402b-00e8-4e5e-ba7b-47661bbe0a93 timeoutMs=900000 bytes=678\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:59.526Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=9889402b-00e8-4e5e-ba7b-47661bbe0a93\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:19:59.527Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=08e99db0-ecdb-47f7-98d0-8c8e00df50d1 id=9889402b-00e8-4e5e-ba7b-47661bbe0a93\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:19:59.528Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=08e99db0-ecdb-47f7-98d0-8c8e00df50d1 id=9889402b-00e8-4e5e-ba7b-47661bbe0a93\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:19:59.532Z] [WARN] [Gateway stderr] [chat.send.trace] handler entered\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:19:59.545Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=rag-owner-1794255599272 sessionKey=agent:main:main loadSessionMs=1.29\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:19:59.590Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=rag-owner-1794255599272 sessionKey=agent:main:main attachments=0\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:19:59.595Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=rag-owner-1794255599272 sessionKey=agent:main:main\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:59.595Z] [INFO] [gateway-rpc] chat.send response id received durationMs=70\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:19:59.596Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"rag-owner-1794255599272\",\"status\":\"started\",\"knowledgeReferences\":[{\"id\":\"rag-owner\",\"title\":\"Project RAG owner\",\"lookup\":\"concepts/owner.md\",\"corpus\":\"wiki\",\"revision\":\"1\",\"contentDigest\":\"sha256:3892d38206e40578fd97309e0c3b45ca4c8a73795d2c847022bb776ddc2c4d2d\",\"sourceRef\":{\"domain\":\"wiki\",\"authorityId\":\"memory-wiki\",\"namespaceId\":\"memory-wiki:6c2f031521936f42a5945cbdb857c604643a8fe3d53c8037f77fee4a9d9b1ad2\",\"subjectId\":\"concepts/owner.md\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:14f849fc8b971cf529c846bdfc05776d1a76e56a53618c7a229f51398f879c1d\",\"policyEpoch\":\"sha256:72c0746c98f1767c9b2117615c79f030c72f6ec60db1c98a1b4392064af77eb2\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":187,\"endByteExclusive\":1621,\"startLine\":11,\"endLine\":49}}}]}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:19:59.618Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=08e99db0-ecdb-47f7-98d0-8c8e00df50d1 id=9889402b-00e8-4e5e-ba7b-47661bbe0a93\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #2\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #3\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:20:11.050Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\tmp\\project-rag-TF-0878\\electron-runs\\verse-claw-e2e-run-ZF8NNc\\verse-claw-e2e-home-jS17ni\\other-workspace\\.verse-claw\\harness\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:20:13.300Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T20:20:13.300Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T20:20:13.300Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-09T20:20:13.300Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:20:14.068Z] [INFO] [provider-sync] Seeded provider account \"openai\" from openclaw.json\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:20:14.556Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T20:20:14.556Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T20:20:14.557Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-09T20:20:14.557Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:20:14.713Z] [WARN] [task-ledger] snapshot cache write failed {\"workspaceId\":\"project-rag-owner-fixture\",\"error\":\"AtomicWriteError: Atomic lock failed for D:\\\\tmp\\\\project-rag-TF-0878\\\\electron-runs\\\\verse-claw-e2e-run-ZF8NNc\\\\verse-claw-e2e-home-jS17ni\\\\.openclaw\\\\task-ledgers\\\\workspaces\\\\project-rag-owner-fixture-be174755b0\\\\snapshot.json (EPERM): EPERM: operation not permitted, open 'D:\\\\tmp\\\\project-rag-TF-0878\\\\electron-runs\\\\verse-claw-e2e-run-ZF8NNc\\\\verse-claw-e2e-home-jS17ni\\\\.openclaw\\\\task-ledgers\\\\workspaces\\\\project-rag-owner-fixture-be174755b0\\\\snapshot.json.clawx-write.lock'\"}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:20:17.124Z] [INFO] [channels.accounts] channels.status probe=0 elapsedMs=19 snapshot=empty\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:20:17.124Z] [INFO] [channels.accounts] response mode=runtime probe=0 elapsedMs=24 view=\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:20:17.154Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:20:17.155Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:20:17.156Z] [INFO] Sending kill to Gateway process (pid=27668)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:20:17.186Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:20:17.187Z] [DEBUG] Gateway state changed: running -> stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:20:17.912Z] [INFO] Gateway process exited (code=1, expected=yes)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:20:17.913Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:20:18.168Z] [INFO] Gateway stop requested\n[2026-11-09T20:20:18.168Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (stop)\n"
+                    },
+                    {
+                      "text": "[app:err] Debugger ending on ws://127.0.0.1:60848/9a5964e1-1d56-43c0-8e53-9ff990f43a55\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:20:18.188Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\",\"power-saver\"],\"transitionCount\":4}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:20:18.189Z] [INFO] [ResourceTracker] Stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:20:18.190Z] [INFO] [ResourceTracker] Shutdown complete\n[2026-11-09T20:20:18.190Z] [INFO] [efficiency-sampler] stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:20:18.190Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-09T20:19:00.291Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3cc2778c35a08400226d-76a5b2aeea378ad2c5af",
+          "file": "project-rag-owner-read.spec.ts",
+          "line": 20,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-09T20:18:58.447Z",
+    "duration": 82547.701,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

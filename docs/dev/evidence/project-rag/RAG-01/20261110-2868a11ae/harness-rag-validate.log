@@ -1,0 +1,3 @@
+$ pnpm --filter @verse-claw/harness start -- "validate" "--spec" "harness/specs/tasks/project-rag-owner-read-contract.md"
+$ node src/cli.mjs "--" "validate" "--spec" "harness/specs/tasks/project-rag-owner-read-contract.md"
+Spec is valid: harness\specs\tasks\project-rag-owner-read-contract.md

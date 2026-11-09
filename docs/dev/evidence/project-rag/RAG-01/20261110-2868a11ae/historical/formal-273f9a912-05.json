@@ -1,0 +1,145 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\playwright.config.ts",
+    "rootDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/project-rag-TF-0878/formal-273f9a912-05/e2e-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "project-rag-owner-read.spec.ts",
+      "file": "project-rag-owner-read.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG owner identity, exact citations and denial cross real Electron Host/Gateway/runtime",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 121578,
+                  "error": {
+                    "message": "TimeoutError: electron.launch: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - <launching> \"D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\electron.exe\" \"--inspect=0\" \"--remote-debugging-port=0\" \"--no-sandbox\" \"--user-data-dir=D:\\tmp\\project-rag-TF-0878\\electron-runs\\verse-claw-e2e-run-r7g4Oo\\verse-claw-e2e-user-data-ijzVVK\" \"--lang=en-US\" \"--disable-gpu\" \"--disable-gpu-compositing\" \"--disable-software-rasterizer\" \"--in-process-gpu\" \"--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization\" \"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\dist-electron\\main\\index.js\"\u001b[22m\n\u001b[2m  - <launched> pid=23968\u001b[22m\n\u001b[2m  - [pid=23968][out]\u001b[22m\n\u001b[2m  - [pid=23968][err] Debugger listening on ws://127.0.0.1:61752/508d5fa1-4a46-448e-a6d1-1885accf5230\u001b[22m\n\u001b[2m  - [pid=23968][err] For help, see: https://nodejs.org/en/docs/inspector\u001b[22m\n\u001b[2m  - <ws connecting> ws://127.0.0.1:61752/508d5fa1-4a46-448e-a6d1-1885accf5230\u001b[22m\n\u001b[2m  - <ws connected> ws://127.0.0.1:61752/508d5fa1-4a46-448e-a6d1-1885accf5230\u001b[22m\n\u001b[2m  - [pid=23968][err] Debugger attached.\u001b[22m\n\u001b[2m  - [pid=23968][out] [2026-11-09T18:14:09.788Z] [DEBUG] [extensions] No clawx-extensions.json found, loading all builtin extensions\u001b[22m\n\u001b[2m  - [pid=23968][out] [2026-11-09T18:14:10.219Z] [DEBUG] [extensions] Registered extension \"builtin/clawhub-marketplace\"\u001b[22m\n\u001b[2m  - [pid=23968][out] [2026-11-09T18:14:10.220Z] [DEBUG] [extensions] Auto-registered builtin extension \"builtin/clawhub-marketplace\"\u001b[22m\n\u001b[2m  - [pid=23968][out] [2026-11-09T18:14:10.220Z] [DEBUG] [extensions] Registered extension \"builtin/diagnostics\"\u001b[22m\n\u001b[2m  - [pid=23968][out] [2026-11-09T18:14:10.220Z] [DEBUG] [extensions] Auto-registered builtin extension \"builtin/diagnostics\"\u001b[22m\n\u001b[2m  - [pid=23968][err] (node:45144) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\u001b[22m\n\u001b[2m  - [pid=23968][err] (Use `electron --trace-warnings ...` to show where the warning was created)\u001b[22m\n\u001b[2m  - [pid=23968][err] (node:45144) ExperimentalWarning: SQLite is an experimental feature and might change at any time\u001b[22m\n\u001b[2m  - [pid=23968][err] (node:45144) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\u001b[22m\n",
+                    "stack": "TimeoutError: electron.launch: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - <launching> \"D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\electron.exe\" \"--inspect=0\" \"--remote-debugging-port=0\" \"--no-sandbox\" \"--user-data-dir=D:\\tmp\\project-rag-TF-0878\\electron-runs\\verse-claw-e2e-run-r7g4Oo\\verse-claw-e2e-user-data-ijzVVK\" \"--lang=en-US\" \"--disable-gpu\" \"--disable-gpu-compositing\" \"--disable-software-rasterizer\" \"--in-process-gpu\" \"--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization\" \"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\dist-electron\\main\\index.js\"\u001b[22m\n\u001b[2m  - <launched> pid=23968\u001b[22m\n\u001b[2m  - [pid=23968][out]\u001b[22m\n\u001b[2m  - [pid=23968][err] Debugger listening on ws://127.0.0.1:61752/508d5fa1-4a46-448e-a6d1-1885accf5230\u001b[22m\n\u001b[2m  - [pid=23968][err] For help, see: https://nodejs.org/en/docs/inspector\u001b[22m\n\u001b[2m  - <ws connecting> ws://127.0.0.1:61752/508d5fa1-4a46-448e-a6d1-1885accf5230\u001b[22m\n\u001b[2m  - <ws connected> ws://127.0.0.1:61752/508d5fa1-4a46-448e-a6d1-1885accf5230\u001b[22m\n\u001b[2m  - [pid=23968][err] Debugger attached.\u001b[22m\n\u001b[2m  - [pid=23968][out] [2026-11-09T18:14:09.788Z] [DEBUG] [extensions] No clawx-extensions.json found, loading all builtin extensions\u001b[22m\n\u001b[2m  - [pid=23968][out] [2026-11-09T18:14:10.219Z] [DEBUG] [extensions] Registered extension \"builtin/clawhub-marketplace\"\u001b[22m\n\u001b[2m  - [pid=23968][out] [2026-11-09T18:14:10.220Z] [DEBUG] [extensions] Auto-registered builtin extension \"builtin/clawhub-marketplace\"\u001b[22m\n\u001b[2m  - [pid=23968][out] [2026-11-09T18:14:10.220Z] [DEBUG] [extensions] Registered extension \"builtin/diagnostics\"\u001b[22m\n\u001b[2m  - [pid=23968][out] [2026-11-09T18:14:10.220Z] [DEBUG] [extensions] Auto-registered builtin extension \"builtin/diagnostics\"\u001b[22m\n\u001b[2m  - [pid=23968][err] (node:45144) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\u001b[22m\n\u001b[2m  - [pid=23968][err] (Use `electron --trace-warnings ...` to show where the warning was created)\u001b[22m\n\u001b[2m  - [pid=23968][err] (node:45144) ExperimentalWarning: SQLite is an experimental feature and might change at any time\u001b[22m\n\u001b[2m  - [pid=23968][err] (node:45144) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\u001b[22m\n\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron.ts:405:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron.ts:545:21\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-owner-read.spec.ts:44:15",
+                    "location": {
+                      "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron.ts",
+                      "column": 15,
+                      "line": 405
+                    },
+                    "snippet": "\u001b[90m   at \u001b[39mfixtures\\electron.ts:405\n\n  403 |     : {};\n  404 |   const pendingLaunch = await recordElectronLaunch(userDataDir);\n> 405 |   const app = await electron.launch({\n      |               ^\n  406 |     executablePath: options.executablePath ?? String(electronBinaryPath),\n  407 |     args: [\n  408 |       // Windows runners cannot use the Chromium sandbox in this isolated E2E user-data context."
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron.ts",
+                        "column": 15,
+                        "line": 405
+                      },
+                      "message": "TimeoutError: electron.launch: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - <launching> \"D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\electron.exe\" \"--inspect=0\" \"--remote-debugging-port=0\" \"--no-sandbox\" \"--user-data-dir=D:\\tmp\\project-rag-TF-0878\\electron-runs\\verse-claw-e2e-run-r7g4Oo\\verse-claw-e2e-user-data-ijzVVK\" \"--lang=en-US\" \"--disable-gpu\" \"--disable-gpu-compositing\" \"--disable-software-rasterizer\" \"--in-process-gpu\" \"--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization\" \"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\dist-electron\\main\\index.js\"\u001b[22m\n\u001b[2m  - <launched> pid=23968\u001b[22m\n\u001b[2m  - [pid=23968][out]\u001b[22m\n\u001b[2m  - [pid=23968][err] Debugger listening on ws://127.0.0.1:61752/508d5fa1-4a46-448e-a6d1-1885accf5230\u001b[22m\n\u001b[2m  - [pid=23968][err] For help, see: https://nodejs.org/en/docs/inspector\u001b[22m\n\u001b[2m  - <ws connecting> ws://127.0.0.1:61752/508d5fa1-4a46-448e-a6d1-1885accf5230\u001b[22m\n\u001b[2m  - <ws connected> ws://127.0.0.1:61752/508d5fa1-4a46-448e-a6d1-1885accf5230\u001b[22m\n\u001b[2m  - [pid=23968][err] Debugger attached.\u001b[22m\n\u001b[2m  - [pid=23968][out] [2026-11-09T18:14:09.788Z] [DEBUG] [extensions] No clawx-extensions.json found, loading all builtin extensions\u001b[22m\n\u001b[2m  - [pid=23968][out] [2026-11-09T18:14:10.219Z] [DEBUG] [extensions] Registered extension \"builtin/clawhub-marketplace\"\u001b[22m\n\u001b[2m  - [pid=23968][out] [2026-11-09T18:14:10.220Z] [DEBUG] [extensions] Auto-registered builtin extension \"builtin/clawhub-marketplace\"\u001b[22m\n\u001b[2m  - [pid=23968][out] [2026-11-09T18:14:10.220Z] [DEBUG] [extensions] Registered extension \"builtin/diagnostics\"\u001b[22m\n\u001b[2m  - [pid=23968][out] [2026-11-09T18:14:10.220Z] [DEBUG] [extensions] Auto-registered builtin extension \"builtin/diagnostics\"\u001b[22m\n\u001b[2m  - [pid=23968][err] (node:45144) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\u001b[22m\n\u001b[2m  - [pid=23968][err] (Use `electron --trace-warnings ...` to show where the warning was created)\u001b[22m\n\u001b[2m  - [pid=23968][err] (node:45144) ExperimentalWarning: SQLite is an experimental feature and might change at any time\u001b[22m\n\u001b[2m  - [pid=23968][err] (node:45144) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\u001b[22m\n\n\n   at fixtures\\electron.ts:405\n\n  403 |     : {};\n  404 |   const pendingLaunch = await recordElectronLaunch(userDataDir);\n> 405 |   const app = await electron.launch({\n      |               ^\n  406 |     executablePath: options.executablePath ?? String(electronBinaryPath),\n  407 |     args: [\n  408 |       // Windows runners cannot use the Chromium sandbox in this isolated E2E user-data context.\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron.ts:405:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron.ts:545:21\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-owner-read.spec.ts:44:15"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-09T18:12:57.749Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\project-rag-TF-0878\\formal-273f9a912-05\\e2e-results\\project-rag-owner-read-Pro-73e8d-ectron-Host-Gateway-runtime\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\project-rag-TF-0878\\formal-273f9a912-05\\e2e-results\\project-rag-owner-read-Pro-73e8d-ectron-Host-Gateway-runtime\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron.ts",
+                    "column": 15,
+                    "line": 405
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "3cc2778c35a08400226d-76a5b2aeea378ad2c5af",
+          "file": "project-rag-owner-read.spec.ts",
+          "line": 20,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-09T18:12:55.021Z",
+    "duration": 127511.424,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

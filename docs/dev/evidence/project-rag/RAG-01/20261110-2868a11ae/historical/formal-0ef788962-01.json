@@ -1,0 +1,149 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\playwright.config.ts",
+    "rootDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/project-rag-TF-0878/formal-0ef788962-01/e2e-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "project-rag-owner-read.spec.ts",
+      "file": "project-rag-owner-read.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG owner identity, exact citations and denial cross real Electron Host/Gateway/runtime",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 143547,
+                  "error": {
+                    "message": "Error: page.evaluate: Error: Host action gateway.start timed out after 60s\n    at eval (eval at evaluate (:302:30), <anonymous>:11:27)\n    at async <anonymous>:328:30",
+                    "stack": "Error: page.evaluate: Error: Host action gateway.start timed out after 60s\n    at eval (eval at evaluate (:302:30), <anonymous>:11:27)\n    at async <anonymous>:328:30\n    at eval (eval at evaluate (:302:30), <anonymous>:11:27)\n    at async <anonymous>:328:30\n    at host (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-owner-read.spec.ts:11:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-owner-read.spec.ts:67:34",
+                    "location": {
+                      "file": "eval at evaluate (:302:30), <anonymous>",
+                      "column": 27,
+                      "line": 11
+                    }
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "eval at evaluate (:302:30), <anonymous>",
+                        "column": 27,
+                        "line": 11
+                      },
+                      "message": "Error: page.evaluate: Error: Host action gateway.start timed out after 60s\n    at eval (eval at evaluate (:302:30), <anonymous>:11:27)\n    at async <anonymous>:328:30\n    at eval (eval at evaluate (:302:30), <anonymous>:11:27)\n    at async <anonymous>:328:30\n    at host (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-owner-read.spec.ts:11:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-owner-read.spec.ts:67:34"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-09T16:11:08.470Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\tmp\\project-rag-TF-0878\\formal-0ef788962-01\\e2e-results\\project-rag-owner-read-Pro-73e8d-ectron-Host-Gateway-runtime\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\project-rag-TF-0878\\formal-0ef788962-01\\e2e-results\\project-rag-owner-read-Pro-73e8d-ectron-Host-Gateway-runtime\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\project-rag-TF-0878\\formal-0ef788962-01\\e2e-results\\project-rag-owner-read-Pro-73e8d-ectron-Host-Gateway-runtime\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "eval at evaluate (:302:30), <anonymous>",
+                    "column": 27,
+                    "line": 11
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "3cc2778c35a08400226d-76a5b2aeea378ad2c5af",
+          "file": "project-rag-owner-read.spec.ts",
+          "line": 20,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-09T16:11:05.629Z",
+    "duration": 150430.706,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}
+[ELIFECYCLE] Command failed with exit code 1.

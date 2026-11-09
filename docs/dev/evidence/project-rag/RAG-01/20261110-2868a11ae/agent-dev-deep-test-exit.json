@@ -1,0 +1,14 @@
+{
+  "durationMs": 59757,
+  "name": "agent-dev-deep-test",
+  "args": [
+    "--config.verify-deps-before-run=false",
+    "agent-dev:deep-test",
+    "--reuse-build",
+    "--cached-typecheck",
+    "--smoke-e2e"
+  ],
+  "exitCode": 0,
+  "candidate": "2868a11ae39aa1b4a920800995b64f98d69ce6b9",
+  "finishedAt": "2026-11-09T20:58:01.5805467+00:00"
+}

@@ -1,0 +1,240 @@
+$ playwright test tests/e2e/agent-dev-quality.spec.ts --workers=2 "--reporter=json" "--output" "D:\\tmp\\project-rag-TF-0878\\formal-2868a11ae-11\\agent-dev-e2e-results"
+{
+  "config": {
+    "configFile": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\playwright.config.ts",
+    "rootDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 2
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/project-rag-TF-0878/formal-2868a11ae-11/agent-dev-e2e-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 2,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "agent-dev-quality.spec.ts",
+      "file": "agent-dev-quality.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "agent dev quality gates",
+          "file": "agent-dev-quality.spec.ts",
+          "line": 5,
+          "column": 6,
+          "specs": [
+            {
+              "title": "produces an accessibility report for a seeded scenario",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 25320,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-09T20:56:18.019Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "agent-dev-a11y-report",
+                          "contentType": "application/json",
+                          "path": "D:\\tmp\\project-rag-TF-0878\\formal-2868a11ae-11\\agent-dev-e2e-results\\agent-dev-quality-agent-de-b3a30-eport-for-a-seeded-scenario\\attachments\\agent-dev-a11y-report-9f698cca9906f59503b1caa91cee832c1d6cad6b.json"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "25c625a4fc6c4b09b841-fb9c6f5baee55d3f71a4",
+              "file": "agent-dev-quality.spec.ts",
+              "line": 8,
+              "column": 7
+            },
+            {
+              "title": "renders assistant-ui welcome suggestions with aligned card styling",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 25309,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-09T20:56:18.065Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "chat-welcome-suggestions",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\project-rag-TF-0878\\formal-2868a11ae-11\\agent-dev-e2e-results\\agent-dev-quality-agent-de-bd8d6-s-with-aligned-card-styling\\attachments\\chat-welcome-suggestions-edcde0fb72c83c6d297af36dc8c3d6f45b4a5915.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "25c625a4fc6c4b09b841-f54796a6dce64b13ac6a",
+              "file": "agent-dev-quality.spec.ts",
+              "line": 24,
+              "column": 7
+            },
+            {
+              "title": "captures a stable visual artifact for a seeded scenario",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 16681,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-09T20:56:43.418Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "agent-dev-visual-doctor-failed",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\project-rag-TF-0878\\formal-2868a11ae-11\\agent-dev-e2e-results\\agent-dev-quality-agent-de-3bbb0-ifact-for-a-seeded-scenario\\attachments\\agent-dev-visual-doctor-failed-56b247c42c1de0d3b75458da04aa935d809fdef8.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "25c625a4fc6c4b09b841-80a55f994e600ae38666",
+              "file": "agent-dev-quality.spec.ts",
+              "line": 60,
+              "column": 7
+            },
+            {
+              "title": "loads the in-app Agent Dev Workbench through host-api and records a scenario",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 16653,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-09T20:56:43.443Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "25c625a4fc6c4b09b841-ddd89b2a90385a5a5b85",
+              "file": "agent-dev-quality.spec.ts",
+              "line": 74,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-09T20:56:16.327Z",
+    "duration": 45237.867,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

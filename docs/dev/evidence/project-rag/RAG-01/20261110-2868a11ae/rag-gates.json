@@ -1,0 +1,27 @@
+[
+  {
+    "exitCode": 0,
+    "args": [
+      "--config.verify-deps-before-run=false",
+      "harness",
+      "validate",
+      "--spec",
+      "harness/specs/tasks/project-rag-owner-read-contract.md"
+    ],
+    "name": "harness-rag-validate",
+    "candidate": "2868a11ae39aa1b4a920800995b64f98d69ce6b9"
+  },
+  {
+    "exitCode": 0,
+    "args": [
+      "--config.verify-deps-before-run=false",
+      "harness",
+      "run",
+      "--spec",
+      "harness/specs/tasks/project-rag-owner-read-contract.md",
+      "--dry-run"
+    ],
+    "name": "harness-rag-dry-run",
+    "candidate": "2868a11ae39aa1b4a920800995b64f98d69ce6b9"
+  }
+]

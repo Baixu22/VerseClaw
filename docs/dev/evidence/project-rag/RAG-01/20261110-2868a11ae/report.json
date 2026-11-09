@@ -1,0 +1,253 @@
+{
+  "schema": "ProjectRagOwnerReadAcceptance/v1",
+  "node": "TF-0878",
+  "programKey": "RAG-01",
+  "status": "pass",
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "candidate": "2868a11ae39aa1b4a920800995b64f98d69ce6b9",
+  "tree": "a00265c97e05ad6d2b9093889d35b7d6c6ab763c",
+  "worktree": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX",
+  "branch": "codex/project-rag-longterm-20261109",
+  "recordedAt": "2026-11-09T21:05:33.957Z",
+  "runtimeBuild": {
+    "candidate": "4b56d8eb4e72a89f942648dab4e0f1d6f43e5c65",
+    "exitCode": 0,
+    "sourceUnchanged": true
+  },
+  "desktopBuild": {
+    "candidate": "4937045618e45d7af5e9d27ab6cf8ffe0b02180d",
+    "exitCode": 0,
+    "sourceUnchanged": true
+  },
+  "ownerVerification": {
+    "candidate": "4937045618e45d7af5e9d27ab6cf8ffe0b02180d",
+    "applicationSourceUnchanged": true,
+    "changedPaths": [
+      "docs/agent-dev-control-plane.md",
+      "harness/specs/tasks/project-rag-owner-read-contract.md",
+      "scripts/harness-ci.mjs",
+      "tests/e2e/agent-dev-quality.spec.ts",
+      "tests/unit/harness-ci-runner.test.ts"
+    ],
+    "rootUnit": {
+      "total": 141,
+      "passed": 141,
+      "skipped": 0
+    },
+    "runtimeUnit": {
+      "total": 37,
+      "passed": 37,
+      "skipped": 0
+    },
+    "electron": {
+      "total": 1,
+      "passed": 1,
+      "skipped": 0,
+      "providerMode": "agent-scripted-local-http",
+      "steps": {
+        "exactCitation": true,
+        "pinDriftRejected": 5,
+        "forgedIdentityClamped": true,
+        "deniedProviderInputs": 0,
+        "deletedSourceReopened": false,
+        "electronCitationRead": true
+      },
+      "lateScopeResponseRejected": true,
+      "providerRequests": 3,
+      "providerAnomalies": []
+    }
+  },
+  "currentVerification": {
+    "typecheck": {
+      "node": 0,
+      "web": 0,
+      "test": 0,
+      "mode": "uncached-full"
+    },
+    "agentDevUnit": {
+      "total": 184,
+      "passed": 184,
+      "skipped": 0
+    },
+    "harnessUnit": {
+      "total": 62,
+      "passed": 62,
+      "skipped": 0
+    },
+    "agentDevElectron": {
+      "total": 4,
+      "passed": 4,
+      "skipped": 0,
+      "durationMs": 45237.867
+    },
+    "harnessCi": {
+      "stages": 12,
+      "passed": 12,
+      "exits": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "ragSpec": {
+      "validate": 0,
+      "dryRun": 0
+    },
+    "contract": 0,
+    "communications": {
+      "replay": 0,
+      "compare": 0
+    },
+    "agentDevAudit": {
+      "status": "warn",
+      "disqualifiers": []
+    },
+    "dailyPerformance": {
+      "decision": "needs-full-gate",
+      "limitSteps": [],
+      "steps": [
+        {
+          "id": "typecheck",
+          "durationMs": 11230,
+          "exitCode": 0,
+          "skipped": false
+        },
+        {
+          "id": "contract",
+          "durationMs": 2556,
+          "exitCode": 0,
+          "skipped": false
+        },
+        {
+          "id": "i18n",
+          "durationMs": 1277,
+          "exitCode": 0,
+          "skipped": false
+        },
+        {
+          "id": "workbench",
+          "durationMs": 905,
+          "exitCode": 0,
+          "skipped": false
+        },
+        {
+          "id": "harness-agent-dev",
+          "durationMs": 4262,
+          "exitCode": 0,
+          "skipped": false
+        },
+        {
+          "id": "vitest-agent-dev",
+          "durationMs": 14969,
+          "exitCode": 0,
+          "skipped": false
+        },
+        {
+          "id": "comms-replay",
+          "durationMs": 1199,
+          "exitCode": 0,
+          "skipped": false
+        },
+        {
+          "id": "comms-compare",
+          "durationMs": 1067,
+          "exitCode": 0,
+          "skipped": false
+        },
+        {
+          "id": "e2e-build",
+          "durationMs": 1,
+          "exitCode": 0,
+          "skipped": true
+        },
+        {
+          "id": "playwright-agent-dev",
+          "durationMs": 20239,
+          "exitCode": 0,
+          "skipped": false
+        },
+        {
+          "id": "workbench-refresh",
+          "durationMs": 787,
+          "exitCode": 0,
+          "skipped": false
+        }
+      ]
+    }
+  },
+  "acceptance": [
+    {
+      "criterion": "Trusted session/workspace context; renderer scope, ACL and score do not grant access.",
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "runtime-unit.json",
+        "owner-read-receipt.json"
+      ]
+    },
+    {
+      "criterion": "Full revision/digest/policy/namespace and raw UTF-8 range survive reads and explicit pin drift is rejected.",
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "owner-read-receipt.json"
+      ]
+    },
+    {
+      "criterion": "Owner status/privacy/ACL/retention are preserved; denied bytes never reach admitted UI/model/embedding/rerank inputs.",
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "runtime-unit.json",
+        "owner-read-receipt.json",
+        "owner-denied-ui.png"
+      ]
+    },
+    {
+      "criterion": "Unavailable/deleted owner versions explicitly fail instead of being revived by projections.",
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "owner-read-receipt.json"
+      ]
+    },
+    {
+      "criterion": "New tests and real Electron journey are implemented, registered and verified against bound source inputs.",
+      "status": "pass",
+      "evidence": [
+        "source-inputs.json",
+        "root-unit.json",
+        "runtime-unit.json",
+        "owner-e2e.log",
+        "harness-ci-report.json"
+      ]
+    }
+  ],
+  "provenance": {
+    "chatAck": "owner-resolved attached/read references",
+    "modelContext": "provider input observed",
+    "finalUsedLineageWorkPackage": "RAG-09"
+  },
+  "longTerm": {
+    "goal": "TF-0870",
+    "completed": false,
+    "nextNode": "TF-0879",
+    "protocol": "240 queries; 60 tasks x 3 repeats x 3 arms; actual 72-hour stability and platform acceptance in later work packages",
+    "controlPlaneObservation": {
+      "fullQualityElapsedMs": 45237.867,
+      "fullDeepE2ELimitMs": 40000,
+      "fullQualityTiming": "over-limit observation retained for final performance acceptance",
+      "latestDailyLimitSteps": []
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "exitCode": 0,
+  "candidate": "4937045618e45d7af5e9d27ab6cf8ffe0b02180d",
+  "args": [
+    "--config.verify-deps-before-run=false",
+    "exec",
+    "vitest",
+    "run",
+    "tests/unit/project-rag-owner-read.test.ts",
+    "tests/unit/knowledge-api.test.ts",
+    "tests/unit/knowledge-source-set-answer.test.ts",
+    "tests/unit/knowledge-evidence-qa.test.ts",
+    "tests/unit/resource-lifecycle-report.test.ts",
+    "tests/unit/harness-ci-runner.test.ts",
+    "--maxWorkers=1",
+    "--reporter=json",
+    "--outputFile",
+    "D:\\tmp\\project-rag-TF-0878\\formal-493704561-10\\root-unit.json",
+    "--passWithNoTests=false"
+  ],
+  "name": "root-unit",
+  "durationMs": 59006,
+  "finishedAt": "2026-11-09T20:18:26.1763558+00:00"
+}

@@ -1,0 +1,15 @@
+{
+  "durationMs": 48238,
+  "name": "agent-dev-e2e",
+  "args": [
+    "--config.verify-deps-before-run=false",
+    "run",
+    "test:e2e:agent-dev-quality:run",
+    "--reporter=json",
+    "--output",
+    "D:\\tmp\\project-rag-TF-0878\\formal-2868a11ae-11\\agent-dev-e2e-results"
+  ],
+  "exitCode": 0,
+  "candidate": "2868a11ae39aa1b4a920800995b64f98d69ce6b9",
+  "finishedAt": "2026-11-09T20:57:01.6662970+00:00"
+}

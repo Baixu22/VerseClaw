@@ -1,0 +1,15 @@
+{
+  "actor": "codex/project-rag",
+  "rootPid": 21320,
+  "exitCode": 128,
+  "observedAt": "2026-11-09T20:37:59.8647496+00:00",
+  "driven_by": "agent",
+  "reason": "Recursive CI fixture run",
+  "creationTime": "2026-11-10T04:31:00.7162700+08:00",
+  "verifiedTaskAncestors": [
+    21320,
+    34624,
+    36140,
+    32120
+  ]
+}
