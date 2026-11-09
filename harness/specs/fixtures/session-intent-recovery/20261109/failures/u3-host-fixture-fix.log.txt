@@ -1,0 +1,1 @@
+JSON report written to D:/tmp/unified-management-20261109/intent-validation/u3-host-fixture-fix.tests.json

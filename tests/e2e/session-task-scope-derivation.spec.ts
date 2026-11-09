@@ -93,24 +93,25 @@ test('Main preserves task references across fork and handoff without inheriting 
     });
     expect(handoff.success).toBe(true);
     const handoffSessionKey = handoff.sessionKey!;
+    const handoffOwner=await hostInvoke<{session:{sessionId:string;parentSessionKey?:string}}>(app,'gateway','rpc',{
+      method:'sessions.describe',params:{key:handoffSessionKey},timeoutMs:30_000,
+    });
+    expect(handoffOwner.session.sessionId).toBeTruthy();
+    expect(handoffOwner.session.parentSessionKey).toBe(sourceSessionKey);
     const afterHandoff = await hostInvoke<LedgerResult>(app, 'taskLedger', 'snapshot', { workspaceId });
     const handoffLinks = afterHandoff.snapshot.sessionLinks.filter((link) => link.sessionKey === handoffSessionKey);
     expect(handoffLinks.filter((link) => link.nodeId).map((link) => link.nodeId)).toEqual([task.id]);
-    expect(handoffLinks.every((link) => link.relation === 'handoff_from' && link.sourceSessionKey === sourceSessionKey && link.sessionGeneration === null)).toBe(true);
+    expect(handoffLinks.every((link) => link.relation === 'handoff_from' && link.sourceSessionKey === sourceSessionKey
+      && link.sessionGeneration === handoffOwner.session.sessionId)).toBe(true);
     const sourceAfterHandoff = await hostInvoke<WorkspaceCoordinatorBindingResult>(app, 'workspaces', 'resolveCoordinator', { workspaceId, agentId: 'main', sessionKey: sourceSessionKey });
     expect(sourceAfterHandoff.binding?.state).toBe('paused');
-    const handoffPending = await hostInvoke<WorkspaceCoordinatorBindingResult>(app, 'workspaces', 'resolveCoordinator', { workspaceId, agentId: 'main', sessionKey: handoffSessionKey });
-    expect(handoffPending.recovery.state).toBe('session-pending');
-    await hostInvoke(app, 'gateway', 'rpc', {
-      method: 'sessions.create', params: { key: handoffSessionKey, agentId: 'main', label: 'Agent task-scope handoff' }, timeoutMs: 60_000,
-    });
     const handoffBinding = await hostInvoke<WorkspaceCoordinatorBindingResult>(app, 'workspaces', 'resolveCoordinator', { workspaceId, agentId: 'main', sessionKey: handoffSessionKey });
     expect(handoffBinding.recovery.state).toBe('ready');
     expect(handoffBinding.binding?.sessionGeneration).toBeTruthy();
     expect(handoffBinding.binding?.sessionGeneration).not.toBe(created.sessionId);
     expect(handoffBinding.binding?.taskLedgerReferences.map((reference) => reference.taskLedgerNodeId)).toEqual([task.id]);
     expect(afterHandoff.snapshot.nodes.find((node) => node.id === task.id)).toEqual(task);
-    await record('handoff', { result: handoff, links: handoffLinks, sourceBinding: sourceAfterHandoff, pending: handoffPending, active: handoffBinding });
+    await record('handoff', { result: handoff, links: handoffLinks, sourceBinding: sourceAfterHandoff, owner:handoffOwner, active: handoffBinding });
     await page.screenshot({ path: testInfo.outputPath('task-scope-derived-session.png') });
     evidence.status = 'passed';
     await record('finishedAt', new Date().toISOString());

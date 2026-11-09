@@ -94,8 +94,8 @@ interface ChatMessageProps {
   onResendUserMessage?: (text: string) => void;
   canResendUserMessage?: boolean;
   /**
-   * #180: fork a new session from this message's transcript entry. Only offered
-   * when the message carries an entry id (the `fromLeafId` the fork RPC needs).
+   * #180: fork from this message's owner transcript entry. Missing identity keeps
+   * the action visible but disabled; it never falls back to a provider id or tip.
    */
   onForkFromMessage?: (messageId: string) => void;
   /**
@@ -646,9 +646,12 @@ export const ChatMessage = memo(function ChatMessage({
             timestamp={message.timestamp}
             canEdit={Boolean(onResendUserMessage) && canResendUserMessage}
             onEdit={handleStartUserMessageEdit}
-            canFork={Boolean(transcriptEntryId) && Boolean(onForkFromMessage)}
+            showFork={Boolean(onForkFromMessage)}
+            canFork={Boolean(transcriptEntryId) && Boolean(onForkFromMessage) && canResendUserMessage && !isStreaming}
+            forkDisabledReason={!transcriptEntryId ? t('messageActions.forkMissingBoundary')
+              : !canResendUserMessage || isStreaming ? t('messageActions.forkUnavailable') : undefined}
             onFork={() => {
-              if (transcriptEntryId) onForkFromMessage?.(transcriptEntryId);
+              if (transcriptEntryId && canResendUserMessage && !isStreaming) onForkFromMessage?.(transcriptEntryId);
             }}
             canCompact={Boolean(transcriptEntryId) && Boolean(onCompactRange)}
             onCompactFrom={() => {
@@ -964,7 +967,9 @@ function UserMessageActions({
   timestamp,
   canEdit,
   onEdit,
+  showFork,
   canFork,
+  forkDisabledReason,
   onFork,
   canCompact,
   onCompactFrom,
@@ -974,7 +979,9 @@ function UserMessageActions({
   timestamp?: number;
   canEdit: boolean;
   onEdit: () => void;
+  showFork: boolean;
   canFork: boolean;
+  forkDisabledReason?: string;
   onFork: () => void;
   canCompact: boolean;
   onCompactFrom: () => void;
@@ -1041,15 +1048,17 @@ function UserMessageActions({
           <TooltipContent side="top">{t('messageActions.edit')}</TooltipContent>
         </Tooltip>
       )}
-      {canFork && (
+      {showFork && (
         <Tooltip>
           <TooltipTrigger asChild>
-            <span className="inline-flex">
+            <span className="inline-flex" tabIndex={!canFork ? 0 : undefined}>
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
                 className="h-6 w-6 text-muted-foreground/75 transition-colors duration-150"
+                disabled={!canFork}
+                aria-description={forkDisabledReason}
                 onClick={onFork}
                 aria-label={t('messageActions.forkFromHere')}
                 data-testid="chat-user-message-fork"
@@ -1058,7 +1067,7 @@ function UserMessageActions({
               </Button>
             </span>
           </TooltipTrigger>
-          <TooltipContent side="top">{t('messageActions.forkFromHere')}</TooltipContent>
+          <TooltipContent side="top">{forkDisabledReason ?? t('messageActions.forkFromHere')}</TooltipContent>
         </Tooltip>
       )}
       {canCompact && (

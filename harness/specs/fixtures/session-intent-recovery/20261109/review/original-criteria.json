@@ -1,0 +1,18 @@
+{
+  "node": "TF-0659",
+  "title": "让分支与续接携带任务范围并可恢复创建和发送",
+  "sourceSpec": "harness/specs/tasks/session-derivation-ui.md",
+  "criteria": [
+    "消息“在新会话中提问”有源标题、真实边界和可编辑问题预览；用户消息使用最近 assistant 祖先，说明此提问之前上下文，无祖先/无 entryId/忙态拒绝而不退化 tip fork。",
+    "确认后以现有 fromLeafId Fork，子会话 composer 只预填问题且不发送；取消无副作用、失败不丢问题或源草稿、重复点击只创建一次。",
+    "核对 ad77bf57c 的有意首轮发送行为；Handoff 主按钮明确为“创建并发送”，旧规格/测试标题/四语一致；发送失败保留已创建 child、来源和可恢复草稿。",
+    "Handoff 创建失败不切换；首轮效果未知先查询 owner 结果，不能自动重发或创建第二 child；来源告警、深度上限、gateway/active-run 拒绝均有可见反馈。",
+    "会话内模型提出新会话建议只能进入同一预览确认；普通回复文字不能触发隐式创建，不新增第二派生关系或文本正则执行器。",
+    "Electron E2E 断言 Fork chatSend=0 与 Handoff 显式一次首发；取消、创建失败、发送失败/未知、重复提交、旧会话晚到响应均覆盖。",
+    "新Handoff在runtime SessionDerivation中有持久直接父级，重载来源不依赖Task Ledger推树；runtime失败不激活假child，部分成功可恢复，权限及generation屏障保持。",
+    "创建响应丢失、首发超时、重复点击、A→B→A和进程重启均先回读持久操作与owner run/transcript/receipt；同一操作不再创建child，同一发送重试复用key。无可证明结果则保持unknown，不盲重发或声称exactly-once。",
+    "新增owner单测及Electron中断/重启恢复断言；contract、comms replay/compare和窄spec验收通过后才宣称完成。",
+    "Fork child默认仅有关联/只读职责，写前经A4重新准入；handoff关联与generation换代可对账，旧执行权不可继续用。",
+    "同逻辑操作重试复用持久key；同payload的新合法意图可单独创建，key不只由payload hash派生。"
+  ]
+}
