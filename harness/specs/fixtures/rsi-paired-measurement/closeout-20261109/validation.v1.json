@@ -1,0 +1,352 @@
+{
+  "schemaVersion": "RsiCloseoutValidation/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-closeout-readback",
+  "sourceCandidate": "2aed4ea163b0eea0e6ae813a0307896c0237211b",
+  "unit": {
+    "driven_by": "agent",
+    "actor": "codex/rsi-relay-gates",
+    "gate": "unit",
+    "sourceCandidate": "b7dd85df2da0a02155ba3fe54bde62df2bacef71",
+    "candidateDirty": false,
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "--config",
+      "vitest.rsi.node.config.ts",
+      "tests/unit/rsi-paired-measurement-replay.test.ts",
+      "tests/unit/rsi-campaign-budget.test.ts",
+      "tests/unit/rsi-benefit-eval.test.ts",
+      "tests/unit/rsi-coding-tool-loop.test.ts",
+      "tests/unit/rsi-coding-collector.test.ts",
+      "tests/unit/rsi-responses-provider.test.ts",
+      "tests/unit/rsi-live-acceptance.test.ts",
+      "--reporter=verbose",
+      "--reporter=json",
+      "--outputFile=D:\\ClawX-acceptance\\rsi-paired-measurement-20261108-01a1b651\\relay-20261109\\gates\\unit-bASpXt\\tests.json"
+    ],
+    "cwd": "D:\\tmp\\rsi-closeout-review-20261109-01a1be64",
+    "out": "D:\\ClawX-acceptance\\rsi-paired-measurement-20261108-01a1b651\\relay-20261109\\gates\\unit-bASpXt",
+    "startedAt": "2026-11-09T04:38:33.145Z",
+    "endedAt": "2026-11-09T04:42:44.084Z",
+    "elapsedMs": 250937,
+    "exitCode": 0,
+    "signal": null,
+    "error": null,
+    "providerCalls": 0,
+    "passed": true,
+    "tests": {
+      "total": 105,
+      "passed": 105,
+      "failed": 0,
+      "pending": 0
+    }
+  },
+  "gates": {
+    "harness": {
+      "driven_by": "agent",
+      "actor": "codex/rsi-relay-gates",
+      "gate": "harness",
+      "sourceCandidate": "2aed4ea163b0eea0e6ae813a0307896c0237211b",
+      "candidateDirty": false,
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/rsi-paired-measurement-closeout.md"
+      ],
+      "cwd": "D:\\tmp\\rsi-closeout-review-20261109-01a1be64",
+      "out": "D:\\ClawX-acceptance\\rsi-paired-measurement-20261108-01a1b651\\relay-20261109\\gates\\harness-LYmyuj",
+      "startedAt": "2026-11-09T04:52:42.135Z",
+      "endedAt": "2026-11-09T04:52:43.622Z",
+      "elapsedMs": 1485,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "providerCalls": 0,
+      "passed": true
+    },
+    "dryrun": {
+      "driven_by": "agent",
+      "actor": "codex/rsi-relay-gates",
+      "gate": "dryrun",
+      "sourceCandidate": "2aed4ea163b0eea0e6ae813a0307896c0237211b",
+      "candidateDirty": false,
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "run",
+        "--dry-run",
+        "--spec",
+        "harness/specs/tasks/rsi-paired-measurement-closeout.md"
+      ],
+      "cwd": "D:\\tmp\\rsi-closeout-review-20261109-01a1be64",
+      "out": "D:\\ClawX-acceptance\\rsi-paired-measurement-20261108-01a1b651\\relay-20261109\\gates\\dryrun-gT4Y4J",
+      "startedAt": "2026-11-09T04:52:43.729Z",
+      "endedAt": "2026-11-09T04:52:45.072Z",
+      "elapsedMs": 1341,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "providerCalls": 0,
+      "passed": true
+    },
+    "types": {
+      "driven_by": "agent",
+      "actor": "codex/rsi-relay-gates",
+      "gate": "types",
+      "sourceCandidate": "2aed4ea163b0eea0e6ae813a0307896c0237211b",
+      "candidateDirty": false,
+      "command": [
+        "powershell.exe",
+        "-NoProfile",
+        "-Command",
+        "pnpm exec tsgo --noEmit -p D:/tmp/rsi-relay-types-20261109.json --composite false"
+      ],
+      "cwd": "D:\\tmp\\rsi-closeout-review-20261109-01a1be64",
+      "out": "D:\\ClawX-acceptance\\rsi-paired-measurement-20261108-01a1b651\\relay-20261109\\gates\\types-pupNaP",
+      "startedAt": "2026-11-09T04:52:45.216Z",
+      "endedAt": "2026-11-09T04:52:49.827Z",
+      "elapsedMs": 4609,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "providerCalls": 0,
+      "passed": true
+    },
+    "comms": {
+      "driven_by": "agent",
+      "actor": "codex/rsi-relay-gates",
+      "gate": "comms",
+      "sourceCandidate": "2aed4ea163b0eea0e6ae813a0307896c0237211b",
+      "candidateDirty": false,
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\tmp\\rsi-closeout-review-20261109-01a1be64",
+      "out": "D:\\ClawX-acceptance\\rsi-paired-measurement-20261108-01a1b651\\relay-20261109\\gates\\comms-0gYU3r",
+      "startedAt": "2026-11-09T04:52:49.984Z",
+      "endedAt": "2026-11-09T04:52:50.886Z",
+      "elapsedMs": 899,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "providerCalls": 0,
+      "passed": true
+    },
+    "compare": {
+      "driven_by": "agent",
+      "actor": "codex/rsi-relay-gates",
+      "gate": "compare",
+      "sourceCandidate": "2aed4ea163b0eea0e6ae813a0307896c0237211b",
+      "candidateDirty": false,
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\tmp\\rsi-closeout-review-20261109-01a1be64",
+      "out": "D:\\ClawX-acceptance\\rsi-paired-measurement-20261108-01a1b651\\relay-20261109\\gates\\compare-1GbpvD",
+      "startedAt": "2026-11-09T04:52:51.021Z",
+      "endedAt": "2026-11-09T04:52:51.757Z",
+      "elapsedMs": 733,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "providerCalls": 0,
+      "passed": true
+    },
+    "lint": {
+      "driven_by": "agent",
+      "actor": "codex/rsi-relay-gates",
+      "gate": "lint",
+      "sourceCandidate": "2aed4ea163b0eea0e6ae813a0307896c0237211b",
+      "candidateDirty": false,
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:/tmp/rsi-relay-lint-20261109.cjs",
+        "D:\\ClawX-acceptance\\rsi-paired-measurement-20261108-01a1b651\\relay-20261109\\gates\\lint-bEOVkB\\lint.json"
+      ],
+      "cwd": "D:\\tmp\\rsi-closeout-review-20261109-01a1be64",
+      "out": "D:\\ClawX-acceptance\\rsi-paired-measurement-20261108-01a1b651\\relay-20261109\\gates\\lint-bEOVkB",
+      "startedAt": "2026-11-09T04:52:51.878Z",
+      "endedAt": "2026-11-09T04:52:54.171Z",
+      "elapsedMs": 2292,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "providerCalls": 0,
+      "passed": true
+    }
+  },
+  "typecheckScope": [
+    "scripts/rsi-paired-measurement-replay.d.mts",
+    "tests/unit/rsi-paired-measurement-replay.test.ts"
+  ],
+  "independentReplay": {
+    "driven_by": "agent",
+    "actor": "codex/rsi-relay-gates",
+    "gate": "replay",
+    "sourceCandidate": "96c11273bd6a18374451a9acd11873b303017d52",
+    "candidateDirty": false,
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "scripts/rsi-paired-measurement-replay.mjs",
+      "--root",
+      "D:/ClawX-work/rsi-remediation-20261107-01a1b651",
+      "--base-dir",
+      "D:/tmp/rsi-paired-experiment-20261108-01a1b651-run2",
+      "--scratch",
+      "D:/tmp/rsi-paired-measurement-20261108-01a1b651",
+      "--out",
+      "D:\\ClawX-acceptance\\rsi-paired-measurement-20261108-01a1b651\\relay-20261109\\gates\\replay-Q40ALX\\replay.json"
+    ],
+    "cwd": "D:/ClawX-work/rsi-remediation-20261107-01a1b651",
+    "out": "D:\\ClawX-acceptance\\rsi-paired-measurement-20261108-01a1b651\\relay-20261109\\gates\\replay-Q40ALX",
+    "startedAt": "2026-11-09T04:12:43.759Z",
+    "endedAt": "2026-11-09T04:15:33.805Z",
+    "elapsedMs": 170043,
+    "exitCode": 0,
+    "signal": null,
+    "error": null,
+    "providerCalls": 0,
+    "passed": true,
+    "replay": {
+      "passed": true
+    },
+    "manifestEntries": 426
+  },
+  "budgetStopRegression": {
+    "driven_by": "agent",
+    "actor": "codex/rsi-relay-gates",
+    "gate": "stop",
+    "sourceCandidate": "b7dd85df2da0a02155ba3fe54bde62df2bacef71",
+    "candidateDirty": false,
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "scripts/rsi-budget-stop-regression.mjs",
+      "--frozen-root",
+      "D:/ClawX-work/rsi-remediation-20261107-01a1b651",
+      "--campaign",
+      "D:/tmp/rsi-paired-experiment-20261108-01a1b651-run2",
+      "--scratch-source",
+      "D:/tmp/rsi-paired-measurement-20261108-01a1b651",
+      "--support-root",
+      "D:/tmp/rsi-private-runtime-20261108",
+      "--out",
+      "D:\\ClawX-acceptance\\rsi-paired-measurement-20261108-01a1b651\\relay-20261109\\gates\\stop-k0EA3F\\stop.v1.json"
+    ],
+    "cwd": "D:\\tmp\\rsi-closeout-review-20261109-01a1be64",
+    "out": "D:\\ClawX-acceptance\\rsi-paired-measurement-20261108-01a1b651\\relay-20261109\\gates\\stop-k0EA3F",
+    "startedAt": "2026-11-09T04:33:26.127Z",
+    "endedAt": "2026-11-09T04:36:30.690Z",
+    "elapsedMs": 184562,
+    "exitCode": 0,
+    "signal": null,
+    "error": null,
+    "providerCalls": 0,
+    "passed": true
+  },
+  "rollback": {
+    "passed": true,
+    "providerCalls": 0
+  },
+  "harnessCi": {
+    "driven_by": "agent",
+    "actor": "codex/rsi-relay-gates",
+    "gate": "ci",
+    "sourceCandidate": "b7dd85df2da0a02155ba3fe54bde62df2bacef71",
+    "candidateDirty": false,
+    "command": [
+      "powershell.exe",
+      "-NoProfile",
+      "-Command",
+      "pnpm run harness:ci"
+    ],
+    "cwd": "D:\\tmp\\rsi-closeout-review-20261109-01a1be64",
+    "out": "D:\\ClawX-acceptance\\rsi-paired-measurement-20261108-01a1b651\\relay-20261109\\gates\\ci-GpGHrV",
+    "startedAt": "2026-11-09T04:42:44.197Z",
+    "endedAt": "2026-11-09T04:43:15.679Z",
+    "elapsedMs": 31480,
+    "exitCode": 1,
+    "signal": null,
+    "error": null,
+    "providerCalls": 0,
+    "passed": false,
+    "disqualifiers": [
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:workbench",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-workbench/evidence.json is 64.6h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+      },
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:deep-test",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-deep-test/report.json is 64.6h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+      },
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:deep-test-history",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-deep-test/history.json is 64.6h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+      },
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:quality",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-quality/report.json is 64.6h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+      },
+      {
+        "dimension": "performance-discipline",
+        "id": "latest-decision-blocked",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "Latest deep-test decision is blocked: vitest-agent-dev, typecheck, contract exceeded hard performance limits.",
+        "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence."
+      },
+      {
+        "dimension": "performance-discipline",
+        "id": "performance-limit:vitest-agent-dev",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "vitest-agent-dev exceeded hard limit: 180444ms > 21000ms.",
+        "recommendation": "Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe."
+      },
+      {
+        "dimension": "performance-discipline",
+        "id": "performance-limit:typecheck",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "typecheck exceeded hard limit: 81259ms > 45000ms.",
+        "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+      },
+      {
+        "dimension": "performance-discipline",
+        "id": "performance-limit:contract",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "contract exceeded hard limit: 3977ms > 3000ms.",
+        "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources."
+      }
+    ]
+  },
+  "dependencyReuse": {
+    "enabled": true,
+    "root": "D:/ClawX-work/rsi-remediation-20261107-01a1b651/node_modules",
+    "freshInstall": false,
+    "automaticPnpmInstallDisabled": true
+  },
+  "thirdPartyProviderCallsDuringCloseout": 0
+}

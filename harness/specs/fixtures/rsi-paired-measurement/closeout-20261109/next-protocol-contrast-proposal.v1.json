@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "RsiProtocolContrastProposal/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-protocol-planning",
+  "status": "proposed",
+  "authorization": "not-authorized",
+  "executor": "orchestration-implementation-required",
+  "purpose": "Separate public-interface input and bounded-tool protocol effects on the frozen task identities.",
+  "provider": {
+    "endpoint": "http://127.0.0.1:3065/v1/responses",
+    "model": "space-bunny",
+    "maxOutputTokens": 16000
+  },
+  "taskIds": [
+    "tf-0274-e01",
+    "tf-0275-e02",
+    "tf-0289-g01",
+    "tf-0290-g02",
+    "tf-0291-g03",
+    "tf-0283-l01",
+    "tf-0284-l02",
+    "tf-0285-l03",
+    "tf-0286-l04",
+    "tf-0287-l05",
+    "tf-0288-l06",
+    "tf-0276-s01",
+    "tf-0277-s02",
+    "tf-0278-s03",
+    "tf-0279-s04",
+    "tf-0280-s05",
+    "tf-0281-s06",
+    "tf-0282-s07",
+    "tf-0293-a01",
+    "tf-0294-a02",
+    "tf-0295-a03",
+    "tf-0296-a04",
+    "tf-0297-a05",
+    "tf-0298-a06"
+  ],
+  "repeats": 3,
+  "variants": [
+    {
+      "id": "v2-legacy-input",
+      "collector": "RsiCodingCollector/v2",
+      "publicInputProtocol": null,
+      "modelCallsPerSlot": 1
+    },
+    {
+      "id": "v3-public-input",
+      "collector": "RsiCodingCollector/v3",
+      "publicInputProtocol": "RsiCodingTaskInputs/v1",
+      "modelCallsPerSlot": 1
+    },
+    {
+      "id": "v4-public-tools",
+      "collector": "RsiCodingCollector/v4",
+      "publicInputProtocol": "RsiCodingTaskInputs/v1",
+      "modelCallsPerSlot": 4
+    }
+  ],
+  "plannedSlots": 216,
+  "requestedResources": {
+    "maxTotalTokens": 12000000,
+    "maxProviderCalls": 433,
+    "maxNewSpending": 0,
+    "currency": "CNY",
+    "existingFreeQuotaOnly": true
+  },
+  "candidateContext": "off in all three protocol contrasts",
+  "evaluatorAndTaskReferences": "unchanged",
+  "requiredPreparation": [
+    "Freeze source and rotating variant order before requests.",
+    "Use one prefixed campaign ledger for preflight and all variants.",
+    "Validate each retained response, edit and reference-bound oracle from raw artifacts.",
+    "Keep candidate generation and validation separate from final outcomes."
+  ],
+  "existingCampaign": {
+    "maximumTokens": 12000000,
+    "accountedTokens": 11934418,
+    "remainingTokens": 65582
+  },
+  "additionalProviderCallsExecuted": 0
+}

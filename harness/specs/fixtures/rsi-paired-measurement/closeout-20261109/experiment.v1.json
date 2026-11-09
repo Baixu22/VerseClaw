@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "RsiPairedExperiment/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-paired-measurement-0857",
+  "createdAt": "2026-11-08T16:36:07.064Z",
+  "planDigest": "72f0b5f1777b645d4c9f9f1b061d43cfe925955642c98de938aa32cb1a88a776",
+  "sourceCandidate": "fb2d09a3a401deecace0ccdcb6d9fc71da0b9693",
+  "candidateDirty": false,
+  "candidateVersion": "da9adbb1b5faab2778fb048b832ea1254bc77358875e33b8e54f0330663818f9",
+  "heldOutDigest": "01b05ac42fa2fd57d61a6af6e88887220a65a58952dfd5f0aa0e5a241feff501",
+  "tasks": 24,
+  "arms": 3,
+  "repeats": 3,
+  "slots": 216,
+  "protocol": "RsiCodingCollector/v4",
+  "comparison": "sekb-confirmed-vs-off",
+  "historicalComparison": "descriptive only; public inputs and tool protocol changed together",
+  "priceBasisDigest": "d6c2736a60fada3756dd7c8a0ba59a10d79e1acc9901b5491eb14de162f1f688",
+  "campaignDigest": "b2c75553cfaab9c70262d7d8c77574f812786817652901ed3581d010a4a8f948",
+  "claims": {
+    "realHuman": false,
+    "benefit": false,
+    "productDefaultsChanged": false
+  }
+}

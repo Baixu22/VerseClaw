@@ -1,0 +1,5055 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-curated-projection",
+  "runId": "e8866141-a1f3-43c4-8efa-dfc9822cd24d",
+  "plannedSlots": 216,
+  "outcomeCounts": {
+    "pass": 4,
+    "fail": 193,
+    "crash": 1,
+    "timeout": 0,
+    "missing": 0
+  },
+  "unexecutedSlots": 18,
+  "trials": [
+    {
+      "slot": {
+        "id": "tf-0274-e01-1-sekb-off",
+        "caseId": "tf-0274-e01",
+        "repeat": 1,
+        "arm": "sekb-off",
+        "caseDigest": "2da394f15da70fdb1ee69765a3091d6152ab30bae3260e11e468f3e029d027a1",
+        "pairSeed": 1,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 0
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [
+        "scripts/lib/reliability-aggregation.d.mts",
+        "scripts/lib/reliability-aggregation.mjs"
+      ],
+      "startedAt": "2026-11-08T18:32:14.590Z",
+      "endedAt": "2026-11-08T18:33:20.134Z",
+      "receiptSha256": "a8ad95c1ca6a8ce142f285ae2962affe3d8f1f66d7a6c9fc4b18edb6c165b0bf",
+      "knownTokens": 38446,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0274-e01-1-sekb-shadow",
+        "caseId": "tf-0274-e01",
+        "repeat": 1,
+        "arm": "sekb-shadow",
+        "caseDigest": "2da394f15da70fdb1ee69765a3091d6152ab30bae3260e11e468f3e029d027a1",
+        "pairSeed": 1,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 1
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "scripts/lib/reliability-aggregation.d.mts",
+        "scripts/lib/reliability-aggregation.mjs",
+        "shared/agent-dev/reliability-fixture.json"
+      ],
+      "startedAt": "2026-11-08T18:33:21.030Z",
+      "endedAt": "2026-11-08T18:34:53.416Z",
+      "receiptSha256": "9ee922fed22ca10259f2871375ae1acfd5dd063d879f033cd2dc4e6ff373119b",
+      "knownTokens": 39649,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0274-e01-1-sekb-confirmed",
+        "caseId": "tf-0274-e01",
+        "repeat": 1,
+        "arm": "sekb-confirmed",
+        "caseDigest": "2da394f15da70fdb1ee69765a3091d6152ab30bae3260e11e468f3e029d027a1",
+        "pairSeed": 1,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 2
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T18:34:56.461Z",
+      "endedAt": "2026-11-08T18:35:52.953Z",
+      "receiptSha256": "549b6e598f93bb0447170ff22d8b599da5e40211d082569172c09d9f9443f4d4",
+      "knownTokens": 32158,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0274-e01-2-sekb-shadow",
+        "caseId": "tf-0274-e01",
+        "repeat": 2,
+        "arm": "sekb-shadow",
+        "caseDigest": "2da394f15da70fdb1ee69765a3091d6152ab30bae3260e11e468f3e029d027a1",
+        "pairSeed": 2,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 3
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 7,
+      "edits": [],
+      "startedAt": "2026-11-08T18:35:54.308Z",
+      "endedAt": "2026-11-08T18:39:08.527Z",
+      "receiptSha256": "9fd9392a90a878d731647e55a17d1083e6890a52b3bfc2132d309afae9ce6562",
+      "knownTokens": 27944,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0274-e01-2-sekb-confirmed",
+        "caseId": "tf-0274-e01",
+        "repeat": 2,
+        "arm": "sekb-confirmed",
+        "caseDigest": "2da394f15da70fdb1ee69765a3091d6152ab30bae3260e11e468f3e029d027a1",
+        "pairSeed": 2,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 4
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T18:39:10.064Z",
+      "endedAt": "2026-11-08T18:40:39.958Z",
+      "receiptSha256": "0c78d2a9572a53707358d1c56e26c9263cf76d0bed439c73275e8fa74289bb5e",
+      "knownTokens": 29020,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0274-e01-2-sekb-off",
+        "caseId": "tf-0274-e01",
+        "repeat": 2,
+        "arm": "sekb-off",
+        "caseDigest": "2da394f15da70fdb1ee69765a3091d6152ab30bae3260e11e468f3e029d027a1",
+        "pairSeed": 2,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 5
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "scripts/lib/reliability-aggregation.mjs"
+      ],
+      "startedAt": "2026-11-08T18:40:42.742Z",
+      "endedAt": "2026-11-08T18:41:33.546Z",
+      "receiptSha256": "f5021c3a119ea582643ce4f2a7bebf9bdeef474e2719f5781dce9030d5e883c0",
+      "knownTokens": 35018,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0274-e01-3-sekb-confirmed",
+        "caseId": "tf-0274-e01",
+        "repeat": 3,
+        "arm": "sekb-confirmed",
+        "caseDigest": "2da394f15da70fdb1ee69765a3091d6152ab30bae3260e11e468f3e029d027a1",
+        "pairSeed": 3,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 6
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T18:41:36.161Z",
+      "endedAt": "2026-11-08T18:44:30.498Z",
+      "receiptSha256": "ae797a0ca0018fc4f7ffb69c694455b8d7e7fcd7cba0a6f96cc81642b644dbc2",
+      "knownTokens": 41710,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0274-e01-3-sekb-off",
+        "caseId": "tf-0274-e01",
+        "repeat": 3,
+        "arm": "sekb-off",
+        "caseDigest": "2da394f15da70fdb1ee69765a3091d6152ab30bae3260e11e468f3e029d027a1",
+        "pairSeed": 3,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 7
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [
+        "scripts/lib/reliability-aggregation.d.mts"
+      ],
+      "startedAt": "2026-11-08T18:44:32.190Z",
+      "endedAt": "2026-11-08T18:45:57.830Z",
+      "receiptSha256": "c3013b6dd86d846e4827d8466b6e90995a08ce80ae5353f4b97cbe828bab906a",
+      "knownTokens": 27791,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0274-e01-3-sekb-shadow",
+        "caseId": "tf-0274-e01",
+        "repeat": 3,
+        "arm": "sekb-shadow",
+        "caseDigest": "2da394f15da70fdb1ee69765a3091d6152ab30bae3260e11e468f3e029d027a1",
+        "pairSeed": 3,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 8
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T18:45:59.665Z",
+      "endedAt": "2026-11-08T18:46:34.920Z",
+      "receiptSha256": "344f51f3fb4209fd7bfa16edd7cb31e69920a7fe65ec3323ef2ececf2fdb5505",
+      "knownTokens": 31454,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0275-e02-1-sekb-shadow",
+        "caseId": "tf-0275-e02",
+        "repeat": 1,
+        "arm": "sekb-shadow",
+        "caseDigest": "c1a087c57b405e4c3f33168a54bf3fa4e95a4fbf877cc8e55edd6cdd1f3c855f",
+        "pairSeed": 4,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 9
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T18:46:35.883Z",
+      "endedAt": "2026-11-08T18:47:13.046Z",
+      "receiptSha256": "4f305c0ff2188db07757775abdc702e8447273ebddc4418796df9bac2aa27e5a",
+      "knownTokens": 59724,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0275-e02-1-sekb-confirmed",
+        "caseId": "tf-0275-e02",
+        "repeat": 1,
+        "arm": "sekb-confirmed",
+        "caseDigest": "c1a087c57b405e4c3f33168a54bf3fa4e95a4fbf877cc8e55edd6cdd1f3c855f",
+        "pairSeed": 4,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 10
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T18:47:14.136Z",
+      "endedAt": "2026-11-08T18:48:09.277Z",
+      "receiptSha256": "97a0e9051ebe31285c5495ba95510d4277e545b3bb82b2cefa90509e019dbe9c",
+      "knownTokens": 58927,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0275-e02-1-sekb-off",
+        "caseId": "tf-0275-e02",
+        "repeat": 1,
+        "arm": "sekb-off",
+        "caseDigest": "c1a087c57b405e4c3f33168a54bf3fa4e95a4fbf877cc8e55edd6cdd1f3c855f",
+        "pairSeed": 4,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 11
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T18:48:12.074Z",
+      "endedAt": "2026-11-08T18:49:14.260Z",
+      "receiptSha256": "5892f5f4b463fc32c98117a0c1c3db8d0272bdb0d6b3f7665eab6af058bb0a9e",
+      "knownTokens": 57577,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0275-e02-2-sekb-confirmed",
+        "caseId": "tf-0275-e02",
+        "repeat": 2,
+        "arm": "sekb-confirmed",
+        "caseDigest": "c1a087c57b405e4c3f33168a54bf3fa4e95a4fbf877cc8e55edd6cdd1f3c855f",
+        "pairSeed": 5,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 12
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T18:49:15.775Z",
+      "endedAt": "2026-11-08T18:51:53.693Z",
+      "receiptSha256": "fef667e54fb8f276c5cc7c2751846f1e23b45426ed3abb407a9d7a65b1ab3e57",
+      "knownTokens": 63814,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0275-e02-2-sekb-off",
+        "caseId": "tf-0275-e02",
+        "repeat": 2,
+        "arm": "sekb-off",
+        "caseDigest": "c1a087c57b405e4c3f33168a54bf3fa4e95a4fbf877cc8e55edd6cdd1f3c855f",
+        "pairSeed": 5,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 13
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T18:52:13.076Z",
+      "endedAt": "2026-11-08T18:52:53.592Z",
+      "receiptSha256": "02f3b9192f6b871a37db2dfe3bf36a12bb1a3c58dd45f18ba3efbb68dbbd19ec",
+      "knownTokens": 56398,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0275-e02-2-sekb-shadow",
+        "caseId": "tf-0275-e02",
+        "repeat": 2,
+        "arm": "sekb-shadow",
+        "caseDigest": "c1a087c57b405e4c3f33168a54bf3fa4e95a4fbf877cc8e55edd6cdd1f3c855f",
+        "pairSeed": 5,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 14
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [
+        "scripts/lib/paired-ablation.mjs"
+      ],
+      "startedAt": "2026-11-08T18:52:55.040Z",
+      "endedAt": "2026-11-08T18:54:21.130Z",
+      "receiptSha256": "ce4b19684e6e33b05213a57ea02070e243edb94b737b6948639c38f900431f16",
+      "knownTokens": 71321,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0275-e02-3-sekb-off",
+        "caseId": "tf-0275-e02",
+        "repeat": 3,
+        "arm": "sekb-off",
+        "caseDigest": "c1a087c57b405e4c3f33168a54bf3fa4e95a4fbf877cc8e55edd6cdd1f3c855f",
+        "pairSeed": 6,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 15
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T18:54:22.522Z",
+      "endedAt": "2026-11-08T18:54:56.167Z",
+      "receiptSha256": "343ef25306abd832064de800e5c4051e129745ef21119e695fd1704f04169f72",
+      "knownTokens": 58004,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0275-e02-3-sekb-shadow",
+        "caseId": "tf-0275-e02",
+        "repeat": 3,
+        "arm": "sekb-shadow",
+        "caseDigest": "c1a087c57b405e4c3f33168a54bf3fa4e95a4fbf877cc8e55edd6cdd1f3c855f",
+        "pairSeed": 6,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 16
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [
+        "scripts/lib/paired-ablation.d.mts",
+        "scripts/lib/paired-ablation.mjs"
+      ],
+      "startedAt": "2026-11-08T18:54:57.223Z",
+      "endedAt": "2026-11-08T18:56:11.688Z",
+      "receiptSha256": "548769815c768facf562711dbbcb8232a64d6e2f1eb254615c1b1d8c3494a0d3",
+      "knownTokens": 72044,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0275-e02-3-sekb-confirmed",
+        "caseId": "tf-0275-e02",
+        "repeat": 3,
+        "arm": "sekb-confirmed",
+        "caseDigest": "c1a087c57b405e4c3f33168a54bf3fa4e95a4fbf877cc8e55edd6cdd1f3c855f",
+        "pairSeed": 6,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 17
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T18:56:12.892Z",
+      "endedAt": "2026-11-08T18:56:57.078Z",
+      "receiptSha256": "ed7b29adbc4d4cc25a97973b394d1fa9cd1aed1d620adda929c0f663bff17866",
+      "knownTokens": 58605,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0289-g01-1-sekb-confirmed",
+        "caseId": "tf-0289-g01",
+        "repeat": 1,
+        "arm": "sekb-confirmed",
+        "caseDigest": "dc8ff89af9d2601b078f15b71b0e3fc868a2a785041415917d61f70503c024ea",
+        "pairSeed": 7,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 18
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "src/lib/error-model.ts"
+      ],
+      "startedAt": "2026-11-08T18:57:00.504Z",
+      "endedAt": "2026-11-08T19:01:06.231Z",
+      "receiptSha256": "2807b1579138bb7acb6251eefed88bffd93f343217fda00baffbe70f05b2a99c",
+      "knownTokens": 92611,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0289-g01-1-sekb-off",
+        "caseId": "tf-0289-g01",
+        "repeat": 1,
+        "arm": "sekb-off",
+        "caseDigest": "dc8ff89af9d2601b078f15b71b0e3fc868a2a785041415917d61f70503c024ea",
+        "pairSeed": 7,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 19
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [],
+      "startedAt": "2026-11-08T19:01:13.953Z",
+      "endedAt": "2026-11-08T19:02:51.691Z",
+      "receiptSha256": "4f85e749763129c7467175978ac2dee91425e33a67665afec71123818196c8f6",
+      "knownTokens": 90601,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0289-g01-1-sekb-shadow",
+        "caseId": "tf-0289-g01",
+        "repeat": 1,
+        "arm": "sekb-shadow",
+        "caseDigest": "dc8ff89af9d2601b078f15b71b0e3fc868a2a785041415917d61f70503c024ea",
+        "pairSeed": 7,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 20
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T19:02:53.269Z",
+      "endedAt": "2026-11-08T19:08:57.109Z",
+      "receiptSha256": "6567445c0fee8050dd9a44f055eb8061a5774a2f8c5319743585d0a99f581a8f",
+      "knownTokens": 88882,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0289-g01-2-sekb-off",
+        "caseId": "tf-0289-g01",
+        "repeat": 2,
+        "arm": "sekb-off",
+        "caseDigest": "dc8ff89af9d2601b078f15b71b0e3fc868a2a785041415917d61f70503c024ea",
+        "pairSeed": 8,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 21
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [],
+      "startedAt": "2026-11-08T19:09:00.543Z",
+      "endedAt": "2026-11-08T19:09:49.281Z",
+      "receiptSha256": "446b746b7b837b42c669004dafeafeb1e7fc29b2ae243cd341dc547b7af63015",
+      "knownTokens": 85103,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0289-g01-2-sekb-shadow",
+        "caseId": "tf-0289-g01",
+        "repeat": 2,
+        "arm": "sekb-shadow",
+        "caseDigest": "dc8ff89af9d2601b078f15b71b0e3fc868a2a785041415917d61f70503c024ea",
+        "pairSeed": 8,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 22
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T19:09:50.387Z",
+      "endedAt": "2026-11-08T19:10:34.352Z",
+      "receiptSha256": "2a54c0fb8d768bb82ee5dfb649dd92dfabedc5d153d7b287584780eb460f2e02",
+      "knownTokens": 87566,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0289-g01-2-sekb-confirmed",
+        "caseId": "tf-0289-g01",
+        "repeat": 2,
+        "arm": "sekb-confirmed",
+        "caseDigest": "dc8ff89af9d2601b078f15b71b0e3fc868a2a785041415917d61f70503c024ea",
+        "pairSeed": 8,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 23
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T19:10:35.513Z",
+      "endedAt": "2026-11-08T19:11:28.496Z",
+      "receiptSha256": "5a3fc6eca2447e61482c4fd79abb5dc8266119064a135d63b4f228bc4c589d6b",
+      "knownTokens": 87003,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0289-g01-3-sekb-shadow",
+        "caseId": "tf-0289-g01",
+        "repeat": 3,
+        "arm": "sekb-shadow",
+        "caseDigest": "dc8ff89af9d2601b078f15b71b0e3fc868a2a785041415917d61f70503c024ea",
+        "pairSeed": 9,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 24
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T19:11:30.095Z",
+      "endedAt": "2026-11-08T19:12:16.708Z",
+      "receiptSha256": "5f173f83eaaba0da8d395cf2e42baf5a3445875e237d868942867cfa6ac0d279",
+      "knownTokens": 88099,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0289-g01-3-sekb-confirmed",
+        "caseId": "tf-0289-g01",
+        "repeat": 3,
+        "arm": "sekb-confirmed",
+        "caseDigest": "dc8ff89af9d2601b078f15b71b0e3fc868a2a785041415917d61f70503c024ea",
+        "pairSeed": 9,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 25
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T19:12:17.774Z",
+      "endedAt": "2026-11-08T19:14:12.286Z",
+      "receiptSha256": "317142b4e8b2a8d2a8c6ebecd2368994f184a3596eca2d4b6c0b0d137e121f31",
+      "knownTokens": 91484,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0289-g01-3-sekb-off",
+        "caseId": "tf-0289-g01",
+        "repeat": 3,
+        "arm": "sekb-off",
+        "caseDigest": "dc8ff89af9d2601b078f15b71b0e3fc868a2a785041415917d61f70503c024ea",
+        "pairSeed": 9,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 26
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "src/lib/error-model.ts"
+      ],
+      "startedAt": "2026-11-08T19:14:13.418Z",
+      "endedAt": "2026-11-08T19:15:06.048Z",
+      "receiptSha256": "f8a9fc7c3f7d9339280f096d0f21e3f8d6730daecd1c1449b410932bf92e4bed",
+      "knownTokens": 91063,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0290-g02-1-sekb-off",
+        "caseId": "tf-0290-g02",
+        "repeat": 1,
+        "arm": "sekb-off",
+        "caseDigest": "0f9c1d4c8a38f447bdfd70c3563dac4ca43bc1d9b99bb3ad8a805ede5145f759",
+        "pairSeed": 10,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 27
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T19:15:08.046Z",
+      "endedAt": "2026-11-08T19:15:55.836Z",
+      "receiptSha256": "b187c567ea273aec4f13ebe505ace3b0962e48fecf3466502465d737d22a6fe2",
+      "knownTokens": 112373,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0290-g02-1-sekb-shadow",
+        "caseId": "tf-0290-g02",
+        "repeat": 1,
+        "arm": "sekb-shadow",
+        "caseDigest": "0f9c1d4c8a38f447bdfd70c3563dac4ca43bc1d9b99bb3ad8a805ede5145f759",
+        "pairSeed": 10,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 28
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T19:15:56.945Z",
+      "endedAt": "2026-11-08T19:16:36.009Z",
+      "receiptSha256": "7708d0e85e34e4aaa99307ce59021e1bd74387ecabd91b543fafb1d91a6a8c07",
+      "knownTokens": 112586,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0290-g02-1-sekb-confirmed",
+        "caseId": "tf-0290-g02",
+        "repeat": 1,
+        "arm": "sekb-confirmed",
+        "caseDigest": "0f9c1d4c8a38f447bdfd70c3563dac4ca43bc1d9b99bb3ad8a805ede5145f759",
+        "pairSeed": 10,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 29
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T19:16:37.129Z",
+      "endedAt": "2026-11-08T19:17:12.578Z",
+      "receiptSha256": "b1798611320333e46cb6e5f332af7b59f393feff864fd59a4f4b8ae2b2355c45",
+      "knownTokens": 111133,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0290-g02-2-sekb-shadow",
+        "caseId": "tf-0290-g02",
+        "repeat": 2,
+        "arm": "sekb-shadow",
+        "caseDigest": "0f9c1d4c8a38f447bdfd70c3563dac4ca43bc1d9b99bb3ad8a805ede5145f759",
+        "pairSeed": 11,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 30
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T19:17:13.886Z",
+      "endedAt": "2026-11-08T19:17:54.984Z",
+      "receiptSha256": "22074fe7371416feb59da171e6fe3ea6f95a5b5a6b2f4bd4c80c3156e5d6e4bf",
+      "knownTokens": 112063,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0290-g02-2-sekb-confirmed",
+        "caseId": "tf-0290-g02",
+        "repeat": 2,
+        "arm": "sekb-confirmed",
+        "caseDigest": "0f9c1d4c8a38f447bdfd70c3563dac4ca43bc1d9b99bb3ad8a805ede5145f759",
+        "pairSeed": 11,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 31
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [
+        "harness/specs/rules/spec-doc-gardening-boundary.md"
+      ],
+      "startedAt": "2026-11-08T19:17:56.056Z",
+      "endedAt": "2026-11-08T19:18:44.385Z",
+      "receiptSha256": "3a2ccc91782a71d2cecf8b560c8fa565e9707be12dcbf87720dd8ed8d1a70f9d",
+      "knownTokens": 112111,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0290-g02-2-sekb-off",
+        "caseId": "tf-0290-g02",
+        "repeat": 2,
+        "arm": "sekb-off",
+        "caseDigest": "0f9c1d4c8a38f447bdfd70c3563dac4ca43bc1d9b99bb3ad8a805ede5145f759",
+        "pairSeed": 11,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 32
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T19:18:45.469Z",
+      "endedAt": "2026-11-08T19:19:31.837Z",
+      "receiptSha256": "0fe81d68a30fac09dd54c188f981d011ec81ef76730a135bff4ad779d29ab194",
+      "knownTokens": 112481,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0290-g02-3-sekb-confirmed",
+        "caseId": "tf-0290-g02",
+        "repeat": 3,
+        "arm": "sekb-confirmed",
+        "caseDigest": "0f9c1d4c8a38f447bdfd70c3563dac4ca43bc1d9b99bb3ad8a805ede5145f759",
+        "pairSeed": 12,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 33
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T19:19:33.009Z",
+      "endedAt": "2026-11-08T19:20:04.838Z",
+      "receiptSha256": "5a42b902cc8e1bb432a5b86bd026a86a972a80418ef4b5cca7e7c23bdf2e3b4e",
+      "knownTokens": 112158,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0290-g02-3-sekb-off",
+        "caseId": "tf-0290-g02",
+        "repeat": 3,
+        "arm": "sekb-off",
+        "caseDigest": "0f9c1d4c8a38f447bdfd70c3563dac4ca43bc1d9b99bb3ad8a805ede5145f759",
+        "pairSeed": 12,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 34
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T19:20:05.898Z",
+      "endedAt": "2026-11-08T19:21:19.238Z",
+      "receiptSha256": "3c8ce05b0d666325cc5e7c3d981f1e129fca47f4521b133cd873088910271e22",
+      "knownTokens": 112573,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0290-g02-3-sekb-shadow",
+        "caseId": "tf-0290-g02",
+        "repeat": 3,
+        "arm": "sekb-shadow",
+        "caseDigest": "0f9c1d4c8a38f447bdfd70c3563dac4ca43bc1d9b99bb3ad8a805ede5145f759",
+        "pairSeed": 12,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 35
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [],
+      "startedAt": "2026-11-08T19:21:20.337Z",
+      "endedAt": "2026-11-08T19:21:47.889Z",
+      "receiptSha256": "62ad053a4ae45d72c9ad0283e335afec7a90a2c2b6ff0d9309030853e7d6c0ae",
+      "knownTokens": 108795,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0291-g03-1-sekb-shadow",
+        "caseId": "tf-0291-g03",
+        "repeat": 1,
+        "arm": "sekb-shadow",
+        "caseDigest": "29897d15119bd3dc6c8080989508e04606333e94eadc26732b6ae5bf9604f9c3",
+        "pairSeed": 13,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 36
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [
+        "docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md",
+        "harness/specs/tasks/harness-gap-trace-to-eval-sample.md",
+        "scripts/lib/trace-to-eval-sample.mjs"
+      ],
+      "startedAt": "2026-11-08T19:21:49.079Z",
+      "endedAt": "2026-11-08T19:22:58.694Z",
+      "receiptSha256": "e50dcfbab95f4137fecf6fd8d52c4d3b85d7dd1c2024f0300c9af1a76052490d",
+      "knownTokens": 19664,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0291-g03-1-sekb-confirmed",
+        "caseId": "tf-0291-g03",
+        "repeat": 1,
+        "arm": "sekb-confirmed",
+        "caseDigest": "29897d15119bd3dc6c8080989508e04606333e94eadc26732b6ae5bf9604f9c3",
+        "pairSeed": 13,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 37
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T19:22:59.644Z",
+      "endedAt": "2026-11-08T19:23:47.329Z",
+      "receiptSha256": "e4281486e4b495fb9db505087e3d55754b00772614e4d9c796c5ffaf43acbb3d",
+      "knownTokens": 15814,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0291-g03-1-sekb-off",
+        "caseId": "tf-0291-g03",
+        "repeat": 1,
+        "arm": "sekb-off",
+        "caseDigest": "29897d15119bd3dc6c8080989508e04606333e94eadc26732b6ae5bf9604f9c3",
+        "pairSeed": 13,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 38
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T19:23:48.566Z",
+      "endedAt": "2026-11-08T19:24:48.748Z",
+      "receiptSha256": "7dee05b6503fb4dca0f413a62b55553fa05162a1bad5c4403c67b36f80464b66",
+      "knownTokens": 15017,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0291-g03-2-sekb-confirmed",
+        "caseId": "tf-0291-g03",
+        "repeat": 2,
+        "arm": "sekb-confirmed",
+        "caseDigest": "29897d15119bd3dc6c8080989508e04606333e94eadc26732b6ae5bf9604f9c3",
+        "pairSeed": 14,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 39
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [
+        "scripts/lib/trace-to-eval-sample.d.mts",
+        "scripts/lib/trace-to-eval-sample.mjs"
+      ],
+      "startedAt": "2026-11-08T19:24:51.816Z",
+      "endedAt": "2026-11-08T19:25:31.483Z",
+      "receiptSha256": "74e8de63f8e9a1abf65c4a486be3e9fefca47409fce51ed891eb991dd2de250c",
+      "knownTokens": 23696,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0291-g03-2-sekb-off",
+        "caseId": "tf-0291-g03",
+        "repeat": 2,
+        "arm": "sekb-off",
+        "caseDigest": "29897d15119bd3dc6c8080989508e04606333e94eadc26732b6ae5bf9604f9c3",
+        "pairSeed": 14,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 40
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T19:25:32.588Z",
+      "endedAt": "2026-11-08T19:26:40.356Z",
+      "receiptSha256": "b6b979ceb8091e1d2ea09d87ffbf7f7e1023b8404b614b43e6cac8e27625aae6",
+      "knownTokens": 14552,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0291-g03-2-sekb-shadow",
+        "caseId": "tf-0291-g03",
+        "repeat": 2,
+        "arm": "sekb-shadow",
+        "caseDigest": "29897d15119bd3dc6c8080989508e04606333e94eadc26732b6ae5bf9604f9c3",
+        "pairSeed": 14,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 41
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T19:26:41.493Z",
+      "endedAt": "2026-11-08T19:27:24.072Z",
+      "receiptSha256": "5777d355a75e8da2db80385dad980c4af2caf254f8000257dddb1cb04d3b3dd2",
+      "knownTokens": 11966,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0291-g03-3-sekb-off",
+        "caseId": "tf-0291-g03",
+        "repeat": 3,
+        "arm": "sekb-off",
+        "caseDigest": "29897d15119bd3dc6c8080989508e04606333e94eadc26732b6ae5bf9604f9c3",
+        "pairSeed": 15,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 42
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "scripts/lib/trace-to-eval-sample.mjs"
+      ],
+      "startedAt": "2026-11-08T19:27:25.452Z",
+      "endedAt": "2026-11-08T19:28:28.817Z",
+      "receiptSha256": "c02a48bf90d0e57927a1c8b85fd79f30efea18db55e3cacbcaa91cefa42a9f4a",
+      "knownTokens": 17659,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0291-g03-3-sekb-shadow",
+        "caseId": "tf-0291-g03",
+        "repeat": 3,
+        "arm": "sekb-shadow",
+        "caseDigest": "29897d15119bd3dc6c8080989508e04606333e94eadc26732b6ae5bf9604f9c3",
+        "pairSeed": 15,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 43
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [
+        "scripts/lib/trace-to-eval-sample.d.mts",
+        "scripts/lib/trace-to-eval-sample.mjs"
+      ],
+      "startedAt": "2026-11-08T19:28:31.930Z",
+      "endedAt": "2026-11-08T19:29:36.775Z",
+      "receiptSha256": "b98743d1d682ba77337ee7e3c8a52610e2a5455f93dd8e8d8abdb5a661a14742",
+      "knownTokens": 15226,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0291-g03-3-sekb-confirmed",
+        "caseId": "tf-0291-g03",
+        "repeat": 3,
+        "arm": "sekb-confirmed",
+        "caseDigest": "29897d15119bd3dc6c8080989508e04606333e94eadc26732b6ae5bf9604f9c3",
+        "pairSeed": 15,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 44
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T19:29:37.957Z",
+      "endedAt": "2026-11-08T19:30:12.543Z",
+      "receiptSha256": "43d92d34ba79208b5c9224ce72357a71b4a39690df87c121a861cb07fc8912d9",
+      "knownTokens": 13250,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0283-l01-1-sekb-confirmed",
+        "caseId": "tf-0283-l01",
+        "repeat": 1,
+        "arm": "sekb-confirmed",
+        "caseDigest": "dddb8e2b3285d7620880c9034c7e29b44ed2a95369d2b440886ddd7893238e6a",
+        "pairSeed": 16,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 45
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T19:30:14.109Z",
+      "endedAt": "2026-11-08T19:30:47.813Z",
+      "receiptSha256": "b8af5a660264dd5433a5dcc4ab64f171d329bde0fe08ade2531b11da6b1444b1",
+      "knownTokens": 52444,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0283-l01-1-sekb-off",
+        "caseId": "tf-0283-l01",
+        "repeat": 1,
+        "arm": "sekb-off",
+        "caseDigest": "dddb8e2b3285d7620880c9034c7e29b44ed2a95369d2b440886ddd7893238e6a",
+        "pairSeed": 16,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 46
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "shared/task-ledger-working-context.ts"
+      ],
+      "startedAt": "2026-11-08T19:30:48.923Z",
+      "endedAt": "2026-11-08T19:31:58.504Z",
+      "receiptSha256": "c633327ad6c42e26ca8502bfc3c7ea5b4a1ac1d0986c98df36936d169c6e36d9",
+      "knownTokens": 67212,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0283-l01-1-sekb-shadow",
+        "caseId": "tf-0283-l01",
+        "repeat": 1,
+        "arm": "sekb-shadow",
+        "caseDigest": "dddb8e2b3285d7620880c9034c7e29b44ed2a95369d2b440886ddd7893238e6a",
+        "pairSeed": 16,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 47
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T19:31:59.706Z",
+      "endedAt": "2026-11-08T19:32:57.185Z",
+      "receiptSha256": "1775b5059ac264cac45744dbd9a68ba34841f4589d155dc96093cf160b1b2622",
+      "knownTokens": 57650,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0283-l01-2-sekb-off",
+        "caseId": "tf-0283-l01",
+        "repeat": 2,
+        "arm": "sekb-off",
+        "caseDigest": "dddb8e2b3285d7620880c9034c7e29b44ed2a95369d2b440886ddd7893238e6a",
+        "pairSeed": 17,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 48
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model",
+      "providerCalls": 4,
+      "toolCalls": 3,
+      "edits": [
+        "electron/services/task-ledger-working-context.ts",
+        "shared/task-ledger-working-context.ts"
+      ],
+      "startedAt": "2026-11-08T19:32:58.468Z",
+      "endedAt": "2026-11-08T19:33:59.985Z",
+      "receiptSha256": "dfbb9ed293b27a5e90cee51c8ad5c2ade2ef22abdd9b92bf0b766cf7a296aa39",
+      "knownTokens": 64143,
+      "oracle": {
+        "revision": "f42bb417b862784ad37e3f488f844cc697dbea51",
+        "digest": "b5337681d99cf86ddc4f078de80cb6c42ba1f30339b7be7adf97c844d257882a",
+        "reports": [
+          {
+            "kind": "vitest",
+            "exitCode": 1,
+            "totalTests": 14,
+            "failedTests": 9
+          }
+        ]
+      }
+    },
+    {
+      "slot": {
+        "id": "tf-0283-l01-2-sekb-shadow",
+        "caseId": "tf-0283-l01",
+        "repeat": 2,
+        "arm": "sekb-shadow",
+        "caseDigest": "dddb8e2b3285d7620880c9034c7e29b44ed2a95369d2b440886ddd7893238e6a",
+        "pairSeed": 17,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 49
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "shared/task-ledger-working-context.ts"
+      ],
+      "startedAt": "2026-11-08T19:34:01.509Z",
+      "endedAt": "2026-11-08T19:35:27.567Z",
+      "receiptSha256": "1d10f3a68ef4b0d5a0565cfaa089aa073f5a01bf00ac724d45b702b116d25db8",
+      "knownTokens": 69077,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0283-l01-2-sekb-confirmed",
+        "caseId": "tf-0283-l01",
+        "repeat": 2,
+        "arm": "sekb-confirmed",
+        "caseDigest": "dddb8e2b3285d7620880c9034c7e29b44ed2a95369d2b440886ddd7893238e6a",
+        "pairSeed": 17,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 50
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T19:35:29.155Z",
+      "endedAt": "2026-11-08T19:37:22.085Z",
+      "receiptSha256": "24b53ab23592884fd644bfbe6f6b010cc04234aacec82d4a6002eb52ba8f8a9f",
+      "knownTokens": 60371,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0283-l01-3-sekb-shadow",
+        "caseId": "tf-0283-l01",
+        "repeat": 3,
+        "arm": "sekb-shadow",
+        "caseDigest": "dddb8e2b3285d7620880c9034c7e29b44ed2a95369d2b440886ddd7893238e6a",
+        "pairSeed": 18,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 51
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T19:37:24.574Z",
+      "endedAt": "2026-11-08T19:38:27.136Z",
+      "receiptSha256": "9dbfa6951908e1d462865d4d29f9e34e1aa4dd3dc2451adb5e573c0f1d9eb939",
+      "knownTokens": 55958,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0283-l01-3-sekb-confirmed",
+        "caseId": "tf-0283-l01",
+        "repeat": 3,
+        "arm": "sekb-confirmed",
+        "caseDigest": "dddb8e2b3285d7620880c9034c7e29b44ed2a95369d2b440886ddd7893238e6a",
+        "pairSeed": 18,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 52
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "shared/task-ledger-working-context.ts"
+      ],
+      "startedAt": "2026-11-08T19:38:28.625Z",
+      "endedAt": "2026-11-08T19:40:14.161Z",
+      "receiptSha256": "dfc7ada327a078de3aae31496f88e8b986240b329f0366af457d7a6e1dbed3c6",
+      "knownTokens": 61701,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0283-l01-3-sekb-off",
+        "caseId": "tf-0283-l01",
+        "repeat": 3,
+        "arm": "sekb-off",
+        "caseDigest": "dddb8e2b3285d7620880c9034c7e29b44ed2a95369d2b440886ddd7893238e6a",
+        "pairSeed": 18,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 53
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T19:40:17.011Z",
+      "endedAt": "2026-11-08T19:41:15.589Z",
+      "receiptSha256": "588bbf07789d04750bf575d6f019e8a7e94796b27e45d58867d7da119f7371ae",
+      "knownTokens": 59570,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0284-l02-1-sekb-off",
+        "caseId": "tf-0284-l02",
+        "repeat": 1,
+        "arm": "sekb-off",
+        "caseDigest": "a4abc710d5e0c322e21b193050b733d03f7ea8b0b87f088c57b42f199b3b11c2",
+        "pairSeed": 19,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 54
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "docs/dev/harness-gap-closure/l02-context-pressure-recovery.md",
+        "harness/specs/tasks/harness-gap-context-pressure-recovery.md",
+        "openclaw_runtime/src/runtime-core/context-pressure-recovery.ts"
+      ],
+      "startedAt": "2026-11-08T19:41:16.591Z",
+      "endedAt": "2026-11-08T19:42:05.960Z",
+      "receiptSha256": "029940682da9b9e2282a4099dbb596bf1d99d00f17f3cc8e2d220811fd8dd4f8",
+      "knownTokens": 24361,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0284-l02-1-sekb-shadow",
+        "caseId": "tf-0284-l02",
+        "repeat": 1,
+        "arm": "sekb-shadow",
+        "caseDigest": "a4abc710d5e0c322e21b193050b733d03f7ea8b0b87f088c57b42f199b3b11c2",
+        "pairSeed": 19,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 55
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T19:42:07.077Z",
+      "endedAt": "2026-11-08T19:43:10.793Z",
+      "receiptSha256": "04d3306e71b9a58d713bdcdf4862e816e75dc40de40ebbc198b761a1b7405dbc",
+      "knownTokens": 22048,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0284-l02-1-sekb-confirmed",
+        "caseId": "tf-0284-l02",
+        "repeat": 1,
+        "arm": "sekb-confirmed",
+        "caseDigest": "a4abc710d5e0c322e21b193050b733d03f7ea8b0b87f088c57b42f199b3b11c2",
+        "pairSeed": 19,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 56
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 3,
+      "edits": [
+        "openclaw_runtime/src/runtime-core/context-pressure-recovery.ts"
+      ],
+      "startedAt": "2026-11-08T19:43:11.898Z",
+      "endedAt": "2026-11-08T19:44:15.135Z",
+      "receiptSha256": "33e6bd54c3689975f75901a8cc82040b9ed82dfa6f66c6098ad0a26d367894ad",
+      "knownTokens": 25352,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0284-l02-2-sekb-shadow",
+        "caseId": "tf-0284-l02",
+        "repeat": 2,
+        "arm": "sekb-shadow",
+        "caseDigest": "a4abc710d5e0c322e21b193050b733d03f7ea8b0b87f088c57b42f199b3b11c2",
+        "pairSeed": 20,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 57
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T19:44:16.158Z",
+      "endedAt": "2026-11-08T19:44:58.429Z",
+      "receiptSha256": "6377f6e5cb8dcc17e8d8ae5fee25ee8ff56b06933645077bfe7392ba43b76798",
+      "knownTokens": 17573,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0284-l02-2-sekb-confirmed",
+        "caseId": "tf-0284-l02",
+        "repeat": 2,
+        "arm": "sekb-confirmed",
+        "caseDigest": "a4abc710d5e0c322e21b193050b733d03f7ea8b0b87f088c57b42f199b3b11c2",
+        "pairSeed": 20,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 58
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [
+        "docs/dev/harness-gap-closure/l02-context-pressure-recovery.md",
+        "harness/specs/tasks/harness-gap-context-pressure-recovery.md",
+        "openclaw_runtime/src/runtime-core/context-pressure-recovery.ts"
+      ],
+      "startedAt": "2026-11-08T19:44:59.419Z",
+      "endedAt": "2026-11-08T19:45:55.016Z",
+      "receiptSha256": "6fe449e0532e3e6e29507c119aa99ad557047e23cadd40d7b56b9377175db16a",
+      "knownTokens": 26833,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0284-l02-2-sekb-off",
+        "caseId": "tf-0284-l02",
+        "repeat": 2,
+        "arm": "sekb-off",
+        "caseDigest": "a4abc710d5e0c322e21b193050b733d03f7ea8b0b87f088c57b42f199b3b11c2",
+        "pairSeed": 20,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 59
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [],
+      "startedAt": "2026-11-08T19:45:56.238Z",
+      "endedAt": "2026-11-08T19:46:45.280Z",
+      "receiptSha256": "20e0c5478f0038580dbfd58c8ed305b259b8d4050259321b5cc97632e83ed49c",
+      "knownTokens": 19960,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0284-l02-3-sekb-confirmed",
+        "caseId": "tf-0284-l02",
+        "repeat": 3,
+        "arm": "sekb-confirmed",
+        "caseDigest": "a4abc710d5e0c322e21b193050b733d03f7ea8b0b87f088c57b42f199b3b11c2",
+        "pairSeed": 21,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 60
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [
+        "openclaw_runtime/src/runtime-core/context-pressure-recovery.ts"
+      ],
+      "startedAt": "2026-11-08T19:46:46.534Z",
+      "endedAt": "2026-11-08T19:47:55.681Z",
+      "receiptSha256": "efde14a5985147102637d8bba0b98a428c36ab52a516249dd9ecfa9bbff5f7f0",
+      "knownTokens": 22223,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0284-l02-3-sekb-off",
+        "caseId": "tf-0284-l02",
+        "repeat": 3,
+        "arm": "sekb-off",
+        "caseDigest": "a4abc710d5e0c322e21b193050b733d03f7ea8b0b87f088c57b42f199b3b11c2",
+        "pairSeed": 21,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 61
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T19:47:56.874Z",
+      "endedAt": "2026-11-08T19:48:47.221Z",
+      "receiptSha256": "8e0e6ccaa244b88bc6b5e418f0ce345c54fb51659b024397772a619e26019181",
+      "knownTokens": 17758,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0284-l02-3-sekb-shadow",
+        "caseId": "tf-0284-l02",
+        "repeat": 3,
+        "arm": "sekb-shadow",
+        "caseDigest": "a4abc710d5e0c322e21b193050b733d03f7ea8b0b87f088c57b42f199b3b11c2",
+        "pairSeed": 21,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 62
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T19:48:50.243Z",
+      "endedAt": "2026-11-08T19:49:55.005Z",
+      "receiptSha256": "5269e3fdd9ad8338f9f01808559aa120abb2a4291af78f654811af0d2f88b1af",
+      "knownTokens": 27839,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0285-l03-1-sekb-shadow",
+        "caseId": "tf-0285-l03",
+        "repeat": 1,
+        "arm": "sekb-shadow",
+        "caseDigest": "cc9f2c6d5ab18be0fc196ec58a3af3a88df24986e87834444402d441e39ac0c1",
+        "pairSeed": 22,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 63
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "openclaw_runtime/src/agents/agent-steering-queue.ts"
+      ],
+      "startedAt": "2026-11-08T19:49:56.558Z",
+      "endedAt": "2026-11-08T19:50:48.446Z",
+      "receiptSha256": "539c048145ce0c9a6a48bf6d4b6accd7a69d1ba5f2661d757253efe1fc4180eb",
+      "knownTokens": 112110,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0285-l03-1-sekb-confirmed",
+        "caseId": "tf-0285-l03",
+        "repeat": 1,
+        "arm": "sekb-confirmed",
+        "caseDigest": "cc9f2c6d5ab18be0fc196ec58a3af3a88df24986e87834444402d441e39ac0c1",
+        "pairSeed": 22,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 64
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 3,
+      "edits": [
+        "openclaw_runtime/src/agents/agent-steering-queue.ts"
+      ],
+      "startedAt": "2026-11-08T19:50:50.017Z",
+      "endedAt": "2026-11-08T19:52:26.674Z",
+      "receiptSha256": "520b28647276b13acc7ed35ef54f0c688c722b4ffeff8ae418cc11404e7ab9d6",
+      "knownTokens": 114476,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0285-l03-1-sekb-off",
+        "caseId": "tf-0285-l03",
+        "repeat": 1,
+        "arm": "sekb-off",
+        "caseDigest": "cc9f2c6d5ab18be0fc196ec58a3af3a88df24986e87834444402d441e39ac0c1",
+        "pairSeed": 22,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 65
+      },
+      "status": "completed",
+      "outcome": "pass",
+      "failureCategory": null,
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "openclaw_runtime/src/agents/agent-steering-queue.ts"
+      ],
+      "startedAt": "2026-11-08T19:52:28.170Z",
+      "endedAt": "2026-11-08T19:53:59.881Z",
+      "receiptSha256": "0be52125ec0d643b01d817387cb50ad8119e115b39543462b0d406b98f8a5b2a",
+      "knownTokens": 113379,
+      "oracle": {
+        "revision": "24c9bd91e3a1345c742f2fe88f39838184a3e575",
+        "digest": "903474f8bc7dfd1a6733ed1244c9fdb39aaeacfb856a7e26841d19da294108fd",
+        "reports": [
+          {
+            "kind": "vitest",
+            "exitCode": 0,
+            "totalTests": 6,
+            "failedTests": 0
+          }
+        ]
+      }
+    },
+    {
+      "slot": {
+        "id": "tf-0285-l03-2-sekb-confirmed",
+        "caseId": "tf-0285-l03",
+        "repeat": 2,
+        "arm": "sekb-confirmed",
+        "caseDigest": "cc9f2c6d5ab18be0fc196ec58a3af3a88df24986e87834444402d441e39ac0c1",
+        "pairSeed": 23,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 66
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T19:54:01.278Z",
+      "endedAt": "2026-11-08T19:54:44.524Z",
+      "receiptSha256": "35f479c51970a190a445fdc961a3e84d8a434e30982e94c80d9adbc7bb420008",
+      "knownTokens": 114719,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0285-l03-2-sekb-off",
+        "caseId": "tf-0285-l03",
+        "repeat": 2,
+        "arm": "sekb-off",
+        "caseDigest": "cc9f2c6d5ab18be0fc196ec58a3af3a88df24986e87834444402d441e39ac0c1",
+        "pairSeed": 23,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 67
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T19:54:46.157Z",
+      "endedAt": "2026-11-08T19:55:36.106Z",
+      "receiptSha256": "05fed3336e600cd1e8e6c47636758ee87d44d520fc073e1d24c1af9d4aff6947",
+      "knownTokens": 109021,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0285-l03-2-sekb-shadow",
+        "caseId": "tf-0285-l03",
+        "repeat": 2,
+        "arm": "sekb-shadow",
+        "caseDigest": "cc9f2c6d5ab18be0fc196ec58a3af3a88df24986e87834444402d441e39ac0c1",
+        "pairSeed": 23,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 68
+      },
+      "status": "completed",
+      "outcome": "pass",
+      "failureCategory": null,
+      "providerCalls": 3,
+      "toolCalls": 2,
+      "edits": [
+        "openclaw_runtime/src/agents/agent-steering-queue.ts"
+      ],
+      "startedAt": "2026-11-08T19:55:37.358Z",
+      "endedAt": "2026-11-08T19:57:00.744Z",
+      "receiptSha256": "ca7a296392fe1f3005bc8697e667a4f6804580d629484009f4dd267eb2962a79",
+      "knownTokens": 84763,
+      "oracle": {
+        "revision": "24c9bd91e3a1345c742f2fe88f39838184a3e575",
+        "digest": "903474f8bc7dfd1a6733ed1244c9fdb39aaeacfb856a7e26841d19da294108fd",
+        "reports": [
+          {
+            "kind": "vitest",
+            "exitCode": 0,
+            "totalTests": 6,
+            "failedTests": 0
+          }
+        ]
+      }
+    },
+    {
+      "slot": {
+        "id": "tf-0285-l03-3-sekb-off",
+        "caseId": "tf-0285-l03",
+        "repeat": 3,
+        "arm": "sekb-off",
+        "caseDigest": "cc9f2c6d5ab18be0fc196ec58a3af3a88df24986e87834444402d441e39ac0c1",
+        "pairSeed": 24,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 69
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "openclaw_runtime/src/agents/agent-steering-queue.ts"
+      ],
+      "startedAt": "2026-11-08T19:57:02.139Z",
+      "endedAt": "2026-11-08T19:58:06.047Z",
+      "receiptSha256": "c42c1fa4486f7bc4a3c446535cfcd9995263680ddec42fe1f617fa9adf1b3fea",
+      "knownTokens": 114239,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0285-l03-3-sekb-shadow",
+        "caseId": "tf-0285-l03",
+        "repeat": 3,
+        "arm": "sekb-shadow",
+        "caseDigest": "cc9f2c6d5ab18be0fc196ec58a3af3a88df24986e87834444402d441e39ac0c1",
+        "pairSeed": 24,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 70
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "openclaw_runtime/src/agents/agent-steering-queue.ts"
+      ],
+      "startedAt": "2026-11-08T19:58:07.277Z",
+      "endedAt": "2026-11-08T19:59:02.484Z",
+      "receiptSha256": "feba3dc486e26147212c54af61a71623cd55dd644cec53afa0dc473cb5c13bff",
+      "knownTokens": 110086,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0285-l03-3-sekb-confirmed",
+        "caseId": "tf-0285-l03",
+        "repeat": 3,
+        "arm": "sekb-confirmed",
+        "caseDigest": "cc9f2c6d5ab18be0fc196ec58a3af3a88df24986e87834444402d441e39ac0c1",
+        "pairSeed": 24,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 71
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T19:59:04.779Z",
+      "endedAt": "2026-11-08T19:59:54.373Z",
+      "receiptSha256": "b8ec12117f91e37d4ca659867d66b2bb5613a80341a8d4e2ce0a95674c2a5a68",
+      "knownTokens": 109149,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0286-l04-1-sekb-confirmed",
+        "caseId": "tf-0286-l04",
+        "repeat": 1,
+        "arm": "sekb-confirmed",
+        "caseDigest": "d8b717e33761504f7b90ebdde5e632dca781f034582e6b396aea2ae3925932f4",
+        "pairSeed": 25,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 72
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [],
+      "startedAt": "2026-11-08T19:59:57.247Z",
+      "endedAt": "2026-11-08T20:01:34.821Z",
+      "receiptSha256": "b2bccf4bc23ffc32e1d51d92e0311d0979ac52994cd3bd33b749d7563e511e41",
+      "knownTokens": 24420,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0286-l04-1-sekb-off",
+        "caseId": "tf-0286-l04",
+        "repeat": 1,
+        "arm": "sekb-off",
+        "caseDigest": "d8b717e33761504f7b90ebdde5e632dca781f034582e6b396aea2ae3925932f4",
+        "pairSeed": 25,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 73
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [],
+      "startedAt": "2026-11-08T20:01:37.347Z",
+      "endedAt": "2026-11-08T20:02:29.925Z",
+      "receiptSha256": "98ad6432f2f9a388f69365a950fd0d3312f039e7ac6860004107de48e8b876f9",
+      "knownTokens": 9700,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0286-l04-1-sekb-shadow",
+        "caseId": "tf-0286-l04",
+        "repeat": 1,
+        "arm": "sekb-shadow",
+        "caseDigest": "d8b717e33761504f7b90ebdde5e632dca781f034582e6b396aea2ae3925932f4",
+        "pairSeed": 25,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 74
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T20:02:32.840Z",
+      "endedAt": "2026-11-08T20:03:11.661Z",
+      "receiptSha256": "b177ed4112f492d2ef42dae43a89de78fcbdb40b09090d32a586829c7c55b9d4",
+      "knownTokens": 10147,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0286-l04-2-sekb-off",
+        "caseId": "tf-0286-l04",
+        "repeat": 2,
+        "arm": "sekb-off",
+        "caseDigest": "d8b717e33761504f7b90ebdde5e632dca781f034582e6b396aea2ae3925932f4",
+        "pairSeed": 26,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 75
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:03:13.228Z",
+      "endedAt": "2026-11-08T20:04:18.558Z",
+      "receiptSha256": "76d24640d120cd42b8d241a7a8dc214852ba3502ebe48245bc94a6cb3ed6185e",
+      "knownTokens": 12835,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0286-l04-2-sekb-shadow",
+        "caseId": "tf-0286-l04",
+        "repeat": 2,
+        "arm": "sekb-shadow",
+        "caseDigest": "d8b717e33761504f7b90ebdde5e632dca781f034582e6b396aea2ae3925932f4",
+        "pairSeed": 26,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 76
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:04:19.970Z",
+      "endedAt": "2026-11-08T20:05:10.724Z",
+      "receiptSha256": "6c44dab2bba72c73b8f9ce8380c450846f09ffee803267cb1ca0474bfd8ebe8f",
+      "knownTokens": 15190,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0286-l04-2-sekb-confirmed",
+        "caseId": "tf-0286-l04",
+        "repeat": 2,
+        "arm": "sekb-confirmed",
+        "caseDigest": "d8b717e33761504f7b90ebdde5e632dca781f034582e6b396aea2ae3925932f4",
+        "pairSeed": 26,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 77
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T20:05:12.678Z",
+      "endedAt": "2026-11-08T20:06:35.352Z",
+      "receiptSha256": "ca1f72ffd96efe7ff3648469deba40db40c872aa799646ff0b57e2120b74fd0e",
+      "knownTokens": 21821,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0286-l04-3-sekb-shadow",
+        "caseId": "tf-0286-l04",
+        "repeat": 3,
+        "arm": "sekb-shadow",
+        "caseDigest": "d8b717e33761504f7b90ebdde5e632dca781f034582e6b396aea2ae3925932f4",
+        "pairSeed": 27,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 78
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:06:36.467Z",
+      "endedAt": "2026-11-08T20:07:12.893Z",
+      "receiptSha256": "f54610cbdddb115e37fed5f1a9fa300910de6b02b9025374489db9f89ce9ea0d",
+      "knownTokens": 9861,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0286-l04-3-sekb-confirmed",
+        "caseId": "tf-0286-l04",
+        "repeat": 3,
+        "arm": "sekb-confirmed",
+        "caseDigest": "d8b717e33761504f7b90ebdde5e632dca781f034582e6b396aea2ae3925932f4",
+        "pairSeed": 27,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 79
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:07:14.008Z",
+      "endedAt": "2026-11-08T20:07:44.635Z",
+      "receiptSha256": "8cc561f8997c930b8ee6973ec0a2b5dbfc9d654579bed914067d72500a59f2de",
+      "knownTokens": 10457,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0286-l04-3-sekb-off",
+        "caseId": "tf-0286-l04",
+        "repeat": 3,
+        "arm": "sekb-off",
+        "caseDigest": "d8b717e33761504f7b90ebdde5e632dca781f034582e6b396aea2ae3925932f4",
+        "pairSeed": 27,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 80
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T20:07:45.754Z",
+      "endedAt": "2026-11-08T20:08:21.758Z",
+      "receiptSha256": "30252fb32b7611bc2cd91fb54731a4fd7be61f5e045a285b9c8f293675c554c6",
+      "knownTokens": 9842,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0287-l05-1-sekb-off",
+        "caseId": "tf-0287-l05",
+        "repeat": 1,
+        "arm": "sekb-off",
+        "caseDigest": "4baa3af9e19f7cc04910e3ab4e8505f39686ada97fdd0fb1126733ef1328a48b",
+        "pairSeed": 28,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 81
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:08:23.069Z",
+      "endedAt": "2026-11-08T20:08:56.309Z",
+      "receiptSha256": "580cc97c2bac6012a3ff97a35b1fee6a55955860a5b17fcffed969f9db48dab3",
+      "knownTokens": 8861,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0287-l05-1-sekb-shadow",
+        "caseId": "tf-0287-l05",
+        "repeat": 1,
+        "arm": "sekb-shadow",
+        "caseDigest": "4baa3af9e19f7cc04910e3ab4e8505f39686ada97fdd0fb1126733ef1328a48b",
+        "pairSeed": 28,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 82
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:08:57.716Z",
+      "endedAt": "2026-11-08T20:09:43.518Z",
+      "receiptSha256": "3749ba0d738b54db506b32c891b091f9d7d72803d4b9ac2780c33e844901eec6",
+      "knownTokens": 8824,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0287-l05-1-sekb-confirmed",
+        "caseId": "tf-0287-l05",
+        "repeat": 1,
+        "arm": "sekb-confirmed",
+        "caseDigest": "4baa3af9e19f7cc04910e3ab4e8505f39686ada97fdd0fb1126733ef1328a48b",
+        "pairSeed": 28,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 83
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:09:45.695Z",
+      "endedAt": "2026-11-08T20:10:24.714Z",
+      "receiptSha256": "12cccc08711d0cfe06eaa951d0dea44d2bb08187c2aa94e77316150d112f9b95",
+      "knownTokens": 9499,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0287-l05-2-sekb-shadow",
+        "caseId": "tf-0287-l05",
+        "repeat": 2,
+        "arm": "sekb-shadow",
+        "caseDigest": "4baa3af9e19f7cc04910e3ab4e8505f39686ada97fdd0fb1126733ef1328a48b",
+        "pairSeed": 29,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 84
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:10:26.081Z",
+      "endedAt": "2026-11-08T20:11:08.481Z",
+      "receiptSha256": "472a15b6c7307154cf5bc5d7f3475818fca19c26c85ca883c2cc6a2f7e868b71",
+      "knownTokens": 11494,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0287-l05-2-sekb-confirmed",
+        "caseId": "tf-0287-l05",
+        "repeat": 2,
+        "arm": "sekb-confirmed",
+        "caseDigest": "4baa3af9e19f7cc04910e3ab4e8505f39686ada97fdd0fb1126733ef1328a48b",
+        "pairSeed": 29,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 85
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [],
+      "startedAt": "2026-11-08T20:11:10.090Z",
+      "endedAt": "2026-11-08T20:11:58.057Z",
+      "receiptSha256": "5307492eee4322a24d70720bd8717f9836e784c550ef07f2d0c05593a576ee12",
+      "knownTokens": 18975,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0287-l05-2-sekb-off",
+        "caseId": "tf-0287-l05",
+        "repeat": 2,
+        "arm": "sekb-off",
+        "caseDigest": "4baa3af9e19f7cc04910e3ab4e8505f39686ada97fdd0fb1126733ef1328a48b",
+        "pairSeed": 29,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 86
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:12:00.093Z",
+      "endedAt": "2026-11-08T20:12:51.028Z",
+      "receiptSha256": "722708f7711dc83c5fcf2a2642f29c0c02d7981cf78b49aa8cfe89e5377c9c21",
+      "knownTokens": 8847,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0287-l05-3-sekb-confirmed",
+        "caseId": "tf-0287-l05",
+        "repeat": 3,
+        "arm": "sekb-confirmed",
+        "caseDigest": "4baa3af9e19f7cc04910e3ab4e8505f39686ada97fdd0fb1126733ef1328a48b",
+        "pairSeed": 30,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 87
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:12:53.208Z",
+      "endedAt": "2026-11-08T20:13:43.875Z",
+      "receiptSha256": "4760d70736eddd2a32c0615e7dfb5ad9bfebc47b9fbe725f28cdba879cef292b",
+      "knownTokens": 11720,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0287-l05-3-sekb-off",
+        "caseId": "tf-0287-l05",
+        "repeat": 3,
+        "arm": "sekb-off",
+        "caseDigest": "4baa3af9e19f7cc04910e3ab4e8505f39686ada97fdd0fb1126733ef1328a48b",
+        "pairSeed": 30,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 88
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:13:45.894Z",
+      "endedAt": "2026-11-08T20:14:30.285Z",
+      "receiptSha256": "90ef9e511706bae65cee514c6c40207007b46f41b5ffb37b0a9f858ca61ce194",
+      "knownTokens": 11278,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0287-l05-3-sekb-shadow",
+        "caseId": "tf-0287-l05",
+        "repeat": 3,
+        "arm": "sekb-shadow",
+        "caseDigest": "4baa3af9e19f7cc04910e3ab4e8505f39686ada97fdd0fb1126733ef1328a48b",
+        "pairSeed": 30,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 89
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:14:32.530Z",
+      "endedAt": "2026-11-08T20:15:17.591Z",
+      "receiptSha256": "30635f2254ce03cd5970f5e41274854eeb7f10382ddeb0933c7725efcc6897cb",
+      "knownTokens": 11612,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0288-l06-1-sekb-shadow",
+        "caseId": "tf-0288-l06",
+        "repeat": 1,
+        "arm": "sekb-shadow",
+        "caseDigest": "f1859be41827ed93013cf489d7ff321ac78e6ff695d9b8dc7359497bffb2ac2d",
+        "pairSeed": 31,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 90
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:15:19.387Z",
+      "endedAt": "2026-11-08T20:15:55.011Z",
+      "receiptSha256": "63e9d9c8fc8c65699e66328a049cf193f7a89051d7df1eb3f2f4f302c4cedd1d",
+      "knownTokens": 10128,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0288-l06-1-sekb-confirmed",
+        "caseId": "tf-0288-l06",
+        "repeat": 1,
+        "arm": "sekb-confirmed",
+        "caseDigest": "f1859be41827ed93013cf489d7ff321ac78e6ff695d9b8dc7359497bffb2ac2d",
+        "pairSeed": 31,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 91
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T20:15:56.673Z",
+      "endedAt": "2026-11-08T20:16:33.181Z",
+      "receiptSha256": "b8dd2dcb338050a73e087af7d0833e93f1b09dec1a0c1d9f39a37c96c0a02618",
+      "knownTokens": 10792,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0288-l06-1-sekb-off",
+        "caseId": "tf-0288-l06",
+        "repeat": 1,
+        "arm": "sekb-off",
+        "caseDigest": "f1859be41827ed93013cf489d7ff321ac78e6ff695d9b8dc7359497bffb2ac2d",
+        "pairSeed": 31,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 92
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:16:34.976Z",
+      "endedAt": "2026-11-08T20:17:12.409Z",
+      "receiptSha256": "1d712448790d6721c819ea427b96e3fb7d274e85681fcbb09ea0e7bc1ded3ee9",
+      "knownTokens": 10175,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0288-l06-2-sekb-confirmed",
+        "caseId": "tf-0288-l06",
+        "repeat": 2,
+        "arm": "sekb-confirmed",
+        "caseDigest": "f1859be41827ed93013cf489d7ff321ac78e6ff695d9b8dc7359497bffb2ac2d",
+        "pairSeed": 32,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 93
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [],
+      "startedAt": "2026-11-08T20:17:14.166Z",
+      "endedAt": "2026-11-08T20:17:56.437Z",
+      "receiptSha256": "cba8a2d24eb62410440c35cef9c3ba832b39114f2ffa6f72597084e269c502d5",
+      "knownTokens": 11760,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0288-l06-2-sekb-off",
+        "caseId": "tf-0288-l06",
+        "repeat": 2,
+        "arm": "sekb-off",
+        "caseDigest": "f1859be41827ed93013cf489d7ff321ac78e6ff695d9b8dc7359497bffb2ac2d",
+        "pairSeed": 32,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 94
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:17:58.257Z",
+      "endedAt": "2026-11-08T20:18:36.528Z",
+      "receiptSha256": "e33d626e3882c82d2ae9ba49c52160b68c50b87edd8fe110c8dad01683fee4c7",
+      "knownTokens": 10617,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0288-l06-2-sekb-shadow",
+        "caseId": "tf-0288-l06",
+        "repeat": 2,
+        "arm": "sekb-shadow",
+        "caseDigest": "f1859be41827ed93013cf489d7ff321ac78e6ff695d9b8dc7359497bffb2ac2d",
+        "pairSeed": 32,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 95
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:18:38.241Z",
+      "endedAt": "2026-11-08T20:19:13.883Z",
+      "receiptSha256": "97a0ab7597d73704be9967a4330f590d3f4b4341a4718cbd8429ed6abbc161e2",
+      "knownTokens": 10032,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0288-l06-3-sekb-off",
+        "caseId": "tf-0288-l06",
+        "repeat": 3,
+        "arm": "sekb-off",
+        "caseDigest": "f1859be41827ed93013cf489d7ff321ac78e6ff695d9b8dc7359497bffb2ac2d",
+        "pairSeed": 33,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 96
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [],
+      "startedAt": "2026-11-08T20:19:15.643Z",
+      "endedAt": "2026-11-08T20:19:51.637Z",
+      "receiptSha256": "43379ebf7f4f01a179d7252a51a0c8a7c65977c325e71f1903a26abc04ff4f73",
+      "knownTokens": 9623,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0288-l06-3-sekb-shadow",
+        "caseId": "tf-0288-l06",
+        "repeat": 3,
+        "arm": "sekb-shadow",
+        "caseDigest": "f1859be41827ed93013cf489d7ff321ac78e6ff695d9b8dc7359497bffb2ac2d",
+        "pairSeed": 33,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 97
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:19:53.385Z",
+      "endedAt": "2026-11-08T20:20:39.437Z",
+      "receiptSha256": "5bf8cf53d2c5ace592afacbcabffcff92dc1877821280ae59b69264f55890b06",
+      "knownTokens": 11671,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0288-l06-3-sekb-confirmed",
+        "caseId": "tf-0288-l06",
+        "repeat": 3,
+        "arm": "sekb-confirmed",
+        "caseDigest": "f1859be41827ed93013cf489d7ff321ac78e6ff695d9b8dc7359497bffb2ac2d",
+        "pairSeed": 33,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 98
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "openclaw_runtime/src/agents/hot-file-write-owner.ts"
+      ],
+      "startedAt": "2026-11-08T20:20:41.468Z",
+      "endedAt": "2026-11-08T20:25:20.968Z",
+      "receiptSha256": "44a5e2638af21b3657f0f36629132d4974251b506954351486a27d86d2678c57",
+      "knownTokens": 15029,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0276-s01-1-sekb-confirmed",
+        "caseId": "tf-0276-s01",
+        "repeat": 1,
+        "arm": "sekb-confirmed",
+        "caseDigest": "d02ac9cc04bc5ab3c89f2132a85f423f22096a3461cbd0dbbe40fa17326d7d68",
+        "pairSeed": 34,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 99
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:25:23.127Z",
+      "endedAt": "2026-11-08T20:26:19.973Z",
+      "receiptSha256": "c6023fea80130caadcb31c9d0ed148f158ab591a251b8fcf5601cc87e0523e4f",
+      "knownTokens": 122287,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0276-s01-1-sekb-off",
+        "caseId": "tf-0276-s01",
+        "repeat": 1,
+        "arm": "sekb-off",
+        "caseDigest": "d02ac9cc04bc5ab3c89f2132a85f423f22096a3461cbd0dbbe40fa17326d7d68",
+        "pairSeed": 34,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 100
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:26:22.414Z",
+      "endedAt": "2026-11-08T20:27:32.190Z",
+      "receiptSha256": "8c683c140f12f3cb76a57545fdb57495377f17f7d94f83bad6cf2e0c3822220b",
+      "knownTokens": 126571,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0276-s01-1-sekb-shadow",
+        "caseId": "tf-0276-s01",
+        "repeat": 1,
+        "arm": "sekb-shadow",
+        "caseDigest": "d02ac9cc04bc5ab3c89f2132a85f423f22096a3461cbd0dbbe40fa17326d7d68",
+        "pairSeed": 34,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 101
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T20:27:34.301Z",
+      "endedAt": "2026-11-08T20:29:03.691Z",
+      "receiptSha256": "f5cb3677ed0ebbf31765067c08825b631ad391e36950e0c03701063f65e20bd6",
+      "knownTokens": 116441,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0276-s01-2-sekb-off",
+        "caseId": "tf-0276-s01",
+        "repeat": 2,
+        "arm": "sekb-off",
+        "caseDigest": "d02ac9cc04bc5ab3c89f2132a85f423f22096a3461cbd0dbbe40fa17326d7d68",
+        "pairSeed": 35,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 102
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T20:29:05.920Z",
+      "endedAt": "2026-11-08T20:30:14.793Z",
+      "receiptSha256": "4660db327f840e8ed594fd46aaaa1903511f50afbda32679ad7109e130a17322",
+      "knownTokens": 121874,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0276-s01-2-sekb-shadow",
+        "caseId": "tf-0276-s01",
+        "repeat": 2,
+        "arm": "sekb-shadow",
+        "caseDigest": "d02ac9cc04bc5ab3c89f2132a85f423f22096a3461cbd0dbbe40fa17326d7d68",
+        "pairSeed": 35,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 103
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T20:30:16.253Z",
+      "endedAt": "2026-11-08T20:31:23.919Z",
+      "receiptSha256": "a369d20acedb82887a20dc392b2418ee572f486968a30fc080c40aa52debd2e5",
+      "knownTokens": 121414,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0276-s01-2-sekb-confirmed",
+        "caseId": "tf-0276-s01",
+        "repeat": 2,
+        "arm": "sekb-confirmed",
+        "caseDigest": "d02ac9cc04bc5ab3c89f2132a85f423f22096a3461cbd0dbbe40fa17326d7d68",
+        "pairSeed": 35,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 104
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [],
+      "startedAt": "2026-11-08T20:31:25.717Z",
+      "endedAt": "2026-11-08T20:32:35.244Z",
+      "receiptSha256": "557fee8b65f1e5284a3db539c8fa320293c50e040b4b2771f1d3a968e5226f7e",
+      "knownTokens": 120812,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0276-s01-3-sekb-shadow",
+        "caseId": "tf-0276-s01",
+        "repeat": 3,
+        "arm": "sekb-shadow",
+        "caseDigest": "d02ac9cc04bc5ab3c89f2132a85f423f22096a3461cbd0dbbe40fa17326d7d68",
+        "pairSeed": 36,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 105
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [],
+      "startedAt": "2026-11-08T20:32:36.842Z",
+      "endedAt": "2026-11-08T20:33:39.168Z",
+      "receiptSha256": "46175ead44b16f2421391fedbe50ffd1d23f0bbfb8aad6bd14f5348741be2d87",
+      "knownTokens": 115958,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0276-s01-3-sekb-confirmed",
+        "caseId": "tf-0276-s01",
+        "repeat": 3,
+        "arm": "sekb-confirmed",
+        "caseDigest": "d02ac9cc04bc5ab3c89f2132a85f423f22096a3461cbd0dbbe40fa17326d7d68",
+        "pairSeed": 36,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 106
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T20:33:40.727Z",
+      "endedAt": "2026-11-08T20:34:50.038Z",
+      "receiptSha256": "b6c19fef9caf69d09f6925ef85ad3b171bae5138bd7447195cd782fce0c5a553",
+      "knownTokens": 121722,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0276-s01-3-sekb-off",
+        "caseId": "tf-0276-s01",
+        "repeat": 3,
+        "arm": "sekb-off",
+        "caseDigest": "d02ac9cc04bc5ab3c89f2132a85f423f22096a3461cbd0dbbe40fa17326d7d68",
+        "pairSeed": 36,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 107
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [],
+      "startedAt": "2026-11-08T20:34:51.752Z",
+      "endedAt": "2026-11-08T20:36:13.790Z",
+      "receiptSha256": "312e94dbce4da43bf87e0c4bff6f8a52dd3780a15224a5f6f42456baef73943a",
+      "knownTokens": 116560,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0277-s02-1-sekb-off",
+        "caseId": "tf-0277-s02",
+        "repeat": 1,
+        "arm": "sekb-off",
+        "caseDigest": "c4f6728ebf6e573443c53b1d939052999da7ad0f780653f65bd2c687d0e360a5",
+        "pairSeed": 37,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 108
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:36:18.431Z",
+      "endedAt": "2026-11-08T20:37:02.506Z",
+      "receiptSha256": "b3e50e6e4f0fa4a51f99f610f483cf31e22bdfc58d0fba450b8a28736e2d89c9",
+      "knownTokens": 102280,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0277-s02-1-sekb-shadow",
+        "caseId": "tf-0277-s02",
+        "repeat": 1,
+        "arm": "sekb-shadow",
+        "caseDigest": "c4f6728ebf6e573443c53b1d939052999da7ad0f780653f65bd2c687d0e360a5",
+        "pairSeed": 37,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 109
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:37:04.765Z",
+      "endedAt": "2026-11-08T20:37:48.234Z",
+      "receiptSha256": "32ad3513acc5eb705d03ec7192258e00cf617686311364f3ba5aebe2dcd67e1a",
+      "knownTokens": 106703,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0277-s02-1-sekb-confirmed",
+        "caseId": "tf-0277-s02",
+        "repeat": 1,
+        "arm": "sekb-confirmed",
+        "caseDigest": "c4f6728ebf6e573443c53b1d939052999da7ad0f780653f65bd2c687d0e360a5",
+        "pairSeed": 37,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 110
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:37:49.966Z",
+      "endedAt": "2026-11-08T20:38:34.891Z",
+      "receiptSha256": "1092cf251fca5eeae26795a514d493e2fd31338e507c2d03dc12d00e09282457",
+      "knownTokens": 102434,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0277-s02-2-sekb-shadow",
+        "caseId": "tf-0277-s02",
+        "repeat": 2,
+        "arm": "sekb-shadow",
+        "caseDigest": "c4f6728ebf6e573443c53b1d939052999da7ad0f780653f65bd2c687d0e360a5",
+        "pairSeed": 38,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 111
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:38:36.687Z",
+      "endedAt": "2026-11-08T20:39:18.001Z",
+      "receiptSha256": "eb1a085c3d2ae99bc82ae96a7943511ce92b8b9c826c2b0431d534a2bc0139bf",
+      "knownTokens": 101991,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0277-s02-2-sekb-confirmed",
+        "caseId": "tf-0277-s02",
+        "repeat": 2,
+        "arm": "sekb-confirmed",
+        "caseDigest": "c4f6728ebf6e573443c53b1d939052999da7ad0f780653f65bd2c687d0e360a5",
+        "pairSeed": 38,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 112
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:39:19.425Z",
+      "endedAt": "2026-11-08T20:39:50.042Z",
+      "receiptSha256": "d22911017e8415a424b873f37d44d0f302c6a72dea685fbf2c7e65bbe7e9fd87",
+      "knownTokens": 102528,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0277-s02-2-sekb-off",
+        "caseId": "tf-0277-s02",
+        "repeat": 2,
+        "arm": "sekb-off",
+        "caseDigest": "c4f6728ebf6e573443c53b1d939052999da7ad0f780653f65bd2c687d0e360a5",
+        "pairSeed": 38,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 113
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:39:51.270Z",
+      "endedAt": "2026-11-08T20:40:31.180Z",
+      "receiptSha256": "5f9290ef7dc23bd34d9652f7b3a56e82fd6a9671d0147934c1837013b8ec6b2d",
+      "knownTokens": 105443,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0277-s02-3-sekb-confirmed",
+        "caseId": "tf-0277-s02",
+        "repeat": 3,
+        "arm": "sekb-confirmed",
+        "caseDigest": "c4f6728ebf6e573443c53b1d939052999da7ad0f780653f65bd2c687d0e360a5",
+        "pairSeed": 39,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 114
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T20:40:32.586Z",
+      "endedAt": "2026-11-08T20:41:09.809Z",
+      "receiptSha256": "ae948720e4dc4b2c129956b2ba5c059a9d30b9e065b7b11d61baa3ead9cce61c",
+      "knownTokens": 102478,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0277-s02-3-sekb-off",
+        "caseId": "tf-0277-s02",
+        "repeat": 3,
+        "arm": "sekb-off",
+        "caseDigest": "c4f6728ebf6e573443c53b1d939052999da7ad0f780653f65bd2c687d0e360a5",
+        "pairSeed": 39,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 115
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:41:11.186Z",
+      "endedAt": "2026-11-08T20:41:49.369Z",
+      "receiptSha256": "26562fae3876c718471ccdcb9c2d207c3ba8197cbbeb31af63be6e960a9bac84",
+      "knownTokens": 102822,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0277-s02-3-sekb-shadow",
+        "caseId": "tf-0277-s02",
+        "repeat": 3,
+        "arm": "sekb-shadow",
+        "caseDigest": "c4f6728ebf6e573443c53b1d939052999da7ad0f780653f65bd2c687d0e360a5",
+        "pairSeed": 39,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 116
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [],
+      "startedAt": "2026-11-08T20:41:50.702Z",
+      "endedAt": "2026-11-08T20:42:27.792Z",
+      "receiptSha256": "2dfb7b27592742ec71d2e5e95fe4cec18a464228523764a0069c6925c0d8b034",
+      "knownTokens": 104003,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0278-s03-1-sekb-shadow",
+        "caseId": "tf-0278-s03",
+        "repeat": 1,
+        "arm": "sekb-shadow",
+        "caseDigest": "6f1021a60902dbf9e28a4fa9fc6e6f8864d9ba669144c6032b4221790877050e",
+        "pairSeed": 40,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 117
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:42:29.154Z",
+      "endedAt": "2026-11-08T20:43:11.782Z",
+      "receiptSha256": "e0337ead9b7b9bdf4c4c05d8a729cb1b9a519f2048a929aaf6555cdeac728aa9",
+      "knownTokens": 45265,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0278-s03-1-sekb-confirmed",
+        "caseId": "tf-0278-s03",
+        "repeat": 1,
+        "arm": "sekb-confirmed",
+        "caseDigest": "6f1021a60902dbf9e28a4fa9fc6e6f8864d9ba669144c6032b4221790877050e",
+        "pairSeed": 40,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 118
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [],
+      "startedAt": "2026-11-08T20:43:13.159Z",
+      "endedAt": "2026-11-08T20:43:52.201Z",
+      "receiptSha256": "0b06c65add47998ccf04372d6dffe0052b7c56432d4365d116d83fdd2e0f2b3c",
+      "knownTokens": 49685,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0278-s03-1-sekb-off",
+        "caseId": "tf-0278-s03",
+        "repeat": 1,
+        "arm": "sekb-off",
+        "caseDigest": "6f1021a60902dbf9e28a4fa9fc6e6f8864d9ba669144c6032b4221790877050e",
+        "pairSeed": 40,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 119
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:43:53.672Z",
+      "endedAt": "2026-11-08T20:44:41.577Z",
+      "receiptSha256": "0033acb2bb4e38d2143fc525b91b409c744c59d1bdfd742f33c52214f4f74138",
+      "knownTokens": 53793,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0278-s03-2-sekb-confirmed",
+        "caseId": "tf-0278-s03",
+        "repeat": 2,
+        "arm": "sekb-confirmed",
+        "caseDigest": "6f1021a60902dbf9e28a4fa9fc6e6f8864d9ba669144c6032b4221790877050e",
+        "pairSeed": 41,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 120
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T20:44:43.338Z",
+      "endedAt": "2026-11-08T20:45:16.469Z",
+      "receiptSha256": "58654a3d74ba44438784450be6d16caba4a47ef2b1f4ad506ae98e944aa109d1",
+      "knownTokens": 48780,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0278-s03-2-sekb-off",
+        "caseId": "tf-0278-s03",
+        "repeat": 2,
+        "arm": "sekb-off",
+        "caseDigest": "6f1021a60902dbf9e28a4fa9fc6e6f8864d9ba669144c6032b4221790877050e",
+        "pairSeed": 41,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 121
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:45:18.016Z",
+      "endedAt": "2026-11-08T20:45:59.791Z",
+      "receiptSha256": "4c67e1079e3773c7d408efbbbf4ee7330e571bc6cfd90fac7a8286b8f17df639",
+      "knownTokens": 53514,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0278-s03-2-sekb-shadow",
+        "caseId": "tf-0278-s03",
+        "repeat": 2,
+        "arm": "sekb-shadow",
+        "caseDigest": "6f1021a60902dbf9e28a4fa9fc6e6f8864d9ba669144c6032b4221790877050e",
+        "pairSeed": 41,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 122
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:46:01.851Z",
+      "endedAt": "2026-11-08T20:46:52.578Z",
+      "receiptSha256": "92e3e06922458c918699014473d79cb4a9b5a3eebbe6c53d121ef97460be124c",
+      "knownTokens": 46253,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0278-s03-3-sekb-off",
+        "caseId": "tf-0278-s03",
+        "repeat": 3,
+        "arm": "sekb-off",
+        "caseDigest": "6f1021a60902dbf9e28a4fa9fc6e6f8864d9ba669144c6032b4221790877050e",
+        "pairSeed": 42,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 123
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [
+        "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts"
+      ],
+      "startedAt": "2026-11-08T20:46:54.269Z",
+      "endedAt": "2026-11-08T20:48:40.254Z",
+      "receiptSha256": "1d465222ea3aaa528bcd07b6a2584884d4296d5636ed1f71c2a15044b84f442f",
+      "knownTokens": 55471,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0278-s03-3-sekb-shadow",
+        "caseId": "tf-0278-s03",
+        "repeat": 3,
+        "arm": "sekb-shadow",
+        "caseDigest": "6f1021a60902dbf9e28a4fa9fc6e6f8864d9ba669144c6032b4221790877050e",
+        "pairSeed": 42,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 124
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T20:48:41.811Z",
+      "endedAt": "2026-11-08T20:49:21.138Z",
+      "receiptSha256": "7868996ea90c0be37738461a53e5dd7240e2bbcf3b833cfca83ee1fcbfec7bcc",
+      "knownTokens": 51797,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0278-s03-3-sekb-confirmed",
+        "caseId": "tf-0278-s03",
+        "repeat": 3,
+        "arm": "sekb-confirmed",
+        "caseDigest": "6f1021a60902dbf9e28a4fa9fc6e6f8864d9ba669144c6032b4221790877050e",
+        "pairSeed": 42,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 125
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [
+        "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts"
+      ],
+      "startedAt": "2026-11-08T20:49:23.386Z",
+      "endedAt": "2026-11-08T20:50:22.656Z",
+      "receiptSha256": "322fb70d7d2363abe9dc68ebdffcd23ada73d1654424061edd5023be5518c7cd",
+      "knownTokens": 51070,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0279-s04-1-sekb-confirmed",
+        "caseId": "tf-0279-s04",
+        "repeat": 1,
+        "arm": "sekb-confirmed",
+        "caseDigest": "98931e9d1ad8b99dac7bc3b6ef4d346a781e02b281a419b3434651371f8aa07c",
+        "pairSeed": 43,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 126
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:50:24.296Z",
+      "endedAt": "2026-11-08T20:50:56.280Z",
+      "receiptSha256": "cbc55816cf5df84609bfe46f8e0a57b08ad1750f08a6aa1a3aaf6b4b992e1f9d",
+      "knownTokens": 25318,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0279-s04-1-sekb-off",
+        "caseId": "tf-0279-s04",
+        "repeat": 1,
+        "arm": "sekb-off",
+        "caseDigest": "98931e9d1ad8b99dac7bc3b6ef4d346a781e02b281a419b3434651371f8aa07c",
+        "pairSeed": 43,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 127
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:50:57.755Z",
+      "endedAt": "2026-11-08T20:51:40.034Z",
+      "receiptSha256": "09ba8fc58eff2857f7f4553a5e0866d79eea29a37d388e7271097434787fad07",
+      "knownTokens": 26207,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0279-s04-1-sekb-shadow",
+        "caseId": "tf-0279-s04",
+        "repeat": 1,
+        "arm": "sekb-shadow",
+        "caseDigest": "98931e9d1ad8b99dac7bc3b6ef4d346a781e02b281a419b3434651371f8aa07c",
+        "pairSeed": 43,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 128
+      },
+      "status": "completed",
+      "outcome": "pass",
+      "failureCategory": null,
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "docs/dev/harness-gap-closure/s04-browser-effect-boundary.md",
+        "harness/specs/tasks/harness-gap-browser-effect-boundary.md"
+      ],
+      "startedAt": "2026-11-08T20:51:41.304Z",
+      "endedAt": "2026-11-08T20:52:56.049Z",
+      "receiptSha256": "1b1e30fe4fa10b3a5d22990b6c8393153cb1ffa73917d560d4ae9d5f0e575a6b",
+      "knownTokens": 26804,
+      "oracle": {
+        "revision": "ce7ebd94cdd5814470daade4a3c7fa67ab8e77a4",
+        "digest": "d33007607918a850a3f0d8feb500944f319ea7da9fb904e1dff2174dc4e00b6f",
+        "reports": [
+          {
+            "kind": "vitest",
+            "exitCode": 0,
+            "totalTests": 5,
+            "failedTests": 0
+          },
+          {
+            "kind": "vitest",
+            "exitCode": 0,
+            "totalTests": 42,
+            "failedTests": 0
+          }
+        ]
+      }
+    },
+    {
+      "slot": {
+        "id": "tf-0279-s04-2-sekb-off",
+        "caseId": "tf-0279-s04",
+        "repeat": 2,
+        "arm": "sekb-off",
+        "caseDigest": "98931e9d1ad8b99dac7bc3b6ef4d346a781e02b281a419b3434651371f8aa07c",
+        "pairSeed": 44,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 129
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:52:57.349Z",
+      "endedAt": "2026-11-08T20:53:43.856Z",
+      "receiptSha256": "304759f05b642ba06705dbcb25e3bca1c617701b8087b6c4c64b3e79b5593de2",
+      "knownTokens": 24829,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0279-s04-2-sekb-shadow",
+        "caseId": "tf-0279-s04",
+        "repeat": 2,
+        "arm": "sekb-shadow",
+        "caseDigest": "98931e9d1ad8b99dac7bc3b6ef4d346a781e02b281a419b3434651371f8aa07c",
+        "pairSeed": 44,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 130
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T20:53:46.116Z",
+      "endedAt": "2026-11-08T20:54:38.771Z",
+      "receiptSha256": "9d438d148c8dfe822e3d732e968804a09ff6053e46addb0095a75421a39ab440",
+      "knownTokens": 24547,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0279-s04-2-sekb-confirmed",
+        "caseId": "tf-0279-s04",
+        "repeat": 2,
+        "arm": "sekb-confirmed",
+        "caseDigest": "98931e9d1ad8b99dac7bc3b6ef4d346a781e02b281a419b3434651371f8aa07c",
+        "pairSeed": 44,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 131
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [
+        "docs/dev/harness-gap-closure/s04-browser-effect-boundary.md"
+      ],
+      "startedAt": "2026-11-08T20:54:40.377Z",
+      "endedAt": "2026-11-08T20:55:13.016Z",
+      "receiptSha256": "7511cdc8582c26111163d2bafca27d6bbda15f37fba45df2aa877e0602c64319",
+      "knownTokens": 25542,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0279-s04-3-sekb-shadow",
+        "caseId": "tf-0279-s04",
+        "repeat": 3,
+        "arm": "sekb-shadow",
+        "caseDigest": "98931e9d1ad8b99dac7bc3b6ef4d346a781e02b281a419b3434651371f8aa07c",
+        "pairSeed": 45,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 132
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "docs/dev/harness-gap-closure/s04-browser-effect-boundary.md"
+      ],
+      "startedAt": "2026-11-08T20:55:14.838Z",
+      "endedAt": "2026-11-08T20:55:55.274Z",
+      "receiptSha256": "8ea2b2b7e8c07327c775bc862ec1aee38d3537ed8040ac69580f2751ef68f8f5",
+      "knownTokens": 24702,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0279-s04-3-sekb-confirmed",
+        "caseId": "tf-0279-s04",
+        "repeat": 3,
+        "arm": "sekb-confirmed",
+        "caseDigest": "98931e9d1ad8b99dac7bc3b6ef4d346a781e02b281a419b3434651371f8aa07c",
+        "pairSeed": 45,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 133
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "docs/dev/harness-gap-closure/s04-browser-effect-boundary.md",
+        "harness/specs/tasks/harness-gap-browser-effect-boundary.md"
+      ],
+      "startedAt": "2026-11-08T20:55:56.620Z",
+      "endedAt": "2026-11-08T20:56:36.678Z",
+      "receiptSha256": "28ac6be2de231fd0cad20f0585f76effcf613ccd90740ad482ebff953ceda343",
+      "knownTokens": 28655,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0279-s04-3-sekb-off",
+        "caseId": "tf-0279-s04",
+        "repeat": 3,
+        "arm": "sekb-off",
+        "caseDigest": "98931e9d1ad8b99dac7bc3b6ef4d346a781e02b281a419b3434651371f8aa07c",
+        "pairSeed": 45,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 134
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:56:37.981Z",
+      "endedAt": "2026-11-08T20:57:11.004Z",
+      "receiptSha256": "e44903b81e3912b63c13651b87b8a55190b7511fdd1d0dc0102b569598d5fe11",
+      "knownTokens": 24727,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0280-s05-1-sekb-off",
+        "caseId": "tf-0280-s05",
+        "repeat": 1,
+        "arm": "sekb-off",
+        "caseDigest": "d0ad674f944b24f30eb67d65ab1cf37f41067686d8f48c619ea9da774dcaed60",
+        "pairSeed": 46,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 135
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [
+        "harness/specs/tasks/harness-gap-credential-use-boundary.md"
+      ],
+      "startedAt": "2026-11-08T20:57:12.334Z",
+      "endedAt": "2026-11-08T20:58:12.600Z",
+      "receiptSha256": "67eb0103ecd11d5508a01c21bad25b66a5a5a4a6c91e70a7e41c7f2288894a2b",
+      "knownTokens": 55658,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0280-s05-1-sekb-shadow",
+        "caseId": "tf-0280-s05",
+        "repeat": 1,
+        "arm": "sekb-shadow",
+        "caseDigest": "d0ad674f944b24f30eb67d65ab1cf37f41067686d8f48c619ea9da774dcaed60",
+        "pairSeed": 46,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 136
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [
+        "docs/dev/harness-gap-closure/s05-credential-use-boundary.md"
+      ],
+      "startedAt": "2026-11-08T20:58:14.315Z",
+      "endedAt": "2026-11-08T20:58:51.762Z",
+      "receiptSha256": "b3e570bc1fe41ec3cf36606f78bc96a651db599f0bd1931349994ec55c63cf7a",
+      "knownTokens": 55843,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0280-s05-1-sekb-confirmed",
+        "caseId": "tf-0280-s05",
+        "repeat": 1,
+        "arm": "sekb-confirmed",
+        "caseDigest": "d0ad674f944b24f30eb67d65ab1cf37f41067686d8f48c619ea9da774dcaed60",
+        "pairSeed": 46,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 137
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [
+        "harness/specs/tasks/harness-gap-credential-use-boundary.md"
+      ],
+      "startedAt": "2026-11-08T20:58:53.114Z",
+      "endedAt": "2026-11-08T20:59:23.315Z",
+      "receiptSha256": "ac3423a00f84657d349de59f6c98d9c52e296b8562f800675d21623b92f5df5d",
+      "knownTokens": 55626,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0280-s05-2-sekb-shadow",
+        "caseId": "tf-0280-s05",
+        "repeat": 2,
+        "arm": "sekb-shadow",
+        "caseDigest": "d0ad674f944b24f30eb67d65ab1cf37f41067686d8f48c619ea9da774dcaed60",
+        "pairSeed": 47,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 138
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T20:59:25.089Z",
+      "endedAt": "2026-11-08T21:00:07.812Z",
+      "receiptSha256": "b051c66fb2908ba41eb8080ec21afed8f82ff02c6297461a14ee90852c5498a8",
+      "knownTokens": 53643,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0280-s05-2-sekb-confirmed",
+        "caseId": "tf-0280-s05",
+        "repeat": 2,
+        "arm": "sekb-confirmed",
+        "caseDigest": "d0ad674f944b24f30eb67d65ab1cf37f41067686d8f48c619ea9da774dcaed60",
+        "pairSeed": 47,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 139
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:00:09.535Z",
+      "endedAt": "2026-11-08T21:00:49.527Z",
+      "receiptSha256": "e0831692976506146273476ea3928c2fb8760796faa4865a3ec4eaa8a35f6665",
+      "knownTokens": 54079,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0280-s05-2-sekb-off",
+        "caseId": "tf-0280-s05",
+        "repeat": 2,
+        "arm": "sekb-off",
+        "caseDigest": "d0ad674f944b24f30eb67d65ab1cf37f41067686d8f48c619ea9da774dcaed60",
+        "pairSeed": 47,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 140
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "docs/dev/harness-gap-closure/s05-credential-use-boundary.md",
+        "harness/specs/tasks/harness-gap-credential-use-boundary.md"
+      ],
+      "startedAt": "2026-11-08T21:00:50.858Z",
+      "endedAt": "2026-11-08T21:01:27.864Z",
+      "receiptSha256": "ec3a8fb08085c0e0d16bd8f20c77cfffedb488e49d002a3c1d4a46dabeabdb74",
+      "knownTokens": 55118,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0280-s05-3-sekb-confirmed",
+        "caseId": "tf-0280-s05",
+        "repeat": 3,
+        "arm": "sekb-confirmed",
+        "caseDigest": "d0ad674f944b24f30eb67d65ab1cf37f41067686d8f48c619ea9da774dcaed60",
+        "pairSeed": 48,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 141
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [
+        "docs/dev/harness-gap-closure/s05-credential-use-boundary.md",
+        "harness/specs/tasks/harness-gap-credential-use-boundary.md"
+      ],
+      "startedAt": "2026-11-08T21:01:29.190Z",
+      "endedAt": "2026-11-08T21:02:16.151Z",
+      "receiptSha256": "06db0e8c5fdfb96127e1c7b76aa93e9272252d80b28ad0d2d7b0b504e58a3315",
+      "knownTokens": 56726,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0280-s05-3-sekb-off",
+        "caseId": "tf-0280-s05",
+        "repeat": 3,
+        "arm": "sekb-off",
+        "caseDigest": "d0ad674f944b24f30eb67d65ab1cf37f41067686d8f48c619ea9da774dcaed60",
+        "pairSeed": 48,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 142
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [
+        "docs/dev/harness-gap-closure/s05-credential-use-boundary.md",
+        "harness/specs/tasks/harness-gap-credential-use-boundary.md"
+      ],
+      "startedAt": "2026-11-08T21:02:17.485Z",
+      "endedAt": "2026-11-08T21:02:50.146Z",
+      "receiptSha256": "ce1710f3e168daa9dfc2ff4f5b0d8b90e08839c6ae64ff6cf4925855df303967",
+      "knownTokens": 54823,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0280-s05-3-sekb-shadow",
+        "caseId": "tf-0280-s05",
+        "repeat": 3,
+        "arm": "sekb-shadow",
+        "caseDigest": "d0ad674f944b24f30eb67d65ab1cf37f41067686d8f48c619ea9da774dcaed60",
+        "pairSeed": 48,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 143
+      },
+      "status": "completed",
+      "outcome": "pass",
+      "failureCategory": null,
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "docs/dev/harness-gap-closure/s05-credential-use-boundary.md",
+        "harness/specs/tasks/harness-gap-credential-use-boundary.md"
+      ],
+      "startedAt": "2026-11-08T21:02:51.509Z",
+      "endedAt": "2026-11-08T21:04:12.807Z",
+      "receiptSha256": "939f45148e58c6a70b9fa931417db62143dac11197f2b53ee7636c33c6c0d4af",
+      "knownTokens": 57852,
+      "oracle": {
+        "revision": "eda64ac3defe18e9c42de31d60e39722f40407e5",
+        "digest": "4f9e8acf25d909851d6512f6dee420dd02c1d927340466317e89c584c1d452a7",
+        "reports": [
+          {
+            "kind": "vitest",
+            "exitCode": 0,
+            "totalTests": 4,
+            "failedTests": 0
+          },
+          {
+            "kind": "vitest",
+            "exitCode": 0,
+            "totalTests": 15,
+            "failedTests": 0
+          }
+        ]
+      }
+    },
+    {
+      "slot": {
+        "id": "tf-0281-s06-1-sekb-shadow",
+        "caseId": "tf-0281-s06",
+        "repeat": 1,
+        "arm": "sekb-shadow",
+        "caseDigest": "43bef8d37c44e6d36e647f0216ba15aef75b778e4d4760651f00bbf7f3013d72",
+        "pairSeed": 49,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 144
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "openclaw_runtime/src/runtime-core/memory-effect-receipt.ts"
+      ],
+      "startedAt": "2026-11-08T21:04:14.354Z",
+      "endedAt": "2026-11-08T21:05:06.370Z",
+      "receiptSha256": "b96771549bebc0c568058c97a9542e4a4bbc887d96af7c1583817730cf3dcff8",
+      "knownTokens": 106390,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0281-s06-1-sekb-confirmed",
+        "caseId": "tf-0281-s06",
+        "repeat": 1,
+        "arm": "sekb-confirmed",
+        "caseDigest": "43bef8d37c44e6d36e647f0216ba15aef75b778e4d4760651f00bbf7f3013d72",
+        "pairSeed": 49,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 145
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:05:10.114Z",
+      "endedAt": "2026-11-08T21:05:50.019Z",
+      "receiptSha256": "6d900e7f21080972afe360158765a321130f6be43cdeb46fab30bef34f1d5ac3",
+      "knownTokens": 111485,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0281-s06-1-sekb-off",
+        "caseId": "tf-0281-s06",
+        "repeat": 1,
+        "arm": "sekb-off",
+        "caseDigest": "43bef8d37c44e6d36e647f0216ba15aef75b778e4d4760651f00bbf7f3013d72",
+        "pairSeed": 49,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 146
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [
+        "openclaw_runtime/src/runtime-core/memory-effect-receipt.ts",
+        "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts"
+      ],
+      "startedAt": "2026-11-08T21:05:51.507Z",
+      "endedAt": "2026-11-08T21:06:39.627Z",
+      "receiptSha256": "f50b98d8d8574704efd8a04ebc0c04c03de2b02614c1049ee452fcb10440d074",
+      "knownTokens": 117657,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0281-s06-2-sekb-confirmed",
+        "caseId": "tf-0281-s06",
+        "repeat": 2,
+        "arm": "sekb-confirmed",
+        "caseDigest": "43bef8d37c44e6d36e647f0216ba15aef75b778e4d4760651f00bbf7f3013d72",
+        "pairSeed": 50,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 147
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [],
+      "startedAt": "2026-11-08T21:06:41.068Z",
+      "endedAt": "2026-11-08T21:07:53.148Z",
+      "receiptSha256": "e2b1aa48becbf3b64420acb55bf0bcd959bf712a9d572fc21bbae9b07da8e125",
+      "knownTokens": 119927,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0281-s06-2-sekb-off",
+        "caseId": "tf-0281-s06",
+        "repeat": 2,
+        "arm": "sekb-off",
+        "caseDigest": "43bef8d37c44e6d36e647f0216ba15aef75b778e4d4760651f00bbf7f3013d72",
+        "pairSeed": 50,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 148
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [],
+      "startedAt": "2026-11-08T21:07:54.789Z",
+      "endedAt": "2026-11-08T21:08:28.240Z",
+      "receiptSha256": "d6e8c83c567d6e9aa1808ae008b801ff359db514b3678673b516f9c7e3442fed",
+      "knownTokens": 106483,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0281-s06-2-sekb-shadow",
+        "caseId": "tf-0281-s06",
+        "repeat": 2,
+        "arm": "sekb-shadow",
+        "caseDigest": "43bef8d37c44e6d36e647f0216ba15aef75b778e4d4760651f00bbf7f3013d72",
+        "pairSeed": 50,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 149
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:08:29.724Z",
+      "endedAt": "2026-11-08T21:09:05.477Z",
+      "receiptSha256": "c42e9191260e80cf690e1db9cef11d4b3f1c788ffa760b15c03383a0d00e6aa5",
+      "knownTokens": 110608,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0281-s06-3-sekb-off",
+        "caseId": "tf-0281-s06",
+        "repeat": 3,
+        "arm": "sekb-off",
+        "caseDigest": "43bef8d37c44e6d36e647f0216ba15aef75b778e4d4760651f00bbf7f3013d72",
+        "pairSeed": 51,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 150
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:09:07.090Z",
+      "endedAt": "2026-11-08T21:10:19.311Z",
+      "receiptSha256": "b4023a622efe4dd9d8992e93f9ff9dea992957d7123a86e768fbd21d4b3558ad",
+      "knownTokens": 113782,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0281-s06-3-sekb-shadow",
+        "caseId": "tf-0281-s06",
+        "repeat": 3,
+        "arm": "sekb-shadow",
+        "caseDigest": "43bef8d37c44e6d36e647f0216ba15aef75b778e4d4760651f00bbf7f3013d72",
+        "pairSeed": 51,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 151
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:10:20.890Z",
+      "endedAt": "2026-11-08T21:11:03.162Z",
+      "receiptSha256": "1443f9af1a9e909fa1460fd735e996c554e67cc75ae31d24099a3e26f9b9a3e2",
+      "knownTokens": 117404,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0281-s06-3-sekb-confirmed",
+        "caseId": "tf-0281-s06",
+        "repeat": 3,
+        "arm": "sekb-confirmed",
+        "caseDigest": "43bef8d37c44e6d36e647f0216ba15aef75b778e4d4760651f00bbf7f3013d72",
+        "pairSeed": 51,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 152
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [
+        "openclaw_runtime/src/runtime-core/memory-effect-receipt.ts"
+      ],
+      "startedAt": "2026-11-08T21:11:04.760Z",
+      "endedAt": "2026-11-08T21:12:07.500Z",
+      "receiptSha256": "a71e9b61526f33d1ea01e01183a1fbb7597ca7e068a9e5ba6f7e59570ad8a641",
+      "knownTokens": 114554,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0282-s07-1-sekb-confirmed",
+        "caseId": "tf-0282-s07",
+        "repeat": 1,
+        "arm": "sekb-confirmed",
+        "caseDigest": "d206bc25db99c36aef610c0e735a9e2edaf5d65f5cb25a4a40d07e46434e723f",
+        "pairSeed": 52,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 153
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts"
+      ],
+      "startedAt": "2026-11-08T21:12:09.254Z",
+      "endedAt": "2026-11-08T21:12:52.998Z",
+      "receiptSha256": "0980b15567f08256c1455443c6dc412f76f0979f23596298cce263d2b8ee5513",
+      "knownTokens": 36862,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0282-s07-1-sekb-off",
+        "caseId": "tf-0282-s07",
+        "repeat": 1,
+        "arm": "sekb-off",
+        "caseDigest": "d206bc25db99c36aef610c0e735a9e2edaf5d65f5cb25a4a40d07e46434e723f",
+        "pairSeed": 52,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 154
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [
+        "openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts"
+      ],
+      "startedAt": "2026-11-08T21:12:54.610Z",
+      "endedAt": "2026-11-08T21:13:55.193Z",
+      "receiptSha256": "4c9647b9ebf90bb481bc0c9722b81db7822d5bacb98f7256865c935e27048d03",
+      "knownTokens": 41956,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0282-s07-1-sekb-shadow",
+        "caseId": "tf-0282-s07",
+        "repeat": 1,
+        "arm": "sekb-shadow",
+        "caseDigest": "d206bc25db99c36aef610c0e735a9e2edaf5d65f5cb25a4a40d07e46434e723f",
+        "pairSeed": 52,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 155
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:13:56.589Z",
+      "endedAt": "2026-11-08T21:14:35.087Z",
+      "receiptSha256": "ce1f240b9100270d7d2936172410535de2cee19fed7e57f4e3268642ee51727e",
+      "knownTokens": 34479,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0282-s07-2-sekb-off",
+        "caseId": "tf-0282-s07",
+        "repeat": 2,
+        "arm": "sekb-off",
+        "caseDigest": "d206bc25db99c36aef610c0e735a9e2edaf5d65f5cb25a4a40d07e46434e723f",
+        "pairSeed": 53,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 156
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:14:36.690Z",
+      "endedAt": "2026-11-08T21:15:28.087Z",
+      "receiptSha256": "dbe22ef5209a887c33f2dabf60c9d158999bd93a8b3be9b9eb9de36104b0ff44",
+      "knownTokens": 35430,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0282-s07-2-sekb-shadow",
+        "caseId": "tf-0282-s07",
+        "repeat": 2,
+        "arm": "sekb-shadow",
+        "caseDigest": "d206bc25db99c36aef610c0e735a9e2edaf5d65f5cb25a4a40d07e46434e723f",
+        "pairSeed": 53,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 157
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [
+        "openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts"
+      ],
+      "startedAt": "2026-11-08T21:15:29.509Z",
+      "endedAt": "2026-11-08T21:16:08.174Z",
+      "receiptSha256": "ef4b881549a0e866ddd7974f17671457763fbc4a043d10c14eeb10df09671ed8",
+      "knownTokens": 33655,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0282-s07-2-sekb-confirmed",
+        "caseId": "tf-0282-s07",
+        "repeat": 2,
+        "arm": "sekb-confirmed",
+        "caseDigest": "d206bc25db99c36aef610c0e735a9e2edaf5d65f5cb25a4a40d07e46434e723f",
+        "pairSeed": 53,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 158
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "docs/dev/harness-gap-closure/s07-verifier-completion-verdict.md",
+        "harness/specs/tasks/harness-gap-verifier-completion-verdict.md",
+        "openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts"
+      ],
+      "startedAt": "2026-11-08T21:16:09.989Z",
+      "endedAt": "2026-11-08T21:17:33.405Z",
+      "receiptSha256": "f0e0d0d39f7206cf5611a3bb8e3e0cf67954d358e792bffe4e44676506b3eab7",
+      "knownTokens": 39991,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0282-s07-3-sekb-shadow",
+        "caseId": "tf-0282-s07",
+        "repeat": 3,
+        "arm": "sekb-shadow",
+        "caseDigest": "d206bc25db99c36aef610c0e735a9e2edaf5d65f5cb25a4a40d07e46434e723f",
+        "pairSeed": 54,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 159
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T21:17:36.556Z",
+      "endedAt": "2026-11-08T21:18:45.468Z",
+      "receiptSha256": "445e4e320a82ecec347f5caecce4ab7a1a4aae71d9efc9c50a225d21fd129504",
+      "knownTokens": 34066,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0282-s07-3-sekb-confirmed",
+        "caseId": "tf-0282-s07",
+        "repeat": 3,
+        "arm": "sekb-confirmed",
+        "caseDigest": "d206bc25db99c36aef610c0e735a9e2edaf5d65f5cb25a4a40d07e46434e723f",
+        "pairSeed": 54,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 160
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "docs/dev/harness-gap-closure/s07-verifier-completion-verdict.md",
+        "harness/specs/tasks/harness-gap-verifier-completion-verdict.md",
+        "openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts"
+      ],
+      "startedAt": "2026-11-08T21:18:47.478Z",
+      "endedAt": "2026-11-08T21:19:44.147Z",
+      "receiptSha256": "ee9d82220cea4236bb06ffae00f92e7b2cbcde14fc03dcd26c8ddece6d6b3c75",
+      "knownTokens": 44837,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0282-s07-3-sekb-off",
+        "caseId": "tf-0282-s07",
+        "repeat": 3,
+        "arm": "sekb-off",
+        "caseDigest": "d206bc25db99c36aef610c0e735a9e2edaf5d65f5cb25a4a40d07e46434e723f",
+        "pairSeed": 54,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 161
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:19:45.843Z",
+      "endedAt": "2026-11-08T21:20:22.455Z",
+      "receiptSha256": "6b1b58c69a548541afa6bc666e51539b465d2ce5788ce7128f8fe90e6a0a1866",
+      "knownTokens": 37014,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0293-a01-1-sekb-off",
+        "caseId": "tf-0293-a01",
+        "repeat": 1,
+        "arm": "sekb-off",
+        "caseDigest": "f401e8ea4ebc6a388cb22da0436d958a02cae70bb169164ef2f2b99bdc21edf8",
+        "pairSeed": 55,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 162
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [],
+      "startedAt": "2026-11-08T21:20:24.897Z",
+      "endedAt": "2026-11-08T21:22:06.521Z",
+      "receiptSha256": "9a6916a878fa6c3c3a2b980dabc7a7eb7b4a3f893b5a714dc4b3aa0e98725166",
+      "knownTokens": 80149,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0293-a01-1-sekb-shadow",
+        "caseId": "tf-0293-a01",
+        "repeat": 1,
+        "arm": "sekb-shadow",
+        "caseDigest": "f401e8ea4ebc6a388cb22da0436d958a02cae70bb169164ef2f2b99bdc21edf8",
+        "pairSeed": 55,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 163
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:22:11.306Z",
+      "endedAt": "2026-11-08T21:23:01.400Z",
+      "receiptSha256": "b80d1a03ddaa951de44595952a9687bdd4a4e40f4f899acf662c4ae6550e7a3a",
+      "knownTokens": 78020,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0293-a01-1-sekb-confirmed",
+        "caseId": "tf-0293-a01",
+        "repeat": 1,
+        "arm": "sekb-confirmed",
+        "caseDigest": "f401e8ea4ebc6a388cb22da0436d958a02cae70bb169164ef2f2b99bdc21edf8",
+        "pairSeed": 55,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 164
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:23:02.891Z",
+      "endedAt": "2026-11-08T21:23:58.898Z",
+      "receiptSha256": "60667eb0e4d397e45390da9458b27b218889e649678a53c8d5c14f1cf8747473",
+      "knownTokens": 79403,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0293-a01-2-sekb-shadow",
+        "caseId": "tf-0293-a01",
+        "repeat": 2,
+        "arm": "sekb-shadow",
+        "caseDigest": "f401e8ea4ebc6a388cb22da0436d958a02cae70bb169164ef2f2b99bdc21edf8",
+        "pairSeed": 56,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 165
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:24:00.535Z",
+      "endedAt": "2026-11-08T21:24:36.611Z",
+      "receiptSha256": "9a238a469a49ced2f69b7868bd0943b46caf2432ec2f6e9efe19b5b8b9762b36",
+      "knownTokens": 81066,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0293-a01-2-sekb-confirmed",
+        "caseId": "tf-0293-a01",
+        "repeat": 2,
+        "arm": "sekb-confirmed",
+        "caseDigest": "f401e8ea4ebc6a388cb22da0436d958a02cae70bb169164ef2f2b99bdc21edf8",
+        "pairSeed": 56,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 166
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:24:38.045Z",
+      "endedAt": "2026-11-08T21:25:27.997Z",
+      "receiptSha256": "d10a7457587f96a096a0641c6fe9cfc1290c986106e7d9760a3bb39ccb08634d",
+      "knownTokens": 80052,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0293-a01-2-sekb-off",
+        "caseId": "tf-0293-a01",
+        "repeat": 2,
+        "arm": "sekb-off",
+        "caseDigest": "f401e8ea4ebc6a388cb22da0436d958a02cae70bb169164ef2f2b99bdc21edf8",
+        "pairSeed": 56,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 167
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:25:29.586Z",
+      "endedAt": "2026-11-08T21:26:12.840Z",
+      "receiptSha256": "56206577d732de20b54e06d7084e9655c987e797b3d25dcc3042d8032f469c61",
+      "knownTokens": 78930,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0293-a01-3-sekb-confirmed",
+        "caseId": "tf-0293-a01",
+        "repeat": 3,
+        "arm": "sekb-confirmed",
+        "caseDigest": "f401e8ea4ebc6a388cb22da0436d958a02cae70bb169164ef2f2b99bdc21edf8",
+        "pairSeed": 57,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 168
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [
+        "harness/specs/tasks/a1-layered-isolation-pilot.md"
+      ],
+      "startedAt": "2026-11-08T21:26:14.337Z",
+      "endedAt": "2026-11-08T21:26:55.555Z",
+      "receiptSha256": "3642b6cd00c05ac6c452463d08eaaf35e35a881ae2b6ba338c072e40f4bf8365",
+      "knownTokens": 79356,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0293-a01-3-sekb-off",
+        "caseId": "tf-0293-a01",
+        "repeat": 3,
+        "arm": "sekb-off",
+        "caseDigest": "f401e8ea4ebc6a388cb22da0436d958a02cae70bb169164ef2f2b99bdc21edf8",
+        "pairSeed": 57,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 169
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "docs/dev/harness-gap-closure/a01-a1-isolation-gate.md",
+        "harness/specs/tasks/a1-layered-isolation-pilot.md",
+        "harness/specs/tasks/harness-gap-a01-isolation-pilot-reverify.md"
+      ],
+      "startedAt": "2026-11-08T21:26:57.013Z",
+      "endedAt": "2026-11-08T21:28:04.477Z",
+      "receiptSha256": "6dbcd25623bd188eb72758ab9c7cdff088cae8d2a84c7febcaac2199465a9f6d",
+      "knownTokens": 85402,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0293-a01-3-sekb-shadow",
+        "caseId": "tf-0293-a01",
+        "repeat": 3,
+        "arm": "sekb-shadow",
+        "caseDigest": "f401e8ea4ebc6a388cb22da0436d958a02cae70bb169164ef2f2b99bdc21edf8",
+        "pairSeed": 57,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 170
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T21:28:05.975Z",
+      "endedAt": "2026-11-08T21:28:50.798Z",
+      "receiptSha256": "6d66f51d1a0ea61b825465607f0e8228dcee617c7b8bcd0ffab469c12e16e806",
+      "knownTokens": 79047,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0294-a02-1-sekb-shadow",
+        "caseId": "tf-0294-a02",
+        "repeat": 1,
+        "arm": "sekb-shadow",
+        "caseDigest": "fe45ba112018a46d59a5dec5dac9871a2133492039232204cc5c57f9a624849c",
+        "pairSeed": 58,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 171
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:28:52.254Z",
+      "endedAt": "2026-11-08T21:29:27.532Z",
+      "receiptSha256": "165b6015ec0cfec6205b8874e796187dfb834e18c4c271992040eb72aa67da3c",
+      "knownTokens": 32777,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0294-a02-1-sekb-confirmed",
+        "caseId": "tf-0294-a02",
+        "repeat": 1,
+        "arm": "sekb-confirmed",
+        "caseDigest": "fe45ba112018a46d59a5dec5dac9871a2133492039232204cc5c57f9a624849c",
+        "pairSeed": 58,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 172
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [
+        "harness/specs/tasks/a2-multi-agent-orchestration-pilot.md"
+      ],
+      "startedAt": "2026-11-08T21:29:29.001Z",
+      "endedAt": "2026-11-08T21:30:08.944Z",
+      "receiptSha256": "6b16c04c207ce9444386bd3044144801587a08b959081348bfe25f5a0aa9de23",
+      "knownTokens": 36012,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0294-a02-1-sekb-off",
+        "caseId": "tf-0294-a02",
+        "repeat": 1,
+        "arm": "sekb-off",
+        "caseDigest": "fe45ba112018a46d59a5dec5dac9871a2133492039232204cc5c57f9a624849c",
+        "pairSeed": 58,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 173
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T21:30:10.392Z",
+      "endedAt": "2026-11-08T21:30:42.900Z",
+      "receiptSha256": "379a6424727f52f30ace1af0a1d4175882a1d3090f31b3a6b908dc5a5546f669",
+      "knownTokens": 32424,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0294-a02-2-sekb-confirmed",
+        "caseId": "tf-0294-a02",
+        "repeat": 2,
+        "arm": "sekb-confirmed",
+        "caseDigest": "fe45ba112018a46d59a5dec5dac9871a2133492039232204cc5c57f9a624849c",
+        "pairSeed": 59,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 174
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:30:44.342Z",
+      "endedAt": "2026-11-08T21:31:20.518Z",
+      "receiptSha256": "3af3bcf30075f5f36add869b55a194779f80835199a6b8653949a781ff2e3cca",
+      "knownTokens": 33956,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0294-a02-2-sekb-off",
+        "caseId": "tf-0294-a02",
+        "repeat": 2,
+        "arm": "sekb-off",
+        "caseDigest": "fe45ba112018a46d59a5dec5dac9871a2133492039232204cc5c57f9a624849c",
+        "pairSeed": 59,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 175
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:31:21.978Z",
+      "endedAt": "2026-11-08T21:31:56.702Z",
+      "receiptSha256": "da84dff5ba57cf7bb84547bba354628c60c8c9cfaf048963f49d056b9c257872",
+      "knownTokens": 32709,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0294-a02-2-sekb-shadow",
+        "caseId": "tf-0294-a02",
+        "repeat": 2,
+        "arm": "sekb-shadow",
+        "caseDigest": "fe45ba112018a46d59a5dec5dac9871a2133492039232204cc5c57f9a624849c",
+        "pairSeed": 59,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 176
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:31:58.384Z",
+      "endedAt": "2026-11-08T21:32:31.205Z",
+      "receiptSha256": "6157faae12fcf3b2c855e0378e7e0e35f9d43659b8cb9e677ab8dcf6b45ce7fd",
+      "knownTokens": 33042,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0294-a02-3-sekb-off",
+        "caseId": "tf-0294-a02",
+        "repeat": 3,
+        "arm": "sekb-off",
+        "caseDigest": "fe45ba112018a46d59a5dec5dac9871a2133492039232204cc5c57f9a624849c",
+        "pairSeed": 60,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 177
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [
+        "harness/specs/tasks/harness-gap-a02-orchestration-pilot-reverify.md"
+      ],
+      "startedAt": "2026-11-08T21:32:32.722Z",
+      "endedAt": "2026-11-08T21:33:11.253Z",
+      "receiptSha256": "d4e0965f5fdcd41529dd811b205e85277a9b280481ea0f5cea98044640808548",
+      "knownTokens": 34028,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0294-a02-3-sekb-shadow",
+        "caseId": "tf-0294-a02",
+        "repeat": 3,
+        "arm": "sekb-shadow",
+        "caseDigest": "fe45ba112018a46d59a5dec5dac9871a2133492039232204cc5c57f9a624849c",
+        "pairSeed": 60,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 178
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:33:12.731Z",
+      "endedAt": "2026-11-08T21:33:45.078Z",
+      "receiptSha256": "e6a2314d3819047b25cad90b767b2ec39d23646e5f741fae2ed691a553b0e986",
+      "knownTokens": 34889,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0294-a02-3-sekb-confirmed",
+        "caseId": "tf-0294-a02",
+        "repeat": 3,
+        "arm": "sekb-confirmed",
+        "caseDigest": "fe45ba112018a46d59a5dec5dac9871a2133492039232204cc5c57f9a624849c",
+        "pairSeed": 60,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 179
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:33:46.636Z",
+      "endedAt": "2026-11-08T21:34:57.094Z",
+      "receiptSha256": "ca78001b933db6680fe640efc87d28ba9b8ed3dd9bf7eb528ab9511e1dc0635d",
+      "knownTokens": 33940,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0295-a03-1-sekb-confirmed",
+        "caseId": "tf-0295-a03",
+        "repeat": 1,
+        "arm": "sekb-confirmed",
+        "caseDigest": "60cf7510173e6e53f19db81a8d06b5f7042f8f7a81125204b85d27d0fd600d18",
+        "pairSeed": 61,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 180
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "docs/dev/harness-gap-closure/a03-a3-resilience-gate.md",
+        "harness/specs/tasks/a3-runtime-resilience-pilot.md",
+        "harness/specs/tasks/harness-gap-a03-resilience-pilot-reverify.md"
+      ],
+      "startedAt": "2026-11-08T21:34:58.769Z",
+      "endedAt": "2026-11-08T21:35:41.216Z",
+      "receiptSha256": "aa59a7799ec9428272bcc7362d3e8576dd60b3d47f3511a6bce40cc686eb3494",
+      "knownTokens": 111795,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0295-a03-1-sekb-off",
+        "caseId": "tf-0295-a03",
+        "repeat": 1,
+        "arm": "sekb-off",
+        "caseDigest": "60cf7510173e6e53f19db81a8d06b5f7042f8f7a81125204b85d27d0fd600d18",
+        "pairSeed": 61,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 181
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "harness/specs/tasks/a3-runtime-resilience-pilot.md"
+      ],
+      "startedAt": "2026-11-08T21:35:42.702Z",
+      "endedAt": "2026-11-08T21:36:21.436Z",
+      "receiptSha256": "53ae1e6494a7d8e87938039a477439310e173c317675872164df81f0fe8e27df",
+      "knownTokens": 106570,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0295-a03-1-sekb-shadow",
+        "caseId": "tf-0295-a03",
+        "repeat": 1,
+        "arm": "sekb-shadow",
+        "caseDigest": "60cf7510173e6e53f19db81a8d06b5f7042f8f7a81125204b85d27d0fd600d18",
+        "pairSeed": 61,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 182
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:36:22.965Z",
+      "endedAt": "2026-11-08T21:37:00.246Z",
+      "receiptSha256": "7a24e58fbcbf5edf8a146d51c05497273827c59e845d3959242c1fb0abfe95fc",
+      "knownTokens": 106698,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0295-a03-2-sekb-off",
+        "caseId": "tf-0295-a03",
+        "repeat": 2,
+        "arm": "sekb-off",
+        "caseDigest": "60cf7510173e6e53f19db81a8d06b5f7042f8f7a81125204b85d27d0fd600d18",
+        "pairSeed": 62,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 183
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [],
+      "startedAt": "2026-11-08T21:37:01.913Z",
+      "endedAt": "2026-11-08T21:37:33.279Z",
+      "receiptSha256": "a541866b4e6da532a5f6f36e4392ff6481698468010df30bf66d2bf95e913f56",
+      "knownTokens": 105000,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0295-a03-2-sekb-shadow",
+        "caseId": "tf-0295-a03",
+        "repeat": 2,
+        "arm": "sekb-shadow",
+        "caseDigest": "60cf7510173e6e53f19db81a8d06b5f7042f8f7a81125204b85d27d0fd600d18",
+        "pairSeed": 62,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 184
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:37:34.773Z",
+      "endedAt": "2026-11-08T21:38:10.146Z",
+      "receiptSha256": "e7d2c29b62d9e9e9092e98f865227c722ace079b31d2c349cd8c83f993b71929",
+      "knownTokens": 106796,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0295-a03-2-sekb-confirmed",
+        "caseId": "tf-0295-a03",
+        "repeat": 2,
+        "arm": "sekb-confirmed",
+        "caseDigest": "60cf7510173e6e53f19db81a8d06b5f7042f8f7a81125204b85d27d0fd600d18",
+        "pairSeed": 62,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 185
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [
+        "harness/specs/tasks/a3-runtime-resilience-pilot.md"
+      ],
+      "startedAt": "2026-11-08T21:38:11.703Z",
+      "endedAt": "2026-11-08T21:39:09.356Z",
+      "receiptSha256": "240c8d5a21e04a7940cdf9d175b918aec7baaafd0ffc26a6fea49340bf55879f",
+      "knownTokens": 106901,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0295-a03-3-sekb-shadow",
+        "caseId": "tf-0295-a03",
+        "repeat": 3,
+        "arm": "sekb-shadow",
+        "caseDigest": "60cf7510173e6e53f19db81a8d06b5f7042f8f7a81125204b85d27d0fd600d18",
+        "pairSeed": 63,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 186
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "harness/specs/tasks/a3-runtime-resilience-pilot.md"
+      ],
+      "startedAt": "2026-11-08T21:39:14.409Z",
+      "endedAt": "2026-11-08T21:39:51.926Z",
+      "receiptSha256": "6c36a6d172601863f713e1b5d337020c29a4711598c00ae3533bd4ee7dffc921",
+      "knownTokens": 109578,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0295-a03-3-sekb-confirmed",
+        "caseId": "tf-0295-a03",
+        "repeat": 3,
+        "arm": "sekb-confirmed",
+        "caseDigest": "60cf7510173e6e53f19db81a8d06b5f7042f8f7a81125204b85d27d0fd600d18",
+        "pairSeed": 63,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 187
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:39:53.517Z",
+      "endedAt": "2026-11-08T21:40:30.278Z",
+      "receiptSha256": "bb8656d080feab84ac3ca0b31ec067befa641baca81394869c36e76220d79632",
+      "knownTokens": 106505,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0295-a03-3-sekb-off",
+        "caseId": "tf-0295-a03",
+        "repeat": 3,
+        "arm": "sekb-off",
+        "caseDigest": "60cf7510173e6e53f19db81a8d06b5f7042f8f7a81125204b85d27d0fd600d18",
+        "pairSeed": 63,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 188
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [
+        "harness/specs/tasks/harness-gap-a03-resilience-pilot-reverify.md"
+      ],
+      "startedAt": "2026-11-08T21:40:31.905Z",
+      "endedAt": "2026-11-08T21:41:11.878Z",
+      "receiptSha256": "825b3363fb88a39b7087ff34d78a0acca960257acfd6cda0b20007c7214fc7f9",
+      "knownTokens": 105360,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0296-a04-1-sekb-off",
+        "caseId": "tf-0296-a04",
+        "repeat": 1,
+        "arm": "sekb-off",
+        "caseDigest": "e5f253a844550cd3f1da551f345588818da89c43677e35cf9b51fd8bf3fcab76",
+        "pairSeed": 64,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 189
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:41:13.449Z",
+      "endedAt": "2026-11-08T21:41:58.580Z",
+      "receiptSha256": "bc27db46236c2bf6dabd4c8a96e5b98f70548555f925fe46765fe9a7f1be054d",
+      "knownTokens": 59511,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0296-a04-1-sekb-shadow",
+        "caseId": "tf-0296-a04",
+        "repeat": 1,
+        "arm": "sekb-shadow",
+        "caseDigest": "e5f253a844550cd3f1da551f345588818da89c43677e35cf9b51fd8bf3fcab76",
+        "pairSeed": 64,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 190
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 5,
+      "edits": [
+        "harness/specs/tasks/a4-decision-quality-pilot.md"
+      ],
+      "startedAt": "2026-11-08T21:42:00.131Z",
+      "endedAt": "2026-11-08T21:42:41.386Z",
+      "receiptSha256": "7ea24c2eee3149d41bb8fece0f8aefcf2463f20b9472dec39cf9d1c26f7c33e6",
+      "knownTokens": 60661,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0296-a04-1-sekb-confirmed",
+        "caseId": "tf-0296-a04",
+        "repeat": 1,
+        "arm": "sekb-confirmed",
+        "caseDigest": "e5f253a844550cd3f1da551f345588818da89c43677e35cf9b51fd8bf3fcab76",
+        "pairSeed": 64,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 191
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:42:42.998Z",
+      "endedAt": "2026-11-08T21:43:21.181Z",
+      "receiptSha256": "58010fe4a1d25e7f80b96ebf88b918d38d4b2c94c4f982563512af938900cea6",
+      "knownTokens": 58717,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0296-a04-2-sekb-shadow",
+        "caseId": "tf-0296-a04",
+        "repeat": 2,
+        "arm": "sekb-shadow",
+        "caseDigest": "e5f253a844550cd3f1da551f345588818da89c43677e35cf9b51fd8bf3fcab76",
+        "pairSeed": 65,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 192
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:43:22.774Z",
+      "endedAt": "2026-11-08T21:44:03.052Z",
+      "receiptSha256": "ef9a3bb67e7e42396b144f5c0f2c55b90859507eafa3bbd42380a2f1873638a5",
+      "knownTokens": 59229,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0296-a04-2-sekb-confirmed",
+        "caseId": "tf-0296-a04",
+        "repeat": 2,
+        "arm": "sekb-confirmed",
+        "caseDigest": "e5f253a844550cd3f1da551f345588818da89c43677e35cf9b51fd8bf3fcab76",
+        "pairSeed": 65,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 193
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 4,
+      "edits": [
+        "harness/specs/tasks/a4-decision-quality-pilot.md"
+      ],
+      "startedAt": "2026-11-08T21:44:04.674Z",
+      "endedAt": "2026-11-08T21:45:15.475Z",
+      "receiptSha256": "81adf127a65c3bb187228a37abefda7f654dbace7dc54a0ef0e4340cef1e36da",
+      "knownTokens": 67230,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0296-a04-2-sekb-off",
+        "caseId": "tf-0296-a04",
+        "repeat": 2,
+        "arm": "sekb-off",
+        "caseDigest": "e5f253a844550cd3f1da551f345588818da89c43677e35cf9b51fd8bf3fcab76",
+        "pairSeed": 65,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 194
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 7,
+      "edits": [],
+      "startedAt": "2026-11-08T21:45:17.795Z",
+      "endedAt": "2026-11-08T21:46:00.640Z",
+      "receiptSha256": "cc0c35dc495b2fc093e651412df1f9a1b756feae10f34d1a2b99845eebefa503",
+      "knownTokens": 60394,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0296-a04-3-sekb-confirmed",
+        "caseId": "tf-0296-a04",
+        "repeat": 3,
+        "arm": "sekb-confirmed",
+        "caseDigest": "e5f253a844550cd3f1da551f345588818da89c43677e35cf9b51fd8bf3fcab76",
+        "pairSeed": 66,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 195
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:46:02.302Z",
+      "endedAt": "2026-11-08T21:46:49.568Z",
+      "receiptSha256": "6855736b5ccc2ef155ce8b6acdd65a61dbb86116b36087789ce3ce80d7c7c01b",
+      "knownTokens": 59036,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0296-a04-3-sekb-off",
+        "caseId": "tf-0296-a04",
+        "repeat": 3,
+        "arm": "sekb-off",
+        "caseDigest": "e5f253a844550cd3f1da551f345588818da89c43677e35cf9b51fd8bf3fcab76",
+        "pairSeed": 66,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 196
+      },
+      "status": "completed",
+      "outcome": "fail",
+      "failureCategory": "model-turn-limit",
+      "providerCalls": 4,
+      "toolCalls": 6,
+      "edits": [],
+      "startedAt": "2026-11-08T21:46:51.436Z",
+      "endedAt": "2026-11-08T21:47:36.496Z",
+      "receiptSha256": "2d879a3997d6b194a5a5d085e535da26500efbd721dadf4b666b67dcaaf8ab4d",
+      "knownTokens": 57468,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0296-a04-3-sekb-shadow",
+        "caseId": "tf-0296-a04",
+        "repeat": 3,
+        "arm": "sekb-shadow",
+        "caseDigest": "e5f253a844550cd3f1da551f345588818da89c43677e35cf9b51fd8bf3fcab76",
+        "pairSeed": 66,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 197
+      },
+      "status": "crash",
+      "outcome": "crash",
+      "failureCategory": "budget",
+      "providerCalls": 2,
+      "toolCalls": 4,
+      "edits": [],
+      "startedAt": "2026-11-08T21:47:38.067Z",
+      "endedAt": "2026-11-08T21:48:09.400Z",
+      "receiptSha256": "2538262c21fa2833b9de4e9e44c860d92f1e09b6ab7d12f8c7c2af4b9e6d482b",
+      "knownTokens": 29251,
+      "oracle": null
+    },
+    {
+      "slot": {
+        "id": "tf-0297-a05-1-sekb-shadow",
+        "caseId": "tf-0297-a05",
+        "repeat": 1,
+        "arm": "sekb-shadow",
+        "caseDigest": "f63272c0e8cc7e65d1d358338d38d9cdf68e74a66c5f97bfe244d3f0fcbe083b",
+        "pairSeed": 67,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 198
+      },
+      "status": "not-run",
+      "outcome": "missing",
+      "providerCalls": 0
+    },
+    {
+      "slot": {
+        "id": "tf-0297-a05-1-sekb-confirmed",
+        "caseId": "tf-0297-a05",
+        "repeat": 1,
+        "arm": "sekb-confirmed",
+        "caseDigest": "f63272c0e8cc7e65d1d358338d38d9cdf68e74a66c5f97bfe244d3f0fcbe083b",
+        "pairSeed": 67,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 199
+      },
+      "status": "not-run",
+      "outcome": "missing",
+      "providerCalls": 0
+    },
+    {
+      "slot": {
+        "id": "tf-0297-a05-1-sekb-off",
+        "caseId": "tf-0297-a05",
+        "repeat": 1,
+        "arm": "sekb-off",
+        "caseDigest": "f63272c0e8cc7e65d1d358338d38d9cdf68e74a66c5f97bfe244d3f0fcbe083b",
+        "pairSeed": 67,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 200
+      },
+      "status": "not-run",
+      "outcome": "missing",
+      "providerCalls": 0
+    },
+    {
+      "slot": {
+        "id": "tf-0297-a05-2-sekb-confirmed",
+        "caseId": "tf-0297-a05",
+        "repeat": 2,
+        "arm": "sekb-confirmed",
+        "caseDigest": "f63272c0e8cc7e65d1d358338d38d9cdf68e74a66c5f97bfe244d3f0fcbe083b",
+        "pairSeed": 68,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 201
+      },
+      "status": "not-run",
+      "outcome": "missing",
+      "providerCalls": 0
+    },
+    {
+      "slot": {
+        "id": "tf-0297-a05-2-sekb-off",
+        "caseId": "tf-0297-a05",
+        "repeat": 2,
+        "arm": "sekb-off",
+        "caseDigest": "f63272c0e8cc7e65d1d358338d38d9cdf68e74a66c5f97bfe244d3f0fcbe083b",
+        "pairSeed": 68,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 202
+      },
+      "status": "not-run",
+      "outcome": "missing",
+      "providerCalls": 0
+    },
+    {
+      "slot": {
+        "id": "tf-0297-a05-2-sekb-shadow",
+        "caseId": "tf-0297-a05",
+        "repeat": 2,
+        "arm": "sekb-shadow",
+        "caseDigest": "f63272c0e8cc7e65d1d358338d38d9cdf68e74a66c5f97bfe244d3f0fcbe083b",
+        "pairSeed": 68,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 203
+      },
+      "status": "not-run",
+      "outcome": "missing",
+      "providerCalls": 0
+    },
+    {
+      "slot": {
+        "id": "tf-0297-a05-3-sekb-off",
+        "caseId": "tf-0297-a05",
+        "repeat": 3,
+        "arm": "sekb-off",
+        "caseDigest": "f63272c0e8cc7e65d1d358338d38d9cdf68e74a66c5f97bfe244d3f0fcbe083b",
+        "pairSeed": 69,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 204
+      },
+      "status": "not-run",
+      "outcome": "missing",
+      "providerCalls": 0
+    },
+    {
+      "slot": {
+        "id": "tf-0297-a05-3-sekb-shadow",
+        "caseId": "tf-0297-a05",
+        "repeat": 3,
+        "arm": "sekb-shadow",
+        "caseDigest": "f63272c0e8cc7e65d1d358338d38d9cdf68e74a66c5f97bfe244d3f0fcbe083b",
+        "pairSeed": 69,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 205
+      },
+      "status": "not-run",
+      "outcome": "missing",
+      "providerCalls": 0
+    },
+    {
+      "slot": {
+        "id": "tf-0297-a05-3-sekb-confirmed",
+        "caseId": "tf-0297-a05",
+        "repeat": 3,
+        "arm": "sekb-confirmed",
+        "caseDigest": "f63272c0e8cc7e65d1d358338d38d9cdf68e74a66c5f97bfe244d3f0fcbe083b",
+        "pairSeed": 69,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 206
+      },
+      "status": "not-run",
+      "outcome": "missing",
+      "providerCalls": 0
+    },
+    {
+      "slot": {
+        "id": "tf-0298-a06-1-sekb-confirmed",
+        "caseId": "tf-0298-a06",
+        "repeat": 1,
+        "arm": "sekb-confirmed",
+        "caseDigest": "17615adde80e63cb04fcdad9848a3c82f8291cd50a18bf1330d437ba77b2695a",
+        "pairSeed": 70,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 207
+      },
+      "status": "not-run",
+      "outcome": "missing",
+      "providerCalls": 0
+    },
+    {
+      "slot": {
+        "id": "tf-0298-a06-1-sekb-off",
+        "caseId": "tf-0298-a06",
+        "repeat": 1,
+        "arm": "sekb-off",
+        "caseDigest": "17615adde80e63cb04fcdad9848a3c82f8291cd50a18bf1330d437ba77b2695a",
+        "pairSeed": 70,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 208
+      },
+      "status": "not-run",
+      "outcome": "missing",
+      "providerCalls": 0
+    },
+    {
+      "slot": {
+        "id": "tf-0298-a06-1-sekb-shadow",
+        "caseId": "tf-0298-a06",
+        "repeat": 1,
+        "arm": "sekb-shadow",
+        "caseDigest": "17615adde80e63cb04fcdad9848a3c82f8291cd50a18bf1330d437ba77b2695a",
+        "pairSeed": 70,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 209
+      },
+      "status": "not-run",
+      "outcome": "missing",
+      "providerCalls": 0
+    },
+    {
+      "slot": {
+        "id": "tf-0298-a06-2-sekb-off",
+        "caseId": "tf-0298-a06",
+        "repeat": 2,
+        "arm": "sekb-off",
+        "caseDigest": "17615adde80e63cb04fcdad9848a3c82f8291cd50a18bf1330d437ba77b2695a",
+        "pairSeed": 71,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 210
+      },
+      "status": "not-run",
+      "outcome": "missing",
+      "providerCalls": 0
+    },
+    {
+      "slot": {
+        "id": "tf-0298-a06-2-sekb-shadow",
+        "caseId": "tf-0298-a06",
+        "repeat": 2,
+        "arm": "sekb-shadow",
+        "caseDigest": "17615adde80e63cb04fcdad9848a3c82f8291cd50a18bf1330d437ba77b2695a",
+        "pairSeed": 71,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 211
+      },
+      "status": "not-run",
+      "outcome": "missing",
+      "providerCalls": 0
+    },
+    {
+      "slot": {
+        "id": "tf-0298-a06-2-sekb-confirmed",
+        "caseId": "tf-0298-a06",
+        "repeat": 2,
+        "arm": "sekb-confirmed",
+        "caseDigest": "17615adde80e63cb04fcdad9848a3c82f8291cd50a18bf1330d437ba77b2695a",
+        "pairSeed": 71,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 212
+      },
+      "status": "not-run",
+      "outcome": "missing",
+      "providerCalls": 0
+    },
+    {
+      "slot": {
+        "id": "tf-0298-a06-3-sekb-shadow",
+        "caseId": "tf-0298-a06",
+        "repeat": 3,
+        "arm": "sekb-shadow",
+        "caseDigest": "17615adde80e63cb04fcdad9848a3c82f8291cd50a18bf1330d437ba77b2695a",
+        "pairSeed": 72,
+        "flagsDigest": "7234a8ab9689c5623eaea398639958e019182f5645509b47e133000a40cd9fd5",
+        "position": 213
+      },
+      "status": "not-run",
+      "outcome": "missing",
+      "providerCalls": 0
+    },
+    {
+      "slot": {
+        "id": "tf-0298-a06-3-sekb-confirmed",
+        "caseId": "tf-0298-a06",
+        "repeat": 3,
+        "arm": "sekb-confirmed",
+        "caseDigest": "17615adde80e63cb04fcdad9848a3c82f8291cd50a18bf1330d437ba77b2695a",
+        "pairSeed": 72,
+        "flagsDigest": "405b8ba7a56a4384d11da7532757ac6627df8153ef6f4a5b4cfbe479e627e73f",
+        "position": 214
+      },
+      "status": "not-run",
+      "outcome": "missing",
+      "providerCalls": 0
+    },
+    {
+      "slot": {
+        "id": "tf-0298-a06-3-sekb-off",
+        "caseId": "tf-0298-a06",
+        "repeat": 3,
+        "arm": "sekb-off",
+        "caseDigest": "17615adde80e63cb04fcdad9848a3c82f8291cd50a18bf1330d437ba77b2695a",
+        "pairSeed": 72,
+        "flagsDigest": "ce6b17f56f439de08ac8fbc3b93aca1cd740c406e6b2801a0d993eccaadb1d53",
+        "position": 215
+      },
+      "status": "not-run",
+      "outcome": "missing",
+      "providerCalls": 0
+    }
+  ]
+}

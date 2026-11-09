@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "RsiBudgetStopRegression/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-budget-stop-regression",
+  "evidenceKind": "retained-receipt-orchestration-regression",
+  "startedAt": "2026-11-09T04:33:27.490Z",
+  "endedAt": "2026-11-09T04:36:30.435Z",
+  "collectorSource": "b7dd85df2da0a02155ba3fe54bde62df2bacef71",
+  "frozenMeasurementSource": "fb2d09a3a401deecace0ccdcb6d9fc71da0b9693",
+  "originalCampaign": "D:/tmp/rsi-paired-experiment-20261108-01a1b651-run2",
+  "fixtureDirectory": "D:/tmp/rsi-budget-stop-regression-Fo55gj",
+  "checkpointRecordedSlots": 197,
+  "finalRecordedSlots": 198,
+  "missingSlots": 18,
+  "incompleteSlots": 1,
+  "originalStop": "token-budget-exhausted",
+  "originalReportPreserved": true,
+  "providerCalls": 0,
+  "replayedReceipt": "tf-0296-a04-3-sekb-shadow",
+  "finalReportDigest": "6a2ef1451c1b3ffe6af3bf826da9f94a8cfef3aa0f739f02eea1be8a5c088495",
+  "passed": true
+}

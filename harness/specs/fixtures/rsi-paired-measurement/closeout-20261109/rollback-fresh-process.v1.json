@@ -1,0 +1,12 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-prompt-resume-process",
+  "pid": 25032,
+  "restoredPromptDigest": "d17fd84ffe6ea6fa2ba3c8cd062a6f6464144ea3c64af932d581018bff6f9d9d",
+  "requestDigest": "0a9d5db6670c079e331637595814209c2b4c4404faccde0083fce44c0506b207",
+  "decision": "eliminate",
+  "enabled": false,
+  "continuation": "off request rebuilt after loading the retained decision in a fresh Node process",
+  "providerCalls": 0,
+  "passed": true
+}

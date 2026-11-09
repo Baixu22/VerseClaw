@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "RsiRemediationAcceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-acceptance-reader",
+  "TF0857": [
+    {
+      "criterion": "endpoint/model、价格依据、样本与全轮调用/tokens 预算在调用前冻结。",
+      "status": "passed",
+      "evidence": "authorization.v1.json; price-basis.v1.json; experiment.v1.json"
+    },
+    {
+      "criterion": "k=3，至少 20 个完整 case；pass^k/pass@k、95% 区间、功效与所有失败类别可复算。",
+      "status": "passed",
+      "evidence": "independent-replay.v1.json: 22 confirmed/off case pairs, 21 shadow/off case pairs"
+    },
+    {
+      "criterion": "公共接口和工具协议的影响单独识别，不借旧 run 对新版本追认。",
+      "status": "not-evaluated",
+      "evidence": "protocol-and-source.v1.json: distinct protocol contrasts were not executed"
+    },
+    {
+      "criterion": "原始响应、工具效果、oracle、真实用量和成本封存；未知字段保持 unknown。",
+      "status": "passed",
+      "evidence": "accounting.v1.json; trial-outcomes.v1.json; private recovery archive"
+    }
+  ],
+  "TF0858": {
+    "individualCriteria": "passed",
+    "independentArithmetic": true,
+    "promptRollback": "passed",
+    "freshProcessContinuation": "passed",
+    "finalCandidateDecision": "eliminate",
+    "codeSelfModificationEligibility": "NO_GO",
+    "blockingDependency": "TF-0857",
+    "dependencyComplete": false
+  },
+  "parent": {
+    "id": "TF-0851",
+    "effectiveExperienceImprovement": false,
+    "status": "review_needed",
+    "decision": "NO_GO"
+  },
+  "proposedStates": {
+    "TF0857": {
+      "status": "review_needed",
+      "progress": 75
+    },
+    "TF0858": {
+      "status": "review_needed",
+      "progress": 100
+    }
+  }
+}
