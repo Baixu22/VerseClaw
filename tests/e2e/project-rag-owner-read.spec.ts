@@ -20,10 +20,12 @@ const digest = (value: Uint8Array | string) => `sha256:${createHash('sha256').up
 test('Project RAG owner identity, exact citations and denial cross real Electron Host/Gateway/runtime', async ({ homeDir, userDataDir, launchElectronApp }, testInfo) => {
   test.setTimeout(360_000);
   const inputs: string[] = [];
+  const providerInputs: string[] = [];
   let hold: Promise<void> | undefined;
   let release!: () => void;
-  const llm = await startScriptedLlm(async userText => {
+  const llm = await startScriptedLlm(async (userText, _toolResults, _requestIndex, messages) => {
     inputs.push(userText);
+    providerInputs.push(JSON.stringify(messages));
     if (hold) await hold;
     const jsonStart = userText.lastIndexOf('\n{"currentQuestion"');
     if (jsonStart >= 0) {
@@ -113,7 +115,7 @@ test('Project RAG owner identity, exact citations and denial cross real Electron
     const runId = (sent.result as { runId?: string })?.runId;
     expect(runId).toBeTruthy();
     await host(page, 'gateway', 'rpc', { method: 'agent.wait', params: { runId, timeoutMs: 60_000 } });
-    expect(inputs.some(input => input.includes(first.sourceRef.namespaceId) && input.includes(first.sourceRef.policyEpoch)
+    expect(providerInputs.some(input => input.includes(first.sourceRef.namespaceId) && input.includes(first.sourceRef.policyEpoch)
       && input.includes(first.sourceRef.sourceDigest))).toBe(true);
     receipt.chatSend = sent;
     hold = new Promise<void>(resolve => { release = resolve; });
@@ -157,7 +159,7 @@ test('Project RAG owner identity, exact citations and denial cross real Electron
     await page.getByTestId('knowledge-search-result').filter({ hasText: 'Project RAG owner' }).first().click();
     await expect(page.getByTestId('knowledge-error')).toBeVisible();
     await expect(page.getByTestId('knowledge-page')).not.toContainText(forbidden);
-    expect(inputs.every(input => !input.includes(forbidden))).toBe(true);
+    expect(providerInputs.every(input => !input.includes(forbidden))).toBe(true);
     receipt.steps = { exactCitation: true, pinDriftRejected: wrongPins.length + 1, forgedIdentityClamped: true,
       deniedProviderInputs: 0, deletedSourceReopened: false, electronCitationRead: true };
     receipt.status = 'pass';
@@ -173,7 +175,7 @@ test('Project RAG owner identity, exact citations and denial cross real Electron
     try { receipt.gatewayStop = await host(await getStableWindow(app), 'gateway', 'stop'); } catch { /* failed startup */ }
     await closeElectronApp(app);
     await new Promise<void>(resolve => llm.server.close(() => resolve()));
-    receipt.providerInputs = inputs; receipt.providerAnomalies = llm.anomalies;
+    receipt.providerInputs = providerInputs; receipt.providerUserInputs = inputs; receipt.providerAnomalies = llm.anomalies;
     await writeFile(testInfo.outputPath('owner-read-receipt.json'), JSON.stringify(receipt, null, 2));
   }
 });

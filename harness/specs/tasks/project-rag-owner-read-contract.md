@@ -37,6 +37,9 @@ touchedAreas:
   - "openclaw_runtime/src/plugin-sdk/memory-host-core.ts"
   - "openclaw_runtime/src/gateway/server-methods/chat.ts"
   - "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts"
+  - "openclaw_runtime/src/agents/embedded-agent-runner/run.ts"
+  - "openclaw_runtime/src/auto-reply/reply/agent-runner-run-params.ts"
+  - "openclaw_runtime/src/auto-reply/reply/queue/types.ts"
   - "src/pages/Chat/ChatInput.tsx"
   - "src/stores/chat.ts"
   - "src/pages/Knowledge/**"
@@ -70,7 +73,7 @@ touchedAreas:
   - "tests/unit/project-rag-owner-read.test.ts"
   - "openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts"
   - "tests/e2e/project-rag-owner-read.spec.ts"
-  - "tests/e2e/project-rag-owner-read.spec.ts"
+  - "tests/e2e/fixtures/fp-p1-harness.ts"
 requiredProfiles:
   - "fast"
   - "comms"
@@ -85,6 +88,7 @@ requiredTests:
   - "tests/unit/project-rag-owner-read.test.ts"
   - "tests/unit/knowledge-evidence-qa.test.ts"
   - "openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts"
+  - "tests/e2e/project-rag-owner-read.spec.ts"
 plannedTests:
   - "tests/unit/project-rag-owner-read.test.ts"
   - "openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts"

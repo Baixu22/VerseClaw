@@ -1,4 +1,5 @@
 import type { PreparedCompassContext } from "../../../context-engine/compass-context.js";
+import type { ResolvedChatKnowledgeRef } from "../../../context-engine/chat-knowledge-intent.js";
 import type { SessionStartInjectionRequest } from "../../../../../shared/types/session-start-injection.js";
 // Shared queue type contracts for admission, drain, and fallback handling.
 import type { AutoFallbackPrimaryProbe } from "../../../agents/agent-scope.js";
@@ -111,6 +112,8 @@ export type FollowupRun = {
     cwd?: string;
     /** Canonical workspace identity forwarded by Gateway chat.send. */
     workspaceId?: string;
+    /** Owner-resolved references preserved through queued attempt dispatch. */
+    chatKnowledgeRefs?: ResolvedChatKnowledgeRef[];
     /**
      * Trusted workspace authority fingerprint forwarded by Gateway chat.send
      * (produced by Main from the workspace's normalized rootPath). Embedded

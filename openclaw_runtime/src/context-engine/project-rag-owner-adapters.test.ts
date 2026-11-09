@@ -24,6 +24,8 @@ import {
 import { Value } from "typebox/value";
 import { ChatSendParamsSchema } from "../../packages/gateway-protocol/src/schema/logs-chat.js";
 import { buildEmbeddedExtensionFactories } from "../agents/embedded-agent-runner/extensions.js";
+import { buildEmbeddedRunBaseParams } from "../auto-reply/reply/agent-runner-run-params.js";
+import type { FollowupRun } from "../auto-reply/reply/queue.js";
 import { Assembler } from "./assembler.js";
 
 describe("Project RAG production owner adapters", () => {
@@ -303,11 +305,34 @@ describe("Project RAG production owner adapters", () => {
     expect(query).not.toHaveBeenCalled();
   });
 
-  it("removes a prior provider projection when asynchronous DCS preparation fails", async () => {
+  it("preserves queued owner refs and removes their projection when DCS preparation fails", async () => {
     const refs = (await read()).admitted;
+    const queuedRun: FollowupRun["run"] = {
+      agentId: "rag-test",
+      agentDir: root,
+      sessionId: generation,
+      sessionKey,
+      sessionFile: join(root, "owner.jsonl"),
+      workspaceDir: identity().workspaceDir,
+      workspaceId: identity().workspaceId,
+      config: { ...cfg, runtime: { rc03: { seal: false } } },
+      provider: "agent-fixture",
+      model: "agent-fixture",
+      timeoutMs: 60_000,
+      blockReplyBreak: "text_end",
+      chatKnowledgeRefs: refs,
+    };
+    const queuedParams = buildEmbeddedRunBaseParams({
+      run: queuedRun,
+      provider: queuedRun.provider,
+      model: queuedRun.model,
+      runId: "rag-dcs-test",
+      authProfile: {},
+    });
     const handlers = new Map<string, Array<(event: unknown, ctx: unknown) => Promise<unknown>>>();
     const factories = buildEmbeddedExtensionFactories({
-      cfg: { ...cfg, runtime: { rc03: { seal: false } } },
+      ...queuedParams,
+      cfg: queuedParams.config,
       sessionManager: {} as never,
       provider: "agent-fixture",
       modelId: "agent-fixture",
@@ -318,7 +343,6 @@ describe("Project RAG production owner adapters", () => {
       injectionTurnId: `rag-turn-${root}`,
       workspaceId: identity().workspaceId,
       workspaceDir: identity().workspaceDir,
-      chatKnowledgeRefs: refs,
     });
     const api = {
       on(name: string, handler: (event: unknown, ctx: unknown) => Promise<unknown>) {
