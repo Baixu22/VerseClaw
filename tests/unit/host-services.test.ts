@@ -1309,10 +1309,10 @@ describe('host services', () => {
       const rpc = vi.fn().mockResolvedValue({ ok: false, reason: 'fixture' });
       const { createSessionsApi } = await import('@electron/services/sessions-api');
       const api = createSessionsApi({ gatewayManager: { rpc } as never });
-      const input = { sessionKey: 'global', agentId: 'reviewer', checkpointId: 'cp-generation', fromLeafId: 'e1' };
+      const input = { sessionKey: 'agent:reviewer:main', agentId: 'reviewer', checkpointId: 'cp-generation', fromLeafId: 'e1' };
       await api[method]({ ...input, expectedSessionId: 'generation-old' });
       expect(rpc.mock.calls[0]?.[1]).toMatchObject({
-        key: 'global', agentId: 'reviewer', expectedSessionId: 'generation-old',
+        key: 'agent:reviewer:main', agentId: 'reviewer', expectedSessionId: 'generation-old',
       });
       await api[method](input);
       expect(rpc.mock.calls[1]?.[1]).not.toHaveProperty('expectedSessionId');
