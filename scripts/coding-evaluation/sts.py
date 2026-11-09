@@ -89,11 +89,24 @@ def json_file(path: Path) -> dict:
 def register_tree(out: Path) -> dict:
     artifacts = {}
     for path in sorted(out.rglob("*")):
-        if not path.is_file() or path.name in {"report.json", "verification.json", "report.sha256", "SHA256SUMS.json"}:
+        if not path.is_file() or path.name in {"report.json", "verification.json", "report.sha256", "SHA256SUMS.json"} or path.is_relative_to(out / "tmp"):
             continue
         relative = path.relative_to(out).as_posix()
         artifacts[relative] = {"sha256": sha256_file(path), "bytes": path.stat().st_size}
     return artifacts
+
+
+def remove_temp_tree(path: Path) -> dict:
+    if not path.exists():
+        return {"removedFiles": 0, "removedBytes": 0, "remaining": 0}
+    removed_files = 0
+    removed_bytes = 0
+    for item in path.rglob("*"):
+        if item.is_file():
+            removed_files += 1
+            removed_bytes += item.stat().st_size
+    shutil.rmtree(path)
+    return {"removedFiles": removed_files, "removedBytes": removed_bytes, "remaining": 0}
 
 
 def clear_caches(repo: Path) -> dict:
@@ -462,6 +475,7 @@ def main() -> int:
         negative_cases["missed-failure"] = {"passed": controls["missed"]["passed"], "kind": "miss-detected", "commandIds": controls["missed"]["commandIds"], "evidence": controls["missed"]["evidence"], "observed": {"missedFailures": controls["missed"]["missedFailures"]}}
         httpx = benchmark_project(evidence, "httpx", args.httpx.resolve(), args.httpx_python.parent.parent, args.httpx_setup_log.resolve())
         packaging = benchmark_project(evidence, "packaging", args.packaging.resolve(), args.packaging_python.parent.parent, args.packaging_setup_log.resolve())
+        temporary_cleanup = remove_temp_tree(out / "tmp")
 
         selected_upgrades = 0
         for version in ("1.1", "2.0"):
@@ -537,6 +551,7 @@ def main() -> int:
                 "claim": "improvement-unproven",
                 "authoritativeFullVerification": all(row["counts"]["missed"] == 0 for row in httpx["trials"] + packaging["trials"]),
             },
+            "temporaryCleanup": temporary_cleanup,
             "commands": evidence.commands,
             "artifacts": register_tree(out),
         }
