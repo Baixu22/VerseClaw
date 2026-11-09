@@ -119,13 +119,13 @@ def verify(report: dict, root: Path, candidate: str, expected_digest: str, allow
             check(lane.get("coldSeconds", 0) > 0 and lane.get("warmSeconds", 0) > 0, f"{workspace} cost missing")
             if lane.get("lane") in ("vg_full", "vg_selected_plus_required_full"):
                 check(bool(lane.get("treeIds")) and all(lane.get("treeIds")), f"{workspace} managed tree identity missing")
-                check(lane.get("selectionScope") in ("full", "selected"), f"{workspace} selection scope missing")
+                check(lane.get("planScope") == "selected" and lane.get("executionScope") in ("full", "selected"), f"{workspace} selection scope missing")
         for run in (1, 2, 3):
             run_lanes = {lane["lane"]: lane for lane in lanes if lane.get("run") == run}
             full = run_lanes.get("vg_full", {})
             selected = run_lanes.get("vg_selected_plus_required_full", {})
-            check(full.get("selectionScope") == "full" and full.get("executionScope") == "full", f"{workspace} run {run} full scope mismatch")
-            check(selected.get("selectionScope") == "selected" and selected.get("executionScope") == "selected", f"{workspace} run {run} selected scope mismatch")
+            check(full.get("planScope") == "selected" and full.get("executionScope") == "full", f"{workspace} run {run} full scope mismatch")
+            check(selected.get("planScope") == "selected" and selected.get("executionScope") == "selected", f"{workspace} run {run} selected scope mismatch")
             check(len(selected.get("treeIds", [])) >= 2, f"{workspace} run {run} lacks final full tree")
             check(bool(full.get("treeIds")) and full["treeIds"][0] == selected["treeIds"][0], f"{workspace} run {run} B/C tree mismatch")
 

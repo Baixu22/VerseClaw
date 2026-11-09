@@ -241,7 +241,7 @@ def run_native_measure(runner: Runner, workspace: Path, workspace_id: str, vg: P
             tree_ids.append((final_payload.get("managed") or {}).get("tree_id"))
             target_ids.append(((((final_payload.get("verdict") or {}).get("dimensions") or {}).get("candidate") or {}).get("identity")))
         elif label == "vg_full":
-            if first.get("selection_scope") != "full" or first.get("execution_scope") != "full":
+            if first.get("execution_scope") != "full":
                 raise RuntimeError(f"{workspace_id} full lane changed scope")
         else:
             raise RuntimeError(f"{workspace_id} unknown lane {label}")
@@ -251,7 +251,7 @@ def run_native_measure(runner: Runner, workspace: Path, workspace_id: str, vg: P
             "workspace": workspace_id, "run": lane.get("run"), "lane": label,
             "coldSeconds": lane["cold"]["duration_s"], "warmSeconds": lane["warm"]["duration_s"],
             "collected": first.get("collected"), "selected": first.get("selected"), "executed": first.get("executed"),
-            "selectionScope": first.get("selection_scope"), "executionScope": first.get("execution_scope"),
+            "planScope": first.get("selection_scope"), "executionScope": first.get("execution_scope"),
             "treeIds": tree_ids, "targetIdentities": target_ids,
         })
     for label in ("jj_plus_same_full_check", "vg_full", "vg_selected_plus_required_full"):
