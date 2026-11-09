@@ -3,3 +3,4 @@ export function projectEmptyOracleReceipt(row: BenefitTrialReceipt): BenefitTria
 export function isUndispatchedSpaceFailure(row: BenefitTrialReceipt): boolean;
 export function recoverProtocolContrast(options: { root: string; base: string; scratch: string; quotaDatabase?: string;
   supportRoot?: string; apiKey?: string; run?: boolean; out?: string; limit?: number; recoverUndispatched?: boolean }): Promise<Record<string, unknown>>;
+export function verifyProtocolArtifactManifest(options: { root: string; base: string; scratch: string; out?: string }): Promise<Record<string, unknown>>;

@@ -76,6 +76,21 @@ function rawOracle(directory, row) {
   }
   return files;
 }
+function verifyAdmissionFiles(ctx) {
+  for (const taskId of ctx.plan.taskIds) {
+    const calibration = read(join(ctx.base, 'admission/calibration', taskId, 'admission.json'));
+    for (const stage of ['reference', 'baseline']) {
+      const directory = join(ctx.base, 'admission/calibration', taskId, stage, 'oracle'), oracle = read(join(directory, 'run-report.json'));
+      const expected = calibration.stages[stage];
+      for (const key of Object.keys(oracle)) assert.deepEqual(oracle[key], expected[key], 'recovery-admission-raw-stage:' + key);
+      for (const [index, execution] of oracle.executions.entries()) {
+        const stem = String(index + 1).padStart(2, '0');
+        if (execution.kind === 'vitest') assert.deepEqual(read(join(directory, stem + '-vitest-report.json')), execution.report, 'recovery-admission-raw-vitest');
+        for (const suffix of ['-stdout.log', '-stderr.log']) assert(existsSync(join(directory, stem + suffix)), 'recovery-admission-log-missing');
+      }
+    }
+  }
+}
 function validateOne(ctx, scratch, scheduled, row, start, recovery) {
   const variant = ctx.plan.variants.find(variant => variant.id === scheduled.variantId), directory = join(scratch, variant.id, scheduled.benefitSlotId);
   assert.equal(row.slot.id, scheduled.benefitSlotId, 'recovery-slot-identity');
@@ -260,6 +275,7 @@ export async function recoverProtocolContrast({ root, base, scratch, quotaDataba
     assert.equal(git(root, ['status', '--porcelain', '--', ...Object.keys(ctx.plan.source.bindings)]), '', 'recovery-frozen-source-uncommitted');
   }
   for (const variant of ctx.plan.variants) ctx.benefit.verifyCodingAdmission(root, join(base, 'variants', variant.id), variant.plan);
+  verifyAdmissionFiles(ctx);
   const lock = join(scratch, 'study.lock'); assert(!existsSync(lock), 'recovery-other-study-owner');
   let state = readRun(ctx, scratch, ledger), error = null, written = 0;
   if (run) write(lock, { pid: process.pid, studyDigest: digest(ctx.plan), operator: git(OPERATOR_ROOT, ['rev-parse', 'HEAD']) });
@@ -314,11 +330,45 @@ export async function recoverProtocolContrast({ root, base, scratch, quotaDataba
       assert.deepEqual(current.pairedDiff.ci95, independent.ci95, 'recovery-independent-ci');
       assert.equal(current.power.requiredCasesApprox, independent.power.requiredCasesApprox, 'recovery-independent-power');
     }
-    result.independentReplay = { statistics, providerCallsDuringReplay: 0, passed: true }; if (out) write(out, result);
+    result.independentReplay = { statistics, providerCallsDuringReplay: 0, passed: true };
+    const accounting = { providerCalls: 0, knownTokens: 0, accountedTokens: 0, unknownUsageRequests: [], currency: 'CNY', spendingUpperBound: 0 };
+    for (const entry of ledger.snapshot().rows) {
+      const usage = entry.settlement?.usage ?? null, input = Buffer.byteLength(JSON.stringify(entry.reservation.request)), output = entry.reservation.request.max_output_tokens;
+      assert.equal(entry.reservation.reserved.inputTokens, input, 'recovery-independent-reserve-input');
+      assert.equal(entry.reservation.reserved.outputTokens, output, 'recovery-independent-reserve-output');
+      assert.equal(entry.reservation.reserved.costMicros, 0, 'recovery-independent-free-spending');
+      accounting.providerCalls++;
+      if (usage) accounting.knownTokens += usage.inputTokens + usage.outputTokens;
+      else accounting.unknownUsageRequests.push(entry.reservation.identity);
+      accounting.accountedTokens += usage ? usage.inputTokens + usage.outputTokens : input + output;
+    }
+    for (const [key, value] of Object.entries(accounting)) assert.deepEqual(result.accounting[key], value, 'recovery-independent-accounting:' + key);
+    result.independentReplay.accounting = accounting;
+    result.independentReplay.costBoundaries = Object.fromEntries(Object.entries(result.comparisons).map(([name, comparison]) => [name,
+      Object.fromEntries([['tokens', comparison.budget.observedRelativeTokenIncrease], ['toolCalls', comparison.budget.observedRelativeToolCallIncrease]].map(([metric, value]) => [metric,
+        { status: value === Infinity ? 'unbounded-from-zero-baseline' : value === null ? 'unknown' : 'measured',
+          relativeIncrease: Number.isFinite(value) ? value : null, exceedsFrozenCeiling: value === null ? null : value > 0.1 }]))]));
+    if (out) write(out, result);
   }
   return { written, recordedSlots: result.recordedSlots, outcomeCounts: result.outcomeCounts, accounting: result.accounting,
       recoveries: result.recoveries.length, undispatchedRecoveries: result.undispatchedRecoveries.length,
       independentReplay: result.independentReplay?.passed ?? null };
+}
+export async function verifyProtocolArtifactManifest({ root, base, scratch, out }) {
+  const result = await recoverProtocolContrast({ root, base, scratch, run: false, recoverUndispatched: true });
+  const files = [], walk = (directory, prefix) => {
+    for (const entry of readdirSync(directory, { withFileTypes: true })) {
+      const path = join(directory, entry.name), name = prefix + '/' + entry.name;
+      if (entry.isDirectory()) { if (['workspace', 'home', 'node_modules', '.git'].includes(entry.name)) continue; walk(path, name); }
+      else if (!entry.isSymbolicLink() && !entry.name.endsWith('.tmp') && !entry.name.endsWith('.lock')) files.push({ path: name, bytes: readFileSync(path).length, sha256: digest(readFileSync(path)) });
+    }
+  };
+  walk(base, 'experiment'); walk(scratch, 'receipts');
+  const manifest = { schemaVersion: 'RsiProtocolRawArtifactManifest/v1', driven_by: 'agent', actor: 'codex/rsi-protocol-artifact-readback',
+    roots: { experiment: base, receipts: scratch }, files: files.sort((a, b) => a.path.localeCompare(b.path)), count: files.length, validatedRun: result,
+    providerCallsDuringVerification: 0, passed: true };
+  if (out) write(out, manifest);
+  return manifest;
 }
 if (isMainEntrypoint(import.meta.url)) {
   try {
