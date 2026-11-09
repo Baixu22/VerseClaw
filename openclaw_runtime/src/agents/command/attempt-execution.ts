@@ -470,6 +470,10 @@ export function runAgentAttempt(params: {
   sessionHasHistory?: boolean;
   suppressPromptPersistenceOnRetry?: boolean;
   onUserMessagePersisted?: (message: Extract<AgentMessage, { role: "user" }>) => void;
+  onSessionIdentityChanged?: (identity: {
+    sessionId: string;
+    sessionFile?: string;
+  }) => void | Promise<void>;
 }) {
   const isRawModelRun = params.opts.modelRun === true || params.opts.promptMode === "none";
   const claudeCliFallbackPrelude =
@@ -604,6 +608,8 @@ export function runAgentAttempt(params: {
       runCliAgent({
         sessionId: params.sessionId,
         sessionKey: params.sessionKey,
+        sessionStorePath: params.opts.sessionEffects === "internal" ? undefined : params.storePath,
+        recoveryAdmission: params.opts.recoveryAdmission,
         sessionEntry: params.sessionEntry,
         agentId: params.sessionAgentId,
         trigger: "user",
@@ -690,6 +696,8 @@ export function runAgentAttempt(params: {
   return runEmbeddedAgent({
     sessionId: params.sessionId,
     sessionKey: params.sessionKey,
+    recoveryAdmission: params.opts.recoveryAdmission,
+    onSessionIdentityChanged: params.onSessionIdentityChanged,
     agentId: params.sessionAgentId,
     trigger: "user",
     messageChannel: params.messageChannel,
@@ -710,6 +718,7 @@ export function runAgentAttempt(params: {
     hasRepliedRef: params.runContext.hasRepliedRef,
     senderIsOwner: params.opts.senderIsOwner,
     sessionFile: params.sessionFile,
+    sessionStorePath: params.opts.sessionEffects === "internal" ? undefined : params.storePath,
     workspaceDir: params.workspaceDir,
     cwd: params.cwd,
     config: params.cfg,
@@ -902,7 +911,6 @@ export function emitAcpLifecycleError(params: {
     },
   });
 }
-
 
 export function emitAcpAssistantDelta(params: { runId: string; text: string; delta: string }) {
   emitAgentEvent({

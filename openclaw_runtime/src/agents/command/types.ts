@@ -2,6 +2,7 @@
  * Public option and metadata types for agent command execution.
  */
 import type { AgentInternalEvent } from "../../agents/internal-events.js";
+import type { RecoveryAdmissionIdentity } from "../../../../shared/recovery-authority/contract.js";
 import type { SpawnedRunMetadata } from "../../agents/spawned-context.js";
 import type { PromptMode } from "../../agents/system-prompt.types.js";
 import type { SourceReplyDeliveryMode } from "../../auto-reply/get-reply-options.types.js";
@@ -148,6 +149,8 @@ export type AgentCommandOpts = {
   acpTurnSource?: AcpTurnSource;
   /** Internal handoffs can feed the model without writing the synthetic prompt to transcript. */
   suppressPromptPersistence?: boolean;
+  /** Exact owner admission revalidated before a recovery attempt executes. */
+  recoveryAdmission?: RecoveryAdmissionIdentity;
 };
 
 /** Restricted option surface for external ingress callsites. */

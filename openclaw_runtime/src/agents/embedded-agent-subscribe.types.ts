@@ -55,6 +55,10 @@ export type SubscribeEmbeddedAgentSessionParams = {
   blockReplyBreak?: "text_end" | "message_end";
   blockReplyChunking?: BlockReplyChunking;
   onPartialReply?: (payload: PartialReplyPayload) => void | Promise<void>;
+  /** Commit output uncertainty before the first public response can leave the run. */
+  onBeforeVisibleOutput?: () => Promise<void>;
+  /** Record that response data was dispatched to the output consumer. */
+  onVisibleOutputObserved?: () => Promise<void>;
   onAssistantMessageStart?: () => void | Promise<void>;
   onExecutionPhase?: (info: {
     phase: "tool_execution_started";
@@ -68,6 +72,7 @@ export type SubscribeEmbeddedAgentSessionParams = {
     sessionKey?: string;
   }) => void | Promise<void>;
   onHeartbeatToolResponse?: (response: HeartbeatToolResponse) => void | Promise<void>;
+  /** "finishing" leaves successful and failed attempt terminals to the caller. */
   terminalLifecyclePhase?: "end" | "finishing";
   /** Read immediately before terminal lifecycle emission. */
   isTerminalAborted?: () => boolean | undefined;

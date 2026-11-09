@@ -37,17 +37,32 @@ export function matchesRecoveryAdmission(
 export function isCurrentRecoverySession(params: {
   sessionId?: string;
   lifecycleRunId?: string;
+  status?: string;
+  abortedLastRun?: boolean;
   requestedSessionId?: string;
   runId: string;
   admission?: RecoveryOwnerAdmission;
   expected: RecoveryAdmissionIdentity;
 }): boolean {
+  const owner = params.admission?.decision.owner;
+  const ownerRunId = owner && "runId" in owner ? owner.runId : undefined;
+  const mainOwnerMatches =
+    owner?.kind !== "main-session" ||
+    Boolean(
+      params.status === "running" &&
+      (params.runId === params.lifecycleRunId ||
+        (params.lifecycleRunId === owner.runId &&
+          params.sessionId === owner.ownerId &&
+          params.abortedLastRun === true)),
+    );
   return Boolean(
     params.sessionId &&
+    mainOwnerMatches &&
     params.sessionId === params.requestedSessionId &&
     params.runId === params.expected.idempotencyKey &&
     matchesRecoveryAdmission(params.admission, params.expected) &&
     (!params.lifecycleRunId ||
+      params.lifecycleRunId === ownerRunId ||
       params.lifecycleRunId === params.expected.ownerId ||
       params.lifecycleRunId === params.runId),
   );

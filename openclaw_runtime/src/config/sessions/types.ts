@@ -393,7 +393,15 @@ export type SessionEntry = {
     boundary: string;
     runId: string;
     attempts: number;
-    state: "admitted" | "accepted" | "wedged";
+    state: "admitted" | "accepted" | "reconcile" | "wedged";
+    authority?: RecoveryOwnerAdmission;
+  };
+  /** Write-ahead public-output boundary owned by the current session run. */
+  recoveryOutput?: {
+    sessionId: string;
+    runId: string;
+    effect: "not_applied" | "unknown";
+    visibleOutputObserved?: boolean;
   };
   /**
    * Whether totalTokens reflects a fresh context snapshot for the latest run.
@@ -614,6 +622,7 @@ export function mergeSessionEntryWithPolicy(
     if (options?.identityTransition !== "compaction") {
       delete next.subagentRecovery;
       delete next.restartRecovery;
+      delete next.recoveryOutput;
     }
     // Session id rotations should move transcript paths when they match known reset/fork shapes.
     const patchHasSessionFile = Object.hasOwn(patch, "sessionFile");

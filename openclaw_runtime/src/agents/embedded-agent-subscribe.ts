@@ -19,6 +19,7 @@ import { hasOrphanReasoningCloseBoundary } from "../shared/text/reasoning-tags.j
 import { parseInlineDirectives } from "../utils/directive-tags.js";
 import { isDeliverableMessageChannel, normalizeMessageChannel } from "../utils/message-channel.js";
 import { EmbeddedBlockChunker } from "./embedded-agent-block-chunker.js";
+import { OutputDeliveryError } from "./failover-error.js";
 import {
   isMessagingToolDuplicateNormalized,
   normalizeTextForComparison,
@@ -258,6 +259,63 @@ export function subscribeEmbeddedAgentSession(params: SubscribeEmbeddedAgentSess
   const pendingMessagingTexts = state.pendingMessagingTexts;
   const pendingMessagingTargets = state.pendingMessagingTargets;
   const pendingBlockReplyTasks = new Set<Promise<void>>();
+  const pendingVisibleOutputTasks = new Set<Promise<void>>();
+  let visibleOutputBoundary: Promise<void> | undefined;
+  let visibleOutputObserved: Promise<void> | undefined;
+  let visibleOutputError: unknown;
+  let visibleOutputTail = Promise.resolve();
+  const trackVisibleOutput = (pending: Promise<void>): Promise<void> => {
+    const task = pending.catch((error: unknown) => {
+      visibleOutputError = new OutputDeliveryError(error);
+    });
+    pendingVisibleOutputTasks.add(task);
+    void task.finally(() => pendingVisibleOutputTasks.delete(task));
+    return task;
+  };
+  const enqueueOutputCallback = (
+    emit: () => void | boolean | Promise<void | boolean>,
+    recordsOutput: boolean,
+  ): void => {
+    if (visibleOutputError) return;
+    if (!params.onBeforeVisibleOutput && !pendingVisibleOutputTasks.size) {
+      const emitted = emit();
+      if (isPromiseLike<void | boolean>(emitted)) {
+        visibleOutputTail = trackVisibleOutput(Promise.resolve(emitted).then(() => {}));
+      }
+      return;
+    }
+    const pending = visibleOutputTail
+      .then(() => {
+        if (!recordsOutput || !params.onBeforeVisibleOutput) return;
+        visibleOutputBoundary ??= Promise.resolve().then(params.onBeforeVisibleOutput);
+        return visibleOutputBoundary;
+      })
+      .then(async () => {
+        if (visibleOutputError) return;
+        if ((await emit()) === false) return;
+        if (!recordsOutput) return;
+        visibleOutputObserved ??= params.onVisibleOutputObserved?.() ?? Promise.resolve();
+        return visibleOutputObserved;
+      });
+    visibleOutputTail = trackVisibleOutput(pending);
+  };
+  const emitVisibleOutput = (emit: () => void | boolean | Promise<void | boolean>): void =>
+    enqueueOutputCallback(emit, true);
+  const emitAssistantMessageStart = () => {
+    if (params.onAssistantMessageStart)
+      enqueueOutputCallback(() => params.onAssistantMessageStart?.(), false);
+  };
+  const waitForOutputDelivery = (): void | Promise<void> => {
+    if (!pendingVisibleOutputTasks.size && !pendingBlockReplyTasks.size && !visibleOutputError)
+      return;
+    return (async () => {
+      while (pendingVisibleOutputTasks.size || pendingBlockReplyTasks.size) {
+        await Promise.all(pendingVisibleOutputTasks);
+        await Promise.allSettled(pendingBlockReplyTasks);
+      }
+      if (visibleOutputError) throw visibleOutputError;
+    })();
+  };
   const replyDirectiveAccumulator = createStreamingDirectiveAccumulator();
   const partialReplyDirectiveAccumulator = createStreamingDirectiveAccumulator();
   const shouldAllowSilentTurnText = (text: string | undefined) =>
@@ -266,18 +324,24 @@ export function subscribeEmbeddedAgentSession(params: SubscribeEmbeddedAgentSess
     delivery: EmbeddedAgentSubscribeContext["state"]["deferredAssistantEvents"][number],
   ) => {
     const { data } = delivery;
-    emitAgentEvent({
-      runId: params.runId,
-      stream: "assistant",
-      data,
+    emitVisibleOutput(() => {
+      emitAgentEvent({
+        runId: params.runId,
+        stream: "assistant",
+        data,
+      });
+      const agentEvent = params.onAgentEvent?.({
+        stream: "assistant",
+        data,
+      });
+      const partialReply =
+        delivery.emitPartialReply && state.shouldEmitPartialReplies
+          ? params.onPartialReply?.(data)
+          : undefined;
+      if (isPromiseLike<void>(agentEvent) || isPromiseLike<void>(partialReply))
+        return Promise.all([agentEvent, partialReply]).then(() => {});
+      return undefined;
     });
-    void params.onAgentEvent?.({
-      stream: "assistant",
-      data,
-    });
-    if (delivery.emitPartialReply && params.onPartialReply && state.shouldEmitPartialReplies) {
-      void params.onPartialReply(data);
-    }
   };
   const emitAssistantStreamData = (
     data: EmbeddedAgentSubscribeContext["state"]["deferredAssistantEvents"][number]["data"],
@@ -321,6 +385,7 @@ export function subscribeEmbeddedAgentSession(params: SubscribeEmbeddedAgentSess
         return true;
       }
       const task = Promise.resolve(maybeTask).catch((err: unknown) => {
+        visibleOutputError = new OutputDeliveryError(err);
         log.warn(`block reply callback failed: ${String(err)}`);
       });
       pendingBlockReplyTasks.add(task);
@@ -329,6 +394,7 @@ export function subscribeEmbeddedAgentSession(params: SubscribeEmbeddedAgentSess
       });
       return true;
     } catch (err) {
+      visibleOutputError = new OutputDeliveryError(err);
       log.warn(`block reply callback failed: ${String(err)}`);
       return false;
     }
@@ -352,10 +418,13 @@ export function subscribeEmbeddedAgentSession(params: SubscribeEmbeddedAgentSess
       state.deferredBlockReplies.push(deferredPayload);
       return;
     }
-    const emitted = emitBlockReplySafely(withToolMedia, options);
-    if (emitted && !withToolMedia.isReasoning && hasAssistantVisibleReply(withToolMedia)) {
-      state.visibleBlockReplyCount += 1;
-    }
+    emitVisibleOutput(() => {
+      const emitted = emitBlockReplySafely(withToolMedia, options);
+      if (emitted && !withToolMedia.isReasoning && hasAssistantVisibleReply(withToolMedia)) {
+        state.visibleBlockReplyCount += 1;
+      }
+      return emitted;
+    });
   };
   const flushDeferredBlockReplies = () => {
     if (state.deferredBlockReplies.length === 0) {
@@ -363,10 +432,13 @@ export function subscribeEmbeddedAgentSession(params: SubscribeEmbeddedAgentSess
     }
     const deferred = state.deferredBlockReplies.splice(0);
     for (const payload of deferred) {
-      const emitted = emitBlockReplySafely(payload);
-      if (emitted && !payload.isReasoning && hasAssistantVisibleReply(payload)) {
-        state.visibleBlockReplyCount += 1;
-      }
+      emitVisibleOutput(() => {
+        const emitted = emitBlockReplySafely(payload);
+        if (emitted && !payload.isReasoning && hasAssistantVisibleReply(payload)) {
+          state.visibleBlockReplyCount += 1;
+        }
+        return emitted;
+      });
     }
   };
   const clearDeferredBlockReplies = () => {
@@ -1092,7 +1164,7 @@ export function subscribeEmbeddedAgentSession(params: SubscribeEmbeddedAgentSess
     final?: boolean;
   }): void | Promise<void> => {
     if (!params.onBlockReply) {
-      return;
+      return waitForOutputDelivery();
     }
     if (blockChunker?.hasBuffered()) {
       if (options?.final) {
@@ -1127,14 +1199,7 @@ export function subscribeEmbeddedAgentSession(params: SubscribeEmbeddedAgentSess
     if (options?.final) {
       emitBlockChunk("", options);
     }
-    if (pendingBlockReplyTasks.size === 0) {
-      return;
-    }
-    return (async () => {
-      while (pendingBlockReplyTasks.size > 0) {
-        await Promise.allSettled(pendingBlockReplyTasks);
-      }
-    })();
+    return waitForOutputDelivery();
   };
 
   const emitReasoningStream = (text: string) => {
@@ -1157,19 +1222,24 @@ export function subscribeEmbeddedAgentSession(params: SubscribeEmbeddedAgentSess
     const delta = trimmed.startsWith(prior) ? trimmed.slice(prior.length) : trimmed;
     state.lastStreamedReasoning = trimmed;
 
-    // Broadcast thinking event to WebSocket clients in real-time
-    emitAgentEvent({
-      runId: params.runId,
-      stream: "thinking",
-      data: {
-        text: trimmed,
-        delta,
-      },
-    });
+    emitVisibleOutput(() => {
+      // Broadcast thinking event to WebSocket clients in real-time
+      emitAgentEvent({
+        runId: params.runId,
+        stream: "thinking",
+        data: {
+          text: trimmed,
+          delta,
+        },
+      });
 
-    void params.onReasoningStream({
-      text: trimmed,
+      return params.onReasoningStream?.({
+        text: trimmed,
+      });
     });
+  };
+  const emitReasoningEnd = () => {
+    if (params.onReasoningEnd) enqueueOutputCallback(() => params.onReasoningEnd?.(), false);
   };
 
   const resetForCompactionRetry = () => {
@@ -1242,6 +1312,8 @@ export function subscribeEmbeddedAgentSession(params: SubscribeEmbeddedAgentSess
     emitBlockChunk,
     flushBlockReplyBuffer,
     emitAssistantStreamData,
+    emitAssistantMessageStart,
+    emitReasoningEnd,
     emitBlockReply,
     flushDeferredAssistantEvents,
     flushDeferredBlockReplies,
@@ -1400,7 +1472,10 @@ export function subscribeEmbeddedAgentSession(params: SubscribeEmbeddedAgentSess
     getUsageTotals,
     getCompactionCount: () => compactionCount,
     getLastCompactionTokensAfter: () => state.lastCompactionTokensAfter,
-    waitForPendingEvents: () => state.pendingEventChain ?? Promise.resolve(),
+    waitForPendingEvents: async () => {
+      await (state.pendingEventChain ?? Promise.resolve());
+      await waitForOutputDelivery();
+    },
     getItemLifecycle: () => ({
       startedCount: state.itemStartedCount,
       completedCount: state.itemCompletedCount,

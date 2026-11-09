@@ -18,6 +18,25 @@ touchedAreas:
   - openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.recovery-admission.test.ts
   - openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.spawn-workspace.test-support.ts
   - openclaw_runtime/src/agents/embedded-agent-subscribe.ts
+  - openclaw_runtime/src/agents/embedded-agent-subscribe.types.ts
+  - openclaw_runtime/src/agents/embedded-agent-subscribe.handlers.lifecycle.ts
+  - openclaw_runtime/src/agents/embedded-agent-subscribe.handlers.messages.ts
+  - openclaw_runtime/src/agents/embedded-agent-subscribe.handlers.types.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/run.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/run/params.ts
+  - openclaw_runtime/extensions/codex/src/app-server/run-attempt.ts
+  - openclaw_runtime/src/agents/command/attempt-execution.ts
+  - openclaw_runtime/src/agents/command/types.ts
+  - openclaw_runtime/src/agents/cli-runner.ts
+  - openclaw_runtime/src/agents/cli-runner/types.ts
+  - openclaw_runtime/src/agents/harness/lifecycle.ts
+  - openclaw_runtime/src/agents/failover-error.ts
+  - openclaw_runtime/src/auto-reply/reply/agent-runner-execution.ts
+  - openclaw_runtime/src/auto-reply/reply/followup-runner.ts
+  - openclaw_runtime/src/auto-reply/reply/followup-runner.recovery-identity.test.ts
+  - openclaw_runtime/src/agents/rc02-cli-entry.acceptance.test.ts
+  - openclaw_runtime/src/gateway/session-lifecycle-state.ts
+  - openclaw_runtime/src/agents/recovery-authority/main-session-admission.test.ts
   - openclaw_runtime/src/agents/main-session-restart-recovery*
   - openclaw_runtime/src/agents/subagent-orphan-recovery*
   - openclaw_runtime/src/agents/subagent-recovery-state*
@@ -100,6 +119,7 @@ acceptance:
   - Concurrent and repeated admissions of the same boundary produce one continuation; failed, ambiguous, and unacknowledged attempts remain recorded across a real process restart.
   - Unknown effects always reconcile; applied or reconciled delivery effects settle without another send; a receipt or transcript alone cannot authorize replay.
   - A stale lifecycle, replaced payload, changed session generation, or stale ACP identity cannot receive an old admission acknowledgement or terminal callback.
+  - Completed admitted recoveries reject replay; provider fallback within one unfinished command retains its admission until the command commits its terminal state.
   - Subagent failure attempts are persisted before RPC and cannot restart an unbounded retry burst; successful registry remapping stays owned by the existing subagent registry.
   - Goal-wake remains level-triggered and never respawns an uncertain durable helper; task terminal state and the wait reconciliation remain idempotent after restart.
   - ACP observed output prevents a fresh turn, and an early backend exit without effect truth is not treated as proof that no effect occurred.

@@ -36,6 +36,16 @@ import { resolveMainSessionResumeBlockReason } from "./main-session-restart-reco
 import { recoveryAuthorityV1 } from "./recovery-authority/authority.js";
 import { buildMainSessionRecoveryRequest } from "./recovery-authority/main-session-adapter.js";
 import {
+  admitMainSessionRecovery,
+  finishMainSessionRecovery,
+  hasRetainedMainSessionRecovery,
+} from "./recovery-authority/main-session-admission.js";
+import {
+  getRecoveryAdmissionIdentity,
+  isRecoveryAuthorityEnabled,
+} from "./recovery-authority/owner-admission.js";
+import type { RecoveryOwnerAdmission } from "../../../shared/recovery-authority/contract.js";
+import {
   compareRecoveryShadow,
   isRecoveryAuthorityShadowEnabled,
   recoveryShadowSink,
@@ -271,7 +281,7 @@ async function markSessionFailed(params: {
       entry.endedAt = Date.now();
       entry.updatedAt = entry.endedAt;
       // A previous or concurrently replaced delivery remains owned by its sender.
-      if (hasSamePendingFinalDelivery(entry, params.entry)) {
+      if (!isRecoveryAuthorityEnabled() && hasSamePendingFinalDelivery(entry, params.entry)) {
         entry.pendingFinalDelivery = undefined;
         entry.pendingFinalDeliveryText = undefined;
         entry.pendingFinalDeliveryRunId = undefined;
@@ -388,6 +398,7 @@ async function resumeMainSession(params: {
   sessionKey: string;
   pendingFinalDeliveryText?: string | null;
   recoveryBoundary: string;
+  authorityAdmission?: RecoveryOwnerAdmission;
 }): Promise<boolean> {
   const sanitizedPendingText =
     typeof params.pendingFinalDeliveryText === "string"
@@ -406,9 +417,11 @@ async function resumeMainSession(params: {
     // Reuse the admitted continuation while this exact payload remains pending.
     // Replacing it before RPC start can orphan the prior lifecycle on a failed RPC.
     let recoveryRunId =
-      (carriesPendingFinal && params.entry.pendingFinalDeliveryRecoveryRunId) || crypto.randomUUID();
+      params.authorityAdmission?.idempotencyKey ||
+      (carriesPendingFinal && params.entry.pendingFinalDeliveryRecoveryRunId) ||
+      crypto.randomUUID();
     let pendingSnapshot = params.entry;
-    if (phaseWriter || carriesPendingFinal) {
+    if (!params.authorityAdmission && (phaseWriter || carriesPendingFinal)) {
       let admitted = false;
       await updateSessionStore(
         params.storePath,
@@ -467,6 +480,10 @@ async function resumeMainSession(params: {
       deliver: Boolean(deliveryContext),
       lane: CommandLane.Main,
     };
+    if (params.authorityAdmission) {
+      agentParams.recoveryAdmission = getRecoveryAdmissionIdentity(params.authorityAdmission);
+      agentParams.suppressPromptPersistence = true;
+    }
     if (deliveryContext) {
       agentParams.channel = deliveryContext.channel;
       agentParams.to = deliveryContext.to;
@@ -478,11 +495,22 @@ async function resumeMainSession(params: {
         agentParams.threadId = String(deliveryContext.threadId);
       }
     }
-    await callGateway<{ runId: string }>({
+    const acknowledgement = await callGateway<{ runId: string }>({
       method: "agent",
       params: agentParams,
       timeoutMs: 10_000,
     });
+    if (params.authorityAdmission) {
+      const accepted = acknowledgement.runId === recoveryRunId;
+      const committed = await finishMainSessionRecovery({
+        entry: params.entry,
+        storePath: params.storePath,
+        sessionKey: params.sessionKey,
+        record: params.authorityAdmission,
+        state: accepted ? "accepted" : "reconcile",
+      });
+      return accepted && committed;
+    }
     await updateSessionStore(
       params.storePath,
       (store) => {
@@ -537,6 +565,15 @@ async function resumeMainSession(params: {
     );
     return true;
   } catch (err) {
+    if (params.authorityAdmission) {
+      await finishMainSessionRecovery({
+        entry: params.entry,
+        storePath: params.storePath,
+        sessionKey: params.sessionKey,
+        record: params.authorityAdmission,
+        state: "reconcile",
+      });
+    }
     log.warn(`failed to resume interrupted main session ${params.sessionKey}: ${String(err)}`);
     return false;
   }
@@ -612,6 +649,16 @@ async function recoverStore(params: {
       result.skipped++;
       continue;
     }
+    if (!isRecoveryAuthorityEnabled() && hasRetainedMainSessionRecovery(entry)) {
+      recordRecoveryEvalDecision({
+        sessionKey,
+        sessionId: entry.sessionId,
+        action: "reconcile",
+        reason: "saved main recovery uncertainty remains reserved after authority rollback",
+      });
+      result.skipped++;
+      continue;
+    }
     if (params.resumedSessionKeys.has(sessionKey)) {
       result.skipped++;
       continue;
@@ -665,7 +712,10 @@ async function recoverStore(params: {
           maxAttempts: MAX_RECOVERY_RETRIES,
           resumable: !resumeBlockReason,
           approvalPending: Boolean(resumeBlockReason?.includes("approval-pending")),
-          visibleOutputObserved: false,
+          visibleOutputObserved:
+            entry.recoveryOutput?.sessionId === entry.sessionId &&
+            entry.recoveryOutput.runId === entry.lifecycleRunId &&
+            entry.recoveryOutput.visibleOutputObserved === true,
           pendingFinalDelivery: Boolean(recoveryEntry.pendingFinalDeliveryText),
         });
         const decision = recoveryAuthorityV1.decide(request);
@@ -684,6 +734,11 @@ async function recoverStore(params: {
     // TF-0719: with the execution-phase writer on, an open effect may already
     // have been applied. Resuming blindly would duplicate it.
     let effectiveResumeBlockReason = resumeBlockReason;
+    let phaseRecovery = {
+      action: "reconcile" as "none" | "resume" | "reconcile",
+      phases: [] as string[],
+      reason: "durable tool writer disabled",
+    };
     if (isExecutionPhaseWriterEnabled()) {
       for (const message of messages) {
         settlePersistedToolResult(message as import("./runtime/index.js").AgentMessage, {
@@ -691,7 +746,7 @@ async function recoverStore(params: {
           sessionId: entry.sessionId,
         });
       }
-      const phaseRecovery = resolveExecutionPhaseRecovery(
+      phaseRecovery = resolveExecutionPhaseRecovery(
         sessionKey,
         process.env,
         {},
@@ -703,11 +758,78 @@ async function recoverStore(params: {
       if (phaseRecovery.action === "reconcile") {
         effectiveResumeBlockReason =
           "execution phase requires reconciliation: " + phaseRecovery.reason;
-      } else if (!effectiveResumeBlockReason && phaseRecovery.action === "resume") {
+      } else if (
+        !isRecoveryAuthorityEnabled() &&
+        !effectiveResumeBlockReason &&
+        phaseRecovery.action === "resume"
+      ) {
         try {
           authorizePendingToolRecovery({ sessionKey, sessionId: entry.sessionId, messages });
         } catch (error) {
           effectiveResumeBlockReason = "execution recovery authorization failed: " + String(error);
+        }
+      }
+    }
+    const recoveryBoundary = crypto
+      .createHash("sha256")
+      .update(JSON.stringify(messages.slice(-1)))
+      .digest("hex");
+    let authorityAdmission: RecoveryOwnerAdmission | undefined;
+    if (isRecoveryAuthorityEnabled()) {
+      const admitted = await admitMainSessionRecovery({
+        entry: recoveryEntry,
+        storePath: params.storePath,
+        sessionKey,
+        boundary: recoveryBoundary,
+        phase: phaseRecovery,
+        resumeBlockReason,
+        maxAttempts: MAX_RECOVERY_RETRIES,
+        cfg: params.cfg,
+      });
+      if (admitted.kind !== "admitted") {
+        if (admitted.kind === "rejected") {
+          await markSessionFailed({
+            entry: recoveryEntry,
+            storePath: params.storePath,
+            sessionKey,
+            reason: admitted.reason,
+          });
+          await sendUnresumableSessionNotice({
+            cfg: params.cfg,
+            entry: recoveryEntry,
+            sessionKey,
+            reason: admitted.reason,
+          });
+        }
+        recordRecoveryEvalDecision({
+          sessionKey,
+          sessionId: entry.sessionId,
+          action: "reconcile",
+          reason: admitted.reason,
+        });
+        result.failed++;
+        continue;
+      }
+      authorityAdmission = admitted.record;
+      if (phaseRecovery.action === "resume") {
+        try {
+          authorizePendingToolRecovery({ sessionKey, sessionId: entry.sessionId, messages });
+        } catch (error) {
+          await finishMainSessionRecovery({
+            entry: recoveryEntry,
+            storePath: params.storePath,
+            sessionKey,
+            record: admitted.record,
+            state: "reconcile",
+          });
+          recordRecoveryEvalDecision({
+            sessionKey,
+            sessionId: entry.sessionId,
+            action: "reconcile",
+            reason: String(error),
+          });
+          result.failed++;
+          continue;
         }
       }
     }
@@ -742,10 +864,8 @@ async function recoverStore(params: {
       storePath: params.storePath,
       sessionKey,
       pendingFinalDeliveryText: recoveryEntry.pendingFinalDeliveryText,
-      recoveryBoundary: crypto
-        .createHash("sha256")
-        .update(JSON.stringify(messages.slice(-1)))
-        .digest("hex"),
+      recoveryBoundary,
+      authorityAdmission,
     });
     recordShadow(resumed ? "resumed" : "failed");
     if (resumed) {

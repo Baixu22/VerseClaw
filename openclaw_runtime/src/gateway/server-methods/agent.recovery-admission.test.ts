@@ -71,6 +71,8 @@ function invocation(request = params, mode: string = GATEWAY_CLIENT_MODES.BACKEN
     logGateway: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
     getSessionEventSubscriberConnIds: () => new Set<string>(),
     broadcastToConnIds: vi.fn(),
+    addChatRun: vi.fn(),
+    removeChatRun: vi.fn(),
   };
   const run = () =>
     agentHandlers.agent!({
@@ -153,6 +155,119 @@ beforeEach(() => {
       sourceTool: "subagent_interrupted_resume",
     },
   };
+});
+
+function mainInvocation() {
+  const mainKey = "agent:main:main";
+  const mainRun = buildRecoveryAdmissionKey(
+    "main-session-restart",
+    sessionId,
+    sessionId,
+    "main-boundary",
+  );
+  const prepared = prepareOwnerRecoveryAdmission({
+    requestId: mainRun,
+    entry: "main-session-restart",
+    owner: {
+      kind: "main-session",
+      ownerId: sessionId,
+      sessionKey: mainKey,
+      runId: "main-original",
+    },
+    admission: {
+      trigger: "gateway-restart",
+      requiredPreState: "aborted-last-run",
+      admitted: true,
+      visibleOutputObserved: false,
+    },
+    budget: {
+      attempts: { current: 0, max: 3 },
+      backoff: { initialMs: 5000, multiplier: 2 },
+      wedge: { afterAttempts: 3, wedged: false },
+    },
+    replayClass: "reconcile",
+    effect: "not_applied",
+    requestedAction: "resume",
+    idempotencyKey: mainRun,
+    evidence: [],
+    requestedAt: Date.now(),
+  });
+  if (!prepared.admitted) throw Error("main fixture was not admitted");
+  mutateSqliteSessionStoreAtomic(storePath, (store) => {
+    store[mainKey] = {
+      sessionId,
+      updatedAt: 1,
+      status: "running",
+      lifecycleRunId: "main-original",
+      abortedLastRun: true,
+      restartRecovery: {
+        sessionId,
+        boundary: "main-boundary",
+        runId: mainRun,
+        attempts: 1,
+        state: "admitted",
+        authority: prepared.record,
+      },
+    };
+  });
+  mocks.loadSessionEntry.mockImplementation(() => ({
+    cfg: mocks.cfg,
+    storePath,
+    canonicalKey: mainKey,
+    entry: loadSqliteSessionStore(storePath)[mainKey],
+  }));
+  const request = {
+    ...params,
+    sessionKey: mainKey,
+    idempotencyKey: mainRun,
+    recoveryAdmission: getRecoveryAdmissionIdentity(prepared.record),
+    suppressPromptPersistence: true,
+  };
+  return { ...invocation(request), mainKey, mainRun };
+}
+
+it("receives a durable main-session admission without rotating its transcript", async () => {
+  const call = mainInvocation();
+  await call.run();
+  await vi.waitFor(() => expect(mocks.ingress).toHaveBeenCalledTimes(1), { timeout: 5000 });
+  expect(loadSqliteSessionStore(storePath)[call.mainKey].sessionId).toBe(sessionId);
+  expect(call.respond.mock.calls.some(([ok, value]) => ok && value?.runId === call.mainRun)).toBe(
+    true,
+  );
+});
+
+it.each([
+  { owner: "recovery", status: "done" },
+  { owner: "original", status: "done" },
+  { owner: "original", status: "running" },
+] as const)(
+  "rejects stale main admission with $owner owner in $status after dedupe is absent",
+  async ({ owner, status }) => {
+    const call = mainInvocation();
+    const lifecycleRunId = owner === "recovery" ? call.mainRun : "main-original";
+    mutateSqliteSessionStoreAtomic(storePath, (store) => {
+      store[call.mainKey].status = status;
+      store[call.mainKey].lifecycleRunId = lifecycleRunId;
+      store[call.mainKey].abortedLastRun = false;
+    });
+    await expect(call.run()).rejects.toThrow("no longer owns");
+    expect(mocks.ingress).not.toHaveBeenCalled();
+    expect(loadSqliteSessionStore(storePath)[call.mainKey]).toMatchObject({
+      status,
+      lifecycleRunId,
+    });
+  },
+);
+
+it("rejects a replaced main-session generation before agent ingress", async () => {
+  const call = mainInvocation();
+  mocks.beforeWrite = () =>
+    mutateSqliteSessionStoreAtomic(storePath, (store) => {
+      store[call.mainKey].sessionId = "new-main-generation";
+    });
+  await expect(call.run()).rejects.toThrow("no longer owns");
+  expect(mocks.ingress).not.toHaveBeenCalled();
+  expect(loadSqliteSessionStore(storePath)[call.mainKey].sessionId).toBe("new-main-generation");
 });
 afterEach(async () => {
   await new Promise<void>((resolve) => setTimeout(resolve, 20));

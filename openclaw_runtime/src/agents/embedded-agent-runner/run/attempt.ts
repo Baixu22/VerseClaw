@@ -177,6 +177,12 @@ import {
 } from "../../embedded-agent-helpers.js";
 import { countActiveToolExecutions } from "../../embedded-agent-subscribe.handlers.tools.js";
 import { subscribeEmbeddedAgentSession } from "../../embedded-agent-subscribe.js";
+import {
+  beginMainSessionRun,
+  recordMainSessionOutputBoundary,
+} from "../../recovery-authority/main-session-admission.js";
+import { isRecoveryAuthorityEnabled } from "../../recovery-authority/owner-admission.js";
+import { isAcpSessionKey, isCronSessionKey } from "../../../routing/session-key.js";
 import { isTimeoutError } from "../../failover-error.js";
 import { runAgentEndSideEffects } from "../../harness/agent-end-side-effects.js";
 import { runAgentHarnessBeforeAgentFinalizeHook } from "../../harness/lifecycle-hook-helpers.js";
@@ -2725,6 +2731,28 @@ export async function runEmbeddedAttempt(
       }
       session.setActiveToolsByName(sessionToolAllowlist);
       const activeSession = session;
+      const guardedMainOutput = Boolean(
+        isRecoveryAuthorityEnabled() &&
+        !isRawModelRun &&
+        params.sessionStorePath &&
+        params.sessionKey &&
+        !isSubagentSessionKey(params.sessionKey) &&
+        !isAcpSessionKey(params.sessionKey) &&
+        !isCronSessionKey(params.sessionKey),
+      );
+      if (guardedMainOutput && params.sessionKey) {
+        const storePath = params.sessionStorePath!;
+        const current = loadSessionStore(storePath, { skipCache: true })[params.sessionKey];
+        await beginMainSessionRun({
+          storePath,
+          sessionKey: params.sessionKey,
+          sessionId: params.sessionId,
+          runId: params.runId,
+          expectedRunId: current?.lifecycleRunId,
+          recoveryAdmission: params.recoveryAdmission,
+          startedAt: diagnosticRunStartedAt,
+        });
+      }
       const recoveryEntry =
         isExecutionPhaseWriterEnabled() && params.sessionKey
           ? loadSessionStore(
@@ -3808,6 +3836,25 @@ export async function runEmbeddedAttempt(
           sessionId: params.sessionId,
           agentId: sessionAgentId,
           builtinToolNames,
+          ...(guardedMainOutput && params.sessionKey
+            ? {
+                onBeforeVisibleOutput: () =>
+                  recordMainSessionOutputBoundary({
+                    storePath: params.sessionStorePath!,
+                    sessionKey: params.sessionKey!,
+                    sessionId: params.sessionId,
+                    runId: params.runId,
+                  }),
+                onVisibleOutputObserved: () =>
+                  recordMainSessionOutputBoundary({
+                    storePath: params.sessionStorePath!,
+                    sessionKey: params.sessionKey!,
+                    sessionId: params.sessionId,
+                    runId: params.runId,
+                    observed: true,
+                  }),
+              }
+            : {}),
           internalEvents: params.internalEvents,
         }),
       );

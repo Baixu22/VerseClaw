@@ -253,3 +253,7 @@ Verse Claw 基于 [OpenClaw](https://github.com/openclaw/openclaw) 与 ValueCell
 恢复实现与证据：可选 execution writer 将工具生命周期相位存入 TaskFlow，在副作用前以 CAS 领取执行权，只恢复 owner 已授权的工作。生命周期与执行 writer 都必须显式选择 `taskflow`，默认仍为 `legacy`；未知副作用进入对账。后续修复已处理待投递答复的run归属和启动恢复排序，验证边界见[后续修复报告](docs/dev/recovery-contract/FOLLOWUP-20261106.zh-CN.md)。[2026-11-05实测](docs/dev/recovery-contract/FINAL-20261105.zh-CN.md)保留60个真实provider答案与30个主故障窗口；候选终态分类改善，但冻结时延门槛仍为FAIL/NO-GO。
 
 子代理恢复在 `OPENCLAW_RECOVERY_AUTHORITY_MODE=authority` 且两种 writer 都选择 `taskflow` 时，先提交决定和预算，再派发 RPC；未知结果保留为对账状态。恢复工具事件接入当前运行订阅，更新投递记录与完成状态。见[恢复准入指南](docs/dev/recovery-contract/GA-READINESS-20261106.md)。
+
+主会话在相同模式下使用统一准入，保留原有三次恢复预算。Session owner 在响应数据发送前记录输出边界，未知输出和待投递答复保留用于对账。
+
+已完成恢复拒绝再次使用原准入身份启动。未结束命令的模型 fallback 保留同一准入，由整条命令在尝试与持久化收尾完成后提交终态。

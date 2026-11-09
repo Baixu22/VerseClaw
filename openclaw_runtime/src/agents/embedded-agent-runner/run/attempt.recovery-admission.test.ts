@@ -1,5 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { closeAllFactStores } from "../../../context-engine/factstore/store.js";
+import { loadSessionStore, updateSessionStoreAtomic } from "../../../config/sessions.js";
+import { closeOpenClawAgentDatabasesForTest } from "../../../state/openclaw-agent-db.js";
+import { closeOpenClawStateDatabase } from "../../../state/openclaw-state-db.js";
+import { mkdtemp } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { __resetWorkspaceFactServiceRegistry } from "../../../context-engine/factstore/workspace-fact-service.js";
 import {
   cleanupTempPaths,
@@ -43,6 +49,9 @@ beforeEach(() => {
   Object.assign(hoisted.sessionManager, { appendMessage: vi.fn() });
 });
 afterEach(async () => {
+  closeOpenClawAgentDatabasesForTest();
+  closeOpenClawStateDatabase();
+  vi.unstubAllEnvs();
   __resetWorkspaceFactServiceRegistry();
   closeAllFactStores();
   await cleanupTempPaths(tempPaths);
@@ -59,6 +68,57 @@ const run = () =>
   });
 
 describe("recovery through the actual embedded attempt", () => {
+  it("runs a standalone helper transcript without requiring a Session owner row", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "standalone-main-helper-"));
+    tempPaths.push(directory);
+    vi.stubEnv("OPENCLAW_STATE_DIR", directory);
+    vi.stubEnv("OPENCLAW_RECOVERY_AUTHORITY_MODE", "authority");
+    const prompt = vi.fn(async () => {});
+    const result = await createContextEngineAttemptRunner({
+      contextEngine: createContextEngineBootstrapAndAssemble(),
+      sessionKey: "temp:slug-generator",
+      tempPaths,
+      sessionPrompt: prompt,
+      attemptOverrides: { config: { session: { store: join(directory, "unused-sessions.json") } } },
+    });
+    expect(result.promptError).toBeNull();
+    expect(prompt).toHaveBeenCalledTimes(1);
+    expect(loadSessionStore(join(directory, "unused-sessions.json"), { skipCache: true })).toEqual(
+      {},
+    );
+  });
+  it("initializes main ownership for a local run before its guarded output", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "local-main-output-"));
+    tempPaths.push(directory);
+    const storePath = join(directory, "sessions.json");
+    const sessionKey = "agent:main:main";
+    vi.stubEnv("OPENCLAW_STATE_DIR", directory);
+    vi.stubEnv("OPENCLAW_RECOVERY_AUTHORITY_MODE", "authority");
+    await updateSessionStoreAtomic(storePath, (store) => {
+      store[sessionKey] = { sessionId: "embedded-session", updatedAt: 1 };
+    });
+    const result = await createContextEngineAttemptRunner({
+      contextEngine: createContextEngineBootstrapAndAssemble(),
+      sessionKey,
+      tempPaths,
+      attemptOverrides: { config: { session: { store: storePath } }, sessionStorePath: storePath },
+      sessionPrompt: async () => {
+        const subscriptionParams = hoisted.subscribeEmbeddedAgentSessionMock.mock.calls[0][0];
+        await subscriptionParams.onBeforeVisibleOutput?.();
+        await subscriptionParams.onVisibleOutputObserved?.();
+      },
+    });
+    expect(result.promptError).toBeNull();
+    expect(loadSessionStore(storePath, { skipCache: true })[sessionKey]).toMatchObject({
+      lifecycleRunId: "run-context-engine-forwarding",
+      recoveryOutput: {
+        runId: "run-context-engine-forwarding",
+        effect: "unknown",
+        visibleOutputObserved: true,
+      },
+    });
+  });
+
   it("replays the original call before repairing Responses history", async () => {
     const user: AgentMessage = { role: "user", content: "original task", timestamp: 1 };
     const call: AgentMessage = {

@@ -15,11 +15,13 @@
 import type {
   RecoveryAuthorityRequest,
   ReplayClass,
-} from '../../../../shared/recovery-authority/contract.js';
+  EffectCertainty,
+} from "../../../../shared/recovery-authority/contract.js";
 
 export type MainSessionRecoveryFacts = {
   sessionKey: string;
   sessionId: string;
+  runId?: string;
   /** Attempts already consumed, including failed ones. */
   attemptsConsumed: number;
   maxAttempts: number;
@@ -31,12 +33,14 @@ export type MainSessionRecoveryFacts = {
   visibleOutputObserved: boolean;
   /** A durable final-delivery intent is still pending for this session. */
   pendingFinalDelivery: boolean;
+  /** Current effect classification read from the existing owner. */
+  effect?: EffectCertainty;
   now?: number;
 };
 
 export function classifyMainSessionReplayClass(facts: MainSessionRecoveryFacts): ReplayClass {
-  if (!facts.resumable || facts.approvalPending) return 'unsafe';
-  return 'reconcile';
+  if (!facts.resumable || facts.approvalPending) return "unsafe";
+  return "reconcile";
 }
 
 export function buildMainSessionRecoveryRequest(
@@ -46,22 +50,23 @@ export function buildMainSessionRecoveryRequest(
   const now = facts.now ?? Date.now();
   return {
     requestId: `main-session:${facts.sessionId}`,
-    entry: 'main-session-restart',
+    entry: "main-session-restart",
     owner: {
-      kind: 'main-session',
+      kind: "main-session",
       ownerId: facts.sessionId,
       sessionKey: facts.sessionKey,
+      ...(facts.runId ? { runId: facts.runId } : {}),
     },
     admission: {
-      trigger: 'gateway-restart',
-      requiredPreState: 'aborted-last-run',
+      trigger: "gateway-restart",
+      requiredPreState: "aborted-last-run",
       admitted: facts.resumable && !facts.approvalPending,
       visibleOutputObserved: facts.visibleOutputObserved,
       reason: facts.approvalPending
-        ? 'stale approval-pending tool result'
+        ? "stale approval-pending tool result"
         : facts.resumable
-          ? 'resumable assistant tail'
-          : 'non-resumable transcript tail',
+          ? "resumable assistant tail"
+          : "non-resumable transcript tail",
     },
     budget: {
       attempts: { current: facts.attemptsConsumed, max: facts.maxAttempts },
@@ -69,22 +74,21 @@ export function buildMainSessionRecoveryRequest(
       wedge: {
         afterAttempts: facts.maxAttempts,
         wedged: facts.attemptsConsumed >= facts.maxAttempts,
-        reason: 'automatic recovery budget exhausted',
+        reason: "automatic recovery budget exhausted",
       },
     },
     replayClass,
-    // A pending final delivery has no effect yet; an unsafe replay never ran.
-    effect: facts.pendingFinalDelivery || replayClass === 'unsafe' ? 'not_applied' : 'unknown',
-    requestedAction: facts.pendingFinalDelivery ? 'deliver' : 'resume',
+    // Pending text does not establish effect truth; the existing owner supplies it.
+    effect: facts.effect ?? (replayClass === "unsafe" ? "not_applied" : "unknown"),
+    requestedAction: facts.pendingFinalDelivery ? "deliver" : "resume",
     idempotencyKey: `main-session-restart-recovery:${facts.sessionId}`,
     evidence: [
       {
-        kind: 'transcript',
+        kind: "transcript",
         ref: `session:${facts.sessionId}`,
-        role: 'evidence',
+        role: "evidence",
       },
     ],
     requestedAt: now,
   };
 }
-

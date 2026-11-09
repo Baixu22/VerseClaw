@@ -32,6 +32,10 @@ Run-level admission hooks and the initialized tool lifecycle precede recovered
 tool execution. A blocked hook cannot leave an already executed recovery effect.
 Recovered tool events use the current session subscriber, preserving delivery
 bookkeeping, tool completion, and browser activity under the original call ID.
+
+Main-session output crosses a Session-owned write-ahead boundary. Persisted text
+does not establish a not_applied effect. A main recovery acknowledgement must
+match its admitted run and cannot clear a later interruption or another payload.
 Unknown owner outcomes retain their registry row through terminal callbacks and
 cold-start pruning. Usage history is not a generation transfer: ordinary session
 rotations clear prior recovery ownership; compaction explicitly preserves it.
