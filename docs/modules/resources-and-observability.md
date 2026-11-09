@@ -115,6 +115,13 @@ I/O 拥塞通过同类读操作的服务延迟反馈。诊断同时列出阈值�
 每轮保留进程身份、CPU/RSS/private/commit、Windows句柄、直接子进程及编译服务退出回执。
 失败尝试保留在原目录；恢复执行会核对源码、fixture和已通过报告的哈希。
 
+长期回收入口为 `scripts/verify-resource-lifecycle-soak.mjs`，接收已构建的 `--candidate`、
+构建哈希 `--artifacts` 和独立 `--output`。同一候选运行50次真实终端进程树与观察窗口生命周期，
+前后各五分钟真实空闲，再独立记录三十分钟观察及周期性复用探针。每次按PID/creation identity
+核对取消后的进程退出，保留资源/句柄/内存、冷账户与generation拒绝记录；watcher/cache通过
+`resource-repeated-observers.test.ts` 的50次真实监听/回读/释放循环单独验证。
+`RESOURCE_SOAK_SMOKE=1`仅运行三次开发冒烟，正式驱动固定覆盖为0，不计为空闲或持续观察验收。
+
 ## 3. BackgroundWorkGate
 
 实现：`openclaw_runtime/src/resources/background-work-gate.ts`。
