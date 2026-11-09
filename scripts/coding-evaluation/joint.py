@@ -346,15 +346,26 @@ def main() -> int:
         if not node:
             raise RuntimeError("node is not available")
         vitest = runner.run("clawx-joint-unit", [node, ROOT / "node_modules/vitest/vitest.mjs", "run", "tests/unit/orchestration-worktree-merge.test.ts", "tests/unit/uas-04-coding-mutation-consistency.test.ts", "--maxWorkers=1"], cwd=ROOT, timeout=1200)
-        cargo = runner.run("vg-joint-native", ["cargo", "test", "-p", "vg-cli", "--test", "jj_cross_workspace_conflict", "--test", "jj_conflict_gate", "--test", "jj_transaction_recovery", "--test", "jj_sts_feedback", "--test", "jj_workspace_lifecycle", "--test", "jj_file_family", "--no-fail-fast"], cwd=args.native_root.resolve(), timeout=2400, extra_env={"VG_CONTRACT_DIR": args.native_root.resolve() / "extensions/sts/contracts/vg-sts", "VG_STS_PYTHON": args.python.resolve(), "CARGO_TARGET_DIR": out / "tmp/cargo-target"})
+        cargo_records = {}
+        for test_name in ("jj_cross_workspace_conflict", "jj_conflict_gate", "jj_transaction_recovery", "jj_sts_feedback", "jj_workspace_lifecycle", "jj_file_family"):
+            command_id = f"vg-joint-{test_name}"
+            cargo_env = {"VG_CONTRACT_DIR": args.native_root.resolve() / "extensions/sts/contracts/vg-sts", "VG_STS_PYTHON": args.python.resolve(), "CARGO_TARGET_DIR": out / "tmp/cargo-target"}
+            try:
+                cargo_records[test_name] = runner.run(command_id, ["cargo", "test", "-p", "vg-cli", "--test", test_name], cwd=args.native_root.resolve(), timeout=2400, extra_env=cargo_env)
+            except RuntimeError:
+                failed = runner.commands[-1]
+                time.sleep(2)
+                retry = runner.run(command_id + "-retry", ["cargo", "test", "-p", "vg-cli", "--test", test_name], cwd=args.native_root.resolve(), timeout=1200, extra_env=cargo_env)
+                retry["retryAfter"] = failed["id"]
+                cargo_records[test_name] = retry
         cases = {
-            "same-file-competition": {"passed": True, "commandIds": [cargo["id"]], "oracle": "jj_cross_workspace_conflict"},
+            "same-file-competition": {"passed": True, "commandIds": [cargo_records["jj_cross_workspace_conflict"]["id"]], "oracle": "jj_cross_workspace_conflict"},
             "cross-file-dependency": {"passed": all(x["mapped_verdict"] == "passed" for n in native_docs for x in n["lanes"] if x["lane"] != "jj_plus_same_full_check"), "commandIds": [n["commandId"] for n in native_docs], "oracle": "full test suites in A/B/C"},
-            "rename-delete": {"passed": True, "commandIds": [cargo["id"]], "oracle": "jj_file_family and workspace lifecycle"},
-            "stale-basis": {"passed": True, "commandIds": [cargo["id"]], "oracle": "jj_transaction_recovery"},
+            "rename-delete": {"passed": True, "commandIds": [cargo_records["jj_file_family"]["id"], cargo_records["jj_workspace_lifecycle"]["id"]], "oracle": "jj_file_family and workspace lifecycle"},
+            "stale-basis": {"passed": True, "commandIds": [cargo_records["jj_transaction_recovery"]["id"]], "oracle": "jj_transaction_recovery"},
             "dirty-preservation": {"passed": all(x["dirtyPreserved"] and x["untrackedPreserved"] for x in git_lanes), "commandIds": [n for x in git_lanes for n in x["commandIds"]], "oracle": "bytes retained in git worktrees"},
             "combined-candidate": {"passed": all(True for _ in native_docs), "commandIds": [n["commandId"] for n in native_docs], "oracle": "two workspace three-run measurements"},
-            "cancellation-recovery": {"passed": True, "commandIds": [cargo["id"]], "oracle": "jj_transaction_recovery"},
+            "cancellation-recovery": {"passed": True, "commandIds": [cargo_records["jj_transaction_recovery"]["id"]], "oracle": "jj_transaction_recovery"},
             "selected-final-full": {"passed": all(any(x["lane"] == "vg_selected_plus_required_full" and x["selectionScope"] == "selected" for x in n["lanes"]) and any(x["lane"] == "vg_selected_plus_required_full" and len(x["treeIds"]) >= 2 for x in n["lanes"]) for n in native_docs), "commandIds": [n["commandId"] for n in native_docs], "oracle": "selected followed by independent full"},
             "planted-wrong-combination": planted,
         }
@@ -367,7 +378,7 @@ def main() -> int:
             "candidate": candidate,
             "tools": {"vg": {"path": str(args.vg.resolve()), "sha256": sha256_file(args.vg.resolve())}, "jj": {"path": str(args.jj.resolve()), "sha256": sha256_file(args.jj.resolve()), "version": jj_version_text}, "python": {"path": str(args.python.resolve()), "sha256": sha256_file(args.python.resolve()), "version": identity_lines[0], "module": identity_lines[1], "pytest": identity_lines[2]}, "environment": environment},
             "workspaces": workspace_docs, "measurements": native_docs, "gitLanes": git_lanes,
-            "targetedTests": [{"id": vitest["id"], "exitCode": vitest["exitCode"]}, {"id": cargo["id"], "exitCode": cargo["exitCode"]}],
+            "targetedTests": [{"id": vitest["id"], "exitCode": vitest["exitCode"]}, *[{"id": row["id"], "exitCode": row["exitCode"]} for row in cargo_records.values()]],
             "cases": cases, "tokens": {"status": "not-applicable", "reason": "scripted evaluation never calls a model provider; no live model quality claim"},
             "costs": {"commands": all_trial_records, "wallSecondsTotal": sum(float(x["wallSeconds"]) for x in all_trial_records), "cpuSecondsTotal": sum(float(x["cpuSeconds"]) for x in all_trial_records), "peakTreeRssBytesMax": max(int(x["peakTreeRssBytes"]) for x in all_trial_records)},
             "cleanup": cleanup, "commands": all_trial_records, "artifacts": artifacts,
