@@ -2671,6 +2671,8 @@ openclaw_runtime/_tmp_*
 !/docs/dev/durable-task-system/DESIGN.md
 !/docs/dev/durable-task-system/STATUS.md
 !/docs/dev/session-lifecycle-control-matrix.md
+!/docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md
+!/docs/dev/evidence/project-rag-decision-20261109/source-review.json
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.

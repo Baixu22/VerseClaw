@@ -49,6 +49,8 @@
 
 ## 3. 当前实现边界
 
+2026-11-09 的 [Project RAG 裁决](2026-11-09-project-rag-retrieval-plane.md) 选择在既有共享 SQLite 内增加可重建的 Wiki chunk/FTS 投影。正文、版本和读取政策仍归 owner，最终上下文仍归 DCS；该决策未实施新检索能力，也不改变本 ADR 的唯一写入入口。旧任务的 no-new-store 保留其历史验收含义。
+
 - `routeContext` 仍未默认接入 SEKB；Runtime Lessons 只在显式 `sourcePolicy.runtimeLessons` 开启时参与候选，并保留结构化 provenance。
 - SourceSet 语义通道仍为显式 opt-in；未配置真实 embedding provider 或调用失败时保留 lexical fallback。
 - `wiki_apply` 对普通 agent 默认不注册，只有显式配置 `tools.allowAgentApply` 时才暴露。
