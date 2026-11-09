@@ -77,6 +77,8 @@ async function setup(launch: Launch, info: TestInfo, providerPort?: number) {
 }
 
 async function select(c: Context, key: string) {
+  const back = c.page.getByTestId('settings-back-button');
+  if (await back.isVisible()) { await back.focus(); await back.press('Enter'); }
   const family = c.page.getByTestId('session-family-children');
   if (key === c.neighbour && await family.isVisible()) {
     await family.selectOption(key);
