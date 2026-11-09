@@ -124,6 +124,7 @@ import { mergeProcessSurfaces, processFromTerminalSurface, projectGeneratedFileD
 import { promoteRunSurfaces } from './run-surface-promotion';
 import { useRunApprovals } from './use-run-approvals';
 import { WelcomeProjectPicker } from '@/components/chat/WelcomeProjectPicker';
+import { SessionWorkspacePicker } from '@/components/chat/SessionWorkspacePicker';
 import { WorkspacePickerMenu } from '@/components/chat/WorkspacePickerMenu';
 import { GeneratedFilesPanel } from '@/components/file-preview/GeneratedFilesPanel';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -398,6 +399,7 @@ function ProjectSessionHeader({
   workspaceProfiles,
   switchWorkspace,
   pickWorkspaceFolder,
+  onSelectWorktree,
   onOpenTaskLedger,
   onOpenClawGraph,
   sessions,
@@ -426,6 +428,7 @@ function ProjectSessionHeader({
   workspaceProfiles: Array<{ id: string; name: string; rootPath: string; lastOpenedAt?: number }>;
   switchWorkspace: (id: string) => Promise<unknown>;
   pickWorkspaceFolder: () => Promise<void>;
+  onSelectWorktree: (tree: GitWorktree) => Promise<void>;
   onOpenTaskLedger: () => void;
   onOpenClawGraph: () => void;
   sessions: ChatSession[];
@@ -538,6 +541,7 @@ function ProjectSessionHeader({
             className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1 motion-safe:zoom-in-95 motion-safe:duration-150 motion-reduce:animate-none"
             extraActions={(
               <>
+                <SessionWorkspacePicker embedded disabled={sending || pendingFinal} onSelect={async tree => { await onSelectWorktree(tree); setOpen(null); }} />
                 <button type="button" className="codex-header-menu__item codex-header-menu__item--muted" onClick={() => { setOpen(null); onOpenTaskLedger(); }}>
                   <ListChecks className="h-4 w-4" />
                   {t('workspace.actions.openTaskLedger')}
@@ -3379,6 +3383,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                 workspaceProfiles={workspaceProfiles}
                 switchWorkspace={handleSwitchWorkspace}
                  pickWorkspaceFolder={handlePickWorkspaceFolder}
+                onSelectWorktree={handleSwitchWorktreeWorkspace}
                  onOpenTaskLedger={handleOpenTaskLedger}
                  onOpenClawGraph={handleOpenClawGraph}
                 sessions={sessions}
@@ -3925,6 +3930,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
           <div className={cn('relative', sendingAnimation && 'codex-welcome-context--sending')}>
             <WelcomeScreen
               onPickFolder={handlePickWorkspaceFolder}
+              onSelectWorktree={handleSwitchWorktreeWorkspace}
               disabled={!isGatewayRunning}
             />
           </div>
@@ -4305,6 +4311,7 @@ function ChatStartupError({ message, onRetry }: { message: string | null; onRetr
 // ── Welcome Screen ──────────────────────────────────────────────
 
 type WelcomeScreenProps = {
+  onSelectWorktree?: (tree: GitWorktree) => Promise<void>;
   onSend: (text: string) => void | Promise<unknown>;
   onPickFolder?: () => void | Promise<unknown>;
   disabled?: boolean;
@@ -4377,10 +4384,10 @@ function WelcomeSuggestionScope({ children, suggestions }: Omit<WelcomeSuggestio
 }
 
 /** The empty conversation names its project without exposing Git configuration. */
-function WelcomeScreen({ disabled = false, onPickFolder }: Omit<WelcomeScreenProps, 'onSend'>) {
+function WelcomeScreen({ disabled = false, onPickFolder, onSelectWorktree }: Omit<WelcomeScreenProps, 'onSend'>) {
   const activeWorkspace = useWorkspacesStore(state=>state.activeWorkspace);
   if (!activeWorkspace) return null;
-  return <div className="codex-welcome-stage"><div className="codex-welcome-context" data-testid="chat-welcome-context"><WelcomeProjectPicker disabled={disabled} onPickFolder={onPickFolder}/></div></div>;
+  return <div className="codex-welcome-stage"><div className="codex-welcome-context" data-testid="chat-welcome-context"><WelcomeProjectPicker disabled={disabled} onPickFolder={onPickFolder} onSelectWorktree={onSelectWorktree}/></div></div>;
 }
 
 /**

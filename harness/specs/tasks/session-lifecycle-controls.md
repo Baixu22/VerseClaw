@@ -70,6 +70,9 @@ ownedPaths:
   - electron/services/long-session-resource-reclamation.ts
   - tests/e2e/session-context-commit-recovery.spec.ts
   - tests/e2e/fixtures/session-context-owner-seed.ts
+  - src/components/chat/WelcomeProjectPicker.tsx
+  - src/components/chat/SessionWorkspacePicker.tsx
+  - src/components/chat/ComposerPopover.tsx
 touchedAreas:
   - src/lib/host-api.ts
   - shared/host-api/contract.ts
@@ -134,6 +137,9 @@ touchedAreas:
   - electron/services/long-session-resource-reclamation.ts
   - tests/e2e/session-context-commit-recovery.spec.ts
   - tests/e2e/fixtures/session-context-owner-seed.ts
+  - src/components/chat/WelcomeProjectPicker.tsx
+  - src/components/chat/SessionWorkspacePicker.tsx
+  - src/components/chat/ComposerPopover.tsx
 requiredRules:
   - identity-scope-boundary
   - renderer-main-boundary

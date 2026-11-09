@@ -11,7 +11,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ComposerPopover } from './ComposerPopover';
 
-export function SessionWorkspacePicker({ disabled, onSelect, onChanged }: {
+export function SessionWorkspacePicker({ disabled, onSelect, onChanged, embedded = false }: {
+  embedded?: boolean;
   disabled?: boolean;
   onSelect: (tree: GitWorktree) => Promise<void>;
   onChanged?: () => void;
@@ -63,7 +64,7 @@ export function SessionWorkspacePicker({ disabled, onSelect, onChanged }: {
     finally { setBusy(false); }
   };
   if (!workspace) return null;
-  return <span ref={root} className="relative inline-flex min-w-0">
+  return <span ref={root} className={embedded ? "relative flex min-w-0 flex-col gap-2 px-2" : "relative inline-flex min-w-0"}>
     <button ref={trigger} type="button" className="codex-welcome-context__subcontrol" data-testid="session-worktree-trigger"
       aria-haspopup="dialog" aria-expanded={open} disabled={disabled || busy}
       onClick={() => { setOpen(!open); if (!open) { setError(null); void refresh(); } }}>
@@ -71,7 +72,7 @@ export function SessionWorkspacePicker({ disabled, onSelect, onChanged }: {
       <span>{current && !current.status.isRepository ? t('init') : isLinked ? t('worktree') : t('local')}</span>
       {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ChevronDown className="h-3.5 w-3.5" />}
     </button>
-    <ComposerPopover open={open} className="codex-composer-menu w-[min(340px,calc(100vw-32px))] overflow-y-auto text-left"
+    <ComposerPopover open={open} inline={embedded} className="codex-composer-menu w-[min(340px,calc(100vw-32px))] overflow-y-auto text-left"
       role="dialog" aria-label={t('environment')} data-testid="session-worktree-menu">
       <div className="px-3 pb-2 pt-2 text-xs font-medium">{t('environment')}</div>
       <p className="px-3 pb-2 text-xs text-muted-foreground">{t('environmentHint')}</p>

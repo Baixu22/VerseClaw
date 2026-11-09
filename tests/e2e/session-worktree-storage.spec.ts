@@ -12,6 +12,16 @@ async function invoke(page: Page, module: string, action: string, payload?: unkn
   }, { module, action, payload });
 }
 
+async function openWorktrees(page: Page) {
+  const trigger = page.getByTestId('session-worktree-trigger');
+  if (!await trigger.isVisible()) {
+    const project = page.getByTestId('welcome-project-trigger');
+    const parent = await project.isVisible() ? project : page.getByTestId('chat-header-environment-project').getByRole('button').first();
+    await parent.focus(); await parent.press('Enter');
+  }
+  await expect(trigger).toBeVisible(); await trigger.focus(); await trigger.press('Enter');
+}
+
 test('real repository, isolated worktree, storage command and settings in light/dark/narrow layouts', async ({ launchElectronApp }, testInfo) => {
   test.setTimeout(240_000);
   // The desktop test profile uses the workspace scratch area on this host.
@@ -35,8 +45,7 @@ test('real repository, isolated worktree, storage command and settings in light/
     const original = created.activeWorkspace as { id: string; activeSessionKey: string };
     await page.reload();
     await publishGatewayStatus(app, { state: 'running', gatewayReady: true, port: 18789 });
-    await expect(page.getByTestId('session-worktree-trigger')).toBeVisible();
-    await page.getByTestId('session-worktree-trigger').click();
+    await openWorktrees(page);
     await page.getByTestId('session-git-init').click();
     await expect.poll(() => { try { return git('rev-parse', '--is-inside-work-tree'); } catch { return ''; } }).toBe('true');
     report.repositoryInitialized = true;
@@ -46,7 +55,7 @@ test('real repository, isolated worktree, storage command and settings in light/
     git('add', '.'); git('commit', '-m', 'Initial files');
     await page.reload();
     await publishGatewayStatus(app, { state: 'running', gatewayReady: true, port: 18789 });
-    await page.getByTestId('session-worktree-trigger').click();
+    await openWorktrees(page);
     await page.getByTestId('session-worktree-create').click();
     await page.getByTestId('session-worktree-branch').fill('codex/storage-demo');
     await page.screenshot({ path: testInfo.outputPath('worktree-create-light.png') });
@@ -65,10 +74,10 @@ test('real repository, isolated worktree, storage command and settings in light/
       const data = await invoke(page, 'workspaces', 'getActive');
       return (data.activeWorkspace as { state?: { draftInput?: string } })?.state?.draftInput;
     }).toBe('Draft for this worktree');
-    await page.getByTestId('session-worktree-trigger').click();
+    await openWorktrees(page);
     await page.getByTestId('session-worktree-menu').getByRole('button').filter({ hasText: /Local/ }).click();
     await expect.poll(async () => (await invoke(page, 'workspaces', 'getActive')).activeWorkspaceId).toBe(original.id);
-    await page.getByTestId('session-worktree-trigger').click();
+    await openWorktrees(page);
     await page.getByTestId('session-worktree-menu').getByRole('button').filter({ hasText: 'codex/storage-demo' }).click();
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('Draft for this worktree');
     report.draftRestored = true;
