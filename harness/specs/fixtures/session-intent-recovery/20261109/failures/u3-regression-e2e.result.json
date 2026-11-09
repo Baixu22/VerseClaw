@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex-unified-session-relay-01a1babd",
+  "name": "u3-regression-e2e",
+  "cwd": "D:\\ClawX-work\\session-task-unified-relay-20261109",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "tests/e2e/chat-session-handoff.spec.ts",
+    "tests/e2e/chat-session-fork.spec.ts",
+    "tests/e2e/session-task-scope-derivation.spec.ts",
+    "--workers=1",
+    "--reporter=list,json",
+    "--output=D:/tmp/unified-management-20261109/intent-validation/u3-regression-e2e-results"
+  ],
+  "startedAt": "2026-11-09T06:16:07.098Z",
+  "finishedAt": "2026-11-09T06:17:56.940Z",
+  "durationMs": 109839,
+  "exitCode": 1,
+  "signal": null,
+  "sourceUnchanged": true,
+  "before": {
+    "commit": "c6a439a52f0366ffb9ab1df7c502e2ee4bb3593b",
+    "tree": "baaf9aabbb77bb4975aa18e2db874ac6c0cf97e8",
+    "dirty": "",
+    "files": [
+      {
+        "file": "electron/services/sessions-api.ts",
+        "sha256": "aec622c683351f4406b5dbb974e3ef834421f43f5f81eb9d5d91b95e9c058cdf"
+      },
+      {
+        "file": "shared/i18n/locales/en/chat.json",
+        "sha256": "a9ccbd289f5aa0725906f55d24123289d98972fd64a91241e4ac0f05f8c4245c"
+      },
+      {
+        "file": "shared/i18n/locales/ja/chat.json",
+        "sha256": "6490d5271f8cbe5dd2f270355598aa9291147d09163ff41f547ac121315b7d91"
+      },
+      {
+        "file": "shared/i18n/locales/ru/chat.json",
+        "sha256": "093ecd598124b2f5aac9ea3af62f22bcb9708944df793fe11ffd69a03be7928f"
+      },
+      {
+        "file": "shared/i18n/locales/zh/chat.json",
+        "sha256": "d2fea0da498d1d3c556ffddb16f66c373dfa2b469ec5ea4d0f63bfda04310821"
+      },
+      {
+        "file": "src/pages/Chat/ChatMessage.tsx",
+        "sha256": "d3fc1dc031d4314d59b1d2dde7708a20f762ae1fc08bd4259bc040539aea1ea6"
+      },
+      {
+        "file": "tests/e2e/session-fork-intent.spec.ts",
+        "sha256": "edc5eb90520628a0ccb961c0b560846128a034d1b53be204b1a50e5920a33bf2"
+      },
+      {
+        "file": "tests/unit/chat-message.test.tsx",
+        "sha256": "b886d495f1a8d916a89cd31a8a6fe7f39698eff81b4df94b30784a2b42459189"
+      },
+      {
+        "file": "tests/unit/host-services.test.ts",
+        "sha256": "3e8ac3d03b550090ddbe916e0250fc0c21d70118825f662e304bf11f5b2640db"
+      },
+      {
+        "file": "tests/unit/session-handoff-recovery.test.ts",
+        "sha256": "6c97b9266cda489ef021a051e63a01bc4d998e363f4a41b034645347ad641171"
+      }
+    ]
+  },
+  "after": {
+    "commit": "c6a439a52f0366ffb9ab1df7c502e2ee4bb3593b",
+    "tree": "baaf9aabbb77bb4975aa18e2db874ac6c0cf97e8",
+    "dirty": "",
+    "files": [
+      {
+        "file": "electron/services/sessions-api.ts",
+        "sha256": "aec622c683351f4406b5dbb974e3ef834421f43f5f81eb9d5d91b95e9c058cdf"
+      },
+      {
+        "file": "shared/i18n/locales/en/chat.json",
+        "sha256": "a9ccbd289f5aa0725906f55d24123289d98972fd64a91241e4ac0f05f8c4245c"
+      },
+      {
+        "file": "shared/i18n/locales/ja/chat.json",
+        "sha256": "6490d5271f8cbe5dd2f270355598aa9291147d09163ff41f547ac121315b7d91"
+      },
+      {
+        "file": "shared/i18n/locales/ru/chat.json",
+        "sha256": "093ecd598124b2f5aac9ea3af62f22bcb9708944df793fe11ffd69a03be7928f"
+      },
+      {
+        "file": "shared/i18n/locales/zh/chat.json",
+        "sha256": "d2fea0da498d1d3c556ffddb16f66c373dfa2b469ec5ea4d0f63bfda04310821"
+      },
+      {
+        "file": "src/pages/Chat/ChatMessage.tsx",
+        "sha256": "d3fc1dc031d4314d59b1d2dde7708a20f762ae1fc08bd4259bc040539aea1ea6"
+      },
+      {
+        "file": "tests/e2e/session-fork-intent.spec.ts",
+        "sha256": "edc5eb90520628a0ccb961c0b560846128a034d1b53be204b1a50e5920a33bf2"
+      },
+      {
+        "file": "tests/unit/chat-message.test.tsx",
+        "sha256": "b886d495f1a8d916a89cd31a8a6fe7f39698eff81b4df94b30784a2b42459189"
+      },
+      {
+        "file": "tests/unit/host-services.test.ts",
+        "sha256": "3e8ac3d03b550090ddbe916e0250fc0c21d70118825f662e304bf11f5b2640db"
+      },
+      {
+        "file": "tests/unit/session-handoff-recovery.test.ts",
+        "sha256": "6c97b9266cda489ef021a051e63a01bc4d998e363f4a41b034645347ad641171"
+      }
+    ]
+  },
+  "tests": {
+    "startTime": "2026-11-09T06:16:09.564Z",
+    "duration": 106517.60100000001,
+    "expected": 8,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "log": {
+    "path": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-regression-e2e.log",
+    "sha256": "43565510098b02f323f629c80bbb62e669ed9cabecd440de911d071a1b548598"
+  }
+}

@@ -334,6 +334,8 @@
     "copiedCode": "Copied"
   },
   "messageActions": {
+    "forkMissingBoundary": "This message has no transcript boundary. Refresh the conversation before forking.",
+    "forkUnavailable": "Fork is available when the session is connected and its current run has finished.",
     "summarizeUpToHere": "Summarize up to here",
     "summarizeFromHere": "Summarize from here",
     "forkFromHere": "Ask in a new session",

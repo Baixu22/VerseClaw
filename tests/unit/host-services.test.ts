@@ -20,6 +20,7 @@ function runtimeHandoffGateway() {
       return { key, sessionId: entries.get(key)!.sessionId };
     }
     if (method === 'chat.history') return { messages: [] };
+    if (method === 'taskScope.runState') return { quiescent: true };
     return {};
   }) };
 }
@@ -240,6 +241,7 @@ vi.mock('@electron/utils/agent-config', () => ({
 vi.mock('@electron/services/workspaces-api', () => ({
   createWorkspacesApi: () => ({ update: handoffWorkspaceUpdateMock, saveState: handoffWorkspaceUpdateMock }),
   getActiveWorkspaceProfile: vi.fn().mockResolvedValue(null),
+  getWorkspaceRootPathById: vi.fn(async () => undefined),
   getPersistedCoordinatorBinding: vi.fn(async () => null),
   readWorkspaceHandoffOperation: async (input: { workspaceId: string; sessionKey: string; operationId?: string }) =>
     [...handoffOperationsMock.values()].find((operation) => operation.workspaceId === input.workspaceId
@@ -1376,11 +1378,12 @@ describe('host services', () => {
   });
 
   it('forwards an explicit fromLeafId fork point and omits it otherwise (#180)', async () => {
-    const rpc = vi.fn().mockResolvedValue({
-      key: 'agent:main:dashboard:fork',
+    let fork = 0;
+    const rpc = vi.fn().mockImplementation(async () => ({
+      key: `agent:main:dashboard:fork-${++fork}`,
       sourceKey: 'agent:main:main',
       forkedFromParent: true,
-    });
+    }));
     const { createSessionsApi } = await import('@electron/services/sessions-api');
     const sessionsApi = createSessionsApi({ gatewayManager: { rpc } as never });
 
@@ -1794,6 +1797,7 @@ describe('host services', () => {
     const before = await ledger.loadTaskLedgerSnapshot('task-workspace');
     const children = new Map<string, { sessionId: string; parentSessionKey: string }>();
     const rpc = vi.fn(async (method: string, params?: Record<string, unknown>) => {
+      if (method === 'taskScope.runState') return { quiescent: true };
       if (method === 'sessions.describe') return { session: params?.key === sourceSessionKey ? { sessionId: 'source-generation' } : children.get(String(params?.key)) ?? null };
       if (method === 'sessions.create') { children.set(String(params?.key), { sessionId: 'handoff-generation', parentSessionKey: sourceSessionKey }); return { key: params?.key }; }
       if (method === 'sessions.fork') return {

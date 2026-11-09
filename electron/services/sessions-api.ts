@@ -114,7 +114,9 @@ function readRuntimeConfigForContextFolding(): unknown {
 }
 
 async function readHandoffDecision(sessionKey: string, workspaceId: string | null) {
-  const snapshot = await loadTaskLedgerSnapshot(workspaceId);
+  const snapshot = await loadTaskLedgerSnapshot(workspaceId).catch((cause: unknown) => {
+    throw new Error('Handoff ancestry unavailable: Task Ledger could not be read', { cause });
+  });
   if (snapshot.warnings.length) throw new Error('Handoff ancestry unavailable: Task Ledger contains unreadable events');
   return evaluateHandoffDerivation({ links: snapshot.sessionLinks, sessionKey, ...resolveConfiguredHandoffPolicy() });
 }

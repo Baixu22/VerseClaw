@@ -4,7 +4,7 @@ id: session-handoff-recovery
 title: Persist fork questions and recover handoff creation and first delivery
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 95b876f27
+diffBase: 806855309
 intent: Keep source generation, child identity and first-send identity in the existing Workspace owner and reconcile through runtime/transcript facts.
 ownedPaths:
   - shared/types/session-handoff.ts
@@ -22,6 +22,10 @@ ownedPaths:
   - src/pages/Chat/ChatMessage.tsx
   - shared/i18n/locales/**/chat.json
   - tests/unit/session-handoff-recovery.test.ts
+  - tests/unit/chat-message.test.tsx
+  - tests/unit/electron-process-identity.test.ts
+  - tests/e2e/fixtures/windows-process.ts
+  - tests/e2e/session-fork-intent.spec.ts
   - tests/unit/host-services.test.ts
   - tests/unit/workspace-session.test.ts
   - tests/e2e/chat-session-handoff.spec.ts
@@ -32,6 +36,11 @@ ownedPaths:
   - harness/specs/fixtures/session-derivation-ui/**
   - docs/modules/multi-agent-and-tasks.md
 touchedAreas:
+  - README.md
+  - README.zh-CN.md
+  - README.ja-JP.md
+  - README.ru-RU.md
+  - harness/specs/fixtures/session-intent-recovery/**
   - shared/**
   - electron/services/**
   - openclaw_runtime/src/gateway/server-methods/sessions.read.ts
@@ -65,6 +74,8 @@ acceptance:
   - Changed payload cannot reuse a send identity; existing task states and writer fences are preserved.
   - Focused owner tests and Electron journeys retain negative and restart evidence with four-locale UI.
 requiredTests:
+  - pnpm exec vitest run tests/unit/chat-message.test.tsx --maxWorkers=1
+  - pnpm exec playwright test tests/e2e/session-fork-intent.spec.ts --workers=1
   - pnpm exec vitest run tests/unit/session-handoff-recovery.test.ts tests/unit/host-services.test.ts tests/unit/workspace-session.test.ts --maxWorkers=1 --no-file-parallelism
   - pnpm exec playwright test tests/e2e/chat-session-handoff.spec.ts tests/e2e/chat-session-fork.spec.ts tests/e2e/session-derivation-ui.spec.ts --workers=1
   - pnpm run typecheck
@@ -77,6 +88,10 @@ requiredTests:
 docs:
   required: true
   files:
+    - README.md
+    - README.zh-CN.md
+    - README.ja-JP.md
+    - README.ru-RU.md
     - docs/modules/multi-agent-and-tasks.md
 ---
 

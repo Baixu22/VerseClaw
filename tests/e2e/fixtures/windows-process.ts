@@ -1,5 +1,17 @@
-import { execFile } from 'node:child_process';
+import { execFile, type ExecFileOptions } from 'node:child_process';
 import { promisify } from 'node:util';
+
+const exec = promisify(execFile);
+
+// Prefer the current shell; retry only when it is absent, never after an uncertain operation.
+async function runPowerShell(script: string, options: ExecFileOptions & { encoding: 'utf8' }) {
+  const args = ['-NoLogo', '-NoProfile', '-NonInteractive', '-Command', script];
+  try { return await exec('pwsh.exe', args, options); }
+  catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+    return exec('powershell.exe', args, options);
+  }
+}
 
 export type WindowsProcessIdentity = { pid: number; creationTime: number };
 export type WindowsProcessCheck = WindowsProcessIdentity & {
@@ -10,8 +22,7 @@ export type WindowsProcessCheck = WindowsProcessIdentity & {
 export async function discoverWindowsElectronProcesses(runRoot: string): Promise<Array<WindowsProcessIdentity & {
   ProcessId: number; ParentProcessId: number; ParentAlive: boolean;
 }>> {
-  const { stdout } = await promisify(execFile)('powershell.exe', [
-    '-NoLogo', '-NoProfile', '-NonInteractive', '-Command', String.raw`
+  const { stdout } = await runPowerShell(String.raw`
 $ErrorActionPreference = 'Stop'
 $root = [IO.Path]::GetFullPath($env:CLAWX_PROCESS_RUN_ROOT).TrimEnd('\') + '\'
 Add-Type -TypeDefinition @'
@@ -81,8 +92,7 @@ $rows = @(foreach ($process in [Diagnostics.Process]::GetProcessesByName('electr
   }
 })
 ConvertTo-Json -InputObject $rows -Depth 3 -Compress
-`,
-  ], { windowsHide: true, timeout: 8_000, encoding: 'utf8', env: { ...process.env, CLAWX_PROCESS_RUN_ROOT: runRoot } });
+`, { windowsHide: true, timeout: 8_000, encoding: 'utf8', env: { ...process.env, CLAWX_PROCESS_RUN_ROOT: runRoot } });
   return JSON.parse(stdout.trim());
 }
 
@@ -133,9 +143,7 @@ export async function checkWindowsProcesses(
     throw new Error('A PID and creation time are required for every owned process');
   }
   const entries = identities.map(({ pid, creationTime }) => ({ pid, creationTime: Math.floor(creationTime) }));
-  const { stdout } = await promisify(execFile)('powershell.exe', [
-    '-NoLogo', '-NoProfile', '-NonInteractive', '-Command', script,
-  ], { windowsHide: true, timeout: 10_000, encoding: 'utf8', env: {
+  const { stdout } = await runPowerShell(script, { windowsHide: true, timeout: 10_000, encoding: 'utf8', env: {
     ...process.env,
     CLAWX_PROCESS_IDENTITIES: JSON.stringify(entries),
     CLAWX_PROCESS_TERMINATE: terminate ? '1' : '0',
