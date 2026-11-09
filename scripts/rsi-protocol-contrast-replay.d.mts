@@ -11,4 +11,5 @@ export function reconstructProtocolStatistics(plan: ProtocolContrastPlan, record
 export function replayProtocolContrast(options: { root: string; base: string; scratch: string; out?: string }): {
   passed: boolean; recordedSlots: number; providerCallsDuringReplay: number; independentArithmetic: boolean;
   statistics: ReturnType<typeof reconstructProtocolStatistics>; independentAccounting: Record<string, unknown>;
+  costBoundaries: Record<string, Record<string, { status: string; relativeIncrease: number | null; exceedsFrozenCeiling: boolean | null }>>;
 };

@@ -122,6 +122,10 @@ describe('protocol contrasts with scripted providers', () => {
       expect(actual[name].pairedDiff.ci95).toEqual(independent.comparisons[name].ci95);
       expect(actual[name].power.requiredCasesApprox).toBe(independent.comparisons[name].power.requiredCasesApprox);
     }
+    const toolsFromZero = summarizeProtocolContrast(study, records.map(record => ({ ...record,
+      toolCalls: record.scheduledSlot.variantId === 'v4-public-tools' ? 1 : 0 })));
+    expect(toolsFromZero['v4-minus-v3'].budget.observedRelativeToolCallIncrease).toBe(Infinity);
+    expect(JSON.parse(JSON.stringify(toolsFromZero))['v4-minus-v3'].budget.observedRelativeToolCallIncrease).toBeNull();
     const partial = reconstructProtocolStatistics(study, records.filter(record => record.scheduledSlot.position !== 1));
     expect(partial.comparisons['v3-minus-v2'].pairCount).toBe(23); expect(partial.unexecutedSlots).toBe(1);
     expect(() => reconstructProtocolStatistics(study, [...records, records[0]])).toThrow('duplicate-or-unknown-slot');

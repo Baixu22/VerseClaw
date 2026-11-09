@@ -92,7 +92,13 @@ function rawOutcome(row) {
 export function replayProtocolContrast({ root, base, scratch, out }) {
   const { plan, records, accounting, interruptedReservations } = readProtocolContrastRun({ root, base, scratch });
   const report = JSON.parse(readFileSync(join(base, 'report.json'), 'utf8'));
-  assert.deepEqual(report.comparisons, summarizeProtocolContrast(plan, records), 'protocol-replay-current-report-drift');
+  const recomputedComparisons = summarizeProtocolContrast(plan, records);
+  assert.deepEqual(report.comparisons, JSON.parse(JSON.stringify(recomputedComparisons)), 'protocol-replay-current-report-drift');
+  const costBoundaries = Object.fromEntries(Object.entries(recomputedComparisons).map(([name, comparison]) => [name,
+    Object.fromEntries([['tokens', comparison.budget.observedRelativeTokenIncrease],
+      ['toolCalls', comparison.budget.observedRelativeToolCallIncrease]].map(([metric, value]) => [metric,
+      { status: value === Infinity ? 'unbounded-from-zero-baseline' : value === null ? 'unknown' : 'measured',
+        relativeIncrease: Number.isFinite(value) ? value : null, exceedsFrozenCeiling: value === null ? null : value > 0.1 }]))]));
   for (const record of records) assert.equal(rawOutcome(record.row), record.outcome, 'protocol-replay-independent-outcome-drift');
   const statistics = reconstructProtocolStatistics(plan, records);
   for (const [name, baseline, treatment] of [['v3-minus-v2', 'v2-legacy-input', 'v3-public-input'],
@@ -134,7 +140,7 @@ export function replayProtocolContrast({ root, base, scratch, out }) {
   const result = { schemaVersion: 'RsiProtocolContrastIndependentReplay/v1', driven_by: 'agent', actor: 'codex/rsi-protocol-arithmetic-verifier',
     generatedAt: new Date().toISOString(), source: plan.source.commit, runId: plan.runId, planDigest: benefitDigest(plan),
     reportDigest: benefitDigest(readFileSync(join(base, 'report.json'))), independentArithmetic: true, statistics,
-    independentAccounting, interruptedReservations, recordedSlots: records.length,
+    independentAccounting, costBoundaries, interruptedReservations, recordedSlots: records.length,
     providerCallsDuringReplay: 0, passed: true };
   if (out) { mkdirSync(dirname(out), { recursive: true }); writeFileSync(out, JSON.stringify(result, null, 2) + '\n', { flag: 'wx' }); }
   return result;
