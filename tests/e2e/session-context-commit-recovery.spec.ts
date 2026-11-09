@@ -42,7 +42,7 @@ async function installReplyLoss(app: ElectronApplication, sessionKey: string) {
       try {
         const response = await original(event, request); row.ownerReply = structuredClone(response); row.completed = true; row.completedAt = Date.now();
         const armed = state.armed, success = response.ok === true && response.data?.success === true;
-        if (armed?.action === request.action && success && (request.action === 'restoreCheckpoint' || response.data?.compacted === true)) {
+        if (armed && armed.action === request.action && success && (request.action === 'restoreCheckpoint' || response.data?.compacted === true)) {
           if (armed.file) {
             const fs = process.mainModule!.require('node:fs') as typeof import('node:fs');
             const crypto = process.mainModule!.require('node:crypto') as typeof import('node:crypto');
