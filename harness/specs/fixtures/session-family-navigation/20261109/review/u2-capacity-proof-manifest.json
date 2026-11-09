@@ -1,0 +1,213 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-u2-capacity",
+  "requested_model": "ccs-workbuddy/deepseek-v4.1-flash",
+  "sourceHead": "103324cc1b4fa2ba87a7ba4e71f9de61f6491c79",
+  "observedHead": "02346f0fad6222c10b393f4948d09078dce8f423",
+  "syntaxErrors": [],
+  "localeParity": true,
+  "files": [
+    {
+      "file": "openclaw_runtime/src/agents/orchestrator-run-observed.ts",
+      "originalSha256": "a7c919f0be0841671c863c5c9ace45df6fe4b89210d26f73cb771914b6f6e426",
+      "candidateSha256": "e88bc2bbe4bebcbe4a440aa99f6ea3258b242fa927a7695b23e8909855920be4"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/long-session-delegation-receipt.ts",
+      "originalSha256": "9761a249c506e7481a8eb59c1cdd445d06d3be325224bae0a33e2ef2b8f8efe5",
+      "candidateSha256": "dc37f4fe8b00833a6777bbf1b9bb942969be5be4727df834e90b118255329d67"
+    },
+    {
+      "file": "src/components/chat/SessionDelegationStatus.tsx",
+      "originalSha256": "1d727901f5664477b573cb249542fa88a7aeb2c526bc6bd5c297464df9e88bfa",
+      "candidateSha256": "6dfec2aa7c3bdb402255a13b7c2f24e26f8b74ce52166e69803a49e98289ffd7"
+    },
+    {
+      "file": "src/components/file-preview/WorkspaceAgentsPanel.tsx",
+      "originalSha256": "3ac4ebb8874ecf430d7384903081a96babac98e90fc2da14ea79c176deea00b8",
+      "candidateSha256": "ad6457964c3e9986d70c017bfd74c89fda6358f9ea8751469d6ef0a275a66d80"
+    },
+    {
+      "file": "src/components/file-preview/WorkspaceSubagentPanel.tsx",
+      "originalSha256": "147f171974ae99d91eca9daf74dee549605d53109110b1c901fcb940bd7dd20c",
+      "candidateSha256": "9a42bf1804bed6c98662b7b6e7b26e317e3860cda07fdb6a6ab93bc8db0d7a5c"
+    },
+    {
+      "file": "shared/i18n/locales/en/chat.json",
+      "originalSha256": "ce9e33627a660cb8e5165f1d53cd301eb37c61e36560140d31b8b9c63808175b",
+      "candidateSha256": "cdda2bee32c0e4e3d7d27e2aa960cba97800e753da722eb0bc5a12de22d5755f"
+    },
+    {
+      "file": "shared/i18n/locales/zh/chat.json",
+      "originalSha256": "2946717d6cd2aaf084c2138fe51b37619ba469ca6ee429a146e087df0382312b",
+      "candidateSha256": "a1ce3c6eabc7a1f5e62acd9c340ca6076546543ba3ead471cfc7e63d7891dad4"
+    },
+    {
+      "file": "shared/i18n/locales/ja/chat.json",
+      "originalSha256": "a85dd484e556900e9b771a2572e3327db99e3e8eee0fac70366139eebfda37ca",
+      "candidateSha256": "d167c5dc6e6468cc1db7250ab988d6fb5c5996f14c8ac41528df6a11872e7a97"
+    },
+    {
+      "file": "shared/i18n/locales/ru/chat.json",
+      "originalSha256": "6845f4abb81c2302bef931cb21a7021e9798c253b573b7597c0982918f965b69",
+      "candidateSha256": "5249cd4650e5c422d92a72e75e3d06cf98960af984e0ec59e82869d5c5b69bfd"
+    },
+    {
+      "file": "tests/unit/long-session-delegation-admission.test.ts",
+      "originalSha256": "27310ee767b7ebfad826c9ced26280af3c613236d45eddb840a50dac78d42cf7",
+      "candidateSha256": "e3bb6ff235563aa1fa35a7ed76335b4779602b384907148a341cae528f32526c"
+    },
+    {
+      "file": "tests/unit/session-delegation-status.test.tsx",
+      "originalSha256": "15a6a4ac04cfae2ebe57bf6c682bc188f84cf26a3b1e979fef8f3b32fe277233",
+      "candidateSha256": "7ff319e5a13ffad68a56668a36c90854012763852a0cf8d9544c6246d1a6af9f"
+    },
+    {
+      "file": "tests/unit/workspace-agents-panel-failure.test.tsx",
+      "originalSha256": "0d14d8c9c3a6d52d87cf1b09734c4a97b6eebca221951f520445085aa9bccf66",
+      "candidateSha256": "d166a6abdd6634ae0d6f84fc31399a364dede2ae5deba1292efe9aa111807bc9"
+    },
+    {
+      "file": "tests/unit/session-chain-panels.test.tsx",
+      "originalSha256": "0ef78f93d675dd0c17b46009f58126aa711a73c240a12fc7127464736e24d925",
+      "candidateSha256": "b6465082f9b2ba52c197ab6cf260155aeb961bbbacfa7489ccfa31a1047544e8"
+    },
+    {
+      "file": "tests/e2e/session-delegation-capacity.spec.ts",
+      "candidateSha256": "02411ac1b64b61207629dba24c5548acd0b7116b73875e58cca13e9853d501c2"
+    }
+  ],
+  "closeout": {
+    "observedHead": "44ece6fafab9bf46ef61a1fb76092a6c78fc408f",
+    "patchApplyCheck": {
+      "exitCode": 0,
+      "againstHead": "44ece6fafab9bf46ef61a1fb76092a6c78fc408f"
+    },
+    "integration": "git apply only; do not overwrite source with staged complete files",
+    "upstreamProjectEntryUnbound": {
+      "en": {
+        "source": "No coordinator bound to this project.",
+        "candidate": "No coordinator bound to this project.",
+        "preserved": true
+      },
+      "zh": {
+        "source": "此项目未绑定负责人。",
+        "candidate": "此项目未绑定负责人。",
+        "preserved": true
+      },
+      "ja": {
+        "source": "このプロジェクトに担当セッションが紐付けられていません。",
+        "candidate": "このプロジェクトに担当セッションが紐付けられていません。",
+        "preserved": true
+      },
+      "ru": {
+        "source": "К этому проекту не привязан координатор.",
+        "candidate": "К этому проекту не привязан координатор.",
+        "preserved": true
+      }
+    },
+    "sourceFiles": [
+      {
+        "file": "openclaw_runtime/src/agents/orchestrator-run-observed.ts",
+        "currentSha256": "a7c919f0be0841671c863c5c9ace45df6fe4b89210d26f73cb771914b6f6e426",
+        "matchesReviewedSource": true
+      },
+      {
+        "file": "openclaw_runtime/src/agents/long-session-delegation-receipt.ts",
+        "currentSha256": "9761a249c506e7481a8eb59c1cdd445d06d3be325224bae0a33e2ef2b8f8efe5",
+        "matchesReviewedSource": true
+      },
+      {
+        "file": "src/components/chat/SessionDelegationStatus.tsx",
+        "currentSha256": "1d727901f5664477b573cb249542fa88a7aeb2c526bc6bd5c297464df9e88bfa",
+        "matchesReviewedSource": true
+      },
+      {
+        "file": "src/components/file-preview/WorkspaceAgentsPanel.tsx",
+        "currentSha256": "3ac4ebb8874ecf430d7384903081a96babac98e90fc2da14ea79c176deea00b8",
+        "matchesReviewedSource": true
+      },
+      {
+        "file": "src/components/file-preview/WorkspaceSubagentPanel.tsx",
+        "currentSha256": "147f171974ae99d91eca9daf74dee549605d53109110b1c901fcb940bd7dd20c",
+        "matchesReviewedSource": true
+      },
+      {
+        "file": "shared/i18n/locales/en/chat.json",
+        "currentSha256": "ce9e33627a660cb8e5165f1d53cd301eb37c61e36560140d31b8b9c63808175b",
+        "matchesReviewedSource": true
+      },
+      {
+        "file": "shared/i18n/locales/zh/chat.json",
+        "currentSha256": "2946717d6cd2aaf084c2138fe51b37619ba469ca6ee429a146e087df0382312b",
+        "matchesReviewedSource": true
+      },
+      {
+        "file": "shared/i18n/locales/ja/chat.json",
+        "currentSha256": "a85dd484e556900e9b771a2572e3327db99e3e8eee0fac70366139eebfda37ca",
+        "matchesReviewedSource": true
+      },
+      {
+        "file": "shared/i18n/locales/ru/chat.json",
+        "currentSha256": "6845f4abb81c2302bef931cb21a7021e9798c253b573b7597c0982918f965b69",
+        "matchesReviewedSource": true
+      },
+      {
+        "file": "tests/unit/long-session-delegation-admission.test.ts",
+        "currentSha256": "27310ee767b7ebfad826c9ced26280af3c613236d45eddb840a50dac78d42cf7",
+        "matchesReviewedSource": true
+      },
+      {
+        "file": "tests/unit/session-delegation-status.test.tsx",
+        "currentSha256": "15a6a4ac04cfae2ebe57bf6c682bc188f84cf26a3b1e979fef8f3b32fe277233",
+        "matchesReviewedSource": true
+      },
+      {
+        "file": "tests/unit/workspace-agents-panel-failure.test.tsx",
+        "currentSha256": "0d14d8c9c3a6d52d87cf1b09734c4a97b6eebca221951f520445085aa9bccf66",
+        "matchesReviewedSource": true
+      },
+      {
+        "file": "tests/unit/session-chain-panels.test.tsx",
+        "currentSha256": "0ef78f93d675dd0c17b46009f58126aa711a73c240a12fc7127464736e24d925",
+        "matchesReviewedSource": true
+      }
+    ],
+    "validation": [
+      {
+        "file": "baseline.tests.json",
+        "sha256": "b6ea0d568ab2b3e99c99d2f4c8f296e73cb5d927fdfd4cb0968bfb05d1ae4056",
+        "success": false,
+        "passed": 0,
+        "failed": 1,
+        "notSelected": 28
+      },
+      {
+        "file": "candidate.tests.json",
+        "sha256": "a838c96d8b86ef4deed9b7c49262224534b3b3ac2b118f1dfad50659fa0b5b51",
+        "success": true,
+        "passed": 15,
+        "failed": 0,
+        "notSelected": 19
+      }
+    ],
+    "fullTypecheck": "not_run",
+    "electron": "not_run",
+    "build": "not_run"
+  },
+  "artifacts": {
+    "patch": {
+      "file": "capacity-reasons.patch",
+      "sha256": "3570ff768b4a4a314fbc77a693e8020556c1c84bd9fec1a974fcb1c93e74cf1a"
+    },
+    "report": {
+      "file": "report.md",
+      "sha256": "1e3b1ee2ff688768ecdc01b7d7ceefa53bb2c875a6591cb512f908446d882466"
+    },
+    "e2e": {
+      "file": "tests/e2e/session-delegation-capacity.spec.ts",
+      "sha256": "02411ac1b64b61207629dba24c5548acd0b7116b73875e58cca13e9853d501c2",
+      "execution": "not_run"
+    }
+  }
+}

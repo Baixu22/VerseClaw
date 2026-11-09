@@ -18,6 +18,7 @@ const LOAD_SESSIONS_MIN_INTERVAL_MS = 1_200;
 const LOAD_HISTORY_MIN_INTERVAL_MS = 800;
 let lastLoadSessionsAt = 0;
 let lastLoadHistoryAt = 0;
+let sessionChangeRefresh: ReturnType<typeof setTimeout> | undefined;
 let cronRepairTriggeredThisSession = false;
 
 interface GatewayState {
@@ -161,7 +162,7 @@ function shouldRefreshForChatRuntimeEvent(event: ChatRuntimeEvent): boolean {
 }
 
 function maybeLoadSessions(
-  state: { loadSessions: () => Promise<void> },
+  state: { loadSessions: (options?: {force?:boolean}) => Promise<void> },
   force = false,
 ): void {
   const { status } = useGatewayStore.getState();
@@ -170,7 +171,7 @@ function maybeLoadSessions(
   const now = Date.now();
   if (!force && now - lastLoadSessionsAt < LOAD_SESSIONS_MIN_INTERVAL_MS) return;
   lastLoadSessionsAt = now;
-  void state.loadSessions();
+  void state.loadSessions(force?{force:true}:undefined);
 }
 
 function maybeLoadHistory(
@@ -212,6 +213,13 @@ function asRecord(value: unknown): Record<string, unknown> {
 function handleGatewayNotification(notification: GatewayNotification | undefined): void {
   const payload = notification;
   if (!payload || payload.method === 'agent') {
+    return;
+  }
+  if (payload.method === 'sessions.changed') {
+    if (sessionChangeRefresh === undefined) sessionChangeRefresh = setTimeout(() => {
+      sessionChangeRefresh = undefined;
+      void import('./chat').then(({ useChatStore }) => maybeLoadSessions(useChatStore.getState(), true)).catch(() => {});
+    }, 60);
     return;
   }
 
@@ -358,6 +366,10 @@ export const useGatewayStore = create<GatewayState>((set, get) => ({
 
         if (!gatewayEventUnsubscribers) {
           const unsubscribers: Array<() => void> = [];
+          unsubscribers.push(hostEvents.onWorkspaceNavigationChanged(()=>{
+            void import('./workspaces').then(({useWorkspacesStore})=>useWorkspacesStore.getState().fetchWorkspaces()).catch(()=>{});
+            handleGatewayNotification({method:'sessions.changed',params:{reason:'workspace-navigation'}});
+          }));
           unsubscribers.push(hostEvents.onGatewayStatus((payload) => {
             set({ status: payload });
 

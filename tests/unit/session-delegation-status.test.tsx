@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { SessionDelegationStatus } from '@/components/chat/SessionDelegationStatus';
 import type { SessionDelegationReceipt } from '@shared/types/session-delegation';
@@ -42,5 +42,52 @@ describe('delegation stage facts', () => {
       receipt={receipt} snapshot={value} worker={worker} />);
     expect(container.querySelector('[data-stage="report"]')).toHaveAttribute('data-status', 'pending');
     expect(container.querySelector('[data-stage="continuation"]')).toHaveAttribute('data-status', 'waiting');
+  });
+});
+
+describe('dispatch-time capacity explanation', () => {
+  const planned: SessionDelegationReceipt = { ...receipt, acceptedAt: '2026-11-09T00:00:00.000Z',
+    scheduler: { executionWaves: [{ wave: 1, taskNodeIds: ['a'], roles: ['planner'],
+      reason: 'scheduled 1 ready node(s); deferred 1 for concurrency cap', deferredReasons: ['concurrency-cap'] }],
+      metrics: { queued: 12, running: 1, scheduled: 1, skipped: 0, concurrencyCap: 1, budgetEstimate: 2 } } };
+  it('shows the receipt plan without presenting its queued metric as a current wait', () => {
+    const open = vi.fn();
+    const view = render(<SessionDelegationStatus workspaceId="project-a" sessionKey="parent" generation="generation-1"
+      receipt={planned} onOpenResources={open} />);
+    expect(view.getByTestId('delegation-receipt-plan')).toHaveAttribute('data-plan-time', 'receipt');
+    expect(view.getByTestId('delegation-plan-reason-1')).toHaveTextContent(planned.scheduler!.executionWaves[0].reason);
+    expect(view.container.querySelector('[data-deferred-reason="concurrency-cap"]')).toHaveTextContent('delegationStages.capacity.reason.concurrencyCap');
+    expect(view.queryByTestId('delegation-current-wait')).toBeNull();
+    fireEvent.click(view.getByTestId('delegation-open-resources'));
+    expect(open).toHaveBeenCalledOnce();
+  });
+  it.each([
+    { workspaceId: 'other', sessionKey: 'parent', generation: 'generation-1' },
+    { workspaceId: 'project-a', sessionKey: 'other', generation: 'generation-1' },
+    { workspaceId: 'project-a', sessionKey: 'parent', generation: 'generation-2' },
+  ])('hides another scope or generation receipt and its action: %j', scope => {
+    const view = render(<SessionDelegationStatus {...scope} receipt={planned} onOpenResources={vi.fn()} />);
+    expect(view.queryByTestId('delegation-receipt-plan')).toBeNull();
+    expect(view.queryByTestId('delegation-open-resources')).toBeNull();
+  });
+  it('reads current queue and explicit worker waiting separately, and drops stale generation facts', () => {
+    const value = snapshot();
+    value.availability.continuity = true; value.availability.subagents = true;
+    value.continuity.queueCount = 2;
+    const waiting = { ...worker, status: 'yielded' as const }; value.subagents = [waiting];
+    const view = render(<SessionDelegationStatus workspaceId="project-a" sessionKey="parent" generation="generation-1"
+      receipt={planned} snapshot={value} worker={waiting} />);
+    expect(view.getByTestId('delegation-current-queue')).toHaveAttribute('data-count', '2');
+    expect(view.getByTestId('delegation-current-worker-wait')).toBeInTheDocument();
+    value.continuity.queueCount = 0; value.subagents = [worker];
+    view.rerender(<SessionDelegationStatus workspaceId="project-a" sessionKey="parent" generation="generation-1"
+      receipt={planned} snapshot={value} worker={worker} />);
+    expect(view.getByTestId('delegation-current-queue')).toHaveAttribute('data-count', '0');
+    expect(view.queryByTestId('delegation-current-worker-wait')).toBeNull();
+    expect(view.getByTestId('delegation-receipt-plan')).toBeInTheDocument();
+    view.rerender(<SessionDelegationStatus workspaceId="project-a" sessionKey="parent" generation="generation-2"
+      receipt={planned} snapshot={value} worker={worker} />);
+    expect(view.queryByTestId('delegation-current-wait')).toBeNull();
+    expect(view.queryByTestId('delegation-receipt-plan')).toBeNull();
   });
 });

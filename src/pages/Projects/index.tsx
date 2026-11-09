@@ -31,7 +31,7 @@ export default function ProjectPage() {
     }).catch((error) => { if (!cancelled) setEntry({ workspaceId, sessionKey: coordinatorKey, error: String(error) }); });
     return () => { cancelled = true; };
   }, [workspaceId, hasWorkspace, coordinatorKey, unavailable, location.key]);
-  if (!workspace || unavailable || (entry?.workspaceId === workspaceId && entry.sessionKey === coordinatorKey && entry.error)) return <p role="status" data-testid="project-entry-unavailable">{t('projectEntry.unavailable')}</p>;
+  if (!workspace || unavailable || (entry?.workspaceId === workspaceId && entry.sessionKey === coordinatorKey && entry.error)) return <p role="status" data-testid="project-entry-unavailable">{t(workspace && !coordinatorKey ? 'projectEntry.unbound' : 'projectEntry.unavailable')}</p>;
   const selectedBelongs = workspace.activeSessionKey === selectedSession
     || Object.hasOwn(workspace.sessionStates ?? {}, selectedSession)
     || Object.hasOwn(workspace.coordinatorBindings ?? {}, selectedSession);

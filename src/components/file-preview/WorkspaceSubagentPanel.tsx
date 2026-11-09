@@ -16,6 +16,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Loader2, RefreshCw, Send } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -51,6 +52,7 @@ function statusTone(status: SessionActivitySubagentStatus | undefined): string {
 
 export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: string }) {
   const { t } = useTranslation('chat');
+  const navigate = useNavigate();
   const parentSessionKey = useChatStore((s) => s.currentSessionKey);
   const anchorAgentId = useChatStore((s) => s.currentAgentId);
   const workspace = useWorkspacesStore((s) => s.activeWorkspace);
@@ -164,7 +166,10 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
   return (
     <div className="flex h-full min-h-0 flex-col p-3" data-testid="workspace-subagent-panel">
       <SessionDelegationStatus workspaceId={workspace?.id} sessionKey={parentSessionKey}
-        generation={snapshot?.session.sessionId} snapshot={snapshot} worker={entry ?? undefined} />
+        generation={snapshot?.session.sessionId} snapshot={snapshot} worker={entry ?? undefined}
+        onOpenResources={workspace?.id ? () => navigate("/settings/storage?" + new URLSearchParams({
+          workspaceId: workspace.id, sessionKey: parentSessionKey,
+        }).toString()) : undefined} />
       {sendPhase && <p role="status" data-testid="worker-send-phase">{t(`delegationStages.status.${sendPhase}`)}</p>}
       <div className="mb-3 flex items-start gap-2.5">
         <span className="relative inline-flex shrink-0">

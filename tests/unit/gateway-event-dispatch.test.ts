@@ -48,6 +48,19 @@ describe('dispatchProtocolEvent', () => {
     expect(emitter.emit).toHaveBeenCalledWith('chat:message', { message: { text: 'hello' } });
   });
 
+  it.each(['final','error','aborted'] as const)('projects canonical chat %s into a terminal runtime receipt', state => {
+    const emitter=createMockEmitter();
+    const payload={runId:'chat-owner-run',sessionKey:'agent:main:scoped',seq:8,state,
+      message:{role:'assistant',content:[{type:'text',text:'result'}],timestamp:1250},errorMessage:'provider unavailable',stopReason:'stop'};
+    dispatchProtocolEvent(emitter,'chat',payload);
+    expect(emitter.emit).toHaveBeenCalledWith('chat:runtime-event',expect.objectContaining({
+      type:'run.ended',runId:'chat-owner-run',sessionKey:'agent:main:scoped',seq:8,endedAt:1250,
+      status:state==='final'?'completed':state,
+    }));
+    expect(emitter.emitted.findIndex(event=>event.event==='chat:runtime-event'))
+      .toBeGreaterThan(emitter.emitted.findIndex(event=>event.event==='chat:message'));
+  });
+
   it('does not normalize non-terminal lifecycle phase=end as run.ended', () => {
     const emitter = createMockEmitter();
     const payload = {

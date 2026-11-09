@@ -267,6 +267,9 @@ function SessionFolderTreeInner({
   const [draggedSessionKey, setDraggedSessionKey] = useState<string | null>(null);
   const [dropTargetKey, setDropTargetKey] = useState<string | null>(null);
   const [expandedFamilies, setExpandedFamilies] = useState<Record<string, boolean>>({});
+  const [interactionOrder, setInteractionOrder] = useState<string[] | null>(null);
+  const pointerInside = useRef(false);
+  const treeElement = useRef<HTMLDivElement>(null);
   const revealedSelection = useRef<string | undefined>(undefined);
   /**
    * `dragOver` can fire in the same native gesture before React has committed
@@ -287,7 +290,7 @@ function SessionFolderTreeInner({
     node,
     pathPrefix: [],
   })), [groups.folders]);
-  const rowGroups = useMemo(() => {
+  const liveRowGroups = useMemo(() => {
     const knownSessions = sessions.map((entry) => entry.session);
     return [
       ...streams.map((stream) => ({ folderId: stream.node.folder.id,
@@ -295,6 +298,39 @@ function SessionFolderTreeInner({
       { folderId: null, rows: threadSessionsByLineage(groups.rootSessions, { knownSessions }) },
     ];
   }, [streams, groups.rootSessions, sessions]);
+  const rowGroups = useMemo(() => {
+    if (!interactionOrder) return liveRowGroups;
+    const rank = new Map(interactionOrder.map((key, index) => [key, index]));
+    return liveRowGroups.map(group => ({ ...group, rows: group.rows
+      .filter(row => rank.has(row.entry.session.key))
+      .sort((left, right) => rank.get(left.entry.session.key)! - rank.get(right.entry.session.key)!) }));
+  }, [liveRowGroups, interactionOrder]);
+  const familyCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const { rows } of liveRowGroups) for (const row of rows)
+      if (row.originKey) counts.set(row.originKey, (counts.get(row.originKey) ?? 0) + 1);
+    return counts;
+  }, [liveRowGroups]);
+  const holdOrder = () => {
+    const keys = rowGroups.flatMap(group => group.rows.map(row => row.entry.session.key));
+    if (keys.length) setInteractionOrder(current => current ?? keys);
+  };
+  useEffect(() => { setInteractionOrder(null); }, [workspace.id, currentSessionKey, sessionSort]);
+  useEffect(() => {
+    if (!interactionOrder) return;
+    const releaseOutside = (event: PointerEvent) => {
+      const tree = treeElement.current;
+      if (tree && !tree.contains(event.target as Node) && !tree.querySelector(':focus-visible')) {
+        pointerInside.current = false;setInteractionOrder(null);
+      }
+    };
+    document.addEventListener('pointermove',releaseOutside,true);
+    document.addEventListener('pointerdown',releaseOutside,true);
+    return () => {
+      document.removeEventListener('pointermove',releaseOutside,true);
+      document.removeEventListener('pointerdown',releaseOutside,true);
+    };
+  },[interactionOrder]);
   const visibleKeys = useMemo(() => {
     const available = rowGroups.flatMap(({ folderId, rows }) => folderId && collapsedFolders[folderId] ? [] : rows)
       .filter((row) => !row.originKey || expandedFamilies[row.originKey] === true);
@@ -472,12 +508,10 @@ function SessionFolderTreeInner({
   ]);
 
   const toRenderedRows = useCallback((rows: LineageRow[]): RenderedSessionRow[] => {
-    const counts = new Map<string, number>();
-    for (const row of rows) if (row.originKey) counts.set(row.originKey, (counts.get(row.originKey) ?? 0) + 1);
     return rows.map((row) => {
       const { entry, relation } = row;
       const key = entry.session.key;
-      const count = counts.get(key) ?? 0;
+      const count = familyCounts.get(key) ?? 0;
       const expanded = expandedFamilies[key] === true;
       const visible = visibleKeys.has(key);
       const Icon = relation?.kind === 'fork' ? GitFork : relation?.kind === 'spawn' ? Bot : CornerDownRight;
@@ -499,14 +533,26 @@ function SessionFolderTreeInner({
         </div>
       ) : null };
     });
-  }, [expandedFamilies, renderDraggableSession, visibleKeys, t]);
+  }, [expandedFamilies, renderDraggableSession, visibleKeys, t, familyCounts]);
 
   return (
     /* Not `space-y-0.5`: the base sidebar rule neutralizes that utility by
        forcing `margin-bottom: 0` on every sibling after the first, which silently
        ate the whitespace rhythm that now carries grouping. Spacing is owned by
        `.ws-stream` / `.ws-time-slice` in codex-sidebar.css instead. */
-    <div className="ws-tree" data-has-groups={streams.length > 0 ? 'true' : undefined}>
+    <div ref={treeElement} className="ws-tree" data-has-groups={streams.length > 0 ? 'true' : undefined} data-order-held={interactionOrder!==null}
+      onPointerEnter={()=>{pointerInside.current=true;holdOrder();}}
+      onPointerMove={()=>{pointerInside.current=true;holdOrder();}}
+      onPointerLeave={event => {
+        pointerInside.current=false;
+        // A window losing focus reports no destination. Keep the user's anchor
+        // until an actual outside pointer gesture or explicit navigation.
+        if(event.relatedTarget instanceof Node && !event.currentTarget.querySelector(':focus-visible'))setInteractionOrder(null);
+      }}
+      onFocusCapture={event => { if (event.target.matches(':focus-visible')) holdOrder(); }}
+      onBlurCapture={event => {
+        if (event.relatedTarget instanceof Node && !event.currentTarget.contains(event.relatedTarget) && !pointerInside.current) setInteractionOrder(null);
+      }}>
       {streams.map((stream, index) => (
         <WorkstreamSection
           key={stream.node.folder.id}

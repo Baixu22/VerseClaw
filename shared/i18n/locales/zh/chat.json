@@ -2810,6 +2810,7 @@
   "projectEntry": {
     "toggle": "展开或收起 {{name}}",
     "loading": "正在打开项目负责人…",
+    "unbound": "此项目未绑定负责人。",
     "unavailable": "项目负责人关联暂不可用。",
     "coordinator": "{{name}} · 项目负责人"
   },
@@ -2836,6 +2837,24 @@
     }
   },
   "delegationStages": {
+    "capacity": {
+      "planTitle": "派发时的安排与原因",
+      "planDescription": "这是派发回执中的计划，不是实时队列。",
+      "recordedAt": "回执时间：{{at}}",
+      "wave": "第 {{wave}} 批 · {{roles}}",
+      "reasonUnavailable": "未记录调度原因。",
+      "otherReason": "调度原因：{{reason}}",
+      "reason": {
+        "concurrencyCap": "并发容量上限",
+        "writeSetConflict": "写入范围重叠",
+        "writeSetProof": "尚未证明写入隔离",
+        "toolContention": "共享工具争用"
+      },
+      "currentTitle": "当前执行状态读回",
+      "currentQueue": "当前会话排队数：{{count}}",
+      "workerWaiting": "执行方当前报告等待。",
+      "openResources": "查看会话与资源占用"
+    },
     "label": {
       "admission": "派发准入",
       "execution": "实际执行",

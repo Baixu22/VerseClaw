@@ -1378,7 +1378,13 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     }
   }, []);
 
-  const { contentRef, scrollRef, scrollToBottom, isAtBottom } = useStickToBottomInstant(currentSessionKey, sending || optimisticRunActive);
+  const currentSession = sessions.find((session) => session.key === currentSessionKey) ?? { key: currentSessionKey };
+  const savedReadingPosition = activeWorkspace?.sessionStates?.[currentSessionKey]?.readingPosition;
+  const preserveReadingPosition = savedReadingPosition?.generation === currentSession.sessionId
+    && Number.isFinite(savedReadingPosition?.scrollTop);
+  const { contentRef, scrollRef, scrollToBottom, isAtBottom } = useStickToBottomInstant(
+    `${currentSessionKey}:${currentSession.sessionId ?? ''}`, sending || optimisticRunActive, preserveReadingPosition,
+  );
   /**
    * The transcript scroller as a plain ref.
    *
@@ -1393,7 +1399,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
    * every render, thrashing the library's own scroll listeners.
    */
   const scrollElementRef = useRef<HTMLElement | null>(null);
-  const currentSession = sessions.find((session) => session.key === currentSessionKey) ?? { key: currentSessionKey };
   useSessionReadingPosition({ workspaceId: activeWorkspace?.id, sessionKey: currentSessionKey,
     generation: currentSession.sessionId, loading, element: scrollElementRef });
   const attachScrollElement = useCallback((element: HTMLDivElement | null) => {
@@ -3060,7 +3065,9 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   ]);
   const visibleMessageRows = useMemo(() => messageRenderRows.filter(row => !row.hidden), [messageRenderRows]);
   const getMessageScrollElement = useCallback(() => scrollElementRef.current, []);
-  const messageViewport = useMessageViewport(visibleMessageRows, getMessageScrollElement, currentSessionKey, getAgentResourceLimits().maxDomRenderMessages);
+  const messageViewport = useMessageViewport(visibleMessageRows, getMessageScrollElement,
+    `${currentSessionKey}:${currentSession.sessionId ?? ''}`, getAgentResourceLimits().maxDomRenderMessages,
+    preserveReadingPosition ? savedReadingPosition : undefined);
   const scrollToMessageIndex = messageViewport.scrollToIndex;
   const messageNavItems = useMemo<MessageNavRailItem[]>(() => {
     const rows = visibleMessageRows;

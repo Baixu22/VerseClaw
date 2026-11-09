@@ -1370,6 +1370,11 @@ export class GatewayManager extends EventEmitter {
           connectedAt: Date.now(),
         });
         this.recordRuntimeHandshake(handshakePayload);
+        // One host subscription follows this socket across reconnects. Renderers
+        // consume the existing notification path and never subscribe per row.
+        void this.rpc('sessions.subscribe', {}, 15_000).catch(error => {
+          logger.warn('Gateway session change subscription failed', { error: String(error) });
+        });
         this.startPing();
         if (!this.status.gatewayReady) {
           this.scheduleGatewayReadyFallback();

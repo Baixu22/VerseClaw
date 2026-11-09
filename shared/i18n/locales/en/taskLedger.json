@@ -69,6 +69,7 @@
   "summary": {
     "title": "Task Ledger",
     "loading": "Loading ledger",
+    "permissionDenied": "Permission denied when reading tasks. Refresh after access is restored.",
     "counts": "{{nodes}} nodes · {{events}} events",
     "empty": "No tracked long-running tasks yet.",
     "currentGoal": "Current goal",
@@ -102,6 +103,14 @@
     "exported": "Task ledger HTML exported"
   },
   "managed": {
+    "waitingDependency": "Waiting for dependency",
+    "openDependency": "Open dependency: {{title}}",
+    "dependencyNotLoaded": "Dependency status has not been read.",
+    "dependencyMissing": "Dependency was not found in this project. Read again to check.",
+    "dependencyReadFailed": "Could not read the dependency. Try again.",
+    "readingDependency": "Reading dependency…",
+    "findDependency": "Read dependency",
+    "findDependencyMore": "Find dependency on the next page",
     "tab": "Persistent tasks",
     "description": "Keep goals and acceptance criteria across sessions. Claim a task before implementation; other worktrees share the same ownership.",
     "objective": "Objective",

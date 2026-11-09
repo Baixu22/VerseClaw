@@ -165,6 +165,7 @@ function armTurnTimeoutTimer(
   _turnTimeoutTimer.unref?.();
 }
 let _loadSessionsInFlight: Promise<void> | null = null;
+let _loadSessionsRefreshRequested = false;
 let _lastLoadSessionsAt = 0;
 let _startupHydrationInFlight: Promise<void> | null = null;
 let _startupHydrationRuntimeKey: string | null = null;
@@ -2972,14 +2973,17 @@ export const useChatStore = create<ChatState>((set, get, api) => {
   loadSessions: async (options) => {
     const now = Date.now();
     if (_loadSessionsInFlight) {
+      if (options?.force) _loadSessionsRefreshRequested = true;
       await _loadSessionsInFlight;
-      if (!options?.force) return;
+      return;
     }
     if (!options?.force && now - _lastLoadSessionsAt < SESSION_LOAD_MIN_INTERVAL_MS) {
       return;
     }
 
     _loadSessionsInFlight = (async () => {
+      do {
+      _loadSessionsRefreshRequested = false;
       try {
         const data = await fetchChatSessionsList();
         if (data) {
@@ -3167,6 +3171,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
       } finally {
         _lastLoadSessionsAt = Date.now();
       }
+      } while (_loadSessionsRefreshRequested);
     })();
 
     try {

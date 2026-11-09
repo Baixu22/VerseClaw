@@ -1,0 +1,2041 @@
+{
+  "schema": "session-family-navigation/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "observedAt": "2026-11-09T05:43:25.075125+00:00",
+  "candidate": "44413d1429c4aa40f71468ec9fb88c4551ac1748",
+  "base": "08fa97bf3",
+  "acceptedNode": "TF-0658",
+  "status": "passed",
+  "uniqueUnitPassed": 230,
+  "uniqueElectronPassed": 10,
+  "commands": [
+    {
+      "name": "u2-final-unit",
+      "candidate": "23365f2f68c3752258a93dc4236d9ec93a828a1d",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/gateway-events.test.ts",
+        "tests/unit/gateway-event-dispatch.test.ts",
+        "tests/unit/host-events.test.ts",
+        "tests/unit/chat-startup-hydration.test.ts",
+        "tests/unit/chat-event-dedupe.test.ts",
+        "tests/unit/workspaces-api.test.ts",
+        "tests/unit/workspaces-store.test.ts",
+        "tests/unit/sidebar-render-containment.test.tsx",
+        "tests/unit/sidebar-session-buckets.test.ts",
+        "tests/unit/session-family-navigation.test.tsx",
+        "tests/unit/session-folder-tree.test.tsx",
+        "tests/unit/session-family-read-model.test.ts",
+        "tests/unit/session-derivation-lineage.test.ts",
+        "tests/unit/session-reading-scroll-owner.test.tsx",
+        "tests/unit/chat-viewport.test.tsx",
+        "tests/unit/session-task-state-guidance.test.tsx",
+        "tests/unit/long-session-delegation-admission.test.ts",
+        "tests/unit/session-delegation-status.test.tsx",
+        "tests/unit/workspace-agents-panel-failure.test.tsx",
+        "tests/unit/session-chain-panels.test.tsx",
+        "tests/unit/gateway-manager-diagnostics.test.ts",
+        "tests/unit/gateway-manager-heartbeat.test.ts",
+        "tests/unit/gateway-manager-restart-recovery.test.ts",
+        "tests/unit/gateway-manager-reload-policy-refresh.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\unified-management-20261109\\interaction-validation/u2-final-unit.tests.json"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": {
+        "total": 230,
+        "passed": 230,
+        "failed": 0,
+        "pending": 0
+      },
+      "acceptedCaseSubset": null,
+      "sourceDeltaToFinal": [
+        "src/components/layout/SessionFolderTree.tsx",
+        "tests/e2e/session-task-reading-navigation.spec.ts",
+        "tests/unit/session-family-navigation.test.tsx"
+      ]
+    },
+    {
+      "name": "u2-window-pointer-unit2",
+      "candidate": "56b5bf85852360860b75f96c7b5f379007ded9cc",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/session-family-navigation.test.tsx",
+        "tests/unit/session-folder-tree.test.tsx",
+        "tests/unit/sidebar-render-containment.test.tsx",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=json",
+        "--outputFile=D:/tmp/unified-management-20261109/interaction-validation/u2-window-pointer-unit2.tests.json"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": {
+        "total": 30,
+        "passed": 30,
+        "failed": 0,
+        "pending": 0
+      },
+      "acceptedCaseSubset": null,
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "u2-final-node-types",
+      "candidate": "23365f2f68c3752258a93dc4236d9ec93a828a1d",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "sourceDeltaToFinal": [
+        "src/components/layout/SessionFolderTree.tsx",
+        "tests/e2e/session-task-reading-navigation.spec.ts",
+        "tests/unit/session-family-navigation.test.tsx"
+      ]
+    },
+    {
+      "name": "u2-current-web-types",
+      "candidate": "44413d1429c4aa40f71468ec9fb88c4551ac1748",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "u2-current-test-types",
+      "candidate": "44413d1429c4aa40f71468ec9fb88c4551ac1748",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "u2-runtime-build",
+      "candidate": "03d56a0fcf202831f6ee2e0f860d00250535c2d5",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "sourceDeltaToFinal": [
+        "src/components/layout/SessionFolderTree.tsx",
+        "tests/e2e/session-delegation-capacity.spec.ts",
+        "tests/e2e/session-task-reading-navigation.spec.ts",
+        "tests/unit/session-family-navigation.test.tsx"
+      ]
+    },
+    {
+      "name": "u2-desktop-build12",
+      "candidate": "44413d1429c4aa40f71468ec9fb88c4551ac1748",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--max-old-space-size=6144",
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "u2-final-contract",
+      "candidate": "ef5e6a8abccfc633e4f133f9e48d84855ca3296b",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/contract-check.mjs"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "sourceDeltaToFinal": [
+        "src/components/layout/SessionFolderTree.tsx",
+        "tests/e2e/session-delegation-capacity.spec.ts",
+        "tests/e2e/session-task-reading-navigation.spec.ts",
+        "tests/unit/session-family-navigation.test.tsx"
+      ]
+    },
+    {
+      "name": "u2-final-i18n",
+      "candidate": "ef5e6a8abccfc633e4f133f9e48d84855ca3296b",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/i18n-lint.mjs"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "sourceDeltaToFinal": [
+        "src/components/layout/SessionFolderTree.tsx",
+        "tests/e2e/session-delegation-capacity.spec.ts",
+        "tests/e2e/session-task-reading-navigation.spec.ts",
+        "tests/unit/session-family-navigation.test.tsx"
+      ]
+    },
+    {
+      "name": "u2-final-comms-replay",
+      "candidate": "23365f2f68c3752258a93dc4236d9ec93a828a1d",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/comms/replay.mjs"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "sourceDeltaToFinal": [
+        "src/components/layout/SessionFolderTree.tsx",
+        "tests/e2e/session-task-reading-navigation.spec.ts",
+        "tests/unit/session-family-navigation.test.tsx"
+      ]
+    },
+    {
+      "name": "u2-final-comms-compare",
+      "candidate": "23365f2f68c3752258a93dc4236d9ec93a828a1d",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/comms/compare.mjs"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "sourceDeltaToFinal": [
+        "src/components/layout/SessionFolderTree.tsx",
+        "tests/e2e/session-task-reading-navigation.spec.ts",
+        "tests/unit/session-family-navigation.test.tsx"
+      ]
+    },
+    {
+      "name": "u2-final-harness2",
+      "candidate": "23365f2f68c3752258a93dc4236d9ec93a828a1d",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/session-family-navigation.md"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "sourceDeltaToFinal": [
+        "src/components/layout/SessionFolderTree.tsx",
+        "tests/e2e/session-task-reading-navigation.spec.ts",
+        "tests/unit/session-family-navigation.test.tsx"
+      ]
+    },
+    {
+      "name": "u2-final-harness-preview",
+      "candidate": "23365f2f68c3752258a93dc4236d9ec93a828a1d",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/session-family-navigation.md",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "sourceDeltaToFinal": [
+        "src/components/layout/SessionFolderTree.tsx",
+        "tests/e2e/session-task-reading-navigation.spec.ts",
+        "tests/unit/session-family-navigation.test.tsx"
+      ]
+    },
+    {
+      "name": "u2-final-artifacts",
+      "candidate": "23365f2f68c3752258a93dc4236d9ec93a828a1d",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "sourceDeltaToFinal": [
+        "src/components/layout/SessionFolderTree.tsx",
+        "tests/e2e/session-task-reading-navigation.spec.ts",
+        "tests/unit/session-family-navigation.test.tsx"
+      ]
+    },
+    {
+      "name": "u2-core-final2",
+      "candidate": "35dd73214d93ce5a2fccff771ad8225bcaabcd4f",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/session-task-reading-navigation.spec.ts",
+        "tests/e2e/session-derivation-ui.spec.ts",
+        "--grep",
+        "restores|background|question",
+        "--workers=1",
+        "--reporter=list,json",
+        "--output=D:/tmp/unified-management-20261109/interaction-validation/u2-core-final2-results"
+      ],
+      "exitCode": 1,
+      "sourceUnchanged": true,
+      "tests": {
+        "startTime": "2026-11-09T04:57:44.654Z",
+        "duration": 263015.94,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "acceptedCaseSubset": "question Fork/Handoff and reading restoration only; background failure superseded by u2-window-final",
+      "sourceDeltaToFinal": [
+        "src/components/layout/SessionFolderTree.tsx",
+        "tests/e2e/session-task-reading-navigation.spec.ts",
+        "tests/unit/session-family-navigation.test.tsx"
+      ]
+    },
+    {
+      "name": "u2-window-final",
+      "candidate": "44413d1429c4aa40f71468ec9fb88c4551ac1748",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/session-task-reading-navigation.spec.ts",
+        "--grep",
+        "background",
+        "--workers=1",
+        "--reporter=list,json",
+        "--output=D:/tmp/unified-management-20261109/interaction-validation/u2-window-final-results"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": {
+        "startTime": "2026-11-09T05:38:30.862Z",
+        "duration": 115994.06499999999,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "acceptedCaseSubset": null,
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "u2-state-final2",
+      "candidate": "02346f0fad6222c10b393f4948d09078dce8f423",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/session-task-state-guidance.spec.ts",
+        "--workers=1",
+        "--reporter=list,json",
+        "--output=D:/tmp/unified-management-20261109/interaction-validation/u2-state-final2-results"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": {
+        "startTime": "2026-11-09T03:36:34.698Z",
+        "duration": 165512.524,
+        "expected": 3,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "acceptedCaseSubset": null,
+      "sourceDeltaToFinal": [
+        "shared/i18n/locales/en/chat.json",
+        "shared/i18n/locales/ja/chat.json",
+        "shared/i18n/locales/ru/chat.json",
+        "shared/i18n/locales/zh/chat.json",
+        "src/components/layout/SessionFolderTree.tsx",
+        "tests/e2e/session-task-reading-navigation.spec.ts",
+        "tests/unit/session-family-navigation.test.tsx",
+        "tests/unit/session-task-state-guidance.test.tsx"
+      ]
+    },
+    {
+      "name": "u2-family-layout4",
+      "candidate": "ef5e6a8abccfc633e4f133f9e48d84855ca3296b",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/session-derivation-ui.spec.ts",
+        "--grep",
+        "family",
+        "--workers=1",
+        "--reporter=list,json",
+        "--output=D:/tmp/unified-management-20261109/interaction-validation/u2-family-layout4-results"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": {
+        "startTime": "2026-11-09T04:27:03.194Z",
+        "duration": 629465.5610000001,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "acceptedCaseSubset": null,
+      "sourceDeltaToFinal": [
+        "src/components/layout/SessionFolderTree.tsx",
+        "tests/e2e/session-delegation-capacity.spec.ts",
+        "tests/e2e/session-task-reading-navigation.spec.ts",
+        "tests/unit/session-family-navigation.test.tsx"
+      ]
+    },
+    {
+      "name": "u2-locales-final",
+      "candidate": "23365f2f68c3752258a93dc4236d9ec93a828a1d",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/session-task-locales.spec.ts",
+        "tests/e2e/session-delegation-capacity.spec.ts",
+        "tests/e2e/project-agent-entry.spec.ts",
+        "--workers=1",
+        "--reporter=list,json",
+        "--output=D:/tmp/unified-management-20261109/interaction-validation/u2-locales-final-results"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": {
+        "startTime": "2026-11-09T04:38:44.502Z",
+        "duration": 170975.436,
+        "expected": 3,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "acceptedCaseSubset": null,
+      "sourceDeltaToFinal": [
+        "src/components/layout/SessionFolderTree.tsx",
+        "tests/e2e/session-task-reading-navigation.spec.ts",
+        "tests/unit/session-family-navigation.test.tsx"
+      ]
+    },
+    {
+      "name": "u2-current-harness",
+      "candidate": "44413d1429c4aa40f71468ec9fb88c4551ac1748",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/session-family-navigation.md"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "u2-current-artifacts",
+      "candidate": "44413d1429c4aa40f71468ec9fb88c4551ac1748",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "sourceDeltaToFinal": []
+    }
+  ],
+  "unitCases": [
+    "chat-event-dedupe.test.ts::chat event dedupe keeps processing delta events without seq for the same run",
+    "chat-event-dedupe.test.ts::chat event dedupe still dedupes repeated delta events when seq matches",
+    "chat-startup-hydration.test.ts::chat startup hydration clears a stale connection error while the gateway is starting",
+    "chat-startup-hydration.test.ts::chat startup hydration clears a startup error after switching to a session whose history loads successfully",
+    "chat-startup-hydration.test.ts::chat startup hydration coalesces concurrent forced session refreshes into one follow-up owner read",
+    "chat-startup-hydration.test.ts::chat startup hydration exposes a retryable startup error when no history source succeeds",
+    "chat-startup-hydration.test.ts::chat startup hydration hydrates the new gateway runtime after an older runtime changes while pending",
+    "chat-startup-hydration.test.ts::chat startup hydration keeps an exhausted startup timeout in error when the transcript fallback is empty",
+    "chat-startup-hydration.test.ts::chat startup hydration keeps cached messages ready while refreshing in the background",
+    "chat-startup-hydration.test.ts::chat startup hydration loads sessions before history and confirms an empty conversation",
+    "chat-startup-hydration.test.ts::chat startup hydration makes a new empty session ready after a startup error",
+    "chat-startup-hydration.test.ts::chat startup hydration waits without showing an empty ready state before the gateway is ready",
+    "chat-viewport.test.tsx::measured message viewport keeps a newly requested bottom position when a resize lands before the next frame",
+    "chat-viewport.test.tsx::measured message viewport mounts the requested old or new row and disconnects every observer on unmount",
+    "chat-viewport.test.tsx::measured message viewport preserves the reading anchor after earlier rows grow or history is prepended",
+    "chat-viewport.test.tsx::measured message viewport restores a saved message across session changes before and after measured heights arrive",
+    "chat-viewport.test.tsx::measured message viewport selects the actual offset of a tall row and never exceeds the existing row cap",
+    "gateway-event-dispatch.test.ts::dispatchProtocolEvent dispatches channel.status to channel:status",
+    "gateway-event-dispatch.test.ts::dispatchProtocolEvent dispatches chat to chat:message",
+    "gateway-event-dispatch.test.ts::dispatchProtocolEvent dispatches exec.approval.requested as approval:requested with the runtime fields",
+    "gateway-event-dispatch.test.ts::dispatchProtocolEvent dispatches exec.approval.resolved as approval:resolved",
+    "gateway-event-dispatch.test.ts::dispatchProtocolEvent dispatches gateway.ready event to gateway:ready",
+    "gateway-event-dispatch.test.ts::dispatchProtocolEvent dispatches native health and presence events separately from generic notifications",
+    "gateway-event-dispatch.test.ts::dispatchProtocolEvent dispatches normalized agent runtime events alongside the legacy notification path",
+    "gateway-event-dispatch.test.ts::dispatchProtocolEvent dispatches ready event to gateway:ready",
+    "gateway-event-dispatch.test.ts::dispatchProtocolEvent dispatches unknown events as notifications",
+    "gateway-event-dispatch.test.ts::dispatchProtocolEvent does not normalize non-terminal lifecycle phase=end as run.ended",
+    "gateway-event-dispatch.test.ts::dispatchProtocolEvent drops approval frames without an approval id instead of opening an unanswerable dialog",
+    "gateway-event-dispatch.test.ts::dispatchProtocolEvent drops prompt-cache frames with missing or malformed fields",
+    "gateway-event-dispatch.test.ts::dispatchProtocolEvent drops unknown change codes while keeping known ones",
+    "gateway-event-dispatch.test.ts::dispatchProtocolEvent normalizes terminal lifecycle phases as run.ended",
+    "gateway-event-dispatch.test.ts::dispatchProtocolEvent projects canonical chat aborted into a terminal runtime receipt",
+    "gateway-event-dispatch.test.ts::dispatchProtocolEvent projects canonical chat error into a terminal runtime receipt",
+    "gateway-event-dispatch.test.ts::dispatchProtocolEvent projects canonical chat final into a terminal runtime receipt",
+    "gateway-event-dispatch.test.ts::dispatchProtocolEvent routes JSON-RPC prompt-cache notifications without a generic notification",
+    "gateway-event-dispatch.test.ts::dispatchProtocolEvent routes prompt-cache break frames to a typed observation, not chat or notifications",
+    "gateway-event-dispatch.test.ts::dispatchProtocolEvent suppresses tick events",
+    "gateway-events.test.ts::gateway store event wiring allows explicit intervention sends while preserving normal active-run double-submit guard",
+    "gateway-events.test.ts::gateway store event wiring clears cached inactive-session run state when run.ended arrives while another session is selected",
+    "gateway-events.test.ts::gateway store event wiring clears chat sending state on terminal run.ended runtime event",
+    "gateway-events.test.ts::gateway store event wiring dedupes exact replayed delta notifications without seq",
+    "gateway-events.test.ts::gateway store event wiring does not clear chat sending state on non-terminal runtime events",
+    "gateway-events.test.ts::gateway store event wiring does not clear the active send when a stale run.ended arrives for the same session",
+    "gateway-events.test.ts::gateway store event wiring does not let a stale send RPC re-arm a completed run after a newer send starts",
+    "gateway-events.test.ts::gateway store event wiring forces a terminal history reload when the runtime emits run.ended",
+    "gateway-events.test.ts::gateway store event wiring forwards normalized chat runtime events through the dedicated host event channel",
+    "gateway-events.test.ts::gateway store event wiring ignores session-less runtime terminals that do not match the active run",
+    "gateway-events.test.ts::gateway store event wiring passes progressive delta notifications without seq through to chat store",
+    "gateway-events.test.ts::gateway store event wiring preserves a running session lifecycle when creating a new chat and switching back",
+    "gateway-events.test.ts::gateway store event wiring propagates gatewayReady field from status events",
+    "gateway-events.test.ts::gateway store event wiring refreshes background session membership in one batch without selecting the changed child",
+    "gateway-events.test.ts::gateway store event wiring retains inactive-session runtime events for graph reconstruction after switching back",
+    "gateway-events.test.ts::gateway store event wiring subscribes to typed host events on init",
+    "gateway-events.test.ts::gateway store event wiring tracks a current-session run.started even when the optimistic send is already active",
+    "gateway-events.test.ts::gateway store event wiring treats undefined gatewayReady as ready for backwards compatibility",
+    "gateway-manager-diagnostics.test.ts::GatewayManager diagnostics does not count gateway-declared rpc errors as transport failures",
+    "gateway-manager-diagnostics.test.ts::GatewayManager diagnostics does not let health polling mark core rpc degraded when OpenClaw health/status are slow",
+    "gateway-manager-diagnostics.test.ts::GatewayManager diagnostics records capability timeouts without counting them as core transport failures",
+    "gateway-manager-diagnostics.test.ts::GatewayManager diagnostics reports rpc router blocked when a fresh core probe fails after gateway was ready",
+    "gateway-manager-diagnostics.test.ts::GatewayManager diagnostics restarts windows gateway on heartbeat misses and marks health unresponsive",
+    "gateway-manager-diagnostics.test.ts::GatewayManager diagnostics updates diagnostics on gateway message, rpc success/timeout, and socket close",
+    "gateway-manager-heartbeat.test.ts::GatewayManager heartbeat recovery defers heartbeat restart while initial gateway.ready is still within grace",
+    "gateway-manager-heartbeat.test.ts::GatewayManager heartbeat recovery does not restart when heartbeat is recovered by incoming messages",
+    "gateway-manager-heartbeat.test.ts::GatewayManager heartbeat recovery restarts after consecutive heartbeat misses on windows",
+    "gateway-manager-heartbeat.test.ts::GatewayManager heartbeat recovery restarts after consecutive heartbeat misses reach threshold",
+    "gateway-manager-heartbeat.test.ts::GatewayManager heartbeat recovery skips heartbeat recovery when auto-reconnect is disabled",
+    "gateway-manager-reload-policy-refresh.test.ts::GatewayManager refreshReloadPolicy deduplicates concurrent refresh calls",
+    "gateway-manager-reload-policy-refresh.test.ts::GatewayManager refreshReloadPolicy hits TTL cache and skips refresh within window",
+    "gateway-manager-reload-policy-refresh.test.ts::GatewayManager refreshReloadPolicy refreshes immediately when force=true even within TTL",
+    "gateway-manager-restart-recovery.test.ts::GatewayManager restart recovery accepts a recovery start after stop cancels a pending startup",
+    "gateway-manager-restart-recovery.test.ts::GatewayManager restart recovery does not schedule extra reconnect when restart succeeds",
+    "gateway-manager-restart-recovery.test.ts::GatewayManager restart recovery re-enables auto-reconnect when start() fails during restart",
+    "host-events.test.ts::hostEvents does not create EventSource fallback",
+    "host-events.test.ts::hostEvents passes typed app navigation payloads from IPC callbacks",
+    "host-events.test.ts::hostEvents subscribes to Office Tools install events over IPC",
+    "host-events.test.ts::hostEvents subscribes to chat runtime events over IPC",
+    "host-events.test.ts::hostEvents subscribes to dynamic channel QR events",
+    "host-events.test.ts::hostEvents subscribes to gateway status over IPC",
+    "host-events.test.ts::hostEvents subscribes to mission lifecycle events over IPC",
+    "host-events.test.ts::hostEvents subscribes to observability runtime events over IPC",
+    "host-events.test.ts::hostEvents subscribes to observability trajectory supply events over IPC",
+    "host-events.test.ts::hostEvents subscribes to subagent lifecycle events over IPC",
+    "long-session-delegation-admission.test.ts::A4 delegation task-scope gate rejects before Gateway delegation when the explicit task scope is unavailable",
+    "long-session-delegation-admission.test.ts::A4 delegation task-scope gate uses the Main default resolver for 'a current explicit task link'",
+    "long-session-delegation-admission.test.ts::A4 delegation task-scope gate uses the Main default resolver for 'a missing link'",
+    "long-session-delegation-admission.test.ts::A4 delegation task-scope gate uses the Main default resolver for 'a missing task'",
+    "long-session-delegation-admission.test.ts::A4 delegation task-scope gate uses the Main default resolver for 'an old-generation link'",
+    "long-session-delegation-admission.test.ts::A4 delegation task-scope gate uses the Main default resolver for 'another session link'",
+    "long-session-delegation-admission.test.ts::A4 delegation task-scope gate uses the Main default resolver for 'the requested task after an unrelated…'",
+    "long-session-delegation-admission.test.ts::long-session delegation admission binds accepted children to coordinator, task, backend, permissions, and actual shared isolation without claiming completion",
+    "long-session-delegation-admission.test.ts::long-session delegation admission clamps child tool authorization to the parent allowlist",
+    "long-session-delegation-admission.test.ts::long-session delegation admission coalesces a concurrent duplicate submission into one Gateway admission",
+    "long-session-delegation-admission.test.ts::long-session delegation admission does not reuse an expired or revoked grant and allows retry only through a fresh owner-approved id",
+    "long-session-delegation-admission.test.ts::long-session delegation admission marks an accepted spawn without both child session and run identifiers as rejected",
+    "long-session-delegation-admission.test.ts::long-session delegation admission preserves owner scheduling reasons in the dispatch receipt without aliasing the plan",
+    "long-session-delegation-admission.test.ts::long-session delegation admission records a real Git worktree as verified checkout isolation",
+    "long-session-delegation-admission.test.ts::long-session delegation admission records a refused spawn as rejected with no completion evidence",
+    "long-session-delegation-admission.test.ts::long-session delegation admission rejects a concurrent stop and never upgrades the stale accepted evidence",
+    "long-session-delegation-admission.test.ts::long-session delegation admission rejects a parent reset that crosses admission without reporting an accepted worker",
+    "long-session-delegation-admission.test.ts::long-session delegation admission rejects task ownership before issuing a worker dispatch",
+    "long-session-delegation-admission.test.ts::long-session delegation admission replays a terminal receipt after owner restart without issuing another spawn",
+    "long-session-delegation-admission.test.ts::long-session delegation admission turns an in-flight record left by a terminated owner into outcome-unknown without retrying",
+    "session-chain-panels.test.tsx::session task and worker panels consume owner results keeps a project-wide Ledger warning unavailable and removes task selection",
+    "session-chain-panels.test.tsx::session task and worker panels consume owner results reconciles an unknown send with its original intervention key and clears only the acknowledged input",
+    "session-chain-panels.test.tsx::session task and worker panels consume owner results refreshes the current worker generation after definite rejection while retaining the input",
+    "session-chain-panels.test.tsx::session task and worker panels consume owner results uses the successful queued receipt without inventing a run or task acceptance",
+    "session-chain-panels.test.tsx::session task and worker panels consume owner results uses the successful steered receipt without inventing a run or task acceptance",
+    "session-delegation-status.test.tsx::delegation stage facts does not use an admission for another worker or a stale requester generation",
+    "session-delegation-status.test.tsx::delegation stage facts keeps accepted, run completion and report delivery separate from task acceptance",
+    "session-delegation-status.test.tsx::delegation stage facts uses the latest owner batch and exposes waiting without claiming a parent run started",
+    "session-delegation-status.test.tsx::dispatch-time capacity explanation hides another scope or generation receipt and its action: {\"workspaceId\":\"other\",\"sessionKey\":\"parent\",\"generation\":\"generation-1\"}",
+    "session-delegation-status.test.tsx::dispatch-time capacity explanation hides another scope or generation receipt and its action: {\"workspaceId\":\"project-a\",\"sessionKey\":\"other\",\"generation\":\"generation-1\"}",
+    "session-delegation-status.test.tsx::dispatch-time capacity explanation hides another scope or generation receipt and its action: {\"workspaceId\":\"project-a\",\"sessionKey\":\"parent\",\"generation\":\"generation-2\"}",
+    "session-delegation-status.test.tsx::dispatch-time capacity explanation reads current queue and explicit worker waiting separately, and drops stale generation facts",
+    "session-delegation-status.test.tsx::dispatch-time capacity explanation shows the receipt plan without presenting its queued metric as a current wait",
+    "session-derivation-lineage.test.ts::classifyDerivation classifies a fork triple as fork and keeps the parent key",
+    "session-derivation-lineage.test.ts::classifyDerivation classifies a parent key without fork facts as handoff",
+    "session-derivation-lineage.test.ts::classifyDerivation classifies spawnedBy as spawn",
+    "session-derivation-lineage.test.ts::classifyDerivation returns unknown when the entry names no parent at all",
+    "session-derivation-lineage.test.ts::deriveSessionLineage degrades to an empty derivation when the root entry is unreadable",
+    "session-derivation-lineage.test.ts::deriveSessionLineage is pure: repeated calls agree and inputs are not mutated",
+    "session-derivation-lineage.test.ts::deriveSessionLineage reports parent-missing instead of a fabricated root when the parent entry is absent",
+    "session-derivation-lineage.test.ts::deriveSessionLineage returns no hops for a root session",
+    "session-derivation-lineage.test.ts::deriveSessionLineage stops at the depth bound and says so",
+    "session-derivation-lineage.test.ts::deriveSessionLineage stops on a cycle instead of looping",
+    "session-derivation-lineage.test.ts::deriveSessionLineage walks fork then handoff hops with the fork point preserved",
+    "session-family-navigation.test.tsx::does not carry task selection busy state into a different session scope",
+    "session-family-navigation.test.tsx::does not show a late Task Ledger response from another project",
+    "session-family-navigation.test.tsx::family navigation keeps every actual parent in a multi-generation relation view",
+    "session-family-navigation.test.tsx::family navigation keeps interacted rows ordered while live status and child counts update",
+    "session-family-navigation.test.tsx::family navigation navigates to the real spawn parent and exposes unloaded sources separately",
+    "session-family-navigation.test.tsx::family navigation reveals a selected child and leaves an explicit collapse intact on later renders",
+    "session-family-navigation.test.tsx::family navigation uses keyboard disclosure without moving or selecting sessions",
+    "session-family-read-model.test.ts::scoped task container distinguishes a discussion container from owner failure",
+    "session-family-read-model.test.ts::scoped task container does not use task link source fields to establish a session lineage",
+    "session-family-read-model.test.ts::scoped task container preserves stale business-task diagnostics even if a current turn-check link exists",
+    "session-family-read-model.test.ts::scoped task container reads linked business tasks and keeps their recorded status",
+    "session-family-read-model.test.ts::scoped task container rejects a response for another scope: {\"generation\":\"old\"}",
+    "session-family-read-model.test.ts::scoped task container rejects a response for another scope: {\"sessionKey\":\"other\"}",
+    "session-family-read-model.test.ts::scoped task container rejects a response for another scope: {\"workspaceId\":\"workspace-b\"}",
+    "session-family-read-model.test.ts::session family list read model does not confuse unloaded sources with an owner-confirmed missing parent",
+    "session-family-read-model.test.ts::session family list read model keeps cross-project/workstream parents outside the group while allowing source navigation",
+    "session-family-read-model.test.ts::session family list read model keeps cycles, incomplete fork facts and truncated chains visible without fabricating roots",
+    "session-family-read-model.test.ts::session family list read model preserves all 100 descendants with one visual indentation level",
+    "session-family-read-model.test.ts::session family list read model preserves all 2 descendants with one visual indentation level",
+    "session-family-read-model.test.ts::session family list read model preserves all 20 descendants with one visual indentation level",
+    "session-family-read-model.test.ts::session family list read model rejects a non-progressing owner cursor",
+    "session-family-read-model.test.ts::session family list read model retains a parent on the next owner page without loading a transcript for every older row",
+    "session-family-read-model.test.ts::session family list read model retains actual list generation and spawn/fork fields and shares precedence with continuity stages",
+    "session-family-read-model.test.ts::session family list read model retains the direct source of a grandchild even when visually grouped at the family root",
+    "session-family-read-model.test.ts::session family list read model uses transcript entry metadata for message actions before provider or optimistic IDs",
+    "session-folder-tree.test.tsx::SessionFolderTree drag-and-drop auto grouping draws no tree connectors",
+    "session-folder-tree.test.tsx::SessionFolderTree drag-and-drop auto grouping ignores dropping a session onto itself",
+    "session-folder-tree.test.tsx::SessionFolderTree drag-and-drop auto grouping nests grouped members in the stream container and leaves ungrouped rows outside it",
+    "session-folder-tree.test.tsx::SessionFolderTree drag-and-drop auto grouping renders the group header as a label with no leading glyph",
+    "session-folder-tree.test.tsx::SessionFolderTree drag-and-drop auto grouping shows the after-target guide line and dispatches the group request on drop",
+    "session-folder-tree.test.tsx::SessionFolderTree folder mutation dispatch deletes the grandchild folder, not its ancestor",
+    "session-folder-tree.test.tsx::SessionFolderTree folder mutation dispatch deletes the mid-level folder with its own id",
+    "session-folder-tree.test.tsx::SessionFolderTree folder mutation dispatch renames the grandchild folder, not its ancestor",
+    "session-folder-tree.test.tsx::SessionFolderTree folder mutation dispatch renders the full nesting depth",
+    "session-folder-tree.test.tsx::SessionFolderTree session rows adds no move control of its own next to the row",
+    "session-folder-tree.test.tsx::SessionFolderTree session rows marks the tree as grouped so filed sessions step in under their group label",
+    "session-folder-tree.test.tsx::SessionFolderTree session rows renders grouped and ungrouped sessions through the shared row renderer",
+    "session-reading-scroll-owner.test.tsx::cancels an older visit second frame before restoring another session",
+    "session-reading-scroll-owner.test.tsx::leaves a saved session position to the reading owner and stops library pinning",
+    "session-task-state-guidance.test.tsx::U2 dependency navigation uses the existing task owner discards an in-flight dependency read when the workspace changes",
+    "session-task-state-guidance.test.tsx::U2 dependency navigation uses the existing task owner keeps a failed dependency read unresolved and retries the same owner cursor",
+    "session-task-state-guidance.test.tsx::U2 dependency navigation uses the existing task owner keeps an absent dependency blocked after exhausting pages and allows a new read",
+    "session-task-state-guidance.test.tsx::U2 dependency navigation uses the existing task owner reads one unfiltered page per click and keeps only the exact dependency before focusing it",
+    "session-task-state-guidance.test.tsx::U2 dependency navigation uses the existing task owner shows unfinished titles and states, focuses the prerequisite, then calls the original claim action",
+    "session-task-state-guidance.test.tsx::U2 project and Ledger causes keeps a late permission rejection scoped to its original workspace",
+    "session-task-state-guidance.test.tsx::U2 project and Ledger causes keeps an archived coordinator distinct from an unbound coordinator",
+    "session-task-state-guidance.test.tsx::U2 project and Ledger causes names an unbound coordinator without activating the default session",
+    "session-task-state-guidance.test.tsx::U2 project and Ledger causes normalizes a permission rejection, hides selection and refreshes the same owner after a held read",
+    "session-task-state-guidance.test.tsx::provides all new state messages and title interpolation in four locales",
+    "sidebar-render-containment.test.tsx::Sidebar re-render containment does not re-render session rows as streamed runtime events arrive",
+    "sidebar-render-containment.test.tsx::Sidebar re-render containment mounts session rows incrementally instead of all at once",
+    "sidebar-render-containment.test.tsx::Sidebar re-render containment persists the selected session before navigation can remount Chat",
+    "sidebar-render-containment.test.tsx::Sidebar re-render containment preserves all 100 child keys and the selected family entry inside the shared budget",
+    "sidebar-render-containment.test.tsx::Sidebar re-render containment preserves all 2 child keys and the selected family entry inside the shared budget",
+    "sidebar-render-containment.test.tsx::Sidebar re-render containment preserves all 20 child keys and the selected family entry inside the shared budget",
+    "sidebar-render-containment.test.tsx::Sidebar re-render containment rejects stale running projections while preserving newer run ownership",
+    "sidebar-render-containment.test.tsx::Sidebar re-render containment reserves the selected session and its visible ancestors without adding slots",
+    "sidebar-render-containment.test.tsx::Sidebar re-render containment shares 80 initial slots across two 80-row workgroups and ungrouped sessions",
+    "sidebar-render-containment.test.tsx::Sidebar re-render containment still re-renders rows when a session status actually changes",
+    "sidebar-render-containment.test.tsx::Sidebar re-render containment unmounts collapsed workgroups without consuming their slots or losing their full count",
+    "sidebar-session-buckets.test.ts::sidebar latest runtime run index preserves the previous tie behavior by selecting the later iterated run",
+    "sidebar-session-buckets.test.ts::sidebar latest runtime run index selects the latest activity for each session in one index",
+    "sidebar-session-buckets.test.ts::sidebar session activity resolution builds the time view as one activity-sorted list across projects",
+    "sidebar-session-buckets.test.ts::sidebar session activity resolution groups sessions by workspace recency and sorts each project by activity",
+    "sidebar-session-buckets.test.ts::sidebar session activity resolution keeps an unbound configured project navigable before its first persisted session",
+    "sidebar-session-buckets.test.ts::sidebar session activity resolution keeps explicitly associated coordinators visible through a agent binding",
+    "sidebar-session-buckets.test.ts::sidebar session activity resolution keeps explicitly associated coordinators visible through a coordinator binding",
+    "sidebar-session-buckets.test.ts::sidebar session activity resolution keeps pinned sessions first and supports active and priority sorting",
+    "sidebar-session-buckets.test.ts::sidebar session activity resolution keeps sessions scoped to the current workspace and agent",
+    "sidebar-session-buckets.test.ts::sidebar session activity resolution prefers real message activity over backend metadata or key creation time",
+    "sidebar-session-buckets.test.ts::sidebar session activity resolution renders a duplicated legacy session in only one project",
+    "sidebar-session-buckets.test.ts::sidebar session activity resolution returns 0 for unparseable session keys without updatedAt",
+    "sidebar-session-buckets.test.ts::sidebar session activity resolution uses the timestamp embedded in a locally-created session key as activity fallback",
+    "workspace-agents-panel-failure.test.tsx::WorkspaceAgentsPanel transcript failure (R2) renders failed+retry instead of an empty transcript when history fails",
+    "workspaces-api.test.ts::workspaces api compatibility migration P2-001: auto-default workspace is readOnly and invalid modes migrate to readOnly not acceptEdits",
+    "workspaces-api.test.ts::workspaces api compatibility migration P2-001: creates new workspaces with readOnly permission mode by default",
+    "workspaces-api.test.ts::workspaces api compatibility migration P2-001: preserves explicit acceptEdits and audits permission mode changes",
+    "workspaces-api.test.ts::workspaces api compatibility migration creates the default workspace from list when no workspace exists",
+    "workspaces-api.test.ts::workspaces api compatibility migration does not copy the previous active session state into a newly selected empty session",
+    "workspaces-api.test.ts::workspaces api compatibility migration does not inherit the previous agent state when switching to a new agent binding",
+    "workspaces-api.test.ts::workspaces api compatibility migration falls back to the default workspace when the stored active id is missing",
+    "workspaces-api.test.ts::workspaces api compatibility migration hydrates old agentId/session fields into selectedAgentId and agentBindings",
+    "workspaces-api.test.ts::workspaces api compatibility migration keeps each agent binding session independent within the same workspace",
+    "workspaces-api.test.ts::workspaces api compatibility migration keeps independent UI state for each session inside a workspace",
+    "workspaces-api.test.ts::workspaces api compatibility migration normalizes legacy nested session folders and new parent input to one level",
+    "workspaces-api.test.ts::workspaces api compatibility migration publishes background membership after persistence without publishing draft-only edits",
+    "workspaces-api.test.ts::workspaces api compatibility migration seeds the Verse Claw harness when creating a workspace profile",
+    "workspaces-api.test.ts::workspaces api compatibility migration switches workspaces without closing the previous workspace resources",
+    "workspaces-api.test.ts::workspaces api compatibility migration switches workspaces without rewriting the target workspace session or state",
+    "workspaces-api.test.ts::workspaces api compatibility migration workspace delete reclaims Main browser and managed-port owners",
+    "workspaces-store.test.ts::workspaces store drag-and-drop grouping creates one root workgroup and files both sessions into it when the target is unfiled",
+    "workspaces-store.test.ts::workspaces store drag-and-drop grouping does nothing when the source and target are the same session",
+    "workspaces-store.test.ts::workspaces store drag-and-drop grouping is a no-op when the source is already in the target workgroup",
+    "workspaces-store.test.ts::workspaces store drag-and-drop grouping moves the source into an existing target workgroup without creating a folder",
+    "workspaces-store.test.ts::workspaces store drag-and-drop grouping rejects grouping sessions claimed by different projects",
+    "workspaces-store.test.ts::workspaces store session state adds the returned active workspace when the local profile list is stale",
+    "workspaces-store.test.ts::workspaces store session state does not leak the previous session state when only activeSessionKey changes",
+    "workspaces-store.test.ts::workspaces store session state does not resubmit identical presentation state or replace the active profile reference",
+    "workspaces-store.test.ts::workspaces store session state drops legacy work mode from workspace session state",
+    "workspaces-store.test.ts::workspaces store session state merges patch state only into the addressed session",
+    "workspaces-store.test.ts::workspaces store session state persists work context visibility inside the addressed chat footer session state",
+    "workspaces-store.test.ts::workspaces store session state saves a newer draft after an in-flight save even when it returns to the original text",
+    "workspaces-store.test.ts::workspaces store session state selects the destination agent without replacing another agent session binding",
+    "workspaces-store.test.ts::workspaces store session state switches active workspace to the target profile without mutating the previous workspace session state"
+  ],
+  "electronCases": [
+    "project-agent-entry.spec.ts::project-agent-entry.spec.ts > project entry keeps its coordinator, task scope and session drafts while disclosure only folds the list",
+    "session-delegation-capacity.spec.ts::session-delegation-capacity.spec.ts > U2 shows owner-generated dispatch capacity reasons and opens resource storage",
+    "session-derivation-ui.spec.ts::session-derivation-ui.spec.ts > family navigation preserves 2/20/100 runtime children and responsive keyboard layouts",
+    "session-derivation-ui.spec.ts::session-derivation-ui.spec.ts > question fork keeps its source draft and handoff submits one reviewed first turn",
+    "session-task-locales.spec.ts::session-task-locales.spec.ts > project tasks and family navigation remain usable in all four interface languages",
+    "session-task-reading-navigation.spec.ts::session-task-reading-navigation.spec.ts > U2 background child creation, failure and completion preserve parent selection, own state and hovered rows",
+    "session-task-reading-navigation.spec.ts::session-task-reading-navigation.spec.ts > U2 restores the visible transcript message, reading offset and both session drafts",
+    "session-task-state-guidance.spec.ts::session-task-state-guidance.spec.ts > AC8: a held real Ledger response shows loading, permission denial and a reachable refresh",
+    "session-task-state-guidance.spec.ts::session-task-state-guidance.spec.ts > AC8: an owner-created project without a coordinator names the missing association",
+    "session-task-state-guidance.spec.ts::session-task-state-guidance.spec.ts > AC9: a real dependency rejection names the prerequisite and opens its existing task action"
+  ],
+  "failures": [
+    {
+      "name": "u2-background-green1",
+      "candidate": "68d9603ce42f378406df19971a573ebc8106de8f",
+      "exitCode": 1,
+      "tests": {
+        "startTime": "2026-11-09T00:48:20.789Z",
+        "duration": 48332.06,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "sha256": "688f7dd455f7fc61525993684e588db8216aa7f0294d5e233d16a0386a1adb11"
+    },
+    {
+      "name": "u2-background-green2",
+      "candidate": "589ad4a517719c91e472c5e8a526a30e607228c4",
+      "exitCode": 1,
+      "tests": {
+        "startTime": "2026-11-09T01:03:01.203Z",
+        "duration": 48008.51,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "sha256": "ca3b82c2e001469a5bbdbcadef3fd22bdffdcae508d24ecc9e26f106d86a8cd9"
+    },
+    {
+      "name": "u2-background-green3",
+      "candidate": "b730717ef9b1e7aa0a8b909132b3db8da14ddaad",
+      "exitCode": 1,
+      "tests": {
+        "startTime": "2026-11-09T03:14:02.244Z",
+        "duration": 70398.99799999999,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "sha256": "3c219ec1732d42144fe74132b9cf4fa6826f9b7a21acc270876dc8e096ff4df2"
+    },
+    {
+      "name": "u2-background-trace",
+      "candidate": "68d9603ce42f378406df19971a573ebc8106de8f",
+      "exitCode": 1,
+      "tests": {
+        "startTime": "2026-11-09T00:55:01.882Z",
+        "duration": 47945.294,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "sha256": "ec431be462717d1bec83a9dccd821925633d0a6db7e3cc84ff0fb8a19da58ba2"
+    },
+    {
+      "name": "u2-core-final",
+      "candidate": "23365f2f68c3752258a93dc4236d9ec93a828a1d",
+      "exitCode": 1,
+      "tests": {
+        "startTime": "2026-11-09T04:47:05.185Z",
+        "duration": 258327.238,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "sha256": "233389ae99a8bb3adc51c8ebff0d9aaebc55d614ff892665e2037ad1f5201787"
+    },
+    {
+      "name": "u2-core-final2",
+      "candidate": "35dd73214d93ce5a2fccff771ad8225bcaabcd4f",
+      "exitCode": 1,
+      "tests": {
+        "startTime": "2026-11-09T04:57:44.654Z",
+        "duration": 263015.94,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "sha256": "abb515ee025e9b6819e72d337e378fa72a660ac4a7144f001ef68f52eb4b219f"
+    },
+    {
+      "name": "u2-empty-project-unit",
+      "candidate": "103324cc1b4fa2ba87a7ba4e71f9de61f6491c79",
+      "exitCode": 1,
+      "tests": {
+        "total": 13,
+        "passed": 12,
+        "failed": 1,
+        "pending": 0
+      },
+      "sha256": "47fb8b06905d57cf83928ef30b9c800e032993ddfa48d51bebe1c82dbf75aa9a"
+    },
+    {
+      "name": "u2-family-layout",
+      "candidate": "44ece6fafab9bf46ef61a1fb76092a6c78fc408f",
+      "exitCode": 1,
+      "tests": {
+        "startTime": "2026-11-09T03:42:29.086Z",
+        "duration": 3367.736,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "sha256": "4358e5f19256146da99e5fadc2e7f5554de9c7fe8543f1d4f2407ddf42411cbe"
+    },
+    {
+      "name": "u2-family-layout2",
+      "candidate": "44ece6fafab9bf46ef61a1fb76092a6c78fc408f",
+      "exitCode": 1,
+      "tests": {
+        "startTime": "2026-11-09T03:43:14.587Z",
+        "duration": 242127.586,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "sha256": "42a1c9111016c89e7742a8afbfb79f8a3f48e4fdac75d7389e592230c5c938d7"
+    },
+    {
+      "name": "u2-family-layout3",
+      "candidate": "03d56a0fcf202831f6ee2e0f860d00250535c2d5",
+      "exitCode": 1,
+      "tests": {
+        "startTime": "2026-11-09T04:06:58.423Z",
+        "duration": 596754.6799999999,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "sha256": "702b34827fd4b1948fb33935687650604794708199d0037f66b5ff4f803f0c68"
+    },
+    {
+      "name": "u2-hover-repeat",
+      "candidate": "d7da1fb5ad992a55d7149023ea21a393dea7d28a",
+      "exitCode": 1,
+      "tests": {
+        "startTime": "2026-11-09T05:11:12.547Z",
+        "duration": 521233.413,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "sha256": "a625e38e231ac5544041480d4bd15e0c803bbeece8eba62a14565e850035b59d"
+    },
+    {
+      "name": "u2-journeys-final1",
+      "candidate": "103324cc1b4fa2ba87a7ba4e71f9de61f6491c79",
+      "exitCode": 1,
+      "tests": {
+        "startTime": "2026-11-09T03:24:15.303Z",
+        "duration": 352278.068,
+        "expected": 3,
+        "skipped": 0,
+        "unexpected": 2,
+        "flaky": 0
+      },
+      "sha256": "78e1a2e523cfcf84752e2caa06bbfe492bef5f85924c9402ad38758059ee6550"
+    },
+    {
+      "name": "u2-navigation-red",
+      "candidate": "0ed2befe7c9b753228978586d4130cc05ec3a371",
+      "exitCode": 1,
+      "tests": {
+        "startTime": "2026-11-09T00:23:17.063Z",
+        "duration": 110658.777,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 2,
+        "flaky": 0
+      },
+      "sha256": "bd89fcfa6307d7a234105fd5f9f54c3d915c0551692b51138dd5c423f4a4d198"
+    },
+    {
+      "name": "u2-reading-green1",
+      "candidate": "add7600c1be77b4f7c37680740948762fa3b7f0d",
+      "exitCode": 1,
+      "tests": {
+        "startTime": "2026-11-09T00:34:59.850Z",
+        "duration": 50760.189999999995,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "sha256": "20b0eca9e1bdb6190de6f8983ab1bacd7ca2ef0c07217ba3a8bbd176152c463d"
+    },
+    {
+      "name": "u2-reading-trace",
+      "candidate": "add7600c1be77b4f7c37680740948762fa3b7f0d",
+      "exitCode": 1,
+      "tests": {
+        "startTime": "2026-11-09T00:39:30.251Z",
+        "duration": 42969.241,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "sha256": "357911c1f71501ea619322a13089b937e5bc6f2779cd89b3893c8bf879412936"
+    },
+    {
+      "name": "u2-session-refresh-red",
+      "candidate": "03d56a0fcf202831f6ee2e0f860d00250535c2d5",
+      "exitCode": 1,
+      "tests": {
+        "total": 10,
+        "passed": 9,
+        "failed": 1,
+        "pending": 0
+      },
+      "sha256": "81d4a00ee9bc04ddf6afd813a7ec2041b732fc9a9ca5a91888f32703b4c2a467"
+    },
+    {
+      "name": "u2-terminal-red",
+      "candidate": "68d9603ce42f378406df19971a573ebc8106de8f",
+      "exitCode": 1,
+      "tests": {
+        "total": 20,
+        "passed": 17,
+        "failed": 3,
+        "pending": 0
+      },
+      "sha256": "1d51428d62198c79c543348350316fc2a9a2e117648e3c23d563c2b03e3c8184"
+    },
+    {
+      "name": "u2-types-test",
+      "candidate": "02346f0fad6222c10b393f4948d09078dce8f423",
+      "exitCode": 2,
+      "tests": null,
+      "sha256": "446030c64cf4d5aa412e5db5fa00ada2285894ddccf69913eea71fba8a8bc67e"
+    },
+    {
+      "name": "u2-window-pointer-unit",
+      "candidate": "90239c985587d5f25132a5a63baaf44419701ed7",
+      "exitCode": 1,
+      "tests": {
+        "total": 30,
+        "passed": 29,
+        "failed": 1,
+        "pending": 0
+      },
+      "sha256": "e0922ed918e95d42af5c939ac3240ee81a5cfe6902ea9e4341295abd160fe14f"
+    }
+  ],
+  "evidenceInventory": [
+    {
+      "path": "commands/u2-final-unit.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-final-unit.result.json",
+      "sha256": "f9f408637c3b6a7c01ce6f8cee9e7b81a181115c722d51aaa4a8527afb0f63f9"
+    },
+    {
+      "path": "commands/u2-final-unit.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-final-unit.tests.json",
+      "sha256": "c469650037763d466a921d1f1a007722638a19db80d6afd706db8a61f5961f12"
+    },
+    {
+      "path": "commands/u2-final-unit.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-final-unit.log",
+      "sha256": "e70cf8591fa193e91b4946f223d252c6307b4c080db2cef320eabac78075599f"
+    },
+    {
+      "path": "commands/u2-window-pointer-unit2.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-window-pointer-unit2.result.json",
+      "sha256": "cac1ecf15628ba490b90b61e9b6e6458cd70f7c37856745a372f597818f01d55"
+    },
+    {
+      "path": "commands/u2-window-pointer-unit2.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-window-pointer-unit2.tests.json",
+      "sha256": "d2b901daec09e535511cdca6fdc16e5e037a084a26df1113d5cd27ff327ec725"
+    },
+    {
+      "path": "commands/u2-window-pointer-unit2.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-window-pointer-unit2.log",
+      "sha256": "6453f04b1faa7ca84655de2f5e32a699be83bab3af522833f1d58b9efb052ceb"
+    },
+    {
+      "path": "commands/u2-final-node-types.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-final-node-types.result.json",
+      "sha256": "ee5fb893e7a9275aea64701cc136607b92ed07fc47b056aeb745a05cfd38c74e"
+    },
+    {
+      "path": "commands/u2-final-node-types.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-final-node-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "commands/u2-current-web-types.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-current-web-types.result.json",
+      "sha256": "c8792317f0fb16e9bf4767307fdb5ddae35c058ac65e86acbee324bd9d59ef53"
+    },
+    {
+      "path": "commands/u2-current-web-types.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-current-web-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "commands/u2-current-test-types.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-current-test-types.result.json",
+      "sha256": "f77f9dbe34d4c9e12c0975c03abf0e709c302c63b741c800342d9cc847c0ebf6"
+    },
+    {
+      "path": "commands/u2-current-test-types.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-current-test-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "commands/u2-runtime-build.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-runtime-build.result.json",
+      "sha256": "6538427f57fc0c06223ef06655ead93581763b29268f54b04dde51acda7a0c70"
+    },
+    {
+      "path": "commands/u2-runtime-build.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-runtime-build.log",
+      "sha256": "be33fd7332d293a2b27a4c72da18bf247fd67e5f8342ca6541d44dc4fe3eae86"
+    },
+    {
+      "path": "commands/u2-desktop-build12.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-desktop-build12.result.json",
+      "sha256": "4bf31aafb708890b533554b5756d329e3e31cc712deb98ff487297e70b83706e"
+    },
+    {
+      "path": "commands/u2-desktop-build12.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-desktop-build12.log",
+      "sha256": "e33145977df0d9abad5f1a0e06ffa0b1e1c7d7a3ed60086c0a0d41a7ddc9c81c"
+    },
+    {
+      "path": "commands/u2-final-contract.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-final-contract.result.json",
+      "sha256": "15c3ec17c5faf308065c4ce5170242b9e6a4de922da66815db39dfbe20cff16e"
+    },
+    {
+      "path": "commands/u2-final-contract.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-final-contract.log",
+      "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+    },
+    {
+      "path": "commands/u2-final-i18n.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-final-i18n.result.json",
+      "sha256": "d21a6aced257f797a172dff1dde65e609982b58a4f69ce7d4ab37d8090080216"
+    },
+    {
+      "path": "commands/u2-final-i18n.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-final-i18n.log",
+      "sha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe"
+    },
+    {
+      "path": "commands/u2-final-comms-replay.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-final-comms-replay.result.json",
+      "sha256": "f79baa2806813743c06127cee6e3e37aae438f8d744c9d7095f6c511e5457788"
+    },
+    {
+      "path": "commands/u2-final-comms-replay.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-final-comms-replay.log",
+      "sha256": "85f1eb6b017f6f66736931491478758ee328c6de614791b74d300a9c098e6819"
+    },
+    {
+      "path": "commands/u2-final-comms-compare.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-final-comms-compare.result.json",
+      "sha256": "8fc3608110b51ac67bc80e297a80bd605c1063f65c548548fc9803e25cb20328"
+    },
+    {
+      "path": "commands/u2-final-comms-compare.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-final-comms-compare.log",
+      "sha256": "26f98cb7eab99aed8beb58f80acfaf75b09b7f8ddf9e1ef18292fac604eda794"
+    },
+    {
+      "path": "commands/u2-final-harness2.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-final-harness2.result.json",
+      "sha256": "3a88aef952b3f418ee65c5c369215d5cbb3ad18c1886b696198a2d8f7fff52bd"
+    },
+    {
+      "path": "commands/u2-final-harness2.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-final-harness2.log",
+      "sha256": "f92e089e97c603bbde423a5f41ed0548ceb6c95919e3e6176b0d012cfa8cad97"
+    },
+    {
+      "path": "commands/u2-final-harness-preview.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-final-harness-preview.result.json",
+      "sha256": "54df8009c74739d8a62ae14d0097af31f5a52c8f9009153cc2f4e43159947204"
+    },
+    {
+      "path": "commands/u2-final-harness-preview.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-final-harness-preview.log",
+      "sha256": "407dd8a3a825e2dc5edc528b8ce69b3717205fa079b081794c7d9f4ffb9111ec"
+    },
+    {
+      "path": "commands/u2-final-artifacts.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-final-artifacts.result.json",
+      "sha256": "e4a34055558105b5236060504d804fdc132c23928220bda963b859d2d962ed01"
+    },
+    {
+      "path": "commands/u2-final-artifacts.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-final-artifacts.log",
+      "sha256": "ab1d29a2b3bf14cfda1803f9d05d8c560792e2f23be01db1e6eb174b724974b3"
+    },
+    {
+      "path": "commands/u2-core-final2.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-core-final2.result.json",
+      "sha256": "abb515ee025e9b6819e72d337e378fa72a660ac4a7144f001ef68f52eb4b219f"
+    },
+    {
+      "path": "commands/u2-core-final2.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-core-final2.tests.json",
+      "sha256": "365b76001e66adf8349ac459ca64b42a4b7d631d9299714a11515ff14afb3daa"
+    },
+    {
+      "path": "commands/u2-core-final2.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-core-final2.log",
+      "sha256": "260f9cd0ba349d2c39b76890fbc096c8ed73a73f4aa65eaf5590da45a0cef8c7"
+    },
+    {
+      "path": "journeys/u2-core-final2/session-derivation-ui-ques-49722-its-one-reviewed-first-turn/question-fork-draft.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-core-final2-results\\session-derivation-ui-ques-49722-its-one-reviewed-first-turn\\question-fork-draft.png",
+      "sha256": "eea3613de0b2f88531cb2f171b84bd23b4e95e7edbf1bd3b7aa9cfe529444039"
+    },
+    {
+      "path": "journeys/u2-core-final2/session-derivation-ui-ques-49722-its-one-reviewed-first-turn/question-handoff-journey.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-core-final2-results\\session-derivation-ui-ques-49722-its-one-reviewed-first-turn\\question-handoff-journey.json",
+      "sha256": "59dfbc989449f4d9e75c7e80d31d55bc09c057057989a31783ae41c185ebac22"
+    },
+    {
+      "path": "journeys/u2-core-final2/session-derivation-ui-ques-49722-its-one-reviewed-first-turn/ui-diagnostic-0.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-core-final2-results\\session-derivation-ui-ques-49722-its-one-reviewed-first-turn\\ui-diagnostic-0.png",
+      "sha256": "138995c3830c94d62636c3847499823a147b74cf9528c18484240994726a6395"
+    },
+    {
+      "path": "journeys/u2-core-final2/session-derivation-ui-ques-49722-its-one-reviewed-first-turn/ui-diagnostics.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-core-final2-results\\session-derivation-ui-ques-49722-its-one-reviewed-first-turn\\ui-diagnostics.json",
+      "sha256": "566317dd07835bbc8654039a329a62398d4ad4e57f383a3c185c6995dcbdfc39"
+    },
+    {
+      "path": "journeys/u2-core-final2/session-task-reading-navig-8f6b4--own-state-and-hovered-rows/test-failed-1.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-core-final2-results\\session-task-reading-navig-8f6b4--own-state-and-hovered-rows\\test-failed-1.png",
+      "sha256": "08d161265ee15882ee552f2e2f03537b62262e86733e27a02adbc8d40a5a0349"
+    },
+    {
+      "path": "journeys/u2-core-final2/session-task-reading-navig-8f6b4--own-state-and-hovered-rows/u2-background.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-core-final2-results\\session-task-reading-navig-8f6b4--own-state-and-hovered-rows\\u2-background.json",
+      "sha256": "959c502088a02a8d917753b936f8982c36d79f0dfaeb2e27dadd218ac9834e51"
+    },
+    {
+      "path": "journeys/u2-core-final2/session-task-reading-navig-8f6b4--own-state-and-hovered-rows/ui-diagnostic-0.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-core-final2-results\\session-task-reading-navig-8f6b4--own-state-and-hovered-rows\\ui-diagnostic-0.png",
+      "sha256": "ce6f64f88e7a6cff134b5c165a93454a319d23fac2157e198347d72e8d71bc39"
+    },
+    {
+      "path": "journeys/u2-core-final2/session-task-reading-navig-8f6b4--own-state-and-hovered-rows/ui-diagnostics.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-core-final2-results\\session-task-reading-navig-8f6b4--own-state-and-hovered-rows\\ui-diagnostics.json",
+      "sha256": "b506c2dcd0068a607972920c2543c87f492afe53e25f09f923c77d2c70aa29f8"
+    },
+    {
+      "path": "journeys/u2-core-final2/session-task-reading-navig-fd737-set-and-both-session-drafts/u2-reading-before.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-core-final2-results\\session-task-reading-navig-fd737-set-and-both-session-drafts\\u2-reading-before.png",
+      "sha256": "81099bcb34c695f24eee906edb614d1ec7bf7b4b2d8429a4941d8ee4cf8a5431"
+    },
+    {
+      "path": "journeys/u2-core-final2/session-task-reading-navig-fd737-set-and-both-session-drafts/u2-reading-restored.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-core-final2-results\\session-task-reading-navig-fd737-set-and-both-session-drafts\\u2-reading-restored.png",
+      "sha256": "af2a3050701b19773b03a980d032e132d53fe988d373ef3b1f5112ab12fd253d"
+    },
+    {
+      "path": "journeys/u2-core-final2/session-task-reading-navig-fd737-set-and-both-session-drafts/u2-reading.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-core-final2-results\\session-task-reading-navig-fd737-set-and-both-session-drafts\\u2-reading.json",
+      "sha256": "969a403eb0af42843ffa7aece942308a6dd2f47e786a3ba9aab9412edda297be"
+    },
+    {
+      "path": "journeys/u2-core-final2/session-task-reading-navig-fd737-set-and-both-session-drafts/ui-diagnostic-0.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-core-final2-results\\session-task-reading-navig-fd737-set-and-both-session-drafts\\ui-diagnostic-0.png",
+      "sha256": "1a199e4bfb166de9055103cb78c1131633b35c8a5dc586efc8541919c65587a6"
+    },
+    {
+      "path": "journeys/u2-core-final2/session-task-reading-navig-fd737-set-and-both-session-drafts/ui-diagnostics.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-core-final2-results\\session-task-reading-navig-fd737-set-and-both-session-drafts\\ui-diagnostics.json",
+      "sha256": "7907298baa0c1035abb4861c9697a9ae9ff14efaf42cdb06d8d4323f62999a84"
+    },
+    {
+      "path": "commands/u2-window-final.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-window-final.result.json",
+      "sha256": "559b9ea59a6ce57a9ae2e57b531132e798c6c01a1e383c84fba7038795ac21da"
+    },
+    {
+      "path": "commands/u2-window-final.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-window-final.tests.json",
+      "sha256": "53afaaba0a7d6bf71cb31a3a5fa5997731a5fcf8c5fc65a78514201a43d116fa"
+    },
+    {
+      "path": "commands/u2-window-final.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-window-final.log",
+      "sha256": "00be83a2fd95ca874eea0dada0436b514d907c1105b2bfb82c1415b2feda9e19"
+    },
+    {
+      "path": "journeys/u2-window-final/session-task-reading-navig-8f6b4--own-state-and-hovered-rows/u2-background-terminal.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-window-final-results\\session-task-reading-navig-8f6b4--own-state-and-hovered-rows\\u2-background-terminal.png",
+      "sha256": "a0f1958275884f2a5bc1ba3cd3703c157af0d4031676567b7173ff98c3a942aa"
+    },
+    {
+      "path": "journeys/u2-window-final/session-task-reading-navig-8f6b4--own-state-and-hovered-rows/u2-background.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-window-final-results\\session-task-reading-navig-8f6b4--own-state-and-hovered-rows\\u2-background.json",
+      "sha256": "a22902e14f5b10487f2872822a8c5eb3ad87aca527b61de4e641dbe44860832f"
+    },
+    {
+      "path": "journeys/u2-window-final/session-task-reading-navig-8f6b4--own-state-and-hovered-rows/ui-diagnostic-0.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-window-final-results\\session-task-reading-navig-8f6b4--own-state-and-hovered-rows\\ui-diagnostic-0.png",
+      "sha256": "53a8a3ba313d462973bef230d56cb86fda91297cb5e442506a9a8dc1d7f6919b"
+    },
+    {
+      "path": "journeys/u2-window-final/session-task-reading-navig-8f6b4--own-state-and-hovered-rows/ui-diagnostics.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-window-final-results\\session-task-reading-navig-8f6b4--own-state-and-hovered-rows\\ui-diagnostics.json",
+      "sha256": "fef66125dc7c833268fa621d9aa50d7dd20bfa80fade79043c788cfa55ae27c2"
+    },
+    {
+      "path": "commands/u2-state-final2.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-state-final2.result.json",
+      "sha256": "013edeca05ec1ad93041bb8f1661db04c764e533fb947e3ffe28c9cc69bbaae8"
+    },
+    {
+      "path": "commands/u2-state-final2.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-state-final2.tests.json",
+      "sha256": "d91ef34dd02532643b6f13735955b0a065b3bdea140a25ae17ed70118c54a1d5"
+    },
+    {
+      "path": "commands/u2-state-final2.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-state-final2.log",
+      "sha256": "7294435aa46a53755e61bc31826330676770755b702293070d49c1d6e09e0d93"
+    },
+    {
+      "path": "journeys/u2-state-final2/session-task-state-guidanc-1755b-mes-the-missing-association/state-guidance.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-state-final2-results\\session-task-state-guidanc-1755b-mes-the-missing-association\\state-guidance.json",
+      "sha256": "3ae55b27a20b6d73d7fddb5bc7641def9b426724c5faac81741f9b7f897b9a5e"
+    },
+    {
+      "path": "journeys/u2-state-final2/session-task-state-guidanc-1755b-mes-the-missing-association/state-guidance.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-state-final2-results\\session-task-state-guidanc-1755b-mes-the-missing-association\\state-guidance.png",
+      "sha256": "e34be9b3766d18d38e91d76b3430b36bbec296182d3734bfc951015bd2a0de26"
+    },
+    {
+      "path": "journeys/u2-state-final2/session-task-state-guidanc-59512-ial-and-a-reachable-refresh/ledger-loading.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-state-final2-results\\session-task-state-guidanc-59512-ial-and-a-reachable-refresh\\ledger-loading.png",
+      "sha256": "2e763383f864c722352db41f89d390636c8b6e55e1026bc9871ed063f5f1c517"
+    },
+    {
+      "path": "journeys/u2-state-final2/session-task-state-guidanc-59512-ial-and-a-reachable-refresh/ledger-permission-denied.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-state-final2-results\\session-task-state-guidanc-59512-ial-and-a-reachable-refresh\\ledger-permission-denied.png",
+      "sha256": "46b751afaed9e3256261061746c218eb216aaf051e53c60c1147c53f28ebe453"
+    },
+    {
+      "path": "journeys/u2-state-final2/session-task-state-guidanc-59512-ial-and-a-reachable-refresh/state-guidance.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-state-final2-results\\session-task-state-guidanc-59512-ial-and-a-reachable-refresh\\state-guidance.json",
+      "sha256": "850a439baf991bcb790ff813c06e59887b926262caac95f2d9a284e353465c93"
+    },
+    {
+      "path": "journeys/u2-state-final2/session-task-state-guidanc-59512-ial-and-a-reachable-refresh/state-guidance.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-state-final2-results\\session-task-state-guidanc-59512-ial-and-a-reachable-refresh\\state-guidance.png",
+      "sha256": "86916230f15bd1fe1bea04e27311b9d8d6a2de2f0f2b4177baace5bfdd362176"
+    },
+    {
+      "path": "journeys/u2-state-final2/session-task-state-guidanc-d7f74-ns-its-existing-task-action/state-guidance.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-state-final2-results\\session-task-state-guidanc-d7f74-ns-its-existing-task-action\\state-guidance.json",
+      "sha256": "964adfa3c4fad23dfaa257614b8eb95a9aadc2926aa48be31ce878869404108c"
+    },
+    {
+      "path": "journeys/u2-state-final2/session-task-state-guidanc-d7f74-ns-its-existing-task-action/state-guidance.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-state-final2-results\\session-task-state-guidanc-d7f74-ns-its-existing-task-action\\state-guidance.png",
+      "sha256": "db24bc77f3f26dbc24ee595d4a27e4d04ee0827b9d44d1d9b199e5b8325c94f8"
+    },
+    {
+      "path": "commands/u2-family-layout4.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-family-layout4.result.json",
+      "sha256": "d9a2f47c4acf42a4beeba92d3aa7c57f9a77dbb3426e8841d327ea2b84295c20"
+    },
+    {
+      "path": "commands/u2-family-layout4.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-family-layout4.tests.json",
+      "sha256": "20965af5d92884149a6ae3618fe38e9e2247fe7cfae2185d3d7a8d80feedfac2"
+    },
+    {
+      "path": "commands/u2-family-layout4.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-family-layout4.log",
+      "sha256": "7f00c721d527e5a75a56e09d61053e45d657464db2ce1fc0035fb942091dbb67"
+    },
+    {
+      "path": "journeys/u2-family-layout4/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/family-collapsed-reduced-motion.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-family-layout4-results\\session-derivation-ui-fami-880f5-responsive-keyboard-layouts\\family-collapsed-reduced-motion.png",
+      "sha256": "aedc8bdc44a3d53e966d60c1cc3a2707db6a32b38afb7764cdfbd76905fe4fe9"
+    },
+    {
+      "path": "journeys/u2-family-layout4/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/family-dark-1280.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-family-layout4-results\\session-derivation-ui-fami-880f5-responsive-keyboard-layouts\\family-dark-1280.png",
+      "sha256": "bb09fe2127edcf82aa4574ed9d1f28bb02484fd61846df568e44049f8abc95a9"
+    },
+    {
+      "path": "journeys/u2-family-layout4/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/family-dark-960.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-family-layout4-results\\session-derivation-ui-fami-880f5-responsive-keyboard-layouts\\family-dark-960.png",
+      "sha256": "3fed14c79ad5b8a4eadcc829b0a4fe44f0d5e06947fe39f32b10f5804183a9d4"
+    },
+    {
+      "path": "journeys/u2-family-layout4/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/family-layout.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-family-layout4-results\\session-derivation-ui-fami-880f5-responsive-keyboard-layouts\\family-layout.json",
+      "sha256": "88d66c99e3c31d70082a602648b2a9165c5524ca668f65c5939adaa20f012c60"
+    },
+    {
+      "path": "journeys/u2-family-layout4/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/family-light-1280.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-family-layout4-results\\session-derivation-ui-fami-880f5-responsive-keyboard-layouts\\family-light-1280.png",
+      "sha256": "9a4bf919e902de8153a9b3178f4bfc0c18c927665e973840d762bfd65b068a6f"
+    },
+    {
+      "path": "journeys/u2-family-layout4/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/family-light-960.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-family-layout4-results\\session-derivation-ui-fami-880f5-responsive-keyboard-layouts\\family-light-960.png",
+      "sha256": "19856b3315cf27f5b79c8d0963edcabd046024756ca7d26335d066128602eda2"
+    },
+    {
+      "path": "journeys/u2-family-layout4/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/ui-diagnostic-0.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-family-layout4-results\\session-derivation-ui-fami-880f5-responsive-keyboard-layouts\\ui-diagnostic-0.png",
+      "sha256": "686f35608caa26e601507518c32f5c75c15272bdb172201aa0c52a1ed0539f6f"
+    },
+    {
+      "path": "journeys/u2-family-layout4/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/ui-diagnostics.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-family-layout4-results\\session-derivation-ui-fami-880f5-responsive-keyboard-layouts\\ui-diagnostics.json",
+      "sha256": "58e434efe3a73dc3ee214b06eb407277ec0004b6cd7b691cc6dc94542ce82b33"
+    },
+    {
+      "path": "commands/u2-locales-final.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final.result.json",
+      "sha256": "cf8960400c8431c16ca17d360d778e9b6d31dc52f28e51762e7a5a5742da949c"
+    },
+    {
+      "path": "commands/u2-locales-final.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final.tests.json",
+      "sha256": "3c965ac131868cb238934cf09c98623ca3636d18bf487c886ebc2658de31927c"
+    },
+    {
+      "path": "commands/u2-locales-final.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final.log",
+      "sha256": "138d1cc34849a34b2033eb0b8399c3ed2cfc2742fda6a4221ad168c843dae305"
+    },
+    {
+      "path": "journeys/u2-locales-final/project-agent-entry-projec-9a4df-closure-only-folds-the-list/project-entry.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final-results\\project-agent-entry-projec-9a4df-closure-only-folds-the-list\\project-entry.json",
+      "sha256": "6edf0bc9cc6016bbc5af27e917ddc6584686cd34f8e287bfe19213dad318f996"
+    },
+    {
+      "path": "journeys/u2-locales-final/project-agent-entry-projec-9a4df-closure-only-folds-the-list/project-entry.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final-results\\project-agent-entry-projec-9a4df-closure-only-folds-the-list\\project-entry.png",
+      "sha256": "0d83e033826cd9e9e3e2a0b29b48238b40ee6488b0703a2e4308fdbf29f5d6f6"
+    },
+    {
+      "path": "journeys/u2-locales-final/project-agent-entry-projec-9a4df-closure-only-folds-the-list/task-drawer-keyboard.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final-results\\project-agent-entry-projec-9a4df-closure-only-folds-the-list\\task-drawer-keyboard.png",
+      "sha256": "7530d9d4a7f4775e017742a536bfee92f45716d67d709bf719428da7cef595c8"
+    },
+    {
+      "path": "journeys/u2-locales-final/project-agent-entry-projec-9a4df-closure-only-folds-the-list/ui-diagnostic-0.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final-results\\project-agent-entry-projec-9a4df-closure-only-folds-the-list\\ui-diagnostic-0.png",
+      "sha256": "033f8f2b6b213f929756cde5043765551f4f000637c07d46f74990bebdbb16a1"
+    },
+    {
+      "path": "journeys/u2-locales-final/project-agent-entry-projec-9a4df-closure-only-folds-the-list/ui-diagnostics.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final-results\\project-agent-entry-projec-9a4df-closure-only-folds-the-list\\ui-diagnostics.json",
+      "sha256": "478066fb6242ade6d049c5fca171d0b367fd6aa22e1318e4aa2021f3967e92f7"
+    },
+    {
+      "path": "journeys/u2-locales-final/session-delegation-capacit-f4690--and-opens-resource-storage/capacity-receipt-plan-en.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final-results\\session-delegation-capacit-f4690--and-opens-resource-storage\\capacity-receipt-plan-en.png",
+      "sha256": "3391b57507c937d1fe1fdc899f0e47cfe61ce81a1e36022818ed6a90ac270dcf"
+    },
+    {
+      "path": "journeys/u2-locales-final/session-delegation-capacit-f4690--and-opens-resource-storage/capacity-receipt-plan-ja.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final-results\\session-delegation-capacit-f4690--and-opens-resource-storage\\capacity-receipt-plan-ja.png",
+      "sha256": "6bf41dde9dbc706dbbc511190e526686aef45784c50bccfdc9fbda1342bc634a"
+    },
+    {
+      "path": "journeys/u2-locales-final/session-delegation-capacit-f4690--and-opens-resource-storage/capacity-receipt-plan-ru.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final-results\\session-delegation-capacit-f4690--and-opens-resource-storage\\capacity-receipt-plan-ru.png",
+      "sha256": "3285c2f13403e956a152b129f4f06762948e88e39033d86ff7781da3bee7f495"
+    },
+    {
+      "path": "journeys/u2-locales-final/session-delegation-capacit-f4690--and-opens-resource-storage/capacity-receipt-plan-zh.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final-results\\session-delegation-capacit-f4690--and-opens-resource-storage\\capacity-receipt-plan-zh.png",
+      "sha256": "6035437fb3b5a994e604ccc53706d0e863c913f892fd2653673cc5c00dc874f5"
+    },
+    {
+      "path": "journeys/u2-locales-final/session-delegation-capacit-f4690--and-opens-resource-storage/u2-capacity.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final-results\\session-delegation-capacit-f4690--and-opens-resource-storage\\u2-capacity.json",
+      "sha256": "4caf7bb0ef09c747b57a995018652f055d14abbb298ef4b8a51eb3dd4f9c3494"
+    },
+    {
+      "path": "journeys/u2-locales-final/session-task-locales-proje-5d2a7-ll-four-interface-languages/handoff-en.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final-results\\session-task-locales-proje-5d2a7-ll-four-interface-languages\\handoff-en.png",
+      "sha256": "9b339c81b79f7ba16dc8558641d27659007c052ff8827df4641034781384f183"
+    },
+    {
+      "path": "journeys/u2-locales-final/session-task-locales-proje-5d2a7-ll-four-interface-languages/handoff-ja.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final-results\\session-task-locales-proje-5d2a7-ll-four-interface-languages\\handoff-ja.png",
+      "sha256": "5df764589265ef58cf09940389ce0c0980eea0ea11b72b600782cadd6c6831ea"
+    },
+    {
+      "path": "journeys/u2-locales-final/session-task-locales-proje-5d2a7-ll-four-interface-languages/handoff-ru.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final-results\\session-task-locales-proje-5d2a7-ll-four-interface-languages\\handoff-ru.png",
+      "sha256": "064c3523f92c5a514402a7bd8831af94f1e651cdb2bcc2b82cbcd23f49ea276e"
+    },
+    {
+      "path": "journeys/u2-locales-final/session-task-locales-proje-5d2a7-ll-four-interface-languages/handoff-zh.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final-results\\session-task-locales-proje-5d2a7-ll-four-interface-languages\\handoff-zh.png",
+      "sha256": "837403fbeb504f527d4a394df0d8dadbe61db51e902d7017ee1ed6c8f0255dd7"
+    },
+    {
+      "path": "journeys/u2-locales-final/session-task-locales-proje-5d2a7-ll-four-interface-languages/session-task-en.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final-results\\session-task-locales-proje-5d2a7-ll-four-interface-languages\\session-task-en.png",
+      "sha256": "0324ea8430ca472e7bca5bf4aa2a01a7dd8d672274241cc5af0e4400b243312d"
+    },
+    {
+      "path": "journeys/u2-locales-final/session-task-locales-proje-5d2a7-ll-four-interface-languages/session-task-ja.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final-results\\session-task-locales-proje-5d2a7-ll-four-interface-languages\\session-task-ja.png",
+      "sha256": "12b2ed4a26a005967110d547e72fd5de4c33f8f1164c6cb197de547faeef75d2"
+    },
+    {
+      "path": "journeys/u2-locales-final/session-task-locales-proje-5d2a7-ll-four-interface-languages/session-task-locales.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final-results\\session-task-locales-proje-5d2a7-ll-four-interface-languages\\session-task-locales.json",
+      "sha256": "e92def34f6fe336af6d328c56e619bffcbe54eb3c6412f07df1ee84ac7593ac3"
+    },
+    {
+      "path": "journeys/u2-locales-final/session-task-locales-proje-5d2a7-ll-four-interface-languages/session-task-ru.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final-results\\session-task-locales-proje-5d2a7-ll-four-interface-languages\\session-task-ru.png",
+      "sha256": "653d9e051d280f1be18169fbc9a3b3153a6d6de1c402a6e95bcd073c40f72d51"
+    },
+    {
+      "path": "journeys/u2-locales-final/session-task-locales-proje-5d2a7-ll-four-interface-languages/session-task-zh.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final-results\\session-task-locales-proje-5d2a7-ll-four-interface-languages\\session-task-zh.png",
+      "sha256": "7fc57066364018842ff17c8fc1c0ae64757ed6fecc6605f49e23cbb82082bea4"
+    },
+    {
+      "path": "commands/u2-current-harness.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-current-harness.result.json",
+      "sha256": "32a854c50beefb69c16d26c1baf21c09ab19a4847c5e03c6b9428e64548d5c55"
+    },
+    {
+      "path": "commands/u2-current-harness.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-current-harness.log",
+      "sha256": "f92e089e97c603bbde423a5f41ed0548ceb6c95919e3e6176b0d012cfa8cad97"
+    },
+    {
+      "path": "commands/u2-current-artifacts.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-current-artifacts.result.json",
+      "sha256": "691267675279fceecd8490c2b22738e79e473105bdeabf757b87ecd41fb31d8a"
+    },
+    {
+      "path": "commands/u2-current-artifacts.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-current-artifacts.log",
+      "sha256": "7631bb7707112d5abaeae2759f255c110da201ab9b76a7de16a9c163d89db767"
+    },
+    {
+      "path": "review/u2-parent-status-report.md",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\u2-parent-status\\report.md",
+      "sha256": "60d931f0aba7bcbdd7633807254dde2cc6fcf32307636bd1a407de8db2aa18c8"
+    },
+    {
+      "path": "review/u2-parent-status-manifest.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\u2-parent-status\\manifest.json",
+      "sha256": "fffe40c67bbff6d002b7182327319b012426a08946eb416ec2cc23f488520091"
+    },
+    {
+      "path": "review/u2-state-proof-evidence-map.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\u2-state-proof\\evidence-map.json",
+      "sha256": "fc97814294572ae02c1718dd0024ca7db083457e766b5f992ab4508619396080"
+    },
+    {
+      "path": "review/u2-state-proof-acceptance-location.md",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\u2-state-proof\\acceptance-location.md",
+      "sha256": "7d91abd8ce89b4da446be49492d071e960a6c4aa1f7e6323b1f2783a0bdd33b3"
+    },
+    {
+      "path": "review/u2-capacity-proof-report.md",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\u2-capacity-proof\\report.md",
+      "sha256": "1e3b1ee2ff688768ecdc01b7d7ceefa53bb2c875a6591cb512f908446d882466"
+    },
+    {
+      "path": "review/u2-capacity-proof-manifest.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\u2-capacity-proof\\manifest.json",
+      "sha256": "a775a61722ec97d7196e12d27a8083894e1719c605df1b2183b4bc2946fff8d9"
+    },
+    {
+      "path": "failures/u2-background-green1.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-background-green1.result.json",
+      "sha256": "688f7dd455f7fc61525993684e588db8216aa7f0294d5e233d16a0386a1adb11"
+    },
+    {
+      "path": "failures/u2-background-green1.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-background-green1.log",
+      "sha256": "e8d99ca78002e34ff4df840b90726256ea2044233fe47ae7ba8e2f023589ed75"
+    },
+    {
+      "path": "failures/u2-background-green2.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-background-green2.result.json",
+      "sha256": "ca3b82c2e001469a5bbdbcadef3fd22bdffdcae508d24ecc9e26f106d86a8cd9"
+    },
+    {
+      "path": "failures/u2-background-green2.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-background-green2.log",
+      "sha256": "6880c4ad23fded454e5fa1e5b07989850bbf9132256c950ce84091e32e7c55b8"
+    },
+    {
+      "path": "failures/u2-background-green3.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-background-green3.result.json",
+      "sha256": "3c219ec1732d42144fe74132b9cf4fa6826f9b7a21acc270876dc8e096ff4df2"
+    },
+    {
+      "path": "failures/u2-background-green3.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-background-green3.log",
+      "sha256": "524b415092a2cffa5ce7f9707cfa0f8b0e73be3276efc4576d918cf68f5aaa68"
+    },
+    {
+      "path": "failures/u2-background-trace.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-background-trace.result.json",
+      "sha256": "ec431be462717d1bec83a9dccd821925633d0a6db7e3cc84ff0fb8a19da58ba2"
+    },
+    {
+      "path": "failures/u2-background-trace.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-background-trace.log",
+      "sha256": "7ab26823dea27195a29d46bee91e721d65ed244b45e40c83128eea7071b66f91"
+    },
+    {
+      "path": "failures/u2-core-final.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-core-final.result.json",
+      "sha256": "233389ae99a8bb3adc51c8ebff0d9aaebc55d614ff892665e2037ad1f5201787"
+    },
+    {
+      "path": "failures/u2-core-final.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-core-final.log",
+      "sha256": "81fe1963eaedf60bae0d15b0deec6b9764bb883836b8a582dad2c37cca24228d"
+    },
+    {
+      "path": "failures/u2-core-final2.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-core-final2.result.json",
+      "sha256": "abb515ee025e9b6819e72d337e378fa72a660ac4a7144f001ef68f52eb4b219f"
+    },
+    {
+      "path": "failures/u2-core-final2.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-core-final2.log",
+      "sha256": "260f9cd0ba349d2c39b76890fbc096c8ed73a73f4aa65eaf5590da45a0cef8c7"
+    },
+    {
+      "path": "failures/u2-empty-project-unit.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-empty-project-unit.result.json",
+      "sha256": "47fb8b06905d57cf83928ef30b9c800e032993ddfa48d51bebe1c82dbf75aa9a"
+    },
+    {
+      "path": "failures/u2-empty-project-unit.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-empty-project-unit.log",
+      "sha256": "be7ab7b7370d5c874e38e7abc9f985e1192be6eb41c392f6182186e1b8272de9"
+    },
+    {
+      "path": "failures/u2-family-layout.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-family-layout.result.json",
+      "sha256": "4358e5f19256146da99e5fadc2e7f5554de9c7fe8543f1d4f2407ddf42411cbe"
+    },
+    {
+      "path": "failures/u2-family-layout.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-family-layout.log",
+      "sha256": "10430d4abdbd108757550247ef54aa526417db51010e4fcac2d0bf16fe54e830"
+    },
+    {
+      "path": "failures/u2-family-layout2.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-family-layout2.result.json",
+      "sha256": "42a1c9111016c89e7742a8afbfb79f8a3f48e4fdac75d7389e592230c5c938d7"
+    },
+    {
+      "path": "failures/u2-family-layout2.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-family-layout2.log",
+      "sha256": "fb8e15192403c06b39fd9a070d9e8b9083e3e5d90f91ed27687f4850f62344d9"
+    },
+    {
+      "path": "failures/u2-family-layout3.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-family-layout3.result.json",
+      "sha256": "702b34827fd4b1948fb33935687650604794708199d0037f66b5ff4f803f0c68"
+    },
+    {
+      "path": "failures/u2-family-layout3.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-family-layout3.log",
+      "sha256": "36766a62205ebe84f2bc6ff4791d79333ecdeeacff73d852221971c511498a9e"
+    },
+    {
+      "path": "failures/u2-hover-repeat.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-hover-repeat.result.json",
+      "sha256": "a625e38e231ac5544041480d4bd15e0c803bbeece8eba62a14565e850035b59d"
+    },
+    {
+      "path": "failures/u2-hover-repeat.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-hover-repeat.log",
+      "sha256": "1927fd8f2667ab5623a92031b1bedbed9bcb526649f28d6c8a1dc153de6b5453"
+    },
+    {
+      "path": "failures/u2-journeys-final1.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-journeys-final1.result.json",
+      "sha256": "78e1a2e523cfcf84752e2caa06bbfe492bef5f85924c9402ad38758059ee6550"
+    },
+    {
+      "path": "failures/u2-journeys-final1.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-journeys-final1.log",
+      "sha256": "ebb6db30f61e7880699864b48fd85e00306029a279c87e9a05e2a347f1546cbf"
+    },
+    {
+      "path": "failures/u2-navigation-red.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-navigation-red.result.json",
+      "sha256": "bd89fcfa6307d7a234105fd5f9f54c3d915c0551692b51138dd5c423f4a4d198"
+    },
+    {
+      "path": "failures/u2-navigation-red.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-navigation-red.log",
+      "sha256": "b1fc15f6a113794f1cd520b577bf2d604c0eab0eb650b224c069205819b777dd"
+    },
+    {
+      "path": "failures/u2-reading-green1.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-reading-green1.result.json",
+      "sha256": "20b0eca9e1bdb6190de6f8983ab1bacd7ca2ef0c07217ba3a8bbd176152c463d"
+    },
+    {
+      "path": "failures/u2-reading-green1.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-reading-green1.log",
+      "sha256": "4da19c83afd01d6d20bd830b29c1f991ab96b2a66916a83855f225caae9a000a"
+    },
+    {
+      "path": "failures/u2-reading-trace.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-reading-trace.result.json",
+      "sha256": "357911c1f71501ea619322a13089b937e5bc6f2779cd89b3893c8bf879412936"
+    },
+    {
+      "path": "failures/u2-reading-trace.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-reading-trace.log",
+      "sha256": "9e84652f6920f12516111b9a67b9043b2dcf2dd6232d1a6c53ab9b0caafb8859"
+    },
+    {
+      "path": "failures/u2-session-refresh-red.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-session-refresh-red.result.json",
+      "sha256": "81d4a00ee9bc04ddf6afd813a7ec2041b732fc9a9ca5a91888f32703b4c2a467"
+    },
+    {
+      "path": "failures/u2-session-refresh-red.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-session-refresh-red.log",
+      "sha256": "27b2c11b57a0b2ac7489184aeeaa035e3799f310689321f5377503b64c63f87a"
+    },
+    {
+      "path": "failures/u2-terminal-red.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-terminal-red.result.json",
+      "sha256": "1d51428d62198c79c543348350316fc2a9a2e117648e3c23d563c2b03e3c8184"
+    },
+    {
+      "path": "failures/u2-terminal-red.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-terminal-red.log",
+      "sha256": "0af007c4d88cecf7dde2d3327d1ecf12384822c497a5871fb563540c82a31e7f"
+    },
+    {
+      "path": "failures/u2-types-test.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-types-test.result.json",
+      "sha256": "446030c64cf4d5aa412e5db5fa00ada2285894ddccf69913eea71fba8a8bc67e"
+    },
+    {
+      "path": "failures/u2-types-test.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-types-test.log",
+      "sha256": "201b56f6f11e87b2d744978f4f90ee25f0200d9abac330d87511897c4922a5d1"
+    },
+    {
+      "path": "failures/u2-window-pointer-unit.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-window-pointer-unit.result.json",
+      "sha256": "e0922ed918e95d42af5c939ac3240ee81a5cfe6902ea9e4341295abd160fe14f"
+    },
+    {
+      "path": "failures/u2-window-pointer-unit.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-window-pointer-unit.log",
+      "sha256": "9ba6e51b4b17190a3fc1e91cc5da027c2c0c7d0e40b1004df9f91ff983745124"
+    }
+  ],
+  "sources": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "16a30c82a735979480b20d087ca690c78d64280f31086dea8f7aabd3b5a25c41"
+    },
+    {
+      "path": "README.md",
+      "sha256": "902baff08dcfe4b870b808195b7bb7a453e26b06ff2d4ef9fc0e40aba20f7a97"
+    },
+    {
+      "path": "README.ru-RU.md",
+      "sha256": "7c5776422f33c2ccc37f6c74323588eea788266ef31b49ca4ff516a90a24560c"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "c1338a37d328c089c689cbf748893f587e3df267f560702e2eca74dfc6047040"
+    },
+    {
+      "path": "docs/modules/multi-agent-and-tasks.md",
+      "sha256": "4b38b75e064d5f42537241e963201f73f17d7a9c8908a72fff06198576773fb2"
+    },
+    {
+      "path": "electron/gateway/chat-runtime-events.ts",
+      "sha256": "826c3d843b0a7ea552ca671c712a746661c7525de02d33d8627105df14bb1e24"
+    },
+    {
+      "path": "electron/gateway/event-dispatch.ts",
+      "sha256": "c76d5b0587e7ccd5aa5fafc53225c4707b748310653f9fd31cd2712425a9b2a1"
+    },
+    {
+      "path": "electron/gateway/manager.ts",
+      "sha256": "ab67a97dd1edfe0570b12657928ea3da41c4c879563cbaceb927ea92c345d562"
+    },
+    {
+      "path": "electron/main/ipc-handlers.ts",
+      "sha256": "3d38ff393d3bca51ee0aee63a5e896a76963fbdda2b1b3912c095a5b104d67d6"
+    },
+    {
+      "path": "electron/services/workspaces-api.ts",
+      "sha256": "ffc1f7577cdb7e03ad4d47dcf961ece82d4908a0f3d6cc4e5411bdd1a4d3f1ae"
+    },
+    {
+      "path": "harness/specs/tasks/session-family-navigation.md",
+      "sha256": "63d4ebdabc7f93c5246ac54b2b1081562f5f5804fad0506cd27cd14e9722aee8"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/long-session-delegation-receipt.ts",
+      "sha256": "dc37f4fe8b00833a6777bbf1b9bb942969be5be4727df834e90b118255329d67"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/orchestrator-run-observed.ts",
+      "sha256": "e88bc2bbe4bebcbe4a440aa99f6ea3258b242fa927a7695b23e8909855920be4"
+    },
+    {
+      "path": "shared/host-events/contract.ts",
+      "sha256": "90d9049e5a78c921a7e14d1cb3073807bb6ba51382c4b846aa0f41889f3fb96d"
+    },
+    {
+      "path": "shared/i18n/locales/en/chat.json",
+      "sha256": "cdda2bee32c0e4e3d7d27e2aa960cba97800e753da722eb0bc5a12de22d5755f"
+    },
+    {
+      "path": "shared/i18n/locales/en/taskLedger.json",
+      "sha256": "96dd8a4247829a48ed0801e0bbc055baa53805471c1d0690d50402bf266033a8"
+    },
+    {
+      "path": "shared/i18n/locales/ja/chat.json",
+      "sha256": "d167c5dc6e6468cc1db7250ab988d6fb5c5996f14c8ac41528df6a11872e7a97"
+    },
+    {
+      "path": "shared/i18n/locales/ja/taskLedger.json",
+      "sha256": "44386547ece8ce43b6b072dcbae7a1f6c6ef904d5c0d6219c26408d27ba9700a"
+    },
+    {
+      "path": "shared/i18n/locales/ru/chat.json",
+      "sha256": "5249cd4650e5c422d92a72e75e3d06cf98960af984e0ec59e82869d5c5b69bfd"
+    },
+    {
+      "path": "shared/i18n/locales/ru/taskLedger.json",
+      "sha256": "b9a77c63f7b59f5a35fc4df4a5db875ab08948d0574b2ac013e42012468fd6de"
+    },
+    {
+      "path": "shared/i18n/locales/zh/chat.json",
+      "sha256": "a1ce3c6eabc7a1f5e62acd9c340ca6076546543ba3ead471cfc7e63d7891dad4"
+    },
+    {
+      "path": "shared/i18n/locales/zh/taskLedger.json",
+      "sha256": "e33c2c510068fc7c30882cd976ba4bbb78e5440b5d0d5c610269ee598126e32f"
+    },
+    {
+      "path": "shared/types/workspace.ts",
+      "sha256": "9dcd02931e63f2f64658a11ba33fa5c247501e98f38dba9d59aaccf47bcb357d"
+    },
+    {
+      "path": "src/components/chat/SessionDelegationStatus.tsx",
+      "sha256": "6dfec2aa7c3bdb402255a13b7c2f24e26f8b74ce52166e69803a49e98289ffd7"
+    },
+    {
+      "path": "src/components/file-preview/WorkspaceAgentsPanel.tsx",
+      "sha256": "ad6457964c3e9986d70c017bfd74c89fda6358f9ea8751469d6ef0a275a66d80"
+    },
+    {
+      "path": "src/components/file-preview/WorkspaceSubagentPanel.tsx",
+      "sha256": "9a42bf1804bed6c98662b7b6e7b26e317e3860cda07fdb6a6ab93bc8db0d7a5c"
+    },
+    {
+      "path": "src/components/layout/SessionFolderTree.tsx",
+      "sha256": "aeee24f12ed597158b2bfc7dbb71bab5c473bc1171d3903fc2293cbe8030b749"
+    },
+    {
+      "path": "src/components/layout/Sidebar.tsx",
+      "sha256": "2d29cdc5b257cf7e75c797f67dda84595b52e46146a2105e53da0074af34c268"
+    },
+    {
+      "path": "src/components/layout/session-buckets.ts",
+      "sha256": "ce699527133ac60cf06d840dd4ea699b257e4c19ec40070fe749e6bc89d9564b"
+    },
+    {
+      "path": "src/components/task-ledger/TaskLedgerSummaryPanel.tsx",
+      "sha256": "5f0a0f474997bd6ef2f368726d312058cb6c9e860bb52e773442f64ba0faef09"
+    },
+    {
+      "path": "src/hooks/use-message-viewport.ts",
+      "sha256": "a152b62ff5d537fca2fd36ffeccdfcb3108a2b366aede1bd45a97331b0afa753"
+    },
+    {
+      "path": "src/hooks/use-stick-to-bottom-instant.ts",
+      "sha256": "acb512d76908a5091c9cd0128a6e3a9911a7568fcb90b5ecbac75e75697d8dd9"
+    },
+    {
+      "path": "src/lib/host-events.ts",
+      "sha256": "fdec1cd7df9e74341772b59aeb4f5b69ba69ede6c39bb3988377c9c6b499af1a"
+    },
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "sha256": "9f8555ba1cec07f1196c279dbff3d77b3c6ce1a2d6e3f0ee4ed828af2dc3715e"
+    },
+    {
+      "path": "src/pages/Chat/use-session-reading-position.ts",
+      "sha256": "c89c24e22e21f472e507efef631b77e10ad88d1464efac1070ad62dbb82c7ae6"
+    },
+    {
+      "path": "src/pages/Projects/index.tsx",
+      "sha256": "a49639af58311ebd39f1838df0a77f480e09c3b610f8c0e850b0fa749e286048"
+    },
+    {
+      "path": "src/pages/TaskLedger/ManagedTasks.tsx",
+      "sha256": "a7c2d0c058c5ea5b3b0ef81b728ab04405f0691446019a732b08a545364d5891"
+    },
+    {
+      "path": "src/stores/chat.ts",
+      "sha256": "f1dbdd6a28b19414a41041ef2e67a7d3430cfec6c984a94a8b82c1ded109380b"
+    },
+    {
+      "path": "src/stores/gateway.ts",
+      "sha256": "2312797232f108cb5da2c92874e830cefff006e47afaca0f901760414f9e8cee"
+    },
+    {
+      "path": "tests/e2e/session-delegation-capacity.spec.ts",
+      "sha256": "e2bd7acf51e96b3250cc4ea530255989bba43da0617f46487e25b14587773d3c"
+    },
+    {
+      "path": "tests/e2e/session-task-reading-navigation.spec.ts",
+      "sha256": "b54af109014ca1b291f4c31f6cc2bb0349775dcfc1600b61399ed2a81d84af3c"
+    },
+    {
+      "path": "tests/e2e/session-task-state-guidance.spec.ts",
+      "sha256": "9dfaa07e190cd97cf6b03a9198f98f3304d9f1b149bed6e83b96dffc1c8a0ae9"
+    },
+    {
+      "path": "tests/unit/chat-startup-hydration.test.ts",
+      "sha256": "d3284f8217ca6fda7d098f5a7d8c392b0b64179382ba4617c846be1c15adb069"
+    },
+    {
+      "path": "tests/unit/chat-viewport.test.tsx",
+      "sha256": "30969869ccdaddb0dd039163918384282265e16efeacbd201238d731e80f4d06"
+    },
+    {
+      "path": "tests/unit/gateway-event-dispatch.test.ts",
+      "sha256": "643ec2220d2940ef8cf7ee7a18dd7e4da942bdf8351af2fc4af5571ef8329ad8"
+    },
+    {
+      "path": "tests/unit/gateway-events.test.ts",
+      "sha256": "867761576d36f04091f96ed1e240c4109552ac29549a7f22cafd1ae2713e6826"
+    },
+    {
+      "path": "tests/unit/long-session-delegation-admission.test.ts",
+      "sha256": "e3bb6ff235563aa1fa35a7ed76335b4779602b384907148a341cae528f32526c"
+    },
+    {
+      "path": "tests/unit/session-chain-panels.test.tsx",
+      "sha256": "b6465082f9b2ba52c197ab6cf260155aeb961bbbacfa7489ccfa31a1047544e8"
+    },
+    {
+      "path": "tests/unit/session-delegation-status.test.tsx",
+      "sha256": "7ff319e5a13ffad68a56668a36c90854012763852a0cf8d9544c6246d1a6af9f"
+    },
+    {
+      "path": "tests/unit/session-family-navigation.test.tsx",
+      "sha256": "5dce39f86a035d82194eed5cd99a3c8edf3bed27864d3df892f68f3ea5eaf55e"
+    },
+    {
+      "path": "tests/unit/session-reading-scroll-owner.test.tsx",
+      "sha256": "8998829fa67cb41fc536dd0f35e6981d540fbe3bf2dbf14d8c9f619cb9946f26"
+    },
+    {
+      "path": "tests/unit/session-task-state-guidance.test.tsx",
+      "sha256": "87a9c62e0cef1f36dc4288920095b83294bb4f61467520806f3896484071a9aa"
+    },
+    {
+      "path": "tests/unit/sidebar-render-containment.test.tsx",
+      "sha256": "22b6c28521fafeec66a0a1671897b6999f6c6c49217da03b171df5a5de7a6624"
+    },
+    {
+      "path": "tests/unit/sidebar-session-buckets.test.ts",
+      "sha256": "3c761fecf40ced3bea68a8b9bb9d114439cedfc23e71a3254264d9d656fa3f94"
+    },
+    {
+      "path": "tests/unit/workspace-agents-panel-failure.test.tsx",
+      "sha256": "d166a6abdd6634ae0d6f84fc31399a364dede2ae5deba1292efe9aa111807bc9"
+    },
+    {
+      "path": "tests/unit/workspaces-api.test.ts",
+      "sha256": "e0f9b3ec293d0a8e9a42ccad01b7adc639553c4368d10bd1b0e8608d9ba68b77"
+    }
+  ],
+  "acceptance": [
+    {
+      "ac": 1,
+      "evidence": [
+        "u2-family-layout4",
+        "u2-final-unit"
+      ],
+      "result": "Real 2/20/100 children retain owner lineage and groups; unit negatives cover cross-group and missing/cyclic ancestry."
+    },
+    {
+      "ac": 2,
+      "evidence": [
+        "u2-family-layout4",
+        "u2-final-unit"
+      ],
+      "result": "30px geometry, two existing row controls and keyboard disclosure remain bounded."
+    },
+    {
+      "ac": 3,
+      "evidence": [
+        "u2-core-final2",
+        "u2-final-unit"
+      ],
+      "result": "Round trip keeps the same visible message and offset, independent parent/child drafts and generation."
+    },
+    {
+      "ac": 4,
+      "evidence": [
+        "u2-window-final",
+        "u2-window-pointer-unit2"
+      ],
+      "result": "Real background create/completed/error retains parent own status, selected chat and stationary pointer row including window deactivation."
+    },
+    {
+      "ac": 5,
+      "evidence": [
+        "u2-family-layout4",
+        "u2-locales-final",
+        "u2-final-unit"
+      ],
+      "result": "Light/Dark x1280/960, collapsed/reduced-motion, four locales and stream containment; 100 descendants mount80 rows initially."
+    },
+    {
+      "ac": 6,
+      "evidence": [
+        "u2-core-final2",
+        "u2-locales-final",
+        "u2-final-unit"
+      ],
+      "result": "Project entry and source/child return preserve scoped task/draft/reading facts; late response scope tests reject stale results."
+    },
+    {
+      "ac": 7,
+      "evidence": [
+        "u2-locales-final",
+        "u2-state-final2",
+        "u2-final-unit"
+      ],
+      "result": "Discussion and execution containers read original task owner; choosing references never grants acceptance."
+    },
+    {
+      "ac": 8,
+      "evidence": [
+        "u2-state-final2",
+        "u2-locales-final",
+        "u2-final-unit",
+        "review/u2-state-proof-evidence-map.json"
+      ],
+      "result": "Unbound project is reachable; loading/permission failure/refreshed owner facts are distinct. Scoped stale/failed branches retain original evidence with explicit candidate mapping."
+    },
+    {
+      "ac": 9,
+      "evidence": [
+        "u2-state-final2",
+        "u2-locales-final",
+        "u2-core-final2",
+        "u2-final-unit"
+      ],
+      "result": "Dependency titles lead to original task actions; receipt-time scheduler reasons and current owner queue observations remain separate; resource action opens existing Storage overview."
+    }
+  ],
+  "evidenceLevels": {
+    "core": "Real Electron/Main/Gateway with local scripted model; Git and owner stores remain real.",
+    "permission": "Explicit Host read delay/denial then restored original owner read.",
+    "capacity": "Production scheduler and receipt builder; fixture spawn outcomes/Host transport, no live capacity exhaustion claim.",
+    "familyStream": "Agent event replay during an actual live model request; flat/family compare same candidate and dataset."
+  },
+  "inheritance": "The 230-unit union binds 23365f2f6; subsequent pointer/window changes have 30 focused unit checks and a real Electron background/window-deactivation regression, with current Web/Test types. Two passed cases from u2-core-final2 are accepted individually; its failed background case and suite exit1 remain preserved. Runtime bytes remain the built03d56a0fc version. Main08fa97bf3 adds only disjoint RSI files. Family geometry/stream assertions retain their prior candidate; pointer handlers are verified separately. Exact source deltas and all failures remain recorded.",
+  "broaderGate": "Full Harness CI previously failed at Agent Dev audit on old reports and existing performance limits; migration evidence preserves it. This node has explicit current task gates, not a repository-wide release verdict.",
+  "remaining": [
+    "TF-0659",
+    "TF-0660 (original active owner 01a1ba3e)",
+    "TF-0661",
+    "TF-0662",
+    "TF-0867"
+  ]
+}

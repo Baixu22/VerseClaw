@@ -1,5 +1,6 @@
 // R2: WorkspaceAgentsPanel transcript failure must render failed+retry,
 // not an empty transcript.
+import { MemoryRouter } from 'react-router-dom';
 import { render, fireEvent, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { WorkspaceAgentsPanel } from '@/components/file-preview/WorkspaceAgentsPanel';
@@ -73,7 +74,7 @@ describe('WorkspaceAgentsPanel transcript failure (R2)', () => {
   });
 
   it('renders failed+retry instead of an empty transcript when history fails', async () => {
-    render(<WorkspaceAgentsPanel />);
+    render(<MemoryRouter><WorkspaceAgentsPanel /></MemoryRouter>);
 
     const failed = await screen.findByTestId('workspace-agents-transcript-failed');
     expect(failed).toHaveTextContent('Could not load this transcript.');

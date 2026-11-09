@@ -102,6 +102,7 @@ const onRuntimeApprovalEvent = <E extends HostEventName<'runtimeApprovals'>>(
 ) => onIpc(HOST_EVENT_CHANNELS.runtimeApprovals[event], handler);
 
 export const hostEvents = {
+  onWorkspaceNavigationChanged: (handler: HostEventHandler<'chat','workspaceNavigationChanged'>) => onChatEvent('workspaceNavigationChanged',handler),
   onGatewayStatus: (handler: HostEventHandler<'gateway', 'statusChanged'>) => (
     onGatewayEvent('statusChanged', handler)
   ),

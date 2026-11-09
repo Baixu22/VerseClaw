@@ -285,6 +285,89 @@ describe('Sidebar re-render containment', () => {
     expect(many.total - many.mount).toBeLessThanOrEqual(SESSION_KEYS.length);
   });
 
+  it('rejects stale running projections while preserving newer run ownership', async () => {
+    const { useChatStore } = await seedStores();
+    const sessionKey = SESSION_KEYS[0];
+    const start = 1_700_000_000_000;
+    useChatStore.setState({
+      sessions: SESSION_KEYS.map(key => ({ key, displayName: key, updatedAt: start,
+        ...(key === sessionKey ? { status: 'running', hasActiveRun: true } : {}) })),
+      lastUserMessageAt: start,
+    });
+    const { Sidebar } = await import('@/components/layout/Sidebar');
+    const view = render(<MemoryRouter><TooltipProvider><Sidebar /></TooltipProvider></MemoryRouter>);
+    const status = () => view.getByTestId('sidebar-session-status-' + sessionKey);
+    try {
+      await act(async () => {
+        useChatStore.getState().handleRuntimeEvent({ type: 'run.started', runId: 'run-1',
+          sessionKey, seq: 1, ts: start, startedAt: start });
+      });
+      expect(status()).toHaveAttribute('data-state', 'running');
+      await act(async () => {
+        useChatStore.getState().handleRuntimeEvent({ type: 'run.ended', runId: 'run-1',
+          sessionKey, seq: 3, ts: start + 100, endedAt: start + 100, status: 'completed' });
+      });
+      // Actual runtime handler closes local lifecycle; list metadata remains cached.
+      expect(useChatStore.getState().activeRunId).toBeNull();
+      expect(useChatStore.getState().sending).toBe(false);
+      expect(useChatStore.getState().sessions[0].hasActiveRun).toBe(true);
+      expect(status()).toHaveAttribute('data-state', 'completed');
+
+      await act(async () => useChatStore.setState(state => ({
+        sessions: state.sessions.map(session => session.key === sessionKey
+          ? { ...session, updatedAt: start + 50, status: 'running', hasActiveRun: true } : session),
+      })));
+      expect(status()).toHaveAttribute('data-state', 'completed');
+
+      // A fresh owner projection and a pre-ack send must each beat the old terminal.
+      await act(async () => useChatStore.setState(state => ({
+        sessions: state.sessions.map(session => session.key === sessionKey
+          ? { ...session, updatedAt: start + 200 } : session),
+      })));
+      expect(status()).toHaveAttribute('data-state', 'running');
+      await act(async () => useChatStore.setState(state => ({
+        sessions: state.sessions.map(session => session.key === sessionKey
+          ? { ...session, updatedAt: start + 50 } : session),
+        sending: true, activeRunId: null, lastUserMessageAt: start + 200,
+      })));
+      expect(status()).toHaveAttribute('data-state', 'running');
+
+      await act(async () => {
+        useChatStore.getState().handleRuntimeEvent({ type: 'run.started', runId: 'run-2',
+          sessionKey, seq: 1, ts: start + 200, startedAt: start + 200 });
+        // Delivery of run-1's terminal is later, but run-2 is the newer execution.
+        useChatStore.getState().handleRuntimeEvent({ type: 'run.ended', runId: 'run-1',
+          sessionKey, seq: 4, ts: start + 300, endedAt: start + 300, status: 'completed' });
+      });
+      expect(useChatStore.getState().activeRunId).toBe('run-2');
+      expect(status()).toHaveAttribute('data-state', 'running');
+      await act(async () => useChatStore.setState(state => ({
+        currentSessionKey: SESSION_KEYS[1], activeRunId: null, sending: false, pendingFinal: false,
+        lastUserMessageAt: null,
+        sessions: state.sessions.map(session => session.key === sessionKey
+          ? { ...session, status: 'completed', hasActiveRun: false, updatedAt: start + 100 } : session),
+      })));
+      // Background run-2 must remain visible without the foreground activeRunId shortcut.
+      expect(status()).toHaveAttribute('data-state', 'running');
+      await act(async () => useChatStore.getState().handleRuntimeEvent({ type: 'approval.updated',
+        runId: 'run-2', sessionKey, seq: 2, ts: start + 350, status: 'pending' }));
+      expect(status()).toHaveAttribute('data-state', 'waiting');
+      await act(async () => useChatStore.getState().handleRuntimeEvent({ type: 'run.ended',
+        runId: 'run-2', sessionKey, seq: 3, ts: start + 400, endedAt: start + 400, status: 'completed' }));
+      expect(status()).toHaveAttribute('data-state', 'completed');
+
+      // A matching residual local run ID cannot revive its own closed receipt.
+      await act(async () => useChatStore.setState({
+        currentSessionKey: sessionKey, activeRunId: 'run-2', sending: true, pendingFinal: true,
+        lastUserMessageAt: start + 200,
+      }));
+      expect(status()).toHaveAttribute('data-state', 'completed');
+    } finally {
+      view.unmount();
+      useChatStore.setState({ activeRunId: null, sending: false, pendingFinal: false, lastUserMessageAt: null });
+    }
+  });
+
   it('still re-renders rows when a session status actually changes', async () => {
     const { useChatStore } = await seedStores();
     const { Sidebar } = await import('@/components/layout/Sidebar');

@@ -19,7 +19,7 @@ const PINNED_EPSILON_PX = 8;
  *                   `ESCAPE_FROM_LOCK_OFFSET_PX` away from the bottom, so it never fights a
  *                   user reading earlier history; returning to the bottom resumes it.
  */
-export function useStickToBottomInstant(resetKey?: string, active = false) {
+export function useStickToBottomInstant(resetKey?: string, active = false, preserveReadingPosition = false) {
   const lastKeyRef = useRef(resetKey);
   const hasInitializedRef = useRef(false);
 
@@ -164,6 +164,14 @@ export function useStickToBottomInstant(resetKey?: string, active = false) {
 
   // Scroll to bottom instantly on mount or when key changes
   useEffect(() => {
+    if (preserveReadingPosition) {
+      // The session reading owner restores this visit. Disable library/stream
+      // pinning before its frame so a delayed bottom scroll cannot replace it.
+      stopScroll();
+      userEscapedRef.current = true;
+      hasInitializedRef.current = true;
+      return;
+    }
     if (hasInitializedRef.current) return;
 
     const scrollElement = scrollRef.current;
@@ -173,21 +181,23 @@ export function useStickToBottomInstant(resetKey?: string, active = false) {
     scrollElement.style.visibility = "hidden";
 
     // Use double RAF to ensure content is rendered
+    let frame2: number | undefined;
     const frame1 = requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
+      frame2 = requestAnimationFrame(() => {
         // Direct scroll to bottom
         scrollElement.scrollTop = scrollElement.scrollHeight;
 
-        // Small delay to ensure scroll is applied
-        setTimeout(() => {
-          scrollElement.style.visibility = "";
-          hasInitializedRef.current = true;
-        }, 0);
+        scrollElement.style.visibility = "";
+        hasInitializedRef.current = true;
       });
     });
 
-    return () => cancelAnimationFrame(frame1);
-  }, [scrollRef, resetKey]);
+    return () => {
+      cancelAnimationFrame(frame1);
+      if (frame2 !== undefined) cancelAnimationFrame(frame2);
+      scrollElement.style.visibility = "";
+    };
+  }, [scrollRef, resetKey, preserveReadingPosition, stopScroll]);
 
   return { ...result, scrollRef: combinedScrollRef, contentRef: combinedContentRef };
 }

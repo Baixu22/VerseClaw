@@ -244,7 +244,7 @@ export interface WorkspaceArtifactPanelState {
 
 export interface WorkspaceUiState {
   draftInput?: string;
-  readingPosition?: { generation?: string; scrollTop: number };
+  readingPosition?: { generation?: string; scrollTop: number; messageKey?: string; offset?: number; pinned?: boolean };
   /** A deliberate stop is remembered so the composer can render its resume state. */
   composerRunState?: 'idle' | 'paused';
   selectedModelRef?: string | null;

@@ -1,6 +1,7 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 type Item = { key: string; index: number };
+type ReadingPosition = { scrollTop: number; messageKey?: string; offset?: number; pinned?: boolean };
 const ROW_GAP = 16;
 const ESTIMATED_HEIGHT = 200;
 const EMPTY_HEIGHTS = new Map<string, number>();
@@ -21,7 +22,8 @@ export function measureMessageWindow<T extends Item>(items: T[], heights: Map<st
 }
 
 /** Measured rows share the existing scroller and sticky-bottom owner. */
-export function useMessageViewport<T extends Item>(items: T[], getScrollElement: () => HTMLElement | null, sessionKey: string, maxRows: number) {
+export function useMessageViewport<T extends Item>(items: T[], getScrollElement: () => HTMLElement | null, sessionKey: string, maxRows: number,
+  initialReadingPosition?: ReadingPosition) {
   const listRef = useRef<HTMLDivElement>(null);
   const [listElement, setListElement] = useState<HTMLDivElement | null>(null);
   const attachList = useCallback((node: HTMLDivElement | null) => { listRef.current = node; setListElement(node); }, []);
@@ -36,6 +38,8 @@ export function useMessageViewport<T extends Item>(items: T[], getScrollElement:
   const observer = useRef<ResizeObserver | null>(null);
   const elements = useRef(new Map<string, HTMLElement>());
   const frame = useRef<number | undefined>(undefined);
+  const initialRestore = useRef<{ sessionKey: string; position?: ReadingPosition; done: boolean }>({ sessionKey, position: initialReadingPosition, done: !initialReadingPosition });
+  if (initialRestore.current.sessionKey !== sessionKey) initialRestore.current = { sessionKey, position: initialReadingPosition, done: !initialReadingPosition };
   const origin = useCallback(() => {
     const container = getScrollElement();
     return container && listRef.current ? listRef.current.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop : 0;
@@ -77,7 +81,7 @@ export function useMessageViewport<T extends Item>(items: T[], getScrollElement:
       // A scroll may arrive after a measurement but before the next publication
       // frame. Capture its new reading position before restoring any old anchor.
       if (anchor.current && Math.abs(container.scrollTop - anchor.current.scrollTop) > 1) captureAnchor();
-      restore.current = anchor.current;
+      if (initialRestore.current.done) restore.current = anchor.current;
       setMeasurements(data => {
         const reset = sessionKey !== data.sessionKey || (width > 0 && width !== data.width);
         const heights = reset ? new Map<string, number>() : new Map(data.heights);
@@ -122,6 +126,20 @@ export function useMessageViewport<T extends Item>(items: T[], getScrollElement:
       if (!node.isConnected) { observer.current?.unobserve(node); elements.current.delete(key); }
     }
     if (!container) return;
+    const initial = initialRestore.current;
+    if (!initial.done && initial.position && items.length) {
+      const position = initial.position;
+      const index = position.messageKey ? items.findIndex(item => item.key === position.messageKey) : -1;
+      const top = position.pinned ? container.scrollHeight
+        : index >= 0 ? origin() + layout.offsets[index] - (position.offset ?? 0) : position.scrollTop;
+      container.scrollTo({ top: Math.max(0, top), behavior: 'instant' });
+      // Keep the saved message anchored through the first measured publication.
+      // Estimated list height may clamp scrollTop before ResizeObserver arrives.
+      if (measurements.sessionKey === sessionKey && (index < 0 || measurements.heights.has(items[index].key))) {
+        initial.done = true;captureAnchor();
+      }
+      schedule();return;
+    }
     const jump = pendingJump.current;
     if (jump) {
       const index = items.findIndex(item => item.key === jump);
@@ -133,7 +151,7 @@ export function useMessageViewport<T extends Item>(items: T[], getScrollElement:
       else if (index >= 0) container.scrollTo({ top: origin() + layout.offsets[index] + saved.offset, behavior: 'instant' });
     }
     schedule();
-  }, [items, layout, sessionKey, getScrollElement, origin, captureAnchor, schedule]);
+  }, [items, layout, sessionKey, getScrollElement, origin, captureAnchor, schedule, measurements]);
 
   const scrollToIndex = useCallback((messageIndex: number) => {
     const container = getScrollElement(); const latest = current.current;

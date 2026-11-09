@@ -69,6 +69,7 @@
   "summary": {
     "title": "任务账本",
     "loading": "正在加载账本",
+    "permissionDenied": "没有读取任务的权限。权限恢复后请刷新。",
     "counts": "{{nodes}} 个节点 · {{events}} 条事件",
     "empty": "还没有跟踪长期任务。",
     "currentGoal": "当前目标",
@@ -102,6 +103,14 @@
     "exported": "任务账本 HTML 已导出"
   },
   "managed": {
+    "waitingDependency": "等待依赖",
+    "openDependency": "打开依赖：{{title}}",
+    "dependencyNotLoaded": "尚未读取依赖状态。",
+    "dependencyMissing": "在此项目中未找到依赖任务。可重新读取核实。",
+    "dependencyReadFailed": "读取依赖失败，请重试。",
+    "readingDependency": "正在读取依赖…",
+    "findDependency": "读取依赖",
+    "findDependencyMore": "在下一页查找依赖",
     "tab": "持久任务",
     "description": "跨会话保存目标与验收条件。实施前领取任务，同仓库的工作树共享任务归属。",
     "objective": "目标",
