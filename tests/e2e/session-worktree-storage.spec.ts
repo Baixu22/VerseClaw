@@ -22,7 +22,7 @@ test('real repository, isolated worktree, storage command and settings in light/
   const root = join(await mkdtemp(join(scratch, 'storage-acceptance-')), 'workspace-demo');
   await mkdir(root, { recursive: true });
   const git = (...args: string[]) => execFileSync('git', args, { cwd: root, windowsHide: true, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
-  const report: Record<string, unknown> = { driven_by: 'agent', actor: 'codex', git: 'real', hostStorage: 'real', gateway: 'mocked idle transport' };
+  const report: Record<string, unknown> = { driven_by: 'agent', actor: 'codex', requested_route: 'ccs-workbuddy/deepseek-v4.1-flash', git: 'real', hostStorage: 'real', gateway: 'mocked idle transport' };
   try {
     await installIpcMocks(app, {
       gatewayStatus: { state: 'running', gatewayReady: true, port: 18789, pid: 12345 },
@@ -84,6 +84,16 @@ test('real repository, isolated worktree, storage command and settings in light/
     expect(terminal.sessionId).toBeTruthy();
     const idlePath = join(dirname(root), 'idle-checkout');
     git('worktree', 'add', '-b', 'codex/cleanup-demo', idlePath);
+    // driven_by: agent; requested_route: ccs-workbuddy/deepseek-v4.1-flash
+    // Real local-only commit: removing its checkout must retain a recoverable branch.
+    const unpublishedContent = 'U5 local-only committed work\n';
+    await writeFile(join(idlePath, 'unpublished.txt'), unpublishedContent);
+    git('-C', idlePath, 'add', 'unpublished.txt');
+    git('-C', idlePath, '-c', 'commit.gpgsign=false', 'commit', '-m', 'Unpublished U5 work');
+    const unpublishedHead = git('-C', idlePath, 'rev-parse', 'HEAD');
+    expect(git('-C', idlePath, 'status', '--porcelain')).toBe('');
+    expect(git('remote')).toBe('');
+    report.unpublishedBeforeRemoval = { head: unpublishedHead, branch: 'codex/cleanup-demo', clean: true, remotes: [] };
     await page.getByTestId('chat-composer-input').fill('/storage');
     await expect(page.getByTestId('chat-slash-command-option-storage')).toBeVisible();
     await page.keyboard.press('Enter');
@@ -117,6 +127,12 @@ test('real repository, isolated worktree, storage command and settings in light/
     await expect(page.getByTestId('storage-confirm')).not.toBeVisible();
     await expect.poll(() => git('worktree', 'list', '--porcelain')).not.toContain('refs/heads/codex/cleanup-demo');
     expect(git('branch', '--list', 'codex/cleanup-demo')).toContain('codex/cleanup-demo');
+    expect(git('rev-parse', 'refs/heads/codex/cleanup-demo')).toBe(unpublishedHead);
+    const recoveredPath = join(dirname(root), 'recovered-checkout');
+    git('worktree', 'add', recoveredPath, 'codex/cleanup-demo');
+    expect(await readFile(join(recoveredPath, 'unpublished.txt'), 'utf8')).toBe(unpublishedContent);
+    report.unpublishedAfterRemoval = { head: git('-C', recoveredPath, 'rev-parse', 'HEAD'),
+      retainedRef: 'refs/heads/codex/cleanup-demo', recoveredContent: await readFile(join(recoveredPath, 'unpublished.txt'), 'utf8') };
     report.worktreeRemovedWithBranchRetained = true;
     await page.getByTestId('storage-refresh').scrollIntoViewIfNeeded();
     report.slashAndSettings = true;

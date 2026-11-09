@@ -3,7 +3,7 @@ import type { ChatKnowledgeReference } from '../host-api/contract';
 import type { KnowledgeInvocationMode, WorkspaceKnowledgeScope } from '../types/workspace';
 import type { AgentReasoningEffort, RuntimeIntensityPreference } from '../types/agent';
 import type { TaskLedgerSnapshot } from '../types/task-ledger';
-import type { SessionArchiveEntry } from '../types/workspace';
+import type { SessionArchiveEntry, SessionPendingMutation } from '../types/workspace';
 
 /** Metadata for locally-attached files (not from Gateway) */
 export interface AttachedFileMeta {
@@ -290,6 +290,7 @@ export interface ChatState {
   sessionLastActivity: Record<string, number>;
   /** Archived sessions (recycle bin) loaded from Main-process archive index */
   archivedSessions: SessionArchiveEntry[];
+  pendingSessionMutations: SessionPendingMutation[];
   /** True while `loadArchivedSessions` is in flight */
   archivedSessionsLoading: boolean;
 

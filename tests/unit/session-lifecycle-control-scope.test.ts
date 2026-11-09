@@ -50,7 +50,7 @@ describe('session lifecycle result scope', () => {
     if (change === 'session') useChatStore.setState({ currentSessionKey: 'agent:main:other' });
     if (change === 'run') useChatStore.setState({ activeRunId: 'run-b' });
     if (change === 'generation') useChatStore.setState({ sessions: [{ key: source, sessionId: 'generation-b' }] });
-    finish({ ok: true }); await pending;
+    finish({ ok: true, aborted: true, runIds: ['run-a'] }); await pending;
     expect(useChatStore.getState().sending).toBe(true);
     expect(useChatStore.getState().streamingText).toBe('Keep this partial output');
   });
@@ -59,9 +59,23 @@ describe('session lifecycle result scope', () => {
     remote.rpc.mockReturnValue(new Promise((resolve) => { finish = resolve; }));
     const pending = useChatStore.getState().abortRun();
     expect(useChatStore.getState().sending).toBe(true);
-    finish({ ok: true }); await pending;
+    finish({ ok: true, aborted: true, runIds: ['run-a'] }); await pending;
     expect(useChatStore.getState().sending).toBe(false);
     expect(useChatStore.getState().activeRunId).toBeNull();
+  });
+  it('retains a still-active run when the abort receipt cannot confirm it', async () => {
+    remote.rpc.mockImplementation(async (method: string) => method === 'chat.abort'
+      ? { ok: true, aborted: false, runIds: [] } : { session: { sessionId: 'generation-a', hasActiveRun: true } });
+    await useChatStore.getState().abortRun();
+    expect(useChatStore.getState()).toMatchObject({ sending: true, activeRunId: 'run-a', streamingText: 'Keep this partial output' });
+    expect(useChatStore.getState().error).toBeTruthy();
+  });
+  it('clears an old rejection on retry and accepts an owner-confirmed idle generation', async () => {
+    useChatStore.setState({ error: 'earlier rejection' });
+    remote.rpc.mockImplementation(async (method: string) => method === 'chat.abort'
+      ? { ok: true, aborted: false, runIds: [] } : { session: { sessionId: 'generation-a', hasActiveRun: false } });
+    await useChatStore.getState().abortRun();
+    expect(useChatStore.getState()).toMatchObject({ sending: false, activeRunId: null, error: null });
   });
   it('preserves materialized empty sessions and only hides a local pending entry', () => {
     useChatStore.getState().cleanupEmptySession();

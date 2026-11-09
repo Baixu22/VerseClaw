@@ -303,6 +303,14 @@ export interface WorkspaceProfile {
   executionMigrations?: Record<string, ExecutionMigrationOperation>;
 }
 
+export type SessionPendingMutation = {
+  operationId: string;
+  operationKind: 'archive' | 'restore' | 'delete';
+  sessionKey: string;
+  agentId: string;
+  createdAt: number;
+};
+
 export interface SessionArchiveEntry {
   sessionKey: string;
   agentId: string;

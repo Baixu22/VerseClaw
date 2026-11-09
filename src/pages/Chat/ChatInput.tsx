@@ -166,7 +166,7 @@ interface ChatInputProps {
   onKnowledgeModeChange?: (mode: KnowledgeInvocationMode) => void | Promise<void>;
   compactionStatus?: SessionCompactionStatus | null;
   compactionBusy?: boolean;
-  onManualCompact?: (customInstructions?: string) => Promise<void>;
+  onManualCompact?: (customInstructions?: string) => Promise<boolean | void>;
   longTaskControlStatus?: LongTaskControlStatus | null;
   queueDrainBusy?: boolean;
   onDrainQueuedFollowup?: () => Promise<void>;
@@ -1728,8 +1728,8 @@ export function ChatInput({
     const generation = sessionGenerationRef.current;
     const allowed = await confirmPromptCacheRisk('manual-compaction');
     if (!allowed || generation !== sessionGenerationRef.current) return;
-    await onManualCompact(compactionInstructions.trim() || undefined);
-    if (generation !== sessionGenerationRef.current) return;
+    const acknowledged = await onManualCompact(compactionInstructions.trim() || undefined);
+    if (generation !== sessionGenerationRef.current || acknowledged === false) return;
     setCompactionInstructions('');
     setCompactionDialogOpen(false);
   }, [compactDisabled, compactionInstructions, confirmPromptCacheRisk, onManualCompact]);

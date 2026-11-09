@@ -2825,6 +2825,8 @@ async function ensureSessionLinkedToLedger(sessionKey: string): Promise<void> {
 
 const streamPublication = createFramePublication<ChatState>();
 
+let archivedReadRevision = 0;
+
 export const useChatStore = create<ChatState>((set, get, api) => {
   streamPublication.attach(api);
   return {
@@ -2855,6 +2857,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
   sessionLabels: {},
   sessionLastActivity: {},
   archivedSessions: [],
+  pendingSessionMutations: [],
   archivedSessionsLoading: false,
 
   thinkingLevel: null,
@@ -3406,14 +3409,15 @@ export const useChatStore = create<ChatState>((set, get, api) => {
   },
 
   restoreSession: async (sessionKey) => {
+    const visit = get().viewRevision;
     try {
       const result = await hostApi.sessions.restore({ id: sessionKey });
       if (!result.success) {
-        console.warn(`[restoreSession] IPC reported failure for ${sessionKey}:`, result.error);
-        return;
+        throw new Error(result.error || 'Restore was not confirmed');
       }
     } catch (err) {
       console.warn(`[restoreSession] IPC call failed for ${sessionKey}:`, err);
+      if (get().viewRevision === visit) toast.warning(i18n.t('chat:archive.mutationUnconfirmed'));
       return;
     }
     set((s) => ({
@@ -3423,14 +3427,15 @@ export const useChatStore = create<ChatState>((set, get, api) => {
   },
 
   permanentDeleteSession: async (sessionKey) => {
+    const visit = get().viewRevision;
     try {
       const result = await hostApi.sessions.permanentDelete({ id: sessionKey });
       if (!result.success) {
-        console.warn(`[permanentDeleteSession] IPC reported failure for ${sessionKey}:`, result.error);
-        return;
+        throw new Error(result.error || 'Delete was not confirmed');
       }
     } catch (err) {
       console.warn(`[permanentDeleteSession] IPC call failed for ${sessionKey}:`, err);
+      if (get().viewRevision === visit) toast.warning(i18n.t('chat:archive.mutationUnconfirmed'));
       return;
     }
     set((s) => ({
@@ -3439,15 +3444,18 @@ export const useChatStore = create<ChatState>((set, get, api) => {
   },
 
   loadArchivedSessions: async (agentId) => {
+    const revision = ++archivedReadRevision;
     set({ archivedSessionsLoading: true });
     try {
-      const result = await hostApi.sessions.listArchived(agentId ? { agentId } : undefined);
-      set({ archivedSessions: result.entries ?? [] });
+      const result = await hostApi.sessions.listArchived({ agentId: agentId || get().currentAgentId || 'main' });
+      if (revision !== archivedReadRevision) return;
+      if (!result.success) throw new Error(result.error || 'Archive state unavailable');
+      set({ archivedSessions: result.entries ?? [], pendingSessionMutations: result.pendingMutations ?? [] });
     } catch (err) {
       console.warn('[loadArchivedSessions] IPC call failed:', err);
-      set({ archivedSessions: [] });
+      if (revision === archivedReadRevision) toast.warning(i18n.t('chat:archive.mutationUnconfirmed'));
     } finally {
-      set({ archivedSessionsLoading: false });
+      if (revision === archivedReadRevision) set({ archivedSessionsLoading: false });
     }
   },
 
@@ -4657,20 +4665,32 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     clearHistoryPoll();
     clearErrorRecoveryTimer();
     clearTurnTimeoutTimer();
-    const { currentSessionKey, sending, activeRunId, sessions } = get();
+    const { currentSessionKey, sending, activeRunId, sessions, viewRevision } = get();
     const generation = sessions.find((session) => session.key === currentSessionKey)?.sessionId;
-    const isCurrentAbortTarget = () => get().currentSessionKey === currentSessionKey && get().activeRunId === activeRunId
+    const isCurrentAbortTarget = () => get().viewRevision === viewRevision && get().currentSessionKey === currentSessionKey && get().activeRunId === activeRunId
       && get().sessions.find((session) => session.key === currentSessionKey)?.sessionId === generation;
+    // A retry clears its previous request error before waiting, never a newer error on completion.
+    set({ error: null });
 
     // R0-3: abort the run FIRST. Only release UI state once the Main process
     // confirms the abort — a failed stop must not masquerade as stopped.
     let receipt: { aborted?: boolean; runIds?: string[] } | undefined;
     try {
       receipt = await abortChatRunViaHostApi(currentSessionKey, activeRunId);
+      const acknowledged = receipt?.aborted === true && (!activeRunId || !receipt.runIds || receipt.runIds.includes(activeRunId));
+      if (!acknowledged && isCurrentAbortTarget()) {
+        const read = await useGatewayStore.getState().rpc<{ session?: { sessionId?: string; hasActiveRun?: boolean } }>(
+          'sessions.describe', { key: currentSessionKey });
+        if (read.session?.hasActiveRun !== false || (generation && read.session?.sessionId !== generation)) {
+          throw new Error(i18n.t('chat:composer.abortFailed'));
+        }
+      }
     } catch (err) {
       console.warn(`[abortRun] chat.abort failed: ${String(err)}`);
-      if (isCurrentAbortTarget()) set({ error: String(err), sending });
-      toast.warning(i18n.t('chat:composer.abortFailed'));
+      if (isCurrentAbortTarget()) {
+        set({ error: String(err), sending });
+        toast.warning(i18n.t('chat:composer.abortFailed'));
+      }
       return;
     }
 
@@ -4685,7 +4705,10 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     }) : get().runtimeRuns;
     if (!isCurrentAbortTarget()) {
       if (runtimeRuns !== get().runtimeRuns) set({ runtimeRuns });
-      if (generationUnchanged) captureSessionRunState(currentSessionKey, DEFAULT_SESSION_RUN_STATE);
+      if (generationUnchanged && get().currentSessionKey !== currentSessionKey && activeRunId
+        && getCachedSessionRunState(currentSessionKey).activeRunId === activeRunId) {
+        captureSessionRunState(currentSessionKey, DEFAULT_SESSION_RUN_STATE);
+      }
       return;
     }
     // Release all in-flight UI/run resources (P5-004 A3).

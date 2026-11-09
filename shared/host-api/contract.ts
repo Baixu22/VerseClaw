@@ -153,6 +153,7 @@ import type {
   WorkspaceContextRange,
   KnowledgeInvocationMode,
   SessionArchiveEntry,
+  SessionPendingMutation,
   SessionFolder,
   WorkspaceCoordinatorArchiveRestorePolicy,
   WorkspaceCoordinatorBinding,
@@ -3019,19 +3020,21 @@ export type SessionLabelSummary = {
 export type SessionSummariesResult = HostSuccess & {
   summaries?: SessionLabelSummary[];
 };
-export type SessionDeletePayload = { id: string };
+export type SessionDeletePayload = { id: string; resumeOperationId?: string };
 export type SessionRenamePayload = { id: string; title: string };
 export type SessionArchivePayload = {
   id: string;
+  resumeOperationId?: string;
   label?: string;
   originalWorkspaceId?: string | null;
   originalFolderId?: string | null;
 };
-export type SessionRestorePayload = { id: string };
+export type SessionRestorePayload = { id: string; resumeOperationId?: string };
 export type SessionPermanentDeletePayload = { id: string };
 export type SessionListArchivedPayload = { agentId?: string };
 export type SessionListArchivedResult = HostSuccess & {
   entries: SessionArchiveEntry[];
+  pendingMutations?: SessionPendingMutation[];
 };
 export type SessionEmptyArchivePayload = { agentId?: string };
 /** context-folding-rlm: read-only flag/limits/rollback descriptor (no session required). */

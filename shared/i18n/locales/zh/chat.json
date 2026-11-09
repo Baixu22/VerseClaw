@@ -1362,7 +1362,7 @@
     "skillEmpty": "未找到匹配的技能",
     "pickAgent": "选择 Agent",
     "pickModel": "选择模型",
-    "abortFailed": "停止失败,运行仍在继续",
+    "abortFailed": "未能确认停止结果。请刷新会话核实当前状态。",
     "actions": {
       "add": "添加",
       "context": "添加上下文",
@@ -2328,6 +2328,11 @@
     "dropHint": "拖到另一个会话上即可归为一组"
   },
   "archive": {
+    "mutationUnconfirmed": "未能确认操作结果。请刷新列表核实当前状态。",
+    "pendingTitle": "待确认的操作",
+    "pendingDescription": "核对已记录的操作，从保存的状态继续。",
+    "resumeMutation": "核实并继续",
+    "pendingKinds": {"archive": "归档", "restore": "还原", "delete": "删除"},
     "searchPlaceholder": "搜索已归档会话",
     "ungrouped": "未分组",
     "noMatches": "没有匹配的会话",

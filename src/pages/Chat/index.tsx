@@ -2148,7 +2148,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   }, [currentAgentId, currentSessionKey, isCurrentControlScope, refreshLongTaskControlStatus, t]);
 
   const handleManualCompact = useCallback(async (customInstructions?: string) => {
-    if (!isCurrentControlScope()) return;
+    if (!isCurrentControlScope()) return false;
     setCompactionBusy(true);
     try {
       const result = await hostApi.sessions.compact({
@@ -2157,10 +2157,11 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         customInstructions,
         force: true,
       });
-      if (!isCurrentControlScope()) return;
+      if (!isCurrentControlScope()) return false;
       if (!result.success) {
         toast.error(result.error || t('composer.compaction.toastFailed'));
-        return;
+        await refreshCompactionStatus();
+        return false;
       }
       if (result.compacted) {
         const before = typeof result.tokensBefore === 'number'
@@ -2184,7 +2185,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
           loadHistory(true),
           loadSessions(),
         ]);
-        if (!isCurrentControlScope()) return;
+        if (!isCurrentControlScope()) return false;
         await Promise.all([
           refreshCompactionStatus(),
           refreshLongTaskControlStatus(),
@@ -2199,9 +2200,12 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       })().catch((refreshError) => {
         console.warn('[chat:manual-compaction] refresh failed', refreshError);
       });
+      return true;
     } catch (error) {
-      if (!isCurrentControlScope()) return;
+      if (!isCurrentControlScope()) return false;
       toast.error(error instanceof Error ? error.message : t('composer.compaction.toastFailed'));
+      await refreshCompactionStatus();
+      return false;
     } finally {
       if (isCurrentControlScope()) setCompactionBusy(false);
     }
@@ -2333,19 +2337,24 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       if (!isCurrentControlScope()) return;
       if (!result.success || result.compacted !== true) {
         toast.error(t('composer.compactRange.toastFailed'), {
-          description: result.reason || t('composer.compactRange.toastFailedDescription'),
+          description: result.error || result.reason || t('composer.compactRange.toastFailedDescription'),
         });
+        await refreshCompactionStatus();
         return;
       }
       await loadSessions();
+      if (!isCurrentControlScope()) return;
       await loadHistory();
+      if (!isCurrentControlScope()) return;
       toast.success(t('composer.compactRange.toastCompacted'));
     } catch (error) {
+      if (!isCurrentControlScope()) return;
       toast.error(t('composer.compactRange.toastFailed'), {
         description: getContinuityErrorMessage(error, t('composer.compactRange.toastFailedDescription')),
       });
+      await refreshCompactionStatus();
     }
-  }, [currentAgentId, currentSessionKey, isCurrentControlScope, loadHistory, loadSessions, t]);
+  }, [currentAgentId, currentSessionKey, isCurrentControlScope, loadHistory, loadSessions, refreshCompactionStatus, t]);
 
   const handleForkFromMessage = useCallback((messageId: string) => {
     const index = messages.findIndex((message) => getTranscriptEntryId(message) === messageId);
@@ -2685,7 +2694,10 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   const hasRunningRuntimeToolStatus = executionProjection.hasRunningRuntimeToolStatus;
   const handlePauseComposerSession = useCallback(async () => {
     if (!inputRunActive) return;
-    setComposerPaused(true);
+    const visit = useChatStore.getState().viewRevision;
+    await abortRun();
+    const current = useChatStore.getState();
+    if (!isCurrentControlScope() || current.viewRevision !== visit || current.sending || current.activeRunId || current.error) return;
     if (activeWorkspace?.id) {
       await saveWorkspaceState({
         id: activeWorkspace.id,
@@ -2693,8 +2705,8 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         state: { composerRunState: 'paused' },
       });
     }
-    await abortRun();
-  }, [abortRun, activeWorkspace?.id, currentSessionKey, inputRunActive, saveWorkspaceState]);
+    if (isCurrentControlScope() && useChatStore.getState().viewRevision === visit) setComposerPaused(true);
+  }, [abortRun, activeWorkspace?.id, currentSessionKey, inputRunActive, isCurrentControlScope, saveWorkspaceState]);
 
   const handleResumeComposerSession = useCallback(async () => {
     if (!composerPaused) return;
@@ -3923,7 +3935,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         </>
       )}
       <Suspense fallback={null}>
-        {checkpointsOpen && <CheckpointsDialog open onOpenChange={setCheckpointsOpen} sessionKey={currentSessionKey} agentId={currentAgentId} />}
+        {checkpointsOpen && <CheckpointsDialog open onOpenChange={setCheckpointsOpen} sessionKey={currentSessionKey} agentId={currentAgentId} generation={controlGeneration} />}
         {compressionEvidence && <CompactionArtifactViewer
           open onOpenChange={(open) => { if (!open) setCompressionEvidence(null); }}
           sessionKey={currentSessionKey} checkpointId={compressionEvidence.checkpointId}

@@ -151,15 +151,26 @@ export async function findSessionDeleteGateBySession(
 }
 
 
+export async function listSessionMutationGates(agentId: string): Promise<SessionDeleteGateRecord[]> {
+  return withGateFileLock(async () => Object.values((await readGateFile()).gates)
+    .filter((gate) => gate.agentId === agentId).map((gate) => ({ ...gate })));
+}
+
 export async function persistSessionMutationGate(input: {
   sessionKey: string;
   agentId: string;
   operationKind: SessionLifecycleMutationKind;
   requestDigest: string;
+  expectedOperationId?: unknown;
 }): Promise<SessionDeleteGateRecord> {
   return withGateFileLock(async () => {
     const file = await readGateFile();
     const existing = Object.values(file.gates).find((gate) => gate.sessionKey === input.sessionKey);
+    // A stale recovery row may resume its recorded operation, never start a new one.
+    if (input.expectedOperationId !== undefined &&
+      (typeof input.expectedOperationId !== 'string' || existing?.operationId !== input.expectedOperationId)) {
+      throw new Error('SESSION_MUTATION_CHANGED: refresh the pending operation');
+    }
     if (existing) {
       if (
         (existing.operationKind ?? "delete") !== input.operationKind ||
@@ -193,11 +204,13 @@ export async function persistSessionMutationGate(input: {
 export async function persistSessionDeleteGate(
   sessionKey: string,
   agentId: string,
+  expectedOperationId?: unknown,
 ): Promise<SessionDeleteGateRecord> {
   return persistSessionMutationGate({
     sessionKey,
     agentId,
     operationKind: "delete",
+    expectedOperationId,
     requestDigest: buildSessionMutationRequestDigest("delete", { sessionKey, agentId }),
   });
 }

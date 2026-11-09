@@ -17,6 +17,7 @@ import {
   buildSessionMutationRequestDigest,
   clearSessionDeleteGate,
   findSessionDeleteGateBySession,
+  listSessionMutationGates,
   persistSessionDeleteGate,
   persistSessionMutationGate,
   updateSessionDeleteGate,
@@ -82,7 +83,7 @@ import {
   describeContextFoldingStatus,
   projectContextFoldResultForParent,
 } from '../../shared/types/context-folding';
-import type { SessionArchiveEntry } from '@shared/types/workspace';
+import type { SessionArchiveEntry, SessionPendingMutation } from '@shared/types/workspace';
 
 // ponytail: serialize desktop handoff writes; use per-workspace queues if throughput requires it.
 let handoffCreationTail: Promise<unknown> = Promise.resolve();
@@ -877,11 +878,13 @@ function mapCompactionRpcOutcome(result: Record<string, unknown>, sessionKey: st
       ? compressionDetails.warnings.filter((item): item is string => typeof item === 'string')
       : []),
   ];
-  const compacted = result.compacted === true;
+  const success = result.ok === true;
+  const compacted = success && result.compacted === true;
   const nextSessionKey = typeof result.key === 'string' ? result.key : sessionKey;
   return {
-    success: true,
-    status: compacted ? 'compacted' : 'skipped',
+    success,
+    status: success ? (compacted ? 'compacted' : 'skipped') : 'failed',
+    ...(!success && typeof result.reason === 'string' ? { error: result.reason } : {}),
     compacted,
     ...(typeof compactResult.summary === 'string' ? { summary: compactResult.summary } : {}),
     ...(typeof result.reason === 'string' ? { reason: result.reason } : {}),
@@ -1568,6 +1571,7 @@ async function archiveSession(
       sessionKey,
       agentId: parsed.agentId,
       operationKind: 'archive',
+      expectedOperationId: payload.resumeOperationId,
       requestDigest: buildSessionMutationRequestDigest('archive', { sessionKey }),
     });
     const result = await gatewayManager.rpc<Record<string, unknown>>('sessions.archive', {
@@ -1631,6 +1635,7 @@ async function restoreSession(
       sessionKey,
       agentId: parsed.agentId,
       operationKind: 'restore',
+      expectedOperationId: payload.resumeOperationId,
       requestDigest: buildSessionMutationRequestDigest('restore', { sessionKey }),
     });
     const result = await gatewayManager.rpc<Record<string, unknown>>('sessions.restore', {
@@ -1740,7 +1745,7 @@ async function permanentDeleteSession(payload: SessionPayload): Promise<{ succes
  * panel. Reads only the Verse-Claw-owned archive index — does not consult
  * sessions.json, since archived entries are deliberately absent from it.
  */
-async function listArchivedSessions(payload: SessionPayload): Promise<{ success: boolean; entries: SessionArchiveEntry[] }> {
+async function listArchivedSessions(payload: SessionPayload): Promise<{ success: boolean; entries: SessionArchiveEntry[]; pendingMutations?: SessionPendingMutation[] }> {
   const agentId = typeof payload.agentId === 'string' && payload.agentId.trim()
     ? payload.agentId.trim()
     : 'main';
@@ -1749,7 +1754,9 @@ async function listArchivedSessions(payload: SessionPayload): Promise<{ success:
   }
   const archiveIndexPath = getArchiveIndexPath(agentId);
   const index = await readArchiveIndex(archiveIndexPath);
-  return { success: true, entries: index.entries };
+  const pendingMutations = (await listSessionMutationGates(agentId))
+    .map(({ operationId, operationKind, sessionKey, agentId, createdAt }) => ({ operationId, operationKind, sessionKey, agentId, createdAt }));
+  return { success: true, entries: index.entries, pendingMutations };
 }
 
 /**
@@ -1798,6 +1805,7 @@ async function deleteSessionViaRuntime(
   sessionKey: string,
   gatewayManager: GatewayManager,
   terminalManager?: TerminalSessionManager,
+  expectedOperationId?: unknown,
 ): Promise<SessionDeleteResult> {
   const parsed = parseSessionKey(sessionKey);
   if (!parsed) {
@@ -1807,7 +1815,7 @@ async function deleteSessionViaRuntime(
   // Electron mirror gate: reuse a previously persisted operationId when the
   // previous RPC failed or its outcome is unknown. A fresh operationId is
   // generated and persisted before the first RPC for a session.
-  const gate = await persistSessionDeleteGate(sessionKey, parsed.agentId);
+  const gate = await persistSessionDeleteGate(sessionKey, parsed.agentId, expectedOperationId);
 
   try {
     const result = await gatewayManager.rpc<GatewaySessionDeleteResult>(
@@ -1898,21 +1906,23 @@ async function deleteSessionViaRuntimeSerialized(
   sessionKey: string,
   gatewayManager: GatewayManager,
   terminalManager?: TerminalSessionManager,
+  expectedOperationId?: unknown,
 ): Promise<SessionDeleteResult> {
-  const previous = sessionDeleteRequests.get(sessionKey);
+  const requestKey = JSON.stringify([sessionKey, expectedOperationId ?? null]);
+  const previous = sessionDeleteRequests.get(requestKey);
   if (previous) return previous;
   const current = withSessionDeleteGateLock(
     sessionKey,
-    () => deleteSessionViaRuntime(sessionKey, gatewayManager, terminalManager),
+    () => deleteSessionViaRuntime(sessionKey, gatewayManager, terminalManager, expectedOperationId),
   );
-  sessionDeleteRequests.set(sessionKey, current);
+  sessionDeleteRequests.set(requestKey, current);
   void current.then(() => {
-    if (sessionDeleteRequests.get(sessionKey) === current) {
-      sessionDeleteRequests.delete(sessionKey);
+    if (sessionDeleteRequests.get(requestKey) === current) {
+      sessionDeleteRequests.delete(requestKey);
     }
   }, () => {
-    if (sessionDeleteRequests.get(sessionKey) === current) {
-      sessionDeleteRequests.delete(sessionKey);
+    if (sessionDeleteRequests.get(requestKey) === current) {
+      sessionDeleteRequests.delete(requestKey);
     }
   });
   return current;
@@ -2007,8 +2017,9 @@ export function createSessionsApi(ctx: {
     delete: async (payload) => {
       const sessionKey = getSessionKey(payload);
       const workspaceId = getOptionalWorkspaceId(payload);
+      if (payload.resumeOperationId !== undefined && !ctx.gatewayManager) return { success: false, error: 'Gateway manager unavailable' };
       const result = ctx.gatewayManager
-        ? await deleteSessionViaRuntimeSerialized(sessionKey, ctx.gatewayManager, ctx.terminalManager)
+        ? await deleteSessionViaRuntimeSerialized(sessionKey, ctx.gatewayManager, ctx.terminalManager, payload.resumeOperationId)
         : await deleteSession(sessionKey);
       if (!result.success) return result;
       await observeCoordinatorLifecycle({ type: 'delete', workspaceId, sessionKey });
@@ -3201,6 +3212,7 @@ export function createSessionsApi(ctx: {
         label: body.label,
         originalWorkspaceId: body.originalWorkspaceId,
         originalFolderId: body.originalFolderId,
+        resumeOperationId: body.resumeOperationId,
       }, ctx.gatewayManager);
       if (result.success) {
         await getResourceTracker().unregisterBySession(sessionKey).catch(() => 0);
@@ -3235,7 +3247,7 @@ export function createSessionsApi(ctx: {
     },
     restore: async (payload) => withSessionDeleteGateLock(getSessionKey(payload), async () => {
       const sessionKey = getSessionKey(payload);
-      const result = await restoreSession({ id: sessionKey }, ctx.gatewayManager);
+      const result = await restoreSession({ id: sessionKey, resumeOperationId: payload.resumeOperationId }, ctx.gatewayManager);
       if (result.success) await observeCoordinatorLifecycle({ type: 'restore', workspaceId: getOptionalWorkspaceId(payload), sessionKey });
       return result;
     }),

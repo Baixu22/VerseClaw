@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AlertTriangle, CheckCircle2, ChevronDown, ChevronRight, History, Loader2, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,7 @@ type CheckpointsDialogProps = {
   onOpenChange: (open: boolean) => void;
   sessionKey: string;
   agentId?: string | null;
+  generation?: string | null;
 };
 
 function formatCheckpointTime(createdAt: string): string {
@@ -21,8 +22,11 @@ function formatCheckpointTime(createdAt: string): string {
   }
 }
 
-export function CheckpointsDialog({ open, onOpenChange, sessionKey, agentId }: CheckpointsDialogProps) {
+export function CheckpointsDialog({ open, onOpenChange, sessionKey, agentId, generation }: CheckpointsDialogProps) {
   const { t } = useTranslation('chat');
+  const scope = useMemo(() => ({ open, sessionKey, agentId, generation }), [open, sessionKey, agentId, generation]);
+  const scopeRef = useRef<typeof scope | null>(scope); scopeRef.current = scope;
+  const isCurrent = useCallback(() => scope.open && scopeRef.current === scope, [scope]);
   const [checkpoints, setCheckpoints] = useState<LongTaskCheckpointRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [restoringId, setRestoringId] = useState<string | null>(null);
@@ -32,36 +36,40 @@ export function CheckpointsDialog({ open, onOpenChange, sessionKey, agentId }: C
   const [diffLoadingId, setDiffLoadingId] = useState<string | null>(null);
   const [diffByCheckpoint, setDiffByCheckpoint] = useState<Record<string, SessionCheckpointDiffFile[]>>({});
 
-  const load = useCallback(async () => {
-    if (!open || !sessionKey) return;
+  const load = useCallback(async (preserveFeedback = false) => {
+    if (!isCurrent() || !sessionKey) return;
     setLoading(true);
-    setError(null);
+    if (!preserveFeedback) setError(null);
+    setDiffByCheckpoint({}); setDiffExpandedId(null);
     try {
       const result = await hostApi.sessions.resumeCheckpoints({
         sessionKey,
         ...(agentId ? { agentId } : {}),
         limit: 20,
       });
+      if (!isCurrent()) return;
       if (result.success) {
         setCheckpoints(result.checkpoints ?? []);
       } else {
         setError(result.error || t('checkpoints.loadFailed'));
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      if (isCurrent()) setError(err instanceof Error ? err.message : String(err));
     } finally {
-      setLoading(false);
+      if (isCurrent()) setLoading(false);
     }
-  }, [open, sessionKey, agentId, t]);
+  }, [isCurrent, sessionKey, agentId, t]);
 
   useEffect(() => {
-    if (open) {
-      setRestored(null);
-      void load();
-    }
-  }, [open, load]);
+    scopeRef.current = scope;
+    setCheckpoints([]); setRestored(null); setRestoringId(null); setError(null);
+    setDiffByCheckpoint({}); setDiffExpandedId(null); setDiffLoadingId(null);
+    if (open) void load();
+    return () => { if (scopeRef.current === scope) scopeRef.current = null; };
+  }, [scope, open, load]);
 
   const handleRestore = useCallback(async (checkpointId: string) => {
+    if (!isCurrent() || restoringId !== null) return;
     setRestoringId(checkpointId);
     setError(null);
     setRestored(null);
@@ -71,6 +79,10 @@ export function CheckpointsDialog({ open, onOpenChange, sessionKey, agentId }: C
         ...(agentId ? { agentId } : {}),
         checkpointId,
       });
+      if (!isCurrent()) return;
+      if ((result.key && result.key !== sessionKey) || result.checkpointId !== checkpointId) {
+        setError(t('checkpoints.restoreFailed')); return;
+      }
       if (result.success) {
         const partialNotice =
           result.mode === 'legacy_checkpoint_fallback'
@@ -82,13 +94,14 @@ export function CheckpointsDialog({ open, onOpenChange, sessionKey, agentId }: C
         setError(result.error || t('checkpoints.restoreFailed'));
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      if (isCurrent()) setError(err instanceof Error ? err.message : String(err));
     } finally {
-      setRestoringId(null);
+      if (isCurrent()) setRestoringId(null);
     }
-  }, [sessionKey, agentId, t, load]);
+  }, [isCurrent, restoringId, sessionKey, agentId, t, load]);
 
   const handleToggleDiff = useCallback(async (checkpointId: string) => {
+    if (!isCurrent()) return;
     setError(null);
     if (diffExpandedId === checkpointId) {
       setDiffExpandedId(null);
@@ -105,6 +118,7 @@ export function CheckpointsDialog({ open, onOpenChange, sessionKey, agentId }: C
         ...(agentId ? { agentId } : {}),
         checkpointId,
       });
+      if (!isCurrent()) return;
       if (result.success) {
         setDiffByCheckpoint((prev) => ({ ...prev, [checkpointId]: result.files }));
       } else {
@@ -112,16 +126,17 @@ export function CheckpointsDialog({ open, onOpenChange, sessionKey, agentId }: C
         setDiffExpandedId(null);
       }
     } catch (err) {
+      if (!isCurrent()) return;
       setError(err instanceof Error ? err.message : String(err));
       setDiffExpandedId(null);
     } finally {
-      setDiffLoadingId(null);
+      if (isCurrent()) setDiffLoadingId(null);
     }
-  }, [sessionKey, agentId, diffExpandedId, diffByCheckpoint, t]);
+  }, [isCurrent, sessionKey, agentId, diffExpandedId, diffByCheckpoint, t]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[70vh] overflow-y-auto sm:max-w-lg">
+      <DialogContent data-testid="chat-checkpoints-dialog" aria-busy={loading || restoringId !== null} className="max-h-[70vh] overflow-y-auto sm:max-w-lg">
         <div className="flex items-center gap-2">
           <DialogTitle className="flex items-center gap-2">
             <History className="h-4 w-4" />
@@ -230,20 +245,22 @@ export function CheckpointsDialog({ open, onOpenChange, sessionKey, agentId }: C
             );
           })}
           {error && (
-            <div className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
+            <div data-testid="chat-checkpoints-error" role="alert" className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
               <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
               <span>{error}</span>
             </div>
           )}
           {restored && (
-            <div className="flex items-start gap-2 rounded-md border border-emerald-600/30 bg-emerald-600/5 px-3 py-2 text-xs text-emerald-700 dark:text-emerald-400">
+            <div data-testid="chat-checkpoints-restored" role="status" className="flex items-start gap-2 rounded-md border border-emerald-600/30 bg-emerald-600/5 px-3 py-2 text-xs text-emerald-700 dark:text-emerald-400">
               <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0" />
               <span>{restored}</span>
             </div>
           )}
         </div>
         <div className="flex justify-end gap-2">
-          <Button type="button" variant="ghost" size="sm" onClick={() => onOpenChange(false)}>
+          <Button type="button" variant="ghost" size="sm" data-testid="chat-checkpoints-refresh"
+            disabled={loading || restoringId !== null} onClick={() => void load(true)}>{t('workspace.actions.refresh')}</Button>
+          <Button type="button" variant="ghost" size="sm" data-testid="chat-checkpoints-close" onClick={() => onOpenChange(false)}>
             {t('checkpoints.close')}
           </Button>
         </div>

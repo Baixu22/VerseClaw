@@ -4,7 +4,7 @@ id: session-lifecycle-controls
 title: Fence session lifecycle controls and preserve recoverable views
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 95b876f27
+diffBase: c308b60e1
 intent: Complete the existing session/task UI contract through owner-backed, generation-scoped results.
 ownedPaths:
   - shared/host-api/contract.ts
@@ -22,6 +22,24 @@ ownedPaths:
   - harness/specs/tasks/session-lifecycle-controls.md
   - shared/i18n/locales/**/chat.json
   - docs/modules/multi-agent-and-tasks.md
+  - electron/services/session-delete-gate.ts
+  - openclaw_runtime/src/agents/worktree-service.ts
+  - shared/chat/types.ts
+  - shared/i18n/locales/en/chat.json
+  - shared/i18n/locales/ja/chat.json
+  - shared/i18n/locales/ru/chat.json
+  - shared/i18n/locales/zh/chat.json
+  - shared/types/workspace.ts
+  - src/components/chat/CheckpointsDialog.tsx
+  - src/components/layout/Sidebar.tsx
+  - src/pages/Chat/ChatInput.tsx
+  - src/pages/Settings/sections/ArchivedSection.tsx
+  - tests/e2e/session-context-recovery.spec.ts
+  - tests/e2e/session-lifecycle-recovery.spec.ts
+  - tests/e2e/session-worktree-storage.spec.ts
+  - tests/unit/checkout-writer-ownership.test.ts
+  - tests/unit/r0-3-chat-abort-checkstuck.test.ts
+  - tests/unit/session-delete-gate.test.ts
 touchedAreas:
   - shared/host-api/contract.ts
   - openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts
@@ -38,6 +56,24 @@ touchedAreas:
   - harness/specs/tasks/session-lifecycle-controls.md
   - shared/i18n/locales/**/chat.json
   - docs/modules/multi-agent-and-tasks.md
+  - electron/services/session-delete-gate.ts
+  - openclaw_runtime/src/agents/worktree-service.ts
+  - shared/chat/types.ts
+  - shared/i18n/locales/en/chat.json
+  - shared/i18n/locales/ja/chat.json
+  - shared/i18n/locales/ru/chat.json
+  - shared/i18n/locales/zh/chat.json
+  - shared/types/workspace.ts
+  - src/components/chat/CheckpointsDialog.tsx
+  - src/components/layout/Sidebar.tsx
+  - src/pages/Chat/ChatInput.tsx
+  - src/pages/Settings/sections/ArchivedSection.tsx
+  - tests/e2e/session-context-recovery.spec.ts
+  - tests/e2e/session-lifecycle-recovery.spec.ts
+  - tests/e2e/session-worktree-storage.spec.ts
+  - tests/unit/checkout-writer-ownership.test.ts
+  - tests/unit/r0-3-chat-abort-checkstuck.test.ts
+  - tests/unit/session-delete-gate.test.ts
 requiredRules:
   - identity-scope-boundary
   - renderer-main-boundary
@@ -62,6 +98,8 @@ acceptance:
   - Existing child sessions remain reachable after source archive/delete; no implicit subtree action is added.
   - Four-locale Electron journeys and focused negative tests identify the same candidate and agent actor.
 requiredTests:
+  - pnpm exec vitest run tests/unit/session-lifecycle-control-scope.test.ts tests/unit/session-delete-gate.test.ts tests/unit/checkout-writer-ownership.test.ts --maxWorkers=1
+  - pnpm exec playwright test tests/e2e/session-context-recovery.spec.ts tests/e2e/session-lifecycle-recovery.spec.ts tests/e2e/session-worktree-storage.spec.ts --workers=1
   - pnpm run typecheck
   - pnpm run contract:check
   - pnpm run i18n:lint
