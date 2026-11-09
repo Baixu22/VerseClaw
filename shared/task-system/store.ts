@@ -188,6 +188,7 @@ export class TaskSystemStore {
     const name = `task_nested_${depth}`;
     try {
       this.db.exec(depth === 0 ? "BEGIN IMMEDIATE" : `SAVEPOINT ${name}`);
+      this.assertAuthorityCurrent();
       const result = fn();
       this.db.exec(depth === 0 ? "COMMIT" : `RELEASE SAVEPOINT ${name}`);
       return result;
