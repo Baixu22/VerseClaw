@@ -57,12 +57,23 @@ test('repeated lifecycle, real idle recovery and separate sustained observation'
           handles = { status: valid.length === pids.length ? 'ok' : 'partial', rows: valid, total: valid.reduce((n, row) => n + row.handles, 0) };
         }
       } catch (error) { (report.unknown as unknown[]).push({ stage, metric: 'handles', error: String(error) }); }
-      const owner = await app.evaluate(({ BrowserWindow }) => {
+      const readOwner = () => app.evaluate(({ BrowserWindow }) => {
         const state = globalThis as Record<symbol, unknown>;
         const fabric = state[Symbol.for('openclaw.resourceFabric')] as { getDiagnostics(): unknown };
         const watcher = state[Symbol.for('openclaw.watcherHub')] as { getDiagnostics(): unknown } | undefined;
         return { memory: process.memoryUsage(), windows: BrowserWindow.getAllWindows().length, fabric: fabric.getDiagnostics(), watchers: watcher?.getDiagnostics() ?? null };
       });
+      let owner: Awaited<ReturnType<typeof readOwner>>;
+      for (let attempt = 1; ; attempt++) {
+        try { owner = await readOwner(); break; }
+        catch (error) {
+          (report.unknown as unknown[]).push({ stage, metric: 'main-owner', attempt, at: Date.now(), error: String(error) }); await save();
+          // Playwright rewrites non-JS inspector errors as context-destroyed.
+          // Retry only this read; never replay lifecycle mutations.
+          if (attempt >= 3 || !String(error).includes('Execution context was destroyed')) throw error;
+          await new Promise(done => setTimeout(done, 250));
+        }
+      }
       const terminals = await invoke(page!, 'terminal', 'list', scope);
       const metrics = await cdp.send('Performance.getMetrics');
       const rendererHeap = metrics.metrics.find(metric => metric.name === 'JSHeapUsedSize')?.value ?? null;
