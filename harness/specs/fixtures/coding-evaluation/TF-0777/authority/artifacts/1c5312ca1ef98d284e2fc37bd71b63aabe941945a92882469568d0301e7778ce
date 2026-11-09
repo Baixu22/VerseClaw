@@ -1,0 +1,1 @@
+{"data":{"artifacts":[],"exit_code":7,"state":"exited","stderr":{"text":""},"stdout":{"text":""},"timed_out":false},"id":"host-process-proc_22713f3041d949079c156c288c02ed4c","meta":{"capabilities_used":["shell.exec"],"elapsed_ms":1929,"profile":"clawx-governed-process/v1","token_estimate":0},"ok":false,"op":"process.start","schema":"verseshell.observation/v1","status":"failed"}

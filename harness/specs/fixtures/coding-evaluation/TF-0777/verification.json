@@ -1,0 +1,63 @@
+{
+  "ok": true,
+  "issues": [],
+  "acceptanceEligible": true,
+  "negativeChecks": [
+    {
+      "case": "wrong-candidate",
+      "rejected": true,
+      "issues": [
+        "candidate mismatch",
+        "report digest mismatch"
+      ]
+    },
+    {
+      "case": "missing-case",
+      "rejected": true,
+      "issues": [
+        "report digest mismatch",
+        "case set mismatch",
+        "failed case: negative-no-native-fallback"
+      ]
+    },
+    {
+      "case": "fake-exit",
+      "rejected": true,
+      "issues": [
+        "report digest mismatch",
+        "timeout not measured"
+      ]
+    },
+    {
+      "case": "old-observation",
+      "rejected": true,
+      "issues": [
+        "report digest mismatch",
+        "receipt observation identity mismatch"
+      ]
+    },
+    {
+      "case": "survivor",
+      "rejected": true,
+      "issues": [
+        "report digest mismatch",
+        "cleanup not clean"
+      ]
+    },
+    {
+      "case": "output-tamper",
+      "rejected": true,
+      "issues": [
+        "report digest mismatch",
+        "command output mismatch: process-exit-authority/stdout"
+      ]
+    },
+    {
+      "case": "digest-tamper",
+      "rejected": true,
+      "issues": [
+        "report digest mismatch"
+      ]
+    }
+  ]
+}
