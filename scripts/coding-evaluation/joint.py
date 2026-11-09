@@ -367,7 +367,7 @@ def main() -> int:
             "dirty-preservation": {"passed": all(x["dirtyPreserved"] and x["untrackedPreserved"] for x in git_lanes), "commandIds": [n for x in git_lanes for n in x["commandIds"]], "oracle": "bytes retained in git worktrees"},
             "combined-candidate": {"passed": all(True for _ in native_docs), "commandIds": [n["commandId"] for n in native_docs], "oracle": "two workspace three-run measurements"},
             "cancellation-recovery": {"passed": True, "commandIds": [cargo_records["jj_transaction_recovery"]["id"]], "oracle": "jj_transaction_recovery"},
-            "selected-final-full": {"passed": all(any(x["lane"] == "vg_selected_plus_required_full" and x["selectionScope"] == "selected" for x in n["lanes"]) and any(x["lane"] == "vg_selected_plus_required_full" and len(x["treeIds"]) >= 2 for x in n["lanes"]) for n in native_docs), "commandIds": [n["commandId"] for n in native_docs], "oracle": "selected followed by independent full"},
+            "selected-final-full": {"passed": all(any(x["lane"] == "vg_selected_plus_required_full" and x["planScope"] == "selected" for x in n["lanes"]) and any(x["lane"] == "vg_selected_plus_required_full" and len(x["treeIds"]) >= 2 for x in n["lanes"]) for n in native_docs), "commandIds": [n["commandId"] for n in native_docs], "oracle": "selected followed by independent full"},
             "planted-wrong-combination": planted,
         }
         cleanup = remove_tree(out / "tmp")
