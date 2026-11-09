@@ -166,6 +166,7 @@ interface ChatInputProps {
   onKnowledgeModeChange?: (mode: KnowledgeInvocationMode) => void | Promise<void>;
   compactionStatus?: SessionCompactionStatus | null;
   compactionBusy?: boolean;
+  compactionUnavailableReason?: string;
   onManualCompact?: (customInstructions?: string) => Promise<boolean | void>;
   longTaskControlStatus?: LongTaskControlStatus | null;
   queueDrainBusy?: boolean;
@@ -980,6 +981,7 @@ export function ChatInput({
   onKnowledgeModeChange,
   compactionStatus,
   compactionBusy = false,
+  compactionUnavailableReason,
   onManualCompact,
   longTaskControlStatus,
   queueDrainBusy = false,
@@ -1423,6 +1425,7 @@ export function ChatInput({
   const compactionHiddenCount = compactionStatus?.truncatedMessageCount ?? contextRange?.truncatedMessageCount ?? 0;
   const compactionLastDate = formatCompactionDate(compactionStatus?.lastCompaction?.timestamp);
   const compactDisabledReason = useMemo(() => {
+    if (compactionUnavailableReason) return compactionUnavailableReason;
     if (!onManualCompact) return t('composer.compaction.unavailable');
     if (compactionBusy || compactionStatus?.inProgress) return t('composer.compaction.inProgress');
     if (sending) return t('composer.compaction.activeRun');
@@ -1432,7 +1435,7 @@ export function ChatInput({
       return reason;
     }
     return null;
-  }, [compactionBusy, compactionStatus?.available, compactionStatus?.canCompact, compactionStatus?.inProgress, compactionStatus?.reason, onManualCompact, sending, t]);
+  }, [compactionUnavailableReason, compactionBusy, compactionStatus?.available, compactionStatus?.canCompact, compactionStatus?.inProgress, compactionStatus?.reason, onManualCompact, sending, t]);
   const compactDisabled = Boolean(compactDisabledReason);
   const queuedFollowupCount = longTaskControlStatus?.queueCount ?? 0;
   const hasLongTaskControlDetails = queuedFollowupCount > 0
@@ -4733,6 +4736,7 @@ export function ChatInput({
             <Button
               type="button"
               data-testid="chat-compaction-confirm"
+              title={compactDisabledReason ?? undefined}
               onClick={() => void handleConfirmCompaction()}
               disabled={compactDisabled || compactionBusy}
             >

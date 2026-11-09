@@ -2279,6 +2279,18 @@ describe('ChatInput read-only context status', () => {
     // The command toasts its disabled reason instead of opening the dialog.
     expect(screen.queryByTestId('chat-compaction-dialog')).not.toBeInTheDocument();
   });
+
+  it('keeps compact unavailable until its session generation is ready', () => {
+    const onManualCompact = vi.fn();
+    renderChatInput(vi.fn(), {
+      compactionStatus: { available: true, canCompact: true, inProgress: false, pressure: 'low', truncatedMessageCount: 0, warnings: [] },
+      compactionUnavailableReason: 'Session generation is still loading', onManualCompact,
+    });
+    fireEvent.change(screen.getByTestId('chat-composer-input'), { target: { value: '/compact' } });
+    fireEvent.click(screen.getByTestId('chat-slash-command-option-compact'));
+    expect(screen.queryByTestId('chat-compaction-dialog')).not.toBeInTheDocument();
+    expect(onManualCompact).not.toHaveBeenCalled();
+  });
 });
 
 describe('ChatInput agent targeting', () => {

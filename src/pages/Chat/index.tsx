@@ -3355,6 +3355,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     <div
       ref={splitContainerRef}
       data-testid="chat-page"
+      data-session-generation={controlGeneration ?? ''}
       data-project-workspace={projectWorkspaceId}
       className={cn(
         'relative flex min-h-0 overflow-hidden transition-colors duration-180 motion-reduce:transition-none',
@@ -3612,6 +3613,8 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                         onResendUserMessage={getResendUserMessageHandler(row.message.id, row.index)}
                         onForkFromMessage={handleForkFromMessage}
                         onCompactRange={handleCompactMessageRange}
+                        compactDisabledReason={!controlGeneration ? t('operationGenerationUnavailable')
+                          : inputRunActive ? t('composer.compaction.activeRun') : compactionBusy ? t('composer.compaction.inProgress') : undefined}
                       />
                       {row.runCards.map((card) => {
                         const runKey = card.runKey;
@@ -3915,6 +3918,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         onKnowledgeModeChange={handleKnowledgeModeChange}
         compactionStatus={compactionStatus}
         compactionBusy={compactionBusy}
+        compactionUnavailableReason={!controlGeneration ? t('operationGenerationUnavailable') : undefined}
         onManualCompact={handleManualCompact}
         longTaskControlStatus={longTaskControlStatus}
         queueDrainBusy={queueDrainBusy}

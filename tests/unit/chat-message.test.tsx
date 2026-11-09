@@ -354,6 +354,20 @@ describe('ChatMessage attachment dedupe', () => {
   });
 });
 
+describe('ChatMessage range readiness', () => {
+  it('keeps its boundary action disabled until the owner scope is ready', () => {
+    const onCompactRange = vi.fn();
+    const message: RawMessage = { role: 'user', id: 'provider-id', __openclaw: { id: 'owner-leaf' }, content: 'Keep this boundary.' };
+    const view = renderMessage(<ChatMessage message={message} onCompactRange={onCompactRange} compactDisabledReason="Session generation is still loading" />);
+    const action = screen.getByTestId('chat-user-message-summarize-from');
+    expect(action).toBeDisabled(); expect(action).toHaveAttribute('title', 'Session generation is still loading');
+    fireEvent.click(action); expect(onCompactRange).not.toHaveBeenCalled();
+    view.rerender(<TooltipProvider><ChatMessage message={message} onCompactRange={onCompactRange} /></TooltipProvider>);
+    fireEvent.click(screen.getByTestId('chat-user-message-summarize-from'));
+    expect(onCompactRange).toHaveBeenCalledWith('owner-leaf', 'from');
+  });
+});
+
 describe('ChatMessage LaTeX rendering', () => {
   it('renders inline `$...$` math with KaTeX', () => {
     const message: RawMessage = {

@@ -137,6 +137,7 @@ test('U5 compact and compactRange lose only committed replies; refresh reads cur
       if (action === 'compactRange') { await send(app, project, 'U5_RANGE_TARGET', 'range-target'); await send(app, project, 'U5_RANGE_TAIL', 'range-tail'); }
       const before = await readOwner(app, project.sessionKey), page = await getStableWindow(app); await page.reload();
       evidence[`${action}Before`] = before;
+      await expect(page.getByTestId('chat-page')).toHaveAttribute('data-session-generation', before.described.session.sessionId, { timeout: 30_000 });
       await expect(page.getByText(action === 'compact' ? 'U5_compact_HEAD_2: discuss the current goal.' : 'U5_RANGE_TAIL', { exact: true })).toBeVisible({ timeout: 60_000 });
       await expect(page.getByTestId('chat-project-session-header')).toContainText('U5 commit compact');
       await expect(page.getByTestId('chat-startup-skeleton')).toHaveCount(0);
@@ -293,9 +294,11 @@ test('U5 real journal checkpoint restore changes v2 to v1 despite reply loss and
     for (const language of ['en', 'zh', 'ja', 'ru'] as const) {
       await hostInvoke(app, 'settings', 'set', { key: 'language', value: language });
       await page.reload(); await expect(page.getByTestId('chat-composer-input')).toBeEnabled();
+      await expect(page.getByTestId('chat-page')).toHaveAttribute('data-session-generation', generation, { timeout: 30_000 });
       await openCheckpoints(page);
       const messages = JSON.parse(await readFile(`shared/i18n/locales/${language}/chat.json`, 'utf8')).filePreview.checkpoints;
       await expect(page.getByTestId('chat-checkpoints-dialog')).toContainText(messages.title);
+      await expect(page.getByTestId(`chat-checkpoint-restore-${seed.record.id}`)).toBeEnabled();
       await page.getByTestId(`chat-checkpoint-diff-${seed.record.id}`).click();
       await expect(page.getByTestId(`chat-checkpoint-diff-panel-${seed.record.id}`)).toContainText(messages.diffEmpty);
       translations.push({ language, title: messages.title, emptyDiff: messages.diffEmpty });

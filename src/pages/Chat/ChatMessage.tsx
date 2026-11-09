@@ -105,6 +105,7 @@ interface ChatMessageProps {
    * and keeps the newer entries verbatim. Only offered when an entry id exists.
    */
   onCompactRange?: (messageId: string, boundary: 'from' | 'to') => void;
+  compactDisabledReason?: string;
   streamStatus?: {
     active: boolean;
     startedAt?: number | null;
@@ -233,6 +234,7 @@ export const ChatMessage = memo(function ChatMessage({
   canResendUserMessage = true,
   onForkFromMessage,
   onCompactRange,
+  compactDisabledReason,
   streamStatus,
   liveUsage,
 }: ChatMessageProps) {
@@ -654,6 +656,7 @@ export const ChatMessage = memo(function ChatMessage({
               if (transcriptEntryId && canResendUserMessage && !isStreaming) onForkFromMessage?.(transcriptEntryId);
             }}
             canCompact={Boolean(transcriptEntryId) && Boolean(onCompactRange)}
+            compactDisabledReason={compactDisabledReason}
             onCompactFrom={() => {
               if (transcriptEntryId) onCompactRange?.(transcriptEntryId, 'from');
             }}
@@ -972,6 +975,7 @@ function UserMessageActions({
   forkDisabledReason,
   onFork,
   canCompact,
+  compactDisabledReason,
   onCompactFrom,
   onCompactTo,
 }: {
@@ -984,6 +988,7 @@ function UserMessageActions({
   forkDisabledReason?: string;
   onFork: () => void;
   canCompact: boolean;
+  compactDisabledReason?: string;
   onCompactFrom: () => void;
   onCompactTo: () => void;
 }) {
@@ -1081,6 +1086,8 @@ function UserMessageActions({
                   size="icon"
                   className="h-6 w-6 text-muted-foreground/75 transition-colors duration-150"
                   onClick={onCompactTo}
+                  disabled={Boolean(compactDisabledReason)}
+                  title={compactDisabledReason}
                   aria-label={t('messageActions.summarizeUpToHere')}
                   data-testid="chat-user-message-summarize-to"
                 >
@@ -1088,7 +1095,7 @@ function UserMessageActions({
                 </Button>
               </span>
             </TooltipTrigger>
-            <TooltipContent side="top">{t('messageActions.summarizeUpToHere')}</TooltipContent>
+            <TooltipContent side="top">{compactDisabledReason ?? t('messageActions.summarizeUpToHere')}</TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -1099,6 +1106,8 @@ function UserMessageActions({
                   size="icon"
                   className="h-6 w-6 text-muted-foreground/75 transition-colors duration-150"
                   onClick={onCompactFrom}
+                  disabled={Boolean(compactDisabledReason)}
+                  title={compactDisabledReason}
                   aria-label={t('messageActions.summarizeFromHere')}
                   data-testid="chat-user-message-summarize-from"
                 >
@@ -1106,7 +1115,7 @@ function UserMessageActions({
                 </Button>
               </span>
             </TooltipTrigger>
-            <TooltipContent side="top">{t('messageActions.summarizeFromHere')}</TooltipContent>
+            <TooltipContent side="top">{compactDisabledReason ?? t('messageActions.summarizeFromHere')}</TooltipContent>
           </Tooltip>
         </>
       )}

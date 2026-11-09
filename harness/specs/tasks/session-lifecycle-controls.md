@@ -78,6 +78,9 @@ ownedPaths:
   - src/components/layout/use-new-chat-action.ts
   - tests/unit/workspace-session.test.ts
   - tests/e2e/chat-workspace-header.spec.ts
+  - src/pages/Chat/ChatMessage.tsx
+  - tests/unit/chat-message.test.tsx
+  - tests/unit/chat-input.test.tsx
 touchedAreas:
   - docs/dev/session-worktree-storage.md
   - src/lib/host-api.ts
@@ -150,6 +153,9 @@ touchedAreas:
   - src/components/layout/use-new-chat-action.ts
   - tests/unit/workspace-session.test.ts
   - tests/e2e/chat-workspace-header.spec.ts
+  - src/pages/Chat/ChatMessage.tsx
+  - tests/unit/chat-message.test.tsx
+  - tests/unit/chat-input.test.tsx
 requiredRules:
   - identity-scope-boundary
   - renderer-main-boundary
