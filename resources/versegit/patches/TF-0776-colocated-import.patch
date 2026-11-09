@@ -1,0 +1,1373 @@
+diff --git a/Cargo.lock b/Cargo.lock
+index 8c8abf9a..e6bb669c 100644
+--- a/Cargo.lock
++++ b/Cargo.lock
+@@ -390,9 +390,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "ctutils"
+-version = "0.4.3"
++version = "0.4.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "03bb0e1cc970d482d121d9a1744999169b69a07470b3d644a7894e53fcaf4574"
++checksum = "12218662ccac37d9714f2191252553d67585b97df8c839cbe49e0bde278dc865"
+ dependencies = [
+  "cmov",
+ ]
+diff --git a/crates/vg-battery-verify/src/interrupt.rs b/crates/vg-battery-verify/src/interrupt.rs
+index d4b09e0b..b54302f3 100644
+--- a/crates/vg-battery-verify/src/interrupt.rs
++++ b/crates/vg-battery-verify/src/interrupt.rs
+@@ -21,7 +21,12 @@ pub fn cancel_on_interrupt() -> Option<Arc<AtomicBool>> {
+     CANCEL_FLAG.store(raw, Ordering::SeqCst);
+     #[cfg(unix)]
+     {
+-        let previous = unsafe { libc::signal(libc::SIGINT, on_interrupt as libc::sighandler_t) };
++        let previous = unsafe {
++            libc::signal(
++                libc::SIGINT,
++                on_interrupt as *const () as libc::sighandler_t,
++            )
++        };
+         if previous == libc::SIG_ERR {
+             return None;
+         }
+diff --git a/crates/vg-cli/src/main.rs b/crates/vg-cli/src/main.rs
+index 02f46928..7ea1344f 100644
+--- a/crates/vg-cli/src/main.rs
++++ b/crates/vg-cli/src/main.rs
+@@ -8092,6 +8092,21 @@ fn cmd_workspace(op: WorkspaceCmd, json: bool) -> Result<(), String> {
+             Ok(())
+         }
+         WorkspaceCmd::Import { root } => {
++            // The explicit --root owns repository selection. Ambient Git
++            // selectors would otherwise affect gix backend construction or
++            // create a file plan from a different repository/index.
++            for name in [
++                "GIT_DIR",
++                "GIT_WORK_TREE",
++                "GIT_INDEX_FILE",
++                "GIT_COMMON_DIR",
++                "GIT_OBJECT_DIRECTORY",
++                "GIT_ALTERNATE_OBJECT_DIRECTORIES",
++                "GIT_NAMESPACE",
++                "GIT_PREFIX",
++            ] {
++                std::env::remove_var(name);
++            }
+             let root_path = std::path::Path::new(&root);
+             let probe = vg_jj::probe_managed_source(root_path).map_err(|e| e.to_string())?;
+             if matches!(
+@@ -8125,18 +8140,50 @@ fn cmd_workspace(op: WorkspaceCmd, json: bool) -> Result<(), String> {
+                 }
+                 return Ok(());
+             }
+-            let workspace = vg_jj::init_external_git(
+-                root_path,
+-                &root_path.join(".git"),
+-                &vg_jj::JjIdentity::default(),
+-            )
+-            .map_err(|e| e.to_string())?;
+-            let snapshot = workspace.snapshot().map_err(|e| e.to_string())?;
++            let jj_path = root_path.join(".jj");
++            let mut initialized_here = false;
++            let import_result: Result<_, String> = (|| {
++                let mut workspace = vg_jj::init_external_git(
++                    root_path,
++                    &root_path.join(".git"),
++                    &vg_jj::JjIdentity::default(),
++                )
++                .map_err(|e| e.to_string())?;
++                // Set ownership immediately after initialization. Any later
++                // failure, including preparing rollback metadata, is recoverable.
++                initialized_here = true;
++                // Explicit import adopts the existing history. Files stay untouched;
++                // an empty-root draft would misidentify every tracked file as newly added.
++                workspace.import_git_refs().map_err(|e| e.to_string())?;
++                let head = workspace
++                    .import_git_head_preserving_files()
++                    .map_err(|e| e.to_string())?;
++                let snapshot = workspace.snapshot().map_err(|e| e.to_string())?;
++                Ok((head, snapshot))
++            })();
++            let (head, snapshot) = match import_result {
++                Ok(imported) => imported,
++                Err(error) => {
++                    // This invocation created .jj because the existing-workspace
++                    // branch above was not taken. Remove it so a retry starts from
++                    // the intact Git worktree and captures the original dirty bytes.
++                    if initialized_here {
++                        std::fs::remove_dir_all(&jj_path).map_err(|cleanup| {
++                            format!(
++                                "{error}; failed to roll back incomplete workspace {}: {cleanup}",
++                                jj_path.display()
++                            )
++                        })?;
++                    }
++                    return Err(error);
++                }
++            };
+             let value = json!({
+                 "schema": "versegit.vg-json/v1",
+                 "command": "workspace.import",
+                 "root": root,
+                 "colocated": true,
++                "head_commit": head.head_commit,
+                 "snapshot": jj_snapshot_json(&snapshot),
+             });
+             if json {
+diff --git a/crates/vg-cli/src/sts_manifest.rs b/crates/vg-cli/src/sts_manifest.rs
+index 058fc309..4ad9e27e 100644
+--- a/crates/vg-cli/src/sts_manifest.rs
++++ b/crates/vg-cli/src/sts_manifest.rs
+@@ -463,7 +463,7 @@ fn walk(
+     root: &Path,
+     dir: &Path,
+     submodules: &BTreeSet<String>,
+-    exact: bool,
++    _exact: bool,
+     unreadable: &mut Vec<String>,
+     visit: &mut impl FnMut(&str, &Path, WalkItem) -> bool,
+ ) {
+@@ -510,7 +510,7 @@ fn walk(
+             }
+         };
+         #[cfg(windows)]
+-        if exact {
++        if _exact {
+             use std::os::windows::fs::MetadataExt;
+             if meta.file_attributes() & 0x400 != 0 {
+                 unreadable.push(format!("{rel}: exact binding rejects reparse points"));
+@@ -536,7 +536,7 @@ fn walk(
+                 visit(&rel, &path, WalkItem::Submodule);
+                 continue;
+             }
+-            walk(root, &path, submodules, exact, unreadable, visit);
++            walk(root, &path, submodules, _exact, unreadable, visit);
+             continue;
+         }
+         if is_noise_file(&name) {
+diff --git a/crates/vg-cli/tests/jj_workspace_lifecycle.rs b/crates/vg-cli/tests/jj_workspace_lifecycle.rs
+index 195e9443..14cb8b06 100644
+--- a/crates/vg-cli/tests/jj_workspace_lifecycle.rs
++++ b/crates/vg-cli/tests/jj_workspace_lifecycle.rs
+@@ -379,7 +379,12 @@ fn workspace_import_colocates_an_existing_git_worktree() {
+             .success());
+     }
+     std::fs::write(repo.join("a.txt"), "a\n").unwrap();
+-    for args in [vec!["add", "a.txt"], vec!["commit", "-q", "-m", "base"]] {
++    std::fs::write(repo.join(".gitignore"), ".env\n").unwrap();
++    std::fs::write(repo.join(".git/info/exclude"), "exclude.secret\n").unwrap();
++    for args in [
++        vec!["add", "a.txt", ".gitignore"],
++        vec!["commit", "-q", "-m", "base"],
++    ] {
+         assert!(Command::new("git")
+             .args(&args)
+             .current_dir(&repo)
+@@ -404,11 +409,95 @@ fn workspace_import_colocates_an_existing_git_worktree() {
+         )
+     };
+     let repo_s = repo.to_string_lossy().to_string();
++    let git_read = |args: &[&str]| {
++        let output = Command::new("git")
++            .args(args)
++            .current_dir(&repo)
++            .output()
++            .unwrap();
++        assert!(output.status.success());
++        String::from_utf8(output.stdout).unwrap()
++    };
++    let head_before = git_read(&["rev-parse", "HEAD"]).trim().to_string();
++    let user_refs = [
++        "for-each-ref",
++        "--format=%(refname) %(objectname)",
++        "refs/heads",
++        "refs/tags",
++    ];
++    let refs_before = git_read(&user_refs);
++    let index_before = std::fs::read(repo.join(".git/index")).unwrap();
++    std::fs::write(repo.join("a.txt"), "user dirty\n").unwrap();
++    std::fs::write(repo.join("untracked.txt"), "untracked user bytes\n").unwrap();
++    let ignored = [
++        (".env", "AGENT_DRIVEN_IGNORED_CANARY_ENV\n"),
++        ("exclude.secret", "AGENT_DRIVEN_IGNORED_CANARY_EXCLUDE\n"),
++    ];
++    let mut ignored_oids = Vec::new();
++    for (path, content) in ignored {
++        std::fs::write(repo.join(path), content).unwrap();
++        ignored_oids.push(git_read(&["hash-object", path]).trim().to_string());
++    }
+     let (o, e, c) = run(&["workspace", "import", "--root", &repo_s, "--json"]);
+     assert_eq!(c, Some(0), "{o} / {e}");
+     let imported: Value = serde_json::from_str(o.trim()).unwrap();
+     assert_eq!(imported["command"], "workspace.import", "{imported}");
+     assert_eq!(imported["colocated"], true, "{imported}");
++    assert_eq!(imported["head_commit"], head_before, "{imported}");
++    assert_eq!(
++        std::fs::read_to_string(repo.join("a.txt")).unwrap(),
++        "user dirty\n"
++    );
++    assert_eq!(
++        std::fs::read_to_string(repo.join("untracked.txt")).unwrap(),
++        "untracked user bytes\n"
++    );
++    assert_eq!(git_read(&["rev-parse", "HEAD"]).trim(), head_before);
++    assert_eq!(git_read(&user_refs), refs_before);
++    assert_eq!(
++        std::fs::read(repo.join(".git/index")).unwrap(),
++        index_before
++    );
++    for ((path, content), oid) in ignored.into_iter().zip(ignored_oids) {
++        assert_eq!(std::fs::read_to_string(repo.join(path)).unwrap(), content);
++        let status = Command::new("git")
++            .args(["cat-file", "-e", &oid])
++            .current_dir(&repo)
++            .status()
++            .unwrap();
++        assert!(
++            !status.success(),
++            "import wrote ignored {path} into the Git object store"
++        );
++    }
++    let (log, error, code) = run(&[
++        "change",
++        "rev-log",
++        "--root",
++        &repo_s,
++        "--revision",
++        "ancestors(@)",
++        "--json",
++    ]);
++    assert_eq!(code, Some(0), "{error}");
++    let log: Value = serde_json::from_str(&log).unwrap();
++    assert_eq!(log["entries"][0]["parent_ids"][0], head_before);
++    let (content, error, code) = run(&[
++        "change",
++        "file-show",
++        "--root",
++        &repo_s,
++        "--revision",
++        "@",
++        "--path",
++        "a.txt",
++        "--json",
++    ]);
++    assert_eq!(code, Some(0), "{error}");
++    assert!(
++        content.contains("user dirty"),
++        "imported working-copy tree omitted dirty bytes: {content}"
++    );
+     assert!(
+         repo.join(".jj").exists(),
+         "colocated import must create .jj"
+@@ -434,6 +523,344 @@ fn workspace_import_colocates_an_existing_git_worktree() {
+     assert_ne!(c3, Some(0));
+ }
+ 
++#[test]
++fn workspace_import_honors_global_ignores_and_retries_after_incomplete_snapshot() {
++    use serde_json::Value;
++    use std::process::{Command, Stdio};
++
++    let temp = tempfile::tempdir().unwrap();
++    let repo = temp.path().join("repo");
++    std::fs::create_dir_all(&repo).unwrap();
++    let global_ignore = temp.path().join("global-ignore");
++    let global_config = temp.path().join("global.gitconfig");
++    std::fs::write(&global_ignore, "global.secret\n").unwrap();
++    let global_ignore_value = global_ignore.to_string_lossy().replace('\\', "/");
++    std::fs::write(
++        &global_config,
++        format!("[core]\n\texcludesFile = \"{global_ignore_value}\"\n"),
++    )
++    .unwrap();
++
++    let git = |args: &[&str]| {
++        let output = Command::new("git")
++            .args(args)
++            .current_dir(&repo)
++            .env("GIT_CONFIG_GLOBAL", &global_config)
++            .env("GIT_CONFIG_NOSYSTEM", "1")
++            .output()
++            .unwrap();
++        assert!(
++            output.status.success(),
++            "git {args:?}: {}",
++            String::from_utf8_lossy(&output.stderr)
++        );
++        String::from_utf8_lossy(&output.stdout).to_string()
++    };
++    assert_eq!(git(&["init", "-q", "-b", "main"]), "");
++    assert_eq!(git(&["config", "user.name", "VG Import"]), "");
++    assert_eq!(
++        git(&["config", "user.email", "vg-import@example.invalid"]),
++        ""
++    );
++    assert_eq!(git(&["config", "core.ignoreCase", "true"]), "");
++    std::fs::write(repo.join("tracked.txt"), "base\n").unwrap();
++    std::fs::create_dir(repo.join(".VG")).unwrap();
++    std::fs::write(repo.join(".VG/private.txt"), "committed private bytes\n").unwrap();
++    std::fs::write(
++        repo.join("removed-secret.txt"),
++        "committed removable bytes\n",
++    )
++    .unwrap();
++    let tracked_large = std::fs::File::create(repo.join("large-tracked.bin")).unwrap();
++    tracked_large.set_len(16 * 1024 * 1024 + 1).unwrap();
++    assert_eq!(
++        git(&[
++            "add",
++            "tracked.txt",
++            ".VG/private.txt",
++            "removed-secret.txt",
++            "large-tracked.bin"
++        ]),
++        ""
++    );
++    assert_eq!(git(&["commit", "-q", "-m", "base"]), "");
++
++    std::fs::write(
++        repo.join(".gitignore"),
++        ".VG/\nforced.txt\nremoved-secret.txt\nlarge-tracked.bin\n",
++    )
++    .unwrap();
++    assert!(git(&["rm", "--cached", ".VG/private.txt"]).contains("private.txt"));
++    assert!(git(&["rm", "--cached", "removed-secret.txt"]).contains("removed-secret.txt"));
++    std::fs::write(repo.join("forced.txt"), "force-added selected bytes\n").unwrap();
++    assert_eq!(git(&["add", "-f", "forced.txt"]), "");
++    std::fs::create_dir_all(repo.join("caller/nested")).unwrap();
++    #[cfg(unix)]
++    {
++        use std::ffi::OsString;
++        use std::os::unix::ffi::OsStringExt;
++        std::fs::create_dir(repo.join("sub")).unwrap();
++        std::fs::write(repo.join("sub/keep.txt"), "selected non-UTF-8 sibling\n").unwrap();
++        let ignored_name = OsString::from_vec(b"bad\xff.tmp".to_vec());
++        std::fs::write(
++            repo.join("sub").join(ignored_name),
++            "ignored invalid path\n",
++        )
++        .unwrap();
++        std::fs::create_dir(repo.join(".Jj")).unwrap();
++        let reserved_name = OsString::from_vec(b"hidden\xff.tmp".to_vec());
++        std::fs::write(
++            repo.join(".Jj").join(reserved_name),
++            "reserved invalid path\n",
++        )
++        .unwrap();
++        std::fs::write(
++            repo.join(".gitignore"),
++            ".VG/\nforced.txt\nremoved-secret.txt\nlarge-tracked.bin\nsub/*.tmp\n",
++        )
++        .unwrap();
++    }
++    std::fs::rename(repo.join("tracked.txt"), repo.join("TRACKED.TXT")).unwrap();
++    std::fs::rename(
++        repo.join("large-tracked.bin"),
++        repo.join("LARGE-TRACKED.bin"),
++    )
++    .unwrap();
++    std::fs::write(repo.join("TRACKED.TXT"), "user dirty retry bytes\n").unwrap();
++    std::fs::write(repo.join("global.secret"), "global ignore canary\n").unwrap();
++    std::fs::write(repo.join("GLOBAL.SECRET"), "case-folded ignore canary\n").unwrap();
++    std::fs::write(
++        repo.join(".VG/private.txt"),
++        "dirty inherited private bytes\n",
++    )
++    .unwrap();
++    std::fs::write(repo.join(".VG/internal.txt"), "reserved internal bytes\n").unwrap();
++    std::fs::write(repo.join("removed-secret.txt"), "dirty removed secret\n").unwrap();
++    assert!(!git(&["ls-files", "--cached"])
++        .lines()
++        .any(|path| path == "removed-secret.txt"));
++    assert!(!git(&["ls-files", "--others", "--exclude-standard"])
++        .lines()
++        .any(|path| path == "removed-secret.txt"));
++    let ignored_oids = [
++        "global.secret",
++        "GLOBAL.SECRET",
++        ".VG/private.txt",
++        ".VG/internal.txt",
++        "removed-secret.txt",
++    ]
++    .into_iter()
++    .map(|path| (path, git(&["hash-object", path]).trim().to_string()))
++    .collect::<Vec<_>>();
++    let large = std::fs::File::create(repo.join("large.bin")).unwrap();
++    large.set_len(16 * 1024 * 1024 + 1).unwrap();
++
++    let run_from = |cwd: &Path, args: &[&str]| {
++        let output = Command::new(env!("CARGO_BIN_EXE_vg"))
++            .args(args)
++            .current_dir(cwd)
++            .env("GIT_CONFIG_GLOBAL", &global_config)
++            .env("GIT_CONFIG_NOSYSTEM", "1")
++            .env("GIT_DIR", temp.path().join("decoy-git-dir"))
++            .env("GIT_WORK_TREE", temp.path().join("decoy-work-tree"))
++            .env("GIT_INDEX_FILE", temp.path().join("decoy-index"))
++            .env("GIT_COMMON_DIR", temp.path().join("decoy-common-dir"))
++            .env("GIT_NAMESPACE", "decoy-namespace")
++            .env_remove("VG_SESSION_ID")
++            .stdin(Stdio::null())
++            .stdout(Stdio::piped())
++            .stderr(Stdio::piped())
++            .output()
++            .unwrap();
++        (
++            String::from_utf8_lossy(&output.stdout).to_string(),
++            String::from_utf8_lossy(&output.stderr).to_string(),
++            output.status.code(),
++        )
++    };
++    let run = |args: &[&str]| run_from(temp.path(), args);
++    let repo_s = repo.to_string_lossy().to_string();
++    let (out, err, code) = run(&["workspace", "import", "--root", &repo_s, "--json"]);
++    assert_ne!(code, Some(0), "{out} / {err}");
++    assert!(
++        err.contains("incomplete snapshot") && err.contains("large.bin"),
++        "oversized file must be surfaced rather than silently omitted: {out} / {err}"
++    );
++    assert!(
++        !repo.join(".jj").exists(),
++        "failed initial import must remove its partially initialized workspace"
++    );
++
++    std::fs::remove_file(repo.join("large.bin")).unwrap();
++    let (out, err, code) = run_from(
++        &repo.join("caller/nested"),
++        &["workspace", "import", "--root", &repo_s, "--json"],
++    );
++    assert_eq!(code, Some(0), "{out} / {err}");
++    let imported: Value = serde_json::from_str(out.trim()).unwrap();
++    assert_eq!(imported["command"], "workspace.import", "{imported}");
++    assert!(repo.join(".jj").exists());
++
++    for (ignored_path, ignored_oid) in ignored_oids {
++        let object_status = Command::new("git")
++            .args(["cat-file", "-e", &ignored_oid])
++            .current_dir(&repo)
++            .env("GIT_CONFIG_GLOBAL", &global_config)
++            .env("GIT_CONFIG_NOSYSTEM", "1")
++            .status()
++            .unwrap();
++        assert!(
++            !object_status.success(),
++            "excluded content entered the Git object store: {ignored_path} ({ignored_oid})"
++        );
++    }
++    for reserved_path in [".VG/private.txt", ".VG/internal.txt", "removed-secret.txt"] {
++        let (reserved, reserved_error, reserved_code) = run(&[
++            "change",
++            "file-show",
++            "--root",
++            &repo_s,
++            "--revision",
++            "@",
++            "--path",
++            reserved_path,
++            "--json",
++        ]);
++        assert_ne!(reserved_code, Some(0), "{reserved} / {reserved_error}");
++    }
++    #[cfg(unix)]
++    {
++        let (selected, selected_error, selected_code) = run(&[
++            "change",
++            "file-show",
++            "--root",
++            &repo_s,
++            "--revision",
++            "@",
++            "--path",
++            "sub/keep.txt",
++            "--json",
++        ]);
++        assert_eq!(selected_code, Some(0), "{selected} / {selected_error}");
++    }
++    let (large_list, large_error, large_code) = run(&[
++        "change",
++        "file-list",
++        "--root",
++        &repo_s,
++        "--revision",
++        "@",
++        "--json",
++    ]);
++    assert_eq!(large_code, Some(0), "{large_list} / {large_error}");
++    assert!(large_list.contains("LARGE-TRACKED.bin"), "{large_list}");
++    let (forced, forced_error, forced_code) = run(&[
++        "change",
++        "file-show",
++        "--root",
++        &repo_s,
++        "--revision",
++        "@",
++        "--path",
++        "forced.txt",
++        "--json",
++    ]);
++    assert_eq!(forced_code, Some(0), "{forced} / {forced_error}");
++    assert!(forced.contains("force-added selected bytes"), "{forced}");
++    let (content, error, code) = run(&[
++        "change",
++        "file-show",
++        "--root",
++        &repo_s,
++        "--revision",
++        "@",
++        "--path",
++        "TRACKED.TXT",
++        "--json",
++    ]);
++    assert_eq!(code, Some(0), "{error}");
++    assert!(
++        content.contains("user dirty retry bytes"),
++        "retry after a failed import omitted dirty bytes: {content}"
++    );
++
++    std::fs::write(repo.join("TRACKED.TXT"), "late dirt after retry\n").unwrap();
++    let (out, err, code) = run(&["workspace", "import", "--root", &repo_s, "--json"]);
++    assert_eq!(code, Some(0), "{out} / {err}");
++    let reopened: Value = serde_json::from_str(out.trim()).unwrap();
++    assert_eq!(reopened["existing"], true, "{reopened}");
++    let (content, error, code) = run(&[
++        "change",
++        "file-show",
++        "--root",
++        &repo_s,
++        "--revision",
++        "@",
++        "--path",
++        "TRACKED.TXT",
++        "--json",
++    ]);
++    assert_eq!(code, Some(0), "{error}");
++    assert!(
++        !content.contains("late dirt after retry"),
++        "existing-workspace import silently captured dirty bytes: {content}"
++    );
++}
++
++#[test]
++fn workspace_import_refuses_selected_paths_below_nested_repository_markers() {
++    use std::process::{Command, Stdio};
++
++    let temp = tempfile::tempdir().unwrap();
++    let repo = temp.path().join("repo");
++    std::fs::create_dir_all(repo.join("src")).unwrap();
++    for args in [
++        vec!["init", "-q", "-b", "main"],
++        vec!["config", "user.name", "VG Import"],
++        vec!["config", "user.email", "vg-import@example.invalid"],
++    ] {
++        assert!(Command::new("git")
++            .args(&args)
++            .current_dir(&repo)
++            .status()
++            .unwrap()
++            .success());
++    }
++    std::fs::write(repo.join("src/main.rs"), "selected source\n").unwrap();
++    assert!(Command::new("git")
++        .args(["add", "src/main.rs"])
++        .current_dir(&repo)
++        .status()
++        .unwrap()
++        .success());
++    assert!(Command::new("git")
++        .args(["commit", "-q", "-m", "base"])
++        .current_dir(&repo)
++        .status()
++        .unwrap()
++        .success());
++    std::fs::create_dir(repo.join("src/.jj")).unwrap();
++
++    let output = Command::new(env!("CARGO_BIN_EXE_vg"))
++        .args([
++            "workspace",
++            "import",
++            "--root",
++            repo.to_str().unwrap(),
++            "--json",
++        ])
++        .current_dir(temp.path())
++        .env_remove("VG_SESSION_ID")
++        .stdin(Stdio::null())
++        .stdout(Stdio::piped())
++        .stderr(Stdio::piped())
++        .output()
++        .unwrap();
++    assert!(!output.status.success());
++    let stderr = String::from_utf8_lossy(&output.stderr);
++    assert!(stderr.contains("nested repository marker"), "{stderr}");
++    assert!(!repo.join(".jj").exists());
++}
+ #[test]
+ fn workspace_remove_deletes_disk_but_guards_current_and_outside_paths() {
+     use serde_json::Value;
+diff --git a/crates/vg-jj/src/lib.rs b/crates/vg-jj/src/lib.rs
+index 898e56f7..49bece25 100644
+--- a/crates/vg-jj/src/lib.rs
++++ b/crates/vg-jj/src/lib.rs
+@@ -5,9 +5,10 @@
+ //! 当前最小闭环：在既有 Git 仓库上初始化 jj workspace，并读取稳定的
+ //! operation/view 元数据。
+ 
+-use std::collections::{BTreeSet, HashSet, VecDeque};
++use std::collections::{BTreeMap, BTreeSet, HashSet, VecDeque};
+ use std::fs;
+ use std::path::{Component, Path, PathBuf};
++use std::process::Command;
+ use std::sync::Arc;
+ 
+ use futures::{StreamExt as _, TryStreamExt as _};
+@@ -33,7 +34,10 @@ use jj_lib::git::{
+     GitSubprocessCallback, GitSubprocessOptions,
+ };
+ use jj_lib::gitignore::GitIgnoreFile;
+-use jj_lib::matchers::{DifferenceMatcher, EverythingMatcher, Matcher as _, PrefixMatcher};
++use jj_lib::matchers::{
++    DifferenceMatcher, EverythingMatcher, FilesMatcher, Matcher, NothingMatcher, PrefixMatcher,
++    Visit,
++};
+ use jj_lib::merge::Merge;
+ use jj_lib::merged_tree_builder::MergedTreeBuilder;
+ use jj_lib::object_id::ObjectId as _;
+@@ -57,7 +61,7 @@ use jj_lib::settings::{SignBehavior, UserSettings};
+ use jj_lib::store::Store;
+ use jj_lib::str_util::StringExpression;
+ use jj_lib::view::View;
+-use jj_lib::working_copy::{SnapshotOptions, WorkingCopyFreshness};
++use jj_lib::working_copy::{SnapshotOptions, UntrackedReason, WorkingCopyFreshness};
+ use jj_lib::workspace::Workspace;
+ use pollster::FutureExt as _;
+ use sha2::{Digest, Sha256};
+@@ -1277,6 +1281,10 @@ pub struct JjRepositoryProbe {
+     pub repository_kind: JjRepositoryKind,
+ }
+ 
++struct GitImportPlan {
++    matcher: FilesMatcher,
++    physical_paths: BTreeMap<PathBuf, PathBuf>,
++}
+ const MAX_PROBE_ENTRIES: usize = 200_000;
+ const MAX_MANAGED_NEW_FILE_BYTES: u64 = 16 * 1024 * 1024;
+ 
+@@ -2265,6 +2273,263 @@ impl JjWorkspace {
+     /// 与 `import_git_refs` 分开：refs 导入只改 view，这一步改的是 working-copy 位置。
+     /// 底层库没有可导入的 HEAD 时保持原样——不伪造一个父提交。
+     pub fn import_git_head(&mut self) -> Result<JjGitHeadImport, JjError> {
++        self.import_git_head_with_checkout(true)
++    }
++
++    /// Attach a colocated draft to Git HEAD without overwriting existing dirty files.
++    /// Record existing dirty bytes against the imported parent, preserving Git state.
++    pub fn import_git_head_preserving_files(&mut self) -> Result<JjGitHeadImport, JjError> {
++        let plan = self.git_import_files_matcher()?;
++        let head = self.import_git_head_with_checkout(false)?;
++        // HEAD's tree becomes the draft tree. Restrict that inherited tree to
++        // Git's selected file set before snapshot can consult existing entries.
++        self.restrict_import_tree_to_matcher(&plan.matcher, &plan.physical_paths)?;
++        // A newly imported draft has no description. Preserve that native state;
++        // public snapshot requests still require their explicit nonempty description.
++        self.snapshot_working_copy_inner("", false, Some(&plan.matcher))?;
++        Ok(head)
++    }
++
++    /// Ask Git for the exact tracked and untracked-but-not-ignored file set.
++    ///
++    /// Git owns global/pathname interpolation, ignore precedence, Windows
++    /// `core.ignoreCase`, and `.gitignore` traversal semantics. Feeding that set
++    /// into the snapshot matcher keeps JJ's case-sensitive `GitIgnoreFile` from
++    /// changing which bytes Git says are importable.
++    fn git_import_files_matcher(&self) -> Result<GitImportPlan, JjError> {
++        let root = self.workspace.workspace_root();
++        let ignore_case = jj_lib::git::get_git_backend(self.workspace.repo_loader().store())
++            .ok()
++            .and_then(|backend| {
++                let repo = backend.git_repo();
++                let config = repo.config_snapshot();
++                config.boolean("core.ignoreCase")
++            })
++            .unwrap_or(false);
++        let git_command = || {
++            let mut command = Command::new("git");
++            command
++                .current_dir(root)
++                .arg("--git-dir")
++                .arg(root.join(".git"))
++                .arg("--work-tree")
++                .arg(root);
++            // -C controls the worktree, but inherited repository selectors can
++            // still redirect the index or common/object directories.
++            for name in [
++                "GIT_DIR",
++                "GIT_WORK_TREE",
++                "GIT_INDEX_FILE",
++                "GIT_COMMON_DIR",
++                "GIT_OBJECT_DIRECTORY",
++                "GIT_ALTERNATE_OBJECT_DIRECTORIES",
++                "GIT_NAMESPACE",
++                "GIT_PREFIX",
++            ] {
++                command.env_remove(name);
++            }
++            command
++        };
++        let read_paths = |args: &[&str]| -> Result<Vec<(PathBuf, PathBuf, RepoPathBuf)>, JjError> {
++            let output = git_command().args(args).output().map_err(|error| {
++                JjError::WriteRefused(format!("query Git import paths: {error}"))
++            })?;
++            if !output.status.success() {
++                return Err(JjError::WriteRefused(format!(
++                    "query Git import paths failed: {}",
++                    String::from_utf8_lossy(&output.stderr).trim()
++                )));
++            }
++            let mut paths = Vec::new();
++            for raw in output
++                .stdout
++                .split(|byte| *byte == 0)
++                .filter(|raw| !raw.is_empty())
++            {
++                if is_reserved_import_path_bytes(raw) {
++                    continue;
++                }
++                let text = std::str::from_utf8(raw).map_err(|error| {
++                    JjError::WriteRefused(format!(
++                        "workspace import refused a non-UTF-8 Git path: {error}"
++                    ))
++                })?;
++                let git_relative = validated_relative_path(text)?;
++                let physical_relative = if ignore_case {
++                    reconcile_case_insensitive_path(root, &git_relative)?
++                } else {
++                    git_relative.clone()
++                };
++                validate_import_physical_path(root, &physical_relative)?;
++                let repo_path = RepoPathBuf::from_relative_path(&physical_relative)
++                    .map_err(|error| JjError::WriteRefused(error.to_string()))?;
++                paths.push((git_relative, physical_relative, repo_path));
++            }
++            Ok(paths)
++        };
++        let tracked = read_paths(&["ls-files", "--cached", "-z"])?;
++        let untracked = read_paths(&["ls-files", "--others", "--exclude-standard", "-z"])?;
++        let has_head = git_command()
++            .args(["rev-parse", "--verify", "HEAD"])
++            .output()
++            .map(|output| output.status.success())
++            .unwrap_or(false);
++        let head = if has_head {
++            read_paths(&["ls-tree", "-r", "-z", "--name-only", "HEAD"])?
++        } else {
++            Vec::new()
++        };
++        let selected_physical_paths = tracked
++            .iter()
++            .chain(untracked.iter())
++            .map(|(_, physical_relative, _)| physical_relative.clone())
++            .collect::<BTreeSet<_>>();
++        let head_physical_paths = head
++            .iter()
++            .map(|(_, physical_relative, _)| physical_relative.clone())
++            .collect::<BTreeSet<_>>();
++        let check_new_file = |physical_relative: &Path,
++                              repo_path: &RepoPathBuf|
++         -> Result<(), JjError> {
++            let full_path = root.join(physical_relative);
++            if let Ok(metadata) = fs::symlink_metadata(&full_path) {
++                if metadata.file_type().is_file() && metadata.len() > MAX_MANAGED_NEW_FILE_BYTES {
++                    return Err(JjError::WriteRefused(format!(
++                            "workspace import refused an incomplete snapshot: {} is {} bytes (maximum automatic import size is {} bytes); add it to a Git ignore file or reduce it before retrying",
++                            repo_path.as_internal_file_string(),
++                            metadata.len(),
++                            MAX_MANAGED_NEW_FILE_BYTES
++                        )));
++                }
++            }
++            Ok(())
++        };
++        for (_, physical_relative, repo_path) in tracked
++            .iter()
++            .filter(|(_, physical_relative, _)| !head_physical_paths.contains(physical_relative))
++        {
++            check_new_file(physical_relative, repo_path)?;
++        }
++        for (_, physical_relative, repo_path) in &untracked {
++            check_new_file(physical_relative, repo_path)?;
++        }
++        for (_, physical_relative, _) in tracked.iter().chain(untracked.iter()) {
++            if let Some(marker) = nested_repository_marker(root, physical_relative) {
++                return Err(JjError::WriteRefused(format!(
++                    "workspace import refused Git-selected path {} beneath nested repository marker {}",
++                    physical_relative.display(),
++                    marker.display()
++                )));
++            }
++        }
++        let mut physical_paths = BTreeMap::new();
++        for (git_relative, physical_relative, _) in &tracked {
++            physical_paths.insert(git_relative.clone(), physical_relative.clone());
++        }
++        for (git_relative, physical_relative, _) in &head {
++            if selected_physical_paths.contains(physical_relative) {
++                physical_paths.insert(git_relative.clone(), physical_relative.clone());
++            }
++        }
++        let selected_repo_paths = tracked
++            .into_iter()
++            .chain(untracked)
++            .map(|(_, _, repo_path)| repo_path)
++            .collect::<Vec<_>>();
++        Ok(GitImportPlan {
++            matcher: FilesMatcher::new(selected_repo_paths),
++            physical_paths,
++        })
++    }
++    fn restrict_import_tree_to_matcher(
++        &mut self,
++        matcher: &dyn Matcher,
++        physical_paths: &BTreeMap<PathBuf, PathBuf>,
++    ) -> Result<(), JjError> {
++        let operation = self.single_head_operation()?;
++        let view = self.load_view(&operation)?;
++        let workspace_name = self.workspace.workspace_name().to_owned();
++        let wc_commit_id = view
++            .get_wc_commit_id(&workspace_name)
++            .ok_or(JjError::MissingWorkingCopy)?
++            .clone();
++        let repo = self
++            .workspace
++            .repo_loader()
++            .load_at(&operation)
++            .block_on()
++            .map_err(|error| JjError::RepoLoad(error.to_string()))?;
++        let old_commit = repo
++            .store()
++            .get_commit(&wc_commit_id)
++            .map_err(|error| JjError::CommitRead(error.to_string()))?;
++        let old_tree = old_commit.tree();
++        let mut builder = MergedTreeBuilder::new(old_tree.clone());
++        for (path, value) in old_tree.entries() {
++            if matcher.matches(&path) {
++                continue;
++            }
++            let value = value.map_err(|error| JjError::CommitRead(error.to_string()))?;
++            let original = PathBuf::from(path.as_internal_file_string());
++            if let Some(physical) = physical_paths.get(&original) {
++                let physical = RepoPathBuf::from_relative_path(physical)
++                    .map_err(|error| JjError::WriteRefused(error.to_string()))?;
++                builder.set_or_remove(path, Merge::absent());
++                builder.set_or_remove(physical, value);
++            } else {
++                builder.set_or_remove(path, Merge::absent());
++            }
++        }
++        let filtered = builder
++            .write_tree()
++            .block_on()
++            .map_err(|error| JjError::WriteFailed(error.to_string()))?;
++        if filtered.tree_ids() == old_tree.tree_ids() {
++            return Ok(());
++        }
++        let mut transaction = repo.start_transaction();
++        let rewritten = transaction
++            .repo_mut()
++            .rewrite_commit(&old_commit)
++            .set_tree(filtered)
++            .write()
++            .block_on()
++            .map_err(|error| JjError::WriteFailed(error.to_string()))?;
++        transaction
++            .repo_mut()
++            .edit(workspace_name, &rewritten)
++            .block_on()
++            .map_err(|error| JjError::WriteFailed(error.to_string()))?;
++        transaction
++            .repo_mut()
++            .rebase_descendants()
++            .block_on()
++            .map_err(|error| JjError::WriteFailed(error.to_string()))?;
++        let committed = transaction
++            .commit("vg: restrict imported Git tree")
++            .block_on()
++            .map_err(|error| JjError::WriteFailed(error.to_string()))?;
++        let operation_id = committed.operation().id().clone();
++        let mut locked = self
++            .workspace
++            .start_working_copy_mutation()
++            .block_on()
++            .map_err(|error| JjError::WriteFailed(error.to_string()))?;
++        locked
++            .locked_wc()
++            .reset(&rewritten)
++            .block_on()
++            .map_err(|error| JjError::WriteFailed(error.to_string()))?;
++        locked
++            .finish(operation_id)
++            .block_on()
++            .map_err(|error| JjError::WriteFailed(error.to_string()))
++    }
++
++    fn import_git_head_with_checkout(
++        &mut self,
++        checkout: bool,
++    ) -> Result<JjGitHeadImport, JjError> {
+         let operation = self.single_head_operation()?;
+         let repo = self
+             .workspace
+@@ -2315,11 +2580,29 @@ impl JjWorkspace {
+                 .store()
+                 .get_commit(&wc_id)
+                 .map_err(|error| JjError::CommitRead(error.to_string()))?;
+-            // 用真正的 check-out（会写文件），不是 reset（只改状态）。
+-            self.workspace
+-                .check_out(operation_id.clone(), None, &commit)
+-                .block_on()
+-                .map_err(|error| JjError::WriteFailed(error.to_string()))?;
++            if checkout {
++                self.workspace
++                    .check_out(operation_id.clone(), None, &commit)
++                    .block_on()
++                    .map_err(|error| JjError::WriteFailed(error.to_string()))?;
++            } else {
++                // Colocation already has user files. Reset only the recorded base;
++                // materialization here would replace uncommitted user content.
++                let mut locked = self
++                    .workspace
++                    .start_working_copy_mutation()
++                    .block_on()
++                    .map_err(|error| JjError::WriteFailed(error.to_string()))?;
++                locked
++                    .locked_wc()
++                    .reset(&commit)
++                    .block_on()
++                    .map_err(|error| JjError::WriteFailed(error.to_string()))?;
++                locked
++                    .finish(operation_id.clone())
++                    .block_on()
++                    .map_err(|error| JjError::WriteFailed(error.to_string()))?;
++            }
+         }
+         Ok(JjGitHeadImport {
+             operation_id: operation_id.hex(),
+@@ -5706,6 +5989,15 @@ impl JjWorkspace {
+         description: &str,
+     ) -> Result<JjWorkspaceSnapshot, JjError> {
+         validate_plan_text("description", description)?;
++        self.snapshot_working_copy_inner(description, true, None)
++    }
++
++    fn snapshot_working_copy_inner(
++        &mut self,
++        description: &str,
++        force_tracking: bool,
++        import_start_matcher: Option<&FilesMatcher>,
++    ) -> Result<JjWorkspaceSnapshot, JjError> {
+         // 与上游一致：工作副本 stale 时**先拒绝写入**，由 `workspace update-stale` 显式落盘。
+         self.ensure_working_copy_not_stale()?;
+         let operation = self.single_head_operation()?;
+@@ -5731,23 +6023,50 @@ impl JjWorkspace {
+         // 托管快照必须排除 VG 自有状态目录：`.vg/` 不是被测仓内容，
+         // 泄漏进去会污染候选树、revision diff 与 manifest 摘要。
+         let tracking_matcher = managed_tracking_matcher();
++        let start_tracking_matcher: &dyn Matcher = match import_start_matcher {
++            Some(matcher) => matcher,
++            None => &tracking_matcher,
++        };
++        let import_force_matcher = import_start_matcher.map(|files| ImportForceMatcher {
++            files,
++            root: self.workspace.workspace_root().to_path_buf(),
++        });
++        let force_tracking_matcher: &dyn Matcher = if force_tracking {
++            &tracking_matcher
++        } else if let Some(matcher) = import_force_matcher.as_ref() {
++            matcher
++        } else {
++            &NothingMatcher
++        };
+         let new_tree = {
+             let mut locked = self
+                 .workspace
+                 .start_working_copy_mutation()
+                 .block_on()
+                 .map_err(|error| JjError::WriteFailed(error.to_string()))?;
+-            let (tree, _stats) = locked
++            let (tree, stats) = locked
+                 .locked_wc()
+                 .snapshot(&SnapshotOptions {
+                     base_ignores: GitIgnoreFile::empty(),
+                     progress: None,
+-                    start_tracking_matcher: &tracking_matcher,
+-                    force_tracking_matcher: &tracking_matcher,
++                    start_tracking_matcher,
++                    force_tracking_matcher,
+                     max_new_file_size: MAX_MANAGED_NEW_FILE_BYTES,
+                 })
+                 .block_on()
+                 .map_err(|error| JjError::WriteFailed(error.to_string()))?;
++            if !force_tracking {
++                if let Some((path, UntrackedReason::FileTooLarge { size, max_size })) = stats
++                    .untracked_paths
++                    .iter()
++                    .find(|(_, reason)| matches!(reason, UntrackedReason::FileTooLarge { .. }))
++                {
++                    return Err(JjError::WriteRefused(format!(
++                        "workspace import refused an incomplete snapshot: {} is {size} bytes (maximum automatic import size is {max_size} bytes); add it to a Git ignore file or reduce it before retrying",
++                        path.as_internal_file_string()
++                    )));
++                }
++            }
+             locked
+                 .finish(old_operation_id)
+                 .block_on()
+@@ -8505,28 +8824,194 @@ fn merged_tree_value_kind(value: &MergedTreeValue) -> Option<&'static str> {
+     })
+ }
+ 
+-/// 装载工作副本里的 ignore 规则：仓库根的 `.gitignore` 与 `.git/info/exclude`。
++fn is_reserved_import_path_bytes(path: &[u8]) -> bool {
++    [b".jj".as_slice(), b".vg".as_slice()]
++        .into_iter()
++        .any(|reserved| {
++            path.len() >= reserved.len()
++                && path[..reserved.len()].eq_ignore_ascii_case(reserved)
++                && (path.len() == reserved.len() || path[reserved.len()] == b'/')
++        })
++}
++
++#[derive(Debug)]
++struct ImportForceMatcher<'a> {
++    files: &'a FilesMatcher,
++    root: PathBuf,
++}
++
++impl Matcher for ImportForceMatcher<'_> {
++    fn matches(&self, file: &RepoPath) -> bool {
++        if !self.files.matches(file) {
++            return false;
++        }
++        let full_path = self.root.join(file.as_internal_file_string());
++        fs::symlink_metadata(full_path)
++            .map(|metadata| metadata.len() <= MAX_MANAGED_NEW_FILE_BYTES)
++            .unwrap_or(true)
++    }
++
++    fn visit(&self, dir: &RepoPath) -> Visit {
++        self.files.visit(dir)
++    }
++}
++
++fn nested_repository_marker(root: &Path, relative: &Path) -> Option<PathBuf> {
++    let mut current = root.to_path_buf();
++    for component in relative.components() {
++        let Component::Normal(name) = component else {
++            return None;
++        };
++        current.push(name);
++        for marker_name in [".git", ".jj"] {
++            let marker = current.join(marker_name);
++            if fs::symlink_metadata(&marker).is_ok() {
++                return Some(marker);
++            }
++        }
++    }
++    None
++}
++
++/// Resolve Git's index spelling to the one physical spelling when Git declares
++/// the checkout case-insensitive. Exact names win; ambiguous case aliases and
++/// selected paths through parent directory links are refused.
++fn reconcile_case_insensitive_path(root: &Path, relative: &Path) -> Result<PathBuf, JjError> {
++    let mut current = root.to_path_buf();
++    let mut resolved = PathBuf::new();
++    let mut components = relative.components().peekable();
++    while let Some(component) = components.next() {
++        let Component::Normal(name) = component else {
++            return Ok(relative.to_path_buf());
++        };
++        let Ok(entries) = fs::read_dir(&current) else {
++            return Ok(relative.to_path_buf());
++        };
++        let entries = entries.filter_map(Result::ok).collect::<Vec<_>>();
++        let chosen = if let Some(entry) = entries
++            .iter()
++            .find(|entry| entry.file_name().as_os_str() == name)
++        {
++            entry.file_name()
++        } else {
++            let wanted = name.to_string_lossy();
++            let mut matches = entries.iter().filter(|entry| {
++                entry
++                    .file_name()
++                    .to_string_lossy()
++                    .eq_ignore_ascii_case(&wanted)
++            });
++            let Some(first) = matches.next() else {
++                return Ok(relative.to_path_buf());
++            };
++            if matches.next().is_some() {
++                return Err(JjError::WriteRefused(format!(
++                    "workspace import refused an ambiguous case-insensitive path: {}",
++                    relative.display()
++                )));
++            }
++            first.file_name()
++        };
++        if components.peek().is_some() {
++            let candidate = current.join(&chosen);
++            if fs::symlink_metadata(&candidate)
++                .map(|metadata| metadata.file_type().is_symlink())
++                .unwrap_or(false)
++            {
++                return Err(JjError::WriteRefused(format!(
++                    "workspace import refused a selected path through a directory link: {}",
++                    relative.display()
++                )));
++            }
++        }
++        resolved.push(&chosen);
++        current.push(&chosen);
++    }
++    Ok(resolved)
++}
++
++fn validate_import_physical_path(root: &Path, relative: &Path) -> Result<(), JjError> {
++    if let Some(Component::Normal(first)) = relative.components().next() {
++        let first = first.to_string_lossy();
++        if first.eq_ignore_ascii_case(".jj") || first.eq_ignore_ascii_case(".vg") {
++            return Err(JjError::WriteRefused(format!(
++                "workspace import refused a path resolving to reserved storage: {}",
++                relative.display()
++            )));
++        }
++    }
++    let components = relative.components().collect::<Vec<_>>();
++    let mut current = root.to_path_buf();
++    for (index, component) in components.iter().enumerate() {
++        current.push(component.as_os_str());
++        if index + 1 == components.len() {
++            break;
++        }
++        match fs::symlink_metadata(&current) {
++            Ok(metadata) if metadata.file_type().is_symlink() => {
++                return Err(JjError::WriteRefused(format!(
++                    "workspace import refused a selected path through a directory link: {}",
++                    relative.display()
++                )));
++            }
++            Ok(_) => {}
++            Err(error) if error.kind() == std::io::ErrorKind::NotFound => break,
++            Err(error) => return Err(JjError::WriteRefused(error.to_string())),
++        }
++    }
++    Ok(())
++}
++
++/// 装载工作副本根级的 ignore 规则。
+ ///
+-/// 只读；读不到就退回"没有任何忽略"（调用方据此**拒绝**未忽略的 untrack，
+-/// 而不是假装成功）。
++/// `file untrack` 直接查询这个 matcher，不经过 snapshot 的逐目录遍历；因此这里
++/// 必须显式包含仓库根 `.gitignore` 与 `.git/info/exclude`。自动导入不依赖该
++/// matcher，而是让 Git 直接产出精确的 tracked/non-ignored 文件集。
+ fn load_workspace_gitignore(
+     workspace_root: &Path,
+     _tree: &jj_lib::merged_tree::MergedTree,
+ ) -> Arc<GitIgnoreFile> {
++    load_workspace_gitignore_checked(workspace_root).unwrap_or_else(|_| GitIgnoreFile::empty())
++}
++
++fn load_workspace_gitignore_checked(workspace_root: &Path) -> std::io::Result<Arc<GitIgnoreFile>> {
+     let mut ignores = GitIgnoreFile::empty();
+-    for candidate in [
+-        workspace_root.join(".gitignore"),
++    chain_ignore_file_if_present(&mut ignores, workspace_root.join(".gitignore"))?;
++    chain_ignore_file_if_present(
++        &mut ignores,
+         workspace_root.join(".git").join("info").join("exclude"),
+-    ] {
+-        if candidate.is_file() {
+-            if let Ok(chained) =
+-                GitIgnoreFile::chain_with_file(&ignores, RepoPath::root(), candidate.clone())
+-            {
+-                ignores = chained;
+-            }
++    )?;
++    Ok(ignores)
++}
++
++fn chain_ignore_file_if_present(
++    ignores: &mut Arc<GitIgnoreFile>,
++    candidate: PathBuf,
++) -> std::io::Result<()> {
++    match fs::metadata(&candidate) {
++        Err(error)
++            if matches!(
++                error.kind(),
++                std::io::ErrorKind::NotFound | std::io::ErrorKind::NotADirectory
++            ) =>
++        {
++            return Ok(());
++        }
++        Err(error) => return Err(error),
++        Ok(metadata) if !metadata.is_file() => {
++            return Err(std::io::Error::new(
++                std::io::ErrorKind::InvalidData,
++                format!(
++                    "ignore rules are not a regular file: {}",
++                    candidate.display()
++                ),
++            ));
+         }
++        Ok(_) => {}
+     }
+-    ignores
++    *ignores = GitIgnoreFile::chain_with_file(ignores, RepoPath::root(), candidate)
++        .map_err(|error| std::io::Error::other(error.to_string()))?;
++    Ok(())
+ }
+ 
+ /// 读取单侧 `MergedTreeValue` 的可执行位：只有**唯一的普通文件正项**才有意义。
+@@ -9336,6 +9821,77 @@ mod tests {
+         assert!(status.success(), "git init 必须在受控环境下成功");
+     }
+ 
++    #[cfg(unix)]
++    #[test]
++    fn physical_validation_refuses_reserved_directory_links() {
++        use std::os::unix::fs::symlink;
++
++        let temp = tempfile::tempdir().expect("tempdir");
++        std::fs::create_dir(temp.path().join(".vg")).expect("reserved directory");
++        std::fs::write(temp.path().join(".vg/private.txt"), "private").expect("private file");
++        symlink(temp.path().join(".vg"), temp.path().join("alias")).expect("directory link");
++        assert!(
++            validate_import_physical_path(temp.path(), Path::new("alias/private.txt")).is_err()
++        );
++    }
++
++    #[test]
++    fn selected_directory_marker_is_detected() {
++        let temp = tempfile::tempdir().expect("tempdir");
++        let nested = temp.path().join("nested");
++        std::fs::create_dir(&nested).expect("nested directory");
++        std::fs::write(
++            nested.join(".git"),
++            "gitdir: elsewhere
++",
++        )
++        .expect("nested marker");
++        assert!(nested_repository_marker(temp.path(), Path::new("nested")).is_some());
++    }
++
++    #[cfg(not(windows))]
++    #[test]
++    fn case_reconciliation_does_not_apply_unicode_case_folding() {
++        let temp = tempfile::tempdir().expect("tempdir");
++        let actual = temp.path().join("K.txt");
++        std::fs::write(&actual, "kelvin sign").expect("unicode sibling");
++        let requested = Path::new("k.txt");
++        let resolved = reconcile_case_insensitive_path(temp.path(), requested).expect("resolve");
++        assert_eq!(resolved, requested);
++    }
++    #[test]
++    fn import_force_matcher_keeps_the_new_file_size_limit() {
++        let temp = tempfile::tempdir().expect("tempdir");
++        let root = temp.path();
++        let file = root.join("large.bin");
++        std::fs::File::create(&file)
++            .expect("large file")
++            .set_len(MAX_MANAGED_NEW_FILE_BYTES + 1)
++            .expect("sparse large file");
++        let path = RepoPathBuf::from_relative_path(Path::new("large.bin")).expect("repo path");
++        let files = FilesMatcher::new([&path]);
++        let matcher = ImportForceMatcher {
++            files: &files,
++            root: root.to_path_buf(),
++        };
++        assert!(!matcher.matches(&path));
++        std::fs::File::create(&file)
++            .expect("resize file")
++            .set_len(MAX_MANAGED_NEW_FILE_BYTES)
++            .expect("bounded file");
++        assert!(matcher.matches(&path));
++    }
++
++    #[test]
++    fn root_gitignore_survives_a_dot_git_pointer_file() {
++        let temp = tempfile::tempdir().expect("tempdir");
++        let root = temp.path();
++        std::fs::write(root.join(".gitignore"), "secret.txt\n").expect("root ignore");
++        std::fs::write(root.join(".git"), "gitdir: elsewhere\n").expect("git pointer");
++        let ignores = load_workspace_gitignore_checked(root).expect("load ignores");
++        assert!(ignores.matches_file(RepoPath::from_internal_string("secret.txt").unwrap()));
++    }
++
+     /// converge：造一个**真的分叉**（同一 change_id 有两个可见提交），
+     /// 断言它被收敛成一个、旧分叉被废弃，并且**没有分叉时是 no-op**。
+     ///
+diff --git a/docs/jj-vg-sts-rollout.md b/docs/jj-vg-sts-rollout.md
+index e74f56fd..14d9935d 100644
+--- a/docs/jj-vg-sts-rollout.md
++++ b/docs/jj-vg-sts-rollout.md
+@@ -6,6 +6,18 @@
+ 
+ 仅显式调用 `vg workspace` / `vg change` / `vg op` 的新托管工作区路径；旧 Git-only 与 1.1 路径保持原行为。STS 选择/排序默认关闭，即使功能测试通过也不自动打开。
+ 
++显式 `workspace import` 在普通 Git checkout 中导入 refs 与 HEAD，并把现存 dirty
++字节记录到 HEAD 之上的工作副本。导入保留原文件、未跟踪内容、Git HEAD、refs 与
++index；再次打开已有 `.jj` 只读。Linked Git worktree、bare 与非 Git 目录由此导入
++入口明确拒绝；Git 选中路径若位于嵌套 `.git`/`.jj` 标记下也会拒绝。拒绝发生在创建 `.jj` 之前或由失败回滚清除。
++导入由隔离环境下的 Git `ls-files --cached --others --exclude-standard` 生成精确
++文件集，因此沿用 Git 的全局排除、`core.excludesFile` 路径插值、
++`.git/info/exclude`、逐目录 `.gitignore` 与 `core.ignoreCase` 语义。HEAD 继承树在
++快照前收窄到同一文件集；大小写不一致的索引项绑定到实际磁盘拼写；`.jj`/`.vg`
++及其大小写别名始终保留在内部；Git 选中的 force-added 文件不会被逐文件 ignore 丢弃，新文件上限仍在快照时独立执行。被忽略的文件保留在磁盘，不写入 JJ 工作副本或 Git
++对象库。不可表示路径或超过自动导入上限的新文件会使导入失败，不会发布不完整的
++`@`；首次导入失败会清理本次新建的 `.jj`，修正输入后可从头重试。
++
+ `pilot` 门覆盖：
+ 
+ - workspace 创建、编辑、快照与重开身份；
+@@ -27,4 +39,4 @@
+ 
+ 正证据：Windows 原生 package/integration、核心 freeze 10/10、新 regression/security/pilot 门通过；负/未测边界：Linux 原生与 WSL isolation 在当前主机挂起、新 live 两项目成本未采样、托管 CI 未取得本轮 run/commit/平台。默认启用/旧仓迁移/refs/push/系统安装均未获额外授权。
+ 
+-因此，后续默认推荐最多只能针对新建托管工作区，并且必须另走提案、交付候选和全门；旧仓迁移、默认值改变、push 与发布保持单独授权。
+\ No newline at end of file
++因此，后续默认推荐最多只能针对新建托管工作区，并且必须另走提案、交付候选和全门；旧仓迁移、默认值改变、push 与发布保持单独授权。
+diff --git a/scripts/check_hook_transcript.py b/scripts/check_hook_transcript.py
+index 7032f6b5..aa39f754 100644
+--- a/scripts/check_hook_transcript.py
++++ b/scripts/check_hook_transcript.py
+@@ -935,8 +935,9 @@ def self_test(write_json: Path | None = None) -> tuple[int, dict]:
+         print(f"hook transcript self-test PASS ({total}/{total} fixtures behaved)")
+     if write_json is not None:
+         write_json.parent.mkdir(parents=True, exist_ok=True)
++        newline = "\r\n" if write_json.exists() and b"\r\n" in write_json.read_bytes() else "\n"
+         write_json.write_text(
+-            json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
++            json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline=newline
+         )
+         print(f"self-test json written {write_json}")
+     return (1 if failures else 0), summary
+@@ -979,8 +980,15 @@ def main(argv: list[str] | None = None) -> int:
+     _outcome, report = run_check(args.transcript, args.expect_tool_use_id)
+     if args.json_out is not None:
+         args.json_out.parent.mkdir(parents=True, exist_ok=True)
++        newline = (
++            "\r\n"
++            if args.json_out.exists() and b"\r\n" in args.json_out.read_bytes()
++            else "\n"
++        )
+         args.json_out.write_text(
+-            json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
++            json.dumps(report, ensure_ascii=False, indent=2) + "\n",
++            encoding="utf-8",
++            newline=newline,
+         )
+     if args.json:
+         print(json.dumps(report, ensure_ascii=False, indent=2))

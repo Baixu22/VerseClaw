@@ -137,13 +137,15 @@ describe('F3 VerseGit sidecar package identity', () => {
     expect(manifest.license.spdx).toBe('Apache-2.0');
     expect(sha(readFileSync(licensePath))).toBe(manifest.license.sha256);
     expect(manifest.retention).toMatchObject({
-      codeCopied: false,
+      codeCopied: true,
       gitDirectoryCopied: false,
       taskForestCopied: false,
       privateEvidenceCopied: false,
       supportedTargets: ['win32-x64'],
+      sourcePatchIncluded: true,
     });
     expect(manifest.build.byteIdentical).toBe(false);
-    expect(manifest.build.semanticIdentityEqual).toBe(true);
+    expect(manifest.build.semanticIdentityEqual).toBe(false);
+    expect(manifest.build.independentBuildRoots).toBe(1);
   });
 });
