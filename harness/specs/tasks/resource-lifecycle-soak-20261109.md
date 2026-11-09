@@ -14,6 +14,12 @@ touchedAreas:
   - tests/e2e/resource-window-lifecycle.spec.ts
   - tests/unit/resource-lifecycle-report.test.ts
   - tests/unit/resource-repeated-observers.test.ts
+  - tests/unit/chat-page-execution-graph.test.tsx
+  - tests/unit/chat-question-directory.test.tsx
+  - tests/unit/chat-stream-publication.test.ts
+  - tests/unit/r0-3-chat-abort-checkstuck.test.ts
+  - tests/unit/resource-metrics-owner.test.ts
+  - shared/dcs/component-disposition-catalog.ts
   - scripts/verify-resource-lifecycle-soak.mjs
   - scripts/lib/resource-lifecycle-report.mjs
   - playwright.resource-lifecycle.config.ts
