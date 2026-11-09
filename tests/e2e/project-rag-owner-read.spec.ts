@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile, unlink } from 'node:fs/promises';
+import { mkdir, readFile, readdir, writeFile, unlink } from 'node:fs/promises';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import type { Page } from '@playwright/test';
@@ -64,7 +64,11 @@ test('Project RAG owner identity, exact citations and denial cross real Electron
     await writeFile(file, raw());
     const port = await allocatePort();
     await host(page, 'settings', 'set', { key: 'gatewayPort', value: port });
-    receipt.gatewayStart = await host(page, 'gateway', 'start');
+    try { receipt.gatewayStart = await host(page, 'gateway', 'start'); }
+    catch (error) {
+      receipt.gatewayStartObservation = String(error);
+      if (!String(error).includes('timed out')) throw error;
+    }
     await expect.poll(async () => (await host(page, 'gateway', 'status')).state, { timeout: 120_000 }).toBe('running');
     expect(await host(page, 'knowledge', 'init')).toMatchObject({ success: true });
     const first = await host<{ success: boolean; ownerSnapshot: OwnerReadSnapshotV1; sourceRef: SourceRefV2; content: string }>(page, 'knowledge', 'get', {
@@ -159,6 +163,13 @@ test('Project RAG owner identity, exact citations and denial cross real Electron
     receipt.status = 'pass';
   } finally {
     if (hold) { release(); hold = undefined; }
+    try { receipt.gatewayDiagnostics = await host(await getStableWindow(app), 'diagnostics', 'gatewaySnapshot'); } catch { /* failed startup */ }
+    try {
+      const logs = join(userDataDir, 'logs');
+      for (const file of (await readdir(logs)).filter(name => name.endsWith('.log'))) {
+        await writeFile(testInfo.outputPath(`app-${file}.txt`), await readFile(join(logs, file), 'utf8'));
+      }
+    } catch { /* logging may not have started */ }
     try { receipt.gatewayStop = await host(await getStableWindow(app), 'gateway', 'stop'); } catch { /* failed startup */ }
     await closeElectronApp(app);
     await new Promise<void>(resolve => llm.server.close(() => resolve()));
