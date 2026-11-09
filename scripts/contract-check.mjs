@@ -240,6 +240,18 @@ function parseIpcCallsUncached(text, file, ipcName, methods) {
     const line = source.getLineAndCharacterOfPosition(diagnostic.start ?? 0).line + 1;
     throw new Error(`${file}:${line}: [flat-ipc/source-parse] ${ts.flattenDiagnosticMessageText(diagnostic.messageText, ' ')}`);
   }
+  // Alias resolution requires a decoded IPC identifier or property somewhere
+  // in this AST. Keep escaped roots, while avoiding typecheckers for unrelated files.
+  let hasIpcRoot = false;
+  function findIpcRoot(node) {
+    if ((ts.isIdentifier(node) || ts.isStringLiteralLike(node)) && node.text === ipcName) {
+      hasIpcRoot = true;
+      return;
+    }
+    if (!hasIpcRoot) ts.forEachChild(node, findIpcRoot);
+  }
+  findIpcRoot(source);
+  if (!hasIpcRoot) return [];
   let checker;
   function declarations(node) {
     if (!checker) {
