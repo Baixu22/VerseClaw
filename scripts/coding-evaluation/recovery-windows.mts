@@ -124,11 +124,12 @@ async function childMain(mode: '--child' | '--readback', window: string, workspa
   const base = fs.readFileSync(path.join(workspace, '.tf0780-base'), 'utf8').trim();
   const candidate = run('git', ['-C', workspace, 'rev-parse', 'HEAD'], repoRoot, env).stdout.trim();
   const vgResult = runAllowFailure(vg, ['verify', 'candidate', '--repo', workspace, '--ours', base, '--theirs', candidate, '--out-dir', vgReceiptDir, '--keep', '--json'], repoRoot, env);
-  if (vgResult.code !== 0) throw new Error('VG candidate receipt failed: ' + vgResult.stderr);
+  if (![0, 3].includes(vgResult.code)) throw new Error('VG candidate receipt failed: ' + vgResult.stderr);
+  const vgPayload = JSON.parse(vgResult.stdout);
+  if (vgPayload.materialized !== true || vgPayload.candidate?.parents?.[1] !== candidate) throw new Error('VG candidate receipt is not bound to the candidate');
   fs.writeFileSync(vgReceipt, vgResult.stdout, 'utf8');
   const stsResult = runAllowFailure(python, ['-B', '-m', 'smart_sorter.shadow', '--repo', workspace, '--test-dir', 'tests/test_extra.py', '--out', stsReport, '--timeout', '120'], repoRoot, env);
   if (stsResult.code !== 0) throw new Error('STS scope failed: ' + stsResult.stderr);
-  const vgPayload = JSON.parse(vgResult.stdout);
   const stsPayload = JSON.parse(fs.readFileSync(stsReport, 'utf8'));
   if (window === 'materialized') await park('materialized', { candidate, receiptSha256: sha256File(vgReceipt), stsScope: stsPayload.runs?.selected?.selection_scope ?? stsPayload.selection_scope });
   const validation = runAllowFailure(python, ['-B', '-m', 'pytest', '-q', '-p', 'no:cacheprovider'], workspace, env);
