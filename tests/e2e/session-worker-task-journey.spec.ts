@@ -191,7 +191,7 @@ test(`a real delegated worker receives its own task, reports separately and acce
     await page.getByTestId('workspace-subagent-refresh').click();
     await expect(page.getByTestId('workspace-subagent-panel')).toContainText('WORKER-RUN-FINISHED');
     holdNext = true;
-    await page.getByTestId('workspace-subagent-dispatch-input').fill('WORKER-HOLD: keep this model turn open for receipt validation.');
+    await page.getByTestId('workspace-subagent-dispatch-input').fill('interrupt WORKER-HOLD: open a model turn for receipt validation.');
     await page.getByTestId('workspace-subagent-dispatch').click();
     await expect.poll(() => held, { timeout: 30_000 }).toBe(true);
     await app.evaluate(() => {
