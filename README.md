@@ -8,6 +8,8 @@ Provider spend limits can be enabled explicitly with `runtime.providerBudget` fo
 
 # Verse Claw
 
+Git initialization and worktree creation or switching are available inside the project menu, alongside the existing workspace choices.
+
 Session controls retain drafts and show outcomes confirmed by their owners. Archive settings lists interrupted archive, restore and delete operations and continues the saved operation. Context changes verify the session generation; Storage preserves checkouts owned by tasks or sessions.
 
 Chat groups ordinary streamed text updates by animation frame. Approvals, cancellation, errors and completion publish immediately; completed message content stays stable while the active reply grows.

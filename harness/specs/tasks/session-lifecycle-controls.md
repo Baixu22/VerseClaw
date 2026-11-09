@@ -7,6 +7,7 @@ taskType: runtime-bridge
 diffBase: c308b60e1
 intent: Complete the existing session/task UI contract through owner-backed, generation-scoped results.
 ownedPaths:
+  - docs/dev/session-worktree-storage.md
   - src/lib/host-api.ts
   - shared/host-api/contract.ts
   - openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts
@@ -74,6 +75,7 @@ ownedPaths:
   - src/components/chat/SessionWorkspacePicker.tsx
   - src/components/chat/ComposerPopover.tsx
 touchedAreas:
+  - docs/dev/session-worktree-storage.md
   - src/lib/host-api.ts
   - shared/host-api/contract.ts
   - openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts

@@ -51,3 +51,5 @@ Git 仓库（共享历史）
 `tests/e2e/session-worktree-storage.spec.ts` 启动 Electron，调用真实 Git、Workspace 和 Storage 服务，通过 UI 建仓、创建工作树、切换与恢复草稿、执行 `/storage` 和设置导航，并保存浅色、深色与窄窗口截图。Gateway 在此测试中使用空闲响应替身，记录中标为 `driven_by: agent`。
 
 验收产物见 [报告与截图](../../harness/specs/fixtures/session-worktree-storage/20261107/README.md)。本次 145 项相关测试通过；真实 Electron 流程同时验证了终端资源释放和工作树移除后的分支保留。全量 Node 类型检查存在 `sessions-api.ts:1929` 的会话作用域签名冲突；完整工作区 Harness 因并行改动超出本任务文件范围失败，本功能明确文件范围的规则检查通过。
+
+工作树管理从项目下拉菜单按需展开。空会话使用输入框下方的项目名称，已有会话使用顶部项目名称；两处接入同一个选择器，创建、切换和草稿保存仍由原工作区 owner 完成。

@@ -133,6 +133,9 @@ test('U5 compact and compactRange lose only committed replies; refresh reads cur
       if (action === 'compactRange') { await send(app, project, 'U5_RANGE_TARGET', 'range-target'); await send(app, project, 'U5_RANGE_TAIL', 'range-tail'); }
       const before = await readOwner(app, project.sessionKey), page = await getStableWindow(app); await page.reload();
       evidence[`${action}Before`] = before;
+      await expect(page.getByText(action === 'compact' ? 'U5_compact_HEAD_2: discuss the current goal.' : 'U5_RANGE_TAIL', { exact: true })).toBeVisible({ timeout: 60_000 });
+      await expect(page.getByTestId('chat-project-session-header')).toContainText('U5 commit compact');
+      await expect(page.getByTestId('chat-startup-skeleton')).toHaveCount(0);
       await expect(page.getByTestId('chat-composer-input')).toBeEnabled({ timeout: 30_000 });
       if (action === 'compact') await installReplyLoss(app, project.sessionKey);
       const draft = action === 'compact' ? '' : `U5 unsent draft for ${action}`; await page.getByTestId('chat-composer-input').fill(draft);
