@@ -118,7 +118,7 @@ export async function replayPairedMeasurement({ root, base, scratch, out }) {
   const { checkBenefitRun } = await fromRoot('scripts/lib/rsi-benefit-eval.mjs');
   const { reconcileCampaign } = await fromRoot('scripts/rsi-paired-measurement.mjs');
   const originalCheck = checkBenefitRun(root, directory);
-  assert(originalCheck.errors.every(error => ['unexecuted-slots', 'incomplete-slots'].includes(error)), originalCheck.errors.join(', '));
+  assert(originalCheck.errors.every(error => ['unexecuted-slots', 'incomplete-slots'].includes(error.split(/\r?\n/u, 1)[0].trim())), originalCheck.errors.join(', '));
   const records = [], rawIds = new Set(), outcomeCounts = { pass: 0, fail: 0, crash: 0, timeout: 0, missing: 0 };
   let knownTrialTokens = 0, unknownTrialRequests = 0, trialProviderCalls = 0, toolCalls = 0;
   for (const slot of plan.slots) {
