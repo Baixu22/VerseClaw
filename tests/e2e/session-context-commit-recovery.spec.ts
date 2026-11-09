@@ -304,7 +304,7 @@ test('U5 real journal checkpoint restore changes v2 to v1 despite reply loss and
     expect(after.checkpoints.checkpoints.some(row => row.id === seed.record.id)).toBe(true); expect(await readFile(target, 'utf8')).toBe('v1\n');
     await page.getByTestId('chat-checkpoints-close').click(); await page.getByTestId('chat-toolbar-refresh').click(); await page.waitForTimeout(1000);
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('U5 retained restore draft');
-    const translations = [];
+    const translations: Array<{ language: string; title: string; emptyDiff: string }> = [];
     evidence.restore = { before, after, lost, diffBefore, diffAfter, restoredFileSha256: sha(await readFile(target)), source: seed.source, translations };
     await writeFile(info.outputPath('context-commit.json'), JSON.stringify(evidence, null, 2));
     for (const language of ['en', 'zh', 'ja', 'ru'] as const) {
