@@ -3,9 +3,20 @@ lifecycleStatus: active
 id: rsi-paired-measurement-closeout
 title: Recompute the retained v4 campaign and verify prompt rollback
 intent: Close the budget-limited RSI experiment from immutable Responses, tool, oracle and campaign receipts, then execute the existing prompt switch through off/on/off and continuation.
-diffBase: fb2d09a3a401deecace0ccdcb6d9fc71da0b9693
+diffBase: 5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976
 touchedAreas:
-  - scripts/rsi-coding-collector.mjs
+  - .gitignore
+  - scripts/repository-artifacts.json
+  - scripts/rsi-paired-measurement.*
+  - scripts/rsi-coding-collector.*
+  - scripts/rsi-live-acceptance.*
+  - scripts/lib/rsi-benefit-eval.*
+  - scripts/lib/rsi-campaign-budget.*
+  - scripts/lib/rsi-coding-tool-loop.*
+  - tests/unit/rsi-campaign-budget.test.ts
+  - tests/unit/rsi-coding-tool-loop.test.ts
+  - harness/specs/rules/rsi-campaign-budget-boundary.md
+  - harness/specs/tasks/rsi-paired-measurement.md
   - scripts/rsi-budget-stop-regression.mjs
   - scripts/rsi-paired-measurement-replay.*
   - tests/unit/rsi-paired-measurement-replay.test.ts
