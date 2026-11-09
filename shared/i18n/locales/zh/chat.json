@@ -334,6 +334,8 @@
     "copiedCode": "已复制"
   },
   "messageActions": {
+    "forkMissingBoundary": "此消息缺少记录边界，请刷新会话后再分支。",
+    "forkUnavailable": "会话连接正常且当前运行结束后才能分支。",
     "summarizeUpToHere": "摘要到此为止",
     "summarizeFromHere": "从这里开始摘要",
     "forkFromHere": "在新会话中提问",

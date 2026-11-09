@@ -334,6 +334,8 @@
     "copiedCode": "コピー済み"
   },
   "messageActions": {
+    "forkMissingBoundary": "このメッセージの会話記録の境界がありません。会話を更新してから分岐してください。",
+    "forkUnavailable": "セッションが接続され、現在の実行が完了すると分岐できます。",
     "summarizeUpToHere": "ここまでを要約",
     "summarizeFromHere": "ここから要約",
     "forkFromHere": "新しいセッションで質問",

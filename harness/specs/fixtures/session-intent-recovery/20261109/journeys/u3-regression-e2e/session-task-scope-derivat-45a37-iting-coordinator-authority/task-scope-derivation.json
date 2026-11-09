@@ -1,0 +1,115 @@
+{
+  "schema": "clawx.session-task-scope-derivation-e2e/v1",
+  "driven_by": "agent",
+  "actor": "codex-session-task-scope-derivation-e2e",
+  "candidate": {
+    "commit": "c6a439a52f0366ffb9ab1df7c502e2ee4bb3593b",
+    "tree": "baaf9aabbb77bb4975aa18e2db874ac6c0cf97e8",
+    "dirty": false
+  },
+  "startedAt": "2026-11-09T06:17:27.939Z",
+  "status": "failed",
+  "source": {
+    "workspaceId": "default",
+    "sessionKey": "agent:main:dashboard:1d1306f8-2493-435d-9b07-6169b1bd7a74",
+    "generation": "d4d7e0b1-9345-4cfc-a277-00b452fc5949",
+    "task": {
+      "id": "51b54a9a8a6b68aada2b87eae7c011ae67b84785935a453ceea78b3e43dd3011",
+      "title": "Preserve this explicit task",
+      "kind": "task",
+      "parentId": null,
+      "status": "done",
+      "owner": "user",
+      "priority": "normal",
+      "tags": [],
+      "createdAt": "2026-11-09T06:17:49.573Z",
+      "updatedAt": "2026-11-09T06:17:49.573Z",
+      "completedAt": "2026-11-09T06:17:49.573Z"
+    },
+    "binding": {
+      "success": true,
+      "binding": {
+        "schemaVersion": 1,
+        "workspaceId": "default",
+        "agentId": "main",
+        "sessionKey": "agent:main:dashboard:1d1306f8-2493-435d-9b07-6169b1bd7a74",
+        "sessionGeneration": "d4d7e0b1-9345-4cfc-a277-00b452fc5949",
+        "taskLedgerReferences": [
+          {
+            "direction": "workboard-to-task-ledger",
+            "taskLedgerNodeId": "51b54a9a8a6b68aada2b87eae7c011ae67b84785935a453ceea78b3e43dd3011",
+            "source": "runtime"
+          }
+        ],
+        "activeTaskNodeId": "51b54a9a8a6b68aada2b87eae7c011ae67b84785935a453ceea78b3e43dd3011",
+        "environment": {
+          "kind": "local",
+          "canonicalRoot": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-nJvoaL\\verse-claw-e2e-home-9wleY5\\.openclaw\\workspace",
+          "backend": "git",
+          "branch": "codex/session-intent-recovery-20261109",
+          "detachedHead": false,
+          "setupProfile": "default"
+        },
+        "archiveRestorePolicy": "restore",
+        "state": "active",
+        "bindingRevision": 1,
+        "invalidationReason": null,
+        "createdAt": "2026-11-09T06:17:50.606Z",
+        "updatedAt": "2026-11-09T06:17:50.606Z"
+      },
+      "recovery": {
+        "state": "ready",
+        "reason": null,
+        "bindingRevision": 1
+      }
+    }
+  },
+  "fork": {
+    "result": {
+      "success": true,
+      "sourceSessionKey": "agent:main:dashboard:1d1306f8-2493-435d-9b07-6169b1bd7a74",
+      "sessionKey": "agent:main:dashboard:148bad9a-fc7b-41df-95d1-f8d878861785",
+      "agentId": "main",
+      "workspaceId": "default",
+      "forkedFromParent": true,
+      "warnings": []
+    },
+    "generation": "2f0f0eec-c560-4864-975f-b227d7f0a1f5",
+    "links": [
+      {
+        "id": "595f3ed1-3db2-483f-b48a-f420c3e2e5b2",
+        "sessionKey": "agent:main:dashboard:148bad9a-fc7b-41df-95d1-f8d878861785",
+        "agentId": "main",
+        "relation": "forked_from",
+        "sourceSessionKey": "agent:main:dashboard:1d1306f8-2493-435d-9b07-6169b1bd7a74",
+        "sessionGeneration": "2f0f0eec-c560-4864-975f-b227d7f0a1f5",
+        "createdAt": "2026-11-09T06:17:50.733Z"
+      },
+      {
+        "id": "595f3ed1-3db2-483f-b48a-f420c3e2e5b2:task:51b54a9a8a6b68aada2b87eae7c011ae67b84785935a453ceea78b3e43dd3011",
+        "sessionKey": "agent:main:dashboard:148bad9a-fc7b-41df-95d1-f8d878861785",
+        "agentId": "main",
+        "relation": "forked_from",
+        "sourceSessionKey": "agent:main:dashboard:1d1306f8-2493-435d-9b07-6169b1bd7a74",
+        "sessionGeneration": "2f0f0eec-c560-4864-975f-b227d7f0a1f5",
+        "createdAt": "2026-11-09T06:17:50.733Z",
+        "nodeId": "51b54a9a8a6b68aada2b87eae7c011ae67b84785935a453ceea78b3e43dd3011"
+      }
+    ],
+    "binding": {
+      "success": true,
+      "binding": null,
+      "recovery": {
+        "state": "missing",
+        "reason": "coordinator-binding-missing",
+        "bindingRevision": null
+      }
+    },
+    "admission": {
+      "success": false,
+      "status": "rejected",
+      "error": "Coordinator binding is missing: coordinator-binding-missing"
+    }
+  },
+  "error": "\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m"
+}

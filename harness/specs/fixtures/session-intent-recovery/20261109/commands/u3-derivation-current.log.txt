@@ -1,0 +1,84 @@
+
+Running 1 test using 1 worker
+
+(node:37180) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:37180) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[app:out] [2026-11-09T06:26:30.939Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)
+[app:out] [2026-11-09T06:26:30.940Z] [INFO] [ResourceTracker] Started heartbeat interval
+[2026-11-09T06:26:30.940Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=44972, ppid=33068
+[2026-11-09T06:26:30.940Z] [INFO] Running in E2E mode: startup side effects minimized
+[app:err] [2026-11-09T06:26:30.981Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[app:err] [2026-11-09T06:26:30.981Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[2026-11-09T06:26:30.982Z] [WARN] [webview-security] deny permission-check: WebView permission "web-app-installation" denied by default (fail-closed)
+[2026-11-09T06:26:30.982Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default
+[app:out] [2026-11-09T06:26:31.024Z] [INFO] [extensions] Extension "builtin/clawhub-marketplace" initialized
+[app:out] [2026-11-09T06:26:31.025Z] [INFO] [extensions] Extension "builtin/diagnostics" initialized
+[app:err] [44972:1109/142631.070:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[44972:1109/142631.070:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[app:out] [2026-11-09T06:26:31.283Z] [INFO] [efficiency] shed state changed {"shedding":false,"reason":null,"activeReasons":[],"transitionCount":2}
+[app:out] [2026-11-09T06:26:31.285Z] [INFO] Gateway auto-start skipped in E2E mode
+[app:err] [2026-11-09T06:26:31.286Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T06:26:31.286Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T06:26:31.286Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T06:26:31.286Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-09T06:26:31.327Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (start)
+[app:out] [2026-11-09T06:26:31.328Z] [INFO] Gateway start requested (port=56179)
+[app:out] [2026-11-09T06:26:31.334Z] [DEBUG] Device identity loaded (deviceId=95d0586e81d797521cdf164642c4a224950ddd7590ff6065997a001a0f8edd1a)
+[app:out] [2026-11-09T06:26:31.334Z] [DEBUG] Gateway state changed: stopped -> starting
+[app:out] [2026-11-09T06:26:31.643Z] [DEBUG] Checking for existing Gateway...
+[app:err] (node:44972) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+[app:out] [2026-11-09T06:26:32.031Z] [DEBUG] No existing Gateway found, starting new process...
+[app:out] [2026-11-09T06:26:32.219Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)
+[app:err] [2026-11-09T06:26:32.268Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.
+[app:out] [2026-11-09T06:26:32.272Z] [INFO] [metric] gateway.prelaunch {"settingsMs":0,"defaultProviderRuntimeSyncMs":0,"providerEnvMs":12,"channelStartupPolicyMs":4,"uvEnvMs":147,"mcpEnvMs":29,"runtimeConfigReadMs":0,"verseShellBundleMs":1,"totalMs":228,"maintenance":{},"configuredChannelCount":0}
+[app:out] [2026-11-09T06:26:32.273Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=56179, entry="D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime\dist\entry.js", args="gateway --port 56179 --allow-unconfigured", execArgv="", cwd="D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime", bundledBin=yes, providerKeys=0, channels=skipped(no configured channels), proxy=disabled)
+[app:out] [2026-11-09T06:26:32.513Z] [INFO] Gateway process started (pid=38520)
+[app:out] [2026-11-09T06:26:32.514Z] [DEBUG] Gateway manager now owns process pid=38520
+[app:err] [2026-11-09T06:26:32.567Z] [WARN] [Gateway stderr] (node:38520) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[app:err] [2026-11-09T06:26:32.567Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)
+[app:out] [2026-11-09T06:26:34.630Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)
+[app:out] [2026-11-09T06:26:36.768Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)
+[app:out] [2026-11-09T06:26:38.901Z] [DEBUG] Still waiting for Gateway... (attempt 31/2400)
+[app:out] [2026-11-09T06:26:39.502Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"power-saver","activeReasons":["power-saver"],"transitionCount":3}
+[app:out] [2026-11-09T06:26:40.973Z] [DEBUG] Still waiting for Gateway... (attempt 41/2400)
+[app:out] [2026-11-09T06:26:42.588Z] [DEBUG] [Gateway stderr] (node:38520) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+[app:err] [2026-11-09T06:26:42.589Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.
+[app:out] [2026-11-09T06:26:42.589Z] [DEBUG] [Gateway stderr] (node:38520) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.
+[app:out] [2026-11-09T06:26:44.590Z] [DEBUG] Still waiting for Gateway... (attempt 51/2400)
+[app:out] [2026-11-09T06:26:46.223Z] [DEBUG] Gateway ready after 52 attempt(s)
+[app:out] [2026-11-09T06:26:46.224Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:56179/ws)
+[app:err] [2026-11-09T06:26:46.256Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=e33564c8-f762-40e9-8e62-7ab50040962a peer=127.0.0.1:54998->127.0.0.1:56179 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:56179 ua=n/a code=1006 reason=n/a[39m
+[app:out] [2026-11-09T06:26:46.270Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[app:out] [2026-11-09T06:26:46.271Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-11-09T06:26:46.271Z] [DEBUG] Sending connect handshake with challenge nonce
+[app:err] [2026-11-09T06:26:46.275Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=bf2d430f-eb0c-4d4c-b088-fa1fb9790121 peer=127.0.0.1:61713->127.0.0.1:56179 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:56179 ua=n/a code=1006 reason=n/a[39m
+[app:out] [2026-11-09T06:26:46.378Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:56179/ws)
+[app:err] [2026-11-09T06:26:46.380Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)
+[app:out] [2026-11-09T06:26:49.082Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[app:out] [2026-11-09T06:26:49.082Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-11-09T06:26:49.082Z] [DEBUG] Sending connect handshake with challenge nonce
+[app:out] [2026-11-09T06:26:50.160Z] [DEBUG] Gateway connect handshake completed (protocol=4)
+[app:out] [2026-11-09T06:26:50.161Z] [DEBUG] Gateway state changed: starting -> running
+[app:out] [2026-11-09T06:26:50.162Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)
+[app:out] [2026-11-09T06:26:50.163Z] [INFO] [metric] gateway.startup {"configSyncMs":871,"spawnToReadyMs":13709,"readyToConnectMs":3940,"totalMs":18520}
+[app:out] [2026-11-09T06:26:57.070Z] [INFO] Gateway stop requested
+[app:out] [2026-11-09T06:26:57.070Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)
+[app:out] [2026-11-09T06:26:57.072Z] [INFO] Sending kill to Gateway process (pid=38520)
+[app:err] [2026-11-09T06:26:57.099Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)
+[app:out] [2026-11-09T06:26:57.100Z] [DEBUG] Gateway state changed: running -> stopped
+[app:out] [2026-11-09T06:26:58.328Z] [INFO] Gateway process exited (code=1, expected=yes)
+[app:out] [2026-11-09T06:26:58.329Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)
+[app:out] [2026-11-09T06:26:58.614Z] [INFO] Gateway stop requested
+[2026-11-09T06:26:58.614Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (stop)
+[app:err] Debugger ending on ws://127.0.0.1:53419/720245df-cdf5-4e80-bb97-34568c129177
+For help, see: https://nodejs.org/en/docs/inspector
+[app:out] [2026-11-09T06:26:58.640Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"window-hidden","activeReasons":["window-hidden","power-saver"],"transitionCount":4}
+[app:out] [2026-11-09T06:26:58.640Z] [INFO] [ResourceTracker] Stopped
+[app:out] [2026-11-09T06:26:58.640Z] [INFO] [ResourceTracker] Shutdown complete
+[app:out] [2026-11-09T06:26:58.641Z] [INFO] [efficiency-sampler] stopped
+[app:out] [2026-11-09T06:26:58.641Z] [INFO] [efficiency] runtime efficiency sampling stopped
+  ok 1 tests\e2e\session-task-scope-derivation.spec.ts:15:5 › Main preserves task references across fork and handoff without inheriting coordinator authority (48.7s)
+
+  1 passed (52.9s)

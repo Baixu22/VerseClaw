@@ -1,0 +1,1537 @@
+{
+  "schema": "session-intent-recovery/v1",
+  "driven_by": "agent",
+  "actor": "codex-unified-session-relay-01a1babd",
+  "observedAt": "2026-11-09T11:44:16.517990+00:00",
+  "candidate": "6ec33a105ebe2f1ba2a2b91885af3f06bde373d8",
+  "base": "806855309",
+  "acceptedNode": "TF-0659",
+  "status": "passed",
+  "uniqueUnitPassed": 114,
+  "uniqueElectronPassed": 15,
+  "commands": [
+    {
+      "name": "u3-units2",
+      "candidate": "9c4f112b56a68b1627961ae4043000d5ac600634",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/chat-message.test.tsx",
+        "tests/unit/session-handoff-recovery.test.ts",
+        "tests/unit/host-services.test.ts",
+        "tests/unit/workspace-session.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=json",
+        "--outputFile=D:/tmp/unified-management-20261109/intent-validation/u3-units2.tests.json"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": {
+        "total": 112,
+        "passed": 112,
+        "failed": 0,
+        "pending": 0
+      },
+      "acceptedCaseSubset": null,
+      "committedSourceDeltaToFinal": [
+        "README.ja-JP.md",
+        "README.md",
+        "README.ru-RU.md",
+        "README.zh-CN.md",
+        "docs/modules/multi-agent-and-tasks.md",
+        "harness/specs/tasks/session-handoff-recovery.md",
+        "tests/e2e/fixtures/windows-process.ts",
+        "tests/e2e/session-fork-intent.spec.ts",
+        "tests/e2e/session-task-scope-derivation.spec.ts"
+      ],
+      "sourceDeltaToFinal": [
+        "tests/e2e/session-fork-intent.spec.ts"
+      ]
+    },
+    {
+      "name": "u3-process-cleanup",
+      "candidate": "41c19e4bb34c1ea374bb9f34a21829906a723dbf",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/electron-process-identity.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=json",
+        "--outputFile=D:/tmp/unified-management-20261109/intent-validation/u3-process-cleanup.tests.json"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": {
+        "total": 2,
+        "passed": 2,
+        "failed": 0,
+        "pending": 0
+      },
+      "acceptedCaseSubset": null,
+      "committedSourceDeltaToFinal": [
+        "harness/specs/tasks/session-handoff-recovery.md",
+        "tests/e2e/fixtures/windows-process.ts"
+      ],
+      "sourceDeltaToFinal": [
+        "tests/e2e/fixtures/windows-process.ts"
+      ]
+    },
+    {
+      "name": "u3-node-types",
+      "candidate": "c6a439a52f0366ffb9ab1df7c502e2ee4bb3593b",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "committedSourceDeltaToFinal": [
+        "harness/specs/tasks/session-handoff-recovery.md",
+        "tests/e2e/fixtures/windows-process.ts",
+        "tests/e2e/session-task-scope-derivation.spec.ts"
+      ],
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "u3-web-types",
+      "candidate": "c6a439a52f0366ffb9ab1df7c502e2ee4bb3593b",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "committedSourceDeltaToFinal": [
+        "harness/specs/tasks/session-handoff-recovery.md",
+        "tests/e2e/fixtures/windows-process.ts",
+        "tests/e2e/session-task-scope-derivation.spec.ts"
+      ],
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "u3-test-types",
+      "candidate": "c6a439a52f0366ffb9ab1df7c502e2ee4bb3593b",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "committedSourceDeltaToFinal": [
+        "harness/specs/tasks/session-handoff-recovery.md",
+        "tests/e2e/fixtures/windows-process.ts",
+        "tests/e2e/session-task-scope-derivation.spec.ts"
+      ],
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "u3-contract",
+      "candidate": "c6a439a52f0366ffb9ab1df7c502e2ee4bb3593b",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/contract-check.mjs"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "committedSourceDeltaToFinal": [
+        "harness/specs/tasks/session-handoff-recovery.md",
+        "tests/e2e/fixtures/windows-process.ts",
+        "tests/e2e/session-task-scope-derivation.spec.ts"
+      ],
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "u3-i18n",
+      "candidate": "c6a439a52f0366ffb9ab1df7c502e2ee4bb3593b",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/i18n-lint.mjs"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "committedSourceDeltaToFinal": [
+        "harness/specs/tasks/session-handoff-recovery.md",
+        "tests/e2e/fixtures/windows-process.ts",
+        "tests/e2e/session-task-scope-derivation.spec.ts"
+      ],
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "u3-harness",
+      "candidate": "c6a439a52f0366ffb9ab1df7c502e2ee4bb3593b",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/session-handoff-recovery.md"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "committedSourceDeltaToFinal": [
+        "harness/specs/tasks/session-handoff-recovery.md",
+        "tests/e2e/fixtures/windows-process.ts",
+        "tests/e2e/session-task-scope-derivation.spec.ts"
+      ],
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "u3-comms-replay",
+      "candidate": "c6a439a52f0366ffb9ab1df7c502e2ee4bb3593b",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/comms/replay.mjs"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "committedSourceDeltaToFinal": [
+        "harness/specs/tasks/session-handoff-recovery.md",
+        "tests/e2e/fixtures/windows-process.ts",
+        "tests/e2e/session-task-scope-derivation.spec.ts"
+      ],
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "u3-comms-compare",
+      "candidate": "c6a439a52f0366ffb9ab1df7c502e2ee4bb3593b",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/comms/compare.mjs"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "committedSourceDeltaToFinal": [
+        "harness/specs/tasks/session-handoff-recovery.md",
+        "tests/e2e/fixtures/windows-process.ts",
+        "tests/e2e/session-task-scope-derivation.spec.ts"
+      ],
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "u3-desktop-build2",
+      "candidate": "c6a439a52f0366ffb9ab1df7c502e2ee4bb3593b",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--max-old-space-size=6144",
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "committedSourceDeltaToFinal": [
+        "harness/specs/tasks/session-handoff-recovery.md",
+        "tests/e2e/fixtures/windows-process.ts",
+        "tests/e2e/session-task-scope-derivation.spec.ts"
+      ],
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "u3-intent-e2e",
+      "candidate": "c6a439a52f0366ffb9ab1df7c502e2ee4bb3593b",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/session-fork-intent.spec.ts",
+        "--workers=1",
+        "--reporter=list,json",
+        "--output=D:/tmp/unified-management-20261109/intent-validation/u3-intent-e2e-results"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": {
+        "startTime": "2026-11-09T06:09:29.055Z",
+        "duration": 239553.332,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "acceptedCaseSubset": null,
+      "committedSourceDeltaToFinal": [
+        "harness/specs/tasks/session-handoff-recovery.md",
+        "tests/e2e/fixtures/windows-process.ts",
+        "tests/e2e/session-task-scope-derivation.spec.ts"
+      ],
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "u3-regression-e2e",
+      "candidate": "c6a439a52f0366ffb9ab1df7c502e2ee4bb3593b",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/chat-session-handoff.spec.ts",
+        "tests/e2e/chat-session-fork.spec.ts",
+        "tests/e2e/session-task-scope-derivation.spec.ts",
+        "--workers=1",
+        "--reporter=list,json",
+        "--output=D:/tmp/unified-management-20261109/intent-validation/u3-regression-e2e-results"
+      ],
+      "exitCode": 1,
+      "sourceUnchanged": true,
+      "tests": {
+        "startTime": "2026-11-09T06:16:09.564Z",
+        "duration": 106517.60100000001,
+        "expected": 8,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "acceptedCaseSubset": "Eight Fork/Handoff cases only; stale null-generation assertion failed and was replaced by u3-derivation-current.",
+      "committedSourceDeltaToFinal": [
+        "harness/specs/tasks/session-handoff-recovery.md",
+        "tests/e2e/fixtures/windows-process.ts",
+        "tests/e2e/session-task-scope-derivation.spec.ts"
+      ],
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "u3-derivation-current",
+      "candidate": "b9b824e51c58e53c364c235a7ce9124e7b91b515",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/session-task-scope-derivation.spec.ts",
+        "--workers=1",
+        "--reporter=list,json",
+        "--output=D:/tmp/unified-management-20261109/intent-validation/u3-derivation-current-results"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": {
+        "startTime": "2026-11-09T06:26:15.619Z",
+        "duration": 52938.092,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "acceptedCaseSubset": null,
+      "committedSourceDeltaToFinal": [
+        "harness/specs/tasks/session-handoff-recovery.md",
+        "tests/e2e/fixtures/windows-process.ts"
+      ],
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "u3-handoff-scopes",
+      "candidate": "b9b824e51c58e53c364c235a7ce9124e7b91b515",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/session-chain-scope-faults.spec.ts",
+        "--grep",
+        "Handoff",
+        "--workers=1",
+        "--reporter=list,json",
+        "--output=D:/tmp/unified-management-20261109/intent-validation/u3-handoff-scopes-results"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": {
+        "startTime": "2026-11-09T10:35:01.193Z",
+        "duration": 33090.672999999995,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "acceptedCaseSubset": null,
+      "committedSourceDeltaToFinal": [
+        "harness/specs/tasks/session-handoff-recovery.md",
+        "tests/e2e/fixtures/windows-process.ts"
+      ],
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "u3-owner-restart2",
+      "candidate": "b9b824e51c58e53c364c235a7ce9124e7b91b515",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/session-task-scope-completion.spec.ts",
+        "--grep",
+        "real Gateway",
+        "--workers=1",
+        "--reporter=list,json",
+        "--output=D:/tmp/unified-management-20261109/intent-validation/u3-owner-restart2-results"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": {
+        "startTime": "2026-11-09T10:35:37.304Z",
+        "duration": 353437.858,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "acceptedCaseSubset": null,
+      "committedSourceDeltaToFinal": [
+        "harness/specs/tasks/session-handoff-recovery.md",
+        "tests/e2e/fixtures/windows-process.ts"
+      ],
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "u3-question-preview4",
+      "candidate": "41c19e4bb34c1ea374bb9f34a21829906a723dbf",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/session-derivation-ui.spec.ts",
+        "--grep",
+        "question fork",
+        "--workers=1",
+        "--reporter=list,json",
+        "--output=D:/tmp/unified-management-20261109/intent-validation/u3-question-preview4-results"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": {
+        "startTime": "2026-11-09T11:32:26.063Z",
+        "duration": 152980.12,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "acceptedCaseSubset": null,
+      "committedSourceDeltaToFinal": [
+        "harness/specs/tasks/session-handoff-recovery.md",
+        "tests/e2e/fixtures/windows-process.ts"
+      ],
+      "sourceDeltaToFinal": [
+        "tests/e2e/fixtures/windows-process.ts"
+      ]
+    },
+    {
+      "name": "u3-harness-preview",
+      "candidate": "b9b824e51c58e53c364c235a7ce9124e7b91b515",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/session-handoff-recovery.md",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "committedSourceDeltaToFinal": [
+        "harness/specs/tasks/session-handoff-recovery.md",
+        "tests/e2e/fixtures/windows-process.ts"
+      ],
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "u3-artifacts",
+      "candidate": "b9b824e51c58e53c364c235a7ce9124e7b91b515",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "committedSourceDeltaToFinal": [
+        "harness/specs/tasks/session-handoff-recovery.md",
+        "tests/e2e/fixtures/windows-process.ts"
+      ],
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "u3-final-test-types",
+      "candidate": "6ec33a105ebe2f1ba2a2b91885af3f06bde373d8",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "committedSourceDeltaToFinal": [],
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "u3-final-harness",
+      "candidate": "6ec33a105ebe2f1ba2a2b91885af3f06bde373d8",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/session-handoff-recovery.md"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "committedSourceDeltaToFinal": [],
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "u3-final-harness-preview",
+      "candidate": "6ec33a105ebe2f1ba2a2b91885af3f06bde373d8",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/session-handoff-recovery.md",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "acceptedCaseSubset": null,
+      "committedSourceDeltaToFinal": [],
+      "sourceDeltaToFinal": []
+    }
+  ],
+  "unitCases": [
+    "chat-message.test.tsx::ChatMessage Fork action identity and availability keeps a missing boundary visible and disabled, and never bypasses busy message actions",
+    "chat-message.test.tsx::ChatMessage LaTeX rendering does not rewrite `\\(` inside code fences",
+    "chat-message.test.tsx::ChatMessage LaTeX rendering renders `\\(...\\)` inline math (OpenAI-style escaping)",
+    "chat-message.test.tsx::ChatMessage LaTeX rendering renders `\\[...\\]` block math (OpenAI-style escaping)",
+    "chat-message.test.tsx::ChatMessage LaTeX rendering renders display `$$...$$` math as a block",
+    "chat-message.test.tsx::ChatMessage LaTeX rendering renders inline `$...$` math with KaTeX",
+    "chat-message.test.tsx::ChatMessage Tool UI rendering converts Markdown plan checklists into plan cards",
+    "chat-message.test.tsx::ChatMessage Tool UI rendering converts Markdown preferences tables into preferences panel cards",
+    "chat-message.test.tsx::ChatMessage Tool UI rendering converts Markdown question and options blocks into question flow cards",
+    "chat-message.test.tsx::ChatMessage Tool UI rendering keeps ordinary JSON code fences visible when they are not Tool UI payloads",
+    "chat-message.test.tsx::ChatMessage Tool UI rendering parses relaxed Tool UI wrapper arrays from component-specific fences",
+    "chat-message.test.tsx::ChatMessage Tool UI rendering renders Tool UI option-list tool calls and emits a structured response",
+    "chat-message.test.tsx::ChatMessage Tool UI rendering renders fenced Tool UI plan payloads as structured cards and removes the raw JSON block",
+    "chat-message.test.tsx::ChatMessage attachment dedupe continues hiding non-preview process attachments when process attachments are suppressed",
+    "chat-message.test.tsx::ChatMessage attachment dedupe derives preview cards from assistant text paths when attachments are missing",
+    "chat-message.test.tsx::ChatMessage attachment dedupe derives skill directory cards from assistant text paths",
+    "chat-message.test.tsx::ChatMessage attachment dedupe does not show cards for hallucinated missing paths",
+    "chat-message.test.tsx::ChatMessage attachment dedupe hides generic tool-result markdown attachments when process attachments are suppressed",
+    "chat-message.test.tsx::ChatMessage attachment dedupe keeps attached SKILL.md visible when process attachments are suppressed",
+    "chat-message.test.tsx::ChatMessage attachment dedupe keeps attachment-only assistant replies visible even when process attachments are suppressed",
+    "chat-message.test.tsx::ChatMessage attachment dedupe keeps html artifacts visible when process attachments are suppressed",
+    "chat-message.test.tsx::ChatMessage attachment dedupe keeps image artifacts visible alongside reply text when process attachments are suppressed",
+    "chat-message.test.tsx::ChatMessage attachment dedupe keeps message-ref image artifacts visible alongside reply text when process attachments are suppressed",
+    "chat-message.test.tsx::ChatMessage attachment dedupe keeps pdf and spreadsheet artifacts visible when process attachments are suppressed",
+    "chat-message.test.tsx::ChatMessage attachment dedupe keeps unicode Windows skill directory paths as cards",
+    "chat-message.test.tsx::ChatMessage attachment dedupe renders the assistant avatar in a fully clipped stable slot",
+    "chat-message.test.tsx::ChatMessage attachment dedupe shows SKILL.md as a previewable file card instead of a folder",
+    "chat-message.test.tsx::ChatMessage attachment dedupe shows an explicit loading state for image artifacts before preview hydration finishes",
+    "chat-message.test.tsx::ChatMessage attachment dedupe shows an unavailable state after image preview hydration gives up",
+    "chat-message.test.tsx::ChatMessage image copy copies image bytes instead of the media URL text when an image attachment is present",
+    "chat-message.test.tsx::ChatMessage reply styling keeps user messages in the blue rounded bubble",
+    "chat-message.test.tsx::ChatMessage reply styling renders assistant replies as plain Markdown without a rounded bubble wrapper",
+    "chat-message.test.tsx::ChatMessage word wrapping does not apply break-all to the assistant prose wrapper",
+    "chat-message.test.tsx::ChatMessage word wrapping does not apply break-all to user message text",
+    "chat-message.test.tsx::ChatMessage word wrapping leaves inline code styling to the ported Codex recipe",
+    "chat-message.test.tsx::ChatMessage word wrapping wraps fenced code block contents instead of overflowing horizontally",
+    "electron-process-identity.test.ts::Electron creation time matches the native process identity",
+    "electron-process-identity.test.ts::cleanup preserves a reused PID and terminates only its recorded process identity",
+    "host-services.test.ts::host services assigns agent channels and schedules gateway reload",
+    "host-services.test.ts::host services builds channel accounts from config without gateway rpc in config mode",
+    "host-services.test.ts::host services creates provider accounts and syncs runtime config through the typed providers service",
+    "host-services.test.ts::host services deletes agents by restarting gateway, removing workspace, and returning snapshot",
+    "host-services.test.ts::host services does not activate a session if lineage cannot be written",
+    "host-services.test.ts::host services does not fork locally when Gateway is unavailable",
+    "host-services.test.ts::host services drops generation-fenced task references when the source resets during fork",
+    "host-services.test.ts::host services exposes provider account snapshot actions through the typed providers service",
+    "host-services.test.ts::host services forks sessions through Gateway without local transcript fallback",
+    "host-services.test.ts::host services forwards an explicit fromLeafId fork point and omits it otherwise (#180)",
+    "host-services.test.ts::host services installs plugin, saves config, ensures scoped binding, and schedules refresh on saveConfig",
+    "host-services.test.ts::host services keeps the four-hop depth bound opt-in with explicit workspace ownership",
+    "host-services.test.ts::host services lists channel targets from session history and validates channel type",
+    "host-services.test.ts::host services loads session summaries and transcript history through the typed sessions service",
+    "host-services.test.ts::host services merges runtime checkpoint handoff with ledger, git, observability, and transcript sources",
+    "host-services.test.ts::host services persists depth and parent/root ids before activating a handoff session and rejects the next hop",
+    "host-services.test.ts::host services prepares deterministic session handoff without requiring Gateway",
+    "host-services.test.ts::host services preserves current explicit business-task links during fork in Main",
+    "host-services.test.ts::host services preserves current explicit business-task links during handoff in Main",
+    "host-services.test.ts::host services proxies located (range) compaction with the chosen boundary (#178)",
+    "host-services.test.ts::host services proxies long-task control RPCs through Gateway",
+    "host-services.test.ts::host services proxies manual compaction to Gateway with force and appended instructions",
+    "host-services.test.ts::host services proxies read-only context recall through Gateway without local archive reads",
+    "host-services.test.ts::host services reads and updates agent bootstrap tooling config",
+    "host-services.test.ts::host services reads only selected log files from the log directory",
+    "host-services.test.ts::host services records canonical fork lineage in Main without creating a handoff",
+    "host-services.test.ts::host services refuses to prepare a handoff past the maximum relay depth (#179)",
+    "host-services.test.ts::host services rejects corrupt lineage before activation and re-reads it at creation time",
+    "host-services.test.ts::host services rejects task inheritance when the fork generation is missing",
+    "host-services.test.ts::host services rejects task inheritance when the source generation is missing",
+    "host-services.test.ts::host services reports compaction status unavailable when Gateway is missing",
+    "host-services.test.ts::host services reports degraded when the default account sync fails partially (R0-2)",
+    "host-services.test.ts::host services reports long-task control status unavailable when Gateway is missing",
+    "host-services.test.ts::host services restarts a running gateway when the Role Memory setting changes",
+    "host-services.test.ts::host services returns diagnostics snapshot with channel view and log tails",
+    "host-services.test.ts::host services routes gateway rpc through backpressure",
+    "host-services.test.ts::host services runs launch-at-startup side effects after settings.setMany and reset",
+    "host-services.test.ts::host services runs proxy side effects and restarts a running gateway after settings.set",
+    "host-services.test.ts::host services saves channel binding for existing agents and schedules channel refresh",
+    "host-services.test.ts::host services sends staged media through the typed chat service with gateway attachments",
+    "host-services.test.ts::host services sets the default provider account and syncs runtime defaults",
+    "host-services.test.ts::host services summarizes large transcripts from bounded head/tail reads",
+    "host-services.test.ts::host services updates and resets avatars through the typed agents Host API",
+    "host-services.test.ts::host services uses runtime history for keyed history and handoff rather than a stale local profile",
+    "host-services.test.ts::host services validates provider keys using account metadata and caller options",
+    "session-handoff-recovery.test.ts::durable handoff owner allows an explicitly retried pre-effect rejection with the same child and send key",
+    "session-handoff-recovery.test.ts::durable handoff owner binds the task selected in the existing composer before dispatching chat effects",
+    "session-handoff-recovery.test.ts::durable handoff owner confirms runtime ancestry, saves the child draft and reuses one child across duplicate creation requests",
+    "session-handoff-recovery.test.ts::durable handoff owner creates independent children for different intent IDs and replays each ID without creating again",
+    "session-handoff-recovery.test.ts::durable handoff owner does not reuse a first-send key with a different compiled payload",
+    "session-handoff-recovery.test.ts::durable handoff owner fences child transcript reads against wrong parents and reset races",
+    "session-handoff-recovery.test.ts::durable handoff owner keeps a lost worker response unknown until delivery evidence is available",
+    "session-handoff-recovery.test.ts::durable handoff owner keeps the same pending child when the source starts a run during creation",
+    "session-handoff-recovery.test.ts::durable handoff owner reconciles a lost send reply from the exact runtime transcript after restart",
+    "session-handoff-recovery.test.ts::durable handoff owner records acknowledgement separately and confirms the exact persisted first-turn identity",
+    "session-handoff-recovery.test.ts::durable handoff owner recovers a lost creation reply from the same runtime child after reconstructing Main services",
+    "session-handoff-recovery.test.ts::durable handoff owner recovers a lost worker acknowledgement from the exact persisted intervention key",
+    "session-handoff-recovery.test.ts::durable handoff owner rejects a changed source generation or draft without creating a second child",
+    "session-handoff-recovery.test.ts::durable handoff owner reports a definite runtime worker rejection as rejected: -32600",
+    "session-handoff-recovery.test.ts::durable handoff owner reports a definite runtime worker rejection as rejected: -32602",
+    "session-handoff-recovery.test.ts::durable handoff owner reports a definite runtime worker rejection as rejected: INVALID_REQUEST",
+    "session-handoff-recovery.test.ts::durable handoff owner retains a successful worker intervention without requiring a new run: {\"queued\":true,\"steered\":true}",
+    "session-handoff-recovery.test.ts::durable handoff owner retains a successful worker intervention without requiring a new run: {\"queued\":true}",
+    "session-handoff-recovery.test.ts::durable handoff owner retains an unknown delivery and prevents silent resends even when the text matches",
+    "session-handoff-recovery.test.ts::durable handoff owner retains one pending child while source resources remain unresolved without a writer binding",
+    "session-handoff-recovery.test.ts::durable handoff owner sends to the selected worker through the existing permission route and rejects stale parent generations",
+    "workspace-session.test.ts::workspace session helpers creates handoff sessions with the edited draft persisted in workspace state",
+    "workspace-session.test.ts::workspace session helpers creates new sessions inside the active workspace and current agent binding",
+    "workspace-session.test.ts::workspace session helpers does not activate a late fork after leaving and returning to the same source",
+    "workspace-session.test.ts::workspace session helpers does not activate a late handoff after leaving and returning to the same source",
+    "workspace-session.test.ts::workspace session helpers does not activate a project after its route is disposed during the workspace switch",
+    "workspace-session.test.ts::workspace session helpers forks sessions through Host API and preserves non-running workspace state",
+    "workspace-session.test.ts::workspace session helpers forwards an explicit fromLeafId when forking from a message (#180)",
+    "workspace-session.test.ts::workspace session helpers keeps a newly created session in the current workgroup",
+    "workspace-session.test.ts::workspace session helpers keeps the current view when Main refuses handoff creation",
+    "workspace-session.test.ts::workspace session helpers restores the default workspace before creating a workspace-scoped new session"
+  ],
+  "electronCases": [
+    "chat-session-fork.spec.ts::chat-session-fork.spec.ts > Verse Claw chat session fork > creates and selects a forked session with inherited history and copied draft without auto-send",
+    "chat-session-fork.spec.ts::chat-session-fork.spec.ts > Verse Claw chat session fork > disables fork entry points while a run is active",
+    "chat-session-fork.spec.ts::chat-session-fork.spec.ts > Verse Claw chat session fork > offers handoff preparation when fork fails because the parent is too large",
+    "chat-session-handoff.spec.ts::chat-session-handoff.spec.ts > Verse Claw chat session handoff > disables handoff entry points while a run is active",
+    "chat-session-handoff.spec.ts::chat-session-handoff.spec.ts > Verse Claw chat session handoff > keeps the current handoff draft when an old conversation responds late",
+    "chat-session-handoff.spec.ts::chat-session-handoff.spec.ts > Verse Claw chat session handoff > keeps the editable draft and session when creation rejects changed ancestry",
+    "chat-session-handoff.spec.ts::chat-session-handoff.spec.ts > Verse Claw chat session handoff > previews, edits, creates and sends the reviewed handoff with a recoverable child draft",
+    "chat-session-handoff.spec.ts::chat-session-handoff.spec.ts > Verse Claw chat session handoff > refuses a relay once the handoff depth limit is reached (#179)",
+    "session-chain-scope-faults.spec.ts::session-chain-scope-faults.spec.ts > automatic Handoff reconciliation ignores an old generation reply after refreshing the same session key",
+    "session-chain-scope-faults.spec.ts::session-chain-scope-faults.spec.ts > manual Handoff verification keeps Project B and its input when Project A replies late",
+    "session-derivation-ui.spec.ts::session-derivation-ui.spec.ts > question fork keeps its source draft and handoff submits one reviewed first turn",
+    "session-fork-intent.spec.ts::session-fork-intent.spec.ts > U3 plain model advice needs explicit Handoff preview and cancellation creates no child",
+    "session-fork-intent.spec.ts::session-fork-intent.spec.ts > U3 rejects question Fork without an assistant ancestor and disables missing-entry projections",
+    "session-task-scope-completion.spec.ts::session-task-scope-completion.spec.ts > real Gateway keeps discussion empty, admits one write, and restores the same handoff child after restart",
+    "session-task-scope-derivation.spec.ts::session-task-scope-derivation.spec.ts > Main preserves task references across fork and handoff without inheriting coordinator authority"
+  ],
+  "failures": [
+    {
+      "name": "u3-host-fixture-fix",
+      "candidate": "3ad4047c335758c4acec3982166aef088e825452",
+      "exitCode": 1,
+      "tests": {
+        "total": 45,
+        "passed": 40,
+        "failed": 5,
+        "pending": 0
+      },
+      "sha256": "43abe1888f868cf5adf382cd39d084e5fe5ef7ad2200aec5dece05f32097df8b"
+    },
+    {
+      "name": "u3-owner-restart",
+      "candidate": "b9b824e51c58e53c364c235a7ce9124e7b91b515",
+      "exitCode": 1,
+      "tests": {
+        "startTime": "2026-11-09T10:24:59.147Z",
+        "duration": 524203.679,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "sha256": "7146e878434902d73d0f52f62515029456b263e62334d36a6a1e5948b06504db"
+    },
+    {
+      "name": "u3-question-preview",
+      "candidate": "b9b824e51c58e53c364c235a7ce9124e7b91b515",
+      "exitCode": 1,
+      "tests": {
+        "startTime": "2026-11-09T10:42:11.389Z",
+        "duration": 193991.792,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "sha256": "9bea9463e5f886829c94a95075a344810c13a12ae88431299782927725461300"
+    },
+    {
+      "name": "u3-question-preview2",
+      "candidate": "b9b824e51c58e53c364c235a7ce9124e7b91b515",
+      "exitCode": 1,
+      "tests": {
+        "startTime": "2026-11-09T10:57:45.183Z",
+        "duration": 348570.201,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "sha256": "88ed3af927ad79b9723706779e29841c7732d09bb23e714100a14b5d7c7fa197"
+    },
+    {
+      "name": "u3-question-preview3",
+      "candidate": "b9b824e51c58e53c364c235a7ce9124e7b91b515",
+      "exitCode": 1,
+      "tests": {
+        "startTime": "2026-11-09T11:23:05.185Z",
+        "duration": 300564.453,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "sha256": "28f7447eff8565f7beed3350270527b160848afcc54bbd93e4ba1d545d562ab4"
+    },
+    {
+      "name": "u3-regression-e2e",
+      "candidate": "c6a439a52f0366ffb9ab1df7c502e2ee4bb3593b",
+      "exitCode": 1,
+      "tests": {
+        "startTime": "2026-11-09T06:16:09.564Z",
+        "duration": 106517.60100000001,
+        "expected": 8,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "sha256": "874574011fa769fd6710a75a1203b9de5230c2e0d00cb291da548e2d421b676b"
+    },
+    {
+      "name": "u3-units",
+      "candidate": "3ad4047c335758c4acec3982166aef088e825452",
+      "exitCode": 1,
+      "tests": {
+        "total": 112,
+        "passed": 97,
+        "failed": 15,
+        "pending": 0
+      },
+      "sha256": "1c2bbce4bef59d706e85d4660e16aead7bab3b693ba10a7f19668605bc06e07a"
+    }
+  ],
+  "evidenceInventory": [
+    {
+      "path": "commands/u3-units2.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-units2.result.json",
+      "sha256": "489e5e47820b8dfb4344922513a062b7c21a95f53e9fe7c6eec75058e249f64f"
+    },
+    {
+      "path": "commands/u3-units2.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-units2.tests.json",
+      "sha256": "26dbced1cb251ecc63fc602192c48e071e2da9057a3a1b66afef9854eb27c1b3"
+    },
+    {
+      "path": "commands/u3-units2.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-units2.log",
+      "sha256": "e0848e7c9caa60fc8c591b722fb3c02800b4884ef27f92a9d964158d85a3508d"
+    },
+    {
+      "path": "commands/u3-process-cleanup.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-process-cleanup.result.json",
+      "sha256": "a24e11b80ab21a281d6a8459e97b9fbac92ce2c0cf3e67cd2010ab619466bbc2"
+    },
+    {
+      "path": "commands/u3-process-cleanup.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-process-cleanup.tests.json",
+      "sha256": "e63fc1d70bfa44d478d54b27037f3b8ab264127669ff961943209b1fc2b0850a"
+    },
+    {
+      "path": "commands/u3-process-cleanup.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-process-cleanup.log",
+      "sha256": "5881931dfc96479309ff5a8f424576f129a300db8b4416f616e8b518d20d1d4a"
+    },
+    {
+      "path": "commands/u3-node-types.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-node-types.result.json",
+      "sha256": "57cda88b2e36f7308bcd29bae93da4cc1e3dafc097f62024ef8089597c6ab5f4"
+    },
+    {
+      "path": "commands/u3-node-types.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-node-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "commands/u3-web-types.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-web-types.result.json",
+      "sha256": "9b449f57dcd44c4fa20ea703a45b3b9e3e4ff39195dc02ad91f56200edc4e701"
+    },
+    {
+      "path": "commands/u3-web-types.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-web-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "commands/u3-test-types.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-test-types.result.json",
+      "sha256": "b671775e4c31f299006c18354f3a0c3a2bfbd5a93fd816127093b41732422ede"
+    },
+    {
+      "path": "commands/u3-test-types.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-test-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "commands/u3-contract.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-contract.result.json",
+      "sha256": "7c629ee444b8e4fbdaa229591ca3c61fac7e4df694577fd07d76ec60fb27e61b"
+    },
+    {
+      "path": "commands/u3-contract.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-contract.log",
+      "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+    },
+    {
+      "path": "commands/u3-i18n.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-i18n.result.json",
+      "sha256": "6ea728d6ccbe3fb69560132ceefc19c0ae5b5430edacd34fb466dea49c841d62"
+    },
+    {
+      "path": "commands/u3-i18n.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-i18n.log",
+      "sha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe"
+    },
+    {
+      "path": "commands/u3-harness.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-harness.result.json",
+      "sha256": "fd6a1a19247ee4643c6185503a686dffe0c9e17106e6aa0adce3fdfde6ca5565"
+    },
+    {
+      "path": "commands/u3-harness.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-harness.log",
+      "sha256": "652f42d0c3c7d6609024ec58c1b4a7c3a9485469a62410d1503d56e6c06c1f5a"
+    },
+    {
+      "path": "commands/u3-comms-replay.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-comms-replay.result.json",
+      "sha256": "2bec6ec752cbc57df0d251137c9e5f01d51051cd9e2d124153168ed0b91101a8"
+    },
+    {
+      "path": "commands/u3-comms-replay.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-comms-replay.log",
+      "sha256": "ec2fdd7e914d1ce4c5b82fd3c4360b39bfb21b50b8f5d17da6d84ffbe4a6ef9f"
+    },
+    {
+      "path": "commands/u3-comms-compare.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-comms-compare.result.json",
+      "sha256": "e82b464daabe0121c21fadfb6ae3e7e014479fb55fd52cf6e026b216df769c2b"
+    },
+    {
+      "path": "commands/u3-comms-compare.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-comms-compare.log",
+      "sha256": "eba2d6ceafc4013a9b20994fb691282295a4b49e8e6bccd2e83d8a6aab57678e"
+    },
+    {
+      "path": "commands/u3-desktop-build2.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-desktop-build2.result.json",
+      "sha256": "038467cf80142d38b1bdaebe487b98ac21656c6c3cc504661b30ebc672fc62d5"
+    },
+    {
+      "path": "commands/u3-desktop-build2.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-desktop-build2.log",
+      "sha256": "04107108a12535f04e06efbff892dd17d8e40b9679d7193a1cea67e398152c81"
+    },
+    {
+      "path": "commands/u3-intent-e2e.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-intent-e2e.result.json",
+      "sha256": "480485de6b6cca736e3827aba63892aac8c7c16cc9240ec09843f1355add9f97"
+    },
+    {
+      "path": "commands/u3-intent-e2e.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-intent-e2e.tests.json",
+      "sha256": "46c617019795cbbaaf20f395314d62f2b8b885ef38cc9223d9334c8c14dbb7dc"
+    },
+    {
+      "path": "commands/u3-intent-e2e.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-intent-e2e.log",
+      "sha256": "595f353220b9adef79de2c1076e6f2a45c6b14afdf79cd711ac29ff8eb9b7185"
+    },
+    {
+      "path": "journeys/u3-intent-e2e/electron-process-cleanup.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-intent-e2e-results\\electron-process-cleanup.json",
+      "sha256": "89b43f0a6261e833ed404590d92afab850c5c6fb9d58dd2a4a5676ab7f27d324"
+    },
+    {
+      "path": "journeys/u3-intent-e2e/electron-process-run.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-intent-e2e-results\\electron-process-run.json",
+      "sha256": "86174b7950868417f6afb40b71ce0ba2417254f29f980a0b00548c0442b597a2"
+    },
+    {
+      "path": "journeys/u3-intent-e2e/session-fork-intent-U3-pla-32849-ncellation-creates-no-child/u3-explicit-handoff-preview.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-intent-e2e-results\\session-fork-intent-U3-pla-32849-ncellation-creates-no-child\\u3-explicit-handoff-preview.png",
+      "sha256": "c512fd6f5f5679e956988e91331e884a909d7bbcb90bc0b8421aa279d96e05df"
+    },
+    {
+      "path": "journeys/u3-intent-e2e/session-fork-intent-U3-pla-32849-ncellation-creates-no-child/u3-prose-no-hidden-child.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-intent-e2e-results\\session-fork-intent-U3-pla-32849-ncellation-creates-no-child\\u3-prose-no-hidden-child.png",
+      "sha256": "ca9a72a85ad1470734d6a4cbacb2563628ecf2b355fe9045679d9dba71a7e315"
+    },
+    {
+      "path": "journeys/u3-intent-e2e/session-fork-intent-U3-pla-32849-ncellation-creates-no-child/u3-text-intent.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-intent-e2e-results\\session-fork-intent-U3-pla-32849-ncellation-creates-no-child\\u3-text-intent.json",
+      "sha256": "efa7198e86793b1c97508b56dd9c22f7d3b5972ba3d748e241e4c1387e476cf2"
+    },
+    {
+      "path": "journeys/u3-intent-e2e/session-fork-intent-U3-pla-32849-ncellation-creates-no-child/ui-diagnostic-0.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-intent-e2e-results\\session-fork-intent-U3-pla-32849-ncellation-creates-no-child\\ui-diagnostic-0.png",
+      "sha256": "d1cb8f8af18058171d337e8dc713c17e9d98a95a5e835fc55c727c9be445903b"
+    },
+    {
+      "path": "journeys/u3-intent-e2e/session-fork-intent-U3-pla-32849-ncellation-creates-no-child/ui-diagnostics.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-intent-e2e-results\\session-fork-intent-U3-pla-32849-ncellation-creates-no-child\\ui-diagnostics.json",
+      "sha256": "a1a993ee2048e4b431529b3d9cb7e5f41f233aacc8c76fdb1f641f9b273bf962"
+    },
+    {
+      "path": "journeys/u3-intent-e2e/session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections/u3-fork-boundaries.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-intent-e2e-results\\session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections\\u3-fork-boundaries.json",
+      "sha256": "db4b0074c5a87649fde73a2459ec31ee5ebcb75f841c362c764dde0df53d5f26"
+    },
+    {
+      "path": "journeys/u3-intent-e2e/session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections/u3-missing-entry-en.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-intent-e2e-results\\session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections\\u3-missing-entry-en.png",
+      "sha256": "e3cca0802f2dfa78cff175f8e2e0a179c9338644d7f5497d440464cdc8df430f"
+    },
+    {
+      "path": "journeys/u3-intent-e2e/session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections/u3-missing-entry-ja.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-intent-e2e-results\\session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections\\u3-missing-entry-ja.png",
+      "sha256": "2395cb15f385f07e2bcb1d5af228511b568439459802568c1965db54c41146c9"
+    },
+    {
+      "path": "journeys/u3-intent-e2e/session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections/u3-missing-entry-ru.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-intent-e2e-results\\session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections\\u3-missing-entry-ru.png",
+      "sha256": "1d6213fbb7e3bb6b5405315dbd86992c797acadc6a2b2f2523cd3c5a216948bb"
+    },
+    {
+      "path": "journeys/u3-intent-e2e/session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections/u3-missing-entry-zh.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-intent-e2e-results\\session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections\\u3-missing-entry-zh.png",
+      "sha256": "86718c724db49f5abc256a32f698c041006e08681fb31402679e11e8670f53ee"
+    },
+    {
+      "path": "journeys/u3-intent-e2e/session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections/u3-no-assistant-ancestor.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-intent-e2e-results\\session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections\\u3-no-assistant-ancestor.png",
+      "sha256": "1e7e582fea419d1eabe1797c63818f8f3f204eca50abaf767ca95c88ed0c9849"
+    },
+    {
+      "path": "journeys/u3-intent-e2e/session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections/ui-diagnostic-0.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-intent-e2e-results\\session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections\\ui-diagnostic-0.png",
+      "sha256": "ac6251899632c3b1edfbc62f57cfbd75ba9b21cadc71b546caced88aff8e1112"
+    },
+    {
+      "path": "journeys/u3-intent-e2e/session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections/ui-diagnostics.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-intent-e2e-results\\session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections\\ui-diagnostics.json",
+      "sha256": "9e3c4c0310034f5e11ed5378fdda14720291c83e0c84a8fafb874bd2fc75bbc3"
+    },
+    {
+      "path": "commands/u3-regression-e2e.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-regression-e2e.result.json",
+      "sha256": "874574011fa769fd6710a75a1203b9de5230c2e0d00cb291da548e2d421b676b"
+    },
+    {
+      "path": "commands/u3-regression-e2e.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-regression-e2e.tests.json",
+      "sha256": "76affd94e1d2461810746da301973ed5a2190ccad3bfa930a27bbbc3197cfe50"
+    },
+    {
+      "path": "commands/u3-regression-e2e.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-regression-e2e.log",
+      "sha256": "43565510098b02f323f629c80bbb62e669ed9cabecd440de911d071a1b548598"
+    },
+    {
+      "path": "journeys/u3-regression-e2e/electron-process-cleanup.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-regression-e2e-results\\electron-process-cleanup.json",
+      "sha256": "a9677321e9e8340ddf8fd9f1eda946f4b0127b06098307e457bc710b2e4caddb"
+    },
+    {
+      "path": "journeys/u3-regression-e2e/electron-process-run.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-regression-e2e-results\\electron-process-run.json",
+      "sha256": "b0a8eafa1aa036a528b574e8335f92e895c78c00ad4d3b0b089ed2b65cc78d60"
+    },
+    {
+      "path": "journeys/u3-regression-e2e/chat-session-handoff-Verse-7b0f1--conversation-responds-late/handoff-isolation-ready.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-regression-e2e-results\\chat-session-handoff-Verse-7b0f1--conversation-responds-late\\handoff-isolation-ready.png",
+      "sha256": "254f2af7899405c5a35f78b05c913bd6f75a421c9da8eae44130dadeadca6fa6"
+    },
+    {
+      "path": "journeys/u3-regression-e2e/session-task-scope-derivat-45a37-iting-coordinator-authority/task-scope-derivation.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-regression-e2e-results\\session-task-scope-derivat-45a37-iting-coordinator-authority\\task-scope-derivation.json",
+      "sha256": "21e477d41ab304e97b12a69552ad4efb1f6d04bf3284616b9fbe0474dfd4a058"
+    },
+    {
+      "path": "journeys/u3-regression-e2e/session-task-scope-derivat-45a37-iting-coordinator-authority/test-failed-1.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-regression-e2e-results\\session-task-scope-derivat-45a37-iting-coordinator-authority\\test-failed-1.png",
+      "sha256": "dda4bd1ab1f5a122a6dfc5d1fd3aea7823e04e208ff2cb0e90365f151f8e6474"
+    },
+    {
+      "path": "commands/u3-derivation-current.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-derivation-current.result.json",
+      "sha256": "aba4da936af23c6a36dd78bcff7f0da084c8740b6d1297f2c75a1abaa97dd3aa"
+    },
+    {
+      "path": "commands/u3-derivation-current.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-derivation-current.tests.json",
+      "sha256": "b1fcbc6ba1cba8435ad1122ce994a0bfd8829457dc13bdee1bcb63188f7e036c"
+    },
+    {
+      "path": "commands/u3-derivation-current.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-derivation-current.log",
+      "sha256": "0968b30410dd3acfa9c0100c3f8545bc48102374085e20ad02c345c3afc76bee"
+    },
+    {
+      "path": "journeys/u3-derivation-current/electron-process-cleanup.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-derivation-current-results\\electron-process-cleanup.json",
+      "sha256": "c83a3ea36ac409c161f620727324c8250b44dce105114d0c21b7f31bd4da94cb"
+    },
+    {
+      "path": "journeys/u3-derivation-current/electron-process-run.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-derivation-current-results\\electron-process-run.json",
+      "sha256": "fe56b6f35a7b6f3e1aaeff1f1d0b17bc0263fef16deb00d728c8dca4c96116d4"
+    },
+    {
+      "path": "journeys/u3-derivation-current/session-task-scope-derivat-45a37-iting-coordinator-authority/task-scope-derivation.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-derivation-current-results\\session-task-scope-derivat-45a37-iting-coordinator-authority\\task-scope-derivation.json",
+      "sha256": "ed2ef2caa51cf4f4ca578b4a22293112f7162227c9a78dd89d89a4cdd588a255"
+    },
+    {
+      "path": "journeys/u3-derivation-current/session-task-scope-derivat-45a37-iting-coordinator-authority/task-scope-derived-session.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-derivation-current-results\\session-task-scope-derivat-45a37-iting-coordinator-authority\\task-scope-derived-session.png",
+      "sha256": "db564b6e5daf0a94bf93d82a0b5bec11be8215019473513f89bc07c8ff8fffba"
+    },
+    {
+      "path": "commands/u3-handoff-scopes.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-handoff-scopes.result.json",
+      "sha256": "a9d20ec6a4be37565f8bd4b49d2478fa9267a3ade340faadb16413115252b39a"
+    },
+    {
+      "path": "commands/u3-handoff-scopes.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-handoff-scopes.tests.json",
+      "sha256": "aad7f23bd6881b87b077fe9b82b711bb2068cead121a5328dc3e4f88b165c69f"
+    },
+    {
+      "path": "commands/u3-handoff-scopes.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-handoff-scopes.log",
+      "sha256": "9df30aeb26912804c0ad5ceca132dff2252453786cdfaa61b673faa9a9cf268e"
+    },
+    {
+      "path": "journeys/u3-handoff-scopes/electron-process-cleanup.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-handoff-scopes-results\\electron-process-cleanup.json",
+      "sha256": "162617ed9151850cebed65b46e4c486296a356e0876c9fb1c445ef4fd4f05ebe"
+    },
+    {
+      "path": "journeys/u3-handoff-scopes/electron-process-run.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-handoff-scopes-results\\electron-process-run.json",
+      "sha256": "1da66eef0956d4f283be50336348e21e74b9100ab1a0574b45652043f76eb587"
+    },
+    {
+      "path": "commands/u3-owner-restart2.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-owner-restart2.result.json",
+      "sha256": "73e9dd891f0d19fd06e7642afb9ea76ba6de7d1fabe4e7ae5dd8a76df4786e2d"
+    },
+    {
+      "path": "commands/u3-owner-restart2.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-owner-restart2.tests.json",
+      "sha256": "411cd1ace131b27bafc56441e498f9055eb1ccd9bd6ad96d94d2ccf386204871"
+    },
+    {
+      "path": "commands/u3-owner-restart2.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-owner-restart2.log",
+      "sha256": "c994afae6a514f0a02a6cc45711706fa7c6305896f059a3e361a171597d61598"
+    },
+    {
+      "path": "journeys/u3-owner-restart2/electron-process-cleanup.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-owner-restart2-results\\electron-process-cleanup.json",
+      "sha256": "255bc41d67789bff4de1724c9f15aed321ae85f73329b7bb8cc6ec9f2b5403a2"
+    },
+    {
+      "path": "journeys/u3-owner-restart2/electron-process-run.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-owner-restart2-results\\electron-process-run.json",
+      "sha256": "80e6a7a49ed143e22b1333437d5151572889d15a71fabebc8fd35939c2aa8061"
+    },
+    {
+      "path": "journeys/u3-owner-restart2/session-task-scope-complet-b4f76-handoff-child-after-restart/session-task-runtime.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-owner-restart2-results\\session-task-scope-complet-b4f76-handoff-child-after-restart\\session-task-runtime.json",
+      "sha256": "098f40b8ed9e6c0df2f35d9fc1e331fcc7a5a2e559e86f1d8e322ff9c84ca01b"
+    },
+    {
+      "path": "commands/u3-question-preview4.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-question-preview4.result.json",
+      "sha256": "fe8929eb08afc41c5921ae97f3ae969ae8a9b507103c412484f2456b42ae120d"
+    },
+    {
+      "path": "commands/u3-question-preview4.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-question-preview4.tests.json",
+      "sha256": "aa741ad103682c89e73849df66fc4bb3421476748f44d261112a96294aee3aa5"
+    },
+    {
+      "path": "commands/u3-question-preview4.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-question-preview4.log",
+      "sha256": "1e8ea84044e787e054539119ba8b894ed585881b248964ab6287126d5a0bc51d"
+    },
+    {
+      "path": "journeys/u3-question-preview4/electron-process-cleanup.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-question-preview4-results\\electron-process-cleanup.json",
+      "sha256": "87501caa553762ceb6d56178f97ad0e8a95fc8aa24b49b9a253001efca077436"
+    },
+    {
+      "path": "journeys/u3-question-preview4/electron-process-run.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-question-preview4-results\\electron-process-run.json",
+      "sha256": "b1606cb70fcb6b8ce1e5bfe75f7e10ef55a9ddc4b9b8e7a109433316951c5ba3"
+    },
+    {
+      "path": "journeys/u3-question-preview4/session-derivation-ui-ques-49722-its-one-reviewed-first-turn/question-fork-draft.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-question-preview4-results\\session-derivation-ui-ques-49722-its-one-reviewed-first-turn\\question-fork-draft.png",
+      "sha256": "a041f48b24acfa390ee459ba4386d06eec9d9a25c48b4e3efe2768df89c7e4a8"
+    },
+    {
+      "path": "journeys/u3-question-preview4/session-derivation-ui-ques-49722-its-one-reviewed-first-turn/question-handoff-journey.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-question-preview4-results\\session-derivation-ui-ques-49722-its-one-reviewed-first-turn\\question-handoff-journey.json",
+      "sha256": "f2701212577a8bc0c1d02305a664dd2881e089044015eab3b391f7a03bddaddb"
+    },
+    {
+      "path": "journeys/u3-question-preview4/session-derivation-ui-ques-49722-its-one-reviewed-first-turn/ui-diagnostic-0.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-question-preview4-results\\session-derivation-ui-ques-49722-its-one-reviewed-first-turn\\ui-diagnostic-0.png",
+      "sha256": "98883af6eaaa06d1acdad0b10bbb5333730ec4ffc401ec194b4a18d29991b1dc"
+    },
+    {
+      "path": "journeys/u3-question-preview4/session-derivation-ui-ques-49722-its-one-reviewed-first-turn/ui-diagnostics.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-question-preview4-results\\session-derivation-ui-ques-49722-its-one-reviewed-first-turn\\ui-diagnostics.json",
+      "sha256": "ce216604f745c66e96a0a3f50e6c381f4dcf70dd4336f98115eefc7d09ee35f5"
+    },
+    {
+      "path": "commands/u3-harness-preview.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-harness-preview.result.json",
+      "sha256": "3fd857a0b579611d9d7d26d9f282168501dc90722104f4cfcf41bcbaf88039c5"
+    },
+    {
+      "path": "commands/u3-harness-preview.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-harness-preview.log",
+      "sha256": "407dd8a3a825e2dc5edc528b8ce69b3717205fa079b081794c7d9f4ffb9111ec"
+    },
+    {
+      "path": "commands/u3-artifacts.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-artifacts.result.json",
+      "sha256": "7137f24fa257cbc709d10a27bda014f55a6af45c376af8a57b826ae75c77a99b"
+    },
+    {
+      "path": "commands/u3-artifacts.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-artifacts.log",
+      "sha256": "1115200c3f996c703b31d7db1fa30af086512ac838d783b4d609e80d7ee4a3f6"
+    },
+    {
+      "path": "commands/u3-final-test-types.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-final-test-types.result.json",
+      "sha256": "87acd0d02ad61cf5241535e9cf556922be60726f1c50c7c47f16110fb72653a7"
+    },
+    {
+      "path": "commands/u3-final-test-types.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-final-test-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "commands/u3-final-harness.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-final-harness.result.json",
+      "sha256": "84ade455d097a17763ce1da13ff797b8c3736f38f22a99ba78a2b4dcd693e6a7"
+    },
+    {
+      "path": "commands/u3-final-harness.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-final-harness.log",
+      "sha256": "652f42d0c3c7d6609024ec58c1b4a7c3a9485469a62410d1503d56e6c06c1f5a"
+    },
+    {
+      "path": "commands/u3-final-harness-preview.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-final-harness-preview.result.json",
+      "sha256": "35764b3fbd0805371d66d73a2dbaf34d6f0d8273cedc87de4046de94df1b566b"
+    },
+    {
+      "path": "commands/u3-final-harness-preview.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-final-harness-preview.log",
+      "sha256": "407dd8a3a825e2dc5edc528b8ce69b3717205fa079b081794c7d9f4ffb9111ec"
+    },
+    {
+      "path": "failures/u3-host-fixture-fix.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-host-fixture-fix.result.json",
+      "sha256": "43abe1888f868cf5adf382cd39d084e5fe5ef7ad2200aec5dece05f32097df8b"
+    },
+    {
+      "path": "failures/u3-host-fixture-fix.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-host-fixture-fix.log",
+      "sha256": "7001430f33f19630f51c5bb7f4011b379cc5b70fe1955a5751543229a9b5128f"
+    },
+    {
+      "path": "failures/u3-host-fixture-fix.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-host-fixture-fix.tests.json",
+      "sha256": "b16f4deeaf78fdce4c122c5b754adaaed3d66573121a008affd6e2afb521f869"
+    },
+    {
+      "path": "failures/u3-owner-restart.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-owner-restart.result.json",
+      "sha256": "7146e878434902d73d0f52f62515029456b263e62334d36a6a1e5948b06504db"
+    },
+    {
+      "path": "failures/u3-owner-restart.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-owner-restart.log",
+      "sha256": "86ae5b289357e27058cc1de6ae901d5d5a047986c62d9e97b4f5311a454fa342"
+    },
+    {
+      "path": "failures/u3-owner-restart.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-owner-restart.tests.json",
+      "sha256": "d1a322b30c948fb0064cc238c456e81a125e571fc515dc3002a4024939a7560c"
+    },
+    {
+      "path": "failures/u3-question-preview.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-question-preview.result.json",
+      "sha256": "9bea9463e5f886829c94a95075a344810c13a12ae88431299782927725461300"
+    },
+    {
+      "path": "failures/u3-question-preview.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-question-preview.log",
+      "sha256": "5d09ea74a06bf26a1e4e3b546a62340e124dd07e2bce02dbcbd0d8886e11228a"
+    },
+    {
+      "path": "failures/u3-question-preview.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-question-preview.tests.json",
+      "sha256": "2f7a71a0594690f6b56c5611a824c1c74f66892f7a5fe19b37818baec1192c1d"
+    },
+    {
+      "path": "failures/u3-question-preview2.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-question-preview2.result.json",
+      "sha256": "88ed3af927ad79b9723706779e29841c7732d09bb23e714100a14b5d7c7fa197"
+    },
+    {
+      "path": "failures/u3-question-preview2.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-question-preview2.log",
+      "sha256": "1620bb91ad2ab9b406faa5b4a189cd6986b66d0568df0560450a2beeb9880ff4"
+    },
+    {
+      "path": "failures/u3-question-preview2.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-question-preview2.tests.json",
+      "sha256": "e0d39d0546d2bbf64a43efedb7298796bf971f80bfd993348bda2e7f6bbaf2ad"
+    },
+    {
+      "path": "failures/u3-question-preview3.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-question-preview3.result.json",
+      "sha256": "28f7447eff8565f7beed3350270527b160848afcc54bbd93e4ba1d545d562ab4"
+    },
+    {
+      "path": "failures/u3-question-preview3.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-question-preview3.log",
+      "sha256": "3534563d8ad3e6d2102a03902631537d10baaf5dc531c0c41d12c60b90df8deb"
+    },
+    {
+      "path": "failures/u3-question-preview3.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-question-preview3.tests.json",
+      "sha256": "7a261fe62c421897e7c066ee26e19d855611c8a843b568245fe8ae0ddf42816f"
+    },
+    {
+      "path": "failures/u3-regression-e2e.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-regression-e2e.result.json",
+      "sha256": "874574011fa769fd6710a75a1203b9de5230c2e0d00cb291da548e2d421b676b"
+    },
+    {
+      "path": "failures/u3-regression-e2e.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-regression-e2e.log",
+      "sha256": "43565510098b02f323f629c80bbb62e669ed9cabecd440de911d071a1b548598"
+    },
+    {
+      "path": "failures/u3-regression-e2e.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-regression-e2e.tests.json",
+      "sha256": "76affd94e1d2461810746da301973ed5a2190ccad3bfa930a27bbbc3197cfe50"
+    },
+    {
+      "path": "failures/u3-units.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-units.result.json",
+      "sha256": "1c2bbce4bef59d706e85d4660e16aead7bab3b693ba10a7f19668605bc06e07a"
+    },
+    {
+      "path": "failures/u3-units.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-units.log",
+      "sha256": "3d2c865d4ea3a86bb917cbfefa79de4284f812024895c29696c3993121afa0be"
+    },
+    {
+      "path": "failures/u3-units.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\u3-units.tests.json",
+      "sha256": "2e8afa43092bc619f206cac756a65511176b3998ffd12c8bc17dcc2ff1bedd39"
+    },
+    {
+      "path": "diagnostics/handles-11556.jsonl",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\handles-11556.jsonl",
+      "sha256": "592d9464b9a5e6f3959ca651fd2d65b2b393572d26ea80c48faf052866bb4241"
+    },
+    {
+      "path": "diagnostics/handles-36252.jsonl",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\handles-36252.jsonl",
+      "sha256": "391cf62400828b6074ae841a830dd68db9fe6374f219432a536f74c487902f83"
+    },
+    {
+      "path": "diagnostics/handle-diagnostics.cjs",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\intent-validation\\handle-diagnostics.cjs",
+      "sha256": "3a302a329d8a98821a69e070b3cfd42d84c7bde8695b615d8de51aeff7d5e165"
+    }
+  ],
+  "sources": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "3b59be54c9827e546204b36afc121bbf24d9982daccaf4329c4425ac256c1a64"
+    },
+    {
+      "path": "README.md",
+      "sha256": "b114e42a5778803293485e6a5bd86ed8894c19440777ec8a96bda41aa3913a85"
+    },
+    {
+      "path": "README.ru-RU.md",
+      "sha256": "0dce8bdba436f4d61b9c30263301c2e8ca1ab3799ec99a23e6236ab6cfa1d54e"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "b5e5dd281e457629a4e3e76b4f5d8e9c4f8aba28cbc7dc125864ddab8a2ca6c5"
+    },
+    {
+      "path": "docs/modules/multi-agent-and-tasks.md",
+      "sha256": "f95833bbc4344ff760380ad245b6c16e7c5fac2075fcd0cf2eda862a3180252a"
+    },
+    {
+      "path": "electron/services/sessions-api.ts",
+      "sha256": "aec622c683351f4406b5dbb974e3ef834421f43f5f81eb9d5d91b95e9c058cdf"
+    },
+    {
+      "path": "harness/specs/tasks/session-handoff-recovery.md",
+      "sha256": "8594e8fd4a513a4538df7db887e5b9701872c960c8d60c313f90ee3d7d72c596"
+    },
+    {
+      "path": "shared/i18n/locales/en/chat.json",
+      "sha256": "a9ccbd289f5aa0725906f55d24123289d98972fd64a91241e4ac0f05f8c4245c"
+    },
+    {
+      "path": "shared/i18n/locales/ja/chat.json",
+      "sha256": "6490d5271f8cbe5dd2f270355598aa9291147d09163ff41f547ac121315b7d91"
+    },
+    {
+      "path": "shared/i18n/locales/ru/chat.json",
+      "sha256": "093ecd598124b2f5aac9ea3af62f22bcb9708944df793fe11ffd69a03be7928f"
+    },
+    {
+      "path": "shared/i18n/locales/zh/chat.json",
+      "sha256": "d2fea0da498d1d3c556ffddb16f66c373dfa2b469ec5ea4d0f63bfda04310821"
+    },
+    {
+      "path": "src/pages/Chat/ChatMessage.tsx",
+      "sha256": "d3fc1dc031d4314d59b1d2dde7708a20f762ae1fc08bd4259bc040539aea1ea6"
+    },
+    {
+      "path": "tests/e2e/fixtures/windows-process.ts",
+      "sha256": "27c7af68a5e580fc108018705711ef71994474a3bf40a7b838e764bdb0862dd9"
+    },
+    {
+      "path": "tests/e2e/session-fork-intent.spec.ts",
+      "sha256": "edc5eb90520628a0ccb961c0b560846128a034d1b53be204b1a50e5920a33bf2"
+    },
+    {
+      "path": "tests/e2e/session-task-scope-derivation.spec.ts",
+      "sha256": "a06d4f0b81005a753c1ae085803a96d69a275ccee1b22ae76846ced1e23e773c"
+    },
+    {
+      "path": "tests/unit/chat-message.test.tsx",
+      "sha256": "b886d495f1a8d916a89cd31a8a6fe7f39698eff81b4df94b30784a2b42459189"
+    },
+    {
+      "path": "tests/unit/host-services.test.ts",
+      "sha256": "3e8ac3d03b550090ddbe916e0250fc0c21d70118825f662e304bf11f5b2640db"
+    },
+    {
+      "path": "tests/unit/session-handoff-recovery.test.ts",
+      "sha256": "6c97b9266cda489ef021a051e63a01bc4d998e363f4a41b034645347ad641171"
+    }
+  ],
+  "acceptance": [
+    {
+      "ac": 1,
+      "criterion": "消息“在新会话中提问”有源标题、真实边界和可编辑问题预览；用户消息使用最近 assistant 祖先，说明此提问之前上下文，无祖先/无 entryId/忙态拒绝而不退化 tip fork。",
+      "evidence": [
+        "u3-intent-e2e",
+        "u3-question-preview4",
+        "u3-units2"
+      ],
+      "result": "Owner transcript boundary, prior assistant ancestor, missing owner ID disabled in four locales; invalid ancestor rejected without tip fallback."
+    },
+    {
+      "ac": 2,
+      "criterion": "确认后以现有 fromLeafId Fork，子会话 composer 只预填问题且不发送；取消无副作用、失败不丢问题或源草稿、重复点击只创建一次。",
+      "evidence": [
+        "u3-question-preview4",
+        "u3-regression-e2e"
+      ],
+      "result": "Preview edit/cancel; child draft only and chatSend=0; source draft retained; existing in-flight creation guard."
+    },
+    {
+      "ac": 3,
+      "criterion": "核对 ad77bf57c 的有意首轮发送行为；Handoff 主按钮明确为“创建并发送”，旧规格/测试标题/四语一致；发送失败保留已创建 child、来源和可恢复草稿。",
+      "evidence": [
+        "u3-regression-e2e",
+        "u3-question-preview4",
+        "u3-intent-e2e"
+      ],
+      "result": "Create-and-send remains explicit; failure/unknown preserves child and draft; four-locale visible copy."
+    },
+    {
+      "ac": 4,
+      "criterion": "Handoff 创建失败不切换；首轮效果未知先查询 owner 结果，不能自动重发或创建第二 child；来源告警、深度上限、gateway/active-run 拒绝均有可见反馈。",
+      "evidence": [
+        "u3-regression-e2e",
+        "u3-owner-restart2",
+        "u3-units2"
+      ],
+      "result": "Ancestry/depth/busy failures remain visible; unknown delivery reconciles and never silently re-sends."
+    },
+    {
+      "ac": 5,
+      "criterion": "会话内模型提出新会话建议只能进入同一预览确认；普通回复文字不能触发隐式创建，不新增第二派生关系或文本正则执行器。",
+      "evidence": [
+        "u3-intent-e2e"
+      ],
+      "result": "Plain model advice creates nothing; explicit existing Handoff menu opens the same editable preview; cancel changes neither sessions nor draft. Design section 94 expressly selects the existing menu when no typed suggestion action exists."
+    },
+    {
+      "ac": 6,
+      "criterion": "Electron E2E 断言 Fork chatSend=0 与 Handoff 显式一次首发；取消、创建失败、发送失败/未知、重复提交、旧会话晚到响应均覆盖。",
+      "evidence": [
+        "u3-question-preview4",
+        "u3-regression-e2e",
+        "u3-handoff-scopes",
+        "u3-units2"
+      ],
+      "result": "Fork no-send, Handoff one first-send, cancellation, create/send failure, duplicate IDs and late cross-scope replies."
+    },
+    {
+      "ac": 7,
+      "criterion": "新Handoff在runtime SessionDerivation中有持久直接父级，重载来源不依赖Task Ledger推树；runtime失败不激活假child，部分成功可恢复，权限及generation屏障保持。",
+      "evidence": [
+        "u3-owner-restart2",
+        "u3-derivation-current",
+        "u3-units2"
+      ],
+      "result": "Runtime confirms persistent direct parent and physical generation; real owner readback after restart; failure and generation fences retain recoverable operation."
+    },
+    {
+      "ac": 8,
+      "criterion": "创建响应丢失、首发超时、重复点击、A→B→A和进程重启均先回读持久操作与owner run/transcript/receipt；同一操作不再创建child，同一发送重试复用key。无可证明结果则保持unknown，不盲重发或声称exactly-once。",
+      "evidence": [
+        "u3-owner-restart2",
+        "u3-handoff-scopes",
+        "u3-units2"
+      ],
+      "result": "Lost creation acknowledgement, unknown first-send, A/B navigation and two process restarts reuse child/send key; transcript identity resolves success, unproved delivery remains unknown."
+    },
+    {
+      "ac": 9,
+      "criterion": "新增owner单测及Electron中断/重启恢复断言；contract、comms replay/compare和窄spec验收通过后才宣称完成。",
+      "evidence": [
+        "u3-units2",
+        "u3-owner-restart2",
+        "u3-contract",
+        "u3-comms-replay",
+        "u3-comms-compare",
+        "u3-harness",
+        "u3-harness-preview"
+      ],
+      "result": "Required owner, Electron restart and communication/spec gates read back from disk."
+    },
+    {
+      "ac": 10,
+      "criterion": "Fork child默认仅有关联/只读职责，写前经A4重新准入；handoff关联与generation换代可对账，旧执行权不可继续用。",
+      "evidence": [
+        "u3-derivation-current",
+        "u3-units2"
+      ],
+      "result": "Fork child retains TaskRefs without coordinator/write authority; Handoff drains old scope and uses runtime-confirmed generation."
+    },
+    {
+      "ac": 11,
+      "criterion": "同逻辑操作重试复用持久key；同payload的新合法意图可单独创建，key不只由payload hash派生。",
+      "evidence": [
+        "u3-units2"
+      ],
+      "result": "Two legitimate operation IDs with identical payload create separate children; each original operation reuses its own child and first-send key."
+    }
+  ],
+  "evidenceLevels": {
+    "realOwner": "u3-intent-e2e, u3-question-preview4, u3-owner-restart2 and u3-derivation-current launch Electron/Main/Gateway with real local state and a local scripted model. Missing message ID is an explicitly modified Host read projection.",
+    "hostFixture": "Legacy Fork/Handoff rejection and late-response tests use Host fixture injection. Unit tests use the production Main owner/persistence with Gateway fixtures.",
+    "fault": "Real restart test loses a completed creation response and fails acknowledgement persistence after a real send; it then reads the exact persisted transcript identity. UI scope tests hold the old response while navigation changes."
+  },
+  "inheritance": "Product bytes remain those built and tested at c6a439a52. Later changes correct the real generation test and prefer PowerShell 7 in the existing test-only process cleanup helper. The 112 product unit cases plus two real Windows process identity cases total 114; the current test type/spec gates are separate. The last source commit only restores LF endings, verified by an empty ignore-space-at-eol diff. Exact tested-source deltas are retained above.",
+  "failureReplacements": {
+    "u3-units": "stale Host fixture omitted workspace-root and quiescent run-state; repaired fixture and u3-units2=112/112",
+    "u3-host-fixture-fix": "remaining old fork mock reused one child; fixed to distinct real fork identities and included in u3-units2=112/112",
+    "u3-regression-e2e": "8 passed cases retained; obsolete null generation expectation corrected to real owner generation and u3-derivation-current passed",
+    "u3-question-preview2": "Test body passed; worker teardown exceeded 90 seconds. Preserved separately from clean u3-question-preview4",
+    "u3-question-preview3": "Test body passed; Windows PowerShell identity-check subprocess did not finish, leaving the owned Electron debug socket; PowerShell 7 cleanup and real identity tests followed by clean u3-question-preview4",
+    "u3-question-preview": "Initial model setup did not complete within the existing 45000ms predicate budget; unchanged source repeated after the combination checks in u3-question-preview4",
+    "u3-owner-restart": "420000ms whole-case timeout while waiting for first transcript turn; first failure retained, unchanged source repeated serially in u3-owner-restart2"
+  },
+  "adjacentGap": "sessions.recoveryContext is currently outside the runtime registration whitelist; Handoff preview displays its existing fallback warning. Registration belongs to checkpoint/recovery work and is not accepted by this node.",
+  "remaining": [
+    "TF-0660 original owner 01a1ba3e",
+    "TF-0661",
+    "TF-0662",
+    "TF-0867"
+  ]
+}

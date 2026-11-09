@@ -152,6 +152,41 @@ describe('durable handoff owner', () => {
     expect(JSON.parse(await readFile(state.store, 'utf8')).profiles[0].sessionStates[source].draftInput).toBe('Keep my source draft');
     expect(JSON.parse(await readFile(state.store, 'utf8')).profiles[0].projectCoordinatorSessionKey).toBe(first.sessionKey);
   });
+  it('creates independent children for different intent IDs and replays each ID without creating again', async () => {
+    const alpha = payload('u3-alpha-intent-001');
+    const bravo = payload('u3-bravo-intent-002');
+    expect({ ...alpha, operationId: undefined }).toEqual({ ...bravo, operationId: undefined });
+
+    const first = await services().sessions.createHandoff(alpha);
+    const replayFirst = await services().sessions.createHandoff(alpha);
+    const second = await services().sessions.createHandoff(bravo);
+    // Reconstruct the Main services between calls; persistence, not instance state, owns replay.
+    const replaySecond = await services().sessions.createHandoff(bravo);
+    expect([first.success, replayFirst.success, second.success, replaySecond.success]).toEqual([true, true, true, true]);
+    expect(replayFirst.sessionKey).toBe(first.sessionKey);
+    expect(replaySecond.sessionKey).toBe(second.sessionKey);
+    expect(second.sessionKey).not.toBe(first.sessionKey);
+    expect(sessions.get(first.sessionKey!)?.parentSessionKey).toBe(source);
+    expect(sessions.get(second.sessionKey!)?.parentSessionKey).toBe(source);
+    expect(sessions.get(source)?.sessionId).toBe('source-generation');
+
+    const savedFirst = await persisted(alpha.operationId);
+    const savedSecond = await persisted(bravo.operationId);
+    expect(savedFirst).toMatchObject({ id: alpha.operationId, phase: 'ready', sessionKey: first.sessionKey,
+      sourceSessionKey: source, sourceGeneration: 'source-generation', draftInput: alpha.draftInput });
+    expect(savedSecond).toMatchObject({ id: bravo.operationId, phase: 'ready', sessionKey: second.sessionKey,
+      sourceSessionKey: source, sourceGeneration: 'source-generation', draftInput: alpha.draftInput });
+    expect(savedFirst.draftDigest).toBe(savedSecond.draftDigest);
+    expect(savedFirst.firstSendIdempotencyKey).not.toBe(savedSecond.firstSendIdempotencyKey);
+    const creates = rpc.mock.calls.filter(([method]) => method === 'sessions.create');
+    expect(creates).toHaveLength(2);
+    expect(new Set(creates.map(([, input]) => input.key))).toEqual(new Set([first.sessionKey, second.sessionKey]));
+    expect(rpc.mock.calls.filter(([method]) => method === 'chat.send')).toHaveLength(0);
+    const document = JSON.parse(await readFile(state.store, 'utf8'));
+    expect(document.profiles[0].sessionStates[source].draftInput).toBe('Keep my source draft');
+    expect(Object.keys(document.profiles[0].handoffOperations).sort()).toEqual([alpha.operationId, bravo.operationId].sort());
+  });
+
   it('recovers a lost creation reply from the same runtime child after reconstructing Main services', async () => {
     lostCreate = true;
     await expect(services().sessions.createHandoff(payload())).rejects.toThrow('creation response lost');
