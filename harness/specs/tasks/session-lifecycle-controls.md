@@ -57,6 +57,13 @@ ownedPaths:
   - tests/unit/ui-worktree-cleanup-conservative.test.ts
   - src/pages/Settings/sections/StorageSection.tsx
   - shared/i18n/locales/**/settings.json
+  - README.md
+  - README.zh-CN.md
+  - README.ja-JP.md
+  - README.ru-RU.md
+  - shared/task-system/store.ts
+  - tests/unit/durable-task-authority-access.test.ts
+  - harness/specs/fixtures/session-lifecycle-recovery/**
 touchedAreas:
   - src/lib/host-api.ts
   - shared/host-api/contract.ts
@@ -108,6 +115,13 @@ touchedAreas:
   - tests/unit/ui-worktree-cleanup-conservative.test.ts
   - src/pages/Settings/sections/StorageSection.tsx
   - shared/i18n/locales/**/settings.json
+  - README.md
+  - README.zh-CN.md
+  - README.ja-JP.md
+  - README.ru-RU.md
+  - shared/task-system/store.ts
+  - tests/unit/durable-task-authority-access.test.ts
+  - harness/specs/fixtures/session-lifecycle-recovery/**
 requiredRules:
   - identity-scope-boundary
   - renderer-main-boundary

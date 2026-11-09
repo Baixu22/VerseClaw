@@ -25,3 +25,7 @@
 资源列表读取资源 owner 的运行/退出回执。上下文 token、进程内存和记忆验收分别来自各自 owner。无法取得回执时显示不可用或未知，并保留可重试输入和已经存在的会话。
 
 运行时工具的写操作在权限检查之后经过 Task Ledger/Workspace 准入。普通讨论与已知纯读操作保持空业务任务；第一次效果创建一个稳定任务。每个任务最多有一个有效 writer，子任务可以独立取得 writer。仅提供 preflight、无法跟踪实际效果的客户端或原生工具入口会返回 `TASK_SCOPE_EFFECT_OWNER_UNAVAILABLE`。
+
+归档页的待确认操作来自原 session-delete gate，并按当前 agent 过滤。继续按钮携带原 operationId；Main 在原锁内核验，过期按钮无法启动新操作。上下文控制携带捕获的 generation；压缩结果与其内部检查点均以压缩前代次核对，检查点恢复持有原准入屏障和存储写队列直到文件回滚完成。
+
+工作树回收保留拥有任务数据库、受管 checkout 或 Workspace 引用的对象；普通无 owner 的原生检出仍采用审批后的 Git 无 force 删除。任务写事务取得锁后再次核验 authority，等待期间删除或替换检出会使后续领取失败。
