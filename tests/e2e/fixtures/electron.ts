@@ -297,8 +297,12 @@ async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000) {
   let graceful = false;
   try { graceful = await bounded(closing, timeoutMs, 'Playwright close'); } catch { /* fall back to owned handles */ }
   let processes: WindowsProcessCheck[] = [];
+  const processObservations: WindowsProcessCheck[][] = [];
   try {
-    if (process.platform === 'win32' && owned) processes = await checkWindowsProcesses(owned.identities, true);
+    if (process.platform === 'win32' && owned) {
+      processes = await checkWindowsProcesses(owned.identities, true);
+      processObservations.push(processes);
+    }
   } catch (error) { errors.push(String(error)); }
   if (launcher && launcher.exitCode === null && launcher.signalCode === null) {
     // ChildProcess.kill uses the launcher's existing native handle on Windows.
@@ -317,12 +321,13 @@ async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000) {
     // same identities again before deciding whether this close left survivors.
     // Retry failed observations only; never replay an uncertain termination.
     for (let attempt = 1; ; attempt++) {
-      try { processes = await checkWindowsProcesses(owned.identities); break; }
-      catch (error) {
-        errors.push(String(error));
-        if (attempt >= 3) break;
-        await new Promise(resolve => setTimeout(resolve, 250));
-      }
+      try {
+        processes = await checkWindowsProcesses(owned.identities);
+        processObservations.push(processes);
+        if (processes.every(({ status }) => status !== 'alive' && status !== 'unavailable')) break;
+      } catch (error) { errors.push(String(error)); }
+      if (attempt >= 3) break;
+      await new Promise(resolve => setTimeout(resolve, 250));
     }
   }
   const launcherExited = Boolean(launcher && (launcher.exitCode !== null || launcher.signalCode !== null));
@@ -347,7 +352,7 @@ async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000) {
   }
   // Other E2E callers close sockets after this helper. Return exit confirmation
   // so those cleanups run even when a process or inspector cannot be closed.
-  return { mainExited, launcherExited, graceful, closeSettled, processes, errors, ...(snapshotError ? { snapshotError } : {}) };
+  return { mainExited, launcherExited, graceful, closeSettled, processes, processObservations, errors, ...(snapshotError ? { snapshotError } : {}) };
 }
 
 async function seedE2eSettings(userDataDir: string, theme?: LaunchElectronOptions['theme']): Promise<void> {
