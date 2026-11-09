@@ -452,7 +452,8 @@ def main() -> int:
         package = json_file(package_dir / "report.json")
         for name, metadata in package.get("artifacts", {}).items():
             path = package_dir / "artifacts" / name
-            if sha256_file(path) != metadata.get("sha256"):
+            expected_sha = metadata.get("sha256") if isinstance(metadata, dict) else metadata
+            if sha256_file(path) != expected_sha:
                 raise RuntimeError(f"clean package artifact changed: {name}")
 
         unit = run_sts_unit(evidence, args.native_root.resolve(), args.native_python.resolve())
