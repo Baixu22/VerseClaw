@@ -1,0 +1,11 @@
+
+running 6 tests
+test prepare_draft_is_idempotent_per_run_key ... ok
+test advance_refuses_phase_regression ... ok
+test moved_operation_is_unknown_not_success ... ok
+test missing_observation_is_pending_not_success ... ok
+test expired_plan_is_refused_before_any_draft_record ... ok
+test stage_faults_are_reboot_checkable_and_idempotent ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.50s
+

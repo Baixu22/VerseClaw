@@ -1,0 +1,13 @@
+   Compiling vg-cli v0.1.0 (D:\tmp\coding-relay-01a1b68a-20261107\TF-0776\vg-import-fix\crates\vg-cli)
+warning: linker stdout: 正在创建库 D:\tmp\tf0779-joint-20261110-044313\tmp\cargo-target\debug\deps\vg.lib 和对象 D:\tmp\tf0779-joint-20261110-044313\tmp\cargo-target\debug\deps\vg.exp
+  |
+  = note: `#[warn(linker_messages)]` on by default
+
+warning: `vg-cli` (bin "vg") generated 1 warning
+warning: linker stdout: 正在创建库 D:\tmp\tf0779-joint-20261110-044313\tmp\cargo-target\debug\deps\jj_transaction_recovery-409dad2ab2edf3ed.lib 和对象 D:\tmp\tf0779-joint-20261110-044313\tmp\cargo-target\debug\deps\jj_transaction_recovery-409dad2ab2edf3ed.exp
+  |
+  = note: `#[warn(linker_messages)]` on by default
+
+warning: `vg-cli` (test "jj_transaction_recovery") generated 1 warning
+    Finished `test` profile [unoptimized] target(s) in 8.02s
+     Running tests\jj_transaction_recovery.rs (D:\tmp\tf0779-joint-20261110-044313\tmp\cargo-target\debug\deps\jj_transaction_recovery-409dad2ab2edf3ed.exe)

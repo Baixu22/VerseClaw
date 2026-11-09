@@ -1,0 +1,8 @@
+warning: linker stdout: 正在创建库 D:\tmp\tf0779-joint-20261110-044313\tmp\cargo-target\debug\deps\vg.lib 和对象 D:\tmp\tf0779-joint-20261110-044313\tmp\cargo-target\debug\deps\vg.exp
+  |
+  = note: `#[warn(linker_messages)]` on by default
+
+   Compiling vg-cli v0.1.0 (D:\tmp\coding-relay-01a1b68a-20261107\TF-0776\vg-import-fix\crates\vg-cli)
+warning: `vg-cli` (bin "vg") generated 1 warning
+    Finished `test` profile [unoptimized] target(s) in 3.75s
+     Running tests\jj_conflict_gate.rs (D:\tmp\tf0779-joint-20261110-044313\tmp\cargo-target\debug\deps\jj_conflict_gate-a33c95f3a8de9a12.exe)

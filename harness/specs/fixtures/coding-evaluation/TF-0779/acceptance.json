@@ -1,0 +1,287 @@
+{
+  "schema": "CodingJointAcceptance/v1",
+  "taskId": "TF-0779",
+  "driven_by": "agent",
+  "actor": "codex-coding-joint-evaluator",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "93a2becbf713af208e42e71e0c53d3ef51ba4c26",
+    "tree": "e52cd5880a4115ac9b60329ccaddf77df6fbd775",
+    "dirty": false,
+    "changedPaths": [],
+    "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "reportDigest": "d7c1955bb901b5d0480737846a5d6420224660e8ffbca07295133540e5f2df9b",
+  "evidenceFinalization": {
+    "finalizerCommit": "934425908",
+    "reason": "Removed the single retained Cargo executable and excluded tmp/** from artifact inventory after all measured commands succeeded."
+  },
+  "tools": {
+    "vg": {
+      "path": "D:\\tmp\\tf0778-isolated-e510-20261110\\harness\\specs\\fixtures\\coding-evaluation\\TF-0778\\inputs\\vg.exe",
+      "sha256": "7c8b05f9c7eb295f5e8006e98e123047f70e5f03dbbdfe05c5cb53748eb70d20"
+    },
+    "jj": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\oracle\\extracted\\jj.exe",
+      "sha256": "53c6ee72346f477bc464e383d4df45f8d3862ad5a17fa5f4d8f4849bcf2d96cc",
+      "version": "jj 0.46.0-7d382314f9420b4b8d932245b49c99492c812b9f"
+    },
+    "python": {
+      "path": "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Scripts\\python.exe",
+      "sha256": "272448c5844564aa5bebc8d8dd0065f859b9fba9f499996eec2a1cf17496f250",
+      "version": "3.10.3",
+      "module": "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\lib\\site-packages\\smart_sorter\\__init__.py",
+      "pytest": "8.0.0"
+    },
+    "environment": {
+      "python": "3.10.3",
+      "platform": "win32",
+      "dependencies_digest": "sha256:a9915c25a3af1d27d268e7a0d07ba2db80b3e898bca925bdf6c1ee6a74cd7949"
+    }
+  },
+  "workspaces": {
+    "workspace-a": {
+      "baseManifestSha256": "f087d2d6df9f79be2e96a6a283757a50176f87a0c42b3efd5af6747efdd60622",
+      "candidateManifestSha256": "6ae1b40ed863b10b945d7bf6282d602ab4a19f3a73b451988f392057de5be96a"
+    },
+    "workspace-b": {
+      "baseManifestSha256": "338983a911757c43e1b4c2439dfee00dc6e00bf546f104ca54a1ae7f47fcb065",
+      "candidateManifestSha256": "d3497f3904228c232ddff0ee1b748d1d081ca535f499552810de165b8a9bb44f"
+    }
+  },
+  "measurements": [
+    {
+      "workspace": "workspace-a",
+      "grouped": {
+        "jj_plus_same_full_check": 3,
+        "vg_full": 3,
+        "vg_selected_plus_required_full": 3
+      },
+      "lanes": 9,
+      "ratios": {
+        "vg_full": {
+          "cold_ratio_vs_jj": 6.463345,
+          "warm_ratio_vs_jj": 5.154062
+        },
+        "vg_selected_plus_required_full": {
+          "cold_ratio_vs_jj": 10.900885,
+          "warm_ratio_vs_jj": 11.568004
+        }
+      }
+    },
+    {
+      "workspace": "workspace-b",
+      "grouped": {
+        "jj_plus_same_full_check": 3,
+        "vg_full": 3,
+        "vg_selected_plus_required_full": 3
+      },
+      "lanes": 9,
+      "ratios": {
+        "vg_full": {
+          "cold_ratio_vs_jj": 7.456552,
+          "warm_ratio_vs_jj": 6.059712
+        },
+        "vg_selected_plus_required_full": {
+          "cold_ratio_vs_jj": 12.860104,
+          "warm_ratio_vs_jj": 13.029402
+        }
+      }
+    }
+  ],
+  "gitLanes": {
+    "count": 6,
+    "allPassed": true,
+    "dirtyPreserved": true
+  },
+  "targetedTests": [
+    {
+      "id": "clawx-joint-unit",
+      "exitCode": 0
+    },
+    {
+      "id": "vg-joint-jj_cross_workspace_conflict",
+      "exitCode": 0
+    },
+    {
+      "id": "vg-joint-jj_conflict_gate",
+      "exitCode": 0
+    },
+    {
+      "id": "vg-joint-jj_transaction_recovery",
+      "exitCode": 0
+    },
+    {
+      "id": "vg-joint-jj_sts_feedback",
+      "exitCode": 0
+    },
+    {
+      "id": "vg-joint-jj_workspace_lifecycle",
+      "exitCode": 0
+    },
+    {
+      "id": "vg-joint-jj_file_family",
+      "exitCode": 0
+    }
+  ],
+  "cases": {
+    "same-file-competition": {
+      "passed": true,
+      "commandIds": [
+        "vg-joint-jj_cross_workspace_conflict"
+      ],
+      "oracle": "jj_cross_workspace_conflict"
+    },
+    "cross-file-dependency": {
+      "passed": true,
+      "commandIds": [
+        "workspace-a-native-measure",
+        "workspace-b-native-measure"
+      ],
+      "oracle": "full test suites in A/B/C"
+    },
+    "rename-delete": {
+      "passed": true,
+      "commandIds": [
+        "vg-joint-jj_file_family",
+        "vg-joint-jj_workspace_lifecycle"
+      ],
+      "oracle": "jj_file_family and workspace lifecycle"
+    },
+    "stale-basis": {
+      "passed": true,
+      "commandIds": [
+        "vg-joint-jj_transaction_recovery"
+      ],
+      "oracle": "jj_transaction_recovery"
+    },
+    "dirty-preservation": {
+      "passed": true,
+      "commandIds": [
+        "workspace-a-1-git-full",
+        "workspace-a-2-git-full",
+        "workspace-a-3-git-full",
+        "workspace-b-1-git-full",
+        "workspace-b-2-git-full",
+        "workspace-b-3-git-full"
+      ],
+      "oracle": "bytes retained in git worktrees"
+    },
+    "combined-candidate": {
+      "passed": true,
+      "commandIds": [
+        "workspace-a-native-measure",
+        "workspace-b-native-measure"
+      ],
+      "oracle": "two workspace three-run measurements"
+    },
+    "cancellation-recovery": {
+      "passed": true,
+      "commandIds": [
+        "vg-joint-jj_transaction_recovery"
+      ],
+      "oracle": "jj_transaction_recovery"
+    },
+    "selected-final-full": {
+      "passed": true,
+      "commandIds": [
+        "workspace-a-native-measure",
+        "workspace-b-native-measure"
+      ],
+      "oracle": "selected followed by independent full"
+    },
+    "planted-wrong-combination": {
+      "id": "planted-wrong-combination",
+      "commandIds": [
+        "planted-wrong-full"
+      ],
+      "passed": true,
+      "expected": "full rejects planted failure"
+    }
+  },
+  "tokens": {
+    "status": "not-applicable",
+    "reason": "scripted evaluation never calls a model provider; no live model quality claim"
+  },
+  "costs": {
+    "commands": 72,
+    "wallSecondsTotal": 797.5030245999806,
+    "cpuSecondsTotal": 130.46875,
+    "peakTreeRssBytesMax": 2666745856
+  },
+  "cleanup": {
+    "removedFiles": 6942,
+    "removedBytes": 2209471604,
+    "remaining": 0
+  },
+  "independentVerification": {
+    "ok": true,
+    "acceptanceEligible": true,
+    "issues": [],
+    "negativeChecks": [
+      {
+        "case": "delete-case",
+        "rejected": true,
+        "issues": [
+          "case set mismatch",
+          "case failed: stale-basis",
+          "case command binding missing: stale-basis"
+        ]
+      },
+      {
+        "case": "wrong-candidate",
+        "rejected": true,
+        "issues": [
+          "candidate commit mismatch"
+        ]
+      },
+      {
+        "case": "artifact-digest-tamper",
+        "rejected": true,
+        "issues": [
+          "artifact digest mismatch: measurements/workspace-a.json",
+          "artifact digest mismatch: measurements/workspace-a.json"
+        ]
+      },
+      {
+        "case": "selected-upgraded",
+        "rejected": true,
+        "issues": [
+          "case failed: selected-final-full"
+        ]
+      },
+      {
+        "case": "tree-mismatch",
+        "rejected": true,
+        "issues": [
+          "workspace-a run 1 B/C tree mismatch"
+        ]
+      },
+      {
+        "case": "missing-git-lane",
+        "rejected": true,
+        "issues": [
+          "Git lane count mismatch",
+          "workspace-b Git run count mismatch"
+        ]
+      },
+      {
+        "case": "self-consistent-forgery",
+        "rejected": true,
+        "issues": [
+          "canonical report digest mismatch",
+          "case failed: combined-candidate"
+        ]
+      }
+    ]
+  },
+  "decision": {
+    "status": "accepted-task-evidence",
+    "scriptedOnly": true,
+    "liveModelQuality": false,
+    "netBenefitClaimed": false,
+    "defaultSelection": "off",
+    "releaseApproved": false,
+    "ga": false
+  }
+}
