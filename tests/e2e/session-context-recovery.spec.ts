@@ -136,7 +136,9 @@ test('U5 manual compact preserves its instructions on cancel, pending, refusal a
     const locale = JSON.parse(await readFile('shared/i18n/locales/en/chat.json', 'utf8'));
     const open = async () => {
       await page.getByTestId('chat-composer-input').fill('/compact');
-      await page.getByTestId('chat-slash-command-option-compact').click();
+      const option = page.getByTestId('chat-slash-command-option-compact');
+      await expect(option).toContainText(/[\d.]+k?\s*\/\s*[\d.]+k?\s*tokens/);
+      await option.click();
       await expect(page.getByTestId('chat-compaction-dialog')).toBeVisible();
     };
     await open();
