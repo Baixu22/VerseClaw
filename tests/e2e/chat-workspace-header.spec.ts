@@ -223,7 +223,7 @@ test.describe('Verse Claw chat workspace header', () => {
     }
   });
 
-  test('keeps sidebar new chat scoped to the active workspace', async ({ launchElectronApp }) => {
+  test('keeps sidebar new chat scoped to the active workspace and preserves drafts after owner refusal', async ({ launchElectronApp }, info) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -308,6 +308,7 @@ test.describe('Verse Claw chat workspace header', () => {
         const calls = {
           workspaceUpdate: [] as Record<string, unknown>[],
           workspaceSaveState: [] as Record<string, unknown>[],
+          rejectedUpdates: [] as Record<string, unknown>[],
         };
         let activeWorkspace = params.workspace;
         const respond = (id: unknown, data: unknown) => ({ id: typeof id === 'string' ? id : undefined, ok: true, data });
@@ -330,6 +331,10 @@ test.describe('Verse Claw chat workspace header', () => {
           payload?: Record<string, unknown>;
         }) => {
           if (request.module === 'workspaces' && request.action === 'update') {
+            if (calls.rejectedUpdates.length === 0) {
+              calls.rejectedUpdates.push(request.payload ?? {});
+              return { id: request.id, ok: false, error: { code: 'CONFLICT', message: 'U5_NEW_SESSION_REJECTED' } };
+            }
             calls.workspaceUpdate.push(request.payload ?? {});
             const payload = request.payload ?? {};
             const agentId = String(payload.agentId ?? activeWorkspace.selectedAgentId);
@@ -378,6 +383,14 @@ test.describe('Verse Claw chat workspace header', () => {
         });
       }, { workspace: WORKSPACE, otherWorkspace: OTHER_WORKSPACE });
 
+      const draft = 'Preserve this source draft after rejected creation';
+      await page.getByTestId('chat-composer-input').fill(draft);
+      await page.getByTestId('sidebar-new-chat').click();
+      await expect(page.getByText('U5_NEW_SESSION_REJECTED', { exact: false })).toBeVisible();
+      await expect(page.getByTestId('chat-composer-input')).toHaveValue(draft);
+      expect(await app.evaluate(() => (globalThis as unknown as {
+        __workspaceNewChatCalls: { workspaceUpdate: unknown[]; rejectedUpdates: unknown[] };
+      }).__workspaceNewChatCalls)).toMatchObject({ workspaceUpdate: [], rejectedUpdates: [expect.objectContaining({ id: WORKSPACE.id })] });
       await page.getByTestId('sidebar-new-chat').click();
 
       await expect.poll(async () => app.evaluate(() => (
@@ -405,6 +418,8 @@ test.describe('Verse Claw chat workspace header', () => {
       }));
       expect(calls?.workspaceUpdate[0]?.sessionKey).toEqual(expect.stringMatching(/^agent:main:session-\d+-[a-z0-9]+$/));
       expect(calls?.workspaceUpdate[0]?.activeSessionKey).toBe(calls?.workspaceUpdate[0]?.sessionKey);
+      await info.attach('new-session-refusal-recovery', { body: JSON.stringify({ driven_by: 'agent', actor: 'playwright-u5-new-session',
+        fixture: 'Host owner rejection followed by original UI retry', sourceDraftRetained: true, calls }), contentType: 'application/json' });
     } finally {
       await closeElectronApp(app);
     }

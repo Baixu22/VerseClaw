@@ -74,6 +74,10 @@ ownedPaths:
   - src/components/chat/WelcomeProjectPicker.tsx
   - src/components/chat/SessionWorkspacePicker.tsx
   - src/components/chat/ComposerPopover.tsx
+  - src/lib/workspace-session.ts
+  - src/components/layout/use-new-chat-action.ts
+  - tests/unit/workspace-session.test.ts
+  - tests/e2e/chat-workspace-header.spec.ts
 touchedAreas:
   - docs/dev/session-worktree-storage.md
   - src/lib/host-api.ts
@@ -142,6 +146,10 @@ touchedAreas:
   - src/components/chat/WelcomeProjectPicker.tsx
   - src/components/chat/SessionWorkspacePicker.tsx
   - src/components/chat/ComposerPopover.tsx
+  - src/lib/workspace-session.ts
+  - src/components/layout/use-new-chat-action.ts
+  - tests/unit/workspace-session.test.ts
+  - tests/e2e/chat-workspace-header.spec.ts
 requiredRules:
   - identity-scope-boundary
   - renderer-main-boundary

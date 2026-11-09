@@ -153,7 +153,7 @@ interface ChatInputProps {
   onPermissionModeChange?: (mode: WorkspacePermissionMode) => void;
   onPickWorkspaceFolder?: () => void;
   onSwitchAgent?: (agentId: string) => void | Promise<void>;
-  onNewSession?: () => void | Promise<void>;
+  onNewSession?: () => void | boolean | Promise<void | boolean>;
   onForkSession?: () => void | Promise<void>;
   onHandoffSession?: () => void | Promise<void>;
   forkDisabled?: boolean;
@@ -2104,7 +2104,7 @@ export function ChatInput({
     }
   }, [confirmPromptCacheRisk, currentAgent, currentSessionKey, modelScope, defaultModelRef, effectiveModelRef, switchingModelRef, t, updateAgentModel]);
 
-  const handleWorkspaceAction = useCallback((action: () => void | Promise<void>) => {
+  const handleWorkspaceAction = useCallback((action: () => unknown) => {
     setWorkspaceMenuOpen(false);
     void Promise.resolve(action()).catch((error) => {
       toast.error(t('composer.workspaceActionFailed', { error: String(error) }));
@@ -2594,7 +2594,7 @@ export function ChatInput({
         return;
       }
       clearComposer();
-      await onNewSession();
+      if (await onNewSession() === false) return;
       toast.success(t('composer.slashCommands.toasts.newSessionCreated'));
       return;
     }

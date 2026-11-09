@@ -1258,11 +1258,17 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   ]);
 
   const handleCreateNewSession = useCallback(async () => {
-    await persistCurrentWorkspaceSessionState({
-      activeSessionKey: currentSessionKey,
-      sessionKey: currentSessionKey,
-    });
-    const nextSessionKey = await createWorkspaceScopedNewSession();
+    const visit = useChatStore.getState().viewRevision;
+    const isCurrent = () => useChatStore.getState().viewRevision === visit
+      && useChatStore.getState().currentSessionKey === currentSessionKey
+      && useWorkspacesStore.getState().activeWorkspaceId === activeWorkspace?.id;
+    let nextSessionKey: string | null;
+    try {
+      await persistCurrentWorkspaceSessionState({ activeSessionKey: currentSessionKey, sessionKey: currentSessionKey });
+      if (!isCurrent()) return false;
+      nextSessionKey = await createWorkspaceScopedNewSession();
+    } catch (error) { if (isCurrent()) toastUserError(error); return false; }
+    if (!nextSessionKey) return false;
     workspaceSessionRestoreTargetRef.current = activeWorkspace?.id
       ? { workspaceId: activeWorkspace.id, sessionKey: nextSessionKey }
       : null;
@@ -1275,6 +1281,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     setContextRange(null);
     setLiveUsage(null);
     setKnowledgeScope('none');
+    return true;
   }, [activeWorkspace?.id, currentSessionKey, persistCurrentWorkspaceSessionState]);
 
   // Callback for file cards in chat messages - opens the in-app preview

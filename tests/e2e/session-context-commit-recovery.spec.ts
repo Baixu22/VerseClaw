@@ -176,7 +176,11 @@ test('U5 compact and compactRange lose only committed replies; refresh reads cur
           await page.getByTestId('prompt-cache-risk-toast').getByRole('button', { name: locale.composer.promptCacheGuard.continue, exact: true }).click();
       } else {
         expect(entryId).toBeTruthy(); const text = page.getByText('U5_RANGE_TARGET', { exact: true }); await text.hover();
-        await page.locator('[id^="chat-message-"]').filter({ has: text }).getByTestId('chat-user-message-summarize-from').click();
+        const window = await app.browserWindow(page);
+        await window.evaluate(window => { window.show(); window.focus(); }); await window.dispose();
+        await page.bringToFront();
+        const select = page.locator('[id^="chat-message-"]').filter({ has: text }).getByTestId('chat-user-message-summarize-from');
+        await expect(select).toBeEnabled(); await select.focus(); await expect(select).toBeFocused(); await select.press('Enter');
       }
       const lost = await dropped(app, action); expect(lost.ownerReply!.data!.compacted).toBe(true); expect(llm.log.length).toBeGreaterThan(providerBefore);
       expect(lost.payload.expectedSessionId).toBe(before.described.session.sessionId);
