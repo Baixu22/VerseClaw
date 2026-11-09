@@ -257,7 +257,7 @@ test('U5 real journal checkpoint restore changes v2 to v1 despite reply loss and
     await page.getByTestId('chat-checkpoints-refresh').click(); await expect(page.getByTestId('chat-checkpoints-dialog')).toHaveAttribute('aria-busy', 'false');
     await page.getByTestId(`chat-checkpoint-diff-${seed.record.id}`).click();
     const locale = JSON.parse(await readFile('shared/i18n/locales/en/chat.json', 'utf8'));
-    await expect(page.getByTestId(`chat-checkpoint-diff-panel-${seed.record.id}`)).toContainText(locale.checkpoints.diffEmpty);
+    await expect(page.getByTestId(`chat-checkpoint-diff-panel-${seed.record.id}`)).toContainText(locale.filePreview.checkpoints.diffEmpty);
     const after = await readOwner(app, project.sessionKey);
     const diffAfter = await hostInvoke<{ success: boolean; files: unknown[]; errors: string[] }>(app, 'sessions', 'checkpointDiff',
       { sessionKey: project.sessionKey, agentId: 'main', checkpointId: seed.record.id });

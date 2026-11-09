@@ -81,6 +81,24 @@ describe('conservative UI deletion using original Git and owners', () => {
       expect((await route(kind, prompt.approval!.id)).success).toBe(true); expect(existsSync(tree)).toBe(false);
       expect(native(repository, 'branch', '--list', 'native-fixture')).toContain('native-fixture'); expect(existsSync(database)).toBe(false);
     });
+    it(`${kind}: preserves a clean detached unique commit until a shared ref retains it`, async () => {
+      native(tree, 'switch', '--detach');
+      await writeFile(join(tree, 'unpublished.txt'), 'native detached work\n');
+      native(tree, 'add', 'unpublished.txt');
+      native(tree, '-c', 'user.name=Agent fixture', '-c', 'user.email=agent@example.invalid', '-c', 'commit.gpgsign=false', 'commit', '-m', 'unpublished detached work');
+      const head = native(tree, 'rev-parse', 'HEAD');
+      expect(native(tree, 'status', '--porcelain')).toBe('');
+      expect(native(repository, 'for-each-ref', `--contains=${head}`, '--format=%(refname)', 'refs/')).toBe('');
+      await blocked(kind, 'UI_CLEANUP_COMMIT_RETENTION');
+      expect(readFileSync(join(tree, 'unpublished.txt'), 'utf8')).toBe('native detached work\n');
+      native(repository, 'branch', 'u5-native-retained', head);
+      const prompt = await route(kind);
+      expect(prompt.approvalRequired).toBe(true);
+      state.approved.add(prompt.approval!.id);
+      expect((await route(kind, prompt.approval!.id)).success).toBe(true);
+      expect(existsSync(tree)).toBe(false);
+      expect(native(repository, 'show', 'refs/heads/u5-native-retained:unpublished.txt')).toBe('native detached work');
+    });
     it(`${kind}: routes an empty managed checkout to its original owner`, async () => {
       const record = createWorktreeService(repository, { backend: 'git' }).create('managed', { installStrategy: 'none' });
       await blocked(kind, 'UI_CLEANUP_MANAGED_CHECKOUT', record.root);

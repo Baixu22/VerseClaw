@@ -339,7 +339,7 @@ function removePathWithRetries(target: string, attempts = 5): void {
   throw lastError instanceof Error ? lastError : new Error(String(lastError ?? 'worktree_remove_failed'));
 }
 
-function assertCleanupCommitRetained(record: WorktreeRecord): void {
+export function assertCleanupCommitRetained(record: Pick<WorktreeRecord, "backend" | "root" | "baseRoot">): void {
   if (record.backend !== "git") return;
   let head: string;
   let refs: string[];
