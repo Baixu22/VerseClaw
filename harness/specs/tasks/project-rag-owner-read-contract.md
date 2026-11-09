@@ -31,6 +31,7 @@ touchedAreas:
   - "playwright.config.ts"
   - "playwright.resource-lifecycle.config.ts"
   - "scripts/lib/resource-lifecycle-report.mjs"
+  - "scripts/lib/resource-lifecycle-report.d.mts"
   - "scripts/verify-resource-lifecycle-soak.mjs"
   - "shared/dcs/component-disposition-catalog.ts"
   - "tests/e2e/fixtures/electron.ts"
@@ -109,6 +110,7 @@ requiredTests:
   - "tests/unit/knowledge-api.test.ts"
   - "tests/unit/project-rag-owner-read.test.ts"
   - "tests/unit/knowledge-evidence-qa.test.ts"
+  - "tests/unit/resource-lifecycle-report.test.ts"
   - "openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts"
   - "tests/e2e/project-rag-owner-read.spec.ts"
 plannedTests:
