@@ -248,7 +248,7 @@ def verify(report: dict, root: Path, candidate: str, expected_digest: str, allow
                 for key, value in raw_counts.items():
                     check(counts.get(key) == value, f"{project_id} raw trial count mismatch: {row.get('id')}/{key}")
                 check(trial_doc.get("target_identity") == row.get("candidateIdentity"), f"{project_id} raw target identity mismatch: {row.get('id')}")
-                check(trial_doc.get("selection_scope") == row.get("selectionScope"), f"{project_id} raw scope mismatch: {row.get('id')}")
+                check(run_doc.get("selection_scope", trial_doc.get("selection_scope")) == row.get("selectionScope"), f"{project_id} raw scope mismatch: {row.get('id')}")
                 check(run_doc.get("completeness") == "complete" and run_doc.get("validity") == "valid" and run_doc.get("raw_exit_code") == 0, f"{project_id} raw trial incomplete: {row.get('id')}")
             except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
                 issues.append(f"{project_id} raw trial unreadable: {row.get('id')}: {error}")
