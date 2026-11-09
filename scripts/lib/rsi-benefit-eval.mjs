@@ -16,6 +16,7 @@ import { reserveProviderTokens } from './rsi-coding-protocol.mjs';
 import { hasPassingPublicCheck, verifyCodingToolJournal } from './rsi-coding-tools.mjs';
 import { buildPublicTaskInputs, TASK_INPUT_BINDINGS, PUBLIC_BEHAVIOR_SOURCE } from './rsi-task-inputs.mjs';
 import { bindEvolutionCandidate } from './rsi-candidate-evolution.mjs';
+import { validateCampaignBudget } from './rsi-campaign-budget.mjs';
 
 export const BENEFIT_ARMS = Object.freeze(['sekb-off', 'sekb-shadow', 'sekb-confirmed']);
 const CORPUS = 'harness/specs/fixtures/rsi-evidence-loop/tf0604/task-corpus.v1.json';
@@ -247,6 +248,14 @@ export function createBenefitPlan(root, options = {}) {
   const maxTotalTokens = mode === 'offline' ? null : options.maxTotalTokens;
   if (mode === 'measured') assert(Number.isSafeInteger(maxProviderCalls) && maxProviderCalls >= 216
     && Number.isSafeInteger(maxTotalTokens) && maxTotalTokens > 0, 'explicit-measurement-budget-required');
+  if (options.campaignBudget) {
+    validateCampaignBudget(options.campaignBudget);
+    assert(evolutionBinding && collector?.version === TOOL_CODING_COLLECTOR.version, 'campaign-requires-evolved-v4-plan');
+    assert.equal(options.campaignBudget.endpoint, endpoint, 'campaign-endpoint-drift');
+    assert.equal(options.campaignBudget.model, model, 'campaign-model-drift');
+    assert(maxProviderCalls <= options.campaignBudget.authorization.maxProviderCalls
+      && maxTotalTokens <= options.campaignBudget.authorization.maxTotalTokens, 'campaign-plan-budget-drift');
+  }
   const paths = [...new Set([...SOURCES, ...(options.codingCollector ? [CODING_BINDINGS_PATH,
     'scripts/rsi-coding-collector.mjs', 'scripts/rsi-coding-collector.d.mts', 'scripts/rsi-coding-candidate.mts',
     'scripts/lib/rsi-coding-protocol.mjs', 'scripts/lib/rsi-coding-protocol.d.mts', 'tests/unit/rsi-coding-collector.test.ts',
@@ -264,6 +273,10 @@ export function createBenefitPlan(root, options = {}) {
       'vitest.rsi-adoption.config.ts', 'openclaw_runtime/src/knowledge/sekb/knowledge-store.ts',
       'openclaw_runtime/src/knowledge/sekb/trajectory-redaction.ts', 'openclaw_runtime/src/knowledge/sekb/types.ts',
       'harness/specs/tasks/rsi-candidate-evolution.md', 'harness/specs/rules/rsi-candidate-evolution-boundary.md'] : []),
+    ...(options.campaignBudget ? ['scripts/lib/rsi-campaign-budget.mjs', 'scripts/lib/rsi-campaign-budget.d.mts',
+      'scripts/rsi-paired-measurement.mjs', 'scripts/rsi-paired-measurement.d.mts',
+      'tests/unit/rsi-campaign-budget.test.ts', 'harness/specs/tasks/rsi-paired-measurement.md',
+      'harness/specs/rules/rsi-campaign-budget-boundary.md'] : []),
     ...tasks.flatMap((task) => [task.source.recordPath, ...Object.keys(task.oracle.inputDigests)])])].sort();
   // Source bindings use the repository's canonical text bytes across LF/CRLF
   // checkouts. Raw run receipts and their manifest remain byte-addressed.
@@ -277,7 +290,8 @@ export function createBenefitPlan(root, options = {}) {
     provider: { endpoint, model, maxOutputTokens: collector ? collector.maxOutputTokens : 2048 },
     ...(collector ? { collector: structuredClone(collector) } : {}),
     ...(evolutionBinding ? { evolution: evolutionBinding.evolution } : {}),
-    budget: { providerCallsAuthorized: maxProviderCalls, maxTotalTokens, network: mode === 'offline' ? 'none' : 'declared-provider-only', retries: 0 },
+    budget: { providerCallsAuthorized: maxProviderCalls, maxTotalTokens, network: mode === 'offline' ? 'none' : 'declared-provider-only', retries: 0,
+      ...(options.campaignBudget ? { campaign: structuredClone(options.campaignBudget) } : {}) },
     design: { k: 3, minimumCompleteCases: 20, primaryComparison: 'sekb-confirmed-vs-off', order: 'rotating-three-arm',
       unit: 'caseId', minimumImprovement: 0.05, costIncreaseMaximum: 0.1 },
     arms: structuredClone(FLAGS), candidate, candidateDigest: benefitDigest(candidate), tasks, policy, slots: schedule(tasks),
@@ -294,7 +308,8 @@ export function validateBenefitPlan(plan, root) {
     mode: plan.evidenceKind === 'live-provider' ? 'measured' : 'offline',
     maxProviderCalls: plan.budget?.providerCallsAuthorized, maxTotalTokens: plan.budget?.maxTotalTokens,
     codingCollector: Boolean(plan.collector), collectorVersion: plan.collector?.version,
-    candidateEvolution: plan.evolution?.export, candidateGeneration: plan.evolution?.generation });
+    candidateEvolution: plan.evolution?.export, candidateGeneration: plan.evolution?.generation,
+    campaignBudget: plan.budget?.campaign });
   assert.equal(plan.schemaVersion, expected.schemaVersion, 'benefit-plan-version-drift');
   assert.deepEqual(plan.evolution, expected.evolution, 'frozen-evolution-drift');
   assert.deepEqual(plan.collector, expected.collector, 'frozen-collector-drift');

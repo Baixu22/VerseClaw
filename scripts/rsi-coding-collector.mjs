@@ -126,11 +126,12 @@ export async function collectCodingTrial(options) {
   return row;
 }
 
-export async function runCodingCollector({ root = ROOT, directory, scratch, supportRoot, apiKey, limit = 216 }) {
+export async function runCodingCollector({ root = ROOT, directory, scratch, supportRoot, apiKey, limit = 216, campaignLedger }) {
   const plan = read(join(directory, 'plan.json'));
   validateBenefitPlan(plan, root);
   assert.equal(plan.evidenceKind, 'live-provider', 'measured-plan-required');
   assert.deepEqual(plan.collector, codingCollectorConfig(plan.collector?.version), 'coding-plan-required');
+  assert(!plan.budget.campaign || campaignLedger?.campaignDigest === benefitDigest(plan.budget.campaign), 'campaign-ledger-required');
   verifyCodingAdmission(root, directory, plan);
   assert(Number.isSafeInteger(limit) && limit > 0 && limit <= 216, 'invalid-slot-limit');
   assert.equal(read(join(supportRoot, 'node_modules/markdown-it/package.json')).version, '14.2.0', 'support-version-drift');
@@ -165,7 +166,7 @@ export async function runCodingCollector({ root = ROOT, directory, scratch, supp
         assert(knownTokens + Buffer.byteLength(JSON.stringify(request)) + plan.provider.maxOutputTokens <= plan.budget.maxTotalTokens, 'token-budget-exhausted');
         row = await collectCodingTrial({ root, plan, slot, apiKey, scratch, supportRoot,
           remainingTokens: plan.budget.maxTotalTokens - knownTokens,
-          remainingProviderCalls: plan.budget.providerCallsAuthorized - priorCalls });
+          remainingProviderCalls: plan.budget.providerCallsAuthorized - priorCalls, campaignLedger });
       }
       const [record] = recordMeasuredBenefitTrials(root, directory, [row]);
       written++;
