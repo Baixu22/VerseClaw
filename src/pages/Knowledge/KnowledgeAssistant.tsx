@@ -148,7 +148,7 @@ export function KnowledgeAssistantMessage({
                       type="button"
                       className={cn('flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors hover:bg-black/5 dark:hover:bg-white/5', compact && 'knowledge-bot-source')}
                       title={source.path || source.lookup}
-                      onClick={() => onOpenCitation({ lookup: source.lookup, title: source.title, excerpt: source.excerpt, path: source.path, score: source.score })}
+                      onClick={() => onOpenCitation({ lookup: source.lookup, title: source.title, excerpt: source.excerpt, path: source.path, score: source.score, sourceRef: source.citation?.sourceRef })}
                       data-testid="knowledge-librarian-source"
                     >
                       {compact ? <FileText className="h-3 w-3 shrink-0 text-muted-foreground" /> : <span className="w-4 shrink-0 text-right font-mono text-[10px] text-muted-foreground">{index + 1}</span>}

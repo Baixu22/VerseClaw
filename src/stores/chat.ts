@@ -4598,6 +4598,10 @@ export const useChatStore = create<ChatState>((set, get, api) => {
           );
         }
         const latest = get();
+        if (result.knowledgeReferences && latest.currentSessionKey === currentSessionKey) {
+          set(state => ({ messages: state.messages.map(message => message.id === userMsg.id
+            ? { ...message, _knowledgeRefs: result.knowledgeReferences } : message) }));
+        }
         const sendStillCurrent = _activeSendGenerationBySession.get(currentSessionKey) === sendGeneration;
         const canAttachToCurrentSession = latest.currentSessionKey === currentSessionKey
           && latest.sending

@@ -195,7 +195,8 @@ describe('Project RAG owner read contract', () => {
     expect(matchOwnerReadPin(first, { ...first.source, revision: '2' })).toBe('revision_mismatch');
     expect(matchOwnerReadPin(first, { ...first.source, sourceDigest: digestOwnerReadContent('other') })).toBe('digest_mismatch');
     expect(matchOwnerReadPin(first, { ...first.source, locator: { ...first.source.locator!, startByte: 1 } })).toBe('invalid_range');
-    const reordered = { endLine: first.source.locator!.endLine, ...first.source.locator! };
+    const { endLine, ...remaining } = first.source.locator!;
+    const reordered = { endLine, ...remaining };
     expect(matchOwnerReadPin(first, { ...first.source, locator: reordered })).toBeUndefined();
   });
 

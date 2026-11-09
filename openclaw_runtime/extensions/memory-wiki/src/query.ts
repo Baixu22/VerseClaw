@@ -1688,8 +1688,15 @@ export async function getMemoryWikiPage(params: {
         if ((error as NodeJS.ErrnoException).code === "ENOENT") return deny("not_found");
         throw error;
       }
+      const currentSummary = toWikiPageSummary({
+        absolutePath: page.absolutePath,
+        relativePath: page.relativePath,
+        raw: currentRaw,
+      });
+      if (!currentSummary) return deny("not_found");
+      const currentPage = { ...currentSummary, raw: currentRaw };
       const current = readMemoryWikiOwnerSnapshot({
-        page: { ...page, raw: currentRaw },
+        page: currentPage,
         config: effectiveConfig,
         context: readContext,
         pin: first.snapshot.source,
@@ -1697,12 +1704,12 @@ export async function getMemoryWikiPage(params: {
       });
       if (current.status === "denied") return deny(current.reason);
       const snapshot = current.snapshot;
-      const totalLines = parseWikiMarkdown(page.raw).body.split(/\r?\n/).length;
+      const totalLines = parseWikiMarkdown(currentRaw).body.split(/\r?\n/).length;
       const slice = snapshot.content;
-      const rawPrefix = Buffer.from(page.raw, "utf8")
+      const rawPrefix = Buffer.from(currentRaw, "utf8")
         .subarray(0, snapshot.source.locator!.startByte)
         .toString("utf8");
-      const bodyStart = page.raw.length - parseWikiMarkdown(page.raw).body.length;
+      const bodyStart = currentRaw.length - parseWikiMarkdown(currentRaw).body.length;
       const actualFromLine = 1 + (rawPrefix.slice(bodyStart).match(/\n/g)?.length ?? 0);
       const actualLineCount = slice.length
         ? snapshot.source.locator!.endLine - snapshot.source.locator!.startLine + 1
@@ -1719,7 +1726,7 @@ export async function getMemoryWikiPage(params: {
         lineCount: actualLineCount,
         totalLines,
         truncated,
-        ...buildWikiResultMetadata(page),
+        ...buildWikiResultMetadata(currentPage),
         sourceRef: snapshot.source,
         ownerSnapshot: snapshot,
       };

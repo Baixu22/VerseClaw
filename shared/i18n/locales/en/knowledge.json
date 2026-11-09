@@ -654,6 +654,7 @@
     "librarianSteward": "Steward review prepared"
   },
   "errors": {
+    "ownerReadDenied": "This source is unavailable or its permission, version, or read range has changed. Select a valid reference again.",
     "status": "Failed to load knowledge status.",
     "action": "Knowledge action failed.",
     "okfValidation": "OKF validation failed.",

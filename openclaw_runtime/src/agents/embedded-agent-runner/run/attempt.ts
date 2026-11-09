@@ -2526,6 +2526,8 @@ export async function runEmbeddedAttempt(
         sekbRuntime: dcsExtensionDeps?.sekbRuntime,
         // B-3 v2: workspace root enriches the child handoff entity snapshot.
         workspaceDir: effectiveWorkspace,
+        workspaceId: params.workspaceId,
+        abortSignal: runAbortController.signal,
         // B-3 v3: write-set coordinate for the child handoff.
         ...(dcsExtensionDeps?.writeSet?.length ? { writeSet: [...dcsExtensionDeps.writeSet] } : {}),
         toolEntries,

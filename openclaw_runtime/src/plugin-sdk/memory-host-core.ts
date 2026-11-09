@@ -17,6 +17,8 @@ export {
   evaluateOwnerReadPolicy,
   evaluateOwnerReadSnapshot,
   isSourceRefV2,
+  isOwnerReadSnapshotV1,
+  normalizeSourceRefV2,
   matchOwnerReadPin,
   type OwnerReadPolicy,
   type OwnerReadSnapshotV1,

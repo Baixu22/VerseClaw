@@ -39,6 +39,10 @@ import {
   matchOrchestrationPreset,
 } from './orchestration-presets-api';
 import { getActiveWorkspaceProfile } from './workspaces-api';
+import { prepareKnowledgeReadScope, assertKnowledgeReadScopeCurrent, type KnowledgeReadScope } from './knowledge-read-scope';
+import { computeWorkspaceFingerprint } from '../../shared/workspace-fingerprint';
+import { normalizeChatKnowledgeReferences } from '../../openclaw_runtime/src/context-engine/chat-knowledge-intent';
+import { normalizeSourceRefV2 } from '../../openclaw_runtime/src/runtime-core/knowledge-owner-read';
 import { createWorkspacePermissionDecisionEvent } from './permission-decision-audit';
 import { createSandboxDenialDetails, type SandboxDenialDetails } from '@shared/sandbox/errors';
 import { decideGatewayRpc, isApprovalRisk } from './workspace-permissions';
@@ -104,12 +108,16 @@ function runGatewayRpc(
   method: string,
   params: unknown,
   timeoutMs: number | undefined,
+  readScope?: KnowledgeReadScope,
 ): Promise<unknown> {
   return resourceFabricInstance.run(
     method,
     params,
     timeoutMs,
-    (rpcMethod, rpcParams, rpcTimeoutMs) => gatewayManager.rpc(rpcMethod, rpcParams, rpcTimeoutMs),
+    async (rpcMethod, rpcParams, rpcTimeoutMs) => {
+      if (readScope) await assertKnowledgeReadScopeCurrent(gatewayManager, readScope);
+      return gatewayManager.rpc(rpcMethod, rpcParams, rpcTimeoutMs);
+    },
   );
 }
 
@@ -347,6 +355,29 @@ export function createGatewayApi(
     timeoutMs: number | undefined,
     policyWorkspace?: Awaited<ReturnType<typeof getActiveWorkspaceProfile>>,
   ) => {
+    let knowledgeReadScope: KnowledgeReadScope | undefined;
+    if (method === 'wiki.get' || method === 'wiki.search') {
+      const values = isRecord(params) ? params : {};
+      knowledgeReadScope = await prepareKnowledgeReadScope(gatewayManager, {
+        sessionKey: typeof values.sessionKey === 'string' ? values.sessionKey : undefined,
+        workspaceId: typeof values.workspaceId === 'string' ? values.workspaceId : undefined,
+      });
+      const sourceRef = normalizeSourceRefV2(values.sourceRef);
+      if (values.sourceRef !== undefined && !sourceRef) throw Object.assign(new Error('Invalid knowledge pin'), { code: 'VALIDATION' });
+      params = { ...values, ...(sourceRef ? { sourceRef } : {}), readIdentity: knowledgeReadScope.identity };
+    }
+    if (method === 'chat.send' && isRecord(params) && Array.isArray(params.knowledgeReferences) && params.knowledgeReferences.length) {
+      knowledgeReadScope = await prepareKnowledgeReadScope(gatewayManager, {
+        sessionKey: typeof params.sessionKey === 'string' ? params.sessionKey : undefined,
+        workspaceId: typeof params.workspaceId === 'string' ? params.workspaceId : undefined,
+      });
+      const references = normalizeChatKnowledgeReferences(params.knowledgeReferences);
+      if (references.some(ref => ref.invalidPin)) throw Object.assign(new Error('Invalid knowledge pin'), { code: 'VALIDATION' });
+      params = { ...params, knowledgeReferences: references,
+        workspaceId: knowledgeReadScope.identity.workspaceId, workspaceDir: knowledgeReadScope.identity.workspaceDir,
+        workspaceFingerprint: computeWorkspaceFingerprint(knowledgeReadScope.identity.workspaceDir ?? ''),
+        ...(knowledgeReadScope.expectedSessionGeneration ? { expectedSessionGeneration: knowledgeReadScope.expectedSessionGeneration } : {}) };
+    }
     if (method === 'chat.send' || method === 'orchestrator.run') {
       const active = await getActiveWorkspaceProfile();
       if (policyWorkspace && (!active || active.id !== policyWorkspace.id
@@ -378,7 +409,8 @@ export function createGatewayApi(
         throw Object.assign(new Error('Verification workspace policy changed after permission evaluation'), { code: 'VALIDATION' });
       }
     }
-    const result = await runGatewayRpc(gatewayManager, resourceFabricInstance, method, params, timeoutMs);
+    const result = await runGatewayRpc(gatewayManager, resourceFabricInstance, method, params, timeoutMs, knowledgeReadScope);
+    if (knowledgeReadScope) await assertKnowledgeReadScopeCurrent(gatewayManager, knowledgeReadScope);
     await captureMissionKnowledgeCandidates(method, result, options.createKnowledgeInboxItem, capturedMissionKnowledgeKeys);
     return result;
   };

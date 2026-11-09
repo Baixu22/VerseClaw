@@ -29,6 +29,8 @@ import type { SessionEffectivePolicy } from '../../shared/types/session-effectiv
 import { getSetting } from '../utils/store';
 import { getHostDeadline } from '../utils/host-deadline-context';
 import { persistentTaskChatContext } from './task-system-service';
+import { normalizeChatKnowledgeReferences } from '../../openclaw_runtime/src/context-engine/chat-knowledge-intent';
+import { prepareKnowledgeReadScope, assertKnowledgeReadScopeCurrent } from './knowledge-read-scope';
 
 const VISION_MIME_TYPES = new Set([
   'image/png',
@@ -110,6 +112,9 @@ type NormalizedKnowledgeReference = {
   confidence?: number;
   freshnessLevel?: string;
   matchedClaimStatus?: string;
+  sourceRef?: import('../../shared/knowledge/owner-read-contract').SourceRefV2;
+  revision?: string;
+  contentDigest?: string;
 };
 
 function capContextText(value: string, maxChars: number): string {
@@ -118,37 +123,9 @@ function capContextText(value: string, maxChars: number): string {
 }
 
 function normalizeKnowledgeReferences(value: unknown): NormalizedKnowledgeReference[] {
-  if (!Array.isArray(value)) return [];
-  return value.flatMap((entry): NormalizedKnowledgeReference[] => {
-    if (!isRecord(entry)) return [];
-    const lookup = typeof entry.lookup === 'string' ? entry.lookup.trim() : '';
-    if (!lookup) return [];
-    const id = typeof entry.id === 'string' && entry.id.trim() ? entry.id.trim() : lookup;
-    const title = typeof entry.title === 'string' && entry.title.trim() ? entry.title.trim() : lookup;
-    const corpus = entry.corpus === 'memory' || entry.corpus === 'all' || entry.corpus === 'wiki' ? entry.corpus : undefined;
-    const pageId = typeof entry.pageId === 'string' && entry.pageId.trim() ? entry.pageId.trim() : undefined;
-    const pagePath = typeof entry.pagePath === 'string' && entry.pagePath.trim() ? entry.pagePath.trim() : undefined;
-    const sourcePath = typeof entry.sourcePath === 'string' && entry.sourcePath.trim() ? entry.sourcePath.trim() : undefined;
-    const attachKind = entry.attachKind === 'suggested' || entry.attachKind === 'auto' ? entry.attachKind : entry.attachKind === 'manual' ? 'manual' : undefined;
-    const routingReason = typeof entry.routingReason === 'string' && entry.routingReason.trim() ? entry.routingReason.trim() : undefined;
-    const confidence = typeof entry.confidence === 'number' && Number.isFinite(entry.confidence) ? entry.confidence : undefined;
-    const freshnessLevel = typeof entry.freshnessLevel === 'string' && entry.freshnessLevel.trim() ? entry.freshnessLevel.trim() : undefined;
-    const matchedClaimStatus = typeof entry.matchedClaimStatus === 'string' && entry.matchedClaimStatus.trim() ? entry.matchedClaimStatus.trim() : undefined;
-    return [{
-      id,
-      title,
-      lookup,
-      ...(corpus ? { corpus } : {}),
-      ...(pageId ? { pageId } : {}),
-      ...(pagePath ? { pagePath } : {}),
-      ...(sourcePath ? { sourcePath } : {}),
-      ...(attachKind ? { attachKind } : {}),
-      ...(routingReason ? { routingReason } : {}),
-      ...(typeof confidence === 'number' ? { confidence } : {}),
-      ...(freshnessLevel ? { freshnessLevel } : {}),
-      ...(matchedClaimStatus ? { matchedClaimStatus } : {}),
-    }];
-  }).slice(0, 8);
+  const references = normalizeChatKnowledgeReferences(value);
+  if (references.some(reference => reference.invalidPin)) throw new Error('Invalid knowledge reference pin');
+  return references;
 }
 
 async function applyTaskLedgerContext(
@@ -474,6 +451,11 @@ export function createChatApi({ gatewayManager, selectSessionTask }: {
         const knowledgeScope = normalizeKnowledgeScope(body.knowledgeScope);
         const knowledgeMode = normalizeKnowledgeMode(body.knowledgeMode);
         const knowledgeReferences = normalizeKnowledgeReferences(body.knowledgeReferences);
+        const knowledgeReadScope = knowledgeReferences.length ? await prepareKnowledgeReadScope(gatewayManager, {
+          sessionKey, workspaceId: typeof body.workspaceId === 'string' ? body.workspaceId : undefined,
+        }) : undefined;
+        if (knowledgeReadScope?.expectedSessionGeneration && typeof body.expectedSessionGeneration === 'string'
+          && body.expectedSessionGeneration !== knowledgeReadScope.expectedSessionGeneration) throw new Error('Knowledge session generation changed');
         let message = applyToolUiResponseContract(typeof body.message === 'string' ? body.message : '');
         const continuityMessage = await applyLongSessionContinuityContext(message, {
           gatewayManager,
@@ -597,6 +579,13 @@ export function createChatApi({ gatewayManager, selectSessionTask }: {
             rpcParams.knowledgeReferences = knowledgeReferences;
           }
         }
+        if (knowledgeReadScope) {
+          await assertKnowledgeReadScopeCurrent(gatewayManager, knowledgeReadScope);
+          if (knowledgeReadScope.expectedSessionGeneration) rpcParams.expectedSessionGeneration = knowledgeReadScope.expectedSessionGeneration;
+          rpcParams.workspaceId = knowledgeReadScope.identity.workspaceId;
+          rpcParams.workspaceDir = knowledgeReadScope.identity.workspaceDir;
+          rpcParams.workspaceFingerprint = computeWorkspaceFingerprint(knowledgeReadScope.identity.workspaceDir ?? '');
+        }
         // Area 2 §3.2: forward turn-scoped model override to runtime chat.send.
         // Empty/null means "no turn override" — omit so resolution falls through.
         if (typeof body.modelRef === 'string' && body.modelRef.trim()) {
@@ -644,6 +633,7 @@ export function createChatApi({ gatewayManager, selectSessionTask }: {
         }
         let result: unknown;
         try {
+          if (knowledgeReadScope) await assertKnowledgeReadScopeCurrent(gatewayManager, knowledgeReadScope);
           result = await gatewayManager.rpc('chat.send', rpcParams, 15 * 60_000);
           if (handoffOperationId) {
             if (!isRecord(result) || result.runId !== idempotencyKey) throw new Error('HANDOFF_SEND_IDENTITY_UNCONFIRMED');
@@ -707,6 +697,7 @@ export function createChatApi({ gatewayManager, selectSessionTask }: {
           success: true,
           ...(response ? { result: response } : {}),
           ...(knowledgeDenials.length > 0 ? { knowledgeDenials } : {}),
+          ...(isRecord(result) && Array.isArray(result.knowledgeReferences) ? { knowledgeReferences: normalizeKnowledgeReferences(result.knowledgeReferences) } : {}),
         };
       } catch (error) {
         logger.error(`[chat:sendWithMedia] Error: ${String(error)}`);

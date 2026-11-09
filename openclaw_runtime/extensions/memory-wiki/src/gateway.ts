@@ -1,6 +1,6 @@
 // Memory Wiki plugin module implements gateway behavior.
 import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { resolveDefaultAgentId } from "openclaw/plugin-sdk/memory-host-core";
+import { normalizeSourceRefV2, resolveDefaultAgentId } from "openclaw/plugin-sdk/memory-host-core";
 import { readPositiveIntegerParam } from "openclaw/plugin-sdk/param-readers";
 import type { OpenClawConfig, OpenClawPluginApi } from "../api.js";
 import { applyMemoryWikiMutation, normalizeMemoryWikiMutationInput } from "./apply.js";
@@ -26,6 +26,7 @@ import { getMemoryWikiPage, searchMemoryWiki, WIKI_SEARCH_MODES } from "./query.
 import { syncMemoryWikiImportedSources } from "./source-sync.js";
 import { buildMemoryWikiDoctorReport, resolveMemoryWikiStatus } from "./status.js";
 import { initializeMemoryWikiVault } from "./vault.js";
+import type { MemoryWikiReadIdentity } from "./owner-read.js";
 
 const READ_SCOPE = "operator.read" as const;
 const WRITE_SCOPE = "operator.write" as const;
@@ -35,6 +36,30 @@ type GatewayMethodContext = Parameters<
   Parameters<OpenClawPluginApi["registerGatewayMethod"]>[1]
 >[0];
 type GatewayRespond = GatewayMethodContext["respond"];
+
+function readIdentity(
+  request: Record<string, unknown>,
+  client: GatewayMethodContext["client"],
+): MemoryWikiReadIdentity | undefined {
+  if (request.readIdentity === undefined) return undefined;
+  if (client?.connect?.client?.mode !== "backend")
+    throw new Error("Knowledge read identity is backend-owned.");
+  const value = request.readIdentity;
+  if (!value || typeof value !== "object" || Array.isArray(value))
+    throw new Error("Invalid knowledge read identity.");
+  const facts = value as Record<string, unknown>;
+  const providerRefs =
+    Array.isArray(facts.egressProviderRefs) &&
+    facts.egressProviderRefs.every((entry) => typeof entry === "string" && entry.trim())
+      ? (facts.egressProviderRefs as string[])
+      : [];
+  return {
+    agentSessionKey: readStringParam(facts, "agentSessionKey"),
+    workspaceId: readStringParam(facts, "workspaceId"),
+    workspaceDir: readStringParam(facts, "workspaceDir"),
+    egressProviderRefs: providerRefs,
+  };
+}
 
 function readStringParam(params: Record<string, unknown>, key: string): string | undefined;
 function readStringParam(
@@ -271,7 +296,7 @@ export function registerMemoryWikiGatewayMethods(params: {
 
   api.registerGatewayMethod(
     "wiki.search",
-    async ({ params: requestParams, respond }) => {
+    async ({ params: requestParams, respond, client }) => {
       try {
         await syncImportedSourcesIfNeeded(config, appConfig);
         const query = readStringParam(requestParams, "query", { required: true });
@@ -291,6 +316,7 @@ export function registerMemoryWikiGatewayMethods(params: {
             searchBackend,
             searchCorpus,
             mode,
+            readIdentity: readIdentity(requestParams, client),
           }),
         );
       } catch (error) {
@@ -353,7 +379,7 @@ export function registerMemoryWikiGatewayMethods(params: {
 
   api.registerGatewayMethod(
     "wiki.get",
-    async ({ params: requestParams, respond }) => {
+    async ({ params: requestParams, respond, client }) => {
       try {
         await syncImportedSourcesIfNeeded(config, appConfig);
         const lookup = readStringParam(requestParams, "lookup", { required: true });
@@ -362,6 +388,9 @@ export function registerMemoryWikiGatewayMethods(params: {
         const searchBackend = readEnumParam(requestParams, "backend", WIKI_SEARCH_BACKENDS);
         const searchCorpus = readEnumParam(requestParams, "corpus", WIKI_SEARCH_CORPORA);
         const agentId = resolveGatewayAgentId(requestParams, appConfig);
+        const sourceRef = normalizeSourceRefV2(requestParams.sourceRef);
+        if (requestParams.sourceRef !== undefined && !sourceRef)
+          throw new Error("Invalid SourceRef/v2 pin.");
         respond(
           true,
           await getMemoryWikiPage({
@@ -373,6 +402,8 @@ export function registerMemoryWikiGatewayMethods(params: {
             lineCount,
             searchBackend,
             searchCorpus,
+            sourceRef,
+            readIdentity: readIdentity(requestParams, client),
           }),
         );
       } catch (error) {

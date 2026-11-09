@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactElement } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useWorkspacesStore } from '@/stores/workspaces';
 import './knowledge.css';
 import type { KnowledgeChatContext } from '@/pages/Chat/KnowledgeChat';
 import { KnowledgeBotLauncher } from '@/components/knowledge-bot/KnowledgeBotLauncher';
@@ -167,6 +168,7 @@ function sourceRefFromSearchRow(row: SearchRow): SourceSetRef | null {
     kind: 'wiki',
     path: lookup,
     label: getTitle(row),
+    ...(asRecord(row.sourceRef)?.schema === 'SourceRef/v2' ? { sourceRef: row.sourceRef as import('@shared/knowledge/owner-read-contract').SourceRefV2 } : {}),
   };
 }
 
@@ -347,6 +349,14 @@ export function Knowledge() {
   const [query, setQuery] = useState('');
   const [searchResult, setSearchResult] = useState<KnowledgeSearchResult | null>(null);
   const [selectedPage, setSelectedPage] = useState<Record<string, unknown> | null>(null);
+  const sourceReadSerialRef = useRef(0);
+  const sourceWorkspace = useWorkspacesStore(state => state.activeWorkspace);
+  useEffect(() => {
+    sourceReadSerialRef.current += 1;
+    setSelectedPage(null);
+    setSelectedRow(null);
+    if (editorMode === 'preview' && selectedLookup) setEditorBody('');
+  }, [sourceWorkspace?.id, sourceWorkspace?.activeSessionKey]);
   const [selectedRow, setSelectedRow] = useState<SearchRow | null>(null);
   const [selectedLookup, setSelectedLookup] = useState('');
   const [draftTitle, setDraftTitle] = useState('');
@@ -1028,17 +1038,23 @@ export function Knowledge() {
   const openResult = useCallback(async (row: SearchRow) => {
     const lookup = getLookup(row);
     if (!lookup) return;
+    const serial = ++sourceReadSerialRef.current;
+    const sourceRef = (row.sourceRef ?? asRecord(row.citation)?.sourceRef) as import('@shared/knowledge/owner-read-contract').SourceRefV2 | undefined;
     setRunning(`get:${lookup}`);
     setError(null);
+    setSelectedPage(null);
+    setEditorBody('');
     try {
-      const result = await hostApi.knowledge.get({ lookup, lineCount: 120, corpus: 'wiki' });
-      if (!result.success) throw new Error(result.error || t('errors.get'));
+      const result = await hostApi.knowledge.get({ lookup, lineCount: 120, corpus: 'wiki', sourceRef,
+        sessionKey: sourceWorkspace?.activeSessionKey, workspaceId: sourceWorkspace?.id });
+      if (serial !== sourceReadSerialRef.current) return;
+      if (!result.success) throw new Error(result.readDenial ? t('errors.ownerReadDenied') : result.error || t('errors.get'));
       setSelectedPage(result);
-      setSelectedRow(row);
+      setSelectedRow({ ...row, ...(result.sourceRef ? { sourceRef: result.sourceRef } : {}) });
       setSelectedLookup(lookup);
       const body = getPageBody(result as Record<string, unknown>);
       setEditorTitle(getTitle(row));
-      setEditorBody(body || makeStarterMarkdown(getTitle(row)));
+      setEditorBody(body);
       setEditorSource(lookup);
       setEditorType('source-note');
       setEditorMode('preview');
@@ -1048,7 +1064,7 @@ export function Knowledge() {
           targetId: lookup,
           targetKind: 'wiki-page',
           title: getTitle(row),
-          sourceRefs: [{ id: lookup, kind: 'wiki', path: lookup }],
+          sourceRefs: [{ id: lookup, kind: 'wiki', path: lookup, ...(result.sourceRef ? { sourceRef: result.sourceRef } : {}) }],
           reference: {
             kind: 'search',
             lookup,
@@ -1061,13 +1077,14 @@ export function Knowledge() {
       }
       if (!draftSources.trim()) setDraftSources(getString(row, ['id', 'pageId', 'pagePath', 'path', 'relativePath']) || lookup);
     } catch (err) {
+      if (serial !== sourceReadSerialRef.current) return;
       const message = errorMessageFrom(err);
       setError(message);
       toast.error(message);
     } finally {
-      setRunning(null);
+      if (serial === sourceReadSerialRef.current) setRunning(null);
     }
-  }, [draftSources, query, t]);
+  }, [draftSources, query, sourceWorkspace?.id, sourceWorkspace?.activeSessionKey, t]);
 
   useEffect(() => {
     if (restoredLocation.current === location.key) return;
@@ -1089,7 +1106,11 @@ export function Knowledge() {
       setSourceSetTitle(context.sourceSetTitle ?? '');
       setSearchResult(context.searchResult ?? null);
       setSelectedRow(context.selectedRow ?? null);
-      setSelectedPage(context.selectedPage ?? null);
+      setSelectedPage(null);
+      if (context.selectedRow && context.editorMode === 'preview') {
+        setEditorBody('');
+        void openResult({ ...context.selectedRow, ...(asRecord(context.selectedPage)?.sourceRef ? { sourceRef: asRecord(context.selectedPage)!.sourceRef } : {}) });
+      }
       setSelectedLookup(context.editorSource ?? '');
     }
     if (search.get('view') === 'review-queue') {
@@ -3047,7 +3068,7 @@ export function Knowledge() {
       {assistantContext && <KnowledgeBotWindow open={assistantOpen} context={assistantContext}
         onClose={closeAssistant}
         onAfterClose={afterAssistantClose}
-        onOpenCitation={(citation) => { void openResult({ title: citation.title, pagePath: citation.lookup }); }} />}
+        onOpenCitation={(citation) => { void openResult({ title: citation.title, pagePath: citation.lookup, sourceRef: citation.sourceRef }); }} />}
 
       <Sheet open={utilityPanel !== null} onOpenChange={(open) => { if (!open) setUtilityPanel(null); }}>
         <SheetContent side="right" className="bottom-0 top-10 flex h-auto w-full flex-col gap-0 overflow-hidden p-0 sm:max-w-lg" data-testid="knowledge-utility-sheet">

@@ -754,6 +754,7 @@ function knowledgeReferenceFromRow(row: KnowledgeSearchRow, corpus: 'wiki' | 'me
   const sourcePath = getString(row, ['sourcePath', 'source', 'filePath']);
   const snippet = getString(row, ['snippet', 'excerpt', 'summary', 'text']);
   const score = getNumber(row, ['score', 'rank']);
+  const sourceRef = asRecord(row.sourceRef);
   return {
     id: pageId || pagePath || lookup,
     title,
@@ -764,6 +765,9 @@ function knowledgeReferenceFromRow(row: KnowledgeSearchRow, corpus: 'wiki' | 'me
     ...(sourcePath ? { sourcePath } : {}),
     ...(snippet ? { snippet } : {}),
     ...(score !== undefined ? { score } : {}),
+    ...(sourceRef?.schema === 'SourceRef/v2' ? { sourceRef: sourceRef as import('@shared/knowledge/owner-read-contract').SourceRefV2 } : {}),
+    ...(typeof row.revision === 'string' ? { revision: row.revision } : {}),
+    ...(typeof row.contentDigest === 'string' ? { contentDigest: row.contentDigest } : {}),
   };
 }
 
@@ -1009,6 +1013,8 @@ export function ChatInput({
   const [knowledgeSearchResult, setKnowledgeSearchResult] = useState<KnowledgeSearchResult | null>(null);
   const [knowledgeSearching, setKnowledgeSearching] = useState(false);
   const [knowledgeSearchError, setKnowledgeSearchError] = useState<string | null>(null);
+  const knowledgeReadSerialRef = useRef(0);
+  const knowledgeWorkspaceId = useWorkspacesStore(state => state.activeWorkspace?.id);
   const [selectedKnowledgeRefs, setSelectedKnowledgeRefs] = useState<ChatKnowledgeReference[]>([]);
   const [suggestedKnowledgeRefs, setSuggestedKnowledgeRefs] = useState<KnowledgeRouteCandidate[]>([]);
   const [knowledgePreflightExpanded, setKnowledgePreflightExpanded] = useState(false);
@@ -1089,6 +1095,12 @@ export function ChatInput({
   const refreshProviderSnapshot = useProviderStore((s) => s.refreshProviderSnapshot);
   const currentAgentId = useChatStore((s) => s.currentAgentId);
   const currentSessionKey = useChatStore((s) => s.currentSessionKey);
+  useEffect(() => {
+    knowledgeReadSerialRef.current += 1;
+    setKnowledgeSearchResult(null);
+    setKnowledgeSearching(false);
+    setSelectedKnowledgeRefs([]);
+  }, [currentSessionKey, knowledgeWorkspaceId]);
   const activeTaskNodeId = useWorkspacesStore((s) => s.activeWorkspace?.coordinatorBindings?.[currentSessionKey]?.activeTaskNodeId ?? null);
   useEffect(() => {
     if (useChatStore.getState().currentSessionKey === currentSessionKey) useChatStore.setState({ activeTaskNodeId });
@@ -1575,6 +1587,7 @@ export function ChatInput({
   ) => {
     const query = rawQuery.trim();
     if (!query) return;
+    const serial = ++knowledgeReadSerialRef.current;
     setKnowledgeSearching(true);
     setKnowledgeSearchError(null);
     try {
@@ -1582,17 +1595,21 @@ export function ChatInput({
         query,
         maxResults: 8,
         corpus,
+        sessionKey: currentSessionKey,
+        workspaceId: knowledgeWorkspaceId,
       });
+      if (serial !== knowledgeReadSerialRef.current) return;
       if (!result.success) throw new Error(result.error || t('composer.knowledgeAttach.searchFailed'));
       setKnowledgeSearchResult(result);
     } catch (error) {
+      if (serial !== knowledgeReadSerialRef.current) return;
       const message = errorMessageFrom(error);
       setKnowledgeSearchError(message);
       toastUserError(error);
     } finally {
-      setKnowledgeSearching(false);
+      if (serial === knowledgeReadSerialRef.current) setKnowledgeSearching(false);
     }
-  }, [knowledgeCorpus, t]);
+  }, [knowledgeCorpus, currentSessionKey, knowledgeWorkspaceId, t]);
 
   const searchKnowledge = useCallback(async () => {
     await runKnowledgeSearch(knowledgeQuery);

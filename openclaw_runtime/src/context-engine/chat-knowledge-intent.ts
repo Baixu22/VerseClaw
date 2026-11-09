@@ -1,5 +1,11 @@
 import { createHash } from "node:crypto";
-import type { OwnerReadSnapshotV1, SourceRefV2 } from "../runtime-core/knowledge-owner-read.js";
+import {
+  evaluateOwnerReadSnapshot,
+  normalizeSourceRefV2,
+  type OwnerReadRejectionCode,
+  type OwnerReadSnapshotV1,
+  type SourceRefV2,
+} from "../runtime-core/knowledge-owner-read.js";
 
 export type ChatKnowledgeScope = "none" | "memory" | "wiki" | "all";
 export type ChatKnowledgeMode = "manual" | "suggest" | "auto-read";
@@ -24,6 +30,7 @@ export type ChatKnowledgeReferenceIntent = {
   sourceRef?: SourceRefV2;
   revision?: string;
   contentDigest?: string;
+  invalidPin?: boolean;
 };
 
 export type ChatKnowledgeOwner = "memory-wiki" | "memory-slot" | "sekb";
@@ -31,11 +38,7 @@ export type ChatKnowledgeOwner = "memory-wiki" | "memory-slot" | "sekb";
 export type ChatKnowledgeDenialReason =
   | "invalid_ref"
   | "unsupported_owner"
-  | "not_found"
-  | "acl_denied"
-  | "sensitive"
-  | "stale"
-  | "revoked";
+  | OwnerReadRejectionCode;
 
 export type ChatKnowledgeDenial = {
   id: string;
@@ -47,6 +50,7 @@ export type ChatKnowledgeDenial = {
 
 export type ResolvedChatKnowledgeRef = {
   refId: string;
+  intentId?: string;
   owner: ChatKnowledgeOwner;
   subjectKind: "wiki-page" | "memory-card" | "experience-principle";
   subjectId: string;
@@ -134,6 +138,14 @@ export function normalizeChatKnowledgeReferences(value: unknown): ChatKnowledgeR
         : undefined;
     const freshnessLevel = cleanString(record.freshnessLevel);
     const matchedClaimStatus = cleanString(record.matchedClaimStatus);
+    const sourceRef = normalizeSourceRefV2(record.sourceRef);
+    const revision = cleanString(record.revision);
+    const contentDigest = cleanString(record.contentDigest);
+    const invalidPin =
+      (record.sourceRef !== undefined && !sourceRef) ||
+      (record.revision !== undefined && !revision) ||
+      (record.contentDigest !== undefined &&
+        (!contentDigest || !/^sha256:[a-f0-9]{64}$/.test(contentDigest)));
     out.push({
       id,
       title,
@@ -147,6 +159,10 @@ export function normalizeChatKnowledgeReferences(value: unknown): ChatKnowledgeR
       ...(typeof confidence === "number" ? { confidence } : {}),
       ...(freshnessLevel ? { freshnessLevel } : {}),
       ...(matchedClaimStatus ? { matchedClaimStatus } : {}),
+      ...(sourceRef ? { sourceRef } : {}),
+      ...(revision ? { revision } : {}),
+      ...(contentDigest ? { contentDigest } : {}),
+      ...(invalidPin ? { invalidPin: true } : {}),
     });
     if (out.length >= 8) break;
   }
@@ -154,6 +170,16 @@ export function normalizeChatKnowledgeReferences(value: unknown): ChatKnowledgeR
 }
 
 function ownerCandidates(ref: ChatKnowledgeReferenceIntent): ChatKnowledgeOwner[] {
+  if (ref.sourceRef) {
+    const owner = ref.sourceRef.authorityId;
+    if (owner !== "memory-wiki" && owner !== "memory-slot" && owner !== "sekb") return [];
+    if (
+      (ref.corpus === "wiki" && owner !== "memory-wiki") ||
+      (ref.corpus === "memory" && owner !== "memory-slot")
+    )
+      return [];
+    return [owner];
+  }
   if (ref.corpus === "memory") return ["memory-slot"];
   if (ref.corpus === "wiki") return ["memory-wiki"];
   // Explicit pinned refs from the Knowledge Hub may not carry a corpus yet.
@@ -174,6 +200,7 @@ export async function resolveChatKnowledgeIntent(params: {
   mode?: unknown;
   references?: unknown;
   adapters: readonly ChatKnowledgeSourceAdapter[];
+  signal?: AbortSignal;
 }): Promise<ChatKnowledgeResolution> {
   const scope = normalizeChatKnowledgeScope(params.scope);
   const mode = normalizeChatKnowledgeMode(params.mode);
@@ -183,6 +210,16 @@ export async function resolveChatKnowledgeIntent(params: {
   const adaptersByOwner = new Map(params.adapters.map((adapter) => [adapter.owner, adapter]));
 
   for (const ref of references) {
+    if (params.signal?.aborted || ref.invalidPin) {
+      denied.push(
+        denial(
+          ref,
+          params.signal?.aborted ? "cancelled" : "invalid_ref",
+          "Knowledge read was cancelled or its pin is invalid.",
+        ),
+      );
+      continue;
+    }
     if (!ref.lookup && !ref.pageId && !ref.sourcePath) {
       denied.push(
         denial(ref, "invalid_ref", `Knowledge reference "${ref.id}" has no lookup or page id.`),
@@ -190,17 +227,96 @@ export async function resolveChatKnowledgeIntent(params: {
       continue;
     }
     const owners = ownerCandidates(ref);
+    if (!owners.length) {
+      denied.push(
+        denial(
+          ref,
+          "unsupported_owner",
+          "Knowledge reference owner does not match the selected corpus.",
+        ),
+      );
+      continue;
+    }
     let resolvedForRef = false;
     for (const owner of owners) {
       const adapter = adaptersByOwner.get(owner);
       if (!adapter) continue;
       let result: ChatKnowledgeSourceAdapterResult;
       try {
-        result = await adapter.resolve(ref);
+        if (!params.signal) result = await adapter.resolve(ref);
+        else
+          result = await new Promise<ChatKnowledgeSourceAdapterResult>((resolve) => {
+            const signal = params.signal!;
+            const cancelled = () =>
+              resolve({
+                status: "denied",
+                reason: "cancelled",
+                visibleReason: "Knowledge read was cancelled.",
+              });
+            signal.addEventListener("abort", cancelled, { once: true });
+            if (signal.aborted) {
+              cancelled();
+              return;
+            }
+            Promise.resolve()
+              .then(() =>
+                signal.aborted
+                  ? ({
+                      status: "denied",
+                      reason: "cancelled",
+                      visibleReason: "Knowledge read was cancelled.",
+                    } as ChatKnowledgeSourceAdapterResult)
+                  : adapter.resolve(ref),
+              )
+              .then(
+                (value) => {
+                  signal.removeEventListener("abort", cancelled);
+                  resolve(
+                    signal.aborted
+                      ? {
+                          status: "denied",
+                          reason: "cancelled",
+                          visibleReason: "Knowledge read was cancelled.",
+                        }
+                      : value,
+                  );
+                },
+                () => {
+                  signal.removeEventListener("abort", cancelled);
+                  resolve({
+                    status: "denied",
+                    reason: "denied",
+                    visibleReason: "Knowledge owner read failed.",
+                  });
+                },
+              );
+          });
       } catch {
-        result = { status: "not_found" };
+        result = ref.sourceRef
+          ? {
+              status: "denied",
+              reason: "denied",
+              visibleReason: "Pinned knowledge owner read failed.",
+            }
+          : { status: "not_found" };
       }
       if (result.status === "resolved") {
+        if (
+          ref.attachKind === "auto" &&
+          (!result.resolved.ownerSnapshot ||
+            !["confirmed", "high-trust"].includes(result.resolved.ownerSnapshot.policy.trust) ||
+            !Number.isFinite(Date.parse(result.resolved.ownerSnapshot.policy.verifiedAt ?? "")))
+        ) {
+          denied.push(
+            denial(
+              ref,
+              "stale",
+              "Automatic knowledge read requires current owner confirmation and known freshness.",
+            ),
+          );
+          resolvedForRef = true;
+          break;
+        }
         admitted.push(result.resolved);
         resolvedForRef = true;
         break;
@@ -261,23 +377,33 @@ export function createResolvedChatKnowledgeRef(params: {
   sourceRefs?: string[];
   evidenceRefs?: string[];
   materializedAt?: string;
+  ownerSnapshot?: OwnerReadSnapshotV1;
+  intentId?: string;
 }): ResolvedChatKnowledgeRef {
-  const contentDigest = digestChatKnowledgeContent(params.content);
+  const snapshot = params.ownerSnapshot;
+  const content = snapshot?.content ?? params.content;
+  const contentDigest = digestChatKnowledgeContent(content);
+  if (snapshot && snapshot.source.authorityId !== params.owner)
+    throw new Error("Knowledge snapshot owner mismatch");
   return {
-    refId: `${params.owner}:${params.subjectId}`,
+    ...(params.intentId ? { intentId: params.intentId } : {}),
+    refId: snapshot
+      ? `${params.owner}:${digestChatKnowledgeContent(JSON.stringify([snapshot.source.namespaceId, snapshot.source.subjectId, snapshot.source.locator])).slice(7, 39)}`
+      : `${params.owner}:${params.subjectId}`,
     owner: params.owner,
     subjectKind: params.subjectKind,
-    subjectId: params.subjectId,
-    revision: params.revision,
+    subjectId: snapshot?.source.subjectId ?? params.subjectId,
+    revision: snapshot?.source.revision ?? params.revision,
     contentDigest,
-    trust: params.trust ?? "advisory",
-    sensitivity: params.sensitivity ?? "workspace",
-    title: params.title,
+    trust: snapshot?.policy.trust ?? params.trust ?? "advisory",
+    sensitivity: snapshot?.policy.sensitivity ?? params.sensitivity ?? "workspace",
+    title: snapshot?.title ?? params.title,
     lookup: params.lookup,
-    content: params.content,
+    content,
     materializedAt: params.materializedAt ?? new Date().toISOString(),
     sourceRefs: params.sourceRefs ?? [],
     evidenceRefs: params.evidenceRefs ?? [],
+    ...(snapshot ? { ownerSnapshot: snapshot } : {}),
   };
 }
 
@@ -286,13 +412,22 @@ export function createResolvedChatKnowledgeRef(params: {
  * dcs-knowledge ContextCandidate channel, never as a raw Main-side prompt edit.
  */
 export function packResolvedChatKnowledgeRef(ref: ResolvedChatKnowledgeRef): string {
-  const content =
-    ref.content.length > 1200
+  if (
+    ref.ownerSnapshot &&
+    (evaluateOwnerReadSnapshot(ref.ownerSnapshot, ref.ownerSnapshot.context) ||
+      ref.content !== ref.ownerSnapshot.content ||
+      ref.contentDigest !== ref.ownerSnapshot.contentDigest)
+  )
+    throw new Error("Knowledge snapshot is no longer admitted");
+  const content = ref.ownerSnapshot
+    ? ref.content
+    : ref.content.length > 1200
       ? `${ref.content.slice(0, 1200)}\n...[knowledge ref truncated]`
       : ref.content;
   return [
     `[Knowledge reference: ${ref.title} (${ref.lookup})]`,
     `owner: ${ref.owner}; subjectId: ${ref.subjectId}; revision: ${ref.revision}; digest: ${ref.contentDigest}`,
+    ...(ref.ownerSnapshot ? [`source: ${JSON.stringify(ref.ownerSnapshot.source)}`] : []),
     "---",
     content,
   ].join("\n");

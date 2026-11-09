@@ -74,6 +74,7 @@ vi.mock('@electron/utils/paths', () => ({
   expandPath: (path: string) => path,
   getOpenClawConfigDir: () => root,
   getDataDir: () => join(root, 'userData'),
+  getResourcesDir: () => join(process.cwd(), 'resources'),
   // Point at a temp root without openclaw_runtime dist so SEKB ops degrade honestly.
   getOpenClawRuntimeDir: () => join(root, 'missing-openclaw-runtime'),
 }));
@@ -88,6 +89,8 @@ describe('knowledge host API', () => {
     mod.__setSekbRuntimeModuleForTests(undefined);
     rmSync(root, { recursive: true, force: true });
     mkdirSync(root, { recursive: true });
+    const { createWorkspacesApi } = await import('@electron/services/workspaces-api');
+    await createWorkspacesApi().create({ name: 'Knowledge owner fixture', rootPath: root, agentId: 'main', permissionMode: 'acceptEdits' });
   });
 
   afterEach(async () => {
@@ -352,6 +355,7 @@ describe('knowledge host API', () => {
   it('configures memory-wiki defaults without overwriting unrelated plugin config', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'config.get') {
           return {
             hash: 'h1',
@@ -413,6 +417,7 @@ describe('knowledge host API', () => {
 
     const gatewayManager = {
       rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.ingest') {
           return {
             sourcePath: params.inputPath,
@@ -536,6 +541,7 @@ describe('knowledge host API', () => {
         listeners.delete(listener);
       }),
       rpc: vi.fn(async (method: string) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'agent') {
           return { runId: 'steward-run-1' };
         }
@@ -863,6 +869,7 @@ describe('knowledge host API', () => {
   it('validates proposals and applies only approved create proposals', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.apply') return { pageId: 'synthesis-1' };
         throw new Error(`unexpected rpc ${method}`);
       }),
@@ -917,6 +924,7 @@ describe('knowledge host API', () => {
   it('converts legacy applyDraft calls into review-gated drafts without direct wiki apply', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         throw new Error(`unexpected rpc ${method}`);
       }),
     };
@@ -965,6 +973,7 @@ describe('knowledge host API', () => {
   it('routes knowledge context only when scope and mode allow read-only search', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.search') {
           return {
             results: [
@@ -1093,6 +1102,7 @@ describe('knowledge host API', () => {
   it('keeps Runtime Lessons opt-in and exposes principle provenance', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.search') {
           return {
             results: [{
@@ -1178,6 +1188,7 @@ describe('knowledge host API', () => {
   it('adds retrieval diagnostics to search without replacing legacy results', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.search') {
           return {
             results: [
@@ -1329,6 +1340,7 @@ describe('knowledge host API', () => {
   it('aggregates governance quality metrics from audit issues and error-experience counters', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.compile') {
           return {
             freshnessReports: [
@@ -1427,6 +1439,7 @@ describe('knowledge host API', () => {
   it('auto-read routes only high-confidence fresh non-contradicted candidates', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.search') {
           return {
             results: [
@@ -1564,6 +1577,7 @@ describe('knowledge host API', () => {
 
     const gatewayManager = {
       rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.ingest') {
           return {
             sourcePath: params.inputPath,
@@ -1610,6 +1624,7 @@ describe('knowledge host API', () => {
   it.each([false, true])('rejects archived Source Set evidence without fallback (semantic=%s)', async (semantic) => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.get') return {
           corpus: 'wiki', path: 'notes/archived.md', title: 'Archived decision',
           content: 'ARCHIVED_BODY_MUST_NOT_ENTER_ANSWER', status: 'archived', revision: 19,
@@ -1634,6 +1649,7 @@ describe('knowledge host API', () => {
   it('retains explicit Source Set version pins and rejects a changed owner revision', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.get') return {
           corpus: 'wiki', path: 'notes/versioned.md', title: 'Versioned decision',
           content: 'OWNER_REVISION_20_BODY', status: 'active', revision: 20,
@@ -1656,6 +1672,7 @@ describe('knowledge host API', () => {
   it('reports unverified Source Set excerpts as partial rather than a calibrated answer', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.get') return {
           corpus: 'wiki', path: params.lookup, title: String(params.lookup),
           content: params.lookup === 'notes/port-a.md' ? 'The gateway port is 8080.' : 'The gateway port is 9090.',
@@ -1680,6 +1697,7 @@ describe('knowledge host API', () => {
   it('keeps Studio drafts bound to admitted evidence and prevents client metadata from upgrading it', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.get') return {
           corpus: 'wiki', path: params.lookup, title: String(params.lookup),
           content: params.lookup === 'notes/active.md' ? 'ADMITTED_BODY' : 'ARCHIVED_BODY',
@@ -1711,7 +1729,9 @@ describe('knowledge host API', () => {
   });
 
   it('applies saved Source Set workspace context without granting cross-workspace reads', async () => {
-    const gatewayManager = { rpc: vi.fn(async () => ({ corpus: 'wiki', path: 'notes/scoped.md', content: 'OTHER_WORKSPACE_BODY', status: 'active', scope: { workspaceId: 'workspace-b' } })) };
+    const gatewayManager = { rpc: vi.fn(async (method: string) => method === 'sessions.describe'
+      ? { session: { sessionId: '10000000-0000-4000-8000-000000000001' } }
+      : ({ corpus: 'wiki', path: 'notes/scoped.md', content: 'OTHER_WORKSPACE_BODY', status: 'active', scope: { workspaceId: 'workspace-b' } })) };
     const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
     const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
     const saved = await api.saveSourceSet({ title: 'Workspace A', sourceRefs: [{ id: 'notes/scoped.md', kind: 'wiki' }], metadata: { workspaceId: 'workspace-a' } });
@@ -1727,6 +1747,7 @@ describe('knowledge host API', () => {
       on: vi.fn((_event: string, callback: (value: unknown) => void) => listeners.add(callback)),
       off: vi.fn((_event: string, callback: (value: unknown) => void) => listeners.delete(callback)),
       rpc: vi.fn(async (method: string) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.search') return { results: [{ pagePath: 'port.md', title: 'Gateway port' }] };
         if (method === 'wiki.get') return { corpus: 'wiki', path: 'port.md', content: '网关端口为8080。', revision: 2, status: 'active' };
         if (method === 'agent') return { runId: 'qa-run' };
@@ -1751,6 +1772,7 @@ describe('knowledge host API', () => {
   it('persists source sets and answers from their selected sources without applying durable wiki changes', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.get') {
           return {
             lookup: params.lookup,
@@ -1813,6 +1835,7 @@ describe('knowledge host API', () => {
   it('uses the real semantic lane for opt-in SourceSet answers while preserving fallback inputs', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.get') {
           return {
             lookup: params.lookup,
@@ -1875,6 +1898,7 @@ describe('knowledge host API', () => {
   it('creates reviewable studio artifact drafts from selected source sets', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.get') {
           return {
             lookup: params.lookup,
@@ -2001,6 +2025,7 @@ describe('knowledge host API', () => {
     it('idempotent apply retry is duplicate success and writes an operation journal', async () => {
       const gatewayManager = {
         rpc: vi.fn(async (method: string) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
           if (method === 'wiki.apply') return { pageId: 'idempotent-page' };
           throw new Error(`unexpected rpc ${method}`);
         }),

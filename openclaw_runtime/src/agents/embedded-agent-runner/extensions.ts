@@ -25,6 +25,7 @@ import {
   packResolvedChatKnowledgeRef,
   type ResolvedChatKnowledgeRef,
 } from "../../context-engine/chat-knowledge-intent.js";
+import { revalidateChatKnowledgeRefs } from "../../context-engine/chat-knowledge-source-adapters.js";
 import { resolveKillSwitchConfig } from "../../context-engine/kill-switch-config-source.js";
 import { isContextEnhancementKillSwitchEngaged } from "../../context-engine/enhancement-kill-switch.js";
 import { nextRc03ModelCallIndex } from "../../context-engine/rc03-seal-hook.js";
@@ -246,6 +247,10 @@ export type PrepareEmbeddedContext = (
 function buildContextBlockFactory(params: {
   sessionId?: string;
   sessionKey?: string;
+  workspaceId?: string;
+  workspaceDir?: string;
+  provider?: string;
+  abortSignal?: AbortSignal;
   runId?: string;
   injectionTurnId?: string;
   attemptIndex?: number;
@@ -356,6 +361,23 @@ function buildContextBlockFactory(params: {
   // set so re-collected working_memory content that did not change is
   // dispositioned "duplicate" instead of injected twice.
   const injectedDedupKeys = new Set<string>();
+  const deniedKnowledgeRefs = new Set<string>();
+  const projectedKnowledgeMessages = new Map<string, Array<{ content: string; timestamp: string | number }>>();
+  const verifyKnowledgeRefs = async () => {
+    const requested = (params.chatKnowledgeRefs ?? []).filter(ref => !deniedKnowledgeRefs.has(ref.refId));
+    let current: ResolvedChatKnowledgeRef[] = [];
+    try { current = await revalidateChatKnowledgeRefs({ refs: requested, cfg: params.cfg,
+      identity: { sessionId: params.sessionId, agentSessionKey: params.sessionKey,
+        workspaceId: params.workspaceId, workspaceDir: params.workspaceDir,
+        egressProviderRefs: params.provider ? [params.provider] : [] }, signal: params.abortSignal }); }
+    catch { /* The empty current set invalidates every requested source below. */ }
+    const ids = new Set(current.map(ref => ref.refId));
+    for (const ref of requested) if (!ids.has(ref.refId)) deniedKnowledgeRefs.add(ref.refId);
+    return current;
+  };
+  const stripDeniedKnowledgeMessages = (messages: AgentMessage[]) => messages.filter(message => ![...deniedKnowledgeRefs].some(refId =>
+    projectedKnowledgeMessages.get(refId)?.some(projected => message.role === "user"
+      && message.content === projected.content && message.timestamp === projected.timestamp)));
   // RC-03: the provider-bound system prompt as it leaves before_agent_start;
   // every sealed model call binds its digest.
   let sealedSystemPrompt: string | undefined;
@@ -373,7 +395,14 @@ function buildContextBlockFactory(params: {
     const turnId = params.injectionTurnId;
     if (!turnId) return undefined;
     await enqueue(async () => undefined);
+    let currentKnowledgeRefs = await verifyKnowledgeRefs();
+    messages = stripDeniedKnowledgeMessages(messages);
     let existingCollection = getContextOrchestratorCollection(turnId);
+    if (existingCollection?.diagnostics.finalized && deniedKnowledgeRefs.size) {
+      // Revocation discards the cached projection; the existing DCS budget still applies.
+      reopenContextCandidateCollection(turnId);
+      existingCollection = undefined;
+    }
     if (options.advanceModelCall === true && existingCollection?.diagnostics.finalized) {
       // F-01: this is the next model call of the same attempt. The previous
       // model call's bundle stays frozen; open a fresh collection so Blocks
@@ -391,21 +420,6 @@ function buildContextBlockFactory(params: {
         // are not injected and were already reported to the renderer. Once the
         // knowledge channel was applied in an earlier model call of this attempt,
         // later calls skip it (same exactly-once rule as the assembler channels).
-        if (!options.skipChannels?.includes("knowledge")) {
-          for (const ref of params.chatKnowledgeRefs ?? []) {
-          collectContextCandidate(
-            turnId,
-            createContextCandidate({
-              authorityObjectId: `chat-knowledge:${ref.owner}:${ref.subjectId}`,
-              authorityVersion: ref.revision,
-              sourceId: "dcs-knowledge",
-              channel: "knowledge",
-              target: "message",
-              text: packResolvedChatKnowledgeRef(ref),
-            }),
-          );
-          }
-        }
         const hasProjectionSource = hasContextBlockProjection(params.projectionFlags);
         const store = hasProjectionSource ? getBlockStore() : undefined;
         // DCS Stage 4: pass the production contextBlockSink so compass/role-memory
@@ -431,15 +445,25 @@ function buildContextBlockFactory(params: {
           buildKnowledgeInputs(messages),
           params.projectionFlags,
         );
+        // Owner reads run after asynchronous preparation and immediately before projection.
+        currentKnowledgeRefs = await verifyKnowledgeRefs();
+        if (!options.skipChannels?.includes("knowledge")) {
+          for (const ref of currentKnowledgeRefs) collectContextCandidate(turnId, createContextCandidate({
+            authorityObjectId: `chat-knowledge:${ref.refId}`, authorityVersion: ref.revision,
+            sourceId: "dcs-knowledge", channel: "knowledge", target: "message", text: packResolvedChatKnowledgeRef(ref),
+          }));
+        }
       } catch (error) {
         // Optional source reads were isolated by ExtensionRunner before eager
         // preparation. Keep that behavior while still arbitrating collected candidates.
         log.warn(`context source preparation failed: ${String(error)}`);
+        for (const ref of params.chatKnowledgeRefs ?? []) deniedKnowledgeRefs.add(ref.refId);
       }
     }
     if (options.seal !== false) {
       modelCallIndex = nextRc03ModelCallIndex(params.runId, params.attemptIndex ?? 0, modelCallIndex);
     }
+    messages = stripDeniedKnowledgeMessages(messages);
     const finalized = finalizeContextOrchestratorTurn({
       turnId,
       messages,
@@ -455,6 +479,13 @@ function buildContextBlockFactory(params: {
       // ledger before the projection charges the lower-precedence CVK addition.
       dcsProjectionEnabled: hasContextBlockProjection(params.projectionFlags),
     });
+    for (const ref of currentKnowledgeRefs) {
+      const prefix = `[Knowledge reference: ${ref.title} (${ref.lookup})]`;
+      const projected = finalized.projection.messages.flatMap(message => message.role === "user"
+        && typeof message.content === "string" && message.content.startsWith(prefix)
+        ? [{ content: message.content, timestamp: message.timestamp }] : []);
+      if (projected.length) projectedKnowledgeMessages.set(ref.refId, projected);
+    }
     // The projection that just sealed is the one that will enter the
     // transcript (or was already consumed for the system prompt); remember
     // which channels actually applied so the next model call skips them.
@@ -921,6 +952,8 @@ export function buildEmbeddedExtensionFactories(params: {
   cfg: OpenClawConfig | undefined;
   sessionManager: SessionManager;
   workspaceDir?: string;
+  workspaceId?: string;
+  abortSignal?: AbortSignal;
   provider: string;
   modelId: string;
   model: ProviderRuntimeModel | undefined;

@@ -542,11 +542,11 @@ function SidebarSettingsNavItem({ collapsed }: { collapsed: boolean }) {
       to="/settings/general"
       data-testid="sidebar-nav-settings"
       aria-label={t('sidebar.settings')}
-      onClick={(event) => {
+      onClick={(event: import('react').MouseEvent<HTMLAnchorElement>) => {
         event.preventDefault();
         openSettings('/settings/general');
       }}
-      className={({ isActive }) =>
+      className={({ isActive }: { isActive: boolean }) =>
         cn(
           'profile-menu-trigger',
           (isActive || settingsOpen) && 'open',

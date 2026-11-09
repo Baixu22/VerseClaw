@@ -1,4 +1,6 @@
 import type { RawMessage } from '../chat/types';
+import type { OwnerReadRejectionCode, OwnerReadSnapshotV1, SourceRefV2 } from '../knowledge/owner-read-contract';
+export type { OwnerReadRejectionCode, OwnerReadSnapshotV1, SourceRefV2 } from '../knowledge/owner-read-contract';
 import type { SessionHandoffOperation } from '../types/session-handoff';
 import type { ExecutionMigrationOperation, WorkspaceExecutionMigrationPayload, WorkspaceExecutionMigrationReadPayload } from '../types/execution-migration';
 export type { WorkspaceExecutionMigrationPayload, WorkspaceExecutionMigrationReadPayload } from '../types/execution-migration';
@@ -3623,6 +3625,7 @@ export type ChatSendWithMediaResult = HostSuccess & {
     used: number;
   };
   knowledgeDenials?: ChatKnowledgeDenial[];
+  knowledgeReferences?: ChatKnowledgeReference[];
 };
 
 export type ChatContinuityPreviewPayload = {
@@ -3646,11 +3649,7 @@ export type ChatKnowledgeDenial = {
   reason:
     | 'invalid_ref'
     | 'unsupported_owner'
-    | 'not_found'
-    | 'acl_denied'
-    | 'sensitive'
-    | 'stale'
-    | 'revoked';
+    | OwnerReadRejectionCode;
   visibleReason: string;
 };
 
@@ -3669,6 +3668,9 @@ export type ChatKnowledgeReference = {
   confidence?: number;
   freshnessLevel?: string;
   matchedClaimStatus?: string;
+  sourceRef?: SourceRefV2;
+  revision?: string;
+  contentDigest?: string;
 };
 
 export type KnowledgeRouteCandidateGroupKey = 'docs' | 'pitfalls' | 'rules' | 'runtime_lessons';
@@ -4144,6 +4146,8 @@ export type KnowledgeSearchPayload = {
   maxResults?: number;
   corpus?: 'wiki' | 'memory' | 'all';
   mode?: string;
+  sessionKey?: string;
+  workspaceId?: string | null;
   /**
    * Area 5 §3.4 — optional role tag for ranking shaping. When set, entries
    * whose `roleTags` contain this tag rank first in the result list. This is
@@ -4182,8 +4186,17 @@ export type KnowledgeGetPayload = {
   fromLine?: number;
   lineCount?: number;
   corpus?: 'wiki' | 'memory' | 'all';
+  sourceRef?: SourceRefV2;
+  revision?: string;
+  contentDigest?: string;
+  sessionKey?: string;
+  workspaceId?: string | null;
 };
-export type KnowledgeGetResult = OptionalHostSuccess & Record<string, unknown>;
+export type KnowledgeGetResult = OptionalHostSuccess & Record<string, unknown> & {
+  sourceRef?: SourceRefV2;
+  ownerSnapshot?: OwnerReadSnapshotV1;
+  readDenial?: OwnerReadRejectionCode;
+};
 export type KnowledgeApplyDraftPayload = {
   title: string;
   body: string;
@@ -4220,6 +4233,7 @@ export type KnowledgeSourceRef = {
   /** Optional owner version and digest pins; selection never overrides these. */
   revision?: string;
   contentDigest?: string;
+  sourceRef?: SourceRefV2;
 };
 export type KnowledgeInteractionMvpMetadata = {
   mvpVersion: 'knowledge-interaction-mvp-1';
@@ -4604,6 +4618,7 @@ export type KnowledgeSourceSetCitation = {
   revision: string;
   contentDigest: string;
   sourceRefs: string[];
+  sourceRef?: SourceRefV2;
 };
 export type KnowledgeSourceSetAnswerSource = {
   id: string;

@@ -626,6 +626,7 @@
     "librarianSteward": "已准备 Steward 审查"
   },
   "errors": {
+    "ownerReadDenied": "此来源已失效，或权限、版本、读取范围已变化。请重新选择有效引用。",
     "status": "无法加载知识状态。",
     "action": "知识操作失败。",
     "okfValidation": "OKF 验证失败。",

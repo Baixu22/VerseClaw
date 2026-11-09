@@ -40,6 +40,8 @@ import {
 import { createContextBlockSink } from '../../openclaw_runtime/src/agents/harness/hook-context';
 import { isRuntimeLineage } from '../../openclaw_runtime/src/runtime-core/lineage';
 import { readBoundedKnowledgePage, retrieveSelectedSourceSetEvidence } from './knowledge-source-set-answer';
+import { prepareKnowledgeReadScope, assertKnowledgeReadScopeCurrent } from './knowledge-read-scope';
+import { normalizeSourceRefV2, isOwnerReadSnapshotV1, evaluateOwnerReadSnapshot } from '../../openclaw_runtime/src/runtime-core/knowledge-owner-read';
 import { createKnowledgeSourceSync } from './knowledge-source-sync';
 import { createKnowledgeGithubConnector, validateGithubConnector } from './knowledge-github-connector';
 import { boundedKnowledgeHistory, buildKnowledgeQaPrompt, runKnowledgeModel, validateKnowledgeQaOutput, type KnowledgeConversationTurn, type KnowledgeQaEvidence } from './knowledge-evidence-qa';
@@ -1037,6 +1039,8 @@ function normalizeSourceRefs(value: unknown): KnowledgeSourceRef[] {
       ...(getString(entry.url) ? { url: getString(entry.url) } : {}),
       ...(entry.revision === undefined ? {} : { revision: getString(entry.revision) ?? 'invalid-revision-pin' }),
       ...(entry.contentDigest === undefined ? {} : { contentDigest: getString(entry.contentDigest) ?? 'invalid-digest-pin' }),
+      ...(normalizeSourceRefV2(entry.sourceRef) ? { sourceRef: normalizeSourceRefV2(entry.sourceRef) } : {}),
+      ...(entry.sourceRef !== undefined && !normalizeSourceRefV2(entry.sourceRef) ? { revision: 'invalid-source-pin' } : {}),
     }];
   });
 }
@@ -3351,16 +3355,24 @@ export function createKnowledgeApi({
       ? createSiliconFlowEmbeddingProvider({
           deadlineMs: resolveEmbeddingDeadlineMs(process.env.KNOWLEDGE_EMBEDDING_DEADLINE_MS),
         }) : undefined;
-    const evidence = await retrieveSelectedSourceSetEvidence({
-      question, sourceRefs,
+    const readScope = await prepareKnowledgeReadScope(gatewayManager, { workspaceId: input.workspaceId }, embeddingProvider ? [embeddingProvider.id] : undefined);
+    const readEvidence = (selectedRefs: KnowledgeSourceRef[], semantic = false) => retrieveSelectedSourceSetEvidence({
+      question, sourceRefs: selectedRefs,
       workspaceId: input.workspaceId ?? getString(sourceSet?.metadata?.workspaceId),
       readPage: (ref) => readBoundedKnowledgePage({
         ref, question, workspaceId: input.workspaceId ?? getString(sourceSet?.metadata?.workspaceId),
-        read: range => rpc('wiki.get', { lookup: ref.path || ref.id, ...range, corpus: 'wiki' }, 30_000),
+        read: async range => {
+          await assertKnowledgeReadScopeCurrent(gatewayManager, readScope);
+          const result = await rpc('wiki.get', { lookup: ref.path || ref.id, ...range, corpus: 'wiki',
+            ...(ref.sourceRef ? { sourceRef: ref.sourceRef } : {}), readIdentity: readScope.identity }, 30_000);
+          await assertKnowledgeReadScopeCurrent(gatewayManager, readScope);
+          return result;
+        },
       }),
-      embeddingProvider,
+      embeddingProvider: semantic ? embeddingProvider : undefined,
     });
-    const { sources } = evidence;
+    let evidence = await readEvidence(sourceRefs, semanticRequested);
+    let { sources } = evidence;
     let unknowns = evidence.unknowns;
     let groundingStatus: KnowledgeAnswerFromSourceSetResult['groundingStatus'] = evidence.groundingStatus;
     let model: KnowledgeAnswerFromSourceSetResult['model'];
@@ -3368,7 +3380,17 @@ export function createKnowledgeApi({
     let synthesized: string | undefined;
     if (input.synthesis && sources.length > 0 && evidence.sourceSet.conflictSet.length === 0) {
       try {
+        const pinned = sources.map(source => ({ id: source.id, kind: 'wiki' as const, path: source.path,
+          ...(source.citation ? { revision: source.citation.revision, contentDigest: source.citation.contentDigest } : {}),
+          ...(source.citation?.sourceRef ? { sourceRef: source.citation.sourceRef } : {}) }));
+        evidence = await readEvidence(pinned);
+        sources = evidence.sources;
+        if (!sources.length) throw new Error('Knowledge owner read was invalidated before prompt assembly');
+        await assertKnowledgeReadScopeCurrent(gatewayManager, readScope);
         const result = await runKnowledgeModel(gatewayManager, buildKnowledgeQaPrompt({ question, history: input.history, sources: evidence.modelSources }), 'Knowledge Librarian');
+        await assertKnowledgeReadScopeCurrent(gatewayManager, readScope);
+        const after = await readEvidence(pinned);
+        if (after.sources.length !== sources.length) { evidence = after; sources = after.sources; throw new Error('Knowledge source changed during model execution'); }
         const validated = validateKnowledgeQaOutput(result.text, evidence.modelSources);
         claims = validated.claims;
         model = { status: 'completed', runId: result.runId };
@@ -3379,6 +3401,7 @@ export function createKnowledgeApi({
       } catch (error) {
         model = { status: 'error', reason: sanitizeUiErrorText(error) };
         unknowns = [...unknowns, `Model synthesis unavailable: ${sanitizeUiErrorText(error)}. Source excerpts are shown instead.`];
+        if (!sources.length) groundingStatus = 'missing_sources';
       }
     } else if (input.synthesis) {
       model = { status: 'unavailable', reason: evidence.sourceSet.conflictSet.length ? 'conflicting-sources' : 'no-admitted-sources' };
@@ -3406,6 +3429,7 @@ export function createKnowledgeApi({
     if (sourceSet) {
       await writeSourceSet({ ...sourceSet, lastUsedAt: nowIso(), updatedAt: nowIso() });
     }
+    await assertKnowledgeReadScopeCurrent(gatewayManager, readScope);
     return {
       success: true, question, answer, sources, unknowns, groundingStatus,
       synthesisMode: synthesized === undefined ? 'source-excerpts' : 'model',
@@ -3873,12 +3897,17 @@ export function createKnowledgeApi({
         const roleTag = typeof body.roleTag === 'string' ? body.roleTag.trim() : undefined;
         const corpus = body.corpus === 'memory' || body.corpus === 'all' || body.corpus === 'wiki' ? body.corpus : 'wiki';
         const mode = typeof body.mode === 'string' && body.mode ? body.mode : 'keyword';
+        const readScope = await prepareKnowledgeReadScope(gatewayManager, {
+          sessionKey: getString(body.sessionKey), workspaceId: getString(body.workspaceId),
+        });
         const result = await rpc<Record<string, unknown>>('wiki.search', {
           query,
           maxResults: clampPositiveInt(body.maxResults, 10, 50),
           corpus,
           ...(mode !== 'keyword' ? { mode } : {}),
+          readIdentity: readScope.identity,
         }, 30_000);
+        await assertKnowledgeReadScopeCurrent(gatewayManager, readScope);
         const rows = getRouteSearchRows(result);
         // Area 5 §3.4 — best-effort ranking shaping. Compiled wiki pages may
         // carry `roleTags` forward from their source drafts; when present and
@@ -3910,6 +3939,7 @@ export function createKnowledgeApi({
         return {
           success: true,
           ...result,
+          results: rows,
           retrievalDiagnostics: buildRetrievalDiagnostics({
             query,
             corpus,
@@ -3928,12 +3958,29 @@ export function createKnowledgeApi({
         const body: Record<string, unknown> = isRecord(payload) ? payload : {};
         const lookup = getString(body.lookup);
         if (!lookup) return { success: false, error: 'lookup is required' };
+        const sourceRef = normalizeSourceRefV2(body.sourceRef);
+        if (body.sourceRef !== undefined && !sourceRef) return { success: false, readDenial: 'invalid_range', error: 'Invalid SourceRef/v2 pin' };
+        const readScope = await prepareKnowledgeReadScope(gatewayManager, {
+          sessionKey: getString(body.sessionKey), workspaceId: getString(body.workspaceId),
+        });
         const result = await rpc<Record<string, unknown>>('wiki.get', {
           lookup,
           ...(typeof body.fromLine === 'number' ? { fromLine: body.fromLine } : {}),
           ...(typeof body.lineCount === 'number' ? { lineCount: body.lineCount } : {}),
           ...(body.corpus === 'memory' || body.corpus === 'all' || body.corpus === 'wiki' ? { corpus: body.corpus } : {}),
+          ...(sourceRef ? { sourceRef } : {}),
+          readIdentity: readScope.identity,
         }, 30_000);
+        await assertKnowledgeReadScopeCurrent(gatewayManager, readScope);
+        if (result?.status === 'denied') return { success: false, readDenial: result.reason as import('../../shared/knowledge/owner-read-contract').OwnerReadRejectionCode, error: `Knowledge source is unavailable (${String(result.reason)}).` };
+        if (result?.ownerSnapshot !== undefined) {
+          if (!isOwnerReadSnapshotV1(result.ownerSnapshot) || evaluateOwnerReadSnapshot(result.ownerSnapshot, result.ownerSnapshot.context)
+            || result.content !== result.ownerSnapshot.content) return { success: false, readDenial: 'digest_mismatch', error: 'Knowledge owner snapshot is invalid' };
+          if ((body.revision !== undefined && body.revision !== result.ownerSnapshot.source.revision)
+            || (body.contentDigest !== undefined && body.contentDigest !== result.ownerSnapshot.contentDigest)) {
+            return { success: false, readDenial: 'revision_mismatch', error: 'Knowledge pin has changed' };
+          }
+        } else if (sourceRef) return { success: false, readDenial: 'not_found', error: 'Pinned knowledge owner snapshot is unavailable' };
         return { success: true, ...result };
       } catch (error) {
         return { success: false, error: sanitizeUiErrorText(error) };

@@ -8,7 +8,21 @@ taskType: runtime-bridge
 programKey: RAG-01
 intent: 确保检索、预览、模型调用和引用使用同一份 owner 读取约束。
 diffBase: ca1ba25b27ccd3783d199d2416d8a81bcf799c2e
+integratedMainCommit: c308b60e1e8dc6849628c524ff8d8e1f0ce0a522
 touchedAreas:
+  # Committed main integration, recorded separately from the RAG implementation.
+  - "docs/modules/multi-agent-and-tasks.md"
+  - "electron/services/sessions-api.ts"
+  - "harness/specs/fixtures/session-intent-recovery/**"
+  - "harness/specs/tasks/session-handoff-recovery.md"
+  - "shared/i18n/locales/**/chat.json"
+  - "src/pages/Chat/ChatMessage.tsx"
+  - "tests/e2e/fixtures/windows-process.ts"
+  - "tests/e2e/session-fork-intent.spec.ts"
+  - "tests/e2e/session-task-scope-derivation.spec.ts"
+  - "tests/unit/chat-message.test.tsx"
+  - "tests/unit/host-services.test.ts"
+  - "tests/unit/session-handoff-recovery.test.ts"
   - "shared/knowledge/**"
   - "shared/host-api/contract.ts"
   - "electron/services/knowledge*.ts"
@@ -16,12 +30,20 @@ touchedAreas:
   - "openclaw_runtime/src/context-engine/chat-knowledge*.ts"
   - "openclaw_runtime/src/context-engine/source-set.ts"
   - "openclaw_runtime/src/runtime-core/knowledge-owner-read.ts"
+  - "openclaw_runtime/src/knowledge/sekb/knowledge-store.ts"
+  - "openclaw_runtime/src/memory/memory-store.ts"
+  - "electron/services/gateway-api.ts"
+  - "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts"
   - "openclaw_runtime/src/plugin-sdk/memory-host-core.ts"
   - "openclaw_runtime/src/gateway/server-methods/chat.ts"
   - "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts"
   - "src/pages/Chat/ChatInput.tsx"
+  - "src/stores/chat.ts"
   - "src/pages/Knowledge/**"
   - "src/lib/host-api.ts"
+  - "src/lib/knowledge-librarian.ts"
+  - "src/components/file-preview/MonacoViewer.tsx"
+  - "src/components/layout/Sidebar.tsx"
   - "shared/i18n/locales/**/knowledge.json"
   - "docs/dev/evidence/project-rag/RAG-01/**"
   - "openclaw_runtime/extensions/memory-wiki/runtime-api.ts"
@@ -48,6 +70,7 @@ touchedAreas:
   - "tests/unit/project-rag-owner-read.test.ts"
   - "openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts"
   - "tests/e2e/project-rag-owner-read.spec.ts"
+  - "tests/e2e/project-rag-owner-read.spec.ts"
 requiredProfiles:
   - "fast"
   - "comms"
@@ -61,6 +84,7 @@ requiredTests:
   - "tests/unit/knowledge-api.test.ts"
   - "tests/unit/project-rag-owner-read.test.ts"
   - "tests/unit/knowledge-evidence-qa.test.ts"
+  - "openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts"
 plannedTests:
   - "tests/unit/project-rag-owner-read.test.ts"
   - "openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts"

@@ -184,7 +184,7 @@ type FeedbackRow = {
   created_at: string;
 };
 
-export function setMemoryStorePath(filePath: string): void {
+export function setMemoryStorePath(filePath: string | undefined): void {
   closeMemoryStore();
   storePath = filePath;
 }

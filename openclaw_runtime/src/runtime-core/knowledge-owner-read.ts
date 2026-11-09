@@ -132,6 +132,97 @@ export function isSourceRefV2(value: unknown): value is SourceRefV2 {
   );
 }
 
+export function normalizeSourceRefV2(value: unknown): SourceRefV2 | undefined {
+  if (!isSourceRefV2(value)) return undefined;
+  return {
+    schema: "SourceRef/v2",
+    domain: value.domain,
+    authorityId: value.authorityId,
+    namespaceId: value.namespaceId,
+    subjectId: value.subjectId,
+    revision: value.revision,
+    sourceDigest: value.sourceDigest,
+    policyEpoch: value.policyEpoch,
+    ...(value.locator
+      ? {
+          locator: {
+            coordinateSpace: "raw-source-utf8-v1",
+            startByte: value.locator.startByte,
+            endByteExclusive: value.locator.endByteExclusive,
+            startLine: value.locator.startLine,
+            endLine: value.locator.endLine,
+          },
+        }
+      : {}),
+  };
+}
+
+export function isOwnerReadSnapshotV1(value: unknown): value is OwnerReadSnapshotV1 {
+  if (
+    !record(value) ||
+    value.schema !== "OwnerReadSnapshot/v1" ||
+    !isSourceRefV2(value.source) ||
+    !value.source.locator ||
+    typeof value.content !== "string" ||
+    typeof value.title !== "string" ||
+    !nonempty(value.contentDigest) ||
+    !nonempty(value.readAt) ||
+    typeof value.truncated !== "boolean" ||
+    !Number.isSafeInteger(value.totalLines) ||
+    Number(value.totalLines) < value.source.locator.endLine
+  )
+    return false;
+  const context = value.context,
+    policy = value.policy;
+  if (
+    !record(context) ||
+    context.schema !== "ReadAdmissionContext/v1" ||
+    context.purpose !== "knowledge-read" ||
+    ![
+      context.contextId,
+      context.principalId,
+      context.sessionId,
+      context.workspaceId,
+      context.policyDigest,
+      context.expiresAt,
+    ].every(nonempty) ||
+    !Array.isArray(context.ownerNamespaces) ||
+    !context.ownerNamespaces.every(nonempty) ||
+    !Array.isArray(context.egressProviderRefs) ||
+    !context.egressProviderRefs.every(nonempty)
+  )
+    return false;
+  if (
+    !record(policy) ||
+    typeof policy.status !== "string" ||
+    !["active", "stale", "archived", "revoked", "deleted", "denied"].includes(policy.status) ||
+    typeof policy.trust !== "string" ||
+    !["untrusted", "advisory", "confirmed", "high-trust"].includes(policy.trust) ||
+    typeof policy.sensitivity !== "string" ||
+    !["public", "workspace", "sensitive", "secret-adjacent", "secret"].includes(
+      policy.sensitivity,
+    ) ||
+    !record(policy.acl) ||
+    !Array.isArray(policy.acl.read) ||
+    !policy.acl.read.every(nonempty) ||
+    !record(policy.retention) ||
+    !["source-coupled", "promoted", "ephemeral", "legal-hold"].includes(
+      String(policy.retention.policy),
+    )
+  )
+    return false;
+  if (policy.retention.expiresAt !== undefined && !nonempty(policy.retention.expiresAt))
+    return false;
+  const scope = policy.scope;
+  return (
+    scope === undefined ||
+    (record(scope) &&
+      ["workspaceId", "agentId", "sessionKey", "taskId"].every(
+        (key) => scope[key] === undefined || nonempty(scope[key]),
+      ))
+  );
+}
+
 /** Called with session/workspace facts resolved by the Host or runtime owner. */
 export function deriveReadAdmissionContext(
   identity: Omit<ReadAdmissionContextV1, "schema" | "contextId" | "purpose">,
@@ -206,6 +297,7 @@ export function evaluateOwnerReadSnapshot(
     signal?: AbortSignal;
   } = {},
 ): OwnerReadRejectionCode | undefined {
+  if (!isOwnerReadSnapshotV1(snapshot)) return "denied";
   const denied = evaluateOwnerReadPolicy(
     snapshot.policy,
     context,

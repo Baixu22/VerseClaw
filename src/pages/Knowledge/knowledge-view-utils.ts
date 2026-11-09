@@ -82,6 +82,7 @@ export type KnowledgeLibrarianCitation = {
   excerpt: string;
   path?: string;
   score?: number;
+  sourceRef?: import('@shared/knowledge/owner-read-contract').SourceRefV2;
 };
 
 export type KnowledgeLibrarianMessage = {

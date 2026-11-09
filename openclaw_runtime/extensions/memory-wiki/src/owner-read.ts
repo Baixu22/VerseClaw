@@ -15,6 +15,7 @@ import {
   type SourceRefV2,
 } from "openclaw/plugin-sdk/memory-host-core";
 import { resolveAgentWorkspaceDir } from "openclaw/plugin-sdk/memory-core-host-engine-foundation";
+import { getSessionEntry, resolveStorePath } from "openclaw/plugin-sdk/session-store-runtime";
 import type { OpenClawConfig } from "../api.js";
 import type { ResolvedMemoryWikiConfig } from "./config.js";
 import { parseWikiMarkdown, type WikiPageSummary } from "./markdown.js";
@@ -53,10 +54,21 @@ export function createMemoryWikiReadContext(input: {
       ? resolveAgentWorkspaceDir(input.appConfig, agentId)
       : input.config.vault.path);
   const rootDigest = digestOwnerReadContent(canonicalPath(workspaceDir));
+  const session =
+    input.appConfig && agentId && identity.agentSessionKey
+      ? getSessionEntry({
+          agentId,
+          sessionKey: identity.agentSessionKey,
+          storePath: resolveStorePath(input.appConfig.session?.store, { agentId }),
+        })
+      : undefined;
   return deriveReadAdmissionContext({
     principalId: "operator",
     sessionId:
-      identity.sessionId ?? identity.agentSessionKey ?? `knowledge-ui:${agentId ?? "local"}`,
+      session?.sessionId ??
+      identity.sessionId ??
+      identity.agentSessionKey ??
+      `knowledge-ui:${agentId ?? "local"}`,
     ...(identity.agentSessionKey ? { sessionKey: identity.agentSessionKey } : {}),
     ...(agentId ? { agentId } : {}),
     workspaceId: identity.workspaceId ?? canonicalPath(workspaceDir),

@@ -626,6 +626,7 @@
     "librarianSteward": "Steward review prepared"
   },
   "errors": {
+    "ownerReadDenied": "このソースは利用できないか、権限・バージョン・読み取り範囲が変更されています。有効な参照を選び直してください。",
     "status": "知識ステータスを読み込めませんでした。",
     "action": "知識操作に失敗しました。",
     "okfValidation": "OKF validation failed.",

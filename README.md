@@ -274,6 +274,7 @@ See [development and validation](docs/modules/development-and-validation.md) for
 | Product boundaries and defaults | [Product semantics](docs/clawx-product-semantics.md) · [Default configuration](docs/dev/default-config-matrix.md) · [Component matrix](docs/dev/component-disposition-matrix-20261021.md) |
 | Knowledge and context | [Knowledge system](docs/enhancements/knowledge-persistence/README.md) · [Context Runtime Kit](docs/context-runtime-kit/README.md) · [Context orchestrator](docs/dev/context-orchestrator.md) · [Memory control plane](docs/dev/memory-control-plane.md) |
 | Project RAG roadmap | [Long-term decision](docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md) · [Implementation program](docs/dev/project-rag/WORK-PACKAGES.md) |
+| Owner-bound source reads | [Source versions, permissions and raw citation ranges](docs/dev/project-rag/OWNER-READ-CONTRACT.md) |
 | Agents and tasks | [Role-first design](docs/role-first-design.md) · [Multi-agent orchestration](docs/multi-agent-orchestration/README.md) |
 | VerseGit / VerseShell / VerseBrowser | [VerseGit control plane](docs/dev/versegit-validation-layer/README.md) · [VerseShell status](docs/dev/verseshell-foundation/STATUS.md) · [VerseBrowser integration](packages/README.md) |
 | Development and evidence | [Development docs](docs/README.md) · [Agent Dev](docs/agent-dev-control-plane.md) · [Repository layout](docs/dev/repository-layout.md) · [Harness](harness/specs/) |

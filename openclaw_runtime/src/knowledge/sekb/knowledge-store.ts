@@ -182,6 +182,11 @@ export class KnowledgeStore {
     this.#now = options.now ?? (() => new Date());
   }
 
+  get_source_namespace_id(): string {
+    const database = this.#openDatabase(this.#database);
+    return `sekb:${createHash("sha256").update(database.path).digest("hex")}`;
+  }
+
   /** Insert an immutable trajectory record; a competing or repeated insert keeps the first bytes. */
   create_trajectory(trajectory: Trajectory): boolean {
     const row = rowFromTrajectory(trajectory, this.#now().getTime());

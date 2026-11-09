@@ -72,7 +72,8 @@ function sourceRefsFromAnswer(answer: KnowledgeLibrarianGroundedAnswer): Knowled
     kind: 'wiki',
     label: source.title,
     path: source.path || source.lookup,
-    ...(source.citation ? { revision: source.citation.revision, contentDigest: source.citation.contentDigest } : {}),
+    ...(source.citation ? { revision: source.citation.revision, contentDigest: source.citation.contentDigest,
+      ...(source.citation.sourceRef ? { sourceRef: source.citation.sourceRef } : {}) } : {}),
   }));
 }
 

@@ -13,6 +13,8 @@ import {
   type SourceSetTrust,
 } from '../../openclaw_runtime/src/context-engine/source-set';
 import type { RuntimeEmbeddingProvider } from '../../openclaw_runtime/src/runtime-core/memory-embedding-provider';
+import { isOwnerReadSnapshotV1, evaluateOwnerReadSnapshot, matchOwnerReadPin,
+  type OwnerReadRejectionCode } from '../../openclaw_runtime/src/runtime-core/knowledge-owner-read';
 
 const UNKNOWN_FRESHNESS = '1970-01-01T00:00:00.000Z';
 
@@ -72,7 +74,7 @@ export async function readBoundedKnowledgePage(input: {
   read: (range: { fromLine?: number; lineCount: number }) => Promise<unknown>;
 }): Promise<unknown> {
   const first = await input.read({ lineCount: 80 });
-  if (!record(first) || typeof first.content !== 'string' || input.ref.contentDigest) return first;
+  if (!record(first) || typeof first.content !== 'string' || input.ref.contentDigest || input.ref.sourceRef?.locator) return first;
   if (first.content.length > 96_000) return { ...first, status: 'denied', statusReason: 'source read exceeds the character budget' };
   const admitted = await retrieveSelectedSourceSetEvidence({
     question: input.question, sourceRefs: [input.ref], workspaceId: input.workspaceId,
@@ -80,6 +82,11 @@ export async function readBoundedKnowledgePage(input: {
   });
   if (!admitted.sources.length || !admitted.sources[0].readRange?.truncated) return first;
   const owner = (page: Record<string, unknown>) => {
+    if (isOwnerReadSnapshotV1(page.ownerSnapshot)) return JSON.stringify([
+      page.ownerSnapshot.source.namespaceId, page.ownerSnapshot.source.subjectId,
+      page.ownerSnapshot.source.revision, page.ownerSnapshot.source.sourceDigest, page.ownerSnapshot.source.policyEpoch,
+      page.ownerSnapshot.context.sessionId, page.ownerSnapshot.context.workspaceId, page.ownerSnapshot.context.workspaceRootDigest,
+    ]);
     const metadata = record(page.metadata) ? page.metadata : {};
     return JSON.stringify(['path', 'corpus', 'revision', 'updatedAt', 'status', 'privacyTier', 'sensitivity', 'acl', 'scope', 'workspaceId', 'agentId', 'trust']
       .map(key => page[key] ?? metadata[key]));
@@ -109,7 +116,19 @@ function materializeSource(ref: KnowledgeSourceRef, page: unknown): Materialized
   const content = typeof contentValue === 'string' && contentValue.trim().length > 0 ? contentValue : undefined;
   if (!content) return null;
   const metadata = record(page.metadata) ? page.metadata : {};
-  const ownerValue = (key: string): unknown => page[key] !== undefined ? page[key] : metadata[key];
+  const snapshot = isOwnerReadSnapshotV1(page.ownerSnapshot) ? page.ownerSnapshot : undefined;
+  const ownerValue = (key: string): unknown => {
+    if (snapshot) {
+      if (key === 'revision') return snapshot.source.revision;
+      if (key === 'contentDigest') return snapshot.contentDigest;
+      if (key === 'scope') return snapshot.policy.scope;
+      if (key === 'acl') return snapshot.policy.acl;
+      if (key === 'retention') return snapshot.policy.retention;
+      if (key === 'updatedAt') return snapshot.policy.updatedAt;
+      if (key === 'status' || key === 'trust' || key === 'sensitivity') return snapshot.policy[key];
+    }
+    return page[key] !== undefined ? page[key] : metadata[key];
+  };
   const lookup = ref.path || ref.id;
   const path = text(page.path) ?? text(page.pagePath) ?? lookup;
   const title = text(page.title) ?? text(page.name) ?? ref.label ?? lookup;
@@ -130,11 +149,16 @@ function materializeSource(ref: KnowledgeSourceRef, page: unknown): Materialized
   const workspaceId = text(scopeRecord.workspaceId) ?? text(ownerValue('workspaceId'));
   const agentId = text(scopeRecord.agentId) ?? text(ownerValue('agentId'));
   const scope: SourceSetRef['scope'] = workspaceId || agentId
-    ? { ...(workspaceId ? { workspaceId } : {}), ...(agentId ? { agentId } : {}) } : undefined;
+    ? { ...(workspaceId ? { workspaceId } : {}), ...(agentId ? { agentId } : {}),
+      ...(text(scopeRecord.sessionKey) ? { sessionKey: text(scopeRecord.sessionKey) } : {}),
+      ...(text(scopeRecord.taskId) ? { taskId: text(scopeRecord.taskId) } : {}) }
+    : snapshot?.policy.scope;
   const invalidScope = (ownerScope !== undefined && !record(ownerScope))
     || [scopeRecord.workspaceId, scopeRecord.agentId, ownerValue('workspaceId'), ownerValue('agentId')]
       .some((value) => value !== undefined && !text(value));
-  const invalidPolicy = ownerAcl !== undefined && !validAcl
+  const invalidPolicy = page.ownerSnapshot !== undefined && (!snapshot || snapshot.content !== content
+    || evaluateOwnerReadSnapshot(snapshot, snapshot.context)) ? 'invalid owner snapshot'
+    : ownerAcl !== undefined && !validAcl
     ? 'invalid owner ACL' : invalidScope
       ? 'invalid owner scope' : ownerRevision !== undefined
         && !(typeof ownerRevision === 'number' && Number.isFinite(ownerRevision)) && !text(ownerRevision)
@@ -155,11 +179,13 @@ function materializeSource(ref: KnowledgeSourceRef, page: unknown): Materialized
   const truncated = page.truncated === true || fromLine > 1 || (totalLines !== undefined && totalLines > toLine);
   const candidate: SourceSetCandidate = {
     ref: {
-      refId: `memory-wiki:${path}`, owner: 'memory-wiki', subjectKind: 'wiki-page', subjectId: path,
+      refId: snapshot ? `memory-wiki:${snapshot.source.namespaceId}:${path}:${snapshot.source.locator!.startByte}-${snapshot.source.locator!.endByteExclusive}` : `memory-wiki:${path}`,
+      owner: 'memory-wiki', subjectKind: 'wiki-page', subjectId: path,
       revision, contentDigest,
       trust: sourceTrust(ownerValue('trust')),
       sensitivity: sourceSensitivity(ownerValue('sensitivity') === undefined ? ownerValue('privacyTier') : ownerValue('sensitivity')),
       acl, ...(scope ? { scope } : {}),
+      ...(snapshot ? { sourceRef: snapshot.source, ownerSnapshot: snapshot, retention: snapshot.policy.retention } : {}),
       provenance: { sourceRefs: strings(ownerValue('sourceRefs')).length > 0 ? strings(ownerValue('sourceRefs')) : [ref.id], evidenceRefs: strings(ownerValue('evidenceRefs')) },
     },
     content, status: invalidRange ? 'denied' : status as SourceSetCandidate['status'],
@@ -174,7 +200,9 @@ function materializeSource(ref: KnowledgeSourceRef, page: unknown): Materialized
       id: ref.id, lookup, path, title,
       excerpt: content.replace(/\s+/g, ' ').trim().slice(0, 240),
       ...(updatedAt ? { updatedAt } : {}),
-      readRange: { fromLine, toLine, ...(totalLines === undefined ? {} : { totalLines }), truncated },
+      readRange: snapshot ? { fromLine: snapshot.source.locator!.startLine, toLine: snapshot.source.locator!.endLine,
+        totalLines: snapshot.totalLines, truncated: snapshot.truncated }
+        : { fromLine, toLine, ...(totalLines === undefined ? {} : { totalLines }), truncated },
     },
   };
 }
@@ -209,15 +237,45 @@ export async function retrieveSelectedSourceSetEvidence(input: {
     sources: [...byRefId.values()].map((entry) => entry.candidate),
     query: {
       text: input.question, aclSubjects: ['operator'],
-      ...(input.workspaceId ? { taskContext: { workspaceId: input.workspaceId } } : {}),
+      ...([...byRefId.values()].some(entry => entry.candidate.ref.ownerSnapshot) ? { taskContext: (() => {
+        const context = [...byRefId.values()].find(entry => entry.candidate.ref.ownerSnapshot)!.candidate.ref.ownerSnapshot!.context;
+        return { workspaceId: context.workspaceId, agentId: context.agentId, sessionKey: context.sessionKey };
+      })() } : input.workspaceId ? { taskContext: { workspaceId: input.workspaceId } } : {}),
       pinnedRefs: input.sourceRefs.map((ref, index) => ({
         owner: 'memory-wiki', subjectId: materialized[index]?.candidate.ref.subjectId ?? ref.path ?? ref.id,
         ...(ref.revision === undefined ? {} : { revision: ref.revision }),
         ...(ref.contentDigest === undefined ? {} : { contentDigest: ref.contentDigest }),
+        ...(ref.sourceRef ? { sourceRef: ref.sourceRef } : {}),
       })),
       limit: Math.max(1, byRefId.size),
     },
     embeddingProvider: input.embeddingProvider,
+    verifyOwnerRead: async (candidate, stage, providerRef) => {
+      const original = materialized.find(entry => entry?.candidate.ref.refId === candidate.ref.refId);
+      if (!original) return 'not_found';
+      const selected = input.sourceRefs[materialized.indexOf(original)];
+      const page = await input.readPage({ ...selected, ...(candidate.ref.sourceRef ? { sourceRef: candidate.ref.sourceRef } : {}) });
+      if (record(page) && page.status === 'denied') return text(page.reason) as OwnerReadRejectionCode ?? 'denied';
+      const current = materializeSource(selected, page);
+      if (!current) return 'not_found';
+      if (candidate.ref.ownerSnapshot) {
+        const fresh = current.candidate.ref.ownerSnapshot;
+        if (!fresh) return 'denied';
+        const reason = matchOwnerReadPin(fresh, candidate.ref.sourceRef!)
+          ?? evaluateOwnerReadSnapshot(fresh, fresh.context, { stage, providerRef });
+        if (reason) return reason;
+        const previous = candidate.ref.ownerSnapshot.context;
+        if (previous.sessionId !== fresh.context.sessionId || previous.sessionKey !== fresh.context.sessionKey
+          || previous.workspaceId !== fresh.context.workspaceId || previous.workspaceRootDigest !== fresh.context.workspaceRootDigest) return 'invalid_context';
+        candidate.ref.ownerSnapshot = fresh;
+      }
+      if (current.candidate.ref.revision !== candidate.ref.revision) return 'revision_mismatch';
+      if (current.candidate.ref.contentDigest !== candidate.ref.contentDigest || current.candidate.content !== candidate.content) return 'digest_mismatch';
+      if (current.candidate.status !== 'active') return current.candidate.status;
+      if (JSON.stringify([current.candidate.ref.acl, current.candidate.ref.scope, current.candidate.ref.retention, current.candidate.ref.sensitivity])
+        !== JSON.stringify([candidate.ref.acl, candidate.ref.scope, candidate.ref.retention, candidate.ref.sensitivity])) return 'policy_changed';
+      return undefined;
+    },
   });
   const sources: KnowledgeSourceSetAnswerSource[] = sourceSet.retrieved.map((entry) => {
     const original = byRefId.get(entry.ref.refId)!.source;
@@ -227,6 +285,7 @@ export async function retrieveSelectedSourceSetEvidence(input: {
         refId: entry.ref.refId, owner: entry.ref.owner, subjectId: entry.ref.subjectId,
         revision: entry.ref.revision, contentDigest: entry.ref.contentDigest,
         sourceRefs: entry.ref.provenance?.sourceRefs ?? [],
+        ...(entry.ref.sourceRef ? { sourceRef: entry.ref.sourceRef } : {}),
       },
     };
   });

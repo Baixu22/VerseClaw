@@ -75,6 +75,36 @@ export const ChatMessageGetResultSchema = Type.Object(
 export type ChatMessageGetResult = Static<typeof ChatMessageGetResultSchema>;
 
 /** Typed, renderer-supplied knowledge retrieval intent. Body fields are intentionally absent. */
+export const SourceRefV2Schema = Type.Object(
+  {
+    schema: Type.Literal("SourceRef/v2"),
+    domain: Type.Union(
+      ["wiki", "native-memory", "role-memory", "experience", "code", "task"].map((value) =>
+        Type.Literal(value),
+      ),
+    ),
+    authorityId: NonEmptyString,
+    namespaceId: NonEmptyString,
+    subjectId: NonEmptyString,
+    revision: NonEmptyString,
+    sourceDigest: Type.String({ pattern: "^sha256:[a-f0-9]{64}$" }),
+    policyEpoch: NonEmptyString,
+    locator: Type.Optional(
+      Type.Object(
+        {
+          coordinateSpace: Type.Literal("raw-source-utf8-v1"),
+          startByte: Type.Integer({ minimum: 0 }),
+          endByteExclusive: Type.Integer({ minimum: 0 }),
+          startLine: Type.Integer({ minimum: 1 }),
+          endLine: Type.Integer({ minimum: 1 }),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+  },
+  { additionalProperties: false },
+);
+
 export const ChatKnowledgeReferenceSchema = Type.Object(
   {
     id: Type.String({ minLength: 1 }),
@@ -93,6 +123,9 @@ export const ChatKnowledgeReferenceSchema = Type.Object(
     confidence: Type.Optional(Type.Number({ minimum: 0, maximum: 1 })),
     freshnessLevel: Type.Optional(Type.String()),
     matchedClaimStatus: Type.Optional(Type.String()),
+    sourceRef: Type.Optional(SourceRefV2Schema),
+    revision: Type.Optional(NonEmptyString),
+    contentDigest: Type.Optional(Type.String({ pattern: "^sha256:[a-f0-9]{64}$" })),
   },
   { additionalProperties: false },
 );
