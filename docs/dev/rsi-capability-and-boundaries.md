@@ -378,6 +378,14 @@ and 0 CNY new spending using existing Free quota. Independent arithmetic runs
 through `node scripts/rsi-protocol-contrast-replay.mjs --root <checkout>
 --base-dir <study> --scratch <receipts> --out <new-report>`.
 
+If an unsuccessful oracle exits with zero test suites, the recovery command
+retains the original receipt and records `missing` with failure class `grader`
+in a separate envelope. `rsi-protocol-contrast-recovery.mjs` takes the frozen
+source checkout through `--root`; its collector and task inputs remain bound
+to that checkout. Recovery uses the same ledger, and retained responses import
+without another provider request. Its `check` command recomputes the recovered
+report and paired statistics.
+
 A measured candidate cannot edit its evaluator, graders, held-out split, task
 set, evidence generator, approval semantics, permissions, product locks or
 defaults. This repair is evaluator-owned and prospective. Applying v2 to old

@@ -6,6 +6,7 @@ severity: error
 appliesTo:
   - scripts/rsi-protocol-contrast.*
   - scripts/rsi-protocol-contrast-replay.*
+  - scripts/rsi-protocol-contrast-recovery.*
   - scripts/rsi-coding-collector.*
   - scripts/lib/rsi-benefit-eval.*
 ---
@@ -21,3 +22,9 @@ The ordinary benefit validator retains its full scheduled-prefix requirement.
 Replay derives budgets from raw ledger entries, validates all retained responses
 and effects, and calculates v3 minus v2 and v4 minus v3 on complete case clusters.
 Historical campaign receipts and resource authorizations remain immutable.
+
+An empty unsuccessful oracle report has no task verdict. Preserve its original
+response, edits, execution record, report and usage; a separately bound recovery
+envelope records missing/grader. The strict frozen validator keeps rejecting the
+original report. Recovery cannot convert a passing or assertion-bearing result,
+redispatch a request identity, change model input, or alter the authorization.

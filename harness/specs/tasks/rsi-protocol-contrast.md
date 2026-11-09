@@ -7,10 +7,12 @@ diffBase: 08fa97bf3e261d49842c9b19cda7388aa4717f2d
 touchedAreas:
   - scripts/rsi-protocol-contrast.*
   - scripts/rsi-protocol-contrast-replay.*
+  - scripts/rsi-protocol-contrast-recovery.*
   - scripts/rsi-coding-collector.*
   - scripts/lib/rsi-benefit-eval.*
   - scripts/repository-artifacts.json
   - tests/unit/rsi-protocol-contrast.test.ts
+  - tests/unit/rsi-protocol-recovery.test.ts
   - tests/unit/rsi-coding-collector.test.ts
   - harness/specs/tasks/rsi-protocol-contrast.md
   - harness/specs/rules/rsi-protocol-contrast-boundary.md
@@ -36,6 +38,7 @@ expectedUserBehavior:
 requiredTests:
   - node node_modules/vitest/vitest.mjs run --config vitest.rsi.node.config.ts tests/unit/rsi-protocol-contrast.test.ts tests/unit/rsi-coding-collector.test.ts tests/unit/rsi-campaign-budget.test.ts tests/unit/rsi-coding-tool-loop.test.ts tests/unit/rsi-benefit-eval.test.ts tests/unit/rsi-responses-provider.test.ts
   - node harness/src/cli.mjs validate --spec harness/specs/tasks/rsi-protocol-contrast.md
+  - node node_modules/vitest/vitest.mjs run --config vitest.rsi.node.config.ts tests/unit/rsi-protocol-recovery.test.ts
   - git diff --check
 acceptance:
   - Freeze a new source revision, plan, rotating version order, provider model, price evidence and the owner's additional 12000000-token, 433-call, 0-CNY authorization before any new request.
@@ -44,6 +47,7 @@ acceptance:
   - Freshly verify all 24 unresolved baselines and reference-bound oracles with markdown-it 14.2.0, then verify the Free model route before every request. No quota purchase or paid fallback is allowed.
   - Validate off-only receipts through an explicit protocol-contrast entry point with budget-at-start values independently derived from the shared ledger. Preserve the existing full-schedule prefix requirement for ordinary benefit measurements.
   - Retain raw Responses, continuations, tools, edits, independent oracle artifacts, settled usage and unknown reserves. A stopped run seals its current report and supports importing retained receipts without redispatch.
+  - An empty unsuccessful oracle report retains its original completed receipt and becomes an explicit incomplete grader outcome through a separate evidence-backed recovery envelope. The strict ordinary validator still rejects that report. Recovery never redispatches the response or changes the frozen task, protocol, oracle or budget.
   - Compute passK, passAtK, at least 20 complete case pairs where available, two paired 95 percent intervals and labelled power. Repeats establish matching; the case cluster is the inference unit. An independent arithmetic implementation reproduces both comparisons.
   - Apply the existing 5pp improvement, positive interval lower bound, cost, safety and anchor gates to each protocol comparison. Protocol findings do not alter the retained evolved-prompt verdict or establish experience benefit.
   - Credential-scan and archive recoverable raw artifacts; track curated evidence and verify hashes from disk before updating Task Forest acceptance states.
