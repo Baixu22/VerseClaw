@@ -1,0 +1,17 @@
+{
+  "entries": [
+    {
+      "change_id": "49a539549e8eada399c63f94a581dbab",
+      "commit_id": "f1d8c2261364766c8d20887250947e4b63b76d3c",
+      "description": "second",
+      "parent_ids": [
+        "39eb64f2449129b5144f3f653d7375f1810e88b4"
+      ]
+    }
+  ],
+  "formatted": null,
+  "graph_truncated": true,
+  "kind": "revision-log",
+  "revset": "@",
+  "schema": "versegit.vg-json/v1"
+}

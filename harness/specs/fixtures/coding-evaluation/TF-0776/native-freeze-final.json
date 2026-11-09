@@ -1,0 +1,1956 @@
+{
+  "schema": "versiget.freeze-scorecard/v2",
+  "generated_by": "scripts/freeze_check.py",
+  "gates_source": "evidence/freeze-gates.json",
+  "generated_at": "2026-11-09T08:13:48+00:00",
+  "platform": "linux",
+  "python": "3.10.12",
+  "git_head": "d9c38a8659274c24ea776b56480a260831b4537f",
+  "worktree_clean": true,
+  "tracked_files_changed_by_check": false,
+  "read_only_ok": true,
+  "vg_binary": "/home/bai/.cache/clawx-coding-jj-20261108/target/debug/vg",
+  "vg_binary_origin": "环境变量 VG_BIN",
+  "cargo_target_dir": "/home/bai/.cache/clawx-coding-jj-20261108/target",
+  "core_gate_count": 10,
+  "core_gates_run": 10,
+  "core_passed": 10,
+  "core_failed": 0,
+  "groups_run": [
+    "core",
+    "preflight",
+    "auxiliary"
+  ],
+  "group_gate_count": 36,
+  "external_gate_count": 27,
+  "gate_count": 63,
+  "passed": 59,
+  "failed": 0,
+  "skipped_external_input": [
+    "distill_drift",
+    "candidate_staleness_expectations"
+  ],
+  "skipped_self_reported": [
+    "jj_vg_sts_isolation",
+    "jj_isolation_negative_control"
+  ],
+  "failures": [],
+  "external_checks": [
+    {
+      "id": "distill_drift",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/distill-drift.py",
+        "check"
+      ],
+      "requires": [
+        "should gitignore/clash-main",
+        "should gitignore/foremerge-main"
+      ],
+      "artifact": {
+        "path": "vendor/DISTILL.lock",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "037e63a4774b89f8ec393f5b8ff253ae7350f86eb2a3194066efefa9ff1f9151"
+      },
+      "status": "skipped_external_input",
+      "exit_code": null,
+      "timed_out": false,
+      "duration_seconds": 0.0,
+      "counts": {},
+      "missing_inputs": [
+        "should gitignore/clash-main",
+        "should gitignore/foremerge-main"
+      ],
+      "reason": "参考仓库 should gitignore/{clash-main,foremerge-main} 被 .gitignore 排除；干净 checkout 下无输入，必须显式 skip 而不是记为 pass",
+      "output_tail": ""
+    },
+    {
+      "id": "read_basis_ablation",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "eval/read-basis/check_read_basis.py"
+      ],
+      "requires": [
+        "target"
+      ],
+      "artifact": {
+        "path": "eval/read-basis/results/ablation.json",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "f72d97be497bbe3c7514bb9eaba72bc45fa66e2fe20ae2d048aeba2a0cded040"
+      },
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 3.904,
+      "counts": {
+        "判据": "12"
+      },
+      "missing_inputs": [],
+      "self_skips": [],
+      "reason": null,
+      "output_tail": "PASS  schema                     ok\nPASS  run-params                 ok\nPASS  boundaries                 ok\nPASS  live-config                ok\nPASS  legacy-control             ok\nPASS  tier-invariance            ok\nPASS  no-critical-below-threshold ok\nPASS  determinism                ok\nPASS  stats-self-consistency     ok\nPASS  blocking-count-consistency ok\nPASS  counters-consistency       ok\nPASS  live-invariant             ok\n\n门 PASS：12 条判据全部通过（实跑复算配置 inferred_share_1.0，场景 308 个）\n"
+    },
+    {
+      "id": "read_basis_negative_control",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "tests/negative-control/read-basis/run.py"
+      ],
+      "requires": [
+        "target"
+      ],
+      "artifact": {
+        "path": "tests/negative-control/read-basis/run.py",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "45292e688a663630b0bdebd5274b941d46a876f73d876df6bcd3692c79171e7b"
+      },
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 21.308,
+      "counts": {
+        "用例": "11"
+      },
+      "missing_inputs": [],
+      "self_skips": [],
+      "reason": null,
+      "output_tail": "=== 反向对照：读档消融产物门（TF-0152）===\n基线：未改动的产物应当 PASS\n  ✓ 基线 rc=0\n  ✓ legacy 召回被改                    rc=1，命中判据「legacy-control」  [legacy.readings.any.recall: 1.0 → 0.5]\n  ✓ blocking 读数被抬成 any             rc=1，命中判据「blocking-count-consistency」  [blocking.flagged_units: 132 → 264（有 78 条降级冲突）]\n  ✓ all_hook 与 legacy 不再相同         rc=1，命中判据「tier-invariance」  [all_hook.readings.any.fpr: 0.25 → 0.35]\n  ✓ read_basis 记数被污染               rc=1，命中判据「stats-self-consistency」  [read_basis.reads.hook_observed += 1（合计不再等于输入读点数）]\n  ✓ 逐场景明细被改                        rc=1，命中判据「determinism」  [per_scenario[PY-CYC-0001][2] += 1（与实跑明细不符）]\n  ✓ 删掉 boundaries                  rc=1，命中判据「boundaries」  [删除 boundaries（10 条）]\n  ✓ 删一半实质边界 + 补占位                  rc=1，命中判据「boundaries」  [删掉 5 条实质边界、补 5 条占位（条数不变）]\n  ✓ 把必查边界就地否定                      rc=1，命中判据「boundaries」  [把「tier 由策略指派」就地改成否定句（子串仍在）]\n  ✓ 保留子串另写相反的话                     rc=1，命中判据「boundaries」  [保留必查子串、另写一句相反的话]\n  ✓ 伪造 critical_below_threshold    rc=1，命中判据「no-critical-below-threshold」  [threshold_basis_receipt.counters.critical_below_threshold = 1]\n  ✓ 严重度分布不自洽                       rc=1，命中判据「counters-consistency」  [conflicts_by_severity.warning += 1（分布合计 ≠ conflicts_total）]\n\n撤销全部注入：产物应回到绿\n  ✓ 撤销后 rc=0\n\n反向对照 PASS：11 个注入偏差全部被门抓住（且命中预期判据）+ 撤销后回绿\n"
+    },
+    {
+      "id": "candidate_pilot_gate",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "eval/candidate-verify/check_candidate_pilot.py"
+      ],
+      "requires": [
+        "target"
+      ],
+      "artifact": {
+        "path": "eval/candidate-verify/results/pilot.json",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "0bddbdd500f196c60922d8ae073dfbb63c27373cadee0a56d17224012602684e"
+      },
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.817,
+      "counts": {
+        "判据": "7"
+      },
+      "missing_inputs": [],
+      "self_skips": [],
+      "reason": null,
+      "output_tail": "PASS  schema                     ok\nPASS  summary-recomputes         ok\nPASS  selection-rule-deterministic ok\nPASS  unresolved-refusal         ok\nPASS  no-ref-writes              ok\nPASS  table-markdown             ok\nPASS  live-rerun                 ok\nWARN                             实跑复算单元：PY-CYC-0001\n\n门 PASS：7 条判据全部通过（含实跑复算一个单元）\n"
+    },
+    {
+      "id": "candidate_staleness_expectations",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/screen-candidate-staleness.py",
+        "--batch",
+        "evidence/real-candidate-batch/batch.json",
+        "--cache",
+        "eval/agenticflict/cache",
+        "--expectations"
+      ],
+      "requires": [
+        "eval/agenticflict/cache/KristopherKubicki__norman",
+        "eval/agenticflict/cache/KristopherKubicki__glimpser"
+      ],
+      "artifact": {
+        "path": "evidence/real-candidate-batch/batch.json",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "b12972dac92e9b84312a065ccc045930bf0527d0c4a6651beff8cf8b4d24720e"
+      },
+      "status": "skipped_external_input",
+      "exit_code": null,
+      "timed_out": false,
+      "duration_seconds": 0.0,
+      "counts": {},
+      "missing_inputs": [
+        "eval/agenticflict/cache/KristopherKubicki__norman",
+        "eval/agenticflict/cache/KristopherKubicki__glimpser"
+      ],
+      "reason": "陈旧预筛的期望值表（TF-0191 给 norman#111 的回归落点）要读候选缓存仓 `eval/agenticflict/cache/`——它是被 .gitignore 排除的库外输入，干净 checkout 与 CI 上都没有，必须显式 skip 而不是记为 pass。**两个仓都列进 requires**：期望值表同时钉着 `norman#111`（必须陈旧）与 `glimpser#2006/#2034`（必须不陈旧，第一版误报反例），只具备其中一个就不该声称核过。**必须放在 external_checks 里**：`requires` 只有这一节被 freeze_check 与 clean_tree_smoke 真正读取，写进组内门的 `requires` 会被静默丢弃（两条脚本现在都对这种写法直接报错拒绝）。脚本自己在缓存根缺失时打印可见 SKIP 并退出 0；缓存根在盘上但有期望值没被核到时**退出 2 并拒绝声称通过**（实测假绿形态：缓存根部分填充时旧实现会打印「全部与实测一致」而其实一条没核）",
+      "output_tail": ""
+    },
+    {
+      "id": "candidate_pilot_negative_control",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "tests/negative-control/candidate-pilot/run.py"
+      ],
+      "requires": [
+        "target"
+      ],
+      "artifact": {
+        "path": "tests/negative-control/candidate-pilot/run.py",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "43a821e556252f245eddf138cca9e88075768b5739d9d15d6cc9d50319d59c85"
+      },
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 2.37,
+      "counts": {
+        "用例": "10"
+      },
+      "missing_inputs": [],
+      "self_skips": [],
+      "reason": null,
+      "output_tail": "=== 反向对照：T2 pilot 产物门（TF-0153）===\n基线：未改动的产物应当 PASS\n  ✓ 基线 rc=0\n  ✓ 删掉 boundaries（边界必须随产物走）            rc=1，命中判据「schema」\n  ✓ 改一个单元 full 臂的结论（summary 复算不再相等）    rc=1，命中判据「summary-recomputes」\n  ✓ 往某单元的 selected 里塞一个文件（选择规则不再可复算）   rc=1，命中判据「selection-rule-deterministic」\n  ✓ 把被拒单元的 category 改成 negative（拒绝面判据应当抓住） rc=1，命中判据「unresolved-refusal」\n  ✓ 让某单元报告 refs_written=true（逼出「不写引用」判据） rc=1，命中判据「no-ref-writes」\n  ✓ 改表格里的一个数字（与 summary 不符）            rc=1，命中判据「table-markdown」\n  ✓ 让 PY-CYC-0001 的 full 臂结论与实跑相反，并同步 summary/table（只有实跑能抓） rc=1，命中判据「live-rerun」\n  ✓ 改 arms_agree（两臂计数不自洽）              rc=1，命中判据「summary-recomputes」\n  ✓ 改 cost_ratio（与两臂总耗时不符）             rc=1，命中判据「summary-recomputes」\n  ✓ 改 units_attempted（与 units[] 长度不符）  rc=1，命中判据「summary-recomputes」\n\n撤销全部注入：产物应回到绿\n  ✓ 撤销后 rc=0\n\n反向对照 PASS：10 个注入偏差全部被门抓住（且命中预期判据）+ 撤销后回绿\n"
+    },
+    {
+      "id": "jj_vg_sts_isolation",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_jj_vg_sts.py",
+        "--suite",
+        "isolation-units"
+      ],
+      "requires": [
+        "target"
+      ],
+      "artifact": {
+        "path": "tests/negative-control/jj-isolation/run.py",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "1dd6b2b1f110247d178abd70dd193ef0ed537f252a6677f15c02f1f9e84829b7"
+      },
+      "status": "skipped_self_reported",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 2.774,
+      "counts": {
+        "verdict": "isolation_units_hold",
+        "availability": null
+      },
+      "missing_inputs": [],
+      "self_skips": [
+        "live 攻击载体属于 --suite isolation，本 suite 不执行（不是本机缺后端）"
+      ],
+      "reason": null,
+      "output_tail": "suite: isolation-units\n  [ok ] vg-battery-isolation: exit=0\n  [ok ] managed-config-isolation-refusal: exit=0\n  [ok ] vg-cli-isolation-gate: exit=0\nverdict: isolation_units_hold\nsummary: 本 suite 只跑隔离单元不变量与缺后端拒绝；live 攻击载体归 --suite isolation，不在这里执行\nSELFSKIP: live 攻击载体属于 --suite isolation，本 suite 不执行（不是本机缺后端）\n"
+    },
+    {
+      "id": "jj_isolation_negative_control",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_jj_vg_sts.py",
+        "--suite",
+        "isolation-units"
+      ],
+      "requires": [
+        "target"
+      ],
+      "artifact": {
+        "path": "tests/negative-control/jj-isolation/run.py",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "1dd6b2b1f110247d178abd70dd193ef0ed537f252a6677f15c02f1f9e84829b7"
+      },
+      "status": "skipped_self_reported",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 2.27,
+      "counts": {
+        "反向对照场景": "isolation_units_hold"
+      },
+      "missing_inputs": [],
+      "self_skips": [
+        "live 攻击载体属于 --suite isolation，本 suite 不执行（不是本机缺后端）"
+      ],
+      "reason": null,
+      "output_tail": "suite: isolation-units\n  [ok ] vg-battery-isolation: exit=0\n  [ok ] managed-config-isolation-refusal: exit=0\n  [ok ] vg-cli-isolation-gate: exit=0\nverdict: isolation_units_hold\nsummary: 本 suite 只跑隔离单元不变量与缺后端拒绝；live 攻击载体归 --suite isolation，不在这里执行\nSELFSKIP: live 攻击载体属于 --suite isolation，本 suite 不执行（不是本机缺后端）\n"
+    },
+    {
+      "id": "jj_vg_sts_budget",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_jj_vg_sts.py",
+        "--suite",
+        "budget"
+      ],
+      "requires": [
+        "target"
+      ],
+      "artifact": {
+        "path": "tests/negative-control/jj-budget/run.py",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "e3da7f0178a7c4330fe6a325ab76b9c578a3bb594e7e3e248b3d36667f2e1225"
+      },
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 12.723,
+      "counts": {
+        "verdict": "budget_boundaries_hold"
+      },
+      "missing_inputs": [],
+      "self_skips": [],
+      "reason": null,
+      "output_tail": "suite: budget\n  [ok ] executor-resource-limits: exit=0\n  [ok ] host-budget: exit=0\n  [ok ] candidate-negative-control: exit=0\nverdict: budget_boundaries_hold\nsummary: 超时、取消、输出洪泛、内存/磁盘上限、进程树回收和清理事实由共享执行器与真实候选负例分别验证\n"
+    },
+    {
+      "id": "jj_vg_sts_land",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_jj_vg_sts.py",
+        "--suite",
+        "land"
+      ],
+      "requires": [
+        "target"
+      ],
+      "artifact": {
+        "path": "crates/vg-cli/tests/jj_evidence_land.rs",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "b57c8b5525bd66f5be5946f4f8f67ed145d7cba0c147ace67f93e3da3f6f51a6"
+      },
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 16.24,
+      "counts": {
+        "verdict": "evidence_land_boundaries_hold"
+      },
+      "missing_inputs": [],
+      "self_skips": [],
+      "reason": null,
+      "output_tail": "suite: land\n  [ok ] evidence-land: exit=0\n  [ok ] evidence-batteries: exit=0\n  [ok ] kernel-land: exit=0\nverdict: evidence_land_boundaries_hold\nsummary: admission、full/valid/complete/cleanup、exact candidate tree、CAS land 与导出故障窗口分别验证\n"
+    },
+    {
+      "id": "jj_vg_sts_bisect",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_jj_vg_sts.py",
+        "--suite",
+        "bisect"
+      ],
+      "requires": [
+        "target"
+      ],
+      "artifact": {
+        "path": "crates/vg-cli/tests/jj_registered_bisect.rs",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "4115bb6361920f82bc62d8bba3dadeb4460377ef0bf124212cca022f9de7fc73"
+      },
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 9.314,
+      "counts": {
+        "verdict": "registered_bisect_boundaries_hold"
+      },
+      "missing_inputs": [],
+      "self_skips": [],
+      "reason": null,
+      "output_tail": "suite: bisect\n  [ok ] registered-bisect: exit=0\n  [ok ] bisect-mechanisms: exit=0\nverdict: registered_bisect_boundaries_hold\nsummary: 固定坏提交可定位；超时、非单调和未注册检查均保持 unknown，且 refs/worktree 清理成立\n"
+    },
+    {
+      "id": "jj_vg_sts_regression",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_jj_vg_sts.py",
+        "--suite",
+        "regression"
+      ],
+      "requires": [
+        "target"
+      ],
+      "artifact": {
+        "path": "scripts/check_jj_vg_sts.py",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "cfc389e19cb2678f771cefab4bab97fd6b32585039bd0a20268abe0e64172f6a"
+      },
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 115.663,
+      "counts": {
+        "verdict": "exit=0"
+      },
+      "missing_inputs": [],
+      "self_skips": [],
+      "reason": null,
+      "output_tail": "3\n  [ok ] conflict-gate: exit=0 passed=2 expected>=2\n  [ok ] ref-management: exit=0 passed=2 expected>=2\n  [ok ] git-ref-sync: exit=0 passed=6 expected>=6\n  [ok ] git-clone: exit=0 passed=4 expected>=4\n  [ok ] git-colocation: exit=0 passed=4 expected>=4\n  [ok ] git-remote: exit=0 passed=2 expected>=2\n  [ok ] git-ref-tracking: exit=0 passed=4 expected>=4\n  [ok ] op-undo-redo: exit=0 passed=6 expected>=3\n  [ok ] bisect: exit=0 passed=4 expected>=4\n  [ok ] repository-capabilities: exit=0 passed=3 expected>=3\n  [ok ] backup-retention: exit=0 passed=4 expected>=4\n  [ok ] backup-restore: exit=0 passed=8 expected>=6\n  [ok ] sparse: exit=0 passed=2 expected>=2\n  [ok ] doctor-recovery: exit=0 passed=3 expected>=3\n  [ok ] external-tools: exit=0 passed=2 expected>=2\n  [ok ] trusted-config: exit=0 passed=10 expected>=8\n  [ok ] run: exit=0 passed=3 expected>=3\n  [ok ] capabilities-audit: exit=0 passed=2 expected>=2\n  [ok ] mcp-equivalence: exit=0 passed=11 expected>=11\n  [ok ] parallel-workspaces: exit=0 passed=2 expected>=2\n  [ok ] gerrit-upload: exit=0 passed=3 expected>=3\n  [ok ] sign-unsign: exit=0 passed=3 expected>=1\n  [ok ] isolation-wiring: exit=0 passed=3 expected>=3\n  [ok ] fileset-negative-control: exit=0 passed=1 expected>=1\n  [ok ] isolation-gate: exit=0 passed=93 expected>=1\n  [ok ] transaction-recovery: exit=0 passed=6 expected>=6\n  [ok ] ledger-version-gate: exit=0 passed=4 expected>=4\nverdict: new_regressions_discovered_and_passed\nsummary: 每条新门都有最小发现数；exit 0 但零测试/少测试仍判失败\n"
+    },
+    {
+      "id": "jj_vg_sts_security",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_jj_vg_sts.py",
+        "--suite",
+        "security"
+      ],
+      "requires": [
+        "target"
+      ],
+      "artifact": {
+        "path": "scripts/check_jj_vg_sts.py",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "cfc389e19cb2678f771cefab4bab97fd6b32585039bd0a20268abe0e64172f6a"
+      },
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 47.376,
+      "counts": {
+        "verdict": "security_matrix_no_unsafe_success"
+      },
+      "missing_inputs": [],
+      "self_skips": [],
+      "reason": null,
+      "output_tail": "suite: security\n  [ok ] isolation-units: exit=0\n  [ok ] budget: exit=0\n  [ok ] bisect: exit=0\n  [ok ] transaction-recovery: exit=0\n  [ok ] external-tools: exit=0\n  [ok ] tools-run-deadline: exit=0\n  [ok ] host-surfaces-cancel: exit=0\n  [ok ] selection-arm-deadline: exit=0\n  [ok ] help-matrix: exit=0\n  [ok ] strict-admission: exit=0\n  [ok ] land-recovery: exit=0\n  [ok ] land-concurrency: exit=0\n  [ok ] cross-stage-counterexamples: exit=0\n  [ok ] managed-config-isolation-refusal: exit=0\nverdict: security_matrix_no_unsafe_success\nsummary: 拒绝、unknown/incomplete、清理和 failpoint 分开记录；live 隔离攻击不在本 suite，归 --suite isolation\n"
+    },
+    {
+      "id": "jj_vg_sts_real_data",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_jj_vg_sts.py",
+        "--suite",
+        "real-data"
+      ],
+      "requires": [
+        "target",
+        "extensions/sts/experiments/tf0028_eval/real-sample/comparison.json"
+      ],
+      "artifact": {
+        "path": "extensions/sts/experiments/tf0028_eval/real-sample/comparison.json",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "4f57072a41f9455040fef1eda252e64156a9c2aacf1b2805a3d95c286666a157"
+      },
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 1.117,
+      "counts": {
+        "verdict": "real_data_recomputed_read_only"
+      },
+      "missing_inputs": [],
+      "self_skips": [],
+      "reason": null,
+      "output_tail": "suite: real-data\n  [ok ] published-numbers: exit=0\n  [ok ] evidence-directories: exit=0\nverdict: real_data_recomputed_read_only\nsummary: 复算历史 real-sample/成本证据；不把旧读数重写成新测量，不降低 trial 门槛\n"
+    },
+    {
+      "id": "jj_vg_sts_pilot",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_jj_vg_sts.py",
+        "--suite",
+        "pilot"
+      ],
+      "requires": [
+        "target"
+      ],
+      "artifact": {
+        "path": "scripts/check_jj_vg_sts.py",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "cfc389e19cb2678f771cefab4bab97fd6b32585039bd0a20268abe0e64172f6a"
+      },
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 11.667,
+      "counts": {
+        "verdict": "opt_in_pilot_boundaries_hold"
+      },
+      "missing_inputs": [],
+      "self_skips": [],
+      "reason": null,
+      "output_tail": "suite: pilot\n  [ok ] workspace-lifecycle: exit=0 passed=10 expected>=1\n  [ok ] operation-restore: exit=0 passed=1 expected>=1\n  [ok ] strict-admission: exit=0 passed=3 expected>=1\n  [ok ] transaction-recovery: exit=0 passed=6 expected>=6\n  [ok ] land-recovery: exit=0 passed=10 expected>=1\n  [ok ] doctor-recovery: exit=0 passed=3 expected>=3\nverdict: opt_in_pilot_boundaries_hold\nsummary: 创建/编辑/恢复/strict/报告与缺失后端拒绝分别验证；默认选择/排序不自动开启\n"
+    },
+    {
+      "id": "jj_vg_sts_risks",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_jj_vg_sts.py",
+        "--suite",
+        "risks"
+      ],
+      "requires": [
+        "target"
+      ],
+      "artifact": {
+        "path": "docs/jj-vg-sts-risks.md",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "54a2796eac3a21c4e8bd97a449bcaf1ab00721b4e1aac5c06104a8b06e0180d7"
+      },
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 28.226,
+      "counts": {
+        "verdict": "risk_profiles_have_positive_and_negative_evidence"
+      },
+      "missing_inputs": [],
+      "self_skips": [],
+      "reason": null,
+      "output_tail": "suite: risks\n  [ok ] strict-admission: exit=0 passed=3 expected>=1\n  [ok ] sts-contract: exit=0 passed=3 expected>=1\n  [ok ] sts-result-v2: exit=0 passed=16 expected>=1\n  [ok ] workspace-lifecycle: exit=0 passed=10 expected>=1\n  [ok ] operation-restore: exit=0 passed=1 expected>=1\n  [ok ] transaction-recovery: exit=0 passed=6 expected>=6\n  [ok ] land-recovery: exit=0 passed=10 expected>=8\n  [ok ] report-reuse: exit=0 passed=3 expected>=1\n  [ok ] bisect: exit=0 passed=4 expected>=4\n  [ok ] repository-capabilities: exit=0 passed=3 expected>=3\n  [ok ] backup-retention: exit=0 passed=4 expected>=4\n  [ok ] backup-restore: exit=0 passed=8 expected>=6\n  [ok ] sparse: exit=0 passed=2 expected>=2\n  [ok ] doctor-recovery: exit=0 passed=3 expected>=3\n  [ok ] external-tools: exit=0 passed=2 expected>=2\n  [ok ] trusted-config: exit=0 passed=10 expected>=8\n  [ok ] run: exit=0 passed=3 expected>=3\n  [ok ] capabilities-audit: exit=0 passed=2 expected>=2\n  [ok ] mcp-equivalence: exit=0 passed=11 expected>=11\n  [ok ] parallel-workspaces: exit=0 passed=2 expected>=2\n  [ok ] gerrit-upload: exit=0 passed=3 expected>=3\n  [ok ] sign-unsign: exit=0 passed=3 expected>=1\n  [ok ] isolation-wiring: exit=0 passed=3 expected>=3\n  [ok ] fileset-negative-control: exit=0 passed=1 expected>=1\n  [ok ] isolation-gate: exit=0 passed=93 expected>=1\nverdict: risk_profiles_have_positive_and_negative_evidence\nsummary: 每条风险都映射到至少一个真实测试门；未测平台和 live 隔离仍在各自节点单独 unmeasured\n"
+    },
+    {
+      "id": "git_diff_check",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_git_diff.py"
+      ],
+      "requires": [],
+      "artifact": {
+        "path": null,
+        "exists": null,
+        "sha256": null
+      },
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.114,
+      "counts": {},
+      "missing_inputs": [],
+      "self_skips": [],
+      "reason": null,
+      "output_tail": "git diff --check 89af0c36216e64bb0f7430fc3fe21c39c485be7c..d9c38a8659274c24ea776b56480a260831b4537f: exit=0\n"
+    },
+    {
+      "id": "git_diff_check_selftest",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_git_diff.py",
+        "--self-test"
+      ],
+      "requires": [],
+      "artifact": {
+        "path": null,
+        "exists": null,
+        "sha256": null
+      },
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.115,
+      "counts": {},
+      "missing_inputs": [],
+      "self_skips": [],
+      "reason": null,
+      "output_tail": "  ✓ clean range passes\n  ✓ trailing whitespace rejected\n  ✓ empty range rejected before git diff\n\ngit diff self-test PASS (3/3 checks)\n"
+    },
+    {
+      "id": "rust_clippy",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "requires": [],
+      "artifact": {
+        "path": null,
+        "exists": null,
+        "sha256": null
+      },
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.671,
+      "counts": {},
+      "missing_inputs": [],
+      "self_skips": [],
+      "reason": null,
+      "output_tail": "    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.56s\n"
+    },
+    {
+      "id": "ci_split_contract",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_ci_contract.py"
+      ],
+      "requires": [],
+      "artifact": {
+        "path": ".gitlab-ci.yml",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "b10de5c124163181d5e3877735abe4ade8a2d220bb4ba81b7f36989e87baa21a"
+      },
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.032,
+      "counts": {},
+      "missing_inputs": [],
+      "self_skips": [],
+      "reason": null,
+      "output_tail": "CI split contract PASS (8 required jobs, 7 aggregate inputs)\n"
+    },
+    {
+      "id": "ci_split_contract_selftest",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_ci_contract.py",
+        "--self-test"
+      ],
+      "requires": [],
+      "artifact": {
+        "path": ".gitlab-ci.yml",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "b10de5c124163181d5e3877735abe4ade8a2d220bb4ba81b7f36989e87baa21a"
+      },
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.033,
+      "counts": {},
+      "missing_inputs": [],
+      "self_skips": [],
+      "reason": null,
+      "output_tail": "  ✓ baseline split graph is contract-clean\n  ✓ deleted ci:sts job: ['missing required job: ci:sts']\n  ✓ allow_failure downgrade: ['ci:preflight: allow_failure must be explicit false', 'ci:rust: allow_failure must be explicit false']\n  ✓ aggregate omits audit: ['ci:aggregate: missing needs entry ci:audit', 'ci:aggregate: does not consume required producer ci:audit']\n  ✓ required job self-skips: ['ci:contracts: required job is configured when: never']\n  ✓ preflight carries heavy build: ['ci:preflight: expensive command in cheap reject lane: cargo test']\n  ✓ evidence recorder removed: ['default after_script does not record CI evidence']\n  ✓ rust job omits STS setup: ['ci:rust: STS environment is not prepared before workspace tests']\n  ✓ high-memory Rust tests not serialised: ['ci:rust: high-memory replay tests are not serialised']\n  ✓ global contract path not exported: ['global VG_CONTRACT_DIR does not point at the versioned contract parent']\n  ✓ main-script log not preserved: ['default before_script does not preserve the main-script log']\n  ✓ isolation vg shim removed: ['ci:replay: isolation suite lacks target/debug/vg artifact shim']\n  ✓ preflight shallow base not fetched: ['ci:preflight: git diff base is not fetched in shallow checkout']\n\nci contract self-test PASS (13/13 checks)\n"
+    },
+    {
+      "id": "ci_evidence_selftest",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/ci_evidence.py",
+        "self-test"
+      ],
+      "requires": [],
+      "artifact": {
+        "path": "scripts/ci_evidence.py",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "f56fc9c39bb11baf0dbb6e9c656646dacef8fcb9b3ce8c0a4a2a3c8070c23cfb"
+      },
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.065,
+      "counts": {},
+      "missing_inputs": [],
+      "self_skips": [],
+      "reason": null,
+      "output_tail": "  ✓ baseline same-commit overlap passes\n  ✓ missing job rejected: fail\n  ✓ mixed commit rejected: fail\n  ✓ stale pipeline rejected: fail\n  ✓ SELFSKIP rejected: fail\n  ✓ identity drift rejected: fail\n  ✓ failed job rejected: fail\n  ✓ non-overlap rejected: fail\n  ✓ tampered log rejected\n  ✓ declared skip is visible and strict mode rejects it\n\nci evidence self-test PASS (10/10 checks)\n"
+    },
+    {
+      "id": "third_party_inventory",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_third_party_inventory.py"
+      ],
+      "requires": [],
+      "artifact": {
+        "path": "evidence/jj-vg-sts/tf0339/third-party-inventory-20261017.json",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "b598e0b1073f8a46d05c0164ee964af7350cc9124de7d0637a0f8adf4ab1bf49"
+      },
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.365,
+      "counts": {},
+      "missing_inputs": [],
+      "self_skips": [],
+      "reason": null,
+      "output_tail": "ITH LLVM-exception OR Apache-2.0 OR MIT\": 3,\n      \"Apache-2.0/MIT\": 2,\n      \"BSD-2-Clause OR Apache-2.0 OR MIT\": 2,\n      \"CC0-1.0\": 1,\n      \"CC0-1.0 OR MIT-0 OR Apache-2.0\": 1,\n      \"ISC\": 2,\n      \"MIT\": 40,\n      \"MIT OR Apache-2.0\": 274,\n      \"MIT OR Apache-2.0 OR LGPL-2.1-or-later\": 1,\n      \"MIT OR Apache-2.0 OR Zlib\": 1,\n      \"MIT/Apache-2.0\": 13,\n      \"MPL-2.0\": 1,\n      \"Unlicense OR MIT\": 11,\n      \"Unlicense/MIT\": 2,\n      \"Zlib\": 3,\n      \"Zlib OR Apache-2.0 OR MIT\": 1\n    },\n    \"packages_without_license_metadata\": [],\n    \"jj_lib\": [\n      {\n        \"version\": \"0.46.0\",\n        \"license\": \"Apache-2.0\",\n        \"license_file\": \"\",\n        \"repository\": \"https://github.com/jj-vcs/jj\"\n      }\n    ]\n  },\n  \"python\": [\n    {\n      \"name\": \"pytest\",\n      \"version\": \"9.1.1\",\n      \"license\": \"MIT\",\n      \"license_files\": [\n        \"pytest-9.1.1.dist-info/licenses/LICENSE\"\n      ]\n    },\n    {\n      \"name\": \"gitpython\",\n      \"version\": \"3.2.0\",\n      \"license\": \"BSD-3-Clause\",\n      \"license_files\": [\n        \"gitpython-3.2.0.dist-info/licenses/AUTHORS\",\n        \"gitpython-3.2.0.dist-info/licenses/LICENSE\"\n      ]\n    },\n    {\n      \"name\": \"flask\",\n      \"version\": \"3.1.3\",\n      \"license\": \"BSD-3-Clause\",\n      \"license_files\": [\n        \"flask-3.1.3.dist-info/licenses/LICENSE.txt\"\n      ]\n    }\n  ],\n  \"python_interpreter\": \"/home/bai/.cache/clawx-coding-jj-20261108/frozen-venv/bin/python\",\n  \"python_environment_present\": true,\n  \"errors\": [],\n  \"ok\": true\n}\n"
+    },
+    {
+      "id": "dependency_audit",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_dependency_audit.py"
+      ],
+      "requires": [],
+      "artifact": {
+        "path": "Cargo.lock",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "cc01521aac87a5451274efc99da874748876fe648ff5b79b536019a95b66337a"
+      },
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 2.572,
+      "counts": {},
+      "missing_inputs": [],
+      "self_skips": [],
+      "reason": null,
+      "output_tail": "{\n  \"schema\": \"versegit.dependency-audit/v1\",\n  \"tool\": {\n    \"available\": true,\n    \"label\": \"cargo-audit-audit 0.22.2\",\n    \"version\": \"cargo-audit-audit 0.22.2\"\n  },\n  \"status\": \"passed\",\n  \"vulnerabilities_found\": false,\n  \"vulnerability_count\": 0,\n  \"warning_count\": 1,\n  \"exit_code\": 0,\n  \"database\": {\n    \"advisory-count\": 1422,\n    \"last-commit\": \"7a40350e1b8ba5b656d909f88222a8059a83d88d\",\n    \"last-updated\": \"2026-11-08T16:03:42-07:00\"\n  },\n  \"stderr_tail\": \"\"\n}\n"
+    },
+    {
+      "id": "dependency_audit_selftest",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_dependency_audit.py",
+        "--self-test"
+      ],
+      "requires": [],
+      "artifact": {
+        "path": "scripts/check_dependency_audit.py",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "b2100440485344f0fe71730d5ed8b011662a1dda29b04dc9c41fdc81e364703d"
+      },
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.032,
+      "counts": {},
+      "missing_inputs": [],
+      "self_skips": [],
+      "reason": null,
+      "output_tail": "  ✓ clean audit: (0, 0, 0)\n  ✓ vulnerability blocks: (1, 1, 0)\n  ✓ warnings counted separately: (0, 0, 2)\n\ndependency audit self-test PASS (3/3 checks)\n"
+    },
+    {
+      "id": "freeze_summary_accounting_selftest",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_freeze_summary_accounting.py",
+        "--self-test"
+      ],
+      "requires": [],
+      "artifact": {
+        "path": "scripts/check_freeze_summary_accounting.py",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "7b0da44c24979b91bf25f4e344556f4e153a80bd75b7a5ae314554ce020cdda3"
+      },
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.032,
+      "counts": {},
+      "missing_inputs": [],
+      "self_skips": [],
+      "reason": null,
+      "output_tail": "  ✓ consistent v2: freeze_summary_accounting_consistent\n  ✓ reason-bearing input skip: freeze_summary_accounting_consistent\n  ✓ wrong total: freeze_summary_accounting_gaps\n  ✓ hidden self skip: freeze_summary_accounting_gaps\n  ✓ hidden external skip: freeze_summary_accounting_gaps\n\nfreeze summary accounting self-test PASS (5/5 checks)\n"
+    },
+    {
+      "id": "response_timeline_selftest",
+      "group": "external",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/reconcile_response_times.py",
+        "--self-test"
+      ],
+      "requires": [],
+      "artifact": {
+        "path": "scripts/reconcile_response_times.py",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "272f67ea03cf6d6a4606e919e98a102da7891801e2c8ea94fee0d42c576e4040"
+      },
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.032,
+      "counts": {},
+      "missing_inputs": [],
+      "self_skips": [],
+      "reason": null,
+      "output_tail": "  ✓ valid chain computes all four bounds\n  ✓ missing introduced keeps MTTD null\n  ✓ cross-run events rejected\n  ✓ duplicate event kind rejected\n  ✓ negative duration rejected\n  ✓ done with failed evidence rejected\n  ✓ resolved deviation without fixed event rejected\n  ✓ resolved deviation without independent verification rejected\n  ✓ open deviation with fixed but unverified change rejected\n  ✓ P95 reported at n=30\n\nresponse timeline self-test PASS (10/10 checks)\n"
+    }
+  ],
+  "gates": [
+    {
+      "id": "readme_tables",
+      "group": "core",
+      "counts_toward_core": true,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "eval/benchmark/check_readme_tables.py"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.164,
+      "counts": {
+        "表块": "9"
+      },
+      "artifact": {
+        "path": "README.md",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "0fc07f49b4b75af445095663285dd6bacd31c5e9b2f324ccc177749b3b2aff9c"
+      },
+      "self_skips": [],
+      "output_tail": "README 表与结果文件逐格一致（9 个表块）✓\n"
+    },
+    {
+      "id": "agenticflict_recompute",
+      "group": "core",
+      "counts_toward_core": true,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "eval/benchmark/recompute.py",
+        "eval/agenticflict/results/after-d9.json"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.115,
+      "counts": {
+        "单元": "263"
+      },
+      "artifact": {
+        "path": "eval/agenticflict/results/after-d9.json",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "fb9c370bd1bd1428a5fbb17ee9dfc6624fe773d7a49f52d6b06ecdddc1903090"
+      },
+      "self_skips": [],
+      "output_tail": "### AgenticFlict 真实 PR 重放（正类 = 文本冲突）\n\n| 方法 | 召回 | 误报率 | 精确率 | F1 | 错误自动合并率 | 提前量 | p50(ms) | p95(ms) |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| git_merge_automerge | 0.000 | 0.000 | 0.000 | 0.000 | n/a | 0.000 | 0.0 | 0.0 |\n| clash_textual | 1.000 | 0.000 | 1.000 | 1.000 | n/a | 0.000 | 26.3 | 51.0 |\n| foremerge_paths | 0.924 | 0.435 | 0.682 | 0.785 | n/a | 1.000 | 0.0 | 0.0 |\n| versegit_l2 | 0.712 | 0.038 | 0.950 | 0.814 | n/a | 1.000 | 103.1 | 1013.7 |\n| versegit_l1l2 | 1.000 | 0.038 | 0.964 | 0.981 | n/a | 0.712 | 129.6 | 1046.7 |\n\n单元 263｜仓库 21｜textual 132 / benign 131\n\n复算门通过：文件内的表与逐单元明细逐格一致 ✓\n"
+    },
+    {
+      "id": "oracle",
+      "group": "core",
+      "counts_toward_core": true,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "eval/agenticflict/check_oracle_gate.py"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.064,
+      "counts": {},
+      "artifact": {
+        "path": "eval/agenticflict/results/fp25-audit.json",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "015c9dfea51624a48ba50dc941d5b81dc99016a6ad3ba24e63d09ba9da406899"
+      },
+      "self_skips": [],
+      "output_tail": "望=no-new-breakage\n  [OK ] ctol3r/chai-vc-platform#306                   审计=false_positive  终审=no-new-breakage（machine）期望=no-new-breakage\n  [OK ] ctol3r/chai-vc-platform#313                   审计=false_positive  终审=no-new-breakage（machine）期望=no-new-breakage\n  [OK ] ctol3r/chai-vc-platform#320                   审计=false_positive  终审=no-new-breakage（machine）期望=no-new-breakage\n  [OK ] m0st4f4-hub/MCP-ProjectManager#471            审计=false_positive  终审=no-new-breakage（machine）期望=no-new-breakage\n  [OK ] m0st4f4-hub/MCP-ProjectManager#484            审计=false_positive  终审=invalid（machine）期望=invalid\n  [OK ] m0st4f4-hub/MCP-ProjectManager#491            审计=false_positive  终审=invalid（machine）期望=invalid\n  [OK ] onlook-dev/onlook#1129                        审计=false_positive  终审=no-coverage（machine）期望=no-coverage\n  [OK ] onlook-dev/onlook#1424                        审计=false_positive  终审=no-coverage（machine）期望=no-coverage\n  [OK ] takoserver/takos#430                          审计=false_positive  终审=no-coverage（machine）期望=no-coverage\n主轨缺口分项（三处同值，冻结口径）: 期望 {'invalid': 5, 'no-coverage': 4, 'undetermined': 1}\n  constraints                      {'invalid': 5, 'no-coverage': 4, 'undetermined': 1}\n  evidence-declaration.md          absent (local archive)\n  task-map.md                      absent (local archive)\n  附条件证据段: annex（非默认测量条件的读数不计入主轨）\n交叉表（审计 × oracle 终审）：\n  false_positive: all-green×1, invalid×4, no-coverage×3, no-new-breakage×14, oracle-hit×3\n\nORACLE GATE OK：审计 ↔ oracle JSON ↔ 终审口径 三方一致。\n"
+    },
+    {
+      "id": "jev_gate",
+      "group": "core",
+      "counts_toward_core": true,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "eval/jev/scripts/check_jev_gate.py",
+        "--offline"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.064,
+      "counts": {
+        "states_units": "97"
+      },
+      "artifact": {
+        "path": "eval/jev/states/write-skew-r3.jsonl",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "28920db80c520410dceb5c501d93959b48f36d8d542ddbf93a0cd0090e22ae7e"
+      },
+      "self_skips": [],
+      "output_tail": "[states] eval/jev/states/write-skew-r3.jsonl rows=72 errors=0\n[states] eval/jev/states/agenticflict-fp25.jsonl rows=25 errors=0\n\n=== JEV GATE PASS ===\nstates_units=97\nboundaries: weak labels are not gold; identity_source typically caller_configuration\n"
+    },
+    {
+      "id": "jev_consistency",
+      "group": "core",
+      "counts_toward_core": true,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "eval/jev/scripts/check_jev_consistency.py",
+        "--arms",
+        "eval/jev/results/arms_index.json"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.115,
+      "counts": {
+        "records": "204",
+        "units": "197"
+      },
+      "artifact": {
+        "path": "eval/jev/results/arms_index.json",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "ac0a22074a7b0b2f0335cd78525f3ee593446dc85b8d19cf2899b28d703378a2"
+      },
+      "self_skips": [],
+      "output_tail": "records=204 units=197 cross-arm=7\n  check1: 204 个 state_hash，违反组数 0\n  check3: 跨臂单元 7（consistent 6 / undefined 1）\n  check3b: arms_index 覆盖 197 单元，与重算比对完成\n  check5(state-contract): canon 行 368，单元 335，跨批 31，漂移 0\n\nJEV CONSISTENCY GATE PASS\n"
+    },
+    {
+      "id": "verdict_shape",
+      "group": "core",
+      "counts_toward_core": true,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "eval/jev/scripts/check_verdict_shape.py"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.032,
+      "counts": {
+        "结果文件": "39"
+      },
+      "artifact": {
+        "path": "eval/jev/results/arms_index.json",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "ac0a22074a7b0b2f0335cd78525f3ee593446dc85b8d19cf2899b28d703378a2"
+      },
+      "self_skips": [],
+      "output_tail": "扫描 oracle 结果文件 39 个；字段块 4 个（canonical 1 / legacy 3）\n  KristopherKubicki/glimpser#1910                      discrimination canonical ['basis', 'reviewed_at', 'reviewer', 'signed_off', 'unverified', 'verdict']\n  KristopherKubicki/glimpser#1922                      human_verdict  legacy    ['added_at', 'added_by', 'final', 'rationale']\n  VimsRocz/IMU#583                                     discrimination legacy    ['basis', 'reviewer', 'unverified', 'verdict']\n  aandresalvarez/flujo#295                             human_verdict  legacy    ['added_at', 'added_by', 'final', 'rationale']\n\nVERDICT SHAPE GATE PASS\n"
+    },
+    {
+      "id": "evidence_registry",
+      "group": "core",
+      "counts_toward_core": true,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_evidence_registry.py"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.165,
+      "counts": {
+        "声明": "78",
+        "指针可达": [
+          "289",
+          "289"
+        ],
+        "guard脚本": [
+          "78",
+          "78"
+        ]
+      },
+      "artifact": {
+        "path": "evidence/claims.json",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "314b177cf3ff6f3c44ee7470779104560bf799c430d515fa9982c5b0bcf6d24f"
+      },
+      "self_skips": [],
+      "output_tail": "=== 证据台账门（TF-0119）===\n台账：evidence/claims.json\n  声明 78 条 ｜ 证据指针 289/289 可达 ｜ 无指针 0 条 ｜ 未解析 token 1 个\n  guard/recompute 点名脚本 78/78 存在\n  强度分布：{\"behavioral-self\": 54, \"self-reported\": 8, \"external-textual\": 8, \"synthetic-injected\": 8}\n\n判定：PASS（已登记声明的指针检查通过，且与文档同源；不证明未登记声明或库外原始输入完整）\n"
+    },
+    {
+      "id": "secret_scan",
+      "group": "core",
+      "counts_toward_core": true,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check-secrets.py"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 9.941,
+      "counts": {
+        "已入库文件": "6749"
+      },
+      "artifact": {
+        "path": "scripts/secret-allowlist.txt",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "e64fcddfcd8ec00dc14579ba75b89376736c1e59e28c259e4e350c4d9b0816d8"
+      },
+      "self_skips": [],
+      "output_tail": "=== 密钥扫描门（TF-0123）===\n已入库文件 6749 个 ｜ 放行名单 2 项\n\n【已入库文件命中】1 处\n  放行       tests/negative-control/secret-scan/allowed_key.txt:1  apikey  apikey_NC_FI…  sha256[:16]=2c4e902f90a29fca\n\n【未入库文件命中】0 处（数据集内容，从不进版本库，信息性）\n  （无）\n  ⚠ 另有 5 个文件因超过 8MB **未扫描正文**（多为数据集）：\n      eval/agenticflict/results/real_baseline.json\n      eval/aidev/results/tf0065.json\n      evidence/retained-runs/sts-ttff-20261006-evidence.zip\n      evidence/retained-runs/tf0210-upstream-evidence.zip\n      evidence/retained-runs/tf0214-0215-evidence.zip\n      这些文件被 .gitignore 排除、不进版本库，但**门对它们没有覆盖**——上面的「0 处」不等于它们里面没有密钥。\n\n判定：PASS（已入库文件里的密钥全部在放行名单内，或没有密钥）\n"
+    },
+    {
+      "id": "evidence_negative_control",
+      "group": "core",
+      "counts_toward_core": true,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "tests/negative-control/evidence-registry/run.py"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 1.874,
+      "counts": {
+        "用例": [
+          "11",
+          "11"
+        ]
+      },
+      "artifact": {
+        "path": "tests/negative-control/evidence-registry/run.py",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "7d38b9d173f45673503a613bfd825eff480e2edee3cdb631f8020e8559a590dd"
+      },
+      "self_skips": [],
+      "output_tail": "=== 反向对照：证据台账门（TF-0119）===\n基线：未改动的台账应当 PASS\n  ✓ 基线 rc=0\n  ✓ 抽取失败明确拒绝\n  ✓ 生成器 --check 拒绝空指针\n  ✓ 悬空证据指针                             rc=1，且命中判据「证据指针不可达」\n  ✓ 全部指针被删空                            rc=1，且命中判据「缺少证据指针」\n  ✓ 证据列表类型错误                           rc=1，且命中判据「evidence_paths 必须是路径列表」\n  ✓ 证据字段被删除                            rc=1，且命中判据「缺少证据指针」\n  ✓ 声明列表被删空                            rc=1，且命中判据「claims 必须是非空对象列表」\n  ✓ 换成可达但无关的证据                         rc=1，且命中判据「台账与文档不同源」\n  ✓ 守护指针被删空                            rc=1，且命中判据「台账与文档不同源」\n  ✓ 绝对本机路径                             rc=1，且命中判据「绝对本机路径」\n  ✓ guard 脚本不存在                        rc=1，且命中判据「guard 点名的脚本不存在」\n  ✓ authority 取值非法                     rc=1，且命中判据「authority 取值非法」\n  ✓ reproducible=false 却非 self-reported rc=1，且命中判据「reproducible=false 却不是 self-reported」\n\n反向对照 PASS：11/11 个注入偏差全部被门抓住（且命中预期判据）\n"
+    },
+    {
+      "id": "secret_negative_control",
+      "group": "core",
+      "counts_toward_core": true,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "tests/negative-control/secret-scan/run.py"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.215,
+      "counts": {
+        "用例": [
+          "6",
+          "6"
+        ]
+      },
+      "artifact": {
+        "path": "tests/negative-control/secret-scan/run.py",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "63bbe4312152f841126bdbf46ce59f4867f193b0f8606ff6437d917f99baaa7c"
+      },
+      "self_skips": [],
+      "output_tail": "=== 反向对照：密钥扫描门（TF-0123）===\n  ✓ 植入 sk- 密钥                  rc=1（拦截）\n  ✓ 植入 ghp_ token              rc=1（拦截）\n  ✓ 植入 Bearer 头                rc=1（拦截）\n  ✓ 植入未放行的 apikey_             rc=1（拦截）\n  ✓ 植入放行名单里的夹具 key             rc=0（放行）\n  ✓ 干净文件                       rc=0（放行）\n\n反向对照 PASS：6/6 个用例全部符合预期\n"
+    },
+    {
+      "id": "claims_same_source",
+      "group": "preflight",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/build_claims_registry.py",
+        "--check"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.165,
+      "counts": {
+        "声明": "78"
+      },
+      "artifact": {
+        "path": "evidence/claims.json",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "314b177cf3ff6f3c44ee7470779104560bf799c430d515fa9982c5b0bcf6d24f"
+      },
+      "self_skips": [],
+      "output_tail": "✓ 台账与文档同源（78 条）\n"
+    },
+    {
+      "id": "freeze_delivery",
+      "group": "preflight",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_freeze_delivery.py",
+        "--check"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.315,
+      "counts": {
+        "小输入": "7",
+        "场景": [
+          "308",
+          "308",
+          "0"
+        ],
+        "JEV引用": [
+          "97",
+          "219",
+          "0"
+        ]
+      },
+      "artifact": {
+        "path": "evidence/freeze-delivery.json",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "89840ff7dcf37f753b4c09b6ebfbd62c182c9a3eb8225622ff14f9b886159edf"
+      },
+      "self_skips": [],
+      "output_tail": "TF-0130 小输入        : 7 项，全部存在且已解锁 ✓\nTF-0130 allowlist 边界: 意外纳入 0 个文件\nTF-0131 场景          : manifest=308 目录=308 不完整=0 文件=2984 (1.00 MB)\nTF-0131 场景总摘要    : 284a1063fef38f17cbf2eeb926a73e22c7df60bf35bbbc9474183313d13c5e5f\nTF-0131 JEV 源文件    : states=97 引用=219 不可达=0\nTF-0132 AIDev 摘要    : snapshot_name=ok, parquet_sha256=ok, script_hashes=ok, commands=ok, filter_conditions=ok, clone_recompute_false=ok, external_input=ok\nTF-0133 命令口径      : 9 个文件，0 处 python 调用缺 `-X utf8 -B`\n\n判定：PASS——交付树完整、可交付、可复核\n"
+    },
+    {
+      "id": "scenario_determinism",
+      "group": "preflight",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "eval/write-skew/verify_set.py",
+        "--determinism"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 2.119,
+      "counts": {
+        "verified": [
+          "308",
+          "308"
+        ]
+      },
+      "artifact": {
+        "path": "eval/write-skew/manifest.json",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "54732e8c7fb10c50c174d786e92d6683a2e02f4362c95b0854e8e11d3bb4ad6f"
+      },
+      "self_skips": [],
+      "output_tail": "[1] 数量与平衡：positive=240（R1–R4 各 [60, 60, 60, 60]），negative=48，cycle=12，text-conflict=8\n[2] oracle 对拍：308/308 verified\n[3] 结构去重：308 个唯一指纹 / 308 场景\n[4] 标签一致性：通过\n[6] 字段完备：通过\n[5] 确定性对拍：通过\n\n全部质量门通过 ✓\n"
+    },
+    {
+      "id": "quality_gates",
+      "group": "preflight",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "eval/write-skew/run_quality_gates.py"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 2.176,
+      "counts": {
+        "质量门": [
+          "0",
+          "6",
+          "True"
+        ]
+      },
+      "artifact": {
+        "path": "eval/write-skew/results/quality-gates.json",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "1a4a4ac71e1df726874ebc04352e4b816d9cfe89a3ca72d678c7ee070df8ab62"
+      },
+      "self_skips": [],
+      "output_tail": "→ eval/write-skew/results/quality-gates.json\n  exit=0 ｜ 6 道门 ｜ 全过=True\n    [1] 数量与平衡            positive=240（R1–R4 各 [60, 60, 60, 60]），negative=48，cycle=12，text-conflict=8\n    [2] oracle 对拍        308/308 verified\n    [3] 结构去重             308 个唯一指纹 / 308 场景\n    [4] 标签一致性            通过\n    [5] 确定性对拍            通过\n    [6] 字段完备             通过\n"
+    },
+    {
+      "id": "clean_tree_smoke",
+      "group": "preflight",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/clean_tree_smoke.py",
+        "--mode",
+        "strict"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 21.556,
+      "counts": {
+        "通过门": "readme_tables"
+      },
+      "artifact": {
+        "path": null,
+        "exists": null,
+        "sha256": null
+      },
+      "self_skips": [],
+      "output_tail": "v_consistency          exit=0\nPASS           verdict_shape            exit=0\nPASS           evidence_registry        exit=0\nPASS           secret_scan              exit=0\nPASS           evidence_negative_control exit=0\nPASS           secret_negative_control  exit=0\nPASS           claims_same_source       exit=0\nPASS           freeze_delivery          exit=0\nPASS           scenario_determinism     exit=0\nPASS           quality_gates            exit=0\nPASS           clean_tree_build_negative_control exit=0\nPASS           oracle_runlist           exit=0\nPASS           oracle_runlist_selftest  exit=0\nPASS           synthetic_attribution    exit=0\nPASS           synthetic_attribution_selftest exit=0\nPASS           hook_transcript_selftest exit=0\nPASS           gate_parity              exit=0\nPASS           gate_parity_selftest     exit=0\nPASS           candidate_pilot_real_gate exit=0\nPASS           candidate_batch_classes  exit=0\nPASS           candidate_batch_classes_negative_control exit=0\nPASS           candidate_pilot_real_negative_control exit=0\nPASS           sts_workspace_selftest   exit=0\nPASS           freeze_readonly_negative_control exit=0\nPASS           sts_v2_draft_review      exit=0\nPASS           sts_v2_draft_review_selftest exit=0\nPASS           sts_workspace            exit=0\nPASS           sts_dev_outputs          exit=0\nPASS           retained_evidence        exit=0\nPASS           retained_evidence_selftest exit=0\n\nSMOKE PASSED (strict)：34 道门通过\ncleanup=removed\n"
+    },
+    {
+      "id": "clean_tree_build_smoke",
+      "group": "preflight",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/clean_tree_smoke.py",
+        "--mode",
+        "build",
+        "--jobs",
+        "1"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 1010.002,
+      "counts": {
+        "通过门": "59"
+      },
+      "artifact": {
+        "path": null,
+        "exists": null,
+        "sha256": null
+      },
+      "self_skips": [],
+      "output_tail": "IP（缺 should gitignore/clash-main,should gitignore/foremerge-main）\nPASS           read_basis_ablation      exit=0\nPASS           read_basis_negative_control exit=0\nPASS           candidate_pilot_gate     exit=0\nSKIP           candidate_staleness_expectations SKIP（缺 eval/agenticflict/cache/KristopherKubicki__norman,eval/agenticflict/cache/KristopherKubicki__glimpser）\nPASS           candidate_pilot_negative_control exit=0\nPASS           jj_vg_sts_isolation      exit=0\nPASS           jj_isolation_negative_control exit=0\nPASS           jj_vg_sts_budget         exit=0\nPASS           jj_vg_sts_land           exit=0\nPASS           jj_vg_sts_bisect         exit=0\nPASS           jj_vg_sts_regression     exit=0\nPASS           jj_vg_sts_security       exit=0\nPASS           jj_vg_sts_real_data      exit=0\nPASS           jj_vg_sts_pilot          exit=0\nPASS           jj_vg_sts_risks          exit=0\nPASS           git_diff_check           exit=0\nPASS           git_diff_check_selftest  exit=0\nPASS           rust_clippy              exit=0\nPASS           ci_split_contract        exit=0\nPASS           ci_split_contract_selftest exit=0\nPASS           ci_evidence_selftest     exit=0\nPASS           third_party_inventory    exit=0\nPASS           dependency_audit         exit=0\nPASS           dependency_audit_selftest exit=0\nPASS           freeze_summary_accounting_selftest exit=0\nPASS           response_timeline_selftest exit=0\n\nSMOKE PASSED (build)：59 道门通过，skip 2（库外输入缺失，不计为 pass）\ncleanup=removed\n"
+    },
+    {
+      "id": "clean_tree_build_negative_control",
+      "group": "preflight",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "tests/negative-control/clean-tree-build/run.py"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.24,
+      "counts": {
+        "反向对照场景": null
+      },
+      "artifact": {
+        "path": "tests/negative-control/clean-tree-build/run.py",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "6efd1a6b5b70dd2595be79d2e205f56b7d2717035c4f1c22cf3aaeea144d20f1"
+      },
+      "self_skips": [],
+      "output_tail": "  ✓ 外置 CARGO_TARGET_DIR：`target` 具备（不误判为 skip）\n  ✓ 无构建产物：`target` 判定为缺（显式 skip，不计为 pass）\n  ✓ 仓内 target/ 存在：`target` 具备（旧行为不回归）\n  ✓ 只有 `target` 走二进制特判，其余仍按存在性判\n  ✓ 真判据：产物在 checkout 之外 ⇒ 判为未泄漏\n  ✓ 真判据：产物写进 checkout ⇒ 报泄漏（会红）\n  ✓ 真判据：overlay 基线 3 条、构建后仍 3 条 ⇒ 不误报\n  ✓ 真判据：overlay 基线 3 条、构建后 4 条 ⇒ 报泄漏\n  ✓ .gitignore 排除的 target/ 不进 porcelain，真判据不误报\n  ✓ 默认：<root>/target/debug/vg.exe 被找到\n  ✓ CARGO_TARGET_DIR 优先于 <root>/target\n  ✓ display_origin 如实标注来源 CARGO_TARGET_DIR\n  ✓ VG_BIN 优先于 CARGO_TARGET_DIR\n  ✓ 显式 --vg 优先于 VG_BIN\n  ✓ 显式 --vg 指向不存在的路径 ⇒ resolved_existing 返回 None（不替换）\n  ✓ 同场景下 resolve_vg 原样返回调用者给的路径（不替换）\n  ✓ 显式 --vg 为相对名（'vg'）时同样不替换\n  ✓ 同场景下 display_origin 说未找到（不谎报来源）\n  ✓ 什么都找不到时 resolved_existing 返回 None（不假装找到了）\n  ✓ resolve_vg 才退回兜底 'vg'（走 PATH）\n  ✓ CARGO_TARGET_DIR 是 <root> 祖先时：来源标为 <root>/target（不按前缀猜）\n  ✓ 同场景下找到的仍是 <root>/target 那个文件\n  ✓ 只有 CARGO_TARGET_DIR 下有二进制时：来源标 CARGO_TARGET_DIR\n  ✓ pilot 实跑复算使用当前 VG_BIN，不执行历史产物路径\n  ✓ pilot 复算不改写历史 run_params\n  ✓ 撤销①：干净 checkout + 无产物 ⇒ `target` 缺\n  ✓ 撤销②：出现 target/ ⇒ `target` 具备\n  ✓ 撤销③：移除 target/ ⇒ 判据回绿（重新判为缺）\n  ✓ 组内门带 requires ⇒ load_gates 报错（不静默丢弃）\n  ✓ 组内门带 requires ⇒ freeze_check.check_list_shape 报错\n  ✓ 放进 external_checks ⇒ load_gates 无错且两侧都在\n  ✓ 放进 external_checks ⇒ check_list_shape 无问题\n  ✓ 库外检查有 requires 无 skip_reason ⇒ 结构不合格\n  ✓ 仓库真实清单通过结构体检（组内门无 requires）\n\n反向对照 PASS (34/34 scenarios behaved)\n"
+    },
+    {
+      "id": "oracle_runlist",
+      "group": "auxiliary",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_oracle_runlist.py"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.065,
+      "counts": {
+        "runlist": [
+          "99",
+          "4",
+          "4",
+          "4",
+          "4"
+        ]
+      },
+      "artifact": {
+        "path": "eval/agenticflict/results/behavior-oracle/",
+        "exists": true,
+        "is_dir": true,
+        "sha256": null
+      },
+      "self_skips": [],
+      "output_tail": "oracle runlist: all_ssi=99 clean_ssi=4 selected=4 completed=4/4\n  missing=0 invalid=0 duplicate=0  runlist_sha256=eaf5b2a59903\noracle runlist gate PASS; protected oracle-hit regressions present\n"
+    },
+    {
+      "id": "oracle_runlist_selftest",
+      "group": "auxiliary",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_oracle_runlist.py",
+        "--self-test"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.065,
+      "counts": {
+        "反向对照场景": [
+          "12",
+          "12"
+        ]
+      },
+      "artifact": {
+        "path": null,
+        "exists": null,
+        "sha256": null
+      },
+      "self_skips": [],
+      "output_tail": "  [PASS] baseline (expect pass)\n  [PASS] missing result (expect fail)\n  [PASS] duplicate result (expect fail)\n  [PASS] illegal verdict (expect fail)\n  [PASS] missing verdict (expect fail)\n  [PASS] denominator drift (expect fail)\n  [PASS] duplicate runlist entry (expect fail)\n  [PASS] protected hit revoked (expect fail)\n  [PASS] protected evidence emptied (expect fail)\n  [PASS] adjudication contradiction (expect fail)\n  [PASS] protected masked by nested status (expect fail)\n  [PASS] restored (expect pass)\noracle runlist self-test PASS (12/12 scenarios behaved)\n"
+    },
+    {
+      "id": "synthetic_attribution",
+      "group": "auxiliary",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_synthetic_attribution.py"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.114,
+      "counts": {
+        "state": [
+          "backfilled_binary_absent",
+          "298452ac0d29",
+          "n/a",
+          "False"
+        ]
+      },
+      "artifact": {
+        "path": "eval/benchmark/results/synthetic.json",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "c89b88a67cb26696a15e4394f7efa264579bd4c5d99e392c1bfc9725231974cf"
+      },
+      "self_skips": [],
+      "output_tail": "synthetic attribution: state=backfilled_binary_absent recorded=298452ac0d29 measured=n/a binary_found=False\n  run_params overlap: equal=[] differ=['python', 'started_at']\n  boundary: synthetic.json has no protocol_integrity block (unlike eval/s2c-holdout); attribution here is about which binary/params produced the numbers, not about an interleaving-integrity protocol.\n  ⚠ 该指纹是**回填归属**，未与任何真实二进制对拍；「与 after-d9 相同」只证明两条记录一致，不构成二进制归属已验证。\nsynthetic attribution gate PASS\n"
+    },
+    {
+      "id": "synthetic_attribution_selftest",
+      "group": "auxiliary",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_synthetic_attribution.py",
+        "--self-test"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.065,
+      "counts": {
+        "反向对照场景": [
+          "7",
+          "7"
+        ]
+      },
+      "artifact": {
+        "path": null,
+        "exists": null,
+        "sha256": null
+      },
+      "self_skips": [],
+      "output_tail": "  [PASS] absent binary + explicit backfill note (expect pass)\n  [PASS] absent binary, no backfill note (expect fail)\n  [PASS] invalid digest (expect fail)\n  [PASS] records disagree (expect fail)\n  [PASS] binary present + measured match (expect pass)\n  [PASS] binary present + measured mismatch (expect fail)\n  [PASS] no-protocol_integrity boundary is reported\nsynthetic attribution self-test PASS (7/7 scenarios behaved)\n"
+    },
+    {
+      "id": "hook_transcript_selftest",
+      "group": "auxiliary",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_hook_transcript.py",
+        "--self-test",
+        "--json-out",
+        "evidence/hook-transcript/selftest.json"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.064,
+      "counts": {
+        "反向对照夹具": [
+          "12",
+          "12"
+        ]
+      },
+      "artifact": {
+        "path": "evidence/hook-transcript/selftest.json",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "89945b6f87809ad2ad7d47aac1b8681794f9a5fb67fa7ab8c399593470acd572"
+      },
+      "self_skips": [],
+      "output_tail": "  [PASS] normal.jsonl                           expected=ok                   actual=ok                   exit=0\n  [PASS] out_of_order.jsonl                     expected=order_violated       actual=order_violated       exit=2\n  [PASS] tool_use_id_mismatch.jsonl             expected=tool_use_id_mismatch actual=tool_use_id_mismatch exit=3\n  [PASS] silent_failure.jsonl                   expected=silent_failure       actual=silent_failure       exit=4\n  [PASS] no_tool_use.jsonl                      expected=no_tool_use          actual=no_tool_use          exit=6\n  [PASS] not_applicable_read_only.jsonl         expected=not_applicable       actual=not_applicable       exit=7\n  [PASS] attachment_after_model_call.jsonl      expected=order_violated       actual=order_violated       exit=2\n  [PASS] payload_stderr_nonempty.jsonl          expected=hook_payload_invalid actual=hook_payload_invalid exit=5\n  [PASS] payload_stdout_without_context.jsonl   expected=hook_payload_invalid actual=hook_payload_invalid exit=5\n  [PASS] multi_call_partial_delivery.jsonl      expected=ok                   actual=ok                   exit=0\n  [PASS] restored baseline (normal.jsonl still ok)\n  [PASS] outcomes distinct & all produced (missing=none)\nhook transcript self-test PASS (12/12 fixtures behaved)\nself-test json written evidence/hook-transcript/selftest.json\n"
+    },
+    {
+      "id": "gate_parity",
+      "group": "auxiliary",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_gate_parity.py"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.033,
+      "counts": {
+        "门": "63"
+      },
+      "artifact": {
+        "path": "evidence/freeze-gates.json",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "39bac5990ef6bfe1dd18c0e810bc3507d7691239d8a6e9979ea8b87fa3fb2837"
+      },
+      "self_skips": [],
+      "output_tail": "门清单 63 条全部在 CI 执行面（例外 1 条，均带可见 SKIP）✓\n"
+    },
+    {
+      "id": "gate_parity_selftest",
+      "group": "auxiliary",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_gate_parity.py",
+        "--self-test"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.032,
+      "counts": {
+        "反向对照场景": [
+          "3",
+          "3"
+        ]
+      },
+      "artifact": {
+        "path": null,
+        "exists": null,
+        "sha256": null
+      },
+      "self_skips": [],
+      "output_tail": "  ✓ 基线无问题\n  ✓ 从 CI 删掉 check-secrets 门        门变红，命中「没在 CI 的 script 段里」\n  ✓ 清单里加一条 CI 不跑的门                 门变红，命中「phantom_gate.py」\n  ✓ 删掉 distill 的 SKIP 打印           门变红，命中「没有可见的 SKIP 打印」\n  ✓ 撤销后回绿\n\nself-test PASS (3/3 scenarios behaved)\n"
+    },
+    {
+      "id": "candidate_pilot_real_gate",
+      "group": "auxiliary",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "eval/candidate-verify/check_candidate_pilot_real.py"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.033,
+      "counts": {
+        "判据": "6"
+      },
+      "artifact": {
+        "path": "eval/candidate-verify/results/pilot-real.json",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "a80927782eebc3960d979b4af5955d17e1ca8462fef70596c19502e24fee93ad"
+      },
+      "self_skips": [],
+      "output_tail": "PASS  schema                       ok\nPASS  truth-cross-check            ok\nPASS  unit-consistency             ok\nPASS  run-health                   ok\nPASS  timing-integrity             ok\nPASS  has-checked-unit             ok\n\n门 PASS：6 条判据全部通过（checked 单元：KristopherKubicki/glimpser#1922, Ladvien/entity#1016）\n"
+    },
+    {
+      "id": "candidate_batch_classes",
+      "group": "auxiliary",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/classify-candidate-batch.py",
+        "--check"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.032,
+      "counts": {
+        "一致": "分类产物与当前 batch.json 重导一致"
+      },
+      "artifact": {
+        "path": "evidence/real-candidate-batch/classification.json",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "983e2efd682af5a13a317c3ef0d5bd30cd6921cfe1531439e1448e2f74a2f7e3"
+      },
+      "self_skips": [],
+      "output_tail": "✓ 分类产物与当前 batch.json 重导一致\n"
+    },
+    {
+      "id": "candidate_batch_classes_negative_control",
+      "group": "auxiliary",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "tests/negative-control/candidate-batch-classes/run.py"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.115,
+      "counts": {
+        "反向对照场景": null
+      },
+      "artifact": {
+        "path": "tests/negative-control/candidate-batch-classes/run.py",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "f0449057677db41c290d0521269b0b59752e6a73d32bad2e5e1512e5a7a635df"
+      },
+      "self_skips": [],
+      "output_tail": "=== A. 候选批分类：三类未判定必须与已拒绝分开 ===\n  ✓ Markf1994/segretaria-digitale-backend#170 ⇒ undetermined_dependency_missing\n  ✓ SecuringTheRealm/str-agentic-adventures#164 ⇒ undetermined_no_plan_artifact\n  ✓ KristopherKubicki/norman#111 ⇒ screened_out_semantic_stale\n  ✓ 14 个未消解单元判为 refused_unresolved\n  ✓ KristopherKubicki/glimpser#2006 ⇒ usable_full\n  ✓ KristopherKubicki/glimpser#2034 ⇒ usable_full\n  ✓ 分母闭合：units == usable+undetermined+refused+gap\n  ✓ 三类未判定合计 = 3（不是 0）\n  ✓ 已拒绝 = 14，且与未判定分开\n  ✓ usable_selected = 0（本批实读）\n  ✓ 上限来源如实标为不可复算\n  ✓ 改掉 refusal_code ⇒ 离开 undetermined_dependency_missing\n  ✓ no-output 改成 plan+selected ⇒ 判为 usable_selected\n  ✓ 去掉 semantic_stale ⇒ 不再判为 screened_out_semantic_stale\n  ✓ 覆盖自查：19 个单元里顶层列表覆盖 18、点名未覆盖的那 1 个\n  ✓ 覆盖自查：无单元被多个顶层列表重复计入\n  ✓ 补上 units_no_plan_artifact ⇒ 覆盖变 19/19、未覆盖清空\n  ✓ 制造重复计入 ⇒ duplicated_units 点名\n  ✓ --check 对覆盖自查漂移报错\n  ✓ --check 对漂移的 batch.json 报错\n  ✓ 未知 outcome 进 unclassified_*（不静默归类）\n\n=== B. 陈旧预筛回归集：期望值表必须会红 ===\n  ✓ 基线（期望值全部满足）无问题、无未核\n  ✓ 期望陈旧却判不陈旧 ⇒ 报错\n  ✓ 可用单元被判陈旧（第一版误报反例）⇒ 报错\n  ✓ 期望单元缺席 ⇒ 报错（不默认通过）\n  ✓ 部分缓存：期望陈旧单元不可筛 ⇒ 进 unverified（不假绿）\n  ✓ 期望值全部核到时 unverified 为空（不误报）\n  ✓ 缓存根缺失：exit 0 + 可见 SKIP（库外输入缺失）\n  ✓ 缓存根缺失：不得声称「回归集通过」（不许跳过与通过混计）\n  ✓ 部分缓存假绿复现（跳过：本机无 glimpser 缓存仓）\n  ✓ 完整缓存真绿（跳过：本机无缓存仓）\n\n反向对照 PASS (31/31 scenarios behaved)\n"
+    },
+    {
+      "id": "candidate_pilot_real_negative_control",
+      "group": "auxiliary",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "tests/negative-control/candidate-pilot-real/run.py"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.288,
+      "counts": {
+        "用例": "8"
+      },
+      "artifact": {
+        "path": "tests/negative-control/candidate-pilot-real/run.py",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "571e5a74d2eb1bf02ec3eeb0fa9a22101b8fc911b2a7343f7180ebdddb382d39"
+      },
+      "self_skips": [],
+      "output_tail": "=== 反向对照：T2 真实单元 pilot 产物门（TF-0153）===\n基线：未改动的产物应当 PASS\n  ✓ 基线 rc=0\n  ✓ 改 KristopherKubicki/glimpser#1922 的真值（权威表不允许自述） rc=1，命中判据「truth-cross-check」\n  ✓ 翻 KristopherKubicki/glimpser#1922 的 selected_flags rc=1，命中判据「unit-consistency」\n  ✓ 改 KristopherKubicki/glimpser#1922 的 cost_ratio rc=1，命中判据「unit-consistency」\n  ✓ 删掉 boundaries                                rc=1，命中判据「schema」\n  ✓ 给 KristopherKubicki/glimpser#1922 塞 run_failed_trees（checked 不该有） rc=1，命中判据「run-health」\n  ✓ 声明 KristopherKubicki/glimpser#1922 的 full 臂是重测却不给 repeat_seconds rc=1，命中判据「timing-integrity」\n  ✓ 改 KristopherKubicki/glimpser#1922 的 selection.coverage rc=1，命中判据「unit-consistency」\n  ✓ 把 KristopherKubicki/glimpser#1922 的 attribution 置空 rc=1，命中判据「run-health」\n\n撤销全部注入：产物应回到绿\n  ✓ 撤销后 rc=0\n\n反向对照 PASS：8 个注入偏差全部被门抓住（且命中预期判据）+ 撤销后回绿\n"
+    },
+    {
+      "id": "sts_workspace_selftest",
+      "group": "auxiliary",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_sts_workspace.py",
+        "--self-test"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.115,
+      "counts": {},
+      "artifact": {
+        "path": "scripts/check_sts_workspace.py",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "77061ab0c5701607ced978a7d25570c1e41c77cbb8248591e28e7c4ab4d3c52c"
+      },
+      "self_skips": [],
+      "output_tail": "STS workspace guard: 6/6 controls passed\n"
+    },
+    {
+      "id": "freeze_readonly_negative_control",
+      "group": "auxiliary",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "tests/negative-control/freeze-readonly/run.py"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.218,
+      "counts": {
+        "反向对照场景": null
+      },
+      "artifact": {
+        "path": "tests/negative-control/freeze-readonly/run.py",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "bba38f6f2ea917edbe9b99f26332048dbc426059db7735a643ae27478c6e9a97"
+      },
+      "self_skips": [],
+      "output_tail": "  ✓ 跟踪文件内容被改写 ⇒ 判据命中（read_only_ok=false）\n  ✓ 撤销后回绿\n  ✓ 新增未跟踪文件 ⇒ 判据命中（工作树不再逐字节一致）\n  ✓ .gitignore 排除的运行产物不误报\n  ✓ 删除跟踪文件 ⇒ 判据命中\n  ✓ 无捕获组的 counts 正则退化成 group(0)（不再打断整轮）\n  ✓ 单组/双组/无匹配三条既有路径未被加固改坏\n  ✓ 带 SELFSKIP 标记 ⇒ skipped_self_reported（不计为 pass）\n  ✓ 无标记的正常门仍是 pass（不误判）\n  ✓ 带标记但退出非 0 ⇒ fail 优先\n  ✓ 计数：自报未核验的不计入 passed\n\nfreeze-readonly 反向对照 PASS (11/11 scenarios behaved)\n"
+    },
+    {
+      "id": "sts_v2_draft_review",
+      "group": "auxiliary",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/review-sts-v2-draft.py"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.064,
+      "counts": {
+        "摘要": [
+          "30",
+          "30"
+        ],
+        "正样例": [
+          "4",
+          "4"
+        ],
+        "反样例": [
+          "7",
+          "7"
+        ],
+        "配对": [
+          "5",
+          "5"
+        ]
+      },
+      "artifact": {
+        "path": "vendor/sts-vg-contract/v2-draft/manifest.json",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "072812e68dcd1ea7b1059e6e1d3a9cb395ea8a6c1e85423ea6c7e9f052e4c30c"
+      },
+      "self_skips": [],
+      "output_tail": "STS 2.0 草案独立复核（vendor/sts-vg-contract/v2-draft）\n  契约｜status=draft｜生产 STS:TF-0040\n  摘要 30/30 匹配｜文件 33 个｜未登记 0\n  manifest sha256 sha256:072812e68dcd1ea7b1059e6e1d3a9cb395ea8a6c1e85423ea6c7e9f052e4c30c\n  正样例 4/4 通过｜反样例 7/7 被拒｜配对 5/5 符合预期\n  语义规则 manifest 声明 12 条｜检查器实现 12 条（本脚本的判据自实现，不采信对方检查器）\n  我们报过、对端已修的缺口 5 条（留档）：\n    · R5-optional-enums: content_manifest 的 symlinks/submodules/unreadable_files 结构层可选，删掉仍通过\n    · R11-kind-and-manifest-digest-not-compared: 绑定只比 content_identity.value；kind 与 manifest_digest 漂移看不出来\n    · R9-execution-identity-vs-plan: result.execution_identity 与 plan 不一致（同一次执行身份核）无判据\n    · R3-single-entry-skips-config-data: content_manifest 只有一条 entry 时，R3 不查 config/data 是否被覆盖\n    · R2-bare-short-value: schema 的 minLength:7 允许裸 7 位值（与标签尾巴同形）；样例只考了带 label 的那种\n  本版草案的已登记发现 0 条（期望 0 条）：\n=> 复核通过，退出码 0\n"
+    },
+    {
+      "id": "sts_v2_draft_review_selftest",
+      "group": "auxiliary",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/review-sts-v2-draft.py",
+        "--self-test"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.265,
+      "counts": {
+        "反向对照场景": [
+          "20",
+          "20"
+        ]
+      },
+      "artifact": {
+        "path": null,
+        "exists": null,
+        "sha256": null
+      },
+      "self_skips": [],
+      "output_tail": "  ✓ 基线：草案复核通过\n  ✓ 改一个字节必须被摘要点名\n  ✓ 多一个未登记文件必须报出来\n  ✓ 删掉摘要覆盖的文件必须报出来\n  ✓ 正样例改成 R9 违例必须变成不通过\n  ✓ 配对反例被改好必须变红（防假绿）\n  ✓ 回归 R5：schema 仍放行、VG 语义层抓住（对端语义层自 0024 起也抓）\n  ✓ 回归 R11：VG 比对 manifest_digest 漂移\n  ✓ 回归 R3：只有一条 entry 时 VG 仍查 config/data\n  ✓ R9 可判形式：plan.expected_execution_identity vs result 漂移被抓住\n  ✓ R9 边界：plan 未填期望执行身份 ⇒ 不判（不报 ≠ 已核对通过）\n  ✓ R12：plan 填了期望环境 ⇒ 漂移被抓住；没填 ⇒ 不判（两侧都验）\n  ✓ 回归 R2：schema 放行、VG 语义层抓住裸 7 位值\n  ✓ 规则清单守卫：注入未声明规则 id 必须被报出\n  ✓ schema 可达性守卫：读未声明字段必须被报出\n  ✓ 散文自述计数守卫：改错条数必须被报出\n  ✓ 配对逐份校验：删 R5 字段必报、补回必消（双向）\n  ✓ 结构层关键字普查：13 个关键字全部在实现范围内\n  ✓ 手抄的 manifest 摘要与现算一致（2 处落点）\n  ✓ 手抄摘要漂移一位必须被抓（反向对照，按位翻转）\nself-test PASS (20/20 scenarios behaved)\n"
+    },
+    {
+      "id": "sts_workspace",
+      "group": "auxiliary",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_sts_workspace.py"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.144,
+      "counts": {},
+      "artifact": {
+        "path": "extensions/sts/contracts/vg-sts/v2/manifest.json",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "99a1f34813780c4aacf5a44d382b507d3342de7165d10e22b16c5d2c6b3df11a"
+      },
+      "self_skips": [],
+      "output_tail": "STS workspace: PASS\n"
+    },
+    {
+      "id": "sts_dev_outputs",
+      "group": "auxiliary",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_sts_dev_outputs.py"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.165,
+      "counts": {},
+      "artifact": {
+        "path": "tests/test_sts_dev_outputs.py",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "5f3994e267b57507f2f4654b1d0e0ec3a987ce3382e960417dae7c1d7a8a3d23"
+      },
+      "self_skips": [],
+      "output_tail": "..........\n----------------------------------------------------------------------\nRan 10 tests in 0.022s\n\nOK\n"
+    },
+    {
+      "id": "retained_evidence",
+      "group": "auxiliary",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_retained_evidence.py"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.165,
+      "counts": {},
+      "artifact": {
+        "path": "evidence/retained-runs/manifest.json",
+        "exists": true,
+        "is_dir": false,
+        "sha256": "c6b225f02d1ed612da46804fbd7ef87db6173884785b776a033e986045ee9ec3"
+      },
+      "self_skips": [],
+      "output_tail": "retained evidence PASS: archives and source summaries match recorded digests; historical scope unchanged\n"
+    },
+    {
+      "id": "retained_evidence_selftest",
+      "group": "auxiliary",
+      "counts_toward_core": false,
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_retained_evidence.py",
+        "--self-test"
+      ],
+      "status": "pass",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 0.064,
+      "counts": {},
+      "artifact": {
+        "path": null,
+        "exists": null,
+        "sha256": null
+      },
+      "self_skips": [],
+      "output_tail": "retained evidence self-test PASS: 6 negative cases and restored baseline\n"
+    }
+  ]
+}

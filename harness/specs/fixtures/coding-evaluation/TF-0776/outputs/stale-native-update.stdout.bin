@@ -1,0 +1,7 @@
+{
+  "command": "workspace.update-stale",
+  "schema": "versegit.vg-json/v1",
+  "state": "Fresh",
+  "target_commit_id": "6f10f932ff19038a6ce62d8a30480b501cb6783a",
+  "workspace_name": "default"
+}

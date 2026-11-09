@@ -1,0 +1,26 @@
+{
+  "label": "cross-windows-final",
+  "argv": [
+    "/mnt/d/tmp/coding-relay-01a1b68a-20261107/TF-0776/cross-tools/cargo-xwin/cargo-xwin",
+    "build",
+    "--locked",
+    "--release",
+    "--target",
+    "x86_64-pc-windows-msvc",
+    "--bin",
+    "vg",
+    "--jobs",
+    "2"
+  ],
+  "cwd": "/home/bai/.cache/clawx-coding-jj-20261108/frozen-source",
+  "exitCode": 0,
+  "seconds": 272.0,
+  "compilerHost": "Linux",
+  "compilerTarget": "x86_64-pc-windows-msvc",
+  "rustToolchain": "1.98.1",
+  "clangVersion": "Ubuntu clang version 14.0.0-1ubuntu1.1",
+  "linker": "/mnt/d/tmp/coding-relay-01a1b68a-20261107/TF-0776/cross-tools/bin/lld-link",
+  "sdkCache": "/mnt/d/tmp/coding-relay-01a1b68a-20261107/TF-0776/cross-tools/sdk",
+  "testBinaryPathMapping": "Cargo test binary macro paths /mnt/<drive> translated to Windows paths",
+  "finishedAt": "2026-11-09T08:32:56.590081+00:00"
+}

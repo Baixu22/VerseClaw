@@ -1,0 +1,60 @@
+{
+  "ok": true,
+  "issues": [],
+  "acceptanceEligible": true,
+  "negativeChecks": [
+    {
+      "case": "delete-case",
+      "rejected": true,
+      "issues": [
+        "case set differs from CodingJjParity/v2 contract",
+        "missing or inconsistent case: crash-operation-history-store-parity",
+        "empty or inconsistent store parity: crash-operation-history-store-parity",
+        "store parity reader description missing: crash-operation-history-store-parity"
+      ]
+    },
+    {
+      "case": "wrong-candidate",
+      "rejected": true,
+      "issues": [
+        "frozen candidate mismatch"
+      ]
+    },
+    {
+      "case": "changed-oracle",
+      "rejected": true,
+      "issues": [
+        "independent oracle digest changed"
+      ]
+    },
+    {
+      "case": "changed-output",
+      "rejected": true,
+      "issues": [
+        "command text differs from retained artifact: oracle-version/stdout"
+      ]
+    },
+    {
+      "case": "failed-case",
+      "rejected": true,
+      "issues": [
+        "missing or inconsistent case: snapshot-tree"
+      ]
+    },
+    {
+      "case": "restore-operation-parent-tamper",
+      "rejected": true,
+      "issues": [
+        "missing or inconsistent case: restore-operation-history-store-parity",
+        "empty or inconsistent store parity: restore-operation-history-store-parity"
+      ]
+    },
+    {
+      "case": "self-consistent-forgery",
+      "rejected": true,
+      "issues": [
+        "retained report digest mismatch"
+      ]
+    }
+  ]
+}

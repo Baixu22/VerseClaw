@@ -1,0 +1,14 @@
+{
+  "abandoned_commit_ids": [
+    "c30a0fa8a47710e03bf325ce4c338e00da8e41a0"
+  ],
+  "conflict_count": 0,
+  "descendants_rebased": 0,
+  "new_commit_ids": [
+    "39eb64f2449129b5144f3f653d7375f1810e88b4",
+    "f1d8c2261364766c8d20887250947e4b63b76d3c"
+  ],
+  "old_commit_id": "c30a0fa8a47710e03bf325ce4c338e00da8e41a0",
+  "operation_id": "a4c9dd55aecb5d912941789cb30e842eeb450b47b493c144582242e3d35be37b4c60956606b19abdda8e4f5a3e83eb589228830e3cb444b16d2b21b1ccfd9926",
+  "schema": "versegit.vg-json/v1"
+}

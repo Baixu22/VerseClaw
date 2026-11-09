@@ -1,0 +1,9 @@
+{
+  "abandoned_commits": 0,
+  "changed_remote_bookmarks": 1,
+  "changed_remote_tags": 0,
+  "kind": "git-import",
+  "operation_id": "cc47d6223b2c7b68f4217f35cf131aaeccfea9970b4e5b26892df5e231a3e4332614f436161615a8f43ce9e47d49724615db3de440fda1659f12b3e0a65e116b",
+  "rewritten_commits": 0,
+  "schema": "versegit.vg-json/v1"
+}

@@ -1,0 +1,23 @@
+{
+  "entries": [
+    {
+      "change_id": "d7b489c6cda6f300d658efdec635809b",
+      "commit_id": "122783680e686e0c44afb90fa856fe68afbe928a",
+      "description": "base",
+      "parent_ids": [
+        "0000000000000000000000000000000000000000"
+      ]
+    },
+    {
+      "change_id": "00000000000000000000000000000000",
+      "commit_id": "0000000000000000000000000000000000000000",
+      "description": "",
+      "parent_ids": []
+    }
+  ],
+  "formatted": null,
+  "graph_truncated": false,
+  "kind": "revision-log",
+  "revset": "ancestors(@)",
+  "schema": "versegit.vg-json/v1"
+}

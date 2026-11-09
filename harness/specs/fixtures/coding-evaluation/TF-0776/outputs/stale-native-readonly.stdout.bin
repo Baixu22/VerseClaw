@@ -1,0 +1,12 @@
+{
+  "allows_managed_execution": false,
+  "command": "workspace.freshness",
+  "conflict_paths": [],
+  "conflict_paths_truncated": false,
+  "schema": "versegit.vg-json/v1",
+  "state": "stale",
+  "target_commit_id": "6f10f932ff19038a6ce62d8a30480b501cb6783a",
+  "target_operation_id": "422bb667d4d8e92f89a578211e09262803c34f833f08203ba6a6d4ec00b3dcf908cce71bf8358378d49fbdf2e50f3b9154096022731302f94508e47e65f11011",
+  "working_copy_operation_id": "c270d154d2b8c0d57f768b6f68824b022c31d6a097d280866fba13b59158e0759bebfabeee371ca76a043a0f1df41ba13ad7d623224b6429c4dee00497fd8223",
+  "workspace_name": "default"
+}

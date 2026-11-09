@@ -1,0 +1,21 @@
+{
+  "diff": {
+    "entries": [
+      {
+        "after_executable": false,
+        "after_kind": "file",
+        "before_executable": null,
+        "before_kind": null,
+        "change_kind": "added",
+        "path": "a.txt"
+      }
+    ],
+    "from_commit_id": "0000000000000000000000000000000000000000",
+    "max_entries": 4096,
+    "to_commit_id": "122783680e686e0c44afb90fa856fe68afbe928a",
+    "truncated": false
+  },
+  "kind": "working-copy-status",
+  "schema": "versegit.vg-json/v1",
+  "snapshot": false
+}

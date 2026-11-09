@@ -1,0 +1,15 @@
+{
+  "commit_id": "122783680e686e0c44afb90fa856fe68afbe928a",
+  "entries": [
+    {
+      "conflicted": false,
+      "executable": false,
+      "kind": "file",
+      "path": "a.txt"
+    }
+  ],
+  "kind": "file-list",
+  "max_entries": 4096,
+  "schema": "versegit.vg-json/v1",
+  "truncated": false
+}

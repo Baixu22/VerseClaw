@@ -1,0 +1,3 @@
+Error: The working copy is stale (not updated since operation 17ce17089a5a).
+Hint: Run `jj workspace update-stale` to update it.
+See https://docs.jj-vcs.dev/latest/working-copy/#stale-working-copy for more information.

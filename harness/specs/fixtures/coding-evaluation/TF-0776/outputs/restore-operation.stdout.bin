@@ -1,0 +1,8 @@
+{
+  "new_operation_id": "52252e5255c637cf26356bb5b7ac2e8d6c2066eba4678e5c3b3870dc4d282a130c9d8675c426ae2b4b887f92902f49aea9352f56dec69bcae230523270902a82",
+  "new_wc_commit_id": "121ed4c69bd3299d6794e9daa0df5b47909c96e9",
+  "old_operation_id": "8db53edd686a542318fd81fe497feed184dccbd006dc57cc14005eff493c6859cce18cb50bc3fb6e7f006c923e57232a8d0ca8caa738ee044424c1efdaa1b688",
+  "old_wc_commit_id": "bf49952c3e1ba7fc7f0c139c4413d6be370be07c",
+  "refs_preserved": true,
+  "schema": "versegit.vg-json/v1"
+}

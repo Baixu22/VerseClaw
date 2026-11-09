@@ -1,0 +1,62 @@
+{
+  "entries": [
+    {
+      "conflicted": false,
+      "kind": "bookmark",
+      "name": "fixture",
+      "targets": [
+        "47a72ea4717af7a50ee35fe44c944c222ba857e3"
+      ],
+      "tracked": null
+    },
+    {
+      "conflicted": false,
+      "kind": "bookmark",
+      "name": "imported",
+      "targets": [
+        "47a72ea4717af7a50ee35fe44c944c222ba857e3"
+      ],
+      "tracked": null
+    },
+    {
+      "conflicted": false,
+      "kind": "git-ref",
+      "name": "refs/heads/fixture",
+      "targets": [
+        "47a72ea4717af7a50ee35fe44c944c222ba857e3"
+      ],
+      "tracked": null
+    },
+    {
+      "conflicted": false,
+      "kind": "git-ref",
+      "name": "refs/heads/imported",
+      "targets": [
+        "47a72ea4717af7a50ee35fe44c944c222ba857e3"
+      ],
+      "tracked": null
+    },
+    {
+      "conflicted": false,
+      "kind": "remote-bookmark",
+      "name": "fixture@git",
+      "targets": [
+        "47a72ea4717af7a50ee35fe44c944c222ba857e3"
+      ],
+      "tracked": true
+    },
+    {
+      "conflicted": false,
+      "kind": "remote-bookmark",
+      "name": "imported@git",
+      "targets": [
+        "47a72ea4717af7a50ee35fe44c944c222ba857e3"
+      ],
+      "tracked": true
+    }
+  ],
+  "kind": "ref-list",
+  "limit": 4096,
+  "schema": "versegit.vg-json/v1",
+  "truncated": false
+}
