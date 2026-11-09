@@ -1,0 +1,6 @@
+{
+  "findings": [],
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "The retry is limited to the identity-observation call after the terminal close receipt. It makes at most three calls with 250 ms gaps, records each failure before continuing, preserves the original identities, and rethrows the final failure. It does not resend kill or capacity-release operations.",
+  "overall_confidence": 0.96
+}

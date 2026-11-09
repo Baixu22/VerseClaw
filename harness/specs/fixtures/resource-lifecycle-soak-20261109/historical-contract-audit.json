@@ -1,0 +1,405 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "scope": "Historical A-K acceptance integrity; final integrated execution is recorded separately. G34 remains pending until final lifecycle proof.",
+  "packages": [
+    {
+      "package": "A",
+      "gaps": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05"
+      ],
+      "directory": "harness/specs/fixtures/verseshell-concurrent-acquisition-20261107",
+      "reportSha256": "fba82df8bee2f25b8cbf5d5949ffd94c19e2171da7e8cc55b749a559ab6dee16",
+      "candidate": {
+        "commit": "5b0512b5fa474fa20accacc8acd97674696d920d",
+        "tree": "7ca6abab9cc963378aeb612be639e1e16b418fd4",
+        "dirty": false
+      },
+      "verdict": "pass-scoped-acquisition",
+      "tests": {
+        "total": 347,
+        "passed": 329,
+        "failed": 0,
+        "skipped": 18
+      },
+      "manifestChecked": 17,
+      "manifestIssues": [],
+      "historicalEvidence": true
+    },
+    {
+      "package": "B",
+      "gaps": [
+        "G06",
+        "G07"
+      ],
+      "directory": "harness/specs/fixtures/resource-bounded-waiting-20261107",
+      "reportSha256": "b1755aa4a2b8c0c3c1a2c4822ff6c5d9c5d4161bccd036b59109e26875a97d7c",
+      "candidate": {
+        "commit": "2fdc57e0dc730c1db56565c1a086f30810263974",
+        "tree": "6d88a19b6175edbd0b6af7d9e2a38991e07ba2af",
+        "dirty": false
+      },
+      "verdict": "pass-bounded-waiting",
+      "tests": {
+        "main": {
+          "total": 122,
+          "passed": 122,
+          "failed": 0,
+          "skipped": 0,
+          "success": true
+        },
+        "runtime": {
+          "total": 43,
+          "passed": 43,
+          "failed": 0,
+          "skipped": 0,
+          "success": true
+        }
+      },
+      "manifestChecked": 12,
+      "manifestIssues": [],
+      "historicalEvidence": true
+    },
+    {
+      "package": "C",
+      "gaps": [
+        "G08",
+        "G09",
+        "G10",
+        "G11",
+        "G12"
+      ],
+      "directory": "harness/specs/fixtures/resource-budget-integration-20261108",
+      "reportSha256": "ff55162075ae0153032bf9c45b52941a7a60a1b8e48fd39f1068866e518fc1d4",
+      "candidate": {
+        "commit": "d607437e684d11ed259996de21ff1861d4cbbfb3",
+        "tree": "7390181d165b4d9d0be9550318fd7df200a90154",
+        "dirty": false
+      },
+      "verdict": "pass-resource-budget-integration",
+      "tests": {
+        "root": {
+          "numTotalTests": 519,
+          "numPassedTests": 519,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true,
+          "numFailedTestSuites": 0
+        },
+        "runtime": {
+          "numTotalTests": 107,
+          "numPassedTests": 107,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true,
+          "numFailedTestSuites": 0
+        },
+        "browser": {
+          "numTotalTests": 45,
+          "numPassedTests": 45,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true,
+          "numFailedTestSuites": 0
+        }
+      },
+      "manifestChecked": 45,
+      "manifestIssues": [],
+      "historicalEvidence": true
+    },
+    {
+      "package": "D",
+      "gaps": [
+        "G13",
+        "G14",
+        "G15",
+        "G16"
+      ],
+      "directory": "harness/specs/fixtures/process-tree-metrics-calibration-20261107",
+      "reportSha256": "fb9af5b1b41cd4e91c5e2e960fc7af847c6f1462de623fa0009678326674308b",
+      "candidate": {
+        "commit": "7088b5887a154090bd94f714236ab005de5c410d",
+        "tree": "31ba2ec29a4ad541070691a2fe85f3696fdcc7e6",
+        "dirty": false
+      },
+      "verdict": "pass",
+      "tests": {
+        "tests": {
+          "total": 58,
+          "passed": 58,
+          "failed": 0,
+          "skipped": 0,
+          "success": true
+        },
+        "runtime-tests": {
+          "total": 43,
+          "passed": 43,
+          "failed": 0,
+          "skipped": 0,
+          "success": true
+        }
+      },
+      "manifestChecked": 8,
+      "manifestIssues": [],
+      "historicalEvidence": true
+    },
+    {
+      "package": "E",
+      "gaps": [
+        "G17",
+        "G18",
+        "G23"
+      ],
+      "directory": "harness/specs/fixtures/multi-window-resource-observers-20261107",
+      "reportSha256": "dbe0745a8710629fcc29afcc01849bf471588c477af999c079f7ac52bbd986ac",
+      "candidate": {
+        "commit": "8271514d082af1aeb38be4cda4260870b6ac88fb",
+        "tree": "11dd2f36db3e3c55aba2bfcc672eb277981ce8bb",
+        "dirty": false
+      },
+      "verdict": "pass-multi-window-observers",
+      "tests": {
+        "numTotalTests": 141,
+        "numPassedTests": 141,
+        "numFailedTests": 0,
+        "numPendingTests": 0,
+        "success": true
+      },
+      "manifestChecked": 21,
+      "manifestIssues": [],
+      "historicalEvidence": true
+    },
+    {
+      "package": "F",
+      "gaps": [
+        "G19",
+        "G20"
+      ],
+      "directory": "harness/specs/fixtures/chat-stream-publication-20261108",
+      "reportSha256": "70a17588d4299690d52c0087df1bfbae89abe168d505461a8781760a6ac7c544",
+      "candidate": {
+        "commit": "f4a9502c561d9997bc7f34d4509e13601bf59e9d",
+        "tree": "a93b07616f6ba8eba416fab395ca75b9adf238aa",
+        "dirty": false
+      },
+      "verdict": "pass-chat-stream-publication",
+      "tests": {
+        "numTotalTests": 105,
+        "numPassedTests": 105,
+        "numFailedTests": 0,
+        "numPendingTests": 0,
+        "success": true,
+        "numFailedTestSuites": 0
+      },
+      "manifestChecked": 38,
+      "manifestIssues": [],
+      "historicalEvidence": true
+    },
+    {
+      "package": "G",
+      "gaps": [
+        "G21",
+        "G22",
+        "G23"
+      ],
+      "directory": "harness/specs/fixtures/chat-viewport-budget-20261108",
+      "reportSha256": "efd8d459b90baf8c98700eab991f4a7d1854c50d7d3d63bbaf587b6af1fea2a1",
+      "candidate": {
+        "commit": "b36b52487513cb2a170b02521963ee8a2d80dad4",
+        "tree": "fa868faa2435ff302204e2e7cd163ac9e37606c3",
+        "dirty": false
+      },
+      "verdict": "pass-chat-viewport-budget",
+      "tests": {
+        "numTotalTests": 115,
+        "numPassedTests": 115,
+        "numFailedTests": 0,
+        "numPendingTests": 0,
+        "success": true,
+        "numFailedTestSuites": 0
+      },
+      "manifestChecked": 38,
+      "manifestIssues": [],
+      "historicalEvidence": true
+    },
+    {
+      "package": "H",
+      "gaps": [
+        "G24",
+        "G25"
+      ],
+      "directory": "harness/specs/fixtures/shared-watchers-read-models-20261108",
+      "reportSha256": "8229e6311f79653e1a005be33801bb614a89116ab8f1536d3dc66cfb561e12a9",
+      "candidate": {
+        "commit": "68533427ba832f574924ff526a8446a3b7635ca8",
+        "tree": "d0da2ba593891afbf1ec093c59fa3b568c0d7407",
+        "dirty": false
+      },
+      "verdict": "pass-shared-watchers-read-models",
+      "tests": {
+        "numTotalTests": 107,
+        "numPassedTests": 107,
+        "numFailedTests": 0,
+        "numPendingTests": 0,
+        "success": true,
+        "numFailedTestSuites": 0
+      },
+      "manifestChecked": 14,
+      "manifestIssues": [],
+      "historicalEvidence": true
+    },
+    {
+      "package": "I",
+      "gaps": [
+        "G26",
+        "G27",
+        "G28",
+        "G29"
+      ],
+      "directory": "harness/specs/fixtures/process-control-backpressure-20261108",
+      "reportSha256": "ba6cf21d9311e44ce20e9bfe5c888fe1103dd1503e03edc8e90d8cff1e492a14",
+      "candidate": {
+        "commit": "228d717b476a10db578a9e01574af8edbcac81fa",
+        "tree": "5ee900f14befd32c66875d1818680a5719a375e8",
+        "dirty": false
+      },
+      "verdict": "pass-process-control-with-baseline-types",
+      "tests": {
+        "numTotalTests": 86,
+        "numPassedTests": 86,
+        "numFailedTests": 0,
+        "numPendingTests": 0,
+        "success": true,
+        "numFailedTestSuites": 0
+      },
+      "manifestChecked": 15,
+      "manifestIssues": [],
+      "historicalEvidence": true
+    },
+    {
+      "package": "J",
+      "gaps": [
+        "G30",
+        "G31",
+        "G32"
+      ],
+      "directory": "harness/specs/fixtures/adaptive-resource-pressure-20261108",
+      "reportSha256": "0743d8d9e2ec97d934ecb28f33764959ce25662639a1ecb81496f37e1c7ca1f1",
+      "candidate": {
+        "commit": "635670257a8c5ed8a51f64cf22df6a5da4cb70d6",
+        "tree": "a82c1a6ded751e23e7e759b21f783ee5fdcbcd49",
+        "dirty": false
+      },
+      "verdict": "pass-adaptive-pressure-with-baseline-types",
+      "tests": {
+        "numTotalTests": 105,
+        "numPassedTests": 105,
+        "numFailedTests": 0,
+        "numPendingTests": 0,
+        "success": true,
+        "numFailedTestSuites": 0
+      },
+      "manifestChecked": 12,
+      "manifestIssues": [],
+      "historicalEvidence": true
+    },
+    {
+      "package": "K",
+      "gaps": [
+        "G30",
+        "G31",
+        "G32",
+        "G33"
+      ],
+      "directory": "harness/specs/fixtures/resource-mixed-load-20261108",
+      "reportSha256": "bd41c3cdccbcebe5c426a77ce274f581a80fa41d327b8686cd0cce5a0bcfa557",
+      "candidate": {
+        "commit": "acebb11e0fd7793a5f8de226dbe36bb979edadc7",
+        "tree": "96a7961f4137dfebf01800c917820a634e12924b",
+        "files": [
+          {
+            "path": "tests/e2e/resource-mixed-load.spec.ts",
+            "sha256": "7f9eee28f0a781cf028476484cacaaf6633aa49a58ff904bc93d3d757bf9e930"
+          },
+          {
+            "path": "tests/e2e/fixtures/electron.ts",
+            "sha256": "5d2c7caa974e962a38398458135f8909e7d65cb8c24b6bfb84b60ce673c742d5"
+          },
+          {
+            "path": "tests/e2e/fixtures/electron-process-cleanup.ts",
+            "sha256": "24ef4b912c99194f6f59779fbf0e712540512b530afd8be446435dc025dbd0d4"
+          },
+          {
+            "path": "tests/e2e/fixtures/windows-process.ts",
+            "sha256": "8f706c9ed693815357c36afbd1e3a434db4825427a6468202028038e636f32ba"
+          },
+          {
+            "path": "openclaw_runtime/src/process/process-tree-sampler.ts",
+            "sha256": "1a3219d00c151d56315bd7a1df833d87ebbf8229c738a67975ac635822b4e529"
+          },
+          {
+            "path": "shared/types/resources.ts",
+            "sha256": "eaf7cbc7d2d66f1290ac077a9974d158964bee6d564f1742f9bc18086eb9d713"
+          },
+          {
+            "path": "playwright.resource-governance.config.ts",
+            "sha256": "e317b27fc0526b3f5569425202ebfb7dcab5c8605ced1733a3ca47dfe1cffdb9"
+          },
+          {
+            "path": "scripts/verify-resource-mixed-load.mjs",
+            "sha256": "4fa2c22527c532c94fb6d6de920f9e07ad5d756193053cdf209f545163d7a8f8"
+          },
+          {
+            "path": "scripts/lib/resource-mixed-measurement.mjs",
+            "sha256": "8d08e489f5bf340f7a14501f5e26e75bc2dd0fbebdd76adf56218f43e9fbf2e3"
+          }
+        ]
+      },
+      "verdict": "pass-mixed-work-measurement",
+      "tests": null,
+      "manifestChecked": 38,
+      "manifestIssues": [],
+      "historicalEvidence": true
+    }
+  ],
+  "coveredGaps": [
+    "G01",
+    "G02",
+    "G03",
+    "G04",
+    "G05",
+    "G06",
+    "G07",
+    "G08",
+    "G09",
+    "G10",
+    "G11",
+    "G12",
+    "G13",
+    "G14",
+    "G15",
+    "G16",
+    "G17",
+    "G18",
+    "G19",
+    "G20",
+    "G21",
+    "G22",
+    "G23",
+    "G24",
+    "G25",
+    "G26",
+    "G27",
+    "G28",
+    "G29",
+    "G30",
+    "G31",
+    "G32",
+    "G33"
+  ],
+  "integrityPass": true
+}

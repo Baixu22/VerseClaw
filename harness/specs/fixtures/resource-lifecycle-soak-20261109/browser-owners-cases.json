@@ -1,0 +1,189 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": "289ee63a210eaec06c202de17b6c9cf23a74f17e",
+  "deliveryCandidate": "ed2cfbb11a1ff59819ac607f922874803e57eb3d",
+  "equivalence": "observation-equivalence.json",
+  "cases": [
+    {
+      "name": "agent browser runtime mode open 默认 normal_restricted 模式",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser runtime mode normal_restricted 下 takeSnapshot/clickByUid/fillByUid/pressKey 被拒",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser runtime mode requestModeUpgrade 升级到 controlled_enhanced 后动作可用",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser runtime mode requestModeUpgrade 升级到 full_access 后动作可用",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser runtime mode requestModeUpgrade 带 expiresInMs 过期后自动回退 normal_restricted",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser runtime mode 降级回 normal_restricted 清理过期时间",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser runtime mode respondBoundaryChoice 对不存在会话返回 false",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser runtime mode setBoundaryChoiceNotifier 注册回调可被调用",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser runtime mode open 时指定 runtimeMode=controlled_enhanced 生效",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser runtime mode requestModeUpgrade without userApproval is rejected (approval gate)",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser service cleans a failed open and retains its owner when native cleanup fails",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser service retains the owner until the original window closes and shares concurrent close requests",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser service retains a browser owner after close failure and permits a later retry",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser service applies supervised request guards to navigation redirects and subresources",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser service prefers the bundled agent-browser CLI runner when available",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser service preserves the creation-time external connection when CLI metadata claims managed",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser service drives a hidden BrowserWindow session",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser service drives browser-control CDP actions (takeSnapshot/clickByUid/fillByUid/pressKey)",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser service rejects browser-control actions on the agent-browser-cli engine",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser service lists and saves reusable browser profiles",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser service validates a browser task and cleans up the temporary session",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser service records a caller-provided canonical runId verbatim with a dir-safe artifact path",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser service rejects traversal-shaped external runIds instead of minting a new id",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser service returns validation failures without keeping the session open",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser service exposes the service through the host api adapter",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser service binds an injected CLI runner to the CLI engine at construction",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser service keeps browser-window authoritative even when a CLI runner exists",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser service fails closed instead of falling back when the CLI engine is unavailable",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser supervised task network policy denies private, local, and special-use addresses",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser supervised task network policy denies DNS rebinding, unapproved domains, and URL credentials",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser supervised task network policy accepts public addresses inside the approved domain set",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser supervised task executor awaits one asynchronous owner cleanup before completing cancellation",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser supervised task executor executes ordered steps and verifies success with progress counters",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser supervised task executor returns an explainable verification failure instead of completing on navigation alone",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser supervised task executor fails closed when the request guard blocks traffic during success verification",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser supervised task executor fails before opening a session when the target resolves private",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser supervised task executor closes the session and skips verification when cancelled during a step",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser supervised task executor completes 20 sequential synthetic public runs with a fresh approval each time",
+      "status": "passed"
+    },
+    {
+      "name": "agent browser supervised task executor fails an unknown step action instead of recording it as a passed no-op",
+      "status": "passed"
+    },
+    {
+      "name": "R0-4 agent browser navigation timeout stops the load and rejects when navigation never finishes",
+      "status": "passed"
+    },
+    {
+      "name": "R0-4 agent browser navigation timeout resolves on the navigation event and never calls stop",
+      "status": "passed"
+    },
+    {
+      "name": "R0-4 agent browser navigation timeout rejects on did-fail-load with the error code",
+      "status": "passed"
+    },
+    {
+      "name": "R0-4 agent browser navigation timeout ignores failed subframes but still observes a later main-frame failure",
+      "status": "passed"
+    },
+    {
+      "name": "R0-4 agent browser navigation timeout preserves a loaded main page after an optional iframe is blocked",
+      "status": "passed"
+    },
+    {
+      "name": "R0-4 agent browser navigation timeout cleans the wait when loadURL rejects before a navigation event",
+      "status": "passed"
+    }
+  ]
+}

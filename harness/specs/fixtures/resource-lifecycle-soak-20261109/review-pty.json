@@ -1,0 +1,6 @@
+{
+  "findings": [],
+  "overall_confidence": 0.95,
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "The installed dependency confirms the retained input Socket. Cleanup occurs in the existing exit path before PTY ownership is dropped, preserving cancellation and capacity settlement. Receipt ordering now compares timestamps from the test process while retaining remote closedAt. Static inspection found no actionable correctness or security defects; tests were not run."
+}

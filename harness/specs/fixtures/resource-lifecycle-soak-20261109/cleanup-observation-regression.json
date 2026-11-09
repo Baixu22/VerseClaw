@@ -1,0 +1,94 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "pass": true,
+  "source": "C:/Users/27933/.codex/worktrees/resource-waiting-recovery/ClawX/tests/e2e/fixtures/electron.ts",
+  "sourceSha256": "1074824d07d971c4d0179f2f2d604ab973c42fa2f5ba65c375e24c7c08605645",
+  "method": "Executed actual closeElectronApp source with injected process observations and immediate unit timers",
+  "rows": [
+    {
+      "name": "retains unavailable and thrown errors before confirmed exit",
+      "pass": true,
+      "calls": [
+        true,
+        false,
+        false,
+        false
+      ],
+      "mainExited": true,
+      "observations": [
+        [
+          {
+            "pid": 123,
+            "creationTime": 123456,
+            "status": "unavailable",
+            "error": "initial-identity-unavailable"
+          }
+        ],
+        [
+          {
+            "pid": 123,
+            "creationTime": 123456,
+            "status": "alive"
+          }
+        ],
+        [
+          {
+            "pid": 123,
+            "creationTime": 123456,
+            "status": "exited"
+          }
+        ]
+      ],
+      "errors": [
+        "Error: transient-read"
+      ]
+    },
+    {
+      "name": "persistent unavailable fails after three read-only probes",
+      "pass": true,
+      "calls": [
+        true,
+        false,
+        false,
+        false
+      ],
+      "mainExited": false,
+      "observations": [
+        [
+          {
+            "pid": 123,
+            "creationTime": 123456,
+            "status": "unavailable",
+            "error": "initial-identity-unavailable"
+          }
+        ],
+        [
+          {
+            "pid": 123,
+            "creationTime": 123456,
+            "status": "unavailable",
+            "error": "initial-identity-unavailable"
+          }
+        ],
+        [
+          {
+            "pid": 123,
+            "creationTime": 123456,
+            "status": "unavailable",
+            "error": "initial-identity-unavailable"
+          }
+        ],
+        [
+          {
+            "pid": 123,
+            "creationTime": 123456,
+            "status": "unavailable",
+            "error": "initial-identity-unavailable"
+          }
+        ]
+      ],
+      "errors": []
+    }
+  ]
+}

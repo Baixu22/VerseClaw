@@ -1,0 +1,524 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "pass",
+  "failure": null,
+  "fixture": "D:\\tmp\\resource-repeat-UuU1oH",
+  "cycles": 50,
+  "rows": [
+    {
+      "index": 0,
+      "events": [
+        "receipt-0.txt",
+        "second-0.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 1,
+      "events": [
+        "receipt-1.txt",
+        "second-1.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 2,
+      "events": [
+        "receipt-2.txt",
+        "second-2.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 3,
+      "events": [
+        "receipt-3.txt",
+        "second-3.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 4,
+      "events": [
+        "receipt-4.txt",
+        "second-4.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 5,
+      "events": [
+        "receipt-5.txt",
+        "second-5.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 6,
+      "events": [
+        "receipt-6.txt",
+        "second-6.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 7,
+      "events": [
+        "receipt-7.txt",
+        "second-7.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 8,
+      "events": [
+        "receipt-8.txt",
+        "second-8.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 9,
+      "events": [
+        "receipt-9.txt",
+        "second-9.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 10,
+      "events": [
+        "receipt-10.txt",
+        "second-10.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 11,
+      "events": [
+        "receipt-11.txt",
+        "second-11.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 12,
+      "events": [
+        "receipt-12.txt",
+        "second-12.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 13,
+      "events": [
+        "receipt-13.txt",
+        "second-13.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 14,
+      "events": [
+        "receipt-14.txt",
+        "second-14.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 15,
+      "events": [
+        "receipt-15.txt",
+        "second-15.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 16,
+      "events": [
+        "receipt-16.txt",
+        "second-16.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 17,
+      "events": [
+        "receipt-17.txt",
+        "second-17.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 18,
+      "events": [
+        "receipt-18.txt",
+        "second-18.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 19,
+      "events": [
+        "receipt-19.txt",
+        "second-19.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 20,
+      "events": [
+        "receipt-20.txt",
+        "second-20.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 21,
+      "events": [
+        "receipt-21.txt",
+        "second-21.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 22,
+      "events": [
+        "receipt-22.txt",
+        "second-22.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 23,
+      "events": [
+        "receipt-23.txt",
+        "second-23.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 24,
+      "events": [
+        "receipt-24.txt",
+        "second-24.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 25,
+      "events": [
+        "receipt-25.txt",
+        "second-25.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 26,
+      "events": [
+        "receipt-26.txt",
+        "second-26.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 27,
+      "events": [
+        "receipt-27.txt",
+        "second-27.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 28,
+      "events": [
+        "receipt-28.txt",
+        "second-28.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 29,
+      "events": [
+        "receipt-29.txt",
+        "second-29.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 30,
+      "events": [
+        "receipt-30.txt",
+        "second-30.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 31,
+      "events": [
+        "receipt-31.txt",
+        "second-31.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 32,
+      "events": [
+        "receipt-32.txt",
+        "second-32.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 33,
+      "events": [
+        "receipt-33.txt",
+        "second-33.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 34,
+      "events": [
+        "receipt-34.txt",
+        "second-34.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 35,
+      "events": [
+        "receipt-35.txt",
+        "second-35.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 36,
+      "events": [
+        "receipt-36.txt",
+        "second-36.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 37,
+      "events": [
+        "receipt-37.txt",
+        "second-37.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 38,
+      "events": [
+        "receipt-38.txt",
+        "second-38.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 39,
+      "events": [
+        "receipt-39.txt",
+        "second-39.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 40,
+      "events": [
+        "receipt-40.txt",
+        "second-40.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 41,
+      "events": [
+        "receipt-41.txt",
+        "second-41.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 42,
+      "events": [
+        "receipt-42.txt",
+        "second-42.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 43,
+      "events": [
+        "receipt-43.txt",
+        "second-43.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 44,
+      "events": [
+        "receipt-44.txt",
+        "second-44.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 45,
+      "events": [
+        "receipt-45.txt",
+        "second-45.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 46,
+      "events": [
+        "receipt-46.txt",
+        "second-46.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 47,
+      "events": [
+        "receipt-47.txt",
+        "second-47.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 48,
+      "events": [
+        "receipt-48.txt",
+        "second-48.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    },
+    {
+      "index": 49,
+      "events": [
+        "receipt-49.txt",
+        "second-49.txt"
+      ],
+      "peakBytes": 32768,
+      "retainedBytes": 0,
+      "cacheEntries": 0
+    }
+  ],
+  "initialHandles": 0,
+  "finalHandles": 0,
+  "finalHub": {
+    "directoryWatchers": 0,
+    "fileWatchers": 0,
+    "rootRecoveryMonitors": 0,
+    "subscriptions": 0,
+    "keys": []
+  },
+  "finalCache": {
+    "bytes": 0,
+    "entries": 0
+  },
+  "scope": "Real Node WatcherHub and BoundedCache owners; independent of Electron userData."
+}
