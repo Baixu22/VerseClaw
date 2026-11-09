@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
 import { execFileSync, fork } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const repoRoot = process.cwd();
@@ -11,7 +12,7 @@ const windows = ['intent', 'effect', 'materialized', 'validated', 'cleanup'] as 
 const repeats = 3;
 
 function sha256File(file: string): string {
-  return execFileSync('git', ['hash-object', file], { cwd: repoRoot, encoding: 'utf8' }).trim();
+  return createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 }
 
 function run(exe: string, args: string[], cwd: string, env = process.env): { code: number; stdout: string; stderr: string } {
