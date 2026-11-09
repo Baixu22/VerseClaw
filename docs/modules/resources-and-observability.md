@@ -121,6 +121,7 @@ I/O 拥塞通过同类读操作的服务延迟反馈。诊断同时列出阈值�
 核对取消后的进程退出，保留资源/句柄/内存、冷账户与generation拒绝记录；watcher/cache通过
 `resource-repeated-observers.test.ts` 的50次真实监听/回读/释放循环单独验证。
 `RESOURCE_SOAK_SMOKE=1`仅运行三次开发冒烟，正式驱动固定覆盖为0，不计为空闲或持续观察验收。
+Windows终端在原生退出回调后释放PTY输入管道，避免已退出终端仍保留写句柄；容量和退出回执继续由原终端owner结算。
 
 ## 3. BackgroundWorkGate
 

@@ -6,7 +6,7 @@ function report() {
     owner: { windows: 1, fabric: { accounts: {} }, watchers: null }, terminals: { sessions: [] } });
   return { driven_by: 'agent', status: 'pass', smoke: true, cleanup: { mainExited: true, launcherExited: true }, unknown: [],
     cycles: [1, 2, 3].map(index => ({ stage: 'repeat', index, status: 'pass', terminalId: `terminal-${index}`, terminalPid: index * 10, observerId: index, observerClose: { id: index, destroyed: true, closedAt: 1100 + index * 200 },
-      startedAt: 1001 + index * 200, endedAt: 1111 + index * 200, closeReceipt: { success: true, status: 'exited', sessionId: `terminal-${index}`, expectedSessionId: `repeat-${index}`, pid: index * 10 },
+      observerCloseReceivedAt: 1100 + index * 200, startedAt: 1001 + index * 200, endedAt: 1111 + index * 200, closeReceipt: { success: true, status: 'exited', sessionId: `terminal-${index}`, expectedSessionId: `repeat-${index}`, pid: index * 10 },
       expectedSessionId: `repeat-${index}`, staleGenerationRejected: true, receipt: { root: index * 10, child: index * 10 + 1 }, createdTree: { status: 'ok', processes: [index * 10, index * 10 + 1].map(pid => ({ pid, creationToken: '116444736010000000' })) },
       exits: [index * 10, index * 10 + 1].map(pid => ({ pid, creationTime: 1000, status: 'exited' })), remainingTerminals: [], cancelledAt: 1100 + index * 200, exitObservedAt: 1110 + index * 200, cancelToExitMs: 10 })),
     segments: [{ name: 'idle-before', start: 1000, end: 1001, elapsedMs: 1 }, { name: 'idle-recovery', start: 1800, end: 1801, elapsedMs: 1 }, { name: 'sustained-observation', start: 1900, end: 1901, elapsedMs: 1 }],
@@ -16,7 +16,7 @@ function report() {
 function formalReport() {
   const result = report(); result.smoke = false;
   const makeCycle = (index: number, stage: string, start: number, unique: number) => ({ ...result.cycles[0], index, stage, terminalId: `t-${unique}`, terminalPid: unique * 10, observerId: unique,
-    observerClose: { id: unique, destroyed: true, closedAt: start + 10 }, startedAt: start, endedAt: start + 30, cancelledAt: start + 10, exitObservedAt: start + 20, cancelToExitMs: 10,
+    observerClose: { id: unique, destroyed: true, closedAt: start + 10 }, observerCloseReceivedAt: start + 10, startedAt: start, endedAt: start + 30, cancelledAt: start + 10, exitObservedAt: start + 20, cancelToExitMs: 10,
     receipt: { root: unique * 10, child: unique * 10 + 1 }, expectedSessionId: `g-${unique}`,
     closeReceipt: { success: true, status: 'exited', sessionId: `t-${unique}`, expectedSessionId: `g-${unique}`, pid: unique * 10 },
     createdTree: { status: 'ok', processes: [unique * 10, unique * 10 + 1].map(pid => ({ pid, creationToken: '116444736010000000' })) },
@@ -54,6 +54,12 @@ describe('lifecycle report evidence gate', () => {
   it('keeps unknown empty process measurements null', () => {
     const missing = report(); missing.observations.at(-1)!.processTree = { status: 'unknown', treeRssBytes: 0, processes: [] };
     expect(verifyLifecycleReport(missing, { smoke: true }).final).toMatchObject({ rssBytes: null, privateBytes: null });
+  });
+  it('uses receipt arrival for cross-process clock ordering and rejects reversed local order', () => {
+    const differentClock = report(); differentClock.cycles[0].observerClose.closedAt = differentClock.cycles[0].cancelledAt + 1;
+    expect(verifyLifecycleReport(differentClock, { smoke: true }).verified).toBe(true);
+    differentClock.cycles[0].observerCloseReceivedAt = differentClock.cycles[0].cancelledAt + 1;
+    expect(() => verifyLifecycleReport(differentClock, { smoke: true })).toThrow();
   });
   it('requires complete chronological observation coverage for formal intervals', () => {
     expect(verifyLifecycleReport(formalReport()).repeatCycles).toBe(50);

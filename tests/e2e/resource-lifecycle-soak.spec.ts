@@ -118,6 +118,9 @@ test('repeated lifecycle, real idle recovery and separate sustained observation'
         const closed = new Promise<void>(done => window.once('closed', () => done())); window.close(); await closed;
         return { id: data.id, closedAt: Date.now(), destroyed: window.isDestroyed() };
       }, { id: observerId, key: root });
+      // Compare ordering on the test process clock; Electron's Date.now can
+      // differ by a millisecond even after its close receipt is delivered.
+      record.observerCloseReceivedAt = Date.now();
       observerId = undefined;
       const cancelledAt = Date.now(); const started = performance.now();
       record.closeReceipt = await invoke(page!, 'terminal', 'close', { ...scope, sessionId: terminalId, expectedSessionId });

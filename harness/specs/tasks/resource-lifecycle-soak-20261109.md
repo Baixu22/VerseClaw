@@ -19,6 +19,9 @@ touchedAreas:
   - tests/unit/chat-stream-publication.test.ts
   - tests/unit/r0-3-chat-abort-checkstuck.test.ts
   - tests/unit/resource-metrics-owner.test.ts
+  - electron/services/terminal-session-manager.ts
+  - tests/unit/terminal-session-manager.test.ts
+  - tests/unit/terminal-resource-native.test.ts
   - shared/dcs/component-disposition-catalog.ts
   - scripts/verify-resource-lifecycle-soak.mjs
   - scripts/lib/resource-lifecycle-report.mjs

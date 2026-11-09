@@ -19,7 +19,8 @@ export function verifyLifecycleReport(report, { smoke = false } = {}) {
     assert.equal(row.closeReceipt.sessionId, row.terminalId); assert.equal(row.closeReceipt.expectedSessionId, row.expectedSessionId);
     assert.equal(row.closeReceipt.pid, row.terminalPid);
     assert(row.startedAt >= lastEndedAt && row.cancelledAt >= row.startedAt && row.endedAt >= row.exitObservedAt);
-    assert(row.observerClose.closedAt >= row.startedAt && row.observerClose.closedAt <= row.cancelledAt);
+    assert(Number.isFinite(row.observerClose.closedAt));
+    assert(row.observerCloseReceivedAt >= row.startedAt && row.observerCloseReceivedAt <= row.cancelledAt);
     lastEndedAt = row.endedAt;
     assert.equal(row.createdTree.status, 'ok');
     assert(row.createdTree.processes.some(p => p.pid === row.receipt.root));

@@ -2,6 +2,7 @@ import type { BrowserWindow } from 'electron';
 import { randomUUID } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { Socket } from 'node:net';
 import * as pty from '@lydell/node-pty';
 import { HOST_EVENT_CHANNELS } from '@shared/host-events/contract';
 import type { WorkspaceProfile } from '@shared/types/workspace';
@@ -521,6 +522,13 @@ export class TerminalSessionManager {
   private handleExit(sessionId: string, exitCode: number | null): void {
     const session = this.sessions.get(sessionId);
     if (!session) return;
+    // @lydell/node-pty 1.2.0-beta.12 closes ConPTY output on exit but retains
+    // its input Socket on Windows. Release that owned pipe only after native
+    // exit; killing alone must not discard a live terminal's input.
+    if (process.platform === 'win32') {
+      const input = (session.ptyProcess as (PtyProcess & { _agent?: { inSocket?: unknown } }) | null)?._agent?.inSocket;
+      if (input instanceof Socket) input.destroy();
+    }
     session.exitCode = exitCode;
     if (session.reservedPorts.length) {
       void assertManagedPortsBindable(session.reservedPorts).then(
