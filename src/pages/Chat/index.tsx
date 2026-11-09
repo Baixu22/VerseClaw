@@ -2176,6 +2176,11 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         await refreshCompactionStatus();
         return false;
       }
+      if (result.status === 'pending') {
+        toast.message(t('composer.compaction.toastPending'));
+        await refreshCompactionStatus();
+        return false;
+      }
       if (result.compacted) {
         const before = typeof result.tokensBefore === 'number'
           ? formatTokenCountForToast(result.tokensBefore)
@@ -2350,6 +2355,11 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         ...(boundary === 'from' ? { fromLeafId: messageId } : { toLeafId: messageId }),
       });
       if (!isCurrentControlScope()) return;
+      if (result.status === 'pending') {
+        toast.message(t('composer.compaction.toastPending'));
+        await refreshCompactionStatus();
+        return;
+      }
       if (!result.success || result.compacted !== true) {
         toast.error(t('composer.compactRange.toastFailed'), {
           description: result.error || result.reason || t('composer.compactRange.toastFailedDescription'),

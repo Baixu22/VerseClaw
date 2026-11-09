@@ -3286,7 +3286,7 @@ export type SessionCompactionHistoryResult = HostSuccess & {
   entries: SessionCompactionHistoryEntry[];
 };
 export type SessionCompactionResult = HostSuccess & {
-  status?: 'compacted' | 'skipped' | 'failed';
+  status?: 'compacted' | 'skipped' | 'pending' | 'failed';
   compacted?: boolean;
   summary?: string;
   reason?: string;

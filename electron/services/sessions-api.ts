@@ -882,11 +882,12 @@ function mapCompactionRpcOutcome(result: Record<string, unknown>, sessionKey: st
       : []),
   ];
   const success = result.ok === true;
-  const compacted = success && result.compacted === true;
+  const pending = success && compactDetails.pending === true;
+  const compacted = success && !pending && result.compacted === true;
   const nextSessionKey = typeof result.key === 'string' ? result.key : sessionKey;
   return {
     success,
-    status: success ? (compacted ? 'compacted' : 'skipped') : 'failed',
+    status: success ? (pending ? 'pending' : compacted ? 'compacted' : 'skipped') : 'failed',
     ...(!success && typeof result.reason === 'string' ? { error: result.reason } : {}),
     compacted,
     ...(typeof compactResult.summary === 'string' ? { summary: compactResult.summary } : {}),

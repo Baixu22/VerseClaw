@@ -1738,6 +1738,7 @@
     "tokenUsageWithLimit": "{{used}} / {{max}} tokens",
     "contextHidden": "{{count}} 件を非表示",
     "compaction": {
+      "toastPending": "圧縮リクエストを受け付けました。会話を更新して結果を確認してください。",
       "compress": "現在のセッションを圧縮",
       "compressTooltip": "現在のセッション履歴を圧縮",
       "viewEvidence": "圧縮エビデンスを表示",

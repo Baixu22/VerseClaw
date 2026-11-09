@@ -1269,6 +1269,16 @@ describe('host services', () => {
     }), 120_000);
   });
 
+  it.each(['compact', 'compactRange'] as const)('preserves an asynchronous %s acceptance as pending', async (method) => {
+    const rpc = vi.fn().mockResolvedValue({ ok: true, key: 'agent:main:main', compacted: false,
+      result: { details: { backend: 'codex-app-server', signal: 'thread/compact/start', pending: true } } });
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const sessionsApi = createSessionsApi({ gatewayManager: { rpc } as never });
+    await expect(sessionsApi[method]({ sessionKey: 'agent:main:main', expectedSessionId: 'generation-1', fromLeafId: 'entry-1' }))
+      .resolves.toMatchObject({ success: true, status: 'pending', compacted: false });
+    expect(rpc).toHaveBeenCalledTimes(1);
+  });
+
   it('proxies located (range) compaction with the chosen boundary (#178)', async () => {
     const rpc = vi.fn().mockResolvedValue({
       ok: true,

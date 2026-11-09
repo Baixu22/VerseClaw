@@ -1752,6 +1752,7 @@
     "tokenUsageWithLimit": "{{used}} / {{max}} tokens",
     "contextHidden": "{{count}} hidden",
     "compaction": {
+      "toastPending": "Compression request accepted. Refresh the conversation to check the result.",
       "compress": "Compress current session",
       "compressTooltip": "Compress the current session history",
       "viewEvidence": "View compression evidence",

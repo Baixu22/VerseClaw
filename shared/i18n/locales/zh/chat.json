@@ -1738,6 +1738,7 @@
     "tokenUsageWithLimit": "{{used}} / {{max}} tokens",
     "contextHidden": "已隐藏 {{count}} 条",
     "compaction": {
+      "toastPending": "整理请求已接收。请刷新会话查看结果。",
       "compress": "压缩当前会话",
       "compressTooltip": "压缩当前会话历史",
       "viewEvidence": "查看压缩证据",

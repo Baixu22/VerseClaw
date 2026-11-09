@@ -1738,6 +1738,7 @@
     "tokenUsageWithLimit": "{{used}} / {{max}} токенов",
     "contextHidden": "скрыто: {{count}}",
     "compaction": {
+      "toastPending": "Запрос на сжатие принят. Обновите диалог, чтобы проверить результат.",
       "compress": "Сжать текущую сессию",
       "compressTooltip": "Сжать историю текущей сессии",
       "viewEvidence": "Посмотреть доказательства сжатия",

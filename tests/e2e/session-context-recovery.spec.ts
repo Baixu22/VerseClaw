@@ -52,7 +52,7 @@ async function installFault(app: ElectronApplication, action: Action, sessionKey
     const original = handlers.get('host:invoke')!;
     const state = {
       calls: [] as Request[], reads: [] as Request[], cacheChecks: [] as Array<Record<string, unknown>>, ownerMutationDispatches: 0,
-      release: null as null | ((mode: 'reject' | 'timeout') => void),
+      release: null as null | ((mode: 'reject' | 'timeout' | 'accepted-pending') => void),
       restore: () => { ipcMain.removeHandler('host:invoke'); ipcMain.handle('host:invoke', original); },
     };
     (globalThis as unknown as { u5ContextFault: typeof state }).u5ContextFault = state;
@@ -66,9 +66,10 @@ async function installFault(app: ElectronApplication, action: Action, sessionKey
       if (request.module === 'sessions' && request.payload?.sessionKey === input.sessionKey) {
         if (request.action === input.action) {
           state.calls.push(structuredClone(request));
-          const mode = await new Promise<'reject' | 'timeout'>(resolve => { state.release = resolve; });
+          const mode = await new Promise<'reject' | 'timeout' | 'accepted-pending'>(resolve => { state.release = resolve; });
           state.release = null;
           if (mode === 'timeout') throw new Error('U5_TIMEOUT_OUTCOME_UNKNOWN');
+          if (mode === 'accepted-pending') return { ok: true, data: { success: true, status: 'pending', compacted: false, sessionKey: input.sessionKey } };
           return { ok: true, data: { success: false, compacted: false, status: 'failed',
             key: input.sessionKey, checkpointId: request.payload.checkpointId,
             error: state.calls.length === 3 ? 'U5_STALE_OWNER_REJECTED' : 'U5_OWNER_REJECTED',
@@ -97,9 +98,9 @@ async function faultState(app: ElectronApplication) {
     return { calls: state?.calls ?? [], reads: state?.reads ?? [], held: Boolean(state?.release), ownerMutationDispatches: state?.ownerMutationDispatches ?? 0 };
   });
 }
-async function releaseFault(app: ElectronApplication, mode: 'reject' | 'timeout') {
+async function releaseFault(app: ElectronApplication, mode: 'reject' | 'timeout' | 'accepted-pending') {
   await app.evaluate((_electron, mode) => {
-    const state = (globalThis as unknown as { u5ContextFault?: { release: null | ((mode: 'reject' | 'timeout') => void) } }).u5ContextFault;
+    const state = (globalThis as unknown as { u5ContextFault?: { release: null | ((mode: 'reject' | 'timeout' | 'accepted-pending') => void) } }).u5ContextFault;
     if (!state?.release) throw new Error('U5 mutation was not held');
     state.release(mode);
   }, mode);
@@ -108,7 +109,7 @@ async function removeFault(app: ElectronApplication) {
   return app.evaluate(() => {
     const target = globalThis as unknown as { u5ContextFault?: {
       calls: unknown[]; reads: unknown[]; cacheChecks: unknown[]; ownerMutationDispatches: number;
-      release: null | ((mode: 'reject' | 'timeout') => void); restore: () => void;
+      release: null | ((mode: 'reject' | 'timeout' | 'accepted-pending') => void); restore: () => void;
     } };
     const state = target.u5ContextFault;
     if (!state) return null;
@@ -172,6 +173,13 @@ test('U5 manual compact preserves its instructions on cancel, pending, refusal a
     await expect(page.getByText(/U5_TIMEOUT_OUTCOME_UNKNOWN/)).toBeVisible();
     await expect(instructions).toHaveValue('U5 preserve this explicit instruction');
     await paint(page); expect((await faultState(app)).calls).toHaveLength(2);
+    await expect(page.getByTestId('chat-compaction-confirm')).toBeEnabled();
+    await page.getByTestId('chat-compaction-confirm').focus(); await page.getByTestId('chat-compaction-confirm').press('Enter');
+    await expect.poll(async () => (await faultState(app)).held, { timeout: 60_000 }).toBe(true);
+    await releaseFault(app, 'accepted-pending');
+    await expect(page.getByText(locale.composer.compaction.toastPending, { exact: true })).toBeVisible();
+    await expect(dialog).toBeVisible(); await expect(instructions).toHaveValue('U5 preserve this explicit instruction');
+    await paint(page); expect((await faultState(app)).calls).toHaveLength(3);
     evidence.fault = await removeFault(app);
     evidence.after = await ownerReadback(app, project.sessionKey);
     expect((evidence.after as typeof before).described.session.sessionId).toBe(project.generation);
