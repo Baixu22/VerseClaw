@@ -103,6 +103,8 @@ acceptance:
   - Recorded cost comes from structured usage in the loaded transcript; absent or null costs display unknown, while a supplied zero remains zero.
   - Worker admission uses its own child receipt; its canonical task comes from the generation-fenced owner read. Verification records retain task revision, epoch and candidate separately from task acceptance.
   - Generation-fenced worker history reads use message-only Gateway requests and render before the independent task-owner query finishes.
+  - Fenced worker history uses the existing Gateway request budget, clamped by the caller's logical deadline, so a concurrent parent history read does not impose a separate ten-second limit.
+  - Worker navigation, intervention recovery and coordinator isolation run as separate Electron cases while retaining the complete original journey assertions.
   - Session describe and list share the tracked-run owner projection; retained terminal abort entries stay available for idempotency without keeping a finished worker active.
   - Task Ledger worker links use runtime source facts to open the existing transcript surface under the correct coordinator.
   - Four-locale Electron journeys and focused negative tests identify the same candidate and agent actor.

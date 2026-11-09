@@ -1316,7 +1316,7 @@ async function loadSessionTranscriptByKey(sessionKey: string, limit: number, gat
   // An empty runtime history is authoritative; never substitute another profile.
   if (gateway) {
     const result = await gateway.rpc<{ messages?: RawMessage[] }>('chat.history', { sessionKey, limit,
-      ...(includeModelMetadata ? {} : { includeModelMetadata: false }) }, 10_000);
+      ...(includeModelMetadata ? {} : { includeModelMetadata: false }) }, includeModelMetadata ? 10_000 : undefined);
     if (!Array.isArray(result?.messages)) throw new Error('Runtime history returned no messages array');
     return result.messages;
   }

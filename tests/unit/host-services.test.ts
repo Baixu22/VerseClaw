@@ -1451,6 +1451,22 @@ describe('host services', () => {
     expect((await api.prepareHandoff({ sessionKey: 'agent:main:runtime-handoff' })).draft).not.toContain('STALE_LOCAL_RESULT');
   });
 
+  it('allows a generation-fenced worker history to finish within the normal Gateway budget', async () => {
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const messages = [{ role: 'assistant', content: 'Current worker result' }];
+    const rpc = vi.fn(async (method: string, _params?: unknown, timeoutMs = 30_000) => {
+      if (method === 'sessions.describe') return { session: { sessionId: 'worker-generation', spawnedBy: 'agent:main:parent' } };
+      if (method === 'chat.history') {
+        if (timeoutMs < 12_000) throw new Error('RPC timeout: chat.history');
+        return { messages };
+      }
+      throw new Error(`Unexpected RPC ${method}`);
+    });
+    const api = createSessionsApi({ gatewayManager: { rpc } as never });
+    expect(await api.history({ sessionKey: 'agent:main:worker', expectedParentSessionKey: 'agent:main:parent',
+      expectedSessionGeneration: 'worker-generation' })).toMatchObject({ success: true, sessionGeneration: 'worker-generation', messages });
+  });
+
   it('reports recorded transcript cost only when each relevant usage record has a cost', async () => {
     const { createSessionsApi } = await import('@electron/services/sessions-api');
     const messages: Array<{ role: string; content: string; usage?: { cost: { total: number | null } } }> = [

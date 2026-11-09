@@ -9,7 +9,8 @@ import { closeElectronApp, expect, getAgentDevHostCalls, getStableWindow, test }
 import { hostInvoke, startScriptedLlm } from './fixtures/fp-p1-harness';
 import { configureSessionChainProvider, createSessionChainProject, createSessionChainTask, observeSessionUi } from './fixtures/session-task-chain';
 
-test('a real delegated worker receives its own task, reports separately and accepts a scoped follow-up', async ({ launchElectronApp }, testInfo) => {
+for (const journey of ['navigation', 'controls', 'isolation'] as const) {
+test(`a real delegated worker receives its own task, reports separately and accepts a scoped follow-up (${journey})`, async ({ launchElectronApp }, testInfo) => {
   test.setTimeout(300_000);
   const target = testInfo.outputPath('workspace', 'worker.txt');
   let wrote = false;
@@ -34,7 +35,7 @@ test('a real delegated worker receives its own task, reports separately and acce
   const collect = (bytes: Buffer) => { mainOutput.push(bytes.toString()); if (mainOutput.length > 2000) mainOutput.splice(0, mainOutput.length - 2000); };
   app.process().stdout?.on('data', collect); app.process().stderr?.on('data', collect);
   const captureUi = await observeSessionUi(app);
-  const evidence: Record<string, unknown> = { driven_by: 'agent', actor: 'playwright-worker-task', provider: 'local-scripted', status: 'running' };
+  const evidence: Record<string, unknown> = { driven_by: 'agent', actor: 'playwright-worker-task', provider: 'local-scripted', journey, status: 'running' };
   try {
     await configureSessionChainProvider(app, llm.port);
     const assistants = await hostInvoke<{ agents: Array<{ id: string; name: string }> }>(app, 'agents', 'create', {
@@ -154,6 +155,7 @@ test('a real delegated worker receives its own task, reports separately and acce
     await expect.poll(async () => JSON.stringify(await rpc('chat.history', { sessionKey: childKey, limit: 100 })).includes('WORKER-FOLLOWUP-UI'), { timeout: 60_000 }).toBe(true);
     await page.screenshot({ path: testInfo.outputPath('worker-lifecycle.png') });
 
+    if (journey === 'navigation') {
     await page.getByTestId('session-tasks-toggle').click();
     await page.getByTestId('session-task-list').getByRole('link', { name: task.title, exact: true }).click();
     await expect(page.getByTestId('task-ledger-tree')).toContainText(task.title);
@@ -178,7 +180,9 @@ test('a real delegated worker receives its own task, reports separately and acce
     await expect(page.getByTestId('workspace-subagent-panel')).toBeVisible();
     await expect(page.getByTestId('workspace-subagent-panel')).toContainText('WORKER-RUN-FINISHED');
     evidence.taskNavigation = { rootId, taskId: task.id, workerLink, artifact: target };
+    }
 
+    if (journey === 'controls') {
     const loop = await rpc<{ loop: { taskLedgerRootId: string; status: string } }>('task_loop.run', {
       task: 'Read the existing worker transcript and return a short summary.', sessionKey: childKey, agentId: 'main',
       workspaceId: project.workspaceId, maxWorkers: 1, includeVerifier: false });
@@ -230,7 +234,9 @@ test('a real delegated worker receives its own task, reports separately and acce
     releaseHold();
     await expect.poll(async () => JSON.stringify(await rpc('chat.history', { sessionKey: childKey, limit: 100 })).includes('later WORKER-QUEUED'), { timeout: 60_000 }).toBe(true);
     await expect.poll(async () => (await rpc<{ session: { hasActiveRun: boolean } }>('sessions.describe', { key: childKey })).session.hasActiveRun, { timeout: 30_000 }).toBe(false);
+    }
 
+    if (journey === 'isolation') {
     const second = await rpc<{ key: string; sessionId: string }>('sessions.create', { agentId: secondAgent.id, label: 'Independent coordinator' });
     await hostInvoke(app, 'workspaces', 'saveState', { id: project.workspaceId, sessionKey: second.key, state: {} });
     await hostInvoke(app, 'workspaces', 'update', { id: project.workspaceId, agentId: secondAgent.id, sessionKey: second.key, activeSessionKey: second.key });
@@ -311,6 +317,7 @@ test('a real delegated worker receives its own task, reports separately and acce
     await page.screenshot({ path: testInfo.outputPath('read-only-worker-navigation.png') });
     evidence.multiCoordinator = { secondAgent, second, secondTask, readOnly, readOnlyDescription, observerOwnerBefore, observerDuringRun,
       firstOrigin, secondOrigin, crossed, currentProject };
+    }
     evidence.status = 'passed';
   } catch (error) {
     evidence.status = 'failed'; evidence.error = String(error);
@@ -336,6 +343,7 @@ test('a real delegated worker receives its own task, reports separately and acce
     llm.server.closeAllConnections(); await new Promise<void>((done) => llm.server.close(() => done()));
   }
 });
+}
 
 // Each locale prepares a real canonical owner and uses one reload within the 300s case budget.
 for (const language of ['en', 'zh', 'ja', 'ru'] as const) {
