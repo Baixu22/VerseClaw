@@ -4,7 +4,7 @@ id: resource-lifecycle-soak-20261109
 title: 完成长期回收与整合候选验收
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
+diffBase: c308b60e1e8dc6849628c524ff8d8e1f0ce0a522
 intent: 完成TF-0839/G34，在当前整合候选验证50生命周期、空闲和持续观察的资源恢复并收口全局合同。
 expectedUserBehavior:
   - Repeated terminal and window lifecycles release owned processes and observation references.
