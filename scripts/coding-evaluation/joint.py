@@ -349,7 +349,7 @@ def main() -> int:
         cargo_records = {}
         for test_name in ("jj_cross_workspace_conflict", "jj_conflict_gate", "jj_transaction_recovery", "jj_sts_feedback", "jj_workspace_lifecycle", "jj_file_family"):
             command_id = f"vg-joint-{test_name}"
-            cargo_env = {"VG_CONTRACT_DIR": args.native_root.resolve() / "extensions/sts/contracts/vg-sts", "VG_STS_PYTHON": args.python.resolve(), "CARGO_TARGET_DIR": out / "tmp/cargo-target"}
+            cargo_env = {"VG_CONTRACT_DIR": args.native_root.resolve() / "extensions/sts/contracts/vg-sts", "VG_STS_PYTHON": args.python.resolve(), "CARGO_TARGET_DIR": out / "tmp/cargo-target", "CARGO_PROFILE_DEV_DEBUG": "0", "CARGO_PROFILE_TEST_DEBUG": "0"}
             try:
                 cargo_records[test_name] = runner.run(command_id, ["cargo", "test", "-p", "vg-cli", "--test", test_name], cwd=args.native_root.resolve(), timeout=2400, extra_env=cargo_env)
             except RuntimeError:
