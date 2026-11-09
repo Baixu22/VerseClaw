@@ -166,12 +166,13 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
     const page = await getStableWindow(app);
     await page.addInitScript(() => {
       type Fiber = { child?: Fiber | null; sibling?: Fiber | null; alternate?: Fiber | null; flags: number; tag: number;
-        memoizedProps?: { session?: { key?: string }; sessionLabel?: string; onSwitch?: unknown } };
-      type Probe = { rendererCount: number; commits: number; identifiedRows: number; rowWork: Record<string, number>; domMutations: number };
+        memoizedProps?: Record<string, unknown> & { session?: { key?: string }; sessionLabel?: string; onSwitch?: unknown } };
+      type Probe = { rendererCount: number; commits: number; identifiedRows: number; rowWork: Record<string, number>; domMutations: number;
+        rowCommits: Array<{ key: string; at: number; commit: number; changed: Record<string, unknown>; orderHeld: string[] }> };
       type Hook = { supportsFiber?: boolean; inject?: (renderer: unknown) => number; onCommitFiberRoot?: (id: number, root: { current: Fiber }) => void };
       const target = window as unknown as { __REACT_DEVTOOLS_GLOBAL_HOOK__?: Hook; __familyRenderProbe?: Probe };
       const previous = target.__REACT_DEVTOOLS_GLOBAL_HOOK__;
-      const probe: Probe = { rendererCount: 0, commits: 0, identifiedRows: 0, rowWork: {}, domMutations: 0 };
+      const probe: Probe = { rendererCount: 0, commits: 0, identifiedRows: 0, rowWork: {}, domMutations: 0, rowCommits: [] };
       const previousRows = new Map<string, Fiber>();
       target.__familyRenderProbe = probe;
       target.__REACT_DEVTOOLS_GLOBAL_HOOK__ = {
@@ -192,6 +193,14 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
               // Bailouts retain old subtrees and flags; only a new committed row fibre can add work.
               if (previousRows.get(key) !== fiber && (!fiber.alternate || (fiber.flags & 1) !== 0)) {
                 probe.rowWork[key] = (probe.rowWork[key] ?? 0) + 1;
+                if (probe.rowCommits.length < 1000) {
+                  const old = fiber.alternate?.memoizedProps;
+                  const value = (input: unknown) => typeof input === 'function' ? '[callback]' : JSON.stringify(input)?.slice(0, 800);
+                  probe.rowCommits.push({ key, at: Date.now(), commit: probe.commits,
+                    changed: Object.fromEntries(Object.keys(props).filter(name => old?.[name] !== props[name])
+                      .map(name => [name, { before: value(old?.[name]), after: value(props[name]) }])),
+                    orderHeld: [...document.querySelectorAll('.ws-tree')].map(tree => tree.getAttribute('data-order-held') ?? '') });
+                }
               }
               previousRows.set(key, fiber);
             }
@@ -347,11 +356,14 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
       expect(before.identifiedRows).toBeGreaterThan(0);
       expect(committedWork(before)).toBeGreaterThan(0);
       for (const key of [project.sessionKey, ...children]) expect(before.rowWork[key]).toBeGreaterThan(0);
+      const sequenceSamples = [];
       for (let seq = 1; seq <= eventCount; seq += 1) {
         await publish({ type: 'assistant.delta', runId, sessionKey: project.sessionKey, seq: seq + 1, ts, replace: true,
           text: 'FAMILY-STREAM-' + eventCount + '-' + seq });
         await expect(page.locator('body')).toContainText('FAMILY-STREAM-' + eventCount + '-' + seq);
         await twoFrames();
+        const sample = await renderer();
+        sequenceSamples.push({ seq, at: Date.now(), rowWork: sample.rowWork });
       }
       const after = await renderer();
       const dom = (await readRows()).filter((row) => children.includes(row.key));
@@ -362,7 +374,7 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
       })).session.hasActiveRun, { timeout: 30_000 }).toBe(false);
       await twoFrames();
       return { projection: view, sourceIdentity, eventCount, warmupEvents: 1, settledSamples, before, after,
-        committedRowWork: committedWork(after) - committedWork(before), dom, receipt, actualOwner,
+        committedRowWork: committedWork(after) - committedWork(before), sequenceSamples, dom, receipt, actualOwner,
         streamInput: 'agent event replay during an actual live Gateway model request' };
     };
 
