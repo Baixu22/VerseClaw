@@ -40,7 +40,10 @@ export function SessionWorkspacePicker({ disabled, onSelect, onChanged, embedded
       if (!status.success || !status.status) throw new Error(status.error || t('loadFailed'));
       const trees = status.status.isRepository ? await hostApi.git.worktrees() : { success: true, worktrees: [] };
       if (!trees.success) throw new Error('error' in trees ? trees.error : t('loadFailed'));
-      if (request === revision.current) setData({ workspaceId, status: status.status, trees: trees.worktrees });
+      const live = useWorkspacesStore.getState().activeWorkspace;
+      if (request !== revision.current || live?.id !== workspaceId || !pathEquals(live.rootPath, workspaceRoot)
+        || !pathEquals(status.status.workspaceRoot, workspaceRoot)) return;
+      setData({ workspaceId, status: status.status, trees: trees.worktrees });
     } catch (cause) { if (request === revision.current) setError(String(cause)); }
   }, [workspaceId, workspaceRoot, t]);
   useEffect(() => {

@@ -213,6 +213,9 @@ test('U5 real journal checkpoint restore changes v2 to v1 despite reply loss and
   test.setTimeout(300_000); const target = info.outputPath('workspace', 'result.txt');
   const evidence: Record<string, unknown> = metadata();
   const llm = await startScriptedLlm((text, results) => {
+    if (!results.u5taskstart) return { toolCall: { id: 'u5taskstart', name: 'task_control', args: { action: 'start', requestId: 'u5taskstart',
+      contract: { objective: 'Verify recovery of the journaled file', target: 'result.txt', constraints: ['Preserve the restore checkpoint'],
+        acceptance: [{ id: 'restored', description: 'The recovered file contains v1', verification: { kind: 'file-sha256', path: 'result.txt', sha256: sha('v1\n') } }] } } } };
     const version = text.lastIndexOf('U5_WRITE_V2') > text.lastIndexOf('U5_WRITE_V1') ? 'v2' : 'v1';
     const id = `u5commitwrite${version}`;
     if (version === 'v2' && !results['u5commitreadv1']) return { toolCall: { id: 'u5commitreadv1', name: 'read', args: { path: target } } };

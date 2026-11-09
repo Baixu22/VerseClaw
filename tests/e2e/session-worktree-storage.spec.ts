@@ -77,6 +77,8 @@ test('real repository, isolated worktree, storage command and settings in light/
     await openWorktrees(page);
     await page.getByTestId('session-worktree-menu').getByRole('button').filter({ hasText: /Local/ }).click();
     await expect.poll(async () => (await invoke(page, 'workspaces', 'getActive')).activeWorkspaceId).toBe(original.id);
+    await expect(page.getByTestId('welcome-project-trigger')).toContainText('Workspace demo');
+    await expect(page.getByTestId('welcome-project-menu')).toHaveCount(0);
     await openWorktrees(page);
     await page.getByTestId('session-worktree-menu').getByRole('button').filter({ hasText: 'codex/storage-demo' }).click();
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('Draft for this worktree');
