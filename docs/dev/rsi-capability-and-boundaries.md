@@ -361,6 +361,23 @@ evidence.
 
 ## Authority and rollback
 
+The protocol-contrast command freezes a separate off-only study with v2 legacy
+JSON input, v3 public JSON input and v4 bounded public tools. It compares
+v3 minus v2 and v4 minus v3 on the same 24 historical tasks, repeated three
+times in rotating version order. A shared ledger covers one preflight and up
+to 432 task requests; every request reserves tokens and verifies the Free route
+before dispatch. Retained receipts can be imported after interruption without
+repeating a model request. Replay checks raw Responses, tool effects, oracle
+reports and case-level statistics from disk.
+
+`node scripts/rsi-protocol-contrast.mjs <prepare|calibrate|run|check>` accepts
+`--base-dir`, with the run additionally taking `--scratch`, `--support-root`
+and `--quota-db`. Preparation takes `--budget-file`; credentials reach the run
+through JSON on stdin. The 2026-11-09 authorization is 12M tokens, 433 calls
+and 0 CNY new spending using existing Free quota. Independent arithmetic runs
+through `node scripts/rsi-protocol-contrast-replay.mjs --root <checkout>
+--base-dir <study> --scratch <receipts> --out <new-report>`.
+
 A measured candidate cannot edit its evaluator, graders, held-out split, task
 set, evidence generator, approval semantics, permissions, product locks or
 defaults. This repair is evaluator-owned and prospective. Applying v2 to old

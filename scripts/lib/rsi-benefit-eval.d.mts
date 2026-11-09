@@ -5,6 +5,9 @@ import type { ResponsesReply } from './rsi-responses-provider.mjs';
 import type { CodingSubjectInput, PublicInputSource } from './rsi-task-inputs.mjs';
 
 export type BenefitArm = 'sekb-off' | 'sekb-shadow' | 'sekb-confirmed';
+export type ProtocolContrastBudgetAtStart = {
+  schemaVersion: 'RsiProtocolContrastBudgetAtStart/v1'; remainingTokens: number; remainingProviderCalls: number;
+};
 export type BenefitTask = {
   id: string; taskId: string; split: 'public' | 'held-out'; safetyRequired: boolean;
   anchor: 'positive' | 'negative' | null; negativeExpectedOutcome: 'pass' | 'fail';
@@ -82,6 +85,8 @@ export function validateBenefitPlan(plan: BenefitPlan, root: string): boolean;
 export function validateCollectedBenefitTrial(root: string, plan: BenefitPlan, receipt: BenefitTrialReceipt,
   priorRows?: BenefitTrialReceipt[]): { row: BenefitTrialReceipt; outcome: string; failureClass: string | null;
     tokens: number | null; turns: number | null; toolCalls: number };
+export function validateProtocolContrastTrial(root: string, plan: BenefitPlan, receipt: BenefitTrialReceipt,
+  budgetAtStart: ProtocolContrastBudgetAtStart): ReturnType<typeof validateCollectedBenefitTrial>;
 export function writeBenefitPlan(root: string, directory: string, options?: BenefitPlanOptions): BenefitPlan;
 export function buildBenefitRequest(plan: BenefitPlan, slot: BenefitSlot): ReturnType<typeof buildResponsesRequest>;
 export function runOfflineBenefit(root: string, directory: string, options?: { limit?: number }): { written: number; resumed: number; planned: number; providerCalls: number };

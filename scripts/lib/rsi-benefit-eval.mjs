@@ -423,7 +423,7 @@ export function runOfflineBenefit(root, directory, options = {}) {
   return { written, resumed, planned: plan.slots.length, providerCalls: 0 };
 }
 
-function readTrial(plan, slot, directory, supplied, root, priorRows) {
+function readTrial(plan, slot, directory, supplied, root, priorRows, budgetAtStart) {
   const path = artifactPath(directory, recordPath(slot));
   if (supplied === undefined && !existsSync(path)) return null;
   const row = supplied ?? read(path), expected = trialReceipt(plan, slot);
@@ -445,11 +445,14 @@ function readTrial(plan, slot, directory, supplied, root, priorRows) {
   const attempts = measured ? readProviderAttempts(plan, row) : [];
   const toolLoop = plan.collector?.version === TOOL_CODING_COLLECTOR.version;
   if (toolLoop && measured) {
-    const prior = priorRows ?? plan.slots.slice(0, slot.position).map(item => read(artifactPath(directory, recordPath(item))));
-    assert.equal(execution.tokenBudgetAtStart, plan.budget.maxTotalTokens
-      - prior.reduce((sum, item) => sum + reserveProviderTokens(plan, item.providerAttempts), 0), 'tool-token-budget-start-drift');
+    const prior = budgetAtStart ? [] : priorRows ?? plan.slots.slice(0, slot.position).map(item => read(artifactPath(directory, recordPath(item))));
+    const tokenLimit = budgetAtStart?.remainingTokens ?? plan.budget.maxTotalTokens
+      - prior.reduce((sum, item) => sum + reserveProviderTokens(plan, item.providerAttempts), 0);
+    const callLimit = budgetAtStart?.remainingProviderCalls ?? plan.budget.providerCallsAuthorized
+      - prior.reduce((sum, item) => sum + item.execution.providerCalls, 0);
+    assert.equal(execution.tokenBudgetAtStart, tokenLimit, 'tool-token-budget-start-drift');
     assert.equal(execution.providerBudgetAtStart, Math.min(plan.collector.maxProviderCalls,
-      plan.budget.providerCallsAuthorized - prior.reduce((sum, item) => sum + item.execution.providerCalls, 0)),
+      callLimit),
     'tool-provider-budget-start-drift');
     verifyCodingToolJournal(root, task, execution.toolEvents, row.edits, execution.status !== 'completed');
   }
@@ -521,6 +524,22 @@ export function validateCollectedBenefitTrial(root, plan, receipt, priorRows = [
   assert(slot && priorRows.length === slot.position
     && priorRows.every((row, index) => row.slot.id === plan.slots[index].id), 'trial-prefix-required');
   return readTrial(plan, slot, resolve(root), receipt, root, priorRows);
+}
+
+/** Off-only protocol studies supply a budget independently reconstructed from their shared ledger. */
+export function validateProtocolContrastTrial(root, plan, receipt, budgetAtStart) {
+  validateBenefitPlan(plan, root);
+  assert(['RsiCodingCollector/v2', 'RsiCodingCollector/v3', 'RsiCodingCollector/v4'].includes(plan.collector?.version)
+    && plan.evidenceKind === 'live-provider' && !plan.budget.campaign, 'protocol-contrast-plan-required');
+  const slot = plan.slots.find(item => item.id === receipt?.slot?.id);
+  assert(slot?.arm === 'sekb-off', 'protocol-contrast-off-only');
+  assert.equal(budgetAtStart?.schemaVersion, 'RsiProtocolContrastBudgetAtStart/v1', 'protocol-budget-context-required');
+  assert.deepEqual(Object.keys(budgetAtStart).sort(), ['remainingProviderCalls', 'remainingTokens', 'schemaVersion'], 'protocol-budget-context-fields');
+  assert(Number.isSafeInteger(budgetAtStart.remainingTokens) && budgetAtStart.remainingTokens >= 0
+    && budgetAtStart.remainingTokens <= plan.budget.maxTotalTokens
+    && Number.isSafeInteger(budgetAtStart.remainingProviderCalls) && budgetAtStart.remainingProviderCalls >= 0
+    && budgetAtStart.remainingProviderCalls <= plan.budget.providerCallsAuthorized, 'protocol-budget-context-invalid');
+  return readTrial(plan, slot, resolve(root), receipt, root, [], budgetAtStart);
 }
 
 function readProviderAttempts(plan, row) {
