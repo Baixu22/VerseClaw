@@ -16,6 +16,8 @@ touchedAreas:
   - "src/pages/Knowledge/**"
   - "shared/i18n/locales/*/knowledge.json"
   - "shared/i18n/locales/*/settings.json"
+  - "shared/dcs/prod-flags-catalog.ts"
+  - "docs/generated/catalogs/prod-flags.md"
   - "docs/dev/evidence/project-rag-decision-20261109/source-review.json"
   - "docs/dev/project-rag/**"
   - "docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md"

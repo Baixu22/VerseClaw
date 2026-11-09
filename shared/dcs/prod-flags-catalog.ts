@@ -161,7 +161,7 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     executor: {
       status: 'wired',
       sites: [
-        'openclaw_runtime/src/agents/orchestrator-run-observed.ts:435',
+        'openclaw_runtime/src/agents/orchestrator-run-observed.ts:480',
       ],
     },
   },

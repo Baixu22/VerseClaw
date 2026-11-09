@@ -19,6 +19,8 @@ touchedAreas:
   - "README*.md"
   - "docs/modules/knowledge-base.md"
   - "docs/dev/adr/2026-08-17-knowledge-system-unification-authority.md"
+  - "shared/dcs/prod-flags-catalog.ts"
+  - "docs/generated/catalogs/prod-flags.md"
   - "docs/dev/evidence/project-rag-decision-20261109/source-review.json"
   - "docs/enhancements/knowledge-persistence/*.md"
   - "docs/clawx-design-overview.md"

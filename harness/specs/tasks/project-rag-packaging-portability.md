@@ -15,6 +15,8 @@ touchedAreas:
   - "scripts/build-openclaw-runtime.mjs"
   - "scripts/release-*.mjs"
   - "harness/specs/fixtures/project-rag/**"
+  - "shared/dcs/prod-flags-catalog.ts"
+  - "docs/generated/catalogs/prod-flags.md"
   - "docs/dev/evidence/project-rag-decision-20261109/source-review.json"
   - "docs/dev/project-rag/**"
   - "docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md"

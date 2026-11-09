@@ -13,6 +13,8 @@ touchedAreas:
   - "openclaw_runtime/src/context-engine/turn-injection-budget.ts"
   - "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts"
   - "openclaw_runtime/src/context-engine/chat-knowledge-intent.ts"
+  - "shared/dcs/prod-flags-catalog.ts"
+  - "docs/generated/catalogs/prod-flags.md"
   - "docs/dev/evidence/project-rag-decision-20261109/source-review.json"
   - "docs/dev/project-rag/**"
   - "docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md"

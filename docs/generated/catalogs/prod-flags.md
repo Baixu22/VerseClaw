@@ -103,7 +103,7 @@ This file is generated — edit the source of truth instead.
 - risk: api-only
 - enable: Call createWorktreeService(baseRoot, { backend: "git" }) with isolation=worktree on the request/plan.
 - rollback: Stop calling the API with backend=git. Isolation request default remains shared.
-- executor: wired — `openclaw_runtime/src/agents/orchestrator-run-observed.ts:435`
+- executor: wired — `openclaw_runtime/src/agents/orchestrator-run-observed.ts:480`
 
 > C4-H git lifecycle hardened (lock/path/cleanup). The runtime.coding.worktree.backend config leaf is wired: when plan nodes request worktree isolation, orchestrator-run-observed resolves the backend via resolveWorktreeBackend, so the leaf drives inprocess vs git. API opt-in (isolation=worktree on request/plan) remains the activation gate.
 

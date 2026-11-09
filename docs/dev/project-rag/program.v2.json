@@ -48,7 +48,9 @@
         "scripts/repository-artifacts.json",
         "README*.md",
         "docs/modules/knowledge-base.md",
-        "docs/dev/adr/2026-08-17-knowledge-system-unification-authority.md"
+        "docs/dev/adr/2026-08-17-knowledge-system-unification-authority.md",
+        "shared/dcs/prod-flags-catalog.ts",
+        "docs/generated/catalogs/prod-flags.md"
       ],
       "contracts": [
         "ProjectRagProgram/v2",

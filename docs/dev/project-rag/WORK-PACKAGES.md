@@ -54,7 +54,7 @@
 
 - Owner：architecture / harness。
 - 契约：ProjectRagProgram/v2、TaskForestWorktreeBinding/v1。
-- 落点：`docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md`、`docs/dev/project-rag/**`、`harness/specs/tasks/project-rag-*.md`、`harness/specs/rules/project-rag-long-term-boundary.md`、`docs/dev/evidence/project-rag-longterm-20261109/**`、`.gitignore`、`scripts/repository-artifacts.json`、`README*.md`、`docs/modules/knowledge-base.md`、`docs/dev/adr/2026-08-17-knowledge-system-unification-authority.md`。
+- 落点：`docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md`、`docs/dev/project-rag/**`、`harness/specs/tasks/project-rag-*.md`、`harness/specs/rules/project-rag-long-term-boundary.md`、`docs/dev/evidence/project-rag-longterm-20261109/**`、`.gitignore`、`scripts/repository-artifacts.json`、`README*.md`、`docs/modules/knowledge-base.md`、`docs/dev/adr/2026-08-17-knowledge-system-unification-authority.md`、`shared/dcs/prod-flags-catalog.ts`、`docs/generated/catalogs/prod-flags.md`。
 - 新测试：文档/Harness/图结构与绑定读回检查。
 - Electron：由后续真实 Host/DCS/产品旅程集成包覆盖；本叶无新 UI。
 - 回滚：回到规划前提交；不修改运行时默认与用户资料。

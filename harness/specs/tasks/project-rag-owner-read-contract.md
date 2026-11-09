@@ -17,6 +17,8 @@ touchedAreas:
   - "openclaw_runtime/extensions/memory-wiki/runtime-api.ts"
   - "openclaw_runtime/extensions/memory-wiki/src/**"
   - "openclaw_runtime/packages/gateway-protocol/src/schema/logs-chat.ts"
+  - "shared/dcs/prod-flags-catalog.ts"
+  - "docs/generated/catalogs/prod-flags.md"
   - "docs/dev/evidence/project-rag-decision-20261109/source-review.json"
   - "docs/dev/project-rag/**"
   - "docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md"
