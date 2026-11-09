@@ -7,13 +7,17 @@
  *   - 真实 handler 调用(sessionsRunControlHandlers)
  * 验证: checkpoint diff 数据从 db 读取 → journal 对比 → respond 形状。
  */
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { sessionsRunControlHandlers } from "./sessions.run-control.js";
-import { snapshotBeforeWrite, __resetWriteJournals } from "../../agents/tools/write-journal.js";
+import { snapshotBeforeWrite, __resetWriteJournals, journalDirFor } from "../../agents/tools/write-journal.js";
+import { acquirePatchBatchLocks } from "../../agents/apply-patch-batch-lock.js";
+import { clearRuntimeConfigSnapshot, setRuntimeConfigSnapshot } from "../../config/io.js";
+import { loadSessionStore, resolveStorePath, saveSessionStore, updateSessionStore } from "../../config/sessions.js";
+import { sessionAdmissionRegistry } from "../../sessions/session-admission-registry.js";
 import {
   buildRuntimeResumeCheckpoint,
   recordLongTaskCheckpoint,
@@ -52,18 +56,23 @@ function makeContext(workspaceRoot: string): { getRuntimeConfig: () => OpenClawC
 describe("sessions.checkpointDiff gateway integration", () => {
   let stateDir: string;
   let workspaceRoot: string;
+  let storePath: string;
   const sessionKey = "agent:main:main";
   // #176: the write-journal is keyed by the session UUID, NOT the canonical
   // session key. The previous fixture used the canonical key for both, which is
   // exactly the mistake production made — so the integration test stayed green
   // while real manual restores rolled back nothing.
   const journalSessionId = "sess-uuid-9f3a1c";
+  const identity = { agentId: "main", canonicalSessionKey: sessionKey, expectedSessionId: journalSessionId };
 
   beforeEach(async () => {
     __resetWriteJournals();
     stateDir = mkdtempSync(path.join(tmpdir(), "gw-state-"));
     workspaceRoot = mkdtempSync(path.join(tmpdir(), "gw-ws-"));
-    process.env.OPENCLAW_STATE_DIR = stateDir;
+    vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+    setRuntimeConfigSnapshot(makeContext(workspaceRoot).getRuntimeConfig());
+    storePath = resolveStorePath(undefined, { agentId: "main" });
+    await saveSessionStore(storePath, { [sessionKey]: { sessionId: journalSessionId, updatedAt: Date.now() } });
     writeFileSync(path.join(workspaceRoot, "f.ts"), "v0\n", "utf8");
     // Pre-checkpoint write (seq 1): v0 -> v1
     snapshotBeforeWrite({ workspaceRoot, sessionId: journalSessionId, filePath: "f.ts", toolName: "write" });
@@ -74,7 +83,8 @@ describe("sessions.checkpointDiff gateway integration", () => {
   afterEach(() => {
     __resetWriteJournals();
     closeOpenClawStateDatabase();
-    delete process.env.OPENCLAW_STATE_DIR;
+    clearRuntimeConfigSnapshot();
+    vi.unstubAllEnvs();
     for (const dir of [stateDir, workspaceRoot]) {
       try {
         rmSync(dir, { recursive: true, force: true });
@@ -154,7 +164,7 @@ describe("sessions.checkpointDiff gateway integration", () => {
     expect(errText).toContain("not found");
   });
 
-  it("restores a checkpoint through the real rollback path", async () => {
+  it.each([undefined, journalSessionId])("restores through the real journal with expectedSessionId=%s", async (expectedSessionId) => {
     await recordLongTaskCheckpoint({
       id: "mission:m1:tick:2",
       idempotencyKey: "mission:m1:tick:2",
@@ -177,7 +187,7 @@ describe("sessions.checkpointDiff gateway integration", () => {
 
     const { calls, respond } = makeRespond();
     await sessionsRunControlHandlers["sessions.restoreCheckpoint"]({
-      params: { key: sessionKey, checkpointId: "mission:m1:tick:2" },
+      params: { key: sessionKey, checkpointId: "mission:m1:tick:2", ...(expectedSessionId ? { expectedSessionId } : {}) },
       respond,
       context: makeContext(workspaceRoot) as never,
     } as never);
@@ -187,8 +197,131 @@ describe("sessions.checkpointDiff gateway integration", () => {
       throw new Error(`restoreCheckpoint failed: ${JSON.stringify(calls[0]!.error)}`);
     }
     // The rollback actually restored the file on disk.
-    const { readFileSync } = await import("node:fs");
     expect(readFileSync(path.join(workspaceRoot, "f.ts"), "utf8")).toBe("v1\n");
+    expect(loadSessionStore(storePath)[sessionKey]?.sessionId).toBe(journalSessionId);
+    expect(sessionAdmissionRegistry.isFenced(identity)).toBe(false);
+  });
+
+  // driven_by: agent; requested_route: ccs-workbuddy/deepseek-v4.1-flash.
+  // These cases use the original session-store, admission, SQLite checkpoint and file-journal owners.
+  async function recordRestoreFixture(stampedSessionId: string | undefined = journalSessionId) {
+    const id = "mission:guard:tick:2";
+    await recordLongTaskCheckpoint({
+      id, idempotencyKey: id, sessionKey, agentId: "main", trigger: "guide", status: "guide",
+      checkpoint: buildRuntimeResumeCheckpoint({
+        id, sessionKey, trigger: "guide", createdAt: Date.now(),
+        metadata: { journalSeq: 1, ...(stampedSessionId ? { journalSessionId: stampedSessionId } : {}) },
+      }),
+    });
+    snapshotBeforeWrite({ workspaceRoot, sessionId: journalSessionId, filePath: "f.ts", toolName: "write" });
+    writeFileSync(path.join(workspaceRoot, "f.ts"), "v2\n", "utf8");
+    return id;
+  }
+
+  function diskState() {
+    const journalDir = journalDirFor(workspaceRoot, journalSessionId);
+    return {
+      file: readFileSync(path.join(workspaceRoot, "f.ts"), "utf8"),
+      store: readFileSync(storePath, "utf8"),
+      journal: readdirSync(journalDir).sort().map((name) => [name, readFileSync(path.join(journalDir, name)).toString("hex")]),
+    };
+  }
+
+  async function restore(checkpointId: string, expectedSessionId?: string, busy = false) {
+    const { calls, respond } = makeRespond();
+    await sessionsRunControlHandlers["sessions.restoreCheckpoint"]!({
+      params: { key: sessionKey, checkpointId, ...(expectedSessionId ? { expectedSessionId } : {}) }, respond,
+      context: {
+        ...makeContext(workspaceRoot),
+        chatAbortControllers: new Map(busy ? [["run", { sessionKey }]] : []),
+      },
+    } as never);
+    return calls;
+  }
+
+  it.each([
+    ["stale request", journalSessionId, "retired", "generation-mismatch"],
+    ["old checkpoint journal", "retired", journalSessionId, "checkpoint-generation-mismatch"],
+    ["unstamped checkpoint", "", journalSessionId, "checkpoint-journal-identity-missing"],
+  ])("rejects %s with unchanged files, journal and session store", async (_name, stamp, expected, reason) => {
+    const checkpointId = await recordRestoreFixture(stamp);
+    const before = diskState();
+    const calls = await restore(checkpointId, expected);
+    expect(calls).toMatchObject([
+      { ok: false, error: { code: "INVALID_REQUEST", details: { reason } } },
+    ]);
+    if (!stamp) expect(calls[0]?.error).toMatchObject({ message: expect.stringContaining("no recorded write-journal session UUID") });
+    expect(diskState()).toEqual(before);
+    expect(sessionAdmissionRegistry.isFenced(identity)).toBe(false);
+  });
+
+  it.each(["run", "permit", "fence"] as const)("refuses restore while the current generation has a busy %s", async (kind) => {
+    const checkpointId = await recordRestoreFixture();
+    const before = diskState();
+    const held = kind === "fence" ? await sessionAdmissionRegistry.fence(identity) : undefined;
+    const release = kind === "permit" ? sessionAdmissionRegistry.acquirePermit(identity, "embedded-agent") : undefined;
+    try {
+      expect(await restore(checkpointId, journalSessionId, kind === "run"))
+        .toMatchObject([{ ok: false, error: { code: "UNAVAILABLE" } }]);
+      expect(diskState()).toEqual(before);
+      if (held) expect(sessionAdmissionRegistry.ownsFence(held)).toBe(true);
+    } finally {
+      release?.();
+      held?.release();
+    }
+  });
+
+  it("rechecks generation after waiting for the real session-store barrier", async () => {
+    const checkpointId = await recordRestoreFixture();
+    const before = diskState();
+    let unblock!: () => void;
+    let entered!: () => void;
+    const gate = new Promise<void>((resolve) => { unblock = resolve; });
+    const started = new Promise<void>((resolve) => { entered = resolve; });
+    const otherOwner = updateSessionStore(storePath, async (store) => {
+      entered();
+      await gate;
+      store[sessionKey]!.sessionId = "generation-new";
+    });
+    await started;
+    const pending = restore(checkpointId, journalSessionId);
+    try {
+      await vi.waitFor(() => expect(sessionAdmissionRegistry.isFenced(identity)).toBe(true));
+    } finally {
+      unblock();
+      await otherOwner;
+    }
+    expect(await pending).toMatchObject([{ ok: false, error: { details: { reason: "generation-mismatch" } } }]);
+    expect(diskState().file).toBe(before.file);
+    expect(diskState().journal).toEqual(before.journal);
+    expect(loadSessionStore(storePath)[sessionKey]?.sessionId).toBe("generation-new");
+    expect(sessionAdmissionRegistry.isFenced(identity)).toBe(false);
+  });
+
+  it("holds the store barrier and admission fence through the real rollback file lease", async () => {
+    const checkpointId = await recordRestoreFixture();
+    const releaseFiles = await acquirePatchBatchLocks([path.join(workspaceRoot, "f.ts")]);
+    const pending = restore(checkpointId, journalSessionId);
+    let nextOwner: Promise<unknown> | undefined;
+    let observedFile: string | undefined;
+    try {
+      await vi.waitFor(() => expect(sessionAdmissionRegistry.isFenced(identity)).toBe(true));
+      expect(() => sessionAdmissionRegistry.acquirePermit(identity, "chat-send")).toThrow(/fenced/);
+      nextOwner = updateSessionStore(storePath, (store) => {
+        observedFile = readFileSync(path.join(workspaceRoot, "f.ts"), "utf8");
+        store[sessionKey]!.sessionId = "generation-after-restore";
+      });
+      await new Promise<void>((resolve) => setImmediate(resolve));
+      expect(observedFile).toBeUndefined();
+      expect(readFileSync(path.join(workspaceRoot, "f.ts"), "utf8")).toBe("v2\n");
+    } finally {
+      releaseFiles();
+      await nextOwner;
+    }
+    expect(await pending).toMatchObject([{ ok: true }]);
+    expect(observedFile).toBe("v1\n");
+    expect(loadSessionStore(storePath)[sessionKey]?.sessionId).toBe("generation-after-restore");
+    expect(sessionAdmissionRegistry.isFenced(identity)).toBe(false);
   });
 });
 

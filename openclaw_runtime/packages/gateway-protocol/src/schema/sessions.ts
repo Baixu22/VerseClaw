@@ -525,6 +525,7 @@ export const SessionsMutationReceiptSchema = Type.Object(
 export const SessionsCompactParamsSchema = Type.Object(
   {
     key: NonEmptyString,
+    expectedSessionId: Type.Optional(NonEmptyString),
     agentId: Type.Optional(NonEmptyString),
     maxLines: Type.Optional(Type.Integer({ minimum: 1 })),
     customInstructions: Type.Optional(Type.String()),
@@ -550,6 +551,7 @@ export const SessionsCompactParamsSchema = Type.Object(
 export const SessionsCompactRangeParamsSchema = Type.Object(
   {
     key: NonEmptyString,
+    expectedSessionId: Type.Optional(NonEmptyString),
     agentId: Type.Optional(NonEmptyString),
     customInstructions: Type.Optional(Type.String()),
     toLeafId: Type.Optional(NonEmptyString),
@@ -896,6 +898,7 @@ export const SessionsQueueDrainParamsSchema = Type.Object(
 export const SessionsRestoreCheckpointParamsSchema = Type.Object(
   {
     key: NonEmptyString,
+    expectedSessionId: Type.Optional(NonEmptyString),
     agentId: Type.Optional(NonEmptyString),
     checkpointId: NonEmptyString,
   },
@@ -1136,6 +1139,7 @@ export const SessionsCompactionBranchParamsSchema = Type.Object(
 export const SessionsCompactionRestoreParamsSchema = Type.Object(
   {
     key: NonEmptyString,
+    expectedSessionId: Type.Optional(NonEmptyString),
     agentId: Type.Optional(NonEmptyString),
     checkpointId: NonEmptyString,
   },

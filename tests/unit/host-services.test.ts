@@ -1302,6 +1302,26 @@ describe('host services', () => {
     }), 120_000);
   });
 
+  it.each(['compact', 'compactRange', 'restoreCheckpoint'] as const)(
+    'forwards %s generation unchanged and preserves omission for legacy callers',
+    async (method) => {
+      // Transport fixture: only verifies forwarding; Runtime owner tests verify effects.
+      const rpc = vi.fn().mockResolvedValue({ ok: false, reason: 'fixture' });
+      const { createSessionsApi } = await import('@electron/services/sessions-api');
+      const api = createSessionsApi({ gatewayManager: { rpc } as never });
+      const input = { sessionKey: 'global', agentId: 'reviewer', checkpointId: 'cp-generation', fromLeafId: 'e1' };
+      await api[method]({ ...input, expectedSessionId: 'generation-old' });
+      expect(rpc.mock.calls[0]?.[1]).toMatchObject({
+        key: 'global', agentId: 'reviewer', expectedSessionId: 'generation-old',
+      });
+      await api[method](input);
+      expect(rpc.mock.calls[1]?.[1]).not.toHaveProperty('expectedSessionId');
+      rpc.mockRejectedValueOnce(new Error('Session generation changed'));
+      await expect(api[method]({ ...input, expectedSessionId: 'generation-old' }))
+        .rejects.toThrow('Session generation changed');
+    },
+  );
+
   it('proxies read-only context recall through Gateway without local archive reads', async () => {
     const archiveHandle = {
       uri: 'context-archive://session-1/tool.context-archive.json',

@@ -2585,6 +2585,7 @@ export function createSessionsApi(ctx: {
       }
       const result = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.restoreCheckpoint', {
         key: sessionKey,
+        ...(payload.expectedSessionId !== undefined ? { expectedSessionId: payload.expectedSessionId } : {}),
         ...(agentId ? { agentId } : {}),
         checkpointId,
       }, 30_000);
@@ -2660,6 +2661,7 @@ export function createSessionsApi(ctx: {
       }
       const result = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.compact', {
         key: sessionKey,
+        ...(payload.expectedSessionId !== undefined ? { expectedSessionId: payload.expectedSessionId } : {}),
         ...(agentId ? { agentId } : {}),
         customInstructions: getManualCompactionInstructions(payload),
         force: true,
@@ -2683,6 +2685,7 @@ export function createSessionsApi(ctx: {
       }
       const result = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.compactRange', {
         key: sessionKey,
+        ...(payload.expectedSessionId !== undefined ? { expectedSessionId: payload.expectedSessionId } : {}),
         ...(agentId ? { agentId } : {}),
         ...(fromLeafId ? { fromLeafId } : {}),
         ...(toLeafId ? { toLeafId } : {}),

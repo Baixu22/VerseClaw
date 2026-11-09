@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor, fireEvent, cleanup } from '@testing-library/react';
 import { CheckpointsDialog } from '@/components/chat/CheckpointsDialog';
 
+const translate = (key: string, options?: { defaultValue?: string }) => options?.defaultValue ?? key;
 const resumeCheckpointsMock = vi.fn();
 const restoreCheckpointMock = vi.fn();
 const checkpointDiffMock = vi.fn();
@@ -9,7 +10,7 @@ const checkpointDiffMock = vi.fn();
 vi.mock('react-i18next', () => ({
   initReactI18next: { type: '3rdParty', init: vi.fn() },
   useTranslation: () => ({
-    t: (key: string, options?: { defaultValue?: string }) => options?.defaultValue ?? key,
+    t: translate,
   }),
 }));
 
@@ -99,7 +100,7 @@ describe('CheckpointsDialog', () => {
       <CheckpointsDialog
         open
         onOpenChange={() => undefined}
-        sessionKey="agent::s1"
+        sessionKey="agent::s1" generation="generation-1"
         agentId={null}
       />,
     );
@@ -118,7 +119,7 @@ describe('CheckpointsDialog', () => {
       <CheckpointsDialog
         open
         onOpenChange={() => undefined}
-        sessionKey="agent::s1"
+        sessionKey="agent::s1" generation="generation-1"
         agentId={null}
       />,
     );
@@ -143,7 +144,7 @@ describe('CheckpointsDialog', () => {
       <CheckpointsDialog
         open
         onOpenChange={() => undefined}
-        sessionKey="agent::s1"
+        sessionKey="agent::s1" generation="generation-1"
         agentId={null}
       />,
     );
@@ -180,7 +181,7 @@ describe('CheckpointsDialog', () => {
       <CheckpointsDialog
         open
         onOpenChange={() => undefined}
-        sessionKey="agent::s1"
+        sessionKey="agent::s1" generation="generation-1"
         agentId={null}
       />,
     );
@@ -211,7 +212,7 @@ describe('CheckpointsDialog', () => {
       <CheckpointsDialog
         open
         onOpenChange={() => undefined}
-        sessionKey="agent::s1"
+        sessionKey="agent::s1" generation="generation-1"
         agentId={null}
       />,
     );
@@ -242,7 +243,7 @@ describe('CheckpointsDialog', () => {
       <CheckpointsDialog
         open
         onOpenChange={() => undefined}
-        sessionKey="agent::s1"
+        sessionKey="agent::s1" generation="generation-1"
         agentId={null}
       />,
     );
@@ -279,7 +280,7 @@ describe('CheckpointsDialog', () => {
       <CheckpointsDialog
         open
         onOpenChange={() => undefined}
-        sessionKey="agent::s1"
+        sessionKey="agent::s1" generation="generation-1"
         agentId={null}
       />,
     );

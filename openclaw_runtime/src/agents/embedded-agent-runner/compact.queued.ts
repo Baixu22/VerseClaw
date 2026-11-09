@@ -430,6 +430,7 @@ export async function compactEmbeddedAgentSession(
                 undefined;
               const storedCheckpoint = await persistSessionCompactionCheckpoint({
                 cfg: params.config,
+                agentId: sessionAgentId,
                 sessionKey: params.sessionKey,
                 sessionId: postCompactionSessionId,
                 reason: resolveSessionCompactionCheckpointReason({

@@ -1,4 +1,5 @@
 {
+  "operationGenerationUnavailable": "セッションの識別情報を取得できません。更新してから続行してください。",
   "gatewayNotRunning": "ゲートウェイが停止中",
   "retry": "再試行",
   "gatewayRequired": "チャットを利用するには OpenClaw ゲートウェイが実行されている必要があります。自動的に起動するか、設定から起動できます。",

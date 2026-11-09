@@ -1,4 +1,5 @@
 {
+  "operationGenerationUnavailable": "会话身份尚未就绪，请刷新后继续。",
   "gatewayNotRunning": "网关未运行",
   "retry": "重试",
   "gatewayRequired": "OpenClaw 网关需要运行才能使用聊天。它将自动启动，或者您可以从设置中启动。",

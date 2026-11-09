@@ -40,6 +40,14 @@ ownedPaths:
   - tests/unit/checkout-writer-ownership.test.ts
   - tests/unit/r0-3-chat-abort-checkstuck.test.ts
   - tests/unit/session-delete-gate.test.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.compaction.ts
+  - openclaw_runtime/src/gateway/session-compaction-checkpoints.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/compact.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/compact.queued.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.compaction-range.handler.test.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts
+  - tests/unit/checkpoints-dialog.test.tsx
+  - tests/unit/host-services.test.ts
 touchedAreas:
   - shared/host-api/contract.ts
   - openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts
@@ -74,6 +82,14 @@ touchedAreas:
   - tests/unit/checkout-writer-ownership.test.ts
   - tests/unit/r0-3-chat-abort-checkstuck.test.ts
   - tests/unit/session-delete-gate.test.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.compaction.ts
+  - openclaw_runtime/src/gateway/session-compaction-checkpoints.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/compact.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/compact.queued.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.compaction-range.handler.test.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts
+  - tests/unit/checkpoints-dialog.test.tsx
+  - tests/unit/host-services.test.ts
 requiredRules:
   - identity-scope-boundary
   - renderer-main-boundary

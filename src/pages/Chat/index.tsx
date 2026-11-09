@@ -2149,10 +2149,12 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
 
   const handleManualCompact = useCallback(async (customInstructions?: string) => {
     if (!isCurrentControlScope()) return false;
+    if (!controlGeneration) { toast.error(t('operationGenerationUnavailable')); return false; }
     setCompactionBusy(true);
     try {
       const result = await hostApi.sessions.compact({
         sessionKey: currentSessionKey,
+        expectedSessionId: controlGeneration,
         agentId: currentAgentId,
         customInstructions,
         force: true,
@@ -2209,7 +2211,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     } finally {
       if (isCurrentControlScope()) setCompactionBusy(false);
     }
-  }, [currentAgentId, currentModelRef, currentSessionKey, isCurrentControlScope, liveUsage?.totalTokens, loadHistory, loadSessions, messages.length, refreshCompactionStatus, refreshLongTaskControlStatus, t]);
+  }, [controlGeneration, currentAgentId, currentModelRef, currentSessionKey, isCurrentControlScope, liveUsage?.totalTokens, loadHistory, loadSessions, messages.length, refreshCompactionStatus, refreshLongTaskControlStatus, t]);
 
   const continuityRunActive = sending || pendingFinal || Boolean(streamingMessage) || Boolean(activeRunId);
   const gatewayAvailable = isGatewayRunning && gatewayStatus.gatewayReady !== false;
@@ -2328,9 +2330,11 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   const handleCompactRange = useCallback(async (messageId: string, boundary: 'from' | 'to') => {
     if (!isCurrentControlScope()) return;
     const sessionKey = currentSessionKey;
+    if (!controlGeneration) { toast.error(t('operationGenerationUnavailable')); return; }
     try {
       const result = await hostApi.sessions.compactRange({
         sessionKey,
+        expectedSessionId: controlGeneration,
         ...(currentAgentId ? { agentId: currentAgentId } : {}),
         ...(boundary === 'from' ? { fromLeafId: messageId } : { toLeafId: messageId }),
       });
@@ -2354,7 +2358,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       });
       await refreshCompactionStatus();
     }
-  }, [currentAgentId, currentSessionKey, isCurrentControlScope, loadHistory, loadSessions, refreshCompactionStatus, t]);
+  }, [controlGeneration, currentAgentId, currentSessionKey, isCurrentControlScope, loadHistory, loadSessions, refreshCompactionStatus, t]);
 
   const handleForkFromMessage = useCallback((messageId: string) => {
     const index = messages.findIndex((message) => getTranscriptEntryId(message) === messageId);

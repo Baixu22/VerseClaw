@@ -69,13 +69,14 @@ export function CheckpointsDialog({ open, onOpenChange, sessionKey, agentId, gen
   }, [scope, open, load]);
 
   const handleRestore = useCallback(async (checkpointId: string) => {
-    if (!isCurrent() || restoringId !== null) return;
+    if (!isCurrent() || restoringId !== null || !generation) return;
     setRestoringId(checkpointId);
     setError(null);
     setRestored(null);
     try {
       const result = await hostApi.sessions.restoreCheckpoint({
         sessionKey,
+        expectedSessionId: generation,
         ...(agentId ? { agentId } : {}),
         checkpointId,
       });
@@ -98,7 +99,7 @@ export function CheckpointsDialog({ open, onOpenChange, sessionKey, agentId, gen
     } finally {
       if (isCurrent()) setRestoringId(null);
     }
-  }, [isCurrent, restoringId, sessionKey, agentId, t, load]);
+  }, [isCurrent, restoringId, sessionKey, agentId, generation, t, load]);
 
   const handleToggleDiff = useCallback(async (checkpointId: string) => {
     if (!isCurrent()) return;
@@ -205,7 +206,8 @@ export function CheckpointsDialog({ open, onOpenChange, sessionKey, agentId, gen
                     type="button"
                     size="sm"
                     variant="outline"
-                    disabled={restoringId !== null}
+                    disabled={restoringId !== null || !generation}
+                    title={!generation ? t('operationGenerationUnavailable') : undefined}
                     onClick={() => void handleRestore(checkpoint.id)}
                     data-testid={`chat-checkpoint-restore-${checkpoint.id}`}
                   >

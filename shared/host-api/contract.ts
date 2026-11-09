@@ -3210,6 +3210,7 @@ export type SessionResumeCheckpointsResult = HostSuccess & {
   checkpoints: LongTaskCheckpointRecord[];
 };
 export type SessionRestoreCheckpointPayload = SessionLongTaskControlHistoryPayload & {
+  expectedSessionId?: string;
   checkpointId: string;
 };
 export type SessionCheckpointDiffFile = {
@@ -3238,6 +3239,7 @@ export type SessionQueueDrainResult = HostSuccess & {
   reason?: string;
 };
 export type SessionManualCompactPayload = SessionCompactionPayload & {
+  expectedSessionId?: string;
   customInstructions?: string;
   force?: boolean;
 };
@@ -3246,6 +3248,7 @@ export type SessionManualCompactPayload = SessionCompactionPayload & {
  * untouched side verbatim. Exactly one of fromLeafId / toLeafId is required.
  */
 export type SessionCompactRangePayload = SessionCompactionPayload & {
+  expectedSessionId?: string;
   customInstructions?: string;
   fromLeafId?: string;
   toLeafId?: string;

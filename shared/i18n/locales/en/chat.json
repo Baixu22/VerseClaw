@@ -1,4 +1,5 @@
 {
+  "operationGenerationUnavailable": "The session identity is unavailable. Refresh before continuing.",
   "gatewayNotRunning": "Gateway Not Running",
   "retry": "Retry",
   "gatewayRequired": "The OpenClaw Gateway needs to be running to use chat. It will start automatically, or you can start it from Settings.",
