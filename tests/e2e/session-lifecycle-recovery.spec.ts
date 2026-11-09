@@ -1,6 +1,6 @@
 // driven_by: agent; requested_route: ccs-workbuddy/deepseek-v4.1-flash
 // Real Electron/Main/Gateway. Inject provider timing, Host reply faults and exact gate-clear write failures.
-import { writeFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import type { ElectronApplication, Page, TestInfo } from '@playwright/test';
 import type { WorkspaceCoordinatorBindingResult } from '../../shared/host-api/contract';
@@ -347,14 +347,7 @@ test('U5 archive restore and confirmed delete retry their retained operationId a
     expect(pendingGate.persisted).toMatchObject({ sessionKey: key, operationKind: action });
     // This is an original Runtime journal replay. It must return the stored committed receipt.
     const receipt = await committedReceipt(c, action, operationId);
-    const committed = await lifecycleRead(c);
-    if (action === 'archive') { expect(committed.live).toBeNull(); expect(committed.archived).not.toBeNull(); }
-    if (action === 'restore') { expect(committed.archived).toBeNull(); expect(committed.live?.sessionId).toBeTruthy(); expect(committed.live?.sessionId).not.toBe(c.project.generation); }
-    if (action === 'delete') { expect(committed.live).toBeNull(); expect(committed.archived).toBeNull(); }
-    expect(action === 'restore' ? receipt.previousSessionId : receipt.sessionId)
-      .toBe(action === 'restore' ? before.archived!.sessionId : before.live!.sessionId);
-    if (action === 'restore') expect(receipt.entry?.sessionId).toBe(committed.live?.sessionId);
-    Object.assign(record, { pendingGate, runtimeCommittedReceipt: receipt, committed });
+    Object.assign(record, { pendingGate, runtimeCommittedReceipt: receipt });
     await select(c, c.neighbour); const url = c.page.url();
     await c.app.evaluate(() => (globalThis as Globals).u5Gate!.release!());
     await expect.poll(async () => (await fault(c))?.phase).toBe('finished');
@@ -365,12 +358,30 @@ test('U5 archive restore and confirmed delete retry their retained operationId a
     const retained = await gateState(c);
     expect(retained.persisted).toMatchObject({ sessionKey: key, operationId, operationKind: action });
     await neighbourUnchanged(c, url);
+    const committed = await lifecycleRead(c);
+    if (action === 'archive') { expect(committed.live).toBeNull(); expect(committed.archived).not.toBeNull(); }
+    if (action === 'restore') { expect(committed.archived).toBeNull(); expect(committed.live?.sessionId).toBeTruthy(); expect(committed.live?.sessionId).not.toBe(c.project.generation); }
+    if (action === 'delete') { expect(committed.live).toBeNull(); expect(committed.archived).toBeNull(); }
+    expect(action === 'restore' ? receipt.previousSessionId : receipt.sessionId)
+      .toBe(action === 'restore' ? before.archived!.sessionId : before.live!.sessionId);
+    if (action === 'restore') expect(receipt.entry?.sessionId).toBe(committed.live?.sessionId);
+    Object.assign(record, { pendingGate, runtimeCommittedReceipt: receipt, committed });
     Object.assign(record, { failedHost, retainedGate: retained });
 
     // The saved operation remains reachable even after the original session row disappears.
     await archivePage(c);
     await c.page.getByTestId('settings-archived-refresh').click();
     await expect(c.page.getByTestId(`settings-resume-mutation-${operationId}`)).toBeVisible();
+    if (action === 'archive') {
+      for (const language of ['en', 'zh', 'ja', 'ru'] as const) {
+        const locale = JSON.parse(await readFile('shared/i18n/locales/' + language + '/chat.json', 'utf8'));
+        await hostInvoke(c.app, 'settings', 'set', { key: 'language', value: language });
+        await expect(c.page.getByTestId('settings-resume-mutation-' + operationId)).toHaveText(locale.archive.resumeMutation);
+        await c.page.screenshot({ path: info.outputPath('pending-operation-' + language + '.png') });
+      }
+      await hostInvoke(c.app, 'settings', 'set', { key: 'language', value: 'en' });
+      await expect(c.page.getByTestId('settings-resume-mutation-' + operationId)).toHaveText('Check and continue');
+    }
     await arm(c, action, 'after');
     const retry = c.page.getByTestId(`settings-resume-mutation-${operationId}`).click();
     void retry.catch(() => undefined);

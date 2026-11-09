@@ -148,6 +148,7 @@ test('U5 manual compact preserves its instructions on cancel, pending, refusal a
     await page.getByTestId('chat-compaction-confirm').click();
     await expect.poll(async () => (await faultState(app)).held).toBe(true);
     await expect(page.getByTestId('chat-compaction-confirm')).toBeDisabled();
+    expect((await faultState(app)).calls).toEqual([expect.objectContaining({ payload: expect.objectContaining({ expectedSessionId: project.generation }) })]);
     await expect(instructions).toHaveValue('U5 preserve this explicit instruction');
     await expect(dialog).toBeVisible();
     await page.screenshot({ path: testInfo.outputPath('compact-pending.png') });
@@ -222,6 +223,7 @@ test('U5 range compact keeps the exact boundary and draft, and ignores a late er
     const faults = await faultState(app);
     expect(faults.calls).toHaveLength(3);
     for (const call of faults.calls as Array<{ payload: Record<string, unknown> }>) {
+      expect(call.payload.expectedSessionId).toBe(project.generation);
       expect(call.payload).toMatchObject({ sessionKey: project.sessionKey, fromLeafId: entryId });
       expect(call.payload).not.toHaveProperty('toLeafId');
     }
@@ -264,6 +266,7 @@ test('U5 checkpoint restore keeps pending and rejected states honest and refresh
     const restore = page.getByTestId('chat-checkpoint-restore-' + FIXTURE_CHECKPOINT);
     await restore.click(); await expect.poll(async () => (await faultState(app)).held).toBe(true);
     await expect(restore).toBeDisabled();
+    expect((await faultState(app)).calls).toEqual([expect.objectContaining({ payload: expect.objectContaining({ expectedSessionId: project.generation }) })]);
     await expect(page.getByTestId('chat-checkpoints-dialog')).toHaveAttribute('aria-busy', 'true');
     await expect(page.getByTestId('chat-checkpoints-restored')).toHaveCount(0);
     await releaseFault(app, 'reject');
