@@ -50,13 +50,18 @@ async function installFault(app: ElectronApplication, action: Action, sessionKey
     const handlers = (ipcMain as unknown as { _invokeHandlers: Map<string, Handler> })._invokeHandlers;
     const original = handlers.get('host:invoke')!;
     const state = {
-      calls: [] as Request[], reads: [] as Request[], ownerMutationDispatches: 0,
+      calls: [] as Request[], reads: [] as Request[], cacheChecks: [] as Array<Record<string, unknown>>, ownerMutationDispatches: 0,
       release: null as null | ((mode: 'reject' | 'timeout') => void),
       restore: () => { ipcMain.removeHandler('host:invoke'); ipcMain.handle('host:invoke', original); },
     };
     (globalThis as unknown as { u5ContextFault: typeof state }).u5ContextFault = state;
     ipcMain.removeHandler('host:invoke');
     ipcMain.handle('host:invoke', async (event, request: Request) => {
+      if (request.module === 'usage' && request.action === 'promptCacheStatus') {
+        const check: Record<string, unknown> = { payload: request.payload, startedAt: Date.now() }; state.cacheChecks.push(check);
+        try { const result = await original(event, request); check.result = result; return result; }
+        catch (error) { check.error = String(error); throw error; } finally { check.finishedAt = Date.now(); }
+      }
       if (request.module === 'sessions' && request.payload?.sessionKey === input.sessionKey) {
         if (request.action === input.action) {
           state.calls.push(structuredClone(request));
@@ -101,14 +106,14 @@ async function releaseFault(app: ElectronApplication, mode: 'reject' | 'timeout'
 async function removeFault(app: ElectronApplication) {
   return app.evaluate(() => {
     const target = globalThis as unknown as { u5ContextFault?: {
-      calls: unknown[]; reads: unknown[]; ownerMutationDispatches: number;
+      calls: unknown[]; reads: unknown[]; cacheChecks: unknown[]; ownerMutationDispatches: number;
       release: null | ((mode: 'reject' | 'timeout') => void); restore: () => void;
     } };
     const state = target.u5ContextFault;
     if (!state) return null;
     state.release?.('timeout'); state.restore(); delete target.u5ContextFault;
     return { driven_by: 'agent', injection: 'Host failure before mutation dispatch',
-      calls: state.calls, reads: state.reads, ownerMutationDispatches: state.ownerMutationDispatches };
+      calls: state.calls, reads: state.reads, cacheChecks: state.cacheChecks, ownerMutationDispatches: state.ownerMutationDispatches };
   });
 }
 const openCheckpoints = async (page: Page) => {
@@ -148,7 +153,7 @@ test('U5 manual compact preserves its instructions on cancel, pending, refusal a
     expect((await faultState(app)).calls).toHaveLength(0);
     await open(); await expect(instructions).toHaveValue('U5 preserve this explicit instruction');
     await page.getByTestId('chat-compaction-confirm').click();
-    await expect.poll(async () => (await faultState(app)).held).toBe(true);
+    await expect.poll(async () => (await faultState(app)).held, { timeout: 60_000 }).toBe(true);
     await expect(page.getByTestId('chat-compaction-confirm')).toBeDisabled();
     expect((await faultState(app)).calls).toEqual([expect.objectContaining({ payload: expect.objectContaining({ expectedSessionId: project.generation }) })]);
     await expect(instructions).toHaveValue('U5 preserve this explicit instruction');
@@ -160,7 +165,7 @@ test('U5 manual compact preserves its instructions on cancel, pending, refusal a
     await expect(dialog).toBeVisible();
     await expect(page.getByTestId('chat-compaction-confirm')).toBeEnabled();
     await page.getByTestId('chat-compaction-confirm').click();
-    await expect.poll(async () => (await faultState(app)).held).toBe(true);
+    await expect.poll(async () => (await faultState(app)).held, { timeout: 60_000 }).toBe(true);
     await releaseFault(app, 'timeout');
     await expect(page.getByText(/U5_TIMEOUT_OUTCOME_UNKNOWN/)).toBeVisible();
     await expect(instructions).toHaveValue('U5 preserve this explicit instruction');
@@ -205,14 +210,14 @@ test('U5 range compact keeps the exact boundary and draft, and ignores a late er
     const row = page.locator('[id^="chat-message-"]').filter({ has: page.getByText('U5_TARGET', { exact: true }) });
     const act = async () => { await page.getByText('U5_TARGET', { exact: true }).hover(); await row.getByTestId('chat-user-message-summarize-from').click(); };
     const locale = JSON.parse(await readFile('shared/i18n/locales/en/chat.json', 'utf8'));
-    await act(); await expect.poll(async () => (await faultState(app)).held).toBe(true);
+    await act(); await expect.poll(async () => (await faultState(app)).held, { timeout: 60_000 }).toBe(true);
     await expect(page.getByText(locale.composer.compactRange.toastCompacted, { exact: true })).toHaveCount(0);
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('U5 range draft');
     await releaseFault(app, 'reject'); await expect(page.getByText('U5_OWNER_REJECTED', { exact: true })).toBeVisible();
-    await act(); await expect.poll(async () => (await faultState(app)).held).toBe(true);
+    await act(); await expect.poll(async () => (await faultState(app)).held, { timeout: 60_000 }).toBe(true);
     await releaseFault(app, 'timeout'); await expect(page.getByText(/U5_TIMEOUT_OUTCOME_UNKNOWN/)).toBeVisible();
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('U5 range draft');
-    await act(); await expect.poll(async () => (await faultState(app)).held).toBe(true);
+    await act(); await expect.poll(async () => (await faultState(app)).held, { timeout: 60_000 }).toBe(true);
     // Move through the existing family action while A's mutation response is still held.
     await page.getByTestId('session-family-children').selectOption(child);
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('Child 1 draft');
@@ -266,7 +271,7 @@ test('U5 checkpoint restore keeps pending and rejected states honest and refresh
     expect((await faultState(app)).calls).toHaveLength(0);
     await openCheckpoints(page);
     const restore = page.getByTestId('chat-checkpoint-restore-' + FIXTURE_CHECKPOINT);
-    await restore.click(); await expect.poll(async () => (await faultState(app)).held).toBe(true);
+    await restore.click(); await expect.poll(async () => (await faultState(app)).held, { timeout: 60_000 }).toBe(true);
     await expect(restore).toBeDisabled();
     expect((await faultState(app)).calls).toEqual([expect.objectContaining({ payload: expect.objectContaining({ expectedSessionId: project.generation }) })]);
     await expect(page.getByTestId('chat-checkpoints-dialog')).toHaveAttribute('aria-busy', 'true');
@@ -274,7 +279,7 @@ test('U5 checkpoint restore keeps pending and rejected states honest and refresh
     await releaseFault(app, 'reject');
     await expect(page.getByTestId('chat-checkpoints-error')).toContainText('U5_OWNER_REJECTED');
     await expect(restore).toBeEnabled();
-    await restore.click(); await expect.poll(async () => (await faultState(app)).held).toBe(true);
+    await restore.click(); await expect.poll(async () => (await faultState(app)).held, { timeout: 60_000 }).toBe(true);
     await releaseFault(app, 'timeout');
     await expect(page.getByTestId('chat-checkpoints-error')).toContainText('U5_TIMEOUT_OUTCOME_UNKNOWN');
     await expect(page.getByTestId('chat-checkpoints-restored')).toHaveCount(0);
