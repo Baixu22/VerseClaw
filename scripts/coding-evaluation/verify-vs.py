@@ -6,7 +6,7 @@ ROOT=Path(__file__).resolve().parents[2]
 EXPECTED=['process-normal','process-timeout','process-cancel','gateway-restart-boundary','cross-task-cancel-isolated','unknown-pid-preserved','sts-pytest-exit0','sts-failed-exit7','live-receipt-accepted','cleanup-zero','negative-old-candidate','negative-observation-digest','negative-forged-live-without-authority','negative-fake-exit0','negative-artifact-summary','negative-late-frame','negative-no-native-fallback']
 
 def digest(value):
-    return hashlib.sha256(json.dumps(value,sort_keys=True,separators=(',', ':'),ensure_ascii=False).encode()).hexdigest()
+    return hashlib.sha256(json.dumps(value,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()).hexdigest()
 
 def verify(report,root,expected_candidate,expected_digest,allow_dirty=False):
     issues=[]

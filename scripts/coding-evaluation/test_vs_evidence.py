@@ -12,6 +12,9 @@ def fixture():
  return root,report
 
 class VsEvidence(unittest.TestCase):
+ def test_digest_uses_stable_key_order_and_compact_json(self):
+  self.assertEqual(evidence.digest(dict(b=2,a=1)),evidence.digest(dict(a=1,b=2)))
+  self.assertEqual(evidence.digest(dict(a=1,b=2)),'43258cff783fe7036d8a43033f830adfc60ec037382473548ac742b888292777')
  def test_exact_case_set(self):
   root,report=fixture(); self.assertEqual(evidence.verify(report,root,'a'*40,evidence.digest(report))['ok'],True)
   altered=copy.deepcopy(report);altered['cases'].pop(); self.assertIn('case set mismatch',evidence.verify(altered,root,'a'*40,evidence.digest(altered))['issues'])
