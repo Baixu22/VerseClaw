@@ -64,6 +64,10 @@ ownedPaths:
   - shared/task-system/store.ts
   - tests/unit/durable-task-authority-access.test.ts
   - harness/specs/fixtures/session-lifecycle-recovery/**
+  - tests/unit/session-lifecycle-tail.test.ts
+  - tests/unit/long-session-lifecycle-barrier.test.ts
+  - tests/unit/r0-2-sessions-delete-fail.test.ts
+  - electron/services/long-session-resource-reclamation.ts
 touchedAreas:
   - src/lib/host-api.ts
   - shared/host-api/contract.ts
@@ -122,6 +126,10 @@ touchedAreas:
   - shared/task-system/store.ts
   - tests/unit/durable-task-authority-access.test.ts
   - harness/specs/fixtures/session-lifecycle-recovery/**
+  - tests/unit/session-lifecycle-tail.test.ts
+  - tests/unit/long-session-lifecycle-barrier.test.ts
+  - tests/unit/r0-2-sessions-delete-fail.test.ts
+  - electron/services/long-session-resource-reclamation.ts
 requiredRules:
   - identity-scope-boundary
   - renderer-main-boundary

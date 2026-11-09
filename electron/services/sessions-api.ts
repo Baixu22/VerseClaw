@@ -22,6 +22,7 @@ import {
   persistSessionMutationGate,
   updateSessionDeleteGate,
   withSessionDeleteGateLock,
+  type SessionDeleteGateRecord,
 } from './session-delete-gate';
 import { buildResumeCheckpoint, renderResumeCheckpointSummary } from '../../shared/types/long-task-control';
 import type {
@@ -67,6 +68,7 @@ import {
 import { evaluateHandoffDerivation } from '../../shared/handoff-depth';
 import { readCurrentGitStatus } from './git-api';
 import { getResourceTracker } from './resource-tracker';
+import { getDefaultAgentBrowserService } from './agent-browser-api';
 import { reclaimLongSessionOwnerResources } from './long-session-resource-reclamation';
 import { getObservabilityTraceBuffer } from './observability-service';
 import {
@@ -1554,10 +1556,84 @@ function isDefinitiveLifecycleMutationFailure(
  * an operation id before the first RPC; any transport failure keeps the gate
  * open so a retry resumes the same journaled mutation.
  */
+type SessionMutationResult = SessionDeleteResult & {
+  sessionId?: string;
+  previousSessionId?: string;
+  operationId?: string;
+  retryable?: boolean;
+  recoveryRequired?: boolean;
+};
+type SessionMutationCommitted = (gate: SessionDeleteGateRecord) => Promise<SessionDeleteGateRecord>;
+
+async function saveMutationProgress(
+  gate: SessionDeleteGateRecord,
+  patch: Parameters<typeof updateSessionDeleteGate>[1],
+): Promise<SessionDeleteGateRecord> {
+  const saved = await updateSessionDeleteGate(gate.operationId, patch);
+  if (!saved) throw new Error('SESSION_MUTATION_CHANGED: pending operation is missing');
+  return saved;
+}
+
+async function pinMutationWorkspace(gate: SessionDeleteGateRecord, requested?: string | null): Promise<SessionDeleteGateRecord> {
+  if (gate.workspaceId !== undefined) return gate;
+  const snapshot = await createWorkspacesApi().list();
+  if (!snapshot.success) throw new Error(snapshot.error || 'Lifecycle workspace owner unavailable');
+  const archive = await readArchiveIndex(getArchiveIndexPath(gate.agentId));
+  const original = archive.entries.find(entry => entry.sessionKey === gate.sessionKey)?.originalWorkspaceId;
+  const matches = snapshot.profiles.filter(profile => profile.activeSessionKey === gate.sessionKey
+    || Object.hasOwn(profile.sessionStates ?? {}, gate.sessionKey)
+    || Object.hasOwn(profile.coordinatorBindings ?? {}, gate.sessionKey)
+    || Object.values(profile.agentBindings ?? {}).some(binding => binding.sessionKey === gate.sessionKey)
+    || profile.archivedSessionKeys?.includes(gate.sessionKey)
+    || (original && profile.id === original));
+  const preferred = requested || original;
+  const selected = preferred ? matches.find(profile => profile.id === preferred) : matches.length === 1 ? matches[0] : undefined;
+  if ((preferred && !selected) || (!preferred && matches.length > 1)) {
+    throw new Error('SESSION_MUTATION_SCOPE_UNRESOLVED: original workspace is missing or ambiguous');
+  }
+  return saveMutationProgress(gate, { workspaceId: selected?.id ?? null });
+}
+
+async function saveMutationReceipt(gate: SessionDeleteGateRecord, receipt: NonNullable<SessionDeleteGateRecord['runtimeReceipt']>) {
+  if (gate.runtimeReceipt && (gate.runtimeReceipt.sessionId !== receipt.sessionId
+    || gate.runtimeReceipt.previousSessionId !== receipt.previousSessionId)) {
+    throw new Error('SESSION_MUTATION_GENERATION_CHANGED: Runtime receipt changed on replay');
+  }
+  return saveMutationProgress(gate, {
+    runtimeReceipt: receipt,
+    expectedSessionId: receipt.previousSessionId ?? receipt.sessionId,
+  });
+}
+
+function mutationResult(gate: SessionDeleteGateRecord): SessionMutationResult {
+  return {
+    success: true,
+    operationId: gate.operationId,
+    sessionId: gate.runtimeReceipt?.sessionId,
+    expectedSessionId: gate.expectedSessionId,
+    ...(gate.runtimeReceipt?.previousSessionId ? { previousSessionId: gate.runtimeReceipt.previousSessionId } : {}),
+    ...(gate.resourceReclamationAttempts?.length ? { resourceReclamation: gate.resourceReclamationAttempts.at(-1) } : {}),
+  };
+}
+
+async function mutationFailure(gate: SessionDeleteGateRecord | undefined, error: unknown): Promise<SessionMutationResult> {
+  const message = error instanceof Error ? error.message : String(error);
+  let current = gate;
+  if (gate) {
+    // Read back progress saved by the tail before reporting its failure.
+    current = await findSessionDeleteGateBySession(gate.sessionKey).catch(() => undefined);
+    if (current?.operationId !== gate.operationId) current = gate;
+    await updateSessionDeleteGate(gate.operationId, { tailError: message }).catch(() => undefined);
+  }
+  return { ...(current ? mutationResult(current) : {}), success: false, error: message,
+    ...(current ? { operationId: current.operationId, retryable: true, recoveryRequired: true } : {}) };
+}
+
 async function archiveSession(
   payload: SessionPayload,
-  gatewayManager?: GatewayManager,
-): Promise<{ success: boolean; error?: string; sessionId?: string }> {
+  gatewayManager: GatewayManager | undefined,
+  onCommitted: SessionMutationCommitted,
+): Promise<SessionMutationResult> {
   const sessionKey = getSessionKey(payload);
   const parsed = parseSessionKey(sessionKey);
   if (!parsed) return { success: false, error: `Invalid sessionKey: ${sessionKey}` };
@@ -1575,6 +1651,7 @@ async function archiveSession(
       expectedOperationId: payload.resumeOperationId,
       requestDigest: buildSessionMutationRequestDigest('archive', { sessionKey }),
     });
+    gate = await pinMutationWorkspace(gate, originalWorkspaceId);
     const result = await gatewayManager.rpc<Record<string, unknown>>('sessions.archive', {
       key: sessionKey,
       operationId: gate.operationId,
@@ -1583,10 +1660,11 @@ async function archiveSession(
       ...(originalFolderId ? { originalFolderId } : {}),
     }, 30_000);
     if (result?.ok === false && result.operationId === gate.operationId && result.key === sessionKey) {
-      if (result.retryable === false || result.noMutation === true) {
+      if (!gate.runtimeReceipt && (result.retryable === false || result.noMutation === true)) {
         await clearSessionDeleteGate(gate.operationId);
+        return { success: false, error: String(result.error ?? 'Archive was refused') };
       }
-      return { success: false, error: String(result.error ?? 'Archive was refused') };
+      return mutationFailure(gate, result.error ?? 'Archive was refused');
     }
     if (
       result?.ok !== true ||
@@ -1596,23 +1674,21 @@ async function archiveSession(
       result.operationId !== gate.operationId ||
       result.journalState !== 'runtime_committed'
     ) {
-      return {
-        success: false,
-        error: 'Gateway archive returned no matching runtime_committed receipt',
-      };
+      return mutationFailure(gate, 'Gateway archive returned no matching runtime_committed receipt');
     }
+    gate = await saveMutationReceipt(gate, { key: sessionKey, operationId: gate.operationId,
+      journalState: 'runtime_committed', sessionId: result.sessionId });
+    gate = await onCommitted(gate);
     await clearSessionDeleteGate(gate.operationId);
-    return { success: true, sessionId: String(result.sessionId) };
+    return mutationResult(gate);
   } catch (error) {
     // Definitive correlated refusals can release the mirror gate. Unknown or
     // retryable outcomes retain the same operationId for journal recovery.
-    if (gate && isDefinitiveLifecycleMutationFailure(error, sessionKey, gate.operationId)) {
+    if (gate && !gate.runtimeReceipt && isDefinitiveLifecycleMutationFailure(error, sessionKey, gate.operationId)) {
       await clearSessionDeleteGate(gate.operationId);
+      return { success: false, error: String(error) };
     }
-    return {
-      success: false,
-      error: `Gateway archive did not return a committed receipt: ${error instanceof Error ? error.message : String(error)}`,
-    };
+    return mutationFailure(gate, error);
   }
 }
 
@@ -1623,8 +1699,9 @@ async function archiveSession(
  */
 async function restoreSession(
   payload: SessionPayload,
-  gatewayManager?: GatewayManager,
-): Promise<{ success: boolean; error?: string }> {
+  gatewayManager: GatewayManager | undefined,
+  onCommitted: SessionMutationCommitted,
+): Promise<SessionMutationResult> {
   const sessionKey = getSessionKey(payload);
   const parsed = parseSessionKey(sessionKey);
   if (!parsed) return { success: false, error: `Invalid sessionKey: ${sessionKey}` };
@@ -1639,40 +1716,42 @@ async function restoreSession(
       expectedOperationId: payload.resumeOperationId,
       requestDigest: buildSessionMutationRequestDigest('restore', { sessionKey }),
     });
+    gate = await pinMutationWorkspace(gate, getOptionalWorkspaceId(payload));
     const result = await gatewayManager.rpc<Record<string, unknown>>('sessions.restore', {
       key: sessionKey,
       operationId: gate.operationId,
     }, 30_000);
     if (result?.ok === false && result.operationId === gate.operationId && result.key === sessionKey) {
-      if (result.retryable === false || result.noMutation === true) {
+      if (!gate.runtimeReceipt && (result.retryable === false || result.noMutation === true)) {
         await clearSessionDeleteGate(gate.operationId);
+        return { success: false, error: String(result.error ?? 'Restore was refused') };
       }
-      return { success: false, error: String(result.error ?? 'Restore was refused') };
+      return mutationFailure(gate, result.error ?? 'Restore was refused');
     }
     if (
       result?.ok !== true ||
       result.key !== sessionKey ||
       !result.entry || typeof result.entry !== 'object' ||
       typeof (result.entry as Record<string, unknown>).sessionId !== 'string' ||
+      !(result.entry as { sessionId: string }).sessionId.trim() ||
       result.operationId !== gate.operationId ||
       result.journalState !== 'runtime_committed' ||
       result.restored !== true
     ) {
-      return {
-        success: false,
-        error: 'Gateway restore returned no matching runtime_committed receipt',
-      };
+      return mutationFailure(gate, 'Gateway restore returned no matching runtime_committed receipt');
     }
+    gate = await saveMutationReceipt(gate, { key: sessionKey, operationId: gate.operationId,
+      journalState: 'runtime_committed', sessionId: (result.entry as { sessionId: string }).sessionId,
+      ...(typeof result.previousSessionId === 'string' ? { previousSessionId: result.previousSessionId } : {}) });
+    gate = await onCommitted(gate);
     await clearSessionDeleteGate(gate.operationId);
-    return { success: true };
+    return mutationResult(gate);
   } catch (error) {
-    if (gate && isDefinitiveLifecycleMutationFailure(error, sessionKey, gate.operationId)) {
+    if (gate && !gate.runtimeReceipt && isDefinitiveLifecycleMutationFailure(error, sessionKey, gate.operationId)) {
       await clearSessionDeleteGate(gate.operationId);
+      return { success: false, error: String(error) };
     }
-    return {
-      success: false,
-      error: `Gateway restore did not return a committed receipt: ${error instanceof Error ? error.message : String(error)}`,
-    };
+    return mutationFailure(gate, error);
   }
 }
 
@@ -1791,6 +1870,7 @@ async function emptyArchive(payload: SessionPayload): Promise<{ success: boolean
 
 type GatewaySessionDeleteResult = {
   ok?: boolean;
+  key?: string;
   deleted?: boolean;
   archived?: string[];
   sessionId?: string;
@@ -1805,9 +1885,10 @@ const sessionDeleteRequests = new Map<string, Promise<SessionDeleteResult>>();
 async function deleteSessionViaRuntime(
   sessionKey: string,
   gatewayManager: GatewayManager,
-  terminalManager?: TerminalSessionManager,
+  onCommitted: SessionMutationCommitted,
   expectedOperationId?: unknown,
-): Promise<SessionDeleteResult> {
+  workspaceId?: string | null,
+): Promise<SessionMutationResult> {
   const parsed = parseSessionKey(sessionKey);
   if (!parsed) {
     return { success: false, error: `Invalid sessionKey: ${sessionKey}` };
@@ -1816,9 +1897,10 @@ async function deleteSessionViaRuntime(
   // Electron mirror gate: reuse a previously persisted operationId when the
   // previous RPC failed or its outcome is unknown. A fresh operationId is
   // generated and persisted before the first RPC for a session.
-  const gate = await persistSessionDeleteGate(sessionKey, parsed.agentId, expectedOperationId);
+  let gate = await persistSessionDeleteGate(sessionKey, parsed.agentId, expectedOperationId);
 
   try {
+    gate = await pinMutationWorkspace(gate, workspaceId);
     const result = await gatewayManager.rpc<GatewaySessionDeleteResult>(
       'sessions.delete',
       { key: sessionKey, operationId: gate.operationId, deleteTranscript: true },
@@ -1829,92 +1911,69 @@ async function deleteSessionViaRuntime(
         result && (result.error || result.message)
           ? String(result.error ?? result.message)
           : JSON.stringify(result ?? {});
-      return { success: false, error: errorText };
+      return mutationFailure(gate, errorText);
     }
 
     if (
       result.deleted !== true ||
+      result.key !== sessionKey ||
       result.operationId !== gate.operationId ||
       result.journalState !== 'runtime_committed' ||
       typeof result.sessionId !== 'string' ||
       !result.sessionId.trim()
     ) {
-      return {
-        success: false,
-        error: 'Gateway delete returned no matching runtime_committed receipt',
-      };
+      return mutationFailure(gate, 'Gateway delete returned no matching runtime_committed receipt');
     }
 
     if (
       gate.expectedSessionId &&
       gate.expectedSessionId !== result.sessionId
     ) {
-      return {
-        success: false,
-        error: `Gateway delete receipt belongs to session ${result.sessionId}, expected ${gate.expectedSessionId}`,
-      };
+      return mutationFailure(gate, `Gateway delete receipt belongs to session ${result.sessionId}, expected ${gate.expectedSessionId}`);
     }
 
-    let currentGate = gate;
-    if (!currentGate.expectedSessionId) {
-      currentGate = await updateSessionDeleteGate(gate.operationId, {
-        expectedSessionId: result.sessionId,
-      }) ?? currentGate;
-    }
-    if (currentGate.terminalClosed !== true) {
-      // Runtime cleanup already proved this exact generation. The Main pass
-      // closes keep_on_leave terminals only for an explicit session delete.
-      const terminals = await terminalManager?.reclaimForSession({
-        sessionKey,
-        workspaceId: (await getActiveWorkspaceProfile())?.id,
-        expectedSessionId: currentGate.expectedSessionId,
-        honorKeepOnLeave: false,
-        reason: 'session-delete',
-      });
-      if (terminals?.failed) return { success: false, error: `${terminals.failed} terminal owner(s) remain after cleanup` };
-      currentGate = await updateSessionDeleteGate(gate.operationId, {
-        terminalClosed: true,
-      }) ?? currentGate;
-    }
-    if (currentGate.localSweepCommitted !== true) {
+    gate = await saveMutationReceipt(gate, { key: sessionKey, operationId: gate.operationId,
+      journalState: 'runtime_committed', sessionId: result.sessionId });
+    if (gate.localSweepCommitted !== true) {
       const sweepResult = await deleteSession(sessionKey);
       const legacyStoreAbsent = !sweepResult.success && /Could not read sessions\.json:.*ENOENT/i.test(sweepResult.error ?? '');
       if (!sweepResult.success && !legacyStoreAbsent) {
-        return sweepResult;
+        return { ...await mutationFailure(gate, sweepResult.error ?? 'Local session sweep incomplete'),
+          partial: sweepResult.partial, remainingPaths: sweepResult.remainingPaths };
       }
-      await updateSessionDeleteGate(gate.operationId, {
+      gate = await saveMutationProgress(gate, {
         localSweepCommitted: true,
+        ...(legacyStoreAbsent ? { localSweepSkipped: 'legacy-store-absent' } : {}),
       });
     }
 
+    gate = await onCommitted(gate);
     await clearSessionDeleteGate(gate.operationId);
-    return {
-      success: true,
-      expectedSessionId: currentGate.expectedSessionId ?? result.sessionId,
-    };
+    return mutationResult(gate);
   } catch (error) {
     // RPC unknown (timeout, socket drop, reconnect): do not sweep, do not
     // release the mirror gate. The persisted operationId makes the next delete
     // a retry of the same operation.
-    return {
-      success: false,
-      error: `Gateway delete did not return a committed receipt: ${error instanceof Error ? error.message : String(error)}`,
-    };
+    return mutationFailure(gate, error);
   }
 }
 
 async function deleteSessionViaRuntimeSerialized(
   sessionKey: string,
   gatewayManager: GatewayManager,
-  terminalManager?: TerminalSessionManager,
+  onCommitted: SessionMutationCommitted,
   expectedOperationId?: unknown,
+  workspaceId?: string | null,
 ): Promise<SessionDeleteResult> {
+  if (expectedOperationId !== undefined && typeof expectedOperationId !== 'string') {
+    throw new Error('SESSION_MUTATION_CHANGED: invalid pending operation identity');
+  }
   const requestKey = JSON.stringify([sessionKey, expectedOperationId ?? null]);
   const previous = sessionDeleteRequests.get(requestKey);
   if (previous) return previous;
   const current = withSessionDeleteGateLock(
     sessionKey,
-    () => deleteSessionViaRuntime(sessionKey, gatewayManager, terminalManager, expectedOperationId),
+    () => deleteSessionViaRuntime(sessionKey, gatewayManager, onCommitted, expectedOperationId, workspaceId),
   );
   sessionDeleteRequests.set(requestKey, current);
   void current.then(() => {
@@ -1950,13 +2009,88 @@ export function createSessionsApi(ctx: {
     claimAdmission: claimSessionDelegationAdmission,
     commitAdmission: commitSessionDelegationAdmission,
   };
-  const observeCoordinatorLifecycle = async (event: WorkspaceCoordinatorLifecycleEvent) => {
-    if (!ctx.coordinatorLifecycle) return;
+  const observeCoordinatorLifecycle = async (event: WorkspaceCoordinatorLifecycleEvent, required = false) => {
+    if (!ctx.coordinatorLifecycle) {
+      if (required) throw new Error('Lifecycle coordinator owner unavailable');
+      return;
+    }
     try {
       await ctx.coordinatorLifecycle(event);
     } catch (error) {
       logger.warn('[session:coordinator-lifecycle]', { event: event.type, sessionKey: event.sessionKey, error: String(error) });
+      if (required) throw error;
     }
+  };
+  const finishMutation: SessionMutationCommitted = async (initial) => {
+    let gate = initial;
+    const receipt = gate.runtimeReceipt;
+    if (!receipt) throw new Error('Lifecycle Runtime receipt is missing');
+    if (!gate.coordinatorCommitted) {
+      const binding = gate.workspaceId ? await getPersistedCoordinatorBinding(gate.workspaceId, gate.sessionKey) : null;
+      if (binding) {
+        const generation = gate.operationKind === 'restore' ? receipt.previousSessionId : receipt.sessionId;
+        if (binding.sessionGeneration && binding.sessionGeneration !== generation && binding.sessionGeneration !== receipt.sessionId) {
+          throw new Error('SESSION_MUTATION_GENERATION_CHANGED: coordinator belongs to a different generation');
+        }
+        const settled = gate.operationKind === 'restore'
+          ? (binding.archiveRestorePolicy === 'none' ? binding.state === 'invalid' && binding.invalidationReason === 'archive-retention-none'
+            : binding.state === 'active' && binding.sessionGeneration === receipt.sessionId && !binding.invalidationReason)
+          : gate.operationKind === 'delete' ? binding.state === 'invalid' && binding.invalidationReason === 'session-deleted'
+            : binding.archiveRestorePolicy === 'restore' ? binding.state === 'paused' && binding.invalidationReason === 'archived-restore-requested'
+              : binding.state === 'invalid' && binding.invalidationReason === 'archived-retention-none';
+        if (!settled) {
+          await observeCoordinatorLifecycle({ type: gate.operationKind, workspaceId: gate.workspaceId, sessionKey: gate.sessionKey }, true);
+          if (gate.operationKind === 'restore' && binding.archiveRestorePolicy === 'restore') {
+            const restored = await getPersistedCoordinatorBinding(gate.workspaceId!, gate.sessionKey);
+            if (restored?.state !== 'active' || restored.sessionGeneration !== receipt.sessionId || restored.invalidationReason) {
+              throw new Error('Coordinator restore has not confirmed the restored generation');
+            }
+          }
+        }
+      }
+      gate = await saveMutationProgress(gate, { coordinatorCommitted: true });
+    }
+    if (gate.operationKind !== 'restore' && !gate.resourcesCommitted) {
+      const tracker = getResourceTracker();
+      if (gate.operationKind === 'delete') {
+        const browsers = getDefaultAgentBrowserService().list();
+        const ports = tracker.list().resources.filter(resource => resource.ownership === 'managed');
+        const terminals = ctx.terminalManager?.listAll() ?? [];
+        const scoped = [...browsers, ...ports, ...terminals].filter(item => item.sessionKey === gate.sessionKey);
+        if (scoped.some(item => !gate.workspaceId || item.workspaceId !== gate.workspaceId)) {
+          throw new Error('SESSION_MUTATION_SCOPE_UNRESOLVED: resource workspace does not match the original operation');
+        }
+      }
+      const resourceReclamation = await reclaimLongSessionOwnerResources({
+        action: gate.operationKind === 'delete' ? 'session-delete' : 'session-archive',
+        scope: { workspaceId: gate.workspaceId ?? '', sessionKey: gate.sessionKey, expectedSessionId: receipt.sessionId },
+        terminalManager: ctx.terminalManager,
+        resourceTracker: {
+          list: () => {
+            const snapshot = tracker.list();
+            return { ...snapshot, resources: snapshot.resources.filter(resource => gate.workspaceId
+              && resource.workspaceId === gate.workspaceId && resource.sessionKey === gate.sessionKey) };
+          },
+          stopResource: async (id) => {
+            const resource = tracker.list().resources.find(item => item.id === id);
+            if (!resource) return { success: true, resourceId: id };
+            if (!gate.workspaceId || resource.workspaceId !== gate.workspaceId || resource.sessionKey !== gate.sessionKey) {
+              return { success: false, error: 'Resource ownership changed before cleanup', resourceId: id };
+            }
+            return tracker.stopResource(id);
+          },
+        },
+        runtimeCleanupSettled: true,
+      });
+      gate = await saveMutationProgress(gate, {
+        resourceReclamationAttempts: [...(gate.resourceReclamationAttempts ?? []), resourceReclamation],
+        resourcesCommitted: !resourceReclamation.recoveryRequired,
+        ...(resourceReclamation.owners.some(owner => owner.kind === 'terminal' && owner.outcome !== 'failed' && owner.outcome !== 'unknown')
+          ? { terminalClosed: true } : {}),
+      });
+      if (resourceReclamation.recoveryRequired) throw new Error('Main resource cleanup requires recovery');
+    }
+    return gate;
   };
   return {
     delegate: async (payload: SessionDelegationPayload): Promise<SessionDelegationResult> => {
@@ -2019,20 +2153,17 @@ export function createSessionsApi(ctx: {
       const sessionKey = getSessionKey(payload);
       const workspaceId = getOptionalWorkspaceId(payload);
       if (payload.resumeOperationId !== undefined && !ctx.gatewayManager) return { success: false, error: 'Gateway manager unavailable' };
-      const result = ctx.gatewayManager
-        ? await deleteSessionViaRuntimeSerialized(sessionKey, ctx.gatewayManager, ctx.terminalManager, payload.resumeOperationId)
-        : await deleteSession(sessionKey);
+      if (ctx.gatewayManager) {
+        return deleteSessionViaRuntimeSerialized(sessionKey, ctx.gatewayManager, finishMutation, payload.resumeOperationId, workspaceId);
+      }
+      const result = await deleteSession(sessionKey);
       if (!result.success) return result;
       await observeCoordinatorLifecycle({ type: 'delete', workspaceId, sessionKey });
       const resourceReclamation = await reclaimLongSessionOwnerResources({
         action: 'session-delete',
-        scope: {
-          workspaceId: workspaceId ?? '',
-          sessionKey,
-          expectedSessionId: result.expectedSessionId ?? null,
-        },
+        scope: { workspaceId: workspaceId ?? '', sessionKey, expectedSessionId: result.expectedSessionId ?? null },
         terminalManager: ctx.terminalManager,
-        runtimeCleanupSettled: Boolean(ctx.gatewayManager),
+        runtimeCleanupSettled: false,
       }).catch((error) => {
         logger.warn('[resource-reclamation] delete pass failed', error);
         return undefined;
@@ -3210,51 +3341,16 @@ export function createSessionsApi(ctx: {
     archive: async (payload) => {
       const body = isRecord(payload) ? payload as SessionPayload : {};
       const sessionKey = getSessionKey(payload);
-      return withSessionDeleteGateLock(sessionKey, async () => {
-      const result = await archiveSession({
+      return withSessionDeleteGateLock(sessionKey, () => archiveSession({
         id: sessionKey,
         label: body.label,
         originalWorkspaceId: body.originalWorkspaceId,
         originalFolderId: body.originalFolderId,
         resumeOperationId: body.resumeOperationId,
-      }, ctx.gatewayManager);
-      if (result.success) {
-        await getResourceTracker().unregisterBySession(sessionKey).catch(() => 0);
-        await observeCoordinatorLifecycle({
-          type: 'archive',
-          workspaceId: typeof body.originalWorkspaceId === 'string' ? body.originalWorkspaceId : null,
-          sessionKey,
-        });
-        const resourceReclamation = await reclaimLongSessionOwnerResources({
-          action: 'session-archive',
-          scope: {
-            workspaceId: typeof body.originalWorkspaceId === 'string' ? body.originalWorkspaceId : '',
-            sessionKey,
-            expectedSessionId: result.sessionId ?? null,
-          },
-          terminalManager: ctx.terminalManager,
-          runtimeCleanupSettled: Boolean(ctx.gatewayManager),
-        }).catch((error) => {
-          logger.warn('[resource-reclamation] archive pass failed', error);
-          return undefined;
-        });
-        if (resourceReclamation?.recoveryRequired) {
-          logger.warn('[resource-reclamation] archive recovery required', {
-            recoveryId: resourceReclamation.recoveryId,
-            activeResidue: resourceReclamation.activeResidue,
-          });
-        }
-        return { ...result, ...(resourceReclamation ? { resourceReclamation } : {}) };
-      }
-      return result;
-      });
+      }, ctx.gatewayManager, finishMutation));
     },
-    restore: async (payload) => withSessionDeleteGateLock(getSessionKey(payload), async () => {
-      const sessionKey = getSessionKey(payload);
-      const result = await restoreSession({ id: sessionKey, resumeOperationId: payload.resumeOperationId }, ctx.gatewayManager);
-      if (result.success) await observeCoordinatorLifecycle({ type: 'restore', workspaceId: getOptionalWorkspaceId(payload), sessionKey });
-      return result;
-    }),
+    restore: async (payload) => withSessionDeleteGateLock(getSessionKey(payload), () =>
+      restoreSession(payload, ctx.gatewayManager, finishMutation)),
     permanentDelete: async (payload) => {
       const sessionKey = getSessionKey(payload);
       const workspaceId = getOptionalWorkspaceId(payload);

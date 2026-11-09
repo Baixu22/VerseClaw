@@ -4,6 +4,7 @@ import path from "node:path";
 import { getOpenClawConfigDir } from "../utils/paths";
 import { logger } from "../utils/logger";
 import { withFileLock, writeFileAtomic } from "../utils/atomic-write";
+import type { ReclaimReceipt } from "@shared/long-session-resource-reclamation";
 
 export type SessionLifecycleMutationKind = "delete" | "archive" | "restore";
 
@@ -16,6 +17,19 @@ export type SessionDeleteGateRecord = {
   expectedSessionId?: string;
   terminalClosed?: boolean;
   localSweepCommitted?: boolean;
+  /** Captured from the original workspace owner, never the active project on retry. */
+  workspaceId?: string | null;
+  runtimeReceipt?: {
+    key: string;
+    operationId: string;
+    journalState: 'runtime_committed';
+    sessionId: string;
+    previousSessionId?: string;
+  };
+  coordinatorCommitted?: boolean;
+  resourcesCommitted?: boolean;
+  resourceReclamationAttempts?: ReclaimReceipt[];
+  tailError?: string;
   /**
    * Why the local mirror sweep was skipped even though the Gateway commit
    * succeeded (for example: this runtime keeps no legacy sessions.json).
@@ -218,7 +232,9 @@ export async function persistSessionDeleteGate(
 export async function updateSessionDeleteGate(
   operationId: string,
   patch: Partial<Pick<SessionDeleteGateRecord,
-    'expectedSessionId' | 'terminalClosed' | 'localSweepCommitted' | 'localSweepSkipped'>>,
+    'expectedSessionId' | 'terminalClosed' | 'localSweepCommitted' | 'localSweepSkipped' |
+    'workspaceId' | 'runtimeReceipt' | 'coordinatorCommitted' | 'resourcesCommitted' |
+    'resourceReclamationAttempts' | 'tailError'>>,
 ): Promise<SessionDeleteGateRecord | undefined> {
   return withGateFileLock(async () => {
     const file = await readGateFile();
