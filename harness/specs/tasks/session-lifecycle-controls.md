@@ -82,6 +82,8 @@ ownedPaths:
   - tests/unit/chat-message.test.tsx
   - tests/unit/chat-input.test.tsx
   - tests/e2e/chat-context-pressure.spec.ts
+  - electron/gateway/session-task-scope-bridge.ts
+  - tests/unit/session-task-scope-bridge.test.ts
 touchedAreas:
   - docs/dev/session-worktree-storage.md
   - src/lib/host-api.ts
@@ -158,6 +160,8 @@ touchedAreas:
   - tests/unit/chat-message.test.tsx
   - tests/unit/chat-input.test.tsx
   - tests/e2e/chat-context-pressure.spec.ts
+  - electron/gateway/session-task-scope-bridge.ts
+  - tests/unit/session-task-scope-bridge.test.ts
 requiredRules:
   - identity-scope-boundary
   - renderer-main-boundary
