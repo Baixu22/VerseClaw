@@ -306,10 +306,10 @@ def run_scenarios(evidence: Evidence, native_root: Path, native_python: Path) ->
     controls = {
         "missed": {"passed": bool(missed.get("comparison", {}).get("missed_failures")), "missedFailures": len(missed.get("comparison", {}).get("missed_failures", [])), "commandIds": [made_missed["id"], missed_cmd["id"]], "evidence": [missed_report.relative_to(evidence.out).as_posix()]},
         "covered": {"passed": covered_cmd["exitCode"] == 0 and not covered_doc.get("comparison", {}).get("missed_failures"), "missedFailures": len(covered_doc.get("comparison", {}).get("missed_failures", [])), "commandIds": [made_covered["id"], covered_cmd["id"]], "evidence": [covered_report.relative_to(evidence.out).as_posix()]},
-        "full": {"passed": full.get("selection_scope") == "full" and full.get("runs", {}).get("full", {}).get("completeness") == "complete", "commandIds": [full_cmd["id"]], "evidence": [full_report.relative_to(evidence.out).as_posix()]},
+        "full": {"passed": full.get("mode") == "full" and full.get("comparison", {}).get("verdict") == "full-only" and full.get("runs", {}).get("full", {}).get("completeness") == "complete", "commandIds": [full_cmd["id"]], "evidence": [full_report.relative_to(evidence.out).as_posix()]},
     }
     flaky_case = {
-        "passed": bool(stability.get("summary", {}).get("instability") and indeterminate.get("comparison", {}).get("missed_failures_indeterminate")),
+        "passed": bool(stability.get("summary", {}).get("instability_detected") and indeterminate.get("comparison", {}).get("missed_failures_indeterminate")),
         "kind": "indeterminate",
         "commandIds": [made_flaky["id"], stability_cmd["id"], indeterminate_cmd["id"]],
         "evidence": [stability_report.relative_to(evidence.out).as_posix(), indeterminate_report.relative_to(evidence.out).as_posix()],
