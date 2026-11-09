@@ -31,7 +31,7 @@ async function setup(launch: Launch, info: TestInfo, providerPort?: number) {
   const page = await getStableWindow(app);
   if (providerPort) await configureSessionChainProvider(app, providerPort);
   const project = await createSessionChainProject(app, info.outputPath('workspace'), 'U5 lifecycle');
-  const neighbour = (await rpc<{ key: string }>(app, 'sessions.create', { agentId: 'main', label: 'U5 neighbour' })).key;
+  const neighbour = (await rpc<{ key: string }>(app, 'sessions.create', { agentId: 'main', parentSessionKey: project.sessionKey, label: 'U5 neighbour' })).key;
   for (const [key, draft] of [[project.sessionKey, 'U5 draft A'], [neighbour, 'U5 draft B']]) {
     await rpc(app, 'chat.inject', { sessionKey: key, message: `Transcript ${draft}`, label: 'agent fixture' });
     await hostInvoke(app, 'workspaces', 'saveState', { id: project.workspaceId, sessionKey: key, state: { draftInput: draft } });
@@ -84,7 +84,7 @@ async function select(c: Context, key: string) {
     return;
   }
   const row = c.page.getByTestId(`sidebar-session-${key}`);
-  await expect(row).toBeVisible({ timeout: 30_000 }); await row.click();
+  await expect(row).toBeVisible({ timeout: 30_000 }); await row.focus(); await row.press('Enter');
   await expect(row.locator('xpath=ancestor::div[contains(concat(" ",normalize-space(@class)," ")," sidebar-row ")][1]'))
     .toHaveAttribute('data-hook-selected', 'true');
 }

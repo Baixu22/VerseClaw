@@ -140,9 +140,12 @@ test('U5 compact and compactRange lose only committed replies; refresh reads cur
       const entryId = boundary ? getTranscriptEntryId(boundary) : null;
       summarizing = true; const providerBefore = llm.log.length; await arm(app, action);
       if (action === 'compact') {
-        await page.getByTestId('chat-composer-actions').click(); await page.getByTestId('chat-composer-action-compact').click();
+        await page.getByTestId('chat-composer-actions').focus(); await page.getByTestId('chat-composer-actions').press('Enter');
+        await expect(page.getByTestId('chat-composer-actions-menu')).toBeVisible();
+        await expect(page.getByTestId('chat-composer-action-compact')).toBeEnabled();
+        await page.getByTestId('chat-composer-action-compact').focus(); await page.getByTestId('chat-composer-action-compact').press('Enter');
         await page.getByTestId('chat-compaction-instructions').fill('Preserve U5_COMMIT_SUMMARY and exact context markers.');
-        await page.getByTestId('chat-compaction-confirm').click();
+        await page.getByTestId('chat-compaction-confirm').focus(); await page.getByTestId('chat-compaction-confirm').press('Enter');
         await expect.poll(async () => (await faultRead(app)).calls.some(row => row.action === action)
           || await page.getByTestId('prompt-cache-risk-toast').isVisible(), { timeout: 30_000 }).toBe(true);
         if (await page.getByTestId('prompt-cache-risk-toast').isVisible())
