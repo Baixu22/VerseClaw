@@ -10,6 +10,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
+import { closeOpenClawAgentDatabasesForTest } from "../../state/openclaw-agent-db.js";
 import path from "node:path";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { sessionsRunControlHandlers } from "./sessions.run-control.js";
@@ -82,6 +83,7 @@ describe("sessions.checkpointDiff gateway integration", () => {
 
   afterEach(() => {
     __resetWriteJournals();
+    closeOpenClawAgentDatabasesForTest();
     closeOpenClawStateDatabase();
     clearRuntimeConfigSnapshot();
     vi.unstubAllEnvs();
@@ -222,7 +224,7 @@ describe("sessions.checkpointDiff gateway integration", () => {
     const journalDir = journalDirFor(workspaceRoot, journalSessionId);
     return {
       file: readFileSync(path.join(workspaceRoot, "f.ts"), "utf8"),
-      store: readFileSync(storePath, "utf8"),
+      store: JSON.stringify(loadSessionStore(storePath, { skipCache: true })),
       journal: readdirSync(journalDir).sort().map((name) => [name, readFileSync(path.join(journalDir, name)).toString("hex")]),
     };
   }

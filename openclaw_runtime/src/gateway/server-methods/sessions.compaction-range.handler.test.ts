@@ -6,7 +6,9 @@
  * params it hands to the delegate.
  */
 import { mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { closeOpenClawStateDatabaseForTest } from "../../state/openclaw-state-db.js";
 import { tmpdir } from "node:os";
+import { closeOpenClawAgentDatabasesForTest } from "../../state/openclaw-agent-db.js";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { clearRuntimeConfigSnapshot, setRuntimeConfigSnapshot } from "../../config/io.js";
@@ -82,6 +84,8 @@ beforeEach(async () => {
 });
 
 afterEach(() => {
+  closeOpenClawAgentDatabasesForTest();
+  closeOpenClawStateDatabaseForTest();
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
   clearRuntimeConfigSnapshot();
@@ -103,7 +107,7 @@ async function invoke(method: "sessions.compact" | "sessions.compactRange" | "se
 
 function diskState() {
   return {
-    store: readFileSync(storePath, "utf8"), transcript: readFileSync(transcriptPath, "utf8"),
+    store: JSON.stringify(loadSessionStore(storePath, { skipCache: true })), transcript: readFileSync(transcriptPath, "utf8"),
     files: readdirSync(path.dirname(storePath)).sort(),
   };
 }
@@ -253,7 +257,7 @@ describe("U5 original compaction checkpoint owner", () => {
     writeFileSync(reviewerTranscript, readFileSync(transcriptPath));
     await saveSessionStore(mainStore, { global: { sessionId: "main-generation", updatedAt: Date.now() } });
     await saveSessionStore(reviewerStore, { global: { sessionId, sessionFile: reviewerTranscript, updatedAt: Date.now() } });
-    const mainBefore = readFileSync(mainStore, "utf8");
+    const mainBefore = JSON.stringify(loadSessionStore(mainStore, { skipCache: true }));
     const snapshot = await captureCompactionCheckpointSnapshotAsync({ sessionFile: reviewerTranscript });
     const checkpoint = await persistSessionCompactionCheckpoint({
       cfg, sessionKey: "global", agentId: "reviewer", sessionId, reason: "manual", snapshot: snapshot!,
@@ -266,7 +270,7 @@ describe("U5 original compaction checkpoint owner", () => {
     });
     expect(calls).toMatchObject([{ ok: true, payload: { key: "global" } }]);
     expect(loadSessionStore(reviewerStore).global?.sessionId).not.toBe(sessionId);
-    expect(readFileSync(mainStore, "utf8")).toBe(mainBefore);
+    expect(JSON.stringify(loadSessionStore(mainStore, { skipCache: true }))).toBe(mainBefore);
     expect(effectMocks.changed).toHaveBeenLastCalledWith(expect.anything(), expect.objectContaining({
       sessionKey: "global", agentId: "reviewer", reason: "checkpoint-restore",
     }));
