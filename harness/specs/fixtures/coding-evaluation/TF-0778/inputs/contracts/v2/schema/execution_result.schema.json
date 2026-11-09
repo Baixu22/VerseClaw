@@ -1,0 +1,119 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://smart-test-sorter/contracts/vg-sts/v2/schema/execution_result.schema.json",
+  "title": "VG-STS v2 DRAFT Execution Result",
+  "description": "【2.0 草案，非权威】按计划执行 pytest 的结果。相对 1.1 的关键变化：结果带自己的**执行身份**与完整内容身份，并在执行前后各自记录观察结果——『执行中失效』与『未完成』因此可以分别表达，不必挤在同一个字段里。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocol_version",
+    "product_version",
+    "request_id",
+    "plan_id",
+    "target_identity",
+    "content_identity",
+    "execution_identity",
+    "selection_scope",
+    "completeness",
+    "validity",
+    "executed",
+    "outcomes",
+    "raw_exit_code"
+  ],
+  "properties": {
+    "protocol_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$" },
+    "product_version": { "type": "string", "minLength": 1 },
+    "request_id": { "type": "string", "minLength": 1 },
+    "plan_id": { "type": "string", "minLength": 1 },
+    "target_identity": {
+      "description": "展示用短标签，必须等于计划里的 target_identity。",
+      "type": "string",
+      "minLength": 1
+    },
+    "content_identity": {
+      "description": "【2.0 新增，必填】这次执行实际跑在哪个内容身份上（不是『计划声称』的那个）。",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "value", "manifest_digest"],
+      "properties": {
+        "kind": { "type": "string", "enum": ["git-tree", "git-commit", "worktree-content"] },
+        "value": { "type": "string", "minLength": 7 },
+        "manifest_digest": { "type": "string", "minLength": 1 }
+      }
+    },
+    "execution_identity": {
+      "description": "【2.0 新增】执行身份**独立于**请求/计划身份：同一次请求可以由不同进程/环境执行，接收方要能分辨。",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["execution_id", "interpreter", "started_at"],
+      "properties": {
+        "execution_id": { "type": "string", "minLength": 1 },
+        "interpreter": { "type": "string", "minLength": 1 },
+        "started_at": { "type": "string", "minLength": 1 },
+        "environment_digest": { "type": "string", "minLength": 1 }
+      }
+    },
+    "environment_identity": {
+      "description": "【2.0 新增】这次执行的**环境身份**（与内容身份分开：同一份内容在不同解释器/依赖下行为可以不同）。若 plan 记了 `expected_environment_identity`，同名字段必须与之一致（R12）。",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "python": { "type": "string", "minLength": 1 },
+        "platform": { "type": "string", "minLength": 1 },
+        "dependencies_digest": { "type": "string", "minLength": 1 }
+      }
+    },
+    "observations": {
+      "description": "【2.0 新增】执行前后的实际观察。任一为 `unconfirmed`/`mismatch` ⇒ 不得声称 validity=valid。",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["before_execution", "after_execution"],
+      "properties": {
+        "before_execution": { "type": "string", "enum": ["confirmed", "unconfirmed", "mismatch"] },
+        "after_execution": { "type": "string", "enum": ["confirmed", "unconfirmed", "mismatch"] }
+      }
+    },
+    "selection_scope": { "type": "string", "enum": ["selected", "full"] },
+    "completeness": { "type": "string", "enum": ["complete", "incomplete"] },
+    "validity": { "type": "string", "enum": ["valid", "invalid"] },
+    "executed": { "type": "array", "items": { "$ref": "#/$defs/nodeid" } },
+    "not_executed": { "type": "array", "items": { "$ref": "#/$defs/nodeid" } },
+    "outcomes": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["outcome"],
+        "properties": {
+          "outcome": { "type": "string", "enum": ["passed", "failed", "error", "skipped"] },
+          "phases": { "type": "array", "items": { "type": "string" } },
+          "duration_s": { "type": "number" }
+        }
+      }
+    },
+    "raw_exit_code": { "type": "integer" },
+    "duration_s": { "type": "number" },
+    "failure_categories": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "assertion": { "type": "integer" },
+        "collection": { "type": "integer" },
+        "environment": { "type": "integer" },
+        "cancelled": { "type": "integer" }
+      }
+    },
+    "invalid_reason": { "type": "string", "minLength": 1 },
+    "incomplete_reason": { "type": "string", "minLength": 1 },
+    "isolated_process": {
+      "description": "这条臂是否在独立解释器进程里执行（对拍两臂的独立性是可核事实，不是口头承诺）。",
+      "type": "boolean"
+    }
+  },
+  "$defs": {
+    "nodeid": {
+      "type": "string",
+      "pattern": "^.+::.+$"
+    }
+  }
+}

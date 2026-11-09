@@ -1,0 +1,25 @@
+{
+  "capabilities": [
+    "selection"
+  ],
+  "identities": {
+    "code_oid": "ff63114aeee87a189252c051bcd2667428aee8f4",
+    "config_digest": "0c634dd2d3b34b3955fb900d022d608d3f4b363d6383dcc224c1953bc0be3cb4"
+  },
+  "mode": "candidate",
+  "product_version": "versegit/0.1.0",
+  "protocol_version": "1.1",
+  "repo": {
+    "path": "D:/tmp/vg sts installed 0t231om7/target"
+  },
+  "request_id": "vg-69bf1c1028f0c891eeb4f0c3e4963c5754098d18",
+  "target": {
+    "base_oid": "8640f63182f2ebe63a63a78982446d1008b8ff7d",
+    "candidate_commit_oid": "69bf1c1028f0c891eeb4f0c3e4963c5754098d18",
+    "candidate_dir": "D:/tmp/vg sts installed 0t231om7/candidate",
+    "candidate_tree_oid": "ff63114aeee87a189252c051bcd2667428aee8f4",
+    "includes_candidate_extra_changes": false,
+    "ours_oid": "35b73a886b3329e2f1819c010264cfa4592256a1",
+    "theirs_oid": "34020923fd52433ba4a0b6a2d7c88ad3b03bad8d"
+  }
+}

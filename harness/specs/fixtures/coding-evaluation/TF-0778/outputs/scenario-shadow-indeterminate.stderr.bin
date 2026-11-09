@@ -1,0 +1,10 @@
+[shadow] 稳定性证据：2 条（来自 1 份报告），待按目标版本核对
+[shadow] 计划就绪：target=worktree@2a470fa3dd+dirty:1 plan=plan-a7c36c0b7fbaaf1d collected=4 selected=1 scope=selected
+[shadow] 按计划跑选中集……
+[shadow] 请求未声明环境身份（1.1: identities.env_id / 2.0: identities.environment_identity）：环境身份未核对
+[shadow] 在独立解释器进程里执行这条臂（与另一条臂不共享模块/插件状态）
+[shadow] 跑全量对拍……
+[shadow] 请求未声明环境身份（1.1: identities.env_id / 2.0: identities.environment_identity）：环境身份未核对
+[shadow] 在独立解释器进程里执行这条臂（与另一条臂不共享模块/插件状态）
+[shadow] 已写出 D:\tmp\tf0778-final-20261110-015510\scenarios\indeterminate.json
+[shadow] verdict=missed-failures-indeterminate target=worktree@2a470fa3dd+dirty:1 collected=4 selected=1 漏选=0 判不了(不稳定)=2 耗时 选中 0.73s / 全量 1.08s

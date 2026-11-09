@@ -1,0 +1,101 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://smart-test-sorter/contracts/vg-sts/v1/test_plan.schema.json",
+  "title": "VG-STS v1 Test Plan",
+  "description": "STS 生成的可解释测试计划。绑定 request/target 与规则身份；含成功收集的测试全集、选中/排除集合、确定执行顺序、逐项理由、回退原因与风险采用/忽略原因。计划是数据，不含要求宿主直接执行的任意 shell 字符串。选择范围(selected/full)、执行由结果对象承担——本对象只描述'打算测什么、为什么'。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocol_version",
+    "product_version",
+    "request_id",
+    "plan_id",
+    "target_identity",
+    "selection_scope",
+    "collected",
+    "selected",
+    "excluded",
+    "order",
+    "reasons"
+  ],
+  "properties": {
+    "protocol_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$" },
+    "product_version": { "type": "string", "minLength": 1 },
+    "request_id": {
+      "description": "绑定回产生本计划的请求。",
+      "type": "string",
+      "minLength": 1
+    },
+    "plan_id": { "type": "string", "minLength": 1 },
+    "target_identity": {
+      "description": "计划所绑定的目标身份指纹（如 worktree@<head>+dirty:n / commit <oid> / candidate <tree>）。报告期与分析期须一致。",
+      "type": "string",
+      "minLength": 1
+    },
+    "rules_id": {
+      "description": "选择/排序规则身份，便于复现同一决策。",
+      "type": "string"
+    },
+    "selection_scope": {
+      "description": "selected=只跑受影响子集；full=全量（回退或显式）。full 时 selected 必须等于 collected 全集（见语义规则）。",
+      "type": "string",
+      "enum": ["selected", "full"]
+    },
+    "collected": {
+      "description": "本次成功收集到的测试全集（准确 pytest nodeid，保留参数化后缀与相对路径）。选择/排除都相对它可核对。",
+      "type": "array",
+      "items": { "$ref": "#/$defs/nodeid" }
+    },
+    "selected": {
+      "description": "计划执行的测试集合（collected 的子集）。",
+      "type": "array",
+      "items": { "$ref": "#/$defs/nodeid" }
+    },
+    "excluded": {
+      "description": "被剔除、计划不跑的测试集合（collected 的子集）。selected 与 excluded 不相交、并集⊆collected。",
+      "type": "array",
+      "items": { "$ref": "#/$defs/nodeid" }
+    },
+    "order": {
+      "description": "确定执行顺序，是 selected 的一个排列。固定输入下稳定可重放。",
+      "type": "array",
+      "items": { "$ref": "#/$defs/nodeid" }
+    },
+    "reasons": {
+      "description": "逐项选择/排除理由，key 为 nodeid。",
+      "type": "object"
+    },
+    "fallback": {
+      "description": "回退全量时的原因列表；非空 ⇒ selection_scope 必须为 full。",
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "risk_decisions": {
+      "description": "对每条风险提示的采用/忽略原因（有效/缺失/失配/过期）。忽略风险不得删掉基础选择要求或覆盖全量回退。风险提示可能无符号（仅 path），因此 symbol 与 path 至少给一个以定位被裁定的提示。",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["decision", "reason"],
+        "properties": {
+          "symbol": { "type": "string", "minLength": 1 },
+          "path": { "type": "string", "minLength": 1 },
+          "decision": { "type": "string", "enum": ["adopted", "ignored"] },
+          "reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "supported_run_modes": {
+      "description": "本计划支持的运行方式（如 pytest-nodeids）。",
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "nodeid": {
+      "description": "pytest 实际收集的完整 nodeid，保留参数化后缀 [..]、大小写与相对路径。不能用去参数化的排序分组键充当执行身份。",
+      "type": "string",
+      "pattern": "^.+::.+$"
+    }
+  }
+}

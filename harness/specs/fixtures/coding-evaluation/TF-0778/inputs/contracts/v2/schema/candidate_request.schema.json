@@ -1,0 +1,222 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://smart-test-sorter/contracts/vg-sts/v2/schema/candidate_request.schema.json",
+  "title": "VG-STS v2 DRAFT Candidate Request",
+  "description": "【2.0 草案，非权威】VG -> STS 的一次性候选请求。相对 1.1 的关键变化：请求贯穿**完整内容身份**（不再只靠 7 位 candidate 标签），并把『内容身份』与『环境身份』分开。草案只用于双方对口径，未发布、未 vendor、未被任何生产路径消费。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocol_version",
+    "product_version",
+    "request_id",
+    "mode",
+    "repo",
+    "target",
+    "identities",
+    "content_manifest"
+  ],
+  "properties": {
+    "protocol_version": {
+      "description": "契约协议版本。2.0 是**破坏性**升级：新增必填的 content_manifest 与更严的拒绝语义。",
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+$"
+    },
+    "product_version": { "type": "string", "minLength": 1 },
+    "capabilities": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "request_id": { "type": "string", "minLength": 1 },
+    "mode": { "type": "string", "enum": ["workspace", "commit", "candidate"] },
+    "repo": { "$ref": "#/$defs/repo" },
+    "target": { "$ref": "#/$defs/target" },
+    "identities": { "$ref": "#/$defs/identities" },
+    "content_manifest": { "$ref": "#/$defs/content_manifest" },
+    "dependency_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "snapshot_id": { "type": "string", "minLength": 1 },
+        "created_at": { "type": "string", "minLength": 1 },
+        "stale": { "type": "boolean" }
+      }
+    },
+    "risk": { "$ref": "#/$defs/risk" }
+  },
+  "$defs": {
+    "oid": {
+      "description": "Git 对象 ID（全 40 位或缩写 >=7 位十六进制）。",
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{7,64}$"
+    },
+    "digest": {
+      "description": "内容摘要，**必须带算法前缀**（如 sha256:<64 位小写十六进制>）。只给裸摘要无法判断算法，两版之间就不可比。",
+      "type": "string",
+      "pattern": "^(sha256|sha1|blake2b):[0-9a-f]{8,128}$"
+    },
+    "repo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path"],
+      "properties": {
+        "path": {
+          "description": "仓库定位路径。**仅作定位**：2.0 要求任何跨方比较都用内容摘要，不用绝对路径。",
+          "type": "string",
+          "minLength": 1
+        },
+        "name": { "type": "string" }
+      }
+    },
+    "target": {
+      "description": "变更目标身份。candidate 模式必须给 candidate_dir + base/ours/theirs；完整内容身份另由 content_manifest 承担。",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "candidate_dir": { "type": "string", "minLength": 1 },
+        "base_oid": { "$ref": "#/$defs/oid" },
+        "ours_oid": { "$ref": "#/$defs/oid" },
+        "theirs_oid": { "$ref": "#/$defs/oid" },
+        "candidate_tree_oid": { "$ref": "#/$defs/oid" },
+        "candidate_commit_oid": { "$ref": "#/$defs/oid" },
+        "commit_oid": { "$ref": "#/$defs/oid" },
+        "head_oid": { "$ref": "#/$defs/oid" },
+        "includes_candidate_extra_changes": { "type": "boolean" }
+      }
+    },
+    "identities": {
+      "description": "【2.0 变化】区分**内容身份**与**环境身份**。内容身份不再只是一个短标签：target 给完整 OID，content_manifest 给完整输入清单与摘要；环境身份在这里。",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["content_identity"],
+      "properties": {
+        "content_identity": {
+          "description": "内容身份：**完整**对象 ID 或内容摘要（不是 7 位标签）。`label` 只作展示。",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "value"],
+          "properties": {
+            "kind": { "type": "string", "enum": ["git-tree", "git-commit", "worktree-content"] },
+            "value": { "type": "string", "minLength": 7 },
+            "label": {
+              "description": "展示用短标签（如 candidate@770e8e0）。**不得**作为唯一的内容比较依据。",
+              "type": "string"
+            }
+          }
+        },
+        "environment_identity": {
+          "description": "环境身份：解释器、依赖、插件、执行配置。与内容身份**分开**——内容一致不等于环境一致，反之亦然。",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["python", "platform", "dependencies_digest"],
+          "properties": {
+            "python": { "type": "string", "minLength": 1 },
+            "platform": { "type": "string", "minLength": 1 },
+            "dependencies_digest": { "$ref": "#/$defs/digest" },
+            "plugins": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+            "config_digest": { "$ref": "#/$defs/digest" },
+            "external_services": {
+              "description": "外部服务/数据库**必须显式声明隔离方式**：一个摘要声称不了观察到了全部外部世界。",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["name", "isolation"],
+                "properties": {
+                  "name": { "type": "string", "minLength": 1 },
+                  "isolation": { "type": "string", "minLength": 1 }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "content_manifest": {
+      "description": "【2.0 新增，必填】真正被当作输入的**内容清单**：源码/测试/配置/数据等，全部带摘要。`additionalProperties:false` 的对象承担不了『任意路径 → 摘要』，所以这里用数组 + 规范性规则。",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "entries", "exclusion_policy_id", "line_endings"],
+      "properties": {
+        "algorithm": {
+          "description": "摘要算法版本（清单里所有摘要都用它）。",
+          "type": "string",
+          "minLength": 1
+        },
+        "entries": {
+          "description": "逐文件内容身份。**所有被跟踪输入默认包含**；`role` 说明它是什么输入。",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "digest", "role"],
+            "properties": {
+              "path": {
+                "description": "**规范化**的仓库相对路径（POSIX 分隔符、不做大小写折叠、不含 `..` 上跳）。",
+                "type": "string",
+                "pattern": "^(?!/)(?!.*\\.\\./).+$"
+              },
+              "digest": { "$ref": "#/$defs/digest" },
+              "role": {
+                "description": "这份输入在测试行为里的角色。配置/数据必须能出现在这里，否则它们的变化无法被察觉。",
+                "type": "string",
+                "enum": ["source", "test", "config", "data", "other"]
+              },
+              "generated": {
+                "description": "是否为生成物（生成物只有在被显式声明时才允许排除）。",
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "exclusion_policy_id": {
+          "description": "**版本化**的排除规则身份（例如 noise-dirs/v2）。git ignore ≠ 不影响测试：被忽略但会被读到的覆盖文件必须能被表达；允许排除什么，由这个 id 指明的规则说了算。",
+          "type": "string",
+          "minLength": 1
+        },
+        "line_endings": {
+          "description": "换行归一化口径：摘要是否先把 CRLF 归一成 LF 再算。**必须显式声明**，否则跨平台摘要不可比。",
+          "type": "string",
+          "enum": ["normalized-lf", "as-is"]
+        },
+        "symlinks": {
+          "description": "符号链接的行为。",
+          "type": "string",
+          "enum": ["follow", "record-target", "reject"]
+        },
+        "submodules": {
+          "description": "子模块的行为。`reject` 表示不支持时明确拒绝，而不是静默按空目录处理。",
+          "type": "string",
+          "enum": ["recurse", "record-commit", "reject"]
+        },
+        "unreadable_files": {
+          "description": "不可读文件的行为。`unconfirmed` 表示如实记为未确认，**不得**当作内容一致。",
+          "type": "string",
+          "enum": ["reject", "unconfirmed"]
+        }
+      }
+    },
+    "risk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_version", "hints"],
+      "properties": {
+        "source_version": { "type": "string", "minLength": 1 },
+        "hints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path"],
+            "properties": {
+              "symbol": { "type": "string", "minLength": 1 },
+              "path": { "type": "string", "minLength": 1 },
+              "score": { "type": "number" },
+              "oid": { "$ref": "#/$defs/oid" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,6 @@
+[shadow] 计划就绪：target=worktree@7faa5ca5bd+dirty:2 plan=plan-e51be90a9849e24c collected=3 selected=2 scope=selected
+[shadow] 跑全量对拍……
+[shadow] 请求未声明环境身份（1.1: identities.env_id / 2.0: identities.environment_identity）：环境身份未核对
+[shadow] 在独立解释器进程里执行这条臂（与另一条臂不共享模块/插件状态）
+[shadow] 已写出 D:\tmp\tf0778-final-20261110-015510\scenarios\full.json
+[shadow] verdict=full-only target=worktree@7faa5ca5bd+dirty:2 collected=3 selected=2 漏选=0 判不了(不稳定)=0 耗时 选中 0.00s / 全量 1.27s

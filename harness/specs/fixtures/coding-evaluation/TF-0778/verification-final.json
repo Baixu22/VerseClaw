@@ -1,0 +1,67 @@
+{
+  "ok": true,
+  "issues": [],
+  "acceptanceEligible": true,
+  "reportDigest": "c32ffc2047754b64f76656681eeaf20e3b7ee47ef63cecf461173b0ee2a03d86",
+  "negativeChecks": [
+    {
+      "case": "delete-negative-case",
+      "rejected": true,
+      "issues": [
+        "negative case not handled: timeout",
+        "negative case kind mismatch: timeout",
+        "negative command binding missing: timeout",
+        "negative artifact binding missing: timeout"
+      ]
+    },
+    {
+      "case": "wrong-candidate",
+      "rejected": true,
+      "issues": [
+        "candidate commit mismatch"
+      ]
+    },
+    {
+      "case": "artifact-digest-tamper",
+      "rejected": true,
+      "issues": [
+        "artifact digest mismatch: benchmarks/httpx/full-cold-1.json.gz"
+      ]
+    },
+    {
+      "case": "flaky-as-pass",
+      "rejected": true,
+      "issues": [
+        "negative case not handled: flaky"
+      ]
+    },
+    {
+      "case": "selected-upgraded",
+      "rejected": true,
+      "issues": [
+        "selected upgraded to full"
+      ]
+    },
+    {
+      "case": "missing-benchmark-arm",
+      "rejected": true,
+      "issues": [
+        "httpx trial count mismatch",
+        "httpx/full/warm sample count too small",
+        "httpx aggregate mismatch: full_warm.samples",
+        "httpx aggregate mismatch: full_warm.wallSecondsMean",
+        "httpx aggregate mismatch: full_warm.peakTreeRssBytesMean",
+        "httpx aggregate mismatch: samples",
+        "httpx aggregate mismatch: wallSecondsTotal"
+      ]
+    },
+    {
+      "case": "self-consistent-forgery",
+      "rejected": true,
+      "issues": [
+        "canonical report digest mismatch",
+        "summary missed failure rate is not zero"
+      ]
+    }
+  ]
+}

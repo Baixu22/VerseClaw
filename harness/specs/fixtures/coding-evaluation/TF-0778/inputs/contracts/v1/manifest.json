@@ -1,0 +1,75 @@
+{
+  "contract": "vg-sts",
+  "protocol_version": "1.1",
+  "product": "smart-test-sorter",
+  "product_version": "0.1.0",
+  "produced_by": "STS:TF-0026",
+  "consumer": "VG:TF-0168",
+  "source_commit": null,
+  "version_policy": "digests-authoritative",
+  "source_note": "版本口径：以下方 digests 为唯一权威内容口径（29 条 = README 1 + schema 4 + valid 9 + invalid 10 + pairs 5；v1.0 时为 18 条）。契约文件由 STS 单独提交 contracts/ 目录引入；该提交 oid 作便利指针在交接回信中给出，但 manifest 无法自引用其所在提交的 hash（manifest 亦不在自身 digests 内），故 source_commit 置 null 并显式声明 digests 口径。",
+  "objects": ["candidate_request", "test_plan", "execution_result", "plan_refusal"],
+  "transport": {
+    "encoding": "utf-8-json-file",
+    "note": "首版用 UTF-8 JSON 文件（request/plan/result/refusal 各一个文件）；机器 JSON 与人类日志分离。",
+    "request_entry": {
+      "argv": ["python", "-m", "smart_sorter.contracts", "validate", "<file>", "--as", "request|plan|result|refusal"],
+      "bind_argv": ["python", "-m", "smart_sorter.contracts", "bind", "--request", "<req>", "--plan", "<plan>", "--result", "<result?>"],
+      "note": "校验入口。候选请求→计划生成入口由 STS:TF-0027 交付（本节点只固定契约与校验）。bind 子命令做跨文档绑定核对（错候选）。",
+      "stdout": "机器可读结论 JSON：{ok, kind, errors}",
+      "stderr": "人类日志",
+      "exit_codes": { "0": "通过", "2": "用法或输入错误", "3": "校验失败" }
+    },
+    "interpreter_selection": "由宿主(VG)显式指定解释器/模块入口，不依赖开发机隐式 PATH。"
+  },
+  "compatibility": {
+    "supported_protocol_versions": ["1.0", "1.1"],
+    "unknown_version_policy": "拒绝，不静默猜测兼容；破坏性字段/语义变化必须升级 protocol_version 并更新双方样例。1.0→1.1 为向后兼容放宽/新增，1.0 文档在 1.1 校验器下仍合法。",
+    "v1_1_changes": [
+      "risk.hints[].symbol 由必填改为可选（path 仍必填）",
+      "新增 plan_refusal 对象（无法规划带内回执）",
+      "candidate 模式必须给 candidate_tree_oid/candidate_commit_oid 之一且不带 worktree_content_digest",
+      "execution_result: completeness=complete ⇒ not_executed 为空",
+      "test_plan.risk_decisions[].symbol 改可选，symbol/path 至少给一个",
+      "新增 validate_binding / bind 子命令做跨文档绑定核对"
+    ]
+  },
+  "digests": {
+    "algorithm": "sha256",
+    "README.md": "sha256:93c6d81e35013bff3df40df7578e9a4fbea369eef78fcd7af5fae9e45f2ed5e6",
+    "schema/candidate_request.schema.json": "sha256:63a3dc99795d83f58a44fb06c03455b702ebc92c3f37e07b699706eb924d486b",
+    "schema/execution_result.schema.json": "sha256:473d7905718c663f58e1f26b34deb65a5ca81748404366a3fef3eb969bb24136",
+    "schema/plan_refusal.schema.json": "sha256:30d3500e8bbaac4599a521974999a2dea0dfa0b2ff58c363d904e3be277747dc",
+    "schema/test_plan.schema.json": "sha256:41505c8d5bdaaea4182fa2722adf944949155e68fdd194fa48e5cb5e440d904c",
+    "samples/valid/plan_full_fallback.json": "sha256:b40c646b5d486e87c34c74a17760a6d9c65ea063e4e73b58ff67f31ee527c877",
+    "samples/valid/plan_risk_decisions_stale.json": "sha256:6dab97d5aba88a1d072fee2924e4d7ddd18370a661d36aa4eaaa43b5432b8700",
+    "samples/valid/plan_selected_parametrized.json": "sha256:526758e934996dbcd1e206206298e2f666e854089e5e5ba2438b5d4a41a36b8a",
+    "samples/valid/refusal_collection_error.json": "sha256:5d0738c4a358c37120f95aca7c2527b29e3397ae3b86bc6472a82c55760a25da",
+    "samples/valid/request_candidate_risk_cjk_path.json": "sha256:28ad4cbecdf78473e4195b2f2ffb91a4c3474b520ef35d990ae98556738e93c7",
+    "samples/valid/request_commit_minimal.json": "sha256:77e4bacf4b75ab6d08a05f66c86fee4a4484679a9b15ad4af3304968066561e8",
+    "samples/valid/request_workspace_norisk.json": "sha256:faf7bcc1648add22de2796dee9bcf048876cf15a9b66200bb71eb3b4edef0d33",
+    "samples/valid/result_complete_pass.json": "sha256:d03692a185398f37d2a7415fabee4a84b9a9d32958be24892cd31a2ebe2eb46a",
+    "samples/valid/result_incomplete_budget_abort.json": "sha256:8e6d3f636b7f6dda06145a07bd6e3bf3c6d0f05501b3f5ceff2624c5cfe55f40",
+    "samples/invalid/plan_empty_selection.json": "sha256:b8dd464d0da1ca5426a612d67ce34c70dd4cd2122fe536f54b7e6eb3f626c69e",
+    "samples/invalid/plan_full_scope_not_all.json": "sha256:a9a976c894e6747f7805b167efeb460912fdfb24f58bbfd4744c209a6e0aee13",
+    "samples/invalid/refusal_full_without_confirm.json": "sha256:a77277e09245f7664b3894c7ed2584e51d46424f16556f18e8729b0bc7ce9cdf",
+    "samples/invalid/request_candidate_missing_theirs.json": "sha256:f04b780647871ebf273ad73c795dc15f3933a7d94edd3820537da7280c470233",
+    "samples/invalid/request_missing_code_oid.json": "sha256:f18086f8105ccd557bbd1c77a55a4c0154cd0101eccb1e7d5ead44e456b98de9",
+    "samples/invalid/request_unknown_protocol_version.json": "sha256:53d325c680016acde4eb92d4b63ecdd97d729d8ff507f037a627f4b763ab6c33",
+    "samples/invalid/result_complete_but_not_executed.json": "sha256:0bc565d030d7138119ddf469021fee43294d74492aa148fd13dee45aed860202",
+    "samples/invalid/result_exit0_but_failure.json": "sha256:6688fa5a73897d9475ffea38eae1a6dc42044de43bfe1616712795816a822641",
+    "samples/invalid/result_incomplete_missing_reason.json": "sha256:a1c42bcac85905b2005bac3d4a19f06ce9971c325f7789b1a6b4069193830fe4",
+    "samples/invalid/result_zero_exec_marked_pass.json": "sha256:832832cfb510fe7f065ddb42da22c74c27eb969d3cdc5b2549bb7db0c58f211e",
+    "samples/pairs/valid/matched/request.json": "sha256:234219f6744d47d8dd8fd9817ce1c36818bdfcfb56c20ee4a2ea0aa788a84a02",
+    "samples/pairs/valid/matched/plan.json": "sha256:3cc3cddf6caeba84244ebc9890ed49c5b05e55bf6a7bbaa2a1651ccc8e0664a9",
+    "samples/pairs/valid/matched/result.json": "sha256:ee4cfc16f01dbbc0a2623dda92fa585eb3d229a6a97378046bcd8c9af82dff05",
+    "samples/pairs/invalid/wrong_candidate/request.json": "sha256:7d421264cce299895ff792f7e9e4741672376c213feb205ad7bdd0c889be3f31",
+    "samples/pairs/invalid/wrong_candidate/plan.json": "sha256:c0c59f3b747a3f499b65d65934167017a9d16c6727441b73e497ca6f6b89fef8"
+  },
+  "replay": {
+    "validate_all_samples": "python -m pytest tests/test_contracts.py -q",
+    "validate_one": "python -m smart_sorter.contracts validate contracts/vg-sts/v1/samples/valid/request_workspace_norisk.json --as request",
+    "bind_matched": "python -m smart_sorter.contracts bind --request contracts/vg-sts/v1/samples/pairs/valid/matched/request.json --plan contracts/vg-sts/v1/samples/pairs/valid/matched/plan.json --result contracts/vg-sts/v1/samples/pairs/valid/matched/result.json"
+  }
+}
+

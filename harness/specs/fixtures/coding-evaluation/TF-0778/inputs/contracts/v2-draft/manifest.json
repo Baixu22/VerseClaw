@@ -1,0 +1,90 @@
+{
+  "contract": "vg-sts",
+  "protocol_version": "2.0",
+  "product": "smart-test-sorter",
+  "product_version": "0.1.0",
+  "produced_by": "STS:TF-0040",
+  "consumer": "VG（待接收：接收步骤见 README §5）",
+  "source_commit": null,
+  "version_policy": "digests-authoritative",
+  "status": "draft",
+  "status_note": "**这是草案，不是权威契约**。权威仍是 contracts/vg-sts/v1/ + 其 manifest 的 digests。本目录未被任何生产路径消费（产品入口仍只产出 1.1 文档），也不随 wheel/sdist 发布。版本号 2.0 是提议，最终由权威方定稿。",
+  "source_note": "覆盖范围：以下方 digests 为唯一权威内容口径（30 条 = README 1 + schema 4 + valid 4 + invalid 7 + pairs 14）。manifest 自身与生成脚本不在覆盖内（前者无法自摘要；后者不是契约内容）。摘要由 make_manifest.py 现算，不手写。",
+  "objects": [
+    "candidate_request",
+    "test_plan",
+    "execution_result",
+    "plan_refusal"
+  ],
+  "requested_protocol_version": "2.0",
+  "compatibility": {
+    "supported_protocol_versions_if_adopted": [
+      "2.0"
+    ],
+    "v1_1_support": "1.1 保留**明确支持范围**：它仍是权威版本，本草案不改变其任何文件或语义。升级到 2.0 会破坏旧生产者（新增必填字段），因此必须作为新版本接受，且**旧文档缺的新字段不得默认补成『有效』**——不支持就显式拒绝。",
+    "why_breaking": [
+      "request 新增必填 content_manifest 与 identities.content_identity/environment_identity 的结构变化",
+      "plan 新增必填 content_identity / policy_identity",
+      "result 新增必填 content_identity / execution_identity",
+      "refusal 的 refusal_code 封闭枚举 → refusal_kind 六类 + 新增必填 content_confirmed"
+    ]
+  },
+  "semantic_rules": {
+    "count": 12,
+    "implemented_by": "check_draft.py（本目录，非权威实现；VG 应自行复核同一批样例）",
+    "registered_from": "check_draft.SEMANTIC_RULES —— 本清单由 make_manifest.py 从检查器**实际实现**生成，不手写",
+    "list": [
+      "R1-protocol-is-2.0",
+      "R2-label-is-not-identity",
+      "R3-manifest-covers-config-and-data",
+      "R4-digest-carries-algorithm",
+      "R5-exclusion-policy-is-versioned",
+      "R6-full-only-when-content-confirmed",
+      "R7-unconfirmed-must-be-listed",
+      "R8-plan-carries-its-own-identity",
+      "R9-invalid-or-unconfirmed-cannot-be-valid",
+      "R10-order-is-permutation-of-selected",
+      "R11-cross-document-binding",
+      "R12-environment-identity-must-match-plan"
+    ]
+  },
+  "digests": {
+    "algorithm": "sha256",
+    "README.md": "sha256:eda0b717ba7e75af95517de1f4ad1fbb423fb655b5016f6a9470913f446125fc",
+    "schema/candidate_request.schema.json": "sha256:7c2f467050c85cfe310bb233e6fbb79434b8b7ce2bef875c9eb8446b36f48e2c",
+    "schema/execution_result.schema.json": "sha256:6710f415582b6d7b71fbb4d9454c4b9ebe56c9f5f97d0b5da00335c3267ba5ec",
+    "schema/plan_refusal.schema.json": "sha256:a7ded329a35381632aa773f8aea65d63761b1f1b2ea0a9ced9853b72088777e0",
+    "schema/test_plan.schema.json": "sha256:cd2f3fe72756ccec1401a702d3a1c7965d4e809721c0a2da5a07747b9b978a85",
+    "samples/invalid/plan_order_not_permutation_of_selected.json": "sha256:e49ea49d9f0eec5f5c8e69e456314028b9055d0b69b789a0949620bda05e86e4",
+    "samples/invalid/refusal_full_available_without_content.json": "sha256:25df6649d9913db08ac524b255441c045be0e72cbf8e6c42a8189f8391b35ddf",
+    "samples/invalid/request_bare_short_content_value.json": "sha256:ad736be83a9e4c49ac40894cecf816a5320e0591e72a3fe49389f6d6b35b5d07",
+    "samples/invalid/request_digest_without_algorithm.json": "sha256:efaa38543ed1beed84943ecfcd5183535e3b66ed2d479fa8f7c4b71155f728e8",
+    "samples/invalid/request_manifest_only_source_entry.json": "sha256:79e48b8d81477b701ba508285dc8927ab8c9c6b607657ac54c9a8873493e22a8",
+    "samples/invalid/request_unknown_field.json": "sha256:84a97306f92b1038fc15e5891c21e6540a3d1433bccddbabbb77d45446e77546",
+    "samples/invalid/result_execution_end_unconfirmed_but_valid.json": "sha256:822adec7d8a667e65bd0ec0fa836a9625b5c5a819eb9ef327d9266254fee1b03",
+    "samples/pairs/invalid/environment_identity_drift/plan.json": "sha256:16fb132f3112c2e87fb551e2b1ea7caf6eadcb6d17b94696075cbe354188b0b5",
+    "samples/pairs/invalid/environment_identity_drift/request.json": "sha256:a7e94acbfb822400539040cbda5d44168a50f55a4a811c80483274b15eda819e",
+    "samples/pairs/invalid/environment_identity_drift/result.json": "sha256:029ceed30ce8d223fd556440537564ab800cac4d8f123c07a58d703ce9c14d3d",
+    "samples/pairs/invalid/execution_identity_drift/plan.json": "sha256:d9f8b0e4598ee9bce2799d4aa243848e74d0467c8f014720679d37a4afc744fe",
+    "samples/pairs/invalid/execution_identity_drift/request.json": "sha256:a7e94acbfb822400539040cbda5d44168a50f55a4a811c80483274b15eda819e",
+    "samples/pairs/invalid/execution_identity_drift/result.json": "sha256:df479fc079a83c651da196d2affc04bf1c1b5ac3008f3b909b4ee72158bab3d5",
+    "samples/pairs/invalid/same_label_different_content/plan.json": "sha256:42369d06e423a38ae7c1e15658a11acc73fbbde8c62251760c2d905ac554f955",
+    "samples/pairs/invalid/same_label_different_content/request.json": "sha256:3bc1adc2a25f97b3d3974a3c8d3996b88b5c40688931a9c8ece6934197a5075c",
+    "samples/pairs/invalid/same_label_different_content/result.json": "sha256:4954ef6ccae337de628b6aba0fc420d7c2d0dc2b9c20e8f120d8821ca8b03fd8",
+    "samples/pairs/invalid/same_value_different_kind/plan.json": "sha256:5d46b058fffe4ec8a562138494265d727e46de39e61413dae5a80cbb60c830ee",
+    "samples/pairs/invalid/same_value_different_kind/request.json": "sha256:a7e94acbfb822400539040cbda5d44168a50f55a4a811c80483274b15eda819e",
+    "samples/pairs/valid/matched/plan.json": "sha256:42369d06e423a38ae7c1e15658a11acc73fbbde8c62251760c2d905ac554f955",
+    "samples/pairs/valid/matched/request.json": "sha256:583af1efa7f373ac983891e637120bddb5ad87ba84807eb5e28d5c9cecd38191",
+    "samples/pairs/valid/matched/result.json": "sha256:b282aa4d6a3c5bb297712361508d7b6c3f44436d211ae7847293269971b1ff4b",
+    "samples/valid/plan_with_full_content_identity.json": "sha256:86c987898fd032a1d7517117cbad89d97359bd93aa565c80d887813ace9aa4da",
+    "samples/valid/refusal_content_unbound.json": "sha256:1f210e16a043aa56310dcaa3ae895e8560d8eb3bfa2655fd1bc0231e041983bc",
+    "samples/valid/request_candidate_full_content_identity.json": "sha256:f5d54119a2aa2ef2903019eb9dffb0c7d7d0cb1e420e7eb2c5f66ca94d7c944b",
+    "samples/valid/result_with_execution_identity.json": "sha256:1f58dbff2a90dc8433ff2a6968be29f5c693e936883fdafb52a5fbf5d8d0b11f"
+  },
+  "replay": {
+    "validate_all_samples": "python contracts/vg-sts/v2-draft/check_draft.py",
+    "unit_tests": "python -m pytest tests/test_contract_v2_draft.py -q",
+    "regenerate_digests": "python contracts/vg-sts/v2-draft/make_manifest.py",
+    "check_digests": "python contracts/vg-sts/v2-draft/make_manifest.py --check"
+  }
+}

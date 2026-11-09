@@ -1,0 +1,428 @@
+{
+  "schema": "smart-test-sorter/stability-report/v1",
+  "product_version": "smart-test-sorter/0.1.0",
+  "recorded_at": "2026-11-09T17:56:23Z",
+  "target_identity": "worktree@2a470fa3dd+dirty:1",
+  "plan_id": "plan-0799caba0240d237",
+  "request_id": "stability",
+  "rules_id": "smart-select/v2",
+  "selection_scope": "selected",
+  "repeats": 3,
+  "observed": [
+    "tests/test_calc.py::test_add",
+    "tests/test_env.py::test_env",
+    "tests/test_flaky.py::test_intermittent",
+    "tests/test_text.py::test_normalize"
+  ],
+  "observed_scope": "full",
+  "tests": {
+    "tests/test_calc.py::test_add": {
+      "verdict": "stable-pass",
+      "reason": "每次重复都通过（3 次重复：通过×3）",
+      "samples": [
+        {
+          "run": 1,
+          "kind": "passed",
+          "outcome": "passed",
+          "phases": [
+            "setup",
+            "call",
+            "teardown"
+          ],
+          "duration_s": 0.001202
+        },
+        {
+          "run": 2,
+          "kind": "passed",
+          "outcome": "passed",
+          "phases": [
+            "setup",
+            "call",
+            "teardown"
+          ],
+          "duration_s": 0.000731
+        },
+        {
+          "run": 3,
+          "kind": "passed",
+          "outcome": "passed",
+          "phases": [
+            "setup",
+            "call",
+            "teardown"
+          ],
+          "duration_s": 0.000944
+        }
+      ],
+      "counts": {
+        "passed": 3
+      },
+      "retain": true
+    },
+    "tests/test_env.py::test_env": {
+      "verdict": "environment-error",
+      "reason": "每次都是环境/夹具失败，不是断言失败（3 次重复：环境/夹具失败×3） ⇒ **不能**当作确定的合并回归证据",
+      "samples": [
+        {
+          "run": 1,
+          "kind": "environment-error",
+          "outcome": "error",
+          "phases": [
+            "setup",
+            "teardown"
+          ],
+          "duration_s": 0.000882
+        },
+        {
+          "run": 2,
+          "kind": "environment-error",
+          "outcome": "error",
+          "phases": [
+            "setup",
+            "teardown"
+          ],
+          "duration_s": 0.001196
+        },
+        {
+          "run": 3,
+          "kind": "environment-error",
+          "outcome": "error",
+          "phases": [
+            "setup",
+            "teardown"
+          ],
+          "duration_s": 0.000452
+        }
+      ],
+      "counts": {
+        "environment-error": 3
+      },
+      "retain": true
+    },
+    "tests/test_flaky.py::test_intermittent": {
+      "verdict": "flaky",
+      "reason": "重复运行结果不一致（时过时挂）（3 次重复：断言失败×1、通过×2） ⇒ **不能**当作确定的合并回归证据",
+      "samples": [
+        {
+          "run": 1,
+          "kind": "passed",
+          "outcome": "passed",
+          "phases": [
+            "setup",
+            "call",
+            "teardown"
+          ],
+          "duration_s": 0.002123
+        },
+        {
+          "run": 2,
+          "kind": "assertion-failure",
+          "outcome": "failed",
+          "phases": [
+            "setup",
+            "call",
+            "teardown"
+          ],
+          "duration_s": 0.00183
+        },
+        {
+          "run": 3,
+          "kind": "passed",
+          "outcome": "passed",
+          "phases": [
+            "setup",
+            "call",
+            "teardown"
+          ],
+          "duration_s": 0.00133
+        }
+      ],
+      "counts": {
+        "passed": 2,
+        "assertion-failure": 1
+      },
+      "retain": true
+    },
+    "tests/test_text.py::test_normalize": {
+      "verdict": "stable-pass",
+      "reason": "每次重复都通过（3 次重复：通过×3）",
+      "samples": [
+        {
+          "run": 1,
+          "kind": "passed",
+          "outcome": "passed",
+          "phases": [
+            "setup",
+            "call",
+            "teardown"
+          ],
+          "duration_s": 0.000422
+        },
+        {
+          "run": 2,
+          "kind": "passed",
+          "outcome": "passed",
+          "phases": [
+            "setup",
+            "call",
+            "teardown"
+          ],
+          "duration_s": 0.000919
+        },
+        {
+          "run": 3,
+          "kind": "passed",
+          "outcome": "passed",
+          "phases": [
+            "setup",
+            "call",
+            "teardown"
+          ],
+          "duration_s": 0.000411
+        }
+      ],
+      "counts": {
+        "passed": 3
+      },
+      "retain": true
+    }
+  },
+  "summary": {
+    "tests": 4,
+    "repeats": 3,
+    "runs_valid_and_complete": true,
+    "verdict_counts": {
+      "stable-pass": 2,
+      "environment-error": 1,
+      "flaky": 1
+    },
+    "instability_detected": true,
+    "run_errors_detected": true,
+    "definite_failures": 0,
+    "not_definite": 2,
+    "undecidable": false
+  },
+  "regression_evidence": {
+    "definite_failures": [],
+    "definite_failures_rule": "只有【每次重复都断言失败】才算确定的失败；单次失败、时过时挂、环境/收集/取消类失败都不算。",
+    "not_evidence": [
+      {
+        "nodeid": "tests/test_env.py::test_env",
+        "verdict": "environment-error",
+        "reason": "每次都是环境/夹具失败，不是断言失败（3 次重复：环境/夹具失败×3） ⇒ **不能**当作确定的合并回归证据"
+      },
+      {
+        "nodeid": "tests/test_flaky.py::test_intermittent",
+        "verdict": "flaky",
+        "reason": "重复运行结果不一致（时过时挂）（3 次重复：断言失败×1、通过×2） ⇒ **不能**当作确定的合并回归证据"
+      }
+    ],
+    "retention": {
+      "policy": "never-auto-discard",
+      "retained": [
+        "tests/test_calc.py::test_add",
+        "tests/test_env.py::test_env",
+        "tests/test_flaky.py::test_intermittent",
+        "tests/test_text.py::test_normalize"
+      ],
+      "note": "不稳定/报错的测试一律保留在计划与收集集合里（retain=true）：本模块只记录不稳定，不据此剔除、跳过或重试测试。"
+    }
+  },
+  "history": {
+    "source": null,
+    "not_definite": {},
+    "outside_plan": {},
+    "note": null
+  },
+  "runs": [
+    {
+      "protocol_version": "1.1",
+      "product_version": "smart-test-sorter/0.1.0",
+      "request_id": "stability",
+      "plan_id": "plan-0799caba0240d237",
+      "target_identity": "worktree@2a470fa3dd+dirty:1",
+      "selection_scope": "full",
+      "completeness": "complete",
+      "validity": "valid",
+      "executed": [
+        "tests/test_calc.py::test_add",
+        "tests/test_env.py::test_env",
+        "tests/test_flaky.py::test_intermittent",
+        "tests/test_text.py::test_normalize"
+      ],
+      "not_executed": [],
+      "outcomes": {
+        "tests/test_calc.py::test_add": {
+          "outcome": "passed",
+          "phases": [
+            "setup",
+            "call",
+            "teardown"
+          ],
+          "duration_s": 0.001202
+        },
+        "tests/test_env.py::test_env": {
+          "outcome": "error",
+          "phases": [
+            "setup",
+            "teardown"
+          ],
+          "duration_s": 0.000882
+        },
+        "tests/test_flaky.py::test_intermittent": {
+          "outcome": "passed",
+          "phases": [
+            "setup",
+            "call",
+            "teardown"
+          ],
+          "duration_s": 0.002123
+        },
+        "tests/test_text.py::test_normalize": {
+          "outcome": "passed",
+          "phases": [
+            "setup",
+            "call",
+            "teardown"
+          ],
+          "duration_s": 0.000422
+        }
+      },
+      "raw_exit_code": 1,
+      "duration_s": 1.14,
+      "failure_categories": {
+        "assertion": 0,
+        "collection": 0,
+        "environment": 1,
+        "cancelled": 0
+      }
+    },
+    {
+      "protocol_version": "1.1",
+      "product_version": "smart-test-sorter/0.1.0",
+      "request_id": "stability",
+      "plan_id": "plan-0799caba0240d237",
+      "target_identity": "worktree@2a470fa3dd+dirty:1",
+      "selection_scope": "full",
+      "completeness": "complete",
+      "validity": "valid",
+      "executed": [
+        "tests/test_calc.py::test_add",
+        "tests/test_env.py::test_env",
+        "tests/test_flaky.py::test_intermittent",
+        "tests/test_text.py::test_normalize"
+      ],
+      "not_executed": [],
+      "outcomes": {
+        "tests/test_calc.py::test_add": {
+          "outcome": "passed",
+          "phases": [
+            "setup",
+            "call",
+            "teardown"
+          ],
+          "duration_s": 0.000731
+        },
+        "tests/test_env.py::test_env": {
+          "outcome": "error",
+          "phases": [
+            "setup",
+            "teardown"
+          ],
+          "duration_s": 0.001196
+        },
+        "tests/test_flaky.py::test_intermittent": {
+          "outcome": "failed",
+          "phases": [
+            "setup",
+            "call",
+            "teardown"
+          ],
+          "duration_s": 0.00183
+        },
+        "tests/test_text.py::test_normalize": {
+          "outcome": "passed",
+          "phases": [
+            "setup",
+            "call",
+            "teardown"
+          ],
+          "duration_s": 0.000919
+        }
+      },
+      "raw_exit_code": 1,
+      "duration_s": 0.844,
+      "failure_categories": {
+        "assertion": 1,
+        "collection": 0,
+        "environment": 1,
+        "cancelled": 0
+      }
+    },
+    {
+      "protocol_version": "1.1",
+      "product_version": "smart-test-sorter/0.1.0",
+      "request_id": "stability",
+      "plan_id": "plan-0799caba0240d237",
+      "target_identity": "worktree@2a470fa3dd+dirty:1",
+      "selection_scope": "full",
+      "completeness": "complete",
+      "validity": "valid",
+      "executed": [
+        "tests/test_calc.py::test_add",
+        "tests/test_env.py::test_env",
+        "tests/test_flaky.py::test_intermittent",
+        "tests/test_text.py::test_normalize"
+      ],
+      "not_executed": [],
+      "outcomes": {
+        "tests/test_calc.py::test_add": {
+          "outcome": "passed",
+          "phases": [
+            "setup",
+            "call",
+            "teardown"
+          ],
+          "duration_s": 0.000944
+        },
+        "tests/test_env.py::test_env": {
+          "outcome": "error",
+          "phases": [
+            "setup",
+            "teardown"
+          ],
+          "duration_s": 0.000452
+        },
+        "tests/test_flaky.py::test_intermittent": {
+          "outcome": "passed",
+          "phases": [
+            "setup",
+            "call",
+            "teardown"
+          ],
+          "duration_s": 0.00133
+        },
+        "tests/test_text.py::test_normalize": {
+          "outcome": "passed",
+          "phases": [
+            "setup",
+            "call",
+            "teardown"
+          ],
+          "duration_s": 0.000411
+        }
+      },
+      "raw_exit_code": 1,
+      "duration_s": 0.704,
+      "failure_categories": {
+        "assertion": 0,
+        "collection": 0,
+        "environment": 1,
+        "cancelled": 0
+      }
+    }
+  ],
+  "contract_note": "本报告是本产品自己的验证产物（不进 VG—STS 契约）：契约 execution_result 只有单次运行的事实，没有地方放「重复运行不一致」；这里把每次重复的 execution_result 原样内嵌，契约仍逐份成立。",
+  "scope_note": "观测的是计划的 collected 全集（--full）：被选择排除的测试也因此被观测到。",
+  "fresh_interpreter_per_repeat": true
+}

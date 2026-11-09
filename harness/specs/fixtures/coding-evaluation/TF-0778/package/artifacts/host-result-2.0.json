@@ -1,0 +1,52 @@
+{
+  "protocol_version": "2.0",
+  "product_version": "smart-test-sorter/0.1.0",
+  "request_id": "vg-selection-69bf1c1028f0c891eeb4f0c3e4963c5754098d18",
+  "plan_id": "plan-eee8183f6da22855",
+  "target_identity": "candidate@ff63114",
+  "selection_scope": "full",
+  "completeness": "complete",
+  "validity": "valid",
+  "executed": [
+    "tests/test_calc.py::test_add"
+  ],
+  "not_executed": [],
+  "outcomes": {
+    "tests/test_calc.py::test_add": {
+      "outcome": "passed",
+      "phases": [
+        "setup",
+        "call",
+        "teardown"
+      ],
+      "duration_s": 0.000591
+    }
+  },
+  "raw_exit_code": 0,
+  "duration_s": 0.61,
+  "failure_categories": {
+    "assertion": 0,
+    "collection": 0,
+    "environment": 0,
+    "cancelled": 0
+  },
+  "content_identity": {
+    "kind": "git-tree",
+    "value": "ff63114aeee87a189252c051bcd2667428aee8f4",
+    "manifest_digest": "sha256:ff53c5ff09b31b3bfc25570577e43efa66cb21b48e9102cb07ccc9c278ea6f5d"
+  },
+  "execution_identity": {
+    "execution_id": "exec-plan-eee8183f6da22855",
+    "interpreter": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+    "started_at": "2026-11-09T14:50:37Z"
+  },
+  "environment_identity": {
+    "python": "3.10.3",
+    "platform": "win32",
+    "dependencies_digest": "sha256:136aea99870f5687cba890d47036e93c9208b1465a065f62adb51de5bca7c444"
+  },
+  "observations": {
+    "before_execution": "confirmed",
+    "after_execution": "confirmed"
+  }
+}

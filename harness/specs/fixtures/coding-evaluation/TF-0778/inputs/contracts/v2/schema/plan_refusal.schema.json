@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://smart-test-sorter/contracts/vg-sts/v2/schema/plan_refusal.schema.json",
+  "title": "VG-STS v2 DRAFT Plan Refusal",
+  "description": "【2.0 草案，非权威】无法生成合法计划时的带内回执。相对 1.1 的关键变化：把『错输入 / 无法确认目标 / 无法绑定内容 / 不支持的能力』分成**可分辨的拒绝原因**，并要求拒绝时如实说明**具体是哪一项没确认**——而不是一个笼统的失败。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocol_version",
+    "product_version",
+    "request_id",
+    "refusal_kind",
+    "reason",
+    "target_confirmable",
+    "content_confirmed",
+    "conservative_full_available"
+  ],
+  "properties": {
+    "protocol_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$" },
+    "product_version": { "type": "string", "minLength": 1 },
+    "request_id": { "type": "string", "minLength": 1 },
+    "refusal_kind": {
+      "description": "【2.0 变化】把 1.1 的封闭 refusal_code 枚举拆成**可分辨的结构化原因**：错输入、目标无法确认、内容无法绑定、执行中失效、能力不支持。",
+      "type": "string",
+      "enum": [
+        "bad-input",
+        "target-unconfirmable",
+        "content-unbound",
+        "invalidated-during-planning",
+        "unsupported",
+        "collection-failed"
+      ]
+    },
+    "reason": { "type": "string", "minLength": 1 },
+    "refusal_code": {
+      "description": "1.1 兼容字段：契约里已有的封闭枚举值，便于旧消费方按原口径读。",
+      "type": "string",
+      "minLength": 1
+    },
+    "target_confirmable": { "type": "boolean" },
+    "content_confirmed": {
+      "description": "【2.0 新增】内容身份是否已确认。`false` 时**不得**声称可保守全量：磁盘不对应任何明确版本。",
+      "type": "boolean"
+    },
+    "conservative_full_available": { "type": "boolean" },
+    "target_identity": { "type": "string", "minLength": 1 },
+    "content_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "type": "string", "enum": ["git-tree", "git-commit", "worktree-content"] },
+        "value": { "type": "string", "minLength": 7 },
+        "manifest_digest": { "type": "string", "minLength": 1 }
+      }
+    },
+    "unconfirmed": {
+      "description": "**具体哪些观察没成功**（逐项列出）。诚实边界：说清『没确认到什么』比笼统说一句失败有用得多。",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["what", "detail"],
+        "properties": {
+          "what": { "type": "string", "minLength": 1 },
+          "detail": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "attempted_collection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["succeeded"],
+      "properties": {
+        "succeeded": { "type": "boolean" },
+        "collected_count": { "type": "integer" }
+      }
+    }
+  }
+}

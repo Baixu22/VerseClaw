@@ -1,0 +1,176 @@
+{
+  "base": "8640f63182f2ebe63a63a78982446d1008b8ff7d",
+  "boundaries": [
+    "候选 worktree 的指纹含临时物化路径，verify 的 S7 复用不可能命中；本轮不改指纹口径",
+    "不写账本事件：pilot 记录不污染产品侧的三态判定（verify_status / reusable_pass）",
+    "不写引用：只写对象（合并树 + 候选提交）与 detach worktree，失败/超时都不触碰分支",
+    "检查通过 ≠ 语义正确：注册检查是本地受信任命令，无沙箱"
+  ],
+  "budget_exhausted": false,
+  "budget_ms": 60000,
+  "candidate": {
+    "commit_oid": "69bf1c1028f0c891eeb4f0c3e4963c5754098d18",
+    "parents": [
+      "35b73a886b3329e2f1819c010264cfa4592256a1",
+      "34020923fd52433ba4a0b6a2d7c88ad3b03bad8d"
+    ],
+    "tree_oid": "ff63114aeee87a189252c051bcd2667428aee8f4"
+  },
+  "checks": [
+    {
+      "budget_remaining_ms": 58206,
+      "check": "smoke",
+      "cleanup_error": null,
+      "command": [
+        "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+        "-c",
+        "print(1)"
+      ],
+      "duration_ms": 301,
+      "executed": true,
+      "exit_code": 0,
+      "passed": true,
+      "resource_limit": null,
+      "status": "passed",
+      "stderr_truncated": false,
+      "stdout_truncated": false,
+      "termination_confirmed": true,
+      "timeout_seconds": 58,
+      "timeout_seconds_registered": 60,
+      "timeout_source": "total_budget"
+    }
+  ],
+  "cleanup": {
+    "kept": false,
+    "removed": true
+  },
+  "conflicting_files": [],
+  "elapsed_ms": 10874,
+  "exit_code": 0,
+  "materialized": true,
+  "ours": "35b73a886b3329e2f1819c010264cfa4592256a1",
+  "refs_written": false,
+  "repo": "\\\\?\\D:\\tmp\\vg sts installed 0t231om7\\target",
+  "requested": {
+    "filter": null,
+    "matched": [
+      "smoke"
+    ],
+    "registered": [
+      "smoke"
+    ],
+    "unknown": []
+  },
+  "revision": {
+    "authoritative": true,
+    "base_oid": "8640f63182f2ebe63a63a78982446d1008b8ff7d",
+    "candidate_commit_oid": "69bf1c1028f0c891eeb4f0c3e4963c5754098d18",
+    "checks_digest": "0c634dd2d3b34b3955fb900d022d608d3f4b363d6383dcc224c1953bc0be3cb4",
+    "ours_oid": "35b73a886b3329e2f1819c010264cfa4592256a1",
+    "ours_requested": "35b73a886b3329e2f1819c010264cfa4592256a1",
+    "registry_changed_during_run": false,
+    "theirs_oid": "34020923fd52433ba4a0b6a2d7c88ad3b03bad8d",
+    "theirs_requested": "34020923fd52433ba4a0b6a2d7c88ad3b03bad8d"
+  },
+  "risk": null,
+  "schema": "versegit.candidate-verify/v1",
+  "scope": {
+    "registered_checks": "本报告只覆盖 `vg verify` 注册表里的检查；注册表为空时等于什么都没验",
+    "repo_test_suite": "unknown：候选域不枚举、也不代表仓库测试套件",
+    "selection": "显式 --selection 才运行附加选择臂；--checks 只过滤注册检查，选择结果不参与准入"
+  },
+  "selection": {
+    "authoritative_pass": false,
+    "binding": "mismatched",
+    "boundaries": [
+      "选择臂的结果仅供理解与补测决策：它不是准入通过，也没有写任何引用或账本事件",
+      "同一份计划的身份（plan_id/target_identity）在执行前后都会核对；候选变化使旧证据失效",
+      "选中子集一律不声称覆盖全集（covered_full_suite=false）"
+    ],
+    "completeness": null,
+    "covered_full_suite": false,
+    "enabled": true,
+    "environment_probe": {
+      "argv": [
+        "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "-m",
+        "smart_sorter.environment"
+      ],
+      "cancelled": false,
+      "cleanup_error": null,
+      "duration_ms": 633,
+      "exit_code": 0,
+      "isolation": {
+        "declaration": {
+          "isolation": "none",
+          "reason": "trusted-local：在本机直接执行，没有沙箱"
+        },
+        "kind": "trusted_local"
+      },
+      "launch_error": null,
+      "log": "",
+      "machine_json_raw": "{\"python\": \"3.10.3\", \"platform\": \"win32\", \"dependencies_digest\": \"sha256:136aea99870f5687cba890d47036e93c9208b1465a065f62adb51de5bca7c444\"}\r\n",
+      "reaped": false,
+      "resource_limit": null,
+      "stderr_truncated": false,
+      "stdout_truncated": false,
+      "termination_confirmed": true,
+      "timed_out": false
+    },
+    "full_rerun": false,
+    "plan": {
+      "argv": [
+        "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "tests/test_calc.py::test_add"
+      ],
+      "collected": 1,
+      "fallback": [
+        "非 Python 文件改动：notes.txt"
+      ],
+      "nodeids": [
+        "tests/test_calc.py::test_add"
+      ],
+      "plan_id": "plan-eee8183f6da22855",
+      "risk_decisions": null,
+      "rules_id": "smart-select/v2",
+      "selected": 1,
+      "selection_scope": "full",
+      "target_identity": "candidate@ff63114"
+    },
+    "plan_ms": 7850,
+    "plan_path": "D:\\tmp\\vg sts installed 0t231om7\\extra-input-candidate-sts-selection\\sts-selection.plan.json",
+    "plan_status": "planned",
+    "protocol_version": "2.0",
+    "refusals": [
+      "候选完整内容清单与请求不一致或存在不可读文件：配置、数据或文件集合发生变化"
+    ],
+    "request_id": "vg-selection-69bf1c1028f0c891eeb4f0c3e4963c5754098d18",
+    "request_path": "D:\\tmp\\vg sts installed 0t231om7\\extra-input-candidate-sts-selection\\sts-selection.request.json",
+    "selection_scope": null,
+    "usable": false,
+    "validity": null,
+    "verdict": "stale"
+  },
+  "status": "checked",
+  "summary": {
+    "cancelled": 0,
+    "checks": 1,
+    "cleanup_unconfirmed": 0,
+    "executed": 1,
+    "failed": 0,
+    "passed": 1,
+    "registered": 1,
+    "requested": 1,
+    "resource_limit": 0,
+    "skipped_budget": 0,
+    "timeout": 0,
+    "unknown": 0
+  },
+  "theirs": "34020923fd52433ba4a0b6a2d7c88ad3b03bad8d",
+  "verdict": "passed",
+  "worktree": "D:\\tmp\\vg sts installed 0t231om7\\extra-input-candidate"
+}

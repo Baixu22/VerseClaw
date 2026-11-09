@@ -1,0 +1,26 @@
+{
+  "protocol_version": "2.0",
+  "product_version": "smart-test-sorter/0.1.0",
+  "request_id": "req-v2-pair-1",
+  "plan_id": "plan-v2-pair-1",
+  "target_identity": "candidate@d444444",
+  "content_identity": {
+    "kind": "git-tree",
+    "value": "d444444444444444444444444444444444444444",
+    "manifest_digest": "sha256:bbbb00000000000000000000000000000000000000000000000000000000000b",
+    "exclusion_policy_id": "noise-dirs/v2",
+    "observed_at": { "before_build": "confirmed", "after_build": "confirmed" }
+  },
+  "environment_identity": { "python": "3.10.3", "platform": "win32" },
+  "policy_identity": { "rules_id": "smart-select/v1", "policy_version": "enablement/v2" },
+  "expected_environment_identity": {
+    "python": "3.10.3",
+    "platform": "win32"
+  },
+  "selection_scope": "selected",
+  "collected": ["tests/test_calc.py::test_add"],
+  "selected": ["tests/test_calc.py::test_add"],
+  "excluded": [],
+  "order": ["tests/test_calc.py::test_add"],
+  "reasons": {}
+}

@@ -1,0 +1,60 @@
+{
+  "capabilities": [
+    "selection"
+  ],
+  "content_manifest": {
+    "algorithm": "sha256",
+    "config_data_absent": true,
+    "entries": [
+      {
+        "digest": "sha256:726b43dcab3c54f3ec7922fe31b21f76def9fa5ca4313ff551f14cca2a5c9621",
+        "path": "calc.py",
+        "role": "source"
+      },
+      {
+        "digest": "sha256:eac47becb0b6f3c07658e4d9afc7b39c21f819d45307db550bc46ba572782a22",
+        "path": "notes.txt",
+        "role": "other"
+      },
+      {
+        "digest": "sha256:cc1aa48da0f1401f3068755ddaea50fc657131c3a1865b37f158fdff12a0f7d0",
+        "path": "tests/test_calc.py",
+        "role": "test"
+      }
+    ],
+    "exclusion_policy_id": "vg-noise/v1",
+    "line_endings": "normalized-lf",
+    "submodules": "reject",
+    "symlinks": "record-target",
+    "unreadable_files": "unconfirmed"
+  },
+  "identities": {
+    "content_identity": {
+      "kind": "git-tree",
+      "label": "candidate@ff63114",
+      "value": "ff63114aeee87a189252c051bcd2667428aee8f4"
+    },
+    "environment_identity": {
+      "config_digest": "sha256:0c634dd2d3b34b3955fb900d022d608d3f4b363d6383dcc224c1953bc0be3cb4",
+      "dependencies_digest": "sha256:136aea99870f5687cba890d47036e93c9208b1465a065f62adb51de5bca7c444",
+      "platform": "win32",
+      "python": "3.10.3"
+    }
+  },
+  "mode": "candidate",
+  "product_version": "versegit/0.1.0",
+  "protocol_version": "2.0",
+  "repo": {
+    "path": "D:/tmp/vg sts installed 0t231om7/target"
+  },
+  "request_id": "vg-selection-69bf1c1028f0c891eeb4f0c3e4963c5754098d18",
+  "target": {
+    "base_oid": "8640f63182f2ebe63a63a78982446d1008b8ff7d",
+    "candidate_commit_oid": "69bf1c1028f0c891eeb4f0c3e4963c5754098d18",
+    "candidate_dir": "D:/tmp/vg sts installed 0t231om7/host-candidate-2.0",
+    "candidate_tree_oid": "ff63114aeee87a189252c051bcd2667428aee8f4",
+    "includes_candidate_extra_changes": false,
+    "ours_oid": "35b73a886b3329e2f1819c010264cfa4592256a1",
+    "theirs_oid": "34020923fd52433ba4a0b6a2d7c88ad3b03bad8d"
+  }
+}
