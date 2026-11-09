@@ -125,7 +125,19 @@ test('repeated lifecycle, real idle recovery and separate sustained observation'
       const cancelledAt = Date.now(); const started = performance.now();
       record.closeReceipt = await invoke(page!, 'terminal', 'close', { ...scope, sessionId: terminalId, expectedSessionId });
       record.closeMs = performance.now() - started; record.cancelledAt = cancelledAt;
-      const exits = await checkWindowsProcesses(identities); record.exits = exits;
+      let exits: Awaited<ReturnType<typeof checkWindowsProcesses>>;
+      const exitProbeErrors: Array<{ at: number; error: string }> = []; record.exitProbeErrors = exitProbeErrors;
+      for (let attempt = 1; ; attempt++) {
+        try { exits = await checkWindowsProcesses(identities); break; }
+        catch (error) {
+          exitProbeErrors.push({ at: Date.now(), error: String(error) }); await save();
+          // The execution owner already returned its terminal receipt. Retry
+          // only the identity observation; never resend kill or release capacity.
+          if (attempt >= 3) throw error;
+          await new Promise(done => setTimeout(done, 250));
+        }
+      }
+      record.exits = exits;
       expect(exits.every(row => ['exited', 'replaced', 'terminated'].includes(row.status))).toBe(true);
       terminalId = undefined; ownedIdentities = [];
       record.exitObservedAt = Date.now(); record.cancelToExitMs = Number(record.exitObservedAt) - cancelledAt;
