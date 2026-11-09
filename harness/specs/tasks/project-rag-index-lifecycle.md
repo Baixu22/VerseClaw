@@ -14,6 +14,7 @@ touchedAreas:
   - "openclaw_runtime/src/resources/background-work-gate.ts"
   - "openclaw_runtime/extensions/memory-wiki/runtime-api.ts"
   - "electron/services/knowledge-source-sync.ts"
+  - "docs/dev/evidence/project-rag-decision-20261109/source-review.json"
   - "docs/dev/project-rag/**"
   - "docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md"
   - "docs/dev/adr/2026-08-17-knowledge-system-unification-authority.md"

@@ -14,6 +14,7 @@ touchedAreas:
   - "electron/services/knowledge-api.ts"
   - "shared/host-api/contract.ts"
   - "src/lib/host-api/knowledge/**"
+  - "docs/dev/evidence/project-rag-decision-20261109/source-review.json"
   - "docs/dev/project-rag/**"
   - "docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md"
   - "docs/dev/adr/2026-08-17-knowledge-system-unification-authority.md"

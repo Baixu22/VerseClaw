@@ -15,6 +15,7 @@ touchedAreas:
   - "README*.md"
   - "docs/modules/knowledge-base.md"
   - "openclaw_runtime/src/knowledge/retrieval/**"
+  - "docs/dev/evidence/project-rag-decision-20261109/source-review.json"
   - "docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md"
   - "docs/dev/adr/2026-08-17-knowledge-system-unification-authority.md"
   - "docs/enhancements/knowledge-persistence/*.md"
