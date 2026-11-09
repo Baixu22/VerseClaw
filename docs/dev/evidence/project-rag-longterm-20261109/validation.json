@@ -1,0 +1,291 @@
+{
+  "schema": "ProjectRagPlanningAcceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "recordedAt": "2026-11-09T06:39:40.602Z",
+  "candidate": {
+    "commit": "78ea8a2285566672459f25c655fcaa3de25bd713",
+    "tree": "9a591f16e59a7817b3b9622c4363a19d60d2c9f3",
+    "dirty": false
+  },
+  "mergedMain": "806855309fb9d0ab4ffcf9f897f42fb0117e4f40",
+  "planningStatus": "verified",
+  "runtimeImplementationStatus": "planned",
+  "checks": {
+    "harness": {
+      "specs": 20,
+      "passed": 20,
+      "dryRunExit": 0
+    },
+    "retention": {
+      "schemaVersion": 1,
+      "trackedPaths": 23898,
+      "issues": [],
+      "passed": true
+    },
+    "typescriptExamples": 1,
+    "typescriptSyntaxErrors": [],
+    "unit": {
+      "files": 3,
+      "total": 48,
+      "passed": 48,
+      "failed": 0,
+      "results": [
+        {
+          "path": "tests/unit/docs-index.test.ts",
+          "status": "passed",
+          "tests": 3
+        },
+        {
+          "path": "tests/unit/harness-spec-lifecycle.test.ts",
+          "status": "passed",
+          "tests": 2
+        },
+        {
+          "path": "tests/unit/harness-specs.test.ts",
+          "status": "passed",
+          "tests": 43
+        }
+      ],
+      "rawReportSha256": "5fd10e61075c43686c3c4d6d2fa0343dea541cc3a4a5f081ba94cd19487619a4"
+    }
+  },
+  "postMergeSource": [
+    {
+      "path": "electron/services/chat-api.ts",
+      "sha256": "6004e57f9a45752a684f1f0ed07892b727a1da6ed098f5ded19037cf68ff6de3",
+      "priorSha256": "6004e57f9a45752a684f1f0ed07892b727a1da6ed098f5ded19037cf68ff6de3",
+      "changed": false
+    },
+    {
+      "path": "electron/services/knowledge-api.ts",
+      "sha256": "b85b80660c3d8c17f4e3a3a94e996dffed492473837db71df34f0b8845559ef7",
+      "priorSha256": "b85b80660c3d8c17f4e3a3a94e996dffed492473837db71df34f0b8845559ef7",
+      "changed": false
+    },
+    {
+      "path": "electron/services/knowledge-embedding-provider.ts",
+      "sha256": "1c3dca66c70565a2b997a52cb95073bbe5fac742abbc1329bffda40438049cae",
+      "priorSha256": "1c3dca66c70565a2b997a52cb95073bbe5fac742abbc1329bffda40438049cae",
+      "changed": false
+    },
+    {
+      "path": "electron/services/knowledge-evidence-qa.ts",
+      "sha256": "2fe36720f89633d63041dde737e029c72f7d2a0b9a70f101998a56129f5205f4",
+      "priorSha256": "2fe36720f89633d63041dde737e029c72f7d2a0b9a70f101998a56129f5205f4",
+      "changed": false
+    },
+    {
+      "path": "electron/services/knowledge-source-set-answer.ts",
+      "sha256": "4a63c652138e58053a5d3daa8feb165c415ee59f6662268a16f06620602c3650",
+      "priorSha256": "4a63c652138e58053a5d3daa8feb165c415ee59f6662268a16f06620602c3650",
+      "changed": false
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-lancedb/index.ts",
+      "sha256": "43d64fc5e8a56e2fb618543defa55f5ddd2e0ed2e0b9eeaae97086e8a0afd41c",
+      "priorSha256": "43d64fc5e8a56e2fb618543defa55f5ddd2e0ed2e0b9eeaae97086e8a0afd41c",
+      "changed": false
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-lancedb/openclaw.plugin.json",
+      "sha256": "f056974a3fe37fd48185f0700c719b153505d56f0b332238ae2ec4ef14265fb4",
+      "priorSha256": "f056974a3fe37fd48185f0700c719b153505d56f0b332238ae2ec4ef14265fb4",
+      "changed": false
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/query.ts",
+      "sha256": "1ea96f9a7f8e865fc5aba03613fde9f862aaa5830e4b2c83fa138cc06367157f",
+      "priorSha256": "1ea96f9a7f8e865fc5aba03613fde9f862aaa5830e4b2c83fa138cc06367157f",
+      "changed": false
+    },
+    {
+      "path": "openclaw_runtime/packages/gateway-protocol/src/schema/logs-chat.ts",
+      "sha256": "a571e64c39c5c8f47ef62446603a4a8f1b025bee57879645328c9255356cdc5d",
+      "priorSha256": "a571e64c39c5c8f47ef62446603a4a8f1b025bee57879645328c9255356cdc5d",
+      "changed": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
+      "sha256": "469ef0a195ddf5f7330738f78aaf3fdc69734dc2552d16fc14425b3f2cfe69f6",
+      "priorSha256": "469ef0a195ddf5f7330738f78aaf3fdc69734dc2552d16fc14425b3f2cfe69f6",
+      "changed": false
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/chat-knowledge-intent.ts",
+      "sha256": "2030f641a425e42c853593135cb4eaf1917dbb2f6cc216626b458ff5c1763928",
+      "priorSha256": "2030f641a425e42c853593135cb4eaf1917dbb2f6cc216626b458ff5c1763928",
+      "changed": false
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/chat-knowledge-source-adapters.ts",
+      "sha256": "d080a2c0936f740152b31b0e2a75a236fc25b3916fe83514b07293303e3dcb03",
+      "priorSha256": "d080a2c0936f740152b31b0e2a75a236fc25b3916fe83514b07293303e3dcb03",
+      "changed": false
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/context-candidate.ts",
+      "sha256": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+      "priorSha256": "1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+      "changed": false
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/factstore/statements.ts",
+      "sha256": "df6ed6dfa5211518a72d79b187e225395f8f780af2088c253f75f664abc66dfe",
+      "priorSha256": "df6ed6dfa5211518a72d79b187e225395f8f780af2088c253f75f664abc66dfe",
+      "changed": false
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/source-set.ts",
+      "sha256": "3b0e26468d6dec33190a05bced060fb54df760eadc41ded957dcce16cdab86f8",
+      "priorSha256": "3b0e26468d6dec33190a05bced060fb54df760eadc41ded957dcce16cdab86f8",
+      "changed": false
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/turn-injection-budget.ts",
+      "sha256": "8f6aa04cd7c61d26c2d50a8fcf1a86c84bfa0da274e0b696721f73ef8ea595e7",
+      "priorSha256": "8f6aa04cd7c61d26c2d50a8fcf1a86c84bfa0da274e0b696721f73ef8ea595e7",
+      "changed": false
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/views/retrieval/graph-reranker.ts",
+      "sha256": "6ad1ef464f3abbe0b7daf6fe1e583d28451ee4c7ff5c369b69bb666391c76165",
+      "priorSha256": "6ad1ef464f3abbe0b7daf6fe1e583d28451ee4c7ff5c369b69bb666391c76165",
+      "changed": false
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/views/retrieval/hybrid-retriever.ts",
+      "sha256": "730bfc1a77d48ea8ec134ee396edbb5603b96c8bc217c5068b244841886366e8",
+      "priorSha256": "730bfc1a77d48ea8ec134ee396edbb5603b96c8bc217c5068b244841886366e8",
+      "changed": false
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/governance-adapters.ts",
+      "sha256": "f40d707413d9f9085b4284f65ebc83447622ba185792ffb3a00737267de308fa",
+      "priorSha256": "f40d707413d9f9085b4284f65ebc83447622ba185792ffb3a00737267de308fa",
+      "changed": false
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/knowledge-store.ts",
+      "sha256": "4ca82b56d1e54f2492131a572a699293b1c9714641b55778e1b1cfbb88280028",
+      "priorSha256": "4ca82b56d1e54f2492131a572a699293b1c9714641b55778e1b1cfbb88280028",
+      "changed": false
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/retrieval-engine.ts",
+      "sha256": "ecf5680b1d82e2951ed9da23037da2e1b293e5ab695e446c6243fa828656cbea",
+      "priorSha256": "ecf5680b1d82e2951ed9da23037da2e1b293e5ab695e446c6243fa828656cbea",
+      "changed": false
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/types.ts",
+      "sha256": "c508dcb36d12012a5d7cf65c8bbf30cc53faffb22f8f5c3c1003bf95de2e8c15",
+      "priorSha256": "c508dcb36d12012a5d7cf65c8bbf30cc53faffb22f8f5c3c1003bf95de2e8c15",
+      "changed": false
+    },
+    {
+      "path": "openclaw_runtime/src/runtime-core/memory-embedding-provider.ts",
+      "sha256": "982c4e09b19118a8549cb8428b34df48531e02842b272c946f5ed3c8cbfdeeca",
+      "priorSha256": "982c4e09b19118a8549cb8428b34df48531e02842b272c946f5ed3c8cbfdeeca",
+      "changed": false
+    },
+    {
+      "path": "openclaw_runtime/src/runtime-core/memory-hybrid-retrieval.ts",
+      "sha256": "0ca3c52f6473bee79384dcb7edd691f47beeded3cd184d0e76f8f4e3ecc54721",
+      "priorSha256": "0ca3c52f6473bee79384dcb7edd691f47beeded3cd184d0e76f8f4e3ecc54721",
+      "changed": false
+    },
+    {
+      "path": "openclaw_runtime/src/runtime-core/memory-tokenization.ts",
+      "sha256": "531e61a22590b1d8a9f59a7b4c9a011ca5aaa7779fbb3e8dc57998bd7c73ac06",
+      "priorSha256": "531e61a22590b1d8a9f59a7b4c9a011ca5aaa7779fbb3e8dc57998bd7c73ac06",
+      "changed": false
+    },
+    {
+      "path": "openclaw_runtime/src/state/openclaw-state-db.ts",
+      "sha256": "b9b6eda8cd5f6e796bc21b0fb33b9a32c652232be7ae70ff623f41c64ebc5e0b",
+      "priorSha256": "b9b6eda8cd5f6e796bc21b0fb33b9a32c652232be7ae70ff623f41c64ebc5e0b",
+      "changed": false
+    },
+    {
+      "path": "openclaw_runtime/src/state/openclaw-state-schema.sql",
+      "sha256": "c8208755b87b3d4e01f588490097185077757eef6ad4bc9b75a3e0481a028540",
+      "priorSha256": "c8208755b87b3d4e01f588490097185077757eef6ad4bc9b75a3e0481a028540",
+      "changed": false
+    },
+    {
+      "path": "shared/component-authority-manifest.ts",
+      "sha256": "ccb9bce305e58964f78901b4f9c2319322e07a4be983d328df9e7da06fb523ad",
+      "priorSha256": "ccb9bce305e58964f78901b4f9c2319322e07a4be983d328df9e7da06fb523ad",
+      "changed": false
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "sha256": "34bbc6125c7299945e134dfced439d2c85dfd0ec94d36e04b9d05896e5c3491f",
+      "priorSha256": "34bbc6125c7299945e134dfced439d2c85dfd0ec94d36e04b9d05896e5c3491f",
+      "changed": false
+    },
+    {
+      "path": "shared/knowledge/governance-contract.ts",
+      "sha256": "add730ac93198f60e7d5f6293bcaab24bdf13f4ca8c3cde002ac0f0565ecf843",
+      "priorSha256": "add730ac93198f60e7d5f6293bcaab24bdf13f4ca8c3cde002ac0f0565ecf843",
+      "changed": false
+    },
+    {
+      "path": "src/pages/Chat/ChatInput.tsx",
+      "sha256": "4d7265a39dc1c7c1826e52b67c76cd95895f0f5b9fe69261c25718e6cf269410",
+      "priorSha256": "4d7265a39dc1c7c1826e52b67c76cd95895f0f5b9fe69261c25718e6cf269410",
+      "changed": false
+    },
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "sha256": "9f8555ba1cec07f1196c279dbff3d77b3c6ce1a2d6e3f0ee4ed828af2dc3715e",
+      "priorSha256": "b288e426c00d364a2e447018f41f40d2329620149c1e07a18de10130cabb138c",
+      "changed": true
+    },
+    {
+      "path": "src/stores/chat.ts",
+      "sha256": "f1dbdd6a28b19414a41041ef2e67a7d3430cfec6c984a94a8b82c1ded109380b",
+      "priorSha256": "61188d31e994a18d8948ba764b757ef62a97867d582c44d6cd1fa9b1de770bc2",
+      "changed": true
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-core/runtime-api.ts",
+      "sha256": "9cb67d84f7f6a2d64b2f4994855749111982afad7e10046b7c2be93af3216ab8",
+      "priorSha256": "9cb67d84f7f6a2d64b2f4994855749111982afad7e10046b7c2be93af3216ab8",
+      "changed": false
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-core/src/memory/embeddings.ts",
+      "sha256": "fe4bc8d7b7e7eff20e48b70cf3eb1ab713c952703ec62b1690c2d7ba1495d165",
+      "priorSha256": "fe4bc8d7b7e7eff20e48b70cf3eb1ab713c952703ec62b1690c2d7ba1495d165",
+      "changed": false
+    },
+    {
+      "path": "openclaw_runtime/src/memory-host-sdk/host/embedding-defaults.ts",
+      "sha256": "b44509612df04b6109364f239d8bf9394526b6243081b8cf0a7beefc8e2a38ef",
+      "priorSha256": "b44509612df04b6109364f239d8bf9394526b6243081b8cf0a7beefc8e2a38ef",
+      "changed": false
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-lancedb/package.json",
+      "sha256": "ad809ef440b0733de67ed049c9d82e0d0250f0e885847c02dd77e3ac06434974",
+      "priorSha256": "ad809ef440b0733de67ed049c9d82e0d0250f0e885847c02dd77e3ac06434974",
+      "changed": false
+    },
+    {
+      "path": "electron-builder.yml",
+      "sha256": "926c449e95a144c31b1e6cec8963b7a35c438af19f0f4f7ae7efc49db87d7994",
+      "priorSha256": "926c449e95a144c31b1e6cec8963b7a35c438af19f0f4f7ae7efc49db87d7994",
+      "changed": false
+    }
+  ],
+  "changedFrontendRagPathsReviewed": true,
+  "applicationDeltaFromMergedMain": "",
+  "dependencies": {
+    "reuse": "existing dependency directories via junction; no new native package install",
+    "runtime": "v24.22.1"
+  },
+  "rawValidationDirectory": "D:/tmp/project-rag-longterm-20261109-01a1be8b/validation",
+  "scope": "long-term design/specification/worktree planning; not runtime RAG acceptance"
+}

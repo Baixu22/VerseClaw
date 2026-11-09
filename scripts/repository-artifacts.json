@@ -2589,7 +2589,12 @@
     "docs/dev/project-rag/RESEARCH-20261109.zh-CN.md",
     "docs/dev/project-rag/program.v2.json",
     "docs/dev/evidence/project-rag-longterm-20261109/research-sources.json",
-    "docs/dev/evidence/project-rag-longterm-20261109/source-review.json"
+    "docs/dev/evidence/project-rag-longterm-20261109/source-review.json",
+    "docs/dev/evidence/project-rag-longterm-20261109/.gitattributes",
+    "docs/dev/evidence/project-rag-longterm-20261109/README.md",
+    "docs/dev/evidence/project-rag-longterm-20261109/credential-scan.json",
+    "docs/dev/evidence/project-rag-longterm-20261109/validation.json",
+    "docs/dev/evidence/project-rag-longterm-20261109/SHA256SUMS"
   ],
   "artifactBatches": {}
 }
