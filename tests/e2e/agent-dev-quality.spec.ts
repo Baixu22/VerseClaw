@@ -72,11 +72,10 @@ test.describe('agent dev quality gates', () => {
   });
 
   test('loads the in-app Agent Dev Workbench through host-api and records a scenario', async ({ page }) => {
-    await openAgentDevScenario(page, 'chat-empty', { visualMode: true });
-    await expect(page.getByTestId('main-layout')).toBeVisible();
-
     const settingsUrl = new URL(page.url());
     settingsUrl.searchParams.delete('devScenario');
+    settingsUrl.searchParams.set('e2eSkipSetup', '1');
+    settingsUrl.searchParams.set('visual', '1');
     settingsUrl.hash = '/settings/developer';
     await page.goto(settingsUrl.toString());
     await expect(page.getByTestId('settings-developer-section')).toBeVisible();

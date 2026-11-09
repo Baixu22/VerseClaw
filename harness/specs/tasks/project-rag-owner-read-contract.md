@@ -119,6 +119,7 @@ touchedAreas:
   - "openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts"
   - "tests/e2e/project-rag-owner-read.spec.ts"
   - "tests/e2e/fixtures/fp-p1-harness.ts"
+  - "tests/e2e/agent-dev-quality.spec.ts"
 requiredProfiles:
   - "fast"
   - "comms"

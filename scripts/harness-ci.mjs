@@ -6,6 +6,11 @@ const pnpm = process.env.npm_execpath;
 if (!/(?:^|[\\/])pnpm\.(?:mjs|cjs|js)$/.test(pnpm ?? '')) {
   throw new Error('Run this entry through pnpm run harness:ci.');
 }
+const entryIdentity = process.platform === 'win32' ? resolve(pnpm).toLowerCase() : resolve(pnpm);
+if (process.env.CLAWX_HARNESS_CI_ACTIVE_PNPM === entryIdentity) {
+  throw new Error('Recursive Harness CI invocation of the same pnpm entry is refused.');
+}
+const childEnv = { ...process.env, CLAWX_HARNESS_CI_ACTIVE_PNPM: entryIdentity };
 const stages = [
   ['harness', 'list'],
   ['harness', 'validate', '--spec', 'harness/specs/scenarios/gateway-backend-communication.md'],
@@ -25,7 +30,7 @@ const report = { schema: 'HarnessCiReport/v1', actor: 'harness-ci', driven_by: '
 mkdirSync(dirname(output), { recursive: true });
 for (const args of stages) {
   const startedAt = Date.now();
-  const result = spawnSync(process.execPath, [pnpm, ...args], { cwd: process.cwd(), env: process.env, stdio: 'inherit', windowsHide: true });
+  const result = spawnSync(process.execPath, [pnpm, ...args], { cwd: process.cwd(), env: childEnv, stdio: 'inherit', windowsHide: true });
   const exitCode = result.status ?? 1;
   report.results.push({ args, exitCode, durationMs: Date.now() - startedAt, ...(result.error ? { error: result.error.message } : {}) });
   report.success = exitCode === 0 && report.results.length === stages.length;
