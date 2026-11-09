@@ -2866,6 +2866,13 @@
     },
     "taskRequired": "Select an existing business task and bind its coordinator before dispatching.",
     "model": "Runtime model: {{model}}",
+    "cost": "Recorded transcript cost: {{cost}}",
+    "costUnknown": "Unknown",
+    "taskAcceptance": {
+      "pending": "Awaiting acceptance",
+      "accepted": "Accepted",
+      "cancelled": "Cancelled"
+    },
     "status": {
       "unavailable": "Unavailable",
       "in-flight": "Admission pending",

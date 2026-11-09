@@ -8,9 +8,11 @@ import { execFileSync } from 'node:child_process';
 import { TaskSystemStore } from '../../shared/task-system/store';
 import { resolveTaskDomain } from '../../shared/task-system/identity';
 import type { TaskContractInput } from '../../shared/task-system/types';
+import type { GatewayManager } from '../../electron/gateway/manager';
+import { getWorkspaceRootPathById } from '../../electron/services/workspaces-api';
 
 vi.mock('../../electron/services/workspaces-api', () => ({ getPersistedCoordinatorBinding: vi.fn(), getWorkspaceRootPathById: vi.fn() }));
-import { handoffManagedSessionTask, selectManagedSessionTask, startManagedSessionEffect } from '../../electron/services/task-system-service';
+import { handoffManagedSessionTask, readSessionTask, selectManagedSessionTask, startManagedSessionEffect } from '../../electron/services/task-system-service';
 
 let root: string;
 let store: TaskSystemStore | undefined;
@@ -29,6 +31,19 @@ beforeEach(() => { root = mkdtempSync(join(tmpdir(), 'session-contract-')); });
 afterEach(() => { store?.close(); store = undefined; rmSync(root, { recursive: true, force: true }); });
 
 describe('session bridge consumes the persistent task owner', () => {
+  it('fences worker acceptance reads before and after a session generation changes', async () => {
+    const task = owner();
+    vi.mocked(getWorkspaceRootPathById).mockResolvedValue(root);
+    const rpc = vi.fn().mockResolvedValue({ session: { sessionId: 'generation-source' } });
+    const gateway = { rpc } as unknown as GatewayManager;
+    expect((await readSessionTask('workspace', 'source', gateway, 'generation-source')).task?.contract.taskNodeId).toBe(task.contract.taskNodeId);
+    rpc.mockResolvedValue({ session: { sessionId: 'replacement-generation' } });
+    await expect(readSessionTask('workspace', 'source', gateway, 'generation-source')).rejects.toThrow('TASK_GENERATION_STALE');
+    rpc.mockReset().mockResolvedValueOnce({ session: { sessionId: 'generation-source' } })
+      .mockResolvedValueOnce({ session: { sessionId: 'replacement-generation' } });
+    await expect(readSessionTask('workspace', 'source', gateway, 'generation-source')).rejects.toThrow('TASK_GENERATION_STALE');
+    expect(store!.get(task.contract.taskNodeId).claim).toEqual(task.claim);
+  });
   it('rejects effects without a contract without creating a database', () => {
     expect(() => effect()).toThrow('TASK_CLAIM_REQUIRED');
     expect(existsSync(resolveTaskDomain(root).database)).toBe(false);

@@ -6,6 +6,8 @@ import { normalizeRunScope, normalizeTaskReference } from '@shared/types/identit
 import type { SessionTaskEffectRequest, SessionTaskEffectAdmission } from '@shared/session-task-scope';
 import type { ReplyOperation } from '../../openclaw_runtime/src/auto-reply/reply/reply-run-registry';
 import type { AgentRunContext } from '../../openclaw_runtime/src/infra/agent-events';
+import { createHostDeadline } from '@shared/host-api/host-deadline';
+import { getHostDeadline, runWithHostDeadline } from '@electron/utils/host-deadline-context';
 
 const runtime = vi.hoisted(() => ({ generation: 'generation-1', invoke: vi.fn(), abandoned: false,
   owner: null as ReplyOperation | null, worker: null as Record<string, unknown> | null,
@@ -28,7 +30,8 @@ vi.mock('../../openclaw_runtime/src/agents/embedded-agent-runner/runs', () => ({
 vi.mock('../../openclaw_runtime/src/agents/bash-process-registry', () => ({ listRunningSessions: () => runtime.processes }));
 vi.mock('../../openclaw_runtime/src/process/supervisor/index', () => ({ getProcessSupervisor: () => ({ snapshotRunsForSession: () => runtime.supervised.filter(entry => entry.state !== 'embedded') }) }));
 vi.mock('../../openclaw_runtime/src/agents/verseshell/managed-process-reservation', () => ({ managedProcessReservations: () => runtime.reservations }));
-vi.mock('../../openclaw_runtime/src/agents/subagent-registry', () => ({ getSubagentRunByRunId: () => null, getLatestSubagentRunByChildSessionKey: () => runtime.worker }));
+vi.mock('../../openclaw_runtime/src/agents/subagent-registry', () => { throw new Error('Mutable subagent lifecycle bootstrap is unavailable'); });
+vi.mock('../../openclaw_runtime/src/agents/subagent-registry-read', () => ({ getSubagentRunByRunId: () => null, getLatestSubagentRunByChildSessionKey: () => runtime.worker }));
 
 import { registerSessionTaskScopeBridge } from '@electron/gateway/session-task-scope-bridge';
 import { sessionTaskScopeHandlers } from '../../openclaw_runtime/src/gateway/server-methods/session-task-scope';
@@ -99,6 +102,25 @@ afterEach(() => {
 });
 
 describe('runtime → Gateway → Main task admission bridge', () => {
+  it('handles reverse admission independently of an expired socket-opening host deadline', async () => {
+    dispose();
+    const observed: Array<ReturnType<typeof getHostDeadline>> = [];
+    const originalRpc = gateway.rpc;
+    gateway.rpc = (method, params) => { observed.push(getHostDeadline()); return originalRpc(method, params); };
+    dispose = registerSessionTaskScopeBridge(gateway as unknown as GatewayManager, async request => {
+      observed.push(getHostDeadline());
+      return admission(request);
+    });
+    const expired = createHostDeadline({ stage: 'main', timeoutMs: 1, now: () => 0 });
+    try {
+      await runWithHostDeadline(expired, async () => {
+        expect(getHostDeadline()).toBe(expired);
+        expect(await execute()).toBe('written');
+        expect(getHostDeadline()).toBe(expired);
+      });
+      expect(observed).toEqual([undefined, undefined]);
+    } finally { gateway.rpc = originalRpc; }
+  });
   it('admits a direct embedded execution without a Chat tracker and rejects its former run id', async () => {
     active.delete(runId);
     runtime.supervised = [{ runId, state: 'embedded' }];

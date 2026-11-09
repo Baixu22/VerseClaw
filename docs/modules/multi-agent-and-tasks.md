@@ -439,6 +439,10 @@ Agents 面板将派发准入、实际执行、报告回传、任务验收和父�
 
 操作范围及恢复入口见[会话、任务与资源操作矩阵](../dev/session-lifecycle-control-matrix.md)。
 
+子代理详情和名单面板按当前 child 会话代次读取任务 owner 的验收状态，分别显示等待验收、已验收和已取消；刷新可回读核验后的状态。验收读取失败时保留已读取的 transcript，任务验收显示不可用。
+
+费用读取当前 transcript 中的结构化 usage 记录；完整费用记录可汇总，缺失费用显示“未知”。
+
 ## 17. 源码索引
 
 - `openclaw_runtime/src/agents/role-contract.ts`

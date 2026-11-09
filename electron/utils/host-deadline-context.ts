@@ -22,3 +22,8 @@ export function runWithHostDeadline<T>(deadline: HostDeadline | undefined, run: 
 export function getHostDeadline(): HostDeadline | undefined {
   return storage.getStore();
 }
+
+/** Runtime callbacks are independent of the host action that opened their socket. */
+export function runOutsideHostDeadline<T>(run: () => T): T {
+  return storage.exit(run);
+}

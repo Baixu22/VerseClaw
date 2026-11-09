@@ -1451,6 +1451,22 @@ describe('host services', () => {
     expect((await api.prepareHandoff({ sessionKey: 'agent:main:runtime-handoff' })).draft).not.toContain('STALE_LOCAL_RESULT');
   });
 
+  it('reports recorded transcript cost only when each relevant usage record has a cost', async () => {
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const messages: Array<{ role: string; content: string; usage?: { cost: { total: number | null } } }> = [
+      { role: 'assistant', content: 'First result', usage: { cost: { total: 0 } } },
+    ];
+    const rpc = vi.fn(async () => ({ messages }));
+    const api = createSessionsApi({ gatewayManager: { rpc } as never });
+    expect(await api.history({ sessionKey: 'agent:main:recorded-cost' })).toMatchObject({ costUsd: 0 });
+    messages.push({ role: 'assistant', content: 'Second result', usage: { cost: { total: 0.25 } } });
+    expect(await api.history({ sessionKey: 'agent:main:recorded-cost' })).toMatchObject({ costUsd: 0.25 });
+    messages[1].usage!.cost.total = null;
+    expect(await api.history({ sessionKey: 'agent:main:recorded-cost' })).not.toHaveProperty('costUsd');
+    delete messages[1].usage;
+    expect(await api.history({ sessionKey: 'agent:main:recorded-cost' })).not.toHaveProperty('costUsd');
+  });
+
   it('prepares deterministic session handoff without requiring Gateway', async () => {
     const sessionsDir = join(testOpenClawConfigDir, 'agents', 'main', 'sessions');
     mkdirSync(sessionsDir, { recursive: true });

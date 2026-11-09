@@ -44,6 +44,7 @@ import { SessionDelegationStatus } from '@/components/chat/SessionDelegationStat
 import type { SessionDelegationReceipt } from '@shared/types/session-delegation';
 import type { RawMessage } from '@shared/chat/types';
 import type { SessionActivitySubagent, SessionActivitySubagentStatus } from '@shared/types/session-activity';
+import type { TaskView } from '@shared/task-system/types';
 
 type RosterEntry = {
   key: string;
@@ -107,7 +108,7 @@ export function WorkspaceAgentsPanel() {
   const [childModel, setChildModel] = useState<string | null>(null);
 
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
-  const [transcript, setTranscript] = useState<{ key: string; scope: object; messages: RawMessage[] } | null>(null);
+  const [transcript, setTranscript] = useState<{ key: string; scope: object; messages: RawMessage[]; costUsd?: number | null; task?: TaskView | null } | null>(null);
   const [transcriptError, setTranscriptError] = useState<SurfaceErrorState | null>(null);
   const [transcriptLoading, setTranscriptLoading] = useState(false);
   const [dispatchTask, setDispatchTask] = useState('');
@@ -182,9 +183,16 @@ export function WorkspaceAgentsPanel() {
       });
       if (version !== transcriptVersion.current || scopeRef.current !== viewScope) return;
       if (!result.success || !result.sessionGeneration) throw new Error(result.error ?? 'Transcript generation unavailable');
-      setTranscript({ key: rosterKey, scope: viewScope, messages: result.messages ?? [] });
+      setTranscript({ key: rosterKey, scope: viewScope, messages: result.messages ?? [], costUsd: result.costUsd });
       setChildModel(result.model ?? null);
       setTranscriptError(null);
+      if (workspace?.id) {
+        const owner = await hostApi.taskLedger.sessionTask({ workspaceId: workspace.id, sessionKey: childSessionKey,
+          expectedSessionGeneration: result.sessionGeneration }).catch(() => null);
+        if (version !== transcriptVersion.current || scopeRef.current !== viewScope) return;
+        setTranscript(current => current?.key === rosterKey && current.scope === viewScope
+          ? { ...current, task: owner?.success ? owner.task : null } : current);
+      }
     } catch (error) {
       if (version !== transcriptVersion.current || scopeRef.current !== viewScope) return;
       // R2: a failed history query is NOT an empty transcript — surface it.
@@ -197,7 +205,7 @@ export function WorkspaceAgentsPanel() {
     } finally {
       if (version === transcriptVersion.current && scopeRef.current === viewScope) setTranscriptLoading(false);
     }
-  }, [anchorAgentId, viewScope, sessionKey]);
+  }, [anchorAgentId, viewScope, sessionKey, workspace?.id]);
 
   useEffect(() => {
     void loadTranscript(selected?.key ?? null, selected?.childSessionKey, selected?.agentId);
@@ -244,11 +252,18 @@ export function WorkspaceAgentsPanel() {
   return (
     <div className="flex h-full min-h-0 flex-col p-3" data-testid="workspace-agents-panel">
       <SessionDelegationStatus workspaceId={workspace?.id} sessionKey={sessionKey} generation={parentGeneration}
-        receipt={dispatchReceipt} snapshot={snapshot} worker={subagents?.find((entry) => entry.id === selectedKey)}
-        onOpenResources={workspace?.id ? () => navigate("/settings/storage?" + new URLSearchParams({
-          workspaceId: workspace.id, sessionKey: sessionKey,
+        receipt={dispatchReceipt} snapshot={snapshot} worker={subagents?.find((entry) => entry.id === selected?.key)}
+        task={transcript?.key === selected?.key && transcript?.scope === viewScope ? transcript.task : null}
+        onOpenResources={workspace?.id ? () => navigate('/settings/storage?' + new URLSearchParams({
+          workspaceId: workspace.id, sessionKey,
         }).toString()) : undefined} />
       {selected?.childSessionKey && <p className="my-1 text-2xs text-muted-foreground">{t('delegationStages.model', { model: childModel ?? t('delegationStages.status.unavailable') })}</p>}
+      {selected && <p data-testid="workspace-agents-cost" className="my-1 break-words text-2xs text-muted-foreground">
+        {t('delegationStages.cost', { cost: transcript?.key === selected.key && transcript.scope === viewScope && typeof transcript.costUsd === 'number'
+          && Number.isFinite(transcript.costUsd) && transcript.costUsd >= 0
+          ? new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 6 }).format(transcript.costUsd)
+          : t('delegationStages.costUnknown') })}
+      </p>}
       <div className="mb-3 flex items-center justify-between gap-2">
         <div className="min-w-0">
           <p className="text-sm font-semibold text-foreground">{t('agentsPanel.title')}</p>

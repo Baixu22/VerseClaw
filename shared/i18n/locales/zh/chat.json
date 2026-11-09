@@ -2866,6 +2866,13 @@
     },
     "taskRequired": "派发前需要选择已有业务任务并绑定协调器。",
     "model": "实际运行模型：{{model}}",
+    "cost": "已读记录费用：{{cost}}",
+    "costUnknown": "未知",
+    "taskAcceptance": {
+      "pending": "等待验收",
+      "accepted": "已验收",
+      "cancelled": "已取消"
+    },
     "status": {
       "unavailable": "不可用",
       "in-flight": "准入处理中",

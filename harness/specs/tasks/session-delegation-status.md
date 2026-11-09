@@ -4,12 +4,22 @@ id: session-delegation-status
 title: Show delegation, execution, reporting and continuation as separate facts
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 95b876f27
+diffBase: c308b60e1e8dc6849628c524ff8d8e1f0ce0a522
 intent: Complete the existing session/task UI contract through owner-backed, generation-scoped results.
 ownedPaths:
+  - README.md
+  - README.zh-CN.md
+  - README.ja-JP.md
+  - README.ru-RU.md
   - shared/types/session-delegation.ts
   - shared/host-api/contract.ts
   - electron/services/sessions-api.ts
+  - openclaw_runtime/src/gateway/server-methods/session-task-scope.ts
+  - electron/gateway/session-task-scope-bridge.ts
+  - electron/utils/host-deadline-context.ts
+  - electron/services/task-ledger-api.ts
+  - electron/services/task-system-service.ts
+  - electron/services/workspaces-api.ts
   - src/lib/host-api.ts
   - src/components/file-preview/WorkspaceAgentsPanel.tsx
   - src/components/file-preview/WorkspaceSubagentPanel.tsx
@@ -17,15 +27,29 @@ ownedPaths:
   - src/stores/session-activity.ts
   - src/components/chat/SessionDelegationStatus.tsx
   - tests/unit/session-delegation-status.test.tsx
+  - tests/unit/durable-task-session-scope.test.ts
+  - tests/unit/session-task-scope-completion.test.ts
+  - tests/unit/session-task-scope-bridge.test.ts
+  - tests/unit/session-chain-panels.test.tsx
+  - tests/unit/workspace-agents-panel-failure.test.tsx
   - tests/unit/session-handoff-recovery.test.ts
+  - tests/unit/host-services.test.ts
   - tests/e2e/session-derivation-ui.spec.ts
+  - tests/e2e/session-worker-task-journey.spec.ts
   - harness/specs/tasks/session-delegation-status.md
   - shared/i18n/locales/**/chat.json
   - docs/modules/multi-agent-and-tasks.md
 touchedAreas:
+  - README.md
+  - README.zh-CN.md
+  - README.ja-JP.md
+  - README.ru-RU.md
   - shared/types/session-delegation.ts
   - shared/host-api/contract.ts
   - electron/services/sessions-api.ts
+  - electron/services/task-ledger-api.ts
+  - electron/services/task-system-service.ts
+  - electron/services/workspaces-api.ts
   - src/lib/host-api.ts
   - src/components/file-preview/WorkspaceAgentsPanel.tsx
   - src/components/file-preview/WorkspaceSubagentPanel.tsx
@@ -33,8 +57,14 @@ touchedAreas:
   - src/stores/session-activity.ts
   - src/components/chat/SessionDelegationStatus.tsx
   - tests/unit/session-delegation-status.test.tsx
+  - tests/unit/durable-task-session-scope.test.ts
+  - tests/unit/session-task-scope-completion.test.ts
+  - tests/unit/session-chain-panels.test.tsx
+  - tests/unit/workspace-agents-panel-failure.test.tsx
   - tests/unit/session-handoff-recovery.test.ts
+  - tests/unit/host-services.test.ts
   - tests/e2e/session-derivation-ui.spec.ts
+  - tests/e2e/session-worker-task-journey.spec.ts
   - harness/specs/tasks/session-delegation-status.md
   - shared/i18n/locales/**/chat.json
   - docs/modules/multi-agent-and-tasks.md
@@ -47,6 +77,7 @@ requiredRules:
   - comms-regression
   - docs-sync
   - disk-temp-policy
+  - durable-task-system-boundary
 requiredProfiles:
   - fast
   - comms
@@ -58,21 +89,32 @@ expectedUserBehavior:
 acceptance:
   - Apply the complete U4 or U5 contract from session-derivation-ui-design and its Task Forest node.
   - Use canonical host actions and current owner receipts; do not infer task acceptance from text or a finished run.
+  - Worker details read the canonical task for the displayed child generation; pending, accepted and cancelled remain separate from run completion. Task read failures preserve the transcript and show unavailable acceptance.
+  - Delegated effects accept a generation-matching canonical parent reference when its navigation link has not yet been written; task identity, generation and writer fencing remain required.
+  - File verification, submission and the existing verifier owner produce a real accepted task before either worker surface displays acceptance. Four locales use task-specific labels.
+  - Recorded cost comes from structured usage in the loaded transcript; absent or null costs display unknown, while a supplied zero remains zero.
   - Stop, pause, archive, delete and context restore retain their distinct scopes and recovery behavior.
   - Existing child sessions remain reachable after source archive/delete; no implicit subtree action is added.
   - Four-locale Electron journeys and focused negative tests identify the same candidate and agent actor.
 requiredTests:
   - pnpm run typecheck
   - pnpm run contract:check
+  - pnpm run typecheck:test
   - pnpm run i18n:lint
   - pnpm run comms:replay
   - pnpm run comms:compare
   - pnpm exec playwright test tests/e2e/session-derivation-ui.spec.ts --workers=1
+  - pnpm exec vitest run tests/unit/session-delegation-status.test.tsx tests/unit/session-chain-panels.test.tsx tests/unit/workspace-agents-panel-failure.test.tsx tests/unit/durable-task-session-scope.test.ts tests/unit/session-task-scope-completion.test.ts --maxWorkers=1 --no-file-parallelism
+  - pnpm exec playwright test tests/e2e/session-worker-task-journey.spec.ts --workers=1
   - pnpm harness validate --spec harness/specs/tasks/session-delegation-status.md
   - pnpm harness run --spec harness/specs/tasks/session-delegation-status.md --dry-run
 docs:
   required: true
   files:
+    - README.md
+    - README.zh-CN.md
+    - README.ja-JP.md
+    - README.ru-RU.md
     - docs/modules/multi-agent-and-tasks.md
 ---
 

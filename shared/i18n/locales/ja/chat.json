@@ -2866,6 +2866,13 @@
     },
     "taskRequired": "既存の業務タスクを選び、担当セッションを関連付けてください。",
     "model": "実行モデル：{{model}}",
+    "cost": "読込記録の費用：{{cost}}",
+    "costUnknown": "不明",
+    "taskAcceptance": {
+      "pending": "検証待ち",
+      "accepted": "検証完了",
+      "cancelled": "取消済み"
+    },
     "status": {
       "unavailable": "利用不可",
       "in-flight": "受付処理中",

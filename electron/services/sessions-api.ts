@@ -2125,7 +2125,15 @@ export function createSessionsApi(ctx: {
           const current = await ctx.gatewayManager.rpc<Description>('sessions.describe', { key: body.sessionKey.trim() }, 15_000);
           if (current.session?.sessionId !== described.session.sessionId) return { success: false, error: 'Transcript generation changed during delivery read' };
         }
+        const recordedMessages = messages as Array<RawMessage & { usage?: unknown }>;
+        const costs = recordedMessages.filter(message => message.role === 'assistant' || isRecord(message.usage)).map(message =>
+          isRecord(message.usage) && isRecord(message.usage.cost) && typeof message.usage.cost.total === 'number'
+            && Number.isFinite(message.usage.cost.total) && message.usage.cost.total >= 0 ? message.usage.cost.total : null);
+        const totalCost = costs.length > 0 && costs.every(cost => cost !== null)
+          ? costs.reduce((total, cost) => total + (cost ?? 0), 0) : Number.NaN;
+        const costUsd = Number.isFinite(totalCost) ? totalCost : undefined;
         return { success: true, messages, ...(described?.session?.sessionId ? { sessionGeneration: described.session.sessionId } : {}), ...(model ? { model } : {}),
+          ...(costUsd !== undefined ? { costUsd } : {}),
           ...(workerSendReceipt ? { workerSendReceipt } : {}) };
       }
 

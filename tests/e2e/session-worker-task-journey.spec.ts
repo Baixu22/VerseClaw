@@ -30,6 +30,9 @@ test('a real delegated worker receives its own task, reports separately and acce
     return { text: 'WORKER-RUN-FINISHED' };
   });
   const app = await launchElectronApp({ skipSetup: true });
+  const mainOutput: string[] = [];
+  const collect = (bytes: Buffer) => { mainOutput.push(bytes.toString()); if (mainOutput.length > 2000) mainOutput.splice(0, mainOutput.length - 2000); };
+  app.process().stdout?.on('data', collect); app.process().stderr?.on('data', collect);
   const captureUi = await observeSessionUi(app);
   const evidence: Record<string, unknown> = { driven_by: 'agent', actor: 'playwright-worker-task', provider: 'local-scripted', status: 'running' };
   try {
@@ -109,12 +112,23 @@ test('a real delegated worker receives its own task, reports separately and acce
     expect(duplicate.receipt?.children[0].childSessionKey).toBe(childKey);
     const described = await rpc<{ session: { sessionId: string; hasActiveRun: boolean; parentSessionKey?: string; spawnedBy?: string } }>('sessions.describe', { key: childKey });
     expect(described.session.spawnedBy).toBe(project.sessionKey);
+    evidence.initialRunOwner = await rpc('agent.wait', { runId: admitted.receipt!.children[0].childRunId!, timeoutMs: 1000 });
+    evidence.initialRunState = await rpc('taskScope.runState', { runId: admitted.receipt!.children[0].childRunId!, sessionKey: childKey, sessionGeneration: described.session.sessionId });
+    await writeFile(testInfo.outputPath('worker-before-followup.json'), JSON.stringify({ owner: evidence.initialRunOwner, runtime: evidence.initialRunState, described }, null, 2));
     await expect.poll(async () => (await rpc<{ session: { hasActiveRun: boolean } }>('sessions.describe', { key: childKey })).session.hasActiveRun, { timeout: 30_000 }).toBe(false);
     const followup = await hostInvoke(app, 'sessions', 'sendWorker', { workspaceId: project.workspaceId, parentSessionKey: project.sessionKey,
       expectedParentGeneration: project.generation, childSessionKey: childKey, expectedChildGeneration: described.session.sessionId,
       message: 'WORKER-FOLLOWUP', idempotencyKey: 'worker-followup-1', mode: 'send' });
     expect(followup).toMatchObject({ success: true, phase: 'accepted' });
-    await expect.poll(async () => JSON.stringify(await rpc('chat.history', { sessionKey: childKey, limit: 100 })).includes('WORKER-FOLLOWUP-RECORDED'), { timeout: 60_000 }).toBe(true);
+    evidence.followup = { childKey, described, response: followup, requestedAt: new Date().toISOString(),
+      parentOwner: { sessionKey: currentOwner.task.claim?.sessionKey, generation: currentOwner.task.claim?.generation, epoch: currentOwner.task.claim?.epoch } };
+    await writeFile(testInfo.outputPath('worker-followup-start.json'), JSON.stringify(evidence.followup, null, 2));
+    await expect.poll(async () => {
+      const readback = await rpc('chat.history', { sessionKey: childKey, limit: 100 });
+      evidence.followupLastHistory = readback;
+      return JSON.stringify(readback).includes('WORKER-FOLLOWUP-RECORDED');
+    }, { timeout: 60_000 }).toBe(true);
+    evidence.followupObservedAt = new Date().toISOString();
     const history = await hostInvoke(app, 'sessions', 'history', { sessionKey: childKey,
       expectedParentSessionKey: project.sessionKey, expectedSessionGeneration: described.session.sessionId });
     const activity = await hostInvoke<{ snapshot: SessionActivitySnapshot }>(app, 'sessionActivity', 'snapshot', { workspaceId: project.workspaceId, sessionKey: project.sessionKey });
@@ -129,7 +143,7 @@ test('a real delegated worker receives its own task, reports separately and acce
     await expect(workerRow).toBeVisible(); await workerRow.click();
     await expect(page.getByTestId('workspace-subagent-panel')).toBeVisible();
     await expect(page.getByTestId('workspace-subagent-panel')).toContainText('WORKER-RUN-FINISHED');
-    await expect(page.getByTestId('workspace-subagent-panel').locator('[data-stage="acceptance"]')).toHaveAttribute('data-status', 'unavailable');
+    await expect(page.getByTestId('workspace-subagent-panel').locator('[data-stage="acceptance"]')).toHaveAttribute('data-status', 'pending');
     await expect(page.getByTestId('workspace-subagent-model')).toContainText((history as { model: string }).model);
     await page.getByTestId('workspace-subagent-dispatch-input').fill('WORKER-FOLLOWUP-UI');
     await page.getByTestId('workspace-subagent-dispatch').click();
@@ -154,11 +168,11 @@ test('a real delegated worker receives its own task, reports separately and acce
     await expect(page.locator('body')).toContainText('WORKER-RUN-FINISHED');
     await page.screenshot({ path: testInfo.outputPath('worker-task-transcript.png') });
     await page.getByTestId(`sidebar-project-open-${project.workspaceId}`).click();
-    await page.getByTestId(`sidebar-session-${project.sessionKey}`).click();
-    if (!(await page.getByTestId('workspace-subagent-panel').isVisible())) {
-      await activityButton.click();
-    }
-    await page.getByTestId('session-family-children').selectOption(childKey);
+    await expect(page.getByTestId('project-coordinator-entry')).toContainText('Worker project');
+    const projectScope = page.locator('[data-project-workspace]');
+    await expect(projectScope).toHaveAttribute('data-project-workspace', project.workspaceId);
+    expect(await page.getByTestId('session-family-children').selectOption(childKey)).toEqual([childKey]);
+    await expect(projectScope).toHaveAttribute('data-project-workspace', project.workspaceId);
     await expect(page.getByTestId('workspace-subagent-panel')).toBeVisible();
     await expect(page.getByTestId('workspace-subagent-panel')).toContainText('WORKER-RUN-FINISHED');
     evidence.taskNavigation = { rootId, taskId: task.id, workerLink, artifact: target };
@@ -293,11 +307,12 @@ test('a real delegated worker receives its own task, reports separately and acce
       'nodeId=' + encodeURIComponent(secondTask.id),
     ));
     await page.screenshot({ path: testInfo.outputPath('read-only-worker-navigation.png') });
-    evidence.multiCoordinator = { secondAgent, second, secondTask, readOnly, observerOwnerBefore, observerDuringRun,
+    evidence.multiCoordinator = { secondAgent, second, secondTask, readOnly, readOnlyDescription, observerOwnerBefore, observerDuringRun,
       firstOrigin, secondOrigin, crossed, currentProject };
     evidence.status = 'passed';
   } catch (error) {
     evidence.status = 'failed'; evidence.error = String(error);
+    evidence.mainLog = await hostInvoke(app, 'logs', 'memory', { count: 500 }).catch(String);
     const receipt = (evidence.admission as SessionDelegationResult | undefined)?.receipt;
     if (receipt?.children[0].childSessionKey) evidence.failureReadback = await hostInvoke(app, 'sessions', 'history', { sessionKey: receipt.children[0].childSessionKey }).catch(String);
     if (receipt?.children[0].childSessionKey) {
@@ -308,14 +323,171 @@ test('a real delegated worker receives its own task, reports separately and acce
   }
   finally {
     releaseHold();
+    await writeFile(testInfo.outputPath('worker-main.log'), mainOutput.join(''));
     evidence.providerLog = llm.log;
-    evidence.hostCalls = await getAgentDevHostCalls(await getStableWindow(app)).catch(String);
+    await writeFile(testInfo.outputPath('worker-task-journey.json'), JSON.stringify(evidence, null, 2));
+    const window = await getStableWindow(app).catch(() => null);
+    evidence.hostCalls = window ? await getAgentDevHostCalls(window).catch(String) : 'Window unavailable after failure';
     await writeFile(testInfo.outputPath('worker-task-journey.json'), JSON.stringify(evidence, null, 2));
     await captureUi((name) => testInfo.outputPath(name));
     await hostInvoke(app, 'gateway', 'stop').catch(() => undefined); await closeElectronApp(app);
     llm.server.closeAllConnections(); await new Promise<void>((done) => llm.server.close(() => done()));
   }
 });
+
+// Each locale prepares a real canonical owner and uses one reload within the 300s case budget.
+for (const language of ['en', 'zh', 'ja', 'ru'] as const) {
+  test(`the worker panel reads a real task acceptance after file verification and owner acceptance (${language})`, async ({ launchElectronApp }, testInfo) => {
+    test.setTimeout(300_000);
+    const content = 'owner-accepted worker result\n';
+    const hash = createHash('sha256').update(content).digest('hex');
+    const target = testInfo.outputPath('accepted-worker-workspace', 'accepted.txt');
+    let wrote = false;
+    const llm = await startScriptedLlm(async text => {
+      if (text.includes('ACCEPTED-WORKER-WRITE') && !wrote) {
+        wrote = true;
+        return { toolCall: { id: 'accepted-worker-write', name: 'write', args: { path: target, content } } };
+      }
+      return { text: 'ACCEPTED-WORKER-FINISHED' };
+    });
+    const app = await launchElectronApp({ skipSetup: true });
+    const evidence: Record<string, unknown> = { driven_by: 'agent', actor: 'playwright-worker-acceptance', provider: 'local-scripted', language, status: 'running' };
+    try {
+      await configureSessionChainProvider(app, llm.port);
+      const project = await createSessionChainProject(app, testInfo.outputPath('accepted-worker-workspace'), 'Accepted worker');
+      const task = await createSessionChainTask(app, project.workspaceId, 'accepted-worker-task', {
+        objective: 'Produce and verify the worker artifact', target: 'accepted.txt', constraints: ['Preserve the coordinator'],
+        acceptance: [{ id: 'file', description: 'Exact worker artifact', verification: { kind: 'file-sha256', path: 'accepted.txt', sha256: hash } },
+          { id: 'owner', description: 'Existing verifier accepts the evidence', verification: { kind: 'owner-receipt', owner: 'evidence-verifier', requires: ['file'] } }],
+      });
+      const binding = await hostInvoke<WorkspaceCoordinatorBindingResult>(app, 'workspaces', 'bindCoordinator', {
+        workspaceId: project.workspaceId, sessionKey: project.sessionKey, agentId: 'main', expectedRevision: 0,
+        taskLedgerNodeIds: [task.contract.taskNodeId], environment: { kind: 'local', rootPath: project.rootPath }, archiveRestorePolicy: 'restore',
+      });
+      await hostInvoke(app, 'taskLedger', 'command', { workspaceId: project.workspaceId,
+        command: { action: 'claim', taskNodeId: task.contract.taskNodeId, sessionKey: project.sessionKey, requestId: 'accepted-worker-claim' } });
+      const admitted = await hostInvoke<SessionDelegationResult>(app, 'sessions', 'delegate', {
+        workspaceId: project.workspaceId, sessionKey: project.sessionKey, agentId: 'main', taskRef: task.contract.taskNodeId,
+        expectedBindingRevision: binding.binding!.bindingRevision, expectedSessionGeneration: project.generation,
+        task: 'Run ACCEPTED-WORKER-WRITE', idempotencyKey: 'accepted-worker-admission', backend: 'subagent',
+        worker: { roleName: 'implementer', task: 'ACCEPTED-WORKER-WRITE', isolation: 'shared', writeSet: ['accepted.txt'] }, includeVerifier: false,
+      });
+      expect(admitted.success, admitted.error).toBe(true);
+      const childKey = admitted.receipt!.children[0].childSessionKey!;
+      evidence.project = project; evidence.task = task; evidence.admission = admitted; evidence.childKey = childKey;
+      evidence.stage = 'worker-write';
+      const rpc = <T,>(method: string, params: Record<string, unknown>) => hostInvoke<T>(app, 'gateway', 'rpc', { method, params, timeoutMs: 45_000 });
+      await expect.poll(() => readFile(target, 'utf8').catch(() => null), { timeout: 90_000 }).toBe(content);
+      await expect.poll(async () => JSON.stringify(await rpc('chat.history', { sessionKey: childKey, limit: 100 })).includes('ACCEPTED-WORKER-FINISHED'), { timeout: 60_000 }).toBe(true);
+      await expect.poll(async () => (await hostInvoke<{ task: TaskView }>(app, 'taskLedger', 'sessionTask', {
+        workspaceId: project.workspaceId, sessionKey: project.sessionKey,
+      })).task.claim?.sessionKey, { timeout: 30_000 }).toBe(project.sessionKey);
+      await rpc('chat.inject', { sessionKey: project.sessionKey, message: 'Read the worker acceptance', label: 'agent fixture' });
+      evidence.uiSeed = { driven_by: 'agent', kind: 'injected-parent-message' };
+      const page = await getStableWindow(app); await page.reload();
+      await page.getByTestId('chat-session-activity-toggle').click();
+      const activity = await hostInvoke<{ snapshot: SessionActivitySnapshot }>(app, 'sessionActivity', 'snapshot', {
+        workspaceId: project.workspaceId, sessionKey: project.sessionKey,
+      });
+      const worker = activity.snapshot.subagents.find(entry => entry.childSessionKey === childKey)!;
+      await page.getByTestId(`session-activity-subagent-${worker.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`).click();
+      const stage = page.getByTestId('workspace-subagent-panel').locator('[data-stage="acceptance"]');
+      await expect(stage).toHaveAttribute('data-status', 'pending');
+      await page.screenshot({ path: testInfo.outputPath('worker-awaiting-acceptance.png') });
+      evidence.stage = 'owner-verification';
+      const current = await hostInvoke<{ task: TaskView }>(app, 'taskLedger', 'sessionTask', { workspaceId: project.workspaceId, sessionKey: project.sessionKey });
+      const commands = [
+        { action: 'verifyFile', credential: current.task.claim, criterionId: 'file', path: 'accepted.txt', expectedSha256: hash, candidate: hash },
+        { action: 'submit', credential: current.task.claim, candidate: hash },
+        { action: 'accept', credential: current.task.claim, candidate: hash },
+      ];
+      const receipts = [];
+      for (const command of commands) {
+        const result = await hostInvoke<{ success: boolean; result?: TaskView; error?: string }>(app, 'taskLedger', 'command', { workspaceId: project.workspaceId, command });
+        expect(result.success, result.error).toBe(true); receipts.push({ command, result });
+      }
+      expect(receipts.at(-1)!.result.result!.contract.state).toBe('done');
+      await page.getByTestId('workspace-subagent-refresh').click();
+      await expect(stage).toHaveAttribute('data-status', 'accepted');
+      await expect(stage).toHaveText(/Accepted|已验收/);
+      const readback = await hostInvoke<{ snapshot: TaskLedgerSnapshot }>(app, 'taskLedger', 'snapshot', { workspaceId: project.workspaceId });
+      expect(readback.snapshot.nodes.find(node => node.id === task.contract.taskNodeId)?.status).toBe('done');
+      const history = await hostInvoke(app, 'sessions', 'history', { sessionKey: childKey, expectedParentSessionKey: project.sessionKey });
+      evidence.project = project; evidence.task = task; evidence.admission = admitted; evidence.childKey = childKey;
+      evidence.artifact = { path: target, sha256: createHash('sha256').update(await readFile(target)).digest('hex') };
+      evidence.acceptance = { current, receipts, readback, history, locales: [] };
+      await page.screenshot({ path: testInfo.outputPath('worker-owner-accepted.png') });
+      await app.evaluate((_electron, key) => {
+        const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
+        const handlers = (ipcMain as unknown as { _invokeHandlers: Map<string, (event: unknown, request: unknown) => Promise<{ data?: Record<string, unknown> }>> })._invokeHandlers;
+        const original = handlers.get('host:invoke')!;
+        (globalThis as unknown as { workerCostOriginal: typeof original }).workerCostOriginal = original;
+        ipcMain.removeHandler('host:invoke');
+        ipcMain.handle('host:invoke', async (event, request: { module?: string; action?: string; payload?: { sessionKey?: string } }) => {
+          const response = await original(event, request);
+          return request.module === 'sessions' && request.action === 'history' && request.payload?.sessionKey === key && response.data
+            ? { ...response, data: { ...response.data, costUsd: null } } : response;
+        });
+      }, childKey);
+      evidence.costFault = { driven_by: 'agent', kind: 'null-cost-after-real-host-read' };
+      evidence.stage = 'cost-unknown';
+      await page.getByTestId('workspace-subagent-refresh').click();
+      await expect(page.getByTestId('workspace-subagent-cost')).toHaveText(/Unknown|未知/);
+      await expect(page.getByTestId('workspace-subagent-cost')).not.toHaveText(/\$0/);
+      await expect(page.getByTestId('workspace-subagent-refresh')).toBeEnabled();
+      await expect(stage).toHaveAttribute('data-status', 'accepted');
+      await page.screenshot({ path: testInfo.outputPath('worker-cost-unknown.png') });
+      const locales: Array<{ language: string; status: string; label: string }> = [];
+      evidence.acceptance = { current, receipts, readback, history, locales };
+      evidence.stage = 'locale-navigation-' + language;
+      {
+        const locale = JSON.parse(await readFile(`shared/i18n/locales/${language}/chat.json`, 'utf8'));
+        await page.getByTestId('sidebar-nav-settings').click();
+        await page.getByTestId('settings-nav-general').click();
+        await page.getByTestId('settings-language-select').click();
+        const languageLabel = { en: 'English', zh: '中文', ja: '日本語', ru: 'Русский' }[language];
+        await page.getByRole('option', { name: languageLabel, exact: true }).click();
+        await expect(page.locator('html')).toHaveAttribute('lang', language);
+        await expect.poll(async () => (await hostInvoke<{ language: string }>(app, 'settings', 'getAll')).language).toBe(language);
+        await page.reload();
+        await expect(page.locator('html')).toHaveAttribute('lang', language);
+        await page.getByTestId('settings-back-button').click();
+        await page.getByTestId(`sidebar-project-open-${project.workspaceId}`).click();
+        await expect(page.getByTestId('project-coordinator-entry')).toBeVisible();
+        const projectScope = page.locator('[data-project-workspace]');
+        await expect(projectScope).toHaveAttribute('data-project-workspace', project.workspaceId);
+        const draft = 'Keep the owner scope draft ' + language;
+        await page.getByTestId('chat-composer-input').fill(draft);
+        const children = page.getByTestId('session-family-children');
+        await expect(children).toBeVisible();
+        expect(await children.selectOption(childKey)).toEqual([childKey]);
+        await expect(projectScope).toHaveAttribute('data-project-workspace', project.workspaceId);
+        await expect(page.getByTestId('chat-composer-input')).toHaveValue(draft);
+        const acceptedStage = page.getByTestId('workspace-subagent-panel').locator('[data-stage="acceptance"]');
+        await expect(acceptedStage).toHaveAttribute('data-status', 'accepted');
+        await expect(acceptedStage).toHaveText(locale.delegationStages.taskAcceptance.accepted);
+        await expect(page.getByTestId('workspace-subagent-cost')).toHaveText(locale.delegationStages.cost.replace('{{cost}}', locale.delegationStages.costUnknown));
+        await page.screenshot({ path: testInfo.outputPath(`worker-owner-accepted-${language}.png`) });
+        locales.push({ language, status: 'passed', label: locale.delegationStages.taskAcceptance.accepted });
+      }
+      evidence.project = project; evidence.task = task; evidence.admission = admitted; evidence.childKey = childKey;
+      evidence.artifact = { path: target, sha256: createHash('sha256').update(await readFile(target)).digest('hex') };
+      evidence.acceptance = { current, receipts, readback, history, locales }; evidence.status = 'passed';
+    } catch (error) { evidence.status = 'failed'; evidence.error = String(error); throw error; }
+    finally {
+      evidence.providerLog = llm.log; await writeFile(testInfo.outputPath('worker-owner-acceptance.json'), JSON.stringify(evidence, null, 2));
+      await app.evaluate(() => {
+        const original = (globalThis as unknown as { workerCostOriginal?: (event: unknown, request: unknown) => unknown }).workerCostOriginal;
+        if (original) {
+          const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
+          ipcMain.removeHandler('host:invoke'); ipcMain.handle('host:invoke', original);
+        }
+      }).catch(() => undefined);
+      await hostInvoke(app, 'gateway', 'stop').catch(() => undefined); await closeElectronApp(app);
+      llm.server.closeAllConnections(); await new Promise<void>(resolve => llm.server.close(() => resolve()));
+    }
+  });
+}
 
 test('a child writes under the canonical transfer while its parent turn remains active', async ({ launchElectronApp }, testInfo) => {
   test.setTimeout(240_000);

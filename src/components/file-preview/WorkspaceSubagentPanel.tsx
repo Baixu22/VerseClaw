@@ -36,6 +36,7 @@ import { SessionDelegationStatus } from '@/components/chat/SessionDelegationStat
 import { subagentIdentity } from '@shared/subagent-identity';
 import type { RawMessage } from '@shared/chat/types';
 import type { SessionActivitySubagentStatus } from '@shared/types/session-activity';
+import type { TaskView } from '@shared/task-system/types';
 const EMPTY_TRANSCRIPT: RawMessage[] = [];
 
 /** `agent:<id>:<session>` — the child's own agent id, for the history call. */
@@ -67,7 +68,7 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
   const sendIntent = useRef<{ text: string; scope: string; id: string; generation: string } | null>(null);
   useEffect(() => { setSendPhase(null); setDispatching(false); }, [scopeKey]);
 
-  const [loadedTranscript, setLoadedTranscript] = useState<{ scope: object; messages: RawMessage[]; model?: string } | null>(null);
+  const [loadedTranscript, setLoadedTranscript] = useState<{ scope: object; messages: RawMessage[]; model?: string; costUsd?: number | null; task?: TaskView | null } | null>(null);
   const transcript = loadedTranscript?.scope === viewScope ? loadedTranscript.messages : EMPTY_TRANSCRIPT;
   const [transcriptError, setTranscriptError] = useState<SurfaceErrorState | null>(null);
   const [loading, setLoading] = useState(false);
@@ -99,7 +100,7 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
       });
       if (scopeRef.current !== viewScope || version !== loadVersion.current) return;
       if (!result.success || !result.sessionGeneration) throw new Error(result.error ?? 'Worker transcript unavailable');
-      setLoadedTranscript({ scope: viewScope, messages: result.messages ?? [], model: result.model });
+      setLoadedTranscript({ scope: viewScope, messages: result.messages ?? [], model: result.model, costUsd: result.costUsd });
       setChildGeneration(result.sessionGeneration);
       const intent = sendIntent.current;
       const receiptPhase = intent?.scope === scopeKey
@@ -112,6 +113,12 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
         sendIntent.current = null;
       }
       setTranscriptError(null);
+      if (workspace?.id) {
+        const owner = await hostApi.taskLedger.sessionTask({ workspaceId: workspace.id, sessionKey: childSessionKey,
+          expectedSessionGeneration: result.sessionGeneration }).catch(() => null);
+        if (scopeRef.current !== viewScope || version !== loadVersion.current) return;
+        setLoadedTranscript(current => current?.scope === viewScope ? { ...current, task: owner?.success ? owner.task : null } : current);
+      }
     } catch (error) {
       if (scopeRef.current !== viewScope || version !== loadVersion.current) return;
       // R2: a failed history query is NOT an empty transcript — surface it.
@@ -124,16 +131,17 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
     } finally {
       if (scopeRef.current === viewScope && version === loadVersion.current) setLoading(false);
     }
-  }, [anchorAgentId, childSessionKey, parentSessionKey, scopeKey, viewScope]);
+  }, [anchorAgentId, childSessionKey, parentSessionKey, scopeKey, viewScope, workspace?.id]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
   useEffect(() => {
+    if (loading) return;
     const node = scrollRef.current;
     if (node) node.scrollTop = node.scrollHeight;
-  }, [transcript]);
+  }, [transcript, loading]);
 
   const handleDispatch = useCallback(async () => {
     const task = dispatchTask.trim();
@@ -167,7 +175,9 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
     <div className="flex h-full min-h-0 flex-col p-3" data-testid="workspace-subagent-panel">
       <SessionDelegationStatus workspaceId={workspace?.id} sessionKey={parentSessionKey}
         generation={snapshot?.session.sessionId} snapshot={snapshot} worker={entry ?? undefined}
-        onOpenResources={workspace?.id ? () => navigate("/settings/storage?" + new URLSearchParams({
+        childSessionKey={childSessionKey}
+        task={loadedTranscript?.scope === viewScope ? loadedTranscript.task : null}
+        onOpenResources={workspace?.id ? () => navigate('/settings/storage?' + new URLSearchParams({
           workspaceId: workspace.id, sessionKey: parentSessionKey,
         }).toString()) : undefined} />
       {sendPhase && <p role="status" data-testid="worker-send-phase">{t(`delegationStages.status.${sendPhase}`)}</p>}
@@ -201,6 +211,12 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
           <p data-testid="workspace-subagent-model" className="mt-0.5 break-words text-2xs text-muted-foreground">
             {t('delegationStages.model', { model: loadedTranscript?.scope === viewScope && loadedTranscript.model
               ? loadedTranscript.model : t('delegationStages.status.unavailable') })}
+          </p>
+          <p data-testid="workspace-subagent-cost" className="mt-0.5 break-words text-2xs text-muted-foreground">
+            {t('delegationStages.cost', { cost: loadedTranscript?.scope === viewScope && typeof loadedTranscript.costUsd === 'number'
+              && Number.isFinite(loadedTranscript.costUsd) && loadedTranscript.costUsd >= 0
+              ? new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 6 }).format(loadedTranscript.costUsd)
+              : t('delegationStages.costUnknown') })}
           </p>
           {entry?.error && (
             <p className="mt-0.5 text-xs text-destructive">{entry.error}</p>
