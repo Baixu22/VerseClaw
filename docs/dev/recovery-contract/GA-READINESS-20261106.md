@@ -28,6 +28,8 @@
 
 该命令使用 Session SQLite 和本地追加日志 fixture，执行并发领取、派发前 kill、效果写入后 kill 与对账回读，输出原始日志、源码哈希及 `report.json`。报告含实际 PID、尝试次数、效果计数和进程清理结果。
 
-GA 当前为 NO-GO，接下来需完成主会话、投递、ACP、goal-wake 接线和五入口验收。冻结验收要求 5 个故障窗口、每窗口至少 3 次、至少 30 对真实模型长会话、9 个指标，以及 P50 ≤ 5000ms、P95 ≤ 15000ms 和重复基线结构一致性。发布候选还需完成完整源码与打包门禁。当前默认 writer 为 legacy；默认值切换由发布者决定。
+主会话节点 TF-0813 已于 2026-11-10 完成收口。源码候选为 `80af3990693d53f78d739e707e698f7b76cf8bd6`，主会话证据保存在 `harness/specs/fixtures/recovery-contract-eval/ga-20261106/main-session/`：26 项检查、221 个不同用例、225 次执行通过，干净源码投影中的 owner/CLI/Gateway 73 项通过，指定模型复审发现 0。实际 PID 中断证明保留效果 1、尝试 2、重复准入 0。
+
+GA 当前为 NO-GO，接下来需完成投递、ACP、goal-wake 接线和五入口验收。冻结验收要求 5 个故障窗口、每窗口至少 3 次、至少 30 对真实模型长会话、9 个指标，以及 P50 ≤ 5000ms、P95 ≤ 15000ms 和重复基线结构一致性。发布候选还需完成完整源码与打包门禁。当前默认 writer 为 legacy；默认值切换由发布者决定。
 
 此前实测见 [恢复评测](FINAL-20261105.zh-CN.md) 与 [后续验证](FOLLOWUP-20261106.zh-CN.md)。最新节点证据完成后收录在 `harness/specs/fixtures/recovery-contract-eval/ga-20261106/`。
