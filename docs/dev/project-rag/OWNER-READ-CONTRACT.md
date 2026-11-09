@@ -8,4 +8,6 @@ Wiki 的公开读取接口返回 `OwnerReadSnapshot/v1`。`SourceRef/v2` 记录 
 
 SourceSet 的候选正文、digest、身份、政策和 raw locator 必须与 owner snapshot 一致。合格集合为空时跳过 embedding；使用前的 owner 复查可以移除候选，失效的显式 pin 同时进入缺失记录。其余有效来源保留，回答状态为 partial。
 
+Host 将 owner 的行数组以及 `results` / `hits` 封装归一化为 `results`，保留每条来源的完整 `SourceRef/v2`。查询诊断中的 `query` 是调用者提交的文本；来源证据由准入后的结果行提供。
+
 公开实现入口：`openclaw_runtime/extensions/memory-wiki/runtime-api.ts`；通用数据合同与校验：`openclaw_runtime/src/runtime-core/knowledge-owner-read.ts`；共享 Host 类型：`shared/knowledge/owner-read-contract.ts`。固定回归入口为 `tests/unit/project-rag-owner-read.test.ts`。Host/Gateway/模型消费者的完整接线由 RAG-01 的验收覆盖，记录在对应候选证据中。

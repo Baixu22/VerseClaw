@@ -8,7 +8,7 @@ taskType: runtime-bridge
 programKey: RAG-01
 intent: 确保检索、预览、模型调用和引用使用同一份 owner 读取约束。
 diffBase: ca1ba25b27ccd3783d199d2416d8a81bcf799c2e
-integratedMainCommit: c308b60e1e8dc6849628c524ff8d8e1f0ce0a522
+integratedMainCommit: ea4bff4423b7c2d2f16fe0c1b1856f850e8ecd15
 touchedAreas:
   # Committed main integration, recorded separately from the RAG implementation.
   - "docs/modules/multi-agent-and-tasks.md"
@@ -23,6 +23,28 @@ touchedAreas:
   - "tests/unit/chat-message.test.tsx"
   - "tests/unit/host-services.test.ts"
   - "tests/unit/session-handoff-recovery.test.ts"
+  - "docs/modules/resources-and-observability.md"
+  - "electron/services/terminal-session-manager.ts"
+  - "harness/specs/fixtures/resource-lifecycle-soak-20261109/**"
+  - "harness/specs/rules/resource-lifecycle-soak.md"
+  - "harness/specs/tasks/resource-lifecycle-soak-20261109.md"
+  - "playwright.config.ts"
+  - "playwright.resource-lifecycle.config.ts"
+  - "scripts/lib/resource-lifecycle-report.mjs"
+  - "scripts/verify-resource-lifecycle-soak.mjs"
+  - "shared/dcs/component-disposition-catalog.ts"
+  - "tests/e2e/fixtures/electron.ts"
+  - "tests/e2e/resource-lifecycle-soak.spec.ts"
+  - "tests/e2e/resource-window-lifecycle.spec.ts"
+  - "tests/unit/chat-page-execution-graph.test.tsx"
+  - "tests/unit/chat-question-directory.test.tsx"
+  - "tests/unit/chat-stream-publication.test.ts"
+  - "tests/unit/r0-3-chat-abort-checkstuck.test.ts"
+  - "tests/unit/resource-lifecycle-report.test.ts"
+  - "tests/unit/resource-metrics-owner.test.ts"
+  - "tests/unit/resource-repeated-observers.test.ts"
+  - "tests/unit/terminal-resource-native.test.ts"
+  - "tests/unit/terminal-session-manager.test.ts"
   - "shared/knowledge/**"
   - "shared/host-api/contract.ts"
   - "electron/services/knowledge*.ts"
