@@ -59,10 +59,22 @@ async function installReplyLoss(app: ElectronApplication, sessionKey: string) {
     });
   }, sessionKey);
 }
-const faultRead = (app: ElectronApplication) => app.evaluate(() => {
-  const s = (globalThis as unknown as { u5CommitLoss: { calls: Captured[]; reads: unknown[]; observedMutations: unknown[] } }).u5CommitLoss;
-  return { calls: s.calls, reads: s.reads, observedMutations: s.observedMutations };
-});
+const observationErrors = new WeakMap<ElectronApplication, Array<{ at: number; error: string }>>();
+async function faultRead(app: ElectronApplication) {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await app.evaluate(() => {
+        const s = (globalThis as unknown as { u5CommitLoss: { calls: Captured[]; reads: unknown[]; observedMutations: unknown[] } }).u5CommitLoss;
+        return { calls: s.calls, reads: s.reads, observedMutations: s.observedMutations };
+      });
+    } catch (error) {
+      if (attempt >= 3 || !String(error).includes('Execution context was destroyed')) throw error;
+      const observations = observationErrors.get(app) ?? [];
+      observations.push({ at: Date.now(), error: String(error) }); observationErrors.set(app, observations);
+      await getStableWindow(app); await new Promise(resolve => setTimeout(resolve, 150));
+    }
+  }
+}
 const arm = (app: ElectronApplication, action: Action, file?: string, expectedSha256?: string) => app.evaluate((_electron, input) => {
   (globalThis as unknown as { u5CommitLoss: { armed: unknown } }).u5CommitLoss.armed = input;
 }, { action, file, expectedSha256 });
@@ -101,6 +113,7 @@ async function openCheckpoints(page: Page) {
 }
 async function finish(app: ElectronApplication, llm: Awaited<ReturnType<typeof startScriptedLlm>>, info: TestInfo, evidence: Record<string, unknown>) {
   evidence.fault = await faultRead(app).catch(String); evidence.providerLog = llm.log;
+  evidence.observationErrors = observationErrors.get(app) ?? [];
   evidence.uiEvents = await (await getStableWindow(app)).evaluate(() =>
     (window as unknown as { u5UiEvents?: unknown[] }).u5UiEvents ?? []).catch(String);
   await app.evaluate(() => (globalThis as unknown as { u5CommitLoss?: { restore: () => void } }).u5CommitLoss?.restore()).catch(() => undefined);

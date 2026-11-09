@@ -255,6 +255,9 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
     const committedWork = (sample: Awaited<ReturnType<typeof renderer>>) => [project.sessionKey, ...children]
       .reduce((sum, key) => sum + (sample.rowWork[key] ?? 0), 0);
     const chooseProjection = async (view: Projection) => {
+      const window = await app.browserWindow(page);
+      await window.evaluate(window => { window.show(); window.focus(); }); await window.dispose();
+      await page.bringToFront();
       const organize = page.getByTestId('sidebar-session-organize');
       await revealSectionHeadingActionsFor(organize); await organize.click();
       const option = page.getByRole('menuitemradio', { name: viewLabels[view], exact: true });

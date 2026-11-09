@@ -426,6 +426,7 @@ test.describe('Verse Claw chat workspace header', () => {
       }));
       expect(calls?.workspaceUpdate[0]?.sessionKey).toEqual(expect.stringMatching(/^agent:main:session-\d+-[a-z0-9]+$/));
       expect(calls?.workspaceUpdate[0]?.activeSessionKey).toBe(calls?.workspaceUpdate[0]?.sessionKey);
+      await expect(page.getByTestId('chat-composer-input')).toHaveValue('');
       await info.attach('new-session-refusal-recovery', { body: JSON.stringify({ driven_by: 'agent', actor: 'playwright-u5-new-session',
         fixture: 'Host owner rejection followed by original UI retry', sourceDraftRetained: true, calls }), contentType: 'application/json' });
     } finally {
