@@ -46,6 +46,7 @@ vi.mock('electron-store', () => {
 
 vi.mock('@electron/services/workspaces-api', () => ({
   getActiveWorkspaceProfile: vi.fn(async () => activeWorkspace.profile),
+  createWorkspacesApi: () => ({ list: async () => ({ profiles: activeWorkspace.profile ? [activeWorkspace.profile] : [] }) }),
 }));
 
 function workspace(permissionMode: WorkspaceProfile['permissionMode'] = 'acceptEdits'): WorkspaceProfile {
@@ -605,7 +606,7 @@ describe('git api', () => {
     expect(calls).toContainEqual(['stash', 'pop', 'stash@{0}']);
   });
 
-  it('only allows worktree remove for paths registered with the repository', async () => {
+  it('rejects paths absent from the native worktree list before owner inspection', async () => {
     const registeredWorktree = resolve(process.cwd(), '..', 'Project-feature');
     mockExec((_command, args) => {
       if (args[0] === 'rev-parse') return { stdout: `${process.cwd()}\n` };
@@ -630,11 +631,7 @@ describe('git api', () => {
     await expect(gitApi.worktreeRemove({ path: resolve(process.cwd(), '..', 'not-a-worktree') })).rejects.toThrow(
       'worktree path is not registered with this repository',
     );
-    await expect(gitApi.worktreeRemove({ path: registeredWorktree })).resolves.toMatchObject({
-      success: false,
-      blocked: true,
-      approvalRequired: true,
-    });
+    // 正向删除与审批/owner拒绝使用 ui-worktree-cleanup-conservative.test.ts 的真实Git夹具。
   });
 
   it('adds a worktree by creating a new branch with the correct argument order', async () => {

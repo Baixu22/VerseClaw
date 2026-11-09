@@ -6,6 +6,7 @@ import { execFileSync } from 'node:child_process';
 import type { WorkspaceProfile } from '@shared/types/workspace';
 import type { TerminalSessionManager } from '@electron/services/terminal-session-manager';
 import type { CompleteHostServiceRegistry } from '@electron/main/ipc/host-contract';
+import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
 
 const owners = vi.hoisted(() => ({
   browserList: vi.fn(() => [] as Array<{ id: string; workspaceId: string; sessionKey: string }>),
@@ -16,6 +17,7 @@ const owners = vi.hoisted(() => ({
 }));
 vi.mock('electron', () => ({ app: { getAppMetrics: () => [{ memory: { workingSetSize: 1024 } }] }, shell: {} }));
 vi.mock('@electron/utils/paths', () => ({ getOpenClawConfigDir: () => owners.configRoot }));
+vi.mock('@electron/services/workspaces-api', () => ({ getPersistedCoordinatorBinding: vi.fn(), getWorkspaceRootPathById: vi.fn() }));
 vi.mock('@electron/services/agent-browser-api', () => ({ getDefaultAgentBrowserService: () => ({ list: owners.browserList, close: owners.browserClose }) }));
 vi.mock('@electron/services/resource-tracker', () => ({ getResourceTracker: () => ({ list: owners.serverList, stopResource: owners.serverStop }) }));
 vi.mock('@electron/services/git-api', async () => {
@@ -56,6 +58,7 @@ describe('session storage with real Git and files', () => {
   beforeEach(async () => {
     vi.clearAllMocks(); terminals.mockReturnValue([]); owners.browserList.mockReturnValue([]); owners.serverList.mockReturnValue({ resources: [] }); owners.permission.mockResolvedValue(null);
     root = await mkdtemp(join(tmpdir(), 'session-storage-'));
+    vi.stubEnv('CLAWX_EXECUTION_STATE_PATH', join(root, 'execution.sqlite'));
     owners.configRoot = join(root, 'config'); primary = join(root, 'project'); clean = join(root, 'clean'); dirty = join(root, 'dirty'); locked = join(root, 'locked');
     await mkdir(primary);
     command(primary, 'init', '-b', 'main'); command(primary, 'config', 'user.name', 'Storage Test'); command(primary, 'config', 'user.email', 'test@example.invalid');
@@ -64,7 +67,7 @@ describe('session storage with real Git and files', () => {
     await writeFile(join(dirty, 'unsaved.txt'), 'keep me'); command(primary, 'worktree', 'lock', locked);
     profiles = [profile('project', primary)];
   });
-  afterEach(async () => { await rm(root, { recursive: true, force: true }); });
+  afterEach(async () => { closeOpenClawStateDatabaseForTest(); vi.unstubAllEnvs(); await rm(root, { recursive: true, force: true }); });
 
   it('measures files, marks bounded scans and never follows junctions', async () => {
     const directory = join(root, 'measure'); await mkdir(directory); await writeFile(join(directory, 'one'), '12345');

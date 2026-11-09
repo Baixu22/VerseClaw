@@ -1005,6 +1005,7 @@
     "removeTitle": "移除此工作树？",
     "removeHint": "从磁盘移除空闲检出目录，保留 Git 分支。仍在使用或有修改的工作树会被保留。",
     "protected": {
+      "owner": "由会话或任务管理，请通过所属流程回收。",
       "primary": "主检出目录",
       "active": "当前工作区",
       "locked": "已由 Git 锁定",

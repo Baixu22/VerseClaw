@@ -49,6 +49,14 @@ ownedPaths:
   - openclaw_runtime/src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts
   - tests/unit/checkpoints-dialog.test.tsx
   - tests/unit/host-services.test.ts
+  - electron/services/git-api.ts
+  - electron/services/session-storage-api.ts
+  - electron/services/task-system-service.ts
+  - tests/unit/git-api.test.ts
+  - tests/unit/session-storage-api.test.ts
+  - tests/unit/ui-worktree-cleanup-conservative.test.ts
+  - src/pages/Settings/sections/StorageSection.tsx
+  - shared/i18n/locales/**/settings.json
 touchedAreas:
   - src/lib/host-api.ts
   - shared/host-api/contract.ts
@@ -92,6 +100,14 @@ touchedAreas:
   - openclaw_runtime/src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts
   - tests/unit/checkpoints-dialog.test.tsx
   - tests/unit/host-services.test.ts
+  - electron/services/git-api.ts
+  - electron/services/session-storage-api.ts
+  - electron/services/task-system-service.ts
+  - tests/unit/git-api.test.ts
+  - tests/unit/session-storage-api.test.ts
+  - tests/unit/ui-worktree-cleanup-conservative.test.ts
+  - src/pages/Settings/sections/StorageSection.tsx
+  - shared/i18n/locales/**/settings.json
 requiredRules:
   - identity-scope-boundary
   - renderer-main-boundary
