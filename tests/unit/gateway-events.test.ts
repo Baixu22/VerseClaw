@@ -52,6 +52,7 @@ vi.mock('@/lib/host-api', () => ({
 
 vi.mock('@/lib/host-events', () => ({
   hostEvents: {
+    onWorkspaceNavigationChanged: (handler: unknown) => hostEventSubscriptionMock('chat:workspace-navigation-changed', handler),
     onGatewayStatus: (handler: unknown) => hostEventSubscriptionMock('gateway:status', handler),
     onGatewayError: (handler: unknown) => hostEventSubscriptionMock('gateway:error', handler),
     onGatewayNotification: (handler: unknown) => hostEventSubscriptionMock('gateway:notification', handler),
@@ -121,6 +122,23 @@ describe('gateway store event wiring', () => {
     // Simulate gateway.ready event setting gatewayReady=true
     handlers.get('gateway:status')?.({ state: 'running', port: 18789, gatewayReady: true });
     expect(useGatewayStore.getState().status.gatewayReady).toBe(true);
+  });
+
+  it('refreshes background session membership in one batch without selecting the changed child', async () => {
+    const handlers=new Map<string,(payload:unknown)=>void>();
+    hostEventSubscriptionMock.mockImplementation((eventName:string,handler:(payload:unknown)=>void)=>{
+      handlers.set(eventName,handler);return()=>{};
+    });
+    const {useGatewayStore}=await import('@/stores/gateway');
+    const {useChatStore}=await import('@/stores/chat');
+    await useGatewayStore.getState().init();
+    const load=vi.fn(async()=>{});
+    useChatStore.setState({currentSessionKey:'parent',loadSessions:load});
+    for(let index=0;index<5;index++)handlers.get('gateway:notification')?.({method:'sessions.changed',params:{sessionKey:'child',reason:'created',ts:index}});
+    await new Promise(resolve=>setTimeout(resolve,100));await flushAsyncImports();
+    expect(load).toHaveBeenCalledTimes(1);
+    expect(load).toHaveBeenCalledWith({force:true});
+    expect(useChatStore.getState().currentSessionKey).toBe('parent');
   });
 
   it('allows explicit intervention sends while preserving normal active-run double-submit guard', async () => {

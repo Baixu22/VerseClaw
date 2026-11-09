@@ -33,7 +33,12 @@ export function buildLatestRuntimeRunBySession(
   for (const run of Object.values(runtimeRuns)) {
     if (!run.sessionKey) continue;
     const activity = getRuntimeRunActivityMs(run);
-    if (activity >= (latestActivityBySession.get(run.sessionKey) ?? -1)) {
+    const previous = latestBySession.get(run.sessionKey);
+    // Late terminal/progress delivery from an older run must not replace a newer run.
+    const knownStartOrder = previous && Number.isFinite(previous.startedAt) && Number.isFinite(run.startedAt)
+      && previous.startedAt !== run.startedAt;
+    if (knownStartOrder ? run.startedAt! > previous!.startedAt!
+      : activity >= (latestActivityBySession.get(run.sessionKey) ?? -1)) {
       latestBySession.set(run.sessionKey, run);
       latestActivityBySession.set(run.sessionKey, activity);
     }
@@ -216,7 +221,6 @@ export function buildSidebarWorkspaceSessionGroups(params: {
         activityMs: getWorkspaceActivityMs(workspace, sessions),
       };
     })
-    .filter((group) => group.sessions.length > 0)
     .sort(compareActivityDesc);
 }
 

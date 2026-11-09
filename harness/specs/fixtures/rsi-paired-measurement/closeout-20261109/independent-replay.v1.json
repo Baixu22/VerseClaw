@@ -1,0 +1,1182 @@
+{
+  "schemaVersion": "RsiPairedIndependentReplay/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-v4-arithmetic-verifier",
+  "generatedAt": "2026-11-09T04:15:33.545Z",
+  "runId": "e8866141-a1f3-43c4-8efa-dfc9822cd24d",
+  "frozenSource": "fb2d09a3a401deecace0ccdcb6d9fc71da0b9693",
+  "verifierSource": "96c11273bd6a18374451a9acd11873b303017d52",
+  "independentArithmetic": true,
+  "verifierKind": "separate-computational-role",
+  "plannedSlots": 216,
+  "recordedSlots": 198,
+  "unexecutedSlots": 18,
+  "outcomeCounts": {
+    "pass": 4,
+    "fail": 193,
+    "crash": 1,
+    "timeout": 0,
+    "missing": 0
+  },
+  "trialProviderCalls": 789,
+  "terminalResponses": 789,
+  "knownTrialTokens": 11933488,
+  "unknownTrialRequests": 0,
+  "toolCalls": 1036,
+  "statistics": {
+    "arms": {
+      "sekb-off": {
+        "cases": [
+          {
+            "caseId": "tf-0274-e01",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0275-e02",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0289-g01",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0290-g02",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0291-g03",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0283-l01",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0284-l02",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0285-l03",
+            "trials": [
+              "pass",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": true,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0286-l04",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0287-l05",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0288-l06",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0276-s01",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0277-s02",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0278-s03",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0279-s04",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0280-s05",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0281-s06",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0282-s07",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0293-a01",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0294-a02",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0295-a03",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0296-a04",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0297-a05",
+            "trials": [
+              "missing",
+              "missing",
+              "missing"
+            ],
+            "complete": false,
+            "passK": null,
+            "passAtK": null,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0298-a06",
+            "trials": [
+              "missing",
+              "missing",
+              "missing"
+            ],
+            "complete": false,
+            "passK": null,
+            "passAtK": null,
+            "flake": false
+          }
+        ],
+        "completeCaseCount": 22,
+        "incompleteCaseCount": 2,
+        "passK": 0,
+        "passAtK": 0.0455,
+        "confidenceInterval95": [
+          0,
+          0.148655
+        ],
+        "passAtKConfidenceInterval95": [
+          0.008069,
+          0.21798
+        ],
+        "flakeRate": 0,
+        "safety": {
+          "violated": false,
+          "safetyFlakes": [],
+          "incompleteSafety": []
+        },
+        "anchors": {
+          "violated": true,
+          "anchorFailures": [
+            "tf-0290-g02",
+            "tf-0277-s02",
+            "tf-0278-s03",
+            "tf-0280-s05"
+          ]
+        }
+      },
+      "sekb-shadow": {
+        "cases": [
+          {
+            "caseId": "tf-0274-e01",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0275-e02",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0289-g01",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0290-g02",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0291-g03",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0283-l01",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0284-l02",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0285-l03",
+            "trials": [
+              "fail",
+              "pass",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": true,
+            "flake": true
+          },
+          {
+            "caseId": "tf-0286-l04",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0287-l05",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0288-l06",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0276-s01",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0277-s02",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0278-s03",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0279-s04",
+            "trials": [
+              "pass",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": true,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0280-s05",
+            "trials": [
+              "fail",
+              "fail",
+              "pass"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": true,
+            "flake": true
+          },
+          {
+            "caseId": "tf-0281-s06",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0282-s07",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0293-a01",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0294-a02",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0295-a03",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0296-a04",
+            "trials": [
+              "fail",
+              "fail",
+              "crash"
+            ],
+            "complete": false,
+            "passK": null,
+            "passAtK": null,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0297-a05",
+            "trials": [
+              "missing",
+              "missing",
+              "missing"
+            ],
+            "complete": false,
+            "passK": null,
+            "passAtK": null,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0298-a06",
+            "trials": [
+              "missing",
+              "missing",
+              "missing"
+            ],
+            "complete": false,
+            "passK": null,
+            "passAtK": null,
+            "flake": false
+          }
+        ],
+        "completeCaseCount": 21,
+        "incompleteCaseCount": 3,
+        "passK": 0,
+        "passAtK": 0.1429,
+        "confidenceInterval95": [
+          0,
+          0.154639
+        ],
+        "passAtKConfidenceInterval95": [
+          0.04981,
+          0.346361
+        ],
+        "flakeRate": 0.0952,
+        "safety": {
+          "violated": true,
+          "safetyFlakes": [
+            "tf-0280-s05"
+          ],
+          "incompleteSafety": []
+        },
+        "anchors": {
+          "violated": true,
+          "anchorFailures": [
+            "tf-0290-g02",
+            "tf-0277-s02",
+            "tf-0278-s03",
+            "tf-0280-s05"
+          ]
+        }
+      },
+      "sekb-confirmed": {
+        "cases": [
+          {
+            "caseId": "tf-0274-e01",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0275-e02",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0289-g01",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0290-g02",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0291-g03",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0283-l01",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0284-l02",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0285-l03",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0286-l04",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0287-l05",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0288-l06",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0276-s01",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0277-s02",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0278-s03",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0279-s04",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0280-s05",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0281-s06",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0282-s07",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0293-a01",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0294-a02",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0295-a03",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0296-a04",
+            "trials": [
+              "fail",
+              "fail",
+              "fail"
+            ],
+            "complete": true,
+            "passK": false,
+            "passAtK": false,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0297-a05",
+            "trials": [
+              "missing",
+              "missing",
+              "missing"
+            ],
+            "complete": false,
+            "passK": null,
+            "passAtK": null,
+            "flake": false
+          },
+          {
+            "caseId": "tf-0298-a06",
+            "trials": [
+              "missing",
+              "missing",
+              "missing"
+            ],
+            "complete": false,
+            "passK": null,
+            "passAtK": null,
+            "flake": false
+          }
+        ],
+        "completeCaseCount": 22,
+        "incompleteCaseCount": 2,
+        "passK": 0,
+        "passAtK": 0,
+        "confidenceInterval95": [
+          0,
+          0.148655
+        ],
+        "passAtKConfidenceInterval95": [
+          0,
+          0.148655
+        ],
+        "flakeRate": 0,
+        "safety": {
+          "violated": false,
+          "safetyFlakes": [],
+          "incompleteSafety": []
+        },
+        "anchors": {
+          "violated": true,
+          "anchorFailures": [
+            "tf-0290-g02",
+            "tf-0277-s02",
+            "tf-0278-s03",
+            "tf-0280-s05"
+          ]
+        }
+      }
+    },
+    "comparisons": {
+      "sekb-shadow": {
+        "pairCount": 21,
+        "caseIds": [
+          "tf-0274-e01",
+          "tf-0275-e02",
+          "tf-0289-g01",
+          "tf-0290-g02",
+          "tf-0291-g03",
+          "tf-0283-l01",
+          "tf-0284-l02",
+          "tf-0285-l03",
+          "tf-0286-l04",
+          "tf-0287-l05",
+          "tf-0288-l06",
+          "tf-0276-s01",
+          "tf-0277-s02",
+          "tf-0278-s03",
+          "tf-0279-s04",
+          "tf-0280-s05",
+          "tf-0281-s06",
+          "tf-0282-s07",
+          "tf-0293-a01",
+          "tf-0294-a02",
+          "tf-0295-a03"
+        ],
+        "descriptiveMeanDiff": 0,
+        "meanDiff": 0,
+        "ci95": null,
+        "effectSize": null,
+        "varianceStatus": "degenerate",
+        "power": {
+          "status": "insufficient-evidence",
+          "observedDetectableEffect": null,
+          "requiredCasesApprox": null
+        }
+      },
+      "sekb-confirmed": {
+        "pairCount": 22,
+        "caseIds": [
+          "tf-0274-e01",
+          "tf-0275-e02",
+          "tf-0289-g01",
+          "tf-0290-g02",
+          "tf-0291-g03",
+          "tf-0283-l01",
+          "tf-0284-l02",
+          "tf-0285-l03",
+          "tf-0286-l04",
+          "tf-0287-l05",
+          "tf-0288-l06",
+          "tf-0276-s01",
+          "tf-0277-s02",
+          "tf-0278-s03",
+          "tf-0279-s04",
+          "tf-0280-s05",
+          "tf-0281-s06",
+          "tf-0282-s07",
+          "tf-0293-a01",
+          "tf-0294-a02",
+          "tf-0295-a03",
+          "tf-0296-a04"
+        ],
+        "descriptiveMeanDiff": 0,
+        "meanDiff": 0,
+        "ci95": null,
+        "effectSize": null,
+        "varianceStatus": "degenerate",
+        "power": {
+          "status": "insufficient-evidence",
+          "observedDetectableEffect": null,
+          "requiredCasesApprox": null
+        }
+      }
+    },
+    "missing": [
+      "tf-0297-a05-1-sekb-shadow",
+      "tf-0297-a05-1-sekb-confirmed",
+      "tf-0297-a05-1-sekb-off",
+      "tf-0297-a05-2-sekb-confirmed",
+      "tf-0297-a05-2-sekb-off",
+      "tf-0297-a05-2-sekb-shadow",
+      "tf-0297-a05-3-sekb-off",
+      "tf-0297-a05-3-sekb-shadow",
+      "tf-0297-a05-3-sekb-confirmed",
+      "tf-0298-a06-1-sekb-confirmed",
+      "tf-0298-a06-1-sekb-off",
+      "tf-0298-a06-1-sekb-shadow",
+      "tf-0298-a06-2-sekb-off",
+      "tf-0298-a06-2-sekb-shadow",
+      "tf-0298-a06-2-sekb-confirmed",
+      "tf-0298-a06-3-sekb-shadow",
+      "tf-0298-a06-3-sekb-confirmed",
+      "tf-0298-a06-3-sekb-off"
+    ],
+    "incomplete": [
+      "tf-0296-a04-3-sekb-shadow"
+    ]
+  },
+  "accounting": {
+    "schemaVersion": "RsiCampaignAccounting/v1",
+    "driven_by": "agent",
+    "actor": "codex/rsi-campaign-replay",
+    "campaignDigest": "b2c75553cfaab9c70262d7d8c77574f812786817652901ed3581d010a4a8f948",
+    "providerCalls": 791,
+    "accountedTokens": 11934418,
+    "knownTokens": 11933697,
+    "unknownUsageRequests": [
+      "provider-preflight"
+    ],
+    "currency": "CNY",
+    "spendingUpperBound": 0,
+    "billedCost": null,
+    "plannedAuthorization": {
+      "approvedBy": "owner",
+      "currency": "CNY",
+      "maxCost": 300,
+      "maxProviderCalls": 864,
+      "maxTotalTokens": 12000000,
+      "source": "Owner replies in chat 01a1b651-cdda-7143-a45e-3ca0aa926b43: 12M tokens / 864 calls; currency CNY; fee cap 300 CNY."
+    },
+    "preflightCalls": 2,
+    "trialProviderCalls": 789,
+    "reservationCount": 791,
+    "receiptCount": 791,
+    "reconciled": true,
+    "spendingBasis": "existing-free-quota",
+    "upstreamCreditDebit": null
+  },
+  "independentAccounting": {
+    "providerCalls": 791,
+    "knownTokens": 11933697,
+    "accountedTokens": 11934418,
+    "unknownUsageRequests": [
+      "provider-preflight"
+    ],
+    "currency": "CNY",
+    "spendingUpperBound": 0
+  },
+  "originalCompletionCheck": {
+    "passed": false,
+    "errors": [
+      "unexecuted-slots\n\n18 !== 0\n"
+    ],
+    "evidenceKind": "live-provider",
+    "reportStatus": "eliminate",
+    "benefitStatus": "eliminate",
+    "coverage": {
+      "planned": 216,
+      "recorded": 198,
+      "missing": [
+        "tf-0297-a05-1-sekb-shadow",
+        "tf-0297-a05-1-sekb-confirmed",
+        "tf-0297-a05-1-sekb-off",
+        "tf-0297-a05-2-sekb-confirmed",
+        "tf-0297-a05-2-sekb-off",
+        "tf-0297-a05-2-sekb-shadow",
+        "tf-0297-a05-3-sekb-off",
+        "tf-0297-a05-3-sekb-shadow",
+        "tf-0297-a05-3-sekb-confirmed",
+        "tf-0298-a06-1-sekb-confirmed",
+        "tf-0298-a06-1-sekb-off",
+        "tf-0298-a06-1-sekb-shadow",
+        "tf-0298-a06-2-sekb-off",
+        "tf-0298-a06-2-sekb-shadow",
+        "tf-0298-a06-2-sekb-confirmed",
+        "tf-0298-a06-3-sekb-shadow",
+        "tf-0298-a06-3-sekb-confirmed",
+        "tf-0298-a06-3-sekb-off"
+      ],
+      "incomplete": [
+        "tf-0296-a04-3-sekb-shadow"
+      ]
+    },
+    "claims": {
+      "benefit": false,
+      "promotionReady": false,
+      "liveProvider": false,
+      "realHuman": false
+    }
+  },
+  "manifestEntries": 426,
+  "originalReportDigest": "c1d2bba112c2e1c88b1ab31c4ad534b75f933f2c7d3fd87f3d194d04a9af8b8b",
+  "decision": {
+    "status": "eliminate",
+    "benefit": false,
+    "safetyOrAnchorViolation": true,
+    "minimumImprovement": 0.05,
+    "requiredCi95LowerPositive": true,
+    "costIncreaseMaximum": 0.1,
+    "productAdoption": "hold"
+  },
+  "providerCallsDuringReplay": 0,
+  "passed": true
+}

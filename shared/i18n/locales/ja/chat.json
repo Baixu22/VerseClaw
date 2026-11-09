@@ -2810,6 +2810,7 @@
   "projectEntry": {
     "toggle": "{{name}} を開閉",
     "loading": "プロジェクト担当を開いています…",
+    "unbound": "このプロジェクトに担当セッションが紐付けられていません。",
     "unavailable": "プロジェクト担当の関連付けを利用できません。",
     "coordinator": "{{name}} · プロジェクト担当"
   },
@@ -2836,6 +2837,24 @@
     }
   },
   "delegationStages": {
+    "capacity": {
+      "planTitle": "派遣時の計画と理由",
+      "planDescription": "派遣時の受領記録です。現在のキューではありません。",
+      "recordedAt": "受領時刻：{{at}}",
+      "wave": "第 {{wave}} 波 · {{roles}}",
+      "reasonUnavailable": "スケジュール理由は記録されていません。",
+      "otherReason": "スケジュール理由：{{reason}}",
+      "reason": {
+        "concurrencyCap": "同時実行数の上限",
+        "writeSetConflict": "書き込み範囲の重複",
+        "writeSetProof": "書き込みの分離を未確認",
+        "toolContention": "共有ツールの競合"
+      },
+      "currentTitle": "現在の所有元の状態",
+      "currentQueue": "現在のセッションのキュー数：{{count}}",
+      "workerWaiting": "ワーカーの所有元が待機中と報告しています。",
+      "openResources": "セッションとリソース使用量を確認"
+    },
     "label": {
       "admission": "実行受付",
       "execution": "実行状態",

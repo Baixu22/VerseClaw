@@ -1,0 +1,184 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-u2-state-proof",
+  "requested_route": "ccs-workbuddy/deepseek-v4.1-flash",
+  "case": "AC9: a real dependency rejection names the prerequisite and opens its existing task action",
+  "evidenceType": "real-electron-production-owners",
+  "startedAt": "2026-11-09T03:38:31.949Z",
+  "owner": {
+    "project": {
+      "workspaceId": "u2-dependency-project",
+      "rootPath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-state-final2-results\\session-task-state-guidanc-d7f74-ns-its-existing-task-action\\dependency-workspace",
+      "sessionKey": "agent:main:session-1794195534037-udependencyproject",
+      "generation": "1d4bd21b-237f-40e5-9387-52b39ac99096"
+    },
+    "prerequisite": {
+      "contract": {
+        "objective": "U2 prepare input",
+        "constraints": [],
+        "acceptance": [
+          {
+            "id": "artifact",
+            "description": "Read the recorded proof file",
+            "verification": {
+              "kind": "file-sha256",
+              "path": "proof.txt",
+              "sha256": "f6ed42a9d765eeb230a069bbc3d5dc346b2669594bb0b83cc6d14d5d967b8961"
+            }
+          }
+        ],
+        "target": "proof.txt",
+        "dependencies": [],
+        "origin": {
+          "source": "host-task-api",
+          "requestId": "u2-prerequisite"
+        },
+        "taskNodeId": "107db66f-f7df-43d2-932a-013341150483",
+        "domain": "ff0df4d2c0e165d40bbee60967b7f1ce8c1d90a90bdf0b7221a40919e5ae9af1",
+        "revision": 1,
+        "digest": "72f2e6b42740a23fe2efc5d9c428b277871d575c4c7149ff51fee295adb4142e",
+        "state": "ready",
+        "createdAt": 1794195551917,
+        "updatedAt": 1794195551917
+      },
+      "claim": null,
+      "checkpoint": null,
+      "pendingOperations": 0,
+      "pendingOperationDetails": [],
+      "childTaskNodeIds": []
+    },
+    "dependent": {
+      "contract": {
+        "objective": "U2 consume input",
+        "constraints": [],
+        "acceptance": [
+          {
+            "id": "artifact",
+            "description": "Read the recorded proof file",
+            "verification": {
+              "kind": "file-sha256",
+              "path": "proof.txt",
+              "sha256": "f6ed42a9d765eeb230a069bbc3d5dc346b2669594bb0b83cc6d14d5d967b8961"
+            }
+          }
+        ],
+        "target": "proof.txt",
+        "dependencies": [
+          "107db66f-f7df-43d2-932a-013341150483"
+        ],
+        "origin": {
+          "source": "host-task-api",
+          "requestId": "u2-dependent"
+        },
+        "taskNodeId": "c4fd083a-3a44-4325-b6d4-0ef73f01314c",
+        "domain": "ff0df4d2c0e165d40bbee60967b7f1ce8c1d90a90bdf0b7221a40919e5ae9af1",
+        "revision": 1,
+        "digest": "92ba6d26998062b3e15257bd9e0484b96d932e1dac1a06fda9b7fda2bf955a79",
+        "state": "ready",
+        "createdAt": 1794195551939,
+        "updatedAt": 1794195551939
+      },
+      "claim": null,
+      "checkpoint": null,
+      "pendingOperations": 0,
+      "pendingOperationDetails": [],
+      "childTaskNodeIds": []
+    },
+    "rejected": {
+      "success": false,
+      "error": "TASK_DEPENDENCY_UNSATISFIED"
+    }
+  },
+  "dependentUi": "U2 consume input\nReady\n\nOwner: Unassigned\n\nRead the recorded proof file\n\nWaiting for dependency\n\nU2 prepare input\nReady\nClaim for this session",
+  "nextAction": {
+    "via": "dependency title button -> existing claim button",
+    "tasks": [
+      {
+        "contract": {
+          "objective": "U2 consume input",
+          "constraints": [],
+          "acceptance": [
+            {
+              "id": "artifact",
+              "description": "Read the recorded proof file",
+              "verification": {
+                "kind": "file-sha256",
+                "path": "proof.txt",
+                "sha256": "f6ed42a9d765eeb230a069bbc3d5dc346b2669594bb0b83cc6d14d5d967b8961"
+              }
+            }
+          ],
+          "target": "proof.txt",
+          "dependencies": [
+            "107db66f-f7df-43d2-932a-013341150483"
+          ],
+          "origin": {
+            "source": "host-task-api",
+            "requestId": "u2-dependent"
+          },
+          "taskNodeId": "c4fd083a-3a44-4325-b6d4-0ef73f01314c",
+          "domain": "ff0df4d2c0e165d40bbee60967b7f1ce8c1d90a90bdf0b7221a40919e5ae9af1",
+          "revision": 1,
+          "digest": "92ba6d26998062b3e15257bd9e0484b96d932e1dac1a06fda9b7fda2bf955a79",
+          "state": "ready",
+          "createdAt": 1794195551939,
+          "updatedAt": 1794195551939
+        },
+        "claim": null,
+        "checkpoint": null,
+        "pendingOperations": 0,
+        "pendingOperationDetails": [],
+        "childTaskNodeIds": []
+      },
+      {
+        "contract": {
+          "objective": "U2 prepare input",
+          "constraints": [],
+          "acceptance": [
+            {
+              "id": "artifact",
+              "description": "Read the recorded proof file",
+              "verification": {
+                "kind": "file-sha256",
+                "path": "proof.txt",
+                "sha256": "f6ed42a9d765eeb230a069bbc3d5dc346b2669594bb0b83cc6d14d5d967b8961"
+              }
+            }
+          ],
+          "target": "proof.txt",
+          "dependencies": [],
+          "origin": {
+            "source": "host-task-api",
+            "requestId": "u2-prerequisite"
+          },
+          "taskNodeId": "107db66f-f7df-43d2-932a-013341150483",
+          "domain": "ff0df4d2c0e165d40bbee60967b7f1ce8c1d90a90bdf0b7221a40919e5ae9af1",
+          "revision": 1,
+          "digest": "72f2e6b42740a23fe2efc5d9c428b277871d575c4c7149ff51fee295adb4142e",
+          "state": "doing",
+          "createdAt": 1794195551917,
+          "updatedAt": 1794195554293
+        },
+        "claim": {
+          "taskNodeId": "107db66f-f7df-43d2-932a-013341150483",
+          "sessionKey": "agent:main:session-1794195534037-udependencyproject",
+          "generation": "1d4bd21b-237f-40e5-9387-52b39ac99096",
+          "epoch": 1,
+          "attemptId": "fb1ccf27-f6ae-4e8f-a916-19a092c3ea1f",
+          "worktree": "d:/tmp/unified-management-20261109/interaction-validation/u2-state-final2-results/session-task-state-guidanc-d7f74-ns-its-existing-task-action/dependency-workspace",
+          "contractRevision": 1,
+          "expiresAt": 1794195674292,
+          "state": "active"
+        },
+        "checkpoint": null,
+        "pendingOperations": 0,
+        "pendingOperationDetails": [],
+        "childTaskNodeIds": []
+      }
+    ]
+  },
+  "faultEvents": [],
+  "status": "passed",
+  "errors": [],
+  "finishedAt": "2026-11-09T03:39:14.521Z"
+}

@@ -1,0 +1,269 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-u2-capacity",
+  "scheduler": "production function",
+  "receipt": {
+    "schemaVersion": "clawx.session-delegation-receipt/v1",
+    "admissionId": "capacity-proof",
+    "idempotencyKey": "capacity-proof",
+    "status": "accepted",
+    "orchestrationRunId": "capacity-proof",
+    "acceptedAt": "2026-11-09T04:40:02.266Z",
+    "coordinator": {
+      "workspaceId": "capacity-proof",
+      "sessionKey": "agent:main:capacity-proof",
+      "sessionGeneration": "capacity-generation",
+      "agentId": "main",
+      "bindingRevision": 1
+    },
+    "taskRef": "capacity-task",
+    "parentEnvironment": {
+      "kind": "local",
+      "backend": "local-workspace",
+      "canonicalRoot": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final-results\\session-delegation-capacit-f4690--and-opens-resource-storage\\workspace",
+      "branch": null,
+      "detachedHead": false,
+      "setupProfile": null
+    },
+    "parentEnvironmentRevision": 1,
+    "authorization": {
+      "approvalId": null,
+      "grantState": "authorized",
+      "owner": "gateway-permission"
+    },
+    "budget": {
+      "status": "observed",
+      "reason": null,
+      "maxWorkers": 1,
+      "process": {
+        "maxChildrenPerAgent": 5,
+        "maxSpawnDepth": 1,
+        "source": "agents.defaults.subagents"
+      },
+      "backgroundTerminal": {
+        "lane": "subagent",
+        "maxConcurrent": 1,
+        "activeCount": 0,
+        "queuedCount": 0,
+        "source": "process.command-queue.subagent"
+      }
+    },
+    "scheduler": {
+      "executionWaves": [
+        {
+          "wave": 1,
+          "taskNodeIds": [
+            "first"
+          ],
+          "roles": [
+            "planner"
+          ],
+          "reason": "scheduled 1 ready node(s); deferred 1 for concurrency cap",
+          "deferredReasons": [
+            "concurrency-cap"
+          ]
+        },
+        {
+          "wave": 2,
+          "taskNodeIds": [
+            "second"
+          ],
+          "roles": [
+            "planner"
+          ],
+          "reason": "scheduled 1 node(s) previously deferred for tool contention or write-set proof"
+        }
+      ],
+      "metrics": {
+        "queued": 2,
+        "running": 0,
+        "scheduled": 2,
+        "skipped": 0,
+        "concurrencyCap": 1,
+        "budgetEstimate": 4
+      }
+    },
+    "children": [
+      {
+        "roleName": "planner",
+        "taskNodeId": "first",
+        "roleInstanceId": "first",
+        "admissionStatus": "accepted",
+        "runState": "accepted-not-completed",
+        "completionObserved": false,
+        "backend": "subagent",
+        "childSessionKey": "agent:main:capacity-child",
+        "childRunId": "first",
+        "toolAuthorization": {
+          "status": "runtime-inherited",
+          "source": "role-contract+runtime-inheritance",
+          "roleName": "planner",
+          "effectiveRoleName": "planner",
+          "parentRoleName": null,
+          "allowlist": null,
+          "denylist": []
+        },
+        "isolation": {
+          "mode": "shared",
+          "backend": "shared-inprocess",
+          "canonicalRoot": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final-results\\session-delegation-capacit-f4690--and-opens-resource-storage\\workspace",
+          "branch": null,
+          "detachedHead": false,
+          "verifiedCheckout": false
+        },
+        "schedulerWave": 1,
+        "error": null
+      },
+      {
+        "roleName": "planner",
+        "taskNodeId": "second",
+        "roleInstanceId": "second",
+        "admissionStatus": "accepted",
+        "runState": "accepted-not-completed",
+        "completionObserved": false,
+        "backend": "subagent",
+        "childSessionKey": "agent:main:capacity-child-2",
+        "childRunId": "second",
+        "toolAuthorization": {
+          "status": "runtime-inherited",
+          "source": "role-contract+runtime-inheritance",
+          "roleName": "planner",
+          "effectiveRoleName": "planner",
+          "parentRoleName": null,
+          "allowlist": null,
+          "denylist": []
+        },
+        "isolation": {
+          "mode": "shared",
+          "backend": "shared-inprocess",
+          "canonicalRoot": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final-results\\session-delegation-capacit-f4690--and-opens-resource-storage\\workspace",
+          "branch": null,
+          "detachedHead": false,
+          "verifiedCheckout": false
+        },
+        "schedulerWave": 2,
+        "error": null
+      }
+    ],
+    "errors": [],
+    "completionObserved": false,
+    "recoveryRequired": false
+  },
+  "transport": "Host fixture",
+  "liveCapacityExhaustion": false,
+  "status": "passed",
+  "locales": [
+    {
+      "language": "en",
+      "status": "passed"
+    },
+    {
+      "language": "zh",
+      "status": "passed"
+    },
+    {
+      "language": "ja",
+      "status": "passed"
+    },
+    {
+      "language": "ru",
+      "status": "passed"
+    }
+  ],
+  "schedule": {
+    "waves": [
+      {
+        "wave": 1,
+        "taskNodeIds": [
+          "first"
+        ],
+        "roles": [
+          "planner"
+        ],
+        "reason": "scheduled 1 ready node(s); deferred 1 for concurrency cap",
+        "deferredReasons": [
+          "concurrency-cap"
+        ]
+      },
+      {
+        "wave": 2,
+        "taskNodeIds": [
+          "second"
+        ],
+        "roles": [
+          "planner"
+        ],
+        "reason": "scheduled 1 node(s) previously deferred for tool contention or write-set proof"
+      }
+    ],
+    "skipped": [],
+    "metrics": {
+      "queued": 2,
+      "running": 0,
+      "scheduled": 2,
+      "completed": 0,
+      "skipped": 0,
+      "concurrencyCap": 1,
+      "budgetEstimate": 4,
+      "roleCostSummary": [
+        {
+          "roleName": "planner",
+          "taskNodeIds": [
+            "first",
+            "second"
+          ],
+          "estimatedCost": 4
+        }
+      ]
+    }
+  },
+  "snapshot": {
+    "session": {
+      "sessionKey": "agent:main:capacity-proof",
+      "runId": null,
+      "status": "idle",
+      "startedAt": null,
+      "endedAt": null,
+      "error": null,
+      "updatedAt": 1794199202268,
+      "sessionId": "capacity-generation"
+    },
+    "git": null,
+    "tasks": [],
+    "subagents": [
+      {
+        "id": "capacity-worker",
+        "childSessionKey": "agent:main:capacity-child",
+        "role": "planner",
+        "status": "completed",
+        "updatedAt": 1794199202268,
+        "source": "snapshot"
+      }
+    ],
+    "completionBatches": [],
+    "terminals": [],
+    "goals": [],
+    "processes": [],
+    "lineage": [],
+    "continuity": {
+      "queueCount": 0,
+      "contextPressure": null,
+      "checkpoint": false,
+      "blockedReason": null
+    },
+    "availability": {
+      "git": false,
+      "tasks": false,
+      "subagents": true,
+      "terminals": false,
+      "continuity": true
+    },
+    "backgroundRead": {
+      "state": "unknown",
+      "readAt": null,
+      "failedAt": null
+    },
+    "capturedAt": 1794199202268
+  },
+  "route": "#/settings/storage?workspaceId=capacity-proof&sessionKey=agent%3Amain%3Acapacity-proof"
+}

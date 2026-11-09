@@ -22,6 +22,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Loader2, RefreshCw, Send, Users } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -86,6 +87,7 @@ function statusTone(status: RosterEntry['status']): string {
 
 export function WorkspaceAgentsPanel() {
   const { t } = useTranslation('chat');
+  const navigate = useNavigate();
   const sessionKey = useChatStore((s) => s.currentSessionKey);
   const anchorAgentId = useChatStore((s) => s.currentAgentId);
   const agents = useAgentsStore((s) => s.agents);
@@ -242,7 +244,10 @@ export function WorkspaceAgentsPanel() {
   return (
     <div className="flex h-full min-h-0 flex-col p-3" data-testid="workspace-agents-panel">
       <SessionDelegationStatus workspaceId={workspace?.id} sessionKey={sessionKey} generation={parentGeneration}
-        receipt={dispatchReceipt} snapshot={snapshot} worker={subagents?.find((entry) => entry.id === selectedKey)} />
+        receipt={dispatchReceipt} snapshot={snapshot} worker={subagents?.find((entry) => entry.id === selectedKey)}
+        onOpenResources={workspace?.id ? () => navigate("/settings/storage?" + new URLSearchParams({
+          workspaceId: workspace.id, sessionKey: sessionKey,
+        }).toString()) : undefined} />
       {selected?.childSessionKey && <p className="my-1 text-2xs text-muted-foreground">{t('delegationStages.model', { model: childModel ?? t('delegationStages.status.unavailable') })}</p>}
       <div className="mb-3 flex items-center justify-between gap-2">
         <div className="min-w-0">

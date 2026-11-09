@@ -29,6 +29,29 @@ function ledger(title: string): TaskLedgerSnapshot {
 beforeEach(() => { vi.clearAllMocks(); });
 
 describe('family navigation', () => {
+  it('keeps interacted rows ordered while live status and child counts update', () => {
+    const entries=[sessions[0],{key:'older',displayName:'Older',parentSessionKey:'parent'},sessions[1]];
+    const renderTree=(updated=false)=><SessionFolderTree workspace={workspace} currentSessionKey="parent"
+      sessions={[...entries,...(updated?[{key:'new',displayName:'New',parentSessionKey:'parent'}]:[])].map((session,index)=>({session,
+        activityMs:updated&&session.key==='older'?10:index}))} collapsedFolders={{}} sessionStatusKinds={updated?{older:'error'}:{}}
+      sessionSort="newest" {...actions} renderSessionRow={entry=><button data-order-key={entry.session.key}>
+        {entry.session.displayName}{updated&&entry.session.key==='older'?':error':''}</button>}/>;
+    const view=render(renderTree());fireEvent.click(screen.getByTestId('session-family-toggle-parent'));
+    const treeNode=view.container.querySelector('.ws-tree')!;
+    const order=()=>Array.from(treeNode.querySelectorAll('[data-order-key]')).map(row=>row.getAttribute('data-order-key'));
+    const before=order();fireEvent.pointerEnter(treeNode);
+    // Focus may leave the disclosure while the pointer still targets a child.
+    fireEvent.blur(screen.getByTestId('session-family-toggle-parent'),{relatedTarget:document.body});
+    view.rerender(renderTree(true));
+    expect(order()).toEqual(before);expect(screen.getByText('Older:error')).toBeVisible();
+    expect(screen.getByTestId('session-family-toggle-parent')).toHaveTextContent('3');
+    expect(screen.queryByText('New')).not.toBeInTheDocument();
+    fireEvent.pointerLeave(treeNode,{relatedTarget:null});
+    fireEvent.blur(screen.getByTestId('session-family-toggle-parent'),{relatedTarget:null});
+    expect(order()).toEqual(before);expect(screen.queryByText('New')).not.toBeInTheDocument();
+    fireEvent.pointerMove(document.body);expect(screen.getByText('New')).toBeVisible();
+    expect(order()).not.toEqual(before);
+  });
   it('uses keyboard disclosure without moving or selecting sessions', () => {
     render(tree());
     expect(screen.queryByText('Child')).not.toBeInTheDocument();

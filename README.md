@@ -24,6 +24,8 @@ Managed tool effects combine task claims, session generations and durable checko
 
 Chat can continue the same conversation and task in another configured checkout. Migration retains the objective and artifact references, verifies source drain and target ownership, and resumes an interrupted transfer from its saved operation.
 
+Session navigation restores the visible message and draft. Background work updates its own status while hovered or focused family rows stay in place. Empty projects, permission failures and dependency waits show specific reasons and existing next actions; dispatch plans remain separate from current queue observations.
+
 Conversations can initialize a Git repository, select an independent worktree, and restore its draft. `/storage` and **Settings → Storage** share a resource page for conversation files, process memory, and worktrees. [Usage and ownership](docs/dev/session-worktree-storage.md).
 
 **Chat, code, knowledge and agent execution in one desktop workspace.**

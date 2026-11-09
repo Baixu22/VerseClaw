@@ -78,6 +78,11 @@ describe('sidebar latest runtime run index', () => {
 });
 
 describe('sidebar session activity resolution', () => {
+  it('keeps an unbound configured project navigable before its first persisted session',()=>{
+    const groups=buildSidebarWorkspaceSessionGroups({sessions:[],currentSessionKey:'another',sessionLastActivity:{},
+      workspaces:[workspace({activeSessionKey:'pending',agentBindings:{},sessionStates:{}})],includeSyntheticCurrent:false});
+    expect(groups.map(group=>group.workspace.id)).toEqual(['workspace-a']);expect(groups[0].sessions).toEqual([]);
+  });
   it('uses the timestamp embedded in a locally-created session key as activity fallback', () => {
     const createdAtMs = new Date('2026-05-06T10:00:00.000Z').getTime();
     const session = {
@@ -284,7 +289,8 @@ describe('sidebar session activity resolution', () => {
       ],
     });
 
-    expect(groups.map((group) => group.workspace.id)).toEqual(['workspace-a']);
+    expect(groups.map((group) => group.workspace.id)).toEqual(['workspace-a', 'workspace-b']);
+    expect(groups[1].sessions).toEqual([]);
     expect(groups[0]?.sessions.map((entry) => entry.session.key)).toEqual([duplicated]);
   });
 

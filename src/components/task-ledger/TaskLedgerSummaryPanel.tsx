@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { hostApi } from '@/lib/host-api';
+import { normalizeAppError, type AppErrorCode } from '@/lib/error-model';
 import { cn } from '@/lib/utils';
 import type { TaskLedgerNode, TaskLedgerSnapshot } from '@shared/types/task-ledger';
 import type { ChatSession } from '@shared/chat/types';
@@ -61,7 +62,7 @@ export function TaskLedgerSummaryPanel({
   onTaskSelected,
 }: Props) {
   const { t } = useTranslation('taskLedger');
-  const [loaded, setLoaded] = useState<{ key: string; snapshot: TaskLedgerSnapshot | null; error?: string } | null>(null);
+  const [loaded, setLoaded] = useState<{ key: string; snapshot: TaskLedgerSnapshot | null; error?: AppErrorCode } | null>(null);
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [narrow, setNarrow] = useState(() => window.matchMedia('(max-width: 960px)').matches);
@@ -79,6 +80,8 @@ export function TaskLedgerSummaryPanel({
   const scopeRef = useRef(viewScope); scopeRef.current = viewScope;
   const selectingTask = selection?.scope === viewScope ? selection.task : null;
   const snapshot = loaded?.key === scopeKey ? loaded.snapshot : null;
+  const loadError = loaded?.key === scopeKey ? loaded.error : undefined;
+  const unavailableText = t(loadError === 'PERMISSION' ? 'summary.permissionDenied' : 'summary.scope.unavailable');
 
   const load = useCallback(async () => {
     const version = ++requestVersion.current;
@@ -87,8 +90,8 @@ export function TaskLedgerSummaryPanel({
       const result = await hostApi.taskLedger.snapshot(workspaceId ? { workspaceId } : undefined);
       if (workspaceId && result.snapshot.sourceWorkspaceId !== workspaceId) throw new Error('Task Ledger owner scope mismatch');
       if (version === requestVersion.current) setLoaded({ key: scopeKey, snapshot: result.snapshot });
-    } catch {
-      if (version === requestVersion.current) setLoaded({ key: scopeKey, snapshot: null, error: 'owner-unavailable' });
+    } catch (error) {
+      if (version === requestVersion.current) setLoaded({ key: scopeKey, snapshot: null, error: normalizeAppError(error).code });
     } finally {
       if (version === requestVersion.current) setLoading(false);
     }
@@ -109,7 +112,7 @@ export function TaskLedgerSummaryPanel({
   }, [snapshot]);
 
   const hasContent = !!snapshot && snapshot.nodes.length > 0;
-  const visible = !hideWhenEmpty || hasContent;
+  const visible = !hideWhenEmpty || hasContent || Boolean(loadError);
   useEffect(() => {
     onVisibilityChange?.(visible);
   }, [onVisibilityChange, visible]);
@@ -123,6 +126,8 @@ export function TaskLedgerSummaryPanel({
     const projectReadable = projectWide && ['ready', 'empty'].includes(container.status);
     const nodes = projectReadable ? (snapshot?.nodes ?? []).filter((node) => node.kind === 'task') : container.nodes;
     const status = projectReadable ? nodes.length ? 'ready' : 'empty' : container.status;
+    const statusText = loading && !snapshot ? t('summary.loading')
+      : status === 'unavailable' ? unavailableText : t(`summary.scope.${status}`);
     const toggle = <button type="button" data-testid="session-tasks-toggle" aria-expanded={expanded}
       onClick={narrow ? undefined : () => setExpanded((value) => !value)}
       className="flex min-w-0 items-center gap-1.5 rounded px-1 py-1 hover:bg-black/5 dark:hover:bg-white/10">
@@ -152,7 +157,7 @@ export function TaskLedgerSummaryPanel({
             });
           }}>{t(binding?.activeTaskNodeId === node.id ? 'summary.selected' : 'summary.select')}</button>
       </li>)}
-      {!nodes.length && <li className="px-1 py-2 text-muted-foreground">{t(`summary.scope.${status}`)}</li>}
+      {!nodes.length && <li className="px-1 py-2 text-muted-foreground">{statusText}</li>}
     </ul>;
     return (
       <section data-testid="session-task-container" data-state={loading && !snapshot ? 'loading' : status}
@@ -166,7 +171,7 @@ export function TaskLedgerSummaryPanel({
             </SheetContent>
           </Sheet> : toggle}
           <span className="min-w-0 flex-1 truncate text-muted-foreground" role="status">
-            {loading && !snapshot ? t('summary.loading') : t(`summary.scope.${status}`)}
+            {statusText}
           </span>
           <button type="button" aria-label={t('summary.refresh')} onClick={() => void load()} disabled={loading} className="rounded p-1">
             <RefreshCw className={cn('size-3.5', loading && 'animate-spin motion-reduce:animate-none')} />
@@ -195,18 +200,19 @@ export function TaskLedgerSummaryPanel({
             <div className="min-w-0">
               <h2 className="truncate text-xs font-semibold text-foreground">{t('summary.title')}</h2>
               <p className="truncate text-2xs text-muted-foreground">
-                {snapshot ? t('summary.counts', { nodes: snapshot.nodes.length, events: snapshot.eventsCount }) : t('summary.loading')}
+                {snapshot ? t('summary.counts', { nodes: snapshot.nodes.length, events: snapshot.eventsCount })
+                  : loadError && !loading ? unavailableText : t('summary.loading')}
               </p>
             </div>
           </div>
-          <Button type="button" variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => void load()} disabled={loading}>
+          <Button type="button" variant="ghost" size="icon" aria-label={t('summary.refresh')} className="h-7 w-7 shrink-0" onClick={() => void load()} disabled={loading}>
             <RefreshCw className={cn('h-3.5 w-3.5', loading && 'animate-spin')} />
           </Button>
         </div>
 
         {!hasContent ? (
           <div className="rounded-md bg-surface-input p-3 text-xs text-muted-foreground">
-            {t('summary.empty')}
+            {loading ? t('summary.loading') : loadError ? unavailableText : t('summary.empty')}
           </div>
         ) : (
           <div className="space-y-3">

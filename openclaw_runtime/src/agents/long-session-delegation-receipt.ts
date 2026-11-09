@@ -255,7 +255,8 @@ export function buildDelegationReceipt(params: {
         wave: wave.wave,
         taskNodeIds: [...wave.taskNodeIds],
         roles: [...wave.roles],
-        reason: "scheduled",
+        reason: wave.reason,
+        ...(wave.deferredReasons ? { deferredReasons: [...wave.deferredReasons] } : {}),
       })),
       metrics: {
         queued: params.result.schedulerMetrics.queued,

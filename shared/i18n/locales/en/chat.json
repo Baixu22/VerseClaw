@@ -2810,6 +2810,7 @@
   "projectEntry": {
     "toggle": "Expand or collapse {{name}}",
     "loading": "Opening project coordinator…",
+    "unbound": "No coordinator bound to this project.",
     "unavailable": "The project coordinator association is unavailable.",
     "coordinator": "{{name}} · Project coordinator"
   },
@@ -2836,6 +2837,24 @@
     }
   },
   "delegationStages": {
+    "capacity": {
+      "planTitle": "Dispatch-time plan and reasons",
+      "planDescription": "Recorded when dispatched; this is not the live queue.",
+      "recordedAt": "Receipt time: {{at}}",
+      "wave": "Wave {{wave}} · {{roles}}",
+      "reasonUnavailable": "No scheduling reason was recorded.",
+      "otherReason": "Scheduler reason: {{reason}}",
+      "reason": {
+        "concurrencyCap": "Concurrency limit",
+        "writeSetConflict": "Overlapping write scopes",
+        "writeSetProof": "Write isolation not established",
+        "toolContention": "Shared tool contention"
+      },
+      "currentTitle": "Current owner observations",
+      "currentQueue": "Current session queue: {{count}}",
+      "workerWaiting": "The worker owner reports waiting.",
+      "openResources": "View sessions and resource usage"
+    },
     "label": {
       "admission": "Admission",
       "execution": "Execution",

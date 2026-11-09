@@ -1,0 +1,23 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-project-entry",
+  "provider": "local-scripted",
+  "projects": {
+    "a": {
+      "workspaceId": "project-a",
+      "rootPath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final-results\\project-agent-entry-projec-9a4df-closure-only-folds-the-list\\project-a",
+      "sessionKey": "agent:main:session-1794199144200-projecta",
+      "generation": "0c62bc88-fb31-46d9-9222-ccf831397aad"
+    },
+    "b": {
+      "workspaceId": "project-b",
+      "rootPath": "D:\\tmp\\unified-management-20261109\\interaction-validation\\u2-locales-final-results\\project-agent-entry-projec-9a4df-closure-only-folds-the-list\\project-b",
+      "sessionKey": "agent:main:session-1794199164650-projectb",
+      "generation": "d3466b94-7beb-4556-bd9f-26e89c27d9e2"
+    },
+    "child": "agent:main:dashboard:2b1dcda6-0f3f-45c6-b39f-fac5950bc35e",
+    "grandchild": "agent:main:dashboard:98eeade4-aa6e-4e6b-b5c5-c097bf727787",
+    "taskId": "c3aa7abe-43e6-4db9-ae5f-aee57bed4c00"
+  },
+  "status": "passed"
+}

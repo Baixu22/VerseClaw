@@ -25,6 +25,7 @@ import {
   type StoredSessionDelegationAdmission,
 } from '../../electron/services/session-delegation-admission';
 import { createSessionsApi } from '../../electron/services/sessions-api';
+import { scheduleResourceAwareWaves } from '../../openclaw_runtime/src/agents/orchestration-resource-scheduler';
 import { buildDelegationReceipt } from '../../openclaw_runtime/src/agents/long-session-delegation-receipt';
 import { spawnRoleSubagent, type RoleSpawnContext, type RoleSpawnParams } from '../../openclaw_runtime/src/agents/role-spawn';
 import { createWorktreeService } from '../../openclaw_runtime/src/agents/worktree-service';
@@ -551,6 +552,31 @@ describe('long-session delegation admission', () => {
       allowlist: ['read'],
       source: 'role-contract+parent-clamp',
     });
+  });
+
+  it('preserves owner scheduling reasons in the dispatch receipt without aliasing the plan', () => {
+    const nodes = ['planner-a', 'planner-b'].map(taskNodeId => ({
+      taskNodeId, roleName: 'planner', task: 'Read assigned context', phase: 'worker' as const,
+      dependsOn: [], scope: taskNodeId, requiredCapabilities: ['task-analysis'],
+      attemptPolicy: { maxRepairAttempts: 1, maxRedoAttempts: 1 }, status: 'ready' as const,
+    }));
+    const taskGraph = { graphRunId: 'capacity-fixture', mode: 'staged' as const, status: 'planned' as const, nodes, edges: [] };
+    const schedule = scheduleResourceAwareWaves({ graph: taskGraph, roles: [role('planner', ['read'])], options: { maxActiveRoles: 1 } });
+    expect(schedule.waves[0].deferredReasons).toContain('concurrency-cap');
+    const admission: SessionDelegationAdmission = {
+      schemaVersion: 'clawx.session-delegation-admission/v1', admissionId: 'capacity-admission',
+      idempotencyKey: 'capacity-intent', coordinator: { workspaceId: WORKSPACE_ID, sessionKey: SESSION_KEY,
+        sessionGeneration: SESSION_GENERATION, agentId: 'main', bindingRevision: 3 },
+      taskRef: TASK_REF, parentEnvironment: binding().environment,
+    };
+    const receipt = buildDelegationReceipt({ admission, orchestrationRunId: 'capacity-run', maxWorkers: 1,
+      result: { outcomes: [], failures: [], taskGraph, executionWaves: schedule.waves, schedulerMetrics: schedule.metrics } as never });
+    expect(receipt.scheduler!.executionWaves).toEqual(schedule.waves);
+    expect(receipt.scheduler!.executionWaves[0].reason).not.toBe('scheduled');
+    expect(receipt.scheduler!.executionWaves[0].deferredReasons).not.toBe(schedule.waves[0].deferredReasons);
+    schedule.waves[0].deferredReasons!.push('tool-contention');
+    expect(receipt.scheduler!.executionWaves[0].deferredReasons).toEqual(['concurrency-cap']);
+    expect(receipt.completionObserved).toBe(false);
   });
 
   it('marks an accepted spawn without both child session and run identifiers as rejected', async () => {

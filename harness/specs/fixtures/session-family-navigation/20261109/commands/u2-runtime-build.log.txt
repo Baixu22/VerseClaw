@@ -1,0 +1,53 @@
+[canvas] build: node scripts/bundle-a2ui.mjs
+A2UI bundle up to date; skipping.
+[diffs] build: node ../../scripts/build-diffs-viewer-runtime.mjs curated
+[diffs-language-pack] build: node ../../scripts/build-diffs-viewer-runtime.mjs full
+[build-all] tsdown
+[build-all] tsdown done in 14.5s
+[build-all] check-cli-bootstrap-imports
+CLI bootstrap import guard passed.
+[build-all] check-cli-bootstrap-imports done in 532ms
+[build-all] runtime-postbuild
+runtime-postbuild: plugin SDK root alias completed in 9ms
+[bundled-plugin-metadata] skipping missing skill path D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime\extensions\acpx\skills (plugin acpx)
+runtime-postbuild: bundled plugin metadata completed in 520ms
+runtime-postbuild: official channel catalog completed in 22ms
+runtime-postbuild: bundled plugin runtime overlay completed in 749ms
+runtime-postbuild: static extension assets completed in 0ms
+runtime-postbuild: stable root runtime imports completed in 395ms
+runtime-postbuild: stable root runtime aliases completed in 94ms
+runtime-postbuild: legacy root runtime compat aliases completed in 121ms
+runtime-postbuild: legacy CLI exit compat chunks completed in 1ms
+[build-all] runtime-postbuild done in 2.15s
+[build-all] build-stamp
+[build-all] build-stamp done in 141ms
+[build-all] runtime-postbuild-stamp
+[build-all] runtime-postbuild-stamp done in 147ms
+[build-all] write-cli-startup-metadata
+[cli-startup-metadata] skipped: CLI startup sources are unavailable in this pruned runtime.
+[build-all] write-cli-startup-metadata done in 138ms
+[build-all] write-cli-compat
+[cli-compat] skipped: legacy daemon CLI sources are unavailable in this pruned runtime.
+[build-all] write-cli-compat done in 123ms
+[build-all] phase timings: total 17.7s; slowest tsdown 14.5s; runtime-postbuild 2.15s; check-cli-bootstrap-imports 532ms; runtime-postbuild-stamp 147ms; build-stamp 141ms; write-cli-startup-metadata 138ms; write-cli-compat 123ms
+Building openclaw_runtime with esbuild...
+  Source: D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime\src
+  Output: D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime\dist
+  Found 1157 npm packages (will keep external)
+
+  openclaw_runtime\dist\knowledge\sekb\index.js  388.5kb
+
+Done in 61ms
+  Done in 0.1s
+runtime-postbuild: plugin SDK root alias completed in 0ms
+[bundled-plugin-metadata] skipping missing skill path D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime\extensions\acpx\skills (plugin acpx)
+runtime-postbuild: bundled plugin metadata completed in 576ms
+runtime-postbuild: official channel catalog completed in 19ms
+runtime-postbuild: bundled plugin runtime overlay completed in 1329ms
+runtime-postbuild: static extension assets completed in 299ms
+runtime-postbuild: stable root runtime imports completed in 463ms
+runtime-postbuild: stable root runtime aliases completed in 31ms
+runtime-postbuild: legacy root runtime compat aliases completed in 104ms
+runtime-postbuild: legacy CLI exit compat chunks completed in 0ms
+[canvas] copy: node scripts/copy-a2ui.mjs
+[runtime-build-smoke] gateway ready on port 55900

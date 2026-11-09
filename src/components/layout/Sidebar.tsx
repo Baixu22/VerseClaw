@@ -192,7 +192,7 @@ const WAITING_SESSION_STATUSES = new Set([
 ]);
 
 function runHasWaitingApproval(run: ChatRuntimeRunState | null): boolean {
-  if (!run) return false;
+  if (!run || run.status !== 'running') return false;
   const latestApproval = [...run.events].reverse().find((event) => event.type === 'approval.updated');
   if (!latestApproval || latestApproval.type !== 'approval.updated') return false;
   const status = `${latestApproval.status ?? ''} ${latestApproval.phase ?? ''}`.toLowerCase();
@@ -206,15 +206,27 @@ function buildSidebarSessionStatus(input: {
   activeRunId: string | null;
   sending: boolean;
   pendingFinal: boolean;
+  lastUserMessageAt: number | null;
   runError: string | null;
   dismissedCompletedSignature?: string;
 }): SidebarSessionStatus | null {
   const latestRun = input.latestRun;
   const isCurrentSession = input.session.key === input.currentSessionKey;
-  const currentRunActive = isCurrentSession && (input.sending || input.pendingFinal || input.activeRunId != null);
-  const sessionStatus = input.session.status?.toLowerCase();
+  const terminalAt = latestRun && latestRun.status !== 'running' && Number.isFinite(latestRun.endedAt)
+    ? latestRun.endedAt! : null;
+  // A receipt closes its own run, not a newer send or another active run ID.
+  const newerSend = isCurrentSession && input.lastUserMessageAt != null
+    && (terminalAt == null || input.lastUserMessageAt > terminalAt);
+  const currentRunActive = isCurrentSession && (input.sending || input.pendingFinal || input.activeRunId != null)
+    && !(terminalAt != null && input.activeRunId === latestRun!.runId && !newerSend);
+  // sessions.list can finish before run.ended and leave its running projection cached.
+  // Only suppress an older, timestamped projection; a newer owner snapshot still wins.
+  const staleSessionProjection = terminalAt != null && Number.isFinite(input.session.updatedAt)
+    && input.session.updatedAt! <= terminalAt;
+  const sessionStatus = staleSessionProjection ? undefined : input.session.status?.toLowerCase();
+  const sessionHasActiveRun = !staleSessionProjection && input.session.hasActiveRun === true;
   const latestRunStatus = latestRun?.status?.toLowerCase();
-  const waitingForInput = (isCurrentSession && input.pendingFinal)
+  const waitingForInput = (currentRunActive && input.pendingFinal)
     || runHasWaitingApproval(latestRun)
     || WAITING_SESSION_STATUSES.has(sessionStatus ?? '')
     || WAITING_SESSION_STATUSES.has(latestRunStatus ?? '');
@@ -222,7 +234,7 @@ function buildSidebarSessionStatus(input: {
   let kind: SidebarSessionStatusKind | null = null;
   if (isCurrentSession && input.runError) {
     kind = 'error';
-  } else if (waitingForInput || currentRunActive || input.session.hasActiveRun === true || sessionStatus === 'running' || latestRunStatus === 'running') {
+  } else if (waitingForInput || currentRunActive || sessionHasActiveRun || sessionStatus === 'running' || latestRunStatus === 'running') {
     kind = waitingForInput ? 'waiting' : 'running';
   } else if (COMPLETED_SESSION_STATUSES.has(latestRunStatus ?? '') || COMPLETED_SESSION_STATUSES.has(sessionStatus ?? '')) {
     kind = 'completed';
@@ -560,7 +572,7 @@ export function Sidebar() {
   const [isResizing, setIsResizing] = useState(false);
   const stopResizeRef = useRef<(() => void) | null>(null);
 
-  const { sessions, messages, currentSessionKey, sessionLabels, sessionLastActivity, runtimeRuns, activeRunId, sending, pendingFinal, runError, startupPhase } = useChatStore(useShallow((s) => ({
+  const { sessions, messages, currentSessionKey, sessionLabels, sessionLastActivity, runtimeRuns, activeRunId, sending, pendingFinal, lastUserMessageAt, runError, startupPhase } = useChatStore(useShallow((s) => ({
     sessions: s.sessions,
     messages: s.messages,
     currentSessionKey: s.currentSessionKey,
@@ -570,6 +582,7 @@ export function Sidebar() {
     activeRunId: s.activeRunId,
     sending: s.sending,
     pendingFinal: s.pendingFinal,
+    lastUserMessageAt: s.lastUserMessageAt,
     runError: s.runError,
     startupPhase: s.startupPhase,
   })));
@@ -1110,6 +1123,7 @@ export function Sidebar() {
         activeRunId,
         sending,
         pendingFinal,
+        lastUserMessageAt,
         runError,
         dismissedCompletedSignature: dismissedCompletedStatuses[session.key],
       });
@@ -1123,6 +1137,7 @@ export function Sidebar() {
     dismissedCompletedStatuses,
     latestRuntimeRunBySession,
     pendingFinal,
+    lastUserMessageAt,
     runError,
     sending,
     sidebarSessions,

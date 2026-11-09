@@ -1,0 +1,16 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-resource-recovery",
+  "entries": [
+    {
+      "identity": "provider-preflight",
+      "path": "D:/tmp/rsi-paired-experiment-20261108-01a1b651-ready/admission/provider-preflight.json",
+      "sha256": "269e8e723c50a5b5501a4a2d11a1ee948b870432de4a3df1152cfab14b23153a"
+    },
+    {
+      "identity": "provider-preflight-recovery-2",
+      "path": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651-run2\\resource-probe-2\\provider-preflight.json",
+      "sha256": "3117f4aa4d2b84e1129b6083ce93be2ef00766cf056121c053d68800f0ed2b0f"
+    }
+  ]
+}

@@ -60,6 +60,20 @@ type WorkspaceStoreDocument = {
   profiles: WorkspaceProfile[];
 };
 
+const workspaceNavigationObservers=new Set<()=>void>();
+export function observeWorkspaceNavigation(observer:()=>void):()=>void {
+  workspaceNavigationObservers.add(observer);return()=>{workspaceNavigationObservers.delete(observer);};
+}
+function publishWorkspaceNavigation(before:WorkspaceProfile[],after:WorkspaceProfile[]) {
+  const navigation=(profiles:WorkspaceProfile[])=>JSON.stringify(profiles.map(profile=>({
+    id:profile.id,name:profile.name,rootPath:profile.rootPath,activeSessionKey:profile.activeSessionKey,
+    sessionKeys:Object.keys(profile.sessionStates??{}).sort(),agentBindings:profile.agentBindings,
+    bindingKeys:Object.keys(profile.coordinatorBindings??{}).sort(),coordinator:profile.projectCoordinatorSessionKey,
+    folders:profile.sessionFolders,assignments:profile.sessionFolderAssignments,archived:profile.archivedSessionKeys,
+  })));
+  if(navigation(before)!==navigation(after))for(const observer of workspaceNavigationObservers)observer();
+}
+
 type WorkspaceCreateBody = {
   name?: unknown;
   rootPath?: unknown;
@@ -495,6 +509,7 @@ async function writeDocument(document: WorkspaceStoreDocument, coordinatorMutati
   });
   store.set('profiles', profiles);
   if (!coordinatorMutation) store.set('activeWorkspaceId', document.activeWorkspaceId);
+  publishWorkspaceNavigation(current,profiles);
 }
 
 function toSnapshot(document: WorkspaceStoreDocument): WorkspaceSnapshot {
@@ -789,6 +804,7 @@ async function migrateWorkspaceExecution(ctx: WorkspacesApiContext, input: Works
       }
       store.set('profiles',profiles);
       if(activate)store.set('activeWorkspaceId',target.id);
+      publishWorkspaceNavigation(latest,profiles);
       return binding;
     },
   },ctx.gatewayManager);

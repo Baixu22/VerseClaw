@@ -13,16 +13,19 @@ export function useSessionReadingPosition(input: {
   useLayoutEffect(() => {
     const scroller = element.current;
     if (!workspaceId || loading || !scroller) return;
-    const workspace = useWorkspacesStore.getState().profiles.find((profile) => profile.id === workspaceId);
-    const saved = workspace?.sessionStates?.[sessionKey]?.readingPosition;
-    let lastTop = scroller.scrollTop;
+    const readPosition = () => {
+      const top = scroller.getBoundingClientRect().top;
+      const row = [...scroller.querySelectorAll<HTMLElement>('[data-viewport-key]')]
+        .find(node => node.getBoundingClientRect().bottom > top);
+      return { generation, scrollTop: scroller.scrollTop, messageKey: row?.dataset.viewportKey,
+        offset: row ? row.getBoundingClientRect().top - top : undefined,
+        pinned: scroller.scrollHeight - scroller.clientHeight - scroller.scrollTop <= 8 };
+    };
+    let lastPosition = readPosition();
     let restored = false;
-    const capture = () => { if (restored) lastTop = scroller.scrollTop; };
+    const capture = () => { if (restored) lastPosition = readPosition(); };
     const frame = requestAnimationFrame(() => {
-      if (saved && saved.generation === generation && Number.isFinite(saved.scrollTop)) {
-        scroller.scrollTop = saved.scrollTop;
-      }
-      lastTop = scroller.scrollTop;
+      lastPosition = readPosition();
       restored = true;
     });
     scroller.addEventListener('scroll', capture, { passive: true });
@@ -30,7 +33,7 @@ export function useSessionReadingPosition(input: {
       cancelAnimationFrame(frame);
       scroller.removeEventListener('scroll', capture);
       if (restored) void useWorkspacesStore.getState().saveWorkspaceState({ id: workspaceId, sessionKey,
-        state: { readingPosition: { generation, scrollTop: lastTop } },
+        state: { readingPosition: lastPosition },
       }).catch((error) => console.warn('Could not save session reading position', error));
     };
   }, [workspaceId, sessionKey, generation, loading, element]);

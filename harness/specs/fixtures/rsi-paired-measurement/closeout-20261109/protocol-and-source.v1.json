@@ -1,0 +1,921 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-protocol-readback",
+  "runId": "e8866141-a1f3-43c4-8efa-dfc9822cd24d",
+  "frozenSource": {
+    "commit": "fb2d09a3a401deecace0ccdcb6d9fc71da0b9693",
+    "tree": "3618106c34782bcf64dac996ad94efa30358d77d",
+    "bindings": {
+      "docs/dev/harness-gap-closure/a01-acceptance.json": "7f45be3ac002e36b10061dd201d6768763011ff2805c30dec4f9ba122efbe1ef",
+      "docs/dev/harness-gap-closure/a02-acceptance.json": "99b89c7ab9a53518eaefba20210dd23ca9f624eab0705ca0ad87d572cd6234ed",
+      "docs/dev/harness-gap-closure/a03-acceptance.json": "94560219120997217ba78b0d8d3378d1a96649850e702b12cd418ad9fbbc6fec",
+      "docs/dev/harness-gap-closure/a04-acceptance.json": "2df9f728a9c7867659b2ce03135e1754a26b7a57fe7f51be80d4ae64c6d18e0c",
+      "docs/dev/harness-gap-closure/a05-acceptance.json": "4cec9973dc952b2793b2d64da099e26a54752788505363922040f426ce2c9819",
+      "docs/dev/harness-gap-closure/a06-acceptance.json": "053a3892c62f918db7b61718eadc84e5c8419e6e9d138a261ffcc97d6f5105aa",
+      "docs/dev/harness-gap-closure/e01-acceptance.json": "b0f0214881444c68e9c7b339a528c80cc9d2894831191cd6ee16ed8825afdb94",
+      "docs/dev/harness-gap-closure/e02-acceptance.json": "67cda0e5a5ccd28e5386d9f64d02039ca0122bb753a536deb48167e143ac73fd",
+      "docs/dev/harness-gap-closure/g01-acceptance.json": "09390cf33cf15bb05097f38d8cb9cf845962bf17958d90befdde235218176407",
+      "docs/dev/harness-gap-closure/g02-acceptance.json": "1bb54cbc25f437496ffdecb71f808562d633b123bd115901e91ef0c3d94aaea0",
+      "docs/dev/harness-gap-closure/g03-acceptance.json": "b2936554a04cf2500ca099bb643a6345aadf451b0c77bcbe76428271c7452949",
+      "docs/dev/harness-gap-closure/l01-acceptance.json": "0e0a4139520eec9ce4940ee7ea1e61e7eb86fd14c2e92cf0a37ccc97d368e141",
+      "docs/dev/harness-gap-closure/l02-acceptance.json": "27ba5b7c62e490e116af31e380292647c3c1ce177962dbe78515e6d19ff9bca1",
+      "docs/dev/harness-gap-closure/l03-acceptance.json": "8afb7462ed0290f2d0899a02ab619680d276b9038cfbec276d498c3d5e9104b8",
+      "docs/dev/harness-gap-closure/l04-acceptance.json": "e3e32b5f69a9d210cc57ccaa34b61e76c4f1dfb94984db776bdc8d5d4eb3f953",
+      "docs/dev/harness-gap-closure/l05-acceptance.json": "985fd1b987c5b48dc7e69c512784465008cff242a06626c9ea27f24efb784e93",
+      "docs/dev/harness-gap-closure/l06-acceptance.json": "17682ec3f46b3f3d0ac6d8469bcd9fc3a97f95c5e0eea7dbcf99ac4a16400272",
+      "docs/dev/harness-gap-closure/s01-acceptance.json": "91eccf66cb8f2b34a5289cd264ff90bf1319c0181c4bc0a4ef8ccd43bea5d276",
+      "docs/dev/harness-gap-closure/s02-acceptance.json": "2d02761a45c25e9c96b3ba0cd9d8016355e1ced5fb9f69fd9b43f30467cb9e64",
+      "docs/dev/harness-gap-closure/s03-acceptance.json": "6c67f99c023728eaed7c506ba24b95104de188d0ecd3eac31b27df40548d0b02",
+      "docs/dev/harness-gap-closure/s04-acceptance.json": "b35b8861b4e37a7f9117c40451783debd7e57d71c5298b95be18d0471208510e",
+      "docs/dev/harness-gap-closure/s05-acceptance.json": "a8422e790efb7ccd9c3f3b9dbbf7c2115d56a37f2081b774d0232eceb9acc4be",
+      "docs/dev/harness-gap-closure/s06-acceptance.json": "a07f47b7576a95958f361fe54a6add343a4c54938ab8ce5db216cade59b98b2e",
+      "docs/dev/harness-gap-closure/s07-acceptance.json": "e1bf507b61cd5df38514ff797f23b4bffe2c77f9370404a9fa7230c5c9d857fb",
+      "harness/specs/fixtures/agent-first-task-corpus/task-corpus.v1.json": "b62d7190d5a22b086827d6aad23d2ae7e46f92bbee5714db164506ef51fd8d61",
+      "harness/specs/fixtures/rsi-coding-cohort/candidate-provenance.json": "b904685875e4f2eb642afc4a39057670130ee98c0f17a8e3dfa4894dc8d1bdfe",
+      "harness/specs/fixtures/rsi-coding-cohort/candidate.json": "7763791a60aa64f8a5806ccf7877306478385e785e16a1dbaf1e930f3734561f",
+      "harness/specs/fixtures/rsi-coding-cohort/task-bindings.v1.json": "2697e0f57ca40ab8e7b547d0d82595dd56b11f3281acf316c03df819590cf417",
+      "harness/specs/fixtures/rsi-evidence-loop/promotion-policy.v2.json": "d8803c95fbf5fac238ebbd0cda7fed5562e2289bcc0a211de8a8856fe6ad89a8",
+      "harness/specs/fixtures/rsi-evidence-loop/tf0604/task-corpus.v1.json": "a4f9b3017288164d51126732f6dd588eff1917e649f6054669ac1060b4775261",
+      "harness/specs/fixtures/rsi-model-diagnostic/g03/request.json": "e00c53960b17a6834a297e7c9bdb57e1f736ac4b3a2b396f1bad3428c72887fd",
+      "harness/specs/fixtures/rsi-task-inputs/public-bindings.v1.json": "040177a8e79fbc8694192ead1b00934ec2d4e468c7fbf271698c6257fa99b6be",
+      "harness/specs/rules/rsi-campaign-budget-boundary.md": "e99e657278515a81d4249e871a7319fe1f5cb71a5a842e0967820ee79922273a",
+      "harness/specs/rules/rsi-candidate-evolution-boundary.md": "a616019b4da9c42a18deadd9101adb2fdc89cac7044de9df8c9e1c094250d806",
+      "harness/specs/rules/rsi-public-input-boundary.md": "52b312c3dfa6d840ab5f028c05125ada4fc7d2a912bc296f5fc7c3320b79b2d4",
+      "harness/specs/tasks/harness-gap-a01-isolation-pilot-reverify.md": "fabb4c1356f01a16f1d1af2d2d9bcbdaa931556e8c9fa5626f2ab9c922805133",
+      "harness/specs/tasks/harness-gap-a02-orchestration-pilot-reverify.md": "5e77f31913eaccffdf18b866a601c73d32183383ab3c7818444aae0df32aefa5",
+      "harness/specs/tasks/harness-gap-a03-resilience-pilot-reverify.md": "33149f70f39b92742daf2564b879eedaadbebb342087ad96fe27a99bd9581189",
+      "harness/specs/tasks/harness-gap-a04-decision-quality-pilot-reverify.md": "7a676a292bee11846f60481b9239fdbd41cd994058d6cc10a122b755f60e1d02",
+      "harness/specs/tasks/harness-gap-a05-adaptive-context-budget-pilot-reverify.md": "be0bdec2d771bb740a9b261dc1106d1e76de793a83d67b70b647d45e547d6cb9",
+      "harness/specs/tasks/harness-gap-a06-long-running-persistence-pilot-reverify.md": "a6135f565f5d75992df5181c100d61a8df6e3594401fd4fd92590f5524fff39b",
+      "harness/specs/tasks/harness-gap-browser-effect-boundary.md": "33af143e068b540096b7f81936f4bde96c502c4395df8022bea2357cc07894c2",
+      "harness/specs/tasks/harness-gap-checkpoint-attachment-binding.md": "b1d72a04abb1dbb3ef50d7e208a5a673a89509d353eeeab13c83b418206de1b3",
+      "harness/specs/tasks/harness-gap-context-pressure-recovery.md": "ad94d07e9ec12713538dbb9836dfc07d218f42afe682092a2bd3444a02d8a0cc",
+      "harness/specs/tasks/harness-gap-credential-use-boundary.md": "7dd4b0679b6bc10ab5bea3a31336ce296db2c39f6538895f0ebfd2540e2a9d64",
+      "harness/specs/tasks/harness-gap-envelope-reject.md": "d42d8423b651d0f9a4b452ff0a6d364655e86d3afe696fbb1db0c20f624c787c",
+      "harness/specs/tasks/harness-gap-error-recovery-next-action.md": "a6784362a5425d594e5bbf893093bbb24cc4d6793541fa05ebf6a1c4f4c94435",
+      "harness/specs/tasks/harness-gap-external-write-boundary.md": "730fb4d519844c6ae9df5d24e4ac0de8b8b92d6b392e1d8ef50e8934123bc2a7",
+      "harness/specs/tasks/harness-gap-hot-file-write-owner.md": "ae28580153e0ef4234d46d0914d5331538193f73307f23bac1bb13ddad587729",
+      "harness/specs/tasks/harness-gap-in-run-steering.md": "2cf3bc047237c3c878b38cc53f7afadc4b7db437430881a0170e82e49835ffe3",
+      "harness/specs/tasks/harness-gap-memory-effect-receipt.md": "bea425fb9d99a62afc7f4ecd27d899f043d8a31869bd907a1d30f7855801eec4",
+      "harness/specs/tasks/harness-gap-paired-ablation.md": "1dacdebf222ad3c2f04bfca4cc424851b1b42ba6c74c7420aa37f92f6b7169af",
+      "harness/specs/tasks/harness-gap-rate-circuit-breaker.md": "1937ad9bb9e466727bf67a0a5a2dc4814881038de453cb37827806d6bca13721",
+      "harness/specs/tasks/harness-gap-reliability-aggregation.md": "2351a1909b0130f4f518638644722f3413394ca3e1f6d673333e24c9340314f6",
+      "harness/specs/tasks/harness-gap-sink-ledger.md": "c3a9989c8c97d30311da69944a5eccd216cd1a0b4f42fb1dab20bb03aa732907",
+      "harness/specs/tasks/harness-gap-spec-doc-gardening.md": "ec5004bce21e5ab4a017830c20fe0116fe77e0ea6cdc58711a89ec51ab218535",
+      "harness/specs/tasks/harness-gap-trace-to-eval-sample.md": "f0d8e2b9991d932ce267a9e88671357687f22f6b34d26f73366271185879aab7",
+      "harness/specs/tasks/harness-gap-verifier-completion-verdict.md": "aa86ff9ae1f449e89e3597f9acd639c36554c5b60e6038d73c829a30598043a9",
+      "harness/specs/tasks/harness-gap-working-context-single-source.md": "bb977807573bb95d30f239c2656e2172be7f4ce93cb19baf6a8b1fe51f6f32a3",
+      "harness/specs/tasks/rsi-benefit-eval.md": "ee3d33a556351dbc0b41a6cf45a366f82ebfdb7dca0ed473e9be72c1d2bd68fd",
+      "harness/specs/tasks/rsi-bounded-coding-loop.md": "80cfd7f1cc2cfbad5bb4aa47c4226201ab57583fc6574837752cd70ecdfbf418",
+      "harness/specs/tasks/rsi-candidate-evolution.md": "48ba8d53e3cc2d0ea489aff99fae53b2c9cfaef85d808bb7d57d2e215102c780",
+      "harness/specs/tasks/rsi-paired-measurement.md": "39dd6240c915550a2a92da9aa5eb47cddd07d46ac589a2ec5e3e18cb262e8571",
+      "harness/specs/tasks/rsi-public-task-inputs.md": "30b896a5540dbc97e3a0c16df283143a1a6e8e44efd88608801b542db1602c3a",
+      "openclaw_runtime/packages/agent-core/src/harness/compaction/compression-planner.test.ts": "21677e685c0edaeff520fe0b5fc74ccb9dcf46494b518aee0260f01d66d82408",
+      "openclaw_runtime/src/agents/agent-browser-provenance-wiring.test.ts": "9b443a49873b8f1046f14f44f94454ff2a33caa6fe7389665026ab91aa60e9c9",
+      "openclaw_runtime/src/agents/agent-hooks/compaction-budget-shadow.test.ts": "835b2b0ddcd050235f730f0cf895405770fa226c1dd4a4a690daa00cec3ccf71",
+      "openclaw_runtime/src/agents/agent-hooks/compaction-promotion.test.ts": "9439025c41946146290e373832e94cf80dfe4b04a719807a435f4bdf56515037",
+      "openclaw_runtime/src/agents/agent-steering-queue.l03.test.ts": "1239cff17997b83b553e90395114743a839ed071c5014fd657c58e06c7b8bea8",
+      "openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts": "d406769bef60ff050c13dbfeff0048fbf06e8051e334fc2b1a2d6b79ec8bf8f9",
+      "openclaw_runtime/src/agents/apply-patch-consistency.test.ts": "7b131dc4b8abbc9c84b592fc1a15f9d8aabf0a8e85d139136f8e7f7f35b7ca28",
+      "openclaw_runtime/src/agents/apply-patch-effect-receipt.test.ts": "0f8aefc661467302271f9de1d03deaa3edf72a0a2a9d6835b42b91166393769e",
+      "openclaw_runtime/src/agents/hot-file-write-owner.test.ts": "bf3c201357685b4b5ec464bbbb7bd3ff48ebcc3eab63de8c2a655780c2f91451",
+      "openclaw_runtime/src/agents/rate-circuit-breaker.test.ts": "d6e73fa68719e77bca0546044ee91cfe5eeeaf1c43ef4d453f80072d32653394",
+      "openclaw_runtime/src/agents/rc02-envelope-reject.test.ts": "b84850fa4e657a7d5b2f8aca0c3e86c13e3d03829efcd3fced46bc566c01aa39",
+      "openclaw_runtime/src/agents/sessions/tools/edit.test.ts": "69ac088add7bf0e874c4b1af32c45559422d236f56a1fe41fa214878635b99c3",
+      "openclaw_runtime/src/agents/sessions/tools/write.test.ts": "07e02c3c8a83e687ef7250fa9d00e7c4bdd4cf4f907ac30a617ea9c84541f883",
+      "openclaw_runtime/src/agents/stage1-effect-receipt.test.ts": "f6705213f0f6bd02c17c2e9d67222e3349f4d5acac3d055c9af1e92144f2dd89",
+      "openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts": "a8506c0c02981b224d4147e6d1b20deda50674cd9c82e731ddd3ba3d8215724e",
+      "openclaw_runtime/src/agents/tools/agent-browser-external-access-policy.test.ts": "fbb24d2415a938e5589a8b788e6b2ad9e9a38b341bec891b1ac47c100dd60b17",
+      "openclaw_runtime/src/agents/tools/agent-browser-tool.provenance.test.ts": "07ab4e40286b82a54a79dba190c7ee05518df80b03a6429b9b6f1136776d4d96",
+      "openclaw_runtime/src/agents/tools/image-generate-tool.credential-use-provenance.test.ts": "1587800ab0562be008122ba56f190bf79f3d8209c9e939d9b7a54711bff02d9a",
+      "openclaw_runtime/src/agents/tools/provider-credential-use-policy.test.ts": "902828bfed65084508bc72f10f3e2c11b14c4e7a514dcb18026f64cf08aaef9c",
+      "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts": "b6ac5977cf5bdbda57cf65a5478d0bc3a1259248ab0fa80117c79eb356bc414b",
+      "openclaw_runtime/src/context-engine/context-orchestrator.test.ts": "40b9500b4a3b0f877121f2fda2963fb5873c7caee4f24f259ef6cb9858cfb549",
+      "openclaw_runtime/src/knowledge/sekb/knowledge-store.ts": "4ca82b56d1e54f2492131a572a699293b1c9714641b55778e1b1cfbb88280028",
+      "openclaw_runtime/src/knowledge/sekb/trajectory-redaction.ts": "d8c06c709aebed26298c6286d6ce9dcd246ba2d3f40952886e129f5b449c3d89",
+      "openclaw_runtime/src/knowledge/sekb/types.ts": "c508dcb36d12012a5d7cf65c8bbf30cc53faffb22f8f5c3c1003bf95de2e8c15",
+      "openclaw_runtime/src/observability/deprecation-counters.test.ts": "8233f578fa953bc8839f1916acdea858bb43121fb9851442b7fa10822f7ce563",
+      "openclaw_runtime/src/runtime-core/checkpoint-attachment-binding.test.ts": "58d3b40b2c44652c0029884133184a2d87532a9ddbc4d4e8d1beb78e76f4033b",
+      "openclaw_runtime/src/runtime-core/context-pressure-recovery.test.ts": "679f1c407490e2a1160480d5c95fd76dec1e835c9e51d2754d643b0fb3f58475",
+      "openclaw_runtime/src/runtime-core/evidence-verifier.test.ts": "b73715370d0bd11afea7a3b0d5561267bf2edbd88bc38c9031d135ed4b4cbb2e",
+      "openclaw_runtime/src/runtime-core/memory-effect-receipt.test.ts": "bcc5f9a595b2c008597d0c29127837227cd4af3291fb68f17617d6af366619df",
+      "openclaw_runtime/src/runtime-core/verifier-completion-verdict.test.ts": "5e70e5bcfc1c54e709233c4d191d7480b94edadbf33200b83e149923371b7434",
+      "scripts/check-spec-lifecycle.mjs": "b06eb534725cd3941048076d5c1fd73941be8eb0110b7c768d37f17da967ae02",
+      "scripts/lib/agent-first-trials.mjs": "3806239bc6272bfafdb490d8263d91b953a88ee388c3396b0d9695e39922e83a",
+      "scripts/lib/entrypoint.mjs": "c6d85bf1a39d6deba581152b62ff6438bca2b4a5e62411c0ffbd81ff7e9cab3b",
+      "scripts/lib/paired-ablation.mjs": "df61dddd780abe1945d5d204308077da1f290fc7b328722061cbd150e6884e32",
+      "scripts/lib/reliability-aggregation.mjs": "764b31e2244dc70945ba4a15a90c9be6b6b7b7b02e40236fd86c5b54adb37483",
+      "scripts/lib/rsi-benefit-eval.d.mts": "2a2c3456d90a192866ba162cb02b265cb7ba78d69b88a07aa500e017cb08a234",
+      "scripts/lib/rsi-benefit-eval.mjs": "b167e2a6d217b77453e974cb500fecd33235beb0c8387ad9057edc4a8282a40d",
+      "scripts/lib/rsi-campaign-budget.d.mts": "7a57212daff128a7d0908daf819123e90c99921a5b922b2167fa629f42f1405a",
+      "scripts/lib/rsi-campaign-budget.mjs": "8d8b95cce9e1cb1427ee5e80f07c1ac4391651425f17d8cb8db37a9ce31d17b6",
+      "scripts/lib/rsi-candidate-evolution.d.mts": "69cab62e2a2617168ce2f06dab872f7d52d163bcc74a5b006964a9f0f483e116",
+      "scripts/lib/rsi-candidate-evolution.mjs": "6383e2ca66882b7258d39d878e5694c085153a77eae361c5f43871cb1105a216",
+      "scripts/lib/rsi-coding-protocol.d.mts": "f15670733c63631f1b7a1749e0df86b33ace3060d055cfe77450ba165e7036f1",
+      "scripts/lib/rsi-coding-protocol.mjs": "38a7b7ecfe1a7b1cc4667e2ec933ebec0ac5d66a0e110d3b764ed99e9612472b",
+      "scripts/lib/rsi-coding-tool-loop.d.mts": "3e5ab04a020b2121f401b5d35d745ddc1cf51b5428e8f1e9ce1bbce4d97d51b6",
+      "scripts/lib/rsi-coding-tool-loop.mjs": "a44e814766c8cf166ae06192faedfa7d28e90c6f3f7e7fde88807d3a327d4d43",
+      "scripts/lib/rsi-coding-tools.d.mts": "03416d47a812fda4b313b7163c78dc778f71c6e52e9b55da0db0ae561ad815fd",
+      "scripts/lib/rsi-coding-tools.mjs": "5449e8a8a337581c52f63a72f32578b6bed017674fcaf3eb794bb67612c8f348",
+      "scripts/lib/rsi-live-grader.d.mts": "0acf026acfbe296812784b681b95e8a9078ad9943d4d4739bb0e71e821110dd7",
+      "scripts/lib/rsi-live-grader.mjs": "580ccb633f075d21fe136bbe651f1db3ea442eb6903dd110f4dc15b896c619c0",
+      "scripts/lib/rsi-responses-provider.d.mts": "8f61c581c87a83258454bc19f00fa6d42bc47b6b28a1c99f1720b62ff1491e29",
+      "scripts/lib/rsi-responses-provider.mjs": "737eb2db5c50247777ddc17d5e0ba86d8d7810c05b34f73fd1c0e933a033f5ae",
+      "scripts/lib/rsi-task-inputs.d.mts": "6c8bda96a38d42a4567f5275e5ff311d398c71ec80684cc86c2cab3b323f5216",
+      "scripts/lib/rsi-task-inputs.mjs": "f6a6f79b31df82a8ed27f4e9220aa989e64fee7e5034bc1a6e645f29757c6fd6",
+      "scripts/rsi-benefit-eval.mjs": "413ce0455fa8de9b419630d9783c68478942237e1c8ce4201ea7ee3a0bc23baf",
+      "scripts/rsi-candidate-evolution-integration.mjs": "c93c347238f319346ed0623d42a0b3dd3f5fa3d7308ba312999225d8d7ad3a1e",
+      "scripts/rsi-candidate-evolution.d.mts": "8ab0721c8827846fe39df12b363b33cc68bb832e0dbb4009e65a4bfedb446dcf",
+      "scripts/rsi-candidate-evolution.mjs": "d95cb2a11d6d2ec2e6c732221b2c1f58ceaf4b4b9c08f9bc422eca5ddc3db9e4",
+      "scripts/rsi-coding-candidate.mts": "00c0e19615a05b6938a3061f9fe7ea580fb0d73847e85366f902265e061bf1a4",
+      "scripts/rsi-coding-collector.d.mts": "3303dde76702899282067b57cc0fc0324ae7f73f0121291fb301e7e323b82fda",
+      "scripts/rsi-coding-collector.mjs": "ab6443c82e9430594f89bebd4c2eb8d7bb3846fdcc496e129d2d7bb90b27a22b",
+      "scripts/rsi-coding-tool-integration.mjs": "5e098db3617a81bc668ae03190ce3a1a129199aac3aefd9be4e95651f2f8adff",
+      "scripts/rsi-live-acceptance.d.mts": "5c0eeded04feda6f0776087b774855fc04c45fff9f2fc4f4a5da181f3db909ac",
+      "scripts/rsi-live-acceptance.mjs": "aada17b3ce7494f0f4503f26e1785b71375cc4324eb2c66debfff265853d97ff",
+      "scripts/rsi-paired-measurement.d.mts": "5cb94657a358fa4aeacc95d272088ca67de28ceed4d24795f39793b87905da88",
+      "scripts/rsi-paired-measurement.mjs": "6e425e47294caebab8ceccb86721daeb461635e52b112eef34d7f113816818d4",
+      "scripts/rsi-task-inputs.mjs": "4e70f1f6291958e123333c61eec9c48f4c2c07f34bfbea2fb7edbf4a2bbc355a",
+      "scripts/rsi-tf0592-statistical-adjudication.mjs": "c66f37616a487da5e8a823d3cf8ceadb6e4aa9e4c1c563f3e284bce83303135a",
+      "scripts/rsi-tf0604-baseline.mjs": "796a6238586dea788d172cde296fc6dd86eafc17b7c6301e6e8349cefbe5a57b",
+      "tests/unit/a01-a1-gate-coverage.test.ts": "23b311a2e8e0fa5d81a79a63540ecd8fa4280f18500e10c901f8e6bd6124b6c4",
+      "tests/unit/a02-a2-gate-coverage.test.ts": "614cb2499f3ec7a91c9e2680037e001ec32ebfbb5d74c8a92612c56252774750",
+      "tests/unit/a03-a3-gate-coverage.test.ts": "257e11055d6c09c89781f8c37e23f5bd230246efe65cc8e963034dbe2e1eca58",
+      "tests/unit/a04-a4-gate-coverage.test.ts": "719261cbbbbdeb5f59e2e78a8c27a7eca27ce36eaccd6408584b9dbf0da1075f",
+      "tests/unit/a05-a5-gate-coverage.test.ts": "0e3bdd7526b9c409ac1c36197ece1ce996288f1b348731a1769809b1f9780dc5",
+      "tests/unit/a06-a6-gate-coverage.test.ts": "c696f24ff5d0f7086ee13ed3eda36df78f10200d121c3c6512293d649628f2ff",
+      "tests/unit/agent-dev-paired-ablation.test.ts": "44634cdf74c172b70b42602b6593b96a996ecf57d49721acc93a39a0118d8d45",
+      "tests/unit/agent-dev-reliability-aggregation.test.ts": "6d446ed2fe11f82154645ad75e5822e7d0ab39ec296ec1f72a67405f7afe5ea9",
+      "tests/unit/anomaly-classifier.test.ts": "8933def3efb0cc772de7bb04c4d850abc683be1ceed057112d060f4643899090",
+      "tests/unit/browser-effect-boundary-ledger.test.ts": "42d481e78e431e7c9d05e52ab6e4779dc1d882b2419c22a2f95ce13a13119b1e",
+      "tests/unit/context-control-plane-stage3-contracts.test.ts": "77c8ac298029b581cc63542cbe45973d7fca58de0f270f2283eb5732e06bcff7",
+      "tests/unit/decision-quality-auditor.test.ts": "d70743d6981d51d0e6d6a4d5735864dcf5726b50a9b8854924d125883875955c",
+      "tests/unit/deep/a4-deep.test.ts": "a39e50830459eb4ee87294409b12c1d8df14ca9dbf85237523b1635dd2868cde",
+      "tests/unit/deprecation-counters.test.ts": "bf5559f7da8fac3f872e0a8985acde35a0452da25fad7ec51914980f398fea31",
+      "tests/unit/error-governance-boundary.test.ts": "3a639eb6cc1917f9f156de36be2509a6d091e956cf19f2ca5e92ea2844e3886f",
+      "tests/unit/error-recovery-next-action.test.ts": "0a2c79941e0037c48327ae04c0ca632209a7dd2f13b9394c1a1ae0fea5091ec7",
+      "tests/unit/external-content-provenance.test.ts": "c2c989f4e1c4e0e0e5a1ff0f07a66795b69b77a5492ac4ca95a44daf5883c55e",
+      "tests/unit/file-fingerprint.test.ts": "c7ce17f8bce4c6931d2306ec797ba144214cd77ac4e4d6a04de2cdbded48f4ac",
+      "tests/unit/long-task-checkpoint-builder.test.ts": "b21f9e890ca81634d17003b61843c2e0cb2314c28430a97923c66de52f0e2ac3",
+      "tests/unit/long-task-control.test.ts": "816813635654f0771a81fd2770fc413498542dd3d18490441f9ede8e39879bd6",
+      "tests/unit/performance-budgets.test.ts": "4502f116876f3270c4d9eb5929461186d8038d7f973bcec23743bcaa4e1e5079",
+      "tests/unit/policy-light-snapshotter.test.ts": "c1d7fd8264b0967f55304af997278a8c227ea75388fb97f91ba1cd67b8a7bde6",
+      "tests/unit/provider-credential-use-boundary-ledger.test.ts": "3f76e97baa0c611a7c1fd4f6b1ae4e1875044bdf02460b188efcfb44ed8d9cf5",
+      "tests/unit/resource-aware-wave-scheduler.test.ts": "7183a6dcdde7e7b14c0843024add33db72a9b581056e9788438305afc7f1a197",
+      "tests/unit/rsi-benefit-eval.test.ts": "6a8625cb8962d23d3f7f6f893bcc04e9cc447934ccec3e9ee5207440a299281b",
+      "tests/unit/rsi-campaign-budget.test.ts": "ec3b3c6592b4dc2e923943b066cecc0653ffe7cf237a774e8d044d3f72d80efe",
+      "tests/unit/rsi-candidate-evolution.test.ts": "ba93ca3743ac7353868d4e0455ae7047a4f9f0ad045d90fb81cb059279008b2e",
+      "tests/unit/rsi-coding-collector.test.ts": "bbd636503e6a08d2969e6656119eb8b93376a1d4595462ba416301c58d0d0c24",
+      "tests/unit/rsi-coding-tool-loop.test.ts": "2811dce42706f1f7540ec96d678e8a9a70228484027b9c220f6e3ba3c8bd7480",
+      "tests/unit/rsi-live-grader.test.ts": "42bc16868d7520d25f6e2125e749fbeef79b86b026c1c31cda9b6dc76d06340d",
+      "tests/unit/rsi-responses-provider.test.ts": "84c706316e6035f207e356234187dc8a0f45ab9bf3971e020e889367ca7693b0",
+      "tests/unit/rsi-task-inputs.test.ts": "06e5abccfc15507831822eb0a549dfcd0010f1db1aa622016d91fbe9a63ed25b",
+      "tests/unit/runtime-memory-paired-ablation.test.ts": "bdbeb72b8a46e87ec95fe7d510497bcb009122673f2163f1fc7b85dc72e27026",
+      "tests/unit/runtime-resume-shadow.test.ts": "718e790ded308d21edb9c8b8d722b984aabc4fe4b7544f7967e59e1e07348760",
+      "tests/unit/sensitive-sink-enforcement-drift.test.ts": "c5f1fb3b8211068de559bbfa8fc73b612bb047a143f04b2df6c727932a81e659",
+      "tests/unit/sensitive-sink-residual-ledger.test.ts": "cef2ba5edbdd68de89533e8ca061d803fe843a6869454167f8f202c9c9f00905",
+      "tests/unit/shadow-write-event-recorder.test.ts": "8d86315c7c49f6f8bfee2dc442a0468db2bc33d08830e9b40368f6eeebc64233",
+      "tests/unit/spec-doc-gardening.test.ts": "968bf0a818599d9b0dd5d912d676aa287ea895cbabc23288ab613f1e393f0837",
+      "tests/unit/task-ledger-working-context-single-source.test.ts": "ba84d439031ab1f4ef7d2dcdf96024f6480902506e74b396de5c85b58cb96251",
+      "tests/unit/tool-registration.test.ts": "8690822b40173545badd0c6d3224baa1acd6eec5c1207e85492683fc420837ec",
+      "tests/unit/trace-namespace-enforcement.test.ts": "8dfeebc6190903dc4d42cca254087df95ad52d3073793375581338b63fa972a3",
+      "tests/unit/trace-to-eval-sample.test.ts": "9895c0c9296985a31e8c1beceac7d3a1d3c4918899f1d84a3ea3441ba38c4d70",
+      "tests/unit/trace-truncation.test.ts": "be6bc7c2c66be4341f0738a126eb43ac8294cad81b2a4ef5f94bc557cc7a792b",
+      "vitest.rsi-adoption.config.ts": "dc4ed9a8a9f5499ec548d86913f32acbe92145acc6d4687f0ee8e1faa8eb4b29"
+    },
+    "boundary": "Bindings pin working bytes; measured receipts also require a clean committed evaluator at final check."
+  },
+  "planFileSha256": "3ab280f69d67232108f624d6a12cd4f24b1d189df77dbde57a099036c0338a5b",
+  "protocol": {
+    "version": "RsiCodingCollector/v4",
+    "reasoningEffort": "low",
+    "maxOutputTokens": 16000,
+    "timeoutMs": 240000,
+    "oracleTimeoutMs": 300000,
+    "maxProviderAttempts": 1,
+    "maxContextChars": 100000,
+    "supportPackage": {
+      "name": "markdown-it",
+      "version": "14.2.0"
+    },
+    "responseSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "finish"
+      ],
+      "properties": {
+        "finish": {
+          "type": "boolean",
+          "const": true
+        }
+      }
+    },
+    "responseFormat": "strict-json-schema",
+    "incompleteOutcome": "known-output-limit-is-failure",
+    "infrastructurePolicy": "retain-slot-and-continue",
+    "unknownUsagePolicy": "reserve-request-upper-bound",
+    "loopbackTransport": "direct-node-http",
+    "schemaEnforcement": "local-strict-validation",
+    "publicInputProtocol": "RsiCodingTaskInputs/v1",
+    "maxProviderCalls": 4,
+    "maxToolCalls": 12,
+    "maxToolOutputChars": 12000,
+    "maxEditBytes": 256000,
+    "maxEditFiles": 32,
+    "slotTimeoutMs": 900000,
+    "tools": [
+      {
+        "type": "function",
+        "name": "read_file",
+        "description": "Read a bounded range of an allowed task source or public declaration.",
+        "strict": true,
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "startLine",
+            "maxLines"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "startLine": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "maxLines": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            }
+          }
+        }
+      },
+      {
+        "type": "function",
+        "name": "apply_edits",
+        "description": "Apply a validated batch. A null oldText writes a complete file; otherwise replace one exact occurrence.",
+        "strict": true,
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "edits"
+          ],
+          "properties": {
+            "edits": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 32,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "oldText",
+                  "newText"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "oldText": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "newText": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "function",
+        "name": "check_public_contract",
+        "description": "Check edited-source syntax, public exported names and task document fields without running hidden tests.",
+        "strict": true,
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {},
+          "required": []
+        }
+      }
+    ]
+  },
+  "design": {
+    "k": 3,
+    "minimumCompleteCases": 20,
+    "primaryComparison": "sekb-confirmed-vs-off",
+    "order": "rotating-three-arm",
+    "unit": "caseId",
+    "minimumImprovement": 0.05,
+    "costIncreaseMaximum": 0.1
+  },
+  "provider": {
+    "endpoint": "http://127.0.0.1:3065/v1/responses",
+    "model": "space-bunny",
+    "maxOutputTokens": 16000
+  },
+  "budget": {
+    "providerCallsAuthorized": 864,
+    "maxTotalTokens": 12000000,
+    "network": "declared-provider-only",
+    "retries": 0,
+    "campaign": {
+      "schemaVersion": "RsiCampaignBudget/v1",
+      "driven_by": "agent",
+      "actor": "codex/rsi-campaign-budget",
+      "endpoint": "http://127.0.0.1:3065/v1/responses",
+      "model": "space-bunny",
+      "authorization": {
+        "approvedBy": "owner",
+        "currency": "CNY",
+        "maxCost": 300,
+        "maxProviderCalls": 864,
+        "maxTotalTokens": 12000000,
+        "source": "Owner replies in chat 01a1b651-cdda-7143-a45e-3ca0aa926b43: 12M tokens / 864 calls; currency CNY; fee cap 300 CNY."
+      },
+      "billing": {
+        "kind": "existing-free-quota",
+        "currency": "CNY",
+        "provider": "workbuddy",
+        "plan": "Free",
+        "newPurchaseAllowed": false,
+        "evidenceDigest": "d6c2736a60fada3756dd7c8a0ba59a10d79e1acc9901b5491eb14de162f1f688",
+        "creditMultiplier": "x0.08"
+      }
+    }
+  },
+  "candidate": {
+    "id": "rsi-prompt-4fb74767a8b13b831edd60f3",
+    "contextDigest": "da9adbb1b5faab2778fb048b832ea1254bc77358875e33b8e54f0330663818f9",
+    "version": "da9adbb1b5faab2778fb048b832ea1254bc77358875e33b8e54f0330663818f9",
+    "heldOutDigest": "01b05ac42fa2fd57d61a6af6e88887220a65a58952dfd5f0aa0e5a241feff501",
+    "evolutionExportDigest": "2d4e535bdc168410c9981331f279de85391f181e7184dfbe80ad8a0f6ba29f26"
+  },
+  "tasks": [
+    {
+      "id": "tf-0274-e01",
+      "split": "public",
+      "source": {
+        "recordPath": "docs/dev/harness-gap-closure/e01-acceptance.json",
+        "recordDigest": "b0f0214881444c68e9c7b339a528c80cc9d2894831191cd6ee16ed8825afdb94",
+        "base": "874befaaa018bdb1160f8f064b17f053fcfe8512",
+        "reference": "42aaf5522499fbb940aa2dd1007967eb55adb0f3"
+      },
+      "targetScope": [
+        "scripts/agent-dev-benefit-eval.mjs",
+        "scripts/lib/reliability-aggregation.mjs",
+        "scripts/lib/reliability-aggregation.d.mts",
+        "shared/agent-dev/reliability-fixture.json",
+        "harness/specs/tasks/harness-gap-reliability-aggregation.md",
+        "harness/specs/rules/reliability-aggregation-boundary.md",
+        "docs/dev/harness-gap-closure/e01-reliability-aggregation.md"
+      ],
+      "baselineSetup": null,
+      "oracleDigest": "0cbd453238c43b3a7df46810f5a49a2cfe707e6afb7eb604dff9bbbfec0ab074",
+      "safetyRequired": false,
+      "anchor": null,
+      "negativeExpectedOutcome": "fail"
+    },
+    {
+      "id": "tf-0275-e02",
+      "split": "held-out",
+      "source": {
+        "recordPath": "docs/dev/harness-gap-closure/e02-acceptance.json",
+        "recordDigest": "67cda0e5a5ccd28e5386d9f64d02039ca0122bb753a536deb48167e143ac73fd",
+        "base": "6b56992a2a55127c7175fda3a3b7c3206736b485",
+        "reference": "ab0ba14cbb3546158b3271f13719d2bba5a15686"
+      },
+      "targetScope": [
+        "scripts/lib/paired-ablation.mjs",
+        "scripts/lib/paired-ablation.d.mts",
+        "shared/agent-dev/paired-ablation-fixture.json",
+        "harness/specs/tasks/harness-gap-paired-ablation.md",
+        "harness/specs/rules/paired-ablation-boundary.md",
+        "docs/dev/harness-gap-closure/e02-paired-ablation.md"
+      ],
+      "baselineSetup": null,
+      "oracleDigest": "4b22363ce8ed9293370e4f6cb5f773600d0173eac0c4cc2f68a2005f2599b572",
+      "safetyRequired": false,
+      "anchor": null,
+      "negativeExpectedOutcome": "fail"
+    },
+    {
+      "id": "tf-0289-g01",
+      "split": "public",
+      "source": {
+        "recordPath": "docs/dev/harness-gap-closure/g01-acceptance.json",
+        "recordDigest": "09390cf33cf15bb05097f38d8cb9cf845962bf17958d90befdde235218176407",
+        "base": "0d72e511c865f0ab494af19a74d0f27a3fe5a8ba",
+        "reference": "8972c4a76e7d4eca6e7cf62da1e2d37c80267b99"
+      },
+      "targetScope": [
+        "src/lib/error-model.ts",
+        "harness/specs/tasks/harness-gap-error-recovery-next-action.md",
+        "docs/dev/harness-gap-closure/g01-error-recovery-next-action.md"
+      ],
+      "baselineSetup": null,
+      "oracleDigest": "827fc79183d732e4b9d4685ad69fd56d07239528418264f4b44d7297469c7192",
+      "safetyRequired": false,
+      "anchor": null,
+      "negativeExpectedOutcome": "fail"
+    },
+    {
+      "id": "tf-0290-g02",
+      "split": "held-out",
+      "source": {
+        "recordPath": "docs/dev/harness-gap-closure/g02-acceptance.json",
+        "recordDigest": "1bb54cbc25f437496ffdecb71f808562d633b123bd115901e91ef0c3d94aaea0",
+        "base": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+        "reference": "ef12077c63b264f2aa05f0eaa1e0e760ae57ca23"
+      },
+      "targetScope": [
+        "harness/specs/rules/spec-doc-gardening-boundary.md",
+        "harness/specs/tasks/harness-gap-spec-doc-gardening.md",
+        "docs/dev/harness-gap-closure/g02-spec-doc-gardening.md",
+        "harness/specs/tasks/harness-gap-browser-effect-boundary.md",
+        "harness/specs/tasks/harness-gap-checkpoint-attachment-binding.md",
+        "harness/specs/tasks/harness-gap-context-pressure-recovery.md",
+        "harness/specs/tasks/harness-gap-credential-use-boundary.md",
+        "harness/specs/tasks/harness-gap-envelope-reject.md",
+        "harness/specs/tasks/harness-gap-error-recovery-next-action.md",
+        "harness/specs/tasks/harness-gap-external-write-boundary.md",
+        "harness/specs/tasks/harness-gap-hot-file-write-owner.md",
+        "harness/specs/tasks/harness-gap-in-run-steering.md",
+        "harness/specs/tasks/harness-gap-memory-effect-receipt.md",
+        "harness/specs/tasks/harness-gap-paired-ablation.md",
+        "harness/specs/tasks/harness-gap-rate-circuit-breaker.md",
+        "harness/specs/tasks/harness-gap-reliability-aggregation.md",
+        "harness/specs/tasks/harness-gap-sink-ledger.md",
+        "harness/specs/tasks/harness-gap-trace-cost-sampling.md",
+        "harness/specs/tasks/harness-gap-verifier-completion-verdict.md",
+        "harness/specs/tasks/harness-gap-working-context-single-source.md"
+      ],
+      "baselineSetup": null,
+      "oracleDigest": "de64a293e9c5c01aed7ec8d14c645e94fac0d655cac1d9d450812a11ae2f9153",
+      "safetyRequired": false,
+      "anchor": "positive",
+      "negativeExpectedOutcome": "fail"
+    },
+    {
+      "id": "tf-0291-g03",
+      "split": "public",
+      "source": {
+        "recordPath": "docs/dev/harness-gap-closure/g03-acceptance.json",
+        "recordDigest": "b2936554a04cf2500ca099bb643a6345aadf451b0c77bcbe76428271c7452949",
+        "base": "6df7bd8cbdd9456612b5524dae18ec618343152e",
+        "reference": "854a9de948d0acf8c9ba11e7bce6ddd9e60c46b4"
+      },
+      "targetScope": [
+        "scripts/lib/trace-to-eval-sample.mjs",
+        "scripts/lib/trace-to-eval-sample.d.mts",
+        "harness/specs/tasks/harness-gap-trace-to-eval-sample.md",
+        "docs/dev/harness-gap-closure/g03-trace-to-eval-sample.md"
+      ],
+      "baselineSetup": null,
+      "oracleDigest": "5e2368cdb7d2e49317a8c4d2cc16cf15fda3d5791c2e598caa1e82f15b6d3170",
+      "safetyRequired": false,
+      "anchor": null,
+      "negativeExpectedOutcome": "fail"
+    },
+    {
+      "id": "tf-0283-l01",
+      "split": "held-out",
+      "source": {
+        "recordPath": "docs/dev/harness-gap-closure/l01-acceptance.json",
+        "recordDigest": "0e0a4139520eec9ce4940ee7ea1e61e7eb86fd14c2e92cf0a37ccc97d368e141",
+        "base": "f8e8c4f011127d331393844d741a7d022bcbf8e3",
+        "reference": "f42bb417b862784ad37e3f488f844cc697dbea51"
+      },
+      "targetScope": [
+        "electron/services/task-ledger-working-context.ts",
+        "shared/task-ledger-working-context.ts"
+      ],
+      "baselineSetup": {
+        "kind": "implementation-reconstruction",
+        "removePaths": [
+          {
+            "path": "electron/services/task-ledger-working-context.ts",
+            "sha256": "645090a9637612f23cdd46387b476fbbcc2474b1bb829e0f643598a938bec2d7"
+          },
+          {
+            "path": "shared/task-ledger-working-context.ts",
+            "sha256": "43eb5c0c6269ff088b8079608e76bb19afc46a8c8510997ae1388ca9eb68563d"
+          }
+        ]
+      },
+      "oracleDigest": "b5337681d99cf86ddc4f078de80cb6c42ba1f30339b7be7adf97c844d257882a",
+      "safetyRequired": false,
+      "anchor": null,
+      "negativeExpectedOutcome": "fail"
+    },
+    {
+      "id": "tf-0284-l02",
+      "split": "public",
+      "source": {
+        "recordPath": "docs/dev/harness-gap-closure/l02-acceptance.json",
+        "recordDigest": "27ba5b7c62e490e116af31e380292647c3c1ce177962dbe78515e6d19ff9bca1",
+        "base": "4845b94bf1a466013d12093f8f9a341d0b43c4f2",
+        "reference": "e355beea81075df4ca53b0434689adcdc508f5e6"
+      },
+      "targetScope": [
+        "openclaw_runtime/src/runtime-core/context-pressure-recovery.ts",
+        "harness/specs/tasks/harness-gap-context-pressure-recovery.md",
+        "docs/dev/harness-gap-closure/l02-context-pressure-recovery.md"
+      ],
+      "baselineSetup": null,
+      "oracleDigest": "b690fd131a38750f18b357ccf2e039e3e747144acb3e91b75d2e39e79ef87dcd",
+      "safetyRequired": false,
+      "anchor": null,
+      "negativeExpectedOutcome": "fail"
+    },
+    {
+      "id": "tf-0285-l03",
+      "split": "held-out",
+      "source": {
+        "recordPath": "docs/dev/harness-gap-closure/l03-acceptance.json",
+        "recordDigest": "8afb7462ed0290f2d0899a02ab619680d276b9038cfbec276d498c3d5e9104b8",
+        "base": "78f13c8f42e64c7f24561a06b795cd1a10253ccf",
+        "reference": "24c9bd91e3a1345c742f2fe88f39838184a3e575"
+      },
+      "targetScope": [
+        "openclaw_runtime/src/agents/agent-steering-queue.ts"
+      ],
+      "baselineSetup": {
+        "kind": "implementation-reconstruction",
+        "removePaths": [
+          {
+            "path": "openclaw_runtime/src/agents/agent-steering-queue.ts",
+            "sha256": "56b953bbebe4d01539659d2447d142973aa4a1a4bac9e3d953511199af2d6d76"
+          }
+        ]
+      },
+      "oracleDigest": "903474f8bc7dfd1a6733ed1244c9fdb39aaeacfb856a7e26841d19da294108fd",
+      "safetyRequired": false,
+      "anchor": null,
+      "negativeExpectedOutcome": "fail"
+    },
+    {
+      "id": "tf-0286-l04",
+      "split": "public",
+      "source": {
+        "recordPath": "docs/dev/harness-gap-closure/l04-acceptance.json",
+        "recordDigest": "e3e32b5f69a9d210cc57ccaa34b61e76c4f1dfb94984db776bdc8d5d4eb3f953",
+        "base": "2813bfcfc95d913c9a914bb082a709988480722e",
+        "reference": "7faef1e3d394cd761b3827ecde070b3dfcba0c27"
+      },
+      "targetScope": [
+        "openclaw_runtime/src/runtime-core/checkpoint-attachment-binding.ts",
+        "harness/specs/tasks/harness-gap-checkpoint-attachment-binding.md",
+        "docs/dev/harness-gap-closure/l04-checkpoint-attachment-binding.md"
+      ],
+      "baselineSetup": null,
+      "oracleDigest": "371f72370369b8fa2a9f840954662fb9b7477cf3980434fab15c81bcdb26e767",
+      "safetyRequired": false,
+      "anchor": null,
+      "negativeExpectedOutcome": "fail"
+    },
+    {
+      "id": "tf-0287-l05",
+      "split": "held-out",
+      "source": {
+        "recordPath": "docs/dev/harness-gap-closure/l05-acceptance.json",
+        "recordDigest": "985fd1b987c5b48dc7e69c512784465008cff242a06626c9ea27f24efb784e93",
+        "base": "679b7124972f25a68d8ab15032afe4aee44ef19b",
+        "reference": "617aee4e85636ad4217eeec6cec6e66aaa4e0058"
+      },
+      "targetScope": [
+        "openclaw_runtime/src/agents/rate-circuit-breaker.ts",
+        "harness/specs/tasks/harness-gap-rate-circuit-breaker.md",
+        "docs/dev/harness-gap-closure/l05-rate-circuit-breaker.md"
+      ],
+      "baselineSetup": null,
+      "oracleDigest": "c4470b9a91878a5d3d0f12d9ee30b39ce31564d2d96ab47128f07bea973b8cfb",
+      "safetyRequired": false,
+      "anchor": null,
+      "negativeExpectedOutcome": "fail"
+    },
+    {
+      "id": "tf-0288-l06",
+      "split": "public",
+      "source": {
+        "recordPath": "docs/dev/harness-gap-closure/l06-acceptance.json",
+        "recordDigest": "17682ec3f46b3f3d0ac6d8469bcd9fc3a97f95c5e0eea7dbcf99ac4a16400272",
+        "base": "4afa1e94a73f200a29713566b5759b92a115f70a",
+        "reference": "c50686ef7099e4e6eafbdbc9652c92d92992087e"
+      },
+      "targetScope": [
+        "openclaw_runtime/src/agents/hot-file-write-owner.ts",
+        "harness/specs/tasks/harness-gap-hot-file-write-owner.md",
+        "docs/dev/harness-gap-closure/l06-hot-file-write-owner.md"
+      ],
+      "baselineSetup": null,
+      "oracleDigest": "5194fa18c060c5b05229d04ca9dcfe77126c4eecdab097692ac3a190e921c529",
+      "safetyRequired": false,
+      "anchor": null,
+      "negativeExpectedOutcome": "fail"
+    },
+    {
+      "id": "tf-0276-s01",
+      "split": "held-out",
+      "source": {
+        "recordPath": "docs/dev/harness-gap-closure/s01-acceptance.json",
+        "recordDigest": "91eccf66cb8f2b34a5289cd264ff90bf1319c0181c4bc0a4ef8ccd43bea5d276",
+        "base": "ca24fb81ae83dde9907561b583b7990df6844b67",
+        "reference": "f064ff2c592580763a564c5635f554130a8fa992"
+      },
+      "targetScope": [
+        "openclaw_runtime/src/agents/shadow-census.ts",
+        "openclaw_runtime/src/agents/provider-transport-fetch.ts",
+        "harness/specs/tasks/harness-gap-envelope-reject.md",
+        "harness/specs/rules/provider-envelope-reject-boundary.md",
+        "docs/dev/harness-gap-closure/s01-envelope-reject.md"
+      ],
+      "baselineSetup": null,
+      "oracleDigest": "c600c5092a08044ddf0363f9c04eab27eaefecf37e7c3465e12d0884cb59fff6",
+      "safetyRequired": false,
+      "anchor": null,
+      "negativeExpectedOutcome": "fail"
+    },
+    {
+      "id": "tf-0277-s02",
+      "split": "public",
+      "source": {
+        "recordPath": "docs/dev/harness-gap-closure/s02-acceptance.json",
+        "recordDigest": "2d02761a45c25e9c96b3ba0cd9d8016355e1ced5fb9f69fd9b43f30467cb9e64",
+        "base": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
+        "reference": "c1cb17973fd8f4a06b9de88f7aa6bf8b6fbe5909"
+      },
+      "targetScope": [
+        "docs/dev/harness-gap-closure/s02-sink-ledger.md",
+        "harness/specs/tasks/harness-gap-sink-ledger.md",
+        "harness/specs/rules/sensitive-sink-ledger-boundary.md"
+      ],
+      "baselineSetup": null,
+      "oracleDigest": "5b66b94b53b685c644d705b216cc91d0c24ed0278bcbe67d95817a3d3bf56fb5",
+      "safetyRequired": true,
+      "anchor": "negative",
+      "negativeExpectedOutcome": "pass"
+    },
+    {
+      "id": "tf-0278-s03",
+      "split": "held-out",
+      "source": {
+        "recordPath": "docs/dev/harness-gap-closure/s03-acceptance.json",
+        "recordDigest": "6c67f99c023728eaed7c506ba24b95104de188d0ecd3eac31b27df40548d0b02",
+        "base": "8bb11a7d83603611d3fcd99160334f85f2e6e3be",
+        "reference": "3f7060cb2bade7b693c407b70cfa71c698988444"
+      },
+      "targetScope": [
+        "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts"
+      ],
+      "baselineSetup": {
+        "kind": "implementation-reconstruction",
+        "removePaths": [
+          {
+            "path": "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts",
+            "sha256": "79124f66fb05890063f0ede7c10f7e1dbb7b67cabe840a1a433aabfb5de46212"
+          }
+        ]
+      },
+      "oracleDigest": "6430449c2f313bf907b570f9a39470e1fd4fde077324f224b55485c975bc944c",
+      "safetyRequired": true,
+      "anchor": "negative",
+      "negativeExpectedOutcome": "pass"
+    },
+    {
+      "id": "tf-0279-s04",
+      "split": "public",
+      "source": {
+        "recordPath": "docs/dev/harness-gap-closure/s04-acceptance.json",
+        "recordDigest": "b35b8861b4e37a7f9117c40451783debd7e57d71c5298b95be18d0471208510e",
+        "base": "ca413cdc436c00f7eddb06584783fd98996939c9",
+        "reference": "ce7ebd94cdd5814470daade4a3c7fa67ab8e77a4"
+      },
+      "targetScope": [
+        "docs/dev/harness-gap-closure/s04-browser-effect-boundary.md",
+        "harness/specs/tasks/harness-gap-browser-effect-boundary.md"
+      ],
+      "baselineSetup": null,
+      "oracleDigest": "d33007607918a850a3f0d8feb500944f319ea7da9fb904e1dff2174dc4e00b6f",
+      "safetyRequired": false,
+      "anchor": null,
+      "negativeExpectedOutcome": "fail"
+    },
+    {
+      "id": "tf-0280-s05",
+      "split": "held-out",
+      "source": {
+        "recordPath": "docs/dev/harness-gap-closure/s05-acceptance.json",
+        "recordDigest": "a8422e790efb7ccd9c3f3b9dbbf7c2115d56a37f2081b774d0232eceb9acc4be",
+        "base": "ae9ea9162c105f734566f5a696d55b5eae5071df",
+        "reference": "eda64ac3defe18e9c42de31d60e39722f40407e5"
+      },
+      "targetScope": [
+        "docs/dev/harness-gap-closure/s05-credential-use-boundary.md",
+        "harness/specs/tasks/harness-gap-credential-use-boundary.md"
+      ],
+      "baselineSetup": null,
+      "oracleDigest": "4f9e8acf25d909851d6512f6dee420dd02c1d927340466317e89c584c1d452a7",
+      "safetyRequired": true,
+      "anchor": "negative",
+      "negativeExpectedOutcome": "pass"
+    },
+    {
+      "id": "tf-0281-s06",
+      "split": "public",
+      "source": {
+        "recordPath": "docs/dev/harness-gap-closure/s06-acceptance.json",
+        "recordDigest": "a07f47b7576a95958f361fe54a6add343a4c54938ab8ce5db216cade59b98b2e",
+        "base": "8c34f6ca3a4151bf60626447a250044bba8ac423",
+        "reference": "3a1e2d384710927bc13aa1e92962824a8b88b7de"
+      },
+      "targetScope": [
+        "openclaw_runtime/src/runtime-core/memory-effect-receipt.ts",
+        "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts",
+        "harness/specs/tasks/harness-gap-memory-effect-receipt.md",
+        "docs/dev/harness-gap-closure/s06-memory-effect-receipt.md"
+      ],
+      "baselineSetup": null,
+      "oracleDigest": "77d11bfafd67c722201b0dfa2ba446094f5c71fd93165776e91cf0a453127127",
+      "safetyRequired": false,
+      "anchor": null,
+      "negativeExpectedOutcome": "fail"
+    },
+    {
+      "id": "tf-0282-s07",
+      "split": "held-out",
+      "source": {
+        "recordPath": "docs/dev/harness-gap-closure/s07-acceptance.json",
+        "recordDigest": "e1bf507b61cd5df38514ff797f23b4bffe2c77f9370404a9fa7230c5c9d857fb",
+        "base": "5da98d1ab1563e924cc97bd43ff206072b1d4dd4",
+        "reference": "38170e1a369a13c4b4c793dc5ab48defa06bb940"
+      },
+      "targetScope": [
+        "openclaw_runtime/src/runtime-core/verifier-completion-verdict.ts",
+        "harness/specs/tasks/harness-gap-verifier-completion-verdict.md",
+        "docs/dev/harness-gap-closure/s07-verifier-completion-verdict.md"
+      ],
+      "baselineSetup": null,
+      "oracleDigest": "444dc8f55714e7c44fff061d4453f3687eba0ef27c38f544388874c6870cc05d",
+      "safetyRequired": false,
+      "anchor": null,
+      "negativeExpectedOutcome": "fail"
+    },
+    {
+      "id": "tf-0293-a01",
+      "split": "public",
+      "source": {
+        "recordPath": "docs/dev/harness-gap-closure/a01-acceptance.json",
+        "recordDigest": "7f45be3ac002e36b10061dd201d6768763011ff2805c30dec4f9ba122efbe1ef",
+        "base": "72ba3c32e31cf071aa98c3ed335f76d9b12ef1c1",
+        "reference": "46e553fd87d5fadf14d6f7aa7a7a85b614aef466"
+      },
+      "targetScope": [
+        "harness/specs/tasks/a1-layered-isolation-pilot.md",
+        "harness/specs/tasks/harness-gap-a01-isolation-pilot-reverify.md",
+        "docs/dev/harness-gap-closure/a01-a1-isolation-gate.md"
+      ],
+      "baselineSetup": null,
+      "oracleDigest": "72945bb74101629828b360bac24db173152b5f64e1a97a4d1aad3a746a587b71",
+      "safetyRequired": false,
+      "anchor": null,
+      "negativeExpectedOutcome": "fail"
+    },
+    {
+      "id": "tf-0294-a02",
+      "split": "held-out",
+      "source": {
+        "recordPath": "docs/dev/harness-gap-closure/a02-acceptance.json",
+        "recordDigest": "99b89c7ab9a53518eaefba20210dd23ca9f624eab0705ca0ad87d572cd6234ed",
+        "base": "4e942fbce0a2dbcb3437a1cef6de651e6cff9508",
+        "reference": "4359e684b795a4033592da4e7c270ce56f9c3711"
+      },
+      "targetScope": [
+        "harness/specs/tasks/a2-multi-agent-orchestration-pilot.md",
+        "harness/specs/tasks/harness-gap-a02-orchestration-pilot-reverify.md",
+        "docs/dev/harness-gap-closure/a02-a2-orchestration-gate.md"
+      ],
+      "baselineSetup": null,
+      "oracleDigest": "80a94491fdd49cf378fd1d1b991221d8c9ae22e1790db1904c84924630357202",
+      "safetyRequired": false,
+      "anchor": null,
+      "negativeExpectedOutcome": "fail"
+    },
+    {
+      "id": "tf-0295-a03",
+      "split": "public",
+      "source": {
+        "recordPath": "docs/dev/harness-gap-closure/a03-acceptance.json",
+        "recordDigest": "94560219120997217ba78b0d8d3378d1a96649850e702b12cd418ad9fbbc6fec",
+        "base": "3c5da37a5295fb0470b1b5035a2d67e797eb9c2b",
+        "reference": "fe392a70e9afbf76238a88d4e87c08b557898940"
+      },
+      "targetScope": [
+        "harness/specs/tasks/a3-runtime-resilience-pilot.md",
+        "harness/specs/tasks/harness-gap-a03-resilience-pilot-reverify.md",
+        "docs/dev/harness-gap-closure/a03-a3-resilience-gate.md"
+      ],
+      "baselineSetup": null,
+      "oracleDigest": "b38ea91eadf7a3b8c3951d9f9066696c22fa631e5346c087c00492c20d5d16b4",
+      "safetyRequired": false,
+      "anchor": null,
+      "negativeExpectedOutcome": "fail"
+    },
+    {
+      "id": "tf-0296-a04",
+      "split": "held-out",
+      "source": {
+        "recordPath": "docs/dev/harness-gap-closure/a04-acceptance.json",
+        "recordDigest": "2df9f728a9c7867659b2ce03135e1754a26b7a57fe7f51be80d4ae64c6d18e0c",
+        "base": "65ecf51657e25297b48bf002ac0af5344362487e",
+        "reference": "0f6d21f673ba491527fc3161dafc8430edb655d8"
+      },
+      "targetScope": [
+        "harness/specs/tasks/a4-decision-quality-pilot.md",
+        "harness/specs/tasks/harness-gap-a04-decision-quality-pilot-reverify.md",
+        "docs/dev/harness-gap-closure/a04-decision-quality-gate.md"
+      ],
+      "baselineSetup": null,
+      "oracleDigest": "2adb051d6bfb269fc7f5e53495dc7b9e3fc8be7d57f4ae2468bf55426c486430",
+      "safetyRequired": false,
+      "anchor": null,
+      "negativeExpectedOutcome": "fail"
+    },
+    {
+      "id": "tf-0297-a05",
+      "split": "public",
+      "source": {
+        "recordPath": "docs/dev/harness-gap-closure/a05-acceptance.json",
+        "recordDigest": "4cec9973dc952b2793b2d64da099e26a54752788505363922040f426ce2c9819",
+        "base": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+        "reference": "47388bf320000a203b096992c9ddb8a3b2bca487"
+      },
+      "targetScope": [
+        "harness/specs/tasks/a5-adaptive-context-budget-pilot.md",
+        "harness/specs/tasks/harness-gap-a05-adaptive-context-budget-pilot-reverify.md",
+        "docs/dev/harness-gap-closure/a05-adaptive-context-budget-gate.md"
+      ],
+      "baselineSetup": null,
+      "oracleDigest": "cab6afe7b9f65e99a5212c6a891b63b1c7c15682e3953142c9637b6aa0ead75e",
+      "safetyRequired": false,
+      "anchor": null,
+      "negativeExpectedOutcome": "fail"
+    },
+    {
+      "id": "tf-0298-a06",
+      "split": "held-out",
+      "source": {
+        "recordPath": "docs/dev/harness-gap-closure/a06-acceptance.json",
+        "recordDigest": "053a3892c62f918db7b61718eadc84e5c8419e6e9d138a261ffcc97d6f5105aa",
+        "base": "4317f7954a638af1dd3afba4f77fa9dfcfa94209",
+        "reference": "bd8dca0a342f75f19e021509e42c16f016f0d891"
+      },
+      "targetScope": [
+        "harness/specs/tasks/a6-long-running-persistence-pilot.md",
+        "harness/specs/tasks/harness-gap-a06-long-running-persistence-pilot-reverify.md",
+        "docs/dev/harness-gap-closure/a06-long-running-persistence-gate.md"
+      ],
+      "baselineSetup": null,
+      "oracleDigest": "536342edcb1777d02b7eed7a35a5131bfa291b80b06ab3a9fce1fc2a47ce9631",
+      "safetyRequired": false,
+      "anchor": null,
+      "negativeExpectedOutcome": "fail"
+    }
+  ],
+  "capturedInitialWiring": {
+    "plannedCaseRepeats": 72,
+    "recordedCaseRepeats": 66,
+    "identicalOffShadow": true,
+    "boundConfirmedContext": true
+  },
+  "componentEffects": {
+    "stagedPromptUnderV4": {
+      "status": "estimated",
+      "meanDiff": 0,
+      "ci95": null
+    },
+    "publicInputEffect": {
+      "status": "not-evaluated",
+      "reason": "No separate public-input contrast in the frozen 216-slot design."
+    },
+    "toolProtocolEffect": {
+      "status": "not-evaluated",
+      "reason": "No separate single-shot versus tool-loop contrast in the frozen 216-slot design."
+    },
+    "historicalV2VsV4": {
+      "status": "descriptive-only",
+      "reason": "Public inputs, execution protocol and candidate changed."
+    }
+  }
+}

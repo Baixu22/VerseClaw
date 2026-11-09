@@ -1,0 +1,15 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-resource-recovery",
+  "runId": "e8866141-a1f3-43c4-8efa-dfc9822cd24d",
+  "beforeFirstTaskTrial": true,
+  "priorSource": "26b644a90d83dbeeb3c4238054b063d5261b2790",
+  "source": "fb2d09a3a401deecace0ccdcb6d9fc71da0b9693",
+  "priorPlanDigest": "9b36605ffaa36f4f74e1e002102aab728ba0044e59d7e87baee652849b50181a",
+  "planDigest": "72f0b5f1777b645d4c9f9f1b061d43cfe925955642c98de938aa32cb1a88a776",
+  "measurementConditionsIdentical": true,
+  "changedBehavior": "Distinct resource recovery reservations and accounting; the existing encrypted key is decoded only in caller memory.",
+  "originalProviderFailure": "D:\\tmp\\rsi-paired-experiment-20261108-01a1b651-ready\\admission\\provider-preflight.json",
+  "originalTrialCount": 0,
+  "campaignLedgerPreserved": "D:/tmp/rsi-paired-measurement-20261108-01a1b651/campaign-ledger"
+}

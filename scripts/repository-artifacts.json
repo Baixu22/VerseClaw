@@ -127,7 +127,9 @@
     "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/baseline/stderr-1.log",
     "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/baseline/stdout-1.log",
     "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/reference/stderr-1.log",
-    "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/reference/stdout-1.log"
+    "harness/specs/fixtures/rsi-live-acceptance/calibration/tf-0283-l01/reference/stdout-1.log",
+    "harness/specs/fixtures/rsi-candidate-evolution/closeout-20261108/harness-ci-stderr.log",
+    "harness/specs/fixtures/rsi-candidate-evolution/closeout-20261108/harness-ci-stdout.log"
   ],
   "preservedMixedUseDirectories": [
     "artifacts/agent-dev-workbench",
