@@ -100,6 +100,7 @@ test('Project RAG owner identity, exact citations and denial cross real Electron
     } });
     expect((generic.ownerSnapshot as OwnerReadSnapshotV1).context.workspaceId).toBe(owner.id);
     const refs = [{ id: 'concepts/owner.md', path: 'concepts/owner.md', kind: 'wiki', sourceRef: first.sourceRef }];
+    const unpinnedRefs = [{ id: 'concepts/owner.md', path: 'concepts/owner.md', kind: 'wiki' }];
     const answer = await host(page, 'knowledge', 'answerFromSourceSet', { question: 'What does the owner record?', sourceRefs: refs, synthesis: true });
     expect(answer).toMatchObject({ success: true, model: { status: 'completed' }, synthesisMode: 'model' });
     expect(inputs.length).toBeGreaterThan(0);
@@ -108,16 +109,17 @@ test('Project RAG owner identity, exact citations and denial cross real Electron
       message: 'Inspect this selected owner reference.', idempotencyKey: `rag-owner-${Date.now()}`,
       knowledgeScope: 'wiki', knowledgeMode: 'manual', knowledgeReferences: [{ id: 'rag-owner', title: 'Project RAG owner',
         lookup: 'concepts/owner.md', corpus: 'wiki' }] });
+    receipt.chatSend = sent;
     expect(sent.success).toBe(true);
     expect((sent.knowledgeReferences as Array<{ sourceRef?: SourceRefV2 }>)[0].sourceRef).toMatchObject({
       sourceDigest: first.sourceRef.sourceDigest, policyEpoch: first.sourceRef.policyEpoch, namespaceId: first.sourceRef.namespaceId,
     });
     const runId = (sent.result as { runId?: string })?.runId;
     expect(runId).toBeTruthy();
-    await host(page, 'gateway', 'rpc', { method: 'agent.wait', params: { runId, timeoutMs: 60_000 } });
+    receipt.chatRun = await host(page, 'gateway', 'rpc', { method: 'agent.wait', params: { runId, timeoutMs: 60_000 } });
+    expect(receipt.chatRun).toMatchObject({ status: 'ok' });
     expect(providerInputs.some(input => input.includes(first.sourceRef.namespaceId) && input.includes(first.sourceRef.policyEpoch)
       && input.includes(first.sourceRef.sourceDigest))).toBe(true);
-    receipt.chatSend = sent;
     hold = new Promise<void>(resolve => { release = resolve; });
     const beforeSwitch = inputs.length;
     const late = host(page, 'knowledge', 'answerFromSourceSet', { question: 'Owner after switch?', sourceRefs: refs, synthesis: true })
@@ -137,11 +139,12 @@ test('Project RAG owner identity, exact citations and denial cross real Electron
     const before = inputs.length;
     for (const policy of ['acl:\r\n  read: [another-principal]\r\n', 'privacyTier: secret\r\n', 'retention:\r\n  expiresAt: "2000-01-01T00:00:00Z"\r\n']) {
       await writeFile(file, raw(policy, forbidden));
-      const denied = await host(page, 'knowledge', 'answerFromSourceSet', { question: 'Owner?', sourceRefs: refs, synthesis: true,
+      const denied = await host(page, 'knowledge', 'answerFromSourceSet', { question: 'Owner?', sourceRefs: unpinnedRefs, synthesis: true,
         acl: { read: ['operator'] }, scope: 'all', score: 999 });
       expect(denied.sources).toEqual([]); expect(inputs).toHaveLength(before);
       const search = await host(page, 'knowledge', 'search', { query: 'RAG_FORBIDDEN_OWNER_BODY', corpus: 'wiki' });
-      expect(JSON.stringify(search)).not.toContain(forbidden);
+      expect(search.results).toEqual([]);
+      expect((search.retrievalDiagnostics as Json)?.items).toEqual([]);
     }
     await unlink(file);
     const deleted = await host(page, 'knowledge', 'get', { lookup: 'concepts/owner.md', sourceRef: first.sourceRef });
@@ -153,15 +156,19 @@ test('Project RAG owner identity, exact citations and denial cross real Electron
     await page.getByTestId('knowledge-search-input').fill('RAG_PUBLIC_OWNER');
     await page.getByTestId('knowledge-search-submit').click();
     await page.getByTestId('knowledge-search-result').filter({ hasText: 'Project RAG owner' }).first().click();
-    await expect(page.getByTestId('knowledge-page')).toContainText('RAG_PUBLIC_OWNER');
+    await expect(page.getByTestId('knowledge-markdown-preview')).toContainText('RAG_PUBLIC_OWNER');
     await page.screenshot({ path: testInfo.outputPath('owner-citation-ui.png') });
     await writeFile(file, raw('privacyTier: secret\r\n', forbidden));
     await page.getByTestId('knowledge-search-result').filter({ hasText: 'Project RAG owner' }).first().click();
     await expect(page.getByTestId('knowledge-error')).toBeVisible();
+    await expect(page.getByTestId('knowledge-markdown-preview')).not.toContainText('RAG_PUBLIC_OWNER');
     await expect(page.getByTestId('knowledge-page')).not.toContainText(forbidden);
+    await page.screenshot({ path: testInfo.outputPath('owner-denied-ui.png') });
     expect(providerInputs.every(input => !input.includes(forbidden))).toBe(true);
+    expect(llm.anomalies).toEqual([]);
     receipt.steps = { exactCitation: true, pinDriftRejected: wrongPins.length + 1, forgedIdentityClamped: true,
-      deniedProviderInputs: 0, deletedSourceReopened: false, electronCitationRead: true };
+      deniedProviderInputs: providerInputs.filter(input => input.includes(forbidden)).length,
+      deletedSourceReopened: false, electronCitationRead: true };
     receipt.status = 'pass';
   } finally {
     if (hold) { release(); hold = undefined; }
