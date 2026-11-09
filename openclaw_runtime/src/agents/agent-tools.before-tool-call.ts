@@ -72,7 +72,7 @@ import {
 import type { SandboxFsBridge } from "./sandbox/fs-bridge.js";
 import { normalizeToolName } from "./tool-policy.js";
 import type { AnyAgentTool } from "./tools/common.js";
-import { createExecutionTaskGuard } from "./execution-task-authority.js";
+import { createExecutionTaskGuard } from "./execution-task-guard.js";
 import { callGatewayTool } from "./tools/gateway.js";
 import type { ToolLoopTerminationObserver } from "./tool-loop-termination.js";
 

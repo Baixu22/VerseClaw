@@ -1,0 +1,612 @@
+
+Running 2 tests using 1 worker
+
+(node:36420) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36420) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[app:out] [2026-11-08T23:48:47.078Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)
+[2026-11-08T23:48:47.078Z] [INFO] [ResourceTracker] Started heartbeat interval
+[2026-11-08T23:48:47.078Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=26424, ppid=39480
+[2026-11-08T23:48:47.078Z] [INFO] Running in E2E mode: startup side effects minimized
+[app:err] [2026-11-08T23:48:47.266Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[app:err] [2026-11-08T23:48:47.266Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[2026-11-08T23:48:47.266Z] [WARN] [webview-security] deny permission-check: WebView permission "web-app-installation" denied by default (fail-closed)
+[2026-11-08T23:48:47.266Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default
+[app:out] [2026-11-08T23:48:47.309Z] [INFO] [extensions] Extension "builtin/clawhub-marketplace" initialized
+[app:out] [2026-11-08T23:48:47.310Z] [INFO] [extensions] Extension "builtin/diagnostics" initialized
+[app:err] [26424:1109/074847.361:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[26424:1109/074847.361:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[app:out] [2026-11-08T23:48:47.471Z] [INFO] Gateway stop requested
+[app:out] [2026-11-08T23:48:47.471Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [2026-11-08T23:48:47.602Z] [INFO] [efficiency] shed state changed {"shedding":false,"reason":null,"activeReasons":[],"transitionCount":2}
+[app:out] [2026-11-08T23:48:47.603Z] [INFO] Gateway auto-start skipped in E2E mode
+[app:err] [2026-11-08T23:48:47.604Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-08T23:48:47.604Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-08T23:48:47.604Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-08T23:48:47.604Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] [2026-11-08T23:48:47.716Z] [INFO] Scheduling Gateway reload after saving provider "custom-sessionc" config
+[app:out] [2026-11-08T23:48:47.716Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)
+[app:out] Set OpenClaw default model to "custom-sessionc/mock-coder" for provider "custom-sessionc" (runtime override)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [2026-11-08T23:48:48.314Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\tmp\unified-management-20261109\migration-validation\electron-migration4-results\execution-migration-moves--e6289--restart-interrupted-false-\source\.verse-claw\harness
+[app:out] [2026-11-08T23:48:48.516Z] [INFO] Gateway stop requested
+[app:out] [2026-11-08T23:48:48.517Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)
+[app:out] [2026-11-08T23:48:48.548Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (start)
+[app:out] [2026-11-08T23:48:48.549Z] [INFO] Gateway start requested (port=65050)
+[app:out] [2026-11-08T23:48:48.554Z] [DEBUG] Device identity loaded (deviceId=90103144306335e5310e79cc41baaa073652b1a013d00622f1517cc094795155)
+[app:out] [2026-11-08T23:48:48.554Z] [DEBUG] Gateway state changed: stopped -> starting
+[app:out] [2026-11-08T23:48:48.802Z] [DEBUG] Checking for existing Gateway...
+[app:err] (node:26424) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+[app:out] [2026-11-08T23:48:49.071Z] [DEBUG] No existing Gateway found, starting new process...
+[app:out] Set OpenClaw default model to "custom-sessionc/mock-coder" for provider "custom-sessionc" (runtime override)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] [2026-11-08T23:48:49.290Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)
+[app:err] [2026-11-08T23:48:49.326Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.
+[app:out] [2026-11-08T23:48:49.331Z] [INFO] [metric] gateway.prelaunch {"settingsMs":2,"defaultProviderRuntimeSyncMs":177,"providerEnvMs":8,"channelStartupPolicyMs":3,"uvEnvMs":14,"mcpEnvMs":19,"runtimeConfigReadMs":1,"verseShellBundleMs":0,"totalMs":245,"maintenance":{},"configuredChannelCount":0}
+[app:out] [2026-11-08T23:48:49.331Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=65050, entry="D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime\dist\entry.js", args="gateway --port 65050 --allow-unconfigured", execArgv="", cwd="D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime", bundledBin=yes, providerKeys=2, channels=skipped(no configured channels), proxy=disabled)
+[app:out] [2026-11-08T23:48:49.420Z] [INFO] Gateway process started (pid=24624)
+[app:out] [2026-11-08T23:48:49.420Z] [DEBUG] Gateway manager now owns process pid=24624
+[app:err] [2026-11-08T23:48:49.580Z] [WARN] [Gateway stderr] (node:24624) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[app:err] [2026-11-08T23:48:49.581Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)
+[app:out] [2026-11-08T23:48:51.525Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)
+[app:out] [2026-11-08T23:48:52.980Z] [DEBUG] [Gateway stderr] (node:24624) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+[app:err] [2026-11-08T23:48:52.981Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.
+[app:out] [2026-11-08T23:48:52.981Z] [DEBUG] [Gateway stderr] (node:24624) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.
+[app:out] [2026-11-08T23:48:54.966Z] [DEBUG] Gateway ready after 20 attempt(s)
+[app:out] [2026-11-08T23:48:54.966Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:65050/ws)
+[app:err] [2026-11-08T23:48:54.985Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=d8252f82-62a5-4595-8ca7-c9dcc318daf7 peer=127.0.0.1:57443->127.0.0.1:65050 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:65050 ua=n/a code=1006 reason=n/a[39m
+[app:out] [2026-11-08T23:48:54.987Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[app:out] [2026-11-08T23:48:54.987Z] [DEBUG] Received connect.challenge, sending handshake
+[app:out] [2026-11-08T23:48:54.988Z] [DEBUG] Sending connect handshake with challenge nonce
+[app:err] [2026-11-08T23:48:54.990Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=e9aad2be-b906-4fcb-9112-4441e5cbd506 peer=127.0.0.1:57445->127.0.0.1:65050 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:65050 ua=n/a code=1006 reason=n/a[39m
+[app:out] [2026-11-08T23:48:55.050Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:65050/ws)
+[app:err] [2026-11-08T23:48:55.051Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)
+[app:out] [2026-11-08T23:48:55.725Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"power-saver","activeReasons":["power-saver"],"transitionCount":3}
+[app:out] [2026-11-08T23:48:56.292Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[app:out] [2026-11-08T23:48:56.293Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-11-08T23:48:56.293Z] [DEBUG] Sending connect handshake with challenge nonce
+[app:out] [2026-11-08T23:48:56.852Z] [DEBUG] Gateway connect handshake completed (protocol=4)
+[app:out] [2026-11-08T23:48:56.853Z] [DEBUG] Gateway state changed: starting -> running
+[app:out] [2026-11-08T23:48:56.854Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)
+[app:out] [2026-11-08T23:48:56.854Z] [INFO] [metric] gateway.startup {"configSyncMs":618,"spawnToReadyMs":5546,"readyToConnectMs":1888,"totalMs":8052}
+[app:out] [2026-11-08T23:49:02.517Z] [INFO] [chat:sendWithMedia] Sending: message="Continuity context (owner-derived, bounded metadata; verify work with tools):
+schema=ContinuityConte", attachments=0, fileRefs=0
+[app:out] [2026-11-08T23:49:02.518Z] [INFO] [gateway-rpc] chat.send serialized id=2ff3be92-cce3-4ab8-90e1-26582fa36f94 timeoutMs=900000 bytes=1110
+[app:out] [2026-11-08T23:49:02.518Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=2ff3be92-cce3-4ab8-90e1-26582fa36f94
+[app:err] [2026-11-08T23:49:02.848Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=17c4757d-44b8-4ce2-9b8f-6fff928b1b41 id=2ff3be92-cce3-4ab8-90e1-26582fa36f94
+[app:err] [2026-11-08T23:49:02.849Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=17c4757d-44b8-4ce2-9b8f-6fff928b1b41 id=2ff3be92-cce3-4ab8-90e1-26582fa36f94
+[app:err] [2026-11-08T23:49:02.849Z] [WARN] [Gateway stderr] [chat.send.trace] handler entered
+[app:err] [2026-11-08T23:49:02.856Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=migration-initial sessionKey=agent:main:session-1794181727964-migrationsource loadSessionMs=0.573
+[app:err] [2026-11-08T23:49:02.973Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=migration-initial sessionKey=agent:main:session-1794181727964-migrationsource attachments=0
+[app:err] [2026-11-08T23:49:02.974Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=migration-initial sessionKey=agent:main:session-1794181727964-migrationsource
+[app:out] [2026-11-08T23:49:02.974Z] [INFO] [gateway-rpc] chat.send response id received durationMs=456
+[2026-11-08T23:49:02.975Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"migration-initial","status":"started"}
+[app:err] [2026-11-08T23:49:02.988Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=17c4757d-44b8-4ce2-9b8f-6fff928b1b41 id=2ff3be92-cce3-4ab8-90e1-26582fa36f94
+[fp-p1-harness] connection #1
+[app:out] [2026-11-08T23:49:11.533Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\tmp\unified-management-20261109\migration-validation\electron-migration4-results\execution-migration-moves--e6289--restart-interrupted-false-\target\.verse-claw\harness
+[app:err] [2026-11-08T23:49:11.673Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-08T23:49:11.673Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-08T23:49:11.673Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-08T23:49:11.673Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [2026-11-08T23:49:20.732Z] [INFO] Gateway stop requested
+[app:out] [2026-11-08T23:49:20.733Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (stop)
+[app:out] [2026-11-08T23:49:20.734Z] [INFO] Sending kill to Gateway process (pid=24624)
+[app:err] [2026-11-08T23:49:20.757Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)
+[app:out] [2026-11-08T23:49:20.758Z] [DEBUG] Gateway state changed: running -> stopped
+[app:out] [2026-11-08T23:49:21.143Z] [INFO] Gateway process exited (code=1, expected=yes)
+[app:out] [2026-11-08T23:49:21.144Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)
+[app:out] [2026-11-08T23:49:21.365Z] [INFO] Gateway stop requested
+[2026-11-08T23:49:21.365Z] [DEBUG] Gateway lifecycle epoch advanced to 5 (stop)
+[app:err] Debugger ending on ws://127.0.0.1:64832/fd1c61b4-3d17-44ed-9454-6bf8bee9025b
+For help, see: https://nodejs.org/en/docs/inspector
+[app:out] [2026-11-08T23:49:21.390Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"window-hidden","activeReasons":["window-hidden","power-saver"],"transitionCount":4}
+[app:out] [2026-11-08T23:49:21.391Z] [INFO] [ResourceTracker] Stopped
+[app:out] [2026-11-08T23:49:21.391Z] [INFO] [ResourceTracker] Shutdown complete
+[2026-11-08T23:49:21.391Z] [INFO] [efficiency-sampler] stopped
+[app:out] [2026-11-08T23:49:21.391Z] [INFO] [efficiency] runtime efficiency sampling stopped
+[app:out] [2026-11-08T23:49:28.947Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)
+[app:out] [2026-11-08T23:49:28.948Z] [INFO] [ResourceTracker] Started heartbeat interval
+[2026-11-08T23:49:28.948Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=33248, ppid=24980
+[2026-11-08T23:49:28.948Z] [INFO] Running in E2E mode: startup side effects minimized
+[app:err] [2026-11-08T23:49:29.026Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[app:err] [2026-11-08T23:49:29.026Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[2026-11-08T23:49:29.026Z] [WARN] [webview-security] deny permission-check: WebView permission "web-app-installation" denied by default (fail-closed)
+[2026-11-08T23:49:29.026Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default
+[app:out] [2026-11-08T23:49:29.059Z] [INFO] [extensions] Extension "builtin/clawhub-marketplace" initialized
+[app:out] [2026-11-08T23:49:29.059Z] [INFO] [extensions] Extension "builtin/diagnostics" initialized
+[app:err] [33248:1109/074929.109:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[33248:1109/074929.109:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[app:out] [2026-11-08T23:49:29.186Z] [INFO] Gateway stop requested
+[app:out] [2026-11-08T23:49:29.186Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [2026-11-08T23:49:29.287Z] [INFO] [efficiency] shed state changed {"shedding":false,"reason":null,"activeReasons":[],"transitionCount":2}
+[app:out] [2026-11-08T23:49:29.288Z] [INFO] Gateway auto-start skipped in E2E mode
+[app:err] [2026-11-08T23:49:29.291Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-08T23:49:29.291Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-08T23:49:29.291Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-08T23:49:29.291Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] [2026-11-08T23:49:29.440Z] [INFO] Scheduling Gateway reload after saving provider "custom-sessionc" config
+[app:out] [2026-11-08T23:49:29.441Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)
+[app:out] Set OpenClaw default model to "custom-sessionc/mock-coder" for provider "custom-sessionc" (runtime override)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] [2026-11-08T23:49:29.732Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (start)
+[app:out] [2026-11-08T23:49:29.733Z] [INFO] Gateway start requested (port=65050)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [2026-11-08T23:49:30.047Z] [DEBUG] Device identity loaded (deviceId=90103144306335e5310e79cc41baaa073652b1a013d00622f1517cc094795155)
+[app:out] [2026-11-08T23:49:30.047Z] [DEBUG] Gateway state changed: stopped -> starting
+[app:out] [2026-11-08T23:49:30.330Z] [DEBUG] Checking for existing Gateway...
+[app:err] (node:33248) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+[app:out] [2026-11-08T23:49:30.641Z] [INFO] Deferring Gateway restart (reload) until startup/reconnect settles (state=starting, startLock=true)
+[app:out] [2026-11-08T23:49:30.643Z] [DEBUG] No existing Gateway found, starting new process...
+[app:out] Set OpenClaw default model to "custom-sessionc/mock-coder" for provider "custom-sessionc" (runtime override)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] [2026-11-08T23:49:30.949Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)
+[app:err] [2026-11-08T23:49:30.973Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.
+[app:out] [2026-11-08T23:49:30.976Z] [INFO] [metric] gateway.prelaunch {"settingsMs":0,"defaultProviderRuntimeSyncMs":274,"providerEnvMs":9,"channelStartupPolicyMs":4,"uvEnvMs":5,"mcpEnvMs":8,"runtimeConfigReadMs":1,"verseShellBundleMs":0,"totalMs":319,"maintenance":{},"configuredChannelCount":0}
+[app:out] [2026-11-08T23:49:30.976Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=65050, entry="D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime\dist\entry.js", args="gateway --port 65050 --allow-unconfigured", execArgv="", cwd="D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime", bundledBin=yes, providerKeys=2, channels=skipped(no configured channels), proxy=disabled)
+[app:out] [2026-11-08T23:49:31.082Z] [INFO] Gateway process started (pid=33796)
+[app:out] [2026-11-08T23:49:31.082Z] [DEBUG] Gateway manager now owns process pid=33796
+[app:err] [2026-11-08T23:49:31.260Z] [WARN] [Gateway stderr] (node:33796) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2026-11-08T23:49:31.261Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)
+[app:out] [2026-11-08T23:49:33.183Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)
+[app:out] [2026-11-08T23:49:35.245Z] [DEBUG] [Gateway stderr] (node:33796) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.
+[app:err] [2026-11-08T23:49:35.245Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.
+[app:out] [2026-11-08T23:49:35.284Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)
+[app:out] [2026-11-08T23:49:37.617Z] [DEBUG] Gateway ready after 24 attempt(s)
+[app:out] [2026-11-08T23:49:37.618Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:65050/ws)
+[app:err] [2026-11-08T23:49:37.653Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=23454b63-80d4-4d6b-a616-312724b27f4c peer=127.0.0.1:50343->127.0.0.1:65050 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:65050 ua=n/a code=1006 reason=n/a[39m
+[app:out] [2026-11-08T23:49:37.656Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[app:out] [2026-11-08T23:49:37.656Z] [DEBUG] Received connect.challenge, sending handshake
+[app:out] [2026-11-08T23:49:37.657Z] [DEBUG] Sending connect handshake with challenge nonce
+[app:err] [2026-11-08T23:49:37.659Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=3ce32415-46f5-4727-b2f0-30e5aaab3cb9 peer=127.0.0.1:50345->127.0.0.1:65050 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:65050 ua=n/a code=1006 reason=n/a[39m
+[app:out] [2026-11-08T23:49:37.709Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:65050/ws)
+[app:err] [2026-11-08T23:49:37.711Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)
+[app:out] [2026-11-08T23:49:37.800Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"power-saver","activeReasons":["power-saver"],"transitionCount":3}
+[app:out] [2026-11-08T23:49:39.065Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[app:out] [2026-11-08T23:49:39.066Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-11-08T23:49:39.066Z] [DEBUG] Sending connect handshake with challenge nonce
+[app:out] [2026-11-08T23:49:39.592Z] [DEBUG] Gateway connect handshake completed (protocol=4)
+[app:out] [2026-11-08T23:49:39.593Z] [DEBUG] Gateway state changed: starting -> running
+[2026-11-08T23:49:39.593Z] [DEBUG] Deferred Gateway restart still waiting (status:starting->running, state=running, startLock=true)
+[app:out] [2026-11-08T23:49:39.594Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)
+[app:out] [2026-11-08T23:49:39.595Z] [INFO] [metric] gateway.startup {"configSyncMs":752,"spawnToReadyMs":6535,"readyToConnectMs":1978,"totalMs":9265}
+[app:out] [2026-11-08T23:49:39.595Z] [INFO] Executing deferred Gateway restart now (start:finally)
+[app:out] [2026-11-08T23:49:39.595Z] [INFO] [gateway-refresh] mode=restart requested pidBefore=33796
+[2026-11-08T23:49:39.595Z] [INFO] Gateway stop requested
+[2026-11-08T23:49:39.595Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (stop)
+[app:out] [2026-11-08T23:49:39.595Z] [INFO] Sending kill to Gateway process (pid=33796)
+[app:err] [2026-11-08T23:49:39.618Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)
+[app:out] [2026-11-08T23:49:39.618Z] [DEBUG] Gateway state changed: running -> stopped
+[app:out] [2026-11-08T23:49:40.098Z] [INFO] Gateway process exited (code=1, expected=yes)
+[app:out] [2026-11-08T23:49:40.099Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)
+[app:out] [2026-11-08T23:49:40.100Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (start)
+[app:out] [2026-11-08T23:49:40.100Z] [INFO] Gateway start requested (port=65050)
+[app:out] [2026-11-08T23:49:40.101Z] [DEBUG] Gateway state changed: stopped -> starting
+[app:out] [2026-11-08T23:49:40.309Z] [DEBUG] Checking for existing Gateway...
+[app:out] [2026-11-08T23:49:40.498Z] [DEBUG] No existing Gateway found, starting new process...
+[app:out] Set OpenClaw default model to "custom-sessionc/mock-coder" for provider "custom-sessionc" (runtime override)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:err] [2026-11-08T23:49:40.671Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.
+[app:out] [2026-11-08T23:49:40.673Z] [INFO] [metric] gateway.prelaunch {"settingsMs":0,"defaultProviderRuntimeSyncMs":143,"providerEnvMs":8,"channelStartupPolicyMs":2,"uvEnvMs":0,"mcpEnvMs":3,"runtimeConfigReadMs":0,"verseShellBundleMs":0,"totalMs":171,"maintenance":{},"configuredChannelCount":0}
+[app:out] [2026-11-08T23:49:40.673Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=65050, entry="D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime\dist\entry.js", args="gateway --port 65050 --allow-unconfigured", execArgv="", cwd="D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime", bundledBin=yes, providerKeys=2, channels=skipped(no configured channels), proxy=disabled)
+[app:out] [2026-11-08T23:49:40.752Z] [INFO] Gateway process started (pid=43128)
+[app:out] [2026-11-08T23:49:40.752Z] [DEBUG] Gateway manager now owns process pid=43128
+[app:err] [2026-11-08T23:49:40.880Z] [WARN] [Gateway stderr] (node:43128) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[app:err] [2026-11-08T23:49:40.881Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)
+[app:out] [2026-11-08T23:49:42.861Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)
+[app:out] [2026-11-08T23:49:44.105Z] [DEBUG] [Gateway stderr] (node:43128) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.
+[app:err] [2026-11-08T23:49:44.106Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.
+[app:out] [2026-11-08T23:49:46.564Z] [DEBUG] Gateway ready after 20 attempt(s)
+[app:out] [2026-11-08T23:49:46.565Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:65050/ws)
+[app:err] [2026-11-08T23:49:46.589Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=55621c5d-8053-4034-a68c-b88a2c4de794 peer=127.0.0.1:64849->127.0.0.1:65050 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:65050 ua=n/a code=1006 reason=n/a[39m
+[app:out] [2026-11-08T23:49:46.604Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[app:out] [2026-11-08T23:49:46.605Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-11-08T23:49:46.605Z] [DEBUG] Sending connect handshake with challenge nonce
+[app:err] [2026-11-08T23:49:46.610Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=b3cf2739-a297-446b-a8aa-fcfa81378865 peer=127.0.0.1:59488->127.0.0.1:65050 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:65050 ua=n/a code=1006 reason=n/a[39m
+[app:out] [2026-11-08T23:49:46.656Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:65050/ws)
+[app:err] [2026-11-08T23:49:46.659Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)
+[app:out] [2026-11-08T23:49:48.205Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[app:out] [2026-11-08T23:49:48.205Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-11-08T23:49:48.205Z] [DEBUG] Sending connect handshake with challenge nonce
+[app:out] [2026-11-08T23:49:48.740Z] [DEBUG] Gateway connect handshake completed (protocol=4)
+[app:out] [2026-11-08T23:49:48.740Z] [DEBUG] Gateway state changed: starting -> running
+[app:out] [2026-11-08T23:49:48.741Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)
+[app:out] [2026-11-08T23:49:48.742Z] [INFO] [metric] gateway.startup {"configSyncMs":444,"spawnToReadyMs":5813,"readyToConnectMs":2177,"totalMs":8434}
+[app:out] [2026-11-08T23:49:48.742Z] [INFO] [metric] gateway.restart.executed {"gateway_restart_executed_total":1,"gateway_restart_suppressed_total":0,"gateway_restart_circuit_open_until":0}
+[app:out] [2026-11-08T23:49:48.742Z] [INFO] [gateway-refresh] mode=restart result=applied pidBefore=33796 pidAfter=43128 suppressed=0 executed=1 circuitOpenUntil=0
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [2026-11-08T23:49:52.718Z] [INFO] [chat:sendWithMedia] Sending: message="Continuity context (owner-derived, bounded metadata; verify work with tools):
+schema=ContinuityConte", attachments=0, fileRefs=0
+[app:out] [2026-11-08T23:49:52.718Z] [INFO] [gateway-rpc] chat.send serialized id=84e14c6e-66a2-49d4-b5c3-08dd6ec2c762 timeoutMs=900000 bytes=1106
+[app:out] [2026-11-08T23:49:52.719Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=84e14c6e-66a2-49d4-b5c3-08dd6ec2c762
+[app:err] [2026-11-08T23:49:53.676Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=a211dc59-77c5-46e5-8ed2-543e1eaddb5e id=84e14c6e-66a2-49d4-b5c3-08dd6ec2c762
+[app:err] [2026-11-08T23:49:53.677Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=a211dc59-77c5-46e5-8ed2-543e1eaddb5e id=84e14c6e-66a2-49d4-b5c3-08dd6ec2c762
+[app:err] [2026-11-08T23:49:53.679Z] [WARN] [Gateway stderr] [chat.send.trace] handler entered
+[app:err] [2026-11-08T23:49:53.695Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=migration-after sessionKey=agent:main:session-1794181727964-migrationsource loadSessionMs=1.259
+[app:err] [2026-11-08T23:49:53.880Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=migration-after sessionKey=agent:main:session-1794181727964-migrationsource attachments=0
+[app:err] [2026-11-08T23:49:53.884Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=migration-after sessionKey=agent:main:session-1794181727964-migrationsource
+[app:out] [2026-11-08T23:49:53.885Z] [INFO] [gateway-rpc] chat.send response id received durationMs=1167
+[app:out] [2026-11-08T23:49:53.886Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"migration-after","status":"started"}
+[app:err] [2026-11-08T23:49:53.905Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=a211dc59-77c5-46e5-8ed2-543e1eaddb5e id=84e14c6e-66a2-49d4-b5c3-08dd6ec2c762
+[fp-p1-harness] connection #2
+[app:out] [2026-11-08T23:50:06.470Z] [INFO] Gateway stop requested
+[2026-11-08T23:50:06.470Z] [DEBUG] Gateway lifecycle epoch advanced to 5 (stop)
+[2026-11-08T23:50:06.471Z] [INFO] Sending kill to Gateway process (pid=43128)
+[app:err] [2026-11-08T23:50:06.513Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)
+[app:out] [2026-11-08T23:50:06.514Z] [DEBUG] Gateway state changed: running -> stopped
+[app:out] [2026-11-08T23:50:07.036Z] [INFO] Gateway process exited (code=1, expected=yes)
+[app:out] [2026-11-08T23:50:07.037Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)
+[app:out] [2026-11-08T23:50:07.342Z] [INFO] Gateway stop requested
+[app:out] [2026-11-08T23:50:07.342Z] [DEBUG] Gateway lifecycle epoch advanced to 6 (stop)
+[app:err] Debugger ending on ws://127.0.0.1:65106/ab5f5aeb-5583-4e11-b858-097710ed1621
+For help, see: https://nodejs.org/en/docs/inspector
+[app:out] [2026-11-08T23:50:07.377Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"window-hidden","activeReasons":["window-hidden","power-saver"],"transitionCount":4}
+[app:out] [2026-11-08T23:50:07.377Z] [INFO] [ResourceTracker] Stopped
+[app:out] [2026-11-08T23:50:07.377Z] [INFO] [ResourceTracker] Shutdown complete
+[2026-11-08T23:50:07.378Z] [INFO] [efficiency-sampler] stopped
+[app:out] [2026-11-08T23:50:07.378Z] [INFO] [efficiency] runtime efficiency sampling stopped
+  ok 1 tests\e2e\execution-migration.spec.ts:11:43 › moves one logical session and its task to a linked checkout and continues after restart (interrupted=false) (1.5m)
+[app:out] [2026-11-08T23:50:16.486Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)
+[app:out] [2026-11-08T23:50:16.487Z] [INFO] [ResourceTracker] Started heartbeat interval
+[2026-11-08T23:50:16.487Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=9684, ppid=3716
+[2026-11-08T23:50:16.487Z] [INFO] Running in E2E mode: startup side effects minimized
+[app:err] [2026-11-08T23:50:16.695Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[app:err] [2026-11-08T23:50:16.696Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[2026-11-08T23:50:16.696Z] [WARN] [webview-security] deny permission-check: WebView permission "web-app-installation" denied by default (fail-closed)
+[2026-11-08T23:50:16.696Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default
+[app:out] [2026-11-08T23:50:16.730Z] [INFO] [extensions] Extension "builtin/clawhub-marketplace" initialized
+[app:out] [2026-11-08T23:50:16.730Z] [INFO] [extensions] Extension "builtin/diagnostics" initialized
+[app:err] [9684:1109/075016.772:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[9684:1109/075016.772:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[app:out] [2026-11-08T23:50:16.851Z] [INFO] Gateway stop requested
+[app:out] [2026-11-08T23:50:16.851Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [2026-11-08T23:50:16.968Z] [INFO] [efficiency] shed state changed {"shedding":false,"reason":null,"activeReasons":[],"transitionCount":2}
+[app:out] [2026-11-08T23:50:16.970Z] [INFO] Gateway auto-start skipped in E2E mode
+[app:err] [2026-11-08T23:50:16.972Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-08T23:50:16.972Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-08T23:50:16.972Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-08T23:50:16.972Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] [2026-11-08T23:50:17.104Z] [INFO] Scheduling Gateway reload after saving provider "custom-sessionc" config
+[app:out] [2026-11-08T23:50:17.105Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)
+[app:out] Set OpenClaw default model to "custom-sessionc/mock-coder" for provider "custom-sessionc" (runtime override)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [2026-11-08T23:50:17.536Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\tmp\unified-management-20261109\migration-validation\electron-migration4-results\execution-migration-moves--e7d15-r-restart-interrupted-true-\source\.verse-claw\harness
+[app:out] [2026-11-08T23:50:17.999Z] [INFO] Gateway stop requested
+[app:out] [2026-11-08T23:50:17.999Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)
+[app:out] [2026-11-08T23:50:18.022Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (start)
+[app:out] [2026-11-08T23:50:18.023Z] [INFO] Gateway start requested (port=64989)
+[app:out] [2026-11-08T23:50:18.030Z] [DEBUG] Device identity loaded (deviceId=7b8cde1102de87cf19c77ff4ec018e9665551d3678e83d9348246a9f4f122b7b)
+[app:out] [2026-11-08T23:50:18.030Z] [DEBUG] Gateway state changed: stopped -> starting
+[app:out] [2026-11-08T23:50:18.346Z] [DEBUG] Checking for existing Gateway...
+[app:err] (node:9684) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+[app:out] [2026-11-08T23:50:18.574Z] [DEBUG] No existing Gateway found, starting new process...
+[app:out] Set OpenClaw default model to "custom-sessionc/mock-coder" for provider "custom-sessionc" (runtime override)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] [2026-11-08T23:50:18.815Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)
+[app:err] [2026-11-08T23:50:18.849Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.
+[app:out] [2026-11-08T23:50:18.852Z] [INFO] [metric] gateway.prelaunch {"settingsMs":0,"defaultProviderRuntimeSyncMs":218,"providerEnvMs":7,"channelStartupPolicyMs":3,"uvEnvMs":4,"mcpEnvMs":22,"runtimeConfigReadMs":0,"verseShellBundleMs":0,"totalMs":270,"maintenance":{},"configuredChannelCount":0}
+[app:out] [2026-11-08T23:50:18.852Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=64989, entry="D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime\dist\entry.js", args="gateway --port 64989 --allow-unconfigured", execArgv="", cwd="D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime", bundledBin=yes, providerKeys=2, channels=skipped(no configured channels), proxy=disabled)
+[app:out] [2026-11-08T23:50:18.937Z] [INFO] Gateway process started (pid=29664)
+[app:out] [2026-11-08T23:50:18.938Z] [DEBUG] Gateway manager now owns process pid=29664
+[app:err] [2026-11-08T23:50:19.075Z] [WARN] [Gateway stderr] (node:29664) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[app:err] [2026-11-08T23:50:19.076Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)
+[app:out] [2026-11-08T23:50:21.071Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)
+[app:out] [2026-11-08T23:50:22.867Z] [DEBUG] [Gateway stderr] (node:29664) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+[app:err] [2026-11-08T23:50:22.867Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.
+[app:out] [2026-11-08T23:50:22.867Z] [DEBUG] [Gateway stderr] (node:29664) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.
+[app:out] [2026-11-08T23:50:24.652Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)
+[app:out] [2026-11-08T23:50:25.254Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"power-saver","activeReasons":["power-saver"],"transitionCount":3}
+[app:out] [2026-11-08T23:50:25.270Z] [DEBUG] Gateway ready after 22 attempt(s)
+[app:out] [2026-11-08T23:50:25.271Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:64989/ws)
+[app:err] [2026-11-08T23:50:25.309Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=6caf77c1-1392-4bac-9c99-2067dbdac9e8 peer=127.0.0.1:64751->127.0.0.1:64989 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:64989 ua=n/a code=1006 reason=n/a[39m
+[app:out] [2026-11-08T23:50:25.313Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[app:out] [2026-11-08T23:50:25.313Z] [DEBUG] Received connect.challenge, sending handshake
+[app:out] [2026-11-08T23:50:25.314Z] [DEBUG] Sending connect handshake with challenge nonce
+[app:err] [2026-11-08T23:50:25.317Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=673b362f-9f10-4bc8-ad4a-54f9fbafffdd peer=127.0.0.1:64754->127.0.0.1:64989 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:64989 ua=n/a code=1006 reason=n/a[39m
+[app:out] [2026-11-08T23:50:25.375Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:64989/ws)
+[app:err] [2026-11-08T23:50:25.376Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)
+[app:out] [2026-11-08T23:50:27.396Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[app:out] [2026-11-08T23:50:27.397Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-11-08T23:50:27.397Z] [DEBUG] Sending connect handshake with challenge nonce
+[app:out] [2026-11-08T23:50:28.226Z] [DEBUG] Gateway connect handshake completed (protocol=4)
+[app:out] [2026-11-08T23:50:28.227Z] [DEBUG] Gateway state changed: starting -> running
+[app:out] [2026-11-08T23:50:28.228Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)
+[app:out] [2026-11-08T23:50:28.228Z] [INFO] [metric] gateway.startup {"configSyncMs":592,"spawnToReadyMs":6333,"readyToConnectMs":2957,"totalMs":9882}
+[app:out] [2026-11-08T23:50:34.626Z] [INFO] [chat:sendWithMedia] Sending: message="Continuity context (owner-derived, bounded metadata; verify work with tools):
+schema=ContinuityConte", attachments=0, fileRefs=0
+[app:out] [2026-11-08T23:50:34.626Z] [INFO] [gateway-rpc] chat.send serialized id=b2574afb-e97d-4534-965a-9c90a8577a69 timeoutMs=900000 bytes=1110
+[2026-11-08T23:50:34.626Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=b2574afb-e97d-4534-965a-9c90a8577a69
+[app:err] [2026-11-08T23:50:34.627Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=c6b6168c-7c06-47ba-8a4a-e7c9453db9b4 id=b2574afb-e97d-4534-965a-9c90a8577a69
+[app:err] [2026-11-08T23:50:34.627Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=c6b6168c-7c06-47ba-8a4a-e7c9453db9b4 id=b2574afb-e97d-4534-965a-9c90a8577a69
+[app:err] [2026-11-08T23:50:34.629Z] [WARN] [Gateway stderr] [chat.send.trace] handler entered
+[app:err] [2026-11-08T23:50:34.635Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=migration-initial sessionKey=agent:main:session-1794181817443-migrationsource loadSessionMs=0.608
+[app:err] [2026-11-08T23:50:34.702Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=migration-initial sessionKey=agent:main:session-1794181817443-migrationsource attachments=0
+[app:err] [2026-11-08T23:50:34.704Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=migration-initial sessionKey=agent:main:session-1794181817443-migrationsource
+[app:out] [2026-11-08T23:50:34.704Z] [INFO] [gateway-rpc] chat.send response id received durationMs=78
+[app:out] [2026-11-08T23:50:34.704Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"migration-initial","status":"started"}
+[app:err] [2026-11-08T23:50:34.716Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=c6b6168c-7c06-47ba-8a4a-e7c9453db9b4 id=b2574afb-e97d-4534-965a-9c90a8577a69
+[fp-p1-harness] connection #1
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [2026-11-08T23:50:47.624Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\tmp\unified-management-20261109\migration-validation\electron-migration4-results\execution-migration-moves--e7d15-r-restart-interrupted-true-\target\.verse-claw\harness
+[app:err] [2026-11-08T23:50:47.881Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-08T23:50:47.881Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-08T23:50:47.881Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-08T23:50:47.881Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-08T23:50:48.005Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-08T23:50:48.006Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-08T23:50:48.006Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-08T23:50:48.006Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-08T23:50:53.290Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-08T23:50:53.290Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-08T23:50:53.290Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-08T23:50:53.290Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-08T23:50:56.754Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-08T23:50:56.754Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-08T23:50:56.754Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[app:err] [2026-11-08T23:50:56.755Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-08T23:51:02.373Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-08T23:51:02.373Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-08T23:51:02.373Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-08T23:51:02.373Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-08T23:51:10.690Z] [INFO] Gateway stop requested
+[app:out] [2026-11-08T23:51:10.691Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (stop)
+[app:out] [2026-11-08T23:51:10.692Z] [INFO] Sending kill to Gateway process (pid=29664)
+[app:err] [2026-11-08T23:51:10.716Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)
+[app:out] [2026-11-08T23:51:10.717Z] [DEBUG] Gateway state changed: running -> stopped
+[app:out] [2026-11-08T23:51:11.310Z] [INFO] Gateway process exited (code=1, expected=yes)
+[app:out] [2026-11-08T23:51:11.311Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)
+[app:out] [2026-11-08T23:51:11.607Z] [INFO] Gateway stop requested
+[app:out] [2026-11-08T23:51:11.607Z] [DEBUG] Gateway lifecycle epoch advanced to 5 (stop)
+[app:err] Debugger ending on ws://127.0.0.1:52525/26a2f3b4-9b95-4693-956d-98e22e804f59
+For help, see: https://nodejs.org/en/docs/inspector
+[app:out] [2026-11-08T23:51:11.650Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"window-hidden","activeReasons":["window-hidden","power-saver"],"transitionCount":4}
+[app:out] [2026-11-08T23:51:11.651Z] [INFO] [ResourceTracker] Stopped
+[app:out] [2026-11-08T23:51:11.651Z] [INFO] [ResourceTracker] Shutdown complete
+[2026-11-08T23:51:11.651Z] [INFO] [efficiency-sampler] stopped
+[app:out] [2026-11-08T23:51:11.651Z] [INFO] [efficiency] runtime efficiency sampling stopped
+[app:out] [2026-11-08T23:51:20.364Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)
+[app:out] [2026-11-08T23:51:20.365Z] [INFO] [ResourceTracker] Started heartbeat interval
+[2026-11-08T23:51:20.365Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=27372, ppid=27832
+[app:out] [2026-11-08T23:51:20.365Z] [INFO] Running in E2E mode: startup side effects minimized
+[app:err] [2026-11-08T23:51:20.402Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[app:err] [2026-11-08T23:51:20.402Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[2026-11-08T23:51:20.402Z] [WARN] [webview-security] deny permission-check: WebView permission "web-app-installation" denied by default (fail-closed)
+[2026-11-08T23:51:20.402Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default
+[app:out] [2026-11-08T23:51:20.486Z] [INFO] [extensions] Extension "builtin/clawhub-marketplace" initialized
+[app:out] [2026-11-08T23:51:20.486Z] [INFO] [extensions] Extension "builtin/diagnostics" initialized
+[app:err] [27372:1109/075120.528:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[27372:1109/075120.528:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[app:out] [2026-11-08T23:51:20.609Z] [INFO] Gateway stop requested
+[app:out] [2026-11-08T23:51:20.609Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:err] [2026-11-08T23:51:20.684Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-08T23:51:20.684Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-08T23:51:20.684Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-08T23:51:20.684Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] [2026-11-08T23:51:20.787Z] [INFO] Scheduling Gateway reload after saving provider "custom-sessionc" config
+[app:out] [2026-11-08T23:51:20.788Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)
+[app:out] Set OpenClaw default model to "custom-sessionc/mock-coder" for provider "custom-sessionc" (runtime override)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] [2026-11-08T23:51:20.984Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (start)
+[app:out] [2026-11-08T23:51:20.985Z] [INFO] Gateway start requested (port=64989)
+[app:out] [2026-11-08T23:51:20.987Z] [DEBUG] Device identity loaded (deviceId=7b8cde1102de87cf19c77ff4ec018e9665551d3678e83d9348246a9f4f122b7b)
+[app:out] [2026-11-08T23:51:20.987Z] [DEBUG] Gateway state changed: stopped -> starting
+[app:out] [2026-11-08T23:51:21.191Z] [DEBUG] Checking for existing Gateway...
+[app:err] (node:27372) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [2026-11-08T23:51:21.583Z] [DEBUG] No existing Gateway found, starting new process...
+[app:out] [2026-11-08T23:51:21.714Z] [INFO] [efficiency] shed state changed {"shedding":false,"reason":null,"activeReasons":[],"transitionCount":2}
+[app:out] [2026-11-08T23:51:21.716Z] [INFO] Gateway auto-start skipped in E2E mode
+[app:out] Set OpenClaw default model to "custom-sessionc/mock-coder" for provider "custom-sessionc" (runtime override)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] [2026-11-08T23:51:21.877Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)
+[app:err] [2026-11-08T23:51:21.901Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.
+[app:out] [2026-11-08T23:51:21.904Z] [INFO] [metric] gateway.prelaunch {"settingsMs":0,"defaultProviderRuntimeSyncMs":265,"providerEnvMs":9,"channelStartupPolicyMs":8,"uvEnvMs":5,"mcpEnvMs":7,"runtimeConfigReadMs":0,"verseShellBundleMs":1,"totalMs":313,"maintenance":{},"configuredChannelCount":0}
+[app:out] [2026-11-08T23:51:21.905Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=64989, entry="D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime\dist\entry.js", args="gateway --port 64989 --allow-unconfigured", execArgv="", cwd="D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime", bundledBin=yes, providerKeys=2, channels=skipped(no configured channels), proxy=disabled)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [2026-11-08T23:51:21.987Z] [INFO] Deferring Gateway restart (reload) until startup/reconnect settles (state=starting, startLock=true)
+[app:out] [2026-11-08T23:51:21.998Z] [INFO] Gateway process started (pid=45940)
+[app:out] [2026-11-08T23:51:21.999Z] [DEBUG] Gateway manager now owns process pid=45940
+[app:err] [2026-11-08T23:51:22.165Z] [WARN] [Gateway stderr] (node:45940) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[app:err] [2026-11-08T23:51:22.166Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)
+[app:out] [2026-11-08T23:51:24.095Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)
+[app:out] [2026-11-08T23:51:26.169Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)
+[app:out] [2026-11-08T23:51:26.395Z] [DEBUG] [Gateway stderr] (node:45940) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.
+[app:err] [2026-11-08T23:51:26.395Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.
+[app:out] [2026-11-08T23:51:28.938Z] [DEBUG] Gateway ready after 25 attempt(s)
+[app:out] [2026-11-08T23:51:28.939Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:64989/ws)
+[app:err] [2026-11-08T23:51:28.982Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=b407a71f-d691-4678-8ff7-295cd2b33ed6 peer=127.0.0.1:64834->127.0.0.1:64989 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:64989 ua=n/a code=1006 reason=n/a[39m
+[app:out] [2026-11-08T23:51:28.987Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[app:out] [2026-11-08T23:51:28.988Z] [DEBUG] Received connect.challenge, sending handshake
+[app:out] [2026-11-08T23:51:28.988Z] [DEBUG] Sending connect handshake with challenge nonce
+[app:err] [2026-11-08T23:51:28.992Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=576ec13e-d851-4c8a-846a-01a50a42e594 peer=127.0.0.1:63353->127.0.0.1:64989 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:64989 ua=n/a code=1006 reason=n/a[39m
+[app:out] [2026-11-08T23:51:29.064Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:64989/ws)
+[app:err] [2026-11-08T23:51:29.067Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)
+[app:out] [2026-11-08T23:51:29.239Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"power-saver","activeReasons":["power-saver"],"transitionCount":3}
+[app:out] [2026-11-08T23:51:30.987Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[app:out] [2026-11-08T23:51:30.987Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-11-08T23:51:30.987Z] [DEBUG] Sending connect handshake with challenge nonce
+[app:out] [2026-11-08T23:51:31.591Z] [DEBUG] Gateway connect handshake completed (protocol=4)
+[app:out] [2026-11-08T23:51:31.591Z] [DEBUG] Gateway state changed: starting -> running
+[2026-11-08T23:51:31.591Z] [DEBUG] Deferred Gateway restart still waiting (status:starting->running, state=running, startLock=true)
+[app:out] [2026-11-08T23:51:31.592Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)
+[app:out] [2026-11-08T23:51:31.593Z] [INFO] [metric] gateway.startup {"configSyncMs":808,"spawnToReadyMs":6939,"readyToConnectMs":2655,"totalMs":10402}
+[app:out] [2026-11-08T23:51:31.593Z] [INFO] Executing deferred Gateway restart now (start:finally)
+[app:out] [2026-11-08T23:51:31.593Z] [INFO] [gateway-refresh] mode=restart requested pidBefore=45940
+[app:out] [2026-11-08T23:51:31.593Z] [INFO] Gateway stop requested
+[2026-11-08T23:51:31.593Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (stop)
+[app:out] [2026-11-08T23:51:31.594Z] [INFO] Sending kill to Gateway process (pid=45940)
+[app:err] [2026-11-08T23:51:31.617Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)
+[app:out] [2026-11-08T23:51:31.617Z] [DEBUG] Gateway state changed: running -> stopped
+[app:out] [2026-11-08T23:51:32.050Z] [INFO] Gateway process exited (code=1, expected=yes)
+[app:out] [2026-11-08T23:51:32.050Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)
+[app:out] [2026-11-08T23:51:32.051Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (start)
+[app:out] [2026-11-08T23:51:32.052Z] [INFO] Gateway start requested (port=64989)
+[app:out] [2026-11-08T23:51:32.053Z] [DEBUG] Gateway state changed: stopped -> starting
+[app:out] [2026-11-08T23:51:32.245Z] [DEBUG] Checking for existing Gateway...
+[app:out] [2026-11-08T23:51:32.423Z] [DEBUG] No existing Gateway found, starting new process...
+[app:out] Set OpenClaw default model to "custom-sessionc/mock-coder" for provider "custom-sessionc" (runtime override)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:err] [2026-11-08T23:51:32.575Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.
+[app:out] [2026-11-08T23:51:32.577Z] [INFO] [metric] gateway.prelaunch {"settingsMs":0,"defaultProviderRuntimeSyncMs":124,"providerEnvMs":5,"channelStartupPolicyMs":2,"uvEnvMs":1,"mcpEnvMs":3,"runtimeConfigReadMs":0,"verseShellBundleMs":0,"totalMs":150,"maintenance":{},"configuredChannelCount":0}
+[app:out] [2026-11-08T23:51:32.577Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=64989, entry="D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime\dist\entry.js", args="gateway --port 64989 --allow-unconfigured", execArgv="", cwd="D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime", bundledBin=yes, providerKeys=2, channels=skipped(no configured channels), proxy=disabled)
+[app:out] [2026-11-08T23:51:32.657Z] [INFO] Gateway process started (pid=47988)
+[app:out] [2026-11-08T23:51:32.657Z] [DEBUG] Gateway manager now owns process pid=47988
+[app:err] [2026-11-08T23:51:32.775Z] [WARN] [Gateway stderr] (node:47988) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[app:err] [2026-11-08T23:51:32.775Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)
+[app:out] [2026-11-08T23:51:34.716Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)
+[app:out] [2026-11-08T23:51:35.700Z] [DEBUG] [Gateway stderr] (node:47988) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.
+[app:err] [2026-11-08T23:51:35.701Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.
+[app:err] [2026-11-08T23:51:37.724Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=2b62938a-9a95-4838-aaeb-1d58d1d1033d peer=127.0.0.1:50396->127.0.0.1:64989 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:64989 ua=n/a code=1006 reason=n/a[39m
+[app:out] [2026-11-08T23:51:37.729Z] [DEBUG] Gateway ready after 18 attempt(s)
+[app:out] [2026-11-08T23:51:37.729Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:64989/ws)
+[app:err] [2026-11-08T23:51:37.733Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=4084268b-3740-4398-8b4d-45ffe577c7d7 peer=127.0.0.1:53040->127.0.0.1:64989 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:64989 ua=n/a code=1006 reason=n/a[39m
+[app:out] [2026-11-08T23:51:37.734Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[app:out] [2026-11-08T23:51:37.734Z] [DEBUG] Received connect.challenge, sending handshake
+[app:out] [2026-11-08T23:51:37.734Z] [DEBUG] Sending connect handshake with challenge nonce
+[app:out] [2026-11-08T23:51:37.786Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:64989/ws)
+[app:err] [2026-11-08T23:51:37.788Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)
+[app:out] [2026-11-08T23:51:39.205Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[app:out] [2026-11-08T23:51:39.206Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-11-08T23:51:39.207Z] [DEBUG] Sending connect handshake with challenge nonce
+[app:out] [2026-11-08T23:51:39.763Z] [DEBUG] Gateway connect handshake completed (protocol=4)
+[app:out] [2026-11-08T23:51:39.764Z] [DEBUG] Gateway state changed: starting -> running
+[app:out] [2026-11-08T23:51:39.764Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)
+[app:out] [2026-11-08T23:51:39.765Z] [INFO] [metric] gateway.startup {"configSyncMs":412,"spawnToReadyMs":5072,"readyToConnectMs":2036,"totalMs":7520}
+[app:out] [2026-11-08T23:51:39.765Z] [INFO] [metric] gateway.restart.executed {"gateway_restart_executed_total":1,"gateway_restart_suppressed_total":0,"gateway_restart_circuit_open_until":0}
+[app:out] [2026-11-08T23:51:39.765Z] [INFO] [gateway-refresh] mode=restart result=applied pidBefore=45940 pidAfter=47988 suppressed=0 executed=1 circuitOpenUntil=0
+[app:err] [2026-11-08T23:51:40.628Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-08T23:51:40.628Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-08T23:51:40.628Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-08T23:51:40.628Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:err] [auth-profiles] main: Primary config at D:\ClawX-work\session-task-unified-relay-20261109\.tmp\e2e-runs\verse-claw-e2e-run-KST2xj\verse-claw-e2e-home-qESrZQ\.openclaw\agents\main\agent\auth-profiles.json was corrupt; recovered from D:\ClawX-work\session-task-unified-relay-20261109\.tmp\e2e-runs\verse-claw-e2e-run-KST2xj\verse-claw-e2e-home-qESrZQ\.openclaw\agents\main\agent\auth-profiles.json.bak. Re-save recommended.
+[app:err] [auth-profiles] main: Primary config at D:\ClawX-work\session-task-unified-relay-20261109\.tmp\e2e-runs\verse-claw-e2e-run-KST2xj\verse-claw-e2e-home-qESrZQ\.openclaw\agents\main\agent\auth-profiles.json was corrupt; recovered from D:\ClawX-work\session-task-unified-relay-20261109\.tmp\e2e-runs\verse-claw-e2e-run-KST2xj\verse-claw-e2e-home-qESrZQ\.openclaw\agents\main\agent\auth-profiles.json.bak. Re-save recommended.
+[app:out] [2026-11-08T23:51:56.392Z] [INFO] Gateway stop requested
+[app:out] [2026-11-08T23:51:56.393Z] [DEBUG] Gateway lifecycle epoch advanced to 5 (stop)
+[app:out] [2026-11-08T23:51:56.393Z] [INFO] Sending kill to Gateway process (pid=47988)
+[app:err] [2026-11-08T23:51:56.413Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)
+[app:out] [2026-11-08T23:51:56.413Z] [DEBUG] Gateway state changed: running -> stopped
+[app:out] [2026-11-08T23:51:56.805Z] [INFO] Gateway process exited (code=1, expected=yes)
+[app:out] [2026-11-08T23:51:56.805Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)
+[app:out] [2026-11-08T23:51:57.034Z] [INFO] Gateway stop requested
+[app:out] [2026-11-08T23:51:57.034Z] [DEBUG] Gateway lifecycle epoch advanced to 6 (stop)
+[app:err] Debugger ending on ws://127.0.0.1:62703/7c28be83-d36d-4b77-b842-f029c9b25686
+For help, see: https://nodejs.org/en/docs/inspector
+[app:out] [2026-11-08T23:51:57.055Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"window-hidden","activeReasons":["window-hidden","power-saver"],"transitionCount":4}
+[app:out] [2026-11-08T23:51:57.055Z] [INFO] [ResourceTracker] Stopped
+[app:out] [2026-11-08T23:51:57.055Z] [INFO] [ResourceTracker] Shutdown complete
+[2026-11-08T23:51:57.055Z] [INFO] [efficiency-sampler] stopped
+[app:out] [2026-11-08T23:51:57.056Z] [INFO] [efficiency] runtime efficiency sampling stopped
+  x  2 tests\e2e\execution-migration.spec.ts:11:43 › moves one logical session and its task to a linked checkout and continues after restart (interrupted=true) (1.8m)
+
+
+  1) tests\e2e\execution-migration.spec.ts:11:43 › moves one logical session and its task to a linked checkout and continues after restart (interrupted=true) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: getByTestId('execution-migration-phase')
+    Expected: [32m"Confirming target"[39m
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toHaveText" with timeout 15000ms[22m
+    [2m  - waiting for getByTestId('execution-migration-phase')[22m
+    [2m    9 × locator resolved to <p role="status" class="text-sm text-muted-foreground" data-testid="execution-migration-phase">Подтверждение цели</p>[22m
+    [2m      - unexpected value "Подтверждение цели"[22m
+
+
+      77 |     await hostInvoke(app,'settings','set',{key:'language',value:language});await page.reload();
+      78 |     await page.getByTestId('execution-migration-open').click();
+    > 79 |     await expect(page.getByTestId('execution-migration-phase')).toHaveText(labels.phase['binding-committed']);
+         |                                                                 ^
+      80 |     await expect(page.getByTestId('execution-migration-target')).toBeDisabled();
+      81 |     await expect(page.getByTestId('execution-migration-start')).toHaveText(labels.resume);
+      82 |     await page.screenshot({path:testInfo.outputPath(`migration-resume-${language}.png`)});
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\execution-migration.spec.ts:79:65
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\migration-validation\electron-migration4-results\execution-migration-moves--e7d15-r-restart-interrupted-true-\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\migration-validation\electron-migration4-results\execution-migration-moves--e7d15-r-restart-interrupted-true-\test-failed-2.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\tmp\unified-management-20261109\migration-validation\electron-migration4-results\execution-migration-moves--e7d15-r-restart-interrupted-true-\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\migration-validation\electron-migration4-results\execution-migration-moves--e7d15-r-restart-interrupted-true-\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\tmp\unified-management-20261109\migration-validation\electron-migration4-results\execution-migration-moves--e7d15-r-restart-interrupted-true-\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\e2e\execution-migration.spec.ts:11:43 › moves one logical session and its task to a linked checkout and continues after restart (interrupted=true) 
+  1 passed (3.4m)

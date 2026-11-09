@@ -1,0 +1,128 @@
+{
+  "schema": 1,
+  "case": "Main durable intent",
+  "breakPoint": "intent",
+  "driven_by": "agent",
+  "requested_route": "DeepSeek v4.1 flash",
+  "diskReadback": true,
+  "sourceGeneration": "tf0866-source-generation",
+  "targetGeneration": "492e982c-2499-4989-a97f-739166febce5",
+  "operation": {
+    "id": "tf0866-process-operation",
+    "phase": "confirmed",
+    "sessionKey": "agent:main:tf0866-process-proof",
+    "sourceGeneration": "tf0866-source-generation",
+    "targetGeneration": "492e982c-2499-4989-a97f-739166febce5",
+    "reservationReleased": true
+  },
+  "journal": {
+    "state": "runtime_committed",
+    "requestDigest": "b64916abed75e95c9607c9da1995e3bf0c81757a33ea3df042d90778bd4ea395",
+    "manifestDigest": "82891813b93f6fa215216569e8171af74dd20746d13e713d3c7b4f8d20dbf120"
+  },
+  "session": {
+    "sessionId": "492e982c-2499-4989-a97f-739166febce5",
+    "workspaceDir": "D:\\tmp\\tf0866-process-t5H84G\\target",
+    "migrationState": "confirmed"
+  },
+  "artifactHashes": [
+    {
+      "path": "D:\\tmp\\tf0866-process-t5H84G\\source\\result.txt",
+      "sha256": "2f1bf152cea586c7342529059c7961e615eafe8cf14d66b57c819c50cfae87bd"
+    }
+  ],
+  "transcriptHashes": [
+    {
+      "role": "source",
+      "sha256": "da7138815694c1938e5a1fcdc9ed339cc810c2e7e0a8cda435af116a538318b7"
+    },
+    {
+      "role": "target",
+      "sha256": "da7138815694c1938e5a1fcdc9ed339cc810c2e7e0a8cda435af116a538318b7"
+    }
+  ],
+  "processes": [
+    {
+      "role": "terminated",
+      "pid": 25644,
+      "breakPoint": "intent",
+      "killRequested": true,
+      "killReturned": true,
+      "exitCode": null,
+      "exitSignal": "SIGKILL",
+      "observedPidGone": true
+    },
+    {
+      "role": "resumed",
+      "pid": 47420,
+      "killRequested": false,
+      "killReturned": false,
+      "exitCode": 0,
+      "exitSignal": null,
+      "observedPidGone": true
+    }
+  ],
+  "workerEvidence": {
+    "workerEvents": [
+      {
+        "at": "2026-11-09T00:14:01.990Z",
+        "pid": 25644,
+        "kind": "main-worker-start",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation",
+        "breakPoint": "intent"
+      },
+      {
+        "at": "2026-11-09T00:14:02.068Z",
+        "pid": 25644,
+        "kind": "durable-break-signal",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "point": "intent",
+        "stage": "main-workspace-save-committed",
+        "operationPhase": "intent",
+        "targetGeneration": "492e982c-2499-4989-a97f-739166febce5"
+      },
+      {
+        "at": "2026-11-09T00:14:04.950Z",
+        "pid": 47420,
+        "kind": "main-worker-start",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation"
+      },
+      {
+        "at": "2026-11-09T00:14:05.602Z",
+        "pid": 47420,
+        "kind": "main-worker-complete",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation",
+        "phase": "confirmed"
+      }
+    ],
+    "breakSignal": {
+      "pid": 25644,
+      "point": "intent",
+      "at": "2026-11-09T00:14:02.067Z",
+      "driven_by": "agent",
+      "requested_route": "DeepSeek v4.1 flash",
+      "stage": "main-workspace-save-committed",
+      "operationPhase": "intent",
+      "targetGeneration": "492e982c-2499-4989-a97f-739166febce5"
+    },
+    "workerResult": {
+      "operationId": "tf0866-process-operation",
+      "phase": "confirmed",
+      "sessionKey": "agent:main:tf0866-process-proof",
+      "sourceGeneration": "tf0866-source-generation",
+      "targetGeneration": "492e982c-2499-4989-a97f-739166febce5",
+      "taskNodeId": "9df08f8e-eea8-4934-af5e-4bbf99441f00",
+      "pid": 47420,
+      "driven_by": "agent",
+      "requested_route": "DeepSeek v4.1 flash"
+    },
+    "workerError": null
+  }
+}

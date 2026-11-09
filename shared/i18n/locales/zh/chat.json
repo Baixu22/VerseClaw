@@ -2872,5 +2872,26 @@
       "queued": "已排队",
       "steered": "引导已接收"
     }
+  },
+  "migration": {
+    "open": "将工作迁移到其他检出",
+    "resume": "继续恢复迁移",
+    "title": "在另一个检出中继续",
+    "description": "保留当前会话和任务。系统关闭源环境的新副作用，核对未结清工作，确认交接后才开放目标环境。",
+    "target": "目标工作区",
+    "start": "迁移并继续",
+    "cancel": "关闭",
+    "retained": "进度已保存。处理提示的条件后可继续恢复。",
+    "artifactChanged": "已记录的产物发生了变化。恢复到检查点版本后可继续迁移。",
+    "phase": {
+      "intent": "已记录迁移意图",
+      "fenced": "已关闭源执行入口",
+      "drained": "源效果已结清",
+      "reserved": "已预留目标",
+      "session-committed": "会话已迁移，正在核对任务",
+      "task-committed": "任务所有权已转交",
+      "binding-committed": "正在确认目标",
+      "confirmed": "目标环境已就绪"
+    }
   }
 }

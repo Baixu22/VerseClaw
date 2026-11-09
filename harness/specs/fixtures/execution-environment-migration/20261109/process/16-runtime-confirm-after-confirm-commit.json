@@ -1,0 +1,147 @@
+{
+  "schema": 1,
+  "case": "Runtime confirm after-confirm-commit",
+  "breakPoint": "after-confirm-commit",
+  "driven_by": "agent",
+  "requested_route": "DeepSeek v4.1 flash",
+  "diskReadback": true,
+  "sourceGeneration": "tf0866-source-generation",
+  "targetGeneration": "tf0866-target-generation",
+  "operation": null,
+  "journal": {
+    "state": "runtime_committed",
+    "requestDigest": "eca3cf11ec6115e4f7c506e471960c46a9565da61ba6c8cd5953b13ee707ebd5",
+    "manifestDigest": "d9640f250fb30a8c76ce78eacd6a5d76513f6c9d950883ff07c8638b14feadf2"
+  },
+  "session": {
+    "sessionId": "tf0866-target-generation",
+    "workspaceDir": "D:\\tmp\\tf0866-process-AMTTKO\\target",
+    "migrationState": "confirmed"
+  },
+  "artifactHashes": [
+    {
+      "path": "result.txt",
+      "sha256": "missing:result.txt"
+    }
+  ],
+  "transcriptHashes": [
+    {
+      "role": "source",
+      "sha256": "da7138815694c1938e5a1fcdc9ed339cc810c2e7e0a8cda435af116a538318b7"
+    },
+    {
+      "role": "target",
+      "sha256": "da7138815694c1938e5a1fcdc9ed339cc810c2e7e0a8cda435af116a538318b7"
+    }
+  ],
+  "processes": [
+    {
+      "role": "prepare-complete",
+      "pid": 45768,
+      "killRequested": false,
+      "killReturned": false,
+      "exitCode": 0,
+      "exitSignal": null,
+      "observedPidGone": true
+    },
+    {
+      "role": "terminated",
+      "pid": 24148,
+      "breakPoint": "after-confirm-commit",
+      "killRequested": true,
+      "killReturned": true,
+      "exitCode": null,
+      "exitSignal": "SIGKILL",
+      "observedPidGone": true
+    },
+    {
+      "role": "resumed",
+      "pid": 28288,
+      "killRequested": false,
+      "killReturned": false,
+      "exitCode": 0,
+      "exitSignal": null,
+      "observedPidGone": true
+    }
+  ],
+  "workerEvidence": {
+    "workerEvents": [
+      {
+        "at": "2026-11-09T00:15:44.394Z",
+        "pid": 45768,
+        "kind": "runtime-prepare-start",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation"
+      },
+      {
+        "at": "2026-11-09T00:15:44.499Z",
+        "pid": 45768,
+        "kind": "runtime-prepare-complete",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation",
+        "state": "prepared"
+      },
+      {
+        "at": "2026-11-09T00:15:47.104Z",
+        "pid": 24148,
+        "kind": "runtime-confirm-start",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation",
+        "breakPoint": "after-confirm-commit"
+      },
+      {
+        "at": "2026-11-09T00:15:47.211Z",
+        "pid": 24148,
+        "kind": "durable-break-signal",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "point": "after-confirm-commit",
+        "stage": "runtime-after-confirm-commit",
+        "sessionKey": "agent:main:tf0866-process-proof",
+        "operationId": "tf0866-process-operation"
+      },
+      {
+        "at": "2026-11-09T00:15:49.792Z",
+        "pid": 28288,
+        "kind": "runtime-confirm-start",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation"
+      },
+      {
+        "at": "2026-11-09T00:15:49.840Z",
+        "pid": 28288,
+        "kind": "runtime-confirm-complete",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation",
+        "state": "confirmed"
+      }
+    ],
+    "breakSignal": {
+      "pid": 24148,
+      "point": "after-confirm-commit",
+      "at": "2026-11-09T00:15:47.210Z",
+      "driven_by": "agent",
+      "requested_route": "DeepSeek v4.1 flash",
+      "stage": "runtime-after-confirm-commit",
+      "sessionKey": "agent:main:tf0866-process-proof",
+      "operationId": "tf0866-process-operation"
+    },
+    "workerResult": {
+      "operationId": "tf0866-process-operation",
+      "state": "confirmed",
+      "sessionKey": "agent:main:tf0866-process-proof",
+      "sourceGeneration": "tf0866-source-generation",
+      "targetGeneration": "tf0866-target-generation",
+      "taskNodeId": "db9ba7a8-2184-42e1-8b64-42c839bccc56",
+      "pid": 28288,
+      "driven_by": "agent",
+      "requested_route": "DeepSeek v4.1 flash"
+    },
+    "workerError": null
+  }
+}

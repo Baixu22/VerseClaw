@@ -10,6 +10,7 @@ import { createChatContentCache } from '@/stores/chat/content-cache';
 import { useMessageViewport } from '@/hooks/use-message-viewport';
 import { classifyDerivation } from '@shared/types/session-derivation';
 import { SessionFamilyNavigation } from '@/components/chat/SessionFamilyNavigation';
+import { ExecutionMigrationControl } from './ExecutionMigrationControl';
 import { TaskLedgerSummaryPanel } from '@/components/task-ledger/TaskLedgerSummaryPanel';
 import { activateWorkspaceScopedSession } from '@/lib/workspace-session';
 import { useSessionReadingPosition } from './use-session-reading-position';
@@ -3397,6 +3398,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
             * because the card listing the workers vanished as soon as one of them
             * was on screen. Only the PASSIVE layer yields to the panel, because
             * only that layer takes width from the transcript. */}
+          <ExecutionMigrationControl workspaceId={activeWorkspace?.id} sessionKey={currentSessionKey} generation={currentSession.sessionId}/>
           <ChatToolbar
             promptCacheStatus={promptCacheStatus}
             sessionActivityAvailable={hasSessionActivityEntry}

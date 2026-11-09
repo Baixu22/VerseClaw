@@ -2,6 +2,7 @@ import { Type } from "typebox";
 import { existsSync } from "node:fs";
 import { TaskSystemStore } from "../../../../shared/task-system/store.js";
 import { createExecutionTaskAccess } from "../execution-task-authority.js";
+import { getSessionEntry } from '../../config/sessions/store.js';
 import type {
   TaskCheckpoint,
   TaskContractInput,
@@ -128,6 +129,10 @@ export function createPersistentTaskTool(input: {
     execute: async (_toolCallId, raw) => {
       if (!input.sessionKey || !input.generation) throw new Error("TASK_SESSION_IDENTITY_REQUIRED");
       const p = raw as Record<string, unknown>;
+      if (process.env.CLAWX_TASK_SCOPE_BRIDGE === '1' && !['list','current','status','changes','history','suggest'].includes(String(p.action))) {
+        const session=getSessionEntry({sessionKey:input.sessionKey});
+        if ((session as {executionMigration?:{state?:string}}|undefined)?.executionMigration?.state==='prepared')throw new Error('TASK_EXECUTION_MIGRATION_PENDING');
+      }
       access.assertCurrent();
       const domain = access.domain;
       if (!existsSync(domain.database) && (p.action === "list" || p.action === "current"))

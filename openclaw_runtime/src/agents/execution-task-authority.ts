@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import type { TaskAuthorityAccess, TaskDomain, TaskAuthorityBasis } from "../../../shared/task-system/identity.js";
 import { TaskSystemStore } from "../../../shared/task-system/store.js";
-import { createTaskRuntimeGuard, inheritPersistentTaskReference, assertTaskWorktreeReleasable } from "../../../shared/task-system/runtime.js";
+import { inheritPersistentTaskReference, assertTaskWorktreeReleasable } from "../../../shared/task-system/runtime.js";
 import { resolveExecutionDomain } from "./execution-domain.js";
 import { filesystemInstance } from "./worktree-registry.js";
 
@@ -65,11 +65,6 @@ export function createExecutionTaskAccess(workspaceRoot: string, expected?: Exec
 export function openExecutionTaskStore(workspaceRoot: string, expected?: ExecutionTaskAuthorityBasis): TaskSystemStore {
   const access = createExecutionTaskAccess(workspaceRoot, expected);
   return new TaskSystemStore(access.domain, undefined, access);
-}
-
-export function createExecutionTaskGuard(workspace: string | undefined, sessionKey: string | undefined, generation: string | undefined, runId?: string) {
-  return createTaskRuntimeGuard(workspace, sessionKey, generation, runId,
-    workspace && sessionKey && existsSync(workspace) ? createExecutionTaskAccess(workspace) : undefined);
 }
 
 export function inheritExecutionTaskReference(workspace: string, sourceSessionKey: string, sourceGeneration: string, sessionKey: string, generation: string) {

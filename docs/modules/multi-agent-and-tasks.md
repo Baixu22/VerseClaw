@@ -429,6 +429,8 @@ Agents 面板将派发准入、实际执行、报告回传、任务验收和父�
 
 受管工具入口联合核对任务合同、会话代次、执行绑定和 checkout writer。writer 在工具之间保持占用，后台进程和未知效果须由原 owner 结清；规范任务委派通过持久父子凭据原子转移 checkout epoch。显式注册的 clone 通过原 TaskSystemStore 访问指定 authority，产物检查仍以实际检出目录为准；已有独立任务库不会被注册操作静默隐藏。受管 Mission 保存同一任务的合同版本、epoch、代次与 authority 引用，每次推进重新核验，业务完成依赖 Task owner 的验收回执。
 
+“在另一个检出中继续”使用 Workspace 保存迁移阶段，并复用 Session mutation journal 记录物理代次和 transcript 转移。原任务的目标、检查点和产物引用保持；源 claim 暂停后交接到新代次，目标完成合同及资源回读后开放。回复丢失、窗口重开或进程重启都沿同一 operationId 恢复；同 ID 的不同目标请求会拒绝。
+
 操作范围及恢复入口见[会话、任务与资源操作矩阵](../dev/session-lifecycle-control-matrix.md)。
 
 ## 17. 源码索引

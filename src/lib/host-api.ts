@@ -392,6 +392,8 @@ import type {
   WorkProviderValidateArtifactResult,
   WorkspaceCoordinatorBindPayload,
   WorkspaceSessionTaskSelectPayload,
+  WorkspaceExecutionMigrationPayload,
+  WorkspaceExecutionMigrationReadPayload,
   WorkspaceCoordinatorBindingResult,
   WorkspaceCoordinatorPausePayload,
   WorkspaceCoordinatorResolvePayload,
@@ -860,6 +862,8 @@ export const hostApi = {
     pauseCoordinator: (input: WorkspaceCoordinatorPausePayload): Promise<WorkspaceCoordinatorBindingResult> => (
       invokeHost('workspaces', 'pauseCoordinator', input)
     ),
+    migrateExecution: (input: WorkspaceExecutionMigrationPayload) => invokeHost('workspaces', 'migrateExecution', input),
+    executionMigration: (input: WorkspaceExecutionMigrationReadPayload) => invokeHost('workspaces', 'executionMigration', input),
   },
   projectRules: {
     snapshot: () => invokeHost('projectRules', 'snapshot'),

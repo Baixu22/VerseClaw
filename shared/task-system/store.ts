@@ -1448,8 +1448,11 @@ export class TaskSystemStore {
       | { id: string; kind: string; state: string; epoch: number; startedAt: number; result: string | null }
       | undefined;
     if (!row) throw new Error("TASK_OPERATION_NOT_FOUND");
-    const cancelledReplay = ["completed", "reconciled"].includes(row.state) && view.contract.state === "cancelled" && c?.epoch === credential.epoch + 1 && c.sessionKey === credential.sessionKey && c.generation === credential.generation && c.worktree === this.domain.worktree;
-    if (!cancelledReplay) this.assertOwner(credential, true);
+    const terminalReplay = ["completed", "reconciled"].includes(row.state)
+      && (view.contract.state === "cancelled" || c?.state === "paused")
+      && c?.epoch === credential.epoch + 1 && c.sessionKey === credential.sessionKey
+      && c.generation === credential.generation && c.worktree === this.domain.worktree;
+    if (!terminalReplay) this.assertOwner(credential, true);
     const { result, ...operation } = row;
     if (row.state !== 'reconciled') return operation;
     const receipt = JSON.parse(result ?? 'null') as { id: string; outcome: "applied" | "not_applied"; owner: string } | null;

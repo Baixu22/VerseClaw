@@ -1,12 +1,12 @@
 import { createHash } from 'node:crypto';
 import type { SessionTaskEffectAdmission } from '../../../shared/session-task-scope.js';
 import type { CheckoutWriterCredential } from '../../../shared/checkout-ownership.js';
-import type { TaskCredential } from '../../../shared/task-system/types.js';
 import { TASK_DELEGATION_DISPATCH_TOOLS } from '../../../shared/task-system/types.js';
 import { TaskSystemStore } from '../../../shared/task-system/store.js';
 import { executeTaskGuarded } from '../../../shared/task-system/runtime.js';
-import { createExecutionTaskGuard, openExecutionTaskStore } from './execution-task-authority.js';
-import { createWorktreeService, resolveExecutionCheckout } from './worktree-service.js';
+import { openExecutionTaskStore } from './execution-task-authority.js';
+import type { createExecutionTaskGuard } from './execution-task-guard.js';
+import { createWorktreeService, resolveExecutionCheckout, reconcileTaskCheckoutWrites } from './worktree-service.js';
 import { managedProcessReservations } from './verseshell/managed-process-reservation.js';
 import { getSession, listRunningSessions } from './bash-process-registry.js';
 import { getProcessSupervisor } from '../process/supervisor/index.js';
@@ -43,20 +43,7 @@ export function reconcileExecutionCheckout(checkout: Checkout): void {
   if (!state.owner.task) return;
   const sessionKey = state.owner.run.scope.sessionKey;
   if (!sessionKey) throw new Error('TASK_CHECKOUT_EXECUTION_IDENTITY_REQUIRED');
-  const store = openExecutionTaskStore(state.root);
-  try {
-    if (store.domain.id !== state.owner.task.authorityId) throw new Error('TASK_CHECKOUT_AUTHORITY_MISMATCH');
-    const task: TaskCredential = { taskNodeId: state.owner.task.taskNodeId as TaskCredential['taskNodeId'],
-      sessionKey, generation: state.owner.sessionGeneration, epoch: state.owner.task.epoch };
-    for (const operation of state.operations.filter(row => row.state !== 'settled')) {
-      let receipt;
-      try { receipt = store.operation(task, operation.id); }
-      catch { continue; }
-      if (receipt.state === 'completed' || receipt.state === 'reconciled') service.settleWrite(checkout.credential,
-        operation.id, { outcome: receipt.receipt?.outcome === 'not_applied' ? 'not-applied' : 'completed',
-          ownerReceipt: receipt.receipt?.id ?? `task-operation:${operation.id}:${receipt.epoch}:${receipt.state}` });
-    }
-  } finally { store.close(); }
+  reconcileTaskCheckoutWrites(checkout);
   const current = service.writer(checkout.worktreeId);
   if (current?.terminalReceipt && current.operations.every(operation => operation.state === 'settled') && !processesPending(current)) {
     const ledger = openExecutionTaskStore(current.root);

@@ -436,7 +436,8 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
     loadHandlers: loadAgentBrowserHandlers,
   }),
   ...createLazyCoreHandlers({
-    methods: ["taskScope.admit", "taskScope.admit.result", "taskScope.runState"],
+    methods: ["taskScope.admit", "taskScope.admit.result", "taskScope.runState",
+      "taskScope.migration.prepare", "taskScope.migration.confirm", "taskScope.migration.read"],
     loadHandlers: loadSessionTaskScopeHandlers,
   }),
   ...createLazyCoreHandlers({

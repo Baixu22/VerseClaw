@@ -410,7 +410,7 @@ import {
 } from "./attempt-stage-timing.js";
 import { buildAttemptSystemPrompt } from "./attempt-system-prompt.js";
 import { restoreTaskModelContext, finishPersistentTaskRun } from "../../../../../shared/task-system/runtime.js";
-import { createExecutionTaskGuard } from "../../execution-task-authority.js";
+import { createExecutionTaskGuard } from "../../execution-task-guard.js";
 import { flushEmbeddedAttemptTrajectoryRecorder } from "./attempt-trajectory-flush-cleanup.js";
 import {
   assembleAttemptContextEngine,

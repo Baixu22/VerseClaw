@@ -1,0 +1,64 @@
+
+Running 1 test using 1 worker
+
+(node:44312) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44312) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 tests\e2e\execution-migration.spec.ts:10:5 › moves one logical session and its task to a linked checkout and continues after restart (1.5m)
+
+
+  1) tests\e2e\execution-migration.spec.ts:10:5 › moves one logical session and its task to a linked checkout and continues after restart 
+
+    TimeoutError: electron.launch: Timeout 90000ms exceeded.
+    Call log:
+    [2m  - <launching> "D:\tmp\clawx-audit-next-20261107\candidate\node_modules\.pnpm\electron@40.8.4\node_modules\electron\dist\electron.exe" "--inspect=0" "--remote-debugging-port=0" "--no-sandbox" "--user-data-dir=D:\ClawX-work\session-task-unified-relay-20261109\.tmp\e2e-runs\verse-claw-e2e-run-ReVRl9\verse-claw-e2e-user-data-bk2VXL" "--lang=en-US" "--disable-gpu" "--disable-gpu-compositing" "--disable-software-rasterizer" "--in-process-gpu" "--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization" "D:\ClawX-work\session-task-unified-relay-20261109\dist-electron\main\index.js"[22m
+    [2m  - <launched> pid=30860[22m
+    [2m  - [pid=30860][out][22m
+    [2m  - [pid=30860][err] Debugger listening on ws://127.0.0.1:57157/86ff1b26-faf6-4e09-8d1f-ebc32022d2bf[22m
+    [2m  - [pid=30860][err] For help, see: https://nodejs.org/en/docs/inspector[22m
+    [2m  - <ws connecting> ws://127.0.0.1:57157/86ff1b26-faf6-4e09-8d1f-ebc32022d2bf[22m
+    [2m  - <ws connected> ws://127.0.0.1:57157/86ff1b26-faf6-4e09-8d1f-ebc32022d2bf[22m
+    [2m  - [pid=30860][err] Debugger attached.[22m
+    [2m  - [pid=30860][err] App threw an error during load[22m
+    [2m  - [pid=30860][err] Error: Cannot find module '@openclaw/model-catalog-core/provider-model-id-normalization'[22m
+    [2m  - [pid=30860][err] Require stack:[22m
+    [2m  - [pid=30860][err] - D:\ClawX-work\session-task-unified-relay-20261109\dist-electron\main\index-v3y9c4vN.js[22m
+    [2m  - [pid=30860][err] - D:\ClawX-work\session-task-unified-relay-20261109\dist-electron\main\index.js[22m
+    [2m  - [pid=30860][err]     at Module._resolveFilename (node:internal/modules/cjs/loader:1463:15)[22m
+    [2m  - [pid=30860][err]     at s._resolveFilename (node:electron/js2c/browser_init:2:140234)[22m
+    [2m  - [pid=30860][err]     at defaultResolveImpl (node:internal/modules/cjs/loader:1073:19)[22m
+    [2m  - [pid=30860][err]     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1078:22)[22m
+    [2m  - [pid=30860][err]     at Module._load (node:internal/modules/cjs/loader:1249:25)[22m
+    [2m  - [pid=30860][err]     at c._load (node:electron/js2c/node_init:2:18047)[22m
+    [2m  - [pid=30860][err]     at wrapModuleLoad (node:internal/modules/cjs/loader:262:19)[22m
+    [2m  - [pid=30860][err]     at Module.require (node:internal/modules/cjs/loader:1563:12)[22m
+    [2m  - [pid=30860][err]     at require (node:internal/modules/helpers:152:16)[22m
+    [2m  - [pid=30860][err]     at Object.<anonymous> (D:\ClawX-work\session-task-unified-relay-20261109\dist-electron\main\index-v3y9c4vN.js:1:2728)[22m
+
+
+       at fixtures\electron.ts:377
+
+      375 |     : {};
+      376 |   const pendingLaunch = await recordElectronLaunch(userDataDir);
+    > 377 |   const app = await electron.launch({
+          |               ^
+      378 |     executablePath: options.executablePath ?? String(electronBinaryPath),
+      379 |     args: [
+      380 |       // Windows runners cannot use the Chromium sandbox in this isolated E2E user-data context.
+        at launchVerseClawElectron (D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\fixtures\electron.ts:377:15)
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\fixtures\electron.ts:517:21
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\execution-migration.spec.ts:22:10
+
+    Error Context: ..\..\tmp\unified-management-20261109\migration-validation\electron-migration-results\execution-migration-moves--0bdba-and-continues-after-restart\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\migration-validation\electron-migration-results\execution-migration-moves--0bdba-and-continues-after-restart\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\tmp\unified-management-20261109\migration-validation\electron-migration-results\execution-migration-moves--0bdba-and-continues-after-restart\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\e2e\execution-migration.spec.ts:10:5 › moves one logical session and its task to a linked checkout and continues after restart 

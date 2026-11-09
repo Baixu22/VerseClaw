@@ -217,7 +217,21 @@ export type SessionGoal = {
   budgetLimitedAt?: number;
 };
 
+export type SessionExecutionMigrationState = {
+  operationId: string;
+  state: "prepared" | "confirmed";
+  requestDigest: string;
+  sourceGeneration: string;
+  targetGeneration: string;
+  sourceRoot: string;
+  targetRoot: string;
+  taskNodeId: string;
+  updatedAt: number;
+};
+
 export type SessionEntry = {
+  /** Durable execution-environment migration gate read by task/model entry points. */
+  executionMigration?: SessionExecutionMigrationState;
   /**
    * Last delivered heartbeat payload (used to suppress duplicate heartbeat notifications).
    * Stored on the main session entry.

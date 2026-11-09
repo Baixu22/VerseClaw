@@ -24,6 +24,7 @@ import { getAgentRunContext } from "../../infra/agent-events.js";
 import { replyRunRegistry } from "../../auto-reply/reply/reply-run-registry.js";
 import { loadSessionEntry } from "../session-utils.js";
 import type { GatewayClient, GatewayRequestContext, GatewayRequestHandlers } from "./types.js";
+import type { SessionExecutionMigrationRequest } from '../../../../shared/types/execution-migration.js';
 
 type Pending = {
   request: SessionTaskEffectRequest;
@@ -67,6 +68,8 @@ function assertLiveRun(context: GatewayRequestContext, request: SessionTaskEffec
   const active = context.chatAbortControllers.get(request.runId);
   const registered = getAgentRunContext(request.runId);
   const { entry, canonicalKey } = loadSessionEntry(request.sessionKey);
+  if ((entry as { executionMigration?: { state?: string } } | undefined)?.executionMigration?.state === 'prepared')
+    throw new Error('TASK_EXECUTION_MIGRATION_PENDING');
   const scheduled = scheduledRunOwner(request.runId, request.sessionKey, request.sessionGeneration);
   const effect = getSessionTaskEffectRequest(request.requestId);
   const issuedHere =
@@ -96,6 +99,27 @@ function assertLiveRun(context: GatewayRequestContext, request: SessionTaskEffec
 }
 
 export const sessionTaskScopeHandlers: GatewayRequestHandlers = {
+  'taskScope.migration.prepare': async ({params,client,context,respond})=>{
+    if(!isBridge(client)){respond(false,undefined,errorShape(ErrorCodes.INVALID_REQUEST,'TASK_SCOPE_BACKEND_REQUIRED'));return;}
+    try{const {prepareSessionExecutionMigration}=await import('../session-execution-migration.js');
+      const result=await prepareSessionExecutionMigration(context.getRuntimeConfig(),params as SessionExecutionMigrationRequest);
+      respond(true,result,undefined);
+    }catch(error){respond(false,undefined,errorShape(ErrorCodes.UNAVAILABLE,error instanceof Error?error.message:String(error)));}
+  },
+  'taskScope.migration.confirm': async ({params,client,context,respond})=>{
+    if(!isBridge(client)){respond(false,undefined,errorShape(ErrorCodes.INVALID_REQUEST,'TASK_SCOPE_BACKEND_REQUIRED'));return;}
+    try{const {confirmSessionExecutionMigration}=await import('../session-execution-migration.js');
+      const result=await confirmSessionExecutionMigration(context.getRuntimeConfig(),params as SessionExecutionMigrationRequest);
+      respond(true,result,undefined);
+    }catch(error){respond(false,undefined,errorShape(ErrorCodes.UNAVAILABLE,error instanceof Error?error.message:String(error)));}
+  },
+  'taskScope.migration.read': async ({params,client,context,respond})=>{
+    if(!isBridge(client)){respond(false,undefined,errorShape(ErrorCodes.INVALID_REQUEST,'TASK_SCOPE_BACKEND_REQUIRED'));return;}
+    try{const {readSessionExecutionMigration}=await import('../session-execution-migration.js');
+      const result=await readSessionExecutionMigration(context.getRuntimeConfig(),String(params.sessionKey??''),String(params.operationId??''));
+      respond(true,result,undefined);
+    }catch(error){respond(false,undefined,errorShape(ErrorCodes.UNAVAILABLE,error instanceof Error?error.message:String(error)));}
+  },
   "taskScope.runState": async ({ params, client, context, respond }) => {
     if (!isBridge(client)) {
       respond(

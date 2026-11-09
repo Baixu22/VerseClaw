@@ -27,7 +27,7 @@ import type { AgentTool, AgentToolResult, AgentToolUpdateCallback } from "./runt
 import type { ToolDefinition } from "./sessions/index.js";
 import { normalizeToolName } from "./tool-policy.js";
 import { jsonResult, payloadTextResult } from "./tools/common.js";
-import { createExecutionTaskGuard } from "./execution-task-authority.js";
+import { createExecutionTaskGuard } from "./execution-task-guard.js";
 
 type AnyAgentTool = AgentTool;
 type BeforeToolCallPreparingTool = AnyAgentTool & {

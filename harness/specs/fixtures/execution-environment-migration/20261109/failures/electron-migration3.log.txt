@@ -1,0 +1,76 @@
+
+Running 2 tests using 1 worker
+
+(node:37876) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:37876) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 tests\e2e\execution-migration.spec.ts:11:43 › moves one logical session and its task to a linked checkout and continues after restart (interrupted=false) (608ms)
+(node:25088) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25088) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  2 tests\e2e\execution-migration.spec.ts:11:43 › moves one logical session and its task to a linked checkout and continues after restart (interrupted=true) (556ms)
+
+
+  1) tests\e2e\execution-migration.spec.ts:11:43 › moves one logical session and its task to a linked checkout and continues after restart (interrupted=false) 
+
+    Error: [FP-P3-05] openclaw_runtime/dist/entry.js is stale. 1 src file(s) newer than dist.
+    Run `pnpm build:runtime` before E2E to avoid testing a stale bundle.
+    Sample stale files: openclaw_runtime\src\agents\execution-checkout-tools.ts
+
+       at fixtures\electron.ts:120
+
+      118 |   if (stale.length > 0) {
+      119 |     const sample = stale.slice(0, 5).map((f) => f.replace(repoRoot + '\\', ''));
+    > 120 |     throw new Error(
+          |           ^
+      121 |       `[FP-P3-05] openclaw_runtime/dist/entry.js is stale. ${stale.length} src file(s) newer than dist.\n` +
+      122 |         `Run \`pnpm build:runtime\` before E2E to avoid testing a stale bundle.\n` +
+      123 |         `Sample stale files: ${sample.join(', ')}${stale.length > 5 ? ` (and ${stale.length - 5} more)` : ''}`,
+        at assertRuntimeDistFresh (D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\fixtures\electron.ts:120:11)
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\fixtures\electron.ts:516:33
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\execution-migration.spec.ts:23:10
+
+    Error Context: ..\..\tmp\unified-management-20261109\migration-validation\electron-migration3-results\execution-migration-moves--e6289--restart-interrupted-false-\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\migration-validation\electron-migration3-results\execution-migration-moves--e6289--restart-interrupted-false-\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\tmp\unified-management-20261109\migration-validation\electron-migration3-results\execution-migration-moves--e6289--restart-interrupted-false-\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests\e2e\execution-migration.spec.ts:11:43 › moves one logical session and its task to a linked checkout and continues after restart (interrupted=true) 
+
+    Error: [FP-P3-05] openclaw_runtime/dist/entry.js is stale. 1 src file(s) newer than dist.
+    Run `pnpm build:runtime` before E2E to avoid testing a stale bundle.
+    Sample stale files: openclaw_runtime\src\agents\execution-checkout-tools.ts
+
+       at fixtures\electron.ts:120
+
+      118 |   if (stale.length > 0) {
+      119 |     const sample = stale.slice(0, 5).map((f) => f.replace(repoRoot + '\\', ''));
+    > 120 |     throw new Error(
+          |           ^
+      121 |       `[FP-P3-05] openclaw_runtime/dist/entry.js is stale. ${stale.length} src file(s) newer than dist.\n` +
+      122 |         `Run \`pnpm build:runtime\` before E2E to avoid testing a stale bundle.\n` +
+      123 |         `Sample stale files: ${sample.join(', ')}${stale.length > 5 ? ` (and ${stale.length - 5} more)` : ''}`,
+        at assertRuntimeDistFresh (D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\fixtures\electron.ts:120:11)
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\fixtures\electron.ts:516:33
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\execution-migration.spec.ts:23:10
+
+    Error Context: ..\..\tmp\unified-management-20261109\migration-validation\electron-migration3-results\execution-migration-moves--e7d15-r-restart-interrupted-true-\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\migration-validation\electron-migration3-results\execution-migration-moves--e7d15-r-restart-interrupted-true-\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\tmp\unified-management-20261109\migration-validation\electron-migration3-results\execution-migration-moves--e7d15-r-restart-interrupted-true-\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    tests\e2e\execution-migration.spec.ts:11:43 › moves one logical session and its task to a linked checkout and continues after restart (interrupted=false) 
+    tests\e2e\execution-migration.spec.ts:11:43 › moves one logical session and its task to a linked checkout and continues after restart (interrupted=true) 

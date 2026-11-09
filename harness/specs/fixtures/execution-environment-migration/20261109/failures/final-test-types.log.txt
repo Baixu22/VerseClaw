@@ -1,0 +1,2 @@
+tests/unit/execution-migration-process.test.ts(451,5): error TS2322: Type 'null' is not assignable to type 'string'.
+tests/unit/fixtures/execution-migration-worker.mts(253,9): error TS2322: Type 'null' is not assignable to type 'string'.

@@ -2,6 +2,7 @@ import type { TaskLedgerReference } from './task-ledger-reference.js';
 import type { WorkModeId } from './work-mode.js';
 import type { SessionTaskWriterClaim } from '../session-task-scope.js';
 import type { SessionHandoffOperation } from './session-handoff.js';
+import type { ExecutionMigrationOperation } from './execution-migration.js';
 
 export type WorkspacePermissionMode = 'readOnly' | 'acceptEdits' | 'plan' | 'fullAccess';
 
@@ -299,6 +300,7 @@ export interface WorkspaceProfile {
   /** Stable project entry, owned by coordinator binding/handoff rather than chat selection. */
   projectCoordinatorSessionKey?: string;
   handoffOperations?: Record<string, SessionHandoffOperation>;
+  executionMigrations?: Record<string, ExecutionMigrationOperation>;
 }
 
 export interface SessionArchiveEntry {

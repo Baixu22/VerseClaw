@@ -1,5 +1,7 @@
 import type { RawMessage } from '../chat/types';
 import type { SessionHandoffOperation } from '../types/session-handoff';
+import type { ExecutionMigrationOperation, WorkspaceExecutionMigrationPayload, WorkspaceExecutionMigrationReadPayload } from '../types/execution-migration';
+export type { WorkspaceExecutionMigrationPayload, WorkspaceExecutionMigrationReadPayload } from '../types/execution-migration';
 import type { ScopedRunId } from '../types/identity-scope';
 import type { InstructionLayerKind, InstructionResolution, InstructionTrust } from '../instruction-precedence';
 import type { BackgroundWorkGateState, ResourceEnvelopeSnapshot } from '../types/resources';
@@ -5823,6 +5825,8 @@ export type HostApiContract = {
     selectSessionTask: (payload: WorkspaceSessionTaskSelectPayload) => WorkspaceCoordinatorBindingResult;
     resolveCoordinator: (payload: WorkspaceCoordinatorResolvePayload) => WorkspaceCoordinatorBindingResult;
     pauseCoordinator: (payload: WorkspaceCoordinatorPausePayload) => WorkspaceCoordinatorBindingResult;
+    migrateExecution: (payload: WorkspaceExecutionMigrationPayload) => HostSuccess & { operation: ExecutionMigrationOperation };
+    executionMigration: (payload: WorkspaceExecutionMigrationReadPayload) => HostSuccess & { operation: ExecutionMigrationOperation | null };
   };
   projectRules: {
     snapshot: () => ProjectRulesSnapshotResult;

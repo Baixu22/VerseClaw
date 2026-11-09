@@ -3,6 +3,7 @@
 // and manifest/digest primitives: this is a new operation kind in the existing
 // session mutation journal, not a second lifecycle truth store.
 import type { SessionEntry } from "../config/sessions/types.js";
+import type { SessionExecutionMigrationRequest } from "../../../shared/types/execution-migration.js";
 import {
   readSessionDeleteOperationJournalRow,
   updateSessionDeleteOperationJournalState,
@@ -17,7 +18,10 @@ import {
 
 export const SESSION_MUTATION_OPERATION_JOURNAL_SCHEMA_VERSION = "1";
 
-export type SessionMutationOperationKind = "session-archive" | "session-restore";
+export type SessionMutationOperationKind =
+  | "session-archive"
+  | "session-restore"
+  | "session-execution-migrate";
 
 export type SessionArchiveIndexSnapshot = {
   sessionKey: string;
@@ -58,9 +62,26 @@ export type SessionRestoreOperationManifest = {
   restoredEntry: SessionEntry;
 };
 
+export type SessionExecutionMigrationOperationManifest = {
+  version: "1";
+  operation: "session-execution-migrate";
+  agentId: string;
+  storeIdentity: string;
+  canonicalKey: string;
+  request: SessionExecutionMigrationRequest;
+  requestDigest: string;
+  sourceEntry: SessionEntry;
+  targetEntry: SessionEntry;
+  sourceTranscriptPath: string;
+  targetTranscriptPath: string;
+  sourceTranscriptSha256: string | null;
+  targetTranscriptSha256: string | null;
+};
+
 export type SessionMutationOperationManifest =
   | SessionArchiveOperationManifest
-  | SessionRestoreOperationManifest;
+  | SessionRestoreOperationManifest
+  | SessionExecutionMigrationOperationManifest;
 
 export type SessionMutationOperationJournalReadResult = {
   row: SessionDeleteOperationJournalRow;
@@ -112,18 +133,56 @@ export function parseSessionMutationOperationManifest(
       `session mutation journal schema version ${String(parsed.version)} is unsupported`,
     );
   }
-  if (parsed.operation !== "session-archive" && parsed.operation !== "session-restore") {
+  if (
+    parsed.operation !== "session-archive" &&
+    parsed.operation !== "session-restore" &&
+    parsed.operation !== "session-execution-migrate"
+  ) {
     throw new Error(`session mutation operation is unsupported: ${String(parsed.operation)}`);
   }
   if (
     !isNonEmptyString(parsed.agentId) ||
     !isNonEmptyString(parsed.storeIdentity) ||
-    !isNonEmptyString(parsed.canonicalKey) ||
+    !isNonEmptyString(parsed.canonicalKey)
+  ) {
+    throw new Error("session mutation journal manifest is missing required identity");
+  }
+  if (parsed.operation === "session-execution-migrate") {
+    const request = parsed.request;
+    if (
+      !isNonEmptyString(parsed.requestDigest) ||
+      !isRecord(request) ||
+      !isNonEmptyString(request.operationId) ||
+      !isNonEmptyString(request.sessionKey) ||
+      !isNonEmptyString(request.agentId) ||
+      !isNonEmptyString(request.sourceGeneration) ||
+      !isNonEmptyString(request.targetGeneration) ||
+      !isNonEmptyString(request.sourceRoot) ||
+      !isNonEmptyString(request.targetRoot) ||
+      !isNonEmptyString(request.taskNodeId) ||
+      typeof request.contractRevision !== "number" ||
+      !Number.isSafeInteger(request.contractRevision) ||
+      !isNonEmptyString(request.contractDigest) ||
+      !isRecord(parsed.sourceEntry) ||
+      !isNonEmptyString(parsed.sourceEntry.sessionId) ||
+      !isRecord(parsed.targetEntry) ||
+      !isNonEmptyString(parsed.targetEntry.sessionId) ||
+      !isNonEmptyString(parsed.sourceTranscriptPath) ||
+      !isNonEmptyString(parsed.targetTranscriptPath) ||
+      (parsed.sourceTranscriptSha256 !== null &&
+        !/^[a-f0-9]{64}$/.test(String(parsed.sourceTranscriptSha256))) ||
+      parsed.sourceTranscriptSha256 !== parsed.targetTranscriptSha256
+    ) {
+      throw new Error("session execution migration manifest is incomplete");
+    }
+    return parsed as SessionExecutionMigrationOperationManifest;
+  }
+  if (
     !isNonEmptyString(parsed.archiveIndexPath) ||
     !isNonEmptyString(parsed.archivedTranscriptPath) ||
     !isNonEmptyString(parsed.liveTranscriptPath)
   ) {
-    throw new Error("session mutation journal manifest is missing required paths or identity");
+    throw new Error("session mutation journal manifest is missing required paths");
   }
   const archiveEntry = validateArchiveEntry(parsed.archiveEntry);
   if (parsed.operation === "session-archive") {

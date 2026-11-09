@@ -277,7 +277,7 @@ async function archiveSessionMutation(input: {
   }
   const label =
     input.label?.trim() ||
-    journal?.manifest.archiveEntry.label ||
+    (journal?.manifest.operation === "session-archive" ? journal.manifest.archiveEntry.label : undefined) ||
     input.entry?.label?.trim() ||
     input.entry?.displayName?.trim() ||
     canonicalKey;

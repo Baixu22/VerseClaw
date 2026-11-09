@@ -43,6 +43,7 @@ const i18nInitialization = i18n
     });
 
 const loadedLanguages = new Set<LanguageCode>(['en']);
+let languageRequest = 0;
 
 async function ensureLanguageResources(language: LanguageCode): Promise<void> {
     if (loadedLanguages.has(language) || isEnglish(language)) return;
@@ -66,6 +67,7 @@ async function ensureLanguageResources(language: LanguageCode): Promise<void> {
  * while the dynamic import is in flight.
  */
 export async function changeLanguageWithResources(language: string): Promise<void> {
+    const request = ++languageRequest;
     const resolved = resolveSupportedLanguage(language);
     if (!isEnglish(resolved)) {
         try {
@@ -74,7 +76,7 @@ export async function changeLanguageWithResources(language: string): Promise<voi
             console.warn(`[i18n] failed to load ${resolved} resources`, error);
         }
     }
-    await i18n.changeLanguage(resolved);
+    if (request === languageRequest) await i18n.changeLanguage(resolved);
 }
 
 // Keep the document language in sync with the active i18n language.

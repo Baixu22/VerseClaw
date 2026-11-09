@@ -1,0 +1,1468 @@
+{
+  "schema": "execution-environment-migration/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "observedAt": "2026-11-09T00:18:42.318763+00:00",
+  "status": "passed",
+  "acceptedNode": "TF-0866",
+  "candidate": "1cba6f8d565330469e3bfee18a59dd72f8b9feff",
+  "base": "03164afd0",
+  "sourceClean": true,
+  "commands": [
+    {
+      "name": "migration-final2-units",
+      "candidate": "39c8f52b11c55498c95b417d0bbc4c1b326110e2",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/execution-migration.test.ts",
+        "tests/unit/execution-migration-runtime.test.ts",
+        "tests/unit/execution-migration-control.test.tsx",
+        "tests/unit/i18n-language-order.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=json",
+        "--outputFile=D:/tmp/unified-management-20261109/migration-validation/migration-final2-units.tests.json"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": {
+        "total": 39,
+        "passed": 39,
+        "failed": 0,
+        "pending": 0
+      },
+      "sourceDeltaToFinal": [
+        "tests/unit/execution-migration-process.test.ts",
+        "tests/unit/fixtures/execution-migration-worker.mts"
+      ]
+    },
+    {
+      "name": "process-proof-final",
+      "candidate": "1cba6f8d565330469e3bfee18a59dd72f8b9feff",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/execution-migration-process.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=json",
+        "--outputFile=D:/tmp/unified-management-20261109/migration-validation/process-proof-final.tests.json"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": {
+        "total": 17,
+        "passed": 17,
+        "failed": 0,
+        "pending": 0
+      },
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "owner-regression",
+      "candidate": "93e1cafedab21f43d1ebdc8da840c01752ff1cdf",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "vitest.unified-effect.config.ts",
+        "--reporter=json",
+        "--outputFile=D:/tmp/unified-management-20261109/migration-validation/owner-regression.tests.json"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": {
+        "total": 27,
+        "passed": 27,
+        "failed": 0,
+        "pending": 0
+      },
+      "sourceDeltaToFinal": [
+        "electron/services/execution-migration.ts",
+        "openclaw_runtime/src/agents/execution-checkout-tools.ts",
+        "shared/i18n/locales/en/chat.json",
+        "shared/i18n/locales/ja/chat.json",
+        "shared/i18n/locales/ru/chat.json",
+        "shared/i18n/locales/zh/chat.json",
+        "shared/types/execution-migration.ts",
+        "src/pages/Chat/ExecutionMigrationControl.tsx",
+        "tests/e2e/execution-migration.spec.ts",
+        "tests/unit/execution-migration.test.ts"
+      ]
+    },
+    {
+      "name": "task-regression",
+      "candidate": "037774fe1805c699a4d23c98d1ac6b05c913e1ee",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "vitest.task-system.config.ts",
+        "--reporter=json",
+        "--outputFile=D:/tmp/unified-management-20261109/migration-validation/task-regression.tests.json"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": {
+        "total": 79,
+        "passed": 79,
+        "failed": 0,
+        "pending": 0
+      },
+      "sourceDeltaToFinal": [
+        "electron/services/execution-migration.ts",
+        "shared/i18n/locales/en/chat.json",
+        "shared/i18n/locales/ja/chat.json",
+        "shared/i18n/locales/ru/chat.json",
+        "shared/i18n/locales/zh/chat.json",
+        "shared/types/execution-migration.ts",
+        "src/pages/Chat/ExecutionMigrationControl.tsx",
+        "tests/e2e/execution-migration.spec.ts",
+        "tests/unit/execution-migration.test.ts"
+      ]
+    },
+    {
+      "name": "checkout-regression",
+      "candidate": "037774fe1805c699a4d23c98d1ac6b05c913e1ee",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "vitest.checkout-writer.config.ts",
+        "--reporter=json",
+        "--outputFile=D:/tmp/unified-management-20261109/migration-validation/checkout-regression.tests.json"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": {
+        "total": 36,
+        "passed": 36,
+        "failed": 0,
+        "pending": 0
+      },
+      "sourceDeltaToFinal": [
+        "electron/services/execution-migration.ts",
+        "shared/i18n/locales/en/chat.json",
+        "shared/i18n/locales/ja/chat.json",
+        "shared/i18n/locales/ru/chat.json",
+        "shared/i18n/locales/zh/chat.json",
+        "shared/types/execution-migration.ts",
+        "src/pages/Chat/ExecutionMigrationControl.tsx",
+        "tests/e2e/execution-migration.spec.ts",
+        "tests/unit/execution-migration.test.ts"
+      ]
+    },
+    {
+      "name": "final-node-types",
+      "candidate": "39c8f52b11c55498c95b417d0bbc4c1b326110e2",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "sourceDeltaToFinal": [
+        "tests/unit/execution-migration-process.test.ts",
+        "tests/unit/fixtures/execution-migration-worker.mts"
+      ]
+    },
+    {
+      "name": "final-web-types",
+      "candidate": "39c8f52b11c55498c95b417d0bbc4c1b326110e2",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "sourceDeltaToFinal": [
+        "tests/unit/execution-migration-process.test.ts",
+        "tests/unit/fixtures/execution-migration-worker.mts"
+      ]
+    },
+    {
+      "name": "final-test-types2",
+      "candidate": "1cba6f8d565330469e3bfee18a59dd72f8b9feff",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "runtime-build5",
+      "candidate": "037774fe1805c699a4d23c98d1ac6b05c913e1ee",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "sourceDeltaToFinal": [
+        "electron/services/execution-migration.ts",
+        "shared/i18n/locales/en/chat.json",
+        "shared/i18n/locales/ja/chat.json",
+        "shared/i18n/locales/ru/chat.json",
+        "shared/i18n/locales/zh/chat.json",
+        "shared/types/execution-migration.ts",
+        "src/pages/Chat/ExecutionMigrationControl.tsx",
+        "tests/e2e/execution-migration.spec.ts",
+        "tests/unit/execution-migration.test.ts"
+      ]
+    },
+    {
+      "name": "desktop-build8",
+      "candidate": "39c8f52b11c55498c95b417d0bbc4c1b326110e2",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--max-old-space-size=6144",
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "sourceDeltaToFinal": [
+        "tests/unit/execution-migration-process.test.ts",
+        "tests/unit/fixtures/execution-migration-worker.mts"
+      ]
+    },
+    {
+      "name": "electron-migration6",
+      "candidate": "39c8f52b11c55498c95b417d0bbc4c1b326110e2",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/execution-migration.spec.ts",
+        "--workers=1",
+        "--reporter=list,json",
+        "--output=D:/tmp/unified-management-20261109/migration-validation/electron-migration6-results"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": {
+        "startTime": "2026-11-09T00:07:56.085Z",
+        "duration": 238634.114,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "sourceDeltaToFinal": [
+        "tests/unit/execution-migration-process.test.ts",
+        "tests/unit/fixtures/execution-migration-worker.mts"
+      ]
+    },
+    {
+      "name": "final-contract",
+      "candidate": "39c8f52b11c55498c95b417d0bbc4c1b326110e2",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/contract-check.mjs"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "sourceDeltaToFinal": [
+        "tests/unit/execution-migration-process.test.ts",
+        "tests/unit/fixtures/execution-migration-worker.mts"
+      ]
+    },
+    {
+      "name": "i18n-final",
+      "candidate": "2a0b0f404db0380afdf800121b933e03b1b9f40a",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/i18n-lint.mjs"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "sourceDeltaToFinal": [
+        "electron/services/execution-migration.ts",
+        "shared/types/execution-migration.ts",
+        "src/pages/Chat/ExecutionMigrationControl.tsx",
+        "tests/unit/execution-migration.test.ts"
+      ]
+    },
+    {
+      "name": "final-comms-replay",
+      "candidate": "1cba6f8d565330469e3bfee18a59dd72f8b9feff",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/comms/replay.mjs"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "final-comms-compare",
+      "candidate": "1cba6f8d565330469e3bfee18a59dd72f8b9feff",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/comms/compare.mjs"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "final-harness",
+      "candidate": "39c8f52b11c55498c95b417d0bbc4c1b326110e2",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/execution-environment-migration.md"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "sourceDeltaToFinal": [
+        "tests/unit/execution-migration-process.test.ts",
+        "tests/unit/fixtures/execution-migration-worker.mts"
+      ]
+    },
+    {
+      "name": "final-harness-preview",
+      "candidate": "39c8f52b11c55498c95b417d0bbc4c1b326110e2",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/execution-environment-migration.md",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "sourceDeltaToFinal": [
+        "tests/unit/execution-migration-process.test.ts",
+        "tests/unit/fixtures/execution-migration-worker.mts"
+      ]
+    },
+    {
+      "name": "final-artifacts",
+      "candidate": "39c8f52b11c55498c95b417d0bbc4c1b326110e2",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "sourceDeltaToFinal": [
+        "tests/unit/execution-migration-process.test.ts",
+        "tests/unit/fixtures/execution-migration-worker.mts"
+      ]
+    },
+    {
+      "name": "final-evidence-refs",
+      "candidate": "1cba6f8d565330469e3bfee18a59dd72f8b9feff",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/check-evidence-refs.mjs"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "sourceDeltaToFinal": []
+    },
+    {
+      "name": "final-coverage-baseline",
+      "candidate": "1cba6f8d565330469e3bfee18a59dd72f8b9feff",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/check-test-coverage-baseline.mjs"
+      ],
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "tests": null,
+      "sourceDeltaToFinal": []
+    }
+  ],
+  "uniqueUnitPassed": 194,
+  "uniqueElectronPassed": 2,
+  "processReceipts": 17,
+  "unitCases": [
+    "autonomy-worktree-native.test.ts::worktree native owner admission keeps a live lock exclusive and refuses duplicate creation across processes",
+    "autonomy-worktree-owner.test.ts::autonomy worktree owner admission does not execute under an existing legacy mutex aged 0 ms",
+    "autonomy-worktree-owner.test.ts::autonomy worktree owner admission does not execute under an existing legacy mutex aged 60000 ms",
+    "autonomy-worktree-owner.test.ts::autonomy worktree owner admission never promotes directory simulation or missing owner records to verified isolation",
+    "autonomy-worktree-owner.test.ts::autonomy worktree owner admission never replaces an occupied checkout for same/id",
+    "autonomy-worktree-owner.test.ts::autonomy worktree owner admission never replaces an occupied checkout for same:id",
+    "autonomy-worktree-owner.test.ts::autonomy worktree owner admission never replaces an occupied checkout for worker",
+    "autonomy-worktree-owner.test.ts::autonomy worktree owner admission records the actual checkout HEAD when the base advances after service creation",
+    "autonomy-worktree-owner.test.ts::autonomy worktree owner admission rejects . as a checkout identity without removing the parent",
+    "autonomy-worktree-owner.test.ts::autonomy worktree owner admission rejects .. as a checkout identity without removing the parent",
+    "autonomy-worktree-owner.test.ts::autonomy worktree owner admission rejects sanitized id collisions and directories surviving registry loss",
+    "autonomy-worktree-owner.test.ts::autonomy worktree owner admission returns snapshots whose mutation cannot rewrite owner state",
+    "checkout-writer-ownership.test.ts::checkout writer resource owner checks managed Git native identity in addition to directory instance",
+    "checkout-writer-ownership.test.ts::checkout writer resource owner closes expired and draining admission without transferring ownership",
+    "checkout-writer-ownership.test.ts::checkout writer resource owner does not reinterpret a failed managed registration as an independent checkout",
+    "checkout-writer-ownership.test.ts::checkout writer resource owner excludes a different writer and preserves exact request/owner/epoch identity",
+    "checkout-writer-ownership.test.ts::checkout writer resource owner finishes only its interrupted cleanup after native removal and permits a new incarnation",
+    "checkout-writer-ownership.test.ts::checkout writer resource owner gates real service merge, freeze and cleanup before filesystem effects",
+    "checkout-writer-ownership.test.ts::checkout writer resource owner normalizes service aliases and releases only unused claims when multi-root admission fails",
+    "checkout-writer-ownership.test.ts::checkout writer resource owner persists in-flight and unknown effects across restart until an explicit owner receipt settles them",
+    "checkout-writer-ownership.test.ts::checkout writer resource owner recovers an exited maintenance reservation that never admitted a filesystem operation",
+    "checkout-writer-ownership.test.ts::checkout writer resource owner rejects a replaced checkout and keeps epochs monotonic after managed recreation",
+    "checkout-writer-ownership.test.ts::checkout writer resource owner replays a completed receipt without reauthorizing its effect and rejects operation payload drift",
+    "checkout-writer-ownership.test.ts::checkout writer resource owner resolves managed roots back to their persistent generation after restart",
+    "checkout-writer-ownership.test.ts::checkout writer resource owner retains a crashed native writer and rejects a new process instead of stealing its lease",
+    "checkout-writer-ownership.test.ts::checkout writer resource owner retains captured task association in the resource identity across reopen",
+    "checkout-writer-ownership.test.ts::checkout writer resource owner retains failed maintenance and does not free or replay an unknown filesystem effect",
+    "checkout-writer-ownership.test.ts::checkout writer resource owner rotates a drained writer without exposing the checkout to a competing task",
+    "checkout-writer-ownership.test.ts::checkout writer resource owner serializes competing processes while different native checkouts keep independent writers",
+    "checkout-writer-ownership.test.ts::checkout writer resource owner shares the same execution owner when the source runtime isolates its session state",
+    "checkout-writer-ownership.test.ts::checkout writer resource owner uses the same base writer for ordinary effects and maintenance",
+    "durable-task-acceptance.test.ts::existing verifier and effect owners does not accept caller-chosen unknown owners",
+    "durable-task-acceptance.test.ts::existing verifier and effect owners reads actual evidence, records an existing effect receipt, and accepts only the current candidate",
+    "durable-task-acceptance.test.ts::existing verifier and effect owners reconciles an unknown effect only from a matching terminal receipt owned by the runtime",
+    "durable-task-acceptance.test.ts::existing verifier and effect owners rejects artifacts changed after the requirement was checked",
+    "durable-task-acceptance.test.ts::existing verifier and effect owners rejects new generations and unresolved operations before completing",
+    "durable-task-acceptance.test.ts::existing verifier and effect owners requires an independent verifier run bound to the unchanged input snapshot",
+    "durable-task-authority-access.test.ts::TaskSystemStore authority access rejects an access domain mismatch before opening the database",
+    "durable-task-authority-access.test.ts::TaskSystemStore authority access rejects an execution worktree mismatch before opening the database",
+    "durable-task-authority-access.test.ts::TaskSystemStore authority access rejects other authorities and allows one authority across physical checkouts",
+    "durable-task-authority-access.test.ts::TaskSystemStore authority access rejects stale authority on construction, reads, and writes without changing the ledger",
+    "durable-task-coordinator-context.test.ts::recovers a fork's read reference from owner lineage without copying its parent's writer",
+    "durable-task-coordinator-context.test.ts::rehydrates a coordinator read reference using the parent generation while a child owns the writer",
+    "durable-task-delegation.test.ts::durable production delegation protocol does not return writing authority to a reset parent generation",
+    "durable-task-delegation.test.ts::durable production delegation protocol does not transfer queued work until dispatch and rejects changed parent ownership",
+    "durable-task-delegation.test.ts::durable production delegation protocol gives a verifier a read reference without transferring writer or blocking the parent",
+    "durable-task-delegation.test.ts::durable production delegation protocol restores the delegation from disk and keeps unknown effects as a return barrier",
+    "durable-task-delegation.test.ts::durable production delegation protocol retains ownership after lost dispatch acknowledgement and rejects a second writer",
+    "durable-task-delegation.test.ts::durable production delegation protocol transfers before dispatch, preserves read-only parent context and returns from terminal owner evidence",
+    "durable-task-event-store.test.ts::existing Task Ledger transactional migration deduplicates event-level keys while preserving new logical requests",
+    "durable-task-event-store.test.ts::existing Task Ledger transactional migration imports old IDs, leaves original bytes intact, and appends in one owner store",
+    "durable-task-event-store.test.ts::existing Task Ledger transactional migration rejects corrupt legacy history instead of presenting an empty task graph",
+    "durable-task-event-store.test.ts::existing Task Ledger transactional migration reuses the current projection and invalidates it after an appended event",
+    "durable-task-faults.test.ts::task owner fault boundaries blocks writes on a corrupt database while preserving its bytes for recovery",
+    "durable-task-faults.test.ts::task owner fault boundaries handles clock rollback conservatively without losing the task or admitting a second owner",
+    "durable-task-faults.test.ts::task owner fault boundaries rejects a busy claim transaction then resumes the same request without a partial owner",
+    "durable-task-planning.test.ts::task discovery and goal decomposition cancels a whole plan only after child effects settle and replays the final effect receipt",
+    "durable-task-planning.test.ts::task discovery and goal decomposition decomposes atomically, retains the original goal and gates the parent on accepted children",
+    "durable-task-planning.test.ts::task discovery and goal decomposition paginates a frozen insertion window without hiding old tasks behind new arrivals",
+    "durable-task-planning.test.ts::task discovery and goal decomposition rehydrates the root goal through multiple decompositions and retains valid progress JSON",
+    "durable-task-planning.test.ts::task discovery and goal decomposition rejects cycles that cross a parent-child plan edge",
+    "durable-task-planning.test.ts::task discovery and goal decomposition replays committed changes after a missed acknowledgement and rejects a stale consumer cursor",
+    "durable-task-planning.test.ts::task discovery and goal decomposition retires settled children explicitly before revising a parent plan",
+    "durable-task-planning.test.ts::task discovery and goal decomposition rolls back every child when the plan contains an invalid dependency",
+    "durable-task-planning.test.ts::task discovery and goal decomposition suggests overlapping goals without merging their identities",
+    "durable-task-runtime.test.ts::production task runtime guard adopts only a new initial binding, then keeps its epoch pinned",
+    "durable-task-runtime.test.ts::production task runtime guard binds a real tool result to unchanged verification inputs",
+    "durable-task-runtime.test.ts::production task runtime guard blocks retries after a background effect until the real process owner reports completion",
+    "durable-task-runtime.test.ts::production task runtime guard captures the old epoch and refuses execution after handoff",
+    "durable-task-runtime.test.ts::production task runtime guard does not grant a fork or unbound session write access in a managed repository",
+    "durable-task-runtime.test.ts::production task runtime guard records cancellation immediately and waits for the in-flight owner before releasing the task",
+    "durable-task-runtime.test.ts::production task runtime guard requires a task before the first write even when no task database exists yet",
+    "durable-task-runtime.test.ts::production task runtime guard restores a goal created during the run after ten compacted contexts without duplicating it",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner keeps an accepted task closed when selected for another effect",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner keeps fork references read only until an explicit new owner is granted",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner rejects a conflicting explicit task instead of reverting the selection",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner rejects a legacy reference without inventing a contract or upgrading its state",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner rejects a second writer and a stale generation at the new entry point",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner rejects conflicting stores after repository initialization",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner rejects effects without a contract without creating a database",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner retains task identity and writer exclusivity when runtime bootstrap initializes Git",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner retains the current task when an execution or an unknown operation blocks selection",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner retains the old owner while an effect is still unresolved",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner reuses the canonical TaskID and writer attempt across admission retries",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner selects another canonical task without changing its state and grants only its next execution",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner uses the existing handoff epoch and fences the previous credential",
+    "durable-task-start.test.ts::reads only the owning session generation, including its cancelled task",
+    "durable-task-start.test.ts::rejects a duplicate writer through the automatic start path and preserves the first claim",
+    "durable-task-start.test.ts::rolls back a proposed task if the session is already implementing another task",
+    "durable-task-start.test.ts::starts and binds an execution task in one tool call and reuses the original attempt on retry",
+    "durable-task-system.test.ts::durable product task ownership accepts only the contract-bound artifact after submitting the same candidate",
+    "durable-task-system.test.ts::durable product task ownership does not convert lease expiration into automatic reassignment",
+    "durable-task-system.test.ts::durable product task ownership does not let a file hash satisfy a business verification requirement",
+    "durable-task-system.test.ts::durable product task ownership enforces dependencies and rejects cycles",
+    "durable-task-system.test.ts::durable product task ownership keeps a lost-response retry tied to the original attempt after ownership changes",
+    "durable-task-system.test.ts::durable product task ownership keeps identity across retries, detects exact duplicates, and separates different goals",
+    "durable-task-system.test.ts::durable product task ownership keeps in-flight and unknown operations as a handoff barrier",
+    "durable-task-system.test.ts::durable product task ownership migrates the prior task schema without changing task identity and rejects future schemas",
+    "durable-task-system.test.ts::durable product task ownership persists the goal and checkpoint independently of chat compression and process connections",
+    "durable-task-system.test.ts::durable product task ownership preserves the goal while paused, and fences the previous writer on resume",
+    "durable-task-system.test.ts::durable product task ownership prevents two runs in the same owning session from implementing one task concurrently",
+    "durable-task-system.test.ts::durable product task ownership refuses a changed contract for the same business key",
+    "durable-task-system.test.ts::durable product task ownership refuses oversize goals and does not infer uniqueness from the title",
+    "durable-task-system.test.ts::durable product task ownership refuses recovery while an unknown external operation lacks its owner receipt",
+    "durable-task-system.test.ts::durable product task ownership rejects a second owner and a stale revision",
+    "durable-task-system.test.ts::durable product task ownership rejects forged generation and same-session calls from another worktree",
+    "durable-task-system.test.ts::durable product task ownership uses one task domain for two real Git worktrees",
+    "durable-task-tool.test.ts::agent-facing production task tool creates, claims, executes a real check, and accepts its owner-produced receipt",
+    "durable-task-tool.test.ts::agent-facing production task tool does not let an old task tool take control of a newer epoch",
+    "durable-task-tool.test.ts::agent-facing production task tool revises an explicitly changed goal with optimistic versioning and fences the previous run",
+    "execution-migration-control.test.tsx::reopens durable binding-committed from the target even before generation hydration",
+    "execution-migration-control.test.tsx::reopens durable confirmed from the target even before generation hydration",
+    "execution-migration-process.test.ts::TF-0866 independent process termination and restart Main resumes the same operation after the OS process is terminated at durable phase binding-committed",
+    "execution-migration-process.test.ts::TF-0866 independent process termination and restart Main resumes the same operation after the OS process is terminated at durable phase drained",
+    "execution-migration-process.test.ts::TF-0866 independent process termination and restart Main resumes the same operation after the OS process is terminated at durable phase fenced",
+    "execution-migration-process.test.ts::TF-0866 independent process termination and restart Main resumes the same operation after the OS process is terminated at durable phase intent",
+    "execution-migration-process.test.ts::TF-0866 independent process termination and restart Main resumes the same operation after the OS process is terminated at durable phase reserved",
+    "execution-migration-process.test.ts::TF-0866 independent process termination and restart Main resumes the same operation after the OS process is terminated at durable phase session-committed",
+    "execution-migration-process.test.ts::TF-0866 independent process termination and restart Main resumes the same operation after the OS process is terminated at durable phase task-committed",
+    "execution-migration-process.test.ts::TF-0866 independent process termination and restart Runtime resumes the same confirmation journal after the OS process is terminated at after-confirm-commit",
+    "execution-migration-process.test.ts::TF-0866 independent process termination and restart Runtime resumes the same confirmation journal after the OS process is terminated at before-confirm-reply",
+    "execution-migration-process.test.ts::TF-0866 independent process termination and restart Runtime resumes the same prepare journal after the OS process is terminated at after-copy",
+    "execution-migration-process.test.ts::TF-0866 independent process termination and restart Runtime resumes the same prepare journal after the OS process is terminated at after-intent",
+    "execution-migration-process.test.ts::TF-0866 independent process termination and restart Runtime resumes the same prepare journal after the OS process is terminated at after-store-commit",
+    "execution-migration-process.test.ts::TF-0866 independent process termination and restart Runtime resumes the same prepare journal after the OS process is terminated at before-prepare-reply",
+    "execution-migration-process.test.ts::TF-0866 independent process termination and restart consumes a completed source checkout receipt before pausing the source Task owner",
+    "execution-migration-process.test.ts::TF-0866 independent process termination and restart consumes a reconciled source checkout receipt before pausing the source Task owner",
+    "execution-migration-process.test.ts::TF-0866 independent process termination and restart does not release a later target writer when a confirmed operation is replayed",
+    "execution-migration-process.test.ts::TF-0866 independent process termination and restart releases the exact reserved target writer after active+confirmed publication but before the process tail",
+    "execution-migration-runtime.test.ts::runtime session execution migration keeps prepared closed until the active target task is at the same generation with no pending operation",
+    "execution-migration-runtime.test.ts::runtime session execution migration recovers the same operation after after-copy",
+    "execution-migration-runtime.test.ts::runtime session execution migration recovers the same operation after after-intent",
+    "execution-migration-runtime.test.ts::runtime session execution migration recovers the same operation after after-store-commit",
+    "execution-migration-runtime.test.ts::runtime session execution migration recovers the same operation after before-prepare-reply",
+    "execution-migration-runtime.test.ts::runtime session execution migration recovery gates rejects active target task pending operations and succeeds after settlement",
+    "execution-migration-runtime.test.ts::runtime session execution migration recovery gates rejects unknown process ownership before intent and resumes after the owner becomes readable",
+    "execution-migration-runtime.test.ts::runtime session execution migration recovery gates replays confirmation after after-confirm-commit",
+    "execution-migration-runtime.test.ts::runtime session execution migration recovery gates replays confirmation after before-confirm-reply",
+    "execution-migration-runtime.test.ts::runtime session execution migration rejects shared id reuse with a changed root or payload",
+    "execution-migration-runtime.test.ts::runtime session execution migration request boundaries rejects an equal source and target checkout before writing intent",
+    "execution-migration-runtime.test.ts::runtime session execution migration request boundaries rejects invalid agent before writing intent",
+    "execution-migration-runtime.test.ts::runtime session execution migration request boundaries rejects invalid digest before writing intent",
+    "execution-migration-runtime.test.ts::runtime session execution migration request boundaries rejects invalid length before writing intent",
+    "execution-migration-runtime.test.ts::runtime session execution migration request boundaries rejects invalid revision before writing intent",
+    "execution-migration-runtime.test.ts::runtime session execution migration request boundaries uses spawnedWorkspaceDir as the source owner root and moves it to the target root",
+    "execution-migration-runtime.test.ts::runtime session execution migration transcript and repeat boundaries allows a confirmed previous migration to start a new operation",
+    "execution-migration-runtime.test.ts::runtime session execution migration transcript and repeat boundaries copies a zero-byte transcript by hash without rewriting the source",
+    "execution-migration-runtime.test.ts::runtime session execution migration transcript and repeat boundaries rejects an absent fresh transcript after preserving the operation intent",
+    "execution-migration.test.ts::Main environment migration composition binds relative checkpoint artifacts to the source checkout across recovery",
+    "execution-migration.test.ts::Main environment migration composition holds target exclusion until publication and never releases a later writer on replay",
+    "execution-migration.test.ts::Main environment migration composition reconciles an already published operation after its reply is lost",
+    "execution-migration.test.ts::Main environment migration composition recovers a lost confirm reply through the same Runtime operation",
+    "execution-migration.test.ts::Main environment migration composition recovers a lost prepare reply through the same Runtime operation",
+    "execution-migration.test.ts::Main environment migration composition recovers its quiescent target claim after the saved migration outlives its lease",
+    "execution-migration.test.ts::Main environment migration composition rejects changed request payload and retains unresolved resources",
+    "execution-migration.test.ts::Main environment migration composition resumes after durable binding-committed without changing task identity",
+    "execution-migration.test.ts::Main environment migration composition resumes after durable drained without changing task identity",
+    "execution-migration.test.ts::Main environment migration composition resumes after durable fenced without changing task identity",
+    "execution-migration.test.ts::Main environment migration composition resumes after durable intent without changing task identity",
+    "execution-migration.test.ts::Main environment migration composition resumes after durable reserved without changing task identity",
+    "execution-migration.test.ts::Main environment migration composition resumes after durable session-committed without changing task identity",
+    "execution-migration.test.ts::Main environment migration composition resumes after durable task-committed without changing task identity",
+    "execution-migration.test.ts::Main environment migration composition retains unknown task effects without advancing the claim",
+    "execution-migration.test.ts::Main environment migration composition settles a durable task receipt before pausing (previous pause=false)",
+    "execution-migration.test.ts::Main environment migration composition settles a durable task receipt before pausing (previous pause=true)",
+    "i18n-language-order.test.ts::keeps the latest selected language when an older startup bundle finishes later",
+    "orchestration-worktree-merge.test.ts::orchestration worktree merge evidence merges the first overlapping worktree and records the conflict for the second",
+    "orchestration-worktree-merge.test.ts::orchestration worktree merge evidence reports declared-vs-actual write-set drift from the git worktree status",
+    "orchestration-worktree-merge.test.ts::rejects late merge, freeze and cleanup requests after the same id is recreated",
+    "orchestration-worktree-merge.test.ts::worktree long-session ownership cleans only explicit ephemeral worktrees for the exact generation",
+    "orchestration-worktree-merge.test.ts::worktree long-session ownership rejects a new owned worktree before filesystem creation when maxWorktrees is reached",
+    "unified-effect-admission.test.ts::joint task and checkout effect boundary compensates both permits when cancellation happens before the raw effect",
+    "unified-effect-admission.test.ts::joint task and checkout effect boundary guards the actual adapter path (hook wrapped: false) exactly once",
+    "unified-effect-admission.test.ts::joint task and checkout effect boundary guards the actual adapter path (hook wrapped: true) exactly once",
+    "unified-effect-admission.test.ts::joint task and checkout effect boundary keeps background ownership until the process and task owners have both settled",
+    "unified-effect-admission.test.ts::joint task and checkout effect boundary permits reuse after the returned parent explicitly releases its task ownership",
+    "unified-effect-admission.test.ts::joint task and checkout effect boundary rejects stale captured task credentials at the raw effect boundary",
+    "unified-effect-admission.test.ts::joint task and checkout effect boundary retains a returned child checkout for the canonical parent rather than a third task",
+    "unified-effect-admission.test.ts::joint task and checkout effect boundary retains one writer between tool calls and refuses another task before touching its file",
+    "unified-effect-admission.test.ts::joint task and checkout effect boundary retains unknown writes until the exact task owner receipt reconciles them",
+    "unified-effect-admission.test.ts::joint task and checkout effect boundary retries deferred canonical return after the original process owner settles",
+    "unified-effect-admission.test.ts::joint task and checkout effect boundary rotates a recovered same-run writer without reviving its old token",
+    "unified-effect-admission.test.ts::joint task and checkout effect boundary settles a process owner signal receipt without inventing a successful exit code",
+    "unified-effect-admission.test.ts::joint task and checkout effect boundary settles an unused grant from durable writer state when the run terminates before receiving its reply",
+    "unified-effect-admission.test.ts::joint task and checkout effect boundary settles the exact completed process receipt after task cancellation advances the epoch",
+    "unified-effect-admission.test.ts::joint task and checkout effect boundary transfers to a canonical child while the parent mission_loop call is still active",
+    "unified-effect-admission.test.ts::joint task and checkout effect boundary transfers to a canonical child while the parent sessions_spawn call is still active",
+    "unified-effect-admission.test.ts::joint task and checkout effect boundary transfers to a canonical child while the parent task_loop call is still active",
+    "unified-task-authority.test.ts::registered authority reaches existing task owners Main and task_control share the same task across explicit clones while files stay local",
+    "unified-task-authority.test.ts::registered authority reaches existing task owners keeps independent clones separate until explicit registration",
+    "unified-task-authority.test.ts::registered authority reaches existing task owners pins both the Main read/claim gap and a task tool to the registration revision",
+    "unified-task-authority.test.ts::registered authority reaches existing task owners refuses registration that would hide an independent local task ledger",
+    "unified-task-authority.test.ts::registered authority reaches existing task owners rejects a missing or replaced registered database instead of creating a local ledger",
+    "unified-task-authority.test.ts::registered authority reaches existing task owners rejects a replaced independent database between Main resolution and claim even when its bytes match"
+  ],
+  "electronCases": [
+    "execution-migration.spec.ts::execution-migration.spec.ts > moves one logical session and its task to a linked checkout and continues after restart (interrupted=false)",
+    "execution-migration.spec.ts::execution-migration.spec.ts > moves one logical session and its task to a linked checkout and continues after restart (interrupted=true)"
+  ],
+  "failures": [
+    {
+      "name": "electron-migration",
+      "candidate": "1e1a1c1d4cdbd782f9af451d2570872b0cbf79d1",
+      "exitCode": 1,
+      "sha256": "0eb9e4d4de1810ed3da4c7986da87d6ae418dfdff1aa7a0dd8e3c2576c5c22ac"
+    },
+    {
+      "name": "electron-migration2",
+      "candidate": "93e1cafedab21f43d1ebdc8da840c01752ff1cdf",
+      "exitCode": 1,
+      "sha256": "46114a45d1c1a2981eae70a4be32f7360b7c5d43f106ffd2288409e45e2191a2"
+    },
+    {
+      "name": "electron-migration3",
+      "candidate": "037774fe1805c699a4d23c98d1ac6b05c913e1ee",
+      "exitCode": 1,
+      "sha256": "19846d30e47be1affc5694a9086943303166fd44c34de7465d117a49c873a105"
+    },
+    {
+      "name": "electron-migration4",
+      "candidate": "037774fe1805c699a4d23c98d1ac6b05c913e1ee",
+      "exitCode": 1,
+      "sha256": "dd619899dfad18e08fbde6d8f9baf34d38c7e15e1625ce09d6de54e08a487750"
+    },
+    {
+      "name": "electron-migration5",
+      "candidate": "2a0b0f404db0380afdf800121b933e03b1b9f40a",
+      "exitCode": 1,
+      "sha256": "ab036757814973db770d2801662f2b6c5ee3acf80f706e15958b37c53fb9d433"
+    },
+    {
+      "name": "final-test-types",
+      "candidate": "39c8f52b11c55498c95b417d0bbc4c1b326110e2",
+      "exitCode": 2,
+      "sha256": "2a633fd1d731d5ea173b8960991f1ee6ae6ddbb18e071845c56fbb261e0e7f50"
+    },
+    {
+      "name": "harness-ci",
+      "candidate": "39c8f52b11c55498c95b417d0bbc4c1b326110e2",
+      "exitCode": 1,
+      "sha256": "3d6a7982bb7ec496a62d6c5610c04e15106b067b7f86d4b5d27bbc86356594ce"
+    },
+    {
+      "name": "language-race-red",
+      "candidate": "2a0b0f404db0380afdf800121b933e03b1b9f40a",
+      "exitCode": 1,
+      "sha256": "d6b726656ca08843b14fbd48488ffae465ba5c72b93dd5dde7c1c472e2879762"
+    },
+    {
+      "name": "migration-expiry-red2",
+      "candidate": "2e6bb9a527a8823d17221ae1e6aee76cf84bdc45",
+      "exitCode": 1,
+      "sha256": "e94decb6e4982d5e538b9b0f7477613d6aed9c7114f12c39ee65e4beca70d78d"
+    },
+    {
+      "name": "node-types",
+      "candidate": "93e1cafedab21f43d1ebdc8da840c01752ff1cdf",
+      "exitCode": 2,
+      "sha256": "d8730b4ea75731f5dfa6f36e8544be9352cc4597112e2a0165bdd9f553d9ef21"
+    },
+    {
+      "name": "runtime-build",
+      "candidate": "a5765222cf2563f55a18c5d4b92aa6e5fc372e83",
+      "exitCode": 1,
+      "sha256": "059d8b70761c3b3f83103bc557b3a911b249165fa16e1a35c5e91fd3d15df396"
+    }
+  ],
+  "evidenceInventory": [
+    {
+      "path": "commands/migration-final2-units.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\migration-final2-units.result.json",
+      "sha256": "f5bedbac2bdfdb9b901f7176f5acdfa4098abb6683c474c31fc3f335565298ee"
+    },
+    {
+      "path": "commands/migration-final2-units.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\migration-final2-units.tests.json",
+      "sha256": "d893a07921be629ba7dae1a7bd5c5e5ab71cd5fb0e13060a441dc7f128dee276"
+    },
+    {
+      "path": "commands/migration-final2-units.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\migration-final2-units.log",
+      "sha256": "573ab83fc5e04e59141216d7688b04100eb1da3eafcdb477b96025a3cdabd641"
+    },
+    {
+      "path": "commands/process-proof-final.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\process-proof-final.result.json",
+      "sha256": "cf47c2f813b204879fbda49c2119b8fb21b1d3848cf22c00baf1907cc735c85d"
+    },
+    {
+      "path": "commands/process-proof-final.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\process-proof-final.tests.json",
+      "sha256": "d7f1879f89b4954b9d6961d28717b7267b1a3ce1ac394e6ad063330c589dddf3"
+    },
+    {
+      "path": "commands/process-proof-final.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\process-proof-final.log",
+      "sha256": "814b63affd58c527cf07a3b5d40012c30209118bb0d03a2b11819565e79704ac"
+    },
+    {
+      "path": "commands/owner-regression.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\owner-regression.result.json",
+      "sha256": "7c22627b2fabf869398e29bd4833671ab60eac3dbdfd4410cdb533dff576c8ed"
+    },
+    {
+      "path": "commands/owner-regression.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\owner-regression.tests.json",
+      "sha256": "e841acc61abbac21d6065041cf49882b3337122454752a731c16b284ae0d6d97"
+    },
+    {
+      "path": "commands/owner-regression.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\owner-regression.log",
+      "sha256": "23555ff56de44e038a1471c98ae928c9d30958a44738196ef4100ac5d66e4ac1"
+    },
+    {
+      "path": "commands/task-regression.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\task-regression.result.json",
+      "sha256": "190c89b81baee30b5b2cb21d1609f988b414f400a96afd315248da66df5a6e95"
+    },
+    {
+      "path": "commands/task-regression.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\task-regression.tests.json",
+      "sha256": "a8f057cd844ec5077cc9811df94ddaecf416806c8a0132d39b3a6f7ec43f504e"
+    },
+    {
+      "path": "commands/task-regression.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\task-regression.log",
+      "sha256": "528d95d9645195ab8c93de3d487d4b93ede1cfe0dd1052fff7fc006cc8e4e60e"
+    },
+    {
+      "path": "commands/checkout-regression.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\checkout-regression.result.json",
+      "sha256": "5d50568392dd609654e4d381dc553e010bd1c156634ff3499251608781a47850"
+    },
+    {
+      "path": "commands/checkout-regression.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\checkout-regression.tests.json",
+      "sha256": "3784c68e5401aba892e7f0a69387774a14e9f4798e9a12eba2dc6c184d279b2c"
+    },
+    {
+      "path": "commands/checkout-regression.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\checkout-regression.log",
+      "sha256": "7a024359975e8fa975871644f40c0c811c1b2a3327ac4c4f7d836e6e4db593f7"
+    },
+    {
+      "path": "commands/final-node-types.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\final-node-types.result.json",
+      "sha256": "c956ce2b329903d47de9dd8fc422dc1f74785f6a8d8d1f1ff5f72c38aee6c7f8"
+    },
+    {
+      "path": "commands/final-node-types.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\final-node-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "commands/final-web-types.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\final-web-types.result.json",
+      "sha256": "749e3c4435d5a9dc33b74f0ad0df459cd74c7d4287ccaf7d25ca46db3298864e"
+    },
+    {
+      "path": "commands/final-web-types.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\final-web-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "commands/final-test-types2.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\final-test-types2.result.json",
+      "sha256": "e2c3f693d04dc61b5d02b77bbd16b9989d27bf8134a70bcbbdfe8714c5d81cca"
+    },
+    {
+      "path": "commands/final-test-types2.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\final-test-types2.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "commands/runtime-build5.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\runtime-build5.result.json",
+      "sha256": "b6e63a1b4acbf64152f85b5982d96b32d5832405993a8f33491a55de966fb417"
+    },
+    {
+      "path": "commands/runtime-build5.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\runtime-build5.log",
+      "sha256": "28a913ac5b6b87b37cf39687bf8267e031a3fec648f4ade648a30ac3aec35c37"
+    },
+    {
+      "path": "commands/desktop-build8.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\desktop-build8.result.json",
+      "sha256": "9d366ff97729b3c73cb5adf14bf7df464c795fdc951125380b6a3342bfa69c37"
+    },
+    {
+      "path": "commands/desktop-build8.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\desktop-build8.log",
+      "sha256": "b06fe27e8b1c1413be94b996ff9d54f5684616ad5a5f6f15568573c8f9b712d1"
+    },
+    {
+      "path": "commands/electron-migration6.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6.result.json",
+      "sha256": "8e72f679dfb4aa91498f51ab584cd2cbcc6114791ea670050d9dbb0c51fba3ec"
+    },
+    {
+      "path": "commands/electron-migration6.tests.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6.tests.json",
+      "sha256": "2a2ececba0cf44c73f05686da19f1cc3c40099740f39eb72a3ffc78c657853fe"
+    },
+    {
+      "path": "commands/electron-migration6.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6.log",
+      "sha256": "f68870a3c0e2c035c8ec8742aa4468df5ad3921e9555c3729c595822d7109f5c"
+    },
+    {
+      "path": "journeys/electron-migration6/execution-migration-moves--e6289--restart-interrupted-false-/migration-complete.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6-results\\execution-migration-moves--e6289--restart-interrupted-false-\\migration-complete.png",
+      "sha256": "2dd2ebdcd22bae960b4cb07f78bf45851025f6d245565f808f0edb7872eb6560"
+    },
+    {
+      "path": "journeys/electron-migration6/execution-migration-moves--e6289--restart-interrupted-false-/migration.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6-results\\execution-migration-moves--e6289--restart-interrupted-false-\\migration.json",
+      "sha256": "97890be331197d0da76b8fa964a200ba13bbc5b2dbb9ef1d53e710e97ba681d1"
+    },
+    {
+      "path": "journeys/electron-migration6/execution-migration-moves--e7d15-r-restart-interrupted-true-/migration-complete.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6-results\\execution-migration-moves--e7d15-r-restart-interrupted-true-\\migration-complete.png",
+      "sha256": "413d885d963100f873f51d491db3cf304780481ea7351f2f24bc74430c65ce74"
+    },
+    {
+      "path": "journeys/electron-migration6/execution-migration-moves--e7d15-r-restart-interrupted-true-/migration-resume-en.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6-results\\execution-migration-moves--e7d15-r-restart-interrupted-true-\\migration-resume-en.png",
+      "sha256": "e49d93f49911fbca1de37d3cc984facd2effbf9e993979a2664b263ae096f780"
+    },
+    {
+      "path": "journeys/electron-migration6/execution-migration-moves--e7d15-r-restart-interrupted-true-/migration-resume-ja.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6-results\\execution-migration-moves--e7d15-r-restart-interrupted-true-\\migration-resume-ja.png",
+      "sha256": "7a8b74b6a61e6ee43f10eb2661768f08e27a90e8ae61f6a9eb9fde82b4773e4a"
+    },
+    {
+      "path": "journeys/electron-migration6/execution-migration-moves--e7d15-r-restart-interrupted-true-/migration-resume-ru.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6-results\\execution-migration-moves--e7d15-r-restart-interrupted-true-\\migration-resume-ru.png",
+      "sha256": "8f9c75c11ef4819514e4e82f647a9b4022e38653f435bc9a69779aa8c7906229"
+    },
+    {
+      "path": "journeys/electron-migration6/execution-migration-moves--e7d15-r-restart-interrupted-true-/migration-resume-zh.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6-results\\execution-migration-moves--e7d15-r-restart-interrupted-true-\\migration-resume-zh.png",
+      "sha256": "78ffcb55ccd85cd3cb9767a682d7c4e9d135f27694986a066f2d0dbcb7000038"
+    },
+    {
+      "path": "journeys/electron-migration6/execution-migration-moves--e7d15-r-restart-interrupted-true-/migration-select-en.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6-results\\execution-migration-moves--e7d15-r-restart-interrupted-true-\\migration-select-en.png",
+      "sha256": "f4d28c5c24cbf8323882f6ac8eeef61f60c829f65f87c89da14297fb916ee942"
+    },
+    {
+      "path": "journeys/electron-migration6/execution-migration-moves--e7d15-r-restart-interrupted-true-/migration-select-ja.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6-results\\execution-migration-moves--e7d15-r-restart-interrupted-true-\\migration-select-ja.png",
+      "sha256": "0471b2ecb4ed1640f01b9f15ae34f65b12e678b9ac1787aa0bc67d11a2cf98f7"
+    },
+    {
+      "path": "journeys/electron-migration6/execution-migration-moves--e7d15-r-restart-interrupted-true-/migration-select-ru.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6-results\\execution-migration-moves--e7d15-r-restart-interrupted-true-\\migration-select-ru.png",
+      "sha256": "5737a522be28a442577985c7c63b7489ab35500c7c6b271ff1b5d41af25eeba5"
+    },
+    {
+      "path": "journeys/electron-migration6/execution-migration-moves--e7d15-r-restart-interrupted-true-/migration-select-zh.png",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6-results\\execution-migration-moves--e7d15-r-restart-interrupted-true-\\migration-select-zh.png",
+      "sha256": "47e30aa948731e9badfa97283a0a674347ee2cf0f097354c858ffcfe93535ef8"
+    },
+    {
+      "path": "journeys/electron-migration6/execution-migration-moves--e7d15-r-restart-interrupted-true-/migration.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration6-results\\execution-migration-moves--e7d15-r-restart-interrupted-true-\\migration.json",
+      "sha256": "c7ac3597f42e69ae76c6375faa597fc008a3e0fc19475ead7dc351758db11205"
+    },
+    {
+      "path": "commands/final-contract.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\final-contract.result.json",
+      "sha256": "8dbd94180c50bed65c0249e57e5061b7d96043751a6c8f08a435dead577ab375"
+    },
+    {
+      "path": "commands/final-contract.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\final-contract.log",
+      "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+    },
+    {
+      "path": "commands/i18n-final.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\i18n-final.result.json",
+      "sha256": "9e7822cf73402456118295a2aebf4064f08fac6d1a003c8af6d56bd9291867b1"
+    },
+    {
+      "path": "commands/i18n-final.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\i18n-final.log",
+      "sha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe"
+    },
+    {
+      "path": "commands/final-comms-replay.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\final-comms-replay.result.json",
+      "sha256": "0c340473d198d008dec134f3bfb4c7dacf45604b4a5007c90a4fd76d3fc8f143"
+    },
+    {
+      "path": "commands/final-comms-replay.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\final-comms-replay.log",
+      "sha256": "22c5a604c635628c5ed83ca79e11407b9c2617d711c3f1f385846d0a3b03ed3a"
+    },
+    {
+      "path": "commands/final-comms-compare.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\final-comms-compare.result.json",
+      "sha256": "d3f8afe9b59ad7d401f7f55aad0ddd4ba55cabb9b89251a4a590f4a091a01d82"
+    },
+    {
+      "path": "commands/final-comms-compare.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\final-comms-compare.log",
+      "sha256": "f83683b5c5186e1e4771a8598026c9d7ccba8d23aa85b7bc394eed79335eb798"
+    },
+    {
+      "path": "commands/final-harness.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\final-harness.result.json",
+      "sha256": "890b4bd6efbf6981b71d3251533524b75c29d29166648ac3d88f4c084f5bcf8c"
+    },
+    {
+      "path": "commands/final-harness.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\final-harness.log",
+      "sha256": "c2779fd082c55fbb51e614777b7192994750e97f738fb7109ea370aa2560c2f5"
+    },
+    {
+      "path": "commands/final-harness-preview.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\final-harness-preview.result.json",
+      "sha256": "0c4dba4e9c8026b61527cc0f0001357552ad1e981e0728d55a03a1eb4e4ee835"
+    },
+    {
+      "path": "commands/final-harness-preview.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\final-harness-preview.log",
+      "sha256": "407dd8a3a825e2dc5edc528b8ce69b3717205fa079b081794c7d9f4ffb9111ec"
+    },
+    {
+      "path": "commands/final-artifacts.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\final-artifacts.result.json",
+      "sha256": "b4e8c6a55d969623dee2a32b08f49bacc9d701034f02e2775b244a7101f984ec"
+    },
+    {
+      "path": "commands/final-artifacts.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\final-artifacts.log",
+      "sha256": "ce4ff1676c900cdf6aa53ab96ab5c5b079b947638a3c9119da5497f65eae4dae"
+    },
+    {
+      "path": "commands/final-evidence-refs.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\final-evidence-refs.result.json",
+      "sha256": "c4f4c6913ad49381eba87acca322dc7f5a3206e3806bb0e9ea16e0f463f3595d"
+    },
+    {
+      "path": "commands/final-evidence-refs.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\final-evidence-refs.log",
+      "sha256": "047cce29d2ca7c0bd2355ac3f116c8b099afb74981f7381fd16ff51c4381427f"
+    },
+    {
+      "path": "commands/final-coverage-baseline.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\final-coverage-baseline.result.json",
+      "sha256": "823a3b51373eee23976f51d8b821ab630e9dd16603987d7bcccc0f35eebffeb2"
+    },
+    {
+      "path": "commands/final-coverage-baseline.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\final-coverage-baseline.log",
+      "sha256": "b5d738013cd663d2da3d3422f4be6fd413bfdeb236751a1ac8ebb9c680ded229"
+    },
+    {
+      "path": "process/01-main-durable-intent.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\process-evidence-final\\01-main-durable-intent.json",
+      "sha256": "05c06dfb172cceba7a6dfe877dade62a79d94f1a39e1c811aa47a9785c5139f4"
+    },
+    {
+      "path": "process/02-main-durable-fenced.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\process-evidence-final\\02-main-durable-fenced.json",
+      "sha256": "a8c65ecb0f7d03bccb37ad197f2403e645264785f557c202fa622394c9e3bdc4"
+    },
+    {
+      "path": "process/03-main-durable-drained.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\process-evidence-final\\03-main-durable-drained.json",
+      "sha256": "0f062596984629d81ab1169c969e0ff0b65b8806d986291ef0f95d1536a1ca99"
+    },
+    {
+      "path": "process/04-main-durable-reserved.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\process-evidence-final\\04-main-durable-reserved.json",
+      "sha256": "3d4ee652bd98798285327a9972ff3a56fb635820adfe4e7d09edef05f6c1966e"
+    },
+    {
+      "path": "process/05-main-durable-session-committed.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\process-evidence-final\\05-main-durable-session-committed.json",
+      "sha256": "0f200ef6ab03a18c7ac43c9998a84742cd5b77ead07837800bd5bab9455dfb94"
+    },
+    {
+      "path": "process/06-main-durable-task-committed.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\process-evidence-final\\06-main-durable-task-committed.json",
+      "sha256": "c90e55d7f5c07fc91667bfc80af7cc43ef5bcb25031838014b34438e2f42e8d1"
+    },
+    {
+      "path": "process/07-main-durable-binding-committed.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\process-evidence-final\\07-main-durable-binding-committed.json",
+      "sha256": "5e48dfe7b67eab9e62c63d87130758fed4916c5675f69bd8d5b85727808bb450"
+    },
+    {
+      "path": "process/08-main-publication-before-tail.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\process-evidence-final\\08-main-publication-before-tail.json",
+      "sha256": "98008e7f25029a248f25c8733f049a9e72e82cea0f859663d622164134927f7e"
+    },
+    {
+      "path": "process/09-main-confirmed-replay-exact-reservation.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\process-evidence-final\\09-main-confirmed-replay-exact-reservation.json",
+      "sha256": "8ec91d3beba14b74f145ec6633a652d6a52373f44c2e8a7acff2eef1923384d4"
+    },
+    {
+      "path": "process/10-main-source-completed-receipt-before-pause.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\process-evidence-final\\10-main-source-completed-receipt-before-pause.json",
+      "sha256": "1764b496e21b0052a6930012bf345c5e19d434655cded35e8f36c9b24cfc297d"
+    },
+    {
+      "path": "process/11-main-source-reconciled-receipt-before-pause.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\process-evidence-final\\11-main-source-reconciled-receipt-before-pause.json",
+      "sha256": "1d6007fd2bb8f6bbc908355e65a04aa6d6a2612b0ccb868d7386b67dbf9a330b"
+    },
+    {
+      "path": "process/12-runtime-prepare-after-intent.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\process-evidence-final\\12-runtime-prepare-after-intent.json",
+      "sha256": "80e0d5f514038505a799dff48f0168428de0bcf2028a956a6fbdd3b02d59aa90"
+    },
+    {
+      "path": "process/13-runtime-prepare-after-copy.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\process-evidence-final\\13-runtime-prepare-after-copy.json",
+      "sha256": "463b974a2f32e2d5748688945c1b19bbdbafb424a7489dd35bad227baa857423"
+    },
+    {
+      "path": "process/14-runtime-prepare-after-store-commit.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\process-evidence-final\\14-runtime-prepare-after-store-commit.json",
+      "sha256": "5a4844b5d00fa99b6ed35cbfc2a098ab6e0bb58e97f979acdba906310f1a42b3"
+    },
+    {
+      "path": "process/15-runtime-prepare-before-prepare-reply.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\process-evidence-final\\15-runtime-prepare-before-prepare-reply.json",
+      "sha256": "9fe45603f82ab9b9c5159ed7166d2a8bd24945b66b9064228a76499762b0f8c7"
+    },
+    {
+      "path": "process/16-runtime-confirm-after-confirm-commit.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\process-evidence-final\\16-runtime-confirm-after-confirm-commit.json",
+      "sha256": "8926db1d718b963376b3131e795ba2f64ef5e9699a9134b72b46dd4fd5950f0d"
+    },
+    {
+      "path": "process/17-runtime-confirm-before-confirm-reply.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\process-evidence-final\\17-runtime-confirm-before-confirm-reply.json",
+      "sha256": "2f2e7ac2ea22f3c95851a55885368429a7d381494c3ab1601aff808748d2c99d"
+    },
+    {
+      "path": "review/migration-code-review.md",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-code-review.md",
+      "sha256": "1e9d08b11bab580cd6feff68319213c4c2a959ba744003f9416226c993cac7b5"
+    },
+    {
+      "path": "broader-checks/harness-ci.steps.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\harness-ci.steps.json",
+      "sha256": "3bb93c8bbc2d9e1b88474de79ea3a5b80687e29dce9956affa61bacf88483233"
+    },
+    {
+      "path": "broader-checks/harness-ci-equivalent.cjs",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\harness-ci-equivalent.cjs",
+      "sha256": "6472c75bdf93a809065a796d8b54414713306401f2bb03bd80ec4ba188c2f686"
+    },
+    {
+      "path": "broader-checks/agent-dev-audit-report.json",
+      "sourcePath": "D:\\ClawX-work\\session-task-unified-relay-20261109\\artifacts\\agent-dev-audit\\report.json",
+      "sha256": "f5016e23841a9a2edf9e638ec29e112bd4cd2e5cc61c6e7b8178ba998a728433"
+    },
+    {
+      "path": "failures/electron-migration.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration.result.json",
+      "sha256": "0eb9e4d4de1810ed3da4c7986da87d6ae418dfdff1aa7a0dd8e3c2576c5c22ac"
+    },
+    {
+      "path": "failures/electron-migration.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration.log",
+      "sha256": "92f8f26420b50ccca3c2edd5e7b6867e5c9c25f05c18d8631777b484e34aa51d"
+    },
+    {
+      "path": "failures/electron-migration2.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration2.result.json",
+      "sha256": "46114a45d1c1a2981eae70a4be32f7360b7c5d43f106ffd2288409e45e2191a2"
+    },
+    {
+      "path": "failures/electron-migration2.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration2.log",
+      "sha256": "68f72bfee699cf4e5ebe45afcad0d78cb541a107f4427ded7ee914ba5d34b74d"
+    },
+    {
+      "path": "failures/electron-migration3.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration3.result.json",
+      "sha256": "19846d30e47be1affc5694a9086943303166fd44c34de7465d117a49c873a105"
+    },
+    {
+      "path": "failures/electron-migration3.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration3.log",
+      "sha256": "b8979569b137bf6d4d0668f8ed0a40678e0de52ccf27bb4f27ec1d2510189800"
+    },
+    {
+      "path": "failures/electron-migration4.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration4.result.json",
+      "sha256": "dd619899dfad18e08fbde6d8f9baf34d38c7e15e1625ce09d6de54e08a487750"
+    },
+    {
+      "path": "failures/electron-migration4.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration4.log",
+      "sha256": "296a1ecaacd8e29f226b138bfd9784ca908fbdaad1c171de631f688654b355c5"
+    },
+    {
+      "path": "failures/electron-migration5.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration5.result.json",
+      "sha256": "ab036757814973db770d2801662f2b6c5ee3acf80f706e15958b37c53fb9d433"
+    },
+    {
+      "path": "failures/electron-migration5.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\electron-migration5.log",
+      "sha256": "4139ec06b159234ccea11cb659de99943c554f67f1734a8bdc7332f4dff3cb4c"
+    },
+    {
+      "path": "failures/final-test-types.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\final-test-types.result.json",
+      "sha256": "2a633fd1d731d5ea173b8960991f1ee6ae6ddbb18e071845c56fbb261e0e7f50"
+    },
+    {
+      "path": "failures/final-test-types.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\final-test-types.log",
+      "sha256": "4c6e773404c94408da3b393ad4dcf8a45cf6ebb4c6c67974855c4211faa267cb"
+    },
+    {
+      "path": "failures/harness-ci.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\harness-ci.result.json",
+      "sha256": "3d6a7982bb7ec496a62d6c5610c04e15106b067b7f86d4b5d27bbc86356594ce"
+    },
+    {
+      "path": "failures/harness-ci.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\harness-ci.log",
+      "sha256": "49a73f2a477d750f502293406a03582883a0a22e7eac0e6c0d7f0d50e3816620"
+    },
+    {
+      "path": "failures/language-race-red.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\language-race-red.result.json",
+      "sha256": "d6b726656ca08843b14fbd48488ffae465ba5c72b93dd5dde7c1c472e2879762"
+    },
+    {
+      "path": "failures/language-race-red.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\language-race-red.log",
+      "sha256": "bb6ab79e183462630ff9d91ce86ec193c83301290867d93ee6a0e60fcff59b1f"
+    },
+    {
+      "path": "failures/migration-expiry-red2.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\migration-expiry-red2.result.json",
+      "sha256": "e94decb6e4982d5e538b9b0f7477613d6aed9c7114f12c39ee65e4beca70d78d"
+    },
+    {
+      "path": "failures/migration-expiry-red2.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\migration-expiry-red2.log",
+      "sha256": "62404b2efcb5ef4ccaaffdb20cb11a00c4390b86eeb77f454dc4b3db81a1f543"
+    },
+    {
+      "path": "failures/node-types.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\node-types.result.json",
+      "sha256": "d8730b4ea75731f5dfa6f36e8544be9352cc4597112e2a0165bdd9f553d9ef21"
+    },
+    {
+      "path": "failures/node-types.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\node-types.log",
+      "sha256": "6e281ac5577841bf33e8a205cf1ae92b144a762ec4d5b5d151375ba314bae5d9"
+    },
+    {
+      "path": "failures/runtime-build.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\runtime-build.result.json",
+      "sha256": "059d8b70761c3b3f83103bc557b3a911b249165fa16e1a35c5e91fd3d15df396"
+    },
+    {
+      "path": "failures/runtime-build.log.txt",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\runtime-build.log",
+      "sha256": "0013af8aee31c3d74743efa72b041314562f768744db49205d352f8672946cc3"
+    },
+    {
+      "path": "excluded/migration-expiry-red.result.json",
+      "sourcePath": "D:\\tmp\\unified-management-20261109\\migration-validation\\migration-expiry-red.result.json",
+      "sha256": "4c287ba0f676abf762a72b32713cba248248e0dca4b2e7d675bff1d0852c1fb7"
+    }
+  ],
+  "sources": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "777d6251ece8893a101e054f83b636099ac4bb6813eef13c8fc375f18c8cee33"
+    },
+    {
+      "path": "README.md",
+      "sha256": "6665e51b1f7d4adea7442e91c158dee0146d33deaaa4d79f25270bba87d0fe3c"
+    },
+    {
+      "path": "README.ru-RU.md",
+      "sha256": "b4087fbba67dc82d142bba4bf608dc65f086329a50b9c8e4d3bf625cee782fdb"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "de297d88ecd125b01107664d47df3ccbcd972ee1bead8629ddcbf6434889f241"
+    },
+    {
+      "path": "docs/dev/session-lifecycle-control-matrix.md",
+      "sha256": "89473e3be2cf4f6777302e858dcf143669ea7d863d733070b5a54ae5e786848f"
+    },
+    {
+      "path": "docs/modules/multi-agent-and-tasks.md",
+      "sha256": "924997fb96bd976a74cd51f4c66a67aedf432f9b4c5daa3d209ba5a12ed73387"
+    },
+    {
+      "path": "docs/modules/sessions.md",
+      "sha256": "cdc6486400de48fae62a966b6c24724a30c895da86c6129610c056381dd7ba62"
+    },
+    {
+      "path": "electron/services/execution-migration.ts",
+      "sha256": "170aee0fc0bc735caeceb2c649142076d646e2556253c7fa3ca7fc9701a1163f"
+    },
+    {
+      "path": "electron/services/workspaces-api.ts",
+      "sha256": "50f734bc0ef06da1b09028610816538c8cba5ffb3c8c7b5fd983904edeeffed6"
+    },
+    {
+      "path": "harness/specs/scenarios/execution-environment-migration.md",
+      "sha256": "6df882debf2fcab547c179a4ef4e74bd5330fb804b4621259d31cca29a23693c"
+    },
+    {
+      "path": "harness/specs/tasks/execution-environment-migration.md",
+      "sha256": "aadc9798c09e4bd442b7ee1a014124ea7c602fdbf5851cfd84a6271f82d1ee67"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-tool-definition-adapter.ts",
+      "sha256": "9af8140a32373b6c4e3c0916d102d29c8187ab589083fdf30ede53b24eebe075"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-tools.before-tool-call.ts",
+      "sha256": "792e5aae53f6cd05882d453b8b236ea5348b70fc4f1a85f4cf778a56bd9560f4"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+      "sha256": "cf104c81204f5eae7e3f8b3b6d30ad17e3701e3a8af8439966ae3e0835b35a08"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/execution-checkout-tools.ts",
+      "sha256": "43b454f5e0cc0b21e9262d2149e85f1515e1c7a5211da6cfc5a337afcf4f6123"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/execution-task-authority.ts",
+      "sha256": "3fc6c1536924764a8ee47df497bf5edc0356f615588a9464b5977ba0e0ff5de1"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/execution-task-guard.ts",
+      "sha256": "6e8ceee648036373f857b517e7374893f6bf6b39be4bd00964e2c31795839906"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/persistent-task-tool.ts",
+      "sha256": "cc4b2a3ee295aa704cf6ae2ef7ae4245aa251cb0e58e0ae6d61820fb6e86c9bb"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/worktree-service.ts",
+      "sha256": "2cebe77ededcc7115ab3ee1ec67d8e87ecd9142d1d352e165b2d848109d386fd"
+    },
+    {
+      "path": "openclaw_runtime/src/config/sessions/types.ts",
+      "sha256": "cb8b7e19c7ae185ff649817b671352d0d12d4dfcc08547d17d2788419b0871a5"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/methods/core-descriptors.ts",
+      "sha256": "3e9df5081ff07ce01989c2b14816e619221e7db97687e431e4b1b155cbad84d7"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods.ts",
+      "sha256": "f7ec076de437f3408671c1d75b5c6c4dc543565e8beba70dcdb2ca7eea7e3e03"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/session-task-scope.ts",
+      "sha256": "95ce4459cf9f309cc1ce160e77fd9956fe0d840097db86c3de5b4af3653711db"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/session-archive-service.ts",
+      "sha256": "b2cb11d9a054cccf0bfa2116c0ea0661c9cd1a69eaf7264bb17c7928e9b548d0"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/session-execution-migration.ts",
+      "sha256": "cc401207f7cea6263871b7abba85ab71176a14631ada01111a2c73c4a7ecf178"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/session-mutation-operation-journal.test.ts",
+      "sha256": "df7d10eff8392396a6981cbbebcb616e6cf8c887915659bda17bebeea512d34f"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/session-mutation-operation-journal.ts",
+      "sha256": "c0e1ddf780fea4ecec42f6b0eca7ee705110e33f6caed02a95a03045a09a48d8"
+    },
+    {
+      "path": "openclaw_runtime/src/plugins/session-entry-slot-keys.ts",
+      "sha256": "cb414fb857f7b54c8bbc0502250299a118fe94fc28f7f294d226a4b48aa719a5"
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "sha256": "34bbc6125c7299945e134dfced439d2c85dfd0ec94d36e04b9d05896e5c3491f"
+    },
+    {
+      "path": "shared/i18n/locales/en/chat.json",
+      "sha256": "12df6d328c0f5b7621a90e51c30dd909554dbbe53fe0644016ab9b1377bac92b"
+    },
+    {
+      "path": "shared/i18n/locales/ja/chat.json",
+      "sha256": "d8c8f050ae14bf292ea68d0d09090194f0688f6c2e1be716bc6186a7b1f880dc"
+    },
+    {
+      "path": "shared/i18n/locales/ru/chat.json",
+      "sha256": "4f38fcc39f5751c259eb98dbc22826f9d07d46bf15db983b68eaecf9f1e7ce44"
+    },
+    {
+      "path": "shared/i18n/locales/zh/chat.json",
+      "sha256": "75888e036afb10fb0a29a00fd7e79a280391b5f044165f5d3382bb13475ac123"
+    },
+    {
+      "path": "shared/task-system/store.ts",
+      "sha256": "844655594e69a6600b2df6b6c5bfac341e5b4f7439c66788afbb666b4d2b9412"
+    },
+    {
+      "path": "shared/types/execution-migration.ts",
+      "sha256": "7a0ffc4822ee2202320a0bc5be0640d10bb37986dfaee5021ec3d4b2740d1594"
+    },
+    {
+      "path": "shared/types/workspace.ts",
+      "sha256": "e337d8492ee27a1882c0c8389bd5275296da419ad53979ab292f4d8732f140d4"
+    },
+    {
+      "path": "src/i18n/index.ts",
+      "sha256": "231d16505f7f2a5dbafef973742a57ca685a9dc149664556523a3b5a7f24e1fd"
+    },
+    {
+      "path": "src/lib/host-api.ts",
+      "sha256": "eb6430f723827d2583577de1f4b141e25ecc7140dc4eb595360c0450895f8a77"
+    },
+    {
+      "path": "src/pages/Chat/ExecutionMigrationControl.tsx",
+      "sha256": "eb4b94e41414e8e9574208464e9ea07ccff5fd85b27b42330f2025959e77c4e1"
+    },
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "sha256": "b288e426c00d364a2e447018f41f40d2329620149c1e07a18de10130cabb138c"
+    },
+    {
+      "path": "tests/e2e/execution-migration.spec.ts",
+      "sha256": "6e9a4ce4ef7633f591322e7cf9c59acba98e7229ce077bd4a2ef68fd2ed5e067"
+    },
+    {
+      "path": "tests/unit/execution-migration-control.test.tsx",
+      "sha256": "023a45168d03b8bf5b22c74f55333530f0c78e8beb3ef00744df4295c477e512"
+    },
+    {
+      "path": "tests/unit/execution-migration-process.test.ts",
+      "sha256": "356c7d0bb268387b007537bd946072e8d51238dceeebb38ae428e269cfdb9cb2"
+    },
+    {
+      "path": "tests/unit/execution-migration-runtime.test.ts",
+      "sha256": "d0e26a46f5ec9328866b777e37b000208a4526967ec3c878d81b384b1e4a3252"
+    },
+    {
+      "path": "tests/unit/execution-migration.test.ts",
+      "sha256": "1ed359bb029e80d8cf22b2c562bd6b16009bf97b7c6fab00dace4f554c5f18d7"
+    },
+    {
+      "path": "tests/unit/fixtures/execution-migration-worker.mts",
+      "sha256": "56ce5bcc3521cbbdfd2f35d45cdb85fe9aa3f960cd647cde8ede3360917e457b"
+    },
+    {
+      "path": "tests/unit/i18n-language-order.test.ts",
+      "sha256": "8d8cc62601f942c6df78b9fe192f4f0d72f70160bcb2cb8163797b4318c1e1f4"
+    },
+    {
+      "path": "tests/unit/unified-effect-admission.test.ts",
+      "sha256": "5adba13046fc08ad1bbafd63dadabeb2f82f2004263a20d7c2361913f3b822ea"
+    },
+    {
+      "path": "tests/unit/unified-task-authority.test.ts",
+      "sha256": "9e2cecd16ec1614a055d6a255c16a7dd27bffc0e3e32348eb76d094da613de7e"
+    }
+  ],
+  "acceptance": [
+    {
+      "criterion": "Durable stages and lost replies resume the same operation after an independent OS process termination.",
+      "evidence": [
+        "process/",
+        "commands/process-proof-final.tests.json",
+        "commands/migration-final2-units.tests.json"
+      ]
+    },
+    {
+      "criterion": "Task generation/epoch and checkout exclusion fence stale effects; target remains reserved through atomic Main publication.",
+      "evidence": [
+        "commands/migration-final2-units.tests.json",
+        "commands/owner-regression.tests.json",
+        "process/"
+      ]
+    },
+    {
+      "criterion": "Receiver reads task revision/digest, original checkpoint artifacts and settled resource receipts before confirmation.",
+      "evidence": [
+        "commands/migration-final2-units.tests.json",
+        "commands/process-proof-final.tests.json",
+        "journeys/"
+      ]
+    },
+    {
+      "criterion": "Same logical session/task survives window restart and continues actual tool writes in target; four locale selection and resume are verified.",
+      "evidence": [
+        "journeys/"
+      ]
+    }
+  ],
+  "verificationModel": {
+    "interaction": "agent-driven Electron against local scripted provider with real Gateway, Git worktree and owner stores",
+    "process": "parent kills isolated Node worker at durable signal; fresh process resumes original operation using real task/session/journal/checkout stores; Workspace persistence and RPC transport are fixture adapters"
+  },
+  "inheritance": "Each command records source hashes and candidate delta. Runtime owner regressions retain identical runtime bytes after UI/test/doc-only changes; final UI journeys bind their built candidate. Failed runs remain separately addressable.",
+  "broaderCheck": {
+    "name": "harness:ci",
+    "status": "failed",
+    "completedSteps": [
+      "scenario/example validation",
+      "59 Harness unit tests",
+      "spec lifecycle",
+      "duplicates",
+      "policy docs",
+      "catalogs"
+    ],
+    "failure": "Agent Dev audit reads reports older than 60 hours and existing deep-test hard-limit results; evidence refs were subsequently checked separately.",
+    "evidence": [
+      "broader-checks/harness-ci.steps.json",
+      "broader-checks/agent-dev-audit-report.json",
+      "failures/harness-ci.result.json"
+    ]
+  },
+  "excludedAttempts": [
+    {
+      "name": "migration-expiry-red",
+      "reason": "Shell quoting filtered out every test; zero executed cases. Superseded by migration-expiry-red2 and final migration units."
+    }
+  ],
+  "remainingNodes": [
+    "TF-0658",
+    "TF-0659",
+    "TF-0660",
+    "TF-0661",
+    "TF-0662",
+    "TF-0867"
+  ],
+  "reviewModelRequestedRoute": "ccs-workbuddy/deepseek-v4.1-flash"
+}

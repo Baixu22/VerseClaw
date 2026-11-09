@@ -24,6 +24,8 @@ Runtime 管理的工作树归属、创建阶段和合并意图持久保存在 SQ
 
 受管工具在执行前联合核对任务领取、会话代次和持久 checkout writer，并与现有合并、冻结和清理共用资源 owner。writer 在工具之间保持占用，未知效果与后台进程需要原 owner 结清。[写入占用契约](harness/specs/guides/checkout-writer-ownership.md)说明转交、恢复和外部写入边界。
 
+Chat 可将同一会话和任务迁移到另一个已配置检出，保留目标与产物引用。系统核对源环境排空和目标所有权，中断后从已保存的操作继续恢复。
+
 **在一个桌面工作空间里完成对话、编码、知识与 Agent 执行。**
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja-JP.md) · [Русский](README.ru-RU.md)

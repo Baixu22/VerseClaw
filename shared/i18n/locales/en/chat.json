@@ -2872,5 +2872,26 @@
       "queued": "Queued",
       "steered": "Guidance accepted"
     }
+  },
+  "migration": {
+    "open": "Move work to another checkout",
+    "resume": "Resume migration",
+    "title": "Continue in another checkout",
+    "description": "Keep this conversation and its task. The system stops new source effects, checks unfinished work, and opens the target only after confirming the handoff.",
+    "target": "Target workspace",
+    "start": "Move and continue",
+    "cancel": "Close",
+    "retained": "Progress is saved. Resolve the reported condition, then resume.",
+    "artifactChanged": "A recorded artifact changed. Restore its checkpoint version before resuming.",
+    "phase": {
+      "intent": "Migration recorded",
+      "fenced": "Source execution closed",
+      "drained": "Source effects settled",
+      "reserved": "Target reserved",
+      "session-committed": "Session moved; checking task",
+      "task-committed": "Task ownership transferred",
+      "binding-committed": "Confirming target",
+      "confirmed": "Ready in target"
+    }
   }
 }

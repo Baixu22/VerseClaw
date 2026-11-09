@@ -1,0 +1,128 @@
+{
+  "schema": 1,
+  "case": "Main source reconciled receipt before pause",
+  "breakPoint": "fenced",
+  "driven_by": "agent",
+  "requested_route": "DeepSeek v4.1 flash",
+  "diskReadback": true,
+  "sourceGeneration": "tf0866-source-generation",
+  "targetGeneration": "e31dd18a-58fa-4372-82da-4516dbd19c66",
+  "operation": {
+    "id": "tf0866-process-operation",
+    "phase": "confirmed",
+    "sessionKey": "agent:main:tf0866-process-proof",
+    "sourceGeneration": "tf0866-source-generation",
+    "targetGeneration": "e31dd18a-58fa-4372-82da-4516dbd19c66",
+    "reservationReleased": true
+  },
+  "journal": {
+    "state": "runtime_committed",
+    "requestDigest": "d13e3df3a8bb803f0ec80feb8043dd1e1576e607e799980c6671c1514ad04c80",
+    "manifestDigest": "3f830094b5fc7522e69a36c617c67a2261091582c86210e2f91efb625853fdf6"
+  },
+  "session": {
+    "sessionId": "e31dd18a-58fa-4372-82da-4516dbd19c66",
+    "workspaceDir": "D:\\tmp\\tf0866-process-auOsLO\\target",
+    "migrationState": "confirmed"
+  },
+  "artifactHashes": [
+    {
+      "path": "D:\\tmp\\tf0866-process-auOsLO\\source\\result.txt",
+      "sha256": "2f1bf152cea586c7342529059c7961e615eafe8cf14d66b57c819c50cfae87bd"
+    }
+  ],
+  "transcriptHashes": [
+    {
+      "role": "source",
+      "sha256": "da7138815694c1938e5a1fcdc9ed339cc810c2e7e0a8cda435af116a538318b7"
+    },
+    {
+      "role": "target",
+      "sha256": "da7138815694c1938e5a1fcdc9ed339cc810c2e7e0a8cda435af116a538318b7"
+    }
+  ],
+  "processes": [
+    {
+      "role": "terminated",
+      "pid": 41260,
+      "breakPoint": "fenced",
+      "killRequested": true,
+      "killReturned": true,
+      "exitCode": null,
+      "exitSignal": "SIGKILL",
+      "observedPidGone": true
+    },
+    {
+      "role": "resumed",
+      "pid": 38120,
+      "killRequested": false,
+      "killReturned": false,
+      "exitCode": 0,
+      "exitSignal": null,
+      "observedPidGone": true
+    }
+  ],
+  "workerEvidence": {
+    "workerEvents": [
+      {
+        "at": "2026-11-09T00:15:13.126Z",
+        "pid": 41260,
+        "kind": "main-worker-start",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation",
+        "breakPoint": "fenced"
+      },
+      {
+        "at": "2026-11-09T00:15:13.207Z",
+        "pid": 41260,
+        "kind": "durable-break-signal",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "point": "fenced",
+        "stage": "main-workspace-save-committed",
+        "operationPhase": "fenced",
+        "targetGeneration": "e31dd18a-58fa-4372-82da-4516dbd19c66"
+      },
+      {
+        "at": "2026-11-09T00:15:15.739Z",
+        "pid": 38120,
+        "kind": "main-worker-start",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation"
+      },
+      {
+        "at": "2026-11-09T00:15:16.322Z",
+        "pid": 38120,
+        "kind": "main-worker-complete",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation",
+        "phase": "confirmed"
+      }
+    ],
+    "breakSignal": {
+      "pid": 41260,
+      "point": "fenced",
+      "at": "2026-11-09T00:15:13.207Z",
+      "driven_by": "agent",
+      "requested_route": "DeepSeek v4.1 flash",
+      "stage": "main-workspace-save-committed",
+      "operationPhase": "fenced",
+      "targetGeneration": "e31dd18a-58fa-4372-82da-4516dbd19c66"
+    },
+    "workerResult": {
+      "operationId": "tf0866-process-operation",
+      "phase": "confirmed",
+      "sessionKey": "agent:main:tf0866-process-proof",
+      "sourceGeneration": "tf0866-source-generation",
+      "targetGeneration": "e31dd18a-58fa-4372-82da-4516dbd19c66",
+      "taskNodeId": "13f019b4-f965-453e-a6cb-7896c2be2bdf",
+      "pid": 38120,
+      "driven_by": "agent",
+      "requested_route": "DeepSeek v4.1 flash"
+    },
+    "workerError": null
+  }
+}

@@ -45,6 +45,7 @@ import { recordPermissionDecisionEvent } from './permissions-api';
 import { normalizeTaskLedgerWorkspaceId } from './task-ledger-service';
 import { normalizeRunScope, normalizeTaskReference } from '@shared/types/identity-scope';
 import type { SessionHandoffOperation } from '@shared/types/session-handoff';
+import type { ExecutionMigrationOperation, WorkspaceExecutionMigrationPayload } from '@shared/types/execution-migration';
 import {
   parseSessionTaskEffectRequest,
   type SessionTaskEffectRequest,
@@ -481,7 +482,7 @@ async function writeDocument(document: WorkspaceStoreDocument, coordinatorMutati
     if (!updated) return profile;
     const priorAgent = handoffTransfer && (!handoffTransfer.workspaceId || handoffTransfer.workspaceId === profile.id)
       ? profile.agentBindings?.[handoffTransfer.agentId] : undefined;
-    return { ...profile, coordinatorBindings: updated.coordinatorBindings, handoffOperations: updated.handoffOperations,
+    return { ...profile, coordinatorBindings: updated.coordinatorBindings, handoffOperations: updated.handoffOperations, executionMigrations: updated.executionMigrations,
       projectCoordinatorSessionKey: handoffTransfer && profile.projectCoordinatorSessionKey === handoffTransfer.sourceSessionKey
         ? handoffTransfer.sessionKey : updated.projectCoordinatorSessionKey,
       ...(handoffTransfer && priorAgent?.sessionKey === handoffTransfer.sourceSessionKey ? { agentBindings: {
@@ -489,7 +490,7 @@ async function writeDocument(document: WorkspaceStoreDocument, coordinatorMutati
       } } : {}), updatedAt: Math.max(profile.updatedAt, updated.updatedAt) };
   }) : document.profiles.map((profile) => {
     const latest = current.find((entry) => entry.id === profile.id);
-    return latest ? { ...profile, coordinatorBindings: latest.coordinatorBindings, handoffOperations: latest.handoffOperations,
+    return latest ? { ...profile, coordinatorBindings: latest.coordinatorBindings, handoffOperations: latest.handoffOperations, executionMigrations: latest.executionMigrations,
       projectCoordinatorSessionKey: latest.projectCoordinatorSessionKey } : profile;
   });
   store.set('profiles', profiles);
@@ -702,6 +703,95 @@ export async function beginWorkspaceHandoffSend(input: {
     if (current.phase !== 'ready' && current.phase !== 'failed') throw new Error('HANDOFF_DELIVERY_REQUIRES_RECONCILIATION');
     return { ...current, firstSendRequestDigest: input.requestDigest, phase: 'sending', error: null };
   });
+}
+
+async function readExecutionMigrationOperation(workspaceId: string, sessionKey: string, operationId?: string): Promise<ExecutionMigrationOperation | null> {
+  const document=await readDocument();
+  const operations=Object.values(document.profiles.find(profile=>profile.id===workspaceId)?.executionMigrations??{})
+    .filter(operation=>operation.sessionKey===sessionKey&&(!operationId||operation.id===operationId));
+  return operations.sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt))[0]??null;
+}
+
+async function migrateWorkspaceExecution(ctx: WorkspacesApiContext, input: WorkspaceExecutionMigrationPayload): Promise<ExecutionMigrationOperation> {
+  if(!ctx.gatewayManager)throw new Error('MIGRATION_GATEWAY_UNAVAILABLE');
+  const { migrateExecutionEnvironment }=await import('./execution-migration');
+  return migrateExecutionEnvironment(input,{
+    read:async()=>{
+      const document=await readDocument();
+      const source=document.profiles.find(profile=>profile.id===input.workspaceId);
+      const target=document.profiles.find(profile=>profile.id===input.targetWorkspaceId);
+      if(!source||!target)throw new Error('MIGRATION_WORKSPACE_UNAVAILABLE');
+      const conflict=Object.values(source.executionMigrations??{}).find(operation=>operation.sessionKey===input.sessionKey
+        &&operation.id!==input.operationId&&operation.phase!=='confirmed');
+      if(conflict)throw new Error('MIGRATION_ALREADY_PENDING');
+      return{source,target,operation:source.executionMigrations?.[input.operationId]??null};
+    },
+    save:async operation=>{
+      const document=await readDocument();
+      await writeDocument(updateWorkspaceProfile(document,operation.workspaceId,profile=>({...profile,
+        executionMigrations:{...profile.executionMigrations,[operation.id]:structuredClone(operation)},updatedAt:Date.now()})),true);
+    },
+    fence:async operation=>{
+      const document=await readDocument();
+      await writeDocument(updateWorkspaceProfile(document,operation.workspaceId,profile=>{
+        const binding=profile.coordinatorBindings?.[operation.sessionKey];
+        if(!binding||binding.sessionGeneration!==operation.sourceGeneration)throw new Error('MIGRATION_SOURCE_BINDING_STALE');
+        if(binding.invalidationReason===`execution-migration:${operation.id}`)return profile;
+        if(binding.bindingRevision!==operation.sourceBindingRevision)throw new Error('MIGRATION_SOURCE_BINDING_STALE');
+        return{...profile,coordinatorBindings:{...profile.coordinatorBindings,[operation.sessionKey]:{...binding,state:'invalid',
+          invalidationReason:`execution-migration:${operation.id}`,bindingRevision:binding.bindingRevision+1,updatedAt:new Date().toISOString()}},updatedAt:Date.now()};
+      }),true);
+    },
+    bind:async(operation,active)=>{
+      const document=await readDocument();
+      const source=document.profiles.find(profile=>profile.id===operation.workspaceId)!;
+      const target=document.profiles.find(profile=>profile.id===operation.targetWorkspaceId)!;
+      const environment=await resolveCoordinatorEnvironment(ctx,target,{kind:'local',rootPath:operation.targetRoot});
+      const existing=target.coordinatorBindings?.[operation.sessionKey];
+      const expected=operation.targetBindingRevision??(existing?.bindingRevision??0)+1;
+      const binding:WorkspaceCoordinatorBinding={schemaVersion:1,workspaceId:target.id,agentId:operation.agentId,
+        sessionKey:operation.sessionKey,sessionGeneration:operation.targetGeneration,activeTaskNodeId:operation.task.credential.taskNodeId,
+        taskLedgerReferences:[createTaskLedgerReference({taskLedgerNodeId:operation.task.credential.taskNodeId,source:'runtime'})],environment,
+        state:active?'active':'paused',bindingRevision:expected,invalidationReason:active?null:`execution-migration:${operation.id}`,
+        archiveRestorePolicy:'restore',createdAt:existing?.createdAt??new Date().toISOString(),updatedAt:new Date().toISOString()};
+      if(ctx.taskLedgerApi?.appendEvents)await ctx.taskLedgerApi.appendEvents({workspaceId:target.id,idempotencyKey:`migration:${operation.id}:target-link`,events:[{
+        id:`migration:${operation.id}:target-link`,type:'session_linked',actor:'system',taskId:operation.task.credential.taskNodeId,sessionId:operation.sessionKey,
+        payload:{sessionLink:{id:`migration:${operation.id}:target-link`,nodeId:operation.task.credential.taskNodeId,sessionKey:operation.sessionKey,
+          sessionGeneration:operation.targetGeneration,agentId:operation.agentId,relation:'related',createdAt:operation.createdAt}},
+      }]});
+      const store=await getWorkspaceStore();
+      const latest=(store.get('profiles')??[]) as WorkspaceProfile[];
+      const sourceState=source.sessionStates?.[operation.sessionKey]??{};
+      const activate=active&&store.get('activeWorkspaceId')===source.id&&source.activeSessionKey===operation.sessionKey;
+      const profiles=latest.map(profile=>{
+        if(profile.id===target.id)return{...profile,coordinatorBindings:{...profile.coordinatorBindings,[operation.sessionKey]:binding},
+          ...(active&&source.id===target.id?{executionMigrations:{...profile.executionMigrations,[operation.id]:{...operation,phase:'confirmed' as const}}}:{}),
+          ...(active?{
+            sessionStates:{...profile.sessionStates,[operation.sessionKey]:{...sourceState,readingPosition:undefined}},
+            projectCoordinatorSessionKey:profile.projectCoordinatorSessionKey??operation.sessionKey}:{}),updatedAt:Date.now()};
+        if(active&&profile.id===source.id&&source.id!==target.id){
+          const states={...profile.sessionStates};delete states[operation.sessionKey];
+          const bindings={...profile.coordinatorBindings};delete bindings[operation.sessionKey];
+          const assignments={...profile.sessionFolderAssignments};delete assignments[operation.sessionKey];
+          const replacement=`agent:${operation.agentId}:session-migrated-${operation.id}`;
+          return{...profile,sessionStates:states,coordinatorBindings:bindings,sessionFolderAssignments:assignments,
+            executionMigrations:{...profile.executionMigrations,[operation.id]:{...operation,phase:'confirmed' as const}},
+            activeSessionKey:profile.activeSessionKey===operation.sessionKey?replacement:profile.activeSessionKey,
+            agentBindings:{...profile.agentBindings,...(profile.agentBindings?.[operation.agentId]?.sessionKey===operation.sessionKey
+              ?{[operation.agentId]:{workspaceId:source.id,agentId:operation.agentId,sessionKey:replacement}}:{})},
+            projectCoordinatorSessionKey:profile.projectCoordinatorSessionKey===operation.sessionKey?undefined:profile.projectCoordinatorSessionKey,updatedAt:Date.now()};
+        }
+        return profile;
+      });
+      if(activate){const destination=profiles.find(profile=>profile.id===target.id)!;
+        destination.agentId=operation.agentId;destination.selectedAgentId=operation.agentId;destination.activeSessionKey=operation.sessionKey;
+        destination.agentBindings={...destination.agentBindings,[operation.agentId]:{workspaceId:target.id,agentId:operation.agentId,sessionKey:operation.sessionKey}};
+      }
+      store.set('profiles',profiles);
+      if(activate)store.set('activeWorkspaceId',target.id);
+      return binding;
+    },
+  },ctx.gatewayManager);
 }
 
 export async function materializeCoordinatorSessionGeneration(input: {
@@ -1428,6 +1518,8 @@ export function createWorkspacesApi(
   admitTaskEffect: (request: SessionTaskEffectRequest) => Promise<SessionTaskEffectAdmission>;
 } {
   return {
+    migrateExecution: payload=>withCoordinatorMutationLock(async()=>({success:true,operation:await migrateWorkspaceExecution(ctx,payload)})),
+    executionMigration: async payload=>({success:true,operation:await readExecutionMigrationOperation(payload.workspaceId,payload.sessionKey,payload.operationId)}),
     selectSessionTask: (payload: WorkspaceSessionTaskSelectPayload) => withCoordinatorMutationLock(async () => {
       const workspaceId = requireNonEmptyString(payload.workspaceId, 'workspaceId');
       const sessionKey = requireNonEmptyString(payload.sessionKey, 'sessionKey');

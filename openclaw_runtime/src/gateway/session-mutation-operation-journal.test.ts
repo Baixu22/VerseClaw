@@ -20,12 +20,10 @@ import {
   type SessionRestoreOperationManifest,
 } from "./session-mutation-operation-journal.js";
 
-function archiveManifest(
-  operation: "session-archive" | "session-restore" = "session-archive",
-): SessionArchiveOperationManifest {
+function archiveManifest(): SessionArchiveOperationManifest {
   return {
     version: "1",
-    operation,
+    operation: "session-archive",
     agentId: "agent-a",
     storeIdentity: "agent-a",
     canonicalKey: "agent:agent-a:main",

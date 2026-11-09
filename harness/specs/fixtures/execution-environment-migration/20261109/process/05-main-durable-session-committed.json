@@ -1,0 +1,128 @@
+{
+  "schema": 1,
+  "case": "Main durable session-committed",
+  "breakPoint": "session-committed",
+  "driven_by": "agent",
+  "requested_route": "DeepSeek v4.1 flash",
+  "diskReadback": true,
+  "sourceGeneration": "tf0866-source-generation",
+  "targetGeneration": "d15106be-b67c-45ad-bb80-1c3acd75e1b1",
+  "operation": {
+    "id": "tf0866-process-operation",
+    "phase": "confirmed",
+    "sessionKey": "agent:main:tf0866-process-proof",
+    "sourceGeneration": "tf0866-source-generation",
+    "targetGeneration": "d15106be-b67c-45ad-bb80-1c3acd75e1b1",
+    "reservationReleased": true
+  },
+  "journal": {
+    "state": "runtime_committed",
+    "requestDigest": "41efc432fa1e90508b336884818aa523f70aee22f2b9d01d48d741092958e9bb",
+    "manifestDigest": "6df1f6c4863856ea4ecbee2a1df48a98cc21a76dc9cafac89b85caf16e882d1c"
+  },
+  "session": {
+    "sessionId": "d15106be-b67c-45ad-bb80-1c3acd75e1b1",
+    "workspaceDir": "D:\\tmp\\tf0866-process-okwYzD\\target",
+    "migrationState": "confirmed"
+  },
+  "artifactHashes": [
+    {
+      "path": "D:\\tmp\\tf0866-process-okwYzD\\source\\result.txt",
+      "sha256": "2f1bf152cea586c7342529059c7961e615eafe8cf14d66b57c819c50cfae87bd"
+    }
+  ],
+  "transcriptHashes": [
+    {
+      "role": "source",
+      "sha256": "da7138815694c1938e5a1fcdc9ed339cc810c2e7e0a8cda435af116a538318b7"
+    },
+    {
+      "role": "target",
+      "sha256": "da7138815694c1938e5a1fcdc9ed339cc810c2e7e0a8cda435af116a538318b7"
+    }
+  ],
+  "processes": [
+    {
+      "role": "terminated",
+      "pid": 20144,
+      "breakPoint": "session-committed",
+      "killRequested": true,
+      "killReturned": true,
+      "exitCode": null,
+      "exitSignal": "SIGKILL",
+      "observedPidGone": true
+    },
+    {
+      "role": "resumed",
+      "pid": 34456,
+      "killRequested": false,
+      "killReturned": false,
+      "exitCode": 0,
+      "exitSignal": null,
+      "observedPidGone": true
+    }
+  ],
+  "workerEvidence": {
+    "workerEvents": [
+      {
+        "at": "2026-11-09T00:14:30.193Z",
+        "pid": 20144,
+        "kind": "main-worker-start",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation",
+        "breakPoint": "session-committed"
+      },
+      {
+        "at": "2026-11-09T00:14:30.712Z",
+        "pid": 20144,
+        "kind": "durable-break-signal",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "point": "session-committed",
+        "stage": "main-workspace-save-committed",
+        "operationPhase": "session-committed",
+        "targetGeneration": "d15106be-b67c-45ad-bb80-1c3acd75e1b1"
+      },
+      {
+        "at": "2026-11-09T00:14:33.638Z",
+        "pid": 34456,
+        "kind": "main-worker-start",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation"
+      },
+      {
+        "at": "2026-11-09T00:14:34.146Z",
+        "pid": 34456,
+        "kind": "main-worker-complete",
+        "driven_by": "agent",
+        "requested_route": "DeepSeek v4.1 flash",
+        "operationId": "tf0866-process-operation",
+        "phase": "confirmed"
+      }
+    ],
+    "breakSignal": {
+      "pid": 20144,
+      "point": "session-committed",
+      "at": "2026-11-09T00:14:30.711Z",
+      "driven_by": "agent",
+      "requested_route": "DeepSeek v4.1 flash",
+      "stage": "main-workspace-save-committed",
+      "operationPhase": "session-committed",
+      "targetGeneration": "d15106be-b67c-45ad-bb80-1c3acd75e1b1"
+    },
+    "workerResult": {
+      "operationId": "tf0866-process-operation",
+      "phase": "confirmed",
+      "sessionKey": "agent:main:tf0866-process-proof",
+      "sourceGeneration": "tf0866-source-generation",
+      "targetGeneration": "d15106be-b67c-45ad-bb80-1c3acd75e1b1",
+      "taskNodeId": "274b568d-7576-4111-bb12-46b5f29ccc14",
+      "pid": 34456,
+      "driven_by": "agent",
+      "requested_route": "DeepSeek v4.1 flash"
+    },
+    "workerError": null
+  }
+}

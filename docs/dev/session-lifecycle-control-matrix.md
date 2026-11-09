@@ -14,6 +14,7 @@
 | UI 排队消息 | Chat store / `queuePendingMessage`、`drainPendingMessages` | 记录 workspace、目标 SessionKey、已知 generation 和发送 key | 仅在对应会话范围恢复时续发；切换项目不会把旧队列送到当前会话 |
 | Fork / 在新会话中提问 | Session runtime / `sessions.fork` | 来源可读且运行允许分支；问题使用指定 user leaf 之前的 assistant 边界 | 新问题留在子会话草稿；源草稿保留；取消或无有效边界时不创建 |
 | Handoff | Workspace + Session runtime / `createHandoff`、`handoffOperation` | 保存 source generation、operationId、child key；runtime 确认 parent 后才完成创建 | 创建响应丢失后核对同一 child；首发使用同一 key；unknown 先核实，不自动重发 |
+| 迁移执行环境 | Workspace + Session mutation journal + TaskSystemStore / `migrateExecution`、`executionMigration` | 保留 sessionKey，源绑定关闭后排空；目标预留、物理代次和任务 epoch 分别更新 | 按同 operationId 续接持久步骤；目标合同/产物/未决效果回读后开放；关闭窗口后仍可恢复 |
 | 给 worker 发送 / 引导 | Main / `sendWorker` → `sessions.send` / `sessions.steer` | 核对项目、parent generation、真实 child 关系和 child generation，并通过既有权限路由 | 已排队、已引导与新运行已接收分别显示；失败保留输入，未知交付按原发送 key 核对 transcript 或运行时 intervention 回执 |
 | 定时执行的首次效果 | Cron embedded owner → 原任务准入桥 | 使用实际执行句柄、runId、generation 和记录的工作区；负责人定时任务同时核对来源 binding 与任务引用 | 独立任务取得自己的 writer，保留项目负责人；来源过期或暂停时拒绝新效果 |
 | 归档 / 撤销归档 | Session archive owner / 既有 archive、restore 入口 | 使用显式目标会话和归档策略 | 归档不更新任务完成状态；恢复沿原 owner 回读会话及协调器绑定 |

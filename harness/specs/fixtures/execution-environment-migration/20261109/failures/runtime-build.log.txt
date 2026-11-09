@@ -1,0 +1,68 @@
+[canvas] build: node scripts/bundle-a2ui.mjs
+A2UI bundle up to date; skipping.
+[diffs] build: node ../../scripts/build-diffs-viewer-runtime.mjs curated
+[diffs-language-pack] build: node ../../scripts/build-diffs-viewer-runtime.mjs full
+[build-all] tsdown
+[build-all] tsdown done in 11.3s
+[build-all] check-cli-bootstrap-imports
+CLI bootstrap import guard passed.
+[build-all] check-cli-bootstrap-imports done in 469ms
+[build-all] runtime-postbuild
+runtime-postbuild: plugin SDK root alias completed in 1ms
+[bundled-plugin-metadata] skipping missing skill path D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime\extensions\acpx\skills (plugin acpx)
+runtime-postbuild: bundled plugin metadata completed in 573ms
+runtime-postbuild: official channel catalog completed in 20ms
+runtime-postbuild: bundled plugin runtime overlay completed in 893ms
+runtime-postbuild: static extension assets completed in 0ms
+runtime-postbuild: stable root runtime imports completed in 377ms
+runtime-postbuild: stable root runtime aliases completed in 83ms
+runtime-postbuild: legacy root runtime compat aliases completed in 119ms
+runtime-postbuild: legacy CLI exit compat chunks completed in 1ms
+[build-all] runtime-postbuild done in 2.46s
+[build-all] build-stamp
+[build-all] build-stamp done in 147ms
+[build-all] runtime-postbuild-stamp
+[build-all] runtime-postbuild-stamp done in 141ms
+[build-all] write-cli-startup-metadata
+[cli-startup-metadata] skipped: CLI startup sources are unavailable in this pruned runtime.
+[build-all] write-cli-startup-metadata done in 157ms
+[build-all] write-cli-compat
+[cli-compat] skipped: legacy daemon CLI sources are unavailable in this pruned runtime.
+[build-all] write-cli-compat done in 110ms
+[build-all] phase timings: total 14.8s; slowest tsdown 11.3s; runtime-postbuild 2.46s; check-cli-bootstrap-imports 469ms; write-cli-startup-metadata 157ms; build-stamp 147ms; runtime-postbuild-stamp 141ms; write-cli-compat 110ms
+Building openclaw_runtime with esbuild...
+  Source: D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime\src
+  Output: D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime\dist
+  Found 1157 npm packages (will keep external)
+
+  openclaw_runtime\dist\knowledge\sekb\index.js  388.5kb
+
+Done in 61ms
+  Done in 0.1s
+runtime-postbuild: plugin SDK root alias completed in 0ms
+[bundled-plugin-metadata] skipping missing skill path D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime\extensions\acpx\skills (plugin acpx)
+runtime-postbuild: bundled plugin metadata completed in 572ms
+runtime-postbuild: official channel catalog completed in 20ms
+runtime-postbuild: bundled plugin runtime overlay completed in 1325ms
+runtime-postbuild: static extension assets completed in 264ms
+runtime-postbuild: stable root runtime imports completed in 324ms
+runtime-postbuild: stable root runtime aliases completed in 30ms
+runtime-postbuild: legacy root runtime compat aliases completed in 112ms
+runtime-postbuild: legacy CLI exit compat chunks completed in 0ms
+[canvas] copy: node scripts/copy-a2ui.mjs
+file:///D:/ClawX-work/session-task-unified-relay-20261109/scripts/smoke-openclaw-runtime.mjs:73
+      throw new Error(`gateway exited before ready (code ${child.exitCode})\n${output()}`);
+            ^
+
+Error: gateway exited before ready (code 1)
+[gateway] starting HTTP server...
+[health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+[shutdown] started: gateway startup failed
+[gmail-watcher] gmail watcher stopped
+[shutdown] completed cleanly in 41ms
+gateway method descriptor has no core handler: taskScope.migration.prepare (add it to the lazy core handler map or document the exception)
+
+    at waitForReady (file:///D:/ClawX-work/session-task-unified-relay-20261109/scripts/smoke-openclaw-runtime.mjs:73:13)
+    at async file:///D:/ClawX-work/session-task-unified-relay-20261109/scripts/smoke-openclaw-runtime.mjs:150:3
+
+Node.js v24.22.1

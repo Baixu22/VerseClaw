@@ -35,7 +35,8 @@ import { codingObservability } from '../context-engine/coding-observability.js';
 import { assertVerseGitCleanupDeletionAllowed, verseGitCleanupResourceId } from '../../../shared/versegit-cleanup-barrier.js';
 import type { VerseGitCleanupDeletionAuthorization } from '../../../shared/types/versegit.js';
 import type { WorktreeBackend } from "../context-engine/coding-runtime-flags.js";
-import { assertExecutionTaskWorktreeReleasable } from "./execution-task-authority.js";
+import { assertExecutionTaskWorktreeReleasable, openExecutionTaskStore } from "./execution-task-authority.js";
+import type { TaskCredential } from '../../../shared/task-system/types.js';
 import { reviewDiff } from "../context-engine/views/verify/review-diff-view.js";
 import type { FactStore } from "../context-engine/factstore/store.js";
 import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
@@ -832,6 +833,29 @@ export function resolveExecutionCheckout(root: string): {
   const basis = service.writerBasis(worktreeId);
   if (canonicalWorktreePath(basis.root) !== canonicalWorktreePath(root)) throw new Error("worktree_execution_root_mismatch");
   return { service, baseRoot, worktreeId, basis };
+}
+
+/** Consume only durable Task owner receipts; unknown effects retain checkout exclusion. */
+export function reconcileTaskCheckoutWrites(checkout: { baseRoot: string; worktreeId: string | null; credential: CheckoutWriterCredential }): void {
+  const service = createWorktreeService(checkout.baseRoot);
+  const state = service.writer(checkout.worktreeId);
+  if (!state || state.epoch !== checkout.credential.epoch || state.token !== checkout.credential.token
+    || state.owner.kind !== 'run' || !state.owner.task) return;
+  const sessionKey = state.owner.run.scope.sessionKey;
+  if (!sessionKey) throw new Error('TASK_CHECKOUT_EXECUTION_IDENTITY_REQUIRED');
+  const store = openExecutionTaskStore(state.root);
+  try {
+    if (store.domain.id !== state.owner.task.authorityId) throw new Error('TASK_CHECKOUT_AUTHORITY_MISMATCH');
+    const task: TaskCredential = { taskNodeId: state.owner.task.taskNodeId as TaskCredential['taskNodeId'],
+      sessionKey, generation: state.owner.sessionGeneration, epoch: state.owner.task.epoch };
+    for (const operation of state.operations.filter(row => row.state !== 'settled')) {
+      let receipt;
+      try { receipt = store.operation(task, operation.id); } catch { continue; }
+      if (receipt.state === 'completed' || receipt.state === 'reconciled') service.settleWrite(checkout.credential,
+        operation.id, { outcome: receipt.receipt?.outcome === 'not_applied' ? 'not-applied' : 'completed',
+          ownerReceipt: receipt.receipt?.id ?? `task-operation:${operation.id}:${receipt.epoch}:${receipt.state}` });
+    }
+  } finally { store.close(); }
 }
 
 export function __resetWorktreeRegistry(): void {
