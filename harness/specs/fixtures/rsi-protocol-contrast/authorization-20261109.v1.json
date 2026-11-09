@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "RsiProtocolContrastAuthorization/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-protocol-authorization-recorder",
+  "approvedOn": "2026-11-09",
+  "authorization": {
+    "approvedBy": "owner",
+    "currency": "CNY",
+    "maxCost": 0,
+    "maxProviderCalls": 433,
+    "maxTotalTokens": 12000000,
+    "source": "Owner reply to request_user_input_async call_autz2RMfwRSVZ5Sn75pO17kT: 批准新增对照与上述资源上限"
+  },
+  "approvedScope": {
+    "taskCount": 24,
+    "versions": ["RsiCodingCollector/v2", "RsiCodingCollector/v3", "RsiCodingCollector/v4"],
+    "repeats": 3,
+    "plannedSlots": 216,
+    "contextArm": "sekb-off",
+    "existingFreeQuotaOnly": true,
+    "newQuotaPurchaseAllowed": false,
+    "paidFallbackAllowed": false
+  },
+  "request": "是否批准新增 v2/v3/v4 协议对照实验（24 任务 × 3 协议 × 3 次），并授权追加最多 12M tokens、433 次调用、0 CNY 新增支出，只用既有 Free 额度？当前结果与补充方案已封存；上一会话批准的 12M tokens 仅剩 65,582，下一请求需预留 118,410，因此追加实验需要新授权。",
+  "reply": "批准新增对照与上述资源上限",
+  "retainedCampaign": {
+    "runId": "e8866141-a1f3-43c4-8efa-dfc9822cd24d",
+    "additionalAuthorizationAppliedToOldLedger": false,
+    "decision": "NO_GO/eliminate"
+  }
+}

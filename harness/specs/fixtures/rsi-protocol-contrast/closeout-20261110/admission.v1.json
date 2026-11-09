@@ -1,0 +1,223 @@
+{
+  "schemaVersion": "RsiProtocolAdmissionReadback/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-protocol-curator",
+  "admitted": 24,
+  "status": "ready-for-measurement",
+  "admissions": [
+    {
+      "taskId": "tf-0274-e01",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "10d6d42b6cc1ca4fa7c79d14ef4c3325d50b491c7d3e5dac70a22cd4e4004e7c"
+    },
+    {
+      "taskId": "tf-0275-e02",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "72e9fb851e8021cdb3acb3518b653f52129d5970d18f33067397cf51c47f5968"
+    },
+    {
+      "taskId": "tf-0289-g01",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "4fe7d5f4a9a0d2fc44482c1f051b28ae1b7761228fb42e70ce49b0a631493a15"
+    },
+    {
+      "taskId": "tf-0290-g02",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "810721a7a201c1a5025bc66e2042dc55144a0c582a5a8715eec4b74c4f35ddc7"
+    },
+    {
+      "taskId": "tf-0291-g03",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "3d9ae00baec3bc351092ca163218cd69bf256f6534bc571304ac089ba21c8c9a"
+    },
+    {
+      "taskId": "tf-0283-l01",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "5946f61d5f1aa3c6e5b907935e6a276f4ae42838667533285cfcf790db43fcc1"
+    },
+    {
+      "taskId": "tf-0284-l02",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "6d3cb48879e55c5b3a3c404d1d260a231a65dab082e4c0647495d4f9a7b16a2c"
+    },
+    {
+      "taskId": "tf-0285-l03",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "fa97ef4d4410ade7ad1649539db84733bb539031536656822c5cf90e70d057b4"
+    },
+    {
+      "taskId": "tf-0286-l04",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "18234ff6d48ebb1eff0a3b876253d7b828cd9b47fd05dca12c3e837dd008eb28"
+    },
+    {
+      "taskId": "tf-0287-l05",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "3ad5573d12f8c895e2d7a8767c922c2e3dc230543a4c1f44ee3031b91543bc86"
+    },
+    {
+      "taskId": "tf-0288-l06",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "3bad9fd733991c33f1b439b56583022a83c465f3102dd613874b3061736e2639"
+    },
+    {
+      "taskId": "tf-0276-s01",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "7ef39a3212094d58ac92e3b5b47a775500d4bc197d1292f909023db738b251cd"
+    },
+    {
+      "taskId": "tf-0277-s02",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "90edf978159caf315b227fcf2428b25897af664c17bfe35eebcf96be18810408"
+    },
+    {
+      "taskId": "tf-0278-s03",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "28f3986514f6acd68d67659f9af99060afa1b6a23aa10e4c04cf9c671e3bb89c"
+    },
+    {
+      "taskId": "tf-0279-s04",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "1b03e1c122457717291f9e43fc521a6d3803aeb68ce2f2fb42c143768d36a444"
+    },
+    {
+      "taskId": "tf-0280-s05",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "4ee5cbb7c476323f36ab399e818bc8b6c71c9e6c60d5cf7969ea67c6943c1393"
+    },
+    {
+      "taskId": "tf-0281-s06",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "5cd07c0c06a1d60b1c56235beda6f481be42678af7fe5dde511207cebcba58e8"
+    },
+    {
+      "taskId": "tf-0282-s07",
+      "passed": true,
+      "issues": [],
+      "warnings": [
+        "baseline-target-module-absent"
+      ],
+      "status": "admitted",
+      "admissionDigest": "53cdee855779b2a37e481eb7500ce9f0937985c4152643eddc3c7b74444a2e24"
+    },
+    {
+      "taskId": "tf-0293-a01",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "082bbed8072b4253a4d0f9574199d298d42fe87093b3f1a00317a1fbe2029d68"
+    },
+    {
+      "taskId": "tf-0294-a02",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "67a540b804e436a74a9cdc4dca13c38af38b8332cb6ef0639023da22f7743c22"
+    },
+    {
+      "taskId": "tf-0295-a03",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "9c7b1aed6c0a81639ba8ae51f5e750761f85c10edfb5fca014544045cb479bff"
+    },
+    {
+      "taskId": "tf-0296-a04",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "eda0c841b351b1eb306a01ae7795042f917914fd5a7f3ac8f8bf45993d633139"
+    },
+    {
+      "taskId": "tf-0297-a05",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "d6144e490ac1abfa778e84ebc67235f58b67e19ea85c0f80c75b8f78b8dcc80a"
+    },
+    {
+      "taskId": "tf-0298-a06",
+      "passed": true,
+      "issues": [],
+      "status": "admitted",
+      "admissionDigest": "b275e9a00b1d865fff69a656e165a46ff55783a0a0d0e3bc8b0fe42b122995db"
+    }
+  ],
+  "originalFailedLocalAdmissions": [
+    "tf-0277-s02:test-timeout",
+    "tf-0297-a05:runner-no-output"
+  ],
+  "rerunStatus": "both admitted with unchanged oracle",
+  "freshInstall": false,
+  "support": {
+    "package": "markdown-it",
+    "version": "14.2.0"
+  }
+}

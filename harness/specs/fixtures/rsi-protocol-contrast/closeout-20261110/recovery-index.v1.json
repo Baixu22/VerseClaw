@@ -1,0 +1,26 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-protocol-recovery-index",
+  "bundle": "D:\\ClawX-acceptance\\rsi-protocol-contrast-20261109-01a1be64-final\\frozen-source.bundle",
+  "sourceRevision": "67dd017512525bd94b98ecf34f26bb38d7961d05",
+  "bundleKind": "incremental-from-existing-private-base",
+  "prerequisiteRevision": "08fa97bf3e261d49842c9b19cda7388aa4717f2d",
+  "operatorRevision": "c8b045543cad08e57866a242243594ca0d75d316",
+  "sourceTree": "2972528b009e73eb5d9b994ea756c2a06b279b45",
+  "reusedDependencies": [
+    "D:/ClawX-work/rsi-remediation-20261107-01a1b651/node_modules",
+    "D:/ClawX-work/rsi-remediation-20261107-01a1b651/openclaw_runtime/node_modules"
+  ],
+  "supportRoot": "D:/tmp/rsi-private-runtime-20261108",
+  "exactSupport": {
+    "name": "markdown-it",
+    "version": "14.2.0"
+  },
+  "freshInstall": false,
+  "plans": {
+    "final": "D:/tmp/rsi-protocol-experiment-20261109-01a1be64-final",
+    "preparation": "D:/tmp/rsi-protocol-experiment-20261109-01a1be64"
+  },
+  "receipts": "D:/tmp/rsi-protocol-measurement-20261109-01a1be64",
+  "restore": "Use a clone of the existing private repository containing prerequisite 08fa97bf3 and the task base/reference revisions, import the incremental source bundle commit, restore the manifest ZIP paths, attach the recorded dependencies or reproduce their versions, then run rsi-protocol-contrast check and rsi-protocol-contrast-replay with the restored base and scratch."
+}
