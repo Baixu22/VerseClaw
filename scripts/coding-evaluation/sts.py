@@ -135,7 +135,7 @@ class Evidence:
 
     def run(self, identifier: str, argv, *, cwd: Path, expected=0, timeout=900, extra_env=None) -> dict:
         binary = Path(argv[0])
-        args = [str(item) for item in argv]
+        args = [str(item) for item in argv[1:]]
         safe = re.sub(r"[^A-Za-z0-9_.-]+", "-", identifier)
         stdout_path = self.out / "outputs" / f"{safe}.stdout.bin"
         stderr_path = self.out / "outputs" / f"{safe}.stderr.bin"
