@@ -5,6 +5,8 @@ title: Recompute the retained v4 campaign and verify prompt rollback
 intent: Close the budget-limited RSI experiment from immutable Responses, tool, oracle and campaign receipts, then execute the existing prompt switch through off/on/off and continuation.
 diffBase: fb2d09a3a401deecace0ccdcb6d9fc71da0b9693
 touchedAreas:
+  - scripts/rsi-coding-collector.mjs
+  - scripts/rsi-budget-stop-regression.mjs
   - scripts/rsi-paired-measurement-replay.*
   - tests/unit/rsi-paired-measurement-replay.test.ts
   - harness/specs/tasks/rsi-paired-measurement-closeout.md
@@ -28,10 +30,11 @@ expectedUserBehavior:
   - Independent arithmetic can reproduce the reliability, paired effect, cost and safety verdict from raw receipts.
   - Turning off the evaluation prompt switch restores the previous prompt bytes and supports a fresh continuation.
 requiredTests:
-  - node node_modules/vitest/vitest.mjs run --config vitest.rsi.node.config.ts tests/unit/rsi-paired-measurement-replay.test.ts tests/unit/rsi-campaign-budget.test.ts tests/unit/rsi-coding-tool-loop.test.ts
+  - node node_modules/vitest/vitest.mjs run --config vitest.rsi.node.config.ts tests/unit/rsi-paired-measurement-replay.test.ts tests/unit/rsi-campaign-budget.test.ts tests/unit/rsi-coding-tool-loop.test.ts tests/unit/rsi-coding-collector.test.ts
   - node harness/src/cli.mjs validate --spec harness/specs/tasks/rsi-paired-measurement-closeout.md
   - git diff --check
 acceptance:
+  - A collector stop after importing new receipts regenerates the final report before propagating the original error. A retained-receipt regression observes the report before and after the budget refusal, with zero new provider dispatches.
   - Read the frozen plan, source bindings, all retained Responses, tool effects, independent historical oracle records and the campaign ledger; identify missing slots separately.
   - Recompute passK, passAtK, complete case pairs and the paired interval with arithmetic separate from the frozen statistical implementation. Preserve unavailable intervals and power for zero variance.
   - Reconcile reservations, settled tokens and unknown-use upper bounds without dispatching requests; retain the original token, call and currency authorization.

@@ -20,7 +20,7 @@ for historical interpretation. The decisions and reversals are in
 
 | Layer | Current boundary | Evidence limit |
 | --- | --- | --- |
-| Experience loop / SEKB | Capture, suggest, explicitly confirm, retrieve and record versioned adoption; default off | Production extension events and a real edit exercised by an agent-driven test; no new benefit measurement |
+| Experience loop / SEKB | Capture, suggest, explicitly confirm, retrieve and record versioned adoption; default off | Production adoption events and an agent-driven edit are covered; the retained v4 prompt measurement eliminates its staged candidate |
 | Harness self-modification | No complete product generator, archive/search and promotion loop | Controlled branch research and evaluator artefacts do not constitute a shipped capability |
 | Code self-modification | No product source-generation-and-merge loop | Eligibility remains No-Go; no code candidate or product effect is claimed |
 
@@ -155,6 +155,38 @@ digests and budget starts are checked against the frozen source projection;
 historical oracles run after public checks. The standalone
 `node scripts/rsi-coding-tool-integration.mjs` exercises this path with a scripted
 provider and real historical oracle bytes.
+
+The v4 measurement on 2026-11-09 has run ID
+`e8866141-a1f3-43c4-8efa-dfc9822cd24d` and frozen evaluator
+`fb2d09a3a401deecace0ccdcb6d9fc71da0b9693`. It measures the staged second-generation
+prompt under the declared 24-task, three-arm, k=3 protocol. The campaign recorded
+198 of 216 slots: four oracle passes, 193 model failures and one incomplete budget
+stop. The remaining 18 slots were not started. Of the model failures, 192 reached
+the four-call limit and one failed its final-state oracle.
+
+Confirmed/off has 22 complete case pairs; shadow/off has 21. All three arms have
+pass^3=0, and the primary paired difference is zero. The zero variance leaves its
+95% interval and power estimate unavailable. Anchor failures and a shadow-arm
+safety flake eliminate the candidate. The original completion check retains its
+missing-slot failure. The final evidence is under
+`harness/specs/fixtures/rsi-paired-measurement/closeout-20261109/`.
+
+The shared ledger reconciles 791 requests, including two preflights, to 11,933,697
+known tokens plus a 721-token upper reservation for the first authentication
+failure. Accounted consumption is 11,934,418 of the authorized 12,000,000 tokens;
+the next initial request needs 118,410 tokens while 65,582 remain. Existing Free
+quota gives a new-spending upper bound of 0 CNY; upstream credit debit and invoices
+remain unavailable. Off/on/off restores the previous prompt bytes, and a fresh
+Node process rebuilds the same off request from the retained elimination decision.
+
+`node scripts/rsi-paired-measurement-replay.mjs --root <frozen-checkout>
+--base-dir <campaign> --scratch <receipts> --out <new.json>` independently reconstructs
+case statistics and accounting from retained v4 data. It verifies the frozen source,
+Responses continuations, public tool effects, historical oracles and hash manifest.
+Run `node scripts/rsi-benefit-eval.mjs report --run-dir <campaign>/measurement` to
+regenerate a retained report before checking it. The original pre-trial report,
+first authentication failure and first calibration failures remain in the private
+recovery archive.
 
 The original v1 run on 2026-11-06 stopped at the hard completion gate: 16 dispatches,
 15 final provider responses (10 oracle failures, 4 format failures, 1 incomplete
