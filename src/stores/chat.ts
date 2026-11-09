@@ -4695,7 +4695,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     // R0-3: abort the run FIRST. Only release UI state once the Main process
     // confirms the abort — a failed stop must not masquerade as stopped.
     let receipt: { aborted?: boolean; runIds?: string[] } | undefined;
-    let stopConfirmed = false;
+    let stopConfirmed: boolean;
     try {
       receipt = await abortChatRunViaHostApi(currentSessionKey, activeRunId);
       const acknowledged = receipt?.aborted === true && (!activeRunId || !receipt.runIds || receipt.runIds.includes(activeRunId));

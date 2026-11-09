@@ -207,6 +207,7 @@ async function deleteDialog(c: Context) {
   await c.page.getByTestId('sidebar-session-context-delete').click();
 }
 
+// eslint-disable-next-line no-empty-pattern -- Playwright hooks require a destructured fixture argument.
 test.afterEach(async ({}, info) => {
   const c = contexts.get(info.testId); if (!c) return;
   try {

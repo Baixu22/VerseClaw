@@ -32,10 +32,12 @@ async function installReplyLoss(app: ElectronApplication, sessionKey: string) {
     type Handler = (event: unknown, request: Request) => Promise<{ ok?: boolean; data?: Record<string, unknown> }>;
     const original = (ipcMain as unknown as { _invokeHandlers: Map<string, Handler> })._invokeHandlers.get('host:invoke')!;
     const state = { armed: null as null | { action: string; file?: string; expectedSha256?: string }, calls: [] as Array<Record<string, unknown>>,
-      reads: [] as Request[], restore: () => { ipcMain.removeHandler('host:invoke'); ipcMain.handle('host:invoke', original); } };
+      reads: [] as Request[], observedMutations: [] as Request[], restore: () => { ipcMain.removeHandler('host:invoke'); ipcMain.handle('host:invoke', original); } };
     (globalThis as unknown as { u5CommitLoss: typeof state }).u5CommitLoss = state;
     ipcMain.removeHandler('host:invoke');
     ipcMain.handle('host:invoke', async (event, request: Request) => {
+      if (request.module === 'sessions' && ['compact', 'compactRange', 'restoreCheckpoint'].includes(request.action ?? ''))
+        state.observedMutations.push(structuredClone(request));
       if (request.module !== 'sessions' || request.payload?.sessionKey !== key) return original(event, request);
       if (!['compact', 'compactRange', 'restoreCheckpoint'].includes(request.action ?? '')) { state.reads.push(structuredClone(request)); return original(event, request); }
       const row: Record<string, unknown> = { action: request.action, payload: structuredClone(request.payload), startedAt: Date.now() }; state.calls.push(row);
@@ -58,8 +60,8 @@ async function installReplyLoss(app: ElectronApplication, sessionKey: string) {
   }, sessionKey);
 }
 const faultRead = (app: ElectronApplication) => app.evaluate(() => {
-  const s = (globalThis as unknown as { u5CommitLoss: { calls: Captured[]; reads: unknown[] } }).u5CommitLoss;
-  return { calls: s.calls, reads: s.reads };
+  const s = (globalThis as unknown as { u5CommitLoss: { calls: Captured[]; reads: unknown[]; observedMutations: unknown[] } }).u5CommitLoss;
+  return { calls: s.calls, reads: s.reads, observedMutations: s.observedMutations };
 });
 const arm = (app: ElectronApplication, action: Action, file?: string, expectedSha256?: string) => app.evaluate((_electron, input) => {
   (globalThis as unknown as { u5CommitLoss: { armed: unknown } }).u5CommitLoss.armed = input;
@@ -99,6 +101,8 @@ async function openCheckpoints(page: Page) {
 }
 async function finish(app: ElectronApplication, llm: Awaited<ReturnType<typeof startScriptedLlm>>, info: TestInfo, evidence: Record<string, unknown>) {
   evidence.fault = await faultRead(app).catch(String); evidence.providerLog = llm.log;
+  evidence.uiEvents = await (await getStableWindow(app)).evaluate(() =>
+    (window as unknown as { u5UiEvents?: unknown[] }).u5UiEvents ?? []).catch(String);
   await app.evaluate(() => (globalThis as unknown as { u5CommitLoss?: { restore: () => void } }).u5CommitLoss?.restore()).catch(() => undefined);
   await (await getStableWindow(app).catch(() => null))?.screenshot({ path: info.outputPath('final.png') }).catch(() => undefined);
   await writeFile(info.outputPath('context-commit.json'), JSON.stringify(evidence, null, 2));
@@ -150,7 +154,22 @@ test('U5 compact and compactRange lose only committed replies; refresh reads cur
         await expect(page.getByTestId('chat-compaction-dialog')).toBeVisible();
         await expect(page.getByTestId('chat-composer-input')).toHaveValue('');
         await page.getByTestId('chat-compaction-instructions').fill('Preserve U5_COMMIT_SUMMARY and exact context markers.');
-        await page.getByTestId('chat-compaction-confirm').focus(); await page.getByTestId('chat-compaction-confirm').press('Enter');
+        const window = await app.browserWindow(page);
+        await window.evaluate(window => { window.show(); window.focus(); }); await window.dispose();
+        await page.bringToFront();
+        await page.evaluate(() => {
+          const rows: unknown[] = []; (window as unknown as { u5UiEvents: unknown[] }).u5UiEvents = rows;
+          for (const type of ['focusin', 'focusout', 'keydown', 'keyup', 'click']) document.addEventListener(type, event => {
+            if (rows.length >= 100) return;
+            const element = event.target as HTMLElement;
+            rows.push({ type, time: Date.now(), target: element.getAttribute('data-testid'),
+              key: event instanceof KeyboardEvent ? event.key : null, documentFocused: document.hasFocus(),
+              active: document.activeElement?.getAttribute('data-testid'), disabled: element.getAttribute('disabled') });
+          }, { capture: true });
+        });
+        const confirm = page.getByTestId('chat-compaction-confirm');
+        await expect(confirm).toBeEnabled(); await confirm.focus(); await expect(confirm).toBeFocused();
+        await confirm.press('Enter');
         await expect.poll(async () => (await faultRead(app)).calls.some(row => row.action === action)
           || await page.getByTestId('prompt-cache-risk-toast').isVisible(), { timeout: 30_000 }).toBe(true);
         if (await page.getByTestId('prompt-cache-risk-toast').isVisible())
