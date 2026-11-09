@@ -231,7 +231,7 @@ def run_native_measure(runner: Runner, workspace: Path, workspace_id: str, vg: P
         target_ids = [((((first_payload.get("verdict") or {}).get("dimensions") or {}).get("candidate") or {}).get("identity"))]
         final = lane["cold"].get("final_full_plan")
         if label == "vg_selected_plus_required_full":
-            if lane.get("selection_scope") != "selected" or lane.get("execution_scope") != "selected":
+            if first.get("selection_scope") != "selected" or first.get("execution_scope") != "selected":
                 raise RuntimeError(f"{workspace_id} selected lane changed scope")
             if not final:
                 raise RuntimeError(f"{workspace_id} selected lane lacks final full")
@@ -241,17 +241,17 @@ def run_native_measure(runner: Runner, workspace: Path, workspace_id: str, vg: P
             tree_ids.append((final_payload.get("managed") or {}).get("tree_id"))
             target_ids.append(((((final_payload.get("verdict") or {}).get("dimensions") or {}).get("candidate") or {}).get("identity")))
         elif label == "vg_full":
-            if lane.get("selection_scope") != "full" or lane.get("execution_scope") != "full":
+            if first.get("selection_scope") != "full" or first.get("execution_scope") != "full":
                 raise RuntimeError(f"{workspace_id} full lane changed scope")
         else:
             raise RuntimeError(f"{workspace_id} unknown lane {label}")
-        if lane.get("mapped_verdict") != "passed":
+        if first.get("mapped_verdict") != "passed":
             raise RuntimeError(f"{workspace_id} {label} mapped verdict {lane.get('mapped_verdict')}")
         normalized.append({
             "workspace": workspace_id, "run": lane.get("run"), "lane": label,
             "coldSeconds": lane["cold"]["duration_s"], "warmSeconds": lane["warm"]["duration_s"],
-            "collected": lane.get("collected"), "selected": lane.get("selected"), "executed": lane.get("executed"),
-            "selectionScope": lane.get("selection_scope"), "executionScope": lane.get("execution_scope"),
+            "collected": first.get("collected"), "selected": first.get("selected"), "executed": first.get("executed"),
+            "selectionScope": first.get("selection_scope"), "executionScope": first.get("execution_scope"),
             "treeIds": tree_ids, "targetIdentities": target_ids,
         })
     for label in ("jj_plus_same_full_check", "vg_full", "vg_selected_plus_required_full"):
