@@ -1,5 +1,7 @@
 # Phased Implementation And Acceptance
 
+The complete long-term target is [Project RAG ADR v2](../../dev/adr/2026-11-09-project-rag-retrieval-plane.md), implemented through [RAG-00 to RAG-19](../../dev/project-rag/WORK-PACKAGES.md). The phases below describe the historical baseline; completing an early phase does not complete that target.
+
 This document breaks Knowledge persistence into implementable phases. Each phase
 has scope, non-goals, and acceptance criteria.
 
@@ -302,8 +304,8 @@ Make knowledge mature over time.
 
 Scope:
 
-- Promote frequently accepted cards.
-- Demote stale/dismissed cards.
+- Produce version-bound review recommendations from usage evidence.
+- Propose lifecycle review for stale/dismissed cards.
 - Support cross-project cards with scoped applicability.
 - Add review reminders for high-impact stale knowledge.
 
@@ -314,7 +316,7 @@ Non-goals:
 
 Acceptance:
 
-- Confidence changes based on usage.
+- Usage is diagnostic; ranking changes require a frozen offline evaluation and a new policy version.
 - Stale cards are marked and excluded from default injection.
 - Cross-project import/export requires user confirmation.
 

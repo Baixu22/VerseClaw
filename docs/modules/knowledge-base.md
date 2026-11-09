@@ -17,7 +17,7 @@ Verse Claw 的 Knowledge 是本地 Markdown/wiki-first 的受治理项目知识�
 
 用户入口：`/knowledge`。
 
-检索升级按 [Project RAG 架构裁决](../dev/adr/2026-11-09-project-rag-retrieval-plane.md) 实施：首版选择既有 SQLite 内的 Wiki chunk/FTS5 投影，先补齐 Chat 的 owner 读取与引用版本链。该能力当前处于待实施状态；本文以下章节描述现有 page/snippet 路径。
+长期检索目标按 [Project RAG ADR v2](../dev/adr/2026-11-09-project-rag-retrieval-plane.md) 和[完整工作包](../dev/project-rag/WORK-PACKAGES.md)实施，覆盖持久混合检索、重排、多来源、Research、交互、索引运维与独立验收。当前处于规划与分阶段开发，以下章节仍描述已有 page/snippet 行为。
 
 ## 2. 页面分区
 

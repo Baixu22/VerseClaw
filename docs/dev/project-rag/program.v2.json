@@ -1,0 +1,870 @@
+{
+  "schema": "ProjectRagProgram/v2",
+  "revision": "2026-11-09-long-term",
+  "purpose": "交付可维护、可验证的项目知识检索系统，具备持久混合检索、重排、多来源、Research、完整交互、生命周期和效果评测。",
+  "baseline": "5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976",
+  "phases": [
+    {
+      "key": "P0",
+      "title": "冻结长期架构与开发基线"
+    },
+    {
+      "key": "P1",
+      "title": "建立可验证的来源、语料与索引基础"
+    },
+    {
+      "key": "P2",
+      "title": "完成持久混合检索与模型重排"
+    },
+    {
+      "key": "P3",
+      "title": "完成证据装配、问答和用户交互"
+    },
+    {
+      "key": "P4",
+      "title": "接通记忆、经验和研究检索"
+    },
+    {
+      "key": "P5",
+      "title": "完成运营维护和长期版本验收"
+    }
+  ],
+  "tasks": [
+    {
+      "key": "RAG-00",
+      "slug": "project-rag-long-term-program",
+      "phase": "P0",
+      "title": "冻结长期决策、研究依据与工作树规划",
+      "purpose": "把完整目标、实现顺序、验证和工作树归属变成可执行合同。",
+      "owner": "architecture / harness",
+      "depends": [],
+      "areas": [
+        "docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md",
+        "docs/dev/project-rag/**",
+        "harness/specs/tasks/project-rag-*.md",
+        "harness/specs/rules/project-rag-long-term-boundary.md",
+        "docs/dev/evidence/project-rag-longterm-20261109/**",
+        ".gitignore",
+        "scripts/repository-artifacts.json",
+        "README*.md",
+        "docs/modules/knowledge-base.md",
+        "docs/dev/adr/2026-08-17-knowledge-system-unification-authority.md"
+      ],
+      "contracts": [
+        "ProjectRagProgram/v2",
+        "TaskForestWorktreeBinding/v1"
+      ],
+      "acceptance": [
+        "长期目标覆盖 RAG-01 至 RAG-19，所有功能包有 owner、前置依赖、验证与回滚。",
+        "一手资料、源码锚点和依赖平台元数据可回读；最终选择不依赖未定义的后续架构决定。",
+        "本次改动已提交至 main 派生的专用工作树，任务提案通过预校验，节点绑定同一执行工作树。"
+      ],
+      "existingTests": [
+        "tests/unit/harness-specs.test.ts"
+      ],
+      "newTests": [],
+      "e2e": [],
+      "rollback": "回到规划前提交；不修改运行时默认与用户资料。",
+      "minutes": 240
+    },
+    {
+      "key": "RAG-01",
+      "slug": "project-rag-owner-read-contract",
+      "phase": "P1",
+      "title": "统一来源读取的身份、权限与版本",
+      "purpose": "确保检索、预览、模型调用和引用使用同一份 owner 读取约束。",
+      "owner": "knowledge owners / Host / Gateway",
+      "depends": [
+        "RAG-00"
+      ],
+      "areas": [
+        "shared/knowledge/**",
+        "shared/host-api/contract.ts",
+        "electron/services/knowledge*.ts",
+        "electron/services/chat-api.ts",
+        "openclaw_runtime/src/context-engine/chat-knowledge*.ts",
+        "openclaw_runtime/extensions/memory-wiki/runtime-api.ts",
+        "openclaw_runtime/extensions/memory-wiki/src/**",
+        "openclaw_runtime/packages/gateway-protocol/src/schema/logs-chat.ts"
+      ],
+      "contracts": [
+        "ReadAdmissionContext/v1",
+        "SourceRef/v2",
+        "OwnerReadSnapshot/v1"
+      ],
+      "acceptance": [
+        "可信 session/workspace 身份派生 read context；renderer 的 scope、ACL 和 score 不能扩大权限。",
+        "source revision、完整内容 digest、policy epoch、namespace 与 range 经 Host/Gateway/runtime 往返保持；显式 pin 漂移拒绝。",
+        "真实 Wiki adapter 保留 status/privacy/ACL/retention，拒绝源在 UI、embedding、rerank 和 prompt 中出现次数为零。",
+        "所引用的 owner 版本按既有 owner 保留策略读取或明确失效；索引不能复活已删除或撤销的内容。",
+        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+      ],
+      "existingTests": [
+        "tests/unit/knowledge-source-set-answer.test.ts",
+        "tests/unit/knowledge-api.test.ts"
+      ],
+      "newTests": [
+        "tests/unit/project-rag-owner-read.test.ts",
+        "openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts"
+      ],
+      "e2e": [
+        "tests/e2e/project-rag-owner-read.spec.ts"
+      ],
+      "rollback": "保留安全修复并禁用新 reader，回到同样准入的 page 读取。",
+      "minutes": 480
+    },
+    {
+      "key": "RAG-02",
+      "slug": "project-rag-frozen-evaluation-corpus",
+      "phase": "P1",
+      "title": "冻结真实语料、独立判据和对照协议",
+      "purpose": "在调参前固定怎样证明完整检索系统有效。",
+      "owner": "evaluation",
+      "depends": [
+        "RAG-01"
+      ],
+      "areas": [
+        "scripts/knowledge-*.ts",
+        "scripts/lib/paired-ablation.mjs",
+        "harness/specs/fixtures/project-rag/**"
+      ],
+      "contracts": [
+        "ProjectRagCorpus/v1",
+        "ProjectRagPromotionPolicy/v1",
+        "SourceSpanGold/v1"
+      ],
+      "acceptance": [
+        "240 个查询按来源族分为 calibration/validation/held-out 各 80；同源改写不跨 split，覆盖中英日俄及六种任务意图。",
+        "安全/无答案/权限/版本负例独立封存；gold 引用真实 owner 版本和字节范围，标明 agent 编写与复核。",
+        "60 个执行任务、3 repeats、Off/page/full 三臂与各 profile 成本预算在运行前冻结；oracle 对被测模型隐藏。",
+        "A1/B1 共享安全修复和预算条件，保留当前强 page/semantic 基线，不用弱化基线制造收益。",
+        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+      ],
+      "existingTests": [
+        "tests/unit/knowledge-retrieval.test.ts"
+      ],
+      "newTests": [
+        "tests/unit/project-rag-corpus-integrity.test.ts"
+      ],
+      "e2e": [],
+      "rollback": "保留原协议和旧 verdict；修订数据产生新版本，不原地改 gold 或阈值。",
+      "minutes": 360
+    },
+    {
+      "key": "RAG-03",
+      "slug": "project-rag-structure-chunk-citation",
+      "phase": "P1",
+      "title": "实现来源标准化、结构切块与精确定位",
+      "purpose": "让相关信息可被召回，并能回到准确原文位置。",
+      "owner": "knowledge retrieval source / Wiki owner",
+      "depends": [
+        "RAG-01",
+        "RAG-02"
+      ],
+      "areas": [
+        "openclaw_runtime/src/knowledge/retrieval/**",
+        "openclaw_runtime/src/runtime-core/memory-tokenization.ts",
+        "openclaw_runtime/extensions/memory-wiki/runtime-api.ts",
+        "shared/knowledge/**"
+      ],
+      "contracts": [
+        "KnowledgeChunk/v2",
+        "CitationLocator/v2",
+        "ChunkerProfile/v1",
+        "NormalizedSourceDocument/v1"
+      ],
+      "acceptance": [
+        "标题、列表、步骤、代码围栏和表格有结构边界；raw UTF-8 offset、frontmatter、CRLF 和多字节字符可往返校验。",
+        "检索文本与可引用正文分离，CJK bigram 和标识符保留通过中英日俄 fixture；生成前缀不能成为原文引文。",
+        "chunkId 绑定 source/version/span/chunker；同输入可重建相同片段，父文档/section/read range 始终可追踪。",
+        "既有文件、目录与GitHub来源经owner标准化，记录parser/编码/来源版本与归一化映射；解析失败明确报错，不能当空文档；新材料仍经过既有确认链。",
+        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+      ],
+      "existingTests": [
+        "tests/unit/knowledge-retrieval.test.ts"
+      ],
+      "newTests": [
+        "openclaw_runtime/src/knowledge/retrieval/chunker.test.ts",
+        "tests/unit/project-rag-citation-locator.test.ts"
+      ],
+      "e2e": [],
+      "rollback": "切换到已验证 chunker generation 或 owner page read，旧来源不迁移。",
+      "minutes": 480
+    },
+    {
+      "key": "RAG-04",
+      "slug": "project-rag-index-lifecycle",
+      "phase": "P1",
+      "title": "实现增量索引、撤销传播与崩溃恢复",
+      "purpose": "让长期索引跟随真实来源变化，而非逐渐过期的缓存。",
+      "owner": "retrieval projection / shared state / background work",
+      "depends": [
+        "RAG-03"
+      ],
+      "areas": [
+        "openclaw_runtime/src/knowledge/retrieval/**",
+        "openclaw_runtime/src/state/openclaw-state-*",
+        "openclaw_runtime/src/resources/background-work-gate.ts",
+        "openclaw_runtime/extensions/memory-wiki/runtime-api.ts",
+        "electron/services/knowledge-source-sync.ts"
+      ],
+      "contracts": [
+        "ProjectionGeneration/v1",
+        "IndexJob/v1",
+        "SourceInvalidation/v1"
+      ],
+      "acceptance": [
+        "SQLite FTS5 和 chunk 投影以 source generation/CAS 发布；未完成构建不会成为 active。",
+        "create/update/revoke/delete/权限变更、停止期间变化及重启均可恢复；撤销立即取消可读资格，后台清理不能恢复授权。",
+        "owner 事件、启动对账和既有 watcher 复用同一入口；失败与重试有游标、幂等键、总预算与退出清理。",
+        "FTS 缺失/索引损坏不影响共享状态和普通 Chat 启动；后台构建不阻塞主线程。",
+        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+      ],
+      "existingTests": [
+        "tests/unit/knowledge-source-sync.test.ts"
+      ],
+      "newTests": [
+        "openclaw_runtime/src/knowledge/retrieval/projection-store.test.ts",
+        "tests/unit/project-rag-index-recovery.test.ts"
+      ],
+      "e2e": [
+        "tests/e2e/project-rag-index-lifecycle.spec.ts"
+      ],
+      "rollback": "停止新 jobs、切回有效 generation 或 page 路径，只清理派生索引。",
+      "minutes": 600
+    },
+    {
+      "key": "RAG-05",
+      "slug": "project-rag-embedding-provider-lifecycle",
+      "phase": "P2",
+      "title": "接通本地与远端 embedding 的完整生命周期",
+      "purpose": "使语义召回可离线工作，并能安全切换获授权的模型服务。",
+      "owner": "embedding provider registry / retrieval source",
+      "depends": [
+        "RAG-04"
+      ],
+      "areas": [
+        "openclaw_runtime/src/plugin-sdk/embedding-providers.ts",
+        "openclaw_runtime/src/embeddings/**",
+        "openclaw_runtime/extensions/memory-core/runtime-api.ts",
+        "openclaw_runtime/src/knowledge/retrieval/**",
+        "electron/services/knowledge-embedding-provider.ts"
+      ],
+      "contracts": [
+        "EmbeddingSpace/v1",
+        "EmbeddingJob/v1",
+        "ProviderCapabilitySnapshot/v1"
+      ],
+      "acceptance": [
+        "复用现有 provider registry/public API，区分 query/document 输入；不启用或替换 memory slot。",
+        "本地 EmbeddingGemma 768 维与配置的 Qwen3/兼容服务形成实际向量；维度、模型 revision、tokenizer、prompt format、normalization 不符拒绝混用。",
+        "首次模型安装、校验、warmup、取消、重试、离线重启、磁盘/RAM 预算与凭据轮换完整；前台发送不触发整库 embedding。",
+        "外部 embedding 需 owner egress 准入，缓存隔离不泄露凭据或跨项目内容。",
+        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+      ],
+      "existingTests": [
+        "tests/unit/knowledge-retrieval.test.ts"
+      ],
+      "newTests": [
+        "tests/unit/project-rag-embedding-lifecycle.test.ts"
+      ],
+      "e2e": [
+        "tests/e2e/project-rag-provider-settings.spec.ts"
+      ],
+      "rollback": "停止 embedding jobs，使用已有合格 space 或 lexical；已生成向量不作为知识真相源。",
+      "minutes": 480
+    },
+    {
+      "key": "RAG-06",
+      "slug": "project-rag-vector-projection-backends",
+      "phase": "P2",
+      "title": "交付可移植向量检索与规模化 ANN",
+      "purpose": "用统一契约覆盖普通项目与大语料，并明确平台能力。",
+      "owner": "vector projection",
+      "depends": [
+        "RAG-05"
+      ],
+      "areas": [
+        "openclaw_runtime/src/knowledge/retrieval/**",
+        "openclaw_runtime/src/state/openclaw-state-*",
+        "openclaw_runtime/package.json",
+        "pnpm-lock.yaml",
+        "scripts/bundle-openclaw-runtime.mjs",
+        "openclaw_runtime/extensions/memory-wiki/package.json",
+        "openclaw_runtime/extensions/memory-wiki/runtime-api.ts",
+        "openclaw_runtime/extensions/memory-wiki/src/retrieval/**"
+      ],
+      "contracts": [
+        "VectorProjection/v1",
+        "VectorGeneration/v1",
+        "IndexBackendCapabilities/v1"
+      ],
+      "acceptance": [
+        "SQLite 精确向量路径与 LanceDB Embedded ANN 均实现同一 id/filter/space/generation 契约；每 namespace 仅一条 active backend。",
+        "LanceDB 使用库级只读检索 adapter，不加载 memory-lancedb 的 recall/capture/store hooks；向量行不承载可直接回答的正文。",
+        "有条件前滤、未索引新行、删除、模型替换、后台 optimize、旧版本 cleanup、切换中断和重启均验证，旧授权不能复活。",
+        "20k portable tier 和 100k ANN tier 分别测 Recall/latency/RSS/disk；缺 native 包明确展示 capability，fallback 保持普通 Chat 可用。",
+        "向量库依赖归实际owner-side检索适配实现，core只消费public SDK/owner seam；ANN是本ADR登记的派生索引例外，SQLite继续拥有系统状态。",
+        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+      ],
+      "existingTests": [
+        "tests/unit/knowledge-retrieval.test.ts"
+      ],
+      "newTests": [
+        "tests/unit/project-rag-vector-backends.test.ts",
+        "tests/unit/project-rag-vector-generation.test.ts"
+      ],
+      "e2e": [],
+      "rollback": "按已发布 generation 回切；LanceDB 不可用时使用合格 portable backend 或 lexical，禁止整库状态倒回。",
+      "minutes": 600
+    },
+    {
+      "key": "RAG-07",
+      "slug": "project-rag-retrieval-plan-fusion",
+      "phase": "P2",
+      "title": "实现按策略检索、融合和候选解释",
+      "purpose": "统一精确、词法、语义候选，避免分数和权限混为一谈。",
+      "owner": "retrieval planner",
+      "depends": [
+        "RAG-06"
+      ],
+      "areas": [
+        "openclaw_runtime/src/knowledge/retrieval/**",
+        "openclaw_runtime/src/context-engine/source-set.ts",
+        "electron/services/knowledge-api.ts",
+        "shared/host-api/contract.ts",
+        "src/lib/host-api/knowledge/**"
+      ],
+      "contracts": [
+        "RetrievalPlan/v2",
+        "RankSignals/v2",
+        "RetrievalResult/v2"
+      ],
+      "acceptance": [
+        "按 mode/profile/owner scope 分配 lanes 和一个总 deadline；provider 失败沿剩余预算退化。",
+        "显式 refs 精确解析；普通结果按 lane rank 做 RRF、去重与 parent 配额，多 query 不重复放大同一信号。",
+        "不沿用 score/100、0.55 或固定 0.72；提供 scoreKind、lane rank、贡献、过滤与fallback原因。",
+        "SourceSet 不二次覆盖 RRF 排名，不恢复 sticky-denied 来源；query tokens 参数化转义。",
+        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+      ],
+      "existingTests": [
+        "tests/unit/knowledge-api.test.ts",
+        "tests/unit/knowledge-source-set-answer.test.ts"
+      ],
+      "newTests": [
+        "tests/unit/project-rag-plan-fusion.test.ts"
+      ],
+      "e2e": [],
+      "rollback": "关闭新 plan reader，沿相同 owner 准入回到 page 检索。",
+      "minutes": 480
+    },
+    {
+      "key": "RAG-08",
+      "slug": "project-rag-cross-encoder-rerank",
+      "phase": "P2",
+      "title": "实现多语言 cross-encoder 重排服务",
+      "purpose": "在召回覆盖后提高实际送入模型的证据精度。",
+      "owner": "rerank provider / retrieval planner",
+      "depends": [
+        "RAG-07"
+      ],
+      "areas": [
+        "openclaw_runtime/src/knowledge/retrieval/**",
+        "openclaw_runtime/src/plugin-sdk/**",
+        "electron/services/knowledge-api.ts",
+        "shared/host-api/contract.ts"
+      ],
+      "contracts": [
+        "RerankProvider/v1",
+        "RerankResult/v1"
+      ],
+      "acceptance": [
+        "Qwen3-Reranker-0.6B 为参考 cross-encoder；实现具备模型清单的本地/远端 endpoint adapter 与取消、超时、批次预算。",
+        "输入仅包含已准入候选；结果 id/order/count/finite score 校验，raw logit 或 sigmoid 不作为校准概率。",
+        "quality/research profile 实际调用重排；local profile 不依赖该服务；失败有 effectiveProfile 与降级原因。",
+        "与固定候选池做模型/无重排消融，输出 nDCG/precision 与端到端成本，不把 provider 可达性当收益。",
+        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+      ],
+      "existingTests": [
+        "tests/unit/knowledge-api.test.ts"
+      ],
+      "newTests": [
+        "tests/unit/project-rag-rerank-provider.test.ts"
+      ],
+      "e2e": [
+        "tests/e2e/project-rag-provider-settings.spec.ts"
+      ],
+      "rollback": "关单一 scorer，保留 RRF 次序与同一准入集。",
+      "minutes": 480
+    },
+    {
+      "key": "RAG-09",
+      "slug": "project-rag-dcs-evidence-packing",
+      "phase": "P3",
+      "title": "让 DCS 保序装配完整证据并记录实际引用",
+      "purpose": "保证检索到的证据以可追踪、预算内且完整的形式进入模型。",
+      "owner": "DCS",
+      "depends": [
+        "RAG-07"
+      ],
+      "areas": [
+        "openclaw_runtime/src/context-engine/context-candidate.ts",
+        "openclaw_runtime/src/context-engine/turn-injection-budget.ts",
+        "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
+        "openclaw_runtime/src/context-engine/chat-knowledge-intent.ts"
+      ],
+      "contracts": [
+        "KnowledgeCandidatePacking/v2",
+        "RetainedEvidenceManifest/v1"
+      ],
+      "acceptance": [
+        "同通道知识候选保留经 DCS 接受的 ordinal，不由 candidateId 意外改序；跨通道优先级仍由 DCS 决定。",
+        "以 chunk/冲突组为原子装配单元，token/字符估算与最终用量可回读，余量不足整片丢弃。",
+        "source/chunk/projection 三种 digest 分开；citation manifest 仅覆盖实际 retained bytes。",
+        "普通 Chat、media、queue、retry、model-only QA 共享准入与知识装配路径；kill switch 和重复模型调用不会晚到或重复注入。",
+        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+      ],
+      "existingTests": [
+        "tests/unit/chat-knowledge-scope.test.ts"
+      ],
+      "newTests": [
+        "openclaw_runtime/src/context-engine/project-rag-packing.test.ts"
+      ],
+      "e2e": [
+        "tests/e2e/project-rag-dcs-citation.spec.ts"
+      ],
+      "rollback": "停用 chunk producer，使用同样受 DCS 控制的 page adapter。",
+      "minutes": 600
+    },
+    {
+      "key": "RAG-10",
+      "slug": "project-rag-grounded-answer-citation",
+      "phase": "P3",
+      "title": "完成 strict/open 问答、冲突披露与引用回源",
+      "purpose": "让用户能区分有证据的事实、推断和未解决的问题。",
+      "owner": "Knowledge QA / citation viewer",
+      "depends": [
+        "RAG-08",
+        "RAG-09"
+      ],
+      "areas": [
+        "electron/services/knowledge-evidence-qa.ts",
+        "electron/services/knowledge-source-set-answer.ts",
+        "src/lib/knowledge-librarian.ts",
+        "src/pages/Chat/KnowledgeChat.tsx",
+        "src/pages/Knowledge/**",
+        "shared/host-api/contract.ts"
+      ],
+      "contracts": [
+        "Citation/v2",
+        "EvidenceStatus/v2",
+        "AnswerClaim/v1"
+      ],
+      "acceptance": [
+        "exact quote、source/版本/范围校验和 semantic claim support 分开记录；不把 quote 存在宣称为语义支持。",
+        "strict 缺源/冲突返回unknown，open 的一般知识/推断不伪造引用；provider错误保留partial与原因。",
+        "citation 点击先重验权限，定位正确 raw range；旧版本按 owner 保留策略显示或明确失效。",
+        "创建产物继续走 Inbox/Draft/Proposal/apply；回答不获得工具或写入权限。",
+        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+      ],
+      "existingTests": [
+        "tests/unit/knowledge-evidence-qa.test.ts",
+        "tests/unit/knowledge-chat.test.tsx"
+      ],
+      "newTests": [
+        "tests/unit/project-rag-answer-contract.test.ts"
+      ],
+      "rollback": "关闭综合或新 citation viewer，保留已准入摘录及原有治理动作。",
+      "minutes": 480,
+      "e2e": [
+        "tests/e2e/project-rag-dcs-citation.spec.ts"
+      ]
+    },
+    {
+      "key": "RAG-11",
+      "slug": "project-rag-chat-interactions",
+      "phase": "P3",
+      "title": "完成按需知识交互和安全 Auto-read",
+      "purpose": "让知识检索可选择、可解释、可取消，并且不拖住普通聊天。",
+      "owner": "Chat UI / Host",
+      "depends": [
+        "RAG-10"
+      ],
+      "areas": [
+        "src/pages/Chat/ChatInput.tsx",
+        "src/pages/Chat/index.tsx",
+        "src/stores/chat.ts",
+        "src/pages/Knowledge/**",
+        "shared/i18n/locales/*/chat.json",
+        "shared/i18n/locales/*/knowledge.json"
+      ],
+      "contracts": [
+        "KnowledgeInteractionPolicy/v2",
+        "AutoReadAdmission/v1"
+      ],
+      "acceptance": [
+        "Off/Manual/Suggest/Auto-read 与 retrieval profile 正交；保持 none/suggest 的现有默认组合。",
+        "Preflight 的 inspect/attach/dismiss/当前版本/预算与 Used Knowledge 反映真实结果；无未授权 snippet。",
+        "Auto-read 显式选择、来源确认/新鲜度与有效相关性校准共同准入，最多3个片段。",
+        "session/scope/query切换、取消、晚到响应、media/queued send、provider超时和missing-index的Electron路径通过；普通发送不被检索无限等待。",
+        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+      ],
+      "existingTests": [
+        "tests/unit/chat-input.test.tsx",
+        "tests/unit/chat-knowledge-scope.test.ts"
+      ],
+      "newTests": [
+        "tests/unit/project-rag-chat-policy.test.tsx"
+      ],
+      "e2e": [
+        "tests/e2e/project-rag-chat-modes.spec.ts"
+      ],
+      "rollback": "恢复兼容 Preflight/page 控件，保留原 scope/mode 和未发送草稿。",
+      "minutes": 480
+    },
+    {
+      "key": "RAG-12",
+      "slug": "project-rag-config-and-operations",
+      "phase": "P3",
+      "title": "交付完整配置、索引运维和能力状态界面",
+      "purpose": "让长期运行中的来源、模型、索引、预算和失败都可管理。",
+      "owner": "Settings / runtime config / retrieval operations",
+      "depends": [
+        "RAG-11"
+      ],
+      "areas": [
+        "openclaw_runtime/src/config/**",
+        "shared/dcs/component-disposition-catalog.ts",
+        "shared/component-authority-manifest.ts",
+        "src/components/settings/**",
+        "src/pages/Knowledge/**",
+        "shared/i18n/locales/*/knowledge.json",
+        "shared/i18n/locales/*/settings.json"
+      ],
+      "contracts": [
+        "ProjectRagConfig/v2",
+        "RetrievalCapabilitySnapshot/v1",
+        "IndexStatus/v1"
+      ],
+      "acceptance": [
+        "config type/schema/help/defaults/catalog/doctor一致；scope/mode不双存，未知配置不能静默放行。",
+        "界面能选择owner/source set/profile/provider与回答策略，并展示enabled/ready/degraded/disabled及原因。",
+        "重建、暂停、恢复、模型/维度换代、空间预算、索引滞后、逻辑删除与物理cleanup状态可回读。",
+        "所有用户文案四语言与设计token覆盖；操作复用Host API，不由renderer直接访问DB、FS或provider。",
+        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+      ],
+      "existingTests": [
+        "tests/unit/host-api-facade.test.ts"
+      ],
+      "newTests": [
+        "tests/unit/project-rag-config-parity.test.ts"
+      ],
+      "e2e": [
+        "tests/e2e/project-rag-settings-operations.spec.ts"
+      ],
+      "rollback": "doctor迁移与profile关闭恢复旧有效配置，保留owner数据和有效generation。",
+      "minutes": 480
+    },
+    {
+      "key": "RAG-13",
+      "slug": "project-rag-memory-source-adapters",
+      "phase": "P4",
+      "title": "接通原生记忆与角色记忆的独立读取",
+      "purpose": "综合可用记忆，同时保持各存储域和作用域的边界。",
+      "owner": "native memory / Role Memory / retrieval adapters",
+      "depends": [
+        "RAG-09",
+        "RAG-12"
+      ],
+      "areas": [
+        "openclaw_runtime/src/memory/**",
+        "openclaw_runtime/extensions/memory-core/runtime-api.ts",
+        "openclaw_runtime/src/context-engine/chat-knowledge-source-adapters.ts",
+        "openclaw_runtime/src/knowledge/retrieval/**",
+        "shared/knowledge/**"
+      ],
+      "contracts": [
+        "RetrievalOwnerDescriptor/v1",
+        "MemorySourceRef/v1"
+      ],
+      "acceptance": [
+        "原生文件/active memory provider与Role Memory card各自精确解析namespace与ID，不按一个memory标签混用。",
+        "原有read/use gates、session/workspace/sensitivity/retention生效；Runtime Memory诊断域不自动转成active lane。",
+        "不复制canonical memory到Wiki或新chunk authority，统一的是只读候选与DCS证据。",
+        "correction/delete/slot切换、禁用和缓存失效真实传播，不访问前一个owner的内容。",
+        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+      ],
+      "existingTests": [
+        "tests/unit/chat-knowledge-scope.test.ts"
+      ],
+      "newTests": [
+        "tests/unit/project-rag-memory-domains.test.ts"
+      ],
+      "e2e": [
+        "tests/e2e/project-rag-source-domains.spec.ts"
+      ],
+      "rollback": "按owner单独关闭adapter，保留原生记忆服务与资料。",
+      "minutes": 480
+    },
+    {
+      "key": "RAG-14",
+      "slug": "project-rag-sekb-experience-lane",
+      "phase": "P4",
+      "title": "接通已确认经验和可观察的采用归因",
+      "purpose": "让历史经验帮助实际执行，并知道是否被采用及是否有效。",
+      "owner": "SEKB / attribution / retrieval",
+      "depends": [
+        "RAG-09",
+        "RAG-12"
+      ],
+      "areas": [
+        "electron/services/knowledge-api.ts",
+        "openclaw_runtime/src/knowledge/sekb/**",
+        "openclaw_runtime/src/agents/embedded-agent-runner/sekb-runtime.ts",
+        "openclaw_runtime/src/knowledge/retrieval/**"
+      ],
+      "contracts": [
+        "ExperienceRef/v1",
+        "RsiExperienceAttribution/v1"
+      ],
+      "acceptance": [
+        "复用 Runtime Lessons 接口，只召回 active confirmed principle；sekb前缀、canonical ID和内容版本精确绑定。",
+        "candidate、revoked、错版本、metadata-only无相关内容的经验不得Auto-read；取消固定0.72。",
+        "UI exposure、context exposure、citation、adoption、operational outcome和independent task grade分别记录。",
+        "adoption必须有同run observed operation，现有事务/去重/删除传播完整；检索和反馈不直接改principle或排序。",
+        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+      ],
+      "existingTests": [
+        "tests/unit/knowledge-api.test.ts"
+      ],
+      "newTests": [
+        "tests/unit/project-rag-sekb-attribution.test.ts"
+      ],
+      "e2e": [
+        "tests/e2e/project-rag-source-domains.spec.ts"
+      ],
+      "rollback": "关闭experience lane，不撤销已确认principle或历史归因收据。",
+      "minutes": 480
+    },
+    {
+      "key": "RAG-15",
+      "slug": "project-rag-code-graph-task-context",
+      "phase": "P4",
+      "title": "接通代码关系和任务事实的受控检索线索",
+      "purpose": "支持跨文件关系与任务相关证据发现，避免创建通用图权威。",
+      "owner": "FactStore / Task Ledger / retrieval",
+      "depends": [
+        "RAG-09",
+        "RAG-12"
+      ],
+      "areas": [
+        "openclaw_runtime/src/context-engine/views/retrieval/**",
+        "openclaw_runtime/src/context-engine/factstore/**",
+        "electron/services/task-ledger-api.ts",
+        "openclaw_runtime/src/knowledge/retrieval/**"
+      ],
+      "contracts": [
+        "RelationshipExpansion/v1",
+        "TaskContextHint/v1"
+      ],
+      "acceptance": [
+        "代码图复用FactStore，先修复/约束文件stem歧义，边绑定repo/revision与实际符号路径。",
+        "graph仅为relationship/research扩展召回，一跳默认、两跳硬上限、节点数有界；每个落点重新owner准入。",
+        "Task Ledger只提供任务revision、约束与证据refs，不进入长期chunk表，不创造或改写任务事实。",
+        "cross-workspace、stale edge、同名文件、缺Ledger与无关系请求均有负例和明确降级。",
+        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+      ],
+      "existingTests": [
+        "tests/unit/task-ledger-reference.test.ts"
+      ],
+      "newTests": [
+        "tests/unit/project-rag-graph-task-context.test.ts"
+      ],
+      "e2e": [
+        "tests/e2e/project-rag-research.spec.ts"
+      ],
+      "rollback": "关闭关系扩展和任务hint，代码/任务canonical stores保持工作。",
+      "minutes": 540
+    },
+    {
+      "key": "RAG-16",
+      "slug": "project-rag-bounded-research",
+      "phase": "P4",
+      "title": "实现有预算、能停止的 Research 检索",
+      "purpose": "完成跨来源研究、证据缺口追查与关系分析。",
+      "owner": "research retrieval planner / DCS / UI",
+      "depends": [
+        "RAG-08",
+        "RAG-10",
+        "RAG-13",
+        "RAG-14",
+        "RAG-15"
+      ],
+      "areas": [
+        "openclaw_runtime/src/knowledge/retrieval/**",
+        "electron/services/knowledge-api.ts",
+        "src/pages/Chat/**",
+        "shared/host-api/contract.ts",
+        "shared/i18n/locales/*/knowledge.json"
+      ],
+      "contracts": [
+        "ResearchPlan/v1",
+        "ResearchStep/v1",
+        "EvidenceGap/v1"
+      ],
+      "acceptance": [
+        "显式单次调用，最多3轮/8检索query/2次规划模型调用；deadline、token、费用和graph预算在开始前冻结。",
+        "查询拆解和证据缺口决定后续检索；重复、无新证据、足够覆盖、超时和取消都能停止。",
+        "所有子查询继承同一scope与owner权限；Research不自动扩外网、跨项目或工具/写权限。",
+        "返回真实证据、推断、冲突与缺口，DCS预算截取后仍可复算；Electron展示进度、取消与partial结果。",
+        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+      ],
+      "existingTests": [
+        "tests/unit/knowledge-evidence-qa.test.ts"
+      ],
+      "newTests": [
+        "tests/unit/project-rag-research-controller.test.ts"
+      ],
+      "e2e": [
+        "tests/e2e/project-rag-research.spec.ts"
+      ],
+      "rollback": "停止research controller，已选scope保留，恢复单query local/quality路径。",
+      "minutes": 600
+    },
+    {
+      "key": "RAG-17",
+      "slug": "project-rag-observability-offline-promotion",
+      "phase": "P5",
+      "title": "完成检索可观测性和离线策略晋级",
+      "purpose": "持续发现质量与成本回退，同时防止反馈形成未审核的自学习。",
+      "owner": "observability / evaluation / policy release",
+      "depends": [
+        "RAG-12",
+        "RAG-14",
+        "RAG-16"
+      ],
+      "areas": [
+        "openclaw_runtime/src/knowledge/retrieval/**",
+        "electron/services/observability*.ts",
+        "scripts/knowledge-*.ts",
+        "harness/specs/fixtures/project-rag/**",
+        "src/pages/Knowledge/**"
+      ],
+      "contracts": [
+        "RetrievalReceipt/v1",
+        "RetrievalSlo/v1",
+        "OfflinePolicyPromotion/v1"
+      ],
+      "acceptance": [
+        "request/plan/source/model/generation/DCS lineage可关联，阶段延迟、token/费用、fallback、索引滞后、删除积压和calibration漂移可查询。",
+        "默认日志只存refs/digests/status/usage；raw evidence需要明确的测试/诊断保留政策，删除传播覆盖反馈与缓存。",
+        "attach/dismiss仅记弱反馈，新的排序参数经离线封存评测与版本化晋级；旧RSI verdict保持原含义。",
+        "回滚能恢复前一policy，不改变owner确认权限、scope和产品锁。",
+        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+      ],
+      "existingTests": [
+        "tests/unit/knowledge-api.test.ts"
+      ],
+      "newTests": [
+        "tests/unit/project-rag-receipts-promotion.test.ts"
+      ],
+      "e2e": [
+        "tests/e2e/project-rag-settings-operations.spec.ts"
+      ],
+      "rollback": "回到上一冻结policy并停止新增诊断采集；保留必要审计。",
+      "minutes": 480
+    },
+    {
+      "key": "RAG-18",
+      "slug": "project-rag-packaging-portability",
+      "phase": "P5",
+      "title": "完成跨平台安装、离线运行与升级回滚",
+      "purpose": "让目标系统在实际发布平台可安装、可恢复、可持续维护。",
+      "owner": "packaging / provider lifecycle / platform validation",
+      "depends": [
+        "RAG-06",
+        "RAG-08",
+        "RAG-12"
+      ],
+      "areas": [
+        "electron-builder.yml",
+        "openclaw_runtime/package.json",
+        "scripts/bundle-openclaw*.mjs",
+        "scripts/build-openclaw-runtime.mjs",
+        "scripts/release-*.mjs",
+        "harness/specs/fixtures/project-rag/**"
+      ],
+      "contracts": [
+        "RetrievalPlatformMatrix/v1",
+        "RetrievalArtifactManifest/v1",
+        "RetrievalUpgradeReceipt/v1"
+      ],
+      "acceptance": [
+        "按实际release target矩阵运行原生SDK/模型/FTS/SQLite probe；npm包清单不当作加载成功。",
+        "Intel Mac等缺ANN预编译包的平台具备完整portable语义路径与容量边界；ANN tier仅在实测通过的目标声明。",
+        "有网首次安装、签名/校验、离线重启、低空间、半安装、模型更换、旧binary读取和增量schema回滚通过。",
+        "正式升级不整库覆盖、不丢governance/SEKB/Task Ledger资料；所有临时输出遵守D盘策略。",
+        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+      ],
+      "existingTests": [
+        "tests/unit/runtime-package-resolution.test.ts"
+      ],
+      "newTests": [
+        "tests/unit/project-rag-package-manifest.test.ts"
+      ],
+      "e2e": [
+        "tests/e2e/project-rag-packaged-smoke.spec.ts"
+      ],
+      "rollback": "停用不兼容feature pack，回portable/lexical；保留canonical owner和正常Chat启动。",
+      "minutes": 720
+    },
+    {
+      "key": "RAG-19",
+      "slug": "project-rag-long-term-acceptance",
+      "phase": "P5",
+      "title": "验收长期版本的完整能力、稳定性与任务收益",
+      "purpose": "证明长期目标已经交付，并结束临时并行实现。",
+      "owner": "independent evaluation / integration",
+      "depends": [
+        "RAG-02",
+        "RAG-17",
+        "RAG-18"
+      ],
+      "areas": [
+        "scripts/knowledge-*.ts",
+        "harness/specs/fixtures/project-rag/**",
+        "docs/dev/project-rag/**",
+        "README*.md",
+        "docs/modules/knowledge-base.md",
+        "openclaw_runtime/src/knowledge/retrieval/**"
+      ],
+      "contracts": [
+        "ProjectRagAcceptance/v1",
+        "ProjectRagPromotionPolicy/v1"
+      ],
+      "acceptance": [
+        "RAG-01至RAG-18每项能力都有当前候选真实接线与失败路径证据；仅完成FTS阶段不得关闭长期目标。",
+        "固定240query评测、完整Electron旅程、实际provider、20k/100k容量和72小时agent驱动soak完成，失败/partial/unknown保留。",
+        "60任务×3repeats×3arms结果封存；按profile冻结门槛判定质量、成本与任务收益，区间/费用缺失不能晋级。",
+        "临时score/confidence路径和重复装配收敛，page direct read成为永久显式ref/故障兼容入口，不保留第二排序或上下文权威。",
+        "源码/规格/证据同候选可复算、clean工作树、回滚可演练；RAG范围验收与产品发布授权分别记录。",
+        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+      ],
+      "existingTests": [
+        "tests/unit/knowledge-retrieval.test.ts",
+        "tests/unit/knowledge-evidence-qa.test.ts",
+        "tests/unit/harness-specs.test.ts"
+      ],
+      "newTests": [
+        "tests/unit/project-rag-acceptance-readback.test.ts"
+      ],
+      "e2e": [
+        "tests/e2e/project-rag-chat-modes.spec.ts",
+        "tests/e2e/project-rag-research.spec.ts",
+        "tests/e2e/project-rag-packaged-smoke.spec.ts"
+      ],
+      "rollback": "保持前一已验证profile与所有者服务，记录未达标项，修复后新版本重测。",
+      "minutes": 960
+    }
+  ]
+}

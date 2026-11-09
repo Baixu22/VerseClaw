@@ -189,6 +189,8 @@ flowchart LR
 
 ### Knowledge Hub, Wiki and SEKB
 
+The [Project RAG long-term decision](adr/2026-11-09-project-rag-retrieval-plane.md) extends the owner/retrieval/DCS boundaries with planned persistent hybrid search, reranking, source adapters and Research. Its delivery status is tracked by the [work packages](project-rag/WORK-PACKAGES.md); these are not current runtime capability claims.
+
 - Knowledge is Markdown/wiki-first and role-governed. The allowed durable path is `Inbox → Draft → Steward review → Proposal → explicit confirmation → wiki.apply`.
 - `routeContext` does not inject SEKB by default. Runtime Lessons participate only when the caller explicitly sets `sourcePolicy.runtimeLessons`, and each candidate carries structured provenance.
 - The Knowledge workbench exposes `library`, `review-queue`, `inbox`, `drafts`, `review`, `runtime` and `governance` tabs.

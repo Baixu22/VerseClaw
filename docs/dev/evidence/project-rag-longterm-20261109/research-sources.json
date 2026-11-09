@@ -1,0 +1,195 @@
+{
+  "schema": "ProjectRagResearchEvidence/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "retrievedAt": "2026-11-09T05:31:26.967Z",
+  "searches": [
+    {
+      "id": "hybrid",
+      "query": "Production retrieval augmented generation hybrid BM25 dense retrieval reranking evaluation long term architecture official guidance",
+      "httpStatus": 200,
+      "resultCount": 4,
+      "rawSha256": "7671a5d33ff1439d56243003c354fda6b7cfe7fecf804fc457e112561359f83a"
+    },
+    {
+      "id": "lancedb",
+      "query": "LanceDB embedded Node TypeScript vector search prefilter incremental index updates delete old versions supported Windows macOS Linux platforms",
+      "httpStatus": 200,
+      "resultCount": 4,
+      "rawSha256": "5b5d1a7343fd9ab734e3ba0f04cbe3af97b45f37e9d75b77360efef21ca7f649"
+    },
+    {
+      "id": "sqlite-vector",
+      "query": "sqlite-vec vector search approximate nearest neighbor ANN roadmap metadata filtering Node.js Windows cross platform",
+      "httpStatus": 200,
+      "resultCount": 4,
+      "rawSha256": "8d22a177677b0e76f5d3e723177eb6437752c18cddeb12c5d642b085077a3f46"
+    },
+    {
+      "id": "chunking",
+      "query": "semantic chunking computational cost benchmark late chunking contextual retrieval structure aware chunks evaluation",
+      "httpStatus": 200,
+      "resultCount": 4,
+      "rawSha256": "553c71211f2f0f445bc2b3de20a267e4cb44f123aed6610233f10a273e5b773c"
+    },
+    {
+      "id": "permissions",
+      "query": "Azure AI Search RAG permission filters security trimming document ACL index updates citations agentic retrieval",
+      "httpStatus": 200,
+      "resultCount": 4,
+      "rawSha256": "58d4667862591864c452199611284c3a1d005f2ad52cd67b240e8fe7f456326e"
+    },
+    {
+      "id": "evaluation",
+      "query": "RAGChecker RAGBench claim level evaluation retrieval generation metrics BEIR benchmarking evidence",
+      "httpStatus": 200,
+      "resultCount": 4,
+      "rawSha256": "8ccdb396af94e0ffe980fa3beef21820c15b55744365a9c23d6bed5b520db8fa"
+    },
+    {
+      "id": "graph",
+      "query": "Microsoft GraphRAG local global DRIFT search incremental update costs LightRAG knowledge graph deletion citations",
+      "httpStatus": 200,
+      "resultCount": 4,
+      "rawSha256": "ff5584d0b16868f043407dd56ca72c5466b56d55b5a1443eb451b0ac9bd59198"
+    },
+    {
+      "id": "models",
+      "query": "multilingual local embedding model EmbeddingGemma 300M Qwen3 embedding reranker BGE reranker v2 m3 ONNX CPU model card",
+      "httpStatus": 200,
+      "resultCount": 4,
+      "rawSha256": "946d7e8c105f7a64ca75c94e399660750d1418bc8f4d88fb8c34d968f8c6f9b3"
+    }
+  ],
+  "primarySources": [
+    {
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/rag/rag-information-retrieval",
+      "title": "Develop a RAG Solution on Azure - Information-Retrieval Phase - Azure Architecture Center | Microsoft Learn",
+      "fetchStatus": "success",
+      "fetchSource": "crawled",
+      "extractedTextSha256": "602963d18085288552f2e6fa8542f7b33602e004148968cec0961ba2535b8d23",
+      "extractedChars": 10000,
+      "excerptLimitReached": true
+    },
+    {
+      "url": "https://docs.lancedb.com/indexing/incremental-indexing",
+      "title": "Incremental Indexing",
+      "fetchStatus": "success",
+      "fetchSource": "crawled",
+      "extractedTextSha256": "86a9d9299e56f157c8714622d41c8d58aa0983b47359004b8f1684d3537a57bc",
+      "extractedChars": 4764,
+      "excerptLimitReached": false
+    },
+    {
+      "url": "https://docs.lancedb.com/search/vector-search",
+      "title": "Vector Search",
+      "fetchStatus": "success",
+      "fetchSource": "crawled",
+      "extractedTextSha256": "941c5693dfb9f0db6d8a0afdb13ebb5770b2b79e56bb768c657c65f5133752a6",
+      "extractedChars": 10000,
+      "excerptLimitReached": true
+    },
+    {
+      "url": "https://github.com/asg017/sqlite-vec/releases/tag/v0.1.10-alpha.1",
+      "title": "v0.1.10-alpha.1",
+      "fetchStatus": "success",
+      "fetchSource": "crawled",
+      "extractedTextSha256": "9ad114bb727b6184fa4614ab961870f70f494d244fbb57f23453c1f0ef1296db",
+      "extractedChars": 2172,
+      "excerptLimitReached": false
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/azure/search/search-document-level-access-overview",
+      "title": "Document-Level Access Control - Azure AI Search | Microsoft Learn",
+      "fetchStatus": "success",
+      "fetchSource": "crawled",
+      "extractedTextSha256": "50d3e6bc82bcd830da856308644666bbc559f9c00a77e9eebd41570de1a3b4a9",
+      "extractedChars": 10000,
+      "excerptLimitReached": true
+    },
+    {
+      "url": "https://microsoft.github.io/graphrag/query/drift_search/",
+      "title": "DRIFT Search - GraphRAG",
+      "fetchStatus": "success",
+      "fetchSource": "crawled",
+      "extractedTextSha256": "b81db678b44186fa993b8a9c8bb0343d2730711ce60be676b65801108d22d969",
+      "extractedChars": 3063,
+      "excerptLimitReached": false
+    },
+    {
+      "url": "https://qwenlm.github.io/blog/qwen3-embedding/",
+      "title": "Qwen3 Embedding: Advancing Text Embedding and Reranking Through Foundation Models | Qwen",
+      "fetchStatus": "success",
+      "fetchSource": "crawled",
+      "extractedTextSha256": "3341331e1bd978068dbe6e17a1f571394094ccf4a994bfdad2a9535809a8d84d",
+      "extractedChars": 6432,
+      "excerptLimitReached": false
+    },
+    {
+      "url": "https://ai.google.dev/gemma/docs/embeddinggemma/model_card",
+      "title": "EmbeddingGemma model card  |  Google AI for Developers",
+      "fetchStatus": "success",
+      "fetchSource": "crawled",
+      "extractedTextSha256": "63cdef255a130724e74461183dbf7e3abd01e220c60d8fd77fb64702e08200cb",
+      "extractedChars": 10000,
+      "excerptLimitReached": true
+    },
+    {
+      "url": "https://huggingface.co/BAAI/bge-reranker-v2-m3",
+      "title": "BAAI/bge-reranker-v2-m3 · Hugging Face",
+      "fetchStatus": "success",
+      "fetchSource": "crawled",
+      "extractedTextSha256": "ad6a8b24cc4250bdc863e04409146342da4bde8c48e8385f51d6557c9e3b702f",
+      "extractedChars": 10000,
+      "excerptLimitReached": true
+    },
+    {
+      "url": "https://github.com/amazon-science/RAGChecker",
+      "title": "amazon-science/RAGChecker",
+      "fetchStatus": "success",
+      "fetchSource": "crawled",
+      "extractedTextSha256": "85ade4104876de80014f73d94fe57a8845fbf028316ec35e61d217bb4fba7fb1",
+      "extractedChars": 6740,
+      "excerptLimitReached": false
+    },
+    {
+      "url": "https://arxiv.org/abs/2410.13070",
+      "title": "Is Semantic Chunking Worth the Computational Cost?",
+      "fetchStatus": "success",
+      "fetchSource": "crawled",
+      "extractedTextSha256": "01a44bc7dec45bef396eeb543fe03ac3c083bb433aac9cc528fc2c98f8560bc3",
+      "extractedChars": 10000,
+      "excerptLimitReached": true
+    },
+    {
+      "url": "https://arxiv.org/abs/2407.11005",
+      "title": "RAGBench: Explainable Benchmark for Retrieval-Augmented Generation Systems",
+      "fetchStatus": "success",
+      "fetchSource": "crawled",
+      "extractedTextSha256": "a14023f4231dc5542446028b1400c1b1d1b075a83fa508159608ac9faa3bfb0b",
+      "extractedChars": 10000,
+      "excerptLimitReached": true
+    }
+  ],
+  "dependency": {
+    "name": "@lancedb/lancedb",
+    "version": "0.30.0",
+    "license": "Apache-2.0",
+    "engines": {
+      "node": ">= 18"
+    },
+    "optionalDependencies": {
+      "@lancedb/lancedb-darwin-arm64": "0.30.0",
+      "@lancedb/lancedb-linux-x64-gnu": "0.30.0",
+      "@lancedb/lancedb-linux-x64-musl": "0.30.0",
+      "@lancedb/lancedb-win32-x64-msvc": "0.30.0",
+      "@lancedb/lancedb-linux-arm64-gnu": "0.30.0",
+      "@lancedb/lancedb-linux-arm64-musl": "0.30.0",
+      "@lancedb/lancedb-win32-arm64-msvc": "0.30.0"
+    },
+    "integrity": "sha512-d0FoEL6cthqgsulqAc7fck6kRXrSRGMTqlKYbhSGSazHU6vB2GEpD737Mu0HZd7fMyBUdhR9sD1W2C9uQZ5p0Q==",
+    "retrievedAt": "2026-11-09T05:38:58.2792665Z"
+  },
+  "rawEvidenceDirectory": "D:/tmp/project-rag-longterm-20261109-01a1be8b/research",
+  "interpretation": "mechanism and dependency evidence; not ClawX performance or native-load acceptance"
+}

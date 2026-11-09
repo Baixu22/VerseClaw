@@ -1,5 +1,7 @@
 # Retrieval And Interaction Strategy
 
+Long-term target: [Project RAG ADR v2](../../dev/adr/2026-11-09-project-rag-retrieval-plane.md) and its [implementation program](../../dev/project-rag/WORK-PACKAGES.md). Hybrid retrieval, reranking, owner adapters, Research and lifecycle operations are planned deliverables; the existing surfaces below remain the implementation baseline.
+
 This document defines how persisted knowledge should be discovered and used by
 the Knowledge page, Chat composer, runtime agents, and future guardrails.
 
@@ -93,7 +95,7 @@ Rules:
 
 - Auto-read must be bounded by character/token caps.
 - Auto-read should prefer approved/applied knowledge.
-- Auto-read may include raw/draft items only if clearly labeled as unreviewed.
+- Unreviewed raw/draft items remain in explicit inspection and review; they are not eligible for Auto-read.
 - Auto-read must never grant write permission.
 - Auto-read failure must not fail ordinary Chat send.
 
@@ -135,9 +137,7 @@ False-positive handling:
   overlap, or a known error-experience trigger plus a matching command family.
 - Single weak hints should stay in a low-priority "possible match" bucket or be
   withheld until repeated.
-- Dismissal is feedback, not failure. Repeated dismissals should reduce the
-  card's default visibility and create a Steward triage item instead of raising
-  louder warnings.
+- Dismissal is feedback, not failure. Repeated dismissals suppress the same input/session locally and may create a Steward triage item; global retrieval ranking changes only through an evaluated policy version.
 - Acceptance, dismiss, ignored, and contradicted-later outcomes must be tracked
   separately. Do not collapse them into one "hit" counter.
 - A future stronger guard needs a false-positive review packet with examples of

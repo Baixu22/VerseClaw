@@ -1035,6 +1035,8 @@ Implementation should start from `harness/specs/tasks/mission-control-loop-mvp.m
 
 ## 8.6 Knowledge Hub and Personal Wiki State
 
+The [Project RAG ADR v2](dev/adr/2026-11-09-project-rag-retrieval-plane.md) defines the complete long-term retrieval program. SQLite and optional native ANN are rebuildable projections; source owners and DCS retain their respective authority. See the [implementation work packages](dev/project-rag/WORK-PACKAGES.md) for planned delivery.
+
 Knowledge Hub is the product-level answer to reusable project knowledge. It is intentionally built around the existing OpenClaw `memory-wiki` / `memory-core` runtime path instead of adding a Verse Claw-native RAG stack. The goal is a usable, inspectable MVP: users can initialize a vault, import bounded local sources, search and inspect source-backed wiki results, run compile/lint, and apply curated syntheses.
 
 - **Ownership**: Verse Claw owns the UI, host-api facade, local file selection/import boundaries, and confirmation UX. The runtime owns wiki storage, search, compile, lint, and apply semantics through `wiki.*` JSON-RPC methods.

@@ -1,179 +1,201 @@
-# ADR-2026-11-09：Project RAG 检索投影与实施裁决
+# ADR-2026-11-09 v2：Project RAG 长期目标架构
 
-| 字段 | 决定 |
+| 字段 | 决策 |
 | --- | --- |
-| 决策 | **REVISE：接受目标，首版选择 B，按本文缩小并修正实现方案。** |
-| 首版 | memory-wiki 的可重建 chunk 投影 + 现有共享 SQLite + FTS5 + exact/BM25 + RRF + owner 准入 + DCS 原子装配 |
-| 工作基线 | 2026-11-09，`main`，`5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976`；审查对象包含工作区文件 |
-| 实际目录 | 用户路径 `C:\Users\27933\Desktop\clawx\ClawX` 是指向 `D:\ClawX` 的 junction |
-| 本次交付 | 源码审查、架构决策、契约、配置、交互、评测与实施工作包；新增产品能力尚未实施 |
-| 证据 | [源码复核与本次验证](../evidence/project-rag-decision-20261109/source-review.json) |
-| 执行者 | `driven_by: agent`，`actor: codex` |
+| 状态 | **accepted：长期架构与完整实现范围已确定；分阶段开发，不以早期阶段代替最终完成。** |
+| 目标 | 可维护、可验证、按需使用的项目知识检索系统，覆盖持久混合检索、重排、多来源、Research、交互、生命周期与任务效果 |
+| 架构选择 | B 为主平面：SQLite 元数据/FTS/可移植向量；LanceDB Embedded 为规模化 ANN 实现；所有投影仍依赖 owner 和 DCS |
+| 开发基线 | 最新本地 `main@5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976`；首轮源码裁决已保存为 `c5896951e` |
+| 范围 | 本次 Project RAG 修改与本地已提交主线；开发执行位置与节点绑定保存在本地 Task Forest |
+| 实施合同 | [长期工作包](../project-rag/WORK-PACKAGES.md) · [机器可读工作包](../project-rag/program.v2.json) |
+| 外部依据 | [资料探索与取舍](../project-rag/RESEARCH-20261109.zh-CN.md) |
+| 历史依据 | [首轮源码审查](../evidence/project-rag-decision-20261109/source-review.json)；其中 93 项为当时既有路径测试 |
+| 本次性质 | 架构、规格、研究、Task Forest 和工作树整合；新增产品能力由 RAG-01 至 RAG-19 实施 |
 
-## 1. 实际决策
+## 1. 最终决定与长期完成标准
 
-**做 B；先补 owner 读取和引用链，再做 chunk 索引。** 首版只索引明确启用的项目 Wiki，不把 Memory、SEKB、Code Graph、Task Ledger 复制进一张“万能知识表”。
+**长期目标是完整的 owner-bound Hybrid RAG，不是停在“切块 + FTS”。** exact/BM25 是永久基础能力；dense、cross-encoder、持久向量投影、跨来源接入、Research、完整运维和效果验收均进入必交付工作包。
 
-1. 原文、版本、权限和生命周期由 memory-wiki 等既有 owner 决定。投影的实现 owner 是已有 `knowledge-retrieval-source`，存储生命周期由 `openclaw-state-db` 管理。chunk 没有独立的知识真相权威。
-2. 首版在现有 `state/openclaw.sqlite` 增加可重建投影表。FTS5 初始化必须可选，缺少 FTS5 不能使共享状态数据库或普通 Chat 启动失败。
-3. 首版执行结构切块、精确标识符召回、BM25、等权 RRF、确定性去重/来源配额。**不执行 dense、模型 reranker、语义切块或自动 query rewrite，shadow 也不默认执行这些模型调用。**
-4. 现有 Chat 默认组合保持 `knowledgeScope=none`、`knowledgeMode=suggest`：普通对话不主动检索；用户选择 Wiki 后才出现 Suggest。新投影总开关初始关闭，Auto-read 继续要求显式选择和独立准入门槛。
-5. Preflight 显示片段、来源、位置、匹配原因和可读状态。Auto-read 最多 3 个片段；片段、标题、引用包装合计最多 3200 字符且不超过 1200 个估算 token，并接受 DCS 剩余预算进一步缩减。
-6. 新路径必须同时打通普通 Chat 和 Knowledge QA。仅给 SourceSet 增加 chunk 字段，不能解决 Chat 丢版本、重读错位置、DCS 改序和截断引用的问题。
-7. 新路径失败时回到**同一 owner 准入下的旧 page-level 检索**；本轮已经拒绝的来源不能被恢复。普通 Chat 在总检索期限内继续发送；strict 知识回答保留“证据不足”，不自动改成 open。
-8. SEKB 的既有 Runtime Lessons 接线继续作为明确的可选来源；迁入新检索计划前补齐身份/版本/效果归因。Code Graph 仅在后续显式 Research 的 relationship 查询中进入，首版不启用。
-9. dense、模型 reranker、外部向量数据库各有不同的进入门槛，见第 7 节。读取反馈只供离线评测，不能直接改变在线权重、知识内容或默认值。
+最终产品必须同时满足：
 
-本决策足以开始 WP1。首版不存在需要再交给“更强模型”回答的架构选择。
+1. 用户可以选择项目/来源集合、交互模式和检索 profile；普通 Chat 保持可独立使用。
+2. 来源有稳定身份、可核验版本、权限和生命周期，引用能回源或明确说明失效。
+3. 持久 exact/BM25/dense 召回与 RRF 融合完整；quality/research profile 具备真实 cross-encoder 重排。
+4. 本地模型、已配置远端模型、可移植向量和 ANN 的安装、运行、换代与退出均可管理。
+5. Wiki、原生记忆、Role Memory、已确认 SEKB、Code Graph 和 Task Ledger 按各自 owner 接入。
+6. Research 能拆解查询、补齐证据、使用关系线索，并受可取消的总预算和停止条件约束。
+7. DCS 保留最终准入、次序、原子装配、去重、预算与 lineage；检索系统不能直接改 prompt。
+8. 维护覆盖索引增量更新、撤销、删除、断电/崩溃、重启、模型迁移、空间回收和版本回滚。
+9. 固定语料、真实 provider、Electron、实际平台、容量、72 小时稳定性及真实任务 cohort 完成独立验收。
+10. RAG-01 至 RAG-19 全部完成各自合同，才关闭长期目标。RAG-04 的 FTS 可用只完成一个阶段。
 
-## 2. 源码复核：成立的事实与必须修正的结论
+这次修订对上一版做三项实质变更：
 
-以下结论来自当前源码及调用链；原报告提供阅读入口，不作为这些事实的唯一依据。
+- 把 dense、rerank、ANN、多域和 Research 从未排期的后续机会变成明确的开发节点。
+- 固定长期存储策略、provider 接入和模型参考方案；后续模型升级通过版本化评测，不重新讨论是否需要完整 RAG。
+- 为每项能力定义可读回的产物、失败路径、测试、回滚和执行工作树绑定。
 
-| 复核对象 | 当前源码事实 | 对决策的影响 |
-| --- | --- | --- |
-| routeContext 和 confidence | [knowledge-api.ts](../../../electron/services/knowledge-api.ts#L3024) 将大于 1 的 score 除以 100，缺省 score 为 0.7；3052 行的 Auto-read 使用 `confidence >= 0.55`。转换与过滤在 Main，ChatInput 只是调用并显示。 | 不是校准概率。新结果必须拆开排序信号与准入状态，不能延用该门槛。 |
-| Runtime Lessons 接线 | [knowledge-api.ts](../../../electron/services/knowledge-api.ts#L3581) 已在显式请求时调用 SEKB，候选固定 `confidence: 0.72`；4916 行的 routeContext 会合并这些候选。 | 修正“SEKB 尚无统一入口”的绝对表述。复用入口，修正身份、分数和准入；不能据候选出现认定发送链已完整。 |
-| 普通 Chat 版本钉选 | [Host DTO](../../../shared/host-api/contract.ts#L3657)、[Main 归一化](../../../electron/services/chat-api.ts#L120)、[runtime 归一化](../../../openclaw_runtime/src/context-engine/chat-knowledge-intent.ts#L104) 均没有保留 revision/digest 的完整契约。 | SourceSet Studio 的版本钉选能力不能外推到普通 Chat。WP1 先补整条传输链。 |
-| Chat Wiki owner adapter | [chat-knowledge-source-adapters.ts](../../../openclaw_runtime/src/context-engine/chat-knowledge-source-adapters.ts#L37) 用读取内容的 hash 作为 revision，并固定 trust/sensitivity 为 advisory/workspace；68 行只读前 80 行。 | 当前 adapter 没有透传 Wiki 返回的 status/privacyTier/revision 等政策事实，不能作为新 RAG 的充分准入证明。 |
-| 读取位置与装配 | [wiki get](../../../openclaw_runtime/extensions/memory-wiki/src/query.ts#L1532) 返回去掉 frontmatter 后的正文行；[packResolvedChatKnowledgeRef](../../../openclaw_runtime/src/context-engine/chat-knowledge-intent.ts#L282) 再截到前 1200 字符。 | 检索到后文不等于模型看到了后文；新 citation 必须明确坐标系和最终保留范围。 |
-| SourceSet | [source-set.ts](../../../openclaw_runtime/src/context-engine/source-set.ts#L721) 先准入再 embedding；按 lexical + exactBonus + semantic×4 排序，freshness 仅用于同分。 | 主体判断成立；它是已物化来源的排序/报告模块，不是持久 chunk index，也不是 BM25/RRF 管线。 |
-| 长文 SourceSet QA | [knowledge-source-set-answer.ts](../../../electron/services/knowledge-source-set-answer.ts#L68) 已实现每次 80 行、最多 800 行/96000 字符的版本绑定续读，并挑选相关窗口。 | 不能把旧基线简化为“永远只读前 80 行”。评测基线必须是当前完整实现。 |
-| Wiki 搜索与 all | [scorePage](../../../openclaw_runtime/extensions/memory-wiki/src/query.ts#L904) 是页面词法/metadata 打分；[corpus merge](../../../openclaw_runtime/extensions/memory-wiki/src/query.ts#L219) 有分库配额，再按原始分数合并。 | “非 chunk FTS/BM25、非统一 RRF”成立；还要保留它已有的分库平衡行为作为对照。 |
-| Memory 检索 | [memory-hybrid-retrieval.ts](../../../openclaw_runtime/src/runtime-core/memory-hybrid-retrieval.ts#L1) 的 BM25 与默认字符 n-gram vector 是纯 TypeScript；可注入真实 embedding。当前生产源码搜索只找到 `rerankHybridHits` 的注释引用，没有该实现。 | 可复用 tokenization、embedding 契约与 RRF 机制；不能把注释或 `ceScore` 字段当现成 cross-encoder。不能直接搬用 Memory 的候选放行规则和权重。 |
-| Code Graph | [hybrid-retriever.ts](../../../openclaw_runtime/src/context-engine/views/retrieval/hybrid-retriever.ts#L34) 已有 exact + chunks_fts + RRF；[graph-reranker.ts](../../../openclaw_runtime/src/context-engine/views/retrieval/graph-reranker.ts#L19) 是基于文件 stem 的一跳 imports/calls 加分。 | 是可复用的局部代码关系信号，不是已经完成的通用 GraphRAG/多跳文档推理。 |
-| DCS | [context-candidate.ts](../../../openclaw_runtime/src/context-engine/context-candidate.ts#L333) 在同通道内按 candidateId 排序；430 行预算扣减允许普通候选截断。 | 逐 chunk 创建现有 Candidate 会丢失召回顺序，并可能截坏证据。必须补 DCS 内的稳定组内次序与原子装配。 |
-| QA 校验 | [knowledge-evidence-qa.ts](../../../electron/services/knowledge-evidence-qa.ts#L36) 校验 sourceId 与 exact quote 的子串存在性；24 行构造证据 prompt，59 行通过 model-only Gateway 运行。 | 复用输出校验和无工具模型路径。新片段正文需从共享 DCS 入口提供；quote 存在、claim 支持与任务成功分别评测。 |
-| 共享数据库与权威 | [state schema](../../../openclaw_runtime/src/state/openclaw-state-schema.sql#L1500) 已有 knowledge governance 表；[authority manifest](../../../shared/component-authority-manifest.ts#L393) 已区分 review authority 与 retrieval source。 | 同库增加派生表符合现有分工；不另设知识 writer、permission authority 或 prompt-plan owner。 |
-| 读取契约 | [ContextRef / ContextSourceAdapter](../../../shared/knowledge/governance-contract.ts#L7) 已存在，但 materialize 的 CapabilityGrant 当前围绕 proposal 和 mutation operations 定义。 | 复用 ContextRef 身份字段；读取上下文从既有身份/政策派生，不能为搜索制造 apply grant，也不把这个类型面误认为完整生产读取实现。 |
-| Memory 范围 | Wiki `corpus=memory` 经 [active memory manager](../../../openclaw_runtime/extensions/memory-wiki/src/query.ts#L1499) 搜索；Chat 的 `memory-slot` adapter 则读取 Role Memory card。 | native memory、Role Memory、Runtime Memory 不能因 UI 都叫 Memory 就共用标识符或互相导入。首版 B 限 Wiki。 |
-| RSI / SEKB 归因 | [knowledge-store.ts](../../../openclaw_runtime/src/knowledge/sekb/knowledge-store.ts#L116) 检查 exposure、版本、同 run 观察到的成功操作；451 行事务化去重，task grade 才能推进 post_adoption_success。 | 复用现有归因 owner；attach、quote、操作完成、独立任务 grade 分开。 |
-| 当前默认与配置 | [Chat/index.tsx](../../../src/pages/Chat/index.tsx#L850) 默认为 none/suggest；本次读取本机默认配置文件，memory-wiki 仍未开启。 | 不把“有源码”和本机配置读回写成 live Knowledge 验收；后续使用独立测试实例完成该门槛。 |
+产品发布、全局冻结默认值和 ClawX 整体 GA 是发布者的独立决定，不作为日常开发节点等待真人的前置条件。
 
-SourceSet 当前只在 query/source 双方提供 workspaceId 时比较该字段；类型中的 agentId、roleTags、retention 并不等于已经执行完整政策校验。WP1 必须从可信 session/workspace 身份得到实际读取约束，并补齐本次采用字段的检查。
+## 2. 源码与外部资料怎样改变了决策
 
-另外，SEKB 候选使用 `sekb:<principle_id>`，而 Chat adapter 目前还包含按裸 ID/title/content 查找的路径。新 contract 必须改成 owner + canonical ID 精确解析，并覆盖现有候选到真实 materialize 的集成测试。
+本次对首轮 33 个文件在新工作树中做了内容比较。30 个文件的文本一致；ChatInput、Chat/index 和 chat store 的本地并发改动未带入，新工作树重新核对了其知识调用、默认值与发送分支。另读了 native embedding public API、默认本地模型、LanceDB package 与实际打包平台。
 
-## 3. 对报告方案逐项裁决
+| 当前事实 | 长期实现决定 |
+| --- | --- |
+| [Main routeContext](../../../electron/services/knowledge-api.ts#L3024) 用 score/100 和固定阈值，Runtime Lessons 固定 0.72 | 移除伪 confidence，分开 raw score、rank、fusion、校准相关性与 evidence status。 |
+| [Chat ref](../../../openclaw_runtime/src/context-engine/chat-knowledge-intent.ts#L104) 未完整保留 pins；[Wiki adapter](../../../openclaw_runtime/src/context-engine/chat-knowledge-source-adapters.ts#L37) 固定 trust/sensitivity 并只读前 80 行 | 先统一 owner read context、全文版本与 locator，再接新索引。 |
+| [SourceSet](../../../openclaw_runtime/src/context-engine/source-set.ts#L721) 是已物化来源的报告/排序，不是持久索引；scope/retention 类型不代表所有字段都已执行校验 | 复用准入与冲突规则，补齐采用字段的真实检查；RRF 后不再二次调用旧排序覆盖次序。 |
+| [DCS](../../../openclaw_runtime/src/context-engine/context-candidate.ts#L333) 按 candidateId 排同通道候选，预算允许截断 | DCS 增加经验证的组内 ordinal 和 atomic group，绑定最终 retained bytes。 |
+| [Memory hybrid](../../../openclaw_runtime/src/runtime-core/memory-hybrid-retrieval.ts#L1) 是 TS BM25/n-gram 加可选 embedding；cross-encoder 仅见注释和 score 字段 | 不把未存在的 scorer 当复用件；明确实现独立 rerank provider adapter。 |
+| [memory-core/runtime-api](../../../openclaw_runtime/extensions/memory-core/runtime-api.ts#L1) 已公开 createEmbeddingProvider；其实现接通 generic registry、query/document inputType 和 dimensions | 长期复用该公开能力边界，不为 RAG 再建一套 provider/secret registry，也不切换 memory slot。 |
+| [本地默认模型](../../../openclaw_runtime/src/memory-host-sdk/host/embedding-defaults.ts#L1) 已是 EmbeddingGemma QAT Q8_0 | 本地 profile 优先沿既有 GGUF/runtime 能力；模型安装与内存管理复用现有 owner。 |
+| [memory-lancedb package](../../../openclaw_runtime/extensions/memory-lancedb/package.json) 声明 LanceDB 0.30.0；npm 原生包清单没有 darwin-x64，而 [产品打包](../../../electron-builder.yml#L107) 包含 Intel Mac | 必须交付可移植精确向量路径；ANN 按实际 native capability 使用，不能宣称依赖存在即跨平台通过。 |
+| LanceDB Embedded 的新行可参与 flat 检索，optimize/cleanup 由应用管理；旧版本不会随一次逻辑删除立即全部消失 | 把维护、滞后、旧版本回收和删除传播纳入运行时合同。 |
+| Azure 权限检索使用已同步 ACL，源权限变化需要再次同步 | 索引过滤之外，保留 owner 当前 epoch/版本复查，关闭旧授权窗口。 |
+| Qwen3 的 embedding 与 reranker 是不同模型/结构；EmbeddingGemma 有明确 query/document 前缀和维度 | EmbeddingSpace 绑定输入格式、模型、维度和 normalization；cross-encoder 独立配置和计量。 |
+| 语义切块研究没有稳定的普遍增益，GraphRAG 的维护与查询涉及额外生成步骤 | 结构切块是长期默认；关系检索复用现有图，不建立全量 LLM 实体图/社区摘要基础设施。 |
 
-| 方案 | 裁决 | 落实方式 |
-| --- | --- | --- |
-| Project RAG 是可重建检索投影 | accept | 既有 retrieval source 拥有投影，owner 拥有内容，DCS 拥有入模决定。 |
-| openclaw-state + FTS5 | accept，附实现约束 | 同一物理 SQLite；独立投影版本；FTS 可选初始化；短事务和后台构建。 |
-| vector disabled + optional dense fallback | revise | 首版新路径没有 dense 调用。dense 后续作为可选召回 lane，失败退回 lexical；它不是 lexical 失败后临时整库 embedding。 |
-| 结构切块，semantic chunking shadow | revise | 结构切块进入首版；semantic/late/contextual-LLM chunking 初始 disabled，经过离线消融后才申请 shadow 预算。 |
-| RetrievalPlan 覆盖所有 lane | revise | 契约描述选中的 lane，首版只有 exact/BM25；Task Ledger 是范围/任务线索，不是长期检索 lane。 |
-| 默认 RRF，weighted-score 实验 | accept | 等权、k=60、按 lane 内 rank 融合；weighted-score 只存在离线候选 profile 中。 |
-| KnowledgeChunk → ContextCandidate | revise | 增加源/片段/投影 digest 区分、版本与坐标传输，DCS 保序和原子装配。 |
-| chunk Preflight | accept | 扩展现有面板；不新建第二个知识工作台。 |
-| Research profile | revise | 正交于读取 mode 的显式、单次检索 profile；先定义，WP8 后开放；不自动切入。 |
-| SEKB confirmed principle 作为经验 lane | revise | 从现有 Runtime Lessons owner adapter 接入；限定 active、版本绑定、同域 scope、可观察 exposure；不接 candidate。 |
-| Code Graph 仅 relationship/research | accept | 先 shadow，后受控一跳扩展；每个落点重新准入。 |
-| 反馈仅离线训参 | accept | 本地弱反馈生成离线评测输入；版本化 profile 经冻结的晋级协议后才替换。 |
-| page + section + line + revision + digest 引用 | accept，补齐字节范围 | raw-source 坐标、exact quote、完整 source digest、chunk digest、最终保留范围。 |
+外部检索覆盖 8 个主题、32 条发现结果，并对 12 项一手材料进行了当日 fresh crawl；另读取 npm 0.30.0 精确版本元数据。这里只采纳其机制与约束，外部 benchmark 分数不成为本项目验收结果。
 
-## 4. 四条路线比较
-
-| 路线 | 适用条件与成本 | 迁移 / 回滚 | 安全与维护边界 | 评测 / 跨平台风险 | 决定 |
-| --- | --- | --- | --- | --- | --- |
-| A：增强 page-level SourceSet | 小语料、短页面、明确选源；实现成本最低，但长文仍需反复扫描和截窗。 | 无新投影；回到当前 page search/read。 | 沿用 owner；仍需修正 Chat 钉选和准入。继续扩展评分会让页面排名承担片段定位职责。 | 当前完整 page 路径是主基线；依赖风险最低。测尾部信息、上下文浪费、定位准确率。 | 保留为兼容路径，不作为升级终点。 |
-| B：共享 SQLite FTS5 + 可选向量投影 | 本地项目 Wiki、标识符和中英混合文档；成本中等，主要在契约、失效、DCS 和评测。 | 只重建派生表，不搬迁原文；关闭新 reader 回到 A。普通状态 schema 采用 additive 方式。 | owner 政策先筛选、物化时复查；不能直接从 FTS snippet 回答。需要防 shared DB 写锁和旧索引泄露。 | 测 CJK、索引/原文一致性、重启/崩溃、旧版本打开数据库；三平台核对打包 Node 的 FTS5。 | **首版选用。** |
-| C：复用 memory-lancedb 作独立 vector projection | 已证明 dense 有用、语料规模需要 ANN 时才有价值；部署与维护成本高于 B。 | 另有 native 包、模型/维度与索引升级；索引可重建，但插件启停可能影响 memory slot。 | [memory-lancedb](../../../openclaw_runtime/extensions/memory-lancedb/openclaw.plugin.json#L10) 是 memory plugin，含 store/forget 和 autoRecall/autoCapture hooks；不能直接当只读 Wiki index。 | 额外验证 native ABI、Windows/macOS/Linux、离线安装、数据删除与模型更换。 | 首版拒绝；后续若选 LanceDB，只用独立派生 adapter，不能启用整个 memory plugin 来承接知识检索。 |
-| D：Graph-first / LightRAG | 关系/跨文档全局问题占主体，并有可靠实体抽取与更新语义；成本最高。 | 需要图构建、实体/关系版本及增量失效；关闭图后回 B。 | 关系不能替代原文或绕过授权。当前代码图的 stem 邻域不足以支撑通用文档图。 | 独立多跳语料、边正确率、维护成本和 stale-edge 泄漏；引入图服务会扩大跨平台运维面。 | 首版拒绝；只吸收后续有预算的 graph expansion。 |
-
-B 的收益假设是“更准确地取出已授权页面中的相关证据，并减少入模噪声”。该假设由第 10 节检验，不能由 SQLite 可用或 93 项旧测试通过直接得出。
-
-## 5. 权威边界与实际数据流
+## 3. 架构与权威
 
 ~~~mermaid
 flowchart TD
-  G["Knowledge review / explicit apply"] --> W["memory-wiki：正文、版本、权限、生命周期"]
-  W --> A["Owner 读取准入与版本快照"]
-  A --> P["knowledge-retrieval-source：可重建 SQLite chunk/FTS 投影"]
-  U["Chat scope / mode / 单次 profile"] --> R["RetrievalPlan：召回、融合、候选解释"]
-  P --> R
-  T["Task Ledger：任务、范围、已知证据引用"] --> R
-  M["Memory owner：独立启用、独立准入"] -. "后续 adapter" .-> R
-  S["SEKB：confirmed active principle"] -. "显式经验来源" .-> R
-  C["FactStore / Code Graph"] -. "Research relationship" .-> R
-  R --> V["Owner 复读：当前版本、policy、精确范围"]
-  V --> D["DCS：最终准入、组内次序、去重、原子预算、lineage"]
-  D --> Q["模型请求 / strict 或 open 回答"]
-  Q --> O["既有 receipt / SEKB attribution"]
-  O --> E["RSI 评测机制：离线对照与 profile 晋级"]
+  W["Wiki / 原生记忆 / Role Memory / SEKB owner"] --> A["Owner read context 与版本快照"]
+  A --> I["可重建投影：SQLite FTS / vector；LanceDB ANN"]
+  U["Scope + Mode + Profile"] --> P["RetrievalPlan"]
+  I --> P
+  G["Code Graph / Task Ledger / Wiki links"] --> P
+  P --> F["exact + lexical + dense → RRF → cross-encoder"]
+  F --> R["Owner 当前权限、版本与范围复查"]
+  R --> D["DCS：保序、原子装配、预算、lineage"]
+  D --> M["普通 Chat / strict 或 open QA / Research"]
+  M --> E["实际引用与采用、成本、任务结果"]
+  E --> V["离线评测与受控 profile 晋级"]
 ~~~
 
-- **Knowledge owner**：只有治理链可以修改正式知识。投影构建不会创建 approval、confirm 或 apply。
-- **Retrieval source**：只维护检索材料和顺序建议。scope/ACL 是从 owner 得到的约束，不能由用户文本、模型或 renderer 自报而扩大。
-- **DCS**：仍是最终上下文权威。检索预算是上限；DCS 可继续缩减或拒绝。新增片段使用 data/message 权限，不因“知识”“规则”标签变成 system instruction。
-- **Memory**：保留各域 owner。Runtime Memory 仍按现有诊断/退休政策处理，不进入本方案 active 索引。
-- **Task Ledger**：提供当前任务约束和引用，不进知识 chunk 表；任务事实的更新与接受仍归 Ledger。
-- **SEKB**：confirmed principle 可提供建议；candidate 留在原评审流程。
-- **RSI**：借用版本绑定、实验身份、独立 grader 和配对统计。Project RAG 不增加自改代码或自动改排序的能力。
+| 对象 | 唯一职责 |
+| --- | --- |
+| source owner | 正文、正式版本、读取政策、保留和撤销；正式知识变化继续走 Inbox/Draft/Steward/Proposal/explicit apply |
+| knowledge-retrieval-source | 可重建索引、查询计划、召回和次序建议；不能创造确认状态或扩大权限 |
+| DCS | 最终上下文准入、冲突/重复处理、次序、token/字符预算、实际入模证据 |
+| Memory owners | 各自保存并审核自己的数据；RAG 只拿有版本的只读候选 |
+| SEKB | 提供 active confirmed principle 与现有 attribution；未确认候选不进入 active retrieval |
+| Code Graph | 提供版本化符号/边/代码事实；关系不是事实支持的替代物 |
+| Task Ledger | 任务事实与 revision；仅提供查询线索/独立上下文，不进长期 chunk store |
+| RSI/evaluation | 实验身份、独立 grader、配对统计与离线策略评估；不会因反馈自动改变在线排序 |
+| UI/Host | 选择、解释和传输；renderer 不直接访问存储、文件或模型服务 |
 
-源码中已有 `ContextRef/v1`、`ProjectionAdapter`、`knowledge-retrieval-source` 和 DCS collection。实现必须扩展这些边界，不能再创建一套 owner registry、permission store 或 prompt assembler。
+这是现有 owner → retrieval source → DCS 的扩展。LanceDB 存储向量和定位 metadata，不提供正式知识写入 API，也不提供可直接拼入答案的正文。
 
-## 6. 数据契约
+## 4. 最终存储选择
 
-以下是新增能力的目标契约，实际实现统一放在一个共享 retrieval contract 中，Host/Gateway/runtime 引用同一语义。既有 page DTO 通过显式 compatibility mapping 继续使用。
+### 4.1 两个向量执行后端，一个投影合同
 
-### 6.1 RetrievalPlan/v1
+**SQLite portable exact 与 LanceDB Embedded ANN 都是长期交付项。** 它们服务不同容量/平台，不是两个知识权威。
+
+- SQLite：继续承载治理 metadata；新增 source projection、chunks、FTS、index jobs/generations、portable vector BLOB 和必要的诊断引用。
+- LanceDB：为已验证平台提供 ANN，只存 chunk/version/space IDs、向量、filter metadata。
+- 每个 namespace + EmbeddingSpace 只有一个 active vector backend；迁移期间允许明确标记的 staging，不长期双写。
+- SourceSet 是结果/报告；不会变成索引或版本 owner。
+- 当前 page direct read 长期保留，服务显式 refs、索引缺失和故障退化；旧分数/权限/装配实现最终收敛到统一合同。
+
+默认自动选择策略在 setup/rebuild 阶段执行，不在发送时临时换库：
+
+1. portable tier：目标不超过 20k eligible chunks，优先 SQLite exact；参考维度 768/1024。
+2. scale tier：目标 100k chunks，使用通过 native probe 与 recall gate 的 LanceDB ANN。
+3. 行数之外同时检查向量维度、预计 RAM/disk、索引构建成本和平台支持。20k×768×4 约 58.6 MiB，不能把相同行数的 4096 维当成相同资源成本。
+4. backend 转换从已有合格向量导出，或从 owner 重新构建；发布 generation 前验证，不能拿一半 SQLite/一半 LanceDB 未声明地混合。
+5. 缺少 ANN native 包时使用 portable/lexical，准确报告容量和 effective backend。不能用漏掉未索引新行的 fast-search 优化冒充完整召回。
+6. ANN 晋级先与同一 eligible 集合的 exact vector 对照：Recall@20 ≥0.98，并满足该平台 profile 预算。
+
+LanceDB 初始兼容目标为仓库已声明的 `0.30.0`，新增依赖必须属于实际 retrieval runtime owner，不通过整个 `memory-lancedb` plugin 装入，也不新增全局 dependency override。源构建的 native 包与官方预编译包都必须有版本、校验、平台和安装证据。
+
+### 4.2 表与数据生命周期
+
+| 数据 | 保存位置 | 规则 |
+| --- | --- | --- |
+| owner 正文/正式版本 | 原 owner | 索引不能代替 owner 回复已删除内容；需要历史引用时由 owner 版本保留策略决定 |
+| source projection | SQLite `knowledge_index_sources` | namespace、subject、source revision/digest、policy epoch、active generation、状态 |
+| chunks 与 FTS | SQLite `knowledge_chunks / knowledge_chunks_fts` | raw span、heading/kind、正文片段、检索 tokens；FTS 与 chunk 事务一致 |
+| vector projection | SQLite portable 或 LanceDB active generation | EmbeddingSpace + chunkDigest 绑定；向量受与源相同的读取/删除政策 |
+| jobs / generations | SQLite `knowledge_index_jobs / knowledge_index_builds` | cursor、lease/fencing、幂等键、错误、取消、重试和发布状态 |
+| plan/candidate pool | 本轮内存 | 到 deadline/结束释放；审计只保留必要引用和摘要 |
+| retrieval receipt | 既有 audit/receipt owner | 记录阶段、policy/model/index 版本、实际使用量、过滤和降级原因 |
+| SEKB attribution | 既有 `sekb_attribution_events` | 保持原事务、去重、版本和删除传播，不重复计数 |
+| 实验语料/原始跑次 | 固定 fixtures 与私有 run artifact | 与运行时知识分开；runtime 不读取评测结论当策略 |
+
+FTS 虚表初始化必须是可选 feature 初始化；不能因 SQLite 缺 FTS 扩展而使整个共享状态库无法打开。普通派生表沿既有 additive/Kysely schema 流程，投影版本独立管理，不通过降低全局 PRAGMA 版本实现回滚。
+
+### 4.3 长期维护必须实施
+
+owner event → invalidation → bounded index job → staged generation → 当前版本/政策复查 → 原子发布。
+
+- 撤销/删除先取消资格，再清理 chunk、vector、缓存、旧 generation 和可删除的衍生收据。
+- 同步失败、部分扫描或 provider 错误不能推断源删除。
+- 后台队列复用 BackgroundWorkGate，单 writer/短事务；拥有取消、停止、重启和异常恢复。
+- LanceDB optimize 的 compaction、index update、cleanup 分别计量；清理不得删除活跃 reader/writer 所需的版本或未确认事务文件。
+- 清理完成有可回读状态；逻辑不可读、派生内容删除、物理空间回收是不同事件。
+- 模型、维度、tokenizer、输入前缀或 chunker 改变均产生新 generation。旧模型空间不得被当作新模型结果。
+- 不在每次 Chat 扫描全库。只复读最终小候选集；索引当前性由 owner 事件与有界启动对账维护。
+
+## 5. 模型、切块与完整检索管线
+
+### 5.1 模型方案
+
+| Profile | embedding | rerank |
+| --- | --- | --- |
+| local | 既有 EmbeddingGemma 300M QAT Q8_0 GGUF runtime，768 维；明确 query/document 输入格式 | 不依赖模型 reranker，提供完整本地 hybrid 语义路径 |
+| quality | 已配置 generic embedding provider；参考 Qwen3-Embedding-8B，目标输出 1024 维仅在 endpoint 明确支持时使用 | 参考 Qwen3-Reranker-0.6B cross-encoder；配置的本地服务或远端 endpoint |
+| research | 使用已通过该语言/任务评测的 embedding space，不能跨空间比较 | 使用 quality scorer，并增加有预算的 query decomposition / relationship expansion |
+
+模型名称是可验证的初始参考，不是硬编码的供应商路由。复用 provider/secret registry 与 public SDK；能力快照声明支持的 inputType、模型版本、维度、token limit、batch limit、deadline、安装状态与 egress scope。
+
+quality 不会因为“有任意聊天模型”就被标为 ready。只有实际 embedding/rerank 能力准备好才可选择；运行中失败时明确 effectiveProfile 和退化原因。
+
+首次模型安装、checksum、license/分发材料、warmup、RAM、磁盘、重试、取消、卸载/回收全部在 RAG-05/RAG-18。local profile 离线验收不依赖外部 API。
+
+### 5.2 切块
+
+结构优先，按标题、段落、步骤、表格和代码边界切块；目标约 384 tokens、上限 768 tokens，并保留 2400 字符防护上限。实际 tokenizer/版本属于 chunker profile；进入 embedding 前还要验证该模型的真实输入上限和前缀预算。
+
+超限单元在结构内生成新的、带 raw span 的小片段，不静默剪尾并保留原 chunkId。标题链用于 retrieval text；原文 quote 不包含模型生成前缀。默认 overlap=0，邻接/父块展开走有界显式机制。
+
+中文/日文复用 CJK bigram，英文保留完整 identifier 与拆分词。NFKC/case folding 只作用于检索字段，不修改引用字节。semantic chunking、late chunking、LLM context augmentation 是受控实验开关；是否采用由固定消融决定，不是长期版本完成所必需的新技术栈。
+
+### 5.3 检索流程
+
+1. 冻结 session/workspace/owner scope、policy epoch、模型/索引 generation 和总预算。
+2. 读取资格在返回 metadata/snippet、embedding、rerank 前检查；renderer 输入不是授权。
+3. 显式 refs 精确解析。普通查询召回 exact、BM25 和 dense，分别保留 lane rank。
+4. RRF 用 `sum(1 / (60 + rank))`。多 query 先做 query-family/lane 去重，避免重复改写给同一结果多次投票。
+5. quality/research 调用 cross-encoder，校验返回 ID、数量、顺序与 finite scores。raw logit/sigmoid 不等于校准概率。
+6. 控制同一 parent 的数量、近重复、邻接展开和冲突组。Graph 得到的目标继续做 owner 准入。
+7. owner 精确复读所选版本/范围，验证 sourceDigest/chunkDigest/policyEpoch；本轮拒绝进入 sticky deny。
+8. 交给 DCS 保序、原子装配；DCS 可以减少预算或拒绝，不能给 retriever 自立一份 prompt 配额。
+9. 从实际 retained bytes 生成 citation manifest。QA 复用现有无工具 model-only 运行和输出校验。
+10. 记录候选、UI 展示、入模、quote、adoption、operational outcome 和 task grade 的不同事件。
+
+Task Ledger 只提供查询上下文/独立任务事实；不会成为持久检索 lane。Runtime Memory 的诊断/退休边界不会被 `scope=all` 绕开。
+
+## 6. 关键数据契约
+
+下列是长期目标合同。运行时落地时从共享定义派生 Host/Gateway/renderer 类型，旧接口通过薄适配迁移。
 
 ~~~ts
-type RetrievalPlanV1 = {
-  schema: 'RetrievalPlan/v1';
-  planId: string;
-  requestId: string;
-  policyId: string;
-  policyDigest: string;
-  mode: 'manual' | 'suggest' | 'auto-read';
-  profile: 'balanced' | 'research';
-  intent: 'lookup' | 'procedure' | 'decision' | 'troubleshooting' | 'relationship' | 'summary';
-  scope: {
-    workspaceId: string;
-    vaultId: string;
-    ownerIds: RetrievalOwner[];
-    sourceSetId?: string;
-    taskLedgerRevision?: string;
-  };
-  query: { original: string; variants: string[] };
-  pinnedRefs: RetrievalRefV1[];
-  admissionContextId: string;
-  lanes: Array<'exact' | 'bm25' | 'dense' | 'graph' | 'experience'>;
-  budget: {
-    candidateK: number;
-    finalK: number;
-    maxPerParent: number;
-    maxChars: number;
-    maxTokens: number;
-    deadlineAtMs: number;
-  };
-  fusion: { strategy: 'rrf'; k: 60 };
-  rerank: { mode: 'none' } | { mode: 'cross-encoder'; providerRef: string; model: string; topN: number };
-  fallback: 'admitted-page-level';
-};
-~~~
+type SourceDomain = 'wiki' | 'native-memory' | 'role-memory' | 'experience' | 'code' | 'task';
 
-`admissionContextId` 在可信 Host/runtime 边界由 session、workspace 和既有读取政策派生，不能引用 mutation grant。计划中的 ownerIds、budget、deadline 均由服务端约束。Off 直接返回 skip，不创建会执行的 RetrievalPlan；用户选择 refs 是读取意图，不是授权证明。
-
-首版 variants 仅含规范化后的原查询，不调用模型改写。计划只在本轮内存中持有；审计保存 ID、输入摘要、策略版本、预算和结果引用，避免持久化原始问题及证据正文。
-
-### 6.2 RetrievalRef、KnowledgeChunk 与 Citation
-
-~~~ts
-type RetrievalOwner = 'memory-wiki' | 'memory-slot' | 'sekb';
-
-type RetrievalRefV1 = {
-  schema: 'RetrievalRef/v1';
-  owner: RetrievalOwner;
+type SourceRefV2 = {
+  schema: 'SourceRef/v2';
+  domain: SourceDomain;
+  authorityId: string;
   namespaceId: string;
   subjectId: string;
   revision: string;
   sourceDigest: string;
-  policyDigest: string;
-  chunkId?: string;
-  chunkDigest?: string;
-  range?: {
+  policyEpoch: string;
+  locator?: {
     coordinateSpace: 'raw-source-utf8-v1';
     startByte: number;
     endByteExclusive: number;
@@ -182,10 +204,36 @@ type RetrievalRefV1 = {
   };
 };
 
-type KnowledgeChunkV1 = {
-  schema: 'KnowledgeChunk/v1';
-  ref: RetrievalRefV1 & { chunkId: string; chunkDigest: string; range: NonNullable<RetrievalRefV1['range']> };
-  parentRefId: string;
+type ReadAdmissionContextV1 = {
+  schema: 'ReadAdmissionContext/v1';
+  contextId: string;
+  principalId: string;
+  sessionId: string;
+  workspaceId: string;
+  ownerNamespaces: string[];
+  policyDigest: string;
+  purpose: 'knowledge-read';
+  egressProviderRefs: string[];
+  expiresAt: string;
+};
+
+type EmbeddingSpaceV1 = {
+  schema: 'EmbeddingSpace/v1';
+  spaceId: string;
+  providerInstanceId: string;
+  modelRevision: string;
+  artifactDigest: string;
+  dimensions: number;
+  tokenizerVersion: string;
+  inputFormatVersion: string;
+  normalization: 'unit' | 'provider-defined';
+};
+
+type KnowledgeChunkV2 = {
+  schema: 'KnowledgeChunk/v2';
+  chunkId: string;
+  source: SourceRefV2;
+  chunkDigest: string;
   headingPath: string[];
   kind: 'paragraph' | 'procedure' | 'table' | 'code' | 'section';
   content: string;
@@ -195,57 +243,50 @@ type KnowledgeChunkV1 = {
     trust: 'untrusted' | 'advisory' | 'confirmed' | 'high-trust';
     sensitivity: 'public' | 'workspace' | 'sensitive' | 'secret-adjacent' | 'secret';
     aclRead: string[];
-    scope: { workspaceId: string; agentId?: string; taskId?: string };
-    ownerEpoch: string;
     verifiedAt: string | null;
     expiresAt: string | null;
   };
-  provenance: { sourceRefs: string[]; evidenceRefs: string[] };
-  projection: { schemaVersion: 1; chunkerVersion: string; generation: string };
+  projection: { generation: string; chunkerVersion: string; embeddingSpaceId?: string };
 };
 
-type CitationV1 = {
-  schema: 'Citation/v1';
+type RetrievalPlanV2 = {
+  schema: 'RetrievalPlan/v2';
+  requestId: string;
+  planId: string;
+  admissionContextId: string;
+  policyId: string;
+  mode: 'manual' | 'suggest' | 'auto-read';
+  profile: 'local' | 'quality' | 'research';
+  intent: 'lookup' | 'procedure' | 'decision' | 'troubleshooting' | 'relationship' | 'summary';
+  pinnedRefs: SourceRefV2[];
+  lanes: Array<'exact' | 'bm25' | 'dense' | 'experience' | 'graph'>;
+  query: { original: string; variants: string[] };
+  budget: { candidateK: number; rerankK: number; finalK: number; maxPerParent: number;
+    maxTokens: number; maxChars: number; deadlineAtMs: number; maxQueries: number; maxModelCalls: number };
+  generations: Array<{ namespaceId: string; generation: string; spaceId?: string }>;
+};
+
+type RankSignalsV2 = {
+  lanes: Array<{ lane: string; rank: number; rawScore: number; scoreKind: string; contribution: number }>;
+  fusionScore: number;
+  rerankScore?: number;
+  reasons: string[];
+  calibratedRelevance?: { probability: number; calibrationId: string };
+};
+
+type CitationV2 = {
+  schema: 'Citation/v2';
   citationId: string;
-  ref: RetrievalRefV1;
-  headingPath: string[];
+  source: SourceRefV2;
+  chunkId: string;
+  chunkDigest: string;
   quote: string;
   quoteStartByte: number;
   quoteEndByteExclusive: number;
   projectionDigest: string;
 };
-~~~
 
-约束：
-
-- namespaceId 绑定真实 vault/owner namespace，不能只用文件名或 page title 作全局身份。
-- sourceDigest 是 owner 原始文件字节的 SHA-256；chunkDigest 是指定源范围字节的 SHA-256；projectionDigest 是实际提交给 DCS 的片段包装摘要。三者不能互换。
-- line 是含 frontmatter 的原始源文件中 1-based 行号；byte 范围从原始 UTF-8 字节 0 起算，end exclusive。旧 body 行号必须由 owner 的 frontmatter offset 映射，不能直接冒充 raw line。
-- `content` 必须与原文范围一致，保留可核验字节；`retrievalText` 可以包含标题链和词法归一化，只用于搜索。生成摘要、补写前缀和重复的表头不能伪装成原文 quote。
-- chunkId 由 owner/namespace/subject/revision/sourceDigest/span/chunkerVersion 确定；重新分块不能复用已经指向另一段内容的 ID。
-- 发送前按 ref 精确复读；revision、sourceDigest、policyDigest、chunkDigest 任一不符则拒绝本引用。显式钉选不静默换成最新版本或同名页面。
-- source status、ACL、sensitivity、retention 和 scope 必须先于 snippet 展示、外部 embedding/rerank 和入模生效。后置 citation 检查不能补救已经发生的泄露。
-- 缺少 owner 版本的旧数据，只能在 owner 完整读取后绑定全文 digest；不能把当前 80 行窗口摘要当整页版本。未知 freshness 单独展示，不能自动判为 fresh。
-- chunk 上的 policy 是 owner 快照；最终政策仍由 owner 复查。它不是可编辑的第二套 ACL。
-
-### 6.3 RankSignals 与 EvidenceStatus
-
-~~~ts
-type RankSignalsV1 = {
-  lanes: Array<{
-    lane: 'exact' | 'bm25' | 'dense' | 'graph' | 'experience';
-    rank: number;
-    rawScore: number;
-    scoreKind: string;
-    fusionContribution: number;
-  }>;
-  fusionScore: number;
-  matchReasons: string[];
-  rerankScore?: number;
-  calibratedRelevance?: { probability: number; calibrationId: string };
-};
-
-type EvidenceStatusV1 = {
+type EvidenceStatusV2 = {
   read: 'admitted' | 'denied' | 'stale' | 'missing';
   coverage: 'complete' | 'partial' | 'none';
   quote: 'unchecked' | 'exact-match' | 'invalid';
@@ -255,368 +296,254 @@ type EvidenceStatusV1 = {
 };
 ~~~
 
-不把 EvidenceStatus 压成一个分数。`calibratedRelevance` 仅表示“片段与查询相关”的校准结果，不是回答置信度。没有校准产物时省略该字段。SourceSet 的旧 `grounded/partial/missing_sources` 显式映射为旧接口读数，不能据此把 `claimSupport` 自动设为 supported。
+约束：
 
-### 6.4 DCS 适配
+- ReadAdmissionContext 由现有身份/权限 owner 派生，不是 renderer 可造的 grant；不能复用 proposal/apply grant 作读权限。
+- sourceDigest 是 owner 原始字节，chunkDigest 是源范围字节，projectionDigest 是实际 DCS 包装；不能互换。
+- raw line 含 frontmatter、从 1 计数，UTF-8 byte 从 0 计数且 end exclusive。旧 body-line 必须映射。
+- quoted bytes 必须在当前许可的 owner 版本、chunk 和 DCS retained manifest 中成立。
+- SourceSetRef 现有 contentDigest 校验物化内容，桥接时用 chunkDigest，另外保留父 sourceDigest；多片段不能复用一个 page refId。
+- ownerPolicy 是约束快照，不是可独立编辑的 ACL。旧权限、旧 vector metadata 或高排名不能放行新请求。
+- Code/Task 的 structured candidate 使用各自 DCS 路径；统一引用合同不等于把它们都写进 Wiki chunk 表。
+- DCS 的 knowledgePacking 包含 planId、ordinal、atomicGroupId 和 refs；只接受可信 producer 生成的字段。冲突组要共同保留或共同丢弃。
+- calibration 只估计相关性，不能提升 knowledge trust、claim support 或工具权限。
 
-在现有 Candidate 契约增加**由 DCS 验证和消费**的知识组内 order 与 atomic packing 提示，限定作用于 knowledge 数据通道。ordinal 不改变跨通道优先级。对普通旧 Candidate 保持现有语义。
+## 7. 交互：按需使用，不以知识聊天替代普通 Chat
 
-~~~ts
-type KnowledgeCandidatePackingV1 = {
-  schema: 'KnowledgeCandidatePacking/v1';
-  planId: string;
-  ordinal: number;
-  atomicGroupId: string;
-  refs: RetrievalRefV1[];
-};
-// ContextCandidate/v1 增加可选 knowledgePacking 字段；
-// 仅接受可信 dcs-knowledge producer 生成、并经 DCS 验证的该结构。
-~~~
+**Mode 决定何时读取；Profile 决定怎样检索；Scope 决定哪些 owner 有资格被询问。**
 
-一个片段是最小可丢弃单元；一个必须共同披露的冲突组是共同装配单元。预算不足时整片/整组丢弃，并记录对应 chunk refs，不能把半段代码、半个 citation 或单侧冲突送入模型。需要更小片段时在 owner-bound chunker 中预先生成，而不在最终文本上裸切。
+| Mode | 行为 |
+| --- | --- |
+| Off / scope=none | 无后台检索和自动附加；普通 Chat 正常。用户主动选择 ref 是新的可见读取动作。 |
+| Manual | 用户搜索/选择 ref，按 owner + namespace + version 精确读取；失效不悄悄换页。 |
+| Suggest | 保留现有 debounce、Preflight、inspect/attach/dismiss；候选不自动进 prompt。 |
+| Auto-read | 显式 opt-in；本次最多 3 个片段，显示实际 Used Knowledge、丢弃和退化。 |
 
-排序结果先成为 DCS 候选建议；DCS 决定最终次序并记录 retained/dropped。引用索引只覆盖 DCS 真正保留的字节，不能引用只被检索到却没发给模型的片段。候选的 `authority.contentDigest` 继续表示投影文本摘要，不冒充原始 source digest。
-
-复用 SourceSet 的准入/冲突规则时提取最小共享函数；不得在 RRF 后再次调用旧 `retrieveSourceSet` 覆盖排名或触发整页 embedding。旧 `SourceSetRef.contentDigest` 校验的是物化内容，新桥接必须使用对应 chunkDigest，并另外保留 sourceDigest。多片段不能复用同一个 page refId。Code Graph 返回的代码事实继续用既有代码 DCS 路径，关系扩展得到的 Wiki 片段才使用本契约。
-
-## 7. 存储、检索与扩展时机
-
-### 7.1 首版持久化选择
-
-| 数据 | 落点与 owner | 生命周期 |
+| Profile | 召回/重排 | 初始预算 |
 | --- | --- | --- |
-| 正式页面、正式版本/政策 | memory-wiki，原有治理路径 | 不因建立索引而迁移或改写 |
-| 来源投影状态 | `knowledge_index_sources`：source key、workspace/vault、owner revision/digest、policy snapshot/epoch、active generation、状态 | 可重建；owner 变化使快照失效 |
-| 片段投影 | `knowledge_chunks`：source key/generation、span、heading/kind、内容摘要、原文片段、检索 tokens | 可重建；不暴露原始表读取作为 answer API |
-| FTS | `knowledge_chunks_fts`，外部内容表指向 chunk 的 token 列 | 与 chunk 在同事务中更新；query 排序用 BM25 ASC |
-| 构建记录 | `knowledge_index_builds`：generation、版本、cursor、状态、数量、错误码 | 构建可重试；失败不发布 active generation |
-| 检索审计 | 复用既有 knowledge audit/event 存储；DCS 保留 selected/omitted receipt | 仅 ID、摘要、策略、原因、使用量；默认不留正文 |
-| SEKB exposure/adoption/outcome | 既有 `sekb_attribution_events` 与 KnowledgeStore | 既有事务、去重、删除与 version 语义 |
-| 计划、候选池、融合中间分、未采纳 query variants | 本轮内存 | deadline/结束即释放 |
-| 向量 | 首版无；后续经晋级后可存派生 BLOB/缓存 | 按 provider/model/dimension/policy/content 绑定，可删除重建 |
+| local | exact + BM25 + local dense，RRF | 40 candidates，4 final，1200 evidence tokens，3200 chars，900ms |
+| quality | hybrid + cross-encoder | 80 candidates，30 rerank，6 final，2200 tokens，6000 chars，2500ms |
+| research | quality + bounded query decomposition + owner links/Code Graph | 120 candidates，60 rerank，12 final，5000 tokens，15000 chars，30s；3轮/8query/2次规划模型调用 |
 
-索引构建使用已选择 vault 的 owner 读取入口，不绕过 owner 扫描整个工作区。外部连接器和 watched directory 产生的 Inbox/Draft 不能直接变成 accepted chunk。已导入但未确认的数据可以保留明确的手动检查路径，不能自动进入 Auto-read。
+这些是向 DCS 请求的上限；DCS 的当前全局剩余预算、约束优先级和模型窗口仍会收紧它。旧 6000 字符保护在迁移期继续生效，retriever 不自行扩容。模型安装/cold warmup 是准备阶段，不算作可以无限延长的前台 query。
 
-更新采用 source 级 staged generation：读取 owner 快照，切块并写入 staging，校验 owner revision/policy 未变后短事务切换 active generation。重建期间继续查询仍有效的上一代；旧来源一旦被 owner 撤销，就立即从可查询集合移除，不等待新索引完成。
+Auto-read 仍满足：active/confirmed、当前权限、有效版本、已知 freshness、无未解决冲突，并且唯一精确命中且有内容证据，或有有效校准 `relevance >=0.90`。校准绑定 policy/corpus/语言组，held-out precision≥0.95 且95%区间下界≥0.90；无校准不使用旧0.55/0.72。
 
-新建/更新/撤销由 owner 事件驱动，启动时做受限一致性检查；直接编辑 vault 的变化仍由 owner 的现有文件生命周期处理。不能在每次 Chat 请求扫描/哈希整个 corpus。最终少量候选的复读负责校验所使用的实际内容。
+strict/open：
 
-### 7.2 分块与词法
+- Knowledge Chat 默认 strict；普通 Chat 保持 open。
+- strict 缺证据返回 unknown/partial，保持引用和冲突；不能以 general knowledge 自动补成已回答。
+- open 可以给出一般知识和推断，但不能为其伪造引用。
+- citation 点击先检查当前权限，再定位同一版本/范围。owner 已清理旧版本时明确失效。
+- 被拒绝来源的标题、路径、snippet 也不能先显示再过滤。
+- 回答保存进入原 Inbox/Draft，不自动 apply。
 
-- 使用现有 Markdown parser，按标题、段落、列表步骤、代码围栏和表格分块。首版 target 1200 字符、max 2400、min 160、overlap 0；小片段只在同 section 内合并。
-- 超大代码块按完整行、超大表格按完整行组切分；保留父段落/表头关系，包装生成的围栏/表头有明确来源标记。不能把整页前缀附到每个可引用片段。
-- 先记录 raw offsets，再产生检索 tokens。NFKC、case folding、标识符拆分、CJK bigram 只作用于检索字段，不改引用原文。
-- 复用 `memory-tokenization.ts` 的 CJK bigram；中日文短词与英文 identifier 建独立 fixture。不能假设 FTS5 默认 unicode61 会给中文分词。
-- 首版固定 title/heading/body 权重 2/2/1。exact 标识符 lane 独立解析；不把 BM25 raw score 当置信度。调参产生新 policy/chunker version，经离线评测后替换。
+Research 只在用户显式选择时进入。它根据证据缺口继续，遇到覆盖充分、无新增证据、重复查询、预算/时间用尽或取消就停止。所有子查询继承同一个 scope；没有外网/跨项目/工具权限的隐式升级。
 
-### 7.3 请求管线
+## 8. 长期有效配置
 
-1. 校验 scope/mode/profile、session/workspace 绑定、开关和端到端 deadline。
-2. owner 提供当前可查询来源集合；过滤 status、ACL、sensitivity、scope、retention、policy epoch。查询只在这个集合内命中。SQL 参数化、FTS token 转义，授权集合过滤在同一查询内强制执行。允许本地读取不自动授予向任意 embedding/rerank endpoint 外发内容的权限。
-3. 显式 ref 单独解析，优先保留，不参与“用高分推翻版本钉选”。
-4. 普通查询执行 exact 标识符和 BM25，lane 内最多 40 个候选；融合去重后的候选池也最多 40。
-5. 对两个非空 lane 使用 `sum(1 / (60 + rank))`。单 lane 保留其原次序，不额外包装成“混合收益”。禁止随意叠加代码图的 0.3 分数到这一尺度。
-6. 合并同 owner/version/span 的重复项，最多 2 个片段来自同一 parent；与问题无内容匹配、仅靠 metadata 加分的条目不能获得 Auto-read 资格。
-7. owner 复读候选范围，检查版本/政策/摘要。拒绝进入本轮 sticky deny 集合，后续 fallback 不得恢复它。
-8. 提交带组内次序和原子提示的候选，由 DCS 完成最终装配、lineage 和引用索引。
-9. QA 复用 model-only Gateway 和 exact quote 校验；普通 Chat 保留现有工具权限。读取任何来源都不会增加写权限。
-10. 记录候选、UI 展示、实际入模、quote、adoption、grade 的不同事件。
-
-第一批要覆盖 Chat 普通文本和 media 发送分支、排队发送、retry、scope 切换、SourceSet Studio 与 Knowledge QA；不能只接 Library 的搜索按钮。
-
-### 7.4 SQLite 与回滚
-
-- 普通派生表走现有 additive schema/Kysely 生成流程。首版不提升共享 `user_version`；投影自己的 `schemaVersion/chunkerVersion/tokenizerVersion` 独立管理。
-- FTS 虚表在 feature 初始化阶段能力探测后创建，不放入无条件启动 DDL。缺失、损坏或 rebuild 失败时标记新路径 unavailable，保留正常共享状态服务。
-- 本机 `node:sqlite` 已实测 FTS5 可用；Windows Electron/Gateway 打包运行时以及 macOS/Linux 仍属于 WP2/WP6 必跑门槛。
-- 后台构建使用既有 BackgroundWorkGate；短事务、单 writer、bounded batch；不在 Main/UI 或 Gateway 请求事件循环中同步执行大范围重建。
-- 保留当前和一代 staging，构建预算包含两代数据与 WAL；失败/撤销的正文与 FTS token 需清理，日志和 tombstone 只留引用。物理文件空间回收遵循既有 checkpoint/retention，不承诺“删行即擦除磁盘所有旧字节”。
-- kill switch 先停止新任务、使旧响应失效，再关闭新 reader；已启用知识的普通请求回到 owner-admitted page 路径。全局 enhancement kill switch 则连旧知识注入一起停止。
-- 回滚不恢复旧的完整 SQLite 备份、不下调 PRAGMA 版本、不覆盖期间产生的 governance/SEKB/task 事实。投影坏了只丢弃该投影并重建。
-- WP2 必须验证“新表存在时旧兼容二进制仍能打开正常状态数据”。若做不到，必须先交付兼容底座，再推进切换；不能以“可重建”掩盖二进制降级失败。
-
-### 7.5 dense、reranker、向量数据库的具体进入门槛
-
-| 能力 | 什么时候进入 | 选型 | 验证 / 退出 |
-| --- | --- | --- | --- |
-| dense lane | B 基线冻结后，held-out 中有稳定的同义/跨语言召回缺口；消融 Recall@20 至少 +5pp、配对区间下界 >0，安全和总预算通过 | 复用 `RuntimeEmbeddingProvider`；第一验证对象是现有 SiliconFlow Qwen3 embedding adapter，provider/模型版本必须固定 | 先离线，再显式 shadow，最后可选 active。失败回 exact/BM25；不能发送前整库计算。 |
-| 模型 reranker | 候选池 Recall@40 足够，但最终片段 Precision/nDCG 不足；nDCG@5 至少 +0.03、区间下界 >0，并满足 profile 总期限/成本 | **多语言 cross-encoder，优先配置过的远端 rerank endpoint**；不首装本地 ONNX 模型，不用通用 LLM 列表评分。当前没有可直接复用的完整 scorer，需要小而独立的 provider adapter | Research 首先验证 top 30 → top 8；普通 Auto-read 只有独立质量/延迟门槛通过后才能启用。关闭后直接用融合结果。 |
-| 持久向量 / ANN 数据库 | 先证明 dense 增益，再证明同库 BLOB + 受限内存精确检索在实际 corpus 下超出延迟/内存预算 | 先沿 B 增加可重建向量；达到规模约 5 万 eligible chunks 时启动 ANN 评测，不自动选库。只有精确 dense p95 >200ms 或额外内存 >256MiB 的实测成立时才打开独立存储 ADR | 按实际维度计算 bytes（如 5 万×4096×4 约 781MiB，尚未计运行开销）。LanceDB 只是候选；必须有三平台安装/升级/删除/回滚证据。 |
-
-现有 embedding adapter 默认声明 4096 维且允许环境选择模型。持久化前必须以实际响应校验维度、一致性和模型绑定；不能把声明的常量当所有模型的真实维度。providerRef 只引用既有凭据管理，不把 key 写进计划、索引、citation 或评测报告。
-
-## 8. 交互与准入
-
-| 用户选择 | 实际行为 | 缺证据 / 失败行为 |
-| --- | --- | --- |
-| Off | `scope=none`；不做后台搜索、embedding 或自动附加。主动选择一个 ref 是新的明确读取动作，并在 UI 显示所选 scope。 | 普通 Chat 正常。 |
-| Manual | 搜索/选择后发送 typed refs；后端精确读取所选版本/范围。 | 失效引用明确标记；不悄悄替换。 |
-| Suggest | 有范围、输入达到现有触发长度并经 650ms debounce 后建议；最多 3 个候选卡片。Attach/Inspect/Dismiss 保留。 | 不影响发送；旧请求的晚到结果不得覆盖新 session/scope/query。 |
-| Auto-read | 显式 opt-in；只附加通过 owner 和相关性门槛的最多 3 个片段，显示 Used Knowledge 与丢弃原因。 | 总检索最多 800ms，包括 fallback 和复读；期限后普通 Chat 继续，无晚到注入。 |
-| Research | 后续显式单次 profile；最多 3 个 query、80 个候选、8 个最终片段、4800 字符/2400 估算 token、8 秒总检索期限 | 允许取消；返回已核验证据与缺口。不能升级 scope、开启写权限或调用外网补证，除非另一项已明确授权。 |
-
-Research 是检索深度，不是新的权限 mode；不新增 `auto-advisory` 作为 `auto-read` 的重复名字。它受 DCS 剩余预算约束，4800 字符不是新增独立上下文额度。
-
-**Preflight 的硬准入**：owner 可读、当前 revision/policy 匹配、范围有效、属于本次 workspace/vault、不是 revoked/deleted/archived/denied、没有超 sensitivity/retention 限制。缺 freshness 可出现在已授权的手动检查/Suggest 中并明确标注，但不能自动附加。不能在准入前展示被拒绝来源的 snippet、标题或敏感路径。
-
-**Auto-read 的相关性准入**：
-
-- 唯一精确 ID/path 命中且包含查询内容证据，或 `calibratedRelevance >= 0.90`；
-- calibration 必须绑定当前 policy/corpus/语言组，在 held-out 上达到 precision ≥0.95、95% 区间下界 ≥0.90；
-- 没有有效 calibration 时只允许上述唯一精确命中；其余退为建议，不用原来的 0.55 或固定 0.72 代替；
-- 即使相关性很高，未确认、冲突、unknown freshness、源版本漂移或政策失败仍不能 Auto-read；
-- 校准产物只改变相关性选择策略，不能提升知识 trust 或给来源新增读取权限。
-
-**strict/open** 是当前回答的证据策略，适用于普通 Chat 的知识增强和 Knowledge Chat：
-
-- Knowledge Chat 默认 strict；普通 Chat 保持 open。对现有会话只保存用户明确选择，不全局迁移成新 mode。
-- strict 的事实 claim 必须由本次 admitted/retained 证据支持；无证据返回 unknowns，引用失效或结构冲突不能伪装成已回答。
-- open 可以使用一般知识，但区分“有来源的事实”和“推断/一般建议”，不给后者伪造 citation。
-- 点 citation 重新检查读取政策，定位同一 page/section/raw range；源已更新时提示版本变化，不跳到同名段落并称之为原证据。
-- 输出校验保证 quote 绑定；语义支持与回答质量另有评测。不能在 UI 把“引用存在”显示成“答案已验证”。
-- 保存回答仍创建现有 Inbox/Draft；确认 apply 继续沿原链。
-
-## 9. 完整配置、默认值与升级路径
-
-下列为**待实现的有效配置导出格式**，不是当前解析器已经支持的配置文件。新增运行时入口统一为 `runtime.knowledge.projectRag`，由该入口的类型、schema/help、metadata 与测试一起落地。算法细项是版本化 policy preset 的只读展开；正常 UI 只暴露启停、来源、模式、profile、strict/open 和已配置 provider，避免几十个互相矛盾的调参开关。
+这是 RAG-12 要实现的目标配置，不是当前解析器已经支持的新键。新入口统一为 `runtime.knowledge.projectRag`；下面是展开后的有效配置，正常 UI 只暴露用户能作出有意义选择的项，算法细节随 policy version 管理。
 
 ~~~json
 {
-  "schema": "ProjectRagConfig/v1",
+  "schema": "ProjectRagConfig/v2",
   "enabled": false,
   "killSwitch": false,
-  "defaultProfile": "balanced",
-  "policyId": "project-rag-lexical-v1",
-  "storage": {
-    "backend": "openclaw-state-sqlite",
-    "projectionSchemaVersion": 1,
-    "ftsInitialization": "optional",
-    "retainedGenerations": 2,
-    "rebuildMode": "owner-events-and-startup-reconcile",
+  "policyId": "project-rag-long-term-v1",
+  "defaultProfile": "local",
+  "sources": {
+    "wiki": true,
+    "nativeMemory": false,
+    "roleMemory": false,
+    "confirmedExperience": false,
+    "codeRelationships": false,
+    "taskContextHints": true,
+    "crossWorkspace": false
+  },
+  "index": {
+    "metadata": "openclaw-state-sqlite",
+    "lexical": "sqlite-fts5",
+    "portableVector": "sqlite-flat",
+    "annVector": "lancedb-embedded",
+    "annSdkReferenceVersion": "0.30.0",
+    "backendSelection": "capability-size-resource-policy",
+    "portableReferenceMaxChunks": 20000,
+    "annReferenceMaxChunks": 100000,
+    "oneActiveBackendPerSpace": true,
+    "generationRetention": 2,
+    "jobConcurrency": 1,
+    "batchChunks": 128,
     "maxSourceBytes": 2097152,
-    "batchChunks": 128
+    "startupReconcile": true,
+    "ownerEventDriven": true,
+    "requireCurrentOwnerAdmission": true
   },
-  "chunking": {
-    "strategy": "markdown-structure-v1",
-    "targetChars": 1200,
+  "chunker": {
+    "profile": "markdown-structure-v2",
+    "targetTokens": 384,
+    "maxTokens": 768,
     "maxChars": 2400,
-    "minChars": 160,
-    "overlapChars": 0,
+    "overlap": 0,
+    "tokenizerStrategy": "model-tokenizer-v1",
+    "effectiveTokenizerDigest": null,
+    "cjk": "bigrams",
     "semanticChunking": "disabled",
-    "contextualLlmPrefix": "disabled",
-    "lateChunking": "disabled"
+    "lateChunking": "disabled",
+    "llmContextPrefix": "disabled"
   },
-  "lexical": {
-    "backend": "sqlite-fts5",
-    "tokenizer": "unicode-words-cjk-bigrams-v1",
-    "fieldWeights": { "title": 2, "heading": 2, "body": 1 }
+  "embedding": {
+    "localReferenceModel": "embeddinggemma-300m-qat-Q8_0.gguf",
+    "localDimensions": 768,
+    "qualityProviderRef": null,
+    "qualityReferenceModel": "Qwen/Qwen3-Embedding-8B",
+    "qualityRequestedDimensions": 1024,
+    "queryDocumentInputTypes": true,
+    "strictSpaceBinding": true,
+    "requireEgressAdmission": true,
+    "foregroundCorpusEmbedding": false
   },
-  "vector": {
-    "mode": "disabled",
-    "providerRef": null,
-    "model": null,
-    "dimension": null,
-    "store": "none"
-  },
-  "fusion": { "strategy": "rrf", "k": 60 },
   "rerank": {
-    "mode": "none",
     "providerRef": null,
-    "model": null,
-    "topN": 0
+    "referenceModel": "Qwen/Qwen3-Reranker-0.6B",
+    "kind": "cross-encoder",
+    "requireCapabilityProbe": true,
+    "scoresAreCalibratedProbabilities": false
   },
-  "lanes": {
-    "exact": true,
-    "bm25": true,
-    "experience": false,
-    "graph": false,
-    "runtimeMemory": false
+  "fusion": {
+    "strategy": "rrf",
+    "k": 60,
+    "queryFamilyDeduplication": true,
+    "maxPerParent": 2
   },
   "profiles": {
-    "balanced": {
-      "candidateK": 40,
-      "finalK": 3,
-      "maxPerParent": 2,
-      "maxChars": 3200,
-      "maxTokens": 1200,
-      "maxQueries": 1,
-      "deadlineMs": 800
-    },
-    "research": {
-      "available": false,
-      "candidateK": 80,
-      "finalK": 8,
-      "maxPerParent": 2,
-      "maxChars": 4800,
-      "maxTokens": 2400,
-      "maxQueries": 3,
-      "deadlineMs": 8000,
-      "graphMaxHops": 1
-    }
+    "local": { "candidateK": 40, "rerankK": 0, "finalK": 4, "maxTokens": 1200, "maxChars": 3200, "deadlineMs": 900 },
+    "quality": { "candidateK": 80, "rerankK": 30, "finalK": 6, "maxTokens": 2200, "maxChars": 6000, "deadlineMs": 2500 },
+    "research": { "candidateK": 120, "rerankK": 60, "finalK": 12, "maxTokens": 5000, "maxChars": 15000, "deadlineMs": 30000, "maxRounds": 3, "maxQueries": 8, "maxPlanningModelCalls": 2, "graphDefaultHops": 1, "graphMaxHops": 2, "graphMaxNodes": 40 }
   },
-  "autoRead": {
-    "requireExplicitOptIn": true,
-    "requireCurrentOwnerVerification": true,
-    "requireConfirmedSource": true,
-    "allowUniqueExactMatch": true,
+  "interaction": {
+    "suggestMinChars": 18,
+    "suggestDebounceMs": 650,
+    "dismissalTtlMs": 600000,
+    "autoReadMaxChunks": 3,
+    "autoReadRequireConfirmed": true,
+    "autoReadUnknownFreshness": "suggest-only",
     "calibrationId": null,
     "minCalibratedRelevance": 0.9,
-    "unknownFreshness": "suggest-only",
-    "conflicts": "suggest-only"
-  },
-  "suggest": {
-    "minQueryChars": 18,
-    "debounceMs": 650,
-    "maxCards": 3,
-    "dismissalTtlMs": 600000
-  },
-  "answer": {
-    "ordinaryChat": "open",
-    "knowledgeChat": "strict",
-    "sourceClaimsRequireCitations": true,
-    "maxClaims": 20
+    "ordinaryAnswerPolicy": "open",
+    "knowledgeAnswerPolicy": "strict"
   },
   "fallback": {
-    "onUnavailable": "admitted-page-level",
-    "onDeadline": "continue-chat-without-new-references",
-    "onDenied": "keep-denied",
-    "reuseRemainingDeadline": true
+    "order": ["same-scope-local", "same-scope-lexical", "admitted-page-read"],
+    "reuseRemainingDeadline": true,
+    "stickyDeny": true,
+    "lateResponseInjection": false,
+    "continueOrdinaryChat": true
   },
   "audit": {
-    "enabled": true,
-    "payload": "refs-digests-status-usage",
+    "defaultPayload": "refs-digests-status-usage",
     "rawContent": false,
-    "retentionDays": 30
+    "retentionDays": 30,
+    "recordEffectiveProfile": true,
+    "recordIncompleteAndUnknown": true
   },
-  "feedback": { "onlineRankUpdates": false, "automaticWriteback": false }
+  "feedback": {
+    "onlineRankUpdates": false,
+    "automaticKnowledgeWriteback": false,
+    "promotion": "offline-versioned-policy"
+  }
 }
 ~~~
 
-配置规则：
+现有 `knowledgeScope/knowledgeMode` 不另存第二份，初始仍为 none/suggest。用户在来源/设置中明确启用本项目 RAG，才建立 namespace 和索引任务。完整版本的功能必须通过正常 UI/Host API 可启用，不能只停在隐藏开发 flag 下。
 
-- 既有 `knowledgeScope/knowledgeMode` 继续保存在原 session/workspace UI 状态，不在新配置里再存一份。
-- feature available ≠ user scope enabled ≠ Auto-read allowed。三道门分别检查。
-- 修改 chunk/tokenizer/model/dimension 必须产生新的 projection generation，旧向量不得混用。
-- `rerank.mode=cross-encoder` 需要有效 provider/model 和预先分配的总 deadline；未配置时不创建“空实现”。
-- 实验 preset 只在离线/显式 shadow 使用：dense、cross-encoder、weighted fusion、graph 和 multi-query 逐项消融，禁止一次开启后宣称某单项有效。
-- schema v1 升级沿 doctor/现有配置迁移入口，不用静默兼容写入或新增 sidecar。关闭新功能后，原 scope/mode 和 page 接口仍可工作。
-- 800ms、40/3、3200 等是本次冻结的初始工程预算。改变这些值需要新 policy 版本及对应验证，不能在失败后原地放宽评测门槛。
+quality/research 的 providerRef 必须引用已有凭据系统；未配置时显示 unavailable。更换凭据不把 key 写入 embedding space 或日志；认证隔离与模型空间分别处理。更新模型、输入格式、维度、backend、chunker 或 policy 均有版本化迁移和回滚。
 
-## 10. 评测与晋级门槛
+## 9. SEKB、Memory、Code Graph、Task Ledger 与 RSI 接线
 
-### 10.1 三种基线，避免比较错对象
+- **SEKB**：复用 Runtime Lessons，修正 qualified ID/裸 ID 的边界；只接 active confirmed。建议、context exposure、citation、observed adoption、operational result、independent grade 各自记录。当前 `KnowledgeStore.record_adoption` 的事务/去重/版本检查继续是归因 owner。
+- **Memory**：native memory provider/file 和 Role Memory card 用独立 adapter 与 namespace，遵守现有 read/use gates。不能因为 UI 的 memory/all 标签相同而互换 id。Runtime Memory 诊断域不进入 active。
+- **Code Graph**：使用 FactStore 符号/边和源码版本；修正文件 stem 歧义。一跳默认、两跳上限；只支持 relationship/research 中的有界扩展。代码片段沿代码 DCS 路径，不复制为 Wiki 真相。
+- **Task Ledger**：提供当前 task revision、约束和 evidence refs；不由 RAG 创建 root、接受任务事实、写入长期知识或决定运行状态。
+- **RSI**：只复用实验身份和配对评测纪律；本程序有独立的 `ProjectRagPromotionPolicy/v1`。原 RSI NO_GO 不重签，retrieval feedback 不自动改排序或确认经验。
+- **反馈**：attach/dismiss 是弱交互信号；实际入模来自 DCS receipt；adoption 需要同 run observed operation。重复信号幂等，来源被删时执行既有保留/删除规则。
 
-- **A0**：同任务的 Knowledge Off，用于测量总成本与任务效果。
-- **A1**：当前 page-level 路径，包含现有中文词法、bounded continuation、owner admission、可配置 semantic 行为；provider/semantic 状态明确固定。
-- **B1**：本文首版 chunk lexical 路径。与 A1 保持相同语料快照、任务、问题、provider、工具权限、最大最终上下文预算和停止条件。
+## 10. 评测与晋级是完整实现的一部分
 
-主消融用 lexical A1 对 lexical B1；另列当前 opt-in semantic A1 的比较，不能悄悄关闭强基线的能力。检索离线评测还要单独比较“相同 raw source 的 gold spans”，不能拿 page hit 与 chunk hit 直接作同分母。
+### 10.1 数据先于调参
 
-WP1 的安全修复对 A1/B1 共同启用并分别冻结源码版本；保留本次旧代码快照用于前后行为核对。评测不能把只修在 B1 的权限或版本 bug 算成 chunk 算法收益；DCS 原子装配等共用机制也要在受控消融中保持一致。
+RAG-02 在检索实现前固定：
 
-### 10.2 数据与方法
+- 240 个查询：80 calibration、80 validation、80 sealed held-out；按 source family 划分，覆盖四语言、六种意图。
+- 单独的权限、撤销、过期、缺源、冲突、提示注入和空结果负例。
+- 60 个可通过仓库 oracle 判断的执行任务，3 repeats，Off/page/full 三臂，共 540 planned slots。
+- 当前完整 page/semantic 基线、owner/policy、provider、最终预算、停止条件、oracle 与成本 envelope。
 
-| 层次 | 固定输入与执行 | 指标和接受条件 |
-| --- | --- | --- |
-| 契约 / fixture | 多语言、首/中/尾段、frontmatter、CRLF、多字节字符、表格、围栏、别名、重复、版本/ACL 变化、prompt injection、冲突、缺源、无 FTS、锁/超时 | 引用范围/digest 100% 可解析；拒绝源进入 UI/embedding/prompt 为 0；无匹配无伪 citation；重复/崩溃不发布半成品 |
-| 实际仓库语料 | 冻结已授权的真实项目文档快照和 owner metadata；120 个 agent 编写并按原文复核的查询，60 calibration、60 sealed hold-out；覆盖中英日俄、标识符、操作步骤、长文和冲突 | 每题 gold source/span/必要事实与不可答原因先封存；同源或改写问题不得跨 split。测 Recall@20/40、MRR、nDCG@5、Precision@3、最终证据覆盖和入模 tokens |
-| 检索晋级 | A1/B1 配对、按 query/source cluster 计算不确定性 | exact ref 解析 100%；Recall@20 不低于 A1；nDCG@5 至少 +0.05 且配对 95% 区间下界 >0；已知冲突/拒绝覆盖 100% |
-| live provider QA | 同一获授权 endpoint/model 与冻结输出预算；保存脱敏 raw response、token usage、超时和未完成状态 | quote validity 100%；claim support、answer completeness、拒答精度分别打分；显式记录判断器版本/agent actor，不用答案中的引用数量代替语义支持 |
-| Electron E2E | 真实 Host→Gateway→owner→DCS 路径，测试实例独立；mock route 响应只能验证 UI 分支 | Off、Manual、Suggest、Auto-read、scope/session 切换、取消、晚到响应、citation 回源、source edit/revoke、media/queued send、kill switch 与旧路径恢复 |
-| 性能与存储 | 1k/10k chunks、冷/热读、同库 governance 写入、两代重建、crash/restart；三个打包平台 | 10k warm 检索 p95 ≤250ms，cold ≤500ms；普通 Auto-read 总等待硬上限 800ms；后台构建不占主事件循环，记录 DB 写锁、RSS、磁盘/WAL峰值 |
-| 真实任务 cohort | 40 个独立、可用仓库 oracle 验证的执行任务 ×3 repeats × A0/A1/B1，共 360 slots；题目、oracle、候选、经验与预算在执行前冻结 | 使用既有 paired-ablation 机制；任务成功提升 ≥5pp、95% 区间下界 >0、token 与 tool-call 成本增幅各 ≤10%、安全/anchor 回退为 0，才允许“本 cohort 有任务收益” |
+所有 gold 和执行可由 agent 产生并复核，标记 actor；真实项目语料与 agent 编写查询、自然用户数据各自准确命名。评测 raw 输出留在私有运行产物，发布精选结果和校验摘要。
 
-40 cases 是本次初始执行计划，不保证足以检测 5pp。沿用 RSI 的完整 case 配对、k=3、功效和 requiredCasesApprox 计算；区间或成本缺失则 hold。不能把 repeats 当独立任务扩充样本量，不能剔除 timeout/incomplete 后改称全量成功。
+### 10.2 具体门槛
 
-历史 RSI NO_GO 和当前 SourceSet 的 synthetic quality report 保持原解释。本方案建立自己的 cohort 和候选版本，不能借它们的任务数或旧结论晋级。
-
-### 10.3 晋级顺序
-
-1. G0：owner/引用/DCS 安全和失败路径全部通过；才可在隔离实例启用 B。
-2. G1：真实语料检索增益、资源预算和打包能力通过；才开放手动选择的新 reader 与 Suggest。
-3. G2：Auto-read 校准/精确匹配准入和真实 Electron 发送链通过；才允许该新路径 Auto-read opt-in。
-4. G3：live QA 与任务 cohort 完成后，分别裁决回答质量和任务收益。
-5. 默认启用、跨项目默认共享、公开发布仍是独立产品决定。不能由 G1/G2 自动翻转。
-
-所有测试、评审、query gold 和 task execution 都可由 agent 自动执行并标记 actor，无需等待真人数据。新的 provider 调用先绑定已有授权凭据/endpoint 与整轮预算；没有资源时保留本地工程结果，不能补写 live 成功。
-
-## 11. 按依赖排序的实施工作包
-
-各包由 agent 开发并按既有 Harness/Task Forest 流程执行。一次推进一个 ready 包；下面的 WP 编号是本 ADR 的工作分解，不另建运行时任务权威。
-
-| 包 / 依赖 | owner 与 touched areas | 契约及交付 | 必跑验证 / E2E | 文档 / 回滚 |
-| --- | --- | --- | --- | --- |
-| WP0 决策与基线（本次） | 架构；本 ADR、authority ADR、Knowledge 文档、保留清单、源码复核证据 | 裁决 B、确认现状、冻结首版边界；实施时创建新 active task spec，引用 gateway-backend-communication | 文档链接/配置语法/保留清单；本次 7 files / 93 tests + 源码探针。没有 UI 变更，不新增 E2E | 本 ADR 为开发入口；回滚本次文档不会改运行行为 |
-| WP1 owner 读取与身份 / WP0 | memory-wiki owner + Host/runtime；`shared/knowledge/*`、`shared/host-api/contract.ts`、`chat-api.ts`、Gateway logs-chat schema、`chat-knowledge-intent.ts`、`chat-knowledge-source-adapters.ts`、`knowledge-source-set-answer.ts` | 统一 readonly ref、policy snapshot、全文版本、range；共享准入规则；明确旧 body-line 映射；不能复用 mutation grant 作读权限 | 真实 Wiki adapter 的 status/privacy/revision/ACL/scope cases；pins 全链路；native-memory/role-memory 不串域；扩展 `knowledge-ks04-chat-dcs.spec.ts` 的编辑/撤销/refused case | 更新 SourceSet read rule 与 Knowledge 读取文档；回到已修正的 page-only adapter，不能回滚掉安全修复 |
-| WP2 chunk + SQLite 投影 / WP1 | retrieval source + state；`openclaw_runtime/src/knowledge/retrieval/*`、Wiki public runtime API、state schema/generated types、现有 BackgroundWorkGate | 三个普通派生表 + 一个 FTS 表；结构/字节坐标切块、CJK tokens、generation/CAS、失效、短事务与资源上限 | 真实临时 SQLite + vault，fts/no-fts、双进程读写、owner 改动、崩溃恢复、新旧二进制兼容；打包 Win/macOS/Linux capability probe。暂不新增 UI | 存储/重建 runbook；关闭 writer/reader，保留正常 owner 和 page 路径 |
-| WP3 计划与召回 / WP2 | runtime retrieval + Main facade；`knowledge/retrieval/*`、`knowledge-api.ts`、`source-set.ts`、host contract/facade | exact/BM25/RRF、去重/来源配额、rank signals、共同 deadline、sticky deny fallback；不复制现有整套 Memory scorer | exact/lexical 消融、真实语料 baseline、权限前滤、同分稳定序、无命中、30s owner 超时注入、总期限；复用既有 Host 集成测试 | 检索 profile/spec；关新 reader 回 owner-admitted A1 |
-| WP4 DCS 与 QA / WP3 | DCS + Knowledge QA；`context-candidate.ts`、`turn-injection-budget.ts`、`embedded-agent-runner/extensions.ts`、`knowledge-evidence-qa.ts`、model-only RPC consumer/schema | group order、atomic pack、三种 digest、最终 citation manifest；普通 Chat/QA 共用证据入口，不在 Main 重拼证据正文 | 排名不被 ID 改写；余量不足整片/冲突组 drop；quotes 只指 retained bytes；global kill；`knowledge-ks04-chat-dcs.spec.ts` 与 `knowledge-hub.spec.ts` 真实调用链 | DCS/QA contract 与规则；停止 chunk consumer 回受准入的 page adapter |
-| WP5 交互 / WP4 | Renderer + Host；`ChatInput.tsx`、`Chat/index.tsx`、`stores/chat.ts`、Knowledge Chat/Library、四语言 locales | 现有 Preflight 的 chunk inspect/attach/dismiss、回源定位、strict/open、已用证据、过期/拒绝；保持 none/suggest 默认 | 同 PR Electron E2E：普通文本/media/排队、切 session/scope、取消/晚到响应、Auto-read 超时仍发送、strict 缺源与 open 标注 | 同步中英日 README 与 Knowledge 模块；关新 UI profile 回兼容卡片与 page viewer |
-| WP6 独立评测与 opt-in 晋级 / WP1–5 | evaluation；`scripts/knowledge-*.ts`、curated fixtures、现有 paired-ablation、独立测试实例 | 冻结 corpus/oracle/policy；G0–G3 分开报告；Auto-read calibration；kill/fallback/downgrade 包 | fixture、真实语料、真实 owner/DCS、live provider、三平台安装、任务 cohort；raw outcome/usage 读回；不靠终端打印判完成 | 验收报告与回滚 runbook；失败留在 A1 或 Suggest，不放宽门槛 |
-| WP7 dense / rerank / WP6 的对应缺口 | retrieval provider + evaluation；现有 embedding provider、必要的新 rerank adapter、派生 vector projection | 每项独立开关和模型/维度/费用绑定；按第 7.5 节消融；不装第二 memory plugin | provider count/dimension/order 校验、缓存隔离、evidence egress、超时/取消、重建；仅有 UI 设置时增加相应 E2E | provider 安装/费用/迁移说明；关闭单 lane 回 B lexical |
-| WP8 SEKB / Code Graph / Research / WP6 | 各 owner + DCS；现有 Runtime Lessons、SEKB store/retriever、FactStore、Task Ledger snapshot facade、Chat profile | 精确 principle identity、真 exposure、existing attribution；graph 一跳只扩召回；Research 有查询/时间/内容预算 | SEKB candidate/revoked/错版本拒绝、metadata-only 无匹配拒绝、同 run observed operation；graph 同名 stem/跨 workspace/过期边；Research 真实 E2E | 更新经验/关系检索文档；按 lane/profile 单独关闭，不删除正式 principle 或代码事实 |
-
-实施 task spec 应引用当前 active 的 `knowledge-retrieval-and-governance-completion`、`knowledge-source-set-read-governance` 和相关规则作为约束，不把 archived KS-07 再标成“新功能已验证”。WP1 的 tests 必须增加真实 production adapter 路径；当前 fake adapter 测试不能替代它。
-
-每次实现按以下流程收口：`harness context --spec <本包>` → scoped tests/类型/contract → 同 PR Electron E2E（用户可见变更）→ `harness validate` / `harness run --dry-run` → 通信变更执行 comms:replay/compare → 按要求执行 harness:ci → 读取磁盘证据、核验 source hashes → Task Forest proposal/evidence gate/apply/validate/export。任务历史保持本地，durable spec 和精选最终证据进入源码保留清单。
-
-## 12. 文档口径裁决与同步表
-
-**不需要废除原有权威 ADR。** `“不新增独立 RAG stack / DB / 第二 authority”` 限制的是新增并行系统；本方案新增同库检索投影。旧任务里的 no-new-store 是该任务的验收边界，保留其历史含义，不追改历史证据。
-
-| 文档 | 本决策后的准确口径 | 执行 owner / 时点 |
-| --- | --- | --- |
-| 2026-08-17 Knowledge authority ADR | 加本 ADR 的引用，明确同库可重建检索投影与原文 owner 的区别；单 writer/explicit apply 保持 | 架构 / WP0 |
-| `docs/modules/knowledge-base.md` | 当前仍是 page/snippet；新增规划链接，注明 B 待实施 | Knowledge docs / WP0；实现后按包更新行为 |
-| `docs/clawx-design-overview.md`、`runtime-control-planes.md` | 将“没有独立 RAG stack”解释为权威边界；实现后补 owner → projection → DCS 与实际 profile 状态 | 架构 / WP1、WP4 |
-| `03-retrieval-and-interaction-strategy.md` | Auto-read 不再允许仅有未审阅标签的 raw/draft；不显示未经校准 confidence；重复 dismiss 只抑制本地展示/离线评测，不能改在线全局排序 | Knowledge UX / WP3、WP5 |
-| `04-phased-implementation-and-acceptance.md` | Phase 5 按本工作包拆分；Phase 6 的“usage 自动升降 confidence”改成治理建议与离线 profile 晋级 | Knowledge / WP3、WP6 |
-| `dcs-first-context-engineering.md`、`context-capability-blueprint.md` | 新实现补原子装配/保序与当前调用锚点；历史状态不当作当前实现；“必须真人”按 owner 政策改为具名 agent 自动等价路径 | DCS / WP4 |
-| `sekb-golden-path.md`、RSI 相关 spec/rule | confirm 可由授权 agent 执行并标记；仍禁止自动写回。保持 exposure/citation/adoption/grade 分离 | SEKB / WP8 |
-| archived KS-07 / Chat routing specs | 保留历史；由新 task spec 显式说明扩展和继承关系，不改旧测试数/NO_GO | Harness / 每包 |
-| README en/zh/ja（及相关 ru） | 本次已核对知识库条目；当前描述仍对应现有行为。用户可见能力落地后才写 chunk/Research 支持，并链接本 ADR | 各实现包 owner |
-
-## 13. 风险与必须避免的实现
-
-| 已定位风险 | 必须采取的处理 | 验证 / 回滚 |
-| --- | --- | --- |
-| Chat 与 QA 准入不一致 | WP1 合并政策语义并贯通 owner metadata/pins，禁止把默认 workspace 当强授权 | 真实 adapter 负例；保留安全修复，关闭新 reader |
-| CJK 在默认 FTS5 上漏召回 | 明确复用 CJK bigram 的索引/查询预处理 | 本次探针 raw=0 / bigram=1；再跑真实语料；退 A1 |
-| BM25/RRF/旧 score 量纲混淆 | raw score、rank、fusion、calibration 分字段，禁止统一除 100 | lane 消融/排序 fixture；停用实验 profile |
-| DCS 重排/切断引用 | DCS 内保序与原子证据组，绑定最终保留内容 | 小预算与冲突组测试；回 page adapter |
-| 撤销后 FTS、缓存或晚到请求泄露 | 当前 owner epoch 前滤，复读复查，sticky deny、请求代次取消、清理派生内容 | edit/revoke/permission-change race；暂停该来源 |
-| shared SQLite 锁拖住 Chat | 后台构建、短事务、请求总期限、FTS 可选初始化 | 多进程锁与缺 FTS 测试；禁用投影 |
-| “现成 Memory reranker”实际只是注释 | 不以缺失实现排开发承诺；必要时在 WP7 明确实现小 adapter | 搜索定义/调用、provider 实测；关 rerank |
-| metadata-only SEKB 误命中 | 要求内容匹配、精确 owner ID 与版本；不能让 pinned/criticality 单独导致 Auto-read | 无词法重合负例、端到端 materialize；关 experience lane |
-| 索引与功能回滚混淆 | 派生版本独立；旧兼容 reader 实测；不整库倒回 | 新表 + 旧二进制对照；关 feature，重建投影 |
-| 统计或弱反馈越权 | 固定 split/oracle/预算；完整保留失败；attach/dismiss 不改 rank、principle 或知识 | 配对读回、事件去重；回已冻结 policy |
-
-## 14. 本次验证、剩余事实与决策权限
-
-本次重新执行并读取了 JSON 结果：
-
-- Host：`knowledge-source-set-answer` 41、`knowledge-evidence-qa` 8、`knowledge-retrieval` 9，共 **58/58**。
-- Runtime：`source-set` 17、`source-set-quality` 2、`chat-knowledge-intent` 7、`context-candidate` 9，共 **35/35**。
-- 直接调用当前 runtime 模块的探针确认：Chat intent 会丢 revision/digest，1200 字符装配丢失尾部证据。
-- 本机 Node `v24.22.1` / SQLite `3.53.4` 的内存 FTS5 探针：查询“版本”，unicode61 原文匹配 0，现有 CJK bigram 预处理匹配 1。
-- 当前 15 个必读源码文件的起止 hash 和当前 diff 状态写入 source-review.json；其他调用链锚点同时登记。
-- 本机默认配置文件读回仍未启用 memory-wiki。没有在当前用户实例上开启插件或运行新 RAG。
-
-文档交付检查通过：25 个本地链接、4 组 TypeScript 示例、1 组 JSON 配置和本次 diff 的空白检查。仓库产物保留总门禁仍有改动前的 8 项问题：7 项测试的 Git 跟踪状态与保留策略冲突，1 项既有 ignore 清单漂移。本次两个新增保留项没有新增门禁问题；详情保存在 source-review.json。
-
-因此，当前可以确认实现缺口、复用点和首版路线；**B 的检索收益、live QA、完整 Electron 发送链与三平台升级证据要由 WP1–6 产出。** 本次 93 项是现有路径回归，不是 B 的验收。
-
-首版架构没有未决项。后续只有这些决定需单独升级：改变冻结默认/产品锁、默认跨项目共享、引入有新增费用或数据外发边界的服务、公开发布、破坏性迁移。模块实现、自动化评测、agent 标注、证据读回和常规收口由 agent 完成。
-
-## 15. 外部机制依据
-
-2026-11-09 经 VerseSearch → Exa Contents 读取以下官方材料；本次四项均成功，内容来源为缓存。外部实验数字不作为 ClawX 的收益承诺。
-
-| 一手材料 | 本决策吸收的机制 |
+| 层 | 门槛 |
 | --- | --- |
-| [SQLite FTS5](https://www.sqlite.org/fts5.html) | unicode61 按连续 token 字符切词、不会自动做中文词语切分；bm25 数值越小越好。结合本机探针决定预分词与 ASC 排序。 |
-| [Anthropic Contextual Retrieval](https://www.anthropic.com/news/contextual-retrieval) | 区分 chunk 召回、融合和 rerank；用消融验证 title/context、dense 和重排，而不是将所有模型步骤默认开启。 |
-| [Elastic RRF](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion) | 用各检索器的 rank 融合异质量纲；采用 k=60，记录 lane contribution，避免伪 confidence。 |
-| [Azure AI Search RAG](https://learn.microsoft.com/en-us/azure/search/retrieval-augmented-generation-overview) | chunk 检索和 query-time access control 配合；权限必须进入检索路径，不能只在回答或 UI 最后过滤。 |
+| 身份/安全/引用 | 错权限、撤销内容进入 snippet/provider/prompt 为 0；exact refs/locator/quote 绑定 100%；不恢复拒绝源 |
+| 片段与检索 | exact ref 100%；Recall@20 不低于共用安全基线；nDCG@5 +0.05 且配对95%区间下界>0；分语言与意图报告 |
+| ANN | 对同 eligible 集合的 exact vector，Recall@20≥0.98；记录未索引覆盖、过滤选择性和 latency |
+| rerank | 固定候选池消融 nDCG@5 +0.03、区间下界>0，并满足相应 profile 的成本/期限 |
+| QA | exact quote 100%；claim support、completeness、拒答精度分别测量；不得只用答案关键词或引用数量替代 |
+| Auto-read | relevance校准条件符合第7节，no-context/denied/conflict负例不自动附加；UI/Electron真实发送链通过 |
+| 工程性能 | 20k portable、100k ANN分别测冷热 query、重建、RAM/disk/WAL和同库写入；目标warm local≤900ms，quality≤2500ms，Research总deadline30s |
+| 可运营性 | 实际平台安装/升级/离线/回滚通过；72小时agent驱动soak，丢job/重复发布/撤销泄露为0，故障后Chat可继续 |
+| 任务收益 | local/quality 任务成功≥5pp且CI下界>0、全流程已测成本增幅≤10%；Research困难任务cohort≥10pp且CI下界>0、增幅≤25%，在执行前单独冻结 |
 
-本 ADR 的消费者是后续 Harness task spec、开发者、验收 agent 和发布者；source-review.json 用于核对本次源码/测试事实。二者加入仓库精确保留清单，原始过程日志和一次性探针留在本地临时目录。
+成本包含 embedding、rerank、规划、生成、工具和未知使用量的预留；零基线成本用显式绝对 envelope，不做除零比较。缺费用、缺完整 case、退化区间或未跑安全案例不能晋级。60 cases 是初始计划，不代表已具有检测上述效应的功效；用现有 paired-ablation 计算 required cases，必要时按已冻结的扩样协议继续。
+
+### 10.3 交付顺序与最终收口
+
+P0 决策/规格/绑定 → P1 owner/语料/chunk/索引 → P2 embedding/vector/hybrid/rerank → P3 DCS/QA/交互/运维 → P4多域/Research → P5可观测、平台、完整验收。
+
+允许前几阶段在隔离实例受控使用。长期目标的状态始终由全部工作包的真实产物决定，不能因某阶段有绿色测试或开关可点就宣告完成。
+
+RAG-19 收敛临时实现：移除旧伪 confidence、重复排序和旁路装配；保留统一合同下有用的 page direct read/fallback。没有统一的 owner、模型/索引版本、DCS 与回滚链，就不属于长期版本完成。
+
+## 11. 工作包、节点和工作树
+
+[program.v2.json](../project-rag/program.v2.json) 固定 20 个工作包的依赖、owner、contracts、touched areas、新增测试、E2E 和回滚。每包对应一个 Harness task spec；[WORK-PACKAGES.md](../project-rag/WORK-PACKAGES.md) 给出开发入口。
+
+Task Forest：
+
+- 新建独立长期 global_task，关联已经完成的 TF-0792（知识库基础）、TF-0038（owner slot）与 TF-0499（经验治理），不重新打开历史结论。
+- 一个阶段 milestone 下保存其实际工作包；只有真正开始执行的节点设 in_progress。
+- 当前只完成规划节点。首个实现节点 RAG-01 设 ready，后续按依赖等待。
+- 每节点有 `TaskForestWorktreeBinding/v1`，记录 repo root、执行工作树、branch、起点、task spec 与串行执行策略。
+- canonical Task Forest 仍在主检出的本地目录；新工作树用目录连接访问同一份图，不复制出第二进度来源。
+- 实际 TF IDs、工作树绝对路径和当前 HEAD 由本地绑定记录提供；源码工作包只保存稳定的 RAG key 和合同。
+
+每叶开始时复核 HEAD/工作区、刷新其 diffBase，运行 harness context；新增测试必须从 plannedTests 加入 requiredTests。用户可见变化同步四语言和 Electron E2E；通信变化执行 comms replay/compare。完成后读取磁盘证据，提交 source/spec/curated evidence，再按仓库 auto-close 规则应用提案、validate/export。
+
+## 12. 回滚与风险处理
+
+| 条件 | 确定的处理 |
+| --- | --- |
+| 无 FTS / 向量库损坏 / 模型不可用 | 新路径 unavailable，沿同 scope 的合格后端或 page read；普通 Chat 在期限内继续 |
+| 权限/版本改变 | 本轮拒绝该 ref，丢弃晚到响应；不能退回更宽 scope 或 cached 内容 |
+| 半次 rebuild / 双进程写入 / 崩溃 | staging不可见，fencing/CAS验证后发布；游标和job恢复不靠目录存在猜完成 |
+| 删除与旧向量版本 | 先取消读取资格，再按generation/reference生命周期回收；物理cleanup有独立完成证据 |
+| native依赖或模型升级 | 固定artifact/model digest、平台probe与新generation；有前一合格版本可回切 |
+| SQLite schema变化 | additive与兼容binary验证；不整库回滚、不降低PRAGMA覆盖期间的任务/知识事实 |
+| 指标回退 | 保留失败证据，退回前一policy；新版本重新测，不修改旧gold/threshold |
+| 反馈偏差 | 弱信号不自动调权；按语言、任务、来源检查calibration drift |
+| Graph复杂度 | 使用现有code/wiki关系、有界扩展；不引入全量GraphRAG社区索引 |
+| 过量配置 | 用户选scope/mode/profile/provider；细参由policy profile统一版本化，不让组件各自存默认值 |
+
+## 13. 资料口径与当前状态
+
+旧“不得新增独立 RAG stack”解释为不得新增第二知识/上下文/权限/写入权威。本决策允许具有明确 owner、可重建、可退出的检索投影和 native ANN；这项选择在 ADR、spec 与节点中公开登记。
+
+需要同步的资料：
+
+- Knowledge 模块、设计总览/控制平面：当前能力与长期目标分开；注明 projection 与 owner。
+- 旧检索/分期策略：dense/rerank/多域/Research 为计划内必交付；删去 usage 自动改 rank/confidence 的口径。
+- DCS 文档：新的保序/原子装配只在 RAG-09 实现验收后写成当前行为。
+- SEKB/RSI：继续使用已确认经验、具名 agent、observed adoption 和独立任务 grade。
+- README en/zh/ja：增加长期规划入口，实际功能逐节点验收后再更新能力声明。
+
+目前已完成的是此长期决策、研究、实施规格、节点规划与 Git 工作树整合。RAG runtime 尚待逐叶实现；初始 source review 的93项结果保持历史绑定。具体新提交、Task Forest proposal/readback、源代码复核和本次文档/Harness检查记录在长期决策证据中。
