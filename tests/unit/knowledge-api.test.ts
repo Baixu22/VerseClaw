@@ -1185,13 +1185,15 @@ describe('knowledge host API', () => {
     expect(gatewayManager.rpc).not.toHaveBeenCalledWith('wiki.apply', expect.anything(), expect.anything());
   });
 
-  it('adds retrieval diagnostics to search without replacing legacy results', async () => {
+  it.each(['array', 'results', 'hits'] as const)('preserves %s Gateway rows and SourceRef in Host search', async (shape) => {
+    const sourceRef = { schema: 'SourceRef/v2', domain: 'wiki', authorityId: 'memory-wiki',
+      namespaceId: 'wiki-owner-fixture', subjectId: 'notes/route-context.md', revision: '1',
+      sourceDigest: `sha256:${'a'.repeat(64)}`, policyEpoch: `sha256:${'b'.repeat(64)}` };
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
         if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.search') {
-          return {
-            results: [
+          const rows = [
               {
                 id: 'search-1',
                 title: 'Route context notes',
@@ -1200,9 +1202,10 @@ describe('knowledge host API', () => {
                 snippet: 'Knowledge side effects are best effort.',
                 score: 0.91,
                 metadata: { knowledgeKind: 'rule' },
+                sourceRef,
               },
-            ],
-          };
+            ];
+          return shape === 'array' ? rows : { [shape]: rows };
         }
         throw new Error(`unexpected rpc ${method}`);
       }),
@@ -1214,8 +1217,9 @@ describe('knowledge host API', () => {
 
     expect(result.success).toBe(true);
     expect(result.results).toEqual([
-      expect.objectContaining({ id: 'search-1', lookup: 'notes/route-context.md' }),
+      expect.objectContaining({ id: 'search-1', lookup: 'notes/route-context.md', sourceRef }),
     ]);
+    expect(result).not.toHaveProperty('0');
     expect(result.retrievalDiagnostics).toMatchObject({
       query: 'routeContext failure',
       corpus: 'wiki',

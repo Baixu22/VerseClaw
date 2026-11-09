@@ -2957,6 +2957,7 @@ function shouldRouteKnowledge(message: string, scope: 'none' | 'memory' | 'wiki'
 }
 
 function getRouteSearchRows(value: unknown): Record<string, unknown>[] {
+  if (Array.isArray(value)) return value.filter(isRecord) as Record<string, unknown>[];
   const record = isRecord(value) ? value : {};
   const results = record.results;
   if (Array.isArray(results)) return results.filter(isRecord) as Record<string, unknown>[];
@@ -3909,13 +3910,14 @@ export function createKnowledgeApi({
         }, 30_000);
         await assertKnowledgeReadScopeCurrent(gatewayManager, readScope);
         const rows = getRouteSearchRows(result);
+        const searchMetadata = isRecord(result) ? result : {};
         // Area 5 §3.4 — best-effort ranking shaping. Compiled wiki pages may
         // carry `roleTags` forward from their source drafts; when present and
         // a roleTag filter was requested, results matching the tag rank first.
         // Results without roleTags metadata remain visible (ranking-only).
-        if (roleTag && Array.isArray(result.results)) {
+        if (roleTag && rows.length > 0) {
           const ranked = rankByRoleTag(
-            (result.results as Array<Record<string, unknown>>).map((entry) => ({
+            rows.map((entry) => ({
               ...entry,
               roleTags: Array.isArray((entry as { roleTags?: unknown }).roleTags)
                 ? ((entry as { roleTags: unknown[] }).roleTags as string[])
@@ -3925,7 +3927,7 @@ export function createKnowledgeApi({
           );
           return {
             success: true,
-            ...result,
+            ...searchMetadata,
             results: ranked,
             retrievalDiagnostics: buildRetrievalDiagnostics({
               query,
@@ -3938,7 +3940,7 @@ export function createKnowledgeApi({
         }
         return {
           success: true,
-          ...result,
+          ...searchMetadata,
           results: rows,
           retrievalDiagnostics: buildRetrievalDiagnostics({
             query,
