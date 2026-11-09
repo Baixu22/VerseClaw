@@ -1,0 +1,3130 @@
+{
+  "base": "03164afd0e49ca01390f9944467590bf5873e42d",
+  "source": "5bd6c1b94302adc2be7eba0724544195d329e9b7",
+  "files": [
+    {
+      "path": "README.ja-JP.md",
+      "before": "500b630afe8e34f2b6dfe133b72eb6e17bc89de71a6d5e3879c7aa43de24e200",
+      "after": "7ef940ffac43abab30afa458fe5e490f19af2b6b4e2ef029ba8d79279800a3eb",
+      "overlay": true
+    },
+    {
+      "path": "README.md",
+      "before": "f0fe4e49b7c94d10dec92b706e25e758fb69020e89872b2b50c50e7587bb2325",
+      "after": "bb099565d85e992e0c168ce06df4e4e33767bc60f0554e03d1babcee12c49a6b",
+      "overlay": true
+    },
+    {
+      "path": "README.ru-RU.md",
+      "before": "bb87bd3aeebb10e6e93e56e9c5438adb37c5c77c1a78c565a82289781d503244",
+      "after": "af7b0dfd9fdac394de72061c9bd2ae4705860d81c67a12e7cbca64d745dc0642",
+      "overlay": true
+    },
+    {
+      "path": "README.zh-CN.md",
+      "before": "f29f1c80295d54cfde05651353c99804043d34140fb30d463ea99da8de5f3a83",
+      "after": "e6113cb87b25300fb35d87dae1374b82e9b5ec4195eb09cd9f3f110dbe1e30c4",
+      "overlay": true
+    },
+    {
+      "path": "docs/dev/session-lifecycle-control-matrix.md",
+      "before": "9722ad320de87eb0245b78f0806ec96ac255151ed80c1cd38ecd2763885dbd4b",
+      "after": "89473e3be2cf4f6777302e858dcf143669ea7d863d733070b5a54ae5e786848f",
+      "overlay": false
+    },
+    {
+      "path": "docs/modules/multi-agent-and-tasks.md",
+      "before": "0017ff7aafdd834ecaa2e27b66ff1a265e5a5f34383ede8c02f135ede11daa3c",
+      "after": "924997fb96bd976a74cd51f4c66a67aedf432f9b4c5daa3d209ba5a12ed73387",
+      "overlay": false
+    },
+    {
+      "path": "docs/modules/sessions.md",
+      "before": "386b0636d04fd3ada2cc0aa358ad57c216e3e2f5068c3ba59ea76151da7b197c",
+      "after": "cdc6486400de48fae62a966b6c24724a30c895da86c6129610c056381dd7ba62",
+      "overlay": false
+    },
+    {
+      "path": "electron/services/execution-migration.ts",
+      "before": null,
+      "after": "170aee0fc0bc735caeceb2c649142076d646e2556253c7fa3ca7fc9701a1163f",
+      "overlay": false
+    },
+    {
+      "path": "electron/services/workspaces-api.ts",
+      "before": "77a184fb54c6df0c9f2d5f008c6c497c158c4283c48d028270d8ceb198c5d7d0",
+      "after": "50f734bc0ef06da1b09028610816538c8cba5ffb3c8c7b5fd983904edeeffed6",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/REPORT.md",
+      "before": null,
+      "after": "e598ed7786eb34f2c18b527523ed1c38e0b480b881abd858e29652e34d981838",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/broader-checks/agent-dev-audit-report.json",
+      "before": null,
+      "after": "f5016e23841a9a2edf9e638ec29e112bd4cd2e5cc61c6e7b8178ba998a728433",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/broader-checks/harness-ci-equivalent.cjs",
+      "before": null,
+      "after": "6472c75bdf93a809065a796d8b54414713306401f2bb03bd80ec4ba188c2f686",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/broader-checks/harness-ci.steps.json",
+      "before": null,
+      "after": "3bb93c8bbc2d9e1b88474de79ea3a5b80687e29dce9956affa61bacf88483233",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/checkout-regression.log.txt",
+      "before": null,
+      "after": "7a024359975e8fa975871644f40c0c811c1b2a3327ac4c4f7d836e6e4db593f7",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/checkout-regression.result.json",
+      "before": null,
+      "after": "5d50568392dd609654e4d381dc553e010bd1c156634ff3499251608781a47850",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/checkout-regression.tests.json",
+      "before": null,
+      "after": "3784c68e5401aba892e7f0a69387774a14e9f4798e9a12eba2dc6c184d279b2c",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/desktop-build8.log.txt",
+      "before": null,
+      "after": "b06fe27e8b1c1413be94b996ff9d54f5684616ad5a5f6f15568573c8f9b712d1",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/desktop-build8.result.json",
+      "before": null,
+      "after": "9d366ff97729b3c73cb5adf14bf7df464c795fdc951125380b6a3342bfa69c37",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/electron-migration6.log.txt",
+      "before": null,
+      "after": "f68870a3c0e2c035c8ec8742aa4468df5ad3921e9555c3729c595822d7109f5c",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/electron-migration6.result.json",
+      "before": null,
+      "after": "8e72f679dfb4aa91498f51ab584cd2cbcc6114791ea670050d9dbb0c51fba3ec",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/electron-migration6.tests.json",
+      "before": null,
+      "after": "2a2ececba0cf44c73f05686da19f1cc3c40099740f39eb72a3ffc78c657853fe",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/final-artifacts.log.txt",
+      "before": null,
+      "after": "ce4ff1676c900cdf6aa53ab96ab5c5b079b947638a3c9119da5497f65eae4dae",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/final-artifacts.result.json",
+      "before": null,
+      "after": "b4e8c6a55d969623dee2a32b08f49bacc9d701034f02e2775b244a7101f984ec",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/final-comms-compare.log.txt",
+      "before": null,
+      "after": "f83683b5c5186e1e4771a8598026c9d7ccba8d23aa85b7bc394eed79335eb798",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/final-comms-compare.result.json",
+      "before": null,
+      "after": "d3f8afe9b59ad7d401f7f55aad0ddd4ba55cabb9b89251a4a590f4a091a01d82",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/final-comms-replay.log.txt",
+      "before": null,
+      "after": "22c5a604c635628c5ed83ca79e11407b9c2617d711c3f1f385846d0a3b03ed3a",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/final-comms-replay.result.json",
+      "before": null,
+      "after": "0c340473d198d008dec134f3bfb4c7dacf45604b4a5007c90a4fd76d3fc8f143",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/final-contract.log.txt",
+      "before": null,
+      "after": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/final-contract.result.json",
+      "before": null,
+      "after": "8dbd94180c50bed65c0249e57e5061b7d96043751a6c8f08a435dead577ab375",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/final-coverage-baseline.log.txt",
+      "before": null,
+      "after": "b5d738013cd663d2da3d3422f4be6fd413bfdeb236751a1ac8ebb9c680ded229",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/final-coverage-baseline.result.json",
+      "before": null,
+      "after": "823a3b51373eee23976f51d8b821ab630e9dd16603987d7bcccc0f35eebffeb2",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/final-evidence-refs.log.txt",
+      "before": null,
+      "after": "047cce29d2ca7c0bd2355ac3f116c8b099afb74981f7381fd16ff51c4381427f",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/final-evidence-refs.result.json",
+      "before": null,
+      "after": "c4f4c6913ad49381eba87acca322dc7f5a3206e3806bb0e9ea16e0f463f3595d",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/final-harness-preview.log.txt",
+      "before": null,
+      "after": "407dd8a3a825e2dc5edc528b8ce69b3717205fa079b081794c7d9f4ffb9111ec",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/final-harness-preview.result.json",
+      "before": null,
+      "after": "0c4dba4e9c8026b61527cc0f0001357552ad1e981e0728d55a03a1eb4e4ee835",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/final-harness.log.txt",
+      "before": null,
+      "after": "c2779fd082c55fbb51e614777b7192994750e97f738fb7109ea370aa2560c2f5",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/final-harness.result.json",
+      "before": null,
+      "after": "890b4bd6efbf6981b71d3251533524b75c29d29166648ac3d88f4c084f5bcf8c",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/final-node-types.log.txt",
+      "before": null,
+      "after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/final-node-types.result.json",
+      "before": null,
+      "after": "c956ce2b329903d47de9dd8fc422dc1f74785f6a8d8d1f1ff5f72c38aee6c7f8",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/final-test-types2.log.txt",
+      "before": null,
+      "after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/final-test-types2.result.json",
+      "before": null,
+      "after": "e2c3f693d04dc61b5d02b77bbd16b9989d27bf8134a70bcbbdfe8714c5d81cca",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/final-web-types.log.txt",
+      "before": null,
+      "after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/final-web-types.result.json",
+      "before": null,
+      "after": "749e3c4435d5a9dc33b74f0ad0df459cd74c7d4287ccaf7d25ca46db3298864e",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/i18n-final.log.txt",
+      "before": null,
+      "after": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/i18n-final.result.json",
+      "before": null,
+      "after": "9e7822cf73402456118295a2aebf4064f08fac6d1a003c8af6d56bd9291867b1",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/migration-final2-units.log.txt",
+      "before": null,
+      "after": "573ab83fc5e04e59141216d7688b04100eb1da3eafcdb477b96025a3cdabd641",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/migration-final2-units.result.json",
+      "before": null,
+      "after": "f5bedbac2bdfdb9b901f7176f5acdfa4098abb6683c474c31fc3f335565298ee",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/migration-final2-units.tests.json",
+      "before": null,
+      "after": "d893a07921be629ba7dae1a7bd5c5e5ab71cd5fb0e13060a441dc7f128dee276",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/owner-regression.log.txt",
+      "before": null,
+      "after": "23555ff56de44e038a1471c98ae928c9d30958a44738196ef4100ac5d66e4ac1",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/owner-regression.result.json",
+      "before": null,
+      "after": "7c22627b2fabf869398e29bd4833671ab60eac3dbdfd4410cdb533dff576c8ed",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/owner-regression.tests.json",
+      "before": null,
+      "after": "e841acc61abbac21d6065041cf49882b3337122454752a731c16b284ae0d6d97",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/process-proof-final.log.txt",
+      "before": null,
+      "after": "814b63affd58c527cf07a3b5d40012c30209118bb0d03a2b11819565e79704ac",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/process-proof-final.result.json",
+      "before": null,
+      "after": "cf47c2f813b204879fbda49c2119b8fb21b1d3848cf22c00baf1907cc735c85d",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/process-proof-final.tests.json",
+      "before": null,
+      "after": "d7f1879f89b4954b9d6961d28717b7267b1a3ce1ac394e6ad063330c589dddf3",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/runtime-build5.log.txt",
+      "before": null,
+      "after": "28a913ac5b6b87b37cf39687bf8267e031a3fec648f4ade648a30ac3aec35c37",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/runtime-build5.result.json",
+      "before": null,
+      "after": "b6e63a1b4acbf64152f85b5982d96b32d5832405993a8f33491a55de966fb417",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/task-regression.log.txt",
+      "before": null,
+      "after": "528d95d9645195ab8c93de3d487d4b93ede1cfe0dd1052fff7fc006cc8e4e60e",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/task-regression.result.json",
+      "before": null,
+      "after": "190c89b81baee30b5b2cb21d1609f988b414f400a96afd315248da66df5a6e95",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/commands/task-regression.tests.json",
+      "before": null,
+      "after": "a8f057cd844ec5077cc9811df94ddaecf416806c8a0132d39b3a6f7ec43f504e",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/excluded/migration-expiry-red.result.json",
+      "before": null,
+      "after": "4c287ba0f676abf762a72b32713cba248248e0dca4b2e7d675bff1d0852c1fb7",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/failures/electron-migration.log.txt",
+      "before": null,
+      "after": "92f8f26420b50ccca3c2edd5e7b6867e5c9c25f05c18d8631777b484e34aa51d",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/failures/electron-migration.result.json",
+      "before": null,
+      "after": "0eb9e4d4de1810ed3da4c7986da87d6ae418dfdff1aa7a0dd8e3c2576c5c22ac",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/failures/electron-migration2.log.txt",
+      "before": null,
+      "after": "68f72bfee699cf4e5ebe45afcad0d78cb541a107f4427ded7ee914ba5d34b74d",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/failures/electron-migration2.result.json",
+      "before": null,
+      "after": "46114a45d1c1a2981eae70a4be32f7360b7c5d43f106ffd2288409e45e2191a2",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/failures/electron-migration3.log.txt",
+      "before": null,
+      "after": "b8979569b137bf6d4d0668f8ed0a40678e0de52ccf27bb4f27ec1d2510189800",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/failures/electron-migration3.result.json",
+      "before": null,
+      "after": "19846d30e47be1affc5694a9086943303166fd44c34de7465d117a49c873a105",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/failures/electron-migration4.log.txt",
+      "before": null,
+      "after": "296a1ecaacd8e29f226b138bfd9784ca908fbdaad1c171de631f688654b355c5",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/failures/electron-migration4.result.json",
+      "before": null,
+      "after": "dd619899dfad18e08fbde6d8f9baf34d38c7e15e1625ce09d6de54e08a487750",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/failures/electron-migration5.log.txt",
+      "before": null,
+      "after": "4139ec06b159234ccea11cb659de99943c554f67f1734a8bdc7332f4dff3cb4c",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/failures/electron-migration5.result.json",
+      "before": null,
+      "after": "ab036757814973db770d2801662f2b6c5ee3acf80f706e15958b37c53fb9d433",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/failures/final-test-types.log.txt",
+      "before": null,
+      "after": "4c6e773404c94408da3b393ad4dcf8a45cf6ebb4c6c67974855c4211faa267cb",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/failures/final-test-types.result.json",
+      "before": null,
+      "after": "2a633fd1d731d5ea173b8960991f1ee6ae6ddbb18e071845c56fbb261e0e7f50",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/failures/harness-ci.log.txt",
+      "before": null,
+      "after": "49a73f2a477d750f502293406a03582883a0a22e7eac0e6c0d7f0d50e3816620",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/failures/harness-ci.result.json",
+      "before": null,
+      "after": "3d6a7982bb7ec496a62d6c5610c04e15106b067b7f86d4b5d27bbc86356594ce",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/failures/language-race-red.log.txt",
+      "before": null,
+      "after": "bb6ab79e183462630ff9d91ce86ec193c83301290867d93ee6a0e60fcff59b1f",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/failures/language-race-red.result.json",
+      "before": null,
+      "after": "d6b726656ca08843b14fbd48488ffae465ba5c72b93dd5dde7c1c472e2879762",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/failures/migration-expiry-red2.log.txt",
+      "before": null,
+      "after": "62404b2efcb5ef4ccaaffdb20cb11a00c4390b86eeb77f454dc4b3db81a1f543",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/failures/migration-expiry-red2.result.json",
+      "before": null,
+      "after": "e94decb6e4982d5e538b9b0f7477613d6aed9c7114f12c39ee65e4beca70d78d",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/failures/node-types.log.txt",
+      "before": null,
+      "after": "6e281ac5577841bf33e8a205cf1ae92b144a762ec4d5b5d151375ba314bae5d9",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/failures/node-types.result.json",
+      "before": null,
+      "after": "d8730b4ea75731f5dfa6f36e8544be9352cc4597112e2a0165bdd9f553d9ef21",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/failures/runtime-build.log.txt",
+      "before": null,
+      "after": "0013af8aee31c3d74743efa72b041314562f768744db49205d352f8672946cc3",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/failures/runtime-build.result.json",
+      "before": null,
+      "after": "059d8b70761c3b3f83103bc557b3a911b249165fa16e1a35c5e91fd3d15df396",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/journeys/electron-migration6/execution-migration-moves--e6289--restart-interrupted-false-/migration-complete.png",
+      "before": null,
+      "after": "2dd2ebdcd22bae960b4cb07f78bf45851025f6d245565f808f0edb7872eb6560",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/journeys/electron-migration6/execution-migration-moves--e6289--restart-interrupted-false-/migration.json",
+      "before": null,
+      "after": "97890be331197d0da76b8fa964a200ba13bbc5b2dbb9ef1d53e710e97ba681d1",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/journeys/electron-migration6/execution-migration-moves--e7d15-r-restart-interrupted-true-/migration-complete.png",
+      "before": null,
+      "after": "413d885d963100f873f51d491db3cf304780481ea7351f2f24bc74430c65ce74",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/journeys/electron-migration6/execution-migration-moves--e7d15-r-restart-interrupted-true-/migration-resume-en.png",
+      "before": null,
+      "after": "e49d93f49911fbca1de37d3cc984facd2effbf9e993979a2664b263ae096f780",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/journeys/electron-migration6/execution-migration-moves--e7d15-r-restart-interrupted-true-/migration-resume-ja.png",
+      "before": null,
+      "after": "7a8b74b6a61e6ee43f10eb2661768f08e27a90e8ae61f6a9eb9fde82b4773e4a",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/journeys/electron-migration6/execution-migration-moves--e7d15-r-restart-interrupted-true-/migration-resume-ru.png",
+      "before": null,
+      "after": "8f9c75c11ef4819514e4e82f647a9b4022e38653f435bc9a69779aa8c7906229",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/journeys/electron-migration6/execution-migration-moves--e7d15-r-restart-interrupted-true-/migration-resume-zh.png",
+      "before": null,
+      "after": "78ffcb55ccd85cd3cb9767a682d7c4e9d135f27694986a066f2d0dbcb7000038",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/journeys/electron-migration6/execution-migration-moves--e7d15-r-restart-interrupted-true-/migration-select-en.png",
+      "before": null,
+      "after": "f4d28c5c24cbf8323882f6ac8eeef61f60c829f65f87c89da14297fb916ee942",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/journeys/electron-migration6/execution-migration-moves--e7d15-r-restart-interrupted-true-/migration-select-ja.png",
+      "before": null,
+      "after": "0471b2ecb4ed1640f01b9f15ae34f65b12e678b9ac1787aa0bc67d11a2cf98f7",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/journeys/electron-migration6/execution-migration-moves--e7d15-r-restart-interrupted-true-/migration-select-ru.png",
+      "before": null,
+      "after": "5737a522be28a442577985c7c63b7489ab35500c7c6b271ff1b5d41af25eeba5",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/journeys/electron-migration6/execution-migration-moves--e7d15-r-restart-interrupted-true-/migration-select-zh.png",
+      "before": null,
+      "after": "47e30aa948731e9badfa97283a0a674347ee2cf0f097354c858ffcfe93535ef8",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/journeys/electron-migration6/execution-migration-moves--e7d15-r-restart-interrupted-true-/migration.json",
+      "before": null,
+      "after": "c7ac3597f42e69ae76c6375faa597fc008a3e0fc19475ead7dc351758db11205",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/manifest.json",
+      "before": null,
+      "after": "80c30de50c0d8fb2751b5af37a682c71ba87eb58f8c87577b1ebbf0851873e5e",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/process/01-main-durable-intent.json",
+      "before": null,
+      "after": "05c06dfb172cceba7a6dfe877dade62a79d94f1a39e1c811aa47a9785c5139f4",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/process/02-main-durable-fenced.json",
+      "before": null,
+      "after": "a8c65ecb0f7d03bccb37ad197f2403e645264785f557c202fa622394c9e3bdc4",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/process/03-main-durable-drained.json",
+      "before": null,
+      "after": "0f062596984629d81ab1169c969e0ff0b65b8806d986291ef0f95d1536a1ca99",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/process/04-main-durable-reserved.json",
+      "before": null,
+      "after": "3d4ee652bd98798285327a9972ff3a56fb635820adfe4e7d09edef05f6c1966e",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/process/05-main-durable-session-committed.json",
+      "before": null,
+      "after": "0f200ef6ab03a18c7ac43c9998a84742cd5b77ead07837800bd5bab9455dfb94",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/process/06-main-durable-task-committed.json",
+      "before": null,
+      "after": "c90e55d7f5c07fc91667bfc80af7cc43ef5bcb25031838014b34438e2f42e8d1",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/process/07-main-durable-binding-committed.json",
+      "before": null,
+      "after": "5e48dfe7b67eab9e62c63d87130758fed4916c5675f69bd8d5b85727808bb450",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/process/08-main-publication-before-tail.json",
+      "before": null,
+      "after": "98008e7f25029a248f25c8733f049a9e72e82cea0f859663d622164134927f7e",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/process/09-main-confirmed-replay-exact-reservation.json",
+      "before": null,
+      "after": "8ec91d3beba14b74f145ec6633a652d6a52373f44c2e8a7acff2eef1923384d4",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/process/10-main-source-completed-receipt-before-pause.json",
+      "before": null,
+      "after": "1764b496e21b0052a6930012bf345c5e19d434655cded35e8f36c9b24cfc297d",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/process/11-main-source-reconciled-receipt-before-pause.json",
+      "before": null,
+      "after": "1d6007fd2bb8f6bbc908355e65a04aa6d6a2612b0ccb868d7386b67dbf9a330b",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/process/12-runtime-prepare-after-intent.json",
+      "before": null,
+      "after": "80e0d5f514038505a799dff48f0168428de0bcf2028a956a6fbdd3b02d59aa90",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/process/13-runtime-prepare-after-copy.json",
+      "before": null,
+      "after": "463b974a2f32e2d5748688945c1b19bbdbafb424a7489dd35bad227baa857423",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/process/14-runtime-prepare-after-store-commit.json",
+      "before": null,
+      "after": "5a4844b5d00fa99b6ed35cbfc2a098ab6e0bb58e97f979acdba906310f1a42b3",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/process/15-runtime-prepare-before-prepare-reply.json",
+      "before": null,
+      "after": "9fe45603f82ab9b9c5159ed7166d2a8bd24945b66b9064228a76499762b0f8c7",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/process/16-runtime-confirm-after-confirm-commit.json",
+      "before": null,
+      "after": "8926db1d718b963376b3131e795ba2f64ef5e9699a9134b72b46dd4fd5950f0d",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/process/17-runtime-confirm-before-confirm-reply.json",
+      "before": null,
+      "after": "2f2e7ac2ea22f3c95851a55885368429a7d381494c3ab1601aff808748d2c99d",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/report.json",
+      "before": null,
+      "after": "1711db259f706790040e75c383c48d2f2a4c0760b2e088ca8e6154455d9d2fa4",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/review/migration-code-review.md",
+      "before": null,
+      "after": "1e9d08b11bab580cd6feff68319213c4c2a959ba744003f9416226c993cac7b5",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/fixtures/execution-environment-migration/20261109/verify.py",
+      "before": null,
+      "after": "6e3a64a357ccfe9b9f853d6bafe96abf2226ebeb69f3c7d5e66f11c0ddc1d619",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/scenarios/execution-environment-migration.md",
+      "before": null,
+      "after": "6df882debf2fcab547c179a4ef4e74bd5330fb804b4621259d31cca29a23693c",
+      "overlay": false
+    },
+    {
+      "path": "harness/specs/tasks/execution-environment-migration.md",
+      "before": null,
+      "after": "aadc9798c09e4bd442b7ee1a014124ea7c602fdbf5851cfd84a6271f82d1ee67",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-tool-definition-adapter.ts",
+      "before": "92fb06b01ed55c893e49782c4876b28762e33171ecc71f5eff38029fe925940e",
+      "after": "9af8140a32373b6c4e3c0916d102d29c8187ab589083fdf30ede53b24eebe075",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-tools.before-tool-call.ts",
+      "before": "9caa09bb3d9853c761bc81b6a5aa27116997ff8745e88cc18b4c1a294e85c3c9",
+      "after": "792e5aae53f6cd05882d453b8b236ea5348b70fc4f1a85f4cf778a56bd9560f4",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+      "before": "d68594ff4dc371926fa899623bfa4cf5d0963ba27a8df9d5fa03e7c3e7f2375e",
+      "after": "cf104c81204f5eae7e3f8b3b6d30ad17e3701e3a8af8439966ae3e0835b35a08",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/execution-checkout-tools.ts",
+      "before": "6762eeec0f020fbccaea21c98cc532ac6cdb5fa0631791bf921cccf0f2d3782f",
+      "after": "43b454f5e0cc0b21e9262d2149e85f1515e1c7a5211da6cfc5a337afcf4f6123",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/execution-task-authority.ts",
+      "before": "14ae84289b9ea0dcac2c65d0ebccde784a8d8c5b104aa02986b0ef69383eb9e7",
+      "after": "3fc6c1536924764a8ee47df497bf5edc0356f615588a9464b5977ba0e0ff5de1",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/execution-task-guard.ts",
+      "before": null,
+      "after": "6e8ceee648036373f857b517e7374893f6bf6b39be4bd00964e2c31795839906",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/persistent-task-tool.ts",
+      "before": "433a705ccc3d25d9582a74ec49ab0c97a013d075e56a86b91d9c8fa5a7ed2538",
+      "after": "cc4b2a3ee295aa704cf6ae2ef7ae4245aa251cb0e58e0ae6d61820fb6e86c9bb",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/agents/worktree-service.ts",
+      "before": "3ddf5f9cbdc25ae00301ecc09f3f7678ed21ae8045bb362b2e8bf266507ba63a",
+      "after": "2cebe77ededcc7115ab3ee1ec67d8e87ecd9142d1d352e165b2d848109d386fd",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/config/sessions/types.ts",
+      "before": "394f701cf1e42de1c8ed300be6c9763df524762539bb23cf3eed46cf19a148cd",
+      "after": "cb8b7e19c7ae185ff649817b671352d0d12d4dfcc08547d17d2788419b0871a5",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/methods/core-descriptors.ts",
+      "before": "cc5e7e6d79ce2bbed33e63bd425c57f476bb3921e9a3148e08e0886e16a8d48a",
+      "after": "5e65c5ec88873bd9956199a54270e72a3390f93f70e60bdbe94f5f0e4fa08bd9",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods.ts",
+      "before": "647828994bbcd38de6edcd68c098e961ff13990a0d983f34350ad19c69cbed06",
+      "after": "e78cc978886f8c6f107682c79bc6e609fc152750af663a038549c4b5185f51fe",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/session-task-scope.ts",
+      "before": "501ef6385cfa74ea3548dcc77554cfcc67bc52e56de6a335a591b14055596f04",
+      "after": "95ce4459cf9f309cc1ce160e77fd9956fe0d840097db86c3de5b4af3653711db",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/session-archive-service.ts",
+      "before": "44390fca8013d570d7075fa568b103eec6f9903fa1ee35667e8fe0be9005326f",
+      "after": "b2cb11d9a054cccf0bfa2116c0ea0661c9cd1a69eaf7264bb17c7928e9b548d0",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/session-execution-migration.ts",
+      "before": null,
+      "after": "cc401207f7cea6263871b7abba85ab71176a14631ada01111a2c73c4a7ecf178",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/session-mutation-operation-journal.test.ts",
+      "before": "8f7cee8db91e5fe7b6f2f20c58542e0ca93ea535ddbe69307c33846814715eca",
+      "after": "df7d10eff8392396a6981cbbebcb616e6cf8c887915659bda17bebeea512d34f",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/session-mutation-operation-journal.ts",
+      "before": "4b2a90c32bbaf040a8182605c15bef281ec15657b40c8db1bfa0d5d5b7fdbf4d",
+      "after": "c0e1ddf780fea4ecec42f6b0eca7ee705110e33f6caed02a95a03045a09a48d8",
+      "overlay": false
+    },
+    {
+      "path": "openclaw_runtime/src/plugins/session-entry-slot-keys.ts",
+      "before": "0966e671788d62459c2d70231c7c09398054b0a025e7e4ef43c1f1f388a6be7a",
+      "after": "cb414fb857f7b54c8bbc0502250299a118fe94fc28f7f294d226a4b48aa719a5",
+      "overlay": false
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "before": "3150626ffbb1f24e899f7808336408d750057cf82fc4cb40c2d0a454706300df",
+      "after": "34bbc6125c7299945e134dfced439d2c85dfd0ec94d36e04b9d05896e5c3491f",
+      "overlay": false
+    },
+    {
+      "path": "shared/i18n/locales/en/chat.json",
+      "before": "982139f905f946542ec12330f77fb8b905fbe6e9fc5648e17dc4e40604bbb5ec",
+      "after": "45ef8d2f85e00a5835c7b4c7069f84ceef10a80df3f74be185f909ecc35978ee",
+      "overlay": true
+    },
+    {
+      "path": "shared/i18n/locales/ja/chat.json",
+      "before": "8dde9062832565796d0cdf140717ae9be480390b67f2c5d42211f25cce0fcc85",
+      "after": "23a122241b74aaf67d7e7bc4444d34c2f76ba4e4551b37c360655a0170ee2e7b",
+      "overlay": true
+    },
+    {
+      "path": "shared/i18n/locales/ru/chat.json",
+      "before": "e33cb22f418d28298626af392aa0b9a19e1a0cd1ee294792e241b05ebcc7a4ae",
+      "after": "fbeba50496ccc7fca7434b842d0146e37ffec17247067e4dd9ba87b5bdba1370",
+      "overlay": true
+    },
+    {
+      "path": "shared/i18n/locales/zh/chat.json",
+      "before": "55c0eb35a1d4dfdc04da95db78f721b1592a40c1cecdee658cdf36bb7d04e3fc",
+      "after": "99563a4a349e596b5ab74c52d4c07ff2df2cc09463a5090a0c8dd1b25b59d0b8",
+      "overlay": true
+    },
+    {
+      "path": "shared/task-system/store.ts",
+      "before": "86a25309ee024b5f2a4a873f9af9608df72b84564b10c8e81efadcc60b365bb7",
+      "after": "844655594e69a6600b2df6b6c5bfac341e5b4f7439c66788afbb666b4d2b9412",
+      "overlay": false
+    },
+    {
+      "path": "shared/types/execution-migration.ts",
+      "before": null,
+      "after": "7a0ffc4822ee2202320a0bc5be0640d10bb37986dfaee5021ec3d4b2740d1594",
+      "overlay": false
+    },
+    {
+      "path": "shared/types/workspace.ts",
+      "before": "36a8fa86f8820beca0fad119eb85f55c74e675420e7f87da00656ae27ab97c93",
+      "after": "e337d8492ee27a1882c0c8389bd5275296da419ad53979ab292f4d8732f140d4",
+      "overlay": false
+    },
+    {
+      "path": "src/i18n/index.ts",
+      "before": "5dcba1da0c1f8f69d671c788ccea16b2154ddeba07e41ca4df7d80f4a89de164",
+      "after": "231d16505f7f2a5dbafef973742a57ca685a9dc149664556523a3b5a7f24e1fd",
+      "overlay": false
+    },
+    {
+      "path": "src/lib/host-api.ts",
+      "before": "8e2bcfe21aef9b581952866a1d643c00c96057644329692105f5e02c730061b4",
+      "after": "eb6430f723827d2583577de1f4b141e25ecc7140dc4eb595360c0450895f8a77",
+      "overlay": false
+    },
+    {
+      "path": "src/pages/Chat/ExecutionMigrationControl.tsx",
+      "before": null,
+      "after": "eb4b94e41414e8e9574208464e9ea07ccff5fd85b27b42330f2025959e77c4e1",
+      "overlay": false
+    },
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "before": "56fb5d89fb328bb82b05e002c76be942064c6bb210bf36a944aa083b49c8e12a",
+      "after": "86f271f339ee062cac1865d2b47d8b7d3fc5506bc43a9c1b413e6724174690de",
+      "overlay": true
+    },
+    {
+      "path": "tests/e2e/execution-migration.spec.ts",
+      "before": null,
+      "after": "6e9a4ce4ef7633f591322e7cf9c59acba98e7229ce077bd4a2ef68fd2ed5e067",
+      "overlay": false
+    },
+    {
+      "path": "tests/unit/execution-migration-control.test.tsx",
+      "before": null,
+      "after": "023a45168d03b8bf5b22c74f55333530f0c78e8beb3ef00744df4295c477e512",
+      "overlay": false
+    },
+    {
+      "path": "tests/unit/execution-migration-process.test.ts",
+      "before": null,
+      "after": "356c7d0bb268387b007537bd946072e8d51238dceeebb38ae428e269cfdb9cb2",
+      "overlay": false
+    },
+    {
+      "path": "tests/unit/execution-migration-runtime.test.ts",
+      "before": null,
+      "after": "d0e26a46f5ec9328866b777e37b000208a4526967ec3c878d81b384b1e4a3252",
+      "overlay": false
+    },
+    {
+      "path": "tests/unit/execution-migration.test.ts",
+      "before": null,
+      "after": "1ed359bb029e80d8cf22b2c562bd6b16009bf97b7c6fab00dace4f554c5f18d7",
+      "overlay": false
+    },
+    {
+      "path": "tests/unit/fixtures/execution-migration-worker.mts",
+      "before": null,
+      "after": "56ce5bcc3521cbbdfd2f35d45cdb85fe9aa3f960cd647cde8ede3360917e457b",
+      "overlay": false
+    },
+    {
+      "path": "tests/unit/i18n-language-order.test.ts",
+      "before": null,
+      "after": "8d8cc62601f942c6df78b9fe192f4f0d72f70160bcb2cb8163797b4318c1e1f4",
+      "overlay": false
+    },
+    {
+      "path": "tests/unit/unified-effect-admission.test.ts",
+      "before": "22a397145203a31df343643ac09f0c31b2cea2c0cb23a6152756b4a55c9b8894",
+      "after": "5adba13046fc08ad1bbafd63dadabeb2f82f2004263a20d7c2361913f3b822ea",
+      "overlay": false
+    },
+    {
+      "path": "tests/unit/unified-task-authority.test.ts",
+      "before": "c2d2359c29894a7f275bc5a5abb4b7e7d163c7ef5a564c0f894cfa9581f210ba",
+      "after": "9e2cecd16ec1614a055d6a255c16a7dd27bffc0e3e32348eb76d094da613de7e",
+      "overlay": false
+    }
+  ],
+  "conflicts": [],
+  "status": "integrated",
+  "indexInitiallyEmpty": true,
+  "commit": "1786a8f1af02c7d1387df51122c86bfb3f295c52",
+  "treeMatches": true,
+  "driven_by": "agent",
+  "actor": "codex",
+  "acceptedNode": "TF-0866",
+  "mainClean": false,
+  "sourceEvidence": "harness/specs/fixtures/execution-environment-migration/20261109/report.json",
+  "overlayValidation": {
+    "mode": "read-only TypeScript compiler host overlay",
+    "candidate": "1cba6f8d565330469e3bfee18a59dd72f8b9feff",
+    "selectedRoots": [
+      "src/pages/Chat/index.tsx",
+      "src/pages/Chat/ExecutionMigrationControl.tsx",
+      "src/vite-env.d.ts",
+      "src/types/electron.d.ts"
+    ],
+    "diagnostics": [],
+    "sourceUnchanged": true,
+    "observations": [
+      {
+        "file": "D:/ClawX/src/pages/Chat/index.tsx",
+        "source": "D:/tmp/unified-management-20261109/migration-main-integration/after/src/pages/Chat/index.tsx",
+        "sha256": "86f271f339ee062cac1865d2b47d8b7d3fc5506bc43a9c1b413e6724174690de"
+      },
+      {
+        "file": "D:/ClawX/package.json",
+        "source": "D:/ClawX/package.json",
+        "sha256": "acec123ba3bec7313fc0f43c9b8692a3f015b0ab76949358f0f6720809840735"
+      },
+      {
+        "file": "D:/ClawX/src/stores/chat/content-cache.ts",
+        "source": "D:/ClawX/src/stores/chat/content-cache.ts",
+        "sha256": "72b6a4b4d0853c02d998a95ac61383e7d2fd2b5b0167f42d9002ea9b8088fe78"
+      },
+      {
+        "file": "D:/ClawX/shared/resources/bounded-cache.ts",
+        "source": "D:/ClawX/shared/resources/bounded-cache.ts",
+        "sha256": "c86fc2a7e65c9bf2b30e43101680b79b92456ef74be7c4e9413dca323f5c9149"
+      },
+      {
+        "file": "D:/ClawX/shared/package.json",
+        "source": "D:/ClawX/shared/package.json",
+        "sha256": "abd0bb5e307c06f1bae714a9c0d4e77c3feb3dfb8f426a130c7ab71c7ddf4d0b"
+      },
+      {
+        "file": "D:/ClawX/src/hooks/use-message-viewport.ts",
+        "source": "D:/ClawX/src/hooks/use-message-viewport.ts",
+        "sha256": "40e4d68102d2c138d2402b8f97d24ae56ca49e72915d3bf08be2586677db9c4c"
+      },
+      {
+        "file": "D:/ClawX/shared/types/session-derivation.ts",
+        "source": "D:/ClawX/shared/types/session-derivation.ts",
+        "sha256": "d4dbb29a538041fe1806a156a447200609117143255f5d5c48588e5dbe47f997"
+      },
+      {
+        "file": "D:/ClawX/src/components/chat/SessionFamilyNavigation.tsx",
+        "source": "D:/ClawX/src/components/chat/SessionFamilyNavigation.tsx",
+        "sha256": "6ab879a8270c2e82ccd5ffdde43e19a3432bf77d1dd8763b1f5b3ac75788d267"
+      },
+      {
+        "file": "D:/ClawX/shared/chat/types.ts",
+        "source": "D:/ClawX/shared/chat/types.ts",
+        "sha256": "3c3ef066b4658c871a35c6e0f62aabd57244c9cb9757891034ddedb05e98e0c2"
+      },
+      {
+        "file": "D:/ClawX/shared/chat-runtime-events.ts",
+        "source": "D:/ClawX/shared/chat-runtime-events.ts",
+        "sha256": "75e091a028137d8ee148cb49074d25ac5590027c0907d208836f6166f8e18e53"
+      },
+      {
+        "file": "D:/ClawX/shared/host-api/contract.ts",
+        "source": "D:/tmp/unified-management-20261109/migration-main-integration/after/shared/host-api/contract.ts",
+        "sha256": "34bbc6125c7299945e134dfced439d2c85dfd0ec94d36e04b9d05896e5c3491f"
+      },
+      {
+        "file": "D:/ClawX/shared/types/session-handoff.ts",
+        "source": "D:/ClawX/shared/types/session-handoff.ts",
+        "sha256": "063fbadffb7e8d9404b5d8e2db88bcbb14ecb9b8064337c28c60b44923ebf42c"
+      },
+      {
+        "file": "D:/ClawX/shared/types/identity-scope.ts",
+        "source": "D:/ClawX/shared/types/identity-scope.ts",
+        "sha256": "d8418a7294578fc5fc0193ad4d94e9cabcafeceaa80cf63aa424470ee8d389bc"
+      },
+      {
+        "file": "D:/ClawX/shared/types/execution-migration.ts",
+        "source": "D:/tmp/unified-management-20261109/migration-main-integration/after/shared/types/execution-migration.ts",
+        "sha256": "7a0ffc4822ee2202320a0bc5be0640d10bb37986dfaee5021ec3d4b2740d1594"
+      },
+      {
+        "file": "D:/ClawX/shared/task-system/identity.ts",
+        "source": "D:/ClawX/shared/task-system/identity.ts",
+        "sha256": "0662a28fde847191cb41a86ba281eab7ebec4280470456e8a505998935ea6ca1"
+      },
+      {
+        "file": "D:/ClawX/shared/task-system/types.ts",
+        "source": "D:/ClawX/shared/task-system/types.ts",
+        "sha256": "efb2e5be3480ee94bd007761a3c665d1d4666b7db22c708b573d1e80a27f4445"
+      },
+      {
+        "file": "D:/ClawX/shared/checkout-ownership.ts",
+        "source": "D:/ClawX/shared/checkout-ownership.ts",
+        "sha256": "748c21cd5b9aafdc9c430026f51bf295143fdfd502786c60d7b868cffa2975c9"
+      },
+      {
+        "file": "D:/ClawX/shared/instruction-precedence.ts",
+        "source": "D:/ClawX/shared/instruction-precedence.ts",
+        "sha256": "502335013d31d0df0faf9deab10713fe15e62552798179951d488b0aa4ec3d5e"
+      },
+      {
+        "file": "D:/ClawX/shared/types/resources.ts",
+        "source": "D:/ClawX/shared/types/resources.ts",
+        "sha256": "eaf7cbc7d2d66f1290ac077a9974d158964bee6d564f1742f9bc18086eb9d713"
+      },
+      {
+        "file": "D:/ClawX/shared/vtoken/types.ts",
+        "source": "D:/ClawX/shared/vtoken/types.ts",
+        "sha256": "45b7bfbba1b6521c375057102426ea9d483014ca9274e02102496071f175f653"
+      },
+      {
+        "file": "D:/ClawX/shared/dcs/prod-flags-control.ts",
+        "source": "D:/ClawX/shared/dcs/prod-flags-control.ts",
+        "sha256": "fe3dee6883b0051250a219cae4dcc8505763105e45a085b53180e4477cbc08e6"
+      },
+      {
+        "file": "D:/ClawX/shared/dcs/prod-flags-catalog.ts",
+        "source": "D:/ClawX/shared/dcs/prod-flags-catalog.ts",
+        "sha256": "9d064a0d306231bbddc2cb00eeb3f7a9c7a96d77f85ce66fe9e3637469dfa2d4"
+      },
+      {
+        "file": "D:/ClawX/shared/product-semantics.ts",
+        "source": "D:/ClawX/shared/product-semantics.ts",
+        "sha256": "83ce341c1bac77ef3cac893555db3fda1f92833db4602cf9694bfd2f6ef86284"
+      },
+      {
+        "file": "D:/ClawX/shared/types/task-ledger-reference.ts",
+        "source": "D:/ClawX/shared/types/task-ledger-reference.ts",
+        "sha256": "7fb8caee299a3e5e2bb71bfcecaf3da56be68fcd3493896bafa97717da8f085d"
+      },
+      {
+        "file": "D:/ClawX/shared/types/workspace.ts",
+        "source": "D:/tmp/unified-management-20261109/migration-main-integration/after/shared/types/workspace.ts",
+        "sha256": "e337d8492ee27a1882c0c8389bd5275296da419ad53979ab292f4d8732f140d4"
+      },
+      {
+        "file": "D:/ClawX/shared/types/work-mode.ts",
+        "source": "D:/ClawX/shared/types/work-mode.ts",
+        "sha256": "6851d679a66c2383a2ac74d2653f14b1fcab4ba899aeecc37b7fbb9876fc2ea8"
+      },
+      {
+        "file": "D:/ClawX/shared/types/work-provider.ts",
+        "source": "D:/ClawX/shared/types/work-provider.ts",
+        "sha256": "c5905c3cd257da06a2e5b3fed19dfdb713177d0b791368c63ee1ec3295373479"
+      },
+      {
+        "file": "D:/ClawX/shared/session-task-scope.ts",
+        "source": "D:/ClawX/shared/session-task-scope.ts",
+        "sha256": "9772c6c0e5677ea15711f2f830bff739db875d6708230989ebc0bd273ab5cf76"
+      },
+      {
+        "file": "D:/ClawX/shared/types/session-delegation.ts",
+        "source": "D:/ClawX/shared/types/session-delegation.ts",
+        "sha256": "3e299453fc4a8c4ec6895c7e80d8a0cbcabcd63575aefd1fd4a5d2a565d548be"
+      },
+      {
+        "file": "D:/ClawX/shared/types/coding-run.ts",
+        "source": "D:/ClawX/shared/types/coding-run.ts",
+        "sha256": "1c5b30f8163c820a06351ec740fd444b3b1dab4923a40b228c7424bd9314d686"
+      },
+      {
+        "file": "D:/ClawX/shared/product-semantic-unsafe-claims.ts",
+        "source": "D:/ClawX/shared/product-semantic-unsafe-claims.ts",
+        "sha256": "a72cf2655e0f970fd12f946b474f414839f2cc94016690a2fa824d64e315b07b"
+      },
+      {
+        "file": "D:/ClawX/shared/sandbox/errors.ts",
+        "source": "D:/ClawX/shared/sandbox/errors.ts",
+        "sha256": "4120d4fe6ec44539698156f97419258b46705dd8bd30bc3c96f9caac569e8772"
+      },
+      {
+        "file": "D:/ClawX/shared/types/agent.ts",
+        "source": "D:/ClawX/shared/types/agent.ts",
+        "sha256": "fded2b6e15307e589d8c9756002e6fffc47b5b79cab419aa64000f2c51925a6a"
+      },
+      {
+        "file": "D:/ClawX/shared/types/cron.ts",
+        "source": "D:/ClawX/shared/types/cron.ts",
+        "sha256": "d56edcee6c6fc2a579a8fb5053735e3141690c5090b34e469c02736590472ca5"
+      },
+      {
+        "file": "D:/ClawX/shared/types/channel.ts",
+        "source": "D:/ClawX/shared/types/channel.ts",
+        "sha256": "03a8f75808eb2e159aab7d61c5bfc3cb543804bfc71f431d27a1e2f42691d3fc"
+      },
+      {
+        "file": "D:/ClawX/shared/long-session-followup-scope.ts",
+        "source": "D:/ClawX/shared/long-session-followup-scope.ts",
+        "sha256": "552283506ae4d89587d1678519f8f0016b0ae7bae3932f2eff1db578d50504d9"
+      },
+      {
+        "file": "D:/ClawX/shared/types/gateway.ts",
+        "source": "D:/ClawX/shared/types/gateway.ts",
+        "sha256": "4eabaaea03aeee7c548cfed2beb02e934ea2015ca7920b0394402a4dc8dcc452"
+      },
+      {
+        "file": "D:/ClawX/shared/types/context-family.ts",
+        "source": "D:/ClawX/shared/types/context-family.ts",
+        "sha256": "3f4c50b791a1f989c1c185586b5df9369017a49fa32292dcfecac4a0b1abf44f"
+      },
+      {
+        "file": "D:/ClawX/shared/types/context-item.ts",
+        "source": "D:/ClawX/shared/types/context-item.ts",
+        "sha256": "78edfcde193727b6f61fc5ad7192fb4ccd2ad2da1c859c072c8d1494eac7459b"
+      },
+      {
+        "file": "D:/ClawX/shared/types/context-runtime-kit.ts",
+        "source": "D:/ClawX/shared/types/context-runtime-kit.ts",
+        "sha256": "4ba86b4481df7161843a17bd00a264307743d2402e6de0df637046e9a2cde336"
+      },
+      {
+        "file": "D:/ClawX/shared/types/context-folding.ts",
+        "source": "D:/ClawX/shared/types/context-folding.ts",
+        "sha256": "f27a4cc997cb64d1ed1ed9240d0d7af11058561ddad4850fa56ef9e0ce815458"
+      },
+      {
+        "file": "D:/ClawX/shared/types/memory.ts",
+        "source": "D:/ClawX/shared/types/memory.ts",
+        "sha256": "bf744f6246837d1e526b618eae31f627d4f26ddd1262293867d29e425d6a23b1"
+      },
+      {
+        "file": "D:/ClawX/shared/types/session-activity.ts",
+        "source": "D:/ClawX/shared/types/session-activity.ts",
+        "sha256": "aaf08e39a22d4ea94b32a2b729f9e24476b0e42faf56f9cf90bc3c553017dbb0"
+      },
+      {
+        "file": "D:/ClawX/shared/types/git.ts",
+        "source": "D:/ClawX/shared/types/git.ts",
+        "sha256": "5fcd62b19eeb3e46d459f062143ec0eb4a11c28bb4dace44ac8b5e60038d2784"
+      },
+      {
+        "file": "D:/ClawX/shared/types/remote-forge.ts",
+        "source": "D:/ClawX/shared/types/remote-forge.ts",
+        "sha256": "bf68001123ab0e9d8138bd294782a466d009ed4aa58908bb821805bd870f2438"
+      },
+      {
+        "file": "D:/ClawX/shared/types/session-effective-policy.ts",
+        "source": "D:/ClawX/shared/types/session-effective-policy.ts",
+        "sha256": "9ecf3109e203ffd5d42ad974ce5088311534a68bfbd5f4938f5c96a7da0638f8"
+      },
+      {
+        "file": "D:/ClawX/shared/types/session-stage.ts",
+        "source": "D:/ClawX/shared/types/session-stage.ts",
+        "sha256": "1cb9621b9ff1e81a09ece0fc205801ac2ec880e0238261f1e5c91d1fa3770b40"
+      },
+      {
+        "file": "D:/ClawX/shared/long-session-resource-reclamation.ts",
+        "source": "D:/ClawX/shared/long-session-resource-reclamation.ts",
+        "sha256": "36ead351d8c3279c21e5655f317b91e50b67f1af01666a8ed568fbb199b74399"
+      },
+      {
+        "file": "D:/ClawX/shared/long-session-continuity.ts",
+        "source": "D:/ClawX/shared/long-session-continuity.ts",
+        "sha256": "88a7b2169805282f9d39f70e1f30dd47207f9772e6bb18b8fce430516e515eb0"
+      },
+      {
+        "file": "D:/ClawX/shared/types/task-ledger.ts",
+        "source": "D:/ClawX/shared/types/task-ledger.ts",
+        "sha256": "75d3fb3d7f79ef5836f2981c8d551fcb8f227c227159bbc777ff31309ae90413"
+      },
+      {
+        "file": "D:/ClawX/shared/types/mcp.ts",
+        "source": "D:/ClawX/shared/types/mcp.ts",
+        "sha256": "3daaa2ba5817c1699d6253b51bb161eccf595030f47c719375fe2c533974daac"
+      },
+      {
+        "file": "D:/ClawX/shared/types/sandbox.ts",
+        "source": "D:/ClawX/shared/types/sandbox.ts",
+        "sha256": "84cfc7617aafac34ad12929a15a51f82bbcd0165b42f6741375c973d2989bedf"
+      },
+      {
+        "file": "D:/ClawX/shared/types/execution-environment.ts",
+        "source": "D:/ClawX/shared/types/execution-environment.ts",
+        "sha256": "42ab3179690f2b495d4b918fd841412ca8c8b6c0edc822784017eb6c83d10b6b"
+      },
+      {
+        "file": "D:/ClawX/shared/types/skill.ts",
+        "source": "D:/ClawX/shared/types/skill.ts",
+        "sha256": "9c289477b4c829fdd019ffa7dc4fcd6ab303ad1f99c965a005877264a48ed9ee"
+      },
+      {
+        "file": "D:/ClawX/shared/agent-browser/types.ts",
+        "source": "D:/ClawX/shared/agent-browser/types.ts",
+        "sha256": "053ba5745f7fcfbe77083f0e460b3026cab9917a14242e4eee7720a3829a02e2"
+      },
+      {
+        "file": "D:/ClawX/shared/types/observability.ts",
+        "source": "D:/ClawX/shared/types/observability.ts",
+        "sha256": "e5c4bdba80baec167a4029b2f40188e251713f3642d87b606eb2e44448790a6d"
+      },
+      {
+        "file": "D:/ClawX/shared/types/clawgraph.ts",
+        "source": "D:/ClawX/shared/types/clawgraph.ts",
+        "sha256": "1b5dccd112e9bf8382e895ae1c4d9baefd2cc885f0c43ef2d667f8e590836be3"
+      },
+      {
+        "file": "D:/ClawX/shared/types/code-review.ts",
+        "source": "D:/ClawX/shared/types/code-review.ts",
+        "sha256": "1deb6f39554ba3eb694d8d218937e6526f75d7d8298ce2f762046519ddff0379"
+      },
+      {
+        "file": "D:/ClawX/shared/types/change-context.ts",
+        "source": "D:/ClawX/shared/types/change-context.ts",
+        "sha256": "21055307d9e690de7aca4d433ea3731cb7f3e68f4c69835acbb41e7cfda4cd31"
+      },
+      {
+        "file": "D:/ClawX/shared/types/context-control-plane/artifacts.ts",
+        "source": "D:/ClawX/shared/types/context-control-plane/artifacts.ts",
+        "sha256": "c4cca9a41783a34683ad27942cb1c01030fa5d15a0119a319e91871ff2d0181f"
+      },
+      {
+        "file": "D:/ClawX/shared/types/remote-tasks.ts",
+        "source": "D:/ClawX/shared/types/remote-tasks.ts",
+        "sha256": "d67dbfd3b2dc3e9a0d0b0fc8d20f98412ae637146e09f8a734533c8f5623d1dd"
+      },
+      {
+        "file": "D:/ClawX/shared/types/long-task-control.ts",
+        "source": "D:/ClawX/shared/types/long-task-control.ts",
+        "sha256": "7465c65b17f0d5d738340fa892d1cc2dbbdf8620467e70b6b86beb209ff6c814"
+      },
+      {
+        "file": "D:/ClawX/shared/agent-dev/scenarios.ts",
+        "source": "D:/ClawX/shared/agent-dev/scenarios.ts",
+        "sha256": "0f71807454e400fbceea356aab1f908c093269b53c0489df99189011e0e85d3a"
+      },
+      {
+        "file": "D:/ClawX/shared/agent-dev/trace-contract.ts",
+        "source": "D:/ClawX/shared/agent-dev/trace-contract.ts",
+        "sha256": "52bf2486562991c131779f626ebade8399d3ab9d5582eb990289d50fce4ad245"
+      },
+      {
+        "file": "D:/ClawX/shared/types/session-storage.ts",
+        "source": "D:/ClawX/shared/types/session-storage.ts",
+        "sha256": "8d098ccfc037cdc9ea7bb08f0a4d264d4a1ca90ecc43b80b9f230d867e895b99"
+      },
+      {
+        "file": "D:/ClawX/shared/types/resource-tracker.ts",
+        "source": "D:/ClawX/shared/types/resource-tracker.ts",
+        "sha256": "74d90cd5af89106eb0db3546b61e359aa09affafbf9c905363d09d0389ee2f04"
+      },
+      {
+        "file": "D:/ClawX/src/pages/Chat/ExecutionMigrationControl.tsx",
+        "source": "D:/tmp/unified-management-20261109/migration-main-integration/after/src/pages/Chat/ExecutionMigrationControl.tsx",
+        "sha256": "eb4b94e41414e8e9574208464e9ea07ccff5fd85b27b42330f2025959e77c4e1"
+      },
+      {
+        "file": "D:/ClawX/src/lib/host-api.ts",
+        "source": "D:/tmp/unified-management-20261109/migration-main-integration/after/src/lib/host-api.ts",
+        "sha256": "eb6430f723827d2583577de1f4b141e25ecc7140dc4eb595360c0450895f8a77"
+      },
+      {
+        "file": "D:/ClawX/src/lib/host-api/knowledge/index.ts",
+        "source": "D:/ClawX/src/lib/host-api/knowledge/index.ts",
+        "sha256": "8254fcb7fe78f1ba43682ea7e3284ffd8d18631238bdee254e48d1777fe529dc"
+      },
+      {
+        "file": "D:/ClawX/src/lib/host-api/knowledge/library.ts",
+        "source": "D:/ClawX/src/lib/host-api/knowledge/library.ts",
+        "sha256": "85fc88a8adef0086ff6d98755d667b6f3515b1d91ad060a612c4a5b35c5da641"
+      },
+      {
+        "file": "D:/ClawX/src/lib/host-api-client.ts",
+        "source": "D:/ClawX/src/lib/host-api-client.ts",
+        "sha256": "2da01aca16076e805d24b7dce5bbb039ce970475bfd92cdcd6b6b2605a7705a0"
+      },
+      {
+        "file": "D:/ClawX/shared/host-api/types.ts",
+        "source": "D:/ClawX/shared/host-api/types.ts",
+        "sha256": "a11d95000a155fb659f85fa694c31c7e154d12927bdfebf8732fc8f8bd4a4745"
+      },
+      {
+        "file": "D:/ClawX/shared/host-api/host-deadline.ts",
+        "source": "D:/ClawX/shared/host-api/host-deadline.ts",
+        "sha256": "3d1d88cd4ccd9387986df61df4356b13d57face03c578fdad3f7ecd1b902d175"
+      },
+      {
+        "file": "D:/ClawX/shared/host-api/host-action-timeouts.ts",
+        "source": "D:/ClawX/shared/host-api/host-action-timeouts.ts",
+        "sha256": "5e90cfaad91f1f38886fe07a3aea112125c834b7ea3a3abff345d97037beed6f"
+      },
+      {
+        "file": "D:/ClawX/src/lib/error-model.ts",
+        "source": "D:/ClawX/src/lib/error-model.ts",
+        "sha256": "b06fe0a4b6475551d078ab0c2819fb491649138dee6d6a5f392eb9d75eb49dd6"
+      },
+      {
+        "file": "D:/ClawX/src/lib/performance-metrics.ts",
+        "source": "D:/ClawX/src/lib/performance-metrics.ts",
+        "sha256": "dca1e2939ff91f168bb3b74b7e8c74971d7c1d7792f28c8fa8a95250ebb4afed"
+      },
+      {
+        "file": "D:/ClawX/src/lib/host-api/knowledge/inbox.ts",
+        "source": "D:/ClawX/src/lib/host-api/knowledge/inbox.ts",
+        "sha256": "e4b7f0d884959e4a19a215b36903a42ed43cd56a29a2f914ef83c60d18639a05"
+      },
+      {
+        "file": "D:/ClawX/src/lib/host-api/knowledge/drafts.ts",
+        "source": "D:/ClawX/src/lib/host-api/knowledge/drafts.ts",
+        "sha256": "6923cdf6245fc994ec9aee70cab94072d9a4749cf010d45ee63983bc14ff00c3"
+      },
+      {
+        "file": "D:/ClawX/src/lib/host-api/knowledge/proposals.ts",
+        "source": "D:/ClawX/src/lib/host-api/knowledge/proposals.ts",
+        "sha256": "9c34e49260ff8f2332de6178b23e09b1396426c5a390ee6fa13a55fbcae664de"
+      },
+      {
+        "file": "D:/ClawX/src/lib/host-api/knowledge/steward.ts",
+        "source": "D:/ClawX/src/lib/host-api/knowledge/steward.ts",
+        "sha256": "f73e1019a04be8267bc0045787b1392cb7ae1e300ca493a8137947e7a3487e70"
+      },
+      {
+        "file": "D:/ClawX/src/lib/host-api/knowledge/runtime-lessons.ts",
+        "source": "D:/ClawX/src/lib/host-api/knowledge/runtime-lessons.ts",
+        "sha256": "a401ce2ea3bfaf37dc1d23ba7e16f6cea3df076f43c204bc11e448b34c77249c"
+      },
+      {
+        "file": "D:/ClawX/src/lib/host-api/knowledge/source-set.ts",
+        "source": "D:/ClawX/src/lib/host-api/knowledge/source-set.ts",
+        "sha256": "3afa0b609569d870f1a67dfd58b01dacb0e16739f2a4d8f25f421298ef7cb1a1"
+      },
+      {
+        "file": "D:/ClawX/src/lib/host-api/knowledge/watched-directories.ts",
+        "source": "D:/ClawX/src/lib/host-api/knowledge/watched-directories.ts",
+        "sha256": "cb2d531583b7cbd5c1ae8cbfc6b3e55e9dae58e07df7908e256e19fe34ea7abf"
+      },
+      {
+        "file": "D:/ClawX/src/lib/host-api/knowledge/provenance.ts",
+        "source": "D:/ClawX/src/lib/host-api/knowledge/provenance.ts",
+        "sha256": "9c3f6b9c07f52108d3584a06e7bef7de36d5efe6913510b73f91cd01ac3ffb20"
+      },
+      {
+        "file": "D:/ClawX/src/lib/host-api/knowledge/routing.ts",
+        "source": "D:/ClawX/src/lib/host-api/knowledge/routing.ts",
+        "sha256": "fa594d476e0c15425f2813ad6ae295d866d85a827f87b2945dc1900782bd495a"
+      },
+      {
+        "file": "D:/ClawX/src/lib/host-api/knowledge/connectors.ts",
+        "source": "D:/ClawX/src/lib/host-api/knowledge/connectors.ts",
+        "sha256": "1d9a62db61a19b4fe5ecdca487e62948e482e5565e363b3f794a32ab4076350d"
+      },
+      {
+        "file": "D:/ClawX/openclaw_runtime/src/trajectory/types.ts",
+        "source": "D:/ClawX/openclaw_runtime/src/trajectory/types.ts",
+        "sha256": "5a5730564f187b0490376563ba1991c585ad16dabb9f3c0dbfe9646d8ace21c7"
+      },
+      {
+        "file": "D:/ClawX/openclaw_runtime/package.json",
+        "source": "D:/ClawX/openclaw_runtime/package.json",
+        "sha256": "f364675abf528ae3e4ad9e5b654f92d05f88e6eefc581e3f6e4cd6fb853b230b"
+      },
+      {
+        "file": "D:/ClawX/src/stores/workspaces.ts",
+        "source": "D:/ClawX/src/stores/workspaces.ts",
+        "sha256": "40bee7adef9fe40d81e6615dda01cf09e58a356177aa63eb4d69330d022bd017"
+      },
+      {
+        "file": "D:/ClawX/src/stores/chat.ts",
+        "source": "D:/ClawX/src/stores/chat.ts",
+        "sha256": "32c32045c87b0c03e1b292c4085924371497fe3de46aecb760a8f27b95cc829f"
+      },
+      {
+        "file": "D:/ClawX/src/lib/session-read-model.ts",
+        "source": "D:/ClawX/src/lib/session-read-model.ts",
+        "sha256": "b0030d796f44714ac46995869f07b7b83c1f98160d9665b7f7a5a9ba467c8623"
+      },
+      {
+        "file": "D:/ClawX/src/stores/gateway.ts",
+        "source": "D:/ClawX/src/stores/gateway.ts",
+        "sha256": "7bc82f8eef890570bfe3ef3d64a8422b9f326efaa680a139fd80dcc1f36b7d0d"
+      },
+      {
+        "file": "D:/ClawX/src/lib/host-events.ts",
+        "source": "D:/ClawX/src/lib/host-events.ts",
+        "sha256": "a5670411192dd610800a3f42d9753c2e319a69fd824ec2865c5d5c9ef4b22916"
+      },
+      {
+        "file": "D:/ClawX/shared/host-events/contract.ts",
+        "source": "D:/ClawX/shared/host-events/contract.ts",
+        "sha256": "5ef5938bde780a3b3d5c49cfc4186a0e393a76f666f8e568a0a10bfef1fca814"
+      },
+      {
+        "file": "D:/ClawX/shared/types/mission-control.ts",
+        "source": "D:/ClawX/shared/types/mission-control.ts",
+        "sha256": "a68021f81f0e3c0deb7f966f199db701c486bf62f0848b32ba2323ad27da971f"
+      },
+      {
+        "file": "D:/ClawX/shared/gateway-endpoint.ts",
+        "source": "D:/ClawX/shared/gateway-endpoint.ts",
+        "sha256": "d0ffc482df51398f17ee3dc9f5395d0bdf8bb78a276b429229ca739624fe8c94"
+      },
+      {
+        "file": "D:/ClawX/src/types/gateway.ts",
+        "source": "D:/ClawX/src/types/gateway.ts",
+        "sha256": "a54b6e3c85f2f51c4385b160689202cd6618394c88ac28fb55d1fba75b933652"
+      },
+      {
+        "file": "D:/ClawX/src/stores/cron.ts",
+        "source": "D:/ClawX/src/stores/cron.ts",
+        "sha256": "47d5579f2c4f43cffcff28e9716c1266b839ca2e3bb6b8c1e879aeb384a37f25"
+      },
+      {
+        "file": "D:/ClawX/src/types/cron.ts",
+        "source": "D:/ClawX/src/types/cron.ts",
+        "sha256": "0392c1185ea577305e6901efe42299872d77a3cfc1b4583e25b6d13a7d2cc2d7"
+      },
+      {
+        "file": "D:/ClawX/src/stores/channels.ts",
+        "source": "D:/ClawX/src/stores/channels.ts",
+        "sha256": "e223539332d4c15cee66f5495a679dcc7f5b4a50998bd67d1741a5bd1faac0ac"
+      },
+      {
+        "file": "D:/ClawX/src/lib/channel-status.ts",
+        "source": "D:/ClawX/src/lib/channel-status.ts",
+        "sha256": "ffc17ae1fea3399742b94559aa2d738a0537786f216b1658392dbba463c12c0d"
+      },
+      {
+        "file": "D:/ClawX/src/types/channel.ts",
+        "source": "D:/ClawX/src/types/channel.ts",
+        "sha256": "aa794d43428d5addb0dea77d7111a4f0edf549e436afca5483083f9636d83e4e"
+      },
+      {
+        "file": "D:/ClawX/src/lib/channel-alias.ts",
+        "source": "D:/ClawX/src/lib/channel-alias.ts",
+        "sha256": "e9e8e562101551c22d75d0b36fbf9c352135760a738e9587ae597b46bbd507b9"
+      },
+      {
+        "file": "D:/ClawX/src/stores/agents.ts",
+        "source": "D:/ClawX/src/stores/agents.ts",
+        "sha256": "061d6db7d5d1cd1469b8d35e3e17e930ef15f2ee5930448a9a8a936a76197090"
+      },
+      {
+        "file": "D:/ClawX/src/types/agent.ts",
+        "source": "D:/ClawX/src/types/agent.ts",
+        "sha256": "5ad3e42c10bdf7d6a3f21c4a3e930d662849443ef54debd9a13e47f1b4e14111"
+      },
+      {
+        "file": "D:/ClawX/src/stores/baseline-cache.ts",
+        "source": "D:/ClawX/src/stores/baseline-cache.ts",
+        "sha256": "65f28db754e0bf36249331d47f2e57abf0f6d3d92e85d42ea7be57d5f4f2ec30"
+      },
+      {
+        "file": "D:/ClawX/src/lib/file-preview-client.ts",
+        "source": "D:/ClawX/src/lib/file-preview-client.ts",
+        "sha256": "9a88d63a0594dc04b73be5641ec35106684fc2f121e81d9a97d81ba9696fc45c"
+      },
+      {
+        "file": "D:/ClawX/src/lib/generated-files.ts",
+        "source": "D:/ClawX/src/lib/generated-files.ts",
+        "sha256": "add6e838ed0f6aa76f9b24312a43e703093a5d6ba59d85071ce2b5dc60e5e0c9"
+      },
+      {
+        "file": "D:/ClawX/shared/remote-forge/error-envelope.ts",
+        "source": "D:/ClawX/shared/remote-forge/error-envelope.ts",
+        "sha256": "3f375ce2bc1f0a7f96df1963d3b9e8119dcc736fba544dd739590634ff3b26e9"
+      },
+      {
+        "file": "D:/ClawX/src/stores/chat/cron-session-utils.ts",
+        "source": "D:/ClawX/src/stores/chat/cron-session-utils.ts",
+        "sha256": "da6a642d592c2d5674a8c2a880eb7c591398c2c07ea808d7ee9cd01271332b0d"
+      },
+      {
+        "file": "D:/ClawX/src/lib/cron-session-history.ts",
+        "source": "D:/ClawX/src/lib/cron-session-history.ts",
+        "sha256": "509ffb0007bb02e6b3b6ecb6e1a3f2f6240dcb586e15733e2f8de3c8bb0f0fa3"
+      },
+      {
+        "file": "D:/ClawX/src/stores/chat/types.ts",
+        "source": "D:/ClawX/src/stores/chat/types.ts",
+        "sha256": "09c53be9f36bb0c3ba44d52ac1ffec07e0c5bdf60351db34b4597d4cfab1fc8e"
+      },
+      {
+        "file": "D:/ClawX/src/stores/chat/session-selection.ts",
+        "source": "D:/ClawX/src/stores/chat/session-selection.ts",
+        "sha256": "767463c4882d73041d7f23eafd78be8ec15989eea7ba136da18312bad111d150"
+      },
+      {
+        "file": "D:/ClawX/src/stores/chat/history-startup-retry.ts",
+        "source": "D:/ClawX/src/stores/chat/history-startup-retry.ts",
+        "sha256": "39aa66c6810bec0581ccc08eb0cb21cf3ac1daddba8798cf5608c7fed305eed3"
+      },
+      {
+        "file": "D:/ClawX/src/stores/chat/history-rpc-params.ts",
+        "source": "D:/ClawX/src/stores/chat/history-rpc-params.ts",
+        "sha256": "7e4e3bfd44e2630448d2ada9a64fe14b4583d094434942bbc55eb4f108b95e61"
+      },
+      {
+        "file": "D:/ClawX/src/stores/chat/history-transcript-fallback.ts",
+        "source": "D:/ClawX/src/stores/chat/history-transcript-fallback.ts",
+        "sha256": "2231025f2e6dbb3fd97bc50f7fb8bdf68bb4e518abb9f45fe537ba5ab7887af3"
+      },
+      {
+        "file": "D:/ClawX/shared/agent-resource-limits.ts",
+        "source": "D:/ClawX/shared/agent-resource-limits.ts",
+        "sha256": "ed3c52492a61e08d0972dd30c04566f219e8da0183c51aaaa29538acaa4123b6"
+      },
+      {
+        "file": "D:/ClawX/src/i18n/index.ts",
+        "source": "D:/tmp/unified-management-20261109/migration-main-integration/after/src/i18n/index.ts",
+        "sha256": "231d16505f7f2a5dbafef973742a57ca685a9dc149664556523a3b5a7f24e1fd"
+      },
+      {
+        "file": "D:/ClawX/shared/language.ts",
+        "source": "D:/ClawX/shared/language.ts",
+        "sha256": "23cd739ec2c0fae72708fb9be554f300fc31e69eed0fa309b5e047593f7f48f7"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/namespaces.ts",
+        "source": "D:/ClawX/shared/i18n/namespaces.ts",
+        "sha256": "b1c05b3288106b806660965d1d5724884f886af27e2ab207e0fd76e940ebd16e"
+      },
+      {
+        "file": "D:/ClawX/src/i18n/resources.ts",
+        "source": "D:/ClawX/src/i18n/resources.ts",
+        "sha256": "162cb30c7786b560296744620e64015e17b88dc358342ce026c359efe71eb158"
+      },
+      {
+        "file": "D:/ClawX/src/i18n/bundles/en.ts",
+        "source": "D:/ClawX/src/i18n/bundles/en.ts",
+        "sha256": "badf8cdaa493e3ad2d89685063726d0f587be536d72e8d6b7416e18f17cd3b8b"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/en/common.json",
+        "source": "D:/ClawX/shared/i18n/locales/en/common.json",
+        "sha256": "b5c5c31a079ad0562da930690f1fa882101008b6383ddfa922840d3a00474c1e"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/en/settings.json",
+        "source": "D:/ClawX/shared/i18n/locales/en/settings.json",
+        "sha256": "c5c7902471b48341bd80720cb98de5c43a3b723447378f96f775473d3eca5fbf"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/en/dashboard.json",
+        "source": "D:/ClawX/shared/i18n/locales/en/dashboard.json",
+        "sha256": "5a6f5582160a99824dc36b805d38b1832b3f1ccbd8f2abb5cbdf4fe5b832e543"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/en/chat.json",
+        "source": "D:/tmp/unified-management-20261109/migration-main-integration/after/shared/i18n/locales/en/chat.json",
+        "sha256": "45ef8d2f85e00a5835c7b4c7069f84ceef10a80df3f74be185f909ecc35978ee"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/en/channels.json",
+        "source": "D:/ClawX/shared/i18n/locales/en/channels.json",
+        "sha256": "bde8d7a29d30e8b2e81846dab1984a1e9a53608f5105d0f1620e5b573cab24e5"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/en/agents.json",
+        "source": "D:/ClawX/shared/i18n/locales/en/agents.json",
+        "sha256": "97edaca1c50463b6b023660ce194b9a46d1fb2838b03cced0bb6731ae7d475ea"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/en/observability.json",
+        "source": "D:/ClawX/shared/i18n/locales/en/observability.json",
+        "sha256": "6c1d3785fd2721dcefd63b3e9ee451d44ae57a409b7173f4f13f19be27e56f71"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/en/skills.json",
+        "source": "D:/ClawX/shared/i18n/locales/en/skills.json",
+        "sha256": "41c7a8fae7adcc6f1c52ae7d60a86b48864b08152ae77929ac8cbc854238c843"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/en/cron.json",
+        "source": "D:/ClawX/shared/i18n/locales/en/cron.json",
+        "sha256": "8f811d1217473115bb03ee1ae1b1457355cee40aa4f8d6778086990994905810"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/en/dreams.json",
+        "source": "D:/ClawX/shared/i18n/locales/en/dreams.json",
+        "sha256": "24943cce6b7760140737a196dbf6e0fea349ca040401db99cdde192b444f6118"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/en/setup.json",
+        "source": "D:/ClawX/shared/i18n/locales/en/setup.json",
+        "sha256": "ecb190b7fced824a7f025e2f002bb90bd516068206ab2d2b24f064fd9f4056dc"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/en/menu.json",
+        "source": "D:/ClawX/shared/i18n/locales/en/menu.json",
+        "sha256": "cfb4659dfac7e92d79e74a5e5786894fbaee58e20c56a2c2c4c2cb2efb39abe8"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/en/taskLedger.json",
+        "source": "D:/ClawX/shared/i18n/locales/en/taskLedger.json",
+        "sha256": "229d88ddfbb5a434403fd4a396dc090de48abfb406fa6ae17178bf2dfd670985"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/en/remoteTasks.json",
+        "source": "D:/ClawX/shared/i18n/locales/en/remoteTasks.json",
+        "sha256": "6f685ce7729f532873efb41048080f082ac93184d7eee65edf4fa3982d454348"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/en/clawGraph.json",
+        "source": "D:/ClawX/shared/i18n/locales/en/clawGraph.json",
+        "sha256": "21df7131cbd216f26cb40a172d2b8eba05a6d67eba6c90453711bce12fbbc41a"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/en/knowledge.json",
+        "source": "D:/ClawX/shared/i18n/locales/en/knowledge.json",
+        "sha256": "921979246cd44d48fe87655f7b050b440181bfd495ce60d85278f715cac77064"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/en/codeReview.json",
+        "source": "D:/ClawX/shared/i18n/locales/en/codeReview.json",
+        "sha256": "8b48616fff27b436e0e4ba2473190c1cadae87aac5a2932ea9d93a5e24bbc1b4"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/en/browser.json",
+        "source": "D:/ClawX/shared/i18n/locales/en/browser.json",
+        "sha256": "9eaeb3731d6bf84bfb60d03b777c33ec4ad7c1c5bf8372a59a3da66fd4800134"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/en/inbox.json",
+        "source": "D:/ClawX/shared/i18n/locales/en/inbox.json",
+        "sha256": "3786b6ca94da80da81ccd4cda02103bc6872d654a3ca6ec1f6c67e6be4830943"
+      },
+      {
+        "file": "D:/ClawX/src/i18n/bundles/zh.ts",
+        "source": "D:/ClawX/src/i18n/bundles/zh.ts",
+        "sha256": "7694d4ba673b8339d99242f96b87d561fc3b6b1c7744d013a4ddd3e3dce3485d"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/zh/common.json",
+        "source": "D:/ClawX/shared/i18n/locales/zh/common.json",
+        "sha256": "48da39fec7e661787a89d77d42acf3ac850aee10fe07636db5e47392f7fda42a"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/zh/settings.json",
+        "source": "D:/ClawX/shared/i18n/locales/zh/settings.json",
+        "sha256": "ca2dfce8daec1cf3a7e7055b5a11ea3c6a8b9979469c4d14f20630cff8fb9d72"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/zh/dashboard.json",
+        "source": "D:/ClawX/shared/i18n/locales/zh/dashboard.json",
+        "sha256": "aa609963de1af5213a56a58b051f8b745173b968be92fd8d28a4e1c4ded065f0"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/zh/chat.json",
+        "source": "D:/tmp/unified-management-20261109/migration-main-integration/after/shared/i18n/locales/zh/chat.json",
+        "sha256": "99563a4a349e596b5ab74c52d4c07ff2df2cc09463a5090a0c8dd1b25b59d0b8"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/zh/channels.json",
+        "source": "D:/ClawX/shared/i18n/locales/zh/channels.json",
+        "sha256": "a8a53a0edcce865db6ce10fc6c7cd428965509999b55128a0caa9bd9d386c0f4"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/zh/agents.json",
+        "source": "D:/ClawX/shared/i18n/locales/zh/agents.json",
+        "sha256": "88f6e8ca4abbe319a0aafe4f3f164ec9ace1c3f8d202a07b9ab6318c35289057"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/zh/observability.json",
+        "source": "D:/ClawX/shared/i18n/locales/zh/observability.json",
+        "sha256": "580ed82dd636d417405a599ae437f6b7f06d7903aea44a7e6b423ce45f744aee"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/zh/skills.json",
+        "source": "D:/ClawX/shared/i18n/locales/zh/skills.json",
+        "sha256": "1da56ee96988ae48f2b9d47199374b19ccf39490ca10bd73b6b72c17c43702db"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/zh/cron.json",
+        "source": "D:/ClawX/shared/i18n/locales/zh/cron.json",
+        "sha256": "507f6f06a5ec9cddad87949155183070ac745690dd34f84ecaab9342e00f1a81"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/zh/dreams.json",
+        "source": "D:/ClawX/shared/i18n/locales/zh/dreams.json",
+        "sha256": "2124ee953c9b6d396381b2c2e4fd04f99ff46d16aaf6ff2ae8b537e2f0cf3e5d"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/zh/setup.json",
+        "source": "D:/ClawX/shared/i18n/locales/zh/setup.json",
+        "sha256": "f15459811ac4b25bb5b8737875536dea041226c4ce77847410b3c269a4f21f49"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/zh/menu.json",
+        "source": "D:/ClawX/shared/i18n/locales/zh/menu.json",
+        "sha256": "55ff41637a8bffc7a8a35fe390868e0f0b39796e20f9d05141438ab4f3570de9"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/zh/taskLedger.json",
+        "source": "D:/ClawX/shared/i18n/locales/zh/taskLedger.json",
+        "sha256": "211b25fd9c0ea8da3af039a71864fd299712b1468e0123e798ced3eaf5b85ebb"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/zh/remoteTasks.json",
+        "source": "D:/ClawX/shared/i18n/locales/zh/remoteTasks.json",
+        "sha256": "4ecd8ad9340adc8ee27ece697ec76dce15d8142d3772b5fdce48c4ef718625e6"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/zh/clawGraph.json",
+        "source": "D:/ClawX/shared/i18n/locales/zh/clawGraph.json",
+        "sha256": "7f1fdf52592b8dae4b708de0b637bed50b8680be997e9502890419164544d722"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/zh/knowledge.json",
+        "source": "D:/ClawX/shared/i18n/locales/zh/knowledge.json",
+        "sha256": "a740dbdf26dc27969a42a1b96cbe7306d467b82921699b2327ac084a6f23fae3"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/zh/codeReview.json",
+        "source": "D:/ClawX/shared/i18n/locales/zh/codeReview.json",
+        "sha256": "d2e88082c6dbea0e5fd5e9e2ef25bd7e48096bb79cef3bfe90c799465de56be6"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/zh/browser.json",
+        "source": "D:/ClawX/shared/i18n/locales/zh/browser.json",
+        "sha256": "aae552e7d5ae605aa871292bdf8b401412a8bdab5c7d36302299b9ebb7765b8f"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/zh/inbox.json",
+        "source": "D:/ClawX/shared/i18n/locales/zh/inbox.json",
+        "sha256": "6f1827c307b98c170349a2a807622b7ba174e943a777ecbdee2674b39ec49078"
+      },
+      {
+        "file": "D:/ClawX/src/i18n/bundles/ja.ts",
+        "source": "D:/ClawX/src/i18n/bundles/ja.ts",
+        "sha256": "fc7a56454165d8923124faa5da830e2e3ca0185be1fdd5447ce9efd5756ca1ee"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ja/common.json",
+        "source": "D:/ClawX/shared/i18n/locales/ja/common.json",
+        "sha256": "b530990095ddd0f3915cd52c29d3dba4a17b8529e1ddeddbb7921b3f99e4075e"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ja/settings.json",
+        "source": "D:/ClawX/shared/i18n/locales/ja/settings.json",
+        "sha256": "7cfd66809a6b82ca277c7807fef30297a89aeb4c629c665e4382f1a67241cb13"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ja/dashboard.json",
+        "source": "D:/ClawX/shared/i18n/locales/ja/dashboard.json",
+        "sha256": "b243e62a072744b5021e955b11aa1e8bdcb43c4b394829fac3c852b28231e7b6"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ja/chat.json",
+        "source": "D:/tmp/unified-management-20261109/migration-main-integration/after/shared/i18n/locales/ja/chat.json",
+        "sha256": "23a122241b74aaf67d7e7bc4444d34c2f76ba4e4551b37c360655a0170ee2e7b"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ja/channels.json",
+        "source": "D:/ClawX/shared/i18n/locales/ja/channels.json",
+        "sha256": "26e1d8c02a1a42b86496966e90829356bdbc12d10aa81325560b5ca21973bf2d"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ja/agents.json",
+        "source": "D:/ClawX/shared/i18n/locales/ja/agents.json",
+        "sha256": "2416c76add3ad689268f83fd6cdcc198bdfa44cc0c4ad65e849233d12b374d77"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ja/observability.json",
+        "source": "D:/ClawX/shared/i18n/locales/ja/observability.json",
+        "sha256": "0310096b3b2a01c771f85abb392b6baeed15325ce881ab17cc5cbf353b5f81cf"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ja/skills.json",
+        "source": "D:/ClawX/shared/i18n/locales/ja/skills.json",
+        "sha256": "7bc02d8fbc425bca5c3f65501cff1bf3108dda4be5668fbdb76a0bdd85936730"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ja/cron.json",
+        "source": "D:/ClawX/shared/i18n/locales/ja/cron.json",
+        "sha256": "9d12722bcb0adac84b4bd7f930a2e76a813309b6aae7127a3eda8e9d84732265"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ja/dreams.json",
+        "source": "D:/ClawX/shared/i18n/locales/ja/dreams.json",
+        "sha256": "f13e0b2790e6efcfe403213ffac80d3fa1fb9713a87ce775d12f97788320dbbd"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ja/setup.json",
+        "source": "D:/ClawX/shared/i18n/locales/ja/setup.json",
+        "sha256": "5d2bebc4821a42f4fae4a8a3302341f86703400b5787fc708a0726b2c66018b8"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ja/menu.json",
+        "source": "D:/ClawX/shared/i18n/locales/ja/menu.json",
+        "sha256": "8299ddb615031a0ca2bcf64baec909c03de47db782991c0356657ea0d216f257"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ja/taskLedger.json",
+        "source": "D:/ClawX/shared/i18n/locales/ja/taskLedger.json",
+        "sha256": "aa987ef5c6e5134d785394beed8cae46b243786eeb1668bd78c75df33731f05a"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ja/remoteTasks.json",
+        "source": "D:/ClawX/shared/i18n/locales/ja/remoteTasks.json",
+        "sha256": "e3864613bfe45499bf6f5f5d40e511bd2a441109c02f1f65d56fbc8cb51a3596"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ja/clawGraph.json",
+        "source": "D:/ClawX/shared/i18n/locales/ja/clawGraph.json",
+        "sha256": "06c11910548735666c76ab80557dc97a181c287bf165c367082e7364eb3ed6b7"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ja/knowledge.json",
+        "source": "D:/ClawX/shared/i18n/locales/ja/knowledge.json",
+        "sha256": "ac853d7484bcfdc8b4a7315a95d2fa6952d57a95b04ca88fe1dd242700778230"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ja/codeReview.json",
+        "source": "D:/ClawX/shared/i18n/locales/ja/codeReview.json",
+        "sha256": "a993b91b35c1ee6fe8b9101a09ce06c8365aeb76c49d325e898db8a327a45221"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ja/browser.json",
+        "source": "D:/ClawX/shared/i18n/locales/ja/browser.json",
+        "sha256": "5dc3ea66e2f23312bf687f3eae76b47ff26bd63ee08deee1ddf54094ef2987ac"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ja/inbox.json",
+        "source": "D:/ClawX/shared/i18n/locales/ja/inbox.json",
+        "sha256": "4fb7eff24ce02bf000cf6d071c6a589386ea485318883e20b25b91bdecfcb469"
+      },
+      {
+        "file": "D:/ClawX/src/i18n/bundles/ru.ts",
+        "source": "D:/ClawX/src/i18n/bundles/ru.ts",
+        "sha256": "368ba30345ad8c83aa2a71b7436f7c78e08f935fa33be64eb0b276fa3fa60a38"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ru/common.json",
+        "source": "D:/ClawX/shared/i18n/locales/ru/common.json",
+        "sha256": "de414afa343de30f4ed8c3fa87f2d84853e588769e9347982c40a063210e5ffc"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ru/settings.json",
+        "source": "D:/ClawX/shared/i18n/locales/ru/settings.json",
+        "sha256": "dcb314e06ba2e8386558014ecb5fa78f4e6aaca6bf82cbefbed1614d2bca243e"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ru/dashboard.json",
+        "source": "D:/ClawX/shared/i18n/locales/ru/dashboard.json",
+        "sha256": "1a3ba258990211f6c6feba460d7b5ef31a571c968321e90e3139ce4018e41320"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ru/chat.json",
+        "source": "D:/tmp/unified-management-20261109/migration-main-integration/after/shared/i18n/locales/ru/chat.json",
+        "sha256": "fbeba50496ccc7fca7434b842d0146e37ffec17247067e4dd9ba87b5bdba1370"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ru/channels.json",
+        "source": "D:/ClawX/shared/i18n/locales/ru/channels.json",
+        "sha256": "9d738e32de46d39c686d11b77788daffe8e1770c5b19e31f0fbe7aef5aeb0b03"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ru/agents.json",
+        "source": "D:/ClawX/shared/i18n/locales/ru/agents.json",
+        "sha256": "e179fd75d6bbc11bb7d6d8e5c37cbb093005dead9f8879aabec6f387fcf86918"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ru/observability.json",
+        "source": "D:/ClawX/shared/i18n/locales/ru/observability.json",
+        "sha256": "0576f833c7c252edf067cf679bea3884ec6ec5d418c4e4b8031a0d722dacfdbb"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ru/skills.json",
+        "source": "D:/ClawX/shared/i18n/locales/ru/skills.json",
+        "sha256": "a91995dffaf86fc091493f5651cb1b8d401fb1ea161caa1fdc8b692cd762bd1f"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ru/cron.json",
+        "source": "D:/ClawX/shared/i18n/locales/ru/cron.json",
+        "sha256": "e79e97361bcfdb272887582882bef1fa902cc9058b976d09ddcd8dfdc158cdb8"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ru/dreams.json",
+        "source": "D:/ClawX/shared/i18n/locales/ru/dreams.json",
+        "sha256": "404802dc01b51abc26274482583ef7f42241b2741de2a056d0c5018845e78150"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ru/setup.json",
+        "source": "D:/ClawX/shared/i18n/locales/ru/setup.json",
+        "sha256": "11964fcefee401700930dc7de2daa7c739bd9f122171f9783526e4a515ef091a"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ru/menu.json",
+        "source": "D:/ClawX/shared/i18n/locales/ru/menu.json",
+        "sha256": "b4459a223cf346a19c399df78248d8b83605142cf65d4413126abb262f8ea571"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ru/taskLedger.json",
+        "source": "D:/ClawX/shared/i18n/locales/ru/taskLedger.json",
+        "sha256": "2ab430e9d8c31d0719092a99de94f084ecf5b638fe82400af2a3c0109b99dbbd"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ru/remoteTasks.json",
+        "source": "D:/ClawX/shared/i18n/locales/ru/remoteTasks.json",
+        "sha256": "522441446fba41669c0fad442eff873d5821667a82a7d02554434ac5f4dfa0b7"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ru/clawGraph.json",
+        "source": "D:/ClawX/shared/i18n/locales/ru/clawGraph.json",
+        "sha256": "c1c0189a14b31036ef16d5c6f04d4601feaaaef4a3c006d82736d1e6f9b377fb"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ru/knowledge.json",
+        "source": "D:/ClawX/shared/i18n/locales/ru/knowledge.json",
+        "sha256": "438cfc8ec23d375778a10ecace76d589087463b6bedce27f6368b7e92618ba7d"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ru/codeReview.json",
+        "source": "D:/ClawX/shared/i18n/locales/ru/codeReview.json",
+        "sha256": "2ae96178a6397df4b57e18323c0f9191d3c085f262a180ba6bdfcc63523e488c"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ru/browser.json",
+        "source": "D:/ClawX/shared/i18n/locales/ru/browser.json",
+        "sha256": "96dbe06783ad7c804a04e91f3f7bf2efd167903d6d3941927666a031bb1d658a"
+      },
+      {
+        "file": "D:/ClawX/shared/i18n/locales/ru/inbox.json",
+        "source": "D:/ClawX/shared/i18n/locales/ru/inbox.json",
+        "sha256": "3976ba5e2895f1edc32fd8559b23ce73b1ff52eda80c466ea0b7600945c1eabe"
+      },
+      {
+        "file": "D:/ClawX/src/stores/chat/history-transcript-hydrate.ts",
+        "source": "D:/ClawX/src/stores/chat/history-transcript-hydrate.ts",
+        "sha256": "7c097357611e1779f07f532a777ed4bd60dfa2a2a274ad710fd360fce451c95e"
+      },
+      {
+        "file": "D:/ClawX/src/stores/chat/history-transcript-merge.ts",
+        "source": "D:/ClawX/src/stores/chat/history-transcript-merge.ts",
+        "sha256": "6ea416de1b44805ca20e0d989d34b35662a151bf9140946e788f7afb31f93b2f"
+      },
+      {
+        "file": "D:/ClawX/src/stores/chat/helpers.ts",
+        "source": "D:/ClawX/src/stores/chat/helpers.ts",
+        "sha256": "8bca28a097036b5c9e8f7381a6faaef20310bebc6327fb9f61b15cd8baf6fedc"
+      },
+      {
+        "file": "D:/ClawX/src/pages/Chat/conversation-resources.ts",
+        "source": "D:/ClawX/src/pages/Chat/conversation-resources.ts",
+        "sha256": "fd4a8d17b6b565645081e449d99a1553e7349e83759834127b61ee9f30f76730"
+      },
+      {
+        "file": "D:/ClawX/shared/security/url-policy.ts",
+        "source": "D:/ClawX/shared/security/url-policy.ts",
+        "sha256": "b11c8d42f6189f2b07b5495a4e443b96473d0aedbd1e67e443d252714f47a49c"
+      },
+      {
+        "file": "D:/ClawX/src/pages/Chat/message-utils.ts",
+        "source": "D:/ClawX/src/pages/Chat/message-utils.ts",
+        "sha256": "c2aaef4ab39e59a6b7572de2df0fb481d80e12da3b984fe422528c41d5817ded"
+      },
+      {
+        "file": "D:/ClawX/src/stores/chat/session-label-hydration.ts",
+        "source": "D:/ClawX/src/stores/chat/session-label-hydration.ts",
+        "sha256": "3e9824b17732e4949b0e1692ecda6caf4cd6c0baa52d98cef2895a2601a091f0"
+      },
+      {
+        "file": "D:/ClawX/src/stores/chat/store-api.ts",
+        "source": "D:/ClawX/src/stores/chat/store-api.ts",
+        "sha256": "017dd882a5b6af7704d8160b86ce755de2ab83e7663161cfb531426310207651"
+      },
+      {
+        "file": "D:/ClawX/src/stores/chat/runtime-graph.ts",
+        "source": "D:/ClawX/src/stores/chat/runtime-graph.ts",
+        "sha256": "9efcf3edb0a001cfc4d6cac63193c1d1f472a3644437e0dc8a1bb461add2fa3a"
+      },
+      {
+        "file": "D:/ClawX/src/stores/chat/frame-publication.ts",
+        "source": "D:/ClawX/src/stores/chat/frame-publication.ts",
+        "sha256": "02dd1407485a1ab9f005ec6f18f33a9ce127972ab62103dbaad5a1f0b926ad77"
+      },
+      {
+        "file": "D:/ClawX/src/stores/chat/turn-ledger-recorder.ts",
+        "source": "D:/ClawX/src/stores/chat/turn-ledger-recorder.ts",
+        "sha256": "e0e9ec2fcbbc82c1df1533c369b657f9269bc1abd3c753e5e128f134222e5e26"
+      },
+      {
+        "file": "D:/ClawX/src/components/ui/button.tsx",
+        "source": "D:/ClawX/src/components/ui/button.tsx",
+        "sha256": "bc0d419b37cc78386af87001821d16506919523ff9d10429c7ac2d3e1c2c9a86"
+      },
+      {
+        "file": "D:/ClawX/src/lib/utils.ts",
+        "source": "D:/ClawX/src/lib/utils.ts",
+        "sha256": "9bebb17b24bfe24a4862f2f39f9a2a68f4a875e1b714a48648a3f9ea3a5ff255"
+      },
+      {
+        "file": "D:/ClawX/src/components/ui/dialog.tsx",
+        "source": "D:/ClawX/src/components/ui/dialog.tsx",
+        "sha256": "7e600130bc4e4fb244ad256ddf32b0115e01a0ed86d755fcd8fd987c2a0b4b64"
+      },
+      {
+        "file": "D:/ClawX/src/components/ui/overlay-portal.tsx",
+        "source": "D:/ClawX/src/components/ui/overlay-portal.tsx",
+        "sha256": "c3689450ead606554c3c95ad757bd12b03203512c771dd61fa884d9fc5d4f8e0"
+      },
+      {
+        "file": "D:/ClawX/src/components/task-ledger/TaskLedgerSummaryPanel.tsx",
+        "source": "D:/ClawX/src/components/task-ledger/TaskLedgerSummaryPanel.tsx",
+        "sha256": "cfb192b765563eff3e279ba080008ea5d977e30e8c4e7d77fd8ca30d4c03b33b"
+      },
+      {
+        "file": "D:/ClawX/src/components/ui/badge.tsx",
+        "source": "D:/ClawX/src/components/ui/badge.tsx",
+        "sha256": "0c5f4304ec643c225edfe5f53fe3215f408c0a24449bc974fad5ce2e010e6d65"
+      },
+      {
+        "file": "D:/ClawX/src/components/ui/sheet.tsx",
+        "source": "D:/ClawX/src/components/ui/sheet.tsx",
+        "sha256": "8ca8bf2d733fcd0b23490410d156fb05229e3317e75316354c3bab00e78d87b3"
+      },
+      {
+        "file": "D:/ClawX/src/pages/Chat/use-session-reading-position.ts",
+        "source": "D:/ClawX/src/pages/Chat/use-session-reading-position.ts",
+        "sha256": "43cc590eb865db112611117ce629ade2efcf2bfd0edf27e97a1185d0bdf8b67b"
+      },
+      {
+        "file": "D:/ClawX/src/components/icons/codex-icons.tsx",
+        "source": "D:/ClawX/src/components/icons/codex-icons.tsx",
+        "sha256": "c47b15c518ecc4646c2531e089b4a67edda5947c830e681b18be3ad6fa1d9121"
+      },
+      {
+        "file": "D:/ClawX/src/pages/Chat/ComposerGitStrip.tsx",
+        "source": "D:/ClawX/src/pages/Chat/ComposerGitStrip.tsx",
+        "sha256": "944f186139928b5fb0395221f00097f2fe2e0fd6b1629c7e6ab9486259b4bc9e"
+      },
+      {
+        "file": "D:/ClawX/src/components/settings/primitives/usePopover.ts",
+        "source": "D:/ClawX/src/components/settings/primitives/usePopover.ts",
+        "sha256": "04519acfe1e74834525f9400b7d8c9dd6e1cd13692d5e461654d1e9f85be7a11"
+      },
+      {
+        "file": "D:/ClawX/src/lib/git-ui.ts",
+        "source": "D:/ClawX/src/lib/git-ui.ts",
+        "sha256": "713ae785b8ff6ddbaa4ff5c68689361043af2ef27c775834d6bae49f2720c018"
+      },
+      {
+        "file": "D:/ClawX/src/pages/Chat/SessionTaskDock.tsx",
+        "source": "D:/ClawX/src/pages/Chat/SessionTaskDock.tsx",
+        "sha256": "3caf559d15d0c83fdee7b12132ae013958a1c2588f4d351e535c331c372d5dc1"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/plan-view.tsx",
+        "source": "D:/ClawX/src/components/tool-ui/plan-view.tsx",
+        "sha256": "055c8bc9bd149fda116c62194f875c1b65ad8f3e87d58bee07631a309371490d"
+      },
+      {
+        "file": "D:/ClawX/src/components/assistant-ui/number-roll.tsx",
+        "source": "D:/ClawX/src/components/assistant-ui/number-roll.tsx",
+        "sha256": "38e125d6ed84ffd09d273bce400efab2ff1a4bdf34c22a7e9740a8a3ca5de4a2"
+      },
+      {
+        "file": "D:/ClawX/src/pages/Chat/run-surface-promotion.ts",
+        "source": "D:/ClawX/src/pages/Chat/run-surface-promotion.ts",
+        "sha256": "65621852bdb030deb9ec81cbec8ae84ec4cf8b34f74b1342013dbfe206f1a676"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/run-surfaces.ts",
+        "source": "D:/ClawX/src/components/tool-ui/run-surfaces.ts",
+        "sha256": "28345f91cf408aaf7d1d48545b2a13aa303cfdbc0a0f61a377b28a779a8f218f"
+      },
+      {
+        "file": "D:/ClawX/src/pages/Chat/task-visualization.ts",
+        "source": "D:/ClawX/src/pages/Chat/task-visualization.ts",
+        "sha256": "16c1b5a02155c147c4f5a0ae71c29cdf74965c5c554b41bee1019988b0a21a08"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/agent-interactions.tsx",
+        "source": "D:/ClawX/src/components/tool-ui/agent-interactions.tsx",
+        "sha256": "be000a4ab1c1c80cda69ff5780f7a4e2448d459c41ee17e10f1bc23e660c6cce"
+      },
+      {
+        "file": "D:/ClawX/src/components/assistant-render/resources/ConversationImage.tsx",
+        "source": "D:/ClawX/src/components/assistant-render/resources/ConversationImage.tsx",
+        "sha256": "1a2540474e2a758dfc6f9275c40425f36ee1f7d4521a0e2194d3110adf2450d9"
+      },
+      {
+        "file": "D:/ClawX/src/components/assistant-ui/attachment.tsx",
+        "source": "D:/ClawX/src/components/assistant-ui/attachment.tsx",
+        "sha256": "78757c271a9a922f79ce11db0fb94cdc6cc60b3cb8000165dbb16bc538d5ddcd"
+      },
+      {
+        "file": "D:/ClawX/src/components/assistant-render/resources/ImageLightbox.tsx",
+        "source": "D:/ClawX/src/components/assistant-render/resources/ImageLightbox.tsx",
+        "sha256": "ae3603ec43773971c838e80bd6e76fa2d1d9ad91f7536e69ea310701d0110430"
+      },
+      {
+        "file": "D:/ClawX/src/components/ui/tooltip.tsx",
+        "source": "D:/ClawX/src/components/ui/tooltip.tsx",
+        "sha256": "c47c4def6d026217d57d03e31ef4303ee49e3e13ef861d5311308958bc3fab2f"
+      },
+      {
+        "file": "D:/ClawX/src/components/assistant-render/resources/ResourceCards.tsx",
+        "source": "D:/ClawX/src/components/assistant-render/resources/ResourceCards.tsx",
+        "sha256": "64613aac1ffc965941e551ac0e766eb1d9eeaddee875871fb26ffcc80eeeb818"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/shared/use-copy-to-clipboard.ts",
+        "source": "D:/ClawX/src/components/tool-ui/shared/use-copy-to-clipboard.ts",
+        "sha256": "ee7de63c6da9889cf93bf57d10765498f0da4e54072e48394f14e8e5d0f1cf45"
+      },
+      {
+        "file": "D:/ClawX/src/stores/artifact-panel.ts",
+        "source": "D:/ClawX/src/stores/artifact-panel.ts",
+        "sha256": "7712201de42c3bc430f1fc928d2b24d0af5638c6ce90aae265ac449d6dcd8585"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/types.ts",
+        "source": "D:/ClawX/src/components/file-preview/types.ts",
+        "sha256": "ea841d9b0a94fca1e210601fe0fbcad41126feca1e29c2b5458dbeaa15ceceb6"
+      },
+      {
+        "file": "D:/ClawX/src/components/ui/label.tsx",
+        "source": "D:/ClawX/src/components/ui/label.tsx",
+        "sha256": "d51e58f3787af329c68da082d045399ed898e7a4fb7e2f60d9f4d062307c8865"
+      },
+      {
+        "file": "D:/ClawX/src/components/ui/select.tsx",
+        "source": "D:/ClawX/src/components/ui/select.tsx",
+        "sha256": "3bd9bedb03da6e178a36bdd2b37c4a98a58ffb715e4f6290f1956b8c080998ec"
+      },
+      {
+        "file": "D:/ClawX/src/components/ui/separator.tsx",
+        "source": "D:/ClawX/src/components/ui/separator.tsx",
+        "sha256": "05b9e7b23eb56c5bdbd94d3f751383a8a38299538277dbb4e5e70129065d93c8"
+      },
+      {
+        "file": "D:/ClawX/src/components/ui/switch.tsx",
+        "source": "D:/ClawX/src/components/ui/switch.tsx",
+        "sha256": "d7a6e7c99d4f6ef8aad5fd6aa3580603cdc93e0d020a198840b04ff25d2b9359"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/chart/chart-view.tsx",
+        "source": "D:/ClawX/src/components/tool-ui/chart/chart-view.tsx",
+        "sha256": "5d2e64b734b64798ca43156794db20c1edf38c6ce4d1ed6e2c9791a9ce0641ac"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/chart/chart-geometry.ts",
+        "source": "D:/ClawX/src/components/tool-ui/chart/chart-geometry.ts",
+        "sha256": "0596f27adab1fc074e26380a4e636cfee387a2284ca04a49bb9dc34badd910f6"
+      },
+      {
+        "file": "D:/ClawX/src/components/ai-elements/test-results.tsx",
+        "source": "D:/ClawX/src/components/ai-elements/test-results.tsx",
+        "sha256": "d6309edec19511550410f16263396e0e6a8e3d35904651ec700be65584278356"
+      },
+      {
+        "file": "D:/ClawX/src/components/ui/collapsible.tsx",
+        "source": "D:/ClawX/src/components/ui/collapsible.tsx",
+        "sha256": "fbc5a6fde41dd3351fd4932faae727114891a0ae4d462df0f25b569ffb2b078e"
+      },
+      {
+        "file": "D:/ClawX/src/components/ai-elements/card.tsx",
+        "source": "D:/ClawX/src/components/ai-elements/card.tsx",
+        "sha256": "12c69c9526d3d025e9aebfc6977d36773358e344f6ba3edc70fbc58509ff8329"
+      },
+      {
+        "file": "D:/ClawX/src/components/ai-elements/stack-trace.tsx",
+        "source": "D:/ClawX/src/components/ai-elements/stack-trace.tsx",
+        "sha256": "80017974e3f2446b4512195d0b6cb3dccd4d2de9161dea402cfca556f306af21"
+      },
+      {
+        "file": "D:/ClawX/src/components/ai-elements/chain-of-thought.tsx",
+        "source": "D:/ClawX/src/components/ai-elements/chain-of-thought.tsx",
+        "sha256": "53ec9ab40ec394a5bcb99b61f8fe6078a54345951e85053b2884839dbe4f6656"
+      },
+      {
+        "file": "D:/ClawX/src/components/ai-elements/task.tsx",
+        "source": "D:/ClawX/src/components/ai-elements/task.tsx",
+        "sha256": "890b70e46b2c3524f581c765fd7e2e53f0d09aa61145ba077fbc94cdd99aa9c8"
+      },
+      {
+        "file": "D:/ClawX/src/components/ai-elements/reasoning.tsx",
+        "source": "D:/ClawX/src/components/ai-elements/reasoning.tsx",
+        "sha256": "31fed59fad9afc3d19ededcf07edce85ab53926ff2e5944e124c537bfb4bf771"
+      },
+      {
+        "file": "D:/ClawX/src/components/ai-elements/shimmer.tsx",
+        "source": "D:/ClawX/src/components/ai-elements/shimmer.tsx",
+        "sha256": "888e034fa667b19edea8b086731a0959a463d59ea1f968e80abf2d3b80e2044a"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/approval-card/index.tsx",
+        "source": "D:/ClawX/src/components/tool-ui/approval-card/index.tsx",
+        "sha256": "c538fb0912b65d8175e7e3cbf72807c5ca1c5ad98ce12616c8f1eb49c158f4fc"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/approval-card/approval-card.tsx",
+        "source": "D:/ClawX/src/components/tool-ui/approval-card/approval-card.tsx",
+        "sha256": "642c017cc8512899623ed4a2948beb7f90628d861d45e008b04a82db7436a6c4"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/approval-card/_adapter.tsx",
+        "source": "D:/ClawX/src/components/tool-ui/approval-card/_adapter.tsx",
+        "sha256": "efddecd95a0df9f5cc9d997e439042f5a9b875888336d612d28e7238d0ea5937"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/approval-card/schema.ts",
+        "source": "D:/ClawX/src/components/tool-ui/approval-card/schema.ts",
+        "sha256": "24bbd43864838ef518ea8b2ef27f06d0d955551e9fe884356b7685e4a6317fa7"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/shared/schema.ts",
+        "source": "D:/ClawX/src/components/tool-ui/shared/schema.ts",
+        "sha256": "aaa77e580338b90059a6bfc9a6c1a810913f4f13a958a97f5cd4ddb362f38e7d"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/shared/contract.ts",
+        "source": "D:/ClawX/src/components/tool-ui/shared/contract.ts",
+        "sha256": "549d3572e17e5f42666a513db344f3e46e5118fb31ae8b09c829fe66c9fe1650"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/shared/parse.ts",
+        "source": "D:/ClawX/src/components/tool-ui/shared/parse.ts",
+        "sha256": "8839af540bebc2bf95da3dcbf30500f13a2c53e701b98d7ac285c6a64845c9b0"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/shared/action-buttons.tsx",
+        "source": "D:/ClawX/src/components/tool-ui/shared/action-buttons.tsx",
+        "sha256": "ae2550c8f816d743d15946bcf9f087f5b3fe7f5e5ad959e36a4d8fd423ea5dff"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/shared/_adapter.tsx",
+        "source": "D:/ClawX/src/components/tool-ui/shared/_adapter.tsx",
+        "sha256": "8fd4932a06bff0591e69ec6dc0a22c9afd8154e435cbf05e9660f173548854f7"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/shared/use-action-buttons.tsx",
+        "source": "D:/ClawX/src/components/tool-ui/shared/use-action-buttons.tsx",
+        "sha256": "e94961a388927a016fa6c4c1bb095c5330c850995dbdc4e7e0704349ce45013a"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/code-diff/index.tsx",
+        "source": "D:/ClawX/src/components/tool-ui/code-diff/index.tsx",
+        "sha256": "b0e6db8ebeba3439832bb5bb3b820fadfaabb845a3867a063dfd5a1cda19d41f"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/code-diff/code-diff.tsx",
+        "source": "D:/ClawX/src/components/tool-ui/code-diff/code-diff.tsx",
+        "sha256": "8fb52c9cc8926eeb0930ac443e7e63b9cf25bd80ef98664f6b33e863cbc51d93"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/code-diff/schema.ts",
+        "source": "D:/ClawX/src/components/tool-ui/code-diff/schema.ts",
+        "sha256": "f16cebf38777aeda7d995b872ce54eacc78307aacafce991a6b81b0fede6b760"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/code-diff/_adapter.tsx",
+        "source": "D:/ClawX/src/components/tool-ui/code-diff/_adapter.tsx",
+        "sha256": "8fd4932a06bff0591e69ec6dc0a22c9afd8154e435cbf05e9660f173548854f7"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/progress-tracker/index.tsx",
+        "source": "D:/ClawX/src/components/tool-ui/progress-tracker/index.tsx",
+        "sha256": "cf35e045704f4dcdda8f15d4ae6210d6a8bae951d16c395f71ec37c51b3f5777"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/progress-tracker/progress-tracker.tsx",
+        "source": "D:/ClawX/src/components/tool-ui/progress-tracker/progress-tracker.tsx",
+        "sha256": "96fa680399ff844097732399c043e0e9f461f89dcc5c54ff210c55a17cb459c9"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/progress-tracker/_adapter.tsx",
+        "source": "D:/ClawX/src/components/tool-ui/progress-tracker/_adapter.tsx",
+        "sha256": "8a662bc839579bcdecc7fc523166dff289200e5f6b4038da800ab143e8af6984"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/progress-tracker/schema.ts",
+        "source": "D:/ClawX/src/components/tool-ui/progress-tracker/schema.ts",
+        "sha256": "0bed6ecaa2f0c5d186f1e0bb193e410a9f49e77a745fdb392106e57d8b7827e6"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/terminal/index.tsx",
+        "source": "D:/ClawX/src/components/tool-ui/terminal/index.tsx",
+        "sha256": "13dfb338a13a9a038f41832fedd82cdcc3be09d23cb27b84cf80e0254d856cef"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/terminal/terminal.tsx",
+        "source": "D:/ClawX/src/components/tool-ui/terminal/terminal.tsx",
+        "sha256": "96f7a1b763c5849c7c44c8f87eba8ef090484f8127ab92c82958df663e8bed69"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/terminal/schema.ts",
+        "source": "D:/ClawX/src/components/tool-ui/terminal/schema.ts",
+        "sha256": "39132961d1e6d363b6983a61b2c0266a2334adffad78518aaaff7e534b9a03f3"
+      },
+      {
+        "file": "D:/ClawX/src/components/assistant-ui/orb-status.tsx",
+        "source": "D:/ClawX/src/components/assistant-ui/orb-status.tsx",
+        "sha256": "ce8e61e1f0f04f0eb78ca47776c67668bc8a57ebbcf2323432c4ea5d2a4ad186"
+      },
+      {
+        "file": "D:/ClawX/src/components/assistant-ui/dot-matrix.tsx",
+        "source": "D:/ClawX/src/components/assistant-ui/dot-matrix.tsx",
+        "sha256": "a2bec1903fdb9e00e04c923710968b33668e83cbc795976ad8df61a29c9d06a4"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/terminal/_adapter.tsx",
+        "source": "D:/ClawX/src/components/tool-ui/terminal/_adapter.tsx",
+        "sha256": "8fd4932a06bff0591e69ec6dc0a22c9afd8154e435cbf05e9660f173548854f7"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/weather-widget/runtime.ts",
+        "source": "D:/ClawX/src/components/tool-ui/weather-widget/runtime.ts",
+        "sha256": "256c30fe1e452ca884c581f0e16ed584489fb98179be0c2fb9d4c7e55fa26ce7"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/weather-widget/weather-widget-container.tsx",
+        "source": "D:/ClawX/src/components/tool-ui/weather-widget/weather-widget-container.tsx",
+        "sha256": "ee57e24f400dea48cd3616b078c7d88aadd7942655f1ebb4674c99f41a7cd50b"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/weather-widget/generated/weather-runtime-core.generated.ts",
+        "source": "D:/ClawX/src/components/tool-ui/weather-widget/generated/weather-runtime-core.generated.ts",
+        "sha256": "a54db14034a80ac637e0ee099ae70880c308a4291e1ac44148e2b98e99167689"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/weather-widget/schema-runtime.ts",
+        "source": "D:/ClawX/src/components/tool-ui/weather-widget/schema-runtime.ts",
+        "sha256": "c006911d2f1f2efca1e7f473bbdf7cb7cd7e9f02e441eb2ce41d129070e1579e"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/weather-widget/weather-data-overlay.tsx",
+        "source": "D:/ClawX/src/components/tool-ui/weather-widget/weather-data-overlay.tsx",
+        "sha256": "8e8e17c50b2c063dd173f6c5def48daebf4dcab4296ebcfc4166a9a733e5e682"
+      },
+      {
+        "file": "D:/ClawX/src/components/rareui/WebSearch.tsx",
+        "source": "D:/ClawX/src/components/rareui/WebSearch.tsx",
+        "sha256": "886c52ec9a61cb1183f5c56215ef60794722d1655c86cb85e1ef95844e198d41"
+      },
+      {
+        "file": "D:/ClawX/src/stores/providers.ts",
+        "source": "D:/ClawX/src/stores/providers.ts",
+        "sha256": "dbe98ad303d2b539fb6a7ce5e346deafd2ca8b65de3a173c932386862234e4ae"
+      },
+      {
+        "file": "D:/ClawX/src/lib/providers.ts",
+        "source": "D:/ClawX/src/lib/providers.ts",
+        "sha256": "f4495962cd20d1ad34dce1f31f34c60509f95c7b54effb742c371ad065e34936"
+      },
+      {
+        "file": "D:/ClawX/src/assets/providers/index.ts",
+        "source": "D:/ClawX/src/assets/providers/index.ts",
+        "sha256": "c4ded0aec9babbe21863ded5d853aa3befaec78514891ac256018ff49bd5cf8e"
+      },
+      {
+        "file": "D:/ClawX/src/lib/provider-accounts.ts",
+        "source": "D:/ClawX/src/lib/provider-accounts.ts",
+        "sha256": "9183d03a4b8173948bee810e8bde7703e1b1fc3d1510c2589bc8194b78f15c43"
+      },
+      {
+        "file": "D:/ClawX/src/stores/settings.ts",
+        "source": "D:/ClawX/src/stores/settings.ts",
+        "sha256": "da4720bdf894006f6db4bd14289037eb427d1938f5c69b4561518d3160118c15"
+      },
+      {
+        "file": "D:/ClawX/src/lib/setup-provider.ts",
+        "source": "D:/ClawX/src/lib/setup-provider.ts",
+        "sha256": "a7cc455aec4a16880ade3f1d8f09cc3abed3d0dcdfb84aa65724f4211221c59a"
+      },
+      {
+        "file": "D:/ClawX/src/stores/session-intent.ts",
+        "source": "D:/ClawX/src/stores/session-intent.ts",
+        "sha256": "2e6834938dc8f1c7e9fc3919045e46f1214280f0d72ffbbaa212ec6a3b7b22e1"
+      },
+      {
+        "file": "D:/ClawX/src/lib/user-error.ts",
+        "source": "D:/ClawX/src/lib/user-error.ts",
+        "sha256": "4d340d1b706a5f4372f253a8e3acae08839e52a7141056eee94ad24ef3be24ea"
+      },
+      {
+        "file": "D:/ClawX/src/lib/error-message.ts",
+        "source": "D:/ClawX/src/lib/error-message.ts",
+        "sha256": "5788eb4c0c8f25e56059294103c0384bb7d3914657da8523e9cc31c28ac9f928"
+      },
+      {
+        "file": "D:/ClawX/shared/privacy/ui-error-sanitize.ts",
+        "source": "D:/ClawX/shared/privacy/ui-error-sanitize.ts",
+        "sha256": "619f79adaf08d77ddf1cbef8a40eb7eb8e4c9ba2014b8bff2bb8b1db0afad4ab"
+      },
+      {
+        "file": "D:/ClawX/src/components/loading/RouteLoadingShell.tsx",
+        "source": "D:/ClawX/src/components/loading/RouteLoadingShell.tsx",
+        "sha256": "bce4223092712ce139c8c8d8fe9e5f75811d8fc237f8caec19c60039646954e8"
+      },
+      {
+        "file": "D:/ClawX/src/components/loading/StructuralSketch.tsx",
+        "source": "D:/ClawX/src/components/loading/StructuralSketch.tsx",
+        "sha256": "0621b5c0581c23266228bdfacc1a8d89ede744dc1ec7a5fdf53909626579d5d9"
+      },
+      {
+        "file": "D:/ClawX/src/components/magicui/dia-text-reveal.tsx",
+        "source": "D:/ClawX/src/components/magicui/dia-text-reveal.tsx",
+        "sha256": "21db94dbc9d8b9cc275f69ed92f679ba02cc1378fe43e90dffa90d724495b9af"
+      },
+      {
+        "file": "D:/ClawX/src/pages/Chat/ChatMessage.tsx",
+        "source": "D:/ClawX/src/pages/Chat/ChatMessage.tsx",
+        "sha256": "84895df86f63191a98043b8c5706f4e393dd486756456c5b3469b37bb4bd4986"
+      },
+      {
+        "file": "D:/ClawX/src/components/assistant-render/AssistantMarkdown.tsx",
+        "source": "D:/ClawX/src/components/assistant-render/AssistantMarkdown.tsx",
+        "sha256": "35ca9234c76956dccc112b7b93e4386a46ee8f32a46554b934b06ae28131408c"
+      },
+      {
+        "file": "D:/ClawX/src/components/assistant-render/GitHubCard.tsx",
+        "source": "D:/ClawX/src/components/assistant-render/GitHubCard.tsx",
+        "sha256": "367e54faf9eb83735adc9661eafe5d416b8ed12d955f3aa158c66390fe43b41d"
+      },
+      {
+        "file": "D:/ClawX/src/hooks/use-ticking-now.ts",
+        "source": "D:/ClawX/src/hooks/use-ticking-now.ts",
+        "sha256": "c381e09c77f84adaf358bb2a84772751dab6986e222f2f852455d00380dccda8"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/shared/call-chip.tsx",
+        "source": "D:/ClawX/src/components/tool-ui/shared/call-chip.tsx",
+        "sha256": "9d96e94c396b0a99093986b974be5acdc85e0c3c21f23ba4479f4b9d349f04ec"
+      },
+      {
+        "file": "D:/ClawX/src/components/assistant-render/ThinkingReasoning.tsx",
+        "source": "D:/ClawX/src/components/assistant-render/ThinkingReasoning.tsx",
+        "sha256": "95479ca93eaef9d845d3b19222874d21aa831f1a9f77ec0bf09205add1437708"
+      },
+      {
+        "file": "D:/ClawX/src/components/assistant-render/model.ts",
+        "source": "D:/ClawX/src/components/assistant-render/model.ts",
+        "sha256": "9482b70176fff36c4b042638e58a4dcec4604c73ad7668b833f00ab35c3594c0"
+      },
+      {
+        "file": "D:/ClawX/shared/types/usage.ts",
+        "source": "D:/ClawX/shared/types/usage.ts",
+        "sha256": "e766dc5d2eb004790d410995aa9316cc8254a60c6caf0a4206fe75bcb1e4135e"
+      },
+      {
+        "file": "D:/ClawX/src/components/assistant-render/TokenUsageBadge.tsx",
+        "source": "D:/ClawX/src/components/assistant-render/TokenUsageBadge.tsx",
+        "sha256": "f70a0eeecd2ae8f9fd575a0cbf0570eddcea8c41d52eef546d40e2826810721d"
+      },
+      {
+        "file": "D:/ClawX/src/components/assistant-render/KnowledgeDirectiveChip.tsx",
+        "source": "D:/ClawX/src/components/assistant-render/KnowledgeDirectiveChip.tsx",
+        "sha256": "776114dc41bec02b869d43deda8f61e333fe2de23b9b19853512fc546eb9ad65"
+      },
+      {
+        "file": "D:/ClawX/src/components/assistant-render/resources/ConversationMediaCard.tsx",
+        "source": "D:/ClawX/src/components/assistant-render/resources/ConversationMediaCard.tsx",
+        "sha256": "6e5306eabb6db4a88917f0d26917e183ff9d998b376f1b4d0a8fa021d4019e8f"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/open-file-utils.ts",
+        "source": "D:/ClawX/src/components/file-preview/open-file-utils.ts",
+        "sha256": "f69add4a300d8be325023de5b73678a1c7a4a28a23e159e1148059a5fc779dc8"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/format.ts",
+        "source": "D:/ClawX/src/components/file-preview/format.ts",
+        "sha256": "d2b20510a51ac584afe8088d3eb8ee28c15efe96492c983a1b8beb3c1d3a24a7"
+      },
+      {
+        "file": "D:/ClawX/src/components/assistant-render/resources/use-media-object-url.ts",
+        "source": "D:/ClawX/src/components/assistant-render/resources/use-media-object-url.ts",
+        "sha256": "0894c8c01109857fd88c70da05f03d9da56c75635ea1257f1909e9cfdd2e75e6"
+      },
+      {
+        "file": "D:/ClawX/src/pages/Chat/message-render-projection.ts",
+        "source": "D:/ClawX/src/pages/Chat/message-render-projection.ts",
+        "sha256": "b444ec04893f08341adc9902c9d675730cd9a99c9b78af3c7117f62fe82884b5"
+      },
+      {
+        "file": "D:/ClawX/src/pages/Chat/copy-image.ts",
+        "source": "D:/ClawX/src/pages/Chat/copy-image.ts",
+        "sha256": "808174961406b727130f71cd6257bed08e40fc665deb9f12eb56e5d924eabefb"
+      },
+      {
+        "file": "D:/ClawX/src/pages/Chat/ChatInput.tsx",
+        "source": "D:/ClawX/src/pages/Chat/ChatInput.tsx",
+        "sha256": "831fbb7c7e670992a2658a18c92062552eb5d064ff8fc8b781789950bda000aa"
+      },
+      {
+        "file": "D:/ClawX/src/components/ui/textarea.tsx",
+        "source": "D:/ClawX/src/components/ui/textarea.tsx",
+        "sha256": "9542d8014a9627d9523ea0f425d956e0cf7973fbdeb1aa958f7b03323d7274fe"
+      },
+      {
+        "file": "D:/ClawX/src/components/task-ledger/TaskNodeSelector.tsx",
+        "source": "D:/ClawX/src/components/task-ledger/TaskNodeSelector.tsx",
+        "sha256": "58b4806f8324b7a9ca29d2d05293cf9b975a9599832da7c3cf6498ec3e58f91c"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/build-preview-target.ts",
+        "source": "D:/ClawX/src/components/file-preview/build-preview-target.ts",
+        "sha256": "67e59a101b54fe8ade06d0056c815e280c1f38ebdc0bd417c389d63732bf1f8d"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/FilePreviewOverlay.tsx",
+        "source": "D:/ClawX/src/components/file-preview/FilePreviewOverlay.tsx",
+        "sha256": "acef8dede70cab502c19ded59561650e71b66ed2f5db5a63c74702958fedce14"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/FilePreviewBody.tsx",
+        "source": "D:/ClawX/src/components/file-preview/FilePreviewBody.tsx",
+        "sha256": "d90ef4a5d7144cf40b917b7f8db7e421b6726f7963394ad58ef4b0bad8cf0247"
+      },
+      {
+        "file": "D:/ClawX/src/components/ui/tabs.tsx",
+        "source": "D:/ClawX/src/components/ui/tabs.tsx",
+        "sha256": "660a5b0cb81dd10065b7927b07d70452a716484145675cebf0a790936a0db5d6"
+      },
+      {
+        "file": "D:/ClawX/src/components/common/LoadingSpinner.tsx",
+        "source": "D:/ClawX/src/components/common/LoadingSpinner.tsx",
+        "sha256": "dbe94dfdb328d4475b04d4e0a935ba72ccb2cc16e82adc9d988a08dcad2b3045"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/file-card-utils.tsx",
+        "source": "D:/ClawX/src/components/file-preview/file-card-utils.tsx",
+        "sha256": "4109a6c5666b5077cff2fd3dc26bccc7926fb62b155921d8afeb4140cea48e7b"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/MarkdownPreview.tsx",
+        "source": "D:/ClawX/src/components/file-preview/MarkdownPreview.tsx",
+        "sha256": "e8646b0c0411405498a9c0f6f4e7f0fde40abece56cf002976827620312308b9"
+      },
+      {
+        "file": "D:/ClawX/src/components/rareui/RailToc.tsx",
+        "source": "D:/ClawX/src/components/rareui/RailToc.tsx",
+        "sha256": "67bd252609709976a74ce5d3d0e4f216099dd230925678c90edd15926f7630c8"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/HtmlPreview.tsx",
+        "source": "D:/ClawX/src/components/file-preview/HtmlPreview.tsx",
+        "sha256": "fdfb184527f57a8b15f3563c3f11a6dd587b8ef58f99eff9cc1fc5c84aa98646"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/ImageViewer.tsx",
+        "source": "D:/ClawX/src/components/file-preview/ImageViewer.tsx",
+        "sha256": "6fef8ba6875b30adc5234bce34a8452cecbfdde1cded19216fdaeb631eefa29a"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/MediaPreview.tsx",
+        "source": "D:/ClawX/src/components/file-preview/MediaPreview.tsx",
+        "sha256": "cddf58ba7bf60be0ab29e3d08430eb3a94b138974ce21a966507b6501d70706d"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/OfficePreview.tsx",
+        "source": "D:/ClawX/src/components/file-preview/OfficePreview.tsx",
+        "sha256": "4c99234a0a37679b93436350a74bf5001d3b2ea044fd23ced1bd7ed45aa054a6"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/MonacoViewer.tsx",
+        "source": "D:/ClawX/src/components/file-preview/MonacoViewer.tsx",
+        "sha256": "dfb635b0d0136c6f7848672b3ddd57ebacb1ff073021c14ea672e4dabef6518d"
+      },
+      {
+        "file": "D:/ClawX/src/lib/monaco/loader.ts",
+        "source": "D:/ClawX/src/lib/monaco/loader.ts",
+        "sha256": "8a01f2d69ec9bf20c31ece6b1b37e5b01940e01aca825ff48f9295b64943263d"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/MonacoDiffViewer.tsx",
+        "source": "D:/ClawX/src/components/file-preview/MonacoDiffViewer.tsx",
+        "sha256": "5d3af3b39844fcd1c6c70a429d8223b77ef7b4175e347a8260cb45f18eafdca9"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/PdfViewer.tsx",
+        "source": "D:/ClawX/src/components/file-preview/PdfViewer.tsx",
+        "sha256": "611a3bfa278e9f6d74512240d1cbc02fc7aab7f4d91a726f2da807b6e79ee87b"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/SheetViewer.tsx",
+        "source": "D:/ClawX/src/components/file-preview/SheetViewer.tsx",
+        "sha256": "0c3258d2d6c0adf55042040e2f913b2c2d8a547369c21ee84a151ce57268115b"
+      },
+      {
+        "file": "D:/ClawX/src/lib/model-options.ts",
+        "source": "D:/ClawX/src/lib/model-options.ts",
+        "sha256": "b3e918745868ba7bcd4b661b9ad95f2dc7bf9736a6f4966705fbc3d002fbeac0"
+      },
+      {
+        "file": "D:/ClawX/src/lib/chat-model-selection.ts",
+        "source": "D:/ClawX/src/lib/chat-model-selection.ts",
+        "sha256": "1ef6fc3043699632d8d6ead95e41e13e48e730aad65c6cc6c41a7f1b233bfbb4"
+      },
+      {
+        "file": "D:/ClawX/src/types/skill.ts",
+        "source": "D:/ClawX/src/types/skill.ts",
+        "sha256": "16e3fa761445b874bcb5f876b5d30d5e171460c7ffde6bdc99cd4d8a3e9e3073"
+      },
+      {
+        "file": "D:/ClawX/src/extensions/registry.ts",
+        "source": "D:/ClawX/src/extensions/registry.ts",
+        "sha256": "d5e02a9dba9a7a0477c455e54d8a9914c191b4b788e48a4dc21e4e67fd9182eb"
+      },
+      {
+        "file": "D:/ClawX/src/extensions/types.ts",
+        "source": "D:/ClawX/src/extensions/types.ts",
+        "sha256": "94a5d084dfb155d1209344ebdaef29cee2d07cd3f8e4be5acf5f821f61d40c1e"
+      },
+      {
+        "file": "D:/ClawX/src/lib/collect-dropped-files.ts",
+        "source": "D:/ClawX/src/lib/collect-dropped-files.ts",
+        "sha256": "3a1ef4fd56f3ea6f9d3f9d98a82ee9c3efdfa8a682742d9f62ebaa4269ab9edc"
+      },
+      {
+        "file": "D:/ClawX/src/lib/quick-access-skills.ts",
+        "source": "D:/ClawX/src/lib/quick-access-skills.ts",
+        "sha256": "173cdbabed34c67a04eaf031c7b40dbe8b22c06ee81e01de549d901ce64e66f5"
+      },
+      {
+        "file": "D:/ClawX/src/components/chat/ChatAgentEffortPopover.tsx",
+        "source": "D:/ClawX/src/components/chat/ChatAgentEffortPopover.tsx",
+        "sha256": "19a62913cbd0316b1858012f98d9001ae70c5bcee755db07d6bf3a8591fe66d3"
+      },
+      {
+        "file": "D:/ClawX/src/hooks/use-webgl-fire.ts",
+        "source": "D:/ClawX/src/hooks/use-webgl-fire.ts",
+        "sha256": "bb47945e91655d8645f451296d8cdce1eadb9a9e37e129ab81481f25e338efca"
+      },
+      {
+        "file": "D:/ClawX/src/components/chat/ChatContextPressure.tsx",
+        "source": "D:/ClawX/src/components/chat/ChatContextPressure.tsx",
+        "sha256": "4ed7b20f34fdcac003af98f6112975a774db4d19e38ba264e45913abe728c78d"
+      },
+      {
+        "file": "D:/ClawX/src/components/agents/AgentAvatar.tsx",
+        "source": "D:/ClawX/src/components/agents/AgentAvatar.tsx",
+        "sha256": "c9291103f1f790edea9000a7b67d7889e6ffbfd67f88fca67283175e4728eed6"
+      },
+      {
+        "file": "D:/ClawX/shared/agent-avatar.ts",
+        "source": "D:/ClawX/shared/agent-avatar.ts",
+        "sha256": "43117e1111cef5fcb9790c4827ce09e88ff1613dc3bc6e18c59784b1c391c8ea"
+      },
+      {
+        "file": "D:/ClawX/src/lib/role-visuals.ts",
+        "source": "D:/ClawX/src/lib/role-visuals.ts",
+        "sha256": "fb277b1009695c2843d3bbcc4f5b807a60b962e59387091f7b6b6d96388ae267"
+      },
+      {
+        "file": "D:/ClawX/src/lib/chat-capability-actions.ts",
+        "source": "D:/ClawX/src/lib/chat-capability-actions.ts",
+        "sha256": "8141ed419a541b44d0ff76c83dc6f950bf605a2a3c05690f3ea647f7389573b3"
+      },
+      {
+        "file": "D:/ClawX/src/lib/capability-audit.ts",
+        "source": "D:/ClawX/src/lib/capability-audit.ts",
+        "sha256": "b7e26c68b8189ad0513c3d9261cf41a15d1b9cf21fcb8541bf19c5965488a58f"
+      },
+      {
+        "file": "D:/ClawX/src/lib/capability-orchestrator.ts",
+        "source": "D:/ClawX/src/lib/capability-orchestrator.ts",
+        "sha256": "9aa65955b3ff057d75f06a58e07d1c8cc67e113d3597d438afc3e3600fc3aa2a"
+      },
+      {
+        "file": "D:/ClawX/src/lib/capability-registry.ts",
+        "source": "D:/ClawX/src/lib/capability-registry.ts",
+        "sha256": "1c7e1e22f7696eabd687a7c7047ebd60a8734a0ac046671fd7cd319ecf13867b"
+      },
+      {
+        "file": "D:/ClawX/src/lib/theme.ts",
+        "source": "D:/ClawX/src/lib/theme.ts",
+        "sha256": "e9eb7260cc6466264e937f91e89574c2c766d886fb68bd0d1ec769fdae17518a"
+      },
+      {
+        "file": "D:/ClawX/src/components/ui/plus-menu-morph.tsx",
+        "source": "D:/ClawX/src/components/ui/plus-menu-morph.tsx",
+        "sha256": "f19d59261604a17dfe36935bb0368a8fb5be0626f92e0aca990d550c405b0e53"
+      },
+      {
+        "file": "D:/ClawX/src/components/chat/ComposerPopover.tsx",
+        "source": "D:/ClawX/src/components/chat/ComposerPopover.tsx",
+        "sha256": "1ecb7acd5bdf33329d9a97dc67e3703b1a8d517e222c5f7cb38d456377058b6e"
+      },
+      {
+        "file": "D:/ClawX/src/components/chat/ModelBrandIcon.tsx",
+        "source": "D:/ClawX/src/components/chat/ModelBrandIcon.tsx",
+        "sha256": "6b5d97162629a09972153455df7e7365271b0d332c217e9e4b7abb30f63d52a5"
+      },
+      {
+        "file": "D:/ClawX/src/lib/model-brand.ts",
+        "source": "D:/ClawX/src/lib/model-brand.ts",
+        "sha256": "06e48121f7d11fa1db6a2f9f6881e39421f48db0edd353764976d34a3b5d00eb"
+      },
+      {
+        "file": "D:/ClawX/src/components/ui/smoky-dissolve.tsx",
+        "source": "D:/ClawX/src/components/ui/smoky-dissolve.tsx",
+        "sha256": "da55af3e81f4a0711f359d082529c5440956882146bda75cf0d5aef51ea8ba16"
+      },
+      {
+        "file": "D:/ClawX/src/pages/Chat/composer-actions.ts",
+        "source": "D:/ClawX/src/pages/Chat/composer-actions.ts",
+        "sha256": "dd3474e639da0f153a16332cdfd238bf85ea01a81f236e9dc870b6be58f5d9c8"
+      },
+      {
+        "file": "D:/ClawX/src/pages/Chat/task-loop-upgrade.ts",
+        "source": "D:/ClawX/src/pages/Chat/task-loop-upgrade.ts",
+        "sha256": "6d95f00e28d886c9e69f0f40d857a2f8b486f16a8d5d19a87783510ccc333483"
+      },
+      {
+        "file": "D:/ClawX/src/components/runtime-approvals/RuntimeApprovalPrompt.tsx",
+        "source": "D:/ClawX/src/components/runtime-approvals/RuntimeApprovalPrompt.tsx",
+        "sha256": "ea898a59017f3dae80e9508ae2eb1735e68a9fd4e97bfa66036a42b0486f9f64"
+      },
+      {
+        "file": "D:/ClawX/src/pages/Chat/ExecutionGraphCard.tsx",
+        "source": "D:/ClawX/src/pages/Chat/ExecutionGraphCard.tsx",
+        "sha256": "aa2d076ae1a7ae5a30225d9f9ce2330e333015fa4004995764f8a8a029ebaffe"
+      },
+      {
+        "file": "D:/ClawX/src/pages/Chat/TeamOrchestrationCard.tsx",
+        "source": "D:/ClawX/src/pages/Chat/TeamOrchestrationCard.tsx",
+        "sha256": "c6573a6e20216bc50a6f71d5dba961e20caac5f98315437873207d220f43b178"
+      },
+      {
+        "file": "D:/ClawX/src/pages/Chat/team-orchestration-visualization.ts",
+        "source": "D:/ClawX/src/pages/Chat/team-orchestration-visualization.ts",
+        "sha256": "17bc33d280afff084ccd77608735debde3af1e6d43856a9975c3154e5b76d9e6"
+      },
+      {
+        "file": "D:/ClawX/src/pages/Chat/ChatToolbar.tsx",
+        "source": "D:/ClawX/src/pages/Chat/ChatToolbar.tsx",
+        "sha256": "381444320e446d43fb377d8259511e2a46aa3aad46bbf7c95ca576c3b5d49e3f"
+      },
+      {
+        "file": "D:/ClawX/src/components/chat/MemoryInjectionPanel.tsx",
+        "source": "D:/ClawX/src/components/chat/MemoryInjectionPanel.tsx",
+        "sha256": "29cf78c05a16b207e997338665b3ec0d133f5c22cf2ad5c97e5f0ab492937952"
+      },
+      {
+        "file": "D:/ClawX/src/components/chat/ResourceChip.tsx",
+        "source": "D:/ClawX/src/components/chat/ResourceChip.tsx",
+        "sha256": "33075c89597fe719b9a8dbd51cb295f65d7f58dc3033d21e10db7012ea84e889"
+      },
+      {
+        "file": "D:/ClawX/src/stores/resource-tracker.ts",
+        "source": "D:/ClawX/src/stores/resource-tracker.ts",
+        "sha256": "8565564a59a061badc021fc36d687baca446ca13f8a4e5547aa90294de9562b4"
+      },
+      {
+        "file": "D:/ClawX/src/lib/poll-scheduler.ts",
+        "source": "D:/ClawX/src/lib/poll-scheduler.ts",
+        "sha256": "3b179f08112457310dc8cf2a5d33e155e907ddd9fc7b183f810cc96bc1c361e9"
+      },
+      {
+        "file": "D:/ClawX/src/lib/resource-shed.ts",
+        "source": "D:/ClawX/src/lib/resource-shed.ts",
+        "sha256": "19ab80655212a93856cf186ae942b14bffdcd31639b3bb13ddda7ce47a8d9ed7"
+      },
+      {
+        "file": "D:/ClawX/src/lib/workspace-session.ts",
+        "source": "D:/ClawX/src/lib/workspace-session.ts",
+        "sha256": "b413f72f7a78cc8926be9d0c417cdffc345768391dfd1b4b1d543d762d782e4a"
+      },
+      {
+        "file": "D:/ClawX/src/stores/session-activity.ts",
+        "source": "D:/ClawX/src/stores/session-activity.ts",
+        "sha256": "51c21009506d7aa0bed88b45fcb8e241a344c42b0eba662e0b75e3ddcda13e30"
+      },
+      {
+        "file": "D:/ClawX/shared/subagent-lifecycle.ts",
+        "source": "D:/ClawX/shared/subagent-lifecycle.ts",
+        "sha256": "9e002bb42674a478d1ef07996279d483e169db93203d560a994d94222c4415f0"
+      },
+      {
+        "file": "D:/ClawX/src/lib/trajectory-view/index.ts",
+        "source": "D:/ClawX/src/lib/trajectory-view/index.ts",
+        "sha256": "0b07cd89c559adad4f8dd2c6861531b3c300fec504df40641ab8c0d54eae77d7"
+      },
+      {
+        "file": "D:/ClawX/src/lib/trajectory-view/feed.ts",
+        "source": "D:/ClawX/src/lib/trajectory-view/feed.ts",
+        "sha256": "9269e2d53f384d18dc2f8202442ff500ee4a2b0c76902e7d01f684d0af1bb073"
+      },
+      {
+        "file": "D:/ClawX/src/lib/trajectory-assembler/index.ts",
+        "source": "D:/ClawX/src/lib/trajectory-assembler/index.ts",
+        "sha256": "ac535a71a62d0a3c43b98b2632ed48d83fb5b506dc65d2189b99a79d6a5ddaad"
+      },
+      {
+        "file": "D:/ClawX/src/lib/trajectory-assembler/assembler.ts",
+        "source": "D:/ClawX/src/lib/trajectory-assembler/assembler.ts",
+        "sha256": "8d9456807a62ad5c2b8e21d20835b94379b27f43e375947005a57a6bc0d51673"
+      },
+      {
+        "file": "D:/ClawX/src/lib/trajectory-assembler/types.ts",
+        "source": "D:/ClawX/src/lib/trajectory-assembler/types.ts",
+        "sha256": "3c319bbf06c0c117bbcff9d8ea56fa5739af069c7e3eabe45430b24e5efd8ad1"
+      },
+      {
+        "file": "D:/ClawX/src/lib/trajectory-view/lifecycle.ts",
+        "source": "D:/ClawX/src/lib/trajectory-view/lifecycle.ts",
+        "sha256": "ff6974b544a873233723017afca46e190267c32834f3f482f520c42854fbc2bf"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/workspace-browser-config.ts",
+        "source": "D:/ClawX/src/components/file-preview/workspace-browser-config.ts",
+        "sha256": "da173d681f337076715cb86445040cd5a893fc7f9637341a82746ea307badf66"
+      },
+      {
+        "file": "D:/ClawX/shared/workspace-preview-policy.ts",
+        "source": "D:/ClawX/shared/workspace-preview-policy.ts",
+        "sha256": "d898e21b51bf7daa8667d49150b2fc71684f48abfe758f50409242145abce3b5"
+      },
+      {
+        "file": "D:/ClawX/src/pages/Chat/MessageNavRail.tsx",
+        "source": "D:/ClawX/src/pages/Chat/MessageNavRail.tsx",
+        "sha256": "c6cbf3992980b2ca725825daeff477c06c43cea7611707260150fd65fbd2b222"
+      },
+      {
+        "file": "D:/ClawX/src/components/rareui/HookSidebar.tsx",
+        "source": "D:/ClawX/src/components/rareui/HookSidebar.tsx",
+        "sha256": "c38c1e7dcd7b530ee3fafecb28ced547429d865e3a9740b6fd776f644974d5ba"
+      },
+      {
+        "file": "D:/ClawX/src/components/rareui/completion-activity.ts",
+        "source": "D:/ClawX/src/components/rareui/completion-activity.ts",
+        "sha256": "2aa750d07db73a10c3fa300217417999427af5f5cc72206ad73028c452291aaf"
+      },
+      {
+        "file": "D:/ClawX/src/pages/Chat/execution-projection.ts",
+        "source": "D:/ClawX/src/pages/Chat/execution-projection.ts",
+        "sha256": "933aa3521c90cc2497f9b0ab23293f63cf7603b17e5b932d5af3f9bd334b6097"
+      },
+      {
+        "file": "D:/ClawX/src/pages/Chat/image-generation-status.ts",
+        "source": "D:/ClawX/src/pages/Chat/image-generation-status.ts",
+        "sha256": "5e67e93d8012325c60e99ff807bd8ddf91aea9c2ccfa3e02bbf67fb77e950df5"
+      },
+      {
+        "file": "D:/ClawX/src/components/rareui/completion-activity-store.ts",
+        "source": "D:/ClawX/src/components/rareui/completion-activity-store.ts",
+        "sha256": "d9991411c22fc6a516374cb8716c78cce52c07a5a4eabdcc63bd0939b0b99b17"
+      },
+      {
+        "file": "D:/ClawX/src/pages/Chat/SessionActivityPanel.tsx",
+        "source": "D:/ClawX/src/pages/Chat/SessionActivityPanel.tsx",
+        "sha256": "c1759da2228de83ced0cd0162df2ccc47a285bc27955137da57ff052a4db318e"
+      },
+      {
+        "file": "D:/ClawX/shared/subagent-identity.ts",
+        "source": "D:/ClawX/shared/subagent-identity.ts",
+        "sha256": "9fa3d4056f7a9047bffc95a8e56baf67c789c6a4afd5c8510ae941f32d790bc7"
+      },
+      {
+        "file": "D:/ClawX/src/pages/Chat/session-environment.ts",
+        "source": "D:/ClawX/src/pages/Chat/session-environment.ts",
+        "sha256": "f756b9ead07f1d1bbf2a674f50ff5f89ed7a2ee76679cdd1f6297dfb64e228f0"
+      },
+      {
+        "file": "D:/ClawX/src/pages/Chat/session-continuity.ts",
+        "source": "D:/ClawX/src/pages/Chat/session-continuity.ts",
+        "sha256": "f139640246e9b6992746944b1f49c34aab8056c17c638199592b61d289399d9b"
+      },
+      {
+        "file": "D:/ClawX/src/hooks/use-stick-to-bottom-instant.ts",
+        "source": "D:/ClawX/src/hooks/use-stick-to-bottom-instant.ts",
+        "sha256": "59d328e57fccac5c0f367f839f96fe6812500c1f913fc1d7a6dec9bda8456a40"
+      },
+      {
+        "file": "D:/ClawX/src/components/assistant-render/AssistantRender.tsx",
+        "source": "D:/ClawX/src/components/assistant-render/AssistantRender.tsx",
+        "sha256": "a9abed7754e6246120885c3ce8df9ea2269159b84b8a1509882b978e76466baa"
+      },
+      {
+        "file": "D:/ClawX/src/components/assistant-render/CodingRunEvidence.tsx",
+        "source": "D:/ClawX/src/components/assistant-render/CodingRunEvidence.tsx",
+        "sha256": "d13747fca3e7422118072dcf827a8f202c2da56ebb6b79110e39183956448d8b"
+      },
+      {
+        "file": "D:/ClawX/src/components/assistant-render/TurnSummaryCard.tsx",
+        "source": "D:/ClawX/src/components/assistant-render/TurnSummaryCard.tsx",
+        "sha256": "6379595865b5f0b7b8df761704a8e9ae2540887d0fdb59544188a94443d529da"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/PendingRunApprovals.tsx",
+        "source": "D:/ClawX/src/components/tool-ui/PendingRunApprovals.tsx",
+        "sha256": "91f20d3cba89151cca17909a3a229dedcf843496e8be91f7a596a99b18f8ca62"
+      },
+      {
+        "file": "D:/ClawX/src/lib/permission-approval-display.ts",
+        "source": "D:/ClawX/src/lib/permission-approval-display.ts",
+        "sha256": "428392033da429404d71910323687eee3373a1909fe8df3ea76355ccc8fccc4d"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/RunMutationDiffs.tsx",
+        "source": "D:/ClawX/src/components/tool-ui/RunMutationDiffs.tsx",
+        "sha256": "2953720d1cd2d9f2d5fecb9fb42c1e9ed34f99b9fd822e99f330292f9413ebfa"
+      },
+      {
+        "file": "D:/ClawX/src/components/tool-ui/RunTerminalSurfaces.tsx",
+        "source": "D:/ClawX/src/components/tool-ui/RunTerminalSurfaces.tsx",
+        "sha256": "5edd6a0327b781c9807b8fc345f1eef903182221d4b632882786ef7097cfc037"
+      },
+      {
+        "file": "D:/ClawX/src/pages/Chat/use-run-approvals.ts",
+        "source": "D:/ClawX/src/pages/Chat/use-run-approvals.ts",
+        "sha256": "6bef3510c538659cd3fc66ec758e784f8e8a542002cb14f2c0814af502dea58b"
+      },
+      {
+        "file": "D:/ClawX/src/components/chat/WelcomeProjectPicker.tsx",
+        "source": "D:/ClawX/src/components/chat/WelcomeProjectPicker.tsx",
+        "sha256": "79017483a0cbc7605a29e3fc2eb14fd0e9dbf19b2aef7358eb4ea2a9e4314a15"
+      },
+      {
+        "file": "D:/ClawX/src/components/chat/WorkspacePickerMenu.tsx",
+        "source": "D:/ClawX/src/components/chat/WorkspacePickerMenu.tsx",
+        "sha256": "6db4f0b00d00832be231012534bbeaa0f82b1a2b197d688f3b64b5e3e931427d"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/GeneratedFilesPanel.tsx",
+        "source": "D:/ClawX/src/components/file-preview/GeneratedFilesPanel.tsx",
+        "sha256": "f0435176267c98ec684e9a4b19439986b84a72a4aa85ae7f42e0590cbe2a68e1"
+      },
+      {
+        "file": "D:/ClawX/src/components/ui/input.tsx",
+        "source": "D:/ClawX/src/components/ui/input.tsx",
+        "sha256": "0be391b51e962af18871bb3c02eb1ac3b753cf31e8c5a4845a01338ac6dbf422"
+      },
+      {
+        "file": "D:/ClawX/shared/types/work-artifact.ts",
+        "source": "D:/ClawX/shared/types/work-artifact.ts",
+        "sha256": "e47226d4613eba150851d839afbb413d1e1d776d8ea27ac819fc8980853dbb1d"
+      },
+      {
+        "file": "D:/ClawX/src/components/chat/CheckpointsDialog.tsx",
+        "source": "D:/ClawX/src/components/chat/CheckpointsDialog.tsx",
+        "sha256": "dc653217896f2868548085db955a8db851a3f5b09c152fe2fff97f7cce4f2727"
+      },
+      {
+        "file": "D:/ClawX/src/pages/Chat/CompactionArtifactViewer.tsx",
+        "source": "D:/ClawX/src/pages/Chat/CompactionArtifactViewer.tsx",
+        "sha256": "2ab98e7929f8749a21dffb5689bbddd111b958d8c9599f8cef6283992e1c7445"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/ArtifactPanel.tsx",
+        "source": "D:/ClawX/src/components/file-preview/ArtifactPanel.tsx",
+        "sha256": "16dd366c7f0d6522a824930998306fbc4df9090620bbcfc07fed5603ecd26c8c"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/WorkspaceBrowserBody.tsx",
+        "source": "D:/ClawX/src/components/file-preview/WorkspaceBrowserBody.tsx",
+        "sha256": "f028ef8116d100720dc47e3a66ffc3d754da7f58374358529f07f627b22e11bb"
+      },
+      {
+        "file": "D:/ClawX/src/lib/workspace-tree.ts",
+        "source": "D:/ClawX/src/lib/workspace-tree.ts",
+        "sha256": "ad1f835aec51c9191fc07cbe8a9c8d2a0960e598c9dc959b8ad5cc788809b7a5"
+      },
+      {
+        "file": "D:/ClawX/src/components/ai-elements/file-tree.tsx",
+        "source": "D:/ClawX/src/components/ai-elements/file-tree.tsx",
+        "sha256": "50b8504710bde9a8c6147f40946d6488f099c49dba62070dc7683b6a6afe1c66"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/WorkspaceAuditPanel.tsx",
+        "source": "D:/ClawX/src/components/file-preview/WorkspaceAuditPanel.tsx",
+        "sha256": "e9939026fa0061f18b764cac1e879d815d7d20834cc96958174821ac4b740556"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/WorkspaceAgentsPanel.tsx",
+        "source": "D:/ClawX/src/components/file-preview/WorkspaceAgentsPanel.tsx",
+        "sha256": "3ac4ebb8874ecf430d7384903081a96babac98e90fc2da14ea79c176deea00b8"
+      },
+      {
+        "file": "D:/ClawX/src/lib/async-surface-state.ts",
+        "source": "D:/ClawX/src/lib/async-surface-state.ts",
+        "sha256": "c43551b906a27bb308de02d3962e2b46ecd226248a8dff8947ed2d8eb5032078"
+      },
+      {
+        "file": "D:/ClawX/src/components/chat/SessionDelegationStatus.tsx",
+        "source": "D:/ClawX/src/components/chat/SessionDelegationStatus.tsx",
+        "sha256": "1d727901f5664477b573cb249542fa88a7aeb2c526bc6bd5c297464df9e88bfa"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/WorkspaceSubagentPanel.tsx",
+        "source": "D:/ClawX/src/components/file-preview/WorkspaceSubagentPanel.tsx",
+        "sha256": "147f171974ae99d91eca9daf74dee549605d53109110b1c901fcb940bd7dd20c"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/WorkspaceProcessPanel.tsx",
+        "source": "D:/ClawX/src/components/file-preview/WorkspaceProcessPanel.tsx",
+        "sha256": "42e79d30b2826c654ba64dd42f2f6f9d189290af2f1bedb1c293cbb400cff0f3"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/WorkspaceTerminalPanel.tsx",
+        "source": "D:/ClawX/src/components/file-preview/WorkspaceTerminalPanel.tsx",
+        "sha256": "e3d495004cc40b5d3939305c531660ab9a87a30e91167cbe3d348bc6ead36134"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/WorkspaceBrowserPanel.tsx",
+        "source": "D:/ClawX/src/components/file-preview/WorkspaceBrowserPanel.tsx",
+        "sha256": "e333d522db0ec688969404383ff5e4b95aa8b72272c169d827e5fa1ba2ef6756"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/WorkspaceLiveBrowserPanel.tsx",
+        "source": "D:/ClawX/src/components/file-preview/WorkspaceLiveBrowserPanel.tsx",
+        "sha256": "64a7e1dd1bdefa82432f1fb76b9d5cae92c48b16e8486bbe78515c082db4bb42"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/WorkspaceWebPreviewPanel.tsx",
+        "source": "D:/ClawX/src/components/file-preview/WorkspaceWebPreviewPanel.tsx",
+        "sha256": "4a74ff20c3237dd6a45a6d69c98d0b33630c5fcb47141cec8905c620e63fdd2b"
+      },
+      {
+        "file": "D:/ClawX/src/components/ai-elements/web-preview.tsx",
+        "source": "D:/ClawX/src/components/ai-elements/web-preview.tsx",
+        "sha256": "7aa49f0da3597efc9551b414060b13e6f3afeecdbdeb396db55e7197cbb29af7"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/WorkspaceReviewPanel.tsx",
+        "source": "D:/ClawX/src/components/file-preview/WorkspaceReviewPanel.tsx",
+        "sha256": "f5f23b64586cbf6cb15a3c6e7e6f93a780b82e71347cd35297cb361e3bc8ecba"
+      },
+      {
+        "file": "D:/ClawX/src/pages/CodeReview/index.tsx",
+        "source": "D:/ClawX/src/pages/CodeReview/index.tsx",
+        "sha256": "09c40623783845997f8086840a53f4042e514e766c4bb695527a95004d24118f"
+      },
+      {
+        "file": "D:/ClawX/src/pages/CodeReview/RemoteForgePanel.tsx",
+        "source": "D:/ClawX/src/pages/CodeReview/RemoteForgePanel.tsx",
+        "sha256": "e8c4104e270822c3c8f017b50c3c7a0d85a498de7ce15bbda5b72dad7fbf6a07"
+      },
+      {
+        "file": "D:/ClawX/src/pages/CodeReview/RemoteForgeMutationPanel.tsx",
+        "source": "D:/ClawX/src/pages/CodeReview/RemoteForgeMutationPanel.tsx",
+        "sha256": "425da2b052f25a960b630628d2773ae9c331a11ea9882658440226acfc5acb25"
+      },
+      {
+        "file": "D:/ClawX/src/pages/CodeReview/RemoteForgeMergePanel.tsx",
+        "source": "D:/ClawX/src/pages/CodeReview/RemoteForgeMergePanel.tsx",
+        "sha256": "bd561a4a64c0781028c98cb5c09891bf94c863fdff85eee9fdafe782f35f5ac6"
+      },
+      {
+        "file": "D:/ClawX/src/pages/CodeReview/ChangeContextPanel.tsx",
+        "source": "D:/ClawX/src/pages/CodeReview/ChangeContextPanel.tsx",
+        "sha256": "0b777e1b30bcbd6834801af73e8d2071de40d08e63429e85dc95ca81091f7cd6"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/WorkspaceGitPanel.tsx",
+        "source": "D:/ClawX/src/components/file-preview/WorkspaceGitPanel.tsx",
+        "sha256": "ce69883e9739742a1053358b8088967e282a56429a188d2877e0bcac44787e9c"
+      },
+      {
+        "file": "D:/ClawX/src/components/ui/confirm-dialog.tsx",
+        "source": "D:/ClawX/src/components/ui/confirm-dialog.tsx",
+        "sha256": "5bb6a336e7205687c5c3a93adf62d72bfc44ceebc08b10ff15d35f065ce47552"
+      },
+      {
+        "file": "D:/ClawX/src/components/ai-elements/commit.tsx",
+        "source": "D:/ClawX/src/components/ai-elements/commit.tsx",
+        "sha256": "94969f6316a5aeb87987666185508c81f5f21c4f580ad2ef744052927ca44bd8"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/ArtifactView.tsx",
+        "source": "D:/ClawX/src/components/file-preview/ArtifactView.tsx",
+        "sha256": "e65b04cb5c4a19748595e53bc2ce9a682021d2b5136097ab1114d271d020e5e1"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/panel-tab-meta.tsx",
+        "source": "D:/ClawX/src/components/file-preview/panel-tab-meta.tsx",
+        "sha256": "4cea8559bb178ef39e4da58ecff05915c8a61d3d8ca8792f4f96f4986ebc32f0"
+      },
+      {
+        "file": "D:/ClawX/src/components/icons/official-workspace-icons.tsx",
+        "source": "D:/ClawX/src/components/icons/official-workspace-icons.tsx",
+        "sha256": "012d7cd8faa6d1cf3ffc9ad226eeacd165666ef440df2394466b7fd0c817dd86"
+      },
+      {
+        "file": "D:/ClawX/src/components/file-preview/PanelResizeDivider.tsx",
+        "source": "D:/ClawX/src/components/file-preview/PanelResizeDivider.tsx",
+        "sha256": "15911605c3a4aae5eaf8391af4b69be5516f3ba4edfc980e0ab5c6c790e542d6"
+      },
+      {
+        "file": "D:/ClawX/src/vite-env.d.ts",
+        "source": "D:/ClawX/src/vite-env.d.ts",
+        "sha256": "424faf9241dd699dda995b367ed36665732da1e6ec1f33b2fd40394488ecac92"
+      },
+      {
+        "file": "D:/ClawX/src/types/electron.d.ts",
+        "source": "D:/ClawX/src/types/electron.d.ts",
+        "sha256": "9e324cbc1f204534bbfaacbdcd962a77f1a7facc56b51bcdbdca3f6f3be73102"
+      }
+    ]
+  }
+}
