@@ -105,8 +105,20 @@ def remove_temp_tree(path: Path) -> dict:
         if item.is_file():
             removed_files += 1
             removed_bytes += item.stat().st_size
-    shutil.rmtree(path)
-    return {"removedFiles": removed_files, "removedBytes": removed_bytes, "remaining": 0}
+    for current, dirs, files in os.walk(path, topdown=False):
+        for name in files:
+            try:
+                os.chmod(Path(current) / name, 0o777)
+            except OSError:
+                pass
+        for name in dirs:
+            try:
+                os.chmod(Path(current) / name, 0o777)
+            except OSError:
+                pass
+    shutil.rmtree(path, ignore_errors=True)
+    remaining = sum(1 for item in path.rglob("*") if item.is_file()) if path.exists() else 0
+    return {"removedFiles": removed_files, "removedBytes": removed_bytes, "remaining": remaining}
 
 
 def clear_caches(repo: Path) -> dict:
