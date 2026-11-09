@@ -113,9 +113,10 @@ test('a real delegated worker receives its own task, reports separately and acce
     const described = await rpc<{ session: { sessionId: string; hasActiveRun: boolean; parentSessionKey?: string; spawnedBy?: string } }>('sessions.describe', { key: childKey });
     expect(described.session.spawnedBy).toBe(project.sessionKey);
     evidence.initialRunOwner = await rpc('agent.wait', { runId: admitted.receipt!.children[0].childRunId!, timeoutMs: 1000 });
-    evidence.initialRunState = await rpc('taskScope.runState', { runId: admitted.receipt!.children[0].childRunId!, sessionKey: childKey, sessionGeneration: described.session.sessionId });
-    await writeFile(testInfo.outputPath('worker-before-followup.json'), JSON.stringify({ owner: evidence.initialRunOwner, runtime: evidence.initialRunState, described }, null, 2));
+    expect(evidence.initialRunOwner).toMatchObject({ status: 'ok' });
+    await writeFile(testInfo.outputPath('worker-before-followup.json'), JSON.stringify({ owner: evidence.initialRunOwner, described }, null, 2));
     await expect.poll(async () => (await rpc<{ session: { hasActiveRun: boolean } }>('sessions.describe', { key: childKey })).session.hasActiveRun, { timeout: 30_000 }).toBe(false);
+    evidence.initialIdleOwner = await rpc('sessions.describe', { key: childKey });
     const followup = await hostInvoke(app, 'sessions', 'sendWorker', { workspaceId: project.workspaceId, parentSessionKey: project.sessionKey,
       expectedParentGeneration: project.generation, childSessionKey: childKey, expectedChildGeneration: described.session.sessionId,
       message: 'WORKER-FOLLOWUP', idempotencyKey: 'worker-followup-1', mode: 'send' });
@@ -471,8 +472,31 @@ for (const language of ['en', 'zh', 'ja', 'ru'] as const) {
         await expect(projectScope).toHaveAttribute('data-project-workspace', project.workspaceId);
         await expect(page.getByTestId('chat-composer-input')).toHaveValue(draft);
         const acceptedStage = page.getByTestId('workspace-subagent-panel').locator('[data-stage="acceptance"]');
-        await expect(acceptedStage).toHaveAttribute('data-status', 'accepted');
+        try { await expect(acceptedStage).toHaveAttribute('data-status', 'accepted'); }
+        catch (error) {
+          const readFailure = page.getByTestId('workspace-subagent-transcript-failed');
+          if (!await readFailure.isVisible()) throw error;
+          const history = await hostInvoke<{ success: boolean; sessionGeneration?: string; error?: string }>(app, 'sessions', 'history', {
+            sessionKey: childKey, expectedParentSessionKey: project.sessionKey,
+          });
+          expect(history.success, history.error).toBe(true);
+          expect(history.sessionGeneration).toBeTruthy();
+          const owner = await hostInvoke<{ success: boolean; task: TaskView }>(app, 'taskLedger', 'sessionTask', {
+            workspaceId: project.workspaceId, sessionKey: childKey, expectedSessionGeneration: history.sessionGeneration,
+          });
+          expect(owner.success).toBe(true);
+          expect(owner.task.contract).toMatchObject({ taskNodeId: task.contract.taskNodeId, state: 'done' });
+          evidence.navigationReadRecovery = { initialFailure: await readFailure.innerText(), history, owner,
+            mainLog: await hostInvoke(app, 'logs', 'memory', { count: 100 }), driven_by: 'agent', actor: 'playwright-worker-acceptance' };
+          await page.screenshot({ path: testInfo.outputPath(`worker-navigation-read-failed-${language}.png`) });
+          await page.getByTestId('workspace-subagent-transcript-retry').click();
+          await expect(acceptedStage).toHaveAttribute('data-status', 'accepted');
+        }
         await expect(acceptedStage).toHaveText(locale.delegationStages.taskAcceptance.accepted);
+        const verification = page.getByTestId('workspace-subagent-panel').locator('[data-stage="verification"]');
+        await expect(verification).toHaveAttribute('data-recorded-criteria', '2');
+        await expect(verification).toHaveAttribute('data-candidate', hash);
+        await expect(verification).toHaveText(locale.delegationStages.verification.recorded.replace('{{count}}', '2').replace('{{total}}', '2'));
         await expect(page.getByTestId('workspace-subagent-cost')).toHaveText(locale.delegationStages.cost.replace('{{cost}}', locale.delegationStages.costUnknown));
         await page.screenshot({ path: testInfo.outputPath(`worker-owner-accepted-${language}.png`) });
         locales.push({ language, status: 'passed', label: locale.delegationStages.taskAcceptance.accepted });

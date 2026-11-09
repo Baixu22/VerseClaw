@@ -16,6 +16,7 @@ ownedPaths:
   - shared/host-api/contract.ts
   - electron/services/sessions-api.ts
   - openclaw_runtime/src/gateway/server-methods/session-task-scope.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.read.ts
   - openclaw_runtime/src/gateway/server-methods/chat.ts
   - openclaw_runtime/src/gateway/server-methods/optional-model-catalog.ts
   - openclaw_runtime/packages/gateway-protocol/src/schema/logs-chat.ts
@@ -36,6 +37,7 @@ ownedPaths:
   - tests/unit/session-task-scope-completion.test.ts
   - tests/unit/session-task-scope-bridge.test.ts
   - tests/unit/gateway-worker-history-metadata.test.ts
+  - tests/unit/gateway-session-active-runs.test.ts
   - tests/unit/session-chain-panels.test.tsx
   - tests/unit/workspace-agents-panel-failure.test.tsx
   - tests/unit/session-handoff-recovery.test.ts
@@ -101,9 +103,11 @@ acceptance:
   - Recorded cost comes from structured usage in the loaded transcript; absent or null costs display unknown, while a supplied zero remains zero.
   - Worker admission uses its own child receipt; its canonical task comes from the generation-fenced owner read. Verification records retain task revision, epoch and candidate separately from task acceptance.
   - Generation-fenced worker history reads use message-only Gateway requests and render before the independent task-owner query finishes.
+  - Session describe and list share the tracked-run owner projection; retained terminal abort entries stay available for idempotency without keeping a finished worker active.
   - Task Ledger worker links use runtime source facts to open the existing transcript surface under the correct coordinator.
   - Four-locale Electron journeys and focused negative tests identify the same candidate and agent actor.
 requiredTests:
+  - pnpm exec vitest run tests/unit/gateway-session-active-runs.test.ts --maxWorkers=1 --no-file-parallelism
   - pnpm run typecheck
   - pnpm run contract:check
   - pnpm run typecheck:test
