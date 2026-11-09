@@ -160,40 +160,54 @@ class Evidence:
         if extra_env:
             env.update({key: str(value) for key, value in extra_env.items()})
         started = time.perf_counter()
-        process = subprocess.Popen([str(binary), *args], cwd=cwd, env=env, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         peak_rss = 0
         timed_out = False
+        stdout_stream = stdout_path.open("wb")
+        stderr_stream = stderr_path.open("wb")
         try:
-            root = psutil.Process(process.pid)
-        except psutil.Error:
-            root = None
-        while process.poll() is None:
-            total = 0
-            handles = []
-            if root is not None:
-                try:
-                    handles = [root, *root.children(recursive=True)]
-                except psutil.Error:
-                    handles = []
-            for handle in {item.pid: item for item in handles}.values():
-                try:
-                    total += handle.memory_info().rss
-                except psutil.Error:
-                    continue
-            peak_rss = max(peak_rss, total)
-            if time.perf_counter() - started > timeout:
-                timed_out = True
-                for handle in sorted(handles, key=lambda item: item.pid, reverse=True):
+            process = subprocess.Popen([str(binary), *args], cwd=cwd, env=env, stdin=subprocess.DEVNULL, stdout=stdout_stream, stderr=stderr_stream)
+            try:
+                root = psutil.Process(process.pid)
+            except psutil.Error:
+                root = None
+            while process.poll() is None:
+                total = 0
+                handles = []
+                if root is not None:
                     try:
-                        handle.kill()
+                        handles = [root, *root.children(recursive=True)]
                     except psutil.Error:
+                        handles = []
+                for handle in {item.pid: item for item in handles}.values():
+                    try:
+                        total += handle.memory_info().rss
+                    except psutil.Error:
+                        continue
+                peak_rss = max(peak_rss, total)
+                if time.perf_counter() - started > timeout:
+                    timed_out = True
+                    for handle in sorted(handles, key=lambda item: item.pid, reverse=True):
+                        try:
+                            handle.kill()
+                        except psutil.Error:
+                            pass
+                    try:
+                        process.kill()
+                    except OSError:
                         pass
-                break
-            time.sleep(0.03)
-        stdout, stderr = process.communicate()
+                    break
+                time.sleep(0.03)
+            try:
+                process.wait(timeout=30)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait(timeout=30)
+        finally:
+            stdout_stream.close()
+            stderr_stream.close()
         wall = time.perf_counter() - started
-        stdout_path.write_bytes(stdout)
-        stderr_path.write_bytes(stderr)
+        stdout = stdout_path.read_bytes()
+        stderr = stderr_path.read_bytes()
         record = {
             "id": identifier,
             "argv": args,
