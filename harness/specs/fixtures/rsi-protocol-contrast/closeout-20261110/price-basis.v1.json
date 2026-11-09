@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "RsiCampaignPriceBasis/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-protocol-price-verifier",
+  "endpoint": "http://127.0.0.1:3065/v1/responses",
+  "model": {
+    "id": "space-bunny",
+    "provider": "workbuddy",
+    "credits": "x0.08",
+    "supportsToolCall": true,
+    "maxInputTokens": 1000000,
+    "maxOutputTokens": 128000
+  },
+  "modelSnapshot": {
+    "source": "plugin:workbuddy",
+    "fetchedAt": 1794222800692,
+    "ageMs": 854957,
+    "model": {
+      "id": "space-bunny",
+      "provider": "workbuddy",
+      "credits": "x0.08",
+      "supportsToolCall": true,
+      "maxInputTokens": 1000000,
+      "maxOutputTokens": 128000
+    }
+  },
+  "quota": {
+    "provider": "workbuddy",
+    "model": "space-bunny",
+    "plan": "Free",
+    "newPurchaseAllowed": false,
+    "enabledAccounts": 6,
+    "remainingQuota": 7392,
+    "unit": "provider-credits",
+    "routes": [
+      {
+        "alias": "space-bunny",
+        "provider": "workbuddy",
+        "target": "space-bunny",
+        "reasoning": null
+      },
+      {
+        "alias": "space-bunny",
+        "provider": "workbuddy-intl",
+        "target": "space-bunny",
+        "reasoning": null
+      }
+    ],
+    "routeProviders": [
+      "workbuddy",
+      "workbuddy-intl"
+    ],
+    "routesDigest": "52c92f8ad3130c05434f23ba3e744b355abd02fec9479334dc4596daee08c897",
+    "source": "read-only Agent2API account_usage_records and modelRules",
+    "observedAt": "2026-11-09T11:27:35.741Z"
+  },
+  "currency": "CNY",
+  "newSpendingPerRequestUpperBoundCny": 0,
+  "tokenTariff": null,
+  "upstreamCreditDebit": null,
+  "upstreamInvoice": null
+}

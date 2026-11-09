@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "RsiProtocolContrastAcceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-protocol-acceptance-reader",
+  "TF0857": [
+    {
+      "criterion": "endpoint/model、价格依据、样本与全轮调用/tokens 预算在调用前冻结。",
+      "status": "passed",
+      "evidence": "plan.v1.json; authorization.v1.json; price-basis.v1.json"
+    },
+    {
+      "criterion": "k=3，至少 20 个完整 case；pass^k/pass@k、95% 区间、功效与所有失败类别可复算。",
+      "status": "passed",
+      "evidence": "independent-replay.v1.json; original failures preserved"
+    },
+    {
+      "criterion": "公共接口和工具协议的影响单独识别，不借旧 run 对新版本追认。",
+      "status": "passed",
+      "evidence": "decision.v1.json; two within-study protocol contrasts"
+    },
+    {
+      "criterion": "原始响应、工具效果、oracle、真实用量和成本封存；未知字段保持 unknown。",
+      "status": "passed",
+      "evidence": "raw recovery archive; accounting.v1.json; trial-outcomes.v1.json"
+    }
+  ],
+  "TF0858": {
+    "independentReplay": "passed",
+    "rollback": "retained original closeout rollback evidence passed",
+    "promotionGates": "eliminate with failures retained",
+    "parentPositiveExperienceImprovement": false
+  },
+  "parent": {
+    "id": "TF-0851",
+    "effectiveExperienceImprovement": false,
+    "decision": "NO_GO"
+  }
+}
