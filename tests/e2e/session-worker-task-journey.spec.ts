@@ -415,7 +415,7 @@ for (const language of ['en', 'zh', 'ja', 'ru'] as const) {
       await writeFile(testInfo.outputPath('worker-owner-refresh.json'), JSON.stringify(evidence.ownerRefresh, null, 2));
       await expect(stage).toHaveAttribute('data-status', 'accepted');
       await expect(page.getByTestId('workspace-subagent-panel').locator('[data-stage="verification"]')).toHaveAttribute('data-status', 'recorded');
-      await expect(page.getByTestId('workspace-subagent-panel').locator('[data-stage="verification"]')).toHaveAttribute('data-recorded-criteria', '1');
+      await expect(page.getByTestId('workspace-subagent-panel').locator('[data-stage="verification"]')).toHaveAttribute('data-recorded-criteria', '2');
       await expect(stage).toHaveText(/Accepted|已验收/);
       const readback = await hostInvoke<{ snapshot: TaskLedgerSnapshot }>(app, 'taskLedger', 'snapshot', { workspaceId: project.workspaceId });
       expect(readback.snapshot.nodes.find(node => node.id === task.contract.taskNodeId)?.status).toBe('done');
