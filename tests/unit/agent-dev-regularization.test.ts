@@ -945,8 +945,6 @@ dist-electron/main/index.js  834.50 kB │ gzip: 247.48 kB
     await mkdir(root, { recursive: true });
     const git = (...args: string[]) => execFileAsync('git', args, { cwd: root });
     await git('init', '-q');
-    await git('config', 'user.email', 'audit@test.local');
-    await git('config', 'user.name', 'audit');
     const file = join(root, 'source.mjs');
     await writeFile(file, 'export const a = 1;\n', 'utf8');
     // An absurd future mtime must not poison freshness once the file is
@@ -954,7 +952,7 @@ dist-electron/main/index.js  834.50 kB │ gzip: 247.48 kB
     const futureMtime = new Date('2035-01-01T00:00:00Z');
     await utimes(file, futureMtime, futureMtime);
     await git('add', 'source.mjs');
-    await git('commit', '-qm', 'add source');
+    await git('-c', 'user.email=audit@test.local', '-c', 'user.name=audit', 'commit', '-qm', 'add source');
 
     const rel = 'source.mjs';
     const cleanState = collectGitSourceState(root, [rel]);

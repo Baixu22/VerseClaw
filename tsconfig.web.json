@@ -27,6 +27,7 @@
       "@/*": ["./src/*"],
       "@electron/*": ["./electron/*"],
       "@shared/*": ["./shared/*"],
+      "openclaw/plugin-sdk/memory-owner-read-types": ["./openclaw_runtime/src/plugin-sdk/memory-owner-read-types.ts"],
       "@openclaw/normalization-core": ["./openclaw_runtime/packages/normalization-core/src/index.ts"],
       "@openclaw/normalization-core/number-coercion": [
         "./openclaw_runtime/packages/normalization-core/src/number-coercion.ts"

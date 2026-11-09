@@ -4,7 +4,7 @@ import { execFile } from 'node:child_process';
 import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import {
   collectContractIssues,
   inlineModuleFacadeAliases,
@@ -502,9 +502,18 @@ describe('contract check: real gate entry (node scripts/contract-check.mjs)', ()
   const fixtures = readdirSync(`${ROOT}/${FIXTURE_DIR}`).filter((name) => name.endsWith('.json')).sort();
   const positiveFixtures = fixtures.filter((name) => JSON.parse(readFileSync(`${ROOT}/${FIXTURE_DIR}/${name}`, 'utf8')).expectCode === 0);
   const negativeFixtures = fixtures.filter((name) => !positiveFixtures.includes(name));
+  let batch: { sourceFileCount: number; cases: Array<{ fixture: string | null; phase?: string; code: number; stdout: string; stderr: string }> };
+  beforeAll(async () => {
+    const result = await runGate(['--fixture-batch', FIXTURE_DIR]);
+    expect(result.code).toBe(0);
+    expect(result.stderr).toBe('');
+    batch = JSON.parse(result.stdout);
+    expect(batch.cases.filter(row => row.fixture).map(row => row.fixture)).toEqual(fixtures.map(name => `${FIXTURE_DIR}/${name}`));
+    expect(batch.sourceFileCount).toBeGreaterThan(0);
+  }, 30_000);
 
   it('passes on the current repository without fixtures', async () => {
-    const result = await runGate([]);
+    const result = batch.cases.find(row => row.phase === 'before')!;
     expect(result.stderr).toBe('');
     expect(result.stdout.trim()).toBe('Contract check passed.');
     expect(result.code).toBe(0);
@@ -529,7 +538,7 @@ describe('contract check: real gate entry (node scripts/contract-check.mjs)', ()
 
   it.each(negativeFixtures)('rejects fixture %s through the real entry with a single locatable diagnostic', async (name) => {
     const fixture = JSON.parse(readFileSync(`${ROOT}/${FIXTURE_DIR}/${name}`, 'utf8'));
-    const result = await runGate(['--fixture', `${FIXTURE_DIR}/${name}`]);
+    const result = batch.cases.find(row => row.fixture === `${FIXTURE_DIR}/${name}`)!;
     expect(result.code).toBe(1);
     expect(result.stdout).toBe('');
     expect(result.stderr).toContain(`Contract check fixtures applied: ${fixture.id}`);
@@ -541,7 +550,7 @@ describe('contract check: real gate entry (node scripts/contract-check.mjs)', ()
 
   it.each(positiveFixtures)('accepts fixture %s through the real entry without diagnostics', async (name) => {
     const fixture = JSON.parse(readFileSync(`${ROOT}/${FIXTURE_DIR}/${name}`, 'utf8'));
-    const result = await runGate(['--fixture', `${FIXTURE_DIR}/${name}`]);
+    const result = batch.cases.find(row => row.fixture === `${FIXTURE_DIR}/${name}`)!;
     expect(result.code).toBe(0);
     expect(result.stdout.trim()).toBe('Contract check passed.');
     expect(result.stderr.trim()).toBe(`Contract check fixtures applied: ${fixture.id}`);
@@ -556,4 +565,7 @@ describe('contract check: real gate entry (node scripts/contract-check.mjs)', ()
     expect(result.code).toBe(2);
     expect(result.stderr).toContain('Contract check fixture error:');
   }, 30_000);
+  it('clears fixture mutations before the final real baseline', () => {
+    expect(batch.cases.find(row => row.phase === 'after')).toMatchObject({ code: 0, stdout: 'Contract check passed.\n', stderr: '' });
+  });
 });

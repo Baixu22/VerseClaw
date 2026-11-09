@@ -171,7 +171,9 @@ function collectGitSourceState(root, relativePaths) {
     dirty.add(entry.slice(3));
   }
   const times = new Map();
-  const logOut = runGitText(root, ['log', '--no-renames', '--format=commit %cI', '--name-only', '-n', '2000', '--', ...relativePaths]);
+  const cleanPaths = relativePaths.filter(path => !dirty.has(path.replaceAll('\\', '/')));
+  if (cleanPaths.length === 0) return { dirty, times };
+  const logOut = runGitText(root, ['log', '--no-renames', '--format=commit %cI', '--name-only', '-n', '2000', '--', ...cleanPaths]);
   if (logOut != null) {
     // --name-only prints "commit <ISO>\n\n<file>\n" groups; track the last
     // seen commit line instead of relying on blank-line block structure.

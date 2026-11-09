@@ -25,6 +25,7 @@ export {
   type OwnerReadRejectionCode,
   type ReadAdmissionContextV1,
   type SourceRefV2,
+  type RawSourceLocator,
 } from "../runtime-core/knowledge-owner-read.js";
 
 async function pathExists(filePath: string): Promise<boolean> {

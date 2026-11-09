@@ -5,4 +5,4 @@ export type {
   OwnerReadPolicy,
   OwnerReadSnapshotV1,
   OwnerReadRejectionCode,
-} from '../../openclaw_runtime/src/runtime-core/knowledge-owner-read';
+} from 'openclaw/plugin-sdk/memory-owner-read-types';

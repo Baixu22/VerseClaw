@@ -10,4 +10,4 @@ SourceSet 的候选正文、digest、身份、政策和 raw locator 必须与 ow
 
 Host 将 owner 的行数组以及 `results` / `hits` 封装归一化为 `results`，保留每条来源的完整 `SourceRef/v2`。查询诊断中的 `query` 是调用者提交的文本；来源证据由准入后的结果行提供。
 
-公开实现入口：`openclaw_runtime/extensions/memory-wiki/runtime-api.ts`；通用数据合同与校验：`openclaw_runtime/src/runtime-core/knowledge-owner-read.ts`；共享 Host 类型：`shared/knowledge/owner-read-contract.ts`。固定回归入口为 `tests/unit/project-rag-owner-read.test.ts`。Host/Gateway/模型消费者的完整接线由 RAG-01 的验收覆盖，记录在对应候选证据中。
+公开实现入口：`openclaw_runtime/extensions/memory-wiki/runtime-api.ts`；通用数据合同与校验：`openclaw_runtime/src/runtime-core/knowledge-owner-read.ts`；共享 Host 类型：`shared/knowledge/owner-read-contract.ts`，通过公开的 `openclaw/plugin-sdk/memory-owner-read-types` 取得。该入口只导出类型，模型前校验继续使用 Main/runtime 的 owner reader。固定回归入口为 `tests/unit/project-rag-owner-read.test.ts`。Host/Gateway/模型消费者的完整接线由 RAG-01 的验收覆盖，记录在对应候选证据中。

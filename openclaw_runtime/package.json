@@ -1149,6 +1149,10 @@
       "types": "./src/plugin-sdk/memory-host-core.ts",
       "default": "./src/plugin-sdk/memory-host-core.ts"
     },
+    "./plugin-sdk/memory-owner-read-types": {
+      "types": "./src/plugin-sdk/memory-owner-read-types.ts",
+      "default": "./src/plugin-sdk/memory-owner-read-types.ts"
+    },
     "./plugin-sdk/memory-host-events": {
       "types": "./src/plugin-sdk/memory-host-events.ts",
       "default": "./src/plugin-sdk/memory-host-events.ts"

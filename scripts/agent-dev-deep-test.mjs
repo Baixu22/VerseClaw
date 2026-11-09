@@ -743,13 +743,15 @@ function runStep(step) {
     let stdout = '';
     let stderr = '';
     const commandLine = [step.command, ...step.args].join(' ');
-    const command = process.platform === 'win32' && step.command === 'pnpm'
+    const pnpmEntrypoint = step.command === 'pnpm' && /(?:^|[\\/])pnpm\.(?:mjs|cjs|js)$/.test(process.env.npm_execpath ?? '')
+      ? process.env.npm_execpath : undefined;
+    const command = pnpmEntrypoint ? process.execPath : process.platform === 'win32' && step.command === 'pnpm'
       ? process.env.ComSpec ?? 'cmd.exe'
       : step.command;
-    const args = process.platform === 'win32' && step.command === 'pnpm'
+    const args = pnpmEntrypoint ? [pnpmEntrypoint, ...step.args] : process.platform === 'win32' && step.command === 'pnpm'
       ? ['/d', '/s', '/c', commandLine]
       : step.args;
-    const child = spawn(command, args, { cwd: ROOT });
+    const child = spawn(command, args, { cwd: ROOT, windowsHide: true });
     child.stdout.on('data', (chunk) => {
       stdout += chunk.toString();
       process.stdout.write(chunk);

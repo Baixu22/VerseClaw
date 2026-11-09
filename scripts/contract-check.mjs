@@ -34,6 +34,9 @@ const fileMutations = new Map();
 // Files whose fixture mutations were actually read by the gate. A fixture that
 // only mutates files the gate never reads would otherwise print a valid pass.
 const consumedMutationFiles = new Set();
+let sourceSnapshot;
+let ipcSourceSnapshot;
+const ipcParseCache = new Map();
 
 async function readProjectFile(path) {
   const [{ readFile }, { resolve }] = await Promise.all([
@@ -42,7 +45,11 @@ async function readProjectFile(path) {
   ]);
   let text;
   try {
-    text = await readFile(resolve(ROOT, path), 'utf8');
+    if (sourceSnapshot?.has(path)) text = sourceSnapshot.get(path);
+    else {
+      text = await readFile(resolve(ROOT, path), 'utf8');
+      sourceSnapshot?.set(path, text);
+    }
   } catch (error) {
     if (error.code !== 'ENOENT' || !fileMutations.get(path)?.some((mutation) => typeof mutation.create === 'string')) throw error;
     text = '';
@@ -214,6 +221,15 @@ function parseRegistryScenarioIds(registryText) {
 // Syntax owns call shape; local symbols distinguish Electron aliases from
 // unrelated or shadowed objects. No project typecheck or module loading occurs.
 function parseIpcCalls(text, file, ipcName, methods) {
+  const key = JSON.stringify([file, text, ipcName, methods]);
+  const cached = ipcParseCache.get(key);
+  if (cached) return cached.map(site => ({ ...site }));
+  const sites = parseIpcCallsUncached(text, file, ipcName, methods);
+  ipcParseCache.set(key, sites);
+  return sites.map(site => ({ ...site }));
+}
+
+function parseIpcCallsUncached(text, file, ipcName, methods) {
   // A decoded IPC root must either occur literally or contain an escape.
   // Any escape forces AST parsing; a context-free lexer cannot safely skip
   // template/regexp contents and would hide subsequent registrations.
@@ -686,7 +702,11 @@ async function listIpcSourceFiles(relativeRoot) {
       }
     }
   }
-  await walk(relativeRoot);
+  if (ipcSourceSnapshot) files.push(...ipcSourceSnapshot);
+  else {
+    await walk(relativeRoot);
+    if (sourceSnapshot) ipcSourceSnapshot = [...files];
+  }
   for (const [file, mutations] of fileMutations) {
     if (file.startsWith(`${relativeRoot}/`) && posix.normalize(file) === file && isProductionFile(file)
       && !file.split('/').some((part) => ['node_modules', 'dist', '__tests__'].includes(part))
@@ -749,23 +769,24 @@ function parseArgs(argv) {
   return { fixtures };
 }
 
-async function main() {
+async function runContractCheck(fixtures) {
+  fileMutations.clear();
+  consumedMutationFiles.clear();
   let fixtureIds = [];
   try {
-    const { fixtures } = parseArgs(process.argv.slice(2));
     fixtureIds = await loadFixtures(fixtures);
   } catch (error) {
-    console.error(`Contract check fixture error: ${error.message}`);
-    process.exitCode = 2;
-    return;
+    return { code: 2, stdout: '', stderr: `Contract check fixture error: ${error.message}\n` };
   }
 
   let files;
   try {
     const contractText = await readProjectFile(CONTRACT_PATH);
     const ipcMainHandleSites = [];
-    for (const file of await listIpcSourceFiles(IPC_MAIN_SCAN_ROOT)) {
-      const text = await readProjectFile(file);
+    const ipcFiles = await listIpcSourceFiles(IPC_MAIN_SCAN_ROOT);
+    const ipcTexts = await Promise.all(ipcFiles.map(readProjectFile));
+    for (const [index, file] of ipcFiles.entries()) {
+      const text = ipcTexts[index];
       ipcMainHandleSites.push(...parseIpcMainHandleSites(text, file));
     }
     files = {
@@ -803,30 +824,52 @@ async function main() {
     };
   } catch (error) {
     if (fixtureIds.length > 0 && /fixture mutation target not found/.test(error.message)) {
-      console.error(`Contract check fixture error: ${error.message}`);
-      process.exitCode = 2;
-      return;
+      return { code: 2, stdout: '', stderr: `Contract check fixture error: ${error.message}\n` };
     }
     throw error;
   }
 
   const unconsumedMutations = [...fileMutations.keys()].filter((path) => !consumedMutationFiles.has(path));
   if (unconsumedMutations.length > 0) {
-    console.error(`Contract check fixture error: fixture mutations target files the gate never reads: ${unconsumedMutations.join(', ')}`);
-    process.exitCode = 2;
-    return;
+    return { code: 2, stdout: '', stderr: `Contract check fixture error: fixture mutations target files the gate never reads: ${unconsumedMutations.join(', ')}\n` };
   }
-  if (fixtureIds.length > 0) {
-    console.error(`Contract check fixtures applied: ${fixtureIds.join(', ')}`);
-  }
+  const stderr = fixtureIds.length > 0 ? `Contract check fixtures applied: ${fixtureIds.join(', ')}\n` : '';
   const issues = collectContractIssues(files);
   if (issues.length > 0) {
-    console.error('Contract check failed:');
-    for (const issue of issues) console.error(`- ${issue}`);
-    process.exitCode = 1;
+    return { code: 1, stdout: '', stderr: `${stderr}Contract check failed:\n${issues.map(issue => `- ${issue}\n`).join('')}` };
+  }
+  return { code: 0, stdout: 'Contract check passed.\n', stderr };
+}
+
+async function main() {
+  const argv = process.argv.slice(2);
+  if (argv[0] === '--fixture-batch') {
+    if (argv.length !== 2) throw new Error('--fixture-batch requires one fixture directory');
+    const { readdir } = await import('node:fs/promises');
+    const { posix, resolve } = await import('node:path');
+    const names = (await readdir(resolve(ROOT, argv[1]))).filter(name => name.endsWith('.json')).sort();
+    if (names.length === 0) throw new Error('Fixture batch is empty');
+    // Each case gets fresh mutations against one source snapshot for this invocation.
+    sourceSnapshot = new Map();
+    const cases = [{ fixture: null, phase: 'before', ...await runContractCheck([]) }];
+    for (const name of names) {
+      const fixture = posix.join(argv[1].replaceAll('\\', '/'), name);
+      cases.push({ fixture, ...await runContractCheck([fixture]) });
+    }
+    cases.push({ fixture: null, phase: 'after', ...await runContractCheck([]) });
+    console.log(JSON.stringify({ schema: 'ContractCheckFixtureBatch/v1', sourceFileCount: ipcSourceSnapshot.length, cases }));
     return;
   }
-  console.log('Contract check passed.');
+  let result;
+  try { result = await runContractCheck(parseArgs(argv).fixtures); }
+  catch (error) {
+    if (/unknown argument:|--fixture requires a path/.test(error.message)) {
+      result = { code: 2, stdout: '', stderr: `Contract check fixture error: ${error.message}\n` };
+    } else throw error;
+  }
+  process.stdout.write(result.stdout);
+  process.stderr.write(result.stderr);
+  process.exitCode = result.code;
 }
 
 if (isMainEntrypoint(import.meta.url)) {

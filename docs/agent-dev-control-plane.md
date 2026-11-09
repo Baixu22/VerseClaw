@@ -46,6 +46,8 @@ Use `pnpm agent-dev:promote-scenario <artifact.scenario.json> <name>` only after
 
 ## Layered Gates
 
+`pnpm agent-dev:unit` runs all seven focused files with two workers. The contract fixture suite uses `node scripts/contract-check.mjs --fixture-batch tests/fixtures/contract-check`: each fixture has separate mutations, diagnostics and exit status against one source snapshot, with a clean baseline before and after the cases. Parsed IPC sites are reused only for identical file text and parsing mode. The normal `pnpm contract:check` entry continues to read the current checkout. Deep-test reuses the invoking pnpm entrypoint to avoid repeated package-manager version handoffs.
+
 | Command | Loop | Coverage | PR evidence | Release evidence |
 |---|---|---|---|---|
 | `pnpm agent-dev:fast` | daily / fast PR | Contract, i18n, static Workbench, and fast Agent Dev unit coverage. | Yes, as fast PR feedback. | No, pair with full gates. |
