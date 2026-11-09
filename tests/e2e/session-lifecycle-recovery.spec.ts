@@ -381,11 +381,13 @@ test('U5 archive restore and confirmed delete retry their retained operationId a
     if (action === 'archive') {
       for (const language of ['en', 'zh', 'ja', 'ru'] as const) {
         const locale = JSON.parse(await readFile('shared/i18n/locales/' + language + '/chat.json', 'utf8'));
-        await hostInvoke(c.app, 'settings', 'set', { key: 'language', value: language });
+        await hostInvoke(c.app, 'settings', 'set', { key: 'language', value: language }); await c.page.reload();
+        await expect(c.page.locator('html')).toHaveAttribute('lang', language);
         await expect(c.page.getByTestId('settings-resume-mutation-' + operationId)).toHaveText(locale.archive.resumeMutation);
         await c.page.screenshot({ path: info.outputPath('pending-operation-' + language + '.png') });
       }
-      await hostInvoke(c.app, 'settings', 'set', { key: 'language', value: 'en' });
+      await hostInvoke(c.app, 'settings', 'set', { key: 'language', value: 'en' }); await c.page.reload();
+      await expect(c.page.locator('html')).toHaveAttribute('lang', 'en');
       await expect(c.page.getByTestId('settings-resume-mutation-' + operationId)).toHaveText('Check and continue');
     }
     await arm(c, action, 'after');

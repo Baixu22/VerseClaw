@@ -135,15 +135,17 @@ test('U5 compact and compactRange lose only committed replies; refresh reads cur
       evidence[`${action}Before`] = before;
       await expect(page.getByTestId('chat-composer-input')).toBeEnabled({ timeout: 30_000 });
       if (action === 'compact') await installReplyLoss(app, project.sessionKey);
-      const draft = `U5 unsent draft for ${action}`; await page.getByTestId('chat-composer-input').fill(draft);
+      const draft = action === 'compact' ? '' : `U5 unsent draft for ${action}`; await page.getByTestId('chat-composer-input').fill(draft);
       const boundary = action === 'compactRange' ? before.history.messages.findLast(row => JSON.stringify(row.content).includes('U5_RANGE_TARGET') && row.role === 'user') : undefined;
       const entryId = boundary ? getTranscriptEntryId(boundary) : null;
       summarizing = true; const providerBefore = llm.log.length; await arm(app, action);
       if (action === 'compact') {
-        await page.getByTestId('chat-composer-actions').focus(); await page.getByTestId('chat-composer-actions').press('Enter');
-        await expect(page.getByTestId('chat-composer-actions-menu')).toBeVisible();
-        await expect(page.getByTestId('chat-composer-action-compact')).toBeEnabled();
-        await page.getByTestId('chat-composer-action-compact').focus(); await page.getByTestId('chat-composer-action-compact').press('Enter');
+        await page.getByTestId('chat-composer-input').fill('/compact');
+        const option = page.getByTestId('chat-slash-command-option-compact');
+        await expect(option).toContainText(/[\d.]+k?\s*\/\s*[\d.]+k?\s*tokens/);
+        await option.focus(); await option.press('Enter');
+        await expect(page.getByTestId('chat-compaction-dialog')).toBeVisible();
+        await expect(page.getByTestId('chat-composer-input')).toHaveValue('');
         await page.getByTestId('chat-compaction-instructions').fill('Preserve U5_COMMIT_SUMMARY and exact context markers.');
         await page.getByTestId('chat-compaction-confirm').focus(); await page.getByTestId('chat-compaction-confirm').press('Enter');
         await expect.poll(async () => (await faultRead(app)).calls.some(row => row.action === action)
@@ -175,12 +177,18 @@ test('U5 compact and compactRange lose only committed replies; refresh reads cur
       expect(transcriptBytes.toString('utf8')).toContain('U5_COMMIT_SUMMARY');
       expect(after.compactionHistory.entries.find(row => row.id === latest.checkpointId)?.summary).toContain('U5_COMMIT_SUMMARY');
       expect(after.compactionStatus.lastCompaction?.id).toBe(latest.checkpointId);
-      await page.getByTestId('chat-composer-actions').click(); await page.getByTestId('chat-composer-action-compact').click();
-      const visibleTime = await page.evaluate(timestamp => new Intl.DateTimeFormat(undefined,
-        { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }).format(new Date(timestamp)), after.compactionStatus.lastCompaction!.timestamp);
-      const statusRow = page.getByTestId('chat-compaction-dialog').getByText(locale.composer.compaction.lastCompaction, { exact: true }).locator('..');
-      await expect(statusRow).toContainText(visibleTime); await expect(statusRow).not.toContainText(locale.composer.compaction.neverCompacted);
-      await page.getByTestId('chat-compaction-dialog').getByRole('button', { name: locale.composer.compaction.cancel, exact: true }).click();
+      let visibleTime: string | null = null;
+      if (action === 'compact') {
+        await page.getByTestId('chat-composer-input').fill('/compact');
+        const option = page.getByTestId('chat-slash-command-option-compact');
+        await expect(option).toBeVisible(); await option.focus(); await option.press('Enter');
+        await expect(page.getByTestId('chat-compaction-dialog')).toBeVisible();
+        visibleTime = await page.evaluate(timestamp => new Intl.DateTimeFormat(undefined,
+          { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }).format(new Date(timestamp)), after.compactionStatus.lastCompaction!.timestamp);
+        const statusRow = page.getByTestId('chat-compaction-dialog').getByText(locale.composer.compaction.lastCompaction, { exact: true }).locator('..');
+        await expect(statusRow).toContainText(visibleTime); await expect(statusRow).not.toContainText(locale.composer.compaction.neverCompacted);
+        await page.getByTestId('chat-compaction-dialog').getByRole('button', { name: locale.composer.compaction.cancel, exact: true }).click();
+      }
       if (action === 'compactRange') {
         expect(lost.payload.fromLeafId).toBe(entryId); expect(added[0].firstKeptEntryId).toBe(entryId);
         await expect(page.getByText('U5_RANGE_TARGET', { exact: true })).toBeVisible(); await expect(page.getByText('U5_RANGE_TAIL', { exact: true })).toBeVisible();
