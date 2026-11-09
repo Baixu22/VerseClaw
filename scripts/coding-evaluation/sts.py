@@ -243,14 +243,37 @@ def parse_pytest_counts(output: str) -> tuple[int, int]:
 def command_text(record: dict, out: Path) -> str:
     return (out / record["stdoutArtifact"]).read_bytes().decode("utf-8", errors="replace")
 
-def run_sts_unit(evidence: Evidence, native_root: Path, native_python: Path) -> dict:
+def run_sts_unit(evidence: Evidence, native_root: Path, native_python: Path, reuse_dir: Path | None = None) -> tuple[dict, dict]:
     sts_root = native_root / "extensions" / "sts"
-    pytest_cmd = evidence.run("sts-unit-pytest", [native_python, "-B", "-m", "pytest", "-q", "-p", "no:cacheprovider", "tests"], cwd=sts_root, timeout=1800)
-    manifest = evidence.run("sts-contract-manifest", [native_python, "-B", "contracts/vg-sts/v2/make_manifest.py", "--check"], cwd=sts_root, timeout=180)
-    published = evidence.run("sts-audit-published", [native_python, "-B", "experiments/tf0028_eval/audit_published_numbers.py"], cwd=sts_root, timeout=180)
-    directories = evidence.run("sts-audit-directories", [native_python, "-B", "experiments/tf0028_eval/audit_evidence_dirs.py"], cwd=sts_root, timeout=180)
+    identifiers = ["sts-unit-pytest", "sts-contract-manifest", "sts-audit-published", "sts-audit-directories"]
+    origin = {"mode": "executed-current", "sourceDirectory": None, "sourceReportSha256": None}
+    if reuse_dir is not None:
+        failure = json_file(reuse_dir / "failure.json")
+        by_id = {row.get("id"): row for row in failure.get("commands", [])}
+        records = []
+        for identifier in identifiers:
+            prior = by_id.get(identifier)
+            if not prior:
+                raise RuntimeError(f"reused STS evidence is missing {identifier}")
+            for channel in ("stdout", "stderr"):
+                relative = prior[f"{channel}Artifact"]
+                source = reuse_dir / relative
+                destination = evidence.out / relative
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(source, destination)
+                if sha256_file(destination) != prior[f"{channel}Sha256"]:
+                    raise RuntimeError(f"reused STS evidence digest changed: {identifier}/{channel}")
+            records.append(prior)
+        evidence.commands.extend(records)
+        origin = {"mode": "reused-same-native-source", "sourceDirectory": str(reuse_dir), "sourceReportSha256": sha256_file(reuse_dir / "failure.json")}
+        pytest_cmd, manifest, published, directories = records
+    else:
+        pytest_cmd = evidence.run("sts-unit-pytest", [native_python, "-B", "-m", "pytest", "-q", "-p", "no:cacheprovider", "tests"], cwd=sts_root, timeout=1800)
+        manifest = evidence.run("sts-contract-manifest", [native_python, "-B", "contracts/vg-sts/v2/make_manifest.py", "--check"], cwd=sts_root, timeout=180)
+        published = evidence.run("sts-audit-published", [native_python, "-B", "experiments/tf0028_eval/audit_published_numbers.py"], cwd=sts_root, timeout=180)
+        directories = evidence.run("sts-audit-directories", [native_python, "-B", "experiments/tf0028_eval/audit_evidence_dirs.py"], cwd=sts_root, timeout=180)
     passed, skipped = parse_pytest_counts(command_text(pytest_cmd, evidence.out))
-    return {"passed": passed, "skipped": skipped, "returnCode": pytest_cmd["exitCode"], "manifestMatched": manifest["exitCode"] == 0, "historicalAuditPassed": published["exitCode"] == 0 and directories["exitCode"] == 0}
+    return {"passed": passed, "skipped": skipped, "returnCode": pytest_cmd["exitCode"], "manifestMatched": manifest["exitCode"] == 0, "historicalAuditPassed": published["exitCode"] == 0 and directories["exitCode"] == 0, "origin": origin}, origin
 
 
 def run_scenarios(evidence: Evidence, native_root: Path, native_python: Path) -> tuple[dict, dict]:
@@ -305,7 +328,7 @@ def run_case_tests(evidence: Evidence, native_root: Path, native_python: Path, f
     }
     for identifier, nodes in NEGATIVE_TESTS.items():
         command = evidence.run(f"negative-{identifier}", [native_python, "-B", "-m", "pytest", "-q", "-p", "no:cacheprovider", *nodes], cwd=sts_root, timeout=300)
-        cases[identifier] = {"passed": command["exitCode"] == 0, "kind": kinds[identifier], "commandIds": [command["id"]], "evidence": [command["stdoutArtifact"], command["stderrArtifact"]], "observed": nodes}
+        cases[identifier] = {"passed": command["exitCode"] == 0, "kind": kinds[identifier], "commandIds": [command["id"]], "evidence": [command["stdoutArtifact"], command["stderrArtifact"]], "observed": {"nodes": nodes}}
     package_artifact = evidence.out / "package" / "artifacts" / "wrong-environment.json"
     environment = json_file(package_artifact)
     cases["environment-drift"]["observed"]["packageArtifact"] = {"contentConfirmed": environment.get("content_confirmed"), "conservativeFullAvailable": environment.get("conservative_full_available")}
@@ -452,6 +475,7 @@ def main() -> int:
     parser.add_argument("--packaging-python", type=Path, required=True)
     parser.add_argument("--httpx-setup-log", type=Path, required=True)
     parser.add_argument("--packaging-setup-log", type=Path, required=True)
+    parser.add_argument("--reuse-unit-dir", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     for name in ("native_root", "native_python", "vg", "contracts", "package_report", "package_artifacts", "wheel", "httpx", "packaging", "httpx_python", "packaging_python", "httpx_setup_log", "packaging_setup_log", "output"):
@@ -483,7 +507,7 @@ def main() -> int:
             if sha256_file(path) != expected_sha:
                 raise RuntimeError(f"clean package artifact changed: {name}")
 
-        unit = run_sts_unit(evidence, args.native_root.resolve(), args.native_python.resolve())
+        unit, unit_origin = run_sts_unit(evidence, args.native_root.resolve(), args.native_python.resolve(), args.reuse_unit_dir.resolve() if args.reuse_unit_dir else None)
         controls, flaky_case = run_scenarios(evidence, args.native_root.resolve(), args.native_python.resolve())
         negative_cases = run_case_tests(evidence, args.native_root.resolve(), args.native_python.resolve(), flaky_case)
         negative_cases["missed-failure"] = {"passed": controls["missed"]["passed"], "kind": "miss-detected", "commandIds": controls["missed"]["commandIds"], "evidence": controls["missed"]["evidence"], "observed": {"missedFailures": controls["missed"]["missedFailures"]}}
@@ -539,6 +563,7 @@ def main() -> int:
                 "cargo": {"status": "not-applicable", "reason": "STS selection is only a pytest plan; Cargo required tests run in their native runner"},
             },
             "stsUnit": unit,
+            "unitEvidenceOrigin": unit_origin,
             "cleanInstall": {
                 "ok": package.get("ok") is True,
                 "installedRequired": package.get("installed_required"),
