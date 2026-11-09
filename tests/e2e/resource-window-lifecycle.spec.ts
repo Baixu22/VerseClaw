@@ -46,7 +46,8 @@ test('integrated main and browser windows retain visibility, observers and backg
     const root = await mkdtemp(join(scratch, 'scope-'));
     const created = await invoke(page, 'workspaces', 'create', { rootPath: root, name: 'Window lifecycle', agentId: 'main', activeSessionKey: 'agent:main:window-lifecycle', permissionMode: 'acceptEdits' });
     const workspace = created.activeWorkspace as { id: string; activeSessionKey: string };
-    await page.reload(); await expect(page.getByTestId('session-worktree-trigger')).toBeVisible();
+    await page.reload(); await expect(page.getByTestId('chat-composer-input')).toBeVisible();
+    expect((await invoke(page, 'workspaces', 'getActive')).activeWorkspace).toMatchObject({ id: workspace.id });
     const scope = { workspaceId: workspace.id, sessionKey: workspace.activeSessionKey };
     let terminal = await invoke(page, 'terminal', 'open', { ...scope, keepOnLeave: true });
     if (terminal.approvalRequired) {

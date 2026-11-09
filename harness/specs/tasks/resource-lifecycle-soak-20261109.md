@@ -11,6 +11,7 @@ expectedUserBehavior:
   - Idle resource state and longer observation retain measured memory, handles and unknown counters with source-bound evidence.
 touchedAreas:
   - tests/e2e/resource-lifecycle-soak.spec.ts
+  - tests/e2e/resource-window-lifecycle.spec.ts
   - tests/unit/resource-lifecycle-report.test.ts
   - tests/unit/resource-repeated-observers.test.ts
   - scripts/verify-resource-lifecycle-soak.mjs
