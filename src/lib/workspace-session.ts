@@ -156,8 +156,7 @@ export function createWorkspaceScopedNewSession(): Promise<string | null> {
     if (!isSourceCurrent() || useWorkspacesStore.getState().activeWorkspaceId !== workspace.id) return null;
     await useWorkspacesStore.getState().fetchWorkspaces();
     await clearWorkspaceActiveTopicMarker(workspace.rootPath);
-    if (intent !== navigationIntent || useWorkspacesStore.getState().activeWorkspaceId !== workspace.id
-      || ![sourceSessionKey, sessionKey].includes(useChatStore.getState().currentSessionKey)) return null;
+    if (!isSourceCurrent() || useWorkspacesStore.getState().activeWorkspaceId !== workspace.id) return null;
     chatState.resetSessionView(sessionKey, { deferSessionEntry: true });
     return sessionKey;
   });

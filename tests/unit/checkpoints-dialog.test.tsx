@@ -109,7 +109,7 @@ describe('CheckpointsDialog', () => {
         expect.objectContaining({ sessionKey: 'agent::s1', limit: 20 }),
       );
     });
-    expect(screen.getByText('checkpoints.title')).toBeDefined();
+    expect(screen.getByText('filePreview.checkpoints.title')).toBeDefined();
     expect(screen.getAllByText('Implement feature X')).toHaveLength(2);
   });
 
@@ -124,7 +124,7 @@ describe('CheckpointsDialog', () => {
       />,
     );
     await waitFor(() => {
-      expect(screen.getByText('checkpoints.empty')).toBeDefined();
+      expect(screen.getByText('filePreview.checkpoints.empty')).toBeDefined();
     });
   });
 
@@ -160,7 +160,7 @@ describe('CheckpointsDialog', () => {
     await waitFor(() => {
       // legacy_checkpoint_fallback → 追加"部分恢复"标注（i18n mock 返回 key）
       expect(
-        screen.getByText('Restored from checkpoint "c1" checkpoints.partialRestoreNotice'),
+        screen.getByText('Restored from checkpoint "c1" filePreview.checkpoints.partialRestoreNotice'),
       ).toBeDefined();
     });
   });
@@ -289,7 +289,7 @@ describe('CheckpointsDialog', () => {
     });
     fireEvent.click(screen.getByTestId('chat-checkpoint-diff-c1'));
     await waitFor(() => {
-      expect(screen.getByText('checkpoints.diffEmpty')).toBeDefined();
+      expect(screen.getByText('filePreview.checkpoints.diffEmpty')).toBeDefined();
     });
   });
 });

@@ -2593,7 +2593,7 @@ export function ChatInput({
         toast.message(t('composer.slashCommands.toasts.sendUnavailable'));
         return;
       }
-      clearComposer();
+      closeSlashMenu();
       if (await onNewSession() === false) return;
       toast.success(t('composer.slashCommands.toasts.newSessionCreated'));
       return;

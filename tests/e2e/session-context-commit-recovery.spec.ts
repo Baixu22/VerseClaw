@@ -289,9 +289,23 @@ test('U5 real journal checkpoint restore changes v2 to v1 despite reply loss and
     expect(after.checkpoints.checkpoints.some(row => row.id === seed.record.id)).toBe(true); expect(await readFile(target, 'utf8')).toBe('v1\n');
     await page.getByTestId('chat-checkpoints-close').click(); await page.getByTestId('chat-toolbar-refresh').click(); await page.waitForTimeout(1000);
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('U5 retained restore draft');
+    const translations = [];
+    for (const language of ['en', 'zh', 'ja', 'ru'] as const) {
+      await hostInvoke(app, 'settings', 'set', { key: 'language', value: language });
+      await page.reload(); await expect(page.getByTestId('chat-composer-input')).toBeEnabled();
+      await openCheckpoints(page);
+      const messages = JSON.parse(await readFile(`shared/i18n/locales/${language}/chat.json`, 'utf8')).filePreview.checkpoints;
+      await expect(page.getByTestId('chat-checkpoints-dialog')).toContainText(messages.title);
+      await page.getByTestId(`chat-checkpoint-diff-${seed.record.id}`).click();
+      await expect(page.getByTestId(`chat-checkpoint-diff-panel-${seed.record.id}`)).toContainText(messages.diffEmpty);
+      translations.push({ language, title: messages.title, emptyDiff: messages.diffEmpty });
+      await page.screenshot({ path: info.outputPath(`checkpoint-restored-${language}.png`) });
+      await page.getByTestId('chat-checkpoints-close').click();
+      await expect(page.getByTestId('chat-composer-input')).toHaveValue('U5 retained restore draft');
+    }
     const audit = await faultRead(app); expect(audit.calls).toHaveLength(1);
     evidence.restore = { before, after, lost, diffBefore, diffAfter, restoredFileSha256: sha(await readFile(target)),
-      source: seed.source, naturalProductCheckpoint: seed.source === 'existing-runtime-checkpoint', automaticRedispatches: audit.calls.length - 1, clientOperationIdConfirmed: false };
+      source: seed.source, translations, naturalProductCheckpoint: seed.source === 'existing-runtime-checkpoint', automaticRedispatches: audit.calls.length - 1, clientOperationIdConfirmed: false };
     expect(llm.anomalies).toEqual([]); evidence.status = 'passed';
   } catch (error) { evidence.status = 'failed'; evidence.error = String(error); throw error; }
   finally { await finish(app, llm, info, evidence); }

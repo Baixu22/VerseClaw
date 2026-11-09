@@ -191,6 +191,22 @@ describe('workspace session helpers', () => {
     expect(chatState.resetSessionView).toHaveBeenCalledTimes(1);
   });
 
+  it('keeps a source revisit during the last new-session await', async () => {
+    const { createWorkspaceScopedNewSession } = await import('@/lib/workspace-session');
+    let release!: () => void;
+    hostApiMock.files.writeText.mockImplementationOnce(async () => {
+      await new Promise<void>(resolve => { release = resolve; }); return { success: true };
+    });
+    const created = createWorkspaceScopedNewSession();
+    await vi.waitFor(() => expect(hostApiMock.files.writeText).toHaveBeenCalledTimes(1));
+    chatState.switchSession('agent:reviewer:neighbour');
+    chatState.switchSession('agent:reviewer:old');
+    release();
+    await expect(created).resolves.toBeNull();
+    expect(chatState.currentSessionKey).toBe('agent:reviewer:old');
+    expect(chatState.resetSessionView).not.toHaveBeenCalled();
+  });
+
   it('creates new sessions inside the active workspace and current agent binding', async () => {
     vi.spyOn(Date, 'now').mockReturnValue(1711111111111);
     vi.spyOn(Math, 'random').mockReturnValue(0.123456);

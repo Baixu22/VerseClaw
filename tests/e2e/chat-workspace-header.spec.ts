@@ -223,7 +223,7 @@ test.describe('Verse Claw chat workspace header', () => {
     }
   });
 
-  test('keeps sidebar new chat scoped to the active workspace and preserves drafts after owner refusal', async ({ launchElectronApp }, info) => {
+  for (const entry of ['sidebar', 'slash'] as const) test(`keeps ${entry} new chat scoped to the active workspace and preserves drafts after owner refusal`, async ({ launchElectronApp }, info) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -383,15 +383,23 @@ test.describe('Verse Claw chat workspace header', () => {
         });
       }, { workspace: WORKSPACE, otherWorkspace: OTHER_WORKSPACE });
 
-      const draft = 'Preserve this source draft after rejected creation';
+      const draft = entry === 'slash' ? '/new' : 'Preserve this source draft after rejected creation';
+      const create = async () => {
+        if (entry === 'sidebar') await page.getByTestId('sidebar-new-chat').click();
+        else {
+          await page.getByTestId('chat-composer-input').fill('/ne'); await page.getByTestId('chat-composer-input').press('w');
+          const option = page.getByTestId('chat-slash-command-option-new');
+          await expect(option).toBeVisible(); await option.focus(); await expect(option).toBeFocused(); await option.press('Enter');
+        }
+      };
       await page.getByTestId('chat-composer-input').fill(draft);
-      await page.getByTestId('sidebar-new-chat').click();
+      await create();
       await expect(page.getByText('U5_NEW_SESSION_REJECTED', { exact: false })).toBeVisible();
       await expect(page.getByTestId('chat-composer-input')).toHaveValue(draft);
       expect(await app.evaluate(() => (globalThis as unknown as {
         __workspaceNewChatCalls: { workspaceUpdate: unknown[]; rejectedUpdates: unknown[] };
       }).__workspaceNewChatCalls)).toMatchObject({ workspaceUpdate: [], rejectedUpdates: [expect.objectContaining({ id: WORKSPACE.id })] });
-      await page.getByTestId('sidebar-new-chat').click();
+      await create();
 
       await expect.poll(async () => app.evaluate(() => (
         (globalThis as typeof globalThis & {

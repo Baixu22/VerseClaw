@@ -51,7 +51,7 @@ export function CheckpointsDialog({ open, onOpenChange, sessionKey, agentId, gen
       if (result.success) {
         setCheckpoints(result.checkpoints ?? []);
       } else {
-        setError(result.error || t('checkpoints.loadFailed'));
+        setError(result.error || t('filePreview.checkpoints.loadFailed'));
       }
     } catch (err) {
       if (isCurrent()) setError(err instanceof Error ? err.message : String(err));
@@ -82,17 +82,17 @@ export function CheckpointsDialog({ open, onOpenChange, sessionKey, agentId, gen
       });
       if (!isCurrent()) return;
       if ((result.key && result.key !== sessionKey) || result.checkpointId !== checkpointId) {
-        setError(t('checkpoints.restoreFailed')); return;
+        setError(t('filePreview.checkpoints.restoreFailed')); return;
       }
       if (result.success) {
         const partialNotice =
           result.mode === 'legacy_checkpoint_fallback'
-            ? ` ${t('checkpoints.partialRestoreNotice')}`
+            ? ` ${t('filePreview.checkpoints.partialRestoreNotice')}`
             : '';
-        setRestored(`${result.evidenceSummary || t('checkpoints.restoreSucceeded')}${partialNotice}`);
+        setRestored(`${result.evidenceSummary || t('filePreview.checkpoints.restoreSucceeded')}${partialNotice}`);
         await load();
       } else {
-        setError(result.error || t('checkpoints.restoreFailed'));
+        setError(result.error || t('filePreview.checkpoints.restoreFailed'));
       }
     } catch (err) {
       if (isCurrent()) setError(err instanceof Error ? err.message : String(err));
@@ -123,7 +123,7 @@ export function CheckpointsDialog({ open, onOpenChange, sessionKey, agentId, gen
       if (result.success) {
         setDiffByCheckpoint((prev) => ({ ...prev, [checkpointId]: result.files }));
       } else {
-        setError(result.error || t('checkpoints.diffFailed'));
+        setError(result.error || t('filePreview.checkpoints.diffFailed'));
         setDiffExpandedId(null);
       }
     } catch (err) {
@@ -141,19 +141,19 @@ export function CheckpointsDialog({ open, onOpenChange, sessionKey, agentId, gen
         <div className="flex items-center gap-2">
           <DialogTitle className="flex items-center gap-2">
             <History className="h-4 w-4" />
-            {t('checkpoints.title')}
+            {t('filePreview.checkpoints.title')}
           </DialogTitle>
-          <DialogDescription>{t('checkpoints.description')}</DialogDescription>
+          <DialogDescription>{t('filePreview.checkpoints.description')}</DialogDescription>
         </div>
         <div className="flex flex-col gap-2 py-2">
           {loading && (
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              {t('checkpoints.loading')}
+              {t('filePreview.checkpoints.loading')}
             </div>
           )}
           {!loading && checkpoints.length === 0 && !error && (
-            <p className="text-xs text-muted-foreground">{t('checkpoints.empty')}</p>
+            <p className="text-xs text-muted-foreground">{t('filePreview.checkpoints.empty')}</p>
           )}
           {checkpoints.map((checkpoint) => {
             const summary = checkpoint.checkpoint;
@@ -172,9 +172,9 @@ export function CheckpointsDialog({ open, onOpenChange, sessionKey, agentId, gen
                   <p className="mt-0.5 truncate text-2xs text-muted-foreground">
                     {formatCheckpointTime(summary.createdAt)}
                     {' · '}
-                    {t('checkpoints.filesTouched', { count: files })}
+                    {t('filePreview.checkpoints.filesTouched', { count: files })}
                     {' · '}
-                    {t('checkpoints.testsRun', { count: tests })}
+                    {t('filePreview.checkpoints.testsRun', { count: tests })}
                   </p>
                   {summary.decisions && summary.decisions.length > 0 && (
                     <p className="mt-0.5 line-clamp-1 text-2xs text-muted-foreground">
@@ -199,8 +199,8 @@ export function CheckpointsDialog({ open, onOpenChange, sessionKey, agentId, gen
                       <ChevronRight className="h-3.5 w-3.5" />
                     )}
                     {diffExpandedId === checkpoint.id
-                      ? t('checkpoints.hideDiff')
-                      : t('checkpoints.showDiff')}
+                      ? t('filePreview.checkpoints.hideDiff')
+                      : t('filePreview.checkpoints.showDiff')}
                   </Button>
                   <Button
                     type="button"
@@ -216,7 +216,7 @@ export function CheckpointsDialog({ open, onOpenChange, sessionKey, agentId, gen
                     ) : (
                       <RotateCcw className="h-3.5 w-3.5" />
                     )}
-                    {t('checkpoints.restore')}
+                    {t('filePreview.checkpoints.restore')}
                   </Button>
                 </div>
                 </div>
@@ -226,10 +226,10 @@ export function CheckpointsDialog({ open, onOpenChange, sessionKey, agentId, gen
                   data-testid={`chat-checkpoint-diff-panel-${checkpoint.id}`}
                 >
                   {diffLoadingId === checkpoint.id && (
-                    <p className="text-2xs text-muted-foreground">{t('checkpoints.diffLoading')}</p>
+                    <p className="text-2xs text-muted-foreground">{t('filePreview.checkpoints.diffLoading')}</p>
                   )}
                   {diffLoadingId !== checkpoint.id && diffByCheckpoint[checkpoint.id]?.length === 0 && (
-                    <p className="text-2xs text-muted-foreground">{t('checkpoints.diffEmpty')}</p>
+                    <p className="text-2xs text-muted-foreground">{t('filePreview.checkpoints.diffEmpty')}</p>
                   )}
                   {diffByCheckpoint[checkpoint.id]?.map((file) => (
                     <div key={file.filePath} className="mb-2 last:mb-0">
@@ -263,7 +263,7 @@ export function CheckpointsDialog({ open, onOpenChange, sessionKey, agentId, gen
           <Button type="button" variant="ghost" size="sm" data-testid="chat-checkpoints-refresh"
             disabled={loading || restoringId !== null} onClick={() => void load(true)}>{t('workspace.actions.refresh')}</Button>
           <Button type="button" variant="ghost" size="sm" data-testid="chat-checkpoints-close" onClick={() => onOpenChange(false)}>
-            {t('checkpoints.close')}
+            {t('filePreview.checkpoints.close')}
           </Button>
         </div>
       </DialogContent>
