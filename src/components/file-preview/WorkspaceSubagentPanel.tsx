@@ -113,6 +113,7 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
         sendIntent.current = null;
       }
       setTranscriptError(null);
+      setLoading(false);
       if (workspace?.id) {
         const owner = await hostApi.taskLedger.sessionTask({ workspaceId: workspace.id, sessionKey: childSessionKey,
           expectedSessionGeneration: result.sessionGeneration }).catch(() => null);

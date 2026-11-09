@@ -16,6 +16,7 @@ export type OptionalServerMethodModelCatalogLoad = {
 };
 
 type LoadOptionalServerMethodModelCatalogOptions = {
+  enabled?: boolean;
   logOnceKey?: string;
   startedLoad?: OptionalServerMethodModelCatalogLoad;
   timeoutMs?: number;
@@ -54,6 +55,7 @@ export async function loadOptionalServerMethodModelCatalog(
   surface: string,
   options?: LoadOptionalServerMethodModelCatalogOptions,
 ): Promise<ModelCatalogEntry[] | undefined> {
+  if (options?.enabled === false) return undefined;
   let timeout: NodeJS.Timeout | undefined;
   const timedOut = Symbol("server-method-model-catalog-timeout");
   const timeoutMs = options?.timeoutMs ?? DEFAULT_OPTIONAL_MODEL_CATALOG_TIMEOUT_MS;

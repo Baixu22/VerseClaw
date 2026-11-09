@@ -1308,14 +1308,15 @@ async function loadSessionSummary(
     return { sessionKey, firstUserText: null, lastTimestamp: null };
   }
 }
-async function loadSessionTranscriptByKey(sessionKey: string, limit: number, gateway?: Pick<GatewayManager, 'rpc'>): Promise<RawMessage[] | null> {
+async function loadSessionTranscriptByKey(sessionKey: string, limit: number, gateway?: Pick<GatewayManager, 'rpc'>, includeModelMetadata = true): Promise<RawMessage[] | null> {
   const parsed = parseSessionKey(sessionKey);
   if (!parsed) return null;
 
   // The live runtime owns transcript location (including isolated source state).
   // An empty runtime history is authoritative; never substitute another profile.
   if (gateway) {
-    const result = await gateway.rpc<{ messages?: RawMessage[] }>('chat.history', { sessionKey, limit }, 10_000);
+    const result = await gateway.rpc<{ messages?: RawMessage[] }>('chat.history', { sessionKey, limit,
+      ...(includeModelMetadata ? {} : { includeModelMetadata: false }) }, 10_000);
     if (!Array.isArray(result?.messages)) throw new Error('Runtime history returned no messages array');
     return result.messages;
   }
@@ -2102,7 +2103,7 @@ export function createSessionsApi(ctx: {
             return { success: false, error: 'Transcript scope or generation changed' };
           }
         }
-        const messages = await loadSessionTranscriptByKey(body.sessionKey.trim(), limit, ctx.gatewayManager);
+        const messages = await loadSessionTranscriptByKey(body.sessionKey.trim(), limit, ctx.gatewayManager, !needsFence);
         if (!messages) return { success: false, error: 'Transcript not found' };
         if (needsFence) {
           const after = await ctx.gatewayManager!.rpc<Description>('sessions.describe', { key: body.sessionKey.trim() }, 15_000);

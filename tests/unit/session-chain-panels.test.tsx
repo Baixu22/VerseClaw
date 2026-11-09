@@ -28,16 +28,18 @@ beforeEach(() => {
 });
 
 describe('session task and worker panels consume owner results', () => {
-  it('scrolls the actual transcript after a delayed task-owner read releases the loading placeholder', async () => {
+  it('shows and scrolls the actual transcript while its task owner is still loading', async () => {
+    let resolveHistory: (result: unknown) => void = () => {};
     let resolveOwner: (result: unknown) => void = () => {};
+    state.history.mockReturnValueOnce(new Promise(resolve => { resolveHistory = resolve; }));
     state.sessionTask.mockReturnValueOnce(new Promise(resolve => { resolveOwner = resolve; }));
     render(<MemoryRouter><WorkspaceSubagentPanel childSessionKey="agent:main:child" /></MemoryRouter>);
-    await waitFor(() => expect(state.sessionTask).toHaveBeenCalledTimes(1));
     const scroll = screen.getByTestId('workspace-subagent-transcript');
     Object.defineProperty(scroll, 'scrollHeight', { configurable: true, value: 1200 });
-    resolveOwner({ success: true, task: null, children: [] });
+    resolveHistory({ success: true, sessionGeneration: 'child-generation', messages: [{ role: 'assistant', content: 'Worker transcript' }] });
     await screen.findByText('Worker transcript');
     await waitFor(() => expect(scroll.scrollTop).toBe(1200));
+    resolveOwner({ success: true, task: null, children: [] });
   });
   it.each([undefined, null])('keeps an unavailable recorded cost (%s) unknown rather than zero', async costUsd => {
     state.history.mockResolvedValue({ success: true, sessionGeneration: 'child-generation', costUsd,

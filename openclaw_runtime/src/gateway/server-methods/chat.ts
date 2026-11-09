@@ -2559,6 +2559,7 @@ async function handleChatHistoryRequest({
     agentId?: string;
     limit?: number;
     maxChars?: number;
+    includeModelMetadata?: boolean;
   };
   const agentIdOverride = normalizeOptionalText((params as { agentId?: string }).agentId);
   const requestedAgentId = resolveRequestedChatAgentId({
@@ -2591,7 +2592,7 @@ async function handleChatHistoryRequest({
             startedLoad: startupModelCatalogLoad,
             timeoutMs: CHAT_STARTUP_OPTIONAL_MODEL_CATALOG_TIMEOUT_MS,
           })
-        : loadOptionalServerMethodModelCatalog(context, method),
+        : loadOptionalServerMethodModelCatalog(context, method, { enabled: params.includeModelMetadata !== false }),
     {
       config: cfg,
       phase: method,

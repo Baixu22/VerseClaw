@@ -186,6 +186,7 @@ export function WorkspaceAgentsPanel() {
       setTranscript({ key: rosterKey, scope: viewScope, messages: result.messages ?? [], costUsd: result.costUsd });
       setChildModel(result.model ?? null);
       setTranscriptError(null);
+      setTranscriptLoading(false);
       if (workspace?.id) {
         const owner = await hostApi.taskLedger.sessionTask({ workspaceId: workspace.id, sessionKey: childSessionKey,
           expectedSessionGeneration: result.sessionGeneration }).catch(() => null);
