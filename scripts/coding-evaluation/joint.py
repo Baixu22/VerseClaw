@@ -275,7 +275,7 @@ def planted_wrong(runner: Runner, workspace: Path) -> dict:
 def artifact_map(out: Path) -> dict:
     artifacts = {}
     for path in sorted(out.rglob("*")):
-        if not path.is_file() or path.name in {"report.json", "verification.json", "failure.json"}:
+        if not path.is_file() or path.name in {"report.json", "verification.json", "failure.json"} or path.is_relative_to(out / "tmp"):
             continue
         artifacts[path.relative_to(out).as_posix()] = {"sha256": sha256_file(path), "bytes": path.stat().st_size}
     return artifacts
@@ -287,18 +287,22 @@ def remove_tree(path: Path) -> dict:
     files = [item for item in path.rglob("*") if item.is_file()]
     removed_files = len(files)
     removed_bytes = sum(item.stat().st_size for item in files)
-    for current, dirs, names in os.walk(path, topdown=False):
-        for name in names:
-            try:
-                os.chmod(Path(current) / name, 0o777)
-            except OSError:
-                pass
-        for name in dirs:
-            try:
-                os.chmod(Path(current) / name, 0o777)
-            except OSError:
-                pass
-    shutil.rmtree(path, ignore_errors=True)
+    for _attempt in range(3):
+        for current, dirs, names in os.walk(path, topdown=False):
+            for name in names:
+                try:
+                    os.chmod(Path(current) / name, 0o777)
+                except OSError:
+                    pass
+            for name in dirs:
+                try:
+                    os.chmod(Path(current) / name, 0o777)
+                except OSError:
+                    pass
+        shutil.rmtree(path, ignore_errors=True)
+        if not path.exists():
+            break
+        time.sleep(0.25)
     remaining = sum(1 for item in path.rglob("*") if item.is_file()) if path.exists() else 0
     return {"removedFiles": removed_files, "removedBytes": removed_bytes, "remaining": remaining}
 
