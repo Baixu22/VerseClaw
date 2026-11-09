@@ -84,6 +84,8 @@ ownedPaths:
   - tests/e2e/chat-context-pressure.spec.ts
   - electron/gateway/session-task-scope-bridge.ts
   - tests/unit/session-task-scope-bridge.test.ts
+  - tests/e2e/session-family-counter-layout.spec.ts
+  - src/styles/codex-sidebar.css
 touchedAreas:
   - docs/dev/session-worktree-storage.md
   - src/lib/host-api.ts
@@ -162,6 +164,8 @@ touchedAreas:
   - tests/e2e/chat-context-pressure.spec.ts
   - electron/gateway/session-task-scope-bridge.ts
   - tests/unit/session-task-scope-bridge.test.ts
+  - tests/e2e/session-family-counter-layout.spec.ts
+  - src/styles/codex-sidebar.css
 requiredRules:
   - identity-scope-boundary
   - renderer-main-boundary

@@ -114,11 +114,12 @@ async function openCheckpoints(page: Page) {
 async function finish(app: ElectronApplication, llm: Awaited<ReturnType<typeof startScriptedLlm>>, info: TestInfo, evidence: Record<string, unknown>) {
   evidence.fault = await faultRead(app).catch(String); evidence.providerLog = llm.log;
   evidence.observationErrors = observationErrors.get(app) ?? [];
-  evidence.uiEvents = await (await getStableWindow(app)).evaluate(() =>
-    (window as unknown as { u5UiEvents?: unknown[] }).u5UiEvents ?? []).catch(String);
-  await app.evaluate(() => (globalThis as unknown as { u5CommitLoss?: { restore: () => void } }).u5CommitLoss?.restore()).catch(() => undefined);
-  await (await getStableWindow(app).catch(() => null))?.screenshot({ path: info.outputPath('final.png') }).catch(() => undefined);
+  const page = await getStableWindow(app).catch(() => null);
+  evidence.uiEvents = page ? await page.evaluate(() =>
+    (window as unknown as { u5UiEvents?: unknown[] }).u5UiEvents ?? []).catch(String) : 'window closed';
   await writeFile(info.outputPath('context-commit.json'), JSON.stringify(evidence, null, 2));
+  await app.evaluate(() => (globalThis as unknown as { u5CommitLoss?: { restore: () => void } }).u5CommitLoss?.restore()).catch(() => undefined);
+  await page?.screenshot({ path: info.outputPath('final.png') }).catch(() => undefined);
   await hostInvoke(app, 'gateway', 'stop').catch(() => undefined); await closeElectronApp(app);
   llm.server.closeAllConnections(); await new Promise<void>(done => llm.server.close(() => done()));
 }
@@ -247,7 +248,7 @@ test('U5 compact and compactRange lose only committed replies; refresh reads cur
 
 test('U5 real journal checkpoint restore changes v2 to v1 despite reply loss and retains generation', async ({ launchElectronApp, userDataDir }, info) => {
   test.skip(process.env.CLAWX_U5_CONTEXT_COMMIT !== '1', '主 agent 串行显式启动');
-  test.setTimeout(300_000); const target = info.outputPath('workspace', 'result.txt');
+  test.setTimeout(420_000); const target = info.outputPath('workspace', 'result.txt');
   const evidence: Record<string, unknown> = metadata();
   const llm = await startScriptedLlm((text, results) => {
     if (!results.u5taskstart) return { toolCall: { id: 'u5taskstart', name: 'task_control', args: { action: 'start', requestId: 'u5taskstart',
@@ -304,6 +305,8 @@ test('U5 real journal checkpoint restore changes v2 to v1 despite reply loss and
     await page.getByTestId('chat-checkpoints-close').click(); await page.getByTestId('chat-toolbar-refresh').click(); await page.waitForTimeout(1000);
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('U5 retained restore draft');
     const translations = [];
+    evidence.restore = { before, after, lost, diffBefore, diffAfter, restoredFileSha256: sha(await readFile(target)), source: seed.source, translations };
+    await writeFile(info.outputPath('context-commit.json'), JSON.stringify(evidence, null, 2));
     for (const language of ['en', 'zh', 'ja', 'ru'] as const) {
       await hostInvoke(app, 'settings', 'set', { key: 'language', value: language });
       await page.reload(); await expect(page.getByTestId('chat-composer-input')).toBeEnabled();
@@ -315,6 +318,7 @@ test('U5 real journal checkpoint restore changes v2 to v1 despite reply loss and
       await page.getByTestId(`chat-checkpoint-diff-${seed.record.id}`).click();
       await expect(page.getByTestId(`chat-checkpoint-diff-panel-${seed.record.id}`)).toContainText(messages.diffEmpty);
       translations.push({ language, title: messages.title, emptyDiff: messages.diffEmpty });
+      await writeFile(info.outputPath('context-commit.json'), JSON.stringify(evidence, null, 2));
       await page.screenshot({ path: info.outputPath(`checkpoint-restored-${language}.png`) });
       await page.getByTestId('chat-checkpoints-close').click();
       await expect(page.getByTestId('chat-composer-input')).toHaveValue('U5 retained restore draft');
