@@ -8,7 +8,7 @@ EXPECTED=['process-normal','process-timeout','process-cancel','gateway-restart-b
 def digest(value):
     return hashlib.sha256(json.dumps(value,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()).hexdigest()
 
-def verify(report,root,expected_candidate,expected_digest,allow_dirty=False):
+def verify(report,root,expected_candidate,expected_digest,allow_dirty=False,report_file_sha256=None):
     issues=[]
     def check(condition,message):
         if not condition: issues.append(message)
@@ -16,7 +16,7 @@ def verify(report,root,expected_candidate,expected_digest,allow_dirty=False):
         check(report.get('schema')=='CodingVsExecution/v1','schema mismatch')
         check(report.get('driven_by')=='agent' and report.get('realHumanEvidence') is False,'attribution mismatch')
         check(report.get('candidate')==expected_candidate and bool(re.fullmatch(r'[a-f0-9]{40}',str(report.get('candidate','')))),'candidate mismatch')
-        check(digest(report)==expected_digest,'report digest mismatch')
+        check(expected_digest==(report_file_sha256 or digest(report)),'report digest mismatch')
         source=report.get('sources',{}).get('clawx',{})
         check(source.get('commit')==expected_candidate and source.get('tree')==report.get('sources',{}).get('clawx',{}).get('tree'),'ClawX binding missing')
         if not allow_dirty: check(source.get('dirty') is False,'source is not frozen')
@@ -84,8 +84,8 @@ def verify(report,root,expected_candidate,expected_digest,allow_dirty=False):
     return dict(ok=not issues,issues=issues,acceptanceEligible=not issues and not allow_dirty)
 
 if __name__=='__main__':
-    parser=argparse.ArgumentParser();parser.add_argument('report',type=Path);parser.add_argument('--candidate',required=True);parser.add_argument('--expected-report-digest',required=True);parser.add_argument('--allow-dirty',action='store_true');parser.add_argument('--negative-checks',action='store_true');parser.add_argument('--output',type=Path);args=parser.parse_args()
-    report=json.loads(args.report.read_text(encoding='utf-8-sig'));result=verify(report,args.report.parent,args.candidate,args.expected_report_digest,args.allow_dirty)
+    parser=argparse.ArgumentParser();parser.add_argument('report',type=Path);parser.add_argument('--candidate',required=True);parser.add_argument('--expected-report-digest',required=True);parser.add_argument('--allow-dirty',action='store_true');parser.add_argument('--negative-checks',action='store_true');parser.add_argument('--expected-digest-is-file-sha256',action='store_true');parser.add_argument('--output',type=Path);args=parser.parse_args()
+    report_bytes=args.report.read_bytes();report=json.loads(report_bytes.decode('utf-8-sig'));result=verify(report,args.report.parent,args.candidate,args.expected_report_digest,args.allow_dirty,hashlib.sha256(report_bytes).hexdigest() if args.expected_digest_is_file_sha256 else None)
     if args.negative_checks:
         tests=[]
         mutations=['wrong-candidate','missing-case','fake-exit','old-observation','survivor','output-tamper','digest-tamper']
@@ -102,7 +102,7 @@ if __name__=='__main__':
             elif name=='output-tamper':altered['commands'][0]['stdoutSha256']='0'*64
             elif name=='digest-tamper':altered_digest='f'*64
             elif name=='fake-exit':next(c for c in altered['processes'] if c['kind']=='timeout')['exit']['timedOut']=False
-            denied=verify(altered,args.report.parent,args.candidate,altered_digest if name!='digest-tamper' else 'f'*64,args.allow_dirty)
+            denied=verify(altered,args.report.parent,args.candidate,altered_digest if name!='digest-tamper' else 'f'*64,args.allow_dirty,None)
             tests.append(dict(case=name,rejected=not denied['ok'],issues=denied['issues']))
         result['negativeChecks']=tests
         if not all(entry['rejected'] for entry in tests):result['ok']=False;result['issues'].append('negative evidence accepted')
