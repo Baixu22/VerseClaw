@@ -126,6 +126,22 @@ describe('workspaces api compatibility migration', () => {
     });
   });
 
+  it('publishes background membership after persistence without publishing draft-only edits',async()=>{
+    const {createWorkspacesApi,observeWorkspaceNavigation}=await import('@electron/services/workspaces-api');
+    const api=createWorkspacesApi();await api.list();
+    const observations:unknown[]=[];
+    const stop=observeWorkspaceNavigation(()=>observations.push(structuredClone(storeState.profiles)));
+    try{
+      await api.saveState({id:'legacy',sessionKey:'agent:research:new-child',state:{draftInput:'first'}});
+      expect(observations).toHaveLength(1);
+      expect(observations[0]).toEqual(expect.arrayContaining([expect.objectContaining({sessionStates:expect.objectContaining({
+        'agent:research:new-child':expect.objectContaining({draftInput:'first'}),
+      })})]));
+      await api.saveState({id:'legacy',sessionKey:'agent:research:new-child',state:{draftInput:'second'}});
+      expect(observations).toHaveLength(1);
+    }finally{stop();}
+  });
+
   it('normalizes legacy nested session folders and new parent input to one level', async () => {
     storeState.profiles[0] = {
       ...(storeState.profiles[0] as Record<string, unknown>),

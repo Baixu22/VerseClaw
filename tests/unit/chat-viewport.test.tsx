@@ -26,10 +26,10 @@ beforeEach(() => {
 });
 afterEach(() => { observers.length = 0; vi.clearAllTimers(); vi.useRealTimers(); vi.unstubAllGlobals(); vi.restoreAllMocks(); globalThis.ResizeObserver = originalObserver; });
 
-function View({ rows = items }: { rows?: typeof items }) {
+function View({ rows = items, session = 'session', position }: { rows?: typeof items; session?: string; position?: {scrollTop:number;messageKey?:string;offset?:number;pinned?:boolean} }) {
   const [scroller, setScroller] = useState<HTMLDivElement | null>(null);
   const getScroller = useCallback(() => scroller, [scroller]);
-  const { rows: mountedRows, offsets, total, start, attachList, measure, scrollToIndex } = useMessageViewport(rows, getScroller, 'session', 30);
+  const { rows: mountedRows, offsets, total, start, attachList, measure, scrollToIndex } = useMessageViewport(rows, getScroller, session, 30, position);
   const attach = useCallback((node: HTMLDivElement | null) => {
       if (node) {
         Object.defineProperty(node, 'clientHeight', { configurable: true, value: 600 });
@@ -47,6 +47,19 @@ function View({ rows = items }: { rows?: typeof items }) {
 }
 
 describe('measured message viewport', () => {
+  it('restores a saved message across session changes before and after measured heights arrive', async () => {
+    const view=render(<View rows={items.slice(0,1)} session="child"/>);
+    await act(async()=>{await vi.advanceTimersByTimeAsync(32);});
+    view.rerender(<View rows={items} session="parent" position={{scrollTop:20000,messageKey:'m-100',offset:-15,pinned:false}}/>);
+    await act(async()=>{await vi.advanceTimersByTimeAsync(32);});
+    expect(screen.getByTestId('row-100')).toBeInTheDocument();
+    const scroll=screen.getByTestId('scroll');expect(scroll.scrollTop).toBe(21615);
+    const earlier=screen.getByTestId('row-98');
+    act(()=>observers.forEach(observer=>{if(observer.nodes.has(earlier))observer.callback([
+      {target:earlier,borderBoxSize:[{blockSize:400}]},{target:screen.getByTestId('row-100'),borderBoxSize:[{blockSize:200}]},
+    ] as unknown as ResizeObserverEntry[],{} as ResizeObserver);}));
+    expect(scroll.scrollTop).toBe(21815);view.unmount();
+  });
   it('selects the actual offset of a tall row and never exceeds the existing row cap', () => {
     const heights = new Map([['m-0', 5000], ['m-1', 40]]);
     const first = measureMessageWindow(items, heights, 3000, 600, 12);

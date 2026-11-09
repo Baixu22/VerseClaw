@@ -52,6 +52,25 @@ describe('chat startup hydration', () => {
     runtimeStatus.connectedAt += 1;
   });
 
+  it('coalesces concurrent forced session refreshes into one follow-up owner read',async()=>{
+    const {useChatStore}=await import('@/stores/chat');
+    useChatStore.setState({currentSessionKey:'agent:main:main',sessions:[{key:'agent:main:main'}]});
+    let release!:()=>void,reads=0,active=0,maxActive=0;
+    gatewayRpcMock.mockImplementation(async(method:string)=>{
+      if(method!=='sessions.list')return{};
+      reads++;active++;maxActive=Math.max(active,maxActive);
+      if(reads===1)await new Promise<void>(resolve=>{release=resolve;});
+      else await new Promise(resolve=>setTimeout(resolve,10));
+      active--;return {sessions:[{key:'agent:main:main',label:'Main',updatedAt:reads}]};
+    });
+    const first=useChatStore.getState().loadSessions({force:true});
+    await vi.waitFor(()=>expect(reads).toBe(1));
+    const waiting=Array.from({length:20},()=>useChatStore.getState().loadSessions({force:true}));
+    release();await Promise.all([first,...waiting]);
+    expect(reads).toBe(2);expect(maxActive).toBe(1);
+    expect(useChatStore.getState().currentSessionKey).toBe('agent:main:main');
+  });
+
   it('waits without showing an empty ready state before the gateway is ready', async () => {
     runtimeStatus.gatewayReady = false;
     const { useChatStore } = await import('@/stores/chat');

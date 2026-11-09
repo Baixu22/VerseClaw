@@ -224,6 +224,7 @@ export type HostEventContract = {
   chat: {
     runtimeEvent: (payload: ChatRuntimeEvent) => void;
     queueStatus: (payload: ChatQueueStatusEvent) => void;
+    workspaceNavigationChanged: () => void;
   };
   subagent: {
     lifecycle: (payload: SubagentRuntimeLifecycleEvent) => void;
@@ -303,6 +304,7 @@ export const HOST_EVENT_CHANNELS = {
   chat: {
     runtimeEvent: 'chat:runtime-event',
     queueStatus: 'chat:queue-status',
+    workspaceNavigationChanged: 'chat:workspace-navigation-changed',
   },
   subagent: {
     lifecycle: 'agent:subagent-lifecycle',

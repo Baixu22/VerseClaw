@@ -47,7 +47,7 @@ describe('session task and worker panels consume owner results', () => {
       ? { success: false, error: 'Worker generation changed' }
       : { success: true, sessionGeneration: generation, model: 'actual-provider/worker-model', messages: [{ role: 'assistant', content: 'Worker transcript' }] });
     state.sendWorker.mockResolvedValue({ success: false, phase: 'rejected', error: 'Worker generation changed' });
-    render(<WorkspaceSubagentPanel childSessionKey="agent:main:child" />);
+    render(<MemoryRouter><WorkspaceSubagentPanel childSessionKey="agent:main:child" /></MemoryRouter>);
     await screen.findByText('Worker transcript');
     expect(screen.getByTestId('workspace-subagent-model')).toHaveTextContent('actual-provider/worker-model');
     generation = 'replacement-generation';
@@ -62,7 +62,7 @@ describe('session task and worker panels consume owner results', () => {
 
   it.each(['queued', 'steered'])('uses the successful %s receipt without inventing a run or task acceptance', async (phase) => {
     state.sendWorker.mockResolvedValue({ success: true, phase });
-    render(<WorkspaceSubagentPanel childSessionKey="agent:main:child" />);
+    render(<MemoryRouter><WorkspaceSubagentPanel childSessionKey="agent:main:child" /></MemoryRouter>);
     await screen.findByText('Worker transcript');
     fireEvent.change(screen.getByTestId('workspace-subagent-dispatch-input'), { target: { value: 'New instruction' } });
     fireEvent.click(screen.getByTestId('workspace-subagent-dispatch'));
@@ -74,7 +74,7 @@ describe('session task and worker panels consume owner results', () => {
   it('reconciles an unknown send with its original intervention key and clears only the acknowledged input', async () => {
     let key = '';
     state.sendWorker.mockImplementation(async (payload: { idempotencyKey: string }) => { key = payload.idempotencyKey; return { success: false, phase: 'unknown' }; });
-    render(<WorkspaceSubagentPanel childSessionKey="agent:main:child" />);
+    render(<MemoryRouter><WorkspaceSubagentPanel childSessionKey="agent:main:child" /></MemoryRouter>);
     await screen.findByText('Worker transcript');
     fireEvent.change(screen.getByTestId('workspace-subagent-dispatch-input'), { target: { value: 'Recover my instruction' } });
     fireEvent.click(screen.getByTestId('workspace-subagent-dispatch'));

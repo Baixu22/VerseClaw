@@ -63,7 +63,7 @@ import { createSessionStorageApi } from '../services/session-storage-api';
 import { createTerminalSessionManager, type TerminalSessionManager } from '../services/terminal-session-manager';
 import { createWebPreviewApi } from '../services/web-preview-api';
 import { createWebPreviewManager } from '../services/web-preview-manager';
-import { createWorkspacesApi } from '../services/workspaces-api';
+import { createWorkspacesApi, observeWorkspaceNavigation } from '../services/workspaces-api';
 import { createProjectRulesApi } from '../services/project-rules-api';
 import { createRemoteControlApi } from '../services/remote-control-api';
 import { createAgentBrowserApi } from '../services/agent-browser-api';
@@ -142,6 +142,10 @@ function registerTypedHostHandlers(
     },
     taskLedgerApi,
   });
+  const stopWorkspaceNavigation=observeWorkspaceNavigation(()=>{
+    if(!mainWindow.isDestroyed())mainWindow.webContents.send(HOST_EVENT_CHANNELS.chat.workspaceNavigationChanged);
+  });
+  mainWindow.once('closed',stopWorkspaceNavigation);
   registerSessionTaskScopeBridge(gatewayManager, workspacesApi.admitTaskEffect);
   const traceDiagnostics = createHostTraceDiagnosticsService({
     onSummary: recordObservabilityHostDiagnostic,

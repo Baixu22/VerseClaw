@@ -1,6 +1,6 @@
 import { GatewayEventType, type JsonRpcNotification } from './protocol';
 import { logger } from '../utils/logger';
-import { normalizeGatewayChatRuntimeEvent } from './chat-runtime-events';
+import { normalizeGatewayChatRuntimeEvent, normalizeGatewayChatTerminalEvent } from './chat-runtime-events';
 import type {
   GatewayChannelStatusEvent,
   GatewayChatMessageEvent,
@@ -134,6 +134,10 @@ export function dispatchProtocolEvent(
       break;
     case 'chat':
       emitter.emit('chat:message', { message: payload });
+      {
+        const terminal=normalizeGatewayChatTerminalEvent(payload);
+        if(terminal)emitter.emit('chat:runtime-event',terminal);
+      }
       break;
     case 'agent': {
       // Prompt-cache diagnostics are consumed in Main as a dedicated, typed

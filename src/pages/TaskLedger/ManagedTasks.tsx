@@ -35,9 +35,18 @@ export function ManagedTasks({
   const [query, setQuery] = useState("");
   const [stateFilter, setStateFilter] = useState("all");
   const [nextCursor, setNextCursor] = useState<string>();
+  const [dependencyReads, setDependencyReads] = useState<Record<string, {
+    status: "loading" | "more" | "missing" | "error"; cursor?: string;
+  }>>({});
+  const dependencyRead = useRef<object | null>(null);
+  const taskCards = useRef(new Map<string, HTMLElement>());
+  const [focusTaskId, setFocusTaskId] = useState<string | null>(null);
   const requestVersion = useRef(0);
   const load = useCallback(async () => {
     const version = ++requestVersion.current;
+    dependencyRead.current = null;
+    setDependencyReads({});
+    setFocusTaskId(null);
     if (!workspaceId) {
       setTasks([]);
       setNextCursor(undefined);
@@ -72,8 +81,46 @@ export function ManagedTasks({
     return () => {
       clearTimeout(timer);
       requestVersion.current++;
+      dependencyRead.current = null;
     };
   }, [load]);
+  useEffect(() => {
+    const card = focusTaskId ? taskCards.current.get(focusTaskId) : null;
+    if (!card) return;
+    card.scrollIntoView({ block: "nearest" });
+    card.focus({ preventScroll: true });
+    setFocusTaskId(null);
+  }, [focusTaskId, tasks]);
+
+  // A click reads one owner page and keeps only the requested dependency.
+  const findDependency = async (taskNodeId: string) => {
+    if (!workspaceId || stale || busy || dependencyRead.current) return;
+    const intent = {};
+    dependencyRead.current = intent;
+    const version = requestVersion.current;
+    const cursor = dependencyReads[taskNodeId]?.cursor;
+    setDependencyReads((old) => ({ ...old, [taskNodeId]: { status: "loading", cursor } }));
+    try {
+      const result = await hostApi.taskLedger.queryTasks({ workspaceId, limit: 50, cursor });
+      if (dependencyRead.current !== intent || version !== requestVersion.current) return;
+      const found = result.tasks.find((task) => task.contract.taskNodeId === taskNodeId);
+      if (found) {
+        setTasks((old) => [...old.filter((task) => task.contract.taskNodeId !== taskNodeId), found]);
+        setDependencyReads((old) => { const next = { ...old }; delete next[taskNodeId]; return next; });
+        setFocusTaskId(taskNodeId);
+      } else {
+        setDependencyReads((old) => ({ ...old, [taskNodeId]: {
+          status: result.nextCursor ? "more" : "missing", cursor: result.nextCursor,
+        } }));
+      }
+    } catch {
+      if (dependencyRead.current === intent && version === requestVersion.current) {
+        setDependencyReads((old) => ({ ...old, [taskNodeId]: { status: "error", cursor } }));
+      }
+    } finally {
+      if (dependencyRead.current === intent) dependencyRead.current = null;
+    }
+  };
   const loadMore = async () => {
     if (!workspaceId || !nextCursor || busy) return;
     setBusy(true);
@@ -268,10 +315,18 @@ export function ManagedTasks({
       {tasks.map((view) => {
         const { contract, claim } = view;
         const mine = claim?.sessionKey === sessionKey;
+        const dependencies = (contract.dependencies ?? []).map((id) => ({ id,
+          task: tasks.find((task) => task.contract.taskNodeId === id),
+        })).filter(({ task }) => task?.contract.state !== "done");
         return (
           <article
             key={contract.taskNodeId}
             data-testid="managed-task"
+            tabIndex={-1}
+            ref={(card) => {
+              if (card) taskCards.current.set(contract.taskNodeId, card);
+              else taskCards.current.delete(contract.taskNodeId);
+            }}
             className="space-y-2 rounded-md border border-border p-4"
           >
             <div className="flex flex-wrap justify-between gap-2">
@@ -306,6 +361,34 @@ export function ManagedTasks({
               <p className="text-sm text-muted-foreground">{t("managed.children", { count: view.childTaskNodeIds!.length })}</p>
             )}
             {view.parentTaskNodeId && <p className="text-xs text-muted-foreground">{t("managed.parentGoal")}</p>}
+            {dependencies.length > 0 && (
+              <div className="space-y-1 text-sm">
+                <p>{t("managed.waitingDependency")}</p>
+                <ul className="space-y-1">
+                  {dependencies.map(({ id, task }) => {
+                    const read = dependencyReads[id];
+                    return <li key={id} className="flex flex-wrap items-center gap-2">
+                      {task ? <>
+                        <button type="button" className="text-left underline underline-offset-2"
+                          aria-label={t("managed.openDependency", { title: task.contract.objective })}
+                          onClick={() => setFocusTaskId(id)}>{task.contract.objective}</button>
+                        <span className="text-muted-foreground">{t(`managed.states.${task.contract.state}`)}</span>
+                      </> : <>
+                        <span role="status" className="text-muted-foreground">{t(read?.status === "missing"
+                          ? "managed.dependencyMissing" : read?.status === "error"
+                            ? "managed.dependencyReadFailed" : "managed.dependencyNotLoaded")}</span>
+                        <button type="button" className="underline underline-offset-2 disabled:opacity-50"
+                          disabled={busy || stale || Object.values(dependencyReads).some((value) => value.status === "loading")}
+                          onClick={() => void findDependency(id)}>
+                          {t(read?.status === "loading" ? "managed.readingDependency"
+                            : read?.status === "more" ? "managed.findDependencyMore" : "managed.findDependency")}
+                        </button>
+                      </>}
+                    </li>;
+                  })}
+                </ul>
+              </div>
+            )}
             {view.checkpoint && (
               <p className="text-sm">
                 {t("managed.nextAction", { action: view.checkpoint.nextAction })}
@@ -333,7 +416,7 @@ export function ManagedTasks({
               {contract.state === "ready" && (
                 <Button
                   size="sm"
-                  disabled={busy || stale || !sessionKey}
+                  disabled={busy || stale || !sessionKey || dependencies.length > 0}
                   onClick={() =>
                     void command({
                       action: "claim",

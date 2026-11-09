@@ -1,0 +1,365 @@
+
+Running 1 test using 1 worker
+
+(node:42580) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:42580) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[app:out] [2026-11-09T04:07:06.159Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)
+[app:out] [2026-11-09T04:07:06.159Z] [INFO] [ResourceTracker] Started heartbeat interval
+[2026-11-09T04:07:06.159Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=41436, ppid=38792
+[2026-11-09T04:07:06.160Z] [INFO] Running in E2E mode: startup side effects minimized
+[app:err] [2026-11-09T04:07:06.203Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[app:err] [2026-11-09T04:07:06.204Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[2026-11-09T04:07:06.204Z] [WARN] [webview-security] deny permission-check: WebView permission "web-app-installation" denied by default (fail-closed)
+[2026-11-09T04:07:06.204Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default
+[app:out] [2026-11-09T04:07:06.325Z] [INFO] [extensions] Extension "builtin/clawhub-marketplace" initialized
+[app:out] [2026-11-09T04:07:06.325Z] [INFO] [extensions] Extension "builtin/diagnostics" initialized
+[app:err] [41436:1109/120706.392:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[41436:1109/120706.392:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[app:out] [2026-11-09T04:07:06.579Z] [INFO] [efficiency] shed state changed {"shedding":false,"reason":null,"activeReasons":[],"transitionCount":2}
+[2026-11-09T04:07:06.581Z] [INFO] Gateway auto-start skipped in E2E mode
+[app:err] [2026-11-09T04:07:06.608Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:07:06.608Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:07:06.609Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T04:07:06.609Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-09T04:07:06.628Z] [INFO] Gateway stop requested
+[app:out] [2026-11-09T04:07:06.629Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] [2026-11-09T04:07:06.892Z] [INFO] Scheduling Gateway reload after saving provider "custom-sessionc" config
+[app:out] [2026-11-09T04:07:06.893Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)
+[app:out] Set OpenClaw default model to "custom-sessionc/mock-coder" for provider "custom-sessionc" (runtime override)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] [2026-11-09T04:07:07.775Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\tmp\unified-management-20261109\interaction-validation\u2-family-layout3-results\session-derivation-ui-fami-880f5-responsive-keyboard-layouts\workspace\.verse-claw\harness
+[app:out] [2026-11-09T04:07:08.190Z] [INFO] [gateway-refresh] mode=reload requested pid=n/a state=stopped
+[2026-11-09T04:07:08.191Z] [INFO] [gateway-refresh] mode=restart requested pidBefore=n/a
+[2026-11-09T04:07:08.191Z] [INFO] Gateway stop requested
+[2026-11-09T04:07:08.191Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)
+[2026-11-09T04:07:08.191Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (start)
+[2026-11-09T04:07:08.192Z] [INFO] Gateway start requested (port=18789)
+[app:err] [2026-11-09T04:07:08.190Z] [WARN] [gateway-refresh] mode=reload result=fallback_restart cause=not_running
+[2026-11-09T04:07:08.190Z] [WARN] Gateway reload requested while not running; falling back to restart
+[app:out] [2026-11-09T04:07:08.240Z] [DEBUG] Device identity loaded (deviceId=6f43eaf42b69283532481298bd792ee1bf0624d7c4f212178dcdf52884bcff78)
+[app:out] [2026-11-09T04:07:08.240Z] [DEBUG] Gateway state changed: stopped -> starting
+[app:out] [2026-11-09T04:07:08.679Z] [DEBUG] Checking for existing Gateway...
+[app:err] (node:41436) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+[app:out] [2026-11-09T04:07:08.884Z] [INFO] Gateway stop requested
+[2026-11-09T04:07:08.884Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (stop)
+[app:out] [2026-11-09T04:07:09.005Z] [DEBUG] Gateway start/find-existing superseded (expectedEpoch=3, currentEpoch=4)
+[app:out] [2026-11-09T04:07:09.006Z] [DEBUG] Gateway state changed: starting -> stopped
+[2026-11-09T04:07:09.006Z] [INFO] [metric] gateway.restart.executed {"gateway_restart_executed_total":1,"gateway_restart_suppressed_total":0,"gateway_restart_circuit_open_until":0}
+[2026-11-09T04:07:09.007Z] [INFO] [gateway-refresh] mode=restart result=applied pidBefore=n/a pidAfter=n/a suppressed=0 executed=1 circuitOpenUntil=0
+[app:out] [2026-11-09T04:07:09.090Z] [DEBUG] Gateway lifecycle epoch advanced to 5 (start)
+[app:out] [2026-11-09T04:07:09.091Z] [INFO] Gateway start requested (port=49727)
+[app:out] [2026-11-09T04:07:09.127Z] [DEBUG] Gateway state changed: stopped -> starting
+[app:out] [2026-11-09T04:07:09.398Z] [DEBUG] Checking for existing Gateway...
+[app:out] [2026-11-09T04:07:09.677Z] [DEBUG] No existing Gateway found, starting new process...
+[app:out] Set OpenClaw default model to "custom-sessionc/mock-coder" for provider "custom-sessionc" (runtime override)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] [2026-11-09T04:07:09.958Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)
+[app:err] [2026-11-09T04:07:10.012Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.
+[app:out] [2026-11-09T04:07:10.017Z] [INFO] [metric] gateway.prelaunch {"settingsMs":1,"defaultProviderRuntimeSyncMs":247,"providerEnvMs":9,"channelStartupPolicyMs":3,"uvEnvMs":8,"mcpEnvMs":36,"runtimeConfigReadMs":0,"verseShellBundleMs":1,"totalMs":330,"maintenance":{},"configuredChannelCount":0}
+[app:out] [2026-11-09T04:07:10.018Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=49727, entry="D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime\dist\entry.js", args="gateway --port 49727 --allow-unconfigured", execArgv="", cwd="D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime", bundledBin=yes, providerKeys=2, channels=skipped(no configured channels), proxy=disabled)
+[app:out] [2026-11-09T04:07:10.135Z] [INFO] Gateway process started (pid=12136)
+[app:out] [2026-11-09T04:07:10.136Z] [DEBUG] Gateway manager now owns process pid=12136
+[app:err] [2026-11-09T04:07:10.339Z] [WARN] [Gateway stderr] (node:12136) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[app:err] [2026-11-09T04:07:10.340Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)
+[app:out] [2026-11-09T04:07:12.227Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)
+[app:out] [2026-11-09T04:07:14.337Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)
+[app:out] [2026-11-09T04:07:14.942Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"power-saver","activeReasons":["power-saver"],"transitionCount":3}
+[app:out] [2026-11-09T04:07:16.121Z] [DEBUG] [Gateway stderr] (node:12136) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+[app:out] [2026-11-09T04:07:16.121Z] [DEBUG] [Gateway stderr] (node:12136) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.
+[app:err] [2026-11-09T04:07:16.121Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.
+[app:out] [2026-11-09T04:07:16.442Z] [DEBUG] Still waiting for Gateway... (attempt 31/2400)
+[app:out] [2026-11-09T04:07:19.525Z] [DEBUG] Gateway ready after 33 attempt(s)
+[app:out] [2026-11-09T04:07:19.526Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:49727/ws)
+[app:err] [2026-11-09T04:07:19.557Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=7ec1ba92-752e-4dfc-85de-0a8dc7668082 peer=127.0.0.1:58538->127.0.0.1:49727 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:49727 ua=n/a code=1006 reason=n/a[39m
+[app:out] [2026-11-09T04:07:19.568Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[app:out] [2026-11-09T04:07:19.569Z] [DEBUG] Received connect.challenge, sending handshake
+[app:out] [2026-11-09T04:07:19.570Z] [DEBUG] Sending connect handshake with challenge nonce
+[app:err] [2026-11-09T04:07:19.573Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=e3809fca-fd87-42c5-9df2-fc1ccb719a47 peer=127.0.0.1:58540->127.0.0.1:49727 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:49727 ua=n/a code=1006 reason=n/a[39m
+[app:out] [2026-11-09T04:07:19.639Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:49727/ws)
+[app:err] [2026-11-09T04:07:19.641Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)
+[app:out] [2026-11-09T04:07:22.063Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[app:out] [2026-11-09T04:07:22.063Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-11-09T04:07:22.063Z] [DEBUG] Sending connect handshake with challenge nonce
+[app:out] [2026-11-09T04:07:22.795Z] [DEBUG] Gateway connect handshake completed (protocol=4)
+[app:out] [2026-11-09T04:07:22.796Z] [DEBUG] Gateway state changed: starting -> running
+[2026-11-09T04:07:22.797Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)
+[2026-11-09T04:07:22.798Z] [INFO] [metric] gateway.startup {"configSyncMs":739,"spawnToReadyMs":9389,"readyToConnectMs":3273,"totalMs":13401}
+[app:out] [2026-11-09T04:07:27.608Z] [INFO] [chat:sendWithMedia] Sending: message="Agent-driven family render probe", attachments=0, fileRefs=0
+[app:out] [2026-11-09T04:07:27.608Z] [INFO] [gateway-rpc] chat.send serialized id=4279aa21-9765-4b2b-96f0-493df913dd03 timeoutMs=900000 bytes=507
+[app:out] [2026-11-09T04:07:27.609Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=4279aa21-9765-4b2b-96f0-493df913dd03
+[app:err] [2026-11-09T04:07:28.010Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=4279aa21-9765-4b2b-96f0-493df913dd03
+[app:err] [2026-11-09T04:07:28.011Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=4279aa21-9765-4b2b-96f0-493df913dd03
+[app:err] [2026-11-09T04:07:28.012Z] [WARN] [Gateway stderr] [chat.send.trace] handler entered
+[app:err] [2026-11-09T04:07:28.023Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=family-render-user-turn sessionKey=agent:main:session-1794197227697-familyproject loadSessionMs=0.826
+[app:err] [2026-11-09T04:07:28.142Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=family-render-user-turn sessionKey=agent:main:session-1794197227697-familyproject attachments=0
+[app:err] [2026-11-09T04:07:28.147Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=family-render-user-turn sessionKey=agent:main:session-1794197227697-familyproject
+[app:out] [2026-11-09T04:07:28.148Z] [INFO] [gateway-rpc] chat.send response id received durationMs=540
+[app:out] [2026-11-09T04:07:28.148Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"family-render-user-turn","status":"started"}
+[app:err] [2026-11-09T04:07:28.163Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=4279aa21-9765-4b2b-96f0-493df913dd03
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[fp-p1-harness] connection #1
+[app:err] [2026-11-09T04:08:00.230Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:08:00.230Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:08:00.230Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T04:08:00.230Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-09T04:08:11.416Z] [INFO] [chat:sendWithMedia] Sending: message="FAMILY-HOLD family-render-2-5-1794197291264", attachments=0, fileRefs=0
+[app:out] [2026-11-09T04:08:11.417Z] [INFO] [gateway-rpc] chat.send serialized id=dc103cc6-51be-4c2b-813c-2e9a536337ae timeoutMs=900000 bytes=526
+[2026-11-09T04:08:11.418Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=dc103cc6-51be-4c2b-813c-2e9a536337ae
+[app:err] [2026-11-09T04:08:11.418Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=dc103cc6-51be-4c2b-813c-2e9a536337ae
+[app:err] [2026-11-09T04:08:11.419Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=dc103cc6-51be-4c2b-813c-2e9a536337ae
+[app:err] [2026-11-09T04:08:11.427Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=family-render-2-5-1794197291264 sessionKey=agent:main:session-1794197227697-familyproject loadSessionMs=1.345
+[app:err] [2026-11-09T04:08:11.431Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=family-render-2-5-1794197291264 sessionKey=agent:main:session-1794197227697-familyproject attachments=0
+[app:err] [2026-11-09T04:08:11.434Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=family-render-2-5-1794197291264 sessionKey=agent:main:session-1794197227697-familyproject
+[app:out] [2026-11-09T04:08:11.435Z] [INFO] [gateway-rpc] chat.send response id received durationMs=18
+[app:out] [2026-11-09T04:08:11.435Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"family-render-2-5-1794197291264","status":"started"}
+[app:err] [2026-11-09T04:08:11.437Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=dc103cc6-51be-4c2b-813c-2e9a536337ae
+[app:err] [2026-11-09T04:08:16.122Z] [WARN] [Gateway stderr] [31m[diagnostic][39m [33mliveness warning: reasons=event_loop_delay interval=30s eventLoopDelayP99Ms=1688.2 eventLoopDelayMaxMs=2204.1 eventLoopUtilization=0 cpuCoreRatio=0.793 active=1 waiting=0 queued=0 recentPhases=post-attach.update-check:3ms,sidecars.session-locks:35ms,sidecars.restart-sentinel:29ms,post-attach.update-sentinel:8ms,post-ready.maintenance:8ms,post-ready.agent-runtime-plugins:6ms work=[active=agent:main:session-1794197227697-familyproject(processing/embedded_run,q=1,age=3s last=embedded_run:started)][39m
+[fp-p1-harness] connection #2
+[app:err] [2026-11-09T04:08:16.355Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-09T04:08:16.356Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:08:16.356Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[app:err] [2026-11-09T04:08:16.356Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-09T04:08:16.853Z] [INFO] [ResourceTracker] Registered: Session server :62265 (pid=46040, port=62265, session=agent:main:session-1794197227697-familyproject)
+[app:out] [2026-11-09T04:08:34.889Z] [INFO] [chat:sendWithMedia] Sending: message="FAMILY-HOLD family-render-2-40-1794197314730", attachments=0, fileRefs=0
+[app:out] [2026-11-09T04:08:34.889Z] [INFO] [gateway-rpc] chat.send serialized id=f4ce2b01-d340-4d6c-8b20-4ca4444f8fc7 timeoutMs=900000 bytes=528
+[app:out] [2026-11-09T04:08:34.889Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=f4ce2b01-d340-4d6c-8b20-4ca4444f8fc7
+[app:err] [2026-11-09T04:08:34.890Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=f4ce2b01-d340-4d6c-8b20-4ca4444f8fc7
+[app:err] [2026-11-09T04:08:34.890Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=f4ce2b01-d340-4d6c-8b20-4ca4444f8fc7
+[app:err] [2026-11-09T04:08:34.900Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=family-render-2-40-1794197314730 sessionKey=agent:main:session-1794197227697-familyproject loadSessionMs=1.263
+[app:err] [2026-11-09T04:08:34.903Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=family-render-2-40-1794197314730 sessionKey=agent:main:session-1794197227697-familyproject attachments=0
+[app:err] [2026-11-09T04:08:34.905Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=family-render-2-40-1794197314730 sessionKey=agent:main:session-1794197227697-familyproject
+[app:out] [2026-11-09T04:08:34.905Z] [INFO] [gateway-rpc] chat.send response id received durationMs=16
+[app:out] [2026-11-09T04:08:34.906Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"family-render-2-40-1794197314730","status":"started"}
+[app:err] [2026-11-09T04:08:34.907Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=f4ce2b01-d340-4d6c-8b20-4ca4444f8fc7
+[fp-p1-harness] connection #3
+[app:err] [2026-11-09T04:08:38.830Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-09T04:08:38.830Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:08:38.831Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T04:08:38.831Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-09T04:09:00.158Z] [INFO] [chat:sendWithMedia] Sending: message="FAMILY-HOLD family-render-2-5-1794197339864", attachments=0, fileRefs=0
+[app:out] [2026-11-09T04:09:00.159Z] [INFO] [gateway-rpc] chat.send serialized id=f869490b-b51a-4fd0-9dde-5090f1c54fe3 timeoutMs=900000 bytes=526
+[app:out] [2026-11-09T04:09:00.159Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=f869490b-b51a-4fd0-9dde-5090f1c54fe3
+[app:err] [2026-11-09T04:09:00.160Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=f869490b-b51a-4fd0-9dde-5090f1c54fe3
+[app:err] [2026-11-09T04:09:00.160Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=f869490b-b51a-4fd0-9dde-5090f1c54fe3
+[app:err] [2026-11-09T04:09:00.168Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=family-render-2-5-1794197339864 sessionKey=agent:main:session-1794197227697-familyproject loadSessionMs=0.958
+[app:err] [2026-11-09T04:09:00.172Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=family-render-2-5-1794197339864 sessionKey=agent:main:session-1794197227697-familyproject attachments=0
+[app:err] [2026-11-09T04:09:00.175Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=family-render-2-5-1794197339864 sessionKey=agent:main:session-1794197227697-familyproject
+[app:out] [2026-11-09T04:09:00.176Z] [INFO] [gateway-rpc] chat.send response id received durationMs=18
+[2026-11-09T04:09:00.176Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"family-render-2-5-1794197339864","status":"started"}
+[app:err] [2026-11-09T04:09:00.178Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=f869490b-b51a-4fd0-9dde-5090f1c54fe3
+[fp-p1-harness] connection #4
+[app:err] [2026-11-09T04:09:08.144Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-09T04:09:08.144Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-09T04:09:08.145Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T04:09:08.145Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-09T04:09:26.493Z] [INFO] [chat:sendWithMedia] Sending: message="FAMILY-HOLD family-render-2-40-1794197366340", attachments=0, fileRefs=0
+[app:out] [2026-11-09T04:09:26.494Z] [INFO] [gateway-rpc] chat.send serialized id=42dede7b-7864-4235-ac88-2093f5667cee timeoutMs=900000 bytes=528
+[app:out] [2026-11-09T04:09:26.494Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=42dede7b-7864-4235-ac88-2093f5667cee
+[app:err] [2026-11-09T04:09:26.495Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=42dede7b-7864-4235-ac88-2093f5667cee
+[app:err] [2026-11-09T04:09:26.495Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=42dede7b-7864-4235-ac88-2093f5667cee
+[app:err] [2026-11-09T04:09:26.501Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=family-render-2-40-1794197366340 sessionKey=agent:main:session-1794197227697-familyproject loadSessionMs=0.692
+[app:err] [2026-11-09T04:09:26.503Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=family-render-2-40-1794197366340 sessionKey=agent:main:session-1794197227697-familyproject attachments=0
+[app:err] [2026-11-09T04:09:26.506Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=family-render-2-40-1794197366340 sessionKey=agent:main:session-1794197227697-familyproject
+[app:out] [2026-11-09T04:09:26.507Z] [INFO] [gateway-rpc] chat.send response id received durationMs=13
+[2026-11-09T04:09:26.507Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"family-render-2-40-1794197366340","status":"started"}
+[app:err] [2026-11-09T04:09:26.509Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=42dede7b-7864-4235-ac88-2093f5667cee
+[fp-p1-harness] connection #5
+[app:err] [2026-11-09T04:09:30.408Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-09T04:09:30.408Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:09:30.408Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T04:09:30.408Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-09T04:09:52.035Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:09:52.036Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-09T04:09:52.036Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T04:09:52.036Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-09T04:09:52.391Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:09:52.391Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:09:52.391Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[app:err] [2026-11-09T04:09:52.391Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-09T04:09:53.000Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:09:53.001Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-09T04:09:53.001Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T04:09:53.001Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-09T04:09:53.553Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:09:53.554Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:09:53.554Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T04:09:53.554Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-09T04:09:53.979Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:09:53.979Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-09T04:09:53.979Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T04:09:53.979Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-09T04:09:54.368Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:09:54.368Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:09:54.368Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[app:err] [2026-11-09T04:09:54.369Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-09T04:10:49.192Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:10:49.193Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:10:49.193Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T04:10:49.193Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-09T04:11:00.026Z] [INFO] [chat:sendWithMedia] Sending: message="FAMILY-HOLD family-render-20-5-1794197459826", attachments=0, fileRefs=0
+[app:out] [2026-11-09T04:11:00.026Z] [INFO] [gateway-rpc] chat.send serialized id=b16aa9d5-7320-41d5-b668-d387a7c70454 timeoutMs=900000 bytes=528
+[app:out] [2026-11-09T04:11:00.027Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=b16aa9d5-7320-41d5-b668-d387a7c70454
+[app:err] [2026-11-09T04:11:00.028Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=b16aa9d5-7320-41d5-b668-d387a7c70454
+[app:err] [2026-11-09T04:11:00.028Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=b16aa9d5-7320-41d5-b668-d387a7c70454
+[app:err] [2026-11-09T04:11:00.037Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=family-render-20-5-1794197459826 sessionKey=agent:main:session-1794197227697-familyproject loadSessionMs=1.211
+[app:err] [2026-11-09T04:11:00.041Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=family-render-20-5-1794197459826 sessionKey=agent:main:session-1794197227697-familyproject attachments=0
+[app:out] [2026-11-09T04:11:00.045Z] [INFO] [gateway-rpc] chat.send response id received durationMs=19
+[2026-11-09T04:11:00.046Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"family-render-20-5-1794197459826","status":"started"}
+[app:err] [2026-11-09T04:11:00.044Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=family-render-20-5-1794197459826 sessionKey=agent:main:session-1794197227697-familyproject
+[app:err] [2026-11-09T04:11:00.050Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=b16aa9d5-7320-41d5-b668-d387a7c70454
+[fp-p1-harness] connection #6
+[app:err] [2026-11-09T04:11:02.956Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-09T04:11:02.956Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:11:02.956Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T04:11:02.957Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-09T04:11:03.890Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"family-project","error":"AtomicWriteError: Atomic lock failed for D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-xK4iUQ\\verse-claw-e2e-home-RV7JG1\\.openclaw\\task-ledgers\\workspaces\\family-project-7f9fd9c07b\\snapshot.json (EPERM): EPERM: operation not permitted, open 'D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-xK4iUQ\\verse-claw-e2e-home-RV7JG1\\.openclaw\\task-ledgers\\workspaces\\family-project-7f9fd9c07b\\snapshot.json.clawx-write.lock'"}
+[app:out] [2026-11-09T04:11:17.766Z] [INFO] [chat:sendWithMedia] Sending: message="FAMILY-HOLD family-render-20-40-1794197477618", attachments=0, fileRefs=0
+[app:out] [2026-11-09T04:11:17.767Z] [INFO] [gateway-rpc] chat.send serialized id=7fc5db5e-e570-4450-bc20-84b29ff13fa6 timeoutMs=900000 bytes=530
+[app:out] [2026-11-09T04:11:17.767Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=7fc5db5e-e570-4450-bc20-84b29ff13fa6
+[app:err] [2026-11-09T04:11:17.768Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=7fc5db5e-e570-4450-bc20-84b29ff13fa6
+[app:err] [2026-11-09T04:11:17.768Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=7fc5db5e-e570-4450-bc20-84b29ff13fa6
+[app:err] [2026-11-09T04:11:17.776Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=family-render-20-40-1794197477618 sessionKey=agent:main:session-1794197227697-familyproject loadSessionMs=1.144
+[app:err] [2026-11-09T04:11:17.778Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=family-render-20-40-1794197477618 sessionKey=agent:main:session-1794197227697-familyproject attachments=0
+[app:err] [2026-11-09T04:11:17.781Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=family-render-20-40-1794197477618 sessionKey=agent:main:session-1794197227697-familyproject
+[app:out] [2026-11-09T04:11:17.781Z] [INFO] [gateway-rpc] chat.send response id received durationMs=15
+[app:out] [2026-11-09T04:11:17.782Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"family-render-20-40-1794197477618","status":"started"}
+[app:err] [2026-11-09T04:11:17.785Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=7fc5db5e-e570-4450-bc20-84b29ff13fa6
+[app:err] [2026-11-09T04:11:18.290Z] [WARN] [Gateway stderr] [31m[diagnostic][39m [33mliveness warning: reasons=event_loop_delay interval=30s eventLoopDelayP99Ms=1392.5 eventLoopDelayMaxMs=1902.1 eventLoopUtilization=0 cpuCoreRatio=0.779 active=1 waiting=0 queued=0 recentPhases=post-attach.update-check:3ms,sidecars.session-locks:35ms,sidecars.restart-sentinel:29ms,post-attach.update-sentinel:8ms,post-ready.maintenance:8ms,post-ready.agent-runtime-plugins:6ms work=[active=agent:main:session-1794197227697-familyproject(processing/embedded_run,q=1,age=1s last=embedded_run:started)][39m
+[fp-p1-harness] connection #7
+[app:err] [2026-11-09T04:11:21.702Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-09T04:11:21.702Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-09T04:11:21.702Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T04:11:21.703Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-09T04:11:39.625Z] [INFO] [chat:sendWithMedia] Sending: message="FAMILY-HOLD family-render-20-5-1794197499437", attachments=0, fileRefs=0
+[app:out] [2026-11-09T04:11:39.626Z] [INFO] [gateway-rpc] chat.send serialized id=3555be14-fa80-4dc2-ae0f-0570af8a02d9 timeoutMs=900000 bytes=528
+[app:out] [2026-11-09T04:11:39.626Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=3555be14-fa80-4dc2-ae0f-0570af8a02d9
+[app:err] [2026-11-09T04:11:39.627Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=3555be14-fa80-4dc2-ae0f-0570af8a02d9
+[app:err] [2026-11-09T04:11:39.627Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=3555be14-fa80-4dc2-ae0f-0570af8a02d9
+[app:err] [2026-11-09T04:11:39.633Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=family-render-20-5-1794197499437 sessionKey=agent:main:session-1794197227697-familyproject loadSessionMs=0.943
+[app:err] [2026-11-09T04:11:39.635Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=family-render-20-5-1794197499437 sessionKey=agent:main:session-1794197227697-familyproject attachments=0
+[app:err] [2026-11-09T04:11:39.637Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=family-render-20-5-1794197499437 sessionKey=agent:main:session-1794197227697-familyproject
+[app:out] [2026-11-09T04:11:39.638Z] [INFO] [gateway-rpc] chat.send response id received durationMs=12
+[app:out] [2026-11-09T04:11:39.638Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"family-render-20-5-1794197499437","status":"started"}
+[app:err] [2026-11-09T04:11:39.640Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=3555be14-fa80-4dc2-ae0f-0570af8a02d9
+[fp-p1-harness] connection #8
+[app:err] [2026-11-09T04:11:42.537Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-09T04:11:42.537Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:11:42.538Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[app:err] [2026-11-09T04:11:42.538Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-09T04:11:59.271Z] [INFO] [chat:sendWithMedia] Sending: message="FAMILY-HOLD family-render-20-40-1794197519060", attachments=0, fileRefs=0
+[app:out] [2026-11-09T04:11:59.271Z] [INFO] [gateway-rpc] chat.send serialized id=e96698d8-4b8e-46e8-a692-1102e3ec86cb timeoutMs=900000 bytes=530
+[2026-11-09T04:11:59.272Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=e96698d8-4b8e-46e8-a692-1102e3ec86cb
+[app:err] [2026-11-09T04:11:59.273Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=e96698d8-4b8e-46e8-a692-1102e3ec86cb
+[app:err] [2026-11-09T04:11:59.274Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=e96698d8-4b8e-46e8-a692-1102e3ec86cb
+[app:err] [2026-11-09T04:11:59.491Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=family-render-20-40-1794197519060 sessionKey=agent:main:session-1794197227697-familyproject loadSessionMs=1.916
+[app:err] [2026-11-09T04:11:59.496Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=family-render-20-40-1794197519060 sessionKey=agent:main:session-1794197227697-familyproject attachments=0
+[app:err] [2026-11-09T04:11:59.500Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=family-render-20-40-1794197519060 sessionKey=agent:main:session-1794197227697-familyproject
+[app:out] [2026-11-09T04:11:59.500Z] [INFO] [gateway-rpc] chat.send response id received durationMs=229
+[2026-11-09T04:11:59.501Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"family-render-20-40-1794197519060","status":"started"}
+[app:err] [2026-11-09T04:11:59.510Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=88947369-7573-4a83-a2ea-87c2cb2542b3 id=e96698d8-4b8e-46e8-a692-1102e3ec86cb
+[app:out] [2026-11-09T04:12:00.692Z] [INFO] [ResourceTracker] Registered: Session server :60698 (pid=39772, port=60698, session=agent:main:session-1794197227697-familyproject)
+[fp-p1-harness] connection #9
+[app:err] [2026-11-09T04:12:03.420Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-09T04:12:03.421Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:12:03.421Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T04:12:03.421Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-09T04:12:24.852Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-09T04:12:24.852Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:12:24.852Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T04:12:24.853Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-09T04:12:25.229Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:12:25.229Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:12:25.230Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T04:12:25.230Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-09T04:12:25.567Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-09T04:12:25.567Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:12:25.567Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T04:12:25.567Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-09T04:12:25.905Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:12:25.906Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-09T04:12:25.906Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T04:12:25.906Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-09T04:12:26.326Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:12:26.326Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:12:26.326Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[app:err] [2026-11-09T04:12:26.326Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-09T04:12:26.682Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-09T04:12:26.682Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T04:12:26.682Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T04:12:26.682Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-09T04:12:29.845Z] [INFO] [ResourceTracker] Registered: Session server :60695 (pid=39772, port=60695, session=agent:main:session-1794197227697-familyproject)
+[app:out] [2026-11-09T04:16:48.764Z] [INFO] Gateway stop requested
+[app:out] [2026-11-09T04:16:48.766Z] [DEBUG] Gateway lifecycle epoch advanced to 6 (stop)
+[app:out] [2026-11-09T04:16:48.770Z] [INFO] Sending kill to Gateway process (pid=12136)
+[app:err] [2026-11-09T04:16:48.801Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)
+[app:out] [2026-11-09T04:16:48.803Z] [DEBUG] Gateway state changed: running -> stopped
+[app:out] [2026-11-09T04:16:49.522Z] [INFO] Gateway process exited (code=1, expected=yes)
+[app:out] [2026-11-09T04:16:49.522Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)
+[app:out] [2026-11-09T04:16:49.692Z] [INFO] Gateway stop requested
+[2026-11-09T04:16:49.692Z] [DEBUG] Gateway lifecycle epoch advanced to 7 (stop)
+[app:err] Debugger ending on ws://127.0.0.1:54413/ee9b95e8-74f4-4596-bb18-f67dc6f748f7
+For help, see: https://nodejs.org/en/docs/inspector
+[app:out] [2026-11-09T04:16:49.769Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"window-hidden","activeReasons":["window-hidden","power-saver"],"transitionCount":4}
+[app:out] [2026-11-09T04:16:49.771Z] [INFO] [ResourceTracker] Stopped
+[app:out] [2026-11-09T04:16:49.772Z] [INFO] [efficiency-sampler] stopped
+[app:out] [2026-11-09T04:16:49.774Z] [INFO] [efficiency] runtime efficiency sampling stopped
+[app:out] [2026-11-09T04:16:49.777Z] [INFO] [ResourceTracker] Shutdown complete
+[app:out] [2026-11-09T04:16:49.814Z] [INFO] [ResourceTracker] Auto-cleaning unreachable resource: Session server :62265 (port=62265)
+[app:out] [2026-11-09T04:16:49.814Z] [INFO] [ResourceTracker] Auto-cleaned 1 resources
+  x  1 tests\e2e\session-derivation-ui.spec.ts:76:5 › family navigation preserves 2/20/100 runtime children and responsive keyboard layouts (9.9m)
+
+
+  1) tests\e2e\session-derivation-ui.spec.ts:76:5 › family navigation preserves 2/20/100 runtime children and responsive keyboard layouts 
+
+    Error: [INTERNAL] RPC timeout: sessions.list
+
+       at fixtures\fp-p1-harness.ts:63
+
+      61 |   if (response.ok) hostSenderWindows.set(app, bridged.windowId);
+      62 |   if (!response.ok) {
+    > 63 |     throw new Error(`[${response.error?.code ?? 'HOST'}] ${response.error?.message ?? 'failed'}`);
+         |           ^
+      64 |   }
+      65 |   return response.data as T;
+      66 | }
+        at hostInvoke (D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\fixtures\fp-p1-harness.ts:63:11)
+        at readSessionListPages (D:\ClawX-work\session-task-unified-relay-20261109\src\lib\session-read-model.ts:13:17)
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\session-derivation-ui.spec.ts:371:21
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\interaction-validation\u2-family-layout3-results\session-derivation-ui-fami-880f5-responsive-keyboard-layouts\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\tmp\unified-management-20261109\interaction-validation\u2-family-layout3-results\session-derivation-ui-fami-880f5-responsive-keyboard-layouts\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\interaction-validation\u2-family-layout3-results\session-derivation-ui-fami-880f5-responsive-keyboard-layouts\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\tmp\unified-management-20261109\interaction-validation\u2-family-layout3-results\session-derivation-ui-fami-880f5-responsive-keyboard-layouts\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  Slow test file: tests\e2e\session-derivation-ui.spec.ts (9.9m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  1 failed
+    tests\e2e\session-derivation-ui.spec.ts:76:5 › family navigation preserves 2/20/100 runtime children and responsive keyboard layouts 

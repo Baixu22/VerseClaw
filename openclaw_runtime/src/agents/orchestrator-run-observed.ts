@@ -43,6 +43,7 @@ import {
 import {
   scheduleResourceAwareWaves,
   type ResourceSchedulerMetrics,
+  type ScheduledOrchestrationWave,
 } from "./orchestration-resource-scheduler.js";
 import { createRoleFirstTrace, completeObservedRun } from "../observability/role-first-observer.js";
 import type { ObservabilityTraceRecorder } from "../observability/trace-recorder.js";
@@ -126,7 +127,7 @@ export type OrchestrationRunResult = {
   attempts: OrchestrationTaskLedgerEntry[];
   taskGraph: OrchestrationTaskGraph;
   graphStatus: OrchestrationTaskGraph["status"];
-  executionWaves: OrchestratorPlan["executionWaves"];
+  executionWaves: ScheduledOrchestrationWave[];
   schedulerMetrics: ResourceSchedulerMetrics;
   pendingGraphNodes: OrchestrationTaskNode[];
   repairNodes: OrchestrationRepairNode[];
