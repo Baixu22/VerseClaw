@@ -176,6 +176,12 @@ export async function runCodingCollector({ root = ROOT, directory, scratch, supp
         && (plan.collector.infrastructurePolicy !== 'retain-slot-and-continue' || row.execution.failureCategory === 'oracle')) break;
     }
     return { written, report: sealBenefitRun(root, directory) };
+  } catch (error) {
+    if (written > 0) {
+      try { sealBenefitRun(root, directory); }
+      catch (reportError) { if (error instanceof Error) error.cause ??= reportError; }
+    }
+    throw error;
   } finally { unlinkSync(lock); }
 }
 

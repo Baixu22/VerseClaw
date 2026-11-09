@@ -188,6 +188,13 @@ regenerate a retained report before checking it. The original pre-trial report,
 first authentication failure and first calibration failures remain in the private
 recovery archive.
 
+The collector regenerates its final report after an exception when new receipts
+were imported, then propagates the original stop error. `node
+scripts/rsi-budget-stop-regression.mjs --frozen-root <checkout> --campaign <campaign>
+--scratch-source <receipts> --support-root <dependencies> --out <new.json>` exercises
+that path with retained receipts in a fresh temporary fixture. It blocks provider
+dispatch and checks the report before and after the token-budget refusal.
+
 The original v1 run on 2026-11-06 stopped at the hard completion gate: 16 dispatches,
 15 final provider responses (10 oracle failures, 4 format failures, 1 incomplete
 at the 16000-token output limit), 1 in-flight result unknown and 200 slots not
