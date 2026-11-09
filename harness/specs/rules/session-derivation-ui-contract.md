@@ -66,6 +66,7 @@ requiredTests:
 - 复用 `globals.css`、`codex-sidebar.css` 与现有会话行、状态 orb、activity 组件。侧栏会话行维持现有 30px 高度、标题截断/tooltip、选中和 hover 规范。
 - 使用 `bg-surface-modal`、`bg-surface-input` 与 `bg-black/5 dark:bg-white/10` 等现有 token；关系类型使用中性色，状态颜色只表达运行状态。不复制 Codex 或 Claude 的品牌视觉。
 - 新增文本完整覆盖 `en`、`zh`、`ja`、`ru`；展开按钮、来源链接、子会话状态和菜单支持键盘与屏幕阅读器，动效遵循 reduced-motion。
+- 家族展开按钮与标题剪裁区保持分离；三位数后代计数完整显示，悬停滚动标题不覆盖计数。
 - 后台衍生、等待、失败和完成不得自动切换或删除当前会话。只有当前用户确认创建的 Fork/Handoff 可以切换；Handoff 的显式“创建并发送”与 Fork 的“创建并预填”必须可辨。
 - 文本声称“已创建会话”不是创建事实。模型建议在新会话继续时使用已有确认/预览入口；没有结构化请求能力时仅提供可操作建议，不解析普通回复文字来偷偷执行。
 

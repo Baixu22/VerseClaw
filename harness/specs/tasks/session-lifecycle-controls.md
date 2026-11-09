@@ -86,6 +86,7 @@ ownedPaths:
   - tests/unit/session-task-scope-bridge.test.ts
   - tests/e2e/session-family-counter-layout.spec.ts
   - src/styles/codex-sidebar.css
+  - harness/specs/rules/session-derivation-ui-contract.md
 touchedAreas:
   - docs/dev/session-worktree-storage.md
   - src/lib/host-api.ts
@@ -166,6 +167,7 @@ touchedAreas:
   - tests/unit/session-task-scope-bridge.test.ts
   - tests/e2e/session-family-counter-layout.spec.ts
   - src/styles/codex-sidebar.css
+  - harness/specs/rules/session-derivation-ui-contract.md
 requiredRules:
   - identity-scope-boundary
   - renderer-main-boundary
