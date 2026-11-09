@@ -3424,6 +3424,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
 
   restoreSession: async (sessionKey) => {
     const visit = get().viewRevision;
+    const archived = get().archivedSessions.find(entry => entry.sessionKey === sessionKey);
     try {
       const result = await hostApi.sessions.restore({ id: sessionKey });
       if (!result.success) {
@@ -3435,13 +3436,15 @@ export const useChatStore = create<ChatState>((set, get, api) => {
       return;
     }
     set((s) => ({
-      archivedSessions: s.archivedSessions.filter((entry) => entry.sessionKey !== sessionKey),
+      archivedSessions: s.archivedSessions.filter((entry) => entry.sessionKey !== sessionKey
+        || !archived || entry.archivedAt !== archived.archivedAt || entry.transcriptPath !== archived.transcriptPath),
     }));
     void get().loadSessions();
   },
 
   permanentDeleteSession: async (sessionKey) => {
     const visit = get().viewRevision;
+    const archived = get().archivedSessions.find(entry => entry.sessionKey === sessionKey);
     try {
       const result = await hostApi.sessions.permanentDelete({ id: sessionKey });
       if (!result.success) {
@@ -3453,7 +3456,8 @@ export const useChatStore = create<ChatState>((set, get, api) => {
       return;
     }
     set((s) => ({
-      archivedSessions: s.archivedSessions.filter((entry) => entry.sessionKey !== sessionKey),
+      archivedSessions: s.archivedSessions.filter((entry) => entry.sessionKey !== sessionKey
+        || !archived || entry.archivedAt !== archived.archivedAt || entry.transcriptPath !== archived.transcriptPath),
     }));
   },
 

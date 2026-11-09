@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-const remote = vi.hoisted(() => ({ rpc: vi.fn(), delete: vi.fn(), archive: vi.fn(), listArchived: vi.fn() }));
+const remote = vi.hoisted(() => ({ rpc: vi.fn(), delete: vi.fn(), archive: vi.fn(), listArchived: vi.fn(), restore: vi.fn(), permanentDelete: vi.fn() }));
 vi.mock('sonner', () => ({ toast: { warning: vi.fn(), error: vi.fn(), success: vi.fn(), info: vi.fn() } }));
 vi.mock('@/stores/gateway', () => ({ useGatewayStore: { getState: () => ({ rpc: remote.rpc }) } }));
 vi.mock('@/stores/agents', () => ({ useAgentsStore: { getState: () => ({ agents: [] }) } }));
 vi.mock('@/lib/host-api', () => ({ hostApi: { gateway: { rpc: remote.rpc }, media: { thumbnails: async () => ({}) },
-  sessions: { delete: remote.delete, archive: remote.archive, listArchived: remote.listArchived, history: async () => ({ messages: [] }), summaries: async () => ({ success: true, summaries: [] }) } } }));
+  sessions: { delete: remote.delete, archive: remote.archive, listArchived: remote.listArchived, restore: remote.restore, permanentDelete: remote.permanentDelete, history: async () => ({ messages: [] }), summaries: async () => ({ success: true, summaries: [] }) } } }));
 import { useChatStore } from '@/stores/chat';
 import { useWorkspacesStore } from '@/stores/workspaces';
 const originalSend = useChatStore.getState().sendMessage;
@@ -12,7 +12,7 @@ const originalLoadArchived = useChatStore.getState().loadArchivedSessions;
 
 const source = 'agent:main:source';
 beforeEach(() => {
-  remote.rpc.mockReset(); remote.delete.mockReset(); remote.archive.mockReset(); remote.listArchived.mockReset();
+  remote.rpc.mockReset(); remote.delete.mockReset(); remote.archive.mockReset(); remote.listArchived.mockReset(); remote.restore.mockReset(); remote.permanentDelete.mockReset();
   useChatStore.setState({ currentSessionKey: source, currentAgentId: 'main', activeRunId: 'run-a', sending: true,
     sessions: [{ key: source, sessionId: 'generation-a' }], messages: [], streamingText: 'Keep this partial output',
     error: null, pendingFinal: true, sessionLabels: {}, sessionLastActivity: {}, pendingMessages: [], sendMessage: originalSend });
@@ -119,6 +119,21 @@ describe('session lifecycle result scope', () => {
     expect(useChatStore.getState().pendingSessionMutations).toEqual([]);
     await originalLoadArchived('main');
     expect(remote.listArchived).toHaveBeenCalledTimes(1);
+  });
+  it.each(['restoreSession', 'permanentDeleteSession'] as const)('keeps a later archive when an old %s response arrives', async (action) => {
+    const previous = { sessionKey: source, agentId: 'main', transcriptPath: 'first', label: 'First', archivedAt: 1,
+      originalWorkspaceId: null, originalFolderId: null, sessionsJsonSnapshot: { sessionId: 'old' } };
+    const next = { ...previous, transcriptPath: 'second', archivedAt: 2, sessionsJsonSnapshot: { sessionId: 'new' } };
+    let finish!: (value: unknown) => void;
+    remote[action === 'restoreSession' ? 'restore' : 'permanentDelete'].mockReturnValue(new Promise(resolve => { finish = resolve; }));
+    const oldLoad = useChatStore.getState().loadSessions;
+    useChatStore.setState({ archivedSessions: [previous], loadSessions: vi.fn(async () => undefined) });
+    try {
+      const pending = useChatStore.getState()[action](source);
+      useChatStore.setState({ archivedSessions: [next] });
+      finish({ success: true }); await pending;
+      expect(useChatStore.getState().archivedSessions).toEqual([next]);
+    } finally { useChatStore.setState({ loadSessions: oldLoad }); }
   });
   it('preserves materialized empty sessions and only hides a local pending entry', () => {
     useChatStore.getState().cleanupEmptySession();
