@@ -1,0 +1,251 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "pid": 35744,
+  "mode": "native-default",
+  "base": [],
+  "rows": [
+    {
+      "i": 0,
+      "pid": 3628,
+      "before": 5,
+      "after": 4,
+      "input": {
+        "destroyed": false,
+        "readable": false,
+        "writable": true,
+        "active": true
+      }
+    },
+    {
+      "i": 1,
+      "pid": 39104,
+      "before": 7,
+      "after": 6,
+      "input": {
+        "destroyed": false,
+        "readable": false,
+        "writable": true,
+        "active": true
+      }
+    },
+    {
+      "i": 2,
+      "pid": 39404,
+      "before": 9,
+      "after": 8,
+      "input": {
+        "destroyed": false,
+        "readable": false,
+        "writable": true,
+        "active": true
+      }
+    },
+    {
+      "i": 3,
+      "pid": 30812,
+      "before": 11,
+      "after": 10,
+      "input": {
+        "destroyed": false,
+        "readable": false,
+        "writable": true,
+        "active": true
+      }
+    },
+    {
+      "i": 4,
+      "pid": 50500,
+      "before": 13,
+      "after": 11,
+      "input": {
+        "destroyed": false,
+        "readable": false,
+        "writable": true,
+        "active": true
+      }
+    },
+    {
+      "i": 5,
+      "pid": 51808,
+      "before": 14,
+      "after": 12,
+      "input": {
+        "destroyed": false,
+        "readable": false,
+        "writable": true,
+        "active": true
+      }
+    },
+    {
+      "i": 6,
+      "pid": 44808,
+      "before": 15,
+      "after": 13,
+      "input": {
+        "destroyed": false,
+        "readable": false,
+        "writable": true,
+        "active": true
+      }
+    },
+    {
+      "i": 7,
+      "pid": 4968,
+      "before": 16,
+      "after": 14,
+      "input": {
+        "destroyed": false,
+        "readable": false,
+        "writable": true,
+        "active": true
+      }
+    },
+    {
+      "i": 8,
+      "pid": 52184,
+      "before": 16,
+      "after": 15,
+      "input": {
+        "destroyed": false,
+        "readable": false,
+        "writable": true,
+        "active": true
+      }
+    },
+    {
+      "i": 9,
+      "pid": 22256,
+      "before": 17,
+      "after": 16,
+      "input": {
+        "destroyed": false,
+        "readable": false,
+        "writable": true,
+        "active": true
+      }
+    },
+    {
+      "i": 10,
+      "pid": 29124,
+      "before": 18,
+      "after": 17,
+      "input": {
+        "destroyed": false,
+        "readable": false,
+        "writable": true,
+        "active": true
+      }
+    },
+    {
+      "i": 11,
+      "pid": 8736,
+      "before": 19,
+      "after": 18,
+      "input": {
+        "destroyed": false,
+        "readable": false,
+        "writable": true,
+        "active": true
+      }
+    }
+  ],
+  "final": [
+    {
+      "type": "Socket",
+      "destroyed": false,
+      "readable": false,
+      "writable": true
+    },
+    {
+      "type": "Socket",
+      "destroyed": false,
+      "readable": false,
+      "writable": true
+    },
+    {
+      "type": "Socket",
+      "destroyed": false,
+      "readable": false,
+      "writable": true
+    },
+    {
+      "type": "Socket",
+      "destroyed": false,
+      "readable": false,
+      "writable": true
+    },
+    {
+      "type": "Socket",
+      "destroyed": false,
+      "readable": false,
+      "writable": true
+    },
+    {
+      "type": "Socket",
+      "destroyed": false,
+      "readable": false,
+      "writable": true
+    },
+    {
+      "type": "Socket",
+      "destroyed": false,
+      "readable": false,
+      "writable": true
+    },
+    {
+      "type": "Socket",
+      "destroyed": false,
+      "readable": false,
+      "writable": true
+    },
+    {
+      "type": "Socket",
+      "destroyed": false,
+      "readable": false,
+      "writable": true
+    },
+    {
+      "type": "Socket",
+      "destroyed": false,
+      "readable": false,
+      "writable": true
+    },
+    {
+      "type": "MessagePort"
+    },
+    {
+      "type": "Socket",
+      "destroyed": false,
+      "readable": false,
+      "writable": true
+    },
+    {
+      "type": "MessagePort"
+    },
+    {
+      "type": "Socket",
+      "destroyed": false,
+      "readable": false,
+      "writable": true
+    },
+    {
+      "type": "MessagePort"
+    },
+    {
+      "type": "Socket",
+      "destroyed": false,
+      "readable": false,
+      "writable": true
+    },
+    {
+      "type": "MessagePort"
+    },
+    {
+      "type": "Socket",
+      "destroyed": false,
+      "readable": false,
+      "writable": true
+    }
+  ]
+}

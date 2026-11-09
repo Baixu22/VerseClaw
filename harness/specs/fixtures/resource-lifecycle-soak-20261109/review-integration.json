@@ -1,0 +1,6 @@
+{
+  "findings": [],
+  "overall_confidence": 0.94,
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "The updated mocks satisfy the current router and resource imports, abort expectations match the seeded active run IDs, and catalog coverage matches the existing project route. Behavioral assertions remain intact. No actionable defects were found. Tests were not run, as requested."
+}

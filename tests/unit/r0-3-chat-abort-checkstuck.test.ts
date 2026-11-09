@@ -172,7 +172,7 @@ describe('R0-3 chat abort/checkStuck reclamation', () => {
     expect(state.activeRunId).toBeNull();
     expect(state.streamingText).toBe('');
     expect(state.streamingTools).toEqual([]);
-    expect(gatewayRpcMock).toHaveBeenCalledWith('chat.abort', { sessionKey: 'agent:main:main' });
+    expect(gatewayRpcMock).toHaveBeenCalledWith('chat.abort', { sessionKey: 'agent:main:main', runId: 'run-r0-3' });
     expect(vi.mocked(toast.warning)).not.toHaveBeenCalled();
   });
 

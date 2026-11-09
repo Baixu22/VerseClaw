@@ -63,7 +63,7 @@ describe('production chat stream publication', () => {
   it('publishes confirmed abort immediately and cancels a pending frame', async () => {
     const listener = observe(); delta(1);
     await store.getState().abortRun();
-    expect(rpc).toHaveBeenCalledWith('chat.abort', { sessionKey });
+    expect(rpc).toHaveBeenCalledWith('chat.abort', { sessionKey, runId: 'live' });
     expect(listener).toHaveBeenCalledOnce(); expect(store.getState().sending).toBe(false);
     expect(frames.size).toBe(0); frame(); expect(store.getState().activeRunId).toBeNull();
     delta(2, 'late runtime text'); frame();

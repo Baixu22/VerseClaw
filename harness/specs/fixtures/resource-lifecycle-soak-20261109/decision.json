@@ -1,0 +1,8 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": "ed2cfbb11a1ff59819ac607f922874803e57eb3d",
+  "status": "accept-measured-recovery",
+  "explanation": "接受本次50重复生命周期与30分钟持续观察的回收结果。前置空闲、恢复空闲和最终句柄为1828、1824、1823；持续段前后五个有效样本的句柄中位数1824→1822。进程树瞬时句柄峰值2612包含额外子进程，后续恢复到1822；完整峰值和缺失样本均保留。private memory持续段中位数增加4530176字节（4.32 MiB），最终364843008字节比前置基线增加12447744字节（11.87 MiB）；持续段RSS中位数增加19398656字节（18.50 MiB）。renderer heap和Main heap中位数分别下降1587236和4752852字节，曲线显示回落及周期性GC。逻辑活动/排队、终端、进程预留均归零，workspace冷账户按实际TTL回收；50次watcher/cache验证归零，12次原生PTY输入管道验证每轮残留0。224个生命周期进程身份退出，最终Electron Main/launcher退出且Playwright收尾完成。采样缺失和重查错误详见lifecycle-verification.json。",
+  "mixedDecision": "同工作量ABBA中，单窗1/4worker吞吐分别改善19.39%和20.35%，输入与滚动P95均下降，接受这两个实测工作点的收益。单窗8worker吞吐下降70.01%、总P95增加603.66%、滚动P95增加145.25%；双窗8worker吞吐下降57.52%、总P95增加58.03%，拒绝据此提高并发或宣称8worker扩容收益。双窗1/4worker输入和滚动P95改善，但吞吐分别下降11.31%和26.35%，仅接受对应交互改善并保留吞吐取舍。负载由脚本worker和本地HTTP等待驱动，所有结果按窗口/worker分别保留。产品默认值保持原设定。"
+}

@@ -297,8 +297,12 @@ async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000) {
   let graceful = false;
   try { graceful = await bounded(closing, timeoutMs, 'Playwright close'); } catch { /* fall back to owned handles */ }
   let processes: WindowsProcessCheck[] = [];
+  const processObservations: WindowsProcessCheck[][] = [];
   try {
-    if (process.platform === 'win32' && owned) processes = await checkWindowsProcesses(owned.identities, true);
+    if (process.platform === 'win32' && owned) {
+      processes = await checkWindowsProcesses(owned.identities, true);
+      processObservations.push(processes);
+    }
   } catch (error) { errors.push(String(error)); }
   if (launcher && launcher.exitCode === null && launcher.signalCode === null) {
     // ChildProcess.kill uses the launcher's existing native handle on Windows.
@@ -311,20 +315,44 @@ async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000) {
   let closeSettled = false;
   try { closeSettled = await bounded(closing, 2_000, 'Playwright close after launcher exit'); }
   catch (error) { errors.push(String(error)); }
-  if (owned && processes.some(({ status }) => status === 'alive')) {
+  if (owned && (processes.length !== owned.identities.length
+    || processes.some(({ status }) => status === 'alive' || status === 'unavailable'))) {
     // A signalled Main can finish after the launcher's pipes close. Read the
     // same identities again before deciding whether this close left survivors.
-    try { processes = await checkWindowsProcesses(owned.identities); }
-    catch (error) { errors.push(String(error)); }
+    // Retry failed observations only; never replay an uncertain termination.
+    for (let attempt = 1; ; attempt++) {
+      try {
+        processes = await checkWindowsProcesses(owned.identities);
+        processObservations.push(processes);
+        if (processes.every(({ status }) => status !== 'alive' && status !== 'unavailable')) break;
+      } catch (error) { errors.push(String(error)); }
+      if (attempt >= 3) break;
+      await new Promise(resolve => setTimeout(resolve, 250));
+    }
   }
   const launcherExited = Boolean(launcher && (launcher.exitCode !== null || launcher.signalCode !== null));
   const mainExited = process.platform === 'win32'
     ? Boolean(owned?.identities.length && processes.length === owned.identities.length
       && processes.every(({ status }) => status === 'exited' || status === 'replaced' || status === 'terminated'))
     : launcherExited;
+  if (mainExited && launcherExited && !closeSettled && launcher) {
+    // Playwright releases its app on ChildProcess 'close', after stdio closes.
+    // Windows descendants can retain the launcher's inherited pipes after all
+    // captured Electron identities exited. Dispose only our local pipe ends.
+    for (const stream of launcher.stdio) stream?.destroy();
+    // The Electron-specific Playwright close handler awaits app.quit over its
+    // private Node inspector before closing that transport. When the target
+    // has exited, disconnect only this app's inspector to settle the await.
+    try {
+      const implementation = (app as unknown as { _connection?: { toImpl?: (value: ElectronApplication) => { _nodeConnection?: { close: () => void } } } })._connection?.toImpl?.(app);
+      implementation?._nodeConnection?.close();
+    } catch (error) { errors.push(String(error)); }
+    try { closeSettled = await bounded(closing, 2_000, 'Playwright close after owned pipe disposal'); }
+    catch (error) { errors.push(String(error)); }
+  }
   // Other E2E callers close sockets after this helper. Return exit confirmation
   // so those cleanups run even when a process or inspector cannot be closed.
-  return { mainExited, launcherExited, graceful, closeSettled, processes, errors, ...(snapshotError ? { snapshotError } : {}) };
+  return { mainExited, launcherExited, graceful, closeSettled, processes, processObservations, errors, ...(snapshotError ? { snapshotError } : {}) };
 }
 
 async function seedE2eSettings(userDataDir: string, theme?: LaunchElectronOptions['theme']): Promise<void> {

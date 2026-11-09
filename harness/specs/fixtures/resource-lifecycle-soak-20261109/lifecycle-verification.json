@@ -1,0 +1,1851 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "pass": true,
+  "candidate": "ed2cfbb11a1ff59819ac607f922874803e57eb3d",
+  "implementation": "Independent Python identity/timestamp/receipt checks and nearest-rank cancellation timing",
+  "repeatCycles": 50,
+  "soakProbes": 5,
+  "totalCycles": 56,
+  "ownedIdentitiesExited": 224,
+  "cancelToExitMs": {
+    "p50": 1099.5,
+    "p95": 1785,
+    "max": 17175
+  },
+  "segments": [
+    {
+      "name": "idle-before",
+      "start": 1794242319645,
+      "minimumMs": 300000,
+      "end": 1794242639552,
+      "elapsedMs": 319907
+    },
+    {
+      "name": "idle-recovery",
+      "start": 1794243030165,
+      "minimumMs": 300000,
+      "end": 1794243335121,
+      "elapsedMs": 304956
+    },
+    {
+      "name": "sustained-observation",
+      "start": 1794243348337,
+      "minimumMs": 1800000,
+      "end": 1794245172981,
+      "elapsedMs": 1824644
+    }
+  ],
+  "baseline": {
+    "stage": "idle-before:end",
+    "at": 1794242639553,
+    "rssBytes": 112971776,
+    "privateBytes": 352395264,
+    "rendererHeapBytes": 25194208,
+    "handles": 1828,
+    "machineCommit": {
+      "sampledAt": 1794242643327,
+      "committedBytes": 41283031040,
+      "commitLimitBytes": 54946750464
+    },
+    "mainHeapUsed": 110807480,
+    "accounts": 0,
+    "windows": 1,
+    "terminalCount": 0,
+    "reservations": [],
+    "watchers": null
+  },
+  "recovered": {
+    "stage": "recovered",
+    "at": 1794243339463,
+    "rssBytes": 148414464,
+    "privateBytes": 359936000,
+    "rendererHeapBytes": 24061656,
+    "handles": 1824,
+    "machineCommit": {
+      "sampledAt": 1794243341874,
+      "committedBytes": 34715271168,
+      "commitLimitBytes": 54946750464
+    },
+    "mainHeapUsed": 116399388,
+    "accounts": 0,
+    "windows": 1,
+    "terminalCount": 0,
+    "reservations": [],
+    "watchers": null
+  },
+  "final": {
+    "stage": "final",
+    "at": 1794245187297,
+    "rssBytes": 121028608,
+    "privateBytes": 364843008,
+    "rendererHeapBytes": 25052244,
+    "handles": 1823,
+    "machineCommit": {
+      "sampledAt": 1794245190044,
+      "committedBytes": 35633405952,
+      "commitLimitBytes": 54946750464
+    },
+    "mainHeapUsed": 112369380,
+    "accounts": 0,
+    "windows": 1,
+    "terminalCount": 0,
+    "reservations": [],
+    "watchers": null
+  },
+  "sustainedTrends": {
+    "privateBytes": {
+      "available": true,
+      "samples": 38,
+      "firstFiveMedian": 359862272,
+      "lastFiveMedian": 364392448,
+      "change": 4530176,
+      "min": 358305792,
+      "max": 438657024
+    },
+    "rssBytes": {
+      "available": true,
+      "samples": 38,
+      "firstFiveMedian": 149008384,
+      "lastFiveMedian": 168407040,
+      "change": 19398656,
+      "min": 83464192,
+      "max": 226332672
+    },
+    "rendererHeapBytes": {
+      "available": true,
+      "samples": 44,
+      "firstFiveMedian": 25604352,
+      "lastFiveMedian": 24017116,
+      "change": -1587236,
+      "min": 20728972,
+      "max": 28482976
+    },
+    "mainHeapUsed": {
+      "available": true,
+      "samples": 44,
+      "firstFiveMedian": 116608608,
+      "lastFiveMedian": 111855756,
+      "change": -4752852,
+      "min": 111341152,
+      "max": 120163004
+    },
+    "handles": {
+      "available": true,
+      "samples": 28,
+      "firstFiveMedian": 1824,
+      "lastFiveMedian": 1822,
+      "change": -2,
+      "min": 1818,
+      "max": 2612
+    }
+  },
+  "unknown": [
+    {
+      "stage": "sustained-observation:sample",
+      "metric": "handles",
+      "error": "Error: Command failed: powershell.exe -NoProfile -NonInteractive -Command $ids=@($env:SOAK_PIDS.Split(\",\")|ForEach-Object{[int]$_}); @(Get-CimInstance Win32_Process|Where-Object{$ids -contains $_.ProcessId}|ForEach-Object{[pscustomobject]@{pid=$_.ProcessId;token=$_.CreationDate.ToFileTimeUtc().ToString();handles=$_.HandleCount}})|ConvertTo-Json -Compress\n"
+    }
+  ],
+  "cleanup": {
+    "mainExited": true,
+    "launcherExited": true,
+    "graceful": true,
+    "closeSettled": true,
+    "processes": [
+      {
+        "pid": 19472,
+        "creationTime": 1794242272518,
+        "status": "exited"
+      },
+      {
+        "pid": 29304,
+        "creationTime": 1794242303458,
+        "status": "exited"
+      },
+      {
+        "pid": 36400,
+        "creationTime": 1794242304700,
+        "status": "exited"
+      }
+    ],
+    "processObservations": [
+      [
+        {
+          "pid": 19472,
+          "creationTime": 1794242272518,
+          "status": "exited"
+        },
+        {
+          "pid": 29304,
+          "creationTime": 1794242303458,
+          "status": "exited"
+        },
+        {
+          "pid": 36400,
+          "creationTime": 1794242304700,
+          "status": "exited"
+        }
+      ]
+    ],
+    "errors": []
+  },
+  "observations": [
+    {
+      "stage": "warmup-complete",
+      "at": 1794242313921,
+      "rssBytes": 763195392,
+      "privateBytes": 585351168,
+      "rendererHeapBytes": 38703852,
+      "handles": 1845,
+      "machineCommit": {
+        "sampledAt": 1794242316779,
+        "committedBytes": 38190579712,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 115805644,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "idle-before:start",
+      "at": 1794242319645,
+      "rssBytes": 763297792,
+      "privateBytes": 585420800,
+      "rendererHeapBytes": 39556592,
+      "handles": 1845,
+      "machineCommit": {
+        "sampledAt": 1794242322610,
+        "committedBytes": 37693120512,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 115914840,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "idle-before:sample",
+      "at": 1794242355439,
+      "rssBytes": 559349760,
+      "privateBytes": 422187008,
+      "rendererHeapBytes": 21093500,
+      "handles": null,
+      "machineCommit": {
+        "sampledAt": 1794242360756,
+        "committedBytes": 39192850432,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 109961848,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "idle-before:sample",
+      "at": 1794242396394,
+      "rssBytes": 458977280,
+      "privateBytes": 350126080,
+      "rendererHeapBytes": 21467232,
+      "handles": 1840,
+      "machineCommit": {
+        "sampledAt": 1794242399514,
+        "committedBytes": 36748312576,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 109910340,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "idle-before:sample",
+      "at": 1794242432888,
+      "rssBytes": 343805952,
+      "privateBytes": 349204480,
+      "rendererHeapBytes": 22139900,
+      "handles": 1824,
+      "machineCommit": {
+        "sampledAt": 1794242439728,
+        "committedBytes": 38622613504,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 110209712,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "idle-before:sample",
+      "at": 1794242475837,
+      "rssBytes": 344379392,
+      "privateBytes": 348696576,
+      "rendererHeapBytes": 22897892,
+      "handles": 1824,
+      "machineCommit": {
+        "sampledAt": 1794242479134,
+        "committedBytes": 36798926848,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 110531800,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "idle-before:sample",
+      "at": 1794242512470,
+      "rssBytes": 345628672,
+      "privateBytes": 350060544,
+      "rendererHeapBytes": 23257280,
+      "handles": 1817,
+      "machineCommit": {
+        "sampledAt": 1794242516885,
+        "committedBytes": 36563550208,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 110356880,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "idle-before:sample",
+      "at": 1794242551236,
+      "rssBytes": 215089152,
+      "privateBytes": 350167040,
+      "rendererHeapBytes": 23900444,
+      "handles": 1828,
+      "machineCommit": {
+        "sampledAt": 1794242558477,
+        "committedBytes": 38240198656,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 110993916,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "idle-before:sample",
+      "at": 1794242594552,
+      "rssBytes": 206942208,
+      "privateBytes": 410488832,
+      "rendererHeapBytes": 24790228,
+      "handles": null,
+      "machineCommit": {
+        "sampledAt": 1794242607135,
+        "committedBytes": 40112627712,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 111060076,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "idle-before:sample",
+      "at": 1794242619659,
+      "rssBytes": 109924352,
+      "privateBytes": 351109120,
+      "rendererHeapBytes": 25181580,
+      "handles": 1821,
+      "machineCommit": {
+        "sampledAt": 1794242634773,
+        "committedBytes": 41781493760,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 111376168,
+      "accounts": 0,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "idle-before:end",
+      "at": 1794242639553,
+      "rssBytes": 112971776,
+      "privateBytes": 352395264,
+      "rendererHeapBytes": 25194208,
+      "handles": 1828,
+      "machineCommit": {
+        "sampledAt": 1794242643327,
+        "committedBytes": 41283031040,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 110807480,
+      "accounts": 0,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "repeat-5",
+      "at": 1794242674749,
+      "rssBytes": 201052160,
+      "privateBytes": 360865792,
+      "rendererHeapBytes": 22213628,
+      "handles": 1830,
+      "machineCommit": {
+        "sampledAt": 1794242678013,
+        "committedBytes": 38579843072,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 111311980,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "repeat-10",
+      "at": 1794242706897,
+      "rssBytes": 211828736,
+      "privateBytes": 366325760,
+      "rendererHeapBytes": 25889820,
+      "handles": 1830,
+      "machineCommit": {
+        "sampledAt": 1794242709350,
+        "committedBytes": 35809357824,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 112486588,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "repeat-15",
+      "at": 1794242736240,
+      "rssBytes": 205066240,
+      "privateBytes": 356847616,
+      "rendererHeapBytes": 23056192,
+      "handles": 1826,
+      "machineCommit": {
+        "sampledAt": 1794242739217,
+        "committedBytes": 37068328960,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 112669072,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "repeat-20",
+      "at": 1794242774724,
+      "rssBytes": 213012480,
+      "privateBytes": 362954752,
+      "rendererHeapBytes": 26388680,
+      "handles": 1820,
+      "machineCommit": {
+        "sampledAt": 1794242777899,
+        "committedBytes": 36373590016,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 113080508,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "repeat-25",
+      "at": 1794242802506,
+      "rssBytes": 449871872,
+      "privateBytes": 583806976,
+      "rendererHeapBytes": 22239108,
+      "handles": null,
+      "machineCommit": {
+        "sampledAt": 1794242805853,
+        "committedBytes": 36322521088,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 113117216,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "repeat-30",
+      "at": 1794242836713,
+      "rssBytes": 218406912,
+      "privateBytes": 364597248,
+      "rendererHeapBytes": 25585672,
+      "handles": 1820,
+      "machineCommit": {
+        "sampledAt": 1794242840092,
+        "committedBytes": 36879572992,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 113527232,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "repeat-35",
+      "at": 1794242879652,
+      "rssBytes": 210259968,
+      "privateBytes": 365580288,
+      "rendererHeapBytes": 22304992,
+      "handles": 1827,
+      "machineCommit": {
+        "sampledAt": 1794242883505,
+        "committedBytes": 38386130944,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 114069252,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "repeat-40",
+      "at": 1794242921113,
+      "rssBytes": 202145792,
+      "privateBytes": 364089344,
+      "rendererHeapBytes": 24852576,
+      "handles": 1827,
+      "machineCommit": {
+        "sampledAt": 1794242924170,
+        "committedBytes": 38850174976,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 114590496,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "repeat-45",
+      "at": 1794242967085,
+      "rssBytes": 343068672,
+      "privateBytes": 475230208,
+      "rendererHeapBytes": 21633512,
+      "handles": null,
+      "machineCommit": {
+        "sampledAt": 1794242972043,
+        "committedBytes": 39601041408,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 114781504,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "repeat-50",
+      "at": 1794243013334,
+      "rssBytes": 205090816,
+      "privateBytes": 365285376,
+      "rendererHeapBytes": 24707028,
+      "handles": 1816,
+      "machineCommit": {
+        "sampledAt": 1794243018880,
+        "committedBytes": 40380739584,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 115157004,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "idle-recovery:start",
+      "at": 1794243030165,
+      "rssBytes": 194428928,
+      "privateBytes": 359522304,
+      "rendererHeapBytes": 24719396,
+      "handles": 1816,
+      "machineCommit": {
+        "sampledAt": 1794243034382,
+        "committedBytes": 40232534016,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 115278248,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "idle-recovery:sample",
+      "at": 1794243067484,
+      "rssBytes": 193204224,
+      "privateBytes": 357904384,
+      "rendererHeapBytes": 25865268,
+      "handles": 1816,
+      "machineCommit": {
+        "sampledAt": 1794243071547,
+        "committedBytes": 36886347776,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 115815784,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "idle-recovery:sample",
+      "at": 1794243105073,
+      "rssBytes": 194465792,
+      "privateBytes": 358420480,
+      "rendererHeapBytes": 25789412,
+      "handles": 1816,
+      "machineCommit": {
+        "sampledAt": 1794243107810,
+        "committedBytes": 35877851136,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 115462304,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "idle-recovery:sample",
+      "at": 1794243140414,
+      "rssBytes": 195039232,
+      "privateBytes": 358756352,
+      "rendererHeapBytes": 26254116,
+      "handles": 1817,
+      "machineCommit": {
+        "sampledAt": 1794243143727,
+        "committedBytes": 36488798208,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 116087532,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "idle-recovery:sample",
+      "at": 1794243176654,
+      "rssBytes": 198270976,
+      "privateBytes": 360071168,
+      "rendererHeapBytes": 20792616,
+      "handles": 1817,
+      "machineCommit": {
+        "sampledAt": 1794243179595,
+        "committedBytes": 37103976448,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 115994792,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "idle-recovery:sample",
+      "at": 1794243212251,
+      "rssBytes": 168919040,
+      "privateBytes": 359706624,
+      "rendererHeapBytes": 21552044,
+      "handles": 1817,
+      "machineCommit": {
+        "sampledAt": 1794243215464,
+        "committedBytes": 37510586368,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 115746720,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "idle-recovery:sample",
+      "at": 1794243248169,
+      "rssBytes": 242302976,
+      "privateBytes": 421367808,
+      "rendererHeapBytes": 22209776,
+      "handles": null,
+      "machineCommit": {
+        "sampledAt": 1794243251457,
+        "committedBytes": 37590663168,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 116351080,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "idle-recovery:sample",
+      "at": 1794243284117,
+      "rssBytes": 153698304,
+      "privateBytes": 358232064,
+      "rendererHeapBytes": 22760556,
+      "handles": 1824,
+      "machineCommit": {
+        "sampledAt": 1794243287497,
+        "committedBytes": 38000766976,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 116092620,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "idle-recovery:sample",
+      "at": 1794243320514,
+      "rssBytes": 146030592,
+      "privateBytes": 358477824,
+      "rendererHeapBytes": 23568480,
+      "handles": 1823,
+      "machineCommit": {
+        "sampledAt": 1794243323200,
+        "committedBytes": 36386189312,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 116605256,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "idle-recovery:sample",
+      "at": 1794243330168,
+      "rssBytes": 280547328,
+      "privateBytes": 461303808,
+      "rendererHeapBytes": 23772448,
+      "handles": null,
+      "machineCommit": {
+        "sampledAt": 1794243332665,
+        "committedBytes": 34763919360,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 116230416,
+      "accounts": 0,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "idle-recovery:end",
+      "at": 1794243335121,
+      "rssBytes": 148381696,
+      "privateBytes": 359911424,
+      "rendererHeapBytes": 23784816,
+      "handles": 1824,
+      "machineCommit": {
+        "sampledAt": 1794243337507,
+        "committedBytes": 34709762048,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 116315304,
+      "accounts": 0,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "recovered",
+      "at": 1794243339463,
+      "rssBytes": 148414464,
+      "privateBytes": 359936000,
+      "rendererHeapBytes": 24061656,
+      "handles": 1824,
+      "machineCommit": {
+        "sampledAt": 1794243341874,
+        "committedBytes": 34715271168,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 116399388,
+      "accounts": 0,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "cold-account-collected",
+      "at": 1794243343984,
+      "rssBytes": 148795392,
+      "privateBytes": 359591936,
+      "rendererHeapBytes": 24074024,
+      "handles": 1824,
+      "machineCommit": {
+        "sampledAt": 1794243346446,
+        "committedBytes": 34880720896,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 116490940,
+      "accounts": 0,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:start",
+      "at": 1794243348337,
+      "rssBytes": 149008384,
+      "privateBytes": 359862272,
+      "rendererHeapBytes": 24086368,
+      "handles": 1824,
+      "machineCommit": {
+        "sampledAt": 1794243350634,
+        "committedBytes": 34797273088,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 116608608,
+      "accounts": 0,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794243382952,
+      "rssBytes": 148299776,
+      "privateBytes": 358334464,
+      "rendererHeapBytes": 25033960,
+      "handles": 1824,
+      "machineCommit": {
+        "sampledAt": 1794243385461,
+        "committedBytes": 34927321088,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 116344824,
+      "accounts": 0,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794243417699,
+      "rssBytes": 151363584,
+      "privateBytes": 360321024,
+      "rendererHeapBytes": 25604352,
+      "handles": 1818,
+      "machineCommit": {
+        "sampledAt": 1794243420620,
+        "committedBytes": 36032954368,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 116908844,
+      "accounts": 0,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794243453072,
+      "rssBytes": 210497536,
+      "privateBytes": 422268928,
+      "rendererHeapBytes": 26494096,
+      "handles": null,
+      "machineCommit": {
+        "sampledAt": 1794243464395,
+        "committedBytes": 37048164352,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 116709864,
+      "accounts": 0,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794243498276,
+      "rssBytes": 118341632,
+      "privateBytes": 358305792,
+      "rendererHeapBytes": 27262904,
+      "handles": 1818,
+      "machineCommit": {
+        "sampledAt": 1794243500841,
+        "committedBytes": 34994667520,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 116431644,
+      "accounts": 0,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794243533714,
+      "rssBytes": 123396096,
+      "privateBytes": 358825984,
+      "rendererHeapBytes": 27386508,
+      "handles": 1825,
+      "machineCommit": {
+        "sampledAt": 1794243536380,
+        "committedBytes": 35188224000,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 117110420,
+      "accounts": 0,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794243568533,
+      "rssBytes": 128634880,
+      "privateBytes": 360488960,
+      "rendererHeapBytes": 27963196,
+      "handles": 1827,
+      "machineCommit": {
+        "sampledAt": 1794243571475,
+        "committedBytes": 35270451200,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 116839880,
+      "accounts": 0,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794243605646,
+      "rssBytes": 133185536,
+      "privateBytes": 358432768,
+      "rendererHeapBytes": 21611084,
+      "handles": 1825,
+      "machineCommit": {
+        "sampledAt": 1794243618282,
+        "committedBytes": 39058223104,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 116723824,
+      "accounts": 0,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794243661286,
+      "rssBytes": 196882432,
+      "privateBytes": 367489024,
+      "rendererHeapBytes": 23216984,
+      "handles": 1823,
+      "machineCommit": {
+        "sampledAt": 1794243663886,
+        "committedBytes": 36988784640,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 116854444,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794243696669,
+      "rssBytes": 190681088,
+      "privateBytes": 360247296,
+      "rendererHeapBytes": 23831684,
+      "handles": 1824,
+      "machineCommit": {
+        "sampledAt": 1794243699244,
+        "committedBytes": 35475136512,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 117241060,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794243731414,
+      "rssBytes": 190398464,
+      "privateBytes": 359501824,
+      "rendererHeapBytes": 24565688,
+      "handles": 1824,
+      "machineCommit": {
+        "sampledAt": 1794243734850,
+        "committedBytes": 36552777728,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 117075240,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794243768161,
+      "rssBytes": 168333312,
+      "privateBytes": 359194624,
+      "rendererHeapBytes": 25646744,
+      "handles": 1822,
+      "machineCommit": {
+        "sampledAt": 1794243776665,
+        "committedBytes": 38661545984,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 117172260,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794243814260,
+      "rssBytes": 83464192,
+      "privateBytes": 360202240,
+      "rendererHeapBytes": 26953152,
+      "handles": null,
+      "machineCommit": {
+        "sampledAt": 1794243830486,
+        "committedBytes": 42568421376,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 117269904,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794243883043,
+      "rssBytes": null,
+      "privateBytes": null,
+      "rendererHeapBytes": 27677772,
+      "handles": null,
+      "machineCommit": null,
+      "mainHeapUsed": 117302676,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794243941943,
+      "rssBytes": null,
+      "privateBytes": null,
+      "rendererHeapBytes": 21430124,
+      "handles": null,
+      "machineCommit": null,
+      "mainHeapUsed": 117798400,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794244037063,
+      "rssBytes": 141000704,
+      "privateBytes": 360095744,
+      "rendererHeapBytes": 23181344,
+      "handles": 1833,
+      "machineCommit": {
+        "sampledAt": 1794244041018,
+        "committedBytes": 45104066560,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 118184408,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794244073546,
+      "rssBytes": 224944128,
+      "privateBytes": 425299968,
+      "rendererHeapBytes": 23850188,
+      "handles": null,
+      "machineCommit": {
+        "sampledAt": 1794244087861,
+        "committedBytes": 45802586112,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 118028640,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794244121261,
+      "rssBytes": 213696512,
+      "privateBytes": 431935488,
+      "rendererHeapBytes": 24531076,
+      "handles": null,
+      "machineCommit": {
+        "sampledAt": 1794244124824,
+        "committedBytes": 43074105344,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 117761580,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794244157509,
+      "rssBytes": null,
+      "privateBytes": null,
+      "rendererHeapBytes": 26550520,
+      "handles": null,
+      "machineCommit": null,
+      "mainHeapUsed": 118167368,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794244264949,
+      "rssBytes": 188395520,
+      "privateBytes": 367001600,
+      "rendererHeapBytes": 20728972,
+      "handles": 1820,
+      "machineCommit": {
+        "sampledAt": 1794244268046,
+        "committedBytes": 40753881088,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 118289784,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794244301201,
+      "rssBytes": 182734848,
+      "privateBytes": 362168320,
+      "rendererHeapBytes": 21856192,
+      "handles": 1828,
+      "machineCommit": {
+        "sampledAt": 1794244309616,
+        "committedBytes": 41004249088,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 118733768,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794244343352,
+      "rssBytes": null,
+      "privateBytes": null,
+      "rendererHeapBytes": 22422004,
+      "handles": null,
+      "machineCommit": null,
+      "mainHeapUsed": 118754872,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794244391110,
+      "rssBytes": 108449792,
+      "privateBytes": 361963520,
+      "rendererHeapBytes": 23249644,
+      "handles": 1821,
+      "machineCommit": {
+        "sampledAt": 1794244395588,
+        "committedBytes": 38319345664,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 118759092,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794244432252,
+      "rssBytes": 114237440,
+      "privateBytes": 362000384,
+      "rendererHeapBytes": 24393624,
+      "handles": 1821,
+      "machineCommit": {
+        "sampledAt": 1794244437045,
+        "committedBytes": 39360823296,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 118645028,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794244470857,
+      "rssBytes": 118644736,
+      "privateBytes": 365490176,
+      "rendererHeapBytes": 24711408,
+      "handles": 1822,
+      "machineCommit": {
+        "sampledAt": 1794244475932,
+        "committedBytes": 38213730304,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 119239824,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794244509148,
+      "rssBytes": 117829632,
+      "privateBytes": 360681472,
+      "rendererHeapBytes": 25515424,
+      "handles": 1822,
+      "machineCommit": {
+        "sampledAt": 1794244512817,
+        "committedBytes": 37659717632,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 118764260,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794244546104,
+      "rssBytes": 122945536,
+      "privateBytes": 360787968,
+      "rendererHeapBytes": 26024412,
+      "handles": 1826,
+      "machineCommit": {
+        "sampledAt": 1794244549014,
+        "committedBytes": 35614543872,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 119205736,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794244586917,
+      "rssBytes": 179855360,
+      "privateBytes": 368959488,
+      "rendererHeapBytes": 27765968,
+      "handles": 1826,
+      "machineCommit": {
+        "sampledAt": 1794244589551,
+        "committedBytes": 34580533248,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 119310956,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794244622139,
+      "rssBytes": 174276608,
+      "privateBytes": 362303488,
+      "rendererHeapBytes": 28315896,
+      "handles": 1830,
+      "machineCommit": {
+        "sampledAt": 1794244625919,
+        "committedBytes": 35631091712,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 119517696,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794244659591,
+      "rssBytes": 197394432,
+      "privateBytes": 424222720,
+      "rendererHeapBytes": 21933412,
+      "handles": null,
+      "machineCommit": {
+        "sampledAt": 1794244668173,
+        "committedBytes": 41155506176,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 119105400,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794244702103,
+      "rssBytes": 176373760,
+      "privateBytes": 426979328,
+      "rendererHeapBytes": 22582644,
+      "handles": null,
+      "machineCommit": {
+        "sampledAt": 1794244716233,
+        "committedBytes": 44305235968,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 119445680,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794244750769,
+      "rssBytes": 187854848,
+      "privateBytes": 425865216,
+      "rendererHeapBytes": 23578848,
+      "handles": null,
+      "machineCommit": {
+        "sampledAt": 1794244760153,
+        "committedBytes": 42496856064,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 119754464,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794244793753,
+      "rssBytes": 195293184,
+      "privateBytes": 424128512,
+      "rendererHeapBytes": 24204456,
+      "handles": null,
+      "machineCommit": {
+        "sampledAt": 1794244796281,
+        "committedBytes": 34177531904,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 119606300,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794244828235,
+      "rssBytes": 109596672,
+      "privateBytes": 363511808,
+      "rendererHeapBytes": 24738744,
+      "handles": 1822,
+      "machineCommit": {
+        "sampledAt": 1794244830978,
+        "committedBytes": 33914068992,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 120163004,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794244872312,
+      "rssBytes": 173940736,
+      "privateBytes": 370331648,
+      "rendererHeapBytes": 26160676,
+      "handles": 2612,
+      "machineCommit": {
+        "sampledAt": 1794244874993,
+        "committedBytes": 35837091840,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 119592668,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794244907224,
+      "rssBytes": 163577856,
+      "privateBytes": 361701376,
+      "rendererHeapBytes": 26743332,
+      "handles": 1822,
+      "machineCommit": {
+        "sampledAt": 1794244909941,
+        "committedBytes": 35430359040,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 120051680,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794244942646,
+      "rssBytes": 166854656,
+      "privateBytes": 363585536,
+      "rendererHeapBytes": 27825108,
+      "handles": 1822,
+      "machineCommit": {
+        "sampledAt": 1794244945013,
+        "committedBytes": 35061071872,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 119697384,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794244977283,
+      "rssBytes": 168407040,
+      "privateBytes": 363745280,
+      "rendererHeapBytes": 28482976,
+      "handles": 1822,
+      "machineCommit": {
+        "sampledAt": 1794244980364,
+        "committedBytes": 37416169472,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 120156396,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794245013622,
+      "rssBytes": 226332672,
+      "privateBytes": 363982848,
+      "rendererHeapBytes": 21217844,
+      "handles": 1822,
+      "machineCommit": {
+        "sampledAt": 1794245017620,
+        "committedBytes": 39271436288,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 111341152,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794245051409,
+      "rssBytes": null,
+      "privateBytes": null,
+      "rendererHeapBytes": 22434960,
+      "handles": null,
+      "machineCommit": null,
+      "mainHeapUsed": 111352780,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794245102704,
+      "rssBytes": 210628608,
+      "privateBytes": 438657024,
+      "rendererHeapBytes": 23146872,
+      "handles": null,
+      "machineCommit": {
+        "sampledAt": 1794245106245,
+        "committedBytes": 37344186368,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 111718988,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794245139007,
+      "rssBytes": 112828416,
+      "privateBytes": 364392448,
+      "rendererHeapBytes": 24017116,
+      "handles": 2507,
+      "machineCommit": {
+        "sampledAt": 1794245144178,
+        "committedBytes": 37705572352,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 112089672,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:sample",
+      "at": 1794245148344,
+      "rssBytes": null,
+      "privateBytes": null,
+      "rendererHeapBytes": 24625988,
+      "handles": null,
+      "machineCommit": null,
+      "mainHeapUsed": 111855756,
+      "accounts": 1,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "sustained-observation:end",
+      "at": 1794245172981,
+      "rssBytes": 150069248,
+      "privateBytes": 380936192,
+      "rendererHeapBytes": 25039900,
+      "handles": null,
+      "machineCommit": {
+        "sampledAt": 1794245184538,
+        "committedBytes": 35963592704,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 112284012,
+      "accounts": 0,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    },
+    {
+      "stage": "final",
+      "at": 1794245187297,
+      "rssBytes": 121028608,
+      "privateBytes": 364843008,
+      "rendererHeapBytes": 25052244,
+      "handles": 1823,
+      "machineCommit": {
+        "sampledAt": 1794245190044,
+        "committedBytes": 35633405952,
+        "commitLimitBytes": 54946750464
+      },
+      "mainHeapUsed": 112369380,
+      "accounts": 0,
+      "windows": 1,
+      "terminalCount": 0,
+      "reservations": [],
+      "watchers": null
+    }
+  ],
+  "metricAvailability": {
+    "processUnknown": [
+      {
+        "stage": "sustained-observation:sample",
+        "at": 1794243883043,
+        "detail": "Error: Command failed: powershell -NoProfile -NonInteractive -Command $ErrorActionPreference = 'Stop'; Get-CimInstance -ClassName Win32_Process | Where-Object { $_.ProcessId -ne $PID } | ForEach-Object { \"{0}|{1}|{2}|{3}|{4}|{5}|{6}\" -f $_.ProcessId, $_.ParentProcessId, $_.WorkingSetSize, $_.KernelModeTime, $_.UserModeTime, $_.CreationDate.ToFileTimeUtc(), $_.PrivatePageCount }; try { $memory = Get-CimInstance -ClassName Win32_PerfFormattedData_PerfOS_Memory; \"commit|{0}|{1}\" -f $memory.CommittedBytes, $memory.CommitLimit } catch { }\n"
+      },
+      {
+        "stage": "sustained-observation:sample",
+        "at": 1794243941943,
+        "detail": "Error: Command failed: powershell -NoProfile -NonInteractive -Command $ErrorActionPreference = 'Stop'; Get-CimInstance -ClassName Win32_Process | Where-Object { $_.ProcessId -ne $PID } | ForEach-Object { \"{0}|{1}|{2}|{3}|{4}|{5}|{6}\" -f $_.ProcessId, $_.ParentProcessId, $_.WorkingSetSize, $_.KernelModeTime, $_.UserModeTime, $_.CreationDate.ToFileTimeUtc(), $_.PrivatePageCount }; try { $memory = Get-CimInstance -ClassName Win32_PerfFormattedData_PerfOS_Memory; \"commit|{0}|{1}\" -f $memory.CommittedBytes, $memory.CommitLimit } catch { }\n"
+      },
+      {
+        "stage": "sustained-observation:sample",
+        "at": 1794244157509,
+        "detail": "Error: Command failed: powershell -NoProfile -NonInteractive -Command $ErrorActionPreference = 'Stop'; Get-CimInstance -ClassName Win32_Process | Where-Object { $_.ProcessId -ne $PID } | ForEach-Object { \"{0}|{1}|{2}|{3}|{4}|{5}|{6}\" -f $_.ProcessId, $_.ParentProcessId, $_.WorkingSetSize, $_.KernelModeTime, $_.UserModeTime, $_.CreationDate.ToFileTimeUtc(), $_.PrivatePageCount }; try { $memory = Get-CimInstance -ClassName Win32_PerfFormattedData_PerfOS_Memory; \"commit|{0}|{1}\" -f $memory.CommittedBytes, $memory.CommitLimit } catch { }\n"
+      },
+      {
+        "stage": "sustained-observation:sample",
+        "at": 1794244343352,
+        "detail": "Error: Command failed: powershell -NoProfile -NonInteractive -Command $ErrorActionPreference = 'Stop'; Get-CimInstance -ClassName Win32_Process | Where-Object { $_.ProcessId -ne $PID } | ForEach-Object { \"{0}|{1}|{2}|{3}|{4}|{5}|{6}\" -f $_.ProcessId, $_.ParentProcessId, $_.WorkingSetSize, $_.KernelModeTime, $_.UserModeTime, $_.CreationDate.ToFileTimeUtc(), $_.PrivatePageCount }; try { $memory = Get-CimInstance -ClassName Win32_PerfFormattedData_PerfOS_Memory; \"commit|{0}|{1}\" -f $memory.CommittedBytes, $memory.CommitLimit } catch { }\n"
+      },
+      {
+        "stage": "sustained-observation:sample",
+        "at": 1794245051409,
+        "detail": "Error: Command failed: powershell -NoProfile -NonInteractive -Command $ErrorActionPreference = 'Stop'; Get-CimInstance -ClassName Win32_Process | Where-Object { $_.ProcessId -ne $PID } | ForEach-Object { \"{0}|{1}|{2}|{3}|{4}|{5}|{6}\" -f $_.ProcessId, $_.ParentProcessId, $_.WorkingSetSize, $_.KernelModeTime, $_.UserModeTime, $_.CreationDate.ToFileTimeUtc(), $_.PrivatePageCount }; try { $memory = Get-CimInstance -ClassName Win32_PerfFormattedData_PerfOS_Memory; \"commit|{0}|{1}\" -f $memory.CommittedBytes, $memory.CommitLimit } catch { }\n"
+      },
+      {
+        "stage": "sustained-observation:sample",
+        "at": 1794245148344,
+        "detail": "Error: Command failed: powershell -NoProfile -NonInteractive -Command $ErrorActionPreference = 'Stop'; Get-CimInstance -ClassName Win32_Process | Where-Object { $_.ProcessId -ne $PID } | ForEach-Object { \"{0}|{1}|{2}|{3}|{4}|{5}|{6}\" -f $_.ProcessId, $_.ParentProcessId, $_.WorkingSetSize, $_.KernelModeTime, $_.UserModeTime, $_.CreationDate.ToFileTimeUtc(), $_.PrivatePageCount }; try { $memory = Get-CimInstance -ClassName Win32_PerfFormattedData_PerfOS_Memory; \"commit|{0}|{1}\" -f $memory.CommittedBytes, $memory.CommitLimit } catch { }\n"
+      }
+    ],
+    "handlePartial": [
+      {
+        "stage": "idle-before:sample",
+        "at": 1794242355439,
+        "status": "partial"
+      },
+      {
+        "stage": "idle-before:sample",
+        "at": 1794242594552,
+        "status": "partial"
+      },
+      {
+        "stage": "repeat-25",
+        "at": 1794242802506,
+        "status": "partial"
+      },
+      {
+        "stage": "repeat-45",
+        "at": 1794242967085,
+        "status": "partial"
+      },
+      {
+        "stage": "idle-recovery:sample",
+        "at": 1794243248169,
+        "status": "partial"
+      },
+      {
+        "stage": "idle-recovery:sample",
+        "at": 1794243330168,
+        "status": "partial"
+      },
+      {
+        "stage": "sustained-observation:sample",
+        "at": 1794243453072,
+        "status": "partial"
+      },
+      {
+        "stage": "sustained-observation:sample",
+        "at": 1794243814260,
+        "status": "unavailable"
+      },
+      {
+        "stage": "sustained-observation:sample",
+        "at": 1794243883043,
+        "status": "unavailable"
+      },
+      {
+        "stage": "sustained-observation:sample",
+        "at": 1794243941943,
+        "status": "unavailable"
+      },
+      {
+        "stage": "sustained-observation:sample",
+        "at": 1794244073546,
+        "status": "partial"
+      },
+      {
+        "stage": "sustained-observation:sample",
+        "at": 1794244121261,
+        "status": "partial"
+      },
+      {
+        "stage": "sustained-observation:sample",
+        "at": 1794244157509,
+        "status": "unavailable"
+      },
+      {
+        "stage": "sustained-observation:sample",
+        "at": 1794244343352,
+        "status": "unavailable"
+      },
+      {
+        "stage": "sustained-observation:sample",
+        "at": 1794244659591,
+        "status": "partial"
+      },
+      {
+        "stage": "sustained-observation:sample",
+        "at": 1794244702103,
+        "status": "partial"
+      },
+      {
+        "stage": "sustained-observation:sample",
+        "at": 1794244750769,
+        "status": "partial"
+      },
+      {
+        "stage": "sustained-observation:sample",
+        "at": 1794244793753,
+        "status": "partial"
+      },
+      {
+        "stage": "sustained-observation:sample",
+        "at": 1794245051409,
+        "status": "unavailable"
+      },
+      {
+        "stage": "sustained-observation:sample",
+        "at": 1794245102704,
+        "status": "partial"
+      },
+      {
+        "stage": "sustained-observation:sample",
+        "at": 1794245148344,
+        "status": "unavailable"
+      },
+      {
+        "stage": "sustained-observation:end",
+        "at": 1794245172981,
+        "status": "partial"
+      }
+    ]
+  },
+  "exitProbeErrors": [
+    {
+      "stage": "soak",
+      "cycle": 2,
+      "at": 1794244031145,
+      "error": "Error: Command failed: pwsh.exe -NoLogo -NoProfile -NonInteractive -Command \n$ErrorActionPreference = 'Stop'\n[Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)\n$entries = $env:CLAWX_PROCESS_IDENTITIES | ConvertFrom-Json\n$results = @(foreach ($entry in $entries) {\n  $result = [ordered]@{ pid = $entry.pid; creationTime = $entry.creationTime; status = 'unavailable' }\n  $owned = $null\n  try {\n    try { $owned = [Diagnostics.Process]::GetProcessById([int]$entry.pid) }\n    catch [ArgumentException] { $result.status = 'exited' }\n    if ($null -ne $owned) {\n      $null = $owned.Handle\n      if ($owned.HasExited) { $result.status = 'exited' }\n      elseif (([DateTimeOffset]$owned.StartTime).ToUnixTimeMilliseconds() -ne [long]$entry.creationTime) {\n        $result.status = 'replaced'\n      } else {\n        $result.status = 'alive'\n        if ($env:CLAWX_PROCESS_TERMINATE -eq '1') {\n          $owned.Kill()\n          if ($owned.WaitForExit(2000)) { $result.status = 'terminated' }\n        }\n      }\n    }\n  } catch {\n    if ($null -ne $owned -and $owned.HasExited) { $result.status = 'exited' }\n    else { $result.status = 'unavailable'; $result.error = $_.Exception.Message }\n  } finally {\n    if ($null -ne $owned) { $owned.Dispose() }\n  }\n  [pscustomobject]$result\n})\nConvertTo-Json -InputObject $results -Depth 3 -Compress\n\n"
+    }
+  ],
+  "createdTreeProbeErrors": [
+    {
+      "stage": "soak",
+      "cycle": 2,
+      "at": 1794244009897,
+      "sample": {
+        "status": "unknown",
+        "sampledAt": 1794244009896,
+        "rootPids": [
+          51584,
+          50072
+        ],
+        "processCount": null,
+        "treeRssBytes": null,
+        "treeCpuTimeMs": null,
+        "treeCpuPercent": null,
+        "queueDepth": 0,
+        "queueWaitMs": 0,
+        "source": "unknown",
+        "detail": "Error: Command failed: powershell -NoProfile -NonInteractive -Command $ErrorActionPreference = 'Stop'; Get-CimInstance -ClassName Win32_Process | Where-Object { $_.ProcessId -ne $PID } | ForEach-Object { \"{0}|{1}|{2}|{3}|{4}|{5}|{6}\" -f $_.ProcessId, $_.ParentProcessId, $_.WorkingSetSize, $_.KernelModeTime, $_.UserModeTime, $_.CreationDate.ToFileTimeUtc(), $_.PrivatePageCount }; try { $memory = Get-CimInstance -ClassName Win32_PerfFormattedData_PerfOS_Memory; \"commit|{0}|{1}\" -f $memory.CommittedBytes, $memory.CommitLimit } catch { }\n",
+        "ownerEpoch": "e22f2ca7-1cd5-417a-8b65-8dd16372f1d9",
+        "processes": []
+      }
+    }
+  ]
+}

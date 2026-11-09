@@ -1,6 +1,7 @@
 import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import { Socket } from 'node:net';
 import { afterEach, expect, it, vi } from 'vitest';
 import { TerminalSessionManager } from '../../electron/services/terminal-session-manager';
 import { configureManagedProcessCapacity, managedProcessCapacityStats, resetManagedProcessCapacity } from '../../openclaw_runtime/src/agents/verseshell/managed-process-capacity';
@@ -38,3 +39,28 @@ it('native Windows PTY owns descendants, generation, capacity and cancellation r
   await manager.close(terminal.sessionId!).catch(()=>undefined);
  }
 },45_000);
+
+it('repeated native terminal exits release their input pipe handles', async () => {
+ expect(process.platform).toBe('win32');
+ const root=mkdtempSync(path.join(tmpdir(),'pty-pipes-'));roots.push(root);vi.stubEnv('OPENCLAW_STATE_DIR',path.join(root,'state'));
+ const workspace:WorkspaceProfile={id:'pipe-owner',name:'Pipes',rootPath:root,agentId:'main',activeSessionKey:'agent:main:pipes',permissionMode:'fullAccess',createdAt:1,updatedAt:1,lastOpenedAt:1,state:{}};
+ const handles=()=> (process as unknown as {_getActiveHandles():object[]})._getActiveHandles();
+ const initial=new Set(handles()); const residual=()=>handles().filter(handle=>handle instanceof Socket && handle.writable && !handle.readable && !initial.has(handle));
+ const manager=new TerminalSessionManager();const rows:Array<{cycle:number;remaining:number}>=[];
+ let current:string|null=null;
+ try {
+  for(let i=0;i<12;i++) {
+   const opened=manager.open({workspace});current=opened.sessionId!;
+   await vi.waitFor(()=>expect(manager.status({sessionId:current!}).pid).toBeGreaterThan(0),{timeout:10000});
+   await manager.close(current);current=null;
+   rows.push({cycle:i,remaining:residual().length});
+  }
+  await vi.waitFor(()=>expect(residual()).toHaveLength(0),{timeout:5000});
+  expect(manager.listAll()).toEqual([]);
+ } finally {
+  if(current)await manager.close(current);
+  if(process.env.RESOURCE_SOAK_REPORT_DIR)writeFileSync(path.join(process.env.RESOURCE_SOAK_REPORT_DIR,`pty-pipes-${Date.now()}.json`),JSON.stringify({driven_by:'agent',actor:'codex',cycles:rows,remaining:residual().length}));
+  // Negative-control runs leave test-owned pipes after their processes exited.
+  for(const pipe of residual())(pipe as Socket).destroy();
+ }
+},60000);

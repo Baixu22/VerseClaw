@@ -1,0 +1,357 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": "289ee63a210eaec06c202de17b6c9cf23a74f17e",
+  "deliveryCandidate": "ed2cfbb11a1ff59819ac607f922874803e57eb3d",
+  "equivalence": "observation-equivalence.json",
+  "cases": [
+    {
+      "name": "output byte backpressure caps a single huge Unicode chunk and preserves full cold output",
+      "status": "passed"
+    },
+    {
+      "name": "output byte backpressure streams many bounded chunks into one artifact with exact incremental readback",
+      "status": "passed"
+    },
+    {
+      "name": "output byte backpressure shares a byte cap across streams and never retains partial leading characters",
+      "status": "passed"
+    },
+    {
+      "name": "output byte backpressure reports spill failure even when cancellation arrives before the producer settles",
+      "status": "passed"
+    },
+    {
+      "name": "concurrent acquisition with real ACI protocol children reuses one owned Node child and leaves zero owned PIDs after repeated shutdown",
+      "status": "passed"
+    },
+    {
+      "name": "native protocol control isolation keeps a second real process alive when the first exits and controls it during poll pressure",
+      "status": "passed"
+    },
+    {
+      "name": "verified native process control controls two live processes during polls and reads bounded artifacts after exit",
+      "status": "passed"
+    },
+    {
+      "name": "verified native process control compares CLI, batch, persistent server and native reads on the same file",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed exec adaptation derives a stable policy digest from the repository-owned definition",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed exec adaptation does not consume an upstream token before OpenClaw host policy approval",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed exec adaptation retries once in an approval-scoped process and preserves bounded recovery metadata",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed exec adaptation keeps shell-string compatibility at the typed argv boundary",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed exec adaptation rejects invalid artifact handles and mode-specific arguments before transport",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed exec adaptation sends bounded result.query arguments through the verified process",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed exec adaptation reports a non-zero exit as a bounded failure without success",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed exec adaptation reports a runtime timeout as a bounded failure",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed exec adaptation rejects an oversized result.query response before returning it",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed exec adaptation rejects a result.query response without bounded data",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell startup capacity rollback returns a confirmed terminal reservation even when executor cleanup fails",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell startup capacity rollback returns capacity when executor acquisition fails before dispatch and permits retry",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell startup capacity rollback returns capacity when approval transport acquisition fails after a confirmed denial",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell startup capacity rollback returns a rejected start reservation even if approval transport cleanup fails",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell startup capacity rollback keeps the managed reservation when start delivery or terminal state is unknown",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell startup capacity rollback keeps the managed reservation when poll delivery or terminal state is unknown",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell startup capacity rollback keeps the managed reservation when malformed-start delivery or terminal state is unknown",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle drains terminal output through the final cursor before releasing its executor",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle keeps a shared executor alive until both lifecycle references settle",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle bounds accumulated UTF-8 output while keeping terminal artifact references",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle uses the pre-approval argv plan without reparsing the display command",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle retries effectful start exactly once in the approval-scoped transport",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle maps start, poll, stdin, EOF, and kill and cleans up after terminal state",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle fails closed on 'cursor rewind'",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle fails closed on 'owner drift'",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle retries only read-only poll after a transport restart and never replays start",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle returns an explicit EOF error instead of acknowledging a failed close",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle keeps a windows-cmd plan auditable without reparsing the display command",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle fails closed when a windows-cmd plan drifts from its script identity",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle clamps timeout and output above the profile bounds",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle clamps the timeout floor to 1ms and uses the profile default when unset",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle sends the requested Job limits and records how enforcement was established",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle does not claim enforcement when no limits were requested",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShell governed process lifecycle fails closed when the executor refuses to start with the requested limits",
+      "status": "passed"
+    },
+    {
+      "name": "managed process capacity admits everything and allocates no counter until a capacity is declared",
+      "status": "passed"
+    },
+    {
+      "name": "managed process capacity bounds the instance-wide live count and refuses beyond it",
+      "status": "passed"
+    },
+    {
+      "name": "managed process capacity persists identity-only ownership without inventing a capacity limit",
+      "status": "passed"
+    },
+    {
+      "name": "managed process capacity counts a double release without freeing a second slot",
+      "status": "passed"
+    },
+    {
+      "name": "managed process capacity reads the declared capacity and per-run defaults from the environment",
+      "status": "passed"
+    },
+    {
+      "name": "managed process capacity exposes the declared default limits to the process boundary",
+      "status": "passed"
+    },
+    {
+      "name": "poll control capacity keeps the sole queue position for controls at concurrency one",
+      "status": "passed"
+    },
+    {
+      "name": "poll control capacity leaves an executor slot for stdin while long polls are pending",
+      "status": "passed"
+    },
+    {
+      "name": "poll control capacity removes successful request abort listeners and keeps a retained idle executor",
+      "status": "passed"
+    },
+    {
+      "name": "poll control capacity stops dispatch under stdin backpressure and removes the drain listener on shutdown",
+      "status": "passed"
+    },
+    {
+      "name": "typed ACI framing decodes schema/op/data observations without the legacy value envelope",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager shares one pending resolver, spawn and handshake across concurrent callers",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager counts pending binary resolution against the cap for distinct keys",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager does not publish a second client before the shared handshake completes",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects all concurrent clients when the shared handshake fails",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager shares concurrent workspace shutdown and rejects new work until owned cleanup finishes",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects every waiter on a failed startup and permits a later retry",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager fences pending binary resolution during all shutdown without a late spawn",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager fences pending binary resolution during workspace shutdown without a late spawn",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager fences pending binary resolution during kill-switch shutdown without a late spawn",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager closes a process while its handshake is pending and rejects every waiter",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager fences shutdownAll before workspace canonicalization completes",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager uses handshake data, JSON mode, non-permissive policy, and one comma-separated --cap",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager isolates process keys by canonical workspace and action-bound approval token",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager removes inherited broad approvals and redacts action tokens from health",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager fails closed when the default binary identity was not Electron-verified",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects an unverified custom binary resolver",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects a handshake whose actual server state mismatches config",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects a handshake whose immutable policy profile binding mismatches config",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects a handshake with an incompatible capability mode",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects a handshake with an incompatible operation catalog schema",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects a handshake with an incompatible operation catalog count",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects malformed frames as transport protocol failures",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects oversized frames as transport protocol failures",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects request id mismatch frames as transport protocol failures",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager resolves operation ok=false separately from transport errors",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects pending requests on crash and never replays the effectful request",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects timed-out pending requests without native shell fallback",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager enforces per-process concurrency and drains its bounded queue",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager collects idle processes after the configured TTL",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager gracefully sends SHUTDOWN and removes all processes",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager binds timeout errors to host-owned request and trace metadata",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager retries one explicitly read-only request after a transport restart",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager rejects retry opt-in for effectful and unknown operations",
+      "status": "passed"
+    },
+    {
+      "name": "VerseShellProcessManager exposes handshaking health and fails closed on the operator kill switch",
+      "status": "passed"
+    }
+  ]
+}

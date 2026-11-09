@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Chat } from '@/pages/Chat';
+import { MemoryRouter } from 'react-router-dom';
 
 vi.mock('react-router-dom', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router-dom')>();
@@ -35,6 +36,7 @@ vi.mock('@/stores/gateway', () => ({
 }));
 
 const chatState = {
+  sessions: [],
   hydrateStartup: vi.fn(async () => {}),
   messages: [
     { role: 'user', content: 'hello' },
@@ -146,9 +148,9 @@ describe('Chat question directory', () => {
    */
   it('stays removed and keeps real repeated questions as separate transcript entries', async () => {
     render(
-      <TooltipProvider>
+      <MemoryRouter><TooltipProvider>
         <Chat />
-      </TooltipProvider>,
+      </TooltipProvider></MemoryRouter>,
     );
 
     expect(screen.queryByTestId('chat-question-directory-toggle')).toBeNull();

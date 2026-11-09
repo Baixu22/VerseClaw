@@ -1,0 +1,18 @@
+{
+  "findings": [
+    {
+      "title": "Preserve row-level unavailable identity errors during cleanup retries",
+      "body": "`unavailable` is treated as a failed identity observation when deciding to enter the retry block, but the loop stops as soon as `checkWindowsProcesses` resolves, even when the returned rows still have `status: 'unavailable'`. Such failures therefore receive only one read-only retry instead of up to three. Additionally, if the initial call returned an unavailable row with its `error`, the successful retry overwrites `processes`; that original error is never added to `errors`, so transient diagnostic evidence is lost. Accumulate unavailable-row errors before replacing the result and continue read-only retries for unavailable rows until every identity has a terminal status or three attempts are exhausted. Persistent unavailable results must continue to leave `mainExited` false.",
+      "priority": "P2",
+      "confidence": 0.87,
+      "category": "bug",
+      "code_location": {
+        "file_path": "tests/e2e/fixtures/electron.ts",
+        "line": 320
+      }
+    }
+  ],
+  "overall_correctness": "patch is incorrect",
+  "overall_explanation": "The lifecycle-tree retry is correct: it performs at most three read-only samples, records every unknown/source-unknown sample, and lets the original assertions fail on persistent unknown. The Electron cleanup retry is incomplete because row-level `unavailable` results stop the loop and can have their error evidence overwritten by a later successful observation. This violates the stated three-attempt, retained-error behavior.",
+  "overall_confidence": 0.87
+}

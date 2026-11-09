@@ -8,6 +8,7 @@ export default defineConfig({
   testDir: './tests/e2e',
   // Live acceptance uses private local resources and is selected explicitly by its runner.
   testIgnore: [
+    '**/resource-lifecycle-soak.spec.ts',
     ...(process.env.CLAWX_SPACE_BUNNY_ACCEPTANCE === '1' ? [] : ['**/product-acceptance-space-bunny.spec.ts']),
     ...(process.env.CLAWX_MOYU_ACCEPTANCE === '1' ? [] : ['**/product-acceptance-moyu.spec.ts']),
   ],

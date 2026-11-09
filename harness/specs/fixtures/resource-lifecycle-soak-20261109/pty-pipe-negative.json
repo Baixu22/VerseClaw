@@ -1,0 +1,14 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": "b16602aed0894ef75613180ffc15295f382c728e",
+  "failed": 1,
+  "source": "D:\\tmp\\tf0839\\pty-pipe-negative2.json",
+  "sha256": "e0ea24208337786080421988bf5d9df7265631d521e93db446967cdb52399a18",
+  "cases": [
+    {
+      "name": "repeated native terminal exits release their input pipe handles",
+      "failure": "AssertionError: expected [ …(12) ] to have a length of +0 but got 12"
+    }
+  ]
+}
