@@ -1497,7 +1497,7 @@ export const hostApi = {
     delegate: (input: SessionDelegationPayload): Promise<SessionDelegationResult> => (
       invokeHost('sessions', 'delegate', input)
     ),
-    delete: (id: string) => invokeHost('sessions', 'delete', { id }),
+    delete: (id: string, resumeOperationId?: string) => invokeHost('sessions', 'delete', { id, ...(resumeOperationId ? { resumeOperationId } : {}) }),
     rename: (id: string, title: string) => (
       invokeHost('sessions', 'rename', { id, title })
     ),

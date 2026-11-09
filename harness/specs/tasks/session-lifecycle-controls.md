@@ -7,6 +7,7 @@ taskType: runtime-bridge
 diffBase: c308b60e1
 intent: Complete the existing session/task UI contract through owner-backed, generation-scoped results.
 ownedPaths:
+  - src/lib/host-api.ts
   - shared/host-api/contract.ts
   - openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts
   - openclaw_runtime/src/gateway/server-methods/sessions.run-control.ts
@@ -49,6 +50,7 @@ ownedPaths:
   - tests/unit/checkpoints-dialog.test.tsx
   - tests/unit/host-services.test.ts
 touchedAreas:
+  - src/lib/host-api.ts
   - shared/host-api/contract.ts
   - openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts
   - openclaw_runtime/src/gateway/server-methods/sessions.run-control.ts

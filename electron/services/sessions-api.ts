@@ -182,6 +182,7 @@ type ParsedTranscriptLine = {
 };
 
 type SessionPayload = {
+  resumeOperationId?: unknown;
   id?: unknown;
   sessionKey?: unknown;
   label?: unknown;

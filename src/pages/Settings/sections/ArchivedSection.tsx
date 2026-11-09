@@ -94,7 +94,9 @@ export function ArchivedSection() {
   const resumeMutation = async (entry: SessionPendingMutation) => {
     setPendingKey(entry.operationId);
     try {
-      const result = await hostApi.sessions[entry.operationKind]({ id: entry.sessionKey, resumeOperationId: entry.operationId });
+      const result = entry.operationKind === 'delete'
+        ? await hostApi.sessions.delete(entry.sessionKey, entry.operationId)
+        : await hostApi.sessions[entry.operationKind]({ id: entry.sessionKey, resumeOperationId: entry.operationId });
       if (!result.success) throw new Error(result.error || t('chat:archive.mutationUnconfirmed'));
     } catch (error) { toastUserError(error); }
     finally {

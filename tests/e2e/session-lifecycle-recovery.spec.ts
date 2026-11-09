@@ -289,7 +289,7 @@ test('U5 coordinator pause and resume reject before commit and recover lost ackn
     sessionKey: c.project.sessionKey, expectedRevision: 0, taskLedgerNodeIds: [task.contract.taskNodeId],
     environment: { kind: 'local', rootPath: c.project.rootPath }, archiveRestorePolicy: 'restore' });
   await c.page.reload(); await select(c, c.project.sessionKey);
-  const observations = []; c.facts.coordinator = observations;
+  const observations: Array<Record<string, unknown>> = []; c.facts.coordinator = observations;
   for (const [button, action, before, after] of [['pause', 'pauseCoordinator', 'active', 'paused'], ['resume', 'bindCoordinator', 'paused', 'active']] as const) {
     const panel = await openCoordinator(c), control = c.page.getByTestId(`coordinator-${button}`);
     const prior = await ownerBinding(c);
@@ -315,7 +315,7 @@ test('U5 coordinator pause and resume reject before commit and recover lost ackn
 });
 
 test('U5 archive restore and confirmed delete retry their retained operationId after Runtime commit and a Main gate-clear failure', async ({ launchElectronApp }, info) => {
-  const c = await setup(launchElectronApp, info); const records = []; c.facts.lifecycle = records;
+  const c = await setup(launchElectronApp, info); const records: Array<Record<string, unknown>> = []; c.facts.lifecycle = records;
   const key = c.project.sessionKey;
   for (const action of ['archive', 'restore', 'delete'] as const) {
     if (action === 'restore') await archivePage(c); else await select(c, key);
