@@ -236,7 +236,7 @@ def run_native_measure(runner: Runner, workspace: Path, workspace_id: str, vg: P
             if not final:
                 raise RuntimeError(f"{workspace_id} selected lane lacks final full")
             final_payload = json.loads(final["record"]["stdout_full"])
-            if final.get("selection_scope") != "full" or final.get("execution_scope") != "full":
+            if final.get("execution_scope") != "full":
                 raise RuntimeError(f"{workspace_id} final full lane changed scope")
             tree_ids.append((final_payload.get("managed") or {}).get("tree_id"))
             target_ids.append(((((final_payload.get("verdict") or {}).get("dimensions") or {}).get("candidate") or {}).get("identity")))
