@@ -12,6 +12,7 @@ expectedUserBehavior:
 touchedAreas:
   - tests/e2e/resource-lifecycle-soak.spec.ts
   - tests/e2e/resource-window-lifecycle.spec.ts
+  - tests/e2e/fixtures/electron.ts
   - tests/unit/resource-lifecycle-report.test.ts
   - tests/unit/resource-repeated-observers.test.ts
   - tests/unit/chat-page-execution-graph.test.tsx

@@ -322,6 +322,21 @@ async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000) {
     ? Boolean(owned?.identities.length && processes.length === owned.identities.length
       && processes.every(({ status }) => status === 'exited' || status === 'replaced' || status === 'terminated'))
     : launcherExited;
+  if (mainExited && launcherExited && !closeSettled && launcher) {
+    // Playwright releases its app on ChildProcess 'close', after stdio closes.
+    // Windows descendants can retain the launcher's inherited pipes after all
+    // captured Electron identities exited. Dispose only our local pipe ends.
+    for (const stream of launcher.stdio) stream?.destroy();
+    // The Electron-specific Playwright close handler awaits app.quit over its
+    // private Node inspector before closing that transport. When the target
+    // has exited, disconnect only this app's inspector to settle the await.
+    try {
+      const implementation = (app as unknown as { _connection?: { toImpl?: (value: ElectronApplication) => { _nodeConnection?: { close: () => void } } } })._connection?.toImpl?.(app);
+      implementation?._nodeConnection?.close();
+    } catch (error) { errors.push(String(error)); }
+    try { closeSettled = await bounded(closing, 2_000, 'Playwright close after owned pipe disposal'); }
+    catch (error) { errors.push(String(error)); }
+  }
   // Other E2E callers close sockets after this helper. Return exit confirmation
   // so those cleanups run even when a process or inspector cannot be closed.
   return { mainExited, launcherExited, graceful, closeSettled, processes, errors, ...(snapshotError ? { snapshotError } : {}) };
