@@ -311,11 +311,19 @@ async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000) {
   let closeSettled = false;
   try { closeSettled = await bounded(closing, 2_000, 'Playwright close after launcher exit'); }
   catch (error) { errors.push(String(error)); }
-  if (owned && processes.some(({ status }) => status === 'alive')) {
+  if (owned && (processes.length !== owned.identities.length
+    || processes.some(({ status }) => status === 'alive' || status === 'unavailable'))) {
     // A signalled Main can finish after the launcher's pipes close. Read the
     // same identities again before deciding whether this close left survivors.
-    try { processes = await checkWindowsProcesses(owned.identities); }
-    catch (error) { errors.push(String(error)); }
+    // Retry failed observations only; never replay an uncertain termination.
+    for (let attempt = 1; ; attempt++) {
+      try { processes = await checkWindowsProcesses(owned.identities); break; }
+      catch (error) {
+        errors.push(String(error));
+        if (attempt >= 3) break;
+        await new Promise(resolve => setTimeout(resolve, 250));
+      }
+    }
   }
   const launcherExited = Boolean(launcher && (launcher.exitCode !== null || launcher.signalCode !== null));
   const mainExited = process.platform === 'win32'

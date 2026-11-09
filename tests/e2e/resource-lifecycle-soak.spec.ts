@@ -100,7 +100,18 @@ test('repeated lifecycle, real idle recovery and separate sustained observation'
         return terminalPid !== undefined;
       }, { timeout: 15_000 }).toBe(true);
       record.terminalPid = terminalPid;
-      const tree = await sampler.sample({ rootPids: [terminalPid!, receipt!.root] });
+      let tree: Awaited<ReturnType<typeof sampler.sample>>;
+      const createdTreeProbeErrors: Array<{ at: number; sample: Awaited<ReturnType<typeof sampler.sample>> }> = [];
+      record.createdTreeProbeErrors = createdTreeProbeErrors;
+      for (let attempt = 1; ; attempt++) {
+        tree = await sampler.sample({ rootPids: [terminalPid!, receipt!.root] });
+        if (tree.status !== 'unknown' || tree.source !== 'unknown') break;
+        createdTreeProbeErrors.push({ at: Date.now(), sample: tree }); await save();
+        // Keep failed process-table observations while the same owned tree is
+        // running. No lifecycle action is replayed during these bounded reads.
+        if (attempt >= 3) break;
+        await new Promise(done => setTimeout(done, 250));
+      }
       record.createdTree = tree; expect(tree.status).toBe('ok'); expect(tree.processes?.some(p => p.pid === receipt!.child)).toBe(true);
       const identities: WindowsProcessIdentity[] = tree.processes!.map(p => ({ pid: p.pid, creationTime: Number(BigInt(p.creationToken) / 10_000n - 11_644_473_600_000n) }));
       ownedIdentities = identities;
