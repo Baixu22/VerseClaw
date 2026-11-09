@@ -251,6 +251,7 @@ def run_native_measure(runner: Runner, workspace: Path, workspace_id: str, vg: P
             "workspace": workspace_id, "run": lane.get("run"), "lane": label,
             "coldSeconds": lane["cold"]["duration_s"], "warmSeconds": lane["warm"]["duration_s"],
             "collected": first.get("collected"), "selected": first.get("selected"), "executed": first.get("executed"),
+            "mapped_verdict": first.get("mapped_verdict"),
             "planScope": first.get("selection_scope"), "executionScope": first.get("execution_scope"),
             "treeIds": tree_ids, "targetIdentities": target_ids,
         })
