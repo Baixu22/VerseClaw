@@ -2683,6 +2683,8 @@ openclaw_runtime/_tmp_*
 !/docs/dev/evidence/project-rag-longterm-20261109/credential-scan.json
 !/docs/dev/evidence/project-rag-longterm-20261109/validation.json
 !/docs/dev/evidence/project-rag-longterm-20261109/SHA256SUMS
+!/docs/dev/evidence/project-rag-longterm-20261109/final-validation.json
+!/docs/dev/evidence/project-rag-longterm-20261109/delivery.json
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.

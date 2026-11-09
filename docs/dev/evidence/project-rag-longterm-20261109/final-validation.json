@@ -1,0 +1,133 @@
+{
+  "schema": "ProjectRagFinalPlanningValidation/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "recordedAt": "2026-11-09T07:35:07.474Z",
+  "candidate": {
+    "commit": "14dbd2cbc027080d400fa4162d9967357791a8ae",
+    "tree": "bbff239d536787ce925559f4c99886a5fcb6a596",
+    "dirty": false
+  },
+  "harnessSpecValidation": {
+    "total": 20,
+    "passed": 20,
+    "dryRunExit": 0
+  },
+  "unit": {
+    "files": 4,
+    "total": 51,
+    "passed": 51,
+    "failed": 0,
+    "results": [
+      {
+        "path": "tests/unit/dcs-prod-flags-catalog.test.ts",
+        "status": "passed",
+        "count": 3
+      },
+      {
+        "path": "tests/unit/docs-index.test.ts",
+        "status": "passed",
+        "count": 3
+      },
+      {
+        "path": "tests/unit/harness-spec-lifecycle.test.ts",
+        "status": "passed",
+        "count": 2
+      },
+      {
+        "path": "tests/unit/harness-specs.test.ts",
+        "status": "passed",
+        "count": 43
+      }
+    ],
+    "rawReportSha256": "ddbb33ea881543a81191ce9cf75d87711c2b175af80fbb6a5348e2cb52adfdab"
+  },
+  "catalogRepair": {
+    "file": "shared/dcs/prod-flags-catalog.ts",
+    "oldSite": "orchestrator-run-observed.ts:435",
+    "verifiedSite": "orchestrator-run-observed.ts:480",
+    "checkPassed": true,
+    "defaultValuesChanged": false
+  },
+  "repositoryRetentionPassed": true,
+  "fullHarnessCi": {
+    "status": "not-passed",
+    "initialStop": "catalog source anchor pointed to a blank line",
+    "catalogStopResolved": true,
+    "remainingAudit": {
+      "status": "fail",
+      "grade": "D",
+      "totalScore": 60,
+      "disqualifiers": [
+        {
+          "dimension": "evidence-completeness",
+          "id": "evidence-stale:workbench",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "artifacts/agent-dev-workbench/evidence.json is 67.34h old, beyond the 24h freshness window.",
+          "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+        },
+        {
+          "dimension": "evidence-completeness",
+          "id": "evidence-stale:deep-test",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "artifacts/agent-dev-deep-test/report.json is 67.34h old, beyond the 24h freshness window.",
+          "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+        },
+        {
+          "dimension": "evidence-completeness",
+          "id": "evidence-stale:deep-test-history",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "artifacts/agent-dev-deep-test/history.json is 67.34h old, beyond the 24h freshness window.",
+          "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+        },
+        {
+          "dimension": "evidence-completeness",
+          "id": "evidence-stale:quality",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "artifacts/agent-dev-quality/report.json is 67.34h old, beyond the 24h freshness window.",
+          "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+        },
+        {
+          "dimension": "performance-discipline",
+          "id": "latest-decision-blocked",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "Latest deep-test decision is blocked: vitest-agent-dev, typecheck, contract exceeded hard performance limits.",
+          "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence."
+        },
+        {
+          "dimension": "performance-discipline",
+          "id": "performance-limit:vitest-agent-dev",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "vitest-agent-dev exceeded hard limit: 180444ms > 21000ms.",
+          "recommendation": "Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe."
+        },
+        {
+          "dimension": "performance-discipline",
+          "id": "performance-limit:typecheck",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "typecheck exceeded hard limit: 81259ms > 45000ms.",
+          "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+        },
+        {
+          "dimension": "performance-discipline",
+          "id": "performance-limit:contract",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "contract exceeded hard limit: 3977ms > 3000ms.",
+          "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources."
+        }
+      ]
+    },
+    "evidenceRefsExit": 0,
+    "testCoverageExit": 0,
+    "note": "Audit timings and ages are values read from retained Agent Dev evidence, not a new deep-test benchmark."
+  },
+  "scope": "planning/specification/integration validation; RAG runtime implementation remains pending"
+}

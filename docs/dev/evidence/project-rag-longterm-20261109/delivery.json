@@ -1,0 +1,52 @@
+{
+  "schema": "ProjectRagPlanningDelivery/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "completedAt": "2026-11-09T07:35:07.477Z",
+  "decision": "long-term owner-bound hybrid RAG",
+  "worktree": {
+    "path": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX",
+    "branch": "codex/project-rag-longterm-20261109",
+    "integratedMain": "806855309fb9d0ab4ffcf9f897f42fb0117e4f40",
+    "validatedCandidate": "14dbd2cbc027080d400fa4162d9967357791a8ae",
+    "gitLocked": true
+  },
+  "taskForest": {
+    "proposalId": "TFP-project-rag-longterm-20261109-01a1be8b",
+    "goalId": "TF-0870",
+    "nodeCount": 27,
+    "phaseCount": 6,
+    "workPackageCount": 20,
+    "planningNodeId": "TF-0877",
+    "nextNode": {
+      "id": "TF-0878",
+      "key": "RAG-01",
+      "title": "统一来源读取的身份、权限与版本",
+      "status": "ready",
+      "spec": "harness/specs/tasks/project-rag-owner-read-contract.md"
+    },
+    "bindingMatches": 27,
+    "bindingDigest": "b5a623b1fed3e0125de9cce8abde71f12b7e280cdf465f9361c529c3899a9ec0",
+    "dependenciesVerified": true,
+    "hierarchyVerified": true,
+    "validatePassed": true,
+    "exportPassed": true,
+    "htmlPath": "D:/ClawX/.agent-workbench/task-forest/exports/task-forest.html",
+    "htmlBytes": 748286304,
+    "htmlSha256": "8c2ce181329c97a5badbc5cbcf17161f4da11436845c0c26fac23d1e08af6670"
+  },
+  "relocation": {
+    "ownedFilesMoved": 2,
+    "ownedTextEditsRemoved": 4,
+    "otherIndexEntriesPreserved": true
+  },
+  "dependencyHandling": {
+    "validationUsedExistingDependencies": true,
+    "restoredSharedWorkspaceLinks": 1300,
+    "restoredMetadataFiles": 2,
+    "sourceFilesChanged": false
+  },
+  "runtimeImplementationStarted": false,
+  "localWorktreeGuide": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/WORKTREE.md",
+  "localHandoff": "D:/ClawX/docs/dev/handoffs/PROJECT-RAG-LONGTERM-20261109.zh-CN.md"
+}
