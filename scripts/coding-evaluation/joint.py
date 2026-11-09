@@ -346,7 +346,7 @@ def main() -> int:
         if not node:
             raise RuntimeError("node is not available")
         vitest = runner.run("clawx-joint-unit", [node, ROOT / "node_modules/vitest/vitest.mjs", "run", "tests/unit/orchestration-worktree-merge.test.ts", "tests/unit/uas-04-coding-mutation-consistency.test.ts", "--maxWorkers=1"], cwd=ROOT, timeout=1200)
-        cargo = runner.run("vg-joint-native", ["cargo", "test", "-p", "vg-cli", "--test", "jj_cross_workspace_conflict", "--test", "jj_conflict_gate", "--test", "jj_transaction_recovery", "--test", "jj_sts_feedback", "--test", "jj_workspace_lifecycle", "--test", "jj_file_family", "--no-fail-fast"], cwd=args.native_root.resolve(), timeout=2400, extra_env={"VG_CONTRACT_DIR": args.native_root.resolve() / "extensions/sts/contracts/vg-sts", "VG_STS_PYTHON": args.python.resolve()})
+        cargo = runner.run("vg-joint-native", ["cargo", "test", "-p", "vg-cli", "--test", "jj_cross_workspace_conflict", "--test", "jj_conflict_gate", "--test", "jj_transaction_recovery", "--test", "jj_sts_feedback", "--test", "jj_workspace_lifecycle", "--test", "jj_file_family", "--no-fail-fast"], cwd=args.native_root.resolve(), timeout=2400, extra_env={"VG_CONTRACT_DIR": args.native_root.resolve() / "extensions/sts/contracts/vg-sts", "VG_STS_PYTHON": args.python.resolve(), "CARGO_TARGET_DIR": out / "tmp/cargo-target"})
         cases = {
             "same-file-competition": {"passed": True, "commandIds": [cargo["id"]], "oracle": "jj_cross_workspace_conflict"},
             "cross-file-dependency": {"passed": all(x["mapped_verdict"] == "passed" for n in native_docs for x in n["lanes"] if x["lane"] != "jj_plus_same_full_check"), "commandIds": [n["commandId"] for n in native_docs], "oracle": "full test suites in A/B/C"},
