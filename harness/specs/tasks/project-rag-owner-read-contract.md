@@ -1,19 +1,29 @@
 ---
 lifecycleStatus: active
-implementationStatus: planned
+implementationStatus: partial
 id: project-rag-owner-read-contract
 title: 统一来源读取的身份、权限与版本
 scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-01
 intent: 确保检索、预览、模型调用和引用使用同一份 owner 读取约束。
-diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
+diffBase: ca1ba25b27ccd3783d199d2416d8a81bcf799c2e
 touchedAreas:
   - "shared/knowledge/**"
   - "shared/host-api/contract.ts"
   - "electron/services/knowledge*.ts"
   - "electron/services/chat-api.ts"
   - "openclaw_runtime/src/context-engine/chat-knowledge*.ts"
+  - "openclaw_runtime/src/context-engine/source-set.ts"
+  - "openclaw_runtime/src/runtime-core/knowledge-owner-read.ts"
+  - "openclaw_runtime/src/plugin-sdk/memory-host-core.ts"
+  - "openclaw_runtime/src/gateway/server-methods/chat.ts"
+  - "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts"
+  - "src/pages/Chat/ChatInput.tsx"
+  - "src/pages/Knowledge/**"
+  - "src/lib/host-api.ts"
+  - "shared/i18n/locales/**/knowledge.json"
+  - "docs/dev/evidence/project-rag/RAG-01/**"
   - "openclaw_runtime/extensions/memory-wiki/runtime-api.ts"
   - "openclaw_runtime/extensions/memory-wiki/src/**"
   - "openclaw_runtime/packages/gateway-protocol/src/schema/logs-chat.ts"
@@ -49,6 +59,8 @@ requiredRules:
 requiredTests:
   - "tests/unit/knowledge-source-set-answer.test.ts"
   - "tests/unit/knowledge-api.test.ts"
+  - "tests/unit/project-rag-owner-read.test.ts"
+  - "tests/unit/knowledge-evidence-qa.test.ts"
 plannedTests:
   - "tests/unit/project-rag-owner-read.test.ts"
   - "openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts"

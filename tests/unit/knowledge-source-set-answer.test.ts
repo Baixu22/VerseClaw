@@ -117,12 +117,14 @@ describe('selected Source Set owner admission', () => {
     expect(JSON.stringify(result.sources)).not.toContain('SECRET_READ_BODY');
   });
 
-  it('semantic errors retain the admitted set rather than refilling rejected text', async () => {
+  it('does not call the provider or refill rejected text when no source is admitted', async () => {
     const provider = { id: 'agent-error', dimension: 2, embedQuery: vi.fn(async () => { throw new Error('embedding unavailable'); }), embedBatch: vi.fn(async () => []) };
     const result = await retrieveSelectedSourceSetEvidence({
       question: 'Review?', sourceRefs: [ref], readPage: read({ status: 'archived' }), embeddingProvider: provider,
     });
-    expect(result.sourceSet.semanticLane.status).toBe('error');
+    expect(result.sourceSet.semanticLane).toEqual({ status: 'unavailable', reason: 'no-admitted-sources' });
+    expect(provider.embedQuery).not.toHaveBeenCalled();
+    expect(provider.embedBatch).not.toHaveBeenCalled();
     expect(result.sources).toEqual([]);
     expect(result.groundingStatus).toBe('missing_sources');
   });

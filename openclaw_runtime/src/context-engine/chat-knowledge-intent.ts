@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import type { OwnerReadSnapshotV1, SourceRefV2 } from "../runtime-core/knowledge-owner-read.js";
 
 export type ChatKnowledgeScope = "none" | "memory" | "wiki" | "all";
 export type ChatKnowledgeMode = "manual" | "suggest" | "auto-read";
@@ -20,6 +21,9 @@ export type ChatKnowledgeReferenceIntent = {
   confidence?: number;
   freshnessLevel?: string;
   matchedClaimStatus?: string;
+  sourceRef?: SourceRefV2;
+  revision?: string;
+  contentDigest?: string;
 };
 
 export type ChatKnowledgeOwner = "memory-wiki" | "memory-slot" | "sekb";
@@ -56,6 +60,7 @@ export type ResolvedChatKnowledgeRef = {
   materializedAt: string;
   sourceRefs: string[];
   evidenceRefs: string[];
+  ownerSnapshot?: OwnerReadSnapshotV1;
 };
 
 export type ChatKnowledgeSourceAdapterResult =
@@ -69,9 +74,7 @@ export type ChatKnowledgeSourceAdapterResult =
 
 export interface ChatKnowledgeSourceAdapter {
   readonly owner: ChatKnowledgeOwner;
-  resolve(
-    ref: ChatKnowledgeReferenceIntent,
-  ): Promise<ChatKnowledgeSourceAdapterResult>;
+  resolve(ref: ChatKnowledgeReferenceIntent): Promise<ChatKnowledgeSourceAdapterResult>;
 }
 
 export type ChatKnowledgeResolution = {
@@ -181,7 +184,9 @@ export async function resolveChatKnowledgeIntent(params: {
 
   for (const ref of references) {
     if (!ref.lookup && !ref.pageId && !ref.sourcePath) {
-      denied.push(denial(ref, "invalid_ref", `Knowledge reference "${ref.id}" has no lookup or page id.`));
+      denied.push(
+        denial(ref, "invalid_ref", `Knowledge reference "${ref.id}" has no lookup or page id.`),
+      );
       continue;
     }
     const owners = ownerCandidates(ref);
@@ -205,7 +210,8 @@ export async function resolveChatKnowledgeIntent(params: {
           denial(
             ref,
             result.reason,
-            result.visibleReason || `Knowledge reference "${ref.title}" was denied (${result.reason}).`,
+            result.visibleReason ||
+              `Knowledge reference "${ref.title}" was denied (${result.reason}).`,
           ),
         );
         resolvedForRef = true;
@@ -280,9 +286,10 @@ export function createResolvedChatKnowledgeRef(params: {
  * dcs-knowledge ContextCandidate channel, never as a raw Main-side prompt edit.
  */
 export function packResolvedChatKnowledgeRef(ref: ResolvedChatKnowledgeRef): string {
-  const content = ref.content.length > 1200
-    ? `${ref.content.slice(0, 1200)}\n...[knowledge ref truncated]`
-    : ref.content;
+  const content =
+    ref.content.length > 1200
+      ? `${ref.content.slice(0, 1200)}\n...[knowledge ref truncated]`
+      : ref.content;
   return [
     `[Knowledge reference: ${ref.title} (${ref.lookup})]`,
     `owner: ${ref.owner}; subjectId: ${ref.subjectId}; revision: ${ref.revision}; digest: ${ref.contentDigest}`,

@@ -69,6 +69,8 @@
 
 ### RAG-01 统一来源读取的身份、权限与版本
 
+读取语义与回源坐标见 [Owner 读取合同](OWNER-READ-CONTRACT.md)。
+
 确保检索、预览、模型调用和引用使用同一份 owner 读取约束。
 
 - Owner：knowledge owners / Host / Gateway。
