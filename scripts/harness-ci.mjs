@@ -11,7 +11,7 @@ const stages = [
   ['harness', 'validate', '--spec', 'harness/specs/scenarios/gateway-backend-communication.md'],
   ['harness', 'validate', '--spec', 'harness/specs/tasks/fix-chat-history-gateway-timeout.example.md', '--no-diff'],
   ['harness', 'run', '--spec', 'harness/specs/scenarios/gateway-backend-communication.md', '--dry-run'],
-  ['exec', 'vitest', 'run', 'tests/unit/harness-specs.test.ts', 'tests/unit/harness-git.test.ts', 'tests/unit/harness-spec-lifecycle.test.ts', 'tests/unit/docs-index.test.ts', 'tests/unit/runtime-source-policy.test.ts'],
+  ['exec', 'vitest', 'run', 'tests/unit/harness-specs.test.ts', 'tests/unit/harness-git.test.ts', 'tests/unit/harness-spec-lifecycle.test.ts', 'tests/unit/docs-index.test.ts', 'tests/unit/runtime-source-policy.test.ts', 'tests/unit/harness-ci-runner.test.ts'],
   ['harness:specs:lifecycle'],
   ['repo:duplicates:check'],
   ['docs:policy:validate'],
