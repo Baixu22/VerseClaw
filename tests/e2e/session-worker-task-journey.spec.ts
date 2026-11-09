@@ -408,7 +408,11 @@ for (const language of ['en', 'zh', 'ja', 'ru'] as const) {
         expect(result.success, result.error).toBe(true); receipts.push({ command, result });
       }
       expect(receipts.at(-1)!.result.result!.contract.state).toBe('done');
+      evidence.ownerVerification = { current, receipts, childOwner: await hostInvoke(app, 'taskLedger', 'sessionTask', { workspaceId: project.workspaceId, sessionKey: childKey }) };
+      await writeFile(testInfo.outputPath('worker-owner-receipts.json'), JSON.stringify(evidence.ownerVerification, null, 2));
       await page.getByTestId('workspace-subagent-refresh').click();
+      evidence.ownerRefresh = { history: await hostInvoke(app, 'sessions', 'history', { sessionKey: childKey, expectedParentSessionKey: project.sessionKey }), task: await hostInvoke(app, 'taskLedger', 'sessionTask', { workspaceId: project.workspaceId, sessionKey: childKey }) };
+      await writeFile(testInfo.outputPath('worker-owner-refresh.json'), JSON.stringify(evidence.ownerRefresh, null, 2));
       await expect(stage).toHaveAttribute('data-status', 'accepted');
       await expect(page.getByTestId('workspace-subagent-panel').locator('[data-stage="verification"]')).toHaveAttribute('data-status', 'recorded');
       await expect(page.getByTestId('workspace-subagent-panel').locator('[data-stage="verification"]')).toHaveAttribute('data-recorded-criteria', '1');
