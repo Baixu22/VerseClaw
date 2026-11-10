@@ -4,7 +4,7 @@ id: session-lifecycle-controls
 title: Fence session lifecycle controls and preserve recoverable views
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: c308b60e1
+diffBase: 5e9e865dc911e32615338c593694fa74d7bf8400
 intent: Complete the existing session/task UI contract through owner-backed, generation-scoped results.
 ownedPaths:
   - docs/dev/session-worktree-storage.md

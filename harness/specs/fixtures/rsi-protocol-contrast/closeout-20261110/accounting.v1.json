@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "RsiProtocolCampaignAccounting/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-protocol-accountant",
+  "authorization": "e43111dd5f78f88422423b1664bac5cf48f6b158dd2deabe85d69cb38d32035a",
+  "limits": {
+    "tokens": 12000000,
+    "calls": 433,
+    "newSpendingCny": 0
+  },
+  "campaignDigest": "e43111dd5f78f88422423b1664bac5cf48f6b158dd2deabe85d69cb38d32035a",
+  "providerCalls": 433,
+  "accountedTokens": 6536811,
+  "knownTokens": 6536811,
+  "unknownUsageRequests": [],
+  "currency": "CNY",
+  "spendingUpperBound": 0,
+  "billedCost": null,
+  "upstreamCreditDebit": null,
+  "upstreamInvoice": null,
+  "originalCampaign": {
+    "campaignDigest": "e43111dd5f78f88422423b1664bac5cf48f6b158dd2deabe85d69cb38d32035a",
+    "providerCalls": 421,
+    "accountedTokens": 6333156,
+    "knownTokens": 6333156,
+    "unknownUsageRequests": [],
+    "currency": "CNY",
+    "spendingUpperBound": 0,
+    "billedCost": null
+  },
+  "undispatchedRecoveryCalls": 12,
+  "remainingTokens": 5463189,
+  "remainingCalls": 0
+}

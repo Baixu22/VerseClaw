@@ -1,0 +1,188 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "pid": 32148,
+  "mode": "dispose-input",
+  "base": [],
+  "rows": [
+    {
+      "i": 0,
+      "pid": 48964,
+      "before": 5,
+      "after": 4,
+      "input": {
+        "destroyed": false,
+        "readable": false,
+        "writable": true,
+        "active": true
+      },
+      "afterDispose": 3
+    },
+    {
+      "i": 1,
+      "pid": 20500,
+      "before": 6,
+      "after": 5,
+      "input": {
+        "destroyed": false,
+        "readable": false,
+        "writable": true,
+        "active": true
+      },
+      "afterDispose": 4
+    },
+    {
+      "i": 2,
+      "pid": 33080,
+      "before": 7,
+      "after": 6,
+      "input": {
+        "destroyed": false,
+        "readable": false,
+        "writable": true,
+        "active": true
+      },
+      "afterDispose": 4
+    },
+    {
+      "i": 3,
+      "pid": 47272,
+      "before": 7,
+      "after": 6,
+      "input": {
+        "destroyed": false,
+        "readable": false,
+        "writable": true,
+        "active": true
+      },
+      "afterDispose": 4
+    },
+    {
+      "i": 4,
+      "pid": 27720,
+      "before": 7,
+      "after": 6,
+      "input": {
+        "destroyed": false,
+        "readable": false,
+        "writable": true,
+        "active": true
+      },
+      "afterDispose": 4
+    },
+    {
+      "i": 5,
+      "pid": 19032,
+      "before": 7,
+      "after": 6,
+      "input": {
+        "destroyed": false,
+        "readable": false,
+        "writable": true,
+        "active": true
+      },
+      "afterDispose": 4
+    },
+    {
+      "i": 6,
+      "pid": 43600,
+      "before": 7,
+      "after": 6,
+      "input": {
+        "destroyed": false,
+        "readable": false,
+        "writable": true,
+        "active": true
+      },
+      "afterDispose": 5
+    },
+    {
+      "i": 7,
+      "pid": 39800,
+      "before": 7,
+      "after": 6,
+      "input": {
+        "destroyed": false,
+        "readable": false,
+        "writable": true,
+        "active": true
+      },
+      "afterDispose": 5
+    },
+    {
+      "i": 8,
+      "pid": 41200,
+      "before": 7,
+      "after": 6,
+      "input": {
+        "destroyed": false,
+        "readable": false,
+        "writable": true,
+        "active": true
+      },
+      "afterDispose": 5
+    },
+    {
+      "i": 9,
+      "pid": 8304,
+      "before": 7,
+      "after": 6,
+      "input": {
+        "destroyed": false,
+        "readable": false,
+        "writable": true,
+        "active": true
+      },
+      "afterDispose": 5
+    },
+    {
+      "i": 10,
+      "pid": 32008,
+      "before": 7,
+      "after": 6,
+      "input": {
+        "destroyed": false,
+        "readable": false,
+        "writable": true,
+        "active": true
+      },
+      "afterDispose": 5
+    },
+    {
+      "i": 11,
+      "pid": 41440,
+      "before": 7,
+      "after": 6,
+      "input": {
+        "destroyed": false,
+        "readable": false,
+        "writable": true,
+        "active": true
+      },
+      "afterDispose": 5
+    }
+  ],
+  "final": [
+    {
+      "type": "Socket",
+      "destroyed": false,
+      "readable": false,
+      "writable": true
+    },
+    {
+      "type": "Socket",
+      "destroyed": false,
+      "readable": false,
+      "writable": true
+    },
+    {
+      "type": "MessagePort"
+    },
+    {
+      "type": "MessagePort"
+    },
+    {
+      "type": "MessagePort"
+    }
+  ]
+}

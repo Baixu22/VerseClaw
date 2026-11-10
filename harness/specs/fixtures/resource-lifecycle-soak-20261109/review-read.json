@@ -1,0 +1,6 @@
+{
+  "findings": [],
+  "overall_confidence": 0.96,
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "The retry is confined to the read-only owner snapshot, allows at most three attempts with 250 ms gaps, and persists each error before retrying. Nonmatching errors and the final failure propagate. Existing lifecycle mutations, durations, assertions, and verifier checks remain intact."
+}

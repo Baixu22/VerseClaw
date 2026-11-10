@@ -1,0 +1,607 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": {
+    "commit": "289ee63a210eaec06c202de17b6c9cf23a74f17e",
+    "tree": "92d432bafa794066435c2480357b9d53eec03942",
+    "dirty": false
+  },
+  "commands": [
+    {
+      "id": "root-unit",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/agent-resource-limits-p5-004.test.ts",
+        "tests/unit/autonomy-orchestration-waves.test.ts",
+        "tests/unit/autonomy-owner-projection.test.ts",
+        "tests/unit/autonomy-provider-budget.test.ts",
+        "tests/unit/autonomy-provider-spend.test.ts",
+        "tests/unit/autonomy-provider-transport.test.ts",
+        "tests/unit/autonomy-resource-admission.test.ts",
+        "tests/unit/autonomy-resource-lease-owner.test.ts",
+        "tests/unit/autonomy-subagent-admission.test.ts",
+        "tests/unit/autonomy-subagent-persistence.test.ts",
+        "tests/unit/autonomy-worktree-native.test.ts",
+        "tests/unit/autonomy-worktree-owner.test.ts",
+        "tests/unit/browser-session-reap-tf0503.test.ts",
+        "tests/unit/chat-completed-projection.test.ts",
+        "tests/unit/chat-content-budget.test.ts",
+        "tests/unit/chat-event-dedupe.test.ts",
+        "tests/unit/chat-history-budget-reload.test.ts",
+        "tests/unit/chat-history-reply-while-sending.test.tsx",
+        "tests/unit/chat-page-execution-graph.test.tsx",
+        "tests/unit/chat-pending-message-queue.test.ts",
+        "tests/unit/chat-question-directory.test.tsx",
+        "tests/unit/chat-runtime-sequence.test.ts",
+        "tests/unit/chat-store-history-retry.test.ts",
+        "tests/unit/chat-stream-publication.test.ts",
+        "tests/unit/chat-target-routing.test.ts",
+        "tests/unit/chat-tool-card-suppression.test.tsx",
+        "tests/unit/chat-viewport.test.tsx",
+        "tests/unit/coding-controls-tf0510-symbol-lease-benchmark.test.ts",
+        "tests/unit/component-authority-manifest.test.ts",
+        "tests/unit/component-disposition-catalog.test.ts",
+        "tests/unit/config-schema-parity.test.ts",
+        "tests/unit/execution-projection.test.ts",
+        "tests/unit/gateway-events.test.ts",
+        "tests/unit/gateway-permissions-api.test.ts",
+        "tests/unit/gateway-supervisor.test.ts",
+        "tests/unit/git-api.test.ts",
+        "tests/unit/handoff-artifacts.test.ts",
+        "tests/unit/host-invoke-security.test.ts",
+        "tests/unit/host-invoke.test.ts",
+        "tests/unit/host-window-observers.test.ts",
+        "tests/unit/knowledge-source-sync.test.ts",
+        "tests/unit/long-session-delegation-admission.test.ts",
+        "tests/unit/long-session-owner-reclamation-adapter.test.ts",
+        "tests/unit/long-session-resource-reclamation.test.ts",
+        "tests/unit/long-session-runtime-resource-inventory.test.ts",
+        "tests/unit/orchestration-resource-scheduler.test.ts",
+        "tests/unit/orchestration-synthesizer.test.ts",
+        "tests/unit/orchestration-worktree-merge.test.ts",
+        "tests/unit/process-tree-sampler.test.ts",
+        "tests/unit/r0-2-sessions-delete-fail.test.ts",
+        "tests/unit/r0-3-chat-abort-checkstuck.test.ts",
+        "tests/unit/r0-3-terminal-session-reclaim.test.ts",
+        "tests/unit/resource-adaptive-pressure.test.ts",
+        "tests/unit/resource-budget-integration.test.ts",
+        "tests/unit/resource-fabric-bounded-waiting.test.ts",
+        "tests/unit/resource-fabric-chat-history.test.ts",
+        "tests/unit/resource-fabric-invariants.test.ts",
+        "tests/unit/resource-fabric-pressure.test.ts",
+        "tests/unit/resource-fabric-primitives.test.ts",
+        "tests/unit/resource-fabric-workspace-exec.test.ts",
+        "tests/unit/resource-lifecycle-report.test.ts",
+        "tests/unit/resource-metrics-calibration.test.ts",
+        "tests/unit/resource-metrics-owner.test.ts",
+        "tests/unit/resource-mixed-measurement.test.ts",
+        "tests/unit/resource-observer-lifecycle.test.ts",
+        "tests/unit/resource-p1-schedulers.test.ts",
+        "tests/unit/resource-repeated-observers.test.ts",
+        "tests/unit/resource-timer-watcher.test.ts",
+        "tests/unit/resource-watcher-handle-pressure.test.ts",
+        "tests/unit/resource-window-lifecycle.test.ts",
+        "tests/unit/role-spawn.test.ts",
+        "tests/unit/roles-orchestration-panel.test.tsx",
+        "tests/unit/runtime-efficiency-api.test.ts",
+        "tests/unit/session-storage-api.test.ts",
+        "tests/unit/shared-watchers-native.test.ts",
+        "tests/unit/shared-watchers-read-models.test.ts",
+        "tests/unit/task-ledger-process.test.ts",
+        "tests/unit/task-visualization.test.ts",
+        "tests/unit/terminal-api.test.ts",
+        "tests/unit/terminal-session-manager.test.ts",
+        "tests/unit/versegit-cleanup-barrier.test.ts",
+        "tests/unit/workspaces-api.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\tf0839\\sealed-gates\\root-unit.json"
+      ],
+      "cwd": "D:\\tmp\\tf0839\\candidate",
+      "exitCode": 0,
+      "durationMs": 309890,
+      "required": true
+    },
+    {
+      "id": "runtime-control",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.process-control.config.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\tf0839\\sealed-gates\\runtime-control.json"
+      ],
+      "cwd": "D:\\tmp\\tf0839\\candidate\\openclaw_runtime",
+      "exitCode": 0,
+      "durationMs": 39875,
+      "required": true
+    },
+    {
+      "id": "runtime-budget",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.resource-budget.config.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\tf0839\\sealed-gates\\runtime-budget.json"
+      ],
+      "cwd": "D:\\tmp\\tf0839\\candidate\\openclaw_runtime",
+      "exitCode": 0,
+      "durationMs": 14531,
+      "required": true
+    },
+    {
+      "id": "browser-owners",
+      "argv": [
+        "node",
+        "../../node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/r0-4-agent-browser-nav-timeout.test.ts",
+        "tests/agent-browser-service.test.ts",
+        "tests/agent-browser-runtime-mode.test.ts",
+        "tests/agent-browser-supervised-task-executor.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\tf0839\\sealed-gates\\browser-owners.json"
+      ],
+      "cwd": "D:\\tmp\\tf0839\\candidate\\packages\\versebrowser",
+      "exitCode": 0,
+      "durationMs": 4000,
+      "required": true
+    },
+    {
+      "id": "terminal-native",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/terminal-resource-native.test.ts",
+        "--environment=node",
+        "--pool=forks",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\tf0839\\sealed-gates\\terminal-native.json"
+      ],
+      "cwd": "D:\\tmp\\tf0839\\candidate",
+      "exitCode": 0,
+      "durationMs": 11875,
+      "required": true
+    },
+    {
+      "id": "node-types",
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\tf0839\\candidate",
+      "exitCode": 0,
+      "durationMs": 40516,
+      "required": true
+    },
+    {
+      "id": "web-types",
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\tf0839\\candidate",
+      "exitCode": 0,
+      "durationMs": 10547,
+      "required": true
+    },
+    {
+      "id": "focused-types",
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "-p",
+        "harness/specs/fixtures/resource-lifecycle-soak-20261109/tsconfig.json"
+      ],
+      "cwd": "D:\\tmp\\tf0839\\candidate",
+      "exitCode": 0,
+      "durationMs": 609,
+      "required": true
+    },
+    {
+      "id": "runtime-types",
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.core.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\tf0839\\candidate\\openclaw_runtime",
+      "exitCode": 2,
+      "durationMs": 38547,
+      "required": false
+    },
+    {
+      "id": "baseline-runtime-types",
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.core.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\tf0839\\runtime-baseline-final\\openclaw_runtime",
+      "exitCode": 2,
+      "durationMs": 38172,
+      "required": false
+    },
+    {
+      "id": "lint",
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "electron/services/terminal-session-manager.ts",
+        "playwright.config.ts",
+        "playwright.resource-lifecycle.config.ts",
+        "scripts/lib/resource-lifecycle-report.mjs",
+        "scripts/verify-resource-lifecycle-soak.mjs",
+        "shared/dcs/component-disposition-catalog.ts",
+        "tests/e2e/fixtures/electron.ts",
+        "tests/e2e/resource-lifecycle-soak.spec.ts",
+        "tests/e2e/resource-window-lifecycle.spec.ts",
+        "tests/unit/chat-page-execution-graph.test.tsx",
+        "tests/unit/chat-question-directory.test.tsx",
+        "tests/unit/chat-stream-publication.test.ts",
+        "tests/unit/r0-3-chat-abort-checkstuck.test.ts",
+        "tests/unit/resource-lifecycle-report.test.ts",
+        "tests/unit/resource-metrics-owner.test.ts",
+        "tests/unit/resource-repeated-observers.test.ts",
+        "tests/unit/terminal-resource-native.test.ts",
+        "tests/unit/terminal-session-manager.test.ts",
+        "--format=json",
+        "--output-file",
+        "D:\\tmp\\tf0839\\sealed-gates\\lint.json"
+      ],
+      "cwd": "D:\\tmp\\tf0839\\candidate",
+      "exitCode": 0,
+      "durationMs": 7781,
+      "required": true
+    },
+    {
+      "id": "contract",
+      "argv": [
+        "node",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0839\\candidate",
+      "exitCode": 0,
+      "durationMs": 4734,
+      "required": true
+    },
+    {
+      "id": "i18n",
+      "argv": [
+        "node",
+        "scripts/i18n-lint.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0839\\candidate",
+      "exitCode": 0,
+      "durationMs": 672,
+      "required": true
+    },
+    {
+      "id": "comms-replay",
+      "argv": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0839\\candidate",
+      "exitCode": 0,
+      "durationMs": 422,
+      "required": true
+    },
+    {
+      "id": "comms-compare",
+      "argv": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0839\\candidate",
+      "exitCode": 0,
+      "durationMs": 266,
+      "required": true
+    },
+    {
+      "id": "retention",
+      "argv": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0839\\candidate",
+      "exitCode": 0,
+      "durationMs": 9140,
+      "required": true
+    },
+    {
+      "id": "harness-validate",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/resource-lifecycle-soak-20261109.md"
+      ],
+      "cwd": "D:\\tmp\\tf0839\\candidate",
+      "exitCode": 0,
+      "durationMs": 1266,
+      "required": true
+    },
+    {
+      "id": "harness-run",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/resource-lifecycle-soak-20261109.md",
+        "--dry-run"
+      ],
+      "cwd": "D:\\tmp\\tf0839\\candidate",
+      "exitCode": 0,
+      "durationMs": 1047,
+      "required": true
+    },
+    {
+      "id": "diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "c308b60e1",
+        "HEAD"
+      ],
+      "cwd": "D:\\tmp\\tf0839\\candidate",
+      "exitCode": 0,
+      "durationMs": 187,
+      "required": true
+    }
+  ],
+  "tests": {
+    "root-unit": {
+      "numTotalTests": 865,
+      "numPassedTests": 865,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numFailedTestSuites": 0,
+      "success": true
+    },
+    "runtime-control": {
+      "numTotalTests": 87,
+      "numPassedTests": 87,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numFailedTestSuites": 0,
+      "success": true
+    },
+    "runtime-budget": {
+      "numTotalTests": 108,
+      "numPassedTests": 108,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numFailedTestSuites": 0,
+      "success": true
+    },
+    "browser-owners": {
+      "numTotalTests": 45,
+      "numPassedTests": 45,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numFailedTestSuites": 0,
+      "success": true
+    },
+    "terminal-native": {
+      "numTotalTests": 2,
+      "numPassedTests": 2,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numFailedTestSuites": 0,
+      "success": true
+    }
+  },
+  "sources": [
+    {
+      "path": "docs/modules/resources-and-observability.md",
+      "sha256": "6ac78f4bf8c478f11a2776dbf671a8ccf2f1b18b382e52e6799c60d5a1917c39"
+    },
+    {
+      "path": "electron/services/terminal-session-manager.ts",
+      "sha256": "652f1ce8f5accb1b71d8f6aa460302a87fe6cd28ceb05d77f3a86e22cc847ca5"
+    },
+    {
+      "path": "harness/specs/fixtures/resource-lifecycle-soak-20261109/tsconfig.json",
+      "sha256": "6566f100848dc5a9d0e3daa2d56ebf6d7d3480b040b3e0da43e515d3bfa6fcc0"
+    },
+    {
+      "path": "harness/specs/rules/resource-lifecycle-soak.md",
+      "sha256": "7e7810e27a41d065bd2ebbb86db5ba8fa3a0bc28235cf6711328156bff775f3d"
+    },
+    {
+      "path": "harness/specs/tasks/resource-lifecycle-soak-20261109.md",
+      "sha256": "62a7c333f4448cc1d627b61e0f2c17ac79b020ad60198a139176db40e71e5731"
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "2cd607585ca31082af882c3a55f4edb11842c4a81e275f391dc7773c949ee804"
+    },
+    {
+      "path": "playwright.resource-lifecycle.config.ts",
+      "sha256": "c914454177e763a57c85971b5e849ea3d49e0cbdce27be123747af89335b7360"
+    },
+    {
+      "path": "scripts/lib/resource-lifecycle-report.mjs",
+      "sha256": "ed6d699ec3770080c12ec933d96720e35b68ccd44c316dfb3d761e386adf7396"
+    },
+    {
+      "path": "scripts/verify-resource-lifecycle-soak.mjs",
+      "sha256": "7c0e0891b75be0cc1daf902287152bc7253d08a0a36a0e8095d6b9a00a7b79c7"
+    },
+    {
+      "path": "shared/dcs/component-disposition-catalog.ts",
+      "sha256": "b1ed4540e07f01d762df855b889daf8939fea7a95494b604dab327eeee1f9bd5"
+    },
+    {
+      "path": "tests/e2e/fixtures/electron.ts",
+      "sha256": "b7ae7e588ed5092c8f37bb61a97bd76e2dc487d04f80623b9b0c405b02dff3c9"
+    },
+    {
+      "path": "tests/e2e/resource-lifecycle-soak.spec.ts",
+      "sha256": "2df65ea96bb8b32ea15185814a5e4fb27be5dcc78f75346e09c950d522736d8f"
+    },
+    {
+      "path": "tests/e2e/resource-window-lifecycle.spec.ts",
+      "sha256": "4e7abb47b20945fe17d4c8fd4365df1094775e5ba5e1f86641210f59ec685107"
+    },
+    {
+      "path": "tests/unit/chat-page-execution-graph.test.tsx",
+      "sha256": "053adea0a99cd0947abf75fc0dfad2295baabb00f1948fb52cccd50e593fa77f"
+    },
+    {
+      "path": "tests/unit/chat-question-directory.test.tsx",
+      "sha256": "5ae548116b0d92a7136b33955fab5e05af4283870a82c389101ce26c9cde7423"
+    },
+    {
+      "path": "tests/unit/chat-stream-publication.test.ts",
+      "sha256": "97f82518913d84d05f5fa7805ceba6b0b7160cfb490a965da02f4f2281d029c7"
+    },
+    {
+      "path": "tests/unit/r0-3-chat-abort-checkstuck.test.ts",
+      "sha256": "4ec22d9f22d1dcbd67aec500d14fba7ca50fea0a58e828055a0ce7332d603a3c"
+    },
+    {
+      "path": "tests/unit/resource-lifecycle-report.test.ts",
+      "sha256": "14526405bfe4acdc20168bd60ea34cb95c0d9f68327659ca4607b8fd1445e428"
+    },
+    {
+      "path": "tests/unit/resource-metrics-owner.test.ts",
+      "sha256": "e95c90c325db93554e6bfe72d2ae4fa92e3a4074355004f3a6a7281cb09efdb3"
+    },
+    {
+      "path": "tests/unit/resource-repeated-observers.test.ts",
+      "sha256": "506198bc59a92529d5003a37a4340599c89c4b942e76de06152deff1a422c011"
+    },
+    {
+      "path": "tests/unit/terminal-resource-native.test.ts",
+      "sha256": "02edef8831745377407390e0471bee1cc063ea1fc01a12877815580fb34a5c43"
+    },
+    {
+      "path": "tests/unit/terminal-session-manager.test.ts",
+      "sha256": "a2fbbfe562106a2e0ae33c5c9ac40ceb6c1f73c32d76dcfd5a535ff78ee47d88"
+    }
+  ],
+  "pass": true,
+  "runtimeTypes": {
+    "baseline": "806855309fb9d0ab4ffcf9f897f42fb0117e4f40",
+    "candidate": "289ee63a210eaec06c202de17b6c9cf23a74f17e",
+    "baselineCount": 38,
+    "candidateCount": 38,
+    "introduced": [],
+    "resolved": [],
+    "baselineDiagnostics": [
+      "src/agents/cross-area/cross-area-facades.ts: error TS6133: 'lastPlan' is declared but its value is never read.",
+      "ui/vitest.config.ts: error TS2321: Excessive stack depth comparing types '{ enabled: true; provider: BrowserProviderOption<PlaywrightProviderOptions>; instances: { browser: string; name: string; }[]; headless: true; ui: false; }' and 'BrowserConfigOptions | undefined'.",
+      "ui/vitest.config.ts: error TS2321: Excessive stack depth comparing types '{ resolve: { alias: ({ find: string; replacement: string; } | { find: RegExp; replacement: string; })[]; }; test: { isolate: false; pool: OpenClawVitestPool; name: string; include: string[]; exclude: (\"src/ui/chat/chat-responsive.browser.test.ts\" | ... 1 more ... | \"src/ui/views/sessions.browser.test.ts\")[]; setupFi...' and 'UserWorkspaceConfig'.",
+      "ui/vitest.config.ts: error TS2769: No overload matches this call.",
+      "../shared/long-session-continuity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './types/memory.js'?",
+      "../shared/long-session-continuity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './types/task-ledger.js'?",
+      "../shared/long-session-continuity.ts: error TS7006: Parameter 'node' implicitly has an 'any' type.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'updatedAt' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'evidenceRefs' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS7006: Parameter 'ref' implicitly has an 'any' type.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'kind' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'description' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'title' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'updatedAt' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'title' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'metadata' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'metadata' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS7006: Parameter 'node' implicitly has an 'any' type.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'title' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'title' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/types/session-activity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './git.js'?",
+      "../shared/types/session-activity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './session-effective-policy.js'?",
+      "../shared/types/session-activity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './session-stage.js'?",
+      "../shared/types/session-activity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './session-derivation.js'?",
+      "../shared/types/session-activity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../long-session-resource-reclamation.js'?",
+      "../shared/types/session-delegation.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './workspace.js'?"
+    ],
+    "candidateDiagnostics": [
+      "src/agents/cross-area/cross-area-facades.ts: error TS6133: 'lastPlan' is declared but its value is never read.",
+      "ui/vitest.config.ts: error TS2321: Excessive stack depth comparing types '{ enabled: true; provider: BrowserProviderOption<PlaywrightProviderOptions>; instances: { browser: string; name: string; }[]; headless: true; ui: false; }' and 'BrowserConfigOptions | undefined'.",
+      "ui/vitest.config.ts: error TS2321: Excessive stack depth comparing types '{ resolve: { alias: ({ find: string; replacement: string; } | { find: RegExp; replacement: string; })[]; }; test: { isolate: false; pool: OpenClawVitestPool; name: string; include: string[]; exclude: (\"src/ui/chat/chat-responsive.browser.test.ts\" | ... 1 more ... | \"src/ui/views/sessions.browser.test.ts\")[]; setupFi...' and 'UserWorkspaceConfig'.",
+      "ui/vitest.config.ts: error TS2769: No overload matches this call.",
+      "../shared/long-session-continuity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './types/memory.js'?",
+      "../shared/long-session-continuity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './types/task-ledger.js'?",
+      "../shared/long-session-continuity.ts: error TS7006: Parameter 'node' implicitly has an 'any' type.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'updatedAt' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'evidenceRefs' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS7006: Parameter 'ref' implicitly has an 'any' type.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'kind' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'description' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'title' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'updatedAt' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'title' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'metadata' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'metadata' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS7006: Parameter 'node' implicitly has an 'any' type.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'status' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'title' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'title' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/long-session-continuity.ts: error TS2339: Property 'id' does not exist on type '{}'.",
+      "../shared/types/session-activity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './git.js'?",
+      "../shared/types/session-activity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './session-effective-policy.js'?",
+      "../shared/types/session-activity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './session-stage.js'?",
+      "../shared/types/session-activity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './session-derivation.js'?",
+      "../shared/types/session-activity.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../long-session-resource-reclamation.js'?",
+      "../shared/types/session-delegation.ts: error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './workspace.js'?"
+    ]
+  }
+}

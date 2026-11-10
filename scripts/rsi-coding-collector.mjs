@@ -29,12 +29,14 @@ export function reservedCodingTokens(plan, rows) {
 
 /** One immutable attempt. A retained dispatch marker is never a license to retry. */
 export async function collectCodingTrial(options) {
-  const { root, plan, slot, apiKey, scratch, supportRoot, provider, grade } = options;
+  const { root, plan, slot, apiKey, scratch, supportRoot, provider, grade, campaignLedger } = options;
   assert.deepEqual(plan.collector, codingCollectorConfig(plan.collector?.version), 'collector-config-drift');
   if (plan.collector.version === TOOL_CODING_COLLECTOR.version) return collectToolCodingTrial(options);
   const task = plan.tasks.find(task => task.id === slot.caseId);
   assert(task && plan.slots.some(item => benefitDigest(item) === benefitDigest(slot)), 'unknown-slot');
   const directory = scratchPath(join(scratch, slot.id));
+  assert(!existsSync(join(directory, 'dispatch.json')) && !existsSync(join(directory, 'receipt.json')),
+    'interrupted-attempt-preserved-no-retry');
   const request = buildBenefitRequest(plan, slot);
   const workspace = join(directory, 'workspace');
   const writeEvidence = (path, value) => {
@@ -43,8 +45,9 @@ export async function collectCodingTrial(options) {
   };
   const startedAt = new Date().toISOString();
   const start = Date.now();
-  write(join(directory, 'dispatch.json'), { driven_by: 'agent', actor: `${plan.actor}/executor`,
+  const dispatch = () => write(join(directory, 'dispatch.json'), { driven_by: 'agent', actor: `${plan.actor}/executor`,
     planDigest: benefitDigest(plan), slot, requestDigest: benefitDigest(request), request, startedAt, attempts: 1 });
+  if (!campaignLedger) dispatch();
   const row = {
     schemaVersion: 'RsiBenefitTrial/v1', driven_by: 'agent', actor: `${plan.actor}/executor`,
     planDigest: benefitDigest(plan), slot, evidenceKind: plan.evidenceKind, request, requestDigest: benefitDigest(request),
@@ -52,21 +55,28 @@ export async function collectCodingTrial(options) {
       injectionDigest: slot.arm === 'sekb-confirmed' ? benefitDigest(plan.candidate.context) : null,
       isolationId: `${plan.runId}/${slot.id}`, runtimeEffectMeasured: true },
     edits: [], execution: { status: 'completed', failureClass: null, failureCategory: null, attempts: 1,
-      providerCalls: 1, wallClockMs: 0, costUsd: null, toolEvents: [], runPosition: slot.position,
+      providerCalls: campaignLedger ? 0 : 1, wallClockMs: 0, costUsd: null, toolEvents: [], runPosition: slot.position,
       startedAt, endedAt: null, measurementBasis: 'live-provider', note: 'Single JSON-edits request; independent reference-bound final-state grading.' },
     rawResponse: null, providerAttempts: [], grader: null,
   };
-  let phase = 'provider';
+  let phase = campaignLedger ? 'budget' : 'provider';
   try {
     const send = provider ?? createResponsesProvider({ endpoint: plan.provider.endpoint, model: plan.provider.model,
       apiKey, timeoutMs: plan.collector.timeoutMs, maxOutputTokens: plan.provider.maxOutputTokens,
       reasoningEffort: plan.collector.reasoningEffort,
       ...(plan.collector.responseFormat === 'strict-json-schema' ? { jsonSchema: plan.collector.responseSchema } : {}) });
-    const response = await send({ instructions: request.instructions, input: request.input });
+    const reservation = campaignLedger ? await campaignLedger.reserve(request, slot.id + '/1') : null;
+    let response;
+    try {
+      if (campaignLedger) { dispatch(); row.execution.providerCalls = 1; }
+      phase = 'provider';
+      row.providerAttempts.push({ endpoint: plan.provider.endpoint, request, rawResponse: null, parsedResponse: null });
+      response = await send({ instructions: request.instructions, input: request.input });
+      Object.assign(row.providerAttempts.at(-1), { rawResponse: response.rawResponse, parsedResponse: response.response });
+      row.rawResponse = response.rawResponse;
+      writeEvidence(join(directory, 'provider-response.json'), response);
+    } finally { if (reservation) campaignLedger.settle(reservation, response); }
     assert.deepEqual(response.request.body, request, 'dispatched-request-drift');
-    row.providerAttempts.push({ endpoint: plan.provider.endpoint, request, rawResponse: response.rawResponse, parsedResponse: response.response });
-    row.rawResponse = response.rawResponse;
-    writeEvidence(join(directory, 'provider-response.json'), response);
     assert.equal(response.response.model, plan.provider.model, 'provider-model-drift');
     if (plan.collector.incompleteOutcome === 'known-output-limit-is-failure'
       && response.response.status === 'incomplete' && response.response.incompleteReason === 'max_output_tokens') {
@@ -110,7 +120,9 @@ export async function collectCodingTrial(options) {
     row.execution.failureCategory = phase;
     row.execution.note = apiKey ? String(error.message).split(apiKey).join('[REDACTED]') : String(error.message);
     row.rawResponse = null;
-    if (!row.providerAttempts.length) row.providerAttempts.push({ endpoint: plan.provider.endpoint, request, rawResponse: null, parsedResponse: null });
+    if (!row.providerAttempts.length && row.execution.providerCalls > 0) {
+      row.providerAttempts.push({ endpoint: plan.provider.endpoint, request, rawResponse: null, parsedResponse: null });
+    }
   } finally {
     if (!grade && existsSync(workspace)) {
       assert(resolve(workspace).startsWith(resolve(directory) + sep), 'unsafe-workspace-cleanup');

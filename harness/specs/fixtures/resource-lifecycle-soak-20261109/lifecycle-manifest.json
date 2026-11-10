@@ -1,0 +1,104 @@
+{
+  "candidate": {
+    "commit": "ed2cfbb11a1ff59819ac607f922874803e57eb3d",
+    "tree": "6da4b804e2edce227a43121e4376908d76303457"
+  },
+  "buildSource": "289ee63a210eaec06c202de17b6c9cf23a74f17e",
+  "buildFiles": 7617,
+  "buildManifest": {
+    "path": "D:\\tmp\\tf0839\\sealed-build-artifacts.json",
+    "sha256": "e87946763b409e509e68b0cee65c75fa606518cb3bd8fefb8f26866f4c110a42"
+  },
+  "executables": [
+    {
+      "role": "node",
+      "path": "C:\\Users\\27933\\AppData\\Roaming\\nvm\\v24.22.1\\node.exe",
+      "bytes": 93915464,
+      "sha256": "d702daa815eabbff763c7d3808e235cf031cf2ca70211b56847bc72f51e240e5"
+    },
+    {
+      "role": "electron",
+      "path": "D:\\ClawX-work\\recovery-integration-20261103\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\electron.exe",
+      "bytes": 213919232,
+      "sha256": "fad08627e2f61846a9afc3ec3e0b6110e6f0c57a79e716cbf2268c5f352bce6e"
+    },
+    {
+      "role": "esbuildModule",
+      "path": "C:\\Users\\27933\\node_modules\\.pnpm\\esbuild@0.25.12\\node_modules\\esbuild\\lib\\main.js",
+      "bytes": 88706,
+      "sha256": "0d1241812c443111d39475dfc66836003e9ef8b87e54d990dd67df29d20010e1"
+    },
+    {
+      "role": "esbuildBinary",
+      "path": "C:\\Users\\27933\\node_modules\\.pnpm\\@esbuild+win32-x64@0.25.12\\node_modules\\@esbuild\\win32-x64\\esbuild.exe",
+      "bytes": 10617344,
+      "sha256": "cae1bbc86f4df800b01d99e28aea0a154b02243de6797e98f48a9b88a64a7be0"
+    },
+    {
+      "role": "git",
+      "path": "C:\\Program Files\\Git\\bin\\git.exe",
+      "bytes": 46480,
+      "sha256": "34a408843194be320d8a87a3c12cd5c7d2e08d03b24567a41db32e21d12569d2"
+    }
+  ],
+  "driverFiles": [
+    {
+      "path": "scripts/verify-resource-lifecycle-soak.mjs",
+      "sha256": "7c0e0891b75be0cc1daf902287152bc7253d08a0a36a0e8095d6b9a00a7b79c7"
+    },
+    {
+      "path": "scripts/lib/resource-lifecycle-report.mjs",
+      "sha256": "ed6d699ec3770080c12ec933d96720e35b68ccd44c316dfb3d761e386adf7396"
+    },
+    {
+      "path": "scripts/lib/resource-mixed-measurement.mjs",
+      "sha256": "8d08e489f5bf340f7a14501f5e26e75bc2dd0fbebdd76adf56218f43e9fbf2e3"
+    },
+    {
+      "path": "tests/e2e/resource-lifecycle-soak.spec.ts",
+      "sha256": "eca6fced0e407bb2be44cd5dfcc11d9e387f91de2ddc20a4e54becf69abd71d8"
+    },
+    {
+      "path": "tests/e2e/fixtures/electron.ts",
+      "sha256": "1074824d07d971c4d0179f2f2d604ab973c42fa2f5ba65c375e24c7c08605645"
+    },
+    {
+      "path": "tests/e2e/fixtures/electron-process-cleanup.ts",
+      "sha256": "24ef4b912c99194f6f59779fbf0e712540512b530afd8be446435dc025dbd0d4"
+    },
+    {
+      "path": "tests/e2e/fixtures/windows-process.ts",
+      "sha256": "27c7af68a5e580fc108018705711ef71994474a3bf40a7b838e764bdb0862dd9"
+    },
+    {
+      "path": "playwright.resource-lifecycle.config.ts",
+      "sha256": "c914454177e763a57c85971b5e849ea3d49e0cbdce27be123747af89335b7360"
+    },
+    {
+      "path": "openclaw_runtime/src/process/process-tree-sampler.ts",
+      "sha256": "1a3219d00c151d56315bd7a1df833d87ebbf8229c738a67975ac635822b4e529"
+    }
+  ],
+  "attempts": [
+    {
+      "directory": "D:\\tmp\\tf0839\\sealed-lifecycle-probes\\attempt-1-71e1541b-c9b2-4b29-8bc4-8a7ba97800b2",
+      "startedAt": 1794242264785,
+      "status": "completed",
+      "exitCode": 0,
+      "verified": true,
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX\\node_modules\\@playwright\\test\\cli.js",
+        "test",
+        "--config",
+        "C:\\Users\\27933\\.codex\\worktrees\\resource-waiting-recovery\\ClawX\\playwright.resource-lifecycle.config.ts",
+        "--output",
+        "D:\\tmp\\tf0839\\sealed-lifecycle-probes\\attempt-1-71e1541b-c9b2-4b29-8bc4-8a7ba97800b2\\results"
+      ],
+      "cwd": "D:\\tmp\\tf0839\\candidate",
+      "endedAt": 1794245196170,
+      "report": "D:\\tmp\\tf0839\\sealed-lifecycle-probes\\attempt-1-71e1541b-c9b2-4b29-8bc4-8a7ba97800b2\\results\\resource-lifecycle-soak-re-4a49a-arate-sustained-observation\\lifecycle.json",
+      "reportSha256": "7e558fe3eb6a8e9befee69ac2befc3e7f123a4fed0c974d90134d408a14defbf"
+    }
+  ]
+}

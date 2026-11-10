@@ -1,0 +1,398 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": {
+    "commit": "ed2cfbb11a1ff59819ac607f922874803e57eb3d",
+    "tree": "6da4b804e2edce227a43121e4376908d76303457",
+    "dirty": false
+  },
+  "lifecycle": {
+    "repeatCycles": 50,
+    "soakProbes": 5,
+    "totalCycles": 56,
+    "ownedIdentitiesExited": 224,
+    "cancelToExitMs": {
+      "p50": 1099.5,
+      "p95": 1785,
+      "max": 17175
+    },
+    "segments": [
+      {
+        "name": "idle-before",
+        "start": 1794242319645,
+        "minimumMs": 300000,
+        "end": 1794242639552,
+        "elapsedMs": 319907
+      },
+      {
+        "name": "idle-recovery",
+        "start": 1794243030165,
+        "minimumMs": 300000,
+        "end": 1794243335121,
+        "elapsedMs": 304956
+      },
+      {
+        "name": "sustained-observation",
+        "start": 1794243348337,
+        "minimumMs": 1800000,
+        "end": 1794245172981,
+        "elapsedMs": 1824644
+      }
+    ],
+    "sustainedTrends": {
+      "privateBytes": {
+        "available": true,
+        "samples": 38,
+        "firstFiveMedian": 359862272,
+        "lastFiveMedian": 364392448,
+        "change": 4530176,
+        "min": 358305792,
+        "max": 438657024
+      },
+      "rssBytes": {
+        "available": true,
+        "samples": 38,
+        "firstFiveMedian": 149008384,
+        "lastFiveMedian": 168407040,
+        "change": 19398656,
+        "min": 83464192,
+        "max": 226332672
+      },
+      "rendererHeapBytes": {
+        "available": true,
+        "samples": 44,
+        "firstFiveMedian": 25604352,
+        "lastFiveMedian": 24017116,
+        "change": -1587236,
+        "min": 20728972,
+        "max": 28482976
+      },
+      "mainHeapUsed": {
+        "available": true,
+        "samples": 44,
+        "firstFiveMedian": 116608608,
+        "lastFiveMedian": 111855756,
+        "change": -4752852,
+        "min": 111341152,
+        "max": 120163004
+      },
+      "handles": {
+        "available": true,
+        "samples": 28,
+        "firstFiveMedian": 1824,
+        "lastFiveMedian": 1822,
+        "change": -2,
+        "min": 1818,
+        "max": 2612
+      }
+    },
+    "metricAvailability": {
+      "processUnknown": [
+        {
+          "stage": "sustained-observation:sample",
+          "at": 1794243883043,
+          "detail": "Error: Command failed: powershell -NoProfile -NonInteractive -Command $ErrorActionPreference = 'Stop'; Get-CimInstance -ClassName Win32_Process | Where-Object { $_.ProcessId -ne $PID } | ForEach-Object { \"{0}|{1}|{2}|{3}|{4}|{5}|{6}\" -f $_.ProcessId, $_.ParentProcessId, $_.WorkingSetSize, $_.KernelModeTime, $_.UserModeTime, $_.CreationDate.ToFileTimeUtc(), $_.PrivatePageCount }; try { $memory = Get-CimInstance -ClassName Win32_PerfFormattedData_PerfOS_Memory; \"commit|{0}|{1}\" -f $memory.CommittedBytes, $memory.CommitLimit } catch { }\n"
+        },
+        {
+          "stage": "sustained-observation:sample",
+          "at": 1794243941943,
+          "detail": "Error: Command failed: powershell -NoProfile -NonInteractive -Command $ErrorActionPreference = 'Stop'; Get-CimInstance -ClassName Win32_Process | Where-Object { $_.ProcessId -ne $PID } | ForEach-Object { \"{0}|{1}|{2}|{3}|{4}|{5}|{6}\" -f $_.ProcessId, $_.ParentProcessId, $_.WorkingSetSize, $_.KernelModeTime, $_.UserModeTime, $_.CreationDate.ToFileTimeUtc(), $_.PrivatePageCount }; try { $memory = Get-CimInstance -ClassName Win32_PerfFormattedData_PerfOS_Memory; \"commit|{0}|{1}\" -f $memory.CommittedBytes, $memory.CommitLimit } catch { }\n"
+        },
+        {
+          "stage": "sustained-observation:sample",
+          "at": 1794244157509,
+          "detail": "Error: Command failed: powershell -NoProfile -NonInteractive -Command $ErrorActionPreference = 'Stop'; Get-CimInstance -ClassName Win32_Process | Where-Object { $_.ProcessId -ne $PID } | ForEach-Object { \"{0}|{1}|{2}|{3}|{4}|{5}|{6}\" -f $_.ProcessId, $_.ParentProcessId, $_.WorkingSetSize, $_.KernelModeTime, $_.UserModeTime, $_.CreationDate.ToFileTimeUtc(), $_.PrivatePageCount }; try { $memory = Get-CimInstance -ClassName Win32_PerfFormattedData_PerfOS_Memory; \"commit|{0}|{1}\" -f $memory.CommittedBytes, $memory.CommitLimit } catch { }\n"
+        },
+        {
+          "stage": "sustained-observation:sample",
+          "at": 1794244343352,
+          "detail": "Error: Command failed: powershell -NoProfile -NonInteractive -Command $ErrorActionPreference = 'Stop'; Get-CimInstance -ClassName Win32_Process | Where-Object { $_.ProcessId -ne $PID } | ForEach-Object { \"{0}|{1}|{2}|{3}|{4}|{5}|{6}\" -f $_.ProcessId, $_.ParentProcessId, $_.WorkingSetSize, $_.KernelModeTime, $_.UserModeTime, $_.CreationDate.ToFileTimeUtc(), $_.PrivatePageCount }; try { $memory = Get-CimInstance -ClassName Win32_PerfFormattedData_PerfOS_Memory; \"commit|{0}|{1}\" -f $memory.CommittedBytes, $memory.CommitLimit } catch { }\n"
+        },
+        {
+          "stage": "sustained-observation:sample",
+          "at": 1794245051409,
+          "detail": "Error: Command failed: powershell -NoProfile -NonInteractive -Command $ErrorActionPreference = 'Stop'; Get-CimInstance -ClassName Win32_Process | Where-Object { $_.ProcessId -ne $PID } | ForEach-Object { \"{0}|{1}|{2}|{3}|{4}|{5}|{6}\" -f $_.ProcessId, $_.ParentProcessId, $_.WorkingSetSize, $_.KernelModeTime, $_.UserModeTime, $_.CreationDate.ToFileTimeUtc(), $_.PrivatePageCount }; try { $memory = Get-CimInstance -ClassName Win32_PerfFormattedData_PerfOS_Memory; \"commit|{0}|{1}\" -f $memory.CommittedBytes, $memory.CommitLimit } catch { }\n"
+        },
+        {
+          "stage": "sustained-observation:sample",
+          "at": 1794245148344,
+          "detail": "Error: Command failed: powershell -NoProfile -NonInteractive -Command $ErrorActionPreference = 'Stop'; Get-CimInstance -ClassName Win32_Process | Where-Object { $_.ProcessId -ne $PID } | ForEach-Object { \"{0}|{1}|{2}|{3}|{4}|{5}|{6}\" -f $_.ProcessId, $_.ParentProcessId, $_.WorkingSetSize, $_.KernelModeTime, $_.UserModeTime, $_.CreationDate.ToFileTimeUtc(), $_.PrivatePageCount }; try { $memory = Get-CimInstance -ClassName Win32_PerfFormattedData_PerfOS_Memory; \"commit|{0}|{1}\" -f $memory.CommittedBytes, $memory.CommitLimit } catch { }\n"
+        }
+      ],
+      "handlePartial": [
+        {
+          "stage": "idle-before:sample",
+          "at": 1794242355439,
+          "status": "partial"
+        },
+        {
+          "stage": "idle-before:sample",
+          "at": 1794242594552,
+          "status": "partial"
+        },
+        {
+          "stage": "repeat-25",
+          "at": 1794242802506,
+          "status": "partial"
+        },
+        {
+          "stage": "repeat-45",
+          "at": 1794242967085,
+          "status": "partial"
+        },
+        {
+          "stage": "idle-recovery:sample",
+          "at": 1794243248169,
+          "status": "partial"
+        },
+        {
+          "stage": "idle-recovery:sample",
+          "at": 1794243330168,
+          "status": "partial"
+        },
+        {
+          "stage": "sustained-observation:sample",
+          "at": 1794243453072,
+          "status": "partial"
+        },
+        {
+          "stage": "sustained-observation:sample",
+          "at": 1794243814260,
+          "status": "unavailable"
+        },
+        {
+          "stage": "sustained-observation:sample",
+          "at": 1794243883043,
+          "status": "unavailable"
+        },
+        {
+          "stage": "sustained-observation:sample",
+          "at": 1794243941943,
+          "status": "unavailable"
+        },
+        {
+          "stage": "sustained-observation:sample",
+          "at": 1794244073546,
+          "status": "partial"
+        },
+        {
+          "stage": "sustained-observation:sample",
+          "at": 1794244121261,
+          "status": "partial"
+        },
+        {
+          "stage": "sustained-observation:sample",
+          "at": 1794244157509,
+          "status": "unavailable"
+        },
+        {
+          "stage": "sustained-observation:sample",
+          "at": 1794244343352,
+          "status": "unavailable"
+        },
+        {
+          "stage": "sustained-observation:sample",
+          "at": 1794244659591,
+          "status": "partial"
+        },
+        {
+          "stage": "sustained-observation:sample",
+          "at": 1794244702103,
+          "status": "partial"
+        },
+        {
+          "stage": "sustained-observation:sample",
+          "at": 1794244750769,
+          "status": "partial"
+        },
+        {
+          "stage": "sustained-observation:sample",
+          "at": 1794244793753,
+          "status": "partial"
+        },
+        {
+          "stage": "sustained-observation:sample",
+          "at": 1794245051409,
+          "status": "unavailable"
+        },
+        {
+          "stage": "sustained-observation:sample",
+          "at": 1794245102704,
+          "status": "partial"
+        },
+        {
+          "stage": "sustained-observation:sample",
+          "at": 1794245148344,
+          "status": "unavailable"
+        },
+        {
+          "stage": "sustained-observation:end",
+          "at": 1794245172981,
+          "status": "partial"
+        }
+      ]
+    },
+    "unknown": [
+      {
+        "stage": "sustained-observation:sample",
+        "metric": "handles",
+        "error": "Error: Command failed: powershell.exe -NoProfile -NonInteractive -Command $ids=@($env:SOAK_PIDS.Split(\",\")|ForEach-Object{[int]$_}); @(Get-CimInstance Win32_Process|Where-Object{$ids -contains $_.ProcessId}|ForEach-Object{[pscustomobject]@{pid=$_.ProcessId;token=$_.CreationDate.ToFileTimeUtc().ToString();handles=$_.HandleCount}})|ConvertTo-Json -Compress\n"
+      }
+    ],
+    "cleanup": {
+      "mainExited": true,
+      "launcherExited": true,
+      "graceful": true,
+      "closeSettled": true,
+      "processes": [
+        {
+          "pid": 19472,
+          "creationTime": 1794242272518,
+          "status": "exited"
+        },
+        {
+          "pid": 29304,
+          "creationTime": 1794242303458,
+          "status": "exited"
+        },
+        {
+          "pid": 36400,
+          "creationTime": 1794242304700,
+          "status": "exited"
+        }
+      ],
+      "processObservations": [
+        [
+          {
+            "pid": 19472,
+            "creationTime": 1794242272518,
+            "status": "exited"
+          },
+          {
+            "pid": 29304,
+            "creationTime": 1794242303458,
+            "status": "exited"
+          },
+          {
+            "pid": 36400,
+            "creationTime": 1794242304700,
+            "status": "exited"
+          }
+        ]
+      ],
+      "errors": []
+    },
+    "exitProbeErrors": [
+      {
+        "stage": "soak",
+        "cycle": 2,
+        "at": 1794244031145,
+        "error": "Error: Command failed: pwsh.exe -NoLogo -NoProfile -NonInteractive -Command \n$ErrorActionPreference = 'Stop'\n[Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)\n$entries = $env:CLAWX_PROCESS_IDENTITIES | ConvertFrom-Json\n$results = @(foreach ($entry in $entries) {\n  $result = [ordered]@{ pid = $entry.pid; creationTime = $entry.creationTime; status = 'unavailable' }\n  $owned = $null\n  try {\n    try { $owned = [Diagnostics.Process]::GetProcessById([int]$entry.pid) }\n    catch [ArgumentException] { $result.status = 'exited' }\n    if ($null -ne $owned) {\n      $null = $owned.Handle\n      if ($owned.HasExited) { $result.status = 'exited' }\n      elseif (([DateTimeOffset]$owned.StartTime).ToUnixTimeMilliseconds() -ne [long]$entry.creationTime) {\n        $result.status = 'replaced'\n      } else {\n        $result.status = 'alive'\n        if ($env:CLAWX_PROCESS_TERMINATE -eq '1') {\n          $owned.Kill()\n          if ($owned.WaitForExit(2000)) { $result.status = 'terminated' }\n        }\n      }\n    }\n  } catch {\n    if ($null -ne $owned -and $owned.HasExited) { $result.status = 'exited' }\n    else { $result.status = 'unavailable'; $result.error = $_.Exception.Message }\n  } finally {\n    if ($null -ne $owned) { $owned.Dispose() }\n  }\n  [pscustomobject]$result\n})\nConvertTo-Json -InputObject $results -Depth 3 -Compress\n\n"
+      }
+    ],
+    "createdTreeProbeErrors": [
+      {
+        "stage": "soak",
+        "cycle": 2,
+        "at": 1794244009897,
+        "sample": {
+          "status": "unknown",
+          "sampledAt": 1794244009896,
+          "rootPids": [
+            51584,
+            50072
+          ],
+          "processCount": null,
+          "treeRssBytes": null,
+          "treeCpuTimeMs": null,
+          "treeCpuPercent": null,
+          "queueDepth": 0,
+          "queueWaitMs": 0,
+          "source": "unknown",
+          "detail": "Error: Command failed: powershell -NoProfile -NonInteractive -Command $ErrorActionPreference = 'Stop'; Get-CimInstance -ClassName Win32_Process | Where-Object { $_.ProcessId -ne $PID } | ForEach-Object { \"{0}|{1}|{2}|{3}|{4}|{5}|{6}\" -f $_.ProcessId, $_.ParentProcessId, $_.WorkingSetSize, $_.KernelModeTime, $_.UserModeTime, $_.CreationDate.ToFileTimeUtc(), $_.PrivatePageCount }; try { $memory = Get-CimInstance -ClassName Win32_PerfFormattedData_PerfOS_Memory; \"commit|{0}|{1}\" -f $memory.CommittedBytes, $memory.CommitLimit } catch { }\n",
+          "ownerEpoch": "e22f2ca7-1cd5-417a-8b65-8dd16372f1d9",
+          "processes": []
+        }
+      }
+    ]
+  },
+  "tests": {
+    "root-unit": {
+      "numTotalTests": 865,
+      "numPassedTests": 865,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numFailedTestSuites": 0,
+      "success": true
+    },
+    "runtime-control": {
+      "numTotalTests": 87,
+      "numPassedTests": 87,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numFailedTestSuites": 0,
+      "success": true
+    },
+    "runtime-budget": {
+      "numTotalTests": 108,
+      "numPassedTests": 108,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numFailedTestSuites": 0,
+      "success": true
+    },
+    "browser-owners": {
+      "numTotalTests": 45,
+      "numPassedTests": 45,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numFailedTestSuites": 0,
+      "success": true
+    },
+    "terminal-native": {
+      "numTotalTests": 2,
+      "numPassedTests": 2,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numFailedTestSuites": 0,
+      "success": true
+    }
+  },
+  "runtimeTypes": {
+    "baselineCount": 38,
+    "candidateCount": 38,
+    "introduced": []
+  },
+  "electronTests": 11,
+  "mixedTrials": 24,
+  "mixedTasks": 1152,
+  "nativeWatcherCycles": 50,
+  "contractGaps": 34,
+  "verdict": "pass-final-resource-governance",
+  "validationCandidates": {
+    "regressionMixed": {
+      "commit": "289ee63a210eaec06c202de17b6c9cf23a74f17e",
+      "tree": "92d432bafa794066435c2480357b9d53eec03942",
+      "dirty": false
+    },
+    "electron": {
+      "commit": "ed2cfbb11a1ff59819ac607f922874803e57eb3d",
+      "tree": "6da4b804e2edce227a43121e4376908d76303457",
+      "dirty": false
+    },
+    "lifecycle": {
+      "commit": "ed2cfbb11a1ff59819ac607f922874803e57eb3d",
+      "tree": "6da4b804e2edce227a43121e4376908d76303457",
+      "dirty": false
+    },
+    "equivalence": "observation-equivalence.json"
+  },
+  "decision": {
+    "driven_by": "agent",
+    "actor": "codex",
+    "candidate": "ed2cfbb11a1ff59819ac607f922874803e57eb3d",
+    "status": "accept-measured-recovery",
+    "explanation": "接受本次50重复生命周期与30分钟持续观察的回收结果。前置空闲、恢复空闲和最终句柄为1828、1824、1823；持续段前后五个有效样本的句柄中位数1824→1822。进程树瞬时句柄峰值2612包含额外子进程，后续恢复到1822；完整峰值和缺失样本均保留。private memory持续段中位数增加4530176字节（4.32 MiB），最终364843008字节比前置基线增加12447744字节（11.87 MiB）；持续段RSS中位数增加19398656字节（18.50 MiB）。renderer heap和Main heap中位数分别下降1587236和4752852字节，曲线显示回落及周期性GC。逻辑活动/排队、终端、进程预留均归零，workspace冷账户按实际TTL回收；50次watcher/cache验证归零，12次原生PTY输入管道验证每轮残留0。224个生命周期进程身份退出，最终Electron Main/launcher退出且Playwright收尾完成。采样缺失和重查错误详见lifecycle-verification.json。",
+    "mixedDecision": "同工作量ABBA中，单窗1/4worker吞吐分别改善19.39%和20.35%，输入与滚动P95均下降，接受这两个实测工作点的收益。单窗8worker吞吐下降70.01%、总P95增加603.66%、滚动P95增加145.25%；双窗8worker吞吐下降57.52%、总P95增加58.03%，拒绝据此提高并发或宣称8worker扩容收益。双窗1/4worker输入和滚动P95改善，但吞吐分别下降11.31%和26.35%，仅接受对应交互改善并保留吞吐取舍。负载由脚本worker和本地HTTP等待驱动，所有结果按窗口/worker分别保留。产品默认值保持原设定。"
+  }
+}

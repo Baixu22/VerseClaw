@@ -1,0 +1,6 @@
+{
+  "findings": [],
+  "overall_confidence": 0.98,
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "Both review2 findings are resolved. Build verification compares the complete regular-file inventory and hashes every entry before and after execution. Observation verification requires bounded start coverage and strictly increasing timestamps while retaining count, gap, tail, and probe checks. Read-only inspection; no tests were run."
+}

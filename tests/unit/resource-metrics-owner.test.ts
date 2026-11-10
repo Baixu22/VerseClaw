@@ -16,7 +16,7 @@ vi.mock('../../openclaw_runtime/src/resources/resource-envelope-snapshot-store',
 vi.mock('../../electron/services/efficiency-sampler', () => ({ EfficiencySampler: class {
   start() {} stop() {} getSummary() { return { latest: { cpuPercent: 0 } }; }
 } }));
-vi.mock('../../shared/resources', () => ({ getTimerAligner: () => ({ setShedding() {}, register: (task: { run: () => Promise<void> }) => {
+vi.mock('../../shared/resources', async importOriginal => ({ ...await importOriginal<typeof import('../../shared/resources')>(), getTimerAligner: () => ({ setShedding() {}, register: (task: { run: () => Promise<void> }) => {
   mocks.refresh = task.run; return () => { mocks.refresh = null; };
 } }) }));
 

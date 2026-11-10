@@ -1,0 +1,3469 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": "289ee63a210eaec06c202de17b6c9cf23a74f17e",
+  "deliveryCandidate": "ed2cfbb11a1ff59819ac607f922874803e57eb3d",
+  "equivalence": "observation-equivalence.json",
+  "cases": [
+    {
+      "name": "P5-004 token/cost budget (A1) allows turns under budget",
+      "status": "passed"
+    },
+    {
+      "name": "P5-004 token/cost budget (A1) visibly rejects when token budget exceeded",
+      "status": "passed"
+    },
+    {
+      "name": "P5-004 token/cost budget (A1) visibly rejects when cost budget exceeded",
+      "status": "passed"
+    },
+    {
+      "name": "P5-004 token/cost budget (A1) null budgets mean unlimited",
+      "status": "passed"
+    },
+    {
+      "name": "P5-004 history memory ceiling (A2) caps large history to a stable max (drops oldest)",
+      "status": "passed"
+    },
+    {
+      "name": "P5-004 history memory ceiling (A2) large history load keeps memory under ceiling for any input size",
+      "status": "passed"
+    },
+    {
+      "name": "P5-004 history memory ceiling (A2) DOM render window bounds mounted rows",
+      "status": "passed"
+    },
+    {
+      "name": "P5-004 tool result flood + timeout (A3) truncates tool result floods",
+      "status": "passed"
+    },
+    {
+      "name": "P5-004 tool result flood + timeout (A3) keeps both the head and the error tail when truncating large results",
+      "status": "passed"
+    },
+    {
+      "name": "P5-004 tool result flood + timeout (A3) detects turn timeout for abort/release path",
+      "status": "passed"
+    },
+    {
+      "name": "orchestration waves follow actual registry terminal state returns queued nodes promptly and dispatches the next wave exactly once after a terminal event",
+      "status": "passed"
+    },
+    {
+      "name": "orchestration waves follow actual registry terminal state does not project an accepted spawn bundle as a verified result",
+      "status": "passed"
+    },
+    {
+      "name": "orchestration waves follow actual registry terminal state returns owner-backed handoff waves before a submission-side output capture settles",
+      "status": "passed"
+    },
+    {
+      "name": "orchestration waves follow actual registry terminal state binds only an available frozen owner handoff (available=true)",
+      "status": "passed"
+    },
+    {
+      "name": "orchestration waves follow actual registry terminal state binds only an available frozen owner handoff (available=false)",
+      "status": "passed"
+    },
+    {
+      "name": "orchestration waves follow actual registry terminal state keeps successors queued while the previous accepted run has no terminal owner receipt",
+      "status": "passed"
+    },
+    {
+      "name": "orchestration waves follow actual registry terminal state rejects queued work when the coordinator generation changes",
+      "status": "passed"
+    },
+    {
+      "name": "orchestration waves follow actual registry terminal state does not dispatch a successor after cancellation of its predecessor",
+      "status": "passed"
+    },
+    {
+      "name": "orchestration waves follow actual registry terminal state waits for agent.wait owner completion as well as lifecycle events",
+      "status": "passed"
+    },
+    {
+      "name": "orchestration waves follow actual registry terminal state retains a lost dispatch acknowledgement without starting later waves",
+      "status": "passed"
+    },
+    {
+      "name": "orchestration waves follow actual registry terminal state rejects a queued payload whose child identity no longer matches its owner row",
+      "status": "passed"
+    },
+    {
+      "name": "orchestration waves follow actual registry terminal state restores the queued wave from owner SQLite and advances only after the prior run ends",
+      "status": "passed"
+    },
+    {
+      "name": "resource envelopes rebuild from existing owners reconstructs browser and terminal occupancy after the Main projection is cleared",
+      "status": "passed"
+    },
+    {
+      "name": "resource envelopes rebuild from existing owners reconstructs active and waiting runtime leases without freeing capacity",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 bounded gate keeps actual leases while limits change does not refill released slots while active ownership still exceeds the reduced limit",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 bounded gate keeps actual leases while limits change serves existing waiters immediately when the owner increases capacity",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 bounded gate keeps actual leases while limits change does not admit a waiter whose deadline passed before its timer callback ran",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 provider owner reconfiguration does not create fresh capacity when the same configuration is reapplied",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 provider owner reconfiguration keeps held slots and waiting callers on the same owner when capacity shrinks",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 provider owner reconfiguration refuses to move an occupied quota to a new alias instead of dropping its ownership",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 provider owner reconfiguration does not claim a new cap is effective while an ungated request remains alive",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 provider owner reconfiguration retains live gated requests across disable and re-enable",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 provider owner reconfiguration validates new limits before replacing a valid configuration",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 provider owner reconfiguration owns its configuration snapshot instead of observing later caller mutations",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 provider owner reconfiguration does not let a diagnostic snapshot mutate the published owner policy",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 provider owner reconfiguration shares a quota through a complete alias chain and rejects alias cycles",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 provider owner reconfiguration uses one effective ceiling for differently overridden members of an aliased quota",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 provider owner reconfiguration does not replace an occupied clock and installs a new clock once the owner is idle",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 provider owner reconfiguration honors explicitly declared zero queue and timeout values",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation rejects a plugin slot that would overwrite the owner workspace budget identity",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation reserves every scope atomically, denies overspend across sessions, and reconciles once",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation enforces project even with a larger host quota and preserves rollback",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation enforces session even with a larger host quota and preserves rollback",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation reserves known USD across projects without charging the same reconciliation twice",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation keeps project ceilings shared by sessions and isolated between owner-supplied projects",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation session budget cannot be reset by changing the project coordinate",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation rebuilds the runtime provider projection after caches and DB handles are cleared",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation unknown usage survives SQLite reopen and cannot be freed by TTL or forged owner",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation rejects unknown scope and cost before reserving, and compensates only unsent reservations",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation rejects invalid estimates instead of allowing NaN or negative cost to mint capacity",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation never rounds a fractional microdollar ceiling upward or lets actual overruns create credit",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation gates the real stream boundary and settles from final usage before returning its result",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation keeps the disabled stream unchanged and never treats unpriced usage as zero USD",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation pins the run identity before mutable caller metadata changes",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation reads the session owner project and rejects missing, stale or conflicting identities before sending",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation persists the trusted initial workspace and recovers it after the owner DB is reopened",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation the production stream resolver and guarded HTTP boundary refuse a physical retry before a second send",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation settles priced usage from the captured rate and preserves the raw normalized message",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation does not price an incomplete usage breakdown as a free request",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation retains token and USD liabilities when usage components 5 disagree with the reported total",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation retains token and USD liabilities when usage components 15 disagree with the reported total",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation rejects a zero model bound before reserving or invoking the provider",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation compensates the spend reservation when the transport confirms overloaded before wire dispatch",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation compensates the spend reservation when the transport confirms cancelled before wire dispatch",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation prevents two real processes from double spending host tokens capacity",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation prevents two real processes from double spending project tokens capacity",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation prevents two real processes from double spending session tokens capacity",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation prevents two real processes from double spending host cost capacity",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation prevents two real processes from double spending project cost capacity",
+      "status": "passed"
+    },
+    {
+      "name": "provider owner layered spend reservation prevents two real processes from double spending session cost capacity",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 actual provider transport ownership releases the owner slot before an EOF response is returned to its consumer",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 actual provider transport ownership retains the quota across reconfiguration and sends no queued or aborted HTTP request",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 existing Fabric admission owners does not spend the same host capacity independently for different tenants",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 existing Fabric admission owners rejects a non-finite or fractional reservation: NaN",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 existing Fabric admission owners rejects a non-finite or fractional reservation: Infinity",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 existing Fabric admission owners rejects a non-finite or fractional reservation: 0.5",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 existing Fabric admission owners eventually serves old background work before new interactive arrivals",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 existing Fabric admission owners eventually serves old opportunistic work before new interactive arrivals",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 existing Fabric admission owners does not let repeated temporary boosts starve old work",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 existing Fabric admission owners keeps all workspace accounts within the existing shared host capacity and wakes another account",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 existing Fabric admission owners bounds the existing account queue without losing the older waiter",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 existing Fabric admission owners cancels a waiting acquisition without releasing the active owner or running cancelled work",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 existing Fabric admission owners checks cancellation again after a grant and before dispatching the work",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 existing Fabric admission owners rebuilds the shadow envelope from the live Fabric owner after the view is cleared",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 existing Fabric admission owners keeps stop and control RPCs reachable while the history admission queue is occupied",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0679 native lease owner fencing retains an expired live owner, then reclaims only after its actual process exits",
+      "status": "passed"
+    },
+    {
+      "name": "real subagent spawn reservation lifecycle inherits the logical workspace from the parent owner before agent dispatch",
+      "status": "passed"
+    },
+    {
+      "name": "real subagent spawn reservation lifecycle counts an in-flight dispatch and keeps capacity after acceptance until owner termination",
+      "status": "passed"
+    },
+    {
+      "name": "real subagent spawn reservation lifecycle does not resurrect a child cancelled before its acceptance reply",
+      "status": "passed"
+    },
+    {
+      "name": "real subagent spawn reservation lifecycle preserves another session when a dispatch response collides with its run id",
+      "status": "passed"
+    },
+    {
+      "name": "real subagent spawn reservation lifecycle retains capacity for timeout without a terminal receipt past the configured deadline",
+      "status": "passed"
+    },
+    {
+      "name": "real subagent spawn reservation lifecycle retains capacity for error without a terminal receipt past the configured deadline",
+      "status": "passed"
+    },
+    {
+      "name": "real subagent spawn reservation lifecycle does not let an orphan sweep release an old run without execution exit evidence",
+      "status": "passed"
+    },
+    {
+      "name": "real subagent spawn reservation lifecycle retains unknown dispatch when cancellation is unconfirmed, including a sweep",
+      "status": "passed"
+    },
+    {
+      "name": "real subagent spawn reservation lifecycle releases failed dispatch only for deleted=true (deleted=true)",
+      "status": "passed"
+    },
+    {
+      "name": "real subagent spawn reservation lifecycle releases failed dispatch only for deleted=true (deleted=false)",
+      "status": "passed"
+    },
+    {
+      "name": "real subagent spawn reservation lifecycle rehydrates unknown dispatch from the actual owner SQLite after memory is cleared",
+      "status": "passed"
+    },
+    {
+      "name": "subagent SQLite concurrency preserves records absent from another gateway snapshot",
+      "status": "passed"
+    },
+    {
+      "name": "subagent SQLite concurrency rejects a stale update that would resurrect an ended run and rolls back sibling changes",
+      "status": "passed"
+    },
+    {
+      "name": "subagent SQLite concurrency rebases unchanged owner facts and rejects stale deletion",
+      "status": "passed"
+    },
+    {
+      "name": "subagent SQLite concurrency refuses an unrelated record with a colliding run id",
+      "status": "passed"
+    },
+    {
+      "name": "subagent SQLite concurrency keeps the original child and controller identity when metadata changes",
+      "status": "passed"
+    },
+    {
+      "name": "subagent SQLite concurrency preserves active sweep iterator positions when records are saved",
+      "status": "passed"
+    },
+    {
+      "name": "subagent SQLite concurrency includes typed owner columns in conflict detection",
+      "status": "passed"
+    },
+    {
+      "name": "subagent SQLite concurrency allows only one reserve when two real processes share a child cap of one",
+      "status": "passed"
+    },
+    {
+      "name": "subagent SQLite concurrency allows only one queue when two real processes share a child cap of one",
+      "status": "passed"
+    },
+    {
+      "name": "worktree native owner admission keeps a live lock exclusive and refuses duplicate creation across processes",
+      "status": "passed"
+    },
+    {
+      "name": "autonomy worktree owner admission never replaces an occupied checkout for worker",
+      "status": "passed"
+    },
+    {
+      "name": "autonomy worktree owner admission never replaces an occupied checkout for same:id",
+      "status": "passed"
+    },
+    {
+      "name": "autonomy worktree owner admission never replaces an occupied checkout for same/id",
+      "status": "passed"
+    },
+    {
+      "name": "autonomy worktree owner admission rejects sanitized id collisions and directories surviving registry loss",
+      "status": "passed"
+    },
+    {
+      "name": "autonomy worktree owner admission returns snapshots whose mutation cannot rewrite owner state",
+      "status": "passed"
+    },
+    {
+      "name": "autonomy worktree owner admission does not execute under an existing legacy mutex aged 0 ms",
+      "status": "passed"
+    },
+    {
+      "name": "autonomy worktree owner admission does not execute under an existing legacy mutex aged 60000 ms",
+      "status": "passed"
+    },
+    {
+      "name": "autonomy worktree owner admission rejects . as a checkout identity without removing the parent",
+      "status": "passed"
+    },
+    {
+      "name": "autonomy worktree owner admission rejects .. as a checkout identity without removing the parent",
+      "status": "passed"
+    },
+    {
+      "name": "autonomy worktree owner admission records the actual checkout HEAD when the base advances after service creation",
+      "status": "passed"
+    },
+    {
+      "name": "autonomy worktree owner admission never promotes directory simulation or missing owner records to verified isolation",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0503 browser session reaper (no orphan sessions) closes every live session through the same owner that listed it",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0503 browser session reaper (no orphan sessions) is a no-op when no sessions exist",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0503 browser session reaper (no orphan sessions) reports a session that refuses to close instead of throwing",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0503 browser session reaper (no orphan sessions) survives a service whose list() itself throws",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0503 browser session reaper (no orphan sessions) skips sessions without an id",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0503 browser session reaper (no orphan sessions) rejects a listed owner without a close capability",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0503 browser session reaper (no orphan sessions) waits for an asynchronous close receipt before reporting cleanup",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0503 browser session reaper (no orphan sessions) drops the resource-envelope entry for a closed session",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0503 browser session reaper (no orphan sessions) registering the reaper outside Electron is safe",
+      "status": "passed"
+    },
+    {
+      "name": "completed history projections during streaming reuses the completed card and its steps when only the live text grows",
+      "status": "passed"
+    },
+    {
+      "name": "completed history projections during streaming invalidates a completed card when its label or history changes",
+      "status": "passed"
+    },
+    {
+      "name": "completed history projections during streaming keeps completed cards stable when another run cache or live error changes",
+      "status": "passed"
+    },
+    {
+      "name": "bounded payload cache evicts least recently used payloads before their combined bytes exceed capacity",
+      "status": "passed"
+    },
+    {
+      "name": "bounded payload cache does not retain a single oversized value",
+      "status": "passed"
+    },
+    {
+      "name": "bounded payload cache reclaims overwritten, deleted and expired payload accounting",
+      "status": "passed"
+    },
+    {
+      "name": "shared chat cache budget charges history, previews and projections to one limit and retains each namespace count",
+      "status": "passed"
+    },
+    {
+      "name": "shared chat cache budget counts cycles, aliases and binary buffers without traversing them twice",
+      "status": "passed"
+    },
+    {
+      "name": "shared chat cache budget does not retain an oversized body and can load it again through its cold key",
+      "status": "passed"
+    },
+    {
+      "name": "chat event dedupe keeps processing delta events without seq for the same run",
+      "status": "passed"
+    },
+    {
+      "name": "chat event dedupe still dedupes repeated delta events when seq matches",
+      "status": "passed"
+    },
+    {
+      "name": "chat history cold reads after shared budget eviction reloads an evicted session and image from their original owner references",
+      "status": "passed"
+    },
+    {
+      "name": "chat history cold reads after shared budget eviction keeps active run identity after its large streaming snapshot is evicted",
+      "status": "passed"
+    },
+    {
+      "name": "Chat history reply while sending shows assistant reply from history even when sending is still true",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle collapses activity when the final reply starts streaming and shows only the reply suffix",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle reads completed execution steps cached after the first page render",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle does not reopen an old handoff draft after changing away and back",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle does not overwrite the new conversation status when old compression finishes",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle keeps completed long task work visible by default and remembers a manual collapse",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle uses the completed-run preference only as a default and allows it to be disabled",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle keeps short conversations as normal messages without a turn summary card",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle renders a team orchestration card for team_orchestrate task graph results",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle renders ordinary orchestration diagnostics without Task Loop repair wording",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle keeps runtime tool status inside the execution graph while a tool is running",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle renders the execution graph immediately for an active run before any stream content arrives",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle renders generated file cards with line stats for edit tools",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle shows a scroll-to-latest button when the chat is scrolled away from the bottom",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle stops showing trailing thinking and renders run error callout after terminal model error",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle keeps history final reply folded while matching streamed text is still active",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle stops trailing thinking when history already contains the final reply but sending is stuck",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle settles composer when generated image media arrives without transcript tool calls",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle stops trailing thinking when generated image media arrives but session wake is missed",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle shows trailing thinking together with a running tool status",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle keeps trailing thinking visible while waiting for final history after completed tool status",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle settles image generation runs after message tool delivers generated media",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle keeps image generation runs active after async task status narration",
+      "status": "passed"
+    },
+    {
+      "name": "Chat execution graph lifecycle keeps the run active when narration landed in history before tools finished",
+      "status": "passed"
+    },
+    {
+      "name": "chat pending message queue queues a message sent while a run is active instead of dropping it",
+      "status": "passed"
+    },
+    {
+      "name": "chat pending message queue drains queued messages and sends them after the run ends",
+      "status": "passed"
+    },
+    {
+      "name": "chat pending message queue does not queue long-task interventions (inputMode passes through)",
+      "status": "passed"
+    },
+    {
+      "name": "Chat question directory stays removed and keeps real repeated questions as separate transcript entries",
+      "status": "passed"
+    },
+    {
+      "name": "runtime stream sequence and terminal boundaries ignores non-adjacent duplicate sequence events before appending text",
+      "status": "passed"
+    },
+    {
+      "name": "runtime stream sequence and terminal boundaries keeps the latest cumulative text when an older sequence arrives",
+      "status": "passed"
+    },
+    {
+      "name": "runtime stream sequence and terminal boundaries preserves repeated legitimate chunks without sequence identities",
+      "status": "passed"
+    },
+    {
+      "name": "runtime stream sequence and terminal boundaries keeps completed runs terminal when delayed starts or deltas arrive",
+      "status": "passed"
+    },
+    {
+      "name": "runtime stream sequence and terminal boundaries keeps error runs terminal when delayed starts or deltas arrive",
+      "status": "passed"
+    },
+    {
+      "name": "runtime stream sequence and terminal boundaries keeps aborted runs terminal when delayed starts or deltas arrive",
+      "status": "passed"
+    },
+    {
+      "name": "runtime stream sequence and terminal boundaries allows an explicit empty cumulative replacement",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry uses the longer timeout only for the initial foreground history load",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry renders local transcript fallback while the initial gateway history request is still pending",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry keeps startup retry active after rendering local transcript fallback",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry keeps local transcript fallback when gateway returns empty history",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry forces the internal final-message reload through the quiet history cooldown",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry keeps non-startup foreground loading safety timeout at 15 seconds",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry keeps cached session messages visible without foreground loading overlay during refresh",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry switchSession restores cached session messages immediately while refreshing in background",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry does not re-arm Thinking state for stale main-session heartbeat tool history",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry switchSession preserves unsynced optimistic user messages when switching back",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry switchSession restores trusted tool results from the session history cache",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry switchSession restores in-flight run state so Thinking indicator survives navigation",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry treats the same session as a fresh foreground load after gateway runtime changes",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry does not burn the first-load retry path when the first attempt becomes stale",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry stops retrying once the user switches sessions mid-load",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry keeps the optimistic user message when completion refresh wins the transcript write race",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry does not restore a pending optimistic message after deleting the session",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry keeps the run open across intermediate [thinking, toolCall] history snapshots",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry keeps the run open for mixed [thinking, text, toolCall] turns with stopReason=toolUse",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry closes the run when a final assistant reply (text, stopReason=endTurn) appears",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry unsticks sending when history has a final reply after tools without pendingFinal",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry keeps the run open for Anthropic-native [thinking, tool_use] (snake_case stop_reason)",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry keeps the run open for OpenAI ChatCompletions message with tool_calls array",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry closes the run for OpenAI ChatCompletions plain-text final reply",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry clears a stale no-response error when history poll shows tool progress",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry does not emit a false no-response error when history poll shows tool progress",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry surfaces an idle-timeout hint when a role-only stream placeholder stalls the run",
+      "status": "passed"
+    },
+    {
+      "name": "useChatStore startup history retry does not treat prior-turn assistant history as progress for a new send",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication publishes a burst once per frame while reads see every delta immediately",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication coalesces legacy cumulative text without losing the latest snapshot",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication immediately publishes 'approval.updated' 'pending' with the pending text included",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication immediately publishes 'run.ended' 'completed' with the pending text included",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication immediately publishes 'run.ended' 'error' with the pending text included",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication immediately publishes 'run.ended' 'aborted' with the pending text included",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication publishes confirmed abort immediately and cancels a pending frame",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication does not revive a terminal owner through a delayed legacy delta",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication keeps a newly selected run intact while an earlier abort resolves",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication does not replace an owner result that arrives before the abort acknowledgement",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication retains running ownership when an abort request fails",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication publishes a session change immediately and retains foreign-run ownership",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication publishes within the fallback bound when animation frames are suspended",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication cancels pending publication when the final subscriber leaves",
+      "status": "passed"
+    },
+    {
+      "name": "production chat stream publication does not schedule unused publication work without subscribers",
+      "status": "passed"
+    },
+    {
+      "name": "chat target routing switches to the selected agent main session before sending text",
+      "status": "passed"
+    },
+    {
+      "name": "chat target routing uses the selected agent main session for attachment sends",
+      "status": "passed"
+    },
+    {
+      "name": "chat target routing passes the selected knowledge scope through host chat send",
+      "status": "passed"
+    },
+    {
+      "name": "chat target routing forwards turn-scoped modelRefOverride to host chat send (Area 2 §3.2)",
+      "status": "passed"
+    },
+    {
+      "name": "chat target routing omits modelRef when no turn override is set (default path parity, Area 2 §6)",
+      "status": "passed"
+    },
+    {
+      "name": "Chat tool card suppression does not render standalone tool cards for messages inside a user run segment",
+      "status": "passed"
+    },
+    {
+      "name": "measured message viewport restores a saved message across session changes before and after measured heights arrive",
+      "status": "passed"
+    },
+    {
+      "name": "measured message viewport selects the actual offset of a tall row and never exceeds the existing row cap",
+      "status": "passed"
+    },
+    {
+      "name": "measured message viewport mounts the requested old or new row and disconnects every observer on unmount",
+      "status": "passed"
+    },
+    {
+      "name": "measured message viewport preserves the reading anchor after earlier rows grow or history is prepended",
+      "status": "passed"
+    },
+    {
+      "name": "measured message viewport keeps a newly requested bottom position when a resize lands before the next frame",
+      "status": "passed"
+    },
+    {
+      "name": "TF-0510 symbol-lease multi-process benchmark serializes overlapping writers across real processes with zero duplicate side effects",
+      "status": "passed"
+    },
+    {
+      "name": "component authority manifest keeps every component mapped to at least one domain and every domain owned",
+      "status": "passed"
+    },
+    {
+      "name": "component authority manifest maps every existing DCS flag to exactly one component",
+      "status": "passed"
+    },
+    {
+      "name": "component authority manifest preserves the Context, Memory, Knowledge, Capability, Execution, Browser and Observability separations",
+      "status": "passed"
+    },
+    {
+      "name": "component authority manifest rejects a second accepted-memory writer",
+      "status": "passed"
+    },
+    {
+      "name": "component authority manifest rejects a second context assembly owner",
+      "status": "passed"
+    },
+    {
+      "name": "component authority manifest rejects a second domain executor",
+      "status": "passed"
+    },
+    {
+      "name": "component authority manifest rejects permission escalation and unauthorized cross-domain writes",
+      "status": "passed"
+    },
+    {
+      "name": "component authority manifest cross-checks the product semantic and default-config surfaces",
+      "status": "passed"
+    },
+    {
+      "name": "component authority manifest keeps every declared source anchor present in the current tree with exact path case",
+      "status": "passed"
+    },
+    {
+      "name": "component authority manifest documents the machine manifest in runtime-control-planes.md",
+      "status": "passed"
+    },
+    {
+      "name": "component authority manifest guards renderer transport against direct Gateway, IPC and domain-store access",
+      "status": "passed"
+    },
+    {
+      "name": "component authority manifest builds a static and effective model-safe component profile",
+      "status": "passed"
+    },
+    {
+      "name": "ComponentDispositionManifest/v1 covers every authority component, DCS flag, runtime leaf, route, Settings section and Settings panel exactly once",
+      "status": "passed"
+    },
+    {
+      "name": "ComponentDispositionManifest/v1 records current consumer, owner, implementation/retirement node and evidence refs for every entry",
+      "status": "passed"
+    },
+    {
+      "name": "ComponentDispositionManifest/v1 covers every writable DCS control and keeps the product preview combo in a visible disposition",
+      "status": "passed"
+    },
+    {
+      "name": "ComponentDispositionManifest/v1 keeps every registered authority component mapped to one disposition",
+      "status": "passed"
+    },
+    {
+      "name": "ComponentDispositionManifest/v1 requires owner, future expiry and graduate/retire criteria on every experiment",
+      "status": "passed"
+    },
+    {
+      "name": "ComponentDispositionManifest/v1 explicitly covers the required special surfaces",
+      "status": "passed"
+    },
+    {
+      "name": "ComponentDispositionManifest/v1 does not expose any shadow or experiment capability as a user surface",
+      "status": "passed"
+    },
+    {
+      "name": "ComponentDispositionManifest/v1 rejects an unclassified route",
+      "status": "passed"
+    },
+    {
+      "name": "ComponentDispositionManifest/v1 rejects a second disposition for the same authority component",
+      "status": "passed"
+    },
+    {
+      "name": "ComponentDispositionManifest/v1 rejects an experiment without expiry or owner",
+      "status": "passed"
+    },
+    {
+      "name": "ComponentDispositionManifest/v1 rejects an internal capability with a user entry",
+      "status": "passed"
+    },
+    {
+      "name": "ComponentDispositionManifest/v1 documents the single-page disposition table and links it from runtime control planes",
+      "status": "passed"
+    },
+    {
+      "name": "ComponentDispositionManifest/v1 projects the stable disposition index for a later ModelCapabilityProfile",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity sanity: the exhaustive fixture is non-trivial",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.providerBudget.host.maxTokens",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.providerBudget.host.maxCostUsd",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.providerBudget.project.maxTokens",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.providerBudget.project.maxCostUsd",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.providerBudget.session.maxTokens",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.providerBudget.session.maxCostUsd",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.handoff.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.handoff.maxDepth",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.verseShellFoundation.killSwitch",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.verseShellFoundation.verifiedRuntime",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.verseShellFoundation.typedAci",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.verseShellFoundation.facade",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.verseShellFoundation.deferredOps",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.verseShellFoundation.governedExec",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.verseShellFoundation.artifactResults",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.verseShellFoundation.patchPreview",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.verseShellFoundation.mcpCompatibility",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.verseShellFoundation.legacyEval",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.verseShellFoundation.compatibilityNativeFallback",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.verseShellFoundation.readOnlyShadow",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.registryPilot.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.providerRegistry.shadow",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextProviders.shadow",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextProviders.loopPackShadow",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextProviders.registryPilot",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.working-memory.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.tool-registry.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.compass.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.role-memory.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.sekb.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.sekb.shadowEvaluation.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.sekb.batchDistillationAssistant.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.sekb.phaseCWouldTrigger.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.sekb.phaseCWouldTrigger.owner",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.sekb.phaseCWouldTrigger.timeoutMs",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.injectionBudget.totalChars",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.injectionBudget.dropAlertRatio",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.injectionBudget.channelDecay",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.sessionStartInjection.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.sessionStartInjection.budgetChars",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.checkpointedContextReset.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.contextFolding.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.context-write.role",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextBlock.context-understand.budgetChars",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.parseOnTouch.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.staleWriteGuard.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.writeJournal.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.autoVerify.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.autoVerify.timeoutSeconds",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.autoVerify.command",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.worktree.backend",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.symbolLease.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.symbolLease.mode",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.patchFlow.default",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.patchFlow.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.sekb.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.sekb.experienceShadow",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.sekb.retrievalShadow",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.routingMemo.shadow",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.routingMemo.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.coding.verifier.noSelfRepair",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextRuntimeKit.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextRuntimeKit.shadow",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextFamily.observationMasking.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextFamily.observationMasking.minChars",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextFamily.observationMasking.preserveNewestObservationCount",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextFamily.contextStatus.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.eventLog.shadow",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.eventLog.persist",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.checkpointSerializer.shadow",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.resume.replayShadow",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.toolRegistry.shadow",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.mission.rollback.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.mission.goalWake.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.mission.goalWake.maxActiveGoalWaits",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.mission.goalWake.maxFlows",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.mission.goalWake.tickFailureBackoffMs",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.mission.goalWake.durableHelper.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.mission.goalWake.durableHelper.maxRunsPerSession",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.mission.goalWake.durableHelper.maxOutputBytesPerRun",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.mission.goalWake.durableHelper.runTtlMs",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.mission.goalWake.durableHelper.sweepIntervalMs",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.registryDiagnostics.collector",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.toolProtocol.mcpShadow",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.toolGovernance.destructiveOperationGuard.preflight.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.evidenceVerifier.shadow",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.traceContext.shadow",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.traceContext.provider",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.traceContext.propagation",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.memory.shadow",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.memory.provider",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.memory.proposeFacts",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.memory.persist",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.memory.candidateGeneration",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.memory.injectPilot.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.memory.injectPilot.providers",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.memory.injectPilot.totalTokenBudget",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.memory.injectPilot.sessions",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.contextEnhancement.killSwitch",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.vtoken.assembly.enabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.vtoken.assembly.budgetTokens",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.vtoken.assembly.renderMode",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.vtoken.assembly.sessions",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.vtoken.assembly.timeoutMs",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.vtoken.assembly.maxSourceFiles",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.vtoken.assembly.maxSourceChars",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.agentMap.provider",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.agentMap.promptAssemblyExperiment",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.agentMap.promptCandidateRuntimeShadow",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.agentMap.promptCandidateControlledCutoverPilot",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.agentMap.promptCandidateTaskLoopExplicitInvocationPilot",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.localControlPlane.contextReport",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.localControlPlane.modelRouterReport",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.localControlPlane.capabilityReport",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.localControlPlane.evidenceReport",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.localControlPlane.missionReport",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.orchestration.routingMemoPilot",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.orchestration.handoffArtifacts",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.resilience.anomalyClassifierPilot",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.rc03.seal",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.rc05.operatorSliceEnabled",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity typed leaf is accepted by the strict schema: runtime.rc05.cronAutoApprove",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity every schema-accepted runtime leaf exists in the compile-checked type fixture",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity every runtime.* key documented in schema.labels.ts is a real, schema-accepted config node",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity every runtime.* key documented in schema.help.ts is a real, schema-accepted config node",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity regression: runtime.contextEnhancement.killSwitch is schema-accepted",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity the runtime schema is still strict (unknown leaves are rejected)",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity every intentional gap entry has a non-empty reason",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity every DCS config catalog entry is accepted by the strict runtime schema",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity rejects the removed runtime.coding.factViews compatibility leaf",
+      "status": "passed"
+    },
+    {
+      "name": "FP-P0-06 config type / zod schema parity documents automatic discovery and the env rollback in the production catalog",
+      "status": "passed"
+    },
+    {
+      "name": "execution projection promotes active runtime assistant text into the latest streaming reply",
+      "status": "passed"
+    },
+    {
+      "name": "execution projection keeps a new active runtime run visible when history already has a prior reply",
+      "status": "passed"
+    },
+    {
+      "name": "execution projection turns active runtime events into a running tool step",
+      "status": "passed"
+    },
+    {
+      "name": "execution projection uses history fallback to build a completed graph card",
+      "status": "passed"
+    },
+    {
+      "name": "execution projection suppresses trailing thinking when streaming text is folded into the graph",
+      "status": "passed"
+    },
+    {
+      "name": "execution projection shows cached graph steps after history reload drops transient graph messages",
+      "status": "passed"
+    },
+    {
+      "name": "execution projection scopes a runtime chat run only when the owning workspace is known",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring subscribes to typed host events on init",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring propagates gatewayReady field from status events",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring refreshes background session membership in one batch without selecting the changed child",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring allows explicit intervention sends while preserving normal active-run double-submit guard",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring treats undefined gatewayReady as ready for backwards compatibility",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring does not clear chat sending state on non-terminal runtime events",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring does not let a stale send RPC re-arm a completed run after a newer send starts",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring preserves a running session lifecycle when creating a new chat and switching back",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring retains inactive-session runtime events for graph reconstruction after switching back",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring clears cached inactive-session run state when run.ended arrives while another session is selected",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring clears chat sending state on terminal run.ended runtime event",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring does not clear the active send when a stale run.ended arrives for the same session",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring ignores session-less runtime terminals that do not match the active run",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring tracks a current-session run.started even when the optimistic send is already active",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring forces a terminal history reload when the runtime emits run.ended",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring forwards normalized chat runtime events through the dedicated host event channel",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring passes progressive delta notifications without seq through to chat store",
+      "status": "passed"
+    },
+    {
+      "name": "gateway store event wiring dedupes exact replayed delta notifications without seq",
+      "status": "passed"
+    },
+    {
+      "name": "gateway permission approval flow binds chat workspace identity to the Main owner and refuses forged scopes",
+      "status": "passed"
+    },
+    {
+      "name": "gateway permission approval flow rejects verification for a workspace whose permissions were not evaluated",
+      "status": "passed"
+    },
+    {
+      "name": "gateway permission approval flow refuses verification when its persisted physical root differs from Main",
+      "status": "passed"
+    },
+    {
+      "name": "gateway permission approval flow requires approval for dangerous gateway RPC and consumes approval before replay",
+      "status": "passed"
+    },
+    {
+      "name": "gateway permission approval flow does not allow an approved gateway request to be reused for different params",
+      "status": "passed"
+    },
+    {
+      "name": "gateway permission approval flow captures mission knowledge draft candidates into Knowledge Inbox without changing the RPC result",
+      "status": "passed"
+    },
+    {
+      "name": "gateway permission approval flow returns structured sandbox denial details for a fail-closed gateway action",
+      "status": "passed"
+    },
+    {
+      "name": "gateway supervisor process cleanup uses a native exit receipt emitted before stop was called",
+      "status": "passed"
+    },
+    {
+      "name": "gateway supervisor process cleanup shares one native termination request between concurrent stop callers",
+      "status": "passed"
+    },
+    {
+      "name": "gateway supervisor process cleanup keeps termination unconfirmed when the native owner emits no exit receipt",
+      "status": "passed"
+    },
+    {
+      "name": "gateway supervisor process cleanup uses taskkill tree strategy for owned process on Windows",
+      "status": "passed"
+    },
+    {
+      "name": "gateway supervisor process cleanup uses direct child.kill for owned process on non-Windows",
+      "status": "passed"
+    },
+    {
+      "name": "gateway supervisor process cleanup forces the owned PID when Windows taskkill fails and waits for native exit",
+      "status": "passed"
+    },
+    {
+      "name": "gateway supervisor process cleanup waits for the original exit receipt when the forced PID has already exited",
+      "status": "passed"
+    },
+    {
+      "name": "gateway supervisor process cleanup fails closed on a foreign listener instead of killing it",
+      "status": "passed"
+    },
+    {
+      "name": "gateway supervisor process cleanup treats the owned gateway pid as its own listener and probes the port",
+      "status": "passed"
+    },
+    {
+      "name": "git api coalesces concurrent status reads and reuses a fresh cached status",
+      "status": "passed"
+    },
+    {
+      "name": "git api fences a pending status when its repository is invalidated",
+      "status": "passed"
+    },
+    {
+      "name": "git api shares the same root status across workspace profiles without mixing roots",
+      "status": "passed"
+    },
+    {
+      "name": "git api rechecks source identity after directory deletion and Git metadata replacement",
+      "status": "passed"
+    },
+    {
+      "name": "git api invalidates the repo status cache after a successful write",
+      "status": "passed"
+    },
+    {
+      "name": "git api invalidates a cached status when a direct commit succeeds",
+      "status": "passed"
+    },
+    {
+      "name": "git api parses porcelain v2 status into branch and change buckets",
+      "status": "passed"
+    },
+    {
+      "name": "git api returns side-by-side content with staged file diffs",
+      "status": "passed"
+    },
+    {
+      "name": "git api fails closed when a file diff exceeds the local Git patch limit",
+      "status": "passed"
+    },
+    {
+      "name": "git api downgrades a parsed file patch when trusted Git status is missing",
+      "status": "passed"
+    },
+    {
+      "name": "git api blocks normal writes in read-only mode before git add",
+      "status": "passed"
+    },
+    {
+      "name": "git api requires approval for dangerous push and consumes approved requests",
+      "status": "passed"
+    },
+    {
+      "name": "git api explains why a dangerous git operation is graded that way in the approval reason",
+      "status": "passed"
+    },
+    {
+      "name": "git api states the refspec scope when no target branch can be determined",
+      "status": "passed"
+    },
+    {
+      "name": "git api distinguishes reset --hard from reset --soft in the approval reason",
+      "status": "passed"
+    },
+    {
+      "name": "git api requires approval before reverting a tracked file and restores index plus worktree after approval",
+      "status": "passed"
+    },
+    {
+      "name": "git api uses git clean for approved untracked file reverts",
+      "status": "passed"
+    },
+    {
+      "name": "git api lists stashes and creates a stash with message and untracked files",
+      "status": "passed"
+    },
+    {
+      "name": "git api requires dangerous approval for stash apply and pop",
+      "status": "passed"
+    },
+    {
+      "name": "git api only allows worktree remove for paths registered with the repository",
+      "status": "passed"
+    },
+    {
+      "name": "git api adds a worktree by creating a new branch with the correct argument order",
+      "status": "passed"
+    },
+    {
+      "name": "git api adds a worktree for an existing branch without -b",
+      "status": "passed"
+    },
+    {
+      "name": "git api defaults new worktree start point to HEAD when omitted",
+      "status": "passed"
+    },
+    {
+      "name": "git api blocks new worktree creation when the target branch already exists",
+      "status": "passed"
+    },
+    {
+      "name": "git api blocks existing-branch worktree creation when that branch is already checked out",
+      "status": "passed"
+    },
+    {
+      "name": "git api requires dangerous approval for custom worktree paths outside the workspace and repo sibling area",
+      "status": "passed"
+    },
+    {
+      "name": "git api treats a drive-root parent as unsafe: custom sibling paths still require approval",
+      "status": "passed"
+    },
+    {
+      "name": "git api creates GitHub PRs with explicit base/head/draft args after dangerous approval",
+      "status": "passed"
+    },
+    {
+      "name": "git api preflights missing base branch with actionable error before creating a PR",
+      "status": "passed"
+    },
+    {
+      "name": "git api reuses an existing open PR for the head branch instead of creating a duplicate",
+      "status": "passed"
+    },
+    {
+      "name": "git api hardens git exec: hooks disabled, no locks, no prompts, fsmonitor off, bounded timeout",
+      "status": "passed"
+    },
+    {
+      "name": "git api resolves merge-base between HEAD and a base branch",
+      "status": "passed"
+    },
+    {
+      "name": "git api returns reflog entries for the complete repository lifecycle",
+      "status": "passed"
+    },
+    {
+      "name": "git api routes merge, rebase, and reset through dangerous Git approval",
+      "status": "passed"
+    },
+    {
+      "name": "git api rejects unsafe or missing refs for merge-base",
+      "status": "passed"
+    },
+    {
+      "name": "git api applyPatch preflight reports conflicts without approval or writes",
+      "status": "passed"
+    },
+    {
+      "name": "git api applyPatch apply mode requires dangerous approval then writes",
+      "status": "passed"
+    },
+    {
+      "name": "git api applyPatch reports skipped and applied paths from real git output",
+      "status": "passed"
+    },
+    {
+      "name": "git api applyPatch counts a --reject partial apply as conflicted, not applied",
+      "status": "passed"
+    },
+    {
+      "name": "git api applyPatch fails closed on a conflicting patch without requesting approval",
+      "status": "passed"
+    },
+    {
+      "name": "git api applyPatch approval is bound to the patch content, not just the target files",
+      "status": "passed"
+    },
+    {
+      "name": "git api applyPatch rejects non-diff input before any git call",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase derives the upstream branch and reports how the base was resolved",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase falls back to origin/HEAD when the branch has no upstream",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase reports unavailable instead of guessing when no remote ancestor exists",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase prefers origin over a nearer non-origin ancestor",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase falls back to configured remote order when there is no origin",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase finds a base in a repo whose only remote is not named origin",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase ignores */HEAD pseudo-refs when scanning for a base",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase skips unsafe scanned refs and reports unavailable when none remain",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase reads line counts from one numstat call and skips per-file diffs",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase returns patches only when asked, and marks binary files",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase reports unavailable when base and HEAD share no common ancestor",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase rejects unsafe explicit base refs and reports a missing ref as unavailable",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase keeps the destination path for renames in name-status output",
+      "status": "passed"
+    },
+    {
+      "name": "git api diffToBase never writes: no approval is requested and no mutating git runs",
+      "status": "passed"
+    },
+    {
+      "name": "git api keeps the tail of oversized diff output",
+      "status": "passed"
+    },
+    {
+      "name": "handoff artifacts stays default-off and only enables the explicit config value",
+      "status": "passed"
+    },
+    {
+      "name": "handoff artifacts builds a provenance-bound artifact from real worker output",
+      "status": "passed"
+    },
+    {
+      "name": "handoff artifacts keeps parent source IDs across the agent handoff boundary",
+      "status": "passed"
+    },
+    {
+      "name": "handoff artifacts redacts secrets before hashing or delivery",
+      "status": "passed"
+    },
+    {
+      "name": "handoff artifacts truncates oversized output to the explicit bound",
+      "status": "passed"
+    },
+    {
+      "name": "handoff artifacts rejects malformed output 0",
+      "status": "passed"
+    },
+    {
+      "name": "handoff artifacts rejects malformed output 1",
+      "status": "passed"
+    },
+    {
+      "name": "handoff artifacts captures only the matching terminal registry record",
+      "status": "passed"
+    },
+    {
+      "name": "handoff artifacts rejects cross-identity run leakage",
+      "status": "passed"
+    },
+    {
+      "name": "handoff artifacts rejects cross-identity session leakage",
+      "status": "passed"
+    },
+    {
+      "name": "handoff artifacts rejects cross-identity task leakage",
+      "status": "passed"
+    },
+    {
+      "name": "handoff artifacts rejects cross-identity role leakage",
+      "status": "passed"
+    },
+    {
+      "name": "handoff artifacts rejects cross-identity attempt leakage",
+      "status": "passed"
+    },
+    {
+      "name": "handoff artifacts rejects cross-identity child session leakage",
+      "status": "passed"
+    },
+    {
+      "name": "handoff artifacts does not accept a same-string taskId as the ledger taskNodeId",
+      "status": "passed"
+    },
+    {
+      "name": "handoff artifacts fails closed for wait, terminal-state, and missing-output failures",
+      "status": "passed"
+    },
+    {
+      "name": "handoff artifacts injects only the matching run and session artifact as untrusted evidence",
+      "status": "passed"
+    },
+    {
+      "name": "handoff artifacts blocks the dependent worker when the artifact is missing or rejected",
+      "status": "passed"
+    },
+    {
+      "name": "handoff artifacts reports disabled, idle, ready, and blocked runtime states",
+      "status": "passed"
+    },
+    {
+      "name": "host-invoke-security helpers rejects deep payloads",
+      "status": "passed"
+    },
+    {
+      "name": "host-invoke-security helpers allows authorized senders only",
+      "status": "passed"
+    },
+    {
+      "name": "host-invoke-security helpers redacts path/stack/secret fragments",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke dispatcher dispatches a typed request to the matching service action",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke dispatcher returns a validation error for malformed requests",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke dispatcher returns unsupported for unknown module/action pairs",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke dispatcher returns unsupported for inherited module and action names",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke dispatcher returns internal when a service action throws",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke dispatcher dispatches extension-contributed actions registered after dispatcher creation",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke dispatcher normalizes structured service errors into the existing envelope",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke dispatcher normalizes structured service errors into the existing envelope",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke dispatcher normalizes structured service errors into the existing envelope",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke dispatcher normalizes structured service errors into the existing envelope",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke dispatcher prevents extension actions from overriding existing host actions",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke security (P1-002) rejects missing and unauthorized senders when senderAuth is configured",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke security (P1-002) rejects payloads that exceed size limits",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke security (P1-002) rejects prototype-polluting payload keys",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke security (P1-002) sanitizes internal errors so renderer does not see stack/path/secret",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke security (P1-002) rejects unauthorized sender session URL prefixes when configured",
+      "status": "passed"
+    },
+    {
+      "name": "host invoke security (P1-002) preserves sandbox denial diagnostics in host error details",
+      "status": "passed"
+    },
+    {
+      "name": "Main-owned read observer windows constructs the owned entry and preload with an explicit read-only action list",
+      "status": "passed"
+    },
+    {
+      "name": "Main-owned read observer windows checks the exact app entry on each request and revokes observers with their primary owner",
+      "status": "passed"
+    },
+    {
+      "name": "Main-owned read observer windows releases authorization and the window when navigation fails during creation",
+      "status": "passed"
+    },
+    {
+      "name": "continuous local knowledge synchronization shares recursive roots while preserving independent patterns and final release",
+      "status": "passed"
+    },
+    {
+      "name": "continuous local knowledge synchronization does not deduplicate later edit cycles or delete/recreate back to the same content",
+      "status": "passed"
+    },
+    {
+      "name": "continuous local knowledge synchronization reconciles twenty native rename/change event bursts, updates and withdrawals without duplicates",
+      "status": "passed"
+    },
+    {
+      "name": "continuous local knowledge synchronization startup repairs modifications, new documents and deletions missed while stopped",
+      "status": "passed"
+    },
+    {
+      "name": "continuous local knowledge synchronization failed candidate capture never commits a cursor and remains retryable",
+      "status": "passed"
+    },
+    {
+      "name": "continuous local knowledge synchronization rejects oversized/binary files and never follows a symlink outside the root",
+      "status": "passed"
+    },
+    {
+      "name": "continuous local knowledge synchronization does not infer deletions from a capped incomplete scan and stops pending work",
+      "status": "passed"
+    },
+    {
+      "name": "A4 delegation task-scope gate uses the Main default resolver for 'a current explicit task link'",
+      "status": "passed"
+    },
+    {
+      "name": "A4 delegation task-scope gate uses the Main default resolver for 'the requested task after an unrelated…'",
+      "status": "passed"
+    },
+    {
+      "name": "A4 delegation task-scope gate uses the Main default resolver for 'a missing task'",
+      "status": "passed"
+    },
+    {
+      "name": "A4 delegation task-scope gate uses the Main default resolver for 'a missing link'",
+      "status": "passed"
+    },
+    {
+      "name": "A4 delegation task-scope gate uses the Main default resolver for 'another session link'",
+      "status": "passed"
+    },
+    {
+      "name": "A4 delegation task-scope gate uses the Main default resolver for 'an old-generation link'",
+      "status": "passed"
+    },
+    {
+      "name": "A4 delegation task-scope gate rejects before Gateway delegation when the explicit task scope is unavailable",
+      "status": "passed"
+    },
+    {
+      "name": "long-session delegation admission rejects task ownership before issuing a worker dispatch",
+      "status": "passed"
+    },
+    {
+      "name": "long-session delegation admission binds accepted children to coordinator, task, backend, permissions, and actual shared isolation without claiming completion",
+      "status": "passed"
+    },
+    {
+      "name": "long-session delegation admission replays a terminal receipt after owner restart without issuing another spawn",
+      "status": "passed"
+    },
+    {
+      "name": "long-session delegation admission coalesces a concurrent duplicate submission into one Gateway admission",
+      "status": "passed"
+    },
+    {
+      "name": "long-session delegation admission turns an in-flight record left by a terminated owner into outcome-unknown without retrying",
+      "status": "passed"
+    },
+    {
+      "name": "long-session delegation admission rejects a parent reset that crosses admission without reporting an accepted worker",
+      "status": "passed"
+    },
+    {
+      "name": "long-session delegation admission rejects a concurrent stop and never upgrades the stale accepted evidence",
+      "status": "passed"
+    },
+    {
+      "name": "long-session delegation admission does not reuse an expired or revoked grant and allows retry only through a fresh owner-approved id",
+      "status": "passed"
+    },
+    {
+      "name": "long-session delegation admission clamps child tool authorization to the parent allowlist",
+      "status": "passed"
+    },
+    {
+      "name": "long-session delegation admission preserves owner scheduling reasons in the dispatch receipt without aliasing the plan",
+      "status": "passed"
+    },
+    {
+      "name": "long-session delegation admission marks an accepted spawn without both child session and run identifiers as rejected",
+      "status": "passed"
+    },
+    {
+      "name": "long-session delegation admission records a refused spawn as rejected with no completion evidence",
+      "status": "passed"
+    },
+    {
+      "name": "long-session delegation admission records a real Git worktree as verified checkout isolation",
+      "status": "passed"
+    },
+    {
+      "name": "Main owner reclamation adapter closes only browser sessions for the exact session scope",
+      "status": "passed"
+    },
+    {
+      "name": "Main owner reclamation adapter leaves observed ports untouched and marks a remaining managed port for recovery",
+      "status": "passed"
+    },
+    {
+      "name": "Main owner reclamation adapter counts keep_on_leave terminals on archive without closing them",
+      "status": "passed"
+    },
+    {
+      "name": "desktop lifecycle helpers workspace delete closes only browser sessions in the removed workspace",
+      "status": "passed"
+    },
+    {
+      "name": "desktop lifecycle helpers app quit closes every process-scoped browser session",
+      "status": "passed"
+    },
+    {
+      "name": "E2 resource owner inventory retains a failed terminal owner result when another terminal was reclaimed",
+      "status": "passed"
+    },
+    {
+      "name": "E2 resource owner inventory describes exactly the five existing owners, with no universal resource table",
+      "status": "passed"
+    },
+    {
+      "name": "E2 resource owner inventory keeps ui-unload, run-cancel, archive and delete as distinct contracts",
+      "status": "passed"
+    },
+    {
+      "name": "E2 resource owner inventory never honors keep_on_leave for a delete, only for life-cycle actions",
+      "status": "passed"
+    },
+    {
+      "name": "E2 reclamation receipts does not touch any owner on ui-unload and records keep_on_leave separately",
+      "status": "passed"
+    },
+    {
+      "name": "E2 reclamation receipts reclaims every owned handle on session-delete and honors a keep_on_leave terminal",
+      "status": "passed"
+    },
+    {
+      "name": "E2 reclamation receipts marks recovery_required with a retry identity on owner failure or unknown",
+      "status": "passed"
+    },
+    {
+      "name": "E2 reclamation receipts keeps unknown/unsupported owners explicit instead of claiming reclamation",
+      "status": "passed"
+    },
+    {
+      "name": "E2 50 create/stop/archive-restore cycles leaves zero lane residue after 50 cycles and counts keep_on_leave separately",
+      "status": "passed"
+    },
+    {
+      "name": "E2 explicit coordination policy reads only explicit session limits and preserves unset values as null",
+      "status": "passed"
+    },
+    {
+      "name": "E2 explicit coordination policy rejects an exceeded budget and never treats an unavailable measurement as zero",
+      "status": "passed"
+    },
+    {
+      "name": "E2 explicit coordination policy fails closed when an action needs an owner but that owner is unavailable",
+      "status": "passed"
+    },
+    {
+      "name": "runtime long-session resource inventory retains known session owners when the worktree root cannot be read",
+      "status": "passed"
+    },
+    {
+      "name": "runtime long-session resource inventory reads admission permits and generation-bound worktrees without inventing measurements",
+      "status": "passed"
+    },
+    {
+      "name": "runtime long-session resource inventory keeps missing generation and missing workspace ownership explicit as unknown",
+      "status": "passed"
+    },
+    {
+      "name": "runtime long-session process budget rejects a second lifecycle-owned process before spawn when maxProcesses is one",
+      "status": "passed"
+    },
+    {
+      "name": "resource-aware orchestration scheduler never treats unmeasured cap undefined as infinite or a zero-sized wave",
+      "status": "passed"
+    },
+    {
+      "name": "resource-aware orchestration scheduler never treats unmeasured cap 0.5 as infinite or a zero-sized wave",
+      "status": "passed"
+    },
+    {
+      "name": "resource-aware orchestration scheduler never treats unmeasured cap NaN as infinite or a zero-sized wave",
+      "status": "passed"
+    },
+    {
+      "name": "resource-aware orchestration scheduler never treats unmeasured cap Infinity as infinite or a zero-sized wave",
+      "status": "passed"
+    },
+    {
+      "name": "resource-aware orchestration scheduler produces deterministic waves and metrics for identical task graphs",
+      "status": "passed"
+    },
+    {
+      "name": "resource-aware orchestration scheduler enforces max active roles in each ready wave",
+      "status": "passed"
+    },
+    {
+      "name": "resource-aware orchestration scheduler splits roles with exclusive tool contention into separate waves",
+      "status": "passed"
+    },
+    {
+      "name": "resource-aware orchestration scheduler skips nodes with unsatisfied dependencies and reports skipped metrics",
+      "status": "passed"
+    },
+    {
+      "name": "resource-aware orchestration scheduler uses custom exclusive tool groups and role cost overrides in metrics",
+      "status": "passed"
+    },
+    {
+      "name": "resource-aware orchestration scheduler packs disjoint write sets into the same wave and splits intersecting write sets",
+      "status": "passed"
+    },
+    {
+      "name": "resource-aware orchestration scheduler does not let custom roles bypass write-set conflicts without default write tools",
+      "status": "passed"
+    },
+    {
+      "name": "resource-aware orchestration scheduler keeps shared writers with incomplete write sets in single-writer waves",
+      "status": "passed"
+    },
+    {
+      "name": "resource-aware orchestration scheduler serializes worktree-intent writers until checkout isolation is verified",
+      "status": "passed"
+    },
+    {
+      "name": "resource-aware orchestration scheduler ignores a caller boolean claiming worktree isolation",
+      "status": "passed"
+    },
+    {
+      "name": "orchestration synthesizer returns deterministic synthesis while preserving roles, evidence, artifacts, traces, and blackboard summary",
+      "status": "passed"
+    },
+    {
+      "name": "orchestration synthesizer preserves verifier failure instead of reporting success",
+      "status": "passed"
+    },
+    {
+      "name": "orchestration synthesizer keeps repair-required status visible without granting tools or memory writes",
+      "status": "passed"
+    },
+    {
+      "name": "orchestration worktree merge evidence merges the first overlapping worktree and records the conflict for the second",
+      "status": "passed"
+    },
+    {
+      "name": "orchestration worktree merge evidence reports declared-vs-actual write-set drift from the git worktree status",
+      "status": "passed"
+    },
+    {
+      "name": "rejects late merge, freeze and cleanup requests after the same id is recreated",
+      "status": "passed"
+    },
+    {
+      "name": "worktree long-session ownership cleans only explicit ephemeral worktrees for the exact generation",
+      "status": "passed"
+    },
+    {
+      "name": "worktree long-session ownership rejects a new owned worktree before filesystem creation when maxWorktrees is reached",
+      "status": "passed"
+    },
+    {
+      "name": "process tree sampler measures a live busy child by its creation identity and observes its exit",
+      "status": "passed"
+    },
+    {
+      "name": "process tree sampler computes tree CPU percent from cumulative CPU-time deltas",
+      "status": "passed"
+    },
+    {
+      "name": "process tree sampler fails closed when process discovery is unavailable",
+      "status": "passed"
+    },
+    {
+      "name": "process tree sampler reports empty roots as empty rather than a healthy process tree",
+      "status": "passed"
+    },
+    {
+      "name": "process tree sampler reads a real process tree for the current process",
+      "status": "passed"
+    },
+    {
+      "name": "R0-2 sessions.delete partial failures returns partial with remainingPaths and keeps the index entry when an artefact unlink fails",
+      "status": "passed"
+    },
+    {
+      "name": "R0-2 sessions.delete partial failures returns partial when sessions.json read-modify-write fails after files were removed",
+      "status": "passed"
+    },
+    {
+      "name": "R0-2 sessions.delete partial failures reports success only when every artefact and the index update succeed",
+      "status": "passed"
+    },
+    {
+      "name": "R0-2 sessions.delete partial failures succeeds without a legacy sessions.json instead of failing the committed delete",
+      "status": "passed"
+    },
+    {
+      "name": "R0-2 sessions.delete partial failures keeps an unverified missing local store as a failure",
+      "status": "passed"
+    },
+    {
+      "name": "R0-2 sessions.delete partial failures retries the same runtime operation until its terminal owner confirms cleanup",
+      "status": "passed"
+    },
+    {
+      "name": "R0-2 sessions.delete partial failures removes runtime .jsonl.deleted.<timestamp> transcripts during hard delete",
+      "status": "passed"
+    },
+    {
+      "name": "R0-2 context archive cleanup (#101) permanentDelete removes the context archive and retains the archive index on partial failure",
+      "status": "passed"
+    },
+    {
+      "name": "R0-2 context archive cleanup (#101) emptyArchive removes the context archive when all derivatives are deletable",
+      "status": "passed"
+    },
+    {
+      "name": "R0-2 sessions.emptyArchive failures does not report success when an archived file could not be removed",
+      "status": "passed"
+    },
+    {
+      "name": "R0-3 chat abort/checkStuck reclamation keeps the run state when chat.abort fails and warns the user",
+      "status": "passed"
+    },
+    {
+      "name": "R0-3 chat abort/checkStuck reclamation releases UI state only after a confirmed abort",
+      "status": "passed"
+    },
+    {
+      "name": "R0-3 chat abort/checkStuck reclamation keeps exactly one pending checkStuck chain across consecutive sends",
+      "status": "passed"
+    },
+    {
+      "name": "R0-3 terminal session reclamation does not accumulate closed sessions in the map",
+      "status": "passed"
+    },
+    {
+      "name": "R0-3 terminal session reclamation reclaims records on process exit and hides exited sessions from list()",
+      "status": "passed"
+    },
+    {
+      "name": "R0-3 terminal session reclamation close on an already-reclaimed session is an idempotent no-op",
+      "status": "passed"
+    },
+    {
+      "name": "R0-3 terminal session reclamation shutdownAll kills every live session and empties all bookkeeping",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure contracts when latency worsens despite a full backlog",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure treats backlog as demand and grows gradually after healthy samples",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure reaches a configured large cap with sustained healthy one-slot growth",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure isolates read, long execution and remote service latency",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure isolates fast reads from Git and log output from builds within a phase",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure bounds operation baselines and rejects unbounded identities before admission",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure recovers concurrency after pressure while operation identities exceed the LRU",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure does not turn an isolated read pause into sustained serial execution",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure requires sustained recovery after congestion instead of learning overload as healthy",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure retains active ownership while pressure contracts admission and blocks demand-driven growth",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure needs fresh low-pressure observations spanning dwell; missing, replayed and stale samples cannot recover",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure retains each independent commit and event-loop cause until that signal recovers",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure does not use infinite commit capacity or a long observation gap as recovery",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure recovers a cached commit signal on its next fresh probe without replay advancing dwell",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure reclaims cold empty accounts and reconstructs them without evicting active or queued owners",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure propagates real lease categories and history semantics to feedback",
+      "status": "passed"
+    },
+    {
+      "name": "adaptive resource pressure merges commit counters with their original timestamp and discards stale readings",
+      "status": "passed"
+    },
+    {
+      "name": "integrated host budget and bounded waiting classifies 200 cross-workspace requests within the host cap and releases every wait resource",
+      "status": "passed"
+    },
+    {
+      "name": "integrated host budget and bounded waiting prefers a less-used tenant at equal QoS when global capacity is released",
+      "status": "passed"
+    },
+    {
+      "name": "integrated host budget and bounded waiting refuses a zero-length queue when only the global owner is saturated",
+      "status": "passed"
+    },
+    {
+      "name": "integrated host budget and bounded waiting expires and cancels global waiters without reserving capacity and rebuilds the live cap",
+      "status": "passed"
+    },
+    {
+      "name": "fabric bounded waiting enforces the exact waiting boundary and readmits after release",
+      "status": "passed"
+    },
+    {
+      "name": "fabric bounded waiting allows immediate grants with zero waiting slots",
+      "status": "passed"
+    },
+    {
+      "name": "fabric bounded waiting cancels before enqueue and during waiting, removing timers and listeners",
+      "status": "passed"
+    },
+    {
+      "name": "fabric bounded waiting checks expired admission, waiting expiration and expiration at grant",
+      "status": "passed"
+    },
+    {
+      "name": "fabric bounded waiting classifies all 200 requests with bounded peaks and no residual resources",
+      "status": "passed"
+    },
+    {
+      "name": "runtime bounded waiting enforces the exact waiting boundary and readmits after release",
+      "status": "passed"
+    },
+    {
+      "name": "runtime bounded waiting allows immediate grants with zero waiting slots",
+      "status": "passed"
+    },
+    {
+      "name": "runtime bounded waiting cancels before enqueue and during waiting, removing timers and listeners",
+      "status": "passed"
+    },
+    {
+      "name": "runtime bounded waiting checks expired admission, waiting expiration and expiration at grant",
+      "status": "passed"
+    },
+    {
+      "name": "runtime bounded waiting classifies all 200 requests with bounded peaks and no residual resources",
+      "status": "passed"
+    },
+    {
+      "name": "regression: old Fabric admission rejects overflow before adding a timer or waiter",
+      "status": "passed"
+    },
+    {
+      "name": "regression: old Fabric admission never invokes work cancelled between grant and callback",
+      "status": "passed"
+    },
+    {
+      "name": "regression: old Fabric admission does not grant an already expired deadline",
+      "status": "passed"
+    },
+    {
+      "name": "execution ownership and shared waits admits fresh history subscribers after abort without releasing abandoned work",
+      "status": "passed"
+    },
+    {
+      "name": "execution ownership and shared waits admits fresh history subscribers after deadline without releasing abandoned work",
+      "status": "passed"
+    },
+    {
+      "name": "execution ownership and shared waits expires the actual host caller while another history subscriber keeps its own deadline",
+      "status": "passed"
+    },
+    {
+      "name": "execution ownership and shared waits removes a host-expired history waiter before it can start",
+      "status": "passed"
+    },
+    {
+      "name": "execution ownership and shared waits fabric checks grant races and retains running capacity until work settles",
+      "status": "passed"
+    },
+    {
+      "name": "execution ownership and shared waits runtime checks grant races and retains running capacity until work settles",
+      "status": "passed"
+    },
+    {
+      "name": "execution ownership and shared waits isolates subscriber aborts and deadlines, including all leaving before work begins",
+      "status": "passed"
+    },
+    {
+      "name": "execution ownership and shared waits passes only remaining history time and cancels abandoned queued flights",
+      "status": "passed"
+    },
+    {
+      "name": "execution ownership and shared waits keeps a surviving subscriber when another deadline expires during shared work",
+      "status": "passed"
+    },
+    {
+      "name": "execution ownership and shared waits preserves shared rejection including undefined",
+      "status": "passed"
+    },
+    {
+      "name": "execution ownership and shared waits preserves shared rejection including Error: failed",
+      "status": "passed"
+    },
+    {
+      "name": "ResourceFabric chat.history admission coalesces duplicate in-flight chat.history requests",
+      "status": "passed"
+    },
+    {
+      "name": "ResourceFabric chat.history admission releases the singleflight after a slow history request so a later retry runs again",
+      "status": "passed"
+    },
+    {
+      "name": "ResourceFabric chat.history admission limits distinct chat.history requests while allowing non-history RPCs through",
+      "status": "passed"
+    },
+    {
+      "name": "ResourceFabric invariants I1: interactive work is never rejected by the account limit",
+      "status": "passed"
+    },
+    {
+      "name": "ResourceFabric invariants I2: active usage never exceeds the current account limit",
+      "status": "passed"
+    },
+    {
+      "name": "ResourceFabric invariants I3: DRF-lite share stays within the two-times fairness bound",
+      "status": "passed"
+    },
+    {
+      "name": "ResourceFabric invariants writes each limit adjustment into the resource-envelope ledger",
+      "status": "passed"
+    },
+    {
+      "name": "ResourceFabric P2 pressure runs 20 exec plus 20 history with zero timeouts and a replayable limit trace",
+      "status": "passed"
+    },
+    {
+      "name": "resource fabric P0 primitives evicts LRU entries, expires by injected TTL, and invalidates by prefix",
+      "status": "passed"
+    },
+    {
+      "name": "resource fabric P0 primitives coalesces same-key work and does not cache rejected calls",
+      "status": "passed"
+    },
+    {
+      "name": "resource fabric P0 primitives adjusts adaptive limits with bounds and a dead zone",
+      "status": "passed"
+    },
+    {
+      "name": "resource fabric P0 primitives removes and clears queued priority items",
+      "status": "passed"
+    },
+    {
+      "name": "resource fabric P0 primitives enforces token-bucket bursts with injected time and rejects invalid input",
+      "status": "passed"
+    },
+    {
+      "name": "resource fabric P0 primitives orders QoS, boosts explicit work, and ages opportunistic work",
+      "status": "passed"
+    },
+    {
+      "name": "resource fabric P0 primitives enforces DRF-lite capacity and fairness bounds",
+      "status": "passed"
+    },
+    {
+      "name": "workspace exec lease preserves FIFO, capacity and queuedMs for 200 queued requests",
+      "status": "passed"
+    },
+    {
+      "name": "workspace exec lease removes timed-out work and admits the next waiter after release",
+      "status": "passed"
+    },
+    {
+      "name": "workspace exec lease releases a slot after synchronous throws and asynchronous rejections",
+      "status": "passed"
+    },
+    {
+      "name": "workspace exec lease does not let a stale double release over-admit while another lease is held",
+      "status": "passed"
+    },
+    {
+      "name": "workspace exec lease grants up to capacity 2 immediately and queues the third",
+      "status": "passed"
+    },
+    {
+      "name": "workspace exec lease does not block a different workspace key",
+      "status": "passed"
+    },
+    {
+      "name": "workspace exec lease records active and queued slots in the shadow resource envelope",
+      "status": "passed"
+    },
+    {
+      "name": "workspace exec lease rejects with a typed timeout error when the slot never frees",
+      "status": "passed"
+    },
+    {
+      "name": "lifecycle report evidence gate verifies identity-bound exits and reports explicit observation scope",
+      "status": "passed"
+    },
+    {
+      "name": "lifecycle report evidence gate rejects smoke as formal evidence and rejects missing exit receipts",
+      "status": "passed"
+    },
+    {
+      "name": "lifecycle report evidence gate rejects stale process identities and remaining active ownership",
+      "status": "passed"
+    },
+    {
+      "name": "lifecycle report evidence gate rejects reused lifecycle receipts and overlapping stages",
+      "status": "passed"
+    },
+    {
+      "name": "lifecycle report evidence gate keeps unknown empty process measurements null",
+      "status": "passed"
+    },
+    {
+      "name": "lifecycle report evidence gate uses receipt arrival for cross-process clock ordering and rejects reversed local order",
+      "status": "passed"
+    },
+    {
+      "name": "lifecycle report evidence gate requires complete chronological observation coverage for formal intervals",
+      "status": "passed"
+    },
+    {
+      "name": "process metrics calibration deduplicates overlapping Main/Gateway trees while preserving logical leases",
+      "status": "passed"
+    },
+    {
+      "name": "process metrics calibration uses the latest generation of a reused PID rather than adding both",
+      "status": "passed"
+    },
+    {
+      "name": "process metrics calibration rejects stale and future snapshots before their logical occupancy is added",
+      "status": "passed"
+    },
+    {
+      "name": "process metrics calibration selects the latest producer epoch and does not refresh a stale measurement on merge",
+      "status": "passed"
+    },
+    {
+      "name": "process metrics calibration starts a new CPU interval after PID reuse, discovery failure or an expired sample",
+      "status": "passed"
+    },
+    {
+      "name": "resource measurement owners holds background work for a busy Gateway while Main is idle and waits for measured recovery",
+      "status": "passed"
+    },
+    {
+      "name": "resource measurement owners projects the existing Gateway event-loop classification with an epoch and clears it on stop",
+      "status": "passed"
+    },
+    {
+      "name": "resource measurement owners feeds fresh event-loop pressure to the existing background gate",
+      "status": "passed"
+    },
+    {
+      "name": "mixed workload independent recomputation replaces drive-relative overrides with captured canonical paths before a D-drive workload",
+      "status": "passed"
+    },
+    {
+      "name": "mixed workload independent recomputation rejects relative ESBUILD_BINARY_PATH before a different working directory can select another binary",
+      "status": "passed"
+    },
+    {
+      "name": "mixed workload independent recomputation rejects relative ELECTRON_OVERRIDE_DIST_PATH before a different working directory can select another binary",
+      "status": "passed"
+    },
+    {
+      "name": "mixed workload independent recomputation uses nearest-rank percentiles and recomputes throughput from verified completions",
+      "status": "passed"
+    },
+    {
+      "name": "mixed workload independent recomputation rejects missing receipts, duplicate work, residual children and empty input measurements",
+      "status": "passed"
+    },
+    {
+      "name": "mixed workload independent recomputation requires exact ABBA groups and retains tail-latency regressions",
+      "status": "passed"
+    },
+    {
+      "name": "mixed workload independent recomputation excludes late input, scrolling and memory observations from workload percentiles",
+      "status": "passed"
+    },
+    {
+      "name": "mixed workload independent recomputation labels the process-tree CPU observation with its longer sampling interval",
+      "status": "passed"
+    },
+    {
+      "name": "resource observer lifetime recovers from synchronous and asynchronous polling failures without overlapping work",
+      "status": "passed"
+    },
+    {
+      "name": "resource observer lifetime uses native visibility over Chromium and ignores an older visibility response",
+      "status": "passed"
+    },
+    {
+      "name": "resource observer lifetime shares a single refresh and releases only the final observer",
+      "status": "passed"
+    },
+    {
+      "name": "resource observer lifetime ignores a stopped generation response and shares explicit refreshes",
+      "status": "passed"
+    },
+    {
+      "name": "resource observer lifetime does not issue shed requests while hidden and refreshes when visible",
+      "status": "passed"
+    },
+    {
+      "name": "read-only query cache coalesces concurrent loads and honors TTL without caching rejections",
+      "status": "passed"
+    },
+    {
+      "name": "read-only query cache invalidates a cache prefix explicitly",
+      "status": "passed"
+    },
+    {
+      "name": "poll scheduler priority does not run background polls while shed, but never suppresses interactive polls",
+      "status": "passed"
+    },
+    {
+      "name": "poll scheduler stops callbacks while hidden or blocked and never overlaps work",
+      "status": "passed"
+    },
+    {
+      "name": "releases50 native watcher lifecycles and bounded cached payloads with readback",
+      "status": "passed"
+    },
+    {
+      "name": "TimerAligner runs aligned tasks and stretches non-interactive work while shedding",
+      "status": "passed"
+    },
+    {
+      "name": "TimerAligner does not overlap async work and releases its interval when empty",
+      "status": "passed"
+    },
+    {
+      "name": "WatcherHub shares one directory watcher across subscribers and closes it with the last one",
+      "status": "passed"
+    },
+    {
+      "name": "WatcherHub shares one file watcher across subscribers and removes it on the last close",
+      "status": "passed"
+    },
+    {
+      "name": "resource watcher handle pressure reduces real fs watcher handles by at least 60% across shared roots",
+      "status": "passed"
+    },
+    {
+      "name": "window resource lifetimes publishes per-window native visibility and releases bridge listeners on close",
+      "status": "passed"
+    },
+    {
+      "name": "window resource lifetimes aggregates visibility and detaches a closed window before reopen",
+      "status": "passed"
+    },
+    {
+      "name": "window resource lifetimes releases power listeners on stop and creates one set on restart",
+      "status": "passed"
+    },
+    {
+      "name": "window resource lifetimes ignores a late pressure result after stopping and restarting its generation",
+      "status": "passed"
+    },
+    {
+      "name": "window resource lifetimes releases observation pressure on stop without dropping queued work",
+      "status": "passed"
+    },
+    {
+      "name": "window resource lifetimes feeds fresh memory pressure to admission and clears it when sampling stops",
+      "status": "passed"
+    },
+    {
+      "name": "role registry exposes built-in roles when no config roles are present",
+      "status": "passed"
+    },
+    {
+      "name": "role registry merges config roles and lets config override a built-in by name",
+      "status": "passed"
+    },
+    {
+      "name": "role registry skips invalid config roles and records issues without throwing",
+      "status": "passed"
+    },
+    {
+      "name": "role effort mapping maps role effort to a thinking level, with auto -> adaptive",
+      "status": "passed"
+    },
+    {
+      "name": "role permissions policy denies write/edit/exec/bash when filesystem is read",
+      "status": "passed"
+    },
+    {
+      "name": "role permissions policy denies all fs tools + shell when filesystem is none",
+      "status": "passed"
+    },
+    {
+      "name": "role permissions policy denies network tools when network is none",
+      "status": "passed"
+    },
+    {
+      "name": "role-driven spawn mapping compiles SOUL into the role system prompt",
+      "status": "passed"
+    },
+    {
+      "name": "role-driven spawn mapping maps model/effort/SOUL into spawn params",
+      "status": "passed"
+    },
+    {
+      "name": "role-driven spawn mapping injects role memory through a context pack and records an explain entry",
+      "status": "passed"
+    },
+    {
+      "name": "role-driven spawn mapping #183 counts the role-spawn memory injection it cannot charge to a turn budget",
+      "status": "passed"
+    },
+    {
+      "name": "role-driven spawn mapping does not inject or record role memory when Role Memory is disabled",
+      "status": "passed"
+    },
+    {
+      "name": "role-driven spawn mapping #183 skips the role-spawn memory block when the DCS projection owns it",
+      "status": "passed"
+    },
+    {
+      "name": "role-driven spawn mapping #183 keeps the role-spawn memory block when the projection is off",
+      "status": "passed"
+    },
+    {
+      "name": "role-driven spawn mapping sets a hard tool allowlist from the role tools + permission-derived deny",
+      "status": "passed"
+    },
+    {
+      "name": "role-driven spawn mapping spawns through an injected spawn fn and reports role-not-found",
+      "status": "passed"
+    },
+    {
+      "name": "orchestrator run bridge spawns initial workers and defers verifier through orchestration metadata",
+      "status": "passed"
+    },
+    {
+      "name": "orchestrator run bridge records failures when a spawn is rejected",
+      "status": "passed"
+    },
+    {
+      "name": "orchestrator run bridge honors template roles and maxWorkers before spawning",
+      "status": "passed"
+    },
+    {
+      "name": "orchestrator run bridge keeps production execution waves aligned with the plan write-set contract",
+      "status": "passed"
+    },
+    {
+      "name": "orchestrator run bridge creates a worktree and passes its cwd to isolated workers",
+      "status": "passed"
+    },
+    {
+      "name": "orchestrator run bridge checks actual Git isolation after async preparation (tampered=false)",
+      "status": "passed"
+    },
+    {
+      "name": "orchestrator run bridge checks actual Git isolation after async preparation (tampered=true)",
+      "status": "passed"
+    },
+    {
+      "name": "RolesOrchestrationPanel records successful orchestration plan previews to Task Ledger as read-only projections",
+      "status": "passed"
+    },
+    {
+      "name": "RolesOrchestrationPanel saves lightweight plan edits to Task Ledger without creating a DAG editor",
+      "status": "passed"
+    },
+    {
+      "name": "RolesOrchestrationPanel creates a config-backed role through the typed host API and shows pending runtime refresh state",
+      "status": "passed"
+    },
+    {
+      "name": "RolesOrchestrationPanel edits only config roles from the selected role detail",
+      "status": "passed"
+    },
+    {
+      "name": "RolesOrchestrationPanel does not offer editing for built-in roles",
+      "status": "passed"
+    },
+    {
+      "name": "RolesOrchestrationPanel exports accepted memory through the single surface and deletes through tombstone confirmation",
+      "status": "passed"
+    },
+    {
+      "name": "RolesOrchestrationPanel shows memory proposal source metadata in the review queue without claiming automatic writes",
+      "status": "passed"
+    },
+    {
+      "name": "runtime efficiency host api fails closed to not-sampled before any real sample",
+      "status": "passed"
+    },
+    {
+      "name": "runtime efficiency host api persists the toggle and starts or stops the sampler",
+      "status": "passed"
+    },
+    {
+      "name": "runtime efficiency host api rejects a non-boolean payload instead of guessing",
+      "status": "passed"
+    },
+    {
+      "name": "session storage with real Git and files measures files, marks bounded scans and never follows junctions",
+      "status": "passed"
+    },
+    {
+      "name": "session storage with real Git and files reports real worktrees and protects primary, dirty, locked and registered checkouts",
+      "status": "passed"
+    },
+    {
+      "name": "session storage with real Git and files retains the branch after approved idle removal and rejects stale cleanup of new changes",
+      "status": "passed"
+    },
+    {
+      "name": "session storage with real Git and files sizes session transcripts and releases only the exact workspace/session owners",
+      "status": "passed"
+    },
+    {
+      "name": "session storage with real Git and files waits for terminal owner exit and records a rejected cleanup as failed",
+      "status": "passed"
+    },
+    {
+      "name": "native shared observation retains independent file listeners after the hub releases its last reference",
+      "status": "passed"
+    },
+    {
+      "name": "native shared observation recovers a recursive directory subscription after native deletion and recreation",
+      "status": "passed"
+    },
+    {
+      "name": "native shared observation records ABBA handle and memory samples for equal overlapping subscription work",
+      "status": "passed"
+    },
+    {
+      "name": "independent watcher ownership keeps two subscriptions with the same callback until both handles close",
+      "status": "passed"
+    },
+    {
+      "name": "independent watcher ownership does not let an old handle close a recreated subscription",
+      "status": "passed"
+    },
+    {
+      "name": "independent watcher ownership updates the shared file poll to the fastest active interval",
+      "status": "passed"
+    },
+    {
+      "name": "independent watcher ownership routes overlapping recursive and shallow subscriptions using their own roots and filters",
+      "status": "passed"
+    },
+    {
+      "name": "independent watcher ownership unregisters only its file callback and ignores late delivery from an old poll",
+      "status": "passed"
+    },
+    {
+      "name": "independent watcher ownership restores the original file poll when a faster backend cannot start",
+      "status": "passed"
+    },
+    {
+      "name": "read-only cache generation does not return or publish an invalidated pending result to new callers",
+      "status": "passed"
+    },
+    {
+      "name": "read-only cache generation clear separates pending loads and respects the requesting TTL",
+      "status": "passed"
+    },
+    {
+      "name": "Task Ledger physical process identity keeps a real OS birth identity when the project cwd contains shadow shell executables",
+      "status": "passed"
+    },
+    {
+      "name": "Task Ledger physical process identity keeps query failure unknown and refuses to publish a guessed own incarnation",
+      "status": "passed"
+    },
+    {
+      "name": "Task Ledger physical process identity reads the same native birth identity after the preferred shell times out",
+      "status": "passed"
+    },
+    {
+      "name": "runtime graph state keeps distinct runtime tool updates for the same tool call",
+      "status": "passed"
+    },
+    {
+      "name": "runtime graph state does not drop full-text assistant deltas that do not extend the previous prefix",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps projects runtime tool events into active execution graph steps",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps projects the external-write risk onto a governed exec approval step",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps builds running steps from streaming tool status without exposing chain-of-thought",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps keeps completed tool steps visible while a later tool is still streaming",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps keeps historical tool results and final assistant reply locatable in the execution graph",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps upgrades a completed historical tool step when streaming status reports a later state",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps keeps all steps when the execution graph exceeds the previous max length",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps keeps recent completed tool steps from assistant history",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps does not expose streaming chain-of-thought in the execution graph",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps skips internal assistant turns and hides NO_REPLY from the execution graph",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps keeps earlier reply segments in the graph when the last streaming segment is rendered separately",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps folds earlier reply segments into the graph but leaves the final answer for the chat bubble",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps strips folded process narration from the final reply text",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps builds a branch for spawned subagents",
+      "status": "passed"
+    },
+    {
+      "name": "deriveTaskSteps parses internal subagent completion events from injected user messages",
+      "status": "passed"
+    },
+    {
+      "name": "run completion detection treats delivered image attachments as a final reply after image generation tools",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api workspace exec lease bounds concurrent terminal executions per workspace at capacity 2",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api workspace exec lease lets different workspaces run in parallel",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api workspace exec lease shares capacity across Windows case and slash variants and API instances",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api workspace exec lease keeps RPC method fallback inside the lease and releases after a Gateway failure",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api workspace exec lease subtracts queue and fallback time from the same terminal deadline",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api workspace exec lease maps full waiting capacity to a blocked terminal result",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api workspace exec lease queues approved work too and records admission timeout without executing it later",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api workspace exec lease reports a stable blocked result when the lease cannot be acquired in time",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api OpenClaw exec integration delegates allowed terminal commands to OpenClaw/Gateway instead of spawning a local shell",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api OpenClaw exec integration tries compatible OpenClaw exec RPC names and never falls back to PowerShell",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api OpenClaw exec integration returns an explicit unavailable result when OpenClaw exposes no direct terminal RPC",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api OpenClaw exec integration requires approval for dangerous commands before delegating to OpenClaw",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api OpenClaw exec integration records a bounded diagnostic for failed approved terminal commands",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api OpenClaw exec integration maps safe Gateway failure metadata to { success: false, code: 'ENOENT', exitCode: 1 }",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api OpenClaw exec integration maps safe Gateway failure metadata to { success: false, code: 'EACCES', exitCode: 1 }",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api OpenClaw exec integration maps safe Gateway failure metadata to { success: false, timedOut: true, exitCode: null }",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api OpenClaw exec integration maps safe Gateway failure metadata to { success: false, cancelled: true, exitCode: null }",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api OpenClaw exec integration does not record successful approved terminal commands",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api OpenClaw exec integration blocks mutating commands in read-only mode before reaching Gateway",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api OpenClaw exec integration returns structured sandbox denial details when the sandbox gate fails closed",
+      "status": "passed"
+    },
+    {
+      "name": "terminal api OpenClaw exec integration keeps the tail of oversized terminal output",
+      "status": "passed"
+    },
+    {
+      "name": "TerminalSessionManager closes a Windows PTY input pipe on native exit, not merely on cancellation",
+      "status": "passed"
+    },
+    {
+      "name": "TerminalSessionManager retains a native terminal receipt when persistence fails and retries through the owner",
+      "status": "passed"
+    },
+    {
+      "name": "TerminalSessionManager retains a port reservation when native exit still leaves a listener and confirms a later cleanup",
+      "status": "passed"
+    },
+    {
+      "name": "TerminalSessionManager shares declared process capacity with governed work and retains a slot until native exit",
+      "status": "passed"
+    },
+    {
+      "name": "TerminalSessionManager rejects another generation or task before reusing a terminal or sending input",
+      "status": "passed"
+    },
+    {
+      "name": "TerminalSessionManager records a native spawn with unknown outcome as a recoverable reservation",
+      "status": "passed"
+    },
+    {
+      "name": "TerminalSessionManager holds a terminal close receipt until the native owner reports exit",
+      "status": "passed"
+    },
+    {
+      "name": "TerminalSessionManager retains terminal occupancy when the native owner rejects termination",
+      "status": "passed"
+    },
+    {
+      "name": "TerminalSessionManager reads a PID that becomes available after the native PTY connection starts",
+      "status": "passed"
+    },
+    {
+      "name": "TerminalSessionManager adds a managed OfficeCLI install dir to interactive terminal PATH",
+      "status": "passed"
+    },
+    {
+      "name": "TerminalSessionManager idle classification classifies pure states including output freshness winning over interaction staleness",
+      "status": "passed"
+    },
+    {
+      "name": "TerminalSessionManager idle classification transitions interactive -> running-process -> interactive -> idle with real event flow",
+      "status": "passed"
+    },
+    {
+      "name": "TerminalSessionManager idle classification honors the CLAWX_TERMINAL_OUTPUT_IDLE_MS environment override",
+      "status": "passed"
+    },
+    {
+      "name": "TerminalSessionManager long-session lifecycle defaults keep_on_leave to true and preserves the physical generation",
+      "status": "passed"
+    },
+    {
+      "name": "TerminalSessionManager long-session lifecycle rejects a terminal before spawn when the explicit background terminal budget is full",
+      "status": "passed"
+    },
+    {
+      "name": "TerminalSessionManager long-session lifecycle runs 50 archive/delete cycles without terminal residue",
+      "status": "passed"
+    },
+    {
+      "name": "TerminalSessionManager long-session lifecycle reclaims only terminals bound to the requested generation",
+      "status": "passed"
+    },
+    {
+      "name": "VerseGit cleanup barrier protocol seals, detaches, completes and rejects every identity drift before deletion",
+      "status": "passed"
+    },
+    {
+      "name": "VerseGit cleanup barrier protocol fails closed for references, unobserved inventory, missing evidence, preserved resources and premature completion",
+      "status": "passed"
+    },
+    {
+      "name": "VerseGit cleanup barrier protocol records late events without overwriting a sealed or deleted outcome",
+      "status": "passed"
+    },
+    {
+      "name": "VerseGit cleanup barrier protocol resumes a sealed record after restart and reports survivors as recovery_required",
+      "status": "passed"
+    },
+    {
+      "name": "production cleanup caller uses the same barrier for normal cleanup and removes owned worktree/temp/manager resources",
+      "status": "passed"
+    },
+    {
+      "name": "production cleanup caller uses the same barrier for failure cleanup and removes owned worktree/temp/manager resources",
+      "status": "passed"
+    },
+    {
+      "name": "production cleanup caller uses the same barrier for cancel cleanup and removes owned worktree/temp/manager resources",
+      "status": "passed"
+    },
+    {
+      "name": "production cleanup caller uses the same barrier for stale cleanup and removes owned worktree/temp/manager resources",
+      "status": "passed"
+    },
+    {
+      "name": "production cleanup caller preserves user changes outside the agent write set and reports recovery_required",
+      "status": "passed"
+    },
+    {
+      "name": "production cleanup caller refuses a direct worktree delete when VerseGit cleanup has no detached seal",
+      "status": "passed"
+    },
+    {
+      "name": "workspaces api compatibility migration hydrates old agentId/session fields into selectedAgentId and agentBindings",
+      "status": "passed"
+    },
+    {
+      "name": "workspaces api compatibility migration publishes background membership after persistence without publishing draft-only edits",
+      "status": "passed"
+    },
+    {
+      "name": "workspaces api compatibility migration normalizes legacy nested session folders and new parent input to one level",
+      "status": "passed"
+    },
+    {
+      "name": "workspaces api compatibility migration creates the default workspace from list when no workspace exists",
+      "status": "passed"
+    },
+    {
+      "name": "workspaces api compatibility migration falls back to the default workspace when the stored active id is missing",
+      "status": "passed"
+    },
+    {
+      "name": "workspaces api compatibility migration keeps independent UI state for each session inside a workspace",
+      "status": "passed"
+    },
+    {
+      "name": "workspaces api compatibility migration does not copy the previous active session state into a newly selected empty session",
+      "status": "passed"
+    },
+    {
+      "name": "workspaces api compatibility migration keeps each agent binding session independent within the same workspace",
+      "status": "passed"
+    },
+    {
+      "name": "workspaces api compatibility migration does not inherit the previous agent state when switching to a new agent binding",
+      "status": "passed"
+    },
+    {
+      "name": "workspaces api compatibility migration seeds the Verse Claw harness when creating a workspace profile",
+      "status": "passed"
+    },
+    {
+      "name": "workspaces api compatibility migration switches workspaces without rewriting the target workspace session or state",
+      "status": "passed"
+    },
+    {
+      "name": "workspaces api compatibility migration P2-001: creates new workspaces with readOnly permission mode by default",
+      "status": "passed"
+    },
+    {
+      "name": "workspaces api compatibility migration P2-001: preserves explicit acceptEdits and audits permission mode changes",
+      "status": "passed"
+    },
+    {
+      "name": "workspaces api compatibility migration P2-001: auto-default workspace is readOnly and invalid modes migrate to readOnly not acceptEdits",
+      "status": "passed"
+    },
+    {
+      "name": "workspaces api compatibility migration switches workspaces without closing the previous workspace resources",
+      "status": "passed"
+    },
+    {
+      "name": "workspaces api compatibility migration workspace delete reclaims Main browser and managed-port owners",
+      "status": "passed"
+    }
+  ]
+}
