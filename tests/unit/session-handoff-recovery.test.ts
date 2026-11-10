@@ -14,7 +14,7 @@ vi.mock('electron-store', () => ({ default: class {
 } }));
 vi.mock('@electron/utils/paths', () => ({
   getOpenClawConfigDir: () => state.root, expandPath: (path: string) => path, getResourcesDir: () => resolve('resources'),
-  getUserDataDir: () => state.root,
+  getUserDataDir: () => state.root, getDataDir: () => state.root,
 }));
 vi.mock('@electron/utils/store', () => ({ getSetting: async () => undefined, setSetting: vi.fn() }));
 vi.mock('@electron/services/workspace-runtime-sync', () => ({ syncActiveWorkspacePermissionToRuntime: vi.fn(), syncActiveWorkspaceRootToRuntime: vi.fn() }));
