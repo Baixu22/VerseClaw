@@ -40,6 +40,7 @@ ownedPaths:
   - tests/unit/gateway-worker-history-metadata.test.ts
   - tests/unit/gateway-session-active-runs.test.ts
   - tests/unit/task-ledger-snapshot-cache.test.ts
+  - tests/unit/chat-send-input-mode.test.ts
   - tests/unit/session-chain-panels.test.tsx
   - tests/unit/workspace-agents-panel-failure.test.tsx
   - tests/unit/session-handoff-recovery.test.ts
@@ -108,10 +109,12 @@ acceptance:
   - Fenced worker history uses the existing Gateway request budget, clamped by the caller's logical deadline, so a concurrent parent history read does not impose a separate ten-second limit.
   - Worker navigation, intervention recovery and coordinator isolation run as separate Electron cases while retaining the complete original journey assertions.
   - Canonical Task Ledger reads skip a contended derived snapshot-cache refresh without waiting on its write lock; explicit cache writes retain serialization, and event or Task owner read failures still reject the read.
+  - A queued worker message rejected by the chat owner remains recoverable in the original queue with the rejection recorded; it is not marked drained.
   - Session describe and list share the tracked-run owner projection; retained terminal abort entries stay available for idempotency without keeping a finished worker active.
   - Task Ledger worker links use runtime source facts to open the existing transcript surface under the correct coordinator.
   - Four-locale Electron journeys and focused negative tests identify the same candidate and agent actor.
 requiredTests:
+  - pnpm exec vitest run tests/unit/chat-send-input-mode.test.ts --maxWorkers=1 --no-file-parallelism
   - pnpm exec vitest run tests/unit/task-ledger-snapshot-cache.test.ts --maxWorkers=1 --no-file-parallelism
   - pnpm exec vitest run tests/unit/gateway-session-active-runs.test.ts --maxWorkers=1 --no-file-parallelism
   - pnpm run typecheck

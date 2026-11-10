@@ -18,12 +18,15 @@ test(`a real delegated worker receives its own task, reports separately and acce
   let holdNext = false;
   let held = false;
   let releaseHold = () => {};
+  const providerTurns: Array<{ at: string; markers: string[] }> = [];
   const llm = await startScriptedLlm(async (text) => {
+    providerTurns.push({ at: new Date().toISOString(), markers: text.match(/WORKER-[A-Z-]+/g) ?? [] });
     if (holdNext && text.includes('WORKER-HOLD')) {
       holdNext = false; held = true;
       await new Promise<void>((resolve) => { releaseHold = resolve; });
       return { text: 'WORKER-HOLD-FINISHED' };
     }
+    if (text.includes('WORKER-QUEUED')) return { text: 'WORKER-QUEUED-FINISHED' };
     if (text.includes('WORKER-FOLLOWUP')) return { text: 'WORKER-FOLLOWUP-RECORDED' };
     if (text.includes('WORKER-EFFECT') && !wrote) {
       wrote = true;
@@ -38,6 +41,18 @@ test(`a real delegated worker receives its own task, reports separately and acce
     const original = handlers.get('host:invoke')!;
     const state = globalThis as unknown as { u4WorkerDispatches: Array<{ request: unknown; startedAt: number; endedAt?: number; result?: unknown; error?: string }> };
     state.u4WorkerDispatches = [];
+    const observer = globalThis as unknown as { u4WorkerRuntimeEvents: Array<{ channel: string; data: unknown; at: number }> };
+    observer.u4WorkerRuntimeEvents = [];
+    const { BrowserWindow } = process.mainModule!.require('electron') as typeof import('electron');
+    for (const window of BrowserWindow.getAllWindows()) {
+      const send = window.webContents.send.bind(window.webContents);
+      window.webContents.send = (channel, ...args) => {
+        if (channel === 'chat:runtime-event' || channel === 'gateway:chat-message') {
+          observer.u4WorkerRuntimeEvents.push({ channel, data: args[0], at: Date.now() });
+        }
+        send(channel, ...args);
+      };
+    }
     ipcMain.removeHandler('host:invoke');
     ipcMain.handle('host:invoke', async (event, request: { module?: string; action?: string; payload?: unknown }) => {
       if (request.module !== 'sessions' || request.action !== 'sendWorker') return original(event, request);
@@ -56,6 +71,11 @@ test(`a real delegated worker receives its own task, reports separately and acce
   const dispatchTimeout = hostActionTimeoutMs('sessions', 'sendWorker');
   try {
     await configureSessionChainProvider(app, llm.port);
+    const secondAgent = journey === 'isolation'
+      ? (await hostInvoke<{ agents: Array<{ id: string; name: string }> }>(app, 'agents', 'create', {
+        name: 'Independent coordinator', inheritWorkspace: true,
+      })).agents.find(agent => agent.name === 'Independent coordinator') : null;
+    if (journey === 'isolation') expect(secondAgent).toBeTruthy();
     const project = await createSessionChainProject(app, testInfo.outputPath('workspace'), 'Worker project');
     const rpc = <T,>(method: string, params: Record<string, unknown>) => hostInvoke<T>(app, 'gateway', 'rpc', { method, params, timeoutMs: 60_000 });
     const taskContract: TaskContractInput = { objective: 'Verify a delegated task', target: 'worker.txt', constraints: ['Preserve the project coordinator'],
@@ -257,11 +277,7 @@ test(`a real delegated worker receives its own task, reports separately and acce
     }
 
     if (journey === 'isolation') {
-    const assistants = await hostInvoke<{ agents: Array<{ id: string; name: string }> }>(app, 'agents', 'create', {
-      name: 'Independent coordinator', inheritWorkspace: true,
-    });
-    const secondAgent = assistants.agents.find((agent) => agent.name === 'Independent coordinator')!;
-    expect(secondAgent).toBeTruthy();
+    if (!secondAgent) throw new Error('Independent coordinator was not created');
     const second = await rpc<{ key: string; sessionId: string }>('sessions.create', { agentId: secondAgent.id, label: 'Independent coordinator' });
     await hostInvoke(app, 'workspaces', 'saveState', { id: project.workspaceId, sessionKey: second.key, state: {} });
     await hostInvoke(app, 'workspaces', 'update', { id: project.workspaceId, agentId: secondAgent.id, sessionKey: second.key, activeSessionKey: second.key });
@@ -352,11 +368,21 @@ test(`a real delegated worker receives its own task, reports separately and acce
     if (receipt?.children[0].childSessionKey) {
       evidence.failureControlHistory = await hostInvoke(app, 'sessions', 'longTaskControlHistory', { sessionKey: receipt.children[0].childSessionKey, limit: 200 }).catch(String);
       evidence.failureControlStatus = await hostInvoke(app, 'sessions', 'longTaskControlStatus', { sessionKey: receipt.children[0].childSessionKey }).catch(String);
+      const control = evidence.failureControlStatus as { latestIntervention?: { idempotencyKey?: string } } | undefined;
+      const eventKey = control?.latestIntervention?.idempotencyKey;
+      if (eventKey?.startsWith('queue_drain_')) {
+        const runId = eventKey.replace(/:(?:drained|failed|event)$/, '');
+        evidence.queueDrainOwner = await hostInvoke(app, 'gateway', 'rpc', {
+          method: 'agent.wait', params: { runId, timeoutMs: 1000 }, timeoutMs: 10_000,
+        }).catch(String);
+      }
     }
     throw error;
   }
   finally {
     releaseHold();
+    evidence.providerTurns = providerTurns;
+    evidence.runtimeEvents = await app.evaluate(() => (globalThis as unknown as { u4WorkerRuntimeEvents: unknown[] }).u4WorkerRuntimeEvents).catch(String);
     evidence.workerDispatches = await app.evaluate(() => (globalThis as unknown as { u4WorkerDispatches: unknown[] }).u4WorkerDispatches).catch(String);
     await writeFile(testInfo.outputPath('worker-main.log'), mainOutput.join(''));
     evidence.providerLog = llm.log;
