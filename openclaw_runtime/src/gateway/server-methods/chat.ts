@@ -2845,7 +2845,7 @@ export async function drainQueuedUserMessagesForSession(
         ...(firstAgentId ? { agentId: firstAgentId } : {}),
         ...(firstWorkspaceId ? { workspaceId: firstWorkspaceId } : {}),
       },
-      respond: (ok, _payload, error) => {
+      respond: (ok: boolean, _payload: unknown, error?: { message: string }) => {
         accepted = ok;
         if (!ok) rejection = error?.message ?? "Queued follow-up was rejected";
       },

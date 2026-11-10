@@ -408,7 +408,7 @@ describe('chat.send inputMode: queue', () => {
     const load = vi.mocked(loadSessionEntry);
     const original = load.getMockImplementation()!;
     load.mockImplementation(() => ({ cfg: {}, canonicalKey: SESSION_KEY,
-      entry: { sessionId: 'session-1', sendPolicy: 'deny' }, storePath: '', store: {}, legacyKey: undefined }));
+      entry: { sessionId: 'session-1', sendPolicy: 'deny', updatedAt: 1 }, storePath: '', store: {}, legacyKey: undefined }));
     try {
       const result = await drainQueuedUserMessagesForSession(makeContext() as never, SESSION_KEY);
       expect(result).toMatchObject({ drained: false, reason: 'drain_failed', queueCount: 1 });
