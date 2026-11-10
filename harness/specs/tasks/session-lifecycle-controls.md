@@ -92,6 +92,8 @@ ownedPaths:
   - tests/unit/gateway-session-active-runs.test.ts
   - tests/e2e/session-family-counter-layout.spec.ts
   - src/styles/codex-sidebar.css
+  - src/components/layout/SessionFolderTree.tsx
+  - tests/unit/session-family-navigation.test.tsx
   - harness/specs/rules/session-derivation-ui-contract.md
 touchedAreas:
   - docs/dev/session-worktree-storage.md
@@ -179,6 +181,8 @@ touchedAreas:
   - tests/unit/gateway-session-active-runs.test.ts
   - tests/e2e/session-family-counter-layout.spec.ts
   - src/styles/codex-sidebar.css
+  - src/components/layout/SessionFolderTree.tsx
+  - tests/unit/session-family-navigation.test.tsx
   - harness/specs/rules/session-derivation-ui-contract.md
 requiredRules:
   - identity-scope-boundary

@@ -29,6 +29,24 @@ function ledger(title: string): TaskLedgerSnapshot {
 beforeEach(() => { vi.clearAllMocks(); });
 
 describe('family navigation', () => {
+  it('explicitly expands newly loaded children while retaining the order of other roots', () => {
+    const renderTree = (loaded: boolean) => <SessionFolderTree workspace={workspace} currentSessionKey="parent"
+      sessions={[{ session: sessions[0], activityMs: 3 }, { session: { key: 'other', displayName: 'Other' }, activityMs: 2 },
+        ...(loaded ? [{ session: sessions[1], activityMs: 4 }] : [])]}
+      collapsedFolders={{}} sessionStatusKinds={{}} sessionSort="newest" {...actions}
+      renderSessionRow={entry => <button data-order-key={entry.session.key}>{entry.session.displayName}</button>} />;
+    const view = render(renderTree(false));
+    fireEvent.pointerEnter(view.container.querySelector('.ws-tree')!);
+    view.rerender(renderTree(true));
+    expect(screen.queryByText('Child')).not.toBeInTheDocument();
+    const toggle = screen.getByTestId('session-family-toggle-parent');
+    fireEvent.keyDown(toggle, { key: 'ArrowRight' });
+    expect(screen.getByText('Child')).toBeVisible();
+    expect(Array.from(view.container.querySelectorAll('[data-order-key]')).map(row => row.getAttribute('data-order-key')))
+      .toEqual(['parent', 'child', 'other']);
+    fireEvent.keyDown(toggle, { key: 'ArrowLeft' });
+    expect(screen.queryByText('Child')).not.toBeInTheDocument();
+  });
   it('keeps interacted rows ordered while live status and child counts update', () => {
     const entries=[sessions[0],{key:'older',displayName:'Older',parentSessionKey:'parent'},sessions[1]];
     const renderTree=(updated=false)=><SessionFolderTree workspace={workspace} currentSessionKey="parent"

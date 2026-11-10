@@ -271,6 +271,7 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
         await expect(toggle).toBeVisible({ timeout: 30_000 });
         await expect(toggle).toContainText(String(children.length));
         if (await toggle.getAttribute('aria-expanded') !== 'true') { await toggle.focus(); await toggle.press('ArrowRight'); }
+        await expect(toggle).toHaveAttribute('aria-expanded', 'true');
       } else await expect(page.getByTestId('session-family-toggle-' + project.sessionKey)).toHaveCount(0);
       await twoFrames();
     };

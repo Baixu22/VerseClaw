@@ -515,7 +515,21 @@ function SessionFolderTreeInner({
       const expanded = expandedFamilies[key] === true;
       const visible = visibleKeys.has(key);
       const Icon = relation?.kind === 'fork' ? GitFork : relation?.kind === 'spawn' ? Bot : CornerDownRight;
-      const toggle = (open = !expanded) => setExpandedFamilies((current) => ({ ...current, [key]: open }));
+      const toggle = (open = !expanded) => {
+        if (open) setInteractionOrder(current => {
+          if (!current) return current;
+          const children = liveRowGroups.flatMap(group => group.rows)
+            .filter(child => child.originKey === key).map(child => child.entry.session.key);
+          if (children.every(child => current.includes(child))) return current;
+          const childKeys = new Set(children);
+          const next = current.filter(child => !childKeys.has(child));
+          const parentIndex = next.indexOf(key);
+          if (parentIndex < 0) return current;
+          next.splice(parentIndex + 1, 0, ...children);
+          return next;
+        });
+        setExpandedFamilies(current => ({ ...current, [key]: open }));
+      };
       return { entry, rendered: visible ? (
         <div key={key} className="ws-family-row" data-lineage-depth={row.lineageDepth} data-source-status={row.sourceStatus}>
           {count > 0 ? (
