@@ -4,6 +4,7 @@ import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'no
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { findForbiddenClaims } from '../../scripts/scan-first-product-claims.mjs';
 import { PRODUCT_SURFACE_AUTHORITY_LINKS } from '../../shared/component-authority-manifest';
 import {
   F5_DOCS_PATH,
@@ -186,7 +187,7 @@ describe('VerseGit product integration acceptance', () => {
       expect(text).toContain('M4');
       expect(text).toContain('win32-x64');
       expect(text).toContain('M1');
-      expect(text).not.toMatch(/\bGA\b/u);
+      expect(findForbiddenClaims(text)).toEqual([]);
     }
     const semantics = readFileSync(resolve(root, F5_PRODUCT_SEMANTICS_PATH), 'utf8');
     const fpStart = semantics.indexOf('<!-- FP-P1-08-COMPONENT-STATUS-START -->');

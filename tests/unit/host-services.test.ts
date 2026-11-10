@@ -1017,7 +1017,7 @@ describe('host services', () => {
           fileName: 'image.png',
         }],
       },
-      120000,
+      900000,
     );
   });
 

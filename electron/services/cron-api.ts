@@ -746,7 +746,9 @@ export function createCronApi({ gatewayManager }: { gatewayManager: GatewayManag
       if (!agentPayload) {
         throw new Error('Cron create requires a message or browser automation task');
       }
-      const coordinator = await assertCoordinatorBindingCurrent(gatewayManager, input.coordinator);
+      const coordinator = input.coordinator
+        ? await assertCoordinatorBindingCurrent(gatewayManager, input.coordinator)
+        : input.coordinator;
       const result = await gatewayManager.rpc('cron.add', {
         name: input.name,
         schedule: { kind: 'cron', expr: input.schedule },

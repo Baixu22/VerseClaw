@@ -528,7 +528,7 @@ describe('sanitizeOpenClawConfig', () => {
         mode: 'off',
         backend: 'openshell',
         scope: 'session',
-        workspaceAccess: 'none',
+        workspaceAccess: 'ro',
       },
     });
     // tools settings should now be enforced

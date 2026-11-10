@@ -96,7 +96,7 @@
       "shared/i18n/locales/ru/knowledge.json": "b2d86733ed002e6ef350b5a8210b96d1f4912d72",
       "shared/i18n/locales/zh/agents.json": "b1d864069df7477a207b3df690689e343550e891",
       "shared/i18n/locales/zh/knowledge.json": "f5117d6dc307ba549a6b25b40e0c030abc10ef32",
-      "src/components/agents/RolesOrchestrationPanel.tsx": "9a9827a672f8917427a1c4679f204a470e6518b8",
+      "src/components/agents/RolesOrchestrationPanel.tsx": "f3bdd2962177fa739740838cf88d9a4893f33ee2",
       "src/pages/Knowledge/index.tsx": "b425f875dd8e2ba0f69c44c7b0adbb8a019001b7",
       "tests/e2e/knowledge-hub.spec.ts": "c4ab133e92c1b99ab30f8784b15957449bc4b92f",
       "tests/e2e/role-memory-panel.spec.ts": "80d9e7ced23a7161d1d96e85f93d23977253d06c",

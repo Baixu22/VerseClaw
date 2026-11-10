@@ -74,7 +74,7 @@ describe('sandbox api', () => {
     expect(status.degraded).toBe(false);
     expect(status.docker).toEqual({ cli: false, daemon: false, image: false });
     expect(status.openClawConfig.agents.defaults.sandbox.mode).toBe('off');
-    expect(status.openClawConfig.agents.defaults.sandbox.workspaceAccess).toBe('none');
+    expect(status.openClawConfig.agents.defaults.sandbox.workspaceAccess).toBe('ro');
     expect(status.openClawConfig.tools.exec.security).toBe('allowlist');
     expect(status.openClawConfig.tools.exec.host).toBe('gateway');
     expect(status.warnings.length).toBeGreaterThan(0);

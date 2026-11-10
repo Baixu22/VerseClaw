@@ -58,6 +58,7 @@ Verse Claw — Electron-приложение на встроенном OpenClaw 
 - Runtime Memory injection, SEKB automatic writeback и Browser private network не default-on.
 - VToken retired; старые env/config имена не могут снова включить production assembly или sidecar.
 - VerseGit — default-off и landed-unwired. VerseShell — default-off controlled foundation. VerseBrowser рекламирует действия из live driver snapshot, а не из полного контракта.
+- Текущие evidence VerseGit ограничены Windows win32-x64 M1. M4, landing/admission authority и release недоступны; liveReady=false и productApproved=false.
 - Dreams retired. Image Generation ограничен developer/test surface и не является обычной продуктовой навигацией.
 - `liveReady=false`, `productApproved=false` и `defaultOn=false` остаются product locks.
 

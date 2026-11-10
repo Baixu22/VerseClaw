@@ -1316,6 +1316,11 @@ async function deleteSession(sessionKey: string): Promise<SessionDeleteResult> {
     const raw = await fsP.readFile(sessionsJsonPath, 'utf8');
     sessionsJson = JSON.parse(raw) as Record<string, unknown>;
   } catch (error) {
+    const code = (error as NodeJS.ErrnoException).code;
+    if (code === 'ENOENT') {
+      logger.info(`[session:delete] No legacy sessions.json for "${sessionKey}"; local sweep is already complete`);
+      return { success: true };
+    }
     logger.warn(`[session:delete] Could not read sessions.json: ${String(error)}`);
     return { success: false, error: `Could not read sessions.json: ${String(error)}` };
   }

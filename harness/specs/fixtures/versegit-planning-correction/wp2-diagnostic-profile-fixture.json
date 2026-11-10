@@ -21,7 +21,7 @@
       "worktreeCount": 2,
       "activeSessionCount": 2,
       "sessionKey": "multi-session",
-      "expectedStatus": "partial",
+      "expectedStatus": "degraded",
       "expectedProcesses": 3
     },
     {

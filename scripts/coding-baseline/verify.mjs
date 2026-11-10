@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import { isMainEntrypoint } from '../lib/entrypoint.mjs';
 
 export const sha256 = (data) => createHash('sha256').update(data).digest('hex');
 export const PROBE_FILES = {
@@ -117,7 +118,7 @@ export function verifyEvidence(report, { readArtifact, readSource, requiredSourc
   return { ok: issues.length === 0, issues, productVerdict: 'needs-fix' };
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (isMainEntrypoint(import.meta.url)) {
   const file = process.argv[2];
   if (!file) throw new Error('Usage: node scripts/coding-baseline/verify.mjs <report.json>');
   const root = fileURLToPath(new URL('../../', import.meta.url));

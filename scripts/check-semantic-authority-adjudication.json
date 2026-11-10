@@ -31,7 +31,7 @@
       "observed": {
         "manifestComponentId": "coding-execution-backend",
         "dispositionEntryId": "feature.patch-flow",
-        "risk": "api-only"
+        "risk": "read-only"
       },
       "basis": "explicit-adjudication",
       "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-01",
@@ -65,7 +65,7 @@
       "observed": {
         "manifestComponentId": "coding-execution-backend",
         "dispositionEntryId": "feature.symbol-lease",
-        "risk": "opt-in"
+        "risk": "read-only"
       },
       "basis": "explicit-adjudication",
       "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-01",
@@ -82,7 +82,7 @@
       "observed": {
         "manifestComponentId": "coding-execution-backend",
         "dispositionEntryId": "feature.symbol-lease",
-        "risk": "opt-in"
+        "risk": "read-only"
       },
       "basis": "explicit-adjudication",
       "source": "docs/dev/architecture-skeleton/AUTHORITY-RECONCILIATION.md#6.3-X-01",

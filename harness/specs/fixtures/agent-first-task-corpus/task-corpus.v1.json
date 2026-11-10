@@ -4,7 +4,7 @@
   "driven_by": "agent",
   "actor": "codex/tf0590-corpus-owner",
   "taskNode": "TF-0590",
-  "sourceCommit": "4b930199a320b5e9d0a3ab542c2f16c7e8b8dfb5",
+  "sourceCommit": "68ee7e08bb62048d19ec0f5e639067223a6b179c",
   "sourceCorpusPath": "harness/specs/fixtures/rsi-evidence-loop/tf0604/task-corpus.v1.json",
   "sourceCorpusSha256": "a4f9b3017288164d51126732f6dd588eff1917e649f6054669ac1060b4775261",
   "tasks": [
@@ -1563,8 +1563,8 @@
         "inputDigests": {
           "harness/specs/tasks/harness-gap-external-write-boundary.md": "730fb4d519844c6ae9df5d24e4ac0de8b8b92d6b392e1d8ef50e8934123bc2a7",
           "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts": "b6ac5977cf5bdbda57cf65a5478d0bc3a1259248ab0fa80117c79eb356bc414b",
-          "openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts": "d406769bef60ff050c13dbfeff0048fbf06e8051e334fc2b1a2d6b79ec8bf8f9",
-          "openclaw_runtime/src/agents/apply-patch-consistency.test.ts": "7b131dc4b8abbc9c84b592fc1a15f9d8aabf0a8e85d139136f8e7f7f35b7ca28",
+          "openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts": "244da97867ba45881868cd34481a96b5fb1d5c8bb231f00491fd02b82cd505ca",
+          "openclaw_runtime/src/agents/apply-patch-consistency.test.ts": "6f4d013b4ab1ab90f04a1537f8e85d3bb2c636fe79325d90b91a103bfabbecaf",
           "openclaw_runtime/src/agents/sessions/tools/write.test.ts": "07e02c3c8a83e687ef7250fa9d00e7c4bdd4cf4f907ac30a617ea9c84541f883",
           "openclaw_runtime/src/agents/sessions/tools/edit.test.ts": "69ac088add7bf0e874c4b1af32c45559422d236f56a1fe41fa214878635b99c3",
           "tests/unit/external-content-provenance.test.ts": "c2c989f4e1c4e0e0e5a1ff0f07a66795b69b77a5492ac4ca95a44daf5883c55e"

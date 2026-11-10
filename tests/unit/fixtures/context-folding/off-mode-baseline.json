@@ -502,7 +502,7 @@
       "sessions_send": "sha256:7e99cf333574fb81a57d55da05083a1caee9733571d3124a26f14881351ae74f",
       "task_loop": "sha256:1505024c91d53822ee51e44a66ce61bdacc6fd7f0d829deda34a9bca95f7e29b",
       "mission_loop": "sha256:d763459993cf9b7430bb051a034c8fd8ad17551468841eca77bf1b5165e3efba",
-      "team_orchestrate": "sha256:754f97e55fb284482da9bd4baf3b5572bf5ff1329c74a28fdf44d0a1c5a4785a",
+      "team_orchestrate": "sha256:d1b6938cac1dfc34246f5aaa7399dc5941110850f64f547b0e21b1cc2e187b46",
       "sessions_spawn": "sha256:7a9dff09b8c5192dbd3915a1075d62679e7c8a2cfae8c79d4df0191b79e2b73a",
       "sessions_yield": "sha256:71668407f4806419a94e8a76a4ffa345c422efbd23c99d2a283893528f31c61c",
       "subagents": "sha256:b77eaa02175c57872475bfa601c80da2da5185000982b2fbee81718eec9c87c0",
