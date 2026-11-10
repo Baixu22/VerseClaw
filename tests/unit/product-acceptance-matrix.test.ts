@@ -45,9 +45,9 @@ describe('TF-0582 product matrix', () => {
     discovery.suites[0].specs[0].tests[0].timeout = 2_400_000;
     discovery.suites[0].specs[1].tests[0].timeout = 1_800_000;
     const cases = collectCases(discovery);
-    expect(executionBudgetMs(cases)).toBe(4_560_000);
+    expect(executionBudgetMs(cases)).toBe(8_760_000);
     expect(cases.map(test => test.timeout)).toEqual([2_400_000, 1_800_000]);
-    expect(executionBudgetMs(collectCases(report(undefined, true)))).toBe(540_000);
+    expect(executionBudgetMs(collectCases(report(undefined, true)))).toBe(720_000);
   });
 
   it('rejects missing, unbounded and overflowing test timeout budgets', () => {
@@ -69,7 +69,7 @@ describe('TF-0582 product matrix', () => {
     const cases = collectCases(report(undefined, true));
     const timeoutOverrides = { [cases[0].file]: declaredCaseTimeoutMs(source) };
     expect(timeoutOverrides[cases[0].file]).toBe(600_000);
-    expect(executionBudgetMs(cases, timeoutOverrides)).toBe(1_560_000);
+    expect(executionBudgetMs(cases, timeoutOverrides)).toBe(2_760_000);
     expect(declaredCaseTimeoutMs('// test.setTimeout(0)')).toBe(0);
     for (const value of ['0', '-1', 'Infinity', 'process.env.TIMEOUT', '1000 * 60']) {
       expect(() => declaredCaseTimeoutMs(`test.setTimeout(${value})`)).toThrow('positive numeric literals');
