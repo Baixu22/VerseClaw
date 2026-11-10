@@ -149,8 +149,6 @@ tmp/
 
 
 # Verse Token local runtime artifacts
-__pycache__/
-*.pyc
 
 packages/vtoken/**/__pycache__/
 packages/vtoken/**/*.pyc

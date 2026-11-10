@@ -8,9 +8,9 @@ diffBase: c00e5ae3ca7f0c745b60b1b611dff64859116abe
 intent: 聚合 TF-0764–TF-0781 的当前磁盘证据，在同一候选完成两角色全量门、当前 Windows win-unpacked 重验和独立 verifier，形成功能、质量、性能、运营、分发与发布分别裁决的非 GA 结论。
 ownedPaths:
   - harness/specs/tasks/coding-vg-sts-jj-maturity-closeout.md
+  - .gitignore
   - harness/specs/fixtures/rsi-evidence-loop/decision-implementation-validation.v1.json
   - tests/unit/channels-page.test.tsx
-  - .gitignore
   - scripts/coding-evaluation/package-evaluation.py
   - scripts/coding-evaluation/final_evaluation.py
   - scripts/coding-evaluation/verify_final_evaluation.py
@@ -30,9 +30,9 @@ ownedPaths:
   - shared/dcs/component-disposition-catalog.ts
 touchedAreas:
   - harness/specs/tasks/coding-vg-sts-jj-maturity-closeout.md
+  - .gitignore
   - harness/specs/fixtures/rsi-evidence-loop/decision-implementation-validation.v1.json
   - tests/unit/channels-page.test.tsx
-  - .gitignore
   - scripts/coding-evaluation/package-evaluation.py
   - scripts/coding-evaluation/final_evaluation.py
   - scripts/coding-evaluation/verify_final_evaluation.py
