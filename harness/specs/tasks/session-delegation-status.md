@@ -13,6 +13,8 @@ ownedPaths:
   - README.ru-RU.md
   - shared/types/session-delegation.ts
   - shared/task-system/types.ts
+  - shared/dcs/prod-flags-catalog.ts
+  - docs/generated/catalogs/prod-flags.md
   - shared/host-api/contract.ts
   - electron/services/sessions-api.ts
   - openclaw_runtime/src/gateway/server-methods/session-task-scope.ts
