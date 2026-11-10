@@ -157,8 +157,9 @@ test('Matrix knowledge imports, indexes, searches, cites, and deletes through is
     await installHostCallRecorder(runningApp);
     const configured = await hostInvoke<{ success: boolean; error?: string }>(runningApp, 'knowledge', 'configure', { vaultPath, renderMode: 'native' });
     expect(configured.success, configured.error).toBe(true);
-    const snapshot = await hostInvoke<{ hash: string }>(runningApp, 'gateway', 'rpc', { method: 'config.get', params: {}, timeoutMs: 30_000 });
+    const snapshot = await hostInvoke<{ hash: string; config?: { plugins?: { enabled?: boolean } } }>(runningApp, 'gateway', 'rpc', { method: 'config.get', params: {}, timeoutMs: 30_000 });
     expect(snapshot.hash).toBeTruthy();
+    expect(snapshot.config?.plugins?.enabled).toBe(true);
     await hostInvoke(runningApp, 'gateway', 'rpc', { method: 'config.patch', params: { baseHash: snapshot.hash,
       raw: JSON.stringify({ plugins: { entries: { 'memory-wiki': { config: {
         search: { backend: 'local', corpus: 'wiki' }, ingest: { autoCompile: true, maxConcurrentJobs: 1 },

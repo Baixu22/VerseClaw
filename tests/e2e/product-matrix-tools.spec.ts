@@ -201,6 +201,9 @@ test('TF-0582 VerseShell starts, reads input, exits, and cancels through the pro
       return { toolCall: { id, name, args } };
     };
     const remember = (id: string) => {
+      if (!Object.hasOwn(results, id)) {
+        throw new Error(`Missing tool result ${id}; observed IDs: ${Object.keys(results).join(', ')}`);
+      }
       const content = results[id];
       if (content) toolOutputs.push({ id, content });
       return content;
@@ -208,7 +211,7 @@ test('TF-0582 VerseShell starts, reads input, exits, and cancels through the pro
 
     if (phase === 'start') {
       phase = 'positive-start';
-      return call('vs-start', 'exec', {
+      return call('vsstart', 'exec', {
         command: 'node interactive.js',
         workdir: workspace,
         background: true,
@@ -218,13 +221,13 @@ test('TF-0582 VerseShell starts, reads input, exits, and cancels through the pro
     }
 
     if (phase === 'positive-start') {
-      const content = remember('vs-start');
+      const content = remember('vsstart');
       const match = content.match(/session ([^,\s]+), pid (\d+|n\/a)/);
       if (!match) throw new Error(`VerseShell did not yield a session owner: ${content}`);
       positiveSessionId = match[1];
       positivePid = match[2] === 'n/a' ? null : Number(match[2]);
       phase = 'positive-ready';
-      positivePollId = `vs-positive-poll-${++positivePollNumber}`;
+      positivePollId = `vspositivepoll${++positivePollNumber}`;
       return call(positivePollId, 'process', {
         action: 'poll',
         sessionId: positiveSessionId,
@@ -236,7 +239,7 @@ test('TF-0582 VerseShell starts, reads input, exits, and cancels through the pro
       const content = remember(positivePollId);
       positivePolls.push(content);
       if (!content.includes(`READY:${marker}`)) {
-        positivePollId = `vs-positive-poll-${++positivePollNumber}`;
+        positivePollId = `vspositivepoll${++positivePollNumber}`;
         return call(positivePollId, 'process', {
           action: 'poll',
           sessionId: positiveSessionId,
@@ -244,7 +247,7 @@ test('TF-0582 VerseShell starts, reads input, exits, and cancels through the pro
         });
       }
       phase = 'positive-write';
-      return call('vs-write', 'process', {
+      return call('vswrite', 'process', {
         action: 'write',
         sessionId: positiveSessionId,
         data: `${inputMarker}\n`,
@@ -252,9 +255,9 @@ test('TF-0582 VerseShell starts, reads input, exits, and cancels through the pro
     }
 
     if (phase === 'positive-write') {
-      remember('vs-write');
+      remember('vswrite');
       phase = 'positive-exit';
-      positivePollId = `vs-positive-poll-${++positivePollNumber}`;
+      positivePollId = `vspositivepoll${++positivePollNumber}`;
       return call(positivePollId, 'process', {
         action: 'poll',
         sessionId: positiveSessionId,
@@ -266,7 +269,7 @@ test('TF-0582 VerseShell starts, reads input, exits, and cancels through the pro
       const content = remember(positivePollId);
       positivePolls.push(content);
       if (!content.includes('Process exited with')) {
-        positivePollId = `vs-positive-poll-${++positivePollNumber}`;
+        positivePollId = `vspositivepoll${++positivePollNumber}`;
         return call(positivePollId, 'process', {
           action: 'poll',
           sessionId: positiveSessionId,
@@ -274,7 +277,7 @@ test('TF-0582 VerseShell starts, reads input, exits, and cancels through the pro
         });
       }
       phase = 'cancel-start';
-      return call('vs-cancel-start', 'exec', {
+      return call('vscancelstart', 'exec', {
         command: 'node hold.js',
         workdir: workspace,
         background: true,
@@ -284,22 +287,22 @@ test('TF-0582 VerseShell starts, reads input, exits, and cancels through the pro
     }
 
     if (phase === 'cancel-start') {
-      const content = remember('vs-cancel-start');
+      const content = remember('vscancelstart');
       const match = content.match(/session ([^,\s]+), pid (\d+|n\/a)/);
       if (!match) throw new Error(`cancel fixture did not yield a session owner: ${content}`);
       cancelSessionId = match[1];
       cancelPid = match[2] === 'n/a' ? null : Number(match[2]);
       phase = 'cancel-kill';
-      return call('vs-cancel-kill', 'process', {
+      return call('vscancelkill', 'process', {
         action: 'kill',
         sessionId: cancelSessionId,
       });
     }
 
     if (phase === 'cancel-kill') {
-      remember('vs-cancel-kill');
+      remember('vscancelkill');
       phase = 'cancel-exit';
-      cancelPollId = `vs-cancel-poll-${++cancelPollNumber}`;
+      cancelPollId = `vscancelpoll${++cancelPollNumber}`;
       return call(cancelPollId, 'process', {
         action: 'poll',
         sessionId: cancelSessionId,
@@ -311,7 +314,7 @@ test('TF-0582 VerseShell starts, reads input, exits, and cancels through the pro
       const content = remember(cancelPollId);
       cancelPolls.push(content);
       if (!content.includes('Process exited with')) {
-        cancelPollId = `vs-cancel-poll-${++cancelPollNumber}`;
+        cancelPollId = `vscancelpoll${++cancelPollNumber}`;
         return call(cancelPollId, 'process', {
           action: 'poll',
           sessionId: cancelSessionId,
@@ -378,8 +381,8 @@ test('TF-0582 VerseShell starts, reads input, exits, and cancels through the pro
     expect(positiveExit).toContain(inputMarker);
     expect(positiveExit).toContain(`EXIT:${marker}`);
     expect(positiveExit).toContain('Process exited with code 0');
-    expect(toolOutputs.find(entry => entry.id === 'vs-write')?.content).toContain('Wrote');
-    expect(toolOutputs.find(entry => entry.id === 'vs-cancel-kill')?.content).toMatch(
+    expect(toolOutputs.find(entry => entry.id === 'vswrite')?.content).toContain('Wrote');
+    expect(toolOutputs.find(entry => entry.id === 'vscancelkill')?.content).toMatch(
       /(Termination requested|Killed session)/,
     );
     expect(cancelPolls.join('\n')).toMatch(/Process exited with (signal|code)/);
@@ -409,14 +412,9 @@ test('TF-0582 VerseShell starts, reads input, exits, and cancels through the pro
         cancelPid,
         electronPid: app.process().pid,
       },
-      commands: toolCommands,
-      outputs: toolOutputs,
       positivePolls,
       cancelPolls,
       receipts,
-      providerRequests,
-      providerLog: llm.log,
-      providerAnomalies: llm.anomalies,
       chatHistory: history,
     });
   } catch (error) {
@@ -435,6 +433,9 @@ test('TF-0582 VerseShell starts, reads input, exits, and cancels through the pro
     if (cleanupError) evidence.cleanupError = cleanupError;
     evidence.providerLog = llm.log;
     evidence.providerAnomalies = llm.anomalies;
+    evidence.commands = toolCommands;
+    evidence.outputs = toolOutputs;
+    evidence.providerRequests = providerRequests;
     const output = testInfo.outputPath('verse-shell-result.json');
     await writeFile(output, JSON.stringify(evidence, null, 2) + '\n');
     await testInfo.attach('verse-shell-result.json', {
@@ -488,7 +489,7 @@ test('TF-0582 Tool Search expands a real schema and rejects absent or denied too
       phase = 'describe';
       return {
         toolCall: {
-          id: 'ts-search',
+          id: 'tssearch',
           name: 'tool_search',
           args: { query: 'background process lifecycle poll write kill', limit: 8 },
         },
@@ -496,19 +497,19 @@ test('TF-0582 Tool Search expands a real schema and rejects absent or denied too
     }
 
     if (phase === 'describe') {
-      const parsed = parsedResult(results, 'ts-search');
-      remember('ts-search');
+      const parsed = parsedResult(results, 'tssearch');
+      remember('tssearch');
       const entries = Array.isArray(parsed) ? parsed : [];
       searchedProcess = entries
         .map(asRecord)
         .find(entry => entry?.name === 'process');
       if (!searchedProcess || typeof searchedProcess.id !== 'string') {
-        throw new Error(`Tool Search did not return the process tool: ${results['ts-search']}`);
+        throw new Error(`Tool Search did not return the process tool: ${results['tssearch']}`);
       }
       phase = 'missing';
       return {
         toolCall: {
-          id: 'ts-describe',
+          id: 'tsdescribe',
           name: 'tool_describe',
           args: { id: searchedProcess.id },
         },
@@ -516,16 +517,16 @@ test('TF-0582 Tool Search expands a real schema and rejects absent or denied too
     }
 
     if (phase === 'missing') {
-      const parsed = parsedResult(results, 'ts-describe');
-      remember('ts-describe');
+      const parsed = parsedResult(results, 'tsdescribe');
+      remember('tsdescribe');
       describedSchema = asRecord(parsed);
       if (!describedSchema || !asRecord(describedSchema.parameters)) {
-        throw new Error(`Tool Describe did not return a schema: ${results['ts-describe']}`);
+        throw new Error(`Tool Describe did not return a schema: ${results['tsdescribe']}`);
       }
       phase = 'denied';
       return {
         toolCall: {
-          id: 'ts-missing',
+          id: 'tsmissing',
           name: 'tool_describe',
           args: { id: 'definitely_missing_product_matrix_tool' },
         },
@@ -533,14 +534,14 @@ test('TF-0582 Tool Search expands a real schema and rejects absent or denied too
     }
 
     if (phase === 'denied') {
-      missingRefusal = remember('ts-missing');
+      missingRefusal = remember('tsmissing');
       if (!missingRefusal.includes('Unknown tool id')) {
         throw new Error(`missing tool was not rejected: ${missingRefusal}`);
       }
       phase = 'done';
       return {
         toolCall: {
-          id: 'ts-denied',
+          id: 'tsdenied',
           name: 'tool_call',
           args: { id: 'sessions_spawn', args: { task: 'must not run' } },
         },
@@ -548,7 +549,7 @@ test('TF-0582 Tool Search expands a real schema and rejects absent or denied too
     }
 
     if (phase === 'done') {
-      deniedRefusal = remember('ts-denied');
+      deniedRefusal = remember('tsdenied');
       if (!deniedRefusal.includes('Unknown tool id')) {
         throw new Error(`policy-denied tool was not rejected: ${deniedRefusal}`);
       }
@@ -621,8 +622,8 @@ test('TF-0582 Tool Search expands a real schema and rejects absent or denied too
     expect(missingRefusal).toContain('Unknown tool id');
     expect(deniedRefusal).toContain('Unknown tool id');
     expect(toolOutputs.some(entry =>
-      entry.id === 'ts-denied' && entry.content.includes('sessions_spawn'))).toBe(true);
-    expect(llm.log.some(entry => entry.issued === 'ts-denied')).toBe(true);
+      entry.id === 'tsdenied' && entry.content.includes('sessions_spawn'))).toBe(true);
+    expect(llm.log.some(entry => entry.issued === 'tsdenied')).toBe(true);
 
     Object.assign(evidence, {
       status: 'passed',
@@ -632,10 +633,6 @@ test('TF-0582 Tool Search expands a real schema and rejects absent or denied too
       describedSchema,
       missingRefusal,
       deniedRefusal,
-      outputs: toolOutputs,
-      providerRequests,
-      providerLog: llm.log,
-      providerAnomalies: llm.anomalies,
       chatHistory: history,
     });
   } catch (error) {
@@ -654,6 +651,8 @@ test('TF-0582 Tool Search expands a real schema and rejects absent or denied too
     if (cleanupError) evidence.cleanupError = cleanupError;
     evidence.providerLog = llm.log;
     evidence.providerAnomalies = llm.anomalies;
+    evidence.outputs = toolOutputs;
+    evidence.providerRequests = providerRequests;
     const output = testInfo.outputPath('tool-search-result.json');
     await writeFile(output, JSON.stringify(evidence, null, 2) + '\n');
     await testInfo.attach('tool-search-result.json', {

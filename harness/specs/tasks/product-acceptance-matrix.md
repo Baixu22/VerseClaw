@@ -5,7 +5,7 @@ title: Core product journey matrix and candidate-bound execution
 scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: Give TF-0582 a reproducible nine-group inventory and compare its frozen Playwright collection with actual results, preserving missing, failed, skipped and stale evidence.
-diffBase: 949757ca18f33df01e385c5d5c98855547a2ecba
+diffBase: ce8bc53284f456c9a43d1dea5e929623278cc5ee
 requiredRules:
   - backend-communication-boundary
   - repository-artifact-retention
@@ -22,9 +22,16 @@ touchedAreas:
   - scripts/product-matrix-judge.mjs
   - scripts/product-matrix-judge.d.mts
   - tests/unit/product-acceptance-matrix.test.ts
+  - tests/unit/knowledge-api.test.ts
+  - electron/services/knowledge-api.ts
   - openclaw_runtime/src/entry.ts
   - openclaw_runtime/src/infra/source-doctor.ts
   - openclaw_runtime/src/infra/source-doctor.test.ts
+  - openclaw_runtime/src/context-engine/chat-turn-memory-injection.ts
+  - openclaw_runtime/src/context-engine/context-orchestrator.ts
+  - openclaw_runtime/src/context-engine/role-memory-context-provider.ts
+  - openclaw_runtime/src/context-engine/memory-pilot-relevance.test.ts
+  - openclaw_runtime/src/memory/context-pack.ts
   - tests/e2e/fixtures/product-candidate.ts
   - tests/e2e/fixtures/space-bunny-responses.ts
   - tests/e2e/fixtures/fp-p1-harness.ts
@@ -49,9 +56,11 @@ requiredProfiles:
   - comms
 requiredTests:
   - node node_modules/vitest/vitest.mjs run tests/unit/product-acceptance-matrix.test.ts --maxWorkers=1
+  - node node_modules/vitest/vitest.mjs run tests/unit/knowledge-api.test.ts --maxWorkers=1
   - node --import ./openclaw_runtime/node_modules/tsx/dist/loader.mjs scripts/product-acceptance-matrix.mjs --check
   - node node_modules/@playwright/test/cli.js test --config tests/exploration/product-matrix.config.ts --list
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.infra.config.ts src/infra/source-doctor.test.ts --maxWorkers=1
+  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit.config.ts src/context-engine/context-orchestrator.test.ts src/context-engine/chat-turn-memory-injection.test.ts src/context-engine/memory-pilot-relevance.test.ts --maxWorkers=1
   - node harness/src/cli.mjs validate --spec harness/specs/tasks/product-acceptance-matrix.md
   - node harness/src/cli.mjs run --spec harness/specs/tasks/product-acceptance-matrix.md --dry-run
   - git diff --check
@@ -73,6 +82,10 @@ acceptance:
   - Credential redaction preserves task identifiers and artifact paths so the frozen rubric and source-input manifests can be read back.
   - Knowledge layout checks follow the current knowledge-bot-avatar contract: a bounded nonmodal conversation keeps the library URL and editor mounted, closes on Escape and restores launcher focus without losing the draft.
   - Source Doctor waits for diagnostic or migration output to flush and exits with the command result, including 1 for malformed configuration, instead of remaining alive until the host timeout.
+  - An enabled role-memory pilot forwards the current turn's task hint to the existing relevance selector; matching reviewed facts can enter the deferred prompt while unrelated optional facts remain unselected.
+  - Memory relevance uses the current query without rendering that query as task-state content; callers that explicitly supply task state retain their existing display behavior.
+  - Explicit Knowledge configuration enables plugin loading and the memory-wiki entry while preserving the existing allowlist, denylist, unrelated entries and source-runtime defaults.
+  - Knowledge setup evaluates the intended state through the runtime activation policy and returns a failure without writing configuration when existing policy blocks memory-wiki; slot precedence remains runtime-owned.
 docs:
   required: true
   files:
