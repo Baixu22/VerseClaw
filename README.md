@@ -261,7 +261,7 @@ See [development and validation](docs/modules/development-and-validation.md) for
 
 | Symptom | What to check |
 |---|---|
-| Knowledge shows `unknown method: wiki.status` | Enable and load `memory-wiki`, then initialize the vault. Gateway readiness alone is insufficient. |
+| Knowledge shows `unknown method: wiki.status` | Use Knowledge configuration to enable plugin loading and `memory-wiki`, then initialize the vault. Configuration reports any existing plugin policy that blocks activation. |
 | Wrong pnpm version / install failure | Check Node.js 24.x, pinned pnpm, both dependency workspaces and lockfiles. |
 | Missing Electron executable | Run `node node_modules/electron/install.js` and check download connectivity. |
 | Gateway stays unavailable | Inspect Settings → System & Runtime and logs; run Doctor before Doctor Fix. |

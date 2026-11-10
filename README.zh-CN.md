@@ -261,7 +261,7 @@ UI 改动应补 Electron E2E 和 en/zh/ja/ru 文案。通信路径改动还应�
 
 | 现象 | 排查方式 |
 |---|---|
-| Knowledge 显示 `unknown method: wiki.status` | 启用并加载 `memory-wiki`，再初始化 vault；Gateway 就绪不够。 |
+| Knowledge 显示 `unknown method: wiki.status` | 通过 Knowledge 配置启用插件加载和 `memory-wiki`，再初始化 vault；现有插件策略阻止启用时，配置操作会返回原因。 |
 | pnpm 版本不符 / 安装失败 | 核对 Node.js 24.x、固定 pnpm、两个 dependency workspace 与 lockfile。 |
 | Electron executable 缺失 | 运行 `node node_modules/electron/install.js` 并检查下载。 |
 | Gateway 一直不可用 | 查看 Settings → System & Runtime 与日志；先 Doctor，再考虑 Doctor Fix。 |

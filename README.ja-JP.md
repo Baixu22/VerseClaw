@@ -259,7 +259,7 @@ UI change では Electron E2E と en/zh/ja/ru の string を追加します。Co
 
 | Symptom | Check |
 |---|---|
-| Knowledge が `unknown method: wiki.status` | `memory-wiki` を enable/load し vault を初期化。Gateway ready だけでは不足。 |
+| Knowledge が `unknown method: wiki.status` | Knowledge の設定でプラグインの読み込みと `memory-wiki` を有効にして、vault を初期化します。既存のプラグインポリシーが有効化を妨げる場合は、設定操作が理由を返します。 |
 | pnpm version / install failure | Node.js 24.x、固定 pnpm、2 つの dependency workspace、lockfile を確認。 |
 | Electron executable がない | `node node_modules/electron/install.js` と download connectivity を確認。 |
 | Gateway が unavailable | Settings → System & Runtime と log を確認。Doctor の後で Doctor Fix。 |
