@@ -116,8 +116,100 @@ def validate_command_rows(rows: list[Any], prefix: str, issues: list[str],
     return found
 
 
+def verify_supplemental(report: dict[str, Any], root: Path, issues: list[str]) -> dict[str, Any]:
+    initial_issue_count = len(issues)
+    base = root / "supplemental"
+    negative_path = base / "negative-checks.json"
+    parity_path = base / "source-package-parity.json"
+    package_cli_path = base / "package-cli-report.json"
+    for path in (negative_path, parity_path, package_cli_path):
+        if not path.is_file():
+            issues.append(f"supplemental artifact missing: {path.relative_to(root).as_posix()}")
+    if issues and any(issue.startswith("supplemental artifact missing:") for issue in issues):
+        return {"ok": False}
+
+    negative = json.loads(negative_path.read_text(encoding="utf-8"))
+    parity = json.loads(parity_path.read_text(encoding="utf-8"))
+    package_cli = json.loads(package_cli_path.read_text(encoding="utf-8"))
+    candidate = report.get("candidate", {}).get("commit")
+    digest = report_digest(report)
+
+    def check(condition: object, message: str) -> None:
+        if not condition:
+            issues.append(message)
+
+    for name, document in (("negative-checks", negative), ("source-package-parity", parity)):
+        check(document.get("taskId") == TASK, f"{name} task id mismatch")
+        check(document.get("driven_by") == "agent" and document.get("realHumanEvidence") is False,
+              f"{name} provenance mismatch")
+        check(document.get("candidate") == candidate, f"{name} candidate mismatch")
+        check(document.get("reportDigest") == digest, f"{name} report digest mismatch")
+
+    check(negative.get("actor") == ACTOR, "negative-check actor mismatch")
+    check(negative.get("status") == "pass", "negative-check status mismatch")
+    cases = negative.get("cases") if isinstance(negative.get("cases"), list) else []
+    by_id = {row.get("id"): row for row in cases if isinstance(row, dict)}
+    required = {
+        "missing-binary": {"exitCode": 1, "code": "artifact_missing"},
+        "wrong-hash": {"exitCode": 1, "code": "artifact_mismatch"},
+        "missing-interpreter": {"exitCode": 3, "status": "dependency_unavailable", "spawned": False},
+    }
+    for identifier, expected in required.items():
+        row = by_id.get(identifier, {})
+        check(row.get("rejected") is True and row.get("waitedForExit") is True,
+              f"supplemental negative case not rejected: {identifier}")
+        for field, value in expected.items():
+            check(row.get(field) == value, f"supplemental negative mismatch: {identifier}/{field}")
+        for channel in ("stdout", "stderr"):
+            metadata = row.get(channel) if isinstance(row.get(channel), dict) else {}
+            relative = metadata.get("path")
+            try:
+                path = resolve(root, relative)
+                data = path.read_bytes()
+                check(sha256_bytes(data) == metadata.get("sha256"), f"supplemental digest mismatch: {identifier}/{channel}")
+                check(len(data) == metadata.get("bytes"), f"supplemental size mismatch: {identifier}/{channel}")
+            except (OSError, TypeError, ValueError) as error:
+                issues.append(f"supplemental artifact unreadable: {identifier}/{channel}: {error}")
+    check(negative.get("processSurvivorsAfterChecks") == 0, "supplemental process survivor count nonzero")
+    boundaries = negative.get("capabilityBoundaries") if isinstance(negative.get("capabilityBoundaries"), dict) else {}
+    check(boundaries.get("defaultEnableAllProfiles") == [False, False, False], "supplemental VG default changed")
+    check(boundaries.get("managedOptInAllProfiles") == [True, True, True], "supplemental managed opt-in missing")
+    check(boundaries.get("bundledPythonPresentAllProfiles") == [False, False, False], "supplemental bundled Python claimed")
+    check(boundaries.get("standaloneJjPresentAllProfiles") == [False, False, False], "supplemental standalone JJ claimed")
+    check(boundaries.get("managedModeMustBeExplicit") is True, "supplemental managed mode is not explicit")
+    cli_summary = negative.get("packageCli") if isinstance(negative.get("packageCli"), dict) else {}
+    check(cli_summary.get("status") == "pass", "package CLI supplemental status mismatch")
+    check(cli_summary.get("probeCount") == 12, "package CLI probe count mismatch")
+    check(cli_summary.get("stateUnchanged") is True, "package CLI changed isolated state")
+    check(cli_summary.get("timedOutProbes") == 0 and cli_summary.get("failedExpectationProbes") == 0,
+          "package CLI probe failure")
+    cli_meta = cli_summary.get("report") if isinstance(cli_summary.get("report"), dict) else {}
+    try:
+        cli_bytes = resolve(root, cli_meta.get("path")).read_bytes()
+        check(sha256_bytes(cli_bytes) == cli_meta.get("sha256"), "package CLI report digest mismatch")
+        check(len(cli_bytes) == cli_meta.get("bytes"), "package CLI report size mismatch")
+    except (OSError, TypeError, ValueError) as error:
+        issues.append(f"package CLI report unreadable: {error}")
+    check(package_cli.get("actor") == "packaged-cli-probe" and package_cli.get("status") == "pass",
+          "package CLI report provenance/status mismatch")
+    check(len(package_cli.get("probes", [])) == 12, "package CLI raw report count mismatch")
+    check(package_cli.get("stateBefore") == package_cli.get("stateAfter"), "package CLI raw state changed")
+    check(not any(row.get("timedOut") for row in package_cli.get("probes", [])), "package CLI raw probe timed out")
+
+    check(parity.get("actor") == ACTOR and parity.get("allMatch") is True, "source/package parity mismatch")
+    rows = parity.get("rows") if isinstance(parity.get("rows"), list) else []
+    check(len(rows) == 6, "source/package parity row count mismatch")
+    check(all(row.get("match") is True for row in rows), "source/package digest mismatch")
+    return {
+        "ok": len(issues) == initial_issue_count,
+        "negativeCases": [row.get("id") for row in cases],
+        "sourcePackageParityRows": len(rows),
+        "packageCliProbes": len(package_cli.get("probes", [])),
+    }
+
+
 def verify(report: dict[str, Any], root: Path, candidate: str, expected_digest: str,
-           allow_development: bool = False) -> dict[str, Any]:
+           allow_development: bool = False, supplemental: bool = False) -> dict[str, Any]:
     issues: list[str] = []
 
     def check(condition: object, message: str) -> None:
@@ -230,12 +322,16 @@ def verify(report: dict[str, Any], root: Path, candidate: str, expected_digest: 
     check(report.get("cleanup", {}).get("ownedProcesses") == 0 and report.get("cleanup", {}).get("survivors") == [], "package cleanup failed")
     claims = report.get("claims") if isinstance(report.get("claims"), dict) else {}
     check(claims.get("releaseAuthorized") is False and claims.get("realHuman") is False and claims.get("ga") is False, "non-GA claims mismatch")
-    return {
+    supplemental_result = verify_supplemental(report, root, issues) if supplemental else None
+    result = {
         "ok": not issues,
         "issues": issues,
         "acceptanceEligible": not issues and not allow_development,
         "reportDigest": report_digest(report),
     }
+    if supplemental_result is not None:
+        result["supplemental"] = supplemental_result
+    return result
 
 
 def negative_checks(report: dict[str, Any], root: Path, candidate: str,
@@ -272,10 +368,12 @@ def main() -> int:
     parser.add_argument("--expected-report-digest", required=True)
     parser.add_argument("--allow-development", action="store_true")
     parser.add_argument("--negative-checks", action="store_true")
+    parser.add_argument("--supplemental", action="store_true")
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
     report = json.loads(args.report.read_text(encoding="utf-8-sig"))
-    result = verify(report, args.report.parent, args.candidate, args.expected_report_digest, args.allow_development)
+    result = verify(report, args.report.parent, args.candidate, args.expected_report_digest,
+                    args.allow_development, args.supplemental)
     if args.negative_checks:
         checks = negative_checks(report, args.report.parent, args.candidate, args.expected_report_digest, args.allow_development)
         result["negativeChecks"] = checks

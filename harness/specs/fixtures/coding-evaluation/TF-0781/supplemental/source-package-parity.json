@@ -1,0 +1,65 @@
+{
+  "schema": "CodingWindowsSourcePackageParity/v1",
+  "taskId": "TF-0781",
+  "driven_by": "agent",
+  "actor": "codex-coding-package-evaluator",
+  "realHumanEvidence": false,
+  "candidate": "f38218d5db6300e63a21f1209946c73e97f4f21b",
+  "reportDigest": "fdf5b0f139015f178de2b5c54e54a4add6bd029c14416b47a3ef313ccb0ae01b",
+  "rows": [
+    {
+      "id": "versegit-manifest",
+      "source": "resources/versegit/manifest.json",
+      "packaged": "release/win-unpacked/resources/resources/versegit/manifest.json",
+      "sourceSha256": "476dfcfb72df4c43a294af2add1844e1d7e00b79235297cbe0ea27ba1f2c0676",
+      "packagedSha256": "476dfcfb72df4c43a294af2add1844e1d7e00b79235297cbe0ea27ba1f2c0676",
+      "bytes": 2916,
+      "match": true
+    },
+    {
+      "id": "verseshell-manifest",
+      "source": "resources/verseshell/manifest.json",
+      "packaged": "release/win-unpacked/resources/resources/verseshell/manifest.json",
+      "sourceSha256": "b26c9edbbc620943af2c9080cee72de68f93e3fa8649aa33859a435a1650d1a7",
+      "packagedSha256": "b26c9edbbc620943af2c9080cee72de68f93e3fa8649aa33859a435a1650d1a7",
+      "bytes": 7559,
+      "match": true
+    },
+    {
+      "id": "versegit-binary",
+      "source": "resources/bin/win32-x64/vg.exe",
+      "packaged": "release/win-unpacked/resources/bin/vg.exe",
+      "sourceSha256": "6fef0fab309702fafdcc716c0f8518257440efafd0a46809930fe33be865c2b4",
+      "packagedSha256": "6fef0fab309702fafdcc716c0f8518257440efafd0a46809930fe33be865c2b4",
+      "bytes": 40831488,
+      "match": true
+    },
+    {
+      "id": "verseshell-binary",
+      "source": "resources/bin/win32-x64/ae.exe",
+      "packaged": "release/win-unpacked/resources/bin/ae.exe",
+      "sourceSha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
+      "packagedSha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
+      "bytes": 15144448,
+      "match": true
+    },
+    {
+      "id": "node-runtime-config",
+      "source": "resources/bin/win32-x64/node-runtime.json",
+      "packaged": "release/win-unpacked/resources/bin/node-runtime.json",
+      "sourceSha256": "a7cc13971a8a95d55428a6fa8ee085b9dba2e1979086ea5a3e023985378bbcc3",
+      "packagedSha256": "a7cc13971a8a95d55428a6fa8ee085b9dba2e1979086ea5a3e023985378bbcc3",
+      "bytes": 132,
+      "match": true
+    },
+    {
+      "id": "node-binary-vs-runtime-config",
+      "source": "resources/bin/win32-x64/node-runtime.json",
+      "packaged": "release/win-unpacked/resources/bin/node.exe",
+      "declaredSha256": "b3094d0b49f9ad602262a9921551737bb97637c05dd357a06ae98188d7290aa3",
+      "packagedSha256": "b3094d0b49f9ad602262a9921551737bb97637c05dd357a06ae98188d7290aa3",
+      "match": true
+    }
+  ],
+  "allMatch": true
+}

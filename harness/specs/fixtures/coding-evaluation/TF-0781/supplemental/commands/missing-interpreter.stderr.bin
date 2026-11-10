@@ -1,0 +1,2 @@
+--- STS stderr（人类日志，原样）---
+failed to run: 启动子进程失败: 系统找不到指定的路径。 (os error 3)

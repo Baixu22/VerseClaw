@@ -1,0 +1,89 @@
+{
+  "budget": {
+    "budget_exhausted": false,
+    "budget_ms": null,
+    "effective_timeout_ms": 120000,
+    "elapsed_ms": 29,
+    "remaining_ms": null,
+    "timeout_ms": 120000
+  },
+  "elapsed_ms": 6,
+  "fallback": {
+    "available": true,
+    "reason": "STS 不可用/失败：退回本仓既有的注册检查全量运行（显式记录，不静默跳过、不声称拿到了选择计划）"
+  },
+  "host": {
+    "argv": [
+      "Z:\\missing\\python.exe",
+      "-m",
+      "smart_sorter.plan_request",
+      "--request",
+      "D:\\tmp\\tf0781-negative-interpreter-20261110\\vg-out\\plan.request.json",
+      "--out",
+      "D:\\tmp\\tf0781-negative-interpreter-20261110\\vg-out\\plan.json"
+    ],
+    "cancelled": false,
+    "cleanup_error": null,
+    "duration_ms": 5,
+    "exit_code": null,
+    "isolation": {
+      "declaration": {
+        "isolation": "none",
+        "reason": "trusted-local：在本机直接执行，没有沙箱"
+      },
+      "kind": "trusted_local"
+    },
+    "launch_error": "启动子进程失败: 系统找不到指定的路径。 (os error 3)",
+    "log": "failed to run: 启动子进程失败: 系统找不到指定的路径。 (os error 3)",
+    "machine_json_raw": "",
+    "reaped": false,
+    "resource_limit": null,
+    "stderr_truncated": false,
+    "stdout_truncated": false,
+    "termination_confirmed": false,
+    "timed_out": false
+  },
+  "notes": [
+    "候选报告 risk=null（未点名会话 ⇒ 这次没取风险）：请求里不带 risk"
+  ],
+  "ok": false,
+  "refusals": [],
+  "request": {
+    "capabilities": [
+      "selection"
+    ],
+    "identities": {
+      "code_oid": "23fc3e646649d542f532ca86680a1850e9fb560f",
+      "config_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "mode": "candidate",
+    "product_version": "versegit/0.1.0",
+    "protocol_version": "1.1",
+    "repo": {
+      "path": "D:/tmp/tf0781-negative-interpreter-20261110/repo"
+    },
+    "request_id": "vg-753397953d32458a4435f2646264aced146df2af",
+    "target": {
+      "base_oid": "281236f969717a9922acf10f2d0256af760bf317",
+      "candidate_commit_oid": "753397953d32458a4435f2646264aced146df2af",
+      "candidate_dir": "D:/tmp/tf0781-negative-interpreter-20261110/candidate",
+      "candidate_tree_oid": "23fc3e646649d542f532ca86680a1850e9fb560f",
+      "includes_candidate_extra_changes": false,
+      "ours_oid": "30b81712e38a7796685644fb701727f8849ba622",
+      "theirs_oid": "b5f199c6d8f76b3fd1e4d640c9b1e5a9fe27c57b"
+    }
+  },
+  "request_id": "vg-753397953d32458a4435f2646264aced146df2af",
+  "schema": "versegit.sts-host-plan/v1",
+  "self_check": {
+    "ok": true,
+    "supported_protocol_versions": [
+      "1.0",
+      "1.1"
+    ]
+  },
+  "sent": true,
+  "spawned": false,
+  "status": "dependency_unavailable",
+  "target_identity_expected": "candidate@23fc3e6"
+}

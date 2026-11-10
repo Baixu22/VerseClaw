@@ -1,0 +1,73 @@
+{
+  "base": "281236f969717a9922acf10f2d0256af760bf317",
+  "boundaries": [
+    "候选 worktree 的指纹含临时物化路径，verify 的 S7 复用不可能命中；本轮不改指纹口径",
+    "不写账本事件：pilot 记录不污染产品侧的三态判定（verify_status / reusable_pass）",
+    "不写引用：只写对象（合并树 + 候选提交）与 detach worktree，失败/超时都不触碰分支",
+    "检查通过 ≠ 语义正确：注册检查是本地受信任命令，无沙箱"
+  ],
+  "budget_exhausted": false,
+  "budget_ms": 60000,
+  "candidate": {
+    "commit_oid": "753397953d32458a4435f2646264aced146df2af",
+    "parents": [
+      "30b81712e38a7796685644fb701727f8849ba622",
+      "b5f199c6d8f76b3fd1e4d640c9b1e5a9fe27c57b"
+    ],
+    "tree_oid": "23fc3e646649d542f532ca86680a1850e9fb560f"
+  },
+  "checks": [],
+  "cleanup": {
+    "kept": false,
+    "removed": true
+  },
+  "conflicting_files": [],
+  "elapsed_ms": 1105,
+  "exit_code": 3,
+  "materialized": true,
+  "ours": "30b81712e38a7796685644fb701727f8849ba622",
+  "refs_written": false,
+  "repo": "\\\\?\\D:\\tmp\\tf0781-negative-interpreter-20261110\\repo",
+  "requested": {
+    "filter": null,
+    "matched": [],
+    "registered": [],
+    "unknown": []
+  },
+  "revision": {
+    "authoritative": true,
+    "base_oid": "281236f969717a9922acf10f2d0256af760bf317",
+    "candidate_commit_oid": "753397953d32458a4435f2646264aced146df2af",
+    "checks_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "ours_oid": "30b81712e38a7796685644fb701727f8849ba622",
+    "ours_requested": "30b81712e38a7796685644fb701727f8849ba622",
+    "registry_changed_during_run": false,
+    "theirs_oid": "b5f199c6d8f76b3fd1e4d640c9b1e5a9fe27c57b",
+    "theirs_requested": "b5f199c6d8f76b3fd1e4d640c9b1e5a9fe27c57b"
+  },
+  "risk": null,
+  "schema": "versegit.candidate-verify/v1",
+  "scope": {
+    "registered_checks": "本报告只覆盖 `vg verify` 注册表里的检查；注册表为空时等于什么都没验",
+    "repo_test_suite": "unknown：候选域不枚举、也不代表仓库测试套件",
+    "selection": "显式 --selection 才运行附加选择臂；--checks 只过滤注册检查，选择结果不参与准入"
+  },
+  "status": "checked",
+  "summary": {
+    "cancelled": 0,
+    "checks": 0,
+    "cleanup_unconfirmed": 0,
+    "executed": 0,
+    "failed": 0,
+    "passed": 0,
+    "registered": 0,
+    "requested": 0,
+    "resource_limit": 0,
+    "skipped_budget": 0,
+    "timeout": 0,
+    "unknown": 0
+  },
+  "theirs": "b5f199c6d8f76b3fd1e4d640c9b1e5a9fe27c57b",
+  "verdict": "not_executed",
+  "worktree": "D:\\tmp\\tf0781-negative-interpreter-20261110\\candidate"
+}

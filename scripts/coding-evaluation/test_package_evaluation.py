@@ -180,6 +180,25 @@ class PackageEvidenceTests(unittest.TestCase):
             result = package.verify(report, root, CANDIDATE, package.report_digest(report))
             self.assertTrue(result["ok"], result["issues"])
 
+    def test_artifact_map_keeps_nested_reports(self) -> None:
+        with tempfile.TemporaryDirectory(dir="D:/tmp") as directory:
+            root = Path(directory)
+            (root / "report.json").write_text("top-level\n", encoding="utf-8")
+            (root / "package-cli").mkdir()
+            (root / "package-cli/report.json").write_text("nested\n", encoding="utf-8")
+            artifacts = aggregator.artifact_map(root)
+            self.assertNotIn("report.json", artifacts)
+            self.assertIn("package-cli/report.json", artifacts)
+
+    def test_retained_supplemental_evidence_verifies(self) -> None:
+        fixture = HERE.parents[1] / "harness/specs/fixtures/coding-evaluation/TF-0781"
+        report = json.loads((fixture / "report.json").read_text(encoding="utf-8"))
+        digest = (fixture / "report.sha256").read_text(encoding="ascii").strip()
+        result = package.verify(report, fixture, report["candidate"]["commit"], digest, supplemental=True)
+        self.assertTrue(result["ok"], result["issues"])
+        self.assertEqual(result["supplemental"]["sourcePackageParityRows"], 6)
+        self.assertEqual(result["supplemental"]["packageCliProbes"], 12)
+
     def test_package_document_serializes_paths(self) -> None:
         with tempfile.TemporaryDirectory(dir="D:/tmp") as directory:
             root = Path(directory)

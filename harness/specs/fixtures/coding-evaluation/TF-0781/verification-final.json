@@ -1,0 +1,90 @@
+{
+  "ok": true,
+  "issues": [],
+  "acceptanceEligible": true,
+  "reportDigest": "fdf5b0f139015f178de2b5c54e54a4add6bd029c14416b47a3ef313ccb0ae01b",
+  "supplemental": {
+    "ok": true,
+    "negativeCases": [
+      "missing-binary",
+      "wrong-hash",
+      "missing-interpreter"
+    ],
+    "sourcePackageParityRows": 6,
+    "packageCliProbes": 12
+  },
+  "negativeChecks": [
+    {
+      "case": "delete-profile",
+      "rejected": true,
+      "issues": [
+        "profile count mismatch",
+        "profile identity set mismatch"
+      ]
+    },
+    {
+      "case": "duplicate-profile",
+      "rejected": true,
+      "issues": [
+        "profile identity set mismatch"
+      ]
+    },
+    {
+      "case": "wrong-candidate",
+      "rejected": true,
+      "issues": [
+        "candidate mismatch"
+      ]
+    },
+    {
+      "case": "artifact-digest-tamper",
+      "rejected": true,
+      "issues": [
+        "artifact digest mismatch: evidence/package.json"
+      ]
+    },
+    {
+      "case": "failed-worker",
+      "rejected": true,
+      "issues": [
+        "worker terminal mismatch: profile-a"
+      ]
+    },
+    {
+      "case": "undo-retained",
+      "rejected": true,
+      "issues": [
+        "undo retained user file: profile-a"
+      ]
+    },
+    {
+      "case": "missing-sts",
+      "rejected": true,
+      "issues": [
+        "STS 2.0 contract failed: profile-a",
+        "STS 2.0 invalid acceptance: profile-a"
+      ]
+    },
+    {
+      "case": "source-overlap",
+      "rejected": true,
+      "issues": [
+        "profile retained source dependency: profile-a"
+      ]
+    },
+    {
+      "case": "cleanup-survivor",
+      "rejected": true,
+      "issues": [
+        "package process survivor count nonzero"
+      ]
+    },
+    {
+      "case": "retained-digest-mismatch",
+      "rejected": true,
+      "issues": [
+        "canonical report digest mismatch"
+      ]
+    }
+  ]
+}

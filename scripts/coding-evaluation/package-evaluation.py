@@ -121,11 +121,14 @@ def survivors(*roots: Path) -> list[dict[str, Any]]:
 def artifact_map(out: Path) -> dict[str, dict[str, Any]]:
     artifacts: dict[str, dict[str, Any]] = {}
     for path in sorted(out.rglob("*")):
-        if not path.is_file() or path.name in {"report.json", "verification.json", "verification-final.json", "failure.json"}:
+        if not path.is_file():
+            continue
+        relative = path.relative_to(out).as_posix()
+        if relative in {"report.json", "verification.json", "verification-final.json", "failure.json"}:
             continue
         if path.is_relative_to(out / "tmp"):
             continue
-        artifacts[path.relative_to(out).as_posix()] = {"sha256": sha256_file(path), "bytes": path.stat().st_size}
+        artifacts[relative] = {"sha256": sha256_file(path), "bytes": path.stat().st_size}
     return artifacts
 
 
