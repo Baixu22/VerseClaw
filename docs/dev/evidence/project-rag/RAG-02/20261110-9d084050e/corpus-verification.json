@@ -1,0 +1,61 @@
+{
+  "status": "pass",
+  "corpusId": "project-rag-v4",
+  "sourceFiles": 54,
+  "queries": 240,
+  "tasks": 60,
+  "negativeCases": 64,
+  "plannedSlots": 540,
+  "queriesBySplit": {
+    "calibration": 80,
+    "held-out": 80,
+    "validation": 80
+  },
+  "queriesByLocale": {
+    "en": 60,
+    "ja": 60,
+    "ru": 60,
+    "zh": 60
+  },
+  "queriesByIntent": {
+    "configuration": 76,
+    "diagnosis": 36,
+    "fact": 32,
+    "ownership": 40,
+    "procedure": 28,
+    "research": 28
+  },
+  "tasksByKind": {
+    "code-repair": 20,
+    "cross-source-research": 20,
+    "diagnostic-report": 20
+  },
+  "tasksByProfile": {
+    "local": 20,
+    "quality": 20,
+    "research": 20
+  },
+  "safetyByKind": {
+    "acl": 4,
+    "cancelled": 4,
+    "conflict": 4,
+    "deleted": 4,
+    "digest": 4,
+    "empty": 4,
+    "expired": 4,
+    "namespace": 4,
+    "no-answer": 4,
+    "policy": 4,
+    "prompt-injection": 4,
+    "range": 4,
+    "revision": 4,
+    "revoked": 4,
+    "scope": 4,
+    "sensitive": 4
+  },
+  "pinnedSourceBlobsMatched": 54,
+  "executedSlots": 0,
+  "freezeDigest": "sha256:cc014f31e4ea67093a6dfe62f97591dec95956571b27c7d021b1677323379841",
+  "actor": "codex/project-rag-corpus-verifier",
+  "driven_by": "agent"
+}

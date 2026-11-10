@@ -1,0 +1,93 @@
+$ node scripts/check-repository-artifacts.mjs
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/.gitattributes
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/README.md
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/SHA256SUMS
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/agent-dev-audit.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/agent-dev-deep-test-exit.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/agent-dev-deep-test.log
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/agent-dev-e2e-exit.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/agent-dev-e2e.log
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/agent-dev-quality.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/agent-dev-report.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/candidate.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/credential-scan.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/dependency-layout.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/desktop-build-exit.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/failure-history.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/harness-ci-exit.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/harness-ci-report.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/harness-ci.log
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/harness-rag-dry-run.log
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/harness-rag-validate.log
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/historical/ci-chain-incomplete.log
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/historical/ci-recursion-stop.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/historical/ci-recursive-incomplete.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/historical/formal-0ef788962-01.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/historical/formal-126d1851f-03.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/historical/formal-273f9a912-05.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/historical/formal-6c67e22ef-04.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/historical/formal-7625be876-02.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/owner-citation-ui.png
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/owner-denied-ui.png
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/owner-e2e-exit.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/owner-e2e.log
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/owner-read-receipt.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/rag-gates.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/report.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/review.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/root-unit-exit.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/root-unit.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/runtime-build-exit.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/runtime-unit-exit.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/runtime-unit.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/source-inputs.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/typecheck-cache-refresh.log
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/typecheck-exit.json
+Tracked path is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/typecheck.log
+Reviewed ignore rules are stale: run pnpm repo:artifacts:check --write-ignore
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/.gitattributes
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/README.md
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/agent-dev-audit.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/agent-dev-deep-test-exit.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/agent-dev-deep-test.log
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/agent-dev-e2e-exit.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/agent-dev-e2e.log
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/agent-dev-quality.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/agent-dev-report.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/candidate.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/credential-scan.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/desktop-build-exit.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/failure-history.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/harness-ci-exit.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/harness-ci-report.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/harness-ci.log
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/harness-rag-dry-run.log
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/harness-rag-validate.log
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/historical/ci-chain-incomplete.log
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/historical/ci-recursion-stop.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/historical/ci-recursive-incomplete.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/historical/formal-0ef788962-01.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/historical/formal-126d1851f-03.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/historical/formal-273f9a912-05.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/historical/formal-6c67e22ef-04.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/historical/formal-7625be876-02.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/owner-citation-ui.png
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/owner-denied-ui.png
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/owner-e2e-exit.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/owner-e2e.log
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/owner-read-receipt.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/rag-gates.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/report.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/review.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/root-unit-exit.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/root-unit.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/runtime-build-exit.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/runtime-unit-exit.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/runtime-unit.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/source-inputs.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/typecheck-cache-refresh.log
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/typecheck-exit.json
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/typecheck.log
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/SHA256SUMS
+Required source input is ignored: docs/dev/evidence/project-rag/RAG-01/20261110-2868a11ae/dependency-layout.json
+[ELIFECYCLE] Command failed with exit code 1.

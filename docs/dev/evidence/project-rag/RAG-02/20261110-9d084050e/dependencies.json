@@ -1,0 +1,20 @@
+{
+  "driven_by": "agent",
+  "candidate": "9d084050e589d47f43f75192fe7b844b2efff19a",
+  "node": "v24.22.1",
+  "dependencies": [
+    {
+      "id": "vitest/package.json",
+      "path": "D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\package.json"
+    },
+    {
+      "id": "typescript/package.json",
+      "path": "D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\typescript@5.9.3\\node_modules\\typescript\\package.json"
+    },
+    {
+      "id": "@typescript/native-preview/package.json",
+      "path": "D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\@typescript+native-preview@7.0.0-dev.20260527.2\\node_modules\\@typescript\\native-preview\\package.json"
+    }
+  ],
+  "mainNodeModulesReused": false
+}

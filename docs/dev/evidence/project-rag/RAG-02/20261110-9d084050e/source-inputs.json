@@ -1,0 +1,1668 @@
+{
+  "schema": "ProjectRagSourceInputs/v1",
+  "candidate": "9d084050e589d47f43f75192fe7b844b2efff19a",
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "inputs": [
+    {
+      "path": "harness/specs/fixtures/project-rag/authoring/v1.catalog.mjs",
+      "digest": "sha256:b3ab0527d9f6d4bd616436a174a80695759371e6c82cc935ed571799d53ccf98",
+      "bytes": 33201
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/authoring/v2.catalog.mjs",
+      "digest": "sha256:6a1148858be82d4e92647e639a5cbb40b0bf0bbd68254e208e53d527baa42c34",
+      "bytes": 4614
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/authoring/v2.code-tasks.mjs",
+      "digest": "sha256:7aa23866ab7203affd26cc72804ef41f6b9e5504b53ddbbaa08b28f7d2b5ed04",
+      "bytes": 9211
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/authoring/v3.scenarios.mjs",
+      "digest": "sha256:26266b40df383453a6753e37747bd98f345a93a79e182de955a9128f2a8db9a5",
+      "bytes": 8845
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/authoring/v4.scenarios.mjs",
+      "digest": "sha256:61e8aa4ccf8ab76e5a6ac3e56b60e7da58fab3af9fbeb06d50a064fc62637ef6",
+      "bytes": 7782
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/release-v1.json",
+      "digest": "sha256:4d6aed01158e17df6cf73dd54f7cd73fe2b3265f6c6c208ceed403cb8d8b8bb0",
+      "bytes": 327
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/release-v2.json",
+      "digest": "sha256:1a5fb49c21c115beff588e3314ae4a55fcfe758da65f6b80dbcaf42bcc35e01e",
+      "bytes": 327
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/release-v3.json",
+      "digest": "sha256:07f73da88f308e60a7c098628753e6e7a5dab62751a22d8d21f6d52bea8bdf8f",
+      "bytes": 327
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/release-v4.json",
+      "digest": "sha256:da8f4b2a790cb1a53ab5a687618e4619a411d818ce13c7c6630053517384ca53",
+      "bytes": 327
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/.gitattributes",
+      "digest": "sha256:705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+      "bytes": 8
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/baseline.json",
+      "digest": "sha256:044a88c8249a6e1c7d2c7588b65813bd06935194a0c2280e71c02f4c0f329211",
+      "bytes": 2362
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/corpus.json",
+      "digest": "sha256:b74c8918e61f7d38086823e826941bc54f4688fa7893acfc1177efab5665939b",
+      "bytes": 62656
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/freeze.json",
+      "digest": "sha256:6671bd542d6a8ae0c86930c5f20f9850c88275284fcd4d3976275aed1c34b598",
+      "bytes": 9694
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/oracle/authoring-catalog.mjs",
+      "digest": "sha256:b3ab0527d9f6d4bd616436a174a80695759371e6c82cc935ed571799d53ccf98",
+      "bytes": 33201
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/oracle/negative-cases.json",
+      "digest": "sha256:e8805812a8515aa507c0f102590f724eca32fb430c1edaf3fcdce44c59c5ffce",
+      "bytes": 48263
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/oracle/query-gold.json",
+      "digest": "sha256:6031c2153ac874703032e61dd67dabfdc09d6b2d76891391d9161b8b56e87c48",
+      "bytes": 491775
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/oracle/task-gold.json",
+      "digest": "sha256:72a55da9d9624201153592dbef3338a84114c24cac79e3d83a91aebe8fa6dd16",
+      "bytes": 147960
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/background-admission-1.md",
+      "digest": "sha256:d5148ac3cd3000391fdf4520e926510a9aea97467a521739deb4eebab5a0fa06",
+      "bytes": 7601
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/background-admission-2.md",
+      "digest": "sha256:d5552b7c5010f2dcf661cf8793a10e62404d40b985794bd58438c1cfc63f92f4",
+      "bytes": 5053
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/backup-restore-1.md",
+      "digest": "sha256:8055916f281cf91cb6925b39c88f0b5ae4809007a427ceb75a4203bfcebfa71f",
+      "bytes": 14504
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/backup-restore-2.md",
+      "digest": "sha256:b5dd813f77b0eb452eb215eb06e99a68eef45b471538d92a5a90423c861c9feb",
+      "bytes": 13213
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/bounded-cache-1.md",
+      "digest": "sha256:32986b885f2f62b5bccddff04aec9a8a36709eaa5d6c15cc584943fa5b571b87",
+      "bytes": 4756
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/bounded-cache-2.md",
+      "digest": "sha256:496316e5711d92cb51f2bc4b98ad0740bf2ca269b8f13d10c8ac19033c693a33",
+      "bytes": 3308
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/bounded-page-read-1.md",
+      "digest": "sha256:5a5b42589ea2feaa203c2706184ae3f5d9900acc7188deaa15a6efc8b511de64",
+      "bytes": 18911
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/cjk-tokenizer-1.md",
+      "digest": "sha256:5dbaae946856d3490012abd619dc1dc65a1e32d76eded7235992faaa600fefbd",
+      "bytes": 883
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/context-candidates-1.md",
+      "digest": "sha256:2f4764db9e8884b77c9ddb4027802926f6c2f127f19e132d5515d9e3e509f2f2",
+      "bytes": 18131
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/context-candidates-2.md",
+      "digest": "sha256:b06188f2ef26e2871703650fabc3c20f2e1ba3c0dc1dfbf360763e74e266b130",
+      "bytes": 41577
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/context-resource-contract-1.md",
+      "digest": "sha256:f335f5307c9c1cba002806ce3f49bb8ee357ecbaa27a4544f295185c45fc557c",
+      "bytes": 18235
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/context-resource-contract-2.md",
+      "digest": "sha256:bf84365f6276fd9e4f7b82c419d6e5038955e7929b45d824fc1588e2c43f92a1",
+      "bytes": 3515
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/dcs-turn-budget-1.md",
+      "digest": "sha256:d89deeacd86db4b01d6bc536bcf60a67874fb63516df52a0818a157618473589",
+      "bytes": 28538
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/dcs-turn-budget-2.md",
+      "digest": "sha256:cd28cfc1e84456a59d3cf76df2d5d188fefdf48e39fd49bf227239bb7c9a0dd3",
+      "bytes": 5226
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/development-commands-1.md",
+      "digest": "sha256:75eea0c929ce9cb4ddaed8993d4237b802da6c34cc01726d4f91276fa04e1dcc",
+      "bytes": 13941
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/existing-semantic-provider-1.md",
+      "digest": "sha256:6be805e45d8430a847a7f2804a8072d990232ea4d358827f8fad254f98ba11be",
+      "bytes": 8657
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/experience-adoption-1.md",
+      "digest": "sha256:bcc41128e9746821f70490768792d25e731b7fd726479c4bb21ad00849a47d36",
+      "bytes": 43960
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/experience-adoption-2.md",
+      "digest": "sha256:8cab8dfcca502c4ef1a31533cf741fa5b3eb15251dc738e46913732b1d622d1b",
+      "bytes": 4018
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/file-path-boundary-1.md",
+      "digest": "sha256:8bff37fc96935ba3cf97a8919de7736eb00ad4fe1bbb856ad86dd67e08b81349",
+      "bytes": 5179
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/host-action-timeouts-1.md",
+      "digest": "sha256:759502d5d99c9d91f65d1118fa7f44f830ee61c245f53f0105cbfb5cafaacc35",
+      "bytes": 2328
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/host-deadline-1.md",
+      "digest": "sha256:a98d6be863318299db6809217fa1374324ab96baf54c0b1a7eb397006fdfbe1c",
+      "bytes": 5264
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/host-knowledge-scope-1.md",
+      "digest": "sha256:26e7d5fbca85701c60aa40d85a4d64e4f56beb99d78483a34e37bf057ee3cd9a",
+      "bytes": 4870
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/knowledge-governance-1.md",
+      "digest": "sha256:deecff903a2502265b4d6e76bdfe38bef47765597061eb5ebe46cade9333914b",
+      "bytes": 18429
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/local-embedding-model-1.md",
+      "digest": "sha256:946f9254a9a63109576f99d854a981ae27e6e0178a860143d366913f24f89db8",
+      "bytes": 734
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/memory-temporal-1.md",
+      "digest": "sha256:ea94e6ab039edceaf684c02f691f6f81f25fee9adffecbda49cc038784364707",
+      "bytes": 12286
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/orchestration-capacity-1.md",
+      "digest": "sha256:6a2fe899a20b4c1f15b04d4b024744f63f68c9fdaea2ef37d8825612713a3c4b",
+      "bytes": 11173
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/orchestration-capacity-2.md",
+      "digest": "sha256:063021ce1b094cfebc038a3869a9d473396db6c0b21654bb8fa634c3890bf08e",
+      "bytes": 6465
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/owner-version-1.md",
+      "digest": "sha256:2a8e8862421572501d0540b97228d6318bda7579280ef5e45d458a5669a467b1",
+      "bytes": 14768
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/provider-accounts-1.md",
+      "digest": "sha256:47e40bc6d4e6f5489740638590d0d21a0c102b9b746e9f83e2876480715f5950",
+      "bytes": 13991
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/provider-outbound-quota-1.md",
+      "digest": "sha256:cf9ae2446d8417a556af7363c7841b89687b68339c0fab3fdd7cc61e885e0616",
+      "bytes": 23301
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/provider-outbound-quota-2.md",
+      "digest": "sha256:e8e75d6a9efb43611fa4cb91b3b3534d22a45ffdff378f8955370503ee77ff4f",
+      "bytes": 27641
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/role-contracts-1.md",
+      "digest": "sha256:979076dd69ff47dce67e5d03e91cadb309780eba41b13ca6dcda6ea898e21478",
+      "bytes": 19477
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/role-contracts-2.md",
+      "digest": "sha256:71aa836ea95075c9d7342e1d562f50acee15f08e35b2669f021f61fe96427a73",
+      "bytes": 3568
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/role-memory-store-1.md",
+      "digest": "sha256:2c6880cec1667010782b2c7f8633a1152f16f14ab646621f668c2223b2895a84",
+      "bytes": 95372
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/session-continuity-1.md",
+      "digest": "sha256:ade5eecc0f48beb6473af3834e59ba869bad79bf363ff428ceb5aab3da568f02",
+      "bytes": 18469
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/source-set-limit-1.md",
+      "digest": "sha256:dce95c7a51bcbeb8eb35d73d75253d97151022c0f1485e690c124f404bd1a32e",
+      "bytes": 37468
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/task-working-context-1.md",
+      "digest": "sha256:323202aa4f334b64aef6563bf8230d7d4ef7ce90b5012528ee32bf3192a7aa73",
+      "bytes": 8515
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/usage-aggregation-1.md",
+      "digest": "sha256:17ae975f9afbf045dc42b3dee040b4d84e6ab0d1dfbd768616f4884b4dc3fe3f",
+      "bytes": 13547
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/wiki-read-policy-1.md",
+      "digest": "sha256:88b63c15470bc2ea20e5574dca110a3e1509a1cabe21c0d0258b273acbcc2e87",
+      "bytes": 10217
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/owner/vault/concepts/workspace-preflight-1.md",
+      "digest": "sha256:f1494e578c48e341192e5bbc67198c259b83c9bb92a3267234fe81133eaf75a0",
+      "bytes": 14973
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/promotion-policy.json",
+      "digest": "sha256:5f51a53b8315065fd6b750cc46c66fa6e16e17490402ef68cd88f6b0311bb76f",
+      "bytes": 5944
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/queries.json",
+      "digest": "sha256:7173ef37c92bceffad105a0c8fb44089b3d9047d2ce5e0b4811d29f403ab2e1d",
+      "bytes": 174359
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/tasks.json",
+      "digest": "sha256:b8a3c23b5c20502cac0a6ccd4ec742a28d3cdfaa86ef94fef902d3f566a50c6f",
+      "bytes": 112476
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v1/trial-plan.json",
+      "digest": "sha256:da6d38846f0d4439647d10c88b55c6ccc579c995cc87de56bc23fceb066cad14",
+      "bytes": 254459
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/.gitattributes",
+      "digest": "sha256:705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+      "bytes": 8
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/baseline.json",
+      "digest": "sha256:044a88c8249a6e1c7d2c7588b65813bd06935194a0c2280e71c02f4c0f329211",
+      "bytes": 2362
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/corpus.json",
+      "digest": "sha256:81501e479c8b054ddc07decdf27867a64c859d450f786852cdd40416d8c420e8",
+      "bytes": 82328
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/freeze.json",
+      "digest": "sha256:b42997a474c857096945f4a3cbd55c4a44c860e4e2ab71d30ce4af7dbf60583d",
+      "bytes": 15875
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/oracle/authoring-catalog.mjs",
+      "digest": "sha256:6a1148858be82d4e92647e639a5cbb40b0bf0bbd68254e208e53d527baa42c34",
+      "bytes": 4614
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/oracle/negative-cases.json",
+      "digest": "sha256:1725942534cf29f8369903b80b6b26f1a046cd0ad0f63d0334f13cb64255a554",
+      "bytes": 40770
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/oracle/query-gold.json",
+      "digest": "sha256:6e120380ba159d1206a2cae6cef305e86f27abf912bcd32d7a39a877c2c46547",
+      "bytes": 610063
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/oracle/task-gold.json",
+      "digest": "sha256:10c5000e2c8bbe4b6b16e896cb74ec45ee2522a7d244f959d45de08ee65fb0c9",
+      "bytes": 788295
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/background-admission-1.md",
+      "digest": "sha256:38400b501a5d0b2d08352d087ea0e52bf4fc135bea741a9c89eacd4b787bc77b",
+      "bytes": 7601
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/background-admission-2.md",
+      "digest": "sha256:482137670aad679c0e5c9e3c9a1e7705d6fd78876b8fa11e04e96456030f810a",
+      "bytes": 5053
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/backup-restore-1.md",
+      "digest": "sha256:1d878c9cde9250a6a0207afc0dbc891ee53425aefe68c2ce2dc90f123007234c",
+      "bytes": 14504
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/backup-restore-2.md",
+      "digest": "sha256:15818ae271a8defe27bdefdbbe69a5efaa118a03aed81417bb7b95664ccdaa21",
+      "bytes": 13213
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/bounded-cache-1.md",
+      "digest": "sha256:19fa1b17227bbc0be7000dcf3e7bd4c3f28ac2d095b9e7608209b282bd19995d",
+      "bytes": 4756
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/bounded-cache-2.md",
+      "digest": "sha256:38a7fcf915b3405ee56b77ec1b450b3f623534372c3aac0ae11285d17483558a",
+      "bytes": 3308
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/bounded-page-read-1.md",
+      "digest": "sha256:b2e29264bcf79255349cfb61585cca2a187c839891856e5d5a2191274d2b09b8",
+      "bytes": 18911
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/bounded-page-read-2.md",
+      "digest": "sha256:6eb4ea8f255b209c90706c7dab18ee57cf133d03d4472b0492c21454dd06c763",
+      "bytes": 7464
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/cjk-tokenizer-1.md",
+      "digest": "sha256:4bd7a29ef88abb1aeb2074123e16c77056ee2dccb03f341c53e6368830cf7f57",
+      "bytes": 883
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/cjk-tokenizer-2.md",
+      "digest": "sha256:729d53b024444b0b4009ff37569fbf150023577d50ed1e508f80eb787a161428",
+      "bytes": 45979
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/context-candidates-1.md",
+      "digest": "sha256:c19ad4e7458dfe0ccfcd2dd63cf7b62daf4ec86942035300eb576073d8b69475",
+      "bytes": 18131
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/context-candidates-2.md",
+      "digest": "sha256:209f25c18a70d454b7e26732d214778d08a86040603cd16a93f268b94e95c3b3",
+      "bytes": 41577
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/context-resource-contract-1.md",
+      "digest": "sha256:4f926f2d524307d22915966bfd13acad98bcf612a16667a68c4d1519da583b68",
+      "bytes": 18235
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/context-resource-contract-2.md",
+      "digest": "sha256:3f3f5f8c2278dd13e89c81b5098eecadce92f7298cee80995ce6d1f96c8a45e2",
+      "bytes": 3515
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/dcs-turn-budget-1.md",
+      "digest": "sha256:28ffe2530c2cbc2809e49d6e2d5f541e63fc7c6786927409022a6ce1db15454e",
+      "bytes": 28538
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/dcs-turn-budget-2.md",
+      "digest": "sha256:d33bb5ed1aaf04da91c3c00d02ce3803ed82eaef003b024ee62deefe00bf679a",
+      "bytes": 5226
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/development-commands-1.md",
+      "digest": "sha256:53ce295a9bc81f84bdc009485351b9161d457bfffc332af943dd22c270836533",
+      "bytes": 13941
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/development-commands-2.md",
+      "digest": "sha256:28c862191e3149cf8c3128f620cc91675e43661bdd21beab5244a2fde8270313",
+      "bytes": 2913
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/existing-semantic-provider-1.md",
+      "digest": "sha256:2f7b78f1b07b0f763e95ab27ffd56ef97f1849ff2130d9bdb9fce6ac50152f46",
+      "bytes": 8657
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/experience-adoption-1.md",
+      "digest": "sha256:1b02fbb57f7954437d97873fef712e82cccb0a4fc800bde1e60e5d54b6e13d50",
+      "bytes": 43960
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/experience-adoption-2.md",
+      "digest": "sha256:b5a34ef7ffc9f798d72ee828ac6ea02c7c6fcc1725d289760bdf20d6f4dd5f42",
+      "bytes": 4018
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/file-path-boundary-1.md",
+      "digest": "sha256:73f3557fa86c9cb723e868c6b82571de0e163fe3025b5e2df90cb80534c14c36",
+      "bytes": 5179
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/host-action-timeouts-1.md",
+      "digest": "sha256:2cc254597bfa4a0ab83d72d24359e699f333bfebde72494c96e5af8a17ac945e",
+      "bytes": 2328
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/host-action-timeouts-2.md",
+      "digest": "sha256:2429209e2dfb2cb37d20c2b7f94f03703354c5e2b1c10e0051859eb2a131e547",
+      "bytes": 14063
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/host-deadline-1.md",
+      "digest": "sha256:602ab4257cf1ea72596d46ad49e158554a4783b0929bbac426d0257a633f1d40",
+      "bytes": 5264
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/host-deadline-2.md",
+      "digest": "sha256:16609d11ce079b1bb2b153c6dac84a3138ad5fa35858e3ffd47b4fc36d9e7433",
+      "bytes": 10502
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/host-knowledge-scope-1.md",
+      "digest": "sha256:7d24dcfe79b2da0c36efadb2e142f957f3196e5d402a0d21383d98694c2c5647",
+      "bytes": 4870
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/host-knowledge-scope-2.md",
+      "digest": "sha256:af28a4d45b4fbf0a4773ff2fbbeabf977d477bbfb4f2ca02e85d50ca23d33243",
+      "bytes": 34969
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/knowledge-governance-1.md",
+      "digest": "sha256:5b01ee173594a5ca57fdf8344e7fc0135daea7642b1a41103e28e3ac1a673ae8",
+      "bytes": 18429
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/knowledge-governance-2.md",
+      "digest": "sha256:8361f84f1c599310d038fe6124c608f1eb72feb04662d3727038e2d4d21fb906",
+      "bytes": 258248
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/local-embedding-model-1.md",
+      "digest": "sha256:e7d1fc3aee467c5205b3f10f5639aada5c157926d490b90381d6d78db29d9179",
+      "bytes": 734
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/memory-temporal-1.md",
+      "digest": "sha256:d28509dd30580e8224bf4958afc3b1f1e9a003cd26ad24df90372f03b39b4a59",
+      "bytes": 12286
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/memory-temporal-2.md",
+      "digest": "sha256:39eb72a434bc141e3e6a99f1e398744f998c857f8c110a22ef43f0c80687851f",
+      "bytes": 2093
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/orchestration-capacity-1.md",
+      "digest": "sha256:83c8ec46a8137a22ec08076d366324c0631245e611f50773e5fe5eba70819d21",
+      "bytes": 11173
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/orchestration-capacity-2.md",
+      "digest": "sha256:e637ad2d144f3ddf3da6d1dbf1c7011f6ac123a3cbe78eca8af28236f224d8b0",
+      "bytes": 6465
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/owner-version-1.md",
+      "digest": "sha256:efc5970a4e0b60642cfed4ef44e6da32fe654d501d4bb6e690fc36bf99381814",
+      "bytes": 14768
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/owner-version-2.md",
+      "digest": "sha256:51b52462aa6f29345a2feaffc5859de700ae42eb304b1d0cad61576a3f621b82",
+      "bytes": 658
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/provider-accounts-1.md",
+      "digest": "sha256:b327b79ef5f8a5d1f7e0985eacb31e804d8001247665c2b0756bed329825766f",
+      "bytes": 13991
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/provider-accounts-2.md",
+      "digest": "sha256:3ec9930a702d527d49ddf0c2466fe8de7e6fcabd3341ec59e4e44666e8b4d759",
+      "bytes": 12126
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/provider-outbound-quota-1.md",
+      "digest": "sha256:1c0039c372259de2b2d3a2099ecf21d8367564bb240207b70b51c293d4c429cb",
+      "bytes": 23301
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/provider-outbound-quota-2.md",
+      "digest": "sha256:6b1527282c1b57b5d99325ef01557762f61b580369f1ff0c115ddbd8ec391db1",
+      "bytes": 27641
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/role-contracts-1.md",
+      "digest": "sha256:0301cf720c84c0a25a6feafb13a9af84e8f551b12d5066b5681f5a215dcb7809",
+      "bytes": 19477
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/role-contracts-2.md",
+      "digest": "sha256:9cb15b70afb56e60bb4f07d1ea840be236f6a34ca21ca416ee33d86971f68c7e",
+      "bytes": 3568
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/role-memory-store-1.md",
+      "digest": "sha256:a3dcdbe83858a0d0ca515b191a6ea2558f3c10a4c6099a69801fbb64c2efb43b",
+      "bytes": 95372
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/session-continuity-1.md",
+      "digest": "sha256:b82bf9942576205d3b3cef81b2ca22b41dc17528d1ad54cc5bdcd3da7f926c07",
+      "bytes": 18469
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/session-continuity-2.md",
+      "digest": "sha256:aa066e4f3697a0b8405dc980c82b4991967ca97fbf9be3a3486b6162a797b446",
+      "bytes": 2783
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/source-set-limit-1.md",
+      "digest": "sha256:e5adb5ba2e4d0d7d76f5256e033bbcd8d445966b03f9d5cbb5bbfc0726538aae",
+      "bytes": 37468
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/source-set-limit-2.md",
+      "digest": "sha256:38d493e165e7a892aa59126b9df2b37bae24f8034c593d21aece5ba1fb43f98e",
+      "bytes": 31698
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/task-working-context-1.md",
+      "digest": "sha256:2430f7966602b5e9f9c8a600799aae398393e81b48735b0a9562a625d0faeb2a",
+      "bytes": 8515
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/usage-aggregation-1.md",
+      "digest": "sha256:51ea1ac02eb3460167df9e1dd963b2949703044d5e2a9157ab3c5a2ccb999be7",
+      "bytes": 13547
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/wiki-read-policy-1.md",
+      "digest": "sha256:b2bfcca65a052e4b9415cc4100efadab37060fe52193cc4bad2a61ba8e3c8f74",
+      "bytes": 10217
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/wiki-read-policy-2.md",
+      "digest": "sha256:f44402eef8bff16f36f53e7edbc7062c8e414869363c0f0f64f5d84cfe7fa3fc",
+      "bytes": 54956
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/workspace-preflight-1.md",
+      "digest": "sha256:a3618a6017571aa342a600e61307ac64f594ac7706f43357f5fe715fa92a13e1",
+      "bytes": 14973
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/owner/vault/concepts/workspace-preflight-2.md",
+      "digest": "sha256:09ac8c616a373f932fe7a9ba7a7ec42dcf30c31359c455ad1349cbc028ddc17d",
+      "bytes": 16198
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/programs/t-code-bounded-page-read.ts",
+      "digest": "sha256:f6b7cd32837000828152a30297a1251967003f86c8c1a17d36e65169ce17bea6",
+      "bytes": 18427
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/programs/t-code-cjk-tokenizer.ts",
+      "digest": "sha256:a59ec75644c0665a10206d12fa8fa1918d3ba6229d3728e6c2b2223fc4e46dda",
+      "bytes": 387
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/programs/t-code-development-commands.ts",
+      "digest": "sha256:09f7373ca547e2bd0fb01581ee6a4a1ab7f6a4f763daf079308fea9294659339",
+      "bytes": 2476
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/programs/t-code-existing-semantic-provider.ts",
+      "digest": "sha256:51a0b7fe277543ef1a185e65a4c3f4735c594db654557a0ecad8901946e52009",
+      "bytes": 8163
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/programs/t-code-file-path-boundary.ts",
+      "digest": "sha256:db95e1fc4397e5ac836f74c5f4955b448e220abadfb4f3be881d10fe8eb2bcd5",
+      "bytes": 4685
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/programs/t-code-host-action-timeouts.ts",
+      "digest": "sha256:cb4eb142bf2b3fa69badf469f32db5d2490e36d12d12dc095177e0f6f5eea8f9",
+      "bytes": 1854
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/programs/t-code-host-deadline.ts",
+      "digest": "sha256:a7cb9c6b4ab8567e21e349adc3d81fc7b478a3b2f7310d1eff10003dc833bbf4",
+      "bytes": 4817
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/programs/t-code-host-knowledge-scope.ts",
+      "digest": "sha256:f336898b938232dd7bd31e117a28b238f9e269b87db07f722dfa516bc722efa4",
+      "bytes": 4398
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/programs/t-code-knowledge-governance.ts",
+      "digest": "sha256:274b0581ddc9205de8dbd1c7ec8313f88cfa4b4bc752249d3c381f6cea7ffafe",
+      "bytes": 257741
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/programs/t-code-local-embedding-model.ts",
+      "digest": "sha256:f307e8baed18785ff37bcc06e59d4c70d25c34bf5b40dce39f168c279cbaffb8",
+      "bytes": 217
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/programs/t-code-memory-temporal.ts",
+      "digest": "sha256:a6cb26b24dbc7f5e3c433a830574d0281bc790381cbd59b68bdfc6ac0982018c",
+      "bytes": 11782
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/programs/t-code-owner-version.ts",
+      "digest": "sha256:080913ae11c8934660c22e74dc7e24adf250b18e58a36055c49e9da4d4a6fb94",
+      "bytes": 14271
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/programs/t-code-provider-accounts.ts",
+      "digest": "sha256:906878ccb22870e438818524dc3bf6504cfd01b2909ba0b32aa50a790d36ff1f",
+      "bytes": 11697
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/programs/t-code-role-memory-store.ts",
+      "digest": "sha256:1982a2b8ce88c781df73cf47d6418334957dafac5cd090c1c11bff8cfd6e304f",
+      "bytes": 94870
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/programs/t-code-session-continuity.ts",
+      "digest": "sha256:8d88fd66c3c2f7fcb27ee9cf3a60901531cac9506861cccb8784d280fa1af01b",
+      "bytes": 2321
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/programs/t-code-source-set-limit.ts",
+      "digest": "sha256:6f6d7624554b2b86c63cd45fd4155c7096217449a9e3bc6cef71ec30d6a5354e",
+      "bytes": 36984
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/programs/t-code-task-working-context.ts",
+      "digest": "sha256:aa2cec28ed105537e094d8be30d87b05898e9e507a82a0c22db00c4606c7c356",
+      "bytes": 8058
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/programs/t-code-usage-aggregation.ts",
+      "digest": "sha256:a74d89e1f314aff284ca261233cfb8649f9832b61fc8f327c833129024045bd8",
+      "bytes": 13101
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/programs/t-code-wiki-read-policy.ts",
+      "digest": "sha256:775a7cdb7c1099f32a9a5009e193ebcde8777fd41f8f420c191edafb08d2be9b",
+      "bytes": 9718
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/programs/t-code-workspace-preflight.ts",
+      "digest": "sha256:df6ee2641296d1a6296f1b0d9079039f9d56c4243e5738fafdd2e5b1e88d59c5",
+      "bytes": 15738
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/promotion-policy.json",
+      "digest": "sha256:5f51a53b8315065fd6b750cc46c66fa6e16e17490402ef68cd88f6b0311bb76f",
+      "bytes": 5944
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/queries.json",
+      "digest": "sha256:fbcffb68764292e4dfd4d8d028b317d619d0d7789593594a34d6a5d29cf0297c",
+      "bytes": 179479
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/tasks.json",
+      "digest": "sha256:0ce6bbe5598952b88f5dad8441e09f7ce8da6264fbd3647ee86d403480e425b0",
+      "bytes": 109971
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v2/trial-plan.json",
+      "digest": "sha256:9a579fef74e511854f71212236382a57aa064ef18bb48401b0e6182b5a68bf8c",
+      "bytes": 256079
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/.gitattributes",
+      "digest": "sha256:705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+      "bytes": 8
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/baseline.json",
+      "digest": "sha256:044a88c8249a6e1c7d2c7588b65813bd06935194a0c2280e71c02f4c0f329211",
+      "bytes": 2362
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/corpus.json",
+      "digest": "sha256:984c76ff9d81f80b907f6bcda611f07ecd58f2e684e8c2c02fd7c796550bdc46",
+      "bytes": 82328
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/freeze.json",
+      "digest": "sha256:63cc3f14b2977d0ba3bd4a988b11661c62fc50f3a1e7bf61ac1acf9090eb0470",
+      "bytes": 16075
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/oracle/authoring-catalog.mjs",
+      "digest": "sha256:6a1148858be82d4e92647e639a5cbb40b0bf0bbd68254e208e53d527baa42c34",
+      "bytes": 4614
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/oracle/negative-cases.json",
+      "digest": "sha256:3f9cb130341de1323a1dba07d63ef5d39ffc00da11d9c99da307ee0b39dc0b85",
+      "bytes": 40770
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/oracle/query-gold.json",
+      "digest": "sha256:0a8ca5412cf4a5609ed84636b60e80b2725fe78d12f3dfe6ab136e2ca70e35f2",
+      "bytes": 648391
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/oracle/task-gold.json",
+      "digest": "sha256:9de62c22f1d1409b3a19f627609352288d48056f524d7247e911b60983252f86",
+      "bytes": 877960
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/oracle/task-scenarios.mjs",
+      "digest": "sha256:073c645836dab5101d437af26917e2939556cfbb4c64c0550d1020e2217f5271",
+      "bytes": 8844
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/background-admission-1.md",
+      "digest": "sha256:6404ebf43df51f6fcb3d778bce039af5ce2071d9d55148a244a3659c677d0c77",
+      "bytes": 7578
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/background-admission-2.md",
+      "digest": "sha256:0406a47d5e2c0fcf464d108e69f7809d57c9a228e15f4014e688ebd43c12ea44",
+      "bytes": 5030
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/backup-restore-1.md",
+      "digest": "sha256:b58a7f7c15c9cec3fd6935ae32342cc6e3fb91179268d310dea87fb18ea95acd",
+      "bytes": 14487
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/backup-restore-2.md",
+      "digest": "sha256:36f2f2b7d74cfa7d1f36abe0fe3ab142e7c121d066b8a359787aeca9d238d0b7",
+      "bytes": 13196
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/bounded-cache-1.md",
+      "digest": "sha256:ad0e70dda2e88e1a0782d2af4c504ee0109456f94b364be809333f96cba67029",
+      "bytes": 4740
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/bounded-cache-2.md",
+      "digest": "sha256:4acfb6b872a8af53486efe44e90fc3afb90f9aac2c82b3fce665a9369051fc47",
+      "bytes": 3292
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/bounded-page-read-1.md",
+      "digest": "sha256:254236d1968db256e6ffbcebe24ff023e78f6eef7f9076642afb89ae907ccefa",
+      "bytes": 18891
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/bounded-page-read-2.md",
+      "digest": "sha256:b3ba41fd910fbcbe77e72321b96e1eb70c6dae97c1cf7edd609114da06808463",
+      "bytes": 7444
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/cjk-tokenizer-1.md",
+      "digest": "sha256:d10c778ee1cb5d0f8944de9599b7aee1c05f60a43f8f5cd47b6d0e7106b94279",
+      "bytes": 867
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/cjk-tokenizer-2.md",
+      "digest": "sha256:7f5277c331126592f4484e2423390a964959c57a7eb8bdfeb954428ca3754316",
+      "bytes": 45963
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/context-candidates-1.md",
+      "digest": "sha256:e00f1d525bd9ad577cf7d5575556375ba3052cc191b9582f11a2fa8ca6131ff0",
+      "bytes": 18110
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/context-candidates-2.md",
+      "digest": "sha256:a339a361ea0f5df79833548b0d6c27e00731a86c727fb3841c7eb395fd89db0c",
+      "bytes": 41556
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/context-resource-contract-1.md",
+      "digest": "sha256:8c96008c0f209514248a8986e3a1f151bc13aa7df644e3e4357fd6f0c739d0ca",
+      "bytes": 18207
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/context-resource-contract-2.md",
+      "digest": "sha256:62a99f1efac01b0382b7a9528afa1534a775fafe605614b13056b12781db8d63",
+      "bytes": 3487
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/dcs-turn-budget-1.md",
+      "digest": "sha256:71d1aaf5d44ea305e60a1b5ccdf99436daf4eb95a96115ca612050888c3a4492",
+      "bytes": 28520
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/dcs-turn-budget-2.md",
+      "digest": "sha256:5eb1c71e5da3d8b0fe531a35ad901ff852a56ce1e9e5be42132e004ac0fc538e",
+      "bytes": 5208
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/development-commands-1.md",
+      "digest": "sha256:3f843ec65e794bd349b6c4de67ecbf15177651ed8d6d04806d97dc05f4c0b5cc",
+      "bytes": 13918
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/development-commands-2.md",
+      "digest": "sha256:7bcbda8622e1d5180f1a9d71bb879331aedc80b1797ec39b4443bdb2d71076ce",
+      "bytes": 2890
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/existing-semantic-provider-1.md",
+      "digest": "sha256:964b907ce5147d85d795ea82fad61a5173724d1443a852c632db1a77a4d84816",
+      "bytes": 8628
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/experience-adoption-1.md",
+      "digest": "sha256:e24ea861545589d1b25e9e82a71b5c7a3e80185732a561de1367fc77c85d67de",
+      "bytes": 43938
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/experience-adoption-2.md",
+      "digest": "sha256:309c57bf192125171d5e5a000ca98faee0a056123d810d527afe1a5b96f4737d",
+      "bytes": 3996
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/file-path-boundary-1.md",
+      "digest": "sha256:20e42905777f78a480bef763c634667e76610f64451b608dd8ced29388b836f7",
+      "bytes": 5158
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/host-action-timeouts-1.md",
+      "digest": "sha256:64917b3b3045979cab0e229e2d4e4b4dfd49d10315334eb06c3609cc54ac27b2",
+      "bytes": 2305
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/host-action-timeouts-2.md",
+      "digest": "sha256:6d4d1781caa6521a0f5a88d74e64de863b550f10a64b86e860fdd7dec2abfe08",
+      "bytes": 14040
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/host-deadline-1.md",
+      "digest": "sha256:e5a991a3526c827b48e8575dcb878a316750745caf414011ca9c31cebb43eade",
+      "bytes": 5248
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/host-deadline-2.md",
+      "digest": "sha256:d592ebe7980aea95cd602208cefc40e0d32f372113395dbedc9b5cdef8d3c3d3",
+      "bytes": 10486
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/host-knowledge-scope-1.md",
+      "digest": "sha256:27a6970aa420e16c475f8d1cf718457d2160aa92743ac72602e730e242d66540",
+      "bytes": 4847
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/host-knowledge-scope-2.md",
+      "digest": "sha256:5265c13dea7f60e09fbd4779eca234db5a52c0e240bdd6d567619ce1981e631f",
+      "bytes": 34946
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/knowledge-governance-1.md",
+      "digest": "sha256:d915fb6d120dea747751c8393d913dd3e0ebdefd8afee43105bda791a69668ac",
+      "bytes": 18406
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/knowledge-governance-2.md",
+      "digest": "sha256:74e8fec81443c5cee5a38eaa3f3c2f107d1c564fc5d3c561797cd22197502296",
+      "bytes": 258225
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/local-embedding-model-1.md",
+      "digest": "sha256:940c86c493babd6aba920d9595d66cee9b293a580b2d641177b4882dd7c2316b",
+      "bytes": 710
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/memory-temporal-1.md",
+      "digest": "sha256:b226f73afc537aee86a02c4192c5c28f8f64a059f7cc0e9aa3a55606cee060d3",
+      "bytes": 12268
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/memory-temporal-2.md",
+      "digest": "sha256:c7a6f7cf636fee00fa36607858d9c7a68c7b5ef3535205ba451ad61c4df68bf6",
+      "bytes": 2075
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/orchestration-capacity-1.md",
+      "digest": "sha256:177ce8dc148b01f0e43d72ab0dde8e0054bc590910ff4add945158a802c5dfff",
+      "bytes": 11148
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/orchestration-capacity-2.md",
+      "digest": "sha256:79f958dd3cb9d9e556ccba68e3b6f862aaa92260c360ea165f10e189de4dc37c",
+      "bytes": 6440
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/owner-version-1.md",
+      "digest": "sha256:8000dfb0c37e3d8bd389b78c324e0777432f003cf2b747edbdcba733e6442c18",
+      "bytes": 14752
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/owner-version-2.md",
+      "digest": "sha256:7e265844a91b4a6ccc69d5110ed6b21c09e2b3361e92bfdbfc49c20370687a17",
+      "bytes": 642
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/provider-accounts-1.md",
+      "digest": "sha256:de69269f34252f59b39e5f5d5571609b526ead62e1eea5f9d2944d522771df27",
+      "bytes": 13971
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/provider-accounts-2.md",
+      "digest": "sha256:ca2550f590f78e389fdbf4cecae0edd86ca817c0b206f06f41d668bcdb1f2e71",
+      "bytes": 12106
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/provider-outbound-quota-1.md",
+      "digest": "sha256:fdf5492155d336dd32f628c13f28004944aca959d436473403d30ce8534750c9",
+      "bytes": 23275
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/provider-outbound-quota-2.md",
+      "digest": "sha256:0adf74008a6e8e1c5f0e739c466e6cbb1a74544445a653f63233666aa45eef87",
+      "bytes": 27615
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/role-contracts-1.md",
+      "digest": "sha256:c45fa11e3616886c1e534bc588770c11179d4702989eb3c82e1acbda3abff035",
+      "bytes": 19460
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/role-contracts-2.md",
+      "digest": "sha256:29f94f01c6a72344e40d517fc02a0d66772db4dc5796ba5dbb65ae95e6d3f1a9",
+      "bytes": 3551
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/role-memory-store-1.md",
+      "digest": "sha256:1f631d66dbcc0b573e806c80e106dd39af52e83cd98cfcf76c8d79fbd97d3a4a",
+      "bytes": 95352
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/session-continuity-1.md",
+      "digest": "sha256:a2f4f3687548fe23a2c83a6caf10fa6c57174d6728ead11bf26efbd3404dbeb0",
+      "bytes": 18448
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/session-continuity-2.md",
+      "digest": "sha256:525ba7004f802db8889acc6c2c8d9cd3c35405aa028a1d258dac974f6cf47846",
+      "bytes": 2762
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/source-set-limit-1.md",
+      "digest": "sha256:7f453ee7193e7c389da71ab7d8506bbc05284f096eff771c38958b295a485523",
+      "bytes": 37449
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/source-set-limit-2.md",
+      "digest": "sha256:fa0fada4a28653cc201b16c66e59a757c4d4a4ef7b11dc81de49f13b791b73c3",
+      "bytes": 31679
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/task-working-context-1.md",
+      "digest": "sha256:fc649febb70c024d27cc67ca305912b1ad9e6d28159b85ee1d579ee448a6e13d",
+      "bytes": 8492
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/usage-aggregation-1.md",
+      "digest": "sha256:7384d3f99fd12b262cadbae8f7699a440055b29ed848cb0da02d68cc3494b1d4",
+      "bytes": 13527
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/wiki-read-policy-1.md",
+      "digest": "sha256:a91b3e2edb0438fa8dece7b0379732de02a6592135957f85bef6b194a2d114cf",
+      "bytes": 10198
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/wiki-read-policy-2.md",
+      "digest": "sha256:a809d98525f184b9e36a8a8334fb3baf6abda95533b686f27e179dd0d740dd6a",
+      "bytes": 54937
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/workspace-preflight-1.md",
+      "digest": "sha256:2400d3e6021a1fdc502181df19b48f5d912849fd866f9af7660bf8d835da997a",
+      "bytes": 14951
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/owner/vault/concepts/workspace-preflight-2.md",
+      "digest": "sha256:42252eac3b8f6ad99a922d5270321cb1d08a93d8908a226e2a2ce67d2f925650",
+      "bytes": 16176
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/programs/t-code-bounded-page-read.ts",
+      "digest": "sha256:f6b7cd32837000828152a30297a1251967003f86c8c1a17d36e65169ce17bea6",
+      "bytes": 18427
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/programs/t-code-cjk-tokenizer.ts",
+      "digest": "sha256:a59ec75644c0665a10206d12fa8fa1918d3ba6229d3728e6c2b2223fc4e46dda",
+      "bytes": 387
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/programs/t-code-development-commands.ts",
+      "digest": "sha256:09f7373ca547e2bd0fb01581ee6a4a1ab7f6a4f763daf079308fea9294659339",
+      "bytes": 2476
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/programs/t-code-existing-semantic-provider.ts",
+      "digest": "sha256:51a0b7fe277543ef1a185e65a4c3f4735c594db654557a0ecad8901946e52009",
+      "bytes": 8163
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/programs/t-code-file-path-boundary.ts",
+      "digest": "sha256:db95e1fc4397e5ac836f74c5f4955b448e220abadfb4f3be881d10fe8eb2bcd5",
+      "bytes": 4685
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/programs/t-code-host-action-timeouts.ts",
+      "digest": "sha256:cb4eb142bf2b3fa69badf469f32db5d2490e36d12d12dc095177e0f6f5eea8f9",
+      "bytes": 1854
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/programs/t-code-host-deadline.ts",
+      "digest": "sha256:a7cb9c6b4ab8567e21e349adc3d81fc7b478a3b2f7310d1eff10003dc833bbf4",
+      "bytes": 4817
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/programs/t-code-host-knowledge-scope.ts",
+      "digest": "sha256:f336898b938232dd7bd31e117a28b238f9e269b87db07f722dfa516bc722efa4",
+      "bytes": 4398
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/programs/t-code-knowledge-governance.ts",
+      "digest": "sha256:274b0581ddc9205de8dbd1c7ec8313f88cfa4b4bc752249d3c381f6cea7ffafe",
+      "bytes": 257741
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/programs/t-code-local-embedding-model.ts",
+      "digest": "sha256:f307e8baed18785ff37bcc06e59d4c70d25c34bf5b40dce39f168c279cbaffb8",
+      "bytes": 217
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/programs/t-code-memory-temporal.ts",
+      "digest": "sha256:a6cb26b24dbc7f5e3c433a830574d0281bc790381cbd59b68bdfc6ac0982018c",
+      "bytes": 11782
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/programs/t-code-owner-version.ts",
+      "digest": "sha256:080913ae11c8934660c22e74dc7e24adf250b18e58a36055c49e9da4d4a6fb94",
+      "bytes": 14271
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/programs/t-code-provider-accounts.ts",
+      "digest": "sha256:906878ccb22870e438818524dc3bf6504cfd01b2909ba0b32aa50a790d36ff1f",
+      "bytes": 11697
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/programs/t-code-role-memory-store.ts",
+      "digest": "sha256:1982a2b8ce88c781df73cf47d6418334957dafac5cd090c1c11bff8cfd6e304f",
+      "bytes": 94870
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/programs/t-code-session-continuity.ts",
+      "digest": "sha256:8d88fd66c3c2f7fcb27ee9cf3a60901531cac9506861cccb8784d280fa1af01b",
+      "bytes": 2321
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/programs/t-code-source-set-limit.ts",
+      "digest": "sha256:6f6d7624554b2b86c63cd45fd4155c7096217449a9e3bc6cef71ec30d6a5354e",
+      "bytes": 36984
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/programs/t-code-task-working-context.ts",
+      "digest": "sha256:aa2cec28ed105537e094d8be30d87b05898e9e507a82a0c22db00c4606c7c356",
+      "bytes": 8058
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/programs/t-code-usage-aggregation.ts",
+      "digest": "sha256:a74d89e1f314aff284ca261233cfb8649f9832b61fc8f327c833129024045bd8",
+      "bytes": 13101
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/programs/t-code-wiki-read-policy.ts",
+      "digest": "sha256:775a7cdb7c1099f32a9a5009e193ebcde8777fd41f8f420c191edafb08d2be9b",
+      "bytes": 9718
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/programs/t-code-workspace-preflight.ts",
+      "digest": "sha256:df6ee2641296d1a6296f1b0d9079039f9d56c4243e5738fafdd2e5b1e88d59c5",
+      "bytes": 15738
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/promotion-policy.json",
+      "digest": "sha256:5f51a53b8315065fd6b750cc46c66fa6e16e17490402ef68cd88f6b0311bb76f",
+      "bytes": 5944
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/queries.json",
+      "digest": "sha256:afc1d23a73e50ca43038ecbfc3df7b4084db82c5faadfae4a99e55ef49ebdc45",
+      "bytes": 179671
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/tasks.json",
+      "digest": "sha256:f47bf2d770d059f5a3396f4e9751a27ae2b329a736fc088cd93aeb58e0d5dbc3",
+      "bytes": 189499
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v3/trial-plan.json",
+      "digest": "sha256:9a579fef74e511854f71212236382a57aa064ef18bb48401b0e6182b5a68bf8c",
+      "bytes": 256079
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/.gitattributes",
+      "digest": "sha256:705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+      "bytes": 8
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/baseline.json",
+      "digest": "sha256:044a88c8249a6e1c7d2c7588b65813bd06935194a0c2280e71c02f4c0f329211",
+      "bytes": 2362
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/corpus.json",
+      "digest": "sha256:8e953a64faee01111a7cb21456533a2f34c92d28439e3df9509b1ecc1b14d239",
+      "bytes": 82328
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/freeze.json",
+      "digest": "sha256:cc014f31e4ea67093a6dfe62f97591dec95956571b27c7d021b1677323379841",
+      "bytes": 16281
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/oracle/authoring-catalog.mjs",
+      "digest": "sha256:6a1148858be82d4e92647e639a5cbb40b0bf0bbd68254e208e53d527baa42c34",
+      "bytes": 4614
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/oracle/negative-cases.json",
+      "digest": "sha256:b261c63f9c861fe7f487b30fd3ff9c752a3c73fd8a925244a866793d2ba87b6f",
+      "bytes": 40770
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/oracle/query-gold.json",
+      "digest": "sha256:9f7c2dcb04dbf393835f877375bd49211dcd58d25c755a864d591065f3aef439",
+      "bytes": 648391
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/oracle/task-gold.json",
+      "digest": "sha256:538b72bdbf7a0fd87443484552f5bf64650b4bb04927330cf032763ea3d16ed0",
+      "bytes": 876655
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/oracle/task-scenarios-v4.mjs",
+      "digest": "sha256:61e8aa4ccf8ab76e5a6ac3e56b60e7da58fab3af9fbeb06d50a064fc62637ef6",
+      "bytes": 7782
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/oracle/task-scenarios.mjs",
+      "digest": "sha256:26266b40df383453a6753e37747bd98f345a93a79e182de955a9128f2a8db9a5",
+      "bytes": 8845
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/background-admission-1.md",
+      "digest": "sha256:84ed7439722ab242ae49c08c48a4acfd48f13f89c0eb76ae3c17d6aaa91c51de",
+      "bytes": 7578
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/background-admission-2.md",
+      "digest": "sha256:c7c40873ce533ee28234c38863fd04146ff161e8dbe29fb4d6b17517f0d38430",
+      "bytes": 5030
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/backup-restore-1.md",
+      "digest": "sha256:c1db9e6c5c7a233d32dd97e1caf09f2db2573768929851a428c24121c6b10698",
+      "bytes": 14487
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/backup-restore-2.md",
+      "digest": "sha256:5cf5d70a0c6a165e82df9ee377c8704803bf9e7e1bd5f08b9ad7f49be071e762",
+      "bytes": 13196
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/bounded-cache-1.md",
+      "digest": "sha256:42e1bb60bf4aea359a35f6168a6deb30523591b2d59e004826428ea80ff4cae9",
+      "bytes": 4740
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/bounded-cache-2.md",
+      "digest": "sha256:3302480f9c9fa37c1ce0be399e2ca8b151de6f89443ae767248d5271c75145fc",
+      "bytes": 3292
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/bounded-page-read-1.md",
+      "digest": "sha256:7ffbc6aa3b9c188e019a433c9c71a9162bbfce0a0d10823742c6c0f445240657",
+      "bytes": 18891
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/bounded-page-read-2.md",
+      "digest": "sha256:1f0211606baad344ed39dc76fd1d7b22523fc6a5bb0f2f09d6ba88dba24a1e40",
+      "bytes": 7444
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/cjk-tokenizer-1.md",
+      "digest": "sha256:0340db8a547a6628dfa3c90840fca5006432f4b6a89ecff1f7dd0ce8323f3b9d",
+      "bytes": 867
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/cjk-tokenizer-2.md",
+      "digest": "sha256:88a40559cd50ff79314d250ba67694aad02f270cb5fb933a226bad11b05c4e83",
+      "bytes": 45963
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/context-candidates-1.md",
+      "digest": "sha256:b0298b2d1a0e82aedb7eb6b140ec5ca25b619c68bdf1c31a721e1e1c59263168",
+      "bytes": 18110
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/context-candidates-2.md",
+      "digest": "sha256:e7146d332f4599a55d239546cbc5a60ab7229f92388396d1cb78947e55ab03b4",
+      "bytes": 41556
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/context-resource-contract-1.md",
+      "digest": "sha256:8007ee8393dfe4cf5298150c569ed60635e2b287b369a2e076010baee545b7f6",
+      "bytes": 18207
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/context-resource-contract-2.md",
+      "digest": "sha256:94998fcfdac95f63ac010924283da9135fa8268b22032ded932479c70ad3c331",
+      "bytes": 3487
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/dcs-turn-budget-1.md",
+      "digest": "sha256:c4ccb1f1bfb6819004b473705c9ec267e89b4439d15cdb780cec7eea3681f9c5",
+      "bytes": 28520
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/dcs-turn-budget-2.md",
+      "digest": "sha256:d5e655bb90645d4432f78f7556bcce4e695afa1177664735437e753bf8640260",
+      "bytes": 5208
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/development-commands-1.md",
+      "digest": "sha256:51d8c2eae3a146b434c0d74d6bcad065ff33100744a122bab1435ec78c6e6f6e",
+      "bytes": 13918
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/development-commands-2.md",
+      "digest": "sha256:015280849d3d6acae4970844e168d90d357c70a01415cf6014ee0897434759d7",
+      "bytes": 2890
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/existing-semantic-provider-1.md",
+      "digest": "sha256:65233dcb51d8acb048f302891dac0313f193f5df050ec505d7fcd452c035463f",
+      "bytes": 8628
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/experience-adoption-1.md",
+      "digest": "sha256:fcbaa526dc9e1345d20dbfc8c8461f334662a6c7e750a816093c8520d326a5cf",
+      "bytes": 43938
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/experience-adoption-2.md",
+      "digest": "sha256:4369d16f09c0a18b3a53a740ae4ad6b53e300efa8ae71226b42b5de67fd278f7",
+      "bytes": 3996
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/file-path-boundary-1.md",
+      "digest": "sha256:a6265b59132392a73e9a38960c5f1946a6c885e6dceb8bcdd637d2e65ed60fb1",
+      "bytes": 5158
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/host-action-timeouts-1.md",
+      "digest": "sha256:14fe42e7605803bc9c54b0d81e794b96e05d0aa6b27097cceda32565e9332835",
+      "bytes": 2305
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/host-action-timeouts-2.md",
+      "digest": "sha256:3d9258490911c086183bb17e768a92505fa7a0ce83608825e7b8ae1e0fa02169",
+      "bytes": 14040
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/host-deadline-1.md",
+      "digest": "sha256:24ba6d5ac2e9b812a559b18768542fc7eadc4128ed32ae736dc1ac33d2917b47",
+      "bytes": 5248
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/host-deadline-2.md",
+      "digest": "sha256:c6a88eeaa071d83ba2969f6ba943f0e961d0fea49d5bd1dfb7f7600c2d015936",
+      "bytes": 10486
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/host-knowledge-scope-1.md",
+      "digest": "sha256:907d928009bb9a1611a86f65d4c9adc69dab82ae8b0be14f86b3108f65fff8d7",
+      "bytes": 4847
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/host-knowledge-scope-2.md",
+      "digest": "sha256:143d46696bdb2123fafe54b580e253f5bd244a44abfa32169beb2b8642853e33",
+      "bytes": 34946
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/knowledge-governance-1.md",
+      "digest": "sha256:9f8b05925b593267760cac36975a2c08a93a1e4dd43e31f0f3acc38c98896496",
+      "bytes": 18406
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/knowledge-governance-2.md",
+      "digest": "sha256:28d849959d7955f9df682b323e9970a9f1b329d02492c28a95107e0372fc0304",
+      "bytes": 258225
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/local-embedding-model-1.md",
+      "digest": "sha256:d5a40cf9fa296ed6db8e50c2a86c6f90a096d2ee9e22dd40371e97b60ee995ce",
+      "bytes": 710
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/memory-temporal-1.md",
+      "digest": "sha256:7cfb891ef26dfdf04b0a9a0336d358f15c746256f57d132fd025151b2ea62b4c",
+      "bytes": 12268
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/memory-temporal-2.md",
+      "digest": "sha256:6d984e1a2495cdcc332c08d2b957988d3aa8754d3f672eee960b818a9537a5cc",
+      "bytes": 2075
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/orchestration-capacity-1.md",
+      "digest": "sha256:222ce975cd2d0794826cb21d61f8c844c53f21993a9aacd508da0e58fe762379",
+      "bytes": 11148
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/orchestration-capacity-2.md",
+      "digest": "sha256:934f77065c322f510aefc6be32f86cd535d4a1ca99506c67a99fab0fea6eec3f",
+      "bytes": 6440
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/owner-version-1.md",
+      "digest": "sha256:c274a5232ce41de0cb059ce1c1437c804ab5135577da0bac011ce2787c18ef67",
+      "bytes": 14752
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/owner-version-2.md",
+      "digest": "sha256:28682caca7da9e234f79cd404522f4a9d90f22aa273d52dded04838ea418c741",
+      "bytes": 642
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/provider-accounts-1.md",
+      "digest": "sha256:07764afc8f5286d994f3b42389215c86c94187d4ca1bbca9abecf4f1e0f04e83",
+      "bytes": 13971
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/provider-accounts-2.md",
+      "digest": "sha256:115e8d27da78a42d94412e0631e3826f1e4beafb088b4166bc15ce99691713c8",
+      "bytes": 12106
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/provider-outbound-quota-1.md",
+      "digest": "sha256:80b064972c14ca5536c0566084dd2a837b3a67012a521b446effdfbb0961aaa8",
+      "bytes": 23275
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/provider-outbound-quota-2.md",
+      "digest": "sha256:684653d63727b53047a0c84818c2d51544e9b5007d353a0d0570b241888aaf93",
+      "bytes": 27615
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/role-contracts-1.md",
+      "digest": "sha256:443ec55cba9851ad774eaaac699ac0b90c19e46d7eb983c4fee3d6c3e039ed34",
+      "bytes": 19460
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/role-contracts-2.md",
+      "digest": "sha256:ac4c0594f25d1d59fdbf994e6c65215c4e19446205fe254f9b0b43212e7a531c",
+      "bytes": 3551
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/role-memory-store-1.md",
+      "digest": "sha256:f27591ab314ee0501de4354d7a0403ea90bd849963727474c5808749164d84f1",
+      "bytes": 95352
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/session-continuity-1.md",
+      "digest": "sha256:77269cd47956b8b05af895222508cf77ba425208a66ea7217dc879c0c24641db",
+      "bytes": 18448
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/session-continuity-2.md",
+      "digest": "sha256:ba24aad38f3287688fa0d104c659a101b219ffde74030c3d9c6e9d1b8942c3e7",
+      "bytes": 2762
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/source-set-limit-1.md",
+      "digest": "sha256:9a918ed6cd6cb7bafdd61af6a72a0de732b91ddc831abe8315b6c12aa0f61cc3",
+      "bytes": 37449
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/source-set-limit-2.md",
+      "digest": "sha256:7fc3ccc032ea8b0924b8088fce6b6da2d651c6c3880103d3057cb351bad0008d",
+      "bytes": 31679
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/task-working-context-1.md",
+      "digest": "sha256:6338c4fbd367bf1ed8ce0ce5668feb24a9850d6cea6c6507b8d7e42516c15cd8",
+      "bytes": 8492
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/usage-aggregation-1.md",
+      "digest": "sha256:2d0f088b0cd3a2e2dc85c212d019337c2ae35b50abea12ddb3dd96982ebebc98",
+      "bytes": 13527
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/wiki-read-policy-1.md",
+      "digest": "sha256:a4b8dd9802f6a8aada1432f1d1eebc53f661a45054fa279de62790fabc74d136",
+      "bytes": 10198
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/wiki-read-policy-2.md",
+      "digest": "sha256:5f87f72d4683a89e8a5f8ce55a1c83c32ec66812af863f9b20225fbab90fb3e4",
+      "bytes": 54937
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/workspace-preflight-1.md",
+      "digest": "sha256:2c56b4f7d4dee447320eafbe76044b5aaf33f6f79dc66b084e7737bad9f14d6d",
+      "bytes": 14951
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/owner/vault/concepts/workspace-preflight-2.md",
+      "digest": "sha256:995fd6cc261b41b2e098c0e6ace69c439b35595ba9b1e0843f9f97ab77582684",
+      "bytes": 16176
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/programs/t-code-bounded-page-read.ts",
+      "digest": "sha256:f6b7cd32837000828152a30297a1251967003f86c8c1a17d36e65169ce17bea6",
+      "bytes": 18427
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/programs/t-code-cjk-tokenizer.ts",
+      "digest": "sha256:a59ec75644c0665a10206d12fa8fa1918d3ba6229d3728e6c2b2223fc4e46dda",
+      "bytes": 387
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/programs/t-code-development-commands.ts",
+      "digest": "sha256:09f7373ca547e2bd0fb01581ee6a4a1ab7f6a4f763daf079308fea9294659339",
+      "bytes": 2476
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/programs/t-code-existing-semantic-provider.ts",
+      "digest": "sha256:51a0b7fe277543ef1a185e65a4c3f4735c594db654557a0ecad8901946e52009",
+      "bytes": 8163
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/programs/t-code-file-path-boundary.ts",
+      "digest": "sha256:db95e1fc4397e5ac836f74c5f4955b448e220abadfb4f3be881d10fe8eb2bcd5",
+      "bytes": 4685
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/programs/t-code-host-action-timeouts.ts",
+      "digest": "sha256:cb4eb142bf2b3fa69badf469f32db5d2490e36d12d12dc095177e0f6f5eea8f9",
+      "bytes": 1854
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/programs/t-code-host-deadline.ts",
+      "digest": "sha256:a7cb9c6b4ab8567e21e349adc3d81fc7b478a3b2f7310d1eff10003dc833bbf4",
+      "bytes": 4817
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/programs/t-code-host-knowledge-scope.ts",
+      "digest": "sha256:f336898b938232dd7bd31e117a28b238f9e269b87db07f722dfa516bc722efa4",
+      "bytes": 4398
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/programs/t-code-knowledge-governance.ts",
+      "digest": "sha256:274b0581ddc9205de8dbd1c7ec8313f88cfa4b4bc752249d3c381f6cea7ffafe",
+      "bytes": 257741
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/programs/t-code-local-embedding-model.ts",
+      "digest": "sha256:f307e8baed18785ff37bcc06e59d4c70d25c34bf5b40dce39f168c279cbaffb8",
+      "bytes": 217
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/programs/t-code-memory-temporal.ts",
+      "digest": "sha256:a6cb26b24dbc7f5e3c433a830574d0281bc790381cbd59b68bdfc6ac0982018c",
+      "bytes": 11782
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/programs/t-code-owner-version.ts",
+      "digest": "sha256:080913ae11c8934660c22e74dc7e24adf250b18e58a36055c49e9da4d4a6fb94",
+      "bytes": 14271
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/programs/t-code-provider-accounts.ts",
+      "digest": "sha256:906878ccb22870e438818524dc3bf6504cfd01b2909ba0b32aa50a790d36ff1f",
+      "bytes": 11697
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/programs/t-code-role-memory-store.ts",
+      "digest": "sha256:1982a2b8ce88c781df73cf47d6418334957dafac5cd090c1c11bff8cfd6e304f",
+      "bytes": 94870
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/programs/t-code-session-continuity.ts",
+      "digest": "sha256:8d88fd66c3c2f7fcb27ee9cf3a60901531cac9506861cccb8784d280fa1af01b",
+      "bytes": 2321
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/programs/t-code-source-set-limit.ts",
+      "digest": "sha256:6f6d7624554b2b86c63cd45fd4155c7096217449a9e3bc6cef71ec30d6a5354e",
+      "bytes": 36984
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/programs/t-code-task-working-context.ts",
+      "digest": "sha256:aa2cec28ed105537e094d8be30d87b05898e9e507a82a0c22db00c4606c7c356",
+      "bytes": 8058
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/programs/t-code-usage-aggregation.ts",
+      "digest": "sha256:a74d89e1f314aff284ca261233cfb8649f9832b61fc8f327c833129024045bd8",
+      "bytes": 13101
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/programs/t-code-wiki-read-policy.ts",
+      "digest": "sha256:775a7cdb7c1099f32a9a5009e193ebcde8777fd41f8f420c191edafb08d2be9b",
+      "bytes": 9718
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/programs/t-code-workspace-preflight.ts",
+      "digest": "sha256:df6ee2641296d1a6296f1b0d9079039f9d56c4243e5738fafdd2e5b1e88d59c5",
+      "bytes": 15738
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/promotion-policy.json",
+      "digest": "sha256:5f51a53b8315065fd6b750cc46c66fa6e16e17490402ef68cd88f6b0311bb76f",
+      "bytes": 5944
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/queries.json",
+      "digest": "sha256:4a3574c4a4d70302591d215ec8f63503f58f108ee29ac791bb85e6074f222463",
+      "bytes": 179671
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/tasks.json",
+      "digest": "sha256:1da873e7f7a16d5856180436a3f838a771d9d45a3f51638dd3f8c760755c89c3",
+      "bytes": 177164
+    },
+    {
+      "path": "harness/specs/fixtures/project-rag/v4/trial-plan.json",
+      "digest": "sha256:9a579fef74e511854f71212236382a57aa064ef18bb48401b0e6182b5a68bf8c",
+      "bytes": 256079
+    },
+    {
+      "path": "scripts/knowledge-rag-corpus.ts",
+      "digest": "sha256:b81c3a47da2b552422a24e4b74b57dce04d98800b8ed0b38be2ae11805c36a3c",
+      "bytes": 4310
+    },
+    {
+      "path": "scripts/lib/project-rag-code-oracle.d.mts",
+      "digest": "sha256:6471b805820a5fe3dae02f95a3caf25eb80fa0db12eda62554339257b1ef6bb0",
+      "bytes": 945
+    },
+    {
+      "path": "scripts/lib/project-rag-code-oracle.mjs",
+      "digest": "sha256:049d24586c34ff5c6a8d053a2bfcd3390eb40fec8fec4d156ae910b042ab3dd1",
+      "bytes": 12427
+    },
+    {
+      "path": "scripts/lib/project-rag-corpus.d.mts",
+      "digest": "sha256:e2f7aa03780fc2c9098e62a6de81d652170e11652115577c1a7f97e785b88bd0",
+      "bytes": 3733
+    },
+    {
+      "path": "scripts/lib/project-rag-corpus.mjs",
+      "digest": "sha256:ef5d47857b12b5888c4cf5100721afd1db3f59a69952cd5cd4a685dce8449cd8",
+      "bytes": 34808
+    },
+    {
+      "path": "scripts/lib/project-rag-freeze.d.mts",
+      "digest": "sha256:fd32c082381204d6bddf196fa15f145c69f5e4163649f3c4760e2cde906a7d83",
+      "bytes": 585
+    },
+    {
+      "path": "scripts/lib/project-rag-freeze.mjs",
+      "digest": "sha256:652d0b2878ed98fe73c0b7a0bf3288c2417dc4fe85fd34693ac9b0e083f0a85d",
+      "bytes": 25285
+    },
+    {
+      "path": "tests/unit/project-rag-code-oracle.test.ts",
+      "digest": "sha256:45755b456e3d04f488541ab07b67c80ea49fd5c45947728f1fb5887e5c1da648",
+      "bytes": 5268
+    },
+    {
+      "path": "tests/unit/project-rag-corpus-integrity.test.ts",
+      "digest": "sha256:cf6b97719012c693278cb02288ce4d69373ff35a194fa5806c640a6b3e7fc357",
+      "bytes": 25437
+    },
+    {
+      "path": "tests/unit/project-rag-owner-read.test.ts",
+      "digest": "sha256:22279d6e1302c6bad362781e510e6b5d6a470fb577f9bade3ffbfcd86d26ff24",
+      "bytes": 12885
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "results": [
+    {
+      "exitCode": 1,
+      "finishedAt": "2026-11-10T06:02:01.9277889+00:00",
+      "name": "unit",
+      "args": [
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/project-rag-corpus-integrity.test.ts",
+        "tests/unit/project-rag-code-oracle.test.ts",
+        "tests/unit/knowledge-retrieval.test.ts",
+        "tests/unit/project-rag-owner-read.test.ts",
+        "tests/unit/knowledge-source-set-answer.test.ts",
+        "tests/unit/knowledge-evidence-qa.test.ts",
+        "tests/unit/knowledge-api.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile",
+        "D:\\tmp\\project-rag-TF-0879\\formal-9d084050e\\unit.json"
+      ],
+      "startedAt": "2026-11-10T05:57:52.1565148+00:00"
+    },
+    {
+      "exitCode": 0,
+      "finishedAt": "2026-11-10T06:02:15.3328740+00:00",
+      "name": "lint",
+      "args": [
+        "exec",
+        "eslint",
+        "scripts/knowledge-rag-corpus.ts",
+        "scripts/lib/project-rag-corpus.mjs",
+        "scripts/lib/project-rag-freeze.mjs",
+        "scripts/lib/project-rag-code-oracle.mjs",
+        "harness/specs/fixtures/project-rag/authoring/v3.scenarios.mjs",
+        "harness/specs/fixtures/project-rag/authoring/v4.scenarios.mjs",
+        "tests/unit/project-rag-corpus-integrity.test.ts",
+        "tests/unit/project-rag-code-oracle.test.ts"
+      ],
+      "startedAt": "2026-11-10T06:02:02.6115648+00:00"
+    },
+    {
+      "exitCode": 0,
+      "finishedAt": "2026-11-10T06:02:18.7174323+00:00",
+      "name": "contract",
+      "args": [
+        "run",
+        "contract:check"
+      ],
+      "startedAt": "2026-11-10T06:02:16.3382903+00:00"
+    },
+    {
+      "exitCode": 0,
+      "finishedAt": "2026-11-10T06:02:22.0110758+00:00",
+      "name": "comms-replay",
+      "args": [
+        "run",
+        "comms:replay"
+      ],
+      "startedAt": "2026-11-10T06:02:20.6020704+00:00"
+    },
+    {
+      "exitCode": 0,
+      "finishedAt": "2026-11-10T06:02:24.1503210+00:00",
+      "name": "comms-compare",
+      "args": [
+        "run",
+        "comms:compare"
+      ],
+      "startedAt": "2026-11-10T06:02:22.4226140+00:00"
+    },
+    {
+      "exitCode": 0,
+      "finishedAt": "2026-11-10T06:02:32.2280480+00:00",
+      "name": "harness-validate",
+      "args": [
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/project-rag-frozen-evaluation-corpus.md"
+      ],
+      "startedAt": "2026-11-10T06:02:24.8585184+00:00"
+    },
+    {
+      "exitCode": 0,
+      "finishedAt": "2026-11-10T06:02:34.8317221+00:00",
+      "name": "harness-dry-run",
+      "args": [
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/project-rag-frozen-evaluation-corpus.md",
+        "--dry-run"
+      ],
+      "startedAt": "2026-11-10T06:02:32.5654732+00:00"
+    },
+    {
+      "exitCode": 0,
+      "finishedAt": "2026-11-10T06:02:42.4134442+00:00",
+      "name": "artifacts",
+      "args": [
+        "run",
+        "repo:artifacts:check"
+      ],
+      "startedAt": "2026-11-10T06:02:35.1861661+00:00"
+    }
+  ],
+  "cleanAtStart": true,
+  "schema": "ProjectRagFormalGates/v1",
+  "driven_by": "agent",
+  "candidate": "9d084050e589d47f43f75192fe7b844b2efff19a",
+  "branch": "codex/project-rag-longterm-20261109",
+  "worktree": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+  "status": "fail",
+  "cleanAtEnd": true,
+  "actor": "codex/project-rag"
+}

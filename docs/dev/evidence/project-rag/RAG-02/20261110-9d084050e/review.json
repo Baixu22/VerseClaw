@@ -1,0 +1,56 @@
+{
+  "schema": "ProjectRagIndependentReview/v1",
+  "actor": "Arendt",
+  "model": "ccs-workbuddy/deepseek-v4.1-flash",
+  "driven_by": "agent",
+  "reviewerThread": "01a1c359-c538-72e1-a265-fa1d4622a569",
+  "candidate": "9d084050e589d47f43f75192fe7b844b2efff19a",
+  "status": "pass",
+  "openFindings": [],
+  "closedFindings": [
+    {
+      "id": "oracle-authority",
+      "resolution": "Restricted permission child, fresh context per case, serialized dependency bridges and empty env; 20 historical declarations/106 cases and 8 isolation tests passed.",
+      "reviewedBy": "main-agent-source-review"
+    },
+    {
+      "id": "task-depth",
+      "resolution": "20 incident diagnosis tasks and 20 cross-source action comparison tasks require analysis beyond typed values.",
+      "reviewedBy": "Arendt"
+    },
+    {
+      "id": "family-routing",
+      "resolution": "Shared materializer emits opaque task/source mappings and generic research objective; all 20 materialized request regression cases reject family and internal task identifiers.",
+      "reviewedBy": "Arendt"
+    },
+    {
+      "id": "citation-window",
+      "resolution": "Quotes are checked against owner bytes and must cover frozen support; valid narrower citations accepted.",
+      "reviewedBy": "Arendt"
+    },
+    {
+      "id": "safety-budget-binding",
+      "resolution": "External experiment, safety and attempt digests require disk readback, 192 safety observations and 540 measured budgets before promotion.",
+      "reviewedBy": "Arendt"
+    },
+    {
+      "id": "failed-pair-retention",
+      "resolution": "Missing/invalid captured agent artifacts remain failed task/repeat pairs.",
+      "reviewedBy": "Arendt"
+    }
+  ],
+  "finalReviewMessages": [
+    {
+      "type": "agentMessage",
+      "id": "msg_3ca3f3d6432686d9fe61827c73786d03",
+      "text": "我会只读检查当前候选的共享 materializer 投影路径、公开 request 组装和新增 integrity 回归，重点确认三点：`familyId`/内部 `task.id` 不再进入 request，proposal 只保留 `id/action`，以及 v4 evaluator gold 未被改动。",
+      "phase": null
+    },
+    {
+      "type": "agentMessage",
+      "id": "msg_be69533a2448ee30820bb7e79fa1628d",
+      "text": "原 P1 已关闭。\n\n实际证据：\n\n- [project-rag-corpus.mjs](C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/scripts/lib/project-rag-corpus.mjs:187) 在共享 materializer 中仅对 `research` profile 将 public `scenario.objective` 替换为通用动作比较说明；该逻辑按 profile 生效，不绑定 v4 路径。\n- 冻结的 evaluator `tasks.json` 仍保留 20 个 research 原始 family metadata；公开 request 组装时不再透传该路由标签。\n- [project-rag-corpus-integrity.test.ts](C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/project-rag-corpus-integrity.test.ts:147) 遍历 20 个 research task，真实 materialize 到磁盘后验证：\n  - 整个 `request.json` 不含 `task.familyId`\n  - 整个 `request.json` 不含内部 `task.id`\n  - `scenario.proposals` 仅含 `id` 和 `action`\n- 既有 [anonymous selected request case](C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/project-rag-corpus-integrity.test.ts:89) 另检查了 `familyId`、split、query ID、cohort、authorship、corpus digest 等 evaluator 元数据不进入公开 request。\n- 当前 HEAD `9d084050e` 工作树干净；相对候选 `eb6c824aa` 的变更只有 `project-rag-corpus.mjs` 和 integrity test，两个文件共 `+15/-1`。\n- `harness/specs/fixtures/project-rag` 相对 `eb6c824aa` 无改动；v4 freeze 实际 SHA256 仍为 `cc014f31e4ea67093a6dfe62f97591dec95956571b27c7d021b1677323379841`，与 `release-v4.json` 完全一致。\n- `git diff --check` 通过。\n\n共享 materializer 修复当前无新增 P1/P2；原 P1 可由上述投影逻辑和 20-task 磁盘回归直接复核关闭。",
+      "phase": null
+    }
+  ]
+}

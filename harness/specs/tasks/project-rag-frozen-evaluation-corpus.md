@@ -1,6 +1,6 @@
 ---
 lifecycleStatus: active
-implementationStatus: partial
+implementationStatus: implemented
 id: project-rag-frozen-evaluation-corpus
 title: 冻结真实语料、独立判据和对照协议
 scenario: gateway-backend-communication
@@ -79,3 +79,5 @@ docs:
 所有检索来源和模型调用接受 owner 准入，DCS 保留最终上下文决定权；验证结果标记 driven_by: agent。
 
 回滚：保留原协议和旧 verdict；修订数据产生新版本，不原地改 gold 或阈值。
+
+当前冻结输入采用 `harness/specs/fixtures/project-rag/release-v4.json`。执行、分析、引用和收据接口见 `docs/dev/project-rag/EVALUATION-CONTRACT.md`；验收结果见 `docs/dev/evidence/project-rag/RAG-02/20261110-9d084050e/report.json`。

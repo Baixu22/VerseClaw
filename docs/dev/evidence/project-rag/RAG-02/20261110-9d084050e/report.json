@@ -1,0 +1,147 @@
+{
+  "schema": "ProjectRagCorpusAcceptance/v1",
+  "node": "TF-0879",
+  "programKey": "RAG-02",
+  "status": "pass",
+  "candidate": "9d084050e589d47f43f75192fe7b844b2efff19a",
+  "branch": "codex/project-rag-longterm-20261109",
+  "worktree": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "recordedAt": "2026-11-10T06:15:53.432Z",
+  "corpus": {
+    "id": "project-rag-v4",
+    "freezeDigest": "sha256:cc014f31e4ea67093a6dfe62f97591dec95956571b27c7d021b1677323379841",
+    "sourceFiles": 54,
+    "pinnedSourceBlobsMatched": 54,
+    "sourceFamilies": 30,
+    "queries": 240,
+    "splitCounts": {
+      "calibration": 80,
+      "held-out": 80,
+      "validation": 80
+    },
+    "locales": {
+      "en": 60,
+      "ja": 60,
+      "ru": 60,
+      "zh": 60
+    },
+    "intents": {
+      "configuration": 76,
+      "diagnosis": 36,
+      "fact": 32,
+      "ownership": 40,
+      "procedure": 28,
+      "research": 28
+    },
+    "negativeCases": 64,
+    "tasksByKind": {
+      "code-repair": 20,
+      "cross-source-research": 20,
+      "diagnostic-report": 20
+    },
+    "tasksByProfile": {
+      "local": 20,
+      "quality": 20,
+      "research": 20
+    },
+    "plannedSlots": 540,
+    "executedSlots": 0
+  },
+  "acceptance": [
+    {
+      "criterion": 1,
+      "status": "pass",
+      "evidence": [
+        "corpus-verification.json",
+        "unit-serial.json"
+      ],
+      "detail": "240 queries, 80 per split, 20 per locale per split, six intents in every split; same-origin sources remain in one family/split."
+    },
+    {
+      "criterion": 2,
+      "status": "pass",
+      "evidence": [
+        "corpus-verification.json",
+        "unit-serial.json",
+        "review.json"
+      ],
+      "detail": "54 pinned repository blobs verified; raw Wiki owner spans reopen with matching bytes/version; 64 distinct negative inputs sealed with agent authorship."
+    },
+    {
+      "criterion": 3,
+      "status": "pass",
+      "evidence": [
+        "unit-serial.json",
+        "review.json",
+        "source-inputs.json"
+      ],
+      "detail": "20 real code repairs, 20 causal incident diagnoses and 20 cross-source decisions; three repeats/arms yield 540 untouched slots. Anonymous pack and restricted code probe keep evaluator data outside model inputs."
+    },
+    {
+      "criterion": 4,
+      "status": "pass",
+      "evidence": [
+        "unit-serial.json",
+        "contract.log"
+      ],
+      "detail": "Page semantic baseline, shared safety/provider/generation/budgets frozen; 192 safety observations and 540 attempt/cost/budget receipts required before promotion."
+    },
+    {
+      "criterion": 5,
+      "status": "pass",
+      "evidence": [
+        "unit-serial.json",
+        "typecheck-exit.json",
+        "harness-ci-report.json"
+      ],
+      "detail": "New integrity and code-isolation tests are requiredTests; current-candidate related checks 182/182, node/web/test types exit 0, all 12 Harness CI stages pass."
+    }
+  ],
+  "tests": {
+    "passed": 182,
+    "total": 182,
+    "skipped": 0,
+    "sourceRepairTasks": 20,
+    "hiddenProbeInputs": 106,
+    "isolationCases": 8,
+    "codeReferenceAndDefectControls": true,
+    "taskArtifactPositiveAndNegativeControls": 60,
+    "materializedResearchRoutingCases": 20,
+    "formalRerun": "unit-serial.json"
+  },
+  "checks": {
+    "contract": 0,
+    "typecheck": 0,
+    "lint": {
+      "exitCode": 0,
+      "warnings": 12
+    },
+    "commsReplay": 0,
+    "commsCompare": 0,
+    "harnessValidate": 0,
+    "harnessDryRun": 0,
+    "harnessCi": {
+      "completed": 12,
+      "total": 12,
+      "exitCode": 0
+    },
+    "artifactRetention": 0
+  },
+  "review": {
+    "status": "pass",
+    "openFindings": 0,
+    "evidence": "review.json"
+  },
+  "measurement": {
+    "status": "not-run",
+    "executedSlots": 0,
+    "plannedSlots": 540
+  },
+  "rollback": {
+    "sourceCandidate": "9d084050e589d47f43f75192fe7b844b2efff19a",
+    "previousCandidate": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+    "method": "Revert the RAG-02 commits as a change set; preserve versioned raw evidence and the RAG-01 owner fixes."
+  }
+}
