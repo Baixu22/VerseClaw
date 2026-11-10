@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: active
 id: product-acceptance-matrix
 title: Core product journey matrix and candidate-bound execution
 scenario: gateway-backend-communication
@@ -100,4 +101,3 @@ and negative controls, the three repeated live sets, a 20-minute agent explorati
 record, calibrated judge rubric and reviewed P0/P1 findings. Mock UI, actual owner
 effects, scripted models and live models retain their distinct evidence layers.
 Windows package and final independent aggregate work remain TF-0584 and TF-0585.
-

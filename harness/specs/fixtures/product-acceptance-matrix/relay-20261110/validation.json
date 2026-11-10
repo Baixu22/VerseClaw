@@ -1,0 +1,395 @@
+{
+  "schema": "TF0582RelayValidation/v1",
+  "driven_by": "agent",
+  "actor": "codex/tf0582-relay",
+  "createdAt": "2026-11-10T16:40:04.319903+08:00",
+  "candidate": {
+    "commit": "c210571ecc9449a02364dadd8ade6364a73a6f01",
+    "tree": "3beef29b23ab7f6c5e44ff3f48a1ca25a7dd5d04",
+    "ref": null,
+    "clean": true,
+    "status": ""
+  },
+  "nodeStatus": "in_progress",
+  "matrix": {
+    "groups": 9,
+    "specFiles": 28,
+    "defaultComponents": 13
+  },
+  "unit": {
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0
+  },
+  "electron": {
+    "planned": 6,
+    "observed": 6,
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0
+  },
+  "selectedGroups": [
+    "settings"
+  ],
+  "checks": {
+    "unit": 0,
+    "lint": 0,
+    "types": 0,
+    "harness": 0,
+    "harnessPlan": 0,
+    "inventory": 0,
+    "commsReplay": 0,
+    "commsCompare": 0,
+    "diff": 0
+  },
+  "verificationCommands": [
+    {
+      "id": "unit",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/product-acceptance-matrix.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/tmp/product-matrix-relay-20261110-01a1c41e/unit-current.json"
+      ],
+      "cwd": "D:\\tmp\\product-matrix-relay-20261110-01a1c41e\\candidate-02",
+      "exitCode": 0,
+      "durationSeconds": 12.475,
+      "stdout": "unit-current.stdout.txt",
+      "stderr": "unit-current.stderr.txt"
+    },
+    {
+      "id": "lint",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/eslint/bin/eslint.js",
+        "scripts/product-acceptance-matrix.mjs",
+        "tests/unit/product-acceptance-matrix.test.ts",
+        "tests/e2e/support-bundle-fp-p1-06.spec.ts"
+      ],
+      "cwd": "D:\\tmp\\product-matrix-relay-20261110-01a1c41e\\candidate-02",
+      "exitCode": 0,
+      "durationSeconds": 4.589,
+      "stdout": "lint-current.stdout.txt",
+      "stderr": "lint-current.stderr.txt"
+    },
+    {
+      "id": "types",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "exec",
+        "tsgo",
+        "--noEmit",
+        "-p",
+        "D:\\tmp\\product-matrix-relay-20261110-01a1c41e\\candidate-02\\.tmp\\tf0582-typecheck-01a1c41e.json"
+      ],
+      "cwd": "D:\\tmp\\product-matrix-relay-20261110-01a1c41e\\candidate-02",
+      "exitCode": 0,
+      "durationSeconds": 2.038,
+      "stdout": "types-current.stdout.txt",
+      "stderr": "types-current.stderr.txt"
+    },
+    {
+      "id": "harness",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/product-acceptance-matrix.md"
+      ],
+      "cwd": "D:\\tmp\\product-matrix-relay-20261110-01a1c41e\\candidate-02",
+      "exitCode": 0,
+      "durationSeconds": 1.931,
+      "stdout": "harness-current.stdout.txt",
+      "stderr": "harness-current.stderr.txt"
+    },
+    {
+      "id": "harnessPlan",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/product-acceptance-matrix.md",
+        "--dry-run"
+      ],
+      "cwd": "D:\\tmp\\product-matrix-relay-20261110-01a1c41e\\candidate-02",
+      "exitCode": 0,
+      "durationSeconds": 1.452,
+      "stdout": "harnessPlan-current.stdout.txt",
+      "stderr": "harnessPlan-current.stderr.txt"
+    },
+    {
+      "id": "inventory",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--import",
+        "./openclaw_runtime/node_modules/tsx/dist/loader.mjs",
+        "scripts/product-acceptance-matrix.mjs",
+        "--check"
+      ],
+      "cwd": "D:\\tmp\\product-matrix-relay-20261110-01a1c41e\\candidate-02",
+      "exitCode": 0,
+      "durationSeconds": 0.799,
+      "stdout": "inventory-current.stdout.txt",
+      "stderr": "inventory-current.stderr.txt"
+    },
+    {
+      "id": "commsReplay",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\tmp\\product-matrix-relay-20261110-01a1c41e\\candidate-02",
+      "exitCode": 0,
+      "durationSeconds": 0.584,
+      "stdout": "commsReplay-current.stdout.txt",
+      "stderr": "commsReplay-current.stderr.txt"
+    },
+    {
+      "id": "commsCompare",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\tmp\\product-matrix-relay-20261110-01a1c41e\\candidate-02",
+      "exitCode": 0,
+      "durationSeconds": 0.34,
+      "stdout": "commsCompare-current.stdout.txt",
+      "stderr": "commsCompare-current.stderr.txt"
+    },
+    {
+      "id": "diff",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "D:\\tmp\\product-matrix-relay-20261110-01a1c41e\\candidate-02",
+      "exitCode": 0,
+      "durationSeconds": 0.203,
+      "stdout": "diff-current.stdout.txt",
+      "stderr": "diff-current.stderr.txt"
+    }
+  ],
+  "environment": {
+    "node": "v24.22.1",
+    "platform": "win32",
+    "arch": "x64",
+    "dependencyMode": "reused",
+    "packages": {
+      "electron": "40.8.4",
+      "@playwright/test": "1.59.0",
+      "vite": "7.3.1",
+      "vitest": "4.1.1",
+      "typescript": "5.9.3"
+    }
+  },
+  "build": {
+    "digest": "b41d1449bdc5e04cbd0e5e61380d06c7c40f8e76fb6e4e14d1d20b33633520f8",
+    "files": 7425,
+    "commands": [
+      {
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:\\ClawX\\node_modules\\.pnpm\\@playwright+test@1.59.0\\node_modules\\@playwright\\test\\cli.js",
+          "test",
+          "tests/e2e/channels-health-diagnostics.spec.ts",
+          "tests/e2e/settings-drawer.spec.ts",
+          "tests/e2e/support-bundle-fp-p1-06.spec.ts",
+          "--workers=1",
+          "--retries=0",
+          "--reporter=json",
+          "--output=D:\\tmp\\product-matrix-relay-20261110-01a1c41e\\settings-run-04\\test-results",
+          "--list"
+        ],
+        "startedAt": "2026-11-10T08:24:53.169Z",
+        "finishedAt": "2026-11-10T08:24:56.265Z",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "artifacts": [
+          {
+            "path": "discovery.stdout.txt",
+            "sha256": "db4912426f7223112700374b235bd9fab3b5993125cbcdb203c00102d3d7a4cd"
+          },
+          {
+            "path": "discovery.stderr.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "path": "discovery.json",
+            "sha256": "3f058250faa7f59867a1b39d7bf58178502905ef546b6d420c5827492214e6fc"
+          }
+        ]
+      },
+      {
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "scripts/generate-ext-bridge.mjs"
+        ],
+        "startedAt": "2026-11-10T08:24:56.282Z",
+        "finishedAt": "2026-11-10T08:24:56.444Z",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "artifacts": [
+          {
+            "path": "extension-bridge.stdout.txt",
+            "sha256": "da57202f9a8cd6ece51b8fc02f165f5825369e65b1ab4dac616835af15a8c506"
+          },
+          {
+            "path": "extension-bridge.stderr.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      {
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "--max-old-space-size=6144",
+          "node_modules/vite/bin/vite.js",
+          "build"
+        ],
+        "startedAt": "2026-11-10T08:24:56.445Z",
+        "finishedAt": "2026-11-10T08:26:05.809Z",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "artifacts": [
+          {
+            "path": "vite-build.stdout.txt",
+            "sha256": "76239b4b6bfa73545530ddd546c34c9f8b2fcfc1fd8484c26c2aa5521850e739"
+          },
+          {
+            "path": "vite-build.stderr.txt",
+            "sha256": "2a6b9b3a686a9f13ed635ebf58ac1a500352214bf86bb4d1ad4c536e25338b51"
+          }
+        ]
+      },
+      {
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "scripts/build-openclaw-runtime.mjs"
+        ],
+        "startedAt": "2026-11-10T08:26:05.810Z",
+        "finishedAt": "2026-11-10T08:26:49.374Z",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "artifacts": [
+          {
+            "path": "runtime-build.stdout.txt",
+            "sha256": "34d472e817b9f03821c03ad1b54a62518594aa7564f64269cec08dd5c1a58614"
+          },
+          {
+            "path": "runtime-build.stderr.txt",
+            "sha256": "f66713ef35c1e14b5411c17ee5c95bf986bb8a5c14017a140f382ee73d1956c2"
+          }
+        ]
+      },
+      {
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:\\ClawX\\node_modules\\.pnpm\\@playwright+test@1.59.0\\node_modules\\@playwright\\test\\cli.js",
+          "test",
+          "tests/e2e/channels-health-diagnostics.spec.ts",
+          "tests/e2e/settings-drawer.spec.ts",
+          "tests/e2e/support-bundle-fp-p1-06.spec.ts",
+          "--workers=1",
+          "--retries=0",
+          "--reporter=json",
+          "--output=D:\\tmp\\product-matrix-relay-20261110-01a1c41e\\settings-run-04\\test-results"
+        ],
+        "startedAt": "2026-11-10T08:26:50.728Z",
+        "finishedAt": "2026-11-10T08:28:43.812Z",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "artifacts": [
+          {
+            "path": "execution.stdout.txt",
+            "sha256": "dbba1fa985acc3ec369f76c72c4bb3785ddcd0c02ae060678e2ca2fcdacf4d08"
+          },
+          {
+            "path": "execution.stderr.txt",
+            "sha256": "4c10c5c36a01913a33a539c3fab16700840dc4e74af1246360cb3ecc03699f8d"
+          },
+          {
+            "path": "execution.json",
+            "sha256": "f10d4b3014c3432702b35869fd0f4e2b1ccd468224f1c3392e0d57c3be14bbcc"
+          }
+        ]
+      }
+    ]
+  },
+  "cleanup": {
+    "status": "passed",
+    "remaining": [],
+    "survivors": [],
+    "sourceChanged": false
+  },
+  "businessOracle": {
+    "archiveEntry": "settings-run-04/test-results/support-bundle-fp-p1-06-FP-3db35-mirrored-and-self-reporting/support-bundle.json",
+    "sha256": "0bf31a5133424267893a194d9c2a57a5fe9f0a8efb10fcdfd41ab88211668d20",
+    "schema": "verse-claw-support-bundle/1",
+    "redactionVerified": true,
+    "runtimeMirrorAvailable": true
+  },
+  "sourceBindings": {
+    "scripts/product-acceptance-matrix.mjs": "861ffb889cff11006068034152cd972f59f2524c3ef38638d9c2ccbc9fdc1329",
+    "scripts/product-acceptance-matrix.d.mts": "7996b62a07736446772d4859d349c568136b8231b79f7798d2a81749cca8e5d8",
+    "tests/unit/product-acceptance-matrix.test.ts": "e48520ca90611d56893ea9e2fb784e851193874fec0dbf82b6d12b432910830b",
+    "tests/e2e/support-bundle-fp-p1-06.spec.ts": "26c6de9dfe0ca7bebcbd80ae887663925739aa8b1c2c5b115971ba28bab7b40a",
+    "harness/specs/fixtures/product-acceptance-matrix/inventory.json": "f0a46f7d49647a9639eddacf2d2b8c0550fa727f158ced291fd1b22956cf7d02"
+  },
+  "priorAttempts": [
+    {
+      "run": "settings-run-01",
+      "candidate": "776b7c303a05c29d96c5356414e9d0dcbc6930c4",
+      "result": "build-failed",
+      "testsExecuted": 0,
+      "reason": "Missing generated extension bridge; retained original logs."
+    },
+    {
+      "run": "settings-run-02",
+      "candidate": "c1a383d952dd000b9a12343b26ced9ec49c71e84",
+      "testsPassed": 6,
+      "businessOracleRetained": false,
+      "reason": "The temporary profile removed the exported bundle; the test now writes it to retained output."
+    },
+    {
+      "run": "settings-run-03",
+      "candidate": "c210571ecc9449a02364dadd8ade6364a73a6f01",
+      "result": "discovery-timeout",
+      "testsExecuted": 0,
+      "reason": "Collection timed out without output; the contemporaneous resource snapshot records low free memory and a concurrent Task Forest export. Original parameters and logs were retained."
+    }
+  ],
+  "remainingAcceptance": [
+    "普通 Chat 最终回复、moyu 编码/撤销、取消后续接各三次同候选 live 结果",
+    "至少 20 分钟 agent 驱动探索，记录动作、截图、console、最终状态和问题 owner",
+    "冻结 Judge rubric 并以正确、错误、无法判定样例校准；文件/DB/状态 oracle 优先",
+    "逐项处理当前 P0/P1，并回读全部原始结果、来源绑定和 SHA256",
+    "provider: not run in this batch",
+    "sessions: not run in this batch",
+    "coding: not run in this batch",
+    "knowledge: not run in this batch",
+    "memory: not run in this batch",
+    "delegation: not run in this batch",
+    "channels: not run in this batch",
+    "tools: not run in this batch",
+    "provider: 三次 live smoke 需当前候选的 fresh-build proof 和既有私有环境资源",
+    "coding: 使用经过筛选的 moyu 临时副本及既有授权 provider；普通取消后续接的三次证据单独回读",
+    "knowledge: 这些 UI seam 测试尚不能证明真实导入→索引→检索→引用→删除的同候选磁盘链，需补充实际 owner/Gateway 证据",
+    "memory: 补齐接受记忆在后续真实 Chat 中的消费回执及作用域隔离结果",
+    "delegation: 将父会话实际续接终态与 UI 回执对应读回；不以 completion batch 存在替代续接完成",
+    "tools: 直接 VerseShell 产品调用与 Tool Search 展开结果仍需对应执行证据",
+    "settings: Doctor 真实命令执行、超时和错误报告需单独回执"
+  ]
+}
