@@ -1,6 +1,6 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
-import { filesystemInstance } from '../../openclaw_runtime/src/agents/worktree-registry';
+import { statSync } from 'node:fs';
 import type { TaskContractInput, TaskView } from '../../shared/task-system/types';
 import type { SessionDelegationResult, WorkspaceCoordinatorBindingResult } from '../../shared/host-api/contract';
 import type { TaskLedgerSnapshot } from '../../shared/types/task-ledger';
@@ -10,6 +10,11 @@ import { hostActionTimeoutMs } from '../../shared/host-api/host-action-timeouts'
 import { closeElectronApp, expect, getAgentDevHostCalls, getStableWindow, test } from './fixtures/electron';
 import { hostInvoke, startScriptedLlm } from './fixtures/fp-p1-harness';
 import { configureSessionChainProvider, createSessionChainProject, createSessionChainTask, observeSessionUi } from './fixtures/session-task-chain';
+
+const filesystemInstance = (pathname: string) => {
+  const stat = statSync(pathname, { bigint: true });
+  return `${stat.dev}:${stat.ino}:${stat.birthtimeNs}`;
+};
 
 for (const journey of ['navigation', 'controls', 'isolation'] as const) {
 test(`a real delegated worker receives its own task, reports separately and accepts a scoped follow-up (${journey})`, async ({ launchElectronApp }, testInfo) => {
