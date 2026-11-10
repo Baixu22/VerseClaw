@@ -2,6 +2,7 @@ import { mkdir } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 import type { ElectronApplication } from '@playwright/test';
+import type { ProviderAccount } from '../../../electron/shared/providers/types';
 import { hostInvoke, startGateway } from './fp-p1-harness';
 import { writeFile } from 'node:fs/promises';
 import type { TaskContractInput, TaskResolution, TaskView } from '../../../shared/task-system/types';
@@ -37,12 +38,20 @@ export async function observeSessionUi(app: ElectronApplication) {
 export async function configureSessionChainProvider(app: ElectronApplication, port: number) {
   await hostInvoke(app, 'gateway', 'stop');
   const now = new Date().toISOString();
-  await hostInvoke(app, 'providers', 'save', { config: {
-    id: 'session-chain-fixture', name: 'Agent session fixture', type: 'custom', apiProtocol: 'openai-completions',
-    baseUrl: `http://127.0.0.1:${port}/v1`, model: 'mock-coder', enabled: true, createdAt: now, updatedAt: now,
+  const account: ProviderAccount = {
+    id: 'custom-sessionc', vendorId: 'custom', label: 'Agent session fixture', authMode: 'api_key',
+    apiProtocol: 'openai-completions', baseUrl: `http://127.0.0.1:${port}/v1`, model: 'mock-coder',
+    enabled: true, isDefault: true, createdAt: now, updatedAt: now,
     modelProfile: { supportsReasoning: true, supportsVision: false, contextWindow: 128000, maxTokens: 4096 },
-  }, apiKey: 'local-scripted-session-key' });
-  await hostInvoke(app, 'providers', 'setDefault', { providerId: 'session-chain-fixture' });
+  };
+  const created = await hostInvoke<{ success: boolean; error?: string }>(app, 'providers', 'createAccount', {
+    account, apiKey: 'local-scripted-session-key',
+  });
+  if (!created.success) throw new Error(`Session provider account failed: ${created.error}`);
+  const validation = await hostInvoke<{ valid: boolean; error?: string }>(app, 'providers', 'validateKey', { accountId: account.id });
+  if (!validation.valid) throw new Error(`Session provider validation failed: ${validation.error}`);
+  await hostInvoke(app, 'providers', 'setDefaultAccount', { accountId: account.id });
+  await hostInvoke(app, 'agents', 'updateModel', { id: 'main', modelRef: `${account.id}/mock-coder` });
 }
 
 /** Pin window content size; visual fixtures launch with a unit device scale. */

@@ -53,4 +53,42 @@ describe("source runtime Doctor", () => {
     expect(output).toContain("Doctor changes:");
     expect(output).toContain("migrated");
   });
+
+  it("reports config failures as non-zero stderr", async () => {
+    let stderr = "";
+
+    const exitCode = await runSourceDoctor([], {
+      readConfig: () => {
+        throw new Error("invalid config");
+      },
+      writeStderr: (text) => {
+        stderr += text;
+      },
+    });
+
+    expect(exitCode).toBe(1);
+    expect(stderr).toBe("invalid config\n");
+  });
+
+  it("waits for asynchronous report output before returning", async () => {
+    let finishWrite: (() => void) | undefined;
+    const outputWritten = new Promise<void>((resolve) => {
+      finishWrite = resolve;
+    });
+
+    const run = runSourceDoctor([], {
+      readConfig: () => cfg,
+      detectLegacyAuthProfileMigrations: () => [],
+      writeStdout: () => outputWritten,
+    });
+    let settled = false;
+    void run.then(() => {
+      settled = true;
+    });
+    await Promise.resolve();
+
+    expect(settled).toBe(false);
+    finishWrite?.();
+    await expect(run).resolves.toBe(0);
+  });
 });

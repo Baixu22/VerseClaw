@@ -1,0 +1,56 @@
+{
+  "schema": "TF0582BaselineCi/v1",
+  "driven_by": "agent",
+  "actor": "codex/tf0582-relay",
+  "candidate": "a37d254cfdd67e30d87b9d160401449d7cd19ed1",
+  "exitCode": 1,
+  "baselineUnit": {
+    "passed": 59,
+    "failed": 0
+  },
+  "failedStage": "catalogs:check",
+  "failure": "executor site points to a blank line for flag worktree-backend: openclaw_runtime/src/agents/orchestrator-run-observed.ts:435",
+  "baselineReadback": {
+    "base": "5e9e865dc911e32615338c593694fa74d7bf8400",
+    "candidate": "a37d254cfdd67e30d87b9d160401449d7cd19ed1",
+    "unchangedSourceHashes": {
+      "shared/dcs/prod-flags-catalog.ts": "9d064a0d306231bbddc2cb00eeb3f7a9c7a96d77f85ce66fe9e3637469dfa2d4",
+      "openclaw_runtime/src/agents/orchestrator-run-observed.ts": "e88bc2bbe4bebcbe4a440aa99f6ea3258b242fa927a7695b23e8909855920be4",
+      "scripts/generate-catalogs.mjs": "6df4d094f8563830b16df8d2d518b713e6efe8805ca8db7517c779cb5241612b",
+      "docs/generated/catalogs/prod-flags.md": "72f4450600f22fbd29a09f38de4c88882f738385af0857a5d9e60c212ca3ffd4"
+    },
+    "line435IsBlank": true
+  },
+  "firstAttempt": {
+    "exitCode": 1,
+    "passed": 58,
+    "failed": 1,
+    "reason": "New task spec was missing lifecycleStatus; fixed to active."
+  },
+  "notRunByCiChain": [
+    "agent-dev:audit",
+    "repo:evidence:check",
+    "repo:test-coverage:check"
+  ],
+  "independentChecks": {
+    "evidence": 0,
+    "testCoverage": 0
+  },
+  "archive": "D:/ClawX-acceptance/product-matrix-relay-20261110-01a1c41e/ci-evidence-v1.zip",
+  "archiveSha256": "87f3e7dd50f795638b6b0480b987879967e8be940665581ec22089b381a3c588",
+  "entryHashes": {
+    "harness-ci.stdout.txt": "8d102beb1509f5b9fd54bb9321baa1a33f3c3d1b04576b90cb9f65d8ec344be9",
+    "harness-ci.stderr.txt": "d8f4925023cca1d9bd05984870cf4ae0a6beb11536bd4941fd59d96ac4a45b42",
+    "harness-ci-result.json": "702e4ac73b71cb0259e0d627c6b561c597c5293156182e28c75214428bea0cab",
+    "harness-ci-retry.stdout.txt": "d75927251bc055f666c0eb8e1c3fd54ab74628a3adb1ba0c79241532b03a4346",
+    "harness-ci-retry.stderr.txt": "4d6a85fd56dce05dfe55b193513e72829e12ef89e6136f805c5499d4811557ec",
+    "harness-ci-retry-result.json": "e03755e262381ef3f6042898ab7abb49bad0746ffe5c2badbc787d0e9962d520",
+    "evidence-check.stdout.txt": "9c174981d68b1d29ffa18fc495b79f6e923823d7c9214aecb6e850329b8cb8ca",
+    "evidence-check.stderr.txt": "7d921ca46de626240c55bcc81563d9873f446143bd38a0f47cfdf75a21490f97",
+    "test-coverage-check.stdout.txt": "9e1f7d6bcb12ee37b5ae055b3efb613b8b04d5d784984316e16179a6210d77e1",
+    "test-coverage-check.stderr.txt": "b6b42d6016b726617ca311123a7ef0a710cc35f4b9a023d3ad0549a18e543c33",
+    "independent-repo-checks.json": "808844eb998a910b636a4278c55212f6d52d6eb93b5564b077c16aeac5b8b53e",
+    "ci-baseline-readback.json": "7c6bb79af89ceab381479e7d509426e96ca9ca43601d61ce8eef7e34669c1b11"
+  },
+  "crcVerified": true
+}

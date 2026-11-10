@@ -249,6 +249,8 @@ UI change では Electron E2E と en/zh/ja/ru の string を追加します。Co
 
 [Responses 検証契約](harness/specs/tasks/product-acceptance-space-bunny.md)は、ローカルサービスの推論後の本文、一度のツール往復、会話分離、中断と provider 障害を対象にします。中断した Responses stream は正常完了にも、不完全な引数でのツール実行にもなりません。この検証はモデルやリリースの承認ではありません。
 
+[主要製品機能の検証マトリクス](harness/specs/tasks/product-acceptance-matrix.md)は、九つのユーザーフローを固定したテストソースに対応付け、各バッチの実行結果と残りの検証項目を記録します。
+
 完全な gate map は [development and validation](docs/modules/development-and-validation.md) を参照してください。
 
 <a id="troubleshooting"></a>
